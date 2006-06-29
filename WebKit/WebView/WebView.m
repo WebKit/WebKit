@@ -275,7 +275,8 @@ macro(yankAndSelect) \
     BOOL drawsBackground;
     BOOL editable;
     BOOL initiatedDrag;
-        
+    BOOL tabKeyCyclesThroughElements;
+
     NSString *mediaStyle;
     
     NSView <WebDocumentDragging> *draggingDocumentView;
@@ -374,6 +375,7 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
     progressNotificationTimeInterval = 0.1;
     settings = [[WebCoreSettings alloc] init];
     dashboardBehaviorAllowWheelScrolling = YES;
+    tabKeyCyclesThroughElements = YES;
 
     return self;
 }
@@ -2230,18 +2232,12 @@ NS_ENDHANDLER
 // Forward these calls to the document subview to make its scroll view scroll.
 - (void)_autoscrollForDraggingInfo:(id)draggingInfo timeDelta:(NSTimeInterval)repeatDelta
 {
-    if (![self isEditable])
-        return;
-    
     NSView <WebDocumentView> *documentView = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
     [documentView _autoscrollForDraggingInfo:draggingInfo timeDelta:repeatDelta];
 }
 
 - (BOOL)_shouldAutoscrollForDraggingInfo:(id)draggingInfo
 {
-    if (![self isEditable])
-        return NO;
-    
     NSView <WebDocumentView> *documentView = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
     return [documentView _shouldAutoscrollForDraggingInfo:draggingInfo];
 }
@@ -2608,7 +2604,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     } else if (action == @selector(toggleContinuousSpellChecking:)) {
         BOOL checkMark = NO;
         BOOL retVal = NO;
-	if ([self isEditable] && [self _continuousCheckingAllowed]) {
+	if ([self _continuousCheckingAllowed]) {
             checkMark = [self isContinuousSpellCheckingEnabled];
             retVal = YES;
         }
@@ -2695,16 +2691,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)toggleSmartInsertDelete:(id)sender
 {
-    if ([self isEditable]) {
-        [self setSmartInsertDeleteEnabled:![self smartInsertDeleteEnabled]];
-    }
+    [self setSmartInsertDeleteEnabled:![self smartInsertDeleteEnabled]];
 }
 
 - (IBAction)toggleContinuousSpellChecking:(id)sender
 {
-    if ([self isEditable]) {
-        [self setContinuousSpellCheckingEnabled:![self isContinuousSpellCheckingEnabled]];
-    }
+    [self setContinuousSpellCheckingEnabled:![self isContinuousSpellCheckingEnabled]];
 }
 
 - (BOOL)maintainsInactiveSelection
@@ -2745,6 +2737,16 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
     [self _performTextSizingSelector:@selector(_makeTextStandardSize:) withObject:sender onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:1.0];
+}
+
+- (void)setTabKeyCyclesThroughElements:(BOOL)cyclesElements
+{
+    _private->tabKeyCyclesThroughElements = cyclesElements;
+}
+
+- (BOOL)tabKeyCyclesThroughElements
+{
+    return _private->tabKeyCyclesThroughElements;
 }
 
 - (void)setScriptDebugDelegate:delegate

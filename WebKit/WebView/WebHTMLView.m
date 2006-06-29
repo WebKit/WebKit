@@ -3472,15 +3472,20 @@ done:
 
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
 {   
-    // Use the isEditable state to determine whether or not to process tab key events.
-    // The idea here is that isEditable will be NO when this WebView is being used
-    // in a browser, and we desire the behavior where tab moves to the next element
-    // in tab order. If isEditable is YES, it is likely that the WebView is being
-    // embedded as the whole view, as in Mail, and tabs should input tabs as expected
-    // in a text editor.
-    if (![[self _webView] isEditable] && [event _web_isTabKeyEvent]) 
+    // Use WebView's tabKeyCyclesThroughElements state to determine whether or not
+    // to process tab key events. The idea here is that tabKeyCyclesThroughElements
+    // will be YES when this WebView is being used in a browser, and we desire the
+    // behavior where tab moves to the next element in tab order. If tabKeyCyclesThroughElements
+    // is NO, it is likely that the WebView is being embedded as the whole view, as in Mail,
+    // and tabs should input tabs as expected in a text editor. Using Option-Tab always cycles
+    // through elements.
+
+    if ([[self _webView] tabKeyCyclesThroughElements] && [event _web_isTabKeyEvent]) 
         return NO;
-    
+
+    if (![[self _webView] tabKeyCyclesThroughElements] && [event _web_isOptionTabKeyEvent])
+        return NO;
+
     // Now process the key normally
     [self interpretKeyEvents:[NSArray arrayWithObject:event]];
     return YES;

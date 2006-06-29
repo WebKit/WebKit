@@ -1,3 +1,39 @@
+2006-06-29  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Harrison.
+
+        Smart insert and delete, continuous spell checking and autoscroll
+        can now be used for any WebView, not just editable ones. All of
+        these make sense for documents that might contain content editable 
+        areas or our new text fields. Autoscroll is usefull for dragging
+        for file input controls also.
+
+        Added a SPI to toggle WebViews tab key behavior, tabKeyCyclesThroughElements.
+        WebHTMLView's _interceptEditingKeyEvent now uses WebView's
+        tabKeyCyclesThroughElements state to determine whether or not
+        to process tab key events. The idea here is that tabKeyCyclesThroughElements
+        will be YES when this WebView is being used in a browser, and we
+        desire the behavior where tab moves to the next element in tab order.
+        If tabKeyCyclesThroughElements is NO, it is likely that the WebView
+        is being embedded as the whole view, as in Mail, and tabs should input
+        tabs as expected in a text editor. Using Option-Tab always cycles
+        through elements.
+
+        * WebView/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]):
+        * WebView/WebHTMLView.m:
+        (-[NSArray _interceptEditingKeyEvent:]):
+        * WebView/WebView.m:
+        (-[WebViewPrivate init]):
+        (-[WebView _autoscrollForDraggingInfo:timeDelta:]):
+        (-[WebView _shouldAutoscrollForDraggingInfo:]):
+        (-[WebView validateUserInterfaceItem:]):
+        (-[WebView toggleSmartInsertDelete:]):
+        (-[WebView toggleContinuousSpellChecking:]):
+        (-[WebView setTabKeyCyclesThroughElements:]):
+        (-[WebView tabKeyCyclesThroughElements]):
+        * WebView/WebViewPrivate.h:
+
 2006-06-29  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Tim O.

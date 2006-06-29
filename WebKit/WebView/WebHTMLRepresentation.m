@@ -191,9 +191,8 @@
         }
         
         WebView *webView = [frame webView];
-        if ([webView isEditable]) {
+        if ([webView isEditable])
             [_private->bridge applyEditingStyleToBodyElement];
-        }
     }
 }
 

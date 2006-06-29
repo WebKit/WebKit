@@ -92,6 +92,9 @@ typedef enum {
 - (BOOL)canMakeTextStandardSize;
 - (IBAction)makeTextStandardSize:(id)sender;
 
+- (void)setTabKeyCyclesThroughElements:(BOOL)cyclesElements;
+- (BOOL)tabKeyCyclesThroughElements;
+
 // If true, the selection will be maintained even when the first responder is outside
 // of the webview. Returns true only if self is editable at this level. Subclasses can
 // override to enforce additional criteria.
