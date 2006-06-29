@@ -79,6 +79,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     // info used to support RSS feeds
     NSString *RSSFeedReferrer;
     id viewState;
+    NSMutableDictionary *transientProperties;
 }
 @end
 
@@ -99,6 +100,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     [formContentType release];
     [formReferrer release];
     [RSSFeedReferrer release];
+    [transientProperties release];
 
     [super dealloc];
 }
@@ -765,6 +767,23 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     return _private->pageCache;
 }
 
+- (id)_transientPropertyForKey:(NSString *)key
+{
+    if (!_private->transientProperties)
+        return nil;
+    
+    return [_private->transientProperties objectForKey:key];
+}
+
+- (void)_setTransientProperty:(id)property forKey:(NSString *)key
+{
+    if (property) {
+        if (!_private->transientProperties)
+            _private->transientProperties = [[NSMutableDictionary alloc] init];
+        [_private->transientProperties setObject:property forKey:key];
+    } else if (_private->transientProperties)
+        [_private->transientProperties removeObjectForKey:key];
+}
 
 @end
 
