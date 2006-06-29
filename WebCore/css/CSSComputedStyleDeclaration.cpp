@@ -46,6 +46,7 @@ static const int computedProperties[] = {
     CSS_PROP_BACKGROUND_IMAGE,
     CSS_PROP__WEBKIT_BACKGROUND_SIZE,
     CSS_PROP_BACKGROUND_REPEAT,
+    CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE,
     CSS_PROP_BACKGROUND_ATTACHMENT,
     CSS_PROP__WEBKIT_BACKGROUND_CLIP,
     CSS_PROP__WEBKIT_BACKGROUND_ORIGIN,
@@ -370,6 +371,39 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 return new CSSPrimitiveValue(CSS_VAL_REPEAT_Y);
             case NO_REPEAT:
                 return new CSSPrimitiveValue(CSS_VAL_NO_REPEAT);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
+    case CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE:
+        switch (style->backgroundComposite()) {
+            case CompositeClear:
+                return new CSSPrimitiveValue(CSS_VAL_CLEAR);
+            case CompositeCopy:
+                return new CSSPrimitiveValue(CSS_VAL_COPY);
+            case CompositeSourceOver:
+                return new CSSPrimitiveValue(CSS_VAL_SOURCE_OVER);
+            case CompositeSourceIn:
+                return new CSSPrimitiveValue(CSS_VAL_SOURCE_IN);
+            case CompositeSourceOut:
+                return new CSSPrimitiveValue(CSS_VAL_SOURCE_OUT);
+            case CompositeSourceAtop:
+                return new CSSPrimitiveValue(CSS_VAL_SOURCE_ATOP);
+            case CompositeDestinationOver:
+                return new CSSPrimitiveValue(CSS_VAL_DESTINATION_OVER);
+            case CompositeDestinationIn:
+                return new CSSPrimitiveValue(CSS_VAL_DESTINATION_IN);
+            case CompositeDestinationOut:
+                return new CSSPrimitiveValue(CSS_VAL_DESTINATION_OUT);
+            case CompositeDestinationAtop:
+                return new CSSPrimitiveValue(CSS_VAL_DESTINATION_ATOP);
+            case CompositeXOR:
+                return new CSSPrimitiveValue(CSS_VAL_XOR);
+            case CompositePlusDarker:
+                return new CSSPrimitiveValue(CSS_VAL_PLUS_DARKER);
+            case CompositeHighlight:
+                return new CSSPrimitiveValue(CSS_VAL_HIGHLIGHT);
+            case CompositePlusLighter:
+                return new CSSPrimitiveValue(CSS_VAL_PLUS_LIGHTER);
         }
         ASSERT_NOT_REACHED();
         return 0;

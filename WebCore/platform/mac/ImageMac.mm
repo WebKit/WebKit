@@ -290,14 +290,15 @@ static void drawPattern(void* info, CGContextRef context)
 
 static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
-void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& tileSize)
+void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint,
+    const FloatSize& tileSize, CompositeOperator op)
 {    
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
 
     if (m_currentFrame == 0 && m_isSolidColor) {
-        fillSolidColorInRect(ctxt, m_solidColor, destRect, CompositeSourceOver);
+        fillSolidColorInRect(ctxt, m_solidColor, destRect, op);
         return;
     }
 
@@ -335,7 +336,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
         fromRect.size.width = destRect.width() / scaleX;
         fromRect.size.height = destRect.height() / scaleY;
 
-        draw(ctxt, destRect, fromRect, CompositeSourceOver);
+        draw(ctxt, destRect, fromRect, op);
         return;
     }
 
@@ -357,7 +358,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
         CGFloat patternAlpha = 1;
         CGContextSetFillPattern(context, pattern, &patternAlpha);
 
-        ctxt->setCompositeOperation(CompositeSourceOver);
+        ctxt->setCompositeOperation(op);
 
         CGContextFillRect(context, destRect);
 
@@ -370,14 +371,15 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 }
 
 // FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
-void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule)
+void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule,
+    TileRule vRule, CompositeOperator op)
 {    
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
 
     if (m_currentFrame == 0 && m_isSolidColor)
-        return fillSolidColorInRect(ctxt, m_solidColor, dstRect, CompositeSourceOver);
+        return fillSolidColorInRect(ctxt, m_solidColor, dstRect, op);
 
     ctxt->save();
 
@@ -440,7 +442,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
         CGFloat patternAlpha = 1;
         CGContextSetFillPattern(context, pattern, &patternAlpha);
 
-        ctxt->setCompositeOperation(CompositeSourceOver);
+        ctxt->setCompositeOperation(op);
         
         CGContextFillRect(context, ir);
 

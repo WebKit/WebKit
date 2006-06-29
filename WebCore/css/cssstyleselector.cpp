@@ -1795,6 +1795,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSS_PROP__WEBKIT_BACKGROUND_CLIP:
         HANDLE_BACKGROUND_VALUE(backgroundClip, BackgroundClip, value)
         break;
+    case CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE:
+        HANDLE_BACKGROUND_VALUE(backgroundComposite, BackgroundComposite, value)
+        break;
     case CSS_PROP__WEBKIT_BACKGROUND_ORIGIN:
         HANDLE_BACKGROUND_VALUE(backgroundOrigin, BackgroundOrigin, value)
         break;
@@ -4078,6 +4081,64 @@ void CSSStyleSelector::mapBackgroundClip(BackgroundLayer* layer, CSSValue* value
         default: // CSS_VAL_CONTENT
             layer->setBackgroundClip(BGCONTENT);
             break;
+    }
+}
+
+void CSSStyleSelector::mapBackgroundComposite(BackgroundLayer* layer, CSSValue* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setBackgroundComposite(RenderStyle::initialBackgroundComposite());
+        return;
+    }
+    
+    if (!value->isPrimitiveValue())
+        return;
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    switch(primitiveValue->getIdent()) {
+        case CSS_VAL_CLEAR:
+            layer->setBackgroundComposite(CompositeClear);
+            break;
+        case CSS_VAL_COPY:
+            layer->setBackgroundComposite(CompositeCopy);
+            break;
+        case CSS_VAL_SOURCE_OVER:
+            layer->setBackgroundComposite(CompositeSourceOver);
+            break;
+        case CSS_VAL_SOURCE_IN:
+            layer->setBackgroundComposite(CompositeSourceIn);
+            break;
+        case CSS_VAL_SOURCE_OUT:
+            layer->setBackgroundComposite(CompositeSourceOut);
+            break;
+        case CSS_VAL_SOURCE_ATOP:
+            layer->setBackgroundComposite(CompositeSourceAtop);
+            break;
+        case CSS_VAL_DESTINATION_OVER:
+            layer->setBackgroundComposite(CompositeDestinationOver);
+            break;
+        case CSS_VAL_DESTINATION_IN:
+            layer->setBackgroundComposite(CompositeDestinationIn);
+            break;
+        case CSS_VAL_DESTINATION_OUT:
+            layer->setBackgroundComposite(CompositeDestinationOut);
+            break;
+        case CSS_VAL_DESTINATION_ATOP:
+            layer->setBackgroundComposite(CompositeDestinationAtop);
+            break;
+        case CSS_VAL_XOR:
+            layer->setBackgroundComposite(CompositeXOR);
+            break;
+        case CSS_VAL_PLUS_DARKER:
+            layer->setBackgroundComposite(CompositePlusDarker);
+            break;
+        case CSS_VAL_HIGHLIGHT:
+            layer->setBackgroundComposite(CompositeHighlight);
+            break;
+        case CSS_VAL_PLUS_LIGHTER:
+            layer->setBackgroundComposite(CompositePlusLighter);
+            break;
+        default:
+            return;
     }
 }
 

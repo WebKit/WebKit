@@ -357,4 +357,4 @@ void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
 
 void Frame::setNeedsReapplyStyles() { }
 
-void Image::drawTiled(GraphicsContext*, const FloatRect&, const FloatRect&, TileRule, TileRule) { }
+void Image::drawTiled(GraphicsContext*, const FloatRect&, const FloatRect&, TileRule, TileRule, CompositeOperator) { }

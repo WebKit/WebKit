@@ -163,6 +163,23 @@ repeat-x
 repeat-y
 no-repeat
 #
+# CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE:
+#
+clear
+copy
+source-over
+source-in
+source-out
+source-atop
+destination-over
+destination-in
+destination-out
+destination-atop
+xor
+plus-darker
+# highlight
+plus-lighter
+#
 # CSS_PROP_VERTICAL_ALIGN:
 #
 baseline

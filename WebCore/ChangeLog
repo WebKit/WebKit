@@ -1,3 +1,56 @@
+2006-06-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4450615> Add composite mode to background 
+        styles
+
+        -webkit-background-composite will set a composite mode on a 
+        background image.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPropertyNames.in: Add -webkit-background-composite
+        * css/CSSValueKeywords.in: Add all possible values (clear, copy, 
+        source-over, source-in, source-out, source-atop, destination-over, 
+        destination-in, destination-out, destination-atop, xor, plus-
+        darker, highlight, and plus-lighter)
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseBackgroundProperty):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapBackgroundComposite):
+        * css/cssstyleselector.h:
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawTiledImage):
+        * platform/GraphicsContext.h: drawTiledImage() now takes a 
+        composite operator.
+        * platform/Image.h: drawTiled() now takes a composite operator.
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawTiled): Set the composite operator.
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::drawTiled): Set the composite operator.
+        * platform/win/TemporaryLinkStubs.cpp:
+        (Image::drawTiled):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended): Send the composite 
+        operator in the render style over to the graphics context.
+        * rendering/render_style.cpp:
+        (WebCore::BackgroundLayer::BackgroundLayer):
+        (WebCore::BackgroundLayer::operator=):
+        (WebCore::BackgroundLayer::operator==):
+        (WebCore::BackgroundLayer::fillUnsetProperties):
+        (WebCore::BackgroundLayer::cullEmptyLayers):
+        * rendering/render_style.h:
+        (WebCore::BackgroundLayer::backgroundComposite):
+        (WebCore::BackgroundLayer::isBackgroundCompositeSet):
+        (WebCore::BackgroundLayer::setBackgroundComposite):
+        (WebCore::BackgroundLayer::clearBackgroundComposite):
+        (WebCore::RenderStyle::backgroundComposite):
+        (WebCore::RenderStyle::initialBackgroundComposite):
+
 2006-06-29  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

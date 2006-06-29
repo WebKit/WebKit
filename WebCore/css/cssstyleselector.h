@@ -191,6 +191,7 @@ class StyledElement;
          
         void mapBackgroundAttachment(BackgroundLayer* layer, CSSValue* value);
         void mapBackgroundClip(BackgroundLayer* layer, CSSValue* value);
+        void mapBackgroundComposite(BackgroundLayer* layer, CSSValue* value);
         void mapBackgroundOrigin(BackgroundLayer* layer, CSSValue* value);
         void mapBackgroundImage(BackgroundLayer* layer, CSSValue* value);
         void mapBackgroundRepeat(BackgroundLayer* layer, CSSValue* value);

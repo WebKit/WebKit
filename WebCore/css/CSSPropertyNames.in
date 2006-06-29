@@ -11,6 +11,7 @@
 background-attachment
 -webkit-background-clip
 background-color
+-webkit-background-composite
 background-image
 -webkit-background-origin
 background-position

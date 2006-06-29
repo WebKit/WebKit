@@ -101,9 +101,11 @@ namespace WebCore {
         void drawImage(Image*, const IntRect& destRect, const IntRect& srcRect, CompositeOperator = CompositeSourceOver);
         void drawImage(Image*, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1),
             CompositeOperator = CompositeSourceOver);
-        void drawTiledImage(Image*, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize);
+        void drawTiledImage(Image*, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize,
+            CompositeOperator = CompositeSourceOver);
         void drawTiledImage(Image*, const IntRect& destRect, const IntRect& srcRect, 
-            Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile);
+            Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
+            CompositeOperator = CompositeSourceOver);
 
         void addClip(const IntRect&);
         void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);

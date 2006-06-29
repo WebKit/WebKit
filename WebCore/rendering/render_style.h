@@ -38,6 +38,7 @@
 #include "Color.h"
 #include "DataRef.h"
 #include "Font.h"
+#include "GraphicsTypes.h"
 #include "IntRect.h"
 #include "Length.h"
 #include "Shared.h"
@@ -451,6 +452,7 @@ public:
     EBackgroundBox backgroundClip() const { return static_cast<EBackgroundBox>(m_bgClip); }
     EBackgroundBox backgroundOrigin() const { return static_cast<EBackgroundBox>(m_bgOrigin); }
     EBackgroundRepeat backgroundRepeat() const { return static_cast<EBackgroundRepeat>(m_bgRepeat); }
+    CompositeOperator backgroundComposite() const { return static_cast<CompositeOperator>(m_bgComposite); }
     LengthSize backgroundSize() const { return m_backgroundSize; }
 
     BackgroundLayer* next() const { return m_next; }
@@ -463,6 +465,7 @@ public:
     bool isBackgroundClipSet() const { return m_clipSet; }
     bool isBackgroundOriginSet() const { return m_originSet; }
     bool isBackgroundRepeatSet() const { return m_repeatSet; }
+    bool isBackgroundCompositeSet() const { return m_compositeSet; }
     bool isBackgroundSizeSet() const { return m_backgroundSizeSet; }
     
     void setBackgroundImage(CachedImage* i) { m_image = i; m_imageSet = true; }
@@ -472,6 +475,7 @@ public:
     void setBackgroundClip(EBackgroundBox b) { m_bgClip = b; m_clipSet = true; }
     void setBackgroundOrigin(EBackgroundBox b) { m_bgOrigin = b; m_originSet = true; }
     void setBackgroundRepeat(EBackgroundRepeat r) { m_bgRepeat = r; m_repeatSet = true; }
+    void setBackgroundComposite(CompositeOperator c) { m_bgComposite = c; m_compositeSet = true; }
     void setBackgroundSize(const LengthSize& b) { m_backgroundSize = b; m_backgroundSizeSet = true; }
     
     void clearBackgroundImage() { m_imageSet = false; }
@@ -481,6 +485,7 @@ public:
     void clearBackgroundClip() { m_clipSet = false; }
     void clearBackgroundOrigin() { m_originSet = false; }
     void clearBackgroundRepeat() { m_repeatSet = false; }
+    void clearBackgroundComposite() { m_compositeSet = false; }
     void clearBackgroundSize() { m_backgroundSizeSet = false; }
 
     void setNext(BackgroundLayer* n) { if (m_next != n) { delete m_next; m_next = n; } }
@@ -518,6 +523,7 @@ public:
     unsigned m_bgClip : 2; // EBackgroundBox
     unsigned m_bgOrigin : 2; // EBackgroundBox
     unsigned m_bgRepeat : 2; // EBackgroundRepeat
+    unsigned m_bgComposite : 2; // CompositeOperator
 
     LengthSize m_backgroundSize;
 
@@ -528,6 +534,7 @@ public:
     bool m_repeatSet : 1;
     bool m_xPosSet : 1;
     bool m_yPosSet : 1;
+    bool m_compositeSet : 1;
     bool m_backgroundSizeSet : 1;
 
     BackgroundLayer* m_next;
@@ -1265,6 +1272,7 @@ public:
     const Color & backgroundColor() const { return background->m_color; }
     CachedImage *backgroundImage() const { return background->m_background.m_image; }
     EBackgroundRepeat backgroundRepeat() const { return static_cast<EBackgroundRepeat>(background->m_background.m_bgRepeat); }
+    CompositeOperator backgroundComposite() const { return static_cast<CompositeOperator>(background->m_background.m_bgComposite); }
     bool backgroundAttachment() const { return background->m_background.m_bgAttachment; }
     EBackgroundBox backgroundClip() const { return static_cast<EBackgroundBox>(background->m_background.m_bgClip); }
     EBackgroundBox backgroundOrigin() const { return static_cast<EBackgroundBox>(background->m_background.m_bgOrigin); }
@@ -1619,6 +1627,7 @@ public:
     static EBackgroundBox initialBackgroundClip() { return BGBORDER; }
     static EBackgroundBox initialBackgroundOrigin() { return BGPADDING; }
     static EBackgroundRepeat initialBackgroundRepeat() { return REPEAT; }
+    static CompositeOperator initialBackgroundComposite() { return CompositeSourceOver; }
     static LengthSize initialBackgroundSize() { return LengthSize(); }
     static bool initialBorderCollapse() { return false; }
     static EBorderStyle initialBorderStyle() { return BNONE; }
