@@ -44,12 +44,55 @@ extern "C" {
 
 // Returns true for successful execution, false for uncaught exception. 
 // returnValue will contain value of last evaluated statement or exception value.
+/*!
+  @function JSEvaluate
+  Evaluates a string of JavaScript code
+  @param context            execution context to use
+  @param thisValue          object to use as the "this" value, or NULL to use the global object as "this"
+  @param script             a string containing the script source code
+  @param sourceURL          URL to the file containing the source, or NULL - this is only used for error reporting
+  @param startingLineNumber starting line number in the source at sourceURL - this is only used for error reporting
+  @param returnValue        result of evaluation if successful, or value of exception
+  @result                   true if evaluation succeeded, false if an uncaught exception or error occured
+*/
 bool JSEvaluate(JSContextRef context, JSValueRef thisValue, JSCharBufferRef script, JSCharBufferRef sourceURL, int startingLineNumber, JSValueRef* returnValue);
+
+/*!
+  @function JSCheckSyntax
+  Checks for syntax errors in a string of JavaScript code
+  @param context execution context to use
+  @param script a string containing the script source code
+  @result true if the script is syntactically correct, false otherwise
+
+*/
 bool JSCheckSyntax(JSContextRef context, JSCharBufferRef script);
 
 // Garbage collection
+/*!
+  @function JSGCProtect
+  Protect a JavaScript value from garbage collection; a value may be
+  protected multiple times and must be unprotected an equal number of
+  times to become collectable again.
+*/
 void JSGCProtect(JSValueRef value);
+
+/*!
+  @function JSGCProtect
+  Stop protecting a JavaScript value from garbage collection; a value may be
+  protected multiple times and must be unprotected an equal number of
+  times to become collectable again.
+*/
 void JSGCUnprotect(JSValueRef value);
+
+/*! 
+  @function JSGCCollect
+  Immediately perform a JavaScript garbage collection. JavaScript
+  values that are on the machine stack, in a register, protected, set
+  as the global object of any interpreter, or reachable from any such
+  value will not be collected. It is not normally necessary to call
+  this function directly; the JS runtime will garbage collect as
+  needed.
+*/
 void JSGCCollect(void);
 
 #ifdef __cplusplus

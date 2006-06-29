@@ -29,7 +29,16 @@
 
 #include "JSBase.h"
 
-// Value types
+/*!
+  @enum JSTypeCode
+  A constant identifying the type of a particular JSValueRef.
+  @constant kJSTypeUndefined the unique undefined value
+  @constant kJSTypeNull the unique null value
+  @constant kJSBoolean a primitive boolean value, one of true or false
+  @constant kJSTypeNumber a primitive number value
+  @constant kJSTypeString a primitive string value
+  @constant kJSTypeObject an object (meaning this JSValueRef is a JSObjectRef
+*/
 typedef enum {
     kJSTypeUndefined,
     kJSTypeNull,
@@ -43,32 +52,173 @@ typedef enum {
 extern "C" {
 #endif
 
+/*!
+  @function JSValueGetType
+  Get the type code for a particular JavaScript value
+  @param value the JS value for which the type should be determined
+  @result      a type code identifying the type
+*/
 JSTypeCode JSValueGetType(JSValueRef value);
 
+/*!
+  @function JSValueIsUndefined
+  Determine if value is of type undefined
+  @param value the JS value to check for undefined type
+  @result      true if the value is undefined, false otherwise
+*/
 bool JSValueIsUndefined(JSValueRef value);
+
+/*!
+  @function JSValueIsNull
+  Determine if value is of type null
+  @param value the JS value to check for null type
+  @result      true if the value is null, false otherwise
+*/
 bool JSValueIsNull(JSValueRef value);
+
+/*!
+  @function JSValueIsBoolean
+  Determine if value is of type boolean
+  @param value the JS value to check for boolean type
+  @result      true if the value is a boolean, false otherwise
+*/
 bool JSValueIsBoolean(JSValueRef value);
+
+/*!
+  @function JSValueIsNumber
+  Determine if value is of type number
+  @param value the JS value to check for number type
+  @result      true if the value is a number, false otherwise
+*/
 bool JSValueIsNumber(JSValueRef value);
+
+/*!
+  @function JSValueIsString
+  Determine if value is of type string
+  @param value the JS value to check for string type
+  @result      true if the value is a string, false otherwise
+*/
 bool JSValueIsString(JSValueRef value);
+
+/*!
+  @function JSValueIsObject
+  Determine if value is of type object
+  @param value the JS value to check for object type
+  @result      true if the value is an object, false otherwise
+*/
 bool JSValueIsObject(JSValueRef value);
 
 // Comparing values
+
+/*!
+  @function JSValueIsEqual
+  Check if two values are equal by JavaScript rules, as if compared by the JS == operator
+  @param context the execution context to use 
+  @param a       the first value to compare
+  @param b       the second value to compare
+  @result        true if the two values are equal, false otherwise
+*/
 bool JSValueIsEqual(JSContextRef context, JSValueRef a, JSValueRef b);
+
+/*!
+  @function JSValueIsStrictEqual
+  Check if two values are strict equal by JavaScript rules, as if compared by the JS === operator
+  @param context the execution context to use 
+  @param a       the first value to compare
+  @param b       the second value to compare
+  @result        true if the two values are strict equal, false otherwise
+*/
 bool JSValueIsStrictEqual(JSContextRef context, JSValueRef a, JSValueRef b);
+
+/*!
+  @function JSValueIsInstanceOf
+  Check if a value is an instance of a particular object; generally this means the object
+  was used as the constructor for that instance
+  @param context the execution context to use 
+  @param value   the possible instance
+  @param object  the possible constructor
+  @result        true if value is an instance of object
+*/
 bool JSValueIsInstanceOf(JSValueRef value, JSObjectRef object);
 
 // Creating values
+
+/*!
+  @function JSUndefinedMake
+  Make a value of the undefined type.
+  @result The unique undefined value.
+*/
 JSValueRef JSUndefinedMake(void);
+
+/*!
+  @function JSNullMake
+  Make a value of the null type.
+  @result the unique null value
+*/
 JSValueRef JSNullMake(void);
+
+/*!
+  @function JSBooleanMake
+  Make a value of the boolean type.
+  @param value whether the returned value should be true or false
+  @result      a JS true or false boolean value, as appropriate
+*/
+
 JSValueRef JSBooleanMake(bool value);
+
+/*!
+  @function JSNumberMake
+  Make a value of the number type.
+  @param  value the numberic value of the number to make
+  @result a JS number corresponding to value
+*/
 JSValueRef JSNumberMake(double value);
+
+/*!
+  @function JSStringMake
+  Make a value of the string type.
+  @param  buffer the internal string contents for the string value
+  @result a JS string value that has the value of the buffer
+*/
 JSValueRef JSStringMake(JSCharBufferRef buffer);
 
 // Converting to primitive values
+
+/*!
+  @function JSValueToBoolean
+  Convert a JavaScript value to boolean and get the boolean value
+  @param context the execution context to use 
+  @param value   the value to convert to boolean
+  @result        the boolean result of conversion
+*/
 bool JSValueToBoolean(JSContextRef context, JSValueRef value);
-double JSValueToNumber(JSContextRef context, JSValueRef value); // 0.0 if conversion fails
-JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value); // Error object if conversion fails
-JSCharBufferRef JSValueCopyStringValue(JSContextRef context, JSValueRef value); // Empty string if conversion fails
+
+/*!
+  @function JSValueToNumber
+  Convert a JavaScript value to number and get the numeric value
+  @param context the execution context to use 
+  @param value   the value to convert to number
+  @result        the boolean result of conversion, or 0 on failure
+*/
+double JSValueToNumber(JSContextRef context, JSValueRef value);
+
+/*!
+  @function JSValueCopyStringValue
+  Convert a JavaScript value to string and get the value as a string
+  @param context the execution context to use 
+  @param value   the value to convert to string
+  @result        the string result of conversion, or empty string on failure
+*/
+JSCharBufferRef JSValueCopyStringValue(JSContextRef context, JSValueRef value);
+
+/*!
+  @function JSValueToObject
+  Convert a JavaScript value to object and return the resulting object
+  @param context the execution context to use 
+  @param value   the value to convert to string
+  @result        the string result of conversion, or error object on failure
+*/
+JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value);
 
 #ifdef __cplusplus
 }

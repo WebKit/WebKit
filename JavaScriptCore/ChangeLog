@@ -1,3 +1,12 @@
+2006-06-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        - add headerdoc comments to some of the new JS API headers
+
+        * API/JSBase.h:
+        * API/JSValueRef.h:
+
 2006-06-28  Timothy Hatcher  <timothy@apple.com>
 
         Prefer the Stabs debugging symbols format until DWARF bugs are fixed.
