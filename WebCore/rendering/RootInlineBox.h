@@ -92,6 +92,10 @@ public:
     
     virtual void clearTruncation();
 
+#if PLATFORM(MAC)
+    void paintCustomHighlight(RenderObject::PaintInfo& i, int tx, int ty, const AtomicString& highlightType);
+#endif
+
     virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);
     virtual bool nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty);
 

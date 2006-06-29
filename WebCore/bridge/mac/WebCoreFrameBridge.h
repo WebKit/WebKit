@@ -679,7 +679,8 @@ typedef enum {
 
 - (void)dashboardRegionsChanged:(NSMutableDictionary *)regions;
 
-- (void)paintCustomHighlight:(NSString*)type forBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text;
+- (NSRect)customHighlightRect:(NSString*)type forLine:(NSRect)lineRect;
+- (void)paintCustomHighlight:(NSString*)type forBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text entireLine:(BOOL)line;
 
 - (void)handledOnloadEvents;
 

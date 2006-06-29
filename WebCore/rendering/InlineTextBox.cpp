@@ -487,7 +487,7 @@ void InlineTextBox::paintCustomHighlight(int tx, int ty, const AtomicString& typ
     FloatRect rootRect(tx + r->xPos(), ty + r->selectionTop(), r->width(), r->selectionHeight());
     FloatRect textRect(tx + xPos(), rootRect.y(), width(), rootRect.height());
 
-    Mac(object()->document()->frame())->paintCustomHighlight(type, textRect, rootRect, true);
+    Mac(object()->document()->frame())->paintCustomHighlight(type, textRect, rootRect, true, false);
 }
 #endif
 

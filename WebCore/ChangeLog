@@ -1,3 +1,23 @@
+2006-06-28  David Hyatt  <hyatt@apple.com>
+
+        Add support for custom highlighting to paint at the root line box level
+        (and to inflate the box it uses so that it can go outside the bounds of
+        the line if necessary).
+
+        Reviewed by harrison
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::customHighlightLineRect):
+        (WebCore::FrameMac::paintCustomHighlight):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintCustomHighlight):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paintCustomHighlight):
+        (WebCore::RootInlineBox::paint):
+        * rendering/RootInlineBox.h:
+
 2006-06-28  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by justin

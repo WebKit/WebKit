@@ -1533,7 +1533,20 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     }
 }
 
+- (NSRect)customHighlightRect:(NSString*)type forLine:(NSRect)lineRect
+{
+    ASSERT(_frame != nil);
+    NSView *documentView = [[_frame frameView] documentView];
+    if (![documentView isKindOfClass:[WebHTMLView class]])
+        return NSZeroRect;
+
+    WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
+    id<WebHTMLHighlighter> highlighter = [webHTMLView _highlighterForType:type];
+    return [highlighter highlightRectForLine:lineRect];
+}
+
 - (void)paintCustomHighlight:(NSString*)type forBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text
+                  entireLine:(BOOL)line
 {
     ASSERT(_frame != nil);
     NSView *documentView = [[_frame frameView] documentView];
@@ -1542,7 +1555,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
     WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
     id<WebHTMLHighlighter> highlighter = [webHTMLView _highlighterForType:type];
-    [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:text];
+    [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:text entireLine:line];
 }
 
 - (NSString *)nameForUndoAction:(WebUndoAction)undoAction

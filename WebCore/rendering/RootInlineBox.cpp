@@ -23,6 +23,11 @@
 
 #include "EllipsisBox.h"
 #include "RenderBlock.h"
+#include "GraphicsContext.h"
+#include "Document.h"
+#if PLATFORM(MAC)
+#include "FrameMac.h"
+#endif
 
 using namespace std;
 
@@ -98,10 +103,29 @@ void RootInlineBox::paintEllipsisBox(RenderObject::PaintInfo& i, int _tx, int _t
         m_ellipsisBox->paint(i, _tx, _ty);
 }
 
+#if PLATFORM(MAC)
+void RootInlineBox::paintCustomHighlight(RenderObject::PaintInfo& i, int tx, int ty, const AtomicString& highlightType)
+{
+    if (!object()->shouldPaintWithinRoot(i) || object()->style()->visibility() != VISIBLE || i.phase != PaintPhaseForeground)
+        return;
+
+    // Get the inflated rect so that we can properly hit test.
+    FloatRect rootRect(tx + xPos(), ty + selectionTop(), width(), selectionHeight());
+    FloatRect inflatedRect = Mac(object()->document()->frame())->customHighlightLineRect(highlightType, rootRect);
+    if (inflatedRect.intersects(i.r))
+        Mac(object()->document()->frame())->paintCustomHighlight(highlightType, rootRect, rootRect, false, true);
+}
+#endif
+
 void RootInlineBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
 {
     InlineFlowBox::paint(i, tx, ty);
     paintEllipsisBox(i, tx, ty);
+#if PLATFORM(MAC)
+    RenderStyle* styleToUse = object()->style(m_firstLine);
+    if (styleToUse->highlight() != nullAtom && !i.p->paintingDisabled())
+        paintCustomHighlight(i, tx, ty, styleToUse->highlight());
+#endif
 }
 
 bool RootInlineBox::nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty)
