@@ -1,3 +1,17 @@
+2006-06-29  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9649
+        The no-svg build broke after r15091
+
+        * bindings/objc/DOMInternal.h: Added #if XPATH_SUPPORT/#endif.
+        * bindings/objc/DOMInternal.mm: Ditto.
+        (raiseDOMException):
+        * bindings/objc/DOMXPath.h: Ditto.
+        * bindings/objc/DOMXPath.mm: Ditto.
+        * bindings/objc/DOMXPathInternal.h: Ditto.
+
 2006-06-29  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Tim O.

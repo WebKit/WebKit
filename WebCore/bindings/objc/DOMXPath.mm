@@ -26,6 +26,8 @@
 #import "config.h"
 #import "DOMXPath.h"
 
+#if XPATH_SUPPORT
+
 #import "DOMInternal.h"
 #import "DOMXPathInternal.h"
 #import "Document.h"
@@ -303,3 +305,4 @@ using WebCore::XPathResult;
 
 @end
 
+#endif // XPATH_SUPPORT

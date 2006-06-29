@@ -160,6 +160,8 @@ ALLOW_DOM_CAST(RectImpl)
 ALLOW_DOM_CAST(StyleSheet)
 ALLOW_DOM_CAST(StyleSheetList)
 ALLOW_DOM_CAST(TreeWalker)
+#if XPATH_SUPPORT
 ALLOW_DOM_CAST(XPathExpression)
 ALLOW_DOM_CAST(XPathNSResolver)
 ALLOW_DOM_CAST(XPathResult)
+#endif // XPATH_SUPPORT
