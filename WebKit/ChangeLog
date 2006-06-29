@@ -1,3 +1,13 @@
+2006-06-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - fix Frame leak on layout tests
+
+        * WebCoreSupport/WebPageBridge.m:
+        (-[WebPageBridge outerView]): Return WebFrameView for main frame instead
+        of WebView to avoid reference cycle between WebView and Page.
+
 2006-06-28  Timothy Hatcher  <timothy@apple.com>
 
         Prefer the Stabs debugging symbols format until DWARF bugs are fixed.

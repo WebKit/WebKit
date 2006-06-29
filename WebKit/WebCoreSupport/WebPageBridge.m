@@ -29,6 +29,7 @@
 #import "WebPageBridge.h"
 
 #import "WebFrameBridge.h"
+#import "WebFrameView.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/Assertions.h>
@@ -55,7 +56,7 @@
 
 - (NSView *)outerView
 {
-    return _webView;
+    return [[_webView mainFrame] frameView];
 }
 
 - (void)setWindowFrame:(NSRect)frameRect
