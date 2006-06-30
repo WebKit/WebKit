@@ -294,16 +294,15 @@ void RenderTable::layout()
     m_height += bpTop;
 
     int oldHeight = m_height;
-    calcHeight();
-    int newHeight = m_height;
+    if (!isPositioned())
+        calcHeight();
     m_height = oldHeight;
 
     Length h = style()->height();
     int th = 0;
-    if (isPositioned())
-        th = newHeight; // FIXME: Leave this alone for now but investigate later.
-    else if (h.isFixed())
-        th = h.value() - (bpTop + bpBottom);  // Tables size as though CSS height includes border/padding.
+    if (h.isFixed())
+        // Tables size as though CSS height includes border/padding.
+        th = h.value() - (bpTop + bpBottom);
     else if (h.isPercent())
         th = calcPercentageHeight(h);
     th = max(0, th);
@@ -317,12 +316,10 @@ void RenderTable::layout()
         if (firstBody) {
             firstBody->calcRowHeight();
             firstBody->layoutRows(th - calculatedHeight);
-        }
-        else if (!style()->htmlHacks()) {
+        } else if (!style()->htmlHacks())
             // Completely empty tables (with no sections or anything) should at least honor specified height
             // in strict mode.
             m_height += th;
-        }
     }
     
     int bl = borderLeft();
@@ -352,9 +349,12 @@ void RenderTable::layout()
         m_height += tCaption->height() + tCaption->marginTop() + tCaption->marginBottom();
     }
 
+    if (isPositioned())
+        calcHeight();
+
     // table can be containing block of positioned elements.
     // ### only pass true if width or height changed.
-    layoutPositionedObjects( true );
+    layoutPositionedObjects(true);
 
     // Repaint with our new bounds if they are different from our old bounds.
     if (checkForRepaint)

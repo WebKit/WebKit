@@ -1,3 +1,17 @@
+2006-06-29  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4874
+        Table with absolute bottom positioning is positioned incorrectly
+
+        Note: test case originally from Mitz.
+
+        * fast/table/absolute-table-at-bottom-expected.checksum: Added.
+        * fast/table/absolute-table-at-bottom-expected.png: Added.
+        * fast/table/absolute-table-at-bottom-expected.txt: Added.
+        * fast/table/absolute-table-at-bottom.html: Added.
+
 2006-06-29  Graham Dennis  <Graham.Dennis@gmail.com>
 
         Reviewed by Justin.

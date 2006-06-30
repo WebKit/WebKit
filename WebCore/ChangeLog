@@ -1,3 +1,17 @@
+2006-06-29  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4874
+        Table with absolute bottom positioning is positioned incorrectly
+
+        Note: patch originally from Mitz, spruced up by Weinig.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcAbsoluteVerticalValues):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+
 2006-06-29  Graham Dennis  <Graham.Dennis@gmail.com>
 
         Reviewed by Justin.
