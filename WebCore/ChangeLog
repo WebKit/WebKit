@@ -1,3 +1,21 @@
+2006-06-30  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9358
+          REGRESSION: Assertion failure in HTMLInputElement::setValueFromRenderer
+          (value == constrainValue(value)) when deleting all text
+
+        Test: editing/deleting/delete-all-text-in-text-field-assertion.html
+
+        Bug 9661 filed to fix the follow-up issue:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9661
+        textContent returns "\n" for a <br> even if it is collapsed
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValueFromRenderer): Work around "\n" value
+        when all characters are deleted from a text field.
+
 2006-06-30  David Harrison  <harrison@apple.com>
 
         Reviewed by Tim Omernick

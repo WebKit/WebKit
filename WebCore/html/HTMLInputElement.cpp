@@ -1089,9 +1089,16 @@ void HTMLInputElement::setValue(const String& value)
 void HTMLInputElement::setValueFromRenderer(const String& value)
 {
     // Renderer and our event handler are responsible for constraining values.
-    ASSERT(value == constrainValue(value));
+    ASSERT(value == constrainValue(value) || constrainValue(value).isEmpty());
 
-    m_value = value;
+    // Workaround for bug where trailing \n is included in the result of textContent.
+    // The assert macro above may also be simplified to:  value == constrainValue(value)
+    // http://bugzilla.opendarwin.org/show_bug.cgi?id=9661
+    if (value == "\n")
+        m_value = "";
+    else
+        m_value = value;
+
     setValueMatchesRenderer();
 
     // Fire the "input" DOM event.
