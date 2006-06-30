@@ -1,5 +1,23 @@
 2006-06-29  Tim Omernick  <timo@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/4608487> REGRESSION: reproducible crash in +[WebCoreFrameBridge supportedImageMIMETypes]
+
+        * Plugins/WebPluginDatabase.m:
+        (+[WebPluginDatabase setAdditionalWebPlugInPaths:]):
+        One might be tempted to add additionalWebPlugInPaths to the global WebPluginDatabase here.
+        For backward compatibility with earlier versions of the +setAdditionalWebPlugInPaths: SPI,
+        we need to save a copy of the additional paths and not cause a refresh of the plugin DB
+        at this time.
+        (-[WebPluginDatabase _plugInPaths]):
+        Include additionalWebPlugInPaths if this is the global DB.
+        (-[WebPluginDatabase refresh]):
+        Call -_plugInPaths to get the modified array of paths.  This is similar to what the old code
+        (before we had per-WebView plugin search paths).
+
+2006-06-29  Tim Omernick  <timo@apple.com>
+
         Reviewed by John Sullivan.
 
         WebHistoryItem now supports getting and setting arbitrary properties via _transientPropertyForKey: and

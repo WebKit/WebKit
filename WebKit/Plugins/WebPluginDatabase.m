@@ -131,12 +131,21 @@ static WebPluginDatabase *database = nil;
     return [plugins allObjects];
 }
 
+static NSArray *additionalWebPlugInPaths;
+
 + (void)setAdditionalWebPlugInPaths:(NSArray *)additionalPaths
 {
-    NSMutableArray *newPlugInPaths = [[self _defaultPlugInPaths] mutableCopy];
-    [newPlugInPaths addObjectsFromArray:additionalPaths];
-    [[WebPluginDatabase installedPlugins] setPlugInPaths:newPlugInPaths];
-    [newPlugInPaths release];
+    if (additionalPaths == additionalWebPlugInPaths)
+        return;
+    
+    [additionalWebPlugInPaths release];
+    additionalWebPlugInPaths = [additionalPaths copy];
+
+    // One might be tempted to add additionalWebPlugInPaths to the global WebPluginDatabase here.
+    // For backward compatibility with earlier versions of the +setAdditionalWebPlugInPaths: SPI,
+    // we need to save a copy of the additional paths and not cause a refresh of the plugin DB
+    // at this time.
+    // See Radars 4608487 and 4609047.
 }
 
 - (void)setPlugInPaths:(NSArray *)newPaths
@@ -174,9 +183,23 @@ static WebPluginDatabase *database = nil;
     [super dealloc];
 }
 
+- (NSArray *)_plugInPaths
+{
+    if (self == database && additionalWebPlugInPaths) {
+        // Add additionalWebPlugInPaths to the global WebPluginDatabase.  We do this here for
+        // backward compatibility with earlier versions of the +setAdditionalWebPlugInPaths: SPI,
+        // which simply saved a copy of the additional paths and did not cause the plugin DB to 
+        // refresh.  See Radars 4608487 and 4609047.
+        NSMutableArray *modifiedPlugInPaths = [[plugInPaths mutableCopy] autorelease];
+        [modifiedPlugInPaths addObjectsFromArray:additionalWebPlugInPaths];
+        return modifiedPlugInPaths;
+    } else
+        return plugInPaths;
+}
+
 - (void)refresh
 {
-    NSEnumerator *directoryEnumerator = [plugInPaths objectEnumerator];
+    NSEnumerator *directoryEnumerator = [[self _plugInPaths] objectEnumerator];
     NSMutableSet *uniqueFilenames = [[NSMutableArray alloc] init];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSMutableSet *newPlugins = [[NSMutableSet alloc] init];
