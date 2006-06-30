@@ -1852,8 +1852,10 @@ NS_ENDHANDLER
 
 - (void)dealloc
 {
-    ASSERT(_private->closed);
-    
+    // call close to ensure we tear-down completly
+    // this maintains our old behavior for existing applications
+    [self _close];
+
     --WebViewCount;
     
     [_private release];

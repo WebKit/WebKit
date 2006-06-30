@@ -1,3 +1,14 @@
+2006-06-30  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        Call _close in dealloc to ensure we cleanup for backwards
+        compatibility. This will safeguard and cleanup even if the
+        application doesn't use the new close API yet, like Mail.
+
+        * WebView/WebView.m:
+        (-[WebView dealloc]):
+
 2006-06-29  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
