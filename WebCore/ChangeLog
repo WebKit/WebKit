@@ -1,3 +1,34 @@
+2006-06-29  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/3694163> -[KWQPageState finalize] is incorrect; design change needed
+        <rdar://problem/3694165> -[WebCoreFrameBridge finalize] is incorrect; design change needed
+
+        Added close methods that need to be called before these
+        objects can be released. This ensures proper tear-down under GC.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge dealloc]):
+        (-[WebCoreFrameBridge finalize]):
+        (-[WebCoreFrameBridge close]):
+        * bridge/mac/WebCorePageBridge.h:
+        * bridge/mac/WebCorePageBridge.mm:
+        (-[WebCorePageBridge setMainFrame:]):
+        (-[WebCorePageBridge dealloc]):
+        (-[WebCorePageBridge finalize]):
+        (-[WebCorePageBridge close]):
+        (-[WebCorePageBridge mainFrame]):
+        (-[WebCorePageBridge setGroupName:]):
+        (-[WebCorePageBridge groupName]):
+        * kwq/KWQPageState.h:
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState dealloc]):
+        (-[KWQPageState finalize]):
+        (-[KWQPageState close]):
+
 2006-06-29  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Hyatt.

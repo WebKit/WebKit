@@ -29,6 +29,7 @@
 #import <WebKit/WebHistoryItemPrivate.h>
 
 #import <JavaScriptCore/Assertions.h>
+#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewInternal.h>
@@ -704,19 +705,23 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     }
 }
 
-+ (void)_destroyAllPluginsInPendingPageCaches
++ (void)_closeObjectsInPendingPageCaches
 {
     NSEnumerator *pageCaches = [_pendingPageCacheToRelease objectEnumerator];
     NSMutableDictionary *pageCache;
     
-    while ((pageCache = [pageCaches nextObject]) != nil) {
+    while ((pageCache = [pageCaches nextObject])) {
         WebHTMLView *HTMLView = [pageCache objectForKey:WebPageCacheDocumentViewKey];
         if ([HTMLView isKindOfClass:[WebHTMLView class]]) {
-            // Don't destroy plug-ins that are currently being viewed.
-            if ([[[HTMLView _frame] frameView] documentView] != HTMLView) {
-                [[HTMLView _pluginController] destroyAllPlugins];
-            }
+            // To avoid any possible retain cycles, call close on all the WebHTMLView.
+            // Don't close the WebHTMLVIew that is currently being viewed.
+            if ([[[HTMLView _frame] frameView] documentView] != HTMLView)
+                [HTMLView close];
         }
+
+        id pageState = [pageCache objectForKey:WebCorePageCacheStateKey];
+        if ([pageState respondsToSelector:@selector(close)])
+            [pageState performSelector:@selector(close)];
     }
 }
 
@@ -724,10 +729,7 @@ static NSTimer *_pageCacheReleaseTimer = nil;
 {
     LOG (PageCache, "releasing %d items\n", [_pendingPageCacheToRelease count]);
     [WebHistoryItem _invalidateReleaseTimer];
-    // Plug-ins could retain anything including the WebHTMLView or the window.
-    // To avoid any possible retain cycle, call destroyPlugin on all the plug-ins
-    // instead of completely relying on dealloc of WebHTMLView.
-    [self _destroyAllPluginsInPendingPageCaches];
+    [self _closeObjectsInPendingPageCaches];
     [_pendingPageCacheToRelease removeAllObjects];
 }
 

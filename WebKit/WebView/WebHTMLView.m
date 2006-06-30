@@ -1832,6 +1832,19 @@ static WebHTMLView *lastHitView = nil;
     [mutableTypes release];
 }
 
+- (void)close
+{
+    if (_private->closed)
+        return;
+    [self _clearLastHitViewIfSelf];
+    // FIXME: This is slow; should remove individual observers instead.
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_private->pluginController destroyAllPlugins];
+    // remove tooltips before clearing _private so removeTrackingRect: will work correctly
+    [self removeAllToolTips];
+    _private->closed = YES;
+}
+
 @end
 
 @implementation NSView (WebHTMLViewFileInternal)
@@ -1945,12 +1958,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)dealloc
 {
-    [self _clearLastHitViewIfSelf];
-    // FIXME: This is slow; should remove individual observers instead.
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [_private->pluginController destroyAllPlugins];
-    // remove tooltips before clearing _private so removeTrackingRect: will work correctly
-    [self removeAllToolTips];
+    // We can't assert that close has already been called because
+    // this view can be removed from it's superview, even though
+    // it could be needed later, so close if needed.
+    [self close];
     [_private release];
     _private = nil;
     [super dealloc];
@@ -1958,13 +1969,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)finalize
 {
-    [self _clearLastHitViewIfSelf];
-    // FIXME: This is slow; should remove individual observers instead.
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [_private->pluginController destroyAllPlugins];
-    // remove tooltips before clearing _private so removeTrackingRect: will work correctly
-    [self removeAllToolTips];
-    _private = nil;
+    // We can't assert that close has already been called because
+    // this view can be removed from it's superview, even though
+    // it could be needed later, so close if needed.
+    [self close];
     [super finalize];
 }
 

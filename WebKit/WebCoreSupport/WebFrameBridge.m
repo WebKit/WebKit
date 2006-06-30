@@ -651,6 +651,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)close
 {
+    [super close];
     [_frame release];
     _frame = nil;
 }
@@ -796,10 +797,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     WebHistoryItem *item = [_frame _itemForSavingDocState];
     if (![item hasPageCache]) {
-        return false;
+        return NO;
     }
     [[item pageCache] setObject:documentInfo forKey:WebCorePageCacheStateKey];
-    return true;
+    return YES;
 }
 
 - (NSString *)userAgentForURL:(NSURL *)URL
@@ -1222,15 +1223,15 @@ static BOOL loggedObjectCacheSize = NO;
 - (BOOL)canGoBackOrForward:(int)distance
 {
     if (distance == 0)
-        return TRUE;
+        return YES;
 
     if (distance > 0 && distance <= [[[self webView] backForwardList] forwardListCount])
-        return TRUE;
+        return YES;
 
     if (distance < 0 && -distance <= [[[self webView] backForwardList] backListCount])
-        return TRUE;
+        return YES;
     
-    return FALSE;
+    return NO;
 }
 
 - (void)goBackOrForward:(int)distance

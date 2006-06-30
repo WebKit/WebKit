@@ -1,3 +1,12 @@
+2006-06-29  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Need to call window close so WebView tears-down completly.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): call [window close]
+
 2006-06-29  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Darin.

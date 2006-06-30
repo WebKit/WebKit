@@ -47,6 +47,7 @@ class KURL;
     KJS::SavedProperties *locationProperties;
     KJS::SavedBuiltins *interpreterBuiltins;
     KJS::PausedTimeouts *pausedTimeouts;
+    BOOL closed;
 }
 
 - initWithDocument:(WebCore::Document *)doc URL:(const KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp interpreterBuiltins:(KJS::SavedBuiltins *)ib pausedTimeouts:(KJS::PausedTimeouts *)pt;

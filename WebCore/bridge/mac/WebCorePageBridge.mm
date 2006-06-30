@@ -76,27 +76,46 @@ static void initializeLoggingChannelsIfNecessary()
 
 - (void)setMainFrame:(WebCoreFrameBridge *)mainFrame
 {
-    _page->setMainFrame(adoptRef([mainFrame impl]));
+    if (_page)
+        _page->setMainFrame(adoptRef([mainFrame impl]));
 }
 
 - (void)dealloc
 {
-    delete _page;
+    ASSERT(_closed);
     [super dealloc];
+}
+
+- (void)finalize
+{
+    ASSERT(_closed);
+    [super finalize];
+}
+
+- (void)close
+{
+    delete _page;
+    _page = 0;
+    _closed = YES;
 }
 
 - (WebCoreFrameBridge *)mainFrame
 {
+    if (!_page)
+        return nil;
     return Mac(_page->mainFrame())->bridge();
 }
 
 - (void)setGroupName:(NSString *)groupName
 {
-    _page->setGroupName(groupName);
+    if (_page)
+        _page->setGroupName(groupName);
 }
 
 - (NSString *)groupName
 {
+    if (!_page)
+        return nil;
     return _page->groupName();
 }
 

@@ -45,6 +45,7 @@
     int current;
     int maximumSize;
     unsigned pageCacheSize;
+    BOOL closed;
 }
 @end
 
@@ -79,28 +80,26 @@
 
 - (void)dealloc
 {
-    unsigned count = [_private->entries count];
-    unsigned i;
-    for (i = 0; i < count; i++){
-        WebHistoryItem *item = [_private->entries objectAtIndex: i];
-        [item setHasPageCache: NO]; 
-    }
+    ASSERT(_private->closed);
     [_private release];
     [super dealloc];
 }
 
 - (void)finalize
 {
-    // FIXME: This code is incorrect.
-    // Instead, change the design so that the list is already empty when released,
-    // remove the setHasPageCache: code from dealloc, and remove this finalize method.
+    ASSERT(_private->closed);
+    [super finalize];
+}
+
+- (void)_close
+{
     unsigned count = [_private->entries count];
     unsigned i;
     for (i = 0; i < count; i++){
         WebHistoryItem *item = [_private->entries objectAtIndex: i];
         [item setHasPageCache: NO]; 
     }
-    [super finalize];
+    _private->closed = YES;
 }
 
 - (void)addItem:(WebHistoryItem *)entry;

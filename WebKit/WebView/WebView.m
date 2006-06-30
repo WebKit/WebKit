@@ -271,6 +271,8 @@ macro(yankAndSelect) \
     
     void *observationInfo;
     
+    BOOL closed;
+    BOOL shouldCloseWithWindow;
     BOOL mainFrameDocumentReady;
     BOOL drawsBackground;
     BOOL editable;
@@ -376,6 +378,7 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
     settings = [[WebCoreSettings alloc] init];
     dashboardBehaviorAllowWheelScrolling = YES;
     tabKeyCyclesThroughElements = YES;
+    shouldCloseWithWindow = YES;
 
     return self;
 }
@@ -587,6 +590,9 @@ static bool debugWidget = true;
 
 - (void)_close
 {
+    if (_private->closed)
+        return;
+
     [self _removeFromAllWebViewsSet];
     [self setGroupName:nil];
 
@@ -594,23 +600,34 @@ static bool debugWidget = true;
     [self removeDragCaret];
     
     [[self mainFrame] _detachFromParent];
+    [_private->_pageBridge close];
     [_private->_pageBridge release];
     _private->_pageBridge = nil;
-    
+
     // Clear the page cache so we call destroy on all the plug-ins in the page cache to break any retain cycles.
     // See comment in [WebHistoryItem _releaseAllPendingPageCaches] for more information.
-    [_private->backForwardList _clearPageCache];
-    
+    if (_private->backForwardList) {
+        [_private->backForwardList _close];
+        [_private->backForwardList release];
+        _private->backForwardList = nil;
+    }
+
     if (_private->hasSpellCheckerDocumentTag) {
         [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:_private->spellCheckerDocumentTag];
         _private->hasSpellCheckerDocumentTag = NO;
     }
-    
+
     if (_private->pluginDatabase) {
         [_private->pluginDatabase close];
         [_private->pluginDatabase release];
         _private->pluginDatabase = nil;
     }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    [WebPreferences _removeReferenceForIdentifier: [self preferencesIdentifier]];
+
+    _private->closed = YES;
 }
 
 + (NSString *)_MIMETypeForFile:(NSString *)path
@@ -1835,13 +1852,9 @@ NS_ENDHANDLER
 
 - (void)dealloc
 {
-    [self _close];
+    ASSERT(_private->closed);
     
     --WebViewCount;
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    [WebPreferences _removeReferenceForIdentifier: [self preferencesIdentifier]];
     
     [_private release];
     // [super dealloc] can end up dispatching against _private (3466082)
@@ -1852,15 +1865,29 @@ NS_ENDHANDLER
 
 - (void)finalize
 {
-    [self _close];
+    ASSERT(_private->closed);
 
     --WebViewCount;
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-    [WebPreferences _removeReferenceForIdentifier: [self preferencesIdentifier]];
-
     [super finalize];
+}
+
+- (void)viewWillMoveToWindow:(NSWindow *)window
+{
+    // Don't do anything if we aren't initialized.  This happens
+    // when decoding a WebView.
+    if (_private) {
+        if ([self window])
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:[self window]];
+        if (window)
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:window];
+    }
+}
+
+- (void)_windowWillClose:(NSNotification *)notification
+{
+    if ([self shouldCloseWithWindow] && ([self window] == [self hostWindow] || ([self window] && ![self hostWindow]) || (![self window] && [self hostWindow])))
+        [self _close];
 }
 
 - (void)setPreferences:(WebPreferences *)prefs
@@ -1884,7 +1911,7 @@ NS_ENDHANDLER
 
 - (void)setPreferencesIdentifier:(NSString *)anIdentifier
 {
-    if (![anIdentifier isEqual:[[self preferences] identifier]]) {
+    if (!_private->closed && ![anIdentifier isEqual:[[self preferences] identifier]]) {
         WebPreferences *prefs = [[WebPreferences alloc] initWithIdentifier:anIdentifier];
         [self setPreferences:prefs];
         [prefs release];
@@ -1964,7 +1991,6 @@ NS_ENDHANDLER
     // This can be called in initialization, before _private has been set up (3465613)
     if (!_private)
         return nil;
-
     return [(WebFrameBridge *)[_private->_pageBridge mainFrame] webFrame];
 }
 
@@ -2135,8 +2161,12 @@ NS_ENDHANDLER
 
 - (void)setHostWindow:(NSWindow *)hostWindow
 {
-    if (hostWindow != _private->hostWindow) {
+    if (!_private->closed && hostWindow != _private->hostWindow) {
         [[self mainFrame] _viewWillMoveToHostWindow:hostWindow];
+        if (_private->hostWindow)
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:_private->hostWindow];
+        if (hostWindow)
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:hostWindow];
         [_private->hostWindow release];
         _private->hostWindow = [hostWindow retain];
         [[self mainFrame] _viewDidMoveToHostWindow];
@@ -2356,6 +2386,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
+    if (_private->closed)
+        return NO;
+
     // Get the frame holding the selection, or start with the main frame
     WebFrame *startFrame = [self _selectedOrMainFrame];
 
@@ -2434,7 +2467,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
     WebFrameBridge *bridge = [self _bridgeForSelectedOrMainFrame];
-    if ([bridge selectionState] != WebSelectionStateRange) {
+    if (bridge && [bridge selectionState] != WebSelectionStateRange) {
         NSView <WebDocumentView> *documentView = [[[bridge webFrame] frameView] documentView];
         if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
             [(NSView <WebDocumentSelection> *)documentView writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
@@ -2839,6 +2872,21 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     } while (frame);
     
     return result;
+}
+
+- (void)close
+{
+    [self _close];
+}
+
+- (void)setShouldCloseWithWindow:(BOOL)close
+{
+    _private->shouldCloseWithWindow = close;
+}
+
+- (BOOL)shouldCloseWithWindow
+{
+    return _private->shouldCloseWithWindow;
 }
 
 @end
@@ -3285,6 +3333,8 @@ static WebFrameView *containingFrameView(NSView *view)
 
 - (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point
 {
+    if (_private->closed)
+        return nil;
     NSView *view = [self hitTest:[[self superview] convertPoint:point fromView:nil]];
     if (![view isDescendantOf:[[self mainFrame] frameView]])
         return nil;

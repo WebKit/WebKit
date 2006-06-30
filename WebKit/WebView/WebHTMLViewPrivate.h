@@ -48,6 +48,8 @@
 + (NSArray *)supportedNonImageMIMETypes;
 + (NSArray *)unsupportedTextMIMETypes;
 
+- (void)close;
+
 // Modifier (flagsChanged) tracking SPI
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (void)_updateMouseoverWithFakeEvent;

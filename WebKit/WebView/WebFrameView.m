@@ -216,6 +216,12 @@ enum {
 
 - (void)_setWebFrame:(WebFrame *)webFrame
 {
+    if (!webFrame) {
+        NSView *docV = [self documentView];
+        if ([docV respondsToSelector:@selector(close)])
+            [docV performSelector:@selector(close)];
+    }
+
     // Not retained because the WebView owns the WebFrame, which owns the WebFrameView.
     _private->webFrame = webFrame;    
 }
@@ -358,8 +364,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 - (void)finalize 
 {
     --WebFrameViewCount;
-
-    _private = nil;
 
     [super finalize];
 }

@@ -48,7 +48,9 @@ class WebCoreFrameBridge;
 @interface WebCorePageBridge : NSObject
 {
     WebCorePage *_page;
+    BOOL _closed;
 }
+- (void)close;
 
 - (void)setMainFrame:(WebCoreFrameBridge *)mainFrame;
 

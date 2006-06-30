@@ -558,7 +558,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
 - (void)_detachFromParent
 {
-    WebFrameBridge *bridge = _private->bridge;
+    WebFrameBridge *bridge = [_private->bridge retain];
 
     [bridge closeURL];
     [self stopLoading];
@@ -574,9 +574,12 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
     [self retain]; // retain self temporarily because dealloc can re-enter this method
 
-    [bridge close];
     [[[self parentFrame] _bridge] removeChild:bridge];
 
+    [bridge close];
+    [bridge release];
+
+    bridge = nil;
     _private->bridge = nil;
 
     [self release];
@@ -2849,7 +2852,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)dealloc
 {
-    [self _detachFromParent];
+    ASSERT(_private->bridge == nil);
     [_private release];
 
     --WebFrameCount;
@@ -2859,8 +2862,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)finalize
 {
-    // FIXME: Should not do this work at finalize time. Need to do it at a predictable time instead.
-    [self _detachFromParent];
+    ASSERT(_private->bridge == nil);
+
     --WebFrameCount;
 
     [super finalize];

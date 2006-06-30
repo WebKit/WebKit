@@ -121,6 +121,11 @@ typedef enum {
 
 - (BOOL)shouldClose;
 
+- (void)close;
+
+- (void)setShouldCloseWithWindow:(BOOL)close;
+- (BOOL)shouldCloseWithWindow;
+
 /*!
     @method aeDescByEvaluatingJavaScriptFromString:
     @param script The text of the JavaScript.

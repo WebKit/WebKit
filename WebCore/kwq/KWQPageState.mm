@@ -110,39 +110,20 @@ using namespace KJS;
 
 - (void)dealloc
 {
-    if (document) {
-        ASSERT(document->view());
-        ASSERT(document->inPageCache());
-
-        FrameView *view = document->view();
-
-        FrameMac::clearTimers(view);
-
-        bool detached = document->renderer() == 0;
-        document->setInPageCache(NO);
-        if (detached) {
-            document->detach();
-            document->removeAllEventListenersFromAllNodes();
-        }
-        document->deref();
-        document = 0;
-        
-        if (view) {
-            view->clearPart();
-            view->deref();
-        }
-    }
-
-    [self clear];
-
+    ASSERT(closed);
     [super dealloc];
 }
 
 - (void)finalize
 {
-    // FIXME: This work really should not be done at deallocation time.
-    // We need to do it at some well-defined time instead.
+    ASSERT(closed);
+    [super finalize];
+}
 
+- (void)close
+{
+    if (closed)
+        return;
     if (document) {
         ASSERT(document->inPageCache());
         ASSERT(document->view());
@@ -159,7 +140,7 @@ using namespace KJS;
         }
         document->deref();
         document = 0;
-        
+
         if (view) {
             view->clearPart();
             view->deref();
@@ -167,8 +148,7 @@ using namespace KJS;
     }
 
     [self clear];
-
-    [super finalize];
+    closed = YES;
 }
 
 - (Document *)document

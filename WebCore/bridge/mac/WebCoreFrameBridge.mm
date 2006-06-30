@@ -487,16 +487,21 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)dealloc
 {
-    [self removeFromFrame];
+    ASSERT(_closed);
     [super dealloc];
 }
 
 - (void)finalize
 {
-    // FIXME: This work really should not be done at deallocation time.
-    // We need to do it at some well-defined time instead.
-    [self removeFromFrame];
+    ASSERT(_closed);
     [super finalize];
+}
+
+- (void)close
+{
+    [self removeFromFrame];
+    [self clearFrame];
+    _closed = YES;
 }
 
 - (WebCoreFrameBridge *)parent

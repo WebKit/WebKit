@@ -1,3 +1,73 @@
+2006-06-29  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4484405> WebKit leaks, improper tear-down
+        <rdar://problem/3694059> -[WebBackForwardList finalize] is incorrect; design change needed
+        <rdar://problem/3694103> -[WebFrame finalize] is incorrect; design change needed
+        <rdar://problem/3694104> -[WebHTMLView finalize] is incorrect; design change needed
+
+        Adds a close method to WebView, this needs to be called when the 
+        WebView is no longer needed. To make this easier for the common cases
+        there is now an "auto close" on WebView that listens to the view's
+        parent window. If the parent window closes and the WebView has no
+        hostWindow then the WebView is automatically closed if autoClose is YES.
+        To manage WebView closing yourself call setAutoClose: and pass NO.
+
+        When a WebView closes it will tear-down and not be usable anymore.
+        Close will will called on various other internal objects as a part
+        of this, to ensure proper tear-down in GC without relying on finalize.
+
+        * History/WebBackForwardList.m:
+        (-[WebBackForwardList dealloc]):
+        (-[WebBackForwardList finalize]):
+        (-[WebBackForwardList _close]):
+        * History/WebHistoryItem.m:
+        (+[WebHistoryItem _closeObjectsInPendingPageCaches]):
+        (+[WebHistoryItem _releaseAllPendingPageCaches]):
+        * History/WebHistoryItemPrivate.h:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge close]):
+        (-[WebFrameBridge saveDocumentToPageCache:]):
+        (-[WebFrameBridge canGoBackOrForward:]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _detachFromParent]):
+        (-[WebFrame dealloc]):
+        (-[WebFrame finalize]):
+        * WebView/WebFrameView.m:
+        (-[WebFrameView _setWebFrame:]):
+        (-[WebFrameView finalize]):
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView close]):
+        (-[NSArray dealloc]):
+        (-[NSArray finalize]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebHTMLViewPrivate.h:
+        * WebView/WebScriptDebugDelegate.m:
+        (-[WebScriptCallFrame _initWithFrame:initWithWebFrame:]):
+        (-[WebScriptCallFrame parsedSource:fromURL:sourceId:startLine:errorLine:errorMessage:]):
+        (-[WebScriptCallFrame enteredFrame:sourceId:line:]):
+        (-[WebScriptCallFrame hitStatement:sourceId:line:]):
+        (-[WebScriptCallFrame leavingFrame:sourceId:line:]):
+        * WebView/WebScriptDebugDelegatePrivate.h:
+        * WebView/WebView.m:
+        (-[WebViewPrivate init]):
+        (-[WebView _close]):
+        (-[WebView dealloc]):
+        (-[WebView finalize]):
+        (-[WebView viewWillMoveToWindow:]):
+        (-[WebView _windowWillClose:]):
+        (-[WebView setPreferencesIdentifier:]):
+        (-[WebView mainFrame]):
+        (-[WebView setHostWindow:]):
+        (-[WebView searchFor:direction:caseSensitive:wrap:]):
+        (-[WebView writeSelectionWithPasteboardTypes:toPasteboard:]):
+        (-[WebView close]):
+        (-[WebView setAutoClose:]):
+        (-[WebView autoClose]):
+        (-[WebView _frameViewAtWindowPoint:]):
+        * WebView/WebViewPrivate.h:
+
 2006-06-29  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by mjs and timo.

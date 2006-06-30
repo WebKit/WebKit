@@ -339,7 +339,7 @@ int main(int argc, const char *argv[])
     // it probably won't cause any trouble (and this is just a test tool, after all).
     [NSObject cancelPreviousPerformRequestsWithTarget:window];
     
-    [window release];
+    [window close]; // releases when closed
     [webView release];
     [delegate release];
     [editingDelegate release];

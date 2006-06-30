@@ -35,6 +35,7 @@
 @interface WebHTMLViewPrivate : NSObject
 {
 @public
+    BOOL closed;
     BOOL needsLayout;
     BOOL needsToApplyStyles;
     BOOL showsURLsInToolTips;

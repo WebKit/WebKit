@@ -36,7 +36,6 @@
 @interface WebScriptDebugger : NSObject <WebScriptDebugger>
 {
 @private
-    WebView                *_webView;
     WebFrame               *_webFrame;
     WebCoreScriptDebugger  *_debugger;
 }
