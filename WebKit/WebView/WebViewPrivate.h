@@ -222,6 +222,7 @@ Could be worth adding to the API.
 - (NSDictionary *)_dashboardRegions;
 
 - (void)_setDashboardBehavior:(WebDashboardBehavior)behavior to:(BOOL)flag;
+- (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
 - (BOOL)_dashboardBehavior:(WebDashboardBehavior)behavior;
 
 + (void)_setShouldUseFontSmoothing:(BOOL)f;

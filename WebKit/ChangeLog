@@ -1,3 +1,12 @@
+2006-06-29  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by mjs and timo.
+        
+        Fixed: <rdar://problem/4609119> handleAuthenticationFromResource was removed; needed by the Dashboard
+
+        * WebView/WebViewPrivate.h: Added handleAuthenticationFromResource back into the header. Needed by the
+        Dashboard, but was removed in r.14028 on 2006-04-23. 
+
 2006-06-29  Tim Omernick  <timo@apple.com>
 
         Reviewed by Kevin Decker.
