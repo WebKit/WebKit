@@ -1,8 +1,22 @@
 <html>
     <head>
-        <meta http-equiv="refresh" content="1;URL=http://nightly.webkit.org/start/" />
+        <title>Loading WebKit...</title>
+        <meta http-equiv="refresh" content="1;URL=http://nightly.webkit.org/start/?current-revision=unknown" />
         <script type="text/javascript">
-            document.location = "http://nightly.webkit.org/start/";
+            function getWebKitRevision()
+            {
+                var request = new XMLHttpRequest();
+                request.open("GET", "VERSION", false);
+                request.send();
+                var revision = parseInt(request.responseText);
+                if (isNaN(revision))
+                    return "unknown";
+
+                return revision;
+            }
+
+            var revision = getWebKitRevision();
+            document.location = "http://nightly.webkit.org/start/?current-revision=" + revision;
         </script>
     </head>
     <body>

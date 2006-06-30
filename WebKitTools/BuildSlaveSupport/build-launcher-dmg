@@ -86,8 +86,9 @@ sub buildDiskImage
 sub uploadNightlyDiskImage
 {
     my $nightlyRemoteDiskImagePath = "$nightlyRemotePath/builds/" . basename($nightlyLauncherDiskImagePath);
+    my $revision = currentSVNRevision();
     system("rsync", "-vP", $nightlyLauncherDiskImagePath, "$nightlyRemoteHost:$nightlyRemoteDiskImagePath") == 0 or die "Failed uploading disk image";
-    system("ssh", $nightlyRemoteHost, $nightlyRemoteLatestPath, $nightlyRemoteDiskImagePath) == 0 or die "Failed linking disk image to latest";
+    system("ssh", $nightlyRemoteHost, $nightlyRemoteLatestPath, $nightlyRemoteDiskImagePath, $revision) == 0 or die "Failed linking disk image to latest";
 }
 
 sub uploadBuildSlaveDiskImage

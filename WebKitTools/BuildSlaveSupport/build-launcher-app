@@ -53,6 +53,7 @@ sub copyNightlyLauncher
 {
     my $revision = currentSVNRevision();
     my $infoPlist = "$nightlyLauncherStagingPath/Contents/Info.plist";
+    my $versionFile = "$nightlyLauncherStagingPath/Contents/Resources/VERSION";
     my $data;
     open(IN, $infoPlist) or die "Couldn't open Info.plist in built application for reading";
     {
@@ -64,7 +65,11 @@ sub copyNightlyLauncher
     $data =~ s/VERSION/$revision/g;
     print OUT $data;
     close(OUT);
-    
+
+    open(OUT, ">$versionFile") or die "Couldn't open VERSION in built application for writing";
+    print OUT "$revision\n";
+    close(OUT);
+
     my @frameworks = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
     for my $framework (@frameworks) {
         system("ditto", productDir() . "/$framework.framework", "$nightlyLauncherStagingPath/Contents/Resources/$framework.framework") == 0 or die "Failed copying $framework.framework into $nightlyLauncherStagingPath";

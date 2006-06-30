@@ -129,7 +129,7 @@ my $productDir = productDir();
 chdirWebKit();
 
 my $buildResult = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
-exit $buildResult if $buildResult;
+exit WEXITSTATUS($buildResult) if $buildResult;
 
 my $dumpToolName = "DumpRenderTree";
 my $tool = "$productDir/$dumpToolName";

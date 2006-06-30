@@ -1,3 +1,19 @@
+2006-06-29  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Darin.
+
+        Bug 9614: Nightly builds should notify user if a newer build is available
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9614
+
+        * BuildSlaveSupport/build-launcher-app: Write revision number to WebKit.app's VERSION file.
+        * BuildSlaveSupport/build-launcher-dmg: Pass revision number to server-side nightly maintenance
+        script so it can keep track of the latest revision.
+        * Scripts/run-webkit-tests: Pass build-dumprendertree's exit status through correctly.
+        * WebKitLauncher/VERSION: Added.  Placeholder for SVN revision number
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+        * WebKitLauncher/start.html: Retrieve revision number from VERSION file, and pass it through to
+        the nightly start page.
+
 2006-06-26  Jonas Witt  <jonas.witt@gmail.com>
 
         Reviewed by Darin.
