@@ -1,3 +1,30 @@
+2006-06-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4598309
+        Caret gets stuck when it hits non editable content within an editable body
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9510>
+        Caret will jump out of an editable region
+        
+        * dom/Position.cpp:
+        (WebCore::Position::upstream): Don't move into a new editable region so that 
+        candidates that that straddle an editable/non-editable boundary will 
+        correspond to different VisiblePositions.
+        (WebCore::Position::downstream): Ditto.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyMovingRightForward): Use VisiblePosition::next(true)
+        (WebCore::SelectionController::modifyMovingLeftBackward): Use VisiblePosition::previous(true)
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::next): Added code to jump to the next editable region as long
+        as it has the same highest editable root.
+        (WebCore::VisiblePosition::previous): Ditto.
+        * editing/VisiblePosition.h:
+        * editing/htmlediting.cpp:
+        (WebCore::highestEditableRoot): Added, returns the highest editable root of a node if that
+        node is in editable content, otherwise 0.
+        * editing/htmlediting.h:
+
 2006-06-30  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

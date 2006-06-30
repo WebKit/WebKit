@@ -60,14 +60,36 @@ void VisiblePosition::init(const Position& position, EAffinity affinity)
         m_affinity = DOWNSTREAM;
 }
 
-VisiblePosition VisiblePosition::next(bool stayInCurrentEditableRegion) const
+VisiblePosition VisiblePosition::next(bool stayInEditableContent) const
 {
     VisiblePosition next(nextVisiblePosition(m_deepPosition), m_affinity);
-    Element* currentRoot = rootEditableElement();
-    return !stayInCurrentEditableRegion || next.rootEditableElement() == currentRoot ? next : VisiblePosition();
+    
+    if (!stayInEditableContent || next.isNull())
+        return next;
+    
+    Node* highestRoot = highestEditableRoot(deepEquivalent().node());
+    
+    if (!next.deepEquivalent().node()->isAncestor(highestRoot))
+        return VisiblePosition();
+
+    if (highestEditableRoot(next.deepEquivalent().node()) == highestRoot)
+        return next;
+
+    Position p = next.deepEquivalent();
+    Node* node = p.node();
+    Node* child = node->childNode(p.offset());
+    node = child ? child : node->traverseNextSibling(highestRoot);
+
+    while (node && !node->isContentEditable())
+        node = node->traverseNextNode(highestRoot);
+    
+    if (!node)
+        return VisiblePosition();
+
+    return VisiblePosition(Position(node, 0));
 }
 
-VisiblePosition VisiblePosition::previous(bool stayInCurrentEditableRegion) const
+VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
 {
     // find first previous DOM position that is visible
     Position pos = previousVisiblePosition(m_deepPosition);
@@ -76,20 +98,42 @@ VisiblePosition VisiblePosition::previous(bool stayInCurrentEditableRegion) cons
     if (pos.atStart())
         return VisiblePosition();
         
-    VisiblePosition result = VisiblePosition(pos, DOWNSTREAM);
-    ASSERT(result != *this);
+    VisiblePosition prev = VisiblePosition(pos, DOWNSTREAM);
+    ASSERT(prev != *this);
     
 #ifndef NDEBUG
     // we should always be able to make the affinity DOWNSTREAM, because going previous from an
     // UPSTREAM position can never yield another UPSTREAM position (unless line wrap length is 0!).
-    if (result.isNotNull() && m_affinity == UPSTREAM) {
-        VisiblePosition temp = result;
+    if (prev.isNotNull() && m_affinity == UPSTREAM) {
+        VisiblePosition temp = prev;
         temp.setAffinity(UPSTREAM);
-        ASSERT(inSameLine(temp, result));
+        ASSERT(inSameLine(temp, prev));
     }
 #endif
-    Element* currentRoot = rootEditableElement();
-    return !stayInCurrentEditableRegion || result.rootEditableElement() == currentRoot ? result : VisiblePosition();
+
+    if (!stayInEditableContent || prev.isNull())
+        return prev;
+    
+    Node* highestRoot = highestEditableRoot(deepEquivalent().node());
+    
+    if (!prev.deepEquivalent().node()->isAncestor(highestRoot))
+        return VisiblePosition();
+        
+    if (highestEditableRoot(prev.deepEquivalent().node()) == highestRoot)
+        return prev;
+
+    Position p = prev.deepEquivalent();
+    Node* node = p.node();
+    Node* child = node->firstChild() && p.offset() > 1 ? node->childNode(p.offset() - 1) : 0;
+    node = child ? child : node->traversePreviousNode(highestRoot);
+
+    while (node && !node->isContentEditable())
+        node = node->traversePreviousNodePostOrder(highestRoot);
+    
+    if (!node)
+        return VisiblePosition();
+
+    return VisiblePosition(Position(node, maxDeepOffset(node)));
 }
 
 Position VisiblePosition::previousVisiblePosition(const Position& pos)

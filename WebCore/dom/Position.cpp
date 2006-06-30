@@ -287,9 +287,13 @@ Position Position::upstream() const
     Node *block = startNode->enclosingBlockFlowOrTableElement();
     Position lastVisible = *this;
     Position currentPos = start;
+    Node* originalRoot = node()->rootEditableElement();
     for (; !currentPos.atStart(); currentPos = currentPos.previous(UsingComposedCharacters)) {
         Node *currentNode = currentPos.node();
         int currentOffset = currentPos.offset();
+        
+        if (currentNode->rootEditableElement() != originalRoot)
+            break;
 
         // Don't enter a new enclosing block flow or table element.  There is code below that
         // terminates early if we're about to leave an enclosing block flow or table element.
@@ -361,9 +365,13 @@ Position Position::downstream() const
     Node *block = startNode->enclosingBlockFlowOrTableElement();
     Position lastVisible = *this;
     Position currentPos = start;
+    Node* originalRoot = node()->rootEditableElement();
     for (; !currentPos.atEnd(); currentPos = currentPos.next(UsingComposedCharacters)) {   
         Node *currentNode = currentPos.node();
         int currentOffset = currentPos.offset();
+        
+        if (currentNode->rootEditableElement() != originalRoot)
+            break;
 
         // stop before going above the body, up into the head
         // return the last visible streamer position

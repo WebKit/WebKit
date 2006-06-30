@@ -86,6 +86,27 @@ bool canHaveChildrenForEditing(const Node* node)
            !node->isTextNode();
 }
 
+Node* highestEditableRoot(Node* node)
+{
+    if (!node)
+        return 0;
+        
+    Node* highestRoot = node->rootEditableElement();
+    if (!highestRoot)
+        return 0;
+    
+    node = highestRoot;
+    while (node) {
+        if (node->isContentEditable())
+            highestRoot = node;
+        if (node->hasTagName(bodyTag))
+            break;
+        node = node->parentNode();
+    }
+    
+    return highestRoot;
+}
+
 // antidote for maxDeepOffset()
 Position rangeCompliantEquivalent(const Position& pos)
 {

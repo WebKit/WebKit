@@ -46,6 +46,7 @@ int maxDeepOffset(const Node*);
 bool isAtomicNode(const Node*);
 bool editingIgnoresContent(const Node*);
 bool canHaveChildrenForEditing(const Node*);
+Node* highestEditableRoot(Node*);
 
 void rebalanceWhitespaceInTextNode(Node*, unsigned start, unsigned length);
 const String& nonBreakingSpaceString();
