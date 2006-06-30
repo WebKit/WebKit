@@ -83,6 +83,7 @@ bool canHaveChildrenForEditing(const Node* node)
            !node->hasTagName(brTag) &&
            !node->hasTagName(imgTag) &&
            !node->hasTagName(buttonTag) &&
+           !node->hasTagName(objectTag) &&
            !node->isTextNode();
 }
 
