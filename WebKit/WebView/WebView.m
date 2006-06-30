@@ -378,7 +378,7 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
     settings = [[WebCoreSettings alloc] init];
     dashboardBehaviorAllowWheelScrolling = YES;
     tabKeyCyclesThroughElements = YES;
-    shouldCloseWithWindow = YES;
+    shouldCloseWithWindow = objc_collecting_enabled();
 
     return self;
 }

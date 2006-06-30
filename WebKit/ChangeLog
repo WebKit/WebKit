@@ -1,5 +1,16 @@
 2006-06-30  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        Only enable shouldCloseWithWindow when ObjC GC is enabled.
+        This maintains backwards compatibility with applications
+        that expect a WebView to be usable after the window closes.
+
+        * WebView/WebView.m:
+        (-[WebViewPrivate init]):
+
+2006-06-30  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Anders.
 
         Call _close in dealloc to ensure we cleanup for backwards
