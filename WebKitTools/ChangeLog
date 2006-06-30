@@ -2,6 +2,29 @@
 
         Reviewed by Darin.
 
+        Bug 9615: Buildbot configuration should be in SVN repository
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9615
+
+        Import BuildBot configuration files as used by build.webkit.org.
+        auth.py has been stubbed out so that slave passwords are not disclosed.
+
+        * BuildSlaveSupport/build.webkit.org-config/Makefile: Added.
+        * BuildSlaveSupport/build.webkit.org-config/buildbot.css: Added.
+        * BuildSlaveSupport/build.webkit.org-config/buildbot.tac: Added.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Added.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/__init__.py: Added.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/auth.py: Added.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/basesteps.py: Added.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/builders.py: Added.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/factories.py: Added.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/schedulers.py: Added.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/status.py: Added.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/steps.py: Added.
+
+2006-06-29  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Darin.
+
         Bug 9614: Nightly builds should notify user if a newer build is available
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9614
 
