@@ -1,3 +1,15 @@
+2006-06-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9652
+          Assertion failure when changing an RTL table cell to display:none
+
+        * fast/table/rtl-cell-display-none-assert-expected.checksum: Added.
+        * fast/table/rtl-cell-display-none-assert-expected.png: Added.
+        * fast/table/rtl-cell-display-none-assert-expected.txt: Added.
+        * fast/table/rtl-cell-display-none-assert.html: Added.
+
 2006-06-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

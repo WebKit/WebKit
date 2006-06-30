@@ -1,3 +1,16 @@
+2006-06-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9652
+          Assertion failure when changing an RTL table cell to display:none
+
+        Test: fast/table/rtl-cell-display-none-assert.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows): Corrected the index used as
+        the last index in the columnPos vector.
+
 2006-06-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
