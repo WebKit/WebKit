@@ -1,3 +1,5 @@
+=== Safari-521.14 ===
+
 2006-06-28  Timothy Hatcher  <timothy@apple.com>
 
         Prefer the Stabs debugging symbols format until DWARF bugs are fixed.
