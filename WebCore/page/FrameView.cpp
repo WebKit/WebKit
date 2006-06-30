@@ -30,6 +30,7 @@
 #include "Cursor.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameTree.h"
 #include "HTMLDocument.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLInputElement.h"
@@ -688,7 +689,7 @@ void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
     MouseEventWithHitTestResults mev = prepareMouseEvent(d->mousePressed && m_frame->mouseDownMayStartSelect(),
         d->mousePressed, true, mouseEvent);
 
-    if (d->oldSubframe)
+    if (d->oldSubframe && d->oldSubframe->tree()->isDescendantOf(m_frame.get()))
         m_frame->passSubframeEventToSubframe(mev, d->oldSubframe.get());
 
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent, mev.targetNode(), false, 0, mouseEvent, true);

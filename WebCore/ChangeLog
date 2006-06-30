@@ -1,3 +1,14 @@
+2006-06-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Tim H.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9664
+          REGRESSION (r15106): Crash in fast/events/mouseover-mouseout2.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleMouseMoveEvent): Added a check that oldSubframe is
+        still a subframe of the view's frame before passing the event to it.
+
 2006-06-29  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
