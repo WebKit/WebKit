@@ -113,7 +113,7 @@ void IconDatabase::clearDatabase()
 
 void IconDatabase::recreateDatabase()
 {
-    if (!m_db.executeCommand("CREATE TABLE IconDatabaseInfo (key varchar NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value NOT NULL ON CONFLICT FAIL);")) {
+    if (!m_db.executeCommand("CREATE TABLE IconDatabaseInfo (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
         LOG_ERROR("Could not create IconDatabaseInfo table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return;
@@ -123,17 +123,17 @@ void IconDatabase::recreateDatabase()
         m_db.close();
         return;
     }
-    if (!m_db.executeCommand("CREATE TABLE PageURL (url varchar NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID integer NOT NULL ON CONFLICT FAIL);")) {
+    if (!m_db.executeCommand("CREATE TABLE PageURL (url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID INTEGER NOT NULL ON CONFLICT FAIL);")) {
         LOG_ERROR("Could not create PageURL table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return;
     }
-    if (!m_db.executeCommand("CREATE TABLE Icon (iconID INTEGER PRIMARY KEY AUTOINCREMENT, url NOT NULL UNIQUE ON CONFLICT FAIL, expires INTEGER);")) {
+    if (!m_db.executeCommand("CREATE TABLE Icon (iconID INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT NOT NULL UNIQUE ON CONFLICT FAIL, expires INTEGER);")) {
         LOG_ERROR("Could not create Icon table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return;
     }
-    if (!m_db.executeCommand("CREATE TABLE IconResource (iconID integer NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,data blob, touch);")) {
+    if (!m_db.executeCommand("CREATE TABLE IconResource (iconID integer NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,data BLOB, touch INTEGER);")) {
         LOG_ERROR("Could not create IconResource table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return;
@@ -147,13 +147,13 @@ void IconDatabase::recreateDatabase()
 
 void IconDatabase::createPrivateTables()
 {
-    if (!m_db.executeCommand("CREATE TEMP TABLE TempPageURL (url varchar NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID integer NOT NULL ON CONFLICT FAIL);")) 
+    if (!m_db.executeCommand("CREATE TEMP TABLE TempPageURL (url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID INTEGER NOT NULL ON CONFLICT FAIL);")) 
         LOG_ERROR("Could not create TempPageURL table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
 
-    if (!m_db.executeCommand("CREATE TEMP TABLE TempIcon (iconID INTEGER PRIMARY KEY AUTOINCREMENT, url NOT NULL UNIQUE ON CONFLICT FAIL, expires INTEGER);")) 
+    if (!m_db.executeCommand("CREATE TEMP TABLE TempIcon (iconID INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT NOT NULL UNIQUE ON CONFLICT FAIL, expires INTEGER);")) 
         LOG_ERROR("Could not create TempIcon table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
 
-    if (!m_db.executeCommand("CREATE TEMP TABLE TempIconResource (iconID integer NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,data blob, touch);")) 
+    if (!m_db.executeCommand("CREATE TEMP TABLE TempIconResource (iconID INTERGER NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,data BLOB, touch INTEGER);")) 
         LOG_ERROR("Could not create TempIconResource table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
 
     if (!m_db.executeCommand("CREATE TEMP TRIGGER temp_create_icon_resource AFTER INSERT ON TempIcon BEGIN INSERT INTO TempIconResource (iconID, data) VALUES (new.iconID, NULL); END;")) 
@@ -170,68 +170,113 @@ void IconDatabase::deletePrivateTables()
         LOG_ERROR("Could not drop TempIconResource table");
 }
 
-const void* IconDatabase::imageDataForIconID(int id, int& size)
+// FIXME - This is a DIRTY, dirty workaround for a problem that we're seeing where certain blobs are having a corrupt buffer
+// returned when we get the result as a const void* blob.  Getting the blob as a textual representation is 100% accurate so this hack
+// does an in place hex-to-character from the textual representation of the icon data.  After I manage to follow up with Adam Swift, the OSX sqlite maintainer,
+// who is too busy to help me until after 7-4-06, this NEEEEEEEEEEEEEEDS to be changed. 
+// *SIGH*
+unsigned char hexToUnsignedChar(UChar h, UChar l)
 {
-    char* query = sqlite3_mprintf("SELECT data FROM IconResource WHERE iconid = %i", id);
-    SQLStatement sql(m_db, String(query));
-    sql.prepare();
-    sqlite3_free(query);
-    if (sql.step() != SQLITE_ROW) {
-        size = 0;
+    unsigned char c;
+    if (h >= '0' && h <= '9')
+        c = h - '0';
+    else if (h >= 'A' && h <= 'F')
+        c = h - 'A' + 10;
+    else {
+        LOG_ERROR("Failed to parse TEXT result from SQL BLOB query");
         return 0;
     }
-    const void* blob = sql.getColumnBlob(0, size);
-    if (!blob) {
-        size = 0;
+    c *= 16;
+    if (l >= '0' && l <= '9')
+        c += l - '0';
+    else if (l >= 'A' && l <= 'F')
+        c += l - 'A' + 10;
+    else {
+        LOG_ERROR("Failed to parse TEXT result from SQL BLOB query");
         return 0;
-    }
-    return blob;
+    }    
+    return c;
 }
 
-const void* IconDatabase::imageDataForIconURL(const String& _iconURL, int& size)
+Vector<unsigned char> hexStringToVector(const String& s)
+{
+    LOG(IconDatabase, "hexStringToVector() - s.length is %i", s.length());
+    if (s[0] != 'X' || s[1] != '\'') {
+        LOG(IconDatabase, "hexStringToVector() - string is invalid SQL HEX-string result - %s", s.ascii().data());
+        return Vector<unsigned char>();
+    }
+
+    Vector<unsigned char> result;
+    result.reserveCapacity(s.length() / 2);
+    const UChar* data = s.characters() + 2;
+    int count = 0;
+    while (data[0] != '\'') {
+        if (data[1] == '\'') {
+            LOG_ERROR("Invalid HEX TEXT data for BLOB query");
+            return Vector<unsigned char>();
+        }
+        result.append(hexToUnsignedChar(data[0], data[1]));
+        data++;
+        data++;
+        count++;
+    }
+    
+    LOG(IconDatabase, "Finished atoi() - %i iterations, result size %i", count, result.size());
+    return result;
+}
+
+Vector<unsigned char> IconDatabase::imageDataForIconID(int id)
+{
+    String blob = SQLStatement(m_db, String::sprintf("SELECT data FROM IconResource WHERE iconid = %i", id)).getColumnText(0);
+    if (blob.length() < 1)
+        return Vector<unsigned char>();
+    return hexStringToVector(blob);
+}
+
+Vector<unsigned char> IconDatabase::imageDataForIconURL(const String& _iconURL)
 {
     //Escape single quotes for SQL 
     String iconURL = _iconURL;
     iconURL.replace('\'', "''");
-    
-    const void* blob = 0;
+    String blob;
     
     // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
     if (m_privateBrowsingEnabled) {
-        blob = SQLStatement(m_db, "SELECT TempIconResource.data FROM TempIconResource, TempIcon WHERE TempIcon.url = '" + iconURL + "' AND TempIconResource.iconID = TempIcon.iconID;").getColumnBlob(0,size);
-        if (blob)
-            return blob;
-    }
+        blob = SQLStatement(m_db, "SELECT TempIconResource.data FROM TempIconResource, TempIcon WHERE TempIcon.url = '" + iconURL + "' AND TempIconResource.iconID = TempIcon.iconID;").getColumnText(0);
+        if (blob.length() > 0) {
+            return hexStringToVector(blob);
+        }
+    } 
     
     // It wasn't found there, so lets check the main tables
-    blob = SQLStatement(m_db, "SELECT IconResource.data FROM IconResource, Icon WHERE Icon.url = '" + iconURL + "' AND IconResource.iconID = Icon.iconID;").getColumnBlob(0, size);
-    if (blob) 
-        return blob;
-    size = 0;
-    return 0;
+    blob = SQLStatement(m_db, "SELECT quote(IconResource.data) FROM IconResource, Icon WHERE Icon.url = '" + iconURL + "' AND IconResource.iconID = Icon.iconID;").getColumnText(0);
+    if (blob.length() < 1)
+        return Vector<unsigned char>();
+    
+    return hexStringToVector(blob);
 }
 
-const void* IconDatabase::imageDataForPageURL(const String& _pageURL, int& size)
+Vector<unsigned char> IconDatabase::imageDataForPageURL(const String& _pageURL)
 {
     //Escape single quotes for SQL 
     String pageURL = _pageURL;
     pageURL.replace('\'', "''");
-    
-    const void* blob = 0;
+    String blob;
     
     // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
     if (m_privateBrowsingEnabled) {
-        blob = SQLStatement(m_db, "SELECT TempIconResource.data FROM TempIconResource, TempPageURL WHERE TempPageURL.url = '" + pageURL + "' AND TempIconResource.iconID = TempPageURL.iconID;").getColumnBlob(0,size);
-        if (blob)
-            return blob;
-    }
+        blob = SQLStatement(m_db, "SELECT TempIconResource.data FROM TempIconResource, TempPageURL WHERE TempPageURL.url = '" + pageURL + "' AND TempIconResource.iconID = TempPageURL.iconID;").getColumnText(0);
+        if (blob.length() > 0) {
+            return hexStringToVector(blob);
+        }
+    } 
     
     // It wasn't found there, so lets check the main tables
-    blob = SQLStatement(m_db, "SELECT IconResource.data FROM IconResource, PageURL WHERE PageURL.url = '" + pageURL + "' AND IconResource.iconID = PageURL.iconID;").getColumnBlob(0, size);
-    if (blob) 
-        return blob;
-    size = 0;
-    return 0;
+    blob = SQLStatement(m_db, "SELECT quote(IconResource.data) FROM IconResource, PageURL WHERE PageURL.url = '" + pageURL + "' AND IconResource.iconID = PageURL.iconID;").getColumnText(0);
+    if (blob.length() < 1)
+        return Vector<unsigned char>();
+    
+    return hexStringToVector(blob);
 }
 
 void IconDatabase::setPrivateBrowsingEnabled(bool flag)
@@ -426,7 +471,7 @@ bool IconDatabase::hasIconForIconURL(const String& _url)
     }
     
     String query = "SELECT IconResource.data FROM IconResource, Icon WHERE Icon.url = '" + url + "' AND IconResource.iconID = Icon.iconID;";
-    int size;
+    int size = 0;
     const void* data = SQLStatement(m_db, query).getColumnBlob(0, size);
     return (data && size);
 }

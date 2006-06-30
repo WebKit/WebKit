@@ -52,18 +52,33 @@ Image* SiteIcon::getImage(const IntSize& size)
         return m_image;
     
     if (IconDatabase::m_sharedInstance) {
-        int size;
-        const void* imageData = IconDatabase::m_sharedInstance->imageDataForIconURL(m_iconURL, size);
-        if (!imageData || !size)
+        Vector<unsigned char> imageData = IconDatabase::m_sharedInstance->imageDataForIconURL(m_iconURL);
+        LOG(IconDatabase, "For URL %s, we got a buffer of size %i", m_iconURL.ascii().data(), imageData.size());
+
+        if (!imageData.size())
             return 0;
+
+        String hexdata;
+        int checksum = 0;
+        for (unsigned int i=0; i<imageData.size(); ++i) {
+            checksum += imageData[i];
+            hexdata.append(String::sprintf("%.2hhX", imageData[i]));
+        }
+            
         NativeBytePtr nativeData = 0;
         // FIXME - Any other platform will need their own method to create NativeBytePtr from the void*
 #ifdef __APPLE__
-        nativeData = CFDataCreate(NULL, (const UInt8*)imageData, size);
+        nativeData = CFDataCreate(NULL, imageData.data(), imageData.size());
 #endif
         m_image = new Image();
-        if (m_image->setNativeData(nativeData, true))
+        
+
+        LOG(IconDatabase,"DUMP-\n%s", hexdata.ascii().data());
+        if (m_image->setNativeData(nativeData, true)) {
+            LOG(IconDatabase, "%s\nImage Creation SUCCESSFUL - %i bytes of data with a checksum of %i", m_iconURL.ascii().data(), imageData.size(), checksum);
             return m_image;
+        }
+        LOG(IconDatabase,     "%s\nImage Creation FAILURE    - %i bytes of data with a checksum of %i", m_iconURL.ascii().data(), imageData.size(), checksum);
         delete m_image;
         return m_image = 0;
     }

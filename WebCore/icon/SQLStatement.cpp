@@ -140,7 +140,7 @@ int SQLStatement::bindInt64(int index, int64_t integer)
 int SQLStatement::columnCount()
 {
     if (m_statement)
-        return sqlite3_column_count(m_statement);
+        return sqlite3_data_count(m_statement);
     return 0;
 }
 
@@ -236,11 +236,13 @@ Vector<char> SQLStatement::getColumnBlobAsVector(int col)
 
 const void* SQLStatement::getColumnBlob(int col, int& size)
 {
-    if (!m_statement)
-        if (prepareAndStep() != SQLITE_ROW) {
-            size = 0;
-            return 0;
-        }
+    if (finalize() != SQLITE_OK)
+        LOG(IconDatabase, "Finalize failed");
+    if (prepare() != SQLITE_OK)
+        LOG(IconDatabase, "Prepare failed");
+    if (step() != SQLITE_ROW)
+        {LOG(IconDatabase, "Step wasn't a row");size=0;return 0;}
+
     if (columnCount() <= col) {
         size = 0;
         return 0;

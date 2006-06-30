@@ -131,9 +131,9 @@ private:
     // The following three methods follow the sqlite convention for blob data
     // They return a const void* which is a pointer to the data buffer, and store
     // the size of the data buffer in the int& parameter
-    const void* imageDataForIconID(int, int&);
-    const void* imageDataForIconURL(const String&, int&);
-    const void* imageDataForPageURL(const String&, int&);
+    Vector<unsigned char> imageDataForIconID(int);
+    Vector<unsigned char> imageDataForIconURL(const String&);
+    Vector<unsigned char> imageDataForPageURL(const String&);
     
     static IconDatabase* m_sharedInstance;
     static const int DefaultCachedPageCount;

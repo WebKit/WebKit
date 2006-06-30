@@ -1,3 +1,33 @@
+2006-06-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Levi.
+
+        In addition to a few small details, logging changes, and style cleanups, this is a stop-gap hack
+        for a problem in SQLite's blob handling.  Querying for a blob in a void* form is reproducibly
+        returning a corrupt buffer.  The temporary solution is to query for the blob as "quoted text" and
+        manually convert the return string into a character buffer.
+
+        * icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::recreateDatabase):
+        (WebCore::IconDatabase::createPrivateTables):
+
+        (WebCore::hexToUnsignedChar): These two functions are the text-to-character-data converters for the time being
+        (WebCore::hexStringToVector):
+
+        (WebCore::IconDatabase::imageDataForIconID):
+        (WebCore::IconDatabase::imageDataForIconURL):
+        (WebCore::IconDatabase::imageDataForPageURL):
+        (WebCore::IconDatabase::iconForPageURL):
+        (WebCore::IconDatabase::hasIconForIconURL):
+        * icon/IconDatabase.h:  changes the icon data accessors to return a Vector<unsigned char> instead of void*
+
+        * icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::columnCount):
+        (WebCore::SQLStatement::getColumnBlob):
+        * icon/SiteIcon.cpp:
+        (SiteIcon::getImage):
+
+
 2006-06-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
