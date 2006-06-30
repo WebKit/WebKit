@@ -1041,6 +1041,9 @@ bool FrameMac::tabsToAllControls() const
 
 KJS::Bindings::RootObject *FrameMac::executionContextForDOM()
 {
+    if (!jScriptEnabled())
+        return 0;
+
     return bindingRootObject();
 }
 

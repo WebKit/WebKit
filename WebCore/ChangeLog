@@ -1,3 +1,13 @@
+2006-06-30  David Harrison  <harrison@apple.com>
+
+        Reviewed by Tim Omernick
+
+        <rdar://problem/4609481> Crash calling -[WebScriptObject valueForKey:] when JS disabled
+        
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::executionContextForDOM):
+        Early return if JS is not enabled.
+
 2006-06-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Tim H.
