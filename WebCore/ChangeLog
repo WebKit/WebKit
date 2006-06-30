@@ -1,3 +1,28 @@
+2006-06-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9622
+          showModalDialog returnValue ignored, function result is always "undefined"
+
+        * manual-tests/modal-dialog.html: Added.
+        * manual-tests/show-modal-dialog-test.html: Added.
+
+        * page/Frame.cpp: (WebCore::Frame::clear): Call KJSProxy::clear with the
+        clearWindowProperties parameter instead of not calling it at all when
+        clearWindowProperties is false.
+
+        * bindings/js/kjs_proxy.h: Add boolean clearWindowProperties parameter.
+        * bindings/js/kjs_proxy.cpp: (WebCore::KJSProxy::clear): Pass clearWindowProperties
+        variable through to Window::clear instead of not calling it at all.
+
+        * bindings/js/kjs_window.h: Add boolean clearWindowProperties parameter.
+        * bindings/js/kjs_window.cpp: (KJS::Window::clear): If clearWindowProperties
+        is false, do only the returnValue work, not the rest of the work.
+
+        * manual-tests/modal-dialog.html: Added.
+        * manual-tests/show-modal-dialog-test.html: Added.
+
 2006-06-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

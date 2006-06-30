@@ -1323,23 +1323,25 @@ JSUnprotectedEventListener *Window::getJSUnprotectedEventListener(JSValue *val, 
   return new JSUnprotectedEventListener(object, this, html);
 }
 
-void Window::clear()
+void Window::clear(bool clearWindowProperties)
 {
-  JSLock lock;
+    JSLock lock;
 
-  if (m_returnValueSlot)
-    if (JSValue* returnValue = getDirect("returnValue"))
-      *m_returnValueSlot = returnValue;
+    if (m_returnValueSlot)
+        if (JSValue* returnValue = getDirect("returnValue"))
+            *m_returnValueSlot = returnValue;
 
-  clearAllTimeouts();
-  clearProperties();
-  setPrototype(JSDOMWindowProto::self()); // clear the prototype
+    if (clearWindowProperties) {
+        clearAllTimeouts();
+        clearProperties();
+        setPrototype(JSDOMWindowProto::self()); // clear the prototype
 
-  // there's likely to be lots of garbage now
-  Collector::collect();
+        // there's likely to be lots of garbage now
+        Collector::collect();
 
-  // Now recreate a working global object for the next URL that will use us
-  interpreter()->initGlobalObject();
+        // Now recreate a working global object for the next URL that will use us
+        interpreter()->initGlobalObject();
+    }
 }
 
 void Window::setCurrentEvent(Event *evt)

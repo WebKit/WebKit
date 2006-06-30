@@ -83,15 +83,15 @@ JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& 
   return 0;
 }
 
-void KJSProxy::clear() {
-  // clear resources allocated by the interpreter, and make it ready to be used by another page
-  // We have to keep it, so that the Window object for the frame remains the same.
-  // (we used to delete and re-create it, previously)
-  if (m_script) {
-    Window *win = Window::retrieveWindow(m_frame);
-    if (win)
-        win->clear();
-  }
+void KJSProxy::clear(bool clearWindowProperties)
+{
+    // Clear resources allocated by the interpreter, and make it ready to be used by another page.
+    // Earlier versions of this function deleted and re-created the window object, but we have to
+    // keep it because JavaScript can keep a reference to the window object and it must be the same.
+    if (m_script) {
+        if (Window* window = Window::retrieveWindow(m_frame))
+            window->clear(clearWindowProperties);
+    }
 }
 
 EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, const String& code, Node* node)

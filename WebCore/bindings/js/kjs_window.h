@@ -138,7 +138,7 @@ namespace KJS {
     BarInfo *toolbar(ExecState*) const;
     JSEventListener *getJSEventListener(JSValue*, bool html = false);
     JSUnprotectedEventListener *getJSUnprotectedEventListener(JSValue*, bool html = false);
-    void clear();
+    void clear(bool clearWindowProperties);
     virtual UString toString(ExecState *) const;
 
     // Set the current "event" object

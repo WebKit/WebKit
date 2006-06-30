@@ -1,0 +1,12 @@
+<form name="form">
+<p>Here is the text from the main window: <input name="fromWindow"></p>
+<p>Type text here to be sent back to the main window: <input name="toWindow" value="from modal window"></p>
+<p>Then, push this button: <input type="button" value="Close" onClick="closeModal()"></p>
+</form>
+<script>
+document.form.fromWindow.value = window.dialogArguments;
+function closeModal() {
+   window.returnValue = document.form.toWindow.value;
+   window.close();
+}
+</script>
