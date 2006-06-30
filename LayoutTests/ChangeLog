@@ -1,3 +1,15 @@
+2006-06-29  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed by Justin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9505
+         moveParagraphContentsToNewBlockIfNecessary creates a new block outside the current position
+
+        * editing/pasteboard/paste-table-002.html: Added.
+        * editing/pasteboard/paste-table-002-expected.checksum: Added.
+        * editing/pasteboard/paste-table-002-expected.png: Added.
+        * editing/pasteboard/paste-table-002-expected.txt: Added.
+
 2006-06-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

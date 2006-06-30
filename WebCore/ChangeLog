@@ -1,3 +1,15 @@
+2006-06-29  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed by Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9505
+          moveParagraphContentsToNewBlockIfNecessary creates a new block outside the current position
+
+        * editing/CompositeEditCommand.cpp:
+        Added sanity checking to prevent modifying nodes outside of 
+        where we should be
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+
 2006-06-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Levi.
@@ -26,7 +38,6 @@
         (WebCore::SQLStatement::getColumnBlob):
         * icon/SiteIcon.cpp:
         (SiteIcon::getImage):
-
 
 2006-06-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
@@ -537,7 +548,6 @@
         (WebCore::SQLStatement::getColumnBlobAsVector):
         (WebCore::SQLStatement::getColumnBlob):
 
->>>>>>> .r15079
 2006-06-27  Ada Chan <adachan@apple.com>
 
         Reviewed by sfalken.
@@ -1378,7 +1388,6 @@
         (WebCore::xmlDocPtrFromNode):
         Pass DocLoader to xmlDocPtrForString
         
->>>>>>> .r15049
 2006-06-21  David Hyatt  <hyatt@apple.com>
 
         Back out -webkit-overlay and just rename it back to overlay.

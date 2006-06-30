@@ -1,0 +1,49 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > DIV > BODY > HTML > #document to 6 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 5 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 770x36
+          text run at (0,0) width 770: "Problem: copy/pasting some HTML including tables can give rise to a <div> element as the first child of the table element."
+          text run at (0,18) width 93: "This is invalid."
+      RenderBlock {DIV} at (0,36) size 784x84
+        RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x80
+            RenderBlock (anonymous) at (0,0) size 780x28
+              RenderText {#text} at (0,0) size 65x28
+                text run at (0,0) width 65: "abcdef"
+            RenderBlock {DIV} at (0,28) size 780x52
+              RenderTable {TABLE} at (0,0) size 51x24
+                RenderTableSection {TBODY} at (0,0) size 51x24
+                  RenderTableRow {TR} at (0,2) size 51x20
+                    RenderTableCell {TD} at (2,2) size 23x20 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 21x18
+                        text run at (1,1) width 21: "foo"
+                    RenderTableCell {TD} at (27,2) size 22x20 [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 20x18
+                        text run at (1,1) width 20: "bar"
+              RenderBlock (anonymous) at (0,24) size 780x28
+                RenderText {#text} at (365,0) size 50x28
+                  text run at (365,0) width 50: "ghijk"
+            RenderBlock (anonymous) at (0,80) size 780x0
+      RenderBlock {OL} at (0,136) size 784x54
+        RenderListItem {LI} at (40,0) size 744x54
+          RenderListMarker at (-20,0) size 16x18
+          RenderText {#text} at (0,0) size 731x54
+            text run at (0,0) width 731: "<div id=\"test\" class=\"editing\"> <div>abcdef<div style=\"text-align: center;\"><table style=\"border-spacing: 2px 2px;"
+            text run at (0,18) width 729: "\"><tbody style=\"border-spacing: 2px 2px; \"><tr style=\"border-spacing: 2px 2px; \"><td style=\"border-spacing: 2px"
+            text run at (0,36) width 712: "2px; \">foo</td><td style=\"border-spacing: 2px 2px; \">bar</td></tr></tbody></table>ghijk</div> </div> </div>"
+caret: position 5 of child 1 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
