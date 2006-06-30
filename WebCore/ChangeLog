@@ -1,3 +1,16 @@
+2006-06-30  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        * editing/VisiblePosition.cpp: Removed is[Not]EqualIgnoringAffinity and made operator== use the logic that ignores affinity.
+        * editing/VisiblePosition.h: Ditto.
+        (WebCore::operator==):
+        * editing/visible_units.cpp:
+        (WebCore::isStartOfParagraph): Changed to compare VisiblePositions using ==.
+        (WebCore::isEndOfParagraph): Ditto.
+        (WebCore::isStartOfBlock): Ditto.
+        (WebCore::isEndOfBlock): Ditto.
+
 === Safari-521.14 ===
 
 2006-06-30  Justin Garcia  <justin.garcia@apple.com>

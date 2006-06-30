@@ -93,16 +93,15 @@ private:
 
 inline bool operator==(const VisiblePosition &a, const VisiblePosition &b)
 {
-    return a.deepEquivalent() == b.deepEquivalent() && a.affinity() == b.affinity();
+    return a.deepEquivalent() == b.deepEquivalent() || 
+           // FIXME (8622): This is a slow but temporary workaround. 
+           a.deepEquivalent().downstream() == b.deepEquivalent().downstream();
 }
  
 inline bool operator!=(const VisiblePosition &a, const VisiblePosition &b)
 {
     return !(a == b);
 }
-
-bool isEqualIgnoringAffinity(const VisiblePosition&, const VisiblePosition&);
-bool isNotEqualIgnoringAffinity(const VisiblePosition&, const VisiblePosition&);
 
 PassRefPtr<Range> makeRange(const VisiblePosition &, const VisiblePosition &);
 bool setStart(Range*, const VisiblePosition&);

@@ -1,3 +1,12 @@
+2006-06-30  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        * editing/execCommand/format-block-with-trailing-br-expected.checksum: Added.
+        * editing/execCommand/format-block-with-trailing-br-expected.png: Added.
+        * editing/execCommand/format-block-with-trailing-br-expected.txt: Added.
+        * editing/execCommand/format-block-with-trailing-br.html: Added.
+
 2006-06-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

@@ -256,26 +256,6 @@ UChar VisiblePosition::characterAfter() const
     return textNode->data()[offset];
 }
 
-bool isEqualIgnoringAffinity(const VisiblePosition &a, const VisiblePosition &b)
-{
-    bool result = a.deepEquivalent() == b.deepEquivalent() || 
-                  // FIXME (8622): This is a slow but temporary workaround. 
-                  a.deepEquivalent().downstream() == b.deepEquivalent().downstream();
-    if (result) {
-        // We want to catch cases where positions are equal, but affinities are not, since
-        // this is very likely a bug, given the places where this call is used. The difference
-        // is very likely due to code that set the affinity on a VisiblePosition "by hand" and 
-        // did so incorrectly.
-        ASSERT(a.affinity() == b.affinity());
-    }
-    return result;
-}
-
-bool isNotEqualIgnoringAffinity(const VisiblePosition &a, const VisiblePosition &b)
-{
-    return !isEqualIgnoringAffinity(a, b);
-}
-
 void VisiblePosition::debugPosition(const char *msg) const
 {
     if (isNull())
