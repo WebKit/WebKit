@@ -1282,7 +1282,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMXpath.h\" > \"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH/DOMXPath.h\"";
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMXPath.h\" > \"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH/DOMXPath.h\"";
 		};
 		9339323E0825A64200AADA6B /* npruntime.h */ = {
 			isa = PBXShellScriptBuildPhase;
