@@ -4,7 +4,6 @@
 		
 		kwq/KWQCString.cpp
 		kwq/KWQTextStream.cpp
-
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_DERIVEDSOURCES">
 		DerivedSources/WebCore/CharsetData.cpp
@@ -94,6 +93,7 @@
 		DerivedSources/WebCore/JSXPathResult.cpp
 		DerivedSources/WebCore/UserAgentStyleSheetsData.cpp
 		DerivedSources/WebCore/XLinkNames.cpp
+		DerivedSources/WebCore/XMLNames.cpp
 		DerivedSources/WebCore/XPathGrammar.cpp
 	</set>
 
@@ -129,6 +129,7 @@
 		loader/loader.cpp
 		loader/Request.cpp
 		loader/TextDocument.cpp
+		loader/PluginDocument.cpp
 
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_PLATFORM">
@@ -386,7 +387,11 @@
 		css/CSSValueList.cpp
 		css/FontFamilyValue.cpp
 		css/FontValue.cpp
+		css/MediaFeatureNames.cpp
 		css/MediaList.cpp
+		css/MediaQuery.cpp
+		css/MediaQueryExp.cpp
+		css/MediaQueryEvaluator.cpp
 		css/ShadowValue.cpp
 		css/StyleBase.cpp
 		css/StyleList.cpp
@@ -435,8 +440,8 @@
 		rendering/RenderPart.cpp
 		rendering/RenderPartObject.cpp
 		rendering/RenderReplaced.cpp
-		rendering/RenderSelect.cpp
-		rendering/RenderSlider.cpp
+		rendering/DeprecatedRenderSelect.cpp
+		rendering/DeprecatedSlider.cpp
 		rendering/RenderTable.cpp
 		rendering/RenderTableCell.cpp
 		rendering/RenderTableCol.cpp
@@ -495,15 +500,19 @@
 		dom/Document.cpp
 		dom/DocumentFragment.cpp
 		dom/DocumentType.cpp
-		dom/dom2_eventsimpl.cpp
 		dom/DOMImplementation.cpp
 		dom/EditingText.cpp
 		dom/Element.cpp
 		dom/Entity.cpp
 		dom/EntityReference.cpp
+		dom/Event.cpp
 		dom/EventNames.cpp
 		dom/EventTargetNode.cpp
+		dom/KeyboardEvent.cpp
 		dom/MappedAttribute.cpp
+		dom/MouseEvent.cpp
+		dom/MouseRelatedEvent.cpp
+		dom/MutationEvent.cpp
 		dom/NamedAttrMap.cpp
 		dom/NamedMappedAttrMap.cpp
 		dom/NodeIterator.cpp
@@ -517,17 +526,21 @@
 		dom/ProcessingInstruction.cpp
 		dom/QualifiedName.cpp
 		dom/Range.cpp
+        dom/RegisteredEventListener.cpp
 		dom/StyledElement.cpp
 		dom/Text.cpp
 		dom/Traversal.cpp
 		dom/TreeWalker.cpp
+		dom/WheelEvent.cpp
+		dom/UIEvent.cpp
 		dom/xml_tokenizer.cpp
 
 	</set>
 
 	<set append="1" var="WEBCORE_SOURCES_ICON">
-
 		icon/IconDatabase.cpp
+		icon/SQLDatabase.cpp
+		icon/SQLStatement.cpp
 	</set>
 
 	<set append="1" var="WEBCORE_SOURCES_BRIDGE">
@@ -550,6 +563,7 @@
 		editing/DeleteFromTextNodeCommand.cpp
 		editing/DeleteSelectionCommand.cpp
 		editing/EditCommand.cpp
+		editing/FormatBlockCommand.cpp
 		editing/htmlediting.cpp
 		editing/HTMLInterchange.cpp
 		editing/InsertIntoTextNodeCommand.cpp

@@ -1,5 +1,11 @@
 2006-06-30  Mike Emmel  <mike.emmel@gmail.com>
 
+        Reviewed by Darin.
+
+        * WebCoreSources.bkl: Updated for recent file changes.
+
+2006-06-30  Mike Emmel  <mike.emmel@gmail.com>
+
         Reviewed and enhanced by Darin.
 
         Compilation fixes for Linux/Gdk.
