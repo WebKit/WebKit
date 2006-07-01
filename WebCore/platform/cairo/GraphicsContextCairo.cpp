@@ -31,7 +31,7 @@
 #include "IntRect.h"
 #include <cairo.h>
 #include <math.h>
-#include <wtf/mathextras.h>
+#include <wtf/MathExtras.h>
 #if WIN32
 #include <cairo-win32.h>
 #endif

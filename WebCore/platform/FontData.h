@@ -34,10 +34,10 @@
 
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
-namespace WebCore
-{
+namespace WebCore {
 
 class FontDescription;
+class FontPlatformData;
 
 class WidthMap;
 

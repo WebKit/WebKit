@@ -1,3 +1,17 @@
+2006-06-30  Mike Emmel  <mike.emmel@gmail.com>
+
+        Reviewed and enhanced by Darin.
+
+        Compilation fixes for Linux/Gdk.
+
+        * WebCore/platform/FontData.h: Added forward declaration of a class.
+        * WebCore/platform/cairo/GraphicsContextCairo.cpp: Fixed case on include.
+        * WebCore/bindings/js/kjs_html.cpp: Added <math.h> include.
+
+        * WebCore/css/maketokenizer: Fixed incorrect check for Linux that was
+        already true even on Mac OS X. Added some additional includes and
+        defines to the Linux extra generated code.
+
 2006-06-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
