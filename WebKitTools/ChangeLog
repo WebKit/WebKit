@@ -1,3 +1,11 @@
+2006-06-30  Mike Emmel  <mike.emmel@gmail.com>
+
+        Reviewed by Darin.
+
+        - first check-in of a Gdk shell for testing WebKit
+
+        * GdkLauncher: Added.
+
 2006-06-29  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

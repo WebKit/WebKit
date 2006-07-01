@@ -1,0 +1,10 @@
+cd ../../WebCore/Projects/gdk
+make 
+cd -
+
+
+Property changes on: WebKitTools/GdkLauncher/mk
+___________________________________________________________________
+Name: svn:executable
+   + *
+

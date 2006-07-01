@@ -1,0 +1,4 @@
+export DFBARGS=system=sdl,mode=800x600
+export DFBARGS=system=x11,mode=800x600
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../WebCore/Projects/gdk:/usr/local/lib
+
