@@ -933,10 +933,10 @@ void RenderBox::repaintDuringLayoutIfMoved(int oldX, int oldY)
         // since the object may not have gotten a layout.
         m_x = oldX; m_y = oldY;
         repaint();
-        repaintFloatingDescendants();
+        repaintOverhangingFloats(true);
         m_x = newX; m_y = newY;
         repaint();
-        repaintFloatingDescendants();
+        repaintOverhangingFloats(true);
     }
 }
 

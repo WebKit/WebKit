@@ -1,3 +1,15 @@
+2006-06-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7204
+          float inserted in fixed height block via DOM not repainted
+
+        * fast/repaint/float-move-during-layout-expected.checksum: Added.
+        * fast/repaint/float-move-during-layout-expected.png: Added.
+        * fast/repaint/float-move-during-layout-expected.txt: Added.
+        * fast/repaint/float-move-during-layout.html: Added.
+
 2006-06-30  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by justin

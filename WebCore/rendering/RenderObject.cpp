@@ -1720,7 +1720,7 @@ void RenderObject::repaintDuringLayoutIfMoved(int x, int y)
 {
 }
 
-void RenderObject::repaintFloatingDescendants()
+void RenderObject::repaintOverhangingFloats(bool paintAllDescendants)
 {
 }
 

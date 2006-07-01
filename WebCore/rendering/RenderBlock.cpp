@@ -1118,7 +1118,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
                 // The child's repaints during layout were done before it reached its final position,
                 // so they were wrong.
                 child->repaint();
-                child->repaintFloatingDescendants();
+                child->repaintOverhangingFloats();
             }
         }
 
@@ -1183,7 +1183,7 @@ void RenderBlock::getAbsoluteRepaintRectIncludingFloats(IntRect& bounds, IntRect
     }
 }
 
-void RenderBlock::repaintFloatingDescendants()
+void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
 {
     // Repaint any overhanging floats (if we know we're the one to paint them).
     if (hasOverhangingFloats()) {
@@ -1196,11 +1196,12 @@ void RenderBlock::repaintFloatingDescendants()
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it) {
-            // Only repaint the object if our noPaint flag isn't set and if it isn't in
-            // its own layer.
-            if (!r->noPaint && !r->node->layer()) {                
+            // Only repaint the object if it is overhanging, is not in its own layer, and
+            // is our responsibility to paint (noPaint isn't set). When paintAllDescendants is true, the latter
+            // condition is replaced with being a descendant of us.
+            if (r->endY > m_height && (paintAllDescendants && r->node->hasAncestor(this) || !r->noPaint) && !r->node->layer()) {                
                 r->node->repaint();
-                r->node->repaintFloatingDescendants();
+                r->node->repaintOverhangingFloats();
             }
         }
     }

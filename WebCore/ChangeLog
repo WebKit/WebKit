@@ -1,3 +1,25 @@
+2006-06-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7204
+          float inserted in fixed height block via DOM not repainted
+
+        Test: fast/repaint/float-move-during-layout.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::repaintOverhangingFloats): Renamed repaintFloatingDescendants()
+        to this and limited it to repainting overhanging floats. Added a boolean parameter that forces
+        all descendant overhanging floats (that don't have their own layer) to paint.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::repaintDuringLayoutIfMoved): Changed to paint all descendant
+        floats.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintOverhangingFloats):
+        * rendering/RenderObject.h:
+
 2006-06-30  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by justin
