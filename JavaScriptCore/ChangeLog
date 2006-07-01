@@ -1,3 +1,14 @@
+2006-06-30  Mike Emmel  <mike.emmel@gmail.com>
+
+        Reviewed by Darin.
+
+        Compilation fixes for Linux/Gdk.
+
+        * JavaScriptCore/kjs/interpreter.cpp: added include of signal.h
+        * JavaScriptCore/kjs/ExecState.h: added missing class declaration 
+        * JavaScriptCore/kjs/ExecState.cpp: case wrong on include of context.h 
+        * JavaScriptCore/JavaScriptCoreSources.bkl: added Context.cpp and ExecState.cpp
+
 === Safari-521.14 ===
 
 2006-06-29  Maciej Stachowiak  <mjs@apple.com>

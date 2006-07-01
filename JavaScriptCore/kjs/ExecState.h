@@ -29,6 +29,7 @@
 
 namespace KJS {
     class Context;
+    class Interpreter;
     
   /**
    * Represents the current state of script execution. This object allows you

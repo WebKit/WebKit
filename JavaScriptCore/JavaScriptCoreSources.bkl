@@ -6,10 +6,12 @@
 		kjs/array_object.cpp
 		kjs/bool_object.cpp
 		kjs/collector.cpp
+		kjs/Context.cpp
 		kjs/date_object.cpp
 		kjs/debugger.cpp
 		kjs/dtoa.cpp
 		kjs/error_object.cpp
+		kjs/ExecState.cpp
 		kjs/fpconst.cpp
 		kjs/function.cpp
 		kjs/function_object.cpp

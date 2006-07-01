@@ -22,7 +22,7 @@
  *
  */
 
-#include "Context.h"
+#include "context.h"
 #include "ExecState.h"
 #include "internal.h"
 
