@@ -42,9 +42,14 @@ and WebCore. Include this file to use these settings.
             <include>$(SRCDIR)/../JavaScriptCore/os-win32</include><!-- stdint.h is here -->
         </if>
         <if cond="FORMAT=='gnu'">
-			<ldflags>-L$(SRCDIR)/../JavaScriptCore -lgtkjs</ldflags>
+			<ldflags>$(SRCDIR)/../JavaScriptCore/libjscore.a</ldflags>
         </if>
     </template>
+
+    <template id="sqlite3">
+    	   <ldflags>`pkg-config --libs sqlite3`</ldflags>
+    	   <cxxflags>`pkg-config --cflags sqlite3`</cxxflags>
+	</template>
 
     <template id="freetype">
     	   <ldflags>`pkg-config --libs freetype2`</ldflags>
@@ -52,6 +57,16 @@ and WebCore. Include this file to use these settings.
     	   <ldflags>`pkg-config --libs fontconfig`</ldflags>
     	   <cxxflags>`pkg-config --cflags fontconfig`</cxxflags>
 	</template>
+
+     <template id="curl">
+     	   <ldflags>`curl-config --libs `</ldflags>
+     	   <cxxflags>`curl-config --cflags `</cxxflags>
+ 	</template>
+ 
+    <template id="cairo">
+     	   <ldflags>`pkg-config --libs cairo`</ldflags>
+     	   <cxxflags>`pkg-config --cflags cairo`</cxxflags>
+ 	</template>
 
     <!-- GTK settings, for GTK ports - wx doesn't use these -->
     <template id="gtk">
