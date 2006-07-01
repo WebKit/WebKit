@@ -56,8 +56,8 @@
 
 #include <assert.h>
 #include <math.h>
-#include <stdio.h>
 #include <signal.h>
+#include <stdio.h>
 
 namespace KJS {
 

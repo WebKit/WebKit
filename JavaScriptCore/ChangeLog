@@ -1,3 +1,15 @@
+2006-06-26  Kevin Ollivier  <kevino@theolliviers.com>
+        
+        Reviewed and tweaked by Darin.
+
+        - Compile fixes for wx port / gcc 4.0.2
+
+        * kjs/array_object.cpp:
+        Added missing headers. 
+
+        * kjs/ExecState.h:
+        gcc needs class prototypes before defining those classes as friend classes
+
 2006-06-30  Mike Emmel  <mike.emmel@gmail.com>
 
         Reviewed by Darin.
