@@ -1,5 +1,40 @@
 2006-06-30  Mike Emmel  <mike.emmel@gmail.com>
 
+        Reviewed and worked over a lot by Darin.
+
+        - check in first set of GDK-specific sources
+
+        * platform/gdk/BrowserExtensionGdk.h: Added.
+        * platform/gdk/CookieJarGdk.cpp: Added.
+        * platform/gdk/CursorGdk.cpp: Added.
+        * platform/gdk/FontCacheGdk.cpp: Added.
+        * platform/gdk/FontDataGdk.cpp: Added.
+        * platform/gdk/FontGdk.cpp: Added.
+        * platform/gdk/FontPlatformData.h: Added.
+        * platform/gdk/FontPlatformDataGdk.cpp: Added.
+        * platform/gdk/FrameGdk.cpp: Added.
+        * platform/gdk/FrameGdk.h: Added.
+        * platform/gdk/GlyphMapGdk.cpp: Added.
+        * platform/gdk/KeyEventGdk.cpp: Added.
+        * platform/gdk/KeyboardCodes.h: Added.
+        * platform/gdk/MouseEventGdk.cpp: Added.
+        * platform/gdk/PageGdk.cpp: Added.
+        * platform/gdk/RenderThemeGdk.cpp: Added.
+        * platform/gdk/RenderThemeGdk.h: Added.
+        * platform/gdk/ScreenGdk.cpp: Added.
+        * platform/gdk/ScrollViewGdk.cpp: Added.
+        * platform/gdk/SharedTimerLinux.cpp: Added.
+        * platform/gdk/SystemTimeLinux.cpp: Added.
+        * platform/gdk/TemporaryLinkStubs.cpp: Added.
+        * platform/gdk/TransferJobCurl.cpp: Added.
+        * platform/gdk/TransferJobManager.cpp: Added.
+        * platform/gdk/TransferJobManager.h: Added.
+        * platform/gdk/WheelEventGdk.cpp: Added.
+        * platform/gdk/WidgetGdk.cpp: Added.
+        * platform/gdk/gdk-encodings.txt: Added.
+
+2006-06-30  Mike Emmel  <mike.emmel@gmail.com>
+
         Reviewed by Darin.
 
         * WebCoreSources.bkl: Updated for recent file changes.
