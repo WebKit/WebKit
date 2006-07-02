@@ -448,16 +448,6 @@
 				<string>file</string>
 			</array>
 		</dict>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>RSS URL</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>feed</string>
-				<string>feeds</string>
-				<string>feedsearch</string>
-			</array>
-		</dict>
 	</array>
 	<key>NSAppleScriptEnabled</key>
 	<string>Yes</string>

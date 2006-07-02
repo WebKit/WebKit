@@ -1,5 +1,14 @@
 2006-07-02  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
+        Reviewed by Alexy Proskuryakov.
+
+        Bug 9654: Refresh Loop when accessing feed URLs
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9654
+
+        * WebKitLauncher/Info.plist: Don't claim to handle feed:// URLs.
+
+2006-07-02  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
         Reviewed by Timothy Hatcher.
 
         Bug 9689: Nightly builds should warn a user about potential problems when using
