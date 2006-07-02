@@ -58,6 +58,8 @@
 		<include>platform/cairo</include>
 	    <include>$(SRCDIR)/kcanvas/device/cairo</include>
     	<define>XPATH_SUPPORT</define>
+        <!-- gdk build broken with without NDEBUG defined -->
+    	<define>NDEBUG</define>
  
         <sources>		
           platform/cairo/GraphicsContextCairo.cpp

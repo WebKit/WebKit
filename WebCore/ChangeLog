@@ -1,3 +1,17 @@
+2006-07-02  Mike Emmel  <mike.emmel@gmail.com>
+
+        Reviewed and landed by ggaren.
+
+        * platform/gdk/TransferJobManager.cpp
+        Fixed broken dowload logic
+        * platform/gdk/ScrollViewGdk.cpp 
+        Add comment that scrollbarSize is a temporary variable
+        * Projects/gdk/webcore-gdk.bkl
+        Defined NDEBUG build executable is miscompiled otherwise
+        * WebCoreSources.bkl
+        added icon/SiteIcon.cpp editing/IndentOutdentCommand.cpp 
+        html/HTMLViewSourceDocument.cpp
+
 2006-07-02  Shawn Stricker  <kb1ibt@gmail.com>
 
         Reviewed by Timothy Hatcher.  Build fix for Linux.

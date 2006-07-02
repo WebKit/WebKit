@@ -541,6 +541,7 @@
 		icon/IconDatabase.cpp
 		icon/SQLDatabase.cpp
 		icon/SQLStatement.cpp
+		icon/SiteIcon.cpp
 	</set>
 
 	<set append="1" var="WEBCORE_SOURCES_BRIDGE">
@@ -566,6 +567,7 @@
 		editing/FormatBlockCommand.cpp
 		editing/htmlediting.cpp
 		editing/HTMLInterchange.cpp
+		editing/IndentOutdentCommand.cpp
 		editing/InsertIntoTextNodeCommand.cpp
 		editing/InsertLineBreakCommand.cpp
 		editing/InsertListCommand.cpp
@@ -599,7 +601,7 @@
 
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_HTML">
-		
+
 		html/CanvasGradient.cpp
 		html/CanvasPattern.cpp
 		html/CanvasRenderingContext2D.cpp
@@ -676,6 +678,7 @@
 		html/HTMLTitleElement.cpp
 		html/HTMLTokenizer.cpp
 		html/HTMLUListElement.cpp
+	    html/HTMLViewSourceDocument.cpp	
 
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_BINDINGS">

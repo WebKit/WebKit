@@ -42,6 +42,7 @@ using namespace std;
 
 namespace WebCore {
 
+//hack to simulate scroll bars
 const int scrollbarSize = 10;
 
 class ScrollView::ScrollViewPrivate
