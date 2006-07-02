@@ -1,3 +1,15 @@
+2006-07-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9674
+          REGRESSION (r15075): Blank or incomplete pages on digg.com
+
+        * fast/tokenizer/nested-cached-scripts-expected.txt: Added.
+        * fast/tokenizer/nested-cached-scripts.html: Added.
+        * fast/tokenizer/resources/nested-1.js: Added.
+        * fast/tokenizer/resources/nested-2.js: Added.
+
 2006-06-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.

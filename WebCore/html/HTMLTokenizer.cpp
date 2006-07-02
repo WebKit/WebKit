@@ -128,6 +128,7 @@ HTMLTokenizer::HTMLTokenizer(HTMLDocument* doc)
     , scriptCodeMaxSize(0)
     , scriptCodeResync(0)
     , m_executingScript(0)
+    , m_requestingScript(false)
     , m_timer(this, &HTMLTokenizer::timerFired)
     , m_doc(doc)
     , parser(new HTMLParser(doc))
@@ -145,6 +146,7 @@ HTMLTokenizer::HTMLTokenizer(HTMLViewSourceDocument* doc)
     , scriptCodeMaxSize(0)
     , scriptCodeResync(0)
     , m_executingScript(0)
+    , m_requestingScript(false)
     , m_timer(this, &HTMLTokenizer::timerFired)
     , m_doc(doc)
     , parser(0)
@@ -161,6 +163,7 @@ HTMLTokenizer::HTMLTokenizer(DocumentFragment* frag)
     , scriptCodeMaxSize(0)
     , scriptCodeResync(0)
     , m_executingScript(0)
+    , m_requestingScript(false)
     , m_timer(this, &HTMLTokenizer::timerFired)
     , m_doc(frag->document())
     , inWrite(false)
@@ -198,6 +201,7 @@ void HTMLTokenizer::reset()
 void HTMLTokenizer::begin()
 {
     m_executingScript = 0;
+    m_requestingScript = false;
     m_state.setLoadingExtScript(false);
     reset();
     size = 254;
@@ -411,11 +415,12 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
 
             // the ref() call below may call notifyFinished if the script is already in cache,
             // and that mucks with the state directly, so we must write it back to the object.
-            state.setRequestingScript(true);
             m_state = state;
+            bool savedRequestingScript = m_requestingScript;
+            m_requestingScript = true;
             cs->ref(this);
+            m_requestingScript = savedRequestingScript;
             state = m_state;
-            state.setRequestingScript(false);
             // will be 0 if script was already loaded and ref() executed it
             if (!pendingScripts.isEmpty())
                 state.setLoadingExtScript(true);
@@ -1707,10 +1712,10 @@ void HTMLTokenizer::notifyFinished(CachedObject*)
 #endif
         }
 
-        // 'requestingScript' is true when we are called synchronously from
+        // 'm_requestingScript' is true when we are called synchronously from
         // scriptHandler(). In that case scriptHandler() will take care
         // of pendingSrc.
-        if (!m_state.requestingScript()) {
+        if (!m_requestingScript) {
             SegmentedString rest = pendingSrc;
             pendingSrc.clear();
             write(rest, false);

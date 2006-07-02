@@ -1,3 +1,24 @@
+2006-07-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9674
+          REGRESSION (r15075): Blank or incomplete pages on digg.com
+
+        Replaced the requestingScript state bit added in the fix for bug 9317
+        with a m_requestingScript bool that is set before and restored
+        after calling ref() on a CachedScript.
+        
+        Test: fast/tokenizer/nested-cached-scripts.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        (WebCore::HTMLTokenizer::begin):
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::State::):
+
 2006-07-01  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by NOBODY (build fix).
