@@ -360,7 +360,7 @@ void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
 
 void Frame::setNeedsReapplyStyles() { }
 
-void Image::drawTiled(GraphicsContext*, const FloatRect&, const FloatRect&, TileRule, TileRule) { }
+void Image::drawTiled(GraphicsContext*, const FloatRect&, const FloatRect&, TileRule, TileRule, CompositeOperator) { }
 
 void RenderThemeGdk::setCheckboxSize(RenderStyle*) const { }
 bool RenderThemeGdk::paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return false; }

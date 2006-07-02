@@ -1,3 +1,17 @@
+2006-07-02  Shawn Stricker  <kb1ibt@gmail.com>
+
+        Reviewed by Timothy Hatcher.  Build fix for Linux.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9684
+          [GDK] multiple little fixes and a few new things for Templinkstubs
+
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrollView::setDrawable): Changed SCROLLBAR_SIZE to scrollbarSize.
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (Image::drawTiled): Added missing parameter to argument list.
+        * platform/gdk/TransferJobManager.cpp:
+        (WebCore::writeCallback): Added missing parenthesis to static_cast.
+
 2006-07-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

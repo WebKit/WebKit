@@ -256,7 +256,7 @@ void ScrollView::setDrawable(GdkDrawable* gdkdrawable)
     gint x, y, width, height, depth;
     gdk_window_get_geometry(frame, &x, &y, &width, &height, &depth);
     m_data->scrollViewArea = IntRect(0, 0, width, height);
-    m_data->viewportArea = IntRect(0, 0, width - SCROLLBAR_SIZE, height - SCROLLBAR_SIZE);
+    m_data->viewportArea = IntRect(0, 0, width - scrollbarSize, height - scrollbarSize);
 }
 
 }
