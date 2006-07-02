@@ -63,7 +63,7 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* obj)
     TransferJob* job = static_cast<TransferJob*>(obj);
     TransferJobInternal* d = job->getInternal();
     int totalSize = size * nmemb;
-    d->client->receivedData(job, static_cat<char*>ptr, totalSize);
+    d->client->receivedData(job, static_cast<char*>ptr, totalSize);
     return totalSize;
 }
 

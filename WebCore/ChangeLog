@@ -1,3 +1,10 @@
+2006-07-01  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by NOBODY (build fix).
+
+        * platform/gdk/TransferJobManager.cpp:
+        (WebCore::writeCallback): Changed 'static_cat' to 'static_cast'.
+
 2006-06-30  Mike Emmel  <mike.emmel@gmail.com>
 
         Reviewed and worked over a lot by Darin.
