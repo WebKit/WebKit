@@ -27,89 +27,97 @@
 #include "APICast.h"
 #include "JSCallbackObject.h"
 #include "JSCharBufferRef.h"
+#include "JSClassRef.h"
 #include "JSObjectRef.h"
 #include "internal.h"
+#include "reference.h"
 #include "reference_list.h"
 
 namespace KJS {
 
-const ClassInfo JSCallbackObject::info = { "JSCallbackObject", 0, 0, 0 };
+const ClassInfo JSCallbackObject::info = { "CallbackObject", 0, 0, 0 };
 
-JSCallbackObject::JSCallbackObject(const JSObjectCallbacks* callbacks)
+JSCallbackObject::JSCallbackObject(JSClassRef jsClass)
     : JSObject()
-    , m_privateData(0)
-    , m_callbacks(*callbacks)
 {
-    JSObjectRef thisRef = toRef(this);
-    
-    do {
-        if (JSInitializeCallback initialize = callbacks->initialize)
-            initialize(thisRef);
-    } while ((callbacks = callbacks->parentCallbacks));
+    init(jsClass);
 }
 
-JSCallbackObject::JSCallbackObject(const JSObjectCallbacks* callbacks, JSObject* prototype)
+JSCallbackObject::JSCallbackObject(JSClassRef jsClass, JSObject* prototype)
     : JSObject(prototype)
-    , m_privateData(0)
-    , m_callbacks(*callbacks)
 {
+    init(jsClass);
+}
+
+void JSCallbackObject::init(JSClassRef jsClass)
+{
+    m_privateData = 0;
+    m_class = JSClassRetain(jsClass);
+
     JSObjectRef thisRef = toRef(this);
     
     do {
-        if (JSInitializeCallback initialize = callbacks->initialize)
+        if (JSInitializeCallback initialize = jsClass->callbacks.initialize)
             initialize(thisRef);
-    } while ((callbacks = callbacks->parentCallbacks));
+    } while ((jsClass = jsClass->parent));
 }
 
 JSCallbackObject::~JSCallbackObject()
 {
     JSObjectRef thisRef = toRef(this);
     
-    for (JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks)
-        if (JSFinalizeCallback finalize = callbacks->finalize)
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent)
+        if (JSFinalizeCallback finalize = jsClass->callbacks.finalize)
             finalize(thisRef);
+    
+    JSClassRelease(m_class);
 }
 
 UString JSCallbackObject::className() const
 {
-    JSObjectRef thisRef = toRef(this);
-    
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks) {
-        if (JSCopyDescriptionCallback copyDescriptionCallback = callbacks->copyDescription) {
-            JSCharBufferRef descriptionBuf = copyDescriptionCallback(thisRef);
-            UString description(toJS(descriptionBuf));
-            JSCharBufferRelease(descriptionBuf);
-            return description;
-        }
-    }
-    
-    return JSObject::className();
+    return classInfo()->className;
 }
 
 bool JSCallbackObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSObjectRef thisRef = toRef(this);
     JSCharBufferRef propertyNameRef = toRef(propertyName.ustring().rep());
-
-    // optional optimization for cases when we only need to know if the property exists, not its value
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks) {
-        if (JSHasPropertyCallback hasPropertyCallback = callbacks->hasProperty) {
-            if (hasPropertyCallback(thisRef, propertyNameRef)) {
-                slot.setCustom(0, callbackGetter);
-                return true;
-            }
-        }
-    }
     
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks) {
-        if (JSGetPropertyCallback getPropertyCallback = callbacks->getProperty) {
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
+        // optional optimization to bypass getProperty in cases when we only need to know if the property exists
+        if (JSHasPropertyCallback hasPropertyCallback = jsClass->callbacks.hasProperty) {
+            if (hasPropertyCallback(thisRef, propertyNameRef)) {
+                slot.setCustom(this, callbackGetter);
+                return true;
+            }
+        } else if (JSGetPropertyCallback getPropertyCallback = jsClass->callbacks.getProperty) {
             JSValueRef returnValue;
-            if (getPropertyCallback(thisRef, propertyNameRef, &returnValue)) {
-                slot.setCustom(reinterpret_cast<JSObject*>(returnValue), cachedValueGetter); // cache the value so we don't have to compute it again
+            if (getPropertyCallback(toRef(exec), thisRef, propertyNameRef, &returnValue)) {
+                // cache the value so we don't have to compute it again
+                // FIXME: This violates the PropertySlot design a little bit.
+                // We should either use this optimization everywhere, or nowhere.
+                slot.setCustom(reinterpret_cast<JSObject*>(returnValue), cachedValueGetter);
+                return true;
+            }
+        }
+
+        if (__JSClass::StaticValuesTable* staticValues = jsClass->staticValues) {
+            if (StaticValueEntry* entry = staticValues->get(propertyName.ustring().rep())) {
+                if (entry->getProperty) {
+                    slot.setCustom(this, staticValueGetter);
+                    return true;
+                }
+            }
+        }
+        
+        if (__JSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
+            if (staticFunctions->contains(propertyName.ustring().rep())) {
+                slot.setCustom(this, staticFunctionGetter);
                 return true;
             }
         }
     }
+
     return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
@@ -123,10 +131,30 @@ void JSCallbackObject::put(ExecState* exec, const Identifier& propertyName, JSVa
     JSObjectRef thisRef = toRef(this);
     JSCharBufferRef propertyNameRef = toRef(propertyName.ustring().rep());
 
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks) {
-        if (JSSetPropertyCallback setPropertyCallback = callbacks->setProperty) {
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
+        if (JSSetPropertyCallback setPropertyCallback = jsClass->callbacks.setProperty) {
             if (setPropertyCallback(thisRef, propertyNameRef, value))
                 return;
+        }
+    
+        if (__JSClass::StaticValuesTable* staticValues = jsClass->staticValues) {
+            if (StaticValueEntry* entry = staticValues->get(propertyName.ustring().rep())) {
+                if (entry->attributes & kJSPropertyAttributeReadOnly)
+                    return;
+                if (JSSetPropertyCallback setPropertyCallback = entry->setProperty) {
+                    if (setPropertyCallback(thisRef, propertyNameRef, value))
+                        return;
+                }
+            }
+        }
+        
+        if (__JSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
+            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.ustring().rep())) {
+                if (entry->attributes & kJSPropertyAttributeReadOnly)
+                    return;
+                putDirect(propertyName, value, attr); // put as override property
+                return;
+            }
         }
     }
     return JSObject::put(exec, propertyName, value, attr);
@@ -142,10 +170,26 @@ bool JSCallbackObject::deleteProperty(ExecState* exec, const Identifier& propert
     JSObjectRef thisRef = toRef(this);
     JSCharBufferRef propertyNameRef = toRef(propertyName.ustring().rep());
     
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks) {
-        if (JSDeletePropertyCallback deletePropertyCallback = callbacks->deleteProperty) {
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
+        if (JSDeletePropertyCallback deletePropertyCallback = jsClass->callbacks.deleteProperty) {
             if (deletePropertyCallback(thisRef, propertyNameRef))
                 return true;
+        }
+
+        if (__JSClass::StaticValuesTable* staticValues = jsClass->staticValues) {
+            if (StaticValueEntry* entry = staticValues->get(propertyName.ustring().rep())) {
+                if (entry->attributes & kJSPropertyAttributeDontDelete)
+                    return false;
+                return true;
+            }
+        }
+        
+        if (__JSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
+            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.ustring().rep())) {
+                if (entry->attributes & kJSPropertyAttributeDontDelete)
+                    return false;
+                return true;
+            }
         }
     }
     return JSObject::deleteProperty(exec, propertyName);
@@ -158,8 +202,8 @@ bool JSCallbackObject::deleteProperty(ExecState* exec, unsigned propertyName)
 
 bool JSCallbackObject::implementsConstruct() const
 {
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks)
-        if (callbacks->callAsConstructor)
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent)
+        if (jsClass->callbacks.callAsConstructor)
             return true;
 
     return false;
@@ -170,8 +214,8 @@ JSObject* JSCallbackObject::construct(ExecState* exec, const List& args)
     JSContextRef execRef = toRef(exec);
     JSObjectRef thisRef = toRef(this);
     
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks) {
-        if (JSCallAsConstructorCallback callAsConstructorCallback = callbacks->callAsConstructor) {
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
+        if (JSCallAsConstructorCallback callAsConstructorCallback = jsClass->callbacks.callAsConstructor) {
             size_t argc = args.size();
             JSValueRef argv[argc];
             for (size_t i = 0; i < argc; i++)
@@ -180,14 +224,14 @@ JSObject* JSCallbackObject::construct(ExecState* exec, const List& args)
         }
     }
     
-    ASSERT(false);
+    ASSERT(0); // implementsConstruct should prevent us from reaching here
     return 0;
 }
 
 bool JSCallbackObject::implementsCall() const
 {
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks)
-        if (callbacks->callAsFunction)
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent)
+        if (jsClass->callbacks.callAsFunction)
             return true;
     
     return false;
@@ -199,8 +243,8 @@ JSValue* JSCallbackObject::callAsFunction(ExecState* exec, JSObject* thisObj, co
     JSObjectRef thisRef = toRef(this);
     JSObjectRef thisObjRef = toRef(thisObj);
 
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks) {
-        if (JSCallAsFunctionCallback callAsFunctionCallback = callbacks->callAsFunction) {
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
+        if (JSCallAsFunctionCallback callAsFunctionCallback = jsClass->callbacks.callAsFunction) {
             size_t argc = args.size();
             JSValueRef argv[argc];
             for (size_t i = 0; i < argc; i++)
@@ -209,7 +253,7 @@ JSValue* JSCallbackObject::callAsFunction(ExecState* exec, JSObject* thisObj, co
         }
     }
 
-    ASSERT(false);
+    ASSERT(0); // implementsCall should prevent us from reaching here
     return 0;
 }
 
@@ -217,9 +261,32 @@ void JSCallbackObject::getPropertyList(ExecState* exec, ReferenceList& propertyL
 {
     JSObjectRef thisRef = toRef(this);
 
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks)
-        if (JSGetPropertyListCallback getPropertyListCallback = callbacks->getPropertyList)
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
+        if (JSGetPropertyListCallback getPropertyListCallback = jsClass->callbacks.getPropertyList)
             getPropertyListCallback(thisRef, toRef(&propertyList));
+
+        if (__JSClass::StaticValuesTable* staticValues = jsClass->staticValues) {
+            typedef __JSClass::StaticValuesTable::const_iterator iterator;
+            iterator end = staticValues->end();
+            for (iterator it = staticValues->begin(); it != end; ++it) {
+                UString::Rep* name = it->first.get();
+                StaticValueEntry* entry = it->second;
+                if (entry->getProperty && !(entry->attributes & kJSPropertyAttributeDontEnum))
+                    propertyList.append(Reference(this, Identifier(name)));
+            }
+        }
+
+        if (__JSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
+            typedef __JSClass::StaticFunctionsTable::const_iterator iterator;
+            iterator end = staticFunctions->end();
+            for (iterator it = staticFunctions->begin(); it != end; ++it) {
+                UString::Rep* name = it->first.get();
+                StaticFunctionEntry* entry = it->second;
+                if (!(entry->attributes & kJSPropertyAttributeDontEnum))
+                    propertyList.append(Reference(this, Identifier(name)));
+            }
+        }
+    }
 
     JSObject::getPropertyList(exec, propertyList, recursive);
 }
@@ -228,8 +295,8 @@ bool JSCallbackObject::toBoolean(ExecState* exec) const
 {
     JSObjectRef thisRef = toRef(this);
 
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks) {
-        if (JSConvertToTypeCallback convertToTypeCallback = callbacks->convertToType) {
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
+        if (JSConvertToTypeCallback convertToTypeCallback = jsClass->callbacks.convertToType) {
             JSValueRef returnValue;
             if (convertToTypeCallback(thisRef, kJSTypeBoolean, &returnValue))
                 return toJS(returnValue)->getBoolean();
@@ -242,8 +309,8 @@ double JSCallbackObject::toNumber(ExecState* exec) const
 {
     JSObjectRef thisRef = toRef(this);
 
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks) {
-        if (JSConvertToTypeCallback convertToTypeCallback = callbacks->convertToType) {
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
+        if (JSConvertToTypeCallback convertToTypeCallback = jsClass->callbacks.convertToType) {
             JSValueRef returnValue;
             if (convertToTypeCallback(thisRef, kJSTypeNumber, &returnValue))
                 return toJS(returnValue)->getNumber();
@@ -256,8 +323,8 @@ UString JSCallbackObject::toString(ExecState* exec) const
 {
     JSObjectRef thisRef = toRef(this);
 
-    for (const JSObjectCallbacks* callbacks = &m_callbacks; callbacks; callbacks = callbacks->parentCallbacks) {
-        if (JSConvertToTypeCallback convertToTypeCallback = callbacks->convertToType) {
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
+        if (JSConvertToTypeCallback convertToTypeCallback = jsClass->callbacks.convertToType) {
             JSValueRef returnValue;
             if (convertToTypeCallback(thisRef, kJSTypeString, &returnValue))
                 return toJS(returnValue)->getString();
@@ -276,6 +343,14 @@ void* JSCallbackObject::getPrivate()
     return m_privateData;
 }
 
+bool JSCallbackObject::inherits(JSClassRef c) const
+{
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent)
+        if (jsClass == c)
+            return true;
+    return false;
+}
+
 JSValue* JSCallbackObject::cachedValueGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
     JSValue* v = slot.slotBase();
@@ -283,19 +358,62 @@ JSValue* JSCallbackObject::cachedValueGetter(ExecState*, JSObject*, const Identi
     return v;
 }
 
-JSValue* JSCallbackObject::callbackGetter(ExecState*, JSObject* originalObject, const Identifier& propertyName, const PropertySlot&)
+JSValue* JSCallbackObject::staticValueGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
-    ASSERT(originalObject->inherits(&JSCallbackObject::info));
-    JSObjectRef thisRef = toRef(originalObject);
-    JSCharBufferRef propertyNameRef= toRef(propertyName.ustring().rep());
+    ASSERT(slot.slotBase()->inherits(&JSCallbackObject::info));
+    JSCallbackObject* thisObj = static_cast<JSCallbackObject*>(slot.slotBase());
 
-    for (const JSObjectCallbacks* callbacks = &static_cast<JSCallbackObject*>(originalObject)->m_callbacks; callbacks; callbacks = callbacks->parentCallbacks) {
-        if (JSGetPropertyCallback getPropertyCallback = callbacks->getProperty) {
-            JSValueRef returnValue;
-            if (getPropertyCallback(thisRef, propertyNameRef, &returnValue)) {
-                return toJS(returnValue);
+    JSObjectRef thisRef = toRef(thisObj);
+    JSCharBufferRef propertyNameRef = toRef(propertyName.ustring().rep());
+
+    for (JSClassRef jsClass = thisObj->m_class; jsClass; jsClass = jsClass->parent) {
+        JSValueRef returnValue;
+        
+        if (__JSClass::StaticValuesTable* staticValues = jsClass->staticValues)
+            if (StaticValueEntry* entry = staticValues->get(propertyName.ustring().rep()))
+                if (JSGetPropertyCallback getPropertyCallback = entry->getProperty)
+                    if (getPropertyCallback(toRef(exec), thisRef, propertyNameRef, &returnValue))
+                        return toJS(returnValue);
+    }
+
+    return jsUndefined();
+}
+
+JSValue* JSCallbackObject::staticFunctionGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
+{
+    ASSERT(slot.slotBase()->inherits(&JSCallbackObject::info));
+    JSCallbackObject* thisObj = static_cast<JSCallbackObject*>(slot.slotBase());
+
+    if (JSValue* cachedOrOverrideValue = thisObj->getDirect(propertyName))
+        return toJS(cachedOrOverrideValue);
+
+    for (JSClassRef jsClass = thisObj->m_class; jsClass; jsClass = jsClass->parent) {
+        if (__JSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
+            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.ustring().rep())) {
+                JSValue* v = toJS(JSFunctionMake(toRef(exec), entry->callAsFunction));
+                thisObj->putDirect(propertyName, v, entry->attributes);
+                return v;
             }
         }
+    }
+
+    return jsUndefined();
+}
+
+JSValue* JSCallbackObject::callbackGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
+{
+    ASSERT(slot.slotBase()->inherits(&JSCallbackObject::info));
+    JSCallbackObject* thisObj = static_cast<JSCallbackObject*>(slot.slotBase());
+
+    JSObjectRef thisRef = toRef(thisObj);
+    JSCharBufferRef propertyNameRef = toRef(propertyName.ustring().rep());
+
+    for (JSClassRef jsClass = thisObj->m_class; jsClass; jsClass = jsClass->parent) {
+        JSValueRef returnValue;
+
+        if (JSGetPropertyCallback getPropertyCallback = jsClass->callbacks.getProperty)
+            if (getPropertyCallback(toRef(exec), thisRef, propertyNameRef, &returnValue))
+                return toJS(returnValue);
     }
 
     return jsUndefined();

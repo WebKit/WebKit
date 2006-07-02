@@ -24,32 +24,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSContextRef_h
-#define JSContextRef_h
+#include "NodeList.h"
 
-#include "JSObjectRef.h"
-#include "JSValueRef.h"
+#include <stdlib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-JSContextRef JSContextCreate(JSClassRef globalObjectClass, JSObjectRef globalObjectPrototype);
-void JSContextDestroy(JSContextRef context);
-
-JSObjectRef JSContextGetGlobalObject(JSContextRef context);
-
-/* FIXME: These probably aren't useful. The exception is sometimes set
-   as a throw completion, other times as a value in the exec state.
-   There's no unified notion of the interpreter's "exception state."
- */
-bool JSContextHasException(JSContextRef context);
-JSValueRef JSContextGetException(JSContextRef context);
-void JSContextClearException(JSContextRef context);
-void JSContextSetException(JSContextRef context, JSValueRef value);
+extern NodeList* NodeList_new(Node* parentNode)
+{
+    Node_ref(parentNode);
     
-#ifdef __cplusplus
+    NodeList* nodeList = (NodeList*)malloc(sizeof(NodeList));
+    nodeList->parentNode = parentNode;
+    nodeList->refCount = 0;
+    return nodeList;
 }
-#endif
-        
-#endif // JSContextRef_h
+
+extern unsigned NodeList_length(NodeList* nodeList)
+{
+    // Linear count from tail -- good enough for our purposes here
+    unsigned i = 0;
+    NodeLink* n = nodeList->parentNode->childNodesTail;
+    while (n) {
+        n = n->prev;
+        ++i;
+    }
+
+    return i;
+}
+
+extern Node* NodeList_item(NodeList* nodeList, unsigned index)
+{
+    unsigned length = NodeList_length(nodeList);
+    if (index >= length)
+        return NULL;
+    
+    // Linear search from tail -- good enough for our purposes here
+    NodeLink* n = nodeList->parentNode->childNodesTail;
+    unsigned i = 0;
+    unsigned count = length - 1 - index;
+    while (i < count) {
+        ++i;
+        n = n->prev;
+    }
+    return n->node;
+}
+
+extern void NodeList_ref(NodeList* nodeList)
+{
+    ++nodeList->refCount;
+}
+
+extern void NodeList_deref(NodeList* nodeList)
+{
+    if (--nodeList->refCount == 0) {
+        Node_deref(nodeList->parentNode);
+        free(nodeList);
+    }
+}

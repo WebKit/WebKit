@@ -24,32 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSContextRef_h
-#define JSContextRef_h
+#ifndef NodeList_h
+#define NodeList_h
 
-#include "JSObjectRef.h"
-#include "JSValueRef.h"
+#include "Node.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+typedef struct {
+    unsigned refCount;
+    Node* parentNode;
+} NodeList;
 
-JSContextRef JSContextCreate(JSClassRef globalObjectClass, JSObjectRef globalObjectPrototype);
-void JSContextDestroy(JSContextRef context);
+extern NodeList* NodeList_new(Node* parentNode);
+extern unsigned NodeList_length(NodeList*);
+extern Node* NodeList_item(NodeList*, unsigned);
+extern void NodeList_ref(NodeList*);
+extern void NodeList_deref(NodeList*);
 
-JSObjectRef JSContextGetGlobalObject(JSContextRef context);
-
-/* FIXME: These probably aren't useful. The exception is sometimes set
-   as a throw completion, other times as a value in the exec state.
-   There's no unified notion of the interpreter's "exception state."
- */
-bool JSContextHasException(JSContextRef context);
-JSValueRef JSContextGetException(JSContextRef context);
-void JSContextClearException(JSContextRef context);
-void JSContextSetException(JSContextRef context, JSValueRef value);
-    
-#ifdef __cplusplus
-}
-#endif
-        
-#endif // JSContextRef_h
+#endif // NodeList_h

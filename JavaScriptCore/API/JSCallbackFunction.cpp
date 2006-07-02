@@ -24,32 +24,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSContextRef_h
-#define JSContextRef_h
+#include "JSCallbackFunction.h"
+#include "APICast.h"
+#include "function.h"
+#include "function_object.h"
 
-#include "JSObjectRef.h"
-#include "JSValueRef.h"
+namespace KJS {
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+const ClassInfo JSCallbackFunction::info = { "CallbackFunction", &InternalFunctionImp::info, 0, 0 };
 
-JSContextRef JSContextCreate(JSClassRef globalObjectClass, JSObjectRef globalObjectPrototype);
-void JSContextDestroy(JSContextRef context);
-
-JSObjectRef JSContextGetGlobalObject(JSContextRef context);
-
-/* FIXME: These probably aren't useful. The exception is sometimes set
-   as a throw completion, other times as a value in the exec state.
-   There's no unified notion of the interpreter's "exception state."
- */
-bool JSContextHasException(JSContextRef context);
-JSValueRef JSContextGetException(JSContextRef context);
-void JSContextClearException(JSContextRef context);
-void JSContextSetException(JSContextRef context, JSValueRef value);
-    
-#ifdef __cplusplus
+JSCallbackFunction::JSCallbackFunction(ExecState* exec, JSCallAsFunctionCallback callback)
+    : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()))
+    , m_callback(callback)
+{
 }
-#endif
-        
-#endif // JSContextRef_h
+
+bool JSCallbackFunction::implementsCall() const
+{
+    return true;
+}
+
+JSValue* JSCallbackFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
+{
+    JSContextRef execRef = toRef(exec);
+    JSObjectRef thisRef = toRef(this);
+    JSObjectRef thisObjRef = toRef(thisObj);
+
+    size_t argc = args.size();
+    JSValueRef argv[argc];
+    for (size_t i = 0; i < argc; i++)
+        argv[i] = args[i];
+    return toJS(m_callback(execRef, thisRef, thisObjRef, argc, argv));
+}
+
+void JSCallbackFunction::setPrivate(void* data)
+{
+    m_privateData = data;
+}
+
+void* JSCallbackFunction::getPrivate()
+{
+    return m_privateData;
+}
+
+} // namespace KJS

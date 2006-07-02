@@ -24,68 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSCallbackObject_h
-#define JSCallbackObject_h
+#ifndef JSCallbackFunction_h
+#define JSCallbackFunction_h
 
 #include "JSObjectRef.h"
-#include "JSValueRef.h"
+#include "internal.h"
 #include "object.h"
 
 namespace KJS {
 
-class JSCallbackObject : public JSObject
+class JSCallbackFunction : public InternalFunctionImp
 {
 public:
-    JSCallbackObject(JSClassRef globalObjectClass);
-    JSCallbackObject(JSClassRef globalObjectClass, JSObject* prototype);
-    virtual ~JSCallbackObject();
-        
-    virtual UString className() const;
-
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual bool getOwnPropertySlot(ExecState*, unsigned, PropertySlot&);
-    
-    virtual void put(ExecState*, const Identifier&, JSValue*, int attr);
-    virtual void put(ExecState*, unsigned, JSValue*, int attr);
-
-    virtual bool deleteProperty(ExecState*, const Identifier&);
-    virtual bool deleteProperty(ExecState*, unsigned);
-
-    virtual bool implementsConstruct() const;
-    virtual JSObject* construct(ExecState*, const List& args);
+    JSCallbackFunction(ExecState* exec, JSCallAsFunctionCallback callback);
 
     virtual bool implementsCall() const;
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List &args);
 
-    virtual void getPropertyList(ExecState*, ReferenceList& propertyList, bool recursive);
-
-    virtual bool toBoolean(ExecState*) const;
-    virtual double toNumber(ExecState*) const;
-    virtual UString toString(ExecState*) const;
-
     void setPrivate(void* data);
     void* getPrivate();
-    
+
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
-
-    bool inherits(JSClassRef) const;
     
 private:
-    JSCallbackObject(); // prevent default construction
-    JSCallbackObject(const JSCallbackObject&);
-
-    void init(JSClassRef jsClass);
-    
-    static JSValue* cachedValueGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* staticValueGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
-    static JSValue* staticFunctionGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
-    static JSValue* callbackGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+    JSCallbackFunction(); // prevent default construction
+    JSCallbackFunction(const JSCallbackFunction&);
     
     void* m_privateData;
-    JSClassRef m_class;
+    JSCallAsFunctionCallback m_callback;
 };
 
 } // namespace KJS
 
-#endif // JSCallbackObject_h
+#endif // JSCallbackFunction_h

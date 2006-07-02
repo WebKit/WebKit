@@ -25,12 +25,99 @@
  */
 
 #include "JavaScriptCore.h"
+#include "JSNode.h"
 #include <wtf/UnusedParam.h>
+
+static char* createStringWithContentsOfFile(const char* fileName);
+static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[]);
 
 int main(int argc, char* argv[])
 {
     UNUSED_PARAM(argc);
     UNUSED_PARAM(argv);
     
+    JSContextRef context = JSContextCreate(NULL, NULL);
+    JSObjectRef globalObject = JSContextGetGlobalObject(context);
+    
+    JSCharBufferRef printBuf = JSCharBufferCreateUTF8("print");
+    JSObjectSetProperty(context, globalObject, printBuf, JSFunctionMake(context, print), kJSPropertyAttributeNone);
+    JSCharBufferRelease(printBuf);
+    
+    JSCharBufferRef nodeBuf = JSCharBufferCreateUTF8("Node");
+    JSObjectSetProperty(context, globalObject, nodeBuf, JSConstructorMake(context, JSNode_construct), kJSPropertyAttributeNone);
+    JSCharBufferRelease(nodeBuf);
+    
+    char* script = createStringWithContentsOfFile("minidom.js");
+    JSCharBufferRef scriptBuf = JSCharBufferCreateUTF8(script);
+    JSValueRef result;
+    JSEvaluate(context, globalObject, scriptBuf, NULL, 0, &result);
+
+    if (JSValueIsUndefined(result))
+        printf("PASS: Test script executed successfully.\n");
+    else {
+        printf("FAIL: Test script returned unexcpected value:\n");
+        JSCharBufferRef resultBuf = JSValueCopyStringValue(context, result);
+        CFStringRef resultCF = CFStringCreateWithJSCharBuffer(kCFAllocatorDefault, resultBuf);
+        CFShow(resultCF);
+        CFRelease(resultCF);
+        JSCharBufferRelease(resultBuf);
+    }
+    JSCharBufferRelease(scriptBuf);
+    free(script);
+
+#if 0 // used for leak/finalize debugging    
+    int i;
+    for (i = 0; i < 1000; i++) {
+        JSObjectRef o = JSObjectMake(context, NULL, NULL);
+        (void)o;
+    }
+    JSGCCollect();
+#endif
+    
+    JSContextDestroy(context);
+    printf("PASS: Program exited normally.\n");
     return 0;
+}
+
+static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[])
+{
+    if (argc > 0) {
+        JSCharBufferRef stringBuf = JSValueCopyStringValue(context, argv[0]);
+        size_t numChars = JSCharBufferGetMaxLengthUTF8(stringBuf);
+        char string[numChars];
+        JSCharBufferGetCharactersUTF8(stringBuf, string, numChars);
+        printf("%s\n", string);
+    }
+    
+    return JSUndefinedMake();
+}
+
+static char* createStringWithContentsOfFile(const char* fileName)
+{
+    char* buffer;
+    
+    int buffer_size = 0;
+    int buffer_capacity = 1024;
+    buffer = (char*)malloc(buffer_capacity);
+    
+    FILE* f = fopen(fileName, "r");
+    if (!f) {
+        fprintf(stderr, "Could not open file: %s\n", fileName);
+        return 0;
+    }
+    
+    while (!feof(f) && !ferror(f)) {
+        buffer_size += fread(buffer + buffer_size, 1, buffer_capacity - buffer_size, f);
+        if (buffer_size == buffer_capacity) { // guarantees space for trailing '\0'
+            buffer_capacity *= 2;
+            buffer = (char*)realloc(buffer, buffer_capacity);
+            assert(buffer);
+        }
+        
+        assert(buffer_size < buffer_capacity);
+    }
+    fclose(f);
+    buffer[buffer_size] = '\0';
+    
+    return buffer;
 }

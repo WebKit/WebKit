@@ -24,32 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSContextRef_h
-#define JSContextRef_h
+#ifndef JSCallbackConstructor_h
+#define JSCallbackConstructor_h
 
 #include "JSObjectRef.h"
-#include "JSValueRef.h"
+#include "object.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-JSContextRef JSContextCreate(JSClassRef globalObjectClass, JSObjectRef globalObjectPrototype);
-void JSContextDestroy(JSContextRef context);
-
-JSObjectRef JSContextGetGlobalObject(JSContextRef context);
-
-/* FIXME: These probably aren't useful. The exception is sometimes set
-   as a throw completion, other times as a value in the exec state.
-   There's no unified notion of the interpreter's "exception state."
- */
-bool JSContextHasException(JSContextRef context);
-JSValueRef JSContextGetException(JSContextRef context);
-void JSContextClearException(JSContextRef context);
-void JSContextSetException(JSContextRef context, JSValueRef value);
+namespace KJS {
     
-#ifdef __cplusplus
-}
-#endif
-        
-#endif // JSContextRef_h
+class JSCallbackConstructor : public JSObject
+{
+public:
+    JSCallbackConstructor(ExecState* exec, JSCallAsConstructorCallback callback);
+    
+    virtual bool implementsConstruct() const;
+    virtual JSObject* construct(ExecState*, const List &args);
+
+    void setPrivate(void* data);
+    void* getPrivate();
+
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
+    
+private:
+    JSCallbackConstructor(); // prevent default construction
+    JSCallbackConstructor(const JSCallbackConstructor&);
+    
+    void* m_privateData;
+    JSCallAsConstructorCallback m_callback;
+};
+
+} // namespace KJS
+
+#endif // JSCallbackConstructor_h

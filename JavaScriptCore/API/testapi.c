@@ -107,8 +107,11 @@ static void assertEqualsAsCharacters(JSValueRef value, const char* expectedValue
     CFStringGetCharacters(expectedValueAsCFString, CFRangeMake(0, cfLength), cfBuffer);
     CFRelease(expectedValueAsCFString);
     
-    assert(memcmp(jsBuffer, cfBuffer, cfLength * sizeof(UniChar)) == 0);
-    assert(jsLength == (size_t)cfLength);
+    if (memcmp(jsBuffer, cfBuffer, cfLength * sizeof(UniChar)) != 0)
+        fprintf(stderr, "assertEqualsAsCharacters failed: jsBuffer != cfBuffer\n");
+    
+    if (jsLength != (size_t)cfLength)
+        fprintf(stderr, "assertEqualsAsCharacters failed: jsLength(%ld) != cfLength(%ld)\n", jsLength, cfLength);
     
     JSCharBufferRelease(valueAsString);
 }
@@ -126,12 +129,6 @@ static void MyObject_initialize(JSObjectRef object)
     didInitialize = true;
 }
 
-static JSCharBufferRef MyObject_copyDescription(JSObjectRef object)
-{
-    UNUSED_PARAM(object);
-    return JSCharBufferCreateUTF8("MyObject");
-}
-
 static bool MyObject_hasProperty(JSObjectRef object, JSCharBufferRef propertyName)
 {
     UNUSED_PARAM(object);
@@ -145,8 +142,9 @@ static bool MyObject_hasProperty(JSObjectRef object, JSCharBufferRef propertyNam
     return false;
 }
 
-static bool MyObject_getProperty(JSObjectRef object, JSCharBufferRef propertyName, JSValueRef* returnValue)
+static bool MyObject_getProperty(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName, JSValueRef* returnValue)
 {
+    UNUSED_PARAM(context);
     UNUSED_PARAM(object);
     
     if (JSCharBufferIsEqualUTF8(propertyName, "alwaysOne")) {
@@ -251,12 +249,10 @@ static void MyObject_finalize(JSObjectRef object)
     didFinalize = true;
 }
 
-JSObjectCallbacks MyObjectCallbacks = {
-    0,
+JSObjectCallbacks MyObject_callbacks = {
     0,
     &MyObject_initialize,
     &MyObject_finalize,
-    &MyObject_copyDescription,
     &MyObject_hasProperty,
     &MyObject_getProperty,
     &MyObject_setProperty,
@@ -266,6 +262,16 @@ JSObjectCallbacks MyObjectCallbacks = {
     &MyObject_callAsConstructor,
     &MyObject_convertToType,
 };
+
+static JSClassRef MyObject_class(JSContextRef context)
+{
+    static JSClassRef jsClass;
+    if (!jsClass) {
+        jsClass = JSClassCreate(context, NULL, NULL, &MyObject_callbacks, NULL);
+    }
+    
+    return jsClass;
+}
 
 static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functionObject, JSObjectRef thisObject, size_t argc, JSValueRef argv[])
 {
@@ -288,7 +294,7 @@ static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjec
 {
     UNUSED_PARAM(constructorObject);
     
-    JSObjectRef result = JSObjectMake(context, &kJSObjectCallbacksNone, 0);
+    JSObjectRef result = JSObjectMake(context, NULL, 0);
     if (argc > 0) {
         JSCharBufferRef valueBuffer = JSCharBufferCreateUTF8("value");
         JSObjectSetProperty(context, result, valueBuffer, argv[0], kJSPropertyAttributeNone);
@@ -305,7 +311,7 @@ int main(int argc, char* argv[])
     UNUSED_PARAM(argc);
     UNUSED_PARAM(argv);
     
-    context = JSContextCreate(&kJSObjectCallbacksNone, 0);
+    context = JSContextCreate(NULL, NULL);
 
     JSValueRef jsUndefined = JSUndefinedMake();
     JSValueRef jsNull = JSNullMake();
@@ -467,7 +473,7 @@ int main(int argc, char* argv[])
     
     // GDB says jsGlobalValue actually ends up being marked by the stack crawl, so this
     // exercise is a bit academic. Not sure why that happens, or how to avoid it.
-    jsGlobalValue = JSObjectMake(context, &kJSObjectCallbacksNone, 0);
+    jsGlobalValue = JSObjectMake(context, NULL, 0);
     JSGCCollect();
     assert(JSValueIsObject(jsGlobalValue));
     JSGCUnprotect(jsGlobalValue);
@@ -506,7 +512,17 @@ int main(int argc, char* argv[])
     JSCharBufferRelease(goodSyntaxBuf);
     JSCharBufferRelease(badSyntaxBuf);
 
-    JSObjectRef myObject = JSObjectMake(context, &MyObjectCallbacks, 0);
+    JSCharBufferRef arrayBuf = JSCharBufferCreateUTF8("Array");
+    JSValueRef v;
+    assert(JSObjectGetProperty(context, globalObject, arrayBuf, &v));
+    JSObjectRef arrayConstructor = JSValueToObject(context, v);
+    JSCharBufferRelease(arrayBuf);
+    JSValueRef arrayObject;
+    assert(JSObjectCallAsConstructor(context, arrayConstructor, 0, NULL, &arrayObject));
+    assert(JSValueIsInstanceOf(context, arrayObject, arrayConstructor));
+    assert(!JSValueIsInstanceOf(context, JSNullMake(), arrayConstructor));
+    
+    JSObjectRef myObject = JSObjectMake(context, MyObject_class(context), NULL);
     assert(didInitialize);
     JSCharBufferRef myObjectBuf = JSCharBufferCreateUTF8("MyObject");
     JSObjectSetProperty(context, globalObject, myObjectBuf, myObject, kJSPropertyAttributeNone);
@@ -537,13 +553,13 @@ int main(int argc, char* argv[])
     free(script);
 
     // Allocate a few dummies so that at least one will be collected
-    JSObjectMake(context, &MyObjectCallbacks, 0);
-    JSObjectMake(context, &MyObjectCallbacks, 0);
+    JSObjectMake(context, MyObject_class(context), 0);
+    JSObjectMake(context, MyObject_class(context), 0);
     JSGCCollect();
     assert(didFinalize);
 
     JSContextDestroy(context);
-    printf("PASS: All assertions passed.\n");
+    printf("PASS: Program exited normally.\n");
     return 0;
 }
 

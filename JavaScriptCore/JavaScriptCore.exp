@@ -14,6 +14,7 @@ _JSCharBufferGetMaxLengthUTF8
 _JSCharBufferIsEqualUTF8
 _JSCharBufferRelease
 _JSCheckSyntax
+_JSClassCreate
 _JSConstructorMake
 _JSContextClearException
 _JSContextCreate
@@ -25,10 +26,15 @@ _JSContextSetException
 _JSEvaluate
 _JSFunctionMake
 _JSGCCollect
+_JSGCProtect
 _JSGCUnprotect
 _JSNullMake
 _JSNumberMake
+_JSObjectCallAsConstructor
+_JSObjectGetPrivate
+_JSObjectGetProperty
 _JSObjectMake
+_JSObjectSetPrivate
 _JSObjectSetProperty
 _JSPropertyListAdd
 _JSStringMake
@@ -36,7 +42,9 @@ _JSUndefinedMake
 _JSValueCopyStringValue
 _JSValueGetType
 _JSValueIsEqual
+_JSValueIsInstanceOf
 _JSValueIsObject
+_JSValueIsObjectOfClass
 _JSValueIsStrictEqual
 _JSValueIsUndefined
 _JSValueToBoolean

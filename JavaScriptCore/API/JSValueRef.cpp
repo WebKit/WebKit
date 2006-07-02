@@ -24,14 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "JSValueRef.h"
 #include "APICast.h"
-#include <JavaScriptCore/JSType.h>
-#include <JavaScriptCore/internal.h>
-#include <JavaScriptCore/operations.h>
-#include <JavaScriptCore/protect.h>
-#include <JavaScriptCore/ustring.h>
-#include <JavaScriptCore/value.h>
+#include "JSCallbackObject.h"
+#include "JSValueRef.h"
+
+#include <kjs/JSType.h>
+#include <kjs/internal.h>
+#include <kjs/operations.h>
+#include <kjs/protect.h>
+#include <kjs/ustring.h>
+#include <kjs/value.h>
 
 #include <wtf/Assertions.h>
 
@@ -97,6 +99,16 @@ bool JSValueIsObject(JSValueRef value)
     return jsValue->isObject();
 }
 
+bool JSValueIsObjectOfClass(JSValueRef value, JSClassRef jsClass)
+{
+    JSValue* jsValue = toJS(value);
+    
+    if (JSObject* o = jsValue->getObject())
+        if (o->inherits(&JSCallbackObject::info))
+            return static_cast<JSCallbackObject*>(o)->inherits(jsClass);
+    return false;
+}
+
 bool JSValueIsEqual(JSContextRef context, JSValueRef a, JSValueRef b)
 {
     JSLock lock;
@@ -118,6 +130,19 @@ bool JSValueIsStrictEqual(JSContextRef context, JSValueRef a, JSValueRef b)
     JSValue* jsB = toJS(b);
     
     bool result = strictEqual(exec, jsA, jsB);
+    if (exec->hadException())
+        exec->clearException();
+    return result;
+}
+
+bool JSValueIsInstanceOf(JSContextRef context, JSValueRef value, JSObjectRef object)
+{
+    ExecState* exec = toJS(context);
+    JSValue* jsValue = toJS(value);
+    JSObject* jsObject = toJS(object);
+    if (!jsObject->implementsHasInstance())
+        return false;
+    bool result = jsObject->hasInstance(exec, jsValue);
     if (exec->hadException())
         exec->clearException();
     return result;

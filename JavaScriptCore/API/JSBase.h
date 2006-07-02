@@ -30,8 +30,9 @@
 /* JS runtime interface types */
 typedef struct __JSContext* JSContextRef;
 typedef struct __JSCharBuffer* JSCharBufferRef;
+typedef struct __JSClass* JSClassRef;
 typedef struct __JSPropertyList* JSPropertyListRef;
-typedef struct __JSPropertyListEnumerator* JSPropertyListEnumeratorRef;
+typedef struct __JSPropertyEnumerator* JSPropertyEnumeratorRef;
 
 /* Base type of all JS values, and polymorphic functions on them */
 typedef void* JSValueRef;

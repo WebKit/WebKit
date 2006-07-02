@@ -107,6 +107,7 @@ bool JSValueIsString(JSValueRef value);
   @result      true if the value is an object, false otherwise
 */
 bool JSValueIsObject(JSValueRef value);
+bool JSValueIsObjectOfClass(JSValueRef value, JSClassRef jsClass);
 
 // Comparing values
 
@@ -139,7 +140,7 @@ bool JSValueIsStrictEqual(JSContextRef context, JSValueRef a, JSValueRef b);
   @param object  the possible constructor
   @result        true if value is an instance of object
 */
-bool JSValueIsInstanceOf(JSValueRef value, JSObjectRef object);
+bool JSValueIsInstanceOf(JSContextRef context, JSValueRef value, JSObjectRef object);
 
 // Creating values
 

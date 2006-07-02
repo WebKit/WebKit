@@ -1,3 +1,156 @@
+2006-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        - Phase 2 in the JS API.
+        
+        - Added support for specifying static tables of values -- this should
+        obviate the need for using complicated callbacks for most lookups.
+        
+        -  API objects are now created with classes (JSClassRef) -- in order to support
+        static values, and in order to prevent API objects from storing their
+        data inline, and thus falling into the oversized (read: slow and prone to
+        giving Maciej the frowny face) heap.
+        
+        - Added two specialized JSObject subclasses -- JSCallbackFunction and JSCallbackConstructor -- 
+        to allow JSFunctionMake and JSConstructorMake to continue to work with
+        the new class model. Another solution to this problem would be to create
+        a custom class object for each function and constructor you make. This
+        solution is more code but also more efficient.
+        
+        - Substantially beefed up the minidom example to demonstrate and test a
+        lot of these techniques. Its output is still pretty haphazard, though.
+        
+        - Gave the <kjs/ preface to some includes -- I'm told this matters to
+        building on some versions of Linux.
+        
+        - Implemented JSValueIsInstanceOf and JSValueIsObjectOfClass
+        
+        - Removed GetDescription callback. Something in the class datastructure
+        should take care of this.
+
+        * API/JSBase.h:
+        * API/JSCallbackConstructor.cpp: Added.
+        (KJS::):
+        (KJS::JSCallbackConstructor::JSCallbackConstructor):
+        (KJS::JSCallbackConstructor::implementsConstruct):
+        (KJS::JSCallbackConstructor::construct):
+        (KJS::JSCallbackConstructor::setPrivate):
+        (KJS::JSCallbackConstructor::getPrivate):
+        * API/JSCallbackConstructor.h: Added.
+        (KJS::JSCallbackConstructor::classInfo):
+        * API/JSCallbackFunction.cpp: Added.
+        (KJS::):
+        (KJS::JSCallbackFunction::JSCallbackFunction):
+        (KJS::JSCallbackFunction::implementsCall):
+        (KJS::JSCallbackFunction::callAsFunction):
+        (KJS::JSCallbackFunction::setPrivate):
+        (KJS::JSCallbackFunction::getPrivate):
+        * API/JSCallbackFunction.h: Added.
+        (KJS::JSCallbackFunction::classInfo):
+        * API/JSCallbackObject.cpp:
+        (KJS::):
+        (KJS::JSCallbackObject::JSCallbackObject):
+        (KJS::JSCallbackObject::init):
+        (KJS::JSCallbackObject::~JSCallbackObject):
+        (KJS::JSCallbackObject::className):
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::deleteProperty):
+        (KJS::JSCallbackObject::implementsConstruct):
+        (KJS::JSCallbackObject::construct):
+        (KJS::JSCallbackObject::implementsCall):
+        (KJS::JSCallbackObject::callAsFunction):
+        (KJS::JSCallbackObject::getPropertyList):
+        (KJS::JSCallbackObject::toBoolean):
+        (KJS::JSCallbackObject::toNumber):
+        (KJS::JSCallbackObject::toString):
+        (KJS::JSCallbackObject::inherits):
+        (KJS::JSCallbackObject::staticValueGetter):
+        (KJS::JSCallbackObject::staticFunctionGetter):
+        (KJS::JSCallbackObject::callbackGetter):
+        * API/JSCallbackObject.h:
+        * API/JSCharBufferRef.cpp:
+        * API/JSClassRef.cpp: Added.
+        (JSClassCreate):
+        (JSClassRetain):
+        (JSClassRelease):
+        * API/JSClassRef.h: Added.
+        (StaticValueEntry::StaticValueEntry):
+        (StaticFunctionEntry::StaticFunctionEntry):
+        (__JSClass::__JSClass):
+        * API/JSContextRef.cpp:
+        (JSContextCreate):
+        (JSEvaluate):
+        * API/JSContextRef.h:
+        * API/JSNode.c: Added.
+        (JSNodePrototype_appendChild):
+        (JSNodePrototype_removeChild):
+        (JSNodePrototype_replaceChild):
+        (JSNodePrototype_class):
+        (JSNode_getNodeType):
+        (JSNode_getChildNodes):
+        (JSNode_getFirstChild):
+        (JSNode_finalize):
+        (JSNode_class):
+        (JSNode_prototype):
+        (JSNode_new):
+        (JSNode_construct):
+        * API/JSNode.h: Added.
+        * API/JSNodeList.c: Added.
+        (JSNodeListPrototype_item):
+        (JSNodeListPrototype_class):
+        (JSNodeList_length):
+        (JSNodeList_getProperty):
+        (JSNodeList_finalize):
+        (JSNodeList_class):
+        (JSNodeList_prototype):
+        (JSNodeList_new):
+        * API/JSNodeList.h: Added.
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSFunctionMake):
+        (JSConstructorMake):
+        (__JSPropertyEnumerator::__JSPropertyEnumerator):
+        (JSObjectCreatePropertyEnumerator):
+        (JSPropertyEnumeratorGetNext):
+        (JSPropertyEnumeratorRetain):
+        (JSPropertyEnumeratorRelease):
+        * API/JSObjectRef.h:
+        (__JSObjectCallbacks::):
+        * API/JSValueRef.cpp:
+        (JSValueIsObjectOfClass):
+        (JSValueIsInstanceOf):
+        * API/JSValueRef.h:
+        * API/Node.c: Added.
+        (Node_new):
+        (Node_appendChild):
+        (Node_removeChild):
+        (Node_replaceChild):
+        (Node_ref):
+        (Node_deref):
+        * API/Node.h: Added.
+        * API/NodeList.c: Added.
+        (NodeList_new):
+        (NodeList_length):
+        (NodeList_item):
+        (NodeList_ref):
+        (NodeList_deref):
+        * API/NodeList.h: Added.
+        * API/minidom.c:
+        (main):
+        (print):
+        (createStringWithContentsOfFile):
+        * API/minidom.js:
+        * API/testapi.c:
+        (assertEqualsAsCharacters):
+        (MyObject_getProperty):
+        (MyObject_class):
+        (myConstructor_callAsConstructor):
+        (main):
+        * API/testapi.js:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2006-06-26  Kevin Ollivier  <kevino@theolliviers.com>
         
         Reviewed and tweaked by Darin.

@@ -37,7 +37,21 @@
 		141211340A48795800480255 /* minidom.c in Sources */ = {isa = PBXBuildFile; fileRef = 141211020A48780900480255 /* minidom.c */; };
 		142711390A460BBB0080EEEA /* JSBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 142711380A460BBB0080EEEA /* JSBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		143A97E60A4A06E200456B66 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
+		1440057F0A5335640005F061 /* JSNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 1440F6420A4F8B6A0005F061 /* JSNode.c */; };
+		144005CB0A5338D10005F061 /* JSNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440F6410A4F8B6A0005F061 /* JSNode.h */; };
+		144005CC0A5338F80005F061 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440051F0A531D3B0005F061 /* Node.h */; };
+		1440063F0A53598A0005F061 /* Node.c in Sources */ = {isa = PBXBuildFile; fileRef = 144005200A531D3B0005F061 /* Node.c */; };
+		1440074A0A536CC20005F061 /* NodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 144007480A536CC20005F061 /* NodeList.h */; };
+		1440074B0A536CC20005F061 /* NodeList.c in Sources */ = {isa = PBXBuildFile; fileRef = 144007490A536CC20005F061 /* NodeList.c */; };
+		144007570A5370D20005F061 /* JSNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 144007550A5370D20005F061 /* JSNodeList.h */; };
+		144007580A5370D20005F061 /* JSNodeList.c in Sources */ = {isa = PBXBuildFile; fileRef = 144007560A5370D20005F061 /* JSNodeList.c */; };
 		1440F6100A4F85670005F061 /* testapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2D0A3E91F600BAF59C /* testapi.c */; };
+		1440F8910A508B100005F061 /* JSCallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440F88F0A508B100005F061 /* JSCallbackFunction.h */; };
+		1440F8920A508B100005F061 /* JSCallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440F8900A508B100005F061 /* JSCallbackFunction.cpp */; };
+		1440F8AE0A508D200005F061 /* JSCallbackConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440F8AC0A508D200005F061 /* JSCallbackConstructor.h */; };
+		1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440F8AD0A508D200005F061 /* JSCallbackConstructor.cpp */; };
+		1440FCE30A51E46B0005F061 /* JSClassRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440FCE10A51E46B0005F061 /* JSClassRef.h */; };
+		1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440FCE20A51E46B0005F061 /* JSClassRef.cpp */; };
 		14760864099C633800437128 /* JSImmediate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14760863099C633800437128 /* JSImmediate.cpp */; };
 		1482B6EB0A4300B300517CFC /* JSValueRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B6EA0A4300B300517CFC /* JSValueRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1482B74D0A43032800517CFC /* JSCharBufferRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B74B0A43032800517CFC /* JSCharBufferRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -51,6 +65,7 @@
 		14ABB455099C2A0F00E2A24F /* JSType.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABB454099C2A0F00E2A24F /* JSType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14ABDF5F0A437FEF00ECCA01 /* JSCallbackObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABDF5D0A437FEF00ECCA01 /* JSCallbackObject.h */; };
 		14ABDF600A437FEF00ECCA01 /* JSCallbackObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14ABDF5E0A437FEF00ECCA01 /* JSCallbackObject.cpp */; };
+		14B8EC720A5652090062BE54 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
 		14BD534C0A3E0AEA00BAF59C /* SavedBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD534A0A3E0AEA00BAF59C /* SavedBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14BD53F50A3E12D800BAF59C /* ExecState.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD53F30A3E12D800BAF59C /* ExecState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14BD53F60A3E12D800BAF59C /* ExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD53F40A3E12D800BAF59C /* ExecState.cpp */; };
@@ -253,6 +268,23 @@
 		E195679909E7CF1200B89D13 /* UnicodeCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679509E7CF1200B89D13 /* UnicodeCategory.h */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildStyle section */
+		14C137130A560E70006CA9AF /* Development */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Development;
+		};
+		14C137140A560E70006CA9AF /* Deployment */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Deployment;
+		};
+/* End PBXBuildStyle section */
+
 /* Begin PBXContainerItemProxy section */
 		141211350A48796100480255 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -324,6 +356,20 @@
 		1412110D0A48788700480255 /* minidom.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = minidom.js; sourceTree = "<group>"; };
 		141211200A48793C00480255 /* minidom */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = minidom; sourceTree = BUILT_PRODUCTS_DIR; };
 		142711380A460BBB0080EEEA /* JSBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBase.h; sourceTree = "<group>"; };
+		1440051F0A531D3B0005F061 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
+		144005200A531D3B0005F061 /* Node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Node.c; sourceTree = "<group>"; };
+		144007480A536CC20005F061 /* NodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeList.h; sourceTree = "<group>"; };
+		144007490A536CC20005F061 /* NodeList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NodeList.c; sourceTree = "<group>"; };
+		144007550A5370D20005F061 /* JSNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNodeList.h; sourceTree = "<group>"; };
+		144007560A5370D20005F061 /* JSNodeList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = JSNodeList.c; sourceTree = "<group>"; };
+		1440F6410A4F8B6A0005F061 /* JSNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNode.h; sourceTree = "<group>"; };
+		1440F6420A4F8B6A0005F061 /* JSNode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = JSNode.c; sourceTree = "<group>"; };
+		1440F88F0A508B100005F061 /* JSCallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackFunction.h; sourceTree = "<group>"; };
+		1440F8900A508B100005F061 /* JSCallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackFunction.cpp; sourceTree = "<group>"; };
+		1440F8AC0A508D200005F061 /* JSCallbackConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackConstructor.h; sourceTree = "<group>"; };
+		1440F8AD0A508D200005F061 /* JSCallbackConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackConstructor.cpp; sourceTree = "<group>"; };
+		1440FCE10A51E46B0005F061 /* JSClassRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSClassRef.h; sourceTree = "<group>"; };
+		1440FCE20A51E46B0005F061 /* JSClassRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClassRef.cpp; sourceTree = "<group>"; };
 		14760863099C633800437128 /* JSImmediate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImmediate.cpp; sourceTree = "<group>"; };
 		1482B6EA0A4300B300517CFC /* JSValueRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValueRef.h; sourceTree = "<group>"; };
 		1482B74B0A43032800517CFC /* JSCharBufferRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCharBufferRef.h; sourceTree = "<group>"; };
@@ -337,6 +383,7 @@
 		14ABB454099C2A0F00E2A24F /* JSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSType.h; sourceTree = "<group>"; };
 		14ABDF5D0A437FEF00ECCA01 /* JSCallbackObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObject.h; sourceTree = "<group>"; };
 		14ABDF5E0A437FEF00ECCA01 /* JSCallbackObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackObject.cpp; sourceTree = "<group>"; };
+		14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.exp; sourceTree = "<group>"; };
 		14BD534A0A3E0AEA00BAF59C /* SavedBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SavedBuiltins.h; sourceTree = "<group>"; };
 		14BD53F30A3E12D800BAF59C /* ExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecState.h; sourceTree = "<group>"; };
 		14BD53F40A3E12D800BAF59C /* ExecState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecState.cpp; sourceTree = "<group>"; };
@@ -349,7 +396,7 @@
 		14D857740A4696C80032146C /* testapi.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = testapi.js; sourceTree = "<group>"; };
 		14F137580A3A727E00F26F90 /* Context.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Context.cpp; sourceTree = "<group>"; };
 		14F137820A3A765B00F26F90 /* context.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = context.h; sourceTree = "<group>"; };
-		45E12D8806A49B0F00E9DF84 /* testkjs.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; path = testkjs.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		45E12D8806A49B0F00E9DF84 /* testkjs.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; name = testkjs.cpp; path = ../kjs/testkjs.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		5114F47B05E4426200D1BBBD /* runtime_root.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime_root.cpp; path = bindings/runtime_root.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		5114F47C05E4426200D1BBBD /* runtime_root.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = runtime_root.h; path = bindings/runtime_root.h; sourceTree = "<group>"; tabWidth = 8; };
 		511B0870056468730080E486 /* runtime.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = runtime.h; path = bindings/runtime.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -553,6 +600,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14B8EC720A5652090062BE54 /* CoreFoundation.framework in Frameworks */,
 				141211310A48794D00480255 /* JavaScriptCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -611,6 +659,8 @@
 			isa = PBXGroup;
 			children = (
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
+				14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */,
+				141211000A48772600480255 /* tests */,
 				1432EBD70A34CAD400717B9F /* API */,
 				65417200039E01BA0058BFEB /* kjs */,
 				65162EF108E6A21C007556CD /* wtf */,
@@ -640,12 +690,13 @@
 		141211000A48772600480255 /* tests */ = {
 			isa = PBXGroup;
 			children = (
+				144005170A531CB50005F061 /* minidom */,
 				14BD5A2D0A3E91F600BAF59C /* testapi.c */,
 				14D857740A4696C80032146C /* testapi.js */,
-				141211020A48780900480255 /* minidom.c */,
-				1412110D0A48788700480255 /* minidom.js */,
+				45E12D8806A49B0F00E9DF84 /* testkjs.cpp */,
 			);
 			name = tests;
+			path = API;
 			sourceTree = "<group>";
 		};
 		1432EBD70A34CAD400717B9F /* API */ = {
@@ -654,19 +705,41 @@
 				1482B78A0A4305AB00517CFC /* APICast.h */,
 				14BD5A2F0A3E91F600BAF59C /* JavaScriptCore.h */,
 				142711380A460BBB0080EEEA /* JSBase.h */,
+				1440F8AD0A508D200005F061 /* JSCallbackConstructor.cpp */,
+				1440F8AC0A508D200005F061 /* JSCallbackConstructor.h */,
+				1440F8900A508B100005F061 /* JSCallbackFunction.cpp */,
+				1440F88F0A508B100005F061 /* JSCallbackFunction.h */,
 				14ABDF5E0A437FEF00ECCA01 /* JSCallbackObject.cpp */,
 				14ABDF5D0A437FEF00ECCA01 /* JSCallbackObject.h */,
 				1482B74C0A43032800517CFC /* JSCharBufferRef.cpp */,
 				1482B74B0A43032800517CFC /* JSCharBufferRef.h */,
+				1440FCE20A51E46B0005F061 /* JSClassRef.cpp */,
+				1440FCE10A51E46B0005F061 /* JSClassRef.h */,
 				14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */,
 				14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */,
 				1482B7E20A43076000517CFC /* JSObjectRef.cpp */,
 				1482B7E10A43076000517CFC /* JSObjectRef.h */,
 				14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */,
 				1482B6EA0A4300B300517CFC /* JSValueRef.h */,
-				141211000A48772600480255 /* tests */,
 			);
 			path = API;
+			sourceTree = "<group>";
+		};
+		144005170A531CB50005F061 /* minidom */ = {
+			isa = PBXGroup;
+			children = (
+				1440F6420A4F8B6A0005F061 /* JSNode.c */,
+				1440F6410A4F8B6A0005F061 /* JSNode.h */,
+				144007560A5370D20005F061 /* JSNodeList.c */,
+				144007550A5370D20005F061 /* JSNodeList.h */,
+				141211020A48780900480255 /* minidom.c */,
+				1412110D0A48788700480255 /* minidom.js */,
+				144005200A531D3B0005F061 /* Node.c */,
+				1440051F0A531D3B0005F061 /* Node.h */,
+				144007490A536CC20005F061 /* NodeList.c */,
+				144007480A536CC20005F061 /* NodeList.h */,
+			);
+			name = minidom;
 			sourceTree = "<group>";
 		};
 		51856D950562EE9C008B9D83 /* bindings */ = {
@@ -862,7 +935,6 @@
 				9374D3A7038D9D74008635CE /* scope_chain.h */,
 				F692A87F0255597D01FF60F7 /* string_object.cpp */,
 				F692A8800255597D01FF60F7 /* string_object.h */,
-				45E12D8806A49B0F00E9DF84 /* testkjs.cpp */,
 				F692A8840255597D01FF60F7 /* types.h */,
 				F692A8850255597D01FF60F7 /* ustring.cpp */,
 				F692A8860255597D01FF60F7 /* ustring.h */,
@@ -937,6 +1009,17 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		144005C70A5338C60005F061 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				144005CB0A5338D10005F061 /* JSNode.h in Headers */,
+				144005CC0A5338F80005F061 /* Node.h in Headers */,
+				1440074A0A536CC20005F061 /* NodeList.h in Headers */,
+				144007570A5370D20005F061 /* JSNodeList.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		932F5B3F0822A1C700736975 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1064,6 +1147,9 @@
 				1482B7E30A43076000517CFC /* JSObjectRef.h in Headers */,
 				14ABDF5F0A437FEF00ECCA01 /* JSCallbackObject.h in Headers */,
 				142711390A460BBB0080EEEA /* JSBase.h in Headers */,
+				1440F8910A508B100005F061 /* JSCallbackFunction.h in Headers */,
+				1440F8AE0A508D200005F061 /* JSCallbackConstructor.h in Headers */,
+				1440FCE30A51E46B0005F061 /* JSClassRef.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1075,7 +1161,9 @@
 			buildConfigurationList = 141211390A48798400480255 /* Build configuration list for PBXNativeTarget "minidom" */;
 			buildPhases = (
 				1412111D0A48793C00480255 /* Sources */,
+				1440025E0A52563F0005F061 /* ShellScript */,
 				1412111E0A48793C00480255 /* Frameworks */,
+				144005C70A5338C60005F061 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -1166,6 +1254,12 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C277108902AFE008A9EFC /* Build configuration list for PBXProject "JavaScriptCore" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				14C137130A560E70006CA9AF /* Development */,
+				14C137140A560E70006CA9AF /* Deployment */,
+			);
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* JavaScriptCore */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -1183,6 +1277,19 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1440025E0A52563F0005F061 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"${SRCROOT}/API/minidom.js\" \"${BUILT_PRODUCTS_DIR}\"";
+		};
 		14D857B50A469C100032146C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1231,7 +1338,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1440063F0A53598A0005F061 /* Node.c in Sources */,
+				1440057F0A5335640005F061 /* JSNode.c in Sources */,
 				141211340A48795800480255 /* minidom.c in Sources */,
+				1440074B0A536CC20005F061 /* NodeList.c in Sources */,
+				144007580A5370D20005F061 /* JSNodeList.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1329,6 +1440,9 @@
 				1482B74E0A43032800517CFC /* JSCharBufferRef.cpp in Sources */,
 				1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */,
 				14ABDF600A437FEF00ECCA01 /* JSCallbackObject.cpp in Sources */,
+				1440F8920A508B100005F061 /* JSCallbackFunction.cpp in Sources */,
+				1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */,
+				1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1484,7 +1598,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_DEFINES = "";
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = stabs;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = JavaScriptCore.exp;

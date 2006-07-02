@@ -27,12 +27,12 @@
 #include "APICast.h"
 #include "JSCharBufferRef.h"
 
-#include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/JSType.h>
-#include <JavaScriptCore/internal.h>
-#include <JavaScriptCore/operations.h>
-#include <JavaScriptCore/ustring.h>
-#include <JavaScriptCore/value.h>
+#include <kjs/JSLock.h>
+#include <kjs/JSType.h>
+#include <kjs/internal.h>
+#include <kjs/operations.h>
+#include <kjs/ustring.h>
+#include <kjs/value.h>
 
 using namespace KJS;
 

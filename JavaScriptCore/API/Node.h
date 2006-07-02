@@ -24,32 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSContextRef_h
-#define JSContextRef_h
+#ifndef Node_h
+#define Node_h
 
-#include "JSObjectRef.h"
-#include "JSValueRef.h"
+typedef struct __Node Node;
+typedef struct __NodeLink NodeLink;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+struct __NodeLink {
+    Node* node;
+    NodeLink* prev;
+};
 
-JSContextRef JSContextCreate(JSClassRef globalObjectClass, JSObjectRef globalObjectPrototype);
-void JSContextDestroy(JSContextRef context);
+struct __Node {
+    unsigned refCount;
+    const char* nodeType;
+    NodeLink* childNodesTail;
+};
 
-JSObjectRef JSContextGetGlobalObject(JSContextRef context);
+extern Node* Node_new(void);
+extern void Node_ref(Node* node);
+extern void Node_deref(Node* node);
+extern void Node_appendChild(Node* node, Node* child);
+extern void Node_removeChild(Node* node, Node* child);
+extern void Node_replaceChild(Node* node, Node* newChild, Node* oldChild);
 
-/* FIXME: These probably aren't useful. The exception is sometimes set
-   as a throw completion, other times as a value in the exec state.
-   There's no unified notion of the interpreter's "exception state."
- */
-bool JSContextHasException(JSContextRef context);
-JSValueRef JSContextGetException(JSContextRef context);
-void JSContextClearException(JSContextRef context);
-void JSContextSetException(JSContextRef context, JSValueRef value);
-    
-#ifdef __cplusplus
-}
-#endif
-        
-#endif // JSContextRef_h
+#endif // Node_h

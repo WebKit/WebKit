@@ -33,7 +33,7 @@ function shouldBe(a, b)
         evalA = e;
     }
     
-    if (evalA == b || isNaN(evalA) && isNaN(b))
+    if (evalA == b || isNaN(evalA) && typeof evalA == 'number' && isNaN(b) && typeof b == 'number')
         print("PASS: " + a + " should be " + b + " and is.", "green");
     else
         print("__FAIL__: " + a + " should be " + b + " but instead is " + evalA + ".", "red");
@@ -74,7 +74,7 @@ shouldBe("MyObject()", undefined);
 shouldBe("typeof new MyObject()", "object");
 shouldBe("MyObject ? 1 : 0", 0); // toBoolean
 shouldBe("+MyObject", 1); // toNumber
-shouldBe("(MyObject + '').indexOf('MyObject') != -1", true); // toString
+shouldBe("(MyObject.toString())", "[object CallbackObject]"); // toString
 shouldBe("MyObject - 0", NaN); // toPrimitive
 
 shouldBe("typeof MyConstructor", "object");

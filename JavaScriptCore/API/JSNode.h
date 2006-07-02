@@ -24,32 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSContextRef_h
-#define JSContextRef_h
+#ifndef JSNode_h
+#define JSNode_h
 
-#include "JSObjectRef.h"
-#include "JSValueRef.h"
+#include "JavaScriptCore.h"
+#include "Node.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+extern JSObjectRef JSNode_new(JSContextRef context, Node* node);
+extern JSObjectRef JSNode_construct(JSContextRef context, JSObjectRef object, size_t argc, JSValueRef argv[]);
 
-JSContextRef JSContextCreate(JSClassRef globalObjectClass, JSObjectRef globalObjectPrototype);
-void JSContextDestroy(JSContextRef context);
-
-JSObjectRef JSContextGetGlobalObject(JSContextRef context);
-
-/* FIXME: These probably aren't useful. The exception is sometimes set
-   as a throw completion, other times as a value in the exec state.
-   There's no unified notion of the interpreter's "exception state."
- */
-bool JSContextHasException(JSContextRef context);
-JSValueRef JSContextGetException(JSContextRef context);
-void JSContextClearException(JSContextRef context);
-void JSContextSetException(JSContextRef context, JSValueRef value);
-    
-#ifdef __cplusplus
-}
-#endif
-        
-#endif // JSContextRef_h
+#endif // JSNode_h

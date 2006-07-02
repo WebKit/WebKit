@@ -28,6 +28,7 @@
 #define JSObjectRef_h
 
 #include "JSBase.h"
+#include "JSValueRef.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,14 +48,11 @@ typedef void
 typedef void            
 (*JSFinalizeCallback)           (JSObjectRef object);
 
-typedef JSCharBufferRef 
-(*JSCopyDescriptionCallback)    (JSObjectRef object);
-
 typedef bool
 (*JSHasPropertyCallback)        (JSObjectRef object, JSCharBufferRef propertyName);
 
 typedef bool
-(*JSGetPropertyCallback)        (JSObjectRef object, JSCharBufferRef propertyName, JSValueRef* returnValue);
+(*JSGetPropertyCallback)        (JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName, JSValueRef* returnValue);
 
 typedef bool
 (*JSSetPropertyCallback)        (JSObjectRef object, JSCharBufferRef propertyName, JSValueRef value);
@@ -76,10 +74,8 @@ typedef bool
 
 typedef struct __JSObjectCallbacks {
     int                         version; // current (and only) version is 0
-    struct __JSObjectCallbacks* parentCallbacks; // pass NULL for the default object callbacks
     JSInitializeCallback        initialize;
     JSFinalizeCallback          finalize;
-    JSCopyDescriptionCallback   copyDescription;
     JSHasPropertyCallback       hasProperty;
     JSGetPropertyCallback       getProperty;
     JSSetPropertyCallback       setProperty;
@@ -92,8 +88,25 @@ typedef struct __JSObjectCallbacks {
 
 extern const JSObjectCallbacks kJSObjectCallbacksNone;
 
+typedef struct {
+    const char* const name; // FIXME: convert UTF8
+    JSGetPropertyCallback getProperty;
+    JSSetPropertyCallback setProperty;
+    JSPropertyAttributes attributes;
+} JSStaticValue;
+
+typedef struct {
+    const char* const name; // FIXME: convert UTF8
+    JSCallAsFunctionCallback callAsFunction;
+    JSPropertyAttributes attributes;
+} JSStaticFunction;
+
+JSClassRef JSClassCreate(JSContextRef context, JSStaticValue* staticValues, JSStaticFunction* staticFunctions, const JSObjectCallbacks* callbacks, JSClassRef parentClass);
+void JSClassRelease(JSClassRef jsClass);
+JSClassRef JSClassRetain(JSClassRef jsClass);
+
 // pass NULL as prototype to get the built-in object prototype
-JSObjectRef JSObjectMake(JSContextRef context, const JSObjectCallbacks* callbacks, JSObjectRef prototype);
+JSObjectRef JSObjectMake(JSContextRef context, JSClassRef jsClass, JSObjectRef prototype);
 
 // Will be assigned the built-in function prototype
 JSObjectRef JSFunctionMake(JSContextRef context, JSCallAsFunctionCallback callback);
@@ -119,10 +132,10 @@ bool JSObjectIsConstructor(JSObjectRef object);
 bool JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, size_t argc, JSValueRef argv[], JSValueRef* returnValue);
 
 // Used for enumerating the names of an object's properties like a for...in loop would
-JSPropertyListEnumeratorRef JSObjectCreatePropertyEnumerator(JSContextRef context, JSObjectRef object);
-JSPropertyListEnumeratorRef JSPropertyEnumeratorRetain(JSPropertyListEnumeratorRef enumerator);
-void JSPropertyEnumeratorRelease(JSPropertyListEnumeratorRef enumerator);
-JSCharBufferRef JSPropertyEnumeratorGetNext(JSContextRef context, JSPropertyListEnumeratorRef enumerator);
+JSPropertyEnumeratorRef JSObjectCreatePropertyEnumerator(JSContextRef context, JSObjectRef object);
+JSPropertyEnumeratorRef JSPropertyEnumeratorRetain(JSPropertyEnumeratorRef enumerator);
+void JSPropertyEnumeratorRelease(JSPropertyEnumeratorRef enumerator);
+JSCharBufferRef JSPropertyEnumeratorGetNext(JSContextRef context, JSPropertyEnumeratorRef enumerator);
 
 // Used for adding property names to a for...in enumeration
 void JSPropertyListAdd(JSPropertyListRef propertyList, JSObjectRef thisObject, JSCharBufferRef propertyName);

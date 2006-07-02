@@ -25,7 +25,7 @@
  */
 
 // For browser-based testing
-if (window) {
+if (typeof window != 'undefined') {
     /* 
     The methods and constructors below approximate what that the native host should provide
 
@@ -59,7 +59,7 @@ if (window) {
         });
     }
 
-    Node.prototype.tag = "Node";
+    Node.prototype.nodeType = "Node";
 
     Node.prototype.appendChild = function(child) {
         this.childNodes.push(child);
@@ -73,14 +73,14 @@ if (window) {
         }
 
         printSpaces(numSpaces);
-        print('<' + this.tag + '>' + '\n');
+        print('<' + this.nodeType + '>' + '\n');
         
         var childNodesLength = this.childNodes.length;
         for (var i = 0; i < childNodesLength; i++) //>
             this.childNodes[i].serialize(numSpaces + 4);
         
         printSpaces(numSpaces);
-        print('</' + this.tag + '>\n');
+        print('</' + this.nodeType + '>\n');
     }
 
     TextNode = function(text)
@@ -90,7 +90,7 @@ if (window) {
 
     TextNode.prototype = new Node();
     
-    TextNode.prototype.tag = "Text";
+    TextNode.prototype.nodeType = "Text";
     
     TextNode.prototype.serialize = function(numSpaces) {
         for (var i = 0; i < numSpaces; i++) // >
@@ -104,7 +104,7 @@ if (window) {
     
     Element.prototype = new Node();
     
-    Element.prototype.tag = "Element";
+    Element.prototype.nodeType = "Element";
 
     RootElement = function()
     {
@@ -112,7 +112,7 @@ if (window) {
     
     RootElement.prototype = new Element();
 
-    RootElement.prototype.tag = "Root";
+    RootElement.prototype.nodeType = "Root";
     
     HeroElement = function()
     {
@@ -120,7 +120,7 @@ if (window) {
     
     HeroElement.prototype = new Element();
 
-    HeroElement.prototype.tag = "Hero";
+    HeroElement.prototype.nodeType = "Hero";
 
     VillainElement = function()
     {
@@ -128,7 +128,7 @@ if (window) {
     
     VillainElement.prototype = new Element();
 
-    VillainElement.prototype.tag = "Villain";
+    VillainElement.prototype.nodeType = "Villain";
 
     NameElement = function()
     {
@@ -136,7 +136,7 @@ if (window) {
     
     NameElement.prototype = new Element();
 
-    NameElement.prototype.tag = "Name";
+    NameElement.prototype.nodeType = "Name";
 
     WeaponElement = function()
     {
@@ -144,7 +144,7 @@ if (window) {
     
     WeaponElement.prototype = new Element();
 
-    WeaponElement.prototype.tag = "Weapon";
+    WeaponElement.prototype.nodeType = "Weapon";
 
     Document = function()
     {
@@ -167,12 +167,68 @@ if (window) {
 
 function test()
 {
+    print("Node is " + Node);
+    for (var p in Node)
+        print(p + ": " + Node[p]);
+    
+    node = new Node();
+    print("node is " + node);
+    for (var p in node)
+        print(p + ": " + node[p]);
+
+    child1 = new Node();
+    child2 = new Node();
+    child3 = new Node();
+    
+    node.appendChild(child1);
+    node.appendChild(child2);
+
+    for (var i = 0; i < node.childNodes.length + 1; i++) {
+        print("item " + i + ": " + node.childNodes.item(i));
+    }
+    
+    for (var i = 0; i < node.childNodes.length + 1; i++) {
+        print(i + ": " + node.childNodes[i]);
+    }
+
+    node.removeChild(child1);
+    node.replaceChild(child3, child2);
+    
+    for (var i = 0; i < node.childNodes.length + 1; i++) {
+        print("item " + i + ": " + node.childNodes.item(i));
+    }
+
+    for (var i = 0; i < node.childNodes.length + 1; i++) {
+        print(i + ": " + node.childNodes[i]);
+    }
+
+    try {
+        node.appendChild(null);
+    } catch(e) {
+        print("caught: " + e);
+    }
+    
+    try {
+        var o = new Object();
+        o.appendChild = node.appendChild;
+        o.appendChild(node);
+    } catch(e) {
+        print("caught: " + e);
+    }
+    
+    try {
+        node.appendChild();
+    } catch(e) {
+        print("caught: " + e);
+    }
+
+    /*
     var element, name, weapon;
     
     var document = new Document();
     document.appendChild(document.createElement('Root'));
 
-    /* Tank Girl */
+    // Tank Girl
     element = document.createElement('Hero');
 
     name = document.createElement('Name');
@@ -194,7 +250,7 @@ function test()
     document.firstChild.appendChild(element);
 
 
-    /* Skeletor */
+    // Skeletor
     element = document.createElement('Villain');
 
     name = document.createElement('Name');
@@ -211,6 +267,9 @@ function test()
     
     document.firstChild.appendChild(element);
 
-    /* Serialize */
+    // Serialize
     document.serialize();
+    */
 }
+
+test();

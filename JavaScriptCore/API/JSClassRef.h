@@ -24,32 +24,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSContextRef_h
-#define JSContextRef_h
+#ifndef JSClassRef_h
+#define JSClassRef_h
 
 #include "JSObjectRef.h"
-#include "JSValueRef.h"
+#include "HashMap.h"
+#include "ustring.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-JSContextRef JSContextCreate(JSClassRef globalObjectClass, JSObjectRef globalObjectPrototype);
-void JSContextDestroy(JSContextRef context);
-
-JSObjectRef JSContextGetGlobalObject(JSContextRef context);
-
-/* FIXME: These probably aren't useful. The exception is sometimes set
-   as a throw completion, other times as a value in the exec state.
-   There's no unified notion of the interpreter's "exception state."
- */
-bool JSContextHasException(JSContextRef context);
-JSValueRef JSContextGetException(JSContextRef context);
-void JSContextClearException(JSContextRef context);
-void JSContextSetException(JSContextRef context, JSValueRef value);
+struct StaticValueEntry {
+    StaticValueEntry(JSGetPropertyCallback _getProperty, JSSetPropertyCallback _setProperty, JSPropertyAttributes _attributes)
+        : getProperty(_getProperty), setProperty(_setProperty), attributes(_attributes)
+    {
+    }
     
-#ifdef __cplusplus
-}
-#endif
-        
-#endif // JSContextRef_h
+    JSGetPropertyCallback getProperty;
+    JSSetPropertyCallback setProperty;
+    JSPropertyAttributes attributes;
+};
+
+struct StaticFunctionEntry {
+    StaticFunctionEntry(JSCallAsFunctionCallback _callAsFunction, JSPropertyAttributes _attributes)
+    : callAsFunction(_callAsFunction), attributes(_attributes)
+    {
+    }
+
+    JSCallAsFunctionCallback callAsFunction;
+    JSPropertyAttributes attributes;
+};
+
+struct __JSClass {
+    __JSClass() : refCount(0), staticValues(0), staticFunctions(0)
+    {
+    }
+    
+    unsigned refCount;
+    
+    typedef HashMap<RefPtr<KJS::UString::Rep>, StaticValueEntry*> StaticValuesTable;
+    StaticValuesTable* staticValues;
+
+    typedef HashMap<RefPtr<KJS::UString::Rep>, StaticFunctionEntry*> StaticFunctionsTable;
+    StaticFunctionsTable* staticFunctions;
+
+    KJS::UString name; // FIXME: Not used yet
+    JSObjectCallbacks callbacks;
+    __JSClass* parent;
+};
+
+#endif // JSClassRef_h
