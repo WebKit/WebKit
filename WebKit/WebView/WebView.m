@@ -1,4 +1,4 @@
-/*
+*
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1636,7 +1636,7 @@ NSMutableDictionary *countInvocations;
     if (_private->pluginDatabase && [_private->pluginDatabase isMIMETypeRegistered:MIMEType])
         return YES;
     
-    return nil;
+    return NO;
 }
 
 + (BOOL)canShowMIMETypeAsHTML:(NSString *)MIMEType

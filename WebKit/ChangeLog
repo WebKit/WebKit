@@ -1,3 +1,11 @@
+2006-07-01  Tim Omernick  <timo@apple.com>
+
+        Reviewed by NOBODY (build fix)
+
+        * WebView/WebView.m:
+        (-[WebView _isMIMETypeRegisteredAsPlugin:]):
+        Changed nil to NO (typo).
+
 === Safari-521.14 ===
 
 2006-06-30  Timothy Hatcher  <timothy@apple.com>
