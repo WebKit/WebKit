@@ -1,3 +1,12 @@
+2006-07-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adele.
+        
+        - Fixed <rdar://problem/4611197> REGRESSION: Liveconnect with Java test 
+        fails at http://www-sor.inria.fr/~dedieu/notes/liveconnect/simple_example.html
+
+        * JavaScriptCore.exp: Export symbols used by liveconnect
+
 2006-06-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
