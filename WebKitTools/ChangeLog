@@ -2,6 +2,20 @@
 
         Reviewed by Alexy Proskuryakov.
 
+        Bug 9692: Warning about Safari extensions on every launch is obnoxious
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9692
+
+        * WebKitLauncher/WebKitNightlyEnabler.m:
+        (myApplicationWillTerminate): Note that we are exiting cleanly.
+        (cleanUpAfterOurselves): Install bundle load tracking only if we failed
+         to exit cleanly on our last invocation.  This doesn't play nicely with
+         multiple concurrent instances of WebKit.app so it can be disabled via
+         defaults write com.apple.Safari WKNEShouldMonitorShutdowns -bool NO.
+
+2006-07-02  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Alexy Proskuryakov.
+
         Bug 9654: Refresh Loop when accessing feed URLs
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9654
 

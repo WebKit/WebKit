@@ -37,6 +37,9 @@
 static void cleanUpAfterOurselves(void) __attribute__ ((constructor));
 static void *symbol_lookup(char *symbol);
 
+static NSString *WKNEDidShutDownCleanly = @"WKNEDidShutDownCleanly";
+static NSString *WKNEShouldMonitorShutdowns = @"WKNEShouldMonitorShutdowns";
+
 static bool extensionBundlesWereLoaded = NO;
 static NSSet *extensionPaths = nil;
 
@@ -82,6 +85,13 @@ static void myApplicationWillFinishLaunching(CFNotificationCenterRef center, voi
                                      @"Safari extensions were detected on your system. They are incompatible with nightly builds of WebKit, and may cause crashes or incorrect behavior.  Please disable them if you experience such behavior.", @"Continue", nil, nil);
 }
 
+static void myApplicationWillTerminate(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setBool:YES forKey:WKNEDidShutDownCleanly];
+    [userDefaults synchronize];
+}
+
 void cleanUpAfterOurselves(void)
 {
     char **args = *(char***)_NSGetArgv();
@@ -98,12 +108,28 @@ void cleanUpAfterOurselves(void)
                                                     @"~/Library/Application Enhancers/", @"/Library/Application Enhancers/",
                                                     nil];
 
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myBundleDidLoad,
-                                    myBundleDidLoad, (CFStringRef) NSBundleDidLoadNotification,
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *defaultPrefs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], WKNEDidShutDownCleanly,
+                                                                            [NSNumber numberWithBool:YES], WKNEShouldMonitorShutdowns, nil];
+    [userDefaults registerDefaults:defaultPrefs];
+    if ([userDefaults boolForKey:WKNEShouldMonitorShutdowns] && ![userDefaults boolForKey:WKNEDidShutDownCleanly])
+    {
+        NSLog(@"WebKit failed to shut down cleanly.  Checking for Safari extensions.");
+        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myBundleDidLoad,
+                                        myBundleDidLoad, (CFStringRef) NSBundleDidLoadNotification,
+                                        NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myApplicationWillFinishLaunching,
+                                        myApplicationWillFinishLaunching, (CFStringRef) NSApplicationWillFinishLaunchingNotification,
+                                        NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+    }
+    [userDefaults setBool:NO forKey:WKNEDidShutDownCleanly];
+    [userDefaults synchronize];
+
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myApplicationWillTerminate,
+                                    myApplicationWillTerminate, (CFStringRef) NSApplicationWillTerminateNotification,
                                     NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myApplicationWillFinishLaunching,
-                                    myApplicationWillFinishLaunching, (CFStringRef) NSApplicationWillFinishLaunchingNotification,
-                                    NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+    [pool release];
 }
 
 #if __LP64__
