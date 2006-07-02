@@ -1,3 +1,19 @@
+2006-07-02  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Timothy Hatcher.
+
+        Bug 9689: Nightly builds should warn a user about potential problems when using
+        "Safari extensions"
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9689
+
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+        * WebKitLauncher/WebKitNightlyEnabler.m:
+        (myBundleDidLoad): Keep track of if any bundles that are loaded.
+        (myApplicationWillFinishLaunching):  Notify user if any bundles are loaded.
+        (cleanUpAfterOurselves): Register for NSBundleDidLoadNotification and
+        NSApplicationWillFinishLaunchingNotification notifications so that we can
+        track bundle loads and notify the user at launch completion.
+
 2006-06-30  Mike Emmel  <mike.emmel@gmail.com>
 
         Reviewed by Darin.

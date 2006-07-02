@@ -35,8 +35,52 @@
 #include <string.h>
 
 static void cleanUpAfterOurselves(void) __attribute__ ((constructor));
+static void *symbol_lookup(char *symbol);
 
-void *symbol_lookup(char *symbol);
+static bool extensionBundlesWereLoaded = NO;
+static NSSet *extensionPaths = nil;
+
+static void myBundleDidLoad(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+{
+    // Break out early if we have already detected an extension
+    if (extensionBundlesWereLoaded)
+        return;
+
+    NSBundle *bundle = (NSBundle *)object;
+    NSString *bundlePath = [[bundle bundlePath] stringByAbbreviatingWithTildeInPath];
+    NSString *bundleFileName = [bundlePath lastPathComponent];
+
+    // Explicitly ignore SIMBL.bundle, as its only purpose is to load extensions
+    // on a per-application basis.  It's presence indicates a user has application
+    // extensions, but not that any will be loaded into Safari
+    if ([bundleFileName isEqualToString:@"SIMBL.bundle"])
+        return;
+
+    // If the bundle lives inside a known extension path, flag it as an extension
+    NSEnumerator *e = [extensionPaths objectEnumerator];
+    NSString *path = nil;
+    while (path = [e nextObject]) {
+        if ([bundlePath length] < [path length])
+            continue;
+
+        if ([[bundlePath substringToIndex:[path length]] isEqualToString:path]) {
+            extensionBundlesWereLoaded = YES;
+            break;
+        }
+    }
+}
+
+static void myApplicationWillFinishLaunching(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+{
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), &myApplicationWillFinishLaunching, NULL, NULL);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), &myBundleDidLoad, NULL, NULL);
+    [extensionPaths release];
+    extensionPaths = nil;
+
+    if (extensionBundlesWereLoaded)
+        NSRunInformationalAlertPanel(@"Safari extensions detected",
+                                     @"Safari extensions were detected on your system. They are incompatible with nightly builds of WebKit, and may cause crashes or incorrect behavior.  Please disable them if you experience such behavior.", @"Continue", nil, nil);
+}
 
 void cleanUpAfterOurselves(void)
 {
@@ -48,6 +92,18 @@ void cleanUpAfterOurselves(void)
     *procPath = procPathBackup;
     unsetenv("DYLD_INSERT_LIBRARIES");
     unsetenv("CFProcessPath");
+
+    extensionPaths = [[NSSet alloc] initWithObjects:@"~/Library/InputManagers/", @"/Library/InputManagers/",
+                                                    @"~/Library/Application Support/SIMBL/Plugins/", @"/Library/Application Support/SIMBL/Plugins/",
+                                                    @"~/Library/Application Enhancers/", @"/Library/Application Enhancers/",
+                                                    nil];
+
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myBundleDidLoad,
+                                    myBundleDidLoad, (CFStringRef) NSBundleDidLoadNotification,
+                                    NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myApplicationWillFinishLaunching,
+                                    myApplicationWillFinishLaunching, (CFStringRef) NSApplicationWillFinishLaunchingNotification,
+                                    NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
 #if __LP64__
