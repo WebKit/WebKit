@@ -1,3 +1,17 @@
+2006-07-02  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Eric.
+
+        Bug 9628: [Drosera] Split Views acting oddly
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9628
+        
+        Only update the last X or Y coordinate if the new
+        size was not constrained. Also adds the resize cursor to
+        the body during the drag incase there is a constrained 
+        over drag off of the resizer element.
+
+        * Drosera/debugger.js:
+
 2006-07-02  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Alexy Proskuryakov.
