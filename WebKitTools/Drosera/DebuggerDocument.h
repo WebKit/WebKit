@@ -41,4 +41,6 @@
 - (IBAction)pause:(id)sender;
 - (IBAction)resume:(id)sender;
 - (IBAction)stepInto:(id)sender;
+- (IBAction)stepOver:(id)sender;
+- (IBAction)stepOut:(id)sender;
 @end

@@ -27,10 +27,13 @@
  */
 
 #import "DebuggerDocument.h"
+#import "DebuggerApplication.h"
 
 static NSString *DebuggerContinueToolbarItem = @"DebuggerContinueToolbarItem";
 static NSString *DebuggerPauseToolbarItem = @"DebuggerPauseToolbarItem";
 static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
+static NSString *DebuggerStepOverToolbarItem = @"DebuggerStepOverToolbarItem";
+static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 @implementation DebuggerDocument
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
@@ -136,6 +139,16 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
     [[webView windowScriptObject] callWebScriptMethod:@"stepInto" withArguments:nil];
 }
 
+- (IBAction)stepOver:(id)sender
+{
+    [[webView windowScriptObject] callWebScriptMethod:@"stepOver" withArguments:nil];
+}
+
+- (IBAction)stepOut:(id)sender
+{
+    [[webView windowScriptObject] callWebScriptMethod:@"stepOut" withArguments:nil];
+}
+
 #pragma mark -
 #pragma mark Window Controller Overrides
 
@@ -150,7 +163,7 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationTerminating:) name:NSApplicationWillTerminateNotification object:nil];
 
-    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"debugger" ofType:@"html" inDirectory:nil];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"debugger" ofType:@"html" inDirectory:nil];
     [[webView mainFrame] loadRequest:[[[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:path]] autorelease]];
 
     NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"debugger"];
@@ -166,8 +179,6 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
     [[webView windowScriptObject] removeWebScriptKey:@"DebuggerDocument"];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:nil];
-    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self name:WebScriptDebugServerQueryReplyNotification object:nil];
-    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self name:WebScriptDebugServerWillUnloadNotification object:nil];
 
     [self switchToServerNamed:nil];
 
@@ -269,6 +280,32 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
         [item setAction:@selector(stepInto:)];
 
         return [item autorelease];
+    } else if ([itemIdentifier isEqualToString:DebuggerStepOverToolbarItem]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+
+        [item setLabel:@"Step Over"];
+        [item setPaletteLabel:@"Step Over"];
+
+        [item setToolTip:@"Step over function call"];
+        [item setImage:[NSImage imageNamed:@"stepOver"]];
+
+        [item setTarget:self];
+        [item setAction:@selector(stepOver:)];
+
+        return [item autorelease];
+    } else if ([itemIdentifier isEqualToString:DebuggerStepOutToolbarItem]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+
+        [item setLabel:@"Step Out"];
+        [item setPaletteLabel:@"Step Over"];
+
+        [item setToolTip:@"Step out of current function"];
+        [item setImage:[NSImage imageNamed:@"stepOut"]];
+
+        [item setTarget:self];
+        [item setAction:@selector(stepOut:)];
+
+        return [item autorelease];
     }
 
     return nil;
@@ -277,23 +314,26 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar
 {
     return [NSArray arrayWithObjects:DebuggerContinueToolbarItem, DebuggerPauseToolbarItem,
-        NSToolbarSeparatorItemIdentifier, DebuggerStepIntoToolbarItem, nil];
+        NSToolbarSeparatorItemIdentifier, DebuggerStepIntoToolbarItem, DebuggerStepOutToolbarItem,
+        DebuggerStepOverToolbarItem, nil];
 }
 
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
 {
-    return [NSArray arrayWithObjects:DebuggerContinueToolbarItem, DebuggerPauseToolbarItem, DebuggerStepIntoToolbarItem,
-        NSToolbarCustomizeToolbarItemIdentifier, NSToolbarFlexibleSpaceItemIdentifier,
-        NSToolbarSpaceItemIdentifier, NSToolbarSeparatorItemIdentifier, nil];
+    return [NSArray arrayWithObjects:DebuggerContinueToolbarItem, DebuggerPauseToolbarItem,
+        DebuggerStepIntoToolbarItem, DebuggerStepOutToolbarItem, DebuggerStepOverToolbarItem, NSToolbarCustomizeToolbarItemIdentifier,
+        NSToolbarFlexibleSpaceItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarSeparatorItemIdentifier, nil];
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)interfaceItem
 {
-    if ([interfaceItem action] == @selector(pause:))
+    SEL action = [interfaceItem action];
+    if (action == @selector(pause:))
         return ![self isPaused];
-    if ([interfaceItem action] == @selector(resume:))
-        return [self isPaused];
-    if ([interfaceItem action] == @selector(stepInto:))
+    if (action == @selector(resume:) ||
+        action == @selector(stepOver:) ||
+        action == @selector(stepOut:) ||
+        action == @selector(stepInto:))
         return [self isPaused];
     return YES;
 }

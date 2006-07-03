@@ -36,6 +36,10 @@ var previousFiles = new Array();
 var nextFiles = new Array();
 var isResizingColumn = false;
 var draggingBreakpoint = null;
+var steppingOut = false;
+var steppingOver = false;
+var steppingStack = 0;
+var pauseOnNextStatement = false;
 
 function sleep(numberMillis) {
     var now = new Date();
@@ -196,12 +200,38 @@ function resume()
         currentStack = null;
     }
 
+    pauseOnNextStatement = false;
+    steppingOut = false;
+    steppingOver = false;
+    steppingStack = 0;
+
     DebuggerDocument.resume();
 }
 
 function stepInto()
 {
+    pauseOnNextStatement = false;
+    steppingOut = false;
+    steppingOver = false;
+    steppingStack = 0;
     DebuggerDocument.stepInto();
+}
+
+function stepOver()
+{
+    pauseOnNextStatement = false;
+    steppingOver = true;
+    steppingStack = 0;
+    DebuggerDocument.resume();
+}
+
+function stepOut()
+{
+    pauseOnNextStatement = false;
+    steppingOver = false;
+    steppingStack = 0;
+    steppingOut = true;
+    DebuggerDocument.resume();
 }
 
 function hasStyleClass(element, className)
@@ -250,14 +280,17 @@ function moveBreakPoint(event)
         var sourcesDocument = document.getElementById("sources").contentDocument;
         sourcesDocument.addEventListener("mousemove", breakpointDrag, true);
         sourcesDocument.addEventListener("mouseup", breakpointDragEnd, true);
+        sourcesDocument.body.style.cursor = "default";
     }
 }
 
 function breakpointDrag(event)
 {
+    var sourcesDocument = document.getElementById("sources").contentDocument;
     if (!draggingBreakpoint) {
         sourcesDocument.removeEventListener("mousemove", breakpointDrag, true);
         sourcesDocument.removeEventListener("mouseup", breakpointDragEnd, true);
+        sourcesDocument.body.style.cursor = null;
         return;
     }
 
@@ -272,7 +305,6 @@ function breakpointDrag(event)
             removeStyleClass(draggingBreakpoint.parentNode, "disabled");
             draggingBreakpoint.started = true;
 
-            var sourcesDocument = document.getElementById("sources").contentDocument;
             var dragImage = sourcesDocument.createElement("img");
             if (draggingBreakpoint.isDisabled)
                 dragImage.src = "breakPointDisabled.tif";
@@ -283,20 +315,20 @@ function breakpointDrag(event)
             dragImage.style.left = x - 12 + "px";
             sourcesDocument.body.appendChild(dragImage);
         } else {
-            var sourcesDocument = document.getElementById("sources").contentDocument;
             var dragImage = sourcesDocument.getElementById("breakpointDrag");
             if (!dragImage) {
                 sourcesDocument.removeEventListener("mousemove", breakpointDrag, true);
                 sourcesDocument.removeEventListener("mouseup", breakpointDragEnd, true);
+                sourcesDocument.body.style.cursor = null;
                 return;
             }
 
             dragImage.style.top = y - 8 + "px";
             dragImage.style.left = x - 12 + "px";
             if (x > 40)
-                dragImage.style.opacity = "0";
+                dragImage.style.visibility = "hidden";
             else
-                dragImage.style.opacity = null;
+                dragImage.style.visibility = null;
         }
 
         draggingBreakpoint.dragLastX = x;
@@ -306,25 +338,25 @@ function breakpointDrag(event)
 
 function breakpointDragEnd(event)
 {
-    var y = event.clientY + window.scrollY;
-    var x = event.clientX + window.scrollX;
     var sourcesDocument = document.getElementById("sources").contentDocument;
     sourcesDocument.removeEventListener("mousemove", breakpointDrag, true);
     sourcesDocument.removeEventListener("mouseup", breakpointDragEnd, true);
+    sourcesDocument.body.style.cursor = null;
 
-    var sourcesDocument = document.getElementById("sources").contentDocument;
     var dragImage = sourcesDocument.getElementById("breakpointDrag");
     if (!dragImage)
         return;
 
     dragImage.parentNode.removeChild(dragImage);
 
+    var x = event.clientX + window.scrollX;
     if (x > 40 || !draggingBreakpoint)
         return;
 
+    var y = event.clientY + window.scrollY;
     var rowHeight = draggingBreakpoint.parentNode.offsetHeight;
     var row = Math.ceil(y / rowHeight);
-    if (!row)
+    if (row <= 0)
         row = 1;
 
     var file = files[currentFile];
@@ -333,6 +365,8 @@ function breakpointDragEnd(event)
         return;
 
     var tr = table.childNodes.item(row - 1);
+    if (!tr)
+        return;
 
     if (draggingBreakpoint.isDisabled)
         addStyleClass(tr, "disabled");
@@ -345,13 +379,11 @@ function breakpointDragEnd(event)
 function totalOffsetTop(element, stop)
 {
     var currentTop = 0;
-    if (element.offsetParent) {
-        while (element.offsetParent) {
-            currentTop += element.offsetTop
-            element = element.offsetParent;
-            if (element == stop)
-                break;
-        }
+    while (element.offsetParent) {
+        currentTop += element.offsetTop
+        element = element.offsetParent;
+        if (element == stop)
+            break;
     }
     return currentTop;
 }
@@ -415,10 +447,10 @@ function syntaxHighlight(code)
             echoChar(cNext);
             for (i += 2; i < code.length; i++) {
                 c = code.charAt(i);
-                if (c == "\n" || c == "\r")
+                if (c == "\n")
                     result += "</span>";
                 echoChar(c);
-                if (c == "\n" || c == "\r")
+                if (c == "\n")
                     result += "<span class=\"comment\">";
                 if (cPrev == "*" && c == "/")
                     break;
@@ -432,7 +464,7 @@ function syntaxHighlight(code)
             echoChar(cNext);
             for (i += 2; i < code.length; i++) {
                 c = code.charAt(i);
-                if (c == "\n" || c == "\r")
+                if (c == "\n")
                     break;
                 echoChar(c);
             }
@@ -565,7 +597,7 @@ function loadFile(fileIndex, manageNavLists)
         files[currentFile].element.style.display = "none";
 
     if (!file.loaded) {
-        file.lines = file.source.split(/[\n\r]/);
+        file.source = file.source.replace(/\r\n|\r/, "\n"); // normalize line endings
 
         var sourcesDocument = document.getElementById("sources").contentDocument;
         var sourcesDiv = sourcesDocument.body;
@@ -577,7 +609,7 @@ function loadFile(fileIndex, manageNavLists)
         var table = sourcesDocument.createElement("table");
         sourceDiv.appendChild(table);
 
-        var lines = syntaxHighlight(file.source).split(/[\n\r]/);
+        var lines = syntaxHighlight(file.source).split("\n");
         for( var i = 0; i < lines.length; i++ ) {
             var tr = sourcesDocument.createElement("tr");
             var td = sourcesDocument.createElement("td");
@@ -589,7 +621,7 @@ function loadFile(fileIndex, manageNavLists)
 
             td = sourcesDocument.createElement("td");
             td.className = "source";
-            td.innerHTML = lines[i];
+            td.innerHTML = (lines[i].length ? lines[i] : "&nbsp;");
             tr.appendChild(td);
             table.appendChild(tr);
         }
@@ -631,7 +663,6 @@ function updateFileSource(source, url, force)
     if (force || file.source.length != source.length || file.source != source) {
         file.source = source;
         file.loaded = false;
-        file.lines = null;
 
         if (file.element) {
             file.element.parentNode.removeChild(file.element);
@@ -672,7 +703,6 @@ function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
     }
 
     var sourceObj = new Object();
-    sourceObj.source = source;
     sourceObj.file = fileIndex;
     sourceObj.baseLineNumber = baseLineNumber;
     file.scripts.push(sourceId);
@@ -695,8 +725,10 @@ function willExecuteStatement(sourceId, line)
     if (!file)
         return;
 
-    if (file.breakpoints[line] == 1)
+    if (pauseOnNextStatement || file.breakpoints[line] == 1 || (steppingOver && !steppingStack)) {
         pause();
+        pauseOnNextStatement = false;
+    }
 
     if (isPaused()) {
         if (currentFile != script.file)
@@ -705,12 +737,15 @@ function willExecuteStatement(sourceId, line)
             removeStyleClass(currentRow, "current");
         if (!file.element)
             return;
-        if (file.element.firstChild.childNodes.length < line)
+        if (line > file.element.firstChild.childNodes.length)
             return;
 
         updateFunctionStack();
 
         currentRow = file.element.firstChild.childNodes.item(line - 1);
+        if (!currentRow)
+            return;
+
         addStyleClass(currentRow, "current");
 
         var sourcesDiv = document.getElementById("sources");
@@ -724,10 +759,22 @@ function willExecuteStatement(sourceId, line)
 
 function didEnterCallFrame(sourceId, line)
 {
+    if (steppingOver || steppingOut)
+        steppingStack++;
     willExecuteStatement(sourceId, line);
 }
 
 function willLeaveCallFrame(sourceId, line)
 {
+    if (line <= 0)
+        resume();
     willExecuteStatement(sourceId, line);
+    if (!steppingStack)
+        steppingOver = false;
+    if (steppingOut && !steppingStack) {
+        steppingOut = false;
+        pauseOnNextStatement = true;
+    }
+    if ((steppingOver || steppingOut) && steppingStack >= 1)
+        steppingStack--;
 }

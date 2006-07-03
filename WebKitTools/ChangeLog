@@ -2,6 +2,31 @@
 
         Reviewed by Eric.
 
+        Bug 9631: [Drosera] Add "Step Over" and "Step Out"
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9631
+        
+        Adds step over and step out. Along with a little code cleanup
+        that was minor enough to piggyback on this fix.
+
+        * Drosera/DebuggerDocument.h:
+        * Drosera/DebuggerDocument.m:
+        (-[DebuggerDocument stepOver:]):
+        (-[DebuggerDocument stepOut:]):
+        (-[DebuggerDocument windowDidLoad]):
+        (-[DebuggerDocument windowWillClose:]):
+        (-[DebuggerDocument toolbar:itemForItemIdentifier:willBeInsertedIntoToolbar:]):
+        (-[DebuggerDocument toolbarDefaultItemIdentifiers:]):
+        (-[DebuggerDocument toolbarAllowedItemIdentifiers:]):
+        (-[DebuggerDocument validateUserInterfaceItem:]):
+        * Drosera/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/debugger.html:
+        * Drosera/debugger.js:
+        * Drosera/viewer.css:
+
+2006-07-02  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Eric.
+
         Bug 9628: [Drosera] Split Views acting oddly
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9628
         

@@ -21,6 +21,7 @@
 		1C4FF94E0A45F5060000D05D /* popUpArrows.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C4FF94D0A45F5060000D05D /* popUpArrows.png */; };
 		1C4FFE5E0A466F5D0000D05D /* programCounterBreakPoint.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1C4FFE5C0A466F5D0000D05D /* programCounterBreakPoint.tif */; };
 		1C4FFE5F0A466F5D0000D05D /* programCounterBreakPointDisabled.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1C4FFE5D0A466F5D0000D05D /* programCounterBreakPointDisabled.tif */; };
+		1C6F83FF0A58E97D004FCD89 /* stepOut.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1C6F83FE0A58E97D004FCD89 /* stepOut.tif */; };
 		1C74F0350A47BF8300FEC632 /* viewer.html in Resources */ = {isa = PBXBuildFile; fileRef = 1C74F0340A47BF8300FEC632 /* viewer.html */; };
 		1C74F04B0A47BFE800FEC632 /* viewer.css in Resources */ = {isa = PBXBuildFile; fileRef = 1C74F03A0A47BFD600FEC632 /* viewer.css */; };
 		1C74F1850A47DEE600FEC632 /* DebuggerApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C74F1840A47DEE600FEC632 /* DebuggerApplication.m */; };
@@ -37,12 +38,10 @@
 		1CC059170A44A210006FE533 /* splitterBar.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1CC058E10A44A210006FE533 /* splitterBar.tif */; };
 		1CC059180A44A210006FE533 /* splitterDimple.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1CC058E20A44A210006FE533 /* splitterDimple.tif */; };
 		1CC0591A0A44A210006FE533 /* continue.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1CC058E40A44A210006FE533 /* continue.tif */; };
-		1CC0591C0A44A210006FE533 /* finishFunction.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1CC058E60A44A210006FE533 /* finishFunction.tif */; };
 		1CC0591D0A44A210006FE533 /* pause.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1CC058E70A44A210006FE533 /* pause.tif */; };
 		1CC0591E0A44A210006FE533 /* run.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1CC058E80A44A210006FE533 /* run.tif */; };
 		1CC0591F0A44A210006FE533 /* step.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1CC058E90A44A210006FE533 /* step.tif */; };
 		1CC059200A44A210006FE533 /* stepOver.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1CC058EA0A44A210006FE533 /* stepOver.tif */; };
-		1CC059210A44A210006FE533 /* stop.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1CC058EB0A44A210006FE533 /* stop.tif */; };
 		1CC059700A44A485006FE533 /* toolbarBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 1CC0596F0A44A485006FE533 /* toolbarBackground.png */; };
 		1CD434B20A4B86F800A007AB /* glossyHeaderPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 1CD434B10A4B86F800A007AB /* glossyHeaderPressed.png */; };
 		1CD8D5690A49041C00E5677B /* launcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CD8D5680A49041C00E5677B /* launcher.m */; };
@@ -82,6 +81,7 @@
 		1C4FF94D0A45F5060000D05D /* popUpArrows.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = popUpArrows.png; sourceTree = "<group>"; };
 		1C4FFE5C0A466F5D0000D05D /* programCounterBreakPoint.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = programCounterBreakPoint.tif; sourceTree = "<group>"; };
 		1C4FFE5D0A466F5D0000D05D /* programCounterBreakPointDisabled.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = programCounterBreakPointDisabled.tif; sourceTree = "<group>"; };
+		1C6F83FE0A58E97D004FCD89 /* stepOut.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = stepOut.tif; sourceTree = "<group>"; };
 		1C74F0340A47BF8300FEC632 /* viewer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = viewer.html; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C74F03A0A47BFD600FEC632 /* viewer.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = viewer.css; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C74F1830A47DEE600FEC632 /* DebuggerApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerApplication.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -197,6 +197,7 @@
 				1CC058E70A44A210006FE533 /* pause.tif */,
 				1CC058E80A44A210006FE533 /* run.tif */,
 				1CC058E90A44A210006FE533 /* step.tif */,
+				1C6F83FE0A58E97D004FCD89 /* stepOut.tif */,
 				1CC058EA0A44A210006FE533 /* stepOver.tif */,
 				1CC058EB0A44A210006FE533 /* stop.tif */,
 				1CC0596F0A44A485006FE533 /* toolbarBackground.png */,
@@ -367,12 +368,10 @@
 				1CC059170A44A210006FE533 /* splitterBar.tif in Resources */,
 				1CC059180A44A210006FE533 /* splitterDimple.tif in Resources */,
 				1CC0591A0A44A210006FE533 /* continue.tif in Resources */,
-				1CC0591C0A44A210006FE533 /* finishFunction.tif in Resources */,
 				1CC0591D0A44A210006FE533 /* pause.tif in Resources */,
 				1CC0591E0A44A210006FE533 /* run.tif in Resources */,
 				1CC0591F0A44A210006FE533 /* step.tif in Resources */,
 				1CC059200A44A210006FE533 /* stepOver.tif in Resources */,
-				1CC059210A44A210006FE533 /* stop.tif in Resources */,
 				1CC059700A44A485006FE533 /* toolbarBackground.png in Resources */,
 				1C4FF7440A44F52C0000D05D /* debugger.css in Resources */,
 				1C4FF7540A44F6320000D05D /* gutter.png in Resources */,
@@ -388,6 +387,7 @@
 				1C2632D80A4AF0B800EA7CD8 /* SourceArrowBlank.png in Resources */,
 				1C2632DA0A4AF0D200EA7CD8 /* background_stripe.png in Resources */,
 				1CD434B20A4B86F800A007AB /* glossyHeaderPressed.png in Resources */,
+				1C6F83FF0A58E97D004FCD89 /* stepOut.tif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
