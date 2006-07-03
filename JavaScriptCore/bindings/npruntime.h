@@ -72,6 +72,7 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
 #include "npapi.h"
 
 /*

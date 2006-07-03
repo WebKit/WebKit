@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Justin Haygood <jhaygood@spsu.edu>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,55 +30,28 @@
 #include "npruntime_priv.h"
 
 #include "c_utility.h"
-#include <CoreFoundation/CoreFoundation.h>
 
-// FIXME: Use HashMap instead of CFDictionary for better performance and portability.
+#include <assert.h>
+#include <wtf/HashMap.h>
 
 using namespace KJS::Bindings;
 
-static Boolean stringIdentifierEqual(const void* value1, const void* value2)
+typedef HashMap<const char*, PrivateIdentifier*> StringIdentifierDictionary;
+static StringIdentifierDictionary* getStringIdentifierDictionary()
 {
-    return strcmp((const char*)value1, (const char*)value2) == 0;
-}
 
-static CFHashCode stringIdentifierHash(const void* value)
-{
-    const unsigned char* key = (const unsigned char*)value;
-    unsigned len = strlen((const char*)key);
-    unsigned result = len;
-
-    if (len <= 16) {
-        unsigned cnt = len;
-        while (cnt--)
-            result = result * 257 + *key++;
-    } else {
-        unsigned cnt;
-        for (cnt = 8; cnt > 0; cnt--)
-            result = result * 257 + *key++;
-        key += (len - 16);
-        for (cnt = 8; cnt > 0; cnt--)
-            result = result * 257 + *key++;
-    }
-    result += (result << (len & 31));
-
-    return result;
-}
-
-static CFMutableDictionaryRef getStringIdentifierDictionary()
-{
-    static CFMutableDictionaryRef stringIdentifierDictionary = 0;
-    if (!stringIdentifierDictionary) {
-        CFDictionaryKeyCallBacks stringIdentifierCallbacks = { 0, NULL, NULL, NULL, stringIdentifierEqual, stringIdentifierHash };
-        stringIdentifierDictionary = CFDictionaryCreateMutable(NULL, 0, &stringIdentifierCallbacks, NULL);
-    }
+    static StringIdentifierDictionary* stringIdentifierDictionary;
+    if (!stringIdentifierDictionary)
+        stringIdentifierDictionary = new StringIdentifierDictionary();
     return stringIdentifierDictionary;
 }
 
-static CFMutableDictionaryRef getIntIdentifierDictionary()
+typedef HashMap<int, PrivateIdentifier*> IntIdentifierDictionary;
+static IntIdentifierDictionary* getIntIdentifierDictionary()
 {
-    static CFMutableDictionaryRef intIdentifierDictionary = 0;
+    static IntIdentifierDictionary* intIdentifierDictionary;
     if (!intIdentifierDictionary)
-        intIdentifierDictionary = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
+        intIdentifierDictionary = new IntIdentifierDictionary();
     return intIdentifierDictionary;
 }
 
@@ -88,7 +62,7 @@ NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)
     if (name) {
         PrivateIdentifier* identifier = 0;
         
-        identifier = (PrivateIdentifier*)CFDictionaryGetValue(getStringIdentifierDictionary(), name);
+        identifier = getStringIdentifierDictionary()->get( name );
         if (identifier == 0) {
             identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
             // We never release identifier names, so this dictionary will grow, as will
@@ -97,7 +71,7 @@ NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)
             const char* identifierName = strdup(name);
             identifier->value.string = identifierName;
 
-            CFDictionaryAddValue(getStringIdentifierDictionary(), identifierName, identifier);
+            getStringIdentifierDictionary()->add(identifierName, identifier);
         }
         return (NPIdentifier)identifier;
     }
@@ -119,14 +93,14 @@ NPIdentifier _NPN_GetIntIdentifier(int32_t intid)
 {
     PrivateIdentifier* identifier = 0;
     
-    identifier = (PrivateIdentifier*)CFDictionaryGetValue(getIntIdentifierDictionary(), (const void*)intid);
+    identifier = getIntIdentifierDictionary()->get( intid );
     if (identifier == 0) {
         identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
         // We never release identifier names, so this dictionary will grow.
         identifier->isString = false;
         identifier->value.number = intid;
 
-        CFDictionaryAddValue(getIntIdentifierDictionary(), (const void*)intid, identifier);
+        getIntIdentifierDictionary()->add( intid, identifier );
     }
     return (NPIdentifier)identifier;
 }

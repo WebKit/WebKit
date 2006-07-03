@@ -1,3 +1,16 @@
+2006-07-02  Justin Haygood <jhaygood@spsu.edu
+
+        Reviewed, tweaked, landed by ggaren.
+
+        - Port NPRuntime from CFDictionary to HashMap.
+
+        * bindings/npruntime.cpp:
+        (getStringIdentifierDictionary):
+        (getIntIdentifierDictionary):
+        (_NPN_GetStringIdentifier):
+        (_NPN_GetIntIdentifier):
+        * bindings/npruntime.h:
+
 2006-07-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adele.
