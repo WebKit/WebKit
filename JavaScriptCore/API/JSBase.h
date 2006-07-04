@@ -43,20 +43,19 @@ typedef struct __JSObject* JSObjectRef;
 extern "C" {
 #endif
 
-// Returns true for successful execution, false for uncaught exception. 
-// returnValue will contain value of last evaluated statement or exception value.
+// Evaluation
 /*!
   @function JSEvaluate
-  Evaluates a string of JavaScript code
+  Evaluates a string of JavaScript
   @param context            execution context to use
-  @param thisValue          object to use as the "this" value, or NULL to use the global object as "this"
-  @param script             a string containing the script source code
-  @param sourceURL          URL to the file containing the source, or NULL - this is only used for error reporting
-  @param startingLineNumber starting line number in the source at sourceURL - this is only used for error reporting
-  @param returnValue        result of evaluation if successful, or value of exception
-  @result                   true if evaluation succeeded, false if an uncaught exception or error occured
+  @param script             a character buffer containing the JavaScript to evaluate
+  @param thisValue          object to use as "this," or NULL to use the global object as "this"
+  @param sourceURL          URL to the file containing the JavaScript, or NULL - this is only used for error reporting
+  @param startingLineNumber the JavaScript's starting line number in the file located at sourceURL - this is only used for error reporting
+  @param exception          pointer to a JSValueRef in which to store an uncaught exception, or NULL
+  @result                   result of evaluation, or NULL if an uncaught exception was thrown
 */
-bool JSEvaluate(JSContextRef context, JSValueRef thisValue, JSCharBufferRef script, JSCharBufferRef sourceURL, int startingLineNumber, JSValueRef* returnValue);
+JSValueRef JSEvaluate(JSContextRef context, JSCharBufferRef script, JSValueRef thisValue, JSCharBufferRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
 /*!
   @function JSCheckSyntax

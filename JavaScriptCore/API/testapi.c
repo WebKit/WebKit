@@ -320,6 +320,8 @@ int main(int argc, char* argv[])
     JSValueRef jsZero = JSNumberMake(0);
     JSValueRef jsOne = JSNumberMake(1);
     JSValueRef jsOneThird = JSNumberMake(1.0 / 3.0);
+    JSObjectRef jsObjectNoProto = JSObjectMake(context, NULL, JSNullMake());
+
     // FIXME: test funny utf8 characters
     JSCharBufferRef jsEmptyStringBuf = JSCharBufferCreateUTF8("");
     JSValueRef jsEmptyString = JSStringMake(jsEmptyStringBuf);
@@ -371,6 +373,14 @@ int main(int argc, char* argv[])
     assert(JSValueGetType(jsCFEmptyString) == kJSTypeString);
     assert(JSValueGetType(jsCFEmptyStringWithCharacters) == kJSTypeString);
 #endif // __APPLE__
+
+    // Conversions that throw exceptions
+    assert(NULL == JSValueToObject(context, jsNull));
+    assert(!JSContextGetException(context));
+    assert(isnan(JSValueToNumber(context, jsObjectNoProto)));
+    assert(!JSContextGetException(context));
+    assertEqualsAsCharactersPtr(jsObjectNoProto, "");
+    assert(!JSContextGetException(context));
 
     assertEqualsAsBoolean(jsUndefined, false);
     assertEqualsAsBoolean(jsNull, false);
@@ -471,9 +481,8 @@ int main(int argc, char* argv[])
     CFRelease(cfEmptyString);
 #endif // __APPLE__
     
-    // GDB says jsGlobalValue actually ends up being marked by the stack crawl, so this
-    // exercise is a bit academic. Not sure why that happens, or how to avoid it.
-    jsGlobalValue = JSObjectMake(context, NULL, 0);
+    jsGlobalValue = JSObjectMake(context, NULL, NULL);
+    JSGCProtect(jsGlobalValue);
     JSGCCollect();
     assert(JSValueIsObject(jsGlobalValue));
     JSGCUnprotect(jsGlobalValue);
@@ -489,17 +498,22 @@ int main(int argc, char* argv[])
     assert(!JSCheckSyntax(context, badSyntaxBuf));
 
     JSValueRef result;
-    assert(JSEvaluate(context, globalObject, goodSyntaxBuf, jsEmptyString, 0, &result));
+    JSValueRef exception;
+
+    result = JSEvaluate(context, goodSyntaxBuf, NULL, NULL, 0, NULL);
+    assert(result);
     assert(JSValueIsEqual(context, result, jsOne));
     
-    assert(!JSEvaluate(context, globalObject, badSyntaxBuf, jsEmptyString, 0, &result));
-    assert(JSValueIsObject(result));
+    result = JSEvaluate(context, badSyntaxBuf, NULL, NULL, 0, &exception);
+    assert(!result);
+    assert(!JSContextGetException(context));
+    assert(JSValueIsObject(exception));
     
     JSContextSetException(context, JSNumberMake(1));
-    assert(JSContextHasException(context));
+    assert(JSContextGetException(context));
     assert(JSValueIsEqual(context, jsOne, JSContextGetException(context)));
     JSContextClearException(context);
-    assert(!JSContextHasException(context));
+    assert(!JSContextGetException(context));
 
     JSCharBufferRelease(jsEmptyStringBuf);
     JSCharBufferRelease(jsOneStringBuf);
@@ -517,9 +531,9 @@ int main(int argc, char* argv[])
     assert(JSObjectGetProperty(context, globalObject, arrayBuf, &v));
     JSObjectRef arrayConstructor = JSValueToObject(context, v);
     JSCharBufferRelease(arrayBuf);
-    JSValueRef arrayObject;
-    assert(JSObjectCallAsConstructor(context, arrayConstructor, 0, NULL, &arrayObject));
-    assert(JSValueIsInstanceOf(context, arrayObject, arrayConstructor));
+    result = JSObjectCallAsConstructor(context, arrayConstructor, 0, NULL, NULL);
+    assert(result);
+    assert(JSValueIsInstanceOf(context, result, arrayConstructor));
     assert(!JSValueIsInstanceOf(context, JSNullMake(), arrayConstructor));
     
     JSObjectRef myObject = JSObjectMake(context, MyObject_class(context), NULL);
@@ -538,16 +552,16 @@ int main(int argc, char* argv[])
 
     char* script = createStringWithContentsOfFile("testapi.js");
     JSCharBufferRef scriptBuf = JSCharBufferCreateUTF8(script);
-    JSEvaluate(context, globalObject, scriptBuf, jsEmptyString, 0, &result);
+    result = JSEvaluate(context, scriptBuf, NULL, NULL, 0, &exception);
     if (JSValueIsUndefined(result))
         printf("PASS: Test script executed successfully.\n");
     else {
         printf("FAIL: Test script returned unexcpected value:\n");
-        JSCharBufferRef resultBuf = JSValueCopyStringValue(context, result);
-        CFStringRef resultCF = CFStringCreateWithJSCharBuffer(kCFAllocatorDefault, resultBuf);
-        CFShow(resultCF);
-        CFRelease(resultCF);
-        JSCharBufferRelease(resultBuf);
+        JSCharBufferRef exceptionBuf = JSValueCopyStringValue(context, exception);
+        CFStringRef exceptionCF = CFStringCreateWithJSCharBuffer(kCFAllocatorDefault, exceptionBuf);
+        CFShow(exceptionCF);
+        CFRelease(exceptionCF);
+        JSCharBufferRelease(exceptionBuf);
     }
     JSCharBufferRelease(scriptBuf);
     free(script);

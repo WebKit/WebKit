@@ -39,14 +39,9 @@ void JSContextDestroy(JSContextRef context);
 
 JSObjectRef JSContextGetGlobalObject(JSContextRef context);
 
-/* FIXME: These probably aren't useful. The exception is sometimes set
-   as a throw completion, other times as a value in the exec state.
-   There's no unified notion of the interpreter's "exception state."
- */
-bool JSContextHasException(JSContextRef context);
-JSValueRef JSContextGetException(JSContextRef context);
-void JSContextClearException(JSContextRef context);
+JSValueRef JSContextGetException(JSContextRef context); // NULL if there is no exception
 void JSContextSetException(JSContextRef context, JSValueRef value);
+void JSContextClearException(JSContextRef context);
     
 #ifdef __cplusplus
 }

@@ -33,9 +33,7 @@ static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef obj
     if (argc > 0) {
         NodeList* nodeList = JSObjectGetPrivate(thisObject);
         assert(nodeList);
-        // FIXME: check for integer value
-        double index = JSValueToNumber(context, argv[0]);
-        Node* node = NodeList_item(nodeList, (unsigned)index);
+        Node* node = NodeList_item(nodeList, JSValueToNumber(context, argv[0]));
         if (node)
             return JSNode_new(context, node);
     }
@@ -77,12 +75,14 @@ static bool JSNodeList_getProperty(JSContextRef context, JSObjectRef thisObject,
 {
     NodeList* nodeList = JSObjectGetPrivate(thisObject);
     assert(nodeList);
-    // FIXME: check for integer value
     double index = JSValueToNumber(context, JSStringMake(propertyName));
-    Node* node = NodeList_item(nodeList, (unsigned)index);
-    if (node) {
-        *returnValue = JSNode_new(context, node);
-        return true;
+    unsigned uindex = index;
+    if (uindex == index) { // false for NaN
+        Node* node = NodeList_item(nodeList, uindex);
+        if (node) {
+            *returnValue = JSNode_new(context, node);
+            return true;
+        }
     }
     
     return false;

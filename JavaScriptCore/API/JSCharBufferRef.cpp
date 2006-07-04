@@ -77,7 +77,6 @@ JSCharBufferRef JSValueCopyStringValue(JSContextRef context, JSValueRef value)
     ExecState* exec = toJS(context);
 
     JSCharBufferRef charBufferRef = toRef(jsValue->toString(exec).rep()->ref());
-    // FIXME: What should we do with this exception?
     if (exec->hadException())
         exec->clearException();
     return charBufferRef;

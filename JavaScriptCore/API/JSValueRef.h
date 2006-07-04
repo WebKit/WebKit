@@ -187,28 +187,28 @@ JSValueRef JSStringMake(JSCharBufferRef buffer);
 
 /*!
   @function JSValueToBoolean
-  Convert a JavaScript value to boolean and get the boolean value
+  Convert a JavaScript value to boolean and return the resulting boolean
   @param context the execution context to use 
-  @param value   the value to convert to boolean
+  @param value   the value to convert
   @result        the boolean result of conversion
 */
 bool JSValueToBoolean(JSContextRef context, JSValueRef value);
 
 /*!
   @function JSValueToNumber
-  Convert a JavaScript value to number and get the numeric value
+  Convert a JavaScript value to number and return the resulting number
   @param context the execution context to use 
-  @param value   the value to convert to number
-  @result        the boolean result of conversion, or 0 on failure
+  @param value   the value to convert
+  @result        the numeric result of conversion, or NaN if conversion fails
 */
 double JSValueToNumber(JSContextRef context, JSValueRef value);
 
 /*!
   @function JSValueCopyStringValue
-  Convert a JavaScript value to string and get the value as a string
-  @param context the execution context to use 
-  @param value   the value to convert to string
-  @result        the string result of conversion, or empty string on failure
+  Convert a JavaScript value to string and copy the resulting string into a newly allocated character buffer
+  @param context the execution context to use
+  @param value   the value to convert
+  @result        a character buffer containing the result of conversion, or an empty character buffer if conversion fails
 */
 JSCharBufferRef JSValueCopyStringValue(JSContextRef context, JSValueRef value);
 
@@ -216,8 +216,8 @@ JSCharBufferRef JSValueCopyStringValue(JSContextRef context, JSValueRef value);
   @function JSValueToObject
   Convert a JavaScript value to object and return the resulting object
   @param context the execution context to use 
-  @param value   the value to convert to string
-  @result        the string result of conversion, or error object on failure
+  @param value   the value to convert
+  @result        the object result of conversion, or NULL if conversion fails
 */
 JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value);
 

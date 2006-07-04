@@ -127,9 +127,9 @@ void* JSObjectGetPrivate(JSObjectRef object);
 bool JSObjectSetPrivate(JSObjectRef object, void* data);
 
 bool JSObjectIsFunction(JSObjectRef object);
-bool JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* returnValue);
+JSValueRef JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception);
 bool JSObjectIsConstructor(JSObjectRef object);
-bool JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, size_t argc, JSValueRef argv[], JSValueRef* returnValue);
+JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, size_t argc, JSValueRef argv[], JSValueRef* exception);
 
 // Used for enumerating the names of an object's properties like a for...in loop would
 JSPropertyEnumeratorRef JSObjectCreatePropertyEnumerator(JSContextRef context, JSObjectRef object);

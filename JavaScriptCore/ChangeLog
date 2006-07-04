@@ -1,3 +1,45 @@
+2006-07-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+        
+        - Refined value conversions in the API:
+            - failed toNumber returns NaN
+            - failed toObject returns NULL
+            - failed toString returns empty string
+        
+        - Refined excpetion handling in the API:
+            - failed value conversions do not throw exceptions
+            - uncaught exceptions in JSEvaluate, JSObjectCallAsFunction, and 
+              JSObjectCallAsConstructor are returned through a JSValueRef* exception
+              argument
+            - removed JSContextHasException, because JSContextGetException does
+              the same job
+            
+        * API/JSBase.h:
+        * API/JSCharBufferRef.cpp:
+        (JSValueCopyStringValue):
+        * API/JSContextRef.cpp:
+        (JSEvaluate):
+        * API/JSContextRef.h:
+        * API/JSNodeList.c: Added test code demonstrating how you would use
+        toNumber, and why you probably don't need toUInt32, etc.
+        (JSNodeListPrototype_item):
+        (JSNodeList_getProperty):
+        * API/JSObjectRef.cpp:
+        (JSValueToObject):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * API/JSObjectRef.h:
+        * API/JSValueRef.cpp:
+        (JSValueToNumber):
+        * API/JSValueRef.h:
+        * API/minidom.c:
+        (main):
+        * API/testapi.c:
+        (main): Added tests for new rules, and call to JSGCProtect to fix Intel 
+        crash
+        * JavaScriptCore.exp:
+
 2006-07-03  Darin Adler  <darin@apple.com>
 
         - Rolled out HashMap implementation of NPRuntime, at least temporarily.

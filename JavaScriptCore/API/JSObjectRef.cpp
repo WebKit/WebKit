@@ -45,9 +45,10 @@ JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value)
     JSValue* jsValue = toJS(value);
 
     JSObjectRef objectRef = toRef(jsValue->toObject(exec));
-    // FIXME: What should we do with this exception?
-    if (exec->hadException())
+    if (exec->hadException()) {
         exec->clearException();
+        objectRef = NULL;
+    }
     return objectRef;
 }    
 
@@ -176,7 +177,7 @@ bool JSObjectIsFunction(JSObjectRef object)
     return jsObject->implementsCall();
 }
 
-bool JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* returnValue)
+JSValueRef JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -187,12 +188,14 @@ bool JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSObjectRe
     for (size_t i = 0; i < argc; i++)
         argList.append(toJS(argv[i]));
     
-    *returnValue = jsObject->call(exec, jsThisObject, argList);
+    JSValueRef result = toRef(jsObject->call(exec, jsThisObject, argList));
     if (exec->hadException()) {
+        if (exception)
+            *exception = exec->exception();
+        result = NULL;
         exec->clearException();
-        return false;
     }
-    return true;
+    return result;
 }
 
 bool JSObjectIsConstructor(JSObjectRef object)
@@ -201,7 +204,7 @@ bool JSObjectIsConstructor(JSObjectRef object)
     return jsObject->implementsConstruct();
 }
 
-bool JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, size_t argc, JSValueRef argv[], JSValueRef* returnValue)
+JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -211,12 +214,14 @@ bool JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, size_t 
     for (size_t i = 0; i < argc; i++)
         argList.append(toJS(argv[i]));
     
-    *returnValue = jsObject->construct(exec, argList);
+    JSObjectRef result = toRef(jsObject->construct(exec, argList));
     if (exec->hadException()) {
+        if (exception)
+            *exception = exec->exception();
+        result = NULL;
         exec->clearException();
-        return false;
     }
-    return true;
+    return result;
 }
 
 struct __JSPropertyEnumerator

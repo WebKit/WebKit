@@ -49,18 +49,17 @@ int main(int argc, char* argv[])
     
     char* script = createStringWithContentsOfFile("minidom.js");
     JSCharBufferRef scriptBuf = JSCharBufferCreateUTF8(script);
-    JSValueRef result;
-    JSEvaluate(context, globalObject, scriptBuf, NULL, 0, &result);
-
-    if (JSValueIsUndefined(result))
+    JSValueRef exception;
+    JSValueRef result = JSEvaluate(context, scriptBuf, NULL, NULL, 0, &exception);
+    if (result)
         printf("PASS: Test script executed successfully.\n");
     else {
-        printf("FAIL: Test script returned unexcpected value:\n");
-        JSCharBufferRef resultBuf = JSValueCopyStringValue(context, result);
-        CFStringRef resultCF = CFStringCreateWithJSCharBuffer(kCFAllocatorDefault, resultBuf);
-        CFShow(resultCF);
-        CFRelease(resultCF);
-        JSCharBufferRelease(resultBuf);
+        printf("FAIL: Test script threw exception:\n");
+        JSCharBufferRef exceptionBuf = JSValueCopyStringValue(context, exception);
+        CFStringRef exceptionCF = CFStringCreateWithJSCharBuffer(kCFAllocatorDefault, exceptionBuf);
+        CFShow(exceptionCF);
+        CFRelease(exceptionCF);
+        JSCharBufferRelease(exceptionBuf);
     }
     JSCharBufferRelease(scriptBuf);
     free(script);

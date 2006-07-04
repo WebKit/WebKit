@@ -71,19 +71,27 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef context)
     return toRef(exec->dynamicInterpreter()->globalObject());
 }
 
-bool JSEvaluate(JSContextRef context, JSValueRef thisValue, JSCharBufferRef script, JSCharBufferRef sourceURL, int startingLineNumber, JSValueRef* returnValue)
+JSValueRef JSEvaluate(JSContextRef context, JSCharBufferRef script, JSValueRef thisValue, JSCharBufferRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
     JSValue* jsThisValue = toJS(thisValue);
     UString::Rep* scriptRep = toJS(script);
     UString::Rep* sourceURLRep = toJS(sourceURL);
+    // Interpreter::evaluate sets thisValue to the global object if it is NULL
     Completion completion = exec->dynamicInterpreter()->evaluate(UString(sourceURLRep), startingLineNumber, UString(scriptRep), jsThisValue);
 
-    if (returnValue)
-        *returnValue = completion.value() ? toRef(completion.value()) : toRef(jsUndefined());
-
-    return completion.complType() != Throw;
+    if (completion.complType() == Throw) {
+        if (exception)
+            *exception = completion.value();
+        return NULL;
+    }
+    
+    if (completion.value())
+        return toRef(completion.value());
+    
+    // happens, for example, when the only statement is an empty (';') statement
+    return toRef(jsUndefined());
 }
 
 bool JSCheckSyntax(JSContextRef context, JSCharBufferRef script)
@@ -92,12 +100,6 @@ bool JSCheckSyntax(JSContextRef context, JSCharBufferRef script)
     ExecState* exec = toJS(context);
     UString::Rep* rep = toJS(script);
     return exec->dynamicInterpreter()->checkSyntax(UString(rep));
-}
-
-bool JSContextHasException(JSContextRef context)
-{
-    ExecState* exec = toJS(context);
-    return exec->hadException();
 }
 
 JSValueRef JSContextGetException(JSContextRef context)

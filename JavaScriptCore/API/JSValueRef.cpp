@@ -188,9 +188,10 @@ double JSValueToNumber(JSContextRef context, JSValueRef value)
     ExecState* exec = toJS(context);
 
     double number = jsValue->toNumber(exec);
-    // FIXME: What should we do with this exception?
-    if (exec->hadException())
+    if (exec->hadException()) {
         exec->clearException();
+        number = NaN;
+    }
     return number;
 }
 
