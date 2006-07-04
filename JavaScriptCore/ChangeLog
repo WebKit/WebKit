@@ -1,4 +1,21 @@
-2006-07-02  Justin Haygood <jhaygood@spsu.edu
+2006-07-03  Darin Adler  <darin@apple.com>
+
+        - Rolled out HashMap implementation of NPRuntime, at least temporarily.
+
+        Fixes hang in the bindings section of layout tests seen on the
+        buildbot.
+
+        This code was using HashMap<const char*, PrivateIdentifier*>.
+        But that hashes based on pointer identity, not string value.
+        The default hash for any pointer type is to hash based on the pointer.
+        And WTF doesn't currently have a string hash for char*.
+        We'll need to fix that before re-landing this patch.
+
+        (Formatting was also incorrect -- extra spaces in parentheses.)
+
+        * bindings/npruntime.cpp: Rolled out last change.
+
+2006-07-02  Justin Haygood  <jhaygood@spsu.edu>
 
         Reviewed, tweaked, landed by ggaren.
 
