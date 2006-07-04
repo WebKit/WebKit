@@ -81,7 +81,10 @@
     // 2. Delegates that modify the cache policy using willSendRequest: should
     //    not affect any other resources. Such changes need to be done
     //    per request.
-    [newRequest setCachePolicy:[[source _originalRequest] cachePolicy]];
+    if ([newRequest _web_isConditionalRequest])
+        [newRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    else
+        [newRequest setCachePolicy:[[source _originalRequest] cachePolicy]];
     [newRequest _web_setHTTPReferrer:referrer];
     
     [[source webFrame] _addExtraFieldsToRequest:newRequest mainResource:NO alwaysFromRequest:NO];

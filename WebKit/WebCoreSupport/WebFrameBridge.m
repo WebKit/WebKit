@@ -573,7 +573,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         [request addValue:[requestHeaders objectForKey:key] forHTTPHeaderField:key];
     }
     
-    [request setCachePolicy:[[[self dataSource] request] cachePolicy]];
+    if ([request _web_isConditionalRequest])
+        [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    else
+        [request setCachePolicy:[[[self dataSource] request] cachePolicy]];
     if (!hideReferrer)
         [request _web_setHTTPReferrer:[self referrer]];
     

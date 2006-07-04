@@ -1,3 +1,14 @@
+2006-07-04  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8210
+        Conditional XMLHttpRequest gets should pass 304 responses unchanged
+
+        * http/tests/xmlhttprequest/cache-override-expected.txt: Added.
+        * http/tests/xmlhttprequest/cache-override.html: Added.
+        * http/tests/xmlhttprequest/resources/304.pl: Added.
+
 2006-07-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

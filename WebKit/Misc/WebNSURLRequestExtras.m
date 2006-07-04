@@ -47,6 +47,17 @@
     return [self valueForHTTPHeaderField:WebContentType];
 }
 
+- (BOOL)_web_isConditionalRequest
+{
+    if ([self valueForHTTPHeaderField:@"If-Match"] ||
+        [self valueForHTTPHeaderField:@"If-Modified-Since"] ||
+        [self valueForHTTPHeaderField:@"If-None-Match"] ||
+        [self valueForHTTPHeaderField:@"If-Range"] ||
+        [self valueForHTTPHeaderField:@"If-Unmodified-Since"])
+        return YES;
+    return NO;
+}
+
 @end
 
 

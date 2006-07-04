@@ -32,7 +32,7 @@
 
 - (NSString *)_web_HTTPReferrer;
 - (NSString *)_web_HTTPContentType;
-
+- (BOOL)_web_isConditionalRequest;
 @end
 
 @interface NSMutableURLRequest (WebNSURLRequestExtras)
