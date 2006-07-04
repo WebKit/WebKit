@@ -2245,6 +2245,69 @@ bool CSSParser::parseColor(const DeprecatedString &name, RGBA32& rgb)
     return false;
 }
 
+bool CSSParser::parseColorParameters(Value* value, int* colorArray, bool parseAlpha)
+{
+    ValueList* args = value->function->args;
+    Value* v = args->current();
+    // Get the first value
+    if (!validUnit(v, FInteger | FPercent, true))
+        return false;
+    colorArray[0] = static_cast<int>(v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256.0 / 100.0 : 1.0));
+    for (int i = 1; i < 3; i++) {
+        v = args->next();
+        if (v->unit != Value::Operator && v->iValue != ',')
+            return false;
+        v = args->next();
+        if (!validUnit(v, FInteger | FPercent, true))
+            return false;
+        colorArray[i] = static_cast<int>(v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256.0 / 100.0 : 1.0));
+    }
+    if (parseAlpha) {
+        v = args->next();
+        if (v->unit != Value::Operator && v->iValue != ',')
+            return false;
+        v = args->next();
+        if (!validUnit(v, FNumber, true))
+            return false;
+        colorArray[3] = static_cast<int>(max(0.0, min(1.0, v->fValue)) * 255);
+    }
+    return true;
+}
+
+// CSS3 sepcification defines the format of a HSL color as
+// hsl(<number>, <percent>, <percent>)
+// and with alpha, the format is
+// hsla(<number>, <percent>, <percent>, <number>)
+// The first value, HUE, is in an angle with a value between 0 and 360
+bool CSSParser::parseHSLParameters(Value* value, double* colorArray, bool parseAlpha)
+{
+    ValueList* args = value->function->args;
+    Value* v = args->current();
+    // Get the first value
+    if (!validUnit(v, FInteger, true))
+        return false;
+    // normalize the Hue value and change it to be between 0 and 1.0
+    colorArray[0] = (((static_cast<int>(v->fValue) % 360) + 360) % 360) / 360.0;
+    for (int i = 1; i < 3; i++) {
+        v = args->next();
+        if (v->unit != Value::Operator && v->iValue != ',')
+            return false;
+        v = args->next();
+        if (!validUnit(v, FPercent, true))
+            return false;
+        colorArray[i] = max(0.0, min(100.0, v->fValue)) / 100.0; // needs to be value between 0 and 1.0
+    }
+    if (parseAlpha) {
+        v = args->next();
+        if (v->unit != Value::Operator && v->iValue != ',')
+            return false;
+        v = args->next();
+        if (!validUnit(v, FNumber, true))
+            return false;
+        colorArray[3] = max(0.0, min(1.0, v->fValue));
+    }
+    return true;
+}
 
 CSSPrimitiveValue *CSSParser::parseColor()
 {
@@ -2269,60 +2332,35 @@ CSSPrimitiveValue *CSSParser::parseColorFromValue(Value* value)
                 value->function->args != 0 &&
                 value->function->args->size() == 5 /* rgb + two commas */ &&
                 domString(value->function->name).lower() == "rgb(") {
-        ValueList *args = value->function->args;
-        Value *v = args->current();
-        if (!validUnit(v, FInteger|FPercent, true))
+        int colorValues[3];
+        if (!parseColorParameters(value, colorValues, false))
             return 0;
-        int r = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        v = args->next();
-        if (v->unit != Value::Operator && v->iValue != ',')
+        c = makeRGB(colorValues[0], colorValues[1], colorValues[2]);
+    } else if (value->unit == Value::Function &&
+                value->function->args != 0 &&
+                value->function->args->size() == 7 /* rgba + three commas */ &&
+                domString(value->function->name).lower() == "rgba(") {
+        int colorValues[4];
+        if (!parseColorParameters(value, colorValues, true))
             return 0;
-        v = args->next();
-        if (!validUnit(v, FInteger|FPercent, true))
+        c = makeRGBA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
+    } else if (value->unit == Value::Function &&
+                value->function->args != 0 &&
+                value->function->args->size() == 5 /* hsl + two commas */ &&
+                domString(value->function->name).lower() == "hsl(") {
+        double colorValues[3];
+        if (!parseHSLParameters(value, colorValues, false))
             return 0;
-        int g = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        v = args->next();
-        if (v->unit != Value::Operator && v->iValue != ',')
+        c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], 1.0);
+    } else if (value->unit == Value::Function &&
+                value->function->args != 0 &&
+                value->function->args->size() == 7 /* hsla + three commas */ &&
+                domString(value->function->name).lower() == "hsla(") {
+        double colorValues[4];
+        if (!parseHSLParameters(value, colorValues, true))
             return 0;
-        v = args->next();
-        if (!validUnit(v, FInteger|FPercent, true))
-            return 0;
-        int b = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        c = makeRGB(r, g, b);
-    }
-    else if (value->unit == Value::Function &&
-              value->function->args != 0 &&
-              value->function->args->size() == 7 /* rgba + three commas */ &&
-              domString(value->function->name).lower() == "rgba(") {
-        ValueList *args = value->function->args;
-        Value *v = args->current();
-        if (!validUnit(v, FInteger|FPercent, true))
-            return 0;
-        int r = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        v = args->next();
-        if (v->unit != Value::Operator && v->iValue != ',')
-            return 0;
-        v = args->next();
-        if (!validUnit(v, FInteger|FPercent, true))
-            return 0;
-        int g = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        v = args->next();
-        if (v->unit != Value::Operator && v->iValue != ',')
-            return 0;
-        v = args->next();
-        if (!validUnit(v, FInteger|FPercent, true))
-            return 0;
-        int b = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
-        v = args->next();
-        if (v->unit != Value::Operator && v->iValue != ',')
-            return 0;
-        v = args->next();
-        if (!validUnit(v, FNumber, true))
-            return 0;
-        int a = (int)(max(0.0, min(1.0, v->fValue)) * 255);
-        c = makeRGBA(r, g, b, a);
-    }
-    else
+        c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
+    } else
         return 0;
 
     return new CSSPrimitiveValue(c);

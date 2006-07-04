@@ -147,6 +147,8 @@ namespace WebCore {
         bool parseShape(int propId, bool important);
         bool parseFont(bool important);
         CSSValueList* parseFontFamily();
+        bool parseColorParameters(Value*, int* colorValues, bool parseAlpha);
+        bool parseHSLParameters(Value*, double* colorValues, bool parseAlpha);
         CSSPrimitiveValue* parseColor();
         CSSPrimitiveValue* parseColorFromValue(Value*);
         

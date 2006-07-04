@@ -1,3 +1,19 @@
+2006-07-02  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Darin.
+
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=9506
+        Tests using HSL rather than RGB for color values.
+
+        * fast/css/hsl-color-expected.checksum: Added.
+        * fast/css/hsl-color-expected.png: Added.
+        * fast/css/hsl-color-expected.txt: Added.
+        * fast/css/hsl-color.html: Added.
+        * fast/css/hsla-color-expected.checksum: Added.
+        * fast/css/hsla-color-expected.png: Added.
+        * fast/css/hsla-color-expected.txt: Added.
+        * fast/css/hsla-color.html: Added.
+
 2006-07-04  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

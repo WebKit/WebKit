@@ -46,8 +46,36 @@ RGBA32 makeRGBA(int r, int g, int b, int a)
     return max(0, min(a, 255)) << 24 | max(0, min(r, 255)) << 16 | max(0, min(g, 255)) << 8 | max(0, min(b, 255));
 }
 
+double calcHue(double temp1, double temp2, double hueVal)
+{
+    if (hueVal < 0)
+        hueVal++;
+    else if (hueVal > 1)
+        hueVal--;
+    if (hueVal * 6 < 1)
+        return temp1 + (temp2 - temp1) * hueVal * 6;
+    if (hueVal * 2 < 1)
+        return temp2;
+    if (hueVal * 3 < 2)
+        return temp1 + (temp2 - temp1) * (2.0 / 3.0 - hueVal) * 6;
+    return temp1;
+}
+
+// Explanation of this algorithm can be found in the CSS3 Color Module
+// specification at http://www.w3.org/TR/css3-color/#hsl-color with further
+// explanation available at http://en.wikipedia.org/wiki/HSL_color_space 
+
+// all values are in the range of 0 to 1.0
+RGBA32 makeRGBAFromHSLA(double h, double s, double l, double a)
+{
+    double temp2 = l < 0.5 ? l * (1.0 + s) : l + s - l * s;
+    double temp1 = 2.0 * l - temp2;
+    
+    return makeRGBA(calcHue(temp1, temp2, h + 1.0 / 3.0) * 255, calcHue(temp1, temp2, h) * 255, calcHue(temp1, temp2, h - 1.0 / 3.0) * 255, a * 255);
+}
+
 // originally moved here from the CSS parser
-static inline bool parseHexColor(const String& name, RGBA32 &rgb)
+static inline bool parseHexColor(const String& name, RGBA32& rgb)
 {
     int len = name.length();
     if (!len)

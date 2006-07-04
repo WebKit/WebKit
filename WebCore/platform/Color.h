@@ -47,6 +47,7 @@ typedef unsigned RGBA32;        // RGBA quadruplet
 
 RGBA32 makeRGB(int r, int g, int b);
 RGBA32 makeRGBA(int r, int g, int b, int a);
+RGBA32 makeRGBAFromHSLA(double h, double s, double l, double a);
 
 int differenceSquared(const Color&, const Color&);
 
