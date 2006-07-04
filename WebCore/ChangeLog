@@ -1,3 +1,10 @@
+2006-07-04  Sam Weinig  <sam.weinig@gmail.com>
+
+        Build fix.
+
+        * platform/Color.cpp:
+        (WebCore::makeRGBAFromHSLA):
+
 2006-07-02  David Carson  <dacarson@gmail.com>
 
         Reviewed by Darin.

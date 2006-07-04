@@ -71,7 +71,10 @@ RGBA32 makeRGBAFromHSLA(double h, double s, double l, double a)
     double temp2 = l < 0.5 ? l * (1.0 + s) : l + s - l * s;
     double temp1 = 2.0 * l - temp2;
     
-    return makeRGBA(calcHue(temp1, temp2, h + 1.0 / 3.0) * 255, calcHue(temp1, temp2, h) * 255, calcHue(temp1, temp2, h - 1.0 / 3.0) * 255, a * 255);
+    return makeRGBA(static_cast<int>(calcHue(temp1, temp2, h + 1.0 / 3.0) * 255), 
+                    static_cast<int>(calcHue(temp1, temp2, h) * 255),
+                    static_cast<int>(calcHue(temp1, temp2, h - 1.0 / 3.0) * 255),
+                    static_cast<int>(a * 255));
 }
 
 // originally moved here from the CSS parser
