@@ -148,7 +148,7 @@ static unsigned listenerCount = 0;
 - (oneway void)addListener:(id<WebScriptDebugListener>)listener
 {
     // can't use isKindOfClass: here because that will send over the wire and not check the proxy object
-    if ([listener class] != [NSDistantObject class] || ![listener conformsToProtocol:@protocol(WebScriptDebugListener)])
+    if (!listener || [listener class] != [NSDistantObject class] || ![listener conformsToProtocol:@protocol(WebScriptDebugListener)])
         return;
     listenerCount++;
     [listeners addObject:listener];
@@ -159,6 +159,8 @@ static unsigned listenerCount = 0;
 
 - (oneway void)removeListener:(id<WebScriptDebugListener>)listener
 {
+    if (!listener || ![listeners containsObject:listener])
+        return;
     ASSERT(listenerCount >= 1);
     listenerCount--;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:[(NSDistantObject *)listener connectionForProxy]];

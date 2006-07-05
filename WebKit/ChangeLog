@@ -1,3 +1,19 @@
+2006-07-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 9732: [Drosera] calling removeListener to many times will cause
+                  WebKit's listener count to underflow/wraparound
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9732
+
+        Adds a check to make sure the listener was in our listeners set before
+        decrementing the global listener count. Also checks for nil in addListner
+        to prevent a possible exception when adding the object to the set.
+
+        * DefaultDelegates/WebScriptDebugServer.m:
+        (-[WebScriptDebugServer addListener:]):
+        (-[WebScriptDebugServer removeListener:]):
+
 2006-07-04  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
