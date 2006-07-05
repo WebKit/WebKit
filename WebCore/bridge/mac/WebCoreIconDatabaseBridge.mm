@@ -99,8 +99,10 @@ static WebCoreIconDatabaseBridge *_sharedBridgeInstance = nil;
     Image* image = _iconDB->iconForPageURL(String(url), IntSize(size));
     if (image) {
         NSImage* nsImage = image->getNSImage();
-        ASSERT(nsImage);
-        
+        if (!nsImage) {
+            LOG(IconDatabase, "image didn't return a valid NSImage for URL %@", url);
+            return nil;
+        }
         LOG(IconDatabase, "Found %i representations in the NSImage", [[nsImage representations] count]);
         
         if (!NSEqualSizes([nsImage size], size)) {
@@ -117,7 +119,7 @@ static WebCoreIconDatabaseBridge *_sharedBridgeInstance = nil;
     ASSERT(_iconDB);
     ASSERT(url);
     
-    String iconURL = _iconDB->iconURLForURL(String(url));
+    String iconURL = _iconDB->iconURLForPageURL(String(url));
     return (NSString*)iconURL;
 }
 

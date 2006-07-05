@@ -28,9 +28,12 @@
 #include "Logging.h"
 #include "PlatformString.h"
 
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <errno.h>
+#include <time.h>
+
+
 
 // FIXME - Make sure we put a private browsing consideration in that uses the temporary tables anytime private browsing would be an issue.
 
@@ -109,6 +112,8 @@ void IconDatabase::clearDatabase()
             LOG(IconDatabase, "Unable to drop table %s", (*table).ascii().data());
         }
     }
+    
+    deletePrivateTables();
 }
 
 void IconDatabase::recreateDatabase()
@@ -162,12 +167,12 @@ void IconDatabase::createPrivateTables()
 
 void IconDatabase::deletePrivateTables()
 {
-    if (!m_db.executeCommand("DROP TEMP TABLE TempPageURL;"))
-        LOG_ERROR("Could not drop TempPageURL table");
-    if (!m_db.executeCommand("DROP TEMP TABLE TempIcon;"))
-        LOG_ERROR("Could not drop TempIcon table");
-    if (!m_db.executeCommand("DROP TEMP TABLE TempIconResource;"))
-        LOG_ERROR("Could not drop TempIconResource table");
+    if (!m_db.executeCommand("DROP TABLE TempPageURL;"))
+        LOG_ERROR("Could not drop TempPageURL table - %s", m_db.lastErrorMsg());
+    if (!m_db.executeCommand("DROP TABLE TempIcon;"))
+        LOG_ERROR("Could not drop TempIcon table - %s", m_db.lastErrorMsg());
+    if (!m_db.executeCommand("DROP TABLE TempIconResource;"))
+        LOG_ERROR("Could not drop TempIconResource table - %s", m_db.lastErrorMsg());
 }
 
 // FIXME - This is a DIRTY, dirty workaround for a problem that we're seeing where certain blobs are having a corrupt buffer
@@ -228,7 +233,7 @@ Vector<unsigned char> hexStringToVector(const String& s)
 Vector<unsigned char> IconDatabase::imageDataForIconID(int id)
 {
     String blob = SQLStatement(m_db, String::sprintf("SELECT data FROM IconResource WHERE iconid = %i", id)).getColumnText(0);
-    if (blob.length() < 1)
+    if (blob.isEmpty())
         return Vector<unsigned char>();
     return hexStringToVector(blob);
 }
@@ -242,15 +247,16 @@ Vector<unsigned char> IconDatabase::imageDataForIconURL(const String& _iconURL)
     
     // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
     if (m_privateBrowsingEnabled) {
-        blob = SQLStatement(m_db, "SELECT TempIconResource.data FROM TempIconResource, TempIcon WHERE TempIcon.url = '" + iconURL + "' AND TempIconResource.iconID = TempIcon.iconID;").getColumnText(0);
-        if (blob.length() > 0) {
+        blob = SQLStatement(m_db, "SELECT quote(TempIconResource.data) FROM TempIconResource, TempIcon WHERE TempIcon.url = '" + iconURL + "' AND TempIconResource.iconID = TempIcon.iconID;").getColumnText(0);
+        if (!blob.isEmpty()) {
+            LOG(IconDatabase, "Icon data pulled from temp tables");
             return hexStringToVector(blob);
         }
     } 
     
     // It wasn't found there, so lets check the main tables
     blob = SQLStatement(m_db, "SELECT quote(IconResource.data) FROM IconResource, Icon WHERE Icon.url = '" + iconURL + "' AND IconResource.iconID = Icon.iconID;").getColumnText(0);
-    if (blob.length() < 1)
+    if (blob.isEmpty())
         return Vector<unsigned char>();
     
     return hexStringToVector(blob);
@@ -266,14 +272,15 @@ Vector<unsigned char> IconDatabase::imageDataForPageURL(const String& _pageURL)
     // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
     if (m_privateBrowsingEnabled) {
         blob = SQLStatement(m_db, "SELECT TempIconResource.data FROM TempIconResource, TempPageURL WHERE TempPageURL.url = '" + pageURL + "' AND TempIconResource.iconID = TempPageURL.iconID;").getColumnText(0);
-        if (blob.length() > 0) {
+        if (!blob.isEmpty()) {
+            LOG(IconDatabase, "Icon data pulled from temp tables");
             return hexStringToVector(blob);
         }
     } 
     
     // It wasn't found there, so lets check the main tables
     blob = SQLStatement(m_db, "SELECT quote(IconResource.data) FROM IconResource, PageURL WHERE PageURL.url = '" + pageURL + "' AND IconResource.iconID = PageURL.iconID;").getColumnText(0);
-    if (blob.length() < 1)
+    if (blob.isEmpty())
         return Vector<unsigned char>();
     
     return hexStringToVector(blob);
@@ -286,7 +293,7 @@ void IconDatabase::setPrivateBrowsingEnabled(bool flag)
     
     m_privateBrowsingEnabled = flag;
     
-    if (!m_privateBrowsingEnabled) 
+    if (!m_privateBrowsingEnabled)
         deletePrivateTables();
     else
         createPrivateTables();
@@ -294,33 +301,41 @@ void IconDatabase::setPrivateBrowsingEnabled(bool flag)
 
 Image* IconDatabase::iconForPageURL(const String& url, const IntSize& size, bool cache)
 {   
-    // FIXME - Private browsing
-
-    // We may have a SiteIcon for this specific URL...
+    // We may have a SiteIcon for this specific PageURL...
     if (m_pageURLToSiteIcons.contains(url))
         return m_pageURLToSiteIcons.get(url)->getImage(size);
     
-    // ...and we may have one for the IconURL this URL maps to
-    String iconURL = iconURLForURL(url);
+    // Otherwise see if we even have an IconURL for this PageURL
+    String iconURL = iconURLForPageURL(url);
+    if (iconURL.isEmpty())
+        return 0;
+    
+    // If we do, maybe we have an image for this IconURL
     if (m_iconURLToSiteIcons.contains(iconURL))
         return m_iconURLToSiteIcons.get(iconURL)->getImage(size);
         
     // If we don't have either, we have to create the SiteIcon
-    if (!iconURL.isEmpty()) {
-        SiteIcon* icon = new SiteIcon(iconURL);
-        m_pageURLToSiteIcons.set(url, icon);
-        m_iconURLToSiteIcons.set(iconURL, icon);
-        return icon->getImage(size);
-    }
-    
-    return 0;
+    SiteIcon* icon = new SiteIcon(iconURL);
+    m_pageURLToSiteIcons.set(url, icon);
+    m_iconURLToSiteIcons.set(iconURL, icon);
+    return icon->getImage(size);
 }
 
-String IconDatabase::iconURLForURL(const String& _url)
+String IconDatabase::iconURLForPageURL(const String& _pageURL)
 {
-    String pageURL = _url;
+    if (_pageURL.isEmpty()) 
+        return String();
+        
+    String pageURL = _pageURL;
     pageURL.replace('\'', "''");
-
+    
+    // Try the private browsing tables because if any PageURL's IconURL was updated during privated browsing, it would be here
+    if (m_privateBrowsingEnabled) {
+        String iconURL = SQLStatement(m_db, "SELECT TempIcon.url FROM TempIcon, TempPageURL WHERE TempPageURL.url = '" + pageURL + "' AND TempIcon.iconID = TempPageURL.iconID").getColumnText16(0);
+        if (!iconURL.isEmpty())
+            return iconURL;
+    }
+    
     return SQLStatement(m_db, "SELECT Icon.url FROM Icon, PageURL WHERE PageURL.url = '" + pageURL + "' AND Icon.iconID = PageURL.iconID").getColumnText16(0);
 }
 
@@ -347,7 +362,7 @@ void IconDatabase::setIconDataForIconURL(const void* data, int size, const Strin
     else
         data = 0;
         
-    if (_iconURL.length() < 1) {
+    if (_iconURL.isEmpty()) {
         LOG_ERROR("Attempt to set icon for blank url");
         return;
     }
@@ -355,28 +370,72 @@ void IconDatabase::setIconDataForIconURL(const void* data, int size, const Strin
     String iconURL = _iconURL;
     iconURL.replace('\'', "''");
 
-    // If we're in private browsing, we'll keep a record in cache instead of in the DB
+    int64_t iconID;
+    String resourceTable;
+
+    // If we're in private browsing, we'll keep a record in the temporary tables instead of in the ondisk table
     if (m_privateBrowsingEnabled) {
-        // FIXME - set data in the temporary tables
-        return;
+        iconID = establishTemporaryIconIDForEscapedIconURL(iconURL);
+        if (!iconID) {
+            LOG(IconDatabase, "Failed to establish an iconID for URL %s in the private browsing table", _iconURL.ascii().data());
+            return;
+        }
+        resourceTable = "TempIconResource";
+    } else {
+        iconID = establishIconIDForEscapedIconURL(iconURL);
+        if (!iconID) {
+            LOG(IconDatabase, "Failed to establish an iconID for URL %s in the on-disk table", _iconURL.ascii().data());
+            return;
+        }
+        resourceTable = "IconResource";
     }
     
-    int64_t iconID = establishIconIDForEscapedIconURL(iconURL);
-    if (iconID) {
-        // The following statement works to set the icon data to NULL because sqlite defaults unbound ? parameters to null
-        SQLStatement sql(m_db, "UPDATE IconResource SET data = ? WHERE iconID = ?;");
-        sql.prepare();
-        if (data)
-            sql.bindBlob(1, data, size);
-        sql.bindInt64(2, iconID);
-        if (sql.step() != SQLITE_DONE)
-            LOG_ERROR("Unable to set icon resource data for iconID %i", iconID);
-    }
+    performSetIconDataForIconID(iconID, resourceTable, data, size);
+}
 
+void IconDatabase::performSetIconDataForIconID(int64_t iconID, const String& resourceTable, const void* data, int size)
+{
+    ASSERT(iconID);
+    ASSERT(!resourceTable.isEmpty());
+    if (data)
+        ASSERT(size > 0);
+        
+    // First we create and prepare the SQLStatement
+    // The following statement also works to set the icon data to NULL because sqlite defaults unbound ? parameters to NULL
+    SQLStatement sql(m_db, "UPDATE " + resourceTable + " SET data = ? WHERE iconID = ?;");
+    sql.prepare();
+        
+    // Then we bind the icondata and the iconID to the SQLStatement
+    if (data)
+        sql.bindBlob(1, data, size);
+    sql.bindInt64(2, iconID);
+        
+    // Finally we step and make sure the step was successful
+    if (sql.step() != SQLITE_DONE)
+        LOG_ERROR("Unable to set icon resource data in table %s for iconID %lli", resourceTable.ascii().data(), iconID);
+    LOG(IconDatabase, "Icon data set in table %s for iconID %lli", resourceTable.ascii().data(), iconID);
+    return;
+}
+
+int IconDatabase::establishTemporaryIconIDForEscapedIconURL(const String& iconURL)
+{
+    // We either lookup the iconURL and return its ID, or we create a new one for it
+    int64_t iconID = 0;
+    SQLStatement sql(m_db, "SELECT iconID FROM TempIcon WHERE url = '" + iconURL + "';");
+    sql.prepare();    
+    if (sql.step() == SQLITE_ROW) {
+        iconID = sql.getColumnInt64(0);
+    } else {
+        sql.finalize();
+        if (m_db.executeCommand("INSERT INTO TempIcon (url) VALUES ('" + iconURL + "');"))
+            iconID = m_db.lastInsertRowID();
+    }
+    return iconID;
 }
 
 int IconDatabase::establishIconIDForEscapedIconURL(const String& iconURL)
 {
+    // We either lookup the iconURL and return its ID, or we create a new one for it
     int64_t iconID = 0;
     SQLStatement sql(m_db, "SELECT iconID FROM Icon WHERE url = '" + iconURL + "';");
     sql.prepare();    
@@ -392,88 +451,68 @@ int IconDatabase::establishIconIDForEscapedIconURL(const String& iconURL)
 
 void IconDatabase::setHaveNoIconForIconURL(const String& _iconURL)
 {    
-    String iconURL = _iconURL;
-    iconURL.replace('\'', "''");
-    
-    // If we're in private browsing, we'll keep a record in cache instead of in the DB
-    if (m_privateBrowsingEnabled) {
-        // FIXME - set data in the temporary tables
-        return;
-    }
-
-    int64_t iconID = establishIconIDForEscapedIconURL(iconURL);
-    if (iconID) {
-        // The following statement works to set the icon data to NULL because sqlite defaults unbound ? parameters to null
-        SQLStatement sql(m_db, "UPDATE IconResource SET data = ? WHERE iconID = ?;");
-        sql.prepare();
-        sql.bindInt64(2, iconID);
-        if (sql.step() != SQLITE_DONE)
-            LOG_ERROR("Unable to set icon resource data for iconID %i", iconID);
-    }
+    setIconDataForIconURL(0, 0, _iconURL);
 }
 
 void IconDatabase::setIconURLForPageURL(const String& _iconURL, const String& _pageURL)
 {
+    ASSERT(!_iconURL.isEmpty());
+    ASSERT(!_pageURL.isEmpty());
+    
     String iconURL = _iconURL;
     iconURL.replace('\'',"''");
     String pageURL = _pageURL;
     pageURL.replace('\'',"''");
-     
-    // If we're in private browsing, we'll keep a record in a temporary table
+
+    int64_t iconID;
+    String pageTable;
     if (m_privateBrowsingEnabled) {
-        // FIXME - set data in the temporary tables
-        return;
-    }
-     
-    // Check if an entry in the Icon table already exists for this iconURL
-    // Get this iconID, or create a new one
-    int64_t iconID = 0;
-    SQLStatement sql(m_db, "SELECT iconID FROM Icon WHERE url = '" + iconURL + "';");
-    sql.prepare();    
-    if (sql.step() == SQLITE_ROW) {
-        iconID = sql.getColumnInt64(0);
-        sql.finalize();
+        iconID = establishTemporaryIconIDForEscapedIconURL(iconURL);
+        pageTable = "TempPageURL";
     } else {
-        sql.finalize();
-        if (m_db.executeCommand("INSERT INTO Icon (url) VALUES ('" + iconURL + "');"))
-            iconID = m_db.lastInsertRowID();
+        iconID = establishIconIDForEscapedIconURL(iconURL);
+        pageTable = "PageURL";
     }
     
-    if (!iconID) {
-        LOG_ERROR("Unable to establish iconID for iconURL %s - %s", iconURL.ascii().data(), m_db.lastErrorMsg());
-        return;
-    }
-    
-    if (m_db.returnsAtLeastOneResult("SELECT url FROM PageURL WHERE url = '" + pageURL + "';")) {
-        if (!m_db.executeCommand("UPDATE PageURL SET iconID = " + String::number(iconID) + " WHERE url = '" + pageURL + "';"))
-            LOG_ERROR("Failed to update record in PageURL table - %s", m_db.lastErrorMsg());
-    } else {
-        if( !m_db.executeCommand("INSERT INTO PageURL (url, iconID) VALUES ('" + pageURL + "', " + String::number(iconID) + ");"))
-            LOG_ERROR("Failed to insert record into PageURL - %s", m_db.lastErrorMsg());
-    }
+    performSetIconURLForPageURL(iconID, pageTable, pageURL);
+}
+
+void IconDatabase::performSetIconURLForPageURL(int64_t iconID, const String& pageTable, const String& pageURL)
+{
+    ASSERT(iconID);
+    if (m_db.returnsAtLeastOneResult("SELECT url FROM " + pageTable + " WHERE url = '" + pageURL + "';")) {
+        if (!m_db.executeCommand("UPDATE " + pageTable + " SET iconID = " + String::number(iconID) + " WHERE url = '" + pageURL + "';"))
+            LOG_ERROR("Failed to update record in %s - %s", pageTable.ascii().data(), m_db.lastErrorMsg());
+    } else
+        if (!m_db.executeCommand("INSERT INTO " + pageTable + " (url, iconID) VALUES ('" + pageURL + "', " + String::number(iconID) + ");"))
+            LOG_ERROR("Failed to insert record into %s - %s", pageTable.ascii().data(), m_db.lastErrorMsg());
 }
 
 bool IconDatabase::hasIconForIconURL(const String& _url)
 {
-    // Places to check -
-    // -iconURLToSiteIcon map
-    // -On disk SQL
-    // -Temporary SQL if private browsing enabled
+    // First check the in memory mapped icons...
+    if (m_iconURLToSiteIcons.contains(_url))
+        return true;
 
+    // Check the on-disk database as we're more likely to have more icons there
     String url = _url;
     url.replace('\'', "''");
-    
-    // If we're in private browsing, we'll check the temporary table as a backup
-    if (m_privateBrowsingEnabled) {
-        // FIXME - make this AFTER the primary checks as we can probably safely consider private browsing to be less common
-        // than regular
-        return false;
-    }
     
     String query = "SELECT IconResource.data FROM IconResource, Icon WHERE Icon.url = '" + url + "' AND IconResource.iconID = Icon.iconID;";
     int size = 0;
     const void* data = SQLStatement(m_db, query).getColumnBlob(0, size);
-    return (data && size);
+    if (data && size)
+        return true;
+    
+    // Finally, check the temporary tables for private browsing if enabled
+    if (m_privateBrowsingEnabled) {
+        query = "SELECT TempIconResource.data FROM TempIconResource, TempIcon WHERE TempIcon.url = '" + url + "' AND TempIconResource.iconID = TempIcon.iconID;";
+        size = 0;
+        data = SQLStatement(m_db, query).getColumnBlob(0, size);
+        LOG(IconDatabase, "Checking for icon for IconURL %s in temporary tables", _url.ascii().data());
+        return data && size;
+    }
+    return false;
 }
 
 IconDatabase::~IconDatabase()

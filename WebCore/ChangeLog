@@ -1,3 +1,41 @@
+2006-07-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        IconDatabase now respects private browsing via the use of in memory, temporary tables
+
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (-[WebCoreIconDatabaseBridge iconForPageURL:withSize:]):
+        (-[WebCoreIconDatabaseBridge iconURLForPageURL:]): Renamed WebCore::IconDatabase methods, changes reflected here
+
+        * icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::clearDatabase):
+        (WebCore::IconDatabase::deletePrivateTables):
+        (WebCore::IconDatabase::imageDataForIconID):
+        (WebCore::IconDatabase::imageDataForIconURL):
+        (WebCore::IconDatabase::imageDataForPageURL):
+        (WebCore::IconDatabase::setPrivateBrowsingEnabled):
+        (WebCore::IconDatabase::iconForPageURL):
+        (WebCore::IconDatabase::iconURLForPageURL):
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::performSetIconDataForIconID):
+        (WebCore::IconDatabase::establishTemporaryIconIDForEscapedIconURL):
+        (WebCore::IconDatabase::establishIconIDForEscapedIconURL):
+        (WebCore::IconDatabase::setHaveNoIconForIconURL):
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::performSetIconURLForPageURL):
+        (WebCore::IconDatabase::hasIconForIconURL):
+        -Some style/comment cleanups, but mainly putting private browsing handling in place
+
+        * icon/IconDatabase.h:  Some methods added, others renamed, some comments added
+
+        * icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::getColumnName):
+        (WebCore::SQLStatement::getColumnName16):
+        (WebCore::SQLStatement::getColumnText):
+        (WebCore::SQLStatement::getColumnText16):
+        -The above 4 had changes to return String() for empty results instead of "" as it's less expensive;
+
 2006-07-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin and Adele.

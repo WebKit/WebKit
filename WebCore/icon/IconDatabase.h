@@ -93,7 +93,7 @@ public:
 
     Image* iconForPageURL(const String&, const IntSize&, bool cache = true);
     Image* iconForIconURL(const String&, const IntSize&, bool cache = true);
-    String iconURLForURL(const String&);
+    String iconURLForPageURL(const String&);
     Image* defaultIcon(const IntSize&);
 
     void retainIconForURL(const String&);
@@ -126,7 +126,15 @@ private:
     void createPrivateTables();
     void deletePrivateTables();
     
+    // The following two methods will either find the iconID for a given iconURL or, if the iconURL
+    // isn't in the table yet, will create an entry and return the resulting iconID
     int establishIconIDForEscapedIconURL(const String&);
+    int establishTemporaryIconIDForEscapedIconURL(const String&);
+    
+    // Since we store data in both the ondisk tables and temporary tables, these methods will do the work 
+    // for either case
+    void performSetIconURLForPageURL(int64_t iconID, const String& pageTable, const String& pageURL);
+    void performSetIconDataForIconID(int64_t iconID, const String& resourceTable, const void* data, int size);
     
     // The following three methods follow the sqlite convention for blob data
     // They return a const void* which is a pointer to the data buffer, and store
