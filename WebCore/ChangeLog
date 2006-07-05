@@ -1,3 +1,25 @@
+2006-07-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin and Adele.
+        
+        - fixed <rdar://problem/4609162> REGRESSION: When tabbing between links on a page, 
+        the window doesn't scroll to link that's not in view
+
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLAnchorElement.h:
+        removed HTMLAnchorElement::focus and HTMLAnchorElement::blur. 
+        
+        HTMLAnchorElement::focus just called document()->setFocusNode(). The scroll-to-reveal
+        code used to be inside document()->setFocusNode(), but now it's in Element::focus, and this override
+        was preventing that code from running.
+        
+        HTMLAnchorElement::blur was exactly the same implementation as Element::blur (and there aren't any
+        other implementations of ::blur in the class hierarchy in between). This change has no practical
+        effect, other than removing duplicate code.
+        
+        Adele and I think that it was an oversight not to remove these two methods on 12/20/05
+        these methods were removed from HTMLButtonElementImpl and HTMLInputElementImpl.
+
 2006-07-05  Anders Carlsson  <acarlsson@apple.com>
 
         * bridge/win/FrameWin.cpp:

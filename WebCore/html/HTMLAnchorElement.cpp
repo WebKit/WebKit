@@ -331,18 +331,6 @@ void HTMLAnchorElement::setType(const String &value)
     setAttribute(typeAttr, value);
 }
 
-void HTMLAnchorElement::blur()
-{
-    Document *d = document();
-    if (d->focusNode() == this)
-        d->setFocusNode(0);
-}
-
-void HTMLAnchorElement::focus()
-{
-    document()->setFocusNode(this);
-}
-
 String HTMLAnchorElement::hash() const
 {
     return '#' + KURL(href().deprecatedString()).ref();

@@ -85,9 +85,6 @@ public:
     String type() const;
     void setType(const String&);
 
-    void blur();
-    void focus();
-
     String hash() const;
     String host() const;
     String hostname() const;
