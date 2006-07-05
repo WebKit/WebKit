@@ -9,6 +9,12 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
 */
 
+/* Begin additions for WebKit layout test framework. */
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+/* End additions for WebKit layout test framework. */
+
+
   function assertSize(descr, expected, actual) {
     var actualSize;
     actualSize = actual.length;

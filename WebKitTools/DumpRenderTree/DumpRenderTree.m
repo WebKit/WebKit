@@ -367,6 +367,8 @@ static void dump(void)
             DOMElement *documentElement = [[frame DOMDocument] documentElement];
             if ([documentElement isKindOfClass:[DOMHTMLElement class]])
                 result = [[(DOMHTMLElement *)documentElement innerText] stringByAppendingString:@"\n"];
+            else
+                result = [[documentElement valueForKey:@"textContent"] stringByAppendingString:@"\n"];
         } else {
             bool isSVGW3CTest = ([currentTest rangeOfString:@"svg/W3C-SVG-1.1"].length);
             if (isSVGW3CTest)
