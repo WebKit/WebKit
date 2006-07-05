@@ -1,3 +1,17 @@
+2006-07-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele.
+        
+        - layout test for <rdar://problem/4609162> REGRESSION: When tabbing between links on a page, 
+        the window doesn't scroll to link that's not in view
+        
+        The test verifies that focusing a link will scroll the link into view.
+
+        * fast/events/reveal-link-when-focused-expected.checksum: Added.
+        * fast/events/reveal-link-when-focused-expected.png: Added.
+        * fast/events/reveal-link-when-focused-expected.txt: Added.
+        * fast/events/reveal-link-when-focused.html: Added.
+
 2006-07-05  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
