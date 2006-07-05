@@ -235,18 +235,6 @@ void RenderPartObject::updateWidget()
           }
       }
       frame->requestObject(this, url, o->getAttribute(nameAttr), serviceType, paramNames, paramValues);
-  } else {
-      assert(element()->hasTagName(iframeTag));
-      HTMLIFrameElement* o = static_cast<HTMLIFrameElement*>(element());
-      url = o->m_URL;
-      if (!isURLAllowed(document(), url))
-          return;
-      if (url.isEmpty())
-          url = "about:blank";
-      FrameView* v = static_cast<FrameView*>(m_view);
-      v->frame()->requestFrame(this, url, o->m_name);
-      if (o->contentFrame())
-          o->contentFrame()->setInViewSourceMode(o->viewSourceMode());
   }
 }
 

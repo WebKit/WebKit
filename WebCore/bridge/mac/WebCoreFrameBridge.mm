@@ -464,12 +464,12 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return self;
 }
 
-- (id)initSubframeWithRenderer:(RenderPart *)renderer
+- (id)initSubframeWithOwnerElement:(Element *)ownerElement
 {
     if (!(self = [super init]))
         return nil;
     
-    m_frame = new FrameMac(renderer->node()->document()->frame()->page(), renderer);
+    m_frame = new FrameMac(ownerElement->document()->frame()->page(), ownerElement);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
     return self;
@@ -1006,7 +1006,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 {
     // If this isn't the main frame, it must have a render m_frame set, or it
     // won't ever get installed in the view hierarchy.
-    ASSERT(self == [[self page] mainFrame] || m_frame->ownerRenderer());
+    ASSERT(self == [[self page] mainFrame] || m_frame->ownerElement());
 
     m_frame->view()->setView(view);
     // FIXME: frame tries to do this too, is it needed?

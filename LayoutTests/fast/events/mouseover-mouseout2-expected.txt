@@ -21,6 +21,7 @@ mouseout on t2
 mouseout on frame2
 mouseover on frame3
 mouseover on t3_1
+mouseout on t3_1
 mouseout on frame3
 mouseover on t3_2
 mouseout on t3_2
@@ -47,6 +48,7 @@ mouseout on t2
 mouseout on frame2
 mouseover on frame3
 mouseover on t3_1
+mouseout on t3_1
 mouseout on frame3
 mouseover on t3_2
 mouseout on t3_2

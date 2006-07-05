@@ -48,6 +48,12 @@ HTMLIFrameElement::HTMLIFrameElement(Document* doc)
 
 HTMLIFrameElement::~HTMLIFrameElement()
 {
+    if (Frame* frame = contentFrame()) {
+        frame->disconnectOwnerElement();
+        frame->page()->decrementFrameCount();
+        frame->frameDetached();
+        ASSERT(!contentFrame());
+    }    
 }
 
 bool HTMLIFrameElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
@@ -93,6 +99,19 @@ void HTMLIFrameElement::insertedIntoDocument()
     }
 
     HTMLElement::insertedIntoDocument();
+    
+    // Load the frame
+    m_name = getAttribute(nameAttr);
+    if (m_name.isNull())
+        m_name = getAttribute(idAttr);
+    
+    Frame* parentFrame = document()->frame();
+    if (parentFrame) {
+        parentFrame->page()->incrementFrameCount();
+        m_name = parentFrame->tree()->uniqueChildName(m_name);
+        
+        openURL();
+    }    
 }
 
 void HTMLIFrameElement::removedFromDocument()
@@ -102,6 +121,13 @@ void HTMLIFrameElement::removedFromDocument()
         doc->removeDocExtraNamedItem(oldNameAttr);
     }
 
+    if (Frame* frame = contentFrame()) {
+        frame->disconnectOwnerElement();
+        frame->page()->decrementFrameCount();
+        frame->frameDetached();
+        ASSERT(!contentFrame());
+    }
+    
     HTMLElement::removedFromDocument();
 }
 
@@ -118,20 +144,31 @@ RenderObject *HTMLIFrameElement::createRenderer(RenderArena *arena, RenderStyle 
 
 void HTMLIFrameElement::attach()
 {
-    m_name = getAttribute(nameAttr);
-    if (m_name.isNull())
-        m_name = getAttribute(idAttr);
-
     HTMLElement::attach();
 
-    Frame* parentFrame = document()->frame();
-    if (renderer() && parentFrame) {
-        parentFrame->page()->incrementFrameCount();
-        m_name = parentFrame->tree()->uniqueChildName(m_name);
-        static_cast<RenderPartObject*>(renderer())->updateWidget();
+    RenderPartObject* renderPart = static_cast<RenderPartObject*>(renderer());
+
+    if (renderPart) {        
+        if (!contentFrame())
+            openURL();
+        
+        renderPart->setFrame(contentFrame());
+        renderPart->setWidget(contentFrame()->view());
+        renderPart->updateWidget();
         needWidgetUpdate = false;
     }
 }
+
+void HTMLIFrameElement::detach()
+{
+    RenderPartObject* renderPart = static_cast<RenderPartObject*>(renderer());
+    
+    if (renderPart)
+        renderPart->setFrame(0);
+    
+    HTMLElement::detach();
+}
+
 
 void HTMLIFrameElement::recalcStyle( StyleChange ch )
 {
@@ -145,8 +182,14 @@ void HTMLIFrameElement::recalcStyle( StyleChange ch )
 
 void HTMLIFrameElement::openURL()
 {
-    needWidgetUpdate = true;
-    setChanged();
+    if (!isURLAllowed(m_URL))
+        return;
+    if (m_URL.isEmpty())
+        m_URL = "about:blank";
+    
+    document()->frame()->requestFrame(this, m_URL, m_name);
+    if (contentFrame())
+        contentFrame()->setInViewSourceMode(viewSourceMode());
 }
 
 bool HTMLIFrameElement::isURLAttribute(Attribute *attr) const

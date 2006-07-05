@@ -1,3 +1,75 @@
+2006-07-05  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3581
+        iFrames set to display:none are Missing from frames array
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::FrameMac):
+        (WebCore::FrameMac::createFrame):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge initSubframeWithOwnerElement:]):
+        (-[WebCoreFrameBridge installInFrame:]):
+        Modify to pass the owner element instead of the owner renderer.        
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::appendChild):
+        Dispatch the node inserted events before attaching the nodes. This is what the
+        tokenizer does.
+        
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::openURL):
+        (WebCore::HTMLFrameElement::attach):
+        Pass the element to requestFrame.
+        
+        (WebCore::HTMLFrameElement::setLocation):
+        Don't call attach/detach on an iframe.
+
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::insertedIntoDocument):
+        Load the frame here (using openURL).
+        
+        (WebCore::HTMLIFrameElement::removedFromDocument):
+        Call frameDetached.
+        
+        (WebCore::HTMLIFrameElement::attach):
+        If there's a renderer, attach the content frame to it.
+        
+        (WebCore::HTMLIFrameElement::detach):
+        Reset the renderer's frame.
+        
+        (WebCore::HTMLIFrameElement::openURL):
+        Modify to request the frame.
+        
+        * html/HTMLIFrameElement.h:
+        Add detach.
+        
+        * page/Frame.cpp:
+        (WebCore::parentFromOwnerElement):
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::requestFrame):
+        (WebCore::Frame::requestObject):
+        (WebCore::Frame::loadSubframe):
+        (WebCore::Frame::ownerElement):
+        (WebCore::Frame::ownerRenderer):
+        (WebCore::Frame::disconnectOwnerElement):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):        
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::setFrame):
+        Modify to keep an owner element around instead of the renderer. 
+        
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        Don't do anything for iframes.
+
 2006-07-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Maciej, reworked a bit by Darin.

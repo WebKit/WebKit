@@ -96,7 +96,7 @@ class Frame : public Shared<Frame>, Noncopyable {
 public:
   enum { NoXPosForVerticalArrowNavigation = INT_MIN };
 
-  Frame(Page*, RenderPart*);
+  Frame(Page*, Element*);
   virtual ~Frame();
 
   virtual bool openURL(const KURL&);
@@ -578,7 +578,7 @@ public:
   virtual void redirectDataToPlugin(Widget* pluginWidget) { }
 protected:
   virtual Plugin* createPlugin(Element* node, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType) = 0;
-  virtual Frame* createFrame(const KURL& url, const String& name, RenderPart* renderer, const String& referrer) = 0;
+  virtual Frame* createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer) = 0;
   virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType) = 0;
 
   virtual void redirectionTimerFired(Timer<Frame>*);
@@ -617,7 +617,7 @@ private:
   bool shouldUsePlugin(Node* element, const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback);
   bool loadPlugin(RenderPart* renderer, const KURL& url, const String& mimeType, 
                   const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
-  Frame* loadSubframe(RenderPart* renderer, const KURL& url, const String& name, const String& referrer);
+  Frame* loadSubframe(Element* ownerElement, const KURL& url, const String& name, const String& referrer);
 
 public:
   void submitForm(const char* action, const String& url, const FormData& formData,
@@ -626,7 +626,7 @@ public:
   
   bool requestObject(RenderPart* frame, const String& url, const AtomicString& frameName,
                      const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
-  bool requestFrame(RenderPart* frame, const String& url, const AtomicString& frameName);
+  bool requestFrame(Element* ownerElement, const String& url, const AtomicString& frameName);
 
   Document* document() const;
   void setDocument(Document* newDoc);
@@ -745,7 +745,7 @@ private:
   
   void replaceContentsWithScriptResult(const KURL& url);
 
-    void disconnectOwnerRenderer();
+    void disconnectOwnerElement();
 
     void setNeedsReapplyStyles();
 

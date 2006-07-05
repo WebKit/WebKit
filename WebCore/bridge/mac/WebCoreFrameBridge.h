@@ -35,16 +35,16 @@ class RenderArena;
 
 namespace WebCore {
     class FrameMac;
-    class RenderPart;
+    class Element;
 }
 
 typedef WebCore::FrameMac WebCoreMacFrame;
-typedef WebCore::RenderPart WebCoreRenderPart;
+typedef WebCore::Element WebCoreElement;
 
 #else
 
 @class WebCoreMacFrame;
-@class WebCoreRenderPart;
+@class WebCoreElement;
 @class RenderArena;
 
 #endif
@@ -189,7 +189,7 @@ typedef enum {
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document;
 
 - (id)initMainFrameWithPage:(WebCorePageBridge *)page;
-- (id)initSubframeWithRenderer:(WebCoreRenderPart *)renderer;
+- (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement;
 
 - (void)close;
 
@@ -535,7 +535,7 @@ typedef enum {
 
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
     referrer:(NSString *)referrer
-    renderPart:(WebCoreRenderPart *)renderPart
+    ownerElement:(WebCoreElement *)ownerElement
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
 - (BOOL)areToolbarsVisible;

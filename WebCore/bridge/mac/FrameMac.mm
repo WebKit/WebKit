@@ -148,8 +148,8 @@ bool FrameView::isFrameView() const
     return true;
 }
 
-FrameMac::FrameMac(Page* page, RenderPart* ownerRenderer)
-    : Frame(page, ownerRenderer)
+FrameMac::FrameMac(Page* page, Element* ownerElement)
+    : Frame(page, ownerElement)
     , _bridge(nil)
     , _mouseDownView(nil)
     , _sendingEventToSubview(false)
@@ -539,15 +539,15 @@ void FrameMac::redirectDataToPlugin(Widget* pluginWidget)
 }
 
 
-Frame* FrameMac::createFrame(const KURL& url, const String& name, RenderPart* renderer, const String& referrer)
+Frame* FrameMac::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
     BOOL allowsScrolling = YES;
     int marginWidth = -1;
     int marginHeight = -1;
-    if (renderer->element()->hasTagName(frameTag) || renderer->element()->hasTagName(iframeTag)) {
-        HTMLFrameElement* o = static_cast<HTMLFrameElement*>(renderer->element());
+    if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag)) {
+        HTMLFrameElement* o = static_cast<HTMLFrameElement*>(ownerElement);
         allowsScrolling = o->scrollingMode() != ScrollBarAlwaysOff;
         marginWidth = o->getMarginWidth();
         marginHeight = o->getMarginHeight();
@@ -556,7 +556,7 @@ Frame* FrameMac::createFrame(const KURL& url, const String& name, RenderPart* re
     WebCoreFrameBridge *childBridge = [_bridge createChildFrameNamed:name
                                                              withURL:url.getNSURL()
                                                             referrer:referrer 
-                                                          renderPart:renderer
+                                                          ownerElement:ownerElement
                                                      allowsScrolling:allowsScrolling
                                                          marginWidth:marginWidth
                                                         marginHeight:marginHeight];

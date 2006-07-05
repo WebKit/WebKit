@@ -887,7 +887,6 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 {
     WebHTMLView *view = (WebHTMLView *)[[[[_private->dataSource _webView] mainFrame] frameView] documentView];
     ASSERT([view isKindOfClass:[WebHTMLView class]]);
-    ASSERT([self isDescendantOf:view]);
     return view;
 }
 

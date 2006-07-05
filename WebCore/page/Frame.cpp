@@ -139,15 +139,15 @@ int FrameCounter::count = 0;
 static FrameCounter frameCounter;
 #endif
 
-static inline Frame* parentFromOwnerRenderer(RenderPart* ownerRenderer)
+static inline Frame* parentFromOwnerElement(Element* ownerElement)
 {
-    if (!ownerRenderer)
+    if (!ownerElement)
         return 0;
-    return ownerRenderer->node()->document()->frame();
+    return ownerElement->document()->frame();
 }
 
-Frame::Frame(Page* page, RenderPart* ownerRenderer) 
-    : d(new FramePrivate(page, parentFromOwnerRenderer(ownerRenderer), this, ownerRenderer))
+Frame::Frame(Page* page, Element* ownerElement) 
+    : d(new FramePrivate(page, parentFromOwnerElement(ownerElement), this, ownerElement))
 {
     AtomicString::init();
     Cache::init();
@@ -169,8 +169,8 @@ Frame::Frame(Page* page, RenderPart* ownerRenderer)
     ++FrameCounter::count;
 #endif
 
-    if (ownerRenderer)
-        ownerRenderer->setFrame(this);
+    if (ownerRenderer())
+        ownerRenderer()->setFrame(this);
 }
 
 Frame::~Frame()
@@ -205,11 +205,12 @@ Frame::~Frame()
     HashSet<Frame*>::iterator end = openedBy.end();
     for (HashSet<Frame*>::iterator it = openedBy.begin(); it != end; ++it)
         (*it)->setOpener(0);
-
-    if (d->m_ownerRenderer)
-        d->m_ownerRenderer->setFrame(0);
-    ASSERT(!d->m_ownerRenderer);
-
+    
+    if (ownerRenderer()) {
+        ownerRenderer()->setFrame(0);
+        ASSERT(!d->m_ownerElement);
+    }
+    
     if (d->m_view) {
         d->m_view->hide();
         d->m_view->m_frame = 0;
@@ -1380,7 +1381,7 @@ void Frame::urlSelected(const ResourceRequest& request, const String& _target)
   urlSelected(requestCopy);
 }
 
-bool Frame::requestFrame(RenderPart* renderer, const String& urlParam, const AtomicString& frameName)
+bool Frame::requestFrame(Element* ownerElement, const String& urlParam, const AtomicString& frameName)
 {
     DeprecatedString _url = urlParam.deprecatedString();
     // Support for <frame src="javascript:string">
@@ -1399,7 +1400,7 @@ bool Frame::requestFrame(RenderPart* renderer, const String& urlParam, const Ato
         request.reload = (d->m_cachePolicy == KIO::CC_Reload) || (d->m_cachePolicy == KIO::CC_Refresh);
         frame->openURLRequest(request);
     } else
-        frame = loadSubframe(renderer, url, frameName, d->m_referrer);
+        frame = loadSubframe(ownerElement, url, frameName, d->m_referrer);
     
     if (!frame)
         return false;
@@ -1425,7 +1426,7 @@ bool Frame::requestObject(RenderPart* renderer, const String& url, const AtomicS
         return loadPlugin(renderer, completedURL, mimeType, paramNames, paramValues, useFallback);
 
     // FIXME: ok to always make a new one? when does the old frame get removed?
-    return loadSubframe(renderer, completedURL, frameName, d->m_referrer);
+    return loadSubframe(static_cast<Element*>(renderer->element()), completedURL, frameName, d->m_referrer);
 }
 
 bool Frame::shouldUsePlugin(Node* element, const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback)
@@ -1471,9 +1472,9 @@ bool Frame::loadPlugin(RenderPart *renderer, const KURL& url, const String& mime
     return true;
 }
 
-Frame* Frame::loadSubframe(RenderPart* renderer, const KURL& url, const String& name, const String& referrer)
+Frame* Frame::loadSubframe(Element* ownerElement, const KURL& url, const String& name, const String& referrer)
 {
-    Frame* frame = createFrame(url, name, renderer, referrer);
+    Frame* frame = createFrame(url, name, ownerElement, referrer);
     if (!frame)  {
         checkEmitLoadEvent();
         return 0;
@@ -1481,8 +1482,8 @@ Frame* Frame::loadSubframe(RenderPart* renderer, const KURL& url, const String& 
     
     frame->childBegin();
     
-    if (renderer && frame->view())
-        renderer->setWidget(frame->view());
+    if (ownerElement->renderer() && frame->view())
+        static_cast<RenderWidget*>(ownerElement->renderer())->setWidget(frame->view());
     
     checkEmitLoadEvent();
     
@@ -2595,15 +2596,15 @@ RenderObject *Frame::renderer() const
 
 Element* Frame::ownerElement()
 {
-    RenderPart* ownerElementRenderer = d->m_ownerRenderer;
-    if (!ownerElementRenderer)
-        return 0;
-    return static_cast<Element*>(ownerElementRenderer->element());
+    return d->m_ownerElement;
 }
 
 RenderPart* Frame::ownerRenderer()
 {
-    return d->m_ownerRenderer;
+    Element* ownerElement = d->m_ownerElement;
+    if (!ownerElement)
+        return 0;
+    return static_cast<RenderPart*>(ownerElement->renderer());
 }
 
 IntRect Frame::selectionRect() const
@@ -3580,9 +3581,9 @@ void Frame::started()
         frame->d->m_bComplete = false;
 }
 
-void Frame::disconnectOwnerRenderer()
+void Frame::disconnectOwnerElement()
 {
-    d->m_ownerRenderer = 0;
+    d->m_ownerElement = 0;
 }
 
 String Frame::documentTypeString() const

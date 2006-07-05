@@ -1,3 +1,28 @@
+2006-07-05  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3581
+        iFrames set to display:none are Missing from frames array
+
+        * fast/events/mouseover-mouseout2-expected.txt:
+        * fast/events/mouseover-mouseout2.html:
+        Update expected result. Since we now keep the frame around, the mouseout event is 
+        now dispatched to the element in the frame.
+
+        * fast/events/onloadFrameCrash-expected.checksum:
+        * fast/events/onloadFrameCrash-expected.png:
+        * fast/events/onloadFrameCrash-expected.txt:
+        This does hide the frame now.
+        
+        * fast/frames/iframe-display-none-expected.txt: Added.
+        * fast/frames/iframe-display-none.html: Added.
+        * fast/frames/resources/iframe-display-none-child.html: Added.
+        New test that tests JS interaction with frames.
+        
+        * fast/frames/iframe-double-attach-expected.txt: Added.
+        * fast/frames/iframe-double-attach.html: Added.
+        
 2006-07-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

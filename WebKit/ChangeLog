@@ -1,3 +1,19 @@
+2006-07-05  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3581
+        iFrames set to display:none are Missing from frames array
+        
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:view:]):
+        (-[WebFrameBridge createChildFrameNamed:withURL:referrer:ownerElement:allowsScrolling:marginWidth:marginHeight:]):
+        Modify to pass the owner element instead of the owner renderer.
+        
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _topHTMLView]):
+        Remove assertion, it's not valid anymore.
+
 2006-07-05  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Harrison.
@@ -8,6 +24,7 @@
         * WebKit.LP64.exp: Added.
         * WebKit.xcodeproj/project.pbxproj:
 
+>>>>>>> .r15169
 2006-07-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.

@@ -126,9 +126,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return self;
 }
 
-- (id)initSubframeWithRenderer:(WebCoreRenderPart *)renderer frameName:(NSString *)name view:(WebFrameView *)view
+- (id)initSubframeWithOwnerElement:(WebCoreElement *)ownerElement frameName:(NSString *)name view:(WebFrameView *)view
 {
-    self = [super initSubframeWithRenderer:renderer];
+    self = [super initSubframeWithOwnerElement:ownerElement];
 
     ++WebBridgeCount;
     
@@ -748,7 +748,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName 
                                       withURL:(NSURL *)URL
                                      referrer:(NSString *)referrer
-                                   renderPart:(WebCoreRenderPart *)childRenderPart
+                                   ownerElement:(WebCoreElement *)ownerElement
                               allowsScrolling:(BOOL)allowsScrolling 
                                   marginWidth:(int)width
                                  marginHeight:(int)height
@@ -761,7 +761,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     
     WebFrameView *childView = [[WebFrameView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
     [childView setAllowsScrolling:allowsScrolling];
-    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initSubframeWithRenderer:childRenderPart frameName:frameName view:childView];
+    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initSubframeWithOwnerElement:ownerElement frameName:frameName view:childView];
     [_frame _addChild:[newBridge webFrame]];
     [childView release];
 

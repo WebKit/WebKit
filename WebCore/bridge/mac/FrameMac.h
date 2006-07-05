@@ -112,7 +112,7 @@ enum KWQSelectionDirection {
 class FrameMac : public Frame
 {
 public:
-    FrameMac(Page*, RenderPart*);
+    FrameMac(Page*, Element*);
     ~FrameMac();
     
     void clear();
@@ -138,7 +138,7 @@ public:
     virtual Plugin* createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
     virtual void redirectDataToPlugin(Widget* pluginWidget);
 
-    virtual Frame* createFrame(const KURL& url, const String& name, RenderPart* renderer, const String& referrer);
+    virtual Frame* createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer);
 
     virtual void scheduleClose();
 
