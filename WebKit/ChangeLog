@@ -1,5 +1,23 @@
 2006-07-04  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Maciej.
+
+        Bug 9731: [Drosera] crash when trying to access the scope chain
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9731
+
+        Because of <rdar://problem/4608404> the WebScriptObject, _globalObj, that
+        WebCoreScriptDebugger holds is unprotected each time the page changes.
+        This causes Drosera to crash Safari when trying to access the scope chain.
+        We simply need to detach and re-attach the debugger when the window script
+        object is cleared until 4608404 is fixed. This change also attaches the
+        debugger before we call the windowScriptObjectAvailable: delegate method,
+        so the debugger is ready before anyone might use the window object.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge windowObjectCleared]):
+
+2006-07-04  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Darin.
 
         Bug 9732: [Drosera] calling removeListener to many times will cause
