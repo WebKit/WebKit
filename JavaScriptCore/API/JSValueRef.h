@@ -221,6 +221,34 @@ JSCharBufferRef JSValueCopyStringValue(JSContextRef context, JSValueRef value);
 */
 JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value);
 
+// Garbage collection
+/*!
+  @function JSGCProtect
+  Protect a JavaScript value from garbage collection; a value may be
+  protected multiple times and must be unprotected an equal number of
+  times to become collectable again.
+*/
+void JSGCProtect(JSValueRef value);
+
+/*!
+  @function JSGCProtect
+  Stop protecting a JavaScript value from garbage collection; a value may be
+  protected multiple times and must be unprotected an equal number of
+  times to become collectable again.
+*/
+void JSGCUnprotect(JSValueRef value);
+
+/*! 
+  @function JSGCCollect
+  Immediately perform a JavaScript garbage collection. JavaScript
+  values that are on the machine stack, in a register, protected, set
+  as the global object of any interpreter, or reachable from any such
+  value will not be collected. It is not normally necessary to call
+  this function directly; the JS runtime will garbage collect as
+  needed.
+*/
+void JSGCCollect(void);
+
 #ifdef __cplusplus
 }
 #endif

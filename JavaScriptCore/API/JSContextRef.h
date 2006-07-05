@@ -43,6 +43,33 @@ JSValueRef JSContextGetException(JSContextRef context); // NULL if there is no e
 void JSContextSetException(JSContextRef context, JSValueRef value);
 void JSContextClearException(JSContextRef context);
     
+// Evaluation
+/*!
+  @function JSEvaluate
+  Evaluates a string of JavaScript
+  @param context            execution context to use
+  @param script             a character buffer containing the JavaScript to evaluate
+  @param thisValue          object to use as "this," or NULL to use the global object as "this"
+  @param sourceURL          URL to the file containing the JavaScript, or NULL - this is only used for error reporting
+  @param startingLineNumber the JavaScript's starting line number in the file located at sourceURL - this is only used for error reporting
+  @param exception          pointer to a JSValueRef in which to store an uncaught exception, if any; can be NULL
+  @result                   result of evaluation, or NULL if an uncaught exception was thrown
+*/
+JSValueRef JSEvaluate(JSContextRef context, JSCharBufferRef script, JSValueRef thisValue, JSCharBufferRef sourceURL, int startingLineNumber, JSValueRef* exception);
+
+/*!
+  @function JSCheckSyntax
+  Check for syntax errors in a string of JavaScript
+  @param context            execution context to use
+  @param script             a character buffer containing the JavaScript to evaluate
+  @param sourceURL          URL to the file containing the JavaScript, or NULL - this is only used for error reporting
+  @param startingLineNumber the JavaScript's starting line number in the file located at sourceURL - this is only used for error reporting
+  @param exception          pointer to a JSValueRef in which to store a syntax error, if any; can be NULL
+  @result                   true if the script is syntactically correct, false otherwise
+
+*/
+bool JSCheckSyntax(JSContextRef context, JSCharBufferRef script, JSCharBufferRef sourceURL, int startingLineNumber, JSValueRef* exception);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,3 +1,16 @@
+2006-07-05  Geoffrey Garen  <ggaren@apple.com>
+
+        RS by Beth.
+        
+        Moved some code around for more logical file separation.
+
+        * API/JSBase.h:
+        * API/JSContextRef.h:
+        * API/JSObjectRef.cpp:
+        * API/JSValueRef.cpp:
+        (JSValueToObject):
+        * API/JSValueRef.h:
+
 2006-07-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

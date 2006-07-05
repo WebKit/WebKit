@@ -40,20 +40,6 @@
 
 using namespace KJS;
 
-JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value)
-{
-    JSLock lock;
-    ExecState* exec = toJS(context);
-    JSValue* jsValue = toJS(value);
-
-    JSObjectRef objectRef = toRef(jsValue->toObject(exec));
-    if (exec->hadException()) {
-        exec->clearException();
-        objectRef = NULL;
-    }
-    return objectRef;
-}    
-
 JSObjectRef JSObjectMake(JSContextRef context, JSClassRef jsClass, JSObjectRef prototype)
 {
     JSLock lock;
