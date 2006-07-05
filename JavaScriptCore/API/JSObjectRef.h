@@ -49,16 +49,16 @@ typedef void
 (*JSFinalizeCallback)           (JSObjectRef object);
 
 typedef bool
-(*JSHasPropertyCallback)        (JSObjectRef object, JSCharBufferRef propertyName);
+(*JSHasPropertyCallback)        (JSObjectRef object, JSStringBufferRef propertyName);
 
 typedef bool
-(*JSGetPropertyCallback)        (JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName, JSValueRef* returnValue);
+(*JSGetPropertyCallback)        (JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef* returnValue);
 
 typedef bool
-(*JSSetPropertyCallback)        (JSObjectRef object, JSCharBufferRef propertyName, JSValueRef value);
+(*JSSetPropertyCallback)        (JSObjectRef object, JSStringBufferRef propertyName, JSValueRef value);
 
 typedef bool
-(*JSDeletePropertyCallback)     (JSObjectRef object, JSCharBufferRef propertyName);
+(*JSDeletePropertyCallback)     (JSObjectRef object, JSStringBufferRef propertyName);
 
 typedef void
 (*JSGetPropertyListCallback)    (JSObjectRef object, JSPropertyListRef propertyList);
@@ -114,17 +114,17 @@ JSObjectRef JSFunctionMake(JSContextRef context, JSCallAsFunctionCallback callAs
 JSObjectRef JSConstructorMake(JSContextRef context, JSCallAsConstructorCallback callAsConstructor);
 
 // returns NULL if functionBody has a syntax error
-JSObjectRef JSFunctionMakeWithBody(JSContextRef context, JSCharBufferRef body, JSCharBufferRef sourceURL, int startingLineNumber);
+JSObjectRef JSFunctionMakeWithBody(JSContextRef context, JSStringBufferRef body, JSStringBufferRef sourceURL, int startingLineNumber);
 
-JSCharBufferRef JSObjectGetDescription(JSObjectRef object);
+JSStringBufferRef JSObjectGetDescription(JSObjectRef object);
 
 JSValueRef JSObjectGetPrototype(JSObjectRef object);
 void JSObjectSetPrototype(JSObjectRef object, JSValueRef value);
 
-bool JSObjectHasProperty(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName);
-bool JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName, JSValueRef* value);
-bool JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName, JSValueRef value, JSPropertyAttributes attributes);
-bool JSObjectDeleteProperty(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName);
+bool JSObjectHasProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName);
+bool JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef* value);
+bool JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef value, JSPropertyAttributes attributes);
+bool JSObjectDeleteProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName);
 
 // Only works with objects created by JSObjectMake
 void* JSObjectGetPrivate(JSObjectRef object);
@@ -139,10 +139,10 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, 
 JSPropertyEnumeratorRef JSObjectCreatePropertyEnumerator(JSContextRef context, JSObjectRef object);
 JSPropertyEnumeratorRef JSPropertyEnumeratorRetain(JSPropertyEnumeratorRef enumerator);
 void JSPropertyEnumeratorRelease(JSPropertyEnumeratorRef enumerator);
-JSCharBufferRef JSPropertyEnumeratorGetNext(JSContextRef context, JSPropertyEnumeratorRef enumerator);
+JSStringBufferRef JSPropertyEnumeratorGetNext(JSContextRef context, JSPropertyEnumeratorRef enumerator);
 
 // Used for adding property names to a for...in enumeration
-void JSPropertyListAdd(JSPropertyListRef propertyList, JSObjectRef thisObject, JSCharBufferRef propertyName);
+void JSPropertyListAdd(JSPropertyListRef propertyList, JSObjectRef thisObject, JSStringBufferRef propertyName);
 
 #ifdef __cplusplus
 }

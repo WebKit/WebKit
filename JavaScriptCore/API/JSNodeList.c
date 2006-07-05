@@ -56,7 +56,7 @@ static JSClassRef JSNodeListPrototype_class(JSContextRef context)
     return jsClass;
 }
 
-static bool JSNodeList_length(JSContextRef context, JSObjectRef thisObject, JSCharBufferRef propertyName, JSValueRef* returnValue)
+static bool JSNodeList_length(JSContextRef context, JSObjectRef thisObject, JSStringBufferRef propertyName, JSValueRef* returnValue)
 {
     UNUSED_PARAM(context);
     
@@ -71,7 +71,7 @@ static JSStaticValue JSNodeList_staticValues[] = {
     { 0, 0, 0, 0 }
 };
 
-static bool JSNodeList_getProperty(JSContextRef context, JSObjectRef thisObject, JSCharBufferRef propertyName, JSValueRef* returnValue)
+static bool JSNodeList_getProperty(JSContextRef context, JSObjectRef thisObject, JSStringBufferRef propertyName, JSValueRef* returnValue)
 {
     NodeList* nodeList = JSObjectGetPrivate(thisObject);
     assert(nodeList);

@@ -70,7 +70,7 @@ JSObjectRef JSConstructorMake(JSContextRef context, JSCallAsConstructorCallback 
     return toRef(new JSCallbackConstructor(exec, callAsConstructor));
 }
 
-JSObjectRef JSFunctionMakeWithBody(JSContextRef context, JSCharBufferRef body, JSCharBufferRef sourceURL, int startingLineNumber)
+JSObjectRef JSFunctionMakeWithBody(JSContextRef context, JSStringBufferRef body, JSStringBufferRef sourceURL, int startingLineNumber)
 {
     JSLock lock;
     
@@ -88,7 +88,7 @@ JSObjectRef JSFunctionMakeWithBody(JSContextRef context, JSCharBufferRef body, J
     return toRef(static_cast<JSObject*>(new DeclaredFunctionImp(exec, "anonymous", bodyNode.get(), scopeChain)));
 }
 
-JSCharBufferRef JSObjectGetDescription(JSObjectRef object)
+JSStringBufferRef JSObjectGetDescription(JSObjectRef object)
 {
     JSLock lock;
     JSObject* jsObject = toJS(object);
@@ -109,7 +109,7 @@ void JSObjectSetPrototype(JSObjectRef object, JSValueRef value)
     jsObject->setPrototype(jsValue);
 }
 
-bool JSObjectHasProperty(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName)
+bool JSObjectHasProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -119,7 +119,7 @@ bool JSObjectHasProperty(JSContextRef context, JSObjectRef object, JSCharBufferR
     return jsObject->hasProperty(exec, Identifier(nameRep));
 }
 
-bool JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName, JSValueRef* value)
+bool JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef* value)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -130,7 +130,7 @@ bool JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSCharBufferR
     return !JSValueIsUndefined(*value);
 }
 
-bool JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName, JSValueRef value, JSPropertyAttributes attributes)
+bool JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef value, JSPropertyAttributes attributes)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -146,7 +146,7 @@ bool JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSCharBufferR
         return false;
 }
 
-bool JSObjectDeleteProperty(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName)
+bool JSObjectDeleteProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -254,7 +254,7 @@ JSPropertyEnumeratorRef JSObjectCreatePropertyEnumerator(JSContextRef context, J
     return JSPropertyEnumeratorRetain(enumerator);
 }
 
-JSCharBufferRef JSPropertyEnumeratorGetNext(JSContextRef context, JSPropertyEnumeratorRef enumerator)
+JSStringBufferRef JSPropertyEnumeratorGetNext(JSContextRef context, JSPropertyEnumeratorRef enumerator)
 {
     ExecState* exec = toJS(context);
     ReferenceListIterator& iterator = enumerator->iterator;
@@ -277,7 +277,7 @@ void JSPropertyEnumeratorRelease(JSPropertyEnumeratorRef enumerator)
         delete enumerator;
 }
 
-void JSPropertyListAdd(JSPropertyListRef propertyList, JSObjectRef thisObject, JSCharBufferRef propertyName)
+void JSPropertyListAdd(JSPropertyListRef propertyList, JSObjectRef thisObject, JSStringBufferRef propertyName)
 {
     JSLock lock;
     ReferenceList* jsPropertyList = toJS(propertyList);

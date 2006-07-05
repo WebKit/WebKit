@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSCharBufferRef_h
-#define JSCharBufferRef_h
+#ifndef JSStringBufferRef_h
+#define JSStringBufferRef_h
 
 #include "JSValueRef.h"
 #ifdef __cplusplus
@@ -38,32 +38,32 @@ extern "C" {
     typedef unsigned short JSChar;
 #endif
     
-JSCharBufferRef JSCharBufferCreate(const JSChar* chars, size_t numChars);
-JSCharBufferRef JSCharBufferCreateUTF8(const char* string);
+JSStringBufferRef JSStringBufferCreate(const JSChar* chars, size_t numChars);
+JSStringBufferRef JSStringBufferCreateUTF8(const char* string);
 
-JSCharBufferRef JSCharBufferRetain(JSCharBufferRef buffer);
-void JSCharBufferRelease(JSCharBufferRef buffer);
+JSStringBufferRef JSStringBufferRetain(JSStringBufferRef buffer);
+void JSStringBufferRelease(JSStringBufferRef buffer);
 
-size_t JSCharBufferGetLength(JSCharBufferRef buffer);
-const JSChar* JSCharBufferGetCharactersPtr(JSCharBufferRef buffer);
-void JSCharBufferGetCharacters(JSCharBufferRef inBuffer, JSChar* outBuffer, size_t numChars);
+size_t JSStringBufferGetLength(JSStringBufferRef buffer);
+const JSChar* JSStringBufferGetCharactersPtr(JSStringBufferRef buffer);
+void JSStringBufferGetCharacters(JSStringBufferRef inBuffer, JSChar* outBuffer, size_t numChars);
 
-size_t JSCharBufferGetMaxLengthUTF8(JSCharBufferRef buffer);
+size_t JSStringBufferGetMaxLengthUTF8(JSStringBufferRef buffer);
 // Returns the number of bytes written into outBuffer, including the trailing '\0'
-size_t JSCharBufferGetCharactersUTF8(JSCharBufferRef inBuffer, char* outBuffer, size_t bufferSize);
+size_t JSStringBufferGetCharactersUTF8(JSStringBufferRef inBuffer, char* outBuffer, size_t bufferSize);
 
-bool JSCharBufferIsEqual(JSCharBufferRef a, JSCharBufferRef b);
-bool JSCharBufferIsEqualUTF8(JSCharBufferRef a, const char* b);
+bool JSStringBufferIsEqual(JSStringBufferRef a, JSStringBufferRef b);
+bool JSStringBufferIsEqualUTF8(JSStringBufferRef a, const char* b);
 
 #if defined(__APPLE__)
 #include <CoreFoundation/CoreFoundation.h>
 // CFString convenience methods
-JSCharBufferRef JSCharBufferCreateWithCFString(CFStringRef string);
-CFStringRef CFStringCreateWithJSCharBuffer(CFAllocatorRef alloc, JSCharBufferRef buffer);
+JSStringBufferRef JSStringBufferCreateWithCFString(CFStringRef string);
+CFStringRef CFStringCreateWithJSStringBuffer(CFAllocatorRef alloc, JSStringBufferRef buffer);
 #endif // __APPLE__
     
 #ifdef __cplusplus
 }
 #endif
 
-#endif // JSCharBufferRef_h
+#endif // JSStringBufferRef_h

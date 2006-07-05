@@ -55,7 +55,7 @@ void JSContextClearException(JSContextRef context);
   @param exception          pointer to a JSValueRef in which to store an uncaught exception, if any; can be NULL
   @result                   result of evaluation, or NULL if an uncaught exception was thrown
 */
-JSValueRef JSEvaluate(JSContextRef context, JSCharBufferRef script, JSValueRef thisValue, JSCharBufferRef sourceURL, int startingLineNumber, JSValueRef* exception);
+JSValueRef JSEvaluate(JSContextRef context, JSStringBufferRef script, JSValueRef thisValue, JSStringBufferRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
 /*!
   @function JSCheckSyntax
@@ -68,7 +68,7 @@ JSValueRef JSEvaluate(JSContextRef context, JSCharBufferRef script, JSValueRef t
   @result                   true if the script is syntactically correct, false otherwise
 
 */
-bool JSCheckSyntax(JSContextRef context, JSCharBufferRef script, JSCharBufferRef sourceURL, int startingLineNumber, JSValueRef* exception);
+bool JSCheckSyntax(JSContextRef context, JSStringBufferRef script, JSStringBufferRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
 #ifdef __cplusplus
 }

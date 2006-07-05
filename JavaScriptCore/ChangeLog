@@ -2,6 +2,84 @@
 
         RS by Beth.
         
+        Renamed JSCharBufferRef, which was universally unpopular, to JSStringBufferRef,
+        which, hopefully, will be less unpopular.
+
+        * API/APICast.h:
+        (toJS):
+        (toRef):
+        * API/JSBase.h:
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::deleteProperty):
+        (KJS::JSCallbackObject::staticValueGetter):
+        (KJS::JSCallbackObject::callbackGetter):
+        * API/JSCharBufferRef.cpp: Removed.
+        * API/JSCharBufferRef.h: Removed.
+        * API/JSContextRef.cpp:
+        (JSEvaluate):
+        (JSCheckSyntax):
+        * API/JSContextRef.h:
+        * API/JSNode.c:
+        (JSNodePrototype_appendChild):
+        (JSNode_getNodeType):
+        (JSNode_getChildNodes):
+        (JSNode_getFirstChild):
+        * API/JSNodeList.c:
+        (JSNodeList_length):
+        (JSNodeList_getProperty):
+        * API/JSObjectRef.cpp:
+        (JSFunctionMakeWithBody):
+        (JSObjectGetDescription):
+        (JSObjectHasProperty):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectDeleteProperty):
+        (JSPropertyEnumeratorGetNext):
+        (JSPropertyListAdd):
+        * API/JSObjectRef.h:
+        * API/JSStringBufferRef.cpp: Added.
+        (JSStringMake):
+        (JSStringBufferCreate):
+        (JSStringBufferCreateUTF8):
+        (JSStringBufferRetain):
+        (JSStringBufferRelease):
+        (JSValueCopyStringValue):
+        (JSStringBufferGetLength):
+        (JSStringBufferGetCharactersPtr):
+        (JSStringBufferGetCharacters):
+        (JSStringBufferGetMaxLengthUTF8):
+        (JSStringBufferGetCharactersUTF8):
+        (JSStringBufferIsEqual):
+        (JSStringBufferIsEqualUTF8):
+        (JSStringBufferCreateWithCFString):
+        (CFStringCreateWithJSStringBuffer):
+        * API/JSStringBufferRef.h: Added.
+        * API/JSValueRef.h:
+        * API/JavaScriptCore.h:
+        * API/minidom.c:
+        (main):
+        (print):
+        * API/testapi.c:
+        (assertEqualsAsUTF8String):
+        (assertEqualsAsCharactersPtr):
+        (assertEqualsAsCharacters):
+        (MyObject_hasProperty):
+        (MyObject_getProperty):
+        (MyObject_setProperty):
+        (MyObject_deleteProperty):
+        (MyObject_getPropertyList):
+        (print_callAsFunction):
+        (myConstructor_callAsConstructor):
+        (main):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2006-07-05  Geoffrey Garen  <ggaren@apple.com>
+
+        RS by Beth.
+        
         Moved some code around for more logical file separation.
 
         * API/JSBase.h:

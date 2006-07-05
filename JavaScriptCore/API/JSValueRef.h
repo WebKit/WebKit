@@ -181,7 +181,7 @@ JSValueRef JSNumberMake(double value);
   @param  buffer the internal string contents for the string value
   @result a JS string value that has the value of the buffer
 */
-JSValueRef JSStringMake(JSCharBufferRef buffer);
+JSValueRef JSStringMake(JSStringBufferRef buffer);
 
 // Converting to primitive values
 
@@ -210,7 +210,7 @@ double JSValueToNumber(JSContextRef context, JSValueRef value);
   @param value   the value to convert
   @result        a character buffer containing the result of conversion, or an empty character buffer if conversion fails
 */
-JSCharBufferRef JSValueCopyStringValue(JSContextRef context, JSValueRef value);
+JSStringBufferRef JSValueCopyStringValue(JSContextRef context, JSValueRef value);
 
 /*!
   @function JSValueToObject

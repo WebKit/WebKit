@@ -31,7 +31,7 @@
 #include <stddef.h> // for size_t
 
 #include "JSBase.h"
-#include "JSCharBufferRef.h"
+#include "JSStringBufferRef.h"
 #include "JSContextRef.h"
 #include "JSObjectRef.h"
 #include "JSValueRef.h"

@@ -51,11 +51,11 @@ static void assertEqualsAsNumber(JSValueRef value, double expectedValue)
 
 static void assertEqualsAsUTF8String(JSValueRef value, const char* expectedValue)
 {
-    JSCharBufferRef valueAsString = JSValueCopyStringValue(context, value);
+    JSStringBufferRef valueAsString = JSValueCopyStringValue(context, value);
 
-    size_t jsSize = JSCharBufferGetMaxLengthUTF8(valueAsString);
+    size_t jsSize = JSStringBufferGetMaxLengthUTF8(valueAsString);
     char jsBuffer[jsSize];
-    JSCharBufferGetCharactersUTF8(valueAsString, jsBuffer, jsSize);
+    JSStringBufferGetCharactersUTF8(valueAsString, jsBuffer, jsSize);
     
     if (strcmp(jsBuffer, expectedValue) != 0)
         fprintf(stderr, "assertEqualsAsUTF8String strcmp failed: %s != %s\n", jsBuffer, expectedValue);
@@ -63,16 +63,16 @@ static void assertEqualsAsUTF8String(JSValueRef value, const char* expectedValue
     if (jsSize < strlen(jsBuffer) + 1)
         fprintf(stderr, "assertEqualsAsUTF8String failed: jsSize was too small\n");
 
-    JSCharBufferRelease(valueAsString);
+    JSStringBufferRelease(valueAsString);
 }
 
 #if defined(__APPLE__)
 static void assertEqualsAsCharactersPtr(JSValueRef value, const char* expectedValue)
 {
-    JSCharBufferRef valueAsString = JSValueCopyStringValue(context, value);
+    JSStringBufferRef valueAsString = JSValueCopyStringValue(context, value);
 
-    size_t jsLength = JSCharBufferGetLength(valueAsString);
-    const JSChar* jsBuffer = JSCharBufferGetCharactersPtr(valueAsString);
+    size_t jsLength = JSStringBufferGetLength(valueAsString);
+    const JSChar* jsBuffer = JSStringBufferGetCharactersPtr(valueAsString);
 
     CFStringRef expectedValueAsCFString = CFStringCreateWithCString(kCFAllocatorDefault, 
                                                                     expectedValue,
@@ -88,16 +88,16 @@ static void assertEqualsAsCharactersPtr(JSValueRef value, const char* expectedVa
     if (jsLength != (size_t)cfLength)
         fprintf(stderr, "assertEqualsAsCharactersPtr failed: jsLength(%ld) != cfLength(%ld)\n", jsLength, cfLength);
     
-    JSCharBufferRelease(valueAsString);
+    JSStringBufferRelease(valueAsString);
 }
 
 static void assertEqualsAsCharacters(JSValueRef value, const char* expectedValue)
 {
-    JSCharBufferRef valueAsString = JSValueCopyStringValue(context, value);
+    JSStringBufferRef valueAsString = JSValueCopyStringValue(context, value);
     
-    size_t jsLength = JSCharBufferGetLength(valueAsString);
+    size_t jsLength = JSStringBufferGetLength(valueAsString);
     JSChar jsBuffer[jsLength];
-    JSCharBufferGetCharacters(valueAsString, jsBuffer, jsLength);
+    JSStringBufferGetCharacters(valueAsString, jsBuffer, jsLength);
     
     CFStringRef expectedValueAsCFString = CFStringCreateWithCString(kCFAllocatorDefault, 
                                                                     expectedValue,
@@ -113,7 +113,7 @@ static void assertEqualsAsCharacters(JSValueRef value, const char* expectedValue
     if (jsLength != (size_t)cfLength)
         fprintf(stderr, "assertEqualsAsCharacters failed: jsLength(%ld) != cfLength(%ld)\n", jsLength, cfLength);
     
-    JSCharBufferRelease(valueAsString);
+    JSStringBufferRelease(valueAsString);
 }
 #endif // __APPLE__
 
@@ -129,35 +129,35 @@ static void MyObject_initialize(JSObjectRef object)
     didInitialize = true;
 }
 
-static bool MyObject_hasProperty(JSObjectRef object, JSCharBufferRef propertyName)
+static bool MyObject_hasProperty(JSObjectRef object, JSStringBufferRef propertyName)
 {
     UNUSED_PARAM(object);
 
-    if (JSCharBufferIsEqualUTF8(propertyName, "alwaysOne")
-        || JSCharBufferIsEqualUTF8(propertyName, "cantFind")
-        || JSCharBufferIsEqualUTF8(propertyName, "myPropertyName")) {
+    if (JSStringBufferIsEqualUTF8(propertyName, "alwaysOne")
+        || JSStringBufferIsEqualUTF8(propertyName, "cantFind")
+        || JSStringBufferIsEqualUTF8(propertyName, "myPropertyName")) {
         return true;
     }
     
     return false;
 }
 
-static bool MyObject_getProperty(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName, JSValueRef* returnValue)
+static bool MyObject_getProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef* returnValue)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
     
-    if (JSCharBufferIsEqualUTF8(propertyName, "alwaysOne")) {
+    if (JSStringBufferIsEqualUTF8(propertyName, "alwaysOne")) {
         *returnValue = JSNumberMake(1);
         return true;
     }
     
-    if (JSCharBufferIsEqualUTF8(propertyName, "myPropertyName")) {
+    if (JSStringBufferIsEqualUTF8(propertyName, "myPropertyName")) {
         *returnValue = JSNumberMake(1);
         return true;
     }
 
-    if (JSCharBufferIsEqualUTF8(propertyName, "cantFind")) {
+    if (JSStringBufferIsEqualUTF8(propertyName, "cantFind")) {
         *returnValue = JSUndefinedMake();
         return true;
     }
@@ -165,22 +165,22 @@ static bool MyObject_getProperty(JSContextRef context, JSObjectRef object, JSCha
     return false;
 }
 
-static bool MyObject_setProperty(JSObjectRef object, JSCharBufferRef propertyName, JSValueRef value)
+static bool MyObject_setProperty(JSObjectRef object, JSStringBufferRef propertyName, JSValueRef value)
 {
     UNUSED_PARAM(object);
     UNUSED_PARAM(value);
 
-    if (JSCharBufferIsEqualUTF8(propertyName, "cantSet"))
+    if (JSStringBufferIsEqualUTF8(propertyName, "cantSet"))
         return true; // pretend we set the property in order to swallow it
     
     return false;
 }
 
-static bool MyObject_deleteProperty(JSObjectRef object, JSCharBufferRef propertyName)
+static bool MyObject_deleteProperty(JSObjectRef object, JSStringBufferRef propertyName)
 {
     UNUSED_PARAM(object);
     
-    if (JSCharBufferIsEqualUTF8(propertyName, "cantDelete"))
+    if (JSStringBufferIsEqualUTF8(propertyName, "cantDelete"))
         return true;
     
     return false;
@@ -188,15 +188,15 @@ static bool MyObject_deleteProperty(JSObjectRef object, JSCharBufferRef property
 
 static void MyObject_getPropertyList(JSObjectRef object, JSPropertyListRef propertyList)
 {
-    JSCharBufferRef propertyNameBuf;
+    JSStringBufferRef propertyNameBuf;
     
-    propertyNameBuf = JSCharBufferCreateUTF8("alwaysOne");
+    propertyNameBuf = JSStringBufferCreateUTF8("alwaysOne");
     JSPropertyListAdd(propertyList, object, propertyNameBuf);
-    JSCharBufferRelease(propertyNameBuf);
+    JSStringBufferRelease(propertyNameBuf);
     
-    propertyNameBuf = JSCharBufferCreateUTF8("myPropertyName");
+    propertyNameBuf = JSStringBufferCreateUTF8("myPropertyName");
     JSPropertyListAdd(propertyList, object, propertyNameBuf);
-    JSCharBufferRelease(propertyNameBuf);
+    JSStringBufferRelease(propertyNameBuf);
 }
 
 static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[])
@@ -279,12 +279,12 @@ static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functio
     UNUSED_PARAM(thisObject);
     
     if (argc > 0) {
-        JSCharBufferRef string = JSValueCopyStringValue(context, argv[0]);
-        size_t sizeUTF8 = JSCharBufferGetMaxLengthUTF8(string);
+        JSStringBufferRef string = JSValueCopyStringValue(context, argv[0]);
+        size_t sizeUTF8 = JSStringBufferGetMaxLengthUTF8(string);
         char stringUTF8[sizeUTF8];
-        JSCharBufferGetCharactersUTF8(string, stringUTF8, sizeUTF8);
+        JSStringBufferGetCharactersUTF8(string, stringUTF8, sizeUTF8);
         printf("%s\n", stringUTF8);
-        JSCharBufferRelease(string);
+        JSStringBufferRelease(string);
     }
     
     return JSUndefinedMake();
@@ -296,9 +296,9 @@ static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjec
     
     JSObjectRef result = JSObjectMake(context, NULL, 0);
     if (argc > 0) {
-        JSCharBufferRef valueBuffer = JSCharBufferCreateUTF8("value");
+        JSStringBufferRef valueBuffer = JSStringBufferCreateUTF8("value");
         JSObjectSetProperty(context, result, valueBuffer, argv[0], kJSPropertyAttributeNone);
-        JSCharBufferRelease(valueBuffer);
+        JSStringBufferRelease(valueBuffer);
     }
     
     return result;
@@ -323,10 +323,10 @@ int main(int argc, char* argv[])
     JSObjectRef jsObjectNoProto = JSObjectMake(context, NULL, JSNullMake());
 
     // FIXME: test funny utf8 characters
-    JSCharBufferRef jsEmptyStringBuf = JSCharBufferCreateUTF8("");
+    JSStringBufferRef jsEmptyStringBuf = JSStringBufferCreateUTF8("");
     JSValueRef jsEmptyString = JSStringMake(jsEmptyStringBuf);
     
-    JSCharBufferRef jsOneStringBuf = JSCharBufferCreateUTF8("1");
+    JSStringBufferRef jsOneStringBuf = JSStringBufferCreateUTF8("1");
     JSValueRef jsOneString = JSStringMake(jsOneStringBuf);
 
 #if defined(__APPLE__)
@@ -338,12 +338,12 @@ int main(int argc, char* argv[])
                                                           1,
                                                           kCFAllocatorNull);
 
-    JSCharBufferRef jsCFStringBuf = JSCharBufferCreateWithCFString(cfString);
+    JSStringBufferRef jsCFStringBuf = JSStringBufferCreateWithCFString(cfString);
     JSValueRef jsCFString = JSStringMake(jsCFStringBuf);
     
     CFStringRef cfEmptyString = CFStringCreateWithCString(kCFAllocatorDefault, "", kCFStringEncodingUTF8);
     
-    JSCharBufferRef jsCFEmptyStringBuf = JSCharBufferCreateWithCFString(cfEmptyString);
+    JSStringBufferRef jsCFEmptyStringBuf = JSStringBufferCreateWithCFString(cfEmptyString);
     JSValueRef jsCFEmptyString = JSStringMake(jsCFEmptyStringBuf);
 
     CFIndex cfStringLength = CFStringGetLength(cfString);
@@ -351,10 +351,10 @@ int main(int argc, char* argv[])
     CFStringGetCharacters(cfString, 
                           CFRangeMake(0, cfStringLength), 
                           buffer);
-    JSCharBufferRef jsCFStringWithCharactersBuf = JSCharBufferCreate(buffer, cfStringLength);
+    JSStringBufferRef jsCFStringWithCharactersBuf = JSStringBufferCreate(buffer, cfStringLength);
     JSValueRef jsCFStringWithCharacters = JSStringMake(jsCFStringWithCharactersBuf);
     
-    JSCharBufferRef jsCFEmptyStringWithCharactersBuf = JSCharBufferCreate(buffer, CFStringGetLength(cfEmptyString));
+    JSStringBufferRef jsCFEmptyStringWithCharactersBuf = JSStringBufferCreate(buffer, CFStringGetLength(cfEmptyString));
     JSValueRef jsCFEmptyStringWithCharacters = JSStringMake(jsCFEmptyStringWithCharactersBuf);
 #endif // __APPLE__
 
@@ -470,8 +470,8 @@ int main(int argc, char* argv[])
     assert(!JSValueIsEqual(context, jsTrue, jsFalse));
     
 #if defined(__APPLE__)
-    CFStringRef cfJSString = CFStringCreateWithJSCharBuffer(kCFAllocatorDefault, jsCFStringBuf);
-    CFStringRef cfJSEmptyString = CFStringCreateWithJSCharBuffer(kCFAllocatorDefault, jsCFEmptyStringBuf);
+    CFStringRef cfJSString = CFStringCreateWithJSStringBuffer(kCFAllocatorDefault, jsCFStringBuf);
+    CFStringRef cfJSEmptyString = CFStringCreateWithJSStringBuffer(kCFAllocatorDefault, jsCFEmptyStringBuf);
     assert(CFEqual(cfJSString, cfString));
     assert(CFEqual(cfJSEmptyString, cfEmptyString));
     CFRelease(cfJSString);
@@ -492,8 +492,8 @@ int main(int argc, char* argv[])
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     assert(JSValueIsObject(globalObject));
 
-    JSCharBufferRef goodSyntaxBuf = JSCharBufferCreateUTF8("x = 1;");
-    JSCharBufferRef badSyntaxBuf = JSCharBufferCreateUTF8("x := 1;");
+    JSStringBufferRef goodSyntaxBuf = JSStringBufferCreateUTF8("x = 1;");
+    JSStringBufferRef badSyntaxBuf = JSStringBufferCreateUTF8("x := 1;");
     assert(JSCheckSyntax(context, goodSyntaxBuf, NULL, 0, NULL));
     assert(!JSCheckSyntax(context, badSyntaxBuf, NULL, 0, NULL));
 
@@ -515,36 +515,36 @@ int main(int argc, char* argv[])
     JSContextClearException(context);
     assert(!JSContextGetException(context));
 
-    JSCharBufferRelease(jsEmptyStringBuf);
-    JSCharBufferRelease(jsOneStringBuf);
+    JSStringBufferRelease(jsEmptyStringBuf);
+    JSStringBufferRelease(jsOneStringBuf);
 #if defined(__APPLE__)
-    JSCharBufferRelease(jsCFStringBuf);
-    JSCharBufferRelease(jsCFEmptyStringBuf);
-    JSCharBufferRelease(jsCFStringWithCharactersBuf);
-    JSCharBufferRelease(jsCFEmptyStringWithCharactersBuf);
+    JSStringBufferRelease(jsCFStringBuf);
+    JSStringBufferRelease(jsCFEmptyStringBuf);
+    JSStringBufferRelease(jsCFStringWithCharactersBuf);
+    JSStringBufferRelease(jsCFEmptyStringWithCharactersBuf);
 #endif // __APPLE__
-    JSCharBufferRelease(goodSyntaxBuf);
-    JSCharBufferRelease(badSyntaxBuf);
+    JSStringBufferRelease(goodSyntaxBuf);
+    JSStringBufferRelease(badSyntaxBuf);
 
-    JSCharBufferRef arrayBuf = JSCharBufferCreateUTF8("Array");
+    JSStringBufferRef arrayBuf = JSStringBufferCreateUTF8("Array");
     JSValueRef v;
     assert(JSObjectGetProperty(context, globalObject, arrayBuf, &v));
     JSObjectRef arrayConstructor = JSValueToObject(context, v);
-    JSCharBufferRelease(arrayBuf);
+    JSStringBufferRelease(arrayBuf);
     result = JSObjectCallAsConstructor(context, arrayConstructor, 0, NULL, NULL);
     assert(result);
     assert(JSValueIsInstanceOf(context, result, arrayConstructor));
     assert(!JSValueIsInstanceOf(context, JSNullMake(), arrayConstructor));
     
-    JSCharBufferRef functionBuf;
+    JSStringBufferRef functionBuf;
     
-    functionBuf = JSCharBufferCreateUTF8("rreturn Array;");
+    functionBuf = JSStringBufferCreateUTF8("rreturn Array;");
     assert(!JSFunctionMakeWithBody(context, functionBuf, NULL, 1));
-    JSCharBufferRelease(functionBuf);
+    JSStringBufferRelease(functionBuf);
 
-    functionBuf = JSCharBufferCreateUTF8("return Array;");
+    functionBuf = JSStringBufferCreateUTF8("return Array;");
     JSObjectRef function = JSFunctionMakeWithBody(context, functionBuf, NULL, 1);
-    JSCharBufferRelease(functionBuf);
+    JSStringBufferRelease(functionBuf);
 
     assert(JSObjectIsFunction(function));
     v = JSObjectCallAsFunction(context, function, NULL, 0, NULL, NULL);
@@ -552,32 +552,32 @@ int main(int argc, char* argv[])
                                                   
     JSObjectRef myObject = JSObjectMake(context, MyObject_class(context), NULL);
     assert(didInitialize);
-    JSCharBufferRef myObjectBuf = JSCharBufferCreateUTF8("MyObject");
+    JSStringBufferRef myObjectBuf = JSStringBufferCreateUTF8("MyObject");
     JSObjectSetProperty(context, globalObject, myObjectBuf, myObject, kJSPropertyAttributeNone);
-    JSCharBufferRelease(myObjectBuf);
+    JSStringBufferRelease(myObjectBuf);
 
-    JSCharBufferRef printBuf = JSCharBufferCreateUTF8("print");
+    JSStringBufferRef printBuf = JSStringBufferCreateUTF8("print");
     JSObjectSetProperty(context, globalObject, printBuf, JSFunctionMake(context, print_callAsFunction), kJSPropertyAttributeNone); 
-    JSCharBufferRelease(printBuf);
+    JSStringBufferRelease(printBuf);
 
-    JSCharBufferRef myConstructorBuf = JSCharBufferCreateUTF8("MyConstructor");
+    JSStringBufferRef myConstructorBuf = JSStringBufferCreateUTF8("MyConstructor");
     JSObjectSetProperty(context, globalObject, myConstructorBuf, JSConstructorMake(context, myConstructor_callAsConstructor), kJSPropertyAttributeNone);
-    JSCharBufferRelease(myConstructorBuf);
+    JSStringBufferRelease(myConstructorBuf);
 
     char* script = createStringWithContentsOfFile("testapi.js");
-    JSCharBufferRef scriptBuf = JSCharBufferCreateUTF8(script);
+    JSStringBufferRef scriptBuf = JSStringBufferCreateUTF8(script);
     result = JSEvaluate(context, scriptBuf, NULL, NULL, 1, &exception);
     if (JSValueIsUndefined(result))
         printf("PASS: Test script executed successfully.\n");
     else {
         printf("FAIL: Test script returned unexcpected value:\n");
-        JSCharBufferRef exceptionBuf = JSValueCopyStringValue(context, exception);
-        CFStringRef exceptionCF = CFStringCreateWithJSCharBuffer(kCFAllocatorDefault, exceptionBuf);
+        JSStringBufferRef exceptionBuf = JSValueCopyStringValue(context, exception);
+        CFStringRef exceptionCF = CFStringCreateWithJSStringBuffer(kCFAllocatorDefault, exceptionBuf);
         CFShow(exceptionCF);
         CFRelease(exceptionCF);
-        JSCharBufferRelease(exceptionBuf);
+        JSStringBufferRelease(exceptionBuf);
     }
-    JSCharBufferRelease(scriptBuf);
+    JSStringBufferRelease(scriptBuf);
     free(script);
 
     // Allocate a few dummies so that at least one will be collected

@@ -39,13 +39,13 @@ static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef 
 
     // Example of throwing a type error for invalid values
     if (!JSValueIsObjectOfClass(thisObject, JSNode_class(context))) {
-        JSCharBufferRef messageBuf = JSCharBufferCreateUTF8("TypeError: appendChild can only be called on nodes");
+        JSStringBufferRef messageBuf = JSStringBufferCreateUTF8("TypeError: appendChild can only be called on nodes");
         JSContextSetException(context, JSStringMake(messageBuf));
-        JSCharBufferRelease(messageBuf);
+        JSStringBufferRelease(messageBuf);
     } else if (argc < 1 || !JSValueIsObjectOfClass(argv[0], JSNode_class(context))) {
-        JSCharBufferRef messageBuf = JSCharBufferCreateUTF8("TypeError: first argument to appendChild must be a node");
+        JSStringBufferRef messageBuf = JSStringBufferCreateUTF8("TypeError: first argument to appendChild must be a node");
         JSContextSetException(context, JSStringMake(messageBuf));
-        JSCharBufferRelease(messageBuf);
+        JSStringBufferRelease(messageBuf);
     } else {
         Node* node = JSObjectGetPrivate(thisObject);
         Node* child = JSObjectGetPrivate(argv[0]);
@@ -113,22 +113,22 @@ static JSClassRef JSNodePrototype_class(JSContextRef context)
     return nodePrototypeClass;
 }
 
-static bool JSNode_getNodeType(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName, JSValueRef* returnValue)
+static bool JSNode_getNodeType(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef* returnValue)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(propertyName);
 
     Node* node = JSObjectGetPrivate(object);
     if (node) {
-        JSCharBufferRef nodeBuf = JSCharBufferCreateUTF8(node->nodeType);
+        JSStringBufferRef nodeBuf = JSStringBufferCreateUTF8(node->nodeType);
         *returnValue = JSStringMake(nodeBuf);
-        JSCharBufferRelease(nodeBuf);
+        JSStringBufferRelease(nodeBuf);
         return true;
     }
     return false;
 }
 
-static bool JSNode_getChildNodes(JSContextRef context, JSObjectRef thisObject, JSCharBufferRef propertyName, JSValueRef* returnValue)
+static bool JSNode_getChildNodes(JSContextRef context, JSObjectRef thisObject, JSStringBufferRef propertyName, JSValueRef* returnValue)
 {
     UNUSED_PARAM(propertyName);
     Node* node = JSObjectGetPrivate(thisObject);
@@ -137,7 +137,7 @@ static bool JSNode_getChildNodes(JSContextRef context, JSObjectRef thisObject, J
     return true;
 }
 
-static bool JSNode_getFirstChild(JSContextRef context, JSObjectRef object, JSCharBufferRef propertyName, JSValueRef* returnValue)
+static bool JSNode_getFirstChild(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef* returnValue)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(propertyName);
