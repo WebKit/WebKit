@@ -500,11 +500,11 @@ int main(int argc, char* argv[])
     JSValueRef result;
     JSValueRef exception;
 
-    result = JSEvaluate(context, goodSyntaxBuf, NULL, NULL, 0, NULL);
+    result = JSEvaluate(context, goodSyntaxBuf, NULL, NULL, 1, NULL);
     assert(result);
     assert(JSValueIsEqual(context, result, jsOne));
     
-    result = JSEvaluate(context, badSyntaxBuf, NULL, NULL, 0, &exception);
+    result = JSEvaluate(context, badSyntaxBuf, NULL, NULL, 1, &exception);
     assert(!result);
     assert(!JSContextGetException(context));
     assert(JSValueIsObject(exception));
@@ -536,6 +536,20 @@ int main(int argc, char* argv[])
     assert(JSValueIsInstanceOf(context, result, arrayConstructor));
     assert(!JSValueIsInstanceOf(context, JSNullMake(), arrayConstructor));
     
+    JSCharBufferRef functionBuf;
+    
+    functionBuf = JSCharBufferCreateUTF8("rreturn Array;");
+    assert(!JSFunctionMakeWithBody(context, functionBuf, NULL, 1));
+    JSCharBufferRelease(functionBuf);
+
+    functionBuf = JSCharBufferCreateUTF8("return Array;");
+    JSObjectRef function = JSFunctionMakeWithBody(context, functionBuf, NULL, 1);
+    JSCharBufferRelease(functionBuf);
+
+    assert(JSObjectIsFunction(function));
+    v = JSObjectCallAsFunction(context, function, NULL, 0, NULL, NULL);
+    assert(JSValueIsEqual(context, v, arrayConstructor));
+                                                  
     JSObjectRef myObject = JSObjectMake(context, MyObject_class(context), NULL);
     assert(didInitialize);
     JSCharBufferRef myObjectBuf = JSCharBufferCreateUTF8("MyObject");
@@ -547,12 +561,12 @@ int main(int argc, char* argv[])
     JSCharBufferRelease(printBuf);
 
     JSCharBufferRef myConstructorBuf = JSCharBufferCreateUTF8("MyConstructor");
-    JSObjectSetProperty(context, globalObject, myConstructorBuf, JSConstructorMake(context, myConstructor_callAsConstructor), kJSPropertyAttributeNone); 
+    JSObjectSetProperty(context, globalObject, myConstructorBuf, JSConstructorMake(context, myConstructor_callAsConstructor), kJSPropertyAttributeNone);
     JSCharBufferRelease(myConstructorBuf);
 
     char* script = createStringWithContentsOfFile("testapi.js");
     JSCharBufferRef scriptBuf = JSCharBufferCreateUTF8(script);
-    result = JSEvaluate(context, scriptBuf, NULL, NULL, 0, &exception);
+    result = JSEvaluate(context, scriptBuf, NULL, NULL, 1, &exception);
     if (JSValueIsUndefined(result))
         printf("PASS: Test script executed successfully.\n");
     else {

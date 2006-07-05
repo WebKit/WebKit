@@ -31,13 +31,13 @@
 
 /*!
   @enum JSTypeCode
-  A constant identifying the type of a particular JSValueRef.
+  A constant identifying the type of a JSValueRef.
   @constant kJSTypeUndefined the unique undefined value
   @constant kJSTypeNull the unique null value
   @constant kJSBoolean a primitive boolean value, one of true or false
   @constant kJSTypeNumber a primitive number value
   @constant kJSTypeString a primitive string value
-  @constant kJSTypeObject an object (meaning this JSValueRef is a JSObjectRef
+  @constant kJSTypeObject an object (meaning that this JSValueRef is a JSObjectRef)
 */
 typedef enum {
     kJSTypeUndefined,

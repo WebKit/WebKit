@@ -1,6 +1,40 @@
 2006-07-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
+        
+        Implemented JSFunctionMakeWithBody, which parses a script as a function body
+        in the global scope, and returns the resulting anonymous function.
+        
+        I also removed private data from JSCallbackFunction. It never worked,
+        since JSCallbackFunction doesn't inherit from JSCallbackObject.
+
+        * API/JSCallbackConstructor.cpp: Removed.
+        * API/JSCallbackConstructor.h: Removed.
+        * API/JSCallbackFunction.cpp:
+        (KJS::JSCallbackFunction::JSCallbackFunction):
+        (KJS::JSCallbackFunction::implementsConstruct):
+        (KJS::JSCallbackFunction::construct):
+        (KJS::JSCallbackFunction::implementsCall):
+        (KJS::JSCallbackFunction::callAsFunction):
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::staticFunctionGetter):
+        * API/JSObjectRef.cpp:
+        (JSFunctionMake):
+        (JSFunctionMakeWithCallbacks):
+        * API/JSObjectRef.h:
+        * API/JSValueRef.h:
+        * API/minidom.c:
+        (main):
+        * API/testapi.c:
+        (main):
+        * JavaScriptCore.exp: Programmatically added all symbols exported by
+        API object files, and sorted results
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2006-07-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
 
         - Return syntax error in JSCheckSyntax through a JSValueRef* exception
         argument

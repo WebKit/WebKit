@@ -32,6 +32,8 @@
 #include "JSCallbackObject.h"
 
 #include "identifier.h"
+#include "function.h"
+#include "nodes.h"
 #include "internal.h"
 #include "object.h"
 #include "reference_list.h"
@@ -68,18 +70,36 @@ JSObjectRef JSObjectMake(JSContextRef context, JSClassRef jsClass, JSObjectRef p
         return toRef(new JSCallbackObject(jsClass, jsPrototype));
 }
 
-JSObjectRef JSFunctionMake(JSContextRef context, JSCallAsFunctionCallback callback)
+JSObjectRef JSFunctionMake(JSContextRef context, JSCallAsFunctionCallback callAsFunction)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
-    return toRef(new JSCallbackFunction(exec, callback));
+    return toRef(new JSCallbackFunction(exec, callAsFunction));
 }
 
-JSObjectRef JSConstructorMake(JSContextRef context, JSCallAsConstructorCallback callback)
+JSObjectRef JSConstructorMake(JSContextRef context, JSCallAsConstructorCallback callAsConstructor)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
-    return toRef(new JSCallbackConstructor(exec, callback));
+    return toRef(new JSCallbackConstructor(exec, callAsConstructor));
+}
+
+JSObjectRef JSFunctionMakeWithBody(JSContextRef context, JSCharBufferRef body, JSCharBufferRef sourceURL, int startingLineNumber)
+{
+    JSLock lock;
+    
+    ExecState* exec = toJS(context);
+    UString::Rep* bodyRep = toJS(body);
+    UString::Rep* sourceURLRep = toJS(sourceURL);
+    if (!bodyRep)
+        bodyRep = &UString::Rep::null;
+    RefPtr<FunctionBodyNode> bodyNode = Parser::parse(UString(sourceURLRep), startingLineNumber, bodyRep->data(), bodyRep->size(), NULL, NULL, NULL);
+    if (!bodyNode)
+        return NULL;
+
+    ScopeChain scopeChain;
+    scopeChain.push(exec->dynamicInterpreter()->globalObject());
+    return toRef(static_cast<JSObject*>(new DeclaredFunctionImp(exec, "anonymous", bodyNode.get(), scopeChain)));
 }
 
 JSCharBufferRef JSObjectGetDescription(JSObjectRef object)
