@@ -69,5 +69,5 @@ Completion JSRun::Evaluate()
 
 bool JSRun::CheckSyntax()
 {
-    return fInterpreter.checkSyntax(fSource);
+    return fInterpreter.checkSyntax(UString(), 0, fSource.data(), fSource.size()).complType() != Throw;
 }

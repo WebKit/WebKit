@@ -412,13 +412,21 @@ ExecState* Interpreter::globalExec()
   return &m_globalExec;
 }
 
-bool Interpreter::checkSyntax(const UString &code)
+Completion Interpreter::checkSyntax(const UString& sourceURL, int startingLineNumber, const UString& code)
+{
+    return checkSyntax(sourceURL, startingLineNumber, code.data(), code.size());
+}
+
+Completion Interpreter::checkSyntax(const UString& sourceURL, int startingLineNumber, const UChar* code, int codeLength)
 {
     JSLock lock;
-    
-    // Parser::parse() returns 0 in a syntax error occurs
-    RefPtr<ProgramNode> progNode = Parser::parse(UString(), 0, code.data(), code.size(), 0, 0, 0);
-    return progNode;
+
+    int errLine;
+    UString errMsg;
+    RefPtr<ProgramNode> progNode = Parser::parse(sourceURL, startingLineNumber, code, codeLength, 0, &errLine, &errMsg);
+    if (!progNode)
+        return Completion(Throw, Error::create(&m_globalExec, SyntaxError, errMsg, errLine, 0, &sourceURL));
+    return Completion(Normal);
 }
 
 Completion Interpreter::evaluate(const UString& sourceURL, int startingLineNumber, const UString& code, JSValue* thisV)

@@ -100,9 +100,11 @@ namespace KJS {
      * Parses the supplied ECMAScript code and checks for syntax errors.
      *
      * @param code The code to check
-     * @return true if there were no syntax errors in the code, otherwise false
+     * @return A normal completion if there were no syntax errors in the code, 
+     * otherwise a throw completion with the syntax error as its value.
      */
-    bool checkSyntax(const UString &code);
+    Completion checkSyntax(const UString& sourceURL, int startingLineNumber, const UString& code);
+    Completion checkSyntax(const UString& sourceURL, int startingLineNumber, const UChar* code, int codeLength);
 
     /**
      * Evaluates the supplied ECMAScript code.

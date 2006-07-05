@@ -494,8 +494,8 @@ int main(int argc, char* argv[])
 
     JSCharBufferRef goodSyntaxBuf = JSCharBufferCreateUTF8("x = 1;");
     JSCharBufferRef badSyntaxBuf = JSCharBufferCreateUTF8("x := 1;");
-    assert(JSCheckSyntax(context, goodSyntaxBuf));
-    assert(!JSCheckSyntax(context, badSyntaxBuf));
+    assert(JSCheckSyntax(context, goodSyntaxBuf, NULL, 0, NULL));
+    assert(!JSCheckSyntax(context, badSyntaxBuf, NULL, 0, NULL));
 
     JSValueRef result;
     JSValueRef exception;
