@@ -1,3 +1,13 @@
+2006-07-04  Darin Adler  <darin@apple.com>
+
+        - updated test result to reflect window without scroll bars
+
+        1) this test should not have scroll bars
+        2) on the buildbot the result is the non-scroll-bar one
+
+        * dom/svg/level3/xpath/Attribute_Nodes-expected.txt:
+        Changed text node width to 800.
+
 2006-07-02  David Carson  <dacarson@gmail.com>
 
         Reviewed by Darin.
