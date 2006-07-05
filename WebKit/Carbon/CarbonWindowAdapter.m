@@ -409,6 +409,9 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     }
 }
 
+// FIXME: <rdar://problem/4561772> HIWebView and HIViewAdapter need to be reworked for 64-bit
+#if !__LP64__
+
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder
 {
     // Let NSWindow focus the appropriate NSView.
@@ -438,6 +441,8 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     return YES;
 }
+
+#enfif
 
 // There's no override of _addCursorRect:cursor:forView:, despite the fact that NSWindow's invokes [self windowNumber], because Carbon windows won't have subviews, and therefore won't have cursor rects.
 
@@ -607,6 +612,9 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     return actualFrame;
 }
 
+// FIXME: <rdar://problem/4561772> HIWebView and HIViewAdapter need to be reworked for 64-bit
+#if !__LP64__
+
 - (void)selectKeyViewFollowingView:(NSView *)aView {
 	HIViewRef	view = NULL;
 	
@@ -642,6 +650,8 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 		[super selectKeyViewPrecedingView:aView];
 	}
 }
+
+#endif
 
 - (void)makeKeyWindow {
 	[NSApp _setMouseActivationInProgress:NO];
