@@ -113,4 +113,4 @@ template <class T> inline bool operator!=(const T *a, const DocPtr<T> &b)
 
 } // namespace WebCore
 
-#endif DOM_DocPtr_h
+#endif // DOM_DocPtr_h

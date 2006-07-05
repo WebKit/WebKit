@@ -33,7 +33,7 @@ Base settings shared by all Bakefile-based ports.
 
     <!-- Common definitions etc.: -->
 
-    <set var="SRCDIR">../..</set>
+    <set var="SRCDIR" append="0">../..</set>
 
     <include file="../Bakefiles/presets.bkl"/>
     <include file="WebCoreSources.bkl"/>
@@ -50,7 +50,6 @@ Base settings shared by all Bakefile-based ports.
 		$(WEBCORE_SOURCES_BMP)
 		$(WEBCORE_SOURCES_GIF)
 		$(WEBCORE_SOURCES_ICO)
-		$(WEBCORE_SOURCES_ICON)
 		$(WEBCORE_SOURCES_PNG)
 		$(WEBCORE_SOURCES_XBM)
 		$(WEBCORE_SOURCES_ZLIB)

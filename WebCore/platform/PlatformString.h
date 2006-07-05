@@ -29,6 +29,10 @@
 
 #include "StringImpl.h"
 
+#if __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 namespace WebCore {
 
 /**

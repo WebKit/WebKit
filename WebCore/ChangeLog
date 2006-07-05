@@ -1,3 +1,30 @@
+2006-07-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Maciej, reworked a bit by Darin.
+
+        Compile fixes for wx port / gcc 4.0.2
+        
+        * platform/PlatformString.h:
+        * platform/StringImpl.h:
+        Include CoreFoundation for CF-specific code.
+        
+        * dom/DocPtr.h:
+        * doc/EventTargetNode.h:
+        Silence warnings about 'extra tokens' after #endif on gcc 4.0.2.
+        (Not an error but warnings appear frequently.)
+        
+        * WebCoreSources.bkl:
+        * webcore-base.bkl:
+        Synching ports sources file with TOT. Also, making sure SRCDIR variable
+        overrides any previous values.
+        
+        * loader/ImageDocument.cpp:
+        Use PLATFORM(MAC) for the parts that are specific to the Macintosh version,
+        and move the Objective-C parts to another file.
+
+        * loader/mac/ImageDocumentMac.h: Added.
+        * loader/mac/ImageDocumentMac.mm: Added.
+
 2006-07-04  Sam Weinig  <sam.weinig@gmail.com>
 
         Build fix.

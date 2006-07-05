@@ -141,24 +141,24 @@ void RenderTextField::updateFromElement()
         RenderFlexibleBox::addChild(divRenderer);
     }
 
-        HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
-        m_div->renderer()->style()->setUserModify(element->isReadOnlyControl() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
-        String value;
-        if (m_multiLine)
-            value = static_cast<HTMLTextAreaElement*>(element)->value().copy();    
-        else
-            value = static_cast<HTMLInputElement*>(element)->value().copy();        
-        if (!element->valueMatchesRenderer() || m_multiLine) {
-            String oldText = text();
-            if (value.isNull())
-                value = "";
-            value.replace('\\', backslashAsCurrencySymbol());
-            if (value != oldText || !m_div->hasChildNodes()) {
-                ExceptionCode ec = 0;
-                m_div->setInnerText(value, ec);
-                setEdited(false);
-            }
-          element->setValueMatchesRenderer();
+    HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
+    m_div->renderer()->style()->setUserModify(element->isReadOnlyControl() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
+    String value;
+    if (m_multiLine)
+        value = static_cast<HTMLTextAreaElement*>(element)->value().copy();    
+    else
+        value = static_cast<HTMLInputElement*>(element)->value().copy();        
+    if (!element->valueMatchesRenderer() || m_multiLine) {
+        String oldText = text();
+        if (value.isNull())
+            value = "";
+        value.replace('\\', backslashAsCurrencySymbol());
+        if (value != oldText || !m_div->hasChildNodes()) {
+            ExceptionCode ec = 0;
+            m_div->setInnerText(value, ec);
+            setEdited(false);
+        }
+        element->setValueMatchesRenderer();
     }
 }
 

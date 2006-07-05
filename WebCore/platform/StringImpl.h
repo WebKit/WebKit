@@ -32,6 +32,10 @@
 #include <unicode/umachine.h>
 #include <limits.h>
 
+#if __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 #if __OBJC__
 @class NSString;
 #endif

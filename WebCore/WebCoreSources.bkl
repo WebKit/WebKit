@@ -6,6 +6,7 @@
 		kwq/KWQTextStream.cpp
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_DERIVEDSOURCES">
+		
 		DerivedSources/WebCore/CharsetData.cpp
 		DerivedSources/WebCore/ColorData.c
 		DerivedSources/WebCore/CSSGrammar.cpp
@@ -95,14 +96,16 @@
 		DerivedSources/WebCore/XLinkNames.cpp
 		DerivedSources/WebCore/XMLNames.cpp
 		DerivedSources/WebCore/XPathGrammar.cpp
-	</set>
 
+	</set>
 	<set append="1" var="WEBCORE_SOURCES_KHTML">
-	</set>
+		
 
+	</set>
 	<set append="1" var="WEBCORE_SOURCES_MISC">
-	</set>
+		
 
+	</set>
 	<set append="1" var="WEBCORE_SOURCES_PAGE">
 		
 		page/DOMWindow.cpp
@@ -127,6 +130,7 @@
 		loader/FormData.cpp
 		loader/ImageDocument.cpp
 		loader/loader.cpp
+		loader/PluginDocument.cpp
 		loader/Request.cpp
 		loader/TextDocument.cpp
 		loader/PluginDocument.cpp
@@ -204,19 +208,6 @@
 		platform/image-decoders/gif/GIFImageReader.cpp
 
 	</set>
-
-	<set append="1" var="WEBCORE_SOURCES_XBM">
-	 	platform/image-decoders/xbm/XBMImageDecoder.cpp
-	</set>
-
-	<set append="1" var="WEBCORE_SOURCES_ICO">
-	 	platform/image-decoders/ico/ICOImageDecoder.cpp
-	</set>
-
-	<set append="1" var="WEBCORE_SOURCES_BMP">
-	 	platform/image-decoders/bmp/BMPImageDecoder.cpp
-	</set>
-
 	<set append="1" var="WEBCORE_SOURCES_PNG">
 		
 		platform/image-decoders/png/png.c
@@ -239,7 +230,6 @@
 		platform/image-decoders/png/pngwutil.c
 
 	</set>
-
 	<set append="1" var="WEBCORE_SOURCES_ZLIB">
 		
 		platform/image-decoders/zlib/adler32.c
@@ -290,6 +280,21 @@
 		platform/image-decoders/jpeg/jutils.c
 
 	</set>
+	<set append="1" var="WEBCORE_SOURCES_BMP">
+		
+		platform/image-decoders/bmp/BMPImageDecoder.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_ICO">
+		
+		platform/image-decoders/ico/ICOImageDecoder.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_XBM">
+		
+		platform/image-decoders/xbm/XBMImageDecoder.cpp
+
+	</set>
 	<set append="1" var="WEBCORE_SOURCES_CAIRO">
 		
 		platform/cairo/GraphicsContextCairo.cpp
@@ -319,7 +324,7 @@
 		platform/cairo/pixman/src/renderedge.c
 
 	</set>
-	<set append="1" var="WEBCORE_SOURCES_CAIRO_CAIRO">
+	<set append="1" var="WEBCORE_SOURCES_CAIRO">
 		
 		platform/cairo/cairo/src/cairo-arc.c
 		platform/cairo/cairo/src/cairo-array.c
@@ -404,6 +409,8 @@
 		rendering/AutoTableLayout.cpp
 		rendering/bidi.cpp
 		rendering/break_lines.cpp
+		rendering/DeprecatedRenderSelect.cpp
+		rendering/DeprecatedSlider.cpp
 		rendering/EllipsisBox.cpp
 		rendering/FixedTableLayout.cpp
 		rendering/InlineBox.cpp
@@ -422,7 +429,6 @@
 		rendering/RenderFileButton.cpp
 		rendering/RenderFlexibleBox.cpp
 		rendering/RenderFlow.cpp
-		rendering/RenderView.cpp
 		rendering/RenderFormElement.cpp
 		rendering/RenderFrame.cpp
 		rendering/RenderFrameSet.cpp
@@ -452,7 +458,9 @@
 		rendering/RenderTextField.cpp
 		rendering/RenderTextFragment.cpp
 		rendering/RenderTheme.cpp
+		
 		rendering/RenderTreeAsText.cpp
+		rendering/RenderView.cpp
 		rendering/RenderWidget.cpp
 		rendering/RootInlineBox.cpp
 
@@ -491,9 +499,11 @@
 		dom/Attr.cpp
 		dom/Attribute.cpp
 		dom/BeforeTextInsertedEvent.cpp
+ 		dom/BeforeUnloadEvent.cpp
 		dom/CDATASection.cpp
 		dom/CharacterData.cpp
 		dom/ChildNodeList.cpp
+ 		dom/ClipboardEvent.cpp
 		dom/Comment.cpp
 		dom/ContainerNode.cpp
 		dom/CSSMappedAttributeDeclaration.cpp
@@ -526,13 +536,13 @@
 		dom/ProcessingInstruction.cpp
 		dom/QualifiedName.cpp
 		dom/Range.cpp
-        dom/RegisteredEventListener.cpp
+		dom/RegisteredEventListener.cpp
 		dom/StyledElement.cpp
 		dom/Text.cpp
 		dom/Traversal.cpp
 		dom/TreeWalker.cpp
-		dom/WheelEvent.cpp
 		dom/UIEvent.cpp
+		dom/WheelEvent.cpp
 		dom/xml_tokenizer.cpp
 
 	</set>
@@ -705,6 +715,6 @@
 		bindings/js/kjs_proxy.cpp
 		bindings/js/kjs_traversal.cpp
 		bindings/js/kjs_window.cpp
-	</set>
 
+	</set>
 </makefile>
