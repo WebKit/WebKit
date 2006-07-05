@@ -1,3 +1,13 @@
+2006-07-05  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/4608423> HIViewAdapter used but not defined
+        Adds a new export file to fix the build.
+
+        * WebKit.LP64.exp: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-07-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.

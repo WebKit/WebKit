@@ -1719,7 +1719,12 @@
 				DEBUG_DEFINES = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE = "$(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH))";
+				EXPORTED_SYMBOLS_FILE_ = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE_i386 = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE_ppc = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE_ppc64 = WebKit.LP64.exp;
+				EXPORTED_SYMBOLS_FILE_x86_64 = WebKit.LP64.exp;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
@@ -1755,7 +1760,12 @@
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE = "$(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH))";
+				EXPORTED_SYMBOLS_FILE_ = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE_i386 = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE_ppc = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE_ppc64 = WebKit.LP64.exp;
+				EXPORTED_SYMBOLS_FILE_x86_64 = WebKit.LP64.exp;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
@@ -1792,7 +1802,12 @@
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE = "$(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH))";
+				EXPORTED_SYMBOLS_FILE_ = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE_i386 = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE_ppc = WebKit.exp;
+				EXPORTED_SYMBOLS_FILE_ppc64 = WebKit.LP64.exp;
+				EXPORTED_SYMBOLS_FILE_x86_64 = WebKit.LP64.exp;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
