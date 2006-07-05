@@ -1,3 +1,24 @@
+2006-07-04  Bjoern Graf  <bjoern.graf@gmail.com>
+
+        Reviewed by Maciej.
+        Tweaked a bit by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9678
+          work around MSVCRT's fmod function returning NaN for fmod(x, infinity) instead of x
+
+        * wtf/MathExtras.h: Added include of <float.h>.
+        (isinf): Fix to return false for NAN.
+        (wtf_fmod): Added. An inline that works around the bug.
+
+        * kjs/nodes.cpp:
+        * kjs/number_object.cpp:
+        * kjs/operations.cpp:
+        * kjs/value.cpp:
+        Added includes of MathExtras.h to all files using fmod.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Let Xcode 2.3 have its way with
+        the project.
+
 2006-07-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

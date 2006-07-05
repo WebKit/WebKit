@@ -23,8 +23,10 @@
 #include "config.h"
 #include "operations.h"
 
+#include "object.h"
 #include <math.h>
 #include <stdio.h>
+#include <wtf/MathExtras.h>
 
 #if HAVE(FUNC_ISINF) && HAVE(IEEEFP_H)
 #include <ieeefp.h>
@@ -34,15 +36,14 @@
 #include <float.h>
 #endif
 
-#include "object.h"
-
 namespace KJS {
     
 #if !PLATFORM(DARWIN)
-// FIXME: should probably be inlined on other platforms too, and controlled exclusively
-// by HAVE macros
-    
-    
+
+// FIXME: Should probably be inlined on non-Darwin platforms too, and controlled exclusively
+// by HAVE macros rather than PLATFORM.
+
+// FIXME: Merge with isnan in MathExtras.h and remove this one entirely.
 bool isNaN(double d)
 {
 #if HAVE(FUNC_ISNAN)
@@ -54,6 +55,7 @@ bool isNaN(double d)
 #endif
 }
 
+// FIXME: Merge with isinf in MathExtras.h and remove this one entirely.
 bool isInf(double d)
 {
     // FIXME: should be HAVE(_FPCLASS)

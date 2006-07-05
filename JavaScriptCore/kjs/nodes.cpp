@@ -38,6 +38,7 @@
 #include "reference_list.h"
 #include <wtf/HashSet.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/MathExtras.h>
 
 using namespace KJS;
 

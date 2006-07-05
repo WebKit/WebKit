@@ -24,13 +24,12 @@
 #include "config.h"
 #include "value.h"
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-
-#include "operations.h"
 #include "error_object.h"
 #include "nodes.h"
+#include "operations.h"
+#include <stdio.h>
+#include <string.h>
+#include <wtf/MathExtras.h>
 
 namespace KJS {
 

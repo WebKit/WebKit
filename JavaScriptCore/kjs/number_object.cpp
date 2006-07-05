@@ -26,8 +26,8 @@
 #include "dtoa.h"
 #include "error_object.h"
 #include "operations.h"
+#include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
-#include <math.h>
 
 using namespace KJS;
 
