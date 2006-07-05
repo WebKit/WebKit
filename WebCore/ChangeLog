@@ -1,5 +1,10 @@
 2006-07-05  Anders Carlsson  <acarlsson@apple.com>
 
+        * WebCore.xcodeproj/project.pbxproj:
+        Revert accidental change of debug format to DWARF.
+
+2006-07-05  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Maciej.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=3581
