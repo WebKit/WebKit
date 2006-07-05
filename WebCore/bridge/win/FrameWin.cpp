@@ -39,8 +39,8 @@
 
 namespace WebCore {
 
-FrameWin::FrameWin(Page* page, RenderPart* renderPart, FrameWinClient* client)
-    : Frame(page, renderPart)
+FrameWin::FrameWin(Page* page, Element* ownerElement, FrameWinClient* client)
+    : Frame(page, ownerElement)
 {
     d->m_extension = new BrowserExtensionWin(this);
     KHTMLSettings* settings = new KHTMLSettings();

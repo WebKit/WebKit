@@ -42,7 +42,7 @@ public:
 class FrameWin : public Frame
 {
 public:
-    FrameWin(Page*, RenderPart*, FrameWinClient*);
+    FrameWin(Page*, Element*, FrameWinClient*);
     ~FrameWin();
 
     virtual bool openURL(const KURL&);
@@ -55,7 +55,7 @@ public:
 
     virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
     virtual Plugin* createPlugin(Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
-    virtual Frame* createFrame(const KURL&, const String& name, RenderPart* renderer, const String& referrer);
+    virtual Frame* createFrame(const KURL&, const String& name, Element* ownerElement, const String& referrer);
 
     virtual void scheduleClose();
 

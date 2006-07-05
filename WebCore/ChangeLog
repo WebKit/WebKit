@@ -1,5 +1,14 @@
 2006-07-05  Anders Carlsson  <acarlsson@apple.com>
 
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin):
+        * bridge/win/FrameWin.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::createFrame):
+        Fix Win32 build.
+
+2006-07-05  Anders Carlsson  <acarlsson@apple.com>
+
         * WebCore.xcodeproj/project.pbxproj:
         Revert accidental change of debug format to DWARF.
 

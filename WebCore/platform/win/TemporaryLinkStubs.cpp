@@ -249,7 +249,7 @@ void FrameWin::addMessageToConsole(String const&,unsigned int,String const&) { }
 bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionController const&,WebCore::EAffinity,bool) const { return true; }
 void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,bool) { }
 static int frameNumber = 0;
-Frame* FrameWin::createFrame(KURL const&,String const&,RenderPart*,String const&) { return 0; }
+Frame* FrameWin::createFrame(KURL const&,String const&,Element*,String const&) { return 0; }
 void FrameWin::saveDocumentState() { }
 void FrameWin::registerCommandForUndo(WebCore::EditCommandPtr const&) { }
 void FrameWin::clearUndoRedoOperations(void) { }
