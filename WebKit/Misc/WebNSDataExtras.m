@@ -168,9 +168,8 @@
 #define VCAL_HEADER_LENGTH 15
     
     NSString *MIMEType = [self _webkit_guessedMIMETypeForXML];
-    if (![MIMEType length]) {
+    if ([MIMEType length])
         return MIMEType;
-    }
     
     int length = [self length];
     const char *bytes = [self bytes];
