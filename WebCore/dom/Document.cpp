@@ -304,6 +304,9 @@ void Document::removedLastRef()
         removeAllChildren();
 
         m_markers.clear();
+
+        delete m_tokenizer;
+        m_tokenizer = 0;
     } else
         delete this;
 }

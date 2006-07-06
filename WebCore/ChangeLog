@@ -1,4 +1,25 @@
+2006-07-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - fix 26 Node leaks on various fast/dom tests
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef): Delete the tokenizer here, since if we are in mid-parse,
+        the parser might hold refs on some of our children that have self-only refs.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLStackElem::HTMLStackElem): don't ref the node if it is a document to avoid ref cycles
+        (WebCore::HTMLStackElem::~HTMLStackElem): ditto
+        (WebCore::HTMLStackElem::node): changed interface a bit to support the above
+        (WebCore::HTMLStackElem::setNode): ditto
+        (WebCore::HTMLParser::popNestedHeaderTag): use new interface to HTMLStackElem
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks): ditto
+        (WebCore::HTMLParser::reopenResidualStyleTags): ditto
+        (WebCore::HTMLParser::popBlock): ditto
+        (WebCore::HTMLParser::popOneBlock): ditto
+
 2006-07-06  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Adele.
         
         * rendering/RenderMenuList.h:
