@@ -412,6 +412,71 @@ using namespace HTMLNames;
     return [self _HTMLElement]->isContentEditable();
 }
 
+- (int)offsetLeft
+{
+    return [self _HTMLElement]->offsetLeft();
+}
+
+- (int)offsetTop
+{
+    return [self _HTMLElement]->offsetTop();
+}
+
+- (int)offsetWidth
+{
+    return [self _HTMLElement]->offsetWidth();
+}
+
+- (int)offsetHeight
+{
+    return [self _HTMLElement]->offsetHeight();
+}
+
+- (DOMHTMLElement *)offsetParent
+{
+    return [DOMHTMLElement _elementWith:static_cast<HTMLElement*>([self _HTMLElement]->offsetParent())];
+}
+
+- (int)clientWidth
+{
+    return [self _HTMLElement]->clientWidth();
+}
+
+- (int)clientHeight
+{
+    return [self _HTMLElement]->clientHeight();
+}
+
+- (int)scrollLeft;
+{
+    return [self _HTMLElement]->scrollLeft();
+}
+
+- (void)setScrollLeft:(int)scroll
+{
+    [self _HTMLElement]->setScrollLeft(scroll);
+}
+
+- (int)scrollTop
+{
+    return [self _HTMLElement]->scrollTop();
+}
+
+- (void)setScrollTop:(int)scroll
+{
+    [self _HTMLElement]->setScrollTop(scroll);
+}
+
+- (int)scrollWidth
+{
+    return [self _HTMLElement]->scrollWidth();
+}
+
+- (int)scrollHeight
+{
+    return [self _HTMLElement]->scrollHeight();
+}
+
 @end
 
 @implementation DOMHTMLDocument

@@ -1,3 +1,27 @@
+2006-07-06  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4610881> Expose scroll-related JS properties to ObjC DOM interface
+        <rdar://problem/4519675> offsetLeft, offsetTop, offsetHeight, and offsetWidth
+        properties are not exposed to ObjC
+
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLElement offsetLeft]):
+        (-[DOMHTMLElement offsetTop]):
+        (-[DOMHTMLElement offsetWidth]):
+        (-[DOMHTMLElement offsetHeight]):
+        (-[DOMHTMLElement offsetParent]):
+        (-[DOMHTMLElement clientWidth]):
+        (-[DOMHTMLElement clientHeight]):
+        (-[DOMHTMLElement scrollLeft]):
+        (-[DOMHTMLElement setScrollLeft:]):
+        (-[DOMHTMLElement scrollTop]):
+        (-[DOMHTMLElement setScrollTop:]):
+        (-[DOMHTMLElement scrollWidth]):
+        (-[DOMHTMLElement scrollHeight]):
+
 2006-07-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.

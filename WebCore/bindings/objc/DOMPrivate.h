@@ -114,6 +114,19 @@
 
 @interface DOMHTMLElement (DOMHTMLElementPendingPublic)
 - (NSString *)titleDisplayString;
+- (int)offsetLeft;
+- (int)offsetTop;
+- (int)offsetWidth;
+- (int)offsetHeight;
+- (DOMHTMLElement *)offsetParent;
+- (int)clientWidth;
+- (int)clientHeight;
+- (int)scrollLeft;
+- (void)setScrollLeft:(int)scroll;
+- (int)scrollTop;
+- (void)setScrollTop:(int)scroll;
+- (int)scrollWidth;
+- (int)scrollHeight;
 @end
 
 @interface DOMHTMLInputElement (DOMHTMLInputElementPendingPublic)
