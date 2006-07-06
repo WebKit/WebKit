@@ -2,6 +2,16 @@
 
         Reviewed by Anders.
 
+        - fix ~3000 Node leaks on the editing tests
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): put a newly created Range in a RefPtr
+        to avoid leaking it, as this leaks the whole document.
+
+2006-07-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
         - fix 26 Node leaks on various fast/dom tests
 
         * dom/Document.cpp:

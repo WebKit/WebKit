@@ -687,7 +687,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     
     setEndingSelection(Selection(start, end, DOWNSTREAM));
     deleteSelection(false, false);
-    
+
     ASSERT(destination.deepEquivalent().node()->inDocument());
     
     // Deleting a paragraph leaves a placeholder (it always does when a whole paragraph is deleted).
@@ -708,7 +708,8 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     if (beforeParagraph.isNotNull() && !isEndOfParagraph(beforeParagraph))
         insertNodeAt(createBreakElement(document()).get(), beforeParagraph.deepEquivalent().node(), beforeParagraph.deepEquivalent().offset());
         
-    destinationIndex = TextIterator::rangeLength(new Range(document(), Position(document(), 0), destination.deepEquivalent()));
+    RefPtr<Range> startToDestinationRange(new Range(document(), Position(document(), 0), destination.deepEquivalent()));
+    destinationIndex = TextIterator::rangeLength(startToDestinationRange.get());
     
     setEndingSelection(destination);
     EditCommandPtr cmd(new ReplaceSelectionCommand(document(), fragment.get(), true, false, !preserveStyle, true));
