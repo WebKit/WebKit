@@ -30,6 +30,7 @@
 #import "RenderView.h"
 #import "WebCoreSystemInterface.h"
 #import "cssstyleselector.h"
+#import "RenderPopupMenuMac.h"
 
 // The methods in this file are specific to the Mac OS X platform.
 
@@ -115,6 +116,10 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
             // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
             if ([button bezelStyle] == NSRoundedBezelStyle)
                 r = inflateRect(r, buttonSizes()[[button controlSize]], buttonMargins());
+            break;
+        }
+        case MenulistAppearance: {
+            setPopupButtonCellState(o, r); 
             break;
         }
         default:
@@ -574,6 +579,76 @@ void RenderThemeMac::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle
     // Add in intrinsic margins if the font size isn't too small
     if (style->fontSize() >= 11)
         addIntrinsicMargins(style, NSRegularControlSize);
+}
+
+bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
+{
+    setPopupButtonCellState(o, r);
+    
+    [popupButton drawWithFrame:r inView:o->view()->frameView()->getDocumentView()];
+    [popupButton setControlView:nil];
+    return false;
+}
+
+void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    NSControlSize controlSize = controlSizeForFont(style);
+    
+    // Add in intrinsic margins
+    addIntrinsicMargins(style, controlSize);
+
+    // Height is locked to auto.
+    style->setHeight(Length(Auto));
+    
+    // White-space is locked to pre
+    style->setWhiteSpace(PRE);
+
+    if (controlSize != NSMiniControlSize) {
+        style->setPaddingTop(Length(2, Fixed));
+        style->setPaddingBottom(Length(5, Fixed));
+    }
+
+    // Our font is locked to the appropriate system font size for the control.  To clarify, we first use the CSS-specified font to figure out
+    // a reasonable control size, but once that control size is determined, we throw that font away and use the appropriate
+    // system font for the control size instead.
+    setFontFromControlSize(selector, style, controlSize);
+}
+
+void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRect& r)
+{
+    if (!popupButton) {
+        popupButton = KWQRetainNSRelease([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
+        [popupButton setUsesItemFromMenu:NO];
+    }
+
+    // Set the control size based off the rectangle we're painting into.
+    RenderThemeMac::setControlSize(popupButton, buttonSizes(), IntSize(r.width(), r.height()));
+
+    // Update the various states we respond to.
+    updateCheckedState(popupButton, o);
+    updateEnabledState(popupButton, o);
+    updatePressedState(popupButton, o);
+    updateFocusedState(popupButton, o);
+}
+
+RenderPopupMenu* RenderThemeMac::createPopupMenu(RenderArena* arena, Document* doc)
+{
+    return new (arena) RenderPopupMenuMac(doc);
+}
+
+int RenderThemeMac::sizeOfArrowControl(RenderStyle* style) const
+{
+    NSControlSize controlSize = controlSizeForFont(style);
+    
+    switch (controlSize) {
+    case NSRegularControlSize:
+        return 26;
+    case NSSmallControlSize:
+        return 20;
+    case NSMiniControlSize:
+        return 16;
+    }
+    return 0;
 }
 
 }

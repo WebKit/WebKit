@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class RenderStyle;
+class RenderPopupMenu;
 
 class RenderThemeMac : public RenderTheme {
 public:
@@ -54,6 +55,9 @@ public:
 
     virtual Color platformActiveSelectionBackgroundColor() const;
     virtual Color platformInactiveSelectionBackgroundColor() const;
+    
+    virtual int sizeOfArrowControl(RenderStyle*) const;
+    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*);
 
 protected:
     // Methods for each appearance value.
@@ -72,6 +76,9 @@ protected:
 
     virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+
+    virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 
 private:
     IntRect inflateRect(const IntRect&, const IntSize&, const int* margins) const;
@@ -103,11 +110,14 @@ private:
     const IntSize* buttonSizes() const;
     const int* buttonMargins() const;
     void setButtonCellState(const RenderObject*, const IntRect&);
+    
+    void setPopupButtonCellState(const RenderObject*, const IntRect&);
 
 private:
     NSButtonCell* checkbox;
     NSButtonCell* radio;
     NSButtonCell* button;
+    NSPopUpButtonCell* popupButton;
     Image* resizeCornerImage;
 };
 

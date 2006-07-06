@@ -27,8 +27,11 @@
 #include "config.h"
 #include "HTMLOptGroupElement.h"
 
+#include "Document.h"
+#include "cssstyleselector.h"
 #include "HTMLSelectElement.h"
 #include "HTMLNames.h"
+#include "RenderMenuList.h"
 
 namespace WebCore {
 
@@ -36,10 +39,7 @@ using namespace HTMLNames;
 
 HTMLOptGroupElement::HTMLOptGroupElement(Document* doc, HTMLFormElement* f)
     : HTMLGenericFormElement(optgroupTag, doc, f)
-{
-}
-
-HTMLOptGroupElement::~HTMLOptGroupElement()
+    , m_style(0)
 {
 }
 
@@ -122,6 +122,45 @@ void HTMLOptGroupElement::setLabel(const String &value)
 bool HTMLOptGroupElement::checkDTD(const Node* newChild)
 {
     return newChild->hasTagName(HTMLNames::optionTag) || newChild->hasTagName(HTMLNames::hrTag);
+}
+
+void HTMLOptGroupElement::attach()
+{
+    setRenderStyle(styleForRenderer(0));
+    HTMLGenericFormElement::attach();
+}
+
+void HTMLOptGroupElement::detach()
+{
+    if (m_style) {
+        m_style->deref(document()->renderArena());
+        m_style = 0;
+    }
+    HTMLGenericFormElement::detach();
+}
+
+void HTMLOptGroupElement::setRenderStyle( RenderStyle* newStyle )
+{
+    RenderStyle* oldStyle = m_style;
+    m_style = newStyle;
+     if (m_style)
+        m_style->ref();
+    
+    if (oldStyle)
+        oldStyle->deref(document()->renderArena());
+}
+
+String HTMLOptGroupElement::groupLabelText()
+{
+    DeprecatedString itemText = getAttribute(labelAttr).deprecatedString();
+    
+    itemText.replace('\\', document()->backslashAsCurrencySymbol());
+    // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
+    itemText = itemText.stripWhiteSpace();
+    // We want to collapse our whitespace too.  This will match other browsers.
+    itemText = itemText.simplifyWhiteSpace();
+        
+    return itemText;
 }
  
 } // namespace

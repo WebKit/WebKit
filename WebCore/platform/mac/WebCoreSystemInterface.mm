@@ -46,6 +46,7 @@ size_t (*wkGetGlyphVectorRecordSize)(void* glyphVector);
 NSString* (*wkGetMIMETypeForExtension)(NSString*);
 ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
 OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
+void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
 void (*wkReleaseStyleGroup)(void* group);
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);

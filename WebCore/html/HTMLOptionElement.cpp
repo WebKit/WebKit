@@ -28,9 +28,11 @@
 #include "HTMLOptionElement.h"
 
 #include "Document.h"
+#include "cssstyleselector.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
+#include "RenderMenuList.h"
 #include "Text.h"
 #include <wtf/Vector.h>
 
@@ -41,12 +43,28 @@ using namespace HTMLNames;
 HTMLOptionElement::HTMLOptionElement(Document* doc, HTMLFormElement* f)
     : HTMLGenericFormElement(optionTag, doc, f)
     , m_selected(false)
+    , m_style(0)
 {
 }
 
 bool HTMLOptionElement::checkDTD(const Node* newChild)
 {
     return newChild->isTextNode() || newChild->hasTagName(scriptTag);
+}
+
+void HTMLOptionElement::attach()
+{
+    setRenderStyle(styleForRenderer(0));
+    HTMLGenericFormElement::attach();
+}
+
+void HTMLOptionElement::detach()
+{
+    if (m_style) {
+        m_style->deref(document()->renderArena());
+        m_style = 0;
+    }
+    HTMLGenericFormElement::detach();
 }
 
 bool HTMLOptionElement::isFocusable() const
@@ -190,6 +208,34 @@ String HTMLOptionElement::label() const
 void HTMLOptionElement::setLabel(const String& value)
 {
     setAttribute(labelAttr, value);
+}
+
+void HTMLOptionElement::setRenderStyle( RenderStyle* newStyle )
+{
+    RenderStyle* oldStyle = m_style;
+    m_style = newStyle;
+     if (m_style)
+        m_style->ref();
+    
+    if (oldStyle)
+        oldStyle->deref(document()->renderArena());
+}
+
+String HTMLOptionElement::optionText()
+{
+    DeprecatedString itemText = text().deprecatedString();
+    if (itemText.isEmpty())
+        itemText = getAttribute(labelAttr).deprecatedString();
+    
+    itemText.replace('\\', document()->backslashAsCurrencySymbol());
+    // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
+    itemText = itemText.stripWhiteSpace();
+    // We want to collapse our whitespace too.  This will match other browsers.
+    itemText = itemText.simplifyWhiteSpace();
+    if (parentNode() && parentNode()->hasTagName(optgroupTag))
+        itemText.prepend("    ");
+        
+    return itemText;
 }
 
 } // namespace

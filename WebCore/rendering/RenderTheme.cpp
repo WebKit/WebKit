@@ -27,6 +27,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "render_style.h"
+#include "RenderPopupMenu.h"
 
 // The methods in this file are shared by all themes on every platform.
 
@@ -59,6 +60,8 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
             return adjustTextFieldStyle(selector, style, e);
         case TextAreaAppearance:
             return adjustTextAreaStyle(selector, style, e);
+        case MenulistAppearance:
+            return adjustMenuListStyle(selector, style, e);
         default:
             break;
     }
@@ -87,6 +90,8 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& i, const
         case SquareButtonAppearance:
         case ButtonAppearance:
             return paintButton(o, i, r);
+        case MenulistAppearance:
+            return paintMenuList(o, i, r);
         case TextFieldAppearance:
         case TextAreaAppearance:
             return true;
@@ -113,6 +118,7 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
         case PushButtonAppearance:
         case SquareButtonAppearance:
         case ButtonAppearance:
+        case MenulistAppearance:
         default:
             break;
     }
@@ -177,6 +183,7 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
         case PushButtonAppearance:
         case SquareButtonAppearance:
         case ButtonAppearance:
+        case MenulistAppearance:
         case TextFieldAppearance:
         case TextAreaAppearance: {
             // Test the style to see if the UA border and background match.
@@ -302,6 +309,10 @@ void RenderTheme::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* 
 }
 
 void RenderTheme::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+}
+
+void RenderTheme::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
 }
 

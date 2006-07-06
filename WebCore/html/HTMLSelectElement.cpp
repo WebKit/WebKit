@@ -29,6 +29,7 @@
 
 #include "CSSPropertyNames.h"
 #include "Document.h"
+#include "DeprecatedRenderSelect.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormDataList.h"
@@ -37,7 +38,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "KeyboardEvent.h"
-#include "DeprecatedRenderSelect.h"
+#include "RenderMenuList.h"
 #include "cssstyleselector.h"
 #include <wtf/Vector.h>
 
@@ -75,8 +76,12 @@ bool HTMLSelectElement::checkDTD(const Node* newChild)
 
 void HTMLSelectElement::recalcStyle( StyleChange ch )
 {
-    if (hasChangedChild() && renderer())
-        static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
+    if (hasChangedChild() && renderer()) {
+        if (shouldUseMenuList(renderer()->style()))
+            static_cast<RenderMenuList*>(renderer())->setOptionsChanged(true);
+        else
+            static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
+    }
 
     HTMLGenericFormElement::recalcStyle( ch );
 }
@@ -272,6 +277,8 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
 
 RenderObject *HTMLSelectElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
+    if (shouldUseMenuList(style))
+        return new (arena) RenderMenuList(this);
     return new (arena) DeprecatedRenderSelect(this);
 }
 
@@ -389,8 +396,12 @@ void HTMLSelectElement::childrenChanged()
 void HTMLSelectElement::setRecalcListItems()
 {
     m_recalcListItems = true;
-    if (renderer())
-        static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
+    if (renderer()) {
+        if (shouldUseMenuList(renderer()->style()))
+            static_cast<RenderMenuList*>(renderer())->setOptionsChanged(true);
+        else
+            static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
+    }
     setChanged();
 }
 
@@ -414,8 +425,12 @@ void HTMLSelectElement::reset()
     }
     if (!optionSelected && firstOption)
         firstOption->setSelected(true);
-    if (renderer())
-        static_cast<DeprecatedRenderSelect*>(renderer())->setSelectionChanged(true);
+    if (renderer()) {
+        if (shouldUseMenuList(renderer()->style()))
+            static_cast<RenderMenuList*>(renderer())->setSelectionChanged(true);
+        else
+            static_cast<DeprecatedRenderSelect*>(renderer())->setSelectionChanged(true);
+    }
     setChanged(true);
 }
 
@@ -430,8 +445,12 @@ void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, 
                 static_cast<HTMLOptionElement*>(items[i])->m_selected = (items[i] == selectedOption);
         }
     }
-    if (renderer())
-        static_cast<DeprecatedRenderSelect*>(renderer())->setSelectionChanged(true);
+    if (renderer()) {
+        if (shouldUseMenuList(renderer()->style()))
+            static_cast<RenderMenuList*>(renderer())->setSelectionChanged(true);
+        else
+            static_cast<DeprecatedRenderSelect*>(renderer())->setSelectionChanged(true);
+    }
 
     setChanged(true);
 }
@@ -448,6 +467,9 @@ void HTMLSelectElement::defaultEventHandler(Event *evt)
             evt->setDefaultHandled();
         }
     }
+    if (evt->type() == mousedownEvent && renderer() && shouldUseMenuList(renderer()->style()))
+        static_cast<RenderMenuList*>(renderer())->showPopup();
+
     HTMLGenericFormElement::defaultEventHandler(evt);
 }
 

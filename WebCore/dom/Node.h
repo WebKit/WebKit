@@ -365,6 +365,10 @@ public:
     virtual bool childShouldCreateRenderer(Node*) const { return true; }
 #endif
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    
+    // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).
+    virtual RenderStyle* renderStyle();
+    virtual void setRenderStyle(RenderStyle* s);
 
     // -----------------------------------------------------------------------------
     // Notification of document structure changes

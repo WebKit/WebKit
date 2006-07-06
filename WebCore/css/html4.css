@@ -384,7 +384,7 @@ select, button, input[type="button"], input[type="image"], input[type="submit"],
     -webkit-user-select: ignore
 }
 
-option, optgroup, area, param {
+area, param {
     display: none
 }
 
@@ -399,7 +399,17 @@ input[type="radio"] {
 }
 
 select {
+    // FIXME: Uncomment this when flipping the switch to use the new popup menu implementation
+    // -webkit-appearance: menulist;
     box-sizing: border-box;
+}
+
+optgroup {
+    font-weight: bolder;
+}
+
+option {
+    font-weight: normal;
 }
 
 /* inline elements */

@@ -70,6 +70,10 @@ public:
     virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, WebCore::Element*) const;
     virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
+    virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*);
+
 private:
     void addIntrinsicMargins(RenderStyle*) const;
     void close();

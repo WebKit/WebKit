@@ -1,3 +1,144 @@
+2006-07-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej and Hyatt.
+
+        Initial implementation of popup menu control.  This can be turned on by setting -webkit-appearance: menulist on a select element.
+
+        * WebCore.xcodeproj/project.pbxproj: Added RenderMenuList.h, RenderMenuList.cpp, RenderPopupMenu.h, RenderPopupMenu.cpp, 
+        RenderPopupMenuWin.h, RenderPopupMenuMac.h, RenderPopupMenuMac.mm, 
+    
+        * dom/Node.cpp:
+        (WebCore::Node::renderStyle): Added. Returns the renderer's style.  If there's no renderer, returns's a RenderStyle that's kept by the node.
+        This is important for HTMLOptGroupElement and HTMLOptionElement, which don't have renderers.
+        (WebCore::Node::setRenderStyle): Added.
+        * dom/Node.h:
+        * dom/Element.cpp: (WebCore::Element::recalcStyle): Updated to use renderStyle so recalcStyle will work for HTMLOptionElements and HTMLOptGroupElements.
+           
+        * css/cssstyleselector.cpp: Updated to call renderStyle method on the node, so resolving style works on elements w/o renderers that cache style. 
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::locateCousinList):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+
+        * css/html4.css: Removed display:none from options and optgroups, since we're now caching style for these elements.
+        Added font-weight styles for option and optgroup.
+        
+        * html/HTMLOptGroupElement.h: Added m_style to keep track of a RenderStyle for the element, even though we aren't creating a renderer.
+        This will allow us to honor style for optgroups and options for popup menus (and eventually list boxes too).
+        (WebCore::HTMLOptGroupElement::rendererIsNeeded): Added.
+        (WebCore::HTMLOptGroupElement::renderStyle): Added.
+        * html/HTMLOptionElement.h: ditto.
+        (WebCore::HTMLOptionElement::rendererIsNeeded): Added.
+        (WebCore::HTMLOptionElement::renderStyle): Added.
+        
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::HTMLOptGroupElement): Initialize m_style.
+        (WebCore::HTMLOptGroupElement::attach): Set the renderStyle.
+        (WebCore::HTMLOptGroupElement::detach): Clear m_style.
+        (WebCore::HTMLOptGroupElement::setRenderStyle): Added.
+        (WebCore::HTMLOptGroupElement::groupLabelText): Added.
+        * html/HTMLOptionElement.cpp: ditto.
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        (WebCore::HTMLOptionElement::attach):
+        (WebCore::HTMLOptionElement::detach):
+        (WebCore::HTMLOptionElement::setRenderStyle):
+        (WebCore::HTMLOptionElement::optionText):
+
+        * html/HTMLSelectElement.cpp: Added code to use the new RenderMenuList if the appearance is set to MenuListAppearance, 
+        and if we're not creating a list box renderer.
+        (WebCore::HTMLSelectElement::recalcStyle):
+        (WebCore::HTMLSelectElement::createRenderer):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::notifyOptionSelected):
+        (WebCore::HTMLSelectElement::defaultEventHandler):
+        * html/HTMLSelectElement.h:
+
+        * WebCore.exp: Added _wkPopupMenu.
+        * platform/mac/WebCoreSystemInterface.h: Added wkPopupMenu to get the NSMenu to pop up.
+        * platform/mac/WebCoreSystemInterface.mm:
+
+        * platform/win/TemporaryLinkStubs.cpp: Added stubs for RenderPopupMenuWin.
+        (RenderPopupMenuWin::RenderPopupMenuWin):
+        (RenderPopupMenuWin::~RenderPopupMenuWin):
+        (RenderPopupMenuWin::clear):
+        (RenderPopupMenuWin::populate):
+        (RenderPopupMenuWin::showPopup):
+        (RenderPopupMenuWin::addSeparator):
+        (RenderPopupMenuWin::addGroupLabel):
+        (RenderPopupMenuWin::addOption):
+        * rendering/RenderPopupMenuWin.h: Added.
+
+        * rendering/RenderPopupMenu.cpp: Added.
+        (WebCore::RenderPopupMenu::RenderPopupMenu):
+        (WebCore::RenderPopupMenu::~RenderPopupMenu):
+        (WebCore::RenderPopupMenu::clear):
+        (WebCore::RenderPopupMenu::populate): Walks the DOM tree, and adds separators, options, and group labels to the RenderPopupMenu.
+        (WebCore::RenderPopupMenu::showPopup):
+        (WebCore::RenderPopupMenu::addSeparator):
+        (WebCore::RenderPopupMenu::addGroupLabel):
+        (WebCore::RenderPopupMenu::addOption):
+        * rendering/RenderPopupMenu.h: Added.
+        (WebCore::RenderPopupMenu::renderName):
+        (WebCore::RenderPopupMenu::getRenderMenuList):
+        * rendering/RenderPopupMenuMac.h: Added.
+        * rendering/RenderPopupMenuMac.mm: Added.
+        (WebCore::RenderPopupMenuMac::RenderPopupMenuMac):
+        (WebCore::RenderPopupMenuMac::~RenderPopupMenuMac):
+        (WebCore::RenderPopupMenuMac::clear): Removes all items from the menu.
+        (WebCore::RenderPopupMenuMac::populate): Disables menuChangedMessages before populating the menu.
+        (WebCore::RenderPopupMenuMac::showPopup): Calculates the right position, and calls wkPopupMenu.
+        (WebCore::RenderPopupMenuMac::addSeparator):
+        (WebCore::RenderPopupMenuMac::addGroupLabel):
+        (WebCore::RenderPopupMenuMac::addOption):
+        
+        * rendering/RenderMenuList.cpp: Added.
+        (WebCore::RenderMenuList::RenderMenuList):
+        (WebCore::RenderMenuList::addChild):
+        (WebCore::RenderMenuList::removeChild):
+        (WebCore::RenderMenuList::setStyle):
+        (WebCore::RenderMenuList::updateFromElement): If the options have changed, iterate through the children to find the menu item with the widest text.
+        Set the button text to the selected item's text.
+        (WebCore::RenderMenuList::setText):
+        (WebCore::RenderMenuList::paintObject):
+        (WebCore::RenderMenuList::baselinePosition):
+        (WebCore::RenderMenuList::calcMinMaxWidth):
+        (WebCore::RenderMenuList::showPopup):
+        (WebCore::RenderMenuList::layout):
+        (WebCore::RenderMenuList::updateSelection):
+        (WebCore::RenderMenuList::valueChanged):
+        * rendering/RenderMenuList.h: Added.
+        (WebCore::RenderMenuList::removeLeftoverAnonymousBoxes):
+        (WebCore::RenderMenuList::allowsReusingAnonymousChild):
+        (WebCore::RenderMenuList::canHaveChildren):
+        (WebCore::RenderMenuList::renderName):
+        (WebCore::RenderMenuList::setOptionsChanged):
+        (WebCore::RenderMenuList::selectionChanged):
+        (WebCore::RenderMenuList::setSelectionChanged):
+        (WebCore::RenderMenuList::hasPopupMenu):
+
+        * rendering/RenderTheme.cpp: Added cases for MenuListAppearance.
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::isControlStyled):
+        (WebCore::RenderTheme::adjustMenuListStyle):
+        (WebCore::RenderTheme::createPopupMenu): creates platform-specific RenderPopupMenu.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::sizeOfArrowControl): Added. 
+        (WebCore::RenderTheme::paintMenuList): Added.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        (WebCore::RenderThemeMac::setPopupButtonCellState):
+        (WebCore::RenderThemeMac::createPopupMenu):
+        (WebCore::RenderThemeMac::sizeOfArrowControl):
+        * rendering/RenderThemeWin.cpp: (WebCore::RenderThemeWin::createPopupMenu):
+        * rendering/RenderThemeWin.h:
+
 2006-07-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Omernick.

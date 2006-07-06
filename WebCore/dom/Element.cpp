@@ -543,41 +543,44 @@ void Element::attach()
     ContainerNode::attach();
 }
 
-void Element::recalcStyle( StyleChange change )
+void Element::recalcStyle(StyleChange change)
 {
     // ### should go away and be done in renderobject
-    RenderStyle* _style = renderer() ? renderer()->style() : 0;
-    bool hasParentRenderer = parent() ? parent()->renderer() : false;
+    RenderStyle* _style = renderStyle();
+    bool hasParentStyle = parentNode() ? parentNode()->renderStyle() : false;
     
-    if ( hasParentRenderer && (change >= Inherit || changed()) ) {
+    if (hasParentStyle && (change >= Inherit || changed())) {
         RenderStyle *newStyle = document()->styleSelector()->styleForElement(this);
-        StyleChange ch = diff( _style, newStyle );
+        StyleChange ch = diff(_style, newStyle);
         if (ch == Detach) {
             if (attached())
                 detach();
             // ### Suboptimal. Style gets calculated again.
             attach();
             // attach recalulates the style for all children. No need to do it twice.
-            setChanged( false );
-            setHasChangedChild( false );
+            setChanged(false);
+            setHasChangedChild(false);
             newStyle->deref(document()->renderArena());
             return;
         }
         else if (ch != NoChange) {
-            if (renderer() && newStyle)
-                renderer()->setStyle(newStyle);
+            if (newStyle)
+                setRenderStyle(newStyle);
         }
-        else if (changed() && renderer() && newStyle && (document()->usesSiblingRules() || document()->usesDescendantRules())) {
+        else if (changed() && newStyle && (document()->usesSiblingRules() || document()->usesDescendantRules())) {
             // Although no change occurred, we use the new style so that the cousin style sharing code won't get
             // fooled into believing this style is the same.  This is only necessary if the document actually uses
             // sibling/descendant rules, since otherwise it isn't possible for ancestor styles to affect sharing of
             // descendants.
-            renderer()->setStyleInternal(newStyle);
+            if (renderer())
+                renderer()->setStyleInternal(newStyle);
+            else
+                setRenderStyle(newStyle);
         }
 
         newStyle->deref(document()->renderArena());
 
-        if ( change != Force) {
+        if (change != Force) {
             if (document()->usesDescendantRules())
                 change = Force;
             else
@@ -590,8 +593,8 @@ void Element::recalcStyle( StyleChange change )
             n->recalcStyle(change);
     }
 
-    setChanged( false );
-    setHasChangedChild( false );
+    setChanged(false);
+    setHasChangedChild(false);
 }
 
 bool Element::childTypeAllowed(NodeType type)

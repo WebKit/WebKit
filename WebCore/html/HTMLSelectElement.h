@@ -28,6 +28,7 @@
 
 #include "HTMLGenericFormElement.h"
 #include "HTMLCollection.h"
+#include "render_style.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ class DeprecatedRenderSelect;
 
 class HTMLSelectElement : public HTMLGenericFormElement {
     friend class DeprecatedRenderSelect;
+    friend class RenderMenuList;
 
 public:
     HTMLSelectElement(Document*, HTMLFormElement* = 0);
@@ -120,6 +122,7 @@ public:
 
 private:
     void recalcListItems();
+    bool shouldUseMenuList(RenderStyle* style) { return !m_multiple && m_size <= 1 && style->appearance() == MenulistAppearance; }
 
     mutable Vector<HTMLElement*> m_listItems;
     int m_minwidth;

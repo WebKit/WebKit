@@ -147,6 +147,7 @@ _wkGetGlyphVectorRecordSize
 _wkGetMIMETypeForExtension
 _wkGetNSFontATSUFontId
 _wkInitializeGlyphVector
+_wkPopupMenu
 _wkReleaseStyleGroup
 _wkSetCGFontRenderingMode
 _wkSetDragImage

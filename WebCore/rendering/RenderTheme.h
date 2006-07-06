@@ -28,6 +28,8 @@
 namespace WebCore {
 
 class Element;
+class RenderPopupMenu;
+
 enum ControlState { HoverState, PressedState, FocusState, EnabledState, CheckedState, ReadOnlyState };
 
 class RenderTheme {
@@ -98,6 +100,9 @@ public:
     virtual Color platformActiveSelectionForegroundColor() const;
     virtual Color platformInactiveSelectionForegroundColor() const;
 
+    virtual int sizeOfArrowControl(RenderStyle*) const { return 0; }
+    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*) = 0;
+
 protected:
     // Methods for state querying
     bool isChecked(const RenderObject* o) const;
@@ -126,6 +131,10 @@ protected:
 
     virtual void adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
     virtual bool paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
+
+    virtual void adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
+    virtual bool paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
+
 };
 
 // Function to obtain the theme.  This is implemented in your platform-specific theme implementation to hand

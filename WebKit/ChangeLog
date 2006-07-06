@@ -1,3 +1,12 @@
+2006-07-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej and Hyatt.
+
+        WebKit part of initial popup menu implementation.
+
+        * WebCoreSupport/WebSystemInterface.m: (InitWebCoreSystemInterface):
+        Initialize WKPopupMenu.
+
 2006-07-05  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
@@ -24,7 +33,6 @@
         * WebKit.LP64.exp: Added.
         * WebKit.xcodeproj/project.pbxproj:
 
->>>>>>> .r15169
 2006-07-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.

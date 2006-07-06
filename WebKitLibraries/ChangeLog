@@ -1,3 +1,10 @@
+2006-07-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej and Hyatt.
+
+        * WebKitSystemInterface.h: Updated.
+        * libWebKitSystemInterface.a: Updated.
+
 2006-06-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Alice.

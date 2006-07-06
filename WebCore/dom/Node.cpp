@@ -940,6 +940,16 @@ RenderObject *Node::createRenderer(RenderArena *arena, RenderStyle *style)
     return 0;
 }
 
+RenderStyle* Node::renderStyle()
+{ 
+    return m_renderer ? m_renderer->style() : 0; 
+}
+
+void Node::setRenderStyle(RenderStyle* s) {
+    if (m_renderer)
+        m_renderer->setStyle(s); 
+}
+
 int Node::maxOffset() const
 {
     return 1;
