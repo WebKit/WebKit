@@ -118,7 +118,8 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
                         || parent->hasTagName(preTag)
                         || parent->hasTagName(scriptTag)
                         || parent->hasTagName(styleTag)
-                        || parent->hasTagName(textareaTag))
+                        || parent->hasTagName(textareaTag)
+                        || parent->hasTagName(xmpTag))
                     return stringValueForRange(node, range).deprecatedString();
             }
             DeprecatedString markup = annotate ? escapeTextForMarkup(renderedText(node, range)) : escapeTextForMarkup(stringValueForRange(node, range).deprecatedString());            
@@ -398,7 +399,8 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
                         || ancestor->hasTagName(olTag)
                         || ancestor->hasTagName(preTag)
                         || ancestor->hasTagName(tableTag)
-                        || ancestor->hasTagName(ulTag)) {
+                        || ancestor->hasTagName(ulTag)
+                        || ancestor->hasTagName(xmpTag)) {
                     breakAtEnd = true;
                 } else
                     break;

@@ -1,3 +1,16 @@
+2006-07-06  David Harrison  <harrison@apple.com>
+
+        Reviewed by Geoff
+
+        <rdar://problem/4565031> innerHTML of XMP tag returns special characters like '&gt;' instead of '>'
+ 
+        Test: fast/innerHTML/006.html
+       
+        * editing/markup.cpp:
+        (WebCore::startMarkup):
+        (WebCore::createMarkup):
+        Do not special quote content of XMP nodes.
+
 2006-07-06  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed - build fix.

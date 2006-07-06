@@ -1,3 +1,14 @@
+2006-07-06  David Harrison  <harrison@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4565031> innerHTML of XMP tag returns special characters like '&gt;' instead of '>'
+
+        * fast/innerHTML/006-expected.checksum: Added.
+        * fast/innerHTML/006-expected.png: Added.
+        * fast/innerHTML/006-expected.txt: Added.
+        * fast/innerHTML/006.html: Added.
+
 2006-07-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adele.
