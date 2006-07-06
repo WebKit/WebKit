@@ -38,6 +38,7 @@
 #include "Image.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
+#include "OverflowEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "RenderArena.h"
@@ -52,6 +53,12 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
+struct ScheduledEvent {
+    RefPtr<Event> m_event;
+    RefPtr<EventTargetNode> m_eventTarget;
+    bool m_tempEvent;
+};
+
 class FrameViewPrivate {
 public:
     FrameViewPrivate(FrameView* view)
@@ -60,6 +67,9 @@ public:
         , hoverTimer(view, &FrameView::hoverTimerFired)
         , m_resizeLayer(0)
         , m_mediaType("screen")
+        , m_scheduledEvents(0)
+        , m_overflowStatusDirty(true)
+        , m_viewportRenderer(0)
     {
         repaintRects = 0;
         isTransparent = false;
@@ -148,6 +158,13 @@ public:
     RefPtr<HTMLFrameSetElement> resizingFrameSet;
     
     String m_mediaType;
+    
+    Vector<ScheduledEvent*>* m_scheduledEvents;
+    
+    bool m_overflowStatusDirty;
+    bool horizontalOverflow;
+    bool m_verticalOverflow;    
+    RenderObject* m_viewportRenderer;
 };
 
 FrameView::FrameView(Frame *frame)
@@ -292,6 +309,8 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollBarMode& hMode, S
             // Don't set it at all.
             ;
     }
+
+    d->m_viewportRenderer = o;
 }
 
 int FrameView::layoutCount() const
@@ -485,6 +504,12 @@ void FrameView::layout(bool allowSubtree)
 
     if (didFirstLayout)
         m_frame->didFirstLayout();
+    
+    updateOverflowStatus(visibleWidth() < contentsWidth(),
+                         visibleHeight() < contentsHeight());
+
+    // Dispatch events scheduled during layout
+    dispatchScheduledEvents();    
 }
 
 //
@@ -1250,6 +1275,65 @@ void FrameView::cleared()
     if (m_frame)
         if (RenderPart* renderer = m_frame->ownerRenderer())
             renderer->viewCleared();
+}
+
+
+void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<EventTargetNode> eventTarget, bool tempEvent)
+{
+    if (!d->m_scheduledEvents)
+        d->m_scheduledEvents = new Vector<ScheduledEvent*>;
+    
+    ScheduledEvent *scheduledEvent = new ScheduledEvent;
+    scheduledEvent->m_event = event;
+    scheduledEvent->m_eventTarget = eventTarget;
+    scheduledEvent->m_tempEvent = tempEvent;
+    
+    d->m_scheduledEvents->append(scheduledEvent);
+}
+
+void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
+{
+    if (d->m_overflowStatusDirty) {
+        d->horizontalOverflow = horizontalOverflow;
+        d->m_verticalOverflow = verticalOverflow;
+        d->m_overflowStatusDirty = false;
+        
+        return;
+    }
+    
+    bool horizontalOverflowChanged = (d->horizontalOverflow != horizontalOverflow);
+    bool verticalOverflowChanged = (d->m_verticalOverflow != verticalOverflow);
+    
+    if (horizontalOverflowChanged || verticalOverflowChanged) {
+        d->horizontalOverflow = horizontalOverflow;
+        d->m_verticalOverflow = verticalOverflow;
+        
+        scheduleEvent(new OverflowEvent(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow),
+                                        EventTargetNodeCast(d->m_viewportRenderer->element()), true);
+    }
+    
+}
+
+void FrameView::dispatchScheduledEvents()
+{
+    if (!d->m_scheduledEvents)
+        return;
+    
+    Vector<ScheduledEvent*> scheduledEventsCopy = *d->m_scheduledEvents;
+    d->m_scheduledEvents->clear();
+    
+    Vector<ScheduledEvent*>::iterator end = scheduledEventsCopy.end();
+    for (Vector<ScheduledEvent*>::iterator it = scheduledEventsCopy.begin(); it != end; ++it) {
+        ScheduledEvent* scheduledEvent = *it;
+        
+        ExceptionCode ec = 0;
+        
+        // Only dispatch events to nodes that are in the document
+        if (scheduledEvent->m_eventTarget->inDocument())
+            scheduledEvent->m_eventTarget->dispatchEvent(scheduledEvent->m_event, ec, scheduledEvent->m_tempEvent);
+        
+        delete scheduledEvent;
+    }    
 }
 
 }

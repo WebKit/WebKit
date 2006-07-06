@@ -33,10 +33,12 @@
 #include "JSKeyboardEvent.h"
 #include "JSMouseEvent.h"
 #include "JSMutationEvent.h"
+#include "JSOverflowEvent.h"
 #include "JSWheelEvent.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
+#include "OverflowEvent.h"
 #include "UIEvent.h"
 #include "WheelEvent.h"
 #include "kjs_proxy.h"
@@ -478,6 +480,8 @@ JSValue *toJS(ExecState *exec, Event *e)
       ret = new JSUIEvent(exec, static_cast<UIEvent *>(e));
     else if (e->isMutationEvent())
       ret = new JSMutationEvent(exec, static_cast<MutationEvent *>(e));
+    else if (e->isOverflowEvent())
+      ret = new JSOverflowEvent(exec, static_cast<OverflowEvent*>(e));
     else
       ret = new JSEvent(exec, e);
 

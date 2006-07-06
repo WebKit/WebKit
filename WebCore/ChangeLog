@@ -1,3 +1,68 @@
+2006-07-06  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4610891> Support overflow events
+        
+        * DerivedSources.make:
+        Add generated sources.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+        
+        * bindings/js/kjs_events.cpp:
+        (KJS::toJS):
+        Support creating wrappers for overflow events..
+        
+        * bindings/objc/DOMEvents.h:
+        * bindings/objc/DOMEvents.mm:
+        (+[DOMEvent _eventWith:]):
+        (-[DOMOverflowEvent _overflowEvent]):
+        (-[DOMOverflowEvent orient]):
+        (-[DOMOverflowEvent horizontalOverflow]):
+        (-[DOMOverflowEvent verticalOverflow]):
+        Add Objective-C wrapper for overflow events.
+        
+        * dom/Event.cpp:
+        (WebCore::Event::isOverflowEvent):        
+        * dom/Event.h:
+        * dom/EventNames.h:
+        * dom/OverflowEvent.cpp: Added.
+        (WebCore::OverflowEvent::OverflowEvent):
+        (WebCore::OverflowEvent::isOverflowEvent):
+        * dom/OverflowEvent.h: Added.
+        (WebCore::OverflowEvent::):
+        (WebCore::OverflowEvent::orient):
+        (WebCore::OverflowEvent::horizontalOverflow):
+        (WebCore::OverflowEvent::verticalOverflow):
+        * dom/OverflowEvent.idl: Added.
+        Add overflow events.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        (WebCore::FrameView::applyOverflowToViewport):        
+        (WebCore::FrameView::layout):
+        Dispatch any scheduled events when layout is done.
+        
+        (WebCore::FrameView::scheduleEvent):
+        New function which schedules an event.
+        
+        (WebCore::FrameView::updateOverflowStatus):
+        Update overflow status for the viewport.
+        
+        (WebCore::FrameView::dispatchScheduledEvents):
+        New function which dispatches all scheduled events.
+        
+        * page/FrameView.h:
+        Add declarations.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateOverflowStatus):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderLayer.h:
+        Schedule overflow events when overflow status changes.
+
 2006-07-06  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff.

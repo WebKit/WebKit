@@ -118,6 +118,7 @@ all : \
     JSNode.h \
     JSNodeFilter.h \
     JSNotation.h \
+	JSOverflowEvent.h \
     JSProcessingInstruction.h \
     JSRange.h \
     JSSVGAngle.h \

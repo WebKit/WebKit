@@ -41,6 +41,10 @@
 		14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E8378D09F85D4F00B85AE4 /* JSEvent.h */; };
 		14EC267F09CA07E000E1EEEC /* EventTargetNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14EC267D09CA07E000E1EEEC /* EventTargetNode.h */; };
 		14EC268009CA07E000E1EEEC /* EventTargetNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */; };
+		1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */; };
+		1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */; };
+		1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */; };
+		1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */; };
 		1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D137E0A5325520064BF5F /* DOMXPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D137F0A5325520064BF5F /* DOMXPath.mm */; };
 		1A1D13CA0A5329090064BF5F /* DOMXPathInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D13C90A5329090064BF5F /* DOMXPathInternal.h */; };
@@ -1622,6 +1626,11 @@
 		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEvent.h; sourceTree = "<group>"; };
 		14EC267D09CA07E000E1EEEC /* EventTargetNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetNode.h; sourceTree = "<group>"; };
 		14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetNode.cpp; sourceTree = "<group>"; };
+		1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OverflowEvent.cpp; sourceTree = "<group>"; };
+		1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OverflowEvent.h; sourceTree = "<group>"; };
+		1A0D57380A5C7812007EDD4C /* OverflowEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = OverflowEvent.idl; sourceTree = "<group>"; };
+		1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSOverflowEvent.cpp; sourceTree = "<group>"; };
+		1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSOverflowEvent.h; sourceTree = "<group>"; };
 		1A1D137E0A5325520064BF5F /* DOMXPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMXPath.h; sourceTree = "<group>"; };
 		1A1D137F0A5325520064BF5F /* DOMXPath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMXPath.mm; sourceTree = "<group>"; };
 		1A1D13C90A5329090064BF5F /* DOMXPathInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMXPathInternal.h; sourceTree = "<group>"; };
@@ -3736,6 +3745,8 @@
 				14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */,
 				65DF31E909D1CC60000BE325 /* JSNotation.cpp */,
 				65DF31EA09D1CC60000BE325 /* JSNotation.h */,
+				1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */,
+				1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */,
 				65DF31EB09D1CC60000BE325 /* JSProcessingInstruction.cpp */,
 				65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */,
 				65DF31ED09D1CC60000BE325 /* JSRange.cpp */,
@@ -5502,6 +5513,9 @@
 				A8EA7EB70A1945D000A8EF5F /* Notation.cpp */,
 				A8EA7EB60A1945D000A8EF5F /* Notation.h */,
 				93EEC1F409C2877700C515D1 /* Notation.idl */,
+				1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */,
+				1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */,
+				1A0D57380A5C7812007EDD4C /* OverflowEvent.idl */,
 				BE91FC8C06133666005E3790 /* Position.cpp */,
 				BE91FC8B06133666005E3790 /* Position.h */,
 				A8EA7EB50A1945D000A8EF5F /* ProcessingInstruction.cpp */,
@@ -6382,6 +6396,8 @@
 				1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */,
 				1A1D13CA0A5329090064BF5F /* DOMXPathInternal.h in Headers */,
 				93A1EAA80A563508006960A0 /* ImageDocumentMac.h in Headers */,
+				1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */,
+				1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */,
 				ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */,
 				ABDDFE7C0A5C6E7000A3E11D /* RenderPopupMenu.h in Headers */,
 				ABDDFE7D0A5C6E7000A3E11D /* RenderPopupMenuMac.h in Headers */,
@@ -7242,6 +7258,8 @@
 				516149ED0A525E3A003DFC7A /* SiteIcon.cpp in Sources */,
 				1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */,
 				93A1EAA00A5634C9006960A0 /* ImageDocumentMac.mm in Sources */,
+				1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */,
+				1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */,
 				ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */,
 				ABDDFE7B0A5C6E7000A3E11D /* RenderPopupMenu.cpp in Sources */,
 				ABDDFE7E0A5C6E7000A3E11D /* RenderPopupMenuMac.mm in Sources */,

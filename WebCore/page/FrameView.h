@@ -40,6 +40,8 @@ class CSSStyleSelector;
 class Clipboard;
 class Document;
 class Element;
+class Event;
+class EventTargetNode;
 class Frame;
 class FrameViewPrivate;
 class GraphicsContext;
@@ -173,6 +175,8 @@ public:
     void updateDashboardRegions();
 #endif
 
+    void scheduleEvent(PassRefPtr<Event>, PassRefPtr<EventTargetNode>, bool tempEvent);
+
     void ref() { ++m_refCount; }
     void deref() { if (!--m_refCount) delete this; }
     
@@ -226,6 +230,9 @@ private:
 
     void updateBorder();
 
+    void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
+    void dispatchScheduledEvents();
+        
     unsigned m_refCount;
     
     IntSize m_size;

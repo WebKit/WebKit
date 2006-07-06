@@ -53,6 +53,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
+#include "OverflowEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderArena.h"
 #include "RenderFormElement.h"
@@ -146,6 +147,7 @@ m_isOverflowOnly(shouldBeOverflowOnly()),
 m_usedTransparency(false),
 m_inOverflowRelayout(false),
 m_repaintOverflowOnResize(false),
+m_overflowStatusDirty(true),
 m_marquee(0)
 {
 }
@@ -1019,15 +1021,40 @@ void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
         *needVBar = bottomPos > clientHeight;
 }
 
+void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
+{
+    if (m_overflowStatusDirty) {
+        m_horizontalOverflow = horizontalOverflow;
+        m_verticalOverflow = verticalOverflow;
+        m_overflowStatusDirty = false;
+        
+        return;
+    }
+    
+    bool horizontalOverflowChanged = (m_horizontalOverflow != horizontalOverflow);
+    bool verticalOverflowChanged = (m_verticalOverflow != verticalOverflow);
+    
+    if (horizontalOverflowChanged || verticalOverflowChanged) {
+        m_horizontalOverflow = horizontalOverflow;
+        m_verticalOverflow = verticalOverflow;
+        
+        m_object->element()->document()->frame()->view()->scheduleEvent(new OverflowEvent(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow),
+                                                                        EventTargetNodeCast(m_object->element()), true);
+    }
+}
+
 void
 RenderLayer::updateScrollInfoAfterLayout()
 {
     m_scrollDimensionsDirty = true;
-    if (m_object->style()->overflowX() == OHIDDEN && m_object->style()->overflowY() == OHIDDEN)
-        return; // All we had to do was dirty.
 
-    bool needHorizontalBar, needVerticalBar;
-    computeScrollDimensions(&needHorizontalBar, &needVerticalBar);
+    bool horizontalOverflow, verticalOverflow;
+    computeScrollDimensions(&horizontalOverflow, &verticalOverflow);
+
+    if (m_object->style()->overflowX() == OHIDDEN && m_object->style()->overflowY() == OHIDDEN) {
+        updateOverflowStatus(horizontalOverflow, verticalOverflow);
+        return; // All we had to do was update the overflow status and dirty
+    }
 
     if (m_object->style()->overflowX() != OMARQUEE) {
         // Layout may cause us to be in an invalid scroll position.  In this case we need
@@ -1042,21 +1069,21 @@ RenderLayer::updateScrollInfoAfterLayout()
 
     bool haveHorizontalBar = m_hBar;
     bool haveVerticalBar = m_vBar;
-
+    
     // overflow:scroll should just enable/disable.
     if (m_object->style()->overflowX() == OSCROLL)
-        m_hBar->setEnabled(needHorizontalBar);
+        m_hBar->setEnabled(horizontalOverflow);
     if (m_object->style()->overflowY() == OSCROLL)
-        m_vBar->setEnabled(needVerticalBar);
+        m_vBar->setEnabled(verticalOverflow);
 
     // overflow:auto may need to lay out again if scrollbars got added/removed.
-    bool scrollbarsChanged = (m_object->hasAutoHorizontalScrollbar() && haveHorizontalBar != needHorizontalBar) || 
-                             (m_object->hasAutoVerticalScrollbar() && haveVerticalBar != needVerticalBar);    
+    bool scrollbarsChanged = (m_object->hasAutoHorizontalScrollbar() && haveHorizontalBar != horizontalOverflow) || 
+                             (m_object->hasAutoVerticalScrollbar() && haveVerticalBar != verticalOverflow);    
     if (scrollbarsChanged) {
         if (m_object->hasAutoHorizontalScrollbar())
-            setHasHorizontalScrollbar(needHorizontalBar);
+            setHasHorizontalScrollbar(horizontalOverflow);
         if (m_object->hasAutoVerticalScrollbar())
-            setHasVerticalScrollbar(needVerticalBar);
+            setHasVerticalScrollbar(verticalOverflow);
 
 #if __APPLE__
         // Force an update since we know the scrollbars have changed things.
@@ -1106,6 +1133,7 @@ RenderLayer::updateScrollInfoAfterLayout()
         m_object->document()->setDashboardRegionsDirty(true);
 #endif
 
+    updateOverflowStatus(horizontalOverflow, verticalOverflow);
     m_object->repaint();
 }
 

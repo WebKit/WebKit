@@ -111,6 +111,11 @@ bool Event::isBeforeTextInsertedEvent() const
     return false;
 }
 
+bool Event::isOverflowEvent() const
+{
+    return false;
+}
+
 bool Event::storesResultAsString() const
 {
     return false;

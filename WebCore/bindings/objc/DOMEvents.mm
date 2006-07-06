@@ -36,6 +36,7 @@
 #import "MouseEvent.h"
 #import "KeyboardEvent.h"
 #import "MutationEvent.h"
+#import "OverflowEvent.h"
 #import "UIEvent.h"
 
 using namespace WebCore;
@@ -127,19 +128,21 @@ ALLOW_DOM_CAST(Event)
         return [[cachedInstance retain] autorelease];
     
     Class wrapperClass = nil;
-    if (impl->isWheelEvent()) {
+    if (impl->isWheelEvent())
         wrapperClass = [DOMWheelEvent class];        
-    } else if (impl->isMouseEvent()) {
+    else if (impl->isMouseEvent())
         wrapperClass = [DOMMouseEvent class];
-    } else if (impl->isMutationEvent()) {
+    else if (impl->isMutationEvent())
         wrapperClass = [DOMMutationEvent class];
-    } else if (impl->isKeyboardEvent()) {
+    else if (impl->isKeyboardEvent())
         wrapperClass = [DOMKeyboardEvent class];
-    } else if (impl->isUIEvent()) {
+    else if (impl->isUIEvent())
         wrapperClass = [DOMUIEvent class];
-    } else {
+    else if (impl->isOverflowEvent())
+        wrapperClass = [DOMOverflowEvent class];
+    else
         wrapperClass = [DOMEvent class];
-    }
+
     return [[[wrapperClass alloc] _initWithEvent:impl] autorelease];
 }
 
@@ -328,6 +331,30 @@ ALLOW_DOM_CAST(Event)
 - (void)initUIEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(int)detailArg
 {
     [self _UIEvent]->initUIEvent(typeArg, canBubbleArg, cancelableArg, [viewArg _abstractView], detailArg);
+}
+
+@end
+
+@implementation DOMOverflowEvent
+
+- (OverflowEvent *)_overflowEvent
+{
+    return static_cast<OverflowEvent *>(DOM_cast<Event *>(_internal));
+}
+
+- (unsigned short)orient
+{
+    return [self _overflowEvent]->orient();
+}
+
+- (BOOL)horizontalOverflow
+{
+    return [self _overflowEvent]->horizontalOverflow();
+}
+
+- (BOOL)verticalOverflow
+{
+    return [self _overflowEvent]->verticalOverflow();
 }
 
 @end

@@ -61,6 +61,7 @@ namespace WebCore { namespace EventNames {
     macro(mouseover) \
     macro(mouseup) \
     macro(mousewheel) \
+    macro(overflowchanged) \
     macro(beforeunload) \
     macro(paste) \
     macro(readystatechange) \

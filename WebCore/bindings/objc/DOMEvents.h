@@ -100,3 +100,15 @@ enum {
 - (unsigned short)attrChange;
 - (void)initMutationEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMNode *)relatedNodeArg :(NSString *)prevValueArg :(NSString *)newValueArg :(NSString *)attrNameArg :(unsigned short)attrChangeArg;
 @end
+
+enum {
+    DOM_HORIZONTAL = 0,
+    DOM_VERTICAL = 1,
+    DOM_BOTH = 2
+};
+
+@interface DOMOverflowEvent : DOMEvent
+- (unsigned short)orient;
+- (BOOL)horizontalOverflow;
+- (BOOL)verticalOverflow;
+@end;
