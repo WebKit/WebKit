@@ -1,3 +1,10 @@
+2006-07-06  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+        Reviewed by Adele.
+        
+        * rendering/RenderMenuList.h:
+        (WebCore::RenderMenuList::createsAnonymousWrapper): This method replaces
+        allowsReusingAnonymousChild() and has the opposite meaning.
+        
 2006-07-05  Adele Peterson  <adele@apple.com>
 
         Build fixes.
