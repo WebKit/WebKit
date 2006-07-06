@@ -121,6 +121,8 @@ NSSize WebIconLargeSize = {128, 128};
     [self _createFileDatabase];
     [self _loadIconDictionaries];
 
+    _isClosing = NO;
+
     _private->databaseBridge = [WebCoreIconDatabaseBridge sharedBridgeInstance];
     if (_private->databaseBridge) {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -661,6 +663,7 @@ NSSize WebIconLargeSize = {128, 128};
     [_private->databaseBridge closeSharedDatabase];
     [_private->databaseBridge release];
     _private->databaseBridge = nil;
+    _isClosing = YES;
 }
 
 - (int)_totalRetainCountForIconURLString:(NSString *)iconURLString
@@ -817,6 +820,9 @@ NSSize WebIconLargeSize = {128, 128};
 - (void)_releaseIconForIconURLString:(NSString *)iconURLString
 {
     ASSERT(iconURLString);
+    
+    if (![self _isEnabled] || _isClosing)
+        return;
     
     WebNSUInteger retainCount = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->iconURLToExtraRetainCount, iconURLString);
 

@@ -1,3 +1,16 @@
+2006-07-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Small fix that prevents an assertion from triggering if the DB is being cleaned up 
+        (ie, the app being shut down)
+
+        * Misc/WebIconDatabase.h:
+        * Misc/WebIconDatabase.m:
+        (-[NSMutableDictionary init]):
+        (-[WebIconDatabase _applicationWillTerminate:]):
+        (-[WebIconDatabase _releaseIconForIconURLString:]):
+
 2006-07-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej and Hyatt.
