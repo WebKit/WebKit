@@ -24,7 +24,9 @@
 #include "RenderThemeWin.h"
 
 #include <cairo-win32.h>
+#include "Document.h"
 #include "GraphicsContext.h"
+#include "RenderPopupMenuWin.h"
 
 /* 
  * The following constants are used to determine how a widget is drawn using

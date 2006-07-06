@@ -360,7 +360,6 @@ void Frame::setNeedsReapplyStyles() { }
 
 void Image::drawTiled(GraphicsContext*, const FloatRect&, const FloatRect&, TileRule, TileRule, CompositeOperator) { }
 
-RenderPopupMenuWin::RenderPopupMenuWin(Node*) { notImplemented();}
 RenderPopupMenuWin::~RenderPopupMenuWin() { notImplemented(); }
 void RenderPopupMenuWin::clear() { notImplemented(); }
 void RenderPopupMenuWin::populate() { notImplemented(); }

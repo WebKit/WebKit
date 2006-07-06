@@ -32,7 +32,7 @@ class HTMLOptGroupElement;
 
 class RenderPopupMenuWin : public RenderPopupMenu {
 public:
-    RenderPopupMenuWin(Node*);
+    RenderPopupMenuWin(Node* n) : RenderPopupMenu(n) {}
     ~RenderPopupMenuWin();
 
     virtual void clear();

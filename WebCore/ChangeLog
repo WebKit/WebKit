@@ -1,3 +1,15 @@
+2006-07-05  Adele Peterson  <adele@apple.com>
+
+        Build fixes.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/win/TemporaryLinkStubs.cpp:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::calcMinMaxWidth):
+        * rendering/RenderPopupMenuWin.h:
+        (WebCore::RenderPopupMenuWin::RenderPopupMenuWin):
+        * rendering/RenderThemeWin.cpp:
+
 2006-07-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.
