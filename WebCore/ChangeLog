@@ -1,3 +1,12 @@
+2006-07-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+
+        - fix 435 more layout tests Node leaks
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): fix more instances of leaked DOM ranges
+
 2006-07-06  David Harrison  <harrison@apple.com>
 
         Reviewed by Geoff
