@@ -821,12 +821,12 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT(iconURLString);
     
-    if (![self _isEnabled] || _isClosing)
+    if (![self _isEnabled])
         return;
     
     WebNSUInteger retainCount = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->iconURLToExtraRetainCount, iconURLString);
 
-    ASSERT(retainCount > 0);
+    ASSERT(_isClosing || retainCount > 0);
     if (retainCount <= 0)
         return;
     

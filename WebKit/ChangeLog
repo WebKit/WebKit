@@ -1,3 +1,13 @@
+2006-07-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John.
+
+        Small fix to my previous small fix that only lets the ASSERT off the hook if the DB
+        is closing
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase _releaseIconForIconURLString:]):
+
 2006-07-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
