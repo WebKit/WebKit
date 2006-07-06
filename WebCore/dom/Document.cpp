@@ -302,6 +302,8 @@ void Document::removedLastRef()
         m_titleElement = 0;
 
         removeAllChildren();
+
+        m_markers.clear();
     } else
         delete this;
 }

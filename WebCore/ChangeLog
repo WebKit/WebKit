@@ -1,3 +1,13 @@
+2006-07-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+
+        - fix 308 Node leaks on the editing layout tests
+
+        * dom/Document.cpp: (WebCore::Document::removedLastRef): Clear the markers once there
+        are no real refs on the document, otherwise a self-only reference cycle w/ the document
+        can occur.
+
 2006-07-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej and Hyatt.
