@@ -1,5 +1,21 @@
 2006-07-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed - build fix.
+
+        - back out earlier leak fix, as it caused a crash on one of the fast/invalid layout tests
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLStackElem::HTMLStackElem):
+        (WebCore::HTMLParser::popNestedHeaderTag):
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        (WebCore::HTMLParser::reopenResidualStyleTags):
+        (WebCore::HTMLParser::popBlock):
+        (WebCore::HTMLParser::popOneBlock):
+
+2006-07-06  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders.
 
         - fix ~3000 Node leaks on the editing tests
