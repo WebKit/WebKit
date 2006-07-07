@@ -1,3 +1,28 @@
+2006-07-08  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9777
+        Reproducible crash in Loading/Frames in ToT.
+        
+        The problem was that the renderpart destructor resets the frame's 
+        owner element. For iframes, this should only be done when the element is 
+        going to be removed from the document.
+        
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::~HTMLIFrameElement):
+        (WebCore::HTMLIFrameElement::willRemove):
+        (WebCore::HTMLIFrameElement::removedFromDocument):
+        (WebCore::HTMLIFrameElement::detach):        
+        * html/HTMLIFrameElement.h:
+        Remove the frame in willRemove instead.
+        
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::RenderPart):
+        (WebCore::RenderPart::~RenderPart):
+        * rendering/RenderPart.h:
+        Don't call setFrame(0) in the destructor when the element is an iframe element.
+
 2006-07-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

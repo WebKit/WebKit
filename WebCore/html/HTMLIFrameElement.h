@@ -44,7 +44,8 @@ public:
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-
+    virtual void willRemove();
+    
     virtual void attach();
     virtual void detach();
     virtual bool rendererIsNeeded(RenderStyle*);

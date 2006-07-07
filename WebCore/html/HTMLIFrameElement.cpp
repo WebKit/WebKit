@@ -48,12 +48,6 @@ HTMLIFrameElement::HTMLIFrameElement(Document* doc)
 
 HTMLIFrameElement::~HTMLIFrameElement()
 {
-    if (Frame* frame = contentFrame()) {
-        frame->disconnectOwnerElement();
-        frame->page()->decrementFrameCount();
-        frame->frameDetached();
-        ASSERT(!contentFrame());
-    }    
 }
 
 bool HTMLIFrameElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
@@ -114,6 +108,18 @@ void HTMLIFrameElement::insertedIntoDocument()
     }    
 }
 
+void HTMLIFrameElement::willRemove()
+{
+    if (Frame* frame = contentFrame()) {
+        frame->disconnectOwnerElement();
+        frame->page()->decrementFrameCount();
+        frame->frameDetached();
+        ASSERT(!contentFrame());
+    }
+
+    HTMLElement::willRemove();
+}
+
 void HTMLIFrameElement::removedFromDocument()
 {
     if (document()->isHTMLDocument()) {
@@ -121,13 +127,6 @@ void HTMLIFrameElement::removedFromDocument()
         doc->removeDocExtraNamedItem(oldNameAttr);
     }
 
-    if (Frame* frame = contentFrame()) {
-        frame->disconnectOwnerElement();
-        frame->page()->decrementFrameCount();
-        frame->frameDetached();
-        ASSERT(!contentFrame());
-    }
-    
     HTMLElement::removedFromDocument();
 }
 
@@ -161,11 +160,6 @@ void HTMLIFrameElement::attach()
 
 void HTMLIFrameElement::detach()
 {
-    RenderPartObject* renderPart = static_cast<RenderPartObject*>(renderer());
-    
-    if (renderPart)
-        renderPart->setFrame(0);
-    
     HTMLElement::detach();
 }
 
