@@ -59,6 +59,108 @@ const UChar nonBreakingSpace = 0xa0;
 /**
  * @internal
  */
+
+    class RefNonDocNodePtr
+    {
+    public:
+        RefNonDocNodePtr() : m_ptr(0) {}
+        RefNonDocNodePtr(Node* ptr) : m_ptr(ptr), m_isDoc(ptr->isDocumentNode()) { if (!m_isDoc && ptr) ptr->ref(); }
+        RefNonDocNodePtr(const RefNonDocNodePtr& o) : m_ptr(o.m_ptr), m_isDoc(o.m_isDoc) { if (!m_isDoc && m_ptr) m_ptr->ref(); }
+
+        ~RefNonDocNodePtr() { if (!m_isDoc && m_ptr) m_ptr->deref(); }
+        
+        Node *get() const { return m_ptr; }
+        
+        Node& operator*() const { return *m_ptr; }
+        Node *operator->() const { return m_ptr; }
+        
+        bool operator!() const { return !m_ptr; }
+    
+        // This conversion operator allows implicit conversion to bool but not to other integer types.
+        typedef Node* (RefNonDocNodePtr::*UnspecifiedBoolType)() const;
+        operator UnspecifiedBoolType() const { return m_ptr ? &RefNonDocNodePtr::get : 0; }
+        
+        RefNonDocNodePtr& operator=(const RefNonDocNodePtr&);
+        RefNonDocNodePtr& operator=(Node*);
+        RefNonDocNodePtr& operator=(RefPtr<Node>&);
+
+    private:
+        Node* m_ptr;
+        bool m_isDoc;
+    };
+    
+    inline RefNonDocNodePtr& RefNonDocNodePtr::operator=(const RefNonDocNodePtr& o)
+    {
+        Node* optr = o.get();
+        if (!o.m_isDoc && optr)
+            optr->ref();
+        Node* ptr = m_ptr;
+        m_ptr = optr;
+        if (!m_isDoc && ptr)
+            ptr->deref();
+        m_isDoc = o.m_isDoc;
+        return *this;
+    }
+    
+    inline RefNonDocNodePtr& RefNonDocNodePtr::operator=(Node* optr)
+    {
+        bool o_isDoc = optr->isDocumentNode();
+        if (!o_isDoc && optr)
+            optr->ref();
+        Node* ptr = m_ptr;
+        m_ptr = optr;
+        if (!m_isDoc && ptr)
+            ptr->deref();
+        m_isDoc = o_isDoc;
+        return *this;
+    }
+
+    inline RefNonDocNodePtr& RefNonDocNodePtr::operator=(RefPtr<Node>& o)
+    {
+        Node* optr = o.get();
+        bool o_isDoc = optr->isDocumentNode();
+        if (!o_isDoc && optr)
+            optr->ref();
+        Node* ptr = m_ptr;
+        m_ptr = optr;
+        if (!m_isDoc && ptr)
+            ptr->deref();
+        m_isDoc = o_isDoc;
+        return *this;
+    }
+
+    inline bool operator==(const RefNonDocNodePtr& a, const RefNonDocNodePtr& b)
+    { 
+        return a.get() == b.get(); 
+    }
+
+    inline bool operator==(const RefNonDocNodePtr& a, Node* b)
+    { 
+        return a.get() == b; 
+    }
+    
+    inline bool operator==(Node* a, const RefNonDocNodePtr& b) 
+    {
+        return a == b.get(); 
+    }
+    
+    inline bool operator!=(const RefNonDocNodePtr& a, const RefNonDocNodePtr& b)
+    { 
+        return a.get() != b.get(); 
+    }
+
+    inline bool operator!=(const RefNonDocNodePtr& a, Node* b)
+    {
+        return a.get() != b; 
+    }
+
+    inline bool operator!=(Node* a, const RefNonDocNodePtr& b)
+    { 
+        return a != b.get(); 
+    }
+    
+
+
 class HTMLStackElem
 {
 public:
@@ -78,7 +180,7 @@ public:
     AtomicString tagName;
     int level;
     bool strayTableContent;
-    RefPtr<Node> node;
+    RefNonDocNodePtr node;
     HTMLStackElem* next;
 };
 
@@ -1012,7 +1114,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
         // in the block stack.
         // This will also affect how we ultimately reparent the block, since we want it to end up
         // under the reopened residual tags (e.g., the <i> in the above example.)
-        Node* prevNode = 0;
+        RefPtr<Node> prevNode = 0;
         currElem = maxElem;
         while (currElem->node != residualElem) {
             if (isResidualStyleTag(currElem->node->localName())) {

@@ -1,3 +1,27 @@
+2006-07-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix 26 Node leaks on fast/dom tests
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef): delete tokenizer - if we are still parsing at this point, we don't
+        want nodes held by the parser to keep the document alive.
+        * html/HTMLParser.cpp:
+        (WebCore::RefNonDocNodePtr::RefNonDocNodePtr): Smart pointer that acts like RefPtr for Node,
+        but avoids refing document nodes to avoid cycles.
+        (WebCore::RefNonDocNodePtr::~RefNonDocNodePtr):
+        (WebCore::RefNonDocNodePtr::get):
+        (WebCore::RefNonDocNodePtr::operator*):
+        (WebCore::RefNonDocNodePtr::operator->):
+        (WebCore::RefNonDocNodePtr::operator!):
+        (WebCore::RefNonDocNodePtr::operator UnspecifiedBoolType):
+        (WebCore::RefNonDocNodePtr::operator=):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::HTMLStackElem): Use a RefNonDocNodePtr instead of RefPtr<Node>
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks): Use a RefPtr here to avoid crashing
+
 2006-07-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
