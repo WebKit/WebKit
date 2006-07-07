@@ -1,3 +1,11 @@
+2006-07-07  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        * WebKit.exp:
+        added surprisingly missing _WebPreferencesChangedNotification, defined in
+        WebPreferences.h
+
 2006-07-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John.
