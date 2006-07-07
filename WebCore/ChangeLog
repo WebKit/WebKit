@@ -1,3 +1,24 @@
+2006-07-06  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adele.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9528
+        REGRESSION: arrow key skips '>' in Bugzilla replies due to '\n' in text nodes
+        
+        Patch by Darin, tweaked by Anders.
+        
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+        Convert newline characters to <br> elements. I've verified that what's done here is what WinIE does when setting innerText.
+        
+        (WebCore::HTMLElement::setOuterText):
+        Fix comment.
+
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::textWithHardLineBreaks):
+        Remove assert. m_div->firstChild() can be null now because setInnerText doesn't create
+        text nodes for empty strings anymore.
+
 2006-07-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim Hatcher.

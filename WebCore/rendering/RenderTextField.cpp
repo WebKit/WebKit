@@ -268,12 +268,11 @@ String RenderTextField::textWithHardLineBreaks()
 {
     String s("");
     
-    if (!m_div)
+    if (!m_div || !m_div->firstChild())
         return s;
 
     document()->updateLayout();
 
-    ASSERT(m_div->firstChild());
     RenderObject* renderer = m_div->firstChild()->renderer();
     if (!renderer)
         return s;

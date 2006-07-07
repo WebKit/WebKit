@@ -32,6 +32,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "HTMLBRElement.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
@@ -339,8 +340,35 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
     }
 
     removeChildren();
-    // FIXME: This creates a new text node even when the text is empty.
-    appendChild(new Text(document(), text), ec);
+
+    // Add text nodes and <br> elements.
+    int length = text.length();
+    if (!text.contains('\n') && !text.contains('\r') && length)
+        appendChild(new Text(document(), text), ec);
+    else {
+        ec = 0;
+        int lineStart = 0;
+        UChar prev = 0;
+        for (int i = 0; i < length; ++i) {
+            UChar c = text[i];
+            if (c == '\n' || c == '\r') {
+                if (i > lineStart) {
+                    appendChild(new Text(document(), text.substring(lineStart, i - lineStart)), ec);
+                    if (ec)
+                        return;
+                }
+                if (!(c == '\n' && i != 0 && prev == '\r')) {
+                    appendChild(new HTMLBRElement(document()), ec);
+                    if (ec)
+                        return;
+                }
+                lineStart = i + 1;
+            }
+            prev = c;
+        }
+        if (length > lineStart)
+            appendChild(new Text(document(), text.substring(lineStart, length - lineStart)), ec);
+    }
 }
 
 void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
@@ -364,7 +392,9 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
         return;
     }
 
-    // FIXME: This creates a new text node even when the text is empy.
+    // FIXME: This creates a new text node even when the text is empty.
+    // FIXME: This creates a single text node even when the text has CR and LF
+    // characters in it. Instead it should create <br> elements.
     RefPtr<Text> t = new Text(document(), text);
     ec = 0;
     parent->replaceChild(t, this, ec);
