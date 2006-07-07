@@ -146,6 +146,21 @@ ALLOW_DOM_CAST(Event)
     return [[[wrapperClass alloc] _initWithEvent:impl] autorelease];
 }
 
+- (void)dealloc
+{
+    if (_internal)
+        DOM_cast<Event *>(_internal)->deref();
+    [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal)
+        DOM_cast<Event *>(_internal)->deref();
+    [super finalize];
+}
+
+
 @end
 
 @implementation DOMKeyboardEvent

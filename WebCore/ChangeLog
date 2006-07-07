@@ -1,3 +1,13 @@
+2006-07-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix 20 Node leaks on fast/events tests - these should be the last ones
+
+        * bindings/objc/DOMEvents.mm:
+        (-[DOMEvent dealloc]): implement - deref the event!
+        (-[DOMEvent finalize]): ditto
+
 2006-07-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Tim Hatcher.
