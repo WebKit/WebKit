@@ -49,13 +49,13 @@ void JSContextClearException(JSContextRef context);
   Evaluates a string of JavaScript
   @param context            execution context to use
   @param script             a character buffer containing the JavaScript to evaluate
-  @param thisValue          object to use as "this," or NULL to use the global object as "this"
+  @param thisObject         the object to use as "this," or NULL to use the global object as "this."
   @param sourceURL          URL to the file containing the JavaScript, or NULL - this is only used for error reporting
   @param startingLineNumber the JavaScript's starting line number in the file located at sourceURL - this is only used for error reporting
   @param exception          pointer to a JSValueRef in which to store an uncaught exception, if any; can be NULL
   @result                   result of evaluation, or NULL if an uncaught exception was thrown
 */
-JSValueRef JSEvaluate(JSContextRef context, JSStringBufferRef script, JSValueRef thisValue, JSStringBufferRef sourceURL, int startingLineNumber, JSValueRef* exception);
+JSValueRef JSEvaluate(JSContextRef context, JSStringBufferRef script, JSObjectRef thisObject, JSStringBufferRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
 /*!
   @function JSCheckSyntax
