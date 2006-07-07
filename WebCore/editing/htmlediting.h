@@ -47,6 +47,10 @@ bool isAtomicNode(const Node*);
 bool editingIgnoresContent(const Node*);
 bool canHaveChildrenForEditing(const Node*);
 Node* highestEditableRoot(Node*);
+VisiblePosition firstEditablePositionAfterPositionInRoot(const Position&, Node*);
+VisiblePosition lastEditablePositionBeforePositionInRoot(const Position&, Node*);
+int comparePositions(const Position&, const Position&);
+Node* lowestEditableAncestor(Node*);
 
 void rebalanceWhitespaceInTextNode(Node*, unsigned start, unsigned length);
 const String& nonBreakingSpaceString();

@@ -148,38 +148,6 @@ bool Selection::expandUsingGranularity(TextGranularity granularity)
     return true;
 }
 
-// Compare two positions, taking into account the possibility that one or both
-// could be inside a shadow tree. Only works for non-null values.
-static int comparePositions(const Position& a, const Position& b)
-{
-    Node* nodeA = a.node();
-    ASSERT(nodeA);
-    Node* nodeB = b.node();
-    ASSERT(nodeB);
-    int offsetA = a.offset();
-    int offsetB = b.offset();
-
-    Node* shadowAncestorA = nodeA->shadowAncestorNode();
-    if (shadowAncestorA == nodeA)
-        shadowAncestorA = 0;
-    Node* shadowAncestorB = nodeB->shadowAncestorNode();
-    if (shadowAncestorB == nodeB)
-        shadowAncestorB = 0;
-
-    if (shadowAncestorA != shadowAncestorB) {
-        if (shadowAncestorA) {
-            nodeA = shadowAncestorA;
-            offsetA = 0;
-        }
-        if (shadowAncestorB) {
-            nodeB = shadowAncestorB;
-            offsetB = 0;
-        }
-    }
-
-    return Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB);
-}
-
 void Selection::validate()
 {
     // Move the selection to rendered positions, if possible.
@@ -329,52 +297,78 @@ void Selection::adjustForEditableContent()
     Node *startRoot = m_start.node()->rootEditableElement();
     Node *endRoot = m_end.node()->rootEditableElement();
     
+    Node* baseEditableAncestor = lowestEditableAncestor(m_base.node());
+    
     // The base, start and end are all in the same region.  No adjustment necessary.
     if (baseRoot == startRoot && baseRoot == endRoot)
         return;
     
-    // The selection is based in an editable area.  Keep both sides from reaching outside that area.
+    // The selection is based in editable content.
     if (baseRoot) {
-        // If the start is outside the base's editable root, cap it at the start of that editable root.
-        if (baseRoot != startRoot) {
-            VisiblePosition first(Position(baseRoot, 0));
+        // If the start is outside the base's editable root, cap it at the start of that root.
+        // If the start is in non-editable content that is inside the base's editable root, put it
+        // at the first editable position after start inside the base's editable root.
+        if (startRoot != baseRoot) {
+            VisiblePosition first = firstEditablePositionAfterPositionInRoot(m_start, baseRoot);
             m_start = first.deepEquivalent();
         }
-        // If the end is outside the base's editable root, cap it at the end of that editable root.
-        if (baseRoot != endRoot) {
-            VisiblePosition last(Position(baseRoot, maxDeepOffset(baseRoot)));
+        // If the end is outside the base's editable root, cap it at the end of that root.
+        // If the end is in non-editable content that is inside the base's root, put it
+        // at the last editable position before the end inside the base's root.
+        if (endRoot != baseRoot) {
+            VisiblePosition last = lastEditablePositionBeforePositionInRoot(m_end, baseRoot);
             m_end = last.deepEquivalent();
         }
-    // The selection is based outside editable content.  Keep both sides from reaching into editable content.
+    // The selection is based in non-editable content.
     } else {
-        // The selection ends in editable content, move backward until non-editable content is reached.
-        if (endRoot) {
-            VisiblePosition previous;
-            do {
-                endRoot = endRoot->shadowAncestorNode();
-                previous = VisiblePosition(Position(endRoot, 0)).previous();
-                endRoot = previous.deepEquivalent().node()->rootEditableElement();
-            } while (endRoot);
+        // FIXME: Non-editable pieces inside editable content should be atomic, in the same way that editable
+        // pieces in non-editable content are atomic.
+    
+        // The selection ends in editable content or non-editable content inside a different editable ancestor, 
+        // move backward until non-editable content inside the same lowest editable ancestor is reached.
+        Node* endEditableAncestor = lowestEditableAncestor(m_end.node());
+        if (endRoot || endEditableAncestor != baseEditableAncestor) {
+            Node* node = m_end.node();
+            VisiblePosition previous(Position(node, maxDeepOffset(node)));
+            while (node && !(lowestEditableAncestor(node) == baseEditableAncestor && !node->isContentEditable() && previous.isNotNull())) {
+                node = node->traversePreviousNode();
+                previous = VisiblePosition(Position(node, maxDeepOffset(node)));
+            }
             
-            ASSERT(!previous.isNull());
+            if (previous.isNull()) {
+                ASSERT_NOT_REACHED();
+                m_base = Position();
+                m_extent = Position();
+                validate();
+                return;
+            }
             m_end = previous.deepEquivalent();
         }
-        // The selection starts in editable content, move forward until non-editable content is reached.
-        if (startRoot) {
-            VisiblePosition next;
-            do {
-                startRoot = startRoot->shadowAncestorNode();
-                next = VisiblePosition(Position(startRoot, maxDeepOffset(startRoot))).next();
-                startRoot = next.deepEquivalent().node()->rootEditableElement();
-            } while (startRoot);
+
+        // The selection ends in editable content or non-editable content inside a different editable ancestor, 
+        // move backward until non-editable content inside the same lowest editable ancestor is reached.
+        Node* startEditableAncestor = lowestEditableAncestor(m_start.node());      
+        if (startRoot || startEditableAncestor != baseEditableAncestor) {
+            Node* node = m_start.node();
+            VisiblePosition next(Position(node, 0));
+            while (node && !(lowestEditableAncestor(node) == baseEditableAncestor && !node->isContentEditable() && next.isNotNull())) {
+                node = node->traverseNextNode();
+                next = VisiblePosition(Position(node, 0));
+            }
             
-            ASSERT(!next.isNull());
+            if (next.isNull()) {
+                ASSERT_NOT_REACHED();
+                m_base = Position();
+                m_extent = Position();
+                validate();
+                return;
+            }
             m_start = next.deepEquivalent();
         }
     }
     
     // Correct the extent if necessary.
-    if (baseRoot != m_extent.node()->rootEditableElement())
+    if (baseEditableAncestor != lowestEditableAncestor(m_extent.node()))
         m_extent = m_baseIsFirst ? m_end : m_start;
 }
 

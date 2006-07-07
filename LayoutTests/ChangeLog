@@ -1,3 +1,21 @@
+2006-07-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4609184>
+        Mail crashes at WebCore::Selection::adjustForEditableContent
+        <rdar://problem/4609140>
+        Crash at WebCore::Range::compareBoundaryPoints
+
+        * editing/selection/mixed-editability-1-expected.checksum: Added.
+        * editing/selection/mixed-editability-1-expected.png: Added.
+        * editing/selection/mixed-editability-1-expected.txt: Added.
+        * editing/selection/mixed-editability-1.html: Added.
+        * editing/selection/mixed-editability-2-expected.checksum: Added.
+        * editing/selection/mixed-editability-2-expected.png: Added.
+        * editing/selection/mixed-editability-2-expected.txt: Added.
+        * editing/selection/mixed-editability-2.html: Added.
+
 2006-07-06  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adele.

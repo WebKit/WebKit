@@ -74,19 +74,8 @@ VisiblePosition VisiblePosition::next(bool stayInEditableContent) const
 
     if (highestEditableRoot(next.deepEquivalent().node()) == highestRoot)
         return next;
-
-    Position p = next.deepEquivalent();
-    Node* node = p.node();
-    Node* child = node->childNode(p.offset());
-    node = child ? child : node->traverseNextSibling(highestRoot);
-
-    while (node && !node->isContentEditable())
-        node = node->traverseNextNode(highestRoot);
     
-    if (!node)
-        return VisiblePosition();
-
-    return VisiblePosition(Position(node, 0));
+    return firstEditablePositionAfterPositionInRoot(next.deepEquivalent(), highestRoot);
 }
 
 VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
@@ -122,18 +111,7 @@ VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
     if (highestEditableRoot(prev.deepEquivalent().node()) == highestRoot)
         return prev;
 
-    Position p = prev.deepEquivalent();
-    Node* node = p.node();
-    Node* child = node->firstChild() && p.offset() > 1 ? node->childNode(p.offset() - 1) : 0;
-    node = child ? child : node->traversePreviousNode(highestRoot);
-
-    while (node && !node->isContentEditable())
-        node = node->traversePreviousNodePostOrder(highestRoot);
-    
-    if (!node)
-        return VisiblePosition();
-
-    return VisiblePosition(Position(node, maxDeepOffset(node)));
+    return lastEditablePositionBeforePositionInRoot(prev.deepEquivalent(), highestRoot);
 }
 
 Position VisiblePosition::previousVisiblePosition(const Position& pos)

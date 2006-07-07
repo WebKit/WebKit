@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "RenderObject.h"
 #include "RegularExpression.h"
+#include "Range.h"
 
 using namespace std;
 
@@ -87,6 +88,38 @@ bool canHaveChildrenForEditing(const Node* node)
            !node->isTextNode();
 }
 
+// Compare two positions, taking into account the possibility that one or both
+// could be inside a shadow tree. Only works for non-null values.
+int comparePositions(const Position& a, const Position& b)
+{
+    Node* nodeA = a.node();
+    ASSERT(nodeA);
+    Node* nodeB = b.node();
+    ASSERT(nodeB);
+    int offsetA = a.offset();
+    int offsetB = b.offset();
+
+    Node* shadowAncestorA = nodeA->shadowAncestorNode();
+    if (shadowAncestorA == nodeA)
+        shadowAncestorA = 0;
+    Node* shadowAncestorB = nodeB->shadowAncestorNode();
+    if (shadowAncestorB == nodeB)
+        shadowAncestorB = 0;
+
+    if (shadowAncestorA != shadowAncestorB) {
+        if (shadowAncestorA) {
+            nodeA = shadowAncestorA;
+            offsetA = 0;
+        }
+        if (shadowAncestorB) {
+            nodeB = shadowAncestorB;
+            offsetB = 0;
+        }
+    }
+
+    return Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB);
+}
+
 Node* highestEditableRoot(Node* node)
 {
     if (!node)
@@ -106,6 +139,59 @@ Node* highestEditableRoot(Node* node)
     }
     
     return highestRoot;
+}
+
+Node* lowestEditableAncestor(Node* node)
+{
+    if (!node)
+        return 0;
+    
+    Node *lowestRoot = 0;
+    while (node) {
+        if (node->isContentEditable())
+            return node->rootEditableElement();
+        if (node->hasTagName(bodyTag))
+            break;
+        node = node->parentNode();
+    }
+    
+    return lowestRoot;
+}
+
+VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& position, Node* highestRoot)
+{
+    if (comparePositions(position, Position(highestRoot, 0)) == -1)
+        return VisiblePosition(Position(highestRoot, 0));
+
+    Node* node = position.node();
+    Node* child = node->childNode(position.offset());
+    node = child ? child : node->traverseNextSibling(highestRoot);
+
+    while (node && !node->isContentEditable())
+        node = node->traverseNextNode(highestRoot);
+    
+    if (!node)
+        return VisiblePosition();
+
+    return VisiblePosition(Position(node, 0));
+}
+
+VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& position, Node* highestRoot)
+{
+    if (comparePositions(position, Position(highestRoot, maxDeepOffset(highestRoot))) == 1)
+        return VisiblePosition(Position(highestRoot, maxDeepOffset(highestRoot)));
+
+    Node* node = position.node();
+    Node* child = node->firstChild() && position.offset() > 1 ? node->childNode(position.offset() - 1) : 0;
+    node = child ? child : node->traversePreviousNode(highestRoot);
+
+    while (node && !node->isContentEditable())
+        node = node->traversePreviousNodePostOrder(highestRoot);
+    
+    if (!node)
+        return VisiblePosition();
+        
+    return VisiblePosition(Position(node, maxDeepOffset(node)));
 }
 
 // antidote for maxDeepOffset()
