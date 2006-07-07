@@ -179,6 +179,7 @@ public:
 
     void ref() { ++m_refCount; }
     void deref() { if (!--m_refCount) delete this; }
+    bool hasOneRef() { return m_refCount == 1; }
     
 private:
     void cleared();

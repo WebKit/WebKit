@@ -1,3 +1,13 @@
+2006-07-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - Speculative fix for <rdar://problem/4605532> unrepro crash at cnn.com after upgrading to 10.4.7 (but happening with 10.4.6 too)
+
+        * page/FrameView.cpp: (WebCore::FrameView::layout): Ref's the view during layout, since a recalcStyle could cause the view to be deleted.
+        If we get back from recalcStyle, and there's only one ref, return early since the the view will be deleted when we exit layout.
+        * page/FrameView.h: (WebCore::FrameView::hasOneRef): Added.
+
 2006-07-06  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

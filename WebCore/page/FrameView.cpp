@@ -343,6 +343,9 @@ void FrameView::layout(bool allowSubtree)
     d->layoutTimer.stop();
     d->delayedLayout = false;
 
+    // Protect the view from being deleted during layout (in recalcStyle)
+    RefPtr<FrameView> protector(this);
+
     if (!m_frame) {
         // FIXME: Do we need to set m_size.width here?
         // FIXME: Should we set m_size.height here too?
@@ -371,6 +374,11 @@ void FrameView::layout(bool allowSubtree)
     // the layout beats any sort of style recalc update that needs to occur.
     if (document->hasChangedChild())
         document->recalcStyle();
+    
+    // If there is only one ref to this view left, then its going to be destroyed as soon as we exit, 
+    // so there's no point to continuiing to layout
+    if (protector->hasOneRef())
+        return;
 
     RenderObject* root = rootNode->renderer();
     if (!root) {
