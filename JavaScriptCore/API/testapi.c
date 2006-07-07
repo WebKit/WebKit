@@ -564,6 +564,9 @@ int main(int argc, char* argv[])
     JSObjectSetProperty(context, globalObject, myConstructorBuf, JSConstructorMake(context, myConstructor_callAsConstructor), kJSPropertyAttributeNone);
     JSStringBufferRelease(myConstructorBuf);
 
+    JSClassRef nullCallbacksClass = JSClassCreate(context, NULL, NULL, NULL, NULL);
+    JSClassRelease(nullCallbacksClass);
+    
     char* script = createStringWithContentsOfFile("testapi.js");
     JSStringBufferRef scriptBuf = JSStringBufferCreateUTF8(script);
     result = JSEvaluate(context, scriptBuf, NULL, NULL, 1, &exception);

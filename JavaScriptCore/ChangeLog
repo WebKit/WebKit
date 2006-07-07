@@ -1,5 +1,17 @@
 2006-07-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by John.
+        
+        - Fixed a few crashes resulting from NULL parameters to JSClassCreate.
+
+        * API/JSClassRef.cpp:
+        (JSClassCreate):
+        (JSClassRelease):
+        * API/testapi.c: Added test for NULL parameters.
+        (main):
+
+2006-07-07  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by John, mocked by Darin.
         
         - Changed JSEvaluate to take a JSObjectRef instead of a JSValueRef as
