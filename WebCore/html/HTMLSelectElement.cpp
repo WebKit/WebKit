@@ -275,6 +275,20 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
         HTMLGenericFormElement::parseMappedAttribute(attr);
 }
 
+bool HTMLSelectElement::isKeyboardFocusable() const
+{
+    if (renderer() && shouldUseMenuList(renderer()->style()))
+        return isFocusable();
+    return HTMLGenericFormElement::isKeyboardFocusable();
+}
+
+bool HTMLSelectElement::isMouseFocusable() const
+{
+    if (renderer() && shouldUseMenuList(renderer()->style()))
+        return isFocusable();
+    return HTMLGenericFormElement::isMouseFocusable();
+}
+
 RenderObject *HTMLSelectElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     if (shouldUseMenuList(style))
@@ -460,15 +474,22 @@ void HTMLSelectElement::defaultEventHandler(Event *evt)
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
     if (evt->type() == keypressEvent) {
-        if (!form() || !renderer() || !evt->isKeyboardEvent())
+        if (!renderer() || !evt->isKeyboardEvent())
             return;
-        if (static_cast<KeyboardEvent*>(evt)->keyIdentifier() == "Enter") {
+        String keyIdentifier = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
+        if (form() && keyIdentifier == "Enter") {
             form()->submitClick();
             evt->setDefaultHandled();
         }
+        if ((keyIdentifier == "Down" || keyIdentifier == "Up" || keyIdentifier == "U+000020") && renderer() && shouldUseMenuList(renderer()->style())) {
+            static_cast<RenderMenuList*>(renderer())->showPopup();
+            evt->setDefaultHandled();
+        }
     }
-    if (evt->type() == mousedownEvent && renderer() && shouldUseMenuList(renderer()->style()))
+    if (evt->type() == mousedownEvent && renderer() && shouldUseMenuList(renderer()->style())) {
         static_cast<RenderMenuList*>(renderer())->showPopup();
+        evt->setDefaultHandled();
+    }
 
     HTMLGenericFormElement::defaultEventHandler(evt);
 }

@@ -311,6 +311,8 @@ public:
 
     FloatRect customHighlightLineRect(const AtomicString& type, const FloatRect& lineRect);
     void paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line);
+    
+    NSEvent* currentEvent() { return _currentEvent; }
 
 protected:
     virtual void startRedirectionTimer();

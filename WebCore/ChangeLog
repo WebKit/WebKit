@@ -1,3 +1,26 @@
+2006-07-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Fixed new popup control to open up when the spacebar and the up and down arrows are pressed.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=9762
+        [Native pop up] Highlighted item text is black instead of white
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::isKeyboardFocusable): Added.
+        (WebCore::HTMLSelectElement::isMouseFocusable): Added.
+        (WebCore::HTMLSelectElement::defaultEventHandler): Updated to showPopup for up and down arrow keys and spacebar.
+        * html/HTMLSelectElement.h: (WebCore::HTMLSelectElement::shouldUseMenuList): Made this const.
+        * rendering/RenderPopupMenu.cpp: (WebCore::RenderPopupMenu::populate): Added FIXME.
+        * rendering/RenderPopupMenuMac.mm:
+        (WebCore::RenderPopupMenuMac::showPopup): Updated to save the NSEvent that triggers the popup, so we can send
+        fake mouseUp and keyUp events when the NSMenu returns.
+        (WebCore::RenderPopupMenuMac::addGroupLabel): Only set the NSForegroundColorAttributeName attribute if the text isn't black.
+        Follow-up bug about other colors: http://bugzilla.opendarwin.org/show_bug.cgi?id=9769
+        (WebCore::RenderPopupMenuMac::addOption): ditto.
+        * bridge/mac/FrameMac.h: (WebCore::FrameMac::currentEvent): Returns the current NSEvent.
+
 2006-07-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

@@ -22,6 +22,7 @@
 #import "config.h"
 #import "RenderPopupMenuMac.h"
 
+#import "FrameMac.h"
 #import "FrameView.h"
 #import "HTMLNames.h"
 #import "HTMLOptionElement.h"
@@ -64,6 +65,12 @@ void RenderPopupMenuMac::populate()
 
 void RenderPopupMenuMac::showPopup(const IntRect& r, FrameView* v, int index)
 {
+    FrameMac* frame = Mac(v->frame());
+    NSEvent* evt = frame->currentEvent();
+    // Save the current event that triggered the popup, so we can clean up our event
+    // state after the NSMenu goes away.
+    [evt retain];
+    
     if (!popup) {
         popup = [[[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO] retain];
         [popup setUsesItemFromMenu:NO];
@@ -115,6 +122,13 @@ void RenderPopupMenuMac::showPopup(const IntRect& r, FrameView* v, int index)
         getRenderMenuList()->valueChanged(newIndex);
 
     [popup dismissPopUp];
+    
+    if (frame) {
+        // Give WebCore a chance to fix up its event state, since the popup eats all the
+        // events during tracking.
+        frame->sendFakeEventsAfterWidgetTracking(evt);
+    }
+    [evt release];
 }
 
 void RenderPopupMenuMac::addSeparator()
@@ -139,7 +153,8 @@ void RenderPopupMenuMac::addGroupLabel(HTMLOptGroupElement* element)
     NSMutableDictionary* attributes = [[NSMutableDictionary alloc] init];
     if (s->font() != Font())
         [attributes setObject:s->font().getNSFont() forKey:NSFontAttributeName];
-    [attributes setObject:nsColor(s->color()) forKey:NSForegroundColorAttributeName];
+    if (s->color() != Color::black)
+        [attributes setObject:nsColor(s->color()) forKey:NSForegroundColorAttributeName];
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:text attributes:attributes];
 
     [menuItem setAttributedTitle:string];
@@ -168,7 +183,9 @@ void RenderPopupMenuMac::addOption(HTMLOptionElement* element)
     NSMutableDictionary* attributes = [[NSMutableDictionary alloc] init];
     if (s->font() != Font())
         [attributes setObject:s->font().getNSFont() forKey:NSFontAttributeName];
-    [attributes setObject:nsColor(s->color()) forKey:NSForegroundColorAttributeName];
+    if (s->color() != Color::black)
+        [attributes setObject:nsColor(s->color()) forKey:NSForegroundColorAttributeName];
+    // FIXME: Find a way to customize text color when an item is highlighted.
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:text attributes:attributes];
 
     [menuItem setAttributedTitle:string];

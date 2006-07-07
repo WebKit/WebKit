@@ -41,6 +41,7 @@ void RenderPopupMenu::populate()
     ASSERT(select);
     if (!select->node())
         return;
+    //FIXME: Maybe we should just iterate through the select element's list items?
     for (Node* n = select->node()->firstChild(); n; n = n->traverseNextNode(select->node())) {
         if (n->hasTagName(optionTag))
             addOption(static_cast<HTMLOptionElement*>(n));

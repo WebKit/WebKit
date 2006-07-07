@@ -50,6 +50,9 @@ public:
     virtual bool checkDTD(const Node* newChild);
 
     virtual const AtomicString& type() const;
+    
+    virtual bool isKeyboardFocusable() const;
+    virtual bool isMouseFocusable() const;
 
     virtual void recalcStyle(StyleChange);
 
@@ -122,7 +125,7 @@ public:
 
 private:
     void recalcListItems();
-    bool shouldUseMenuList(RenderStyle* style) { return !m_multiple && m_size <= 1 && style->appearance() == MenulistAppearance; }
+    bool shouldUseMenuList(RenderStyle* style) const { return !m_multiple && m_size <= 1 && style->appearance() == MenulistAppearance; }
 
     mutable Vector<HTMLElement*> m_listItems;
     int m_minwidth;
