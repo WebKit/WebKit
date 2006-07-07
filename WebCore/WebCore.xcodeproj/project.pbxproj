@@ -332,6 +332,8 @@
 		85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B390A44EFC700F992E0 /* UIEventWithKeyState.h */; };
 		85031B500A44EFC700F992E0 /* WheelEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B3A0A44EFC700F992E0 /* WheelEvent.cpp */; };
 		85031B510A44EFC700F992E0 /* WheelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B3B0A44EFC700F992E0 /* WheelEvent.h */; };
+		85217E020A5ECD4700DB8D00 /* XSLImportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85217E000A5ECD4700DB8D00 /* XSLImportRule.cpp */; };
+		85217E030A5ECD4700DB8D00 /* XSLImportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 85217E010A5ECD4700DB8D00 /* XSLImportRule.h */; };
 		854FE7300A2297BE0058D7AD /* NodeFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE7260A2297BE0058D7AD /* NodeFilter.cpp */; };
 		854FE7310A2297BE0058D7AD /* NodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE7270A2297BE0058D7AD /* NodeFilter.h */; };
 		854FE7320A2297BE0058D7AD /* NodeFilterCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE7280A2297BE0058D7AD /* NodeFilterCondition.cpp */; };
@@ -2008,6 +2010,8 @@
 		85031B390A44EFC700F992E0 /* UIEventWithKeyState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = UIEventWithKeyState.h; sourceTree = "<group>"; };
 		85031B3A0A44EFC700F992E0 /* WheelEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = WheelEvent.cpp; sourceTree = "<group>"; };
 		85031B3B0A44EFC700F992E0 /* WheelEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WheelEvent.h; sourceTree = "<group>"; };
+		85217E000A5ECD4700DB8D00 /* XSLImportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XSLImportRule.cpp; sourceTree = "<group>"; };
+		85217E010A5ECD4700DB8D00 /* XSLImportRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XSLImportRule.h; sourceTree = "<group>"; };
 		854FE7260A2297BE0058D7AD /* NodeFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeFilter.cpp; sourceTree = "<group>"; };
 		854FE7270A2297BE0058D7AD /* NodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NodeFilter.h; sourceTree = "<group>"; };
 		854FE7280A2297BE0058D7AD /* NodeFilterCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeFilterCondition.cpp; sourceTree = "<group>"; };
@@ -5154,6 +5158,8 @@
 				A833C7F60A2CF1D800D57664 /* xmlattrs.in */,
 				E1F0424409839389006694EA /* xmlhttprequest.cpp */,
 				E1F0424509839389006694EA /* xmlhttprequest.h */,
+				85217E000A5ECD4700DB8D00 /* XSLImportRule.cpp */,
+				85217E010A5ECD4700DB8D00 /* XSLImportRule.h */,
 				BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */,
 				BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */,
 				BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */,
@@ -6401,6 +6407,7 @@
 				ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */,
 				ABDDFE7C0A5C6E7000A3E11D /* RenderPopupMenu.h in Headers */,
 				ABDDFE7D0A5C6E7000A3E11D /* RenderPopupMenuMac.h in Headers */,
+				85217E030A5ECD4700DB8D00 /* XSLImportRule.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7263,6 +7270,7 @@
 				ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */,
 				ABDDFE7B0A5C6E7000A3E11D /* RenderPopupMenu.cpp in Sources */,
 				ABDDFE7E0A5C6E7000A3E11D /* RenderPopupMenuMac.mm in Sources */,
+				85217E020A5ECD4700DB8D00 /* XSLImportRule.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

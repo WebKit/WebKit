@@ -1,3 +1,20 @@
+2006-07-07  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9768
+          Split XSLImportRule out of XSLStyleSheet.* into separate 
+          files (one class per file).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * xml/XSLImportRule.cpp: Added.
+        (WebCore::XSLImportRule::XSLImportRule):
+        (WebCore::XSLImportRule::parentStyleSheet):
+        (WebCore::XSLImportRule::loadSheet):
+        * xml/XSLImportRule.h: Added.
+        * xml/XSLStyleSheet.cpp:
+        * xml/XSLStyleSheet.h:
+
 2006-07-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

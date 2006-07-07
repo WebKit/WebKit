@@ -24,18 +24,20 @@
 
 #ifdef KHTML_XSLT
 
-#include "CachedXSLStyleSheet.h"
 #include "DocLoader.h"
-#include "HTMLDocument.h"
+#include "Document.h"
+#include "Node.h"
+#include "XSLImportRule.h"
 #include "loader.h"
 #include "xml_tokenizer.h"
 #include <libxml/uri.h>
 #include <libxslt/xsltutils.h>
 
+namespace WebCore {
+
 #define IS_BLANK_NODE(n)                                                \
     (((n)->type == XML_TEXT_NODE) && (xsltIsBlank((n)->content)))
 
-namespace WebCore {
     
 XSLStyleSheet::XSLStyleSheet(XSLImportRule* parentRule, const String& href)
     : StyleSheet(parentRule, href)
@@ -193,11 +195,6 @@ void XSLStyleSheet::loadChildSheet(const DeprecatedString& href)
     childRule->loadSheet();
 }
 
-XSLStyleSheet* XSLImportRule::parentStyleSheet() const
-{
-    return (parent() && parent()->isXSLStyleSheet()) ? static_cast<XSLStyleSheet*>(parent()) : 0;
-}
-
 xsltStylesheetPtr XSLStyleSheet::compileStyleSheet()
 {
     // FIXME: Hook up error reporting for the stylesheet compilation process.
@@ -261,82 +258,6 @@ void XSLStyleSheet::markAsProcessed()
     m_stylesheetDocTaken = true;
 }
 
-// ----------------------------------------------------------------------------------------------
+} // namespace WebCore
 
-XSLImportRule::XSLImportRule(StyleBase* parent, const String &href)
-: StyleBase(parent)
-{
-    m_strHref = href;
-    m_cachedSheet = 0;
-    m_loading = false;
-}
-
-XSLImportRule::~XSLImportRule()
-{
-    if (m_styleSheet)
-        m_styleSheet->setParent(0);
-    
-    if (m_cachedSheet)
-        m_cachedSheet->deref(this);
-}
-
-void XSLImportRule::setStyleSheet(const String& url, const String& sheet)
-{
-    if (m_styleSheet)
-        m_styleSheet->setParent(0);
-    
-    m_styleSheet = new XSLStyleSheet(this, url);
-    
-    XSLStyleSheet* parent = parentStyleSheet();
-    if (parent)
-        m_styleSheet->setOwnerDocument(parent->ownerDocument());
-
-    m_styleSheet->parseString(sheet);
-    m_loading = false;
-    
-    checkLoaded();
-}
-
-bool XSLImportRule::isLoading()
-{
-    return (m_loading || (m_styleSheet && m_styleSheet->isLoading()));
-}
-
-void XSLImportRule::loadSheet()
-{
-    DocLoader* docLoader = 0;
-    StyleBase* root = this;
-    StyleBase* parent;
-    while ((parent = root->parent()))
-        root = parent;
-    if (root->isXSLStyleSheet())
-        docLoader = static_cast<XSLStyleSheet*>(root)->docLoader();
-    
-    String absHref = m_strHref;
-    XSLStyleSheet* parentSheet = parentStyleSheet();
-    if (!parentSheet->href().isNull())
-        // use parent styleheet's URL as the base URL
-        absHref = KURL(parentSheet->href().deprecatedString(),m_strHref.deprecatedString()).url();
-    
-    // Check for a cycle in our import chain.  If we encounter a stylesheet
-    // in our parent chain with the same URL, then just bail.
-    for (parent = static_cast<StyleBase*>(this)->parent(); parent; parent = parent->parent())
-        if (absHref == parent->baseURL())
-            return;
-    
-    m_cachedSheet = docLoader->requestXSLStyleSheet(absHref);
-    
-    if (m_cachedSheet) {
-        m_cachedSheet->ref(this);
-        
-        // If the imported sheet is in the cache, then setStyleSheet gets called,
-        // and the sheet even gets parsed (via parseString).  In this case we have
-        // loaded (even if our subresources haven't), so if we have a stylesheet after
-        // checking the cache, then we've clearly loaded.
-        if (!m_styleSheet)
-            m_loading = true;
-    }
-}
-
-}
-#endif
+#endif // KHTML_XSLT
