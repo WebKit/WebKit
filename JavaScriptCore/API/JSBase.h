@@ -27,16 +27,26 @@
 #ifndef JSBase_h
 #define JSBase_h
 
-/* JS runtime interface types */
+/* JavaScript engine interface */
+
+/*! @typedef JSContextRef A JavaScript execution context. Holds the global object and other execution state. */
 typedef struct __JSContext* JSContextRef;
+/*! @typedef JSStringBuffer A UTF16 character buffer. The fundamental string representation in JavaScript. */
 typedef struct __JSStringBuffer* JSStringBufferRef;
+/*! @typedef JSClassRef A JavaScript class. Used with JSObjectMake to construct objects with custom behavior. */
 typedef struct __JSClass* JSClassRef;
+/*! @typedef JSPropertyListRef A JavaScript property list. Used for listing the properties in an object so they can be enumerated. */
 typedef struct __JSPropertyList* JSPropertyListRef;
+/*! @typedef JSPropertyEnumeratorRef A JavaScript property enumerator. Used for enumerating the properties in an object. */
 typedef struct __JSPropertyEnumerator* JSPropertyEnumeratorRef;
 
-/* Base type of all JS values, and polymorphic functions on them */
+
+/* JavaScript data types */
+
+/*! @typedef JSValueRef A JavaScript value. The base type for all JavaScript values, and polymorphic functions on them. */
 typedef void* JSValueRef;
 
+/*! @typedef JSObjectRef A JavaScript object. A JSObject is a JSValue. */
 typedef struct __JSObject* JSObjectRef;
 
 #endif // JSBase_h
