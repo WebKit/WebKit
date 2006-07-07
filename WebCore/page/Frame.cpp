@@ -1973,6 +1973,11 @@ bool Frame::shouldChangeSelection(const SelectionController& newselection) const
     return shouldChangeSelection(d->m_selection, newselection, newselection.affinity(), false);
 }
 
+bool Frame::shouldDeleteSelection(const SelectionController& newselection) const
+{
+    return true;
+}
+
 bool Frame::shouldBeginEditing(const Range *range) const
 {
     return true;

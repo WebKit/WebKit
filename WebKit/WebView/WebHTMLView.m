@@ -574,10 +574,6 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
        smartDeleteOK:(BOOL)smartDeleteOK 
       deletionAction:(WebDeletionAction)deletionAction
 {
-    if (![self _shouldDeleteRange:range]) {
-        return;
-    }
-
     WebFrameBridge *bridge = [self _bridge];
     BOOL smartDelete = smartDeleteOK ? [self _canSmartCopyOrDelete] : NO;
 
@@ -4537,7 +4533,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         if (isTypingAction)
             deletionAction = deleteKeyAction;
     } else {
-        range = [[self _bridge] rangeByAlteringCurrentSelection:WebSelectByExtending direction:direction granularity:granularity];
+        range = [self _selectedRange];
         if (isTypingAction)
             switch (direction) {
                 case WebBridgeSelectForward:
@@ -4551,7 +4547,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
             }
     }
 
-    if (range == nil || [range collapsed] || ![self _shouldDeleteRange:range])
+    if (range == nil)
         return NO;
     [self _deleteRange:range killRing:killRing prepend:NO smartDeleteOK:NO deletionAction:deletionAction];
     return YES;

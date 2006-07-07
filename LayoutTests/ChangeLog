@@ -1,3 +1,15 @@
+2006-07-07  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        Improved table editing
+
+        * editing/deleting/delete-to-select-table-expected.checksum: Added.
+        * editing/deleting/delete-to-select-table-expected.png: Added.
+        * editing/deleting/delete-to-select-table-expected.txt: Added.
+        * editing/deleting/delete-to-select-table.html: Added.
+        * editing/input/text-input-controller-expected.txt:
+
 2006-07-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

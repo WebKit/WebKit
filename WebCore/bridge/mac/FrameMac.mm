@@ -3169,6 +3169,11 @@ bool FrameMac::shouldChangeSelection(const SelectionController &oldSelection, co
                                   stillSelecting:stillSelecting];
 }
 
+bool FrameMac::shouldDeleteSelection(const SelectionController &selection) const
+{
+    return [_bridge shouldDeleteSelectedDOMRange:[DOMRange _rangeWith:selection.toRange().get()]];
+}
+
 void FrameMac::respondToChangedContents()
 {
     if (AccessibilityObjectCache::accessibilityEnabled())

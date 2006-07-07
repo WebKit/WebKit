@@ -1471,6 +1471,12 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     return [[self webView] _shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:selectionAffinity stillSelecting:flag];
 }
 
+- (BOOL)shouldDeleteSelectedDOMRange:(DOMRange *)range
+{
+    WebView *webView = [self webView];
+    return [[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:range];
+}
+
 - (BOOL)shouldBeginEditing:(DOMRange *)range
 {
     return [[self webView] _shouldBeginEditingInDOMRange:range];

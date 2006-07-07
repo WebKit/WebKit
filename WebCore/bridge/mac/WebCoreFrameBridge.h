@@ -665,6 +665,7 @@ typedef enum {
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view;
 - (BOOL)isEditable;
 - (BOOL)shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;
+- (BOOL)shouldDeleteSelectedDOMRange:(DOMRange *)currentRange;
 - (BOOL)shouldBeginEditing:(DOMRange *)range;
 - (BOOL)shouldEndEditing:(DOMRange *)range;
 - (void)didBeginEditing;

@@ -28,6 +28,7 @@
 
 #include "BeforeTextInsertedEvent.h"
 #include "BreakBlockquoteCommand.h"
+#include "DeleteSelectionCommand.h"
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
@@ -332,6 +333,12 @@ void TypingCommand::deleteKeyPressed()
             // root editable element or at the start of a document.
             SelectionController sc = SelectionController(endingSelection().start(), endingSelection().end(), SEL_DEFAULT_AFFINITY);
             sc.modify(SelectionController::EXTEND, SelectionController::BACKWARD, CharacterGranularity);
+            Position upstreamStart = endingSelection().start().upstream();
+            // When deleting tables: Select the table first, then perform the deletion
+            if (upstreamStart.node()->renderer() && upstreamStart.node()->renderer()->isTable() && upstreamStart.offset() == maxDeepOffset(upstreamStart.node())) {
+                setEndingSelection(Selection(Position(upstreamStart.node(), 0), upstreamStart, DOWNSTREAM));
+                return;
+            }
             selectionToDelete = sc.selection();
             break;
         }
@@ -340,7 +347,7 @@ void TypingCommand::deleteKeyPressed()
             break;
     }
     
-    if (selectionToDelete.isCaretOrRange()) {
+    if (selectionToDelete.isCaretOrRange() && document()->frame()->shouldDeleteSelection(SelectionController(selectionToDelete))) {
         deleteSelection(selectionToDelete, m_smartDelete);
         setSmartDelete(false);
         typingAddedToOpenCommand();
@@ -361,6 +368,12 @@ void TypingCommand::forwardDeleteKeyPressed()
             // root editable element or at the start of a document.
             SelectionController sc = SelectionController(endingSelection().start(), endingSelection().end(), SEL_DEFAULT_AFFINITY);
             sc.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity);
+            Position downstreamEnd = endingSelection().end().downstream();
+            // When deleting tables: Select the table first, then perform the deletion
+            if (downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->isTable() && downstreamEnd.offset() == 0) {
+                setEndingSelection(Selection(downstreamEnd, Position(downstreamEnd.node(), maxDeepOffset(downstreamEnd.node())), DOWNSTREAM));
+                return;
+            }
             selectionToDelete = sc.selection();
             break;
         }
@@ -369,7 +382,7 @@ void TypingCommand::forwardDeleteKeyPressed()
             break;
     }
     
-    if (selectionToDelete.isCaretOrRange()) {
+    if (selectionToDelete.isCaretOrRange() && document()->frame()->shouldDeleteSelection(SelectionController(selectionToDelete))) {
         deleteSelection(selectionToDelete, m_smartDelete);
         setSmartDelete(false);
         typingAddedToOpenCommand();

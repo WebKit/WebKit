@@ -1,3 +1,17 @@
+2006-07-06  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        Improved table editing
+
+        * WebCoreSupport/WebFrameBridge.m: Added method to allow WebCore to trigger
+        deletion editing delegate
+        (-[WebFrameBridge shouldDeleteSelectedDOMRange:]):
+        * WebView/WebHTMLView.m: Moved code that expanded a selection when the delete
+        key is pressed over to WebCore so we can be more intelligent about how to handle it
+        (-[WebHTMLView _deleteRange:killRing:prepend:smartDeleteOK:deletionAction:]):
+        (-[NSArray _deleteWithDirection:granularity:killRing:isTypingAction:]):
+
 2006-07-07  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher
