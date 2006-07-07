@@ -28,10 +28,10 @@
 #include "HTMLOptGroupElement.h"
 
 #include "Document.h"
-#include "cssstyleselector.h"
-#include "HTMLSelectElement.h"
 #include "HTMLNames.h"
+#include "HTMLSelectElement.h"
 #include "RenderMenuList.h"
+#include "cssstyleselector.h"
 
 namespace WebCore {
 
@@ -126,7 +126,9 @@ bool HTMLOptGroupElement::checkDTD(const Node* newChild)
 
 void HTMLOptGroupElement::attach()
 {
-    setRenderStyle(styleForRenderer(0));
+    RenderStyle* style = styleForRenderer(0);
+    setRenderStyle(style);
+    style->deref(document()->renderArena());
     HTMLGenericFormElement::attach();
 }
 
@@ -139,13 +141,12 @@ void HTMLOptGroupElement::detach()
     HTMLGenericFormElement::detach();
 }
 
-void HTMLOptGroupElement::setRenderStyle( RenderStyle* newStyle )
+void HTMLOptGroupElement::setRenderStyle(RenderStyle* newStyle)
 {
     RenderStyle* oldStyle = m_style;
     m_style = newStyle;
-     if (m_style)
-        m_style->ref();
-    
+    if (newStyle)
+        newStyle->ref();
     if (oldStyle)
         oldStyle->deref(document()->renderArena());
 }

@@ -2,6 +2,17 @@
 
         Reviewed by Adele.
 
+        - fixed a couple of storage leaks noticed by the buildbot
+
+        * html/HTMLOptGroupElement.cpp: (WebCore::HTMLOptGroupElement::attach):
+        Call deref on the style after calling setRenderStyle, since styleForRenderer
+        returns us a "ref'd" RenderStyle object.
+        * html/HTMLOptionElement.cpp: (WebCore::HTMLOptionElement::attach): Ditto.
+
+2006-07-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
         - fix some license mistakes
 
         * LICENSE-APPLE: Added more years of publication to the copyright here.
