@@ -80,6 +80,7 @@ public:
     ~FrameViewPrivate()
     {
         delete repaintRects;
+        delete m_scheduledEvents;
     }
     void reset()
     {

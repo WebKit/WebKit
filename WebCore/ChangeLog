@@ -1,5 +1,14 @@
 2006-07-07  Darin Adler  <darin@apple.com>
 
+        Reviewed by Anders.
+
+        - fixed a storage leak noticed by the buildbot
+
+        * page/FrameView.cpp: (WebCore::FrameViewPrivate::~FrameViewPrivate):
+        Delete m_scheduledEvents.
+
+2006-07-07  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - fixed a couple of storage leaks noticed by the buildbot
