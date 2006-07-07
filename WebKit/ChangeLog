@@ -1,3 +1,13 @@
+2006-07-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        Changed an ASSERT to a LOG_ERROR for an error that could be handled gracefully, but
+        whose assertion was reproducibly causing a build bot failure
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase _releaseIconForIconURLString:]):
+
 2006-07-06  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by justin

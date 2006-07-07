@@ -826,9 +826,18 @@ NSSize WebIconLargeSize = {128, 128};
     
     WebNSUInteger retainCount = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->iconURLToExtraRetainCount, iconURLString);
 
-    ASSERT(_isClosing || retainCount > 0);
-    if (retainCount <= 0)
+    // This error used to be an ASSERT() that was causing the build bot to fail.  The build bot was getting itself into a reproducible
+    // situation of having an icon for 127.0.0.1:8000/favicon.ico registered in the database but not finding the file for it.  This situation
+    // triggers a call to _forgetIconForIconURL which dumps everything about the icon - including the retain count.  A later call to releaseIconForURL
+    // would then ASSERT and crash the test as the retain count had be internally reset to zero
+    // The reason the build bot was getting into this situation is not yet understood but the cause of the ASSERT is - and the condition was already
+    // handled gracefully in release builds.  Therefore we're changing it to a LOG_ERROR with the understanding that the sqlite icon database will not 
+    // have this issue due to its entirely different nature
+    if (retainCount <= 0) {
+        if (!_isClosing)
+            LOG_ERROR("Trying to release an icon whose retain-count is already non-positive");
         return;
+    }
     
     WebNSUInteger newRetainCount = retainCount - 1;
     if (newRetainCount == 0) {
