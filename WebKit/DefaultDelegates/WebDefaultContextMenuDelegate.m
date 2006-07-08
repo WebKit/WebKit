@@ -222,9 +222,6 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     
     if (!imageURL && !linkURL) {
         if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
-            // Add Tiger-only items that act on selected text. Google search needn't be Tiger-only technically,
-            // but it's a new Tiger-only feature to have it in the context menu by default.
-            
             // The Spotlight and Google items are implemented in WebView, and require that the
             // current document view conforms to WebDocumentText
             ASSERT([[[webFrame frameView] documentView] conformsToProtocol:@protocol(WebDocumentText)]);

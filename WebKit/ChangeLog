@@ -1,3 +1,9 @@
+2006-07-08  Darin Adler  <darin@apple.com>
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate contextMenuItemsForElement:defaultMenuItems:]):
+        Removed misleading old comment.
+
 === Safari-521.15 ===
 
 2006-07-07  Levi Weintraub  <lweintraub@apple.com>
