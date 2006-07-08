@@ -127,7 +127,7 @@ bool JSObjectHasProperty(JSContextRef context, JSObjectRef object, JSStringBuffe
     return jsObject->hasProperty(exec, Identifier(nameRep));
 }
 
-bool JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef* value)
+JSValueRef JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -135,9 +135,9 @@ bool JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringBuffe
     UString::Rep* nameRep = toJS(propertyName);
 
     JSValue* jsValue = jsObject->get(exec, Identifier(nameRep));
-    if (value)
-        *value = toRef(jsValue);
-    return !jsValue->isUndefined();
+    if (jsValue->isUndefined())
+        return 0;
+    return jsValue;
 }
 
 bool JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef value, JSPropertyAttributes attributes)

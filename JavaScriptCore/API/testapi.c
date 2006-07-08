@@ -535,9 +535,9 @@ int main(int argc, char* argv[])
     JSStringBufferRelease(goodSyntaxBuf);
     JSStringBufferRelease(badSyntaxBuf);
 
-    v = NULL;
     JSStringBufferRef arrayBuf = JSStringBufferCreateUTF8("Array");
-    assert(JSObjectGetProperty(context, globalObject, arrayBuf, &v));
+    v = JSObjectGetProperty(context, globalObject, arrayBuf);
+    assert(v);
     JSObjectRef arrayConstructor = JSValueToObject(context, v);
     JSStringBufferRelease(arrayBuf);
     result = JSObjectCallAsConstructor(context, arrayConstructor, 0, NULL, NULL);
@@ -547,13 +547,13 @@ int main(int argc, char* argv[])
     
     JSStringBufferRef functionBuf;
     
-    v = NULL;
     exception = NULL;
     functionBuf = JSStringBufferCreateUTF8("rreturn Array;");
     JSStringBufferRef lineBuf = JSStringBufferCreateUTF8("line");
     assert(!JSFunctionMakeWithBody(context, functionBuf, NULL, 1, &exception));
     assert(JSValueIsObject(exception));
-    assert(JSObjectGetProperty(context, exception, lineBuf, &v));
+    v = JSObjectGetProperty(context, exception, lineBuf);
+    assert(v);
     assertEqualsAsNumber(v, 2); // FIXME: Lexer::setCode bumps startingLineNumber by 1 -- we need to change internal callers so that it doesn't have to (saying '0' to mean '1' in the API would be really confusing -- it's really confusing internally, in fact)
     JSStringBufferRelease(functionBuf);
     JSStringBufferRelease(lineBuf);

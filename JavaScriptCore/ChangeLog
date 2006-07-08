@@ -1,5 +1,17 @@
 2006-07-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Anders.
+        
+        - Make JSObjectGetProperty return a JSValue or NULL, like JSEvaluate does.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectGetProperty):
+        * API/JSObjectRef.h:
+        * API/testapi.c:
+        (main):
+
+2006-07-08  Geoffrey Garen  <ggaren@apple.com>
+
         Style change -- no review necessary.
         
         Use 0 instead of NULL in API .cpp files, to match our style guidelines.

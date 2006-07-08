@@ -386,10 +386,9 @@ bool JSObjectHasProperty(JSContextRef context, JSObjectRef object, JSStringBuffe
 @param context The execution context to use.
 @param object The JSObject whose property you want to get.
 @param propertyName A JSStringBuffer containing the property's name.
-@param value A pointer to a JSValueRef in which to store the property's value. On return, value will contain the property's value. Pass NULL if you do not care to store the property's value.
-@result true if the object has a property whose name matches propertyName, otherwise false. If this function returns false, the contents of value will be unmodified.
+@result The property's value, or NULL if the object does not have a property whose name matches propertyName.
 */
-bool JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef* value);
+JSValueRef JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName);
 /*!
 @function
 @abstract Sets a property on an object.
