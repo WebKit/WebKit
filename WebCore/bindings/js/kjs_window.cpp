@@ -598,7 +598,7 @@ static bool canShowModalDialogNow(const Window *window)
     return frame && static_cast<BrowserExtension *>(frame->browserExtension())->canRunModalNow();
 }
 
-static JSValue *showModalDialog(ExecState *exec, Window *openerWindow, const List &args)
+static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const List& args)
 {
     UString URL = args[0]->toString(exec);
 
@@ -651,16 +651,26 @@ static JSValue *showModalDialog(ExecState *exec, Window *openerWindow, const Lis
     wargs.locationBarVisible = false;
     wargs.fullscreen = false;
     
-    Frame *dialogPart = createNewWindow(exec, openerWindow, URL, "", wargs, args[1]);
-    if (!dialogPart)
+    Frame* dialogFrame = createNewWindow(exec, openerWindow, URL, "", wargs, args[1]);
+    if (!dialogFrame)
         return jsUndefined();
 
-    Window *dialogWindow = Window::retrieveWindow(dialogPart);
-    JSValue *returnValue = jsUndefined();
+    Window* dialogWindow = Window::retrieveWindow(dialogFrame);
+
+    // Get the return value either just before clearing the dialog window's
+    // properties (in Window::clear), or when on return from runModal.
+    JSValue* returnValue = 0;
     dialogWindow->setReturnValueSlot(&returnValue);
-    static_cast<BrowserExtension *>(dialogPart->browserExtension())->runModal();
-    dialogWindow->setReturnValueSlot(NULL);
-    return returnValue;
+    static_cast<BrowserExtension *>(dialogFrame->browserExtension())->runModal();
+    dialogWindow->setReturnValueSlot(0);
+
+    // If we don't have a return value, get it now.
+    // Either Window::clear was not called yet, or there was no return value,
+    // and in that case, there's no harm in trying again (no benefit either).
+    if (!returnValue)
+        returnValue = dialogWindow->getDirect("returnValue");
+
+    return returnValue ? returnValue : jsUndefined();
 }
 
 JSValue *Window::getValueProperty(ExecState *exec, int token) const
@@ -1323,25 +1333,22 @@ JSUnprotectedEventListener *Window::getJSUnprotectedEventListener(JSValue *val, 
   return new JSUnprotectedEventListener(object, this, html);
 }
 
-void Window::clear(bool clearWindowProperties)
+void Window::clear()
 {
-    JSLock lock;
+  JSLock lock;
 
-    if (m_returnValueSlot)
-        if (JSValue* returnValue = getDirect("returnValue"))
-            *m_returnValueSlot = returnValue;
+  if (m_returnValueSlot && !*m_returnValueSlot)
+    *m_returnValueSlot = getDirect("returnValue");
 
-    if (clearWindowProperties) {
-        clearAllTimeouts();
-        clearProperties();
-        setPrototype(JSDOMWindowProto::self()); // clear the prototype
+  clearAllTimeouts();
+  clearProperties();
+  setPrototype(JSDOMWindowProto::self()); // clear the prototype
 
-        // there's likely to be lots of garbage now
-        Collector::collect();
+  // there's likely to be lots of garbage now
+  Collector::collect();
 
-        // Now recreate a working global object for the next URL that will use us
-        interpreter()->initGlobalObject();
-    }
+  // Now recreate a working global object for the next URL that will use us
+  interpreter()->initGlobalObject();
 }
 
 void Window::setCurrentEvent(Event *evt)

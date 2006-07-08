@@ -1,5 +1,28 @@
 2006-07-08  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - better fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9622
+          REGRESSION: showModalDialog returnValue ignored, function result is always "undefined"
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::showModalDialog): Set the return value after returning from the function if the
+        window is not cleared; this is a better way to handle the case where the window does
+        not get cleared before returning, and handles some new cases created by slight changes
+        in the latest Safari properly too.
+        (KJS::Window::clear): Changed logic slightly so we always store the result of getDirect
+        into the return value slot -- the old code left the storage untouched if it was 0.
+        Also made it only overwrite the return value slot if it's 0.
+
+        * bindings/js/kjs_proxy.h:
+        * bindings/js/kjs_proxy.cpp:
+        * bindings/js/kjs_window.h:
+        * bindings/js/kjs_window.cpp:
+        * page/Frame.cpp:
+        Roll the previous fix out.
+
+2006-07-08  Darin Adler  <darin@apple.com>
+
         - try to fix Windows build
 
         * WebCore.vcproj/WebCore/WebCore.vcproj: Add missing source files.
