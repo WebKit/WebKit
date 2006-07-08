@@ -1,3 +1,12 @@
+2006-07-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed a storage leak noticed by the buildbot
+
+        * dom/Document.cpp: (WebCore::Document::removedLastRef):
+        Call delete on the markers before clearing the map containing them.
+
 2006-07-08  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.
