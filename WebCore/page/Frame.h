@@ -327,7 +327,7 @@ public:
   // FIXME: Replace these with functions on the selection controller.
   void setSelection(const SelectionController&, bool closeTyping = true, bool keepTypingStyle = false);
   bool shouldChangeSelection(const SelectionController&) const;
-  bool shouldDeleteSelection(const SelectionController&) const;
+  virtual bool shouldDeleteSelection(const SelectionController&) const;
   
   void notifyRendererOfSelectionChange(bool userTriggered);
 

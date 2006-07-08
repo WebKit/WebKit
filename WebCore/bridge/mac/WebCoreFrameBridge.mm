@@ -2161,21 +2161,21 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     EditCommandPtr(new DeleteSelectionCommand(m_frame->document(), smartDelete)).apply();
 }
 
-- (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete
+- (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity
 {
     if (!m_frame || !m_frame->document())
         return;
     
-    TypingCommand::deleteKeyPressed(m_frame->document(), smartDelete);
+    TypingCommand::deleteKeyPressed(m_frame->document(), smartDelete, static_cast<TextGranularity>(granularity));
     [self ensureSelectionVisible];
 }
 
-- (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete
+- (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity
 {
     if (!m_frame || !m_frame->document())
         return;
     
-    TypingCommand::forwardDeleteKeyPressed(m_frame->document(), smartDelete);
+    TypingCommand::forwardDeleteKeyPressed(m_frame->document(), smartDelete, static_cast<TextGranularity>(granularity));
     [self ensureSelectionVisible];
 }
 

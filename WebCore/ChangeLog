@@ -1,3 +1,20 @@
+2006-07-07  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        Allowed deletion typing commands to take in a granularity
+
+        * bridge/mac/WebCoreFrameBridge.h: Pass granularity across the bridge
+        * bridge/mac/WebCoreFrameBridge.mm: Ditto
+        (-[WebCoreFrameBridge deleteKeyPressedWithSmartDelete:granularity:]):
+        (-[WebCoreFrameBridge forwardDeleteKeyPressedWithSmartDelete:granularity:]):
+        * editing/TypingCommand.cpp: Constructors take in a granularity
+        (WebCore::TypingCommand::TypingCommand):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/TypingCommand.h: ditto
+        * page/Frame.h: Fixed bug that shouldDeleteSelection wasn't virtual
+
 2006-07-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders and Tim Hatcher

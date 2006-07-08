@@ -42,18 +42,19 @@
 
 namespace WebCore {
 
-TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, const String &textToInsert, bool selectInsertedText)
+TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, const String &textToInsert, bool selectInsertedText, TextGranularity granularity)
     : CompositeEditCommand(document), 
       m_commandType(commandType), 
       m_textToInsert(textToInsert), 
       m_openForMoreTyping(true), 
       m_applyEditing(false), 
       m_selectInsertedText(selectInsertedText),
-      m_smartDelete(false)
+      m_smartDelete(false),
+      m_granularity(granularity)
 {
 }
 
-void TypingCommand::deleteKeyPressed(Document *document, bool smartDelete)
+void TypingCommand::deleteKeyPressed(Document *document, bool smartDelete, TextGranularity granularity)
 {
     ASSERT(document);
     
@@ -66,13 +67,13 @@ void TypingCommand::deleteKeyPressed(Document *document, bool smartDelete)
         return;
     }
     
-    TypingCommand *typingCommand = new TypingCommand(document, DeleteKey);
+    TypingCommand *typingCommand = new TypingCommand(document, DeleteKey, "", false, granularity);
     typingCommand->setSmartDelete(smartDelete);
     EditCommandPtr cmd(typingCommand);
     cmd.apply();
 }
 
-void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete)
+void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete, TextGranularity granularity)
 {
     ASSERT(document);
     
@@ -85,7 +86,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete
         return;
     }
 
-    TypingCommand *typingCommand = new TypingCommand(document, ForwardDeleteKey);
+    TypingCommand *typingCommand = new TypingCommand(document, ForwardDeleteKey, "", false, granularity);
     typingCommand->setSmartDelete(smartDelete);
     EditCommandPtr cmd(typingCommand);
     cmd.apply();
@@ -332,7 +333,7 @@ void TypingCommand::deleteKeyPressed()
             // Do nothing in the case that the caret is at the start of a
             // root editable element or at the start of a document.
             SelectionController sc = SelectionController(endingSelection().start(), endingSelection().end(), SEL_DEFAULT_AFFINITY);
-            sc.modify(SelectionController::EXTEND, SelectionController::BACKWARD, CharacterGranularity);
+            sc.modify(SelectionController::EXTEND, SelectionController::BACKWARD, m_granularity);
             Position upstreamStart = endingSelection().start().upstream();
             // When deleting tables: Select the table first, then perform the deletion
             if (upstreamStart.node()->renderer() && upstreamStart.node()->renderer()->isTable() && upstreamStart.offset() == maxDeepOffset(upstreamStart.node())) {
@@ -367,7 +368,7 @@ void TypingCommand::forwardDeleteKeyPressed()
             // Do nothing in the case that the caret is at the start of a
             // root editable element or at the start of a document.
             SelectionController sc = SelectionController(endingSelection().start(), endingSelection().end(), SEL_DEFAULT_AFFINITY);
-            sc.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity);
+            sc.modify(SelectionController::EXTEND, SelectionController::FORWARD, m_granularity);
             Position downstreamEnd = endingSelection().end().downstream();
             // When deleting tables: Select the table first, then perform the deletion
             if (downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->isTable() && downstreamEnd.offset() == 0) {

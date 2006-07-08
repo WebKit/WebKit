@@ -1,3 +1,15 @@
+2006-07-07  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        Finished moving deletion selection expansion across the bridge... say that 3 times fast.
+
+        * WebView/WebHTMLView.m:  Pass granularity to WebCore to handle expansion
+        (-[WebHTMLView _deleteRange:killRing:prepend:smartDeleteOK:deletionAction:granularity:]):
+        (-[WebHTMLView _deleteSelection]):
+        (-[NSArray _deleteWithDirection:granularity:killRing:isTypingAction:]):
+        (-[NSArray deleteToMark:]):
+
 2006-07-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John

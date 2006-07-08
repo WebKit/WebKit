@@ -453,8 +453,8 @@ typedef enum {
 - (DOMRange *)characterRangeAtPoint:(NSPoint)point;
 
 - (void)deleteSelectionWithSmartDelete:(BOOL)smartDelete;
-- (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete;
-- (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete;
+- (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity;
+- (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity;
 
 - (DOMCSSStyleDeclaration *)typingStyle;
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction;

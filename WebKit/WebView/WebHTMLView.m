@@ -191,7 +191,8 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
             killRing:(BOOL)killRing 
              prepend:(BOOL)prepend 
        smartDeleteOK:(BOOL)smartDeleteOK
-      deletionAction:(WebDeletionAction)deletionAction;
+      deletionAction:(WebDeletionAction)deletionAction
+         granularity:(WebBridgeSelectionGranularity)granularity;
 - (void)_deleteSelection;
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 - (NSView *)_hitViewForEvent:(NSEvent *)event;
@@ -573,6 +574,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
              prepend:(BOOL)prepend 
        smartDeleteOK:(BOOL)smartDeleteOK 
       deletionAction:(WebDeletionAction)deletionAction
+         granularity:(WebBridgeSelectionGranularity)granularity
 {
     WebFrameBridge *bridge = [self _bridge];
     BOOL smartDelete = smartDeleteOK ? [self _canSmartCopyOrDelete] : NO;
@@ -599,11 +601,11 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
             break;
         case deleteKeyAction:
             [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:NO];
-            [bridge deleteKeyPressedWithSmartDelete:smartDelete];
+            [bridge deleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
             break;
         case forwardDeleteKeyAction:
             [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:NO];
-            [bridge forwardDeleteKeyPressedWithSmartDelete:smartDelete];
+            [bridge forwardDeleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
             break;
     }
 
@@ -616,7 +618,8 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
               killRing:YES 
                prepend:NO
          smartDeleteOK:YES
-        deletionAction:deleteSelectionAction];
+        deletionAction:deleteSelectionAction
+           granularity:WebBridgeSelectByCharacter];
 }
 
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard
@@ -4534,22 +4537,21 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
             deletionAction = deleteKeyAction;
     } else {
         range = [self _selectedRange];
-        if (isTypingAction)
-            switch (direction) {
-                case WebBridgeSelectForward:
-                case WebBridgeSelectRight:
-                    deletionAction = forwardDeleteKeyAction;
-                    break;
-                case WebBridgeSelectBackward:
-                case WebBridgeSelectLeft:
-                    deletionAction = deleteKeyAction;
-                    break;
-            }
+        switch (direction) {
+            case WebBridgeSelectForward:
+            case WebBridgeSelectRight:
+                deletionAction = forwardDeleteKeyAction;
+                break;
+            case WebBridgeSelectBackward:
+            case WebBridgeSelectLeft:
+                deletionAction = deleteKeyAction;
+                break;
+        }
     }
 
     if (range == nil)
         return NO;
-    [self _deleteRange:range killRing:killRing prepend:NO smartDeleteOK:NO deletionAction:deletionAction];
+    [self _deleteRange:range killRing:killRing prepend:NO smartDeleteOK:NO deletionAction:deletionAction granularity:granularity];
     return YES;
 }
 
@@ -4798,7 +4800,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         NS_HANDLER
             r = selection;
         NS_ENDHANDLER
-        [self _deleteRange:r killRing:YES prepend:YES smartDeleteOK:NO deletionAction:deleteSelectionAction];
+        [self _deleteRange:r killRing:YES prepend:YES smartDeleteOK:NO deletionAction:deleteSelectionAction granularity:WebBridgeSelectByCharacter];
     }
     [self setMark:sender];
 }
