@@ -1,3 +1,12 @@
+2006-07-07  Geoffrey Garen  <ggaren@apple.com>
+
+        - build fix
+
+        * JSUtils.cpp:
+        (KJSValueToCFTypeInternal):
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+
 2006-07-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
