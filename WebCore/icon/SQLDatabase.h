@@ -61,6 +61,15 @@ public:
     // TODO - add pragma and sqlite_master accessors here
     void setFullsync(bool);
     
+    // The SQLite SYNCHRONOUS pragma can be either FULL, NORMAL, or OFF
+    // FULL - Any writing calls to the DB block until the data is actually on the disk surface
+    // NORMAL - SQLite pauses at some critical moments when writing, but much less than FULL
+    // OFF - Calls return immediately after the data has been passed to disk
+    enum SynchronousPragma {
+        SyncOff = 0, SyncNormal = 1, SyncFull = 2
+    };
+    void setSynchronous(SynchronousPragma);
+    
     int lastError() { return m_db ? sqlite3_errcode(m_db) : SQLITE_ERROR; }
     const char* lastErrorMsg() { return sqlite3_errmsg(m_db); }
     

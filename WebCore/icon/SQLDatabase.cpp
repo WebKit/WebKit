@@ -67,9 +67,14 @@ void SQLDatabase::close()
 void SQLDatabase::setFullsync(bool fsync) 
 {
     if (fsync) 
-        SQLStatement(*this,"PRAGMA fullfsync = 1;").executeCommand();
+        executeCommand("PRAGMA fullfsync = 1;");
     else
-        SQLStatement(*this,"PRAGMA fullfsync = 0;").executeCommand();
+        executeCommand("PRAGMA fullfsync = 0;");
+}
+
+void SQLDatabase::setSynchronous(SynchronousPragma sync)
+{
+    executeCommand(String::sprintf("PRAGMA synchronous = %i", sync));
 }
 
 void SQLDatabase::setBusyTimeout(int ms)

@@ -1,3 +1,19 @@
+2006-07-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders and Tim Hatcher
+
+        Added an accessor to a SQLite config option to change its disk-syncing behavior.
+        Used this accessor to significantly speed up writes to the Icon DB.
+
+        * icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):  Disable full syncing to the SQLite db to speed up writes to the icondb
+
+        * icon/SQLDatabase.cpp:
+        (SQLDatabase::setFullsync):
+        (SQLDatabase::setSynchronous):
+        * icon/SQLDatabase.h:
+        (WebCore::SQLDatabase::):  Added accessor to the SQLite config pragma "synchronous"
+
 2006-07-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -72,8 +72,11 @@ bool IconDatabase::open(const String& databasePath)
         clearDatabase();
         recreateDatabase();
     }
-    
+
+    // These are actually two different SQLite config options - not my fault they are named confusingly  ;)
+    m_db.setSynchronous(SQLDatabase::SyncOff);    
     m_db.setFullsync(false);
+    
     return isOpen();
 }
 
