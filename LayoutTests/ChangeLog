@@ -1,5 +1,15 @@
 2006-07-07  Levi Weintraub  <lweintraub@apple.com>
 
+        Reviewed by NOBODY
+
+        Missed a few in the last update...
+
+        * fast/forms/input-delete-expected.txt:
+        * fast/repaint/inline-outline-repaint-expected.txt:
+        * fast/repaint/selection-after-delete-expected.txt:
+
+2006-07-07  Levi Weintraub  <lweintraub@apple.com>
+
         Reviewed by justin
 
         Deletion editing deligates now show up!
