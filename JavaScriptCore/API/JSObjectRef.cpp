@@ -88,7 +88,7 @@ JSObjectRef JSFunctionMakeWithBody(JSContextRef context, JSStringBufferRef body,
     if (!bodyNode) {
         if (exception)
             *exception = Error::create(exec, SyntaxError, errMsg, errLine, sid, jsSourceURL);
-        return NULL;
+        return 0;
     }
 
     ScopeChain scopeChain;
@@ -229,7 +229,7 @@ JSValueRef JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSOb
         if (exception)
             *exception = exec->exception();
         exec->clearException();
-        result = NULL;
+        result = 0;
     }
     return result;
 }
@@ -254,8 +254,8 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, 
     if (exec->hadException()) {
         if (exception)
             *exception = exec->exception();
-        result = NULL;
         exec->clearException();
+        result = 0;
     }
     return result;
 }

@@ -204,7 +204,7 @@ JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value)
     JSObjectRef objectRef = toRef(jsValue->toObject(exec));
     if (exec->hadException()) {
         exec->clearException();
-        objectRef = NULL;
+        objectRef = 0;
     }
     return objectRef;
 }    
