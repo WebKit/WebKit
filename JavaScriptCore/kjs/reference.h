@@ -40,7 +40,7 @@ namespace KJS {
      * Performs the GetPropertyName type conversion operation on this value
      * (ECMA 8.7)
      */
-    Identifier getPropertyName(ExecState *exec) const;
+    Identifier getPropertyName() const;
 
     /**
      * Performs the GetValue type conversion operation on this value

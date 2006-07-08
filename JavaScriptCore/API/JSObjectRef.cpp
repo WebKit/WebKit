@@ -53,7 +53,7 @@ JSObjectRef JSObjectMake(JSContextRef context, JSClassRef jsClass, JSObjectRef p
     if (!jsClass)
         return toRef(new JSObject(jsPrototype)); // slightly more efficient
     else
-        return toRef(new JSCallbackObject(jsClass, jsPrototype));
+        return toRef(new JSCallbackObject(context, jsClass, jsPrototype));
 }
 
 JSObjectRef JSFunctionMake(JSContextRef context, JSCallAsFunctionCallback callAsFunction)
@@ -281,12 +281,11 @@ JSPropertyEnumeratorRef JSObjectCreatePropertyEnumerator(JSContextRef context, J
     return JSPropertyEnumeratorRetain(enumerator);
 }
 
-JSStringBufferRef JSPropertyEnumeratorGetNext(JSContextRef context, JSPropertyEnumeratorRef enumerator)
+JSStringBufferRef JSPropertyEnumeratorGetNext(JSPropertyEnumeratorRef enumerator)
 {
-    ExecState* exec = toJS(context);
     ReferenceListIterator& iterator = enumerator->iterator;
     if (iterator != enumerator->list.end()) {
-        JSStringBufferRef result = toRef(iterator->getPropertyName(exec).ustring().rep());
+        JSStringBufferRef result = toRef(iterator->getPropertyName().ustring().rep());
         iterator++;
         return result;
     }

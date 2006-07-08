@@ -36,8 +36,8 @@ namespace KJS {
 class JSCallbackObject : public JSObject
 {
 public:
-    JSCallbackObject(JSClassRef globalObjectClass);
-    JSCallbackObject(JSClassRef globalObjectClass, JSObject* prototype);
+    JSCallbackObject(JSContextRef, JSClassRef);
+    JSCallbackObject(JSContextRef, JSClassRef, JSObject* prototype);
     virtual ~JSCallbackObject();
         
     virtual UString className() const;
@@ -75,7 +75,7 @@ private:
     JSCallbackObject(); // prevent default construction
     JSCallbackObject(const JSCallbackObject&);
 
-    void init(JSClassRef jsClass);
+    void init(JSContextRef, JSClassRef);
     
     static JSValue* cachedValueGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* staticValueGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);

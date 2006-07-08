@@ -1,3 +1,40 @@
+2006-07-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        - Standardized which functions take a JSContext as an argument. The rule is:
+        if you might execute JavaScript, you take a JSContext, otherwise you don't.
+        
+        The FIXME in JSObjectRef.h requires refactoring some parts of Interpreter,
+        but not API changes, so I'm putting it off until later.
+
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::JSCallbackObject):
+        (KJS::JSCallbackObject::init):
+        * API/JSCallbackObject.h:
+        * API/JSContextRef.cpp:
+        (JSContextCreate):
+        * API/JSContextRef.h:
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSPropertyEnumeratorGetNext):
+        * API/JSObjectRef.h:
+        * API/testapi.c:
+        (MyObject_initialize):
+        (main):
+        * JavaScriptCore.exp:
+        * kjs/array_object.cpp:
+        (ArrayInstance::setLength):
+        (ArrayInstance::pushUndefinedObjectsToEnd):
+        * kjs/nodes.cpp:
+        (ForInNode::execute):
+        * kjs/reference.cpp:
+        (KJS::Reference::getPropertyName):
+        (KJS::Reference::getValue):
+        * kjs/reference.h:
+        * kjs/scope_chain.cpp:
+        (KJS::ScopeChain::print):
+
 2006-07-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

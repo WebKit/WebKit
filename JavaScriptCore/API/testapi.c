@@ -122,7 +122,7 @@ static JSValueRef jsGlobalValue; // non-stack value for testing JSGCProtect()
 /* MyObject pseudo-class */
 
 static bool didInitialize = false;
-static void MyObject_initialize(JSObjectRef object)
+static void MyObject_initialize(JSContextRef context, JSObjectRef object)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -593,7 +593,7 @@ int main(int argc, char* argv[])
     JSObjectSetProperty(context, o, jsCFString,  JSNumberMake(1), kJSPropertyAttributeDontEnum);
     JSPropertyEnumeratorRef enumerator = JSObjectCreatePropertyEnumerator(context, o);
     int count = 0;
-    while (JSPropertyEnumeratorGetNext(context, enumerator))
+    while (JSPropertyEnumeratorGetNext(enumerator))
         ++count;
     JSPropertyEnumeratorRelease(enumerator);
     assert(count == 1); // jsCFString should not be enumerated

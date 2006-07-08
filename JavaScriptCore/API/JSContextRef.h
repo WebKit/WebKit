@@ -110,5 +110,5 @@ bool JSCheckSyntax(JSContextRef context, JSStringBufferRef script, JSStringBuffe
 #ifdef __cplusplus
 }
 #endif
-        
+
 #endif // JSContextRef_h

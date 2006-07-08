@@ -43,7 +43,7 @@ Reference::Reference(JSObject *b, unsigned p)
 {
 }
 
-Identifier Reference::getPropertyName(ExecState*) const
+Identifier Reference::getPropertyName() const
 {
   if (propertyNameIsNumber && prop.isNull())
     prop = Identifier::from(propertyNameAsNumber);
@@ -55,7 +55,7 @@ JSValue *Reference::getValue(ExecState *exec) const
   JSValue *o = base;
   if (!o || !o->isObject()) {
     if (!o || o->isNull())
-      return throwError(exec, ReferenceError, "Can't find variable: " + getPropertyName(exec).ustring());
+      return throwError(exec, ReferenceError, "Can't find variable: " + getPropertyName().ustring());
     return throwError(exec, ReferenceError, "Base is not an object");
   }
 

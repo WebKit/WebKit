@@ -251,7 +251,7 @@ void ArrayInstance::setLength(unsigned newLength, ExecState *exec)
     while (it != sparseProperties.end()) {
       Reference ref = it++;
       bool ok;
-      unsigned index = ref.getPropertyName(exec).toArrayIndex(&ok);
+      unsigned index = ref.getPropertyName().toArrayIndex(&ok);
       if (ok && index > newLength) {
         ref.deleteValue(exec);
       }
@@ -373,7 +373,7 @@ unsigned ArrayInstance::pushUndefinedObjectsToEnd(ExecState *exec)
     while (it != sparseProperties.end()) {
       Reference ref = it++;
       storage[o] = ref.getValue(exec);
-      JSObject::deleteProperty(exec, ref.getPropertyName(exec));
+      JSObject::deleteProperty(exec, ref.getPropertyName());
       o++;
     }
     

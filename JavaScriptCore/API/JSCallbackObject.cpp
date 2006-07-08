@@ -37,19 +37,19 @@ namespace KJS {
 
 const ClassInfo JSCallbackObject::info = { "CallbackObject", 0, 0, 0 };
 
-JSCallbackObject::JSCallbackObject(JSClassRef jsClass)
+JSCallbackObject::JSCallbackObject(JSContextRef context, JSClassRef jsClass)
     : JSObject()
 {
-    init(jsClass);
+    init(context, jsClass);
 }
 
-JSCallbackObject::JSCallbackObject(JSClassRef jsClass, JSObject* prototype)
+JSCallbackObject::JSCallbackObject(JSContextRef context, JSClassRef jsClass, JSObject* prototype)
     : JSObject(prototype)
 {
-    init(jsClass);
+    init(context, jsClass);
 }
 
-void JSCallbackObject::init(JSClassRef jsClass)
+void JSCallbackObject::init(JSContextRef context, JSClassRef jsClass)
 {
     m_privateData = 0;
     m_class = JSClassRetain(jsClass);
@@ -58,7 +58,7 @@ void JSCallbackObject::init(JSClassRef jsClass)
     
     do {
         if (JSInitializeCallback initialize = jsClass->callbacks.initialize)
-            initialize(thisRef);
+            initialize(context, thisRef);
     } while ((jsClass = jsClass->parent));
 }
 

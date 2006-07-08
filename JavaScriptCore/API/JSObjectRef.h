@@ -57,15 +57,14 @@ typedef unsigned JSPropertyAttributes;
 /*! 
 @typedef JSInitializeCallback
 @abstract The callback invoked when an object is first created.
+@param context The execution context to use.
 @param object The JSObject being created.
 @discussion If you named your function Initialize, you would declare it like this:
 
-void Initialize(JSObjectRef object);
+void Initialize(JSContextRef context, JSObjectRef object);
 */
-
-// FIXME: Needs to take a context argument, but can't because no context exists when we're creating the global object
 typedef void
-(*JSInitializeCallback)         (JSObjectRef object);
+(*JSInitializeCallback)         (JSContextRef context, JSObjectRef object);
 
 /*! 
 @typedef JSFinalizeCallback
@@ -492,11 +491,10 @@ void JSPropertyEnumeratorRelease(JSPropertyEnumeratorRef enumerator);
 /*!
 @function
 @abstract Gets a property enumerator's next property.
-@param context The execution context to use.
 @param enumerator The JSPropertyEnumerator whose next property you want to get.
 @result A JSStringBuffer containing the property's name, or NULL if all properties have been enumerated.
 */
-JSStringBufferRef JSPropertyEnumeratorGetNext(JSContextRef context, JSPropertyEnumeratorRef enumerator);
+JSStringBufferRef JSPropertyEnumeratorGetNext(JSPropertyEnumeratorRef enumerator);
 
 /*!
 @function

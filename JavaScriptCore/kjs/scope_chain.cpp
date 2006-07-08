@@ -48,7 +48,7 @@ void ScopeChain::print(ExecState* exec)
 
         fprintf(stderr, "----- [scope %p] -----\n", o);
         for (ReferenceListIterator propIter = propertyList.begin(); propIter != propEnd; propIter++) {
-            Identifier name = propIter->getPropertyName(exec);
+            Identifier name = propIter->getPropertyName();
             fprintf(stderr, "%s, ", name.ascii());
         }
         fprintf(stderr, "\n");

@@ -1883,7 +1883,7 @@ Completion ForInNode::execute(ExecState *exec)
   ReferenceListIterator propIt = propertyList.begin();
 
   while (propIt != propertyList.end()) {
-    Identifier name = propIt->getPropertyName(exec);
+    Identifier name = propIt->getPropertyName();
     if (!v->hasProperty(exec, name)) {
       propIt++;
       continue;
