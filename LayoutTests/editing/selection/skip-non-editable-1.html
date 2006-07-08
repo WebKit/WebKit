@@ -47,15 +47,19 @@ var e3 = document.getElementById("e3");
 
 s.setPosition(e1.firstChild, e1.firstChild.length);
 s.modify("move", "forward", "character");
+s.modify("move", "forward", "character");
 assert(s.anchorNode == e2.firstChild && s.anchorOffset == 0);
 
+s.modify("move", "backward", "character");
 s.modify("move", "backward", "character");
 assert(s.anchorNode == e1.firstChild && s.anchorOffset == e1.firstChild.length);
     
 s.setPosition(e2.firstChild, e2.firstChild.length);
 s.modify("move", "forward", "character");
+s.modify("move", "forward", "character");
 assert(s.anchorNode == e3.firstChild && s.anchorOffset == 0);
 
+s.modify("move", "backward", "character");
 s.modify("move", "backward", "character");
 assert(s.anchorNode == e2.firstChild && s.anchorOffset == e2.firstChild.length)
 </script>

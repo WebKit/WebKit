@@ -1,10 +1,12 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 13 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of BODY > HTML > #document to 13 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of TD > TR > TBODY > TABLE > BODY > HTML > #document to 1 of TD > TR > TBODY > TABLE > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of TD > TR > TBODY > TABLE > BODY > HTML > #document to 1 of TD > TR > TBODY > TABLE > BODY > HTML > #document
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
@@ -16,10 +18,12 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of TD > TR > TBODY > TABLE > BODY > HTML > #document to 1 of TD > TR > TBODY > TABLE > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of TD > TR > TBODY > TABLE > BODY > HTML > #document to 1 of TD > TR > TBODY > TABLE > BODY > HTML > #document
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 13 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of BODY > HTML > #document to 13 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification

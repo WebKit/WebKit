@@ -75,9 +75,9 @@ public:
 
     PassRefPtr<Range> toRange() const;
     
-    Element* rootEditableElement() const { return start().node() ? start().node()->rootEditableElement() : 0; }
-    bool isContentEditable() const { return start().node() ? start().node()->isContentEditable() : false; }
-    bool isContentRichlyEditable() const { return start().node() ? start().node()->isContentRichlyEditable() : false; }
+    Element* rootEditableElement() const;
+    bool isContentEditable() const;
+    bool isContentRichlyEditable() const;
 
     void debugPosition() const;
 

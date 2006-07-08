@@ -160,7 +160,7 @@ void Selection::validate()
     if (m_extent.isNotNull() && !baseAndExtentEqual)
         m_extent = VisiblePosition(m_extent, m_affinity).deepEquivalent();
 
-    // Make sure we do not have a dangling start or end
+    // Make sure we do not have a dangling base or extent.
     if (m_base.isNull() && m_extent.isNull())
         m_baseIsFirst = true;
     else if (m_base.isNull()) {
@@ -258,6 +258,12 @@ void Selection::validate()
             break;
     }
     
+    // Make sure we do not have a dangling start or end.
+    if (m_start.isNull())
+        m_start = m_end;
+    if (m_end.isNull())
+        m_end = m_start;
+    
     adjustForEditableContent();
 
     // adjust the state
@@ -290,7 +296,7 @@ void Selection::validate()
 
 void Selection::adjustForEditableContent()
 {
-    if (m_base.isNull())
+    if (m_base.isNull() || m_start.isNull() || m_end.isNull())
         return;
 
     Node *baseRoot = m_base.node()->rootEditableElement();
@@ -370,6 +376,21 @@ void Selection::adjustForEditableContent()
     // Correct the extent if necessary.
     if (baseEditableAncestor != lowestEditableAncestor(m_extent.node()))
         m_extent = m_baseIsFirst ? m_end : m_start;
+}
+
+bool Selection::isContentEditable() const
+{
+    return isEditablePosition(start());
+}
+
+bool Selection::isContentRichlyEditable() const
+{
+    return isRichlyEditablePosition(start());
+}
+
+Element* Selection::rootEditableElement() const
+{
+    return editableRootForPosition(start());
 }
 
 void Selection::debugPosition() const

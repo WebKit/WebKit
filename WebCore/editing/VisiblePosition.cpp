@@ -67,12 +67,12 @@ VisiblePosition VisiblePosition::next(bool stayInEditableContent) const
     if (!stayInEditableContent || next.isNull())
         return next;
     
-    Node* highestRoot = highestEditableRoot(deepEquivalent().node());
+    Node* highestRoot = highestEditableRoot(deepEquivalent());
     
     if (!next.deepEquivalent().node()->isAncestor(highestRoot))
         return VisiblePosition();
 
-    if (highestEditableRoot(next.deepEquivalent().node()) == highestRoot)
+    if (highestEditableRoot(next.deepEquivalent()) == highestRoot)
         return next;
     
     return firstEditablePositionAfterPositionInRoot(next.deepEquivalent(), highestRoot);
@@ -103,12 +103,12 @@ VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
     if (!stayInEditableContent || prev.isNull())
         return prev;
     
-    Node* highestRoot = highestEditableRoot(deepEquivalent().node());
+    Node* highestRoot = highestEditableRoot(deepEquivalent());
     
     if (!prev.deepEquivalent().node()->isAncestor(highestRoot))
         return VisiblePosition();
         
-    if (highestEditableRoot(prev.deepEquivalent().node()) == highestRoot)
+    if (highestEditableRoot(prev.deepEquivalent()) == highestRoot)
         return prev;
 
     return lastEditablePositionBeforePositionInRoot(prev.deepEquivalent(), highestRoot);

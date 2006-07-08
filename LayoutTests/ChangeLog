@@ -1,3 +1,14 @@
+2006-07-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+
+        * editing/selection/editable-non-editable-crash-expected.checksum: Added.
+        * editing/selection/editable-non-editable-crash-expected.png: Added.
+        * editing/selection/editable-non-editable-crash-expected.txt: Added.
+        * editing/selection/editable-non-editable-crash.html: Added.
+        * editing/selection/skip-non-editable-1-expected.txt:
+        * editing/selection/skip-non-editable-1.html:
+
 2006-07-07  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by NOBODY

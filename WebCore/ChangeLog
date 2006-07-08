@@ -1,3 +1,38 @@
+2006-07-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        Fix Mail ToDo crashers.
+
+        * dom/Range.cpp:
+        (WebCore::Range::compareBoundaryPoints): Added an ASSERT that both
+        containers are non-null and an early return.
+        * editing/Selection.cpp:
+        (WebCore::Selection::validate): Fix a dangling start/end.
+        (WebCore::Selection::adjustForEditableContent): Added an early return if
+        m_start or m_end are null.
+        (WebCore::Selection::isContentEditable): Use isRichlyEditablePosition.
+        (WebCore::Selection::isContentRichlyEditable): Ditto.
+        * editing/Selection.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::next): Use the new highestEditableRoot.
+        (WebCore::VisiblePosition::previous): Ditto.
+        * editing/htmlediting.cpp:
+        (WebCore::highestEditableRoot): Takes in a position.
+        (WebCore::isEditablePosition): Added.
+        (WebCore::isRichlyEditablePosition): Added.
+        (WebCore::rootEditableElement): Added.
+        (WebCore::nextCandidate): Moved and split out from nextVisiblePosition.
+        (WebCore::nextVisuallyDistinctCandidate): Ditto.
+        (WebCore::previousCandidate): Moved and split out from previousVisiblePosition.
+        (WebCore::previousVisuallyDistinctCandidate): Ditto.
+        (WebCore::firstEditablePositionAfterPositionInRoot): Iterate over positions,
+        using nextVisuallyDistinctCandidate, skipping atomic nodes that are non-editable.
+        (WebCore::lastEditablePositionBeforePositionInRoot): Ditto.
+        * editing/htmlediting.h:
+        * editing/visible_units.cpp:
+        (WebCore::startOfWord): Added a FIXME.
+
 2006-07-07  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by justin

@@ -193,6 +193,8 @@ static unsigned startWordBoundary(const UChar* characters, unsigned length)
 
 VisiblePosition startOfWord(const VisiblePosition &c, EWordSide side)
 {
+    // FIXME: This returns a null VP for c at the start of the document
+    // and side == LeftWordIfOnBoundary
     VisiblePosition p = c;
     if (side == RightWordIfOnBoundary) {
         // at paragraph end, the startofWord is the current position

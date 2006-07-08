@@ -120,12 +120,13 @@ int comparePositions(const Position& a, const Position& b)
     return Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB);
 }
 
-Node* highestEditableRoot(Node* node)
+Node* highestEditableRoot(const Position& position)
 {
+    Node* node = position.node();
     if (!node)
         return 0;
         
-    Node* highestRoot = node->rootEditableElement();
+    Node* highestRoot = editableRootForPosition(position);
     if (!highestRoot)
         return 0;
     
@@ -158,40 +159,110 @@ Node* lowestEditableAncestor(Node* node)
     return lowestRoot;
 }
 
+bool isEditablePosition(const Position& p)
+{
+    Node* node = p.node();
+    if (!node)
+        return false;
+        
+    if (node->renderer() && node->renderer()->isTable())
+        node = node->parentNode();
+    
+    return node->isContentEditable();
+}
+
+bool isRichlyEditablePosition(const Position& p)
+{
+    Node* node = p.node();
+    if (!node)
+        return false;
+        
+    if (node->renderer() && node->renderer()->isTable())
+        node = node->parentNode();
+    
+    return node->isContentRichlyEditable();
+}
+
+Element* editableRootForPosition(const Position& p)
+{
+    Node* node = p.node();
+    if (!node)
+        return 0;
+        
+    if (node->renderer() && node->renderer()->isTable())
+        node = node->parentNode();
+    
+    return node->rootEditableElement();
+}
+
+Position nextCandidate(const Position& position)
+{
+    Position p = position;
+    while (!p.atEnd()) {
+        p = p.next(UsingComposedCharacters);
+        if (p.inRenderedContent())
+            return p;
+    }
+    return Position();
+}
+
+Position nextVisuallyDistinctCandidate(const Position& position)
+{
+    Position p = position;
+    Position downstreamStart = p.downstream();
+    while (!p.atEnd()) {
+        p = p.next(UsingComposedCharacters);
+        if (p.inRenderedContent() && p.downstream() != downstreamStart)
+            return p;
+    }
+    return Position();
+}
+
+Position previousCandidate(const Position& position)
+{
+    Position p = position;
+    while (!p.atStart()) {
+        p = p.previous(UsingComposedCharacters);
+        if (p.inRenderedContent())
+            return p;
+    }
+    return Position();
+}
+
+Position previousVisuallyDistinctCandidate(const Position& position)
+{
+    Position p = position;
+    Position downstreamStart = p.downstream();
+    while (!p.atStart()) {
+        p = p.previous(UsingComposedCharacters);
+        if (p.inRenderedContent() && p.downstream() != downstreamStart)
+            return p;
+    }
+    return Position();
+}
+
 VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& position, Node* highestRoot)
 {
     if (comparePositions(position, Position(highestRoot, 0)) == -1)
         return VisiblePosition(Position(highestRoot, 0));
 
-    Node* node = position.node();
-    Node* child = node->childNode(position.offset());
-    node = child ? child : node->traverseNextSibling(highestRoot);
+    Position p = nextVisuallyDistinctCandidate(position);
+    while (p.isNotNull() && !isEditablePosition(p) && p.node()->isAncestor(highestRoot))
+        p = isAtomicNode(p.node()) ? positionAfterNode(p.node()) : nextVisuallyDistinctCandidate(p);
 
-    while (node && !node->isContentEditable())
-        node = node->traverseNextNode(highestRoot);
-    
-    if (!node)
-        return VisiblePosition();
-
-    return VisiblePosition(Position(node, 0));
+    return VisiblePosition(p);
 }
 
 VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& position, Node* highestRoot)
 {
     if (comparePositions(position, Position(highestRoot, maxDeepOffset(highestRoot))) == 1)
         return VisiblePosition(Position(highestRoot, maxDeepOffset(highestRoot)));
-
-    Node* node = position.node();
-    Node* child = node->firstChild() && position.offset() > 1 ? node->childNode(position.offset() - 1) : 0;
-    node = child ? child : node->traversePreviousNode(highestRoot);
-
-    while (node && !node->isContentEditable())
-        node = node->traversePreviousNodePostOrder(highestRoot);
     
-    if (!node)
-        return VisiblePosition();
-        
-    return VisiblePosition(Position(node, maxDeepOffset(node)));
+    Position p = previousVisuallyDistinctCandidate(position);
+    while (p.isNotNull() && !isEditablePosition(p) && p.node()->isAncestor(highestRoot))
+        p = isAtomicNode(p.node()) ? positionBeforeNode(p.node()) : previousVisuallyDistinctCandidate(p);
+
+    return VisiblePosition(p);
 }
 
 // antidote for maxDeepOffset()

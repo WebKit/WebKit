@@ -388,6 +388,11 @@ short Range::compareBoundaryPoints(CompareHow how, const Range *sourceRange, Exc
 
 short Range::compareBoundaryPoints( Node *containerA, int offsetA, Node *containerB, int offsetB )
 {
+    ASSERT(containerA && containerB);
+    if (!containerA)
+        return -1;
+    if (!containerB)
+        return 1;
     // see DOM2 traversal & range section 2.5
 
     // case 1: both points have the same container
