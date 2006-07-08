@@ -1,3 +1,16 @@
+2006-07-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by TimO.
+
+        - Added ability to pass NULL for thisObject when calling JSObjectCallAsFunction,
+        to match JSEvaluate.
+        
+        * API/JSObjectRef.cpp:
+        (JSObjectCallAsFunction):
+        * API/JSObjectRef.h:
+        * API/testapi.c:
+        (main):
+
 === Safari-521.15 ===
 
 2006-07-07  Geoffrey Garen  <ggaren@apple.com>

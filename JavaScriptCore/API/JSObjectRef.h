@@ -441,7 +441,7 @@ bool JSObjectIsFunction(JSObjectRef object);
 @abstract Calls an object as a function.
 @param context The execution context to use.
 @param object The JSObject to call as a function.
-@param thisObject The JSObject to use as 'this' in the function call.
+@param thisObject The object to use as "this," or NULL to use the global object as "this."
 @param argc An integer count of the number of arguments in argv.
 @param argv A JSValue array of the  arguments to pass to the function.
 @param exception A pointer to a JSValueRef in which to store an uncaught exception, if any. Pass NULL if you do not care to store an uncaught exception.

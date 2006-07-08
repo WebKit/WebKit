@@ -601,6 +601,14 @@ int main(int argc, char* argv[])
     JSClassRef nullCallbacksClass = JSClassCreate(NULL, NULL, NULL, NULL);
     JSClassRelease(nullCallbacksClass);
     
+    functionBuf = JSStringBufferCreateUTF8("return this;");
+    function = JSFunctionMakeWithBody(context, functionBuf, NULL, 1, NULL);
+    JSStringBufferRelease(functionBuf);
+    v = JSObjectCallAsFunction(context, function, NULL, 0, NULL, NULL);
+    assert(JSValueIsEqual(context, v, globalObject));
+    v = JSObjectCallAsFunction(context, function, o, 0, NULL, NULL);
+    assert(JSValueIsEqual(context, v, o));
+    
     char* script = createStringWithContentsOfFile("testapi.js");
     JSStringBufferRef scriptBuf = JSStringBufferCreateUTF8(script);
     result = JSEvaluate(context, scriptBuf, NULL, NULL, 1, &exception);
