@@ -1,5 +1,9 @@
 2006-07-08  Darin Adler  <darin@apple.com>
 
+        * Scripts/do-webcore-rename: A few more.
+
+2006-07-08  Darin Adler  <darin@apple.com>
+
         * Scripts/do-webcore-rename: Another cut at renames. About ready to go (later today).
 
 2006-07-04  Maciej Stachowiak  <mjs@apple.com>
