@@ -65,10 +65,7 @@ sub wanted
     push @paths, $File::Find::name;
 }
 
-# find all symbols ending in Impl
-
 my %renames = (
-    "DOMRect" => "JSRect",
     "KHTMLSettings" => "Settings",
     "KSSLKeyGen" => "SSLKeyGenerator",
     "KWQCString" => "DeprecatedCString",
@@ -90,7 +87,7 @@ my %renames = (
     "KWQListBoxSeparator" => "ListBoxSeparator",
     "KWQListBoxSeparator" => "ListBoxSeparator",
     "KWQListNode" => "DeprecatedListNode",
-    "KWQNSControlSizeForFont" => "ControlSize",
+    "KWQNSControlSizeForFont" => "ControlSizeForFont",
     "KWQNSTextAlignment" => "TextAlignment",
     "KWQPTRQUEUE_H_" => "DeprecatedPtrQueue_h",
     "KWQPageState" => "WebCorePageState",
@@ -98,8 +95,8 @@ my %renames = (
     "KWQPopUpButtonCell" => "WebCorePopUpButtonCell",
     "KWQPtrQueue" => "DeprecatedPtrQueue",
     "KWQRegExpPrivate" => "Private",
-    "KWQRelease" => "Release",
-    "KWQRetain" => "Retain",
+    "KWQRelease" => "HardRelease",
+    "KWQRetain" => "HardRetain",
     "KWQSCROLLBAR_H_" => "ScrollBar_h",
     "KWQScrollBar" => "WebCoreScrollBar",
     "KWQScrollDirection" => "ScrollDirection",
@@ -130,6 +127,7 @@ my %renames = (
     "KWQWMatrix" => "AffineTransform",
     "KWQ_LIST_IMPL_H" => "DeprecatedPtrListImpl_h",
     "MouseEventMac" => "PlatformMouseEventMac",
+    "QChar" => "DeprecatedChar",
     "Q3CString" => "DeprecatedCString",
     "Q3PtrList" => "DeprecatedPtrList",
     "Q3PtrListIterator" => "DeprecatedPtrListIterator",
@@ -149,7 +147,6 @@ my %renames = (
     "QTextStreamManipulator" => "TextStreamManipulator",
     "QTextStreamSeparator" => "TextStreamSeparator",
     "QWMatrix" => "AffineTransform",
-    "RectImpl" => "DOMRect",
     "detachQSlider" => "detachSlider",
     "initWithQSlider" => "initWithSlider",
     "qmatrix" => "matrix",
@@ -163,6 +160,43 @@ my %renames = (
     "_KWQ_truncateToNumComposedCharacterSequences" => "_webcore_truncateToNumComposedCharacterSequences",
     "_KWQ_currentEditor" => "_webcore_currentEditor",
     "KWQInternal" => "WebCoreInternal",
+    "KWQLoader" => "LoaderFunctions",
+    "KWQFILEBUTTON_H" => "FileButton_h",
+    "KWQLISTBOX_H_" => "ListBox_h",
+    "KWQComboBoxKnowsAppKitSecrets" => "WebCorePopUpButtonKnowsAppKitSecrets",
+    "KWQServeSynchronousRequest" => "ServeSynchronousRequest",
+    "KWQCheckCacheObjectStatus" => "CheckCacheObjectStatus",
+    "KWQCheckIfReloading" => "CheckIfReloading",
+    "KWQIsResponseURLEqualToURL" => "IsResponseURLEqualToURL",
+    "KWQResponseURL" => "ResponseURL",
+    "KWQResponseMIMEType" => "ResponseMIMEType",
+    "KWQResponseIsMultipart" => "ResponseIsMultipart",
+    "KWQNumberOfPendingOrLoadingRequests" => "NumberOfPendingOrLoadingRequests",
+    "KWQCacheObjectExpiresTime" => "CacheObjectExpiresTime",
+    "KWQHeaderStringFromDictionary" => "HeaderStringFromDictionary",
+    "KWQResourceLoader" => "WebCoreResourceLoaderImp",
+    "KWQTableViewTypeSelectCallback" => "ListBoxTypeSelectCallback",
+    "KWQKIOGlobal" => "CacheControl",
+    "KWQVALUELIST_H_" => "DeprecatedValueListImpl_h",
+    "KWQCLIPBOARD_H_" => "ClipboardMac_h",
+    "KWQRetainNSRelease" => "HardRetainWithNSRelease",
+    "KWQCFAutorelease" => "HardAutorelease",
+    "QWMATRIX_H_" => "AffineTransform_h",
+    "QCOMBOBOX_H_" => "PopUpButton_h",
+    "QTEXTEDIT_H_" => "TextBox_h",
+    "QLineEdit_H" => "TextField_h",
+    "QTextStream_H" => "TextStream_h",
+    "ALLOC_QCHAR" => "WEBCORE_ALLOCATE_CHARACTERS",
+    "REALLOC_QCHAR" => "WEBCORE_REALLOCATE_CHARACTERS",
+    "QLIST_H_" => "DeprecatedPtrList_h",
+    "QS_INTERNAL_BUFFER_SIZE" => "WEBCORE_DS_INTERNAL_BUFFER_SIZE",
+    "QS_INTERNAL_BUFFER_CHARS" => "WEBCORE_DS_INTERNAL_BUFFER_CHARS",
+    "QS_INTERNAL_BUFFER_UCHARS" => "WEBCORE_DS_INTERNAL_BUFFER_UCHARS",
+    "QSTRING_DEBUG_ALLOCATIONS" => "WEBCORE_DS_DEBUG_ALLOCATIONS",
+    "QSTRINGLIST_H_" => "DeprecatedStringList_h",
+    "QVALUELIST_H_" => "DeprecatedValueList_h",
+    "QSIZEF_H_" => "FloatSize_h",
+    "QREGEXP_H_" => "RegularExpression_h",
 );
 
 # rename files
@@ -196,6 +230,8 @@ for my $file (sort @paths) {
         close FILE;
     }
     my $newContents = $contents;
+
+    $newContents =~ s/\n\s*class\s+AffineTransform;\s*\n/\n/g;
 
     for my $from (keys %renames) {
         $newContents =~ s/\b$from(?!["\w])/$renames{$from}/g; # this " unconfuses Xcode syntax highlighting
