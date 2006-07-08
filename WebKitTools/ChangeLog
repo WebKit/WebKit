@@ -1,5 +1,16 @@
 2006-07-08  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff (well, half of it at least).
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9788
+          storage leaks in Objective-C tests
+
+        * DumpRenderTree/DumpRenderTree.m: (-[LayoutTestController keepWebHistory]):
+        * DumpRenderTree/ObjCPlugin.m: (-[ObjCPlugin removeBridgeRestrictions:]):
+        Add a release to fix a storage leak.
+
+2006-07-08  Darin Adler  <darin@apple.com>
+
         * Scripts/do-webcore-rename: A few more.
 
 2006-07-08  Darin Adler  <darin@apple.com>

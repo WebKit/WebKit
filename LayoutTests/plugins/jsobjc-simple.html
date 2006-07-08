@@ -19,7 +19,7 @@ function test() {
     // test creating an obj-c object
     var NSCell = objc('NSCell');
     print('got class: ' + NSCell);
-    var cell = NSCell.alloc().init();
+    var cell = NSCell.alloc().init().autorelease();
     print('created object: <' + cell.className() + '>');
     cell.setValue_forKey_('zoe', 'stringValue');
     print('set string value: ' + cell.stringValue());

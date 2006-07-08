@@ -149,7 +149,9 @@ static BOOL _allowsScriptsFullAccess = NO;
     [NSObject setAllowsScriptsFullAccess:YES];
     
     // store a JSObjC instance into the provided container
-    [container setValue:[[JSObjC alloc] init] forKey:@"objc"];
+    JSObjC *objc = [[JSObjC alloc] init];
+    [container setValue:objc forKey:@"objc"];
+    [objc release];
 }
 
 @end

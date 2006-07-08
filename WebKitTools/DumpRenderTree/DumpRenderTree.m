@@ -633,8 +633,11 @@ static void dump(void)
 
 - (void)keepWebHistory
 {
-    if (![WebHistory optionalSharedHistory])
-        [WebHistory setOptionalSharedHistory:[[WebHistory alloc] init]];
+    if (![WebHistory optionalSharedHistory]) {
+        WebHistory *history = [[WebHistory alloc] init];
+        [WebHistory setOptionalSharedHistory:history];
+        [history release];
+    }
 }
 
 - (void)waitUntilDone 
