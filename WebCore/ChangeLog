@@ -1,3 +1,9 @@
+2006-07-08  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows build
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Add missing source files.
+
 === Safari-521.15 ===
 
 2006-07-07  Justin Garcia  <justin.garcia@apple.com>

@@ -843,6 +843,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSOverflowEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSOverflowEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSProcessingInstruction.cpp"
 				>
 			</File>
@@ -3419,6 +3427,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\xml\XSLImportRule.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\xml\XSLImportRule.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\xml\XSLStyleSheet.cpp"
 				>
 			</File>
@@ -3752,6 +3768,14 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\Notation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\OverflowEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\OverflowEvent.h"
 				>
 			</File>
 			<File
