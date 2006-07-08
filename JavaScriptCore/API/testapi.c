@@ -129,8 +129,9 @@ static void MyObject_initialize(JSObjectRef object)
     didInitialize = true;
 }
 
-static bool MyObject_hasProperty(JSObjectRef object, JSStringBufferRef propertyName)
+static bool MyObject_hasProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName)
 {
+    UNUSED_PARAM(context);
     UNUSED_PARAM(object);
 
     if (JSStringBufferIsEqualUTF8(propertyName, "alwaysOne")
@@ -165,8 +166,9 @@ static bool MyObject_getProperty(JSContextRef context, JSObjectRef object, JSStr
     return false;
 }
 
-static bool MyObject_setProperty(JSObjectRef object, JSStringBufferRef propertyName, JSValueRef value)
+static bool MyObject_setProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef value)
 {
+    UNUSED_PARAM(context);
     UNUSED_PARAM(object);
     UNUSED_PARAM(value);
 
@@ -176,8 +178,9 @@ static bool MyObject_setProperty(JSObjectRef object, JSStringBufferRef propertyN
     return false;
 }
 
-static bool MyObject_deleteProperty(JSObjectRef object, JSStringBufferRef propertyName)
+static bool MyObject_deleteProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName)
 {
+    UNUSED_PARAM(context);
     UNUSED_PARAM(object);
     
     if (JSStringBufferIsEqualUTF8(propertyName, "cantDelete"))
@@ -186,8 +189,10 @@ static bool MyObject_deleteProperty(JSObjectRef object, JSStringBufferRef proper
     return false;
 }
 
-static void MyObject_getPropertyList(JSObjectRef object, JSPropertyListRef propertyList)
+static void MyObject_getPropertyList(JSContextRef context, JSObjectRef object, JSPropertyListRef propertyList)
 {
+    UNUSED_PARAM(context);
+    
     JSStringBufferRef propertyNameBuf;
     
     propertyNameBuf = JSStringBufferCreateUTF8("alwaysOne");
@@ -222,8 +227,9 @@ static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef 
     return JSValueToObject(context, JSNumberMake(0));
 }
 
-static bool MyObject_convertToType(JSObjectRef object, JSTypeCode typeCode, JSValueRef* returnValue)
+static bool MyObject_convertToType(JSContextRef context, JSObjectRef object, JSTypeCode typeCode, JSValueRef* returnValue)
 {
+    UNUSED_PARAM(context);
     UNUSED_PARAM(object);
     
     switch (typeCode) {
@@ -267,7 +273,7 @@ static JSClassRef MyObject_class(JSContextRef context)
 {
     static JSClassRef jsClass;
     if (!jsClass) {
-        jsClass = JSClassCreate(context, NULL, NULL, &MyObject_callbacks, NULL);
+        jsClass = JSClassCreate(NULL, NULL, &MyObject_callbacks, NULL);
     }
     
     return jsClass;
@@ -311,7 +317,7 @@ int main(int argc, char* argv[])
     UNUSED_PARAM(argc);
     UNUSED_PARAM(argv);
     
-    context = JSContextCreate(NULL, NULL);
+    context = JSContextCreate(NULL);
 
     JSValueRef jsUndefined = JSUndefinedMake();
     JSValueRef jsNull = JSNullMake();
@@ -338,12 +344,12 @@ int main(int argc, char* argv[])
                                                           1,
                                                           kCFAllocatorNull);
 
-    JSStringBufferRef jsCFStringBuf = JSStringBufferCreateWithCFString(cfString);
+    JSStringBufferRef jsCFStringBuf = JSStringBufferCreateCF(cfString);
     JSValueRef jsCFString = JSStringMake(jsCFStringBuf);
     
     CFStringRef cfEmptyString = CFStringCreateWithCString(kCFAllocatorDefault, "", kCFStringEncodingUTF8);
     
-    JSStringBufferRef jsCFEmptyStringBuf = JSStringBufferCreateWithCFString(cfEmptyString);
+    JSStringBufferRef jsCFEmptyStringBuf = JSStringBufferCreateCF(cfEmptyString);
     JSValueRef jsCFEmptyString = JSStringMake(jsCFEmptyStringBuf);
 
     CFIndex cfStringLength = CFStringGetLength(cfString);
@@ -499,11 +505,14 @@ int main(int argc, char* argv[])
 
     JSValueRef result;
     JSValueRef exception;
+    JSValueRef v;
+    JSObjectRef o;
 
     result = JSEvaluate(context, goodSyntaxBuf, NULL, NULL, 1, NULL);
     assert(result);
     assert(JSValueIsEqual(context, result, jsOne));
-    
+
+    exception = NULL;
     result = JSEvaluate(context, badSyntaxBuf, NULL, NULL, 1, &exception);
     assert(!result);
     assert(!JSContextGetException(context));
@@ -526,8 +535,8 @@ int main(int argc, char* argv[])
     JSStringBufferRelease(goodSyntaxBuf);
     JSStringBufferRelease(badSyntaxBuf);
 
+    v = NULL;
     JSStringBufferRef arrayBuf = JSStringBufferCreateUTF8("Array");
-    JSValueRef v;
     assert(JSObjectGetProperty(context, globalObject, arrayBuf, &v));
     JSObjectRef arrayConstructor = JSValueToObject(context, v);
     JSStringBufferRelease(arrayBuf);
@@ -538,12 +547,19 @@ int main(int argc, char* argv[])
     
     JSStringBufferRef functionBuf;
     
+    v = NULL;
+    exception = NULL;
     functionBuf = JSStringBufferCreateUTF8("rreturn Array;");
-    assert(!JSFunctionMakeWithBody(context, functionBuf, NULL, 1));
+    JSStringBufferRef lineBuf = JSStringBufferCreateUTF8("line");
+    assert(!JSFunctionMakeWithBody(context, functionBuf, NULL, 1, &exception));
+    assert(JSValueIsObject(exception));
+    assert(JSObjectGetProperty(context, exception, lineBuf, &v));
+    assertEqualsAsNumber(v, 2); // FIXME: Lexer::setCode bumps startingLineNumber by 1 -- we need to change internal callers so that it doesn't have to (saying '0' to mean '1' in the API would be really confusing -- it's really confusing internally, in fact)
     JSStringBufferRelease(functionBuf);
+    JSStringBufferRelease(lineBuf);
 
     functionBuf = JSStringBufferCreateUTF8("return Array;");
-    JSObjectRef function = JSFunctionMakeWithBody(context, functionBuf, NULL, 1);
+    JSObjectRef function = JSFunctionMakeWithBody(context, functionBuf, NULL, 1, NULL);
     JSStringBufferRelease(functionBuf);
 
     assert(JSObjectIsFunction(function));
@@ -557,14 +573,32 @@ int main(int argc, char* argv[])
     JSStringBufferRelease(myObjectBuf);
 
     JSStringBufferRef printBuf = JSStringBufferCreateUTF8("print");
-    JSObjectSetProperty(context, globalObject, printBuf, JSFunctionMake(context, print_callAsFunction), kJSPropertyAttributeNone); 
+    JSValueRef printFunction = JSFunctionMake(context, print_callAsFunction);
+    JSObjectSetProperty(context, globalObject, printBuf, printFunction, kJSPropertyAttributeNone); 
     JSStringBufferRelease(printBuf);
+    
+    assert(JSObjectSetPrivate(printFunction, (void*)1));
+    assert(JSObjectGetPrivate(printFunction) == (void*)1);
 
     JSStringBufferRef myConstructorBuf = JSStringBufferCreateUTF8("MyConstructor");
-    JSObjectSetProperty(context, globalObject, myConstructorBuf, JSConstructorMake(context, myConstructor_callAsConstructor), kJSPropertyAttributeNone);
+    JSValueRef myConstructor = JSConstructorMake(context, myConstructor_callAsConstructor);
+    JSObjectSetProperty(context, globalObject, myConstructorBuf, myConstructor, kJSPropertyAttributeNone);
     JSStringBufferRelease(myConstructorBuf);
+    
+    assert(JSObjectSetPrivate(myConstructor, (void*)1));
+    assert(JSObjectGetPrivate(myConstructor) == (void*)1);
+    
+    o = JSObjectMake(context, NULL, NULL);
+    JSObjectSetProperty(context, o, jsOneString, JSNumberMake(1), kJSPropertyAttributeNone);
+    JSObjectSetProperty(context, o, jsCFString,  JSNumberMake(1), kJSPropertyAttributeDontEnum);
+    JSPropertyEnumeratorRef enumerator = JSObjectCreatePropertyEnumerator(context, o);
+    int count = 0;
+    while (JSPropertyEnumeratorGetNext(context, enumerator))
+        ++count;
+    JSPropertyEnumeratorRelease(enumerator);
+    assert(count == 1); // jsCFString should not be enumerated
 
-    JSClassRef nullCallbacksClass = JSClassCreate(context, NULL, NULL, NULL, NULL);
+    JSClassRef nullCallbacksClass = JSClassCreate(NULL, NULL, NULL, NULL);
     JSClassRelease(nullCallbacksClass);
     
     char* script = createStringWithContentsOfFile("testapi.js");

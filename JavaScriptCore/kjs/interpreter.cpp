@@ -425,7 +425,7 @@ Completion Interpreter::checkSyntax(const UString& sourceURL, int startingLineNu
     UString errMsg;
     RefPtr<ProgramNode> progNode = Parser::parse(sourceURL, startingLineNumber, code, codeLength, 0, &errLine, &errMsg);
     if (!progNode)
-        return Completion(Throw, Error::create(&m_globalExec, SyntaxError, errMsg, errLine, 0, &sourceURL));
+        return Completion(Throw, Error::create(&m_globalExec, SyntaxError, errMsg, errLine, 0, sourceURL));
     return Completion(Normal);
 }
 
@@ -457,7 +457,7 @@ Completion Interpreter::evaluate(const UString& sourceURL, int startingLineNumbe
     
     // no program node means a syntax error occurred
     if (!progNode)
-        return Completion(Throw, Error::create(&m_globalExec, SyntaxError, errMsg, errLine, sid, &sourceURL));
+        return Completion(Throw, Error::create(&m_globalExec, SyntaxError, errMsg, errLine, sid, sourceURL));
     
     m_globalExec.clearException();
     

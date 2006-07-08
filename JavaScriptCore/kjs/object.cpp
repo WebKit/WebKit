@@ -562,7 +562,7 @@ const char * const errorNamesArr[] = {
 const char * const * const Error::errorNames = errorNamesArr;
 
 JSObject *Error::create(ExecState *exec, ErrorType errtype, const UString &message,
-                         int lineno, int sourceId, const UString *sourceURL)
+                         int lineno, int sourceId, const UString &sourceURL)
 {
   JSObject *cons;
   switch (errtype) {
@@ -601,8 +601,8 @@ JSObject *Error::create(ExecState *exec, ErrorType errtype, const UString &messa
   if (sourceId != -1)
     err->put(exec, "sourceId", jsNumber(sourceId));
 
-  if(sourceURL)
-   err->put(exec,"sourceURL", jsString(*sourceURL));
+  if(!sourceURL.isNull())
+    err->put(exec, "sourceURL", jsString(sourceURL));
  
   return err;
 
@@ -645,7 +645,7 @@ JSObject *throwError(ExecState *exec, ErrorType type, const char *message)
     return error;
 }
 
-JSObject *throwError(ExecState *exec, ErrorType type, const UString &message, int line, int sourceId, const UString *sourceURL)
+JSObject *throwError(ExecState *exec, ErrorType type, const UString &message, int line, int sourceId, const UString &sourceURL)
 {
     JSObject *error = Error::create(exec, type, message, line, sourceId, sourceURL);
     exec->setException(error);

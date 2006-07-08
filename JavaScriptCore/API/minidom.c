@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     UNUSED_PARAM(argc);
     UNUSED_PARAM(argv);
     
-    JSContextRef context = JSContextCreate(NULL, NULL);
+    JSContextRef context = JSContextCreate(NULL);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     
     JSStringBufferRef printBuf = JSStringBufferCreateUTF8("print");

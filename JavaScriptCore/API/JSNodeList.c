@@ -50,7 +50,7 @@ static JSClassRef JSNodeListPrototype_class(JSContextRef context)
 {
     static JSClassRef jsClass;
     if (!jsClass) {
-        jsClass = JSClassCreate(context, NULL, JSNodeListPrototype_staticFunctions, &kJSObjectCallbacksNone, NULL);
+        jsClass = JSClassCreate(NULL, JSNodeListPrototype_staticFunctions, &kJSObjectCallbacksNone, NULL);
     }
     
     return jsClass;
@@ -103,7 +103,7 @@ static JSClassRef JSNodeList_class(JSContextRef context)
         callbacks.getProperty = JSNodeList_getProperty;
         callbacks.finalize = JSNodeList_finalize;
         
-        jsClass = JSClassCreate(context, JSNodeList_staticValues, NULL, &callbacks, NULL);
+        jsClass = JSClassCreate(JSNodeList_staticValues, NULL, &callbacks, NULL);
     }
     
     return jsClass;

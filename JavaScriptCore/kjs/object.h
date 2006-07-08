@@ -553,7 +553,7 @@ namespace KJS {
      * @param sourceId Optional source id.
      * @param sourceURL Optional source URL.
      */
-    static JSObject *create(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString *sourceURL);
+    static JSObject *create(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString &sourceURL);
     static JSObject *create(ExecState *, ErrorType, const char *message);
 
     /**
@@ -562,7 +562,7 @@ namespace KJS {
     static const char * const * const errorNames;
   };
 
-JSObject *throwError(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString *sourceURL);
+JSObject *throwError(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString &sourceURL);
 JSObject *throwError(ExecState *, ErrorType, const UString &message);
 JSObject *throwError(ExecState *, ErrorType, const char *message);
 JSObject *throwError(ExecState *, ErrorType);

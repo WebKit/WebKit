@@ -43,7 +43,7 @@ _JSPropertyEnumeratorRetain
 _JSPropertyListAdd
 _JSStringBufferCreate
 _JSStringBufferCreateUTF8
-_JSStringBufferCreateWithCFString
+_JSStringBufferCreateCF
 _JSStringBufferGetCharacters
 _JSStringBufferGetCharactersPtr
 _JSStringBufferGetCharactersUTF8

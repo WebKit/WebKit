@@ -109,7 +109,7 @@ static JSClassRef JSNodePrototype_class(JSContextRef context)
 {
     static JSClassRef nodePrototypeClass;
     if (!nodePrototypeClass)
-        nodePrototypeClass = JSClassCreate(context, NULL, JSNodePrototype_staticFunctions, &kJSObjectCallbacksNone, NULL);
+        nodePrototypeClass = JSClassCreate(NULL, JSNodePrototype_staticFunctions, &kJSObjectCallbacksNone, NULL);
     return nodePrototypeClass;
 }
 
@@ -169,7 +169,7 @@ static JSClassRef JSNode_class(JSContextRef context)
         JSObjectCallbacks JSNode_callbacks = kJSObjectCallbacksNone;
         JSNode_callbacks.finalize = JSNode_finalize;
         
-        nodeClass = JSClassCreate(context, JSNode_staticValues, NULL, &JSNode_callbacks, NULL);
+        nodeClass = JSClassCreate(JSNode_staticValues, NULL, &JSNode_callbacks, NULL);
     }
     return nodeClass;
 }

@@ -1,3 +1,98 @@
+2006-07-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        More API action.
+        
+        - Headerdoc finished
+
+        Semantic Changes:
+        - Added a JSContextRef argument to many functions, because you need a 
+        JSContextRef for doing virtually anything. I expect to add this argument
+        to even more functions in a future patch.
+        
+        - Removed the globalObjectPrototype argument to JSContextCreate because
+        you can't create an object until you have a context, so it's impossible
+        to pass a prototype object to JSContextCreate. That's OK because (1) there's
+        no reason to give the global object a prototype and (2) if you really want
+        to, you can just use a separate call to JSObjectSetPrototype.
+        
+        - Removed the JSClassRef argument to JSClassCreate because it was unnecessary,
+        and you need to be able to make the global object's class before you've
+        created a JSContext.
+        
+        - Added an optional exception parameter to JSFunctionMakeWithBody because anything
+        less would be uncivilized.
+        
+        - Made the return value parameter to JSObjectGetProperty optional to match
+        all other return value parameters in the API.
+        
+        - Made JSObjectSetPrivate/JSObjectGetPrivate work on JSCallbackFunctions
+        and JSCallbackConstructors. You could use an abstract base class or strategic
+        placement of m_privateData in the class structure to implement this, but 
+        the former seemed like overkill, and the latter seemed too dangerous.
+        
+        - Fixed a bug where JSPropertyEnumeratorGetNext would skip the first property.
+
+        Cosmetic Changes:
+        - Reversed the logic of the JSChar #ifdef to avoid confusing headerdoc
+        
+        - Removed function names from @function declarations because headeroc
+        can parse them automatically, and I wanted to rule out manual mismatch.
+
+        - Changed Error::create to take a const UString& instead of a UString*
+        because it was looking at me funny.
+        
+        - Renamed JSStringBufferCreateWithCFString to JSStringBufferCreateCF
+        because the latter is more concise and it matches JSStringBufferCreateUTF8.
+        
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::deleteProperty):
+        (KJS::JSCallbackObject::getPropertyList):
+        (KJS::JSCallbackObject::toBoolean):
+        (KJS::JSCallbackObject::toNumber):
+        (KJS::JSCallbackObject::toString):
+        * API/JSClassRef.cpp:
+        (JSClassCreate):
+        * API/JSContextRef.cpp:
+        (JSContextCreate):
+        (JSContextSetException):
+        * API/JSContextRef.h:
+        * API/JSNode.c:
+        (JSNodePrototype_class):
+        (JSNode_class):
+        * API/JSNodeList.c:
+        (JSNodeListPrototype_class):
+        (JSNodeList_class):
+        * API/JSObjectRef.cpp:
+        (JSObjectGetProperty):
+        (JSObjectGetPrivate):
+        (JSObjectSetPrivate):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        (JSPropertyEnumeratorGetNext):
+        * API/JSObjectRef.h:
+        * API/JSStringBufferRef.cpp:
+        (JSStringBufferCreateCF):
+        * API/JSStringBufferRef.h:
+        * API/JSValueRef.cpp:
+        (JSValueIsInstanceOf):
+        * API/JSValueRef.h:
+        * API/minidom.c:
+        (main):
+        * API/minidom.js:
+        * API/testapi.c:
+        (MyObject_hasProperty):
+        (MyObject_setProperty):
+        (MyObject_deleteProperty):
+        (MyObject_getPropertyList):
+        (MyObject_convertToType):
+        (MyObject_class):
+        (main):
+        * JavaScriptCore.exp:
+
 2006-07-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by John.

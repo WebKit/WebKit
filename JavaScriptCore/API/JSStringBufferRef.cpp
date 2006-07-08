@@ -139,7 +139,7 @@ bool JSStringBufferIsEqualUTF8(JSStringBufferRef a, const char* b)
 }
 
 #if defined(__APPLE__)
-JSStringBufferRef JSStringBufferCreateWithCFString(CFStringRef string)
+JSStringBufferRef JSStringBufferCreateCF(CFStringRef string)
 {
     JSLock lock;
     CFIndex length = CFStringGetLength(string);

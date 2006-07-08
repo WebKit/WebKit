@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef JSValueRef_h
@@ -30,14 +30,14 @@
 #include "JSBase.h"
 
 /*!
-  @enum JSTypeCode
-  A constant identifying the type of a JSValueRef.
-  @constant kJSTypeUndefined the unique undefined value
-  @constant kJSTypeNull the unique null value
-  @constant kJSBoolean a primitive boolean value, one of true or false
-  @constant kJSTypeNumber a primitive number value
-  @constant kJSTypeString a primitive string value
-  @constant kJSTypeObject an object (meaning that this JSValueRef is a JSObjectRef)
+@enum JSTypeCode
+@abstract     A constant identifying the type of a JSValue.
+@constant     kJSTypeUndefined  The unique undefined value.
+@constant     kJSTypeNull       The unique null value.
+@constant     kJSTypeBoolean    A primitive boolean value, one of true or false.
+@constant     kJSTypeNumber     A primitive number value.
+@constant     kJSTypeString     A primitive string value.
+@constant     kJSTypeObject     An object value (meaning that this JSValueRef is a JSObjectRef).
 */
 typedef enum {
     kJSTypeUndefined,
@@ -53,199 +53,213 @@ extern "C" {
 #endif
 
 /*!
-  @function JSValueGetType
-  Get the type code for a particular JavaScript value
-  @param value the JS value for which the type should be determined
-  @result      a type code identifying the type
+@function
+@abstract       Returns a JavaScript value's type code.
+@param value    The JSValue whose type you want to obtain.
+@result         A value of type JSTypeCode that identifies value's type.
 */
 JSTypeCode JSValueGetType(JSValueRef value);
 
 /*!
-  @function JSValueIsUndefined
-  Determine if value is of type undefined
-  @param value the JS value to check for undefined type
-  @result      true if the value is undefined, false otherwise
+@function
+@abstract       Tests whether a JavaScript value's type is the undefined type.
+@param value    The JSValue to test.
+@result         true if value's type is the undefined type, otherwise false.
 */
 bool JSValueIsUndefined(JSValueRef value);
 
 /*!
-  @function JSValueIsNull
-  Determine if value is of type null
-  @param value the JS value to check for null type
-  @result      true if the value is null, false otherwise
+@function
+@abstract       Tests whether a JavaScript value's type is the null type.
+@param value    The JSValue to test.
+@result         true if value's type is the null type, otherwise false.
 */
 bool JSValueIsNull(JSValueRef value);
 
 /*!
-  @function JSValueIsBoolean
-  Determine if value is of type boolean
-  @param value the JS value to check for boolean type
-  @result      true if the value is a boolean, false otherwise
+@function
+@abstract       Tests whether a JavaScript value's type is the boolean type.
+@param value    The JSValue to test.
+@result         true if value's type is the boolean type, otherwise false.
 */
 bool JSValueIsBoolean(JSValueRef value);
 
 /*!
-  @function JSValueIsNumber
-  Determine if value is of type number
-  @param value the JS value to check for number type
-  @result      true if the value is a number, false otherwise
+@function
+@abstract       Tests whether a JavaScript value's type is the number type.
+@param value    The JSValue to test.
+@result         true if value's type is the number type, otherwise false.
 */
 bool JSValueIsNumber(JSValueRef value);
 
 /*!
-  @function JSValueIsString
-  Determine if value is of type string
-  @param value the JS value to check for string type
-  @result      true if the value is a string, false otherwise
+@function
+@abstract       Tests whether a JavaScript value's type is the string type.
+@param value    The JSValue to test.
+@result         true if value's type is the string type, otherwise false.
 */
 bool JSValueIsString(JSValueRef value);
 
 /*!
-  @function JSValueIsObject
-  Determine if value is of type object
-  @param value the JS value to check for object type
-  @result      true if the value is an object, false otherwise
+@function
+@abstract       Tests whether a JavaScript value's type is the object type.
+@param value    The JSValue to test.
+@result         true if value's type is the object type, otherwise false.
 */
 bool JSValueIsObject(JSValueRef value);
+
+/*!
+@function
+@abstract       Tests whether a JavaScript value is an object with a given 
+ class in its class chain.
+@param value    The JSValue to test.
+ @result        true if value is an object and has jsClass in its class chain, 
+ otherwise false.
+*/
 bool JSValueIsObjectOfClass(JSValueRef value, JSClassRef jsClass);
 
 // Comparing values
 
 /*!
-  @function JSValueIsEqual
-  Check if two values are equal by JavaScript rules, as if compared by the JS == operator
-  @param context the execution context to use 
-  @param a       the first value to compare
-  @param b       the second value to compare
-  @result        true if the two values are equal, false otherwise
+@function
+@abstract       Tests whether two JavaScript values are equal, as compared by the JS == operator.
+@param context  The execution context to use.
+@param a        The first value to test.
+@param b        The second value to test.
+@result         true if the two values are equal, otherwise false.
 */
 bool JSValueIsEqual(JSContextRef context, JSValueRef a, JSValueRef b);
 
 /*!
-  @function JSValueIsStrictEqual
-  Check if two values are strict equal by JavaScript rules, as if compared by the JS === operator
-  @param context the execution context to use 
-  @param a       the first value to compare
-  @param b       the second value to compare
-  @result        true if the two values are strict equal, false otherwise
+@function
+@abstract       Tests whether two JavaScript values are strict equal, as compared by the JS === operator.
+@param context  The execution context to use.
+@param a        The first value to test.
+@param b        The second value to test.
+@result         true if the two values are strict equal, otherwise false.
 */
 bool JSValueIsStrictEqual(JSContextRef context, JSValueRef a, JSValueRef b);
 
 /*!
-  @function JSValueIsInstanceOf
-  Check if a value is an instance of a particular object; generally this means the object
-  was used as the constructor for that instance
-  @param context the execution context to use 
-  @param value   the possible instance
-  @param object  the possible constructor
-  @result        true if value is an instance of object
+@function
+@abstract       Tests whether a JavaScript value is an object constructed by
+ a given constructor, as compared by the JS instanceof operator.
+@param context  The execution context to use.
+@param value    The JSValue to test.
+@param object   The constructor to test against.
+@result         true if value is an object constructed by constructor, as compared
+ by the JS instanceof operator, otherwise false.
 */
-bool JSValueIsInstanceOf(JSContextRef context, JSValueRef value, JSObjectRef object);
+bool JSValueIsInstanceOf(JSContextRef context, JSValueRef value, JSObjectRef constructor);
 
 // Creating values
 
 /*!
-  @function JSUndefinedMake
-  Make a value of the undefined type.
-  @result The unique undefined value.
+@function
+@abstract   Creates a JavaScript value of the undefined type.
+@result     The unique undefined value.
 */
 JSValueRef JSUndefinedMake(void);
 
 /*!
-  @function JSNullMake
-  Make a value of the null type.
-  @result the unique null value
+@function
+@abstract   Creates a JavaScript value of the null type.
+@result     The unique null value.
 */
 JSValueRef JSNullMake(void);
 
 /*!
-  @function JSBooleanMake
-  Make a value of the boolean type.
-  @param value whether the returned value should be true or false
-  @result      a JS true or false boolean value, as appropriate
+@function
+@abstract       Creates a JavaScript value of the boolean type.
+@param value    The boolean value to assign to the newly created JSValue.
+@result         A JSValue of the boolean type, representing the boolean value of value.
 */
 
 JSValueRef JSBooleanMake(bool value);
 
 /*!
-  @function JSNumberMake
-  Make a value of the number type.
-  @param  value the numberic value of the number to make
-  @result a JS number corresponding to value
+@function
+@abstract       Creates a JavaScript value of the number type.
+@param value    The numeric value to assign to the newly created JSValue.
+@result         A JSValue of the number type, representing the numeric value of value.
 */
 JSValueRef JSNumberMake(double value);
 
 /*!
-  @function JSStringMake
-  Make a value of the string type.
-  @param  buffer the internal string contents for the string value
-  @result a JS string value that has the value of the buffer
+@function
+@abstract       Creates a JavaScript value of the string type.
+@param buffer   The JSStringBuffer to assign to the newly created JSValue. The
+ newly created JSValue retains buffer, and releases it upon garbage collection.
+@result         A JSValue of the string type, representing the string value of buffer.
 */
 JSValueRef JSStringMake(JSStringBufferRef buffer);
 
 // Converting to primitive values
 
 /*!
-  @function JSValueToBoolean
-  Convert a JavaScript value to boolean and return the resulting boolean
-  @param context the execution context to use 
-  @param value   the value to convert
-  @result        the boolean result of conversion
+@function
+@abstract       Converts a JavaScript value to boolean and returns the resulting boolean.
+@param context  The execution context to use.
+@param value    The JSValue to convert.
+@result         The boolean result of conversion.
 */
 bool JSValueToBoolean(JSContextRef context, JSValueRef value);
 
 /*!
-  @function JSValueToNumber
-  Convert a JavaScript value to number and return the resulting number
-  @param context the execution context to use 
-  @param value   the value to convert
-  @result        the numeric result of conversion, or NaN if conversion fails
+@function
+@abstract       Converts a JavaScript value to number and returns the resulting number.
+@param context  The execution context to use.
+@param value    The JSValue to convert.
+@result         The numeric result of conversion, or NaN if conversion fails.
 */
 double JSValueToNumber(JSContextRef context, JSValueRef value);
 
 /*!
-  @function JSValueCopyStringValue
-  Convert a JavaScript value to string and copy the resulting string into a newly allocated character buffer
-  @param context the execution context to use
-  @param value   the value to convert
-  @result        a character buffer containing the result of conversion, or an empty character buffer if conversion fails
+@function
+@abstract       Converts a JavaScript value to string and copies the resulting
+ string into a newly allocated JavaScript string buffer.
+@param context  The execution context to use.
+@param value    The JSValue to convert.
+@result         A JSStringBuffer containing the result of conversion, or an empty
+ string buffer if conversion fails. Ownership follows the copy rule.
 */
 JSStringBufferRef JSValueCopyStringValue(JSContextRef context, JSValueRef value);
 
 /*!
-  @function JSValueToObject
-  Convert a JavaScript value to object and return the resulting object
-  @param context the execution context to use 
-  @param value   the value to convert
-  @result        the object result of conversion, or NULL if conversion fails
+@function
+@abstract Converts a JavaScript value to object and returns the resulting object.
+@param context  The execution context to use.
+@param value    The JSValue to convert.
+@result         The JSObject result of conversion, or NULL if conversion fails.
 */
 JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value);
 
 // Garbage collection
 /*!
-  @function JSGCProtect
-  Protect a JavaScript value from garbage collection; a value may be
-  protected multiple times and must be unprotected an equal number of
-  times to become collectable again.
+@function
+@abstract       Protects a JavaScript value from garbage collection.
+@param value    The JSValue to protect.
+@discussion     A value may be protected multiple times and must be unprotected an
+ equal number of times before becoming eligible for garbage collection.
 */
 void JSGCProtect(JSValueRef value);
 
 /*!
-  @function JSGCProtect
-  Stop protecting a JavaScript value from garbage collection; a value may be
-  protected multiple times and must be unprotected an equal number of
-  times to become collectable again.
+@function
+@abstract       Unprotects a JavaScript value from garbage collection.
+@param value    The JSValue to unprotect.
+@discussion     A value may be protected multiple times and must be unprotected an 
+ equal number of times before becoming eligible for garbage collection.
 */
 void JSGCUnprotect(JSValueRef value);
 
-/*! 
-  @function JSGCCollect
-  Immediately perform a JavaScript garbage collection. JavaScript
-  values that are on the machine stack, in a register, protected, set
-  as the global object of any interpreter, or reachable from any such
-  value will not be collected. It is not normally necessary to call
-  this function directly; the JS runtime will garbage collect as
-  needed.
+/*!
+@function
+@abstract Performs a JavaScript garbage collection. 
+@discussion JavaScript values that are on the machine stack, in a register, 
+ protected by JSGCProtect, set as the global object of an execution context, or reachable from any such
+ value will not be collected. It is not normally necessary to call this function 
+ directly; the JS runtime will garbage collect as needed.
 */
 void JSGCCollect(void);
 

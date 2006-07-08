@@ -70,18 +70,26 @@ JSObjectRef JSConstructorMake(JSContextRef context, JSCallAsConstructorCallback 
     return toRef(new JSCallbackConstructor(exec, callAsConstructor));
 }
 
-JSObjectRef JSFunctionMakeWithBody(JSContextRef context, JSStringBufferRef body, JSStringBufferRef sourceURL, int startingLineNumber)
+JSObjectRef JSFunctionMakeWithBody(JSContextRef context, JSStringBufferRef body, JSStringBufferRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
     JSLock lock;
     
     ExecState* exec = toJS(context);
     UString::Rep* bodyRep = toJS(body);
-    UString::Rep* sourceURLRep = toJS(sourceURL);
+    UString jsSourceURL = UString(toJS(sourceURL));
+
     if (!bodyRep)
         bodyRep = &UString::Rep::null;
-    RefPtr<FunctionBodyNode> bodyNode = Parser::parse(UString(sourceURLRep), startingLineNumber, bodyRep->data(), bodyRep->size(), NULL, NULL, NULL);
-    if (!bodyNode)
+    
+    int sid;
+    int errLine;
+    UString errMsg;
+    RefPtr<FunctionBodyNode> bodyNode = Parser::parse(jsSourceURL, startingLineNumber, bodyRep->data(), bodyRep->size(), &sid, &errLine, &errMsg);
+    if (!bodyNode) {
+        if (exception)
+            *exception = Error::create(exec, SyntaxError, errMsg, errLine, sid, jsSourceURL);
         return NULL;
+    }
 
     ScopeChain scopeChain;
     scopeChain.push(exec->dynamicInterpreter()->globalObject());
@@ -126,8 +134,10 @@ bool JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringBuffe
     JSObject* jsObject = toJS(object);
     UString::Rep* nameRep = toJS(propertyName);
 
-    *value = toRef(jsObject->get(exec, Identifier(nameRep)));
-    return !JSValueIsUndefined(*value);
+    JSValue* jsValue = jsObject->get(exec, Identifier(nameRep));
+    if (value)
+        *value = toRef(jsValue);
+    return !jsValue->isUndefined();
 }
 
 bool JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSStringBufferRef propertyName, JSValueRef value, JSPropertyAttributes attributes)
@@ -160,21 +170,38 @@ void* JSObjectGetPrivate(JSObjectRef object)
 {
     JSObject* jsObject = toJS(object);
     
-    if (!jsObject->inherits(&JSCallbackObject::info))
-        return 0;
+    if (jsObject->inherits(&JSCallbackObject::info))
+        return static_cast<JSCallbackObject*>(jsObject)->getPrivate();
     
-    return static_cast<JSCallbackObject*>(jsObject)->getPrivate();
+    if (jsObject->inherits(&JSCallbackFunction::info))
+        return static_cast<JSCallbackFunction*>(jsObject)->getPrivate();
+    
+    if (jsObject->inherits(&JSCallbackConstructor::info))
+        return static_cast<JSCallbackConstructor*>(jsObject)->getPrivate();
+    
+    return 0;
 }
 
 bool JSObjectSetPrivate(JSObjectRef object, void* data)
 {
     JSObject* jsObject = toJS(object);
     
-    if (!jsObject->inherits(&JSCallbackObject::info))
-        return false;
+    if (jsObject->inherits(&JSCallbackObject::info)) {
+        static_cast<JSCallbackObject*>(jsObject)->setPrivate(data);
+        return true;
+    }
+        
+    if (jsObject->inherits(&JSCallbackFunction::info)) {
+        static_cast<JSCallbackFunction*>(jsObject)->setPrivate(data);
+        return true;
+    }
+        
+    if (jsObject->inherits(&JSCallbackConstructor::info)) {
+        static_cast<JSCallbackConstructor*>(jsObject)->setPrivate(data);
+        return true;
+    }
     
-    static_cast<JSCallbackObject*>(jsObject)->setPrivate(data);
-    return true;
+    return false;
 }
 
 bool JSObjectIsFunction(JSObjectRef object)
@@ -193,8 +220,8 @@ JSValueRef JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSOb
     List argList;
     for (size_t i = 0; i < argc; i++)
         argList.append(toJS(argv[i]));
-    
-    JSValueRef result = toRef(jsObject->call(exec, jsThisObject, argList));
+
+    JSValueRef result = toRef(jsObject->call(exec, jsThisObject, argList)); // returns NULL if object->implementsCall() is false
     if (exec->hadException()) {
         if (exception)
             *exception = exec->exception();
@@ -220,7 +247,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, 
     for (size_t i = 0; i < argc; i++)
         argList.append(toJS(argv[i]));
     
-    JSObjectRef result = toRef(jsObject->construct(exec, argList));
+    JSObjectRef result = toRef(jsObject->construct(exec, argList)); // returns NULL if object->implementsCall() is false
     if (exec->hadException()) {
         if (exception)
             *exception = exec->exception();
@@ -259,8 +286,9 @@ JSStringBufferRef JSPropertyEnumeratorGetNext(JSContextRef context, JSPropertyEn
     ExecState* exec = toJS(context);
     ReferenceListIterator& iterator = enumerator->iterator;
     if (iterator != enumerator->list.end()) {
+        JSStringBufferRef result = toRef(iterator->getPropertyName(exec).ustring().rep());
         iterator++;
-        return toRef(iterator->getPropertyName(exec).ustring().rep());
+        return result;
     }
     return 0;
 }
