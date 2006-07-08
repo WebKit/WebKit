@@ -1,3 +1,57 @@
+2006-07-08  Darin Adler  <darin@apple.com>
+
+        - clear up a few minor housekeeping problems
+
+        * fast/css/xml-stylesheet-pi-not-in-prolog-expected.checksum: Added.
+        * fast/css/xml-stylesheet-pi-not-in-prolog-expected.png: Added.
+        * fast/forms/input-appearance-height-expected.checksum: Added.
+        Added missing test results.
+
+        * fast/block/float/nopaint-after-layer-destruction-expected.checksum:
+        * fast/block/positioning/absolute-positioned-overconstrained.html:
+        * fast/css/ZeroOpacityLayers.html:
+        * fast/css/ZeroOpacityLayers2.html:
+        * fast/css/font-shorthand-weight-only-expected.checksum:
+        * fast/css/hsl-color-expected.checksum:
+        * fast/css/hsla-color-expected.checksum:
+        * fast/css/resize-corner-tracking-expected.checksum:
+        * fast/dom/HTMLLinkElement/pending-stylesheet-count-expected.checksum:
+        * fast/dynamic/selection-highlight-adjust-expected.checksum:
+        * fast/forms/button-generated-content-expected.checksum:
+        * fast/frames/calculate-fixed.html:
+        * fast/frames/calculate-order.html:
+        * fast/frames/calculate-percentage.html:
+        * fast/frames/calculate-relative.html:
+        * fast/frames/calculate-round.html:
+        * fast/history/clicked-link-is-visited-expected.checksum:
+        * fast/layers/opacity-outline-expected.checksum:
+        * fast/media/import-p-red.css:
+        * fast/parser/broken-comments-vs-parsing-mode-expected.checksum:
+        * fast/repaint/clipped-relative-expected.checksum:
+        * fast/repaint/float-move-during-layout-expected.checksum:
+        * fast/repaint/layer-child-outline-expected.checksum:
+        * fast/repaint/outline-shrinking-expected.checksum:
+        * fast/repaint/static-to-positioned-expected.checksum:
+        * fast/repaint/table-collapsed-border-expected.checksum:
+        * fast/table/absolute-table-at-bottom-expected.checksum:
+        * fast/table/border-collapsing/border-collapsing-head-foot-expected.checksum:
+        * fast/table/empty-section-crash-expected.checksum:
+        * fast/table/rtl-cell-display-none-assert-expected.checksum:
+        * fast/table/text-field-baseline-expected.checksum:
+        * fast/text/capitalize-empty-generated-string-expected.checksum:
+        * svg/custom/gradient-stroke-width-expected.checksum:
+        * traversal/stay-within-root-expected.checksum:
+        Removed "No newline at end of file" that snuck in as part of the "apply patch" process.
+
+        * fast/block/positioning/absolute-positioned-overconstrained-expected.txt:
+        * fast/css/ZeroOpacityLayers-expected.checksum:
+        * fast/css/ZeroOpacityLayers-expected.png:
+        * fast/css/ZeroOpacityLayers-expected.txt:
+        * fast/css/ZeroOpacityLayers2-expected.checksum:
+        * fast/css/ZeroOpacityLayers2-expected.png:
+        * fast/css/ZeroOpacityLayers2-expected.txt:
+        Updated tests results that changed due to the above.
+
 2006-07-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
