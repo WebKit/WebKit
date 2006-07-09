@@ -1,3 +1,13 @@
+2006-07-09  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Timothy Hatcher.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9794
+          Teach run-webkit-tests how to ignore tests with performance improvements
+
+        * Scripts/run-webkit-tests: Speed up test list generation, implement --ignore-tests
+        feature, and minor clean up.
+
 2006-07-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff (well, half of it at least).
