@@ -2,7 +2,7 @@
 
         Reviewed by Maciej
 
-        The ICONDEBUG flag no choose either/or the new icon database and the old one
+        The ICONDEBUG flag now chooses either the new icon database or the old one
         No longer any need to live side by side to compare results
 
         * Misc/WebIconDatabase.m:
