@@ -3,7 +3,7 @@
         Reviewed by Darin.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=8251
-        navigator.product incorrect in WebKit.app on Intel Macs
+        navigator.platform incorrect in WebKit.app on Intel Macs
 
         For navigator.platform return "MacIntel" for Intel processors, "MacPPC"
         otherwise.
