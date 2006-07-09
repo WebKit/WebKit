@@ -1,3 +1,25 @@
+2006-07-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Set the stage to remove the workaround for the SQLite BLOB corruption.  A few other small cleanups, and
+        preparation for pruning unreferenced and unretained icons.
+
+        * icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::recreateDatabase):  Added another trigger to assist in icon removal
+        (WebCore::IconDatabase::deletePrivateTables):  Cleaned up logging messages
+        (WebCore::IconDatabase::imageDataForIconID):  #ifdefed the blobbing hack for impending removal, use the real blob by default
+        (WebCore::IconDatabase::imageDataForIconURL):  same
+        (WebCore::IconDatabase::imageDataForPageURL):  same
+        (WebCore::IconDatabase::pruneUnreferencedIcons):  Will delete any icons and their data that are not referenced
+          by any PageURL
+        * icon/IconDatabase.h:
+
+        * icon/SQLDatabase.h:  Changed BlobAsVector to be unsigned char as thats the most reasonable type for
+          a byte-buffer, and is what CFData expects
+        * icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::getColumnBlobAsVector):
+
 2006-07-09  Darin Adler  <darin@apple.com>
 
         - move all but the last 12 files out of kwq directory

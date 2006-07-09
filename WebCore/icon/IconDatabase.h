@@ -90,7 +90,7 @@ public:
     bool open(const String& path);
     bool isOpen() { return m_db.isOpen(); }
     void close();
-
+ 
     Image* iconForPageURL(const String&, const IntSize&, bool cache = true);
     Image* iconForIconURL(const String&, const IntSize&, bool cache = true);
     String iconURLForPageURL(const String&);
@@ -110,6 +110,10 @@ public:
     void setIconDataForIconURL(const void* data, int size, const String&);
     void setHaveNoIconForIconURL(const String&);
     void setIconURLForPageURL(const String& iconURL, const String& pageURL);
+
+    // Removes icons from the db that no longer have any PageURLs pointing to them
+    // If numberToPrune is negative, ALL dangling icons will be pruned
+    void pruneUnreferencedIcons(int numberToPrune);
 
     static const int currentDatabaseVersion;    
 private:

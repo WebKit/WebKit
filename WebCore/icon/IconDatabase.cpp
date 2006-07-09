@@ -34,8 +34,10 @@
 #include <time.h>
 
 
-
 // FIXME - Make sure we put a private browsing consideration in that uses the temporary tables anytime private browsing would be an issue.
+
+// FIXME - One optimization to be made when this is no longer in flux is to make query construction smarter - that is queries that are created from
+// multiple strings and numbers should be handled differently than with String + String + String + etc.
 
 const char* DefaultIconDatabaseFilename = "/icon.db";
 
@@ -151,6 +153,12 @@ void IconDatabase::recreateDatabase()
         m_db.close();
         return;
     }
+    if (!m_db.executeCommand("CREATE TRIGGER delete_icon_resource AFTER DELETE ON Icon BEGIN DELETE FROM IconResource WHERE IconResource.iconID =  old.iconID; END;")) {
+        LOG_ERROR("Unable to create delete_icon_resource trigger in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
+        m_db.close();
+        return;
+    }
+    
 }    
 
 void IconDatabase::createPrivateTables()
@@ -170,12 +178,9 @@ void IconDatabase::createPrivateTables()
 
 void IconDatabase::deletePrivateTables()
 {
-    if (!m_db.executeCommand("DROP TABLE TempPageURL;"))
-        LOG_ERROR("Could not drop TempPageURL table - %s", m_db.lastErrorMsg());
-    if (!m_db.executeCommand("DROP TABLE TempIcon;"))
-        LOG_ERROR("Could not drop TempIcon table - %s", m_db.lastErrorMsg());
-    if (!m_db.executeCommand("DROP TABLE TempIconResource;"))
-        LOG_ERROR("Could not drop TempIconResource table - %s", m_db.lastErrorMsg());
+    m_db.executeCommand("DROP TABLE TempPageURL;");
+    m_db.executeCommand("DROP TABLE TempIcon;");
+    m_db.executeCommand("DROP TABLE TempIconResource;");
 }
 
 // FIXME - This is a DIRTY, dirty workaround for a problem that we're seeing where certain blobs are having a corrupt buffer
@@ -183,6 +188,7 @@ void IconDatabase::deletePrivateTables()
 // does an in place hex-to-character from the textual representation of the icon data.  After I manage to follow up with Adam Swift, the OSX sqlite maintainer,
 // who is too busy to help me until after 7-4-06, this NEEEEEEEEEEEEEEDS to be changed. 
 // *SIGH*
+#ifdef BLOB_WORKAROUND
 unsigned char hexToUnsignedChar(UChar h, UChar l)
 {
     unsigned char c;
@@ -232,13 +238,18 @@ Vector<unsigned char> hexStringToVector(const String& s)
     LOG(IconDatabase, "Finished atoi() - %i iterations, result size %i", count, result.size());
     return result;
 }
+#endif
 
 Vector<unsigned char> IconDatabase::imageDataForIconID(int id)
 {
-    String blob = SQLStatement(m_db, String::sprintf("SELECT data FROM IconResource WHERE iconid = %i", id)).getColumnText(0);
+#ifdef BLOB_WORKAROUND
+    String blob = SQLStatement(m_db, String::sprintf("SELECT quote(data) FROM IconResource WHERE iconid = %i", id)).getColumnText(0);
     if (blob.isEmpty())
         return Vector<unsigned char>();
     return hexStringToVector(blob);
+#else
+    return SQLStatement(m_db, String::sprintf("SELECT data FROM IconResource WHERE iconid = %i", id)).getColumnBlobAsVector(0);
+#endif
 }
 
 Vector<unsigned char> IconDatabase::imageDataForIconURL(const String& _iconURL)
@@ -246,8 +257,11 @@ Vector<unsigned char> IconDatabase::imageDataForIconURL(const String& _iconURL)
     //Escape single quotes for SQL 
     String iconURL = _iconURL;
     iconURL.replace('\'', "''");
-    String blob;
     
+#ifdef BLOB_WORKAROUND
+    LOG(IconDatabase, "imageDataForIconURL called with BLOB_WORKAROUND set");
+    String blob;
+     
     // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
     if (m_privateBrowsingEnabled) {
         blob = SQLStatement(m_db, "SELECT quote(TempIconResource.data) FROM TempIconResource, TempIcon WHERE TempIcon.url = '" + iconURL + "' AND TempIconResource.iconID = TempIcon.iconID;").getColumnText(0);
@@ -263,6 +277,20 @@ Vector<unsigned char> IconDatabase::imageDataForIconURL(const String& _iconURL)
         return Vector<unsigned char>();
     
     return hexStringToVector(blob);
+#else    
+    LOG(IconDatabase, "imageDataForIconURL called using preferred method");
+    // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
+    if (m_privateBrowsingEnabled) {    
+        Vector<unsigned char> blob = SQLStatement(m_db, "SELECT TempIconResource.data FROM TempIconResource, TempIcon WHERE TempIcon.url = '" + iconURL + "' AND TempIconResource.iconID = TempIcon.iconID;").getColumnBlobAsVector(0);
+        if (!blob.isEmpty()) {
+            LOG(IconDatabase, "Icon data pulled from temp tables");
+            return blob;
+        }
+    } 
+    
+    // It wasn't found there, so lets check the main tables
+    return SQLStatement(m_db, "SELECT IconResource.data FROM IconResource, Icon WHERE Icon.url = '" + iconURL + "' AND IconResource.iconID = Icon.iconID;").getColumnBlobAsVector(0);
+#endif
 }
 
 Vector<unsigned char> IconDatabase::imageDataForPageURL(const String& _pageURL)
@@ -270,11 +298,12 @@ Vector<unsigned char> IconDatabase::imageDataForPageURL(const String& _pageURL)
     //Escape single quotes for SQL 
     String pageURL = _pageURL;
     pageURL.replace('\'', "''");
-    String blob;
     
+#ifdef BLOB_WORKAROUND
+    String blob;
     // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
     if (m_privateBrowsingEnabled) {
-        blob = SQLStatement(m_db, "SELECT TempIconResource.data FROM TempIconResource, TempPageURL WHERE TempPageURL.url = '" + pageURL + "' AND TempIconResource.iconID = TempPageURL.iconID;").getColumnText(0);
+        blob = SQLStatement(m_db, "SELECT quote(TempIconResource.data) FROM TempIconResource, TempPageURL WHERE TempPageURL.url = '" + pageURL + "' AND TempIconResource.iconID = TempPageURL.iconID;").getColumnText(0);
         if (!blob.isEmpty()) {
             LOG(IconDatabase, "Icon data pulled from temp tables");
             return hexStringToVector(blob);
@@ -287,6 +316,20 @@ Vector<unsigned char> IconDatabase::imageDataForPageURL(const String& _pageURL)
         return Vector<unsigned char>();
     
     return hexStringToVector(blob);
+#else
+    LOG(IconDatabase, "imageDataForIconURL called using preferred method");
+    // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
+    if (m_privateBrowsingEnabled) {    
+        Vector<unsigned char> blob = SQLStatement(m_db, "SELECT TempIconResource.data FROM TempIconResource, TempPageURL WHERE TempPageURL.url = '" + pageURL + "' AND TempIconResource.iconID = TempPageURL.iconID;").getColumnBlobAsVector(0);
+        if (!blob.isEmpty()) {
+            LOG(IconDatabase, "Icon data pulled from temp tables");
+            return blob;
+        }
+    } 
+    
+    // It wasn't found there, so lets check the main tables
+    return SQLStatement(m_db, "SELECT IconResource.data FROM IconResource, PageURL WHERE PageURL.url = '" + pageURL + "' AND IconResource.iconID = PageURL.iconID;").getColumnBlobAsVector(0);
+#endif
 }
 
 void IconDatabase::setPrivateBrowsingEnabled(bool flag)
@@ -490,6 +533,20 @@ void IconDatabase::performSetIconURLForPageURL(int64_t iconID, const String& pag
         if (!m_db.executeCommand("INSERT INTO " + pageTable + " (url, iconID) VALUES ('" + pageURL + "', " + String::number(iconID) + ");"))
             LOG_ERROR("Failed to insert record into %s - %s", pageTable.ascii().data(), m_db.lastErrorMsg());
 }
+
+void IconDatabase::pruneUnreferencedIcons(int numberToPrune)
+{
+    if (!numberToPrune)
+        return;
+        
+    if (numberToPrune > 0)
+        if (!m_db.executeCommand(String::sprintf("DELETE FROM Icon WHERE iconID IN (SELECT Icon.iconID FROM Icon WHERE Icon.iconID NOT IN(SELECT PageURL.iconID FROM PageURL) LIMIT %i;", numberToPrune)))
+            LOG_ERROR("Failed to prune %i unreferenced icons from the DB", numberToPrune);
+    else
+        if (!m_db.executeCommand(String("DELETE FROM Icon WHERE iconID IN (SELECT Icon.iconID FROM Icon WHERE Icon.iconID NOT IN(SELECT PageURL.iconID FROM PageURL);")))
+            LOG_ERROR("Failed to prune all unreferenced icons from the DB");
+}
+
 
 bool IconDatabase::hasIconForIconURL(const String& _url)
 {

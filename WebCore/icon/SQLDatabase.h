@@ -136,7 +136,7 @@ public:
     int getColumnInt(int col);
     int64_t getColumnInt64(int col);
     const void* getColumnBlob(int col, int& size);
-    Vector<char> getColumnBlobAsVector(int col);
+    Vector<unsigned char> getColumnBlobAsVector(int col);
 
     bool returnTextResults(int col, Vector<String>& v);
     bool returnTextResults16(int col, Vector<String>& v);

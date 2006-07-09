@@ -76,7 +76,7 @@ int SQLStatement::finalize()
     return lastError();
 }
 
-int SQLStatement::reset()
+int SQLStatement::reset() 
 {
     if (m_statement) {
         return sqlite3_reset(m_statement);
@@ -215,23 +215,23 @@ int64_t SQLStatement::getColumnInt64(int col)
     return sqlite3_column_int64(m_statement, col);
 }
     
-Vector<char> SQLStatement::getColumnBlobAsVector(int col)
+Vector<unsigned char> SQLStatement::getColumnBlobAsVector(int col)
 {
     if (!m_statement)
         if (prepareAndStep() != SQLITE_ROW)
-            return Vector<char>();
+            return Vector<unsigned char>();
     if (columnCount() <= col)
-        return Vector<char>();
+        return Vector<unsigned char>();
  
     const void* blob = sqlite3_column_blob(m_statement, col);
-    if (blob) {
-        int size = sqlite3_column_bytes(m_statement, col);
-        Vector<char> result((size_t)size);
-        for (int i = 0; i < size; ++i)
-            result[i] = ((const char*)blob)[i];
-        return result;
-    } 
-    return Vector<char>();
+    if (!blob) 
+        return Vector<unsigned char>();
+        
+    int size = sqlite3_column_bytes(m_statement, col);
+    Vector<unsigned char> result((size_t)size);
+    for (int i = 0; i < size; ++i)
+        result[i] = ((const unsigned char*)blob)[i];
+    return result;
 }
 
 const void* SQLStatement::getColumnBlob(int col, int& size)
