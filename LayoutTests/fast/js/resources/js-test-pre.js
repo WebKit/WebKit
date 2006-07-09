@@ -3,7 +3,14 @@ if (window.layoutTestController)
 
 function description(msg)
 {
-    document.getElementById("description").innerHTML = '<p>' + msg + '</p><p>On success, you will see a series of "<span class="pass">PASS</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
+    // For MSIE 6 compatibility
+    var span = document.createElement("span");
+    span.innerHTML = '<p>' + msg + '</p><p>On success, you will see a series of "<span class="pass">PASS</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
+    var description = document.getElementById("description");
+    if (description.firstChild)
+        description.replaceChild(span, description.firstChild);
+    else
+        description.appendChild(span);
 }
 
 function debug(msg)
