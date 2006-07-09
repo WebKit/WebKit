@@ -1,3 +1,15 @@
+2006-07-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9572
+        Add application/xhtml+xml to the Accept header
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _addExtraFieldsToRequest:mainResource:alwaysFromRequest:]): Add an Accept header
+        to main resource requests.
+        * English.lproj/StringsNotToBeLocalized.txt: Added new strings.
+
 2006-07-08  Darin Adler  <darin@apple.com>
 
         * DefaultDelegates/WebDefaultContextMenuDelegate.m:
