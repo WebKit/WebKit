@@ -85,7 +85,6 @@
 
 using namespace std;
 using namespace KJS::Bindings;
-using namespace KIO;
 
 using KJS::JSLock;
 using KJS::PausedTimeouts;

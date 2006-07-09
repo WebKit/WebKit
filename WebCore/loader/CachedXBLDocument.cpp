@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-CachedXBLDocument::CachedXBLDocument(DocLoader* dl, const String &url, KIO::CacheControl _cachePolicy, time_t _expireDate)
-: CachedObject(url, XBL, _cachePolicy, _expireDate), m_document(0)
+CachedXBLDocument::CachedXBLDocument(DocLoader* dl, const String &url, CachePolicy cachePolicy, time_t _expireDate)
+: CachedObject(url, XBL, cachePolicy, _expireDate), m_document(0)
 {
     // It's XML we want.
     setAccept("text/xml, application/xml, application/xhtml+xml, text/xsl, application/rss+xml, application/atom+xml");

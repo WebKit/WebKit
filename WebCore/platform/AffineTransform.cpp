@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KIO_GLOBAL_H_
-#define KIO_GLOBAL_H_
+#include "config.h"
+#include "AffineTransform.h"
 
-namespace KIO {
+#include "FloatRect.h"
+#include "IntRect.h"
 
-    enum CacheControl
-    {
-        CC_Cache,
-        CC_Verify,
-        CC_Refresh,
-        CC_Reload
-    };
-
+bool AffineTransform::isInvertible() const
+{
+    return det() != 0.0;
 }
-
-#endif /* KIO_GLOBAL_H_ */

@@ -38,8 +38,6 @@
 #include <kjs/protect.h>
 #include <wtf/Vector.h>
 
-using namespace KIO;
-
 namespace WebCore {
 
 using namespace EventNames;

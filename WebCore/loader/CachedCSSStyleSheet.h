@@ -39,7 +39,7 @@ namespace WebCore
     class CachedCSSStyleSheet : public CachedObject
     {
     public:
-        CachedCSSStyleSheet(DocLoader*, const String& URL, KIO::CacheControl, time_t expireDate, const DeprecatedString& charset);
+        CachedCSSStyleSheet(DocLoader*, const String& URL, CachePolicy, time_t expireDate, const DeprecatedString& charset);
         CachedCSSStyleSheet(const String& URL, const DeprecatedString& stylesheetData);
         virtual ~CachedCSSStyleSheet();
 

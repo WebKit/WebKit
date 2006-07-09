@@ -37,7 +37,7 @@ namespace WebCore {
 
     class CachedScript : public CachedObject {
     public:
-        CachedScript(DocLoader*, const String& URL, KIO::CacheControl, time_t expireDate, const DeprecatedString& charset);
+        CachedScript(DocLoader*, const String& URL, CachePolicy, time_t expireDate, const DeprecatedString& charset);
         CachedScript(const String& URL, const DeprecatedString& scriptData);
         virtual ~CachedScript();
 

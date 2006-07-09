@@ -23,13 +23,13 @@
  *
  */
 
-#ifndef render_object_h
-#define render_object_h
+#ifndef RenderObject_h
+#define RenderObject_h
 
 #include "CachedObjectClient.h"
-#include "WebCoreScrollBar.h"
-#include "VisiblePosition.h"
 #include "RenderStyle.h"
+#include "ScrollBar.h"
+#include "VisiblePosition.h"
 
 class CSSStyle;
 class AffineTransform;

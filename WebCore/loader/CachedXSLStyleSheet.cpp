@@ -40,8 +40,8 @@ namespace WebCore {
 
 #ifdef KHTML_XSLT
 
-CachedXSLStyleSheet::CachedXSLStyleSheet(DocLoader* dl, const String &url, KIO::CacheControl _cachePolicy, time_t _expireDate)
-: CachedObject(url, XSLStyleSheet, _cachePolicy, _expireDate)
+CachedXSLStyleSheet::CachedXSLStyleSheet(DocLoader* dl, const String &url, CachePolicy cachePolicy, time_t _expireDate)
+    : CachedObject(url, XSLStyleSheet, cachePolicy, _expireDate)
 {
     // It's XML we want.
     // FIXME: This should accept more general xml formats */*+xml, image/svg+xml for example.

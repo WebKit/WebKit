@@ -28,7 +28,7 @@
 #define Element_h
 
 #include "Attr.h"
-#include "WebCoreScrollBar.h"
+#include "ScrollBar.h"
 
 namespace WebCore {
 

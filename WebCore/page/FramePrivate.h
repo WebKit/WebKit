@@ -24,10 +24,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef khtmlpart_p_h
-#define khtmlpart_p_h
+#ifndef FramePrivate_h
+#define FramePrivate_h
 
+#include "CSSMutableStyleDeclaration.h"
+#include "CachePolicy.h"
 #include "DOMWindow.h"
+#include "Decoder.h"
 #include "EditCommand.h"
 #include "Frame.h"
 #include "FrameTree.h"
@@ -35,10 +38,7 @@
 #include "StringHash.h"
 #include "Timer.h"
 #include "kjs_proxy.h"
-#include "CacheControl.h"
 #include <wtf/HashMap.h>
-#include "CSSMutableStyleDeclaration.h"
-#include "Decoder.h"
 
 namespace WebCore {
 
@@ -74,7 +74,7 @@ namespace WebCore {
             , m_bHTTPRefresh(false)
             , m_redirectLockHistory(false)
             , m_redirectUserGesture(false)
-            , m_cachePolicy(KIO::CC_Verify)
+            , m_cachePolicy(CachePolicyVerify)
             , m_redirectionTimer(thisFrame, &Frame::redirectionTimerFired)
             , m_scheduledRedirection(noRedirectionScheduled)
             , m_delayRedirect(0)
@@ -154,7 +154,7 @@ namespace WebCore {
         KURL m_workingURL;
         ResourceRequest m_request;
 
-        KIO::CacheControl m_cachePolicy;
+        CachePolicy m_cachePolicy;
         Timer<Frame> m_redirectionTimer;
 
         RedirectionScheduled m_scheduledRedirection;

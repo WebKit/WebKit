@@ -27,9 +27,9 @@
 #ifndef Cache_h
 #define Cache_h
 
-#include "PlatformString.h"
-#include "CacheControl.h"
+#include "CachePolicy.h"
 #include "DeprecatedPtrList.h"
+#include "PlatformString.h"
 #include <wtf/HashSet.h>
 
 class KURL;

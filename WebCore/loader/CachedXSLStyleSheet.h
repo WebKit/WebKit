@@ -39,7 +39,7 @@ namespace WebCore {
 #ifdef KHTML_XSLT
     class CachedXSLStyleSheet : public CachedObject {
     public:
-        CachedXSLStyleSheet(DocLoader*, const String& url, KIO::CacheControl cachePolicy, time_t expireDate);
+        CachedXSLStyleSheet(DocLoader*, const String& url, CachePolicy, time_t expireDate);
 
         const String& sheet() const { return m_sheet; }
         

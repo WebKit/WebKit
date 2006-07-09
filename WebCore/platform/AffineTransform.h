@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,8 @@
 #define AffineTransform_h
 
 #if __APPLE__
-// FIXME: Just comment out the entire file, since its implementation is completely CG-specific.
+
+// FIXME: Implementation is currently completely CG-specific, but soon to be fixed.
 
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -69,15 +70,13 @@ public:
 
     operator CGAffineTransform() const;
 
-    bool operator== (const AffineTransform &) const;
-    AffineTransform &operator*= (const AffineTransform &);
-    AffineTransform operator* (const AffineTransform &m2);
+    bool operator==(const AffineTransform&) const;
+    AffineTransform& operator*=(const AffineTransform&);
+    AffineTransform operator*(const AffineTransform&);
     
 private:
     CGAffineTransform m_transform;
 };
-
-#define AffineTransform AffineTransform
 
 #endif // __APPLE__
 

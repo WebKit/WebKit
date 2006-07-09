@@ -29,7 +29,7 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "HTMLInputElement.h"
-#include "WebCoreSlider.h"
+#include "Slider.h"
 
 using std::min;
 

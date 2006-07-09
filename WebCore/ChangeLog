@@ -1,5 +1,107 @@
 2006-07-09  Darin Adler  <darin@apple.com>
 
+        - move all but the last 12 files out of kwq directory
+        - removed a few unused source files I discovered
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Update for new file locations.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * bridge/mac/FrameMac.mm:
+        * dom/Element.h:
+        * html/HTMLImageLoader.cpp:
+        * loader/Cache.cpp:
+        * loader/Cache.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedImage.cpp:
+        * loader/CachedImage.h:
+        * loader/CachedObject.h:
+        * loader/CachedScript.cpp:
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.cpp:
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp:
+        * loader/DocLoader.h:
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/win/TemporaryLinkStubs.cpp:
+        * rendering/DeprecatedSlider.cpp:
+        * rendering/RenderObject.h:
+        * xml/xmlhttprequest.cpp:
+        Updated includes as needed for file location changes. Changed
+        CachePolicy uses to match new filename and enum names.
+
+        * loader/CachedResource.cpp: Removed.
+        * loader/CachedResource.h: Removed.
+        * loader/CachedResourceClient.h: Removed.
+        * loader/CachedResourceClientWalker.cpp: Removed.
+        * loader/CachedResourceClientWalker.h: Removed.
+        The above files were checked in by accident a while back. The rename of
+        CachedObject to CachedResource is now reflected in do-webcore-rename,
+        and will be done soon.
+
+        * kwq/AffineTransform.cpp: Removed.
+        * kwq/AffineTransform.h: Removed.
+        * kwq/CacheControl.h: Removed.
+        * kwq/DeprecatedPtrQueue.h: Removed.
+        * kwq/FileButton.h: Removed.
+        * kwq/FileButton.mm: Removed.
+        * kwq/ListBox.h: Removed.
+        * kwq/ListBox.mm: Removed.
+        * kwq/LoaderFunctions.h: Removed.
+        * kwq/LoaderFunctions.mm: Removed.
+        * kwq/PopUpButton.h: Removed.
+        * kwq/PopUpButton.mm: Removed.
+        * kwq/SSLKeyGenerator.h: Removed.
+        * kwq/SSLKeyGenerator.mm: Removed.
+        * kwq/Settings.h: Removed.
+        * kwq/TextBox.h: Removed.
+        * kwq/TextBox.mm: Removed.
+        * kwq/TextField.h: Removed.
+        * kwq/TextField.mm: Removed.
+        * kwq/WebCoreScrollBar.h: Removed.
+        * kwq/WebCoreScrollBar.mm: Removed.
+        * kwq/WebCoreSlider.h: Removed.
+        * kwq/WebCoreSlider.mm: Removed.
+
+        * loader/CachePolicy.h: Added.
+        * loader/LoaderFunctions.h: Added.
+
+        * loader/mac/LoaderFunctionsMac.mm: Added.
+
+        * page/Settings.h: Added.
+
+        * platform/AffineTransform.cpp: Added.
+        * platform/AffineTransform.h: Added.
+        * platform/DeprecatedPtrQueue.h: Added.
+        * platform/FileButton.h: Added.
+        * platform/ListBox.h: Added.
+        * platform/PopUpButton.h: Added.
+        * platform/SSLKeyGenerator.h: Added.
+        * platform/ScrollBar.h: Added.
+        * platform/Slider.h: Added.
+        * platform/TextBox.h: Added.
+        * platform/TextField.h: Added.
+
+        * platform/cg/AffineTransformCG.cpp: Added.
+
+        * platform/mac/FileButtonMac.mm: Added.
+        * platform/mac/ListBoxMac.mm: Added.
+        * platform/mac/PopUpButtonMac.mm: Added.
+        * platform/mac/SSLKeyGeneratorMac.mm: Added.
+        * platform/mac/ScrollBarMac.mm: Added.
+        * platform/mac/ScrollBarMac.mm: Added.
+        * platform/mac/SliderMac.mm: Added.
+        * platform/mac/SliderMac.mm: Added.
+        * platform/mac/TextBoxMac.mm: Added.
+        * platform/mac/TextFieldMac.mm: Added.
+
+2006-07-09  Darin Adler  <darin@apple.com>
+
         - move 4 files out of kwq directory
         - make some minor project adjustments for the WebCore project
 

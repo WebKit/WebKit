@@ -77,7 +77,7 @@ void HTMLImageLoader::updateFromElement()
     CachedImage *newImage = 0;
     if (!attr.isEmpty()) {
         if (m_loadManually) {
-            newImage = new CachedImage(doc->docLoader(), parseURL(attr), KIO::CC_Verify, 0);
+            newImage = new CachedImage(doc->docLoader(), parseURL(attr), CachePolicyVerify, 0);
             doc->docLoader()->m_docObjects.set(newImage->url(), newImage);
         } else
             newImage = doc->docLoader()->requestImage(parseURL(attr));

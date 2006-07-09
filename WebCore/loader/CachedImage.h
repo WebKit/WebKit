@@ -41,7 +41,7 @@ class Image;
 
 class CachedImage : public CachedObject, public ImageAnimationObserver {
 public:
-    CachedImage(DocLoader*, const String& url, KIO::CacheControl cachePolicy, time_t expireDate);
+    CachedImage(DocLoader*, const String& url, CachePolicy, time_t expireDate);
     virtual ~CachedImage();
 
     Image* image() const;

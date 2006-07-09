@@ -33,7 +33,7 @@
 #include "DeprecatedStringList.h"
 #include "EditAction.h"
 #include "FrameView.h"
-#include "WebCoreScrollBar.h"
+#include "ScrollBar.h"
 #include "Node.h"
 #include "TextAffinity.h"
 #include "TextGranularity.h"

@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-CachedCSSStyleSheet::CachedCSSStyleSheet(DocLoader* dl, const String &url, KIO::CacheControl _cachePolicy, time_t _expireDate, const DeprecatedString& charset)
-    : CachedObject(url, CSSStyleSheet, _cachePolicy, _expireDate)
+CachedCSSStyleSheet::CachedCSSStyleSheet(DocLoader* dl, const String &url, CachePolicy cachePolicy, time_t _expireDate, const DeprecatedString& charset)
+    : CachedObject(url, CSSStyleSheet, cachePolicy, _expireDate)
     , m_encoding(charset.latin1())
 {
     // It's css we want.
@@ -52,7 +52,7 @@ CachedCSSStyleSheet::CachedCSSStyleSheet(DocLoader* dl, const String &url, KIO::
 }
 
 CachedCSSStyleSheet::CachedCSSStyleSheet(const String &url, const DeprecatedString &stylesheet_data)
-    : CachedObject(url, CSSStyleSheet, KIO::CC_Verify, 0, stylesheet_data.length())
+    : CachedObject(url, CSSStyleSheet, CachePolicyVerify, 0, stylesheet_data.length())
     , m_encoding(InvalidEncoding)
 {
     m_loading = false;

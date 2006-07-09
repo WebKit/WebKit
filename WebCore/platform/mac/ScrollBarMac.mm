@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WebCoreScrollBar.h"
+#import "ScrollBar.h"
 
 #import "BlockExceptions.h"
 #import "WebCoreWidgetHolder.h"

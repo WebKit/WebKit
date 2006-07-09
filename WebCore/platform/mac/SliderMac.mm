@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WebCoreSlider.h"
+#import "Slider.h"
 
 #import "BlockExceptions.h"
 #import "TextField.h"

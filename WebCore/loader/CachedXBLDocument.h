@@ -42,7 +42,7 @@ namespace WebCore {
     class CachedXBLDocument : public CachedObject
     {
     public:
-        CachedXBLDocument(DocLoader* dl, const String& url, KIO::CacheControl cachePolicy, time_t _expireDate);
+        CachedXBLDocument(DocLoader*, const String& url, CachePolicy, time_t expireDate);
         virtual ~CachedXBLDocument();
         
         XBL::XBLDocument* document() const { return m_document; }
@@ -65,6 +65,6 @@ namespace WebCore {
 
 #endif
 
-};
+}
 
 #endif
