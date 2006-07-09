@@ -127,8 +127,6 @@
         * WebKit.xcodeproj/project.pbxproj:
         Link OpenGL and AGL.
 
-=======
->>>>>>> .r15264
 2006-07-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
