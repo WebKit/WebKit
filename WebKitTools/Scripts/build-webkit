@@ -106,6 +106,6 @@ print " WebKit is now built. To run Safari with this newly-built\n";
 print " code, use the \"run-safari\" script.\n";
 if ($svgSupport) {
     print "\n NOTE: WebKit has been built with SVG support enabled.\n";
-    print " Safari will have basic SVG viewing capatibilies.\n";
+    print " Safari will have basic SVG viewing capabilities.\n";
 }
 print "===========================================================\n";
