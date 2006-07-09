@@ -1,3 +1,11 @@
+2006-07-09  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim O.
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+        Initialize wkPathFromFont.
+
 2006-07-09  Darin Adler  <darin@apple.com>
 
         - fix release build
@@ -120,6 +128,7 @@
         Link OpenGL and AGL.
 
 =======
+>>>>>>> .r15264
 2006-07-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
@@ -134,7 +143,6 @@
         (-[WebIconDatabase _setHaveNoIconForIconURL:]):
         (-[WebIconDatabase _setIconURL:forURL:]):
         (-[WebIconDatabase _resetCachedWebPreferences:]):
-
 
 2006-07-08  Timothy Hatcher  <timothy@apple.com>
 

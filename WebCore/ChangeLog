@@ -1,3 +1,18 @@
+2006-07-09  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim O.
+
+        * WebCore.exp:
+        Add wkPathFromFont.
+        
+        * platform/mac/FontDataMac.mm:
+        (-[NSFont WebCore]):
+        Use wkPathFromFont.
+        
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        Declare wkPathFromFont.
+
 2006-07-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
@@ -20,6 +35,7 @@
         * icon/SQLStatement.cpp:
         (WebCore::SQLStatement::getColumnBlobAsVector):
 
+>>>>>>> .r15260
 2006-07-09  Darin Adler  <darin@apple.com>
 
         - move all but the last 12 files out of kwq directory

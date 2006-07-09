@@ -64,10 +64,6 @@ namespace WebCore
 #define CONTEXT_DPI (72.0)
 #define SCALE_EM_TO_UNITS(X, U_PER_EM) (X * ((1.0 * CONTEXT_DPI) / (CONTEXT_DPI * U_PER_EM)))
 
-#if !ERROR_DISABLED
-static NSString *pathFromFont(NSFont *font);
-#endif
-
 bool initFontData(FontData* fontData)
 {
     ATSUStyle fontStyle;
@@ -137,7 +133,7 @@ void FontData::platformInit()
 #endif
         m_font.font = [[NSFontManager sharedFontManager] convertFont:m_font.font toFamily:fallbackFontFamily];
 #if !ERROR_DISABLED
-        NSString *filePath = pathFromFont(initialFont);
+        NSString *filePath = wkPathFromFont(initialFont);
         if (!filePath)
             filePath = @"not known";
 #endif
@@ -263,28 +259,6 @@ bool FontData::containsCharacters(const UChar* characters, int length) const
     [string release];
     return result;
 }
-
-#if !ERROR_DISABLED
-
-static NSString *pathFromFont(NSFont *font)
-{
-    FSSpec oFile;
-    OSStatus status = ATSFontGetFileSpecification(FMGetATSFontRefFromFont((FMFont)wkGetNSFontATSUFontId(font)), &oFile);
-    if (status == noErr) {
-        OSErr err;
-        FSRef fileRef;
-        err = FSpMakeFSRef(&oFile, &fileRef);
-        if (err == noErr) {
-            UInt8 filePathBuffer[PATH_MAX];
-            status = FSRefMakePath(&fileRef, filePathBuffer, PATH_MAX);
-            if (status == noErr)
-                return [NSString stringWithUTF8String:(const char *)filePathBuffer];
-        }
-    }
-    return nil;
-}
-
-#endif
 
 void FontData::determinePitch()
 {

@@ -59,6 +59,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetMIMETypeForExtension);
     INIT(GetNSFontATSUFontId);
     INIT(InitializeGlyphVector);
+    INIT(PathFromFont);
     INIT(PopupMenu);
     INIT(ReleaseStyleGroup);
     INIT(SetCGFontRenderingMode);
