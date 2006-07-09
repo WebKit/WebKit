@@ -35,7 +35,6 @@
         * icon/SQLStatement.cpp:
         (WebCore::SQLStatement::getColumnBlobAsVector):
 
->>>>>>> .r15260
 2006-07-09  Darin Adler  <darin@apple.com>
 
         - move all but the last 12 files out of kwq directory
