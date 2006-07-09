@@ -1,3 +1,14 @@
+2006-07-09  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4598149> Deleting the contents of a DOMRange and then inserting a node into it crashes in WebCore::Font::canUseGlyphCache
+
+        Test: fast/dom/delete-contents.html
+        
+        * dom/Range.cpp:
+        (WebCore::Range::processContents):
+
 2006-07-09  Darin Adler  <darin@apple.com>
 
         - another round of renaming; and KWQ is dead

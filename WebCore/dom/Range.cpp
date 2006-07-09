@@ -544,8 +544,10 @@ PassRefPtr<DocumentFragment> Range::processContents ( ActionType action, Excepti
                 c->deleteData(0, m_startOffset, ec);
                 fragment->appendChild(c.release(), ec);
             }
-            if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS)
+            if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS) {
                 static_cast<CharacterData*>(m_startContainer.get())->deleteData(m_startOffset,m_endOffset-m_startOffset,ec);
+                m_startContainer->document()->updateLayout();
+            }
         }
         else if (m_startContainer->nodeType() == Node::PROCESSING_INSTRUCTION_NODE) {
             // ### operate just on data ?
@@ -602,9 +604,11 @@ PassRefPtr<DocumentFragment> Range::processContents ( ActionType action, Excepti
                 c->deleteData(0, m_startOffset, ec);
                 leftContents = c.release();
             }
-            if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS)
+            if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS) {
                 static_cast<CharacterData*>(m_startContainer.get())->deleteData(
                     m_startOffset, static_cast<CharacterData*>(m_startContainer.get())->length() - m_startOffset, ec);
+                m_startContainer->document()->updateLayout();
+            }
         }
         else if (m_startContainer->nodeType() == Node::PROCESSING_INSTRUCTION_NODE) {
             // ### operate just on data ?
@@ -664,8 +668,10 @@ PassRefPtr<DocumentFragment> Range::processContents ( ActionType action, Excepti
                 c->deleteData(m_endOffset, static_cast<CharacterData*>(m_endContainer.get())->length() - m_endOffset, ec);
                 rightContents = c;
             }
-            if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS)
+            if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS) {
                 static_cast<CharacterData*>(m_endContainer.get())->deleteData(0, m_endOffset, ec);
+                m_startContainer->document()->updateLayout();
+            }
         }
         else if (m_startContainer->nodeType() == Node::PROCESSING_INSTRUCTION_NODE) {
             // ### operate just on data ?
