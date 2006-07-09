@@ -1,3 +1,34 @@
+2006-07-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 5312: comments aren't available via DOM
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5312
+
+        New tests for DOM comment nodes. Updated results to account for new
+        nodes in the DOM (editing offsets changed.)
+
+        * editing/deleting/delete-line-013-expected.txt:
+        * editing/deleting/delete-line-014-expected.txt:
+        * editing/inserting/insert-3907422-fix-expected.txt:
+        * editing/inserting/insert-div-009-expected.txt:
+        * editing/inserting/insert-div-010-expected.txt:
+        * editing/selection/extend-by-character-006-expected.txt:
+        * editing/selection/move-between-blocks-no-001-expected.txt:
+        * editing/selection/move-between-blocks-yes-001-expected.txt:
+        * fast/dom/HTMLDocument/object-by-name-or-id-expected.txt:
+        * fast/dom/HTMLDocument/object-by-name-or-id.html:
+        * fast/dom/comment-document-fragment-expected.txt: Added.
+        * fast/dom/comment-document-fragment.html: Added.
+        * fast/dom/comment-dom-node-expected.txt: Added.
+        * fast/dom/comment-dom-node.html: Added.
+        * fast/dom/comment-not-documentElement-expected.checksum: Added.
+        * fast/dom/comment-not-documentElement-expected.png: Added.
+        * fast/dom/comment-not-documentElement-expected.txt: Added.
+        * fast/dom/comment-not-documentElement.html: Added.
+        * fast/text/atsui-pointtooffset-calls-cg-expected.txt:
+        * fast/text/atsui-rtl-override-selection-expected.txt:
+
 2006-07-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff (well, half of it at least).

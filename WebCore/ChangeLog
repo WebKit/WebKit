@@ -1,3 +1,26 @@
+2006-07-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 5312: comments aren't available via DOM
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5312
+
+        <rdar://problem/4564414> getting comments via DOM isn't working (5312)
+        <rdar://problem/4545691> DOM_COMMENT node masking out real DOM elements
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef): set m_documentElement to 0
+        (WebCore::Document::childrenChanged): invalidate the document element we have cached in case it was replaced
+        (WebCore::Document::documentElement): cache the first element as the document node if m_documentElement is 0
+        * dom/Document.h: added m_documentElement
+        * html/HTMLDocument.cpp: removed documentElement(), HTML documents just use Document's documentElement()
+        * html/HTMLDocument.h: ditto
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError): make a new HTML node is the document's firstChild is NULL or
+        the firstChild is not a HTML element (like a comment)
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseComment): removed the #ifdef to include comment nodes
+
 2006-07-08  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin, tweaked slightly and landed by Maciej.

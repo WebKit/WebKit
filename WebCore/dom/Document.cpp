@@ -300,6 +300,7 @@ void Document::removedLastRef()
         m_hoverNode = 0;
         m_activeNode = 0;
         m_titleElement = 0;
+        m_documentElement = 0;
 
         removeAllChildren();
 
@@ -391,12 +392,22 @@ DOMImplementation* Document::implementation() const
     return m_implementation.get();
 }
 
+void Document::childrenChanged()
+{
+    // invalidate the document element we have cached in case it was replaced
+    m_documentElement = 0;
+}
+
 Element* Document::documentElement() const
 {
-    Node* n = firstChild();
-    while (n && !n->isElementNode())
-      n = n->nextSibling();
-    return static_cast<Element*>(n);
+    if (!m_documentElement) {
+        Node* n = firstChild();
+        while (n && !n->isElementNode())
+            n = n->nextSibling();
+        m_documentElement = static_cast<Element*>(n);
+    }
+
+    return m_documentElement.get();
 }
 
 PassRefPtr<Element> Document::createElement(const String &name, ExceptionCode& ec)

@@ -671,7 +671,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
             }
         }
     } else if (current->isDocumentNode()) {
-        if (current->firstChild() == 0) {
+        if (current->firstChild() == 0 || !current->firstChild()->isHTMLElement()) {
             e = new HTMLHtmlElement(document);
             insertNode(e);
             handled = true;

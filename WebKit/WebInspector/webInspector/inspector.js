@@ -349,7 +349,7 @@ function updateElementAttributes()
 function updateNodePane() {
     var focusedNode = Inspector.focusedDOMNode();
 
-    if (focusedNode.nodeType == Node.TEXT_NODE) {
+    if (focusedNode.nodeType == Node.TEXT_NODE || focusedNode.nodeType == Node.COMMENT_NODE) {
         document.getElementById("nodeNamespaceRow").style.display = "none";
         document.getElementById("elementAttributes").style.display = "none";
         document.getElementById("nodeContents").style.display = null;

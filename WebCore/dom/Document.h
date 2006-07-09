@@ -160,7 +160,8 @@ public:
     DocumentType* realDocType() const { return m_docType.get(); }
 
     DOMImplementation* implementation() const;
-    virtual Element* documentElement() const;
+    virtual void childrenChanged();
+    Element* documentElement() const;
     virtual PassRefPtr<Element> createElement(const String& tagName, ExceptionCode&);
     PassRefPtr<DocumentFragment> createDocumentFragment ();
     PassRefPtr<Text> createTextNode(const String& data);
@@ -633,6 +634,7 @@ protected:
     RefPtr<Node> m_focusNode;
     RefPtr<Node> m_hoverNode;
     RefPtr<Node> m_activeNode;
+    mutable RefPtr<Element> m_documentElement;
 
     unsigned m_domtree_version;
     

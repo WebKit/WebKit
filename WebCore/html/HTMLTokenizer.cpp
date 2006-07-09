@@ -543,7 +543,6 @@ HTMLTokenizer::State HTMLTokenizer::parseComment(SegmentedString &src, State sta
             if (handleBrokenComments || endCharsCount > 1) {
                 ++src;
                 if (!(state.inScript() || state.inXmp() || state.inTextArea() || state.inStyle())) {
-#ifdef INCLUDE_COMMENTS_IN_DOM // FIXME: Turn this on soon.
                     checkScriptBuffer();
                     scriptCode[scriptCodeSize] = 0;
                     scriptCode[scriptCodeSize + 1] = 0;
@@ -554,7 +553,6 @@ HTMLTokenizer::State HTMLTokenizer::parseComment(SegmentedString &src, State sta
                     currToken.tagName = commentAtom;
                     currToken.beginTag = false;
                     processToken();
-#endif
                     scriptCodeSize = 0;
                 }
                 state.setInComment(false);

@@ -1347,6 +1347,8 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
             CFStringTrimWhitespace((CFMutableStringRef)value);
             return [NSString stringWithFormat:@"\"%@\"", value];
         }
+        case DOM_COMMENT_NODE:
+            return [NSString stringWithFormat:@"<!--%@-->", [self nodeValue]];
     }
     return [[self nodeName] lowercaseString];
 }

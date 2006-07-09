@@ -6,8 +6,8 @@ By name:
 no children: PASS
 param: PASS
 param and whitespace: PASS
-param and empty comment (expected to fail): FAIL
-param and non-empty comment (expected to fail): FAIL
+param and empty comment: PASS
+param and non-empty comment: PASS
 param and text: PASS
 param and img: PASS
 
@@ -15,8 +15,8 @@ By id:
 no children: PASS
 param: PASS
 param and whitespace: PASS
-param and empty comment (expected to fail): FAIL
-param and non-empty comment (expected to fail): FAIL
+param and empty comment: PASS
+param and non-empty comment: PASS
 param and text: PASS
 param and img: PASS
 

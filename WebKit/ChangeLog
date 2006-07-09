@@ -1,3 +1,16 @@
+2006-07-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 5312: comments aren't available via DOM
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5312
+
+        Makes the Web Inspector show comment node contents.
+
+        * WebInspector/WebInspector.m:
+        (-[DOMNode _displayName]): return the contents of the comment
+        * WebInspector/webInspector/inspector.js: check for comment nodes
+
 2006-07-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
