@@ -1,3 +1,16 @@
+2006-07-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8251
+        navigator.product incorrect in WebKit.app on Intel Macs
+
+        For navigator.platform return "MacIntel" for Intel processors, "MacPPC"
+        otherwise.
+
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::Navigator::getValueProperty):
+
 2006-07-08  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.

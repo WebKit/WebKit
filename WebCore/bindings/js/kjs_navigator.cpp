@@ -30,6 +30,16 @@
 #include "Language.h"
 #include "PlugInInfoStore.h"
 
+#if PLATFORM(MAC) && PLATFORM(PPC)
+#define WEBCORE_NAVIGATOR_PLATFORM "MacPPC"
+#elif PLATFORM(MAC) && PLATFORM(X86)
+#define WEBCORE_NAVIGATOR_PLATFORM "MacIntel"
+#elif PLATFORM(WIN_OS)
+#define WEBCORE_NAVIGATOR_PLATFORM "Win32"
+#else
+#define WEBCORE_NAVIGATOR_PLATFORM ""
+#endif
+
 using namespace WebCore;
 
 namespace KJS {
@@ -175,13 +185,7 @@ JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
   case UserAgent:
     return jsString(userAgent);
   case Platform:
-#if __APPLE__
-    return jsString("MacPPC");
-#elif WIN32
-    return jsString("Win32");
-#else
-    return jsString("");
-#endif
+    return jsString(WEBCORE_NAVIGATOR_PLATFORM);
   case _Plugins:
     return new Plugins(exec);
   case _MimeTypes:
