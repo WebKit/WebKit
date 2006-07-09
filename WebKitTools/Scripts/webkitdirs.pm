@@ -51,7 +51,7 @@ my $currentSVNRevision;
 
 
 # Variables for Win32 support
-my $devenvPath;
+my $vcbuildPath;
 my $windowsTmpPath;
 
 sub determineSourceDir
@@ -345,11 +345,26 @@ sub checkRequiredSystemConfig
 sub setupCygwinEnv()
 {
     return if !isCygwin();
-    return if $devenvPath;
+    return if $vcbuildPath;
 
-    my $programFilesPath = `cygpath "$ENV{'PROGRAMFILES'}"`;
-    chomp $programFilesPath;
-    $devenvPath = "$programFilesPath/Microsoft Visual Studio 8/Common7/IDE/devenv.com";
+    my $vcInstallDir = $ENV{'VCINSTALLDIR'};
+    if (!$vcInstallDir) {
+        my $pf = $ENV{'PROGRAMFILES'} || "C:/Program Files";
+        $vcInstallDir = "$pf/Microsoft Visual Studio 8/VC";
+    }
+    $vcInstallDir = `cygpath "$vcInstallDir"`;
+    chomp $vcInstallDir;
+    $vcbuildPath = "$vcInstallDir/vcpackages/vcbuild.exe";
+    if (! -e $vcbuildPath) {
+        print "*************************************************************\n";
+        print "Cannot find 'vcbuild.exe' in '$vcInstallDir/vcpackages/'\n";
+        print "Please execute the file 'vcvars32.bat' from\n";
+        print "'<Program Files>\\Microsoft Visual Studio 8\\VC\\bin\\'\n";
+        print "to setup the necessary environment variables.\n";
+        print "*************************************************************\n";
+        die;
+    }
+
     $windowsTmpPath = `cygpath -w /tmp`;
     chomp $windowsTmpPath;
     print "Building results into: ", baseProductDir(), "\n";
@@ -364,8 +379,8 @@ sub buildVisualStudioProject($)
     chdir "$project.vcproj" or die "Failed to cd into $project.vcproj\n";
     my $config = configuration();
 
-    print "$devenvPath $project.sln /build $config";
-    my $result = system $devenvPath, "$project.sln", "/build", $config;
+    print "$vcbuildPath $project.sln /u /time \"$config|Win32\"\n";
+    my $result = system $vcbuildPath, "$project.sln", "/u", "/time", "$config|Win32";
     chdir ".." or die;
     return $result;
 }
