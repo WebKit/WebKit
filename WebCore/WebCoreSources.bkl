@@ -2,8 +2,6 @@
 <makefile>
 	<set append="1" var="WEBCORE_SOURCES_KWQ">
 		
-		kwq/DeprecatedCString.cpp
-		kwq/TextStream.cpp
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_DERIVEDSOURCES">
 		
@@ -143,6 +141,7 @@
 		platform/AtomicString.cpp
 		platform/CharsetNames.cpp
 		platform/Color.cpp
+		platform/DeprecatedCString.cpp
 		platform/DeprecatedPtrListImpl.cpp
 		platform/DeprecatedString.cpp
 		platform/DeprecatedStringList.cpp
@@ -170,6 +169,7 @@
 		platform/String.cpp
 		platform/StringImpl.cpp
 		platform/TextEncoding.cpp
+		platform/TextStream.cpp
 		platform/Timer.cpp
 		platform/TransferJob.cpp
 		platform/Widget.cpp

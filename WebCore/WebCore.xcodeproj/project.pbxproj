@@ -464,6 +464,7 @@
 		935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBCF109BA143B00E230B1 /* ExceptionCode.h */; };
 		936B424E09A436CD00BAA820 /* SVGCSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6F6089701F100BA5114 /* SVGCSSParser.cpp */; };
 		936BDD1D0A031AEB004DF4AB /* GraphicsContextCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 936BDD1C0A031AEB004DF4AB /* GraphicsContextCG.cpp */; };
+		937256100A61564200B053B9 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9372560F0A61564200B053B9 /* libsqlite3.dylib */; };
 		9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47109A11AB4001FDB34 /* Widget.cpp */; };
 		9380F47409A11AB4001FDB34 /* Widget.h in Headers */ = {isa = PBXBuildFile; fileRef = 9380F47209A11AB4001FDB34 /* Widget.h */; };
 		9380F47809A11ACC001FDB34 /* WidgetMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47709A11ACC001FDB34 /* WidgetMac.mm */; };
@@ -2148,6 +2149,7 @@
 		935FBCF109BA143B00E230B1 /* ExceptionCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCode.h; sourceTree = "<group>"; };
 		936BDD1C0A031AEB004DF4AB /* GraphicsContextCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextCG.cpp; sourceTree = "<group>"; };
 		936DD03A09CEAC270056AE8C /* Range.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Range.idl; sourceTree = "<group>"; };
+		9372560F0A61564200B053B9 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = /usr/lib/libsqlite3.dylib; sourceTree = "<absolute>"; };
 		9380F47109A11AB4001FDB34 /* Widget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Widget.cpp; sourceTree = "<group>"; };
 		9380F47209A11AB4001FDB34 /* Widget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Widget.h; sourceTree = "<group>"; };
 		9380F47709A11ACC001FDB34 /* WidgetMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WidgetMac.mm; sourceTree = "<group>"; };
@@ -3362,7 +3364,7 @@
 		F565AE8502ECA583018635CA /* WebCoreSettings.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreSettings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F565AE8602ECA583018635CA /* WebCoreSettings.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreSettings.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784D202DE375901EA4122 /* PopUpButton.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PopUpButton.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58784D502DE375901EA4122 /* DeprecatedCString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedCString.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F58784D502DE375901EA4122 /* DeprecatedCString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedCString.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784F002DE375901EA4122 /* CursorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CursorMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784FF02DE375901EA4122 /* JavaAppletWidget.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JavaAppletWidget.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587850302DE375901EA4122 /* LoaderFunctions.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoaderFunctions.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3378,7 +3380,7 @@
 		F587853502DE375901EA4122 /* WebCoreTextArea.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTextArea.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853602DE375901EA4122 /* WebCoreTextArea.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreTextArea.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853802DE375901EA4122 /* TextBox.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextBox.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587853902DE375901EA4122 /* TextStream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextStream.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F587853902DE375901EA4122 /* TextStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextStream.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853B02DE375901EA4122 /* DeprecatedValueListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedValueListImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedValueListImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854C02DE375901EA4122 /* WebCoreFrameView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3390,14 +3392,14 @@
 		F587864902DE3A9A01EA4122 /* CacheControl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CacheControl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SSLKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868202DE3B8601EA4122 /* PopUpButton.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = PopUpButton.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587868302DE3B8601EA4122 /* DeprecatedCString.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedCString.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F587868302DE3B8601EA4122 /* DeprecatedCString.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedCString.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868402DE3B8601EA4122 /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Cursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587869802DE3B8601EA4122 /* TextField.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TextField.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587869902DE3B8601EA4122 /* DeprecatedPtrList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedPtrList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786AD02DE3B8601EA4122 /* DeprecatedPtrQueue.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedPtrQueue.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786B302DE3B8601EA4122 /* RegularExpression.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RegularExpression.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786BE02DE3B8601EA4122 /* TextBox.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TextBox.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58786BF02DE3B8601EA4122 /* TextStream.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TextStream.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F58786BF02DE3B8601EA4122 /* TextStream.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TextStream.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786C202DE3B8601EA4122 /* DeprecatedValueList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedValueList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58EF58E02DFDFB7018635CA /* WebCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.exports; path = WebCore.exp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5A1B04902DE8ABA018635CA /* linkCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = linkCursor.tiff; sourceTree = "<group>"; };
@@ -3428,6 +3430,7 @@
 				93F19B1808245E59001E9ABC /* libxslt.dylib in Frameworks */,
 				A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */,
 				DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */,
+				937256100A61564200B053B9 /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3483,6 +3486,7 @@
 				A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */,
 				F8216299029F4FB501000131 /* JavaScriptCore.framework */,
 				93F1D31A0558CC5C00821BC0 /* libicucore.dylib */,
+				9372560F0A61564200B053B9 /* libsqlite3.dylib */,
 				DD763BB10992C2C900740B8E /* libxml2.dylib */,
 				840633070731A77200DB1FD1 /* libxslt.dylib */,
 			);
@@ -5061,6 +5065,8 @@
 				9352088109BD45E900F2038D /* CookieJar.h */,
 				F587868402DE3B8601EA4122 /* Cursor.h */,
 				BCB16B880979B01400467741 /* DeprecatedArray.h */,
+				F58784D502DE375901EA4122 /* DeprecatedCString.cpp */,
+				F587868302DE3B8601EA4122 /* DeprecatedCString.h */,
 				F587869902DE3B8601EA4122 /* DeprecatedPtrList.h */,
 				F587851602DE375901EA4122 /* DeprecatedPtrListImpl.cpp */,
 				F587851502DE375901EA4122 /* DeprecatedPtrListImpl.h */,
@@ -5139,6 +5145,8 @@
 				9353686A09AF78F600D35CD6 /* TextDirection.h */,
 				657BD74B09AFDC54005A2056 /* TextEncoding.cpp */,
 				657BD74C09AFDC54005A2056 /* TextEncoding.h */,
+				F587853902DE375901EA4122 /* TextStream.cpp */,
+				F58786BF02DE3B8601EA4122 /* TextStream.h */,
 				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
 				6545F66C09B82FED0013006F /* TransferJob.cpp */,
@@ -5591,8 +5599,6 @@
 			children = (
 				F587868202DE3B8601EA4122 /* PopUpButton.h */,
 				F58784D202DE375901EA4122 /* PopUpButton.mm */,
-				F58784D502DE375901EA4122 /* DeprecatedCString.cpp */,
-				F587868302DE3B8601EA4122 /* DeprecatedCString.h */,
 				F587869802DE3B8601EA4122 /* TextField.h */,
 				F587851202DE375901EA4122 /* TextField.mm */,
 				F587851302DE375901EA4122 /* ListBox.h */,
@@ -5602,8 +5608,6 @@
 				BC86FB8E061F5C23006BB822 /* WebCoreSlider.mm */,
 				F58786BE02DE3B8601EA4122 /* TextBox.h */,
 				F587853802DE375901EA4122 /* TextBox.mm */,
-				F587853902DE375901EA4122 /* TextStream.cpp */,
-				F58786BF02DE3B8601EA4122 /* TextStream.h */,
 				A85D7A8C0879EC64006A9172 /* AffineTransform.cpp */,
 				A85D7A8D0879EC64006A9172 /* AffineTransform.h */,
 			);
@@ -7291,6 +7295,7 @@
 				DEBUG_DEFINES = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				EXPORTED_SYMBOLS_FILE = WebCore.exp;
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
@@ -7299,7 +7304,6 @@
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
 					.,
-					khtml,
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
@@ -7308,14 +7312,7 @@
 				HEADER_SEARCH_PATHS_QUOTED_1 = "\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				OTHER_LDFLAGS = (
-					"$(STYLE_LDFLAGS)",
-					"-lsqlite3",
-					"-Wl,-exported_symbols_list,WebCore.exp,-Y,3",
-				);
 				PRODUCT_NAME = WebCore;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
 			};
 			name = Debug;
 		};
@@ -7325,6 +7322,7 @@
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				EXPORTED_SYMBOLS_FILE = WebCore.exp;
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
@@ -7333,7 +7331,6 @@
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
 					.,
-					khtml,
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
@@ -7342,14 +7339,7 @@
 				HEADER_SEARCH_PATHS_QUOTED_1 = "\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				OTHER_LDFLAGS = (
-					"$(STYLE_LDFLAGS)",
-					"-lsqlite3",
-					"-Wl,-exported_symbols_list,WebCore.exp,-Y,3",
-				);
 				PRODUCT_NAME = WebCore;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
 			};
 			name = Release;
 		};
@@ -7359,6 +7349,7 @@
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				EXPORTED_SYMBOLS_FILE = WebCore.exp;
 				FRAMEWORK_SEARCH_PATHS = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks";
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -7368,7 +7359,6 @@
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
 					.,
-					khtml,
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
@@ -7378,9 +7368,8 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				OTHER_LDFLAGS = (
-					"$(STYLE_LDFLAGS)",
-					"-lsqlite3",
-					"-Wl,-exported_symbols_list,WebCore.exp,-Y,3",
+					"-umbrella",
+					WebKit,
 				);
 				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = (
@@ -7389,7 +7378,6 @@
 					__text,
 					/AppleInternal/OrderFiles/WebCore.order,
 				);
-				STYLE_LDFLAGS = "-umbrella WebKit";
 			};
 			name = Production;
 		};

@@ -1,5 +1,35 @@
 2006-07-09  Darin Adler  <darin@apple.com>
 
+        - move 4 files out of kwq directory
+        - make some minor project adjustments for the WebCore project
+
+        * WebCore.xcodeproj/project.pbxproj: Link libsqlite3 the same way we do other
+        libraries, rather than using a custom linker option. Moved the files from their
+        old locations to the new ones. Removed "khtml" from the list of header search
+        paths since that directory doesn't exist any more. Eliminated STYLE_LDFLAGS
+        and just put -umbrella WebKit in OTHER_LDFLAGS in the Production configuration
+        (was a leftover from "build styles" in Xcode 1). Changed to use EXPORTED_SYMBOLS_FILE
+        instead of using -exported_symbols_list directly again now that Xcode has fixed the
+        "strip twice" bug. Removed unneeded explicit SECTORDER_FLAGS = "" settings.
+        Removed the explicit -Y,3 option now that Xcode does that by default.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Removed some obsolete uneeded files,
+        many of which didn't exist any more. Moved the files from their old locations
+        to the new ones.
+
+        * WebCoreSources.bkl: Moved the files from their old locations to the new ones.
+
+        * kwq/DeprecatedCString.cpp: Removed.
+        * kwq/DeprecatedCString.h: Removed.
+        * kwq/TextStream.cpp: Removed.
+        * kwq/TextStream.h: Removed.
+        * platform/DeprecatedCString.cpp: Added.
+        * platform/DeprecatedCString.h: Added.
+        * platform/TextStream.cpp: Added.
+        * platform/TextStream.h: Added.
+
+2006-07-09  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Maciej (kinda).
 
         - did the next pass of renaming (used do-webcore-rename script)

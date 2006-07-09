@@ -163,23 +163,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\DeprecatedCString.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\DeprecatedCString.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\WebCoreEditCommand.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\FileButton.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\FormDataMac.h"
 				>
 			</File>
 			<File
@@ -188,10 +172,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\SSLKeyGenerator.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKWinModule.h"
 				>
 			</File>
 			<File
@@ -207,15 +187,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\WebCorePageState.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\DeprecatedPtrQueue.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\WebCoreResourceLoaderImp.h"
 				>
 			</File>
 			<File
@@ -228,18 +200,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\TextBox.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\TextStream.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\TextStream.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQWindowWidget.h"
 				>
 			</File>
 			<File
@@ -1243,6 +1203,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\DeprecatedCString.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\DeprecatedCString.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\DeprecatedPtrList.h"
 				>
 			</File>
@@ -1548,6 +1516,14 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\TextEncoding.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\TextStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\TextStream.h"
 				>
 			</File>
 			<File
