@@ -28,6 +28,9 @@
 		225F881509F97E8A00423A40 /* WebPluginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 225F881409F97E8A00423A40 /* WebPluginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		226E9E6A09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */; };
 		226E9E6B09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = 226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
+		22C53C810A60E9C9003FC824 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C53C800A60E9C9003FC824 /* Accelerate.framework */; };
+		22E42A4F0A5B9F620003275B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22E42A4E0A5B9F620003275B /* OpenGL.framework */; };
+		22E42A9A0A5BA4D00003275B /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22E42A990A5BA4D00003275B /* AGL.framework */; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		650F74E409E488F70020118A /* WebUnarchivingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F74E209E488F70020118A /* WebUnarchivingState.h */; };
 		650F74E509E488F70020118A /* WebUnarchivingState.m in Sources */ = {isa = PBXBuildFile; fileRef = 650F74E309E488F70020118A /* WebUnarchivingState.m */; };
@@ -300,6 +303,9 @@
 		225F881409F97E8A00423A40 /* WebPluginPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginPrivate.h; sourceTree = "<group>"; };
 		226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapeDeprecatedFunctions.h; sourceTree = "<group>"; };
 		226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WebNetscapeDeprecatedFunctions.c; sourceTree = "<group>"; };
+		22C53C800A60E9C9003FC824 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
+		22E42A4E0A5B9F620003275B /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		22E42A990A5BA4D00003275B /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2568C72C0174912D0ECA149E /* WebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKit.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFormDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -567,6 +573,9 @@
 				9398112E0824BF01008DF038 /* libicucore.dylib in Frameworks */,
 				9398112F0824BF01008DF038 /* Security.framework in Frameworks */,
 				65A0006908527D1A005620FA /* libWebKitSystemInterface.a in Frameworks */,
+				22E42A4F0A5B9F620003275B /* OpenGL.framework in Frameworks */,
+				22E42A9A0A5BA4D00003275B /* AGL.framework in Frameworks */,
+				22C53C810A60E9C9003FC824 /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -605,9 +614,12 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				22C53C800A60E9C9003FC824 /* Accelerate.framework */,
+				22E42A990A5BA4D00003275B /* AGL.framework */,
 				F5C2869302846DCD018635CA /* ApplicationServices.framework */,
 				F5C2869402846DCD018635CA /* Carbon.framework */,
 				F5C2869502846DCD018635CA /* Cocoa.framework */,
+				22E42A4E0A5B9F620003275B /* OpenGL.framework */,
 				830E81E005853AC000AD0891 /* Security.framework */,
 				93D623DD051E791F002F47DD /* libicucore.dylib */,
 				F738C9E903FAD3DF0321FBE0 /* JavaScriptCore.framework */,

@@ -28,6 +28,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import <AGL/agl.h>
 #import <WebKit/npfunctions.h>
 #import <WebKit/npapi.h>
 
@@ -42,6 +43,7 @@ typedef union PluginPort {
     NP_Port qdPort;
 #endif        
     NP_CGContext cgPort;
+    NP_GLContext aglPort;
 } PluginPort;
 
 @interface WebBaseNetscapePluginView : NSView
@@ -61,6 +63,10 @@ typedef union PluginPort {
     PluginPort nPort;
     PluginPort lastSetPort;
     NPDrawingModel drawingModel;
+    
+    // These are only valid when drawingModel is NPDrawingModelOpenGL
+    AGLContext aglContext;
+    NSWindow *aglWindow;
 
     BOOL isStarted;
     BOOL inSetWindow;

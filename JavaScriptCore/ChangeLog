@@ -1,3 +1,11 @@
+2006-07-08  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Maciej.
+
+        Added an OpenGL drawing model to the Netscape Plug-in API.
+
+        * bindings/npapi.h:
+
 2006-07-08  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.

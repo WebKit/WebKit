@@ -1,3 +1,116 @@
+2006-07-08  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        - Added ivars for OpenGL support.  Someday it would be nice to refactor this class so
+          that each drawing model is encapsulated in a class; this would allow
+          WebBaseNetscapePluginView to make more efficient use of space, for example by not
+          keeping OpenGL-related ivars for Quickdraw plug-ins.
+        
+        * Plugins/WebBaseNetscapePluginView.m:
+        - Declared a bunch of internal methods for OpenGL support (see below).
+        - Removed "forUpdate" from CoreGraphics port state struct; it was always set to "YES",
+          so I just cleaned up the silly code that used it.
+        - Declared OpenGL port state struct.
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        - Moved a CoreGraphics-related assertion down to the big "switch" statement.
+        - Don't set window.type here -- according to the Netscape Plug-in API docs, the plug-in
+          should default to "windowed" mode, and may call NPN_SetValue() during its NPN_New() to
+          request that the browser use a "windowless" (offscreen) context instead.
+        - Moved the assertion from the top of this method here; removed a less restrictive
+          assertion that is now obsolete.
+        - Removed "forUpdate" flag from CoreGraphics port state struct.
+        - Fill in OpenGL port state struct.  Set up the viewport appropriately for both windowed
+          and windowless OpenGL plug-ins.  Windowed plug-ins need to have their GL viewport
+          transformed by the amount the plug-in is clipped; windowless plug-ins are drawn off-screen
+          into a surface whose geometry is never changed or clipped, so they may always draw with
+          a viewport origin of (0, 0).
+        (-[WebBaseNetscapePluginView restorePortState:]):
+        - Removed "forUpdate" flag from CoreGraphics port state struct.
+        - Restore the old OpenGL context saved by -saveAndSetNewPortStateForUpdate:.
+        (-[WebBaseNetscapePluginView sendEvent:]):
+        - Updated an assertion to also include OpenGL.  To ensure that attached plug-in window movements
+          happen atomically with web page redisplays, we assert that the plug-in's window is set only while
+          the plug-in view is redrawing.
+        - Same deal as with the assertion; only save/set port state when redrawing the plug-in view.  Plug-ins
+          that use the new drawing models are only allowed to draw when the web page draws.  I might consider
+          changing this for windowed OpenGL plug-ins, since they always obscure the page content anyway.
+        (-[WebBaseNetscapePluginView isNewWindowEqualToOldWindow]):
+        - Compare new NP_GLContext structs.
+        (-[WebBaseNetscapePluginView updateAndSetWindow]):
+        - In OpenGL mode, can only set window when updating plug-in view.
+        (-[WebBaseNetscapePluginView setWindowIfNecessary]):
+        - ditto
+        - Updated logging for OpenGL drawing mode.
+        (-[WebBaseNetscapePluginView addWindowObservers]):
+        - No need to observe frame/bounds change notifications for this and all parent views.  See -renewGState
+          comments below.
+        (-[WebBaseNetscapePluginView removeWindowObservers]):
+        - Don't need to remove frame/bounds observers anymore.
+        (-[WebBaseNetscapePluginView start]):
+        - Plug-ins are "windowed" by default.  This is not a change from our previous behavior, but this is a
+          better place to set the default value as it allows the plug-in to override it later.
+        (-[WebBaseNetscapePluginView stop]):
+        - Destroy AGL context when the plug-in stops.
+        (-[WebBaseNetscapePluginView dealloc]):
+        - Assert that the AGL stuff has been cleaned up.
+        (-[WebBaseNetscapePluginView drawRect:]):
+        - If this is a windowless OpenGL plugin, blit its contents back into this view.
+        (-[WebBaseNetscapePluginView renewGState]):
+        - This method is called when the view or one of its parents is moved or resized (see comments).
+        (-[WebBaseNetscapePluginView viewWillMoveToWindow:]):
+        - Hide the AGL window if the plug-in view is about to be removed from its window.
+        (-[WebBaseNetscapePluginView viewHasMoved:]):
+        - Renamed and moved to the "Internal" category.
+        (-[WebBaseNetscapePluginView invalidateRegion:]):
+        - Style changes.
+        - Add support for OpenGL (uses the same region type as CoreGraphics).
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+        - Style changes.
+        - Implemented NPNVsupportsOpenGLBool; returns YES since we now support the OpenGL drawing model.
+        (-[WebBaseNetscapePluginView setVariable:value:]):
+        - Implemented NPPVpluginWindowBool, which allows plug-ins to specify whether they should be rendered in
+          "windowed" or "windowless" mode.  This is an older part of the Netscape Plug-in API that was never
+          implemented in WebKit.  "Windowed" Quickdraw plug-ins do not actually reside in a separate window, and
+          can already do many of the same things (such as transparency) that only "windowless" plug-ins can do on
+          other platforms.  However, we need the "windowed" vs. "windowless" distinction for OpenGL plug-ins so
+          that they have some way of specifying whether they should be rendered on an accelerated overlay surface,
+          composited into the browser window.
+        - Support for setting the drawing model to OpenGL.
+        (-[WebBaseNetscapePluginView _viewHasMoved]):
+        - Renamed from -viewHasMoved:, and moved down in the file.
+        - None of this work is necessary when the plug-in is not in a window; the plug-in's state will be properly
+          restored when it is moved back into a window.
+        - Reshape OpenGL surface window here.
+        (-[WebBaseNetscapePluginView _createAGLContextIfNeeded]):
+        - Creates the AGL context of the appropriate type (windowed/windowless).
+        (-[WebBaseNetscapePluginView _createWindowedAGLContext]):
+        - Creates a windowed AGL context, which is an AGL context attached to a child window.  This is the only way
+          to get true hardware acceleration.
+        (-[WebBaseNetscapePluginView _createWindowlessAGLContext]):
+        - Creates a windowless AGL context, which is an AGL context attached to an offscreen buffer.  This buffer can
+          then be blitted back into the browser window with a different alpha, or scaled, or whatever.
+        (-[WebBaseNetscapePluginView _cglContext]):
+        - Returns the underlying CGL context from the AGL context.  We give the plug-in access to the CGL context because
+          CGL is the more primitive of the GL drawable APIs and allows for finer control over the context.
+        (-[WebBaseNetscapePluginView _getAGLOffscreenBuffer:width:height:]):
+        - Returns the buffer allocated for the offscreen AGL context, if there is one.
+        (-[WebBaseNetscapePluginView _destroyAGLContext]):
+        - Destroys the AGL context, as well as the associated offscreen buffer or child window.
+        (-[WebBaseNetscapePluginView _reshapeAGLWindow]):
+        - Positions the AGL window over the browser window.
+        (-[WebBaseNetscapePluginView _hideAGLWindow]):
+        - Hides the AGL window.
+        (-[WebBaseNetscapePluginView _aglOffscreenImageForDrawingInRect:]):
+        - Returns an NSImage representation of the offscreen AGL context's framebuffer.  This is used to draw the offscreen
+          bits back into the plug-in view.  This is kind of tricky because it has to convert the offscreen buffer in-place
+          from BGRA to RGBA so that it can be wrapped in an NSBitmapImageRep.  See comments.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Link OpenGL and AGL.
+
+=======
 2006-07-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

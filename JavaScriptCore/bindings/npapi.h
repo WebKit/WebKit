@@ -83,6 +83,7 @@
 #ifdef XP_MACOSX
     #include <Carbon/Carbon.h>
     #include <ApplicationServices/ApplicationServices.h>
+    #include <OpenGL/OpenGL.h>
 #endif
 
 #ifdef XP_UNIX
@@ -343,6 +344,7 @@ typedef enum {
     , NPNVsupportsQuickDrawBool = 2000 /* TRUE if the browser supports the QuickDraw drawing model */
 #endif
     , NPNVsupportsCoreGraphicsBool = 2001 /* TRUE if the browser supports the CoreGraphics drawing model */
+    , NPNVsupportsOpenGLBool = 2002 /* TRUE if the browser supports the OpenGL drawing model (CGL on Mac) */
 #endif /* XP_MACOSX */
 } NPNVariable;
 
@@ -365,7 +367,8 @@ typedef enum {
 #ifndef NP_NO_QUICKDRAW
     NPDrawingModelQuickDraw = 0,
 #endif
-    NPDrawingModelCoreGraphics = 1
+    NPDrawingModelCoreGraphics = 1,
+    NPDrawingModelOpenGL = 2
 } NPDrawingModel;
 
 #endif
@@ -431,7 +434,8 @@ typedef RgnHandle NPRegion;
 #elif defined(XP_MACOSX)
 /* 
  * NPRegion's type depends on the drawing model specified by the plugin (see NPNVpluginDrawingModel).
- * NPQDRegion represents a QuickDraw RgnHandle, and NPCGRegion represents a CoreGraphics CGPathRef.
+ * NPQDRegion represents a QuickDraw RgnHandle and is used with the QuickDraw drawing model.
+ * NPCGRegion repesents a graphical region when using any other drawing model.
  */
 typedef void *NPRegion;
 #ifndef NP_NO_QUICKDRAW
@@ -458,6 +462,17 @@ typedef struct NP_CGContext
     CGContextRef context;
     WindowRef window;
 } NP_CGContext;
+
+/* 
+ * NP_GLContext is the type of the NPWindow's 'window' when the plugin specifies NPDrawingModelOpenGL as its
+ * drawing model.
+ */
+
+typedef struct NP_GLContext
+{
+    CGLContextObj context;
+    WindowRef window;
+} NP_GLContext;
 
 #endif /* XP_MACOSX */
 

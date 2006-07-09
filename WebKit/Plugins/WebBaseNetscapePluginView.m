@@ -28,6 +28,7 @@
 
 #import <WebKit/WebBaseNetscapePluginView.h>
 
+#import <Accelerate/Accelerate.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSource.h>
@@ -64,7 +65,17 @@
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 
 @interface WebBaseNetscapePluginView (Internal)
+- (void)_viewHasMoved;
 - (NSBitmapImageRep *)_printedPluginBitmap;
+- (BOOL)_createAGLContextIfNeeded;
+- (BOOL)_createWindowedAGLContext;
+- (BOOL)_createWindowlessAGLContext;
+- (CGLContextObj)_cglContext;
+- (BOOL)_getAGLOffscreenBuffer:(GLvoid **)outBuffer width:(GLsizei *)outWidth height:(GLsizei *)outHeight;
+- (void)_destroyAGLContext;
+- (void)_reshapeAGLWindow;
+- (void)_hideAGLWindow;
+- (NSImage *)_aglOffscreenImageForDrawingInRect:(NSRect)drawingInRect;
 @end
 
 static WebBaseNetscapePluginView *currentPluginView = nil;
@@ -88,8 +99,11 @@ typedef struct {
 
 typedef struct {
     CGContextRef context;
-    BOOL forUpdate;
 } PortState_CG;
+
+typedef struct {
+    AGLContext oldContext;
+} PortState_GL;
 
 @interface WebPluginRequest : NSObject
 {
@@ -234,9 +248,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     ASSERT([self currentWindow] != nil);
 
-    // A CoreGraphics plugin's window may only be set while the plugin view is being updated
-    ASSERT(drawingModel != NPDrawingModelCoreGraphics || (forUpdate && [NSView focusView] == self));
-     
 #ifndef NP_NO_QUICKDRAW
     // If drawing with QuickDraw, fix the window port so that it has the same bounds as the NSWindow's
     // content view.  This makes it easier to convert between AppKit view and QuickDraw port coordinates.
@@ -311,8 +322,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         window.clipRect.bottom = (uint16)(visibleRectInWindow.origin.y + visibleRectInWindow.size.height);
         window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);        
     }
-
-    window.type = NPWindowTypeWindow;
     
     // Save the port state, set up the port for entry into the plugin
     PortState portState;
@@ -409,11 +418,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         
         case NPDrawingModelCoreGraphics:
         {            
-            ASSERT([NSView focusView] == self);
+            // A CoreGraphics plugin's window may only be set while the plugin view is being updated
+            ASSERT(forUpdate && [NSView focusView] == self);
 
             PortState_CG *cgPortState = (PortState_CG *)malloc(sizeof(PortState_CG));
             portState = (PortState)cgPortState;
-            cgPortState->forUpdate = YES;
             cgPortState->context = [[NSGraphicsContext currentContext] graphicsPort];
             
             // Update the plugin's window/context
@@ -425,6 +434,53 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             CGContextSaveGState(nPort.cgPort.context);
             
             // FIXME (4544971): Clip to dirty region when updating in "windowless" mode (transparent), like in the QD case
+        }
+        break;
+        
+        case NPDrawingModelOpenGL:
+        {
+            // An OpenGL plugin's window may only be set while the plugin view is being updated
+            ASSERT(forUpdate && [NSView focusView] == self);
+
+            // Clear the "current" window and context -- they will be assigned below (if all goes well)
+            nPort.aglPort.window = NULL;
+            nPort.aglPort.context = NULL;
+            
+            // Create AGL context if needed
+            if (![self _createAGLContextIfNeeded]) {
+                LOG_ERROR("Could not create AGL context");
+                return NULL;
+            }
+            
+            // Update the plugin's window/context
+            nPort.aglPort.window = windowRef;
+            nPort.aglPort.context = [self _cglContext];
+            window.window = &nPort.aglPort;
+            
+            // Save/set current AGL context
+            PortState_GL *glPortState = (PortState_GL *)malloc(sizeof(PortState_GL));
+            portState = (PortState)glPortState;
+            glPortState->oldContext = aglGetCurrentContext();
+            aglSetCurrentContext(aglContext);
+            
+            // Adjust viewport according to clip
+            switch (window.type) {
+                case NPWindowTypeWindow:
+                    glViewport(NSMinX(boundsInWindow) - NSMinX(visibleRectInWindow), NSMaxY(visibleRectInWindow) - NSMaxY(boundsInWindow), window.width, window.height);
+                break;
+                
+                case NPWindowTypeDrawable:
+                {
+                    GLsizei width, height;
+                    if ([self _getAGLOffscreenBuffer:NULL width:&width height:&height])
+                        glViewport(0.0, 0.0, width, height);
+                }
+                break;
+                
+                default:
+                    ASSERT_NOT_REACHED();
+                break;
+            }
         }
         break;
         
@@ -475,12 +531,14 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         case NPDrawingModelCoreGraphics:
         {
             PortState_CG *cgPortState = (PortState_CG *)portState;
-            if (cgPortState->forUpdate) {
-                ASSERT([NSView focusView] == self);
-                ASSERT(cgPortState->context == nPort.cgPort.context);
-                CGContextRestoreGState(nPort.cgPort.context);
-            }
+            ASSERT([NSView focusView] == self);
+            ASSERT(cgPortState->context == nPort.cgPort.context);
+            CGContextRestoreGState(nPort.cgPort.context);
         }
+        break;
+        
+        case NPDrawingModelOpenGL:
+            aglSetCurrentContext(((PortState_GL *)portState)->oldContext);
         break;
         
         default:
@@ -518,14 +576,14 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (!defers)
         [[self webView] setDefersCallbacks:YES];
 
-    // Can only send updateEvt to CoreGraphics plugins when actually drawing
-    ASSERT(drawingModel != NPDrawingModelCoreGraphics || event->what != updateEvt || [NSView focusView] == self);
+    // Can only send updateEvt to CoreGraphics and OpenGL plugins when actually drawing
+    ASSERT((drawingModel != NPDrawingModelCoreGraphics && drawingModel != NPDrawingModelOpenGL) || event->what != updateEvt || [NSView focusView] == self);
     
     BOOL updating = event->what == updateEvt;
     PortState portState;
-    if (drawingModel != NPDrawingModelCoreGraphics || event->what == updateEvt) {
-        // Can only save/set port state when updating in CoreGraphics mode.  We can save/set the port state
-        // at any time in other modes.
+    if ((drawingModel != NPDrawingModelCoreGraphics && drawingModel != NPDrawingModelOpenGL) || event->what == updateEvt) {
+        // In CoreGraphics or OpenGL mode, the port state only needs to be saved/set when redrawing the plug-in view.  The plug-in is not
+        // allowed to draw at any other time.
         portState = [self saveAndSetNewPortStateForUpdate:updating];
         
         // We may have changed the window, so inform the plug-in.
@@ -953,6 +1011,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 return NO;
         break;
             
+        case NPDrawingModelOpenGL:
+            if (nPort.aglPort.window != lastSetPort.aglPort.window)
+                return NO;
+            if (nPort.aglPort.context != lastSetPort.aglPort.context)
+                return NO;
+        break;
+        
         default:
             ASSERT_NOT_REACHED();
         break;
@@ -963,8 +1028,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (void)updateAndSetWindow
 {
-    if (drawingModel == NPDrawingModelCoreGraphics) {
-        // Can only update CoreGraphics plugins while redrawing the plugin view
+    if (drawingModel == NPDrawingModelCoreGraphics || drawingModel == NPDrawingModelOpenGL) {
+        // Can only update CoreGraphics and OpenGL plugins while redrawing the plugin view
         [self setNeedsDisplay:YES];
         return;
     }
@@ -997,8 +1062,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         
         inSetWindow = YES;
         
-        // A CoreGraphics plugin's window may only be set while the plugin is being updated
-        ASSERT(drawingModel != NPDrawingModelCoreGraphics || [NSView focusView] == self);
+        // A CoreGraphics or OpenGL plugin's window may only be set while the plugin is being updated
+        ASSERT((drawingModel != NPDrawingModelCoreGraphics && drawingModel != NPDrawingModelOpenGL) || [NSView focusView] == self);
         
         npErr = NPP_SetWindow(instance, &window);
         inSetWindow = NO;
@@ -1015,6 +1080,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             case NPDrawingModelCoreGraphics:
                 LOG(Plugins, "NPP_SetWindow (CoreGraphics): %d, window=%p, context=%p, window.x:%d window.y:%d window.width:%d window.height:%d",
                 npErr, nPort.cgPort.window, nPort.cgPort.context, (int)window.x, (int)window.y, (int)window.width, (int)window.height);
+            break;
+
+            case NPDrawingModelOpenGL:
+                LOG(Plugins, "NPP_SetWindow (CoreGraphics): %d, window=%p, context=%p, window.x:%d window.y:%d window.width:%d window.height:%d",
+                npErr, nPort.aglPort.window, nPort.aglPort.context, (int)window.x, (int)window.y, (int)window.width, (int)window.height);
             break;
             
             default:
@@ -1077,13 +1147,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     NSWindow *theWindow = [self window];
     
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    NSView *view;
-    for (view = self; view; view = [view superview]) {
-        [notificationCenter addObserver:self selector:@selector(viewHasMoved:)
-                                   name:NSViewFrameDidChangeNotification object:view];
-        [notificationCenter addObserver:self selector:@selector(viewHasMoved:)
-                                   name:NSViewBoundsDidChangeNotification object:view];
-    }
     [notificationCenter addObserver:self selector:@selector(windowWillClose:)
                                name:NSWindowWillCloseNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(windowBecameKey:)
@@ -1104,8 +1167,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (void)removeWindowObservers
 {
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    [notificationCenter removeObserver:self name:NSViewFrameDidChangeNotification     object:nil];
-    [notificationCenter removeObserver:self name:NSViewBoundsDidChangeNotification    object:nil];
     [notificationCenter removeObserver:self name:NSWindowWillCloseNotification        object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidBecomeKeyNotification     object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidResignKeyNotification     object:nil];
@@ -1137,6 +1198,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     // Initialize drawingModel to an invalid value so that we can detect when the plugin does not specify a drawingModel
     drawingModel = -1;
+    
+    // Plug-ins are "windowed" by default.  On MacOS, windowed plug-ins share the same window and graphics port as the main
+    // browser window.  Windowless plug-ins are rendered off-screen, then copied into the main browser window.
+    window.type = NPWindowTypeWindow;
     
     [[self class] setCurrentPluginView:self];
     NPError npErr = NPP_New((char *)[MIMEType cString], instance, mode, argsCount, cAttributes, cValues, NULL);
@@ -1218,6 +1283,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // We usually remove the key event handler in resignFirstResponder but it is possible that resignFirstResponder 
     // may never get called so we can't completely rely on it.
     [self removeKeyEventHandler];
+    
+    if (drawingModel == NPDrawingModelOpenGL)
+        [self _destroyAGLContext];
 }
 
 - (BOOL)isStarted
@@ -1373,6 +1441,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [MIMEType release];
     [baseURL release];
     [pendingFrameLoads release];
+    
+    ASSERT(!aglWindow);
+    ASSERT(!aglContext);
 
     [self freeAttributeKeysAndValues];
 
@@ -1410,11 +1481,41 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             CGContextRestoreGState(cgContext);
         }
     }
+    
+    // If this is a windowless OpenGL plugin, blit its contents back into this view.  The plug-in just drew into the offscreen context.
+    if (drawingModel == NPDrawingModelOpenGL && window.type == NPWindowTypeDrawable) {
+        NSImage *aglOffscreenImage = [self _aglOffscreenImageForDrawingInRect:rect];
+        if (aglOffscreenImage) {
+            // Flip the context before drawing because the CGL context is flipped relative to this view.
+            CGContextRef cgContext = [[NSGraphicsContext currentContext] graphicsPort];
+            CGContextSaveGState(cgContext);
+            NSRect bounds = [self bounds];
+            CGContextTranslateCTM(cgContext, 0.0, NSHeight(bounds));
+            CGContextScaleCTM(cgContext, 1.0, -1.0);
+            
+            // Copy 'rect' from the offscreen buffer to this view (the flip above makes this sort of tricky)
+            NSRect flippedRect = rect;
+            flippedRect.origin.y = NSMaxY(bounds) - NSMaxY(flippedRect);
+            [aglOffscreenImage drawInRect:flippedRect fromRect:flippedRect operation:NSCompositeSourceOver fraction:1.0];
+            CGContextRestoreGState(cgContext);
+        }
+    }
 }
 
 - (BOOL)isFlipped
 {
     return YES;
+}
+
+- (void)renewGState
+{
+    [super renewGState];
+    
+    // -renewGState is called whenever the view's geometry changes.  It's a little hacky to override this method, but
+    // much safer than walking up the view hierarchy and observing frame/bounds changed notifications, since you don't
+    // have to track subsequent changes to the view hierarchy and add/remove notification observers.
+    // NSOpenGLView uses the exact same technique to reshape its OpenGL surface.
+    [self _viewHasMoved];
 }
 
 #ifndef NP_NO_QUICKDRAW
@@ -1450,6 +1551,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [self setHasFocus:NO];
 
     if (!newWindow) {
+        // Hide the AGL child window
+        if (drawingModel == NPDrawingModelOpenGL)
+            [self _hideAGLWindow];
+        
         if ([[self webView] hostWindow]) {
             // View will be moved out of the actual window but it still has a host window.
             [self stopNullEvents];
@@ -1508,23 +1613,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 }
 
 #pragma mark NOTIFICATIONS
-
-- (void)viewHasMoved:(NSNotification *)notification
-{
-#ifndef NP_NO_QUICKDRAW
-    if (drawingModel == NPDrawingModelQuickDraw)
-        [self tellQuickTimeToChill];
-#endif
-    [self updateAndSetWindow];
-    [self resetTrackingRect];
-    
-    // Check to see if the plugin view is completely obscured (scrolled out of view, for example).
-    // For performance reasons, we send null events at a lower rate to plugins which are obscured.
-    BOOL oldIsObscured = isCompletelyObscured;
-    isCompletelyObscured = NSEqualSizes([self visibleRect].size, NSZeroSize);
-    if (isCompletelyObscured != oldIsObscured)
-        [self restartNullEvents];
-}
 
 - (void)windowWillClose:(NSNotification *)notification
 {
@@ -1971,7 +2059,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     NSRect invalidRect;
     switch (drawingModel) {
 #ifndef NP_NO_QUICKDRAW
-        case NPDrawingModelQuickDraw: {
+        case NPDrawingModelQuickDraw:
+        {
             Rect qdRect;
             GetRegionBounds(invalidRegion, &qdRect);
             invalidRect = NSMakeRect(qdRect.left, qdRect.top, qdRect.right - qdRect.left, qdRect.bottom - qdRect.top);
@@ -1979,7 +2068,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         break;
 #endif /* NP_NO_QUICKDRAW */
         
-        case NPDrawingModelCoreGraphics: {
+        case NPDrawingModelCoreGraphics:
+        case NPDrawingModelOpenGL:
+        {
             CGRect cgRect = CGPathGetBoundingBox((NPCGRegion)invalidRegion);
             invalidRect = *(NSRect *)&cgRect;
         }
@@ -2003,7 +2094,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (NPError)getVariable:(NPNVariable)variable value:(void *)value
 {
     switch (variable) {
-        case NPNVWindowNPObject: {
+        case NPNVWindowNPObject:
+        {
             NPObject *windowScriptObject = [[[self webFrame] _bridge] windowScriptNPObject];
 
             // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
@@ -2035,6 +2127,12 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             *(NPBool *)value = TRUE;
             return NPERR_NO_ERROR;
         }
+
+        case NPNVsupportsOpenGLBool:
+        {
+            *(NPBool *)value = TRUE;
+            return NPERR_NO_ERROR;
+        }
         
         default:
             break;
@@ -2046,6 +2144,17 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (NPError)setVariable:(NPPVariable)variable value:(void *)value
 {
     switch (variable) {
+        case NPPVpluginWindowBool:
+        {
+            NPWindowType newWindowType = (value ? NPWindowTypeWindow : NPWindowTypeDrawable);
+
+            // Redisplay if window type is changing (some drawing models can only have their windows set while updating).
+            if (newWindowType != window.type)
+                [self setNeedsDisplay:YES];
+            
+            window.type = newWindowType;
+        }
+        
         case NPPVpluginTransparentBool:
         {
             BOOL newTransparent = (value != 0);
@@ -2073,6 +2182,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 case NPDrawingModelQuickDraw:
 #endif
                 case NPDrawingModelCoreGraphics:
+                case NPDrawingModelOpenGL:
                     drawingModel = newDrawingModel;
                     return NPERR_NO_ERROR;
                 
@@ -2138,6 +2248,31 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 @end
 
 @implementation WebBaseNetscapePluginView (Internal)
+
+- (void)_viewHasMoved
+{
+    // All of the work this method does may safely be skipped if the view is not in a window.  When the view
+    // is moved back into a window, everything should be set up correctly.
+    if (![self window])
+        return;
+    
+    if (drawingModel == NPDrawingModelOpenGL)
+        [self _reshapeAGLWindow];
+
+#ifndef NP_NO_QUICKDRAW
+    if (drawingModel == NPDrawingModelQuickDraw)
+        [self tellQuickTimeToChill];
+#endif
+    [self updateAndSetWindow];
+    [self resetTrackingRect];
+    
+    // Check to see if the plugin view is completely obscured (scrolled out of view, for example).
+    // For performance reasons, we send null events at a lower rate to plugins which are obscured.
+    BOOL oldIsObscured = isCompletelyObscured;
+    isCompletelyObscured = NSIsEmptyRect([self visibleRect]);
+    if (isCompletelyObscured != oldIsObscured)
+        [self restartNullEvents];
+}
 
 - (NSBitmapImageRep *)_printedPluginBitmap
 {
@@ -2206,6 +2341,371 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         
     return bitmap;
 #endif
+}
+
+- (BOOL)_createAGLContextIfNeeded
+{
+    ASSERT(drawingModel == NPDrawingModelOpenGL);
+
+    // Do nothing (but indicate success) if the AGL context already exists
+    if (aglContext)
+        return YES;
+        
+    switch (window.type) {
+        case NPWindowTypeWindow:
+            return [self _createWindowedAGLContext];
+        
+        case NPWindowTypeDrawable:
+            return [self _createWindowlessAGLContext];
+        
+        default:
+            ASSERT_NOT_REACHED();
+            return NO;
+    }
+}
+
+- (BOOL)_createWindowedAGLContext
+{
+    ASSERT(drawingModel == NPDrawingModelOpenGL);
+    ASSERT(!aglContext);
+    ASSERT(!aglWindow);
+    ASSERT([self window]);
+    
+    GLint pixelFormatAttributes[] = {
+        AGL_RGBA,
+        AGL_RED_SIZE, 8,
+        AGL_GREEN_SIZE, 8,
+        AGL_BLUE_SIZE, 8,
+        AGL_ALPHA_SIZE, 8,
+        AGL_DEPTH_SIZE, 32,
+        AGL_WINDOW,
+        AGL_ACCELERATED,
+        0
+    };
+    
+    // Choose AGL pixel format
+    AGLPixelFormat pixelFormat = aglChoosePixelFormat(NULL, 0, pixelFormatAttributes);
+    if (!pixelFormat) {
+        LOG_ERROR("Could not find suitable AGL pixel format: %s", aglErrorString(aglGetError()));
+        return NO;
+    }
+    
+    // Create AGL context
+    aglContext = aglCreateContext(pixelFormat, NULL);
+    aglDestroyPixelFormat(pixelFormat);
+    if (!aglContext) {
+        LOG_ERROR("Could not create AGL context: %s", aglErrorString(aglGetError()));
+        return NO;
+    }
+    
+    // Create AGL window
+    aglWindow = [[NSWindow alloc] initWithContentRect:NSZeroRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+    if (!aglWindow) {
+        LOG_ERROR("Could not create window for AGL drawable.");
+        return NO;
+    }
+    
+    // AGL window should allow clicks to go through -- mouse events are tracked by WebCore
+    [aglWindow setIgnoresMouseEvents:YES];
+    
+    // Make sure the window is not opaque -- windowed plug-ins cannot layer with other page elements
+    [aglWindow setOpaque:YES];
+
+    // Position and order in the AGL window
+    [self _reshapeAGLWindow];
+
+    // Attach the AGL context to its window
+    if (!aglSetDrawable(aglContext, (AGLDrawable)GetWindowPort([aglWindow windowRef]))) {
+        LOG_ERROR("Could not set AGL drawable: %s", aglErrorString(aglGetError()));
+        aglDestroyContext(aglContext);
+        aglContext = NULL;
+        return NO;
+    }
+        
+    return YES;
+}
+
+- (BOOL)_createWindowlessAGLContext
+{
+    ASSERT(drawingModel == NPDrawingModelOpenGL);
+    ASSERT(!aglContext);
+    ASSERT(!aglWindow);
+    
+    GLint pixelFormatAttributes[] = {
+        AGL_RGBA,
+        AGL_RED_SIZE, 8,
+        AGL_GREEN_SIZE, 8,
+        AGL_BLUE_SIZE, 8,
+        AGL_ALPHA_SIZE, 8,
+        AGL_DEPTH_SIZE, 32,
+        AGL_OFFSCREEN,
+        0
+    };
+
+    // Choose AGL pixel format
+    AGLPixelFormat pixelFormat = aglChoosePixelFormat(NULL, 0, pixelFormatAttributes);
+    if (!pixelFormat) {
+        LOG_ERROR("Could not find suitable AGL pixel format: %s", aglErrorString(aglGetError()));
+        return NO;
+    }
+    
+    // Create AGL context
+    aglContext = aglCreateContext(pixelFormat, NULL);
+    aglDestroyPixelFormat(pixelFormat);
+    if (!aglContext) {
+        LOG_ERROR("Could not create AGL context: %s", aglErrorString(aglGetError()));
+        return NO;
+    }
+    
+    // Create offscreen buffer for AGL context
+    NSSize boundsSize = [self bounds].size;
+    GLvoid *offscreenBuffer = (GLvoid *)malloc(boundsSize.width * boundsSize.height * 4);
+    if (!offscreenBuffer) {
+        LOG_ERROR("Could not allocate offscreen buffer for AGL context");
+        aglDestroyContext(aglContext);
+        aglContext = NULL;
+        return NO;
+    }
+    
+    // Attach AGL context to offscreen buffer
+    if (!aglSetOffScreen(aglContext, boundsSize.width, boundsSize.height, boundsSize.width * 4, offscreenBuffer)) {
+        LOG_ERROR("Could not set offscreen buffer for AGL context: %d", aglGetError());
+        aglDestroyContext(aglContext);
+        aglContext = NULL;
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (CGLContextObj)_cglContext
+{
+    ASSERT(drawingModel == NPDrawingModelOpenGL);
+
+    CGLContextObj cglContext = NULL;
+    if (!aglGetCGLContext(aglContext, (void **)&cglContext) || !cglContext)
+        LOG_ERROR("Could not get CGL context for AGL context: %s", aglErrorString(aglGetError()));
+        
+    return cglContext;
+}
+
+- (BOOL)_getAGLOffscreenBuffer:(GLvoid **)outBuffer width:(GLsizei *)outWidth height:(GLsizei *)outHeight
+{
+    ASSERT(drawingModel == NPDrawingModelOpenGL);
+    
+    if (outBuffer)
+        *outBuffer = NULL;
+    if (outWidth)
+        *outWidth = 0;
+    if (outHeight)
+        *outHeight = 0;
+    
+    // Only windowless plug-ins have offscreen buffers
+    if (window.type != NPWindowTypeDrawable)
+        return NO;
+    
+    CGLContextObj cglContext = [self _cglContext];
+    if (!cglContext)
+        return NO;
+    
+    GLsizei width, height;
+    GLint rowBytes;
+    void *offscreenBuffer = NULL;
+    CGLError error = CGLGetOffScreen(cglContext, &width, &height, &rowBytes, &offscreenBuffer);
+    if (error || !offscreenBuffer) {
+        LOG_ERROR("Could not get offscreen buffer for AGL context: %d", error);
+        return NO;
+    }
+    
+    if (outBuffer)
+        *outBuffer = offscreenBuffer;
+    if (outWidth)
+        *outWidth = width;
+    if (outHeight)
+        *outHeight = height;
+    
+    return YES;
+}
+
+- (void)_destroyAGLContext
+{    
+    ASSERT(drawingModel == NPDrawingModelOpenGL);
+
+    if (!aglContext)
+        return;
+
+    if (aglContext) {
+        // If this is a windowless plug-in, free its offscreen buffer
+        GLvoid *offscreenBuffer;
+        if ([self _getAGLOffscreenBuffer:&offscreenBuffer width:NULL height:NULL])
+            free(offscreenBuffer);
+        
+        // Detach context from the AGL window
+        aglSetDrawable(aglContext, NULL);
+        
+        // Destroy the context
+        aglDestroyContext(aglContext);
+        aglContext = NULL;
+    }
+    
+    // Destroy the AGL window
+    if (aglWindow) {
+        [self _hideAGLWindow];
+        aglWindow = nil;
+    }
+}
+
+- (void)_reshapeAGLWindow
+{
+    ASSERT(drawingModel == NPDrawingModelOpenGL);
+    
+    if (!aglContext)
+        return;
+
+    switch (window.type) {
+        case NPWindowTypeWindow:
+        {
+            if (!aglWindow)
+                break;
+                
+            // The AGL window is being reshaped because the plugin view has moved.  Since the view has moved, it will soon redraw.
+            // We want the AGL window to update at the same time as its underlying view.  So, we disable screen updates until the
+            // plugin view's window flushes.
+            NSWindow *browserWindow = [self window];
+            ASSERT(browserWindow);
+            [browserWindow disableScreenUpdatesUntilFlush];
+
+            // Add the AGL window as a child of the main window if necessary
+            if ([aglWindow parentWindow] != browserWindow)
+                [browserWindow addChildWindow:aglWindow ordered:NSWindowAbove];
+            
+            // Update the AGL window frame
+            NSRect aglWindowFrame = [self convertRect:[self visibleRect] toView:nil];
+            aglWindowFrame.origin = [browserWindow convertBaseToScreen:aglWindowFrame.origin];
+            [aglWindow setFrame:aglWindowFrame display:NO];
+            
+            // Update the AGL context
+            aglUpdateContext(aglContext);
+        }
+        break;
+        
+        case NPWindowTypeDrawable:
+        {
+            // Get offscreen buffer; we can skip this step if we don't have one yet
+            GLvoid *offscreenBuffer;
+            GLsizei width, height;
+            if (![self _getAGLOffscreenBuffer:&offscreenBuffer width:&width height:&height] || !offscreenBuffer)
+                break;
+            
+            // Don't resize the offscreen buffer if it's already the same size as the view bounds
+            NSSize boundsSize = [self bounds].size;
+            if (boundsSize.width == width && boundsSize.height == height)
+                break;
+            
+            // Resize the offscreen buffer
+            offscreenBuffer = realloc(offscreenBuffer, boundsSize.width * boundsSize.height * 4);
+            if (!offscreenBuffer) {
+                LOG_ERROR("Could not allocate offscreen buffer for AGL context");
+                break;
+            }
+
+            // Update the offscreen 
+            if (!aglSetOffScreen(aglContext, boundsSize.width, boundsSize.height, boundsSize.width * 4, offscreenBuffer)) {
+                LOG_ERROR("Could not set offscreen buffer for AGL context: %d", aglGetError());
+                break;
+            }
+
+            // Update the AGL context
+            aglUpdateContext(aglContext);
+        }
+        break;
+        
+        default:
+            ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+- (void)_hideAGLWindow
+{
+    ASSERT(drawingModel == NPDrawingModelOpenGL);
+    
+    if (!aglWindow)
+        return;
+    
+    // aglWindow should only be set for a windowed OpenGL plug-in
+    ASSERT(window.type == NPWindowTypeWindow);
+    
+    NSWindow *parentWindow = [aglWindow parentWindow];
+    if (parentWindow) {
+        // Disable screen updates so that this AGL window orders out atomically with other plugins' AGL windows
+        [parentWindow disableScreenUpdatesUntilFlush];
+        ASSERT(parentWindow == [self window]);
+        [parentWindow removeChildWindow:aglWindow];
+    }
+    [aglWindow orderOut:nil];
+}
+
+- (NSImage *)_aglOffscreenImageForDrawingInRect:(NSRect)drawingInRect
+{
+    ASSERT(drawingModel == NPDrawingModelOpenGL);
+
+    CGLContextObj cglContext = [self _cglContext];
+    if (!cglContext)
+        return nil;
+
+    // Get the offscreen buffer
+    GLvoid *offscreenBuffer;
+    GLsizei width, height;
+    if (![self _getAGLOffscreenBuffer:&offscreenBuffer width:&width height:&height])
+        return nil;
+    
+    // Make sure drawingInRect is inside the offscreen buffer because we're about to directly modify the bits inside drawingInRect
+    drawingInRect = NSIntersectionRect(drawingInRect, NSMakeRect(0, 0, width, height));
+    
+    // The offscreen buffer, being an OpenGL framebuffer, is in BGRA format.  We need to swap the blue and red channels before trying
+    // to wrap the buffer in an NSBitmapImageRep, which only understands RGBA and ARGB.
+    // This is where drawingInRect comes into play.  If only a small region of the plug-in is being redrawn, then it would be a waste
+    // to convert the entire image from BGRA to RGBA.  Since we know what region of the image will ultimately be drawn to screen, we
+    // restrict the channel swapping to just that region within the offscreen buffer.
+    GLsizei rowBytes = width * 4;
+    GLvoid *swizzleImageBase = (unsigned char *)offscreenBuffer + (int)(NSMinY(drawingInRect) * rowBytes) + (int)(NSMinX(drawingInRect) * 4);
+    vImage_Buffer vImage = {
+        data: swizzleImageBase,
+        height: NSHeight(drawingInRect),
+        width: NSWidth(drawingInRect),
+        rowBytes: rowBytes
+    };
+    uint8_t vImagePermuteMap[4] = { 2, 1, 0, 3 }; // Where { 0, 1, 2, 3 } would leave the channels unchanged; this map flips channels 0 and 2
+    vImage_Error vImageError = vImagePermuteChannels_ARGB8888(&vImage, &vImage, vImagePermuteMap, 0);
+    if (vImageError) {
+        LOG_ERROR("Could not convert BGRA image to ARGB: %d", vImageError);
+        return nil;
+    }
+    
+    NSBitmapImageRep *aglBitmap = [[NSBitmapImageRep alloc]
+        initWithBitmapDataPlanes:(unsigned char **)&offscreenBuffer
+                      pixelsWide:width
+                      pixelsHigh:height
+                   bitsPerSample:8
+                 samplesPerPixel:4
+                        hasAlpha:YES
+                        isPlanar:NO
+                  colorSpaceName:NSDeviceRGBColorSpace
+                    bitmapFormat:0
+                     bytesPerRow:width * 4
+                    bitsPerPixel:32];
+    if (!aglBitmap) {
+        LOG_ERROR("Could not create bitmap for AGL offscreen buffer");
+        return nil;
+    }
+
+    // Wrap the bitmap in an NSImage.  This allocation isn't very expensive -- the actual image data is already in the bitmap rep
+    NSImage *aglImage = [[[NSImage alloc] initWithSize:[aglBitmap size]] autorelease];
+    [aglImage addRepresentation:aglBitmap];
+    [aglBitmap release];
+    
+    return aglImage;
 }
 
 @end
