@@ -31,11 +31,27 @@
 #include "jni_runtime.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
-#include "softlinking.h"
+#include <dlfcn.h>
 
 namespace KJS {
 
 namespace Bindings {
+
+static jint KJS_GetCreatedJavaVMs(JavaVM** vmBuf, jsize bufLen, jsize* nVMs)
+{
+    static void* javaVMFramework = 0;
+    if (!javaVMFramework)
+        javaVMFramework = dlopen("/System/Library/Frameworks/JavaVM.framework/JavaVM", RTLD_LAZY);
+    if (!javaVMFramework)
+        return JNI_ERR;
+
+    static jint(*functionPointer)(JavaVM**, jsize, jsize *) = 0;
+    if (!functionPointer)
+        functionPointer = (jint(*)(JavaVM**, jsize, jsize *))dlsym(javaVMFramework, "JNI_GetCreatedJavaVMs");
+    if (!functionPointer)
+        return JNI_ERR;
+    return functionPointer(vmBuf, bufLen, nVMs);
+}
 
 static JavaVM *jvm = 0;
 

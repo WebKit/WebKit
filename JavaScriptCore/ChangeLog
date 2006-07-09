@@ -1,3 +1,19 @@
+2006-07-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Moved KJS_GetCreatedJavaVMs to jni_utility.cpp.
+        Switched KJS_GetCreatedJavaVMs over to use dlopen and dlsym
+        now that NSAddImage, NSLookupSymbolInImage and NSAddressOfSymbol
+        are deprecated in Leopard.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::KJS_GetCreatedJavaVMs):
+        * bindings/softlinking.c: Removed.
+        * bindings/softlinking.h: Removed.
+
 2006-07-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Anders.

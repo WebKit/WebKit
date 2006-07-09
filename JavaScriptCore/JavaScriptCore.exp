@@ -70,7 +70,6 @@ _JSValueIsUndefined
 _JSValueToBoolean
 _JSValueToNumber
 _JSValueToObject
-_KJS_GetCreatedJavaVMs
 _KJS_JSCreateNativeJSObject
 _KJS_JSObject_JSFinalize
 _KJS_JSObject_JSObjectCall
