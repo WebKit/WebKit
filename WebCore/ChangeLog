@@ -1,3 +1,43 @@
+2006-07-08  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin, tweaked slightly and landed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9787
+        fast/frames tests failing (bad pointer to owner element) under MallocScribble
+        
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::close):
+        Disconnect the owner element of our frame.
+        
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::attach):
+        Don't call setFrame here.
+        
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::detach):
+        Disconnect the owner element of our frame.
+
+        * html/HTMLPlugInElement.h:
+        (WebCore::HTMLPlugInElement::setFrameName):        
+        New function.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        Don't call setFrame.
+        
+        (WebCore::Frame::~Frame):
+        Null out the owner element.
+        
+        (WebCore::Frame::requestObject):
+        When an object creates a child frame, assign it a name so it can be
+        accessed from HTMLPlugInElement.
+        
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::RenderPart):
+        (WebCore::RenderPart::~RenderPart):
+        * rendering/RenderPart.h:
+        Get rid of setFrame.
+
 2006-07-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

@@ -39,7 +39,6 @@ public:
     
     virtual const char* renderName() const { return "RenderPart"; }
 
-    void setFrame(Frame*);
     void setWidget(Widget*);
 
     // FIXME: This should not be necessary.

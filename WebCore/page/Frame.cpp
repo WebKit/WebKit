@@ -168,9 +168,6 @@ Frame::Frame(Page* page, Element* ownerElement)
 #ifndef NDEBUG
     ++FrameCounter::count;
 #endif
-
-    if (ownerRenderer())
-        ownerRenderer()->setFrame(this);
 }
 
 Frame::~Frame()
@@ -205,11 +202,6 @@ Frame::~Frame()
     HashSet<Frame*>::iterator end = openedBy.end();
     for (HashSet<Frame*>::iterator it = openedBy.begin(); it != end; ++it)
         (*it)->setOpener(0);
-    
-    if (ownerRenderer()) {
-        ownerRenderer()->setFrame(0);
-        ASSERT(!d->m_ownerElement);
-    }
     
     if (d->m_view) {
         d->m_view->hide();
@@ -1425,8 +1417,12 @@ bool Frame::requestObject(RenderPart* renderer, const String& url, const AtomicS
     if (shouldUsePlugin(renderer->element(), completedURL, mimeType, renderer->hasFallbackContent(), useFallback))
         return loadPlugin(renderer, completedURL, mimeType, paramNames, paramValues, useFallback);
 
+    ASSERT(renderer->node()->hasTagName(objectTag) || renderer->node()->hasTagName(embedTag));
+    AtomicString uniqueFrameName = tree()->uniqueChildName(frameName);
+    static_cast<HTMLPlugInElement*>(renderer->node())->setFrameName(uniqueFrameName);
+    
     // FIXME: ok to always make a new one? when does the old frame get removed?
-    return loadSubframe(static_cast<Element*>(renderer->element()), completedURL, frameName, d->m_referrer);
+    return loadSubframe(static_cast<Element*>(renderer->node()), completedURL, uniqueFrameName, d->m_referrer);
 }
 
 bool Frame::shouldUsePlugin(Node* element, const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback)

@@ -25,6 +25,9 @@
 #include "HTMLPlugInElement.h"
 
 #include "CSSPropertyNames.h"
+#include "Document.h"
+#include "Frame.h"
+#include "FrameTree.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
@@ -115,6 +118,17 @@ void HTMLPlugInElement::parseMappedAttribute(MappedAttribute* attr)
 bool HTMLPlugInElement::checkDTD(const Node* newChild)
 {
     return newChild->hasTagName(paramTag) || HTMLElement::checkDTD(newChild);
+}
+
+void HTMLPlugInElement::detach()
+{
+    if (Frame* parentFrame = document()->frame()) {
+        Frame* contentFrame = parentFrame->tree()->child(m_frameName);
+        if (contentFrame)
+            contentFrame->disconnectOwnerElement();
+    }
+    
+    HTMLElement::detach();
 }
 
 }

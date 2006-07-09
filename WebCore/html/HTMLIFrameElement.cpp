@@ -151,7 +151,6 @@ void HTMLIFrameElement::attach()
         if (!contentFrame())
             openURL();
         
-        renderPart->setFrame(contentFrame());
         renderPart->setWidget(contentFrame()->view());
         renderPart->updateWidget();
         needWidgetUpdate = false;

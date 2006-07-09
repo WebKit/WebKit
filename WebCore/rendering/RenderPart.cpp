@@ -39,8 +39,6 @@ using namespace HTMLNames;
 
 RenderPart::RenderPart(HTMLElement* node)
     : RenderWidget(node)
-    , m_frame(0)
-    , m_disconnectOwnerElementWhenDestroyed(!node->hasTagName(iframeTag))
 {
     // init RenderObject attributes
     setInline(false);
@@ -56,19 +54,6 @@ RenderPart::~RenderPart()
         static_cast<FrameView*>(widget)->deref();
     else
         delete widget;
-
-    if (m_disconnectOwnerElementWhenDestroyed)
-        setFrame(0);
-}
-
-void RenderPart::setFrame(Frame* frame)
-{
-    if (frame == m_frame)
-        return;
-
-    if (m_frame)
-        m_frame->disconnectOwnerElement();
-    m_frame = frame;
 }
 
 void RenderPart::setWidget(Widget* widget)
