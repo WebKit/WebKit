@@ -25,7 +25,7 @@
 #include "config.h"
 #include "FrameView.h"
 
-#include "AccessibilityObjectCache.h"
+#include "AXObjectCache.h"
 #include "CachedImage.h"
 #include "Cursor.h"
 #include "EventNames.h"
@@ -500,8 +500,8 @@ void FrameView::layout(bool allowSubtree)
     d->layoutCount++;
 
 #if __APPLE__
-    if (AccessibilityObjectCache::accessibilityEnabled())
-        root->document()->getAccObjectCache()->postNotification(root, "AXLayoutComplete");
+    if (AXObjectCache::accessibilityEnabled())
+        root->document()->axObjectCache()->postNotification(root, "AXLayoutComplete");
     updateDashboardRegions();
 #endif
 

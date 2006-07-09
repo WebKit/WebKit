@@ -32,16 +32,16 @@
 
 namespace WebCore {
 
-    class CachedObject;
+    class CachedResource;
     class DocLoader;
 
     class Request {
     public:
-        Request(DocLoader*, CachedObject*, bool incremental);
+        Request(DocLoader*, CachedResource*, bool incremental);
         ~Request();
         
         Vector<char>& buffer() { return m_buffer; }
-        CachedObject* cachedObject() { return m_object; }
+        CachedResource* cachedObject() { return m_object; }
         DocLoader* docLoader() { return m_docLoader; }
 
         bool isIncremental() { return m_incremental; }
@@ -52,7 +52,7 @@ namespace WebCore {
 
     private:
         Vector<char> m_buffer;
-        CachedObject* m_object;
+        CachedResource* m_object;
         DocLoader* m_docLoader;
         bool m_incremental;
         bool m_multipart;

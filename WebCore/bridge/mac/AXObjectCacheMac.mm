@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "AccessibilityObjectCache.h"
+#import "AXObjectCache.h"
 
 #import "Document.h"
 #import "RenderObject.h"
@@ -42,9 +42,9 @@ struct TextMarkerData  {
     EAffinity affinity;
 };
 
-bool AccessibilityObjectCache::gAccessibilityEnabled = false;
+bool AXObjectCache::gAccessibilityEnabled = false;
 
-AccessibilityObjectCache::~AccessibilityObjectCache()
+AXObjectCache::~AXObjectCache()
 {
     HashMap<RenderObject*, WebCoreAXObject*>::iterator end = m_objects.end();
     for (HashMap<RenderObject*, WebCoreAXObject*>::iterator it = m_objects.begin(); it != end; ++it) {
@@ -54,7 +54,7 @@ AccessibilityObjectCache::~AccessibilityObjectCache()
     }
 }
 
-WebCoreAXObject* AccessibilityObjectCache::get(RenderObject* renderer)
+WebCoreAXObject* AXObjectCache::get(RenderObject* renderer)
 {
     WebCoreAXObject* obj = m_objects.get(renderer);
     if (obj)
@@ -67,7 +67,7 @@ WebCoreAXObject* AccessibilityObjectCache::get(RenderObject* renderer)
     return obj;
 }
 
-void AccessibilityObjectCache::remove(RenderObject* renderer)
+void AXObjectCache::remove(RenderObject* renderer)
 {
     HashMap<RenderObject*, WebCoreAXObject*>::iterator it = m_objects.find(renderer);
     if (it == m_objects.end())
@@ -80,7 +80,7 @@ void AccessibilityObjectCache::remove(RenderObject* renderer)
     ASSERT(m_objects.size() >= m_idsInUse.size());
 }
 
-AXID AccessibilityObjectCache::getAXID(WebCoreAXObject* obj)
+AXID AXObjectCache::getAXID(WebCoreAXObject* obj)
 {
     // check for already-assigned ID
     AXID objID = [obj axObjectID];
@@ -102,7 +102,7 @@ AXID AccessibilityObjectCache::getAXID(WebCoreAXObject* obj)
     return objID;
 }
 
-void AccessibilityObjectCache::removeAXID(WebCoreAXObject* obj)
+void AXObjectCache::removeAXID(WebCoreAXObject* obj)
 {
     AXID objID = [obj axObjectID];
     if (objID == 0)
@@ -113,7 +113,7 @@ void AccessibilityObjectCache::removeAXID(WebCoreAXObject* obj)
     m_idsInUse.remove(objID);
 }
 
-WebCoreTextMarker* AccessibilityObjectCache::textMarkerForVisiblePosition(const VisiblePosition& visiblePos)
+WebCoreTextMarker* AXObjectCache::textMarkerForVisiblePosition(const VisiblePosition& visiblePos)
 {
     Position deepPos = visiblePos.deepEquivalent();
     Node* domNode = deepPos.node();
@@ -137,7 +137,7 @@ WebCoreTextMarker* AccessibilityObjectCache::textMarkerForVisiblePosition(const 
     return [[WebCoreViewFactory sharedFactory] textMarkerWithBytes:&textMarkerData length:sizeof(textMarkerData)]; 
 }
 
-VisiblePosition AccessibilityObjectCache::visiblePositionForTextMarker(WebCoreTextMarker* textMarker)
+VisiblePosition AXObjectCache::visiblePositionForTextMarker(WebCoreTextMarker* textMarker)
 {
     TextMarkerData textMarkerData;
     
@@ -152,26 +152,26 @@ VisiblePosition AccessibilityObjectCache::visiblePositionForTextMarker(WebCoreTe
     return VisiblePosition(textMarkerData.node, textMarkerData.offset, textMarkerData.affinity);
 }
 
-void AccessibilityObjectCache::childrenChanged(RenderObject* renderer)
+void AXObjectCache::childrenChanged(RenderObject* renderer)
 {
     WebCoreAXObject* obj = m_objects.get(renderer);
     if (obj)
         [obj childrenChanged];
 }
 
-void AccessibilityObjectCache::postNotificationToTopWebArea(RenderObject* renderer, const String& message)
+void AXObjectCache::postNotificationToTopWebArea(RenderObject* renderer, const String& message)
 {
     if (renderer)
         NSAccessibilityPostNotification(get(renderer->document()->topDocument()->renderer()), message);
 }
 
-void AccessibilityObjectCache::postNotification(RenderObject* renderer, const String& message)
+void AXObjectCache::postNotification(RenderObject* renderer, const String& message)
 {
     if (renderer)
         NSAccessibilityPostNotification(get(renderer), message);
 }
 
-void AccessibilityObjectCache::handleFocusedUIElementChanged()
+void AXObjectCache::handleFocusedUIElementChanged()
 {
     [[WebCoreViewFactory sharedFactory] accessibilityHandleFocusChanged];
 }

@@ -179,20 +179,20 @@ bool CheckIfReloading(DocLoader *loader)
     return false;
 }
 
-void CheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
+void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedObject)
 {
     // Return from the function for objects that we didn't load from the cache.
     if (!cachedObject)
         return;
     switch (cachedObject->status()) {
-    case CachedObject::Persistent:
-    case CachedObject::Cached:
-    case CachedObject::Uncacheable:
+    case CachedResource::Persistent:
+    case CachedResource::Cached:
+    case CachedResource::Uncacheable:
         break;
-    case CachedObject::NotCached:
-    case CachedObject::Unknown:
-    case CachedObject::New:
-    case CachedObject::Pending:
+    case CachedResource::NotCached:
+    case CachedResource::Unknown:
+    case CachedResource::New:
+    case CachedResource::Pending:
         return;
     }
     
@@ -279,7 +279,7 @@ time_t CacheObjectExpiresTime(WebCore::DocLoader *docLoader, NSURLResponse *resp
 
 namespace WebCore {
     
-void CachedObject::setResponse(NSURLResponse *response)
+void CachedResource::setResponse(NSURLResponse *response)
 {
     HardRetain(response);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -289,7 +289,7 @@ void CachedObject::setResponse(NSURLResponse *response)
     m_response = response;
 }
 
-void CachedObject::setAllData(NSData *allData)
+void CachedResource::setAllData(NSData *allData)
 {
     HardRetain(allData);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

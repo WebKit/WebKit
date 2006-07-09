@@ -46,7 +46,7 @@ namespace XBL {
 
 namespace WebCore {
 
-    class AccessibilityObjectCache;
+    class AXObjectCache;
     class Attr;
     class Attribute;
     class CDATASection;
@@ -300,7 +300,7 @@ public:
 
     RenderArena* renderArena() { return m_renderArena; }
 
-    AccessibilityObjectCache* getAccObjectCache() const;
+    AXObjectCache* axObjectCache() const;
     
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
@@ -676,7 +676,7 @@ protected:
     typedef HashMap<RefPtr<Node>, MarkerMapVectorPair*> MarkerMap;
     MarkerMap m_markers;
 
-    mutable AccessibilityObjectCache* m_accCache;
+    mutable AXObjectCache* m_axObjectCache;
     
     DeprecatedPtrList<HTMLImageLoader> m_imageLoadEventDispatchSoonList;
     DeprecatedPtrList<HTMLImageLoader> m_imageLoadEventDispatchingList;

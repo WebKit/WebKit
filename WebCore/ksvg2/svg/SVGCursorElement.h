@@ -30,7 +30,7 @@
 #include "SVGTests.h"
 #include "SVGURIReference.h"
 #include "SVGExternalResourcesRequired.h"
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 
 namespace WebCore
 {
@@ -40,7 +40,7 @@ namespace WebCore
                                  public SVGTests,
                                  public SVGExternalResourcesRequired,
                                  public SVGURIReference,
-                                 public CachedObjectClient
+                                 public CachedResourceClient
     {
     public:
         SVGCursorElement(const QualifiedName&, Document*);

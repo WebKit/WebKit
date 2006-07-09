@@ -24,13 +24,13 @@
 #define CSSImageValue_H
 
 #include "CSSPrimitiveValue.h"
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 
 namespace WebCore {
 
 class DocLoader;
 
-class CSSImageValue : public CSSPrimitiveValue, public CachedObjectClient
+class CSSImageValue : public CSSPrimitiveValue, public CachedResourceClient
 {
 public:
     CSSImageValue();

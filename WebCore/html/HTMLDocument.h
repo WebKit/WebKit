@@ -25,7 +25,7 @@
 #ifndef HTML_DOCUMENTIMPL_H
 #define HTML_DOCUMENTIMPL_H
 
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 #include "Document.h"
 #include "HTMLCollection.h"
 
@@ -36,7 +36,7 @@ namespace WebCore {
 class FrameView;
 class HTMLElement;
 
-class HTMLDocument : public WebCore::Document, public WebCore::CachedObjectClient
+class HTMLDocument : public WebCore::Document, public WebCore::CachedResourceClient
 {
 public:
     HTMLDocument(DOMImplementation *_implementation, FrameView *v = 0);

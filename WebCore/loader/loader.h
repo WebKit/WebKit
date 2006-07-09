@@ -41,7 +41,7 @@ class NSURLResponse;
 
 namespace WebCore {
 
-    class CachedObject;
+    class CachedResource;
     class DocLoader;
     class Request;
     class String;
@@ -52,7 +52,7 @@ namespace WebCore {
         Loader();
         ~Loader();
 
-        void load(DocLoader*, CachedObject*, bool incremental = true);
+        void load(DocLoader*, CachedResource*, bool incremental = true);
 
         int numRequests(DocLoader*) const;
         void cancelRequests(DocLoader*);

@@ -38,7 +38,7 @@ namespace WebCore  {
 
     class CachedCSSStyleSheet;
     class CachedImage;
-    class CachedObject;
+    class CachedResource;
     class CachedScript;
     class CachedXSLStyleSheet;
     class DocLoader;
@@ -89,10 +89,10 @@ namespace WebCore  {
         static int maxCacheableObjectSize() { return maxCacheable; }
 
         // Get an existing cache entry by URL.
-        static CachedObject* get(const String& URL);
+        static CachedResource* get(const String& URL);
 
         // Remove an existing cache entry.
-        static void remove(CachedObject*);
+        static void remove(CachedResource*);
 
         /**
          * clean up cache
@@ -135,11 +135,11 @@ namespace WebCore  {
         static void flushAll();
         static void setCacheDisabled(bool);
 
-        static void insertInLRUList(CachedObject*);
-        static void removeFromLRUList(CachedObject*);
-        static bool adjustSize(CachedObject*, int sizeDelta);
+        static void insertInLRUList(CachedResource*);
+        static void removeFromLRUList(CachedResource*);
+        static bool adjustSize(CachedResource*, int sizeDelta);
         
-        static LRUList* getLRUListFor(CachedObject*);
+        static LRUList* getLRUListFor(CachedResource*);
         
         static void checkLRUAndUncacheableListIntegrity();
 
@@ -152,13 +152,13 @@ namespace WebCore  {
     
         static Loader* m_loader;
     
-        static void moveToHeadOfLRUList(CachedObject*);
-        static void updateCacheStatus(DocLoader*, CachedObject*);
+        static void moveToHeadOfLRUList(CachedResource*);
+        static void updateCacheStatus(DocLoader*, CachedResource*);
     
         static LRUList* m_LRULists;
         static int m_totalSizeOfLRULists;
             
-        static CachedObject* m_headOfUncacheableList;
+        static CachedResource* m_headOfUncacheableList;
             
         static int m_countOfLRUAndUncacheableLists;
     };

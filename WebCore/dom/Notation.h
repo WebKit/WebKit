@@ -24,7 +24,7 @@
 #ifndef Notation_H
 #define Notation_H
 
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 #include "ContainerNode.h"
 
 namespace WebCore {

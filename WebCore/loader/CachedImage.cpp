@@ -30,8 +30,8 @@
 #include "CachedImage.h"
 
 #include "Cache.h"
-#include "CachedObjectClient.h"
-#include "CachedObjectClientWalker.h"
+#include "CachedResourceClient.h"
+#include "CachedResourceClientWalker.h"
 #include "DocLoader.h"
 #include "Image.h"
 #include "LoaderFunctions.h"
@@ -43,7 +43,7 @@ using std::max;
 namespace WebCore {
 
 CachedImage::CachedImage(DocLoader* dl, const String &url, CachePolicy cachePolicy, time_t _expireDate)
-    : CachedObject(url, ImageResource, cachePolicy, _expireDate)
+    : CachedResource(url, ImageResource, cachePolicy, _expireDate)
     , m_dataSize(0)
 {
     m_image = 0;
@@ -57,9 +57,9 @@ CachedImage::~CachedImage()
     clear();
 }
 
-void CachedImage::ref(CachedObjectClient* c)
+void CachedImage::ref(CachedResourceClient* c)
 {
-    CachedObject::ref(c);
+    CachedResource::ref(c);
 
     if (!imageRect().isEmpty())
         c->imageChanged(this);
@@ -68,10 +68,10 @@ void CachedImage::ref(CachedObjectClient* c)
         c->notifyFinished(this);
 }
 
-void CachedImage::deref(CachedObjectClient *c)
+void CachedImage::deref(CachedResourceClient *c)
 {
     Cache::flush();
-    CachedObject::deref(c);
+    CachedResource::deref(c);
     if (canDelete() && m_free)
         delete this;
 }
@@ -99,8 +99,8 @@ IntRect CachedImage::imageRect() const
 
 void CachedImage::notifyObservers()
 {
-    CachedObjectClientWalker w(m_clients);
-    while (CachedObjectClient *c = w.next())
+    CachedResourceClientWalker w(m_clients);
+    while (CachedResourceClient *c = w.next())
         c->imageChanged(this);
 }
 
@@ -189,8 +189,8 @@ void CachedImage::checkNotify()
     if (m_loading)
         return;
 
-    CachedObjectClientWalker w(m_clients);
-    while (CachedObjectClient* c = w.next())
+    CachedResourceClientWalker w(m_clients);
+    while (CachedResourceClient* c = w.next())
         c->notifyFinished(this);
 }
 
@@ -199,8 +199,8 @@ bool CachedImage::shouldStopAnimation(const Image* image)
     if (image != m_image)
         return false;
     
-    CachedObjectClientWalker w(m_clients);
-    while (CachedObjectClient* c = w.next()) {
+    CachedResourceClientWalker w(m_clients);
+    while (CachedResourceClient* c = w.next()) {
         if (c->willRenderImage(this))
             return false;
     }

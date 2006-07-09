@@ -26,7 +26,7 @@
 #ifndef RenderObject_h
 #define RenderObject_h
 
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 #include "RenderStyle.h"
 #include "ScrollBar.h"
 #include "VisiblePosition.h"
@@ -114,7 +114,7 @@ typedef HashSet<RenderFlow*> RenderFlowSequencedSet;
 /**
  * Base Class for all rendering tree objects.
  */
-class RenderObject : public CachedObjectClient
+class RenderObject : public CachedResourceClient
 {
 public:
     // Anonymous objects should pass the document as their node, and they will then automatically be

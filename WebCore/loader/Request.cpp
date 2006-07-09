@@ -29,11 +29,11 @@
 #include "config.h"
 #include "Request.h"
 
-#include "CachedObject.h"
+#include "CachedResource.h"
 
 namespace WebCore {
 
-Request::Request(DocLoader* docLoader, CachedObject* object, bool incremental)
+Request::Request(DocLoader* docLoader, CachedResource* object, bool incremental)
     : m_object(object)
     , m_docLoader(docLoader)
     , m_incremental(incremental)

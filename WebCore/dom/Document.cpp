@@ -25,7 +25,7 @@
 #include "config.h"
 #include "Document.h"
 
-#include "AccessibilityObjectCache.h"
+#include "AXObjectCache.h"
 #include "CDATASection.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -241,7 +241,7 @@ Document::Document(DOMImplementation* impl, FrameView *v)
     m_view = v;
     m_renderArena = 0;
 
-    m_accCache = 0;
+    m_axObjectCache = 0;
     
     m_docLoader = new DocLoader(v ? v->frame() : 0, this);
 
@@ -348,9 +348,9 @@ Document::~Document()
 
     deleteAllValues(m_markers);
 
-    if (m_accCache) {
-        delete m_accCache;
-        m_accCache = 0;
+    if (m_axObjectCache) {
+        delete m_axObjectCache;
+        m_axObjectCache = 0;
     }
     m_decoder = 0;
     
@@ -968,7 +968,7 @@ void Document::detach()
     
     if (m_inPageCache) {
         if (render)
-            getAccObjectCache()->remove(render);
+            axObjectCache()->remove(render);
         return;
     }
 
@@ -1024,33 +1024,33 @@ void Document::removeAllDisconnectedNodeEventListeners()
     m_disconnectedNodesWithEventListeners.clear();
 }
 
-AccessibilityObjectCache* Document::getAccObjectCache() const
+AXObjectCache* Document::axObjectCache() const
 {
-    // The only document that actually has a AccessibilityObjectCache is the top-level
+    // The only document that actually has a AXObjectCache is the top-level
     // document.  This is because we need to be able to get from any WebCoreAXObject
     // to any other WebCoreAXObject on the same page.  Using a single cache allows
     // lookups across nested webareas (i.e. multiple documents).
     
-    if (m_accCache) {
+    if (m_axObjectCache) {
         // return already known top-level cache
         if (!ownerElement())
-            return m_accCache;
+            return m_axObjectCache;
         
         // In some pages with frames, the cache is created before the sub-webarea is
         // inserted into the tree.  Here, we catch that case and just toss the old
         // cache and start over.
-        delete m_accCache;
-        m_accCache = 0;
+        delete m_axObjectCache;
+        m_axObjectCache = 0;
     }
 
     // ask the top-level document for its cache
     Document* doc = topDocument();
     if (doc != this)
-        return doc->getAccObjectCache();
+        return doc->axObjectCache();
     
     // this is the top-level document, so install a new cache
-    m_accCache = new AccessibilityObjectCache;
-    return m_accCache;
+    m_axObjectCache = new AXObjectCache;
+    return m_axObjectCache;
 }
 
 void Document::setVisuallyOrdered()
@@ -1096,8 +1096,8 @@ void Document::updateSelection()
     // or loses focus, and once for every low level change to the selection during an editing operation.
     // FIXME: We no longer blow away the selection before starting an editing operation, so the isNotNull checks below are no 
     // longer a correct way to check for user-level selection changes.
-    if (AccessibilityObjectCache::accessibilityEnabled() && s.start().isNotNull() && s.end().isNotNull()) {
-        getAccObjectCache()->postNotificationToTopWebArea(renderer(), "AXSelectedTextChanged");
+    if (AXObjectCache::accessibilityEnabled() && s.start().isNotNull() && s.end().isNotNull()) {
+        axObjectCache()->postNotificationToTopWebArea(renderer(), "AXSelectedTextChanged");
     }
 #endif
 }
@@ -1243,8 +1243,8 @@ void Document::implicitClose()
             view()->layout();
     }
 #if __APPLE__
-    if (renderer() && AccessibilityObjectCache::accessibilityEnabled())
-        getAccObjectCache()->postNotification(renderer(), "AXLoadComplete");
+    if (renderer() && AXObjectCache::accessibilityEnabled())
+        axObjectCache()->postNotification(renderer(), "AXLoadComplete");
 #endif
 
 #if SVG_SUPPORT
@@ -2138,8 +2138,8 @@ bool Document::setFocusNode(PassRefPtr<Node> newFocusNode)
    }
 
 #if __APPLE__
-    if (!focusChangeBlocked && m_focusNode && AccessibilityObjectCache::accessibilityEnabled())
-        getAccObjectCache()->handleFocusedUIElementChanged();
+    if (!focusChangeBlocked && m_focusNode && AXObjectCache::accessibilityEnabled())
+        axObjectCache()->handleFocusedUIElementChanged();
 #endif
 
 SetFocusNodeDone:

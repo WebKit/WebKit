@@ -37,7 +37,7 @@ namespace WebCore {
                                   public SVGURIReference,
                                   public SVGLangSpace,
                                   public SVGExternalResourcesRequired,
-                                  public CachedObjectClient
+                                  public CachedResourceClient
     {
     public:
         SVGFEImageElement(const QualifiedName&, Document*);
@@ -47,7 +47,7 @@ namespace WebCore {
         SVGAnimatedPreserveAspectRatio *preserveAspectRatio() const;
 
         virtual void parseMappedAttribute(MappedAttribute *attr);
-        virtual void notifyFinished(CachedObject *finishedObj);
+        virtual void notifyFinished(CachedResource *finishedObj);
 
     protected:
         virtual KCanvasFEImage *filterEffect() const;

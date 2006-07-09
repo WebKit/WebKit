@@ -36,7 +36,7 @@
 using namespace WebCore;
 
 SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document *doc)
-: SVGElement(tagName, doc), SVGTests(), SVGExternalResourcesRequired(), SVGURIReference(), CachedObjectClient()
+: SVGElement(tagName, doc), SVGTests(), SVGExternalResourcesRequired(), SVGURIReference(), CachedResourceClient()
 {
     m_cachedImage = 0;
 }

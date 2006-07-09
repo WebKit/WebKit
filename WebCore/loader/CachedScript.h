@@ -28,14 +28,14 @@
 #ifndef CachedScript_h
 #define CachedScript_h
 
-#include "CachedObject.h"
+#include "CachedResource.h"
 #include "TextEncoding.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
     class DocLoader;
 
-    class CachedScript : public CachedObject {
+    class CachedScript : public CachedResource {
     public:
         CachedScript(DocLoader*, const String& URL, CachePolicy, time_t expireDate, const DeprecatedString& charset);
         CachedScript(const String& URL, const DeprecatedString& scriptData);
@@ -43,8 +43,8 @@ namespace WebCore {
 
         const String& script() const { return m_script; }
 
-        virtual void ref(CachedObjectClient*);
-        virtual void deref(CachedObjectClient*);
+        virtual void ref(CachedResourceClient*);
+        virtual void deref(CachedResourceClient*);
 
         virtual void setCharset(const DeprecatedString&);
         virtual void data(Vector<char>&, bool allDataReceived);

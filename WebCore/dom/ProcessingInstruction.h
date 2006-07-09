@@ -24,14 +24,14 @@
 #ifndef ProcessingInstruction_H
 #define ProcessingInstruction_H
 
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 #include "ContainerNode.h"
 
 namespace WebCore {
 
 class StyleSheet;
 
-class ProcessingInstruction : public ContainerNode, private CachedObjectClient
+class ProcessingInstruction : public ContainerNode, private CachedResourceClient
 {
 public:
     ProcessingInstruction(Document*);
@@ -69,7 +69,7 @@ private:
     RefPtr<StringImpl> m_target;
     RefPtr<StringImpl> m_data;
     RefPtr<StringImpl> m_localHref;
-    CachedObject* m_cachedSheet;
+    CachedResource* m_cachedSheet;
     RefPtr<StyleSheet> m_sheet;
     bool m_loading;
 #ifdef KHTML_XSLT

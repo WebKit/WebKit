@@ -29,7 +29,7 @@
 #include "RenderLayer.h"
 
 namespace WebCore {
-    class CachedObject;
+    class CachedResource;
     
     enum WidthType { Width, MinWidth, MaxWidth };
     

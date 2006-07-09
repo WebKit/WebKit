@@ -52,7 +52,7 @@ class ScrollBar;
 
 namespace WebCore {
 
-class CachedObject;
+class CachedResource;
 class RenderView;
 class RenderFrameSet;
 class RenderObject;

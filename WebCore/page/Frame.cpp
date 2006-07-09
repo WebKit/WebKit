@@ -109,7 +109,7 @@ using namespace HTMLNames;
 const double caretBlinkFrequency = 0.5;
 const double autoscrollInterval = 0.1;
 
-class UserStyleSheetLoader : public CachedObjectClient {
+class UserStyleSheetLoader : public CachedResourceClient {
 public:
     UserStyleSheetLoader(Frame* frame, const String& url, DocLoader* dl)
         : m_frame(frame)

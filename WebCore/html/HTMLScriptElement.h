@@ -25,13 +25,13 @@
 #define HTMLScriptElement_H
 
 #include "HTMLElement.h"
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 
 namespace WebCore {
 
 class CachedScript;
 
-class HTMLScriptElement : public HTMLElement, public CachedObjectClient
+class HTMLScriptElement : public HTMLElement, public CachedResourceClient
 {
 public:
     HTMLScriptElement(Document *doc);
@@ -44,7 +44,7 @@ public:
     virtual void parseMappedAttribute(MappedAttribute *attr);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    virtual void notifyFinished(CachedObject *finishedObj);
+    virtual void notifyFinished(CachedResource *finishedObj);
 
     virtual void childrenChanged();
 

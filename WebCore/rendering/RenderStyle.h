@@ -62,7 +62,7 @@ using std::max;
 
 class CSSStyleSelector;
 class CachedImage;
-class CachedObject;
+class CachedResource;
 class ShadowValue;
 class StringImpl;
 
@@ -874,12 +874,12 @@ struct ContentData {
     ContentType contentType() { return _contentType; }
 
     StringImpl* contentText() { if (contentType() == CONTENT_TEXT) return _content.text; return 0; }
-    CachedObject* contentObject() { if (contentType() == CONTENT_OBJECT) return _content.object; return 0; }
+    CachedResource* contentObject() { if (contentType() == CONTENT_OBJECT) return _content.object; return 0; }
     
     ContentType _contentType;
 
     union {
-        CachedObject* object;
+        CachedResource* object;
         StringImpl* text;
         // counters...
     } _content ;
@@ -1588,7 +1588,7 @@ public:
     ContentData* contentData() { return content; }
     bool contentDataEquivalent(const RenderStyle *otherStyle) const;
     void setContent(StringImpl* s, bool add = false);
-    void setContent(CachedObject* o, bool add = false);
+    void setContent(CachedResource* o, bool add = false);
 
     bool inheritedNotEqual( RenderStyle *other ) const;
 

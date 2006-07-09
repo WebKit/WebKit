@@ -25,7 +25,7 @@
 
 #ifdef KHTML_XSLT
 
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 #include "StyleBase.h"
 #include "XSLStyleSheet.h"
 
@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CachedXSLStyleSheet;
 
-class XSLImportRule : public CachedObjectClient, public StyleBase {
+class XSLImportRule : public CachedResourceClient, public StyleBase {
 public:
     XSLImportRule(StyleBase* parent, const String& href);
     virtual ~XSLImportRule();
@@ -44,7 +44,7 @@ public:
     virtual bool isImportRule() { return true; }
     XSLStyleSheet* parentStyleSheet() const;
     
-    // from CachedObjectClient
+    // from CachedResourceClient
     virtual void setStyleSheet(const String& url, const String& sheet);
     
     bool isLoading();

@@ -573,7 +573,7 @@
 		93F199B808245E59001E9ABC /* ScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B2AF80450824100A8000F /* ScrollBar.h */; };
 		93F199BB08245E59001E9ABC /* WebCoreKeyboardAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = BE983D95052A2E0A00892D85 /* WebCoreKeyboardAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199BC08245E59001E9ABC /* WebCoreAXObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 55998A5A052B59CC0017A6C1 /* WebCoreAXObject.h */; };
-		93F199BD08245E59001E9ABC /* AccessibilityObjectCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 55998A5C052B59CC0017A6C1 /* AccessibilityObjectCache.h */; };
+		93F199BD08245E59001E9ABC /* AXObjectCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 55998A5C052B59CC0017A6C1 /* AXObjectCache.h */; };
 		93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A640F00533BB1F0085E777 /* BlockExceptions.h */; settings = {ATTRIBUTES = (); }; };
 		93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199CF08245E59001E9ABC /* AtomicStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364705C9D5E200E42902 /* AtomicStringList.h */; };
@@ -633,7 +633,7 @@
 		93F19AD508245E59001E9ABC /* RenderTreeAsText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93955A4203D72932008635CE /* RenderTreeAsText.cpp */; };
 		93F19ADC08245E59001E9ABC /* ScrollBarMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2AF90450824100A8000F /* ScrollBarMac.mm */; };
 		93F19ADF08245E59001E9ABC /* WebCoreAXObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55998A5B052B59CC0017A6C1 /* WebCoreAXObject.mm */; };
-		93F19AE008245E59001E9ABC /* AccessibilityObjectCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55998A5D052B59CC0017A6C1 /* AccessibilityObjectCache.mm */; };
+		93F19AE008245E59001E9ABC /* AXObjectCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55998A5D052B59CC0017A6C1 /* AXObjectCacheMac.mm */; };
 		93F19AE108245E59001E9ABC /* BlockExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65F80697054D9F86008BF776 /* BlockExceptions.mm */; };
 		93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
 		93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */; };
@@ -1457,10 +1457,10 @@
 		BCB16C1A0979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */; };
 		BCB16C1B0979C3BD00467741 /* CachedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C020979C3BD00467741 /* CachedImage.cpp */; };
 		BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C030979C3BD00467741 /* CachedImage.h */; };
-		BCB16C1F0979C3BD00467741 /* CachedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C060979C3BD00467741 /* CachedObject.cpp */; };
-		BCB16C200979C3BD00467741 /* CachedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C070979C3BD00467741 /* CachedObject.h */; };
-		BCB16C210979C3BD00467741 /* CachedObjectClientWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C080979C3BD00467741 /* CachedObjectClientWalker.cpp */; };
-		BCB16C220979C3BD00467741 /* CachedObjectClientWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C090979C3BD00467741 /* CachedObjectClientWalker.h */; };
+		BCB16C1F0979C3BD00467741 /* CachedResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C060979C3BD00467741 /* CachedResource.cpp */; };
+		BCB16C200979C3BD00467741 /* CachedResource.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C070979C3BD00467741 /* CachedResource.h */; };
+		BCB16C210979C3BD00467741 /* CachedResourceClientWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C080979C3BD00467741 /* CachedResourceClientWalker.cpp */; };
+		BCB16C220979C3BD00467741 /* CachedResourceClientWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C090979C3BD00467741 /* CachedResourceClientWalker.h */; };
 		BCB16C230979C3BD00467741 /* CachedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C0A0979C3BD00467741 /* CachedScript.cpp */; };
 		BCB16C240979C3BD00467741 /* CachedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C0B0979C3BD00467741 /* CachedScript.h */; };
 		BCB16C250979C3BD00467741 /* CachedXBLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C0C0979C3BD00467741 /* CachedXBLDocument.cpp */; };
@@ -1554,7 +1554,7 @@
 		BCF7C0990A1683580032F75B /* FontFallbackListMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF7C0980A1683580032F75B /* FontFallbackListMac.mm */; };
 		BCF7C0B80A1687CC0032F75B /* FontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF7C0B70A1687CC0032F75B /* FontCache.h */; };
 		BCF7C2340A16B5F80032F75B /* FontCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */; };
-		BCFB2E5E0979E46400BA703D /* CachedObjectClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */; };
+		BCFB2E5E0979E46400BA703D /* CachedResourceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */; };
 		BCFB2E840979FD4F00BA703D /* Shared.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E830979FD4F00BA703D /* Shared.h */; };
 		BCFB2F41097A24B500BA703D /* SegmentedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */; };
 		BCFB2F42097A24B500BA703D /* SegmentedString.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2F40097A24B500BA703D /* SegmentedString.h */; };
@@ -1820,8 +1820,8 @@
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		55998A5A052B59CC0017A6C1 /* WebCoreAXObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreAXObject.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		55998A5B052B59CC0017A6C1 /* WebCoreAXObject.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreAXObject.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		55998A5C052B59CC0017A6C1 /* AccessibilityObjectCache.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityObjectCache.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		55998A5D052B59CC0017A6C1 /* AccessibilityObjectCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectCache.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		55998A5C052B59CC0017A6C1 /* AXObjectCache.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AXObjectCache.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		55998A5D052B59CC0017A6C1 /* AXObjectCacheMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AXObjectCacheMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSGrammar.h; sourceTree = "<group>"; };
 		651B4D8309AC83370029F1EF /* DeprecatedStringList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedStringList.cpp; sourceTree = "<group>"; };
 		651B4D8409AC83370029F1EF /* DeprecatedStringList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DeprecatedStringList.h; sourceTree = "<group>"; };
@@ -3209,10 +3209,10 @@
 		BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedCSSStyleSheet.h; sourceTree = "<group>"; };
 		BCB16C020979C3BD00467741 /* CachedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedImage.cpp; sourceTree = "<group>"; };
 		BCB16C030979C3BD00467741 /* CachedImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedImage.h; sourceTree = "<group>"; };
-		BCB16C060979C3BD00467741 /* CachedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedObject.cpp; sourceTree = "<group>"; };
-		BCB16C070979C3BD00467741 /* CachedObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedObject.h; sourceTree = "<group>"; };
-		BCB16C080979C3BD00467741 /* CachedObjectClientWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedObjectClientWalker.cpp; sourceTree = "<group>"; };
-		BCB16C090979C3BD00467741 /* CachedObjectClientWalker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedObjectClientWalker.h; sourceTree = "<group>"; };
+		BCB16C060979C3BD00467741 /* CachedResource.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResource.cpp; sourceTree = "<group>"; };
+		BCB16C070979C3BD00467741 /* CachedResource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResource.h; sourceTree = "<group>"; };
+		BCB16C080979C3BD00467741 /* CachedResourceClientWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceClientWalker.cpp; sourceTree = "<group>"; };
+		BCB16C090979C3BD00467741 /* CachedResourceClientWalker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceClientWalker.h; sourceTree = "<group>"; };
 		BCB16C0A0979C3BD00467741 /* CachedScript.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedScript.cpp; sourceTree = "<group>"; };
 		BCB16C0B0979C3BD00467741 /* CachedScript.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedScript.h; sourceTree = "<group>"; };
 		BCB16C0C0979C3BD00467741 /* CachedXBLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedXBLDocument.cpp; sourceTree = "<group>"; };
@@ -3311,7 +3311,7 @@
 		BCF7C0980A1683580032F75B /* FontFallbackListMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontFallbackListMac.mm; sourceTree = "<group>"; };
 		BCF7C0B70A1687CC0032F75B /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontCache.h; sourceTree = "<group>"; };
 		BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontCacheMac.mm; sourceTree = "<group>"; };
-		BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedObjectClient.h; sourceTree = "<group>"; };
+		BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceClient.h; sourceTree = "<group>"; };
 		BCFB2E830979FD4F00BA703D /* Shared.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Shared.h; sourceTree = "<group>"; };
 		BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SegmentedString.cpp; sourceTree = "<group>"; };
 		BCFB2F40097A24B500BA703D /* SegmentedString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SegmentedString.h; sourceTree = "<group>"; };
@@ -3463,7 +3463,6 @@
 				5126E6B60A2E3AEF005C29FA /* icon */,
 				A8C0FB51089701F700BA5114 /* kcanvas */,
 				A8C0F6E9089701F100BA5114 /* ksvg2 */,
-				F58785E802DE377601EA4122 /* kwq */,
 				BCB16BFB0979C38700467741 /* loader */,
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
@@ -3921,6 +3920,7 @@
 			isa = PBXGroup;
 			children = (
 				65BF02350974819000C43196 /* mac */,
+				55998A5C052B59CC0017A6C1 /* AXObjectCache.h */,
 				BCEA4943097F0F5C0094C9E4 /* BrowserExtension.h */,
 				935C475C09AC4CA000A6AAB4 /* History.h */,
 				F587864502DE3A7701EA4122 /* JavaAppletWidget.h */,
@@ -3931,10 +3931,11 @@
 		65BF02350974819000C43196 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				65901A4209FC6039005BD752 /* WebCoreStringTruncator.h */,
-				65901A4309FC6039005BD752 /* WebCoreStringTruncator.mm */,
+				55998A5D052B59CC0017A6C1 /* AXObjectCacheMac.mm */,
 				BCEA4945097F0F770094C9E4 /* BrowserExtensionMac.h */,
 				BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */,
+				93B641F206E28C5C0055F610 /* FormDataMac.h */,
+				93B641F106E28C5C0055F610 /* FormDataMac.mm */,
 				65BF023B0974819000C43196 /* FrameMac.h */,
 				65BF023C0974819000C43196 /* FrameMac.mm */,
 				9380F68609A143B2001FDB34 /* FrameViewMac.mm */,
@@ -3943,6 +3944,8 @@
 				93E47C5B09BE2BBB0019C5C1 /* PageMac.mm */,
 				F5B2A4FC02E2220F018635CB /* WebCoreCache.h */,
 				F5B2A4FD02E2220F018635CB /* WebCoreCache.mm */,
+				BEF7EEA005FF8F0D009717EE /* WebCoreEditCommand.h */,
+				BEF7EEA105FF8F0D009717EE /* WebCoreEditCommand.mm */,
 				F56234DF03026D7301629B47 /* WebCoreEncodings.h */,
 				F56234E003026D7301629B47 /* WebCoreEncodings.mm */,
 				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
@@ -3957,17 +3960,25 @@
 				BE983D95052A2E0A00892D85 /* WebCoreKeyboardAccess.h */,
 				65C7F4310979E2620022E453 /* WebCorePageBridge.h */,
 				65C7F44B0979E8C90022E453 /* WebCorePageBridge.mm */,
+				9394E0A403AA5BBE008635CE /* WebCorePageState.h */,
+				9394E0A503AA5BBE008635CE /* WebCorePageState.mm */,
 				F587855002DE375901EA4122 /* WebCoreResourceLoader.h */,
+				93386B90037045B3008635CE /* WebCoreResourceLoaderImp.h */,
+				93386B91037045B3008635CE /* WebCoreResourceLoaderImp.mm */,
 				7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */,
 				7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */,
 				F565AE8502ECA583018635CA /* WebCoreSettings.h */,
 				F565AE8602ECA583018635CA /* WebCoreSettings.mm */,
+				65901A4209FC6039005BD752 /* WebCoreStringTruncator.h */,
+				65901A4309FC6039005BD752 /* WebCoreStringTruncator.mm */,
 				E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */,
 				E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */,
 				F587855402DE375901EA4122 /* WebCoreViewFactory.h */,
 				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
 				5150C2A10702629000AF642C /* WebDashboardRegion.h */,
 				5150C2A50702629800AF642C /* WebDashboardRegion.m */,
+				55998A5A052B59CC0017A6C1 /* WebCoreAXObject.h */,
+				55998A5B052B59CC0017A6C1 /* WebCoreAXObject.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -5014,11 +5025,11 @@
 				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
 				BCB16C020979C3BD00467741 /* CachedImage.cpp */,
 				BCB16C030979C3BD00467741 /* CachedImage.h */,
-				BCB16C060979C3BD00467741 /* CachedObject.cpp */,
-				BCB16C070979C3BD00467741 /* CachedObject.h */,
-				BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */,
-				BCB16C080979C3BD00467741 /* CachedObjectClientWalker.cpp */,
-				BCB16C090979C3BD00467741 /* CachedObjectClientWalker.h */,
+				BCB16C060979C3BD00467741 /* CachedResource.cpp */,
+				BCB16C070979C3BD00467741 /* CachedResource.h */,
+				BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */,
+				BCB16C080979C3BD00467741 /* CachedResourceClientWalker.cpp */,
+				BCB16C090979C3BD00467741 /* CachedResourceClientWalker.h */,
 				BCB16C0A0979C3BD00467741 /* CachedScript.cpp */,
 				BCB16C0B0979C3BD00467741 /* CachedScript.h */,
 				BCB16C0C0979C3BD00467741 /* CachedXBLDocument.cpp */,
@@ -5558,25 +5569,6 @@
 			path = dom;
 			sourceTree = "<group>";
 		};
-		F58785E802DE377601EA4122 /* kwq */ = {
-			isa = PBXGroup;
-			children = (
-				55998A5C052B59CC0017A6C1 /* AccessibilityObjectCache.h */,
-				55998A5D052B59CC0017A6C1 /* AccessibilityObjectCache.mm */,
-				93B641F206E28C5C0055F610 /* FormDataMac.h */,
-				93B641F106E28C5C0055F610 /* FormDataMac.mm */,
-				55998A5A052B59CC0017A6C1 /* WebCoreAXObject.h */,
-				55998A5B052B59CC0017A6C1 /* WebCoreAXObject.mm */,
-				BEF7EEA005FF8F0D009717EE /* WebCoreEditCommand.h */,
-				BEF7EEA105FF8F0D009717EE /* WebCoreEditCommand.mm */,
-				9394E0A403AA5BBE008635CE /* WebCorePageState.h */,
-				9394E0A503AA5BBE008635CE /* WebCorePageState.mm */,
-				93386B90037045B3008635CE /* WebCoreResourceLoaderImp.h */,
-				93386B91037045B3008635CE /* WebCoreResourceLoaderImp.mm */,
-			);
-			path = kwq;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -5626,7 +5618,7 @@
 				93F199B808245E59001E9ABC /* ScrollBar.h in Headers */,
 				93F199BB08245E59001E9ABC /* WebCoreKeyboardAccess.h in Headers */,
 				93F199BC08245E59001E9ABC /* WebCoreAXObject.h in Headers */,
-				93F199BD08245E59001E9ABC /* AccessibilityObjectCache.h in Headers */,
+				93F199BD08245E59001E9ABC /* AXObjectCache.h in Headers */,
 				93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */,
 				93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */,
 				93F199CF08245E59001E9ABC /* AtomicStringList.h in Headers */,
@@ -5865,15 +5857,15 @@
 				BCB16C180979C3BD00467741 /* Cache.h in Headers */,
 				BCB16C1A0979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */,
 				BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */,
-				BCB16C200979C3BD00467741 /* CachedObject.h in Headers */,
-				BCB16C220979C3BD00467741 /* CachedObjectClientWalker.h in Headers */,
+				BCB16C200979C3BD00467741 /* CachedResource.h in Headers */,
+				BCB16C220979C3BD00467741 /* CachedResourceClientWalker.h in Headers */,
 				BCB16C240979C3BD00467741 /* CachedScript.h in Headers */,
 				BCB16C260979C3BD00467741 /* CachedXBLDocument.h in Headers */,
 				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				BCB16C2A0979C3BD00467741 /* DocLoader.h in Headers */,
 				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
 				BCB16C2F0979C3BD00467741 /* Request.h in Headers */,
-				BCFB2E5E0979E46400BA703D /* CachedObjectClient.h in Headers */,
+				BCFB2E5E0979E46400BA703D /* CachedResourceClient.h in Headers */,
 				A8FEFB0A0979F472005839FD /* RenderForeignObject.h in Headers */,
 				A8FEFB320979F4F6005839FD /* SVGForeignObjectElement.h in Headers */,
 				BCFB2E840979FD4F00BA703D /* Shared.h in Headers */,
@@ -6539,7 +6531,7 @@
 				93F19AD508245E59001E9ABC /* RenderTreeAsText.cpp in Sources */,
 				93F19ADC08245E59001E9ABC /* ScrollBarMac.mm in Sources */,
 				93F19ADF08245E59001E9ABC /* WebCoreAXObject.mm in Sources */,
-				93F19AE008245E59001E9ABC /* AccessibilityObjectCache.mm in Sources */,
+				93F19AE008245E59001E9ABC /* AXObjectCacheMac.mm in Sources */,
 				93F19AE108245E59001E9ABC /* BlockExceptions.mm in Sources */,
 				93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */,
 				93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.mm in Sources */,
@@ -6764,8 +6756,8 @@
 				BCB16C170979C3BD00467741 /* Cache.cpp in Sources */,
 				BCB16C190979C3BD00467741 /* CachedCSSStyleSheet.cpp in Sources */,
 				BCB16C1B0979C3BD00467741 /* CachedImage.cpp in Sources */,
-				BCB16C1F0979C3BD00467741 /* CachedObject.cpp in Sources */,
-				BCB16C210979C3BD00467741 /* CachedObjectClientWalker.cpp in Sources */,
+				BCB16C1F0979C3BD00467741 /* CachedResource.cpp in Sources */,
+				BCB16C210979C3BD00467741 /* CachedResourceClientWalker.cpp in Sources */,
 				BCB16C230979C3BD00467741 /* CachedScript.cpp in Sources */,
 				BCB16C250979C3BD00467741 /* CachedXBLDocument.cpp in Sources */,
 				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,

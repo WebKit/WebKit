@@ -60,7 +60,7 @@
 #include "TransferJob.h"
 #include "RenderThemeWin.h"
 #include "TextBoundaries.h"
-#include "AccessibilityObjectCache.h"
+#include "AXObjectCache.h"
 #include "RenderPopupMenuWin.h"
 
 using namespace WebCore;
@@ -220,7 +220,7 @@ bool WebCore::screenIsMonochrome(Widget*) { notImplemented(); return false; }
 static Cursor localCursor;
 const Cursor& WebCore::moveCursor() { return localCursor; }
 
-bool AccessibilityObjectCache::gAccessibilityEnabled = false;
+bool AXObjectCache::gAccessibilityEnabled = false;
 
 bool WebCore::historyContains(DeprecatedString const&) { return false; }
 String WebCore::submitButtonDefaultLabel() { return "Submit"; }
@@ -264,7 +264,7 @@ void BrowserExtensionWin::setIconURL(KURL const&) { }
 int BrowserExtensionWin::getHistoryLength() { return 0; }
 
 bool CheckIfReloading(WebCore::DocLoader*) { return false; }
-void CheckCacheObjectStatus(DocLoader*, CachedObject*) { }
+void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
 
 void Widget::setEnabled(bool) { }
 void Widget::paint(GraphicsContext*,IntRect const&) { }

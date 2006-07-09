@@ -36,7 +36,7 @@
 #include "Document.h"
 
 // For accessibility
-#include "AccessibilityObjectCache.h" 
+#include "AXObjectCache.h" 
 
 namespace WebCore {
 
@@ -203,8 +203,8 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     oldChild->setNextSibling(0);
     oldChild->setParent(0);
 
-    if (AccessibilityObjectCache::accessibilityEnabled())
-        document()->getAccObjectCache()->childrenChanged(this);
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->childrenChanged(this);
 
     return oldChild;
 }
@@ -381,8 +381,8 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
     if (!newChild->isFloatingOrPositioned() && childrenInline())
         dirtyLinesFromChangedChild(newChild);
     
-    if (AccessibilityObjectCache::accessibilityEnabled())
-        document()->getAccObjectCache()->childrenChanged(this);
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->childrenChanged(this);
 }
 
 void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeChild)
@@ -421,8 +421,8 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     if (!child->isFloating() && childrenInline())
         dirtyLinesFromChangedChild(child);
     
-    if (AccessibilityObjectCache::accessibilityEnabled())
-        document()->getAccObjectCache()->childrenChanged(this);
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->childrenChanged(this);
 }
 
 void RenderContainer::layout()

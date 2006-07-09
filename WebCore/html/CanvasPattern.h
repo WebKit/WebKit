@@ -26,7 +26,7 @@
 #ifndef HTMLImagePattern_h
 #define HTMLImagePattern_h
 
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 #include "Shared.h"
 
 #if __APPLE__
@@ -40,7 +40,7 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class CanvasPattern : public Shared<CanvasPattern>, CachedObjectClient {
+    class CanvasPattern : public Shared<CanvasPattern>, CachedResourceClient {
     public:
         static void parseRepetitionType(const String&, bool& repeatX, bool& repeatY, ExceptionCode&);
 

@@ -140,7 +140,7 @@ void HTMLScriptElement::removedFromDocument()
     }
 }
 
-void HTMLScriptElement::notifyFinished(CachedObject* o)
+void HTMLScriptElement::notifyFinished(CachedResource* o)
 {
     CachedScript *cs = static_cast<CachedScript *>(o);
 

@@ -131,7 +131,7 @@ using namespace HTMLNames;
     RenderObject* currRenderer;
     for (currRenderer = m_renderer; currRenderer && !currRenderer->element(); currRenderer = currRenderer->parent()) {
         if (currRenderer->continuation())
-            return [currRenderer->document()->getAccObjectCache()->get(currRenderer->continuation()) anchorElement];
+            return [currRenderer->document()->axObjectCache()->get(currRenderer->continuation()) anchorElement];
     }
     
     // bail of none found
@@ -188,38 +188,38 @@ using namespace HTMLNames;
 {
     if (!m_renderer || !m_renderer->firstChild())
         return nil;
-    return m_renderer->document()->getAccObjectCache()->get(m_renderer->firstChild());
+    return m_renderer->document()->axObjectCache()->get(m_renderer->firstChild());
 }
 
 -(WebCoreAXObject*)lastChild
 {
     if (!m_renderer || !m_renderer->lastChild())
         return nil;
-    return m_renderer->document()->getAccObjectCache()->get(m_renderer->lastChild());
+    return m_renderer->document()->axObjectCache()->get(m_renderer->lastChild());
 }
 
 -(WebCoreAXObject*)previousSibling
 {
     if (!m_renderer || !m_renderer->previousSibling())
         return nil;
-    return m_renderer->document()->getAccObjectCache()->get(m_renderer->previousSibling());
+    return m_renderer->document()->axObjectCache()->get(m_renderer->previousSibling());
 }
 
 -(WebCoreAXObject*)nextSibling
 {
     if (!m_renderer || !m_renderer->nextSibling())
         return nil;
-    return m_renderer->document()->getAccObjectCache()->get(m_renderer->nextSibling());
+    return m_renderer->document()->axObjectCache()->get(m_renderer->nextSibling());
 }
 
 -(WebCoreAXObject*)parentObject
 {
     if (m_areaElement)
-        return m_renderer->document()->getAccObjectCache()->get(m_renderer);
+        return m_renderer->document()->axObjectCache()->get(m_renderer);
 
     if (!m_renderer || !m_renderer->parent())
         return nil;
-    return m_renderer->document()->getAccObjectCache()->get(m_renderer->parent());
+    return m_renderer->document()->axObjectCache()->get(m_renderer->parent());
 }
 
 -(WebCoreAXObject*)parentObjectUnignored
@@ -721,12 +721,12 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
         
-    return m_renderer->document()->getAccObjectCache()->textMarkerForVisiblePosition(visiblePos);
+    return m_renderer->document()->axObjectCache()->textMarkerForVisiblePosition(visiblePos);
 }
 
 - (VisiblePosition) visiblePositionForTextMarker: (WebCoreTextMarker *)textMarker
 {
-    return m_renderer->document()->getAccObjectCache()->visiblePositionForTextMarker(textMarker);
+    return m_renderer->document()->axObjectCache()->visiblePositionForTextMarker(textMarker);
 }
 
 - (VisiblePosition) visiblePositionForStartOfTextMarkerRange: (WebCoreTextMarkerRange *)textMarkerRange
@@ -808,7 +808,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
             while (curr) {
                 RenderObject *obj = curr->renderer();
                 if (obj) {
-                    WebCoreAXObject *axobj = obj->document()->getAccObjectCache()->get(obj);
+                    WebCoreAXObject *axobj = obj->document()->axObjectCache()->get(obj);
                     ASSERT([[axobj role] isEqualToString:@"AXLink"]);
                     if (![axobj accessibilityIsIgnored])
                         [links addObject: axobj];
@@ -949,7 +949,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (!obj)
         return nil;
     
-    return obj->document()->getAccObjectCache()->get(obj);
+    return obj->document()->axObjectCache()->get(obj);
 }
 
 - (id)doAXTextMarkerRangeForUIElement: (id) uiElement
@@ -1260,12 +1260,12 @@ static WebCoreAXObject *AXLinkElementForNode (Node *node)
     if (!obj)
         return nil;
 
-    WebCoreAXObject *axObj = obj->document()->getAccObjectCache()->get(obj);
+    WebCoreAXObject *axObj = obj->document()->axObjectCache()->get(obj);
     HTMLAnchorElement* anchor = [axObj anchorElement];
     if (!anchor || !anchor->renderer())
         return nil;
 
-    return anchor->renderer()->document()->getAccObjectCache()->get(anchor->renderer());
+    return anchor->renderer()->document()->axObjectCache()->get(anchor->renderer());
 }
 
 static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* nodeImpl, const UChar* chars, int length)
@@ -1311,7 +1311,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     }
         
     // create an AX object, but skip it if it is not supposed to be seen
-    WebCoreAXObject *obj = replacedNode->renderer()->document()->getAccObjectCache()->get(replacedNode->renderer());
+    WebCoreAXObject *obj = replacedNode->renderer()->document()->axObjectCache()->get(replacedNode->renderer());
     if ([obj accessibilityIsIgnored])
         return;
     
@@ -1765,7 +1765,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (!obj)
         return NSAccessibilityUnignoredAncestor(self);
     
-    return NSAccessibilityUnignoredAncestor(obj->document()->getAccObjectCache()->get(obj));
+    return NSAccessibilityUnignoredAncestor(obj->document()->axObjectCache()->get(obj));
 }
 
 - (RenderObject *) rendererForView:(NSView *)view
@@ -1808,7 +1808,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (!renderer)
         return nil;
         
-    WebCoreAXObject* obj = renderer->document()->getAccObjectCache()->get(renderer);
+    WebCoreAXObject* obj = renderer->document()->axObjectCache()->get(renderer);
     return [obj parentObjectUnignored];
 }
 
@@ -1819,7 +1819,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (!focusNode || !focusNode->renderer())
         return nil;
 
-    WebCoreAXObject* obj = focusNode->renderer()->document()->getAccObjectCache()->get(focusNode->renderer());
+    WebCoreAXObject* obj = focusNode->renderer()->document()->axObjectCache()->get(focusNode->renderer());
     
     // the HTML element, for example, is focusable but has an AX object that is ignored
     if ([obj accessibilityIsIgnored])
@@ -1919,7 +1919,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 {
     if (!m_id)
         return;
-    m_renderer->document()->getAccObjectCache()->removeAXID(self);
+    m_renderer->document()->axObjectCache()->removeAXID(self);
 }
 
 @end

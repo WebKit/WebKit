@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityObjectCache_h
-#define AccessibilityObjectCache_h
+#ifndef AXObjectCache_h
+#define AXObjectCache_h
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -49,9 +49,9 @@ namespace WebCore {
         static TraitType deletedValue() { return UINT_MAX; }
     };
 
-    class AccessibilityObjectCache {
+    class AXObjectCache {
     public:
-        ~AccessibilityObjectCache();
+        ~AXObjectCache();
 
         WebCoreAXObject* get(RenderObject*);
         void remove(RenderObject*);
@@ -79,14 +79,14 @@ namespace WebCore {
     };
 
 #ifndef __APPLE__
-    inline AccessibilityObjectCache::~AccessibilityObjectCache() { }
-    inline WebCoreAXObject* AccessibilityObjectCache::get(RenderObject*) { return 0; }
-    inline void AccessibilityObjectCache::remove(RenderObject*) { }
-    inline void AccessibilityObjectCache::removeAXID(WebCoreAXObject*) { }
-    inline void AccessibilityObjectCache::childrenChanged(RenderObject*) { }
-    inline void AccessibilityObjectCache::postNotification(RenderObject*, const String&) { }
-    inline void AccessibilityObjectCache::postNotificationToTopWebArea(RenderObject*, const String&) { }
-    inline void AccessibilityObjectCache::handleFocusedUIElementChanged() { }
+    inline AXObjectCache::~AXObjectCache() { }
+    inline WebCoreAXObject* AXObjectCache::get(RenderObject*) { return 0; }
+    inline void AXObjectCache::remove(RenderObject*) { }
+    inline void AXObjectCache::removeAXID(WebCoreAXObject*) { }
+    inline void AXObjectCache::childrenChanged(RenderObject*) { }
+    inline void AXObjectCache::postNotification(RenderObject*, const String&) { }
+    inline void AXObjectCache::postNotificationToTopWebArea(RenderObject*, const String&) { }
+    inline void AXObjectCache::handleFocusedUIElementChanged() { }
 #endif
 
 }

@@ -30,8 +30,8 @@
 #include "CachedXSLStyleSheet.h"
 
 #include "Cache.h"
-#include "CachedObjectClient.h"
-#include "CachedObjectClientWalker.h"
+#include "CachedResourceClient.h"
+#include "CachedResourceClientWalker.h"
 #include "Decoder.h"
 #include "loader.h"
 #include <wtf/Vector.h>
@@ -41,7 +41,7 @@ namespace WebCore {
 #ifdef KHTML_XSLT
 
 CachedXSLStyleSheet::CachedXSLStyleSheet(DocLoader* dl, const String &url, CachePolicy cachePolicy, time_t _expireDate)
-    : CachedObject(url, XSLStyleSheet, cachePolicy, _expireDate)
+    : CachedResource(url, XSLStyleSheet, cachePolicy, _expireDate)
 {
     // It's XML we want.
     // FIXME: This should accept more general xml formats */*+xml, image/svg+xml for example.
@@ -53,18 +53,18 @@ CachedXSLStyleSheet::CachedXSLStyleSheet(DocLoader* dl, const String &url, Cache
     m_decoder = new Decoder;
 }
 
-void CachedXSLStyleSheet::ref(CachedObjectClient *c)
+void CachedXSLStyleSheet::ref(CachedResourceClient *c)
 {
-    CachedObject::ref(c);
+    CachedResource::ref(c);
     
     if (!m_loading)
         c->setStyleSheet(m_url, m_sheet);
 }
 
-void CachedXSLStyleSheet::deref(CachedObjectClient *c)
+void CachedXSLStyleSheet::deref(CachedResourceClient *c)
 {
     Cache::flush();
-    CachedObject::deref(c);
+    CachedResource::deref(c);
     if (canDelete() && m_free)
         delete this;
 }
@@ -91,8 +91,8 @@ void CachedXSLStyleSheet::checkNotify()
     if (m_loading)
         return;
     
-    CachedObjectClientWalker w(m_clients);
-    while (CachedObjectClient *c = w.next())
+    CachedResourceClientWalker w(m_clients);
+    while (CachedResourceClient *c = w.next())
         c->setStyleSheet(m_url, m_sheet);
 }
 

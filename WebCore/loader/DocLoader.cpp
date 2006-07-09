@@ -68,7 +68,7 @@ bool DocLoader::needReload(const KURL& fullURL)
     bool reload = false;
     if (m_cachePolicy == CachePolicyVerify) {
        if (!m_reloadedURLs.contains(fullURL.url())) {
-          CachedObject* existing = Cache::get(fullURL.url());
+          CachedResource* existing = Cache::get(fullURL.url());
           if (existing && existing->isExpired()) {
              Cache::remove(existing);
              m_reloadedURLs.append(fullURL.url());
@@ -77,7 +77,7 @@ bool DocLoader::needReload(const KURL& fullURL)
        }
     } else if ((m_cachePolicy == CachePolicyReload) || (m_cachePolicy == CachePolicyRefresh)) {
        if (!m_reloadedURLs.contains(fullURL.url())) {
-          CachedObject* existing = Cache::get(fullURL.url());
+          CachedResource* existing = Cache::get(fullURL.url());
           if (existing)
              Cache::remove(existing);
           m_reloadedURLs.append(fullURL.url());
@@ -174,14 +174,14 @@ void DocLoader::setAutoloadImages(bool enable)
     if (!m_bautoloadImages)
         return;
 
-    HashMap<String, CachedObject*>::iterator end = m_docObjects.end();
-    for (HashMap<String, CachedObject*>::iterator it = m_docObjects.begin(); it != end; ++it) {
-        CachedObject* co = it->second;
-        if (co->type() == CachedObject::ImageResource) {
+    HashMap<String, CachedResource*>::iterator end = m_docObjects.end();
+    for (HashMap<String, CachedResource*>::iterator it = m_docObjects.begin(); it != end; ++it) {
+        CachedResource* co = it->second;
+        if (co->type() == CachedResource::ImageResource) {
             CachedImage *img = const_cast<CachedImage*>(static_cast<const CachedImage *>(co));
 
-            CachedObject::Status status = img->status();
-            if (status != CachedObject::Unknown)
+            CachedResource::Status status = img->status();
+            if (status != CachedResource::Unknown)
                 continue;
 
             Cache::loader()->load(this, img, true);
@@ -194,7 +194,7 @@ void DocLoader::setCachePolicy(CachePolicy cachePolicy)
     m_cachePolicy = cachePolicy;
 }
 
-void DocLoader::removeCachedObject(CachedObject* o) const
+void DocLoader::removeCachedObject(CachedResource* o) const
 {
     m_docObjects.remove(o->url());
 }

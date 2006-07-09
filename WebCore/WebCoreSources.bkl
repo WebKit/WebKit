@@ -119,8 +119,8 @@
 		loader/Cache.cpp
 		loader/CachedCSSStyleSheet.cpp
 		loader/CachedImage.cpp
-		loader/CachedObject.cpp
-		loader/CachedObjectClientWalker.cpp
+		loader/CachedResource.cpp
+		loader/CachedResourceClientWalker.cpp
 		loader/CachedScript.cpp
 		loader/CachedXSLStyleSheet.cpp
 		loader/Decoder.cpp

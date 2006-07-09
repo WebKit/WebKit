@@ -27,7 +27,7 @@
 #import "config.h"
 #import "WebCoreFrameBridge.h"
 
-#import "AccessibilityObjectCache.h"
+#import "AXObjectCache.h"
 #import "Cache.h"
 #import "CharsetNames.h"
 #import "DOMImplementation.h"
@@ -1555,13 +1555,13 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (id)accessibilityTree
 {
-    AccessibilityObjectCache::enableAccessibility();
+    AXObjectCache::enableAccessibility();
     if (!m_frame || !m_frame->document())
         return nil;
     RenderView* root = static_cast<RenderView *>(m_frame->document()->renderer());
     if (!root)
         return nil;
-    return m_frame->document()->getAccObjectCache()->get(root);
+    return m_frame->document()->axObjectCache()->get(root);
 }
 
 - (void)setDrawsBackground:(BOOL)drawsBackground
@@ -2531,7 +2531,7 @@ static NSCharacterSet *_getPostSmartSet(void)
     if (!doc)
         return NO;
 
-    CachedObject* o = doc->docLoader()->cachedObject([URL absoluteString]);
+    CachedResource* o = doc->docLoader()->cachedObject([URL absoluteString]);
     if (!o)
         return NO;
 
@@ -2550,13 +2550,13 @@ static NSCharacterSet *_getPostSmartSet(void)
         return;
     }
 
-    const HashMap<String, CachedObject*>& allResources = doc->docLoader()->allCachedObjects();
+    const HashMap<String, CachedResource*>& allResources = doc->docLoader()->allCachedObjects();
 
     NSMutableArray *d = [[NSMutableArray alloc] initWithCapacity:allResources.size()];
     NSMutableArray *r = [[NSMutableArray alloc] initWithCapacity:allResources.size()];
 
-    HashMap<String, CachedObject*>::const_iterator end = allResources.end();
-    for (HashMap<String, CachedObject*>::const_iterator it = allResources.begin(); it != end; ++it) {
+    HashMap<String, CachedResource*>::const_iterator end = allResources.end();
+    for (HashMap<String, CachedResource*>::const_iterator it = allResources.begin(); it != end; ++it) {
         [d addObject:it->second->allData()];
         [r addObject:it->second->response()];
     }

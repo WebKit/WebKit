@@ -31,7 +31,7 @@
 #include "SegmentedString.h"
 #include "Timer.h"
 #include "XMLTokenizer.h"
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 
 namespace WebCore {
 
@@ -78,7 +78,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class HTMLTokenizer : public Tokenizer, public CachedObjectClient
+class HTMLTokenizer : public Tokenizer, public CachedResourceClient
 {
 public:
     HTMLTokenizer(HTMLDocument*);
@@ -136,8 +136,8 @@ private:
     void timerFired(Timer<HTMLTokenizer>*);
     void allDataProcessed();
 
-    // from CachedObjectClient
-    void notifyFinished(CachedObject *finishedObj);
+    // from CachedResourceClient
+    void notifyFinished(CachedResource *finishedObj);
 
     // Internal buffers
     ///////////////////

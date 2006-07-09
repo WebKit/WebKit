@@ -25,7 +25,7 @@
 #define CSSImportRule_H
 
 #include "CSSRule.h"
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -33,7 +33,7 @@ namespace WebCore {
 class CachedCSSStyleSheet;
 class MediaList;
 
-class CSSImportRule : public CSSRule, public CachedObjectClient
+class CSSImportRule : public CSSRule, public CachedResourceClient
 {
 public:
     CSSImportRule(StyleBase* parent, const String& href, MediaList*);
@@ -48,7 +48,7 @@ public:
   
     bool isLoading() const;
 
-    // from CachedObjectClient
+    // from CachedResourceClient
     virtual void setStyleSheet(const String& url, const String& sheet);
 
     virtual void insertedIntoParent();

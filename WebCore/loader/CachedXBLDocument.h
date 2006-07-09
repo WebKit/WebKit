@@ -28,18 +28,18 @@
 #ifndef CachedXBLDocument_h
 #define CachedXBLDocument_h
 
-#include "CachedObject.h"
+#include "CachedResource.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
-    class CachedObject;
+    class CachedResource;
     class Request;
     class DocLoader;
     class Decoder;
-    class CachedObjectClient;
+    class CachedResourceClient;
     
 #ifndef KHTML_NO_XBL
-    class CachedXBLDocument : public CachedObject
+    class CachedXBLDocument : public CachedResource
     {
     public:
         CachedXBLDocument(DocLoader*, const String& url, CachePolicy, time_t expireDate);
@@ -47,8 +47,8 @@ namespace WebCore {
         
         XBL::XBLDocument* document() const { return m_document; }
         
-        virtual void ref(CachedObjectClient*);
-        virtual void deref(CachedObjectClient*);
+        virtual void ref(CachedResourceClient*);
+        virtual void deref(CachedResourceClient*);
         
         virtual void setCharset(const DeprecatedString&);
         virtual void data(Vector<char>&, bool allDataReceived);

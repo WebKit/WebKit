@@ -27,7 +27,7 @@
 */
 
 #include "config.h"
-#include "CachedObject.h"
+#include "CachedResource.h"
 
 #include "Cache.h"
 #include "Request.h"
@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-CachedObject::~CachedObject()
+CachedResource::~CachedResource()
 {
     if (m_deleted)
         abort();
@@ -48,7 +48,7 @@ CachedObject::~CachedObject()
 #endif
 }
 
-Vector<char>& CachedObject::bufferData(const char* bytes, int addedSize, Request* request)
+Vector<char>& CachedResource::bufferData(const char* bytes, int addedSize, Request* request)
 {
     // Add new bytes to the buffer in the Request object.
     Vector<char>& buffer = request->buffer();
@@ -60,7 +60,7 @@ Vector<char>& CachedObject::bufferData(const char* bytes, int addedSize, Request
     return buffer;
 }
 
-void CachedObject::finish()
+void CachedResource::finish()
 {
     if (m_size > Cache::maxCacheableObjectSize())
         m_status = Uncacheable;
@@ -71,7 +71,7 @@ void CachedObject::finish()
         m_expireDateChanged = false;
 }
 
-void CachedObject::setExpireDate(time_t expireDate, bool changeHttpCache)
+void CachedResource::setExpireDate(time_t expireDate, bool changeHttpCache)
 {
     if (expireDate == m_expireDate)
         return;
@@ -84,14 +84,14 @@ void CachedObject::setExpireDate(time_t expireDate, bool changeHttpCache)
        m_expireDateChanged = true;
 }
 
-bool CachedObject::isExpired() const
+bool CachedResource::isExpired() const
 {
     if (!m_expireDate) return false;
     time_t now = time(0);
     return (difftime(now, m_expireDate) >= 0);
 }
 
-void CachedObject::setRequest(Request *_request)
+void CachedResource::setRequest(Request *_request)
 {
     if ( _request && !m_request )
         m_status = Pending;
@@ -102,21 +102,21 @@ void CachedObject::setRequest(Request *_request)
         Cache::insertInLRUList(this);
 }
 
-void CachedObject::ref(CachedObjectClient *c)
+void CachedResource::ref(CachedResourceClient *c)
 {
     m_clients.add(c);
     Cache::removeFromLRUList(this);
     increaseAccessCount();
 }
 
-void CachedObject::deref(CachedObjectClient *c)
+void CachedResource::deref(CachedResourceClient *c)
 {
     m_clients.remove(c);
     if (allowInLRUList())
         Cache::insertInLRUList(this);
 }
 
-void CachedObject::setSize(int size)
+void CachedResource::setSize(int size)
 {
     bool sizeChanged = Cache::adjustSize(this, size - m_size);
 

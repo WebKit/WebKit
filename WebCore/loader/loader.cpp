@@ -31,7 +31,7 @@
 
 #include "Cache.h"
 #include "CachedImage.h"
-#include "CachedObject.h"
+#include "CachedResource.h"
 #include "DocLoader.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
@@ -79,7 +79,7 @@ Loader::~Loader()
     deleteAllValues(m_requestsLoading);
 }
 
-void Loader::load(DocLoader* dl, CachedObject* object, bool incremental)
+void Loader::load(DocLoader* dl, CachedResource* object, bool incremental)
 {
     Request* req = new Request(dl, object, incremental);
     m_requestsPending.append(req);
@@ -124,7 +124,7 @@ void Loader::receivedAllData(TransferJob* job, PlatformData allData)
     Request* req = i->second;
     m_requestsLoading.remove(i);
 
-    CachedObject* object = req->cachedObject();
+    CachedResource* object = req->cachedObject();
     DocLoader* docLoader = req->docLoader();
 
     if (job->error() || job->isErrorPage()) {
@@ -179,7 +179,7 @@ void Loader::receivedData(TransferJob* job, const char* data, int size)
     if (!request)
         return;
 
-    CachedObject* object = request->cachedObject();    
+    CachedResource* object = request->cachedObject();    
     Vector<char>& buffer = object->bufferData(data, size, request);
 
     // Set the data.
@@ -267,7 +267,7 @@ TransferJob* Loader::jobForRequest(const String& URL) const
 {
     RequestMap::const_iterator end = m_requestsLoading.end();
     for (RequestMap::const_iterator i = m_requestsLoading.begin(); i != end; ++i) {
-        CachedObject* obj = i->second->cachedObject();
+        CachedResource* obj = i->second->cachedObject();
         if (obj && obj->url() == URL)
             return i->first;
     }

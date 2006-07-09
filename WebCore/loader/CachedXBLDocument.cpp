@@ -33,7 +33,7 @@
 #include "CachedXBLDocument.h"
 
 #include "Cache.h"
-#include "CachedObjectClientWalker.h"
+#include "CachedResourceClientWalker.h"
 #include "Decoder.h"
 #include "loader.h"
 #include <wtf/Vector.h>
@@ -41,7 +41,7 @@
 namespace WebCore {
 
 CachedXBLDocument::CachedXBLDocument(DocLoader* dl, const String &url, CachePolicy cachePolicy, time_t _expireDate)
-: CachedObject(url, XBL, cachePolicy, _expireDate), m_document(0)
+: CachedResource(url, XBL, cachePolicy, _expireDate), m_document(0)
 {
     // It's XML we want.
     setAccept("text/xml, application/xml, application/xhtml+xml, text/xsl, application/rss+xml, application/atom+xml");
@@ -58,17 +58,17 @@ CachedXBLDocument::~CachedXBLDocument()
         m_document->deref();
 }
 
-void CachedXBLDocument::ref(CachedObjectClient *c)
+void CachedXBLDocument::ref(CachedResourceClient *c)
 {
-    CachedObject::ref(c);
+    CachedResource::ref(c);
     if (!m_loading)
         c->setXBLDocument(m_url, m_document);
 }
 
-void CachedXBLDocument::deref(CachedObjectClient *c)
+void CachedXBLDocument::deref(CachedResourceClient *c)
 {
     Cache::flush();
-    CachedObject::deref(c);
+    CachedResource::deref(c);
     if (canDelete() && m_free)
         delete this;
 }
@@ -104,8 +104,8 @@ void CachedXBLDocument::checkNotify()
     if (m_loading)
         return;
     
-    CachedObjectClientWalker w(m_clients);
-    while (CachedObjectClient *c = w.next())
+    CachedResourceClientWalker w(m_clients);
+    while (CachedResourceClient *c = w.next())
         c->setXBLDocument(m_url, m_document);
 }
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "FrameMac.h"
 
-#import "AccessibilityObjectCache.h"
+#import "AXObjectCache.h"
 #import "BeforeUnloadEvent.h"
 #import "BlockExceptions.h"
 #import "BrowserExtensionMac.h"
@@ -3175,8 +3175,8 @@ bool FrameMac::shouldDeleteSelection(const SelectionController &selection) const
 
 void FrameMac::respondToChangedContents()
 {
-    if (AccessibilityObjectCache::accessibilityEnabled())
-        renderer()->document()->getAccObjectCache()->postNotificationToTopWebArea(renderer(), "AXValueChanged");
+    if (AXObjectCache::accessibilityEnabled())
+        renderer()->document()->axObjectCache()->postNotificationToTopWebArea(renderer(), "AXValueChanged");
     [_bridge respondToChangedContents];
 }
 

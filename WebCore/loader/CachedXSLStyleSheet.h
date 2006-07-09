@@ -28,7 +28,7 @@
 #ifndef KHTML_CachedXSLStyleSheet_h
 #define KHTML_CachedXSLStyleSheet_h
 
-#include "CachedObject.h"
+#include "CachedResource.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,14 +37,14 @@ namespace WebCore {
     class Decoder;
 
 #ifdef KHTML_XSLT
-    class CachedXSLStyleSheet : public CachedObject {
+    class CachedXSLStyleSheet : public CachedResource {
     public:
         CachedXSLStyleSheet(DocLoader*, const String& url, CachePolicy, time_t expireDate);
 
         const String& sheet() const { return m_sheet; }
         
-        virtual void ref(CachedObjectClient*);
-        virtual void deref(CachedObjectClient*);
+        virtual void ref(CachedResourceClient*);
+        virtual void deref(CachedResourceClient*);
         
         virtual void setCharset(const DeprecatedString&);
         virtual void data(Vector<char>&, bool allDataReceived);

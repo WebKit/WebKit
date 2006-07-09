@@ -2,7 +2,8 @@
     This file is part of the KDE libraries
 
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
-    Copyright (C) 2001 Dirk Mueller <mueller@kde.org>
+    Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
+    Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -24,28 +25,31 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef CachedObjectClientWalker_h
-#define CachedObjectClientWalker_h
-
-#include <wtf/HashSet.h>
-#include <wtf/Vector.h>
+#include "config.h"
+#include "CachedResourceClientWalker.h"
 
 namespace WebCore {
 
-    class CachedObjectClient;
-
-    // Call this "walker" instead of iterator so people won't expect Qt or STL-style iterator interface.
-    // Just keep calling next() on this. It's safe from deletions of items.
-    class CachedObjectClientWalker {
-    public:
-        CachedObjectClientWalker(const HashSet<CachedObjectClient*>&);
-        CachedObjectClient* next();
-    private:
-        const HashSet<CachedObjectClient*>& m_clientSet;
-        Vector<CachedObjectClient*> m_clientVector;
-        size_t m_index;
-    };
-
+CachedResourceClientWalker::CachedResourceClientWalker(const HashSet<CachedResourceClient*>& set)
+    : m_clientSet(set), m_clientVector(set.size()), m_index(0)
+{
+    typedef HashSet<CachedResourceClient*>::const_iterator Iterator;
+    Iterator end = set.end();
+    size_t clientIndex = 0;
+    for (Iterator current = set.begin(); current != end; ++current)
+        m_clientVector[clientIndex++] = *current;
 }
 
-#endif
+CachedResourceClient* CachedResourceClientWalker::next()
+{
+    size_t size = m_clientVector.size();
+    while (m_index < size) {
+        CachedResourceClient* next = m_clientVector[m_index++];
+        if (m_clientSet.contains(next))
+            return next;
+    }
+
+    return 0;
+}
+
+}

@@ -2,8 +2,7 @@
     This file is part of the KDE libraries
 
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
-    Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
+    Copyright (C) 2001 Dirk Mueller <mueller@kde.org>
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -25,31 +24,28 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#include "config.h"
-#include "CachedObjectClientWalker.h"
+#ifndef CachedResourceClientWalker_h
+#define CachedResourceClientWalker_h
+
+#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-CachedObjectClientWalker::CachedObjectClientWalker(const HashSet<CachedObjectClient*>& set)
-    : m_clientSet(set), m_clientVector(set.size()), m_index(0)
-{
-    typedef HashSet<CachedObjectClient*>::const_iterator Iterator;
-    Iterator end = set.end();
-    size_t clientIndex = 0;
-    for (Iterator current = set.begin(); current != end; ++current)
-        m_clientVector[clientIndex++] = *current;
-}
+    class CachedResourceClient;
 
-CachedObjectClient* CachedObjectClientWalker::next()
-{
-    size_t size = m_clientVector.size();
-    while (m_index < size) {
-        CachedObjectClient* next = m_clientVector[m_index++];
-        if (m_clientSet.contains(next))
-            return next;
-    }
-
-    return 0;
-}
+    // Call this "walker" instead of iterator so people won't expect Qt or STL-style iterator interface.
+    // Just keep calling next() on this. It's safe from deletions of items.
+    class CachedResourceClientWalker {
+    public:
+        CachedResourceClientWalker(const HashSet<CachedResourceClient*>&);
+        CachedResourceClient* next();
+    private:
+        const HashSet<CachedResourceClient*>& m_clientSet;
+        Vector<CachedResourceClient*> m_clientVector;
+        size_t m_index;
+    };
 
 }
+
+#endif

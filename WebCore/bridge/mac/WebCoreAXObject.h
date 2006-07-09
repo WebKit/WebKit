@@ -24,7 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "AccessibilityObjectCache.h"
+#import "AXObjectCache.h"
 
 namespace WebCore {
     class HTMLAreaElement;

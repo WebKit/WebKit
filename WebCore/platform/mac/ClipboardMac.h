@@ -31,7 +31,7 @@
 #include "Image.h"
 #include "IntPoint.h"
 #include "Clipboard.h"
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 
 #ifdef __OBJC__
 @class NSImage;
@@ -48,7 +48,7 @@ namespace WebCore {
 
 class FrameMac;
 
-class ClipboardMac : public Clipboard, public CachedObjectClient {
+class ClipboardMac : public Clipboard, public CachedResourceClient {
 public:
     // security mechanisms
     typedef enum {

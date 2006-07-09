@@ -30,15 +30,15 @@
 #include "CachedScript.h"
 
 #include "Cache.h"
-#include "CachedObjectClient.h"
-#include "CachedObjectClientWalker.h"
+#include "CachedResourceClient.h"
+#include "CachedResourceClientWalker.h"
 #include "loader.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 CachedScript::CachedScript(DocLoader* dl, const String &url, CachePolicy cachePolicy, time_t _expireDate, const DeprecatedString& charset)
-    : CachedObject(url, Script, cachePolicy, _expireDate)
+    : CachedResource(url, Script, cachePolicy, _expireDate)
     , m_encoding(charset.latin1())
 {
     // It's javascript we want.
@@ -54,7 +54,7 @@ CachedScript::CachedScript(DocLoader* dl, const String &url, CachePolicy cachePo
 }
 
 CachedScript::CachedScript(const String &url, const DeprecatedString &script_data)
-    : CachedObject(url, Script, CachePolicyVerify, 0, script_data.length())
+    : CachedResource(url, Script, CachePolicyVerify, 0, script_data.length())
     , m_encoding(InvalidEncoding)
 {
     m_errorOccurred = false;
@@ -67,17 +67,17 @@ CachedScript::~CachedScript()
 {
 }
 
-void CachedScript::ref(CachedObjectClient *c)
+void CachedScript::ref(CachedResourceClient *c)
 {
-    CachedObject::ref(c);
+    CachedResource::ref(c);
 
     if(!m_loading) c->notifyFinished(this);
 }
 
-void CachedScript::deref(CachedObjectClient *c)
+void CachedScript::deref(CachedResourceClient *c)
 {
     Cache::flush();
-    CachedObject::deref(c);
+    CachedResource::deref(c);
     if ( canDelete() && m_free )
       delete this;
 }
@@ -105,8 +105,8 @@ void CachedScript::checkNotify()
     if (m_loading)
         return;
 
-    CachedObjectClientWalker w(m_clients);
-    while (CachedObjectClient *c = w.next())
+    CachedResourceClientWalker w(m_clients);
+    while (CachedResourceClient *c = w.next())
         c->notifyFinished(this);
 }
 

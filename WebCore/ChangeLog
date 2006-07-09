@@ -1,3 +1,105 @@
+2006-07-09  Darin Adler  <darin@apple.com>
+
+        - another round of renaming; and KWQ is dead
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Remove paths for kwq and khtml directories.
+        Move files to their new locations. Did rename.
+        * WebCore.xcodeproj/project.pbxproj: Move files to their new locations. Did rename.
+        * WebCoreSources.bkl: Did rename.
+        * webcore-base.bkl: Removed kwq.
+
+        * kwq/AccessibilityObjectCache.h: Removed.
+        * kwq/AccessibilityObjectCache.mm: Removed.
+        * kwq/FormDataMac.h: Removed.
+        * kwq/FormDataMac.mm: Removed.
+        * kwq/WebCoreAXObject.h: Removed.
+        * kwq/WebCoreAXObject.mm: Removed.
+        * kwq/WebCoreEditCommand.h: Removed.
+        * kwq/WebCoreEditCommand.mm: Removed.
+        * kwq/WebCorePageState.h: Removed.
+        * kwq/WebCorePageState.mm: Removed.
+        * kwq/WebCoreResourceLoaderImp.h: Removed.
+        * kwq/WebCoreResourceLoaderImp.mm: Removed.
+
+        * bridge/AXObjectCache.h: Added.
+        * bridge/mac/AXObjectCacheMac.mm: Added.
+        * bridge/mac/WebCoreAXObject.h: Added.
+        * bridge/mac/WebCoreAXObject.mm: Added.
+
+        * loader/CachedObject.cpp: Removed.
+        * loader/CachedObject.h: Removed.
+        * loader/CachedObjectClient.h: Removed.
+        * loader/CachedObjectClientWalker.cpp: Removed.
+        * loader/CachedObjectClientWalker.h: Removed.
+
+        * loader/CachedResource.cpp: Added.
+        * loader/CachedResource.h: Added.
+        * loader/CachedResourceClient.h: Added.
+        * loader/CachedResourceClientWalker.cpp: Added.
+        * loader/CachedResourceClientWalker.h: Added.
+
+        * bridge/mac/FrameMac.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * css/CSSImageValue.h:
+        * css/CSSImportRule.h:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/Notation.h:
+        * dom/ProcessingInstruction.h:
+        * dom/XMLTokenizer.cpp:
+        * html/CanvasPattern.h:
+        * html/HTMLDocument.h:
+        * html/HTMLImageLoader.cpp:
+        * html/HTMLImageLoader.h:
+        * html/HTMLLinkElement.h:
+        * html/HTMLScriptElement.cpp:
+        * html/HTMLScriptElement.h:
+        * html/HTMLTokenizer.cpp:
+        * html/HTMLTokenizer.h:
+        * kcanvas/KCanvasFilters.h:
+        * ksvg2/svg/SVGCursorElement.cpp:
+        * ksvg2/svg/SVGCursorElement.h:
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        * ksvg2/svg/SVGFEImageElement.h:
+        * loader/Cache.cpp:
+        * loader/Cache.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedImage.cpp:
+        * loader/CachedImage.h:
+        * loader/CachedScript.cpp:
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.cpp:
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp:
+        * loader/DocLoader.h:
+        * loader/LoaderFunctions.h:
+        * loader/Request.cpp:
+        * loader/Request.h:
+        * loader/loader.cpp:
+        * loader/loader.h:
+        * loader/mac/LoaderFunctionsMac.mm:
+        * page/Frame.cpp:
+        * page/FrameView.cpp:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/mac/ClipboardMac.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        * rendering/RenderBox.h:
+        * rendering/RenderContainer.cpp:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderImage.h:
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderStyle.cpp:
+        * rendering/RenderStyle.h:
+        * xml/XSLImportRule.h:
+        Did renaming.
+
+        * platform/mac/can-convert.mm: Removed.
+
 2006-07-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Tim O.

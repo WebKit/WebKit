@@ -1006,7 +1006,7 @@ bool RenderStyle::contentDataEquivalent(const RenderStyle* otherStyle) const
     return !c1 && !c2;
 }
 
-void RenderStyle::setContent(CachedObject* o, bool add)
+void RenderStyle::setContent(CachedResource* o, bool add)
 {
     if (!o)
         return; // The object is null. Nothing to do. Just bail.

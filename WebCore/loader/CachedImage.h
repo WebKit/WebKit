@@ -28,7 +28,7 @@
 #ifndef KHTML_CachedImage_h
 #define KHTML_CachedImage_h
 
-#include "CachedObject.h"
+#include "CachedResource.h"
 #include "ImageAnimationObserver.h"
 #include "IntRect.h"
 #include <wtf/Vector.h>
@@ -39,7 +39,7 @@ class DocLoader;
 class Cache;
 class Image;
 
-class CachedImage : public CachedObject, public ImageAnimationObserver {
+class CachedImage : public CachedResource, public ImageAnimationObserver {
 public:
     CachedImage(DocLoader*, const String& url, CachePolicy, time_t expireDate);
     virtual ~CachedImage();
@@ -51,8 +51,8 @@ public:
     IntSize imageSize() const;  // returns the size of the complete image
     IntRect imageRect() const;  // The size of the image.
 
-    virtual void ref(CachedObjectClient*);
-    virtual void deref(CachedObjectClient*);
+    virtual void ref(CachedResourceClient*);
+    virtual void deref(CachedResourceClient*);
 
     virtual Vector<char>& bufferData(const char* bytes, int addedSize, Request*);
     virtual void data(Vector<char>&, bool allDataReceived);

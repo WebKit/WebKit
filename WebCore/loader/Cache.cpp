@@ -50,14 +50,14 @@ const int minMaxCacheableObjectSize = 80 * 1024;
 const int maxLRULists = 20;
     
 struct LRUList {
-    CachedObject* m_head;
-    CachedObject* m_tail;
+    CachedResource* m_head;
+    CachedResource* m_tail;
     LRUList() : m_head(0), m_tail(0) { }
 };
 
 static bool cacheDisabled;
 
-typedef HashMap<RefPtr<StringImpl>, CachedObject*> CacheMap;
+typedef HashMap<RefPtr<StringImpl>, CachedResource*> CacheMap;
 
 static CacheMap* cache = 0;
 
@@ -71,7 +71,7 @@ int Cache::flushCount = 0;
 Image *Cache::nullImage = 0;
 Image *Cache::brokenImage = 0;
 
-CachedObject *Cache::m_headOfUncacheableList = 0;
+CachedResource *Cache::m_headOfUncacheableList = 0;
 int Cache::m_totalSizeOfLRULists = 0;
 int Cache::m_countOfLRUAndUncacheableLists;
 LRUList *Cache::m_LRULists = 0;
@@ -109,7 +109,7 @@ void Cache::clear()
     delete docloaders; docloaders = 0;
 }
 
-void Cache::updateCacheStatus(DocLoader* dl, CachedObject* o)
+void Cache::updateCacheStatus(DocLoader* dl, CachedResource* o)
 {
     moveToHeadOfLRUList(o);
     if (dl) {
@@ -145,7 +145,7 @@ CachedImage* Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, ti
     if (!dl->doc()->shouldCreateRenderers())
         return 0;
 
-    CachedObject *o = 0;
+    CachedResource *o = 0;
     if (!reload)
         o = cache->get(String(url.url()).impl());
     if (!o) {
@@ -164,11 +164,11 @@ CachedImage* Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, ti
     }
 
     
-    if (o->type() != CachedObject::ImageResource)
+    if (o->type() != CachedResource::ImageResource)
         return 0;
 
 #ifdef CACHE_DEBUG
-    if (o->status() == CachedObject::Pending)
+    if (o->status() == CachedResource::Pending)
         kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
     else
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << ", status " << o->status() << endl;
@@ -193,7 +193,7 @@ CachedCSSStyleSheet* Cache::requestStyleSheet(DocLoader* dl, const String& url, 
 
     // Checking if the URL is malformed is lots of extra work for little benefit.
 
-    CachedObject *o = cache->get(String(kurl.url()).impl());
+    CachedResource *o = cache->get(String(kurl.url()).impl());
     if (!o) {
 #ifdef CACHE_DEBUG
         kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
@@ -209,7 +209,7 @@ CachedCSSStyleSheet* Cache::requestStyleSheet(DocLoader* dl, const String& url, 
     }
 
     
-    if (o->type() != CachedObject::CSSStyleSheet)
+    if (o->type() != CachedResource::CSSStyleSheet)
     {
 #ifdef CACHE_DEBUG
         kdDebug(6060) << "Cache::Internal Error in requestStyleSheet url=" << kurl.url() << "!" << endl;
@@ -218,7 +218,7 @@ CachedCSSStyleSheet* Cache::requestStyleSheet(DocLoader* dl, const String& url, 
     }
 
 #ifdef CACHE_DEBUG
-    if (o->status() == CachedObject::Pending)
+    if (o->status() == CachedResource::Pending)
         kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
     else
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
@@ -243,7 +243,7 @@ CachedScript* Cache::requestScript(DocLoader* dl, const String& url, bool reload
 
     // Checking if the URL is malformed is lots of extra work for little benefit.
 
-    CachedObject *o = cache->get(String(kurl.url()).impl());
+    CachedResource *o = cache->get(String(kurl.url()).impl());
     if (!o)
     {
 #ifdef CACHE_DEBUG
@@ -260,7 +260,7 @@ CachedScript* Cache::requestScript(DocLoader* dl, const String& url, bool reload
     }
 
     
-    if (!(o->type() == CachedObject::Script)) {
+    if (!(o->type() == CachedResource::Script)) {
 #ifdef CACHE_DEBUG
         kdDebug(6060) << "Cache::Internal Error in requestScript url=" << kurl.url() << "!" << endl;
 #endif
@@ -269,7 +269,7 @@ CachedScript* Cache::requestScript(DocLoader* dl, const String& url, bool reload
     
     
 #ifdef CACHE_DEBUG
-    if (o->status() == CachedObject::Pending)
+    if (o->status() == CachedResource::Pending)
         kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
     else
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
@@ -296,7 +296,7 @@ CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String& ur
     
     // Checking if the URL is malformed is lots of extra work for little benefit.
     
-    CachedObject *o = cache->get(String(kurl.url()).impl());
+    CachedResource *o = cache->get(String(kurl.url()).impl());
     if (!o) {
 #ifdef CACHE_DEBUG
         kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
@@ -312,7 +312,7 @@ CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String& ur
     }
     
     
-    if (o->type() != CachedObject::XSLStyleSheet) {
+    if (o->type() != CachedResource::XSLStyleSheet) {
 #ifdef CACHE_DEBUG
         kdDebug(6060) << "Cache::Internal Error in requestXSLStyleSheet url=" << kurl.url() << "!" << endl;
 #endif
@@ -320,7 +320,7 @@ CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String& ur
     }
     
 #ifdef CACHE_DEBUG
-    if (o->status() == CachedObject::Pending)
+    if (o->status() == CachedResource::Pending)
         kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
     else
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
@@ -348,7 +348,7 @@ CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String& url, b
     
     // Checking if the URL is malformed is lots of extra work for little benefit.
     
-    CachedObject *o = cache->get(String(kurl.url()).impl());
+    CachedResource *o = cache->get(String(kurl.url()).impl());
     if (!o) {
 #ifdef CACHE_DEBUG
         kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
@@ -364,7 +364,7 @@ CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String& url, b
     }
     
     
-    if (o->type() != CachedObject::XBL) {
+    if (o->type() != CachedResource::XBL) {
 #ifdef CACHE_DEBUG
         kdDebug(6060) << "Cache::Internal Error in requestXBLDocument url=" << kurl.url() << "!" << endl;
 #endif
@@ -372,7 +372,7 @@ CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String& url, b
     }
     
 #ifdef CACHE_DEBUG
-    if (o->status() == CachedObject::Pending)
+    if (o->status() == CachedResource::Pending)
         kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
     else
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
@@ -418,9 +418,9 @@ void Cache::setSize(int bytes)
     flush(true);
 }
 
-void Cache::remove(CachedObject *object)
+void Cache::remove(CachedResource *object)
 {
-  // this indicates the deref() method of CachedObject to delete itself when the reference counter
+  // this indicates the deref() method of CachedResource to delete itself when the reference counter
   // drops down to zero
   object->setFree(true);
 
@@ -453,7 +453,7 @@ static inline int FastLog2(uint32_t i)
     return log2;
 }
 
-LRUList* Cache::getLRUListFor(CachedObject* o)
+LRUList* Cache::getLRUListFor(CachedResource* o)
 {
     int accessCount = o->accessCount();
     int queueIndex;
@@ -472,14 +472,14 @@ LRUList* Cache::getLRUListFor(CachedObject* o)
     return &m_LRULists[queueIndex];
 }
 
-void Cache::removeFromLRUList(CachedObject *object)
+void Cache::removeFromLRUList(CachedResource *object)
 {
-    CachedObject *next = object->m_nextInLRUList;
-    CachedObject *prev = object->m_prevInLRUList;
-    bool uncacheable = object->status() == CachedObject::Uncacheable;
+    CachedResource *next = object->m_nextInLRUList;
+    CachedResource *prev = object->m_prevInLRUList;
+    bool uncacheable = object->status() == CachedResource::Uncacheable;
     
     LRUList* list = uncacheable ? 0 : getLRUListFor(object);
-    CachedObject *&head = uncacheable ? m_headOfUncacheableList : list->m_head;
+    CachedResource *&head = uncacheable ? m_headOfUncacheableList : list->m_head;
     
     if (next == 0 && prev == 0 && head != object) {
         return;
@@ -504,12 +504,12 @@ void Cache::removeFromLRUList(CachedObject *object)
         m_totalSizeOfLRULists -= object->size();
 }
 
-void Cache::moveToHeadOfLRUList(CachedObject *object)
+void Cache::moveToHeadOfLRUList(CachedResource *object)
 {
     insertInLRUList(object);
 }
 
-void Cache::insertInLRUList(CachedObject *object)
+void Cache::insertInLRUList(CachedResource *object)
 {
     removeFromLRUList(object);
     
@@ -518,8 +518,8 @@ void Cache::insertInLRUList(CachedObject *object)
     
     LRUList* list = getLRUListFor(object);
     
-    bool uncacheable = object->status() == CachedObject::Uncacheable;
-    CachedObject *&head = uncacheable ? m_headOfUncacheableList : list->m_head;
+    bool uncacheable = object->status() == CachedResource::Uncacheable;
+    CachedResource *&head = uncacheable ? m_headOfUncacheableList : list->m_head;
 
     object->m_nextInLRUList = head;
     if (head)
@@ -535,9 +535,9 @@ void Cache::insertInLRUList(CachedObject *object)
         m_totalSizeOfLRULists += object->size();
 }
 
-bool Cache::adjustSize(CachedObject *object, int delta)
+bool Cache::adjustSize(CachedResource *object, int delta)
 {
-    if (object->status() == CachedObject::Uncacheable)
+    if (object->status() == CachedResource::Uncacheable)
         return false;
 
     if (object->m_nextInLRUList == 0 && object->m_prevInLRUList == 0 &&
@@ -557,30 +557,30 @@ Cache::Statistics Cache::getStatistics()
 
     CacheMap::iterator e = cache->end();
     for (CacheMap::iterator i = cache->begin(); i != e; ++i) {
-        CachedObject *o = i->second;
+        CachedResource *o = i->second;
         switch (o->type()) {
-            case CachedObject::ImageResource:
+            case CachedResource::ImageResource:
                 stats.images.count++;
                 stats.images.size += o->size();
                 break;
 
-            case CachedObject::CSSStyleSheet:
+            case CachedResource::CSSStyleSheet:
                 stats.styleSheets.count++;
                 stats.styleSheets.size += o->size();
                 break;
 
-            case CachedObject::Script:
+            case CachedResource::Script:
                 stats.scripts.count++;
                 stats.scripts.size += o->size();
                 break;
 #ifdef KHTML_XSLT
-            case CachedObject::XSLStyleSheet:
+            case CachedResource::XSLStyleSheet:
                 stats.xslStyleSheets.count++;
                 stats.xslStyleSheets.size += o->size();
                 break;
 #endif
 #ifndef KHTML_NO_XBL
-            case CachedObject::XBL:
+            case CachedResource::XBL:
                 stats.xblDocs.count++;
                 stats.xblDocs.size += o->size();
                 break;
@@ -614,7 +614,7 @@ void Cache::setCacheDisabled(bool disabled)
         flushAll();
 }
 
-CachedObject* Cache::get(const String& s)
+CachedResource* Cache::get(const String& s)
 {
     return (cache && s.impl()) ? cache->get(s.impl()) : 0;
 }

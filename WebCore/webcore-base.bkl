@@ -39,7 +39,6 @@ Base settings shared by all Bakefile-based ports.
     <include file="WebCoreSources.bkl"/>
     
 	<set var="WEBCORE_BASE_SOURCES">	
-		$(WEBCORE_SOURCES_KWQ)
 		$(WEBCORE_SOURCES_DERIVEDSOURCES)
 		$(WEBCORE_SOURCES_KHTML)
 		$(WEBCORE_SOURCES_MISC)
@@ -88,7 +87,6 @@ Base settings shared by all Bakefile-based ports.
         <include>$(SRCDIR)/html</include>
         <include>$(SRCDIR)/css</include>
         <include>$(SRCDIR)/dom</include>
-        <include>$(SRCDIR)/kwq</include>
         <include>$(SRCDIR)/loader</include>
         <include>$(SRCDIR)/page</include>
         <include>$(SRCDIR)/platform</include>

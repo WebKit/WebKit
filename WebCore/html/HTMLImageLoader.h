@@ -25,13 +25,13 @@
 #ifndef HTMLImageLoader_H
 #define HTMLImageLoader_H
 
-#include "CachedObjectClient.h"
+#include "CachedResourceClient.h"
 
 namespace WebCore {
 
 class Element;
 
-class HTMLImageLoader : public CachedObjectClient {
+class HTMLImageLoader : public CachedResourceClient {
 public:
     HTMLImageLoader(Element*);
     virtual ~HTMLImageLoader();
@@ -46,8 +46,8 @@ public:
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
-    // CachedObjectClient API
-    virtual void notifyFinished(CachedObject*);
+    // CachedResourceClient API
+    virtual void notifyFinished(CachedResource*);
 
 protected:
     void setLoadingImage(CachedImage*);

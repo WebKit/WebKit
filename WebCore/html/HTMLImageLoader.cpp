@@ -108,7 +108,7 @@ void HTMLImageLoader::dispatchLoadEvent()
     }
 }
 
-void HTMLImageLoader::notifyFinished(CachedObject *image)
+void HTMLImageLoader::notifyFinished(CachedResource *image)
 {
     m_imageComplete = true;
     Element* elem = element();
