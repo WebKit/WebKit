@@ -530,9 +530,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         
         case NPDrawingModelCoreGraphics:
         {
-            PortState_CG *cgPortState = (PortState_CG *)portState;
             ASSERT([NSView focusView] == self);
-            ASSERT(cgPortState->context == nPort.cgPort.context);
+            ASSERT(((PortState_CG *)portState)->context == nPort.cgPort.context);
             CGContextRestoreGState(nPort.cgPort.context);
         }
         break;
