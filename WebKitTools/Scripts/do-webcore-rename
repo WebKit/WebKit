@@ -72,6 +72,10 @@ my %renames = (
     "CachedObjectClientWalker_h" => "CachedResourceClientWalker_h",
     "CachedObject_h" => "CachedResource_h",
     "LOADER_CACHED_OBJECT_CLIENT_H" => "CachedResourceClient_h",
+    "AccessibilityObjectCache" => "AXObjectCache",
+    "AccessibilityObjectCache_h" => "AXObjectCache_h",
+    "m_accCache" => "m_axObjectCache",
+    "getAccObjectCache" => "axObjectCache",
 );
 
 # rename files

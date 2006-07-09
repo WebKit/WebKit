@@ -1,5 +1,9 @@
 2006-07-09  Darin Adler  <darin@apple.com>
 
+        * Scripts/do-webcore-rename: Final version of this round of renaming for posterity.
+
+2006-07-09  Darin Adler  <darin@apple.com>
+
         * Scripts/do-webcore-rename: Next round of renaming. (Last round was done.)
 
 2006-07-09  David Kilzer  <ddkilzer@kilzer.net>
