@@ -101,7 +101,7 @@ public:
     RenderTableSection* section() const { return static_cast<RenderTableSection*>(parent()->parent()); }
 
 #if !NDEBUG
-    virtual void dump(QTextStream *stream, DeprecatedString ind = "") const;
+    virtual void dump(TextStream *stream, DeprecatedString ind = "") const;
 #endif
 
     void paintBackgroundsBehindCell(PaintInfo&, int tx, int ty, RenderObject* backgroundObject);

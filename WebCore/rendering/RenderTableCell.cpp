@@ -31,7 +31,7 @@
 #include "RenderTableCol.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 
 using namespace std;
 
@@ -752,7 +752,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
 }
 
 #ifndef NDEBUG
-void RenderTableCell::dump(QTextStream *stream, DeprecatedString ind) const
+void RenderTableCell::dump(TextStream *stream, DeprecatedString ind) const
 {
     *stream << " row=" << _row;
     *stream << " col=" << _col;

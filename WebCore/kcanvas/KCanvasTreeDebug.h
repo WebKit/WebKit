@@ -24,10 +24,10 @@
  */
 
 #include "DeprecatedString.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 #include "DeprecatedValueList.h"
 
-class QMatrix;
+class AffineTransform;
 class DeprecatedStringList;
 
 namespace WebCore {
@@ -41,29 +41,29 @@ namespace WebCore {
     class IntRect;
     class Node;
     class RenderPath;
-    class KCanvasContainer;
+    class RenderSVGContainer;
 
 // functions used by the main RenderTreeAsText code
-void write(QTextStream &ts, const WebCore::KCanvasContainer &container, int indent = 0);
-void write(QTextStream &ts, const WebCore::RenderPath &path, int indent = 0);
-void writeRenderResources(QTextStream &ts, WebCore::Node *parent);
+void write(TextStream &ts, const WebCore::RenderSVGContainer &container, int indent = 0);
+void write(TextStream &ts, const WebCore::RenderPath &path, int indent = 0);
+void writeRenderResources(TextStream &ts, WebCore::Node *parent);
 
 // helper operators defined used in various classes to dump the render tree. 
-QTextStream &operator<<(QTextStream &ts, const QMatrix &);
-QTextStream &operator<<(QTextStream &ts, const WebCore::IntRect &);
-QTextStream &operator<<(QTextStream &ts, const WebCore::Color &);
-QTextStream &operator<<(QTextStream &ts, const WebCore::IntPoint &);
-QTextStream &operator<<(QTextStream &ts, const WebCore::FloatSize &);
-QTextStream &operator<<(QTextStream &ts, const WebCore::FloatRect &);
-QTextStream &operator<<(QTextStream &ts, const WebCore::FloatPoint &);
+TextStream &operator<<(TextStream &ts, const AffineTransform &);
+TextStream &operator<<(TextStream &ts, const WebCore::IntRect &);
+TextStream &operator<<(TextStream &ts, const WebCore::Color &);
+TextStream &operator<<(TextStream &ts, const WebCore::IntPoint &);
+TextStream &operator<<(TextStream &ts, const WebCore::FloatSize &);
+TextStream &operator<<(TextStream &ts, const WebCore::FloatRect &);
+TextStream &operator<<(TextStream &ts, const WebCore::FloatPoint &);
 
 // helper operators specific to dumping the render tree. these are used in various classes to dump the render tree
 // these could be defined in separate namespace to avoid matching these generic signatures unintentionally.
     
-QTextStream &operator<<(QTextStream &ts, const DeprecatedStringList &l);
+TextStream &operator<<(TextStream &ts, const DeprecatedStringList &l);
     
 template<typename Item>
-QTextStream &operator<<(QTextStream &ts, const DeprecatedValueList<Item*> &l)
+TextStream &operator<<(TextStream &ts, const DeprecatedValueList<Item*> &l)
 {
     ts << "[";
     typename DeprecatedValueList<Item*>::ConstIterator it = l.begin();
@@ -80,7 +80,7 @@ QTextStream &operator<<(QTextStream &ts, const DeprecatedValueList<Item*> &l)
 }
 
 template<typename Item>
-QTextStream &operator<<(QTextStream &ts, const DeprecatedValueList<Item> &l)
+TextStream &operator<<(TextStream &ts, const DeprecatedValueList<Item> &l)
 {
     ts << "[";
     typename DeprecatedValueList<Item>::ConstIterator it = l.begin();

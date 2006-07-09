@@ -51,7 +51,7 @@
 #include "JSProcessingInstruction.h"
 #include "JSRange.h"
 #include "JSText.h"
-#include "KWQKHTMLSettings.h"
+#include "Settings.h"
 #include "NamedNodeMap.h"
 #include "Notation.h"
 #include "ProcessingInstruction.h"

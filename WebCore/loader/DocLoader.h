@@ -24,18 +24,18 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef KHTML_DocLoader_h
-#define KHTML_DocLoader_h
+#ifndef DocLoader_h
+#define DocLoader_h
 
-#include "KWQKHTMLSettings.h"
-#include "KWQKIOGlobal.h"
+#include "Settings.h"
+#include "CacheControl.h"
 #include "DeprecatedPtrList.h"
 #include "DeprecatedStringList.h"
 #include "wtf/HashMap.h"
 #include "StringHash.h"
 
 class KURL;
-class KWQLoader;
+class LoaderFunctions;
 
 namespace WebCore {
     class CachedCSSStyleSheet;

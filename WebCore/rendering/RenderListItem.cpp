@@ -210,8 +210,8 @@ void RenderListItem::calcMinMaxWidth()
 
 void RenderListItem::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
     
     updateMarkerLocation();    
     RenderBlock::layout();

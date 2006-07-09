@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QVALUELIST_H_
-#define QVALUELIST_H_
+#ifndef DeprecatedValueList_h
+#define DeprecatedValueList_h
 
 #include "DeprecatedValueListImpl.h"
 

@@ -29,7 +29,7 @@
 #include "DocLoader.h"
 #include "ExceptionCode.h"
 #include "XSLStyleSheet.h"
-#include "xml_tokenizer.h" // for parseAttributes()
+#include "XMLTokenizer.h" // for parseAttributes()
 
 namespace WebCore {
 

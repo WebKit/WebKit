@@ -189,7 +189,7 @@ NSImage* Image::getNSImage()
     if (!data)
         return 0;
     
-    m_nsImage = KWQRetainNSRelease([[NSImage alloc] initWithData:(NSData*)data]);
+    m_nsImage = HardRetainWithNSRelease([[NSImage alloc] initWithData:(NSData*)data]);
     return m_nsImage;
 }
 

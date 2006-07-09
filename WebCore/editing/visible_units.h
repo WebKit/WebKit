@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KHTML_EDITING_VISIBLE_UNITS_H
-#define KHTML_EDITING_VISIBLE_UNITS_H
+#ifndef visible_units_h
+#define visible_units_h
 
 #include "TextAffinity.h"
 
@@ -87,4 +87,4 @@ bool isEndOfEditableContent(const VisiblePosition &);
 
 } // namespace WebCore
 
-#endif // KHTML_EDITING_VISIBLE_POSITION_H
+#endif // VisiblePosition_h

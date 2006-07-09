@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KHTML_EDITING_SELECTION_H
-#define KHTML_EDITING_SELECTION_H
+#ifndef Selection_h
+#define Selection_h
 
 #include "Position.h"
 #include "VisiblePosition.h"
@@ -121,4 +121,4 @@ void showTree(const WebCore::Selection&);
 void showTree(const WebCore::Selection*);
 #endif
 
-#endif // KHTML_EDITING_SELECTION_H
+#endif // Selection_h

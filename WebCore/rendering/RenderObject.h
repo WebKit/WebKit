@@ -27,16 +27,14 @@
 #define render_object_h
 
 #include "CachedObjectClient.h"
-#include "KWQScrollBar.h"
+#include "WebCoreScrollBar.h"
 #include "VisiblePosition.h"
-#include "render_style.h"
+#include "RenderStyle.h"
 
 class CSSStyle;
-class QMatrix;
-class QTextStream;
+class AffineTransform;
+class TextStream;
 class RenderArena;
-
-#define KHTMLAssert(x) ASSERT(x)
 
 /*
  *  The painting of a layer occurs in three distinct phases.  Each phase involves
@@ -48,8 +46,6 @@ class RenderArena;
  */
 
 namespace WebCore {
-
-class AffineTransform;
 class Color;
 class CollapsedBorderValue;
 class String;
@@ -217,7 +213,7 @@ public:
     virtual const char *renderName() const { return "RenderObject"; }
 #ifndef NDEBUG
     DeprecatedString information() const;
-    virtual void dump(QTextStream *stream, DeprecatedString ind = "") const;
+    virtual void dump(TextStream *stream, DeprecatedString ind = "") const;
     void showTreeForThis() const;
 #endif
 
@@ -274,9 +270,9 @@ public:
     virtual bool isRenderPath() const { return false; }
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
     // We may eventually want to make these non-virtual
-    virtual QMatrix localTransform() const;
-    virtual void setLocalTransform(const QMatrix&);
-    virtual QMatrix absoluteTransform() const;
+    virtual AffineTransform localTransform() const;
+    virtual void setLocalTransform(const AffineTransform&);
+    virtual AffineTransform absoluteTransform() const;
 #endif
     
     virtual bool isEditable() const;
@@ -616,7 +612,7 @@ public:
     int scrollWidth() const;
     int scrollHeight() const;
     
-    virtual bool scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier=1.0);
+    virtual bool scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier=1.0);
 
     // The following seven functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The

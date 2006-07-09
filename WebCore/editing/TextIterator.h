@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KHTML_EDITING_VISIBLE_TEXT_H
-#define KHTML_EDITING_VISIBLE_TEXT_H
+#ifndef TextIterator_h
+#define TextIterator_h
 
 #include "DeprecatedString.h"
 #include "InlineTextBox.h"

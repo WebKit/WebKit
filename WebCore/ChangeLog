@@ -1,3 +1,323 @@
+2006-07-09  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Maciej (kinda).
+
+        - did the next pass of renaming (used do-webcore-rename script)
+          this takes care of most of the remaining KWQ names (almost all)
+
+        * WebCore+SVG/DOMList.h:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/kjs_dom.cpp:
+        * bindings/js/kjs_window.cpp:
+        * bindings/objc/DOMHTML.mm:
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * bridge/mac/WebCoreSettings.h:
+        * bridge/mac/WebCoreSettings.mm:
+        * bridge/win/FrameWin.cpp:
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSValueKeywords.in:
+        * css/MediaQueryEvaluator.cpp:
+        * css/cssparser.cpp:
+        * css/cssstyleselector.cpp:
+        * css/cssstyleselector.h:
+        * dom/CharacterData.cpp:
+        * dom/CharacterData.h:
+        * dom/Document.cpp:
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/EventTargetNode.cpp:
+        * dom/EventTargetNode.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/Position.cpp:
+        * dom/ProcessingInstruction.cpp:
+        * dom/QualifiedName.cpp:
+        * dom/QualifiedName.h:
+        * dom/XMLTokenizer.cpp: Added.
+        * dom/xml_tokenizer.cpp: Removed.
+        * dom/xml_tokenizer.h: Removed.
+        * editing/EditAction.h:
+        * editing/HTMLInterchange.cpp:
+        * editing/HTMLInterchange.h:
+        * editing/Selection.h:
+        * editing/SelectionController.h:
+        * editing/TextAffinity.h:
+        * editing/TextIterator.cpp:
+        * editing/TextIterator.h:
+        * editing/VisiblePosition.h:
+        * editing/htmlediting.cpp:
+        * editing/markup.cpp:
+        * editing/markup.h:
+        * editing/visible_units.cpp:
+        * editing/visible_units.h:
+        * html/HTMLDocument.cpp:
+        * html/HTMLFontElement.cpp:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLKeygenElement.cpp:
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        * html/HTMLTextFieldInnerElement.cpp:
+        * html/HTMLTokenizer.cpp:
+        * html/HTMLTokenizer.h:
+        * kcanvas/KCanvasContainer.cpp: Removed.
+        * kcanvas/KCanvasContainer.h: Removed.
+        * kcanvas/KCanvasCreator.cpp:
+        * kcanvas/KCanvasFilters.cpp:
+        * kcanvas/KCanvasFilters.h:
+        * kcanvas/KCanvasMatrix.cpp:
+        * kcanvas/KCanvasMatrix.h:
+        * kcanvas/KCanvasPath.cpp:
+        * kcanvas/KCanvasPath.h:
+        * kcanvas/KCanvasResources.cpp:
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        * kcanvas/KCanvasTreeDebug.h:
+        * kcanvas/RenderForeignObject.cpp:
+        * kcanvas/RenderForeignObject.h:
+        * kcanvas/RenderPath.cpp:
+        * kcanvas/RenderPath.h:
+        * kcanvas/RenderSVGContainer.cpp: Added.
+        * kcanvas/RenderSVGContainer.h: Added.
+        * kcanvas/RenderSVGImage.cpp:
+        * kcanvas/RenderSVGImage.h:
+        * kcanvas/RenderSVGText.cpp:
+        * kcanvas/RenderSVGText.h:
+        * kcanvas/device/KRenderingPaintServer.h:
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        * kcanvas/device/KRenderingPaintServerPattern.cpp:
+        * kcanvas/device/KRenderingPaintServerPattern.h:
+        * kcanvas/device/KRenderingPaintServerSolid.cpp:
+        * kcanvas/device/KRenderingPaintServerSolid.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        * ksvg2/css/CSSValueKeywords.in:
+        * ksvg2/css/SVGRenderStyleDefs.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        * ksvg2/svg/SVGAElement.cpp:
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGGElement.cpp:
+        * ksvg2/svg/SVGHelper.cpp:
+        * ksvg2/svg/SVGHelper.h:
+        * ksvg2/svg/SVGImageElement.cpp:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        * ksvg2/svg/SVGMatrix.cpp:
+        * ksvg2/svg/SVGMatrix.h:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        * ksvg2/svg/SVGStyledElement.h:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        * ksvg2/svg/SVGStyledTransformableElement.h:
+        * ksvg2/svg/SVGSwitchElement.cpp:
+        * ksvg2/svg/SVGTextElement.cpp:
+        * ksvg2/svg/SVGTransformable.h:
+        * ksvg2/svg/SVGUseElement.cpp:
+        * kwq/AffineTransform.cpp: Added.
+        * kwq/AffineTransform.h: Added.
+        * kwq/DeprecatedCString.cpp: Added.
+        * kwq/DeprecatedCString.h: Added.
+        * kwq/DeprecatedPtrQueue.h: Added.
+        * kwq/FileButton.h: Added.
+        * kwq/FileButton.mm: Added.
+        * kwq/FormDataMac.mm: Added.
+        * kwq/KWQCString.cpp: Removed.
+        * kwq/KWQCString.h: Removed.
+        * kwq/KWQComboBox.h: Removed.
+        * kwq/KWQComboBox.mm: Removed.
+        * kwq/KWQEditCommand.h: Removed.
+        * kwq/KWQEditCommand.mm: Removed.
+        * kwq/KWQFileButton.h: Removed.
+        * kwq/KWQFileButton.mm: Removed.
+        * kwq/KWQFormData.h: Removed.
+        * kwq/KWQFormData.mm: Removed.
+        * kwq/KWQKHTMLSettings.h: Removed.
+        * kwq/KWQKIOGlobal.h: Removed.
+        * kwq/KWQKSSLKeyGen.h: Removed.
+        * kwq/KWQKSSLKeyGen.mm: Removed.
+        * kwq/KWQLineEdit.h: Removed.
+        * kwq/KWQLineEdit.mm: Removed.
+        * kwq/KWQListBox.h: Removed.
+        * kwq/KWQListBox.mm: Removed.
+        * kwq/KWQLoader.h: Removed.
+        * kwq/KWQLoader.mm: Removed.
+        * kwq/KWQPageState.h: Removed.
+        * kwq/KWQPageState.mm: Removed.
+        * kwq/KWQPtrQueue.h: Removed.
+        * kwq/KWQResourceLoader.h: Removed.
+        * kwq/KWQResourceLoader.mm: Removed.
+        * kwq/KWQScrollBar.h: Removed.
+        * kwq/KWQScrollBar.mm: Removed.
+        * kwq/KWQSlider.h: Removed.
+        * kwq/KWQSlider.mm: Removed.
+        * kwq/KWQTextEdit.h: Removed.
+        * kwq/KWQTextEdit.mm: Removed.
+        * kwq/KWQTextStream.cpp: Removed.
+        * kwq/KWQTextStream.h: Removed.
+        * kwq/KWQWMatrix.cpp: Removed.
+        * kwq/KWQWMatrix.h: Removed.
+        * kwq/ListBox.h: Added.
+        * kwq/ListBox.mm: Added.
+        * kwq/LoaderFunctions.h: Added.
+        * kwq/LoaderFunctions.mm: Added.
+        * kwq/PopUpButton.h: Added.
+        * kwq/PopUpButton.mm: Added.
+        * kwq/SSLKeyGenerator.h: Added.
+        * kwq/SSLKeyGenerator.mm: Added.
+        * kwq/Settings.h: Added.
+        * kwq/TextBox.h: Added.
+        * kwq/TextBox.mm: Added.
+        * kwq/TextField.h: Added.
+        * kwq/TextField.mm: Added.
+        * kwq/TextStream.cpp: Added.
+        * kwq/TextStream.h: Added.
+        * kwq/WebCoreEditCommand.h: Added.
+        * kwq/WebCoreEditCommand.mm: Added.
+        * kwq/WebCorePageState.h: Added.
+        * kwq/WebCorePageState.mm: Added.
+        * kwq/WebCoreResourceLoaderImp.h: Added.
+        * kwq/WebCoreResourceLoaderImp.mm: Added.
+        * kwq/WebCoreScrollBar.h: Added.
+        * kwq/WebCoreScrollBar.mm: Added.
+        * kwq/WebCoreSlider.h: Added.
+        * kwq/WebCoreSlider.mm: Added.
+        * loader/Cache.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        * loader/CachedImage.cpp:
+        * loader/CachedObject.h:
+        * loader/CachedObjectClientWalker.h:
+        * loader/CachedResource.h:
+        * loader/CachedResourceClientWalker.h:
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.h:
+        * loader/Decoder.h:
+        * loader/DocLoader.cpp:
+        * loader/DocLoader.h:
+        * loader/FormData.h:
+        * loader/ImageDocument.cpp:
+        * loader/PluginDocument.cpp:
+        * loader/TextDocument.cpp:
+        * loader/loader.cpp:
+        * loader/loader.h:
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/Page.cpp:
+        * page/Page.h:
+        * platform/DeprecatedPtrList.h:
+        * platform/DeprecatedPtrListImpl.cpp:
+        * platform/DeprecatedPtrListImpl.h:
+        * platform/DeprecatedString.cpp:
+        * platform/DeprecatedString.h:
+        * platform/DeprecatedStringList.cpp:
+        * platform/DeprecatedStringList.h:
+        * platform/DeprecatedValueList.h:
+        * platform/DeprecatedValueListImpl.cpp:
+        * platform/DeprecatedValueListImpl.h:
+        * platform/FloatSize.h:
+        * platform/Font.cpp:
+        * platform/KURL.cpp:
+        * platform/RegularExpression.cpp:
+        * platform/RegularExpression.h:
+        * platform/SegmentedString.h:
+        * platform/StreamingTextDecoder.cpp:
+        * platform/String.cpp:
+        * platform/StringImpl.cpp:
+        * platform/TextEncoding.cpp:
+        * platform/TransferJob.cpp:
+        * platform/TransferJob.h:
+        * platform/TransferJobInternal.h:
+        * platform/gdk/FrameGdk.cpp:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/mac/ClipboardMac.h:
+        * platform/mac/ClipboardMac.mm:
+        * platform/mac/CursorMac.mm:
+        * platform/mac/DeprecatedStringMac.mm: Added.
+        * platform/mac/FontCacheMac.mm:
+        * platform/mac/FontMac.mm:
+        * platform/mac/FoundationExtras.h:
+        * platform/mac/ImageMac.mm:
+        * platform/mac/KURLMac.mm:
+        * platform/mac/MouseEventMac.mm: Removed.
+        * platform/mac/QStringListMac.mm: Removed.
+        * platform/mac/QStringMac.mm: Removed.
+        * platform/mac/TransferJobMac.mm:
+        * platform/mac/WebCoreTextArea.h:
+        * platform/mac/WebCoreTextArea.mm:
+        * platform/mac/WebCoreTextField.h:
+        * platform/mac/WebCoreTextField.mm:
+        * platform/mac/WidgetMac.mm:
+        * platform/win/TemporaryLinkStubs.cpp:
+        * rendering/DataRef.h:
+        * rendering/DeprecatedRenderSelect.cpp:
+        * rendering/DeprecatedRenderSelect.h:
+        * rendering/DeprecatedSlider.cpp:
+        * rendering/InlineFlowBox.cpp:
+        * rendering/RenderApplet.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderContainer.cpp:
+        * rendering/RenderFileButton.cpp:
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFormElement.cpp:
+        * rendering/RenderFrameSet.cpp:
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+        * rendering/RenderLineEdit.cpp:
+        * rendering/RenderListItem.cpp:
+        * rendering/RenderListMarker.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderPartObject.cpp:
+        * rendering/RenderReplaced.cpp:
+        * rendering/RenderStyle.cpp: Added.
+        * rendering/RenderStyle.h: Added.
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        * rendering/RenderTableSection.cpp:
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.cpp:
+        * rendering/RenderText.h:
+        * rendering/RenderTextArea.cpp:
+        * rendering/RenderTextControl.cpp: Added.
+        * rendering/RenderTextControl.h: Added.
+        * rendering/RenderTextField.cpp: Removed.
+        * rendering/RenderTextField.h: Removed.
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderThemeMac.mm:
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/RenderTreeAsText.h:
+        * rendering/RenderView.cpp:
+        * rendering/RenderWidget.cpp:
+        * rendering/bidi.cpp:
+        * rendering/render_style.cpp: Removed.
+        * rendering/render_style.h: Removed.
+        * xml/XSLStyleSheet.cpp:
+        * xml/XSLTProcessor.cpp:
+        * xml/xmlhttprequest.cpp:
+        * xpath/impl/XPathParser.cpp:
+
 2006-07-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

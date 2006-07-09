@@ -29,13 +29,13 @@
 #include "Shared.h"
 #include <stdlib.h>
 
-class DeprecatedValueListImpl::KWQValueListPrivate : public Shared<DeprecatedValueListImpl::KWQValueListPrivate>
+class DeprecatedValueListImpl::Private : public Shared<DeprecatedValueListImpl::Private>
 {
 public:
-    KWQValueListPrivate(void (*deleteFunc)(DeprecatedValueListImplNode *), DeprecatedValueListImplNode *(*copyFunc)(DeprecatedValueListImplNode *));
-    KWQValueListPrivate(const KWQValueListPrivate &other);
+    Private(void (*deleteFunc)(DeprecatedValueListImplNode *), DeprecatedValueListImplNode *(*copyFunc)(DeprecatedValueListImplNode *));
+    Private(const Private &other);
 
-    ~KWQValueListPrivate();
+    ~Private();
 
     void copyList(DeprecatedValueListImplNode *l, DeprecatedValueListImplNode *&head, DeprecatedValueListImplNode *&tail) const;
     void deleteList(DeprecatedValueListImplNode *l);
@@ -48,7 +48,7 @@ public:
     unsigned count;
 };
 
-inline DeprecatedValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteFunc)(DeprecatedValueListImplNode*),
+inline DeprecatedValueListImpl::Private::Private(void (*deleteFunc)(DeprecatedValueListImplNode*),
         DeprecatedValueListImplNode* (*copyFunc)(DeprecatedValueListImplNode*)) : 
     head(NULL),
     tail(NULL),
@@ -58,8 +58,8 @@ inline DeprecatedValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*
 {
 }
 
-inline DeprecatedValueListImpl::KWQValueListPrivate::KWQValueListPrivate(const KWQValueListPrivate &other) :
-    Shared<DeprecatedValueListImpl::KWQValueListPrivate>(),
+inline DeprecatedValueListImpl::Private::Private(const Private &other) :
+    Shared<DeprecatedValueListImpl::Private>(),
     deleteNode(other.deleteNode),
     copyNode(other.copyNode),
     count(other.count)
@@ -67,12 +67,12 @@ inline DeprecatedValueListImpl::KWQValueListPrivate::KWQValueListPrivate(const K
     other.copyList(other.head, head, tail);
 }
 
-inline DeprecatedValueListImpl::KWQValueListPrivate::~KWQValueListPrivate()
+inline DeprecatedValueListImpl::Private::~Private()
 {
     deleteList(head);
 }
 
-void DeprecatedValueListImpl::KWQValueListPrivate::copyList(DeprecatedValueListImplNode *l, DeprecatedValueListImplNode *&head, DeprecatedValueListImplNode *&tail) const
+void DeprecatedValueListImpl::Private::copyList(DeprecatedValueListImplNode *l, DeprecatedValueListImplNode *&head, DeprecatedValueListImplNode *&tail) const
 {
     DeprecatedValueListImplNode *prev = NULL;
     DeprecatedValueListImplNode *node = l;
@@ -97,7 +97,7 @@ void DeprecatedValueListImpl::KWQValueListPrivate::copyList(DeprecatedValueListI
     tail = prev;
 }
 
-void DeprecatedValueListImpl::KWQValueListPrivate::deleteList(DeprecatedValueListImplNode *l)
+void DeprecatedValueListImpl::Private::deleteList(DeprecatedValueListImplNode *l)
 {
     DeprecatedValueListImplNode *p = l;
     
@@ -109,7 +109,7 @@ void DeprecatedValueListImpl::KWQValueListPrivate::deleteList(DeprecatedValueLis
 }
 
 DeprecatedValueListImpl::DeprecatedValueListImpl(void (*deleteFunc)(DeprecatedValueListImplNode *), DeprecatedValueListImplNode *(*copyFunc)(DeprecatedValueListImplNode *)) :
-    d(new KWQValueListPrivate(deleteFunc, copyFunc))
+    d(new Private(deleteFunc, copyFunc))
 {
 }
 
@@ -377,7 +377,7 @@ DeprecatedValueListImplNode *DeprecatedValueListImpl::nodeAt(unsigned index) con
 DeprecatedValueListImpl& DeprecatedValueListImpl::operator=(const DeprecatedValueListImpl &other)
 {
     DeprecatedValueListImpl tmp(other);
-    RefPtr<KWQValueListPrivate> tmpD = tmp.d;
+    RefPtr<Private> tmpD = tmp.d;
 
     tmp.d = d;
     d = tmpD;
@@ -388,7 +388,7 @@ DeprecatedValueListImpl& DeprecatedValueListImpl::operator=(const DeprecatedValu
 void DeprecatedValueListImpl::copyOnWrite()
 {
     if (!d->hasOneRef())
-        d = new KWQValueListPrivate(*d);
+        d = new Private(*d);
 }
 
 bool DeprecatedValueListImpl::isEqual(const DeprecatedValueListImpl &other, bool (*equalFunc)(const DeprecatedValueListImplNode *, const DeprecatedValueListImplNode *)) const

@@ -31,7 +31,7 @@
 #include "HTMLNames.h"
 #include "SegmentedString.h"
 #include "Text.h"
-#include "xml_tokenizer.h"
+#include "XMLTokenizer.h"
 
 #if PLATFORM(MAC)
 #include "ImageDocumentMac.h"

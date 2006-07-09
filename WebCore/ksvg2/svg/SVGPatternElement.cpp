@@ -27,7 +27,7 @@
 #include "Attr.h"
 #include "Document.h"
 #include "GraphicsContext.h"
-#include "KCanvasContainer.h"
+#include "RenderSVGContainer.h"
 #include "KCanvasCreator.h"
 #include "KCanvasImage.h"
 #include "KCanvasMatrix.h"
@@ -260,11 +260,11 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
             RefPtr<SVGMatrix> svgCTM = svgElement->getCTM();
             RefPtr<SVGMatrix> ctm = getCTM();
 
-            KCanvasMatrix newMatrix(svgCTM->qmatrix());
+            KCanvasMatrix newMatrix(svgCTM->matrix());
             newMatrix.multiply(savedMatrix);
             newMatrix.scale(1.0 / ctm->a(), 1.0 / ctm->d());
 
-            item->setLocalTransform(newMatrix.qmatrix());
+            item->setLocalTransform(newMatrix.matrix());
         }
 #endif
 
@@ -275,7 +275,7 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
         if (savedContext)
             e->pushAttributeContext(savedContext);
 
-        item->setLocalTransform(savedMatrix.qmatrix());
+        item->setLocalTransform(savedMatrix.matrix());
 #endif
     }
 
@@ -340,7 +340,7 @@ void SVGPatternElement::notifyAttributeChange() const
 
     KCanvasMatrix patternTransformMatrix;
     if (patternTransform()->baseVal()->numberOfItems() > 0)
-        patternTransformMatrix = KCanvasMatrix(patternTransform()->baseVal()->consolidate()->matrix()->qmatrix());
+        patternTransformMatrix = KCanvasMatrix(patternTransform()->baseVal()->consolidate()->matrix()->matrix());
 
     fillAttributesFromReferencePattern(target, patternTransformMatrix);
     
@@ -356,7 +356,7 @@ void SVGPatternElement::notifyAttributeChange() const
 
 RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    KCanvasContainer* patternContainer = new (arena) KCanvasContainer(this);
+    RenderSVGContainer* patternContainer = new (arena) RenderSVGContainer(this);
     patternContainer->setDrawsContents(false);
     return patternContainer;
 }

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef KHTML_DATAREF_H
-#define KHTML_DATAREF_H
+#ifndef DataRef_h
+#define DataRef_h
 
 #include <assert.h>
 

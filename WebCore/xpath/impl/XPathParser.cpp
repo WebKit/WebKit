@@ -148,7 +148,7 @@ bool Parser::isOperatorContext() const
 
 void Parser::skipWS()
 {
-    while (m_nextPos < m_data.length() && QChar(m_data[m_nextPos]).isSpace())
+    while (m_nextPos < m_data.length() && DeprecatedChar(m_data[m_nextPos]).isSpace())
         ++m_nextPos;
 }
 

@@ -37,7 +37,7 @@ enum KCGradientSpreadMethod {
 typedef std::pair<float, Color> KCGradientStop;
 inline KCGradientStop makeGradientStop(float offset, const Color& color) { return std::make_pair(offset, color); }
 
-QTextStream &operator<<(QTextStream &ts, WebCore::KCGradientSpreadMethod m);
+TextStream &operator<<(TextStream &ts, WebCore::KCGradientSpreadMethod m);
 
 class KCanvasMatrix;
 class KRenderingPaintServerGradient : public KRenderingPaintServer
@@ -67,7 +67,7 @@ public:
     KCanvasResourceListener *listener() const;
     void setListener(KCanvasResourceListener *listener);
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 private:
     class Private;
     Private *d;
@@ -88,7 +88,7 @@ public:
     FloatPoint gradientEnd() const;
     void setGradientEnd(const FloatPoint &end);
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 private:
     class Private;
     Private *d;
@@ -112,7 +112,7 @@ public:
     float gradientRadius() const;
     void setGradientRadius(float radius);
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 private:
     class Private;
     Private *d;

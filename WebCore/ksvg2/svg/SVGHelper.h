@@ -45,7 +45,7 @@ namespace WebCore
     public:
         static float PercentageOfViewport(float value, const SVGElement *viewportElement, LengthMode mode);
 
-        static void ParseSeperatedList(SVGStringList *list, const DeprecatedString &data, const QChar &delimiter = ',');
+        static void ParseSeperatedList(SVGStringList *list, const DeprecatedString &data, const DeprecatedChar &delimiter = ',');
     };
 
     // Lazy creation, template-based

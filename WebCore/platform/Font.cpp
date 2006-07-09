@@ -29,7 +29,7 @@
 
 #include "FontFallbackList.h"
 #include "GraphicsContext.h"
-#include "KWQKHTMLSettings.h"
+#include "Settings.h"
 
 #include "GlyphBuffer.h"
 

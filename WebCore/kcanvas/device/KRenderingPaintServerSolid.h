@@ -40,7 +40,7 @@ public:
     Color color() const;
     void setColor(const Color &color);
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 private:
     class Private;
     Private *d;

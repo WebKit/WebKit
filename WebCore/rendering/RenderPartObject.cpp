@@ -240,8 +240,8 @@ void RenderPartObject::updateWidget()
 
 void RenderPartObject::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
 
     calcWidth();
     calcHeight();

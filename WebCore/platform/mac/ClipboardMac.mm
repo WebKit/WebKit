@@ -34,7 +34,7 @@
 namespace WebCore {
 
 ClipboardMac::ClipboardMac(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, FrameMac *frame)
-  : m_pasteboard(KWQRetain(pasteboard)), m_forDragging(forDragging), m_dragImage(0),
+  : m_pasteboard(HardRetain(pasteboard)), m_forDragging(forDragging), m_dragImage(0),
     m_policy(policy), m_dragStarted(false), m_frame(frame)
 {
     m_changeCount = [m_pasteboard changeCount];
@@ -42,7 +42,7 @@ ClipboardMac::ClipboardMac(bool forDragging, NSPasteboard *pasteboard, AccessPol
 
 ClipboardMac::~ClipboardMac()
 {
-    KWQRelease(m_pasteboard);
+    HardRelease(m_pasteboard);
 }
 
 bool ClipboardMac::isForDragging() const
@@ -86,7 +86,7 @@ static NSString *cocoaTypeFromMIMEType(const String &type)
         CFStringRef pbType = UTTypeCopyPreferredTagWithClass(UTIType, kUTTagClassNSPboardType);
         CFRelease(UTIType);
         if (pbType)
-            return KWQCFAutorelease(pbType);
+            return HardAutorelease(pbType);
     }
 
    // No mapping, just pass the whole string though

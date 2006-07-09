@@ -65,7 +65,7 @@ Widget::Widget() : data(new WidgetPrivate)
 
 Widget::Widget(NSView* view) : data(new WidgetPrivate)
 {
-    data->view = KWQRetain(view);
+    data->view = HardRetain(view);
     data->client = 0;
     data->visible = true;
     data->mustStayInWindow = false;
@@ -75,7 +75,7 @@ Widget::Widget(NSView* view) : data(new WidgetPrivate)
 Widget::~Widget() 
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    KWQRelease(data->view);
+    HardRelease(data->view);
     END_BLOCK_OBJC_EXCEPTIONS;
 
     if (deferredFirstResponder == this)
@@ -289,8 +289,8 @@ NSView* Widget::getView() const
 void Widget::setView(NSView* view)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    KWQRetain(view);
-    KWQRelease(data->view);
+    HardRetain(view);
+    HardRelease(data->view);
     data->view = view;
     END_BLOCK_OBJC_EXCEPTIONS;
 }

@@ -33,7 +33,7 @@
 #include "SegmentedString.h"
 #include "Text.h"
 #include "HTMLEmbedElement.h"
-#include "xml_tokenizer.h"
+#include "XMLTokenizer.h"
 
 namespace WebCore {
     

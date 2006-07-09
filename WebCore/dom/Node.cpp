@@ -36,7 +36,7 @@
 #include "HTMLNames.h"
 #include "kjs_binding.h"
 #include "RenderObject.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -675,7 +675,7 @@ Node::StyleChange Node::diff( WebCore::RenderStyle *s1, WebCore::RenderStyle *s2
 }
 
 #ifndef NDEBUG
-void Node::dump(QTextStream *stream, DeprecatedString ind) const
+void Node::dump(TextStream *stream, DeprecatedString ind) const
 {
     // ### implement dump() for all appropriate subclasses
 

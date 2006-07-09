@@ -43,7 +43,7 @@
 #include "JSRange.h"
 #include "JSXMLHttpRequest.h"
 #include "JSXMLSerializer.h"
-#include "KWQKHTMLSettings.h"
+#include "Settings.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PlugInInfoStore.h"

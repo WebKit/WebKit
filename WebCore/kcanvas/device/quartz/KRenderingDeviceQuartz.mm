@@ -53,7 +53,7 @@ KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz(CGContextRef contex
 KRenderingDeviceContextQuartz::~KRenderingDeviceContextQuartz()
 {
     CGContextRelease(m_cgContext);
-    KWQRelease(m_nsGraphicsContext);
+    HardRelease(m_nsGraphicsContext);
 }
 
 KCanvasMatrix KRenderingDeviceContextQuartz::concatCTM(const KCanvasMatrix &worldMatrix)
@@ -94,7 +94,7 @@ void KRenderingDeviceContextQuartz::addPath(const KCanvasPath *path)
 NSGraphicsContext *KRenderingDeviceContextQuartz::nsGraphicsContext()
 {
     if (!m_nsGraphicsContext && m_cgContext)
-        m_nsGraphicsContext = KWQRetain([NSGraphicsContext graphicsContextWithGraphicsPort:m_cgContext flipped:YES]);
+        m_nsGraphicsContext = HardRetain([NSGraphicsContext graphicsContextWithGraphicsPort:m_cgContext flipped:YES]);
     return m_nsGraphicsContext;
 }
 

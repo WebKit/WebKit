@@ -35,7 +35,7 @@
 #include "HTMLNames.h"
 #include "RenderView.h"
 #include "RenderTheme.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 
 using namespace std;
 
@@ -142,8 +142,8 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
     // just insert the child into the anonymous block box instead of here.
     if (beforeChild && beforeChild->parent() != this) {
 
-        KHTMLAssert(beforeChild->parent());
-        KHTMLAssert(beforeChild->parent()->isAnonymousBlock());
+        ASSERT(beforeChild->parent());
+        ASSERT(beforeChild->parent()->isAnonymousBlock());
 
         if (newChild->isInline()) {
             beforeChild->parent()->addChild(newChild,beforeChild);
@@ -166,8 +166,8 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
         
         if (beforeChild && beforeChild->parent() != this) {
             beforeChild = beforeChild->parent();
-            KHTMLAssert(beforeChild->isAnonymousBlock());
-            KHTMLAssert(beforeChild->parent() == this);
+            ASSERT(beforeChild->isAnonymousBlock());
+            ASSERT(beforeChild->parent() == this);
         }
     }
     else if (!m_childrenInline && !newChild->isFloatingOrPositioned())
@@ -253,8 +253,8 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
     // means that we cannot coalesce inlines before |insertionPoint| with inlines following
     // |insertionPoint|, because the new child is going to be inserted in between the inlines,
     // splitting them.
-    KHTMLAssert(isInlineBlockOrInlineTable() || !isInline());
-    KHTMLAssert(!insertionPoint || insertionPoint->parent() == this);
+    ASSERT(isInlineBlockOrInlineTable() || !isInline());
+    ASSERT(!insertionPoint || insertionPoint->parent() == this);
 
     m_childrenInline = false;
 
@@ -283,7 +283,7 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
 
 #ifndef NDEBUG
     for (RenderObject *c = firstChild(); c; c = c->nextSibling())
-        KHTMLAssert(!c->isInline());
+        ASSERT(!c->isInline());
 #endif
 }
 
@@ -417,8 +417,8 @@ void RenderBlock::layout()
 
 void RenderBlock::layoutBlock(bool relayoutChildren)
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
 
     if (isInline() && !isInlineBlockOrInlineTable()) // Inline <form>s inside various table elements can
         return;                                      // cause us to come in here.  Just bail.
@@ -514,7 +514,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         // Check for an overhanging float first.
         // FIXME: This needs to look at the last flow, not the last child.
         if (lastChild() && lastChild()->hasOverhangingFloats()) {
-            KHTMLAssert(lastChild()->isRenderBlock());
+            ASSERT(lastChild()->isRenderBlock());
             m_height = lastChild()->yPos() + static_cast<RenderBlock*>(lastChild())->floatBottom();
             m_height += borderBottom() + paddingBottom();
         }
@@ -1824,7 +1824,7 @@ void RenderBlock::insertFloatingObject(RenderObject *o)
     else {
         // We should never get here, as insertFloatingObject() should only ever be called with floating
         // objects.
-        KHTMLAssert(false);
+        ASSERT(false);
         newObj = 0; // keep gcc's uninitialized variable warnings happy
     }
 
@@ -2706,7 +2706,7 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
 
 void RenderBlock::calcMinMaxWidth()
 {
-    KHTMLAssert( !minMaxKnown() );
+    ASSERT( !minMaxKnown() );
 
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(RenderBlock)::calcMinMaxWidth() this=" << this << endl;
@@ -3415,13 +3415,13 @@ void RenderBlock::updateFirstLetter()
         // string.  We want the original string before it got transformed in case first-letter has
         // no text-transform or a different text-transform applied to it.
         RefPtr<StringImpl> oldText = textObj->originalString();
-        KHTMLAssert(oldText);
+        ASSERT(oldText);
         
         if (oldText && oldText->length() > 0) {
             unsigned int length = 0;
             
             // account for leading spaces and punctuation
-            while (length < oldText->length() && (QChar((*oldText)[length]).isSpace() || u_ispunct((*oldText)[length])))
+            while (length < oldText->length() && (DeprecatedChar((*oldText)[length]).isSpace() || u_ispunct((*oldText)[length])))
                 length++;
             
             // account for first letter
@@ -3588,7 +3588,7 @@ const char *RenderBlock::renderName() const
 
 #ifndef NDEBUG
 
-void RenderBlock::dump(QTextStream *stream, DeprecatedString ind) const
+void RenderBlock::dump(TextStream *stream, DeprecatedString ind) const
 {
     if (m_childrenInline) { *stream << " childrenInline"; }
     if (m_firstLine) { *stream << " firstLine"; }

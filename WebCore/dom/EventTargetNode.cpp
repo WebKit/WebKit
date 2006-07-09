@@ -33,7 +33,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
@@ -419,7 +419,7 @@ bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int butt
     if (defaultHandled || defaultPrevented)
         swallowEvent = true;
     
-    // Special case: If it's a double click event, we also send the KHTML_DBLCLICK event. This is not part
+    // Special case: If it's a double click event, we also send the dblclick event. This is not part
     // of the DOM specs, but is used for compatibility with the ondblclick="" attribute.  This is treated
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
     if (eventType == clickEvent && detail == 2) {
@@ -526,7 +526,7 @@ void EventTargetNode::defaultEventHandler(Event *evt)
 
 #ifndef NDEBUG
 
-void EventTargetNode::dump(QTextStream* stream, DeprecatedString ind) const
+void EventTargetNode::dump(TextStream* stream, DeprecatedString ind) const
 {
     if (m_regdListeners)
         *stream << " #regdListeners=" << m_regdListeners->count(); // ### more detail

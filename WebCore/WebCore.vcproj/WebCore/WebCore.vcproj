@@ -159,35 +159,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQComboBox.h"
+				RelativePath="..\..\kwq\PopUpButton.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQCString.cpp"
+				RelativePath="..\..\kwq\DeprecatedCString.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQCString.h"
+				RelativePath="..\..\kwq\DeprecatedCString.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQEditCommand.h"
+				RelativePath="..\..\kwq\WebCoreEditCommand.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQFileButton.h"
+				RelativePath="..\..\kwq\FileButton.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQFormData.h"
+				RelativePath="..\..\kwq\FormDataMac.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQKHTMLSettings.h"
+				RelativePath="..\..\kwq\Settings.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQKSSLKeyGen.h"
+				RelativePath="..\..\kwq\SSLKeyGenerator.h"
 				>
 			</File>
 			<File
@@ -195,47 +195,47 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQLineEdit.h"
+				RelativePath="..\..\kwq\TextField.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQListBox.h"
+				RelativePath="..\..\kwq\ListBox.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQLoader.h"
+				RelativePath="..\..\kwq\LoaderFunctions.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQPageState.h"
+				RelativePath="..\..\kwq\WebCorePageState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQPtrQueue.h"
+				RelativePath="..\..\kwq\DeprecatedPtrQueue.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQResourceLoader.h"
+				RelativePath="..\..\kwq\WebCoreResourceLoaderImp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQScrollBar.h"
+				RelativePath="..\..\kwq\WebCoreScrollBar.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQSlider.h"
+				RelativePath="..\..\kwq\WebCoreSlider.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQTextEdit.h"
+				RelativePath="..\..\kwq\TextBox.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQTextStream.cpp"
+				RelativePath="..\..\kwq\TextStream.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQTextStream.h"
+				RelativePath="..\..\kwq\TextStream.h"
 				>
 			</File>
 			<File
@@ -243,7 +243,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQWMatrix.h"
+				RelativePath="..\..\kwq\AffineTransform.h"
 				>
 			</File>
 		</Filter>
@@ -2915,11 +2915,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_style.cpp"
+				RelativePath="..\..\rendering\RenderStyle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_style.h"
+				RelativePath="..\..\rendering\RenderStyle.h"
 				>
 			</File>
 			<File
@@ -3223,11 +3223,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderTextField.cpp"
+				RelativePath="..\..\rendering\RenderTextControl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderTextField.h"
+				RelativePath="..\..\rendering\RenderTextControl.h"
 				>
 			</File>
 			<File
@@ -3871,11 +3871,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\xml_tokenizer.cpp"
+				RelativePath="..\..\dom\XMLTokenizer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\xml_tokenizer.h"
+				RelativePath="..\..\dom\XMLTokenizer.h"
 				>
 			</File>
 		</Filter>

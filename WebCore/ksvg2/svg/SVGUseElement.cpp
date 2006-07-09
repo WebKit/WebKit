@@ -37,7 +37,7 @@
 #include "SVGSVGElement.h"
 #include "SVGSymbolElement.h"
 #include "ksvg.h"
-#include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/RenderSVGContainer.h>
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
@@ -165,7 +165,7 @@ bool SVGUseElement::hasChildNodes() const
 
 RenderObject* SVGUseElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) KCanvasContainer(this);
+    return new (arena) RenderSVGContainer(this);
 }
 
 // vim:ts=4:noet

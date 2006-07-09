@@ -68,5 +68,5 @@ CFURLRef KURL::createCFURL() const
 
 NSURL *KURL::getNSURL() const
 {
-    return KWQCFAutorelease(createCFURL());
+    return HardAutorelease(createCFURL());
 }

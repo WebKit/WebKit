@@ -77,7 +77,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
 
 void RenderReplaced::calcMinMaxWidth()
 {
-    KHTMLAssert( !minMaxKnown());
+    ASSERT( !minMaxKnown());
 
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << "RenderReplaced::calcMinMaxWidth() known=" << minMaxKnown() << endl;

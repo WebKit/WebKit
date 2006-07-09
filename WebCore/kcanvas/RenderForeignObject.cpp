@@ -37,10 +37,10 @@ RenderForeignObject::RenderForeignObject(SVGForeignObjectElement *node)
 {
 }
 
-QMatrix RenderForeignObject::translationForAttributes()
+AffineTransform RenderForeignObject::translationForAttributes()
 {
     SVGForeignObjectElement *foreign = static_cast<SVGForeignObjectElement *>(element());
-    return QMatrix().translate(foreign->x()->baseVal()->value(), foreign->y()->baseVal()->value());
+    return AffineTransform().translate(foreign->x()->baseVal()->value(), foreign->y()->baseVal()->value());
 }
 
 void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
@@ -60,7 +60,7 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     paintInfo.p->save();
 
-    context->concatCTM(QMatrix().translate(parentX, parentY));
+    context->concatCTM(AffineTransform().translate(parentX, parentY));
     context->concatCTM(localTransform());
     context->concatCTM(translationForAttributes());
 
@@ -87,7 +87,7 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
 void RenderForeignObject::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
-    QMatrix transform = translationForAttributes() * localTransform();
+    AffineTransform transform = translationForAttributes() * localTransform();
     r = transform.mapRect(r);
     
     RenderBlock::computeAbsoluteRepaintRect(r, f);
@@ -100,8 +100,8 @@ bool RenderForeignObject::requiresLayer()
 
 void RenderForeignObject::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
 
     IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
@@ -120,7 +120,7 @@ void RenderForeignObject::layout()
 
 bool RenderForeignObject::nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
-    QMatrix totalTransform = absoluteTransform();
+    AffineTransform totalTransform = absoluteTransform();
     totalTransform *= translationForAttributes();
     double localX, localY;
     totalTransform.invert().map(x, y, &localX, &localY);

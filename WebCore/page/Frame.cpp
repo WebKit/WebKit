@@ -62,7 +62,7 @@
 #include "PluginDocument.h"
 #include "RenderPart.h"
 #include "RenderTheme.h"
-#include "RenderTextField.h"
+#include "RenderTextControl.h"
 #include "RenderView.h"
 #include "SegmentedString.h"
 #include "TextDocument.h"
@@ -73,7 +73,7 @@
 #include "kjs_window.h"
 #include "markup.h"
 #include "visible_units.h"
-#include "xml_tokenizer.h"
+#include "XMLTokenizer.h"
 #include "xmlhttprequest.h"
 #include <math.h>
 #include <sys/types.h>
@@ -822,7 +822,7 @@ void Frame::checkEmitLoadEvent()
         d->m_doc->implicitClose();
 }
 
-const KHTMLSettings *Frame::settings() const
+const Settings *Frame::settings() const
 {
   return d->m_settings;
 }
@@ -1202,7 +1202,7 @@ void Frame::notifyRendererOfSelectionChange(bool userTriggered)
 
     // If the current selection is in a textfield or textarea, notify the renderer that the selection has changed
     if (renderer && (renderer->isTextArea() || renderer->isTextField()))
-        static_cast<RenderTextField*>(renderer)->selectionChanged(userTriggered);
+        static_cast<RenderTextControl*>(renderer)->selectionChanged(userTriggered);
 }
 
 void Frame::setDragCaret(const SelectionController& dragCaret)
@@ -2456,7 +2456,7 @@ void Frame::removeEditingStyleFromElement(Element *element) const
 }
 
 
-bool Frame::isCharacterSmartReplaceExempt(const QChar&, bool)
+bool Frame::isCharacterSmartReplaceExempt(const DeprecatedChar&, bool)
 {
     // no smart replace
     return true;
@@ -2564,7 +2564,7 @@ void Frame::handleFallbackContent()
     static_cast<HTMLObjectElement*>(owner)->renderFallbackContent();
 }
 
-void Frame::setSettings(KHTMLSettings *settings)
+void Frame::setSettings(Settings *settings)
 {
     d->m_settings = settings;
 }
@@ -2735,7 +2735,7 @@ void Frame::revealSelection()
 }
 
 // FIXME: should this be here?
-bool Frame::scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity granularity)
+bool Frame::scrollOverflow(ScrollDirection direction, ScrollGranularity granularity)
 {
     if (!document()) {
         return false;

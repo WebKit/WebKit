@@ -30,8 +30,8 @@
 #import "DOMHTML.h"
 #import "EventNames.h"
 #import "Element.h"
-#import "KWQKHTMLSettings.h"
-#import "KWQTextEdit.h"
+#import "Settings.h"
+#import "TextBox.h"
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "RenderReplaced.h"
@@ -61,17 +61,17 @@ using namespace EventNames;
 */
 
 @interface NSView (WebCoreTextArea)
-- (void)_KWQ_setKeyboardFocusRingNeedsDisplay;
+- (void)_webcore_setKeyboardFocusRingNeedsDisplay;
 @end
 
 @interface NSTextView (WebCoreTextArea)
-- (NSParagraphStyle *)_KWQ_typingParagraphStyle;
-- (void)_KWQ_setTypingParagraphStyle:(NSParagraphStyle *)style;
-- (void)_KWQ_updateTypingAttributes:(NSParagraphStyle *)style forLineHeight:(float)lineHeight font:(NSFont *)font;
+- (NSParagraphStyle *)_webcore_typingParagraphStyle;
+- (void)_webcore_setTypingParagraphStyle:(NSParagraphStyle *)style;
+- (void)_webcore_updateTypingAttributes:(NSParagraphStyle *)style forLineHeight:(float)lineHeight font:(NSFont *)font;
 @end
 
 @interface NSTextStorage (WebCoreTextArea)
-- (void)_KWQ_setBaseWritingDirection:(NSWritingDirection)direction;
+- (void)_webcore_setBaseWritingDirection:(NSWritingDirection)direction;
 @end
 
 @interface WebCoreTextArea (WebCoreTextView)
@@ -86,14 +86,14 @@ const int MinimumHeightWhileResizing = 40;
 
 @interface WebCoreTextView : NSTextView <WebCoreWidgetHolder>
 {
-    QTextEdit *widget;
+    TextBox *widget;
     BOOL disabled;
     BOOL editableIfEnabled;
     BOOL inCut;
     int inResponderChange;
 }
 
-- (void)setWidget:(QTextEdit *)widget;
+- (void)setWidget:(TextBox *)widget;
 
 - (void)setEnabled:(BOOL)flag;
 - (BOOL)isEnabled;
@@ -185,7 +185,7 @@ const float LargeNumberForText = 1.0e7;
     return self;
 }
 
-- initWithQTextEdit:(QTextEdit *)w 
+- initWithQTextEdit:(TextBox *)w 
 {
     [self init];
 
@@ -482,10 +482,10 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     _font = font;
     [textView setFont:font];
     
-    NSParagraphStyle *style = [textView _KWQ_typingParagraphStyle];
+    NSParagraphStyle *style = [textView _webcore_typingParagraphStyle];
     if (_lineHeight) {
         ASSERT(style);
-        [textView _KWQ_updateTypingAttributes:style forLineHeight:_lineHeight font:_font];
+        [textView _webcore_updateTypingAttributes:style forLineHeight:_lineHeight font:_font];
     }
 }
 
@@ -532,7 +532,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     }
     NSMutableParagraphStyle *newStyle = [paraStyle mutableCopy];
     [newStyle setMinimumLineHeight:lineHeight];
-    [textView _KWQ_updateTypingAttributes:newStyle forLineHeight:lineHeight font:_font];
+    [textView _webcore_updateTypingAttributes:newStyle forLineHeight:lineHeight font:_font];
     [newStyle release];
 }
 
@@ -563,14 +563,14 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 - (NSView *)nextKeyView
 {
     return inNextValidKeyView && widget
-        ? FrameMac::nextKeyViewForWidget(widget, KWQSelectingNext)
+        ? FrameMac::nextKeyViewForWidget(widget, SelectingNext)
         : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
    return inNextValidKeyView && widget
-        ? FrameMac::nextKeyViewForWidget(widget, KWQSelectingPrevious)
+        ? FrameMac::nextKeyViewForWidget(widget, SelectingPrevious)
         : [super previousKeyView];
 }
 
@@ -727,7 +727,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     }
 }
 
-- (void)_KWQ_setKeyboardFocusRingNeedsDisplay
+- (void)_webcore_setKeyboardFocusRingNeedsDisplay
 {
     [self setKeyboardFocusRingNeedsDisplayInRect:[self bounds]];
 }
@@ -745,16 +745,16 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 - (void)setBaseWritingDirection:(NSWritingDirection)direction
 {
     // Set the base writing direction for typing.
-    NSParagraphStyle *style = [textView _KWQ_typingParagraphStyle];
+    NSParagraphStyle *style = [textView _webcore_typingParagraphStyle];
     if ([style baseWritingDirection] != direction) {
         NSMutableParagraphStyle *mutableStyle = [style mutableCopy];
         [mutableStyle setBaseWritingDirection:direction];
-        [textView _KWQ_setTypingParagraphStyle:mutableStyle];
+        [textView _webcore_setTypingParagraphStyle:mutableStyle];
         [mutableStyle release];
     }
 
     // Set the base writing direction for text.
-    [[textView textStorage] _KWQ_setBaseWritingDirection:direction];
+    [[textView textStorage] _webcore_setBaseWritingDirection:direction];
     [textView setNeedsDisplay:YES];
 }
 
@@ -876,7 +876,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 }
 
 
-- (void)setWidget:(QTextEdit *)w
+- (void)setWidget:(TextBox *)w
 {
     widget = w;
 }
@@ -919,7 +919,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     if (become) {
         if (widget && widget->client() && !FrameMac::currentEventIsMouseDownInWidget(widget))
             widget->client()->scrollToVisible(widget);
-        [self _KWQ_setKeyboardFocusRingNeedsDisplay];
+        [self _webcore_setKeyboardFocusRingNeedsDisplay];
         if (widget && widget->client()) {
             widget->client()->focusIn(widget);
             [FrameMac::bridgeForWidget(widget) formControlIsBecomingFirstResponder:self];
@@ -938,7 +938,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     --inResponderChange;
 
     if (resign) {
-        [self _KWQ_setKeyboardFocusRingNeedsDisplay];
+        [self _webcore_setKeyboardFocusRingNeedsDisplay];
 
         if (widget && widget->client()) {
             widget->client()->focusOut(widget);
@@ -1136,7 +1136,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     [[self textStorage] setForegroundColor:color];
 }
 
-// Could get fancy and send this to QTextEdit, then RenderTextArea, but there's really no harm
+// Could get fancy and send this to TextBox, then RenderTextArea, but there's really no harm
 // in doing this directly right here. Could refactor some day if you disagree.
 
 // FIXME: This does not yet implement the feature of canceling the operation, or the necessary
@@ -1197,16 +1197,16 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
 @implementation NSView (WebCoreTextArea)
 
-- (void)_KWQ_setKeyboardFocusRingNeedsDisplay
+- (void)_webcore_setKeyboardFocusRingNeedsDisplay
 {
-    [[self superview] _KWQ_setKeyboardFocusRingNeedsDisplay];
+    [[self superview] _webcore_setKeyboardFocusRingNeedsDisplay];
 }
 
 @end
 
 @implementation NSTextView (WebCoreTextArea)
 
-- (NSParagraphStyle *)_KWQ_typingParagraphStyle
+- (NSParagraphStyle *)_webcore_typingParagraphStyle
 {
     NSParagraphStyle *style = [[self typingAttributes] objectForKey:NSParagraphStyleAttributeName];
     if (style != nil) {
@@ -1219,7 +1219,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     return [NSParagraphStyle defaultParagraphStyle];
 }
 
-- (void)_KWQ_setTypingParagraphStyle:(NSParagraphStyle *)style
+- (void)_webcore_setTypingParagraphStyle:(NSParagraphStyle *)style
 {
     NSParagraphStyle *immutableStyle = [style copy];
     NSDictionary *attributes = [self typingAttributes];
@@ -1235,7 +1235,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     [attributes release];
 }
 
-- (void)_KWQ_updateTypingAttributes:(NSParagraphStyle *)style forLineHeight:(float)lineHeight font:(NSFont *)font
+- (void)_webcore_updateTypingAttributes:(NSParagraphStyle *)style forLineHeight:(float)lineHeight font:(NSFont *)font
 {
     NSDictionary *typingAttrs = [self typingAttributes];
     NSMutableDictionary *dict;
@@ -1259,7 +1259,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
 @implementation NSTextStorage (WebCoreTextArea)
 
-- (void)_KWQ_setBaseWritingDirection:(NSWritingDirection)direction
+- (void)_webcore_setBaseWritingDirection:(NSWritingDirection)direction
 {
     unsigned end = [self length];
     NSRange range = NSMakeRange(0, end);

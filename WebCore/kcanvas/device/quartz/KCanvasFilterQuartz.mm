@@ -91,14 +91,14 @@ static inline CIVector *getVectorForChannel(KCChannelSelectorType channel)
 
 KCanvasFilterQuartz::KCanvasFilterQuartz() : m_filterCIContext(0), m_filterCGLayer(0)
 {
-    m_imagesByName = KWQRetainNSRelease([[NSMutableDictionary alloc] init]);
+    m_imagesByName = HardRetainWithNSRelease([[NSMutableDictionary alloc] init]);
 }
 
 KCanvasFilterQuartz::~KCanvasFilterQuartz()
 {
     ASSERT(!m_filterCGLayer);
     ASSERT(!m_filterCIContext);
-    KWQRelease(m_imagesByName);
+    HardRelease(m_imagesByName);
 }
 
 void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
@@ -115,13 +115,13 @@ void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
     if (useSoftware)
         contextOptions = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], kCIContextUseSoftwareRenderer, nil];
     
-    m_filterCIContext = KWQRetain([CIContext contextWithCGContext:cgContext options:contextOptions]);
+    m_filterCIContext = HardRetain([CIContext contextWithCGContext:cgContext options:contextOptions]);
     m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGRect(bbox).size info:NULL];
     
     KRenderingDeviceContext *filterContext = new KRenderingDeviceContextQuartz(CGLayerGetContext(m_filterCGLayer));
     renderingDevice()->pushContext(filterContext);
     
-    filterContext->concatCTM(QMatrix().translate(-1.0f * bbox.x(), -1.0f * bbox.y()));
+    filterContext->concatCTM(AffineTransform().translate(-1.0f * bbox.x(), -1.0f * bbox.y()));
 }
 
 void KCanvasFilterQuartz::applyFilter(const FloatRect &bbox)
@@ -154,7 +154,7 @@ void KCanvasFilterQuartz::applyFilter(const FloatRect &bbox)
     CGLayerRelease(m_filterCGLayer);
     m_filterCGLayer = 0;
 
-    KWQRelease(m_filterCIContext);
+    HardRelease(m_filterCIContext);
     m_filterCIContext = 0;
 }
 

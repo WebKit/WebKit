@@ -117,7 +117,7 @@ namespace WebCore
         }
 
     private:
-        Q3PtrList<T> m_impl;
+        DeprecatedPtrList<T> m_impl;
     };
 };
 

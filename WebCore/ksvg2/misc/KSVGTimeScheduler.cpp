@@ -189,7 +189,7 @@ void SVGTimer::notifyAll()
 
                     if(animation->isAdditive() && initialMatrix)
                     {
-                        RefPtr<SVGMatrix> matrix = new SVGMatrix(initialMatrix->qmatrix());
+                        RefPtr<SVGMatrix> matrix = new SVGMatrix(initialMatrix->matrix());
                         
                         data->setMatrix(matrix.get());
                         targetTransforms->appendItem(data.get());

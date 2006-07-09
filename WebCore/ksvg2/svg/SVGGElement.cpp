@@ -25,7 +25,7 @@
 #include "SVGGElement.h"
 
 #include <kcanvas/KCanvasCreator.h>
-#include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/RenderSVGContainer.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
 using namespace WebCore;
@@ -48,7 +48,7 @@ void SVGGElement::parseMappedAttribute(MappedAttribute *attr)
 
 RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    return new (arena) KCanvasContainer(this);
+    return new (arena) RenderSVGContainer(this);
 }
 
 // Helper class for <use> support

@@ -48,7 +48,7 @@
 #include "Timer.h"
 #include "WidgetClient.h"
 
-class QScrollBar;
+class ScrollBar;
 
 namespace WebCore {
 
@@ -168,7 +168,7 @@ public:
     static ScrollBehavior getPartialBehavior(const ScrollAlignment& s) { return s.m_rectPartial; }
     static ScrollBehavior getHiddenBehavior(const ScrollAlignment& s) { return s.m_rectHidden; }
 
-    static QScrollBar* gScrollBar;
+    static ScrollBar* gScrollBar;
     
     RenderLayer(RenderObject*);
     ~RenderLayer();
@@ -234,8 +234,8 @@ public:
     IntRect getRectToExpose(const IntRect &visibleRect,  const IntRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);    
     void setHasHorizontalScrollbar(bool hasScrollbar);
     void setHasVerticalScrollbar(bool hasScrollbar);
-    QScrollBar* horizontalScrollbar() { return m_hBar; }
-    QScrollBar* verticalScrollbar() { return m_vBar; }
+    ScrollBar* horizontalScrollbar() { return m_hBar; }
+    ScrollBar* verticalScrollbar() { return m_vBar; }
     int verticalScrollbarWidth();
     int horizontalScrollbarHeight();
     void positionScrollbars(const IntRect& absBounds);
@@ -246,7 +246,7 @@ public:
     void paintResizeControl(GraphicsContext*);
     void updateScrollInfoAfterLayout();
     void slotValueChanged(int);
-    bool scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier=1.0);
+    bool scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier=1.0);
     void autoscroll();
     bool shouldAutoscroll();
     IntRect resizeControlRect() { return m_resizeControlRect; }
@@ -382,8 +382,8 @@ protected:
     int m_scrollHeight;
     
     // For layers with overflow, we have a pair of scrollbars.
-    QScrollBar* m_hBar;
-    QScrollBar* m_vBar;
+    ScrollBar* m_hBar;
+    ScrollBar* m_vBar;
     
     // The rectangle for the control to resize layers that have overflow.
     IntRect m_resizeControlRect;

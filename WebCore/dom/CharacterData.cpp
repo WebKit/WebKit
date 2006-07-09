@@ -27,7 +27,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 #include "MutationEvent.h"
 #include "RenderText.h"
 
@@ -309,7 +309,7 @@ bool CharacterData::offsetInCharacters() const
 }
 
 #ifndef NDEBUG
-void CharacterData::dump(QTextStream *stream, DeprecatedString ind) const
+void CharacterData::dump(TextStream *stream, DeprecatedString ind) const
 {
     *stream << " str=\"" << String(str).deprecatedString().ascii() << "\"";
 

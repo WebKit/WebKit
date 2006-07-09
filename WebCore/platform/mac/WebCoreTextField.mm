@@ -30,8 +30,8 @@
 #import "Element.h"
 #import "FrameMac.h"
 #import "HTMLNames.h"
-#import "KWQKHTMLSettings.h"
-#import "KWQLineEdit.h"
+#import "Settings.h"
+#import "TextField.h"
 #import "WebCoreFrameBridge.h"
 #import "WidgetClient.h"
 #import <wtf/Assertions.h>
@@ -40,23 +40,23 @@ using namespace WebCore;
 using namespace HTMLNames;
 
 @interface NSString (WebCoreTextField)
-- (int)_KWQ_numComposedCharacterSequences;
-- (NSString *)_KWQ_truncateToNumComposedCharacterSequences:(int)num;
+- (int)_webcore_numComposedCharacterSequences;
+- (NSString *)_webcore_truncateToNumComposedCharacterSequences:(int)num;
 @end
 
 @interface NSTextField (WebCoreTextField)
-- (NSTextView *)_KWQ_currentEditor;
+- (NSTextView *)_webcore_currentEditor;
 @end
 
-@interface NSCell (KWQTextFieldKnowsAppKitSecrets)
+@interface NSCell (WebCoreTextField)
 - (NSMutableDictionary *)_textAttributes;
 @end
 
-@interface NSSearchFieldCell (KWQTextFieldAppKitSecrets)
+@interface NSSearchFieldCell (WebCoreTextField)
 - (void)_addStringToRecentSearches:(NSString *)string;
 @end
 
-@interface NSTextView (KWQTextFieldAppKitSecrets)
+@interface NSTextView (WebCoreTextField)
 - (void)setWantsNotificationForMarkedText:(BOOL)wantsNotification;
 @end
 
@@ -64,13 +64,13 @@ using namespace HTMLNames;
 // and override the base writing direction.
 @interface KWQTextFieldCell : NSTextFieldCell
 @end
-@interface KWQSecureTextFieldCell : NSSecureTextFieldCell
+@interface WebCoreSecureTextFieldCell : NSSecureTextFieldCell
 @end
-@interface KWQSearchFieldCell : NSSearchFieldCell
+@interface WebCoreSearchFieldCell : NSSearchFieldCell
 @end
 
-// KWQTextFieldFormatter enforces a maximum length.
-@interface KWQTextFieldFormatter : NSFormatter
+// WebCoreTextFieldFormatter enforces a maximum length.
+@interface WebCoreTextFieldFormatter : NSFormatter
 {
     int maxLength;
 }
@@ -78,8 +78,8 @@ using namespace HTMLNames;
 - (int)maximumLength;
 @end
 
-@interface KWQTextFieldController (KWQInternal)
-- (id)initWithTextField:(NSTextField *)f QLineEdit:(QLineEdit *)w;
+@interface WebCoreTextFieldController (WebCoreInternal)
+- (id)initWithTextField:(NSTextField *)f TextField:(TextField *)w;
 - (Widget *)widget;
 - (void)textChanged;
 - (void)setInDrawingMachinery:(BOOL)inDrawing;
@@ -93,9 +93,9 @@ using namespace HTMLNames;
 - (void)setHasFocus:(BOOL)hasFocus;
 @end
 
-@implementation KWQTextFieldController
+@implementation WebCoreTextFieldController
 
-- (id)initWithTextField:(NSTextField *)f QLineEdit:(QLineEdit *)w
+- (id)initWithTextField:(NSTextField *)f TextField:(TextField *)w
 {
     self = [self init];
     if (!self)
@@ -104,13 +104,13 @@ using namespace HTMLNames;
     // This is initialization that's shared by all types of text fields.
     widget = w;
     field = f;
-    formatter = [[KWQTextFieldFormatter alloc] init];
+    formatter = [[WebCoreTextFieldFormatter alloc] init];
     lastSelectedRange.location = NSNotFound;
     [[field cell] setScrollable:YES];
     [field setFormatter:formatter];
     [field setDelegate:self];
     
-    if (widget->type() == QLineEdit::Search) {
+    if (widget->type() == TextField::Search) {
         [field setTarget:self];
         [field setAction:@selector(action:)];
     }
@@ -145,8 +145,8 @@ using namespace HTMLNames;
 - (void)setMaximumLength:(int)len
 {
     NSString *oldValue = [self string];
-    if ([oldValue _KWQ_numComposedCharacterSequences] > len) {
-        [field setStringValue:[oldValue _KWQ_truncateToNumComposedCharacterSequences:len]];
+    if ([oldValue _webcore_numComposedCharacterSequences] > len) {
+        [field setStringValue:[oldValue _webcore_truncateToNumComposedCharacterSequences:len]];
     }
     [formatter setMaximumLength:len];
 }
@@ -166,7 +166,7 @@ using namespace HTMLNames;
     edited = ed;
 }
 
-static DOMHTMLInputElement* inputElement(QLineEdit* widget)
+static DOMHTMLInputElement* inputElement(TextField* widget)
 {
     if (!widget)
         return nil;
@@ -184,7 +184,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     if (!widget)
         return;
     
-    [[field _KWQ_currentEditor] setWantsNotificationForMarkedText:YES];
+    [[field _webcore_currentEditor] setWantsNotificationForMarkedText:YES];
 
     if (DOMHTMLInputElement* input = inputElement(widget))
         [FrameMac::bridgeForWidget(widget) textFieldDidBeginEditing:input];
@@ -210,7 +210,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     if (FrameMac::handleKeyboardOptionTabInView(field))
         return;
     
-    if (![[field _KWQ_currentEditor] hasMarkedText])
+    if (![[field _webcore_currentEditor] hasMarkedText])
         if (DOMHTMLInputElement* input = inputElement(widget))
             [FrameMac::bridgeForWidget(widget) textDidChangeInTextField:input];
     
@@ -354,7 +354,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
 
 - (NSRange)selectedRange
 {
-    NSText *editor = [field _KWQ_currentEditor];
+    NSText *editor = [field _webcore_currentEditor];
     return editor ? [editor selectedRange] : lastSelectedRange;
 }
 
@@ -363,7 +363,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     // Range check just in case the saved range has gotten out of sync.
     // Even though we don't see this in testing, we really don't want
     // an exception in this case, so we protect ourselves.
-    NSText *editor = [field _KWQ_currentEditor];
+    NSText *editor = [field _webcore_currentEditor];
     if (editor) { // if we have no focus, we don't have a current editor
         unsigned len = [[editor string] length];
         if (NSMaxRange(range) > len) {
@@ -428,7 +428,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
         // and the text field will think it's still editing, so it will continue to draw
         // the focus ring. So we call endEditing: manually if we detect this inconsistency,
         // and the correct our internal impression of the focus state.
-        if ([field _KWQ_currentEditor] == nil && [field currentEditor] != nil) {
+        if ([field _webcore_currentEditor] == nil && [field currentEditor] != nil) {
             [[field cell] endEditing:[field currentEditor]];
             [self setHasFocus:NO];
         }
@@ -458,7 +458,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
 {
     // Calling stringValue can have a side effect of ending International inline input.
     // So don't call it unless there's no editor.
-    NSText *editor = [field _KWQ_currentEditor];
+    NSText *editor = [field _webcore_currentEditor];
     if (editor == nil) {
         return [field stringValue];
     }
@@ -487,7 +487,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     NSRange newline = [result rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\r\n"]];
     if (newline.location != NSNotFound)
         result = [result substringToIndex:newline.location];
-    return [result _KWQ_truncateToNumComposedCharacterSequences:[formatter maximumLength]];
+    return [result _webcore_truncateToNumComposedCharacterSequences:[formatter maximumLength]];
 }
 
 - (void)textViewDidChangeSelection:(NSNotification *)notification
@@ -505,12 +505,12 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     return [KWQTextFieldCell class];
 }
 
-- (id)initWithQLineEdit:(QLineEdit *)w 
+- (id)initWithQLineEdit:(TextField *)w 
 {
     self = [self init];
     if (!self)
         return nil;
-    controller = [[KWQTextFieldController alloc] initWithTextField:self QLineEdit:w];
+    controller = [[WebCoreTextFieldController alloc] initWithTextField:self TextField:w];
     return self;
 }
 
@@ -520,7 +520,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     [super dealloc];
 }
 
-- (KWQTextFieldController *)controller
+- (WebCoreTextFieldController *)controller
 {
     return controller;
 }
@@ -557,7 +557,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     Widget* widget = [controller widget];
     if (!widget)
         return [super nextKeyView];
-    return FrameMac::nextKeyViewForWidget(widget, KWQSelectingNext);
+    return FrameMac::nextKeyViewForWidget(widget, SelectingNext);
 }
 
 - (NSView *)previousKeyView
@@ -567,7 +567,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     Widget* widget = [controller widget];
     if (!widget)
         return [super previousKeyView];
-    return FrameMac::nextKeyViewForWidget(widget, KWQSelectingPrevious);
+    return FrameMac::nextKeyViewForWidget(widget, SelectingPrevious);
 }
 
 - (NSView *)nextValidKeyView
@@ -678,19 +678,19 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
 @end
 
 
-@implementation KWQSecureTextField
+@implementation WebCoreSecureTextField
 
 + (Class)cellClass
 {
-    return [KWQSecureTextFieldCell class];
+    return [WebCoreSecureTextFieldCell class];
 }
 
-- (id)initWithQLineEdit:(QLineEdit *)w 
+- (id)initWithQLineEdit:(TextField *)w 
 {
     self = [self init];
     if (!self)
         return nil;
-    controller = [[KWQTextFieldController alloc] initWithTextField:self QLineEdit:w];
+    controller = [[WebCoreTextFieldController alloc] initWithTextField:self TextField:w];
     return self;
 }
 
@@ -700,7 +700,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     [super dealloc];
 }
 
-- (KWQTextFieldController *)controller
+- (WebCoreTextFieldController *)controller
 {
     return controller;
 }
@@ -723,7 +723,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     Widget* widget = [controller widget];
     if (!widget)
         return [super nextKeyView];
-    return FrameMac::nextKeyViewForWidget(widget, KWQSelectingNext);
+    return FrameMac::nextKeyViewForWidget(widget, SelectingNext);
 }
 
 - (NSView *)previousKeyView
@@ -733,7 +733,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     Widget* widget = [controller widget];
     if (!widget)
         return [super previousKeyView];
-    return FrameMac::nextKeyViewForWidget(widget, KWQSelectingPrevious);
+    return FrameMac::nextKeyViewForWidget(widget, SelectingPrevious);
 }
 
 - (NSView *)nextValidKeyView
@@ -815,7 +815,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     // If we do, we'll end up deactivating and then reactivating, which will send
     // unwanted onBlur events and wreak havoc in other ways as well by setting the focus
     // back to the window.
-    NSText *editor = [self _KWQ_currentEditor];
+    NSText *editor = [self _webcore_currentEditor];
     if (editor) {
         [editor setSelectedRange:NSMakeRange(0, [[editor string] length])];
         return;
@@ -858,27 +858,27 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
 
 @end
 
-@implementation KWQSecureTextFieldCell
+@implementation WebCoreSecureTextFieldCell
 
 - (void)editWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate event:(NSEvent *)event
 {
     [super editWithFrame:frame inView:view editor:editor delegate:delegate event:event];
-    ASSERT([delegate isKindOfClass:[KWQSecureTextField class]]);
-    [[(KWQSecureTextField *)delegate controller] setHasFocus:YES];
+    ASSERT([delegate isKindOfClass:[WebCoreSecureTextField class]]);
+    [[(WebCoreSecureTextField *)delegate controller] setHasFocus:YES];
 }
 
 - (void)selectWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate start:(int)start length:(int)length
 {
     [super selectWithFrame:frame inView:view editor:editor delegate:delegate start:start length:length];
-    ASSERT([delegate isKindOfClass:[KWQSecureTextField class]]);
-    [[(KWQSecureTextField *)delegate controller] setHasFocus:YES];
+    ASSERT([delegate isKindOfClass:[WebCoreSecureTextField class]]);
+    [[(WebCoreSecureTextField *)delegate controller] setHasFocus:YES];
 }
 
 - (NSMutableDictionary *)_textAttributes
 {
-    ASSERT([[self controlView] isKindOfClass:[KWQSecureTextField class]]);
+    ASSERT([[self controlView] isKindOfClass:[WebCoreSecureTextField class]]);
     NSMutableDictionary* attributes = [super _textAttributes];
-    [[(KWQSecureTextField*)[self controlView] controller] updateTextAttributes:attributes];
+    [[(WebCoreSecureTextField*)[self controlView] controller] updateTextAttributes:attributes];
     return attributes;
 }
 
@@ -891,19 +891,19 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
 
 @end
 
-@implementation KWQSearchField
+@implementation WebCoreSearchField
 
 + (Class)cellClass
 {
-    return [KWQSearchFieldCell class];
+    return [WebCoreSearchFieldCell class];
 }
 
-- (id)initWithQLineEdit:(QLineEdit *)w 
+- (id)initWithQLineEdit:(TextField *)w 
 {
     self = [self init];
     if (!self)
         return nil;
-    controller = [[KWQTextFieldController alloc] initWithTextField:self QLineEdit:w];
+    controller = [[WebCoreTextFieldController alloc] initWithTextField:self TextField:w];
     return self;
 }
 
@@ -913,7 +913,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     [super dealloc];
 }
 
-- (KWQTextFieldController *)controller
+- (WebCoreTextFieldController *)controller
 {
     return controller;
 }
@@ -950,7 +950,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     Widget* widget = [controller widget];
     if (!widget)
         return [super nextKeyView];
-    return FrameMac::nextKeyViewForWidget(widget, KWQSelectingNext);
+    return FrameMac::nextKeyViewForWidget(widget, SelectingNext);
 }
 
 - (NSView *)previousKeyView
@@ -960,7 +960,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     Widget* widget = [controller widget];
     if (!widget)
         return [super previousKeyView];
-    return FrameMac::nextKeyViewForWidget(widget, KWQSelectingPrevious);
+    return FrameMac::nextKeyViewForWidget(widget, SelectingPrevious);
 }
 
 - (NSView *)nextValidKeyView
@@ -1037,26 +1037,26 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
 
 @end
 
-@implementation KWQSearchFieldCell
+@implementation WebCoreSearchFieldCell
 
 - (void)editWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate event:(NSEvent *)event
 {
     [super editWithFrame:frame inView:view editor:editor delegate:delegate event:event];
-    ASSERT([delegate isKindOfClass:[KWQSearchField class]]);
-    [[(KWQSearchField *)delegate controller] setHasFocus:YES];
+    ASSERT([delegate isKindOfClass:[WebCoreSearchField class]]);
+    [[(WebCoreSearchField *)delegate controller] setHasFocus:YES];
 }
 
 - (void)selectWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate start:(int)start length:(int)length
 {
     [super selectWithFrame:frame inView:view editor:editor delegate:delegate start:start length:length];
-    ASSERT([delegate isKindOfClass:[KWQSearchField class]]);
-    [[(KWQSearchField *)delegate controller] setHasFocus:YES];
+    ASSERT([delegate isKindOfClass:[WebCoreSearchField class]]);
+    [[(WebCoreSearchField *)delegate controller] setHasFocus:YES];
 }
 
 - (void)_addStringToRecentSearches:(NSString *)string
 {
-    ASSERT([[self controlView] isKindOfClass:[KWQSearchField class]]);
-    Frame *frame = Frame::frameForWidget([(KWQSearchField*)[self controlView] widget]);
+    ASSERT([[self controlView] isKindOfClass:[WebCoreSearchField class]]);
+    Frame *frame = Frame::frameForWidget([(WebCoreSearchField*)[self controlView] widget]);
     if (frame && frame->settings()->privateBrowsingEnabled())
         return;
 
@@ -1065,9 +1065,9 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
 
 - (NSMutableDictionary *)_textAttributes
 {
-    ASSERT([[self controlView] isKindOfClass:[KWQSearchField class]]);
+    ASSERT([[self controlView] isKindOfClass:[WebCoreSearchField class]]);
     NSMutableDictionary* attributes = [super _textAttributes];
-    [[(KWQSearchField*)[self controlView] controller] updateTextAttributes:attributes];
+    [[(WebCoreSearchField*)[self controlView] controller] updateTextAttributes:attributes];
     return attributes;
 }
 
@@ -1080,7 +1080,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
 
 @end
 
-@implementation KWQTextFieldFormatter
+@implementation WebCoreTextFieldFormatter
 
 - init
 {
@@ -1117,7 +1117,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
 {
     NSString *p = *partialStringPtr;
 
-    int length = [p _KWQ_numComposedCharacterSequences];
+    int length = [p _webcore_numComposedCharacterSequences];
     if (length <= maxLength) {
         return YES;
     }
@@ -1147,7 +1147,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
 
 @implementation NSString (WebCoreTextField)
 
-- (int)_KWQ_numComposedCharacterSequences
+- (int)_webcore_numComposedCharacterSequences
 {
     unsigned i = 0;
     unsigned l = [self length];
@@ -1159,7 +1159,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
     return num;
 }
 
-- (NSString *)_KWQ_truncateToNumComposedCharacterSequences:(int)num
+- (NSString *)_webcore_truncateToNumComposedCharacterSequences:(int)num
 {
     unsigned i = 0;
     unsigned l = [self length];
@@ -1181,7 +1181,7 @@ static DOMHTMLInputElement* inputElement(QLineEdit* widget)
 
 // The currentEditor method does not work for secure text fields.
 // This works around that limitation.
-- (NSTextView *)_KWQ_currentEditor
+- (NSTextView *)_webcore_currentEditor
 {
     NSResponder *firstResponder = [[self window] firstResponder];
     if ([firstResponder isKindOfClass:[NSTextView class]]) {

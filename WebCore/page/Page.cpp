@@ -117,7 +117,7 @@ void Page::setNeedsReapplyStyles()
             frame->setNeedsReapplyStyles();
 }
 
-void Page::setNeedsReapplyStylesForSettingsChange(KHTMLSettings* settings)
+void Page::setNeedsReapplyStylesForSettingsChange(Settings* settings)
 {
     if (!allPages)
         return;

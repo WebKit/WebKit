@@ -46,9 +46,9 @@
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "Image.h"
-#import "KWQEditCommand.h"
-#import "KWQLoader.h"
-#import "KWQPageState.h"
+#import "WebCoreEditCommand.h"
+#import "LoaderFunctions.h"
+#import "WebCorePageState.h"
 #import "ModifySelectionListLevel.h"
 #import "MoveSelectionCommand.h"
 #import "Page.h"
@@ -74,7 +74,7 @@
 #import "kjs_window.h"
 #import "markup.h"
 #import "visible_units.h"
-#import "xml_tokenizer.h"
+#import "XMLTokenizer.h"
 #import <JavaScriptCore/date_object.h>
 #import <JavaScriptCore/runtime_root.h>
 #import <kjs/SavedBuiltins.h>
@@ -517,7 +517,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)openURL:(NSURL *)URL reload:(BOOL)reload contentType:(NSString *)contentType refresh:(NSString *)refresh lastModified:(NSDate *)lastModified pageCache:(NSDictionary *)pageCache
 {
     if (pageCache) {
-        KWQPageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
+        WebCorePageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
         m_frame->openURLFromPageCache(state);
         [state invalidate];
         return;
@@ -583,10 +583,10 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     if (doc)
         doc->setInPageCache(NO);
 
-    KWQPageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
+    WebCorePageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
 
     // FIXME: This is a grotesque hack to fix <rdar://problem/4059059> Crash in RenderFlow::detach
-    // Somehow the KWQPageState object is not properly updated, and is holding onto a stale document
+    // Somehow the WebCorePageState object is not properly updated, and is holding onto a stale document
     // both Xcode and FileMaker see this crash, Safari does not.
     // This if check MUST be removed as part of re-writing the loader down in WebCore
     ASSERT(!state || ([state document] == doc));
@@ -649,7 +649,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
     if (!m_frame)
         return NO;
-    return m_frame->scrollOverflow((KWQScrollDirection)direction, (KWQScrollGranularity)granularity);
+    return m_frame->scrollOverflow((ScrollDirection)direction, (ScrollGranularity)granularity);
 }
 
 - (BOOL)sendScrollWheelEvent:(NSEvent *)event
@@ -678,7 +678,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     SavedBuiltins *interpreterBuiltins = new SavedBuiltins;
     m_frame->saveInterpreterBuiltins(*interpreterBuiltins);
 
-    KWQPageState *pageState = [[KWQPageState alloc] initWithDocument:doc
+    WebCorePageState *pageState = [[WebCorePageState alloc] initWithDocument:doc
                                                                  URL:m_frame->url()
                                                     windowProperties:windowProperties
                                                   locationProperties:locationProperties
@@ -1272,7 +1272,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->nextKeyView(doc->focusNode(), KWQSelectingNext);
+    return m_frame->nextKeyView(doc->focusNode(), SelectingNext);
 }
 
 - (NSView *)previousKeyView
@@ -1280,7 +1280,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->nextKeyView(doc->focusNode(), KWQSelectingPrevious);
+    return m_frame->nextKeyView(doc->focusNode(), SelectingPrevious);
 }
 
 - (NSView *)nextKeyViewInsideWebFrameViews
@@ -1288,7 +1288,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->nextKeyViewInFrameHierarchy(doc->focusNode(), KWQSelectingNext);
+    return m_frame->nextKeyViewInFrameHierarchy(doc->focusNode(), SelectingNext);
 }
 
 - (NSView *)previousKeyViewInsideWebFrameViews
@@ -1296,7 +1296,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     if (!doc)
         return nil;
-    return m_frame->nextKeyViewInFrameHierarchy(doc->focusNode(), KWQSelectingPrevious);
+    return m_frame->nextKeyViewInFrameHierarchy(doc->focusNode(), SelectingPrevious);
 }
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string
@@ -1515,7 +1515,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Document *doc = m_frame->document();
     
     if (doc)
-        return KWQNumberOfPendingOrLoadingRequests (doc->docLoader());
+        return NumberOfPendingOrLoadingRequests (doc->docLoader());
     return 0;
 }
 
@@ -1572,13 +1572,13 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)undoEditing:(id)arg
 {
-    ASSERT([arg isKindOfClass:[KWQEditCommand class]]);
+    ASSERT([arg isKindOfClass:[WebCoreEditCommand class]]);
     [arg command]->unapply();
 }
 
 - (void)redoEditing:(id)arg
 {
-    ASSERT([arg isKindOfClass:[KWQEditCommand class]]);
+    ASSERT([arg isKindOfClass:[WebCoreEditCommand class]]);
     [arg command]->reapply();
 }
 
@@ -1896,14 +1896,14 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
     bool addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(startVisiblePos);
     if (addLeadingSpace) {
-        QChar previousChar = startVisiblePos.previous().characterAfter();
+        DeprecatedChar previousChar = startVisiblePos.previous().characterAfter();
         if (previousChar.unicode())
             addLeadingSpace = !m_frame->isCharacterSmartReplaceExempt(previousChar, true);
     }
     
     bool addTrailingSpace = endPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(endVisiblePos);
     if (addTrailingSpace) {
-        QChar thisChar = endVisiblePos.characterAfter();
+        DeprecatedChar thisChar = endVisiblePos.characterAfter();
         if (thisChar.unicode())
             addTrailingSpace = !m_frame->isCharacterSmartReplaceExempt(thisChar, false);
     }

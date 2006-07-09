@@ -32,7 +32,7 @@
 #import "Font.h"
 #import "WebFontCache.h"
 #import "WebCoreSystemInterface.h"
-#import "KWQListBox.h"
+#import "ListBox.h"
 #import "WebCoreStringTruncator.h"
 
 namespace WebCore

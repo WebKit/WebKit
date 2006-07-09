@@ -321,7 +321,7 @@ const int* RenderThemeMac::checkboxMargins() const
 void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const IntRect& r)
 {
     if (!checkbox) {
-        checkbox = KWQRetainNSRelease([[NSButtonCell alloc] init]);
+        checkbox = HardRetainWithNSRelease([[NSButtonCell alloc] init]);
         [checkbox setButtonType:NSSwitchButton];
         [checkbox setTitle:nil];
         [checkbox setAllowsMixedState:YES];
@@ -381,7 +381,7 @@ const int* RenderThemeMac::radioMargins() const
 void RenderThemeMac::setRadioCellState(const RenderObject* o, const IntRect& r)
 {
     if (!radio) {
-        radio = KWQRetainNSRelease([[NSButtonCell alloc] init]);
+        radio = HardRetainWithNSRelease([[NSButtonCell alloc] init]);
         [radio setButtonType:NSRadioButton];
         [radio setTitle:nil];
     }
@@ -498,7 +498,7 @@ void RenderThemeMac::setButtonSize(RenderStyle* style) const
 void RenderThemeMac::setButtonCellState(const RenderObject* o, const IntRect& r)
 {
     if (!button) {
-        button = KWQRetainNSRelease([[NSButtonCell alloc] init]);
+        button = HardRetainWithNSRelease([[NSButtonCell alloc] init]);
         [button setTitle:nil];
         [button setButtonType:NSMomentaryPushInButton];
     }
@@ -617,7 +617,7 @@ void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
 void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRect& r)
 {
     if (!popupButton) {
-        popupButton = KWQRetainNSRelease([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
+        popupButton = HardRetainWithNSRelease([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
         [popupButton setUsesItemFromMenu:NO];
     }
 

@@ -65,12 +65,12 @@ static DeprecatedString toRoman(int number, bool upper)
 static DeprecatedString toLetterString(int number, int letterA)
 {
     if (number < 2)
-        return QChar(letterA); // match WinIE (A.) not FireFox (0.)
+        return DeprecatedChar(letterA); // match WinIE (A.) not FireFox (0.)
 
     DeprecatedString letterString;
     while (number > 0) {
         int onesDigit = (number - 1) % 26;
-        letterString = QChar(letterA + onesDigit) + letterString;
+        letterString = DeprecatedChar(letterA + onesDigit) + letterString;
         number -= onesDigit;
         number /= 26;
     }
@@ -80,7 +80,7 @@ static DeprecatedString toLetterString(int number, int letterA)
 
 static DeprecatedString toHebrew(int number)
 {
-    const QChar tenDigit[] = {1497, 1499, 1500, 1502, 1504, 1505, 1506, 1508, 1510};
+    const DeprecatedChar tenDigit[] = {1497, 1499, 1500, 1502, 1504, 1505, 1506, 1508, 1510};
 
     DeprecatedString letter;
     if (number > 999) {
@@ -89,21 +89,21 @@ static DeprecatedString toHebrew(int number)
     }
     int fourHundreds = number / 400;
     for (int i = 0; i < fourHundreds; i++)
-        letter += QChar(1511 + 3);
+        letter += DeprecatedChar(1511 + 3);
     number %= 400;
     if (number / 100)
-        letter += QChar(1511 + (number / 100) - 1);
+        letter += DeprecatedChar(1511 + (number / 100) - 1);
     number %= 100;
     if (number == 15 || number == 16) {
-        letter += QChar(1487 + 9);
-        letter += QChar(1487 + number - 9);
+        letter += DeprecatedChar(1487 + 9);
+        letter += DeprecatedChar(1487 + number - 9);
     } else {
         int tens = number / 10;
         if (tens)
             letter += tenDigit[tens - 1];
         number = number % 10;
         if (number)
-            letter += QChar(1487 + number);
+            letter += DeprecatedChar(1487 + number);
     }
     return letter;
 }
@@ -142,7 +142,7 @@ void RenderListMarker::setStyle(RenderStyle* s)
 
 InlineBox* RenderListMarker::createInlineBox(bool, bool isRootLineBox, bool)
 {
-    KHTMLAssert(!isRootLineBox);
+    ASSERT(!isRootLineBox);
     ListMarkerBox* box = new (renderArena()) ListMarkerBox(this);
     m_inlineBoxWrapper = box;
     return box;
@@ -239,8 +239,8 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
 
 void RenderListMarker::layout()
 {
-    KHTMLAssert(needsLayout());
-    // ### KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    // ### ASSERT(minMaxKnown());
     if (!minMaxKnown())
         calcMinMaxWidth();
     setNeedsLayout(false);
@@ -261,7 +261,7 @@ void RenderListMarker::imageChanged(CachedImage *o)
 
 void RenderListMarker::calcMinMaxWidth()
 {
-    KHTMLAssert(!minMaxKnown());
+    ASSERT(!minMaxKnown());
 
     if (m_listImage) {
         m_width = m_listImage->image()->width();
@@ -309,7 +309,7 @@ void RenderListMarker::calcMinMaxWidth()
 
         if (l>16) {l++;} // Skip GREEK SMALL LETTER FINAL SIGMA
 
-        m_item = QChar(945 + l);
+        m_item = DeprecatedChar(945 + l);
         for (int i = 0; i < (number / 24); i++) {
             m_item += "'";
         }

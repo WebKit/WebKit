@@ -25,11 +25,11 @@
 #define CSS_cssstyleselector_h_
 
 #include "DeprecatedString.h"
-#include "render_style.h"
+#include "RenderStyle.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
-class KHTMLSettings;
+class Settings;
 class KURL;
 
 namespace WebCore {
@@ -225,7 +225,7 @@ class StyledElement;
         RenderStyle::PseudoId pseudoStyle;
         FrameView *view;
         Frame *frame;
-        const KHTMLSettings *settings;
+        const Settings *settings;
         bool fontDirty;
         bool isXMLDoc;
 

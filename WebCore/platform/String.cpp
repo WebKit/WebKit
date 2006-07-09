@@ -224,7 +224,7 @@ bool String::percentage(int& result) const
     if ((*m_impl)[m_impl->length() - 1] != '%')
        return false;
 
-    result = QConstString(reinterpret_cast<const QChar*>(m_impl->characters()), m_impl->length() - 1).string().toInt();
+    result = DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(m_impl->characters()), m_impl->length() - 1).string().toInt();
     return true;
 }
 
@@ -241,7 +241,7 @@ DeprecatedString String::deprecatedString() const
         return DeprecatedString::null;
     if (!m_impl->characters())
         return DeprecatedString("", 0);
-    return DeprecatedString(reinterpret_cast<const QChar*>(m_impl->characters()), m_impl->length());
+    return DeprecatedString(reinterpret_cast<const DeprecatedChar*>(m_impl->characters()), m_impl->length());
 }
 
 String String::sprintf(const char *format, ...)

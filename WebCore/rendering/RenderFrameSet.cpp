@@ -31,7 +31,7 @@
 #include "GraphicsContext.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 #include "MouseEvent.h"
 #include "RenderFrame.h"
 #include "RenderView.h"
@@ -92,8 +92,8 @@ bool RenderFrameSet::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _t
 
 void RenderFrameSet::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
 
     if (!parent()->isFrameSet()) {
         FrameView* v = view()->frameView();
@@ -540,7 +540,7 @@ bool RenderFrameSet::canResize(int _x, int _y)
 }
 
 #ifndef NDEBUG
-void RenderFrameSet::dump(QTextStream* stream, DeprecatedString ind) const
+void RenderFrameSet::dump(TextStream* stream, DeprecatedString ind) const
 {
   *stream << " totalrows=" << element()->totalRows();
   *stream << " totalcols=" << element()->totalCols();

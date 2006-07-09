@@ -25,8 +25,8 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef KHTML_CachedXBLDocument_h
-#define KHTML_CachedXBLDocument_h
+#ifndef CachedXBLDocument_h
+#define CachedXBLDocument_h
 
 #include "CachedObject.h"
 #include <wtf/Vector.h>

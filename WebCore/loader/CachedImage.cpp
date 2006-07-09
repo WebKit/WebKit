@@ -34,7 +34,7 @@
 #include "CachedObjectClientWalker.h"
 #include "DocLoader.h"
 #include "Image.h"
-#include "KWQLoader.h"
+#include "LoaderFunctions.h"
 #include "Request.h"
 #include <wtf/Vector.h>
 
@@ -116,7 +116,7 @@ inline void CachedImage::createImage()
     // Create the image if it doesn't yet exist.
     if (!m_image)
 #if __APPLE__
-        m_image = new Image(this, KWQResponseMIMEType(m_response) == "application/pdf");
+        m_image = new Image(this, ResponseMIMEType(m_response) == "application/pdf");
 #else
         m_image = new Image(this, false);
 #endif

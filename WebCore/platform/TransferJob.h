@@ -45,9 +45,9 @@ typedef LONG_PTR LRESULT;
 
 #if __APPLE__
 #ifdef __OBJC__
-@class KWQResourceLoader;
+@class WebCoreResourceLoaderImp;
 #else
-class KWQResourceLoader;
+class WebCoreResourceLoaderImp;
 #endif
 #endif
 
@@ -81,7 +81,7 @@ public:
     FormData postData() const;
 
 #if __APPLE__
-    void setLoader(KWQResourceLoader*);
+    void setLoader(WebCoreResourceLoaderImp*);
 #endif
 #if WIN32
     void fileLoadTimer(Timer<TransferJob>* timer);

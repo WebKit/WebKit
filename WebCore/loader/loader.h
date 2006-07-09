@@ -24,8 +24,8 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef KHTML_Loader_h
-#define KHTML_Loader_h
+#ifndef loader_h
+#define loader_h
 
 #include "TransferJobClient.h"
 #include <wtf/HashMap.h>

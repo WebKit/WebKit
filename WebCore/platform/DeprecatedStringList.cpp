@@ -43,7 +43,7 @@ DeprecatedStringList DeprecatedStringList::split(const DeprecatedString &separat
     return result;
 }
  
-DeprecatedStringList DeprecatedStringList::split(const QChar &separator, const DeprecatedString &s, bool allowEmptyEntries)
+DeprecatedStringList DeprecatedStringList::split(const DeprecatedChar &separator, const DeprecatedString &s, bool allowEmptyEntries)
 {
     return DeprecatedStringList::split(DeprecatedString(separator), s, allowEmptyEntries);
 }

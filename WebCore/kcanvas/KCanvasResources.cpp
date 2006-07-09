@@ -27,18 +27,18 @@
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "KCanvasContainer.h"
+#include "RenderSVGContainer.h"
 #include "KCanvasImage.h"
 #include "KCanvasMatrix.h"
 #include "KCanvasTreeDebug.h"
 #include "KRenderingDevice.h"
 #include "RenderPath.h"
 #include "SVGStyledElement.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
-QTextStream &operator<<(QTextStream &ts, const WebCore::KCanvasResource &r) 
+TextStream &operator<<(TextStream &ts, const WebCore::KCanvasResource &r) 
 { 
     return r.externalRepresentation(ts); 
 }
@@ -84,7 +84,7 @@ void KCanvasResource::setIdInRegistry(const DeprecatedString& newId)
     registryId = newId;
 } 
 
-QTextStream& KCanvasResource::externalRepresentation(QTextStream &ts) const
+TextStream& KCanvasResource::externalRepresentation(TextStream &ts) const
 {
     return ts;
 }
@@ -113,7 +113,7 @@ KCClipDataList KCanvasClipper::clipData() const
     return m_clipData;
 }
 
-QTextStream& KCanvasClipper::externalRepresentation(QTextStream &ts) const
+TextStream& KCanvasClipper::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=CLIPPER]";
     ts << " [clip data=" << clipData() << "]";
@@ -138,7 +138,7 @@ void KCanvasMasker::setMask(KCanvasImage *mask)
     }
 }
 
-QTextStream& KCanvasMasker::externalRepresentation(QTextStream &ts) const
+TextStream& KCanvasMasker::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=MASKER]";
     return ts;
@@ -240,14 +240,14 @@ void KCanvasMarker::draw(GraphicsContext* context, const FloatRect& rect, double
         // FIXME: PaintInfo should be passed into this method instead.
         // FIXME: bounding box fractions lost
         RenderObject::PaintInfo info(context, enclosingIntRect(rect), PaintPhaseForeground, 0, 0);
-        m_marker->setLocalTransform(rotation.multiply(translation).qmatrix());
-        static_cast<KCanvasContainer *>(m_marker)->setDrawsContents(true);
+        m_marker->setLocalTransform(rotation.multiply(translation).matrix());
+        static_cast<RenderSVGContainer *>(m_marker)->setDrawsContents(true);
         m_marker->paint(info, 0, 0);
-        static_cast<KCanvasContainer *>(m_marker)->setDrawsContents(false);
+        static_cast<RenderSVGContainer *>(m_marker)->setDrawsContents(false);
     }
 }
 
-QTextStream& KCanvasMarker::externalRepresentation(QTextStream &ts) const
+TextStream& KCanvasMarker::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=MARKER]"
        << " [angle=";

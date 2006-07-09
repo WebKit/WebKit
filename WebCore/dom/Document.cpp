@@ -81,7 +81,7 @@
 #include "cssstyleselector.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
-#include "xml_tokenizer.h"
+#include "XMLTokenizer.h"
 #include "xmlhttprequest.h"
 
 #if XPATH_SUPPORT
@@ -843,7 +843,7 @@ void Document::recalcStyle(StyleChange change)
         FontDescription fontDescription;
         fontDescription.setUsePrinterFont(printing());
         if (m_view) {
-            const KHTMLSettings *settings = m_view->frame()->settings();
+            const Settings *settings = m_view->frame()->settings();
             if (printing() && !settings->shouldPrintBackgrounds())
                 _style->setForceBackgroundsToWhite(true);
             const AtomicString& stdfont = settings->stdFontName();

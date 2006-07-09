@@ -24,8 +24,8 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef KHTML_CachedObjectClientWalker_h
-#define KHTML_CachedObjectClientWalker_h
+#ifndef CachedObjectClientWalker_h
+#define CachedObjectClientWalker_h
 
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>

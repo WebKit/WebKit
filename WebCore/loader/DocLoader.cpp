@@ -35,7 +35,7 @@
 #include "CachedXSLStyleSheet.h"
 #include "Document.h"
 #include "Frame.h"
-#include "KWQLoader.h"
+#include "LoaderFunctions.h"
 #include "loader.h"
 
 namespace WebCore {
@@ -91,13 +91,13 @@ CachedImage *DocLoader::requestImage(const String& url)
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
 
-    if (KWQCheckIfReloading(this))
+    if (CheckIfReloading(this))
         setCachePolicy(KIO::CC_Reload);
 
     bool reload = needReload(fullURL);
 
     CachedImage *cachedObject = Cache::requestImage(this, fullURL, reload, m_expireDate);
-    KWQCheckCacheObjectStatus(this, cachedObject);
+    CheckCacheObjectStatus(this, cachedObject);
     return cachedObject;
 }
 
@@ -105,13 +105,13 @@ CachedCSSStyleSheet *DocLoader::requestStyleSheet(const String& url, const Depre
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
 
-    if (KWQCheckIfReloading(this))
+    if (CheckIfReloading(this))
         setCachePolicy(KIO::CC_Reload);
 
     bool reload = needReload(fullURL);
 
     CachedCSSStyleSheet *cachedObject = Cache::requestStyleSheet(this, url, reload, m_expireDate, charset);
-    KWQCheckCacheObjectStatus(this, cachedObject);
+    CheckCacheObjectStatus(this, cachedObject);
     return cachedObject;
 }
 
@@ -119,13 +119,13 @@ CachedScript *DocLoader::requestScript(const String& url, const DeprecatedString
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
 
-    if (KWQCheckIfReloading(this))
+    if (CheckIfReloading(this))
         setCachePolicy(KIO::CC_Reload);
 
     bool reload = needReload(fullURL);
 
     CachedScript *cachedObject = Cache::requestScript(this, url, reload, m_expireDate, charset);
-    KWQCheckCacheObjectStatus(this, cachedObject);
+    CheckCacheObjectStatus(this, cachedObject);
     return cachedObject;
 }
 
@@ -134,13 +134,13 @@ CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const String& url)
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
     
-    if (KWQCheckIfReloading(this))
+    if (CheckIfReloading(this))
         setCachePolicy(KIO::CC_Reload);
     
     bool reload = needReload(fullURL);
     
     CachedXSLStyleSheet *cachedObject = Cache::requestXSLStyleSheet(this, url, reload, m_expireDate);
-    KWQCheckCacheObjectStatus(this, cachedObject);
+    CheckCacheObjectStatus(this, cachedObject);
     return cachedObject;
 }
 #endif
@@ -153,13 +153,13 @@ CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
     // FIXME: Is this right for XBL?
     if (m_frame && m_frame->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
     
-    if (KWQCheckIfReloading(this))
+    if (CheckIfReloading(this))
         setCachePolicy(KIO::CC_Reload);
     
     bool reload = needReload(fullURL);
     
     CachedXBLDocument *cachedObject = Cache::requestXBLDocument(this, url, reload, m_expireDate);
-    KWQCheckCacheObjectStatus(this, cachedObject);
+    CheckCacheObjectStatus(this, cachedObject);
     return cachedObject;
 }
 #endif

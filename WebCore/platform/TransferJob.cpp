@@ -27,7 +27,7 @@
 #include "TransferJob.h"
 #include "TransferJobInternal.h"
 
-#include "KWQLoader.h"
+#include "LoaderFunctions.h"
 #include "Logging.h"
 
 namespace WebCore {

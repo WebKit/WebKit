@@ -37,7 +37,7 @@ class FloatPoint;
 class SVGStyledElement;
 
 class KCanvasPath;
-class KCanvasContainer;
+class RenderSVGContainer;
 class KCanvasMatrix;
 
 class RenderPath : public RenderObject
@@ -59,8 +59,8 @@ public:
     virtual bool isRenderPath() const { return true; }
     virtual const char *renderName() const { return "KCanvasItem"; }
     
-    virtual QMatrix localTransform() const;
-    virtual void setLocalTransform(const QMatrix &matrix);
+    virtual AffineTransform localTransform() const;
+    virtual void setLocalTransform(const AffineTransform &matrix);
     
     virtual void layout();
     virtual IntRect getAbsoluteRepaintRect();

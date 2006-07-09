@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 
 #include "RenderBlock.h"
-#include "KWQWMatrix.h"
+#include "AffineTransform.h"
 
 namespace WebCore {
 
@@ -39,8 +39,8 @@ public:
     virtual const char *renderName() const { return "RenderForeignObject"; }
     virtual void paint(PaintInfo& paintInfo, int parentX, int parentY);
     
-    virtual QMatrix localTransform() const { return m_transform; }
-    virtual void setLocalTransform(const QMatrix& transform) { m_transform = transform; }
+    virtual AffineTransform localTransform() const { return m_transform; }
+    virtual void setLocalTransform(const AffineTransform& transform) { m_transform = transform; }
     
     virtual void computeAbsoluteRepaintRect(IntRect& r, bool f);
     virtual bool requiresLayer();
@@ -49,8 +49,8 @@ public:
     virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
 
  private:
-    QMatrix translationForAttributes();
-    QMatrix m_transform;
+    AffineTransform translationForAttributes();
+    AffineTransform m_transform;
     IntRect m_absoluteBounds;
 };
 

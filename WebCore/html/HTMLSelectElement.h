@@ -28,7 +28,7 @@
 
 #include "HTMLGenericFormElement.h"
 #include "HTMLCollection.h"
-#include "render_style.h"
+#include "RenderStyle.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

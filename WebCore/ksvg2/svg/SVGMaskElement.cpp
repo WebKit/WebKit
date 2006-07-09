@@ -26,7 +26,7 @@
 #include "SVGMaskElement.h"
 
 #include "GraphicsContext.h"
-#include "KCanvasContainer.h"
+#include "RenderSVGContainer.h"
 #include "KCanvasImage.h"
 #include "KCanvasPath.h"
 #include "KRenderingDevice.h"
@@ -125,7 +125,7 @@ KCanvasImage *SVGMaskElement::drawMaskerContent()
 
     OwnPtr<GraphicsContext> context(patternContext->createGraphicsContext());
 
-    KCanvasContainer *maskContainer = static_cast<KCanvasContainer *>(renderer());
+    RenderSVGContainer *maskContainer = static_cast<RenderSVGContainer *>(renderer());
     RenderObject::PaintInfo info(context.get(), IntRect(), PaintPhaseForeground, 0, 0);
     maskContainer->setDrawsContents(true);
     maskContainer->paint(info, 0, 0);
@@ -139,7 +139,7 @@ KCanvasImage *SVGMaskElement::drawMaskerContent()
 
 RenderObject* SVGMaskElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    KCanvasContainer* maskContainer = new (arena) KCanvasContainer(this);
+    RenderSVGContainer* maskContainer = new (arena) RenderSVGContainer(this);
     maskContainer->setDrawsContents(false);
     return maskContainer;
 }

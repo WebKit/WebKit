@@ -25,7 +25,7 @@
 
 #ifdef __cplusplus
 
-#include "KWQTextStream.h"
+#include "TextStream.h"
 #include "RenderObject.h"
 
 namespace WebCore {
@@ -33,6 +33,6 @@ namespace WebCore {
 }
 
 DeprecatedString externalRepresentation(WebCore::RenderObject *);
-void write(QTextStream &ts, const WebCore::RenderObject &o, int indent = 0);
+void write(TextStream &ts, const WebCore::RenderObject &o, int indent = 0);
 
 #endif

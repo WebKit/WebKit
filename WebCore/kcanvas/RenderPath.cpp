@@ -26,7 +26,7 @@
 #include "RenderPath.h"
 
 #include "GraphicsContext.h"
-#include "KCanvasContainer.h"
+#include "RenderSVGContainer.h"
 #include "KRenderingDevice.h"
 #include "KRenderingFillPainter.h"
 #include "KRenderingStrokePainter.h"
@@ -41,7 +41,7 @@ public:
 
     FloatRect fillBBox;
     FloatRect strokeBbox;
-    QMatrix matrix;
+    AffineTransform matrix;
     IntRect absoluteBounds;
 };        
 
@@ -57,12 +57,12 @@ RenderPath::~RenderPath()
     delete d;
 }
 
-QMatrix RenderPath::localTransform() const
+AffineTransform RenderPath::localTransform() const
 {
     return d->matrix;
 }
 
-void RenderPath::setLocalTransform(const QMatrix &matrix)
+void RenderPath::setLocalTransform(const AffineTransform &matrix)
 {
     d->matrix = matrix;
 }

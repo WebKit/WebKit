@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef KHTML_RenderText_H
-#define KHTML_RenderText_H
+#ifndef RenderText_h
+#define RenderText_h
 
 #include "RenderObject.h"
 #include "Text.h"

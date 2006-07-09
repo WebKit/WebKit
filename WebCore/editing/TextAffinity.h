@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KHTML_EDITING_TEXT_AFFINITY_H
-#define KHTML_EDITING_TEXT_AFFINITY_H
+#ifndef TextAffinity_h
+#define TextAffinity_h
 
 namespace WebCore {
 

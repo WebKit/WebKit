@@ -30,25 +30,25 @@
 #include <algorithm>
 #include <wtf/Assertions.h>
 
-class KWQListNode
+class DeprecatedListNode
 {
 public:
-    KWQListNode(void *d) : data(d), next(0), prev(0) { }
+    DeprecatedListNode(void *d) : data(d), next(0), prev(0) { }
 
     void *data;
-    KWQListNode *next;
-    KWQListNode *prev;
+    DeprecatedListNode *next;
+    DeprecatedListNode *prev;
 };
 
 
-static KWQListNode *copyList(KWQListNode *l, KWQListNode *&tail)
+static DeprecatedListNode *copyList(DeprecatedListNode *l, DeprecatedListNode *&tail)
 {
-    KWQListNode *node = l;
-    KWQListNode *copyHead = 0;
-    KWQListNode *last = 0;
+    DeprecatedListNode *node = l;
+    DeprecatedListNode *copyHead = 0;
+    DeprecatedListNode *last = 0;
 
     while (node != 0) {
-        KWQListNode *copy = new KWQListNode(node->data);
+        DeprecatedListNode *copy = new DeprecatedListNode(node->data);
         if (last != 0) {
             last->next = copy;
         } else {
@@ -101,9 +101,9 @@ DeprecatedPtrListImpl::~DeprecatedPtrListImpl()
      
 void DeprecatedPtrListImpl::clear(bool deleteItems)
 {
-    KWQListNode *next;
+    DeprecatedListNode *next;
     
-    for (KWQListNode *node = head; node; node = next) {
+    for (DeprecatedListNode *node = head; node; node = next) {
         next = node->next;
         if (deleteItems)
             deleteItem(node->data);
@@ -121,7 +121,7 @@ void DeprecatedPtrListImpl::clear(bool deleteItems)
 
 void *DeprecatedPtrListImpl::at(unsigned n)
 {
-    KWQListNode *node;
+    DeprecatedListNode *node;
     if (n >= nodeCount - 1) {
         node = tail;
     } else {
@@ -141,7 +141,7 @@ bool DeprecatedPtrListImpl::insert(unsigned n, const void *item)
         return false;
     }
 
-    KWQListNode *node = new KWQListNode((void *)item);
+    DeprecatedListNode *node = new DeprecatedListNode((void *)item);
 
     if (n == 0) {
         // inserting at head
@@ -165,7 +165,7 @@ bool DeprecatedPtrListImpl::insert(unsigned n, const void *item)
         
         // iterate to one node before the insertion point, can't be null
         // since we know n > 0 and n < nodeCount
-        KWQListNode *prevNode = head;
+        DeprecatedListNode *prevNode = head;
 
         for (unsigned i = 0; i < n - 1; i++) {
             prevNode = prevNode->next;
@@ -185,7 +185,7 @@ bool DeprecatedPtrListImpl::insert(unsigned n, const void *item)
 
 bool DeprecatedPtrListImpl::remove(bool shouldDeleteItem)
 {
-    KWQListNode *node = cur;
+    DeprecatedListNode *node = cur;
     if (node == 0) {
         return false;
     }
@@ -246,7 +246,7 @@ bool DeprecatedPtrListImpl::removeLast(bool deleteItem)
 
 bool DeprecatedPtrListImpl::removeRef(const void *item, bool deleteItem)
 {
-    KWQListNode *node;
+    DeprecatedListNode *node;
 
     node = head;
 
@@ -348,7 +348,7 @@ unsigned DeprecatedPtrListImpl::containsRef(const void *item) const
 {
     unsigned count = 0;
     
-    for (KWQListNode *node = head; node; node = node->next) {
+    for (DeprecatedListNode *node = head; node; node = node->next) {
         if (item == node->data) {
             ++count;
         }
@@ -361,7 +361,7 @@ unsigned DeprecatedPtrListImpl::containsRef(const void *item) const
 // remove when no longer needed.
 int DeprecatedPtrListImpl::findRef(const void *item)
 {
-    KWQListNode *node = head;
+    DeprecatedListNode *node = head;
     int index = 0;
     
     while (node && item != node->data) {

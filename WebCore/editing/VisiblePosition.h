@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KHTML_EDITING_VISIBLE_POSITION_H
-#define KHTML_EDITING_VISIBLE_POSITION_H
+#ifndef VisiblePosition_h
+#define VisiblePosition_h
 
 #include "Position.h"
 
@@ -122,4 +122,4 @@ void showTree(const WebCore::VisiblePosition*);
 void showTree(const WebCore::VisiblePosition&);
 #endif
 
-#endif // KHTML_EDITING_VISIBLE_POSITION_H
+#endif // VisiblePosition_h

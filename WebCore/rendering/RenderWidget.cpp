@@ -93,7 +93,7 @@ void RenderWidget::destroy()
 
 RenderWidget::~RenderWidget()
 {
-    KHTMLAssert(m_refCount <= 0);
+    ASSERT(m_refCount <= 0);
     deleteWidget();
 }
 
@@ -140,8 +140,8 @@ void RenderWidget::setWidget(Widget* widget)
 
 void RenderWidget::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
 
     setNeedsLayout(false);
 }

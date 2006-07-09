@@ -27,7 +27,7 @@
 #import "WebCoreSettings.h"
 
 #import "FoundationExtras.h"
-#import "KWQKHTMLSettings.h"
+#import "Settings.h"
 #import "Page.h"
 #import "WebCoreFrameBridge.h"
 
@@ -59,9 +59,9 @@ using namespace WebCore;
 
 - (id)init
 {
-    // A Frame may not have been created yet, so we initialize the AtomicString hash before we try and use it in KHTMLSettings.
+    // A Frame may not have been created yet, so we initialize the AtomicString hash before we try and use it in Settings.
     AtomicString::init();
-    settings = new KHTMLSettings;
+    settings = new Settings;
     return [super init];
 }
 
@@ -333,7 +333,7 @@ using namespace WebCore;
     return defaultTextEncoding;
 }
 
-- (KHTMLSettings *)settings
+- (Settings *)settings
 {
     return settings;
 }

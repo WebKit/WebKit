@@ -166,7 +166,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
             
     // Patterns don't seem to resepect the CTM unless we make them...
     CGAffineTransform ctm = CGContextGetCTM(context);
-    CGAffineTransform transform = CGAffineTransform(patternTransform().qmatrix());
+    CGAffineTransform transform = CGAffineTransform(patternTransform().matrix());
     transform = CGAffineTransformConcat(transform, ctm);
 
     CGSize phase = CGSizeMake(bbox().x(), bbox().y());

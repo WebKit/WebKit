@@ -32,7 +32,7 @@
 
 #import "FontFallbackList.h"
 #import "GraphicsContext.h"
-#import "KWQKHTMLSettings.h"
+#import "Settings.h"
 
 #import "FontData.h"
 

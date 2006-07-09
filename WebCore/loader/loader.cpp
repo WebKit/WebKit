@@ -35,7 +35,7 @@
 #include "DocLoader.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
-#include "KWQLoader.h"
+#include "LoaderFunctions.h"
 #include "Request.h"
 #include "TransferJob.h"
 #include "TransferJob.h"
@@ -154,7 +154,7 @@ void Loader::receivedResponse(TransferJob* job, PlatformResponse response)
     ASSERT(req);
     ASSERT(response);
     req->cachedObject()->setResponse(response);
-    req->cachedObject()->setExpireDate(KWQCacheObjectExpiresTime(req->docLoader(), response), false);
+    req->cachedObject()->setExpireDate(CacheObjectExpiresTime(req->docLoader(), response), false);
     
     DeprecatedString chs = job->queryMetaData("charset").deprecatedString();
     if (!chs.isNull())
@@ -165,7 +165,7 @@ void Loader::receivedResponse(TransferJob* job, PlatformResponse response)
         static_cast<CachedImage*>(req->cachedObject())->clear();
         if (req->docLoader()->frame())
             req->docLoader()->frame()->checkCompleted();
-    } else if (KWQResponseIsMultipart(response)) {
+    } else if (ResponseIsMultipart(response)) {
         req->setIsMultipart(true);
         if (!req->cachedObject()->isImage())
             job->cancel();

@@ -36,7 +36,7 @@
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "ksvg.h"
-#include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/RenderSVGContainer.h>
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
@@ -167,14 +167,14 @@ KCanvasMarker *SVGMarkerElement::canvasResource()
     double w = markerWidth()->baseVal()->value();
     double h = markerHeight()->baseVal()->value();
     RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(w, h);
-    m_marker->setScale(viewBox->qmatrix().m11(), viewBox->qmatrix().m22());
+    m_marker->setScale(viewBox->matrix().m11(), viewBox->matrix().m22());
     
     return m_marker;
 }
 
 RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    KCanvasContainer *markerContainer = new (arena) KCanvasContainer(this);
+    RenderSVGContainer *markerContainer = new (arena) RenderSVGContainer(this);
     markerContainer->setDrawsContents(false); // Marker contents will be explicitly drawn.
     return markerContainer;
 }

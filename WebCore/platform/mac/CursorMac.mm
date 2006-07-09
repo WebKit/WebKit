@@ -75,30 +75,30 @@ static NSCursor* leakNamedCursor(const char* name, int x, int y)
 }
 
 Cursor::Cursor(Image* image)
-    : m_impl(KWQRetainNSRelease(createCustomCursor(image)))
+    : m_impl(HardRetainWithNSRelease(createCustomCursor(image)))
 {
 }
 
 Cursor::Cursor(const Cursor& other)
-    : m_impl(KWQRetain(other.m_impl))
+    : m_impl(HardRetain(other.m_impl))
 {
 }
 
 Cursor::~Cursor()
 {
-    KWQRelease(m_impl);
+    HardRelease(m_impl);
 }
 
 Cursor& Cursor::operator=(const Cursor& other)
 {
-    KWQRetain(other.m_impl);
-    KWQRelease(m_impl);
+    HardRetain(other.m_impl);
+    HardRelease(m_impl);
     m_impl = other.m_impl;
     return *this;
 }
 
 Cursor::Cursor(NSCursor* c)
-    : m_impl(KWQRetain(c))
+    : m_impl(HardRetain(c))
 {
 }
 

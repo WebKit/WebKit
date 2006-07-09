@@ -112,7 +112,7 @@ public:
     virtual void prepareFilter(const FloatRect &bbox) = 0;
     virtual void applyFilter(const FloatRect &bbox) = 0;
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 
 protected:
     FloatRect m_filterRect;
@@ -145,7 +145,7 @@ public:
     virtual CIFilter* getCIFilter(KCanvasFilterQuartz*) const = 0;
 #endif
 
-    virtual QTextStream &externalRepresentation(QTextStream &) const;
+    virtual TextStream &externalRepresentation(TextStream &) const;
 
 private:
     FloatRect m_subregion;
@@ -153,7 +153,7 @@ private:
     DeprecatedString m_result;
 };
 
-QTextStream &operator<<(QTextStream &, const KCanvasFilterEffect &);
+TextStream &operator<<(TextStream &, const KCanvasFilterEffect &);
 
 typedef enum {
     BM_NORMAL = 0,
@@ -172,7 +172,7 @@ public:
     KCBlendModeType blendMode() const { return m_mode; }
     void setBlendMode(KCBlendModeType mode) { m_mode = mode; }
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 
 private:
     KCBlendModeType m_mode;
@@ -195,7 +195,7 @@ public:
     DeprecatedValueList<float> values() const { return m_values; }
     void setValues(const DeprecatedValueList<float> &values) { m_values = values; };
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 
 private:
     KCColorMatrixType m_type;
@@ -237,7 +237,7 @@ public:
     KCComponentTransferFunction alphaFunction() const { return m_alphaFunc; }
     void setAlphaFunction(const KCComponentTransferFunction& func) { m_alphaFunc = func; }
 
-    QTextStream& externalRepresentation(QTextStream&) const;
+    TextStream& externalRepresentation(TextStream&) const;
 
 private:
     KCComponentTransferFunction m_redFunc;
@@ -273,7 +273,7 @@ public:
     float k4() const { return m_k4; }
     void setK4(float k4) { m_k4 = k4; }
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 
 private:
     DeprecatedString m_in2;
@@ -319,7 +319,7 @@ public:
     bool preserveAlpha() const { return m_preserveAlpha; }
     void setPreserveAlpha(bool preserveAlpha) { m_preserveAlpha = preserveAlpha; }
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 
 private:
     FloatSize m_kernelSize;
@@ -348,7 +348,7 @@ public:
     
     KCLightType type() const { return m_type; }
     
-    virtual QTextStream &externalRepresentation(QTextStream &) const = 0;
+    virtual TextStream &externalRepresentation(TextStream &) const = 0;
     
 private:
     KCLightType m_type;
@@ -363,7 +363,7 @@ public:
     float azimuth() const{ return m_azimuth; }
     float elevation() const{ return m_elevation; }
     
-    virtual QTextStream &externalRepresentation(QTextStream &) const;
+    virtual TextStream &externalRepresentation(TextStream &) const;
     
 private:
     float m_azimuth;
@@ -377,7 +377,7 @@ public:
     
     const KCanvasPoint3F& position() const { return m_position; }
     
-    virtual QTextStream &externalRepresentation(QTextStream &) const;
+    virtual TextStream &externalRepresentation(TextStream &) const;
 
 private:
     KCanvasPoint3F m_position;
@@ -395,7 +395,7 @@ public:
     float specularExponent() const { return m_specularExponent; }
     float limitingConeAngle() const { return m_limitingConeAngle; }
     
-    virtual QTextStream &externalRepresentation(QTextStream &) const;
+    virtual TextStream &externalRepresentation(TextStream &) const;
 private:
     KCanvasPoint3F m_position;
     KCanvasPoint3F m_direction;
@@ -427,7 +427,7 @@ public:
     const KCLightSource *lightSource() const { return m_lightSource; }
     void setLightSource(KCLightSource *lightSource);
     
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 
 private:
     Color m_lightingColor;
@@ -462,7 +462,7 @@ public:
     float scale() const { return m_scale; }
     void setScale(float scale) { m_scale = scale; }
     
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
     
 private:
     DeprecatedString m_in2;
@@ -480,7 +480,7 @@ public:
     float floodOpacity() const { return m_floodOpacity; }
     void setFloodOpacity(float floodOpacity) { m_floodOpacity = floodOpacity; }
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 
 private:
     Color m_floodColor;
@@ -496,7 +496,7 @@ public:
     float stdDeviationY() const;
     void setStdDeviationY(float y);
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 
 private:
     float m_x;
@@ -514,7 +514,7 @@ public:
     CachedImage* cachedImage() const { return m_cachedImage; }
     void setCachedImage(CachedImage* image);
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
     
 private:
     CachedImage* m_cachedImage;
@@ -526,7 +526,7 @@ public:
     DeprecatedStringList mergeInputs() const { return m_mergeInputs; }
     void setMergeInputs(const DeprecatedStringList &mergeInputs) { m_mergeInputs = mergeInputs; }
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
     
 private:
     DeprecatedStringList m_mergeInputs;
@@ -549,7 +549,7 @@ public:
     float radiusY() const { return m_radiusY; }
     void setRadiusY(float radiusY) { m_radiusY = radiusY; }
     
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
     
 private:
     KCMorphologyOperatorType m_operator;
@@ -566,7 +566,7 @@ public:
     float dy() const { return m_dy; }
     void setDy(float dy) { m_dy = dy; }
     
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
     
 private:
     float m_dx;
@@ -600,7 +600,7 @@ public:
     const KCLightSource *lightSource() const { return m_lightSource; }
     void setLightSource(KCLightSource *lightSource);
     
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
     
 private:
     Color m_lightingColor;
@@ -640,7 +640,7 @@ public:
     bool stitchTiles() const { return m_stitchTiles; }
     void setStitchTiles(bool stitch) { m_stitchTiles = stitch; }
 
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
     
 private:
     float m_baseFrequencyX;

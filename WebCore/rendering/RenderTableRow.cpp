@@ -106,8 +106,8 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
 
 void RenderTableRow::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
 
     for (RenderObject *child = firstChild(); child; child = child->nextSibling()) {
         if (child->isTableCell()) {

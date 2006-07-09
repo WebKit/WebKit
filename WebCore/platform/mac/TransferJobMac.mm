@@ -32,10 +32,10 @@
 #import "FoundationExtras.h"
 #import "FrameMac.h"
 #import "KURL.h"
-#import "KWQFormData.h"
-#import "KWQLoader.h"
-#import "KWQLoader.h"
-#import "KWQResourceLoader.h"
+#import "FormDataMac.h"
+#import "LoaderFunctions.h"
+#import "LoaderFunctions.h"
+#import "WebCoreResourceLoaderImp.h"
 #import "Logging.h"
 #import "WebCoreFrameBridge.h"
 
@@ -43,8 +43,8 @@ namespace WebCore {
     
 TransferJobInternal::~TransferJobInternal()
 {
-    KWQRelease(response);
-    KWQRelease(loader);
+    HardRelease(response);
+    HardRelease(loader);
 }
 
 TransferJob::~TransferJob()
@@ -70,7 +70,7 @@ bool TransferJob::start(DocLoader* docLoader)
     frame->didTellBridgeAboutLoad(url().url());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    KWQResourceLoader* resourceLoader = [[KWQResourceLoader alloc] initWithJob:this];
+    WebCoreResourceLoaderImp* resourceLoader = [[WebCoreResourceLoaderImp alloc] initWithJob:this];
 
     id <WebCoreResourceHandle> handle;
 
@@ -98,7 +98,7 @@ void TransferJob::assembleResponseHeaders() const
         if ([d->response isKindOfClass:[NSHTTPURLResponse class]]) {
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)d->response;
             NSDictionary *headers = [httpResponse allHeaderFields];
-            d->responseHeaders = DeprecatedString::fromNSString(KWQHeaderStringFromDictionary(headers, [httpResponse statusCode]));
+            d->responseHeaders = DeprecatedString::fromNSString(HeaderStringFromDictionary(headers, [httpResponse statusCode]));
         }
         d->assembledResponseHeaders = true;
     }
@@ -114,10 +114,10 @@ void TransferJob::retrieveCharset() const
     }
 }
 
-void TransferJob::setLoader(KWQResourceLoader *loader)
+void TransferJob::setLoader(WebCoreResourceLoaderImp *loader)
 {
-    KWQRetain(loader);
-    KWQRelease(d->loader);
+    HardRetain(loader);
+    HardRelease(d->loader);
     d->loader = loader;
 }
 
@@ -126,7 +126,7 @@ void TransferJob::receivedResponse(NSURLResponse* response)
     d->assembledResponseHeaders = false;
     d->retrievedCharset = false;
     d->response = response;
-    KWQRetain(d->response);
+    HardRetain(d->response);
     if (d->client)
         d->client->receivedResponse(this, response);
 }

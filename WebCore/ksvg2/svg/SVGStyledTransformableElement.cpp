@@ -85,7 +85,7 @@ void SVGStyledTransformableElement::updateLocalTransform(SVGTransformList *local
     if(localTransform) {
         m_localMatrix = localTransform->matrix();
         if (renderer()) {
-            renderer()->setLocalTransform(m_localMatrix->qmatrix());
+            renderer()->setLocalTransform(m_localMatrix->matrix());
             renderer()->setNeedsLayout(true);
         }
     }
@@ -128,7 +128,7 @@ void SVGStyledTransformableElement::attach()
     SVGStyledElement::attach();
 
     if (renderer() && m_localMatrix)
-        renderer()->setLocalTransform(m_localMatrix->qmatrix());
+        renderer()->setLocalTransform(m_localMatrix->matrix());
 }
 
 

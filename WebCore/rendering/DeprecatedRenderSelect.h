@@ -28,7 +28,7 @@
 
 #include "RenderFormElement.h"
 
-class QListBox;
+class ListBox;
 
 namespace WebCore {
     
@@ -61,7 +61,7 @@ namespace WebCore {
         virtual void selectionChanged(Widget*);
 
     protected:
-        QListBox* createListBox();
+        ListBox* createListBox();
         void setWidgetWritingDirection();
 
         unsigned m_size;

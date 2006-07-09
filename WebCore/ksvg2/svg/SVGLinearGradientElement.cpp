@@ -112,7 +112,7 @@ void SVGLinearGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
     KRenderingPaintServerLinearGradient *grad = static_cast<KRenderingPaintServerLinearGradient *>(_grad);
     KCanvasMatrix mat;
     if(gradientTransform()->baseVal()->numberOfItems() > 0)
-        mat = KCanvasMatrix(gradientTransform()->baseVal()->consolidate()->matrix()->qmatrix());
+        mat = KCanvasMatrix(gradientTransform()->baseVal()->consolidate()->matrix()->matrix());
 
     DeprecatedString ref = String(href()->baseVal()).deprecatedString();
     KRenderingPaintServer *pserver = getPaintServerById(document(), ref.mid(1));

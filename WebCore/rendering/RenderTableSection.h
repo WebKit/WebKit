@@ -53,7 +53,7 @@ public:
     virtual void position(int, int, int, int, int, bool, bool, int) {}
 
 #ifndef NDEBUG
-    virtual void dump(QTextStream *stream, DeprecatedString ind = "") const;
+    virtual void dump(TextStream *stream, DeprecatedString ind = "") const;
 #endif
 
     void addCell(RenderTableCell *cell, RenderObject* row);

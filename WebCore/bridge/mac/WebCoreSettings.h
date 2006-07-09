@@ -26,9 +26,9 @@
 #import <Foundation/Foundation.h>
 
 #ifdef __cplusplus
-class KHTMLSettings;
+class Settings;
 #else
-@class KHTMLSettings;
+@class Settings;
 #endif
 
 @interface WebCoreSettings : NSObject
@@ -54,7 +54,7 @@ class KHTMLSettings;
     NSString *userStyleSheetLocation;
     NSString *defaultTextEncoding;
     
-    KHTMLSettings *settings;
+    Settings *settings;
 }
 
 - (void)setStandardFontFamily:(NSString *)family;
@@ -117,6 +117,6 @@ class KHTMLSettings;
 - (void)setDefaultTextEncoding:(NSString *)encoding;
 - (NSString *)defaultTextEncoding;
 
-- (KHTMLSettings *)settings;
+- (Settings *)settings;
 
 @end

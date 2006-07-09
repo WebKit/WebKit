@@ -24,7 +24,7 @@
 #define KCanvasMatrix_H
 #if SVG_SUPPORT
 
-#include "KWQWMatrix.h"
+#include "AffineTransform.h"
 
 namespace WebCore {
 
@@ -38,17 +38,17 @@ class KCanvasMatrix
 {
 public:
     KCanvasMatrix();
-    KCanvasMatrix(const QMatrix &qmatrix);
+    KCanvasMatrix(const AffineTransform &matrix);
     KCanvasMatrix(const KCanvasMatrix &matrix);
     KCanvasMatrix(double a, double b, double c, double d, double e, double f);
     ~KCanvasMatrix();
 
     // Operators
-    KCanvasMatrix &operator=(const QMatrix &other);
+    KCanvasMatrix &operator=(const AffineTransform &other);
     KCanvasMatrix &operator=(const KCanvasMatrix &other);
 
-    bool operator==(const QMatrix &other) const;
-    bool operator!=(const QMatrix &other) const;
+    bool operator==(const AffineTransform &other) const;
+    bool operator!=(const AffineTransform &other) const;
 
     bool operator==(const KCanvasMatrix &other) const;
     bool operator!=(const KCanvasMatrix &other) const;
@@ -94,10 +94,10 @@ public:
     // After this operation, the matrix has x and y scale of one ('1').
     void removeScale(double *xScale, double *yScale);
 
-    QMatrix qmatrix() const;
+    AffineTransform matrix() const;
 
 private:
-    QMatrix m_matrix;
+    AffineTransform m_matrix;
     KCMatrixOperationMode m_mode;
 };
 

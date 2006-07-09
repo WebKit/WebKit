@@ -1247,7 +1247,7 @@ static DeprecatedString encodeHostname(const DeprecatedString &s)
     if (error != U_ZERO_ERROR) {
         return s;
     }
-    return DeprecatedString(reinterpret_cast<QChar *>(buffer), numCharactersConverted);
+    return DeprecatedString(reinterpret_cast<DeprecatedChar *>(buffer), numCharactersConverted);
 }
 
 static Vector<pair<int, int> > findHostnamesInMailToURL(const DeprecatedString &s)
@@ -1265,7 +1265,7 @@ static Vector<pair<int, int> > findHostnamesInMailToURL(const DeprecatedString &
         if (hostnameOrStringStart == -1) {
             return a;
         }
-        QChar c = s[hostnameOrStringStart];
+        DeprecatedChar c = s[hostnameOrStringStart];
         p = hostnameOrStringStart + 1;
 
         if (c == '?') {

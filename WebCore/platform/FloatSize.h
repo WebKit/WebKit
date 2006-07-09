@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef QSIZEF_H_
-#define QSIZEF_H_
+#ifndef FloatSize_h
+#define FloatSize_h
 
 #if __APPLE__
 

@@ -30,7 +30,7 @@
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
-#include "KWQComboBox.h"
+#include "PopUpButton.h"
 
 using std::min;
 
@@ -50,16 +50,16 @@ DeprecatedRenderSelect::DeprecatedRenderSelect(HTMLSelectElement* element)
     if (m_useListBox)
         setWidget(createListBox());
     else
-        setWidget(new QComboBox);
+        setWidget(new PopUpButton);
 }
 
 void DeprecatedRenderSelect::setWidgetWritingDirection()
 {
     TextDirection d = style()->direction() == RTL ? RTL : LTR;
     if (m_useListBox)
-        static_cast<QListBox*>(m_widget)->setWritingDirection(d);
+        static_cast<ListBox*>(m_widget)->setWritingDirection(d);
     else
-        static_cast<QComboBox*>(m_widget)->setWritingDirection(d);
+        static_cast<PopUpButton*>(m_widget)->setWritingDirection(d);
 }
 
 void DeprecatedRenderSelect::setStyle(RenderStyle* s)
@@ -89,12 +89,12 @@ void DeprecatedRenderSelect::updateFromElement()
             if (m_useListBox)
                 setWidget(createListBox());
             else
-                setWidget(new QComboBox);
+                setWidget(new PopUpButton);
             setWidgetWritingDirection();
         }
 
         if (m_useListBox && oldMultiple != m_multiple) {
-            static_cast<QListBox*>(m_widget)->setSelectionMode(m_multiple ? QListBox::Extended : QListBox::Single);
+            static_cast<ListBox*>(m_widget)->setSelectionMode(m_multiple ? ListBox::Extended : ListBox::Single);
         }
         m_selectionChanged = true;
         m_optionsChanged = true;
@@ -108,9 +108,9 @@ void DeprecatedRenderSelect::updateFromElement()
         int listIndex;
 
         if (m_useListBox)
-            static_cast<QListBox*>(m_widget)->clear();
+            static_cast<ListBox*>(m_widget)->clear();
         else
-            static_cast<QComboBox*>(m_widget)->clear();
+            static_cast<PopUpButton*>(m_widget)->clear();
 
         bool groupEnabled = true;
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
@@ -128,9 +128,9 @@ void DeprecatedRenderSelect::updateFromElement()
                 groupEnabled = optgroupElement->isEnabled();
                 
                 if (m_useListBox)
-                    static_cast<QListBox*>(m_widget)->appendGroupLabel(label, groupEnabled);
+                    static_cast<ListBox*>(m_widget)->appendGroupLabel(label, groupEnabled);
                 else
-                    static_cast<QComboBox*>(m_widget)->appendGroupLabel(label);
+                    static_cast<PopUpButton*>(m_widget)->appendGroupLabel(label);
             } else if (listItems[listIndex]->hasTagName(optionTag)) {
                 HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(listItems[listIndex]);
                 DeprecatedString itemText = optionElement->text().deprecatedString();
@@ -148,18 +148,18 @@ void DeprecatedRenderSelect::updateFromElement()
                     itemText.prepend("    ");
 
                 if (m_useListBox)
-                    static_cast<QListBox*>(m_widget)->appendItem(itemText, groupEnabled && optionElement->isEnabled());
+                    static_cast<ListBox*>(m_widget)->appendItem(itemText, groupEnabled && optionElement->isEnabled());
                 else
-                    static_cast<QComboBox*>(m_widget)->appendItem(itemText, groupEnabled && optionElement->isEnabled());
+                    static_cast<PopUpButton*>(m_widget)->appendItem(itemText, groupEnabled && optionElement->isEnabled());
             } else if (listItems[listIndex]->hasTagName(hrTag)) {
                 if (!m_useListBox)
-                    static_cast<QComboBox*>(m_widget)->appendSeparator();
+                    static_cast<PopUpButton*>(m_widget)->appendSeparator();
             } else
                 ASSERT(false);
             m_selectionChanged = true;
         }
         if (m_useListBox)
-            static_cast<QListBox*>(m_widget)->doneAppendingItems();
+            static_cast<ListBox*>(m_widget)->doneAppendingItems();
         setNeedsLayoutAndMinMaxRecalc();
         m_optionsChanged = false;
     }
@@ -176,7 +176,7 @@ void DeprecatedRenderSelect::updateFromElement()
 short DeprecatedRenderSelect::baselinePosition(bool f, bool isRootLineBox) const
 {
     if (m_useListBox) {
-        // FIXME: Should get the hardcoded constant of 7 by calling a QListBox function,
+        // FIXME: Should get the hardcoded constant of 7 by calling a ListBox function,
         // as we do for other widget classes.
         return RenderWidget::baselinePosition(f, isRootLineBox) - 7;
     }
@@ -210,7 +210,7 @@ void DeprecatedRenderSelect::layout()
 
     // calculate size
     if (m_useListBox) {
-        QListBox* w = static_cast<QListBox*>(m_widget);
+        ListBox* w = static_cast<ListBox*>(m_widget);
 
 
         int size = m_size;
@@ -220,7 +220,7 @@ void DeprecatedRenderSelect::layout()
         // the average of that is IMHO min(number of elements, 10)
         // so I did that ;-)
         if (size < 1)
-            size = min(static_cast<QListBox*>(m_widget)->count(), 10U);
+            size = min(static_cast<ListBox*>(m_widget)->count(), 10U);
 
         // Let the widget tell us how big it wants to be.
         IntSize s(w->sizeForNumberOfLines(size));
@@ -251,7 +251,7 @@ void DeprecatedRenderSelect::valueChanged(Widget*)
 
     ASSERT(!m_useListBox);
 
-    int index = static_cast<QComboBox*>(m_widget)->currentItem();
+    int index = static_cast<PopUpButton*>(m_widget)->currentItem();
 
     Vector<HTMLElement*> listItems = static_cast<HTMLSelectElement*>(node())->listItems();
     if (index >= 0 && index < (int)listItems.size()) {
@@ -278,8 +278,8 @@ void DeprecatedRenderSelect::valueChanged(Widget*)
         }
 
         if (found) {
-            if (index != static_cast<QComboBox*>(m_widget)->currentItem())
-                static_cast<QComboBox*>(m_widget)->setCurrentItem(index);
+            if (index != static_cast<PopUpButton*>(m_widget)->currentItem())
+                static_cast<PopUpButton*>(m_widget)->setCurrentItem(index);
 
             for (unsigned i = 0; i < listItems.size(); ++i)
                 if (listItems[i]->hasTagName(optionTag) && i != (unsigned int) index)
@@ -307,7 +307,7 @@ void DeprecatedRenderSelect::selectionChanged(Widget*)
         // again with updateSelection.
         if (listItems[i]->hasTagName(optionTag))
             static_cast<HTMLOptionElement*>(listItems[i])
-                ->m_selected = static_cast<QListBox*>(m_widget)->isSelected(j);
+                ->m_selected = static_cast<ListBox*>(m_widget)->isSelected(j);
         if (listItems[i]->hasTagName(optionTag) || listItems[i]->hasTagName(optgroupTag))
             ++j;
     }
@@ -319,10 +319,10 @@ void DeprecatedRenderSelect::setOptionsChanged(bool _optionsChanged)
     m_optionsChanged = _optionsChanged;
 }
 
-QListBox* DeprecatedRenderSelect::createListBox()
+ListBox* DeprecatedRenderSelect::createListBox()
 {
-    QListBox *lb = new QListBox();
-    lb->setSelectionMode(m_multiple ? QListBox::Extended : QListBox::Single);
+    ListBox *lb = new ListBox();
+    lb->setSelectionMode(m_multiple ? ListBox::Extended : ListBox::Single);
     m_ignoreSelectEvents = false;
     return lb;
 }
@@ -333,7 +333,7 @@ void DeprecatedRenderSelect::updateSelection()
     int i;
     if (m_useListBox) {
         // if multi-select, we select only the new selected index
-        QListBox *listBox = static_cast<QListBox*>(m_widget);
+        ListBox *listBox = static_cast<ListBox*>(m_widget);
         int j = 0;
         for (i = 0; i < int(listItems.size()); i++) {
             listBox->setSelected(j, listItems[i]->hasTagName(optionTag) &&
@@ -351,7 +351,7 @@ void DeprecatedRenderSelect::updateSelection()
                 if (found)
                     static_cast<HTMLOptionElement*>(listItems[i])->m_selected = false;
                 else if (static_cast<HTMLOptionElement*>(listItems[i])->selected()) {
-                    static_cast<QComboBox*>(m_widget)->setCurrentItem(i);
+                    static_cast<PopUpButton*>(m_widget)->setCurrentItem(i);
                     found = true;
                 }
                 firstOption = i;

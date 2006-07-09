@@ -35,7 +35,7 @@
 #include "StringHash.h"
 #include "Timer.h"
 #include "kjs_proxy.h"
-#include "KWQKIOGlobal.h"
+#include "CacheControl.h"
 #include <wtf/HashMap.h>
 #include "CSSMutableStyleDeclaration.h"
 #include "Decoder.h"
@@ -133,7 +133,7 @@ namespace WebCore {
         bool m_bJavaEnabled : 1;
         bool m_bPluginsEnabled : 1;
 
-        KHTMLSettings* m_settings;
+        Settings* m_settings;
 
         HashMap<String, String> m_metaData;
 

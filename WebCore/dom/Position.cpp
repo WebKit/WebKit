@@ -609,7 +609,7 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
     if (prev != *this && prev.node()->inSameContainingBlockFlowElement(node()) && prev.node()->isTextNode()) {
         String string = static_cast<Text *>(prev.node())->data();
         UChar c = string[prev.offset()];
-        if (considerNonCollapsibleWhitespace ? (QChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
+        if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
             return prev;
     }
 
@@ -626,7 +626,7 @@ Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerN
         if (offset() < (int)textNode->length()) {
             String string = textNode->data();
             UChar c = string[offset()];
-            if (considerNonCollapsibleWhitespace ? (QChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
+            if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
                 return *this;
             return Position();
         }
@@ -639,7 +639,7 @@ Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerN
     if (next != *this && next.node()->inSameContainingBlockFlowElement(node()) && next.node()->isTextNode()) {
         String string = static_cast<Text*>(next.node())->data();
         UChar c = string[0];
-        if (considerNonCollapsibleWhitespace ? (QChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
+        if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
             return next;
     }
 

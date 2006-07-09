@@ -25,8 +25,8 @@
 
 // An implementation of the clipboard class from IE that talks to the Cocoa Pasteboard
 
-#ifndef KWQCLIPBOARD_H_
-#define KWQCLIPBOARD_H_
+#ifndef ClipboardMac_h
+#define ClipboardMac_h
 
 #include "Image.h"
 #include "IntPoint.h"

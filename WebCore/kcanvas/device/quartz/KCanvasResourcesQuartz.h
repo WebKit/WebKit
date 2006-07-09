@@ -27,8 +27,8 @@
 #define KCanvasResourcesQuartz_h
 
 #import "KCanvasImage.h"
-#import "KCanvasContainer.h"
-#import "KWQWMatrix.h"
+#import "RenderSVGContainer.h"
+#import "AffineTransform.h"
 
 typedef struct CGContext *CGContextRef;
 typedef struct CGLayer *CGLayerRef;

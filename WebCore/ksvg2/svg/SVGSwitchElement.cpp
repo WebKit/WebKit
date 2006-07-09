@@ -25,7 +25,7 @@
 #include "Attr.h"
 
 #include <kcanvas/KCanvasCreator.h>
-#include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/RenderSVGContainer.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
 #include "SVGNames.h"
@@ -58,7 +58,7 @@ bool SVGSwitchElement::childShouldCreateRenderer(Node *child) const
 
 RenderObject* SVGSwitchElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) KCanvasContainer(this);
+    return new (arena) RenderSVGContainer(this);
 }
 
 }

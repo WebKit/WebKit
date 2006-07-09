@@ -35,7 +35,7 @@
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "csshelper.h"
-#include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/RenderSVGContainer.h>
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
@@ -75,7 +75,7 @@ void SVGAElement::parseMappedAttribute(MappedAttribute *attr)
 
 RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    return new (arena) KCanvasContainer(this);
+    return new (arena) RenderSVGContainer(this);
 }
 
 void SVGAElement::defaultEventHandler(Event *evt)

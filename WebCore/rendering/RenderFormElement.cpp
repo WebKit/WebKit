@@ -69,8 +69,8 @@ void RenderFormElement::updateFromElement()
 
 void RenderFormElement::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
 
     // minimum height
     m_height = 0;

@@ -27,7 +27,7 @@
 
 #include "CachedImage.h"
 
-#include "KWQTextStream.h"
+#include "TextStream.h"
 #include "KCanvasTreeDebug.h"
 #include <wtf/Assertions.h>
 
@@ -66,7 +66,7 @@ FloatRect KCanvasFilter::filterBBoxForItemBBox(FloatRect itemBBox) const
     return filterBBox;
 }
 
-QTextStream &KCanvasFilter::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFilter::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=FILTER] "
         << " [bounding box=" << filterRect() << "]";
@@ -87,7 +87,7 @@ KCanvasFilter *getFilterById(Document *document, const AtomicString &id)
     return 0;
 }
 
-QTextStream &operator<<(QTextStream &ts, const KCanvasFilterEffect &e)
+TextStream &operator<<(TextStream &ts, const KCanvasFilterEffect &e)
 {
     return e.externalRepresentation(ts);
 }
@@ -121,13 +121,13 @@ void KCanvasFilterEffect::setResult(const DeprecatedString &result)
     m_result = result;
 }
 
-static QTextStream &operator<<(QTextStream &ts, const KCanvasPoint3F p)
+static TextStream &operator<<(TextStream &ts, const KCanvasPoint3F p)
 {
     ts << "x=" << p.x() << " y=" << p.y() << " z=" << p.z();
     return ts;  
 }
 
-QTextStream &KCanvasFilterEffect::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFilterEffect::externalRepresentation(TextStream &ts) const
 {
     if (!in().isEmpty())
         ts << "[in=\"" << in() << "\"]";
@@ -138,14 +138,14 @@ QTextStream &KCanvasFilterEffect::externalRepresentation(QTextStream &ts) const
     return ts;    
 }
 
-QTextStream &KCPointLightSource::externalRepresentation(QTextStream &ts) const
+TextStream &KCPointLightSource::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=POINT-LIGHT] ";
     ts << "[position=\"" << position() << "\"]";
     return ts;  
 }
 
-QTextStream &KCSpotLightSource::externalRepresentation(QTextStream &ts) const
+TextStream &KCSpotLightSource::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=SPOT-LIGHT] ";
     ts << "[position=\"" << position() << "\"]";
@@ -155,7 +155,7 @@ QTextStream &KCSpotLightSource::externalRepresentation(QTextStream &ts) const
     return ts;
 }
 
-QTextStream &KCDistantLightSource::externalRepresentation(QTextStream &ts) const
+TextStream &KCDistantLightSource::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=DISTANT-LIGHT] ";
     ts << "[azimuth=\"" << azimuth() << "\"]";
@@ -163,7 +163,7 @@ QTextStream &KCDistantLightSource::externalRepresentation(QTextStream &ts) const
     return ts;  
 }
 
-static QTextStream &operator<<(QTextStream &ts, KCBlendModeType t)
+static TextStream &operator<<(TextStream &ts, KCBlendModeType t)
 {
     switch (t) 
     {
@@ -181,7 +181,7 @@ static QTextStream &operator<<(QTextStream &ts, KCBlendModeType t)
     return ts;        
 }
 
-QTextStream &KCanvasFEBlend::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEBlend::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=BLEND] ";
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -191,7 +191,7 @@ QTextStream &KCanvasFEBlend::externalRepresentation(QTextStream &ts) const
     return ts;
 }
 
-static QTextStream &operator<<(QTextStream &ts, KCColorMatrixType t)
+static TextStream &operator<<(TextStream &ts, KCColorMatrixType t)
 {
     switch (t) 
     {
@@ -207,7 +207,7 @@ static QTextStream &operator<<(QTextStream &ts, KCColorMatrixType t)
     return ts;        
 }
 
-QTextStream &KCanvasFEColorMatrix::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEColorMatrix::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=COLOR-MATRIX] "; 
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -216,7 +216,7 @@ QTextStream &KCanvasFEColorMatrix::externalRepresentation(QTextStream &ts) const
     return ts;
 }
 
-static QTextStream &operator<<(QTextStream &ts, KCComponentTransferType t)
+static TextStream &operator<<(TextStream &ts, KCComponentTransferType t)
 {
     switch (t) 
     {
@@ -234,7 +234,7 @@ static QTextStream &operator<<(QTextStream &ts, KCComponentTransferType t)
     return ts;
 }
 
-static QTextStream &operator<<(QTextStream &ts, const KCComponentTransferFunction &func)
+static TextStream &operator<<(TextStream &ts, const KCComponentTransferFunction &func)
 {
     ts << "[type=" << func.type << "]"; 
     switch (func.type) {
@@ -265,7 +265,7 @@ static QTextStream &operator<<(QTextStream &ts, const KCComponentTransferFunctio
     return ts;        
 }
 
-QTextStream &KCanvasFEComponentTransfer::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEComponentTransfer::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=COMPONENT-TRANSFER] ";
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -276,7 +276,7 @@ QTextStream &KCanvasFEComponentTransfer::externalRepresentation(QTextStream &ts)
     return ts;  
 }
 
-QTextStream &KCanvasFEComposite::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEComposite::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=COMPOSITE] ";
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -286,7 +286,7 @@ QTextStream &KCanvasFEComposite::externalRepresentation(QTextStream &ts) const
     return ts;
 }
 
-static QTextStream &operator<<(QTextStream &ts, KCEdgeModeType t)
+static TextStream &operator<<(TextStream &ts, KCEdgeModeType t)
 {   
     switch (t) 
     {
@@ -300,7 +300,7 @@ static QTextStream &operator<<(QTextStream &ts, KCEdgeModeType t)
     return ts;
 }
 
-QTextStream &KCanvasFEConvolveMatrix::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEConvolveMatrix::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=CONVOLVE-MATRIX] ";
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -331,7 +331,7 @@ void KCanvasFESpecularLighting::setLightSource(KCLightSource *lightSource)
     }
 }
 
-QTextStream &KCanvasFEDiffuseLighting::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEDiffuseLighting::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=DIFFUSE-LIGHTING] ";
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -341,7 +341,7 @@ QTextStream &KCanvasFEDiffuseLighting::externalRepresentation(QTextStream &ts) c
    return ts;
 }
 
-static QTextStream &operator<<(QTextStream &ts, KCChannelSelectorType t)
+static TextStream &operator<<(TextStream &ts, KCChannelSelectorType t)
 {
     switch (t)
     {
@@ -357,7 +357,7 @@ static QTextStream &operator<<(QTextStream &ts, KCChannelSelectorType t)
     return ts;
 }
 
-QTextStream &KCanvasFEDisplacementMap::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEDisplacementMap::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=DISPLACEMENT-MAP] "; 
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -369,7 +369,7 @@ QTextStream &KCanvasFEDisplacementMap::externalRepresentation(QTextStream &ts) c
    return ts;
 }
 
-QTextStream &KCanvasFEFlood::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEFlood::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=FLOOD] "; 
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -398,7 +398,7 @@ void KCanvasFEGaussianBlur::setStdDeviationY(float y)
     m_y = y;
 }
 
-QTextStream &KCanvasFEGaussianBlur::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEGaussianBlur::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=GAUSSIAN-BLUR] "; 
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -406,7 +406,7 @@ QTextStream &KCanvasFEGaussianBlur::externalRepresentation(QTextStream &ts) cons
     return ts;
 }
 
-QTextStream &KCanvasFEImage::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEImage::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=IMAGE] "; 
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -414,7 +414,7 @@ QTextStream &KCanvasFEImage::externalRepresentation(QTextStream &ts) const
     return ts;
 }
 
-QTextStream &KCanvasFEMerge::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEMerge::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=MERGE] ";
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -422,7 +422,7 @@ QTextStream &KCanvasFEMerge::externalRepresentation(QTextStream &ts) const
     return ts;
 }
 
-static QTextStream &operator<<(QTextStream &ts, KCMorphologyOperatorType t)
+static TextStream &operator<<(TextStream &ts, KCMorphologyOperatorType t)
 {
     switch (t)
     {
@@ -434,7 +434,7 @@ static QTextStream &operator<<(QTextStream &ts, KCMorphologyOperatorType t)
     return ts;
 }
 
-QTextStream &KCanvasFEMorphology::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEMorphology::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=MORPHOLOGY-OPERATOR] "; 
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -443,14 +443,14 @@ QTextStream &KCanvasFEMorphology::externalRepresentation(QTextStream &ts) const
    return ts;
 }
 
-QTextStream &KCanvasFEOffset::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFEOffset::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=OFFSET] "; KCanvasFilterEffect::externalRepresentation(ts)
         << " [dx=" << dx() << " dy=" << dy() << "]";    
    return ts;
 }
 
-QTextStream &KCanvasFESpecularLighting::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFESpecularLighting::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=SPECULAR-LIGHTING] ";
     KCanvasFilterEffect::externalRepresentation(ts);
@@ -462,14 +462,14 @@ QTextStream &KCanvasFESpecularLighting::externalRepresentation(QTextStream &ts) 
 
 #if 0
 ///FIXME: KCanvasFETile doesn't have any properties
-QTextStream &KCanvasFETile::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFETile::externalRepresentation(TextStream &ts) const
 {
    KCanvasFilterEffect::externalRepresentation(ts);
    return ts;
 }
 #endif
 
-static QTextStream &operator<<(QTextStream &ts, KCTurbulanceType t)
+static TextStream &operator<<(TextStream &ts, KCTurbulanceType t)
 {
     switch (t)
     {
@@ -481,7 +481,7 @@ static QTextStream &operator<<(QTextStream &ts, KCTurbulanceType t)
     return ts;
 }
 
-QTextStream &KCanvasFETurbulence::externalRepresentation(QTextStream &ts) const
+TextStream &KCanvasFETurbulence::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=TURBULENCE] "; 
     KCanvasFilterEffect::externalRepresentation(ts);

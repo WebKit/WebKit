@@ -79,7 +79,7 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-QScrollBar* RenderLayer::gScrollBar = 0;
+ScrollBar* RenderLayer::gScrollBar = 0;
 
 #ifndef NDEBUG
 static bool inRenderLayerDestroy;
@@ -889,7 +889,7 @@ RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
 {
     if (hasScrollbar && !m_hBar) {
         FrameView* scrollView = m_object->element()->document()->view();
-        m_hBar = new QScrollBar(HorizontalScrollBar);
+        m_hBar = new ScrollBar(HorizontalScrollBar);
         m_hBar->setClient(this);
         scrollView->addChild(m_hBar, 0, -50000);
     } else if (!hasScrollbar && m_hBar) {
@@ -905,7 +905,7 @@ RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 {
     if (hasScrollbar && !m_vBar) {
         FrameView* scrollView = m_object->element()->document()->view();
-        m_vBar = new QScrollBar(VerticalScrollBar);
+        m_vBar = new ScrollBar(VerticalScrollBar);
         m_vBar->setClient(this);
         scrollView->addChild(m_vBar, 0, -50000);
     } else if (!hasScrollbar && m_vBar) {
@@ -1171,16 +1171,16 @@ void RenderLayer::paintResizeControl(GraphicsContext* c)
     c->drawImage(m_resizeCornerImage, imagePoint);
 }
 
-bool RenderLayer::scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier)
+bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
     bool didHorizontalScroll = false;
     bool didVerticalScroll = false;
     
     if (m_hBar != 0) {
-        if (granularity == KWQScrollDocument) {
-            // Special-case for the KWQScrollDocument granularity. A document scroll can only be up 
+        if (granularity == ScrollByDocument) {
+            // Special-case for the ScrollByDocument granularity. A document scroll can only be up 
             // or down and in both cases the horizontal bar goes all the way to the left.
-            didHorizontalScroll = m_hBar->scroll(KWQScrollLeft, KWQScrollDocument, multiplier);
+            didHorizontalScroll = m_hBar->scroll(ScrollLeft, ScrollByDocument, multiplier);
         } else {
             didHorizontalScroll = m_hBar->scroll(direction, granularity, multiplier);
         }

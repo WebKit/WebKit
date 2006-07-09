@@ -19,8 +19,8 @@
     Boston, MA 02111-1307, USA.
 
 */
-#ifndef KHTMLDECODER_H
-#define KHTMLDECODER_H
+#ifndef Decoder_h
+#define Decoder_h
 
 #include <wtf/OwnPtr.h>
 #include "TextEncoding.h"

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KHTML_EDITING_SELECTIONCONTROLLER_H
-#define KHTML_EDITING_SELECTIONCONTROLLER_H
+#ifndef SelectionController_h
+#define SelectionController_h
 
 #include "IntRect.h"
 #include "Selection.h"
@@ -201,4 +201,4 @@ void showTree(const WebCore::SelectionController&);
 void showTree(const WebCore::SelectionController*);
 #endif
 
-#endif // KHTML_EDITING_SELECTIONCONTROLLER_H
+#endif // SelectionController_h

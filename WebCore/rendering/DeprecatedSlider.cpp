@@ -29,7 +29,7 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "HTMLInputElement.h"
-#include "KWQSlider.h"
+#include "WebCoreSlider.h"
 
 using std::min;
 
@@ -41,7 +41,7 @@ using namespace HTMLNames;
 DeprecatedSlider::DeprecatedSlider(HTMLInputElement* element)
     : RenderFormElement(element)
 {
-    setWidget(new QSlider);
+    setWidget(new Slider);
 }
 
 void DeprecatedSlider::calcMinMaxWidth()
@@ -83,7 +83,7 @@ void DeprecatedSlider::updateFromElement()
 
     static_cast<HTMLInputElement*>(node())->setValue(String::number(val));
 
-    QSlider* slider = static_cast<QSlider*>(widget());
+    Slider* slider = static_cast<Slider*>(widget());
      
     slider->setMinValue(minVal);
     slider->setMaxValue(maxVal);
@@ -94,7 +94,7 @@ void DeprecatedSlider::updateFromElement()
 
 void DeprecatedSlider::valueChanged(Widget*)
 {
-    QSlider* slider = static_cast<QSlider*>(widget());
+    Slider* slider = static_cast<Slider*>(widget());
 
     double val = slider->value();
     const AtomicString& precision = static_cast<HTMLInputElement*>(node())->getAttribute(precisionAttr);

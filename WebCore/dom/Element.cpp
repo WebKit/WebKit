@@ -33,7 +33,7 @@
 #include "NamedAttrMap.h"
 #include "RenderBlock.h"
 #include "SelectionController.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -154,14 +154,14 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
     }
 }
 
-void Element::scrollByUnits(int units, KWQScrollGranularity granularity)
+void Element::scrollByUnits(int units, ScrollGranularity granularity)
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject *rend = renderer()) {
         if (rend->hasOverflowClip()) {
-            KWQScrollDirection direction = KWQScrollDown;
+            ScrollDirection direction = ScrollDown;
             if (units < 0) {
-                direction = KWQScrollUp;
+                direction = ScrollUp;
                 units = -units;
             }
             rend->layer()->scroll(direction, granularity, units);
@@ -171,12 +171,12 @@ void Element::scrollByUnits(int units, KWQScrollGranularity granularity)
 
 void Element::scrollByLines(int lines)
 {
-    scrollByUnits(lines, KWQScrollLine);
+    scrollByUnits(lines, ScrollByLine);
 }
 
 void Element::scrollByPages(int pages)
 {
-    scrollByUnits(pages, KWQScrollPage);
+    scrollByUnits(pages, ScrollByPage);
 }
 
 int Element::offsetLeft()
@@ -699,7 +699,7 @@ void Element::updateId(const AtomicString& oldId, const AtomicString& newId)
 }
 
 #ifndef NDEBUG
-void Element::dump(QTextStream *stream, DeprecatedString ind) const
+void Element::dump(TextStream *stream, DeprecatedString ind) const
 {
     updateStyleAttributeIfNeeded();
     if (namedAttrMap) {

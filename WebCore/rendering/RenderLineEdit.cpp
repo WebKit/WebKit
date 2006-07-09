@@ -30,7 +30,7 @@
 #include "HTMLNames.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
-#include "KWQLineEdit.h"
+#include "TextField.h"
 
 namespace WebCore {
 
@@ -41,19 +41,19 @@ RenderLineEdit::RenderLineEdit(HTMLInputElement* element)
     : RenderFormElement(element)
     , m_updating(false)
 {
-    QLineEdit::Type type;
+    TextField::Type type;
     switch (element->inputType()) {
         case HTMLInputElement::PASSWORD:
-            type = QLineEdit::Password;
+            type = TextField::Password;
             break;
         case HTMLInputElement::SEARCH:
-            type = QLineEdit::Search;
+            type = TextField::Search;
             break;
         default:
-            type = QLineEdit::Normal;
+            type = TextField::Normal;
     }
-    QLineEdit* edit = new QLineEdit(type);
-    if (type == QLineEdit::Search)
+    TextField* edit = new TextField(type);
+    if (type == TextField::Search)
         edit->setLiveSearch(false);
     setWidget(edit);
 }
@@ -61,7 +61,7 @@ RenderLineEdit::RenderLineEdit(HTMLInputElement* element)
 void RenderLineEdit::selectionChanged(Widget*)
 {
     // We only want to call onselect if there actually is a selection
-    QLineEdit* w = static_cast<QLineEdit*>(m_widget);
+    TextField* w = static_cast<TextField*>(m_widget);
     if (w->hasSelectedText())
         static_cast<HTMLGenericFormElement*>(node())->onSelect();
 }
@@ -89,17 +89,17 @@ void RenderLineEdit::performSearch(Widget*)
 void RenderLineEdit::addSearchResult()
 {
     if (widget())
-        static_cast<QLineEdit*>(widget())->addSearchResult();
+        static_cast<TextField*>(widget())->addSearchResult();
 }
 
 void RenderLineEdit::calcMinMaxWidth()
 {
-    KHTMLAssert(!minMaxKnown());
+    ASSERT(!minMaxKnown());
 
     // Let the widget tell us how big it wants to be.
     m_updating = true;
     int size = static_cast<HTMLInputElement*>(node())->size();
-    IntSize s(static_cast<QLineEdit*>(widget())->sizeForCharacterWidth(size > 0 ? size : 20));
+    IntSize s(static_cast<TextField*>(widget())->sizeForCharacterWidth(size > 0 ? size : 20));
     m_updating = false;
 
     setIntrinsicWidth(s.width());
@@ -112,7 +112,7 @@ void RenderLineEdit::setStyle(RenderStyle *s)
 {
     RenderFormElement::setStyle(s);
 
-    QLineEdit* w = static_cast<QLineEdit*>(widget());
+    TextField* w = static_cast<TextField*>(widget());
     w->setAlignment(textAlignment());
     w->setWritingDirection(style()->direction() == RTL ? RTL : LTR);
 }
@@ -120,7 +120,7 @@ void RenderLineEdit::setStyle(RenderStyle *s)
 void RenderLineEdit::updateFromElement()
 {
     HTMLInputElement* e = static_cast<HTMLInputElement*>(node());
-    QLineEdit* w = static_cast<QLineEdit*>(widget());
+    TextField* w = static_cast<TextField*>(widget());
     
     int ml = e->maxLength();
     if (ml <= 0 || ml > 1024)
@@ -150,7 +150,7 @@ void RenderLineEdit::updateFromElement()
     
     // Handle updating the search attributes.
     w->setPlaceholderString(e->getAttribute(placeholderAttr).deprecatedString());
-    if (w->type() == QLineEdit::Search) {
+    if (w->type() == TextField::Search) {
         w->setLiveSearch(!e->getAttribute(incrementalAttr).isNull());
         w->setAutoSaveName(e->getAttribute(autosaveAttr));
         w->setMaxResults(e->maxResults());
@@ -166,7 +166,7 @@ void RenderLineEdit::valueChanged(Widget*)
     if (m_updating) // Don't alter the value if we are in the middle of initing the control, since
         return;     // we are getting the value from the DOM and it's not user input.
 
-    String newText = static_cast<QLineEdit*>(widget())->text();
+    String newText = static_cast<TextField*>(widget())->text();
 
     // A null string value is used to indicate that the form control has not altered the original
     // default value.  That means that we should never use the null string value when the user
@@ -180,7 +180,7 @@ void RenderLineEdit::valueChanged(Widget*)
 
 int RenderLineEdit::selectionStart()
 {
-    QLineEdit *lineEdit = static_cast<QLineEdit *>(m_widget);
+    TextField *lineEdit = static_cast<TextField *>(m_widget);
     int start = lineEdit->selectionStart();
     if (start == -1)
         start = lineEdit->cursorPosition();
@@ -189,7 +189,7 @@ int RenderLineEdit::selectionStart()
 
 int RenderLineEdit::selectionEnd()
 {
-    QLineEdit *lineEdit = static_cast<QLineEdit *>(m_widget);
+    TextField *lineEdit = static_cast<TextField *>(m_widget);
     int start = lineEdit->selectionStart();
     if (start == -1)
         return lineEdit->cursorPosition();
@@ -200,7 +200,7 @@ void RenderLineEdit::setSelectionStart(int start)
 {
     int realStart = max(start, 0);
     int length = max(selectionEnd() - realStart, 0);
-    static_cast<QLineEdit *>(m_widget)->setSelection(realStart, length);
+    static_cast<TextField *>(m_widget)->setSelection(realStart, length);
 }
 
 void RenderLineEdit::setSelectionEnd(int end)
@@ -212,28 +212,28 @@ void RenderLineEdit::setSelectionEnd(int end)
         start = realEnd;
         length = 0;
     }
-    static_cast<QLineEdit *>(m_widget)->setSelection(start, length);
+    static_cast<TextField *>(m_widget)->setSelection(start, length);
 }
 
 void RenderLineEdit::select()
 {
-    static_cast<QLineEdit*>(m_widget)->selectAll();
+    static_cast<TextField*>(m_widget)->selectAll();
 }
 
 bool RenderLineEdit::isEdited() const
 {
-    return static_cast<QLineEdit*>(m_widget)->edited();
+    return static_cast<TextField*>(m_widget)->edited();
 }
 void RenderLineEdit::setEdited(bool x)
 {
-    static_cast<QLineEdit*>(m_widget)->setEdited(x);
+    static_cast<TextField*>(m_widget)->setEdited(x);
 }
 
 void RenderLineEdit::setSelectionRange(int start, int end)
 {
     int realStart = max(start, 0);
     int length = max(end - realStart, 0);
-    static_cast<QLineEdit *>(m_widget)->setSelection(realStart, length);
+    static_cast<TextField *>(m_widget)->setSelection(realStart, length);
 }
 
 } // namespace WebCore

@@ -78,7 +78,7 @@ DeprecatedString StreamingTextDecoder::convertUTF16(const unsigned char* s, int 
             c = (m_bufferedBytes[0] << 8) | p[0];
 
         if (c)
-            result.append(reinterpret_cast<QChar*>(&c), 1);
+            result.append(reinterpret_cast<DeprecatedChar*>(&c), 1);
 
         m_numBufferedBytes = 0;
         p += 1;
@@ -104,7 +104,7 @@ DeprecatedString StreamingTextDecoder::convertUTF16(const unsigned char* s, int 
                     buffer[bufferLength++] = c;
             }
         }
-        result.append(reinterpret_cast<QChar*>(buffer), bufferLength);
+        result.append(reinterpret_cast<DeprecatedChar*>(buffer), bufferLength);
         len -= runLength * 2;
     }
     
@@ -138,7 +138,7 @@ bool StreamingTextDecoder::convertIfASCII(const unsigned char* s, int length, De
         }
         if (ored & 0x80)
             return false;
-        result.append(reinterpret_cast<QChar*>(buffer), bufferLength);
+        result.append(reinterpret_cast<DeprecatedChar*>(buffer), bufferLength);
         len -= runLength;
     }
 
@@ -188,12 +188,12 @@ void StreamingTextDecoder::appendOmittingBOM(DeprecatedString& s, const UChar* c
     for (int i = 0; i != characterCount; ++i) {
         if (BOM == characters[i]) {
             if (start != i)
-                s.append(reinterpret_cast<const QChar*>(&characters[start]), i - start);
+                s.append(reinterpret_cast<const DeprecatedChar*>(&characters[start]), i - start);
             start = i + 1;
         }
     }
     if (start != characterCount)
-        s.append(reinterpret_cast<const QChar*>(&characters[start]), characterCount - start);
+        s.append(reinterpret_cast<const DeprecatedChar*>(&characters[start]), characterCount - start);
 }
 
 DeprecatedString StreamingTextDecoder::convertUsingICU(const unsigned char* chs, int len, bool flush)

@@ -132,7 +132,7 @@ void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
     KRenderingPaintServerRadialGradient *grad = static_cast<KRenderingPaintServerRadialGradient *>(_grad);
     KCanvasMatrix mat;
     if(gradientTransform()->baseVal()->numberOfItems() > 0)
-        mat = KCanvasMatrix(gradientTransform()->baseVal()->consolidate()->matrix()->qmatrix());
+        mat = KCanvasMatrix(gradientTransform()->baseVal()->consolidate()->matrix()->matrix());
 
     DeprecatedString ref = String(href()->baseVal()).deprecatedString();
     KRenderingPaintServer *pserver = getPaintServerById(document(), ref.mid(1));

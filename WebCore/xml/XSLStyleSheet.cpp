@@ -29,7 +29,7 @@
 #include "Node.h"
 #include "XSLImportRule.h"
 #include "loader.h"
-#include "xml_tokenizer.h"
+#include "XMLTokenizer.h"
 #include <libxml/uri.h>
 #include <libxslt/xsltutils.h>
 

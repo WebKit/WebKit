@@ -49,9 +49,9 @@
 #import "HTMLGenericFormElement.h"
 #import "HTMLNames.h"
 #import "HTMLTableCellElement.h"
-#import "KWQEditCommand.h"
-#import "KWQFormData.h"
-#import "KWQPageState.h"
+#import "WebCoreEditCommand.h"
+#import "FormDataMac.h"
+#import "WebCorePageState.h"
 #import "Logging.h"
 #import "MouseEventWithHitTestResults.h"
 #import "PlatformKeyboardEvent.h"
@@ -76,7 +76,7 @@
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/npruntime_impl.h>
 
-#undef _KWQ_TIMING
+#undef _webcore_TIMING
 
 @interface NSObject (WebPlugIn)
 - (id)objectForWebScript;
@@ -170,7 +170,7 @@ FrameMac::~FrameMac()
     clearRecordedFormValues();    
     
     [_bridge clearFrame];
-    KWQRelease(_bridge);
+    HardRelease(_bridge);
     _bridge = nil;
 }
 
@@ -579,7 +579,7 @@ void FrameMac::setView(FrameView *view)
     // Delete old PlugIn data structures
     cleanupPluginRootObjects();
     _bindingRoot = 0;
-    KWQRelease(_windowScriptObject);
+    HardRelease(_windowScriptObject);
     _windowScriptObject = 0;
 
     if (_windowScriptNPObject) {
@@ -722,7 +722,7 @@ String FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
         if (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
             const UChar* chars = it.characters();
             int len = it.length();
-            if (len > 1 || !QChar(chars[0]).isSpace()) {
+            if (len > 1 || !DeprecatedChar(chars[0]).isSpace()) {
                 NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
                 NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:[_bridge spellCheckerDocumentTag] wordCount:NULL];
                 [chunk release];
@@ -769,13 +769,13 @@ bool FrameMac::wheelEvent(NSEvent *event)
 
     if (v) {
         NSEvent *oldCurrentEvent = _currentEvent;
-        _currentEvent = KWQRetain(event);
+        _currentEvent = HardRetain(event);
 
         PlatformWheelEvent qEvent(event);
         v->handleWheelEvent(qEvent);
 
         ASSERT(_currentEvent == event);
-        KWQRelease(event);
+        HardRelease(event);
         _currentEvent = oldCurrentEvent;
 
         if (qEvent.isAccepted())
@@ -785,21 +785,21 @@ bool FrameMac::wheelEvent(NSEvent *event)
     // FIXME: The scrolling done here should be done in the default handlers
     // of the elements rather than here in the part.
 
-    KWQScrollDirection direction;
+    ScrollDirection direction;
     float multiplier;
     float deltaX = [event deltaX];
     float deltaY = [event deltaY];
     if (deltaX < 0) {
-        direction = KWQScrollRight;
+        direction = ScrollRight;
         multiplier = -deltaX;
     } else if (deltaX > 0) {
-        direction = KWQScrollLeft;
+        direction = ScrollLeft;
         multiplier = deltaX;
     } else if (deltaY < 0) {
-        direction = KWQScrollDown;
+        direction = ScrollDown;
         multiplier = -deltaY;
     }  else if (deltaY > 0) {
-        direction = KWQScrollUp;
+        direction = ScrollUp;
         multiplier = deltaY;
     } else
         return false;
@@ -820,7 +820,7 @@ bool FrameMac::wheelEvent(NSEvent *event)
     if (!r)
         return false;
     
-    return r->scroll(direction, KWQScrollWheel, multiplier);
+    return r->scroll(direction, ScrollByWheel, multiplier);
 }
 
 void FrameMac::startRedirectionTimer()
@@ -871,14 +871,14 @@ String FrameMac::mimeTypeForFileName(const String& fileName) const
     return String();
 }
 
-NSView* FrameMac::nextKeyViewInFrame(Node* node, KWQSelectionDirection direction)
+NSView* FrameMac::nextKeyViewInFrame(Node* node, SelectionDirection direction)
 {
     Document* doc = document();
     if (!doc)
         return nil;
     
     for (;;) {
-        node = direction == KWQSelectingNext
+        node = direction == SelectingNext
             ? doc->nextFocusNode(node) : doc->previousFocusNode(node);
         if (!node)
             return nil;
@@ -902,7 +902,7 @@ NSView* FrameMac::nextKeyViewInFrame(Node* node, KWQSelectionDirection direction
     }
 }
 
-NSView *FrameMac::nextKeyViewInFrameHierarchy(Node *node, KWQSelectionDirection direction)
+NSView *FrameMac::nextKeyViewInFrameHierarchy(Node *node, SelectionDirection direction)
 {
     NSView *next = nextKeyViewInFrame(node, direction);
     if (!next)
@@ -917,7 +917,7 @@ NSView *FrameMac::nextKeyViewInFrameHierarchy(Node *node, KWQSelectionDirection 
     return next;
 }
 
-NSView *FrameMac::nextKeyView(Node *node, KWQSelectionDirection direction)
+NSView *FrameMac::nextKeyView(Node *node, SelectionDirection direction)
 {
     NSView * next;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -928,7 +928,7 @@ NSView *FrameMac::nextKeyView(Node *node, KWQSelectionDirection direction)
 
     // Look at views from the top level part up, looking for a next key view that we can use.
 
-    next = direction == KWQSelectingNext
+    next = direction == SelectingNext
         ? [_bridge nextKeyViewOutsideWebFrameViews]
         : [_bridge previousKeyViewOutsideWebFrameViews];
 
@@ -941,7 +941,7 @@ NSView *FrameMac::nextKeyView(Node *node, KWQSelectionDirection direction)
     return nextKeyViewInFrameHierarchy(0, direction);
 }
 
-NSView *FrameMac::nextKeyViewForWidget(Widget *startingWidget, KWQSelectionDirection direction)
+NSView *FrameMac::nextKeyViewForWidget(Widget *startingWidget, SelectionDirection direction)
 {
     // Use the event filter object to figure out which RenderWidget owns this Widget and get to the DOM.
     // Then get the next key view in the order determined by the DOM.
@@ -1069,7 +1069,7 @@ WebScriptObject *FrameMac::windowScriptObject()
     if (!_windowScriptObject) {
         KJS::JSLock lock;
         KJS::JSObject *win = KJS::Window::retrieveWindow(this);
-        _windowScriptObject = KWQRetainNSRelease([[WebScriptObject alloc] _initWithJSObject:win originExecutionContext:bindingRootObject() executionContext:bindingRootObject()]);
+        _windowScriptObject = HardRetainWithNSRelease([[WebScriptObject alloc] _initWithJSObject:win originExecutionContext:bindingRootObject() executionContext:bindingRootObject()]);
     }
 
     return _windowScriptObject;
@@ -1100,10 +1100,10 @@ void FrameMac::partClearedInBegin()
         [_bridge windowObjectCleared];
 }
 
-void FrameMac::openURLFromPageCache(KWQPageState *state)
+void FrameMac::openURLFromPageCache(WebCorePageState *state)
 {
-    // It's safe to assume none of the KWQPageState methods will raise
-    // exceptions, since KWQPageState is implemented by WebCore and
+    // It's safe to assume none of the WebCorePageState methods will raise
+    // exceptions, since WebCorePageState is implemented by WebCore and
     // does not throw
 
     Document *doc = [state document];
@@ -1349,7 +1349,7 @@ bool FrameMac::keyEvent(NSEvent *event)
     }
 
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = KWQRetain(event);
+    _currentEvent = HardRetain(event);
 
     PlatformKeyboardEvent qEvent(event);
     result = !EventTargetNodeCast(node)->dispatchKeyEvent(qEvent);
@@ -1365,7 +1365,7 @@ bool FrameMac::keyEvent(NSEvent *event)
     }
 
     ASSERT(_currentEvent == event);
-    KWQRelease(event);
+    HardRelease(event);
     _currentEvent = oldCurrentEvent;
 
     return result;
@@ -1952,7 +1952,7 @@ void FrameMac::mouseDown(NSEvent *event)
     _dragSrc = 0;
     
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = KWQRetain(event);
+    _currentEvent = HardRetain(event);
     m_mouseDown = PlatformMouseEvent(event);
     NSPoint loc = [event locationInWindow];
     m_mouseDownPos = d->m_view->viewportToContents(IntPoint(loc));
@@ -1964,7 +1964,7 @@ void FrameMac::mouseDown(NSEvent *event)
     v->handleMousePressEvent(event);
     
     ASSERT(_currentEvent == event);
-    KWQRelease(event);
+    HardRelease(event);
     _currentEvent = oldCurrentEvent;
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -1980,12 +1980,12 @@ void FrameMac::mouseDragged(NSEvent *event)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = KWQRetain(event);
+    _currentEvent = HardRetain(event);
 
     v->handleMouseMoveEvent(event);
     
     ASSERT(_currentEvent == event);
-    KWQRelease(event);
+    HardRelease(event);
     _currentEvent = oldCurrentEvent;
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -2000,7 +2000,7 @@ void FrameMac::mouseUp(NSEvent *event)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = KWQRetain(event);
+    _currentEvent = HardRetain(event);
 
     // Our behavior here is a little different that Qt. Qt always sends
     // a mouse release event, even for a double click. To correct problems
@@ -2016,7 +2016,7 @@ void FrameMac::mouseUp(NSEvent *event)
         v->handleMouseReleaseEvent(event);
     
     ASSERT(_currentEvent == event);
-    KWQRelease(event);
+    HardRelease(event);
     _currentEvent = oldCurrentEvent;
     
     _mouseDownView = nil;
@@ -2096,12 +2096,12 @@ void FrameMac::mouseMoved(NSEvent *event)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = KWQRetain(event);
+    _currentEvent = HardRetain(event);
     
     v->handleMouseMoveEvent(event);
     
     ASSERT(_currentEvent == event);
-    KWQRelease(event);
+    HardRelease(event);
     _currentEvent = oldCurrentEvent;
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -2132,7 +2132,7 @@ bool FrameMac::sendContextMenuEvent(NSEvent *event)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = KWQRetain(event);
+    _currentEvent = HardRetain(event);
     
     PlatformMouseEvent mouseEvent(event);
 
@@ -2148,7 +2148,7 @@ bool FrameMac::sendContextMenuEvent(NSEvent *event)
     }
 
     ASSERT(_currentEvent == event);
-    KWQRelease(event);
+    HardRelease(event);
     _currentEvent = oldCurrentEvent;
 
     return swallowEvent;
@@ -2387,13 +2387,13 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                         maxMarkerWidth = MAX([font pointSize], maxMarkerWidth);
                         switch(style->listStyleType()) {
                             case DISC:
-                                listText += ((QChar)BULLET_CHAR);
+                                listText += ((DeprecatedChar)BULLET_CHAR);
                                 break;
                             case CIRCLE:
-                                listText += ((QChar)CIRCLE_CHAR);
+                                listText += ((DeprecatedChar)CIRCLE_CHAR);
                                 break;
                             case SQUARE:
-                                listText += ((QChar)SQUARE_CHAR);
+                                listText += ((DeprecatedChar)SQUARE_CHAR);
                                 break;
                             case LNONE:
                                 break;
@@ -2853,8 +2853,8 @@ void FrameMac::setBridge(WebCoreFrameBridge *bridge)
     if (_bridge == bridge)
         return;
 
-    KWQRetain(bridge);
-    KWQRelease(_bridge);
+    HardRetain(bridge);
+    HardRelease(_bridge);
     _bridge = bridge;
 }
 
@@ -2978,7 +2978,7 @@ void FrameMac::cleanupPluginRootObjects()
 void FrameMac::registerCommandForUndoOrRedo(const EditCommandPtr &cmd, bool isRedo)
 {
     ASSERT(cmd.get());
-    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommand:cmd.get()];
+    WebCoreEditCommand *kwq = [WebCoreEditCommand commandWithEditCommand:cmd.get()];
     NSUndoManager *undoManager = [_bridge undoManager];
     [undoManager registerUndoWithTarget:_bridge selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:kwq];
     NSString *actionName = [_bridge nameForUndoAction:static_cast<WebUndoAction>(cmd.editingAction())];
@@ -3092,7 +3092,7 @@ void FrameMac::markMisspellings(const SelectionController &selection)
     while (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
         const UChar* chars = it.characters();
         int len = it.length();
-        if (len > 1 || !QChar(chars[0]).isSpace()) {
+        if (len > 1 || !DeprecatedChar(chars[0]).isSpace()) {
             NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
             int startIndex = 0;
             // Loop over the chunk to find each misspelling in it.
@@ -3365,7 +3365,7 @@ void FrameMac::dashboardRegionsChanged()
     [_bridge dashboardRegionsChanged:webRegions];
 }
 
-bool FrameMac::isCharacterSmartReplaceExempt(const QChar &c, bool isPreviousChar)
+bool FrameMac::isCharacterSmartReplaceExempt(const DeprecatedChar &c, bool isPreviousChar)
 {
     return [_bridge isCharacterSmartReplaceExempt:c.unicode() isPreviousCharacter:isPreviousChar];
 }

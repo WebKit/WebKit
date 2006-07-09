@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQVALUELIST_H_
-#define KWQVALUELIST_H_
+#ifndef DeprecatedValueListImpl_h
+#define DeprecatedValueListImpl_h
 
 #include <wtf/RefPtr.h>
 
@@ -98,9 +98,9 @@ public:
 private:
     void copyOnWrite();
 
-    class KWQValueListPrivate;
+    class Private;
 
-    RefPtr<KWQValueListPrivate> d;
+    RefPtr<Private> d;
     
     friend class DeprecatedValueListImplNode;
 };
@@ -116,7 +116,7 @@ private:
 
     friend class DeprecatedValueListImpl;
     friend class DeprecatedValueListImplIterator;
-    friend class DeprecatedValueListImpl::KWQValueListPrivate;
+    friend class DeprecatedValueListImpl::Private;
 };
 
 inline DeprecatedValueListImplIterator::DeprecatedValueListImplIterator() : 

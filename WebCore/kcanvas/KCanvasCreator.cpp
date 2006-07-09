@@ -27,7 +27,7 @@
 #include <math.h>
 
 #include "KRenderingDevice.h"
-#include "KCanvasContainer.h"
+#include "RenderSVGContainer.h"
 
 namespace WebCore {
 

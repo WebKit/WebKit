@@ -39,28 +39,28 @@
 
 #if SVG_SUPPORT
 #include "KCanvasTreeDebug.h"
-#include "KCanvasContainer.h"
+#include "RenderSVGContainer.h"
 #endif
 
 using namespace WebCore;
 
-static void writeLayers(QTextStream&, const RenderLayer* rootLayer, RenderLayer*, const IntRect& paintDirtyRect, int indent = 0);
+static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*, const IntRect& paintDirtyRect, int indent = 0);
 
 #if !SVG_SUPPORT
-static QTextStream &operator<<(QTextStream &ts, const IntRect &r)
+static TextStream &operator<<(TextStream &ts, const IntRect &r)
 {
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
 #endif
 
-static void writeIndent(QTextStream &ts, int indent)
+static void writeIndent(TextStream &ts, int indent)
 {
     for (int i = 0; i != indent; ++i) {
         ts << "  ";
     }
 }
 
-static void printBorderStyle(QTextStream &ts, const RenderObject &o, const EBorderStyle borderStyle)
+static void printBorderStyle(TextStream &ts, const RenderObject &o, const EBorderStyle borderStyle)
 {
     switch (borderStyle) {
         case WebCore::BNONE:
@@ -107,7 +107,7 @@ static DeprecatedString getTagName(Node *n)
     return n->nodeName().deprecatedString(); 
 }
 
-static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
+static TextStream &operator<<(TextStream &ts, const RenderObject &o)
 {
     ts << o.renderName();
     
@@ -228,7 +228,7 @@ static String quoteAndEscapeNonPrintables(const String& s)
     return result;
 }
 
-static void writeTextRun(QTextStream& ts, const RenderText& o, const InlineTextBox& run)
+static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBox& run)
 {
     ts << "text run at (" << run.m_x << "," << run.m_y << ") width " << run.m_width;
     if (run.m_reversed || run.m_dirOverride) {
@@ -241,7 +241,7 @@ static void writeTextRun(QTextStream& ts, const RenderText& o, const InlineTextB
         << "\n"; 
 }
 
-void write(QTextStream &ts, const RenderObject &o, int indent)
+void write(TextStream &ts, const RenderObject &o, int indent)
 {
 #if SVG_SUPPORT
     // FIXME:  A hackish way to doing our own "virtual" dispatch
@@ -250,7 +250,7 @@ void write(QTextStream &ts, const RenderObject &o, int indent)
         return;
     }
     if (o.isKCanvasContainer()) {
-        write(ts, static_cast<const KCanvasContainer&>(o), indent);
+        write(ts, static_cast<const RenderSVGContainer&>(o), indent);
         return;
     }
 #endif
@@ -287,7 +287,7 @@ void write(QTextStream &ts, const RenderObject &o, int indent)
     }
 }
 
-static void write(QTextStream &ts, RenderLayer &l,
+static void write(TextStream &ts, RenderLayer &l,
                   const IntRect& layerBounds, const IntRect& backgroundClipRect, const IntRect& clipRect, const IntRect& outlineClipRect,
                   int layerType = 0, int indent = 0)
 {
@@ -327,7 +327,7 @@ static void write(QTextStream &ts, RenderLayer &l,
         write(ts, *l.renderer(), indent + 1);
 }
     
-static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLayer* l,
+static void writeLayers(TextStream &ts, const RenderLayer* rootLayer, RenderLayer* l,
                         const IntRect& paintDirtyRect, int indent)
 {
     // Calculate the clip rects we should use.
@@ -384,7 +384,7 @@ static DeprecatedString nodePosition(Node *node)
     return result;
 }
 
-static void writeSelection(QTextStream &ts, const RenderObject *o)
+static void writeSelection(TextStream &ts, const RenderObject *o)
 {
     Node *n = o->element();
     if (!n || !n->isDocumentNode())
@@ -413,7 +413,7 @@ DeprecatedString externalRepresentation(RenderObject* o)
 
     DeprecatedString s;
     if (o) {
-        QTextStream ts(&s);
+        TextStream ts(&s);
 #if SVG_SUPPORT
         ts.precision(2);
         writeRenderResources(ts, o->document());

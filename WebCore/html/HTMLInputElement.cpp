@@ -46,7 +46,7 @@
 #include "RenderImageButton.h"
 #include "RenderLineEdit.h"
 #include "RenderText.h"
-#include "RenderTextField.h"
+#include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "SelectionController.h"
 #include <unicode/ubrk.h>
@@ -462,7 +462,7 @@ int HTMLInputElement::selectionStart() const
         case TEXT:
             if (document()->focusNode() != this && cachedSelStart >= 0)
                 return cachedSelStart;
-            return static_cast<RenderTextField*>(renderer())->selectionStart();
+            return static_cast<RenderTextControl*>(renderer())->selectionStart();
     }
     return 0;
 }
@@ -490,7 +490,7 @@ int HTMLInputElement::selectionEnd() const
         case TEXT:
             if (document()->focusNode() != this && cachedSelEnd >= 0)
                 return cachedSelEnd;
-            return static_cast<RenderTextField*>(renderer())->selectionEnd();
+            return static_cast<RenderTextControl*>(renderer())->selectionEnd();
     }
     return 0;
 }
@@ -517,7 +517,7 @@ void HTMLInputElement::setSelectionStart(int start)
             static_cast<RenderLineEdit*>(renderer())->setSelectionStart(start);
             break;
         case TEXT:
-            static_cast<RenderTextField*>(renderer())->setSelectionStart(start);
+            static_cast<RenderTextControl*>(renderer())->setSelectionStart(start);
             break;
     }
 }
@@ -544,7 +544,7 @@ void HTMLInputElement::setSelectionEnd(int end)
             static_cast<RenderLineEdit*>(renderer())->setSelectionEnd(end);
             break;
         case TEXT:
-            static_cast<RenderTextField*>(renderer())->setSelectionEnd(end);
+            static_cast<RenderTextControl*>(renderer())->setSelectionEnd(end);
             break;
     }
 }
@@ -573,7 +573,7 @@ void HTMLInputElement::select()
             static_cast<RenderLineEdit*>(renderer())->select();
             break;
         case TEXT:
-            static_cast<RenderTextField*>(renderer())->select();
+            static_cast<RenderTextControl*>(renderer())->select();
             break;
     }
 }
@@ -600,7 +600,7 @@ void HTMLInputElement::setSelectionRange(int start, int end)
             static_cast<RenderLineEdit*>(renderer())->setSelectionRange(start, end);
             break;
         case TEXT:
-            static_cast<RenderTextField*>(renderer())->setSelectionRange(start, end);
+            static_cast<RenderTextControl*>(renderer())->setSelectionRange(start, end);
             break;
     }
 }
@@ -824,7 +824,7 @@ RenderObject *HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *
         case RANGE:
             return new (arena) DeprecatedSlider(this);
         case TEXT:
-            return new (arena) RenderTextField(this, false);
+            return new (arena) RenderTextControl(this, false);
     }
     assert(false);
     return 0;
@@ -1360,7 +1360,7 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
     }
     
     if (isNonWidgetTextField() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent) && renderer())
-        static_cast<RenderTextField*>(renderer())->forwardEvent(evt);
+        static_cast<RenderTextControl*>(renderer())->forwardEvent(evt);
     
     HTMLGenericFormElement::defaultEventHandler(evt);
 }

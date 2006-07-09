@@ -36,8 +36,8 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
-#include "KWQTextStream.h"
-#include "KWQWMatrix.h"
+#include "TextStream.h"
+#include "AffineTransform.h"
 #include "Position.h"
 #include "RenderArena.h"
 #include "RenderFlexibleBox.h"
@@ -224,28 +224,28 @@ bool RenderObject::isInlineContinuation() const
 
 void RenderObject::addChild(RenderObject* , RenderObject *)
 {
-    KHTMLAssert(0);
+    ASSERT(0);
 }
 
 RenderObject* RenderObject::removeChildNode(RenderObject* )
 {
-    KHTMLAssert(0);
+    ASSERT(0);
     return 0;
 }
 
 void RenderObject::removeChild(RenderObject* )
 {
-    KHTMLAssert(0);
+    ASSERT(0);
 }
 
 void RenderObject::appendChildNode(RenderObject*)
 {
-    KHTMLAssert(0);
+    ASSERT(0);
 }
 
 void RenderObject::insertChildNode(RenderObject*, RenderObject*)
 {
-    KHTMLAssert(0);
+    ASSERT(0);
 }
 
 RenderObject *RenderObject::nextInPreOrder() const
@@ -622,7 +622,7 @@ RenderObject::scrollHeight() const
     return hasOverflowClip() ? layer()->scrollHeight() : overflowHeight();
 }
 
-bool RenderObject::scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier)
+bool RenderObject::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
     RenderLayer *l = layer();
     if (l != 0 && l->scroll(direction, granularity, multiplier)) {
@@ -1790,7 +1790,7 @@ void RenderObject::dirtyLinesFromChangedChild(RenderObject* child)
 DeprecatedString RenderObject::information() const
 {
     DeprecatedString str;
-    QTextStream ts(&str);
+    TextStream ts(&str);
     ts << renderName()
         << "(" << (style() ? style()->refCount() : 0) << ")"
        << ": " << (void*)this << "  ";
@@ -1820,7 +1820,7 @@ DeprecatedString RenderObject::information() const
     return str;
 }
 
-void RenderObject::dump(QTextStream *stream, DeprecatedString ind) const
+void RenderObject::dump(TextStream *stream, DeprecatedString ind) const
 {
     if (isAnonymous()) { *stream << " anonymous"; }
     if (isFloating()) { *stream << " floating"; }
@@ -2548,7 +2548,7 @@ void RenderObject::invalidateVerticalPositions()
 
 void RenderObject::recalcMinMaxWidths()
 {
-    KHTMLAssert( m_recalcMinMax );
+    ASSERT( m_recalcMinMax );
 
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << " recalcMinMaxWidths() this=" << this <<endl;
@@ -2607,7 +2607,7 @@ void RenderObject::removeLeftoverAnonymousBoxes()
 
 InlineBox* RenderObject::createInlineBox(bool, bool isRootLineBox, bool)
 {
-    KHTMLAssert(!isRootLineBox);
+    ASSERT(!isRootLineBox);
     return new (renderArena()) InlineBox(this);
 }
 
@@ -2888,17 +2888,17 @@ FloatRect RenderObject::relativeBBox(bool) const
     return FloatRect();
 }
 
-QMatrix RenderObject::localTransform() const
+AffineTransform RenderObject::localTransform() const
 {
-    return QMatrix(1, 0, 0, 1, xPos(), yPos());
+    return AffineTransform(1, 0, 0, 1, xPos(), yPos());
 }
  
-void RenderObject::setLocalTransform(const QMatrix&)
+void RenderObject::setLocalTransform(const AffineTransform&)
 {
     ASSERT(false);
 }
 
-QMatrix RenderObject::absoluteTransform() const
+AffineTransform RenderObject::absoluteTransform() const
 {
     if (parent())
         return localTransform() * parent()->absoluteTransform();

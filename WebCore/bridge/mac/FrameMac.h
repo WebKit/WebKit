@@ -52,7 +52,7 @@ namespace KJS {
 @class DOMElement;
 typedef DOMElement ObjCDOMElement;
 
-@class KWQPageState;
+@class WebCorePageState;
 @class NSArray;
 @class NSAttributedString;
 @class NSColor;
@@ -73,7 +73,7 @@ typedef DOMElement ObjCDOMElement;
 // Avoid clashes with KJS::DOMElement in KHTML code.
 class ObjCDOMElement;
 
-class KWQPageState;
+class WebCorePageState;
 class NSArray;
 class NSAttributedString;
 class NSColor;
@@ -104,9 +104,9 @@ class VisiblePosition;
 
 struct DashboardRegionValue;
 
-enum KWQSelectionDirection {
-    KWQSelectingNext,
-    KWQSelectingPrevious
+enum SelectionDirection {
+    SelectingNext,
+    SelectingPrevious
 };
 
 class FrameMac : public Frame
@@ -145,16 +145,16 @@ public:
     virtual void focusWindow();
     virtual void unfocusWindow();
     
-    void openURLFromPageCache(KWQPageState*);
+    void openURLFromPageCache(WebCorePageState*);
 
     virtual void saveDocumentState();
     virtual void restoreDocumentState();
     
     virtual void addMessageToConsole(const String& message,  unsigned int lineNumber, const String& sourceID);
     
-    NSView* nextKeyView(Node* startingPoint, KWQSelectionDirection);
-    NSView* nextKeyViewInFrameHierarchy(Node* startingPoint, KWQSelectionDirection);
-    static NSView* nextKeyViewForWidget(Widget* startingPoint, KWQSelectionDirection);
+    NSView* nextKeyView(Node* startingPoint, SelectionDirection);
+    NSView* nextKeyViewInFrameHierarchy(Node* startingPoint, SelectionDirection);
+    static NSView* nextKeyViewForWidget(Widget* startingPoint, SelectionDirection);
     static bool currentEventIsKeyboardOptionTab();
     static bool handleKeyboardOptionTabInView(NSView* view);
     
@@ -299,7 +299,7 @@ public:
     NSMutableDictionary* dashboardRegionsDictionary();
     void dashboardRegionsChanged();
     
-    virtual bool isCharacterSmartReplaceExempt(const QChar &, bool);
+    virtual bool isCharacterSmartReplaceExempt(const DeprecatedChar &, bool);
     
     virtual bool mouseDownMayStartSelect() const { return _mouseDownMayStartSelect; }
     
@@ -326,7 +326,7 @@ private:
     
     NSView* mouseDownViewIfStillGood();
 
-    NSView* nextKeyViewInFrame(Node* startingPoint, KWQSelectionDirection);
+    NSView* nextKeyViewInFrame(Node* startingPoint, SelectionDirection);
     static NSView* documentViewForNode(Node*);
     
     bool dispatchCPPEvent(const AtomicString &eventType, ClipboardMac::AccessPolicy policy);

@@ -140,7 +140,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
         shouldPopContext = true;
     }
 
-    context->concatCTM(QMatrix().translate(parentX, parentY));
+    context->concatCTM(AffineTransform().translate(parentX, parentY));
     context->concatCTM(localTransform());
     translateForAttributes();
     
@@ -199,7 +199,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
 void RenderSVGImage::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
-    QMatrix transform = translationForAttributes() * localTransform();
+    AffineTransform transform = translationForAttributes() * localTransform();
     r = transform.mapRect(r);
     
     RenderImage::computeAbsoluteRepaintRect(r, f);
@@ -207,7 +207,7 @@ void RenderSVGImage::computeAbsoluteRepaintRect(IntRect& r, bool f)
 
 bool RenderSVGImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
-    QMatrix totalTransform = absoluteTransform();
+    AffineTransform totalTransform = absoluteTransform();
     totalTransform *= translationForAttributes();
     double localX, localY;
     totalTransform.invert().map(_x + _tx, _y + _ty, &localX, &localY);
@@ -221,8 +221,8 @@ bool RenderSVGImage::requiresLayer()
 
 void RenderSVGImage::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
 
     IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
@@ -279,12 +279,12 @@ void RenderSVGImage::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx,
 }
 
 
-QMatrix RenderSVGImage::translationForAttributes()
+AffineTransform RenderSVGImage::translationForAttributes()
 {
     SVGImageElement *image = static_cast<SVGImageElement *>(node());
     float xOffset = image->x()->baseVal() ? image->x()->baseVal()->value() : 0;
     float yOffset = image->y()->baseVal() ? image->y()->baseVal()->value() : 0;
-    return QMatrix().translate(xOffset, yOffset);
+    return AffineTransform().translate(xOffset, yOffset);
 }
 
 void RenderSVGImage::translateForAttributes()

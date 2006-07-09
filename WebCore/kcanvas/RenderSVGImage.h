@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 
 #include "RenderImage.h"
-#include "KWQWMatrix.h"
+#include "AffineTransform.h"
 
 namespace WebCore
 {
@@ -36,8 +36,8 @@ namespace WebCore
         RenderSVGImage(SVGImageElement *impl);
         virtual ~RenderSVGImage();
         
-        virtual QMatrix localTransform() const { return m_transform; }
-        virtual void setLocalTransform(const QMatrix& transform) { m_transform = transform; }
+        virtual AffineTransform localTransform() const { return m_transform; }
+        virtual void setLocalTransform(const AffineTransform& transform) { m_transform = transform; }
         
         virtual FloatRect relativeBBox(bool includeStroke = true) const;
         virtual IntRect getAbsoluteRepaintRect();
@@ -57,8 +57,8 @@ namespace WebCore
 
     private:
         void translateForAttributes();
-        QMatrix translationForAttributes();
-        QMatrix m_transform;
+        AffineTransform translationForAttributes();
+        AffineTransform m_transform;
         IntRect m_absoluteBounds;
     };
 }

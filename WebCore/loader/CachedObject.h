@@ -25,12 +25,12 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef KHTML_CachedObject_h
-#define KHTML_CachedObject_h
+#ifndef CachedObject_h
+#define CachedObject_h
 
 #include "DeprecatedString.h"
 #include "PlatformString.h"
-#include "KWQKIOGlobal.h"
+#include "CacheControl.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <time.h>

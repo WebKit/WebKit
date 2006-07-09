@@ -33,7 +33,7 @@ class WebCorePageBridge;
 #endif
 #endif
 
-class KHTMLSettings;
+class Settings;
 
 namespace WebCore {
 
@@ -64,7 +64,7 @@ namespace WebCore {
         Widget* widget() const;
 
         static void setNeedsReapplyStyles();
-        static void setNeedsReapplyStylesForSettingsChange(KHTMLSettings*);
+        static void setNeedsReapplyStylesForSettingsChange(Settings*);
         
         // FIXME: Replace this with a function on the selection controller or change it to Selection instead?
         void setDragCaret(const SelectionController&);

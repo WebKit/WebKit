@@ -27,7 +27,7 @@
 #include "SVGStyledLocatableElement.h"
 #include "SVGTransformable.h"
 
-class QMatrix;
+class AffineTransform;
 
 namespace WebCore
 {

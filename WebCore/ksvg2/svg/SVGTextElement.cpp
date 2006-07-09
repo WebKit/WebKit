@@ -30,7 +30,7 @@
 #include "SVGMatrix.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"
-#include "render_style.h"
+#include "RenderStyle.h"
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/RenderSVGText.h>
 
@@ -74,7 +74,7 @@ void SVGTextElement::updateLocalTransform(SVGTransformList *localTransforms)
     if(localTransform) {
         m_localMatrix = localTransform->matrix();
         if (renderer()) {
-            renderer()->setLocalTransform(m_localMatrix->qmatrix());
+            renderer()->setLocalTransform(m_localMatrix->matrix());
             renderer()->setNeedsLayout(true);
         }
     }
@@ -85,7 +85,7 @@ void SVGTextElement::attach()
     SVGStyledElement::attach();
 
     if (renderer() && m_localMatrix)
-        renderer()->setLocalTransform(m_localMatrix->qmatrix());
+        renderer()->setLocalTransform(m_localMatrix->matrix());
 }
 
 SVGElement *SVGTextElement::nearestViewportElement() const

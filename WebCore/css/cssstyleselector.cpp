@@ -47,7 +47,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "History.h"
-#include "KWQKHTMLSettings.h"
+#include "Settings.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "Pair.h"
@@ -616,7 +616,7 @@ static void checkPseudoState(Element *e, bool checkVisited = true)
         return;
     }
     
-    QConstString cu(reinterpret_cast<const QChar*>(attr.characters()), attr.length());
+    DeprecatedConstString cu(reinterpret_cast<const DeprecatedChar*>(attr.characters()), attr.length());
     DeprecatedString u = cu.string();
     if (!u.contains("://")) {
         if (u[0] == '/')

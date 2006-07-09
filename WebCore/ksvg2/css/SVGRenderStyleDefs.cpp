@@ -29,7 +29,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include "ksvg.h"
-#include "render_style.h"
+#include "RenderStyle.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderStyleDefs.h"
 

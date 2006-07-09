@@ -23,11 +23,11 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include "KRenderingPaintServerSolid.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 #include "KCanvasTreeDebug.h"
 
 // this is related to KRenderingPaintServer, but currently it doesn't have its own .cpp file
-QTextStream &operator<<(QTextStream &ts, const WebCore::KRenderingPaintServer &ps)
+TextStream &operator<<(TextStream &ts, const WebCore::KRenderingPaintServer &ps)
 {
     return ps.externalRepresentation(ts);
 }
@@ -67,7 +67,7 @@ KCPaintServerType KRenderingPaintServerSolid::type() const
     return PS_SOLID;
 }
 
-QTextStream &KRenderingPaintServerSolid::externalRepresentation(QTextStream &ts) const
+TextStream &KRenderingPaintServerSolid::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=SOLID]"
         << " [color="<< color() << "]";

@@ -29,7 +29,7 @@
 
 #include "HTMLNames.h"
 #include "HTMLTableColElement.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -64,7 +64,7 @@ bool RenderTableCol::canHaveChildren() const
 }
 
 #ifndef NDEBUG
-void RenderTableCol::dump(QTextStream* stream, DeprecatedString ind) const
+void RenderTableCol::dump(TextStream* stream, DeprecatedString ind) const
 {
     *stream << " span=" << m_span;
     RenderContainer::dump(stream, ind);

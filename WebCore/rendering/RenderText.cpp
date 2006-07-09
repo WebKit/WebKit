@@ -102,7 +102,7 @@ RenderText::RenderText(WebCore::Node* node, StringImpl *_str)
     setRenderText();
     if (str)
         str = str->replace('\\', backslashAsCurrencySymbol());
-    KHTMLAssert(!str || !str->length() || str->characters());
+    ASSERT(!str || !str->length() || str->characters());
 }
 
 void RenderText::setStyle(RenderStyle *_style)
@@ -483,7 +483,7 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font* f, int start, int len, 
                     w += tabWidth - ((xpos + w) % tabWidth);
                 else
                     w += m_monospaceCharacterWidth;
-                if (QChar(c).isSpace() && i > start && !QChar((*str)[i - 1]).isSpace())
+                if (DeprecatedChar(c).isSpace() && i > start && !DeprecatedChar((*str)[i - 1]).isSpace())
                     w += f->wordSpacing();        
             }
         }
@@ -578,7 +578,7 @@ void RenderText::calcMinMaxWidth()
 {
     // Use 0 for the leadWidth.   If the text contains a variable width tab, the real width
     // will get measured when trimmedMinMaxWidth calls again with the real leadWidth.
-    KHTMLAssert( !minMaxKnown() );
+    ASSERT( !minMaxKnown() );
     calcMinMaxWidth(0);
 }
 
@@ -909,8 +909,8 @@ void RenderText::setText(StringImpl *text, bool force)
 
     // ### what should happen if we change the text of a
     // RenderBR object ?
-    KHTMLAssert(!isBR() || (str->length() == 1 && (*str)[0] == '\n'));
-    KHTMLAssert(!str->length() || str->characters());
+    ASSERT(!isBR() || (str->length() == 1 && (*str)[0] == '\n'));
+    ASSERT(!str->length() || str->characters());
 
     setNeedsLayoutAndMinMaxRecalc();
 }
@@ -942,7 +942,7 @@ void RenderText::dirtyLineBoxes(bool fullLayout, bool)
 
 InlineBox* RenderText::createInlineBox(bool, bool isRootLineBox, bool)
 {
-    KHTMLAssert(!isRootLineBox);
+    ASSERT(!isRootLineBox);
     InlineTextBox* textBox = new (renderArena()) InlineTextBox(this);
     if (!m_firstTextBox)
         m_firstTextBox = m_lastTextBox = textBox;

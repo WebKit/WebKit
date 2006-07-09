@@ -142,11 +142,11 @@ DeprecatedCString TextEncoding::fromUnicode(const DeprecatedString &qcs, bool al
     if (UNORM_YES != unorm_quickCheck(source, copy.length(), UNORM_NFC, &err)) {
         normalizedString.truncate(copy.length()); // normalization to NFC rarely increases the length, so this first attempt will usually succeed
         
-        int32_t normalizedLength = unorm_normalize(source, copy.length(), UNORM_NFC, 0, reinterpret_cast<UChar*>(const_cast<QChar*>(normalizedString.unicode())), copy.length(), &err);
+        int32_t normalizedLength = unorm_normalize(source, copy.length(), UNORM_NFC, 0, reinterpret_cast<UChar*>(const_cast<DeprecatedChar*>(normalizedString.unicode())), copy.length(), &err);
         if (err == U_BUFFER_OVERFLOW_ERROR) {
             err = U_ZERO_ERROR;
             normalizedString.truncate(normalizedLength);
-            normalizedLength = unorm_normalize(source, copy.length(), UNORM_NFC, 0, reinterpret_cast<UChar*>(const_cast<QChar*>(normalizedString.unicode())), normalizedLength, &err);
+            normalizedLength = unorm_normalize(source, copy.length(), UNORM_NFC, 0, reinterpret_cast<UChar*>(const_cast<DeprecatedChar*>(normalizedString.unicode())), normalizedLength, &err);
         }
         
         source = reinterpret_cast<const UChar*>(normalizedString.unicode());

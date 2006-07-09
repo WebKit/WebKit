@@ -24,7 +24,7 @@
 #define KSVG_SVGMatrixImpl_H
 #if SVG_SUPPORT
 
-#include "KWQWMatrix.h"
+#include "AffineTransform.h"
 
 #include "Shared.h"
 
@@ -37,7 +37,7 @@ namespace WebCore
     public:
         SVGMatrix();
         SVGMatrix(double a, double b, double c, double d, double e, double f);
-        SVGMatrix(const QMatrix& mat);
+        SVGMatrix(const AffineTransform& mat);
         virtual ~SVGMatrix();
 
         void setA(double);
@@ -89,16 +89,16 @@ namespace WebCore
         void reset();
 
         // KSVG helper method
-        QMatrix& qmatrix();
-        const QMatrix& qmatrix() const;
+        AffineTransform& matrix();
+        const AffineTransform& matrix() const;
 
         // Determine the scaling component of the matrix and factor it out. After
         // this operation, the matrix has x and y scale of one.
         void removeScale(double* xScale, double* yScale);
 
     private:
-        void setMatrix(const QMatrix&);
-        QMatrix m_mat;
+        void setMatrix(const AffineTransform&);
+        AffineTransform m_mat;
     };
 };
 

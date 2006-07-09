@@ -34,9 +34,9 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "RenderTextArea.h"
-#include "RenderTextField.h"
+#include "RenderTextControl.h"
 #include "Text.h"
-#include "render_style.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
 
@@ -81,7 +81,7 @@ int HTMLTextAreaElement::selectionStart()
     if (renderer()) {
         if (document()->focusNode() != this && cachedSelStart >= 0)
             return cachedSelStart;
-        return static_cast<RenderTextField *>(renderer())->selectionStart();
+        return static_cast<RenderTextControl *>(renderer())->selectionStart();
     }
     return 0;
 }
@@ -91,7 +91,7 @@ int HTMLTextAreaElement::selectionEnd()
     if (renderer()) {
         if (document()->focusNode() != this && cachedSelEnd >= 0)
             return cachedSelEnd;
-        return static_cast<RenderTextField *>(renderer())->selectionEnd();
+        return static_cast<RenderTextControl *>(renderer())->selectionEnd();
     }
     return 0;
 }
@@ -99,25 +99,25 @@ int HTMLTextAreaElement::selectionEnd()
 void HTMLTextAreaElement::setSelectionStart(int start)
 {
     if (renderer())
-        static_cast<RenderTextField*>(renderer())->setSelectionStart(start);
+        static_cast<RenderTextControl*>(renderer())->setSelectionStart(start);
 }
 
 void HTMLTextAreaElement::setSelectionEnd(int end)
 {
     if (renderer())
-        static_cast<RenderTextField*>(renderer())->setSelectionEnd(end);
+        static_cast<RenderTextControl*>(renderer())->setSelectionEnd(end);
 }
 
 void HTMLTextAreaElement::select()
 {
     if (renderer())
-        static_cast<RenderTextField *>(renderer())->select();
+        static_cast<RenderTextControl *>(renderer())->select();
 }
 
 void HTMLTextAreaElement::setSelectionRange(int start, int end)
 {
     if (renderer())
-        static_cast<RenderTextField*>(renderer())->setSelectionRange(start, end);
+        static_cast<RenderTextControl*>(renderer())->setSelectionRange(start, end);
 }
 
 void HTMLTextAreaElement::childrenChanged()
@@ -164,7 +164,7 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute *attr)
 
 RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    return new (arena) RenderTextField(this, true);
+    return new (arena) RenderTextControl(this, true);
 }
 
 bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)
@@ -173,7 +173,7 @@ bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)
         return false;
         
     bool hardWrap = renderer() && wrap() == ta_Physical;
-    String v = hardWrap ? static_cast<RenderTextField*>(renderer())->textWithHardLineBreaks() : value();
+    String v = hardWrap ? static_cast<RenderTextControl*>(renderer())->textWithHardLineBreaks() : value();
     encoding.appendData(name(), v);
     return true;
 }
@@ -210,7 +210,7 @@ void HTMLTextAreaElement::focus()
             ASSERT(cachedSelEnd == -1);
             // If this is the first focus, set a caret at the end of the text.  
             // This matches other browsers' behavior.
-            int max = static_cast<RenderTextField*>(renderer())->text().length();
+            int max = static_cast<RenderTextControl*>(renderer())->text().length();
             setSelectionRange(max, max);
         } else
             // Restore the cached selection.  This matches other browsers' behavior.
@@ -226,7 +226,7 @@ void HTMLTextAreaElement::focus()
 void HTMLTextAreaElement::defaultEventHandler(Event *evt)
 {
     if (renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent))
-        static_cast<RenderTextField*>(renderer())->forwardEvent(evt);
+        static_cast<RenderTextControl*>(renderer())->forwardEvent(evt);
 
     HTMLGenericFormElement::defaultEventHandler(evt);
 }
@@ -240,7 +240,7 @@ void HTMLTextAreaElement::updateValue() const
 {
     if (!valueMatchesRenderer()) {
         ASSERT(renderer());
-        m_value = static_cast<RenderTextField*>(renderer())->text();
+        m_value = static_cast<RenderTextControl*>(renderer())->text();
         setValueMatchesRenderer();
     }
 }

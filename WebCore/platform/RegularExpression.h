@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QREGEXP_H_
-#define QREGEXP_H_
+#ifndef RegularExpression_h
+#define RegularExpression_h
 
 #include "DeprecatedString.h"
 
@@ -50,8 +50,8 @@ public:
     DeprecatedString cap(int n = 0) const;
     
 private:
-    class KWQRegExpPrivate;    
-    RefPtr<KWQRegExpPrivate> d;
+    class Private;    
+    RefPtr<Private> d;
 };
 
 #endif

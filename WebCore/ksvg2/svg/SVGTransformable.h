@@ -26,7 +26,7 @@
 
 #include "SVGLocatable.h"
 
-class QMatrix;
+class AffineTransform;
 
 namespace WebCore {
     class Node;

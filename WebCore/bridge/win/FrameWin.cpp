@@ -30,7 +30,7 @@
 #include "Decoder.h"
 #include "Document.h"
 #include "FramePrivate.h"
-#include "KWQKHTMLSettings.h"
+#include "Settings.h"
 #include "PlatformKeyboardEvent.h"
 #include "Plugin.h"
 #include "RenderFrame.h"
@@ -43,7 +43,7 @@ FrameWin::FrameWin(Page* page, Element* ownerElement, FrameWinClient* client)
     : Frame(page, ownerElement)
 {
     d->m_extension = new BrowserExtensionWin(this);
-    KHTMLSettings* settings = new KHTMLSettings();
+    Settings* settings = new Settings();
     settings->setAutoLoadImages(true);
     settings->setMediumFixedFontSize(13);
     settings->setMediumFontSize(16);

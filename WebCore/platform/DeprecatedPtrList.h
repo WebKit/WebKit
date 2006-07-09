@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QLIST_H_
-#define QLIST_H_
+#ifndef DeprecatedPtrList_h
+#define DeprecatedPtrList_h
 
 #include "DeprecatedPtrListImpl.h"
 
@@ -106,7 +106,7 @@ private:
     DeprecatedPtrListImplIterator impl;
 };
 
-#define Q3PtrList DeprecatedPtrList
-#define Q3PtrListIterator DeprecatedPtrListIterator
+#define DeprecatedPtrList DeprecatedPtrList
+#define DeprecatedPtrListIterator DeprecatedPtrListIterator
 
 #endif

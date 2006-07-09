@@ -85,7 +85,7 @@
 #import "HTMLUListElement.h"
 #import "NameNodeList.h"
 #import "markup.h"
-#import "RenderTextField.h"
+#import "RenderTextControl.h"
 #import "FrameView.h"
 
 using namespace WebCore;

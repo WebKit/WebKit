@@ -272,8 +272,8 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 
 void RenderImage::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert( minMaxKnown() );
+    ASSERT(needsLayout());
+    ASSERT( minMaxKnown() );
 
     IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();

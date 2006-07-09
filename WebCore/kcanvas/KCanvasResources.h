@@ -28,7 +28,7 @@
 #include <kcanvas/KCanvasPath.h>
 #include <kcanvas/KCanvasResourceListener.h>
 
-class QTextStream;
+class TextStream;
 
 namespace WebCore {
 
@@ -66,7 +66,7 @@ public:
     virtual bool isMarker() const { return false; }
     virtual bool isMasker() const { return false; }
     
-    virtual QTextStream& externalRepresentation(QTextStream &) const; 
+    virtual TextStream& externalRepresentation(TextStream &) const; 
 private:
     KCanvasItemList m_clients;
     DeprecatedString registryId;
@@ -87,7 +87,7 @@ public:
 
     KCClipDataList clipData() const;
 
-    QTextStream& externalRepresentation(QTextStream &) const; 
+    TextStream& externalRepresentation(TextStream &) const; 
 protected:
     KCClipDataList m_clipData;
 };
@@ -106,7 +106,7 @@ public:
     
     virtual void applyMask(const FloatRect& boundingBox) const = 0;
 
-    QTextStream& externalRepresentation(QTextStream &) const; 
+    TextStream& externalRepresentation(TextStream &) const; 
 protected:
     KCanvasImage *m_mask;
 };
@@ -138,7 +138,7 @@ public:
 
     void draw(GraphicsContext*, const FloatRect&, double x, double y, double strokeWidth = 1, double angle = 0);
 
-    QTextStream& externalRepresentation(QTextStream &) const; 
+    TextStream& externalRepresentation(TextStream &) const; 
 
 private:
     double m_refX, m_refY;
@@ -153,7 +153,7 @@ KCanvasClipper *getClipperById(Document *document, const AtomicString &id);
 KCanvasMasker *getMaskerById(Document *document, const AtomicString &id);
 KRenderingPaintServer *getPaintServerById(Document *document, const AtomicString &id);
 
-QTextStream &operator<<(QTextStream &ts, const KCanvasResource &r);
+TextStream &operator<<(TextStream &ts, const KCanvasResource &r);
 
 }
 

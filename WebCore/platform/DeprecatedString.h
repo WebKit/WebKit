@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QSTRING_H_
-#define QSTRING_H_
+#ifndef DeprecatedString_h
+#define DeprecatedString_h
 
 #include <ctype.h>
 #include <unicode/uchar.h>
 #if __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
 #endif
-#include "KWQCString.h"
+#include "DeprecatedCString.h"
 
 class RegularExpression;
 
@@ -48,109 +48,109 @@ namespace KJS {
     class UString;
 }
 
-class QChar {
+class DeprecatedChar {
 public:
-    QChar();
-    QChar(char);
-    QChar(unsigned char);
-    QChar(short);
-    QChar(unsigned short);
-    QChar(int);
-    QChar(unsigned);
+    DeprecatedChar();
+    DeprecatedChar(char);
+    DeprecatedChar(unsigned char);
+    DeprecatedChar(short);
+    DeprecatedChar(unsigned short);
+    DeprecatedChar(int);
+    DeprecatedChar(unsigned);
 
     unsigned short unicode() const;
     char latin1() const;
     bool isSpace() const;
-    QChar lower() const;
-    QChar upper() const;
+    DeprecatedChar lower() const;
+    DeprecatedChar upper() const;
 
 private:
     unsigned short c;
 };
 
-inline QChar::QChar() : c(0)
+inline DeprecatedChar::DeprecatedChar() : c(0)
 {
 }
 
-inline QChar::QChar(char ch) : c((unsigned char) ch)
+inline DeprecatedChar::DeprecatedChar(char ch) : c((unsigned char) ch)
 {
 }
 
-inline QChar::QChar(unsigned char uch) : c(uch)
+inline DeprecatedChar::DeprecatedChar(unsigned char uch) : c(uch)
 {
 }
 
-inline QChar::QChar(short n) : c(n)
+inline DeprecatedChar::DeprecatedChar(short n) : c(n)
 {
 }
 
-inline QChar::QChar(unsigned short n) : c(n)
+inline DeprecatedChar::DeprecatedChar(unsigned short n) : c(n)
 {
 }
 
-inline QChar::QChar(unsigned n) : c(n)
+inline DeprecatedChar::DeprecatedChar(unsigned n) : c(n)
 {
 }
 
-inline QChar::QChar(int n) : c(n)
+inline DeprecatedChar::DeprecatedChar(int n) : c(n)
 {
 }
 
-inline unsigned short QChar::unicode() const
+inline unsigned short DeprecatedChar::unicode() const
 {
     return c;
 }
 
-inline bool QChar::isSpace() const
+inline bool DeprecatedChar::isSpace() const
 {
     // Use isspace() for basic Latin-1.
     // This will include newlines, which aren't included in unicode DirWS.
     return c <= 0x7F ? isspace(c) : (u_charDirection(c) == U_WHITE_SPACE_NEUTRAL);
 }
 
-inline QChar QChar::lower() const
+inline DeprecatedChar DeprecatedChar::lower() const
 {
     // FIXME: If fast enough, we should just call u_tolower directly.
     return c <= 0x7F ? tolower(c) : u_tolower(c);
 }
 
-inline QChar QChar::upper() const
+inline DeprecatedChar DeprecatedChar::upper() const
 {
     // FIXME: If fast enough, we should just call u_toupper directly.
     return c <= 0x7F ? toupper(c) : u_toupper(c);
 }
 
-inline char QChar::latin1() const
+inline char DeprecatedChar::latin1() const
 {
     return c > 0xff ? 0 : c;
 }
 
-inline bool operator==(QChar qc1, QChar qc2)
+inline bool operator==(DeprecatedChar qc1, DeprecatedChar qc2)
 {
     return qc1.unicode() == qc2.unicode();
 }
 
-inline bool operator==(QChar qc, char ch)
+inline bool operator==(DeprecatedChar qc, char ch)
 {
     return qc.unicode() == (unsigned char) ch;
 }
 
-inline bool operator==(char ch, QChar qc)
+inline bool operator==(char ch, DeprecatedChar qc)
 {
     return (unsigned char) ch == qc.unicode();
 }
 
-inline bool operator!=(QChar qc1, QChar qc2)
+inline bool operator!=(DeprecatedChar qc1, DeprecatedChar qc2)
 {
     return qc1.unicode() != qc2.unicode();
 }
 
-inline bool operator!=(QChar qc, char ch)
+inline bool operator!=(DeprecatedChar qc, char ch)
 {
     return qc.unicode() != (unsigned char) ch;
 }
 
-inline bool operator!=(char ch, QChar qc)
+inline bool operator!=(char ch, DeprecatedChar qc)
 {
     return (unsigned char) ch != qc.unicode();
 }
@@ -158,34 +158,34 @@ inline bool operator!=(char ch, QChar qc)
 // Keep this struct to <= 46 bytes, that's what the system will allocate.
 // Will be rounded up to a multiple of 4, so we're stuck at 44.
 
-#define QS_INTERNAL_BUFFER_SIZE 20
-#define QS_INTERNAL_BUFFER_CHARS QS_INTERNAL_BUFFER_SIZE-1
-#define QS_INTERNAL_BUFFER_UCHARS QS_INTERNAL_BUFFER_SIZE/2
+#define WEBCORE_DS_INTERNAL_BUFFER_SIZE 20
+#define WEBCORE_DS_INTERNAL_BUFFER_CHARS WEBCORE_DS_INTERNAL_BUFFER_SIZE-1
+#define WEBCORE_DS_INTERNAL_BUFFER_UCHARS WEBCORE_DS_INTERNAL_BUFFER_SIZE/2
 
-struct KWQStringData  
+struct DeprecatedStringData  
 {
     // Uses shared null data.
-    KWQStringData();
+    DeprecatedStringData();
     void initialize();
     
     // No copy.
-    KWQStringData(QChar *u, unsigned l, unsigned m);
-    void initialize(QChar *u, unsigned l, unsigned m);
+    DeprecatedStringData(DeprecatedChar *u, unsigned l, unsigned m);
+    void initialize(DeprecatedChar *u, unsigned l, unsigned m);
     
     // Copy bytes.
-    KWQStringData(const QChar *u, unsigned l);
-    void initialize(const QChar *u, unsigned l);
+    DeprecatedStringData(const DeprecatedChar *u, unsigned l);
+    void initialize(const DeprecatedChar *u, unsigned l);
 
     // Copy bytes.
-    KWQStringData(const char *u, unsigned l);
+    DeprecatedStringData(const char *u, unsigned l);
     void initialize(const char *u, unsigned l);
 
     // Move from destination to source.
-    KWQStringData(KWQStringData &);
+    DeprecatedStringData(DeprecatedStringData &);
 
-    ~KWQStringData();
+    ~DeprecatedStringData();
 
-#ifdef QSTRING_DEBUG_ALLOCATIONS
+#ifdef WEBCORE_DS_DEBUG_ALLOCATIONS
     void* operator new(size_t s);
     void operator delete(void*p);
 #endif
@@ -197,8 +197,8 @@ struct KWQStringData
     char *makeAscii();
     void increaseAsciiSize(unsigned size);
 
-    QChar *unicode();
-    QChar *makeUnicode();    
+    DeprecatedChar *unicode();
+    DeprecatedChar *makeUnicode();    
     void increaseUnicodeSize(unsigned size);
     
     bool isUnicodeInternal() const { return (char *)_unicode == _internalBuffer; }
@@ -206,7 +206,7 @@ struct KWQStringData
 
     unsigned refCount;
     unsigned _length;
-    mutable QChar *_unicode;
+    mutable DeprecatedChar *_unicode;
     mutable char *_ascii;
     unsigned _maxUnicode : 30;
     bool _isUnicodeValid : 1;
@@ -214,11 +214,11 @@ struct KWQStringData
     unsigned _maxAscii : 31;
     bool _isAsciiValid : 1;
     
-    char _internalBuffer[QS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
+    char _internalBuffer[WEBCORE_DS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
 
 private:
-    KWQStringData(const KWQStringData &);
-    KWQStringData &operator=(const KWQStringData &);
+    DeprecatedStringData(const DeprecatedStringData &);
+    DeprecatedStringData &operator=(const DeprecatedStringData &);
 };
 
 class DeprecatedString {
@@ -226,8 +226,8 @@ public:
     static const char * const null;
 
     DeprecatedString();
-    DeprecatedString(QChar);
-    DeprecatedString(const QChar *, unsigned);
+    DeprecatedString(DeprecatedChar);
+    DeprecatedString(const DeprecatedChar *, unsigned);
     DeprecatedString(const char *);
     DeprecatedString(const char *, int len);
     DeprecatedString(const KJS::Identifier&);
@@ -250,14 +250,14 @@ public:
     static DeprecatedString fromNSString(NSString*);
 #endif
     DeprecatedString &operator=(char);
-    DeprecatedString &operator=(QChar);
+    DeprecatedString &operator=(DeprecatedChar);
     DeprecatedString &operator=(const char *);
     DeprecatedString &operator=(const DeprecatedCString &);
 
     unsigned length() const;
 
-    const QChar *unicode() const;
-    const QChar *stableUnicode();
+    const DeprecatedChar *unicode() const;
+    const DeprecatedChar *stableUnicode();
     const char *latin1() const;
     const char *ascii() const;
     bool isAllASCII() const;
@@ -270,7 +270,7 @@ public:
     bool isNull() const;
     bool isEmpty() const;
 
-    QChar at(unsigned) const;
+    DeprecatedChar at(unsigned) const;
 
     int compare(const DeprecatedString &) const;
     int compare(const char *) const;
@@ -280,7 +280,7 @@ public:
     bool startsWith(const char *, bool caseSensitive) const;
 
     int find(char, int index = 0) const;
-    int find(QChar, int index = 0) const;
+    int find(DeprecatedChar, int index = 0) const;
     int find(const char *, int index = 0, bool cs = true) const;
     int find(const DeprecatedString &, int index = 0, bool cs = true) const;
     int find(const RegularExpression &, int index = 0) const;
@@ -292,7 +292,7 @@ public:
     int contains(char) const;
     int contains(const char *, bool cs = true) const;
     int contains(const DeprecatedString &, bool cs = true) const;
-    int contains(QChar c, bool cs = true) const;
+    int contains(DeprecatedChar c, bool cs = true) const;
 
     bool endsWith(const DeprecatedString &) const;
 
@@ -318,7 +318,7 @@ public:
     DeprecatedString stripWhiteSpace() const;
     DeprecatedString simplifyWhiteSpace() const;
 
-    DeprecatedString &setUnicode(const QChar *, unsigned);
+    DeprecatedString &setUnicode(const DeprecatedChar *, unsigned);
     DeprecatedString &setLatin1(const char *, int len=-1);
 
     DeprecatedString &setNum(short);
@@ -336,39 +336,39 @@ public:
     ;
 
     DeprecatedString &append(const DeprecatedString &);
-    DeprecatedString &append(QChar);
+    DeprecatedString &append(DeprecatedChar);
     DeprecatedString &append(char);
     DeprecatedString &insert(unsigned, const DeprecatedString &);
-    DeprecatedString &insert(unsigned, QChar);
+    DeprecatedString &insert(unsigned, DeprecatedChar);
     DeprecatedString &insert(unsigned, char);
     DeprecatedString &insert(unsigned index, const char *insertChars, unsigned insertLength);
     DeprecatedString &prepend(const DeprecatedString &);
     DeprecatedString &remove(unsigned, unsigned);
-    DeprecatedString &remove(const QChar &c) { return replace(DeprecatedString(c), ""); }
+    DeprecatedString &remove(const DeprecatedChar &c) { return replace(DeprecatedString(c), ""); }
     DeprecatedString &remove(const DeprecatedString &s) { return replace(s, ""); }
     DeprecatedString &replace(unsigned index, unsigned len, const DeprecatedString &s);
     DeprecatedString &replace(char, const DeprecatedString &);
-    DeprecatedString &replace(QChar, const DeprecatedString &);
+    DeprecatedString &replace(DeprecatedChar, const DeprecatedString &);
     DeprecatedString &replace(const DeprecatedString &, const DeprecatedString &);
     DeprecatedString &replace(const RegularExpression &, const DeprecatedString &);
-    DeprecatedString &replace(QChar, QChar);
+    DeprecatedString &replace(DeprecatedChar, DeprecatedChar);
 
-    DeprecatedString &append(const QChar *, unsigned length);
+    DeprecatedString &append(const DeprecatedChar *, unsigned length);
     DeprecatedString &append(const char *, unsigned length);
-    DeprecatedString &insert(unsigned position, const QChar *, unsigned length);
-    DeprecatedString &prepend(const QChar *, unsigned length);
+    DeprecatedString &insert(unsigned position, const DeprecatedChar *, unsigned length);
+    DeprecatedString &prepend(const DeprecatedChar *, unsigned length);
     
-    void fill(QChar, int len=-1);
+    void fill(DeprecatedChar, int len=-1);
     void truncate(unsigned);
 
     void reserve(unsigned);
 
     bool operator!() const;
 
-    const QChar operator[](int) const;
+    const DeprecatedChar operator[](int) const;
 
     DeprecatedString &operator+=(const DeprecatedString &s) { return append(s); }
-    DeprecatedString &operator+=(QChar c) { return append(c); }
+    DeprecatedString &operator+=(DeprecatedChar c) { return append(c); }
     DeprecatedString &operator+=(char c) { return append(c); }
 
 #if __APPLE__
@@ -378,46 +378,46 @@ public:
 #endif
 
 private:
-    // Used by QConstString.
-    DeprecatedString(KWQStringData *constData, bool /*dummy*/);
+    // Used by DeprecatedConstString.
+    DeprecatedString(DeprecatedStringData *constData, bool /*dummy*/);
     void detach();
     void detachAndDiscardCharacters();
     void detachIfInternal();
     void detachInternal();
     void deref();
-    QChar *forceUnicode();
+    DeprecatedChar *forceUnicode();
     void setLength(unsigned);
 
-    KWQStringData **dataHandle;
-    KWQStringData internalData;
+    DeprecatedStringData **dataHandle;
+    DeprecatedStringData internalData;
     
-    static KWQStringData *shared_null;
-    static KWQStringData *makeSharedNull();
-    static KWQStringData **shared_null_handle;
-    static KWQStringData **makeSharedNullHandle();
+    static DeprecatedStringData *shared_null;
+    static DeprecatedStringData *makeSharedNull();
+    static DeprecatedStringData **shared_null_handle;
+    static DeprecatedStringData **makeSharedNullHandle();
 
     friend bool operator==(const DeprecatedString &, const DeprecatedString &);
     friend bool operator==(const DeprecatedString &, const char *);
 
-    friend class QConstString;
+    friend class DeprecatedConstString;
     friend class QGDict;
-    friend struct KWQStringData;
+    friend struct DeprecatedStringData;
 };
 
 DeprecatedString operator+(const DeprecatedString &, const DeprecatedString &);
 DeprecatedString operator+(const DeprecatedString &, const char *);
-DeprecatedString operator+(const DeprecatedString &, QChar);
+DeprecatedString operator+(const DeprecatedString &, DeprecatedChar);
 DeprecatedString operator+(const DeprecatedString &, char);
 DeprecatedString operator+(const char *, const DeprecatedString &);
-DeprecatedString operator+(QChar, const DeprecatedString &);
+DeprecatedString operator+(DeprecatedChar, const DeprecatedString &);
 DeprecatedString operator+(char, const DeprecatedString &);
 
-inline char *KWQStringData::ascii()
+inline char *DeprecatedStringData::ascii()
 {
     return _isAsciiValid ? _ascii : makeAscii();
 }
 
-inline QChar *KWQStringData::unicode()
+inline DeprecatedChar *DeprecatedStringData::unicode()
 {
     return _isUnicodeValid ? _unicode : makeUnicode();
 }
@@ -437,7 +437,7 @@ inline const char *DeprecatedString::latin1() const
     return dataHandle[0]->ascii();
 }
 
-inline const QChar *DeprecatedString::unicode() const
+inline const DeprecatedChar *DeprecatedString::unicode() const
 {
     return dataHandle[0]->unicode();
 }
@@ -469,7 +469,7 @@ inline bool DeprecatedString::operator!() const
     return isNull();
 }
 
-inline const QChar DeprecatedString::operator[](int index) const
+inline const DeprecatedChar DeprecatedString::operator[](int index) const
 {
     return at(index);
 }
@@ -554,10 +554,10 @@ inline bool operator>=(const char *chs, const DeprecatedString &qs)
     return qs.compare(chs) <= 0;
 }
 
-class QConstString : private DeprecatedString {
+class DeprecatedConstString : private DeprecatedString {
 public:
-    QConstString(const QChar *, unsigned);
-    ~QConstString();
+    DeprecatedConstString(const DeprecatedChar *, unsigned);
+    ~DeprecatedConstString();
     const DeprecatedString &string() const { return *this; }
 };
 

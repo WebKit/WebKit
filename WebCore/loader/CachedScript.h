@@ -25,8 +25,8 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef KHTML_CachedScript_h
-#define KHTML_CachedScript_h
+#ifndef CachedScript_h
+#define CachedScript_h
 
 #include "CachedObject.h"
 #include "TextEncoding.h"

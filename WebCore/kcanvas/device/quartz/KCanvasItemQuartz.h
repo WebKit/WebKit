@@ -28,7 +28,7 @@
 
 #import "kcanvas/RenderPath.h"
 
-#include "KWQWMatrix.h"
+#include "AffineTransform.h"
 
 namespace WebCore {
 

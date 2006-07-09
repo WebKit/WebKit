@@ -34,7 +34,7 @@
 #include <wtf/PassRefPtr.h>
 
 class DeprecatedStringList;
-class QTextStream;
+class TextStream;
 class RenderArena;
 
 namespace WebCore {
@@ -338,7 +338,7 @@ public:
     virtual int nextOffset(int current) const;
     
 #ifndef NDEBUG
-    virtual void dump(QTextStream*, DeprecatedString indent = "") const;
+    virtual void dump(TextStream*, DeprecatedString indent = "") const;
 #endif
 
     // -----------------------------------------------------------------------------

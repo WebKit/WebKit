@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQ_LIST_IMPL_H
-#define KWQ_LIST_IMPL_H
+#ifndef DeprecatedPtrListImpl_h
+#define DeprecatedPtrListImpl_h
 
-class KWQListNode;
+class DeprecatedListNode;
 class DeprecatedPtrListImplIterator;
 
 class DeprecatedPtrListImpl
@@ -78,9 +78,9 @@ public:
     void addIterator(DeprecatedPtrListImplIterator *iter) const;
     void removeIterator(DeprecatedPtrListImplIterator *iter) const;
 
-    KWQListNode *head;
-    KWQListNode *tail;
-    KWQListNode *cur;
+    DeprecatedListNode *head;
+    DeprecatedListNode *tail;
+    DeprecatedListNode *cur;
     unsigned nodeCount;
     void (*deleteItem)(void *);
     mutable DeprecatedPtrListImplIterator *iterators;
@@ -108,7 +108,7 @@ public:
 
 private:
     const DeprecatedPtrListImpl *list;
-    KWQListNode *node;
+    DeprecatedListNode *node;
     DeprecatedPtrListImplIterator *next;
     DeprecatedPtrListImplIterator *prev;
 

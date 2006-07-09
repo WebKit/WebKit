@@ -25,16 +25,16 @@
 
 #import <Cocoa/Cocoa.h>
 
-class QLineEdit;
-@class KWQTextFieldFormatter;
+class TextField;
+@class WebCoreTextFieldFormatter;
 @protocol WebCoreWidgetHolder;
 
-@interface KWQTextFieldController : NSObject
+@interface WebCoreTextFieldController : NSObject
 {
 @private
     NSTextField* field;
-    QLineEdit *widget;
-    KWQTextFieldFormatter *formatter;
+    TextField *widget;
+    WebCoreTextFieldFormatter *formatter;
     BOOL hasFocus;
     BOOL hasFocusAndSelectionSet;
     BOOL edited;
@@ -66,37 +66,37 @@ class QLineEdit;
 @interface WebCoreTextField : NSTextField <WebCoreWidgetHolder>
 {
 @private
-    KWQTextFieldController* controller;
+    WebCoreTextFieldController* controller;
     BOOL inNextValidKeyView;
 }
 
-- (id)initWithQLineEdit:(QLineEdit *)widget;
-- (KWQTextFieldController *)controller;
+- (id)initWithQLineEdit:(TextField *)widget;
+- (WebCoreTextFieldController *)controller;
 
 @end
 
-@interface KWQSecureTextField : NSSecureTextField <WebCoreWidgetHolder>
+@interface WebCoreSecureTextField : NSSecureTextField <WebCoreWidgetHolder>
 {
 @private
-    KWQTextFieldController* controller;
+    WebCoreTextFieldController* controller;
     BOOL inNextValidKeyView;
     BOOL inSetFrameSize;
 }
 
-- (id)initWithQLineEdit:(QLineEdit *)widget;
-- (KWQTextFieldController *)controller;
+- (id)initWithQLineEdit:(TextField *)widget;
+- (WebCoreTextFieldController *)controller;
 
 @end
 
-@interface KWQSearchField : NSSearchField <WebCoreWidgetHolder>
+@interface WebCoreSearchField : NSSearchField <WebCoreWidgetHolder>
 {
 @private
-    KWQTextFieldController* controller;
+    WebCoreTextFieldController* controller;
     BOOL inNextValidKeyView;
 }
 
-- (id)initWithQLineEdit:(QLineEdit *)widget;
-- (KWQTextFieldController *)controller;
+- (id)initWithQLineEdit:(TextField *)widget;
+- (WebCoreTextFieldController *)controller;
 
 @end
 

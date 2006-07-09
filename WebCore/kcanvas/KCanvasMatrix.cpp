@@ -25,7 +25,7 @@
 #include "KCanvasMatrix.h"
 
 #include "KCanvasPath.h"
-#include "KWQWMatrix.h"
+#include "AffineTransform.h"
 #include <math.h>
 
 namespace WebCore {
@@ -38,10 +38,10 @@ KCanvasMatrix::KCanvasMatrix()
     m_mode = OPS_PREMUL;
 }
 
-KCanvasMatrix::KCanvasMatrix(const QMatrix &qmatrix)
+KCanvasMatrix::KCanvasMatrix(const AffineTransform &matrix)
 {
     m_mode = OPS_PREMUL;
-    (*this) = qmatrix;
+    (*this) = matrix;
 }
 
 KCanvasMatrix::KCanvasMatrix(const KCanvasMatrix &matrix)
@@ -60,7 +60,7 @@ KCanvasMatrix::~KCanvasMatrix()
 {
 }
 
-KCanvasMatrix &KCanvasMatrix::operator=(const QMatrix &other)
+KCanvasMatrix &KCanvasMatrix::operator=(const AffineTransform &other)
 {
     m_matrix = other;
     return *this;
@@ -72,12 +72,12 @@ KCanvasMatrix &KCanvasMatrix::operator=(const KCanvasMatrix &other)
     return *this;
 }
 
-bool KCanvasMatrix::operator==(const QMatrix &other) const
+bool KCanvasMatrix::operator==(const AffineTransform &other) const
 {
     return (m_matrix == other);
 }
 
-bool KCanvasMatrix::operator!=(const QMatrix &other) const
+bool KCanvasMatrix::operator!=(const AffineTransform &other) const
 {
     return !operator==(other);
 }
@@ -163,7 +163,7 @@ KCanvasMatrix &KCanvasMatrix::translate(double x, double y)
         m_matrix.translate(x, y);
     else
     {
-        QMatrix temp;
+        AffineTransform temp;
         temp.translate(x, y);
         m_matrix *= temp;
     }
@@ -173,7 +173,7 @@ KCanvasMatrix &KCanvasMatrix::translate(double x, double y)
 
 KCanvasMatrix &KCanvasMatrix::multiply(const KCanvasMatrix &other)
 {
-    QMatrix temp(other.a(), other.b(), other.c(), other.d(), other.e(), other.f());
+    AffineTransform temp(other.a(), other.b(), other.c(), other.d(), other.e(), other.f());
 
     if(m_mode == OPS_PREMUL)
     {
@@ -192,7 +192,7 @@ KCanvasMatrix &KCanvasMatrix::scale(double scaleFactorX, double scaleFactorY)
         m_matrix.scale(scaleFactorX, scaleFactorY);
     else
     {
-        QMatrix temp;
+        AffineTransform temp;
         temp.scale(scaleFactorX, scaleFactorY);
         m_matrix *= temp;
     }
@@ -206,7 +206,7 @@ KCanvasMatrix &KCanvasMatrix::rotate(double angle)
         m_matrix.rotate(angle);
     else
     {
-        QMatrix temp;
+        AffineTransform temp;
         temp.rotate(angle);
         m_matrix *= temp;
     }
@@ -220,7 +220,7 @@ KCanvasMatrix &KCanvasMatrix::rotateFromVector(double x, double y)
         m_matrix.rotate(atan2(y, x) / deg2rad);
     else
     {
-        QMatrix temp;
+        AffineTransform temp;
         temp.rotate(atan2(y, x) / deg2rad);
         m_matrix *= temp;
     }
@@ -244,7 +244,7 @@ KCanvasMatrix &KCanvasMatrix::skewX(double angle)
         m_matrix.shear(tan(angle * deg2rad), 0.0f);
     else
     {
-        QMatrix temp;
+        AffineTransform temp;
         temp.shear(tan(angle * deg2rad), 0.0f);
         m_matrix *= temp;
     }
@@ -258,7 +258,7 @@ KCanvasMatrix &KCanvasMatrix::skewY(double angle)
         m_matrix.shear(0.0f, tan(angle * deg2rad));
     else
     {
-        QMatrix temp;
+        AffineTransform temp;
         temp.shear(0.0f, tan(angle * deg2rad));
         m_matrix *= temp;
     }
@@ -283,7 +283,7 @@ void KCanvasMatrix::removeScale(double *xScale, double *yScale)
     *xScale = sx; *yScale = sy;
 }
 
-QMatrix KCanvasMatrix::qmatrix() const
+AffineTransform KCanvasMatrix::matrix() const
 {
     return m_matrix;
 }

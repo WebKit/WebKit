@@ -26,11 +26,11 @@
 #ifndef HTMLTOKENIZER_H
 #define HTMLTOKENIZER_H
 
-#include "KWQPtrQueue.h"
+#include "DeprecatedPtrQueue.h"
 #include "NamedMappedAttrMap.h"
 #include "SegmentedString.h"
 #include "Timer.h"
-#include "xml_tokenizer.h"
+#include "XMLTokenizer.h"
 #include "CachedObjectClient.h"
 
 namespace WebCore {

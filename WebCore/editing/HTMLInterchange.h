@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KHTML_EDITING_HTML_INTERCHANGE_H
-#define KHTML_EDITING_HTML_INTERCHANGE_H
+#ifndef HTMLInterchange_h
+#define HTMLInterchange_h
 
 class DeprecatedString;
 

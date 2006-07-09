@@ -56,7 +56,7 @@ public:
 
     KCanvasResourceListener *listener() const;
     void setListener(KCanvasResourceListener *listener);
-    QTextStream &externalRepresentation(QTextStream &) const;
+    TextStream &externalRepresentation(TextStream &) const;
 
 private:
     class Private;

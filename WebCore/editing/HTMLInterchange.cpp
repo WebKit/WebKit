@@ -40,7 +40,7 @@ DeprecatedString convertedSpaceString()
         convertedSpaceString = "<span class=\"";
         convertedSpaceString += AppleConvertedSpace;
         convertedSpaceString += "\">";
-        convertedSpaceString += QChar(0xa0);
+        convertedSpaceString += DeprecatedChar(0xa0);
         convertedSpaceString += "</span>";
     }
     return convertedSpaceString;

@@ -37,7 +37,7 @@
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "XLinkNames.h"
-#include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/RenderSVGContainer.h>
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasImage.h>
 #include <kcanvas/KCanvasPath.h>

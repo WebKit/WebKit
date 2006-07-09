@@ -27,9 +27,9 @@
 #include "SVGElement.h"
 #include "SVGStylable.h"
 
-#include "KWQWMatrix.h"
+#include "AffineTransform.h"
 #include <kcanvas/KCanvasPath.h>
-#include "render_style.h"
+#include "RenderStyle.h"
 
 namespace WebCore
 {

@@ -40,7 +40,7 @@
 #include "SVGRenderStyle.h"
 #include "SVGStyledElement.h"
 #include "ksvg.h"
-#include "render_style.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
 

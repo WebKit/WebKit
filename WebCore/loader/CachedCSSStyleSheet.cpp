@@ -32,7 +32,7 @@
 #include "Cache.h"
 #include "CachedObjectClient.h"
 #include "CachedObjectClientWalker.h"
-#include "KWQLoader.h"
+#include "LoaderFunctions.h"
 #include "loader.h"
 #include <wtf/Vector.h>
 
@@ -108,8 +108,8 @@ void CachedCSSStyleSheet::checkNotify()
     CachedObjectClientWalker w(m_clients);
     while (CachedObjectClient *c = w.next()) {
 #if __APPLE__
-        if (m_response && !KWQIsResponseURLEqualToURL(m_response, m_url))
-            c->setStyleSheet(String(KWQResponseURL(m_response)), m_sheet);
+        if (m_response && !IsResponseURLEqualToURL(m_response, m_url))
+            c->setStyleSheet(String(ResponseURL(m_response)), m_sheet);
         else
 #endif
             c->setStyleSheet(m_url, m_sheet);

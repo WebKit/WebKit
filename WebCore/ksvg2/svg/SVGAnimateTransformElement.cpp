@@ -172,7 +172,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
     if (timePercentage >= 1.0)
         timePercentage = 1.0;
     
-    QWMatrix qToMatrix, qFromMatrix;
+    AffineTransform qToMatrix, qFromMatrix;
     double useTimePercentage = timePercentage;
 
     if (m_values) {
@@ -191,8 +191,8 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             if (!value1.isEmpty() && !value2.isEmpty()) {
                 bool apply = false;
                 if (m_toTransform && m_fromTransform) {    
-                    qToMatrix = m_toTransform->matrix()->qmatrix();
-                    qFromMatrix = m_fromTransform->matrix()->qmatrix();
+                    qToMatrix = m_toTransform->matrix()->matrix();
+                    qFromMatrix = m_fromTransform->matrix()->matrix();
                     
                     apply = true;
                     useTimePercentage = 1.0;
@@ -215,10 +215,10 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
     }
 
     if (m_toTransform && m_toTransform->matrix() && qToMatrix.isIdentity())
-        qToMatrix = m_toTransform->matrix()->qmatrix();
+        qToMatrix = m_toTransform->matrix()->matrix();
 
     if (m_fromTransform && m_fromTransform->matrix() && qFromMatrix.isIdentity())
-        qFromMatrix = m_fromTransform->matrix()->qmatrix();
+        qFromMatrix = m_fromTransform->matrix()->matrix();
 
     if (!m_transformMatrix)
         m_transformMatrix = new SVGMatrix();
@@ -419,7 +419,7 @@ RefPtr<SVGTransform> SVGAnimateTransformElement::parseTransformValue(const Depre
     return parsedTransform;
 }
 
-void SVGAnimateTransformElement::calculateRotationFromMatrix(const QWMatrix &matrix, double &angle, double &cx, double &cy) const
+void SVGAnimateTransformElement::calculateRotationFromMatrix(const AffineTransform &matrix, double &angle, double &cx, double &cy) const
 {
     double cosa = matrix.m11();
     double sina = -matrix.m21();

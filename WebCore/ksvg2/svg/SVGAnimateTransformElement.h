@@ -44,7 +44,7 @@ namespace WebCore
 
         // Helpers
         RefPtr<SVGTransform> parseTransformValue(const DeprecatedString &data) const;
-        void calculateRotationFromMatrix(const QWMatrix &matrix, double &angle, double &cx, double &cy) const;
+        void calculateRotationFromMatrix(const AffineTransform &matrix, double &angle, double &cx, double &cy) const;
 
         SVGMatrix *initialMatrix() const;
         SVGMatrix *transformMatrix() const;

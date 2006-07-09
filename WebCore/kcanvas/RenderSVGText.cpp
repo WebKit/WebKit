@@ -40,20 +40,20 @@ RenderSVGText::RenderSVGText(SVGTextElement *node)
 {
 }
 
-QMatrix RenderSVGText::translationTopToBaseline()
+AffineTransform RenderSVGText::translationTopToBaseline()
 {
     int offset = baselinePosition(true, true);
-    return QMatrix().translate(0, -offset);
+    return AffineTransform().translate(0, -offset);
 }
 
-QMatrix RenderSVGText::translationForAttributes()
+AffineTransform RenderSVGText::translationForAttributes()
 {
     SVGTextElement *text = static_cast<SVGTextElement *>(element());
 
     float xOffset = text->x()->baseVal()->getFirst() ? text->x()->baseVal()->getFirst()->value() : 0;
     float yOffset = text->y()->baseVal()->getFirst() ? text->y()->baseVal()->getFirst()->value() : 0;
 
-    return QMatrix().translate(xOffset, yOffset);
+    return AffineTransform().translate(xOffset, yOffset);
 }
 
 void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
@@ -74,7 +74,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     }
     
     context->concatCTM(localTransform());
-    context->concatCTM(QMatrix().translate(parentX, parentY));
+    context->concatCTM(AffineTransform().translate(parentX, parentY));
     context->concatCTM(translationForAttributes());
     context->concatCTM(translationTopToBaseline());
     
@@ -139,7 +139,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
 void RenderSVGText::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
-    QMatrix transform = translationTopToBaseline() * translationForAttributes() * absoluteTransform();
+    AffineTransform transform = translationTopToBaseline() * translationForAttributes() * absoluteTransform();
     r = transform.mapRect(r);
     
     RenderContainer::computeAbsoluteRepaintRect(r, f);
@@ -152,8 +152,8 @@ bool RenderSVGText::requiresLayer()
 
 void RenderSVGText::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
 
     IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
@@ -173,7 +173,7 @@ void RenderSVGText::layout()
 
 bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
-    QMatrix totalTransform = translationForAttributes();
+    AffineTransform totalTransform = translationForAttributes();
     totalTransform *= translationTopToBaseline();
     totalTransform *= absoluteTransform();
     double localX, localY;
@@ -183,7 +183,7 @@ bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty
 
 void RenderSVGText::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty)
 {
-    QMatrix mat = translationForAttributes();
+    AffineTransform mat = translationForAttributes();
     mat *= translationTopToBaseline();
     mat *= absoluteTransform();
 

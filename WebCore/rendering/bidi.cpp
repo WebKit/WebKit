@@ -754,7 +754,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj)
 {
     // See if we have an unconstructed line box for this object that is also
     // the last item on the line.
-    KHTMLAssert(obj->isInlineFlow() || obj == this);
+    ASSERT(obj->isInlineFlow() || obj == this);
     RenderFlow* flow = static_cast<RenderFlow*>(obj);
 
     // Get the last box we made for this render object.
@@ -769,7 +769,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj)
         // We need to make a new box for this render object.  Once
         // made, we need to place it at the end of the current line.
         InlineBox* newBox = obj->createInlineBox(false, obj == this);
-        KHTMLAssert(newBox->isInlineFlowBox());
+        ASSERT(newBox->isInlineFlowBox());
         box = static_cast<InlineFlowBox*>(newBox);
         box->setFirstLineStyleBit(m_firstLine);
         
@@ -872,9 +872,9 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             int effectiveWidth = textWidth;
             int rtLength = rt->length();
             if (rtLength != 0) {
-                if (r->start == 0 && needsWordSpacing && QChar(rt->text()[r->start]).isSpace())
+                if (r->start == 0 && needsWordSpacing && DeprecatedChar(rt->text()[r->start]).isSpace())
                     effectiveWidth += rt->font(m_firstLine)->wordSpacing();
-                needsWordSpacing = !QChar(rt->text()[r->stop-1]).isSpace() && r->stop == rtLength;          
+                needsWordSpacing = !DeprecatedChar(rt->text()[r->stop-1]).isSpace() && r->stop == rtLength;          
             }
             if (!r->compact) {
                 RenderStyle *style = r->obj->style();
@@ -950,7 +950,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
                         spaces++;
                 }
 
-                KHTMLAssert(spaces <= numSpaces);
+                ASSERT(spaces <= numSpaces);
 
                 // Only justify text if whitespace is collapsed.
                 if (r->obj->style()->collapseWhiteSpace()) {
@@ -1776,7 +1776,7 @@ RootInlineBox* RenderBlock::determineStartPosition(bool fullLayout, BidiIterator
                 curr->deleteLine(arena);
                 curr = next;
             }
-            KHTMLAssert(!m_firstLineBox && !m_lastLineBox);
+            ASSERT(!m_firstLineBox && !m_lastLineBox);
         }
     } else {
         for (curr = firstRootBox(); curr && !curr->isDirty(); curr = curr->nextRootBox());
@@ -2375,7 +2375,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 tmpW += inlineWidth(o, true, false);
             tmpW += inlineWidth(o, false, true);
         } else
-            KHTMLAssert( false );
+            ASSERT( false );
 
         RenderObject* next = bidiNext(start.block, o, bidi);
         bool autoWrap = o->style()->autoWrap();

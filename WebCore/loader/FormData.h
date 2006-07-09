@@ -18,8 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef KHTML_FORM_DATA_H
-#define KHTML_FORM_DATA_H
+#ifndef FormData_h
+#define FormData_h
 
 #include "DeprecatedString.h"
 #include "DeprecatedValueList.h"

@@ -32,7 +32,7 @@
 #include "Document.h"
 #include "FixedTableLayout.h"
 #include "HTMLNames.h"
-#include "KWQTextStream.h"
+#include "TextStream.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableSection.h"
@@ -233,9 +233,9 @@ void RenderTable::calcWidth()
 
 void RenderTable::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
-    KHTMLAssert(!needSectionRecalc);
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
+    ASSERT(!needSectionRecalc);
 
     if (posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
         // All we have to is lay out our positioned objects.
@@ -451,7 +451,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
 
 void RenderTable::calcMinMaxWidth()
 {
-    KHTMLAssert(!minMaxKnown());
+    ASSERT(!minMaxKnown());
 
     if (needSectionRecalc)
         recalcSections();
@@ -471,7 +471,7 @@ void RenderTable::splitColumn(int pos, int firstSpan)
     int oldSize = columns.size();
     columns.resize(oldSize + 1);
     int oldSpan = columns[pos].span;
-    KHTMLAssert(oldSpan > firstSpan);
+    ASSERT(oldSpan > firstSpan);
     columns[pos].span = firstSpan;
     memmove(columns.data() + pos + 1, columns.data() + pos, (oldSize-pos)*sizeof(ColumnStruct));
     columns[pos+1].span = oldSpan - firstSpan;
@@ -1033,7 +1033,7 @@ IntRect RenderTable::getOverflowClipRect(int tx, int ty)
 }
 
 #ifndef NDEBUG
-void RenderTable::dump(QTextStream *stream, DeprecatedString ind) const
+void RenderTable::dump(TextStream *stream, DeprecatedString ind) const
 {
     if (tCaption)
         *stream << " tCaption";

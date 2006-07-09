@@ -78,7 +78,7 @@ float SVGHelper::PercentageOfViewport(float value, const SVGElement* viewportEle
     return 0.0;
 }
 
-void SVGHelper::ParseSeperatedList(SVGStringList *list, const DeprecatedString &data, const QChar &delimiter)
+void SVGHelper::ParseSeperatedList(SVGStringList *list, const DeprecatedString &data, const DeprecatedChar &delimiter)
 {
     // TODO : more error checking/reporting
     list->clear();

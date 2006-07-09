@@ -289,7 +289,7 @@ void KRenderingPaintServerGradientQuartz::renderPath(const KRenderingPaintServer
     }
     
     // apply the gradient's own transform
-    CGAffineTransform gradientTransform = CGAffineTransform(server->gradientTransform().qmatrix());
+    CGAffineTransform gradientTransform = CGAffineTransform(server->gradientTransform().matrix());
     CGContextConcatCTM(context, gradientTransform);
 }
 

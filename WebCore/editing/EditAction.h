@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KHTML_EDITING_EDIT_ACTIONS_H
-#define KHTML_EDITING_EDIT_ACTIONS_H
+#ifndef EditAction_h
+#define EditAction_h
 
 namespace WebCore {
     typedef enum {

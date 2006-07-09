@@ -2,8 +2,8 @@
 <makefile>
 	<set append="1" var="WEBCORE_SOURCES_KWQ">
 		
-		kwq/KWQCString.cpp
-		kwq/KWQTextStream.cpp
+		kwq/DeprecatedCString.cpp
+		kwq/TextStream.cpp
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_DERIVEDSOURCES">
 		
@@ -417,7 +417,7 @@
 		rendering/InlineFlowBox.cpp
 		rendering/InlineTextBox.cpp
 		rendering/ListMarkerBox.cpp
-		rendering/render_style.cpp
+		rendering/RenderStyle.cpp
 		rendering/RenderApplet.cpp
 		rendering/RenderArena.cpp
 		rendering/RenderBlock.cpp
@@ -455,7 +455,7 @@
 		rendering/RenderTableSection.cpp
 		rendering/RenderText.cpp
 		rendering/RenderTextArea.cpp
-		rendering/RenderTextField.cpp
+		rendering/RenderTextControl.cpp
 		rendering/RenderTextFragment.cpp
 		rendering/RenderTheme.cpp
 		
@@ -543,7 +543,7 @@
 		dom/TreeWalker.cpp
 		dom/UIEvent.cpp
 		dom/WheelEvent.cpp
-		dom/xml_tokenizer.cpp
+		dom/XMLTokenizer.cpp
 
 	</set>
 

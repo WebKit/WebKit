@@ -34,12 +34,12 @@
 #define MAX_SUBSTRINGS  10
 #define MAX_OFFSETS     (3 *MAX_SUBSTRINGS)
 
-class RegularExpression::KWQRegExpPrivate : public Shared<RegularExpression::KWQRegExpPrivate>
+class RegularExpression::Private : public Shared<RegularExpression::Private>
 {
 public:
-    KWQRegExpPrivate();
-    KWQRegExpPrivate(DeprecatedString pattern, bool caseSensitive, bool glob);
-    ~KWQRegExpPrivate();
+    Private();
+    Private(DeprecatedString pattern, bool caseSensitive, bool glob);
+    ~Private();
 
     void compile(bool caseSensitive, bool glob);
 
@@ -53,12 +53,12 @@ public:
     int lastMatchLength;
 };
 
-RegularExpression::KWQRegExpPrivate::KWQRegExpPrivate() : pattern("")
+RegularExpression::Private::Private() : pattern("")
 {
     compile(true, false);
 }
 
-RegularExpression::KWQRegExpPrivate::KWQRegExpPrivate(DeprecatedString p, bool caseSensitive, bool glob) : pattern(p), lastMatchPos(-1), lastMatchLength(-1)
+RegularExpression::Private::Private(DeprecatedString p, bool caseSensitive, bool glob) : pattern(p), lastMatchPos(-1), lastMatchLength(-1)
 {
     compile(caseSensitive, glob);
 }
@@ -86,7 +86,7 @@ static DeprecatedString RegExpFromGlob(DeprecatedString glob)
     return result;
 }
 
-void RegularExpression::KWQRegExpPrivate::compile(bool caseSensitive, bool glob)
+void RegularExpression::Private::compile(bool caseSensitive, bool glob)
 {
     DeprecatedString p;
 
@@ -109,21 +109,21 @@ void RegularExpression::KWQRegExpPrivate::compile(bool caseSensitive, bool glob)
     }
 }
 
-RegularExpression::KWQRegExpPrivate::~KWQRegExpPrivate()
+RegularExpression::Private::~Private()
 {
     pcre_free(regex);
 }
 
 
-RegularExpression::RegularExpression() : d(new RegularExpression::KWQRegExpPrivate())
+RegularExpression::RegularExpression() : d(new RegularExpression::Private())
 {
 }
 
-RegularExpression::RegularExpression(const DeprecatedString &pattern, bool caseSensitive, bool glob) : d(new RegularExpression::KWQRegExpPrivate(pattern, caseSensitive, glob))
+RegularExpression::RegularExpression(const DeprecatedString &pattern, bool caseSensitive, bool glob) : d(new RegularExpression::Private(pattern, caseSensitive, glob))
 {
 }
 
-RegularExpression::RegularExpression(const char *cpattern) : d(new RegularExpression::KWQRegExpPrivate(cpattern, true, false))
+RegularExpression::RegularExpression(const char *cpattern) : d(new RegularExpression::Private(cpattern, true, false))
 {
 }
 
@@ -139,7 +139,7 @@ RegularExpression::~RegularExpression()
 RegularExpression &RegularExpression::operator=(const RegularExpression &re)
 {
     RegularExpression tmp(re);
-    RefPtr<RegularExpression::KWQRegExpPrivate> tmpD = tmp.d;
+    RefPtr<RegularExpression::Private> tmpD = tmp.d;
     
     tmp.d = d;
     d = tmpD;
@@ -224,7 +224,7 @@ DeprecatedString RegularExpression::cap(int n) const
     const pcre_char *substring = NULL;
     int substringLength = pcre_get_substring(reinterpret_cast<const uint16_t *>(d->lastMatchString.unicode()), d->lastMatchOffsets, d->lastMatchCount, n, &substring);
     if (substringLength > 0) {
-       DeprecatedString capture(reinterpret_cast<const QChar *>(substring), substringLength);
+       DeprecatedString capture(reinterpret_cast<const DeprecatedChar *>(substring), substringLength);
        pcre_free_substring(substring);
        return capture;
     }
