@@ -214,14 +214,12 @@ NSSize WebIconLargeSize = {128, 128};
 {
     if (![self _isEnabled])
         return nil;
+        
 #ifdef ICONDEBUG
     NSString* iconurl = [_private->databaseBridge iconURLForPageURL:URL];
-    NSString* oldURL = [_private->pageURLToIconURL objectForKey:URL];
-    if ([oldURL isEqualToString:iconurl]) 
-        LOG(IconDatabase,"iconURLForURL - Old and New icon databases agree on %@ for PageURL %@", iconurl, URL);
-    else
-        LOG(IconDatabase,"iconURLForURL - Old (%@) and New (%@) disagree on PageURL %@", oldURL, iconurl, URL );
+    return iconurl;
 #endif
+
     return URL ? [_private->pageURLToIconURL objectForKey:URL] : nil;
 }
 
@@ -248,12 +246,15 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(URL);
     if (![self _isEnabled])
         return;
-    
-    WebNSUInteger retainCount = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, URL);
-    CFDictionarySetValue(_private->pageURLToRetainCount, URL, (void *)(retainCount + 1));
+
 #ifdef ICONDEBUG
     [_private->databaseBridge retainIconForURL:URL];
+    return;
 #endif
+
+    WebNSUInteger retainCount = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, URL);
+    CFDictionarySetValue(_private->pageURLToRetainCount, URL, (void *)(retainCount + 1));
+
 }
 
 - (void)releaseIconForURL:(NSString *)pageURL
@@ -261,8 +262,10 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(pageURL);
     if (![self _isEnabled])
         return;
+        
 #ifdef ICONDEBUG
     [_private->databaseBridge releaseIconForURL:pageURL];
+    return;
 #endif
 
     WebNSUInteger retainCount = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, pageURL);
@@ -416,6 +419,7 @@ NSSize WebIconLargeSize = {128, 128};
 
 #ifdef ICONDEBUG
     [_private->databaseBridge _setHaveNoIconForIconURL:iconURL];
+    return;
 #endif
 
     [_private->iconURLsWithNoIcons addObject:iconURL];
@@ -443,6 +447,7 @@ NSSize WebIconLargeSize = {128, 128};
     
 #ifdef ICONDEBUG
     [_private->databaseBridge _setIconURL:iconURL forURL:URL];
+    return;
 #endif
 
     if ([[_private->pageURLToIconURL objectForKey:URL] isEqualToString:iconURL]) {
@@ -881,13 +886,16 @@ NSSize WebIconLargeSize = {128, 128};
 - (void)_resetCachedWebPreferences:(NSNotification *)notification
 {
     BOOL privateBrowsingEnabledNow = [[WebPreferences standardPreferences] privateBrowsingEnabled];
+
+#ifdef ICONDEBUG
+    [_private->databaseBridge setPrivateBrowsingEnabled:privateBrowsingEnabledNow];
+    return;
+#endif
+
     if (privateBrowsingEnabledNow == _private->privateBrowsingEnabled)
         return;
     
     _private->privateBrowsingEnabled = privateBrowsingEnabledNow;
-#ifdef ICONDEBUG
-    [_private->databaseBridge setPrivateBrowsingEnabled:privateBrowsingEnabledNow];
-#endif
     
     // When private browsing is turned off, forget everything we learned while it was on 
     if (!_private->privateBrowsingEnabled) {

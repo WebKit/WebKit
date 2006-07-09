@@ -1,3 +1,19 @@
+2006-07-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        The ICONDEBUG flag no choose either/or the new icon database and the old one
+        No longer any need to live side by side to compare results
+
+        * Misc/WebIconDatabase.m:
+        (-[NSMutableDictionary iconURLForURL:]):
+        (-[NSMutableDictionary retainIconForURL:]):
+        (-[NSMutableDictionary releaseIconForURL:]):
+        (-[WebIconDatabase _setHaveNoIconForIconURL:]):
+        (-[WebIconDatabase _setIconURL:forURL:]):
+        (-[WebIconDatabase _resetCachedWebPreferences:]):
+
+
 2006-07-08  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.
