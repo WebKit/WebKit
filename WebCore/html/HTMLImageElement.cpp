@@ -156,6 +156,9 @@ String HTMLImageElement::altText() const
 
 RenderObject *HTMLImageElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
+     if (style->contentData())
+        return RenderObject::createObject(this, style);
+     
      return new (arena) RenderImage(this);
 }
 

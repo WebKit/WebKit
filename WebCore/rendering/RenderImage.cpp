@@ -49,6 +49,7 @@ RenderImage::RenderImage(Node* n)
     m_selectionState = SelectionNone;
     setIntrinsicWidth(0);
     setIntrinsicHeight(0);
+    m_isAnonymousImage = 0;
     updateAltText();
 }
 
@@ -78,6 +79,9 @@ void RenderImage::setContentObject(CachedResource* co)
 
 void RenderImage::setCachedImage(CachedImage* newImage)
 {
+    if (isAnonymousImage())
+        return;
+    
     if (m_cachedImage != newImage) {
         if (m_cachedImage)
             m_cachedImage->deref(this);

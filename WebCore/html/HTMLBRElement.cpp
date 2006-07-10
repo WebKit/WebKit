@@ -66,8 +66,11 @@ void HTMLBRElement::parseMappedAttribute(MappedAttribute *attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-RenderObject* HTMLBRElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* HTMLBRElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
+     if (style->contentData())
+        return RenderObject::createObject(this, style);
+
      return new (arena) RenderBR(this);
 }
 

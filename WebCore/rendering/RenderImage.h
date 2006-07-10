@@ -61,6 +61,9 @@ public:
     virtual void setStyle(RenderStyle *style);
     void updateAltText();
     
+    void setIsAnonymousImage(bool anon) { m_isAnonymousImage = anon; }
+    bool isAnonymousImage() { return m_isAnonymousImage; }
+    
     void setCachedImage(CachedImage*);
     CachedImage* cachedImage() const { return m_cachedImage; }
     
@@ -91,6 +94,9 @@ private:
 
     // The image we are rendering.
     CachedImage* m_cachedImage;
+
+    // True if the image is set through the content: property
+    bool m_isAnonymousImage;
 
     // Text to display as long as the image isn't available.
     String m_altText;

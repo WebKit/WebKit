@@ -1,3 +1,38 @@
+2006-07-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/4610314> Support the CSS3 content property 
+        for images
+
+        This patch provides initial support for the CSS3 content property. 
+        It lacks support for any content other than images, and only allows 
+        content for elements that seemed safe for now.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Remove restrictions for 
+        just :before and :after
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::createRenderer):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::createRenderer):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::createRenderer):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::createRenderer):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::setCachedImage): Don't allow the image to be 
+        set this way if it was already set with the content property.
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::setIsAnonymousImage): Anonymous images are 
+        those set through the content property.
+        (WebCore::RenderImage::isAnonymousImage):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject): If there is content 
+        specified, create a RenderImage with the content and initialize the 
+        cached image to whatever was specified in the CSS.
+
 2006-07-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by NOBODY (Build Fix!)

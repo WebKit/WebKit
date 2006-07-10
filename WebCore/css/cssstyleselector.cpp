@@ -3087,9 +3087,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     {
         // FIXME: In CSS3, it will be possible to inherit content.  In CSS2 it is not.  This
         // note is a reminder that eventually "inherit" needs to be supported.
-        if (!(style->styleType()==RenderStyle::BEFORE ||
-                style->styleType()==RenderStyle::AFTER))
-            break;
 
         if (isInitial) {
             if (style->contentData())

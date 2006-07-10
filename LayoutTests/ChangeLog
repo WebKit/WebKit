@@ -1,3 +1,24 @@
+2006-07-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Test cases for <rdar://problem/4610314> Support the CSS3 content 
+        property for images
+
+        * fast/css/contentDiv-expected.checksum: Added.
+        * fast/css/contentDiv-expected.png: Added.
+        * fast/css/contentDiv-expected.txt: Added.
+        * fast/css/contentDiv.html: Added.
+        * fast/css/contentDivWithChildren-expected.checksum: Added.
+        * fast/css/contentDivWithChildren-expected.png: Added.
+        * fast/css/contentDivWithChildren-expected.txt: Added.
+        * fast/css/contentDivWithChildren.html: Added.
+        * fast/css/contentImage-expected.checksum: Added.
+        * fast/css/contentImage-expected.png: Added.
+        * fast/css/contentImage-expected.txt: Added.
+        * fast/css/contentImage.html: Added.
+        * fast/css/resources/show-shoes-vs-pie.png: Added.
+
 2006-07-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adele.
