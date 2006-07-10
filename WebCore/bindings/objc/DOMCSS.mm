@@ -1074,14 +1074,19 @@ void removeWrapperForRGB(RGBA32 value)
     
 }
 
+- (NSColor *)color
+{
+    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
+    return nsColor(Color(rgb));
+}
+
 @end
 
 @implementation DOMRGBColor (WebPrivate)
 
 - (NSColor *)_color
 {
-    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    return nsColor(Color(rgb));
+    return [self color];
 }
 
 @end

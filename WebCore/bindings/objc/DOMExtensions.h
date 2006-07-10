@@ -25,11 +25,22 @@
 
 #import <WebCore/DOMCSS.h>
 #import <WebCore/DOMHTML.h>
+#import <WebCore/DOMRange.h>
 
 @class DOMCSSStyleDeclaration;
 
-@interface DOMDocument (DOMDocumentExtensions)
+@interface DOMImplementation (DOMImplementationExtensions)
+- (DOMHTMLDocument *)createHTMLDocument:(NSString *)title;
+@end
+
+@interface DOMDocument (DOMDocumentCSSExtensions)
 - (DOMCSSStyleDeclaration *)createCSSStyleDeclaration;
+- (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt;
+@end
+
+@interface DOMHTMLDocument (DOMHTMLDocumentExtensions)
+- (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL;
+- (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text;
 @end
 
 @interface DOMHTMLElement (DOMHTMLElementExtensions)
@@ -45,6 +56,23 @@
 - (NSString *)contentEditable;
 - (void)setContentEditable:(NSString *)contentEditable;
 - (BOOL)isContentEditable;
+- (NSString *)titleDisplayString;
+
+- (int)offsetLeft;
+- (int)offsetTop;
+- (int)offsetWidth;
+- (int)offsetHeight;
+- (DOMHTMLElement *)offsetParent;
+
+- (int)clientWidth;
+- (int)clientHeight;
+
+- (int)scrollLeft;
+- (void)setScrollLeft:(int)scroll;
+- (int)scrollTop;
+- (void)setScrollTop:(int)scroll;
+- (int)scrollWidth;
+- (int)scrollHeight;
 @end
 
 @interface DOMHTMLEmbedElement : DOMHTMLElement
@@ -64,4 +92,55 @@
 
 @interface DOMRGBColor (DOMRGBColorExtensions)
 - (DOMCSSPrimitiveValue *)alpha;
+- (NSColor *)color;
+@end
+
+@interface DOMAttr (DOMAttrExtensions)
+- (DOMCSSStyleDeclaration *)style;
+@end
+
+@interface DOMCSSStyleDeclaration (DOMCSSStyleDeclarationExtensions)
+- (NSString *)getPropertyShorthand:(NSString *)propertyName;
+- (BOOL)isPropertyImplicit:(NSString *)propertyName;
+@end
+
+@interface DOMNode (DOMNodeExtensions)
+- (NSRect)boundingBox;
+- (NSArray *)lineBoxRects;
+@end
+
+@interface DOMRange (DOMRangeExtensions)
+- (NSString *)text;
+@end
+
+@interface DOMElement (DOMElementExtensions)
+- (NSImage *)image;
+- (void)scrollIntoView:(BOOL)alignTop;
+- (void)scrollIntoViewIfNeeded:(BOOL)centerIfNeeded;
+@end
+
+@interface DOMHTMLInputElement (DOMHTMLInputElementExtensions)
+- (NSString *)altDisplayString;
+- (NSURL *)absoluteImageURL;
+@end
+
+@interface DOMHTMLImageElement (DOMHTMLImageElementExtensions)
+- (NSString *)altDisplayString;
+- (NSURL *)absoluteImageURL;
+@end
+
+@interface DOMHTMLObjectElement (DOMHTMLObjectElementExtensions)
+- (NSURL *)absoluteImageURL;
+@end
+
+@interface DOMHTMLAnchorElement (DOMHTMLAnchorElementExtensions)
+- (NSURL *)absoluteLinkURL;
+@end
+
+@interface DOMHTMLAreaElement (DOMHTMLAreaElementExtensions)
+- (NSURL *)absoluteLinkURL;
+@end
+
+@interface DOMHTMLLinkElement (DOMHTMLLinkElementExtensions)
+- (NSURL *)absoluteLinkURL;
 @end

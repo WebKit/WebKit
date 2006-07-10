@@ -118,6 +118,10 @@ enum {
 - (void)setPrefix:(NSString *)prefix;
 - (NSString *)localName;
 - (BOOL)hasAttributes;
+- (BOOL)isSameNode:(DOMNode *)other;
+- (BOOL)isEqualNode:(DOMNode *)other;
+- (NSString *)textContent;
+- (void)setTextContent:(NSString *)text;
 @end
 
 @interface DOMNodeList : DOMObject
@@ -172,6 +176,8 @@ enum {
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
 - (BOOL)hasAttribute:(NSString *)name;
 - (BOOL)hasAttributeNS:(NSString *)namespaceURI :(NSString *)localName;
+- (void)focus;
+- (void)blur;
 @end
 
 @interface DOMText : DOMCharacterData
@@ -234,4 +240,5 @@ enum {
 - (DOMAttr *)createAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName;
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
 - (DOMElement *)getElementById:(NSString *)elementId;
+- (DOMNode *)adoptNode:(DOMNode *)source;
 @end

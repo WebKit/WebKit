@@ -1440,6 +1440,16 @@ static Class elementClass(const AtomicString& tagName)
     return [self _element]->hasAttributeNS(namespaceURI, localName);
 }
 
+- (void)focus
+{
+    [self _element]->focus();
+}
+
+- (void)blur
+{
+    [self _element]->blur();
+}
+
 @end
 
 @implementation DOMElement (DOMElementCSSInlineStyle)
@@ -1462,16 +1472,6 @@ static Class elementClass(const AtomicString& tagName)
             return img->cachedImage()->image()->getNSImage();
     }
     return nil;
-}
-
-- (void)focus
-{
-    [self _element]->focus();
-}
-
-- (void)blur
-{
-    [self _element]->blur();
 }
 
 - (void)scrollIntoView:(BOOL)alignTop
@@ -1901,6 +1901,11 @@ static Class elementClass(const AtomicString& tagName)
     return result;
 }
 
+- (NSString *)text
+{
+    return [self _range]->text();
+}
+
 - (void)detach
 {
     ExceptionCode ec = 0;
@@ -1947,7 +1952,7 @@ static Class elementClass(const AtomicString& tagName)
 
 - (NSString *)_text
 {
-    return [self _range]->text();
+    return [self text];
 }
 
 @end

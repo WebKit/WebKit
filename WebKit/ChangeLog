@@ -1,5 +1,16 @@
 2006-07-09  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        Bug 9820: Move new DOM API that has been through API review to public headers
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9820
+
+        * Misc/WebElementDictionary.m: include DOMExtensions.h
+        * Misc/WebNSViewExtras.m: include DOMExtensions.h
+        * WebKit.xcodeproj/project.pbxproj: make DOMXPath.h public
+
+2006-07-09  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Kevin.
 
         Bug 9818: move new UIDelegate API that has been through API review to public headers

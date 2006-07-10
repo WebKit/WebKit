@@ -35,7 +35,7 @@
 #import "WebViewPrivate.h"
 
 #import <WebKit/DOMCore.h>
-#import <WebKit/DOMPrivate.h>
+#import <WebKit/DOMExtensions.h>
 
 typedef enum {
     WebElementSelf,

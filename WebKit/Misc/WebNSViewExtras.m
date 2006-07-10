@@ -28,7 +28,7 @@
 
 #import <WebKit/WebNSViewExtras.h>
 
-#import <WebCore/DOMPrivate.h>
+#import <WebCore/DOMExtensions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewInternal.h>

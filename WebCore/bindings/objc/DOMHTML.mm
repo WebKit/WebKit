@@ -29,6 +29,7 @@
 #import "DOMHTMLInternal.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
+#import "DOMExtensions.h"
 #import "DocumentFragment.h"
 #import "FoundationExtras.h"
 #import "HTMLAppletElement.h"
@@ -87,6 +88,8 @@
 #import "markup.h"
 #import "RenderTextControl.h"
 #import "FrameView.h"
+#import "csshelper.h"
+#import "KURL.h"
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -285,11 +288,6 @@ using namespace HTMLNames;
     return [self _HTMLElement]->title();
 }
 
-- (NSString *)titleDisplayString
-{
-    return [self _HTMLElement]->title().replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
-}
-
 - (void)setTitle:(NSString *)title
 {
     [self _HTMLElement]->setTitle(title);
@@ -342,6 +340,11 @@ using namespace HTMLNames;
 @end
 
 @implementation DOMHTMLElement (DOMHTMLElementExtensions)
+
+- (NSString *)titleDisplayString
+{
+    return [self _HTMLElement]->title().replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
+}
 
 - (NSString *)innerHTML
 {
@@ -594,19 +597,30 @@ using namespace HTMLNames;
     return [DOMNodeList _nodeListWith:nodeList];
 }
 
+- (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
+{
+    RefPtr<DocumentFragment> fragment = createFragmentFromMarkup([self _document], markupString, [baseURL absoluteString]);
+    return [DOMDocumentFragment _documentFragmentWith:fragment.get()];
+}
+
+- (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text
+{
+    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText([self _document], DeprecatedString::fromNSString(text)).get()];
+}
+
 @end
 
 @implementation DOMHTMLDocument (WebPrivate)
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
-    RefPtr<DocumentFragment> fragment = createFragmentFromMarkup([self _document], markupString, baseURLString);
-    return [DOMDocumentFragment _documentFragmentWith:fragment.get()];
+    NSURL *baseURL = KURL([self _document]->completeURL(parseURL(baseURLString)).deprecatedString()).getNSURL();
+    return [self createDocumentFragmentWithMarkupString:markupString baseURL:baseURL];
 }
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithText:(NSString *)text
 {
-    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText([self _document], DeprecatedString::fromNSString(text)).get()];
+    return [self createDocumentFragmentWithText:text];
 }
 
 @end

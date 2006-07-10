@@ -24,10 +24,10 @@
  */
 
 #import "config.h"
-#import "DOMXPath.h"
 
 #if XPATH_SUPPORT
 
+#import "DOMXPath.h"
 #import "DOMInternal.h"
 #import "DOMXPathInternal.h"
 #import "Document.h"

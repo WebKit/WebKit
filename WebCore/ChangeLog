@@ -1,3 +1,31 @@
+2006-07-09  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 9820: Move new DOM API that has been through API review to public headers
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9820
+
+        * bindings/objc/DOM.mm:
+        (-[DOMElement focus]):
+        (-[DOMElement blur]):
+        (-[DOMRange text]):
+        (-[DOMRange _text]):
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMRGBColor color]):
+        (-[DOMRGBColor _color]):
+        * bindings/objc/DOMCore.h:
+        * bindings/objc/DOMEvents.h:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLElement titleDisplayString]):
+        (-[DOMHTMLDocument createDocumentFragmentWithMarkupString:baseURL:]):
+        (-[DOMHTMLDocument createDocumentFragmentWithText:]):
+        (-[DOMHTMLDocument _createDocumentFragmentWithMarkupString:baseURLString:]):
+        (-[DOMHTMLDocument _createDocumentFragmentWithText:]):
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/DOMXPath.h:
+        * bindings/objc/DOMXPath.mm:
+
 2006-07-09  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
