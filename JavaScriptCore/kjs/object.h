@@ -105,7 +105,7 @@ namespace KJS {
      *
      * @param proto The prototype
      */
-    JSObject(JSObject *proto, bool destructorIsThreadSafe = true);
+    JSObject(JSValue* proto, bool destructorIsThreadSafe = true);
 
     /**
      * Creates a new JSObject with a prototype of jsNull()
@@ -567,7 +567,7 @@ JSObject *throwError(ExecState *, ErrorType, const UString &message);
 JSObject *throwError(ExecState *, ErrorType, const char *message);
 JSObject *throwError(ExecState *, ErrorType);
 
-inline JSObject::JSObject(JSObject *proto, bool destructorIsThreadSafe)
+inline JSObject::JSObject(JSValue* proto, bool destructorIsThreadSafe)
     : JSCell(destructorIsThreadSafe)
     , _proto(proto)
     , _internalValue(0)

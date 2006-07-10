@@ -46,7 +46,7 @@ inline KJS::ExecState* toJS(JSContextRef c)
 
 inline KJS::JSValue* toJS(JSValueRef v)
 {
-    return reinterpret_cast<KJS::JSValue*>(v);
+    return reinterpret_cast<KJS::JSValue*>(const_cast<__JSValue*>(v));
 }
 
 inline KJS::UString::Rep* toJS(JSInternalStringRef b)

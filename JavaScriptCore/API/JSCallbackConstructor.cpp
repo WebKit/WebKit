@@ -50,7 +50,7 @@ JSObject* JSCallbackConstructor::construct(ExecState* exec, const List &args)
     size_t argc = args.size();
     JSValueRef argv[argc];
     for (size_t i = 0; i < argc; i++)
-        argv[i] = args[i];
+        argv[i] = toRef(args[i]);
     return toJS(m_callback(execRef, thisRef, argc, argv));
 }
 

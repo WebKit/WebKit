@@ -1,5 +1,52 @@
 2006-07-10  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin.
+
+        Improved type safety by implementing opaque JSValue/JSObject typing through 
+        abuse of 'const', not void*. Also fixed an alarming number of bugs
+        exposed by this new type safety.
+        
+        I made one design change in JavaScriptCore, which is that the JSObject
+        constructor should take a JSValue* as its prototype argument, not a JSObject*,
+        since we allow the prototype to be any JSValue*, including jsNull(), for
+        example.
+        
+        * API/APICast.h:
+        (toJS):
+        * API/JSBase.h:
+        * API/JSCallbackConstructor.cpp:
+        (KJS::JSCallbackConstructor::construct):
+        * API/JSCallbackFunction.cpp:
+        (KJS::JSCallbackFunction::callAsFunction):
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::JSCallbackObject):
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::construct):
+        (KJS::JSCallbackObject::callAsFunction):
+        (KJS::JSCallbackObject::staticFunctionGetter):
+        * API/JSCallbackObject.h:
+        * API/JSContextRef.cpp:
+        (JSEvaluate):
+        * API/JSNode.c:
+        (JSNodePrototype_appendChild):
+        (JSNodePrototype_removeChild):
+        (JSNodePrototype_replaceChild):
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSFunctionMakeWithBody):
+        (JSObjectGetProperty):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * API/JSObjectRef.h:
+        * API/testapi.c:
+        (main):
+        * ChangeLog:
+        * kjs/object.h:
+        (KJS::JSObject::JSObject):
+
+2006-07-10  Geoffrey Garen  <ggaren@apple.com>
+
         Approved by Maciej, Darin.
         
         Renamed JSStringBufferRef to JSInternalStringRef. "Internal string" means the 

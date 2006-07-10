@@ -552,7 +552,7 @@ int main(int argc, char* argv[])
     JSInternalStringRef lineBuf = JSInternalStringCreateUTF8("line");
     assert(!JSFunctionMakeWithBody(context, functionBuf, NULL, 1, &exception));
     assert(JSValueIsObject(exception));
-    v = JSObjectGetProperty(context, exception, lineBuf);
+    v = JSObjectGetProperty(context, JSValueToObject(context, exception), lineBuf);
     assert(v);
     assertEqualsAsNumber(v, 2); // FIXME: Lexer::setCode bumps startingLineNumber by 1 -- we need to change internal callers so that it doesn't have to (saying '0' to mean '1' in the API would be really confusing -- it's really confusing internally, in fact)
     JSInternalStringRelease(functionBuf);
@@ -573,7 +573,7 @@ int main(int argc, char* argv[])
     JSInternalStringRelease(myObjectBuf);
 
     JSInternalStringRef printBuf = JSInternalStringCreateUTF8("print");
-    JSValueRef printFunction = JSFunctionMake(context, print_callAsFunction);
+    JSObjectRef printFunction = JSFunctionMake(context, print_callAsFunction);
     JSObjectSetProperty(context, globalObject, printBuf, printFunction, kJSPropertyAttributeNone); 
     JSInternalStringRelease(printBuf);
     
@@ -581,7 +581,7 @@ int main(int argc, char* argv[])
     assert(JSObjectGetPrivate(printFunction) == (void*)1);
 
     JSInternalStringRef myConstructorBuf = JSInternalStringCreateUTF8("MyConstructor");
-    JSValueRef myConstructor = JSConstructorMake(context, myConstructor_callAsConstructor);
+    JSObjectRef myConstructor = JSConstructorMake(context, myConstructor_callAsConstructor);
     JSObjectSetProperty(context, globalObject, myConstructorBuf, myConstructor, kJSPropertyAttributeNone);
     JSInternalStringRelease(myConstructorBuf);
     
@@ -589,8 +589,8 @@ int main(int argc, char* argv[])
     assert(JSObjectGetPrivate(myConstructor) == (void*)1);
     
     o = JSObjectMake(context, NULL, NULL);
-    JSObjectSetProperty(context, o, jsOneString, JSNumberMake(1), kJSPropertyAttributeNone);
-    JSObjectSetProperty(context, o, jsCFString,  JSNumberMake(1), kJSPropertyAttributeDontEnum);
+    JSObjectSetProperty(context, o, jsOneStringBuf, JSNumberMake(1), kJSPropertyAttributeNone);
+    JSObjectSetProperty(context, o, jsCFStringBuf,  JSNumberMake(1), kJSPropertyAttributeDontEnum);
     JSPropertyEnumeratorRef enumerator = JSObjectCreatePropertyEnumerator(context, o);
     int count = 0;
     while (JSPropertyEnumeratorGetNext(enumerator))

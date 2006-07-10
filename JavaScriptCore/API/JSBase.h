@@ -44,9 +44,9 @@ typedef struct __JSPropertyEnumerator* JSPropertyEnumeratorRef;
 /* JavaScript data types */
 
 /*! @typedef JSValueRef A JavaScript value. The base type for all JavaScript values, and polymorphic functions on them. */
-typedef void* JSValueRef;
+typedef const struct __JSValue* JSValueRef;
 
 /*! @typedef JSObjectRef A JavaScript object. A JSObject is a JSValue. */
-typedef struct __JSObject* JSObjectRef;
+typedef struct __JSValue* JSObjectRef;
 
 #endif // JSBase_h

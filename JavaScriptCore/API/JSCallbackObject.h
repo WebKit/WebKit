@@ -37,7 +37,7 @@ class JSCallbackObject : public JSObject
 {
 public:
     JSCallbackObject(JSContextRef, JSClassRef);
-    JSCallbackObject(JSContextRef, JSClassRef, JSObject* prototype);
+    JSCallbackObject(JSContextRef, JSClassRef, JSValue* prototype);
     virtual ~JSCallbackObject();
         
     virtual UString className() const;

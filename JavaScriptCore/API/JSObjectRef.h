@@ -316,7 +316,7 @@ void JSClassRelease(JSClassRef jsClass);
 @param prototype The prototype to assign to the object. Pass NULL to use the default object prototype.
 @result A JSObject with the given class and prototype.
 */
-JSObjectRef JSObjectMake(JSContextRef context, JSClassRef jsClass, JSObjectRef prototype);
+JSObjectRef JSObjectMake(JSContextRef context, JSClassRef jsClass, JSValueRef prototype);
 
 /*!
 @function

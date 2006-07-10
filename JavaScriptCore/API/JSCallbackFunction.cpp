@@ -53,7 +53,7 @@ JSValue* JSCallbackFunction::callAsFunction(ExecState* exec, JSObject* thisObj, 
     size_t argc = args.size();
     JSValueRef argv[argc];
     for (size_t i = 0; i < argc; i++)
-        argv[i] = args[i];
+        argv[i] = toRef(args[i]);
     return toJS(m_callback(execRef, thisRef, thisObjRef, argc, argv));
 }
 
