@@ -1,3 +1,45 @@
+2006-07-10  Adele Peterson  <adele@apple.com>
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9830
+        More pixel test results need updating since switching to native popup
+
+        * editing/selection/replaced-boundaries-3-expected.checksum:
+        * editing/selection/replaced-boundaries-3-expected.png:
+        * fast/block/margin-collapse/103-expected.checksum:
+        * fast/block/margin-collapse/103-expected.png:
+        * fast/forms/001-expected.checksum:
+        * fast/forms/001-expected.png:
+        * fast/forms/HTMLOptionElement_label01-expected.checksum:
+        * fast/forms/HTMLOptionElement_label01-expected.png:
+        * fast/forms/HTMLOptionElement_label02-expected.checksum:
+        * fast/forms/HTMLOptionElement_label02-expected.png:
+        * fast/forms/HTMLOptionElement_label03-expected.checksum:
+        * fast/forms/HTMLOptionElement_label03-expected.png:
+        * fast/forms/HTMLOptionElement_label04-expected.checksum:
+        * fast/forms/HTMLOptionElement_label04-expected.png:
+        * fast/forms/form-element-geometry-expected.checksum:
+        * fast/forms/form-element-geometry-expected.png:
+        * fast/forms/option-script-expected.checksum:
+        * fast/forms/option-script-expected.png:
+        * fast/forms/option-strip-whitespace-expected.checksum:
+        * fast/forms/option-strip-whitespace-expected.png:
+        * fast/invalid/014-expected.checksum:
+        * fast/invalid/014-expected.png:
+        * fast/parser/document-write-option-expected.checksum:
+        * fast/parser/document-write-option-expected.png:
+        * tables/mozilla/bugs/bug2479-3-expected.checksum:
+        * tables/mozilla/bugs/bug2479-3-expected.png:
+        * tables/mozilla/bugs/bug29326-expected.checksum:
+        * tables/mozilla/bugs/bug29326-expected.png:
+        * tables/mozilla/bugs/bug33855-expected.checksum:
+        * tables/mozilla/bugs/bug33855-expected.png:
+        * tables/mozilla/bugs/bug96334-expected.checksum:
+        * tables/mozilla/bugs/bug96334-expected.png:
+        * tables/mozilla/core/margins-expected.checksum:
+        * tables/mozilla/core/margins-expected.png:
+        * tables/mozilla/dom/tableDom-expected.checksum:
+        * tables/mozilla/dom/tableDom-expected.png:
+
 2006-07-10  Darin Adler  <darin@apple.com>
 
         * tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
