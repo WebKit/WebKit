@@ -1,3 +1,14 @@
+2006-07-09  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9693
+          svn-apply should set ChangeLog date correctly when applying patches
+
+        * Scripts/svn-apply: Set the ChangeLog entry date using a configurable timezone
+        before applying the patch.
+        * Scripts/svn-unapply: Reset the ChangeLog entry date before unapplying the patch.
+
 2006-07-09  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: Final version of this round of renaming for posterity.
