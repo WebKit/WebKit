@@ -375,8 +375,6 @@ function updateNodePane() {
         document.getElementById("nodeContents").style.display = "none";
     }
 
-    document.getElementById("nodeXpathValue").textContent = xpathForNode(focusedNode);
-
     document.getElementById("nodeType").textContent = nodeTypeName(focusedNode);
     document.getElementById("nodeName").textContent = focusedNode.nodeName;
 

@@ -1,3 +1,14 @@
+2006-07-09  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 9487: The XPath section should be removed and/or moved.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9487
+
+        * WebInspector/webInspector/inspector.css:
+        * WebInspector/webInspector/inspector.html:
+        * WebInspector/webInspector/inspector.js:
+
 2006-07-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Tim O.
