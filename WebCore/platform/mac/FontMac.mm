@@ -505,6 +505,9 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
 
 float Font::floatWidthForComplexText(const TextRun& run, const TextStyle& style) const
 {
+    if (run.from() == run.to())
+        return 0;
+
     ATSULayoutParameters params(run, style);
     params.initialize(this);
     

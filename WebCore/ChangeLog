@@ -1,3 +1,14 @@
+2006-07-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9808
+          REGRESSION: Incorrect layout (and ERROR) when forcing ATSU For All Text
+
+        * manual-tests/ATSU-bad-layout.html: Added.
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::floatWidthForComplexText): Return 0 immediately for empty runs.
+
 2006-07-10  Darin Adler  <darin@apple.com>
 
         - try to fix the no-SVG build
