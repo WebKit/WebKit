@@ -222,10 +222,10 @@ HRESULT STDMETHODCALLTYPE WebFrame::loadHTMLString(
     /* [in] */ BSTR string,
     /* [in] */ BSTR baseURL)
 {
-    DeprecatedString htmlString((QChar*)string, SysStringLen(string));
+    DeprecatedString htmlString((DeprecatedChar*)string, SysStringLen(string));
 
     if (baseURL) {
-        DeprecatedString baseURLString((QChar*)baseURL, SysStringLen(baseURL));
+        DeprecatedString baseURLString((DeprecatedChar*)baseURL, SysStringLen(baseURL));
         d->frame->begin(KURL(baseURLString));
     }
     else
@@ -352,7 +352,7 @@ void WebFrame::paint()
     EndPaint(windowHandle, &ps);
 }
 
-WebCore::Frame* WebFrame::impl()
+Frame* WebFrame::impl()
 {
     return d->frame.get();
 }
@@ -370,11 +370,11 @@ HRESULT WebFrame::loadDataSource(WebDataSource* dataSource)
         if (SUCCEEDED(hr)) {
             hr = request->HTTPMethod(&method);
             if (SUCCEEDED(hr)) {
-                KURL kurl(DeprecatedString((QChar*)url, SysStringLen(url)));
+                KURL kurl(DeprecatedString((DeprecatedChar*)url, SysStringLen(url)));
                 d->frame->didOpenURL(kurl);
                 d->frame->begin(kurl);
                 String methodString(method, SysStringLen(method));
-                WebCore::TransferJob* job;
+                TransferJob* job;
                 const FormData* formData = 0;
                 if (wcscmp(method, TEXT("GET"))) {
                     WebMutableURLRequest* requestImpl = static_cast<WebMutableURLRequest*>(request);

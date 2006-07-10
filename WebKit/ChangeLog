@@ -1,5 +1,11 @@
 2006-07-09  Darin Adler  <darin@apple.com>
 
+        - try to fix Windows build
+
+        * COM/WebFrame.cpp: Rename QChar to DeprecatedChar.
+
+2006-07-09  Darin Adler  <darin@apple.com>
+
         - fix newlines to be consistent for all files in the COM directory
           (many had mixed style) and set the EOL style to "native" on them.
 
