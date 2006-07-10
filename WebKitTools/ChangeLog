@@ -1,5 +1,14 @@
 2006-07-09  David Kilzer  <ddkilzer@kilzer.net>
 
+        Build fix. Reviewed by NOBODY.
+
+        - Backed out http://bugzilla.opendarwin.org/show_bug.cgi?id=7802
+          devenv.com not available in VC++ Express installations
+
+        * Scripts/webkitdirs.pm: Backed out previous change.
+
+2006-07-09  David Kilzer  <ddkilzer@kilzer.net>
+
         Reviewed by Darin.
 
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=9693
