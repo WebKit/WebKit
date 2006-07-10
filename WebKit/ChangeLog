@@ -1,3 +1,17 @@
+2006-07-09  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4404652> Netscape plug-in mouse events broken in HiDPI
+
+        Multiply global mouse coordinates by the window scale factor so that plug-ins can use GlobalToLocal() in HiDPI.
+        This fixes many bugs involving plug-in mouse event handling in HiDPI.  Most notably, the Flash player will now
+        correctly respond to clicks.
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (+[WebBaseNetscapePluginView getCarbonEvent:]):
+        (-[WebBaseNetscapePluginView getCarbonEvent:withEvent:]):
+
 2006-07-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

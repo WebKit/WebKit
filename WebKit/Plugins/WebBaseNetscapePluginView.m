@@ -150,6 +150,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     carbonEvent->message = 0;
     carbonEvent->when = TickCount();
     GetGlobalMouse(&carbonEvent->where);
+    carbonEvent->where.h *= HIGetScaleFactor();
+    carbonEvent->where.v *= HIGetScaleFactor();
     carbonEvent->modifiers = GetCurrentKeyModifiers();
     if (!Button())
         carbonEvent->modifiers |= btnState;
@@ -192,6 +194,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (void)getCarbonEvent:(EventRecord *)carbonEvent withEvent:(NSEvent *)cocoaEvent
 {
     if (WKConvertNSEventToCarbonEvent(carbonEvent, cocoaEvent)) {
+        carbonEvent->where.h *= HIGetScaleFactor();
+        carbonEvent->where.v *= HIGetScaleFactor();
         return;
     }
     
