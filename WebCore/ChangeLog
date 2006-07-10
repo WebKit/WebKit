@@ -1,5 +1,11 @@
 2006-07-10  Darin Adler  <darin@apple.com>
 
+        - try to fix the no-SVG build
+
+        * ksvg2/misc/SVGImageLoader.cpp: Move namespace brace inside the #if.
+
+2006-07-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9833
