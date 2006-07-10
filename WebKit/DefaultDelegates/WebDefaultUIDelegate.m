@@ -147,17 +147,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return window == nil ? NSZeroRect : [window frame];
 }
 
-- (void)webView:(WebView *)webView setContentRect:(NSRect)contentRect
-{
-    [self webView:webView setFrame:[NSWindow frameRectForContentRect:contentRect styleMask:[[webView window] styleMask]]];
-}
-
-- (NSRect)webViewContentRect:(WebView *)webView
-{
-    NSWindow *window = [webView window];
-    return window == nil ? NSZeroRect : [NSWindow contentRectForFrameRect:[window frame] styleMask:[window styleMask]];
-}
-
 - (void)webView: (WebView *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
 {
     // FIXME: We want a default here, but that would add localized strings.

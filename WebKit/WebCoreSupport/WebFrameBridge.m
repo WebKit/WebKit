@@ -1351,9 +1351,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     
     if ([wd respondsToSelector:@selector(webView:printFrameView:)]) {
         [wd webView:[self webView] printFrameView:[_frame frameView]];
-    } else if ([wd respondsToSelector:@selector(webViewPrint:)]) {
-        // Backward-compatible, but webViewPrint: was never public, so probably not needed.
-        [wd webViewPrint:[self webView]];
     } else {
         [[WebDefaultUIDelegate sharedUIDelegate] webView:[self webView] printFrameView:[_frame frameView]];
     }

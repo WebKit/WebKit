@@ -1,5 +1,27 @@
 2006-07-09  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Kevin.
+
+        Bug 9818: move new UIDelegate API that has been through API review to public headers
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9818
+
+        <rdar://problem/4387541> API: Remove webView:setContentRect: & webViewContentRect: delegate methods?
+        The fix for 4310363 removed the only use of webViewContentRect: in our code. webView:setContentRect:
+        was never used to begin with. There's no harm in leaving these around in the API, but they'll cruft it up.
+
+        Also removes the never used webViewPrint: SPI that was replaced by webView:printFrameView:.
+
+        * DefaultDelegates/WebDefaultUIDelegate.m:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge print]):
+        * WebView/WebFrameView.h:
+        * WebView/WebFrameView.m:
+        * WebView/WebFrameViewPrivate.h:
+        * WebView/WebUIDelegate.h:
+        * WebView/WebUIDelegatePrivate.h:
+
+2006-07-09  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Darin.
 
         Bug 9814: Move new WebView API that has been through API review to public headers

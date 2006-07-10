@@ -856,10 +856,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return view ? [view _webcore_effectiveFirstResponder] : [super _webcore_effectiveFirstResponder];
 }
 
-@end
-
-@implementation WebFrameView (WebPrivate)
-
 - (BOOL)canPrintHeadersAndFooters
 {
     NSView *documentView = [[self _scrollView] documentView];
@@ -896,6 +892,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if (documentView && [documentView respondsToSelector:@selector(printDocumentView)])
         [(id)documentView printDocumentView];
 }
+
+@end
+
+@implementation WebFrameView (WebPrivate)
 
 - (float)_area
 {

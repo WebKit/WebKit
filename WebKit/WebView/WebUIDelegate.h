@@ -168,6 +168,27 @@ typedef enum {
 - (void)webViewShow:(WebView *)sender;
 
 /*!
+    @method webView:createWebViewModalDialogWithRequest:
+    @abstract Create a new window and begin to load the specified request.
+    @discussion The newly created window is hidden, and the window operations delegate on the
+    new WebViews will get a webViewShow: call.
+    @param sender The WebView sending the delegate method.
+    @param request The request to load.
+    @result The WebView for the new window.
+*/
+- (WebView *)webView:(WebView *)sender createWebViewModalDialogWithRequest:(NSURLRequest *)request;
+
+/*!
+    @method webViewRunModal:
+    @param sender The WebView sending the delegate method.
+    @abstract Show the window that contains the top level view of the WebView,
+    ordering it frontmost. The window should be run modal in the application.
+    @discussion This will only be called just after createWebViewModalDialogWithRequest:
+    is used to create a new window.
+*/
+- (void)webViewRunModal:(WebView *)sender;
+
+/*!
     @method webViewClose:
     @abstract Close the current window. 
     @param sender The WebView sending the delegate method.
@@ -320,58 +341,56 @@ typedef enum {
 - (NSRect)webViewFrame:(WebView *)sender;
 
 /*!
-    @method webView:setContentRect:
-    @abstract Set the window's content rect
+    @method webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:
+    @abstract Display a JavaScript alert panel.
     @param sender The WebView sending the delegate method.
-    @param frame The new window content rect
-    @discussion Even though a caller could set the content rect
-    directly using the NSWindow, this method is provided so
-    implementors of this protocol can do special things on
-    programmatic move/resize, like avoiding autosaving of the size.
-*/
-- (void)webView:(WebView *)sender setContentRect:(NSRect)contentRect;
-
-/*!
-    @method webViewContentRect:
-    @abstract Return the window's content rect
-    @discussion 
-*/
-- (NSRect)webViewContentRect:(WebView *)sender;
-
-/*!
-    @method webView:runJavaScriptAlertPanelWithMessage:
-    @abstract Display a JavaScript alert panel
-    @param sender The WebView sending the delegate method.
-    @param message The message to display
+    @param message The message to display.
+    @param frame The WebFrame whose JavaScript initiated this call.
     @discussion Clients should visually indicate that this panel comes
-    from JavaScript. The panel should have a single OK button.
+    from JavaScript initiated by the specified frame. The panel should have 
+    a single OK button.
 */
-- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message;
+- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame;
 
 /*!
-    @method webView:runJavaScriptConfirmPanelWithMessage:
-    @abstract Display a JavaScript confirm panel
+    @method webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:
+    @abstract Display a JavaScript confirm panel.
     @param sender The WebView sending the delegate method.
-    @param message The message to display
-    @result YES if the user hit OK, no if the user chose Cancel.
+    @param message The message to display.
+    @param frame The WebFrame whose JavaScript initiated this call.
+    @result YES if the user hit OK, NO if the user chose Cancel.
     @discussion Clients should visually indicate that this panel comes
-    from JavaScript. The panel should have two buttons, e.g. "OK" and
-    "Cancel".
+    from JavaScript initiated by the specified frame. The panel should have 
+    two buttons, e.g. "OK" and "Cancel".
 */
-- (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message;
+- (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame;
 
 /*!
-    @method webView:runJavaScriptTextInputPanelWithPrompt:defaultText:
-    @abstract Display a JavaScript text input panel
+    @method webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:
+    @abstract Display a JavaScript text input panel.
     @param sender The WebView sending the delegate method.
-    @param message The message to display
+    @param message The message to display.
     @param defaultText The initial text for the text entry area.
+    @param frame The WebFrame whose JavaScript initiated this call.
     @result The typed text if the user hit OK, otherwise nil.
     @discussion Clients should visually indicate that this panel comes
-    from JavaScript. The panel should have two buttons, e.g. "OK" and
-    "Cancel", and an area to type text.
+    from JavaScript initiated by the specified frame. The panel should have 
+    two buttons, e.g. "OK" and "Cancel", and an area to type text.
 */
-- (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText;
+- (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame;
+
+/*!
+    @method webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:
+    @abstract Display a confirm panel by an "before unload" event handler.
+    @param sender The WebView sending the delegate method.
+    @param message The message to display.
+    @param frame The WebFrame whose JavaScript initiated this call.
+    @result YES if the user hit OK, NO if the user chose Cancel.
+    @discussion Clients should include a message in addition to the one
+    supplied by the web page that indicates. The panel should have 
+    two buttons, e.g. "OK" and "Cancel".
+*/
+- (BOOL)webView:(WebView *)sender runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame;
 
 /*!
     @method webView:runOpenPanelForFileButtonWithResultListener:
@@ -472,6 +491,65 @@ typedef enum {
     the contents of the dragging pasteboard.
 */
 - (void)webView:(WebView *)webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:(NSPoint)point withPasteboard:(NSPasteboard *)pasteboard;
+
+/*!
+    @method webView:printFrameView:
+    @abstract Informs that a WebFrameView needs to be printed
+    @param webView The WebView sending the delegate method
+    @param frameView The WebFrameView needing to be printed
+    @discussion This method is called when a script or user requests the page to be printed.
+    In this method the delegate can prepare the WebFrameView to be printed. Some content that WebKit
+    displays can be printed directly by the WebFrameView, other content will need to be handled by
+    the delegate. To determine if the WebFrameView can handle printing the delegate should check
+    WebFrameView's documentViewShouldHandlePrint, if YES then the delegate can call printDocumentView
+    on the WebFrameView. Otherwise the delegate will need to request a NSPrintOperation from
+    the WebFrameView's printOperationWithPrintInfo to handle the printing.
+*/
+- (void)webView:(WebView *)sender printFrameView:(WebFrameView *)frameView;
+
+/*!
+    @method webViewHeaderHeight:
+    @param webView The WebView sending the delegate method
+    @abstract Reserve a height for the printed page header.
+    @result The height to reserve for the printed page header, return 0.0 to not reserve any space for a header.
+    @discussion The height returned will be used to calculate the rect passed to webView:drawHeaderInRect:.
+*/
+- (float)webViewHeaderHeight:(WebView *)sender;
+
+/*!
+    @method webViewFooterHeight:
+    @param webView The WebView sending the delegate method
+    @abstract Reserve a height for the printed page footer.
+    @result The height to reserve for the printed page footer, return 0.0 to not reserve any space for a footer.
+    @discussion The height returned will be used to calculate the rect passed to webView:drawFooterInRect:.
+*/
+- (float)webViewFooterHeight:(WebView *)sender;
+
+/*!
+    @method webView:drawHeaderInRect:
+    @param webView The WebView sending the delegate method
+    @param rect The NSRect reserved for the header of the page
+    @abstract The delegate should draw a header for the sender in the supplied rect.
+*/
+- (void)webView:(WebView *)sender drawHeaderInRect:(NSRect)rect;
+
+/*!
+    @method webView:drawFooterInRect:
+    @param webView The WebView sending the delegate method
+    @param rect The NSRect reserved for the footer of the page
+    @abstract The delegate should draw a footer for the sender in the supplied rect.
+*/
+- (void)webView:(WebView *)sender drawFooterInRect:(NSRect)rect;
+
+// The following delegate methods are deprecated in favor of the ones above that specify
+// the WebFrame whose JavaScript initiated this call.
+- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message;
+- (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message;
+- (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText;
+
+// The following delegate methods are deprecated. Content rect calculations are now done automatically.
+- (void)webView:(WebView *)sender setContentRect:(NSRect)frame;
+- (NSRect)webViewContentRect:(WebView *)sender;
 
 @end
 
