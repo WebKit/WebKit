@@ -1,3 +1,11 @@
+2006-07-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::clear): Garbage collect after reinitalizing the global
+        object, not before, since the reinitialization tends to create garbage.
+
 2006-07-09  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

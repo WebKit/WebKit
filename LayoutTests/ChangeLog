@@ -1,3 +1,15 @@
+2006-07-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+        
+        Now that we garbage collect after reinitalizing the global object, not
+        before, we have more free memory, so a custom property that used to
+        get collected during the initialization phase of this test now avoids
+        getting collected until the collection phase.
+
+        * fast/dom/gc-9-expected.txt:
+        * fast/dom/gc-9.html:
+
 2006-07-09  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

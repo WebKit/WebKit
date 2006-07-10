@@ -1344,11 +1344,11 @@ void Window::clear()
   clearProperties();
   setPrototype(JSDOMWindowProto::self()); // clear the prototype
 
-  // there's likely to be lots of garbage now
-  Collector::collect();
-
   // Now recreate a working global object for the next URL that will use us
   interpreter()->initGlobalObject();
+
+  // there's likely to be lots of garbage now
+  Collector::collect();
 }
 
 void Window::setCurrentEvent(Event *evt)
