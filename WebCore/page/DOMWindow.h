@@ -53,6 +53,8 @@ namespace WebCore {
         // WebKit extension for the Web Inspector
         PassRefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
         
+        double devicePixelRatio() const;
+        
     private:
         Frame* m_frame;
     };

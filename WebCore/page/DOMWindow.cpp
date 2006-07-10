@@ -83,4 +83,9 @@ PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* elt, const String
     return m_frame->document()->styleSelector()->styleRulesForElement(elt, authorOnly);
 }
 
+double DOMWindow::devicePixelRatio() const
+{
+    return m_frame->view() ? m_frame->view()->scaleFactor() : 1.0;
+}
+
 } // namespace WebCore

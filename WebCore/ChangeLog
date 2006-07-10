@@ -1,3 +1,17 @@
+2006-07-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/4621095> The should be a way to 
+        access the user interface scale factor through the DOM
+
+        window.devicePixelRatio returns the user interface scale factor.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::devicePixelRatio):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2006-07-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey

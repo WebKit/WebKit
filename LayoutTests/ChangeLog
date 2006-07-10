@@ -1,3 +1,15 @@
+2006-07-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Test for  <rdar://problem/4621095> The should be a way to 
+        access the user interface scale factor through the DOM
+
+        * fast/dom/jsDevicePixelRatio-expected.checksum: Added.
+        * fast/dom/jsDevicePixelRatio-expected.png: Added.
+        * fast/dom/jsDevicePixelRatio-expected.txt: Added.
+        * fast/dom/jsDevicePixelRatio.html: Added.
+
 2006-07-10  Adele Peterson  <adele@apple.com>
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9830

@@ -31,6 +31,8 @@ module window {
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
         
+        readonly attribute double devicePixelRatio;
+        
         // DOM Level 2 Style Interface
         CSSStyleDeclaration getComputedStyle(in Element elt,
                                              in DOMString pseudoElt);
