@@ -81,6 +81,9 @@ bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData&
 {
     if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance)
         return style->border() != border;
+    // FIXME: We should allow menulists to be styled- but not until we have a good design for styled popups.
+    if (style->appearance() == MenulistAppearance)
+        return false;
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }
 

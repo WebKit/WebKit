@@ -1,3 +1,15 @@
+2006-07-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        - Fix for <rdar://problem/4621442> REGRESSION (NativePopup) : Popup menus aren't drawn correctly on page at orbitz.com; cheaptickets.com
+
+        Test: fast/forms/select-style.html
+
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::isControlStyled):
+        Don't let popups be style-able for now.  We'll allow it later, when we
+        have a good way to handle border & backgrounds and still having it look like a control.
+
 2006-07-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
