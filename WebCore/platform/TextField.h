@@ -43,7 +43,7 @@ namespace WebCore {
 
 class TextField : public Widget {
 public:
-    enum Type { Password, Search };
+    enum Type { Normal, Password, Search };
 
     TextField(Type);
     ~TextField();

@@ -1,5 +1,15 @@
 2006-07-09  Darin Adler  <darin@apple.com>
 
+        - add back "unused code" for plain text fields, still used by <isindex>!
+
+        * platform/TextField.h:
+        * platform/mac/TextFieldMac.mm:
+        * platform/mac/WebCoreTextField.h:
+        * platform/mac/WebCoreTextField.mm:
+        * rendering/RenderLineEdit.cpp:
+
+2006-07-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Tim Hatcher.
 
         - put more into the WebCore namespace

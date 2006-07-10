@@ -59,6 +59,9 @@ TextField::TextField(Type type)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     id view = nil;
     switch (type) {
+        case Normal:
+            view = [WebCoreTextField alloc];
+            break;
         case Password:
             view = [WebCoreSecureTextField alloc];
             break;
@@ -67,7 +70,7 @@ TextField::TextField(Type type)
             break;
     }
     ASSERT(view);
-    [view initWithQLineEdit:this];
+    [view initWithWidget:this];
     m_controller = [view controller];
     setView((NSView *)view);
     [view release];
@@ -78,7 +81,7 @@ TextField::TextField(Type type)
 TextField::~TextField()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_controller detachQLineEdit];
+    [m_controller detachWidget];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
