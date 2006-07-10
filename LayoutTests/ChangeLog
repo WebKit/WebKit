@@ -1,3 +1,8 @@
+2006-07-10  Darin Adler  <darin@apple.com>
+
+        * tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        Updated one more result for Adele's 4463835 change last night.
+
 2006-07-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
