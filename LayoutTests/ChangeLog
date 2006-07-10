@@ -1,3 +1,13 @@
+2006-07-09  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9812
+          LayoutTests/svg/custom/foreign-object-skew.svg seems to be fixed
+
+        * svg/custom/foreign-object-skew-expected.checksum: Updated.
+        * svg/custom/foreign-object-skew-expected.png: Updated.
+
 2006-07-09  Darin Adler  <darin@apple.com>
 
         * fast/dom/delete-contents-expected.txt: Updated results that changed
