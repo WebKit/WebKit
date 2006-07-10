@@ -130,15 +130,15 @@ public:
         /* [retval][out] */ IWebFrame ***frames);
 
     // TransferJobClient
-    virtual void receivedRedirect(WebCore::TransferJob*, const KURL&);
+    virtual void receivedRedirect(WebCore::TransferJob*, const WebCore::KURL&);
     virtual void receivedResponse(WebCore::TransferJob*, WebCore::PlatformResponse);
     virtual void receivedData(WebCore::TransferJob*, const char*, int);
     virtual void receivedAllData(WebCore::TransferJob*);
     virtual void receivedAllData(WebCore::TransferJob*, WebCore::PlatformData);
 
     // FrameWinClient
-    virtual void openURL(const DeprecatedString&, bool lockHistory);
-    virtual void submitForm(const WebCore::String& method, const KURL&, const WebCore::FormData*);
+    virtual void openURL(const WebCore::DeprecatedString&, bool lockHistory);
+    virtual void submitForm(const WebCore::String& method, const WebCore::KURL&, const WebCore::FormData*);
     virtual void setTitle(const WebCore::String& title);
     virtual void setStatusText(const WebCore::String& title);
 
