@@ -1,3 +1,14 @@
+2006-07-10  David Harrison  <harrison@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Partial fix for...
+        <rdar://problem/4619260> 9A213 + Safari 521.15.1 Crash with To Do's alarm icon (WebCore::maxDeepOffset(WebCore::Node const*) )
+        
+        * editing/Selection.cpp:
+        (WebCore::Selection::adjustForEditableContent):
+        Allow for node being 0.  This is a bandaid fix to prevent the crash.  It will still assert in a debug build.  See bug for more info.
+
 2006-07-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
