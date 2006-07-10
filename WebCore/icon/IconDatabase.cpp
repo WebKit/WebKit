@@ -56,6 +56,7 @@ IconDatabase* IconDatabase::sharedIconDatabase()
 
 IconDatabase::IconDatabase()
     : m_privateBrowsingEnabled(false)
+    , m_startupTimer(this, &IconDatabase::pruneUnretainedIcons)
 {
     close();
 }
@@ -75,9 +76,19 @@ bool IconDatabase::open(const String& databasePath)
         recreateDatabase();
     }
 
+    // We're going to track an icon's retain count in a temp table in memory so we can cross reference it to to the on disk tables
+    bool result;
+    result = m_db.executeCommand("CREATE TEMP TABLE PageRetain (url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,count INTEGER NOT NULL ON CONFLICT FAIL);");
+    // Creating an in-memory temp table should never, ever, ever fail
+    ASSERT(result);
+    
     // These are actually two different SQLite config options - not my fault they are named confusingly  ;)
     m_db.setSynchronous(SQLDatabase::SyncOff);    
     m_db.setFullsync(false);
+    
+    // Only if we successfully remained open will we setup our "initial purge timer"
+    if (isOpen())
+        m_startupTimer.startOneShot(0);
     
     return isOpen();
 }
@@ -357,8 +368,12 @@ Image* IconDatabase::iconForPageURL(const String& url, const IntSize& size, bool
         return 0;
     
     // If we do, maybe we have an image for this IconURL
-    if (m_iconURLToSiteIcons.contains(iconURL))
-        return m_iconURLToSiteIcons.get(iconURL)->getImage(size);
+    if (m_iconURLToSiteIcons.contains(iconURL)) {
+        SiteIcon* icon = m_iconURLToSiteIcons.get(iconURL);
+        // Assign this SiteIcon to this PageURL for faster lookup in the future
+        m_pageURLToSiteIcons.set(url, icon);
+        return icon->getImage(size);
+    }
         
     // If we don't have either, we have to create the SiteIcon
     SiteIcon* icon = new SiteIcon(iconURL);
@@ -390,13 +405,148 @@ Image* IconDatabase::defaultIcon(const IntSize& size)
     return 0;
 }
 
-void IconDatabase::retainIconForURL(const String& url)
+void IconDatabase::retainIconForURL(const String& _url)
 {
-
+    if (_url.isEmpty())
+        return;
+        
+    String url = _url;
+    url.replace('\'', "''");
+    
+    int retainCount = SQLStatement(m_db, "SELECT count FROM PageRetain WHERE url = '" + url + "';").getColumnInt(0);
+    ASSERT(retainCount > -1);
+    
+    if (!m_db.executeCommand("INSERT INTO PageRetain VALUES ('" + url + "', " + String::number(retainCount + 1) + ");"))
+        LOG_ERROR("Failed to increment retain count for url %s", _url.ascii().data());
+        
+    LOG(IconDatabase, "URL %s now has a retain count of %i", _url.ascii().data(), retainCount + 1);
 }
 
-void IconDatabase::releaseIconForURL(const String& url)
+void IconDatabase::releaseIconForURL(const String& _url)
 {
+    if (_url.isEmpty())
+        return;
+        
+    String url = _url;
+    url.replace('\'', "''");
+    
+    SQLStatement sql(m_db, "SELECT count FROM PageRetain WHERE url = '" + url + "';");
+    switch (sql.prepareAndStep()) {
+        case SQLITE_ROW:
+            break;
+        case SQLITE_DONE:
+            LOG_ERROR("Released icon for url %s that had not been retained", _url.ascii().data());
+            return;
+        default:
+            LOG_ERROR("Error retrieving retain count for url %s", _url.ascii().data());
+            return;
+    }
+    
+    int retainCount = sql.getColumnInt(0);
+    sql.finalize();
+    
+    // If the retain count SOMEHOW gets to zero or less, we need to bail right here   
+    if (retainCount < 1) {
+        LOG_ERROR("Attempting to release icon for URL %s - already fully released", _url.ascii().data());
+        return;
+    }
+    
+    --retainCount;
+    if (!m_db.executeCommand("INSERT INTO PageRetain VALUES ('" + url + "', " + String::number(retainCount) + ");"))
+        LOG_ERROR("Failed to decrement retain count for url %s", _url.ascii().data());
+    
+    LOG(IconDatabase, "URL %s now has a retain count of %i", _url.ascii().data(), retainCount);
+    
+    // If we still have a positve retain count, we're done - lets bail
+    if (retainCount)
+        return;
+    
+    // Grab the iconURL for later use...
+    String iconURL = iconURLForPageURL(_url);
+    
+    // The retain count is zilch so we can wipe this PageURL
+    if (!m_db.executeCommand("DELETE FROM PageRetain WHERE url = '" + url + "';"))
+        LOG_ERROR("Failed to delete retain record for url %s", _url.ascii().data());
+    if (m_privateBrowsingEnabled)
+        if (!m_db.executeCommand("DELETE FROM TempPageURL WHERE url = '" + url + "';"))
+            LOG_ERROR("Failed to delete record of PageURL %s from private browsing tables", _url.ascii().data());
+    if (!m_db.executeCommand("DELETE FROM PageURL WHERE url = '" + url + "';"))
+        LOG_ERROR("Failed to delete record of PageURL %s from on-disk tables", _url.ascii().data());            
+            
+    // And now see if we can wipe the icon itself
+    if (iconURL.isEmpty())
+        return;
+    retainCount = totalRetainCountForIconURL(iconURL);
+    
+    // If the icon has other retainers, we're all done - bail
+    if (retainCount)
+        return;
+        
+    LOG(IconDatabase, "No retainers for Icon URL %s - forgetting icon altogether", iconURL.ascii().data());
+
+    // Wipe it from the database...
+    forgetIconForIconURLFromDatabase(iconURL);
+
+    // And then from the SiteIcons
+    SiteIcon* icon1;
+    SiteIcon* icon2;
+    if ((icon1 = m_pageURLToSiteIcons.get(_url)))
+        m_pageURLToSiteIcons.remove(_url);
+    if ((icon2 = m_iconURLToSiteIcons.get(iconURL)))
+        m_iconURLToSiteIcons.remove(iconURL);
+    
+    if (icon1 && icon2) {
+        ASSERT(icon1 == icon2);
+        delete icon1;
+        icon1 = icon2 = 0;
+    } 
+    if (icon1)
+        delete icon1;
+    else if (icon2)
+        delete icon2;
+}
+
+int IconDatabase::totalRetainCountForIconURL(const String& _iconURL)
+{
+    if (_iconURL.isEmpty())
+        return 0;
+        
+    String iconURL = _iconURL;
+    iconURL.replace('\'', "''");
+    
+    int retainCount = SQLStatement(m_db, "SELECT sum(count) FROM PageRetain WHERE url IN(SELECT PageURL.url FROM PageURL, Icon WHERE PageURL.iconID = Icon.iconID AND Icon.url = '" + iconURL + "');").getColumnInt(0);
+    LOG(IconDatabase, "The total retain count for URL %s is %i", _iconURL.ascii().data(), retainCount);
+    return retainCount;
+}
+
+void IconDatabase::forgetIconForIconURLFromDatabase(const String& _iconURL)
+{
+    if (_iconURL.isEmpty())
+        return;
+        
+    String iconURL = _iconURL;
+    iconURL.replace('\'', "''");
+    
+    // Lets start with the icon from the temporary private tables...
+    int64_t iconID;
+    if (m_privateBrowsingEnabled) {
+        iconID = establishTemporaryIconIDForIconURL(iconURL, false);
+        if (iconID) {
+            if (!m_db.executeCommand(String::sprintf("DELETE FROM TempIcon WHERE iconID = %lli", iconID)))
+                LOG_ERROR("Unable to drop Icon at URL %s from table TemporaryIcon", iconURL.ascii().data()); 
+            if (!m_db.executeCommand(String::sprintf("DELETE FROM TempPageURL WHERE iconID = %lli", iconID)))
+                LOG_ERROR("Unable to drop temporary PageURLs pointing at Icon URL %s", iconURL.ascii().data());
+        }
+    }
+    
+    // And then from the on-disk tables
+    iconID = establishIconIDForIconURL(iconURL, false);
+    if (iconID) {
+        if (!m_db.executeCommand(String::sprintf("DELETE FROM Icon WHERE iconID = %lli", iconID)))
+            LOG_ERROR("Unable to drop Icon at URL %s from table Icon", iconURL.ascii().data()); 
+        if (!m_db.executeCommand(String::sprintf("DELETE FROM PageURL WHERE iconID = %lli", iconID)))
+            LOG_ERROR("Unable to drop PageURLs pointing at Icon URL %s", iconURL.ascii().data());
+    }
 
 }
 
@@ -463,7 +613,16 @@ void IconDatabase::performSetIconDataForIconID(int64_t iconID, const String& res
     return;
 }
 
-int IconDatabase::establishTemporaryIconIDForEscapedIconURL(const String& iconURL)
+int64_t IconDatabase::establishTemporaryIconIDForIconURL(const String& _iconURL, bool create)
+{
+    if (_iconURL.isEmpty())
+        return 0;
+    String iconURL = _iconURL;
+    iconURL.replace('\'', "''");
+    return establishTemporaryIconIDForEscapedIconURL(iconURL, create);
+}
+
+int64_t IconDatabase::establishTemporaryIconIDForEscapedIconURL(const String& iconURL, bool create)
 {
     // We either lookup the iconURL and return its ID, or we create a new one for it
     int64_t iconID = 0;
@@ -473,13 +632,23 @@ int IconDatabase::establishTemporaryIconIDForEscapedIconURL(const String& iconUR
         iconID = sql.getColumnInt64(0);
     } else {
         sql.finalize();
-        if (m_db.executeCommand("INSERT INTO TempIcon (url) VALUES ('" + iconURL + "');"))
-            iconID = m_db.lastInsertRowID();
+        if (create)
+            if (m_db.executeCommand("INSERT INTO TempIcon (url) VALUES ('" + iconURL + "');"))
+                iconID = m_db.lastInsertRowID();
     }
     return iconID;
 }
 
-int IconDatabase::establishIconIDForEscapedIconURL(const String& iconURL)
+int64_t IconDatabase::establishIconIDForIconURL(const String& _iconURL, bool create)
+{
+    if (_iconURL.isEmpty())
+        return 0;
+    String iconURL = _iconURL;
+    iconURL.replace('\'', "''");
+    return establishIconIDForEscapedIconURL(iconURL, create);
+}
+
+int64_t IconDatabase::establishIconIDForEscapedIconURL(const String& iconURL, bool create)
 {
     // We either lookup the iconURL and return its ID, or we create a new one for it
     int64_t iconID = 0;
@@ -489,8 +658,9 @@ int IconDatabase::establishIconIDForEscapedIconURL(const String& iconURL)
         iconID = sql.getColumnInt64(0);
     } else {
         sql.finalize();
-        if (m_db.executeCommand("INSERT INTO Icon (url) VALUES ('" + iconURL + "');"))
-            iconID = m_db.lastInsertRowID();
+        if (create)
+            if (m_db.executeCommand("INSERT INTO Icon (url) VALUES ('" + iconURL + "');"))
+                iconID = m_db.lastInsertRowID();
     }
     return iconID;
 }
@@ -538,13 +708,32 @@ void IconDatabase::pruneUnreferencedIcons(int numberToPrune)
 {
     if (!numberToPrune)
         return;
-        
-    if (numberToPrune > 0)
-        if (!m_db.executeCommand(String::sprintf("DELETE FROM Icon WHERE iconID IN (SELECT Icon.iconID FROM Icon WHERE Icon.iconID NOT IN(SELECT PageURL.iconID FROM PageURL) LIMIT %i;", numberToPrune)))
-            LOG_ERROR("Failed to prune %i unreferenced icons from the DB", numberToPrune);
-    else
-        if (!m_db.executeCommand(String("DELETE FROM Icon WHERE iconID IN (SELECT Icon.iconID FROM Icon WHERE Icon.iconID NOT IN(SELECT PageURL.iconID FROM PageURL);")))
-            LOG_ERROR("Failed to prune all unreferenced icons from the DB");
+    
+    if (numberToPrune > 0) {
+        if (!m_db.executeCommand(String::sprintf("DELETE FROM Icon WHERE Icon.iconID IN (SELECT Icon.iconID FROM Icon WHERE Icon.iconID NOT IN(SELECT PageURL.iconID FROM PageURL) LIMIT %i);", numberToPrune)))
+            LOG_ERROR("Failed to prune %i unreferenced icons from the DB - %s", numberToPrune, m_db.lastErrorMsg());
+    } else {
+        if (!m_db.executeCommand("DELETE FROM Icon WHERE Icon.iconID IN (SELECT Icon.iconID FROM Icon WHERE Icon.iconID NOT IN(SELECT PageURL.iconID FROM PageURL));"))
+            LOG_ERROR("Failed to prune all unreferenced icons from the DB - %s", m_db.lastErrorMsg());
+    }
+}
+
+void IconDatabase::pruneUnretainedIcons(Timer<IconDatabase>* timer)
+{
+
+// FIXME - The PageURL delete and the pruneunreferenced icons need to be in an atomic transaction
+#ifndef NDEBUG
+    double start = CFAbsoluteTimeGetCurrent();
+#endif
+    if (!m_db.executeCommand("DELETE FROM PageURL WHERE PageURL.url NOT IN(SELECT url FROM PageRetain WHERE count > 0);"))
+        LOG_ERROR("Failed to delete unretained PageURLs from DB - %s", m_db.lastErrorMsg());
+    pruneUnreferencedIcons(-1);
+#ifndef NDEBUG
+    double duration = CFAbsoluteTimeGetCurrent() - start;
+    LOG(IconDatabase, "Pruning unretained icons took %d seconds", duration);
+    if (duration > 1.0) 
+        LOG_ERROR("Pruning unretained icons took %d seconds - this is much too long!", duration);
+#endif
 }
 
 

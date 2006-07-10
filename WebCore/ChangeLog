@@ -1,3 +1,42 @@
+2006-07-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        SQLite Icon DB now fully replicates functionality of the old DB, including pruning to keep unused
+        information out to keep down disk usage.  For now, it is still off by default, as the critical
+        feature of importing old icons into the new DB is still unrealized.
+        If you'd like to test, add #define ICONDEBUG to your WebKitPrefix.h
+
+        * icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::open):
+          -Sets up a timer for initial pruning
+        (WebCore::IconDatabase::iconForPageURL):
+          -Switched away from "dirty blob hack" as the problem is provisionally solved
+        (WebCore::IconDatabase::retainIconForURL):
+        (WebCore::IconDatabase::releaseIconForURL):
+          -Same as found in WebKit
+        (WebCore::IconDatabase::totalRetainCountForIconURL):
+          -Adds up all retainers of icon
+        (WebCore::IconDatabase::forgetIconForIconURLFromDatabase):
+          -Wipes an Icon table entry out
+        (WebCore::IconDatabase::establishTemporaryIconIDForIconURL):
+        (WebCore::IconDatabase::establishTemporaryIconIDForEscapedIconURL):
+        (WebCore::IconDatabase::establishIconIDForIconURL):
+        (WebCore::IconDatabase::establishIconIDForEscapedIconURL):
+          -Added ability to get an iconID without creating a new one if a lookup is all
+           that is genuinely wanted
+        (WebCore::IconDatabase::pruneUnreferencedIcons):
+        (WebCore::IconDatabase::pruneUnretainedIcons):
+          -Called on a timer on DB startup to clean it out
+        * icon/IconDatabase.h:
+        * icon/SiteIcon.cpp:
+        (SiteIcon::SiteIcon):
+        (SiteIcon::~SiteIcon):
+          -Deletes the image on deletion
+        (SiteIcon::getImage):
+          -Cut down on no-longer-necessary debug info
+
 2006-07-10  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adele.

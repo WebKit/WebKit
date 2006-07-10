@@ -32,6 +32,7 @@
 #include "PlatformString.h"
 #include "SQLDatabase.h"
 #include "StringHash.h"
+#include "Timer.h"
 
 #include <wtf/HashMap.h>
 
@@ -57,18 +58,11 @@ public:
     void resetExpiration(time_t newExpiration = 0);
     time_t getExpiration();
         
-    //getImage() inherently touch()es the icon
-    Image* getImage(const IntSize&);
-    
-    //incase a user wants to manually touch() the icon
-    void touch();
-    time_t getTouch() { return m_touch; }
-    
+    Image* getImage(const IntSize&);    
     String getIconURL() { return m_iconURL; }
-        
+
 private:
     String m_iconURL;
-    time_t m_touch;
     time_t m_expire;
     Image* m_image;
     
@@ -111,29 +105,50 @@ public:
     void setHaveNoIconForIconURL(const String&);
     void setIconURLForPageURL(const String& iconURL, const String& pageURL);
 
-    // Removes icons from the db that no longer have any PageURLs pointing to them
-    // If numberToPrune is negative, ALL dangling icons will be pruned
-    void pruneUnreferencedIcons(int numberToPrune);
-
     static const int currentDatabaseVersion;    
 private:
     IconDatabase();
     ~IconDatabase();
     
+    // Remove the Icon and IconResource entry for this icon, as well as the SiteIcon object in memory
+    void forgetIconForIconURLFromDatabase(const String&);
+    
+    // Wipe all icons from the DB
     void removeAllIcons();
+    
+    // Removes icons from the db that no longer have any PageURLs pointing to them
+    // If numberToPrune is negative, ALL dangling icons will be pruned
+    void pruneUnreferencedIcons(int numberToPrune);
+    
+    // Removes ALL icons that are unretained
+    // Meant to be called just once on startup, after initial retains are complete
+    // via a timer fire
+    void pruneUnretainedIcons(Timer<IconDatabase>*);
+    
+    // Add up the retain count for an iconURL
+    int totalRetainCountForIconURL(const String&);
+    
     bool isEnabled();
     
+    // Do a quick check to make sure the database tables are in place and the db version is current
     bool isValidDatabase();
+    
+    // Delete all tables from the database
     void clearDatabase();
+    
+    // Create the tables and triggers for the on-disk database
     void recreateDatabase();
 
+    // Create/Delete the temporary, in-memory tables used for private browsing
     void createPrivateTables();
     void deletePrivateTables();
     
-    // The following two methods will either find the iconID for a given iconURL or, if the iconURL
-    // isn't in the table yet, will create an entry and return the resulting iconID
-    int establishIconIDForEscapedIconURL(const String&);
-    int establishTemporaryIconIDForEscapedIconURL(const String&);
+    // The following four methods will either find the iconID for a given iconURL or, if the iconURL
+    // isn't in the table yet and you don't pass a false flag, will create an entry and return the resulting iconID
+    int64_t establishIconIDForIconURL(const String&, bool create = true);
+    int64_t establishIconIDForEscapedIconURL(const String&, bool create = true);
+    int64_t establishTemporaryIconIDForIconURL(const String&, bool create = true);
+    int64_t establishTemporaryIconIDForEscapedIconURL(const String&, bool create = true);
     
     // Since we store data in both the ondisk tables and temporary tables, these methods will do the work 
     // for either case
@@ -152,6 +167,8 @@ private:
     
     SQLDatabase m_db;
     bool m_privateBrowsingEnabled;
+    
+    Timer<IconDatabase> m_startupTimer;
     
     typedef HashMap<String, SiteIcon*> SiteIconMap;
     SiteIconMap m_pageURLToSiteIcons;
