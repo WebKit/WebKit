@@ -54,7 +54,7 @@ SVGAnimatedLength *SVGEllipseElement::cy() const
 
 SVGAnimatedLength *SVGEllipseElement::rx() const
 {
-    return lazy_create<SVGAnimatedLength>(m_rx, this, LM_HEIGHT, viewportElement());
+    return lazy_create<SVGAnimatedLength>(m_rx, this, LM_WIDTH, viewportElement());
 }
 
 SVGAnimatedLength *SVGEllipseElement::ry() const

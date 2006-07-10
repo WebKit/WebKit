@@ -1,3 +1,15 @@
+2006-07-10  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej via IRC.
+
+        Make sure the attributes are calculated against viewport width value,
+        as defined in the spec.  http://paste.lisp.org/display/22342
+
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::rx):  Changed LM_HEIGHT to LM_WIDTH.
+        * ksvg2/svg/SVGLineElement.cpp:
+        (SVGLineElement::x2): Ditto.
+
 2006-07-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.

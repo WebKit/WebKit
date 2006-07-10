@@ -54,7 +54,7 @@ SVGAnimatedLength *SVGLineElement::y1() const
 
 SVGAnimatedLength *SVGLineElement::x2() const
 {
-    return lazy_create<SVGAnimatedLength>(m_x2, this, LM_HEIGHT, viewportElement());
+    return lazy_create<SVGAnimatedLength>(m_x2, this, LM_WIDTH, viewportElement());
 }
 
 SVGAnimatedLength *SVGLineElement::y2() const
