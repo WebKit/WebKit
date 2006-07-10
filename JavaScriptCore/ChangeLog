@@ -1,3 +1,82 @@
+2006-07-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Approved by Maciej, Darin.
+        
+        Renamed JSStringBufferRef to JSInternalStringRef. "Internal string" means the 
+        JavaScript engine's internal string representation, which is the most 
+        low-level and efficient representation to use when interfacing with JavaScript.
+
+        * API/APICast.h:
+        (toJS):
+        (toRef):
+        * API/JSBase.h:
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::deleteProperty):
+        (KJS::JSCallbackObject::staticValueGetter):
+        (KJS::JSCallbackObject::callbackGetter):
+        * API/JSContextRef.cpp:
+        (JSEvaluate):
+        (JSCheckSyntax):
+        * API/JSContextRef.h:
+        * API/JSInternalStringRef.cpp: Added.
+        (JSStringMake):
+        (JSInternalStringCreate):
+        (JSInternalStringCreateUTF8):
+        (JSInternalStringRetain):
+        (JSInternalStringRelease):
+        (JSValueCopyStringValue):
+        (JSInternalStringGetLength):
+        (JSInternalStringGetCharactersPtr):
+        (JSInternalStringGetCharacters):
+        (JSInternalStringGetMaxLengthUTF8):
+        (JSInternalStringGetCharactersUTF8):
+        (JSInternalStringIsEqual):
+        (JSInternalStringIsEqualUTF8):
+        (JSInternalStringCreateCF):
+        (CFStringCreateWithJSInternalString):
+        * API/JSInternalStringRef.h: Added.
+        * API/JSNode.c:
+        (JSNodePrototype_appendChild):
+        (JSNode_getNodeType):
+        (JSNode_getChildNodes):
+        (JSNode_getFirstChild):
+        * API/JSNodeList.c:
+        (JSNodeList_length):
+        (JSNodeList_getProperty):
+        * API/JSObjectRef.cpp:
+        (JSFunctionMakeWithBody):
+        (JSObjectGetDescription):
+        (JSObjectHasProperty):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectDeleteProperty):
+        (JSPropertyEnumeratorGetNext):
+        (JSPropertyListAdd):
+        * API/JSObjectRef.h:
+        * API/JSStringBufferRef.cpp: Removed.
+        * API/JSStringBufferRef.h: Removed.
+        * API/JSValueRef.h:
+        * API/JavaScriptCore.h:
+        * API/minidom.c:
+        (main):
+        (print):
+        * API/testapi.c:
+        (assertEqualsAsUTF8String):
+        (assertEqualsAsCharactersPtr):
+        (assertEqualsAsCharacters):
+        (MyObject_hasProperty):
+        (MyObject_getProperty):
+        (MyObject_setProperty):
+        (MyObject_deleteProperty):
+        (MyObject_getPropertyList):
+        (print_callAsFunction):
+        (myConstructor_callAsConstructor):
+        (main):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2006-07-08  Tim Omernick  <timo@apple.com>
 
         Reviewed by Maciej.

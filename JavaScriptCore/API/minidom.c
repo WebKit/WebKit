@@ -39,29 +39,29 @@ int main(int argc, char* argv[])
     JSContextRef context = JSContextCreate(NULL);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     
-    JSStringBufferRef printBuf = JSStringBufferCreateUTF8("print");
+    JSInternalStringRef printBuf = JSInternalStringCreateUTF8("print");
     JSObjectSetProperty(context, globalObject, printBuf, JSFunctionMake(context, print), kJSPropertyAttributeNone);
-    JSStringBufferRelease(printBuf);
+    JSInternalStringRelease(printBuf);
     
-    JSStringBufferRef nodeBuf = JSStringBufferCreateUTF8("Node");
+    JSInternalStringRef nodeBuf = JSInternalStringCreateUTF8("Node");
     JSObjectSetProperty(context, globalObject, nodeBuf, JSConstructorMake(context, JSNode_construct), kJSPropertyAttributeNone);
-    JSStringBufferRelease(nodeBuf);
+    JSInternalStringRelease(nodeBuf);
     
     char* script = createStringWithContentsOfFile("minidom.js");
-    JSStringBufferRef scriptBuf = JSStringBufferCreateUTF8(script);
+    JSInternalStringRef scriptBuf = JSInternalStringCreateUTF8(script);
     JSValueRef exception;
     JSValueRef result = JSEvaluate(context, scriptBuf, NULL, NULL, 0, &exception);
     if (result)
         printf("PASS: Test script executed successfully.\n");
     else {
         printf("FAIL: Test script threw exception:\n");
-        JSStringBufferRef exceptionBuf = JSValueCopyStringValue(context, exception);
-        CFStringRef exceptionCF = CFStringCreateWithJSStringBuffer(kCFAllocatorDefault, exceptionBuf);
+        JSInternalStringRef exceptionBuf = JSValueCopyStringValue(context, exception);
+        CFStringRef exceptionCF = CFStringCreateWithJSInternalString(kCFAllocatorDefault, exceptionBuf);
         CFShow(exceptionCF);
         CFRelease(exceptionCF);
-        JSStringBufferRelease(exceptionBuf);
+        JSInternalStringRelease(exceptionBuf);
     }
-    JSStringBufferRelease(scriptBuf);
+    JSInternalStringRelease(scriptBuf);
     free(script);
 
 #if 0 // used for leak/finalize debugging    
@@ -81,10 +81,10 @@ int main(int argc, char* argv[])
 static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[])
 {
     if (argc > 0) {
-        JSStringBufferRef stringBuf = JSValueCopyStringValue(context, argv[0]);
-        size_t numChars = JSStringBufferGetMaxLengthUTF8(stringBuf);
+        JSInternalStringRef stringBuf = JSValueCopyStringValue(context, argv[0]);
+        size_t numChars = JSInternalStringGetMaxLengthUTF8(stringBuf);
         char string[numChars];
-        JSStringBufferGetCharactersUTF8(stringBuf, string, numChars);
+        JSInternalStringGetCharactersUTF8(stringBuf, string, numChars);
         printf("%s\n", string);
     }
     

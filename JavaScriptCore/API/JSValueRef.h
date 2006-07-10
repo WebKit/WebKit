@@ -188,11 +188,11 @@ JSValueRef JSNumberMake(double value);
 /*!
 @function
 @abstract       Creates a JavaScript value of the string type.
-@param buffer   The JSStringBuffer to assign to the newly created JSValue. The
+@param buffer   The JSInternalString to assign to the newly created JSValue. The
  newly created JSValue retains buffer, and releases it upon garbage collection.
 @result         A JSValue of the string type, representing the string value of buffer.
 */
-JSValueRef JSStringMake(JSStringBufferRef buffer);
+JSValueRef JSStringMake(JSInternalStringRef buffer);
 
 // Converting to primitive values
 
@@ -217,13 +217,13 @@ double JSValueToNumber(JSContextRef context, JSValueRef value);
 /*!
 @function
 @abstract       Converts a JavaScript value to string and copies the resulting
- string into a newly allocated JavaScript string buffer.
+ string into a newly allocated JavaScript string.
 @param context  The execution context to use.
 @param value    The JSValue to convert.
-@result         A JSStringBuffer containing the result of conversion, or an empty
- string buffer if conversion fails. Ownership follows the copy rule.
+@result         A JSInternalString containing the result of conversion, or an empty
+ string if conversion fails. Ownership follows the copy rule.
 */
-JSStringBufferRef JSValueCopyStringValue(JSContextRef context, JSValueRef value);
+JSInternalStringRef JSValueCopyStringValue(JSContextRef context, JSValueRef value);
 
 /*!
 @function

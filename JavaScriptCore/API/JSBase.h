@@ -31,8 +31,8 @@
 
 /*! @typedef JSContextRef A JavaScript execution context. Holds the global object and other execution state. */
 typedef struct __JSContext* JSContextRef;
-/*! @typedef JSStringBuffer A UTF16 character buffer. The fundamental string representation in JavaScript. */
-typedef struct __JSStringBuffer* JSStringBufferRef;
+/*! @typedef JSInternalString A UTF16 character buffer. The fundamental string representation in JavaScript. */
+typedef struct __JSInternalString* JSInternalStringRef;
 /*! @typedef JSClassRef A JavaScript class. Used with JSObjectMake to construct objects with custom behavior. */
 typedef struct __JSClass* JSClassRef;
 /*! @typedef JSPropertyListRef A JavaScript property list. Used for listing the properties in an object so they can be enumerated. */

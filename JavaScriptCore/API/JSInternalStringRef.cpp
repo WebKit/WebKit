@@ -25,7 +25,7 @@
  */
 
 #include "APICast.h"
-#include "JSStringBufferRef.h"
+#include "JSInternalStringRef.h"
 
 #include <kjs/JSLock.h>
 #include <kjs/JSType.h>
@@ -36,20 +36,20 @@
 
 using namespace KJS;
 
-JSValueRef JSStringMake(JSStringBufferRef buffer)
+JSValueRef JSStringMake(JSInternalStringRef buffer)
 {
     JSLock lock;
     UString::Rep* rep = toJS(buffer);
     return toRef(jsString(UString(rep)));
 }
 
-JSStringBufferRef JSStringBufferCreate(const JSChar* chars, size_t numChars)
+JSInternalStringRef JSInternalStringCreate(const JSChar* chars, size_t numChars)
 {
     JSLock lock;
     return toRef(UString(reinterpret_cast<const UChar*>(chars), numChars).rep()->ref());
 }
 
-JSStringBufferRef JSStringBufferCreateUTF8(const char* string)
+JSInternalStringRef JSInternalStringCreateUTF8(const char* string)
 {
     JSLock lock;
     // FIXME: Only works with ASCII
@@ -57,44 +57,44 @@ JSStringBufferRef JSStringBufferCreateUTF8(const char* string)
     return toRef(UString(string).rep()->ref());
 }
 
-JSStringBufferRef JSStringBufferRetain(JSStringBufferRef buffer)
+JSInternalStringRef JSInternalStringRetain(JSInternalStringRef buffer)
 {
     UString::Rep* rep = toJS(buffer);
     return toRef(rep->ref());
 }
 
-void JSStringBufferRelease(JSStringBufferRef buffer)
+void JSInternalStringRelease(JSInternalStringRef buffer)
 {
     JSLock lock;
     UString::Rep* rep = toJS(buffer);
     rep->deref();
 }
 
-JSStringBufferRef JSValueCopyStringValue(JSContextRef context, JSValueRef value)
+JSInternalStringRef JSValueCopyStringValue(JSContextRef context, JSValueRef value)
 {
     JSLock lock;
     JSValue* jsValue = toJS(value);
     ExecState* exec = toJS(context);
 
-    JSStringBufferRef charBufferRef = toRef(jsValue->toString(exec).rep()->ref());
+    JSInternalStringRef charBufferRef = toRef(jsValue->toString(exec).rep()->ref());
     if (exec->hadException())
         exec->clearException();
     return charBufferRef;
 }
 
-size_t JSStringBufferGetLength(JSStringBufferRef buffer)
+size_t JSInternalStringGetLength(JSInternalStringRef buffer)
 {
     UString::Rep* rep = toJS(buffer);
     return rep->size();
 }
 
-const JSChar* JSStringBufferGetCharactersPtr(JSStringBufferRef buffer)
+const JSChar* JSInternalStringGetCharactersPtr(JSInternalStringRef buffer)
 {
     UString::Rep* rep = toJS(buffer);
     return reinterpret_cast<const JSChar*>(rep->data());
 }
 
-void JSStringBufferGetCharacters(JSStringBufferRef inBuffer, JSChar* outBuffer, size_t numChars)
+void JSInternalStringGetCharacters(JSInternalStringRef inBuffer, JSChar* outBuffer, size_t numChars)
 {
     UString::Rep* rep = toJS(inBuffer);
     const JSChar* data = reinterpret_cast<const JSChar*>(rep->data());
@@ -102,7 +102,7 @@ void JSStringBufferGetCharacters(JSStringBufferRef inBuffer, JSChar* outBuffer, 
     memcpy(outBuffer, data, numChars * sizeof(JSChar));
 }
 
-size_t JSStringBufferGetMaxLengthUTF8(JSStringBufferRef buffer)
+size_t JSInternalStringGetMaxLengthUTF8(JSInternalStringRef buffer)
 {
     UString::Rep* rep = toJS(buffer);
     
@@ -110,7 +110,7 @@ size_t JSStringBufferGetMaxLengthUTF8(JSStringBufferRef buffer)
     return rep->size() * 3 + 1; // + 1 for terminating '\0'
 }
 
-size_t JSStringBufferGetCharactersUTF8(JSStringBufferRef inBuffer, char* outBuffer, size_t bufferSize)
+size_t JSInternalStringGetCharactersUTF8(JSInternalStringRef inBuffer, char* outBuffer, size_t bufferSize)
 {
     JSLock lock;
     UString::Rep* rep = toJS(inBuffer);
@@ -121,7 +121,7 @@ size_t JSStringBufferGetCharactersUTF8(JSStringBufferRef inBuffer, char* outBuff
     return length;
 }
 
-bool JSStringBufferIsEqual(JSStringBufferRef a, JSStringBufferRef b)
+bool JSInternalStringIsEqual(JSInternalStringRef a, JSInternalStringRef b)
 {
     UString::Rep* aRep = toJS(a);
     UString::Rep* bRep = toJS(b);
@@ -129,17 +129,17 @@ bool JSStringBufferIsEqual(JSStringBufferRef a, JSStringBufferRef b)
     return UString(aRep) == UString(bRep);
 }
 
-bool JSStringBufferIsEqualUTF8(JSStringBufferRef a, const char* b)
+bool JSInternalStringIsEqualUTF8(JSInternalStringRef a, const char* b)
 {
-    JSStringBufferRef bBuf = JSStringBufferCreateUTF8(b);
-    bool result = JSStringBufferIsEqual(a, bBuf);
-    JSStringBufferRelease(bBuf);
+    JSInternalStringRef bBuf = JSInternalStringCreateUTF8(b);
+    bool result = JSInternalStringIsEqual(a, bBuf);
+    JSInternalStringRelease(bBuf);
     
     return result;
 }
 
 #if defined(__APPLE__)
-JSStringBufferRef JSStringBufferCreateCF(CFStringRef string)
+JSInternalStringRef JSInternalStringCreateCF(CFStringRef string)
 {
     JSLock lock;
     CFIndex length = CFStringGetLength(string);
@@ -156,7 +156,7 @@ JSStringBufferRef JSStringBufferCreateCF(CFStringRef string)
     return toRef(rep);
 }
 
-CFStringRef CFStringCreateWithJSStringBuffer(CFAllocatorRef alloc, JSStringBufferRef buffer)
+CFStringRef CFStringCreateWithJSInternalString(CFAllocatorRef alloc, JSInternalStringRef buffer)
 {
     UString::Rep* rep = toJS(buffer);
     return CFStringCreateWithCharacters(alloc, reinterpret_cast<const JSChar*>(rep->data()), rep->size());
