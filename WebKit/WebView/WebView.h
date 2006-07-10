@@ -185,6 +185,32 @@ extern NSString *WebViewProgressFinishedNotification;
 - (id)initWithFrame:(NSRect)frame frameName:(NSString *)frameName groupName:(NSString *)groupName;
 
 /*!
+    @method close
+    @abstract Cancels any pending load operations. Once the receiver is closed it will no longer
+    respond to new requests or fire any more delegate methods.
+    @discussion A garbage collected application is required to call close when the receiver is no longer needed.
+    The close method will be called automatically when the window or hostWindow closes and shouldCloseWithWindow returns YES.
+    A non-garbage collected application can still call close, providing a convenient way to prevent receiver
+    from doing any more loading and firing any future delegate methods.
+*/
+- (void)close;
+
+/*!
+    @method setShouldCloseWithWindow:
+    @abstract Set whether the receiver closes when either it's window or hostWindow closes.
+    @param close YES if the receiver should close when either it's window or hostWindow closes, otherwise NO.
+*/
+- (void)setShouldCloseWithWindow:(BOOL)close;
+
+/*!
+    @method shouldCloseWithWindow
+    @abstract Returns whether the receiver closes when either it's window or hostWindow closes.
+    @discussion Defaults to YES in garbage collected applications, otherwise NO to maintain backwards compatibility.
+    @result YES if the receiver closes when either it's window or hostWindow closes, otherwise NO.
+*/
+- (BOOL)shouldCloseWithWindow;
+
+/*!
     @method setUIDelegate:
     @abstract Set the WebView's WebUIDelegate.
     @param delegate The WebUIDelegate to set as the delegate.
@@ -262,6 +288,15 @@ extern NSString *WebViewProgressFinishedNotification;
     @result The main frame.
 */    
 - (WebFrame *)mainFrame;
+
+/*!
+    @method selectedFrame
+    @abstract Return the frame that has the active selection.  
+    @discussion Returns the frame that contains the first responder, if any. Otherwise returns the
+    frame that contains a non-zero-length selection, if any. Returns nil if no frame meets these criteria.
+    @result The selected frame.
+*/
+- (WebFrame *)selectedFrame;
 
 /*!
     @method backForwardList
@@ -491,7 +526,6 @@ extern NSString *WebViewProgressFinishedNotification;
 */
 - (NSString *)groupName;
 
-
 /*!
     @method estimatedProgress
     @discussion An estimate of the percent complete for a document load.  This
@@ -503,6 +537,12 @@ extern NSString *WebViewProgressFinishedNotification;
     WebResourceLoadDelegate.
 */
 - (double)estimatedProgress;
+
+/*!
+    @method isLoading
+    @discussion Returns YES if there are any pending loads.
+*/
+- (BOOL)isLoading;
 
 /*!
     @method elementAtPoint:
@@ -555,6 +595,50 @@ extern NSString *WebViewProgressFinishedNotification;
 */
 - (void)removeDragCaret;
 
+/*!
+    @method setDrawsBackground:
+    @param drawsBackround YES to cause the receiver to draw a default white background, NO otherwise.
+    @abstract Sets whether the receiver draws a default white background when the loaded page has no background specified.
+*/
+- (void)setDrawsBackground:(BOOL)drawsBackround;
+
+/*!
+    @method drawsBackground
+    @result Returns YES if the receiver draws a default white background, NO otherwise.
+*/
+- (BOOL)drawsBackground;
+
+/*!
+    @method setMainFrameURL:
+    @param URLString The URL to load in the mainFrame.
+*/
+- (void)setMainFrameURL:(NSString *)URLString;
+
+/*!
+    @method mainFrameURL
+    @result Returns the main frame's current URL.
+*/
+- (NSString *)mainFrameURL;
+
+/*!
+    @method mainFrameDocument
+    @result Returns the main frame's DOMDocument.
+*/
+- (DOMDocument *)mainFrameDocument;
+
+/*!
+    @method mainFrameTitle
+    @result Returns the main frame's title if any, otherwise an empty string.
+*/
+- (NSString *)mainFrameTitle;
+
+/*!
+    @method mainFrameIcon
+    @discussion The methods returns the site icon for the current page loaded in the mainFrame.
+    @result Returns the main frame's icon if any, otherwise nil.
+*/
+- (NSImage *)mainFrameIcon;
+
 @end
 
 
@@ -570,6 +654,10 @@ extern NSString *WebViewProgressFinishedNotification;
 - (IBAction)makeTextLarger:(id)sender;
 - (BOOL)canMakeTextSmaller;
 - (IBAction)makeTextSmaller:(id)sender;
+- (BOOL)canMakeTextStandardSize;
+- (IBAction)makeTextStandardSize:(id)sender;
+- (IBAction)toggleContinuousSpellChecking:(id)sender;
+- (IBAction)toggleSmartInsertDelete:(id)sender;
 @end
 
 
@@ -590,6 +678,7 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity;
 - (DOMRange *)selectedDOMRange;
 - (NSSelectionAffinity)selectionAffinity;
+- (BOOL)maintainsInactiveSelection;
 - (void)setEditable:(BOOL)flag;
 - (BOOL)isEditable;
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style;
@@ -641,6 +730,12 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 
 - (void)startSpeaking:(id)sender;
 - (void)stopSpeaking:(id)sender;
+
+- (void)moveToBeginningOfSentence:(id)sender;
+- (void)moveToBeginningOfSentenceAndModifySelection:(id)sender;
+- (void)moveToEndOfSentence:(id)sender;
+- (void)moveToEndOfSentenceAndModifySelection:(id)sender;
+- (void)selectSentence:(id)sender;
 
 /* 
 The following methods are declared in NSResponder.h.

@@ -1874,6 +1874,21 @@ NS_ENDHANDLER
     [super finalize];
 }
 
+- (void)close
+{
+    [self _close];
+}
+
+- (void)setShouldCloseWithWindow:(BOOL)close
+{
+    _private->shouldCloseWithWindow = close;
+}
+
+- (BOOL)shouldCloseWithWindow
+{
+    return _private->shouldCloseWithWindow;
+}
+
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
     // Don't do anything if we aren't initialized.  This happens
@@ -1994,6 +2009,22 @@ NS_ENDHANDLER
     if (!_private)
         return nil;
     return [(WebFrameBridge *)[_private->_pageBridge mainFrame] webFrame];
+}
+
+- (WebFrame *)selectedFrame
+{
+    // If the first responder is a view in our tree, we get the frame containing the first responder.
+    // This is faster than searching the frame hierarchy, and will give us a result even in the case
+    // where the focused frame doesn't actually contain a selection.
+    WebFrame *focusedFrame = [self _focusedFrame];
+    if (focusedFrame)
+        return focusedFrame;
+    
+    // If the first responder is outside of our view tree, we search for a frame containing a selection.
+    // There should be at most only one of these.
+    return [[self mainFrame] _findFrameWithSelection];
+    
+    return nil;
 }
 
 - (WebBackForwardList *)backForwardList
@@ -2510,6 +2541,59 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [[[self mainFrame] _bridge] removeDragCaret];
 }
 
+- (void)setMainFrameURL:(NSString *)URLString
+{
+    [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL _web_URLWithDataAsString: URLString]]];
+}
+
+- (NSString *)mainFrameURL
+{
+    WebDataSource *ds;
+    ds = [[self mainFrame] provisionalDataSource];
+    if (!ds)
+        ds = [[self mainFrame] dataSource];
+    return [[[ds request] URL] _web_originalDataAsString];
+}
+
+- (BOOL)isLoading
+{
+    LOG (Bindings, "isLoading = %d", (int)[self _isLoading]);
+    return [self _isLoading];
+}
+
+- (NSString *)mainFrameTitle
+{
+    NSString *mainFrameTitle = [[[self mainFrame] dataSource] pageTitle];
+    return (mainFrameTitle != nil) ? mainFrameTitle : (NSString *)@"";
+}
+
+- (NSImage *)mainFrameIcon
+{
+    return [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[self mainFrame] dataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
+}
+
+- (DOMDocument *)mainFrameDocument
+{
+    // only return the actual value if the state we're in gives NSTreeController
+    // enough time to release its observers on the old model
+    if (_private->mainFrameDocumentReady)
+        return [[self mainFrame] DOMDocument];
+    return nil;
+}
+
+- (void)setDrawsBackground:(BOOL)drawsBackground
+{
+    if (_private->drawsBackground == drawsBackground)
+        return;
+    _private->drawsBackground = drawsBackground;
+    [[self mainFrame] _updateDrawsBackground];
+}
+
+- (BOOL)drawsBackground
+{
+    return _private->drawsBackground;
+}
+
 - (void)_inspectElement:(id)sender
 {
     NSDictionary *element = [sender representedObject];
@@ -2603,6 +2687,16 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [self _performTextSizingSelector:@selector(_makeTextLarger:) withObject:sender onTrackingDocs:canGrowMore selForNonTrackingDocs:@selector(_canMakeTextLarger) newScaleFactor:newScale];
 }
 
+- (IBAction)toggleSmartInsertDelete:(id)sender
+{
+    [self setSmartInsertDeleteEnabled:![self smartInsertDeleteEnabled]];
+}
+
+- (IBAction)toggleContinuousSpellChecking:(id)sender
+{
+    [self setContinuousSpellCheckingEnabled:![self isContinuousSpellCheckingEnabled]];
+}
+
 - (BOOL)_responderValidateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     id responder = [self _responderForResponderOperations];
@@ -2613,6 +2707,18 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         return YES;
     }
     return NO;
+}
+
+- (BOOL)canMakeTextStandardSize
+{
+    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
+    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:0];
+}
+
+- (IBAction)makeTextStandardSize:(id)sender
+{
+    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
+    [self _performTextSizingSelector:@selector(_makeTextStandardSize:) withObject:sender onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:1.0];
 }
 
 #define VALIDATE(name) \
@@ -2658,37 +2764,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 @implementation WebView (WebPendingPublic)
 
-- (void)setMainFrameURL:(NSString *)URLString
-{
-    [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL _web_URLWithDataAsString: URLString]]];
-}
-
-- (NSString *)mainFrameURL
-{
-    WebDataSource *ds;
-    ds = [[self mainFrame] provisionalDataSource];
-    if (!ds)
-        ds = [[self mainFrame] dataSource];
-    return [[[ds request] URL] _web_originalDataAsString];
-}
-
-- (BOOL)isLoading
-{
-    LOG (Bindings, "isLoading = %d", (int)[self _isLoading]);
-    return [self _isLoading];
-}
-
-- (NSString *)mainFrameTitle
-{
-    NSString *mainFrameTitle = [[[self mainFrame] dataSource] pageTitle];
-    return (mainFrameTitle != nil) ? mainFrameTitle : (NSString *)@"";
-}
-
-- (NSImage *)mainFrameIcon
-{
-    return [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[self mainFrame] dataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
-}
-
 - (void)setMainFrameDocumentReady:(BOOL)mainFrameDocumentReady
 {
     // by setting this to NO, calls to mainFrameDocument are forced to return nil
@@ -2702,76 +2777,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     // this will cause observers to call mainFrameDocument where this flag will be checked
 }
 
-- (DOMDocument *)mainFrameDocument
-{
-    // only return the actual value if the state we're in gives NSTreeController
-    // enough time to release its observers on the old model
-    if (_private->mainFrameDocumentReady)
-        return [[self mainFrame] DOMDocument];
-    return nil;
-}
-
-- (void)setDrawsBackground:(BOOL)drawsBackground
-{
-    if (_private->drawsBackground == drawsBackground)
-        return;
-    _private->drawsBackground = drawsBackground;
-    [[self mainFrame] _updateDrawsBackground];
-}
-
-- (BOOL)drawsBackground
-{
-    return _private->drawsBackground;
-}
-
-- (void)toggleSmartInsertDelete:(id)sender
-{
-    [self setSmartInsertDeleteEnabled:![self smartInsertDeleteEnabled]];
-}
-
-- (IBAction)toggleContinuousSpellChecking:(id)sender
-{
-    [self setContinuousSpellCheckingEnabled:![self isContinuousSpellCheckingEnabled]];
-}
-
-- (BOOL)maintainsInactiveSelection
-{
-    return [self isEditable];
-}
-
 // This method name is used by Mail on Tiger (but not post-Tiger), so we shouldn't delete it 
 // until the day comes when we're no longer supporting Mail on Tiger.
 - (WebFrame *)_frameForCurrentSelection
 {
     return [self _selectedOrMainFrame];
-}
-
-- (WebFrame *)selectedFrame
-{
-    // If the first responder is a view in our tree, we get the frame containing the first responder.
-    // This is faster than searching the frame hierarchy, and will give us a result even in the case
-    // where the focused frame doesn't actually contain a selection.
-    WebFrame *focusedFrame = [self _focusedFrame];
-    if (focusedFrame)
-        return focusedFrame;
-    
-    // If the first responder is outside of our view tree, we search for a frame containing a selection.
-    // There should be at most only one of these.
-    return [[self mainFrame] _findFrameWithSelection];
-    
-    return nil;
-}
-
-- (BOOL)canMakeTextStandardSize
-{
-    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
-    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:0];
-}
-
-- (IBAction)makeTextStandardSize:(id)sender
-{
-    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
-    [self _performTextSizingSelector:@selector(_makeTextStandardSize:) withObject:sender onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:1.0];
 }
 
 - (void)setTabKeyCyclesThroughElements:(BOOL)cyclesElements
@@ -2874,21 +2884,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     } while (frame);
     
     return result;
-}
-
-- (void)close
-{
-    [self _close];
-}
-
-- (void)setShouldCloseWithWindow:(BOOL)close
-{
-    _private->shouldCloseWithWindow = close;
-}
-
-- (BOOL)shouldCloseWithWindow
-{
-    return _private->shouldCloseWithWindow;
 }
 
 @end
@@ -3047,6 +3042,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     id documentView = [[[self mainFrame] frameView] documentView];
     return [documentView respondsToSelector:@selector(_canPaste)] && [documentView _canPaste];
+}
+
+- (BOOL)maintainsInactiveSelection
+{
+    return [self isEditable];
 }
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity

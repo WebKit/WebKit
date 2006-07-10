@@ -1,5 +1,33 @@
 2006-07-09  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        Bug 9814: Move new WebView API that has been through API review to public headers
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9814
+
+        * WebView/WebView.h:
+        * WebView/WebView.m:
+        (-[WebView close]):
+        (-[WebView setShouldCloseWithWindow:]):
+        (-[WebView shouldCloseWithWindow]):
+        (-[WebView selectedFrame]):
+        (-[WebView setMainFrameURL:]):
+        (-[WebView mainFrameURL]):
+        (-[WebView isLoading]):
+        (-[WebView mainFrameTitle]):
+        (-[WebView mainFrameIcon]):
+        (-[WebView mainFrameDocument]):
+        (-[WebView setDrawsBackground:]):
+        (-[WebView drawsBackground]):
+        (-[WebView toggleSmartInsertDelete:]):
+        (-[WebView toggleContinuousSpellChecking:]):
+        (-[WebView canMakeTextStandardSize]):
+        (-[WebView makeTextStandardSize:]):
+        (-[WebView maintainsInactiveSelection]):
+        * WebView/WebViewPrivate.h:
+
+2006-07-09  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Maciej.
 
         Bug 9487: The XPath section should be removed and/or moved.
