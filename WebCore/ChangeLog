@@ -1,3 +1,18 @@
+2006-07-10  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adele.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9245
+        Quirksmode: Incorrect handling of disabled BUTTON elements
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler):
+        Don't call prepareSubmit if the element is disabled.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        Don't call prepareSubmit if the element is disabled.
+
 2006-07-10  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build

@@ -1219,7 +1219,7 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
     // actually submitting the form. For reset inputs, the form is reset. These events are sent when the user clicks
     // on the element, or presses enter while it is the active element. Javacsript code wishing to activate the element
     // must dispatch a DOMActivate event - a click event will not do the job.
-    if (evt->type() == DOMActivateEvent) {
+    if (evt->type() == DOMActivateEvent && !disabled()) {
         if (inputType() == IMAGE || inputType() == SUBMIT || inputType() == RESET) {
             if (!form())
                 return;

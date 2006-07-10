@@ -85,7 +85,7 @@ void HTMLButtonElement::parseMappedAttribute(MappedAttribute *attr)
 
 void HTMLButtonElement::defaultEventHandler(Event *evt)
 {
-    if (m_type != BUTTON && (evt->type() == DOMActivateEvent)) {
+    if (m_type != BUTTON && (evt->type() == DOMActivateEvent) && !disabled()) {
         if (form() && m_type == SUBMIT) {
             m_activeSubmit = true;
             form()->prepareSubmit();
