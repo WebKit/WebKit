@@ -1,3 +1,13 @@
+2006-07-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey
+
+        Resolved the console error messages people got from the new DB even if they didn't have it enabled
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase init]):
+        Disabled initializing the IconDatabaseBridge if user is living on the old DB
+
 2006-07-10  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build

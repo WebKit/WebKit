@@ -123,6 +123,7 @@ NSSize WebIconLargeSize = {128, 128};
 
     _isClosing = NO;
 
+#ifdef ICONDEBUG
     _private->databaseBridge = [WebCoreIconDatabaseBridge sharedBridgeInstance];
     if (_private->databaseBridge) {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -135,6 +136,9 @@ NSSize WebIconLargeSize = {128, 128};
         databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
         [_private->databaseBridge openSharedDatabaseWithPath:databaseDirectory];
     }
+#else
+    _private->databaseBridge = nil;
+#endif
     
     _private->iconURLToIcons = [[NSMutableDictionary alloc] init];
     _private->iconURLToExtraRetainCount = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);

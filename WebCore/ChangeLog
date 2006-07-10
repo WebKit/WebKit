@@ -1,3 +1,14 @@
+2006-07-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey
+
+        Resolved the console error messages people got from the new DB even if they didn't have it enabled
+
+        * icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::pruneUnreferencedIcons):
+        (WebCore::IconDatabase::pruneUnretainedIcons):
+        Added quick check to bail if the DB isn't open
+
 2006-07-10  David Harrison  <harrison@apple.com>
 
         Reviewed by Tim Hatcher
