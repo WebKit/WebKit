@@ -62,8 +62,9 @@ public:
     void valueChanged(unsigned index);
     bool hasPopupMenu() { return m_popupMenu; }
 
-protected:
-    void setText(String);
+private:
+    void createInnerBlock();
+    void setText(const String&);
 
     RenderText* m_buttonText;
     RenderBlock* m_inner;

@@ -1,3 +1,20 @@
+2006-07-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9833
+          REGRESSION: Reproducible crash: RenderMenuList.cpp:58: failed assertion `!m_first'
+
+        * manual-tests/empty-title-popup.html: Added.
+
+        * rendering/RenderMenuList.h: Add createInnerBlock.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::createInnerBlock): Factored out of addChild.
+        (WebCore::RenderMenuList::addChild): Call createInnerBlock.
+        (WebCore::RenderMenuList::setText): Changed parameter type.
+        (WebCore::RenderMenuList::showPopup): Call createInnerBlock before calling
+        the parent class's addChild.
+
 2006-07-10  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej via IRC.
@@ -6,7 +23,7 @@
         as defined in the spec.  http://paste.lisp.org/display/22342
 
         * ksvg2/svg/SVGEllipseElement.cpp:
-        (WebCore::SVGEllipseElement::rx):  Changed LM_HEIGHT to LM_WIDTH.
+        (WebCore::SVGEllipseElement::rx): Changed LM_HEIGHT to LM_WIDTH.
         * ksvg2/svg/SVGLineElement.cpp:
         (SVGLineElement::x2): Ditto.
 
