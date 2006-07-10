@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -689,7 +689,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (nullEventTimer)
         [self stopNullEvents];
     
-    if ([[self window] isMiniaturized])
+    if (!isStarted || [[self window] isMiniaturized])
         return;
 
     NSTimeInterval interval;

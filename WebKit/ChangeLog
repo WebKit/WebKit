@@ -1,3 +1,15 @@
+2006-07-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix assertion firing in plug-in layout tests
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView restartNullEvents]):
+        Don't start null events if the plug-in is not in the
+        started state. This happens when the plug-in moves within
+        its view hierarchy after it has been stopped.
+
 2006-07-09  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
