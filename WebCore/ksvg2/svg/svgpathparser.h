@@ -21,10 +21,10 @@
 #define __SVGPATHPARSER_H__
 #if SVG_SUPPORT
 
-class DeprecatedString;
-
 namespace WebCore
 {
+    class DeprecatedString;
+
     const char *parseCoord(const char *ptr, double &number);
 
     class SVGPolyParser

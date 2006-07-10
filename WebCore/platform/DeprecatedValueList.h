@@ -28,6 +28,8 @@
 
 #include "DeprecatedValueListImpl.h"
 
+namespace WebCore {
+
 template <class T> class DeprecatedValueList;
 template <class T> class DeprecatedValueListConstIterator;
 
@@ -142,6 +144,8 @@ template<class T>
 inline bool operator==(const DeprecatedValueList<T> &a, const DeprecatedValueList<T> &b)
 {
     return a.impl.isEqual(b.impl, DeprecatedValueList<T>::nodesEqual);
+}
+
 }
 
 #endif

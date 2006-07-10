@@ -51,13 +51,12 @@ class WebCoreResourceLoaderImp;
 #endif
 #endif
 
-class KURL;
-
 namespace WebCore {
 
-class FormData;
-class TransferJobInternal;
 class DocLoader;
+class FormData;
+class KURL;
+class TransferJobInternal;
 
 class TransferJob {
 public:

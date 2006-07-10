@@ -37,7 +37,7 @@ enum KCGradientSpreadMethod {
 typedef std::pair<float, Color> KCGradientStop;
 inline KCGradientStop makeGradientStop(float offset, const Color& color) { return std::make_pair(offset, color); }
 
-TextStream &operator<<(TextStream &ts, WebCore::KCGradientSpreadMethod m);
+TextStream& operator<<(TextStream&, KCGradientSpreadMethod);
 
 class KCanvasMatrix;
 class KRenderingPaintServerGradient : public KRenderingPaintServer

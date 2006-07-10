@@ -110,7 +110,7 @@ void XSLStyleSheet::clearDocuments()
     }
 }
 
-WebCore::DocLoader* XSLStyleSheet::docLoader()
+DocLoader* XSLStyleSheet::docLoader()
 {
     if (!m_ownerDocument)
         return 0;

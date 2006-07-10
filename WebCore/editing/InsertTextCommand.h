@@ -33,20 +33,20 @@ namespace WebCore {
 class InsertTextCommand : public CompositeEditCommand
 {
 public:
-    InsertTextCommand(WebCore::Document *document);
+    InsertTextCommand(Document *document);
 
     virtual void doApply();
 
     void deleteCharacter();
-    void input(const WebCore::String &text, bool selectInsertedText = false);
+    void input(const String &text, bool selectInsertedText = false);
     
     unsigned charactersAdded() const { return m_charactersAdded; }
     
 private:
     virtual bool isInsertTextCommand() const;
 
-    WebCore::Position prepareForTextInsertion(const WebCore::Position& pos);
-    WebCore::Position insertTab(WebCore::Position pos);
+    Position prepareForTextInsertion(const Position& pos);
+    Position insertTab(Position pos);
 
     unsigned m_charactersAdded;
 };

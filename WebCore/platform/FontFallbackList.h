@@ -38,7 +38,7 @@ class FontData;
 class FontDescription;
 class FontPlatformData;
 
-static const int cAllFamiliesScanned = -1;
+const int cAllFamiliesScanned = -1;
 
 class FontFallbackList : public Shared<FontFallbackList>, Noncopyable {
 public:

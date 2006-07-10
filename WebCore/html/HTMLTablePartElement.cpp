@@ -64,7 +64,7 @@ void HTMLTablePartElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == bgcolorAttr)
         addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
     else if (attr->name() == backgroundAttr) {
-        String url = WebCore::parseURL(attr->value());
+        String url = parseURL(attr->value());
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, document()->completeURL(url));
     } else if (attr->name() == bordercolorAttr) {

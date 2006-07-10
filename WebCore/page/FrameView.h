@@ -30,14 +30,13 @@
 #include "IntSize.h"
 #include "PlatformString.h"
 
-class DeprecatedStringList;
-
 namespace WebCore {
 
 class AtomicString;
 class CSSProperty;
 class CSSStyleSelector;
 class Clipboard;
+class DeprecatedStringList;
 class Document;
 class Element;
 class Event;

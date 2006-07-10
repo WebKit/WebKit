@@ -33,15 +33,15 @@ namespace WebCore {
 class WrapContentsInDummySpanCommand : public EditCommand
 {
 public:
-    WrapContentsInDummySpanCommand(WebCore::Document *, WebCore::Element *);
+    WrapContentsInDummySpanCommand(Document *, Element *);
     virtual ~WrapContentsInDummySpanCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
 private:
-    RefPtr<WebCore::Element> m_element;
-    RefPtr<WebCore::Element> m_dummySpan;
+    RefPtr<Element> m_element;
+    RefPtr<Element> m_dummySpan;
 };
 
 } // namespace WebCore

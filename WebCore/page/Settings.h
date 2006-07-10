@@ -29,6 +29,8 @@
 #include "Font.h"
 #include "KURL.h"
 
+namespace WebCore {
+
 class Settings
 {
 public:
@@ -48,12 +50,12 @@ public:
     {
     }
 
-    const WebCore::AtomicString& stdFontName() const { return m_stdFontName; }
-    const WebCore::AtomicString& fixedFontName() const { return m_fixedFontName; }
-    const WebCore::AtomicString& serifFontName() const { return m_serifFontName; }
-    const WebCore::AtomicString& sansSerifFontName() const { return m_sansSerifFontName; }
-    const WebCore::AtomicString& cursiveFontName() const { return m_cursiveFontName; }
-    const WebCore::AtomicString& fantasyFontName() const { return m_fantasyFontName; }
+    const AtomicString& stdFontName() const { return m_stdFontName; }
+    const AtomicString& fixedFontName() const { return m_fixedFontName; }
+    const AtomicString& serifFontName() const { return m_serifFontName; }
+    const AtomicString& sansSerifFontName() const { return m_sansSerifFontName; }
+    const AtomicString& cursiveFontName() const { return m_cursiveFontName; }
+    const AtomicString& fantasyFontName() const { return m_fantasyFontName; }
 
     int minFontSize() const { return m_minimumFontSize; }
     int minLogicalFontSize() const { return m_minimumLogicalFontSize; }
@@ -74,12 +76,12 @@ public:
     bool shouldPrintBackgrounds() const { return m_shouldPrintBackgrounds; }
     bool textAreasAreResizable() const { return m_textAreasAreResizable; }
 
-    void setStdFontName(const WebCore::AtomicString& s) { m_stdFontName = s; }
-    void setFixedFontName(const WebCore::AtomicString& s) { m_fixedFontName = s; }
-    void setSerifFontName(const WebCore::AtomicString& s) { m_serifFontName = s; }
-    void setSansSerifFontName(const WebCore::AtomicString& s) { m_sansSerifFontName = s; }
-    void setCursiveFontName(const WebCore::AtomicString& s) { m_cursiveFontName = s; }
-    void setFantasyFontName(const WebCore::AtomicString& s) { m_fantasyFontName = s; }
+    void setStdFontName(const AtomicString& s) { m_stdFontName = s; }
+    void setFixedFontName(const AtomicString& s) { m_fixedFontName = s; }
+    void setSerifFontName(const AtomicString& s) { m_serifFontName = s; }
+    void setSansSerifFontName(const AtomicString& s) { m_sansSerifFontName = s; }
+    void setCursiveFontName(const AtomicString& s) { m_cursiveFontName = s; }
+    void setFantasyFontName(const AtomicString& s) { m_fantasyFontName = s; }
     
     void setMinFontSize(int s) { m_minimumFontSize = s; }
     void setMinLogicalFontSize(int s) { m_minimumLogicalFontSize = s; }
@@ -100,12 +102,12 @@ public:
     void setTextAreasAreResizable(bool f) { m_textAreasAreResizable = f; }
     
 private:
-    WebCore::AtomicString m_stdFontName;
-    WebCore::AtomicString m_fixedFontName;
-    WebCore::AtomicString m_serifFontName;
-    WebCore::AtomicString m_sansSerifFontName;
-    WebCore::AtomicString m_cursiveFontName;
-    WebCore::AtomicString m_fantasyFontName;
+    AtomicString m_stdFontName;
+    AtomicString m_fixedFontName;
+    AtomicString m_serifFontName;
+    AtomicString m_sansSerifFontName;
+    AtomicString m_cursiveFontName;
+    AtomicString m_fantasyFontName;
     DeprecatedString m_encoding; // FIXME: TextEncoding takes a latin1 string, which String & AtomicString don't easily produce
     KURL m_userStyleSheetLocation;
     
@@ -122,5 +124,7 @@ private:
     bool m_shouldPrintBackgrounds : 1;
     bool m_textAreasAreResizable : 1;
 };
+
+}
 
 #endif

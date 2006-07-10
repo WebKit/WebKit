@@ -40,8 +40,6 @@
 #include <wtf/Vector.h>
 #include "RenderObject.h"
 
-class Settings;
-
 namespace KJS {
     class JSValue;
     class PausedTimeouts;
@@ -71,6 +69,7 @@ class Range;
 class RenderLayer;
 class Selection;
 class SelectionController;
+class Settings;
 class VisiblePosition;
 
 template <typename T> class Timer;

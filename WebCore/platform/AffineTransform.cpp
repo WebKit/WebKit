@@ -29,7 +29,11 @@
 #include "FloatRect.h"
 #include "IntRect.h"
 
+namespace WebCore {
+
 bool AffineTransform::isInvertible() const
 {
     return det() != 0.0;
+}
+
 }

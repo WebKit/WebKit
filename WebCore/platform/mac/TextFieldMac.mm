@@ -37,11 +37,11 @@
 #import "WebCoreViewFactory.h"
 #import "WidgetClient.h"
 
-using namespace WebCore;
-
 @interface NSSearchFieldCell (SearchFieldSecrets)
 - (void)_addStringToRecentSearches:(NSString *)string;
 @end
+
+namespace WebCore {
 
 NSControlSize ControlSizeForFont(const Font& f)
 {
@@ -59,9 +59,6 @@ TextField::TextField(Type type)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     id view = nil;
     switch (type) {
-        case Normal:
-            view = [WebCoreTextField alloc];
-            break;
         case Password:
             view = [WebCoreSecureTextField alloc];
             break;
@@ -267,7 +264,7 @@ IntSize TextField::sizeForCharacterWidth(int numCharacters) const
     size.height += [layoutManager defaultLineHeightForFont:font.font];
     [layoutManager release];
 
-    WebCore::TextStyle style;
+    TextStyle style;
     style.disableRoundingHacks();
 
     const UniChar zero = '0';
@@ -386,7 +383,7 @@ void TextField::setMaxResults(int maxResults)
     [searchCell setMaximumRecents:maxResults];
 }
 
-void TextField::setPlaceholderString(const WebCore::String& placeholder)
+void TextField::setPlaceholderString(const String& placeholder)
 {
     NSTextField *textField = (NSTextField *)getView();
     [[textField cell] setPlaceholderString:placeholder];
@@ -401,3 +398,4 @@ void TextField::addSearchResult()
     [[searchField cell] _addStringToRecentSearches:[searchField stringValue]];
 }
 
+}

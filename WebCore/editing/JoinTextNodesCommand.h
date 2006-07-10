@@ -37,18 +37,18 @@ namespace WebCore {
 class JoinTextNodesCommand : public EditCommand
 {
 public:
-    JoinTextNodesCommand(WebCore::Document *, WebCore::Text *, WebCore::Text *);
+    JoinTextNodesCommand(Document *, Text *, Text *);
     virtual ~JoinTextNodesCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    WebCore::Text *firstNode() const { return m_text1.get(); }
-    WebCore::Text *secondNode() const { return m_text2.get(); }
+    Text *firstNode() const { return m_text1.get(); }
+    Text *secondNode() const { return m_text2.get(); }
 
 private:
-    RefPtr<WebCore::Text> m_text1;
-    RefPtr<WebCore::Text> m_text2;
+    RefPtr<Text> m_text1;
+    RefPtr<Text> m_text2;
     unsigned m_offset;
 };
 

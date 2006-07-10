@@ -35,19 +35,19 @@ namespace WebCore {
 class RemoveNodeAttributeCommand : public EditCommand
 {
 public:
-    RemoveNodeAttributeCommand(WebCore::Document *, WebCore::Element *, const WebCore::QualifiedName& attribute);
+    RemoveNodeAttributeCommand(Document *, Element *, const QualifiedName& attribute);
     virtual ~RemoveNodeAttributeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    WebCore::Element *element() const { return m_element.get(); }
-    const WebCore::QualifiedName& attribute() const { return m_attribute; }
+    Element *element() const { return m_element.get(); }
+    const QualifiedName& attribute() const { return m_attribute; }
     
 private:
-    RefPtr<WebCore::Element> m_element;
-    WebCore::QualifiedName m_attribute;
-    WebCore::String m_oldValue;
+    RefPtr<Element> m_element;
+    QualifiedName m_attribute;
+    String m_oldValue;
 };
 
 } // namespace WebCore

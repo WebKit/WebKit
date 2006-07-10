@@ -26,10 +26,6 @@
 #ifndef WEBCORE_PLATFORM_WIDGET_H_
 #define WEBCORE_PLATFORM_WIDGET_H_
 
-namespace WebCore {
-    class Font;
-}
-
 #if __APPLE__
 #ifdef __OBJC__
 @class NSView;
@@ -50,6 +46,7 @@ typedef struct _GdkDrawable GdkDrawable;
 namespace WebCore {
 
     class Cursor;
+    class Font;
     class GraphicsContext;
     class IntPoint;
     class IntRect;
@@ -165,10 +162,5 @@ namespace WebCore {
     };
 
 }
-
-using WebCore::IntPoint; // FIXME: remove when we move everything into the WebCore namespace
-using WebCore::IntRect; // FIXME: remove when we move everything into the WebCore namespace
-using WebCore::IntSize; // FIXME: remove when we move everything into the WebCore namespace
-using WebCore::Widget; // FIXME: remove when we move everything into the WebCore namespace
 
 #endif

@@ -212,14 +212,14 @@ namespace KJS {
     public:
         ScheduledAction(JSValue *func, const List& args)
             : m_func(func), m_args(args) { }
-        ScheduledAction(const DeprecatedString& code)
+        ScheduledAction(const WebCore::DeprecatedString& code)
             : m_code(code) { }
         void execute(Window *);
 
     private:
         ProtectedPtr<JSValue> m_func;
         List m_args;
-        DeprecatedString m_code;
+        WebCore::DeprecatedString m_code;
     };
 
   class Location : public DOMObject {

@@ -37,18 +37,18 @@ namespace WebCore {
 class AppendNodeCommand : public EditCommand
 {
 public:
-    AppendNodeCommand(WebCore::Document *, WebCore::Node *appendChild, WebCore::Node *parentNode);
+    AppendNodeCommand(Document *, Node *appendChild, Node *parentNode);
     virtual ~AppendNodeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    WebCore::Node *appendChild() const { return m_appendChild.get(); }
-    WebCore::Node *parentNode() const { return m_parentNode.get(); }
+    Node *appendChild() const { return m_appendChild.get(); }
+    Node *parentNode() const { return m_parentNode.get(); }
 
 private:
-    RefPtr<WebCore::Node> m_appendChild;
-    RefPtr<WebCore::Node> m_parentNode;
+    RefPtr<Node> m_appendChild;
+    RefPtr<Node> m_parentNode;
 };
 
 } // namespace WebCore

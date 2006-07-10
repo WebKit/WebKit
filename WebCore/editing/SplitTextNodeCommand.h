@@ -37,18 +37,18 @@ namespace WebCore {
 class SplitTextNodeCommand : public EditCommand
 {
 public:
-    SplitTextNodeCommand(WebCore::Document *, WebCore::Text *, int);
+    SplitTextNodeCommand(Document *, Text *, int);
     virtual ~SplitTextNodeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    WebCore::Text *node() const { return m_text2.get(); }
+    Text *node() const { return m_text2.get(); }
     int offset() const { return m_offset; }
 
 private:
-    RefPtr<WebCore::Text> m_text1;
-    RefPtr<WebCore::Text> m_text2;
+    RefPtr<Text> m_text1;
+    RefPtr<Text> m_text2;
     unsigned m_offset;
 };
 

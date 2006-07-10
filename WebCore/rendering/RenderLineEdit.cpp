@@ -50,7 +50,8 @@ RenderLineEdit::RenderLineEdit(HTMLInputElement* element)
             type = TextField::Search;
             break;
         default:
-            type = TextField::Normal;
+            ASSERT(false);
+            type = TextField::Search;
     }
     TextField* edit = new TextField(type);
     if (type == TextField::Search)

@@ -28,12 +28,9 @@
 
 #include "Element.h"
 
-using WebCore::Document;
-using WebCore::Element;
-
 namespace WebCore {
 
-MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(WebCore::Document *document, WebCore::Element *first, WebCore::Element *second)
+MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(Document *document, Element *first, Element *second)
     : EditCommand(document), m_element1(first), m_element2(second)
 {
     ASSERT(m_element1);

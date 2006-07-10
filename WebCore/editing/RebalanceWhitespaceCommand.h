@@ -33,7 +33,7 @@ namespace WebCore {
 class RebalanceWhitespaceCommand : public EditCommand
 {
 public:
-    RebalanceWhitespaceCommand(WebCore::Document *, const WebCore::Position &);
+    RebalanceWhitespaceCommand(Document *, const Position &);
     virtual ~RebalanceWhitespaceCommand() { }
 
     virtual void doApply();
@@ -44,9 +44,9 @@ private:
 
     virtual bool preservesTypingStyle() const;
 
-    WebCore::String m_beforeString;
-    WebCore::String m_afterString;
-    WebCore::Position m_position;
+    String m_beforeString;
+    String m_afterString;
+    Position m_position;
     int m_upstreamOffset;
     int m_downstreamOffset;
 };

@@ -33,13 +33,12 @@ class WebCorePageBridge;
 #endif
 #endif
 
-class Settings;
-
 namespace WebCore {
 
     class Frame;
     class FrameNamespace;
     class FloatRect;
+    class Settings;
     class Widget;
     
     class Page : Noncopyable {

@@ -86,7 +86,7 @@ bool HTMLBodyElement::mapToEntry(const QualifiedName& attrName, MappedAttributeE
 void HTMLBodyElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == backgroundAttr) {
-        String url = WebCore::parseURL(attr->value());
+        String url = parseURL(attr->value());
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, document()->completeURL(url));
     } else if (attr->name() == marginwidthAttr || attr->name() == leftmarginAttr) {

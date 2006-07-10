@@ -410,7 +410,7 @@ void HTMLFormElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == actionAttr) {
         bool oldURLWasSecure = formWouldHaveSecureSubmission(m_url);
-        m_url = WebCore::parseURL(attr->value());
+        m_url = parseURL(attr->value());
         bool newURLIsSecure = formWouldHaveSecureSubmission(m_url);
 
         if (m_attached && (oldURLWasSecure != newURLIsSecure))

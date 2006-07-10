@@ -115,7 +115,7 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
           m_imageLoader = 0;
         }
     } else if (attr->name() == dataAttr) {
-        url = WebCore::parseURL(val).deprecatedString();
+        url = parseURL(val).deprecatedString();
         if (renderer())
           needWidgetUpdate = true;
         if (renderer() && isImageType()) {

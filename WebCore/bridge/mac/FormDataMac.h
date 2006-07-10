@@ -26,7 +26,9 @@
 #import <Foundation/Foundation.h>
 
 namespace WebCore {
-    class FormData;
-}
 
-NSArray *arrayFromFormData(const WebCore::FormData &);
+    class FormData;
+
+    NSArray *arrayFromFormData(const FormData&);
+
+}

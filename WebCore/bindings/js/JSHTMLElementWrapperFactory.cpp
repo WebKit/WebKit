@@ -177,7 +177,7 @@ FOR_EACH_TAG(CREATE_WRAPPER_FUNCTION)
 
 DOMNode* createJSHTMLWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
 {
-    static HashMap<WebCore::AtomicStringImpl*, CreateHTMLElementWrapperFunction> map;
+    static HashMap<AtomicStringImpl*, CreateHTMLElementWrapperFunction> map;
     if (map.isEmpty()) {
 #define ADD_TO_HASH_MAP(tag, name) map.set(tag##Tag.localName().impl(), create##name##Wrapper);
 FOR_EACH_TAG(ADD_TO_HASH_MAP)

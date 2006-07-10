@@ -37,6 +37,7 @@
 #import "KURL.h"
 
 using namespace KJS;
+using namespace WebCore;
 
 @interface WebCoreScriptDebugger (WebCoreScriptDebuggerInternal)
 
@@ -45,8 +46,6 @@ using namespace KJS;
 
 @end
 
-
-
 @interface WebCoreScriptCallFrame (WebCoreScriptDebuggerInternal)
 
 - (WebCoreScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebCoreScriptCallFrame *)caller state:(ExecState *)state;
@@ -54,8 +53,6 @@ using namespace KJS;
 - (id)_convertValueToObjcValue:(JSValue *)value;
 
 @end
-
-
 
 // convert UString to NSString
 static NSString *toNSString(const UString &s)
@@ -70,7 +67,6 @@ static NSURL *toNSURL(const UString &s)
     if (s.isEmpty()) return nil;
     return KURL(DeprecatedString(s)).getNSURL();
 }
-
 
 // C++ interface to KJS debugger callbacks
 

@@ -38,20 +38,20 @@ namespace WebCore {
 class InsertIntoTextNodeCommand : public EditCommand
 {
 public:
-    InsertIntoTextNodeCommand(WebCore::Document *document, WebCore::Text *, int, const WebCore::String &);
+    InsertIntoTextNodeCommand(Document *document, Text *, int, const String &);
     virtual ~InsertIntoTextNodeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    WebCore::Text *node() const { return m_node.get(); }
+    Text *node() const { return m_node.get(); }
     int offset() const { return m_offset; }
-    WebCore::String text() const { return m_text; }
+    String text() const { return m_text; }
 
 private:
-    RefPtr<WebCore::Text> m_node;
+    RefPtr<Text> m_node;
     int m_offset;
-    WebCore::String m_text;
+    String m_text;
 };
 
 } // namespace WebCore

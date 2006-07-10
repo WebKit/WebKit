@@ -31,21 +31,16 @@
 #import "Image.h"
 #import "PlatformString.h"
 
-using WebCore::IconDatabase;
-using WebCore::String;
-using WebCore::Image;
-
-static WebCoreIconDatabaseBridge *_sharedBridgeInstance = nil;
+using namespace WebCore;
 
 @implementation WebCoreIconDatabaseBridge
 
-
 + (WebCoreIconDatabaseBridge *)sharedBridgeInstance;
 {
-    if (_sharedBridgeInstance) 
-        return _sharedBridgeInstance;
-        
-    return _sharedBridgeInstance = [[WebCoreIconDatabaseBridge alloc] init];
+    static WebCoreIconDatabaseBridge *sharedBridgeInstance = nil;
+    if (sharedBridgeInstance) 
+        return sharedBridgeInstance;
+    return sharedBridgeInstance = [[WebCoreIconDatabaseBridge alloc] init];
 }
 
 - (BOOL)openSharedDatabaseWithPath:(NSString *)path;

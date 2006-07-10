@@ -26,9 +26,12 @@
 #import <Foundation/Foundation.h>
 
 #ifdef __cplusplus
-class Settings;
+namespace WebCore {
+    class Settings;
+}
+typedef WebCore::Settings WebCoreSettingsImpl;
 #else
-@class Settings;
+@class WebCoreSettingsImpl;
 #endif
 
 @interface WebCoreSettings : NSObject
@@ -54,7 +57,7 @@ class Settings;
     NSString *userStyleSheetLocation;
     NSString *defaultTextEncoding;
     
-    Settings *settings;
+    WebCoreSettingsImpl *settings;
 }
 
 - (void)setStandardFontFamily:(NSString *)family;
@@ -117,6 +120,6 @@ class Settings;
 - (void)setDefaultTextEncoding:(NSString *)encoding;
 - (NSString *)defaultTextEncoding;
 
-- (Settings *)settings;
+- (WebCoreSettingsImpl *)settings;
 
 @end

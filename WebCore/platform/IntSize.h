@@ -136,7 +136,4 @@ inline bool operator!=(const IntSize& a, const IntSize& b)
 
 }
 
-// FIXME: Remove when the engine files have been converted to be in the WebCore namespace.
-using WebCore::IntSize;
-
 #endif

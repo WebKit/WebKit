@@ -119,7 +119,4 @@ inline bool operator!=(const IntPoint& a, const IntPoint& b)
 
 }
 
-// FIXME: Remove when everything is in the WebCore namespace.
-using WebCore::IntPoint;
-
 #endif

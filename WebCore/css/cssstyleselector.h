@@ -29,9 +29,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
-class Settings;
-class KURL;
-
 namespace WebCore {
 
 class CSSMutableStyleDeclaration;
@@ -45,12 +42,14 @@ class CSSSelector;
 class CSSStyleRule;
 class CSSStyleSheet;
 class CSSValue;
-class MediaQueryEvaluator;
 class Document;
 class Element;
 class Frame;
 class FrameView;
+class KURL;
+class MediaQueryEvaluator;
 class Node;
+class Settings;
 class StyleSheet;
 class StyleSheetList;
 class StyledElement;

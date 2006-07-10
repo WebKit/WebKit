@@ -139,7 +139,7 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
             }
         }
 
-        DeprecatedString url = WebCore::parseURL(getAttribute(hrefAttr)).deprecatedString();
+        DeprecatedString url = parseURL(getAttribute(hrefAttr)).deprecatedString();
         String utarget = getAttribute(targetAttr);
 
         if (e && e->button() == 1)

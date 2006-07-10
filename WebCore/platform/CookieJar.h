@@ -26,10 +26,9 @@
 #ifndef CookieJar_h
 #define CookieJar_h
 
-class KURL;
-
 namespace WebCore {
 
+    class KURL;
     class String;
 
     String cookies(const KURL&);

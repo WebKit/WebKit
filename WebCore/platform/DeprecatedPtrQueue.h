@@ -28,6 +28,8 @@
 
 #include "DeprecatedPtrList.h"
 
+namespace WebCore {
+
 template<class T> class DeprecatedPtrQueue
 {
 public:
@@ -41,5 +43,7 @@ public:
  private:
     DeprecatedPtrList<T> list;
 };
+
+}
 
 #endif /* DeprecatedPtrQueue_h */

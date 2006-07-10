@@ -118,7 +118,7 @@ RenderObject *SVGImageElement::createRenderer(RenderArena *arena, RenderStyle *s
 void SVGImageElement::attach()
 {
     SVGStyledTransformableElement::attach();
-    if (WebCore::RenderSVGImage* imageObj = static_cast<WebCore::RenderSVGImage*>(renderer()))
+    if (RenderSVGImage* imageObj = static_cast<RenderSVGImage*>(renderer()))
         imageObj->setCachedImage(m_imageLoader.image());
 }
 

@@ -42,6 +42,8 @@
 
 #define ARENA_ALIGN_MASK 3
 
+namespace WebCore {
+
 typedef unsigned long uword;
 
 struct Arena {
@@ -122,5 +124,7 @@ void* ArenaAllocate(ArenaPool *pool, unsigned int nb);
          CLEAR_ARENA(a); \
          fastFree(a); \
          (a) = 0;
+
+}
 
 #endif

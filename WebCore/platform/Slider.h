@@ -28,17 +28,19 @@
 
 #include "Widget.h"
 
+namespace WebCore {
+
 class Slider : public Widget {
 public:
     Slider();
     ~Slider();
 
     IntSize sizeHint() const;
-    virtual void setFont(const WebCore::Font&);
+    virtual void setFont(const Font&);
 
-    void setValue(double v);
-    void setMinValue(double v);
-    void setMaxValue(double v);
+    void setValue(double);
+    void setMinValue(double);
+    void setMaxValue(double);
     
     double value() const;
     double minValue() const;
@@ -55,5 +57,7 @@ private:
     double m_maxVal;
     double m_val;
 };
+
+}
 
 #endif

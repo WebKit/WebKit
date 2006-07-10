@@ -33,16 +33,16 @@ namespace WebCore {
 class MergeIdenticalElementsCommand : public EditCommand
 {
 public:
-    MergeIdenticalElementsCommand(WebCore::Document *, WebCore::Element *first, WebCore::Element *second);
+    MergeIdenticalElementsCommand(Document *, Element *first, Element *second);
     virtual ~MergeIdenticalElementsCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
 private:
-    RefPtr<WebCore::Element> m_element1;
-    RefPtr<WebCore::Element> m_element2;
-    RefPtr<WebCore::Node> m_atChild;
+    RefPtr<Element> m_element1;
+    RefPtr<Element> m_element2;
+    RefPtr<Node> m_atChild;
 };
 
 } // namespace WebCore

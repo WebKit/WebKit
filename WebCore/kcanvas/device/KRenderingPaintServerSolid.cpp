@@ -26,12 +26,6 @@
 #include "TextStream.h"
 #include "KCanvasTreeDebug.h"
 
-// this is related to KRenderingPaintServer, but currently it doesn't have its own .cpp file
-TextStream &operator<<(TextStream &ts, const WebCore::KRenderingPaintServer &ps)
-{
-    return ps.externalRepresentation(ts);
-}
-
 namespace WebCore {
 
 class KRenderingPaintServerSolid::Private
@@ -72,6 +66,11 @@ TextStream &KRenderingPaintServerSolid::externalRepresentation(TextStream &ts) c
     ts << "[type=SOLID]"
         << " [color="<< color() << "]";
     return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const KRenderingPaintServer& ps)
+{
+    return ps.externalRepresentation(ts);
 }
 
 }

@@ -29,8 +29,7 @@
 #import <wtf/Assertions.h>
 #import "FormData.h"
 
-using WebCore::FormData;
-using WebCore::FormDataElement;
+namespace WebCore {
 
 NSArray *arrayFromFormData(const FormData &d)
 {
@@ -45,4 +44,6 @@ NSArray *arrayFromFormData(const FormData &d)
         }
     }
     return a;
+}
+
 }

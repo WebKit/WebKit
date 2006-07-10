@@ -33,14 +33,11 @@
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 
-class DeprecatedStringList;
-class TextStream;
-class RenderArena;
-
 namespace WebCore {
 
 class AtomicString;
 class ContainerNode;
+class DeprecatedStringList;
 class Document;
 class Element;
 class Event;
@@ -53,8 +50,10 @@ class PlatformMouseEvent;
 class PlatformWheelEvent;
 class QualifiedName;
 class RegisteredEventListener;
+class RenderArena;
 class RenderObject;
 class RenderStyle;
+class TextStream;
 
 typedef int ExceptionCode;
 

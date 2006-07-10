@@ -30,7 +30,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/Vector.h>
 
-// KURL
+namespace WebCore {
 
 KURL::KURL(NSURL *url)
 {
@@ -69,4 +69,6 @@ CFURLRef KURL::createCFURL() const
 NSURL *KURL::getNSURL() const
 {
     return HardAutorelease(createCFURL());
+}
+
 }

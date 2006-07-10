@@ -73,7 +73,7 @@ namespace WebCore {
         
         virtual void closeRenderer() { m_closed = true; }
         virtual bool rendererIsNeeded(RenderStyle *) { return false; }
-        virtual bool childShouldCreateRenderer(WebCore::Node *) const;
+        virtual bool childShouldCreateRenderer(Node *) const;
         
         // helper:
         bool isClosed() const { return m_closed; }

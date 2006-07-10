@@ -1035,8 +1035,8 @@ static bool areIdenticalElements(Node *first, Node *second)
         return false;
 
     for (unsigned i = 0; i < firstLength; i++) {
-        WebCore::Attribute *attribute = firstMap->attributeItem(i);
-        WebCore::Attribute *secondAttribute = secondMap->getAttributeItem(attribute->name());
+        Attribute *attribute = firstMap->attributeItem(i);
+        Attribute *secondAttribute = secondMap->getAttributeItem(attribute->name());
 
         if (!secondAttribute || attribute->value() != secondAttribute->value())
             return false;

@@ -452,15 +452,15 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
     return fragment.release();
 }
 
-DeprecatedString createMarkup(const WebCore::Node *node, EChildrenOnly includeChildren,
-    DeprecatedPtrList<WebCore::Node> *nodes, EAnnotateForInterchange annotate)
+DeprecatedString createMarkup(const Node *node, EChildrenOnly includeChildren,
+    DeprecatedPtrList<Node> *nodes, EAnnotateForInterchange annotate)
 {
     ASSERT(annotate == DoNotAnnotateForInterchange); // annotation not yet implemented for this code path
     node->document()->updateLayoutIgnorePendingStylesheets();
     return markup(node, includeChildren, false, nodes);
 }
 
-static void createParagraphContentsFromString(WebCore::Document *document, Element *paragraph, const DeprecatedString &string)
+static void createParagraphContentsFromString(Document *document, Element *paragraph, const DeprecatedString &string)
 {
     ExceptionCode ec = 0;
     if (string.isEmpty()) {

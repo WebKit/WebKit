@@ -34,12 +34,12 @@
 #import "WidgetClient.h"
 #import <wtf/Assertions.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 TextBox::TextBox(Widget *parent)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    WebCoreTextArea *textView = [[WebCoreTextArea alloc] initWithQTextEdit:this];
+    WebCoreTextArea *textView = [[WebCoreTextArea alloc] initWithWidget:this];
     setView(textView);
     [textView release];
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -48,7 +48,7 @@ TextBox::TextBox(Widget *parent)
 TextBox::~TextBox()
 {
     WebCoreTextArea *textArea = (WebCoreTextArea *)getView();
-    [textArea detachQTextEdit]; 
+    [textArea detachWidget]; 
 }
 
 void TextBox::setText(const String& string)
@@ -404,4 +404,6 @@ void TextBox::setColors(const Color& background, const Color& foreground)
     [textArea setDrawsBackground:bg.alpha() != 0];
 
     END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 }

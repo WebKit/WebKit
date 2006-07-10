@@ -34,7 +34,7 @@ class IndentOutdentCommand : public CompositeEditCommand
 {
 public:
     enum EIndentType { Indent, Outdent };
-    IndentOutdentCommand(WebCore::Document*, EIndentType, int marginInPixels = 0);
+    IndentOutdentCommand(Document*, EIndentType, int marginInPixels = 0);
     virtual void doApply();
     virtual EditAction editingAction() const { return m_typeOfAction == Indent ? EditActionIndent : EditActionOutdent; }
 private:

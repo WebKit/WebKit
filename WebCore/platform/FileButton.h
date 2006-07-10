@@ -36,12 +36,12 @@ class WebCoreFileButton;
 #endif
 
 namespace WebCore {
+
     class Frame;
-}
 
 class FileButton : public Widget {
 public:
-    FileButton(WebCore::Frame*);
+    FileButton(Frame*);
     
     void setFilename(const DeprecatedString &);
     void click(bool sendMouseEvents);
@@ -55,13 +55,15 @@ public:
     
     void filenameChanged(const DeprecatedString &);
 
-    const WebCore::String& filename() const { return m_name; }
+    const String& filename() const { return m_name; }
 
     void setDisabled(bool);
 
 private:
     WebCoreFileButton* _buttonView;
-    WebCore::String m_name;
+    String m_name;
 };
+
+}
 
 #endif

@@ -33,18 +33,18 @@ namespace WebCore {
 class InsertNodeBeforeCommand : public EditCommand
 {
 public:
-    InsertNodeBeforeCommand(WebCore::Document *, WebCore::Node *insertChild, WebCore::Node *refChild);
+    InsertNodeBeforeCommand(Document *, Node *insertChild, Node *refChild);
     virtual ~InsertNodeBeforeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    WebCore::Node *insertChild() const { return m_insertChild.get(); }
-    WebCore::Node *refChild() const { return m_refChild.get(); }
+    Node *insertChild() const { return m_insertChild.get(); }
+    Node *refChild() const { return m_refChild.get(); }
 
 private:
-    RefPtr<WebCore::Node> m_insertChild;
-    RefPtr<WebCore::Node> m_refChild; 
+    RefPtr<Node> m_insertChild;
+    RefPtr<Node> m_refChild; 
 };
 
 } // namespace WebCore

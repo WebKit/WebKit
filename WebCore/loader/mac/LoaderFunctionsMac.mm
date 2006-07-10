@@ -95,6 +95,8 @@ using namespace WebCore;
 
 @end
 
+namespace WebCore {
+
 NSString *HeaderStringFromDictionary(NSDictionary *headers, int statusCode)
 {
     NSMutableString *headerString = [[[NSMutableString alloc] init] autorelease];
@@ -164,9 +166,9 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Trans
     return Vector<char>();
 }
 
-int NumberOfPendingOrLoadingRequests(WebCore::DocLoader *dl)
+int NumberOfPendingOrLoadingRequests(DocLoader *dl)
 {
-    return WebCore::Cache::loader()->numRequests(dl);
+    return Cache::loader()->numRequests(dl);
 }
 
 bool CheckIfReloading(DocLoader *loader)
@@ -214,7 +216,7 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedObject)
     }
 }
 
-bool IsResponseURLEqualToURL(NSURLResponse *response, const WebCore::String& m_url)
+bool IsResponseURLEqualToURL(NSURLResponse *response, const String& m_url)
 {
     NSURL *responseURL = [(NSURLResponse *)response URL];
     NSString *urlString = [responseURL absoluteString];
@@ -262,7 +264,7 @@ bool ResponseIsMultipart(NSURLResponse *response)
     return false;
 }
 
-time_t CacheObjectExpiresTime(WebCore::DocLoader *docLoader, NSURLResponse *response)
+time_t CacheObjectExpiresTime(DocLoader *docLoader, NSURLResponse *response)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
@@ -277,8 +279,6 @@ time_t CacheObjectExpiresTime(WebCore::DocLoader *docLoader, NSURLResponse *resp
     return 0;
 }
 
-namespace WebCore {
-    
 void CachedResource::setResponse(NSURLResponse *response)
 {
     HardRetain(response);

@@ -147,7 +147,7 @@ namespace KJS {
   // when multiple nodes have the same name.
   class DOMNamedNodesCollection : public DOMObject {
   public:
-    DOMNamedNodesCollection(ExecState *exec, const DeprecatedValueList< RefPtr<WebCore::Node> >& nodes );
+    DOMNamedNodesCollection(ExecState *exec, const WebCore::DeprecatedValueList< RefPtr<WebCore::Node> >& nodes );
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
@@ -155,7 +155,7 @@ private:
     static JSValue *lengthGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
     static JSValue *indexGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
 
-    DeprecatedValueList< RefPtr<WebCore::Node> > m_nodes;
+    WebCore::DeprecatedValueList< RefPtr<WebCore::Node> > m_nodes;
   };
 
 } // namespace

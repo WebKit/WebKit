@@ -630,7 +630,7 @@ bool Node::childAllowed( Node *newChild )
     return childTypeAllowed(newChild->nodeType());
 }
 
-Node::StyleChange Node::diff( WebCore::RenderStyle *s1, WebCore::RenderStyle *s2 ) const
+Node::StyleChange Node::diff( RenderStyle *s1, RenderStyle *s2 ) const
 {
     // FIXME: The behavior of this function is just totally wrong.  It doesn't handle
     // explicit inheritance of non-inherited properties and so you end up not re-resolving

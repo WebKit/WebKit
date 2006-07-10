@@ -33,8 +33,8 @@ namespace WebCore {
 class DeleteSelectionCommand : public CompositeEditCommand
 { 
 public:
-    DeleteSelectionCommand(WebCore::Document *document, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
-    DeleteSelectionCommand(WebCore::Document *document, const Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
+    DeleteSelectionCommand(Document *document, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
+    DeleteSelectionCommand(Document *document, const Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
 
     virtual void doApply();
     virtual EditAction editingAction() const;
@@ -51,7 +51,7 @@ private:
     void fixupWhitespace();
     void mergeParagraphs();
     void calculateEndingPosition();
-    void calculateTypingStyleAfterDelete(WebCore::Node*);
+    void calculateTypingStyleAfterDelete(Node*);
     void clearTransientState();
     virtual void removeNode(Node*);
     virtual void deleteTextFromNode(Text*, int, int);
@@ -62,17 +62,17 @@ private:
 
     // This data is transient and should be cleared at the end of the doApply function.
     Selection m_selectionToDelete;
-    WebCore::Position m_upstreamStart;
-    WebCore::Position m_downstreamStart;
-    WebCore::Position m_upstreamEnd;
-    WebCore::Position m_downstreamEnd;
-    WebCore::Position m_endingPosition;
-    WebCore::Position m_leadingWhitespace;
-    WebCore::Position m_trailingWhitespace;
-    RefPtr<WebCore::Node> m_startBlock;
-    RefPtr<WebCore::Node> m_endBlock;
-    RefPtr<WebCore::CSSMutableStyleDeclaration> m_typingStyle;
-    RefPtr<WebCore::CSSMutableStyleDeclaration> m_deleteIntoBlockquoteStyle;
+    Position m_upstreamStart;
+    Position m_downstreamStart;
+    Position m_upstreamEnd;
+    Position m_downstreamEnd;
+    Position m_endingPosition;
+    Position m_leadingWhitespace;
+    Position m_trailingWhitespace;
+    RefPtr<Node> m_startBlock;
+    RefPtr<Node> m_endBlock;
+    RefPtr<CSSMutableStyleDeclaration> m_typingStyle;
+    RefPtr<CSSMutableStyleDeclaration> m_deleteIntoBlockquoteStyle;
 };
 
 } // namespace WebCore

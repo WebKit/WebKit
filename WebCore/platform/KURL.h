@@ -39,14 +39,18 @@ class NSURL;
 #endif
 
 namespace WebCore {
+
+    class KURL;
     class String;
-}
+
+    bool operator==(const KURL&, const KURL&);
+    bool equalIgnoringRef(const KURL&, const KURL&);
 
 class KURL {
 public:
     KURL();
     KURL(const char*);
-    KURL(const KURL&, const DeprecatedString&, const WebCore::TextEncoding& encoding = WebCore::TextEncoding(WebCore::UTF8Encoding));
+    KURL(const KURL&, const DeprecatedString&, const TextEncoding& encoding = TextEncoding(UTF8Encoding));
     KURL(const DeprecatedString&);
 #if __APPLE__
     KURL(NSURL*);
@@ -89,7 +93,7 @@ public:
 
     bool isLocalFile() const;
 
-    static DeprecatedString decode_string(const DeprecatedString &, const WebCore::TextEncoding& encoding = WebCore::TextEncoding(WebCore::UTF8Encoding));
+    static DeprecatedString decode_string(const DeprecatedString &, const TextEncoding& encoding = TextEncoding(UTF8Encoding));
     static DeprecatedString encode_string(const DeprecatedString &);
     
     friend bool operator==(const KURL &, const KURL &);
@@ -112,5 +116,7 @@ private:
     
     friend bool equalIgnoringRef(const KURL& a, const KURL& b);
 };
+
+}
 
 #endif

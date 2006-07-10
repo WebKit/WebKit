@@ -33,13 +33,13 @@ namespace WebCore {
 class SplitTextNodeContainingElementCommand : public CompositeEditCommand
 {
 public:
-    SplitTextNodeContainingElementCommand(WebCore::Document *, WebCore::Text *, int);
+    SplitTextNodeContainingElementCommand(Document *, Text *, int);
     virtual ~SplitTextNodeContainingElementCommand() { }
 
     virtual void doApply();
 
 private:
-    RefPtr<WebCore::Text> m_text;
+    RefPtr<Text> m_text;
     int m_offset;
 };
 

@@ -175,7 +175,7 @@ IntSize PopUpButton::sizeHint() const
                 ++i;
 
                 TextRun run(reinterpret_cast<const UniChar *>(s.unicode()), s.length());
-                WebCore::TextStyle style;
+                TextStyle style;
                 style.disableRoundingHacks();
                 Font* renderer = isGroupLabel ? &labelRenderer : &itemRenderer;
                 float textWidth = renderer->floatWidth(run, style);

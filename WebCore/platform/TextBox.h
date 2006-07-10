@@ -31,11 +31,11 @@
 #include "TextDirection.h"
 
 namespace WebCore {
+
     class Color;
     class String;
-}
 
-class TextBox : public WebCore::ScrollView {
+class TextBox : public ScrollView {
  public:
     typedef enum { 
         NoWrap,
@@ -46,18 +46,18 @@ class TextBox : public WebCore::ScrollView {
         PlainText,
     } TextFormat;
 
-    TextBox(WebCore::Widget* parent);
+    TextBox(Widget* parent);
     ~TextBox();
 
-    void setColors(const WebCore::Color& background, const WebCore::Color& foreground);
+    void setColors(const Color& background, const Color& foreground);
 
-    void setAlignment(WebCore::HorizontalAlignment);
+    void setAlignment(HorizontalAlignment);
     void setLineHeight(int lineHeight);
 
     void setCursorPosition(int, int);
     void getCursorPosition(int *, int *) const;
 
-    void setFont(const WebCore::Font&);
+    void setFont(const Font&);
 
     void setReadOnly(bool);
     bool isReadOnly() const;
@@ -67,18 +67,18 @@ class TextBox : public WebCore::ScrollView {
 
     bool hasSelectedText() const;
     
-    void setText(const WebCore::String&);
-    WebCore::String text() const;
-    WebCore::String textWithHardLineBreaks() const;
+    void setText(const String&);
+    String text() const;
+    String textWithHardLineBreaks() const;
 
     void setTextFormat(TextFormat) { }
 
     void setWordWrap(WrapStyle);
     WrapStyle wordWrap() const;
 
-    void setScrollBarModes(WebCore::ScrollBarMode hMode, WebCore::ScrollBarMode vMode);
+    void setScrollBarModes(ScrollBarMode hMode, ScrollBarMode vMode);
 
-    void setWritingDirection(WebCore::TextDirection);
+    void setWritingDirection(TextDirection);
 
     int selectionStart();
     int selectionEnd();
@@ -93,5 +93,7 @@ class TextBox : public WebCore::ScrollView {
     virtual FocusPolicy focusPolicy() const;
     virtual bool checksDescendantsForFocus() const;
 };
+
+}
 
 #endif /* TextBox_h */

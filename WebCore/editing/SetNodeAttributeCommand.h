@@ -35,21 +35,21 @@ namespace WebCore {
 class SetNodeAttributeCommand : public EditCommand
 {
 public:
-    SetNodeAttributeCommand(WebCore::Document *, WebCore::Element *, const WebCore::QualifiedName& attribute, const WebCore::String &value);
+    SetNodeAttributeCommand(Document *, Element *, const QualifiedName& attribute, const String &value);
     virtual ~SetNodeAttributeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    WebCore::Element *element() const { return m_element.get(); }
-    const WebCore::QualifiedName& attribute() const { return m_attribute; }
-    WebCore::String value() const { return m_value; }
+    Element *element() const { return m_element.get(); }
+    const QualifiedName& attribute() const { return m_attribute; }
+    String value() const { return m_value; }
     
 private:
-    RefPtr<WebCore::Element> m_element;
-    WebCore::QualifiedName m_attribute;
-    WebCore::String m_value;
-    WebCore::String m_oldValue;
+    RefPtr<Element> m_element;
+    QualifiedName m_attribute;
+    String m_value;
+    String m_oldValue;
 };
 
 } // namespace WebCore

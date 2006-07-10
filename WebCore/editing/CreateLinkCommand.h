@@ -33,7 +33,7 @@ namespace WebCore {
 class CreateLinkCommand : public CompositeEditCommand
 {
 public:
-    CreateLinkCommand(WebCore::Document*, const String&);
+    CreateLinkCommand(Document*, const String&);
     virtual void doApply();
     virtual EditAction editingAction() const { return EditActionCreateLink; }
 private:

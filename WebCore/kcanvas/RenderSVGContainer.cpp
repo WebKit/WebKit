@@ -141,7 +141,7 @@ void RenderSVGContainer::paint(PaintInfo &paintInfo, int parentX, int parentY)
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(paintInfo.p, parentX, parentY, width(), height(), style());
     
-    if (paintInfo.phase != WebCore::PaintPhaseForeground || !drawsContents() || style()->visibility() == HIDDEN)
+    if (paintInfo.phase != PaintPhaseForeground || !drawsContents() || style()->visibility() == HIDDEN)
         return;
     
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));

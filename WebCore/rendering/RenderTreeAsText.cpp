@@ -42,7 +42,7 @@
 #include "RenderSVGContainer.h"
 #endif
 
-using namespace WebCore;
+namespace WebCore {
 
 static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*, const IntRect& paintDirtyRect, int indent = 0);
 
@@ -63,34 +63,34 @@ static void writeIndent(TextStream &ts, int indent)
 static void printBorderStyle(TextStream &ts, const RenderObject &o, const EBorderStyle borderStyle)
 {
     switch (borderStyle) {
-        case WebCore::BNONE:
+        case BNONE:
             ts << "none";
             break;
-        case WebCore::BHIDDEN:
+        case BHIDDEN:
             ts << "hidden";
             break;
-        case WebCore::INSET:
+        case INSET:
             ts << "inset";
             break;
-        case WebCore::GROOVE:
+        case GROOVE:
             ts << "groove";
             break;
-        case WebCore::RIDGE:
+        case RIDGE:
             ts << "ridge";
             break;
-        case WebCore::OUTSET:
+        case OUTSET:
             ts << "outset";
             break;
-        case WebCore::DOTTED:
+        case DOTTED:
             ts << "dotted";
             break;
-        case WebCore::DASHED:
+        case DASHED:
             ts << "dashed";
             break;
-        case WebCore::SOLID:
+        case SOLID:
             ts << "solid";
             break;
-        case WebCore::DOUBLE:
+        case DOUBLE:
             ts << "double";
             break;
     }
@@ -426,4 +426,6 @@ DeprecatedString externalRepresentation(RenderObject* o)
         }
     }
     return s;
+}
+
 }

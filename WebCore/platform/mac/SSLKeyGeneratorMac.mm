@@ -29,7 +29,9 @@
 #import "KURL.h"
 #import "WebCoreKeyGenerator.h"
 
-DeprecatedStringList SSLKeyGenerator::supportedKeySizes()
+namespace WebCore {
+
+DeprecatedStringList supportedKeySizes()
 { 
     NSEnumerator *enumerator = [[[WebCoreKeyGenerator sharedGenerator] strengthMenuItemTitles] objectEnumerator];
     DeprecatedStringList supportedKeySizes = DeprecatedStringList(); 
@@ -40,9 +42,11 @@ DeprecatedStringList SSLKeyGenerator::supportedKeySizes()
     return supportedKeySizes;
 }
 
-DeprecatedString SSLKeyGenerator::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const DeprecatedString &challengeString, const KURL &url)
+DeprecatedString signedPublicKeyAndChallengeString(unsigned keySizeIndex, const DeprecatedString &challengeString, const KURL &url)
 {   
     return DeprecatedString::fromNSString([[WebCoreKeyGenerator sharedGenerator] signedPublicKeyAndChallengeStringWithStrengthIndex:keySizeIndex 
                                                                                                                  challenge:challengeString.getNSString()
                                                                                                                    pageURL:url.getNSURL()]);
+}
+
 }

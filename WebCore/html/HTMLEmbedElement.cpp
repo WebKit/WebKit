@@ -101,7 +101,7 @@ void HTMLEmbedElement::parseMappedAttribute(MappedAttribute *attr)
             serviceType = serviceType.left( pos );
     } else if (attr->name() == codeAttr ||
                attr->name() == srcAttr) {
-         url = WebCore::parseURL(attr->value()).deprecatedString();
+         url = parseURL(attr->value()).deprecatedString();
     } else if (attr->name() == pluginpageAttr ||
                attr->name() == pluginspageAttr) {
         pluginPage = val;

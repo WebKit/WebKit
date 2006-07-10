@@ -37,6 +37,8 @@ class NSArray;
 #endif
 #endif
 
+namespace WebCore {
+
 class DeprecatedStringList : public DeprecatedValueList<DeprecatedString> {
 public:
     static DeprecatedStringList split(const DeprecatedString &, const DeprecatedString &, bool allowEmptyEntries = false);
@@ -50,5 +52,7 @@ public:
     NSArray *getNSArray() const;
 #endif
 };
+
+}
 
 #endif

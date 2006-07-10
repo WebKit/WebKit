@@ -120,7 +120,4 @@ inline bool operator!=(const FloatSize& a, const FloatSize& b)
 
 }
 
-// FIXME: Remove when the engine files have been converted to be in the WebCore namespace.
-using WebCore::FloatSize;
-
 #endif

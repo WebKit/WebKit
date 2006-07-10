@@ -360,7 +360,7 @@ void writeRenderResources(TextStream &ts, Node *parent)
         if (!resource)
             continue;
         
-        DeprecatedString elementId = svgElement->getAttribute(WebCore::HTMLNames::idAttr).deprecatedString();
+        DeprecatedString elementId = svgElement->getAttribute(HTMLNames::idAttr).deprecatedString();
         if (resource->isPaintServer())
             ts << "KRenderingPaintServer {id=\"" << elementId << "\" " << *static_cast<KRenderingPaintServer *>(resource) << "}" << endl;
         else

@@ -32,8 +32,6 @@
 #include "PlatformString.h"
 #include <wtf/HashSet.h>
 
-class KURL;
-
 namespace WebCore  {
 
     class CachedCSSStyleSheet;
@@ -43,6 +41,7 @@ namespace WebCore  {
     class CachedXSLStyleSheet;
     class DocLoader;
     class Image;
+    class KURL;
     class Loader;
     struct LRUList;
     

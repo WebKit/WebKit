@@ -135,7 +135,7 @@ void HTMLFrameSetElement::attach()
 void HTMLFrameSetElement::defaultEventHandler(Event* evt)
 {
     if (evt->isMouseEvent() && !noresize && renderer()) {
-        static_cast<WebCore::RenderFrameSet*>(renderer())->userResize(static_cast<MouseEvent*>(evt));
+        static_cast<RenderFrameSet*>(renderer())->userResize(static_cast<MouseEvent*>(evt));
         evt->setDefaultHandled();
     }
 

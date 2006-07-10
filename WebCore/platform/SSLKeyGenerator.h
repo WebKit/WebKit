@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KSSLKEYGEN_H_
-#define KSSLKEYGEN_H_
+#ifndef SSLKeyGenerator_h
+#define SSLKeyGenerator_h
 
 #include "DeprecatedStringList.h"
 
-class KURL;
+namespace WebCore {
 
-class SSLKeyGenerator
-{
-public:
-    static DeprecatedStringList supportedKeySizes();
-    static DeprecatedString signedPublicKeyAndChallengeString(unsigned keySizeIndex, const DeprecatedString &challengeString, const KURL &url);
-};
+    class KURL;
+
+    DeprecatedStringList supportedKeySizes();
+    DeprecatedString signedPublicKeyAndChallengeString(unsigned keySizeIndex, const DeprecatedString& challengeString, const KURL&);
+
+}
 
 #endif

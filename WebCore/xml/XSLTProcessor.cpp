@@ -64,7 +64,7 @@ static void parseErrorFunc(void *ctxt, const char *msg, ...)
 
 // FIXME: There seems to be no way to control the ctxt pointer for loading here, thus we have globals.
 static XSLTProcessor *globalProcessor = 0;
-static WebCore::DocLoader *globalDocLoader = 0;
+static DocLoader *globalDocLoader = 0;
 static xmlDocPtr docLoaderFunc(const xmlChar *uri,
                                     xmlDictPtr dict,
                                     int options,
@@ -104,7 +104,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar *uri,
     return 0;
 }
 
-static inline void setXSLTLoadCallBack(xsltDocLoaderFunc func, XSLTProcessor *processor, WebCore::DocLoader *loader)
+static inline void setXSLTLoadCallBack(xsltDocLoaderFunc func, XSLTProcessor *processor, DocLoader *loader)
 {
     xsltSetLoaderFunc(func);
     globalProcessor = processor;

@@ -94,7 +94,7 @@ private:
     unsigned int lastOrdinal;
 };
     
-RenderFlexibleBox::RenderFlexibleBox(WebCore::Node* node)
+RenderFlexibleBox::RenderFlexibleBox(Node* node)
 :RenderBlock(node)
 {
     setChildrenInline(false); // All of our children must be block-level

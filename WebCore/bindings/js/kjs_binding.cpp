@@ -48,7 +48,7 @@ UString DOMObject::toString(ExecState *) const
 }
 
 typedef HashMap<void*, DOMObject*> DOMObjectMap;
-typedef HashMap<WebCore::Node*, DOMNode*> NodeMap;
+typedef HashMap<Node*, DOMNode*> NodeMap;
 typedef HashMap<Document*, NodeMap*> NodePerDocMap;
 
 static DOMObjectMap *domObjects()
@@ -93,7 +93,7 @@ void ScriptInterpreter::forgetDOMObject(void* objectHandle)
     domObjects()->remove(objectHandle);
 }
 
-DOMNode *ScriptInterpreter::getDOMNodeForDocument(WebCore::Document *document, WebCore::Node *node)
+DOMNode *ScriptInterpreter::getDOMNodeForDocument(Document *document, Node *node)
 {
     if (!document)
         return static_cast<DOMNode *>(domObjects()->get(node));
@@ -103,7 +103,7 @@ DOMNode *ScriptInterpreter::getDOMNodeForDocument(WebCore::Document *document, W
     return NULL;
 }
 
-void ScriptInterpreter::forgetDOMNodeForDocument(WebCore::Document *document, WebCore::Node *node)
+void ScriptInterpreter::forgetDOMNodeForDocument(Document *document, Node *node)
 {
     if (!document) {
         domObjects()->remove(node);
@@ -114,7 +114,7 @@ void ScriptInterpreter::forgetDOMNodeForDocument(WebCore::Document *document, We
         documentDict->remove(node);
 }
 
-void ScriptInterpreter::putDOMNodeForDocument(WebCore::Document *document, WebCore::Node *nodeHandle, DOMNode *nodeWrapper)
+void ScriptInterpreter::putDOMNodeForDocument(Document *document, Node *nodeHandle, DOMNode *nodeWrapper)
 {
     if (!document) {
         domObjects()->set(nodeHandle, nodeWrapper);
@@ -128,7 +128,7 @@ void ScriptInterpreter::putDOMNodeForDocument(WebCore::Document *document, WebCo
     documentDict->set(nodeHandle, nodeWrapper);
 }
 
-void ScriptInterpreter::forgetAllDOMNodesForDocument(WebCore::Document *document)
+void ScriptInterpreter::forgetAllDOMNodesForDocument(Document *document)
 {
     assert(document);
     NodePerDocMap::iterator it = domNodesPerDocument()->find(document);
@@ -184,7 +184,7 @@ ExecState *ScriptInterpreter::globalExec()
     return Interpreter::globalExec();
 }
 
-void ScriptInterpreter::updateDOMNodeDocument(WebCore::Node *node, WebCore::Document *oldDoc, WebCore::Document *newDoc)
+void ScriptInterpreter::updateDOMNodeDocument(Node *node, Document *oldDoc, Document *newDoc)
 {
   DOMNode *cachedObject = getDOMNodeForDocument(oldDoc, node);
   if (cachedObject) {

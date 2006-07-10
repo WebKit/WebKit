@@ -23,16 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifdef __cplusplus
-
-#include "TextStream.h"
 #include "RenderObject.h"
+#include "TextStream.h"
 
 namespace WebCore {
+
     class RenderObject;
+
+    DeprecatedString externalRepresentation(RenderObject*);
+    void write(TextStream&, const RenderObject&, int indent = 0);
+
 }
-
-DeprecatedString externalRepresentation(WebCore::RenderObject *);
-void write(TextStream &ts, const WebCore::RenderObject &o, int indent = 0);
-
-#endif

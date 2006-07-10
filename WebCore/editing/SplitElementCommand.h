@@ -33,16 +33,16 @@ namespace WebCore {
 class SplitElementCommand : public EditCommand
 {
 public:
-    SplitElementCommand(WebCore::Document *, WebCore::Element *element, WebCore::Node *atChild);
+    SplitElementCommand(Document *, Element *element, Node *atChild);
     virtual ~SplitElementCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
 private:
-    RefPtr<WebCore::Element> m_element1;
-    RefPtr<WebCore::Element> m_element2;
-    RefPtr<WebCore::Node> m_atChild;
+    RefPtr<Element> m_element1;
+    RefPtr<Element> m_element2;
+    RefPtr<Node> m_atChild;
 };
 
 } // namespace WebCore

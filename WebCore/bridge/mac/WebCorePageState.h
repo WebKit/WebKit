@@ -33,16 +33,15 @@ namespace KJS {
 
 namespace WebCore {
     class Document;
+    class KURL;
     class Node;
 }
-
-class KURL;
 
 @interface WebCorePageState : NSObject
 {
     WebCore::Document *document;
     WebCore::Node *mousePressNode;
-    KURL *URL;
+    WebCore::KURL *URL;
     KJS::SavedProperties *windowProperties;
     KJS::SavedProperties *locationProperties;
     KJS::SavedBuiltins *interpreterBuiltins;
@@ -50,11 +49,11 @@ class KURL;
     BOOL closed;
 }
 
-- initWithDocument:(WebCore::Document *)doc URL:(const KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp interpreterBuiltins:(KJS::SavedBuiltins *)ib pausedTimeouts:(KJS::PausedTimeouts *)pt;
+- initWithDocument:(WebCore::Document *)doc URL:(const WebCore::KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp interpreterBuiltins:(KJS::SavedBuiltins *)ib pausedTimeouts:(KJS::PausedTimeouts *)pt;
 
 - (WebCore::Document *)document;
 - (WebCore::Node *)mousePressNode;
-- (KURL *)URL;
+- (WebCore::KURL *)URL;
 - (KJS::SavedProperties *)windowProperties;
 - (KJS::SavedProperties *)locationProperties;
 - (KJS::SavedBuiltins *)interpreterBuiltins;

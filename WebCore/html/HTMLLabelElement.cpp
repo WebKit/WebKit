@@ -32,11 +32,10 @@
 #include "EventNames.h"
 #include "Document.h"
 
-using namespace WebCore;
-using namespace WebCore::HTMLNames;
-using namespace WebCore::EventNames;
-
 namespace WebCore {
+
+using namespace HTMLNames;
+using namespace EventNames;
 
 HTMLLabelElement::HTMLLabelElement(Document *doc)
     : HTMLElement(labelTag, doc)

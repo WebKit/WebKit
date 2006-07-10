@@ -29,7 +29,9 @@
 #include "DeprecatedArray.h"
 #include <string.h>
 
-class DeprecatedCString : public WebCore::DeprecatedByteArray {
+namespace WebCore {
+
+class DeprecatedCString : public DeprecatedByteArray {
 public:
     DeprecatedCString();
     DeprecatedCString(int);
@@ -67,6 +69,6 @@ inline bool operator==(const char *s1, const DeprecatedCString &s2) { return s2 
 inline bool operator!=(const DeprecatedCString &s1, const char *s2) { return !(s1 == s2); }
 inline bool operator!=(const char *s1, const DeprecatedCString &s2) { return !(s1 == s2); }
 
-typedef DeprecatedCString DeprecatedCString;
+}
 
 #endif

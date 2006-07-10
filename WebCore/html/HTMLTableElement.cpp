@@ -402,7 +402,7 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute *attr)
             m_solid = true;
         }
     } else if (attr->name() == backgroundAttr) {
-        String url = WebCore::parseURL(attr->value());
+        String url = parseURL(attr->value());
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, document()->completeURL(url));
     } else if (attr->name() == frameAttr) {

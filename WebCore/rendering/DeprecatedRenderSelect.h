@@ -28,11 +28,10 @@
 
 #include "RenderFormElement.h"
 
-class ListBox;
-
 namespace WebCore {
     
     class HTMLSelectElement;
+    class ListBox;
 
     class DeprecatedRenderSelect : public RenderFormElement {
     public:

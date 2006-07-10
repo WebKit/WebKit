@@ -152,7 +152,7 @@ void SVGElement::parseMappedAttribute(MappedAttribute *attr)
         StyledElement::parseMappedAttribute(attr);
 }
 
-bool SVGElement::childShouldCreateRenderer(WebCore::Node *child) const
+bool SVGElement::childShouldCreateRenderer(Node *child) const
 {
     if (child->isSVGElement())
         return static_cast<SVGElement*>(child)->isValid();

@@ -23,16 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef JavaAppletWidget_h
+#define JavaAppletWidget_h
+
 #include "StringHash.h"
 #include "Widget.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
+
     class Element;
+
+    class JavaAppletWidget : public Widget {
+    public:
+        JavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>& args);
+    };
+
 }
 
-class JavaAppletWidget : public Widget
-{
-public:
-    JavaAppletWidget(const IntSize&, WebCore::Element*, const HashMap<WebCore::String, WebCore::String>& args);
-};
+#endif

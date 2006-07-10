@@ -40,11 +40,10 @@
 @class NSString;
 #endif
 
-class DeprecatedString;
-
 namespace WebCore {
 
 class AtomicString;
+class DeprecatedString;
 struct UCharBufferTranslator;
 struct CStringTranslator;
 struct Length;

@@ -77,7 +77,7 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int top, int bottom)
 
 // -------------------------------------------------------------------------------------------------------
 
-RenderBlock::RenderBlock(WebCore::Node* node)
+RenderBlock::RenderBlock(Node* node)
 :RenderFlow(node)
 {
     m_childrenInline = true;

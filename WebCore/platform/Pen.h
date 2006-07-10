@@ -60,7 +60,4 @@ private:
 
 }
 
-// FIXME: Remove when everything is in the WebCore namespace.
-using WebCore::Pen;
-
 #endif

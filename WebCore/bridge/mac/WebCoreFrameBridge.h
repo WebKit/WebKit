@@ -31,8 +31,6 @@
 
 #ifdef __cplusplus
 
-class RenderArena;
-
 namespace WebCore {
     class FrameMac;
     class Element;
@@ -45,7 +43,6 @@ typedef WebCore::Element WebCoreElement;
 
 @class WebCoreMacFrame;
 @class WebCoreElement;
-@class RenderArena;
 
 #endif
 

@@ -31,27 +31,26 @@
 #include "TextDirection.h"
 #include "Widget.h"
 
-namespace WebCore {
-    class Color;
-}
-
 #ifdef __OBJC__
 @class WebCoreTextFieldController;
-NSControlSize ControlSizeForFont(const WebCore::Font&);
 #else
 class WebCoreTextFieldController;
 #endif
 
+namespace WebCore {
+
+    class Color;
+
 class TextField : public Widget {
 public:
-    enum Type { Normal, Password, Search };
+    enum Type { Password, Search };
 
     TextField(Type);
     ~TextField();
 
-    void setColors(const WebCore::Color& background, const WebCore::Color& foreground);
+    void setColors(const Color& background, const Color& foreground);
 
-    void setAlignment(WebCore::HorizontalAlignment);
+    void setAlignment(HorizontalAlignment);
 
     void setCursorPosition(int);
     int cursorPosition() const;
@@ -59,7 +58,7 @@ public:
     void setEdited(bool);
     bool edited() const;
 
-    void setFont(const WebCore::Font&);
+    void setFont(const Font&);
     
     void setMaxLength(int);
     int maxLength() const;
@@ -67,16 +66,16 @@ public:
     void setReadOnly(bool);
     bool isReadOnly() const;
 
-    void setText(const WebCore::String&);
-    WebCore::String text() const;
+    void setText(const String&);
+    String text() const;
 
-    void setWritingDirection(WebCore::TextDirection);
+    void setWritingDirection(TextDirection);
     
     void selectAll();
     bool hasSelectedText() const;
     
     int selectionStart() const;
-    WebCore::String selectedText() const;
+    String selectedText() const;
     void setSelection(int, int);
     
     IntSize sizeForCharacterWidth(int numCharacters) const;
@@ -88,9 +87,9 @@ public:
     Type type() const { return m_type; }
     
     void setLiveSearch(bool liveSearch);
-    void setAutoSaveName(const WebCore::String& name);
+    void setAutoSaveName(const String& name);
     void setMaxResults(int maxResults);
-    void setPlaceholderString(const WebCore::String& placeholder);
+    void setPlaceholderString(const String& placeholder);
     void addSearchResult();
 
 private:
@@ -99,7 +98,10 @@ private:
 };
 
 #ifdef __OBJC__
-NSTextAlignment TextAlignment(WebCore::HorizontalAlignment);
+NSControlSize ControlSizeForFont(const Font&);
+NSTextAlignment TextAlignment(HorizontalAlignment);
 #endif
+
+}
 
 #endif

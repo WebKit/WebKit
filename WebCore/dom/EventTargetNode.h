@@ -28,9 +28,9 @@
 
 #include "Node.h"
 
-template <typename T> class DeprecatedValueList;
-
 namespace WebCore {
+
+template <typename T> class DeprecatedValueList;
 
 class EventTargetNode : public Node {
 public:

@@ -30,12 +30,11 @@
 #include "Shared.h"
 #include "FloatRect.h"
 
-class TextStream;
-
 namespace WebCore {
 
 class KRenderingStrokePainter;
 class RenderStyle;
+class TextStream;
 
 enum KCWindRule {
     RULE_NONZERO = 0,

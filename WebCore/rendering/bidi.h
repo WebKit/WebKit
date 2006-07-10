@@ -26,10 +26,9 @@
 
 #include <unicode/uchar.h>
 
-class RenderArena;
-
 namespace WebCore {
 
+    class RenderArena;
     class RenderBlock;
     class RenderObject;
     class InlineBox;

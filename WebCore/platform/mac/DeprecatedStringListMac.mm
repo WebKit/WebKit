@@ -26,6 +26,8 @@
 #include "config.h"
 #import "DeprecatedStringList.h"
 
+namespace WebCore {
+
 NSArray *DeprecatedStringList::getNSArray() const
 {
     NSMutableArray *array = [NSMutableArray array];
@@ -33,4 +35,6 @@ NSArray *DeprecatedStringList::getNSArray() const
         [array addObject:(*it).getNSString()];
     }
     return array;
+}
+
 }

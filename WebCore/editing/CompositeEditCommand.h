@@ -41,7 +41,7 @@ namespace WebCore {
 class CompositeEditCommand : public EditCommand
 {
 public:
-    CompositeEditCommand(WebCore::Document *);
+    CompositeEditCommand(Document *);
 
     virtual void doUnapply();
     virtual void doReapply();
@@ -50,54 +50,54 @@ protected:
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands
     //
-    void appendNode(WebCore::Node *appendChild, WebCore::Node *parentNode);
+    void appendNode(Node *appendChild, Node *parentNode);
     void applyCommandToComposite(EditCommandPtr &);
-    void applyStyle(WebCore::CSSStyleDeclaration *style, EditAction editingAction=EditActionChangeAttributes);
-    void applyStyle(WebCore::CSSStyleDeclaration *style, WebCore::Position start, WebCore::Position end, EditAction editingAction=EditActionChangeAttributes);
+    void applyStyle(CSSStyleDeclaration *style, EditAction editingAction=EditActionChangeAttributes);
+    void applyStyle(CSSStyleDeclaration *style, Position start, Position end, EditAction editingAction=EditActionChangeAttributes);
     void applyStyledElement(Element*);
     void removeStyledElement(Element*);
     void deleteKeyPressed();
     void deleteSelection(bool smartDelete=false, bool mergeBlocksAfterDelete=true);
     void deleteSelection(const Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
-    virtual void deleteTextFromNode(WebCore::Text *node, int offset, int count);
-    void inputText(const WebCore::String &text, bool selectInsertedText = false);
-    void insertNodeAfter(WebCore::Node *insertChild, WebCore::Node *refChild);
-    void insertNodeAt(WebCore::Node *insertChild, WebCore::Node *refChild, int offset);
-    void insertNodeBefore(WebCore::Node *insertChild, WebCore::Node *refChild);
+    virtual void deleteTextFromNode(Text *node, int offset, int count);
+    void inputText(const String &text, bool selectInsertedText = false);
+    void insertNodeAfter(Node *insertChild, Node *refChild);
+    void insertNodeAt(Node *insertChild, Node *refChild, int offset);
+    void insertNodeBefore(Node *insertChild, Node *refChild);
     void insertParagraphSeparator();
-    void insertTextIntoNode(WebCore::Text *node, int offset, const WebCore::String &text);
-    void joinTextNodes(WebCore::Text *text1, WebCore::Text *text2);
+    void insertTextIntoNode(Text *node, int offset, const String &text);
+    void joinTextNodes(Text *text1, Text *text2);
     void rebalanceWhitespace();
-    void rebalanceWhitespaceAt(const WebCore::Position &position);
-    void removeCSSProperty(WebCore::CSSStyleDeclaration *, int property);
-    void removeNodeAttribute(WebCore::Element *, const WebCore::QualifiedName& attribute);
-    void removeChildrenInRange(WebCore::Node *node, int from, int to);
-    virtual void removeNode(WebCore::Node*);
-    void removeNodePreservingChildren(WebCore::Node*);
+    void rebalanceWhitespaceAt(const Position &position);
+    void removeCSSProperty(CSSStyleDeclaration *, int property);
+    void removeNodeAttribute(Element *, const QualifiedName& attribute);
+    void removeChildrenInRange(Node *node, int from, int to);
+    virtual void removeNode(Node*);
+    void removeNodePreservingChildren(Node*);
     void removeNodeAndPruneAncestors(Node* node);
     void prune(PassRefPtr<Node> node);
-    void replaceTextInNode(WebCore::Text *node, int offset, int count, const WebCore::String &replacementText);
-    WebCore::Position positionOutsideTabSpan(const WebCore::Position& pos);
-    void insertNodeAtTabSpanPosition(WebCore::Node *node, const WebCore::Position& pos);
-    void setNodeAttribute(WebCore::Element *, const WebCore::QualifiedName& attribute, const WebCore::String &);
-    void splitTextNode(WebCore::Text *text, int offset);
-    void splitElement(WebCore::Element *element, WebCore::Node *atChild);
-    void mergeIdenticalElements(WebCore::Element *first, WebCore::Element *second);
-    void wrapContentsInDummySpan(WebCore::Element *element);
-    void splitTextNodeContainingElement(WebCore::Text *text, int offset);
+    void replaceTextInNode(Text *node, int offset, int count, const String &replacementText);
+    Position positionOutsideTabSpan(const Position& pos);
+    void insertNodeAtTabSpanPosition(Node *node, const Position& pos);
+    void setNodeAttribute(Element *, const QualifiedName& attribute, const String &);
+    void splitTextNode(Text *text, int offset);
+    void splitElement(Element *element, Node *atChild);
+    void mergeIdenticalElements(Element *first, Element *second);
+    void wrapContentsInDummySpan(Element *element);
+    void splitTextNodeContainingElement(Text *text, int offset);
 
-    void deleteInsignificantText(WebCore::Text *, int start, int end);
-    void deleteInsignificantText(const WebCore::Position &start, const WebCore::Position &end);
-    void deleteInsignificantTextDownstream(const WebCore::Position &);
+    void deleteInsignificantText(Text *, int start, int end);
+    void deleteInsignificantText(const Position &start, const Position &end);
+    void deleteInsignificantTextDownstream(const Position &);
 
-    WebCore::Node *appendBlockPlaceholder(WebCore::Node *);
-    WebCore::Node *insertBlockPlaceholder(const WebCore::Position &pos);
-    WebCore::Node *addBlockPlaceholderIfNeeded(WebCore::Node *);
+    Node *appendBlockPlaceholder(Node *);
+    Node *insertBlockPlaceholder(const Position &pos);
+    Node *addBlockPlaceholderIfNeeded(Node *);
     void removeBlockPlaceholder(const VisiblePosition&);
 
-    void moveParagraphContentsToNewBlockIfNecessary(const WebCore::Position &);
+    void moveParagraphContentsToNewBlockIfNecessary(const Position &);
     
-    void pushAnchorElementDown(WebCore::Node*);
+    void pushAnchorElementDown(Node*);
     void pushPartiallySelectedAnchorElementsDown();
     
     void moveParagraph(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false, bool preserveStyle = true);

@@ -29,6 +29,8 @@
 #include "FloatRect.h"
 #include "IntRect.h"
 
+namespace WebCore {
+
 static const double deg2rad = 0.017453292519943295769; // pi/180
 
 AffineTransform::AffineTransform()
@@ -134,4 +136,6 @@ AffineTransform &AffineTransform::operator*= (const AffineTransform &m2)
 AffineTransform AffineTransform::operator* (const AffineTransform &m2)
 {
     return CGAffineTransformConcat(m_transform, CGAffineTransform(m2));
+}
+
 }

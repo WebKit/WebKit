@@ -608,10 +608,10 @@ selector:
             end->m_relation = $2;
             end->tagHistory = p->sinkFloatingSelector($1);
             if ($2 == CSSSelector::Descendant || $2 == CSSSelector::Child) {
-                if (WebCore::Document* doc = p->document())
+                if (Document* doc = p->document())
                     doc->setUsesDescendantRules(true);
             } else if ($2 == CSSSelector::DirectAdjacent || $2 == CSSSelector::IndirectAdjacent) {
-                if (WebCore::Document* doc = p->document())
+                if (Document* doc = p->document())
                     doc->setUsesSiblingRules(true);
             }
         }
@@ -687,7 +687,7 @@ element_name:
     IDENT {
         ParseString& str = $1;
         CSSParser *p = static_cast<CSSParser *>(parser);
-        WebCore::Document *doc = p->document();
+        Document *doc = p->document();
         if (doc && doc->isHTMLDocument())
             str.lower();
         $$ = str;
@@ -750,7 +750,7 @@ attr_name:
     IDENT maybe_space {
         ParseString& str = $1;
         CSSParser *p = static_cast<CSSParser *>(parser);
-        WebCore::Document *doc = p->document();
+        Document *doc = p->document();
         if (doc && doc->isHTMLDocument())
             str.lower();
         $$ = str;
@@ -825,7 +825,7 @@ pseudo:
         if ($$->value == "empty" || $$->value == "only-child" ||
             $$->value == "first-child" || $$->value == "last-child") {
             CSSParser *p = static_cast<CSSParser *>(parser);
-            WebCore::Document *doc = p->document();
+            Document *doc = p->document();
             if (doc)
                 doc->setUsesSiblingRules(true);
         }

@@ -42,7 +42,7 @@ public:
     virtual AffineTransform localTransform() const { return m_transform; }
     virtual void setLocalTransform(const AffineTransform& transform) { m_transform = transform; }
     
-    virtual bool nodeAtPoint(NodeInfo&, int _x, int _y, int _tx, int _ty, WebCore::HitTestAction);
+    virtual bool nodeAtPoint(NodeInfo&, int _x, int _y, int _tx, int _ty, HitTestAction);
 
     virtual void absoluteRects(DeprecatedValueList<IntRect>& rects, int tx, int ty);
 

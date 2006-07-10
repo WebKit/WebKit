@@ -40,7 +40,7 @@ KJS_DEFINE_PROTOTYPE(DOMParserProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMParserProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMParser",DOMParserProto,DOMParserProtoFunc)
 
-DOMParserConstructorImp::DOMParserConstructorImp(ExecState *exec, WebCore::Document *d)
+DOMParserConstructorImp::DOMParserConstructorImp(ExecState *exec, Document *d)
     : doc(d)
 {
     setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
@@ -64,7 +64,7 @@ const ClassInfo JSDOMParser::info = { "DOMParser", 0, &DOMParserTable, 0 };
 @end
 */
 
-JSDOMParser::JSDOMParser(ExecState *exec, WebCore::Document *d)
+JSDOMParser::JSDOMParser(ExecState *exec, Document *d)
   : doc(d)
 {
   setPrototype(DOMParserProto::self(exec));

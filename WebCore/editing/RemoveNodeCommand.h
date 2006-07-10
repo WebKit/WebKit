@@ -33,18 +33,18 @@ namespace WebCore {
 class RemoveNodeCommand : public EditCommand
 {
 public:
-    RemoveNodeCommand(WebCore::Document *, WebCore::Node *);
+    RemoveNodeCommand(Document *, Node *);
     virtual ~RemoveNodeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    WebCore::Node *node() const { return m_removeChild.get(); }
+    Node *node() const { return m_removeChild.get(); }
 
 private:
-    RefPtr<WebCore::Node> m_removeChild;
-    RefPtr<WebCore::Node> m_parent;
-    RefPtr<WebCore::Node> m_refChild;    
+    RefPtr<Node> m_removeChild;
+    RefPtr<Node> m_parent;
+    RefPtr<Node> m_refChild;    
 };
 
 } // namespace WebCore

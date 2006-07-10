@@ -27,35 +27,35 @@
 #include "TextStream.h"
 #include "DeprecatedValueList.h"
 
-class AffineTransform;
-class DeprecatedStringList;
-
 namespace WebCore {
-    class KCClipData;
-    class KCPathData;
+
+    class AffineTransform;
     class Color;
-    class FloatSize;
+    class DeprecatedStringList;
     class FloatPoint;
     class FloatRect;
+    class FloatSize;
     class IntPoint;
     class IntRect;
+    class KCClipData;
+    class KCPathData;
     class Node;
     class RenderPath;
     class RenderSVGContainer;
 
 // functions used by the main RenderTreeAsText code
-void write(TextStream &ts, const WebCore::RenderSVGContainer &container, int indent = 0);
-void write(TextStream &ts, const WebCore::RenderPath &path, int indent = 0);
-void writeRenderResources(TextStream &ts, WebCore::Node *parent);
+void write(TextStream &ts, const RenderSVGContainer &container, int indent = 0);
+void write(TextStream &ts, const RenderPath &path, int indent = 0);
+void writeRenderResources(TextStream &ts, Node *parent);
 
 // helper operators defined used in various classes to dump the render tree. 
 TextStream &operator<<(TextStream &ts, const AffineTransform &);
-TextStream &operator<<(TextStream &ts, const WebCore::IntRect &);
-TextStream &operator<<(TextStream &ts, const WebCore::Color &);
-TextStream &operator<<(TextStream &ts, const WebCore::IntPoint &);
-TextStream &operator<<(TextStream &ts, const WebCore::FloatSize &);
-TextStream &operator<<(TextStream &ts, const WebCore::FloatRect &);
-TextStream &operator<<(TextStream &ts, const WebCore::FloatPoint &);
+TextStream &operator<<(TextStream &ts, const IntRect &);
+TextStream &operator<<(TextStream &ts, const Color &);
+TextStream &operator<<(TextStream &ts, const IntPoint &);
+TextStream &operator<<(TextStream &ts, const FloatSize &);
+TextStream &operator<<(TextStream &ts, const FloatRect &);
+TextStream &operator<<(TextStream &ts, const FloatPoint &);
 
 // helper operators specific to dumping the render tree. these are used in various classes to dump the render tree
 // these could be defined in separate namespace to avoid matching these generic signatures unintentionally.

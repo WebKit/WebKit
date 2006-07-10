@@ -600,8 +600,8 @@ PassRefPtr<Element> Document::createElementNS(const String &_namespaceURI, const
         }
     }
 #if SVG_SUPPORT
-    else if (_namespaceURI == WebCore::SVGNames::svgNamespaceURI)
-        e = WebCore::SVGElementFactory::createSVGElement(qName, this, false);
+    else if (_namespaceURI == SVGNames::svgNamespaceURI)
+        e = SVGElementFactory::createSVGElement(qName, this, false);
 #endif
     
     if (!e)
@@ -1889,14 +1889,14 @@ void Document::recalcStyleSelector()
             }
         }
 #if SVG_SUPPORT
-        else if (n->isSVGElement() && n->hasTagName(WebCore::SVGNames::styleTag)) {
+        else if (n->isSVGElement() && n->hasTagName(SVGNames::styleTag)) {
             DeprecatedString title;
             // <STYLE> element
-            WebCore::SVGStyleElement *s = static_cast<WebCore::SVGStyleElement*>(n);
+            SVGStyleElement *s = static_cast<SVGStyleElement*>(n);
             if (!s->isLoading()) {
                 sheet = s->sheet();
                 if(sheet)
-                    title = s->getAttribute(WebCore::SVGNames::titleAttr).deprecatedString();
+                    title = s->getAttribute(SVGNames::titleAttr).deprecatedString();
             }
 
             if (!title.isEmpty() && m_preferredStylesheetSet.isEmpty())
@@ -2219,7 +2219,7 @@ PassRefPtr<Event> Document::createEvent(const String &eventType, ExceptionCode& 
     if (eventType == "SVGEvents")
         return new Event();
     if (eventType == "SVGZoomEvents")
-        return new WebCore::SVGZoomEvent();
+        return new SVGZoomEvent();
 #endif
     ec = NOT_SUPPORTED_ERR;
     return 0;

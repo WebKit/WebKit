@@ -42,7 +42,7 @@ public:
     // metrics and defaults given the contents of the style.  This includes sophisticated operations like
     // selection of control size based off the font, the disabling of appearance when certain other properties like
     // "border" are set, or if the appearance is not supported by the theme.
-    void adjustStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e);
+    void adjustStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e);
     
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates
@@ -114,25 +114,25 @@ protected:
     bool isReadOnlyControl(const RenderObject* o) const;
 
     // Methods for each appearance value.
-    virtual void adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
+    virtual void adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
     virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
     virtual void setCheckboxSize(RenderStyle* style) const {};
     
-    virtual void adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
+    virtual void adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
     virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
     virtual void setRadioSize(RenderStyle* style) const {};
     
-    virtual void adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
+    virtual void adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
     virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
     virtual void setButtonSize(RenderStyle* style) const {};
 
-    virtual void adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
+    virtual void adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
     virtual bool paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
 
-    virtual void adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
+    virtual void adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
     virtual bool paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
 
-    virtual void adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
+    virtual void adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
     virtual bool paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
 
 };

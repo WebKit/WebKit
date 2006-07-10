@@ -185,7 +185,7 @@ const float LargeNumberForText = 1.0e7;
     return self;
 }
 
-- initWithQTextEdit:(TextBox *)w 
+- initWithWidget:(TextBox *)w 
 {
     [self init];
 
@@ -195,7 +195,7 @@ const float LargeNumberForText = 1.0e7;
     return self;
 }
 
-- (void)detachQTextEdit
+- (void)detachWidget
 {
     widget = 0;
     [textView setWidget:0];

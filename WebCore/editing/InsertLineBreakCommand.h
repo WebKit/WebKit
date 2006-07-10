@@ -33,14 +33,14 @@ namespace WebCore {
 class InsertLineBreakCommand : public CompositeEditCommand
 {
 public:
-    InsertLineBreakCommand(WebCore::Document *document);
+    InsertLineBreakCommand(Document *document);
 
     virtual void doApply();
 
 private:
     virtual bool preservesTypingStyle() const;
-    void insertNodeAfterPosition(WebCore::Node *node, const WebCore::Position &pos);
-    void insertNodeBeforePosition(WebCore::Node *node, const WebCore::Position &pos);
+    void insertNodeAfterPosition(Node *node, const Position &pos);
+    void insertNodeBeforePosition(Node *node, const Position &pos);
 };
 
 } // namespace WebCore

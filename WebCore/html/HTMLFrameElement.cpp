@@ -128,7 +128,7 @@ void HTMLFrameElement::openURL()
 void HTMLFrameElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == srcAttr)
-        setLocation(WebCore::parseURL(attr->value()));
+        setLocation(parseURL(attr->value()));
     else if (attr->name() == idAttr) {
         // Important to call through to base for the id attribute so the hasID bit gets set.
         HTMLElement::parseMappedAttribute(attr);
@@ -287,7 +287,7 @@ bool HTMLFrameElement::isFocusable() const
 void HTMLFrameElement::setFocus(bool received)
 {
     HTMLElement::setFocus(received);
-    WebCore::RenderFrame *renderFrame = static_cast<WebCore::RenderFrame *>(renderer());
+    RenderFrame *renderFrame = static_cast<RenderFrame *>(renderer());
     if (!renderFrame || !renderFrame->widget())
         return;
     if (received)

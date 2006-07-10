@@ -63,8 +63,8 @@ public:
     
     // FIXME: Make these non-member functions and put them somewhere in the editing directory.
     // These aren't really basic "position" operations. More high level editing helper functions.
-    Position leadingWhitespacePosition(WebCore::EAffinity affinity, bool considerNonCollapsibleWhitespace = false) const;
-    Position trailingWhitespacePosition(WebCore::EAffinity affinity, bool considerNonCollapsibleWhitespace = false) const;
+    Position leadingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace = false) const;
+    Position trailingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace = false) const;
 
     // p.upstream() through p.downstream() is the range of positions that map to the same VisiblePosition as p.
     Position upstream() const;
@@ -87,8 +87,8 @@ private:
 
     bool inRenderedText() const;
 
-    Position previousCharacterPosition(WebCore::EAffinity affinity) const;
-    Position nextCharacterPosition(WebCore::EAffinity affinity) const;
+    Position previousCharacterPosition(EAffinity) const;
+    Position nextCharacterPosition(EAffinity) const;
     
     RefPtr<Node> m_node;
     int m_offset;

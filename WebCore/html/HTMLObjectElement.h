@@ -119,7 +119,7 @@ public:
 
     DeprecatedString serviceType;
     DeprecatedString url;
-    WebCore::String classId;
+    String classId;
     bool needWidgetUpdate : 1;
     bool m_useFallbackContent : 1;
     HTMLImageLoader* m_imageLoader;

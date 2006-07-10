@@ -252,7 +252,7 @@ void CompositeEditCommand::splitElement(Element *element, Node *atChild)
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::mergeIdenticalElements(WebCore::Element *first, WebCore::Element *second)
+void CompositeEditCommand::mergeIdenticalElements(Element *first, Element *second)
 {
     ASSERT(!first->isAncestor(second) && second != first);
     if (first->nextSibling() != second) {
@@ -263,13 +263,13 @@ void CompositeEditCommand::mergeIdenticalElements(WebCore::Element *first, WebCo
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::wrapContentsInDummySpan(WebCore::Element *element)
+void CompositeEditCommand::wrapContentsInDummySpan(Element *element)
 {
     EditCommandPtr cmd(new WrapContentsInDummySpanCommand(document(), element));
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::splitTextNodeContainingElement(WebCore::Text *text, int offset)
+void CompositeEditCommand::splitTextNodeContainingElement(Text *text, int offset)
 {
     EditCommandPtr cmd(new SplitTextNodeContainingElementCommand(document(), text, offset));
     applyCommandToComposite(cmd);
@@ -477,7 +477,7 @@ void CompositeEditCommand::deleteInsignificantText(const Position &start, const 
     }
 }
 
-void CompositeEditCommand::deleteInsignificantTextDownstream(const WebCore::Position &pos)
+void CompositeEditCommand::deleteInsignificantTextDownstream(const Position &pos)
 {
     Position end = VisiblePosition(pos, VP_DEFAULT_AFFINITY).next().deepEquivalent().downstream();
     deleteInsignificantText(pos, end);

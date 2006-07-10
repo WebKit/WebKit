@@ -26,9 +26,9 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
-class DeprecatedString;
-
 namespace WebCore {
+
+    class DeprecatedString;
 
     bool historyContains(const DeprecatedString&);
 

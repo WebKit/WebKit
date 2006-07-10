@@ -28,6 +28,8 @@
 
 #include "DeprecatedString.h"
 
+namespace WebCore {
+
 class RegularExpression {
 public:
     RegularExpression();
@@ -53,5 +55,7 @@ private:
     class Private;    
     RefPtr<Private> d;
 };
+
+}
 
 #endif

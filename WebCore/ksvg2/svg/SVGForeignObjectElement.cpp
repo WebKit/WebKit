@@ -93,7 +93,7 @@ RenderObject *SVGForeignObjectElement::createRenderer(RenderArena *arena, Render
     return new (arena) RenderForeignObject(this);
 }
 
-bool SVGForeignObjectElement::childShouldCreateRenderer(WebCore::Node *child) const
+bool SVGForeignObjectElement::childShouldCreateRenderer(Node *child) const
 {
     // Skip over SVG rules which disallow non-SVG kids
     return StyledElement::childShouldCreateRenderer(child);

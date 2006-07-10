@@ -36,15 +36,15 @@ namespace WebCore {
 class ModifySelectionListLevelCommand : public CompositeEditCommand
 {
 public:
-    ModifySelectionListLevelCommand(WebCore::Document* document);
+    ModifySelectionListLevelCommand(Document* document);
     
 private:
     virtual bool preservesTypingStyle() const;
     
 protected:
-    void appendSiblingNodeRange(WebCore::Node* startNode, WebCore::Node* endNode, WebCore::Node* newParent);
-    void insertSiblingNodeRangeBefore(WebCore::Node* startNode, WebCore::Node* endNode, WebCore::Node* refNode);
-    void insertSiblingNodeRangeAfter(WebCore::Node* startNode, WebCore::Node* endNode, WebCore::Node* refNode);
+    void appendSiblingNodeRange(Node* startNode, Node* endNode, Node* newParent);
+    void insertSiblingNodeRangeBefore(Node* startNode, Node* endNode, Node* refNode);
+    void insertSiblingNodeRangeAfter(Node* startNode, Node* endNode, Node* refNode);
 };
 
 // IncreaseSelectionListLevelCommand moves the selected list items one level deeper
@@ -53,12 +53,12 @@ typedef enum EListType { InheritedListType, OrderedList, UnorderedList };
 class IncreaseSelectionListLevelCommand : public ModifySelectionListLevelCommand
 {
 public:
-    static bool canIncreaseSelectionListLevel(WebCore::Document*);
-    static WebCore::Node* increaseSelectionListLevel(WebCore::Document*);
-    static WebCore::Node* increaseSelectionListLevelOrdered(WebCore::Document*);
-    static WebCore::Node* increaseSelectionListLevelUnordered(WebCore::Document*);
+    static bool canIncreaseSelectionListLevel(Document*);
+    static Node* increaseSelectionListLevel(Document*);
+    static Node* increaseSelectionListLevelOrdered(Document*);
+    static Node* increaseSelectionListLevelUnordered(Document*);
 
-    IncreaseSelectionListLevelCommand(WebCore::Document* document, EListType);
+    IncreaseSelectionListLevelCommand(Document* document, EListType);
     Node*       listElement();
     virtual void doApply();
 
@@ -71,10 +71,10 @@ private:
 class DecreaseSelectionListLevelCommand : public ModifySelectionListLevelCommand
 {
 public:
-    static bool canDecreaseSelectionListLevel(WebCore::Document*);
-    static void decreaseSelectionListLevel(WebCore::Document*);
+    static bool canDecreaseSelectionListLevel(Document*);
+    static void decreaseSelectionListLevel(Document*);
 
-    DecreaseSelectionListLevelCommand(WebCore::Document* document);
+    DecreaseSelectionListLevelCommand(Document* document);
 
     virtual void doApply();
 };

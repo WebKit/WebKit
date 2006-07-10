@@ -44,7 +44,7 @@ using namespace HTMLNames;
 HTMLKeygenElement::HTMLKeygenElement(Document* doc, HTMLFormElement* f)
     : HTMLSelectElement(keygenTag, doc, f)
 {
-    DeprecatedStringList keys = SSLKeyGenerator::supportedKeySizes();
+    DeprecatedStringList keys = supportedKeySizes();
     for (DeprecatedStringList::Iterator i = keys.begin(); i != keys.end(); ++i) {
         HTMLOptionElement* o = new HTMLOptionElement(doc, form());
         addChild(o);
@@ -74,7 +74,7 @@ bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)
     // Only RSA is supported at this time.
     if (!m_keyType.isNull() && !equalIgnoringCase(m_keyType, "rsa"))
         return false;
-    DeprecatedString value = SSLKeyGenerator::signedPublicKeyAndChallengeString(selectedIndex(), m_challenge.deprecatedString(), document()->baseURL());
+    DeprecatedString value = signedPublicKeyAndChallengeString(selectedIndex(), m_challenge.deprecatedString(), document()->baseURL());
     if (value.isNull())
         return false;
     encoded_values.appendData(name(), value.utf8());

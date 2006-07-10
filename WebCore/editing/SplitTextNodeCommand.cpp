@@ -31,10 +31,6 @@
 
 #include <wtf/Assertions.h>
 
-using WebCore::Document;
-using WebCore::Text;
-using WebCore::Node;
-
 namespace WebCore {
 
 SplitTextNodeCommand::SplitTextNodeCommand(Document *document, Text *text, int offset)

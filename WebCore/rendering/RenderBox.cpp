@@ -50,7 +50,7 @@ using namespace HTMLNames;
 
 #define TABLECELLMARGIN -0x4000
 
-RenderBox::RenderBox(WebCore::Node* node)
+RenderBox::RenderBox(Node* node)
     : RenderObject(node)
 {
     m_minWidth = -1;
@@ -479,7 +479,7 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
     // no background in the child document should show the parent's background.
     if (!bgLayer->next() && isRoot() && !(bgColor.isValid() && bgColor.alpha() > 0) && view()->frameView()) {
         bool isTransparent;
-        WebCore::Node* elt = document()->ownerElement();
+        Node* elt = document()->ownerElement();
         if (elt) {
             if (elt->hasTagName(frameTag))
                 isTransparent = false;

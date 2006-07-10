@@ -33,8 +33,6 @@
 #endif
 #include "DeprecatedCString.h"
 
-class RegularExpression;
-
 #if __APPLE__
 #ifdef __OBJC__
 @class NSString;
@@ -47,6 +45,10 @@ namespace KJS {
     class Identifier;
     class UString;
 }
+
+namespace WebCore {
+
+class RegularExpression;
 
 class DeprecatedChar {
 public:
@@ -220,6 +222,11 @@ private:
     DeprecatedStringData(const DeprecatedStringData &);
     DeprecatedStringData &operator=(const DeprecatedStringData &);
 };
+
+class DeprecatedString;
+
+bool operator==(const DeprecatedString&, const DeprecatedString&);
+bool operator==(const DeprecatedString&, const char*);
 
 class DeprecatedString {
 public:
@@ -560,5 +567,7 @@ public:
     ~DeprecatedConstString();
     const DeprecatedString &string() const { return *this; }
 };
+
+}
 
 #endif

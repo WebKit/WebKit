@@ -36,8 +36,6 @@
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
 
-class RenderArena;
-
 #ifndef KHTML_NO_XBL
 namespace XBL {
     class XBLBindingManager;
@@ -85,6 +83,7 @@ namespace WebCore {
     class ProcessingInstruction;
     class Range;
     class RegisteredEventListener;
+    class RenderArena;
     class StyleSheet;
     class StyleSheetList;
     class Text;

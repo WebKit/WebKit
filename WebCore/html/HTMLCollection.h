@@ -30,14 +30,14 @@
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
-template <typename T> class DeprecatedValueList;
-
 namespace WebCore {
 
-class Node;
-class String;
 class AtomicString;
 class AtomicStringImpl;
+class Node;
+class String;
+
+template <typename T> class DeprecatedValueList;
 
 class HTMLCollection : public Shared<HTMLCollection>
 {

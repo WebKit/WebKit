@@ -21,8 +21,6 @@
 #ifndef KJS_PROXY_H
 #define KJS_PROXY_H
 
-class DeprecatedString;
-
 namespace KJS {
     class JSValue;
     class ScriptInterpreter;
@@ -30,11 +28,12 @@ namespace KJS {
 
 namespace WebCore {
 
-class String;
+class DeprecatedString;
 class Event;
 class EventListener;
 class Frame;
 class Node;
+class String;
 
 class KJSProxy {
 public:

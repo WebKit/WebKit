@@ -70,7 +70,7 @@ void SVGTRefElement::parseMappedAttribute(MappedAttribute *attr)
     SVGTextPositioningElement::parseMappedAttribute(attr);
 }
 
-bool SVGTRefElement::childShouldCreateRenderer(WebCore::Node *child) const
+bool SVGTRefElement::childShouldCreateRenderer(Node *child) const
 {
     if (child->isTextNode() || child->hasTagName(SVGNames::tspanTag) ||
         child->hasTagName(SVGNames::trefTag))

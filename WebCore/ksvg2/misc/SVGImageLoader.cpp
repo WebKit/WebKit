@@ -35,9 +35,9 @@
 
 #include "RenderImage.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGImageLoader::SVGImageLoader(SVGImageElement *node) : WebCore::HTMLImageLoader(node)
+SVGImageLoader::SVGImageLoader(SVGImageElement *node) : HTMLImageLoader(node)
 {
 }
 
@@ -69,3 +69,4 @@ void SVGImageLoader::updateFromElement()
 }
 #endif // SVG_SUPPORT
 
+}

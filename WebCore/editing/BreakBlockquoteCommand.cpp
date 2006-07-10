@@ -43,7 +43,7 @@ BreakBlockquoteCommand::BreakBlockquoteCommand(Document *document)
 
 void BreakBlockquoteCommand::doApply()
 {
-    DeprecatedPtrList<WebCore::Node> ancestors;
+    DeprecatedPtrList<Node> ancestors;
     
     Selection selection = endingSelection();
     if (selection.isNone())

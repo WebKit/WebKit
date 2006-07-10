@@ -32,14 +32,18 @@
 #define LOG_CHANNEL_PREFIX Log
 #endif
 
-extern WTFLogChannel LogNotYetImplemented;
+namespace WebCore {
 
-extern WTFLogChannel LogFrames;
-extern WTFLogChannel LogLoading;
-extern WTFLogChannel LogPopupBlocking;
-extern WTFLogChannel LogEvents;
-extern WTFLogChannel LogEditing;
-extern WTFLogChannel LogTextConversion;
-extern WTFLogChannel LogIconDatabase;
+    extern WTFLogChannel LogNotYetImplemented;
+
+    extern WTFLogChannel LogFrames;
+    extern WTFLogChannel LogLoading;
+    extern WTFLogChannel LogPopupBlocking;
+    extern WTFLogChannel LogEvents;
+    extern WTFLogChannel LogEditing;
+    extern WTFLogChannel LogTextConversion;
+    extern WTFLogChannel LogIconDatabase;
+
+}
 
 #endif

@@ -325,10 +325,10 @@ void TypingCommand::deleteKeyPressed()
     Selection selectionToDelete;
     
     switch (endingSelection().state()) {
-        case WebCore::Selection::RANGE:
+        case Selection::RANGE:
             selectionToDelete = endingSelection();
             break;
-        case WebCore::Selection::CARET: {
+        case Selection::CARET: {
             // Handle delete at beginning-of-block case.
             // Do nothing in the case that the caret is at the start of a
             // root editable element or at the start of a document.
@@ -343,7 +343,7 @@ void TypingCommand::deleteKeyPressed()
             selectionToDelete = sc.selection();
             break;
         }
-        case WebCore::Selection::NONE:
+        case Selection::NONE:
             ASSERT_NOT_REACHED();
             break;
     }
@@ -360,10 +360,10 @@ void TypingCommand::forwardDeleteKeyPressed()
     Selection selectionToDelete;
     
     switch (endingSelection().state()) {
-        case WebCore::Selection::RANGE:
+        case Selection::RANGE:
             selectionToDelete = endingSelection();
             break;
-        case WebCore::Selection::CARET: {
+        case Selection::CARET: {
             // Handle delete at beginning-of-block case.
             // Do nothing in the case that the caret is at the start of a
             // root editable element or at the start of a document.
@@ -378,7 +378,7 @@ void TypingCommand::forwardDeleteKeyPressed()
             selectionToDelete = sc.selection();
             break;
         }
-        case WebCore::Selection::NONE:
+        case Selection::NONE:
             ASSERT_NOT_REACHED();
             break;
     }

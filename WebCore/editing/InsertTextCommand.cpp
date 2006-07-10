@@ -142,7 +142,7 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
         setEndingSelection(endingSelection().end(), endingSelection().affinity());
 }
 
-WebCore::Position InsertTextCommand::insertTab(Position pos)
+Position InsertTextCommand::insertTab(Position pos)
 {
     Position insertPos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent();
         

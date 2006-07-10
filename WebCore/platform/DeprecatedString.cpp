@@ -39,7 +39,8 @@
 
 using namespace std;
 using namespace KJS;
-using namespace WebCore;
+
+namespace WebCore {
 
 #define CHECK_FOR_HANDLE_LEAKS 0
 
@@ -2545,17 +2546,17 @@ void freeHandle(DeprecatedStringData **_free)
 
 DeprecatedString DeprecatedString::fromUtf8(const char *chs)
 {
-    return WebCore::TextEncoding(WebCore::UTF8Encoding).toUnicode(chs, strlen(chs));
+    return TextEncoding(UTF8Encoding).toUnicode(chs, strlen(chs));
 }
 
 DeprecatedString DeprecatedString::fromUtf8(const char *chs, int len)
 {
-    return WebCore::TextEncoding(WebCore::UTF8Encoding).toUnicode(chs, len);
+    return TextEncoding(UTF8Encoding).toUnicode(chs, len);
 }
 
 DeprecatedCString DeprecatedString::utf8(int& length) const
 {
-    DeprecatedCString result = WebCore::TextEncoding(UTF8Encoding).fromUnicode(*this);
+    DeprecatedCString result = TextEncoding(UTF8Encoding).fromUnicode(*this);
     length = result.length();
     return result;
 }
@@ -2598,4 +2599,6 @@ DeprecatedString::operator UString() const
     if (isNull())
         return UString();
     return UString(reinterpret_cast<const KJS::UChar*>(unicode()), length());
+}
+
 }

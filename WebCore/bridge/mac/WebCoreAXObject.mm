@@ -29,8 +29,6 @@
 // need this until accesstool supports arrays of markers
 #define MARKERARRAY_SELF_TEST 0
 
-#include <mach-o/dyld.h>
-
 #import "DOMInternal.h"
 #import "Document.h"
 #import "EventNames.h"
@@ -41,10 +39,10 @@
 #import "HTMLInputElement.h"
 #import "HTMLMapElement.h"
 #import "HTMLNames.h"
-#import "RenderView.h"
 #import "RenderImage.h"
 #import "RenderListMarker.h"
 #import "RenderTheme.h"
+#import "RenderView.h"
 #import "RenderWidget.h"
 #import "SelectionController.h"
 #import "TextIterator.h"
@@ -53,6 +51,7 @@
 #import "WebCoreViewFactory.h"
 #import "kjs_html.h"
 #import "visible_units.h"
+#include <mach-o/dyld.h>
 
 using namespace WebCore;
 using namespace EventNames;
@@ -576,7 +575,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
 -(BOOL)accessibilityIsIgnored
 {
-    if (!m_renderer || m_renderer->style()->visibility() != WebCore::VISIBLE)
+    if (!m_renderer || m_renderer->style()->visibility() != VISIBLE)
         return YES;
 
     // NOTE: BRs always have text boxes now, so the text box check here can be removed
@@ -751,8 +750,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (!m_renderer)
         return nil;
         
-    WebCoreTextMarker *startTextMarker = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMinOffset(), WebCore::VP_DEFAULT_AFFINITY)];
-    WebCoreTextMarker *endTextMarker   = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMaxRenderedOffset(), WebCore::VP_DEFAULT_AFFINITY)];
+    WebCoreTextMarker *startTextMarker = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMinOffset(), VP_DEFAULT_AFFINITY)];
+    WebCoreTextMarker *endTextMarker   = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMaxRenderedOffset(), VP_DEFAULT_AFFINITY)];
     return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
 
@@ -836,7 +835,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     }
 
     if ([attributeName isEqualToString: @"AXVisited"]) {
-        return [NSNumber numberWithBool: m_renderer->style()->pseudoState() == WebCore::PseudoVisited];
+        return [NSNumber numberWithBool: m_renderer->style()->pseudoState() == PseudoVisited];
     }
     
     if ([attributeName isEqualToString: NSAccessibilityTitleAttribute])
@@ -1003,7 +1002,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     // starting at an empty line.  The resulting selection in that case
     // will be a caret at visiblePos. 
     SelectionController sel = SelectionController(visiblePos, visiblePos);
-    (void)sel.modify(SelectionController::EXTEND, SelectionController::RIGHT, WebCore::LineBoundary);
+    (void)sel.modify(SelectionController::EXTEND, SelectionController::RIGHT, LineBoundary);
 
     // return a marker range for the selection start to end
     VisiblePosition startPosition = VisiblePosition(sel.start(), sel.affinity());
@@ -1197,9 +1196,9 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString *attrString, Ren
 
     // set super/sub scripting
     EVerticalAlign alignment = style->verticalAlign();
-    if (alignment == WebCore::SUB)
+    if (alignment == SUB)
         AXAttributeStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, [NSNumber numberWithInt:(-1)], range);
-    else if (alignment == WebCore::SUPER)
+    else if (alignment == SUPER)
         AXAttributeStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, [NSNumber numberWithInt:1], range);
     else
         [attrString removeAttribute:NSAccessibilitySuperscriptTextAttribute range:range];
@@ -1212,28 +1211,28 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString *attrString, Ren
     
     // set underline and strikethrough
     int decor = style->textDecorationsInEffect();
-    if ((decor & WebCore::UNDERLINE) == 0) {
+    if ((decor & UNDERLINE) == 0) {
         [attrString removeAttribute:NSAccessibilityUnderlineTextAttribute range:range];
         [attrString removeAttribute:NSAccessibilityUnderlineColorTextAttribute range:range];
     }
     
-    if ((decor & WebCore::LINE_THROUGH) == 0) {
+    if ((decor & LINE_THROUGH) == 0) {
         [attrString removeAttribute:NSAccessibilityStrikethroughTextAttribute range:range];
         [attrString removeAttribute:NSAccessibilityStrikethroughColorTextAttribute range:range];
     }
 
-    if ((decor & (WebCore::UNDERLINE | WebCore::LINE_THROUGH)) != 0) {
+    if ((decor & (UNDERLINE | LINE_THROUGH)) != 0) {
         // find colors using quirk mode approach (strict mode would use current
         // color for all but the root line box, which would use getTextDecorationColors)
         Color underline, overline, linethrough;
         renderer->getTextDecorationColors(decor, underline, overline, linethrough);
         
-        if ((decor & WebCore::UNDERLINE) != 0) {
+        if ((decor & UNDERLINE) != 0) {
             AXAttributeStringSetNumber(attrString, NSAccessibilityUnderlineTextAttribute, [NSNumber numberWithBool:YES], range);
             AXAttributeStringSetColor(attrString, NSAccessibilityUnderlineColorTextAttribute, nsColor(underline), range);
         }
 
-        if ((decor & WebCore::LINE_THROUGH) != 0) {
+        if ((decor & LINE_THROUGH) != 0) {
             AXAttributeStringSetNumber(attrString, NSAccessibilityStrikethroughTextAttribute, [NSNumber numberWithBool:YES], range);
             AXAttributeStringSetColor(attrString, NSAccessibilityStrikethroughColorTextAttribute, nsColor(linethrough), range);
         }
@@ -1424,7 +1423,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 - (id)doAXLeftWordTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
-    VisiblePosition startPosition = startOfWord(visiblePos, WebCore::LeftWordIfOnBoundary);
+    VisiblePosition startPosition = startOfWord(visiblePos, LeftWordIfOnBoundary);
     VisiblePosition endPosition = endOfWord(startPosition);
 
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
@@ -1433,7 +1432,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 - (id)doAXRightWordTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
-    VisiblePosition startPosition = startOfWord(visiblePos, WebCore::RightWordIfOnBoundary);
+    VisiblePosition startPosition = startOfWord(visiblePos, RightWordIfOnBoundary);
     VisiblePosition endPosition = endOfWord(startPosition);
 
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
@@ -1503,7 +1502,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (visiblePos.isNull())
         return nil;
 
-    VisiblePosition endPosition = endOfWord(visiblePos, WebCore::LeftWordIfOnBoundary);
+    VisiblePosition endPosition = endOfWord(visiblePos, LeftWordIfOnBoundary);
     return (id) [self textMarkerForVisiblePosition:endPosition];
 }
 
@@ -1518,7 +1517,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (visiblePos.isNull())
         return nil;
     
-    VisiblePosition startPosition = startOfWord(visiblePos, WebCore::RightWordIfOnBoundary);
+    VisiblePosition startPosition = startOfWord(visiblePos, RightWordIfOnBoundary);
     return (id) [self textMarkerForVisiblePosition:startPosition];
 }
 

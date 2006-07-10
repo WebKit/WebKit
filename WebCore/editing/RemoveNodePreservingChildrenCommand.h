@@ -33,15 +33,15 @@ namespace WebCore {
 class RemoveNodePreservingChildrenCommand : public CompositeEditCommand
 {
 public:
-    RemoveNodePreservingChildrenCommand(WebCore::Document *, WebCore::Node *);
+    RemoveNodePreservingChildrenCommand(Document *, Node *);
     virtual ~RemoveNodePreservingChildrenCommand() { }
 
     virtual void doApply();
 
-    WebCore::Node *node() const { return m_node.get(); }
+    Node *node() const { return m_node.get(); }
 
 private:
-    RefPtr<WebCore::Node> m_node;
+    RefPtr<Node> m_node;
 };
 
 } // namespace WebCore

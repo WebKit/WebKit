@@ -113,7 +113,4 @@ inline bool operator!=(const FloatPoint& a, const FloatPoint& b)
 
 }
 
-// FIXME: Remove when everything is in the WebCore namespace.
-using WebCore::FloatPoint;
-
 #endif

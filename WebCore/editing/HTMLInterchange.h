@@ -26,6 +26,8 @@
 #ifndef HTMLInterchange_h
 #define HTMLInterchange_h
 
+namespace WebCore {
+
 class DeprecatedString;
 
 #define AppleInterchangeNewline   "Apple-interchange-newline"
@@ -36,6 +38,8 @@ class DeprecatedString;
 
 enum EAnnotateForInterchange { DoNotAnnotateForInterchange, AnnotateForInterchange };
 
-DeprecatedString convertHTMLTextToInterchangeFormat(const DeprecatedString &);
+DeprecatedString convertHTMLTextToInterchangeFormat(const DeprecatedString&);
+
+}
 
 #endif

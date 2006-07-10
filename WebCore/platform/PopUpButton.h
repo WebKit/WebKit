@@ -36,14 +36,16 @@ class NSMenuItem;
 class NSFont;
 #endif
 
+namespace WebCore {
+
 class PopUpButton : public Widget {
 public:  
     PopUpButton();
     ~PopUpButton();
     
     void clear();
-    void appendItem(const DeprecatedString &text, bool enabled) { appendItem(text, ListBoxOption, enabled); }
-    void appendGroupLabel(const DeprecatedString &text) { appendItem(text, ListBoxGroupLabel, false); }
+    void appendItem(const DeprecatedString& text, bool enabled) { appendItem(text, ListBoxOption, enabled); }
+    void appendGroupLabel(const DeprecatedString& text) { appendItem(text, ListBoxGroupLabel, false); }
     void appendSeparator() { appendItem(DeprecatedString::null, ListBoxSeparator, true); }
 
     int currentItem() const { return _currentItem; }
@@ -51,24 +53,24 @@ public:
     
     IntSize sizeHint() const;
     IntRect frameGeometry() const;
-    void setFrameGeometry(const IntRect &);
+    void setFrameGeometry(const IntRect&);
     int baselinePosition(int height) const;
-    void setFont(const WebCore::Font&);
+    void setFont(const Font&);
 
     void itemSelected();
     
     virtual FocusPolicy focusPolicy() const;
 
-    void setWritingDirection(WebCore::TextDirection);
+    void setWritingDirection(TextDirection);
 
     virtual void populate();
     void populateMenu();
     
 private:
-    void appendItem(const DeprecatedString &, ListBoxItemType, bool);
-    const int *dimensions() const;
-    NSFont *labelFont() const;
-    void setTitle(NSMenuItem *, const ListBoxItem &);
+    void appendItem(const DeprecatedString&, ListBoxItemType, bool);
+    const int* dimensions() const;
+    NSFont* labelFont() const;
+    void setTitle(NSMenuItem*, const ListBoxItem&);
     
     mutable int _width;
     mutable bool _widthGood;
@@ -81,5 +83,7 @@ private:
 
     mutable NSFont *_labelFont;
 };
+
+}
 
 #endif

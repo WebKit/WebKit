@@ -42,10 +42,9 @@ class NSPasteboard;
 typedef unsigned int NSDragOperation;
 #endif
 
-class DeprecatedStringList;
-
 namespace WebCore {
 
+class DeprecatedStringList;
 class FrameMac;
 
 class ClipboardMac : public Clipboard, public CachedResourceClient {

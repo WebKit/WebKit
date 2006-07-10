@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-SplitElementCommand::SplitElementCommand(WebCore::Document *document, WebCore::Element *element, WebCore::Node *atChild)
+SplitElementCommand::SplitElementCommand(Document *document, Element *element, Node *atChild)
     : EditCommand(document), m_element2(element), m_atChild(atChild)
 {
     ASSERT(m_element2);

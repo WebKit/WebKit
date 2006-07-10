@@ -23,19 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "WebCoreEncodings.h"
 
 #import "Decoder.h"
+#import "HTMLNames.h"
 
-#include "HTMLNames.h"
+using namespace WebCore;
 
 @implementation WebCoreEncodings
 
 + (NSString *)decodeData:(NSData *)data
 {
-    WebCore::HTMLNames::init(); // this method is used for importing bookmarks at startup, so HTMLNames are likely to be uninitialized yet
-    WebCore::Decoder *decoder = new WebCore::Decoder();
+    HTMLNames::init(); // this method is used for importing bookmarks at startup, so HTMLNames are likely to be uninitialized yet
+    Decoder* decoder = new Decoder;
     DeprecatedString result = decoder->decode(static_cast<const char *>([data bytes]), [data length]);
     result += decoder->flush();
     decoder->deref();

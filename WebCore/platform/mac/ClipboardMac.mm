@@ -284,7 +284,7 @@ void ClipboardMac::setDragImage(CachedImage* img, const IntPoint &loc)
     setDragImage(img, 0, loc);
 }
 
-WebCore::Node *ClipboardMac::dragImageElement()
+Node *ClipboardMac::dragImageElement()
 {
     return m_dragImageElement.get();
 }
@@ -355,24 +355,24 @@ NSImage *ClipboardMac::dragNSImage(NSPoint *loc)
     return result;
 }
 
-WebCore::String ClipboardMac::dropEffect() const
+String ClipboardMac::dropEffect() const
 {
     return m_dropEffect;
 }
 
-void ClipboardMac::setDropEffect(const WebCore::String &s)
+void ClipboardMac::setDropEffect(const String &s)
 {
     if (m_policy == Readable || m_policy == TypesReadable) {
         m_dropEffect = s;
     }
 }
 
-WebCore::String ClipboardMac::effectAllowed() const
+String ClipboardMac::effectAllowed() const
 {
     return m_effectAllowed;
 }
 
-void ClipboardMac::setEffectAllowed(const WebCore::String &s)
+void ClipboardMac::setEffectAllowed(const String &s)
 {
     if (m_policy == Writable)
         m_effectAllowed = s;

@@ -1098,7 +1098,7 @@ void ContentData::clearContent()
 }
 
 #ifndef KHTML_NO_XBL
-BindingURI::BindingURI(WebCore::StringImpl* uri) 
+BindingURI::BindingURI(StringImpl* uri) 
 :m_next(0)
 { 
     m_uri = uri;
@@ -1137,7 +1137,7 @@ bool BindingURI::operator==(const BindingURI& o) const
     return String(m_uri) == String(o.m_uri);
 }
 
-void RenderStyle::addBindingURI(WebCore::StringImpl* uri)
+void RenderStyle::addBindingURI(StringImpl* uri)
 {
     BindingURI* binding = new BindingURI(uri);
     if (!bindingURIs())

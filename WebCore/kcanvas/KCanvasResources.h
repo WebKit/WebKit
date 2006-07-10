@@ -28,9 +28,9 @@
 #include <kcanvas/KCanvasPath.h>
 #include <kcanvas/KCanvasResourceListener.h>
 
-class TextStream;
-
 namespace WebCore {
+
+class TextStream;
 
 // Enumerations
 typedef enum

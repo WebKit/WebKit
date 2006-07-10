@@ -41,8 +41,8 @@ public:
 
     virtual bool isPageRule() { return true; }
 
-    WebCore::String selectorText() const;
-    void setSelectorText(String str);
+    String selectorText() const;
+    void setSelectorText(const String&);
 
 protected:
     RefPtr<CSSMutableStyleDeclaration> m_style;

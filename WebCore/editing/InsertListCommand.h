@@ -34,7 +34,7 @@ class InsertListCommand : public CompositeEditCommand
 {
 public:
     enum EListType { OrderedListType, UnorderedListType };
-    InsertListCommand(WebCore::Document*, EListType, const String&);
+    InsertListCommand(Document*, EListType, const String&);
     virtual void doApply();
     virtual EditAction editingAction() const { return EditActionInsertList; }
 private:

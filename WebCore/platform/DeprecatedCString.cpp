@@ -29,7 +29,7 @@
 #include <wtf/Assertions.h>
 #include <ctype.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 DeprecatedCString::DeprecatedCString()
 {
@@ -299,4 +299,6 @@ bool operator==(const DeprecatedCString &s1, const char *s2)
     if (s1.size() == 0 && s2)
         return false;
     return strcmp(s1, s2) == 0;
+}
+
 }

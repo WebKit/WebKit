@@ -39,6 +39,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define ROUNDUP(x,y) ((((x)+((y)-1))/(y))*(y))
+
+namespace WebCore {
+
 #ifndef NDEBUG
 
 const int signature = 0xDBA00AEA;
@@ -127,4 +131,6 @@ void RenderArena::free(size_t size, void* ptr)
         *((void**)ptr) = currentTop;
     }
 #endif
+}
+
 }

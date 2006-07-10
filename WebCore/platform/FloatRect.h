@@ -140,7 +140,4 @@ IntRect enclosingIntRect(const FloatRect&);
 
 }
 
-// FIXME: Remove when everything is in the WebCore namespace.
-using WebCore::FloatRect;
-
 #endif

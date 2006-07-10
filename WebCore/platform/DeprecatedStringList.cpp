@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DeprecatedStringList.h"
 
+namespace WebCore {
+
 DeprecatedStringList DeprecatedStringList::split(const DeprecatedString &separator, const DeprecatedString &s, bool allowEmptyEntries)
 {
     DeprecatedStringList result;
@@ -67,4 +69,6 @@ DeprecatedString DeprecatedStringList::pop_front()
     DeprecatedString front = first();
     remove(begin());
     return front;
+}
+
 }

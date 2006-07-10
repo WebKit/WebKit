@@ -46,14 +46,13 @@ typedef struct _cairo PlatformGraphicsContext;
 typedef void PlatformGraphicsContext;
 #endif
 
-static const int cMisspellingLineThickness = 3;
-static const int cMisspellingLinePatternWidth = 4;
-static const int cMisspellingLinePatternGapWidth = 1;
-
-class DeprecatedString;
-
 namespace WebCore {
 
+    const int cMisspellingLineThickness = 3;
+    const int cMisspellingLinePatternWidth = 4;
+    const int cMisspellingLinePatternGapWidth = 1;
+
+    class DeprecatedString;
     class Font;
     class GraphicsContextPrivate;
     class GraphicsContextPlatformPrivate;

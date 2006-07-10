@@ -29,17 +29,16 @@
 #include "GlyphWidthMap.h"
 #include <wtf/Noncopyable.h>
 
-// FIXME: Temporary.  Only needed to support API that's going to move.
+// FIXME: Temporary. Only needed to support API that's going to move.
 #include <unicode/umachine.h>
-
-enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 namespace WebCore {
 
 class FontDescription;
 class FontPlatformData;
-
 class WidthMap;
+
+enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 class FontData : Noncopyable
 {

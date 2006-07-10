@@ -263,7 +263,7 @@ IntSize ListBox::sizeForNumberOfLines(int lines) const
         DeprecatedValueListConstIterator<ListBoxItem> i = const_cast<const DeprecatedValueList<ListBoxItem> &>(_items).begin();
         DeprecatedValueListConstIterator<ListBoxItem> e = const_cast<const DeprecatedValueList<ListBoxItem> &>(_items).end();
         if (i != e) {
-            WebCore::TextStyle style;
+            TextStyle style;
             style.disableRoundingHacks();
             style.setRTL([tableView baseWritingDirection] == NSWritingDirectionRightToLeft);
 

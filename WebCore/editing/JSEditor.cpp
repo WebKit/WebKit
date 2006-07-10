@@ -469,7 +469,7 @@ bool execUnlink(Frame *frame, bool userInterface, const String &value)
 bool execUnselect(Frame *frame, bool userInterface, const String &value)
 {
     // FIXME: 6498 Should just be able to call m_frame->selection().clear()
-    frame->setSelection(WebCore::SelectionController());
+    frame->setSelection(SelectionController());
     return true;
 }
 

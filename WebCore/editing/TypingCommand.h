@@ -42,14 +42,14 @@ public:
         InsertParagraphSeparatorInQuotedContent,
     };
 
-    TypingCommand(WebCore::Document *document, ETypingCommand, const WebCore::String &text = "", bool selectInsertedText = false, TextGranularity granularity = CharacterGranularity);
+    TypingCommand(Document *document, ETypingCommand, const String &text = "", bool selectInsertedText = false, TextGranularity granularity = CharacterGranularity);
 
-    static void deleteKeyPressed(WebCore::Document *, bool smartDelete = false, TextGranularity granularity = CharacterGranularity);
-    static void forwardDeleteKeyPressed(WebCore::Document *, bool smartDelete = false, TextGranularity granularity = CharacterGranularity);
-    static void insertText(WebCore::Document *, const WebCore::String &, bool selectInsertedText = false);
-    static void insertLineBreak(WebCore::Document *);
-    static void insertParagraphSeparator(WebCore::Document *);
-    static void insertParagraphSeparatorInQuotedContent(WebCore::Document *);
+    static void deleteKeyPressed(Document *, bool smartDelete = false, TextGranularity granularity = CharacterGranularity);
+    static void forwardDeleteKeyPressed(Document *, bool smartDelete = false, TextGranularity granularity = CharacterGranularity);
+    static void insertText(Document *, const String &, bool selectInsertedText = false);
+    static void insertLineBreak(Document *);
+    static void insertParagraphSeparator(Document *);
+    static void insertParagraphSeparatorInQuotedContent(Document *);
     static bool isOpenForMoreTypingCommand(const EditCommandPtr &);
     static void closeTyping(const EditCommandPtr &);
     
@@ -59,8 +59,8 @@ public:
     bool openForMoreTyping() const { return m_openForMoreTyping; }
     void closeTyping() { m_openForMoreTyping = false; }
 
-    void insertText(const WebCore::String &text, bool selectInsertedText);
-    void insertTextRunWithoutNewlines(const WebCore::String &text, bool selectInsertedText);
+    void insertText(const String &text, bool selectInsertedText);
+    void insertTextRunWithoutNewlines(const String &text, bool selectInsertedText);
     void insertLineBreak();
     void insertParagraphSeparatorInQuotedContent();
     void insertParagraphSeparator();
@@ -78,7 +78,7 @@ private:
     void typingAddedToOpenCommand();
     
     ETypingCommand m_commandType;
-    WebCore::String m_textToInsert;
+    String m_textToInsert;
     bool m_openForMoreTyping;
     bool m_applyEditing;
     bool m_selectInsertedText;

@@ -32,17 +32,17 @@ namespace WebCore {
 class HTMLButtonElement : public HTMLGenericFormElement
 {
 public:
-    HTMLButtonElement(Document *doc, HTMLFormElement *f = 0);
+    HTMLButtonElement(Document*, HTMLFormElement* = 0);
     virtual ~HTMLButtonElement();
 
     enum typeEnum { SUBMIT, RESET, BUTTON };
 
     virtual const AtomicString& type() const;
         
-    virtual WebCore::RenderObject *createRenderer(RenderArena*, WebCore::RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    virtual void parseMappedAttribute(MappedAttribute *attr);
-    virtual void defaultEventHandler(Event *evt);
+    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void defaultEventHandler(Event*);
     virtual bool appendFormData(FormDataList&, bool);
 
     virtual bool isEnumeratable() const { return true; } 
@@ -54,10 +54,10 @@ public:
     virtual void accessKeyAction(bool sendToAnyElement);
 
     String accessKey() const;
-    void setAccessKey(const String &);
+    void setAccessKey(const String&);
 
     String value() const;
-    void setValue(const String &);
+    void setValue(const String&);
     
 protected:
     String m_value;
@@ -67,6 +67,6 @@ protected:
     bool m_activeSubmit : 1;
 };
 
-} //namespace
+} // namespace
 
 #endif

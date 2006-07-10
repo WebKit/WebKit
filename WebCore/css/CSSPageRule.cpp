@@ -43,7 +43,7 @@ String CSSPageRule::selectorText() const
     return String();
 }
 
-void CSSPageRule::setSelectorText(String /*str*/)
+void CSSPageRule::setSelectorText(const String& /*str*/)
 {
     // ###
 }

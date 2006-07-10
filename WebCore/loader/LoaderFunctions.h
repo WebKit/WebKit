@@ -40,26 +40,27 @@ class NSString;
 class NSURLResponse;
 #endif
 
-class KURL;
-class DeprecatedString;
-
 namespace WebCore {
-    class CachedResource;
-    class DocLoader;
-    class TransferJob;
-    class Loader;
-    class Request;
-    class String;
-}
 
-Vector<char> ServeSynchronousRequest(WebCore::Loader*, WebCore::DocLoader*, WebCore::TransferJob*, KURL& finalURL, DeprecatedString& headers);
+class CachedResource;
+class DeprecatedString;
+class DocLoader;
+class KURL;
+class Loader;
+class Request;
+class String;
+class TransferJob;
 
-void CheckCacheObjectStatus(WebCore::DocLoader*, WebCore::CachedResource*);
-bool CheckIfReloading(WebCore::DocLoader*);
-bool IsResponseURLEqualToURL(NSURLResponse*, const WebCore::String& m_url);
-DeprecatedString ResponseURL(NSURLResponse *response);
-DeprecatedString ResponseMIMEType(NSURLResponse *response);
-bool ResponseIsMultipart(NSURLResponse *response);
-int NumberOfPendingOrLoadingRequests(WebCore::DocLoader*);
-time_t CacheObjectExpiresTime(WebCore::DocLoader*, NSURLResponse*);
+Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, TransferJob*, KURL& finalURL, DeprecatedString& headers);
+
+void CheckCacheObjectStatus(DocLoader*, CachedResource*);
+bool CheckIfReloading(DocLoader*);
+bool IsResponseURLEqualToURL(NSURLResponse*, const String& URL);
+DeprecatedString ResponseURL(NSURLResponse*);
+DeprecatedString ResponseMIMEType(NSURLResponse*);
+bool ResponseIsMultipart(NSURLResponse*);
+int NumberOfPendingOrLoadingRequests(DocLoader*);
+time_t CacheObjectExpiresTime(DocLoader*, NSURLResponse*);
 NSString* HeaderStringFromDictionary(NSDictionary* headers, int statusCode);
+
+}

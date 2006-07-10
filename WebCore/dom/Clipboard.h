@@ -30,11 +30,10 @@
 #include "Node.h"
 #include "Shared.h"
 
-class DeprecatedStringList;
-
 namespace WebCore {
 
     class CachedImage;
+    class DeprecatedStringList;
     class IntPoint;
 
     // State available during IE's events for drag and drop and copy/paste

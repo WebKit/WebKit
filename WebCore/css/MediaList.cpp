@@ -168,7 +168,7 @@ void MediaList::deleteMedium(const String& oldMedium, ExceptionCode& ec)
     }
 }
 
-WebCore::String MediaList::mediaText() const
+String MediaList::mediaText() const
 {
     String text("");
 
@@ -184,7 +184,7 @@ WebCore::String MediaList::mediaText() const
     return text;
 }
 
-void MediaList::setMediaText(const WebCore::String& value,  ExceptionCode& ec)
+void MediaList::setMediaText(const String& value, ExceptionCode& ec)
 {
     MediaList tempMediaList;
     CSSParser p(true);

@@ -34,7 +34,7 @@ namespace WebCore {
 class BreakBlockquoteCommand : public CompositeEditCommand
 {
 public:
-    BreakBlockquoteCommand(WebCore::Document *);
+    BreakBlockquoteCommand(Document *);
 
     virtual void doApply();
 };

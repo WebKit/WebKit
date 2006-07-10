@@ -37,13 +37,13 @@
 
 namespace WTF {
 
-template<> struct IntHash<IntSize> {
-    static unsigned hash(const IntSize& key) { return intHash(((uint64_t)(key.width()) << 32 | key.height())); }
-    static bool equal(const IntSize& a, const IntSize& b) { return a.width() == b.width() && a.height() == b.height(); }
-};
-template<> struct DefaultHash<IntSize> { typedef IntHash<IntSize> Hash; };
+    template<> struct IntHash<WebCore::IntSize> {
+        static unsigned hash(const WebCore::IntSize& key) { return intHash((static_cast<uint64_t>(key.width()) << 32 | key.height())); }
+        static bool equal(const WebCore::IntSize& a, const WebCore::IntSize& b) { return a == b; }
+    };
+    template<> struct DefaultHash<WebCore::IntSize> { typedef IntHash<WebCore::IntSize> Hash; };
 
-} //namespace WTF
+} // namespace WTF
 
 namespace WebCore { 
 

@@ -28,10 +28,9 @@
 
 #include "PlatformString.h"
 
-class DeprecatedString;
-
 namespace WebCore {
 
+class DeprecatedString;
 class Document;
 
 class JSEditor {

@@ -420,7 +420,7 @@ static int matchFunc(const char* uri)
     return 1; // Match everything.
 }
 
-static WebCore::DocLoader *globalDocLoader = 0;
+static DocLoader *globalDocLoader = 0;
 
 class OffsetBuffer {
 public:
@@ -1267,7 +1267,7 @@ void XMLTokenizer::insertErrorMessageBlock()
         documentElement = body.get();
     }
 #if SVG_SUPPORT
-    else if (documentElement->namespaceURI() == WebCore::SVGNames::svgNamespaceURI) {
+    else if (documentElement->namespaceURI() == SVGNames::svgNamespaceURI) {
         // Until our SVG implementation has text support, it is best if we 
         // wrap the erroneous SVG document in an xhtml document and render
         // the combined document with error messages.

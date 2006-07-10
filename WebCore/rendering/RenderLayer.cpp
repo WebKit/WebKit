@@ -351,7 +351,7 @@ bool
 RenderLayer::isTransparent() const
 {
 #if SVG_SUPPORT
-    if (m_object->node()->namespaceURI() == WebCore::SVGNames::svgNamespaceURI)
+    if (m_object->node()->namespaceURI() == SVGNames::svgNamespaceURI)
         return false;
 #endif
     return m_object->isTransparent();
@@ -1722,8 +1722,8 @@ void RenderLayer::updateHoverActiveState(RenderObject::NodeInfo& info)
 
     // Check to see if the hovered node has changed.  If not, then we don't need to
     // do anything.  
-    WebCore::Node* oldHoverNode = doc->hoverNode();
-    WebCore::Node* newHoverNode = info.innerNode();
+    Node* oldHoverNode = doc->hoverNode();
+    Node* newHoverNode = info.innerNode();
 
     // Update our current hover node.
     doc->setHoverNode(newHoverNode);
@@ -1899,7 +1899,7 @@ Marquee::Marquee(RenderLayer* l)
 int Marquee::marqueeSpeed() const
 {
     int result = m_layer->renderer()->style()->marqueeSpeed();
-    WebCore::Node* elt = m_layer->renderer()->element();
+    Node* elt = m_layer->renderer()->element();
     if (elt && elt->hasTagName(marqueeTag)) {
         HTMLMarqueeElement* marqueeElt = static_cast<HTMLMarqueeElement*>(elt);
         result = max(result, marqueeElt->minimumDelay());

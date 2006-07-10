@@ -133,7 +133,7 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
         NSFontTraitMask traits = 0;
         if (font.fontDescription().italic())
             traits |= NSItalicFontMask;
-        if (font.fontDescription().weight() >= WebCore::cBoldWeight)
+        if (font.fontDescription().weight() >= cBoldWeight)
             traits |= NSBoldFontMask;
         float size = font.fontDescription().computedPixelSize();
     

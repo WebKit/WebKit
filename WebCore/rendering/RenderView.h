@@ -32,7 +32,7 @@ class FrameView;
 
 class RenderView : public RenderBlock {
 public:
-    RenderView(WebCore::Node* node, FrameView *view);
+    RenderView(Node*, FrameView*);
     virtual ~RenderView();
 
     virtual const char *renderName() const { return "RenderView"; }

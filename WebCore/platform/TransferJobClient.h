@@ -26,8 +26,6 @@
 #ifndef TransferJobClient_h
 #define TransferJobClient_h
 
-class KURL;
-
 #ifdef __APPLE__
 #ifdef __OBJC__
 @class NSData;
@@ -49,6 +47,7 @@ namespace WebCore {
     typedef struct PlatformResponseStruct *PlatformResponse;
 #endif
 
+    class KURL;
     class TransferJob;
 
     class TransferJobClient {

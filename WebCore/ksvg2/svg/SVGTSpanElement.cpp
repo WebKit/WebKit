@@ -37,7 +37,7 @@ SVGTSpanElement::~SVGTSpanElement()
 {
 }
 
-bool SVGTSpanElement::childShouldCreateRenderer(WebCore::Node *child) const
+bool SVGTSpanElement::childShouldCreateRenderer(Node *child) const
 {
     if (child->isTextNode() || child->hasTagName(SVGNames::tspanTag) ||
         child->hasTagName(SVGNames::trefTag))
