@@ -48,8 +48,6 @@
 #include "Timer.h"
 #include "WidgetClient.h"
 
-class ScrollBar;
-
 namespace WebCore {
 
 class CachedResource;
@@ -59,6 +57,7 @@ class RenderObject;
 class RenderStyle;
 class RenderTable;
 class RenderText;
+class ScrollBar;
 
 class ClipRects
 {
