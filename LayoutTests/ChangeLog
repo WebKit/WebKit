@@ -1,3 +1,42 @@
+2006-07-09  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Updated results for:
+        <rdar://problem/4463835> Switch to use new popup menu implementation for <select>
+
+        * editing/selection/replaced-boundaries-3-expected.txt:
+        * editing/selection/select-box-expected.txt:
+        * fast/block/margin-collapse/103-expected.txt:
+        * fast/dom/option-properties-expected.txt:
+        * fast/forms/003-expected.txt:
+        * fast/forms/004-expected.txt:
+        * fast/forms/HTMLOptionElement_label01-expected.txt:
+        * fast/forms/HTMLOptionElement_label02-expected.txt:
+        * fast/forms/HTMLOptionElement_label03-expected.txt:
+        * fast/forms/HTMLOptionElement_label04-expected.txt:
+        * fast/forms/HTMLOptionElement_label06-expected.txt:
+        * fast/forms/HTMLOptionElement_label07-expected.txt:
+        * fast/forms/form-element-geometry-expected.txt:
+        * fast/forms/option-script-expected.txt:
+        * fast/forms/option-strip-whitespace-expected.txt:
+        * fast/forms/select-remove-option-expected.txt:
+        * fast/forms/select-replace-option-expected.txt:
+        * fast/forms/select-reset-expected.txt:
+        * fast/invalid/014-expected.txt:
+        * fast/parser/document-write-option-expected.txt:
+        * fast/replaced/width100percent-expected.txt:
+        * tables/mozilla/bugs/bug1188-expected.txt:
+        * tables/mozilla/bugs/bug18359-expected.txt:
+        * tables/mozilla/bugs/bug2479-3-expected.txt:
+        * tables/mozilla/bugs/bug2479-4-expected.txt:
+        * tables/mozilla/bugs/bug29326-expected.txt:
+        * tables/mozilla/bugs/bug33855-expected.txt:
+        * tables/mozilla/bugs/bug4382-expected.txt:
+        * tables/mozilla/bugs/bug96334-expected.txt:
+        * tables/mozilla/core/margins-expected.txt:
+        * tables/mozilla/dom/tableDom-expected.txt:
+
 2006-07-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth.
