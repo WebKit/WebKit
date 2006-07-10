@@ -162,7 +162,11 @@ int WebCore::findNextSentenceFromIndex(UChar const*,int,int,bool) { notImplement
 void WebCore::findSentenceBoundary(UChar const*,int,int,int*,int*) { notImplemented(); }
 int WebCore::findNextWordFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
 
+namespace WebCore {
+
 Vector<char> ServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,DeprecatedString&) { notImplemented(); return Vector<char>(); }
+
+}
 
 void FrameWin::focusWindow() { notImplemented(); }
 void FrameWin::unfocusWindow() { notImplemented(); }
@@ -263,8 +267,12 @@ void BrowserExtensionWin::setTypedIconURL(KURL const&, const String&) { }
 void BrowserExtensionWin::setIconURL(KURL const&) { }
 int BrowserExtensionWin::getHistoryLength() { return 0; }
 
+namespace WebCore {
+
 bool CheckIfReloading(WebCore::DocLoader*) { return false; }
 void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
+
+}
 
 void Widget::setEnabled(bool) { }
 void Widget::paint(GraphicsContext*,IntRect const&) { }

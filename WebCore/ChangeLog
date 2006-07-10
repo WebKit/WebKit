@@ -1,5 +1,12 @@
 2006-07-10  Darin Adler  <darin@apple.com>
 
+        - try to fix Windows build
+
+        * platform/win/TemporaryLinkStubs.cpp: Put a few functions in the WebCore namespace.
+        * platform/gdk/TemporaryLinkStubs.cpp: Ditto.
+
+2006-07-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - fix failures seen in layout tests

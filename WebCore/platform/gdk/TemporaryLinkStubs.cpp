@@ -164,7 +164,11 @@ int WebCore::findNextSentenceFromIndex(UChar const*, int, int, bool) { notImplem
 void WebCore::findSentenceBoundary(UChar const*, int, int, int*, int*) { notImplemented(); }
 int WebCore::findNextWordFromIndex(UChar const*, int, int, bool) { notImplemented(); return 0; }
 
-DeprecatedArray<char> ServeSynchronousRequest(Loader*, DocLoader*, TransferJob*, KURL&, DeprecatedString&) { notImplemented(); return 0; }
+namespace WebCore {
+
+Vector<char> ServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,DeprecatedString&) { notImplemented(); return Vector<char>(); }
+
+}
 
 void FrameGdk::focusWindow() { notImplemented(); }
 void FrameGdk::unfocusWindow() { notImplemented(); }
@@ -260,8 +264,12 @@ void BrowserExtensionGdk::setTypedIconURL(KURL const&, const String&) { }
 void BrowserExtensionGdk::setIconURL(KURL const&) { }
 int BrowserExtensionGdk::getHistoryLength() { return 0; }
 
+namespace WebCore {
+
 bool CheckIfReloading(WebCore::DocLoader*) { return false; }
 void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
+
+}
 
 void Widget::setEnabled(bool) { }
 void Widget::paint(GraphicsContext*, IntRect const&) { }
