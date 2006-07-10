@@ -1,5 +1,13 @@
 2006-07-10  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by NOBODY (Build Fix!)
+
+        * icon/SiteIcon.cpp:
+        (SiteIcon::getImage):
+        Release build made an "unused variable" warning, which is, of course, an error.  fixed that.
+
+2006-07-10  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Maciej
 
         SQLite Icon DB now fully replicates functionality of the old DB, including pruning to keep unused

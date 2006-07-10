@@ -57,7 +57,8 @@ Image* SiteIcon::getImage(const IntSize& size)
         if (!imageData.size())
             return 0;
 
-        int checksum = 0;
+        int checksum;
+        checksum = 0;
 #ifndef NDEBUG
         for (unsigned int i=0; i<imageData.size(); ++i) 
             checksum += imageData[i];
