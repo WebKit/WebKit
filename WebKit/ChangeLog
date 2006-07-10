@@ -1,3 +1,10 @@
+2006-07-09  Darin Adler  <darin@apple.com>
+
+        - fix newlines to be consistent for all files in the COM directory
+          (many had mixed style) and set the EOL style to "native" on them.
+
+        * COM/*: Set properties and changed files.
+
 2006-07-09  Tim Omernick  <timo@apple.com>
 
         Reviewed by Maciej.
