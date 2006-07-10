@@ -334,12 +334,16 @@ void Selection::adjustForEditableContent()
         // move backward until non-editable content inside the same lowest editable ancestor is reached.
         Node* endEditableAncestor = lowestEditableAncestor(m_end.node());
         if (endRoot || endEditableAncestor != baseEditableAncestor) {
-            Node* node = m_end.node();
-            VisiblePosition previous(Position(node, maxDeepOffset(node)));
-            while (node && !(lowestEditableAncestor(node) == baseEditableAncestor && !node->isContentEditable() && previous.isNotNull())) {
-                node = node->traversePreviousNode();
-                previous = VisiblePosition(Position(node, node ? maxDeepOffset(node) : 0));
+            
+            Position p = previousVisuallyDistinctCandidate(m_end);
+            while (p.isNotNull() && !(lowestEditableAncestor(p.node()) == baseEditableAncestor && !isEditablePosition(p))) {
+                Node* root = editableRootForPosition(p);
+                Node* shadowParent = root && root->isShadowNode() ? root->shadowParentNode() : 0;
+                p = isAtomicNode(p.node()) ? positionBeforeNode(p.node()) : previousVisuallyDistinctCandidate(p);
+                if (p.isNull() && shadowParent)
+                    p = Position(shadowParent, maxDeepOffset(shadowParent));
             }
+            VisiblePosition previous(p);
             
             if (previous.isNull()) {
                 ASSERT_NOT_REACHED();
@@ -351,16 +355,19 @@ void Selection::adjustForEditableContent()
             m_end = previous.deepEquivalent();
         }
 
-        // The selection ends in editable content or non-editable content inside a different editable ancestor, 
-        // move backward until non-editable content inside the same lowest editable ancestor is reached.
+        // The selection starts in editable content or non-editable content inside a different editable ancestor, 
+        // move forward until non-editable content inside the same lowest editable ancestor is reached.
         Node* startEditableAncestor = lowestEditableAncestor(m_start.node());      
         if (startRoot || startEditableAncestor != baseEditableAncestor) {
-            Node* node = m_start.node();
-            VisiblePosition next(Position(node, 0));
-            while (node && !(lowestEditableAncestor(node) == baseEditableAncestor && !node->isContentEditable() && next.isNotNull())) {
-                node = node->traverseNextNode();
-                next = VisiblePosition(Position(node, 0));
+            Position p = nextVisuallyDistinctCandidate(m_start);
+            while (p.isNotNull() && !(lowestEditableAncestor(p.node()) == baseEditableAncestor && !isEditablePosition(p))) {
+                Node* root = editableRootForPosition(p);
+                Node* shadowParent = root && root->isShadowNode() ? root->shadowParentNode() : 0;
+                p = isAtomicNode(p.node()) ? positionAfterNode(p.node()) : nextVisuallyDistinctCandidate(p);
+                if (p.isNull() && shadowParent)
+                    p = Position(shadowParent, 0);
             }
+            VisiblePosition next(p);
             
             if (next.isNull()) {
                 ASSERT_NOT_REACHED();

@@ -1,3 +1,19 @@
+2006-07-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4619260>
+        9A213 + Safari 521.15.1 Crash with To Do's alarm icon (WebCore::maxDeepOffset(WebCore::Node const*) )
+        <rdar://problem/4619841>
+        REGRESSION: Dragging selection over input field results in a crash (WebCore::maxDeepOffset(WebCore::Node const*)
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Selection.cpp:
+        (WebCore::Selection::adjustForEditableContent): Iterate using next/previousVisuallyDistinctCandidate 
+        instead of traverseNext/Previous node because we were skipping positions.  Jump out of shadow trees.  
+        Migrate to isEditablePosition instead of isContentEditable.
+        
+
 2006-07-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele.
