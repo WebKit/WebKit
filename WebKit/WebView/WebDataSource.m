@@ -368,8 +368,10 @@
         // there's no callback for that.
         [self _loadIcon];
 
-        [self _setData:[_private->frameLoader mainResourceData]];
-        [_private->frameLoader releaseMainResourceLoader];
+        if ([_private->frameLoader isLoadingMainResource]) {
+            [self _setData:[_private->frameLoader mainResourceData]];
+            [_private->frameLoader releaseMainResourceLoader];
+        }
         
         [self _updateLoading];
 
