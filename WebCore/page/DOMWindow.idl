@@ -31,16 +31,15 @@ module window {
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
         
-        readonly attribute double devicePixelRatio;
-        
         // DOM Level 2 Style Interface
         CSSStyleDeclaration getComputedStyle(in Element elt,
                                              in DOMString pseudoElt);
 
-        // WebKit extension for the Web Inspector
+        // WebKit extensions
         CSSRuleList getMatchedCSSRules(in Element elt,
                                        in DOMString pseudoElt,
                                        in [ConvertUndefinedToTrue] boolean authorOnly);
+        readonly attribute double devicePixelRatio;
         
         // Global constructors
         attribute CSSPrimitiveValueConstructor CSSPrimitiveValue;
