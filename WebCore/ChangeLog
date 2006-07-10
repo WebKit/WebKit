@@ -1,5 +1,15 @@
 2006-07-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - fix failures seen in layout tests
+
+        * bindings/js/kjs_dom.cpp: (KJS::toJS): Restore one of the few WebCore:: prefixes
+        that really needed to be there -- because we have two classes named JSHTMLDocument
+        at the moment! (One in KJS and one in WebCore namespace.)
+
+2006-07-10  Darin Adler  <darin@apple.com>
+
         - try to fix Windows build
 
         * rendering/RenderLayer.h: Correct a forward declaration of ScrollBar.

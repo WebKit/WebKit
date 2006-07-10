@@ -940,7 +940,7 @@ JSValue* toJS(ExecState* exec, Document *n)
     return ret;
 
   if (n->isHTMLDocument())
-    ret = new JSHTMLDocument(exec, static_cast<HTMLDocument*>(n));
+    ret = new WebCore::JSHTMLDocument(exec, static_cast<HTMLDocument*>(n));
   else
     ret = new JSDocument(exec, n);
 
