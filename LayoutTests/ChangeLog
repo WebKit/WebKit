@@ -1,3 +1,8 @@
+2006-07-09  Darin Adler  <darin@apple.com>
+
+        * fast/dom/delete-contents-expected.txt: Updated results that changed
+        because we now keep comment nodes in the DOM.
+
 2006-07-09  David Harrison  <harrison@apple.com>
 
         Reviewed by John Sullivan.
