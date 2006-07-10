@@ -399,9 +399,24 @@ input[type="radio"] {
 }
 
 select {
-    // FIXME: Uncomment this when flipping the switch to use the new popup menu implementation
-    // -webkit-appearance: menulist;
+    -webkit-appearance: menulist;
     box-sizing: border-box;
+    -webkit-box-align: center;
+}
+
+select[size],
+select[multiple],
+select[size][multiple] {
+    -webkit-appearance: none;
+    -webkit-box-align: initial;
+    box-sizing: initial;
+}
+ 
+select[size="0"],
+select[size="1"] {
+    -webkit-appearance: menulist;
+    box-sizing: border-box;
+    -webkit-box-align: center;
 }
 
 optgroup {

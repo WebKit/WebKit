@@ -173,7 +173,7 @@ bool RenderTheme::isControlContainer(EAppearance appearance) const
 {
     // There are more leaves than this, but we'll patch this function as we add support for
     // more controls.
-    return appearance != CheckboxAppearance && appearance != RadioAppearance;
+    return appearance != CheckboxAppearance && appearance != RadioAppearance && appearance != MenulistAppearance;
 }
 
 bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& border, const BackgroundLayer& background,

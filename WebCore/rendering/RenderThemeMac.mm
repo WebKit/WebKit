@@ -42,6 +42,13 @@ enum {
     bottomMargin,
     leftMargin
 };
+
+enum {
+    topPadding,
+    rightPadding,
+    bottomPadding,
+    leftPadding
+};
     
 RenderTheme* theme()
 {
@@ -120,6 +127,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
         }
         case MenulistAppearance: {
             setPopupButtonCellState(o, r); 
+            r = inflateRect(r, popupButtonSizes()[[popupButton controlSize]], popupButtonMargins());
             break;
         }
         default:
@@ -191,6 +199,8 @@ short RenderThemeMac::baselinePosition(const RenderObject* o) const
 {
     if (o->style()->appearance() == CheckboxAppearance || o->style()->appearance() == RadioAppearance)
         return o->marginTop() + o->height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
+    if (o->style()->appearance() == MenulistAppearance)
+        return o->marginTop() + o->height() - 5; // This is to match AppKit.  There might be a better way to calculate this though.
     return RenderTheme::baselinePosition(o);
 }
 
@@ -328,7 +338,7 @@ void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const IntRect& 
     }
     
     // Set the control size based off the rectangle we're painting into.
-    setControlSize(checkbox, checkboxSizes(), IntSize(r.width(), r.height()));
+    setControlSize(checkbox, checkboxSizes(), r.size());
     
     // Update the various states we respond to.
     updateCheckedState(checkbox, o);
@@ -387,7 +397,7 @@ void RenderThemeMac::setRadioCellState(const RenderObject* o, const IntRect& r)
     }
     
     // Set the control size based off the rectangle we're painting into.
-    setControlSize(radio, radioSizes(), IntSize(r.width(), r.height()));
+    setControlSize(radio, radioSizes(), r.size());
     
     // Update the various states we respond to.
     updateCheckedState(radio, o);
@@ -512,7 +522,7 @@ void RenderThemeMac::setButtonCellState(const RenderObject* o, const IntRect& r)
     } else if ([button bezelStyle] != NSRoundedBezelStyle)
         [button setBezelStyle:NSRoundedBezelStyle];
             
-    setControlSize(button, buttonSizes(), IntSize(r.width(), r.height()));
+    setControlSize(button, buttonSizes(), r.size());
     
     // Update the various states we respond to.
     updateCheckedState(button, o);
@@ -581,11 +591,54 @@ void RenderThemeMac::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle
         addIntrinsicMargins(style, NSRegularControlSize);
 }
 
+const int* RenderThemeMac::popupButtonMargins() const
+{
+    static const int margins[3][4] = 
+    {
+        { 0, 3, 1, 3 },
+        { 0, 3, 2, 3 },
+        { 0, 1, 0, 1 }
+    };
+    return margins[[popupButton controlSize]];
+}
+
+const IntSize* RenderThemeMac::popupButtonSizes() const
+{
+    static const IntSize sizes[3] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15) };
+    return sizes;
+}
+
+const int* RenderThemeMac::popupButtonPadding(NSControlSize size) const
+{
+    static const int padding[3][4] = 
+    {
+        { 0, 26, 0, 8 },
+        { 0, 23, 0, 8 },
+        { 0, 22, 0, 10 }
+    };
+    return padding[size];
+}
+
+void RenderThemeMac::setPopupPaddingFromControlSize(RenderStyle* style, NSControlSize size) const
+{
+    style->setPaddingLeft(Length(popupButtonPadding(size)[leftPadding], Fixed));
+    style->setPaddingRight(Length(popupButtonPadding(size)[rightPadding], Fixed));
+    style->setPaddingTop(Length(popupButtonPadding(size)[topPadding], Fixed));
+    style->setPaddingBottom(Length(popupButtonPadding(size)[bottomPadding], Fixed));
+}
+
 bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
 {
     setPopupButtonCellState(o, r);
     
-    [popupButton drawWithFrame:r inView:o->view()->frameView()->getDocumentView()];
+    IntRect inflatedRect = r;
+    IntSize size = popupButtonSizes()[[popupButton controlSize]];
+    size.setWidth(r.width());
+
+    // Now inflate it to account for the shadow.
+    inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins());
+        
+    [popupButton drawWithFrame:inflatedRect inView:o->view()->frameView()->getDocumentView()];
     [popupButton setControlView:nil];
     return false;
 }
@@ -593,20 +646,23 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInf
 void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     NSControlSize controlSize = controlSizeForFont(style);
-    
+
     // Add in intrinsic margins
     addIntrinsicMargins(style, controlSize);
 
+    style->resetBorder();
+    
     // Height is locked to auto.
     style->setHeight(Length(Auto));
     
     // White-space is locked to pre
     style->setWhiteSpace(PRE);
 
-    if (controlSize != NSMiniControlSize) {
-        style->setPaddingTop(Length(2, Fixed));
-        style->setPaddingBottom(Length(5, Fixed));
-    }
+    // Set the button's vertical size.
+    setButtonSize(style);
+
+    // Add in the padding that we'd like to use.
+    setPopupPaddingFromControlSize(style, controlSize);
 
     // Our font is locked to the appropriate system font size for the control.  To clarify, we first use the CSS-specified font to figure out
     // a reasonable control size, but once that control size is determined, we throw that font away and use the appropriate
@@ -622,7 +678,7 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRec
     }
 
     // Set the control size based off the rectangle we're painting into.
-    RenderThemeMac::setControlSize(popupButton, buttonSizes(), IntSize(r.width(), r.height()));
+    setControlSize(popupButton, popupButtonSizes(), r.size());
 
     // Update the various states we respond to.
     updateCheckedState(popupButton, o);
@@ -636,18 +692,13 @@ RenderPopupMenu* RenderThemeMac::createPopupMenu(RenderArena* arena, Document* d
     return new (arena) RenderPopupMenuMac(doc);
 }
 
-int RenderThemeMac::sizeOfArrowControl(RenderStyle* style) const
+int RenderThemeMac::minimumTextSize(RenderStyle* style) const
 {
-    NSControlSize controlSize = controlSizeForFont(style);
-    
-    switch (controlSize) {
-    case NSRegularControlSize:
-        return 26;
-    case NSSmallControlSize:
-        return 20;
-    case NSMiniControlSize:
-        return 16;
-    }
+    int fontSize = style->fontSize();
+    if (fontSize >= 13)
+        return 9;
+    if (fontSize >= 11)
+        return 5;
     return 0;
 }
 

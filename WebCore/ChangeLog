@@ -1,3 +1,35 @@
+2006-07-09  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/4463835> Switch to use new popup menu implementation for <select>
+
+        * css/html4.css: Added style for new selects, and for list boxes.
+        * html/HTMLSelectElement.h: (WebCore::HTMLSelectElement::shouldUseMenuList): Removed check for appearance so new popups can be styled.
+   
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::setStyle): Removed padding.  This is now set by the theme.
+        (WebCore::RenderMenuList::calcMinMaxWidth): Now takes minimum text size into account.
+        * rendering/RenderMenuList.h: Removed baselinePosition since we're letting the theme calculate that.
+
+        * rendering/RenderTheme.cpp: (WebCore::RenderTheme::isControlContainer): Added menuList as a ControlContainer, 
+        so RenderThemeMac will compute its baseline.
+        * rendering/RenderTheme.h: (WebCore::RenderTheme::minimumTextSize): Added.
+        * rendering/RenderThemeMac.h: Added minimumTextSize, setPopupPaddingFromControlSize, popupButtonSizes, popupButtonMargins, popupButtonPadding.
+        Removed sizeOfArrowControl. 
+        * rendering/RenderThemeMac.mm:
+        (WebCore::): Added enum for padding.
+        (WebCore::RenderThemeMac::adjustRepaintRect): Now inflates rect to account for control shadow.
+        (WebCore::RenderThemeMac::baselinePosition): Now calculates baseline for menulist.
+        (WebCore::RenderThemeMac::popupButtonMargins): Tweaked values.
+        (WebCore::RenderThemeMac::popupButtonSizes): Added.
+        (WebCore::RenderThemeMac::popupButtonPadding): Added, so different padding can be set for different control sizes.
+        (WebCore::RenderThemeMac::setPopupPaddingFromControlSize): Added.
+        (WebCore::RenderThemeMac::paintMenuList): Now inflates rect to account for control shadow.
+        (WebCore::RenderThemeMac::adjustMenuListStyle): Resets border, sets padding, sets control size.
+        (WebCore::RenderThemeMac::setPopupButtonCellState): Removed unnecessary class name.
+        (WebCore::RenderThemeMac::minimumTextSize): Added.
+
 2006-07-09  Darin Adler  <darin@apple.com>
 
         - add back "unused code" for plain text fields, still used by <isindex>!

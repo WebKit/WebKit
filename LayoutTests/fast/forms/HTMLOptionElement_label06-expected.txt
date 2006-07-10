@@ -6,5 +6,8 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 718x18
         text run at (0,0) width 718: "The select item below has a label specified, and no enclosed text. There should be no text shown in the select box."
       RenderBR {BR} at (718,14) size 0x0
-      DeprecatedRenderSelect {SELECT} at (2,20) size 53x18
+      RenderMenuList {SELECT} at (2,20) size 53x18
+        RenderBlock (anonymous) at (8,2) size 22x13
+          RenderText at (0,0) size 22x13
+            text run at (0,0) width 22: "text"
       RenderText {#text} at (0,0) size 0x0

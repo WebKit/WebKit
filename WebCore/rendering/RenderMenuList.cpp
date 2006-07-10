@@ -75,8 +75,6 @@ void RenderMenuList::removeChild(RenderObject* oldChild)
 
 void RenderMenuList::setStyle(RenderStyle* style)
 {
-    style->setPaddingLeft(Length(10, Fixed));
-    style->setPaddingRight(Length(8, Fixed));
     RenderBlock::setStyle(style);
     if (m_buttonText)
         m_buttonText->setStyle(style);
@@ -160,12 +158,6 @@ void RenderMenuList::paintObject(PaintInfo& i, int _tx, int _ty)
         i.p->restore();
 }
 
-
-short RenderMenuList::baselinePosition(bool f, bool b) const
-{
-    return RenderFlexibleBox::baselinePosition(f, b);
-}
-
 void RenderMenuList::calcMinMaxWidth()
 {
     if (m_optionsChanged)
@@ -177,7 +169,7 @@ void RenderMenuList::calcMinMaxWidth()
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value());
     else
-        m_maxWidth = (int)ceilf(m_longestWidth);
+        m_maxWidth = max((int)ceilf(m_longestWidth), theme()->minimumTextSize(style()));
     
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxWidth = max(m_maxWidth, calcContentBoxWidth(style()->minWidth().value()));
@@ -192,7 +184,7 @@ void RenderMenuList::calcMinMaxWidth()
         m_minWidth = min(m_minWidth, calcContentBoxWidth(style()->maxWidth().value()));
     }
 
-    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight() + theme()->sizeOfArrowControl(style());
+    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight();
     m_minWidth += toAdd;
     m_maxWidth += toAdd;
 

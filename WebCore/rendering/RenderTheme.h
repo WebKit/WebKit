@@ -100,7 +100,7 @@ public:
     virtual Color platformActiveSelectionForegroundColor() const;
     virtual Color platformInactiveSelectionForegroundColor() const;
 
-    virtual int sizeOfArrowControl(RenderStyle*) const { return 0; }
+    virtual int minimumTextSize(RenderStyle*) const { return 0; }
     virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*) = 0;
 
 protected:
