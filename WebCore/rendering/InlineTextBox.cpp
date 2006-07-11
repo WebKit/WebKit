@@ -292,11 +292,17 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     }
     DeprecatedValueListIterator<MarkedTextUnderline> underlineIt = underlines.begin();
 
-    Color textColor = styleToUse->color();
+    Color textColor;
     
-    // Make the text color legible against a white background
-    if (styleToUse->forceBackgroundsToWhite())
-        textColor = correctedTextColor(textColor, Color::white);
+    if (i.forceWhiteText)
+        textColor = Color::white;
+    else {
+        textColor = styleToUse->color();
+        
+        // Make the text color legible against a white background
+        if (styleToUse->forceBackgroundsToWhite())
+            textColor = correctedTextColor(textColor, Color::white);
+    }
 
     if (textColor != i.p->pen().color())
         i.p->setPen(textColor);

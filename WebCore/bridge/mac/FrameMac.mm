@@ -2676,11 +2676,11 @@ NSImage *FrameMac::imageFromRect(NSRect rect) const
     return nil;
 }
 
-NSImage *FrameMac::selectionImage() const
+NSImage* FrameMac::selectionImage(bool forceWhiteText) const
 {
-    d->m_drawSelectionOnly = true;  // invoke special drawing mode
+    d->m_paintRestriction = forceWhiteText ? PaintRestrictionSelectionOnlyWhiteText : PaintRestrictionSelectionOnly;
     NSImage *result = imageFromRect(visibleSelectionRect());
-    d->m_drawSelectionOnly = false;
+    d->m_paintRestriction = PaintRestrictionNone;
     return result;
 }
 

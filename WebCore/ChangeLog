@@ -1,3 +1,58 @@
+2006-07-11  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin, Timo O, Brady, Darin, and Hyatt (whee!)
+
+        - added support for creating a selection image with white text
+
+        * rendering/RenderObject.h:
+        (WebCore::):
+        add PaintRestriction enum
+        (WebCore::RenderObject::PaintInfo::PaintInfo):
+        add forceWhiteText boolean to PaintInfo struct
+
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        replaced m_selectionOnly bool with m_paintRestriction, which also handles forcing the
+        text to white
+
+        * page/Frame.cpp:
+        (WebCore::Frame::paint):
+        updated to use & pass m_paintRestriction where it used to use & pass just m_selectionOnly
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::selectionImage):
+        now takes forceWhiteText parameter, stored in FramePrivate as part of PaintRestriction
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge selectionImageForcingWhiteText:]):
+        renamed from selectionImage, now takes forceWhiteText parameter, which is passed
+        down into Frame
+
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        use a PaintRestriction value where we used to use a selectionOnly bool
+        (WebCore::RenderLayer::paintLayer):
+        ditto; also stores forceWhiteText in PaintInfo struct
+
+        * kcanvas/KCanvasResources.cpp:
+        (WebCore::KCanvasMarker::draw):
+        updated for changed signature of PaintInfo constructor
+
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        ditto
+
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        ditto
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        paint with white text color if forceWhiteText is set in PaintInfo struct
+
 2006-07-11  Tim Omernick  <timo@apple.com>
 
         Reviewed by Anders.

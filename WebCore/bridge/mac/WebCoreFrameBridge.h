@@ -356,7 +356,7 @@ typedef enum {
 - (NSRect)selectionRect;
 - (NSRect)visibleSelectionRect;
 - (void)centerSelectionInVisibleArea;
-- (NSImage *)selectionImage;
+- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText;
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity;
 - (NSRect)firstRectForDOMRange:(DOMRange *)range;
 

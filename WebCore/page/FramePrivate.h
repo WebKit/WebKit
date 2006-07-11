@@ -52,7 +52,7 @@ namespace WebCore {
         historyNavigationScheduled,
         locationChangeScheduledDuringLoad
     };
-
+    
     class FramePrivate {
     public:
         FramePrivate(Page* page, Frame* parent, Frame* thisFrame, Element* ownerElement)
@@ -97,7 +97,7 @@ namespace WebCore {
             , m_userStyleSheetLoader(0)
             , m_autoscrollTimer(thisFrame, &Frame::autoscrollTimerFired)
             , m_autoscrollLayer(0)
-            , m_drawSelectionOnly(false)
+            , m_paintRestriction(PaintRestrictionNone)
             , m_markedTextUsesUnderlines(false)
             , m_highlightTextMatches(false)
             , m_windowHasFocus(false)
@@ -215,7 +215,7 @@ namespace WebCore {
         RenderLayer* m_autoscrollLayer;
         
         RefPtr<Node> m_elementToDraw;
-        bool m_drawSelectionOnly;
+        PaintRestriction m_paintRestriction;
         
         HashMap<String, String> m_formValuesAboutToBeSubmitted;
         RefPtr<Element> m_formAboutToBeSubmitted;

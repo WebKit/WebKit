@@ -184,7 +184,7 @@ public:
 
     virtual String mimeTypeForFileName(const String&) const;
 
-    NSImage* selectionImage() const;
+    NSImage* selectionImage(bool forceWhiteText = false) const;
     NSImage* snapshotDragImage(Node* node, NSRect* imageRect, NSRect* elementRect) const;
 
     bool dispatchDragSrcEvent(const AtomicString &eventType, const PlatformMouseEvent&) const;

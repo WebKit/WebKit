@@ -1193,9 +1193,9 @@ bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularit
 }
 
 void
-RenderLayer::paint(GraphicsContext* p, const IntRect& damageRect, bool selectionOnly, RenderObject *paintingRoot)
+RenderLayer::paint(GraphicsContext* p, const IntRect& damageRect, PaintRestriction paintRestriction, RenderObject *paintingRoot)
 {
-    paintLayer(this, p, damageRect, false, selectionOnly, paintingRoot);
+    paintLayer(this, p, damageRect, false, paintRestriction, paintingRoot);
 }
 
 static void setClip(GraphicsContext* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
@@ -1219,7 +1219,7 @@ static void restoreClip(GraphicsContext* p, const IntRect& paintDirtyRect, const
 
 void
 RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
-                        const IntRect& paintDirtyRect, bool haveTransparency, bool selectionOnly,
+                        const IntRect& paintDirtyRect, bool haveTransparency, PaintRestriction paintRestriction,
                         RenderObject *paintingRoot)
 {
     // Calculate the clip rects we should use.
@@ -1237,6 +1237,9 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // If this layer is totally invisible, then return as there is nothing to paint
     if (!m_object->opacity())
         return;
+        
+    bool selectionOnly = paintRestriction == PaintRestrictionSelectionOnly || paintRestriction == PaintRestrictionSelectionOnlyWhiteText;
+    bool forceWhiteText = paintRestriction == PaintRestrictionSelectionOnlyWhiteText;
 
     if (isTransparent())
         haveTransparency = true;
@@ -1261,7 +1264,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         setClip(p, paintDirtyRect, damageRect);
 
         // Paint the background.
-        RenderObject::PaintInfo info(p, damageRect, PaintPhaseBlockBackground, paintingRootForRenderer, 0);
+        RenderObject::PaintInfo info(p, damageRect, PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
         renderer()->paint(info, tx, ty);
 
         // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
@@ -1276,7 +1279,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Now walk the sorted list of children with negative z-indices.
     if (m_negZOrderList)
         for (Vector<RenderLayer*>::iterator it = m_negZOrderList->begin(); it != m_negZOrderList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly, paintingRoot);
+            it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot);
     
     // Now establish the appropriate clip and paint our child RenderObjects.
     if (shouldPaint && !clipRectToApply.isEmpty()) {
@@ -1288,6 +1291,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         setClip(p, paintDirtyRect, clipRectToApply);
         RenderObject::PaintInfo info(p, clipRectToApply, 
                                      selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
+                                     forceWhiteText,
                                      paintingRootForRenderer, 0);
         renderer()->paint(info, tx, ty);
         if (!selectionOnly) {
@@ -1305,7 +1309,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     
     if (!outlineRect.isEmpty()) {
         // Paint our own outline
-        RenderObject::PaintInfo info(p, outlineRect, PaintPhaseSelfOutline, paintingRootForRenderer, 0);
+        RenderObject::PaintInfo info(p, outlineRect, PaintPhaseSelfOutline, false, paintingRootForRenderer, 0);
         setClip(p, paintDirtyRect, outlineRect);
         renderer()->paint(info, tx, ty);
         restoreClip(p, paintDirtyRect, outlineRect);
@@ -1314,12 +1318,12 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Paint any child layers that have overflow.
     if (m_overflowList)
         for (Vector<RenderLayer*>::iterator it = m_overflowList->begin(); it != m_overflowList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly, paintingRoot);
+            it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot);
     
     // Now walk the sorted list of children with positive z-indices.
     if (m_posZOrderList)
         for (Vector<RenderLayer*>::iterator it = m_posZOrderList->begin(); it != m_posZOrderList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly, paintingRoot);
+            it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot);
     
     // End our transparency layer
     if (isTransparent() && m_usedTransparency) {

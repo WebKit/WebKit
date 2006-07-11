@@ -1400,9 +1400,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
                  startCaretRect.height());
 }
 
-- (NSImage *)selectionImage
+- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText;
 {
-    return m_frame->selectionImage();
+    return m_frame->selectionImage(forceWhiteText);
 }
 
 - (void)setName:(NSString *)name

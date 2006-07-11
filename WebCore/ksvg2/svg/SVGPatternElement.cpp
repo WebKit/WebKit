@@ -268,7 +268,7 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
         }
 #endif
 
-        RenderObject::PaintInfo info(context.get(), IntRect(), PaintPhaseForeground, 0, 0);
+        RenderObject::PaintInfo info(context.get(), IntRect(), PaintPhaseForeground, 0, 0, 0);
         item->paint(info, 0, 0);
 
 #if 0
