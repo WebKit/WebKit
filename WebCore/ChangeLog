@@ -92,6 +92,9 @@
 
 2006-07-10  David Hyatt  <hyatt@apple.com>
 
+        <rdar://problem/4620557> REGRESSION: In a mail message, text isn't painted
+        correctly after choosing Redo Typing
+
         Better fix for repainting issue with positioned objects when height
         changes.  Optimize when only a positioned child changes so that we don't
         incorrectly do normal flow layout.
