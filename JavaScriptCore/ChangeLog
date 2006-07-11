@@ -2,6 +2,11 @@
 
 2006-07-10  Darin Adler  <darin@apple.com>
 
+        * kjs/value.cpp: (KJS::JSValue::toInt32Inline): Added inline keyword one more place.
+        Just in case.
+
+2006-07-10  Darin Adler  <darin@apple.com>
+
         - fix the release build
 
         * kjs/value.h:

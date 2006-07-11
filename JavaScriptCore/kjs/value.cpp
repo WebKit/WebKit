@@ -55,7 +55,7 @@ double JSValue::toInteger(ExecState *exec) const
     return roundValue(exec, const_cast<JSValue*>(this));
 }
 
-int32_t JSValue::toInt32Inline(ExecState* exec, bool& ok) const
+inline int32_t JSValue::toInt32Inline(ExecState* exec, bool& ok) const
 {
     ok = true;
 
