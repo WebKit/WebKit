@@ -30,10 +30,10 @@
 #include <stdbool.h>
 #include <stddef.h> // for size_t
 
-#include "JSBase.h"
-#include "JSInternalStringRef.h"
-#include "JSContextRef.h"
-#include "JSObjectRef.h"
-#include "JSValueRef.h"
+#include <JavaScriptCore/JSBase.h>
+#include <JavaScriptCore/JSInternalStringRef.h>
+#include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/JSValueRef.h>
 
 #endif // JavaScriptCore_h

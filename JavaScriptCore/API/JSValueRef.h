@@ -27,7 +27,7 @@
 #ifndef JSValueRef_h
 #define JSValueRef_h
 
-#include "JSBase.h"
+#include <JavaScriptCore/JSBase.h>
 
 /*!
 @enum JSTypeCode
@@ -188,11 +188,11 @@ JSValueRef JSNumberMake(double value);
 /*!
 @function
 @abstract       Creates a JavaScript value of the string type.
-@param buffer   The JSInternalString to assign to the newly created JSValue. The
- newly created JSValue retains buffer, and releases it upon garbage collection.
-@result         A JSValue of the string type, representing the string value of buffer.
+@param string   The JSInternalString to assign to the newly created JSValue. The
+ newly created JSValue retains string, and releases it upon garbage collection.
+@result         A JSValue of the string type, representing the string value of string.
 */
-JSValueRef JSStringMake(JSInternalStringRef buffer);
+JSValueRef JSStringMake(JSInternalStringRef string);
 
 // Converting to primitive values
 

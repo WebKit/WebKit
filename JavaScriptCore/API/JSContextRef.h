@@ -27,8 +27,8 @@
 #ifndef JSContextRef_h
 #define JSContextRef_h
 
-#include "JSObjectRef.h"
-#include "JSValueRef.h"
+#include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/JSValueRef.h>
 
 #ifdef __cplusplus
 extern "C" {

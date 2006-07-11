@@ -1,3 +1,42 @@
+2006-07-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+        
+        - Changed public header includes to the <JavaScriptCore/ style.
+        - Changed instances of 'buffer' to 'string' since we decided on
+        JSInternalString instead of JSStringBuffer.
+
+        * API/JSContextRef.h:
+        * API/JSInternalStringRef.cpp:
+        (JSStringMake):
+        (JSInternalStringRetain):
+        (JSInternalStringRelease):
+        (JSValueCopyStringValue):
+        (JSInternalStringGetLength):
+        (JSInternalStringGetCharactersPtr):
+        (JSInternalStringGetCharacters):
+        (JSInternalStringGetMaxLengthUTF8):
+        (JSInternalStringGetCharactersUTF8):
+        (CFStringCreateWithJSInternalString):
+        * API/JSInternalStringRef.h:
+        * API/JSNode.c:
+        (JSNodePrototype_appendChild):
+        (JSNode_getNodeType):
+        * API/JSObjectRef.cpp:
+        (JSObjectCallAsConstructor):
+        * API/JSValueRef.h:
+        * API/JavaScriptCore.h:
+        * API/minidom.c:
+        (main):
+        (print):
+        * API/testapi.c:
+        (MyObject_getPropertyList):
+        (myConstructor_callAsConstructor):
+        (main): I noticed that we were prematurely releasing some string buffers,
+        so I moved their release calls to the end of main(). I got rid of 'Buf' in *Buf
+        (sometimes changing to 'IString', when necessary to differentiate a variable) 
+        to match the buffer->string change.
+
 === Safari-521.16 ===
 
 2006-07-10  Darin Adler  <darin@apple.com>

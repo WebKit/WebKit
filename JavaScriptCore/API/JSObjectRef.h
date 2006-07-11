@@ -27,8 +27,8 @@
 #ifndef JSObjectRef_h
 #define JSObjectRef_h
 
-#include "JSBase.h"
-#include "JSValueRef.h"
+#include <JavaScriptCore/JSBase.h>
+#include <JavaScriptCore/JSValueRef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -268,7 +268,7 @@ extern const JSObjectCallbacks kJSObjectCallbacksNone;
 /*! 
 @struct JSStaticValue
 @abstract This structure describes a static value property.
-@field name A UTF8 buffer containing the property's name.
+@field name A null-terminated UTF8 string containing the property's name.
 @field getProperty A JSGetPropertyCallback to invoke when getting the property's value.
 @field setProperty A JSSetPropertyCallback to invoke when setting the property's value.
 @field attributes A logically ORed set of JSPropertyAttributes to give to the property.
@@ -283,7 +283,7 @@ typedef struct {
 /*! 
 @struct JSStaticFunction
 @abstract This structure describes a static function property.
-@field name A UTF8 buffer containing the property's name.
+@field name A null-terminated UTF8 string containing the property's name.
 @field callAsFunction A JSCallAsFunctionCallback to invoke when the property is called as a function.
 @field attributes A logically ORed set of JSPropertyAttributes to give to the property.
 */

@@ -39,13 +39,13 @@ static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef 
 
     // Example of throwing a type error for invalid values
     if (!JSValueIsObjectOfClass(thisObject, JSNode_class(context))) {
-        JSInternalStringRef messageBuf = JSInternalStringCreateUTF8("TypeError: appendChild can only be called on nodes");
-        *exception = JSStringMake(messageBuf);
-        JSInternalStringRelease(messageBuf);
+        JSInternalStringRef message = JSInternalStringCreateUTF8("TypeError: appendChild can only be called on nodes");
+        *exception = JSStringMake(message);
+        JSInternalStringRelease(message);
     } else if (argc < 1 || !JSValueIsObjectOfClass(argv[0], JSNode_class(context))) {
-        JSInternalStringRef messageBuf = JSInternalStringCreateUTF8("TypeError: first argument to appendChild must be a node");
-        *exception = JSStringMake(messageBuf);
-        JSInternalStringRelease(messageBuf);
+        JSInternalStringRef message = JSInternalStringCreateUTF8("TypeError: first argument to appendChild must be a node");
+        *exception = JSStringMake(message);
+        JSInternalStringRelease(message);
     } else {
         Node* node = JSObjectGetPrivate(thisObject);
         Node* child = JSObjectGetPrivate(JSValueToObject(context, argv[0]));
@@ -120,9 +120,9 @@ static bool JSNode_getNodeType(JSContextRef context, JSObjectRef object, JSInter
 
     Node* node = JSObjectGetPrivate(object);
     if (node) {
-        JSInternalStringRef nodeBuf = JSInternalStringCreateUTF8(node->nodeType);
-        *returnValue = JSStringMake(nodeBuf);
-        JSInternalStringRelease(nodeBuf);
+        JSInternalStringRef nodeType = JSInternalStringCreateUTF8(node->nodeType);
+        *returnValue = JSStringMake(nodeType);
+        JSInternalStringRelease(nodeType);
         return true;
     }
     return false;
