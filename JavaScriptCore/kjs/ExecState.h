@@ -72,6 +72,7 @@ namespace KJS {
     void setException(JSValue* e) { m_exception = e; }
     void clearException() { m_exception = 0; }
     JSValue* exception() const { return m_exception; }
+    JSValue** exceptionSlot() { return &m_exception; }
     bool hadException() const { return m_exception; }
 
   private:

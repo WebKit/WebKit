@@ -60,27 +60,6 @@ void JSContextDestroy(JSContextRef context);
 */
 JSObjectRef JSContextGetGlobalObject(JSContextRef context);
 
-/*!
-@function
-@abstract       Returns the current exception in a JavaScript execution context.
-@param context  The JSContext whose exception you want to retrieve.
-@result         A JSValue representing context's exception, or NULL if no exception has been set.
-*/
-JSValueRef JSContextGetException(JSContextRef context);
-/*!
-@function
-@abstract       Sets an exception in a JavaScript execution context.
-@param context  The JSContext whose exception you want to set.
-@param value    The exception you want to set.
-*/
-void JSContextSetException(JSContextRef context, JSValueRef value);
-/*!
-@function
-@abstract       Clears the exception in a JavaScript execution context.
-@param context  The JSContext whose exception you want to clear.
-*/
-void JSContextClearException(JSContextRef context);
-
 // Evaluation
 /*!
 @function

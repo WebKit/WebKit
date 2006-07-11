@@ -28,7 +28,7 @@
 #include "JSNodeList.h"
 #include "UnusedParam.h"
 
-static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[])
+static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     if (argc > 0) {
         NodeList* nodeList = JSObjectGetPrivate(thisObject);
@@ -56,7 +56,7 @@ static JSClassRef JSNodeListPrototype_class(JSContextRef context)
     return jsClass;
 }
 
-static bool JSNodeList_length(JSContextRef context, JSObjectRef thisObject, JSInternalStringRef propertyName, JSValueRef* returnValue)
+static bool JSNodeList_length(JSContextRef context, JSObjectRef thisObject, JSInternalStringRef propertyName, JSValueRef* returnValue, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     
@@ -71,7 +71,7 @@ static JSStaticValue JSNodeList_staticValues[] = {
     { 0, 0, 0, 0 }
 };
 
-static bool JSNodeList_getProperty(JSContextRef context, JSObjectRef thisObject, JSInternalStringRef propertyName, JSValueRef* returnValue)
+static bool JSNodeList_getProperty(JSContextRef context, JSObjectRef thisObject, JSInternalStringRef propertyName, JSValueRef* returnValue, JSValueRef* exception)
 {
     NodeList* nodeList = JSObjectGetPrivate(thisObject);
     assert(nodeList);

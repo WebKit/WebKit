@@ -1,6 +1,72 @@
 2006-07-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
+        
+        Added exception out parameter to API object callbacks, removed semi-bogus
+        JSContext(.*)Exception functions.
+        
+        To make these calls syntactically simple, I added an exceptionSlot()
+        method to the ExecState class, which provides a JSValue** slot in which to 
+        store a JSValue* exception.
+
+        * API/APICast.h:
+        (toRef):
+        * API/JSCallbackConstructor.cpp:
+        (KJS::JSCallbackConstructor::construct):
+        * API/JSCallbackFunction.cpp:
+        (KJS::JSCallbackFunction::callAsFunction):
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::init):
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::deleteProperty):
+        (KJS::JSCallbackObject::construct):
+        (KJS::JSCallbackObject::callAsFunction):
+        (KJS::JSCallbackObject::getPropertyList):
+        (KJS::JSCallbackObject::toBoolean):
+        (KJS::JSCallbackObject::toNumber):
+        (KJS::JSCallbackObject::toString):
+        (KJS::JSCallbackObject::staticValueGetter):
+        (KJS::JSCallbackObject::callbackGetter):
+        * API/JSContextRef.cpp:
+        (JSCheckSyntax):
+        * API/JSContextRef.h:
+        * API/JSNode.c:
+        (JSNodePrototype_appendChild):
+        (JSNodePrototype_removeChild):
+        (JSNodePrototype_replaceChild):
+        (JSNode_getNodeType):
+        (JSNode_getChildNodes):
+        (JSNode_getFirstChild):
+        (JSNode_construct):
+        * API/JSNode.h:
+        * API/JSNodeList.c:
+        (JSNodeListPrototype_item):
+        (JSNodeList_length):
+        (JSNodeList_getProperty):
+        * API/JSObjectRef.h:
+        * API/minidom.c:
+        (print):
+        * API/testapi.c:
+        (MyObject_initialize):
+        (MyObject_hasProperty):
+        (MyObject_getProperty):
+        (MyObject_setProperty):
+        (MyObject_deleteProperty):
+        (MyObject_getPropertyList):
+        (MyObject_callAsFunction):
+        (MyObject_callAsConstructor):
+        (MyObject_convertToType):
+        (print_callAsFunction):
+        (myConstructor_callAsConstructor):
+        (main):
+        * JavaScriptCore.exp:
+        * kjs/ExecState.h:
+        (KJS::ExecState::exceptionHandle):
+
+2006-07-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
 
         Improved type safety by implementing opaque JSValue/JSObject typing through 
         abuse of 'const', not void*. Also fixed an alarming number of bugs

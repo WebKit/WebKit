@@ -69,6 +69,11 @@ inline JSValueRef toRef(KJS::JSValue* v)
     return reinterpret_cast<JSValueRef>(v);
 }
 
+inline JSValueRef* toRef(KJS::JSValue** v)
+{
+    return reinterpret_cast<JSValueRef*>(const_cast<const KJS::JSValue**>(v));
+}
+
 inline JSInternalStringRef toRef(KJS::UString::Rep* s)
 {
     return reinterpret_cast<JSInternalStringRef>(s);

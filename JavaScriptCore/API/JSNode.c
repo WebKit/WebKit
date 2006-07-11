@@ -32,7 +32,7 @@
 
 static JSClassRef JSNode_class(JSContextRef context);
 
-static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argc, JSValueRef argv[])
+static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(function);
@@ -40,11 +40,11 @@ static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef 
     // Example of throwing a type error for invalid values
     if (!JSValueIsObjectOfClass(thisObject, JSNode_class(context))) {
         JSInternalStringRef messageBuf = JSInternalStringCreateUTF8("TypeError: appendChild can only be called on nodes");
-        JSContextSetException(context, JSStringMake(messageBuf));
+        *exception = JSStringMake(messageBuf);
         JSInternalStringRelease(messageBuf);
     } else if (argc < 1 || !JSValueIsObjectOfClass(argv[0], JSNode_class(context))) {
         JSInternalStringRef messageBuf = JSInternalStringCreateUTF8("TypeError: first argument to appendChild must be a node");
-        JSContextSetException(context, JSStringMake(messageBuf));
+        *exception = JSStringMake(messageBuf);
         JSInternalStringRelease(messageBuf);
     } else {
         Node* node = JSObjectGetPrivate(thisObject);
@@ -56,7 +56,7 @@ static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef 
     return JSUndefinedMake();
 }
 
-static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argc, JSValueRef argv[])
+static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(function);
@@ -76,7 +76,7 @@ static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef 
     return JSUndefinedMake();
 }
 
-static JSValueRef JSNodePrototype_replaceChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argc, JSValueRef argv[])
+static JSValueRef JSNodePrototype_replaceChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(function);
@@ -113,7 +113,7 @@ static JSClassRef JSNodePrototype_class(JSContextRef context)
     return nodePrototypeClass;
 }
 
-static bool JSNode_getNodeType(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* returnValue)
+static bool JSNode_getNodeType(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* returnValue, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(propertyName);
@@ -128,7 +128,7 @@ static bool JSNode_getNodeType(JSContextRef context, JSObjectRef object, JSInter
     return false;
 }
 
-static bool JSNode_getChildNodes(JSContextRef context, JSObjectRef thisObject, JSInternalStringRef propertyName, JSValueRef* returnValue)
+static bool JSNode_getChildNodes(JSContextRef context, JSObjectRef thisObject, JSInternalStringRef propertyName, JSValueRef* returnValue, JSValueRef* exception)
 {
     UNUSED_PARAM(propertyName);
     Node* node = JSObjectGetPrivate(thisObject);
@@ -137,7 +137,7 @@ static bool JSNode_getChildNodes(JSContextRef context, JSObjectRef thisObject, J
     return true;
 }
 
-static bool JSNode_getFirstChild(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* returnValue)
+static bool JSNode_getFirstChild(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* returnValue, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(propertyName);
@@ -193,7 +193,7 @@ JSObjectRef JSNode_new(JSContextRef context, Node* node)
     return jsNode;
 }
 
-JSObjectRef JSNode_construct(JSContextRef context, JSObjectRef object, size_t argc, JSValueRef argv[])
+JSObjectRef JSNode_construct(JSContextRef context, JSObjectRef object, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     UNUSED_PARAM(object);
     UNUSED_PARAM(argc);

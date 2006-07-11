@@ -8,12 +8,9 @@ _JSClassCreate
 _JSClassRelease
 _JSClassRetain
 _JSConstructorMake
-_JSContextClearException
 _JSContextCreate
 _JSContextDestroy
-_JSContextGetException
 _JSContextGetGlobalObject
-_JSContextSetException
 _JSEvaluate
 _JSFunctionMake
 _JSFunctionMakeWithBody

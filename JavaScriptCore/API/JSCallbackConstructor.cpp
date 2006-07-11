@@ -51,7 +51,7 @@ JSObject* JSCallbackConstructor::construct(ExecState* exec, const List &args)
     JSValueRef argv[argc];
     for (size_t i = 0; i < argc; i++)
         argv[i] = toRef(args[i]);
-    return toJS(m_callback(execRef, thisRef, argc, argv));
+    return toJS(m_callback(execRef, thisRef, argc, argv, toRef(exec->exceptionSlot())));
 }
 
 void JSCallbackConstructor::setPrivate(void* data)

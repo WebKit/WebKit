@@ -29,7 +29,7 @@
 #include <wtf/UnusedParam.h>
 
 static char* createStringWithContentsOfFile(const char* fileName);
-static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[]);
+static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception);
 
 int main(int argc, char* argv[])
 {
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[])
+static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     if (argc > 0) {
         JSInternalStringRef stringBuf = JSValueCopyStringValue(context, argv[0]);

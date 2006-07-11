@@ -54,7 +54,7 @@ JSValue* JSCallbackFunction::callAsFunction(ExecState* exec, JSObject* thisObj, 
     JSValueRef argv[argc];
     for (size_t i = 0; i < argc; i++)
         argv[i] = toRef(args[i]);
-    return toJS(m_callback(execRef, thisRef, thisObjRef, argc, argv));
+    return toJS(m_callback(execRef, thisRef, thisObjRef, argc, argv, toRef(exec->exceptionSlot())));
 }
 
 void JSCallbackFunction::setPrivate(void* data)

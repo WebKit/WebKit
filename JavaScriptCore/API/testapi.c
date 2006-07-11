@@ -122,14 +122,14 @@ static JSValueRef jsGlobalValue; // non-stack value for testing JSGCProtect()
 /* MyObject pseudo-class */
 
 static bool didInitialize = false;
-static void MyObject_initialize(JSContextRef context, JSObjectRef object)
+static void MyObject_initialize(JSContextRef context, JSObjectRef object, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
     didInitialize = true;
 }
 
-static bool MyObject_hasProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName)
+static bool MyObject_hasProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -143,7 +143,7 @@ static bool MyObject_hasProperty(JSContextRef context, JSObjectRef object, JSInt
     return false;
 }
 
-static bool MyObject_getProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* returnValue)
+static bool MyObject_getProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* returnValue, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -166,7 +166,7 @@ static bool MyObject_getProperty(JSContextRef context, JSObjectRef object, JSInt
     return false;
 }
 
-static bool MyObject_setProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef value)
+static bool MyObject_setProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef value, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -178,7 +178,7 @@ static bool MyObject_setProperty(JSContextRef context, JSObjectRef object, JSInt
     return false;
 }
 
-static bool MyObject_deleteProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName)
+static bool MyObject_deleteProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -189,7 +189,7 @@ static bool MyObject_deleteProperty(JSContextRef context, JSObjectRef object, JS
     return false;
 }
 
-static void MyObject_getPropertyList(JSContextRef context, JSObjectRef object, JSPropertyListRef propertyList)
+static void MyObject_getPropertyList(JSContextRef context, JSObjectRef object, JSPropertyListRef propertyList, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     
@@ -204,7 +204,7 @@ static void MyObject_getPropertyList(JSContextRef context, JSObjectRef object, J
     JSInternalStringRelease(propertyNameBuf);
 }
 
-static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[])
+static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -216,7 +216,7 @@ static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef obje
     return JSUndefinedMake();
 }
 
-static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef object, size_t argc, JSValueRef argv[])
+static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef object, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -227,7 +227,7 @@ static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef 
     return JSValueToObject(context, JSNumberMake(0));
 }
 
-static bool MyObject_convertToType(JSContextRef context, JSObjectRef object, JSTypeCode typeCode, JSValueRef* returnValue)
+static bool MyObject_convertToType(JSContextRef context, JSObjectRef object, JSTypeCode typeCode, JSValueRef* returnValue, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -279,7 +279,7 @@ static JSClassRef MyObject_class(JSContextRef context)
     return jsClass;
 }
 
-static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functionObject, JSObjectRef thisObject, size_t argc, JSValueRef argv[])
+static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functionObject, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     UNUSED_PARAM(functionObject);
     UNUSED_PARAM(thisObject);
@@ -296,7 +296,7 @@ static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functio
     return JSUndefinedMake();
 }
 
-static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argc, JSValueRef argv[])
+static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     UNUSED_PARAM(constructorObject);
     
@@ -382,11 +382,8 @@ int main(int argc, char* argv[])
 
     // Conversions that throw exceptions
     assert(NULL == JSValueToObject(context, jsNull));
-    assert(!JSContextGetException(context));
     assert(isnan(JSValueToNumber(context, jsObjectNoProto)));
-    assert(!JSContextGetException(context));
     assertEqualsAsCharactersPtr(jsObjectNoProto, "");
-    assert(!JSContextGetException(context));
 
     assertEqualsAsBoolean(jsUndefined, false);
     assertEqualsAsBoolean(jsNull, false);
@@ -515,15 +512,8 @@ int main(int argc, char* argv[])
     exception = NULL;
     result = JSEvaluate(context, badSyntaxBuf, NULL, NULL, 1, &exception);
     assert(!result);
-    assert(!JSContextGetException(context));
     assert(JSValueIsObject(exception));
     
-    JSContextSetException(context, JSNumberMake(1));
-    assert(JSContextGetException(context));
-    assert(JSValueIsEqual(context, jsOne, JSContextGetException(context)));
-    JSContextClearException(context);
-    assert(!JSContextGetException(context));
-
     JSInternalStringRelease(jsEmptyStringBuf);
     JSInternalStringRelease(jsOneStringBuf);
 #if defined(__APPLE__)
