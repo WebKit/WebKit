@@ -1,3 +1,25 @@
+2006-07-11  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by a tired Geoff.
+
+        Bug 9597: [Drosera] hook up the variables table to show stack variables
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9597
+
+        * Drosera/DebuggerDocument.m:
+        (-[WebScriptObject isSelectorExcludedFromWebScript:]):
+        (-[WebScriptObject webScriptAttributeKeysForScriptObject:]):
+        (-[WebScriptObject localScopeVariableNamesForCallFrame:]):
+        (-[WebScriptObject valueForScopeVariableNamed:inCallFrame:]):
+        (-[WebScriptObject webView:didReceiveTitle:forFrame:]):
+        (-[WebScriptObject webView:didLoadMainResourceForDataSource:]):
+        (-[WebScriptObject webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:]):
+        (-[WebScriptObject webView:didEnterCallFrame:sourceId:line:forWebFrame:]):
+        (-[WebScriptObject webView:willExecuteStatement:sourceId:line:forWebFrame:]):
+        (-[WebScriptObject webView:willLeaveCallFrame:sourceId:line:forWebFrame:]):
+        * Drosera/debugger.css:
+        * Drosera/debugger.html:
+        * Drosera/debugger.js:
+
 2006-07-10  Tim Omernick  <timo@apple.com>
 
         Reviewed by Beth Dakin.

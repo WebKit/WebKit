@@ -35,6 +35,10 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
 static NSString *DebuggerStepOverToolbarItem = @"DebuggerStepOverToolbarItem";
 static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
+@interface WebScriptObject (WebScriptObjectPrivate)
+- (unsigned int)count;
+@end
+
 @implementation DebuggerDocument
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
@@ -85,6 +89,63 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
         frame = [frame caller];
     }
     return [result autorelease];
+}
+
+- (NSArray *)webScriptAttributeKeysForScriptObject:(WebScriptObject *)object
+{
+    WebScriptObject *func = [object evaluateWebScript:@"(function () { var result = new Array(); for (var x in this) { result.push(x); } return result; })"];
+    [object setValue:func forKey:@"__drosera_introspection"];
+
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    WebScriptObject *variables = [object callWebScriptMethod:@"__drosera_introspection" withArguments:nil];
+    unsigned length = [variables count];
+    for (unsigned i = 0; i < length; i++) {
+        NSString *key = [variables webScriptValueAtIndex:i];
+        if (![key isEqualToString:@"__drosera_introspection"])
+            [result addObject:key];
+    }
+
+    [object removeWebScriptKey:@"__drosera_introspection"];
+
+    [result sortUsingSelector:@selector(compare:)];
+    return [result autorelease];
+}
+
+- (NSArray *)localScopeVariableNamesForCallFrame:(int)frame
+{
+    WebScriptCallFrame *cframe = currentFrame;
+    for (unsigned count = 0; count < frame; count++)
+        cframe = [cframe caller];
+
+    if (![[cframe scopeChain] count])
+        return nil;
+
+    WebScriptObject *scope = [[cframe scopeChain] objectAtIndex:0]; // local is always first
+    return [self webScriptAttributeKeysForScriptObject:scope];
+}
+
+- (NSString *)valueForScopeVariableNamed:(NSString *)key inCallFrame:(int)frame
+{
+    WebScriptCallFrame *cframe = currentFrame;
+    for (unsigned count = 0; count < frame; count++)
+        cframe = [cframe caller];
+
+    if (![[cframe scopeChain] count])
+        return nil;
+
+    unsigned scopeCount = [[cframe scopeChain] count];
+    for (unsigned i = 0; i < scopeCount; i++) {
+        WebScriptObject *scope = [[cframe scopeChain] objectAtIndex:i];
+        id value = [scope valueForKey:key];
+        if ([value isKindOfClass:NSClassFromString(@"WebScriptObject")])
+            return [value callWebScriptMethod:@"toString" withArguments:nil];
+        if (value && ![value isKindOfClass:[NSString class]])
+            return [NSString stringWithFormat:@"%@", value];
+        if (value)
+            return value;
+    }
+
+    return nil;
 }
 
 #pragma mark -
@@ -367,9 +428,10 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
         return;
 
     NSString *urlCopy = [[[[dataSource response] URL] absoluteString] copy];
-    NSArray *args = [NSArray arrayWithObjects:(documentSourceCopy ? documentSourceCopy : @""), (urlCopy ? urlCopy : @""), [NSNumber numberWithBool:NO], nil];
+    NSArray *args = [[NSArray alloc] initWithObjects:(documentSourceCopy ? documentSourceCopy : @""), (urlCopy ? urlCopy : @""), [NSNumber numberWithBool:NO], nil];
     [[webView windowScriptObject] callWebScriptMethod:@"updateFileSource" withArguments:args];
 
+    [args release];
     [documentSourceCopy release];
     [urlCopy release];
 }
@@ -395,9 +457,10 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
             urlCopy = [[[[dataSource response] URL] absoluteString] copy];
     }
 
-    NSArray *args = [NSArray arrayWithObjects:sourceCopy, (documentSourceCopy ? documentSourceCopy : @""), (urlCopy ? urlCopy : @""), [NSNumber numberWithInt:sid], [NSNumber numberWithUnsignedInt:baseLine], nil];
+    NSArray *args = [[NSArray alloc] initWithObjects:sourceCopy, (documentSourceCopy ? documentSourceCopy : @""), (urlCopy ? urlCopy : @""), [NSNumber numberWithInt:sid], [NSNumber numberWithUnsignedInt:baseLine], nil];
     [[webView windowScriptObject] callWebScriptMethod:@"didParseScript" withArguments:args];
 
+    [args release];
     [sourceCopy release];
     [documentSourceCopy release];
     [urlCopy release];
@@ -416,8 +479,9 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     currentFrame = [frame retain];
     [old release];
 
-    NSArray *args = [NSArray arrayWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
+    NSArray *args = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
     [[webView windowScriptObject] callWebScriptMethod:@"didEnterCallFrame" withArguments:args];
+    [args release];
 }
 
 - (void)webView:(WebView *)view willExecuteStatement:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
@@ -425,8 +489,9 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     if (!webViewLoaded)
         return;
 
-    NSArray *args = [NSArray arrayWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
+    NSArray *args = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
     [[webView windowScriptObject] callWebScriptMethod:@"willExecuteStatement" withArguments:args];
+    [args release];
 }
 
 - (void)webView:(WebView *)view willLeaveCallFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
@@ -434,8 +499,9 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     if (!webViewLoaded)
         return;
 
-    NSArray *args = [NSArray arrayWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
+    NSArray *args = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
     [[webView windowScriptObject] callWebScriptMethod:@"willLeaveCallFrame" withArguments:args];
+    [args release];
 
     id old = currentFrame;
     currentFrame = [[frame caller] retain];

@@ -27,7 +27,7 @@
  */
 
 img { padding: 0; margin: 0; }
-body { margin: 0; padding: 0; }
+body { margin: 0; padding: 0; overflow: hidden; }
 
 #main { position: absolute; top: 0; bottom: 0; left: 0; right: 0; }
 #info { position: absolute; top: 0; height: 175px; left: 0; right: 0; }
@@ -196,7 +196,20 @@ table {
     border: 0;
 }
 
-td { padding: 3px 7px 3px 9px; height: 15px; box-sizing: border-box; }
+td {
+    padding: 3px 7px 3px 9px;
+    height: 15px;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+tr.current {
+    background-color: rgb(56, 117, 215);
+    color: white;
+}
 
 .stackNumber {
     width: 2em;

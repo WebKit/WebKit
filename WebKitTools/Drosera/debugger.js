@@ -32,6 +32,7 @@ var scripts = new Array();
 var currentFile = -1;
 var currentRow = null;
 var currentStack = null;
+var currentCallFrame = null;
 var previousFiles = new Array();
 var nextFiles = new Array();
 var isResizingColumn = false;
@@ -40,6 +41,43 @@ var steppingOut = false;
 var steppingOver = false;
 var steppingStack = 0;
 var pauseOnNextStatement = false;
+
+ScriptCallFrame = function (functionName, index, row)
+{
+    this.functionName = functionName;
+    this.index = index;
+    this.row = row;
+    this.localVariableNames = null;
+}
+
+ScriptCallFrame.prototype.valueForScopeVariable = function (name)
+{
+    return DebuggerDocument.valueForScopeVariableNamed_inCallFrame_(name, this.index);
+}
+
+ScriptCallFrame.prototype.loadVariables = function ()
+{
+    if (!this.localVariableNames)
+        this.localVariableNames = DebuggerDocument.localScopeVariableNamesForCallFrame_(this.index);
+
+    var variablesTable = document.getElementById("variablesTable");
+    variablesTable.innerHTML = "";
+
+    for(var i = 0; i < this.localVariableNames.length; i++) {
+        var tr = document.createElement("tr");
+        var td = document.createElement("td");
+        td.innerText = this.localVariableNames[i];
+        td.className = "variable";
+        tr.appendChild(td);
+
+        td = document.createElement("td");
+        td.innerText = this.valueForScopeVariable(this.localVariableNames[i]);
+        tr.appendChild(td);
+        tr.addEventListener("click", selectVariable, true);
+
+        variablesTable.appendChild(tr);
+    }
+}
 
 function sleep(numberMillis) {
     var now = new Date();
@@ -112,12 +150,20 @@ function columnResizerDrag(event) {
     if (element.dragging == true) {
         var main = document.getElementById("rightPane");
         var variableColumn = document.getElementById("variable");
+        var rules = document.defaultView.getMatchedCSSRules(variableColumn, "");
+        for (var i = 0; i < rules.length; i++) {
+            if (rules[i].selectorText == ".variable") {
+                var columnRule = rules[i];
+                break;
+            }
+        }
+
         var x = event.clientX + window.scrollX;
         var delta = element.dragLastX - x;
         var newWidth = constrainedWidthFromElement(variableColumn.clientWidth - delta, main);
         if ((variableColumn.clientWidth - delta) == newWidth) // the width wasn't constrained
             element.dragLastX = x;
-        variableColumn.style.width = newWidth + "px";
+        columnRule.style.width = newWidth + "px";
         element.style.left = newWidth + "px";
         event.preventDefault();
     }
@@ -194,11 +240,12 @@ function resume()
         currentRow = null;
     }
 
-    if (currentStack) {
-        var stackframeTable = document.getElementById("stackframeTable");
-        stackframeTable.innerHTML = ""; // clear the content
-        currentStack = null;
-    }
+    var stackframeTable = document.getElementById("stackframeTable");
+    stackframeTable.innerHTML = ""; // clear the content
+    var variablesTable = document.getElementById("variablesTable");
+    variablesTable.innerHTML = ""; // clear the content
+    currentStack = null;
+    currentCallFrame = null;
 
     pauseOnNextStatement = false;
     steppingOut = false;
@@ -559,8 +606,9 @@ function updateFunctionStack()
     var stackframeTable = document.getElementById("stackframeTable");
     stackframeTable.innerHTML = ""; // clear the content
 
-    currentStack = DebuggerDocument.currentFunctionStack();
-    for(var i = 0; i < currentStack.length; i++) {
+    currentStack = new Array();
+    var stack = DebuggerDocument.currentFunctionStack();
+    for(var i = 0; i < stack.length; i++) {
         var tr = document.createElement("tr");
         var td = document.createElement("td");
         td.className = "stackNumber";
@@ -568,23 +616,42 @@ function updateFunctionStack()
         tr.appendChild(td);
 
         td = document.createElement("td");
-        td.innerText = currentStack[i];
+        td.innerText = stack[i];
         tr.appendChild(td);
+        tr.addEventListener("click", selectStackFrame, true);
 
         stackframeTable.appendChild(tr);
+
+        var frame = new ScriptCallFrame(stack[i], i, tr);
+        tr.callFrame = frame;
+        currentStack.push(frame);
+
+        if (i == 0) {
+            addStyleClass(tr, "current");
+            frame.loadVariables();
+            currentCallFrame = frame;
+        }
     }
+}
 
-    var tr = document.createElement("tr");
-    var td = document.createElement("td");
-    td.className = "stackNumber";
-    td.innerText = i;
-    tr.appendChild(td);
+function selectStackFrame(event)
+{
+    var stackframeTable = document.getElementById("stackframeTable");
+    var rows = stackframeTable.childNodes;
+    for (var i = 0; i < rows.length; i++)
+        removeStyleClass(rows[i], "current");
+    addStyleClass(this, "current");
+    this.callFrame.loadVariables();
+    currentCallFrame = this.callFrame;
+}
 
-    td = document.createElement("td");
-    td.innerText = "Global";
-    tr.appendChild(td);
-
-    stackframeTable.appendChild(tr);
+function selectVariable(event)
+{
+    var variablesTable = document.getElementById("variablesTable");
+    var rows = variablesTable.childNodes;
+    for (var i = 0; i < rows.length; i++)
+        removeStyleClass(rows[i], "current");
+    addStyleClass(this, "current");
 }
 
 function loadFile(fileIndex, manageNavLists)
