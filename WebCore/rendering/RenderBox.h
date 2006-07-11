@@ -156,6 +156,10 @@ protected:
 
     void paintBackgrounds(GraphicsContext*, const Color&, const BackgroundLayer*, int clipy, int cliph, int _tx, int _ty, int w, int h);
     void paintBackground(GraphicsContext*, const Color&, const BackgroundLayer*, int clipy, int cliph, int _tx, int _ty, int w, int h);
+#if PLATFORM(MAC)
+    void paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText);
+#endif
+
     void outlineBox(GraphicsContext*, int _tx, int _ty, const char *color = "red");
 
     int containingBlockWidthForPositioned(const RenderObject* containingBlock) const;

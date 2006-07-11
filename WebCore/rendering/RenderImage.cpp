@@ -261,13 +261,17 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                     p->drawText(textRun, IntPoint(ax, ay + ascent));
             }
         }
-    }
-    else if (m_cachedImage) {
+    } else if (m_cachedImage) {
         IntRect rect(IntPoint(_tx + leftBorder + leftPad, _ty + topBorder + topPad), IntSize(cWidth, cHeight));
         
         HTMLImageElement* imageElt = (element() && element()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(element()) : 0;
         CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
         p->drawImage(image(), rect, compositeOperator);
+
+#if PLATFORM(MAC)
+        if (style()->highlight() != nullAtom && !i.p->paintingDisabled())
+            paintCustomHighlight(_tx - m_x, _ty - m_y, style()->highlight(), false);
+#endif
 
         if (drawSelectionTint)
             p->fillRect(selectionRect(), selectionBackgroundColor());

@@ -190,6 +190,11 @@ void RenderWidget::paint(PaintInfo& i, int tx, int ty)
         m_widget->paint(i.p, i.r);
     }
 
+#if PLATFORM(MAC)
+    if (style()->highlight() != nullAtom && !i.p->paintingDisabled())
+        paintCustomHighlight(tx - m_x, ty - m_y, style()->highlight(), false);
+#endif
+
     // Paint a partially transparent wash over selected widgets.
     if (isSelected() && !document()->printing())
         i.p->fillRect(selectionRect(), selectionBackgroundColor());

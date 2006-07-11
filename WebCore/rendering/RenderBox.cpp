@@ -42,6 +42,10 @@
 #include <algorithm>
 #include <math.h>
 
+#if PLATFORM(MAC)
+#include "FrameMac.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -653,6 +657,22 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
     if (clippedToBorderRadius)
         p->restore(); // Undo the border radius clip
 }
+
+#if PLATFORM(MAC)
+void RenderBox::paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText)
+{
+    InlineBox* boxWrap = inlineBoxWrapper();
+    RootInlineBox* r = boxWrap ? boxWrap->root() : 0;
+    if (r) {
+        FloatRect rootRect(tx + r->xPos(), ty + r->selectionTop(), r->width(), r->selectionHeight());
+        FloatRect imageRect(tx + m_x, rootRect.y(), width(), rootRect.height());
+        Mac(document()->frame())->paintCustomHighlight(type, imageRect, rootRect, behindText, false);
+    } else {
+        FloatRect imageRect(tx + m_x, ty + m_y, width(), height());
+        Mac(document()->frame())->paintCustomHighlight(type, imageRect, imageRect, behindText, false);
+    }
+}
+#endif
 
 void RenderBox::outlineBox(GraphicsContext* p, int _tx, int _ty, const char* color)
 {

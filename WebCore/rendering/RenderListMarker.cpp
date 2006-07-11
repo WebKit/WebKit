@@ -186,6 +186,10 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
 
     if (m_listImage && !m_listImage->isErrorImage()) {
         p->drawImage(m_listImage->image(), marker.location());
+#if PLATFORM(MAC)
+        if (style()->highlight() != nullAtom && !i.p->paintingDisabled())
+            paintCustomHighlight(_tx, _ty, style()->highlight(), false);
+#endif
         if (selectionState() != SelectionNone)
             p->fillRect(selectionRect(), selectionBackgroundColor());
         return;
@@ -194,6 +198,12 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
 #ifdef BOX_DEBUG
     p->setPen(red);
     p->drawRect(box.x(), box.y(), box.width(), box.height());
+#endif
+
+#if PLATFORM(MAC)
+    // FIXME: paint gap between marker and list item proper
+    if (style()->highlight() != nullAtom && !i.p->paintingDisabled())
+        paintCustomHighlight(_tx, _ty, style()->highlight(), true);
 #endif
 
     if (selectionState() != SelectionNone)
