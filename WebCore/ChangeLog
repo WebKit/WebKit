@@ -1,3 +1,14 @@
+2006-07-11  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Beth Dakin and Tim Omernick
+
+        - fixed <rdar://problem/4622794> HiDPI: dragging the selection in Safari can show pixel cracks 
+        at non-integral scale factors
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::imageFromRect):
+        round image rect in window coordinate space
+
 2006-07-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

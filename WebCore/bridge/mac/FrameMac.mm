@@ -2645,6 +2645,13 @@ NSImage *FrameMac::imageFromRect(NSRect rect) const
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
     NSRect bounds = [view bounds];
+    
+    // Round image rect size in window coordinate space to avoid pixel cracks at HiDPI (4622794)
+    rect = [view convertRect:rect toView:nil];
+    rect.size.height = roundf(rect.size.height);
+    rect.size.width = roundf(rect.size.width);
+    rect = [view convertRect:rect fromView:nil];
+    
     resultImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
 
     if (rect.size.width != 0 && rect.size.height != 0) {
