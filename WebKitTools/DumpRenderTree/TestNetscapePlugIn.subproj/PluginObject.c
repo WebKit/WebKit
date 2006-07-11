@@ -76,14 +76,16 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 #define ID_TEST_CALLBACK_METHOD     0
 #define ID_TEST_GETURL              1
 #define ID_REMOVE_DEFAULT_METHOD    2
+#define ID_TEST_DOM_ACCESS          3
 
-#define NUM_METHOD_IDENTIFIERS      3
+#define NUM_METHOD_IDENTIFIERS      4
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testCallback",
     "getURL",
     "removeDefaultMethod",
+    "testDOMAccess"
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant *variant)
@@ -131,6 +133,27 @@ static bool pluginSetProperty(NPObject *obj, NPIdentifier name, const NPVariant 
     return false;
 }
 
+static void testDOMAccess(PluginObject *obj)
+{
+    // Get plug-in's DOM element
+    NPObject *elementObject;
+    if (browser->getvalue(obj->npp, NPNVPluginElementNPObject, &elementObject) == NPERR_NO_ERROR) {
+        // Get style
+        NPVariant styleVariant;
+        NPIdentifier styleIdentifier = browser->getstringidentifier("style");
+        if (browser->getproperty(obj->npp, elementObject, styleIdentifier, &styleVariant) && NPVARIANT_IS_OBJECT(styleVariant)) {
+            // Set style.border
+            NPIdentifier borderIdentifier = browser->getstringidentifier("border");
+            NPVariant borderVariant;
+            STRINGZ_TO_NPVARIANT("3px solid red", borderVariant);
+            browser->setproperty(obj->npp, NPVARIANT_TO_OBJECT(styleVariant), borderIdentifier, &borderVariant);
+            browser->releasevariantvalue(&styleVariant);
+        }
+        
+        browser->releaseobject(elementObject);
+    }
+}
+
 static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
     PluginObject *obj = (PluginObject *)header;
@@ -164,6 +187,10 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
         }
     } else if (name == pluginMethodIdentifiers[ID_REMOVE_DEFAULT_METHOD]) {
         pluginClass.invokeDefault = 0;
+        VOID_TO_NPVARIANT(*result);
+        return true;
+    } else if (name == pluginMethodIdentifiers[ID_TEST_DOM_ACCESS]) {
+        testDOMAccess(obj);
         VOID_TO_NPVARIANT(*result);
         return true;
     }

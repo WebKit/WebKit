@@ -1,3 +1,14 @@
+2006-07-10  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9844>:
+        Add DOM access test to DumpRenderTree's Netscape plug-in
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (testDOMAccess):
+        (pluginInvoke):
+
 2006-07-10  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Darin.
