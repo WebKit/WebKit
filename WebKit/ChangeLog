@@ -1,3 +1,15 @@
+2006-07-11  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4622748> WebKit now uses deprecated AGL functions
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView _createWindowedAGLContext]):
+        aglSetDrawable() is deprecated in AGL 3.0.  Use aglSetWindowRef() instead.
+        (-[WebBaseNetscapePluginView _createWindowlessAGLContext]):
+        aglSetOffScreen() is deprecated in AGL 3.0.  Use CGLSetOffScreen(), which does the same thing.
+
 2006-07-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Tim O.

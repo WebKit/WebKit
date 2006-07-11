@@ -2418,7 +2418,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [self _reshapeAGLWindow];
 
     // Attach the AGL context to its window
-    if (!aglSetDrawable(aglContext, (AGLDrawable)GetWindowPort([aglWindow windowRef]))) {
+    GLboolean success;
+#ifdef AGL_VERSION_3_0
+    success = aglSetWindowRef(aglContext, [aglWindow windowRef]);
+#else
+    success = aglSetDrawable(aglContext, (AGLDrawable)GetWindowPort([aglWindow windowRef]));
+#endif
+    if (!success) {
         LOG_ERROR("Could not set AGL drawable: %s", aglErrorString(aglGetError()));
         aglDestroyContext(aglContext);
         aglContext = NULL;
@@ -2471,8 +2477,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
     
     // Attach AGL context to offscreen buffer
-    if (!aglSetOffScreen(aglContext, boundsSize.width, boundsSize.height, boundsSize.width * 4, offscreenBuffer)) {
-        LOG_ERROR("Could not set offscreen buffer for AGL context: %d", aglGetError());
+    CGLContextObj cglContext = [self _cglContext];
+    CGLError error = CGLSetOffScreen(cglContext, boundsSize.width, boundsSize.height, boundsSize.width * 4, offscreenBuffer);
+    if (error) {
+        LOG_ERROR("Could not set offscreen buffer for AGL context: %d", error);
         aglDestroyContext(aglContext);
         aglContext = NULL;
         return NO;
