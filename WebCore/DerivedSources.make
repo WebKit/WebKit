@@ -98,6 +98,7 @@ all : \
     JSHTMLLinkElement.h \
     JSHTMLMenuElement.h \
     JSHTMLOptionElement.h \
+    JSHTMLOptionsCollection.h \
     JSHTMLOptGroupElement.h \
     JSHTMLQuoteElement.h \
     JSHTMLMapElement.h \

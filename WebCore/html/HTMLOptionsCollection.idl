@@ -19,17 +19,12 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateNativeConverter] HTMLOptionElement : HTMLElement {
-        readonly attribute  HTMLFormElement      form;
-                 attribute  boolean              defaultSelected;
-                 attribute  DOMString            text
+    interface [LegacyParent=KJS::JSHTMLCollection, HasCustomIndexSetter] HTMLOptionsCollection : HTMLCollection {
+                 attribute          long                 selectedIndex;
+                 attribute [Custom] long                 length
                         setter raises (DOMException);
-                 attribute  long                 index
-                        setter raises (DOMException); // FIXME: We disallow setting in violation of DOM 1 HTML.
-                 attribute  boolean              disabled;
-                 attribute  DOMString            label;
-                 attribute  boolean              selected;
-                 attribute  DOMString            value;
-    };
 
+        void               add(in HTMLOptionElement option, in [Optional] unsigned long index)
+             raises (DOMException);
+    };
 }

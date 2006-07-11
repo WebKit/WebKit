@@ -30,6 +30,7 @@ namespace WebCore {
     class HTMLCollection;
     class HTMLDocument;
     class HTMLElement;
+    class HTMLOptionsCollection;
     class HTMLSelectElement;
     class HTMLTableCaptionElement;
     class HTMLTableSectionElement;
@@ -169,6 +170,8 @@ namespace KJS {
   WebCore::HTMLTableCaptionElement* toHTMLTableCaptionElement(JSValue*); // returns 0 if passed-in value is not a JSHTMLElement object for a HTMLTableCaptionElement
   WebCore::HTMLTableSectionElement* toHTMLTableSectionElement(JSValue*); // returns 0 if passed-in value is not a JSHTMLElement object for a HTMLTableSectionElement
 
+  KJS_DEFINE_PROTOTYPE(JSHTMLCollectionProto)
+
   class JSHTMLCollection : public DOMObject {
   public:
     JSHTMLCollection(ExecState*, WebCore::HTMLCollection*);
@@ -188,17 +191,6 @@ namespace KJS {
     static JSValue* lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* nameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-  };
-
-  class JSHTMLSelectCollection : public JSHTMLCollection {
-  public:
-    JSHTMLSelectCollection(ExecState*, WebCore::HTMLCollection*, WebCore::HTMLSelectElement*);
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, int attr = None);
-  private:
-    static JSValue* selectedIndexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-
-    RefPtr<WebCore::HTMLSelectElement> m_element;
   };
 
   class HTMLAllCollection : public JSHTMLCollection {
@@ -221,7 +213,7 @@ namespace KJS {
   };
 
   JSValue* getHTMLCollection(ExecState*, WebCore::HTMLCollection*);
-  JSValue* getSelectHTMLCollection(ExecState*, WebCore::HTMLCollection*, WebCore::HTMLSelectElement*);
+  JSValue* getHTMLOptionsCollection(ExecState*, WebCore::HTMLOptionsCollection*);
   JSValue* getAllHTMLCollection(ExecState*, WebCore::HTMLCollection*);
 
 } // namespace

@@ -66,6 +66,7 @@
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
 #include "JSHTMLImageElement.h"
+#include "JSHTMLOptionsCollection.h"
 #include "NameNodeList.h"
 #include "RenderLayer.h"
 #include "Text.h"
@@ -834,7 +835,7 @@ JSValue *JSHTMLElement::selectGetter(ExecState* exec, int token) const
         case SelectValue:           return jsString(select.value());
         case SelectLength:          return jsNumber(select.length());
         case SelectForm:            return toJS(exec, select.form()); // type HTMLFormElement
-        case SelectOptions:         return getSelectHTMLCollection(exec, select.options().get(), &select); // type JSHTMLCollection
+        case SelectOptions:         return getHTMLOptionsCollection(exec, select.options().get());
         case SelectDisabled:        return jsBoolean(select.disabled());
         case SelectMultiple:        return jsBoolean(select.multiple());
         case SelectName:            return jsString(select.name());
@@ -1278,7 +1279,7 @@ void JSHTMLElement::put(ExecState* exec, const Identifier &propertyName, JSValue
         bool ok;
         /*unsigned u =*/ propertyName.toUInt32(&ok);
         if (ok) {
-            JSObject* coll = static_cast<JSObject*>(getSelectHTMLCollection(exec, select.options().get(), &select));
+            JSObject* coll = static_cast<JSObject*>(getHTMLOptionsCollection(exec, select.options().get()));
             coll->put(exec,propertyName,value);
             return;
         }
@@ -1314,7 +1315,7 @@ void JSHTMLElement::selectSetter(ExecState* exec, int token, JSValue *value, con
         case SelectSelectedIndex:   { select.setSelectedIndex(value->toInt32(exec)); return; }
         case SelectValue:           { select.setValue(str); return; }
         case SelectLength:          { // read-only according to the NS spec, but webpages need it writeable
-                                        JSObject* coll = static_cast<JSObject*>(getSelectHTMLCollection(exec, select.options().get(), &select));
+                                        JSObject* coll = static_cast<JSObject*>(getHTMLOptionsCollection(exec, select.options().get()));
                                         coll->put(exec,lengthPropertyName,value);
                                         return;
                                     }
@@ -1573,23 +1574,22 @@ HTMLTableSectionElement* toHTMLTableSectionElement(JSValue *val)
 }
 
 // -------------------------------------------------------------------------
-/* Source for HTMLCollectionProtoTable. Use "make hashtables" to regenerate.
-@begin HTMLCollectionProtoTable 3
+/* Source for JSHTMLCollectionProtoTable. Use "make hashtables" to regenerate.
+@begin JSHTMLCollectionProtoTable 3
   item          JSHTMLCollection::Item            DontDelete|Function 1
   namedItem     JSHTMLCollection::NamedItem       DontDelete|Function 1
   tags          JSHTMLCollection::Tags            DontDelete|Function 1
 @end
 */
-KJS_DEFINE_PROTOTYPE(HTMLCollectionProto)
-KJS_IMPLEMENT_PROTOFUNC(HTMLCollectionProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("HTMLCollection",HTMLCollectionProto,HTMLCollectionProtoFunc)
+KJS_IMPLEMENT_PROTOFUNC(JSHTMLCollectionProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("HTMLCollection",JSHTMLCollectionProto,JSHTMLCollectionProtoFunc)
 
 const ClassInfo JSHTMLCollection::info = { "Collection", 0, 0, 0 };
 
-JSHTMLCollection::JSHTMLCollection(ExecState* exec, HTMLCollection *c)
+JSHTMLCollection::JSHTMLCollection(ExecState* exec, HTMLCollection* c)
   : m_impl(c) 
 {
-  setPrototype(HTMLCollectionProto::self(exec));
+  setPrototype(JSHTMLCollectionProto::self(exec));
 }
 
 JSHTMLCollection::~JSHTMLCollection()
@@ -1695,7 +1695,7 @@ JSValue *JSHTMLCollection::getNamedItems(ExecState* exec, const Identifier &prop
     return new DOMNamedNodesCollection(exec, namedItems);
 }
 
-JSValue *HTMLCollectionProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
+JSValue* JSHTMLCollectionProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
   if (!thisObj->inherits(&JSHTMLCollection::info))
     return throwError(exec, TypeError);
@@ -1710,75 +1710,6 @@ JSValue *HTMLCollectionProtoFunc::callAsFunction(ExecState* exec, JSObject* this
     return static_cast<JSHTMLCollection*>(thisObj)->getNamedItems(exec, Identifier(args[0]->toString(exec)));
   default:
     return jsUndefined();
-  }
-}
-
-// -------------------------------------------------------------------------
-
-JSHTMLSelectCollection::JSHTMLSelectCollection(ExecState* exec, HTMLCollection *c, HTMLSelectElement* e)
-  : JSHTMLCollection(exec, c), m_element(e)
-{
-}
-
-JSValue *JSHTMLSelectCollection::selectedIndexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-    JSHTMLSelectCollection *thisObj = static_cast<JSHTMLSelectCollection*>(slot.slotBase());
-    return jsNumber(thisObj->m_element->selectedIndex());
-}
-
-bool JSHTMLSelectCollection::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  if (propertyName == "selectedIndex") {
-    slot.setCustom(this, selectedIndexGetter);
-    //result = jsNumber(m_element->selectedIndex());
-    return true;
-  }
-
-  return JSHTMLCollection::getOwnPropertySlot(exec, propertyName, slot);
-}
-
-void JSHTMLSelectCollection::put(ExecState* exec, const Identifier &propertyName, JSValue *value, int)
-{
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "JSHTMLSelectCollection::put " << propertyName.deprecatedString() << endl;
-#endif
-  if ( propertyName == "selectedIndex" )
-    m_element->setSelectedIndex(value->toInt32(exec));
-  else if (propertyName == lengthPropertyName) {
-    // resize ?
-    if (value->isNumber()) {
-      double newLen;
-      if (value->getNumber(newLen)) {
-        int exception = 0;
-        if (newLen >= 0) {
-          m_element->setLength(unsigned(floor(newLen)), exception);
-          setDOMException(exec, exception);
-        }
-      }
-    } else {
-      int exception = 0;
-      m_element->setLength(0, exception);
-      setDOMException(exec, exception);
-    }
-  } else {
-    // an index ?
-    bool ok;
-    unsigned i = propertyName.toUInt32(&ok);
-    if (ok) {
-      if (value->isUndefinedOrNull()) {
-        // null and undefined delete. others, too ?
-        m_element->remove(i);
-      } else {
-        WebCore::Node *option = toNode(value);
-        // is v an option element ?
-        if (!option || !option->hasTagName(optionTag))
-            return;
-
-        int exception = 0;
-        m_element->setOption(i, static_cast<HTMLOptionElement*>(option), exception);
-        setDOMException(exec, exception);
-      }
-    }
   }
 }
 
@@ -1832,17 +1763,17 @@ JSValue* getHTMLCollection(ExecState* exec, HTMLCollection* c)
     return cacheDOMObject<HTMLCollection, JSHTMLCollection>(exec, c);
 }
 
-JSValue *getSelectHTMLCollection(ExecState* exec, HTMLCollection *c, HTMLSelectElement* e)
+JSValue* getHTMLOptionsCollection(ExecState* exec, HTMLOptionsCollection* c)
 {
-  DOMObject *ret;
+  DOMObject* ret;
   if (!c)
     return jsNull();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
   if ((ret = interp->getDOMObject(c)))
     return ret;
   else {
-    ret = new JSHTMLSelectCollection(exec, c, e);
-    interp->putDOMObject(c,ret);
+    ret = new JSHTMLOptionsCollection(exec, c);
+    interp->putDOMObject(c, ret);
     return ret;
   }
 }

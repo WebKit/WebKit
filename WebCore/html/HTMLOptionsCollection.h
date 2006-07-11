@@ -27,6 +27,7 @@
 #define HTML_HTMLOptionsCollectionImpl_H
 
 #include "HTMLCollection.h"
+#include "HTMLOptionElement.h"
 
 namespace WebCore {
 
@@ -37,6 +38,12 @@ class HTMLSelectElement;
 class HTMLOptionsCollection : public HTMLCollection {
 public:
     HTMLOptionsCollection(HTMLSelectElement*);
+
+    void add(PassRefPtr<HTMLOptionElement>, ExceptionCode&);
+    void add(PassRefPtr<HTMLOptionElement>, int index, ExceptionCode&);
+
+    int selectedIndex() const;
+    void setSelectedIndex(int);
 
     void setLength(unsigned, ExceptionCode&);
 };

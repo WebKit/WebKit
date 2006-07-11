@@ -348,7 +348,12 @@ sub GenerateHeader
             }
         }
     }
-  
+
+    # Index setter
+    if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
+        push(@headerContent, "    void indexSetter(KJS::ExecState*, const KJS::Identifier &propertyName, KJS::JSValue*, int attr);\n");
+    }
+
     if (!$hasParent) {
         push(@headerContent, "    $implClassName* impl() const { return m_impl.get(); }\n");
         push(@headerContent, "private:\n");
@@ -691,7 +696,7 @@ sub GenerateImplementation
     push(@implContent, "}\n\n");
   
     push(@implContent, "JSValue* ${className}::getValueProperty(ExecState* exec, int token) const\n{\n");
-    push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(${className}::impl());\n\n");
+    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
     push(@implContent, "    switch (token) {\n");
 
     foreach my $attribute (@{$dataNode->attributes}) {
@@ -708,11 +713,11 @@ sub GenerateImplementation
         push(@implContent, "        return JS" . $constructorType . "::getConstructor(exec);\n");
       } elsif (!@{$attribute->getterExceptions}) {
         push(@implContent, "    case " . ucfirst($name) . "AttrNum:\n");
-        push(@implContent, "        return " . NativeToJSValue($attribute->signature, "impl->$name()") . ";\n");
+        push(@implContent, "        return " . NativeToJSValue($attribute->signature, "imp->$name()") . ";\n");
       } else {
         push(@implContent, "    case " . ucfirst($name) . "AttrNum: {\n");
         push(@implContent, "        ExceptionCode ec = 0;\n");
-        push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "impl->$name(ec)") . ";\n");
+        push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "imp->$name(ec)") . ";\n");
         push(@implContent, "        setDOMException(exec, ec);\n");
         push(@implContent, "        return result;\n");
         push(@implContent, "    }\n");
@@ -728,12 +733,20 @@ sub GenerateImplementation
     }
     if ($hasReadWriteProperties) {
       push(@implContent, "void ${className}::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)\n");
-      push(@implContent, "{\n    lookupPut<$className, $parentClassName>" .
-                         "(exec, propertyName, value, attr, &${className}Table, this);\n}\n\n");
-                         
+      if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
+        push(@implContent, "{\n" .
+                           "    if (!lookupPut<$className>(exec, propertyName, value, attr, &${className}Table, this))\n");
+        push(@implContent, "        indexSetter(exec, propertyName, value, attr);\n");
+        push(@implContent, "}\n\n");
+      }
+      else {
+        push(@implContent, "{\n    lookupPut<$className, $parentClassName>" .
+                           "(exec, propertyName, value, attr, &${className}Table, this);\n}\n\n");
+      }
+
       push(@implContent, "void ${className}::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)\n");
       push(@implContent, "{\n");
-      push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(${className}::impl());\n\n");
+      push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
       push(@implContent, "    switch (token) {\n");
 
       foreach my $attribute (@{$dataNode->attributes}) {
@@ -757,7 +770,7 @@ sub GenerateImplementation
           } else {
               push(@implContent, "    case " . ucfirst($name) ."AttrNum: {\n");
               push(@implContent, "        ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
-              push(@implContent, "        impl->set" . ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
+              push(@implContent, "        imp->set" . ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
               push(@implContent, ", ec") if @{$attribute->setterExceptions};
               push(@implContent, ");\n");
               push(@implContent, "        setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
@@ -770,7 +783,7 @@ sub GenerateImplementation
         
       if ($interfaceName eq "DOMWindow") {
           push(@implContent, "    // FIXME: Hack to prevent unused variable warning -- remove once DOMWindow includes a settable property\n");
-          push(@implContent, "    (void)impl;\n");
+          push(@implContent, "    (void)imp;\n");
       }
       push(@implContent, "}\n\n"); # end function
     }
@@ -788,34 +801,49 @@ sub GenerateImplementation
     push(@implContent, "    if (!thisObj->inherits(&${className}::info))\n");
     push(@implContent, "      return throwError(exec, TypeError);\n\n");
 
-    push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(static_cast<$className*>(thisObj)->impl());\n\n");
-    
-    
+    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObj)->impl());\n\n");
+
     push(@implContent, "    switch (id) {\n");
-    foreach my $function (@{$dataNode->functions}) {      
+    foreach my $function (@{$dataNode->functions}) {
       push(@implContent, "    case ${className}::" . ucfirst($function->signature->name) . "FuncNum: {\n");
-      
+
       if ($function->signature->extendedAttributes->{"Custom"}) {
         push(@implContent, "        return static_cast<${className}*>(thisObj)->" . $function->signature->name . "(exec, args);\n    }\n");
         next;
       }
-      
+
       AddIncludesForType($function->signature->type);
-      
+
+      if (@{$function->raisesExceptions}) {
+        push(@implContent, "        ExceptionCode ec = 0;\n");
+      }
+
       my $paramIndex = 0;
-      my $functionString = "impl->" . $function->signature->name . "(";
+      my $functionString = "imp->" . $function->signature->name . "(";
       my $numParameters = @{$function->parameters};
-      
+      my $hasOptionalArguments = 0;
+
       foreach my $parameter (@{$function->parameters}) {
+        if (!$hasOptionalArguments && $parameter->extendedAttributes->{"Optional"}) {
+          push(@implContent, "\n        int argsCount = args.size();\n");
+          $hasOptionalArguments = 1;
+        }
+
+        if ($hasOptionalArguments) {
+          push(@implContent, "        if (argsCount < " . ($paramIndex + 1) . ") {\n");
+          GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 3);
+          push(@implContent, "        }\n\n");
+        }
+
         my $name = $parameter->name;
         push(@implContent, "        bool ${name}Ok;\n") if TypeCanFailConversion($parameter);
         push(@implContent, "        " . GetNativeType($parameter) . " $name = " . JSValueToNative($parameter, "args[$paramIndex]", TypeCanFailConversion($parameter) ? "${name}Ok" : undef) . ";\n");        
-    if (TypeCanFailConversion($parameter)) {
-        push(@implContent, "        if (!${name}Ok) {\n");
-        push(@implContent, "            setDOMException(exec, TYPE_MISMATCH_ERR);\n");
-        push(@implContent, "            return jsUndefined();\n        }\n");
-    }          
-        
+        if (TypeCanFailConversion($parameter)) {
+          push(@implContent, "        if (!${name}Ok) {\n");
+          push(@implContent, "            setDOMException(exec, TYPE_MISMATCH_ERR);\n");
+          push(@implContent, "            return jsUndefined();\n        }\n");
+        }          
+
         # If a parameter is "an index", it should throw an INDEX_SIZE_ERR
         # exception        
         if ($parameter->extendedAttributes->{"IsIndex"}) {
@@ -824,37 +852,23 @@ sub GenerateImplementation
           push(@implContent, "            setDOMException(exec, INDEX_SIZE_ERR);\n");
           push(@implContent, "            return jsUndefined();\n        }\n");          
         }
-        
+
         $functionString .= ", " if $paramIndex;
         $functionString .= $name;
 
         $paramIndex++;
       }
-  
-      if (@{$function->raisesExceptions}) {
-        $functionString .= ", " if $paramIndex;
-        $functionString .= "ec";
-        push(@implContent, "        ExceptionCode ec = 0;\n");
-      }
-      $functionString .= ")";
-      
-      if ($function->signature->type eq "void") {
-        push(@implContent, "\n        $functionString;\n");
-        push(@implContent, "        setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
-        push(@implContent, "        return jsUndefined();\n");
-      } else {
-        push(@implContent, "\n        KJS::JSValue* result = " . NativeToJSValue($function->signature, $functionString) . ";\n");
-        push(@implContent, "        setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
-        push(@implContent, "        return result;\n");
-      }
 
-      push(@implContent, "    }\n");
+      push(@implContent, "\n");
+      GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2);
+
+      push(@implContent, "    }\n"); # end case
     }
-    push(@implContent, "    }\n");
+    push(@implContent, "    }\n"); # end switch
     push(@implContent, "    return 0;\n");
-    push(@implContent, "}\n")
+    push(@implContent, "}\n");
   }
-  
+
   if ($dataNode->extendedAttributes->{"HasIndexGetter"}) {
     push(@implContent, "\nJSValue* ${className}::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)\n");
     push(@implContent, "{\n");
@@ -862,7 +876,7 @@ sub GenerateImplementation
     push(@implContent, "    return toJS(exec, static_cast<$implClassName*>(thisObj->impl())->item(slot.index()));\n");
     push(@implContent, "}\n");
   }
-    
+
   if (!$hasParent) {
     my $implContent = << "EOF";
 KJS::JSValue* toJS(KJS::ExecState* exec, $implClassName* obj)
@@ -893,6 +907,30 @@ EOF
   push(@implContent, "\n}\n");
     
   push(@implContent, "\n#endif // ${conditional}_SUPPORT\n") if $conditional;
+}
+
+sub GenerateImplementationFunctionCall()
+{
+    my $function = shift;
+    my $functionString = shift;
+    my $paramIndex = shift;
+    my $indent = shift;
+
+    if (@{$function->raisesExceptions}) {
+        $functionString .= ", " if $paramIndex;
+        $functionString .= "ec";
+    }
+    $functionString .= ")";
+
+    if ($function->signature->type eq "void") {
+        push(@implContent, $indent . "$functionString;\n");
+        push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
+        push(@implContent, $indent . "return jsUndefined();\n");
+    } else {
+        push(@implContent, "\n" . $indent . "KJS::JSValue* result = " . NativeToJSValue($function->signature, $functionString) . ";\n");
+        push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
+        push(@implContent, $indent . "return result;\n");
+    }
 }
 
 sub GetNativeType
@@ -943,7 +981,8 @@ sub TypeCanFailConversion
   if ($type eq "boolean") {
     return 0;
   } elsif ($type eq "unsigned long" or $type eq "long") {
-    return 0; # or can it?
+    $implIncludes{"ExceptionCode.h"} = 1;
+    return 1;
   } elsif ($type eq "unsigned short") {
     return 0; # or can it?
   } elsif ($type eq "CompareHow") {
@@ -967,7 +1006,8 @@ sub TypeCanFailConversion
            $type eq "XPathResult" or
            $type eq "SVGMatrix" or
            $type eq "SVGRect" or
-           $type eq "SVGElement") {
+           $type eq "SVGElement" or
+           $type eq "HTMLOptionElement") {
       return 0;
   } else {
     die "Don't know whether a JS value can fail conversion to type $type."
@@ -993,7 +1033,11 @@ sub JSValueToNative
     } elsif ($type eq "unsigned long" or
              $type eq "long" or
              $type eq "unsigned short") {
-        return "$value->toInt32(exec)";
+        if ($maybeOkParam) {
+            return "$value->toInt32(exec${maybeOkParam})";
+        } else {
+            return "$value->toInt32(exec)";
+        }
     } elsif ($type eq "CompareHow") {
         return "static_cast<Range::CompareHow>($value->toInt32(exec))";
     } elsif ($type eq "float") {
@@ -1112,7 +1156,7 @@ sub NativeToJSValue
     } elsif ($type eq "StyleSheetList") {
         $implIncludes{"StyleSheetList.h"} = 1;
         $implIncludes{"kjs_css.h"} = 1;
-        return "toJS(exec, $value, impl)";
+        return "toJS(exec, $value, imp)";
     } elsif ($type eq "CSSStyleDeclaration" or $type eq "Rect") {
         $implIncludes{"CSSStyleDeclaration.h"} = 1;
         $implIncludes{"RectImpl.h"} = 1;

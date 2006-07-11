@@ -135,7 +135,7 @@
 		932F5B510822A1C700736975 /* number_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8710255597D01FF60F7 /* number_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B530822A1C700736975 /* object_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8740255597D01FF60F7 /* object_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B540822A1C700736975 /* object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8760255597D01FF60F7 /* object.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		932F5B550822A1C700736975 /* operations.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8780255597D01FF60F7 /* operations.h */; };
+		932F5B550822A1C700736975 /* operations.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8780255597D01FF60F7 /* operations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B560822A1C700736975 /* property_map.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A87A0255597D01FF60F7 /* property_map.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B570822A1C700736975 /* regexp_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A87C0255597D01FF60F7 /* regexp_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B580822A1C700736975 /* regexp.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A87E0255597D01FF60F7 /* regexp.h */; settings = {ATTRIBUTES = (Private, ); }; };

@@ -1,3 +1,19 @@
+2006-07-10  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9179
+          Implement select.options.add() method
+
+        * fast/dom/select-selectedIndex-multiple-expected.txt: Updated test results.
+        * fast/dom/select-selectedIndex-multiple.html: Updated to print comments between
+        tests to make failures easier to track down.
+        * fast/dom/select-selectedIndex-expected.txt: Mirrored updates from select-selectedIndex-multiple.html
+        * fast/dom/select-selectedIndex.html: Ditto.
+        * fast/js/resources/select-options-add.js: Added.
+        * fast/js/select-options-add-expected.txt: Added.
+        * fast/js/select-options-add.html: Added.
+
 2006-07-10  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.

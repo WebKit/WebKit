@@ -1,3 +1,45 @@
+2006-07-10  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9179
+          Implement select.options.add() method
+
+        Tests:
+        - fast/dom/select-selectedIndex-multiple.html
+        - fast/dom/select-selectedIndex.html
+        - fast/js/select-options-add.html
+
+        * DerivedSources.make: Added JSHTMLOptionsCollection.h.
+        * ForwardingHeaders/kjs/operations.h: Added.
+        * WebCore.xcodeproj/project.pbxproj: Added new source files.
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp: Added.
+        (WebCore::JSHTMLOptionsCollection::length):
+        (WebCore::JSHTMLOptionsCollection::setLength):
+        (WebCore::JSHTMLOptionsCollection::indexSetter):
+        * bindings/js/kjs_html.cpp: Removed JSHTMLOptionsCollection implementation.
+        Renamed classes and methods for consistency.
+        (KJS::JSHTMLElement::selectGetter):
+        (KJS::JSHTMLElement::put):
+        (KJS::JSHTMLElement::selectSetter):
+        (KJS::JSHTMLCollection::JSHTMLCollection):
+        (KJS::JSHTMLCollectionProtoFunc::callAsFunction):
+        (KJS::getHTMLOptionsCollection):
+        * bindings/js/kjs_html.h: Ditto.
+        * bindings/scripts/CodeGeneratorJS.pm: Added support for HasCustomIndexSetter class attribute.
+        Added support for Optional parameter attribute, which makes generated code assume overloaded
+        implementation methods are available for a JavaScript function with optional arguments.  Changed
+        local 'impl' variables to 'imp' so that impl() methods could be called without class designation.
+        * html/HTMLOptionElement.idl: Added GenerateNativeConverter attribute.
+        * html/HTMLOptionsCollection.cpp: Added methods used by generated JSHTMLOptionsCollection class.
+        (WebCore::HTMLOptionsCollection::HTMLOptionsCollection):
+        (WebCore::HTMLOptionsCollection::add):
+        (WebCore::HTMLOptionsCollection::selectedIndex):
+        (WebCore::HTMLOptionsCollection::setSelectedIndex):
+        (WebCore::HTMLOptionsCollection::setLength):
+        * html/HTMLOptionsCollection.h: Ditto.
+        * html/HTMLOptionsCollection.idl: Added.
+
 2006-07-10  David Harrison  <harrison@apple.com>
 
         Reviewed by Dave Hyatt.

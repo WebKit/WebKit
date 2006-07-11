@@ -1,3 +1,20 @@
+2006-07-10  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9179
+          Implement select.options.add() method
+
+        * JavaScriptCore.exp: Added overloaded KJS::JSValue::toInt32() method.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Altered attributes metadata for
+        kjs/value.h to make it available as a forwarded header.
+        * kjs/lookup.h:
+        (KJS::lookupPut): Extracted a lookupPut() method from the existing lookupPut() method.
+        The new method returns a boolean value if no entry is found in the lookup table.
+        * kjs/value.cpp:
+        (KJS::JSValue::toInt32): Overloaded toInt32() method with boolean "Ok" argument.
+        * kjs/value.h: Ditto.
+
 2006-07-10  Geoffrey Garen  <ggaren@apple.com>
 
         No review necessary. Removed bogus file I accidentally checked in before.

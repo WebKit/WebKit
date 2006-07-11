@@ -164,6 +164,9 @@
 		1CD4418E0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418A0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff */; };
 		1CD4418F0A4CE76F00A007AB /* northSouthResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418B0A4CE76F00A007AB /* northSouthResizeCursor.tiff */; };
 		1CD441900A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418C0A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff */; };
+		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
+		448A29C00A46D9CB0030759F /* JSHTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */; };
+		448AD27C0A48137A0023D179 /* JSHTMLOptionsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */; };
 		4E1959210A39DABA00220FE5 /* MediaFeatureNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */; };
 		4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */; };
 		4E1959290A39DACC00220FE5 /* MediaQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E1959230A39DACC00220FE5 /* MediaQuery.cpp */; };
@@ -1811,6 +1814,9 @@
 		1CD4418C0A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = northWestSouthEastResizeCursor.tiff; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* ClipboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
+		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
+		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFeatureNames.cpp; sourceTree = "<group>"; };
 		4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaFeatureNames.h; sourceTree = "<group>"; };
@@ -3730,6 +3736,8 @@
 				A80E7E910A1A83E3007FB8C5 /* JSHTMLOptGroupElement.h */,
 				A80E7E900A1A83E3007FB8C5 /* JSHTMLOptionElement.cpp */,
 				A80E7E8F0A1A83E3007FB8C5 /* JSHTMLOptionElement.h */,
+				448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */,
+				448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */,
 				1AE2AB9E0A1CE90500B42B25 /* JSHTMLParagraphElement.cpp */,
 				1AE2AB9F0A1CE90500B42B25 /* JSHTMLParagraphElement.h */,
 				1AE2ABA00A1CE90500B42B25 /* JSHTMLParamElement.cpp */,
@@ -4967,6 +4975,7 @@
 				A80E7E630A1A82EC007FB8C5 /* JSHTMLInputElementBase.h */,
 				A826E8AD0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.cpp */,
 				A826E8AC0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h */,
+				448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */,
 				93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */,
 				93B70D4209EB0C7C009D8468 /* JSXMLHttpRequest.h */,
 				93B70D4309EB0C7C009D8468 /* JSXMLSerializer.cpp */,
@@ -6374,6 +6383,7 @@
 				ABE7B5240A489F830031881C /* DeprecatedRenderSelect.h in Headers */,
 				DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */,
 				BCCD74DC0A4C8D35005FDA6D /* HTMLViewSourceDocument.h in Headers */,
+				448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */,
 				1A8086CC0A4D097600DFB6A7 /* DOMCSSInternal.h in Headers */,
 				1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */,
 				1A1D13CA0A5329090064BF5F /* DOMXPathInternal.h in Headers */,
@@ -7243,6 +7253,8 @@
 				51F11E150A48C2920034A24E /* SQLTransaction.cpp in Sources */,
 				DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */,
 				BCCD74E50A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp in Sources */,
+				448A29C00A46D9CB0030759F /* JSHTMLOptionsCollection.cpp in Sources */,
+				448AD27C0A48137A0023D179 /* JSHTMLOptionsCollectionCustom.cpp in Sources */,
 				E1052C320A4D70010072D99B /* DOMEventsNonstandard.mm in Sources */,
 				516149ED0A525E3A003DFC7A /* SiteIcon.cpp in Sources */,
 				1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */,

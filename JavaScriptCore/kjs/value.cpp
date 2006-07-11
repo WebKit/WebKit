@@ -55,15 +55,19 @@ double JSValue::toInteger(ExecState *exec) const
     return roundValue(exec, const_cast<JSValue*>(this));
 }
 
-int32_t JSValue::toInt32(ExecState *exec) const
+int32_t JSValue::toInt32(ExecState* exec, bool& ok) const
 {
+    ok = true;
+
     uint32_t i;
     if (getUInt32(i))
         return i;
 
     double d = roundValue(exec, const_cast<JSValue*>(this));
-    if (isNaN(d) || isInf(d))
+    if (isNaN(d) || isInf(d)) {
+        ok = false;
         return 0;
+    }
     double d32 = fmod(d, D32);
 
     if (d32 >= D32 / 2)
