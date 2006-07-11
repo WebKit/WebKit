@@ -1,3 +1,15 @@
+2006-07-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele.
+
+        Adele checked in new results for this test when you could style 
+        selects, but the styling of selects is turned off for now, so back 
+        to the original results.
+
+        * fast/forms/001-expected.checksum:
+        * fast/forms/001-expected.png:
+        * fast/forms/001-expected.txt:
+
 2006-07-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Tim O.
