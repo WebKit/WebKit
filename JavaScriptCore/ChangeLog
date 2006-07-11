@@ -1,3 +1,5 @@
+=== Safari-521.16 ===
+
 2006-07-10  Darin Adler  <darin@apple.com>
 
         - fix the release build
@@ -6,8 +8,6 @@
         * kjs/value.cpp:
         (KJS::JSValue::toInt32Inline): Move the code here to an inline.
         (KJS::JSValue::toInt32): Call the inline from both overloaded toInt32 functions.
-
-=== Safari-521.16 ===
 
 2006-07-10  David Kilzer  <ddkilzer@kilzer.net>
 
