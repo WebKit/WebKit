@@ -30,6 +30,7 @@
 
 #import <Accelerate/Accelerate.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebKit/DOMPrivate.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultUIDelegate.h>
@@ -1444,6 +1445,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [MIMEType release];
     [baseURL release];
     [pendingFrameLoads release];
+    [element release];
     
     ASSERT(!aglWindow);
     ASSERT(!aglContext);
@@ -2107,6 +2109,23 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             
             void **v = (void **)value;
             *v = windowScriptObject;
+
+            return NPERR_NO_ERROR;
+        }
+
+        case NPNVPluginElementNPObject:
+        {
+            if (!element)
+                return NPERR_GENERIC_ERROR;
+            
+            NPObject *plugInScriptObject = [element _NPObject];
+
+            // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
+            if (plugInScriptObject)
+                _NPN_RetainObject(plugInScriptObject);
+
+            void **v = (void **)value;
+            *v = plugInScriptObject;
 
             return NPERR_NO_ERROR;
         }

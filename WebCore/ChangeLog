@@ -1,3 +1,45 @@
+2006-07-11  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Anders.
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9843>:
+        Give Netscape plug-ins access to their own DOM element
+
+        * html/HTMLPlugInElement.h:
+        Just import JSC headers on Mac.  The NPObject and Bindings::Instance stuff is only used on Mac anyway.
+        Changed __APPLE__ to PLATFORM(MAC).
+        Added m_NPObject ivar.
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement):
+        Initialize the NPObject.
+        (WebCore::HTMLPlugInElement::~HTMLPlugInElement):
+        Release the NPObject when the element is destroyed.
+        (WebCore::HTMLPlugInElement::createNPObject):
+        Creates an NPObject for the element.
+        (WebCore::HTMLPlugInElement::getNPObject):
+        Returns the NPObject for the element, creating and caching it if necessary.
+
+        * html/HTMLAppletElement.h:
+        Changed __APPLE__ to PLATFORM(MAC).
+        * html/HTMLAppletElement.cpp:
+        ditto
+        * html/HTMLEmbedElement.h:
+        ditto
+        * html/HTMLEmbedElement.cpp:
+        ditto
+        * html/HTMLObjectElement.h:
+        ditto
+        * html/HTMLObjectElement.cpp:
+        ditto
+
+        * bindings/objc/DOMPrivate.h:
+        Added -[DOMElement _NPObject].
+
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _NPObject]):
+        Returns the NPObject for the element.  Since this is only needed by the Netscape plug-in API, you can only get 
+        the NPObject for applet, embed, and object elements.
+        
 2006-07-11  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

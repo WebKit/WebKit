@@ -1,3 +1,15 @@
+2006-07-11  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+
+        Test case for <http://bugzilla.opendarwin.org/show_bug.cgi?id=9843>:
+        Give Netscape plug-ins access to their own DOM element
+
+        * plugins/netscape-dom-access-expected.checksum: Added.
+        * plugins/netscape-dom-access-expected.png: Added.
+        * plugins/netscape-dom-access-expected.txt: Added.
+        * plugins/netscape-dom-access.html: Added.
+
 2006-07-11  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

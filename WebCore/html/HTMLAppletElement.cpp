@@ -42,7 +42,7 @@ HTMLAppletElement::HTMLAppletElement(Document *doc)
 
 HTMLAppletElement::~HTMLAppletElement()
 {
-#if __APPLE__
+#if PLATFORM(MAC)
     // m_instance should have been cleaned up in detach().
     assert(!m_instance);
 #endif
@@ -138,7 +138,7 @@ RenderObject *HTMLAppletElement::createRenderer(RenderArena *arena, RenderStyle 
     return new (document()->renderArena()) RenderInline(this);
 }
 
-#if __APPLE__
+#if PLATFORM(MAC)
 KJS::Bindings::Instance *HTMLAppletElement::getInstance() const
 {
     Frame *frame = document()->frame();
@@ -171,7 +171,7 @@ void HTMLAppletElement::closeRenderer()
 
 void HTMLAppletElement::detach()
 {
-#if __APPLE__
+#if PLATFORM(MAC)
     m_instance = 0;
 #endif
     HTMLPlugInElement::detach();

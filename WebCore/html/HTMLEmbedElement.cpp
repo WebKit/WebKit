@@ -42,13 +42,13 @@ HTMLEmbedElement::HTMLEmbedElement(Document* doc)
 
 HTMLEmbedElement::~HTMLEmbedElement()
 {
-#if __APPLE__
+#if PLATFORM(MAC)
     // m_instance should have been cleaned up in detach().
     assert(!m_instance);
 #endif
 }
 
-#if __APPLE__
+#if PLATFORM(MAC)
 KJS::Bindings::Instance *HTMLEmbedElement::getInstance() const
 {
     Frame* frame = document()->frame();
@@ -154,7 +154,7 @@ void HTMLEmbedElement::attach()
 
 void HTMLEmbedElement::detach()
 {
-#if __APPLE__
+#if PLATFORM(MAC)
     m_instance = 0;
 #endif
     HTMLPlugInElement::detach();

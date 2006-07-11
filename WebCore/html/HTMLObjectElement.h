@@ -27,7 +27,7 @@
 
 #include "HTMLPlugInElement.h"
 
-#if __APPLE__
+#if PLATFORM(MAC)
 #include <JavaScriptCore/runtime.h>
 #else
 namespace KJS { namespace Bindings { class Instance; } }
@@ -65,7 +65,7 @@ public:
 
     void renderFallbackContent();
 
-#if __APPLE__
+#if PLATFORM(MAC)
     virtual KJS::Bindings::Instance* getInstance() const;
 #endif
 

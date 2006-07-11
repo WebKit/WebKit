@@ -29,6 +29,19 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
+#include "kjs_dom.h"
+#include "kjs_proxy.h"
+
+#if PLATFORM(MAC)
+#include "FrameMac.h"
+#include <JavaScriptCore/npruntime_impl.h>
+#include <JavaScriptCore/NP_jsobject.h>
+#endif
+
+using KJS::ExecState;
+using KJS::JSLock;
+using KJS::JSValue;
+using KJS::Bindings::RootObject;
 
 namespace WebCore {
 
@@ -36,7 +49,20 @@ using namespace HTMLNames;
 
 HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc)
     : HTMLElement(tagName, doc)
+#if PLATFORM(MAC)
+    , m_NPObject(0)
+#endif
 {
+}
+
+HTMLPlugInElement::~HTMLPlugInElement()
+{
+#if PLATFORM(MAC)
+    if (m_NPObject) {
+        _NPN_ReleaseObject(m_NPObject);
+        m_NPObject = 0;
+    }
+#endif
 }
 
 String HTMLPlugInElement::align() const
@@ -130,5 +156,39 @@ void HTMLPlugInElement::detach()
     
     HTMLElement::detach();
 }
+
+#if PLATFORM(MAC)
+
+NPObject* HTMLPlugInElement::createNPObject()
+{
+    // This shouldn't ever happen, but might as well check anyway
+    if (!document() || !document()->frame())
+        return _NPN_CreateNoScriptObject();
+
+    // Can't create NPObjects when JavaScript is disabled
+    Frame* frame = document()->frame();
+    if (!frame->jScriptEnabled())
+        return _NPN_CreateNoScriptObject();
+    
+    // Create a JSObject bound to this element
+    JSLock lock;
+    ExecState *exec = frame->jScript()->interpreter()->globalExec();
+    JSValue* jsElementValue = toJS(exec, this);
+    if (!jsElementValue || !jsElementValue->isObject())
+        return _NPN_CreateNoScriptObject();
+
+    // Wrap the JSObject in an NPObject
+    const RootObject *executionContext = Mac(frame)->bindingRootObject();
+    return _NPN_CreateScriptObject(0, jsElementValue->getObject(), executionContext, executionContext);
+}
+
+NPObject* HTMLPlugInElement::getNPObject()
+{
+    if (!m_NPObject)
+        m_NPObject = createNPObject();
+    return m_NPObject;
+}
+
+#endif /* PLATFORM(MAC) */
 
 }

@@ -52,7 +52,8 @@
            MIMEType:(NSString *)MIME
       attributeKeys:(NSArray *)keys
     attributeValues:(NSArray *)values
-       loadManually:(BOOL)loadManually;
+       loadManually:(BOOL)loadManually
+         DOMElement:(DOMElement *)anElement;
 
 - (void)setWebFrame:(WebFrame *)webFrame;
 

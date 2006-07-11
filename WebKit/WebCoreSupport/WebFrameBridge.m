@@ -1007,7 +1007,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                                 MIMEType:MIMEType
                                                            attributeKeys:attributeNames
                                                          attributeValues:attributeValues
-                                                            loadManually:loadManually] autorelease];
+                                                            loadManually:loadManually
+                                                              DOMElement:element] autorelease];
             view = embeddedView;
             [_frame _addPlugInView:embeddedView];
         } else
@@ -1092,7 +1093,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                                 MIMEType:MIMEType
                                                            attributeKeys:attributeNames
                                                          attributeValues:attributeValues
-                                                            loadManually:NO] autorelease];
+                                                            loadManually:NO
+                                                              DOMElement:element] autorelease];
         } else {
             ASSERT_NOT_REACHED();
         }

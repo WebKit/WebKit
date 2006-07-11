@@ -53,6 +53,7 @@
       attributeKeys:(NSArray *)keys
     attributeValues:(NSArray *)values
        loadManually:(BOOL)loadManually
+         DOMElement:(DOMElement *)anElement
 {
     [super initWithFrame:frame];
 
@@ -62,6 +63,8 @@
         return nil;
     }
     [self setPlugin:thePlugin];    
+
+    element = [anElement retain];
     
     URL = [theURL retain];
     

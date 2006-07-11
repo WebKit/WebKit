@@ -1,3 +1,28 @@
+2006-07-11  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9843>:
+        Give Netscape plug-ins access to their own DOM element
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView dealloc]):
+        Release DOM element.
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+        Return NPObject for plugin DOM element.
+
+        * Plugins/WebNetscapePluginEmbeddedView.h:
+        * Plugins/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView initWithFrame:plugin:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:DOMElement:]):
+        Now takes a DOMElement, in much the same way that WebKit plug-in views take a DOMElement.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:DOMElement:loadManually:]):
+        Pass DOMElement to Netscape plug-ins.
+        (-[WebFrameBridge viewForJavaAppletWithFrame:attributeNames:attributeValues:baseURL:DOMElement:]):
+        ditto
+
 2006-07-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi & thatcher

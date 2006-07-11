@@ -54,7 +54,7 @@ HTMLObjectElement::HTMLObjectElement(Document *doc)
 
 HTMLObjectElement::~HTMLObjectElement()
 {
-#if __APPLE__
+#if PLATFORM(MAC)
     // m_instance should have been cleaned up in detach().
     assert(!m_instance);
 #endif
@@ -62,7 +62,7 @@ HTMLObjectElement::~HTMLObjectElement()
     delete m_imageLoader;
 }
 
-#if __APPLE__
+#if PLATFORM(MAC)
 KJS::Bindings::Instance *HTMLObjectElement::getInstance() const
 {
     Frame* frame = document()->frame();
@@ -234,7 +234,7 @@ void HTMLObjectElement::detach()
         needWidgetUpdate = true;
     }
 
-#if __APPLE__
+#if PLATFORM(MAC)
     m_instance = 0;
 #endif
     HTMLPlugInElement::detach();

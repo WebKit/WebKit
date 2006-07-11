@@ -32,6 +32,7 @@
 #import <WebKit/npfunctions.h>
 #import <WebKit/npapi.h>
 
+@class DOMElement;
 @class WebDataSource;
 @class WebFrame;
 @class WebNetscapePluginPackage;
@@ -75,6 +76,8 @@ typedef union PluginPort {
     BOOL currentEventIsUserGesture;
     BOOL isTransparent;
     BOOL isCompletelyObscured;
+    
+    DOMElement *element;
     
     int32 specifiedHeight;
     int32 specifiedWidth;

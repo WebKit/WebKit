@@ -45,6 +45,7 @@
 #import "FrameMac.h"
 #import "HTMLDocument.h"
 #import "HTMLNames.h"
+#import "HTMLPlugInElement.h"
 #import "NodeFilter.h"
 #import "NodeFilterCondition.h"
 #import "NodeIterator.h"
@@ -1531,6 +1532,15 @@ static Class elementClass(const AtomicString& tagName)
     Element *e = [self _element];
     ASSERT(e);
     return KURL(e->document()->completeURL(parseURL(e->getAttribute(name)).deprecatedString())).getNSURL();
+}
+
+- (NPObject *)_NPObject
+{
+    Element* element = [self _element];
+    if (element->hasTagName(appletTag) || element->hasTagName(embedTag) || element->hasTagName(objectTag))
+        return static_cast<WebCore::HTMLPlugInElement*>(element)->getNPObject();
+    else
+        return 0;
 }
 
 @end

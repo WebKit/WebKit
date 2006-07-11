@@ -28,6 +28,8 @@
 #import <WebCore/DOMRange.h>
 #import <WebCore/DOMEvents.h>
 
+@class NPObject;
+
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText
 - (NSString *)_text;
@@ -42,6 +44,7 @@
 - (NSFont *)_font;
 - (NSData *)_imageTIFFRepresentation;
 - (NSURL *)_getURLAttribute:(NSString *)name;
+- (NPObject *)_NPObject; // For subclasses to implement; we only allow NPObjects to be created for certain element types
 @end
 
 @interface DOMCSSStyleDeclaration (WebPrivate)
