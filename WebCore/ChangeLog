@@ -2,7 +2,21 @@
 
         Reviewed by Geoff.
 
-        - fix rdar://problem/4619534 http://bugzilla.opendarwin.org/show_bug.cgi?id=9810
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9811
+          rdar://problem/4619572
+          OPTION text contained in OPTGROUP appears at the wrong size
+
+        * dom/Node.h:
+        * dom/Node.cpp: (WebCore::Node::renderStyle): Made a const member function.
+        The derived classes were overriding with const member functions, and I could
+        change either this or the derived -- decided to do this.
+
+2006-07-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9810
+          rdar://problem/4619534
           OPTGROUP label text is using the default font instead of Lucida Grande
 
         * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::setFontFromControlSize):

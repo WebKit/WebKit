@@ -940,12 +940,13 @@ RenderObject *Node::createRenderer(RenderArena *arena, RenderStyle *style)
     return 0;
 }
 
-RenderStyle* Node::renderStyle()
+RenderStyle* Node::renderStyle() const
 { 
     return m_renderer ? m_renderer->style() : 0; 
 }
 
-void Node::setRenderStyle(RenderStyle* s) {
+void Node::setRenderStyle(RenderStyle* s)
+{
     if (m_renderer)
         m_renderer->setStyle(s); 
 }
