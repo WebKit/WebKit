@@ -1,3 +1,15 @@
+2006-07-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9572
+        Add application/xhtml+xml to the Accept header
+
+        The fix itself was landed on 2006-07-09, but I forgot about the test.
+
+        * http/tests/misc/xhtml-expected.txt: Added.
+        * http/tests/misc/xhtml.php: Added.
+
 2006-07-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele.
