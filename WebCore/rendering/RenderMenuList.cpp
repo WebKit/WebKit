@@ -100,6 +100,12 @@ void RenderMenuList::setStyle(RenderStyle* style)
 
 void RenderMenuList::updateFromElement()
 {
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    if (select->size() > 1 || select->multiple()) {
+        select->detach();
+        select->attach();
+        return;
+    }
     if (m_optionsChanged) {
         HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
         if (select->m_recalcListItems)

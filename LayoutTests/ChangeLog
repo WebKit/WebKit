@@ -1,3 +1,15 @@
+2006-07-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9859
+        REGRESSION: Can't dynamically change popup to list box
+
+        * fast/forms/select-change-popup-to-listbox-expected.checksum: Added.
+        * fast/forms/select-change-popup-to-listbox-expected.png: Added.
+        * fast/forms/select-change-popup-to-listbox-expected.txt: Added.
+        * fast/forms/select-change-popup-to-listbox.html: Added.
+
 2006-07-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

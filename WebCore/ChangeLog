@@ -1,3 +1,17 @@
+2006-07-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9859
+        REGRESSION: Can't dynamically change popup to list box
+
+        Test: fast/forms/select-change-popup-to-listbox.html
+
+        * rendering/RenderMenuList.cpp: (WebCore::RenderMenuList::updateFromElement):
+        If the select element has the multiple property set, or has a size > 1, then it
+        really should be a list box, so we detach and attach the element so it creates the
+        correct type of renderer.
+
 2006-07-11  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Beth Dakin and Tim Omernick
