@@ -29,6 +29,7 @@
 #import "DebuggerDocument.h"
 #import "DebuggerApplication.h"
 
+static NSString *DebuggerConsoleToolbarItem = @"DebuggerConsoleToolbarItem";
 static NSString *DebuggerContinueToolbarItem = @"DebuggerContinueToolbarItem";
 static NSString *DebuggerPauseToolbarItem = @"DebuggerPauseToolbarItem";
 static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
@@ -89,6 +90,20 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
         frame = [frame caller];
     }
     return [result autorelease];
+}
+
+- (id)evaluateScript:(NSString *)script inCallFrame:(int)frame
+{
+    WebScriptCallFrame *cframe = currentFrame;
+    for (unsigned count = 0; count < frame; count++)
+        cframe = [cframe caller];
+    if (!cframe)
+        return nil;
+
+    id result = [cframe evaluateWebScript:script];
+    if ([result isKindOfClass:NSClassFromString(@"WebScriptObject")])
+        return [result callWebScriptMethod:@"toString" withArguments:nil];
+    return result;
 }
 
 - (NSArray *)webScriptAttributeKeysForScriptObject:(WebScriptObject *)object
@@ -210,6 +225,11 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     [[webView windowScriptObject] callWebScriptMethod:@"stepOut" withArguments:nil];
 }
 
+- (IBAction)showConsole:(id)sender
+{
+    [[webView windowScriptObject] callWebScriptMethod:@"showConsoleWindow" withArguments:nil];
+}
+
 #pragma mark -
 #pragma mark Window Controller Overrides
 
@@ -315,6 +335,19 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
         [item setAction:@selector(resume:)];
 
         return [item autorelease];
+    } else if ([itemIdentifier isEqualToString:DebuggerConsoleToolbarItem]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+
+        [item setLabel:@"Console"];
+        [item setPaletteLabel:@"Console"];
+
+        [item setToolTip:@"Console"];
+        [item setImage:[NSImage imageNamed:@"console"]];
+
+        [item setTarget:self];
+        [item setAction:@selector(showConsole:)];
+
+        return [item autorelease];
     } else if ([itemIdentifier isEqualToString:DebuggerPauseToolbarItem]) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
 
@@ -376,12 +409,12 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 {
     return [NSArray arrayWithObjects:DebuggerContinueToolbarItem, DebuggerPauseToolbarItem,
         NSToolbarSeparatorItemIdentifier, DebuggerStepIntoToolbarItem, DebuggerStepOutToolbarItem,
-        DebuggerStepOverToolbarItem, nil];
+        DebuggerStepOverToolbarItem, NSToolbarFlexibleSpaceItemIdentifier, DebuggerConsoleToolbarItem, nil];
 }
 
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
 {
-    return [NSArray arrayWithObjects:DebuggerContinueToolbarItem, DebuggerPauseToolbarItem,
+    return [NSArray arrayWithObjects:DebuggerConsoleToolbarItem, DebuggerContinueToolbarItem, DebuggerPauseToolbarItem,
         DebuggerStepIntoToolbarItem, DebuggerStepOutToolbarItem, DebuggerStepOverToolbarItem, NSToolbarCustomizeToolbarItemIdentifier,
         NSToolbarFlexibleSpaceItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarSeparatorItemIdentifier, nil];
 }
@@ -400,18 +433,117 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 }
 
 #pragma mark -
+#pragma mark WebView UI Delegate
+
+- (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
+{
+    WebView *newWebView = [[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil];
+    [newWebView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+    [newWebView setUIDelegate:self];
+    [newWebView setPolicyDelegate:self];
+    [newWebView setFrameLoadDelegate:self];
+    if (request)
+        [[newWebView mainFrame] loadRequest:request];
+
+    NSWindow *window = [[NSWindow alloc] initWithContentRect:NSZeroRect styleMask:(NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSUnifiedTitleAndToolbarWindowMask) backing:NSBackingStoreBuffered defer:NO screen:[[webView window] screen]];
+    [window setReleasedWhenClosed:YES];
+    [newWebView setFrame:[[window contentView] frame]];
+    [[window contentView] addSubview:newWebView];
+    [newWebView release];
+
+    return newWebView;
+}
+
+- (void)webViewShow:(WebView *)sender
+{
+    [[sender window] makeKeyAndOrderFront:sender];
+}
+
+- (BOOL)webViewAreToolbarsVisible:(WebView *)sender
+{
+    return [[[sender window] toolbar] isVisible];
+}
+
+- (void)webView:(WebView *)sender setToolbarsVisible:(BOOL)visible
+{
+    [[[sender window] toolbar] setVisible:visible];
+}
+
+- (void)webView:(WebView *)sender setResizable:(BOOL)resizable
+{
+    [[sender window] setShowsResizeIndicator:resizable];
+    [[[sender window] standardWindowButton:NSWindowZoomButton] setEnabled:resizable];
+}
+
+- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
+{
+    NSRange range = [message rangeOfString:@"\t"];
+    NSString *title = @"Alert";
+    if (range.location != NSNotFound) {
+        title = [message substringToIndex:range.location];
+        message = [message substringFromIndex:(range.location + range.length)];
+    }
+
+    NSBeginInformationalAlertSheet(title, nil, nil, nil, [sender window], nil, NULL, NULL, NULL, message);
+}
+
+- (void)scriptConfirmSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(int *)contextInfo
+{
+    *contextInfo = returnCode;
+}
+
+- (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
+{
+    NSRange range = [message rangeOfString:@"\t"];
+    NSString *title = @"Alert";
+    if (range.location != NSNotFound) {
+        title = [message substringToIndex:range.location];
+        message = [message substringFromIndex:(range.location + range.length)];
+    }
+
+    int result = NSNotFound;
+    NSBeginInformationalAlertSheet(title, nil, @"Cancel", nil, [sender window], self, @selector(scriptConfirmSheetDidEnd:returnCode:contextInfo:), NULL, &result, message);
+
+    while (result == NSNotFound) {
+        NSEvent *nextEvent = [[NSApplication sharedApplication] nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
+        [[NSApplication sharedApplication] sendEvent:nextEvent];
+    }
+
+    return result;
+}
+
+#pragma mark -
 #pragma mark WebView Frame Load Delegate
 
 - (void)webView:(WebView *)sender windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject
 {
     // note: this is the Debuggers's own WebView, not the one being debugged
-    [[sender windowScriptObject] setValue:self forKey:@"DebuggerDocument"];
+    if ([[sender window] isEqual:[self window]])
+        [[sender windowScriptObject] setValue:self forKey:@"DebuggerDocument"];
 }
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
     // note: this is the Debuggers's own WebView, not the one being debugged
-    webViewLoaded = YES;
+    if ([[sender window] isEqual:[self window]])
+        webViewLoaded = YES;
+}
+
+- (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
+{
+    // note: this is the Debuggers's own WebViews, not the one being debugged
+    if ([frame isEqual:[sender mainFrame]]) {
+        NSDictionary *info = [[(DebuggerApplication *)[[NSApplication sharedApplication] delegate] knownServers] objectForKey:currentServerName];
+        NSString *processName = [info objectForKey:WebScriptDebugServerProcessNameKey];
+        if (info && [processName length]) {
+            NSMutableString *newTitle = [[NSMutableString alloc] initWithString:processName];
+            [newTitle appendString:@" - "];
+            [newTitle appendString:title];
+            [[sender window] setTitle:newTitle];
+            [newTitle release];
+        } else 
+            [[sender window] setTitle:title];
+    }
 }
 
 #pragma mark -

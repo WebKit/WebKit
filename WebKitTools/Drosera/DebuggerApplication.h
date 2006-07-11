@@ -34,4 +34,6 @@
 }
 - (IBAction)showAttachPanel:(id)sender;
 - (IBAction)attach:(id)sender;
+
+- (NSDictionary *)knownServers;
 @end

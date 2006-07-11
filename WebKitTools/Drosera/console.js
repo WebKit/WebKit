@@ -26,22 +26,50 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface DebuggerDocument : NSWindowController <WebScriptDebugListener>
-{
-    IBOutlet WebView *webView;
-    id<WebScriptDebugServer> server;
-    WebScriptCallFrame *currentFrame;
-    NSString *currentServerName;
-    BOOL webViewLoaded;
-    BOOL paused;
-}
-- (id)initWithServerName:(NSString *)serverName;
-- (void)switchToServerNamed:(NSString *)name;
+var inputElement = null;
+var mainWindow = window.opener;
 
-- (IBAction)pause:(id)sender;
-- (IBAction)resume:(id)sender;
-- (IBAction)stepInto:(id)sender;
-- (IBAction)stepOver:(id)sender;
-- (IBAction)stepOut:(id)sender;
-- (IBAction)showConsole:(id)sender;
-@end
+function loaded()
+{
+    inputElement = document.getElementById("input");
+    inputElement.addEventListener("keydown", inputKeyDown, false);
+    inputElement.focus();
+}
+
+function inputKeyDown(event)
+{
+    if (event.keyCode == 13 && !event.altKey) {
+        if (mainWindow.isPaused() && mainWindow.currentStack) {
+            sendScript(inputElement.innerText);
+            inputElement.innerText = "";
+            inputElement.focus();
+        } else
+            alert("The debugger needs to be paused.\tIn order to evaluate your script input you need to pause the debugger in the context of another script.");
+        event.preventDefault();
+    }
+}
+
+function sendScript(script)
+{
+    var history = document.getElementById("history");
+    var row = document.createElement("div");
+    row.className = "row";
+    if (history.childNodes.length % 2)
+        row.className += " alt";
+
+    var expression = document.createElement("div");
+    expression.className = "expression";
+    expression.innerText = script;
+    row.appendChild(expression);
+
+    var result = document.createElement("div");
+    result.className = "result";
+    result.innerText = mainWindow.DebuggerDocument.evaluateScript_inCallFrame_(script, mainWindow.currentCallFrame.index);
+    row.appendChild(result);
+
+    history.appendChild(row);
+    history.scrollTop = history.scrollHeight;
+
+    if (script.indexOf("="))
+        mainWindow.currentCallFrame.loadVariables();
+}

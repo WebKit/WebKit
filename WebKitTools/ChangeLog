@@ -1,5 +1,39 @@
 2006-07-11  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        Bug 9598: [Drosera] add a JavaScript evaluator console
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9598
+
+        * Drosera/DebuggerApplication.h:
+        * Drosera/DebuggerApplication.m:
+        (-[DebuggerApplication knownServers]):
+        * Drosera/DebuggerDocument.h:
+        * Drosera/DebuggerDocument.m:
+        (-[WebScriptObject evaluateScript:inCallFrame:]):
+        (-[WebScriptObject showConsole:]):
+        (-[WebScriptObject toolbar:itemForItemIdentifier:willBeInsertedIntoToolbar:]):
+        (-[WebScriptObject toolbarDefaultItemIdentifiers:]):
+        (-[WebScriptObject toolbarAllowedItemIdentifiers:]):
+        (-[WebScriptObject webView:createWebViewWithRequest:]):
+        (-[WebScriptObject webViewShow:]):
+        (-[WebScriptObject webViewAreToolbarsVisible:]):
+        (-[WebScriptObject webView:setToolbarsVisible:]):
+        (-[WebScriptObject webView:setResizable:]):
+        (-[WebScriptObject webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:]):
+        (-[WebScriptObject scriptConfirmSheetDidEnd:returnCode:contextInfo:]):
+        (-[WebScriptObject webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:]):
+        (-[WebScriptObject webView:windowScriptObjectAvailable:]):
+        (-[WebScriptObject webView:didFinishLoadForFrame:]):
+        (-[WebScriptObject webView:didReceiveTitle:forFrame:]):
+        * Drosera/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/Images/console.png: Added.
+        * Drosera/console.css: Added.
+        * Drosera/console.html: Added.
+        * Drosera/console.js: Added.
+
+2006-07-11  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by a tired Geoff.
 
         Bug 9597: [Drosera] hook up the variables table to show stack variables

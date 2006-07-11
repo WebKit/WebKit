@@ -26,22 +26,80 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface DebuggerDocument : NSWindowController <WebScriptDebugListener>
-{
-    IBOutlet WebView *webView;
-    id<WebScriptDebugServer> server;
-    WebScriptCallFrame *currentFrame;
-    NSString *currentServerName;
-    BOOL webViewLoaded;
-    BOOL paused;
-}
-- (id)initWithServerName:(NSString *)serverName;
-- (void)switchToServerNamed:(NSString *)name;
+img { padding: 0; margin: 0; }
+body { margin: 0; padding: 0; overflow: hidden; }
 
-- (IBAction)pause:(id)sender;
-- (IBAction)resume:(id)sender;
-- (IBAction)stepInto:(id)sender;
-- (IBAction)stepOver:(id)sender;
-- (IBAction)stepOut:(id)sender;
-- (IBAction)showConsole:(id)sender;
-@end
+#main {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#top {
+    position: absolute;
+    top: 0;
+    bottom: 50px;
+    left: 0;
+    right: 0;
+}
+
+#history {
+    position: absolute;
+    top: 20px;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#divider {
+    cursor: row-resize;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url(splitterDimple.tif) 50% no-repeat, url(splitterBar.tif) repeat-x;
+    height: 10px;
+}
+
+#input {
+    position: absolute;
+    box-sizing: border-box;
+    height: 50px;
+    max-height: 150px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    -webkit-user-modify: read-write;
+    -webkit-nbsp-mode: space;
+    -webkit-line-break: after-white-space;
+    word-wrap: break-word;
+    outline: none;
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 14px;
+    padding: 3px;
+}
+
+#history .row {
+    height: 38px;
+    padding: 4px;
+    box-sizing: border-box;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+#history .row.alt {
+    background-color: rgb(237, 243, 254);
+}
+
+.expression {
+    color: blue;
+}
+
+.result {
+    color: navy;
+}

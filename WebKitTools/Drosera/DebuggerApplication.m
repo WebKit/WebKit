@@ -76,6 +76,11 @@
     [attachTable reloadData];
 }
 
+- (NSDictionary *)knownServers
+{
+    return knownServerNames;
+}
+
 #pragma mark -
 #pragma mark Attach Panel Actions
 
