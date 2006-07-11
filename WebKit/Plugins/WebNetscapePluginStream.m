@@ -73,11 +73,6 @@
     // Temporarily set isTerminated to YES to avoid assertion failure in dealloc in case we are released in this method.
     isTerminated = YES;
     
-    if (![WebView _canHandleRequest:theRequest]) {
-        [self release];
-        return nil;
-    }
-        
     request = [theRequest mutableCopy];
     if (hideReferrer) {
         [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];

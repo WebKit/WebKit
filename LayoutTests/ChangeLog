@@ -1,3 +1,13 @@
+2006-07-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Tim O.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7808
+        Assertion failure in -[WebBaseNetscapePluginStream dealloc] when requesting an invalid URL
+
+        * plugins/get-empty-url-expected.txt: Added.
+        * plugins/get-empty-url.html: Added.
+
 2006-07-10  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

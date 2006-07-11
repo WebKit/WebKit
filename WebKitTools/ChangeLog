@@ -1,3 +1,14 @@
+2006-07-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Tim O.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7808
+        Assertion failure in -[WebBaseNetscapePluginStream dealloc] when requesting an invalid URL
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (pluginInvoke): treat getURL() with one parameter as if the second parameter were NULL -
+        should open a new stream and deliver the data to the current instance.
+
 2006-07-11  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

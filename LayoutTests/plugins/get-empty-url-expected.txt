@@ -1,0 +1,4 @@
+
+Test for bug 7808. Should not fail with an assertion.
+
+

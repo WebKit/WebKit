@@ -1,3 +1,14 @@
+2006-07-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Tim O.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7808
+        Assertion failure in -[WebBaseNetscapePluginStream dealloc] when requesting an invalid URL
+
+        * Plugins/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]):
+        Remove the early return when requesting an invalid (unsupported) URL.
+
 === Safari-521.16 ===
 
 2006-07-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
