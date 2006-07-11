@@ -1,3 +1,19 @@
+2006-07-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi & thatcher
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9642>
+        GMail Editor: Operations that use drop down menus blow away the selection
+        
+        * WebView/WebHTMLView.m:
+        (-[NSArray maintainsInactiveSelection]): Maintain an inactive selection
+        when resigning as first responder if the selection is editable
+        or if the WebView tells us to.
+        * WebView/WebView.m:
+        (-[WebView maintainsInactiveSelection]): Just because a WebView is
+        editable doesn't mean selections inside subframes will be.  Return
+        NO by default.
+
 2006-07-11  Tim Omernick  <timo@apple.com>
 
         Reviewed by Tim Hatcher.
