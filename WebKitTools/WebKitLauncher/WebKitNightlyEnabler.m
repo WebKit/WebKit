@@ -37,8 +37,14 @@
 static void cleanUpAfterOurselves(void) __attribute__ ((constructor));
 static void *symbol_lookup(char *symbol);
 
-static NSString *WKNEDidShutDownCleanly = @"WKNEDidShutDownCleanly";
+static NSString *WKNERunState = @"WKNERunState";
 static NSString *WKNEShouldMonitorShutdowns = @"WKNEShouldMonitorShutdowns";
+
+typedef enum {
+    RunStateShutDown,
+    RunStateInitializing,
+    RunStateRunning
+} WKNERunStates;
 
 static bool extensionBundlesWereLoaded = NO;
 static NSSet *extensionPaths = nil;
@@ -80,15 +86,20 @@ static void myApplicationWillFinishLaunching(CFNotificationCenterRef center, voi
     [extensionPaths release];
     extensionPaths = nil;
 
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setInteger:RunStateRunning forKey:WKNERunState];
+    [userDefaults synchronize];
+
     if (extensionBundlesWereLoaded)
         NSRunInformationalAlertPanel(@"Safari extensions detected",
-                                     @"Safari extensions were detected on your system. They are incompatible with nightly builds of WebKit, and may cause crashes or incorrect behavior.  Please disable them if you experience such behavior.", @"Continue", nil, nil);
+                                     @"Safari extensions were detected on your system.  Extensions are incompatible with nightly builds of WebKit, and may cause crashes or incorrect behavior.  Please disable them if you experience such behavior.", @"Continue",
+                                     nil, nil);
 }
 
 static void myApplicationWillTerminate(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    [userDefaults setBool:YES forKey:WKNEDidShutDownCleanly];
+    [userDefaults setInteger:RunStateShutDown forKey:WKNERunState];
     [userDefaults synchronize];
 }
 
@@ -110,22 +121,33 @@ void cleanUpAfterOurselves(void)
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *defaultPrefs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], WKNEDidShutDownCleanly,
+    NSDictionary *defaultPrefs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:RunStateShutDown], WKNERunState,
                                                                             [NSNumber numberWithBool:YES], WKNEShouldMonitorShutdowns, nil];
     [userDefaults registerDefaults:defaultPrefs];
-    if ([userDefaults boolForKey:WKNEShouldMonitorShutdowns] && ![userDefaults boolForKey:WKNEDidShutDownCleanly])
-    {
-        NSLog(@"WebKit failed to shut down cleanly.  Checking for Safari extensions.");
-        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myBundleDidLoad,
-                                        myBundleDidLoad, (CFStringRef) NSBundleDidLoadNotification,
-                                        NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
-        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myApplicationWillFinishLaunching,
-                                        myApplicationWillFinishLaunching, (CFStringRef) NSApplicationWillFinishLaunchingNotification,
-                                        NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+    if ([userDefaults boolForKey:WKNEShouldMonitorShutdowns]) {
+        WKNERunStates savedState = (WKNERunStates)[userDefaults integerForKey:WKNERunState];
+        if (savedState == RunStateInitializing) {
+            // Use CoreFoundation here as AppKit hasn't been initialized at this stage of Safari's lifetime
+            CFOptionFlags responseFlags;
+            CFUserNotificationDisplayAlert(0, kCFUserNotificationCautionAlertLevel,
+                                           NULL, NULL, NULL,
+                                           CFSTR("WebKit failed to open correctly"),
+                                           CFSTR("WebKit failed to open correctly on your previous attempt. Please disable any Safari extensions that you may have installed.  If the problem continues to occur, please file a bug report at http://webkit.opendarwin.org/quality/reporting.html"), 
+                                           CFSTR("Continue"), NULL, NULL, &responseFlags);
+        }
+        else if (savedState == RunStateRunning) {
+            NSLog(@"WebKit failed to shut down cleanly.  Checking for Safari extensions.");
+            CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myBundleDidLoad,
+                                            myBundleDidLoad, (CFStringRef) NSBundleDidLoadNotification,
+                                            NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+        }
     }
-    [userDefaults setBool:NO forKey:WKNEDidShutDownCleanly];
+    [userDefaults setInteger:RunStateInitializing forKey:WKNERunState];
     [userDefaults synchronize];
 
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myApplicationWillFinishLaunching,
+                                    myApplicationWillFinishLaunching, (CFStringRef) NSApplicationWillFinishLaunchingNotification,
+                                    NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myApplicationWillTerminate,
                                     myApplicationWillTerminate, (CFStringRef) NSApplicationWillTerminateNotification,
                                     NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
@@ -147,13 +169,12 @@ void cleanUpAfterOurselves(void)
 #define macho_nlist nlist
 #endif
 
-void *GDSymbolLookup(const struct macho_header *header, const char *symbol);
+static void *GDSymbolLookup(const struct macho_header *header, const char *symbol);
 
-void *symbol_lookup(char *symbol)
+static void *symbol_lookup(char *symbol)
 {
     int i;
-    for(i=0;i<_dyld_image_count();i++)
-    {    
+    for (i = 0; i < _dyld_image_count(); i++) {
         void *symbolResult = GDSymbolLookup((const struct macho_header*)_dyld_get_image_header(i), symbol);
         if (symbolResult)
             return symbolResult;
@@ -161,90 +182,84 @@ void *symbol_lookup(char *symbol)
     return NULL;
 }
 
-void *GDSymbolLookup(const struct macho_header *header, const char *symbol)
+static void *GDSymbolLookup(const struct macho_header *header, const char *symbol)
 {
     if (!header || !symbol)
         return NULL;
-    if ((header->magic != MH_MAGIC) && (header->magic != MH_MAGIC_64))
+
+    if (header->magic != MH_MAGIC && header->magic != MH_MAGIC_64)
         return NULL;
-    
+
     uint32_t currCommand;
     const struct load_command *loadCommand = (const struct load_command *)( ((void *)header) + sizeof(struct macho_header));
     const struct macho_segment_command *segCommand;
-    
+
     const struct symtab_command *symtabCommand = NULL;
     const struct dysymtab_command *dysymtabCommand = NULL;
     const struct macho_segment_command *textSegment = NULL;
     const struct macho_segment_command *linkEditSegment = NULL;
-    
-    for (currCommand = 0; currCommand < header->ncmds; currCommand++)
-    {
-        switch (loadCommand->cmd)
-        {
+
+    for (currCommand = 0; currCommand < header->ncmds; currCommand++) {
+        switch (loadCommand->cmd) {
             case LC_SEGMENT_COMMAND:
                 segCommand = (const struct macho_segment_command *)loadCommand;
-                if (strcmp(segCommand->segname, "__TEXT")==0)
+                if (!strcmp(segCommand->segname, "__TEXT"))
                     textSegment = segCommand;
-                else if (strcmp(segCommand->segname, "__LINKEDIT")==0)
+                else if (!strcmp(segCommand->segname, "__LINKEDIT"))
                     linkEditSegment = segCommand;
                     break;
-                
+
             case LC_SYMTAB:
                 symtabCommand = (const struct symtab_command *)loadCommand;
                 break;
-                
+
             case LC_DYSYMTAB:
                 dysymtabCommand = (const struct dysymtab_command *)loadCommand;
                 break;
         }
-        
+
         loadCommand = (const struct load_command *)(((void*)loadCommand) + loadCommand->cmdsize);
     }
-    if (textSegment==NULL || linkEditSegment==NULL || symtabCommand==NULL || dysymtabCommand==NULL) {
+    if (!textSegment || !linkEditSegment || !symtabCommand || !dysymtabCommand)
         return NULL;
-    }
-    
+
     typedef enum { Start = 0, LocalSymbols, ExternalSymbols, Done } SymbolSearchState;
     uint32_t currentSymbolIndex;
     uint32_t maximumSymbolIndex;
     SymbolSearchState state;
-    
-    for (state = Start + 1; state < Done; state++)
-    {
-        switch(state) {
+
+    for (state = Start + 1; state < Done; state++) {
+        switch (state) {
             case LocalSymbols:
                 currentSymbolIndex = dysymtabCommand->ilocalsym;
                 maximumSymbolIndex = dysymtabCommand->ilocalsym + dysymtabCommand->nlocalsym;
                 break;
-                
+
             case ExternalSymbols:
                 currentSymbolIndex = dysymtabCommand->iextdefsym;
                 maximumSymbolIndex = dysymtabCommand->nextdefsym;
                 break;
-                
+
             default:
                 return NULL;
         }
-        for (; currentSymbolIndex < maximumSymbolIndex; currentSymbolIndex++)
-        {
+        for (; currentSymbolIndex < maximumSymbolIndex; currentSymbolIndex++) {
             const struct macho_nlist *symbolTableEntry;
             symbolTableEntry = (const struct macho_nlist *)(currentSymbolIndex*sizeof(struct macho_nlist)
                                                             + (ptrdiff_t)header + symtabCommand->symoff
                                                             + linkEditSegment->vmaddr - linkEditSegment->fileoff
                                                             - textSegment->vmaddr);
             int32_t stringTableIndex = symbolTableEntry->n_un.n_strx;
-            if (stringTableIndex<0)
+            if (stringTableIndex < 0)
                 continue;
             const char *stringTableEntry = (const char*)(stringTableIndex + (ptrdiff_t)header + symtabCommand->stroff
                                                          + linkEditSegment->vmaddr - linkEditSegment->fileoff
                                                          - textSegment->vmaddr);
-            if (strcmp(symbol, stringTableEntry)==0) {
+            if (!strcmp(symbol, stringTableEntry))
                 return ((void*)header) - textSegment->vmaddr + symbolTableEntry->n_value;
-            }
         }
         state++;
     }
     return NULL;
 }
-
 

@@ -1,3 +1,21 @@
+2006-07-10  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9839
+          Bug 9839: Nightly launcher fails to detect extensions when extension causes crash on load
+
+        Now track three states: initializing, running, and closed.  If we are launched and the previous
+        state was initializing then we likely just experienced a crash on launch.
+
+        * WebKitLauncher/WebKitNightlyEnabler.m:
+        (myApplicationWillFinishLaunching): Improve wording of dialog.  Update to set new running state.
+        (myApplicationWillTerminate): Update to use new states.
+        (cleanUpAfterOurselves): Display alert if previous state was initializing.  Set state as
+        initializing as early as practical.
+        (symbol_lookup): Bring code up to speed with formatting guidelines.
+        (GDSymbolLookup): Ditto.
+
 2006-07-10  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build
