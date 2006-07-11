@@ -1,3 +1,14 @@
+2006-07-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix rdar://problem/4619534 http://bugzilla.opendarwin.org/show_bug.cgi?id=9810
+          OPTGROUP label text is using the default font instead of Lucida Grande
+
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::setFontFromControlSize):
+        Code wants the family name, but was calling fontName, which is not the same thing.
+        Also removed the unneeded conversion to DeprecatedString.
+
 === Safari-521.16 ===
 
 2006-07-10  David Kilzer  <ddkilzer@kilzer.net>

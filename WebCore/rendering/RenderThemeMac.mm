@@ -267,7 +267,7 @@ void RenderThemeMac::setFontFromControlSize(CSSStyleSelector* selector, RenderSt
     fontDescription.setGenericFamily(FontDescription::SerifFamily);
     
     NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
-    fontDescription.firstFamily().setFamily(DeprecatedString::fromNSString([font fontName]));
+    fontDescription.firstFamily().setFamily([font familyName]);
     fontDescription.setComputedSize([font pointSize]);
     fontDescription.setSpecifiedSize([font pointSize]);
 
