@@ -2,6 +2,52 @@
 
         Reviewed by Hyatt.
 
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9861
+        REGRESSION: Can't dynamically change list box to popup
+        
+        and updated fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9859
+        REGRESSION: Can't dynamically change popup to list box
+
+        The original fix for 9859 was in the renderer, and I think we can catch the change
+        earlier in the element to detach and reattach.
+
+        I also did some cleanup to remove the PopupButton code path from DeprecatedRenderSelect
+
+        Test: fast/forms/select-change-listbox-to-popup.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute): If the new attribute value is going to require us to change from listbox to popup or vice versa,
+        and we're already attached, then detach and reattach to create the correct renderer.  If we're not attached, then we'll create the correct renderer
+        when we attach.
+        (WebCore::HTMLSelectElement::recalcStyle): Updated shouldUseMenuList since it no longer takes a RenderStyle.
+        (WebCore::HTMLSelectElement::isKeyboardFocusable): ditto.
+        (WebCore::HTMLSelectElement::isMouseFocusable): ditto.
+        (WebCore::HTMLSelectElement::createRenderer): ditto.
+        (WebCore::HTMLSelectElement::setRecalcListItems): ditto.
+        (WebCore::HTMLSelectElement::reset): ditto.
+        (WebCore::HTMLSelectElement::notifyOptionSelected): ditto.
+        (WebCore::HTMLSelectElement::defaultEventHandler): ditto.
+
+        * html/HTMLSelectElement.h: (WebCore::HTMLSelectElement::shouldUseMenuList):
+        This method no longer takes a RenderStyle.  That was leftover from when we used to use the appearance
+        to determine whether or not to use the new menu list implementation.
+
+        * rendering/DeprecatedRenderSelect.h: Removed PopupButton code path.
+        * rendering/DeprecatedRenderSelect.cpp:
+        (WebCore::DeprecatedRenderSelect::DeprecatedRenderSelect):
+        (WebCore::DeprecatedRenderSelect::setWidgetWritingDirection):
+        (WebCore::DeprecatedRenderSelect::updateFromElement):
+        (WebCore::DeprecatedRenderSelect::baselinePosition):
+        (WebCore::DeprecatedRenderSelect::layout):
+        (WebCore::DeprecatedRenderSelect::updateSelection):
+
+        * rendering/RenderMenuList.cpp: (WebCore::RenderMenuList::updateFromElement):
+        Backed out previous fix since this is now done in HTMLSelectElement.
+
+2006-07-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
         Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9859
         REGRESSION: Can't dynamically change popup to list box
 

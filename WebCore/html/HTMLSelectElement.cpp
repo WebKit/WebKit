@@ -77,7 +77,7 @@ bool HTMLSelectElement::checkDTD(const Node* newChild)
 void HTMLSelectElement::recalcStyle( StyleChange ch )
 {
     if (hasChangedChild() && renderer()) {
-        if (shouldUseMenuList(renderer()->style()))
+        if (shouldUseMenuList())
             static_cast<RenderMenuList*>(renderer())->setOptionsChanged(true);
         else
             static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
@@ -257,12 +257,21 @@ ContainerNode* HTMLSelectElement::addChild(PassRefPtr<Node> newChild)
 
 void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
 {
+    bool oldShouldUseMenuList = shouldUseMenuList();
     if (attr->name() == sizeAttr) {
         m_size = max(attr->value().toInt(), 1);
+        if (oldShouldUseMenuList != shouldUseMenuList() && attached()) {
+            detach();
+            attach();
+        }
     } else if (attr->name() == widthAttr) {
         m_minwidth = max(attr->value().toInt(), 0);
     } else if (attr->name() == multipleAttr) {
         m_multiple = (!attr->isNull());
+        if (oldShouldUseMenuList != shouldUseMenuList() && attached()) {
+            detach();
+            attach();
+        }
     } else if (attr->name() == accesskeyAttr) {
         // FIXME: ignore for the moment
     } else if (attr->name() == onfocusAttr) {
@@ -277,21 +286,21 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
 
 bool HTMLSelectElement::isKeyboardFocusable() const
 {
-    if (renderer() && shouldUseMenuList(renderer()->style()))
+    if (renderer() && shouldUseMenuList())
         return isFocusable();
     return HTMLGenericFormElement::isKeyboardFocusable();
 }
 
 bool HTMLSelectElement::isMouseFocusable() const
 {
-    if (renderer() && shouldUseMenuList(renderer()->style()))
+    if (renderer() && shouldUseMenuList())
         return isFocusable();
     return HTMLGenericFormElement::isMouseFocusable();
 }
 
 RenderObject *HTMLSelectElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    if (shouldUseMenuList(style))
+    if (shouldUseMenuList())
         return new (arena) RenderMenuList(this);
     return new (arena) DeprecatedRenderSelect(this);
 }
@@ -411,7 +420,7 @@ void HTMLSelectElement::setRecalcListItems()
 {
     m_recalcListItems = true;
     if (renderer()) {
-        if (shouldUseMenuList(renderer()->style()))
+        if (shouldUseMenuList())
             static_cast<RenderMenuList*>(renderer())->setOptionsChanged(true);
         else
             static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
@@ -440,7 +449,7 @@ void HTMLSelectElement::reset()
     if (!optionSelected && firstOption)
         firstOption->setSelected(true);
     if (renderer()) {
-        if (shouldUseMenuList(renderer()->style()))
+        if (shouldUseMenuList())
             static_cast<RenderMenuList*>(renderer())->setSelectionChanged(true);
         else
             static_cast<DeprecatedRenderSelect*>(renderer())->setSelectionChanged(true);
@@ -460,7 +469,7 @@ void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, 
         }
     }
     if (renderer()) {
-        if (shouldUseMenuList(renderer()->style()))
+        if (shouldUseMenuList())
             static_cast<RenderMenuList*>(renderer())->setSelectionChanged(true);
         else
             static_cast<DeprecatedRenderSelect*>(renderer())->setSelectionChanged(true);
@@ -481,12 +490,12 @@ void HTMLSelectElement::defaultEventHandler(Event *evt)
             form()->submitClick();
             evt->setDefaultHandled();
         }
-        if ((keyIdentifier == "Down" || keyIdentifier == "Up" || keyIdentifier == "U+000020") && renderer() && shouldUseMenuList(renderer()->style())) {
+        if ((keyIdentifier == "Down" || keyIdentifier == "Up" || keyIdentifier == "U+000020") && renderer() && shouldUseMenuList()) {
             static_cast<RenderMenuList*>(renderer())->showPopup();
             evt->setDefaultHandled();
         }
     }
-    if (evt->type() == mousedownEvent && renderer() && shouldUseMenuList(renderer()->style())) {
+    if (evt->type() == mousedownEvent && renderer() && shouldUseMenuList()) {
         static_cast<RenderMenuList*>(renderer())->showPopup();
         evt->setDefaultHandled();
     }

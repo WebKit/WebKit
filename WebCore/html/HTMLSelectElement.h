@@ -125,7 +125,7 @@ public:
 
 private:
     void recalcListItems();
-    bool shouldUseMenuList(RenderStyle* style) const { return !m_multiple && m_size <= 1; }
+    bool shouldUseMenuList() const { return !m_multiple && m_size <= 1; }
 
     mutable Vector<HTMLElement*> m_listItems;
     int m_minwidth;

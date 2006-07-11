@@ -42,24 +42,17 @@ DeprecatedRenderSelect::DeprecatedRenderSelect(HTMLSelectElement* element)
     : RenderFormElement(element)
     , m_size(element->size())
     , m_multiple(element->multiple())
-    , m_useListBox(m_multiple || m_size > 1)
     , m_selectionChanged(true)
     , m_ignoreSelectEvents(false)
     , m_optionsChanged(true)
 {
-    if (m_useListBox)
-        setWidget(createListBox());
-    else
-        setWidget(new PopUpButton);
+    setWidget(createListBox());
 }
 
 void DeprecatedRenderSelect::setWidgetWritingDirection()
 {
     TextDirection d = style()->direction() == RTL ? RTL : LTR;
-    if (m_useListBox)
-        static_cast<ListBox*>(m_widget)->setWritingDirection(d);
-    else
-        static_cast<PopUpButton*>(m_widget)->setWritingDirection(d);
+    static_cast<ListBox*>(m_widget)->setWritingDirection(d);
 }
 
 void DeprecatedRenderSelect::setStyle(RenderStyle* s)
@@ -74,28 +67,10 @@ void DeprecatedRenderSelect::updateFromElement()
 
     // change widget type
     bool oldMultiple = m_multiple;
-    unsigned oldSize = m_size;
-    bool oldListbox = m_useListBox;
-
     m_multiple = static_cast<HTMLSelectElement*>(node())->multiple();
-    m_size = static_cast<HTMLSelectElement*>(node())->size();
-    m_useListBox = (m_multiple || m_size > 1);
 
-    if (oldMultiple != m_multiple || oldSize != m_size) {
-        if (m_useListBox != oldListbox) {
-            // type of select has changed
-            delete m_widget;
-
-            if (m_useListBox)
-                setWidget(createListBox());
-            else
-                setWidget(new PopUpButton);
-            setWidgetWritingDirection();
-        }
-
-        if (m_useListBox && oldMultiple != m_multiple) {
-            static_cast<ListBox*>(m_widget)->setSelectionMode(m_multiple ? ListBox::Extended : ListBox::Single);
-        }
+    if (oldMultiple != m_multiple) {
+        static_cast<ListBox*>(m_widget)->setSelectionMode(m_multiple ? ListBox::Extended : ListBox::Single);
         m_selectionChanged = true;
         m_optionsChanged = true;
     }
@@ -107,11 +82,8 @@ void DeprecatedRenderSelect::updateFromElement()
         Vector<HTMLElement*> listItems = static_cast<HTMLSelectElement*>(node())->listItems();
         int listIndex;
 
-        if (m_useListBox)
-            static_cast<ListBox*>(m_widget)->clear();
-        else
-            static_cast<PopUpButton*>(m_widget)->clear();
-
+        static_cast<ListBox*>(m_widget)->clear();
+        
         bool groupEnabled = true;
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
             if (listItems[listIndex]->hasTagName(optgroupTag)) {
@@ -127,10 +99,8 @@ void DeprecatedRenderSelect::updateFromElement()
 
                 groupEnabled = optgroupElement->isEnabled();
                 
-                if (m_useListBox)
-                    static_cast<ListBox*>(m_widget)->appendGroupLabel(label, groupEnabled);
-                else
-                    static_cast<PopUpButton*>(m_widget)->appendGroupLabel(label);
+                static_cast<ListBox*>(m_widget)->appendGroupLabel(label, groupEnabled);
+
             } else if (listItems[listIndex]->hasTagName(optionTag)) {
                 HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(listItems[listIndex]);
                 DeprecatedString itemText = optionElement->text().deprecatedString();
@@ -147,19 +117,12 @@ void DeprecatedRenderSelect::updateFromElement()
                 if (listItems[listIndex]->parentNode()->hasTagName(optgroupTag))
                     itemText.prepend("    ");
 
-                if (m_useListBox)
-                    static_cast<ListBox*>(m_widget)->appendItem(itemText, groupEnabled && optionElement->isEnabled());
-                else
-                    static_cast<PopUpButton*>(m_widget)->appendItem(itemText, groupEnabled && optionElement->isEnabled());
-            } else if (listItems[listIndex]->hasTagName(hrTag)) {
-                if (!m_useListBox)
-                    static_cast<PopUpButton*>(m_widget)->appendSeparator();
+                static_cast<ListBox*>(m_widget)->appendItem(itemText, groupEnabled && optionElement->isEnabled());
             } else
                 ASSERT(false);
             m_selectionChanged = true;
         }
-        if (m_useListBox)
-            static_cast<ListBox*>(m_widget)->doneAppendingItems();
+        static_cast<ListBox*>(m_widget)->doneAppendingItems();
         setNeedsLayoutAndMinMaxRecalc();
         m_optionsChanged = false;
     }
@@ -175,12 +138,9 @@ void DeprecatedRenderSelect::updateFromElement()
 
 short DeprecatedRenderSelect::baselinePosition(bool f, bool isRootLineBox) const
 {
-    if (m_useListBox) {
-        // FIXME: Should get the hardcoded constant of 7 by calling a ListBox function,
-        // as we do for other widget classes.
-        return RenderWidget::baselinePosition(f, isRootLineBox) - 7;
-    }
-    return RenderFormElement::baselinePosition(f, isRootLineBox);
+    // FIXME: Should get the hardcoded constant of 7 by calling a ListBox function,
+    // as we do for other widget classes.
+    return RenderWidget::baselinePosition(f, isRootLineBox) - 7;
 }
 
 void DeprecatedRenderSelect::calcMinMaxWidth()
@@ -209,28 +169,22 @@ void DeprecatedRenderSelect::layout()
     // first selected one)
 
     // calculate size
-    if (m_useListBox) {
-        ListBox* w = static_cast<ListBox*>(m_widget);
+    ListBox* w = static_cast<ListBox*>(m_widget);
 
 
-        int size = m_size;
-        // check if multiple and size was not given or invalid
-        // Internet Exploder sets size to min(number of elements, 4)
-        // Netscape seems to simply set it to "number of elements"
-        // the average of that is IMHO min(number of elements, 10)
-        // so I did that ;-)
-        if (size < 1)
-            size = min(static_cast<ListBox*>(m_widget)->count(), 10U);
+    int size = m_size;
+    // check if multiple and size was not given or invalid
+    // Internet Exploder sets size to min(number of elements, 4)
+    // Netscape seems to simply set it to "number of elements"
+    // the average of that is IMHO min(number of elements, 10)
+    // so I did that ;-)
+    if (size < 1)
+        size = min(static_cast<ListBox*>(m_widget)->count(), 10U);
 
-        // Let the widget tell us how big it wants to be.
-        IntSize s(w->sizeForNumberOfLines(size));
-        setIntrinsicWidth(s.width());
-        setIntrinsicHeight(s.height());
-    } else {
-        IntSize s(m_widget->sizeHint());
-        setIntrinsicWidth(s.width());
-        setIntrinsicHeight(s.height());
-    }
+    // Let the widget tell us how big it wants to be.
+    IntSize s(w->sizeForNumberOfLines(size));
+    setIntrinsicWidth(s.width());
+    setIntrinsicHeight(s.height());
 
     RenderFormElement::layout();
 
@@ -242,54 +196,6 @@ void DeprecatedRenderSelect::layout()
         foundOption = (listItems[i]->hasTagName(optionTag));
 
     m_widget->setEnabled(foundOption && ! static_cast<HTMLSelectElement*>(node())->disabled());
-}
-
-void DeprecatedRenderSelect::valueChanged(Widget*)
-{
-    if (m_ignoreSelectEvents)
-        return;
-
-    ASSERT(!m_useListBox);
-
-    int index = static_cast<PopUpButton*>(m_widget)->currentItem();
-
-    Vector<HTMLElement*> listItems = static_cast<HTMLSelectElement*>(node())->listItems();
-    if (index >= 0 && index < (int)listItems.size()) {
-        bool found = listItems[index]->hasTagName(optionTag);
-        if (!found) {
-            // this one is not selectable,  we need to find an option element
-            while ((unsigned) index < listItems.size()) {
-                if (listItems[index]->hasTagName(optionTag)) {
-                    found = true;
-                    break;
-                }
-                ++index;
-            }
-
-            if (!found) {
-                while (index >= 0) {
-                    if (listItems[index]->hasTagName(optionTag)) {
-                        found = true;
-                        break;
-                    }
-                    --index;
-                }
-            }
-        }
-
-        if (found) {
-            if (index != static_cast<PopUpButton*>(m_widget)->currentItem())
-                static_cast<PopUpButton*>(m_widget)->setCurrentItem(index);
-
-            for (unsigned i = 0; i < listItems.size(); ++i)
-                if (listItems[i]->hasTagName(optionTag) && i != (unsigned int) index)
-                    static_cast<HTMLOptionElement*>(listItems[i])->m_selected = false;
-
-            static_cast<HTMLOptionElement*>(listItems[index])->m_selected = true;
-        }
-    }
-
-    static_cast<HTMLSelectElement*>(node())->onChange();
 }
 
 void DeprecatedRenderSelect::selectionChanged(Widget*)
@@ -331,33 +237,15 @@ void DeprecatedRenderSelect::updateSelection()
 {
     Vector<HTMLElement*> listItems = static_cast<HTMLSelectElement*>(node())->listItems();
     int i;
-    if (m_useListBox) {
-        // if multi-select, we select only the new selected index
-        ListBox *listBox = static_cast<ListBox*>(m_widget);
-        int j = 0;
-        for (i = 0; i < int(listItems.size()); i++) {
-            listBox->setSelected(j, listItems[i]->hasTagName(optionTag) &&
-                                static_cast<HTMLOptionElement*>(listItems[i])->selected());
-            if (listItems[i]->hasTagName(optionTag) || listItems[i]->hasTagName(optgroupTag))
-                ++j;
-            
-        }
-    } else {
-        bool found = false;
-        unsigned firstOption = listItems.size();
-        i = listItems.size();
-        while (i--)
-            if (listItems[i]->hasTagName(optionTag)) {
-                if (found)
-                    static_cast<HTMLOptionElement*>(listItems[i])->m_selected = false;
-                else if (static_cast<HTMLOptionElement*>(listItems[i])->selected()) {
-                    static_cast<PopUpButton*>(m_widget)->setCurrentItem(i);
-                    found = true;
-                }
-                firstOption = i;
-            }
-
-        ASSERT(firstOption == listItems.size() || found);
+    // if multi-select, we select only the new selected index
+    ListBox *listBox = static_cast<ListBox*>(m_widget);
+    int j = 0;
+    for (i = 0; i < int(listItems.size()); i++) {
+        listBox->setSelected(j, listItems[i]->hasTagName(optionTag) &&
+                            static_cast<HTMLOptionElement*>(listItems[i])->selected());
+        if (listItems[i]->hasTagName(optionTag) || listItems[i]->hasTagName(optgroupTag))
+            ++j;
+        
     }
 
     m_selectionChanged = false;
