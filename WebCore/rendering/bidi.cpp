@@ -1491,7 +1491,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     // Figure out if we should clear out our line boxes.
     // FIXME: Handle resize eventually!
     // FIXME: Do something better when floats are present.
-    bool fullLayout = !firstChild() || selfNeedsLayout() || relayoutChildren || containsFloats();
+    bool fullLayout = !firstLineBox() || !firstChild() || selfNeedsLayout() || relayoutChildren || containsFloats();
     if (fullLayout)
         deleteLineBoxes();
         

@@ -101,12 +101,17 @@ void RenderView::layout()
     if (m_printingMode)
         m_minWidth = m_width;
 
-    setChildNeedsLayout(true);
-    setMinMaxKnown(false);
-    for (RenderObject *c = firstChild(); c; c = c->nextSibling())
-        c->setChildNeedsLayout(true);
+    // FIXME: This is all just a terrible workaround for bugs in layout when the view height changes.  
+    // Find a better way to detect view height changes.  We're guessing that if we don't need layout that the reason
+    // we were called is because of a FrameView bounds change.
+    if (!needsLayout()) {
+        setChildNeedsLayout(true, false);
+        setMinMaxKnown(false);
+        for (RenderObject *c = firstChild(); c; c = c->nextSibling())
+            c->setChildNeedsLayout(true, false);
+    }
 
-    if ( recalcMinMax() )
+    if (recalcMinMax())
         recalcMinMaxWidths();
 
     RenderBlock::layout();

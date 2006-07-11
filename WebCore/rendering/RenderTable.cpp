@@ -239,7 +239,7 @@ void RenderTable::layout()
 
     if (posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
         // All we have to is lay out our positioned objects.
-        layoutPositionedObjects(true);
+        layoutPositionedObjects(false);
         setNeedsLayout(false);
         return;
     }
