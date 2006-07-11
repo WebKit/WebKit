@@ -1,5 +1,11 @@
 2006-07-10  Geoffrey Garen  <ggaren@apple.com>
 
+        No review necessary. Removed bogus file I accidentally checked in before.
+
+        * API/JSInternalSringRef.h: Removed.
+
+2006-07-10  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin.
         
         Added exception out parameter to API object callbacks, removed semi-bogus
