@@ -1,3 +1,12 @@
+2006-07-12  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by NOBODY (layout test fix).
+
+        Remove property information left in files from svn-apply.
+
+        * fast/table/large-rowspan-crash-expected.txt:
+        * fast/table/large-rowspan-crash.html:
+
 2006-07-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
