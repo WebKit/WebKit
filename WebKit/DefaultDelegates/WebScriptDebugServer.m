@@ -80,6 +80,7 @@ static unsigned listenerCount = 0;
         serverConnection = nil;
     }
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationTerminating:) name:NSApplicationWillTerminateNotification object:nil];
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(serverQuery:) name:WebScriptDebugServerQueryNotification object:nil];
 
     listeners = [[NSMutableSet alloc] init];
@@ -93,6 +94,7 @@ static unsigned listenerCount = 0;
     listenerCount -= [listeners count];
     if (!listenerCount)
         [self detachScriptDebuggerFromAllWebViews];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:nil];
     [[NSDistributedNotificationCenter defaultCenter] removeObserver:self name:WebScriptDebugServerQueryNotification object:nil];
     [[NSDistributedNotificationCenter defaultCenter] postNotificationName:WebScriptDebugServerWillUnloadNotification object:serverName];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:nil];
@@ -101,6 +103,11 @@ static unsigned listenerCount = 0;
     [serverName release];
     [listeners release];
     [super dealloc];
+}
+
+- (void)applicationTerminating:(NSNotification *)notifiction
+{
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:WebScriptDebugServerWillUnloadNotification object:serverName];
 }
 
 - (void)attachScriptDebuggerToAllWebViews

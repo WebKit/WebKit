@@ -1,3 +1,16 @@
+2006-07-12  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Timothy.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9868
+        Applications shown in Drosera's "Attach" window remain after exit
+
+        * DefaultDelegates/WebScriptDebugServer.m:
+        (-[WebScriptDebugServer init]): Register for NSApplicationWillTerminateNotification so we will
+        know when the application is being exited.
+        (-[WebScriptDebugServer dealloc]): Unregister notification before we are deallocated.
+        (-[WebScriptDebugServer applicationTerminating:]): Inform anyone listening that we are going away.
+
 2006-07-12  Tim Omernick  <timo@apple.com>
 
         Reviewed by Tim Hatcher.
