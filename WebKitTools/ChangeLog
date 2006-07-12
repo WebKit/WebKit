@@ -1,3 +1,14 @@
+2006-07-12  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9848
+          Teach svn-create-patch and friends to fix ChangeLog patches
+
+        * Scripts/svn-apply: Added fixChangeLogPatch() and invoked it in the proper place.
+        * Scripts/svn-create-patch: Ditto.
+        * Scripts/svn-unapply: Ditto.
+
 2006-07-12  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by ggaren.
