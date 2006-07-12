@@ -3143,22 +3143,13 @@ void FrameMac::respondToChangedSelection(const SelectionController &oldSelection
             VisiblePosition newStart(selection().start(), selection().affinity());
             SelectionController newAdjacentWords(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
 
-            if (oldAdjacentWords != newAdjacentWords) {
-                // Mark misspellings in the portion that was previously unmarked because of
-                // the proximity of the start of the selection. We only spell check words in
-                // the vicinity of the start of the old selection because the spelling checker
-                // is not fast enough to do a lot of spelling checking implicitly. This matches
-                // AppKit. This function is really the only code that knows that rule. The
-                // markMisspellings function is prepared to handler larger ranges.
+            // When typing we check spelling elsewhere, so don't redo it here.
+            if (closeTyping && oldAdjacentWords != newAdjacentWords)
+                markMisspellings(oldAdjacentWords);
 
-                // When typing we check spelling elsewhere, so don't redo it here.
-                if (closeTyping)
-                    markMisspellings(oldAdjacentWords);
-
-                // This only erases a marker in the first word of the selection.
-                // Perhaps peculiar, but it matches AppKit.
-                document()->removeMarkers(newAdjacentWords.toRange().get(), DocumentMarker::Spelling);
-            }
+            // This only erases a marker in the first word of the selection.
+            // Perhaps peculiar, but it matches AppKit.
+            document()->removeMarkers(newAdjacentWords.toRange().get(), DocumentMarker::Spelling);
         } else
             // When continuous spell checking is off, no markers appear after the selection changes.
             document()->removeMarkers(DocumentMarker::Spelling);

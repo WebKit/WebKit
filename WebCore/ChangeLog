@@ -1,3 +1,15 @@
+2006-07-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4620686>
+        REGRESSION: Mispelling markers are still displayed when using the delete key to place caret into a misspelled word
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::respondToChangedSelection): Remove markers from newAdjacentWords 
+        even if oldAdjacentWords is equal to newAdjacentWords.  This happens during a deletion.
+        
+
 2006-07-11  Tim Omernick  <timo@apple.com>
 
         Reviewed by NOBODY (build fix)

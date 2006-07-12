@@ -1,3 +1,21 @@
+2006-07-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4620686>
+        REGRESSION: Mispelling markers are still displayed when using the delete key to place caret into a misspelled word
+
+        * editing/deleting/delete-after-span-ws-001-expected.checksum:
+        * editing/deleting/delete-after-span-ws-001-expected.png:
+        * editing/deleting/delete-after-span-ws-002-expected.checksum:
+        * editing/deleting/delete-after-span-ws-002-expected.png:
+        * editing/deleting/delete-after-span-ws-003-expected.checksum:
+        * editing/deleting/delete-after-span-ws-003-expected.png:
+        * editing/deleting/delete-block-merge-contents-010-expected.checksum:
+        * editing/deleting/delete-block-merge-contents-010-expected.png:
+        * editing/deleting/merge-unrendered-space-expected.checksum:
+        * editing/deleting/merge-unrendered-space-expected.png:
+        
 2006-07-11  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff.
