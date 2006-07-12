@@ -574,6 +574,13 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     bool swallowEvent = dispatchMouseEvent(mousedownEvent, mev.targetNode(), true, d->clickCount, mouseEvent, true);
 
     if (!swallowEvent) {
+        // Refetch the event target node if it currently is the shadow node inside an <input> element.
+        // If a mouse event handler changes the input element type to one that has a widget associated,
+        // we'd like to Frame::handleMousePressEvent to pass the event to the widget and thus the
+        // event target node can't still be the shadow node.
+        if (mev.targetNode()->isShadowNode() && mev.targetNode()->shadowParentNode()->hasTagName(inputTag))
+            mev = prepareMouseEvent(true, true, false, mouseEvent);
+
         m_frame->handleMousePressEvent(mev);
         // Many AK widgets run their own event loops and consume events while the mouse is down.
         // When they finish, currentEvent is the mouseUp that they exited on.  We need to update

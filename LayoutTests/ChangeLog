@@ -1,3 +1,14 @@
+2006-07-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4586665> REGRESSION: autorestore.apple.com: Crashes Safari in WebCore::Widget::client() const
+
+        * fast/forms/input-type-change-in-onfocus-keyboard-expected.txt: Added.
+        * fast/forms/input-type-change-in-onfocus-keyboard.html: Added.
+        * fast/forms/input-type-change-in-onfocus-mouse-expected.txt: Added.
+        * fast/forms/input-type-change-in-onfocus-mouse.html: Added.
+
 2006-07-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

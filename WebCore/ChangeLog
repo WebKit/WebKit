@@ -1,3 +1,24 @@
+2006-07-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4586665> REGRESSION: autorestore.apple.com: Crashes Safari in WebCore::Widget::client() const
+
+        * bridge/mac/FrameMac.h:
+        Add focusCallResultedInViewBeingCreated argument. 
+        
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::nextKeyViewInFrame):
+        If the call to focus() caused the node to get a native widget, set focusCallResultedInViewBeingCreated to true.
+        
+        (WebCore::FrameMac::nextKeyViewInFrameHierarchy):
+        Don't reset the focus node if focusCallResultedInViewBeingCreated is true. Also, add magic to prevent setting
+        a text field as the first responder if its field editor already is the current first responder.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleMousePressEvent):
+        In some cases, get the event target node again after dispatching the mouse event.
+
 2006-07-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele.

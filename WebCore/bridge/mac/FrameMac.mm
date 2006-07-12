@@ -870,7 +870,7 @@ String FrameMac::mimeTypeForFileName(const String& fileName) const
     return String();
 }
 
-NSView* FrameMac::nextKeyViewInFrame(Node* node, SelectionDirection direction)
+NSView* FrameMac::nextKeyViewInFrame(Node* node, SelectionDirection direction, bool* focusCallResultedInViewBeingCreated)
 {
     Document* doc = document();
     if (!doc)
@@ -885,8 +885,13 @@ NSView* FrameMac::nextKeyViewInFrame(Node* node, SelectionDirection direction)
         RenderObject* renderer = node->renderer();
         if (!renderer->isWidget()) {
             static_cast<Element*>(node)->focus(); 
-            [_bridge willMakeFirstResponderForNodeFocus];
-            return [_bridge documentView];
+            // The call to focus might have triggered event handlers that change the renderer type.
+            // FIXME: When all input elements are native, we won't need this extra check
+            if ((renderer = node->renderer()) && !renderer->isWidget()) {
+                [_bridge willMakeFirstResponderForNodeFocus];
+                return [_bridge documentView];
+            } else if (focusCallResultedInViewBeingCreated)
+                *focusCallResultedInViewBeingCreated = true;
         }
 
         if (Widget* widget = static_cast<RenderWidget*>(renderer)->widget()) {
@@ -903,15 +908,30 @@ NSView* FrameMac::nextKeyViewInFrame(Node* node, SelectionDirection direction)
 
 NSView *FrameMac::nextKeyViewInFrameHierarchy(Node *node, SelectionDirection direction)
 {
-    NSView *next = nextKeyViewInFrame(node, direction);
+    bool focusCallResultedInViewBeingCreated = false;
+    NSView *next = nextKeyViewInFrame(node, direction, &focusCallResultedInViewBeingCreated);
     if (!next)
         if (FrameMac *parent = Mac(tree()->parent()))
             next = parent->nextKeyViewInFrameHierarchy(ownerElement(), direction);
     
     // remove focus from currently focused node if we're giving focus to another view
-    if (next && (next != [_bridge documentView]))
+    // unless the other view was created as a result of calling focus in nextKeyViewWithFrame.
+    // FIXME: The focusCallResultedInViewBeingCreated calls can be removed when all input element types
+    // have been made native.
+    if (next && (next != [_bridge documentView] && !focusCallResultedInViewBeingCreated))
         if (Document *doc = document())
             doc->setFocusNode(0);
+
+    // The common case where a view was created is when an <input> element changed from native 
+    // to non-native. When this happens, HTMLGenericFormElement::attach() method will call setFocus()
+    // on the widget. For views with a field editor, setFocus() will set the active responder to be the field editor. 
+    // In this case, we want to return the field editor as the next key view. Otherwise, the focus will be lost
+    // and a blur message will be sent. 
+    // FIXME: This code can be removed when all input element types are native.
+    if (focusCallResultedInViewBeingCreated) {
+        if ([[next window] firstResponder] == [[next window] fieldEditor:NO forObject:next])
+            return [[next window] fieldEditor:NO forObject:next];
+    }
     
     return next;
 }
