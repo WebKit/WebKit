@@ -81,7 +81,7 @@ static NSFont *itemFont()
 
 static Font* itemTextRenderer(bool isPrinting)
 {
-    if (isPrinting) {
+    if (!isPrinting) {
         if (itemScreenRenderer == nil) {
             FontPlatformData font(itemFont());
             itemScreenRenderer = new Font(font);
@@ -98,7 +98,7 @@ static Font* itemTextRenderer(bool isPrinting)
 
 static Font* groupLabelTextRenderer(bool isPrinting)
 {
-    if (isPrinting) {
+    if (!isPrinting) {
         if (groupLabelScreenRenderer == nil) {
             FontPlatformData font([NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]]);
             groupLabelScreenRenderer = new Font(font);

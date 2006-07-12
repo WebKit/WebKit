@@ -1,3 +1,17 @@
+2006-07-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Anders.
+
+        Fix for layout test regressions after my check-in last night. Just 
+        a silly mistake where I should have asked if we were NOT printing 
+        instead of if we were in the listbox code.
+
+        * WebCore.xcodeproj/project.pbxproj: Project file wars. Back to 
+        XCode 2.3
+        * platform/mac/ListBoxMac.mm:
+        (itemTextRenderer): Inverted check.
+        (groupLabelTextRenderer): Inverted check.
+
 2006-07-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
