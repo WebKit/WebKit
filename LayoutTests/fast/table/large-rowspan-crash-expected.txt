@@ -1,0 +1,9 @@
+If the browser didn't crash, the test passed.
+
+
+
+Property changes on: LayoutTests/fast/table/large-rowspan-crash-expected.txt
+___________________________________________________________________
+Name: svn:eol-style
+   + native
+

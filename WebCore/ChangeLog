@@ -1,3 +1,19 @@
+2006-07-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9806
+          <rdar://problem/4622622>
+          REGRESSION: Large rowspan causes WebKit to call abort()
+
+        Test: fast/table/large-rowspan-crash.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::ensureRows):
+        Use sizeof(RowStruct) instead of sizeof(int).
+        Clearly we'll need something better to solve this completely.
+        I expect another smaller, but still huge, value will still cause a problem.
+
 2006-07-12  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
