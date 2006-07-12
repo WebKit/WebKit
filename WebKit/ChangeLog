@@ -1,3 +1,35 @@
+2006-07-11  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin and Tim O
+
+        - added support for creating a selection image with white text
+
+        * WebView/WebDocumentPrivate.h:
+        added -selectionImageForcingWhiteText: and -selectionImageRect to the private
+        <WebDocumentSelection> protocol
+
+        * Misc/WebSearchableTextView.m:
+        (-[NSString selectionImageForcingWhiteText:]):
+        added stub for this new method to this obsolete class to satisfy the compiler
+        (-[NSString selectionImageRect]):
+        ditto
+        
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _selectionDraggingImage]):
+        now calls -selectionImageForcingWhiteText:NO instead of just -selectionImage
+        (-[WebHTMLView _selectionDraggingRect]):
+        now calls selectionImageRect, to which the implementation moved
+        (-[WebHTMLView selectionImageForcingWhiteText:]):
+        implemented this new method by calling through to new bridge method selectionImageForcingWhiteText:
+        (-[WebHTMLView selectionImageRect]):
+        implemented this new method by using existing _selectionDraggingRect implementation
+        
+        * WebView/WebPDFView.m:
+        (-[WebPDFView selectionImageForcingWhiteText:]):
+        implemented by using code that was formerly in Safari
+        (-[WebPDFView selectionImageRect]):
+        implemented by returning selectionRect
+
 2006-07-11  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff.

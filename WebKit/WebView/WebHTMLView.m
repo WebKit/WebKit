@@ -1683,7 +1683,7 @@ static WebHTMLView *lastHitView = nil;
 - (NSImage *)_selectionDraggingImage
 {
     if ([self _hasSelection]) {
-        NSImage *dragImage = [[self _bridge] selectionImage];
+        NSImage *dragImage = [[self _bridge] selectionImageForcingWhiteText:NO];
         [dragImage _web_dissolveToFraction:WebDragImageAlpha];
         return dragImage;
     }
@@ -1692,9 +1692,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSRect)_selectionDraggingRect
 {
-    if ([self _hasSelection])
-        return [[self _bridge] visibleSelectionRect];
-    return NSZeroRect;
+    // Mail currently calls this method. We can eliminate it when Mail no longer calls it.
+    return [self selectionImageRect];
 }
 
 - (BOOL)_canIncreaseSelectionListLevel
@@ -2049,6 +2048,21 @@ static WebHTMLView *lastHitView = nil;
 - (NSView *)selectionView
 {
     return self;
+}
+
+- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
+{
+    if ([self _hasSelection])
+        return [[self _bridge] selectionImageForcingWhiteText:forceWhiteText];
+
+    return nil;
+}
+
+- (NSRect)selectionImageRect
+{
+    if ([self _hasSelection])
+        return [[self _bridge] visibleSelectionRect];
+    return NSZeroRect;
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 

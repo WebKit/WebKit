@@ -824,6 +824,40 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     return [PDFSubview documentView];
 }
 
+- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
+{
+    // Convert the selection to an attributed string, and draw that.
+    // FIXME 4621154: this doesn't handle italics (and maybe other styles)
+    // FIXME 4604366: this doesn't handle text at non-actual size
+    NSMutableAttributedString *attributedString = [[self selectedAttributedString] mutableCopy];
+    NSRange wholeStringRange = NSMakeRange(0, [attributedString length]);
+    
+    // Modify the styles in the attributed string to draw white text, no background, and no underline. We draw 
+    // no underline because it would look ugly.
+    [attributedString beginEditing];
+    [attributedString removeAttribute:NSBackgroundColorAttributeName range:wholeStringRange];
+    [attributedString removeAttribute:NSUnderlineStyleAttributeName range:wholeStringRange];
+    if (forceWhiteText)
+        [attributedString addAttribute:NSForegroundColorAttributeName value:[NSColor colorWithDeviceWhite:1.0 alpha:1.0] range:wholeStringRange];
+    [attributedString endEditing];
+    
+    NSImage* selectionImage = [[[NSImage alloc] initWithSize:[self selectionImageRect].size] autorelease];
+    
+    [selectionImage lockFocus];
+    [attributedString drawAtPoint:NSZeroPoint];
+    [selectionImage unlockFocus];
+    
+    [attributedString release];
+
+    return selectionImage;
+}
+
+- (NSRect)selectionImageRect
+{
+    // FIXME: deal with clipping?
+    return [self selectionRect];
+}
+
 - (NSArray *)pasteboardTypesForSelection
 {
     return [NSArray arrayWithObjects:NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];

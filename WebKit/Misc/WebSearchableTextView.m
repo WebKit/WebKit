@@ -112,6 +112,20 @@
     return result;
 }
 
+- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
+{
+    // This is here to complete the <WebDocumentSelection> protocol, but it was introduced after this
+    // class was deprecated so there's no implementation.
+    return nil;
+}
+
+- (NSRect)selectionImageRect
+{
+    // This is here to complete the <WebDocumentSelection> protocol, but it was introduced after this
+    // class was deprecated so there's no implementation.
+    return NSZeroRect;
+}
+
 - (NSView *)selectionView
 {
     return self;
