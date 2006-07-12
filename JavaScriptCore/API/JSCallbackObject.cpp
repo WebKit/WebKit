@@ -287,14 +287,13 @@ JSValue* JSCallbackObject::callAsFunction(ExecState* exec, JSObject* thisObj, co
     return 0;
 }
 
-void JSCallbackObject::getPropertyList(ExecState* exec, ReferenceList& propertyList, bool recursive)
+void JSCallbackObject::getPropertyList(ReferenceList& propertyList, bool recursive)
 {
-    JSContextRef context = toRef(exec);
     JSObjectRef thisRef = toRef(this);
 
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
         if (JSObjectAddPropertiesToListCallback addPropertiesToList = jsClass->callbacks.addPropertiesToList)
-            addPropertiesToList(context, thisRef, toRef(&propertyList), toRef(exec->exceptionSlot()));
+            addPropertiesToList(thisRef, toRef(&propertyList));
 
         if (__JSClass::StaticValuesTable* staticValues = jsClass->staticValues) {
             typedef __JSClass::StaticValuesTable::const_iterator iterator;
@@ -319,7 +318,7 @@ void JSCallbackObject::getPropertyList(ExecState* exec, ReferenceList& propertyL
         }
     }
 
-    JSObject::getPropertyList(exec, propertyList, recursive);
+    JSObject::getPropertyList(propertyList, recursive);
 }
 
 bool JSCallbackObject::toBoolean(ExecState* exec) const

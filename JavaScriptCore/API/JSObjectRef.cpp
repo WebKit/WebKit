@@ -271,14 +271,13 @@ struct __JSPropertyEnumerator
     ReferenceListIterator iterator;
 };
 
-JSPropertyEnumeratorRef JSObjectCreatePropertyEnumerator(JSContextRef context, JSObjectRef object)
+JSPropertyEnumeratorRef JSObjectCreatePropertyEnumerator(JSObjectRef object)
 {
     JSLock lock;
-    ExecState* exec = toJS(context);
     JSObject* jsObject = toJS(object);
     
     JSPropertyEnumeratorRef enumerator = new __JSPropertyEnumerator();
-    jsObject->getPropertyList(exec, enumerator->list);
+    jsObject->getPropertyList(enumerator->list);
     enumerator->iterator = enumerator->list.begin();
     
     return JSPropertyEnumeratorRetain(enumerator);

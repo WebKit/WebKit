@@ -162,7 +162,7 @@ static bool MyObject_deleteProperty(JSContextRef context, JSObjectRef object, JS
     return false;
 }
 
-static void MyObject_getPropertyList(JSContextRef context, JSObjectRef object, JSPropertyListRef propertyList, JSValueRef* exception)
+static void MyObject_addPropertiesToList(JSObjectRef object, JSPropertyListRef propertyList)
 {
     UNUSED_PARAM(context);
     
@@ -245,7 +245,7 @@ JSObjectCallbacks MyObject_callbacks = {
     MyObject_getProperty,
     MyObject_setProperty,
     MyObject_deleteProperty,
-    MyObject_getPropertyList,
+    MyObject_addPropertiesToList,
     MyObject_callAsFunction,
     MyObject_callAsConstructor,
     MyObject_hasInstance,
@@ -537,7 +537,7 @@ int main(int argc, char* argv[])
     o = JSObjectMake(context, NULL, NULL);
     JSObjectSetProperty(context, o, jsOneIString, JSValueMakeNumber(1), kJSPropertyAttributeNone);
     JSObjectSetProperty(context, o, jsCFIString,  JSValueMakeNumber(1), kJSPropertyAttributeDontEnum);
-    JSPropertyEnumeratorRef enumerator = JSObjectCreatePropertyEnumerator(context, o);
+    JSPropertyEnumeratorRef enumerator = JSObjectCreatePropertyEnumerator(o);
     int count = 0;
     while (JSPropertyEnumeratorGetNextName(enumerator))
         ++count;

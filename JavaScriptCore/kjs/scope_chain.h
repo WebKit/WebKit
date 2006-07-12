@@ -82,7 +82,7 @@ namespace KJS {
         void mark();
 
 #ifndef NDEBUG        
-        void print(ExecState*);
+        void print();
 #endif
         
     private:

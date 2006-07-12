@@ -37,13 +37,13 @@ void ScopeChain::push(const ScopeChain &c)
 
 #ifndef NDEBUG
 
-void ScopeChain::print(ExecState* exec)
+void ScopeChain::print()
 {
     ScopeChainIterator scopeEnd = end();
     for (ScopeChainIterator scopeIter = begin(); scopeIter != scopeEnd; ++scopeIter) {
         JSObject* o = *scopeIter;
         ReferenceList propertyList;
-        o->getPropertyList(exec, propertyList, false);
+        o->getPropertyList(propertyList, false);
         ReferenceListIterator propEnd = propertyList.end();
 
         fprintf(stderr, "----- [scope %p] -----\n", o);

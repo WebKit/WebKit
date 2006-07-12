@@ -1,3 +1,17 @@
+2006-07-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        - Removed context and exception parameters from JSObjectGetPropertyEnumerator,
+        removing the spurious use of ExecState inside JavaScriptCore that made
+        us think this was necessary in the first place.
+
+        (StringInstance::getPropertyList): Use getString instead of toString because
+        we know we're dealing with a string -- we put it there in the first place.
+        While we're at it, store the string's size instead of retrieving it each time 
+        through the loop, to avoid the unnecessary killing of puppies.
+        * kjs/string_object.h:
+
 2006-07-12  Maciej Stachowiak  <mjs@apple.com>
 
         4eviewed by Geoff.

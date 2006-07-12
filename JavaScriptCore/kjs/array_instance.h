@@ -39,7 +39,7 @@ namespace KJS {
     virtual void put(ExecState *exec, unsigned propertyName, JSValue *value, int attr = None);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
-    virtual void getPropertyList(ExecState*, ReferenceList& propertyList, bool recursive);
+    virtual void getPropertyList(ReferenceList& propertyList, bool recursive);
 
     virtual void mark();
 

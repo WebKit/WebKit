@@ -1878,7 +1878,7 @@ Completion ForInNode::execute(ExecState *exec)
 
   KJS_CHECKEXCEPTION
   v = e->toObject(exec);
-  v->getPropertyList(exec, propertyList);
+  v->getPropertyList(propertyList);
 
   ReferenceListIterator propIt = propertyList.begin();
 

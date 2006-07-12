@@ -456,7 +456,7 @@ namespace KJS {
      * included in the list.
      * @return A List of References to properties of the object.
      **/
-    virtual void getPropertyList(ExecState *exec, ReferenceList& propertyList, bool recursive = true);
+    virtual void getPropertyList(ReferenceList& propertyList, bool recursive = true);
 
     /**
      * Returns the internal value of the object. This is used for objects such
