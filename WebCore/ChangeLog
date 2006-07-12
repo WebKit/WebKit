@@ -1,3 +1,17 @@
+2006-07-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=9813
+        OPTION text can paint over select element's scrollbar
+
+        Test: fast/forms/option-text-clip.html
+
+        * rendering/RenderMenuList.cpp: (WebCore::RenderMenuList::paintObject):
+        When calculating the clip to apply to the button text, also consider padding.
+        In the future, we may have separate renderers for the text part, and the arrow part
+        of the control, and then the separation should be natural.  For now, we use padding.
+
 2006-07-11  David Kilzer  <ddkilzer@kilzer.net>
 
         Windows build fix.  Reviewed by NOBODY.

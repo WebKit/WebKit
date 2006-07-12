@@ -1,3 +1,15 @@
+2006-07-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Test for: http://bugzilla.opendarwin.org/show_bug.cgi?id=9813
+        OPTION text can paint over select element's scrollbar
+
+        * fast/forms/option-text-clip-expected.checksum: Added.
+        * fast/forms/option-text-clip-expected.png: Added.
+        * fast/forms/option-text-clip-expected.txt: Added.
+        * fast/forms/option-text-clip.html: Added.
+
 2006-07-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

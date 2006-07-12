@@ -142,9 +142,9 @@ void RenderMenuList::paintObject(PaintInfo& i, int x, int y)
 {
     // Push a clip.
     if (i.phase == PaintPhaseForeground) {
-        IntRect clipRect(x + borderLeft(), y + borderTop(),
-            width() - borderLeft() - borderRight(),
-            height() - borderBottom() - borderTop());
+        IntRect clipRect(x + borderLeft() + paddingLeft(), y + borderTop() + paddingTop(),
+            width() - borderLeft() - borderRight() - paddingLeft() - paddingRight(),
+            height() - borderBottom() - borderTop() - paddingTop() - paddingBottom());
         if (clipRect.isEmpty())
             return;
         i.p->save();
