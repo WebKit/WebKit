@@ -2,6 +2,16 @@
 
         Reviewed by ggaren.
 
+        Bug 9869: [Drosera] JS Console fails to evaluate input when paused in global scope
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9869
+
+        * Drosera/DebuggerDocument.m:
+        (-[WebScriptObject currentFunctionStack]): Include the global frame in the stack.
+
+2006-07-12  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by ggaren.
+
         Bug 9863: Drosera needs to show something at launch
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9863
 
