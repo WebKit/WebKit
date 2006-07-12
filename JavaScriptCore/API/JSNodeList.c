@@ -38,7 +38,7 @@ static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef obj
             return JSNode_new(context, node);
     }
     
-    return JSUndefinedMake();
+    return JSValueMakeUndefined();
 }
 
 static JSStaticFunction JSNodeListPrototype_staticFunctions[] = {
@@ -56,14 +56,13 @@ static JSClassRef JSNodeListPrototype_class(JSContextRef context)
     return jsClass;
 }
 
-static bool JSNodeList_length(JSContextRef context, JSObjectRef thisObject, JSInternalStringRef propertyName, JSValueRef* returnValue, JSValueRef* exception)
+static JSValueRef JSNodeList_length(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     
     NodeList* nodeList = JSObjectGetPrivate(thisObject);
     assert(nodeList);
-    *returnValue = JSNumberMake(NodeList_length(nodeList));
-    return true;
+    return JSValueMakeNumber(NodeList_length(nodeList));
 }
 
 static JSStaticValue JSNodeList_staticValues[] = {
@@ -71,21 +70,20 @@ static JSStaticValue JSNodeList_staticValues[] = {
     { 0, 0, 0, 0 }
 };
 
-static bool JSNodeList_getProperty(JSContextRef context, JSObjectRef thisObject, JSInternalStringRef propertyName, JSValueRef* returnValue, JSValueRef* exception)
+static JSValueRef JSNodeList_getProperty(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     NodeList* nodeList = JSObjectGetPrivate(thisObject);
     assert(nodeList);
-    double index = JSValueToNumber(context, JSStringMake(propertyName));
+    double index = JSValueToNumber(context, JSValueMakeString(propertyName));
     unsigned uindex = index;
     if (uindex == index) { // false for NaN
         Node* node = NodeList_item(nodeList, uindex);
         if (node) {
-            *returnValue = JSNode_new(context, node);
-            return true;
+            return JSNode_new(context, node);
         }
     }
     
-    return false;
+    return NULL;
 }
 
 static void JSNodeList_finalize(JSObjectRef thisObject)
@@ -114,7 +112,7 @@ static JSObjectRef JSNodeList_prototype(JSContextRef context)
     static JSObjectRef prototype;
     if (!prototype) {
         prototype = JSObjectMake(context, JSNodeListPrototype_class(context), NULL);
-        JSGCProtect(prototype);
+        JSValueProtect(prototype);
     }
     return prototype;
 }

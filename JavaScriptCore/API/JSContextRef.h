@@ -30,6 +30,8 @@
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSValueRef.h>
 
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -54,8 +56,8 @@ void JSContextDestroy(JSContextRef context);
 
 /*!
 @function
-@abstract       Returns the global object of a JavaScript execution context.
-@param context  The JSContext whose global object you want to retrieve.
+@abstract       Gets the global object of a JavaScript execution context.
+@param context  The JSContext whose global object you want to get.
 @result         context's global object.
 */
 JSObjectRef JSContextGetGlobalObject(JSContextRef context);
@@ -65,26 +67,26 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef context);
 @function
 @abstract                 Evaluates a string of JavaScript.
 @param context            The execution context to use.
-@param script             A JSInternalString containing the script to evaluate.
+@param script             A JSString containing the script to evaluate.
 @param thisObject         The object to use as "this," or NULL to use the global object as "this."
-@param sourceURL          A JSInternalString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
+@param sourceURL          A JSString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
 @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions.
 @param exception          A pointer to a JSValueRef in which to store an uncaught exception, if any. Pass NULL if you do not care to store an uncaught exception.
 @result                   The JSValue that results from evaluating script, or NULL if an uncaught exception is thrown.
 */
-JSValueRef JSEvaluate(JSContextRef context, JSInternalStringRef script, JSObjectRef thisObject, JSInternalStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
+JSValueRef JSEvaluate(JSContextRef context, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
 /*!
 @function JSCheckSyntax
 @abstract                 Checks for syntax errors in a string of JavaScript.
 @param context            The execution context to use.
-@param script             A JSInternalString containing the JavaScript to check for syntax errors.
-@param sourceURL          A JSInternalString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
+@param script             A JSString containing the script to check for syntax errors.
+@param sourceURL          A JSString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
 @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions.
 @param exception          A pointer to a JSValueRef in which to store a syntax error exception, if any. Pass NULL if you do not care to store a syntax error exception.
 @result                   true if the script is syntactically correct, otherwise false.
 */
-bool JSCheckSyntax(JSContextRef context, JSInternalStringRef script, JSInternalStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
+bool JSCheckSyntax(JSContextRef context, JSStringRef script, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
 #ifdef __cplusplus
 }

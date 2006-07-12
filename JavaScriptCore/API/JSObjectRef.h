@@ -30,6 +30,9 @@
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/JSValueRef.h>
 
+#include <stdbool.h>
+#include <stddef.h> // for size_t
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -55,7 +58,7 @@ enum {
 typedef unsigned JSPropertyAttributes;
 
 /*! 
-@typedef JSInitializeCallback
+@typedef JSObjectInitializeCallback
 @abstract The callback invoked when an object is first created.
 @param context The execution context to use.
 @param object The JSObject being created.
@@ -65,10 +68,10 @@ typedef unsigned JSPropertyAttributes;
 void Initialize(JSContextRef context, JSObjectRef object, JSValueRef* exception);
 */
 typedef void
-(*JSInitializeCallback) (JSContextRef context, JSObjectRef object, JSValueRef* exception);
+(*JSObjectInitializeCallback) (JSContextRef context, JSObjectRef object, JSValueRef* exception);
 
 /*! 
-@typedef JSFinalizeCallback
+@typedef JSObjectFinalizeCallback
 @abstract The callback invoked when an object is finalized (prepared for garbage collection).
 @param object The JSObject being finalized.
 @discussion If you named your function Finalize, you would declare it like this:
@@ -76,80 +79,81 @@ typedef void
 void Finalize(JSObjectRef object);
 */
 typedef void            
-(*JSFinalizeCallback) (JSObjectRef object);
+(*JSObjectFinalizeCallback) (JSObjectRef object);
 
 /*! 
-@typedef JSHasPropertyCallback
+@typedef JSObjectHasPropertyCallback
 @abstract The callback invoked when determining whether an object has a given property.
 @param context The current execution context.
 @param object The JSObject to search for the property.
-@param propertyName A JSInternalString containing the name of the property look up.
+@param propertyName A JSString containing the name of the property look up.
 @param exception A pointer to a JSValueRef in which to return an exception, if any.
 @result true if object has the property, otherwise false.
 @discussion If you named your function HasProperty, you would declare it like this:
 
-bool HasProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* exception);
+bool HasProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
 
-This callback enables optimization in cases where only a property's existence needs to be known, not its value, and computing its value would be expensive. If this callback is NULL, the getProperty callback will be used to service hasProperty calls.
+If this function returns false, the hasProperty request forwards to object's static property table, then its parent class chain (which includes the default object class), then its prototype chain.
+
+This callback enables optimization in cases where only a property's existence needs to be known, not its value, and computing its value would be expensive. If this callback is NULL, the getProperty callback will be used to service hasProperty requests.
 */
 typedef bool
-(*JSHasPropertyCallback) (JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* exception);
+(*JSObjectHasPropertyCallback) (JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
 
 /*! 
-@typedef JSGetPropertyCallback
+@typedef JSObjectGetPropertyCallback
 @abstract The callback invoked when getting a property from an object.
 @param context The current execution context.
 @param object The JSObject to search for the property.
-@param propertyName A JSInternalString containing the name of the property to get.
-@param returnValue A pointer to a JSValue in which to store the property's value.
+@param propertyName A JSString containing the name of the property to get.
 @param exception A pointer to a JSValueRef in which to return an exception, if any.
-@result true if object has the property in question, otherwise false. If this function returns true, returnValue is assumed to contain a valid JSValue.
+@result The property's value if object has the property, otherwise NULL.
 @discussion If you named your function GetProperty, you would declare it like this:
 
-bool GetProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* returnValue, JSValueRef* exception);
+JSValueRef GetProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
 
-If this function returns false, the get request forwards to object's static property table, then its parent class chain (which includes the default object class), then its prototype chain.
+If this function returns NULL, the get request forwards to object's static property table, then its parent class chain (which includes the default object class), then its prototype chain.
 */
-typedef bool
-(*JSGetPropertyCallback) (JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* returnValue, JSValueRef* exception);
+typedef JSValueRef
+(*JSObjectGetPropertyCallback) (JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
 
 /*! 
-@typedef JSSetPropertyCallback
+@typedef JSObjectSetPropertyCallback
 @abstract The callback invoked when setting the value of a given property.
 @param context The current execution context.
 @param object The JSObject on which to set the property's value.
-@param propertyName A JSInternalString containing the name of the property to set.
+@param propertyName A JSString containing the name of the property to set.
 @param value A JSValue to use as the property's value.
 @param exception A pointer to a JSValueRef in which to return an exception, if any.
-@result true if the property was successfully set, otherwise false.
+@result true if the property was set, otherwise false.
 @discussion If you named your function SetProperty, you would declare it like this:
 
-bool SetProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef value, JSValueRef* exception);
+bool SetProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception);
 
 If this function returns false, the set request forwards to object's static property table, then its parent class chain (which includes the default object class).
 */
 typedef bool
-(*JSSetPropertyCallback) (JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef value, JSValueRef* exception);
+(*JSObjectSetPropertyCallback) (JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception);
 
 /*! 
-@typedef JSDeletePropertyCallback
+@typedef JSObjectDeletePropertyCallback
 @abstract The callback invoked when deleting a given property.
 @param context The current execution context.
 @param object The JSObject in which to delete the property.
-@param propertyName A JSInternalString containing the name of the property to delete.
+@param propertyName A JSString containing the name of the property to delete.
 @param exception A pointer to a JSValueRef in which to return an exception, if any.
 @result true if propertyName was successfully deleted, otherwise false.
 @discussion If you named your function DeleteProperty, you would declare it like this:
 
-bool DeleteProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* exception);
+bool DeleteProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
 
 If this function returns false, the delete request forwards to object's static property table, then its parent class chain (which includes the default object class).
 */
 typedef bool
-(*JSDeletePropertyCallback) (JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef* exception);
+(*JSObjectDeletePropertyCallback) (JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
 
 /*! 
-@typedef JSGetPropertyListCallback
+@typedef JSObjectAddPropertiesToListCallback
 @abstract The callback invoked when adding an object's properties to a property list.
 @param context The current execution context.
 @param object The JSObject whose properties need to be added to propertyList.
@@ -157,17 +161,17 @@ typedef bool
 @param exception A pointer to a JSValueRef in which to return an exception, if any.
 @discussion If you named your function GetPropertyList, you would declare it like this:
 
-void GetPropertyList(JSContextRef context, JSObjectRef object, JSPropertyListRef propertyList, JSValueRef* exception);
+void AddPropertiesToList(JSContextRef context, JSObjectRef object, JSPropertyListRef propertyList, JSValueRef* exception);
 
 Use JSPropertyListAdd to add properties to propertyList.
 
 Property lists are used by JSPropertyEnumerators and JavaScript for...in loops.
 */
 typedef void
-(*JSGetPropertyListCallback) (JSContextRef context, JSObjectRef object, JSPropertyListRef propertyList, JSValueRef* exception);
+(*JSObjectAddPropertiesToListCallback) (JSContextRef context, JSObjectRef object, JSPropertyListRef propertyList, JSValueRef* exception);
 
 /*! 
-@typedef JSCallAsFunctionCallback
+@typedef JSObjectCallAsFunctionCallback
 @abstract The callback invoked when an object is called as a function.
 @param context The current execution context.
 @param function A JSObject that is the function being called.
@@ -185,10 +189,10 @@ If your callback were invoked by the JavaScript expression 'myObject.myMemberFun
 If this callback is NULL, calling your object as a function will throw an exception.
 */
 typedef JSValueRef 
-(*JSCallAsFunctionCallback) (JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception);
+(*JSObjectCallAsFunctionCallback) (JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception);
 
 /*! 
-@typedef JSCallAsConstructorCallback
+@typedef JSObjectCallAsConstructorCallback
 @abstract The callback invoked when an object is used as a constructor in a 'new' statement.
 @param context The current execution context.
 @param constructor A JSObject that is the constructor being called.
@@ -205,25 +209,24 @@ If your callback were invoked by the JavaScript expression 'new myConstructorFun
 If this callback is NULL, using your object as a constructor in a 'new' statement will throw an exception.
 */
 typedef JSObjectRef 
-(*JSCallAsConstructorCallback) (JSContextRef context, JSObjectRef constructor, size_t argc, JSValueRef argv[], JSValueRef* exception);
+(*JSObjectCallAsConstructorCallback) (JSContextRef context, JSObjectRef constructor, size_t argc, JSValueRef argv[], JSValueRef* exception);
 
 /*! 
-@typedef JSConvertToTypeCallback
+@typedef JSObjectConvertToTypeCallback
 @abstract The callback invoked when converting an object to a particular JavaScript type.
 @param context The current execution context.
 @param object The JSObject to convert.
-@param typeCode A JSTypeCode specifying the JavaScript type to convert to.
-@param returnValue A pointer to a JSValue in which to store the converted value.
+@param type A JSType specifying the JavaScript type to convert to.
 @param exception A pointer to a JSValueRef in which to return an exception, if any.
-@result true if the value was converted, otherwise false. If this function returns true, returnValue is assumed to contain a valid JSValue.
+@result The objects's converted value, or NULL if the object was not converted.
 @discussion If you named your function ConvertToType, you would declare it like this:
 
-bool ConvertToType(JSContextRef context, JSObjectRef object, JSTypeCode typeCode, JSValueRef* returnValue, JSValueRef* exception);
+JSValueRef ConvertToType(JSContextRef context, JSObjectRef object, JSType type, JSValueRef* exception);
 
 If this function returns false, the conversion request forwards to object's parent class chain (which includes the default object class).
 */
-typedef bool
-(*JSConvertToTypeCallback) (JSContextRef context, JSObjectRef object, JSTypeCode typeCode, JSValueRef* returnValue, JSValueRef* exception);
+typedef JSValueRef
+(*JSObjectConvertToTypeCallback) (JSContextRef context, JSObjectRef object, JSType type, JSValueRef* exception);
 
 /*!
 @struct JSObjectCallbacks
@@ -241,17 +244,17 @@ typedef bool
 @field convertToType The callback invoked when converting an object to a particular JavaScript type.
 */
 typedef struct {
-    int                         version; // current (and only) version is 0
-    JSInitializeCallback        initialize;
-    JSFinalizeCallback          finalize;
-    JSHasPropertyCallback       hasProperty;
-    JSGetPropertyCallback       getProperty;
-    JSSetPropertyCallback       setProperty;
-    JSDeletePropertyCallback    deleteProperty;
-    JSGetPropertyListCallback   getPropertyList;
-    JSCallAsFunctionCallback    callAsFunction;
-    JSCallAsConstructorCallback callAsConstructor;
-    JSConvertToTypeCallback     convertToType;
+    int                                 version; // current (and only) version is 0
+    JSObjectInitializeCallback          initialize;
+    JSObjectFinalizeCallback            finalize;
+    JSObjectHasPropertyCallback         hasProperty;
+    JSObjectGetPropertyCallback         getProperty;
+    JSObjectSetPropertyCallback         setProperty;
+    JSObjectDeletePropertyCallback      deleteProperty;
+    JSObjectAddPropertiesToListCallback addPropertiesToList;
+    JSObjectCallAsFunctionCallback      callAsFunction;
+    JSObjectCallAsConstructorCallback   callAsConstructor;
+    JSObjectConvertToTypeCallback       convertToType;
 } JSObjectCallbacks;
 
 /*! 
@@ -269,14 +272,14 @@ extern const JSObjectCallbacks kJSObjectCallbacksNone;
 @struct JSStaticValue
 @abstract This structure describes a static value property.
 @field name A null-terminated UTF8 string containing the property's name.
-@field getProperty A JSGetPropertyCallback to invoke when getting the property's value.
-@field setProperty A JSSetPropertyCallback to invoke when setting the property's value.
+@field getProperty A JSObjectGetPropertyCallback to invoke when getting the property's value.
+@field setProperty A JSObjectSetPropertyCallback to invoke when setting the property's value.
 @field attributes A logically ORed set of JSPropertyAttributes to give to the property.
 */
 typedef struct {
     const char* const name; // FIXME: convert UTF8
-    JSGetPropertyCallback getProperty;
-    JSSetPropertyCallback setProperty;
+    JSObjectGetPropertyCallback getProperty;
+    JSObjectSetPropertyCallback setProperty;
     JSPropertyAttributes attributes;
 } JSStaticValue;
 
@@ -284,22 +287,23 @@ typedef struct {
 @struct JSStaticFunction
 @abstract This structure describes a static function property.
 @field name A null-terminated UTF8 string containing the property's name.
-@field callAsFunction A JSCallAsFunctionCallback to invoke when the property is called as a function.
+@field callAsFunction A JSObjectCallAsFunctionCallback to invoke when the property is called as a function.
 @field attributes A logically ORed set of JSPropertyAttributes to give to the property.
 */
 typedef struct {
     const char* const name; // FIXME: convert UTF8
-    JSCallAsFunctionCallback callAsFunction;
+    JSObjectCallAsFunctionCallback callAsFunction;
     JSPropertyAttributes attributes;
 } JSStaticFunction;
 
 /*!
 @function
-@abstract Creates a JavaScript class suitable for use with JSObjectMake. Ownership follows the create rule.
+@abstract Creates a JavaScript class suitable for use with JSObjectMake
 @param staticValues A JSStaticValue array representing the class's static value properties. Pass NULL to specify no static value properties. The array must be terminated by a JSStaticValue whose name field is NULL.
 @param staticFunctions A JSStaticFunction array representing the class's static function properties. Pass NULL to specify no static function properties. The array must be terminated by a JSStaticFunction whose name field is NULL.
 @param callbacks A pointer to a JSObjectCallbacks structure holding custom callbacks for supplementing default object behavior. Pass NULL to specify no custom behavior.
 @param parentClass A JSClass to set as the class's parent class. Pass NULL use the default object class.
+@result A JSClass with the given properties, callbacks, and parent class. Ownership follows the Create Rule.
 @discussion The simplest and most efficient way to add custom properties to a class is by specifying static values and functions. Standard JavaScript practice calls for functions to be placed in prototype objects, so that they can be shared among objects.
 */
 JSClassRef JSClassCreate(JSStaticValue* staticValues, JSStaticFunction* staticFunctions, const JSObjectCallbacks* callbacks, JSClassRef parentClass);
@@ -331,40 +335,40 @@ JSObjectRef JSObjectMake(JSContextRef context, JSClassRef jsClass, JSValueRef pr
 @function
 @abstract Convenience method for creating a JavaScript function with a given callback as its implementation.
 @param context The execution context to use.
-@param callAsFunction The JSCallAsFunctionCallback to invoke when the function is called.
+@param callAsFunction The JSObjectCallAsFunctionCallback to invoke when the function is called.
 @result A JSObject that is an anonymous function. The object's prototype will be the default function prototype.
 */
-JSObjectRef JSFunctionMake(JSContextRef context, JSCallAsFunctionCallback callAsFunction);
+JSObjectRef JSObjectMakeFunction(JSContextRef context, JSObjectCallAsFunctionCallback callAsFunction);
 /*!
 @function
 @abstract Convenience method for creating a JavaScript constructor with a given callback as its implementation.
 @param context The execution context to use.
-@param callAsConstructor The JSCallAsConstructorCallback to invoke when the constructor is used in a 'new' statement.
+@param callAsConstructor The JSObjectCallAsConstructorCallback to invoke when the constructor is used in a 'new' statement.
 @result A JSObject that is a constructor. The object's prototype will be the default object prototype.
 */
-JSObjectRef JSConstructorMake(JSContextRef context, JSCallAsConstructorCallback callAsConstructor);
+JSObjectRef JSObjectMakeConstructor(JSContextRef context, JSObjectCallAsConstructorCallback callAsConstructor);
 
 /*!
 @function
 @abstract Creates a function with a given script as its body.
 @param context The execution context to use.
-@param body A JSInternalString containing the script to use as the function's body.
-@param sourceURL A JSInternalString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
+@param body A JSString containing the script to use as the function's body.
+@param sourceURL A JSString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
 @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions.
 @param exception A pointer to a JSValueRef in which to store a syntax error exception, if any. Pass NULL if you do not care to store a syntax error exception.
 @result A JSObject that is an anonymous function, or NULL if body contains a syntax error. The returned object's prototype will be the default function prototype.
 @discussion Use this method when you want to execute a script repeatedly, to avoid the cost of re-parsing the script before each execution.
 */
-JSObjectRef JSFunctionMakeWithBody(JSContextRef context, JSInternalStringRef body, JSInternalStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
+JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
 /*!
 @function
 @abstract Gets a short description of a JavaScript object.
 @param context The execution context to use.
 @param object The object whose description you want to get.
-@result A JSInternalString containing the object's description. This is usually the object's class name.
+@result A JSString containing the object's description. This is usually the object's class name.
 */
-JSInternalStringRef JSObjectGetDescription(JSObjectRef object);
+JSStringRef JSObjectGetDescription(JSObjectRef object);
 
 /*!
 @function
@@ -385,46 +389,46 @@ void JSObjectSetPrototype(JSObjectRef object, JSValueRef value);
 @function
 @abstract Tests whether an object has a certain property.
 @param object The JSObject to test.
-@param propertyName A JSInternalString containing the property's name.
+@param propertyName A JSString containing the property's name.
 @result true if the object has a property whose name matches propertyName, otherwise false.
 */
-bool JSObjectHasProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName);
+bool JSObjectHasProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName);
 /*!
 @function
 @abstract Gets a property from an object.
 @param context The execution context to use.
 @param object The JSObject whose property you want to get.
-@param propertyName A JSInternalString containing the property's name.
-@result The property's value, or NULL if the object does not have a property whose name matches propertyName.
+@param propertyName A JSString containing the property's name.
+@result The property's value if object has the property, otherwise NULL.
 */
-JSValueRef JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName);
+JSValueRef JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName);
 /*!
 @function
 @abstract Sets a property on an object.
 @param context The execution context to use.
 @param object The JSObject whose property you want to set.
-@param propertyName A JSInternalString containing the property's name.
+@param propertyName A JSString containing the property's name.
 @param value A JSValue to use as the property's value.
 @param attributes A logically ORed set of JSPropertyAttributes to give to the property.
 @result true if the set operation succeeds, otherwise false (for example, if the object already has a property of the given name with the kJSPropertyAttributeReadOnly attribute set).
 */
-bool JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName, JSValueRef value, JSPropertyAttributes attributes);
+bool JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSPropertyAttributes attributes);
 /*!
 @function
 @abstract Deletes a property from an object.
 @param context The execution context to use.
 @param object The JSObject whose property you want to delete.
-@param propertyName A JSInternalString containing the property's name.
+@param propertyName A JSString containing the property's name.
 @result true if the delete operation succeeds, otherwise false (for example, if the property has the kJSPropertyAttributeDontDelete attribute set).
 */
-bool JSObjectDeleteProperty(JSContextRef context, JSObjectRef object, JSInternalStringRef propertyName);
+bool JSObjectDeleteProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName);
 
 /*!
 @function
 @abstract Gets a pointer to private data from an object.
 @param object A JSObject whose private data you want to get.
-@result A void* that points to the object's private data, or NULL if the object has no private data.
-@discussion JSObjectGetPrivate and JSObjectSetPrivate only work on custom objects created by JSObjectMake, JSFunctionMake, and JSConstructorMake.
+@result A void* that points to the object's private data, if the object has private data, otherwise NULL.
+@discussion JSObjectGetPrivate and JSObjectSetPrivate only work on custom objects created by JSObjectMake, JSObjectMakeFunction, and JSObjectMakeConstructor.
 */
 void* JSObjectGetPrivate(JSObjectRef object);
 /*!
@@ -433,7 +437,7 @@ void* JSObjectGetPrivate(JSObjectRef object);
 @param object A JSObject whose private data you want to set.
 @param data A void* that points to the object's private data.
 @result true if the set operation succeeds, otherwise false.
-@discussion JSObjectGetPrivate and JSObjectSetPrivate only work on custom objects created by JSObjectMake, JSFunctionMake, and JSConstructorMake.
+@discussion JSObjectGetPrivate and JSObjectSetPrivate only work on custom objects created by JSObjectMake, JSObjectMakeFunction, and JSObjectMakeConstructor.
 */
 bool JSObjectSetPrivate(JSObjectRef object, void* data);
 
@@ -480,7 +484,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, 
 @abstract Creates an enumerator for an object's properties.
 @param context The execution context to use.
 @param object The object whose properties you want to enumerate.
-@result A JSPropertyEnumerator with a list of object's properties. Ownership follows the create rule.
+@result A JSPropertyEnumerator with a list of object's properties. Ownership follows the Create Rule.
 */
 JSPropertyEnumeratorRef JSObjectCreatePropertyEnumerator(JSContextRef context, JSObjectRef object);
 /*!
@@ -500,19 +504,19 @@ void JSPropertyEnumeratorRelease(JSPropertyEnumeratorRef enumerator);
 @function
 @abstract Gets a property enumerator's next property.
 @param enumerator The JSPropertyEnumerator whose next property you want to get.
-@result A JSInternalString containing the property's name, or NULL if all properties have been enumerated.
+@result A JSString containing the property's name, or NULL if all properties have been enumerated.
 */
-JSInternalStringRef JSPropertyEnumeratorGetNext(JSPropertyEnumeratorRef enumerator);
+JSStringRef JSPropertyEnumeratorGetNextName(JSPropertyEnumeratorRef enumerator);
 
 /*!
 @function
 @abstract Adds a property to a property list.
-@discussion Use this method inside a JSGetPropertyListCallback to add a custom property to an object's property list.
+@discussion Use this method inside a JSObjectAddPropertiesToListCallback to add a custom property to an object's property list.
 @param propertyList The JSPropertyList to which you want to add a property.
 @param thisObject The JSObject to which the property belongs.
-@param propertyName A JSInternalString specifying the property's name.
+@param propertyName A JSString specifying the property's name.
 */
-void JSPropertyListAdd(JSPropertyListRef propertyList, JSObjectRef thisObject, JSInternalStringRef propertyName);
+void JSPropertyListAdd(JSPropertyListRef propertyList, JSObjectRef thisObject, JSStringRef propertyName);
 
 #ifdef __cplusplus
 }

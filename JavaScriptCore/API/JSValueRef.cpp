@@ -39,29 +39,29 @@
 
 #include <algorithm> // for std::min
 
-using namespace KJS;
-
-JSTypeCode JSValueGetType(JSValueRef value)
+JSType JSValueGetType(JSValueRef value)
 {
-    JSValue* jsValue = toJS(value);
+    KJS::JSValue* jsValue = toJS(value);
     switch (jsValue->type()) {
-        case UndefinedType:
+        case KJS::UndefinedType:
             return kJSTypeUndefined;
-        case NullType:
+        case KJS::NullType:
             return kJSTypeNull;
-        case BooleanType:
+        case KJS::BooleanType:
             return kJSTypeBoolean;
-        case NumberType:
+        case KJS::NumberType:
             return kJSTypeNumber;
-        case StringType:
+        case KJS::StringType:
             return kJSTypeString;
-        case ObjectType:
+        case KJS::ObjectType:
             return kJSTypeObject;
         default:
             ASSERT(!"JSValueGetType: unknown type code.\n");
             return kJSTypeUndefined;
     }
 }
+
+using namespace KJS; // placed here to avoid conflict between KJS::JSType and JSType, above.
 
 bool JSValueIsUndefined(JSValueRef value)
 {
@@ -135,7 +135,7 @@ bool JSValueIsStrictEqual(JSContextRef context, JSValueRef a, JSValueRef b)
     return result;
 }
 
-bool JSValueIsInstanceOf(JSContextRef context, JSValueRef value, JSObjectRef constructor)
+bool JSValueIsInstanceOfConstructor(JSContextRef context, JSValueRef value, JSObjectRef constructor)
 {
     ExecState* exec = toJS(context);
     JSValue* jsValue = toJS(value);
@@ -148,25 +148,22 @@ bool JSValueIsInstanceOf(JSContextRef context, JSValueRef value, JSObjectRef con
     return result;
 }
 
-JSValueRef JSUndefinedMake()
+JSValueRef JSValueMakeUndefined()
 {
-    JSLock lock;
     return toRef(jsUndefined());
 }
 
-JSValueRef JSNullMake()
+JSValueRef JSValueMakeNull()
 {
-    JSLock lock;
     return toRef(jsNull());
 }
 
-JSValueRef JSBooleanMake(bool value)
+JSValueRef JSValueMakeBoolean(bool value)
 {
-    JSLock lock;
     return toRef(jsBoolean(value));
 }
 
-JSValueRef JSNumberMake(double value)
+JSValueRef JSValueMakeNumber(double value)
 {
     JSLock lock;
     return toRef(jsNumber(value));
@@ -178,7 +175,12 @@ bool JSValueToBoolean(JSContextRef context, JSValueRef value)
     ExecState* exec = toJS(context);
     JSValue* jsValue = toJS(value);
     
-    return jsValue->toBoolean(exec);
+    bool boolean = jsValue->toBoolean(exec);
+    if (exec->hadException()) {
+        exec->clearException();
+        boolean = false;
+    }
+    return boolean;
 }
 
 double JSValueToNumber(JSContextRef context, JSValueRef value)
@@ -209,21 +211,21 @@ JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value)
     return objectRef;
 }    
 
-void JSGCProtect(JSValueRef value)
+void JSValueProtect(JSValueRef value)
 {
     JSLock lock;
     JSValue* jsValue = toJS(value);
     gcProtect(jsValue);
 }
 
-void JSGCUnprotect(JSValueRef value)
+void JSValueUnprotect(JSValueRef value)
 {
     JSLock lock;
     JSValue* jsValue = toJS(value);
     gcUnprotect(jsValue);
 }
 
-void JSGCCollect()
+void JSGarbageCollect()
 {
     JSLock lock;
     Collector::collect();

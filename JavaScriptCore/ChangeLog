@@ -1,3 +1,40 @@
+2006-07-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        - Implemented a vast number of renames and comment clarifications 
+        suggested during API review.
+        
+        JSInternalString -> JSString
+        JS*Make -> JSValueMake*, JSObjectMake*
+        JSTypeCode -> JSType
+        JSValueIsInstanceOf -> JSValueIsInstanceOfConstructor (reads strangely well in client code)
+        JSGC*Protect -> JSValue*Protect
+        JS*Callback -> JSObject*Callback
+        JSGetPropertyListCallback -> JSObjectAddPropertiesToListCallback
+        JSPropertyEnumeratorGetNext -> JSPropertyEnumeratorGetNextName
+        JSString* -> 
+            JSStringCreateWithUTF8CString, JSStringGetUTF8CString,
+            JSStringGetMaximumUTF8CStringSize JSStringIsEqualToUTF8CString, 
+            JSStringCreateWithCFString, JSStringCopyCFString, JSStringCreateWithCharacters.
+        
+        - Changed functions taking a JSValue out arg and returning a bool indicating
+        whether it was set to simply return a JSValue or NULL.
+        
+        - Removed JSStringGetCharacters because it's more documentation than code,
+        and it's just a glorified memcpy built on existing API functionality.
+        
+        - Moved standard library includes into the headers that actually require them.
+        
+        - Standardized use of the phrase "Create Rule."
+        
+        - Removed JSLock from make functions that don't allocate.
+        
+        - Added exception handling to JSValueToBoolean, since we now allow
+        callback objects to throw exceptions upon converting to boolean.
+        
+        - Renamed JSGCCollect to JSGarbageCollect.
+
 2006-07-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

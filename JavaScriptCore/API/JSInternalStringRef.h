@@ -28,6 +28,10 @@
 #define JSInternalStringRef_h
 
 #include <JavaScriptCore/JSValueRef.h>
+
+#include <stdbool.h>
+#include <stddef.h> // for size_t
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -45,102 +49,91 @@ extern "C" {
 /*!
 @function
 @abstract         Creates a JavaScript string from a buffer of Unicode characters.
-@param chars      The buffer of Unicode characters to copy into the new JSInternalString.
+@param chars      The buffer of Unicode characters to copy into the new JSString.
 @param numChars   The number of characters to copy from the buffer pointed to by chars.
-@result           A JSInternalString containing chars. Ownership follows the create rule.
+@result           A JSString containing chars. Ownership follows the Create Rule.
 */
-JSInternalStringRef JSInternalStringCreate(const JSChar* chars, size_t numChars);
+JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars);
 /*!
 @function
 @abstract         Creates a JavaScript string from a null-terminated UTF8 string.
-@param string     The null-terminated UTF8 string to copy into the new JSInternalString.
-@result           A JSInternalString containing string. Ownership follows the create rule.
+@param string     The null-terminated UTF8 string to copy into the new JSString.
+@result           A JSString containing string. Ownership follows the Create Rule.
 */
-JSInternalStringRef JSInternalStringCreateUTF8(const char* string);
+JSStringRef JSStringCreateWithUTF8CString(const char* string);
 
 /*!
 @function
 @abstract         Retains a JavaScript string.
-@param string     The JSInternalString to retain.
-@result           A JSInternalString that is the same as buffer.
+@param string     The JSString to retain.
+@result           A JSString that is the same as string.
 */
-JSInternalStringRef JSInternalStringRetain(JSInternalStringRef string);
+JSStringRef JSStringRetain(JSStringRef string);
 /*!
 @function
 @abstract         Releases a JavaScript string.
-@param string     The JSInternalString to release.
+@param string     The JSString to release.
 */
-void JSInternalStringRelease(JSInternalStringRef string);
+void JSStringRelease(JSStringRef string);
 
 /*!
 @function
 @abstract         Returns the number of Unicode characters in a JavaScript string.
-@param string     The JSInternalString whose length (in Unicode characters) you want to know.
+@param string     The JSString whose length (in Unicode characters) you want to know.
 @result           The number of Unicode characters stored in string.
 */
-size_t JSInternalStringGetLength(JSInternalStringRef string);
+size_t JSStringGetLength(JSStringRef string);
 /*!
 @function
-@abstract         Quickly obtains a pointer to the Unicode character buffer that 
+@abstract         Returns a pointer to the Unicode character buffer that 
  serves as the backing store for a JavaScript string.
-@param string     The JSInternalString whose backing store you want to access.
+@param string     The JSString whose backing store you want to access.
 @result           A pointer to the Unicode character buffer that serves as string's 
  backing store, which will be deallocated when string is deallocated.
 */
-const JSChar* JSInternalStringGetCharactersPtr(JSInternalStringRef string);
-/*!
-@function
-@abstract         Copies a JavaScript string's Unicode characters into an 
- external character buffer.
-@param string   The source JSInternalString.
-@param buffer  The destination JSChar buffer into which to copy string's 
- characters. On return, buffer contains the requested Unicode characters.
-@param numChars   The number of Unicode characters to copy. This number must not 
- exceed the length of the string.
-*/
-void JSInternalStringGetCharacters(JSInternalStringRef string, JSChar* buffer, size_t numChars);
+const JSChar* JSStringGetCharactersPtr(JSStringRef string);
 
 /*!
 @function
-@abstract         Returns the maximum number of bytes required to encode the 
- contents of a JavaScript string as a null-terminated UTF8 string.
-@param string     The JSInternalString whose maximum encoded length (in bytes) you 
+@abstract Returns the maximum number of bytes a JavaScript string will 
+ take up if converted into a null-terminated UTF8 string.
+@param string The JSString whose maximum converted size (in bytes) you 
  want to know.
-@result           The maximum number of bytes required to encode string's contents 
- as a null-terminated UTF8 string.
+@result The maximum number of bytes that could be required to convert string into a 
+ null-terminated UTF8 string. The number of bytes that the conversion actually ends 
+ up requiring could be less than this, but never more.
 */
-size_t JSInternalStringGetMaxLengthUTF8(JSInternalStringRef string);
+size_t JSStringGetMaximumUTF8CStringSize(JSStringRef string);
 /*!
 @function
-@abstract         Converts a JavaScript string's contents into a 
- null-terminated UTF8 string, and copies the result into an external byte buffer.
-@param string   The source JSInternalString.
-@param buffer  The destination byte buffer into which to copy a UTF8 string 
- representation of string. The buffer must be at least bufferSize bytes in length. 
- On return, buffer contains a UTF8 string representation of string. 
+@abstract Converts a JavaScript string into a null-terminated UTF8 string, 
+ and copies the result into an external byte buffer.
+@param string The source JSString.
+@param buffer The destination byte buffer into which to copy a null-terminated 
+ UTF8 string representation of string. The buffer must be at least bufferSize 
+ bytes in size. On return, buffer contains a UTF8 string representation of string. 
  If bufferSize is too small, buffer will contain only partial results.
-@param bufferSize The length of the external buffer in bytes.
-@result           The number of bytes written into buffer (including the null-terminator byte).
+@param bufferSize The size of the external buffer in bytes.
+@result The number of bytes written into buffer (including the null-terminator byte).
 */
-size_t JSInternalStringGetCharactersUTF8(JSInternalStringRef string, char* buffer, size_t bufferSize);
+size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSize);
 
 /*!
 @function
-@abstract     Tests whether the characters in two JavaScript strings match.
-@param a      The first JSInternalString to test.
-@param b      The second JSInternalString to test.
-@result       true if the characters in the two strings match, otherwise false.
+@abstract     Tests whether two JavaScript strings match.
+@param a      The first JSString to test.
+@param b      The second JSString to test.
+@result       true if the two strings match, otherwise false.
 */
-bool JSInternalStringIsEqual(JSInternalStringRef a, JSInternalStringRef b);
+bool JSStringIsEqual(JSStringRef a, JSStringRef b);
 /*!
 @function
-@abstract     Tests whether the characters in a JavaScript string match 
- the characters in a null-terminated UTF8 string.
-@param a      The JSInternalString to test.
+@abstract     Tests whether a JavaScript string matches a null-terminated UTF8 string.
+@param a      The JSString to test.
 @param b      The null-terminated UTF8 string to test.
-@result       true if the characters in the two strings match, otherwise false.
+@result       true if the two strings match, otherwise false.
 */
-bool JSInternalStringIsEqualUTF8(JSInternalStringRef a, const char* b);
+bool JSStringIsEqualToUTF8CString(JSStringRef a, const char* b);
 
 #if defined(__APPLE__)
 #include <CoreFoundation/CoreFoundation.h>
@@ -150,18 +143,18 @@ bool JSInternalStringIsEqualUTF8(JSInternalStringRef a, const char* b);
 @abstract         Creates a JavaScript string from a CFString.
 @discussion       This function is optimized to take advantage of cases when 
  CFStringGetCharactersPtr returns a valid pointer.
-@param string     The CFString to copy into the new JSInternalString.
-@result           A JSInternalString containing string. Ownership follows the create rule.
+@param string     The CFString to copy into the new JSString.
+@result           A JSString containing string. Ownership follows the Create Rule.
 */
-JSInternalStringRef JSInternalStringCreateCF(CFStringRef string);
+JSStringRef JSStringCreateWithCFString(CFStringRef string);
 /*!
 @function
 @abstract         Creates a CFString form a JavaScript string.
 @param alloc      The alloc parameter to pass to CFStringCreate.
-@param string     The JSInternalString to copy into the new CFString.
-@result           A CFString containing string. Ownership follows the create rule.
+@param string     The JSString to copy into the new CFString.
+@result           A CFString containing string. Ownership follows the Create Rule.
 */
-CFStringRef CFStringCreateWithJSInternalString(CFAllocatorRef alloc, JSInternalStringRef string);
+CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef string);
 #endif // __APPLE__
     
 #ifdef __cplusplus

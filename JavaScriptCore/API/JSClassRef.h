@@ -32,28 +32,29 @@
 #include "ustring.h"
 
 struct StaticValueEntry {
-    StaticValueEntry(JSGetPropertyCallback _getProperty, JSSetPropertyCallback _setProperty, JSPropertyAttributes _attributes)
+    StaticValueEntry(JSObjectGetPropertyCallback _getProperty, JSObjectSetPropertyCallback _setProperty, JSPropertyAttributes _attributes)
         : getProperty(_getProperty), setProperty(_setProperty), attributes(_attributes)
     {
     }
     
-    JSGetPropertyCallback getProperty;
-    JSSetPropertyCallback setProperty;
+    JSObjectGetPropertyCallback getProperty;
+    JSObjectSetPropertyCallback setProperty;
     JSPropertyAttributes attributes;
 };
 
 struct StaticFunctionEntry {
-    StaticFunctionEntry(JSCallAsFunctionCallback _callAsFunction, JSPropertyAttributes _attributes)
-    : callAsFunction(_callAsFunction), attributes(_attributes)
+    StaticFunctionEntry(JSObjectCallAsFunctionCallback _callAsFunction, JSPropertyAttributes _attributes)
+        : callAsFunction(_callAsFunction), attributes(_attributes)
     {
     }
 
-    JSCallAsFunctionCallback callAsFunction;
+    JSObjectCallAsFunctionCallback callAsFunction;
     JSPropertyAttributes attributes;
 };
 
 struct __JSClass {
-    __JSClass() : refCount(0), staticValues(0), staticFunctions(0)
+    __JSClass() 
+        : refCount(0), staticValues(0), staticFunctions(0)
     {
     }
     

@@ -29,8 +29,10 @@
 
 #include <JavaScriptCore/JSBase.h>
 
+#include <stdbool.h>
+
 /*!
-@enum JSTypeCode
+@enum JSType
 @abstract     A constant identifying the type of a JSValue.
 @constant     kJSTypeUndefined  The unique undefined value.
 @constant     kJSTypeNull       The unique null value.
@@ -46,7 +48,7 @@ typedef enum {
     kJSTypeNumber,
     kJSTypeString,
     kJSTypeObject
-} JSTypeCode;
+} JSType;
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,11 +56,11 @@ extern "C" {
 
 /*!
 @function
-@abstract       Returns a JavaScript value's type code.
+@abstract       Returns a JavaScript value's type.
 @param value    The JSValue whose type you want to obtain.
-@result         A value of type JSTypeCode that identifies value's type.
+@result         A value of type JSType that identifies value's type.
 */
-JSTypeCode JSValueGetType(JSValueRef value);
+JSType JSValueGetType(JSValueRef value);
 
 /*!
 @function
@@ -150,7 +152,7 @@ bool JSValueIsStrictEqual(JSContextRef context, JSValueRef a, JSValueRef b);
 @result         true if value is an object constructed by constructor, as compared
  by the JS instanceof operator, otherwise false.
 */
-bool JSValueIsInstanceOf(JSContextRef context, JSValueRef value, JSObjectRef constructor);
+bool JSValueIsInstanceOfConstructor(JSContextRef context, JSValueRef value, JSObjectRef constructor);
 
 // Creating values
 
@@ -159,40 +161,40 @@ bool JSValueIsInstanceOf(JSContextRef context, JSValueRef value, JSObjectRef con
 @abstract   Creates a JavaScript value of the undefined type.
 @result     The unique undefined value.
 */
-JSValueRef JSUndefinedMake(void);
+JSValueRef JSValueMakeUndefined(void);
 
 /*!
 @function
 @abstract   Creates a JavaScript value of the null type.
 @result     The unique null value.
 */
-JSValueRef JSNullMake(void);
+JSValueRef JSValueMakeNull(void);
 
 /*!
 @function
 @abstract       Creates a JavaScript value of the boolean type.
-@param value    The boolean value to assign to the newly created JSValue.
-@result         A JSValue of the boolean type, representing the boolean value of value.
+@param boolean  The bool to assign to the newly created JSValue.
+@result         A JSValue of the boolean type, representing the value of boolean.
 */
 
-JSValueRef JSBooleanMake(bool value);
+JSValueRef JSValueMakeBoolean(bool boolean);
 
 /*!
 @function
 @abstract       Creates a JavaScript value of the number type.
-@param value    The numeric value to assign to the newly created JSValue.
-@result         A JSValue of the number type, representing the numeric value of value.
+@param number   The double to assign to the newly created JSValue.
+@result         A JSValue of the number type, representing the value of number.
 */
-JSValueRef JSNumberMake(double value);
+JSValueRef JSValueMakeNumber(double number);
 
 /*!
 @function
 @abstract       Creates a JavaScript value of the string type.
-@param string   The JSInternalString to assign to the newly created JSValue. The
+@param string   The JSString to assign to the newly created JSValue. The
  newly created JSValue retains string, and releases it upon garbage collection.
-@result         A JSValue of the string type, representing the string value of string.
+@result         A JSValue of the string type, representing the value of string.
 */
-JSValueRef JSStringMake(JSInternalStringRef string);
+JSValueRef JSValueMakeString(JSStringRef string);
 
 // Converting to primitive values
 
@@ -216,14 +218,12 @@ double JSValueToNumber(JSContextRef context, JSValueRef value);
 
 /*!
 @function
-@abstract       Converts a JavaScript value to string and copies the resulting
- string into a newly allocated JavaScript string.
+@abstract       Converts a JavaScript value to string and copies the result into a JavaScript string.
 @param context  The execution context to use.
 @param value    The JSValue to convert.
-@result         A JSInternalString containing the result of conversion, or an empty
- string if conversion fails. Ownership follows the copy rule.
+@result         A JSString with the result of conversion, or an empty string if conversion fails. Ownership follows the Create Rule.
 */
-JSInternalStringRef JSValueCopyStringValue(JSContextRef context, JSValueRef value);
+JSStringRef JSValueToStringCopy(JSContextRef context, JSValueRef value);
 
 /*!
 @function
@@ -242,7 +242,7 @@ JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value);
 @discussion     A value may be protected multiple times and must be unprotected an
  equal number of times before becoming eligible for garbage collection.
 */
-void JSGCProtect(JSValueRef value);
+void JSValueProtect(JSValueRef value);
 
 /*!
 @function
@@ -251,17 +251,19 @@ void JSGCProtect(JSValueRef value);
 @discussion     A value may be protected multiple times and must be unprotected an 
  equal number of times before becoming eligible for garbage collection.
 */
-void JSGCUnprotect(JSValueRef value);
+void JSValueUnprotect(JSValueRef value);
 
 /*!
 @function
 @abstract Performs a JavaScript garbage collection. 
 @discussion JavaScript values that are on the machine stack, in a register, 
- protected by JSGCProtect, set as the global object of an execution context, or reachable from any such
- value will not be collected. It is not normally necessary to call this function 
- directly; the JS runtime will garbage collect as needed.
+ protected by JSValueProtect, set as the global object of an execution context, 
+ or reachable from any such value will not be collected. 
+ 
+ You are not required to call this function; the JavaScript engine will garbage 
+ collect as needed.
 */
-void JSGCCollect(void);
+void JSGarbageCollect(void);
 
 #ifdef __cplusplus
 }

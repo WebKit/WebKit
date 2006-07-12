@@ -36,7 +36,7 @@ namespace KJS {
 class JSCallbackFunction : public InternalFunctionImp
 {
 public:
-    JSCallbackFunction(ExecState* exec, JSCallAsFunctionCallback callback);
+    JSCallbackFunction(ExecState* exec, JSObjectCallAsFunctionCallback callback);
 
     virtual bool implementsCall() const;
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List &args);
@@ -52,7 +52,7 @@ private:
     JSCallbackFunction(const JSCallbackFunction&);
     
     void* m_privateData;
-    JSCallAsFunctionCallback m_callback;
+    JSObjectCallAsFunctionCallback m_callback;
 };
 
 } // namespace KJS

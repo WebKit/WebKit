@@ -27,12 +27,9 @@
 #ifndef JavaScriptCore_h
 #define JavaScriptCore_h
 
-#include <stdbool.h>
-#include <stddef.h> // for size_t
-
 #include <JavaScriptCore/JSBase.h>
-#include <JavaScriptCore/JSInternalStringRef.h>
 #include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSInternalStringRef.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSValueRef.h>
 

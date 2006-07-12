@@ -39,29 +39,29 @@ int main(int argc, char* argv[])
     JSContextRef context = JSContextCreate(NULL);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     
-    JSInternalStringRef printIString = JSInternalStringCreateUTF8("print");
-    JSObjectSetProperty(context, globalObject, printIString, JSFunctionMake(context, print), kJSPropertyAttributeNone);
-    JSInternalStringRelease(printIString);
+    JSStringRef printIString = JSStringCreateWithUTF8CString("print");
+    JSObjectSetProperty(context, globalObject, printIString, JSObjectMakeFunction(context, print), kJSPropertyAttributeNone);
+    JSStringRelease(printIString);
     
-    JSInternalStringRef node = JSInternalStringCreateUTF8("Node");
-    JSObjectSetProperty(context, globalObject, node, JSConstructorMake(context, JSNode_construct), kJSPropertyAttributeNone);
-    JSInternalStringRelease(node);
+    JSStringRef node = JSStringCreateWithUTF8CString("Node");
+    JSObjectSetProperty(context, globalObject, node, JSObjectMakeConstructor(context, JSNode_construct), kJSPropertyAttributeNone);
+    JSStringRelease(node);
     
     char* scriptUTF8 = createStringWithContentsOfFile("minidom.js");
-    JSInternalStringRef script = JSInternalStringCreateUTF8(scriptUTF8);
+    JSStringRef script = JSStringCreateWithUTF8CString(scriptUTF8);
     JSValueRef exception;
     JSValueRef result = JSEvaluate(context, script, NULL, NULL, 0, &exception);
     if (result)
         printf("PASS: Test script executed successfully.\n");
     else {
         printf("FAIL: Test script threw exception:\n");
-        JSInternalStringRef exceptionIString = JSValueCopyStringValue(context, exception);
-        CFStringRef exceptionCF = CFStringCreateWithJSInternalString(kCFAllocatorDefault, exceptionIString);
+        JSStringRef exceptionIString = JSValueToStringCopy(context, exception);
+        CFStringRef exceptionCF = JSStringCopyCFString(kCFAllocatorDefault, exceptionIString);
         CFShow(exceptionCF);
         CFRelease(exceptionCF);
-        JSInternalStringRelease(exceptionIString);
+        JSStringRelease(exceptionIString);
     }
-    JSInternalStringRelease(script);
+    JSStringRelease(script);
     free(scriptUTF8);
 
 #if 0 // used for leak/finalize debugging    
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
         JSObjectRef o = JSObjectMake(context, NULL, NULL);
         (void)o;
     }
-    JSGCCollect();
+    JSGarbageCollect();
 #endif
     
     JSContextDestroy(context);
@@ -81,14 +81,14 @@ int main(int argc, char* argv[])
 static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     if (argc > 0) {
-        JSInternalStringRef string = JSValueCopyStringValue(context, argv[0]);
-        size_t numChars = JSInternalStringGetMaxLengthUTF8(string);
+        JSStringRef string = JSValueToStringCopy(context, argv[0]);
+        size_t numChars = JSStringGetMaximumUTF8CStringSize(string);
         char stringUTF8[numChars];
-        JSInternalStringGetCharactersUTF8(string, stringUTF8, numChars);
+        JSStringGetUTF8CString(string, stringUTF8, numChars);
         printf("%s\n", stringUTF8);
     }
     
-    return JSUndefinedMake();
+    return JSValueMakeUndefined();
 }
 
 static char* createStringWithContentsOfFile(const char* fileName)
