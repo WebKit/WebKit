@@ -1,3 +1,19 @@
+2006-07-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9635
+        REGRESSION: Crash when adding to cart at <http://www.yemeksepeti.com/>
+        
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        Don't load external scripts if the parser is stopped.
+        
+        * manual-tests/open-close-tokenizer-crash.html: Added.
+        * manual-tests/resources/empty-file.js: Added.
+        * manual-tests/resources/open-close-tokenizer-crash.html: Added.
+        Add manual test.
+
 2006-07-11  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin, Timo O, Brady, Darin, and Hyatt (whee!)
