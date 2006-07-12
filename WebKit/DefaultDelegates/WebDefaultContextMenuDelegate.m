@@ -290,18 +290,19 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLearnSpelling target:nil representedObject:element]];
         [menuItems addObject:[NSMenuItem separatorItem]];
     }
-    
-    // Add items that aren't in our nib, originally because they were Tiger-only.
-    // FIXME: We should update the nib to include these.
-    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight target:nil representedObject:element]];
-    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil representedObject:element]];
-    [menuItems addObject:[NSMenuItem separatorItem]];
-    // FIXME: The NSTextView behavior for looking text up in the dictionary is different if
-    // there was a selection before you clicked than if the selection was created as part of
-    // the click. This is desired by the dictionary folks apparently, though it seems bizarre.
-    // It might be tricky to pull this off in WebKit.
-    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil representedObject:element]];
-    [menuItems addObject:[NSMenuItem separatorItem]];
+
+    if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight target:nil representedObject:element]];
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil representedObject:element]];
+        [menuItems addObject:[NSMenuItem separatorItem]];
+
+        // FIXME: The NSTextView behavior for looking text up in the dictionary is different if
+        // there was a selection before you clicked than if the selection was created as part of
+        // the click. This is desired by the dictionary folks apparently, though it seems bizarre.
+        // It might be tricky to pull this off in WebKit.
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil representedObject:element]];
+        [menuItems addObject:[NSMenuItem separatorItem]];
+    }
     
     // Load our NSTextView-like context menu nib.
     if (defaultMenu == nil) {
