@@ -1,3 +1,14 @@
+2006-07-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Build fix
+        
+        * JSUtils.cpp:
+        (KJSValueToCFTypeInternal):
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+        * UserObjectImp.cpp:
+        (UserObjectImp::getPropertyList):
+        
 === Safari-521.15 ===
 
 2006-07-07  Geoffrey Garen  <ggaren@apple.com>

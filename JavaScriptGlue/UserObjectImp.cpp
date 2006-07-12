@@ -137,7 +137,7 @@ void UserObjectImp::getPropertyList(ExecState *exec, ReferenceList& propertyList
             CFRelease(cfPropertyNames);
         }
     }
-    JSObject::getPropertyList(exec, propertyList, recursive);
+    JSObject::getPropertyList(propertyList, recursive);
 }
 
 JSValue *UserObjectImp::userObjectGetter(ExecState *, JSObject *, const Identifier& propertyName, const PropertySlot& slot)
