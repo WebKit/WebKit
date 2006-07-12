@@ -200,6 +200,17 @@ static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef 
     return JSValueToObject(context, JSValueMakeNumber(0));
 }
 
+static bool MyObject_hasInstance(JSContextRef context, JSObjectRef constructor, JSValueRef possibleValue, JSValueRef* exception)
+{
+    UNUSED_PARAM(context);
+
+    JSStringRef numberString = JSStringCreateWithUTF8CString("Number");
+    JSObjectRef numberConstructor = JSValueToObject(context, JSObjectGetProperty(context, JSContextGetGlobalObject(context), numberString));
+    JSStringRelease(numberString);
+
+    return JSValueIsInstanceOfConstructor(context, possibleValue, numberConstructor);
+}
+
 static JSValueRef MyObject_convertToType(JSContextRef context, JSObjectRef object, JSType type, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
@@ -228,16 +239,17 @@ static void MyObject_finalize(JSObjectRef object)
 
 JSObjectCallbacks MyObject_callbacks = {
     0,
-    &MyObject_initialize,
-    &MyObject_finalize,
-    &MyObject_hasProperty,
-    &MyObject_getProperty,
-    &MyObject_setProperty,
-    &MyObject_deleteProperty,
-    &MyObject_getPropertyList,
-    &MyObject_callAsFunction,
-    &MyObject_callAsConstructor,
-    &MyObject_convertToType,
+    MyObject_initialize,
+    MyObject_finalize,
+    MyObject_hasProperty,
+    MyObject_getProperty,
+    MyObject_setProperty,
+    MyObject_deleteProperty,
+    MyObject_getPropertyList,
+    MyObject_callAsFunction,
+    MyObject_callAsConstructor,
+    MyObject_hasInstance,
+    MyObject_convertToType,
 };
 
 static JSClassRef MyObject_class(JSContextRef context)

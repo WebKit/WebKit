@@ -193,7 +193,7 @@ typedef JSValueRef
 
 /*! 
 @typedef JSObjectCallAsConstructorCallback
-@abstract The callback invoked when an object is used as a constructor in a 'new' statement.
+@abstract The callback invoked when an object is used as a constructor in a 'new' expression.
 @param context The current execution context.
 @param constructor A JSObject that is the constructor being called.
 @param argc An integer count of the number of arguments in argv.
@@ -206,10 +206,32 @@ JSObjectRef CallAsConstructor(JSContextRef context, JSObjectRef constructor, siz
 
 If your callback were invoked by the JavaScript expression 'new myConstructorFunction()', constructor would be set to myConstructorFunction.
 
-If this callback is NULL, using your object as a constructor in a 'new' statement will throw an exception.
+If this callback is NULL, using your object as a constructor in a 'new' expression will throw an exception.
 */
 typedef JSObjectRef 
 (*JSObjectCallAsConstructorCallback) (JSContextRef context, JSObjectRef constructor, size_t argc, JSValueRef argv[], JSValueRef* exception);
+
+/*! 
+@typedef JSObjectHasInstanceCallback
+@abstract The callback invoked when an object is used in an 'instanceof' expression.
+@param context The current execution context.
+@param constructor The JSObject receiving the hasInstance request
+@param possibleInstance The JSValue being tested to determine if it is an instance of constructor.
+@param exception A pointer to a JSValueRef in which to return an exception, if any.
+@result true if possibleInstance is an instance of constructor, otherwise false
+
+@discussion If you named your function HasInstance, you would declare it like this:
+
+bool HasInstance(JSContextRef context, JSObjectRef constructor, JSValueRef possibleInstance, JSValueRef* exception);
+
+If your callback were invoked by the JavaScript expression 'someValue instanceof myObject', constructor would be set to myObject and possibleInstance would be set to someValue..
+
+If this callback is NULL, using your object in an 'instanceof' will always return false.
+
+Standard JavaScript practice calls for objects that implement the callAsConstructor callback to implement the hasInstance callback as well.
+*/
+typedef bool 
+(*JSObjectHasInstanceCallback)  (JSContextRef context, JSObjectRef constructor, JSValueRef possibleInstance, JSValueRef* exception);
 
 /*! 
 @typedef JSObjectConvertToTypeCallback
@@ -240,7 +262,8 @@ typedef JSValueRef
 @field deleteProperty The callback invoked when deleting a given property.
 @field getPropertyList The callback invoked when adding an object's properties to a property list.
 @field callAsFunction The callback invoked when an object is called as a function.
-@field callAsConstructor The callback invoked when an object is used as a constructor in a 'new' statement.
+@field hasInstance The callback invoked when an object is used in an 'instanceof' expression.
+@field callAsConstructor The callback invoked when an object is used as a constructor in a 'new' expression.
 @field convertToType The callback invoked when converting an object to a particular JavaScript type.
 */
 typedef struct {
@@ -254,6 +277,7 @@ typedef struct {
     JSObjectAddPropertiesToListCallback addPropertiesToList;
     JSObjectCallAsFunctionCallback      callAsFunction;
     JSObjectCallAsConstructorCallback   callAsConstructor;
+    JSObjectHasInstanceCallback         hasInstance;
     JSObjectConvertToTypeCallback       convertToType;
 } JSObjectCallbacks;
 
@@ -343,7 +367,7 @@ JSObjectRef JSObjectMakeFunction(JSContextRef context, JSObjectCallAsFunctionCal
 @function
 @abstract Convenience method for creating a JavaScript constructor with a given callback as its implementation.
 @param context The execution context to use.
-@param callAsConstructor The JSObjectCallAsConstructorCallback to invoke when the constructor is used in a 'new' statement.
+@param callAsConstructor The JSObjectCallAsConstructorCallback to invoke when the constructor is used in a 'new' expression.
 @result A JSObject that is a constructor. The object's prototype will be the default object prototype.
 */
 JSObjectRef JSObjectMakeConstructor(JSContextRef context, JSObjectCallAsConstructorCallback callAsConstructor);

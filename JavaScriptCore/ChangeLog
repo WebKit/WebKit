@@ -1,3 +1,19 @@
+2006-07-12  Maciej Stachowiak  <mjs@apple.com>
+
+        4eviewed by Geoff.
+        
+        - add handling of hasInstance callback for API objects
+
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::implementsHasInstance): Check if callback is present.
+        (KJS::JSCallbackObject::hasInstance): Invoke appropriate callback.
+        * API/JSCallbackObject.h:
+        * API/JSClassRef.cpp:
+        * API/JSObjectRef.h:
+        * API/testapi.c:
+        (MyObject_hasInstance): Test case; should match what construct would do.
+        * API/testapi.js:
+
 2006-07-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

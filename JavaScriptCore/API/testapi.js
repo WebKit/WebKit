@@ -81,3 +81,5 @@ shouldBe("typeof MyConstructor", "object");
 constructedObject = new MyConstructor(1);
 shouldBe("typeof constructedObject", "object");
 shouldBe("constructedObject.value", 1);
+shouldBe("(new MyObject()) instanceof MyObject", true);
+shouldBe("(new Object()) instanceof MyObject", false);

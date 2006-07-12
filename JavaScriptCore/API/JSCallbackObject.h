@@ -54,6 +54,9 @@ public:
     virtual bool implementsConstruct() const;
     virtual JSObject* construct(ExecState*, const List& args);
 
+    virtual bool implementsHasInstance() const;
+    virtual bool hasInstance(ExecState *exec, JSValue *value);
+
     virtual bool implementsCall() const;
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List &args);
 

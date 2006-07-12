@@ -235,6 +235,29 @@ JSObject* JSCallbackObject::construct(ExecState* exec, const List& args)
     return 0;
 }
 
+bool JSCallbackObject::implementsHasInstance() const
+{
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent)
+        if (jsClass->callbacks.hasInstance)
+            return true;
+
+    return false;
+}
+
+bool JSCallbackObject::hasInstance(ExecState *exec, JSValue *value)
+{
+    JSContextRef execRef = toRef(exec);
+    JSObjectRef thisRef = toRef(this);
+
+    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent)
+        if (JSObjectHasInstanceCallback hasInstance = jsClass->callbacks.hasInstance)
+            return hasInstance(execRef, thisRef, toRef(value), toRef(exec->exceptionSlot()));
+
+    ASSERT(0); // implementsHasInstance should prevent us from reaching here
+    return 0;
+}
+
+
 bool JSCallbackObject::implementsCall() const
 {
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent)
