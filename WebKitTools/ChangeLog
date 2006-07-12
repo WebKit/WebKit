@@ -1,3 +1,14 @@
+2006-07-12  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Timothy.
+        
+        Lets Drosera build universal for the nightlies. Right now it is not
+        possible to build a universal binary on a PPC machine because of a
+        conflict with the universal SDK.
+
+        * BuildSlaveSupport/build-launcher-app:
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+
 2006-07-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Tim O.
