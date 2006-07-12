@@ -27,7 +27,6 @@
 #import <WebCore/DOMHTML.h>
 #import <WebCore/DOMRange.h>
 #import <WebCore/DOMEvents.h>
-#import <JavaScriptCore/npruntime.h>
 
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText
@@ -43,7 +42,7 @@
 - (NSFont *)_font;
 - (NSData *)_imageTIFFRepresentation;
 - (NSURL *)_getURLAttribute:(NSString *)name;
-- (NPObject *)_NPObject; // NPObjects may only be created for APPLET, EMBED, or OBJECT elements
+- (void *)_NPObject; // For subclasses to implement; we only allow NPObjects to be created for certain element types
 @end
 
 @interface DOMCSSStyleDeclaration (WebPrivate)

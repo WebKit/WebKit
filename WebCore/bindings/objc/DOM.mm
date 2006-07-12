@@ -1534,7 +1534,7 @@ static Class elementClass(const AtomicString& tagName)
     return KURL(e->document()->completeURL(parseURL(e->getAttribute(name)).deprecatedString())).getNSURL();
 }
 
-- (NPObject *)_NPObject
+- (void *)_NPObject
 {
     Element* element = [self _element];
     if (element->hasTagName(appletTag) || element->hasTagName(embedTag) || element->hasTagName(objectTag))
