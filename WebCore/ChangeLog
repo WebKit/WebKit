@@ -1,3 +1,10 @@
+2006-07-11  David Kilzer  <ddkilzer@kilzer.net>
+
+        Windows build fix.  Reviewed by NOBODY.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:  Added JSHTMLOptionsCollection.cpp/h
+        and JSHTMLOptionsCollectionCuston.cpp.  VC++ Express realphabetized the file list.
+
 2006-07-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

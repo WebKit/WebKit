@@ -627,6 +627,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLOptionsCollection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLOptionsCollection.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLParagraphElement.cpp"
 				>
 			</File>
@@ -1419,11 +1427,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\ScrollBarMode.h"
+				RelativePath="..\..\platform\ScrollBar.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\ScrollBar.h"
+				RelativePath="..\..\platform\ScrollBarMode.h"
 				>
 			</File>
 			<File
@@ -2875,14 +2883,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderStyle.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderStyle.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\RenderApplet.cpp"
 				>
 			</File>
@@ -3124,6 +3124,14 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\RenderReplaced.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderStyle.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderStyle.h"
 				>
 			</File>
 			<File
@@ -4895,6 +4903,10 @@
 				</File>
 				<File
 					RelativePath="..\..\bindings\js\JSHTMLOptionElementConstructor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bindings\js\JSHTMLOptionsCollectionCustom.cpp"
 					>
 				</File>
 				<File
