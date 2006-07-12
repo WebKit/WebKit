@@ -25,6 +25,7 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptGroupElement.h"
+#include "HTMLSelectElement.h"
 
 namespace WebCore {
 
@@ -37,18 +38,22 @@ RenderPopupMenu::RenderPopupMenu(Node* element)
 
 void RenderPopupMenu::populate()
 {
-    RenderMenuList* select = getRenderMenuList();
-    ASSERT(select);
-    if (!select->node())
+    ASSERT(menuList());
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(menuList()->node());
+    if (!select)
         return;
-    //FIXME: Maybe we should just iterate through the select element's list items?
-    for (Node* n = select->node()->firstChild(); n; n = n->traverseNextNode(select->node())) {
-        if (n->hasTagName(optionTag))
-            addOption(static_cast<HTMLOptionElement*>(n));
-        else if (n->hasTagName(optgroupTag))
-            addGroupLabel(static_cast<HTMLOptGroupElement*>(n));
-        else if (n->hasTagName(hrTag))
+    const Vector<HTMLElement*>& items = select->listItems();
+    size_t size = items.size();
+    for (size_t i = 0; i < size; ++i) {
+        HTMLElement* element = items[i];
+        if (element->hasTagName(optionTag))
+            addOption(static_cast<HTMLOptionElement*>(element));
+        else if (element->hasTagName(optgroupTag))
+            addGroupLabel(static_cast<HTMLOptGroupElement*>(element));
+        else if (element->hasTagName(hrTag))
             addSeparator();
+        else
+            ASSERT(0);
     }
 }
 

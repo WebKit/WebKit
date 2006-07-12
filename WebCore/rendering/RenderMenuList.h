@@ -23,21 +23,18 @@
 #ifndef RenderMenuList_H
 #define RenderMenuList_H
 
-#include "RenderButton.h"
-#include "HTMLSelectElement.h"
+#include "RenderFlexibleBox.h"
 
 namespace WebCore {
 
-class RenderPopupMenu;
+class HTMLSelectElement;
 
-class RenderMenuList : public RenderFlexibleBox
-{
+class RenderMenuList : public RenderFlexibleBox {
 public:
     RenderMenuList(HTMLSelectElement*);
 
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
-    virtual void removeChild(RenderObject* oldChild);
-    virtual void removeLeftoverAnonymousBoxes() {}
+    virtual void removeChild(RenderObject*);
     virtual bool createsAnonymousWrapper() const { return true; }
     virtual bool canHaveChildren() const { return false; }
 
@@ -47,34 +44,23 @@ public:
     virtual void paintObject(PaintInfo&, int tx, int ty);
 
     virtual const char* renderName() const { return "RenderMenuList"; }
-    
-    RenderStyle* createInnerStyle(RenderStyle*);
+
     virtual void calcMinMaxWidth();
-    virtual void layout();
 
-    void setOptionsChanged(bool o) { m_optionsChanged = o; }
-
-    bool selectionChanged() { return m_selectionChanged; }
-    void setSelectionChanged(bool selectionChanged) { m_selectionChanged = selectionChanged; }
-    void updateSelection();
-    
     void showPopup();
+
+    void setOptionsChanged(bool c) { m_optionsChanged = c; }
     void valueChanged(unsigned index);
-    bool hasPopupMenu() { return m_popupMenu; }
 
 private:
     void createInnerBlock();
     void setText(const String&);
 
     RenderText* m_buttonText;
-    RenderBlock* m_inner;
-    RenderPopupMenu* m_popupMenu;
+    RenderBlock* m_innerBlock;
 
-    unsigned m_size;
-    bool m_selectionChanged;
     bool m_optionsChanged;
-    float m_longestWidth;
-    int m_selectedIndex;
+    int m_optionsWidth;
 };
 
 }

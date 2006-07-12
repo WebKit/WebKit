@@ -124,7 +124,7 @@ int HTMLOptionElement::index() const
     // we won't forget to update a member variable in some cases...
     HTMLSelectElement *select = getSelect();
     if (select) {
-        Vector<HTMLElement*> items = select->listItems();
+        const Vector<HTMLElement*>& items = select->listItems();
         int l = items.size();
         int optionIndex = 0;
         for(int i = 0; i < l; i++) {
@@ -162,19 +162,18 @@ String HTMLOptionElement::value() const
     return text().deprecatedString().stripWhiteSpace();
 }
 
-void HTMLOptionElement::setValue(const String &value)
+void HTMLOptionElement::setValue(const String& value)
 {
     setAttribute(valueAttr, value);
 }
 
-void HTMLOptionElement::setSelected(bool _selected)
+void HTMLOptionElement::setSelected(bool selected)
 {
-    if(m_selected == _selected)
+    if (m_selected == selected)
         return;
-    m_selected = _selected;
-    HTMLSelectElement *select = getSelect();
-    if (select)
-        select->notifyOptionSelected(this,_selected);
+    m_selected = selected;
+    if (HTMLSelectElement* select = getSelect())
+        select->notifyOptionSelected(this, selected);
 }
 
 void HTMLOptionElement::childrenChanged()

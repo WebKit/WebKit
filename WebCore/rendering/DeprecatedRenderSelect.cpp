@@ -77,9 +77,8 @@ void DeprecatedRenderSelect::updateFromElement()
 
     // update contents listbox/combobox based on options in m_element
     if (m_optionsChanged) {
-        if (static_cast<HTMLSelectElement*>(node())->m_recalcListItems)
-            static_cast<HTMLSelectElement*>(node())->recalcListItems();
-        Vector<HTMLElement*> listItems = static_cast<HTMLSelectElement*>(node())->listItems();
+        static_cast<HTMLSelectElement*>(node())->recalcListItems();
+        const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(node())->listItems();
         int listIndex;
 
         static_cast<ListBox*>(m_widget)->clear();
@@ -189,7 +188,7 @@ void DeprecatedRenderSelect::layout()
     RenderFormElement::layout();
 
     // and now disable the widget in case there is no <option> given
-    Vector<HTMLElement*> listItems = static_cast<HTMLSelectElement*>(node())->listItems();
+    const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(node())->listItems();
 
     bool foundOption = false;
     for (unsigned i = 0; i < listItems.size() && !foundOption; i++)
@@ -205,7 +204,7 @@ void DeprecatedRenderSelect::selectionChanged(Widget*)
 
     // don't use listItems() here as we have to avoid recalculations - changing the
     // option list will make use update options not in the way the user expects them
-    Vector<HTMLElement*> listItems = static_cast<HTMLSelectElement*>(node())->m_listItems;
+    const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(node())->m_listItems;
     int j = 0;
     unsigned size = listItems.size();
     for (unsigned i = 0; i < size; i++) {
@@ -235,7 +234,7 @@ ListBox* DeprecatedRenderSelect::createListBox()
 
 void DeprecatedRenderSelect::updateSelection()
 {
-    Vector<HTMLElement*> listItems = static_cast<HTMLSelectElement*>(node())->listItems();
+    const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(node())->listItems();
     int i;
     // if multi-select, we select only the new selected index
     ListBox *listBox = static_cast<ListBox*>(m_widget);

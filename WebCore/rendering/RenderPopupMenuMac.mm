@@ -25,8 +25,8 @@
 #import "FrameMac.h"
 #import "FrameView.h"
 #import "HTMLNames.h"
-#import "HTMLOptionElement.h"
 #import "HTMLOptGroupElement.h"
+#import "HTMLOptionElement.h"
 #import "RenderMenuList.h"
 #import "WebCoreSystemInterface.h"
 
@@ -43,7 +43,7 @@ RenderPopupMenuMac::RenderPopupMenuMac(Node* element)
 RenderPopupMenuMac::~RenderPopupMenuMac()
 {
     if (popup) {
-        [popup setControlView: nil];
+        [popup setControlView:nil];
         [popup release];
     }
 }
@@ -56,95 +56,73 @@ void RenderPopupMenuMac::clear()
 
 void RenderPopupMenuMac::populate()
 {
+    if (popup)
+        [popup removeAllItems];
+    else {
+        popup = [[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO];
+        [popup setUsesItemFromMenu:NO];
+        [popup setAutoenablesItems:NO];
+    }
     BOOL messagesEnabled = [[popup menu] menuChangedMessagesEnabled];
     [[popup menu] setMenuChangedMessagesEnabled:NO];
     RenderPopupMenu::populate();
     [[popup menu] setMenuChangedMessagesEnabled:messagesEnabled];
-
 }
 
 void RenderPopupMenuMac::showPopup(const IntRect& r, FrameView* v, int index)
 {
-    FrameMac* frame = Mac(v->frame());
-    NSEvent* evt = frame->currentEvent();
-    // Save the current event that triggered the popup, so we can clean up our event
-    // state after the NSMenu goes away.
-    [evt retain];
-    
-    if (!popup) {
-        popup = [[[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO] retain];
-        [popup setUsesItemFromMenu:NO];
-        [popup setAutoenablesItems:NO];
-    }
-    // If we decide to cache the NSMenuItems, we shouldn't clear and populate every time we show the popup menu
-    clear();
     populate();
-    
     if ([popup numberOfItems] <= 0)
         return;
-    
     ASSERT([popup numberOfItems] > index);
-    
+
     NSView* view = v->getDocumentView();
+
     [popup attachPopUpWithFrame:r inView:view];
-    
     [popup selectItemAtIndex:index];
     
-    NSPoint location = NSMakePoint(NSMinX(r), NSMaxY(r));
-    float vertOffset;
-    
-    //center it in our title frame
+    NSFont* font = style()->font().getNSFont();
+
     NSRect titleFrame = [popup titleRectForBounds:r];
     if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
         titleFrame = r;
-    NSFont* font = style()->font().getNSFont();
-    NSSize sizeOfSelectedItem = titleFrame.size;
-
-    vertOffset = round((NSMaxY(r) - NSMaxY(titleFrame)) + (NSHeight(titleFrame) + sizeOfSelectedItem.height)/2.f);
-
-    //Align us for different fonts
+    float vertOffset = roundf((NSMaxY(r) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
+    // Adjust for fonts other than the system font.
     NSFont* defaultFont = [NSFont systemFontOfSize:[font pointSize]];
     vertOffset += [font descender] - [defaultFont descender];
-
     vertOffset = fmin(NSHeight(r), vertOffset);
 
-    location.x -= 10;
-    location.y -= vertOffset;
-
-//  NSColor* backgroundColor = nsColor(style()->backgroundColor());
     NSMenu* menu = [popup menu];
-    
-    wkPopupMenu(menu, location, floor(NSWidth(r) + 0.5), view, index, font);
-    
-    // update text on button
-    int newIndex = [popup indexOfSelectedItem];
-    if (index != newIndex && newIndex >= 0)
-        getRenderMenuList()->valueChanged(newIndex);
+    // FIXME: Need to document where this magic number 10 comes from.
+    NSPoint location = NSMakePoint(NSMinX(r) - 10, NSMaxY(r) - vertOffset);
 
+    // Save the current event that triggered the popup, so we can clean up our event
+    // state after the NSMenu goes away.
+    RefPtr<FrameMac> frame = Mac(v->frame());
+    NSEvent* event = [frame->currentEvent() retain];
+
+    wkPopupMenu(menu, location, roundf(NSWidth(r)), view, index, font);
+    int newIndex = [popup indexOfSelectedItem];
     [popup dismissPopUp];
-    
-    if (frame) {
-        // Give WebCore a chance to fix up its event state, since the popup eats all the
-        // events during tracking.
-        frame->sendFakeEventsAfterWidgetTracking(evt);
-    }
-    [evt release];
+
+    if (index != newIndex && newIndex >= 0)
+        menuList()->valueChanged(newIndex);
+
+    // Give the frame a chance to fix up its event state, since the popup eats all the
+    // events during tracking.
+    frame->sendFakeEventsAfterWidgetTracking(event);
+
+    [event release];
 }
 
 void RenderPopupMenuMac::addSeparator()
 {
-    NSMenuItem *separator = [NSMenuItem separatorItem];
-    [[popup menu] addItem:separator];
+    [[popup menu] addItem:[NSMenuItem separatorItem]];
 }
 
 void RenderPopupMenuMac::addGroupLabel(HTMLOptGroupElement* element)
 {
-    if (!element)
-        return;
     String text = element->groupLabelText();
-    
-    [popup addItemWithTitle:@""];
-    NSMenuItem *menuItem = [popup lastItem];
 
     RenderStyle* s = element->renderStyle();
     if (!s)
@@ -155,27 +133,25 @@ void RenderPopupMenuMac::addGroupLabel(HTMLOptGroupElement* element)
         [attributes setObject:s->font().getNSFont() forKey:NSFontAttributeName];
     if (s->color() != Color::black)
         [attributes setObject:nsColor(s->color()) forKey:NSForegroundColorAttributeName];
-    NSAttributedString *string = [[NSAttributedString alloc] initWithString:text attributes:attributes];
-
-    [menuItem setAttributedTitle:string];
-    [string release];
+    NSAttributedString* string = [[NSAttributedString alloc] initWithString:text attributes:attributes];
     [attributes release];
+
+    [popup addItemWithTitle:@""];
+    NSMenuItem* menuItem = [popup lastItem];
+    [menuItem setAttributedTitle:string];
     [menuItem setEnabled:NO];
+
+    [string release];
 }
 
 void RenderPopupMenuMac::addOption(HTMLOptionElement* element)
 {
-    if (!element)
-        return;
     String text = element->optionText();
     
     bool groupEnabled = true;
     if (element->parentNode() && element->parentNode()->hasTagName(optgroupTag))
         groupEnabled = element->parentNode()->isEnabled();
 
-    [popup addItemWithTitle:@""];
-    NSMenuItem *menuItem = [popup lastItem];
-    
     RenderStyle* s = element->renderStyle();
     if (!s)
         s = style();
@@ -186,13 +162,15 @@ void RenderPopupMenuMac::addOption(HTMLOptionElement* element)
     if (s->color() != Color::black)
         [attributes setObject:nsColor(s->color()) forKey:NSForegroundColorAttributeName];
     // FIXME: Find a way to customize text color when an item is highlighted.
-    NSAttributedString *string = [[NSAttributedString alloc] initWithString:text attributes:attributes];
-
-    [menuItem setAttributedTitle:string];
-    [string release];
+    NSAttributedString* string = [[NSAttributedString alloc] initWithString:text attributes:attributes];
     [attributes release];
+
+    [popup addItemWithTitle:@""];
+    NSMenuItem* menuItem = [popup lastItem];
+    [menuItem setAttributedTitle:string];
     [menuItem setEnabled:groupEnabled && element->isEnabled()];
 
+    [string release];
 }
 
 }

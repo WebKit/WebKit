@@ -33,14 +33,12 @@
 
 namespace WebCore {
 
+class DeprecatedRenderSelect;
 class HTMLOptionElement;
 class HTMLOptionsCollection;
-class DeprecatedRenderSelect;
 
 class HTMLSelectElement : public HTMLGenericFormElement {
     friend class DeprecatedRenderSelect;
-    friend class RenderMenuList;
-
 public:
     HTMLSelectElement(Document*, HTMLFormElement* = 0);
     HTMLSelectElement(const QualifiedName& tagName, Document*, HTMLFormElement* = 0);
@@ -100,10 +98,10 @@ public:
 
     void setRecalcListItems();
 
-    Vector<HTMLElement*> listItems() const
+    const Vector<HTMLElement*>& listItems() const
     {
         if (m_recalcListItems)
-            const_cast<HTMLSelectElement*>(this)->recalcListItems();
+            recalcListItems();
         return m_listItems;
     }
     virtual void reset();
@@ -119,23 +117,23 @@ public:
     void setOption(unsigned index, HTMLOptionElement*, ExceptionCode&);
     void setLength(unsigned, ExceptionCode&);
 
-    virtual Node* namedItem(const String &name, bool caseSensitive = true);
+    virtual Node* namedItem(const String& name, bool caseSensitive = true);
 
     HTMLCollection::CollectionInfo* collectionInfo() { return &m_collectionInfo; }
 
 private:
-    void recalcListItems();
+    void recalcListItems() const;
     bool shouldUseMenuList() const { return !m_multiple && m_size <= 1; }
 
     mutable Vector<HTMLElement*> m_listItems;
     int m_minwidth;
     int m_size;
     bool m_multiple;
-    bool m_recalcListItems;
-    
+    mutable bool m_recalcListItems;
+
     HTMLCollection::CollectionInfo m_collectionInfo;
 };
 
-} //namespace
+} // namespace
 
 #endif

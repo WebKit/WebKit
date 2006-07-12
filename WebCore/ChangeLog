@@ -1,3 +1,96 @@
+2006-07-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9809
+          <rdar://problem/4619515>
+          focus ring fails to appear on select element after choosing item from popup
+
+        - includes http://bugzilla.opendarwin.org/show_bug.cgi?id=9853
+          improvements to select element, including some storage leak fixes
+
+        * html/HTMLOptionElement.cpp: (WebCore::HTMLOptionElement::index): Use a const
+        reference for the list items, so we don't have to copy a vector.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::selectedIndex): Ditto.
+        (WebCore::HTMLSelectElement::setSelectedIndex): Ditto.
+        (WebCore::HTMLSelectElement::length): Ditto.
+        (WebCore::HTMLSelectElement::remove): Ditto.
+        (WebCore::HTMLSelectElement::value): Ditto.
+        (WebCore::HTMLSelectElement::setValue): Ditto.
+        (WebCore::HTMLSelectElement::stateValue): Ditto.
+        (WebCore::HTMLSelectElement::restoreState): Ditto.
+        (WebCore::HTMLSelectElement::appendFormData): Ditto.
+        (WebCore::HTMLSelectElement::optionToListIndex): Ditto.
+        (WebCore::HTMLSelectElement::listToOptionIndex): Ditto.
+        (WebCore::HTMLSelectElement::recalcListItems): Made const, with the appropriate
+        fields mutable.
+        (WebCore::HTMLSelectElement::reset): Use a const reference for
+        the list items, so we don't have to copy the vector. Remove the call to
+        setSelectionChanged for the RenderMenuList case.
+        (WebCore::HTMLSelectElement::notifyOptionSelected): Ditto, on both counts.
+        (WebCore::HTMLSelectElement::defaultEventHandler): Call focus() before showing
+        the pop-up.
+        * html/HTMLSelectElement.h: The RenderMenuList class is no longer a friend.
+        Changed the listItems function to return a const reference to the vector so
+        it no longer copies the vector. Removed the const_cast to the call to
+        recalcListItems and changed it to a const member function. Made m_recalcListItems
+        mutable.
+        * rendering/DeprecatedRenderSelect.cpp:
+        (WebCore::DeprecatedRenderSelect::updateFromElement): Removed an unnecessary call
+        to recalcListItems, which is called automatically. Use a const reference for the
+        list items so we don't have to copy a vector.
+        (WebCore::DeprecatedRenderSelect::layout): Ditto.
+        (WebCore::DeprecatedRenderSelect::selectionChanged): Ditto.
+        (WebCore::DeprecatedRenderSelect::updateSelection): Ditto.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::RenderMenuList): Updated for renamed data members.
+        (WebCore::RenderMenuList::createInnerBlock): Ditto.
+        (WebCore::RenderMenuList::addChild): Ditto.
+        (WebCore::RenderMenuList::removeChild): Ditto.
+        (WebCore::RenderMenuList::setStyle): Ditto. Also removed code to set the style
+        on the pop-up menu, because it's created with the correct style and destroyed
+        before it a style change could occur.
+        (WebCore::RenderMenuList::updateFromElement): Rearranged code to compute the
+        maximum width in a simpler fashion, and to not bother trying to maintain
+        the "selected" flags on the elements, since the HTMLSelectElement class
+        takes care of that. Store the width as an int. Call setText to set the text
+        based on the selected element's option text.
+        (WebCore::RenderMenuList::paintObject): Don't check m_inner when setting
+        up the clip -- always set up the clip.
+        (WebCore::RenderMenuList::calcMinMaxWidth): Use m_optionsWidth directly
+        instead of calling ceilf on m_longestWidth.
+        (WebCore::RenderMenuList::showPopup): Don't use m_popupMenu to store the
+        menu -- instead keep the pointer in a local variable. Get the selected
+        index from the HTMLSelectElement.
+        (WebCore::RenderMenuList::valueChanged): Call HTMLSelectElement::setSelectedIndex
+        to do most of the work.
+        * rendering/RenderMenuList.h: Renamed m_inner to m_innerBlock. Removed
+        m_popupMenu, m_size, m_selectionChanged, and m_selectedIndex. Renamed
+        m_longestWidth to m_optionsWidth and changed it to be an int. Removed
+        unneeded override of removeLeftoverAnonymousBoxes function. Removed
+        unneeded selectionChanged, setSelectionChanged, updateSelection, and
+        hasPopupMenu functions. Removed extra includes.
+        * rendering/RenderPopupMenu.cpp: (WebCore::RenderPopupMenu::populate):
+        Change to iterate the list items instead of iterating all children
+        of the select node.
+        * rendering/RenderPopupMenu.h: Renamed getRenderMenuList to menuList.
+        * rendering/RenderPopupMenuMac.mm:
+        (WebCore::RenderPopupMenuMac::populate): Moved code to clear and create
+        the pop-up here from the caller. Removed an extra retain that would cause
+        the NSPopUpButtonCell to leak.
+        (WebCore::RenderPopupMenuMac::showPopup): Removed unnecessary code to
+        create the pop-up, which is now in populate, and also the call to the
+        clear function, for the same reason. Reorganized code to make it a bit
+        more readable. Removed an unnecessary if to check if frame is nil.
+        Used a RefPtr to make sure we don't make a call on a frame after it's
+        deleted. As part of the reorganization fixed a problem where we'd retain
+        the event and then return early without releasing it in one case.
+        (WebCore::RenderPopupMenuMac::addSeparator): Tweaked a little.
+        (WebCore::RenderPopupMenuMac::addGroupLabel): Grouped all the code to
+        manage the NSMenu at the bottom of the function.
+        (WebCore::RenderPopupMenuMac::addOption): Ditto.
+
 2006-07-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
