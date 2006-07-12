@@ -1,3 +1,15 @@
+2006-07-12  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4624858> AGL isn't 64-bit yet; temporarily remove it from WebKit 64-bit build
+
+        Also, fixed a LOG_ERROR() so that it uses the CGL error instead of the AGL error; Tim H missed this in his build fix
+        from earlier.
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.m:
+
 2006-07-11  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin and Tim O
