@@ -1,3 +1,15 @@
+2006-07-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4614656> REGRESSION: onpaste() handlers don't run for textarea elements
+        
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::dispatchCPPEvent):
+        If the element is a shadow node, dispatch the event to its real parent.
+
+        * manual-tests/textarea-onpaste.html: Added.
+
 2006-07-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders.
@@ -12,7 +24,7 @@
         (itemTextRenderer): Inverted check.
         (groupLabelTextRenderer): Inverted check.
 
-2006-07-13  Darin Adler  <darin@apple.com>
+2006-07-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
 

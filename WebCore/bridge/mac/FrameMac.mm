@@ -1783,7 +1783,9 @@ bool FrameMac::dispatchCPPEvent(const AtomicString &eventType, ClipboardMac::Acc
         target = document()->body();
     if (!target)
         return true;
-
+    if (target->isShadowNode())
+        target = target->shadowParentNode();
+    
     RefPtr<ClipboardMac> clipboard = new ClipboardMac(false, [NSPasteboard generalPasteboard], (ClipboardMac::AccessPolicy)policy);
 
     ExceptionCode ec = 0;
