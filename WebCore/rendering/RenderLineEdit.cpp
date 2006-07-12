@@ -30,6 +30,7 @@
 #include "HTMLNames.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
+#include "RenderView.h"
 #include "TextField.h"
 
 namespace WebCore {

@@ -1,3 +1,38 @@
+2006-07-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for <rdar://problem/4615765> Input[type='search' fields 
+        initially render too large in Widgets
+
+        Fundamentally, the problem here is that we were miscalculating 
+        things because [NSGraphicsContext currentContextDrawingToScreen] 
+        was evaluating to false when widgets first load. We only ever used 
+        this check, however, to determine if we were printing or not, so it 
+        should not have evaluated to false for loading in Dashbaord. 
+        Instead, if we query the RenderView about whether or not we are 
+        printing, we will get the right answer.
+
+        No test case added since this appears only to affect Dashboard.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge drawRect:]): Ask the RenderView if we are 
+        printing instead. This is not part of the actual bug fix, but it 
+        seems wise to get rid of all calls to [NSGraphicsContext 
+        currentContextDrawingToScreen] when we are just trying to determine 
+        if we are printing or not.
+        * platform/mac/ListBoxMac.mm:
+        (itemTextRenderer):This function now takes a boolean, isPrinting.
+        (groupLabelTextRenderer): Same as above.
+        (ListBox::sizeForNumberOfLines): Ask the RenderView if we are 
+        printing.
+        (-[WebCoreTableView drawRow:clipRect:]): Same as above.
+        * platform/mac/PopUpButtonMac.mm:
+        (PopUpButton::sizeHint): Same as above.
+        * platform/mac/TextFieldMac.mm:
+        (-[NSSearchFieldCell _addStringToRecentSearches:]):
+        * rendering/RenderLineEdit.cpp: Same as above.
+
 2006-07-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

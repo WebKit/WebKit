@@ -30,6 +30,8 @@
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "FontData.h"
+#import "RenderView.h"
+#import "RenderWidget.h"
 #import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
 #import <wtf/Assertions.h>
@@ -77,9 +79,9 @@ static NSFont *itemFont()
     return font;
 }
 
-static Font* itemTextRenderer()
+static Font* itemTextRenderer(bool isPrinting)
 {
-    if ([NSGraphicsContext currentContextDrawingToScreen]) {
+    if (isPrinting) {
         if (itemScreenRenderer == nil) {
             FontPlatformData font(itemFont());
             itemScreenRenderer = new Font(font);
@@ -94,9 +96,9 @@ static Font* itemTextRenderer()
     }
 }
 
-static Font* groupLabelTextRenderer()
+static Font* groupLabelTextRenderer(bool isPrinting)
 {
-    if ([NSGraphicsContext currentContextDrawingToScreen]) {
+    if (isPrinting) {
         if (groupLabelScreenRenderer == nil) {
             FontPlatformData font([NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]]);
             groupLabelScreenRenderer = new Font(font);
@@ -272,8 +274,10 @@ IntSize ListBox::sizeForNumberOfLines(int lines) const
             
             bool needToDeleteLabel = false;
             if (tableView->isSystemFont) {        
-                renderer = itemTextRenderer();
-                groupLabelRenderer = groupLabelTextRenderer();
+                RenderWidget *client = static_cast<RenderWidget *>(Widget::client());
+                bool isPrinting = client->view()->printingMode();
+                renderer = itemTextRenderer(isPrinting);
+                groupLabelRenderer = groupLabelTextRenderer(isPrinting);
             } else {
                 renderer = &font();
                 FontDescription boldDesc = font().fontDescription();
@@ -677,7 +681,9 @@ static Boolean ListBoxTypeSelectCallback(UInt32 index, void *listDataPtr, void *
     bool deleteRenderer = false;
     const Font* renderer;
     if (isSystemFont) {
-        renderer = (item.type == ListBoxGroupLabel) ? groupLabelTextRenderer() : itemTextRenderer();
+        RenderWidget *client = static_cast<RenderWidget *>([self widget]->client());
+        bool isPrinting = client->view()->printingMode();
+        renderer = (item.type == ListBoxGroupLabel) ? groupLabelTextRenderer(isPrinting) : itemTextRenderer(isPrinting);
     } else {
         if (item.type == ListBoxGroupLabel) {
             deleteRenderer = true;

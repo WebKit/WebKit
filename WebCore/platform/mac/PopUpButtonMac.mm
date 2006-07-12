@@ -32,6 +32,8 @@
 #import "TextField.h"
 #import "WebCoreFrameBridge.h"
 #import "FontData.h"
+#import "RenderView.h"
+#import "RenderWidget.h"
 #import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
 #import "Font.h"
@@ -165,8 +167,10 @@ IntSize PopUpButton::sizeHint() const
         DeprecatedValueListConstIterator<ListBoxItem> i = const_cast<const DeprecatedValueList<ListBoxItem> &>(_items).begin();
         DeprecatedValueListConstIterator<ListBoxItem> e = const_cast<const DeprecatedValueList<ListBoxItem> &>(_items).end();
         if (i != e) {
-            FontPlatformData itemFont([button font], ![NSGraphicsContext currentContextDrawingToScreen]);
-            FontPlatformData labelFont(this->labelFont(), ![NSGraphicsContext currentContextDrawingToScreen]);
+            RenderWidget *client = static_cast<RenderWidget *>(Widget::client());
+            bool isPrinting = client->view()->printingMode();
+            FontPlatformData itemFont([button font], isPrinting);
+            FontPlatformData labelFont(this->labelFont(), isPrinting);
             Font itemRenderer(itemFont);
             Font labelRenderer(labelFont);
             do {

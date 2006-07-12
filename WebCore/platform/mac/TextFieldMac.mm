@@ -34,6 +34,8 @@
 #import "WebCoreTextField.h"
 #import "WebCoreFrameBridge.h"
 #import "FontData.h"
+#import "RenderView.h"
+#import "RenderWidget.h"
 #import "WebCoreViewFactory.h"
 #import "WidgetClient.h"
 
@@ -260,7 +262,8 @@ IntSize TextField::sizeForCharacterWidth(int numCharacters) const
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    FontPlatformData font([textField font], ![NSGraphicsContext currentContextDrawingToScreen]);
+    RenderWidget *client = static_cast<RenderWidget *>(Widget::client());
+    FontPlatformData font([textField font], client->view()->printingMode());
     Font renderer(font);
 
     NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
