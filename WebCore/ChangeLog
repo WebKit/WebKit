@@ -1,3 +1,13 @@
+2006-07-11  Tim Omernick  <timo@apple.com>
+
+        Reviewed by NOBODY (build fix)
+
+        * bindings/objc/DOMPrivate.h:
+        Don't @class NPObject; that breaks files that actually #import <JavaScriptCore/npruntime.h>, since the NPObject
+        there is of a different type.
+        Also clarified a highly misleading comment from my last commit.  I meant to clarify the comment
+        before landing.
+
 2006-07-12  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
