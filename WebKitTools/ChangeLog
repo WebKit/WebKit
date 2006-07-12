@@ -1,5 +1,15 @@
 2006-07-12  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
+        Reviewed by ggaren.
+
+        Bug 9863: Drosera needs to show something at launch
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9863
+
+        * Drosera/DebuggerApplication.m:
+        (-[DebuggerApplication applicationDidFinishLaunching:]): Show the attach window on launch.
+
+2006-07-12  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
         Reviewed by Timothy.
         
         Lets Drosera build universal for the nightlies. Right now it is not

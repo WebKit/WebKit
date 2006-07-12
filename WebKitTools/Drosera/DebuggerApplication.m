@@ -50,6 +50,8 @@
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(serverLoaded:) name:WebScriptDebugServerQueryReplyNotification object:nil];
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(serverUnloaded:) name:WebScriptDebugServerWillUnloadNotification object:nil];
     [[NSDistributedNotificationCenter defaultCenter] postNotificationName:WebScriptDebugServerQueryNotification object:nil];
+
+    [self showAttachPanel:nil];
 }
 
 #pragma mark -
