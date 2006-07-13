@@ -1,3 +1,14 @@
+2006-07-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Adele.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9862
+          REGRESSION: GMail: Crash in RenderView::repaintViewRectangle when spoofing as FF
+        - see also <rdar://problem/4622407>
+
+        * fast/frames/repaint-display-none-crash-expected.txt: Added.
+        * fast/frames/repaint-display-none-crash.html: Added.
+
 2006-07-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

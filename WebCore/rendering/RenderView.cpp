@@ -213,12 +213,11 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
         Element* elt = element()->document()->ownerElement();
         if (!elt)
             m_frameView->repaintRectangle(r, immediate);
-        else {
+        else if (RenderObject* obj = elt->renderer()) {
             // Subtract out the contentsX and contentsY offsets to get our coords within the viewing
             // rectangle.
             r.move(-m_frameView->contentsX(), -m_frameView->contentsY());
 
-            RenderObject* obj = elt->renderer();
             // FIXME: Hardcoded offsets here are not good.
             int yFrameOffset = m_frameView->hasBorder() ? 2 : 0;
             int xFrameOffset = m_frameView->hasBorder() ? 1 : 0;
