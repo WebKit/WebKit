@@ -1,3 +1,27 @@
+2006-07-13  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin and Levi.
+
+        <rdar://problem/4620743> REGRESSION: Option-Delete doesn't delete words during typing
+
+        * Tests:
+        editing/deleting/delete-by-word-001.html
+        editing/deleting/delete-by-word-002.html
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::doApply):
+        * editing/TypingCommand.h:
+        Delete and forward delete to use specified granularity.
+        Undo of delete and forward delete to select what had been deleted (non-char granularity only).
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::setSelection):
+        Close typing and end style even if selection is not changing.
+        * page/Frame.h:
+        Remove unused setSelection parameter keepTypingStyle.
+
 2006-07-12  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by justin

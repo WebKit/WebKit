@@ -600,11 +600,11 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
             [bridge deleteSelectionWithSmartDelete:smartDelete];
             break;
         case deleteKeyAction:
-            [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:NO];
+            [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:(granularity != WebBridgeSelectByCharacter)];
             [bridge deleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
             break;
         case forwardDeleteKeyAction:
-            [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:NO];
+            [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:(granularity != WebBridgeSelectByCharacter)];
             [bridge forwardDeleteKeyPressedWithSmartDelete:smartDelete granularity:granularity];
             break;
     }
