@@ -1,3 +1,16 @@
+2006-07-13  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9880
+          Memory leaks running DOM-Hanoi
+
+        No change in behavior, thus no test included.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::setStatusBarText): Use a local autorelease pool to release the temporaries - 
+        the test runs non-stop, and the enclosing pool doesn't get a chance to be drained.
+
 2006-07-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Adele.

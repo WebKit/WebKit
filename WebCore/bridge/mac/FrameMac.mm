@@ -610,9 +610,15 @@ void FrameMac::setStatusBarText(const String& status)
     String text = status;
     text.replace('\\', backslashAsCurrencySymbol());
     
+    // We want the temporaries allocated here to be released even before returning to the 
+    // event loop; see <http://bugzilla.opendarwin.org/show_bug.cgi?id=9880>.
+    NSAutoreleasePool* localPool = [[NSAutoreleasePool alloc] init];
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [_bridge setStatusText:text];
     END_BLOCK_OBJC_EXCEPTIONS;
+
+    [localPool release];
 }
 
 void FrameMac::scheduleClose()
