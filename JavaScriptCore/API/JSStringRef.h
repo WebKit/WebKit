@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSInternalStringRef_h
-#define JSInternalStringRef_h
+#ifndef JSStringRef_h
+#define JSStringRef_h
 
 #include <JavaScriptCore/JSValueRef.h>
 
@@ -161,4 +161,4 @@ CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef string);
 }
 #endif
 
-#endif // JSInternalStringRef_h
+#endif // JSStringRef_h

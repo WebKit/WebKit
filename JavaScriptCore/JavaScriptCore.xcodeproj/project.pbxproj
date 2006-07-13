@@ -54,8 +54,8 @@
 		1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440FCE20A51E46B0005F061 /* JSClassRef.cpp */; };
 		14760864099C633800437128 /* JSImmediate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14760863099C633800437128 /* JSImmediate.cpp */; };
 		1482B6EB0A4300B300517CFC /* JSValueRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B6EA0A4300B300517CFC /* JSValueRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1482B74D0A43032800517CFC /* JSInternalStringRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B74B0A43032800517CFC /* JSInternalStringRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1482B74E0A43032800517CFC /* JSInternalStringRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B74C0A43032800517CFC /* JSInternalStringRef.cpp */; };
+		1482B74D0A43032800517CFC /* JSStringRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B74B0A43032800517CFC /* JSStringRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B74C0A43032800517CFC /* JSStringRef.cpp */; };
 		1482B78B0A4305AB00517CFC /* APICast.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B78A0A4305AB00517CFC /* APICast.h */; };
 		1482B7E30A43076000517CFC /* JSObjectRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B7E10A43076000517CFC /* JSObjectRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B7E20A43076000517CFC /* JSObjectRef.cpp */; };
@@ -353,8 +353,8 @@
 		1440FCE20A51E46B0005F061 /* JSClassRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClassRef.cpp; sourceTree = "<group>"; };
 		14760863099C633800437128 /* JSImmediate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImmediate.cpp; sourceTree = "<group>"; };
 		1482B6EA0A4300B300517CFC /* JSValueRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValueRef.h; sourceTree = "<group>"; };
-		1482B74B0A43032800517CFC /* JSInternalStringRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInternalStringRef.h; sourceTree = "<group>"; };
-		1482B74C0A43032800517CFC /* JSInternalStringRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInternalStringRef.cpp; sourceTree = "<group>"; };
+		1482B74B0A43032800517CFC /* JSStringRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringRef.h; sourceTree = "<group>"; };
+		1482B74C0A43032800517CFC /* JSStringRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringRef.cpp; sourceTree = "<group>"; };
 		1482B78A0A4305AB00517CFC /* APICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APICast.h; sourceTree = "<group>"; };
 		1482B7E10A43076000517CFC /* JSObjectRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectRef.h; sourceTree = "<group>"; };
 		1482B7E20A43076000517CFC /* JSObjectRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObjectRef.cpp; sourceTree = "<group>"; };
@@ -694,10 +694,10 @@
 				1440FCE10A51E46B0005F061 /* JSClassRef.h */,
 				14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */,
 				14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */,
-				1482B74C0A43032800517CFC /* JSInternalStringRef.cpp */,
-				1482B74B0A43032800517CFC /* JSInternalStringRef.h */,
 				1482B7E20A43076000517CFC /* JSObjectRef.cpp */,
 				1482B7E10A43076000517CFC /* JSObjectRef.h */,
+				1482B74C0A43032800517CFC /* JSStringRef.cpp */,
+				1482B74B0A43032800517CFC /* JSStringRef.h */,
 				14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */,
 				1482B6EA0A4300B300517CFC /* JSValueRef.h */,
 			);
@@ -1118,7 +1118,7 @@
 				14BD534C0A3E0AEA00BAF59C /* SavedBuiltins.h in Headers */,
 				14BD53F50A3E12D800BAF59C /* ExecState.h in Headers */,
 				1482B6EB0A4300B300517CFC /* JSValueRef.h in Headers */,
-				1482B74D0A43032800517CFC /* JSInternalStringRef.h in Headers */,
+				1482B74D0A43032800517CFC /* JSStringRef.h in Headers */,
 				1482B78B0A4305AB00517CFC /* APICast.h in Headers */,
 				1482B7E30A43076000517CFC /* JSObjectRef.h in Headers */,
 				14ABDF5F0A437FEF00ECCA01 /* JSCallbackObject.h in Headers */,
@@ -1406,7 +1406,7 @@
 				14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */,
 				14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */,
 				14BD53F60A3E12D800BAF59C /* ExecState.cpp in Sources */,
-				1482B74E0A43032800517CFC /* JSInternalStringRef.cpp in Sources */,
+				1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */,
 				1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */,
 				14ABDF600A437FEF00ECCA01 /* JSCallbackObject.cpp in Sources */,
 				1440F8920A508B100005F061 /* JSCallbackFunction.cpp in Sources */,

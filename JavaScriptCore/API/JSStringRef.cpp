@@ -25,7 +25,7 @@
  */
 
 #include "APICast.h"
-#include "JSInternalStringRef.h"
+#include "JSStringRef.h"
 
 #include <kjs/JSLock.h>
 #include <kjs/JSType.h>

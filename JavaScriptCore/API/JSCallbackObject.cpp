@@ -26,7 +26,7 @@
 
 #include "APICast.h"
 #include "JSCallbackObject.h"
-#include "JSInternalStringRef.h"
+#include "JSStringRef.h"
 #include "JSClassRef.h"
 #include "JSObjectRef.h"
 #include "internal.h"

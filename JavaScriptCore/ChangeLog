@@ -1,5 +1,20 @@
 2006-07-12  Geoffrey Garen  <ggaren@apple.com>
 
+        RS by Beth.
+        
+        Finished previously approved JSInternalString -> JSString conversion 
+        by renaming the files.
+
+        * API/JSCallbackObject.cpp:
+        * API/JSInternalStringRef.cpp: Removed.
+        * API/JSInternalStringRef.h: Removed.
+        * API/JSStringRef.cpp: Added.
+        * API/JSStringRef.h: Added.
+        * API/JavaScriptCore.h:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2006-07-12  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej.
         
         - Removed context and exception parameters from JSObjectGetPropertyEnumerator,
