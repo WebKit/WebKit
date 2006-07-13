@@ -1,3 +1,16 @@
+2006-07-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Brady Eidson
+        
+        - fixed <rdar://problem/4611164> REGRESSION: Crash occurs when undoing a series of 
+        misspelled words (WebCore::RenderObject::repaint(bool)
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeMarkers):
+        put (it - markers.begin()) in a local variable before altering markers, in every case where this was
+        happening. One of the cases like this was fixed a while back, but other cases were
+        either missed at that time or crept in since. 
+
 2006-07-13  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Justin.

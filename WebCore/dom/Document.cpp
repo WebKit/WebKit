@@ -2828,24 +2828,27 @@ void Document::removeMarkers(Node *node, unsigned startOffset, int length, Docum
         docDirty = true;
 
         // pitch the old marker and any associated rect
-        markers.remove(it - markers.begin());
-        rects.remove(it - markers.begin());
+        unsigned removalIndex = it - markers.begin();
+        markers.remove(removalIndex);
+        rects.remove(removalIndex);
         // it now points to the next node
         
         // add either of the resulting slices that are left after removing target
         if (startOffset > marker.startOffset) {
             DocumentMarker newLeft = marker;
             newLeft.endOffset = startOffset;
-            markers.insert(it - markers.begin(), newLeft);
-            rects.insert(it - markers.begin(), placeholderRectForMarker());
+            unsigned insertionIndex = it - markers.begin();
+            markers.insert(insertionIndex, newLeft);
+            rects.insert(insertionIndex, placeholderRectForMarker());
             // it now points to the newly-inserted node, but we want to skip that one
             it++;
         }
         if (marker.endOffset > endOffset) {
             DocumentMarker newRight = marker;
             newRight.startOffset = endOffset;
-            markers.insert(it - markers.begin(), newRight);
-            rects.insert(it - markers.begin(), placeholderRectForMarker());
+            unsigned insertionIndex = it - markers.begin();
+            markers.insert(insertionIndex, newRight);
+            rects.insert(insertionIndex, placeholderRectForMarker());
             // it now points to the newly-inserted node, but we want to skip that one
             it++;
         }
