@@ -1067,8 +1067,6 @@ void Document::updateSelection()
     
     RenderView *canvas = static_cast<RenderView*>(renderer());
     SelectionController s = frame()->selection();
-    if (s.isNone())
-        return;
         
     if (!s.isRange())
         canvas->clearSelection();

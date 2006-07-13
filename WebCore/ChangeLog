@@ -1,3 +1,14 @@
+2006-07-13  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Justin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9663
+        REGRESSION (r14948-r14956): Selection in text field remains highlighted when the text field loses focus
+        
+        * dom/Document.cpp:
+        (WebCore::Document::updateSelection):
+        Don't return early if the selection is empty.
+
 2006-07-12  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adele.
