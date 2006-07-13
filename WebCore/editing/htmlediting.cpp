@@ -60,12 +60,13 @@ bool editingIgnoresContent(const Node *node)
         return true;
     
     if (node->renderer())
-        return node->renderer()->isWidget() || node->renderer()->isImage() || node->renderer()->isFormElement();
+        return node->renderer()->isWidget() || node->renderer()->isImage() || node->renderer()->isHR();
 
     return node->hasTagName(appletTag) ||
            node->hasTagName(embedTag) ||
            node->hasTagName(iframeTag) ||
            node->hasTagName(imgTag) ||
+           node->hasTagName(hrTag) ||
            static_cast<const HTMLElement *>(node)->isGenericFormElement();
 }
 

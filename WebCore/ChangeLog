@@ -1,3 +1,28 @@
+2006-07-12  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        <rdar://problem/4622763> Deleting from beginning of paragraph following a table deletes rather than selects the table
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd): Added selection expansion for HRs.
+        (WebCore::DeleteSelectionCommand::initializePositionData): Now uses enclosingBlockFlowOrTableElement
+        instead of enclosingBlockFlowElement.
+        (WebCore::DeleteSelectionCommand::removeNode): Use to identify that we need a placeholder
+        when the start or end block is removed.
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): Added check for canHaveChildrenForEditing
+        to keep things like HRs from being given children.
+        (WebCore::DeleteSelectionCommand::doApply): Switched to use member variable for needPlaceholder.
+        * editing/DeleteSelectionCommand.h: Made needPlaceholder a member variable.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Fixed selection bug for tables and open typing commands.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+        * editing/htmlediting.cpp:
+        (WebCore::editingIgnoresContent): Added check for HRs, since it's not considered a widget.
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph): Fix for HRs and tables.
+        (WebCore::endOfParagraph): Ditto.
+
 2006-07-13  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

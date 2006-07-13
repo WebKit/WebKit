@@ -59,6 +59,7 @@ private:
     bool m_hasSelectionToDelete;
     bool m_smartDelete;
     bool m_mergeBlocksAfterDelete;
+    bool m_needPlaceholder;
 
     // This data is transient and should be cleared at the end of the doApply function.
     Selection m_selectionToDelete;

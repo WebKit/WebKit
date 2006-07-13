@@ -1,3 +1,21 @@
+2006-07-13  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        <rdar://problem/4622763> Deleting from beginning of paragraph following a table deletes rather than selects the table
+
+        * editing/deleting/delete-block-table-expected.checksum: Added.
+        * editing/deleting/delete-block-table-expected.png: Added.
+        * editing/deleting/delete-block-table-expected.txt: Added.
+        * editing/deleting/delete-block-table.html: Added.
+        * editing/deleting/delete-hr-expected.checksum: Added.
+        * editing/deleting/delete-hr-expected.png: Added.
+        * editing/deleting/delete-hr-expected.txt: Added.
+        * editing/deleting/delete-hr.html: Added.
+        * editing/deleting/delete-to-select-table-expected.png:
+        * editing/execCommand/insertHorizontalRule-expected.txt:
+        * fast/lists/markers-in-selection-expected.txt:
+
 2006-07-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Adele.

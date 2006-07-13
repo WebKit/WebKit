@@ -77,6 +77,13 @@ void DeleteSelectionCommand::initializeStartEnd()
     Position start = m_selectionToDelete.start();
     Position end = m_selectionToDelete.end();
  
+    // For HR's, we'll get a position at (HR,1) when hitting delete from the beginning of the previous line, or (HR,0) when forward deleting,
+    // but in these cases, we want to delete it, so manually expand the selection
+    if (start.node()->hasTagName(hrTag))
+        start = Position(start.node(), 0);
+    else if (end.node()->hasTagName(hrTag))
+        end = Position(end.node(), 1);
+    
     while (1) {
         startSpecialContainer = 0;
         endSpecialContainer = 0;
@@ -156,8 +163,8 @@ void DeleteSelectionCommand::initializePositionData()
     //
     // Handle setting start and end blocks and the start node.
     //
-    m_startBlock = m_downstreamStart.node()->enclosingBlockFlowElement();
-    m_endBlock = m_upstreamEnd.node()->enclosingBlockFlowElement();
+    m_startBlock = m_downstreamStart.node()->enclosingBlockFlowOrTableElement();
+    m_endBlock = m_upstreamEnd.node()->enclosingBlockFlowOrTableElement();
 }
 
 void DeleteSelectionCommand::saveTypingStyleState()
@@ -227,6 +234,11 @@ void DeleteSelectionCommand::removeNode(Node *node)
         return;
     }
     
+    if (node == m_startBlock && !isEndOfBlock(VisiblePosition(m_startBlock.get(), 0, DOWNSTREAM).previous()))
+        m_needPlaceholder = true;
+    else if (node == m_endBlock && !isStartOfBlock(VisiblePosition(m_endBlock.get(), maxDeepOffset(m_endBlock.get()), DOWNSTREAM).next()))
+        m_needPlaceholder = true;
+    
     // FIXME: Update the endpoints of the range being deleted.
     updatePositionForNodeRemoval(node, m_endingPosition);
     updatePositionForNodeRemoval(node, m_leadingWhitespace);
@@ -260,9 +272,9 @@ void DeleteSelectionCommand::handleGeneralDelete()
 {
     int startOffset = m_upstreamStart.offset();
     Node* startNode = m_upstreamStart.node();
-
-    // Never remove the start block.
-    if (startNode == m_startBlock && startOffset == 0) {
+    
+    // Never remove the start block unless it's a table, in which case we won't merge content in.
+    if (startNode == m_startBlock && startOffset == 0 && canHaveChildrenForEditing(startNode) && !startNode->hasTagName(tableTag)) {
         startOffset = 0;
         startNode = startNode->traverseNextNode();
     }
@@ -512,9 +524,9 @@ void DeleteSelectionCommand::doApply()
     EAffinity affinity = m_selectionToDelete.affinity();
     
     Position downstreamEnd = m_selectionToDelete.end().downstream();
-    bool needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart()) &&
-                           isEndOfParagraph(m_selectionToDelete.visibleEnd()) &&
-                           !(downstreamEnd.node()->hasTagName(brTag) && downstreamEnd.offset() == 0);
+    m_needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart()) &&
+                        isEndOfParagraph(m_selectionToDelete.visibleEnd()) &&
+                        !(downstreamEnd.node()->hasTagName(brTag) && downstreamEnd.offset() == 0);
     
     // set up our state
     initializePositionData();
@@ -546,10 +558,11 @@ void DeleteSelectionCommand::doApply()
     handleGeneralDelete();
     
     fixupWhitespace();
+
+    RefPtr<Node> placeholder = m_needPlaceholder ? createBreakElement(document()) : 0;
     
     mergeParagraphs();
     
-    RefPtr<Node> placeholder = needPlaceholder ? createBreakElement(document()) : 0;
     if (placeholder)
         insertNodeAt(placeholder.get(), m_endingPosition.node(), m_endingPosition.offset());
 
