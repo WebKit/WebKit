@@ -1,3 +1,16 @@
+2006-07-13  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4616920> REGRESSION: tabbing in mail moves focus
+        to next control instead of inserting a tab space.
+
+        Change editible WebView's tabKeyCyclesThroughElements to NO only
+        if the setTabKeyCyclesThroughElements SPI wasn't called.
+
+        * WebView/WebView.m:
+        (-[WebView setEditable:]):
+
 2006-07-12  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

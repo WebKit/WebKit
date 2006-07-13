@@ -278,6 +278,7 @@ macro(yankAndSelect) \
     BOOL editable;
     BOOL initiatedDrag;
     BOOL tabKeyCyclesThroughElements;
+    BOOL tabKeyCyclesThroughElementsChanged;
 
     NSString *mediaStyle;
     
@@ -2786,6 +2787,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)setTabKeyCyclesThroughElements:(BOOL)cyclesElements
 {
+    _private->tabKeyCyclesThroughElementsChanged = YES;
     _private->tabKeyCyclesThroughElements = cyclesElements;
 }
 
@@ -3075,16 +3077,16 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     if (_private->editable != flag) {
         _private->editable = flag;
+        if (!_private->tabKeyCyclesThroughElementsChanged)
+            _private->tabKeyCyclesThroughElements = !flag;
         WebFrameBridge *bridge = [[self mainFrame] _bridge];
         if (flag) {
             [bridge applyEditingStyleToBodyElement];
             // If the WebView is made editable and the selection is empty, set it to something.
-            if ([self selectedDOMRange] == nil)
+            if (![self selectedDOMRange])
                 [bridge setSelectionFromNone];
-        }
-        else {
+        } else
             [bridge removeEditingStyleFromBodyElement];
-        }
     }
 }
 
