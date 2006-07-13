@@ -1,5 +1,19 @@
 2006-07-13  David Harrison  <harrison@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/4624203> -webkit-highlight should be behind images
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        Call custom highlighter before painting the image, marker, or widget.
+
+2006-07-13  David Harrison  <harrison@apple.com>
+
         Reviewed by Justin and Levi.
 
         <rdar://problem/4620743> REGRESSION: Option-Delete doesn't delete words during typing
