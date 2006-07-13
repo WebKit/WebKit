@@ -489,8 +489,9 @@ bool ReplaceSelectionCommand::shouldMergeStart(const ReplacementFragment& incomi
         return false;
     
     // Don't pull content out of a list item.
-    // FIXMEs: Don't pull content out of a table cell either.
-    if (enclosingList(incomingFragment.mergeStartNode()))
+    // FIXMEs: Use an enclosing element getter that uses the render tree once this function is called after the fragment
+    // that's been placed into the document.
+    if (enclosingList(incomingFragment.mergeStartNode()) || enclosingNodeWithTag(incomingFragment.mergeStartNode(), tdTag))
         return false;
     
     // Merge if this is an empty editable subtree, to prevent an extra level of block nesting.

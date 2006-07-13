@@ -495,7 +495,7 @@ VisiblePosition RenderContainer::positionForCoordinates(int x, int y)
     if (!firstChild())
         return VisiblePosition(element(), 0, DOWNSTREAM);
         
-    if (isTable()) {
+    if (isTable() && element()) {
         int absx, absy;
         absolutePositionForContent(absx, absy);
         

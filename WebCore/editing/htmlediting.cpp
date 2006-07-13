@@ -55,26 +55,18 @@ bool editingIgnoresContent(const Node *node)
     if (!node || !node->isHTMLElement())
         return false;
     
-    if (node->renderer()) {
-        if (node->renderer()->isWidget() || node->renderer()->isImage())
-            return true;
-    } else {
-        // widgets
-        if (static_cast<const HTMLElement *>(node)->isGenericFormElement())
-            return true;
-        if (node->hasTagName(appletTag))
-            return true;
-        if (node->hasTagName(embedTag))
-            return true;
-        if (node->hasTagName(iframeTag))
-            return true;
-
-        // images
-        if (node->hasTagName(imgTag))
-            return true;
-    }
+    // There doesn't seem to be a way to find out if a a node is a pop up box by looking at its renderer.
+    if (node->hasTagName(selectTag))
+        return true;
     
-    return false;
+    if (node->renderer())
+        return node->renderer()->isWidget() || node->renderer()->isImage() || node->renderer()->isFormElement();
+
+    return node->hasTagName(appletTag) ||
+           node->hasTagName(embedTag) ||
+           node->hasTagName(iframeTag) ||
+           node->hasTagName(imgTag) ||
+           static_cast<const HTMLElement *>(node)->isGenericFormElement();
 }
 
 // Some nodes, like brs, will technically accept children, but we don't want that to happen while editing. 
@@ -265,7 +257,6 @@ VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& positio
     return VisiblePosition(p);
 }
 
-// antidote for maxDeepOffset()
 Position rangeCompliantEquivalent(const Position& pos)
 {
     if (pos.isNull())
@@ -274,10 +265,7 @@ Position rangeCompliantEquivalent(const Position& pos)
     Node *node = pos.node();
     
     if (pos.offset() <= 0) {
-        // FIXME: createMarkup has a problem with BR 0 as the starting position
-        // so workaround until I can come back and fix createMarkup.  The problem
-        // is that createMarkup fails to include the initial BR in the markup.
-        if (node->parentNode() && node->hasTagName(brTag))
+        if (node->parentNode() && (node->hasTagName(brTag) || editingIgnoresContent(node)))
             return positionBeforeNode(node);
         return Position(node, 0);
     }
@@ -294,12 +282,9 @@ Position rangeCompliantEquivalent(const Position& pos)
         // use the highest allowed position in the node
         return Position(node, maxCompliantOffset);
     } 
-    
-    // "select" nodes, e.g., are ignored by editing but can have children.
-    // For us, a range inside of that node is tough to deal with, so use
-    // a more generic position.
+
+    // Editing should never generate positions like this.
     if ((pos.offset() < maxCompliantOffset) && editingIgnoresContent(node)) {
-        // ... but we should not have generated any such positions
         ASSERT_NOT_REACHED();
         return node->parentNode() ? positionBeforeNode(node) : Position(node, 0);
     }

@@ -1,3 +1,21 @@
+2006-07-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4509393>
+        selected DOM range starts with <object>, 0 offset but selection should include the <object>
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldMergeStart): 
+        Don't pull content out of a table cell.
+        * editing/htmlediting.cpp:
+        (WebCore::editingIgnoresContent): Added <select> nodes.
+        (WebCore::rangeCompliantEquivalent): Convert [node, 0] positions to positionBeforeNode(node)
+        for more types of nodes.
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::positionForCoordinates): 
+        Fix a crasher when right clicking on an anonymous table.
+
 2006-07-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Brady Eidson

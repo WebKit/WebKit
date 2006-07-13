@@ -1,3 +1,22 @@
+2006-07-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4509393>
+        selected DOM range starts with <object>, 0 offset but selection should include the <object>
+
+        * editing/selection/legal-positions-expected.txt: Added.
+        * editing/selection/legal-positions.html: Added.
+
+        * editing/deleting/delete-3608430-fix-expected.txt:
+        * editing/deleting/delete-image-001-expected.txt:
+        * editing/deleting/delete-image-002-expected.txt:
+        * editing/deleting/delete-image-003-expected.txt:
+        * editing/deleting/delete-image-004-expected.txt:
+        * editing/selection/drag-to-contenteditable-iframe-expected.txt:
+        * editing/selection/replaced-boundaries-3-expected.txt:
+        * editing/selection/select-box-expected.txt:
+
 2006-07-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Brady Eidson (and written by Justin Garcia)
