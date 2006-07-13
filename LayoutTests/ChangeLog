@@ -1,3 +1,14 @@
+2006-07-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Brady Eidson (and written by Justin Garcia)
+        
+        - layout test corresponding to <rdar://problem/4611164>
+
+        * editing/undo/undo-misspellings-expected.checksum: Added.
+        * editing/undo/undo-misspellings-expected.png: Added.
+        * editing/undo/undo-misspellings-expected.txt: Added.
+        * editing/undo/undo-misspellings.html: Added.
+
 2006-07-13  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Justin.
