@@ -1,3 +1,13 @@
+2006-07-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Timothy.
+
+        Bug 9889: [Drosera] Stepping out when paused after last statement in function skips a frame
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9889
+
+        * Drosera/debugger.js:  Track whether we paused during the execution of willLeaveFrame.  If
+        so, have stepOut pause on the next call to willExecuteStatement rather than second.
+
 2006-07-12  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

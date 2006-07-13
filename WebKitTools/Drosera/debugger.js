@@ -41,6 +41,7 @@ var steppingOut = false;
 var steppingOver = false;
 var steppingStack = 0;
 var pauseOnNextStatement = false;
+var pausedWhileLeavingFrame = false;
 var consoleWindow = null;
 
 ScriptCallFrame = function (functionName, index, row)
@@ -249,6 +250,7 @@ function resume()
     currentCallFrame = null;
 
     pauseOnNextStatement = false;
+    pausedWhileLeavingFrame = false;
     steppingOut = false;
     steppingOver = false;
     steppingStack = 0;
@@ -275,7 +277,7 @@ function stepOver()
 
 function stepOut()
 {
-    pauseOnNextStatement = false;
+    pauseOnNextStatement = pausedWhileLeavingFrame;
     steppingOver = false;
     steppingStack = 0;
     steppingOut = true;
@@ -783,7 +785,7 @@ function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
         loadFile(fileIndex, true);
 }
 
-function willExecuteStatement(sourceId, line)
+function willExecuteStatement(sourceId, line, fromLeavingFrame)
 {
     var script = scripts[sourceId];
     if (line <= 0 || !script)
@@ -796,6 +798,7 @@ function willExecuteStatement(sourceId, line)
     if (pauseOnNextStatement || file.breakpoints[line] == 1 || (steppingOver && !steppingStack)) {
         pause();
         pauseOnNextStatement = false;
+        pausedWhileLeavingFrame = fromLeavingFrame || false;
     }
 
     if (isPaused()) {
@@ -836,7 +839,7 @@ function willLeaveCallFrame(sourceId, line)
 {
     if (line <= 0)
         resume();
-    willExecuteStatement(sourceId, line);
+    willExecuteStatement(sourceId, line, true);
     if (!steppingStack)
         steppingOver = false;
     if (steppingOut && !steppingStack) {
