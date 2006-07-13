@@ -385,15 +385,6 @@ JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef body,
 
 /*!
 @function
-@abstract Gets a short description of a JavaScript object.
-@param context The execution context to use.
-@param object The object whose description you want to get.
-@result A JSString containing the object's description. This is usually the object's class name.
-*/
-JSStringRef JSObjectGetDescription(JSObjectRef object);
-
-/*!
-@function
 @abstract Gets an object's prototype.
 @param object A JSObject whose prototype you want to get.
 @result A JSValue containing the object's prototype.
@@ -465,9 +456,9 @@ bool JSObjectSetPrivate(JSObjectRef object, void* data);
 
 /*!
 @function
-@abstract Tests whether an object is a function.
+@abstract Tests whether an object can be called as a function.
 @param object The JSObject to test.
-@result true if the object is a function, otherwise false.
+@result true if the object can be called as a function, otherwise false.
 */
 bool JSObjectIsFunction(JSObjectRef object);
 /*!
@@ -484,9 +475,9 @@ bool JSObjectIsFunction(JSObjectRef object);
 JSValueRef JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception);
 /*!
 @function
-@abstract Tests whether an object is a constructor.
+@abstract Tests whether an object can be called as a constructor.
 @param object The JSObject to test.
-@result true if the object is a constructor, otherwise false.
+@result true if the object can be called as a constructor, otherwise false.
 */
 bool JSObjectIsConstructor(JSObjectRef object);
 /*!

@@ -33,7 +33,7 @@ static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef obj
     if (argc > 0) {
         NodeList* nodeList = JSObjectGetPrivate(thisObject);
         assert(nodeList);
-        Node* node = NodeList_item(nodeList, JSValueToNumber(context, argv[0]));
+        Node* node = NodeList_item(nodeList, JSValueToNumber(context, argv[0], exception));
         if (node)
             return JSNode_new(context, node);
     }
@@ -74,7 +74,7 @@ static JSValueRef JSNodeList_getProperty(JSContextRef context, JSObjectRef thisO
 {
     NodeList* nodeList = JSObjectGetPrivate(thisObject);
     assert(nodeList);
-    double index = JSValueToNumber(context, JSValueMakeString(propertyName));
+    double index = JSValueToNumber(context, JSValueMakeString(propertyName), exception);
     unsigned uindex = index;
     if (uindex == index) { // false for NaN
         Node* node = NodeList_item(nodeList, uindex);

@@ -50,12 +50,12 @@ int main(int argc, char* argv[])
     char* scriptUTF8 = createStringWithContentsOfFile("minidom.js");
     JSStringRef script = JSStringCreateWithUTF8CString(scriptUTF8);
     JSValueRef exception;
-    JSValueRef result = JSEvaluate(context, script, NULL, NULL, 0, &exception);
+    JSValueRef result = JSEvaluateScript(context, script, NULL, NULL, 0, &exception);
     if (result)
         printf("PASS: Test script executed successfully.\n");
     else {
         printf("FAIL: Test script threw exception:\n");
-        JSStringRef exceptionIString = JSValueToStringCopy(context, exception);
+        JSStringRef exceptionIString = JSValueToStringCopy(context, exception, NULL);
         CFStringRef exceptionCF = JSStringCopyCFString(kCFAllocatorDefault, exceptionIString);
         CFShow(exceptionCF);
         CFRelease(exceptionCF);
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
 {
     if (argc > 0) {
-        JSStringRef string = JSValueToStringCopy(context, argv[0]);
+        JSStringRef string = JSValueToStringCopy(context, argv[0], NULL);
         size_t numChars = JSStringGetMaximumUTF8CStringSize(string);
         char stringUTF8[numChars];
         JSStringGetUTF8CString(string, stringUTF8, numChars);

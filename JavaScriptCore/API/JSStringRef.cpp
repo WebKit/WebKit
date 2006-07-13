@@ -70,18 +70,6 @@ void JSStringRelease(JSStringRef string)
     rep->deref();
 }
 
-JSStringRef JSValueToStringCopy(JSContextRef context, JSValueRef value)
-{
-    JSLock lock;
-    JSValue* jsValue = toJS(value);
-    ExecState* exec = toJS(context);
-
-    JSStringRef stringRef = toRef(jsValue->toString(exec).rep()->ref());
-    if (exec->hadException())
-        exec->clearException();
-    return stringRef;
-}
-
 size_t JSStringGetLength(JSStringRef string)
 {
     UString::Rep* rep = toJS(string);

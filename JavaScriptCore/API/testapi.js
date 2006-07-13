@@ -72,7 +72,7 @@ shouldBe("MyObject.regularType", undefined);
 shouldBe("MyObject(0)", 1);
 shouldBe("MyObject()", undefined);
 shouldBe("typeof new MyObject()", "object");
-shouldBe("MyObject ? 1 : 0", 0); // toBoolean
+shouldBe("MyObject ? 1 : 0", 2); // toBoolean -- should throw 2
 shouldBe("+MyObject", 1); // toNumber
 shouldBe("(MyObject.toString())", "[object CallbackObject]"); // toString
 shouldBe("MyObject - 0", NaN); // toPrimitive

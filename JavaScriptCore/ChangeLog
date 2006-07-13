@@ -1,3 +1,15 @@
+2006-07-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Pleasing to Maciej.
+        
+        - Renamed JSEvaluate -> JSEvaluateScript, JSCheckSyntax -> JSCheckScriptSyntax
+        - Added exception out parameters to JSValueTo* and JSValueIsEqual because
+        they can throw
+        - Removed JSObjectGetDescription because it's useless and vague, and 
+        JSValueToString/JSValueIsObjectOfClass do a better job, anyway
+        - Clarified comments about "IsFunction/Constructor" to indicate that they
+        are true of all functions/constructors, not just those created by JSObjectMake*
+
 2006-07-12  Geoffrey Garen  <ggaren@apple.com>
 
         RS by Beth.

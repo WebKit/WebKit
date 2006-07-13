@@ -48,7 +48,7 @@ static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef 
         JSStringRelease(message);
     } else {
         Node* node = JSObjectGetPrivate(thisObject);
-        Node* child = JSObjectGetPrivate(JSValueToObject(context, argv[0]));
+        Node* child = JSObjectGetPrivate(JSValueToObject(context, argv[0], NULL));
 
         Node_appendChild(node, child);
     }
@@ -66,7 +66,7 @@ static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef 
         if (JSValueIsObjectOfClass(thisObject, JSNode_class(context))) {
             if (JSValueIsObjectOfClass(argv[0], JSNode_class(context))) {
                 Node* node = JSObjectGetPrivate(thisObject);
-                Node* child = JSObjectGetPrivate(JSValueToObject(context, argv[0]));
+                Node* child = JSObjectGetPrivate(JSValueToObject(context, argv[0], NULL));
                 
                 Node_removeChild(node, child);
             }
@@ -86,8 +86,8 @@ static JSValueRef JSNodePrototype_replaceChild(JSContextRef context, JSObjectRef
             if (JSValueIsObjectOfClass(argv[0], JSNode_class(context))) {
                 if (JSValueIsObjectOfClass(argv[1], JSNode_class(context))) {
                     Node* node = JSObjectGetPrivate(thisObject);
-                    Node* newChild = JSObjectGetPrivate(JSValueToObject(context, argv[0]));
-                    Node* oldChild = JSObjectGetPrivate(JSValueToObject(context, argv[1]));
+                    Node* newChild = JSObjectGetPrivate(JSValueToObject(context, argv[0], NULL));
+                    Node* oldChild = JSObjectGetPrivate(JSValueToObject(context, argv[1], NULL));
                     
                     Node_replaceChild(node, newChild, oldChild);
                 }

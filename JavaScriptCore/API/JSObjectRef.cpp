@@ -96,13 +96,6 @@ JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef body,
     return toRef(static_cast<JSObject*>(new DeclaredFunctionImp(exec, "anonymous", bodyNode.get(), scopeChain)));
 }
 
-JSStringRef JSObjectGetDescription(JSObjectRef object)
-{
-    JSLock lock;
-    JSObject* jsObject = toJS(object);
-    return toRef(jsObject->className().rep());
-}
-
 JSValueRef JSObjectGetPrototype(JSObjectRef object)
 {
     JSObject* jsObject = toJS(object);

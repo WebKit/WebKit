@@ -124,13 +124,14 @@ bool JSValueIsObjectOfClass(JSValueRef value, JSClassRef jsClass);
 
 /*!
 @function
-@abstract       Tests whether two JavaScript values are equal, as compared by the JS == operator.
-@param context  The execution context to use.
-@param a        The first value to test.
-@param b        The second value to test.
-@result         true if the two values are equal, otherwise false.
+@abstract Tests whether two JavaScript values are equal, as compared by the JS == operator.
+@param context The execution context to use.
+@param a The first value to test.
+@param b The second value to test.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+@result true if the two values are equal, false if they are not equal or an exception is thrown.
 */
-bool JSValueIsEqual(JSContextRef context, JSValueRef a, JSValueRef b);
+bool JSValueIsEqual(JSContextRef context, JSValueRef a, JSValueRef b, JSValueRef* exception);
 
 /*!
 @function
@@ -203,36 +204,40 @@ JSValueRef JSValueMakeString(JSStringRef string);
 @abstract       Converts a JavaScript value to boolean and returns the resulting boolean.
 @param context  The execution context to use.
 @param value    The JSValue to convert.
-@result         The boolean result of conversion.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+@result         The boolean result of conversion, or false if an exception is thrown.
 */
-bool JSValueToBoolean(JSContextRef context, JSValueRef value);
+bool JSValueToBoolean(JSContextRef context, JSValueRef value, JSValueRef* exception);
 
 /*!
 @function
 @abstract       Converts a JavaScript value to number and returns the resulting number.
 @param context  The execution context to use.
 @param value    The JSValue to convert.
-@result         The numeric result of conversion, or NaN if conversion fails.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+@result         The numeric result of conversion, or NaN if an exception is thrown.
 */
-double JSValueToNumber(JSContextRef context, JSValueRef value);
+double JSValueToNumber(JSContextRef context, JSValueRef value, JSValueRef* exception);
 
 /*!
 @function
 @abstract       Converts a JavaScript value to string and copies the result into a JavaScript string.
 @param context  The execution context to use.
 @param value    The JSValue to convert.
-@result         A JSString with the result of conversion, or an empty string if conversion fails. Ownership follows the Create Rule.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+@result         A JSString with the result of conversion, or NULL if an exception is thrown. Ownership follows the Create Rule.
 */
-JSStringRef JSValueToStringCopy(JSContextRef context, JSValueRef value);
+JSStringRef JSValueToStringCopy(JSContextRef context, JSValueRef value, JSValueRef* exception);
 
 /*!
 @function
 @abstract Converts a JavaScript value to object and returns the resulting object.
 @param context  The execution context to use.
 @param value    The JSValue to convert.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
 @result         The JSObject result of conversion, or NULL if conversion fails.
 */
-JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value);
+JSObjectRef JSValueToObject(JSContextRef context, JSValueRef value, JSValueRef* exception);
 
 // Garbage collection
 /*!
