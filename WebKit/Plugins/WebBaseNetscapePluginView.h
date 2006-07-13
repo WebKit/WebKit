@@ -28,10 +28,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
 #import <AGL/agl.h>
-#endif /* __LP64__ */
 #import <WebKit/npfunctions.h>
 #import <WebKit/npapi.h>
 
@@ -47,10 +44,7 @@ typedef union PluginPort {
     NP_Port qdPort;
 #endif        
     NP_CGContext cgPort;
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
     NP_GLContext aglPort;
-#endif /* __LP64__ */
 } PluginPort;
 
 @interface WebBaseNetscapePluginView : NSView
@@ -71,12 +65,9 @@ typedef union PluginPort {
     PluginPort lastSetPort;
     NPDrawingModel drawingModel;
     
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
     // These are only valid when drawingModel is NPDrawingModelOpenGL
     AGLContext aglContext;
     NSWindow *aglWindow;
-#endif /* __LP64__ */
 
     BOOL isStarted;
     BOOL inSetWindow;

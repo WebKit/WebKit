@@ -68,8 +68,6 @@
 @interface WebBaseNetscapePluginView (Internal)
 - (void)_viewHasMoved;
 - (NSBitmapImageRep *)_printedPluginBitmap;
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.
-#if !__LP64__
 - (BOOL)_createAGLContextIfNeeded;
 - (BOOL)_createWindowedAGLContext;
 - (BOOL)_createWindowlessAGLContext;
@@ -79,7 +77,6 @@
 - (void)_reshapeAGLWindow;
 - (void)_hideAGLWindow;
 - (NSImage *)_aglOffscreenImageForDrawingInRect:(NSRect)drawingInRect;
-#endif /* __LP64__ */
 @end
 
 static WebBaseNetscapePluginView *currentPluginView = nil;
@@ -105,12 +102,9 @@ typedef struct {
     CGContextRef context;
 } PortState_CG;
 
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
 typedef struct {
     AGLContext oldContext;
 } PortState_GL;
-#endif /* __LP64__ */
 
 @interface WebPluginRequest : NSObject
 {
@@ -447,9 +441,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             // FIXME (4544971): Clip to dirty region when updating in "windowless" mode (transparent), like in the QD case
         }
         break;
-
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
+        
         case NPDrawingModelOpenGL:
         {
             // An OpenGL plugin's window may only be set while the plugin view is being updated
@@ -496,7 +488,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             }
         }
         break;
-#endif /* __LP64__ */
         
         default:
             ASSERT_NOT_REACHED();
@@ -550,12 +541,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         }
         break;
         
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
         case NPDrawingModelOpenGL:
             aglSetCurrentContext(((PortState_GL *)portState)->oldContext);
         break;
-#endif /* __LP64__ */
         
         default:
             ASSERT_NOT_REACHED();
@@ -1027,15 +1015,12 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 return NO;
         break;
             
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
         case NPDrawingModelOpenGL:
             if (nPort.aglPort.window != lastSetPort.aglPort.window)
                 return NO;
             if (nPort.aglPort.context != lastSetPort.aglPort.context)
                 return NO;
         break;
-#endif /* __LP64__ */
         
         default:
             ASSERT_NOT_REACHED();
@@ -1101,13 +1086,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 npErr, nPort.cgPort.window, nPort.cgPort.context, (int)window.x, (int)window.y, (int)window.width, (int)window.height);
             break;
 
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
             case NPDrawingModelOpenGL:
                 LOG(Plugins, "NPP_SetWindow (CoreGraphics): %d, window=%p, context=%p, window.x:%d window.y:%d window.width:%d window.height:%d",
                 npErr, nPort.aglPort.window, nPort.aglPort.context, (int)window.x, (int)window.y, (int)window.width, (int)window.height);
             break;
-#endif /* __LP64__ */
             
             default:
                 ASSERT_NOT_REACHED();
@@ -1306,11 +1288,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // may never get called so we can't completely rely on it.
     [self removeKeyEventHandler];
     
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
     if (drawingModel == NPDrawingModelOpenGL)
         [self _destroyAGLContext];
-#endif /* __LP64__ */
 }
 
 - (BOOL)isStarted
@@ -1468,11 +1447,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [pendingFrameLoads release];
     [element release];
     
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
     ASSERT(!aglWindow);
     ASSERT(!aglContext);
-#endif /* __LP64__ */
 
     [self freeAttributeKeysAndValues];
 
@@ -1511,8 +1487,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         }
     }
     
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
     // If this is a windowless OpenGL plugin, blit its contents back into this view.  The plug-in just drew into the offscreen context.
     if (drawingModel == NPDrawingModelOpenGL && window.type == NPWindowTypeDrawable) {
         NSImage *aglOffscreenImage = [self _aglOffscreenImageForDrawingInRect:rect];
@@ -1531,7 +1505,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             CGContextRestoreGState(cgContext);
         }
     }
-#endif /* __LP64__ */
 }
 
 - (BOOL)isFlipped
@@ -1583,12 +1556,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [self setHasFocus:NO];
 
     if (!newWindow) {
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
         // Hide the AGL child window
         if (drawingModel == NPDrawingModelOpenGL)
             [self _hideAGLWindow];
-#endif /* __LP64__ */
         
         if ([[self webView] hostWindow]) {
             // View will be moved out of the actual window but it still has a host window.
@@ -2180,14 +2150,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             return NPERR_NO_ERROR;
         }
 
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
         case NPNVsupportsOpenGLBool:
         {
             *(NPBool *)value = TRUE;
             return NPERR_NO_ERROR;
         }
-#endif /* __LP64__ */
         
         default:
             break;
@@ -2237,10 +2204,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 case NPDrawingModelQuickDraw:
 #endif
                 case NPDrawingModelCoreGraphics:
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
                 case NPDrawingModelOpenGL:
-#endif /* __LP64__ */
                     drawingModel = newDrawingModel;
                     return NPERR_NO_ERROR;
                 
@@ -2314,11 +2278,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (![self window])
         return;
     
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
     if (drawingModel == NPDrawingModelOpenGL)
         [self _reshapeAGLWindow];
-#endif /* __LP64__ */
 
 #ifndef NP_NO_QUICKDRAW
     if (drawingModel == NPDrawingModelQuickDraw)
@@ -2403,9 +2364,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return bitmap;
 #endif
 }
-
-// FIXME: AGL isn't 64-bit (yet).  See <rdar://problem/4624858>.        
-#if !__LP64__
 
 - (BOOL)_createAGLContextIfNeeded
 {
@@ -2785,8 +2743,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     return aglImage;
 }
-
-#endif /* __LP64__ */
 
 @end
 
