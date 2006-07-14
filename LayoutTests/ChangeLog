@@ -1,3 +1,21 @@
+2006-07-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9879
+          REGRESSION: Repro crash when clicking to the side of an anonymous table
+        - see also <rdar://problem/4628129> REGRESSION: Repro crash when clicking
+          to the side of an anonymous table
+
+        NOTE: Only the layout test part of this patch was landed since an alternate
+        fix was committed in r15401:  <rdar://problem/4509393> selected DOM range
+        starts with <object>, 0 offset but selection should include the <object>
+
+        * fast/table/click-near-anonymous-table-expected.checksum: Added.
+        * fast/table/click-near-anonymous-table-expected.png: Added.
+        * fast/table/click-near-anonymous-table-expected.txt: Added.
+        * fast/table/click-near-anonymous-table.html: Added.
+
 2006-07-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt.

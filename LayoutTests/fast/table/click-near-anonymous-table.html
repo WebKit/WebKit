@@ -1,0 +1,51 @@
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript">
+        function test()
+        {
+            if (!window.layoutTestController)
+                return;
+            var target = document.getElementById("target");
+            var baseX = document.body.offsetLeft + target.offsetLeft;
+            var baseY = document.body.offsetTop + target.offsetTop;
+            for (i = 0; i < target.children.length; i++) {
+                var div = target.children[i];
+                var clickX = baseX + target.offsetLeft + target.offsetWidth + 5;
+                var clickY = baseY + target.offsetTop + target.offsetHeight + 5;
+                eventSender.mouseMoveTo(clickX, clickY);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+                eventSender.timeForward(500);   // we're not multi-clicking
+            }
+        }
+    </script>
+</head>
+<body onload="test()">
+    <p>
+        This is a regression test for <i><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=9879">http://bugzilla.opendarwin.org/show_bug.cgi?id=9879</a>
+        REGRESSION: Repro crash when clicking to the side of an anonymous table</i>.
+    </p>
+    <p>
+        If the browser does not crash as you click to the right of each of the lines below, it passes the test.
+    </p>
+    <hr>
+    <div id="target">
+        <div style="display:table-row;">
+        Click to the right of this text
+        </div>
+
+        <div style="display:table-cell;">
+        Click to the right of this text
+        </div>
+        
+        <div style="display:table-caption;">
+        Click to the right of this text
+        </div>
+                
+        <div style="display:table-row-group;">
+        Click to the right of this text
+        </div>
+    </div>
+</body>
+</html>
