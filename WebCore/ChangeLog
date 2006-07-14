@@ -1,3 +1,16 @@
+2006-07-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - Fix for <rdar://problem/4614054> REGRESSION: Safari submits forms when the Return key is hit to complete inline inputs
+
+        * page/Frame.h: (WebCore::Frame::inputManagerHasMarkedText): Added.
+        * bridge/mac/FrameMac.h: ditto.
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::inputManagerHasMarkedText): Added. Asks the input manager if there's marked text.
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::defaultEventHandler): For text fields, don't submit the form on Enter
+        if the input manager says there's marked text.  I added this code for all text field paths.  For widgets, WebCoreTextField.mm
+        has code to deal with this case.  But as we convert search, password, and isindex, they will need to do this check too.
+
 2006-07-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

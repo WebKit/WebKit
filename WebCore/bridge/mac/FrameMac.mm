@@ -3284,6 +3284,14 @@ void FrameMac::textWillBeDeletedInTextField(Element* input)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+bool FrameMac::inputManagerHasMarkedText() const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[NSInputManager currentInputManager] hasMarkedText];
+    END_BLOCK_OBJC_EXCEPTIONS
+    return false;
+}
+
 static DeprecatedValueList<MarkedTextUnderline> convertAttributesToUnderlines(const Range *markedTextRange, NSArray *attributes, NSArray *ranges)
 {
     DeprecatedValueList<MarkedTextUnderline> result;

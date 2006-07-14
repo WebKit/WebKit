@@ -277,6 +277,8 @@ public:
     virtual bool doTextFieldCommandFromEvent(Element*, const PlatformKeyboardEvent*);
     virtual void textWillBeDeletedInTextField(Element*);
     virtual void textDidChangeInTextArea(Element*);
+    
+    virtual bool inputManagerHasMarkedText() const;
 
     KJS::Bindings::RootObject* executionContextForDOM();
     KJS::Bindings::RootObject* bindingRootObject();

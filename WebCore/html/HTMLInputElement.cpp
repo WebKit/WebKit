@@ -1282,13 +1282,16 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
                 case BUTTON:
                 case CHECKBOX:
                 case HIDDEN:
-                case ISINDEX:
-                case PASSWORD:
                 case RANGE:
-                case SEARCH:
-                case TEXT:
                     // Simulate mouse click on the default form button for enter for these types of elements.
                     clickDefaultFormButton = true;
+                case ISINDEX:
+                case PASSWORD:
+                case SEARCH:
+                case TEXT:
+                    if (!document()->frame()->inputManagerHasMarkedText())
+                        // Simulate mouse click on the default form button for enter for these types of elements.
+                        clickDefaultFormButton = true;
                     break;
                 case FILE:
                 case IMAGE:
