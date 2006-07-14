@@ -1,3 +1,14 @@
+2006-06-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9625
+          <rdar://problem/4604703>
+          REGRESSION: Focus not removed from password field after ctrl-click in text field
+
+        * WebView/WebHTMLView.m: (-[NSArray menuForEvent:]): Set handlingMouseDownEvent to
+        YES while calling sendContextMenuEvent: on the bridge.
+
 2006-07-14  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.

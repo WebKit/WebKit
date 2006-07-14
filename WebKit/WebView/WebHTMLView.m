@@ -2525,9 +2525,12 @@ static WebHTMLView *lastHitView = nil;
 {
     [_private->compController endRevertingChange:NO moveLeft:NO];
 
-    if ([[self _bridge] sendContextMenuEvent:event]) {
+    _private->handlingMouseDownEvent = YES;
+    BOOL handledEvent = [[self _bridge] sendContextMenuEvent:event];
+    _private->handlingMouseDownEvent = NO;
+    if (handledEvent)
         return nil;
-    }
+
     NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
     NSDictionary *element = [self elementAtPoint:point];
     return [[self _webView] _menuForElement:element defaultItems:nil];

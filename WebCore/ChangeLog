@@ -1,5 +1,16 @@
 2006-07-14  Adele Peterson  <adele@apple.com>
 
+        RS by Darin.
+
+        Backing out fix for <rdar://problem/4604703> 
+        REGRESSION (NativeTextField): Focus is not removed from password field after I ctrl-click into a different field
+
+        Darin had a better fix in WebKit for this.
+
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::sendContextMenuEvent):
+
+2006-07-14  Adele Peterson  <adele@apple.com>
+
         Reviewed by Darin.
 
         - Fix for <rdar://problem/4614054> REGRESSION: Safari submits forms when the Return key is hit to complete inline inputs
