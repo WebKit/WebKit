@@ -1,3 +1,11 @@
+2006-07-13  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Moved JavaScriptCore to be a public framework.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2006-07-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Geoffrey.

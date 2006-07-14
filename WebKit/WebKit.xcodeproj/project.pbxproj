@@ -1840,7 +1840,7 @@
 				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
-				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
+				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = (
@@ -1849,7 +1849,7 @@
 					__text,
 					/AppleInternal/OrderFiles/WebKit.order,
 				);
-				STYLE_LDFLAGS = "-sub_umbrella WebCore -sub_umbrella JavaScriptCore";
+				STYLE_LDFLAGS = "-sub_umbrella WebCore";
 				UMBRELLA_FRAMEWORKS_DIR = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				VALID_ARCHS = "i386 ppc ppc7400 ppc970 ppc64 x86_64";
 				WEBCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders";

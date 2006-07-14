@@ -1582,13 +1582,12 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
-					"$(STYLE_LDFLAGS)",
 					"-sub_library",
 					libobjc,
 					"-Wl,-Y,3",
 				);
 				PRODUCT_NAME = JavaScriptCore;
-				STYLE_LDFLAGS = "";
+				VALID_ARCHS = "i386 ppc ppc7400 ppc970 ppc64 x86_64";
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-W",
@@ -1623,13 +1622,12 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
-					"$(STYLE_LDFLAGS)",
 					"-sub_library",
 					libobjc,
 					"-Wl,-Y,3",
 				);
 				PRODUCT_NAME = JavaScriptCore;
-				STYLE_LDFLAGS = "";
+				VALID_ARCHS = "i386 ppc ppc7400 ppc970 ppc64 x86_64";
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-W",
@@ -1662,9 +1660,8 @@
 				);
 				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore\"";
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
 				OTHER_LDFLAGS = (
-					"$(STYLE_LDFLAGS)",
 					"-sub_library",
 					libobjc,
 					"-Wl,-Y,3",
@@ -1676,7 +1673,7 @@
 					__text,
 					"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptCore.order",
 				);
-				STYLE_LDFLAGS = "-umbrella WebKit -allowable_client JavaScriptGlue";
+				VALID_ARCHS = "i386 ppc ppc7400 ppc970 ppc64 x86_64";
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-W",
