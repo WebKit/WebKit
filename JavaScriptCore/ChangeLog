@@ -1,3 +1,13 @@
+2006-07-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Geoffrey.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9742
+        Bug 9742: REGRESSION: WebKit hangs when loading <http://www.vtbook.com>
+
+        * kjs/value.h:
+        (KJS::JSValue::getUInt32): Only types tagged as numeric can be converted to UInt32.
+
 2006-07-13  Geoffrey Garen  <ggaren@apple.com>
 
         Pleasing to Maciej.
@@ -41,7 +51,7 @@
 
 2006-07-12  Maciej Stachowiak  <mjs@apple.com>
 
-        4eviewed by Geoff.
+        Reviewed by Geoff.
         
         - add handling of hasInstance callback for API objects
 

@@ -1,3 +1,21 @@
+2006-07-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Geoffrey.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9742
+        Bug 9742: REGRESSION: WebKit hangs when loading <http://www.vtbook.com>
+
+        This includes tests for indexing an array with immediate types, and for
+        setting selectField.options.length to immediate types.
+
+        * fast/dom/select-selectedIndex-expected.txt:
+        * fast/dom/select-selectedIndex-multiple-expected.txt:
+        * fast/dom/select-selectedIndex-multiple.html: Update to test setting length to true and false.
+        * fast/dom/select-selectedIndex.html: Ditto.
+        * fast/js/array-index-immediate-types-expected.txt: Added.
+        * fast/js/array-index-immediate-types.html: Added.
+        * fast/js/resources/array-index-immediate-types.js: Added.
+
 2006-07-13  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin and Levi.

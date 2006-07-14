@@ -51,6 +51,18 @@ shouldBe("mySelect.options.length", "0");
 shouldBe("mySelect.selectedIndex", "-1");
 reset(mySelect);
 
+debug((++i) + ") setting length to non-integer value: true");
+mySelect.options.length = true;
+shouldBe("mySelect.options.length", "1");
+shouldBe("mySelect.selectedIndex", "-1");
+reset(mySelect);
+
+debug((++i) + ") setting length to non-integer value: false");
+mySelect.options.length = false;
+shouldBe("mySelect.options.length", "0");
+shouldBe("mySelect.selectedIndex", "-1");
+reset(mySelect);
+
 debug((++i) + ") setting length to non-integer value: non-numeric string");
 mySelect.options.length = "apple";
 shouldBe("mySelect.options.length", "0");

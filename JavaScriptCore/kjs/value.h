@@ -340,7 +340,7 @@ inline bool JSValue::getUInt32(uint32_t& v) const
         if (!(d >= 0) || d > 0xFFFFFFFFUL) // true for NaN
             return false;
         v = static_cast<uint32_t>(d);
-        return true;
+        return JSImmediate::isNumber(this);
     }
     return downcast()->getUInt32(v);
 }

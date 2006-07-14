@@ -20,47 +20,53 @@ PASS mySelect.selectedIndex is -1
 6) setting length to non-integer value: undefined
 PASS mySelect.options.length is 0
 PASS mySelect.selectedIndex is -1
-7) setting length to non-integer value: non-numeric string
+7) setting length to non-integer value: true
+PASS mySelect.options.length is 1
+PASS mySelect.selectedIndex is -1
+8) setting length to non-integer value: false
 PASS mySelect.options.length is 0
 PASS mySelect.selectedIndex is -1
-8) setting length to non-integer value: object
+9) setting length to non-integer value: non-numeric string
 PASS mySelect.options.length is 0
 PASS mySelect.selectedIndex is -1
-9) setting length to non-integer value: negative infinity
+10) setting length to non-integer value: object
 PASS mySelect.options.length is 0
 PASS mySelect.selectedIndex is -1
-10) setting length to non-integer value: NaN
+11) setting length to non-integer value: negative infinity
 PASS mySelect.options.length is 0
 PASS mySelect.selectedIndex is -1
-11) setting length to non-integer value: positive infinity
+12) setting length to non-integer value: NaN
 PASS mySelect.options.length is 0
 PASS mySelect.selectedIndex is -1
-12) setting length to non-integer value: floating point number
+13) setting length to non-integer value: positive infinity
+PASS mySelect.options.length is 0
+PASS mySelect.selectedIndex is -1
+14) setting length to non-integer value: floating point number
 PASS mySelect.options.length is 2
 PASS mySelect.selectedIndex is 1
-13) setting an element by index past the end of the current list
+15) setting an element by index past the end of the current list
 PASS mySelect.options.length is 11
 PASS mySelect.selectedIndex is 10
-14) setting an existing element by index
+16) setting an existing element by index
 PASS mySelect.options.length is 11
 PASS mySelect.selectedIndex is 10
-15) trying to set an element that's not an option: null
+17) trying to set an element that's not an option: null
 PASS mySelect.options.length is 10
 PASS mySelect.selectedIndex is -1
-16) trying to set an element that's not an option: undefined
+18) trying to set an element that's not an option: undefined
 PASS mySelect.options.length is 10
 PASS mySelect.selectedIndex is -1
-17) trying to set an element that's not an option: select element
+19) trying to set an element that's not an option: select element
 PASS mySelect.options[10] = mySelect; threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS mySelect.options.length is 10
 PASS mySelect.selectedIndex is -1
-18) trying to set a option element using an invalid index: negative infinity
+20) trying to set a option element using an invalid index: negative infinity
 PASS mySelect.options.length is 10
 PASS mySelect.selectedIndex is -1
-19) trying to set a option element using an invalid index: NaN
+21) trying to set a option element using an invalid index: NaN
 PASS mySelect.options.length is 10
 PASS mySelect.selectedIndex is -1
-20) trying to set a option element using an invalid index: positive infinity
+22) trying to set a option element using an invalid index: positive infinity
 PASS mySelect.options.length is 10
 PASS mySelect.selectedIndex is -1
 
