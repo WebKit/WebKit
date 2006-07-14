@@ -340,7 +340,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity)
             if (visibleStart == startOfParagraph(visibleStart))
                 upstreamStart = visibleStart.previous(true).deepEquivalent().upstream();
             // When deleting tables: Select the table first, then perform the deletion
-            if (upstreamStart.node()->renderer() && upstreamStart.node()->renderer()->isTable() && upstreamStart.offset() == maxDeepOffset(upstreamStart.node())) {
+            if (upstreamStart.node() && upstreamStart.node()->renderer() && upstreamStart.node()->renderer()->isTable() && upstreamStart.offset() == maxDeepOffset(upstreamStart.node())) {
                 setEndingSelection(Selection(Position(upstreamStart.node(), 0), endingSelection().start(), DOWNSTREAM));
                 typingAddedToOpenCommand();
                 return;
@@ -384,7 +384,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity)
             if (visibleEnd == endOfParagraph(visibleEnd))
                 downstreamEnd = visibleEnd.next(true).deepEquivalent().downstream();
             // When deleting tables: Select the table first, then perform the deletion
-            if (downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->isTable() && downstreamEnd.offset() == 0) {
+            if (downstreamEnd.node() && downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->isTable() && downstreamEnd.offset() == 0) {
                 setEndingSelection(Selection(endingSelection().end(), Position(downstreamEnd.node(), maxDeepOffset(downstreamEnd.node())), DOWNSTREAM));
                 typingAddedToOpenCommand();
                 return;

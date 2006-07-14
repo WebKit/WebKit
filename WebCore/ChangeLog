@@ -1,3 +1,16 @@
+2006-07-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9905
+          REGRESSION (r15404-r15415): Repro crash when pressing delete in an empty editable div
+
+        Test: editing/deleting/delete-at-start-or-end.html
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Added null check.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+
 2006-07-14  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Geoffrey.

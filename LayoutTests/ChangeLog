@@ -2,6 +2,18 @@
 
         Reviewed by Darin.
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9905
+          REGRESSION (r15404-r15415): Repro crash when pressing delete in an empty editable div
+
+        * editing/deleting/delete-at-start-or-end-expected.checksum: Added.
+        * editing/deleting/delete-at-start-or-end-expected.png: Added.
+        * editing/deleting/delete-at-start-or-end-expected.txt: Added.
+        * editing/deleting/delete-at-start-or-end.html: Added.
+
+2006-07-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9879
           REGRESSION: Repro crash when clicking to the side of an anonymous table
         - see also <rdar://problem/4628129> REGRESSION: Repro crash when clicking
