@@ -258,18 +258,6 @@ void JSValueProtect(JSValueRef value);
 */
 void JSValueUnprotect(JSValueRef value);
 
-/*!
-@function
-@abstract Performs a JavaScript garbage collection. 
-@discussion JavaScript values that are on the machine stack, in a register, 
- protected by JSValueProtect, set as the global object of an execution context, 
- or reachable from any such value will not be collected. 
- 
- You are not required to call this function; the JavaScript engine will garbage 
- collect as needed.
-*/
-void JSGarbageCollect(void);
-
 #ifdef __cplusplus
 }
 #endif

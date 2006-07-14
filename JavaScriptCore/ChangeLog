@@ -1,3 +1,20 @@
+2006-07-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+        
+        Moved JSCheckScriptSyntax, JSEvaluateScript, and JSGarbageCollect into
+        JSBase.h/.cpp. They don't belong in the value-specific or context-specific 
+        files because they're not part of the value or context implementations.
+
+        * API/JSBase.h:
+        * API/JSContextRef.cpp:
+        (JSContextGetGlobalObject):
+        * API/JSContextRef.h:
+        * API/JSValueRef.cpp:
+        (JSValueUnprotect):
+        * API/JSValueRef.h:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2006-07-13  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.
