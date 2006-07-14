@@ -84,6 +84,7 @@ inline bool operator!=(const BidiStatus& status1, const BidiStatus& status2)
 // Used to track a list of chained bidi runs.
 static BidiRun* sFirstBidiRun;
 static BidiRun* sLastBidiRun;
+static BidiRun* sLogicallyLastBidiRun;
 static int sBidiRunCount;
 static BidiRun* sCompactFirstBidiRun;
 static BidiRun* sCompactLastBidiRun;
@@ -867,7 +868,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
                       // correct static x position.  They have no effect on the width.
                       // Similarly, line break boxes have no effect on the width.
         if (r->obj->isText()) {
-            RenderText *rt = static_cast<RenderText *>(r->obj);
+            RenderText* rt = static_cast<RenderText*>(r->obj);
             int textWidth = rt->width(r->start, r->stop-r->start, totWidth, m_firstLine);
             int effectiveWidth = textWidth;
             int rtLength = rt->length();
@@ -875,13 +876,6 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
                 if (r->start == 0 && needsWordSpacing && DeprecatedChar(rt->text()[r->start]).isSpace())
                     effectiveWidth += rt->font(m_firstLine)->wordSpacing();
                 needsWordSpacing = !DeprecatedChar(rt->text()[r->stop-1]).isSpace() && r->stop == rtLength;          
-            }
-            if (!r->compact) {
-                RenderStyle *style = r->obj->style();
-                if (style->autoWrap() && style->breakOnlyAfterWhiteSpace()) {
-                    // shrink the box as needed to keep the line from overflowing the available width
-                    textWidth = min(effectiveWidth, availableWidth - totWidth);
-                }
             }
             r->box->setWidth(textWidth);
         } else if (!r->obj->isInlineFlow()) {
@@ -894,6 +888,13 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
         // Compacts don't contribute to the width of the line, since they are placed in the margin.
         if (!r->compact)
             totWidth += r->box->width();
+    }
+
+    if (totWidth > availableWidth && sLogicallyLastBidiRun->obj->style(m_firstLine)->autoWrap() &&
+        sLogicallyLastBidiRun->obj->style(m_firstLine)->breakOnlyAfterWhiteSpace() &&
+        !sLogicallyLastBidiRun->compact) {
+        sLogicallyLastBidiRun->box->setWidth(sLogicallyLastBidiRun->box->width() - totWidth + availableWidth);
+        totWidth = availableWidth;
     }
 
     // Armed with the total width of the line (without justification),
@@ -1387,6 +1388,8 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
             pastEnd = true;
         }
     }
+
+    sLogicallyLastBidiRun = sLastBidiRun;
 
     // reorder line according to run structure...
     // do not reverse for visually ordered web sites
@@ -2270,6 +2273,13 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                                 if (w + tmpW <= width) {
                                     lBreak.obj = o;
                                     lBreak.pos = pos;
+                                    if (pos > 0) {
+                                        // Separate the trailing space into its own box, which we will
+                                        // resize to fit on the line in computeHorizontalPositionsForLine().
+                                        BidiIterator midpoint(0, o, pos);
+                                        addMidpoint(BidiIterator(0, o, pos-1)); // Stop
+                                        addMidpoint(BidiIterator(0, o, pos)); // Start
+                                    }
                                     skipWhitespace(lBreak, bidi);
                                 }
                             }

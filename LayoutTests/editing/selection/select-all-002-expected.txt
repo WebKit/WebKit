@@ -21,7 +21,8 @@ layer at (0,0) size 820x900
             text run at (0,250) width 569: "so dedicated, can long endure. We are met here on a great "
           RenderBR {BR} at (569,272) size 0x0
           RenderText {#text} at (0,298) size 600x172
-            text run at (0,298) width 600: "battlefield of that war. We have come to dedicate a portion of "
+            text run at (0,298) width 600: "battlefield of that war. We have come to dedicate a portion of"
+            text run at (600,298) width 0: " "
             text run at (0,346) width 585: "it as a final resting place for those who here gave their lives "
             text run at (0,394) width 588: "that that nation might live. It is altogether fitting and proper "
             text run at (0,442) width 224: "that we should do this. "

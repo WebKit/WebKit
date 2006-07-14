@@ -1,3 +1,26 @@
+2006-07-13  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9670
+          REGRESSION: RTL white-space:pre-wrap text is offset to the right
+
+        Test: fast/text/international/rtl-white-space-pre-wrap.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::caretRect): Fixed LTR case and added the RTL case
+        of clipping the caret position to the text box when the caret is after
+        the trailing space of an autowrapped line.
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Changed to truncate-
+        to-fit the logically last text box if it contains the trailing spaces of an
+        autowrapped line. 
+        (WebCore::RenderBlock::bidiReorderLine): Remember the logically last text run.
+        In the case of autowrapped text with white space that overflows beyond the line,
+        the last text run is the one containing the overflowing white space.
+        (WebCore::RenderBlock::findNextLineBreak): Split overflowing white space on a
+        line that autowraps only after white space into a separate text run.
+
 2006-07-13  David Harrison  <harrison@apple.com>
 
         Reviewed by Dave Hyatt.

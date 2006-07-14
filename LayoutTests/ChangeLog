@@ -1,3 +1,31 @@
+2006-07-13  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - test and updated results for http://bugzilla.opendarwin.org/show_bug.cgi?id=9670
+          REGRESSION: RTL white-space:pre-wrap text is offset to the right
+
+        * editing/deleting/delete-to-select-table-expected.txt:
+        * editing/execCommand/boldSelection-expected.txt:
+        * editing/execCommand/italicizeByCharacter-expected.txt:
+        * editing/execCommand/modifyForeColorByCharacter-expected.txt:
+        * editing/execCommand/print-expected.txt:
+        * editing/execCommand/selectAll-expected.txt:
+        * editing/execCommand/strikethroughSelection-expected.txt:
+        * editing/inserting/insert-div-027-expected.txt:
+        * editing/selection/after-line-wrap-expected.txt:
+        * editing/selection/mixed-editability-1-expected.txt:
+        * editing/selection/select-all-001-expected.txt:
+        * editing/selection/select-all-002-expected.txt:
+        * editing/selection/select-all-003-expected.txt:
+        * fast/clip/outline-overflowClip-expected.txt:
+        * fast/text/international/rtl-white-space-pre-wrap-expected.checksum: Added.
+        * fast/text/international/rtl-white-space-pre-wrap-expected.png: Added.
+        * fast/text/international/rtl-white-space-pre-wrap-expected.txt: Added.
+        * fast/text/international/rtl-white-space-pre-wrap.html: Added.
+        * fast/text/whitespace/pre-wrap-overflow-selection-expected.txt:
+        * fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt:
+
 2006-07-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Geoffrey.
