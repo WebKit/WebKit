@@ -1023,14 +1023,15 @@ void Range::checkNodeWOffset( Node *n, int offset, ExceptionCode& ec) const
 void Range::checkNodeBA( Node *n, ExceptionCode& ec) const
 {
     // INVALID_NODE_TYPE_ERR: Raised if the root container of refNode is not an
-    // Attr, Document or DocumentFragment node or if refNode is a Document,
-    // DocumentFragment, Attr, Entity, or Notation node.
+    // Attr, Document or DocumentFragment node or part of a shadow DOM tree
+    // or if refNode is a Document, DocumentFragment, Attr, Entity, or Notation node.
     Node *root = n;
     while (root->parentNode())
         root = root->parentNode();
     if (!(root->nodeType() == Node::ATTRIBUTE_NODE ||
           root->nodeType() == Node::DOCUMENT_NODE ||
-          root->nodeType() == Node::DOCUMENT_FRAGMENT_NODE)) {
+          root->nodeType() == Node::DOCUMENT_FRAGMENT_NODE ||
+          root->isShadowNode())) {
         ec = INVALID_NODE_TYPE_ERR;
         return;
     }

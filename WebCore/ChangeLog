@@ -1,3 +1,23 @@
+2006-07-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adele and Justin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9658
+        <rdar://problem/4613948>
+        REGRESSION: Check Spelling does not work in textarea elements
+        
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        Don't use setStartBefore or setEndAfter on the search range because for shadow trees, there
+        is no notion of before and after. Instead, use setStart and setEnd and pass in the start and end
+        indices respectively.
+        
+        * dom/Range.cpp:
+        (WebCore::Range::checkNodeBA):
+        Allow range operations on shadow trees.
+
+        * manual-tests/form-element-spelling.html: Added.
+
 2006-07-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
