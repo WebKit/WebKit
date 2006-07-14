@@ -1,3 +1,18 @@
+2006-07-13  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9795
+          REGRESSION: Crash in [WebHTMLView(WebPrivate) 
+          _updateMouseoverWithEvent:]
+          and http://bugzilla.opendarwin.org/show_bug.cgi?id=9850
+          REGRESSION: Assertion failure (SHOULD NEVER BE REACHED) in -
+          [WebHTMLView(WebPrivate) removeTrackingRect:]
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _updateMouseoverWithEvent:]): Return immediately if 
+        the view has already been closed.
+
 2006-07-13  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin and Levi.

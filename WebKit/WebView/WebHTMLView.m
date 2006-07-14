@@ -1097,6 +1097,9 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_updateMouseoverWithEvent:(NSEvent *)event
 {
+    if (_private->closed)
+        return;
+
     NSView *contentView = [[event window] contentView];
     NSPoint locationForHitTest = [[contentView superview] convertPoint:[event locationInWindow] fromView:nil];
     
