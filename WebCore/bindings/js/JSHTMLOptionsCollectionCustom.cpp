@@ -44,11 +44,9 @@ void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue* value)
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
     ExceptionCode ec = 0;
     unsigned newLength = 0;
-    double lengthValue;
-    if (!value->isUndefinedOrNull() && value->getNumber(lengthValue)) {
-        if (isNaN(lengthValue) || isInf(lengthValue))
-            newLength = 0;
-        else if (lengthValue < 0.0)
+    double lengthValue = value->getNumber();
+    if (!isNaN(lengthValue) && !isInf(lengthValue)) {
+        if (lengthValue < 0.0)
             ec = INDEX_SIZE_ERR;
         else if (lengthValue > static_cast<double>(UINT_MAX))
             newLength = UINT_MAX;
