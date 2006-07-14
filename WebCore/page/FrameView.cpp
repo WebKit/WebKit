@@ -1309,6 +1309,9 @@ void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<EventTargetNod
 
 void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
 {
+    if (!d->m_viewportRenderer)
+        return;
+    
     if (d->m_overflowStatusDirty) {
         d->horizontalOverflow = horizontalOverflow;
         d->m_verticalOverflow = verticalOverflow;

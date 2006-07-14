@@ -1,3 +1,17 @@
+2006-07-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4621660> REGRESSION: Safari crashing in 
+        WebCore::FrameView::updateOverflowStatus
+
+        m_viewportRenderer is never initialized for framesets, and it 
+        shouldn't be. So we just need to nil-check for it in 
+        updateOverflowStatus() and return early.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateOverflowStatus): Nil check.
+
 2006-07-14  Adele Peterson  <adele@apple.com>
 
         RS by Darin.
