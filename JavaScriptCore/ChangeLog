@@ -1,3 +1,17 @@
+2006-07-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        - removed bool return value from JSObjectSetProperty, since it is inefficient and
+        also doesn't work quite right
+        - added JSObjectGetPropertyAtIndex and JSObjectSetPropertyAtIndex
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetProperty): Removed return value and canPut stuff.
+        (JSObjectGetPropertyAtIndex): Added.
+        (JSObjectSetPropertyAtIndex): Added.
+        * API/JSObjectRef.h: Prototyped and documented new functions.
+
 2006-07-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth.
