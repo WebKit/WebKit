@@ -153,11 +153,16 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
         case RUN_IN:
         case TABLE:
             // Allow a form to just sit at the top level.
-            wrapInAnonymousSection = !isTableElement || !child->element() || !child->element()->hasTagName(formTag);
+            wrapInAnonymousSection = !isTableElement || !child->element() || !(child->element()->hasTagName(formTag) && document()->isHTMLDocument());
             break;
         }
 
     if (!wrapInAnonymousSection) {
+        
+        // If the next renderer is actually wrapped in an anonymous table section, we need to go up and find that
+        while (beforeChild && !beforeChild->isTableSection())
+            beforeChild = beforeChild->parent();
+
         RenderContainer::addChild(child, beforeChild);
         return;
     }

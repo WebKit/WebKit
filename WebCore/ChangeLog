@@ -1,3 +1,24 @@
+2006-07-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed <rdar://problem/4567031> REGRESSION: Crash at WebCore::RenderBlock::createLineBoxes (seems to be a security hole?)
+        
+        I also fixed all the similar crash / assertion failure cases I could think of.
+
+        * dom/Node.cpp:
+        (WebCore::Node::nextRendererWithSameParent): Helper function for some of the above.
+        * dom/Node.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): Don't allow inserting forms when not in
+        an HTML document, since we don't need that quirk and because parsing won't
+        do certain render tree fixups. Also watch out for case when inserting before
+        the renderer of a misnested child.
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild): ditto
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild): ditto
+
 2006-07-13  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

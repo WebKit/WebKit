@@ -1,3 +1,25 @@
+2006-07-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+        
+        Test cases for <rdar://problem/4567031> REGRESSION: Crash at WebCore::RenderBlock::createLineBoxes (seems to be a security hole?)
+        
+        I included the test case from the bug plus variants for other broken cases that
+        were similar but needed separate fixes.
+
+        * fast/table/cell-in-row-before-misnested-text-crash-expected.txt: Added.
+        * fast/table/cell-in-row-before-misnested-text-crash.xhtml: Added.
+        * fast/table/form-in-row-before-misnested-text-crash-expected.txt: Added.
+        * fast/table/form-in-row-before-misnested-text-crash.xhtml: Added.
+        * fast/table/form-in-table-before-misnested-text-crash-expected.txt: Added.
+        * fast/table/form-in-table-before-misnested-text-crash.xhtml: Added.
+        * fast/table/form-in-tbody-before-misnested-text-crash-expected.txt: Added.
+        * fast/table/form-in-tbody-before-misnested-text-crash.xhtml: Added.
+        * fast/table/row-in-tbody-before-misnested-text-crash-expected.txt: Added.
+        * fast/table/row-in-tbody-before-misnested-text-crash.xhtml: Added.
+        * fast/table/section-in-table-before-misnested-text-crash-expected.txt: Added.
+        * fast/table/section-in-table-before-misnested-text-crash.xhtml: Added.
+
 2006-07-13  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
