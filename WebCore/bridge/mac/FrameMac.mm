@@ -2174,11 +2174,8 @@ bool FrameMac::sendContextMenuEvent(NSEvent *event)
         // Since we're about to make a new selection in this view,
         // make sure this view is first responder
         NSView *view = d->m_view->getDocumentView();
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        if ([_bridge firstResponder] != view) {
+        if ([_bridge firstResponder] != view)
             [_bridge makeFirstResponder:view];
-        }
-        END_BLOCK_OBJC_EXCEPTIONS;
 
         _mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
         selectClosestWordFromMouseEvent(mouseEvent, mev.targetNode());

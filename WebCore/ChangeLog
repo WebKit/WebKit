@@ -1,3 +1,14 @@
+2006-07-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adele.
+
+        - Build fix: don't need BLOCK_OBJC_EXCEPTIONS because we already have
+        one surrounding this function, and the nested one makes the compiler
+        think our local variable is volatile (seems like a compiler bug to me).
+        
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::sendContextMenuEvent):
+
 2006-07-14  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.
