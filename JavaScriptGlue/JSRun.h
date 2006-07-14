@@ -37,8 +37,11 @@ class JSInterpreter : public Interpreter {
         JSInterpreter(JSObject *global, JSFlags flags) : Interpreter(global), fJSFlags(flags) { }
         JSInterpreter(JSObject *global) : Interpreter(global), fJSFlags(kJSFlagNone) { }
         JSInterpreter() : Interpreter(), fJSFlags(kJSFlagNone) { }
-        JSInterpreter::~JSInterpreter() { }
         JSFlags Flags() const { return fJSFlags; }
+
+    protected:
+        virtual JSInterpreter::~JSInterpreter() { } // only deref on the base class should delete us
+
     private:
         JSFlags fJSFlags;
 };
@@ -57,7 +60,7 @@ class JSRun : public JSBase {
     private:
         UString fSource;
         ProtectedPtr<JSObject> fGlobalObject;
-        JSInterpreter fInterpreter;
+        RefPtr<JSInterpreter> fInterpreter;
         JSFlags fFlags;
 };
 

@@ -38,27 +38,35 @@ extern "C" {
 
 /*!
 @function
-@abstract Creates a JavaScript execution context.
-@discussion JSContextCreate allocates a global object and populates it with all the
+@abstract Creates a global JavaScript execution context.
+@discussion JSGlobalContextCreate allocates a global object and populates it with all the
  built-in JavaScript objects, such as Object, Function, String, and Array.
-@param globalObjectClass The class to use when creating the JSContext's global object.
- Pass NULL to use the default object class.
-@result A JSContext with a global object of class globalObjectClass.
+@param globalObjectClass The class to use when creating the global object. Pass 
+ NULL to use the default object class.
+@result A JSGlobalContext with a global object of class globalObjectClass.
 */
-JSContextRef JSContextCreate(JSClassRef globalObjectClass);
+JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass);
 
 /*!
 @function
-@abstract       Destroys a JavaScript execution context, freeing its resources.
-@param context  The JSContext to destroy.
+@abstract Retains a global JavaScript execution context.
+@param context The JSGlobalContext to retain.
+@result A JSGlobalContext that is the same as context.
 */
-void JSContextDestroy(JSContextRef context);
+JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef context);
 
 /*!
 @function
-@abstract       Gets the global object of a JavaScript execution context.
-@param context  The JSContext whose global object you want to get.
-@result         context's global object.
+@abstract Releases a global JavaScript execution context.
+@param context The JSGlobalContext to release.
+*/
+void JSGlobalContextRelease(JSGlobalContextRef context);
+
+/*!
+@function
+@abstract Gets the global object of a JavaScript execution context.
+@param context The JSContext whose global object you want to get.
+@result context's global object.
 */
 JSObjectRef JSContextGetGlobalObject(JSContextRef context);
 

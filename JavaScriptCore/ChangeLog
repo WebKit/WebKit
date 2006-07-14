@@ -1,3 +1,33 @@
+2006-07-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        - Implemented ref-counting of JSContexts by splitting into two datatypes:
+        JSGlobalContext, which you can create/retain/release, and JSContext, which
+        you can't.
+        
+        Internally, you retain a JSGlobalContext/ExecState by retaining its
+        interpreter, which, in the case of a global ExecState, owns it.
+        
+        - Also made ~Interpreter() protected to catch places where Interpreter
+        is manually deleted. (Can't make it private because some crazy fool
+        decided it would be a good idea to subclass Interpreter in other frameworks.
+        I pity da fool.)
+
+        * API/APICast.h: 
+        (toJS): Added cast for new JSGlobalContext
+        * API/JSStringRef.h: Changed vague "you must" language to more specific
+        (but, ultimately, equally vague) "behavior is undefined if you don't" 
+        language.
+        (KJS::Interpreter::Interpreter): Factored more common initialization into
+        init()
+        * kjs/interpreter.h:
+        (KJS::Interpreter::ref): new
+        (KJS::Interpreter::deref): new
+        (KJS::Interpreter::refCount): new
+        * kjs/testkjs.cpp: 
+        (doIt): Ref-count the interpreter.
+
 2006-07-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

@@ -63,7 +63,6 @@ namespace KJS {
   {
   public:
     ScriptInterpreter(JSObject *global, WebCore::Frame *frame);
-    virtual ~ScriptInterpreter();
 
     static DOMObject* getDOMObject(void* objectHandle);
     static void putDOMObject(void* objectHandle, DOMObject* obj);
@@ -103,6 +102,9 @@ namespace KJS {
 
     virtual bool shouldInterruptScript() const;
 
+  protected:
+    virtual ~ScriptInterpreter() { } // only deref on the base class should delete us
+    
   private:
     WebCore::Frame* m_frame;
 

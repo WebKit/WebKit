@@ -5,11 +5,12 @@ _JSCheckScriptSyntax
 _JSClassCreate
 _JSClassRelease
 _JSClassRetain
-_JSContextCreate
-_JSContextDestroy
 _JSContextGetGlobalObject
 _JSEvaluateScript
 _JSGarbageCollect
+_JSGlobalContextCreate
+_JSGlobalContextRelease
+_JSGlobalContextRetain
 _JSObjectCallAsConstructor
 _JSObjectCallAsFunction
 _JSObjectCreatePropertyEnumerator

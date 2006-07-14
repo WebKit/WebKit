@@ -34,7 +34,7 @@
 #include <assert.h>
 #include <math.h>
 
-static JSContextRef context = 0;
+static JSGlobalContextRef context = 0;
 
 static void assertEqualsAsBoolean(JSValueRef value, bool expectedValue)
 {
@@ -301,7 +301,7 @@ int main(int argc, char* argv[])
     UNUSED_PARAM(argc);
     UNUSED_PARAM(argv);
     
-    context = JSContextCreate(NULL);
+    context = JSGlobalContextCreate(NULL);
     
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     assert(JSValueIsObject(globalObject));
@@ -604,7 +604,7 @@ int main(int argc, char* argv[])
     JSStringRelease(goodSyntax);
     JSStringRelease(badSyntax);
     
-    JSContextDestroy(context);
+    JSGlobalContextRelease(context);
     printf("PASS: Program exited normally.\n");
     return 0;
 }

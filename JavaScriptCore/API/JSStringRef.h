@@ -110,9 +110,10 @@ size_t JSStringGetMaximumUTF8CStringSize(JSStringRef string);
  and copies the result into an external byte buffer.
 @param string The source JSString.
 @param buffer The destination byte buffer into which to copy a null-terminated 
- UTF8 string representation of string. The buffer must be at least bufferSize 
- bytes in size. On return, buffer contains a UTF8 string representation of string. 
- If bufferSize is too small, buffer will contain only partial results.
+ UTF8 representation of string. On return, buffer contains a UTF8 string 
+ representation of string. If bufferSize is too small, buffer will contain only 
+ partial results. If buffer is not at least bufferSize bytes in size, 
+ behavior is undefined. 
 @param bufferSize The size of the external buffer in bytes.
 @result The number of bytes written into buffer (including the null-terminator byte).
 */

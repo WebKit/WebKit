@@ -29,7 +29,7 @@
 #ifndef JSUtils_h
 #define JSUtils_h
 
-#include <JavaScriptGlue/JavaScriptGlue.h>
+#include "JavaScriptGlue.h"
 
 #include <JavaScriptCore/value.h>
 #include <JavaScriptCore/object.h>
@@ -38,6 +38,8 @@
 #include <JavaScriptCore/protect.h>
 #include <JavaScriptCore/collector.h>
 #include <JavaScriptCore/ustring.h>
+
+#include <wtf/RefPtr.h>
 
 using namespace KJS;
 

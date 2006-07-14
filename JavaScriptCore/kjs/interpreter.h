@@ -74,7 +74,6 @@ namespace KJS {
      * initialized with the standard global properties.
      */
     Interpreter();
-    virtual ~Interpreter();
 
     /**
      * Returns the object that is used as the global object during all script
@@ -337,8 +336,14 @@ namespace KJS {
     
     bool checkTimeout();
     
+    void ref() { ++m_refCount; }
+    void deref() { if (--m_refCount <= 0) delete this; }
+    int refCount() const { return m_refCount; }
+    
 protected:
+    virtual ~Interpreter(); // only deref should delete us
     virtual bool shouldInterruptScript() const { return true; }
+
     long m_timeoutTime;
 
 private:
@@ -358,6 +363,8 @@ private:
      * interpreter instance instead.
      */
     Interpreter operator=(const Interpreter&);
+    
+    int m_refCount;
     
     ExecState m_globalExec;
     JSObject* m_globalObject;

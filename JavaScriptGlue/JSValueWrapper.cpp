@@ -63,14 +63,14 @@ JSValue *JSValueWrapper::GetValue()
 pthread_key_t interpreterKey;
 pthread_once_t interpreterKeyOnce = PTHREAD_ONCE_INIT;
 
-static void destroyInterpreter(void* data) 
+static void derefInterpreter(void* data) 
 {
-    delete static_cast<Interpreter*>(data);
+    static_cast<Interpreter*>(data)->deref();
 }
 
 static void initializeInterpreterKey()
 {
-    pthread_key_create(&interpreterKey, destroyInterpreter);
+    pthread_key_create(&interpreterKey, derefInterpreter);
 }
 
 static ExecState* getThreadGlobalExecState()
@@ -79,6 +79,7 @@ static ExecState* getThreadGlobalExecState()
     Interpreter* interpreter = static_cast<Interpreter*>(pthread_getspecific(interpreterKey));
     if (!interpreter) {
         interpreter = new Interpreter();
+        interpreter->ref();
         pthread_setspecific(interpreterKey, interpreter);
     }
 

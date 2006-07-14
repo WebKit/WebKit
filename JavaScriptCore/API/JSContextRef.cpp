@@ -34,7 +34,7 @@
 
 using namespace KJS;
 
-JSContextRef JSContextCreate(JSClassRef globalObjectClass)
+JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 {
     JSLock lock;
 
@@ -46,14 +46,23 @@ JSContextRef JSContextCreate(JSClassRef globalObjectClass)
         globalObject = new JSObject();
 
     Interpreter* interpreter = new Interpreter(globalObject); // adds the built-in object prototype to the global object
-    return toRef(interpreter->globalExec());
+    JSGlobalContextRef context = reinterpret_cast<JSGlobalContextRef>(interpreter->globalExec());
+    return JSGlobalContextRetain(context);
 }
 
-void JSContextDestroy(JSContextRef context)
+JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef context)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
-    delete exec->dynamicInterpreter();
+    exec->dynamicInterpreter()->ref();
+    return context;
+}
+
+void JSGlobalContextRelease(JSGlobalContextRef context)
+{
+    JSLock lock;
+    ExecState* exec = toJS(context);
+    exec->dynamicInterpreter()->deref();
 }
 
 JSObjectRef JSContextGetGlobalObject(JSContextRef context)

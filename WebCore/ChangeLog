@@ -1,3 +1,13 @@
+2006-07-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        - Updated ScriptInterpreter to work with Interpreter ref-counting in 
+        JavaScriptCore.
+
+        (KJS::ScriptInterpreter::~ScriptInterpreter): Now protected to catch
+        manual delete.
+
 2006-07-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adele and Justin.

@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     UNUSED_PARAM(argc);
     UNUSED_PARAM(argv);
     
-    JSContextRef context = JSContextCreate(NULL);
+    JSGlobalContextRef context = JSGlobalContextCreate(NULL);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     
     JSStringRef printIString = JSStringCreateWithUTF8CString("print");
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
     JSGarbageCollect();
 #endif
     
-    JSContextDestroy(context);
+    JSGlobalContextRelease(context);
     printf("PASS: Program exited normally.\n");
     return 0;
 }

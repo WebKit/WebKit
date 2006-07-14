@@ -32,13 +32,20 @@
 /* JavaScript engine interface */
 
 /*! @typedef JSContextRef A JavaScript execution context. Holds the global object and other execution state. */
-typedef struct __JSContext* JSContextRef;
+typedef const struct __JSContext* JSContextRef;
+
+/*! @typedef JSGlobalContextRef A global JavaScript execution context. A JSGlobalContext is a JSContext. */
+typedef struct __JSContext* JSGlobalContextRef;
+
 /*! @typedef JSString A UTF16 character buffer. The fundamental string representation in JavaScript. */
 typedef struct __JSString* JSStringRef;
+
 /*! @typedef JSClassRef A JavaScript class. Used with JSObjectMake to construct objects with custom behavior. */
 typedef struct __JSClass* JSClassRef;
+
 /*! @typedef JSPropertyListRef A JavaScript property list. Used for listing the properties in an object so they can be enumerated. */
 typedef struct __JSPropertyList* JSPropertyListRef;
+
 /*! @typedef JSPropertyEnumeratorRef A JavaScript property enumerator. Used for enumerating the properties in an object. */
 typedef struct __JSPropertyEnumerator* JSPropertyEnumeratorRef;
 
@@ -47,6 +54,7 @@ typedef struct __JSPropertyEnumerator* JSPropertyEnumeratorRef;
 
 /*! @typedef JSValueRef A JavaScript value. The base type for all JavaScript values, and polymorphic functions on them. */
 typedef const struct __JSValue* JSValueRef;
+
 /*! @typedef JSObjectRef A JavaScript object. A JSObject is a JSValue. */
 typedef struct __JSValue* JSObjectRef;
 

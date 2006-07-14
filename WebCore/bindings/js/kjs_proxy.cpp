@@ -36,7 +36,6 @@ namespace WebCore {
 
 KJSProxy::KJSProxy(Frame* frame)
 {
-    m_script = 0;
     m_frame = frame;
     m_handlerLineno = 0;
 }
@@ -44,7 +43,6 @@ KJSProxy::KJSProxy(Frame* frame)
 KJSProxy::~KJSProxy()
 {
     JSLock lock;
-    delete m_script;
     Collector::collect();
 }
 
@@ -123,7 +121,7 @@ ScriptInterpreter* KJSProxy::interpreter()
 {
   initScriptIfNeeded();
   assert(m_script);
-  return m_script;
+  return m_script.get();
 }
 
 void KJSProxy::initScriptIfNeeded()
