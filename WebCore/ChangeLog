@@ -1,3 +1,17 @@
+2006-07-13  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fix for <rdar://problem/4604703> 
+        REGRESSION (NativeTextField): Focus is not removed from password field after I ctrl-click into a different field
+
+        Test:
+        * manual-tests/password-ctrl-click-lose-focus.html: Added.
+
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::sendContextMenuEvent):
+        If we're about to set a selection in the current view, make sure its the first responder.
+        In this case, this will cause the password field to resign first responder at the right time.
+
 2006-07-13  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
