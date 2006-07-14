@@ -2,6 +2,17 @@
 
         Reviewed by Darin.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9907
+          REGRESSION (r15418): editing/pasteboard/paste-table-001 fails in pixel  mode
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::caretRect): Fixed the calculation of the max/min allowed caret
+        position.
+
+2006-07-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9905
           REGRESSION (r15404-r15415): Repro crash when pressing delete in an empty editable div
 

@@ -404,10 +404,11 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToE
 
     int left = box->positionForOffset(offset);
 
+    int rootLeft = box->root()->xPos();
     // FIXME: should we use the width of the root inline box or the
     // width of the containing block for this?
     if (extraWidthToEndOfLine)
-        *extraWidthToEndOfLine = (box->root()->width() + box->root()->xPos()) - (left + 1);
+        *extraWidthToEndOfLine = (box->root()->width() + rootLeft) - (left + 1);
 
     int absx, absy;
     absolutePositionForContent(absx, absy);
@@ -418,9 +419,9 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToE
     if (style()->autoWrap()) {
         int availableWidth = cb->lineWidth(top);
         if (!box->m_reversed)
-            left = min(left, absx + availableWidth - 1);
+            left = min(left, absx + rootLeft + availableWidth - 1);
         else
-            left = max(left, absx + box->m_x);
+            left = max(left, absx + rootLeft);
     }
      
     return IntRect(left, top, 1, height);
