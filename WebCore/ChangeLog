@@ -1,3 +1,5 @@
+=== Safari-521.17 ===
+
 2006-07-14  Timothy Hatcher  <timothy@apple.com>
 
         <rdar://problem/4623957> SWB: gcc-5412 (new?) objc warning causes WebCore project failure
