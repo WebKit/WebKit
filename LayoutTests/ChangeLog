@@ -1,3 +1,20 @@
+2006-07-14  Timothy Hatcher  <timothy@apple.com>
+ 
+        Rolling out this fix from r15358 since it isn't resolved.
+
+    2006-07-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi & thatcher
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9642>
+        GMail Editor: Operations that use drop down menus blow away the selection
+
+        * editing/selection/drag-to-contenteditable-iframe-expected.txt:
+        * editing/selection/subframe-with-selection-expected.checksum: Added.
+        * editing/selection/subframe-with-selection-expected.png: Added.
+        * editing/selection/subframe-with-selection-expected.txt: Added.
+        * editing/selection/subframe-with-selection.html: Added.
+
 2006-07-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

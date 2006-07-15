@@ -2,6 +2,26 @@
 
 2006-07-14  Timothy Hatcher  <timothy@apple.com>
 
+        Rolling out this fix from r15358 since it isn't resolved.
+
+    2006-07-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi & thatcher
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9642>
+        GMail Editor: Operations that use drop down menus blow away the selection
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray maintainsInactiveSelection]): Maintain an inactive selection
+        when resigning as first responder if the selection is editable
+        or if the WebView tells us to.
+        * WebView/WebView.m:
+        (-[WebView maintainsInactiveSelection]): Just because a WebView is
+        editable doesn't mean selections inside subframes will be.  Return
+        NO by default.
+
+2006-07-14  Timothy Hatcher  <timothy@apple.com>
+
         <rdar://problem/4623957> SWB: gcc-5412 (new?) objc warning causes WebCore project failure
 
         Build fix with the new GCC. Removes forward declarations of protocols.
