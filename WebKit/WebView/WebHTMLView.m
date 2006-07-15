@@ -197,6 +197,8 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 - (NSView *)_hitViewForEvent:(NSEvent *)event;
 - (void)_writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard cachedAttributedString:(NSAttributedString *)attributedString;
+- (DOMRange *)_documentRange;
+- (WebFrameBridge *)_bridge;
 @end
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
@@ -264,6 +266,11 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 @end
 
 @implementation WebHTMLView (WebHTMLViewFileInternal)
+
+- (DOMRange *)_documentRange
+{
+    return [[[self _bridge] DOMDocument] _documentRange];
+}
 
 - (BOOL)_imageExistsAtPaths:(NSArray *)paths
 {
@@ -1986,22 +1993,6 @@ static WebHTMLView *lastHitView = nil;
     [NSPasteboard _web_setFindPasteboardString:[self selectedString] withOwner:self];
 }
 
-- (NSArray *)pasteboardTypesForSelection
-{
-    if ([self _canSmartCopyOrDelete]) {
-        NSMutableArray *types = [[[[self class] _selectionPasteboardTypes] mutableCopy] autorelease];
-        [types addObject:WebSmartPastePboardType];
-        return types;
-    } else {
-        return [[self class] _selectionPasteboardTypes];
-    }
-}
-
-- (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
-{
-    [self _writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard cachedAttributedString:nil];
-}
-
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {
     [pasteboard declareTypes:types owner:nil];
@@ -2041,31 +2032,6 @@ static WebHTMLView *lastHitView = nil;
 - (void)jumpToSelection:(id)sender
 {
     [self centerSelectionInVisibleArea:sender];
-}
-
-- (NSRect)selectionRect
-{
-    return [[self _bridge] selectionRect];
-}
-
-- (NSView *)selectionView
-{
-    return self;
-}
-
-- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
-{
-    if ([self _hasSelection])
-        return [[self _bridge] selectionImageForcingWhiteText:forceWhiteText];
-
-    return nil;
-}
-
-- (NSRect)selectionImageRect
-{
-    if ([self _hasSelection])
-        return [[self _bridge] visibleSelectionRect];
-    return NSZeroRect;
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
@@ -2559,67 +2525,6 @@ static WebHTMLView *lastHitView = nil;
     return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag];
 }
 
-- (DOMRange *)_documentRange
-{
-    return [[[self _bridge] DOMDocument] _documentRange];
-}
-
-- (NSString *)string
-{
-    return [[self _bridge] stringForRange:[self _documentRange]];
-}
-
-- (NSAttributedString *)_attributeStringFromDOMRange:(DOMRange *)range
-{
-    NSAttributedString *attributedString;
-#if !LOG_DISABLED        
-    double start = CFAbsoluteTimeGetCurrent();
-#endif    
-    attributedString = [[[NSAttributedString alloc] _initWithDOMRange:range] autorelease];
-#if !LOG_DISABLED
-    double duration = CFAbsoluteTimeGetCurrent() - start;
-    LOG(Timing, "creating attributed string from selection took %f seconds.", duration);
-#endif
-    return attributedString;
-}
-
-- (NSAttributedString *)attributedString
-{
-    WebFrameBridge *bridge = [self _bridge];
-    DOMDocument *document = [bridge DOMDocument];
-    NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
-    if (attributedString == nil) {
-        attributedString = [bridge attributedStringFrom:document startOffset:0 to:nil endOffset:0];
-    }
-    return attributedString;
-}
-
-- (NSString *)selectedString
-{
-    return [[self _bridge] selectedString];
-}
-
-- (NSAttributedString *)selectedAttributedString
-{
-    WebFrameBridge *bridge = [self _bridge];
-    NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[self _selectedRange]];
-    if (attributedString == nil) {
-        attributedString = [bridge selectedAttributedString];
-    }
-    return attributedString;
-}
-
-- (void)selectAll
-{
-    [[self _bridge] selectAll];
-}
-
-// Remove the selection.
-- (void)deselectAll
-{
-    [[self _bridge] deselectAll];
-}
-
 - (void)deselectText
 {
     [[self _bridge] deselectText];
@@ -2997,161 +2902,6 @@ done:
     return [NSArray arrayWithObject:[path lastPathComponent]];
 }
 
-- (BOOL)_canProcessDragWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
-{
-    ASSERT([self _isTopHTMLView]);
-
-    NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
-    NSMutableSet *types = [NSMutableSet setWithArray:[pasteboard types]];
-    [types intersectSet:[NSSet setWithArray:[WebHTMLView _insertablePasteboardTypes]]];
-    if ([types count] == 0)
-        return NO;
-    if ([types count] == 1
-            && [types containsObject:NSFilenamesPboardType]
-            && ![self _imageExistsAtPaths:[pasteboard propertyListForType:NSFilenamesPboardType]])
-        return NO;
-
-    NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
-    NSDictionary *element = [self elementAtPoint:point allowShadowContent:YES];
-    if ([[self _webView] isEditable] || [[element objectForKey:WebElementDOMNodeKey] isContentEditable]) {
-        // Can't drag onto the selection being dragged.
-        if (_private->initiatedDrag && [[element objectForKey:WebElementIsSelectedKey] boolValue])
-            return NO;
-        return YES;
-    }
-
-    return NO;
-}
-
-- (BOOL)_isMoveDrag
-{
-    ASSERT([self _isTopHTMLView]);
-    return _private->initiatedDrag
-        && [self _isEditable] && [self _hasSelection]
-        && !([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask);
-}
-
-- (BOOL)_isNSColorDrag:(id <NSDraggingInfo>)draggingInfo
-{
-    return [[[draggingInfo draggingPasteboard] types] containsObject:NSColorPboardType];
-}
-
-- (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
-{
-    ASSERT([self _isTopHTMLView]);
-
-    NSDragOperation operation = NSDragOperationNone;
-    if (actionMask & WebDragDestinationActionDHTML)
-        operation = [[self _bridge] dragOperationForDraggingInfo:draggingInfo];
-    _private->webCoreHandlingDrag = (operation != NSDragOperationNone);
-
-    if ((actionMask & WebDragDestinationActionEdit) && !_private->webCoreHandlingDrag && [self _canProcessDragWithDraggingInfo:draggingInfo]) {
-        if ([self _isNSColorDrag:draggingInfo])
-            operation = NSDragOperationGeneric;
-        else {
-            WebView *webView = [self _webView];
-            [webView moveDragCaretToPoint:[webView convertPoint:[draggingInfo draggingLocation] fromView:nil]];
-            operation = [self _isMoveDrag] ? NSDragOperationMove : NSDragOperationCopy;
-        }
-    } else
-        [[self _webView] removeDragCaret];
-
-    return operation;
-}
-
-- (void)draggingCancelledWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
-{
-    ASSERT([self _isTopHTMLView]);
-
-    [[self _bridge] dragExitedWithDraggingInfo:draggingInfo];
-    [[self _webView] removeDragCaret];
-}
-
-- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
-{
-    ASSERT([self _isTopHTMLView]);
-
-    WebView *webView = [self _webView];
-    WebFrameBridge *bridge = [self _bridge];
-    if (_private->webCoreHandlingDrag) {
-        ASSERT(actionMask & WebDragDestinationActionDHTML);
-        [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionDHTML forDraggingInfo:draggingInfo];
-        [bridge concludeDragForDraggingInfo:draggingInfo];
-        return YES;
-    }
-
-    if (!(actionMask & WebDragDestinationActionEdit))
-        return NO;
-
-    NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
-    NSDictionary *element = [self elementAtPoint:point allowShadowContent:YES];
-    ASSERT(element);
-    WebFrame *innerFrame = (WebFrame *)[element objectForKey:WebElementFrameKey];
-    ASSERT(innerFrame);
-    ASSERT([innerFrame isKindOfClass:[WebFrame class]]);
-    WebFrameBridge *innerBridge = [innerFrame _bridge];
-
-    if ([self _isNSColorDrag:draggingInfo]) {
-        NSColor *color = [NSColor colorFromPasteboard:[draggingInfo draggingPasteboard]];
-        if (!color)
-            return NO;
-        DOMCSSStyleDeclaration *style = [self _emptyStyle];
-        [style setProperty:@"color" :[self _colorAsString:color] :@""];
-        if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[innerBridge selectedDOMRange]]) {
-            [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
-            [innerBridge applyStyle:style withUndoAction:WebUndoActionSetColor];
-            return YES;
-        }
-        return NO;
-    }
-
-    BOOL didInsert = NO;
-    if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
-        NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
-        if ([self _isMoveDrag] || [innerBridge isDragCaretRichlyEditable]) { 
-            BOOL chosePlainText;
-            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:YES chosePlainText:&chosePlainText];
-            if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[innerBridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
-                [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
-                if ([self _isMoveDrag]) {
-                    BOOL smartMove = [innerBridge selectionGranularity] == WebBridgeSelectByWord && [self _canSmartReplaceWithPasteboard:pasteboard];
-                    [innerBridge moveSelectionToDragCaret:fragment smartMove:smartMove];
-                } else {
-                    [innerBridge setSelectionToDragCaret];
-                    [innerBridge replaceSelectionWithFragment:fragment selectReplacement:YES smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:chosePlainText];
-                }
-                didInsert = YES;
-            }
-        } else {
-            NSString *text = [self _plainTextFromPasteboard:pasteboard];
-            if (text && [self _shouldInsertText:text replacingDOMRange:[innerBridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
-                [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
-                [innerBridge setSelectionToDragCaret];
-                [innerBridge replaceSelectionWithText:text selectReplacement:YES smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
-                didInsert = YES;
-            }
-        }
-    }
-    [webView removeDragCaret];
-    return didInsert;
-}
-
-- (NSDictionary *)elementAtPoint:(NSPoint)point
-{
-    return [self elementAtPoint:point allowShadowContent:NO];
-}
-
-- (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
-{
-    DOMNode *innerNode = nil;
-    DOMNode *innerNonSharedNode = nil;
-    DOMElement *URLElement = nil;
-    [[self _bridge] getInnerNonSharedNode:&innerNonSharedNode innerNode:&innerNode URLElement:&URLElement atPoint:point allowShadowContent:allow];
-    NSView *innerView = [[[[innerNonSharedNode ownerDocument] webFrame] frameView] documentView];
-    NSPoint innerPoint = innerView ? [self convertPoint:point toView:innerView] : point;
-    return [[[WebElementDictionary alloc] initWithInnerNonSharedNode:innerNonSharedNode innerNode:innerNode URLElement:URLElement andPoint:innerPoint] autorelease];
-}
-
 - (void)mouseUp:(NSEvent *)event
 {
     NSInputManager *currentInputManager = [NSInputManager currentInputManager];
@@ -3170,11 +2920,6 @@ done:
 - (void)mouseMovedNotification:(NSNotification *)notification
 {
     [self _updateMouseoverWithEvent:[[notification userInfo] objectForKey:@"NSEvent"]];
-}
-
-- (BOOL)supportsTextEncoding
-{
-    return YES;
 }
 
 // returning YES from this method is the way we tell AppKit that it is ok for this view
@@ -5767,6 +5512,270 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
     [self _reflectSelection];
+}
+
+@end
+
+@implementation WebHTMLView (WebDocumentPrivateProtocols)
+
+- (NSRect)selectionRect
+{
+    return [[self _bridge] selectionRect];
+}
+
+- (NSView *)selectionView
+{
+    return self;
+}
+
+- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
+{
+    if ([self _hasSelection])
+        return [[self _bridge] selectionImageForcingWhiteText:forceWhiteText];
+
+    return nil;
+}
+
+- (NSRect)selectionImageRect
+{
+    if ([self _hasSelection])
+        return [[self _bridge] visibleSelectionRect];
+    return NSZeroRect;
+}
+
+- (NSArray *)pasteboardTypesForSelection
+{
+    if ([self _canSmartCopyOrDelete]) {
+        NSMutableArray *types = [[[[self class] _selectionPasteboardTypes] mutableCopy] autorelease];
+        [types addObject:WebSmartPastePboardType];
+        return types;
+    } else {
+        return [[self class] _selectionPasteboardTypes];
+    }
+}
+
+- (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
+{
+    [self _writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard cachedAttributedString:nil];
+}
+
+- (void)selectAll
+{
+    [[self _bridge] selectAll];
+}
+
+- (void)deselectAll
+{
+    [[self _bridge] deselectAll];
+}
+
+- (NSString *)string
+{
+    return [[self _bridge] stringForRange:[self _documentRange]];
+}
+
+- (NSAttributedString *)_attributeStringFromDOMRange:(DOMRange *)range
+{
+    NSAttributedString *attributedString;
+#if !LOG_DISABLED        
+    double start = CFAbsoluteTimeGetCurrent();
+#endif    
+    attributedString = [[[NSAttributedString alloc] _initWithDOMRange:range] autorelease];
+#if !LOG_DISABLED
+    double duration = CFAbsoluteTimeGetCurrent() - start;
+    LOG(Timing, "creating attributed string from selection took %f seconds.", duration);
+#endif
+    return attributedString;
+}
+
+- (NSAttributedString *)attributedString
+{
+    WebFrameBridge *bridge = [self _bridge];
+    DOMDocument *document = [bridge DOMDocument];
+    NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
+    if (attributedString == nil) {
+        attributedString = [bridge attributedStringFrom:document startOffset:0 to:nil endOffset:0];
+    }
+    return attributedString;
+}
+
+- (NSString *)selectedString
+{
+    return [[self _bridge] selectedString];
+}
+
+- (NSAttributedString *)selectedAttributedString
+{
+    WebFrameBridge *bridge = [self _bridge];
+    NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[self _selectedRange]];
+    if (attributedString == nil) {
+        attributedString = [bridge selectedAttributedString];
+    }
+    return attributedString;
+}
+
+- (BOOL)supportsTextEncoding
+{
+    return YES;
+}
+
+@end
+
+@implementation WebHTMLView (WebDocumentInternalProtocols)
+
+- (BOOL)_canProcessDragWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    ASSERT([self _isTopHTMLView]);
+
+    NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
+    NSMutableSet *types = [NSMutableSet setWithArray:[pasteboard types]];
+    [types intersectSet:[NSSet setWithArray:[WebHTMLView _insertablePasteboardTypes]]];
+    if ([types count] == 0)
+        return NO;
+    if ([types count] == 1
+            && [types containsObject:NSFilenamesPboardType]
+            && ![self _imageExistsAtPaths:[pasteboard propertyListForType:NSFilenamesPboardType]])
+        return NO;
+
+    NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
+    NSDictionary *element = [self elementAtPoint:point allowShadowContent:YES];
+    if ([[self _webView] isEditable] || [[element objectForKey:WebElementDOMNodeKey] isContentEditable]) {
+        // Can't drag onto the selection being dragged.
+        if (_private->initiatedDrag && [[element objectForKey:WebElementIsSelectedKey] boolValue])
+            return NO;
+        return YES;
+    }
+
+    return NO;
+}
+
+- (BOOL)_isMoveDrag
+{
+    ASSERT([self _isTopHTMLView]);
+    return _private->initiatedDrag
+        && [self _isEditable] && [self _hasSelection]
+        && !([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask);
+}
+
+- (BOOL)_isNSColorDrag:(id <NSDraggingInfo>)draggingInfo
+{
+    return [[[draggingInfo draggingPasteboard] types] containsObject:NSColorPboardType];
+}
+
+- (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
+{
+    ASSERT([self _isTopHTMLView]);
+
+    NSDragOperation operation = NSDragOperationNone;
+    if (actionMask & WebDragDestinationActionDHTML)
+        operation = [[self _bridge] dragOperationForDraggingInfo:draggingInfo];
+    _private->webCoreHandlingDrag = (operation != NSDragOperationNone);
+
+    if ((actionMask & WebDragDestinationActionEdit) && !_private->webCoreHandlingDrag && [self _canProcessDragWithDraggingInfo:draggingInfo]) {
+        if ([self _isNSColorDrag:draggingInfo])
+            operation = NSDragOperationGeneric;
+        else {
+            WebView *webView = [self _webView];
+            [webView moveDragCaretToPoint:[webView convertPoint:[draggingInfo draggingLocation] fromView:nil]];
+            operation = [self _isMoveDrag] ? NSDragOperationMove : NSDragOperationCopy;
+        }
+    } else
+        [[self _webView] removeDragCaret];
+
+    return operation;
+}
+
+- (void)draggingCancelledWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    ASSERT([self _isTopHTMLView]);
+
+    [[self _bridge] dragExitedWithDraggingInfo:draggingInfo];
+    [[self _webView] removeDragCaret];
+}
+
+- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
+{
+    ASSERT([self _isTopHTMLView]);
+
+    WebView *webView = [self _webView];
+    WebFrameBridge *bridge = [self _bridge];
+    if (_private->webCoreHandlingDrag) {
+        ASSERT(actionMask & WebDragDestinationActionDHTML);
+        [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionDHTML forDraggingInfo:draggingInfo];
+        [bridge concludeDragForDraggingInfo:draggingInfo];
+        return YES;
+    }
+
+    if (!(actionMask & WebDragDestinationActionEdit))
+        return NO;
+
+    NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
+    NSDictionary *element = [self elementAtPoint:point allowShadowContent:YES];
+    ASSERT(element);
+    WebFrame *innerFrame = (WebFrame *)[element objectForKey:WebElementFrameKey];
+    ASSERT(innerFrame);
+    ASSERT([innerFrame isKindOfClass:[WebFrame class]]);
+    WebFrameBridge *innerBridge = [innerFrame _bridge];
+
+    if ([self _isNSColorDrag:draggingInfo]) {
+        NSColor *color = [NSColor colorFromPasteboard:[draggingInfo draggingPasteboard]];
+        if (!color)
+            return NO;
+        DOMCSSStyleDeclaration *style = [self _emptyStyle];
+        [style setProperty:@"color" :[self _colorAsString:color] :@""];
+        if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[innerBridge selectedDOMRange]]) {
+            [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
+            [innerBridge applyStyle:style withUndoAction:WebUndoActionSetColor];
+            return YES;
+        }
+        return NO;
+    }
+
+    BOOL didInsert = NO;
+    if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
+        NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
+        if ([self _isMoveDrag] || [innerBridge isDragCaretRichlyEditable]) { 
+            BOOL chosePlainText;
+            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:YES chosePlainText:&chosePlainText];
+            if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[innerBridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
+                [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
+                if ([self _isMoveDrag]) {
+                    BOOL smartMove = [innerBridge selectionGranularity] == WebBridgeSelectByWord && [self _canSmartReplaceWithPasteboard:pasteboard];
+                    [innerBridge moveSelectionToDragCaret:fragment smartMove:smartMove];
+                } else {
+                    [innerBridge setSelectionToDragCaret];
+                    [innerBridge replaceSelectionWithFragment:fragment selectReplacement:YES smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:chosePlainText];
+                }
+                didInsert = YES;
+            }
+        } else {
+            NSString *text = [self _plainTextFromPasteboard:pasteboard];
+            if (text && [self _shouldInsertText:text replacingDOMRange:[innerBridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
+                [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
+                [innerBridge setSelectionToDragCaret];
+                [innerBridge replaceSelectionWithText:text selectReplacement:YES smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
+                didInsert = YES;
+            }
+        }
+    }
+    [webView removeDragCaret];
+    return didInsert;
+}
+
+- (NSDictionary *)elementAtPoint:(NSPoint)point
+{
+    return [self elementAtPoint:point allowShadowContent:NO];
+}
+
+- (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
+{
+    DOMNode *innerNode = nil;
+    DOMNode *innerNonSharedNode = nil;
+    DOMElement *URLElement = nil;
+    [[self _bridge] getInnerNonSharedNode:&innerNonSharedNode innerNode:&innerNode URLElement:&URLElement atPoint:point allowShadowContent:allow];
+    NSView *innerView = [[[[innerNonSharedNode ownerDocument] webFrame] frameView] documentView];
+    NSPoint innerPoint = innerView ? [self convertPoint:point toView:innerView] : point;
+    return [[[WebElementDictionary alloc] initWithInnerNonSharedNode:innerNonSharedNode innerNode:innerNode URLElement:URLElement andPoint:innerPoint] autorelease];
 }
 
 @end

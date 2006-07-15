@@ -1,3 +1,36 @@
+2006-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9928
+          REGRESSION: Text Encoding menu inoperative (after gcc protocol build fix)
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _documentRange]): Moved into WebHTMLViewFileInternal category.
+        (-[WebHTMLView selectionRect]): Moved into WebDocumentPrivateProtocols category.
+        (-[WebHTMLView selectionView]): Ditto.
+        (-[WebHTMLView selectionImageForcingWhiteText:]): Ditto.
+        (-[WebHTMLView selectionImageRect]): Ditto.
+        (-[WebHTMLView pasteboardTypesForSelection]): Ditto.
+        (-[WebHTMLView selectAll]): Ditto.
+        (-[WebHTMLView deselectAll]): Ditto.
+        (-[WebHTMLView string]): Ditto.
+        (-[WebHTMLView _attributeStringFromDOMRange:]): Ditto.
+        (-[WebHTMLView attributedString]): Ditto.
+        (-[WebHTMLView selectedString]): Ditto.
+        (-[WebHTMLView selectedAttributedString]): Ditto.
+        (-[WebHTMLView supportsTextEncoding]): Ditto.
+        (-[WebHTMLView _canProcessDragWithDraggingInfo:]): Moved into WebDocumentInternalProtocols.
+        (-[WebHTMLView _isMoveDrag]): Ditto.
+        (-[WebHTMLView _isNSColorDrag:]): Ditto.
+        (-[WebHTMLView draggingUpdatedWithDraggingInfo:actionMask:]): Ditto.
+        (-[WebHTMLView draggingCancelledWithDraggingInfo:]): Ditto.
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): Ditto.
+        (-[WebHTMLView elementAtPoint:]): Ditto.
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]): Ditto.
+
+        * WebKit.xcodeproj/project.pbxproj: Let Xcode 2.3 do its thing.
+
 === Safari-521.17 ===
 
 2006-07-14  Timothy Hatcher  <timothy@apple.com>
@@ -12,7 +45,7 @@
         GMail Editor: Operations that use drop down menus blow away the selection
 
         * WebView/WebHTMLView.m:
-        (-[NSArray maintainsInactiveSelection]): Maintain an inactive selection
+        (-[WebHTMLView maintainsInactiveSelection]): Maintain an inactive selection
         when resigning as first responder if the selection is editable
         or if the WebView tells us to.
         * WebView/WebView.m:
@@ -43,7 +76,7 @@
           <rdar://problem/4604703>
           REGRESSION: Focus not removed from password field after ctrl-click in text field
 
-        * WebView/WebHTMLView.m: (-[NSArray menuForEvent:]): Set handlingMouseDownEvent to
+        * WebView/WebHTMLView.m: (-[WebHTMLView menuForEvent:]): Set handlingMouseDownEvent to
         YES while calling sendContextMenuEvent: on the bridge.
 
 2006-07-14  Timothy Hatcher  <timothy@apple.com>
@@ -206,7 +239,7 @@
         GMail Editor: Operations that use drop down menus blow away the selection
         
         * WebView/WebHTMLView.m:
-        (-[NSArray maintainsInactiveSelection]): Maintain an inactive selection
+        (-[WebHTMLView maintainsInactiveSelection]): Maintain an inactive selection
         when resigning as first responder if the selection is editable
         or if the WebView tells us to.
         * WebView/WebView.m:
@@ -563,8 +596,8 @@
         * WebView/WebHTMLView.m:  Pass granularity to WebCore to handle expansion
         (-[WebHTMLView _deleteRange:killRing:prepend:smartDeleteOK:deletionAction:granularity:]):
         (-[WebHTMLView _deleteSelection]):
-        (-[NSArray _deleteWithDirection:granularity:killRing:isTypingAction:]):
-        (-[NSArray deleteToMark:]):
+        (-[WebHTMLView _deleteWithDirection:granularity:killRing:isTypingAction:]):
+        (-[WebHTMLView deleteToMark:]):
 
 2006-07-07  Brady Eidson  <beidson@apple.com>
 
@@ -588,7 +621,7 @@
         * WebView/WebHTMLView.m: Moved code that expanded a selection when the delete
         key is pressed over to WebCore so we can be more intelligent about how to handle it
         (-[WebHTMLView _deleteRange:killRing:prepend:smartDeleteOK:deletionAction:]):
-        (-[NSArray _deleteWithDirection:granularity:killRing:isTypingAction:]):
+        (-[WebHTMLView _deleteWithDirection:granularity:killRing:isTypingAction:]):
 
 2006-07-07  John Sullivan  <sullivan@apple.com>
 
@@ -789,8 +822,8 @@
         (-[WebFrameView finalize]):
         * WebView/WebHTMLView.m:
         (-[WebHTMLView close]):
-        (-[NSArray dealloc]):
-        (-[NSArray finalize]):
+        (-[WebHTMLView dealloc]):
+        (-[WebHTMLView finalize]):
         * WebView/WebHTMLViewInternal.h:
         * WebView/WebHTMLViewPrivate.h:
         * WebView/WebScriptDebugDelegate.m:
@@ -884,7 +917,7 @@
         * WebView/WebHTMLRepresentation.m:
         (-[WebHTMLRepresentation finishedLoadingWithDataSource:]):
         * WebView/WebHTMLView.m:
-        (-[NSArray _interceptEditingKeyEvent:]):
+        (-[WebHTMLView _interceptEditingKeyEvent:]):
         * WebView/WebView.m:
         (-[WebViewPrivate init]):
         (-[WebView _autoscrollForDraggingInfo:timeDelta:]):
@@ -1108,7 +1141,7 @@
         * WebView/WebHTMLView.m:
         (-[WebHTMLView _frameOrBoundsChanged]):
         use _UIDelegateForwarder mechanism to notify delegate that scrolling occurred
-        (-[NSArray drawSingleRect:]):
+        (-[WebHTMLView drawSingleRect:]):
         use _UIDelegateForwarder mechanism instead of checking respondsToSelector stuff
         here (that's packaged up nicely by the forwarder mechanism)
         
@@ -1779,11 +1812,11 @@
 
         * WebView/WebHTMLView.m:
         (-[WebHTMLView _updateActiveState]):
-        (-[NSArray viewDidMoveToWindow]):
-        (-[NSArray windowDidBecomeKey:]):
-        (-[NSArray windowDidResignKey:]):
-        (-[NSArray becomeFirstResponder]):
-        (-[NSArray resignFirstResponder]):
+        (-[WebHTMLView viewDidMoveToWindow]):
+        (-[WebHTMLView windowDidBecomeKey:]):
+        (-[WebHTMLView windowDidResignKey:]):
+        (-[WebHTMLView becomeFirstResponder]):
+        (-[WebHTMLView resignFirstResponder]):
         (-[WebHTMLView _formControlIsBecomingFirstResponder:]):
         (-[WebHTMLView _formControlIsResigningFirstResponder:]):
         * WebView/WebHTMLViewPrivate.h:
@@ -1861,25 +1894,25 @@
         Change dragging code to not assume that the dragged node is in the current view's document.
         Added checks that the node is an element in a couple places and coordinate conversions.
         (-[WebHTMLView _mayStartDragAtEventLocation:]): Forward to the top HTML view.
-        (-[NSArray addMouseMovedObserver]): Change to do nothing when the dataSource field is 0,
+        (-[WebHTMLView addMouseMovedObserver]): Change to do nothing when the dataSource field is 0,
         since we now use the dataSource field to get to the WebView.
-        (-[NSArray removeMouseMovedObserver]): Added a comment.
-        (-[NSArray dragImage:at:offset:event:pasteboard:source:slideBack:]):
+        (-[WebHTMLView removeMouseMovedObserver]): Added a comment.
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]):
         Forward to the top HTML view.
-        (-[NSArray draggingSourceOperationMaskForLocal:]): Assert that it's the top HTML view.
-        (-[NSArray draggedImage:movedTo:]): Ditto.
-        (-[NSArray draggedImage:endedAt:operation:]): Ditto.
-        (-[NSArray namesOfPromisedFilesDroppedAtDestination:]): Ditto.
-        (-[NSArray _canProcessDragWithDraggingInfo:]): Ditto.
-        (-[NSArray _isMoveDrag]): Ditto.
-        (-[NSArray draggingUpdatedWithDraggingInfo:actionMask:]): Ditto.
-        (-[NSArray draggingCancelledWithDraggingInfo:]): Ditto.
-        (-[NSArray concludeDragForDraggingInfo:actionMask:]): Ditto. Also added code to work
+        (-[WebHTMLView draggingSourceOperationMaskForLocal:]): Assert that it's the top HTML view.
+        (-[WebHTMLView draggedImage:movedTo:]): Ditto.
+        (-[WebHTMLView draggedImage:endedAt:operation:]): Ditto.
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): Ditto.
+        (-[WebHTMLView _canProcessDragWithDraggingInfo:]): Ditto.
+        (-[WebHTMLView _isMoveDrag]): Ditto.
+        (-[WebHTMLView draggingUpdatedWithDraggingInfo:actionMask:]): Ditto.
+        (-[WebHTMLView draggingCancelledWithDraggingInfo:]): Ditto.
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): Ditto. Also added code to work
         with the appropriate bridge when receiving a drag. This fixes the problem where the
         top level frame got a selection intended for the inner frame; the source of the bug.
-        (-[NSArray elementAtPoint:allowShadowContent:]): Added code to convert the coordinates
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]): Added code to convert the coordinates
         so this works properly when returning an element from an inner frame.
-        (-[NSArray setDataSource:]): Added a call to addMouseMovedObserver, needed now that
+        (-[WebHTMLView setDataSource:]): Added a call to addMouseMovedObserver, needed now that
         addMouseMovedObserver won't do anything if called when dataSource is nil.
         (-[WebHTMLView _delegateDragSourceActionMask]): Forward to the top HTML view.
 
@@ -2491,7 +2524,7 @@
         * WebView/WebFrame.m:
         (-[WebFrame _sendRemainingDelegateMessagesWithIdentifier:response:length:error:]):
         * WebView/WebHTMLView.m:
-        (-[NSArray drawRect:]):
+        (-[WebHTMLView drawRect:]):
         (-[WebHTMLView characterIndexForPoint:]):
         (-[WebHTMLView conversationIdentifier]):
         * WebView/WebResourceLoadDelegate.h:
@@ -2793,8 +2826,8 @@
         Switch to use new text field implementation for <textarea>
 
         * WebView/WebHTMLView.m:
-        (-[NSArray insertNewline:]): If we're in plain text mode, insert a line break instead of a paragraph separator.
-        (-[NSArray insertParagraphSeparator:]): ditto.
+        (-[WebHTMLView insertNewline:]): If we're in plain text mode, insert a line break instead of a paragraph separator.
+        (-[WebHTMLView insertParagraphSeparator:]): ditto.
         * WebView/WebView.m: (-[WebView _menuForElement:defaultItems:]):
         Checks for textareas as well as textfields before allowing the delegate to control
         the context menu.  This won't affect the old textareas because AppKit handles those context menus.
@@ -3201,7 +3234,7 @@
         Manual test: manual-tests/dom-manipulation-on-resize.html
 
         * WebView/WebHTMLView.m:
-        (-[NSArray layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]): Relayout if necessary
+        (-[WebHTMLView layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]): Relayout if necessary
         after sending the resize event.
 
 2006-05-12  Maciej Stachowiak  <mjs@apple.com>
@@ -3651,7 +3684,7 @@
         * WebView/WebFrameView.m:
         (-[WebFrameView initWithFrame:]):
         * WebView/WebHTMLView.m:
-        (-[NSArray _addToStyle:fontA:fontB:]):
+        (-[WebHTMLView _addToStyle:fontA:fontB:]):
         * WebView/WebTextView.m:
         (-[WebTextView setFixedWidthFont]):
         * WebView/WebView.m:
@@ -3956,12 +3989,12 @@
         (-[WebHTMLView _webView]):
         (-[WebHTMLView _frameView]):
         (-[WebHTMLView _web_firstResponderCausesFocusDisplay]):
-        (-[NSArray becomeFirstResponder]):
-        (-[NSArray setDataSource:]):
-        (-[NSArray pageUp:]):
-        (-[NSArray pageDown:]):
-        (-[NSArray pageUpAndModifySelection:]):
-        (-[NSArray pageDownAndModifySelection:]):
+        (-[WebHTMLView becomeFirstResponder]):
+        (-[WebHTMLView setDataSource:]):
+        (-[WebHTMLView pageUp:]):
+        (-[WebHTMLView pageDown:]):
+        (-[WebHTMLView pageUpAndModifySelection:]):
+        (-[WebHTMLView pageDownAndModifySelection:]):
         (-[WebHTMLView _frame]):
         * WebView/WebHTMLViewInternal.h:
         * WebView/WebImageView.h:
@@ -4182,15 +4215,15 @@
         * WebView/WebHTMLRepresentation.m:
         * WebView/WebHTMLView.m:
         (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
-        (-[NSArray drawSingleRect:]):
-        (-[NSArray namesOfPromisedFilesDroppedAtDestination:]):
-        (-[NSArray _scaleFactorForPrintOperation:]):
-        (-[NSArray deleteBackwardByDecomposingPreviousCharacter:]):
-        (-[NSArray checkSpelling:]):
-        (-[NSArray showGuessPanel:]):
-        (-[NSArray _changeSpellingToWord:]):
-        (-[NSArray ignoreSpelling:]):
-        (-[NSArray performFindPanelAction:]):
+        (-[WebHTMLView drawSingleRect:]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WebHTMLView _scaleFactorForPrintOperation:]):
+        (-[WebHTMLView deleteBackwardByDecomposingPreviousCharacter:]):
+        (-[WebHTMLView checkSpelling:]):
+        (-[WebHTMLView showGuessPanel:]):
+        (-[WebHTMLView _changeSpellingToWord:]):
+        (-[WebHTMLView ignoreSpelling:]):
+        (-[WebHTMLView performFindPanelAction:]):
         (-[WebTextCompleteController doCompletion]):
         * WebView/WebImageView.m:
         * WebView/WebLoader.m:
@@ -4234,7 +4267,7 @@
 
         Test: manual-tests/tabbing-input-google.html
 
-        * WebView/WebHTMLView.m: (-[NSArray resignFirstResponder]):
+        * WebView/WebHTMLView.m: (-[WebHTMLView resignFirstResponder]):
         When resigning first responder, reset willBecomeFirstResponderForNodeFocus, so when the WebHTMLView gets focus again
         it knows it can start moving through the tab cycle.
 
@@ -4435,12 +4468,12 @@
         * fast/dom/inner-text-001.html: Added.
 
         * WebView/WebHTMLView.m:
-        (-[NSArray validateUserInterfaceItem:]):
-        (-[NSArray moveToBeginningOfSentence:]):
-        (-[NSArray moveToBeginningOfSentenceAndModifySelection:]):
-        (-[NSArray moveToEndOfSentence:]):
-        (-[NSArray moveToEndOfSentenceAndModifySelection:]):
-        (-[NSArray selectSentence:]):
+        (-[WebHTMLView validateUserInterfaceItem:]):
+        (-[WebHTMLView moveToBeginningOfSentence:]):
+        (-[WebHTMLView moveToBeginningOfSentenceAndModifySelection:]):
+        (-[WebHTMLView moveToEndOfSentence:]):
+        (-[WebHTMLView moveToEndOfSentenceAndModifySelection:]):
+        (-[WebHTMLView selectSentence:]):
         * WebView/WebView.m:
         * WebView/WebViewPrivate.h:
         Add sentence navigation and selection.
@@ -4551,8 +4584,8 @@
         Reviewed by darin
 
         * WebView/WebHTMLView.m:
-        (-[NSArray drawSingleRect:]):
-        (-[NSArray drawRect:]):
+        (-[WebHTMLView drawSingleRect:]):
+        (-[WebHTMLView drawRect:]):
 
 2006-04-07  Maciej Stachowiak  <mjs@apple.com>
 
@@ -4700,9 +4733,9 @@
         has already been set, so it should not move focus forward or
         backward inside it.
         * WebView/WebHTMLView.m:
-        (-[NSArray needsPanelToBecomeKey]): Override to return YES, oddly enough this
+        (-[WebHTMLView needsPanelToBecomeKey]): Override to return YES, oddly enough this
         is the right way to tell AppKit that you should be in the tab cycle loop.
-        (-[NSArray becomeFirstResponder]): Don't move forward or back in tab cycle
+        (-[WebHTMLView becomeFirstResponder]): Don't move forward or back in tab cycle
         when this becomeFirstResponder is for tabbing from a control in the page.
         (-[WebHTMLView _willMakeFirstResponderForNodeFocus]): Note that the next
         time this view becomes first responder, it will be for in-page focus 
@@ -4782,11 +4815,11 @@
         (-[WebHTMLView _canDecreaseSelectionListLevel]): Ditto.
         (-[WebHTMLView _increaseSelectionListLevel]):
         (-[WebHTMLView _decreaseSelectionListLevel]):
-        (-[NSArray validateUserInterfaceItem:]): 
+        (-[WebHTMLView validateUserInterfaceItem:]): 
         Split rich text editing actions off from ones that can be applied anywhere.
-        (-[NSArray _applyStyleToSelection:withUndoAction:]):
-        (-[NSArray _applyParagraphStyleToSelection:withUndoAction:]):
-        (-[NSArray _alignSelectionUsingCSSValue:withUndoAction:]):
+        (-[WebHTMLView _applyStyleToSelection:withUndoAction:]):
+        (-[WebHTMLView _applyParagraphStyleToSelection:withUndoAction:]):
+        (-[WebHTMLView _alignSelectionUsingCSSValue:withUndoAction:]):
         * WebView/WebHTMLViewPrivate.h:
 
 2006-03-29  Tim Omernick  <timo@apple.com>
@@ -4960,7 +4993,7 @@
         Remove assertion that _inNextKeyViewOutsideWebFrameViews should always be false here.
         
         * WebView/WebHTMLView.m:
-        (-[NSArray nextValidKeyView]):
+        (-[WebHTMLView nextValidKeyView]):
         Removed assertion that the frame should never be the main frame here.
 
 2006-03-27  Tim Omernick  <timo@apple.com>
@@ -5091,12 +5124,12 @@
 
         * WebView/WebDocumentInternal.h: Added elementAtPoint:allowShadowContent:
         * WebView/WebHTMLView.m:
-        (-[NSArray elementAtPoint:]): Does not allow shadow content.  This way, by default, callers would get the input element instead of the inner div.
-        (-[NSArray elementAtPoint:allowShadowContent:]): Allows callers to specify whether or not the element can be a shadow node.
+        (-[WebHTMLView elementAtPoint:]): Does not allow shadow content.  This way, by default, callers would get the input element instead of the inner div.
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]): Allows callers to specify whether or not the element can be a shadow node.
         (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]): Allows shadow content when getting element.
         (-[WebHTMLView _mayStartDragAtEventLocation:]): ditto.
-        (-[NSArray _isSelectionEvent:]): ditto.
-        (-[NSArray _canProcessDragWithDraggingInfo:]): ditto.
+        (-[WebHTMLView _isSelectionEvent:]): ditto.
+        (-[WebHTMLView _canProcessDragWithDraggingInfo:]): ditto.
         * WebView/WebFrame.m: (-[WebFrame _actionInformationForNavigationType:event:originalURL:]): Does not allow shadow content when getting element.
         * WebView/WebImageView.m: (-[WebImageView elementAtPoint:allowShadowContent:]): Added to conform to the WebDocumentElement protocol.
         * WebView/WebPDFView.m: (-[WebPDFView elementAtPoint:allowShadowContent:]): ditto.
@@ -5553,7 +5586,7 @@
         * WebView/WebHTMLView.m:
         (-[WebHTMLView _updateMouseoverWithEvent:]):
         (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
-        (-[NSArray elementAtPoint:]):
+        (-[WebHTMLView elementAtPoint:]):
         * WebView/WebView.m:
         * WebView/WebViewPrivate.h:
 
@@ -5708,12 +5741,12 @@
 
         * WebView/WebHTMLView.m:
         (-[WebHTMLView _updateFocusState]):
-        (-[NSArray viewDidMoveToWindow]):
-        (-[NSArray windowDidBecomeKey:]):
-        (-[NSArray windowDidResignKey:]):
-        (-[NSArray dragImage:at:offset:event:pasteboard:source:slideBack:]):
-        (-[NSArray becomeFirstResponder]):
-        (-[NSArray resignFirstResponder]):
+        (-[WebHTMLView viewDidMoveToWindow]):
+        (-[WebHTMLView windowDidBecomeKey:]):
+        (-[WebHTMLView windowDidResignKey:]):
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]):
+        (-[WebHTMLView becomeFirstResponder]):
+        (-[WebHTMLView resignFirstResponder]):
         (-[WebHTMLView _formControlIsResigningFirstResponder:]):
         * WebView/WebHTMLViewInternal.h:
         * WebView/WebHTMLViewPrivate.h:

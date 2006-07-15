@@ -416,36 +416,6 @@ static ListenerMap* listenerMap;
     raiseOnDOMError(ec);
 }
 
-- (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
-{
-    if (![self _node]->isEventTargetNode())
-        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
-    
-    EventListener *wrapper = ObjCEventListener::create(listener);
-    EventTargetNodeCast([self _node])->addEventListener(type, wrapper, useCapture);
-    wrapper->deref();
-}
-
-- (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
-{
-    if (![self _node]->isEventTargetNode())
-        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
-
-    if (EventListener *wrapper = ObjCEventListener::find(listener))
-        EventTargetNodeCast([self _node])->removeEventListener(type, wrapper, useCapture);
-}
-
-- (BOOL)dispatchEvent:(DOMEvent *)event
-{
-    if (![self _node]->isEventTargetNode())
-        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
-
-    ExceptionCode ec = 0;
-    BOOL result = EventTargetNodeCast([self _node])->dispatchEvent([event _event], ec);
-    raiseOnDOMError(ec);
-    return result;
-}
-
 - (NSRect)boundingBox
 {
     WebCore::RenderObject *renderer = [self _node]->renderer();
@@ -649,6 +619,40 @@ static Class elementClass(const AtomicString& tagName)
             return f->executionContextForDOM();
 
     return 0;
+}
+
+@end
+
+@implementation DOMNode (DOMEventTarget)
+
+- (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
+{
+    if (![self _node]->isEventTargetNode())
+        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+    
+    EventListener *wrapper = ObjCEventListener::create(listener);
+    EventTargetNodeCast([self _node])->addEventListener(type, wrapper, useCapture);
+    wrapper->deref();
+}
+
+- (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
+{
+    if (![self _node]->isEventTargetNode())
+        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+
+    if (EventListener *wrapper = ObjCEventListener::find(listener))
+        EventTargetNodeCast([self _node])->removeEventListener(type, wrapper, useCapture);
+}
+
+- (BOOL)dispatchEvent:(DOMEvent *)event
+{
+    if (![self _node]->isEventTargetNode())
+        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+
+    ExceptionCode ec = 0;
+    BOOL result = EventTargetNodeCast([self _node])->dispatchEvent([event _event], ec);
+    raiseOnDOMError(ec);
+    return result;
 }
 
 @end

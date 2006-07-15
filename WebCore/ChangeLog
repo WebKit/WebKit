@@ -1,3 +1,17 @@
+2006-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9928
+          REGRESSION: Text Encoding menu inoperative (after gcc protocol build fix)
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode addEventListener:::]): Moved into DOMEventTarget category.
+        (-[DOMNode removeEventListener:::]): Ditto.
+        (-[DOMNode dispatchEvent:]): Ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: Allow Xcode to do its thing.
+
 2006-07-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
