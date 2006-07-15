@@ -1951,12 +1951,10 @@ for (;;)
       length = 1;
       GETUTF8CHARLEN(fc, ecode, length);
       {
-      int utf16Length; /* don't initialize on this line as workaround for Win32 compile problem */
-      utf16Length = fc > 0xFFFF ? 2 : 1;
-      if (min * utf16Length > md->end_subject - eptr) RRETURN(MATCH_NOMATCH);
+      if (min * (fc > 0xFFFF ? 2 : 1) > md->end_subject - eptr) RRETURN(MATCH_NOMATCH);
       ecode += length;
 
-      if (utf16Length == 1)
+      if (fc <= 0xFFFF)
         {
 #ifdef SUPPORT_UCP
         int othercase;
@@ -1990,7 +1988,7 @@ for (;;)
           pp = eptr;
           for (i = min; i < max; i++)
             {
-            if (eptr > md->end_subject - length) break;
+            if (eptr >= md->end_subject) break;
             if (*eptr != fc && *eptr != othercase) break;
             ++eptr;
             }
@@ -2038,7 +2036,7 @@ for (;;)
           for (i = min; i < max; i++)
             {
             int nc;
-            if (eptr > md->end_subject - length) break;
+            if (eptr > md->end_subject - 2) break;
             GETCHAR(nc, eptr);
             if (*eptr != fc) break;
             eptr += 2;
@@ -2161,8 +2159,12 @@ for (;;)
     matching character if failing, up to the maximum. Alternatively, if
     maximizing, find the maximum number of characters and work backwards. */
 
+#if PCRE_UTF16
+    DPRINTF(("matching %c{%d,%d}\n", fc, min, max));
+#else
     DPRINTF(("matching %c{%d,%d} against subject %.*s\n", fc, min, max,
       max, eptr));
+#endif
 
     if ((ims & PCRE_CASELESS) != 0)
       {
@@ -2306,8 +2308,12 @@ for (;;)
     maximum. Alternatively, if maximizing, find the maximum number of
     characters and work backwards. */
 
+#if PCRE_UTF16
+    DPRINTF(("negative matching %c{%d,%d}\n", fc, min, max));
+#else
     DPRINTF(("negative matching %c{%d,%d} against subject %.*s\n", fc, min, max,
       max, eptr));
+#endif
 
     if ((ims & PCRE_CASELESS) != 0)
       {
@@ -3732,7 +3738,7 @@ do
     start_match++;
 #ifdef SUPPORT_UTF8
     if (match_block.utf8)
-      while(start_match < end_subject && (*start_match & 0xc0) == 0x80)
+      while(start_match < end_subject && ISMIDCHAR(*start_match))
         start_match++;
 #endif
     continue;

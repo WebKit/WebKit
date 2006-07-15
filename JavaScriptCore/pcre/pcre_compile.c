@@ -3995,7 +3995,9 @@ compile_block.backref_map = 0;
 /* Reflect pattern for debugging output */
 
 DPRINTF(("------------------------------------------------------------------\n"));
+#if !PCRE_UTF16
 DPRINTF(("%s\n", pattern));
+#endif
 
 /* The first thing to do is to make a pass over the pattern to compute the
 amount of store required to hold the compiled code. This does not have to be

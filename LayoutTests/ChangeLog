@@ -1,5 +1,17 @@
 2006-07-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8395
+          <rdar://problem/4613467>
+          REGRESSION: RegEx seems broken for hex escaped non breaking space
+
+        * fast/js/regexp-extended-characters-more-expected.txt: Added.
+        * fast/js/regexp-extended-characters-more.html: Added.
+        * fast/js/resources/regexp-extended-characters-more.js: Added.
+
+2006-07-15  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8871

@@ -1,3 +1,28 @@
+2006-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8395
+          <rdar://problem/4613467>
+          REGRESSION: RegEx seems broken for hex escaped non breaking space
+
+        Test: fast/js/regexp-extended-characters-more.html
+
+        * pcre/pcre_exec.c:
+        (match): Got rid of utf16Length local variable to guarantee there's no
+        extra stack usage in recursive calls. Fixed two places in the PCRE_UTF16
+        code that were using the length variable, which is the UTF-8 length of
+        a character in the pattern, to move in the UTF-16 subject string. Instead
+        they hardcode lengths of 1 and 2 since the code already handles BMP
+        characters and surrogate pairs separately. Also fixed some DPRINTF so
+        I could compile with DEBUG on.
+        (pcre_exec): Changed a place that was checking for multibyte characters
+        in the subject string to use ISMIDCHAR. Instead it was using hardcoded
+        logic that was right for UTF-8 but wrong for UTF-16.
+
+        * pcre/pcre_compile.c: (pcre_compile2): Fixed a DPRINTF so I could compile
+        with DEBUG on.
+
 2006-07-14  Geoffrey Garen  <ggaren@apple.com>
 
         RS by Maciej.
