@@ -3264,6 +3264,11 @@ void FrameMac::textDidChangeInTextArea(Element* textarea)
 
 bool FrameMac::doTextFieldCommandFromEvent(Element* input, const PlatformKeyboardEvent* event)
 {
+    // FIXME: We might eventually need to make sure key bindings for editing work even with
+    // events created with the DOM API. Those don't have a PlatformKeyboardEvent.
+    if (!event)
+        return false;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [_bridge textField:(DOMHTMLInputElement *)[DOMElement _elementWith:input] doCommandBySelector:selectorForKeyEvent(event)];
     END_BLOCK_OBJC_EXCEPTIONS;

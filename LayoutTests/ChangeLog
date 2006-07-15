@@ -1,5 +1,19 @@
 2006-07-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8871
+          <rdar://problem/4575417>
+          REGRESSION: Pressing Enter/Return in a text input removes the selected text
+          and http://bugzilla.opendarwin.org/show_bug.cgi?id=9743
+          <rdar://problem/4614228>
+          REGRESSION: crash dispatching JavaScript-created keyboard event to input element
+
+        * fast/forms/input-text-enter-expected.txt: Added.
+        * fast/forms/input-text-enter.html: Added.
+
+2006-07-15  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9883

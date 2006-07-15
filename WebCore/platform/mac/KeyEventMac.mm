@@ -78,7 +78,7 @@ static String keyIdentifierForKeyEvent(NSEvent* event)
         case NSEndFunctionKey:
             return "End";
         // "Enter"
-        case 0x3: case 0xD: // Macintosh calls the one on the main keyboard Return, but Windows calls it Enter, so we'll do the same for the DOM
+        case 0x3: case 0xA: case 0xD: // Macintosh calls the one on the main keyboard Return, but Windows calls it Enter, so we'll do the same for the DOM
             return "Enter";
 
         // "EraseEof"
@@ -270,27 +270,27 @@ static String keyIdentifierForKeyEvent(NSEvent* event)
         // "Zoom"
 
         // More function keys, not in the key identifier specification.
-	case NSF25FunctionKey:
+        case NSF25FunctionKey:
             return "F25";
-	case NSF26FunctionKey:
+        case NSF26FunctionKey:
             return "F26";
-	case NSF27FunctionKey:
+        case NSF27FunctionKey:
             return "F27";
-	case NSF28FunctionKey:
+        case NSF28FunctionKey:
             return "F28";
-	case NSF29FunctionKey:
+        case NSF29FunctionKey:
             return "F29";
-	case NSF30FunctionKey:
+        case NSF30FunctionKey:
             return "F30";
-	case NSF31FunctionKey:
+        case NSF31FunctionKey:
             return "F31";
-	case NSF32FunctionKey:
+        case NSF32FunctionKey:
             return "F32";
-	case NSF33FunctionKey:
+        case NSF33FunctionKey:
             return "F33";
-	case NSF34FunctionKey:
+        case NSF34FunctionKey:
             return "F34";
-	case NSF35FunctionKey:
+        case NSF35FunctionKey:
             return "F35";
 
         // Turn 0x7F into 0x08, because backspace needs to always be 0x08.
@@ -300,21 +300,21 @@ static String keyIdentifierForKeyEvent(NSEvent* event)
         case NSDeleteFunctionKey:
             return "U+00007F";
 
-	case NSBeginFunctionKey:
-	case NSBreakFunctionKey:
-	case NSClearDisplayFunctionKey:
-	case NSDeleteCharFunctionKey:
-	case NSDeleteLineFunctionKey:
-	case NSInsertCharFunctionKey:
-	case NSInsertLineFunctionKey:
-	case NSNextFunctionKey:
-	case NSPrevFunctionKey:
-	case NSPrintFunctionKey:
-	case NSRedoFunctionKey:
-	case NSResetFunctionKey:
-	case NSSysReqFunctionKey:
-	case NSSystemFunctionKey:
-	case NSUserFunctionKey:
+        case NSBeginFunctionKey:
+        case NSBreakFunctionKey:
+        case NSClearDisplayFunctionKey:
+        case NSDeleteCharFunctionKey:
+        case NSDeleteLineFunctionKey:
+        case NSInsertCharFunctionKey:
+        case NSInsertLineFunctionKey:
+        case NSNextFunctionKey:
+        case NSPrevFunctionKey:
+        case NSPrintFunctionKey:
+        case NSRedoFunctionKey:
+        case NSResetFunctionKey:
+        case NSSysReqFunctionKey:
+        case NSSystemFunctionKey:
+        case NSUserFunctionKey:
             // FIXME: We should use something other than the vendor-area Unicode values for the above keys.
             // For now, just fall through to the default.
         default:
@@ -326,9 +326,9 @@ static bool isKeypadEvent(NSEvent* event)
 {
     // Check that this is the type of event that has a keyCode.
     switch ([event type]) {
-	case NSKeyDown:
-	case NSKeyUp:
-	case NSFlagsChanged:
+        case NSKeyDown:
+        case NSKeyUp:
+        case NSFlagsChanged:
             break;
         default:
             return false;

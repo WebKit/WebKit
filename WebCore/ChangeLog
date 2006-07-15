@@ -1,5 +1,29 @@
 2006-07-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8871
+          <rdar://problem/4575417>
+          REGRESSION: Pressing Enter/Return in a text input removes the selected text
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9743
+          <rdar://problem/4614228>
+          REGRESSION: crash dispatching JavaScript-created keyboard event to input element
+
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::doTextFieldCommandFromEvent):
+        Add a null check to fix the crash, and a FIXME explaining why this is not necessarily
+        enough for the future.
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::defaultEventHandler):
+        Consume Enter key keypress events even if the element is not in a form.
+
+        * platform/mac/KeyEventMac.mm: (WebCore::keyIdentifierForKeyEvent): Added \n to the
+        characters that turn into "Enter". Actual keyboard events always are \r or \003 on
+        the Macintosh, but in layout tests we can use \n, and everything other than the
+        code path here works, so worth fixing.
+
+2006-07-15  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9883
