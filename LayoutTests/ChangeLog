@@ -2,6 +2,19 @@
 
         Reviewed by John Sullivan.
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8952
+          <rdar://problem/4575185>
+          REGRESSION: crash on drag of highlighted Google custom home page modules
+
+        * fast/dynamic/move-node-with-selection-expected.checksum: Added.
+        * fast/dynamic/move-node-with-selection-expected.png: Added.
+        * fast/dynamic/move-node-with-selection-expected.txt: Added.
+        * fast/dynamic/move-node-with-selection.html: Added.
+
+2006-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8587
           <rdar://problem/4631844>
           REGRESSION: {display:list-item} on items outside an ol or ul element no longer causes incremental numbering

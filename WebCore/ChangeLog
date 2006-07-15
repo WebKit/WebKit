@@ -2,6 +2,21 @@
 
         Reviewed by John Sullivan.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8952
+          <rdar://problem/4575185>
+          REGRESSION: crash on drag of highlighted Google custom home page modules
+
+        Test: fast/dynamic/move-node-with-selection.html
+
+        * editing/SelectionController.cpp: (WebCore::SelectionController::nodeWillBeRemoved):
+        Call updateRendering before calling clearSelection(), since it's important to do any
+        work beforehand, and there are calls inside clearSelection that will indirectly do an
+        updateRendering. Also change code to make fewer assumptions about object lifetime.
+
+2006-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8587
           <rdar://problem/4631844>
           REGRESSION: {display:list-item} on items outside an ol or ul element no longer causes incremental numbering

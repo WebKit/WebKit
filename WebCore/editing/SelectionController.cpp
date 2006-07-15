@@ -177,20 +177,23 @@ void SelectionController::nodeWillBeRemoved(Node *node)
     Node* start = m_sel.start().node();
     Node* end = m_sel.end().node();
     
-    bool baseRemoved = node == base || base->isAncestor(node);
-    bool extentRemoved = node == extent || extent->isAncestor(node);
-    bool startRemoved = node == start || start->isAncestor(node);
-    bool endRemoved = node == end || end->isAncestor(node);
+    bool baseRemoved = node == base || (base && base->isAncestor(node));
+    bool extentRemoved = node == extent || (extent && extent->isAncestor(node));
+    bool startRemoved = node == start || (start && start->isAncestor(node));
+    bool endRemoved = node == end || (end && end->isAncestor(node));
     
+    bool clearSelection = false;
     if (startRemoved || endRemoved) {
-    
-        // FIXME (6498): This doesn't notify the editing delegate of a selection change.
-
         // FIXME: When endpoints are removed, we should just alter the selection, instead of blowing it away.
-        
-        static_cast<RenderView*>(start->document()->renderer())->clearSelection();
-        setSelection(Selection());
-        
+        clearSelection = true;
+    // FIXME: This could be more efficient if we had an isNodeInRange function on Ranges.
+    } else if (Range::compareBoundaryPoints(m_sel.start(), Position(node, 0)) == -1 &&
+               Range::compareBoundaryPoints(m_sel.end(), Position(node, 0)) == 1) {
+        // If we did nothing here, when this node's renderer was destroyed, the rect that it 
+        // occupied would be invalidated, but, selection gaps that change as a result of 
+        // the removal wouldn't be invalidated.
+        // FIXME: Don't do so much unnecessary invalidation.
+        clearSelection = true;
     } else if (baseRemoved || extentRemoved) {
         if (m_sel.isBaseFirst()) {
             m_sel.setBase(m_sel.start());
@@ -199,14 +202,15 @@ void SelectionController::nodeWillBeRemoved(Node *node)
             m_sel.setBase(m_sel.start());
             m_sel.setExtent(m_sel.end());
         }
-    // FIXME: This could be more efficient if we had an isNodeInRange function on Ranges.
-    } else if (Range::compareBoundaryPoints(m_sel.start(), Position(node, 0)) == -1 &&
-               Range::compareBoundaryPoints(m_sel.end(), Position(node, 0)) == 1) {
-        // If we did nothing here, when this node's renderer was destroyed, the rect that it 
-        // occupied would be invalidated, but, selection gaps that change as a result of 
-        // the removal wouldn't be invalidated.
-        // FIXME: Don't do so much unnecessary invalidation.
-        static_cast<RenderView*>(start->document()->renderer())->clearSelection();
+    }
+
+    if (clearSelection) {
+        // FIXME (6498): This doesn't notify the editing delegate of a selection change.
+        RefPtr<Document> document = start->document();
+        document->updateRendering();
+        if (RenderView* view = static_cast<RenderView*>(document->renderer()))
+            view->clearSelection();
+        setSelection(Selection());
     }
 }
 
