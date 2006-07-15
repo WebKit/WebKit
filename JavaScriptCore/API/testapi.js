@@ -49,6 +49,7 @@ shouldBe("MyObject.alwaysOne", 1);
 MyObject.cantDelete = 1;
 delete MyObject.cantDelete;
 shouldBe("MyObject.cantDelete", 1);
+shouldBe("delete MyObject.throwOnDelete", 2); // deleteProperty -- should throw 2
 MyObject.cantSet = 1;
 shouldBe("MyObject.cantSet", undefined);
 
@@ -72,7 +73,7 @@ shouldBe("MyObject.regularType", undefined);
 shouldBe("MyObject(0)", 1);
 shouldBe("MyObject()", undefined);
 shouldBe("typeof new MyObject()", "object");
-shouldBe("MyObject ? 1 : 0", 2); // toBoolean -- should throw 2
+shouldBe("MyObject ? 1 : 0", true); // toBoolean
 shouldBe("+MyObject", 1); // toNumber
 shouldBe("(MyObject.toString())", "[object CallbackObject]"); // toString
 shouldBe("MyObject - 0", NaN); // toPrimitive

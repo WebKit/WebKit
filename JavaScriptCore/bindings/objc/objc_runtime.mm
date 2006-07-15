@@ -304,7 +304,7 @@ JSValue* ObjcFallbackObjectImp::defaultValue(ExecState* exec, JSType hint) const
     return _instance->getValueOfUndefinedField(exec, _item, hint);
 }
 
-bool ObjcFallbackObjectImp::toBoolean(ExecState*) const
+bool ObjcFallbackObjectImp::toBoolean(ExecState *) const
 {
     id targetObject = _instance->getObject();
     

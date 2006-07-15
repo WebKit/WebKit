@@ -120,7 +120,7 @@ bool JSObjectHasProperty(JSContextRef context, JSObjectRef object, JSStringRef p
     return jsObject->hasProperty(exec, Identifier(nameRep));
 }
 
-JSValueRef JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName)
+JSValueRef JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -129,11 +129,16 @@ JSValueRef JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStrin
 
     JSValue* jsValue = jsObject->get(exec, Identifier(nameRep));
     if (jsValue->isUndefined())
-        return 0;
+        jsValue = 0;
+    if (exec->hadException()) {
+        if (exception)
+            *exception = toRef(exec->exception());
+        exec->clearException();
+    }
     return toRef(jsValue);
 }
 
-void JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSPropertyAttributes attributes)
+void JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -142,6 +147,11 @@ void JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSStringRef p
     JSValue* jsValue = toJS(value);
     
     jsObject->put(exec, Identifier(nameRep), jsValue, attributes);
+    if (exec->hadException()) {
+        if (exception)
+            *exception = toRef(exec->exception());
+        exec->clearException();
+    }
 }
 
 JSValueRef JSObjectGetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsigned propertyIndex)
@@ -167,14 +177,20 @@ void JSObjectSetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsign
     jsObject->put(exec, propertyIndex, jsValue);
 }
 
-bool JSObjectDeleteProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName)
+bool JSObjectDeleteProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
     JSObject* jsObject = toJS(object);
     UString::Rep* nameRep = toJS(propertyName);
 
-    return jsObject->deleteProperty(exec, Identifier(nameRep));
+    bool result = jsObject->deleteProperty(exec, Identifier(nameRep));
+    if (exec->hadException()) {
+        if (exception)
+            *exception = toRef(exec->exception());
+        exec->clearException();
+    }
+    return result;
 }
 
 void* JSObjectGetPrivate(JSObjectRef object)

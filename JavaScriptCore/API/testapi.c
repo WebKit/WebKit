@@ -38,7 +38,7 @@ static JSGlobalContextRef context = 0;
 
 static void assertEqualsAsBoolean(JSValueRef value, bool expectedValue)
 {
-    if (JSValueToBoolean(context, value, NULL) != expectedValue)
+    if (JSValueToBoolean(context, value) != expectedValue)
         fprintf(stderr, "assertEqualsAsBoolean failed: %p, %d\n", value, expectedValue);
 }
 
@@ -105,7 +105,7 @@ static void MyObject_initialize(JSContextRef context, JSObjectRef object, JSValu
     didInitialize = true;
 }
 
-static bool MyObject_hasProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
+static bool MyObject_hasProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -159,6 +159,11 @@ static bool MyObject_deleteProperty(JSContextRef context, JSObjectRef object, JS
     if (JSStringIsEqualToUTF8CString(propertyName, "cantDelete"))
         return true;
     
+    if (JSStringIsEqualToUTF8CString(propertyName, "throwOnDelete")) {
+        *exception = JSValueMakeNumber(2);
+        return false;
+    }
+
     return false;
 }
 
@@ -205,10 +210,10 @@ static bool MyObject_hasInstance(JSContextRef context, JSObjectRef constructor, 
     UNUSED_PARAM(context);
 
     JSStringRef numberString = JSStringCreateWithUTF8CString("Number");
-    JSObjectRef numberConstructor = JSValueToObject(context, JSObjectGetProperty(context, JSContextGetGlobalObject(context), numberString), NULL);
+    JSObjectRef numberConstructor = JSValueToObject(context, JSObjectGetProperty(context, JSContextGetGlobalObject(context), numberString, NULL), NULL);
     JSStringRelease(numberString);
 
-    return JSValueIsInstanceOfConstructor(context, possibleValue, numberConstructor);
+    return JSValueIsInstanceOfConstructor(context, possibleValue, numberConstructor, NULL);
 }
 
 static JSValueRef MyObject_convertToType(JSContextRef context, JSObjectRef object, JSType type, JSValueRef* exception)
@@ -217,9 +222,6 @@ static JSValueRef MyObject_convertToType(JSContextRef context, JSObjectRef objec
     UNUSED_PARAM(object);
     
     switch (type) {
-    case kJSTypeBoolean:
-        *exception = JSValueMakeNumber(2);
-        return NULL;
     case kJSTypeNumber:
         return JSValueMakeNumber(1);
     default:
@@ -287,7 +289,7 @@ static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjec
     JSObjectRef result = JSObjectMake(context, NULL, 0);
     if (argc > 0) {
         JSStringRef value = JSStringCreateWithUTF8CString("value");
-        JSObjectSetProperty(context, result, value, argv[0], kJSPropertyAttributeNone);
+        JSObjectSetProperty(context, result, value, argv[0], kJSPropertyAttributeNone, NULL);
         JSStringRelease(value);
     }
     
@@ -370,7 +372,7 @@ int main(int argc, char* argv[])
     JSObjectRef myObject = JSObjectMake(context, MyObject_class(context), NULL);
     assert(didInitialize);
     JSStringRef myObjectIString = JSStringCreateWithUTF8CString("MyObject");
-    JSObjectSetProperty(context, globalObject, myObjectIString, myObject, kJSPropertyAttributeNone);
+    JSObjectSetProperty(context, globalObject, myObjectIString, myObject, kJSPropertyAttributeNone, NULL);
     JSStringRelease(myObjectIString);
     
     JSValueRef exception;
@@ -388,9 +390,7 @@ int main(int argc, char* argv[])
     assert(!JSValueToStringCopy(context, jsObjectNoProto, &exception));
     assert(exception);
     
-    exception = NULL;
-    assert(!JSValueToBoolean(context, myObject, &exception));
-    assert(exception);
+    assert(JSValueToBoolean(context, myObject));
     
     exception = NULL;
     assert(!JSValueIsEqual(context, jsObjectNoProto, JSValueMakeNumber(1), &exception));
@@ -504,14 +504,14 @@ int main(int argc, char* argv[])
     assert(JSValueIsObject(exception));
     
     JSStringRef array = JSStringCreateWithUTF8CString("Array");
-    v = JSObjectGetProperty(context, globalObject, array);
+    v = JSObjectGetProperty(context, globalObject, array, NULL);
     assert(v);
     JSObjectRef arrayConstructor = JSValueToObject(context, v, NULL);
     JSStringRelease(array);
     result = JSObjectCallAsConstructor(context, arrayConstructor, 0, NULL, NULL);
     assert(result);
-    assert(JSValueIsInstanceOfConstructor(context, result, arrayConstructor));
-    assert(!JSValueIsInstanceOfConstructor(context, JSValueMakeNull(), arrayConstructor));
+    assert(JSValueIsInstanceOfConstructor(context, result, arrayConstructor, NULL));
+    assert(!JSValueIsInstanceOfConstructor(context, JSValueMakeNull(), arrayConstructor, NULL));
     
     JSStringRef functionBody;
     
@@ -520,7 +520,7 @@ int main(int argc, char* argv[])
     JSStringRef line = JSStringCreateWithUTF8CString("line");
     assert(!JSObjectMakeFunctionWithBody(context, functionBody, NULL, 1, &exception));
     assert(JSValueIsObject(exception));
-    v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line);
+    v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line, NULL);
     assert(v);
     assertEqualsAsNumber(v, 2); // FIXME: Lexer::setCode bumps startingLineNumber by 1 -- we need to change internal callers so that it doesn't have to (saying '0' to mean '1' in the API would be really confusing -- it's really confusing internally, in fact)
     JSStringRelease(functionBody);
@@ -536,7 +536,7 @@ int main(int argc, char* argv[])
                                                   
     JSStringRef print = JSStringCreateWithUTF8CString("print");
     JSObjectRef printFunction = JSObjectMakeFunction(context, print_callAsFunction);
-    JSObjectSetProperty(context, globalObject, print, printFunction, kJSPropertyAttributeNone); 
+    JSObjectSetProperty(context, globalObject, print, printFunction, kJSPropertyAttributeNone, NULL); 
     JSStringRelease(print);
     
     assert(JSObjectSetPrivate(printFunction, (void*)1));
@@ -544,15 +544,15 @@ int main(int argc, char* argv[])
 
     JSStringRef myConstructorIString = JSStringCreateWithUTF8CString("MyConstructor");
     JSObjectRef myConstructor = JSObjectMakeConstructor(context, myConstructor_callAsConstructor);
-    JSObjectSetProperty(context, globalObject, myConstructorIString, myConstructor, kJSPropertyAttributeNone);
+    JSObjectSetProperty(context, globalObject, myConstructorIString, myConstructor, kJSPropertyAttributeNone, NULL);
     JSStringRelease(myConstructorIString);
     
     assert(JSObjectSetPrivate(myConstructor, (void*)1));
     assert(JSObjectGetPrivate(myConstructor) == (void*)1);
     
     o = JSObjectMake(context, NULL, NULL);
-    JSObjectSetProperty(context, o, jsOneIString, JSValueMakeNumber(1), kJSPropertyAttributeNone);
-    JSObjectSetProperty(context, o, jsCFIString,  JSValueMakeNumber(1), kJSPropertyAttributeDontEnum);
+    JSObjectSetProperty(context, o, jsOneIString, JSValueMakeNumber(1), kJSPropertyAttributeNone, NULL);
+    JSObjectSetProperty(context, o, jsCFIString,  JSValueMakeNumber(1), kJSPropertyAttributeDontEnum, NULL);
     JSPropertyEnumeratorRef enumerator = JSObjectCreatePropertyEnumerator(o);
     int count = 0;
     while (JSPropertyEnumeratorGetNextName(enumerator))

@@ -89,7 +89,7 @@ bool JSCallbackObject::getOwnPropertySlot(ExecState* exec, const Identifier& pro
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
         // optional optimization to bypass getProperty in cases when we only need to know if the property exists
         if (JSObjectHasPropertyCallback hasProperty = jsClass->callbacks.hasProperty) {
-            if (hasProperty(context, thisRef, propertyNameRef, toRef(exec->exceptionSlot()))) {
+            if (hasProperty(context, thisRef, propertyNameRef)) {
                 slot.setCustom(this, callbackGetter);
                 return true;
             }
@@ -319,19 +319,6 @@ void JSCallbackObject::getPropertyList(ReferenceList& propertyList, bool recursi
     }
 
     JSObject::getPropertyList(propertyList, recursive);
-}
-
-bool JSCallbackObject::toBoolean(ExecState* exec) const
-{
-    JSContextRef context = toRef(exec);
-    JSObjectRef thisRef = toRef(this);
-
-    for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent)
-        if (JSObjectConvertToTypeCallback convertToType = jsClass->callbacks.convertToType)
-            if (JSValueRef value = convertToType(context, thisRef, kJSTypeBoolean, toRef(exec->exceptionSlot())))
-                return toJS(value)->getBoolean();
-
-    return JSObject::toBoolean(exec);
 }
 
 double JSCallbackObject::toNumber(ExecState* exec) const

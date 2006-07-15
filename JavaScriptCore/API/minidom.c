@@ -40,11 +40,11 @@ int main(int argc, char* argv[])
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     
     JSStringRef printIString = JSStringCreateWithUTF8CString("print");
-    JSObjectSetProperty(context, globalObject, printIString, JSObjectMakeFunction(context, print), kJSPropertyAttributeNone);
+    JSObjectSetProperty(context, globalObject, printIString, JSObjectMakeFunction(context, print), kJSPropertyAttributeNone, NULL);
     JSStringRelease(printIString);
     
     JSStringRef node = JSStringCreateWithUTF8CString("Node");
-    JSObjectSetProperty(context, globalObject, node, JSObjectMakeConstructor(context, JSNode_construct), kJSPropertyAttributeNone);
+    JSObjectSetProperty(context, globalObject, node, JSObjectMakeConstructor(context, JSNode_construct), kJSPropertyAttributeNone, NULL);
     JSStringRelease(node);
     
     char* scriptUTF8 = createStringWithContentsOfFile("minidom.js");

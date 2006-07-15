@@ -1,3 +1,20 @@
+2006-07-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        - Finalized exception handling in the API.
+        
+        setProperty can throw because it throws for built-in arrays. getProperty
+        and deleteProperty can throw because setProperty can throw and we want
+        to be consistent, and also because they seem like "actions." callAsFunction,
+        callAsConstructor, and hasInstance can throw, because they caan throw for
+        all built-ins.
+        
+        toBoolean can't throw because it's defined that way in the spec.
+        
+        - Documented that toBoolean and toObject can't be overridden by custom 
+        objects because they're defined that way in the spec.
+
 === Safari-521.17 ===
 
 2006-07-14  Geoffrey Garen  <ggaren@apple.com>
