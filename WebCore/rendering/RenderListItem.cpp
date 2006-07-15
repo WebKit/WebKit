@@ -90,8 +90,6 @@ static Node* enclosingList(Node* node)
 
 static RenderListItem* previousListItem(Node* list, RenderListItem* item)
 {
-    if (!list)
-        return 0;
     for (Node* n = item->node()->traversePreviousNode(); n != list; n = n->traversePreviousNode()) {
         RenderObject* o = n->renderer();
         if (o && o->isListItem()) {

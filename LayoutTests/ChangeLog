@@ -1,4 +1,17 @@
-2006-07-16  Geoffrey Garen  <ggaren@apple.com>
+2006-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8587
+          <rdar://problem/4631844>
+          REGRESSION: {display:list-item} on items outside an ol or ul element no longer causes incremental numbering
+
+        * fast/lists/numeric-markers-outside-list-expected.checksum: Added.
+        * fast/lists/numeric-markers-outside-list-expected.png: Added.
+        * fast/lists/numeric-markers-outside-list-expected.txt: Added.
+        * fast/lists/numeric-markers-outside-list.html: Added.
+
+2006-07-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
         

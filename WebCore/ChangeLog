@@ -1,3 +1,16 @@
+2006-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8587
+          <rdar://problem/4631844>
+          REGRESSION: {display:list-item} on items outside an ol or ul element no longer causes incremental numbering
+
+        Test: fast/lists/numeric-markers-outside-list.html
+
+        * rendering/RenderListItem.cpp: (WebCore::previousListItem):
+        Look for list items, even when we're outside any list.
+
 2006-07-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by John.
