@@ -250,7 +250,7 @@ breakBreak:
 
 Decoder::Decoder() 
   : m_encoding(Latin1Encoding)
-  , m_decoder(new StreamingTextDecoder(m_encoding))
+  , m_decoder(StreamingTextDecoder::create(m_encoding))
   , enc(0)
   , m_type(DefaultEncoding)
   , body(false)
@@ -277,7 +277,7 @@ void Decoder::setEncodingName(const char* _encoding, EncodingSource type)
         enc = encoding.name();
         m_encoding = encoding;
         m_type = type;
-        m_decoder.set(new StreamingTextDecoder(m_encoding));
+        m_decoder.set(StreamingTextDecoder::create(m_encoding));
     }
 }
 
@@ -387,7 +387,7 @@ DeprecatedString Decoder::decode(const char *data, int len)
                 m_encoding = TextEncoding(autoDetectedEncoding);
                 ASSERT(m_encoding.isValid());
                 enc = m_encoding.name();
-                m_decoder.set(new StreamingTextDecoder(m_encoding));
+                m_decoder.set(StreamingTextDecoder::create(m_encoding));
             }
         }
         beginning = false;
@@ -555,7 +555,7 @@ DeprecatedString Decoder::decode(const char *data, int len)
             enc = "iso8859-1";
             m_encoding = TextEncoding(Latin1Encoding);
         }
-        m_decoder.set(new StreamingTextDecoder(m_encoding));
+        m_decoder.set(StreamingTextDecoder::create(m_encoding));
     }
     DeprecatedString out;
 

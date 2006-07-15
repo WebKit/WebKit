@@ -1,3 +1,21 @@
+2006-07-14  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4195
+        REGRESSION: KOI8-U encoding no longer supported.
+
+        * fast/encoding/charset-koi8-u-expected.txt: Added.
+        * fast/encoding/charset-koi8-u.html: Added.
+        * fast/encoding/charset-x-nextstep-expected.txt: Added.
+        * fast/encoding/charset-x-nextstep.html: Added.
+        * http/tests/misc/BOM-override-expected.txt: Added.
+        * http/tests/misc/BOM-override-script-expected.txt: Added.
+        * http/tests/misc/BOM-override-script.html: Added.
+        * http/tests/misc/BOM-override.pl: Added.
+        * http/tests/misc/resources/BOM-override-2.pl: Added.
+        * http/tests/misc/resources/BOM-override-3.pl: Added.
+
 2006-07-14  Timothy Hatcher  <timothy@apple.com>
  
         Rolling out this fix from r15358 since it isn't resolved.

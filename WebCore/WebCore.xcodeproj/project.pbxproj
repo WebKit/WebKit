@@ -232,7 +232,6 @@
 		6565821309D15111000E61D7 /* ksvgcssvalues.h in Headers */ = {isa = PBXBuildFile; fileRef = 6565820F09D15111000E61D7 /* ksvgcssvalues.h */; };
 		65743B52097076F8001E7CEF /* RenderSVGText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65743B50097076F8001E7CEF /* RenderSVGText.cpp */; };
 		65743B53097076F8001E7CEF /* RenderSVGText.h in Headers */ = {isa = PBXBuildFile; fileRef = 65743B51097076F8001E7CEF /* RenderSVGText.h */; };
-		6576F9D609B2484A000041F7 /* TextEncodingMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6576F9D509B2484A000041F7 /* TextEncodingMac.cpp */; };
 		657BD74D09AFDC54005A2056 /* StreamingTextDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 657BD74909AFDC54005A2056 /* StreamingTextDecoder.cpp */; };
 		657BD74E09AFDC54005A2056 /* StreamingTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 657BD74A09AFDC54005A2056 /* StreamingTextDecoder.h */; };
 		657BD74F09AFDC54005A2056 /* TextEncoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 657BD74B09AFDC54005A2056 /* TextEncoding.cpp */; };
@@ -1579,8 +1578,10 @@
 		DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD763BB10992C2C900740B8E /* libxml2.dylib */; };
 		DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */; };
 		E1052C320A4D70010072D99B /* DOMEventsNonstandard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1052C310A4D70010072D99B /* DOMEventsNonstandard.mm */; };
-		E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */; };
+		E14842DE0A674934007E4D39 /* StreamingTextDecoderICU.h in Headers */ = {isa = PBXBuildFile; fileRef = E14842DD0A674934007E4D39 /* StreamingTextDecoderICU.h */; };
+		E14842FF0A674A31007E4D39 /* StreamingTextDecoderICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14842FE0A674A31007E4D39 /* StreamingTextDecoderICU.cpp */; };
+		E148432F0A674FC2007E4D39 /* StreamingTextDecoderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E148432E0A674FC2007E4D39 /* StreamingTextDecoderMac.h */; };
+		E14843D60A6754A6007E4D39 /* StreamingTextDecoderMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14843910A6752BF007E4D39 /* StreamingTextDecoderMac.cpp */; };
 		E1F0424609839389006694EA /* xmlhttprequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F0424409839389006694EA /* xmlhttprequest.cpp */; };
 		E1F0424709839389006694EA /* xmlhttprequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F0424509839389006694EA /* xmlhttprequest.h */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
@@ -1896,8 +1897,7 @@
 		6565821009D15111000E61D7 /* ksvgcssvalues.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ksvgcssvalues.in; sourceTree = "<group>"; };
 		65743B50097076F8001E7CEF /* RenderSVGText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGText.cpp; sourceTree = "<group>"; };
 		65743B51097076F8001E7CEF /* RenderSVGText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGText.h; sourceTree = "<group>"; };
-		6576F9D509B2484A000041F7 /* TextEncodingMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingMac.cpp; sourceTree = "<group>"; };
-		657BD74909AFDC54005A2056 /* StreamingTextDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StreamingTextDecoder.cpp; sourceTree = "<group>"; };
+		657BD74909AFDC54005A2056 /* StreamingTextDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = StreamingTextDecoder.cpp; sourceTree = "<group>"; };
 		657BD74A09AFDC54005A2056 /* StreamingTextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StreamingTextDecoder.h; sourceTree = "<group>"; };
 		657BD74B09AFDC54005A2056 /* TextEncoding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncoding.cpp; sourceTree = "<group>"; };
 		657BD74C09AFDC54005A2056 /* TextEncoding.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextEncoding.h; sourceTree = "<group>"; };
@@ -3345,8 +3345,10 @@
 		DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IndentOutdentCommand.h; sourceTree = "<group>"; };
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
 		E1052C310A4D70010072D99B /* DOMEventsNonstandard.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMEventsNonstandard.mm; sourceTree = "<group>"; };
-		E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTextDecoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreTextDecoder.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		E14842DD0A674934007E4D39 /* StreamingTextDecoderICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamingTextDecoderICU.h; sourceTree = "<group>"; };
+		E14842FE0A674A31007E4D39 /* StreamingTextDecoderICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamingTextDecoderICU.cpp; sourceTree = "<group>"; };
+		E148432E0A674FC2007E4D39 /* StreamingTextDecoderMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = StreamingTextDecoderMac.h; path = mac/StreamingTextDecoderMac.h; sourceTree = "<group>"; };
+		E14843910A6752BF007E4D39 /* StreamingTextDecoderMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = StreamingTextDecoderMac.cpp; path = mac/StreamingTextDecoderMac.cpp; sourceTree = "<group>"; };
 		E1F0424409839389006694EA /* xmlhttprequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlhttprequest.cpp; sourceTree = "<group>"; };
 		E1F0424509839389006694EA /* xmlhttprequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xmlhttprequest.h; sourceTree = "<group>"; };
 		ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = textAreaResizeCorner.tiff; sourceTree = "<group>"; };
@@ -3874,7 +3876,6 @@
 				6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */,
 				9352071B09BD3BBB00F2038D /* TextBoundaries.mm */,
 				F587853802DE375901EA4122 /* TextBoxMac.mm */,
-				6576F9D509B2484A000041F7 /* TextEncodingMac.cpp */,
 				F587851202DE375901EA4122 /* TextFieldMac.mm */,
 				6545F67509B830180013006F /* TransferJobMac.mm */,
 				F5517DC2031AB56301A80180 /* WebCoreHistory.h */,
@@ -3979,8 +3980,6 @@
 				F565AE8602ECA583018635CA /* WebCoreSettings.mm */,
 				65901A4209FC6039005BD752 /* WebCoreStringTruncator.h */,
 				65901A4309FC6039005BD752 /* WebCoreStringTruncator.mm */,
-				E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */,
-				E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */,
 				F587855402DE375901EA4122 /* WebCoreViewFactory.h */,
 				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
 				5150C2A10702629000AF642C /* WebDashboardRegion.h */,
@@ -5169,6 +5168,10 @@
 				9352071709BD3BA500F2038D /* StaticConstructors.h */,
 				657BD74909AFDC54005A2056 /* StreamingTextDecoder.cpp */,
 				657BD74A09AFDC54005A2056 /* StreamingTextDecoder.h */,
+				E14842FE0A674A31007E4D39 /* StreamingTextDecoderICU.cpp */,
+				E14842DD0A674934007E4D39 /* StreamingTextDecoderICU.h */,
+				E14843910A6752BF007E4D39 /* StreamingTextDecoderMac.cpp */,
+				E148432E0A674FC2007E4D39 /* StreamingTextDecoderMac.h */,
 				93CD4FDA0995F9EA007ECC97 /* String.cpp */,
 				93126F6009D7A736008D9626 /* StringHash.h */,
 				93CD4FDC0995F9EA007ECC97 /* StringImpl.cpp */,
@@ -5648,7 +5651,6 @@
 				7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */,
 				939885C408B7E3D100E707C4 /* EventNames.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
-				E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */,
 				A88AD3870952486D001DD196 /* KRenderingDevice.h in Headers */,
 				A88AD3890952486D001DD196 /* KRenderingFillPainter.h in Headers */,
 				A88AD38A0952486D001DD196 /* KRenderingPaintServer.h in Headers */,
@@ -6377,6 +6379,8 @@
 				ABDDFE7C0A5C6E7000A3E11D /* RenderPopupMenu.h in Headers */,
 				ABDDFE7D0A5C6E7000A3E11D /* RenderPopupMenuMac.h in Headers */,
 				85217E030A5ECD4700DB8D00 /* XSLImportRule.h in Headers */,
+				E14842DE0A674934007E4D39 /* StreamingTextDecoderICU.h in Headers */,
+				E148432F0A674FC2007E4D39 /* StreamingTextDecoderMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6563,7 +6567,6 @@
 				A8FD8B86087CB44C00DC3707 /* AffineTransform.cpp in Sources */,
 				7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */,
 				939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */,
-				E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */,
 				A88AD3860952486D001DD196 /* KRenderingDevice.cpp in Sources */,
 				A88AD3880952486D001DD196 /* KRenderingFillPainter.cpp in Sources */,
 				A88AD38B0952486D001DD196 /* KRenderingPaintServerGradient.cpp in Sources */,
@@ -6915,7 +6918,6 @@
 				935367E909AF77EF00D35CD6 /* GraphicsContextMac.mm in Sources */,
 				657BD74D09AFDC54005A2056 /* StreamingTextDecoder.cpp in Sources */,
 				657BD74F09AFDC54005A2056 /* TextEncoding.cpp in Sources */,
-				6576F9D609B2484A000041F7 /* TextEncodingMac.cpp in Sources */,
 				65F5386B09B2C05E00F3DC4A /* CharsetNames.cpp in Sources */,
 				A82398A809B3ACF500B60641 /* PlugInInfoStoreMac.mm in Sources */,
 				A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */,
@@ -7245,6 +7247,8 @@
 				ABDDFE7E0A5C6E7000A3E11D /* RenderPopupMenuMac.mm in Sources */,
 				85217E020A5ECD4700DB8D00 /* XSLImportRule.cpp in Sources */,
 				93CF35AA0A6169F700543E52 /* AffineTransformCG.cpp in Sources */,
+				E14842FF0A674A31007E4D39 /* StreamingTextDecoderICU.cpp in Sources */,
+				E14843D60A6754A6007E4D39 /* StreamingTextDecoderMac.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

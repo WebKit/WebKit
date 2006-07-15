@@ -1,3 +1,84 @@
+2006-07-14  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4195
+        REGRESSION: KOI8-U encoding no longer supported.
+
+        Tests:
+        * http/tests/misc/BOM-override.pl
+        * http/tests/misc/BOM-override-script.html
+        * fast/encoding/charset-koi8-u.html
+        * fast/encoding/charset-x-nextstep.html
+
+        Restored a TEC code path for encodings that are not supported by ICU (but which currently
+        passes all layout tests even by itself with ICU disabled). A lot of refactoring is 
+        still needed - most importantly, round-tripping encoding names via CFStringEncoding 
+        makes little sense now.
+
+        * WebCore.exp:
+        * bridge/mac/WebCoreTextDecoder.h: Removed.
+        * bridge/mac/WebCoreTextDecoder.mm: Removed.
+        WebCoreTextDecoder was not used anywhere since WebTextView was moved into WebCore.
+
+        * loader/Decoder.cpp:
+        (Decoder::Decoder):
+        (Decoder::setEncodingName):
+        (Decoder::decode):
+        Use StreamingTextDecoder::create().
+
+        * platform/StreamingTextDecoder.cpp:
+        (WebCore::StreamingTextDecoder::create):
+        (WebCore::StreamingTextDecoder::~StreamingTextDecoder):
+        * platform/StreamingTextDecoder.h:
+        StreamingTextDecoder is just an abstract interface to implementations now.
+
+        * platform/StreamingTextDecoderICU.cpp: Added.
+        (WebCore::StreamingTextDecoderICU::StreamingTextDecoderICU):
+        (WebCore::StreamingTextDecoderICU::~StreamingTextDecoderICU):
+        (WebCore::StreamingTextDecoderICU::releaseICUConverter):
+        (WebCore::StreamingTextDecoderICU::textEncodingSupported):
+        (WebCore::StreamingTextDecoderICU::convertUTF16):
+        (WebCore::StreamingTextDecoderICU::convertIfASCII):
+        (WebCore::StreamingTextDecoderICU::createICUConverter):
+        (WebCore::StreamingTextDecoderICU::appendOmittingBOM):
+        (WebCore::StreamingTextDecoderICU::convertUsingICU):
+        (WebCore::StreamingTextDecoderICU::convert):
+        (WebCore::StreamingTextDecoderICU::toUnicode):
+        (WebCore::StreamingTextDecoderICU::fromUnicode):
+        * platform/StreamingTextDecoderICU.h: Added.
+        Renamed from StreamingTextDecoder; added a way to tell whether the encoding is actually
+        supported by the decoder; minor cleanup.
+
+        * platform/TextEncoding.cpp:
+        (WebCore::TextEncoding::effectiveEncoding): Moved from StreamingTextDecoder.
+        (WebCore::TextEncoding::toUnicode): Use StreamingTextDecoder::create().
+        (WebCore::TextEncoding::fromUnicode): Moved to StreamingTextDecoderICU.
+        
+        * platform/TextEncoding.h: Changed __APPLE__ to PLATFORM(MAC); added effectiveEncoding().
+
+        * platform/mac/StreamingTextDecoderMac.cpp: Added.
+        (WebCore::StreamingTextDecoderMac::StreamingTextDecoderMac):
+        (WebCore::StreamingTextDecoderMac::~StreamingTextDecoderMac):
+        (WebCore::StreamingTextDecoderMac::releaseTECConverter):
+        (WebCore::StreamingTextDecoderMac::textEncodingSupported):
+        (WebCore::StreamingTextDecoderMac::convertUTF16):
+        (WebCore::StreamingTextDecoderMac::convertIfASCII):
+        (WebCore::StreamingTextDecoderMac::createTECConverter):
+        (WebCore::StreamingTextDecoderMac::appendOmittingBOM):
+        (WebCore::StreamingTextDecoderMac::convertOneChunkUsingTEC):
+        (WebCore::StreamingTextDecoderMac::convertUsingTEC):
+        (WebCore::StreamingTextDecoderMac::convert):
+        (WebCore::StreamingTextDecoderMac::toUnicode):
+        (WebCore::StreamingTextDecoderMac::fromUnicode):
+        * platform/mac/StreamingTextDecoderMac.h: Added.
+        (WebCore::StreamingTextDecoderMac::convert):
+        This is a TEC+CFString code path for decoding, basically restored from a year-old revision.
+
+        * platform/mac/TextEncodingMac.cpp: Removed. Code moved to StreamingTextDecoderMac.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 === Safari-521.17 ===
 
 2006-07-14  Timothy Hatcher  <timothy@apple.com>
