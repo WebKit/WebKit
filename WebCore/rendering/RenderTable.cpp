@@ -160,7 +160,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     if (!wrapInAnonymousSection) {
         
         // If the next renderer is actually wrapped in an anonymous table section, we need to go up and find that
-        while (beforeChild && !beforeChild->isTableSection())
+        while (beforeChild && !beforeChild->isTableSection() && !beforeChild->isTableCol())
             beforeChild = beforeChild->parent();
 
         RenderContainer::addChild(child, beforeChild);

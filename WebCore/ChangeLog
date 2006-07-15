@@ -1,3 +1,13 @@
+2006-07-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/4632144> REGRESSION: table column tests failing as a result of very recent fix
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): columns and colgroups are valid children of a table too, not
+        just table sections!
+
 2006-07-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
