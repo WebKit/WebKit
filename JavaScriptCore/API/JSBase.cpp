@@ -29,7 +29,7 @@
 #include "APICast.h"
 
 #include <kjs/ExecState.h>
-#include <kjs/Interpreter.h>
+#include <kjs/interpreter.h>
 #include <kjs/JSLock.h>
 #include <kjs/object.h>
 
