@@ -559,7 +559,7 @@ void ReplaceSelectionCommand::doApply()
         // When the start of the selection being pasted into is at the start of a block, not merging 
         // will leave hanging block(s).
         bool mergeBlocksAfterDelete = isEndOfParagraph(visibleEnd) || isStartOfBlock(visibleStart);
-        deleteSelection(false, mergeBlocksAfterDelete);
+        deleteSelection(false, mergeBlocksAfterDelete, true);
         updateLayout();
         visibleStart = endingSelection().visibleStart();
         if (fragment.hasInterchangeNewlineAtStart()) {

@@ -44,11 +44,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDelete, bool mergeBlocksAfterDelete)
+DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDelete, bool mergeBlocksAfterDelete, bool replace)
     : CompositeEditCommand(document), 
       m_hasSelectionToDelete(false), 
       m_smartDelete(smartDelete), 
       m_mergeBlocksAfterDelete(mergeBlocksAfterDelete),
+      m_replace(replace),
       m_startBlock(0),
       m_endBlock(0),
       m_typingStyle(0),
@@ -56,11 +57,12 @@ DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDel
 {
 }
 
-DeleteSelectionCommand::DeleteSelectionCommand(Document *document, const Selection &selection, bool smartDelete, bool mergeBlocksAfterDelete)
+DeleteSelectionCommand::DeleteSelectionCommand(Document *document, const Selection &selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace)
     : CompositeEditCommand(document), 
       m_hasSelectionToDelete(true), 
       m_smartDelete(smartDelete), 
       m_mergeBlocksAfterDelete(mergeBlocksAfterDelete),
+      m_replace(replace),
       m_selectionToDelete(selection),
       m_startBlock(0),
       m_endBlock(0),
@@ -514,11 +516,13 @@ void DeleteSelectionCommand::doApply()
     if (!m_selectionToDelete.isRange())
         return;
 
-    // If the deletion is occurring in a text field, let the frame call across the bridge to notify the form delegate. 
-    Node* startNode = m_selectionToDelete.start().node();
-    Node* ancestorNode = startNode ? startNode->shadowAncestorNode() : 0;
-    if (ancestorNode && ancestorNode->hasTagName(inputTag) && static_cast<HTMLInputElement*>(ancestorNode)->isNonWidgetTextField())
-        document()->frame()->textWillBeDeletedInTextField(static_cast<Element*>(ancestorNode));
+    // If the deletion is occurring in a text field, and we're not deleting to replace the selection, then let the frame call across the bridge to notify the form delegate. 
+    if (!m_replace) {
+        Node* startNode = m_selectionToDelete.start().node();
+        Node* ancestorNode = startNode ? startNode->shadowAncestorNode() : 0;
+        if (ancestorNode && ancestorNode->hasTagName(inputTag) && static_cast<HTMLInputElement*>(ancestorNode)->isNonWidgetTextField())
+            document()->frame()->textWillBeDeletedInTextField(static_cast<Element*>(ancestorNode));
+    }
 
     // save this to later make the selection with
     EAffinity affinity = m_selectionToDelete.affinity();

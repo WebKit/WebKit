@@ -1,4 +1,26 @@
-2006-07-16  Geoffrey Garen  <ggaren@apple.com>
+2006-07-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John.
+
+        - Fix for <rdar://problem/4593970> REGRESSION (NativeTextField): autofill menu disappears after typing a 2nd character
+
+        This was caused by composite editing commands, (like typing or pasting) that include a DeleteCommand, being
+        interpreted by the form delegate as an actual delete.  This fix doesn't notify the form delegate if the deletion is
+        part of an editing command to replace the selected text.
+
+        * editing/DeleteSelectionCommand.h: Added m_replace to keep track of whether this deletion is 
+          part of a composite command to replace the text being deleted.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::DeleteSelectionCommand): Initialize m_replace.
+        (WebCore::DeleteSelectionCommand::doApply): Only notify the form delegate of the deletion if the text is not being replaced.
+        * editing/CompositeEditCommand.h:
+        * editing/CompositeEditCommand.cpp: (WebCore::CompositeEditCommand::deleteSelection): 
+          Added replace argument to construct DeleteSelectionCommand.
+          
+        * editing/InsertTextCommand.cpp: (WebCore::InsertTextCommand::input): Call deleteSelection with replace argument.
+        * editing/ReplaceSelectionCommand.cpp: (WebCore::ReplaceSelectionCommand::doApply): ditto.
+
+2006-07-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej, tweaked to match Darin's patch.
         

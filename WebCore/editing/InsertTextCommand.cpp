@@ -91,7 +91,7 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
     
     // Delete the current selection.
     if (endingSelection().isRange())
-        deleteSelection();
+        deleteSelection(false, true, true);
     
     // Insert the character at the leftmost candidate.
     Position startPosition = endingSelection().start().upstream();
