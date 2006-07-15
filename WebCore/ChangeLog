@@ -1,5 +1,17 @@
 2006-07-15  Darin Adler  <darin@apple.com>
 
+        - fix mistake from fix for 8952 that was breaking layout tests
+
+        * editing/SelectionController.cpp: (WebCore::SelectionController::nodeWillBeRemoved):
+        Justin was right! I changed the behavior of the function by accident. Changed it
+        back so that it doesn't blow away the selection on the DOM side in the case where
+        it didn't before.
+
+        I will write 100 times on the blackboard: "When Justin says something about editing,
+        assume he is right."
+
+2006-07-15  Darin Adler  <darin@apple.com>
+
         - try to fix Windows build
 
         * WebCore.vcproj/WebCore/WebCore.vcproj: Added StreamingTextDecoderICU.cpp/h.

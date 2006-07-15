@@ -182,18 +182,13 @@ void SelectionController::nodeWillBeRemoved(Node *node)
     bool startRemoved = node == start || (start && start->isAncestor(node));
     bool endRemoved = node == end || (end && end->isAncestor(node));
     
-    bool clearSelection = false;
+    bool clearRenderTreeSelection = false;
+    bool clearDOMTreeSelection = false;
+
     if (startRemoved || endRemoved) {
         // FIXME: When endpoints are removed, we should just alter the selection, instead of blowing it away.
-        clearSelection = true;
-    // FIXME: This could be more efficient if we had an isNodeInRange function on Ranges.
-    } else if (Range::compareBoundaryPoints(m_sel.start(), Position(node, 0)) == -1 &&
-               Range::compareBoundaryPoints(m_sel.end(), Position(node, 0)) == 1) {
-        // If we did nothing here, when this node's renderer was destroyed, the rect that it 
-        // occupied would be invalidated, but, selection gaps that change as a result of 
-        // the removal wouldn't be invalidated.
-        // FIXME: Don't do so much unnecessary invalidation.
-        clearSelection = true;
+        clearRenderTreeSelection = true;
+        clearDOMTreeSelection = true;
     } else if (baseRemoved || extentRemoved) {
         if (m_sel.isBaseFirst()) {
             m_sel.setBase(m_sel.start());
@@ -202,16 +197,26 @@ void SelectionController::nodeWillBeRemoved(Node *node)
             m_sel.setBase(m_sel.start());
             m_sel.setExtent(m_sel.end());
         }
+    // FIXME: This could be more efficient if we had an isNodeInRange function on Ranges.
+    } else if (Range::compareBoundaryPoints(m_sel.start(), Position(node, 0)) == -1 &&
+               Range::compareBoundaryPoints(m_sel.end(), Position(node, 0)) == 1) {
+        // If we did nothing here, when this node's renderer was destroyed, the rect that it 
+        // occupied would be invalidated, but, selection gaps that change as a result of 
+        // the removal wouldn't be invalidated.
+        // FIXME: Don't do so much unnecessary invalidation.
+        clearRenderTreeSelection = true;
     }
 
-    if (clearSelection) {
+    if (clearRenderTreeSelection) {
         // FIXME (6498): This doesn't notify the editing delegate of a selection change.
         RefPtr<Document> document = start->document();
         document->updateRendering();
         if (RenderView* view = static_cast<RenderView*>(document->renderer()))
             view->clearSelection();
-        setSelection(Selection());
     }
+
+    if (clearDOMTreeSelection)
+        setSelection(Selection());
 }
 
 void SelectionController::setModifyBias(EAlter alter, EDirection direction)
