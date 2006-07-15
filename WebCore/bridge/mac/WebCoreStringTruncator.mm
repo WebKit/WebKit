@@ -29,8 +29,6 @@
 #import "config.h"
 #import "WebCoreStringTruncator.h"
 
-#import <Cocoa/Cocoa.h>
-
 #import <wtf/Assertions.h>
 #import "Font.h"
 

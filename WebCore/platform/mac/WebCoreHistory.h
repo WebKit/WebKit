@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Foundation/Foundation.h>
-
 @protocol WebCoreHistoryProvider <NSObject>
 - (BOOL)containsItemForURLLatin1:(const char *)latin1 length:(unsigned)length;
 - (BOOL)containsItemForURLUnicode:(const UniChar *)unicode length:(unsigned)length;

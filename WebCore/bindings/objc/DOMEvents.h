@@ -43,6 +43,9 @@ enum DOMEventExceptionCode {
 - (BOOL)dispatchEvent:(DOMEvent *)event;
 @end
 
+@interface DOMNode (DOMEventTarget) <DOMEventTarget>
+@end
+
 enum {
     DOM_CAPTURING_PHASE = 1,
     DOM_AT_TARGET = 2,

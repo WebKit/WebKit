@@ -29,7 +29,6 @@
 #import "KURL.h"
 #import "BlockExceptions.h"
 #import "PlatformString.h"
-#include <Foundation/Foundation.h>
 
 namespace WebCore {
 

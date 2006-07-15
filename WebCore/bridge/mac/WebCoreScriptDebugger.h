@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-
 @class WebScriptObject;         // from JavaScriptCore
 @class WebCoreScriptCallFrame;  // below
 

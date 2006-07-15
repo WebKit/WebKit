@@ -27,7 +27,6 @@
 #include "DeprecatedString.h"
 
 #import <wtf/Assertions.h>
-#import <Foundation/Foundation.h>
 #import "TextEncoding.h"
 
 using namespace WebCore;

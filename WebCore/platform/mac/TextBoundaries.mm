@@ -26,7 +26,6 @@
 #import "config.h"
 #import "TextBoundaries.h"
 
-#import <Cocoa/Cocoa.h>
 #import <unicode/ubrk.h>
 
 namespace WebCore {

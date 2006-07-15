@@ -30,10 +30,6 @@
 @class DOMElement;
 @class DOMNamedNodeMap;
 @class DOMNodeList;
-@class DOMEvent;
-
-@protocol DOMEventListener;
-@protocol DOMEventTarget;
 
 typedef struct DOMObjectInternal DOMObjectInternal;
 
@@ -92,7 +88,7 @@ enum {
     DOM_NOTATION_NODE                 = 12,
 };
 
-@interface DOMNode : DOMObject <DOMEventTarget>
+@interface DOMNode : DOMObject
 - (NSString *)nodeName;
 - (NSString *)nodeValue;
 - (void)setNodeValue:(NSString *)string;

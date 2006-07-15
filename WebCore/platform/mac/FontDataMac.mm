@@ -35,7 +35,6 @@
 #import <wtf/Assertions.h>
 
 #import <ApplicationServices/ApplicationServices.h>
-#import <Cocoa/Cocoa.h>
 
 #import "FontCache.h"
 

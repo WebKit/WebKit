@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Cocoa/Cocoa.h>
-
 // WebCorePageBridge is used to bridge between Page in WebCore and
 // WebView in WebKit. It is a two-way bridge, with subclasses expected
 // to implement a protocol of bridging methods.

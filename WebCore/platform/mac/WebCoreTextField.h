@@ -23,13 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Cocoa/Cocoa.h>
+#import "WebCoreWidgetHolder.h"
 
 namespace WebCore {
     class TextField;
 }
+
 @class WebCoreTextFieldFormatter;
-@protocol WebCoreWidgetHolder;
 
 @interface WebCoreTextFieldController : NSObject
 {

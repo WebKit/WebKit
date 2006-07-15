@@ -1,3 +1,49 @@
+2006-07-14  Timothy Hatcher  <timothy@apple.com>
+
+        <rdar://problem/4623957> SWB: gcc-5412 (new?) objc warning causes WebCore project failure
+
+        Made a DOMNode category in DOMEvents.h that lets DOMNode conform to the
+        DOMEventTarget protocol that works with GCC 5412.
+
+        Removed forward declarations of WebCoreWidgetHolder and imported WebCoreWidgetHolder.h.
+
+        Removed all <Cocoa/Cocoa.h> and <Foundation/Foundation.h> imports in other headers,
+        we import <Cocoa/Cocoa.h> in the prefix header for ObjC.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMCore.h:
+        * bindings/objc/DOMEvents.h:
+        * bridge/mac/FormDataMac.h:
+        * bridge/mac/WebCoreAXObject.h:
+        * bridge/mac/WebCoreCache.h:
+        * bridge/mac/WebCoreEncodings.h:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameNamespaces.h:
+        * bridge/mac/WebCoreJavaScript.h:
+        * bridge/mac/WebCorePageBridge.h:
+        * bridge/mac/WebCorePageState.h:
+        * bridge/mac/WebCoreResourceLoader.h:
+        * bridge/mac/WebCoreScriptDebugger.h:
+        * bridge/mac/WebCoreSettings.h:
+        * bridge/mac/WebCoreStringTruncator.h:
+        * bridge/mac/WebCoreStringTruncator.mm:
+        * bridge/mac/WebCoreTextDecoder.h:
+        * bridge/mac/WebDashboardRegion.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        * platform/mac/CookieJar.mm:
+        * platform/mac/DeprecatedStringMac.mm:
+        * platform/mac/FontDataMac.mm:
+        * platform/mac/FoundationExtras.h:
+        * platform/mac/TextBoundaries.mm:
+        * platform/mac/WebCoreHistory.h:
+        * platform/mac/WebCoreHistory.m:
+        * platform/mac/WebCoreKeyGenerator.h:
+        * platform/mac/WebCoreTextArea.h:
+        * platform/mac/WebCoreTextField.h:
+        * platform/mac/WebCoreTextRenderer.h:
+        * platform/mac/WebCoreView.h:
+        * platform/mac/WebCoreWidgetHolder.h:
+
 2006-07-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

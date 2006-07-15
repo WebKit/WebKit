@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-#import <Foundation/Foundation.h>
 
 #import "WebCoreHistory.h"
 

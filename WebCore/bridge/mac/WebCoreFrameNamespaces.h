@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-
 @interface WebCoreFrameNamespaces : NSObject
 + (NSEnumerator *)framesInNamespace:(NSString *)name;
 @end

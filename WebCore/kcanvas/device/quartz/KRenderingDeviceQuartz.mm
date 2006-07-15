@@ -41,7 +41,6 @@
 #import "Logging.h"
 #import "QuartzSupport.h"
 #import "RenderView.h"
-#import <Cocoa/Cocoa.h>
 
 namespace WebCore {
 

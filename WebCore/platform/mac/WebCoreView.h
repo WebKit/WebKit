@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Cocoa/Cocoa.h>
-
 @interface NSView (WebCoreView)
 - (NSView *)_webcore_effectiveFirstResponder;
 @end
