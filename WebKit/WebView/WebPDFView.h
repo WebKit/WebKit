@@ -26,15 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit/WebDocumentInternal.h>
+
 @class PDFDocument;
 @class PDFView;
 @class WebDataSource;
 @class PDFPrefUpdatingProxy;
-
-@protocol _WebDocumentTextSizing;
-@protocol _WebDocumentViewState;
-@protocol WebDocumentSelection;
-@protocol WebDocumentElement;
 
 @interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentSelection, WebDocumentElement, _WebDocumentViewState, _WebDocumentTextSizing>
 {

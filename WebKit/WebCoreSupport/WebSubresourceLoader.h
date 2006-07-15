@@ -26,9 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-
 #import <WebKit/WebLoader.h>
+#import <WebCore/WebCoreResourceLoader.h>
 
 @class WebDataSource;
 

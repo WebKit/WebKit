@@ -1,3 +1,18 @@
+2006-07-14  Timothy Hatcher  <timothy@apple.com>
+
+        <rdar://problem/4623957> SWB: gcc-5412 (new?) objc warning causes WebCore project failure
+
+        Build fix with the new GCC. Removes forward declarations of protocols.
+
+        * Misc/WebSearchableTextView.h:
+        * WebCoreSupport/WebSubresourceLoader.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDocumentInternal.h:
+        * WebView/WebDocumentPrivate.h:
+        * WebView/WebHTMLView.h:
+        * WebView/WebPDFView.h:
+        * WebView/WebScriptDebugDelegatePrivate.h:
+
 2006-06-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
