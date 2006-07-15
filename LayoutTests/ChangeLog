@@ -1,3 +1,14 @@
+2006-07-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9866
+        <rdar://problem/4631561>
+        REGRESSION: Repro crash from mangleme using iframe, only from server.
+
+        * http/tests/misc/iframe-invalid-source-crash-expected.txt: Added.
+        * http/tests/misc/iframe-invalid-source-crash.html: Added.
+
 2006-07-14  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
