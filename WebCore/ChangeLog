@@ -1,5 +1,11 @@
 2006-07-15  Darin Adler  <darin@apple.com>
 
+        - try to fix Windows build
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Added StreamingTextDecoderICU.cpp/h.
+
+2006-07-15  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8952

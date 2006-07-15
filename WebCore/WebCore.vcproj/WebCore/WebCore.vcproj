@@ -1475,6 +1475,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\StreamingTextDecoderICU.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\StreamingTextDecoderICU.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\String.cpp"
 				>
 			</File>
