@@ -1,3 +1,19 @@
+2006-07-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej, tweaked to match Darin's patch.
+        
+        - Fixed <rdar://problem/4631837> REGRESSION: Reproducible crash on 
+        FCKeditor demo (9911)
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocument::putValueProperty): Check for a null body element before
+        forwarding the put request to it. I confirmed that no other parts of the 
+        file use 'body' or 'bodyElement' without checking for null. 
+        
+        Also, use 'body' rather than 'bodyElement' because dir can bet set on 
+        any element, not just HTMLBodyElement.
+
 2006-07-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

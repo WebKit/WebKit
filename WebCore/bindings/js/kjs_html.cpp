@@ -302,9 +302,9 @@ JSValue *JSHTMLDocument::getValueProperty(ExecState* exec, int token) const
   case Width:
     return jsNumber(view ? view->contentsWidth() : 0);
   case Dir:
-    if (!bodyElement)
+    if (!body)
       return jsUndefined();
-    return jsString(bodyElement->dir());
+    return jsString(body->dir());
   case DesignMode:
     return jsString(doc.inDesignMode() ? "on" : "off");
   default:
@@ -409,7 +409,8 @@ void JSHTMLDocument::putValueProperty(ExecState* exec, int token, JSValue *value
     }
     break;
   case Dir:
-    body->setDir(value->toString(exec));
+    if (body)
+      body->setDir(value->toString(exec));
     break;
   case DesignMode:
     {
