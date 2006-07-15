@@ -223,11 +223,11 @@ JSObject* JSCallbackObject::construct(ExecState* exec, const List& args)
     
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
         if (JSObjectCallAsConstructorCallback callAsConstructor = jsClass->callbacks.callAsConstructor) {
-            size_t argc = args.size();
-            JSValueRef argv[argc];
-            for (size_t i = 0; i < argc; i++)
-                argv[i] = toRef(args[i]);
-            return toJS(callAsConstructor(execRef, thisRef, argc, argv, toRef(exec->exceptionSlot())));
+            size_t argumentCount = args.size();
+            JSValueRef arguments[argumentCount];
+            for (size_t i = 0; i < argumentCount; i++)
+                arguments[i] = toRef(args[i]);
+            return toJS(callAsConstructor(execRef, thisRef, argumentCount, arguments, toRef(exec->exceptionSlot())));
         }
     }
     
@@ -275,11 +275,11 @@ JSValue* JSCallbackObject::callAsFunction(ExecState* exec, JSObject* thisObj, co
 
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parent) {
         if (JSObjectCallAsFunctionCallback callAsFunction = jsClass->callbacks.callAsFunction) {
-            size_t argc = args.size();
-            JSValueRef argv[argc];
-            for (size_t i = 0; i < argc; i++)
-                argv[i] = toRef(args[i]);
-            return toJS(callAsFunction(execRef, thisRef, thisObjRef, argc, argv, toRef(exec->exceptionSlot())));
+            size_t argumentCount = args.size();
+            JSValueRef arguments[argumentCount];
+            for (size_t i = 0; i < argumentCount; i++)
+                arguments[i] = toRef(args[i]);
+            return toJS(callAsFunction(execRef, thisRef, thisObjRef, argumentCount, arguments, toRef(exec->exceptionSlot())));
         }
     }
 

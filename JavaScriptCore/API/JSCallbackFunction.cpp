@@ -50,11 +50,11 @@ JSValue* JSCallbackFunction::callAsFunction(ExecState* exec, JSObject* thisObj, 
     JSObjectRef thisRef = toRef(this);
     JSObjectRef thisObjRef = toRef(thisObj);
 
-    size_t argc = args.size();
-    JSValueRef argv[argc];
-    for (size_t i = 0; i < argc; i++)
-        argv[i] = toRef(args[i]);
-    return toJS(m_callback(execRef, thisRef, thisObjRef, argc, argv, toRef(exec->exceptionSlot())));
+    size_t argumentCount = args.size();
+    JSValueRef arguments[argumentCount];
+    for (size_t i = 0; i < argumentCount; i++)
+        arguments[i] = toRef(args[i]);
+    return toJS(m_callback(execRef, thisRef, thisObjRef, argumentCount, arguments, toRef(exec->exceptionSlot())));
 }
 
 void JSCallbackFunction::setPrivate(void* data)

@@ -1,5 +1,11 @@
 2006-07-14  Geoffrey Garen  <ggaren@apple.com>
 
+        RS by Maciej.
+        
+        Global replace in the API of argc/argv with argumentCount/arguments.
+
+2006-07-14  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej.
         
         - Finalized exception handling in the API.

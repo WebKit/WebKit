@@ -28,12 +28,12 @@
 #include "JSNodeList.h"
 #include "UnusedParam.h"
 
-static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
+static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
 {
-    if (argc > 0) {
+    if (argumentCount > 0) {
         NodeList* nodeList = JSObjectGetPrivate(thisObject);
         assert(nodeList);
-        Node* node = NodeList_item(nodeList, JSValueToNumber(context, argv[0], exception));
+        Node* node = NodeList_item(nodeList, JSValueToNumber(context, arguments[0], exception));
         if (node)
             return JSNode_new(context, node);
     }

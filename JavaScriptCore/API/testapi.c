@@ -182,24 +182,24 @@ static void MyObject_addPropertiesToList(JSObjectRef object, JSPropertyListRef p
     JSStringRelease(propertyName);
 }
 
-static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
+static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
     UNUSED_PARAM(thisObject);
 
-    if (argc > 0 && JSValueIsStrictEqual(context, argv[0], JSValueMakeNumber(0)))
+    if (argumentCount > 0 && JSValueIsStrictEqual(context, arguments[0], JSValueMakeNumber(0)))
         return JSValueMakeNumber(1);
     
     return JSValueMakeUndefined();
 }
 
-static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef object, size_t argc, JSValueRef argv[], JSValueRef* exception)
+static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef object, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
 
-    if (argc > 0 && JSValueIsStrictEqual(context, argv[0], JSValueMakeNumber(0)))
+    if (argumentCount > 0 && JSValueIsStrictEqual(context, arguments[0], JSValueMakeNumber(0)))
         return JSValueToObject(context, JSValueMakeNumber(1), NULL);
     
     return JSValueToObject(context, JSValueMakeNumber(0), NULL);
@@ -265,13 +265,13 @@ static JSClassRef MyObject_class(JSContextRef context)
     return jsClass;
 }
 
-static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functionObject, JSObjectRef thisObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
+static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functionObject, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(functionObject);
     UNUSED_PARAM(thisObject);
     
-    if (argc > 0) {
-        JSStringRef string = JSValueToStringCopy(context, argv[0], NULL);
+    if (argumentCount > 0) {
+        JSStringRef string = JSValueToStringCopy(context, arguments[0], NULL);
         size_t sizeUTF8 = JSStringGetMaximumUTF8CStringSize(string);
         char stringUTF8[sizeUTF8];
         JSStringGetUTF8CString(string, stringUTF8, sizeUTF8);
@@ -282,14 +282,14 @@ static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functio
     return JSValueMakeUndefined();
 }
 
-static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argc, JSValueRef argv[], JSValueRef* exception)
+static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(constructorObject);
     
     JSObjectRef result = JSObjectMake(context, NULL, 0);
-    if (argc > 0) {
+    if (argumentCount > 0) {
         JSStringRef value = JSStringCreateWithUTF8CString("value");
-        JSObjectSetProperty(context, result, value, argv[0], kJSPropertyAttributeNone, NULL);
+        JSObjectSetProperty(context, result, value, arguments[0], kJSPropertyAttributeNone, NULL);
         JSStringRelease(value);
     }
     
