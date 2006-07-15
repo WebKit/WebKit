@@ -50,7 +50,7 @@ public:
     void showPopup();
 
     void setOptionsChanged(bool c) { m_optionsChanged = c; }
-    void valueChanged(unsigned index);
+    void valueChanged(unsigned listIndex);
 
 private:
     void createInnerBlock();

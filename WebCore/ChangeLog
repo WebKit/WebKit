@@ -2,6 +2,25 @@
 
         Reviewed by John Sullivan.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9883
+          <rdar://problem/4631821>
+          REGRESSION: NativePopups don't work correctly in some forum software
+
+        Test: fast/forms/select-selected.html
+
+        * rendering/RenderMenuList.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateFromElement): Added code to map the selected option
+        index to a list index before using it to index into the list.
+        (WebCore::RenderMenuList::showPopup): Added code to map the selection option index
+        to a list index before passing it to the menu renderer.
+        (WebCore::RenderMenuList::valueChanged): Added code to map the list index back to a
+        option index before calling setSelectedIndex (that function takes an option index).
+
+2006-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9928
           REGRESSION: Text Encoding menu inoperative (after gcc protocol build fix)
 

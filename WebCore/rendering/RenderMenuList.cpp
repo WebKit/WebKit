@@ -110,7 +110,7 @@ void RenderMenuList::updateFromElement()
         m_optionsChanged = false;
     }
 
-    int i = select->selectedIndex();
+    int i = select->optionToListIndex(select->selectedIndex());
     String text = "";
     if (i >= 0 && i < size) {
         HTMLElement* element = listItems[i];
@@ -203,15 +203,16 @@ void RenderMenuList::showPopup()
     newStyle->inheritFrom(style());
     menu->setStyle(newStyle);
     RenderFlexibleBox::addChild(menu);
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     menu->showPopup(absoluteBoundingBoxRect(), document()->view(),
-        static_cast<HTMLSelectElement*>(node())->selectedIndex());
+        select->optionToListIndex(select->selectedIndex()));
     menu->destroy();
 }
 
-void RenderMenuList::valueChanged(unsigned index)
+void RenderMenuList::valueChanged(unsigned listIndex)
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    select->setSelectedIndex(index);
+    select->setSelectedIndex(select->listToOptionIndex(listIndex));
     select->onChange();
 }
 

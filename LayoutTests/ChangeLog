@@ -1,3 +1,16 @@
+2006-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9883
+          <rdar://problem/4631821>
+          REGRESSION: NativePopups don't work correctly in some forum software
+
+        * fast/forms/select-selected-expected.checksum: Added.
+        * fast/forms/select-selected-expected.png: Added.
+        * fast/forms/select-selected-expected.txt: Added.
+        * fast/forms/select-selected.html: Added.
+
 2006-07-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
