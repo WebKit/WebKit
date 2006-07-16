@@ -1,6 +1,19 @@
 2006-07-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
+        
+        - JSObjectMakeFunctionWithBody includes a function name and named parameters now.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunctionWithBody):
+        * API/JSObjectRef.h:
+        * API/testapi.c:
+        (assertEqualsAsUTF8String): More informative failure reporting.
+        (main): Test more function cases.
+
+2006-07-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
 
         - Moved the arguments passed to JSClassCreate into a single structure,
         called JSClassDefinition. This will enable easier structure 

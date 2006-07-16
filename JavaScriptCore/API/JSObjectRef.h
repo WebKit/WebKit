@@ -397,14 +397,17 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef context, JSObjectCallAsConstruc
 @function
 @abstract Creates a function with a given script as its body.
 @param context The execution context to use.
+@param A JSString containting the function's name. Pass NULL to create an anonymous function.
+@param parameterCount An integer count of the number of parameter names in parameterNames.
+@param parameterNames A JSString array containing the names of the function's parameters. Pass NULL if parameterCount is 0.
 @param body A JSString containing the script to use as the function's body.
 @param sourceURL A JSString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
 @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions.
 @param exception A pointer to a JSValueRef in which to store a syntax error exception, if any. Pass NULL if you do not care to store a syntax error exception.
-@result A JSObject that is an anonymous function, or NULL if body contains a syntax error. The returned object's prototype will be the default function prototype.
+@result A JSObject that is a function, or NULL if either body or parameterNames contains a syntax error. The object's prototype will be the default function prototype.
 @discussion Use this method when you want to execute a script repeatedly, to avoid the cost of re-parsing the script before each execution.
 */
-JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
+JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef name, unsigned parameterCount, JSStringRef parameterNames[], JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
 /*!
 @function
@@ -520,7 +523,7 @@ bool JSObjectIsFunction(JSObjectRef object);
 @param object The JSObject to call as a function.
 @param thisObject The object to use as "this," or NULL to use the global object as "this."
 @param argumentCount An integer count of the number of arguments in arguments.
-@param arguments A JSValue array of the  arguments to pass to the function.
+@param arguments A JSValue array of the  arguments to pass to the function. Pass NULL if argumentCount is 0.
 @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
 @result The JSValue that results from calling object as a function, or NULL if an exception is thrown or object is not a function.
 */
@@ -538,7 +541,7 @@ bool JSObjectIsConstructor(JSObjectRef object);
 @param context The execution context to use.
 @param object The JSObject to call as a constructor.
 @param argumentCount An integer count of the number of arguments in arguments.
-@param arguments A JSValue array of the  arguments to pass to the function.
+@param arguments A JSValue array of the  arguments to pass to the function. Pass NULL if argumentCount is 0.
 @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
 @result The JSObject that results from calling object as a constructor, or NULL if an exception is thrown or object is not a constructor.
 */

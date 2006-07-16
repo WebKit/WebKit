@@ -89,30 +89,30 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef context, JSObjectCallAsConstruc
     return toRef(new JSCallbackConstructor(exec, callAsConstructor));
 }
 
-JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
+JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef name, unsigned parameterCount, JSStringRef parameterNames[], JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
     JSLock lock;
     
     ExecState* exec = toJS(context);
+    UString::Rep* nameRep = name ? toJS(name) : &UString::Rep::null;
     UString::Rep* bodyRep = toJS(body);
-    UString jsSourceURL = UString(toJS(sourceURL));
-
-    if (!bodyRep)
-        bodyRep = &UString::Rep::null;
+    UString::Rep* sourceURLRep = sourceURL ? toJS(sourceURL) : &UString::Rep::null;
     
-    int sid;
-    int errLine;
-    UString errMsg;
-    RefPtr<FunctionBodyNode> bodyNode = Parser::parse(jsSourceURL, startingLineNumber, bodyRep->data(), bodyRep->size(), &sid, &errLine, &errMsg);
-    if (!bodyNode) {
-        if (exception)
-            *exception = toRef(Error::create(exec, SyntaxError, errMsg, errLine, sid, jsSourceURL));
-        return 0;
-    }
+    Identifier nameIdentifier = nameRep ? Identifier(nameRep) : Identifier("anonymous");
+    
+    List args;
+    for (unsigned i = 0; i < parameterCount; i++)
+        args.append(jsString(UString(toJS(parameterNames[i]))));
+    args.append(jsString(UString(bodyRep)));
 
-    ScopeChain scopeChain;
-    scopeChain.push(exec->dynamicInterpreter()->globalObject());
-    return toRef(static_cast<JSObject*>(new DeclaredFunctionImp(exec, "anonymous", bodyNode.get(), scopeChain)));
+    JSObject* result = exec->dynamicInterpreter()->builtinFunction()->construct(exec, args, nameIdentifier, UString(sourceURLRep), startingLineNumber);
+    if (exec->hadException()) {
+        if (exception)
+            *exception = toRef(exec->exception());
+        exec->clearException();
+        result = 0;
+    }
+    return toRef(result);
 }
 
 JSValueRef JSObjectGetPrototype(JSObjectRef object)

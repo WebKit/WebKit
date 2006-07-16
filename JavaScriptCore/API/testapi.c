@@ -57,8 +57,10 @@ static void assertEqualsAsUTF8String(JSValueRef value, const char* expectedValue
     char jsBuffer[jsSize];
     JSStringGetUTF8CString(valueAsString, jsBuffer, jsSize);
     
-    if (strcmp(jsBuffer, expectedValue) != 0)
-        fprintf(stderr, "assertEqualsAsUTF8String strcmp failed: %s != %s\n", jsBuffer, expectedValue);
+    unsigned i;
+    for (i = 0; jsBuffer[i]; i++)
+        if (jsBuffer[i] != expectedValue[i])
+            fprintf(stderr, "assertEqualsAsUTF8String failed at character %d: %c(%d) != %c(%d)\n", i, jsBuffer[i], jsBuffer[i], expectedValue[i], expectedValue[i]);
         
     if (jsSize < strlen(jsBuffer) + 1)
         fprintf(stderr, "assertEqualsAsUTF8String failed: jsSize was too small\n");
@@ -499,6 +501,7 @@ int main(int argc, char* argv[])
     JSValueRef result;
     JSValueRef v;
     JSObjectRef o;
+    JSStringRef string;
 
     result = JSEvaluateScript(context, goodSyntax, NULL, NULL, 1, NULL);
     assert(result);
@@ -520,11 +523,12 @@ int main(int argc, char* argv[])
     assert(!JSValueIsInstanceOfConstructor(context, JSValueMakeNull(), arrayConstructor, NULL));
     
     JSStringRef functionBody;
+    JSObjectRef function;
     
     exception = NULL;
     functionBody = JSStringCreateWithUTF8CString("rreturn Array;");
     JSStringRef line = JSStringCreateWithUTF8CString("line");
-    assert(!JSObjectMakeFunctionWithBody(context, functionBody, NULL, 1, &exception));
+    assert(!JSObjectMakeFunctionWithBody(context, NULL, 0, NULL, functionBody, NULL, 1, &exception));
     assert(JSValueIsObject(exception));
     v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line, NULL);
     assert(v);
@@ -532,14 +536,39 @@ int main(int argc, char* argv[])
     JSStringRelease(functionBody);
     JSStringRelease(line);
 
+    exception = NULL;
     functionBody = JSStringCreateWithUTF8CString("return Array;");
-    JSObjectRef function = JSObjectMakeFunctionWithBody(context, functionBody, NULL, 1, NULL);
+    function = JSObjectMakeFunctionWithBody(context, NULL, 0, NULL, functionBody, NULL, 1, &exception);
     JSStringRelease(functionBody);
-
+    assert(!exception);
     assert(JSObjectIsFunction(function));
     v = JSObjectCallAsFunction(context, function, NULL, 0, NULL, NULL);
+    assert(v);
     assert(JSValueIsEqual(context, v, arrayConstructor, NULL));
-                                                  
+    
+    exception = NULL;
+    function = JSObjectMakeFunctionWithBody(context, NULL, 0, NULL, jsEmptyIString, NULL, 0, &exception);
+    assert(!exception);
+    v = JSObjectCallAsFunction(context, function, NULL, 0, NULL, &exception);
+    assert(v && !exception);
+    assert(JSValueIsUndefined(v));
+    
+    exception = NULL;
+    v = NULL;
+    JSStringRef foo = JSStringCreateWithUTF8CString("foo");
+    JSStringRef argumentNames[] = { foo };
+    functionBody = JSStringCreateWithUTF8CString("return foo;");
+    function = JSObjectMakeFunctionWithBody(context, foo, 1, argumentNames, functionBody, NULL, 1, &exception);
+    assert(function && !exception);
+    JSValueRef arguments[] = { JSValueMakeNumber(2) };
+    v = JSObjectCallAsFunction(context, function, NULL, 1, arguments, &exception);
+    JSStringRelease(foo);
+    JSStringRelease(functionBody);
+    
+    string = JSValueToStringCopy(context, function, NULL);
+    assertEqualsAsUTF8String(JSValueMakeString(string), "function foo(foo) \n{\n  return foo;\n}");
+    JSStringRelease(string);
+
     JSStringRef print = JSStringCreateWithUTF8CString("print");
     JSObjectRef printFunction = JSObjectMakeFunction(context, print_callAsFunction);
     JSObjectSetProperty(context, globalObject, print, printFunction, kJSPropertyAttributeNone, NULL); 
@@ -571,7 +600,7 @@ int main(int argc, char* argv[])
     JSClassRelease(nullClass);
     
     functionBody = JSStringCreateWithUTF8CString("return this;");
-    function = JSObjectMakeFunctionWithBody(context, functionBody, NULL, 1, NULL);
+    function = JSObjectMakeFunctionWithBody(context, NULL, 0, NULL, functionBody, NULL, 1, NULL);
     JSStringRelease(functionBody);
     v = JSObjectCallAsFunction(context, function, NULL, 0, NULL, NULL);
     assert(JSValueIsEqual(context, v, globalObject, NULL));
