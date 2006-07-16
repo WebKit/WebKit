@@ -30,6 +30,7 @@
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
+#include "JSClassRef.h"
 
 #include "identifier.h"
 #include "function.h"
@@ -39,6 +40,24 @@
 #include "reference_list.h"
 
 using namespace KJS;
+
+JSClassRef JSClassCreate(JSClassDefinition* definition)
+{
+    JSClassRef jsClass = new __JSClass(definition);
+    return JSClassRetain(jsClass);
+}
+
+JSClassRef JSClassRetain(JSClassRef jsClass)
+{
+    ++jsClass->refCount;
+    return jsClass;
+}
+
+void JSClassRelease(JSClassRef jsClass)
+{
+    if (--jsClass->refCount == 0)
+        delete jsClass;
+}
 
 JSObjectRef JSObjectMake(JSContextRef context, JSClassRef jsClass, JSValueRef prototype)
 {

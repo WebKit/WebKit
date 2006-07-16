@@ -260,7 +260,7 @@ __ZNK3KJS9ExecState18lexicalInterpreterEv
 __ZNK3KJS9Reference15getPropertyNameEv
 __ZTVN3KJS19InternalFunctionImpE
 __ZTVN3KJS8JSObjectE
-_kJSObjectCallbacksNone
+_kJSClassDefinitionNull
 _kjs_pcre_compile
 _kjs_pcre_exec
 _kjs_pcre_free

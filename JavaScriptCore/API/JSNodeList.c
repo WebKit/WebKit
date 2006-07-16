@@ -50,7 +50,9 @@ static JSClassRef JSNodeListPrototype_class(JSContextRef context)
 {
     static JSClassRef jsClass;
     if (!jsClass) {
-        jsClass = JSClassCreate(NULL, JSNodeListPrototype_staticFunctions, &kJSObjectCallbacksNone, NULL);
+        JSClassDefinition definition = kJSClassDefinitionNull;
+        definition.staticFunctions = JSNodeListPrototype_staticFunctions;
+        jsClass = JSClassCreate(&definition);
     }
     
     return jsClass;
@@ -97,11 +99,12 @@ static JSClassRef JSNodeList_class(JSContextRef context)
 {
     static JSClassRef jsClass;
     if (!jsClass) {
-        JSObjectCallbacks callbacks = kJSObjectCallbacksNone;
-        callbacks.getProperty = JSNodeList_getProperty;
-        callbacks.finalize = JSNodeList_finalize;
-        
-        jsClass = JSClassCreate(JSNodeList_staticValues, NULL, &callbacks, NULL);
+        JSClassDefinition definition = kJSClassDefinitionNull;
+        definition.staticValues = JSNodeList_staticValues;
+        definition.getProperty = JSNodeList_getProperty;
+        definition.finalize = JSNodeList_finalize;
+
+        jsClass = JSClassCreate(&definition);
     }
     
     return jsClass;

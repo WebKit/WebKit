@@ -83,7 +83,7 @@ typedef void
 
 /*! 
 @typedef JSObjectHasPropertyCallback
-@abstract The callback invoked when determining whether an object has a given property.
+@abstract The callback invoked when determining whether an object has a property.
 @param context The current execution context.
 @param object The JSObject to search for the property.
 @param propertyName A JSString containing the name of the property look up.
@@ -92,7 +92,7 @@ typedef void
 
 bool HasProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName);
 
-If this function returns false, the hasProperty request forwards to object's static property table, then its parent class chain (which includes the default object class), then its prototype chain.
+If this function returns false, the hasProperty request forwards to object's statically declared properties, then its parent class chain (which includes the default object class), then its prototype chain.
 
 This callback enables optimization in cases where only a property's existence needs to be known, not its value, and computing its value would be expensive.
 
@@ -103,7 +103,7 @@ typedef bool
 
 /*! 
 @typedef JSObjectGetPropertyCallback
-@abstract The callback invoked when getting a property from an object.
+@abstract The callback invoked when getting a property's value.
 @param context The current execution context.
 @param object The JSObject to search for the property.
 @param propertyName A JSString containing the name of the property to get.
@@ -113,14 +113,14 @@ typedef bool
 
 JSValueRef GetProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
 
-If this function returns NULL, the get request forwards to object's static property table, then its parent class chain (which includes the default object class), then its prototype chain.
+If this function returns NULL, the get request forwards to object's statically declared properties, then its parent class chain (which includes the default object class), then its prototype chain.
 */
 typedef JSValueRef
 (*JSObjectGetPropertyCallback) (JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
 
 /*! 
 @typedef JSObjectSetPropertyCallback
-@abstract The callback invoked when setting the value of a given property.
+@abstract The callback invoked when setting a property's value.
 @param context The current execution context.
 @param object The JSObject on which to set the property's value.
 @param propertyName A JSString containing the name of the property to set.
@@ -131,14 +131,14 @@ typedef JSValueRef
 
 bool SetProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception);
 
-If this function returns false, the set request forwards to object's static property table, then its parent class chain (which includes the default object class).
+If this function returns false, the set request forwards to object's statically declared properties, then its parent class chain (which includes the default object class).
 */
 typedef bool
 (*JSObjectSetPropertyCallback) (JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception);
 
 /*! 
 @typedef JSObjectDeletePropertyCallback
-@abstract The callback invoked when deleting a given property.
+@abstract The callback invoked when deleting a property.
 @param context The current execution context.
 @param object The JSObject in which to delete the property.
 @param propertyName A JSString containing the name of the property to delete.
@@ -148,7 +148,7 @@ typedef bool
 
 bool DeleteProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
 
-If this function returns false, the delete request forwards to object's static property table, then its parent class chain (which includes the default object class).
+If this function returns false, the delete request forwards to object's statically declared properties, then its parent class chain (which includes the default object class).
 */
 typedef bool
 (*JSObjectDeletePropertyCallback) (JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
@@ -251,51 +251,9 @@ This function is only invoked when converting an object to number or string. An 
 typedef JSValueRef
 (*JSObjectConvertToTypeCallback) (JSContextRef context, JSObjectRef object, JSType type, JSValueRef* exception);
 
-/*!
-@struct JSObjectCallbacks
-@abstract This structure contains optional callbacks for supplementing default object behavior. Any callback field can be NULL.
-@field version The version number of this structure. The current version is 0.
-@field initialize The callback invoked when an object is first created. Use this callback in conjunction with JSObjectSetPrivate to initialize private data in your object.
-@field finalize The callback invoked when an object is finalized (prepared for garbage collection). Use this callback to release resources allocated for your object, and perform other cleanup.
-@field hasProperty The callback invoked when determining whether an object has a given property. If this field is NULL, getProperty will be called instead. The hasProperty callback enables optimization in cases where only a property's existence needs to be known, not its value, and computing its value would be expensive. 
-@field getProperty The callback invoked when getting the value of a given property.
-@field setProperty The callback invoked when setting the value of a given property.
-@field deleteProperty The callback invoked when deleting a given property.
-@field addPropertiesToList The callback invoked when adding an object's properties to a property list.
-@field callAsFunction The callback invoked when an object is called as a function.
-@field hasInstance The callback invoked when an object is used as the target of an 'instanceof' expression.
-@field callAsConstructor The callback invoked when an object is used as a constructor in a 'new' expression.
-@field convertToType The callback invoked when converting an object to a particular JavaScript type.
-*/
-typedef struct {
-    int                                 version; // current (and only) version is 0
-    JSObjectInitializeCallback          initialize;
-    JSObjectFinalizeCallback            finalize;
-    JSObjectHasPropertyCallback         hasProperty;
-    JSObjectGetPropertyCallback         getProperty;
-    JSObjectSetPropertyCallback         setProperty;
-    JSObjectDeletePropertyCallback      deleteProperty;
-    JSObjectAddPropertiesToListCallback addPropertiesToList;
-    JSObjectCallAsFunctionCallback      callAsFunction;
-    JSObjectCallAsConstructorCallback   callAsConstructor;
-    JSObjectHasInstanceCallback         hasInstance;
-    JSObjectConvertToTypeCallback       convertToType;
-} JSObjectCallbacks;
-
-/*! 
-@const kJSObjectCallbacksNone 
-@abstract A JSObjectCallbacks structure of the current version, filled with NULL callbacks.
-@discussion Use this constant as a convenience when creating callback structures. For example, to create a callback structure that has only a finalize method:
-
-JSObjectCallbacks callbacks = kJSObjectCallbacksNone;
-
-callbacks.finalize = Finalize;
-*/
-extern const JSObjectCallbacks kJSObjectCallbacksNone;
-
 /*! 
 @struct JSStaticValue
-@abstract This structure describes a static value property.
+@abstract This structure describes a statically declared value property.
 @field name A null-terminated UTF8 string containing the property's name.
 @field getProperty A JSObjectGetPropertyCallback to invoke when getting the property's value.
 @field setProperty A JSObjectSetPropertyCallback to invoke when setting the property's value.
@@ -310,7 +268,7 @@ typedef struct {
 
 /*! 
 @struct JSStaticFunction
-@abstract This structure describes a static function property.
+@abstract This structure describes a statically declared function property.
 @field name A null-terminated UTF8 string containing the property's name.
 @field callAsFunction A JSObjectCallAsFunctionCallback to invoke when the property is called as a function.
 @field attributes A logically ORed set of JSPropertyAttributes to give to the property.
@@ -322,16 +280,78 @@ typedef struct {
 } JSStaticFunction;
 
 /*!
-@function
-@abstract Creates a JavaScript class suitable for use with JSObjectMake
-@param staticValues A JSStaticValue array representing the class's static value properties. Pass NULL to specify no static value properties. The array must be terminated by a JSStaticValue whose name field is NULL.
-@param staticFunctions A JSStaticFunction array representing the class's static function properties. Pass NULL to specify no static function properties. The array must be terminated by a JSStaticFunction whose name field is NULL.
-@param callbacks A pointer to a JSObjectCallbacks structure holding custom callbacks for supplementing default object behavior. Pass NULL to specify no custom behavior.
-@param parentClass A JSClass to set as the class's parent class. Pass NULL use the default object class.
-@result A JSClass with the given properties, callbacks, and parent class. Ownership follows the Create Rule.
-@discussion The simplest and most efficient way to add custom properties to a class is by specifying static values and functions. Standard JavaScript practice calls for functions to be placed in prototype objects, so that they can be shared among objects.
+@struct JSClassDefinition
+@abstract This structure contains properties and callbacks that define a type of object. All fields are optional. Any field may be NULL.
+@field version The version number of this structure. The current version is 0.
+@field className A null-terminated UTF8 string containing the class's name.
+@field parentClass A JSClass to set as the class's parent class. Pass NULL use the default object class.
+@field staticValues A JSStaticValue array containing the class's statically declared value properties. Pass NULL to specify no statically declared value properties. The array must be terminated by a JSStaticValue whose name field is NULL.
+@field staticFunctions A JSStaticFunction array containing the class's statically declared function properties. Pass NULL to specify no statically declared function properties. The array must be terminated by a JSStaticFunction whose name field is NULL.
+@field initialize The callback invoked when an object is first created. Use this callback to initialize the object.
+@field finalize The callback invoked when an object is finalized (prepared for garbage collection). Use this callback to release resources allocated for the object, and perform other cleanup.
+@field hasProperty The callback invoked when determining whether an object has a property. If this field is NULL, getProperty is called instead. The hasProperty callback enables optimization in cases where only a property's existence needs to be known, not its value, and computing its value is expensive. 
+@field getProperty The callback invoked when getting a property's value.
+@field setProperty The callback invoked when setting a property's value.
+@field deleteProperty The callback invoked when deleting a property.
+@field addPropertiesToList The callback invoked when adding an object's properties to a property list.
+@field callAsFunction The callback invoked when an object is called as a function.
+@field hasInstance The callback invoked when an object is used as the target of an 'instanceof' expression.
+@field callAsConstructor The callback invoked when an object is used as a constructor in a 'new' expression.
+@field convertToType The callback invoked when converting an object to a particular JavaScript type.
+@discussion The staticValues and staticFunctions arrays are the simplest and most efficient means for vending custom properties. Statically declared properties autmatically service requests like get, set, and enumerate. Property access callbacks are required only to implement unusual properties, like array indexes, whose names are not known at compile-time.
+
+If you named your getter function "GetX" and your setter function "SetX", you would declare a JSStaticValue array containing "X" like this:
+
+JSStaticValue StaticValueArray[] = {
+    { "X", GetX, SetX, kJSPropertyAttributeNone },
+    { 0, 0, 0, 0 }
+};
+
+Standard JavaScript practice calls for storing functions in prototype objects, so derived objects can share them. Therefore, it is common for prototype classes to have function properties but no value properties, and for object classes to have value properties but no function properties.
+
+A NULL callback specifies that the default object callback should substitute, except in the case of hasProperty, where it specifies that getProperty should substitute.
 */
-JSClassRef JSClassCreate(JSStaticValue* staticValues, JSStaticFunction* staticFunctions, const JSObjectCallbacks* callbacks, JSClassRef parentClass);
+typedef struct {
+    int                                 version; // current (and only) version is 0
+
+    const char*                         className;
+    JSClassRef                          parentClass;
+        
+    JSStaticValue*                      staticValues;
+    JSStaticFunction*                   staticFunctions;
+    
+    JSObjectInitializeCallback          initialize;
+    JSObjectFinalizeCallback            finalize;
+    JSObjectHasPropertyCallback         hasProperty;
+    JSObjectGetPropertyCallback         getProperty;
+    JSObjectSetPropertyCallback         setProperty;
+    JSObjectDeletePropertyCallback      deleteProperty;
+    JSObjectAddPropertiesToListCallback addPropertiesToList;
+    JSObjectCallAsFunctionCallback      callAsFunction;
+    JSObjectCallAsConstructorCallback   callAsConstructor;
+    JSObjectHasInstanceCallback         hasInstance;
+    JSObjectConvertToTypeCallback       convertToType;
+} JSClassDefinition;
+
+/*! 
+@const kJSClassDefinitionNull 
+@abstract A JSClassDefinition structure of the current version, filled with NULL pointers.
+@discussion Use this constant as a convenience when creating class definitions. For example, to create a class definition with only a finalize method:
+
+JSClassDefinition definition = kJSClassDefinitionNull;
+
+definition.finalize = Finalize;
+*/
+extern const JSClassDefinition kJSClassDefinitionNull;
+
+/*!
+@function
+@abstract Creates a JavaScript class suitable for use with JSObjectMake.
+@param definition A JSClassDefinition that defines the class.
+@result A JSClass with the given definition's name, properties, callbacks, and parent class. Ownership follows the Create Rule.
+*/
+JSClassRef JSClassCreate(JSClassDefinition* definition);
+
 /*!
 @function
 @abstract Retains a JavaScript class.
@@ -403,7 +423,7 @@ void JSObjectSetPrototype(JSObjectRef object, JSValueRef value);
 
 /*!
 @function
-@abstract Tests whether an object has a certain property.
+@abstract Tests whether an object has a given property.
 @param object The JSObject to test.
 @param propertyName A JSString containing the property's name.
 @result true if the object has a property whose name matches propertyName, otherwise false.
@@ -472,7 +492,7 @@ void JSObjectSetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsign
 @abstract Gets a pointer to private data from an object.
 @param object A JSObject whose private data you want to get.
 @result A void* that points to the object's private data, if the object has private data, otherwise NULL.
-@discussion JSObjectGetPrivate and JSObjectSetPrivate only work on custom objects created by JSObjectMake, JSObjectMakeFunction, and JSObjectMakeConstructor.
+@discussion JSObjectGetPrivate and JSObjectSetPrivate only work on objects created by JSObjectMake, JSObjectMakeFunction, and JSObjectMakeConstructor.
 */
 void* JSObjectGetPrivate(JSObjectRef object);
 
@@ -482,7 +502,7 @@ void* JSObjectGetPrivate(JSObjectRef object);
 @param object A JSObject whose private data you want to set.
 @param data A void* that points to the object's private data.
 @result true if the set operation succeeds, otherwise false.
-@discussion JSObjectGetPrivate and JSObjectSetPrivate only work on custom objects created by JSObjectMake, JSObjectMakeFunction, and JSObjectMakeConstructor.
+@discussion JSObjectGetPrivate and JSObjectSetPrivate only work on objects created by JSObjectMake, JSObjectMakeFunction, and JSObjectMakeConstructor.
 */
 bool JSObjectSetPrivate(JSObjectRef object, void* data);
 
@@ -555,7 +575,7 @@ JSStringRef JSPropertyEnumeratorGetNextName(JSPropertyEnumeratorRef enumerator);
 /*!
 @function
 @abstract Adds a property to a property list.
-@discussion Use this method inside a JSObjectAddPropertiesToListCallback to add a custom property to an object's property list.
+@discussion Use this method inside a JSObjectAddPropertiesToListCallback to add a property to an object's property list.
 @param propertyList The JSPropertyList to which you want to add a property.
 @param thisObject The JSObject to which the property belongs.
 @param propertyName A JSString specifying the property's name.

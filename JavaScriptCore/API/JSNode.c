@@ -107,10 +107,13 @@ static JSStaticFunction JSNodePrototype_staticFunctions[] = {
 
 static JSClassRef JSNodePrototype_class(JSContextRef context)
 {
-    static JSClassRef nodePrototypeClass;
-    if (!nodePrototypeClass)
-        nodePrototypeClass = JSClassCreate(NULL, JSNodePrototype_staticFunctions, &kJSObjectCallbacksNone, NULL);
-    return nodePrototypeClass;
+    static JSClassRef jsClass;
+    if (!jsClass) {
+        JSClassDefinition definition = kJSClassDefinitionNull;
+        definition.staticFunctions = JSNodePrototype_staticFunctions;
+        jsClass = JSClassCreate(&definition);
+    }
+    return jsClass;
 }
 
 static JSValueRef JSNode_getNodeType(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
@@ -163,14 +166,15 @@ static void JSNode_finalize(JSObjectRef object)
 
 static JSClassRef JSNode_class(JSContextRef context)
 {
-    static JSClassRef nodeClass;
-    if (!nodeClass) {
-        JSObjectCallbacks JSNode_callbacks = kJSObjectCallbacksNone;
-        JSNode_callbacks.finalize = JSNode_finalize;
-        
-        nodeClass = JSClassCreate(JSNode_staticValues, NULL, &JSNode_callbacks, NULL);
+    static JSClassRef jsClass;
+    if (!jsClass) {
+        JSClassDefinition definition = kJSClassDefinitionNull;
+        definition.staticValues = JSNode_staticValues;
+        definition.finalize = JSNode_finalize;
+
+        jsClass = JSClassCreate(&definition);
     }
-    return nodeClass;
+    return jsClass;
 }
 
 static JSObjectRef JSNode_prototype(JSContextRef context)

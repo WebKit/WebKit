@@ -30,58 +30,54 @@
 
 using namespace KJS;
 
-const JSObjectCallbacks kJSObjectCallbacksNone = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+const JSClassDefinition kJSClassDefinitionNull = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-JSClassRef JSClassCreate(JSStaticValue* staticValues, JSStaticFunction* staticFunctions, const JSObjectCallbacks* callbacks, JSClassRef parentClass)
+__JSClass::__JSClass(JSClassDefinition* definition) 
+    : refCount(0)
+    , className(definition->className)
+    , parentClass(definition->parentClass)
+    , staticValues(0)
+    , staticFunctions(0)
+    , initialize(definition->initialize)
+    , finalize(definition->finalize)
+    , hasProperty(definition->hasProperty)
+    , getProperty(definition->getProperty)
+    , setProperty(definition->setProperty)
+    , deleteProperty(definition->deleteProperty)
+    , addPropertiesToList(definition->addPropertiesToList)
+    , callAsFunction(definition->callAsFunction)
+    , callAsConstructor(definition->callAsConstructor)
+    , hasInstance(definition->hasInstance)
+    , convertToType(definition->convertToType)
 {
-    JSClassRef jsClass = new __JSClass;
+    if (JSStaticValue* staticValue = definition->staticValues) {
+        staticValues = new StaticValuesTable();
+        while (staticValue->name) {
+            staticValues->add(Identifier(staticValue->name).ustring().rep(), 
+                              new StaticValueEntry(staticValue->getProperty, staticValue->setProperty, staticValue->attributes));
+            ++staticValue;
+        }
+    }
+    
+    if (JSStaticFunction* staticFunction = definition->staticFunctions) {
+        staticFunctions = new StaticFunctionsTable();
+        while (staticFunction->name) {
+            staticFunctions->add(Identifier(staticFunction->name).ustring().rep(), 
+                                 new StaticFunctionEntry(staticFunction->callAsFunction, staticFunction->attributes));
+            ++staticFunction;
+        }
+    }
+}
+
+__JSClass::~__JSClass()
+{
     if (staticValues) {
-        jsClass->staticValues = new __JSClass::StaticValuesTable();
-        while (staticValues->name) {
-            jsClass->staticValues->add(Identifier(staticValues->name).ustring().rep(), 
-                                       new StaticValueEntry(staticValues->getProperty, staticValues->setProperty, staticValues->attributes));
-            ++staticValues;
-        }
+        deleteAllValues(*staticValues);
+        delete staticValues;
     }
-    
+
     if (staticFunctions) {
-        jsClass->staticFunctions = new __JSClass::StaticFunctionsTable();
-        while (staticFunctions->name) {
-            jsClass->staticFunctions->add(Identifier(staticFunctions->name).ustring().rep(), 
-                                          new StaticFunctionEntry(staticFunctions->callAsFunction, staticFunctions->attributes));
-            ++staticFunctions;
-        }
-    }
-    
-    if (callbacks)
-        jsClass->callbacks = *callbacks;
-    else
-        jsClass->callbacks = kJSObjectCallbacksNone;
-    
-    jsClass->parent = parentClass;
-    
-    return JSClassRetain(jsClass);
-}
-
-JSClassRef JSClassRetain(JSClassRef jsClass)
-{
-    ++jsClass->refCount;
-    return jsClass;
-}
-
-void JSClassRelease(JSClassRef jsClass)
-{
-    if (--jsClass->refCount == 0) {
-        if (jsClass->staticValues) {
-            deleteAllValues(*jsClass->staticValues);
-            delete jsClass->staticValues;
-        }
-
-        if (jsClass->staticFunctions) {
-            deleteAllValues(*jsClass->staticFunctions);
-            delete jsClass->staticFunctions;
-        }
-
-        delete jsClass;
+        deleteAllValues(*staticFunctions);
+        delete staticFunctions;
     }
 }

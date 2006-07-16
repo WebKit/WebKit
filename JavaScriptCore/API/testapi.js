@@ -75,7 +75,7 @@ shouldBe("MyObject()", undefined);
 shouldBe("typeof new MyObject()", "object");
 shouldBe("MyObject ? 1 : 0", true); // toBoolean
 shouldBe("+MyObject", 1); // toNumber
-shouldBe("(MyObject.toString())", "[object CallbackObject]"); // toString
+shouldBe("(MyObject.toString())", "[object MyObject]"); // toString
 shouldBe("MyObject - 0", NaN); // toPrimitive
 
 shouldBe("typeof MyConstructor", "object");

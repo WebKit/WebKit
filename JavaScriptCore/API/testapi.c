@@ -240,8 +240,15 @@ static void MyObject_finalize(JSObjectRef object)
     didFinalize = true;
 }
 
-JSObjectCallbacks MyObject_callbacks = {
+JSClassDefinition MyObject_definition = {
     0,
+    
+    "MyObject",
+    NULL,
+    
+    NULL,
+    NULL,
+    
     MyObject_initialize,
     MyObject_finalize,
     MyObject_hasProperty,
@@ -258,9 +265,8 @@ JSObjectCallbacks MyObject_callbacks = {
 static JSClassRef MyObject_class(JSContextRef context)
 {
     static JSClassRef jsClass;
-    if (!jsClass) {
-        jsClass = JSClassCreate(NULL, NULL, &MyObject_callbacks, NULL);
-    }
+    if (!jsClass)
+        jsClass = JSClassCreate(&MyObject_definition);
     
     return jsClass;
 }
@@ -560,8 +566,9 @@ int main(int argc, char* argv[])
     JSPropertyEnumeratorRelease(enumerator);
     assert(count == 1); // jsCFString should not be enumerated
 
-    JSClassRef nullCallbacksClass = JSClassCreate(NULL, NULL, NULL, NULL);
-    JSClassRelease(nullCallbacksClass);
+    JSClassDefinition nullDefinition = kJSClassDefinitionNull;
+    JSClassRef nullClass = JSClassCreate(&nullDefinition);
+    JSClassRelease(nullClass);
     
     functionBody = JSStringCreateWithUTF8CString("return this;");
     function = JSObjectMakeFunctionWithBody(context, functionBody, NULL, 1, NULL);
