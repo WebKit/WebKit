@@ -37,7 +37,7 @@
 #include "nodes.h"
 #include "internal.h"
 #include "object.h"
-#include "reference_list.h"
+#include "PropertyNameArray.h"
 
 using namespace KJS;
 
@@ -306,58 +306,55 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, 
     return result;
 }
 
-struct __JSPropertyEnumerator
+struct __JSPropertyNameArray
 {
-    __JSPropertyEnumerator() : refCount(0), iterator(list.end())
+    __JSPropertyNameArray() : refCount(0)
     {
     }
     
     unsigned refCount;
-    ReferenceList list;
-    ReferenceListIterator iterator;
+    PropertyNameArray array;
 };
 
-JSPropertyEnumeratorRef JSObjectCreatePropertyEnumerator(JSObjectRef object)
+JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef context, JSObjectRef object)
 {
     JSLock lock;
     JSObject* jsObject = toJS(object);
+    ExecState* exec = toJS(context);
     
-    JSPropertyEnumeratorRef enumerator = new __JSPropertyEnumerator();
-    jsObject->getPropertyList(enumerator->list);
-    enumerator->iterator = enumerator->list.begin();
+    JSPropertyNameArrayRef propertyNames = new __JSPropertyNameArray();
+    jsObject->getPropertyNames(exec, propertyNames->array);
     
-    return JSPropertyEnumeratorRetain(enumerator);
+    return JSPropertyNameArrayRetain(propertyNames);
 }
 
-JSStringRef JSPropertyEnumeratorGetNextName(JSPropertyEnumeratorRef enumerator)
+JSPropertyNameArrayRef JSPropertyNameArrayRetain(JSPropertyNameArrayRef array)
 {
-    ReferenceListIterator& iterator = enumerator->iterator;
-    if (iterator != enumerator->list.end()) {
-        JSStringRef result = toRef(iterator->getPropertyName().ustring().rep());
-        iterator++;
-        return result;
-    }
-    return 0;
+    ++array->refCount;
+    return array;
 }
 
-JSPropertyEnumeratorRef JSPropertyEnumeratorRetain(JSPropertyEnumeratorRef enumerator)
+void JSPropertyNameArrayRelease(JSPropertyNameArrayRef array)
 {
-    ++enumerator->refCount;
-    return enumerator;
+    if (--array->refCount == 0)
+        delete array;
 }
 
-void JSPropertyEnumeratorRelease(JSPropertyEnumeratorRef enumerator)
+size_t JSPropertyNameArrayGetCount(JSPropertyNameArrayRef array)
 {
-    if (--enumerator->refCount == 0)
-        delete enumerator;
+    return array->array.size();
 }
 
-void JSPropertyListAdd(JSPropertyListRef propertyList, JSObjectRef thisObject, JSStringRef propertyName)
+JSStringRef JSPropertyNameArrayGetNameAtIndex(JSPropertyNameArrayRef array, size_t index)
+{
+    return toRef(array->array[index].ustring().rep());
+}
+
+void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef array, JSStringRef propertyName)
 {
     JSLock lock;
-    ReferenceList* jsPropertyList = toJS(propertyList);
-    JSObject* jsObject = toJS(thisObject);
+    PropertyNameArray* propertyNames = toJS(array);
     UString::Rep* rep = toJS(propertyName);
     
-    jsPropertyList->append(Reference(jsObject, Identifier(rep)));
+    propertyNames->add(Identifier(rep));
 }

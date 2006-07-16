@@ -28,8 +28,8 @@
 
 namespace KJS {
 
+    class PropertyNameArray;
     class JSObject;
-    class ReferenceList;
     class JSValue;
     
     class SavedProperty;
@@ -80,8 +80,8 @@ namespace KJS {
         JSValue **getLocation(const Identifier &name);
 
         void mark() const;
-        void addEnumerablesToReferenceList(ReferenceList &, JSObject *) const;
-        void addSparseArrayPropertiesToReferenceList(ReferenceList &, JSObject *) const;
+        void getEnumerablePropertyNames(PropertyNameArray&) const;
+        void getSparseArrayPropertyNames(PropertyNameArray&) const;
 
         void save(SavedProperties &) const;
         void restore(const SavedProperties &p);

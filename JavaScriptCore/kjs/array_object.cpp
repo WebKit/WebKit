@@ -28,7 +28,7 @@
 #include "error_object.h"
 #include "lookup.h"
 #include "operations.h"
-#include "reference_list.h"
+#include "PropertyNameArray.h"
 #include <wtf/HashSet.h>
 #include <stdio.h>
 
@@ -199,19 +199,18 @@ bool ArrayInstance::deleteProperty(ExecState *exec, unsigned index)
   return JSObject::deleteProperty(exec, Identifier::from(index));
 }
 
-void ArrayInstance::getPropertyList(ReferenceList& propertyList, bool recursive)
+void ArrayInstance::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
   // avoid fetching this every time through the loop
-  JSValue *undefined = jsUndefined();
-
-  //### FIXME: should avoid duplicates with prototype
+  JSValue* undefined = jsUndefined();
+  
   for (unsigned i = 0; i < storageLength; ++i) {
-    JSValue *imp = storage[i];
-    if (imp && imp != undefined) {
-      propertyList.append(Reference(this, i));
-    }
+    JSValue* value = storage[i];
+    if (value && value != undefined)
+      propertyNames.add(Identifier::from(i));
   }
-  return JSObject::getPropertyList(propertyList, recursive);
+ 
+  JSObject::getPropertyNames(exec, propertyNames);
 }
 
 void ArrayInstance::resizeStorage(unsigned newLength)
@@ -243,18 +242,18 @@ void ArrayInstance::setLength(unsigned newLength, ExecState *exec)
   }
 
   if (newLength < length) {
-    ReferenceList sparseProperties;
+    PropertyNameArray sparseProperties;
     
-    _prop.addSparseArrayPropertiesToReferenceList(sparseProperties, this);
+    _prop.getSparseArrayPropertyNames(sparseProperties);
     
-    ReferenceListIterator it = sparseProperties.begin();
-    while (it != sparseProperties.end()) {
-      Reference ref = it++;
+    PropertyNameArrayIterator end = sparseProperties.end();
+    
+    for (PropertyNameArrayIterator it = sparseProperties.begin(); it != end; ++it) {
+      Identifier name = *it;
       bool ok;
-      unsigned index = ref.getPropertyName().toArrayIndex(&ok);
-      if (ok && index > newLength) {
-        ref.deleteValue(exec);
-      }
+      unsigned index = name.toArrayIndex(&ok);
+      if (ok && index > newLength)
+        deleteProperty(exec, name);
     }
   }
   
@@ -360,21 +359,20 @@ unsigned ArrayInstance::pushUndefinedObjectsToEnd(ExecState *exec)
             o++;
         }
     }
+   
+    PropertyNameArray sparseProperties;
+    _prop.getSparseArrayPropertyNames(sparseProperties);
+    unsigned newLength = o + sparseProperties.size();
     
-    ReferenceList sparseProperties;
-    _prop.addSparseArrayPropertiesToReferenceList(sparseProperties, this);
-    unsigned newLength = o + sparseProperties.length();
-
-    if (newLength > storageLength) {
-      resizeStorage(newLength);
-    } 
-
-    ReferenceListIterator it = sparseProperties.begin();
-    while (it != sparseProperties.end()) {
-      Reference ref = it++;
-      storage[o] = ref.getValue(exec);
-      JSObject::deleteProperty(exec, ref.getPropertyName());
-      o++;
+    if (newLength > storageLength)
+        resizeStorage(newLength);
+    
+    PropertyNameArrayIterator end = sparseProperties.end();
+    for (PropertyNameArrayIterator it = sparseProperties.begin(); it != end; ++it) {
+        Identifier name = *it;
+        storage[o] = get(exec, name);
+        JSObject::deleteProperty(exec, name);
+        o++;
     }
     
     if (newLength != storageLength)

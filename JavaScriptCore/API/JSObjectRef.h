@@ -154,20 +154,26 @@ typedef bool
 (*JSObjectDeletePropertyCallback) (JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
 
 /*! 
-@typedef JSObjectAddPropertiesToListCallback
-@abstract The callback invoked when adding an object's properties to a property list.
-@param object The JSObject whose properties need to be added to propertyList.
-@param propertyList A JavaScript property list that will be used to enumerate object's properties.
-@discussion If you named your function GetPropertyList, you would declare it like this:
+@typedef JSObjectGetPropertyNamesCallback
+@abstract The callback invoked to get the names of an object's properties.
+@param context The current execution context.
+@param object The JSObject whose property names need to be appended to propertyNames.
+@param accumulator A JavaScript property name accumulator, to which the object should add the names of its properties.
+@discussion If you named your function GetPropertyNames, you would declare it like this:
 
-void AddPropertiesToList(JSObjectRef object, JSPropertyListRef propertyList);
+void GetPropertyNames(JSContextRef context, JSObjectRef object, JSPropertyNameAccumulatorRef accumulator);
 
-Use JSPropertyListAdd to add properties to propertyList.
+Use JSPropertyNameAccumulatorAddName to add property names to accumulator.
 
-Property lists are used by JSPropertyEnumerators and JavaScript for...in loops.
+Property lists are used by JSPropertyEnumerators and JavaScript for...in loops. 
+
+It's only necessary to add names of properties that you handle
+specially in your own get / set callbacks. Static property names,
+names of standard JS properties, and properties from the prototype
+will be added automatically.
 */
 typedef void
-(*JSObjectAddPropertiesToListCallback) (JSObjectRef object, JSPropertyListRef propertyList);
+(*JSObjectGetPropertyNamesCallback) (JSContextRef context, JSObjectRef object, JSPropertyNameAccumulatorRef propertyNames);
 
 /*! 
 @typedef JSObjectCallAsFunctionCallback
@@ -326,7 +332,7 @@ typedef struct {
     JSObjectGetPropertyCallback         getProperty;
     JSObjectSetPropertyCallback         setProperty;
     JSObjectDeletePropertyCallback      deleteProperty;
-    JSObjectAddPropertiesToListCallback addPropertiesToList;
+    JSObjectGetPropertyNamesCallback    getPropertyNames;
     JSObjectCallAsFunctionCallback      callAsFunction;
     JSObjectCallAsConstructorCallback   callAsConstructor;
     JSObjectHasInstanceCallback         hasInstance;
@@ -485,10 +491,9 @@ JSValueRef JSObjectGetPropertyAtIndex(JSContextRef context, JSObjectRef object, 
 @param object The JSObject whose property you want to set.
 @param propertyIndex The property's name as a number
 @param value A JSValue to use as the property's value.
-@param attributes A logically ORed set of JSPropertyAttributes to give to the property.
 @discussion This is equivalent to setting a property by a string name containing the number, but allows faster access to JS arrays.
 */
-void JSObjectSetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsigned propertyIndex, JSValueRef value, JSPropertyAttributes attributes);
+void JSObjectSetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsigned propertyIndex, JSValueRef value);
 
 /*!
 @function
@@ -549,41 +554,52 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, 
 
 /*!
 @function
-@abstract Creates an enumerator for an object's properties.
-@param object The object whose properties you want to enumerate.
-@result A JSPropertyEnumerator with a list of object's properties. Ownership follows the Create Rule.
+@abstract Get the names of all enumerable properties of an object.
+@param context The execution context to use.
+@param object The object from which to get property names. 
+@result A JSPropertyNameArray containing the names of all the object's enumerable properties.
 */
-JSPropertyEnumeratorRef JSObjectCreatePropertyEnumerator(JSObjectRef object);
-/*!
-@function
-@abstract Retains a property enumerator.
-@param enumerator The JSPropertyEnumerator to retain.
-@result A JSPropertyEnumerator that is the same as enumerator.
-*/
-JSPropertyEnumeratorRef JSPropertyEnumeratorRetain(JSPropertyEnumeratorRef enumerator);
-/*!
-@function
-@abstract Releases a property enumerator.
-@param enumerator The JSPropertyEnumerator to release.
-*/
-void JSPropertyEnumeratorRelease(JSPropertyEnumeratorRef enumerator);
-/*!
-@function
-@abstract Gets a property enumerator's next property.
-@param enumerator The JSPropertyEnumerator whose next property you want to get.
-@result A JSString containing the property's name, or NULL if all properties have been enumerated.
-*/
-JSStringRef JSPropertyEnumeratorGetNextName(JSPropertyEnumeratorRef enumerator);
+JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef context, JSObjectRef object);
 
 /*!
 @function
-@abstract Adds a property to a property list.
-@discussion Use this method inside a JSObjectAddPropertiesToListCallback to add a property to an object's property list.
-@param propertyList The JSPropertyList to which you want to add a property.
-@param thisObject The JSObject to which the property belongs.
-@param propertyName A JSString specifying the property's name.
+@abstract         Retains a JavaScript property name array.
+@param array      The JSPropertyNameArray to retain.
+@result           A JSPropertyNameArray that is the same as array.
 */
-void JSPropertyListAdd(JSPropertyListRef propertyList, JSObjectRef thisObject, JSStringRef propertyName);
+JSPropertyNameArrayRef JSPropertyNameArrayRetain(JSPropertyNameArrayRef array);
+
+/*!
+@function
+@abstract         Releases a JavaScript property name array.
+@param array      The JSPropetyNameArray to release.
+*/
+void JSPropertyNameArrayRelease(JSPropertyNameArrayRef array);
+
+/*!
+@function
+@abstract      Get the number of items in a JavaScript property name array.
+@param array   The array from which to retrieve the count.
+@result        The count of items in the array.
+*/
+size_t JSPropertyNameArrayGetCount(JSPropertyNameArrayRef array);
+
+/*!
+@function
+@abstract      Get a single item from a JavaScript property name array.
+@param array   The array from which to retrieve a property name.
+@param index   The index of the property name to retrieve.
+@result        A JSStringRef containing the name of the property.
+*/
+JSStringRef JSPropertyNameArrayGetNameAtIndex(JSPropertyNameArrayRef array, size_t index);
+
+/*!
+@function
+@abstract           Add a property name - useful while getting the property names for an object.
+@param accumulator  The accumulator object to which to add the property.
+@param propertyName The new property to add.
+*/
+void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef accumulator, JSStringRef propertyName);
 
 #ifdef __cplusplus
 }

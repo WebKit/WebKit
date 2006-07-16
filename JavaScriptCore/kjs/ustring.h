@@ -132,6 +132,7 @@ namespace KJS {
      * @return Higher byte.
      */
     unsigned char high() const { return ref().uc >> 8; }
+
   private:
     // not implemented, can only be constructed from UString
     UCharReference();
@@ -215,6 +216,7 @@ namespace KJS {
     };
 
   public:
+
     /**
      * Constructs a null string.
      */

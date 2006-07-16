@@ -1,3 +1,80 @@
+2006-07-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - switch property lists to be vector+set of Identifiers instead of list of References
+        
+        This has the following benefits:
+        
+        - no duplicates in property lists
+        - simplifies API calls
+        - probably more efficient, since linked list is gone
+        - entirely removed Reference, ReferenceList and ProtectedReference types from the API
+
+        * kjs/PropertyNameArray.cpp: Added.
+        (KJS::PropertyNameArray::add): Check set, if not already there, add to
+        vector.
+        * kjs/PropertyNameArray.h: Added.
+        (KJS::PropertyNameArray::PropertyNameArray): Newly added type, combines
+        a set and a vector to make a unique but ordered list of identifiers.
+        (KJS::PropertyNameArray::begin): ditto
+        (KJS::PropertyNameArray::end): ditto
+        (KJS::PropertyNameArray::size): ditto
+        (KJS::PropertyNameArray::operator[]): ditto
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        (ArrayInstance::getPropertyNames): renamed from getPropertyList, updated
+        for PropertyNameArray
+        (ArrayInstance::setLength): updated for PropertyNameArray
+        (ArrayInstance::pushUndefinedObjectsToEnd): ditto
+        * kjs/nodes.cpp:
+        (ForInNode::execute): updated for PropertyNameArray
+        * kjs/nodes.h:
+        * kjs/object.cpp:
+        (KJS::JSObject::getPropertyNames): renamed from getPropertyList, updated
+        for PropertyNameArray
+        * kjs/object.h:
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::getEnumerablePropertyNames): updated for PropertyNameArray
+        (KJS::PropertyMap::getSparseArrayPropertyNames): ditto
+        * kjs/property_map.h:
+        * kjs/protected_reference.h: Removed.
+        * kjs/reference.cpp: Removed.
+        * kjs/reference.h: Removed.
+        * kjs/reference_list.cpp: Removed.
+        * kjs/reference_list.h: Removed.
+        * kjs/scope_chain.cpp:
+        (KJS::ScopeChain::print): Use PropertyNamesArray instead of ReferenceList.
+        * kjs/string_object.cpp:
+        (StringInstance::getPropertyNames): Updated for new approach.
+        * kjs/string_object.h:
+        * kjs/ustring.h:
+        * API/APICast.h:
+        (toJS): Added overload for PropertyNameAccumulatorRef / PropertyNameArray*
+        (toRef): ditto
+        * API/JSBase.h:
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::getPropertyNames): Fixed for new API.
+        * API/JSCallbackObject.h:
+        * API/JSObjectRef.cpp:
+        (__JSPropertyNameArray::__JSPropertyNameArray): Type used for a publicly vended
+        JSPropertyNameArrayRef.
+        (JSObjectCopyPropertyNames): New API call - renamed / refactored from 
+        JSObjectCreatePropertyList
+        (JSPropertyNameArrayRetain): new retain call for JSPropertyNameArray.
+        (JSPropertyNameArrayRelease): new release call for - " -.
+        (JSPropertyNameArrayGetCount): Instead of having to use a stateful enumerator you
+        can now get the count and items in any order.
+        (JSPropertyNameArrayGetNameAtIndex): See above.
+        (JSPropertyNameAccumulatorAddName): What you add properties to is now an opaque 
+        accumulator object.
+        * API/JSObjectRef.h: Prototyped new functions, removed old ones
+        * JavaScriptCore.exp: Updated exported symbols.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added new files, removed old.
+        * API/testapi.c:
+        (MyObject_getPropertyNames): Renamed / fixed callback to fit new paradigm.
+        (main): Updated for new API.
+
 2006-07-15  Darin Adler  <darin@apple.com>
 
         - oops, missed a few more arrays that had to be const

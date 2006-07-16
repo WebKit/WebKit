@@ -60,7 +60,7 @@ public:
     virtual bool implementsCall() const;
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List &args);
 
-    virtual void getPropertyList(ReferenceList& propertyList, bool recursive);
+    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
     virtual double toNumber(ExecState*) const;
     virtual UString toString(ExecState*) const;

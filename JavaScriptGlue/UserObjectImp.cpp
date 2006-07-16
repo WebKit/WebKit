@@ -28,7 +28,7 @@
 
 #include "config.h"
 #include "UserObjectImp.h"
-#include <JavaScriptCore/reference_list.h>
+#include <JavaScriptCore/PropertyNameArray.h>
 
 const ClassInfo UserObjectImp::info = {"UserObject", 0, 0, 0};
 
@@ -122,7 +122,7 @@ JSValue *UserObjectImp::callAsFunction(ExecState *exec, JSObject *thisObj, const
 }
 
 
-void UserObjectImp::getPropertyList(ExecState *exec, ReferenceList& propertyList, bool recursive)
+void UserObjectImp::getPropertyNames(ExecState *exec, PropertyNameArray& propertyNames)
 {
     JSUserObject* ptr = GetJSUserObject();
     if (ptr) {
@@ -132,12 +132,12 @@ void UserObjectImp::getPropertyList(ExecState *exec, ReferenceList& propertyList
             CFIndex i;
             for (i = 0; i < count; i++) {
                 CFStringRef propertyName = (CFStringRef)CFArrayGetValueAtIndex(cfPropertyNames, i);
-                propertyList.append(Reference(this, CFStringToIdentifier(propertyName)));
+                propertyNames.add(CFStringToIdentifier(propertyName));
             }
             CFRelease(cfPropertyNames);
         }
     }
-    JSObject::getPropertyList(propertyList, recursive);
+    JSObject::getPropertyNames(exec, propertyNames);
 }
 
 JSValue *UserObjectImp::userObjectGetter(ExecState *, JSObject *, const Identifier& propertyName, const PropertySlot& slot)

@@ -35,7 +35,7 @@
 #include "function_object.h"
 #include "lexer.h"
 #include "operations.h"
-#include "reference_list.h"
+#include "PropertyNameArray.h"
 #include <wtf/HashSet.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/MathExtras.h>
@@ -1859,7 +1859,7 @@ Completion ForInNode::execute(ExecState *exec)
   JSValue *retval = 0;
   JSObject *v;
   Completion c;
-  ReferenceList propertyList;
+  PropertyNameArray propertyNames;
 
   if (varDecl) {
     varDecl->evaluate(exec);
@@ -1878,20 +1878,17 @@ Completion ForInNode::execute(ExecState *exec)
 
   KJS_CHECKEXCEPTION
   v = e->toObject(exec);
-  v->getPropertyList(propertyList);
+  v->getPropertyNames(exec, propertyNames);
+  
+  PropertyNameArrayIterator end = propertyNames.end();
+  for (PropertyNameArrayIterator it = propertyNames.begin(); it != end; ++it) {
+      const Identifier &name = *it;
+      if (!v->hasProperty(exec, name))
+          continue;
 
-  ReferenceListIterator propIt = propertyList.begin();
+      JSValue *str = jsString(name.ustring());
 
-  while (propIt != propertyList.end()) {
-    Identifier name = propIt->getPropertyName();
-    if (!v->hasProperty(exec, name)) {
-      propIt++;
-      continue;
-    }
-
-    JSValue *str = jsString(name.ustring());
-
-    if (lexpr->isResolveNode()) {
+      if (lexpr->isResolveNode()) {
         const Identifier &ident = static_cast<ResolveNode *>(lexpr.get())->identifier();
 
         const ScopeChain& chain = exec->context()->scopeChain();
@@ -1950,8 +1947,6 @@ Completion ForInNode::execute(ExecState *exec)
         return c;
       }
     }
-
-    propIt++;
   }
 
   // bail out on error

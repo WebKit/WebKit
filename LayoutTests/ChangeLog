@@ -1,3 +1,14 @@
+2006-07-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - new test case and updated results for property list changes
+
+        * fast/js/for-in-avoid-duplicates-expected.txt: Added.
+        * fast/js/for-in-avoid-duplicates.html: Added.
+        * fast/js/kde/Array-expected.txt:
+        * fast/js/resources/for-in-avoid-duplicates.js: Added.
+
 2006-07-15  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

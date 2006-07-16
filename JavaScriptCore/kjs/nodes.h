@@ -34,7 +34,6 @@ namespace KJS {
   class ProgramNode;
   class PropertyNameNode;
   class PropertyListNode;
-  class Reference;
   class RegExp;
   class SourceElementsNode;
   class SourceStream;

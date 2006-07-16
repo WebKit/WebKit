@@ -43,11 +43,11 @@ typedef struct __JSString* JSStringRef;
 /*! @typedef JSClassRef A JavaScript class. Used with JSObjectMake to construct objects with custom behavior. */
 typedef struct __JSClass* JSClassRef;
 
-/*! @typedef JSPropertyListRef A JavaScript property list. Used for listing the properties in an object so they can be enumerated. */
-typedef struct __JSPropertyList* JSPropertyListRef;
+/*! @typedef JSPropertyNameArrayRef An array of JavaScript property names. */
+typedef struct __JSPropertyNameArray* JSPropertyNameArrayRef;
 
-/*! @typedef JSPropertyEnumeratorRef A JavaScript property enumerator. Used for enumerating the properties in an object. */
-typedef struct __JSPropertyEnumerator* JSPropertyEnumeratorRef;
+/*! @typedef JSPropertyNameAccumulatorRef A data type used to collect a JavaScript object's property names. */
+typedef struct __JSPropertyNameAccumulator* JSPropertyNameAccumulatorRef;
 
 
 /* JavaScript data types */

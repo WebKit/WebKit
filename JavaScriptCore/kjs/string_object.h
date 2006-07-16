@@ -31,10 +31,10 @@ namespace KJS {
     StringInstance(JSObject *proto);
     StringInstance(JSObject *proto, const UString &string);
 
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
-    virtual void getPropertyList(ReferenceList& propertyList, bool recursive);
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    virtual void put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr = None);
+    virtual bool deleteProperty(ExecState* exec, const Identifier& propertyName);
+    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;

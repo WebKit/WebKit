@@ -26,7 +26,7 @@
 
 #include "error_object.h"
 #include "operations.h"
-#include "reference_list.h"
+#include "PropertyNameArray.h"
 #include "regexp_object.h"
 #include <wtf/unicode/Unicode.h>
 
@@ -94,13 +94,12 @@ bool StringInstance::deleteProperty(ExecState *exec, const Identifier &propertyN
   return JSObject::deleteProperty(exec, propertyName);
 }
 
-void StringInstance::getPropertyList(ReferenceList& propertyList, bool recursive)
+void StringInstance::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
-  //### FIXME: should avoid duplicates with prototype
   int size = internalValue()->getString().size();
   for (int i = 0; i < size; i++)
-    propertyList.append(Reference(this, i));
-  return JSObject::getPropertyList(propertyList, recursive);
+    propertyNames.add(Identifier(UString(i)));
+  return JSObject::getPropertyNames(exec, propertyNames);
 }
 
 // ------------------------------ StringPrototype ---------------------------

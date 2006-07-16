@@ -38,6 +38,7 @@ namespace KJS {
   class HashEntry;
   class ListImp;
   class InternalFunctionImp;
+  class PropertyNameArray;
 
   // ECMA 262-3 8.6.1
   // Property attributes
@@ -440,23 +441,7 @@ namespace KJS {
     const ScopeChain &scope() const { return _scope; }
     void setScope(const ScopeChain &s) { _scope = s; }
 
-    /**
-     * Returns a List of References to all the properties of the object. Used
-     * in "for x in y" statements. The list is created new, so it can be freely
-     * modified without affecting the object's properties. It should be deleted
-     * by the caller.
-     *
-     * Subclasses can override this method in ObjectImpl to provide the
-     * appearance of
-     * having extra properties other than those set specifically with put().
-     *
-     * @param exec The current execution state
-     * @param recursive Whether or not properties in the object's prototype
-     * chain should be
-     * included in the list.
-     * @return A List of References to properties of the object.
-     **/
-    virtual void getPropertyList(ReferenceList& propertyList, bool recursive = true);
+    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
     /**
      * Returns the internal value of the object. This is used for objects such

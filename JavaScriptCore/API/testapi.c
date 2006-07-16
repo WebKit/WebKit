@@ -169,18 +169,18 @@ static bool MyObject_deleteProperty(JSContextRef context, JSObjectRef object, JS
     return false;
 }
 
-static void MyObject_addPropertiesToList(JSObjectRef object, JSPropertyListRef propertyList)
+static void MyObject_getPropertyNames(JSContextRef context, JSObjectRef object, JSPropertyNameAccumulatorRef propertyNames)
 {
     UNUSED_PARAM(context);
     
     JSStringRef propertyName;
     
     propertyName = JSStringCreateWithUTF8CString("alwaysOne");
-    JSPropertyListAdd(propertyList, object, propertyName);
+    JSPropertyNameAccumulatorAddName(propertyNames, propertyName);
     JSStringRelease(propertyName);
     
     propertyName = JSStringCreateWithUTF8CString("myPropertyName");
-    JSPropertyListAdd(propertyList, object, propertyName);
+    JSPropertyNameAccumulatorAddName(propertyNames, propertyName);
     JSStringRelease(propertyName);
 }
 
@@ -257,7 +257,7 @@ JSClassDefinition MyObject_definition = {
     MyObject_getProperty,
     MyObject_setProperty,
     MyObject_deleteProperty,
-    MyObject_addPropertiesToList,
+    MyObject_getPropertyNames,
     MyObject_callAsFunction,
     MyObject_callAsConstructor,
     MyObject_hasInstance,
@@ -588,11 +588,12 @@ int main(int argc, char* argv[])
     o = JSObjectMake(context, NULL, NULL);
     JSObjectSetProperty(context, o, jsOneIString, JSValueMakeNumber(1), kJSPropertyAttributeNone, NULL);
     JSObjectSetProperty(context, o, jsCFIString,  JSValueMakeNumber(1), kJSPropertyAttributeDontEnum, NULL);
-    JSPropertyEnumeratorRef enumerator = JSObjectCreatePropertyEnumerator(o);
-    int count = 0;
-    while (JSPropertyEnumeratorGetNextName(enumerator))
-        ++count;
-    JSPropertyEnumeratorRelease(enumerator);
+    JSPropertyNameArrayRef nameArray = JSObjectCopyPropertyNames(context, o);
+    size_t expectedCount = JSPropertyNameArrayGetCount(nameArray);
+    size_t count;
+    for (count = 0; count < expectedCount; ++count)
+        JSPropertyNameArrayGetNameAtIndex(nameArray, count);
+    JSPropertyNameArrayRelease(nameArray);
     assert(count == 1); // jsCFString should not be enumerated
 
     JSClassDefinition nullDefinition = kJSClassDefinitionNull;

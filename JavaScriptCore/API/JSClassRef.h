@@ -73,7 +73,7 @@ struct __JSClass {
     JSObjectGetPropertyCallback getProperty;
     JSObjectSetPropertyCallback setProperty;
     JSObjectDeletePropertyCallback deleteProperty;
-    JSObjectAddPropertiesToListCallback addPropertiesToList;
+    JSObjectGetPropertyNamesCallback getPropertyNames;
     JSObjectCallAsFunctionCallback callAsFunction;
     JSObjectCallAsConstructorCallback callAsConstructor;
     JSObjectHasInstanceCallback hasInstance;

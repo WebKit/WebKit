@@ -1,3 +1,17 @@
+2006-07-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - switch property lists to be vector+set of Identifiers instead of list of References
+        
+        * JSUtils.cpp:
+        (KJSValueToCFTypeInternal): updated for JSC SPI changes
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCopyPropertyNames): ditto
+        * UserObjectImp.cpp:
+        (UserObjectImp::getPropertyNames): ditto
+        * UserObjectImp.h:
+
 === Safari-521.17 ===
 
 2006-07-14  Geoffrey Garen  <ggaren@apple.com>

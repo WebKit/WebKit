@@ -29,7 +29,7 @@
 #include "lookup.h"
 #include "nodes.h"
 #include "operations.h"
-#include "reference_list.h"
+#include "PropertyNameArray.h"
 #include <math.h>
 
 // maximum global call stack size. Protects against accidental or
@@ -475,9 +475,9 @@ bool JSObject::getPropertyAttributes(const Identifier& propertyName, unsigned& a
   return false;
 }
 
-void JSObject::getPropertyList(ReferenceList& propertyList, bool recursive)
+void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
-  _prop.addEnumerablesToReferenceList(propertyList, this);
+   _prop.getEnumerablePropertyNames(propertyNames);
 
   // Add properties from the static hashtable of properties
   const ClassInfo *info = classInfo();
@@ -486,14 +486,14 @@ void JSObject::getPropertyList(ReferenceList& propertyList, bool recursive)
       int size = info->propHashTable->size;
       const HashEntry *e = info->propHashTable->entries;
       for (int i = 0; i < size; ++i, ++e) {
-        if ( e->s && !(e->attr & DontEnum) )
-          propertyList.append(Reference(this, e->s)); /// ######### check for duplicates with the propertymap
+        if (e->s && !(e->attr & DontEnum))
+          propertyNames.add(e->s);
       }
     }
     info = info->parentClass;
   }
-  if (_proto->isObject() && recursive)
-      static_cast<JSObject*>(_proto)->getPropertyList(propertyList, recursive);
+  if (_proto->isObject())
+     static_cast<JSObject*>(_proto)->getPropertyNames(exec, propertyNames);
 }
 
 bool JSObject::toBoolean(ExecState */*exec*/) const

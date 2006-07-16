@@ -34,7 +34,7 @@
 #include "UserObjectImp.h"
 #include "JSValueWrapper.h"
 #include "JSObject.h"
-#include <JavaScriptCore/reference_list.h>
+#include <JavaScriptCore/PropertyNameArray.h>
 
 struct ObjectImpList {
     JSObject* imp;
@@ -294,13 +294,13 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
                         isArray = true;
                         JSInterpreter* intrepreter = (JSInterpreter*)exec->dynamicInterpreter();
                         if (intrepreter && (intrepreter->Flags() & kJSFlagConvertAssociativeArray)) {
-                            ReferenceList propList;
-                            object->getPropertyList(propList);
-                            ReferenceListIterator iter = propList.begin();
-                            ReferenceListIterator end = propList.end();
+                            PropertyNameArray propNames;
+                            object->getPropertyNames(exec, propNames);
+                            PropertyNameArrayIterator iter = propNames.begin();
+                            PropertyNameArrayIterator end = propNames.end();
                             while(iter != end && isArray)
                             {
-                                Identifier propName = iter->getPropertyName();
+                                Identifier propName = *iter;
                                 UString ustr = propName.ustring();
                                 const UniChar* uniChars = (const UniChar*)ustr.data();
                                 int size = ustr.size();
@@ -333,8 +333,8 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
                     else
                     {
                         // Not an array, just treat it like a dictionary which contains (property name, property value) pairs
-                        ReferenceList propList;
-                        object->getPropertyList(propList);
+                        PropertyNameArray propNames;
+                        object->getPropertyNames(exec, propNames);
                         {
                             result = CFDictionaryCreateMutable(0,
                                                                0,
@@ -342,11 +342,11 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
                                                                &kCFTypeDictionaryValueCallBacks);
                             if (result)
                             {
-                                ReferenceListIterator iter = propList.begin();
-                                ReferenceListIterator end = propList.end();
+                                PropertyNameArrayIterator iter = propNames.begin();
+                                PropertyNameArrayIterator end = propNames.end();
                                 while(iter != end)
                                 {
-                                    Identifier propName = iter->getPropertyName();
+                                    Identifier propName = *iter;
                                     if (object->hasProperty(exec, propName))
                                     {
                                         CFStringRef cfKey = IdentifierToCFString(propName);
