@@ -1,5 +1,28 @@
 2006-07-15  Darin Adler  <darin@apple.com>
 
+        - oops, missed a few more arrays that had to be const
+
+        * API/JSNode.c:
+        (JSNodePrototype_appendChild): Added const.
+        (JSNodePrototype_removeChild): Ditto.
+        (JSNodePrototype_replaceChild): Ditto.
+        (JSNode_construct): Ditto.
+        * API/JSNodeList.c:
+        (JSNodeListPrototype_item): Ditto.
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunctionWithBody): Ditto.
+        (JSObjectCallAsFunction): Ditto.
+        (JSObjectCallAsConstructor): Ditto.
+        * API/minidom.c:
+        (print): Ditto.
+        * API/testapi.c:
+        (MyObject_callAsFunction): Ditto.
+        (MyObject_callAsConstructor): Ditto.
+        (print_callAsFunction): Ditto.
+        (myConstructor_callAsConstructor): Ditto.
+
+2006-07-15  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         * API/JSNode.h: Made an array parameter const.

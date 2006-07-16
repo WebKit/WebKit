@@ -184,7 +184,7 @@ static void MyObject_addPropertiesToList(JSObjectRef object, JSPropertyListRef p
     JSStringRelease(propertyName);
 }
 
-static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -196,7 +196,7 @@ static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef obje
     return JSValueMakeUndefined();
 }
 
-static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef object, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
+static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -273,7 +273,7 @@ static JSClassRef MyObject_class(JSContextRef context)
     return jsClass;
 }
 
-static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functionObject, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functionObject, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(functionObject);
     UNUSED_PARAM(thisObject);
@@ -290,7 +290,7 @@ static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functio
     return JSValueMakeUndefined();
 }
 
-static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
+static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(constructorObject);
     

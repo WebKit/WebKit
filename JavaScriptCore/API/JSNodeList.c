@@ -28,7 +28,7 @@
 #include "JSNodeList.h"
 #include "UnusedParam.h"
 
-static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount > 0) {
         NodeList* nodeList = JSObjectGetPrivate(thisObject);

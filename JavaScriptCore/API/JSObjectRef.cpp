@@ -89,7 +89,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef context, JSObjectCallAsConstruc
     return toRef(new JSCallbackConstructor(exec, callAsConstructor));
 }
 
-JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef name, unsigned parameterCount, JSStringRef parameterNames[], JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
+JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef name, unsigned parameterCount, const JSStringRef parameterNames[], JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
     JSLock lock;
     
@@ -256,7 +256,7 @@ bool JSObjectIsFunction(JSObjectRef object)
     return jsObject->implementsCall();
 }
 
-JSValueRef JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
+JSValueRef JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -286,7 +286,7 @@ bool JSObjectIsConstructor(JSObjectRef object)
     return jsObject->implementsConstruct();
 }
 
-JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
+JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     JSLock lock;
     ExecState* exec = toJS(context);

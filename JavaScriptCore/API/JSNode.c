@@ -32,7 +32,7 @@
 
 static JSClassRef JSNode_class(JSContextRef context);
 
-static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(function);
@@ -56,7 +56,7 @@ static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef 
     return JSValueMakeUndefined();
 }
 
-static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(function);
@@ -76,7 +76,7 @@ static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef 
     return JSValueMakeUndefined();
 }
 
-static JSValueRef JSNodePrototype_replaceChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef JSNodePrototype_replaceChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(function);
@@ -196,7 +196,7 @@ JSObjectRef JSNode_new(JSContextRef context, Node* node)
     return jsNode;
 }
 
-JSObjectRef JSNode_construct(JSContextRef context, JSObjectRef object, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception)
+JSObjectRef JSNode_construct(JSContextRef context, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(object);
     UNUSED_PARAM(argumentCount);
