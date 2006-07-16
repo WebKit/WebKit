@@ -54,14 +54,4 @@ JSObject* JSCallbackConstructor::construct(ExecState* exec, const List &args)
     return toJS(m_callback(execRef, thisRef, argumentCount, arguments, toRef(exec->exceptionSlot())));
 }
 
-void JSCallbackConstructor::setPrivate(void* data)
-{
-    m_privateData = data;
-}
-
-void* JSCallbackConstructor::getPrivate()
-{
-    return m_privateData;
-}
-
 } // namespace KJS

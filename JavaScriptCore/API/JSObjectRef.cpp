@@ -75,11 +75,13 @@ JSObjectRef JSObjectMake(JSContextRef context, JSClassRef jsClass, JSValueRef pr
         return toRef(new JSCallbackObject(context, jsClass, jsPrototype));
 }
 
-JSObjectRef JSObjectMakeFunction(JSContextRef context, JSObjectCallAsFunctionCallback callAsFunction)
+JSObjectRef JSObjectMakeFunction(JSContextRef context, JSStringRef name, JSObjectCallAsFunctionCallback callAsFunction)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
-    return toRef(new JSCallbackFunction(exec, callAsFunction));
+    Identifier nameID = name ? Identifier(toJS(name)) : Identifier("anonymous");
+    
+    return toRef(new JSCallbackFunction(exec, callAsFunction, nameID));
 }
 
 JSObjectRef JSObjectMakeConstructor(JSContextRef context, JSObjectCallAsConstructorCallback callAsConstructor)
@@ -94,18 +96,17 @@ JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef name,
     JSLock lock;
     
     ExecState* exec = toJS(context);
-    UString::Rep* nameRep = name ? toJS(name) : &UString::Rep::null;
     UString::Rep* bodyRep = toJS(body);
     UString::Rep* sourceURLRep = sourceURL ? toJS(sourceURL) : &UString::Rep::null;
     
-    Identifier nameIdentifier = nameRep ? Identifier(nameRep) : Identifier("anonymous");
+    Identifier nameID = name ? Identifier(toJS(name)) : Identifier("anonymous");
     
     List args;
     for (unsigned i = 0; i < parameterCount; i++)
         args.append(jsString(UString(toJS(parameterNames[i]))));
     args.append(jsString(UString(bodyRep)));
 
-    JSObject* result = exec->dynamicInterpreter()->builtinFunction()->construct(exec, args, nameIdentifier, UString(sourceURLRep), startingLineNumber);
+    JSObject* result = exec->dynamicInterpreter()->builtinFunction()->construct(exec, args, nameID, UString(sourceURLRep), startingLineNumber);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());
@@ -219,12 +220,6 @@ void* JSObjectGetPrivate(JSObjectRef object)
     if (jsObject->inherits(&JSCallbackObject::info))
         return static_cast<JSCallbackObject*>(jsObject)->getPrivate();
     
-    if (jsObject->inherits(&JSCallbackFunction::info))
-        return static_cast<JSCallbackFunction*>(jsObject)->getPrivate();
-    
-    if (jsObject->inherits(&JSCallbackConstructor::info))
-        return static_cast<JSCallbackConstructor*>(jsObject)->getPrivate();
-    
     return 0;
 }
 
@@ -237,16 +232,6 @@ bool JSObjectSetPrivate(JSObjectRef object, void* data)
         return true;
     }
         
-    if (jsObject->inherits(&JSCallbackFunction::info)) {
-        static_cast<JSCallbackFunction*>(jsObject)->setPrivate(data);
-        return true;
-    }
-        
-    if (jsObject->inherits(&JSCallbackConstructor::info)) {
-        static_cast<JSCallbackConstructor*>(jsObject)->setPrivate(data);
-        return true;
-    }
-    
     return false;
 }
 

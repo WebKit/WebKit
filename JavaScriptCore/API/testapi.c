@@ -570,20 +570,20 @@ int main(int argc, char* argv[])
     JSStringRelease(string);
 
     JSStringRef print = JSStringCreateWithUTF8CString("print");
-    JSObjectRef printFunction = JSObjectMakeFunction(context, print_callAsFunction);
+    JSObjectRef printFunction = JSObjectMakeFunction(context, print, print_callAsFunction);
     JSObjectSetProperty(context, globalObject, print, printFunction, kJSPropertyAttributeNone, NULL); 
     JSStringRelease(print);
     
-    assert(JSObjectSetPrivate(printFunction, (void*)1));
-    assert(JSObjectGetPrivate(printFunction) == (void*)1);
+    assert(!JSObjectSetPrivate(printFunction, (void*)1));
+    assert(!JSObjectGetPrivate(printFunction));
 
     JSStringRef myConstructorIString = JSStringCreateWithUTF8CString("MyConstructor");
     JSObjectRef myConstructor = JSObjectMakeConstructor(context, myConstructor_callAsConstructor);
     JSObjectSetProperty(context, globalObject, myConstructorIString, myConstructor, kJSPropertyAttributeNone, NULL);
     JSStringRelease(myConstructorIString);
     
-    assert(JSObjectSetPrivate(myConstructor, (void*)1));
-    assert(JSObjectGetPrivate(myConstructor) == (void*)1);
+    assert(!JSObjectSetPrivate(myConstructor, (void*)1));
+    assert(!JSObjectGetPrivate(myConstructor));
     
     o = JSObjectMake(context, NULL, NULL);
     JSObjectSetProperty(context, o, jsOneIString, JSValueMakeNumber(1), kJSPropertyAttributeNone, NULL);

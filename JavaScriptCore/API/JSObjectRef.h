@@ -386,10 +386,11 @@ JSObjectRef JSObjectMake(JSContextRef context, JSClassRef jsClass, JSValueRef pr
 @function
 @abstract Convenience method for creating a JavaScript function with a given callback as its implementation.
 @param context The execution context to use.
+@param name A JSString containing the function's name. This will be used when converting the function to string. Pass NULL to create an anonymous function.
 @param callAsFunction The JSObjectCallAsFunctionCallback to invoke when the function is called.
 @result A JSObject that is an anonymous function. The object's prototype will be the default function prototype.
 */
-JSObjectRef JSObjectMakeFunction(JSContextRef context, JSObjectCallAsFunctionCallback callAsFunction);
+JSObjectRef JSObjectMakeFunction(JSContextRef context, JSStringRef name, JSObjectCallAsFunctionCallback callAsFunction);
 /*!
 @function
 @abstract Convenience method for creating a JavaScript constructor with a given callback as its implementation.
@@ -403,7 +404,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef context, JSObjectCallAsConstruc
 @function
 @abstract Creates a function with a given script as its body.
 @param context The execution context to use.
-@param name A JSString containing the function's name. Pass NULL to create an anonymous function.
+@param name A JSString containing the function's name. This will be used when converting the function to string. Pass NULL to create an anonymous function.
 @param parameterCount An integer count of the number of parameter names in parameterNames.
 @param parameterNames A JSString array containing the names of the function's parameters. Pass NULL if parameterCount is 0.
 @param body A JSString containing the script to use as the function's body.
@@ -500,7 +501,6 @@ void JSObjectSetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsign
 @abstract Gets a pointer to private data from an object.
 @param object A JSObject whose private data you want to get.
 @result A void* that points to the object's private data, if the object has private data, otherwise NULL.
-@discussion JSObjectGetPrivate and JSObjectSetPrivate only work on objects created by JSObjectMake, JSObjectMakeFunction, and JSObjectMakeConstructor.
 */
 void* JSObjectGetPrivate(JSObjectRef object);
 
@@ -509,8 +509,8 @@ void* JSObjectGetPrivate(JSObjectRef object);
 @abstract Sets a pointer to private data on an object.
 @param object A JSObject whose private data you want to set.
 @param data A void* that points to the object's private data.
-@result true if the set operation succeeds, otherwise false.
-@discussion JSObjectGetPrivate and JSObjectSetPrivate only work on objects created by JSObjectMake, JSObjectMakeFunction, and JSObjectMakeConstructor.
+@result true if the object can store private data, otherwise false.
+@discussion Only custom objects created with a JSClass can store private data.
 */
 bool JSObjectSetPrivate(JSObjectRef object, void* data);
 

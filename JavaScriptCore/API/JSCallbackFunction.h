@@ -36,13 +36,9 @@ namespace KJS {
 class JSCallbackFunction : public InternalFunctionImp
 {
 public:
-    JSCallbackFunction(ExecState* exec, JSObjectCallAsFunctionCallback callback);
+    JSCallbackFunction(ExecState* exec, JSObjectCallAsFunctionCallback callback, const Identifier& name);
 
-    virtual bool implementsCall() const;
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List &args);
-
-    void setPrivate(void* data);
-    void* getPrivate();
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
@@ -51,7 +47,6 @@ private:
     JSCallbackFunction(); // prevent default construction
     JSCallbackFunction(const JSCallbackFunction&);
     
-    void* m_privateData;
     JSObjectCallAsFunctionCallback m_callback;
 };
 
