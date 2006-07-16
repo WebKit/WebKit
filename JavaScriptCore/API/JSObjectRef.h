@@ -181,14 +181,14 @@ typedef void
 @result A JSValue that is the function's return value.
 @discussion If you named your function CallAsFunction, you would declare it like this:
 
-JSValueRef CallAsFunction(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception);
+JSValueRef CallAsFunction(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
 If your callback were invoked by the JavaScript expression 'myObject.myMemberFunction()', function would be set to myMemberFunction, and thisObject would be set to myObject.
 
 If this callback is NULL, calling your object as a function will throw an exception.
 */
 typedef JSValueRef 
-(*JSObjectCallAsFunctionCallback) (JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception);
+(*JSObjectCallAsFunctionCallback) (JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
 /*! 
 @typedef JSObjectCallAsConstructorCallback
@@ -201,14 +201,14 @@ typedef JSValueRef
 @result A JSObject that is the constructor's return value.
 @discussion If you named your function CallAsConstructor, you would declare it like this:
 
-JSObjectRef CallAsConstructor(JSContextRef context, JSObjectRef constructor, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception);
+JSObjectRef CallAsConstructor(JSContextRef context, JSObjectRef constructor, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
 If your callback were invoked by the JavaScript expression 'new myConstructorFunction()', constructor would be set to myConstructorFunction.
 
 If this callback is NULL, using your object as a constructor in a 'new' expression will throw an exception.
 */
 typedef JSObjectRef 
-(*JSObjectCallAsConstructorCallback) (JSContextRef context, JSObjectRef constructor, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception);
+(*JSObjectCallAsConstructorCallback) (JSContextRef context, JSObjectRef constructor, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
 /*! 
 @typedef JSObjectHasInstanceCallback
@@ -397,7 +397,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef context, JSObjectCallAsConstruc
 @function
 @abstract Creates a function with a given script as its body.
 @param context The execution context to use.
-@param A JSString containting the function's name. Pass NULL to create an anonymous function.
+@param name A JSString containing the function's name. Pass NULL to create an anonymous function.
 @param parameterCount An integer count of the number of parameter names in parameterNames.
 @param parameterNames A JSString array containing the names of the function's parameters. Pass NULL if parameterCount is 0.
 @param body A JSString containing the script to use as the function's body.
@@ -407,7 +407,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef context, JSObjectCallAsConstruc
 @result A JSObject that is a function, or NULL if either body or parameterNames contains a syntax error. The object's prototype will be the default function prototype.
 @discussion Use this method when you want to execute a script repeatedly, to avoid the cost of re-parsing the script before each execution.
 */
-JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef name, unsigned parameterCount, JSStringRef parameterNames[], JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
+JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef name, unsigned parameterCount, const JSStringRef parameterNames[], JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
 /*!
 @function
@@ -527,7 +527,7 @@ bool JSObjectIsFunction(JSObjectRef object);
 @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
 @result The JSValue that results from calling object as a function, or NULL if an exception is thrown or object is not a function.
 */
-JSValueRef JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception);
+JSValueRef JSObjectCallAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 /*!
 @function
 @abstract Tests whether an object can be called as a constructor.
@@ -545,7 +545,7 @@ bool JSObjectIsConstructor(JSObjectRef object);
 @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
 @result The JSObject that results from calling object as a constructor, or NULL if an exception is thrown or object is not a constructor.
 */
-JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, size_t argumentCount, JSValueRef arguments[], JSValueRef* exception);
+JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
 /*!
 @function

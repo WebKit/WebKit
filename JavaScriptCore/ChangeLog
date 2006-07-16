@@ -1,3 +1,10 @@
+2006-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * API/JSNode.h: Made an array parameter const.
+        * API/JSObjectRef.h: Made array parameters const. Fixed a comment.
+
 2006-07-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
