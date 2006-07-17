@@ -1,3 +1,22 @@
+2006-07-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        - fixed <rdar://problem/4604366> Orange Find highlight displays text in wrong size on PDF pages 
+        if they're not at "actual size"
+        
+        To match WebHTMLView, I made the methods that return attributed strings take the view's scale
+        factor into account.
+
+        * WebView/WebPDFView.m:
+        (-[WebPDFView _scaledAttributedString:]):
+        new helper method, takes an attributed string and returns one that's scaled by the view's
+        current scale factor
+        (-[WebPDFView attributedString]):
+        pass result through _scaledAttributedString:
+        (-[WebPDFView selectedAttributedString]):
+        ditto
+
 2006-07-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

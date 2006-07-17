@@ -659,6 +659,31 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     return [[PDFSubview document] string];
 }
 
+- (NSAttributedString *)_scaledAttributedString:(NSAttributedString *)unscaledAttributedString
+{
+    NSLog(@"unscaledAttributedString is %@", unscaledAttributedString);
+    if (!unscaledAttributedString)
+        return nil;
+    
+    float scaleFactor = [PDFSubview scaleFactor];
+    if (scaleFactor == 1.0)
+        return unscaledAttributedString;
+    
+    NSMutableAttributedString *result = [[unscaledAttributedString mutableCopy] autorelease];
+    unsigned int length = [result length];
+    NSRange effectiveRange = NSMakeRange(0,0);
+
+    [result beginEditing];    
+    while (NSMaxRange(effectiveRange) < length) {
+        NSFont *unscaledFont = [result attribute:NSFontAttributeName atIndex:NSMaxRange(effectiveRange) effectiveRange:&effectiveRange];
+        NSFont *scaledFont = [NSFont fontWithName:[unscaledFont fontName] size:[unscaledFont pointSize]*scaleFactor];
+        [result addAttribute:NSFontAttributeName value:scaledFont range:effectiveRange];
+    }
+    [result endEditing];
+    
+    return result;
+}
+
 - (NSAttributedString *)attributedString
 {
     // changing the selection is a hack, but the only way to get an attr string is via PDFSelection
@@ -675,6 +700,9 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
         // Otherwise, we could collapse this code with the case above.
         [PDFSubview clearSelection];
     }
+    
+    result = [self _scaledAttributedString:result];
+    
     return result;
 }
 
@@ -685,7 +713,7 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 
 - (NSAttributedString *)selectedAttributedString
 {
-    return [[PDFSubview currentSelection] attributedString];
+    return [self _scaledAttributedString:[[PDFSubview currentSelection] attributedString]];
 }
 
 - (void)selectAll
