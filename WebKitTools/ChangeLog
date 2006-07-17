@@ -1,3 +1,19 @@
+2006-07-16  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9875
+          Teach svn-apply and svn-unapply to use patch(1) for additions and deletions
+
+        * Scripts/svn-apply:
+        (addDirectoriesIfNeeded): Don't try to add a directory that's already in svn.
+        (checksum): Added.
+        (patch): Use patch(1) for non-binary additions and deletions.
+        * Scripts/svn-unapply:
+        (checksum): Added.
+        (patch): Use patch(1) for reverting non-binary additions and deletions.
+        (revertDirectories): Don't try to revert a directory that hasn't changed in svn.
+
 2006-07-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Timothy.

@@ -30,9 +30,9 @@
 
 # Differences from invoking "patch -p0":
 #
-#   Handles added files (does a svn add).
+#   Handles added files (does a svn add with logic to handle local changes).
 #   Handles added directories (does a svn add).
-#   Handles removed files (does a svn rm).
+#   Handles removed files (does a svn rm with logic to handle local changes).
 #   Handles removed directories--those with no more files or directories left in them
 #       (does a svn rm).
 #   Has mode where it will roll back to svn version numbers in the patch file so svn
@@ -57,6 +57,7 @@ use strict;
 use warnings;
 
 use Cwd;
+use Digest::MD5;
 use File::Basename;
 use File::Spec;
 use Getopt::Long;
@@ -65,6 +66,7 @@ use POSIX qw(strftime);
 
 sub addDirectoriesIfNeeded($);
 sub applyPatch($$;$);
+sub checksum($);
 sub fixChangeLogPatch($);
 sub handleBinaryChange($$);
 sub isDirectoryEmptyForRemoval($);
@@ -153,7 +155,7 @@ sub addDirectoriesIfNeeded($)
         }
         elsif (-d $dir) {
             my $svnOutput = svnStatus($dir);
-            if ($svnOutput && substr($svnOutput, 0, 1) eq "?") {
+            if ($svnOutput && $svnOutput =~ m#\?\s+$dir\n#) {
                 system "svn", "add", $dir;
             }
             $checkedDirectories{$dir} = 1;
@@ -172,6 +174,16 @@ sub applyPatch($$;$)
     open PATCH, "| $command" or die "Failed to patch $fullPath\n";
     print PATCH $patch;
     close PATCH;
+}
+
+sub checksum($)
+{
+    my $file = shift;
+    open(FILE, $file) or die "Can't open '$file': $!";
+    binmode(FILE);
+    my $checksum = Digest::MD5->new->addfile(*FILE)->hexdigest();
+    close(FILE);
+    return $checksum;
 }
 
 sub fixChangeLogPatch($)
@@ -300,23 +312,16 @@ sub patch($)
             # Binary change
             handleBinaryChange($fullPath, $patch);
         } elsif ($deletion) {
-            # Deletion.
-            system "svn", "rm", $fullPath;
+            # Deletion
+            applyPatch($patch, $fullPath, ["--force"]);
+            system "svn", "rm", "--force", $fullPath;
         } else {
-            # Addition.
-            my $contents = $patch;
-            if ($contents !~ s/^(.*\n)*@@[^\n]+@@\n//) {
-                # Empty contents.
-                $contents = "";
-            } else {
-                # Non-empty contents: Remove leading + signs.
-                $contents =~ s/^\+//;
-                $contents =~ s/\n\+/\n/g;
-            }
-            open FILE, ">", $fullPath or die;
-            print FILE $contents;
-            close FILE;
+            # Addition
+            rename($fullPath, "$fullPath.orig") if -e $fullPath;
+            applyPatch($patch, $fullPath);
+            unlink("$fullPath.orig") if -e "$fullPath.orig" && checksum($fullPath) eq checksum("$fullPath.orig");
             system "svn", "add", $fullPath;
+            system "svn", "stat", "$fullPath.orig" if -e "$fullPath.orig";
         }
     }
 }
