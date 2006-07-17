@@ -1,3 +1,12 @@
+2006-07-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4618389> REGRESSION: After applying a link to the last word of a sentence, a new selection is created at the start of the sentence
+        
+        * dom/Document.cpp:
+        (WebCore::Document::updateSelection):
+
 2006-07-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Beth.

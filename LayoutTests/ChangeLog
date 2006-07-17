@@ -1,3 +1,14 @@
+2006-07-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4618389> REGRESSION: After applying a link to the last word of a sentence, a new selection is created at the start of the sentence
+
+        * editing/selection/replace-selection-1-expected.checksum: Added.
+        * editing/selection/replace-selection-1-expected.png: Added.
+        * editing/selection/replace-selection-1-expected.txt: Added.
+        * editing/selection/replace-selection-1.html: Added.
+
 2006-07-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
