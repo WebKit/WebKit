@@ -1,3 +1,70 @@
+2006-07-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Approved by Maciej, RS by Beth.
+        
+        JSObjectMakeFunction -> JSObjectMakeFunctionWithCallback
+        JSObjectMakeFunctionWithBody -> JSObjectMakeFunction
+        
+        because the latter is more common, and more fundamental, than the former.
+
+        * API/APICast.h:
+        (toJS):
+        * API/JSBase.h:
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::deleteProperty):
+        (KJS::JSCallbackObject::getPropertyNames):
+        (KJS::JSCallbackObject::staticValueGetter):
+        (KJS::JSCallbackObject::staticFunctionGetter):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass):
+        (OpaqueJSClass::~OpaqueJSClass):
+        * API/JSClassRef.h:
+        * API/JSObjectRef.cpp:
+        (JSClassCreate):
+        (JSObjectMakeFunctionWithCallback):
+        (JSObjectMakeFunction):
+        (OpaqueJSPropertyNameArray::OpaqueJSPropertyNameArray):
+        (JSObjectCopyPropertyNames):
+        * API/JSObjectRef.h:
+        * API/minidom.c:
+        (main):
+        * API/testapi.c:
+        (main):
+        * ChangeLog:
+        * JavaScriptCore.exp:
+
+2006-07-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Laughed at by Beth.
+        
+        Replace __JS with OpaqueJS because the former, while used by CF, is
+        a prefix that's triply-reserved by the compiler. (_* is reserved in global 
+        names, _[A-Z] is reserved in all names, and __ is reserved in all names 
+        in C++.)
+        
+        Opaque is an alternative used by other Mac OS X framewokrs.
+
+        * API/APICast.h:
+        (toJS):
+        * API/JSBase.h:
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::deleteProperty):
+        (KJS::JSCallbackObject::getPropertyNames):
+        (KJS::JSCallbackObject::staticValueGetter):
+        (KJS::JSCallbackObject::staticFunctionGetter):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass):
+        (OpaqueJSClass::~OpaqueJSClass):
+        * API/JSClassRef.h:
+        * API/JSObjectRef.cpp:
+        (JSClassCreate):
+        (OpaqueJSPropertyNameArray::OpaqueJSPropertyNameArray):
+        (JSObjectCopyPropertyNames):
+
 2006-07-16  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build

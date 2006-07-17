@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     
     JSStringRef printIString = JSStringCreateWithUTF8CString("print");
-    JSObjectSetProperty(context, globalObject, printIString, JSObjectMakeFunction(context, printIString, print), kJSPropertyAttributeNone, NULL);
+    JSObjectSetProperty(context, globalObject, printIString, JSObjectMakeFunctionWithCallback(context, printIString, print), kJSPropertyAttributeNone, NULL);
     JSStringRelease(printIString);
     
     JSStringRef node = JSStringCreateWithUTF8CString("Node");

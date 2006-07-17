@@ -32,7 +32,7 @@ using namespace KJS;
 
 const JSClassDefinition kJSClassDefinitionNull = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-__JSClass::__JSClass(JSClassDefinition* definition) 
+OpaqueJSClass::OpaqueJSClass(JSClassDefinition* definition) 
     : refCount(0)
     , className(definition->className)
     , parentClass(definition->parentClass)
@@ -69,7 +69,7 @@ __JSClass::__JSClass(JSClassDefinition* definition)
     }
 }
 
-__JSClass::~__JSClass()
+OpaqueJSClass::~OpaqueJSClass()
 {
     if (staticValues) {
         deleteAllValues(*staticValues);

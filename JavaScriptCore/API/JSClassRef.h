@@ -52,9 +52,9 @@ struct StaticFunctionEntry {
     JSPropertyAttributes attributes;
 };
 
-struct __JSClass {
-    __JSClass(JSClassDefinition*);
-    ~__JSClass();
+struct OpaqueJSClass {
+    OpaqueJSClass(JSClassDefinition*);
+    ~OpaqueJSClass();
     
     typedef HashMap<RefPtr<KJS::UString::Rep>, StaticValueEntry*> StaticValuesTable;
     typedef HashMap<RefPtr<KJS::UString::Rep>, StaticFunctionEntry*> StaticFunctionsTable;
@@ -62,7 +62,7 @@ struct __JSClass {
     unsigned refCount;
 
     KJS::UString className;
-    __JSClass* parentClass;
+    OpaqueJSClass* parentClass;
         
     StaticValuesTable* staticValues;
     StaticFunctionsTable* staticFunctions;

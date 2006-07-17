@@ -43,7 +43,7 @@ using namespace KJS;
 
 JSClassRef JSClassCreate(JSClassDefinition* definition)
 {
-    JSClassRef jsClass = new __JSClass(definition);
+    JSClassRef jsClass = new OpaqueJSClass(definition);
     return JSClassRetain(jsClass);
 }
 
@@ -75,7 +75,7 @@ JSObjectRef JSObjectMake(JSContextRef context, JSClassRef jsClass, JSValueRef pr
         return toRef(new JSCallbackObject(context, jsClass, jsPrototype));
 }
 
-JSObjectRef JSObjectMakeFunction(JSContextRef context, JSStringRef name, JSObjectCallAsFunctionCallback callAsFunction)
+JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef context, JSStringRef name, JSObjectCallAsFunctionCallback callAsFunction)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -91,7 +91,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef context, JSObjectCallAsConstruc
     return toRef(new JSCallbackConstructor(exec, callAsConstructor));
 }
 
-JSObjectRef JSObjectMakeFunctionWithBody(JSContextRef context, JSStringRef name, unsigned parameterCount, const JSStringRef parameterNames[], JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
+JSObjectRef JSObjectMakeFunction(JSContextRef context, JSStringRef name, unsigned parameterCount, const JSStringRef parameterNames[], JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
     JSLock lock;
     
@@ -297,9 +297,9 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef context, JSObjectRef object, 
     return result;
 }
 
-struct __JSPropertyNameArray
+struct OpaqueJSPropertyNameArray
 {
-    __JSPropertyNameArray() : refCount(0)
+    OpaqueJSPropertyNameArray() : refCount(0)
     {
     }
     
@@ -313,7 +313,7 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef context, JSObjectR
     JSObject* jsObject = toJS(object);
     ExecState* exec = toJS(context);
     
-    JSPropertyNameArrayRef propertyNames = new __JSPropertyNameArray();
+    JSPropertyNameArrayRef propertyNames = new OpaqueJSPropertyNameArray();
     jsObject->getPropertyNames(exec, propertyNames->array);
     
     return JSPropertyNameArrayRetain(propertyNames);

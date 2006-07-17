@@ -32,31 +32,31 @@
 /* JavaScript engine interface */
 
 /*! @typedef JSContextRef A JavaScript execution context. Holds the global object and other execution state. */
-typedef const struct __JSContext* JSContextRef;
+typedef const struct OpaqueJSContext* JSContextRef;
 
 /*! @typedef JSGlobalContextRef A global JavaScript execution context. A JSGlobalContext is a JSContext. */
-typedef struct __JSContext* JSGlobalContextRef;
+typedef struct OpaqueJSContext* JSGlobalContextRef;
 
 /*! @typedef JSString A UTF16 character buffer. The fundamental string representation in JavaScript. */
-typedef struct __JSString* JSStringRef;
+typedef struct OpaqueJSString* JSStringRef;
 
 /*! @typedef JSClassRef A JavaScript class. Used with JSObjectMake to construct objects with custom behavior. */
-typedef struct __JSClass* JSClassRef;
+typedef struct OpaqueJSClass* JSClassRef;
 
 /*! @typedef JSPropertyNameArrayRef An array of JavaScript property names. */
-typedef struct __JSPropertyNameArray* JSPropertyNameArrayRef;
+typedef struct OpaqueJSPropertyNameArray* JSPropertyNameArrayRef;
 
 /*! @typedef JSPropertyNameAccumulatorRef A data type used to collect a JavaScript object's property names. */
-typedef struct __JSPropertyNameAccumulator* JSPropertyNameAccumulatorRef;
+typedef struct OpaqueJSPropertyNameAccumulator* JSPropertyNameAccumulatorRef;
 
 
 /* JavaScript data types */
 
 /*! @typedef JSValueRef A JavaScript value. The base type for all JavaScript values, and polymorphic functions on them. */
-typedef const struct __JSValue* JSValueRef;
+typedef const struct OpaqueJSValue* JSValueRef;
 
 /*! @typedef JSObjectRef A JavaScript object. A JSObject is a JSValue. */
-typedef struct __JSValue* JSObjectRef;
+typedef struct OpaqueJSValue* JSObjectRef;
 
 #ifdef __cplusplus
 extern "C" {

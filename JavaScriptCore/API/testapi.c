@@ -560,7 +560,7 @@ int main(int argc, char* argv[])
     exception = NULL;
     functionBody = JSStringCreateWithUTF8CString("rreturn Array;");
     JSStringRef line = JSStringCreateWithUTF8CString("line");
-    assert(!JSObjectMakeFunctionWithBody(context, NULL, 0, NULL, functionBody, NULL, 1, &exception));
+    assert(!JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, &exception));
     assert(JSValueIsObject(exception));
     v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line, NULL);
     assertEqualsAsNumber(v, 2); // FIXME: Lexer::setCode bumps startingLineNumber by 1 -- we need to change internal callers so that it doesn't have to (saying '0' to mean '1' in the API would be really confusing -- it's really confusing internally, in fact)
@@ -569,7 +569,7 @@ int main(int argc, char* argv[])
 
     exception = NULL;
     functionBody = JSStringCreateWithUTF8CString("return Array;");
-    function = JSObjectMakeFunctionWithBody(context, NULL, 0, NULL, functionBody, NULL, 1, &exception);
+    function = JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, &exception);
     JSStringRelease(functionBody);
     assert(!exception);
     assert(JSObjectIsFunction(function));
@@ -578,7 +578,7 @@ int main(int argc, char* argv[])
     assert(JSValueIsEqual(context, v, arrayConstructor, NULL));
     
     exception = NULL;
-    function = JSObjectMakeFunctionWithBody(context, NULL, 0, NULL, jsEmptyIString, NULL, 0, &exception);
+    function = JSObjectMakeFunction(context, NULL, 0, NULL, jsEmptyIString, NULL, 0, &exception);
     assert(!exception);
     v = JSObjectCallAsFunction(context, function, NULL, 0, NULL, &exception);
     assert(v && !exception);
@@ -589,7 +589,7 @@ int main(int argc, char* argv[])
     JSStringRef foo = JSStringCreateWithUTF8CString("foo");
     JSStringRef argumentNames[] = { foo };
     functionBody = JSStringCreateWithUTF8CString("return foo;");
-    function = JSObjectMakeFunctionWithBody(context, foo, 1, argumentNames, functionBody, NULL, 1, &exception);
+    function = JSObjectMakeFunction(context, foo, 1, argumentNames, functionBody, NULL, 1, &exception);
     assert(function && !exception);
     JSValueRef arguments[] = { JSValueMakeNumber(2) };
     v = JSObjectCallAsFunction(context, function, NULL, 1, arguments, &exception);
@@ -601,7 +601,7 @@ int main(int argc, char* argv[])
     JSStringRelease(string);
 
     JSStringRef print = JSStringCreateWithUTF8CString("print");
-    JSObjectRef printFunction = JSObjectMakeFunction(context, print, print_callAsFunction);
+    JSObjectRef printFunction = JSObjectMakeFunctionWithCallback(context, print, print_callAsFunction);
     JSObjectSetProperty(context, globalObject, print, printFunction, kJSPropertyAttributeNone, NULL); 
     JSStringRelease(print);
     
@@ -632,7 +632,7 @@ int main(int argc, char* argv[])
     JSClassRelease(nullClass);
     
     functionBody = JSStringCreateWithUTF8CString("return this;");
-    function = JSObjectMakeFunctionWithBody(context, NULL, 0, NULL, functionBody, NULL, 1, NULL);
+    function = JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, NULL);
     JSStringRelease(functionBody);
     v = JSObjectCallAsFunction(context, function, NULL, 0, NULL, NULL);
     assert(JSValueIsEqual(context, v, globalObject, NULL));
