@@ -1,3 +1,10 @@
+2006-07-16  Darin Adler  <darin@apple.com>
+
+        - fixed a couple of files I checked in wrong
+
+        * fast/html/body-offset-properties-expected.txt: Removed property cruft.
+        * fast/html/body-offset-properties.html: Ditto.
+
 2006-07-16  Maciej Stachowiak  <mjs@apple.com>
 
         - fixed typo in expected results
