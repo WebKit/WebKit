@@ -2205,21 +2205,14 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)maintainsInactiveSelection
 {
-    // This method helps to determing whether the view should maintain
-    // an inactive selection when the view is not first responder.
+    // This method helps to determine whether the WebHTMLView should maintain
+    // an inactive selection when it's not first responder.
     // Traditionally, these views have not maintained such selections,
     // clearing them when the view was not first responder. However,
     // to fix bugs like this one:
     // <rdar://problem/3672088>: "Editable WebViews should maintain a selection even 
     //                            when they're not firstResponder"
     // it was decided to add a switch to act more like an NSTextView.
-    // For now, however, the view only acts in this way when the
-    // web view is set to be editable. This will maintain traditional
-    // behavior for WebKit clients dating back to before this change,
-    // and will likely be a decent switch for the long term, since
-    // clients to ste the web view to be editable probably want it
-    // to act like a "regular" Cocoa view in terms of its selection
-    // behavior.
     id nextResponder = [[self window] _newFirstResponderAfterResigning];
 
     // Predict the case where we are losing first responder status only to
@@ -2240,15 +2233,7 @@ static WebHTMLView *lastHitView = nil;
     if (nextResponder == self)
         return YES;
 
-    if (![[self _webView] maintainsInactiveSelection])
-        return NO;
-    
-    // editable views lose selection when losing first responder status
-    // to a widget in the same page, but not otherwise
-    BOOL loseSelection = [nextResponder isKindOfClass:[NSView class]]
-        && [nextResponder isDescendantOf:[self _webView]];
-
-    return !loseSelection;
+    return [[self _webView] maintainsInactiveSelection] || [[self _bridge] isSelectionEditable];
 }
 
 - (void)addMouseMovedObserver
@@ -2992,7 +2977,6 @@ done:
     _private->willBecomeFirstResponderForNodeFocus = NO;
     if (view)
         [[self window] makeFirstResponder:view];
-    [[self _frame] _clearSelectionInOtherFrames];
     [self _updateActiveState];
     [self _updateFontPanel];
     _private->startNewKillRingSequence = YES;

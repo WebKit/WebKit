@@ -1,3 +1,19 @@
+2006-07-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        Rolled the first fix for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9642>
+        GMail Editor: Operations that use drop down menus blow away the selection
+        back in and removed the call to _clearSelectionInOtherFrames from 
+        -[WebHTMLView becomeFirstResponder] to fix the bug.
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray maintainsInactiveSelection]):
+        (-[NSArray becomeFirstResponder]):
+        * WebView/WebView.m:
+        (-[WebView maintainsInactiveSelection]):
+
 2006-07-15  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
