@@ -114,7 +114,7 @@ static JSObjectRef JSNodeList_prototype(JSContextRef context)
 {
     static JSObjectRef prototype;
     if (!prototype) {
-        prototype = JSObjectMake(context, JSNodeListPrototype_class(context), NULL);
+        prototype = JSObjectMake(context, JSNodeListPrototype_class(context), NULL, NULL);
         JSValueProtect(context, prototype);
     }
     return prototype;
@@ -124,7 +124,7 @@ JSObjectRef JSNodeList_new(JSContextRef context, NodeList* nodeList)
 {
     NodeList_ref(nodeList);
     
-    JSObjectRef jsNodeList = JSObjectMake(context, JSNodeList_class(context), JSNodeList_prototype(context));
+    JSObjectRef jsNodeList = JSObjectMake(context, JSNodeList_class(context), JSNodeList_prototype(context), NULL);
     JSObjectSetPrivate(jsNodeList, nodeList);
     return jsNodeList;
 }

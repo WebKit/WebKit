@@ -2,6 +2,21 @@
 
         Reviewed by Maciej.
         
+        - Changed the initialize callback to run from least derived class (parent
+        class) to most derived class. This enables C++ style initialization,
+        and derived class overriding of member data.
+        
+        - Added excpetion propopgation to JSObjectMake, to support initialize
+        exceptions, and generally round out our policy of making function
+        signatures as long as possible.
+
+        * API/JSCallbackObject.h: Use ExecState instead of ContextRef, cuz we're
+        in C++ land now.
+
+2006-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
         - Changed JSObjectMakeConstructor to JSObjectMakeConstructorWithCallback,
         to match JSObjectMakeFunctionWithCallback.
         

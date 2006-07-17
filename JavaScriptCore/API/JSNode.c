@@ -181,7 +181,7 @@ JSObjectRef JSNode_prototype(JSContextRef context)
 {
     static JSObjectRef prototype;
     if (!prototype) {
-        prototype = JSObjectMake(context, JSNodePrototype_class(context), NULL);
+        prototype = JSObjectMake(context, JSNodePrototype_class(context), NULL, NULL);
         JSValueProtect(context, prototype);
     }
     return prototype;
@@ -191,7 +191,7 @@ JSObjectRef JSNode_new(JSContextRef context, Node* node)
 {
     Node_ref(node);
 
-    JSObjectRef jsNode = JSObjectMake(context, JSNode_class(context), JSNode_prototype(context));
+    JSObjectRef jsNode = JSObjectMake(context, JSNode_class(context), JSNode_prototype(context), NULL);
     JSObjectSetPrivate(jsNode, node);
     return jsNode;
 }

@@ -66,6 +66,9 @@ typedef unsigned JSPropertyAttributes;
 @discussion If you named your function Initialize, you would declare it like this:
 
 void Initialize(JSContextRef ctx, JSObjectRef object, JSValueRef* exception);
+
+Unlike the other object callbacks, the initialize callback is called on the least
+derived class (the parent class) first, and the most derived class last.
 */
 typedef void
 (*JSObjectInitializeCallback) (JSContextRef ctx, JSObjectRef object, JSValueRef* exception);
@@ -77,6 +80,9 @@ typedef void
 @discussion If you named your function Finalize, you would declare it like this:
 
 void Finalize(JSObjectRef object);
+
+The finalize callback is called on the most derived class first, and the least 
+derived class (the parent class) last.
 */
 typedef void            
 (*JSObjectFinalizeCallback) (JSObjectRef object);
@@ -224,7 +230,6 @@ typedef JSObjectRef
 @param possibleInstance The JSValue being tested to determine if it is an instance of constructor.
 @param exception A pointer to a JSValueRef in which to return an exception, if any.
 @result true if possibleInstance is an instance of constructor, otherwise false.
-
 @discussion If you named your function HasInstance, you would declare it like this:
 
 bool HasInstance(JSContextRef ctx, JSObjectRef constructor, JSValueRef possibleInstance, JSValueRef* exception);
@@ -378,9 +383,10 @@ void JSClassRelease(JSClassRef jsClass);
 @param ctx The execution context to use.
 @param jsClass The JSClass to assign to the object. Pass NULL to use the default object class.
 @param prototype The prototype to assign to the object. Pass NULL to use the default object prototype.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
 @result A JSObject with the given class and prototype.
 */
-JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, JSValueRef prototype);
+JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, JSValueRef prototype, JSValueRef* exception);
 
 /*!
 @function

@@ -59,7 +59,7 @@ void JSClassRelease(JSClassRef jsClass)
         delete jsClass;
 }
 
-JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, JSValueRef prototype)
+JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, JSValueRef prototype, JSValueRef* exception)
 {
     JSLock lock;
 
@@ -69,10 +69,18 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, JSValueRef protot
     if (!prototype)
         jsPrototype = exec->lexicalInterpreter()->builtinObjectPrototype();
 
-    if (!jsClass)
-        return toRef(new JSObject(jsPrototype)); // slightly more efficient
-    else
-        return toRef(new JSCallbackObject(ctx, jsClass, jsPrototype));
+    JSObjectRef result;
+    if (jsClass) {
+        result = toRef(new JSCallbackObject(exec, jsClass, jsPrototype));
+        if (exec->hadException()) {
+            if (exception)
+                *exception = toRef(exec->exception());
+            exec->clearException();
+        }
+    } else
+        result = toRef(new JSObject(jsPrototype)); // slightly more efficient -- and can't throw
+        
+    return result;
 }
 
 JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name, JSObjectCallAsFunctionCallback callAsFunction)
