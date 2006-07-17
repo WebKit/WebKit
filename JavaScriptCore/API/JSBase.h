@@ -66,26 +66,26 @@ extern "C" {
 
 /*!
 @function
-@abstract                 Evaluates a string of JavaScript.
-@param ctx            The execution context to use.
-@param script             A JSString containing the script to evaluate.
-@param thisObject         The object to use as "this," or NULL to use the global object as "this."
-@param sourceURL          A JSString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
+@abstract Evaluates a string of JavaScript.
+@param ctx The execution context to use.
+@param script A JSString containing the script to evaluate.
+@param thisObject The object to use as "this," or NULL to use the global object as "this."
+@param sourceURL A JSString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
 @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions.
-@param exception          A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
-@result                   The JSValue that results from evaluating script, or NULL if an exception is thrown.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+@result The JSValue that results from evaluating script, or NULL if an exception is thrown.
 */
 JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
 /*!
 @function JSCheckScriptSyntax
-@abstract                 Checks for syntax errors in a string of JavaScript.
-@param ctx            The execution context to use.
-@param script             A JSString containing the script to check for syntax errors.
-@param sourceURL          A JSString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
+@abstract Checks for syntax errors in a string of JavaScript.
+@param ctx The execution context to use.
+@param script A JSString containing the script to check for syntax errors.
+@param sourceURL A JSString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
 @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions.
-@param exception          A pointer to a JSValueRef in which to store a syntax error exception, if any. Pass NULL if you do not care to store a syntax error exception.
-@result                   true if the script is syntactically correct, otherwise false.
+@param exception A pointer to a JSValueRef in which to store a syntax error exception, if any. Pass NULL if you do not care to store a syntax error exception.
+@result true if the script is syntactically correct, otherwise false.
 */
 bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
 

@@ -504,7 +504,7 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
 @abstract Gets a property from an object by numeric index.
 @param ctx The execution context to use.
 @param object The JSObject whose property you want to get.
-@param propertyIndex The property's name as a number
+@param propertyIndex The property's name as a number.
 @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
 @result The property's value if object has the property, otherwise the undefined value.
 @discussion Calling JSObjectGetPropertyAtIndex is equivalent to calling JSObjectGetProperty with a string containing propertyIndex, but it enables optimized access to JavaScript arrays.
@@ -516,7 +516,7 @@ JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsi
 @abstract Sets a property on an object by numeric index.
 @param ctx The execution context to use.
 @param object The JSObject whose property you want to set.
-@param propertyIndex The property's name as a number
+@param propertyIndex The property's name as a number.
 @param value A JSValue to use as the property's value.
 @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
 @discussion Calling JSObjectSetPropertyAtIndex is equivalent to calling JSObjectSetProperty with a string containing propertyIndex, but it enables optimized access to JavaScript arrays.
@@ -595,40 +595,40 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
 
 /*!
 @function
-@abstract         Retains a JavaScript property name array.
-@param array      The JSPropertyNameArray to retain.
-@result           A JSPropertyNameArray that is the same as array.
+@abstract Retains a JavaScript property name array.
+@param array The JSPropertyNameArray to retain.
+@result A JSPropertyNameArray that is the same as array.
 */
 JSPropertyNameArrayRef JSPropertyNameArrayRetain(JSPropertyNameArrayRef array);
 
 /*!
 @function
-@abstract         Releases a JavaScript property name array.
-@param array      The JSPropetyNameArray to release.
+@abstract Releases a JavaScript property name array.
+@param array The JSPropetyNameArray to release.
 */
 void JSPropertyNameArrayRelease(JSPropertyNameArrayRef array);
 
 /*!
 @function
-@abstract      Get the number of items in a JavaScript property name array.
-@param array   The array from which to retrieve the count.
-@result        The count of items in the array.
+@abstract Get the number of items in a JavaScript property name array.
+@param array The array from which to retrieve the count.
+@result The count of items in the array.
 */
 size_t JSPropertyNameArrayGetCount(JSPropertyNameArrayRef array);
 
 /*!
 @function
-@abstract      Get a single item from a JavaScript property name array.
-@param array   The array from which to retrieve a property name.
-@param index   The index of the property name to retrieve.
-@result        A JSStringRef containing the name of the property.
+@abstract Get a single item from a JavaScript property name array.
+@param array The array from which to retrieve a property name.
+@param index The index of the property name to retrieve.
+@result A JSStringRef containing the name of the property.
 */
 JSStringRef JSPropertyNameArrayGetNameAtIndex(JSPropertyNameArrayRef array, size_t index);
 
 /*!
 @function
-@abstract           Add a property name - useful while getting the property names for an object.
-@param accumulator  The accumulator object to which to add the property.
+@abstract Add a property name - useful while getting the property names for an object.
+@param accumulator The accumulator object to which to add the property.
 @param propertyName The new property to add.
 */
 void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef accumulator, JSStringRef propertyName);

@@ -1,3 +1,9 @@
+2006-07-17  Darin Adler  <darin@apple.com>
+
+        * API/JSBase.h: Fix comment formatting where things used to be lined up but
+        are now ragged. Got rid of spaces that attempted to line things up.
+        * API/JSObjectRef.h: Ditto. Also add missing periods for a couple of comments.
+
 2006-07-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
