@@ -148,8 +148,6 @@ JSValueRef JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStrin
     UString::Rep* nameRep = toJS(propertyName);
 
     JSValue* jsValue = jsObject->get(exec, Identifier(nameRep));
-    if (jsValue->isUndefined())
-        jsValue = 0;
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());
@@ -174,20 +172,23 @@ void JSObjectSetProperty(JSContextRef context, JSObjectRef object, JSStringRef p
     }
 }
 
-JSValueRef JSObjectGetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsigned propertyIndex)
+JSValueRef JSObjectGetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsigned propertyIndex, JSValueRef* exception)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
     JSObject* jsObject = toJS(object);
 
     JSValue* jsValue = jsObject->get(exec, propertyIndex);
-    if (jsValue->isUndefined())
-        return 0;
+    if (exec->hadException()) {
+        if (exception)
+            *exception = toRef(exec->exception());
+        exec->clearException();
+    }
     return toRef(jsValue);
 }
 
 
-void JSObjectSetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsigned propertyIndex, JSValueRef value)
+void JSObjectSetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsigned propertyIndex, JSValueRef value, JSValueRef* exception)
 {
     JSLock lock;
     ExecState* exec = toJS(context);
@@ -195,6 +196,11 @@ void JSObjectSetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsign
     JSValue* jsValue = toJS(value);
     
     jsObject->put(exec, propertyIndex, jsValue);
+    if (exec->hadException()) {
+        if (exception)
+            *exception = toRef(exec->exception());
+        exec->clearException();
+    }
 }
 
 bool JSObjectDeleteProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)

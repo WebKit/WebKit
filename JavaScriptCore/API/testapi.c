@@ -115,7 +115,8 @@ static bool MyObject_hasProperty(JSContextRef context, JSObjectRef object, JSStr
     if (JSStringIsEqualToUTF8CString(propertyName, "alwaysOne")
         || JSStringIsEqualToUTF8CString(propertyName, "cantFind")
         || JSStringIsEqualToUTF8CString(propertyName, "myPropertyName")
-        || JSStringIsEqualToUTF8CString(propertyName, "hasPropertyLie")) {
+        || JSStringIsEqualToUTF8CString(propertyName, "hasPropertyLie")
+        || JSStringIsEqualToUTF8CString(propertyName, "0")) {
         return true;
     }
     
@@ -137,6 +138,11 @@ static JSValueRef MyObject_getProperty(JSContextRef context, JSObjectRef object,
 
     if (JSStringIsEqualToUTF8CString(propertyName, "cantFind")) {
         return JSValueMakeUndefined();
+    }
+    
+    if (JSStringIsEqualToUTF8CString(propertyName, "0")) {
+        *exception = JSValueMakeNumber(1);
+        return JSValueMakeNumber(1);
     }
     
     return NULL;
@@ -414,6 +420,10 @@ int main(int argc, char* argv[])
     exception = NULL;
     assert(!JSValueIsEqual(context, jsObjectNoProto, JSValueMakeNumber(1), &exception));
     assert(exception);
+    
+    exception = NULL;
+    JSObjectGetPropertyAtIndex(context, myObject, 0, &exception);
+    assert(1 == JSValueToNumber(context, exception, NULL));
 
     assertEqualsAsBoolean(jsUndefined, false);
     assertEqualsAsBoolean(jsNull, false);
@@ -524,15 +534,26 @@ int main(int argc, char* argv[])
     assert(JSValueIsObject(exception));
     
     JSStringRef array = JSStringCreateWithUTF8CString("Array");
-    v = JSObjectGetProperty(context, globalObject, array, NULL);
-    assert(v);
-    JSObjectRef arrayConstructor = JSValueToObject(context, v, NULL);
+    JSObjectRef arrayConstructor = JSValueToObject(context, JSObjectGetProperty(context, globalObject, array, NULL), NULL);
     JSStringRelease(array);
     result = JSObjectCallAsConstructor(context, arrayConstructor, 0, NULL, NULL);
     assert(result);
+    assert(JSValueIsObject(result));
     assert(JSValueIsInstanceOfConstructor(context, result, arrayConstructor, NULL));
     assert(!JSValueIsInstanceOfConstructor(context, JSValueMakeNull(), arrayConstructor, NULL));
+
+    o = JSValueToObject(context, result, NULL);
+    exception = NULL;
+    assert(JSValueIsUndefined(JSObjectGetPropertyAtIndex(context, o, 0, &exception)));
+    assert(!exception);
     
+    JSObjectSetPropertyAtIndex(context, o, 0, JSValueMakeNumber(1), &exception);
+    assert(!exception);
+    
+    exception = NULL;
+    assert(1 == JSValueToNumber(context, JSObjectGetPropertyAtIndex(context, o, 0, &exception), &exception));
+    assert(!exception);
+
     JSStringRef functionBody;
     JSObjectRef function;
     
@@ -542,7 +563,6 @@ int main(int argc, char* argv[])
     assert(!JSObjectMakeFunctionWithBody(context, NULL, 0, NULL, functionBody, NULL, 1, &exception));
     assert(JSValueIsObject(exception));
     v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line, NULL);
-    assert(v);
     assertEqualsAsNumber(v, 2); // FIXME: Lexer::setCode bumps startingLineNumber by 1 -- we need to change internal callers so that it doesn't have to (saying '0' to mean '1' in the API would be really confusing -- it's really confusing internally, in fact)
     JSStringRelease(functionBody);
     JSStringRelease(line);
@@ -618,6 +638,8 @@ int main(int argc, char* argv[])
     assert(JSValueIsEqual(context, v, globalObject, NULL));
     v = JSObjectCallAsFunction(context, function, o, 0, NULL, NULL);
     assert(JSValueIsEqual(context, v, o, NULL));
+    
+    
     
     char* scriptUTF8 = createStringWithContentsOfFile("testapi.js");
     JSStringRef script = JSStringCreateWithUTF8CString(scriptUTF8);

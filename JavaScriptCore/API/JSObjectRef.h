@@ -447,7 +447,7 @@ bool JSObjectHasProperty(JSContextRef context, JSObjectRef object, JSStringRef p
 @param object The JSObject whose property you want to get.
 @param propertyName A JSString containing the property's name.
 @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
-@result The property's value if object has the property, otherwise NULL.
+@result The property's value if object has the property, otherwise the undefined value.
 */
 JSValueRef JSObjectGetProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception);
 
@@ -480,10 +480,11 @@ bool JSObjectDeleteProperty(JSContextRef context, JSObjectRef object, JSStringRe
 @param context The execution context to use.
 @param object The JSObject whose property you want to get.
 @param propertyIndex The property's name as a number
-@result The property's value if object has the property, otherwise NULL.
-@discussion This is equivalent to getting a property by a string name containing the number, but allows faster access to JS arrays.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+@result The property's value if object has the property, otherwise the undefined value.
+@discussion Calling JSObjectGetPropertyAtIndex is equivalent to calling JSObjectGetProperty with a string containing propertyIndex, but it enables optimized access to JavaScript arrays.
 */
-JSValueRef JSObjectGetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsigned propertyIndex);
+JSValueRef JSObjectGetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsigned propertyIndex, JSValueRef* exception);
 
 /*!
 @function
@@ -492,9 +493,10 @@ JSValueRef JSObjectGetPropertyAtIndex(JSContextRef context, JSObjectRef object, 
 @param object The JSObject whose property you want to set.
 @param propertyIndex The property's name as a number
 @param value A JSValue to use as the property's value.
-@discussion This is equivalent to setting a property by a string name containing the number, but allows faster access to JS arrays.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+@discussion Calling JSObjectSetPropertyAtIndex is equivalent to calling JSObjectSetProperty with a string containing propertyIndex, but it enables optimized access to JavaScript arrays.
 */
-void JSObjectSetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsigned propertyIndex, JSValueRef value);
+void JSObjectSetPropertyAtIndex(JSContextRef context, JSObjectRef object, unsigned propertyIndex, JSValueRef value, JSValueRef* exception);
 
 /*!
 @function

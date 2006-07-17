@@ -2,6 +2,23 @@
 
         Reviewed by Maciej.
         
+        - Change getProperty* to return undefined, rather than NULL, for missing
+        properties, since that's what the spec says. Also added exception out
+        parameters to the *Index functions, because they can call through to the
+        regular functions, which can throw for custom objects.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectGetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        * API/JSObjectRef.h:
+        * API/testapi.c:
+        (main):
+
+2006-07-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
         - Properly document and handle NULL callbacks for static properties. We
         throw an exception in any case other than a ReadOnly property with a NULL
         setProperty callback, because a NULL callback almost certainly indicates 
