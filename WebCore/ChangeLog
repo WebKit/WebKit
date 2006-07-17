@@ -1,3 +1,12 @@
+2006-07-16  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        * dom/NodeFilter.idl:
+        Removed "No newline at end of file" that snuck in as part of the "apply patch" process.
+        * manual-tests/input-empty-on-focus.html:
+        Removed "Property changes" that snuck in as part of the "apply patch" process.
+
 2006-07-16  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

@@ -2,6 +2,15 @@
 
         Reviewed by Darin.
 
+        * BuildSlaveSupport/build.webkit.org-config/buildbot.css:
+        Removed "No newline at end of file" that snuck in as part of the "apply patch" process.
+        * GdkLauncher/mk:
+        Removed "Property changes" that snuck in as part of the "apply patch" process.
+
+2006-07-16  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9875
           Teach svn-apply and svn-unapply to use patch(1) for additions and deletions
 
