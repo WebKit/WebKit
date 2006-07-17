@@ -1,3 +1,24 @@
+2006-07-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/4616595> REGRESSION: Problems with world 
+        clock widget clock hand motion on 9A211 + 4604574
+
+        The second hand on the widget was jiggling because the rotation was 
+        messing up the use of the affine transformation matrix while 
+        rounding to pixel boundaries in device space. We are mainly 
+        concerned with rounding to pixel boundaries with the scale in mind, 
+        so this patch extracts the scale to device space from the matrix, 
+        and rounds to pixel boundaries using only the scale. This doesn't 
+        seem like it is a perfect solution, but it definitely solves the 
+        immediate problem. We will probably need to re-address what should 
+        happen to avoid pixel cracks with rotations at non-integral scale 
+        factors. 
+
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::roundToDevicePixels):
+
 2006-07-15  Darin Adler  <darin@apple.com>
 
         - fix mistake from fix for 8952 that was breaking layout tests

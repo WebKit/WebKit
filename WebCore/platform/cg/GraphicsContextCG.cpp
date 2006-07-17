@@ -636,11 +636,17 @@ void GraphicsContext::translate(const FloatSize& size)
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
 {
-    // It's important to separately transform the two corners, as transforming the whole rect
-    // will grab bounding boxes, and so will enlarge the rect when there is any rotation or skew
-    // in the current transform
-    CGPoint deviceOrigin = CGContextConvertPointToDeviceSpace(platformContext(), rect.location());
-    CGPoint deviceLowerRight = CGContextConvertPointToDeviceSpace(platformContext(), rect.location() + rect.size());
+    // It is not enough just to round to pixels in device space. The rotation part of the 
+    // affine transform matrix to device space can mess with this conversion if we have a
+    // rotating image like the hands of the world clock widget. We just need the scale, so 
+    // we get the affine transform matrix and extract the scale.
+    CGAffineTransform deviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(platformContext());
+    float deviceScaleX = sqrtf(deviceMatrix.a * deviceMatrix.a + deviceMatrix.b * deviceMatrix.b);
+    float deviceScaleY = sqrtf(deviceMatrix.c * deviceMatrix.c + deviceMatrix.d * deviceMatrix.d);
+
+    CGPoint deviceOrigin = CGPointMake(rect.x() * deviceScaleX, rect.y() * deviceScaleY);
+    CGPoint deviceLowerRight = CGPointMake((rect.x() + rect.width()) * deviceScaleX,
+        (rect.y() + rect.height()) * deviceScaleY);
 
     deviceOrigin.x = roundf(deviceOrigin.x);
     deviceOrigin.y = roundf(deviceOrigin.y);
@@ -652,10 +658,9 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
         deviceLowerRight.y += 1;
     if (deviceOrigin.x == deviceLowerRight.x && rect.width() != 0)
         deviceLowerRight.x += 1;
-    
-    FloatPoint roundedOrigin = CGContextConvertPointToUserSpace(platformContext(), deviceOrigin);
-    FloatPoint roundedLowerRight = CGContextConvertPointToUserSpace(platformContext(), deviceLowerRight);
 
+    FloatPoint roundedOrigin = FloatPoint(deviceOrigin.x / deviceScaleX, deviceOrigin.y / deviceScaleY);
+    FloatPoint roundedLowerRight = FloatPoint(deviceLowerRight.x / deviceScaleX, deviceLowerRight.y / deviceScaleY);
     return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
 }
 
