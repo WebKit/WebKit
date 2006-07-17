@@ -165,6 +165,21 @@ if (typeof window != 'undefined') {
     }
 }
 
+function shouldBe(a, b)
+{
+    var evalA;
+    try {
+        evalA = eval(a);
+    } catch(e) {
+        evalA = e;
+    }
+    
+    if (evalA == b || isNaN(evalA) && typeof evalA == 'number' && isNaN(b) && typeof b == 'number')
+        print("PASS: " + a + " should be " + b + " and is.", "green");
+    else
+        print("__FAIL__: " + a + " should be " + b + " but instead is " + evalA + ".", "red");
+}
+
 function test()
 {
     print("Node is " + Node);
@@ -221,6 +236,10 @@ function test()
     } catch(e) {
         print("caught: " + e);
     }
+    
+    oldNodeType = node.nodeType;
+    node.nodeType = 1;
+    shouldBe("node.nodeType", oldNodeType);
 
     /*
     var element, name, weapon;

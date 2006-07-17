@@ -2,6 +2,32 @@
 
         Reviewed by Maciej.
         
+        - Properly document and handle NULL callbacks for static properties. We
+        throw an exception in any case other than a ReadOnly property with a NULL
+        setProperty callback, because a NULL callback almost certainly indicates 
+        a programming error. Also throw an exception if hasProperty returns true
+        for a property that getProperty can't get.
+        
+        - If a static setProperty callback returns 'false', to indicate that the
+        property was not set, we no longer forward the set request up the class
+        chain, because that's almost certainly not what the programmer expected.
+
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::staticValueGetter):
+        (KJS::JSCallbackObject::staticFunctionGetter):
+        (KJS::JSCallbackObject::callbackGetter):
+        * API/JSObjectRef.h:
+        * API/minidom.js:
+        * API/testapi.c:
+        (MyObject_hasProperty):
+        * API/testapi.js:
+
+2006-07-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
         - Added names to functions.
         
         - Removed GetPrivate/SetPrivate from callbackFunctions and callbackConstructors.

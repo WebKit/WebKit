@@ -114,7 +114,8 @@ static bool MyObject_hasProperty(JSContextRef context, JSObjectRef object, JSStr
 
     if (JSStringIsEqualToUTF8CString(propertyName, "alwaysOne")
         || JSStringIsEqualToUTF8CString(propertyName, "cantFind")
-        || JSStringIsEqualToUTF8CString(propertyName, "myPropertyName")) {
+        || JSStringIsEqualToUTF8CString(propertyName, "myPropertyName")
+        || JSStringIsEqualToUTF8CString(propertyName, "hasPropertyLie")) {
         return true;
     }
     
@@ -242,14 +243,24 @@ static void MyObject_finalize(JSObjectRef object)
     didFinalize = true;
 }
 
+static JSStaticValue evilStaticValues[] = {
+    { "nullGetSet", 0, 0, kJSPropertyAttributeNone },
+    { 0, 0, 0, 0 }
+};
+
+static JSStaticFunction evilStaticFunctions[] = {
+    { "nullCall", 0, kJSPropertyAttributeNone },
+    { 0, 0, 0 }
+};
+
 JSClassDefinition MyObject_definition = {
     0,
     
     "MyObject",
     NULL,
     
-    NULL,
-    NULL,
+    evilStaticValues,
+    evilStaticFunctions,
     
     MyObject_initialize,
     MyObject_finalize,

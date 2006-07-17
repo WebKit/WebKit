@@ -262,7 +262,7 @@ typedef JSValueRef
 @abstract This structure describes a statically declared value property.
 @field name A null-terminated UTF8 string containing the property's name.
 @field getProperty A JSObjectGetPropertyCallback to invoke when getting the property's value.
-@field setProperty A JSObjectSetPropertyCallback to invoke when setting the property's value.
+@field setProperty A JSObjectSetPropertyCallback to invoke when setting the property's value. May be NULL if the ReadOnly attribute is set.
 @field attributes A logically ORed set of JSPropertyAttributes to give to the property.
 */
 typedef struct {
