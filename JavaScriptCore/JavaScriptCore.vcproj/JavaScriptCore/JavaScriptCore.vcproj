@@ -417,27 +417,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\PropertyNameArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\PropertyNameArray.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\protect.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\protected_reference.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\reference.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\reference.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\reference_list.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\reference_list.h"
 				>
 			</File>
 			<File
