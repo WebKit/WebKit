@@ -88,7 +88,7 @@ static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef th
         printf("%s\n", stringUTF8);
     }
     
-    return JSValueMakeUndefined();
+    return JSValueMakeUndefined(context);
 }
 
 static char* createStringWithContentsOfFile(const char* fileName)

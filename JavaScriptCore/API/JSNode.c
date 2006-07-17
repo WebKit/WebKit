@@ -38,13 +38,13 @@ static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef 
     UNUSED_PARAM(function);
 
     // Example of throwing a type error for invalid values
-    if (!JSValueIsObjectOfClass(thisObject, JSNode_class(context))) {
+    if (!JSValueIsObjectOfClass(context, thisObject, JSNode_class(context))) {
         JSStringRef message = JSStringCreateWithUTF8CString("TypeError: appendChild can only be called on nodes");
-        *exception = JSValueMakeString(message);
+        *exception = JSValueMakeString(context, message);
         JSStringRelease(message);
-    } else if (argumentCount < 1 || !JSValueIsObjectOfClass(arguments[0], JSNode_class(context))) {
+    } else if (argumentCount < 1 || !JSValueIsObjectOfClass(context, arguments[0], JSNode_class(context))) {
         JSStringRef message = JSStringCreateWithUTF8CString("TypeError: first argument to appendChild must be a node");
-        *exception = JSValueMakeString(message);
+        *exception = JSValueMakeString(context, message);
         JSStringRelease(message);
     } else {
         Node* node = JSObjectGetPrivate(thisObject);
@@ -53,7 +53,7 @@ static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef 
         Node_appendChild(node, child);
     }
 
-    return JSValueMakeUndefined();
+    return JSValueMakeUndefined(context);
 }
 
 static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -63,8 +63,8 @@ static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef 
     
     // Example of ignoring invalid values
     if (argumentCount > 0) {
-        if (JSValueIsObjectOfClass(thisObject, JSNode_class(context))) {
-            if (JSValueIsObjectOfClass(arguments[0], JSNode_class(context))) {
+        if (JSValueIsObjectOfClass(context, thisObject, JSNode_class(context))) {
+            if (JSValueIsObjectOfClass(context, arguments[0], JSNode_class(context))) {
                 Node* node = JSObjectGetPrivate(thisObject);
                 Node* child = JSObjectGetPrivate(JSValueToObject(context, arguments[0], NULL));
                 
@@ -73,7 +73,7 @@ static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef 
         }
     }
     
-    return JSValueMakeUndefined();
+    return JSValueMakeUndefined(context);
 }
 
 static JSValueRef JSNodePrototype_replaceChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -82,9 +82,9 @@ static JSValueRef JSNodePrototype_replaceChild(JSContextRef context, JSObjectRef
     UNUSED_PARAM(function);
     
     if (argumentCount > 1) {
-        if (JSValueIsObjectOfClass(thisObject, JSNode_class(context))) {
-            if (JSValueIsObjectOfClass(arguments[0], JSNode_class(context))) {
-                if (JSValueIsObjectOfClass(arguments[1], JSNode_class(context))) {
+        if (JSValueIsObjectOfClass(context, thisObject, JSNode_class(context))) {
+            if (JSValueIsObjectOfClass(context, arguments[0], JSNode_class(context))) {
+                if (JSValueIsObjectOfClass(context, arguments[1], JSNode_class(context))) {
                     Node* node = JSObjectGetPrivate(thisObject);
                     Node* newChild = JSObjectGetPrivate(JSValueToObject(context, arguments[0], NULL));
                     Node* oldChild = JSObjectGetPrivate(JSValueToObject(context, arguments[1], NULL));
@@ -95,7 +95,7 @@ static JSValueRef JSNodePrototype_replaceChild(JSContextRef context, JSObjectRef
         }
     }
     
-    return JSValueMakeUndefined();
+    return JSValueMakeUndefined(context);
 }
 
 static JSStaticFunction JSNodePrototype_staticFunctions[] = {
@@ -124,7 +124,7 @@ static JSValueRef JSNode_getNodeType(JSContextRef context, JSObjectRef object, J
     Node* node = JSObjectGetPrivate(object);
     if (node) {
         JSStringRef nodeType = JSStringCreateWithUTF8CString(node->nodeType);
-        JSValueRef value = JSValueMakeString(nodeType);
+        JSValueRef value = JSValueMakeString(context, nodeType);
         JSStringRelease(nodeType);
         return value;
     }
@@ -146,7 +146,7 @@ static JSValueRef JSNode_getFirstChild(JSContextRef context, JSObjectRef object,
     UNUSED_PARAM(propertyName);
     UNUSED_PARAM(object);
     
-    return JSValueMakeUndefined();
+    return JSValueMakeUndefined(context);
 }
 
 static JSStaticValue JSNode_staticValues[] = {
@@ -182,7 +182,7 @@ static JSObjectRef JSNode_prototype(JSContextRef context)
     static JSObjectRef prototype;
     if (!prototype) {
         prototype = JSObjectMake(context, JSNodePrototype_class(context), NULL);
-        JSValueProtect(prototype);
+        JSValueProtect(context, prototype);
     }
     return prototype;
 }

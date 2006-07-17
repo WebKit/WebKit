@@ -50,25 +50,25 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass);
 /*!
 @function
 @abstract Retains a global JavaScript execution context.
-@param context The JSGlobalContext to retain.
-@result A JSGlobalContext that is the same as context.
+@param ctx The JSGlobalContext to retain.
+@result A JSGlobalContext that is the same as ctx.
 */
-JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef context);
+JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx);
 
 /*!
 @function
 @abstract Releases a global JavaScript execution context.
-@param context The JSGlobalContext to release.
+@param ctx The JSGlobalContext to release.
 */
-void JSGlobalContextRelease(JSGlobalContextRef context);
+void JSGlobalContextRelease(JSGlobalContextRef ctx);
 
 /*!
 @function
 @abstract Gets the global object of a JavaScript execution context.
-@param context The JSContext whose global object you want to get.
-@result context's global object.
+@param ctx The JSContext whose global object you want to get.
+@result ctx's global object.
 */
-JSObjectRef JSContextGetGlobalObject(JSContextRef context);
+JSObjectRef JSContextGetGlobalObject(JSContextRef ctx);
 
 #ifdef __cplusplus
 }

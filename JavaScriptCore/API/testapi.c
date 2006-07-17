@@ -129,20 +129,20 @@ static JSValueRef MyObject_getProperty(JSContextRef context, JSObjectRef object,
     UNUSED_PARAM(object);
     
     if (JSStringIsEqualToUTF8CString(propertyName, "alwaysOne")) {
-        return JSValueMakeNumber(1);
+        return JSValueMakeNumber(context, 1);
     }
     
     if (JSStringIsEqualToUTF8CString(propertyName, "myPropertyName")) {
-        return JSValueMakeNumber(1);
+        return JSValueMakeNumber(context, 1);
     }
 
     if (JSStringIsEqualToUTF8CString(propertyName, "cantFind")) {
-        return JSValueMakeUndefined();
+        return JSValueMakeUndefined(context);
     }
     
     if (JSStringIsEqualToUTF8CString(propertyName, "0")) {
-        *exception = JSValueMakeNumber(1);
-        return JSValueMakeNumber(1);
+        *exception = JSValueMakeNumber(context, 1);
+        return JSValueMakeNumber(context, 1);
     }
     
     return NULL;
@@ -169,7 +169,7 @@ static bool MyObject_deleteProperty(JSContextRef context, JSObjectRef object, JS
         return true;
     
     if (JSStringIsEqualToUTF8CString(propertyName, "throwOnDelete")) {
-        *exception = JSValueMakeNumber(2);
+        *exception = JSValueMakeNumber(context, 2);
         return false;
     }
 
@@ -197,10 +197,10 @@ static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef obje
     UNUSED_PARAM(object);
     UNUSED_PARAM(thisObject);
 
-    if (argumentCount > 0 && JSValueIsStrictEqual(context, arguments[0], JSValueMakeNumber(0)))
-        return JSValueMakeNumber(1);
+    if (argumentCount > 0 && JSValueIsStrictEqual(context, arguments[0], JSValueMakeNumber(context, 0)))
+        return JSValueMakeNumber(context, 1);
     
-    return JSValueMakeUndefined();
+    return JSValueMakeUndefined(context);
 }
 
 static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -208,10 +208,10 @@ static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef 
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
 
-    if (argumentCount > 0 && JSValueIsStrictEqual(context, arguments[0], JSValueMakeNumber(0)))
-        return JSValueToObject(context, JSValueMakeNumber(1), NULL);
+    if (argumentCount > 0 && JSValueIsStrictEqual(context, arguments[0], JSValueMakeNumber(context, 0)))
+        return JSValueToObject(context, JSValueMakeNumber(context, 1), NULL);
     
-    return JSValueToObject(context, JSValueMakeNumber(0), NULL);
+    return JSValueToObject(context, JSValueMakeNumber(context, 0), NULL);
 }
 
 static bool MyObject_hasInstance(JSContextRef context, JSObjectRef constructor, JSValueRef possibleValue, JSValueRef* exception)
@@ -232,7 +232,7 @@ static JSValueRef MyObject_convertToType(JSContextRef context, JSObjectRef objec
     
     switch (type) {
     case kJSTypeNumber:
-        return JSValueMakeNumber(1);
+        return JSValueMakeNumber(context, 1);
     default:
         break;
     }
@@ -304,7 +304,7 @@ static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functio
         JSStringRelease(string);
     }
     
-    return JSValueMakeUndefined();
+    return JSValueMakeUndefined(context);
 }
 
 static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -331,23 +331,23 @@ int main(int argc, char* argv[])
     context = JSGlobalContextCreate(NULL);
     
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
-    assert(JSValueIsObject(globalObject));
+    assert(JSValueIsObject(context, globalObject));
     
-    JSValueRef jsUndefined = JSValueMakeUndefined();
-    JSValueRef jsNull = JSValueMakeNull();
-    JSValueRef jsTrue = JSValueMakeBoolean(true);
-    JSValueRef jsFalse = JSValueMakeBoolean(false);
-    JSValueRef jsZero = JSValueMakeNumber(0);
-    JSValueRef jsOne = JSValueMakeNumber(1);
-    JSValueRef jsOneThird = JSValueMakeNumber(1.0 / 3.0);
-    JSObjectRef jsObjectNoProto = JSObjectMake(context, NULL, JSValueMakeNull());
+    JSValueRef jsUndefined = JSValueMakeUndefined(context);
+    JSValueRef jsNull = JSValueMakeNull(context);
+    JSValueRef jsTrue = JSValueMakeBoolean(context, true);
+    JSValueRef jsFalse = JSValueMakeBoolean(context, false);
+    JSValueRef jsZero = JSValueMakeNumber(context, 0);
+    JSValueRef jsOne = JSValueMakeNumber(context, 1);
+    JSValueRef jsOneThird = JSValueMakeNumber(context, 1.0 / 3.0);
+    JSObjectRef jsObjectNoProto = JSObjectMake(context, NULL, JSValueMakeNull(context));
 
     // FIXME: test funny utf8 characters
     JSStringRef jsEmptyIString = JSStringCreateWithUTF8CString("");
-    JSValueRef jsEmptyString = JSValueMakeString(jsEmptyIString);
+    JSValueRef jsEmptyString = JSValueMakeString(context, jsEmptyIString);
     
     JSStringRef jsOneIString = JSStringCreateWithUTF8CString("1");
-    JSValueRef jsOneString = JSValueMakeString(jsOneIString);
+    JSValueRef jsOneString = JSValueMakeString(context, jsOneIString);
 
 #if defined(__APPLE__)
     UniChar singleUniChar = 65; // Capital A
@@ -359,12 +359,12 @@ int main(int argc, char* argv[])
                                                           kCFAllocatorNull);
 
     JSStringRef jsCFIString = JSStringCreateWithCFString(cfString);
-    JSValueRef jsCFString = JSValueMakeString(jsCFIString);
+    JSValueRef jsCFString = JSValueMakeString(context, jsCFIString);
     
     CFStringRef cfEmptyString = CFStringCreateWithCString(kCFAllocatorDefault, "", kCFStringEncodingUTF8);
     
     JSStringRef jsCFEmptyIString = JSStringCreateWithCFString(cfEmptyString);
-    JSValueRef jsCFEmptyString = JSValueMakeString(jsCFEmptyIString);
+    JSValueRef jsCFEmptyString = JSValueMakeString(context, jsCFEmptyIString);
 
     CFIndex cfStringLength = CFStringGetLength(cfString);
     UniChar buffer[cfStringLength];
@@ -372,26 +372,26 @@ int main(int argc, char* argv[])
                           CFRangeMake(0, cfStringLength), 
                           buffer);
     JSStringRef jsCFIStringWithCharacters = JSStringCreateWithCharacters(buffer, cfStringLength);
-    JSValueRef jsCFStringWithCharacters = JSValueMakeString(jsCFIStringWithCharacters);
+    JSValueRef jsCFStringWithCharacters = JSValueMakeString(context, jsCFIStringWithCharacters);
     
     JSStringRef jsCFEmptyIStringWithCharacters = JSStringCreateWithCharacters(buffer, CFStringGetLength(cfEmptyString));
-    JSValueRef jsCFEmptyStringWithCharacters = JSValueMakeString(jsCFEmptyIStringWithCharacters);
+    JSValueRef jsCFEmptyStringWithCharacters = JSValueMakeString(context, jsCFEmptyIStringWithCharacters);
 #endif // __APPLE__
 
-    assert(JSValueGetType(jsUndefined) == kJSTypeUndefined);
-    assert(JSValueGetType(jsNull) == kJSTypeNull);
-    assert(JSValueGetType(jsTrue) == kJSTypeBoolean);
-    assert(JSValueGetType(jsFalse) == kJSTypeBoolean);
-    assert(JSValueGetType(jsZero) == kJSTypeNumber);
-    assert(JSValueGetType(jsOne) == kJSTypeNumber);
-    assert(JSValueGetType(jsOneThird) == kJSTypeNumber);
-    assert(JSValueGetType(jsEmptyString) == kJSTypeString);
-    assert(JSValueGetType(jsOneString) == kJSTypeString);
+    assert(JSValueGetType(context, jsUndefined) == kJSTypeUndefined);
+    assert(JSValueGetType(context, jsNull) == kJSTypeNull);
+    assert(JSValueGetType(context, jsTrue) == kJSTypeBoolean);
+    assert(JSValueGetType(context, jsFalse) == kJSTypeBoolean);
+    assert(JSValueGetType(context, jsZero) == kJSTypeNumber);
+    assert(JSValueGetType(context, jsOne) == kJSTypeNumber);
+    assert(JSValueGetType(context, jsOneThird) == kJSTypeNumber);
+    assert(JSValueGetType(context, jsEmptyString) == kJSTypeString);
+    assert(JSValueGetType(context, jsOneString) == kJSTypeString);
 #if defined(__APPLE__)
-    assert(JSValueGetType(jsCFString) == kJSTypeString);
-    assert(JSValueGetType(jsCFStringWithCharacters) == kJSTypeString);
-    assert(JSValueGetType(jsCFEmptyString) == kJSTypeString);
-    assert(JSValueGetType(jsCFEmptyStringWithCharacters) == kJSTypeString);
+    assert(JSValueGetType(context, jsCFString) == kJSTypeString);
+    assert(JSValueGetType(context, jsCFStringWithCharacters) == kJSTypeString);
+    assert(JSValueGetType(context, jsCFEmptyString) == kJSTypeString);
+    assert(JSValueGetType(context, jsCFEmptyStringWithCharacters) == kJSTypeString);
 #endif // __APPLE__
 
     JSObjectRef myObject = JSObjectMake(context, MyObject_class(context), NULL);
@@ -418,7 +418,7 @@ int main(int argc, char* argv[])
     assert(JSValueToBoolean(context, myObject));
     
     exception = NULL;
-    assert(!JSValueIsEqual(context, jsObjectNoProto, JSValueMakeNumber(1), &exception));
+    assert(!JSValueIsEqual(context, jsObjectNoProto, JSValueMakeNumber(context, 1), &exception));
     assert(exception);
     
     exception = NULL;
@@ -509,10 +509,10 @@ int main(int argc, char* argv[])
 #endif // __APPLE__
     
     jsGlobalValue = JSObjectMake(context, NULL, NULL);
-    JSValueProtect(jsGlobalValue);
-    JSGarbageCollect();
-    assert(JSValueIsObject(jsGlobalValue));
-    JSValueUnprotect(jsGlobalValue);
+    JSValueProtect(context, jsGlobalValue);
+    JSGarbageCollect(context);
+    assert(JSValueIsObject(context, jsGlobalValue));
+    JSValueUnprotect(context, jsGlobalValue);
 
     JSStringRef goodSyntax = JSStringCreateWithUTF8CString("x = 1;");
     JSStringRef badSyntax = JSStringCreateWithUTF8CString("x := 1;");
@@ -531,23 +531,23 @@ int main(int argc, char* argv[])
     exception = NULL;
     result = JSEvaluateScript(context, badSyntax, NULL, NULL, 1, &exception);
     assert(!result);
-    assert(JSValueIsObject(exception));
+    assert(JSValueIsObject(context, exception));
     
     JSStringRef array = JSStringCreateWithUTF8CString("Array");
     JSObjectRef arrayConstructor = JSValueToObject(context, JSObjectGetProperty(context, globalObject, array, NULL), NULL);
     JSStringRelease(array);
     result = JSObjectCallAsConstructor(context, arrayConstructor, 0, NULL, NULL);
     assert(result);
-    assert(JSValueIsObject(result));
+    assert(JSValueIsObject(context, result));
     assert(JSValueIsInstanceOfConstructor(context, result, arrayConstructor, NULL));
-    assert(!JSValueIsInstanceOfConstructor(context, JSValueMakeNull(), arrayConstructor, NULL));
+    assert(!JSValueIsInstanceOfConstructor(context, JSValueMakeNull(context), arrayConstructor, NULL));
 
     o = JSValueToObject(context, result, NULL);
     exception = NULL;
-    assert(JSValueIsUndefined(JSObjectGetPropertyAtIndex(context, o, 0, &exception)));
+    assert(JSValueIsUndefined(context, JSObjectGetPropertyAtIndex(context, o, 0, &exception)));
     assert(!exception);
     
-    JSObjectSetPropertyAtIndex(context, o, 0, JSValueMakeNumber(1), &exception);
+    JSObjectSetPropertyAtIndex(context, o, 0, JSValueMakeNumber(context, 1), &exception);
     assert(!exception);
     
     exception = NULL;
@@ -561,7 +561,7 @@ int main(int argc, char* argv[])
     functionBody = JSStringCreateWithUTF8CString("rreturn Array;");
     JSStringRef line = JSStringCreateWithUTF8CString("line");
     assert(!JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, &exception));
-    assert(JSValueIsObject(exception));
+    assert(JSValueIsObject(context, exception));
     v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line, NULL);
     assertEqualsAsNumber(v, 2); // FIXME: Lexer::setCode bumps startingLineNumber by 1 -- we need to change internal callers so that it doesn't have to (saying '0' to mean '1' in the API would be really confusing -- it's really confusing internally, in fact)
     JSStringRelease(functionBody);
@@ -572,7 +572,7 @@ int main(int argc, char* argv[])
     function = JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, &exception);
     JSStringRelease(functionBody);
     assert(!exception);
-    assert(JSObjectIsFunction(function));
+    assert(JSObjectIsFunction(context, function));
     v = JSObjectCallAsFunction(context, function, NULL, 0, NULL, NULL);
     assert(v);
     assert(JSValueIsEqual(context, v, arrayConstructor, NULL));
@@ -582,7 +582,7 @@ int main(int argc, char* argv[])
     assert(!exception);
     v = JSObjectCallAsFunction(context, function, NULL, 0, NULL, &exception);
     assert(v && !exception);
-    assert(JSValueIsUndefined(v));
+    assert(JSValueIsUndefined(context, v));
     
     exception = NULL;
     v = NULL;
@@ -591,13 +591,13 @@ int main(int argc, char* argv[])
     functionBody = JSStringCreateWithUTF8CString("return foo;");
     function = JSObjectMakeFunction(context, foo, 1, argumentNames, functionBody, NULL, 1, &exception);
     assert(function && !exception);
-    JSValueRef arguments[] = { JSValueMakeNumber(2) };
+    JSValueRef arguments[] = { JSValueMakeNumber(context, 2) };
     v = JSObjectCallAsFunction(context, function, NULL, 1, arguments, &exception);
     JSStringRelease(foo);
     JSStringRelease(functionBody);
     
     string = JSValueToStringCopy(context, function, NULL);
-    assertEqualsAsUTF8String(JSValueMakeString(string), "function foo(foo) \n{\n  return foo;\n}");
+    assertEqualsAsUTF8String(JSValueMakeString(context, string), "function foo(foo) \n{\n  return foo;\n}");
     JSStringRelease(string);
 
     JSStringRef print = JSStringCreateWithUTF8CString("print");
@@ -617,8 +617,8 @@ int main(int argc, char* argv[])
     assert(!JSObjectGetPrivate(myConstructor));
     
     o = JSObjectMake(context, NULL, NULL);
-    JSObjectSetProperty(context, o, jsOneIString, JSValueMakeNumber(1), kJSPropertyAttributeNone, NULL);
-    JSObjectSetProperty(context, o, jsCFIString,  JSValueMakeNumber(1), kJSPropertyAttributeDontEnum, NULL);
+    JSObjectSetProperty(context, o, jsOneIString, JSValueMakeNumber(context, 1), kJSPropertyAttributeNone, NULL);
+    JSObjectSetProperty(context, o, jsCFIString,  JSValueMakeNumber(context, 1), kJSPropertyAttributeDontEnum, NULL);
     JSPropertyNameArrayRef nameArray = JSObjectCopyPropertyNames(context, o);
     size_t expectedCount = JSPropertyNameArrayGetCount(nameArray);
     size_t count;
@@ -644,7 +644,7 @@ int main(int argc, char* argv[])
     char* scriptUTF8 = createStringWithContentsOfFile("testapi.js");
     JSStringRef script = JSStringCreateWithUTF8CString(scriptUTF8);
     result = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
-    if (JSValueIsUndefined(result))
+    if (JSValueIsUndefined(context, result))
         printf("PASS: Test script executed successfully.\n");
     else {
         printf("FAIL: Test script returned unexcpected value:\n");
@@ -660,7 +660,7 @@ int main(int argc, char* argv[])
     // Allocate a few dummies so that at least one will be collected
     JSObjectMake(context, MyObject_class(context), 0);
     JSObjectMake(context, MyObject_class(context), 0);
-    JSGarbageCollect();
+    JSGarbageCollect(context);
     assert(didFinalize);
 
     JSStringRelease(jsEmptyIString);

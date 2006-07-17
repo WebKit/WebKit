@@ -1,3 +1,99 @@
+2006-07-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        - add a JSContextRef parameter to all JSValueRef, JSObjectRef, and JSContextRef operations;
+        except JSObject{Get,Set}PrivateData which can be assumed to be simple pure accessors.
+        
+        Also renamed the parameter "context" to "ctx" because it makes the code read better with this pervasive
+        but usually uninteresting parameter.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        (JSGarbageCollect):
+        * API/JSBase.h:
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::JSCallbackObject):
+        (KJS::JSCallbackObject::init):
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::deleteProperty):
+        (KJS::JSCallbackObject::toNumber):
+        (KJS::JSCallbackObject::toString):
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate):
+        (JSGlobalContextRetain):
+        (JSGlobalContextRelease):
+        (JSContextGetGlobalObject):
+        * API/JSContextRef.h:
+        * API/JSNode.c:
+        (JSNodePrototype_appendChild):
+        (JSNodePrototype_removeChild):
+        (JSNodePrototype_replaceChild):
+        (JSNode_getNodeType):
+        (JSNode_getFirstChild):
+        (JSNode_prototype):
+        * API/JSNodeList.c:
+        (JSNodeListPrototype_item):
+        (JSNodeList_length):
+        (JSNodeList_getProperty):
+        (JSNodeList_prototype):
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectMakeFunctionWithCallback):
+        (JSObjectMakeConstructor):
+        (JSObjectMakeFunction):
+        (JSObjectGetPrototype):
+        (JSObjectSetPrototype):
+        (JSObjectHasProperty):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        (JSObjectDeleteProperty):
+        (JSObjectIsFunction):
+        (JSObjectCallAsFunction):
+        (JSObjectIsConstructor):
+        (JSObjectCallAsConstructor):
+        (JSObjectCopyPropertyNames):
+        * API/JSObjectRef.h:
+        * API/JSStringRef.cpp:
+        * API/JSValueRef.cpp:
+        (JSValueGetType):
+        (JSValueIsUndefined):
+        (JSValueIsNull):
+        (JSValueIsBoolean):
+        (JSValueIsNumber):
+        (JSValueIsString):
+        (JSValueIsObject):
+        (JSValueIsObjectOfClass):
+        (JSValueIsEqual):
+        (JSValueIsStrictEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueMakeUndefined):
+        (JSValueMakeNull):
+        (JSValueMakeBoolean):
+        (JSValueMakeNumber):
+        (JSValueMakeString):
+        (JSValueToBoolean):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+        (JSValueProtect):
+        (JSValueUnprotect):
+        * API/JSValueRef.h:
+        * API/minidom.c:
+        (print):
+        * API/testapi.c:
+        (MyObject_getProperty):
+        (MyObject_deleteProperty):
+        (MyObject_callAsFunction):
+        (MyObject_callAsConstructor):
+        (MyObject_convertToType):
+        (print_callAsFunction):
+        (main):
+
 2006-07-16  Geoffrey Garen  <ggaren@apple.com>
 
         Approved by Maciej, RS by Beth.

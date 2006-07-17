@@ -38,7 +38,7 @@ static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef obj
             return JSNode_new(context, node);
     }
     
-    return JSValueMakeUndefined();
+    return JSValueMakeUndefined(context);
 }
 
 static JSStaticFunction JSNodeListPrototype_staticFunctions[] = {
@@ -64,7 +64,7 @@ static JSValueRef JSNodeList_length(JSContextRef context, JSObjectRef thisObject
     
     NodeList* nodeList = JSObjectGetPrivate(thisObject);
     assert(nodeList);
-    return JSValueMakeNumber(NodeList_length(nodeList));
+    return JSValueMakeNumber(context, NodeList_length(nodeList));
 }
 
 static JSStaticValue JSNodeList_staticValues[] = {
@@ -76,7 +76,7 @@ static JSValueRef JSNodeList_getProperty(JSContextRef context, JSObjectRef thisO
 {
     NodeList* nodeList = JSObjectGetPrivate(thisObject);
     assert(nodeList);
-    double index = JSValueToNumber(context, JSValueMakeString(propertyName), exception);
+    double index = JSValueToNumber(context, JSValueMakeString(context, propertyName), exception);
     unsigned uindex = index;
     if (uindex == index) { // false for NaN
         Node* node = NodeList_item(nodeList, uindex);
@@ -115,7 +115,7 @@ static JSObjectRef JSNodeList_prototype(JSContextRef context)
     static JSObjectRef prototype;
     if (!prototype) {
         prototype = JSObjectMake(context, JSNodeListPrototype_class(context), NULL);
-        JSValueProtect(prototype);
+        JSValueProtect(context, prototype);
     }
     return prototype;
 }

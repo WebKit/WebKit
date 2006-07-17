@@ -36,13 +36,6 @@
 
 using namespace KJS;
 
-JSValueRef JSValueMakeString(JSStringRef string)
-{
-    JSLock lock;
-    UString::Rep* rep = toJS(string);
-    return toRef(jsString(UString(rep)));
-}
-
 JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
 {
     JSLock lock;

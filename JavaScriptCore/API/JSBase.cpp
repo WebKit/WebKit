@@ -35,10 +35,10 @@
 
 using namespace KJS;
 
-JSValueRef JSEvaluateScript(JSContextRef context, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
+JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
     JSLock lock;
-    ExecState* exec = toJS(context);
+    ExecState* exec = toJS(ctx);
     JSObject* jsThisObject = toJS(thisObject);
     UString::Rep* scriptRep = toJS(script);
     UString::Rep* sourceURLRep = toJS(sourceURL);
@@ -58,11 +58,11 @@ JSValueRef JSEvaluateScript(JSContextRef context, JSStringRef script, JSObjectRe
     return toRef(jsUndefined());
 }
 
-bool JSCheckScriptSyntax(JSContextRef context, JSStringRef script, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
+bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
     JSLock lock;
 
-    ExecState* exec = toJS(context);
+    ExecState* exec = toJS(ctx);
     UString::Rep* scriptRep = toJS(script);
     UString::Rep* sourceURLRep = toJS(sourceURL);
     Completion completion = exec->dynamicInterpreter()->checkSyntax(UString(sourceURLRep), startingLineNumber, UString(scriptRep));
@@ -75,7 +75,7 @@ bool JSCheckScriptSyntax(JSContextRef context, JSStringRef script, JSStringRef s
     return true;
 }
 
-void JSGarbageCollect()
+void JSGarbageCollect(JSContextRef)
 {
     JSLock lock;
     Collector::collect();
