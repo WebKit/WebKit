@@ -609,7 +609,7 @@ int main(int argc, char* argv[])
     assert(!JSObjectGetPrivate(printFunction));
 
     JSStringRef myConstructorIString = JSStringCreateWithUTF8CString("MyConstructor");
-    JSObjectRef myConstructor = JSObjectMakeConstructor(context, myConstructor_callAsConstructor);
+    JSObjectRef myConstructor = JSObjectMakeConstructorWithCallback(context, NULL, myConstructor_callAsConstructor);
     JSObjectSetProperty(context, globalObject, myConstructorIString, myConstructor, kJSPropertyAttributeNone, NULL);
     JSStringRelease(myConstructorIString);
     

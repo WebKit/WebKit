@@ -444,10 +444,23 @@ bool JSObject::implementsHasInstance() const
   return false;
 }
 
-bool JSObject::hasInstance(ExecState *, JSValue *)
+bool JSObject::hasInstance(ExecState* exec, JSValue* value)
 {
-  assert(false);
-  return false;
+    JSValue* proto = get(exec, prototypePropertyName);
+    if (!proto->isObject()) {
+        throwError(exec, TypeError, "intanceof called on an object with an invalid prototype property.");
+        return false;
+    }
+    
+    if (!value->isObject())
+        return false;
+    
+    JSObject* o = static_cast<JSObject*>(value);
+    while ((o = o->prototype()->getObject())) {
+        if (o == proto)
+            return true;
+    }
+    return false;
 }
 
 bool JSObject::propertyIsEnumerable(ExecState*, const Identifier& propertyName) const

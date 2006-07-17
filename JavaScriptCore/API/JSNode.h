@@ -31,6 +31,7 @@
 #include "Node.h"
 
 extern JSObjectRef JSNode_new(JSContextRef context, Node* node);
+extern JSObjectRef JSNode_prototype(JSContextRef context);
 extern JSObjectRef JSNode_construct(JSContextRef context, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
 #endif // JSNode_h

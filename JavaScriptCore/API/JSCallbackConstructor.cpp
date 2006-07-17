@@ -37,6 +37,11 @@ JSCallbackConstructor::JSCallbackConstructor(ExecState* exec, JSObjectCallAsCons
 {
 }
 
+bool JSCallbackConstructor::implementsHasInstance() const
+{
+    return true;
+}
+
 bool JSCallbackConstructor::implementsConstruct() const
 {
     return true;

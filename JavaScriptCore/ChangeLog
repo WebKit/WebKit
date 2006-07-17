@@ -1,3 +1,21 @@
+2006-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        - Changed JSObjectMakeConstructor to JSObjectMakeConstructorWithCallback,
+        to match JSObjectMakeFunctionWithCallback.
+        
+        - Added prototype parameter, so the generated constructor
+        automatically works with hasInstance / instanceof
+        
+        - Moved hasInstance implementation from InternalFunctionImp to JSObject
+        so that subclasses can inherit it without inheriting function-related baggage.
+        More refactoring here would be good, but this seems like a good short-term
+        solution.
+
+        (KJS::JSCallbackFunction::implementsHasInstance): override and return false,
+        because callback functions aren't constructors.
+
 2006-07-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

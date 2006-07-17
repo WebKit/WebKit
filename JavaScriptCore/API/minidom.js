@@ -240,6 +240,11 @@ function test()
     oldNodeType = node.nodeType;
     node.nodeType = 1;
     shouldBe("node.nodeType", oldNodeType);
+    
+    shouldBe("node instanceof Node", true);
+    shouldBe("new Object() instanceof Node", false);
+    
+    print(Node);
 
     /*
     var element, name, weapon;

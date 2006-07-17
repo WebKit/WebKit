@@ -388,17 +388,19 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, JSValueRef protot
 @param ctx The execution context to use.
 @param name A JSString containing the function's name. This will be used when converting the function to string. Pass NULL to create an anonymous function.
 @param callAsFunction The JSObjectCallAsFunctionCallback to invoke when the function is called.
-@result A JSObject that is an anonymous function. The object's prototype will be the default function prototype.
+@result A JSObject that is a function. The object's prototype will be the default function prototype.
 */
 JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name, JSObjectCallAsFunctionCallback callAsFunction);
+
 /*!
 @function
 @abstract Convenience method for creating a JavaScript constructor with a given callback as its implementation.
 @param ctx The execution context to use.
+@param prototype A JSValue to use as the constructor's .prototype property. This should be the same value your constructor will set as the prototype of the objects it constructs.
 @param callAsConstructor The JSObjectCallAsConstructorCallback to invoke when the constructor is used in a 'new' expression.
 @result A JSObject that is a constructor. The object's prototype will be the default object prototype.
 */
-JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSObjectCallAsConstructorCallback callAsConstructor);
+JSObjectRef JSObjectMakeConstructorWithCallback(JSContextRef ctx, JSValueRef prototype, JSObjectCallAsConstructorCallback callAsConstructor);
 
 /*!
 @function

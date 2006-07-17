@@ -216,25 +216,6 @@ bool InternalFunctionImp::implementsHasInstance() const
   return true;
 }
 
-bool InternalFunctionImp::hasInstance(ExecState *exec, JSValue *value)
-{
-  if (!value->isObject())
-    return false;
-
-  JSValue *prot = get(exec,prototypePropertyName);
-  if (!prot->isObject() && !prot->isNull()) {
-    throwError(exec, TypeError, "Invalid prototype encountered in instanceof operation.");
-    return false;
-  }
-
-  JSObject *v = static_cast<JSObject *>(value);
-  while ((v = v->prototype()->getObject())) {
-    if (v == prot)
-      return true;
-  }
-  return false;
-}
-
 // ------------------------------ global functions -----------------------------
 
 double roundValue(ExecState *exec, JSValue *v)

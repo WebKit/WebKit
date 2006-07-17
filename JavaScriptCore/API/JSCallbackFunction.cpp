@@ -39,6 +39,12 @@ JSCallbackFunction::JSCallbackFunction(ExecState* exec, JSObjectCallAsFunctionCa
 {
 }
 
+// InternalFunctionImp mish-mashes constructor and function behavior -- we should 
+// refactor the code so this override isn't necessary
+bool JSCallbackFunction::implementsHasInstance() const { 
+    return false; 
+}
+
 JSValue* JSCallbackFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
     JSContextRef execRef = toRef(exec);

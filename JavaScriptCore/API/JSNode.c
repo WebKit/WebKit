@@ -177,7 +177,7 @@ static JSClassRef JSNode_class(JSContextRef context)
     return jsClass;
 }
 
-static JSObjectRef JSNode_prototype(JSContextRef context)
+JSObjectRef JSNode_prototype(JSContextRef context)
 {
     static JSObjectRef prototype;
     if (!prototype) {
