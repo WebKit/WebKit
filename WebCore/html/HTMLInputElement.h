@@ -82,7 +82,7 @@ public:
     bool isNonWidgetTextField() const { return m_type == TEXT; }
 
     bool checked() const { return m_checked; }
-    void setChecked(bool);
+    void setChecked(bool, bool sendChangeEvent = false);
     bool indeterminate() const { return m_indeterminate; }
     void setIndeterminate(bool);
     int maxLength() const { return m_maxLen; }

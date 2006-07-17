@@ -1,3 +1,12 @@
+2006-07-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Beth.
+        
+        <rdar://problem/4604946> REGRESSION: 'checkboxRef.checked = true' fires onchange event in Leopard
+
+        * fast/events/programmatic-check-no-change-event-expected.txt: Added.
+        * fast/events/programmatic-check-no-change-event.html: Added.
+
 2006-07-16  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

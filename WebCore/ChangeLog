@@ -1,3 +1,14 @@
+2006-07-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Beth.
+        
+        <rdar://problem/4604946> REGRESSION: 'checkboxRef.checked = true' fires onchange event in Leopard
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::preDispatchEventHandler):
+        * html/HTMLInputElement.h:
+
 2006-07-16  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

@@ -972,7 +972,7 @@ void HTMLInputElement::reset()
     m_useDefaultChecked = true;
 }
 
-void HTMLInputElement::setChecked(bool nowChecked)
+void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
 {
     // We mimic WinIE and don't allow unnamed radio buttons to be checked.
     if (checked() == nowChecked || (inputType() == RADIO && name().isEmpty()))
@@ -992,7 +992,7 @@ void HTMLInputElement::setChecked(bool nowChecked)
     // unchecked to match other browsers. DOM is not a useful standard for this
     // because it says only to fire change events at "lose focus" time, which is
     // definitely wrong in practice for these types of elements.
-    if (inDocument() && (inputType() != RADIO || nowChecked))
+    if (sendChangeEvent && inDocument() && (inputType() != RADIO || nowChecked))
         onChange();
 }
 
@@ -1143,7 +1143,7 @@ void* HTMLInputElement::preDispatchEventHandler(Event *evt)
             } else {
                 if (checked())
                     result = (void*)0x1;
-                setChecked(!checked());
+                setChecked(!checked(), true);
             }
         } else {
             // For radio buttons, store the current selected radio object.
@@ -1161,7 +1161,7 @@ void* HTMLInputElement::preDispatchEventHandler(Event *evt)
                 currRadio->ref();
                 result = currRadio;
             }
-            setChecked(true);
+            setChecked(true, true);
         }
     }
     return result;
