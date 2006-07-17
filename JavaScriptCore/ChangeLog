@@ -2,6 +2,35 @@
 
         Reviewed by Maciej.
         
+        - Removed the exception parameter from the initialize callback and, by extension,
+        JSObjectMake. We have never had a need for exceptions when iniitializing,
+        so the parameter seemed likely to "get in the way." 
+        
+        Also, an exception in JavaScript is thrown in response to input -- 
+        "invalid URL", "index not a number", etc., so it's the job of the 
+        constructor function, not the initialize method, to throw.
+        
+        If initialize *really* wants to throw, it can communicate the throw to
+        the constructor through the constructed object's private data (e.g., set
+        it to NULL, signaling to the consntructor that initialization failed.)
+        
+        - Added JSObjectMakeWithData, which enables a constructor to set private
+        data on an object *before* it has been initialized. That way, the initialize
+        methods can properly operate on the data. 
+
+        * API/JSNode.c: Moved ref into the initialize method, for better encapsulation,
+        now that it's possible.
+        * API/JSNodeList.c: ditto
+        * API/minidom.c:
+        (main): Do more aggressive garbage collection to test ref/deref and 
+        initialize/finalize.
+        * API/minidom.js: store childNodes in a temporary so it doesn't get re-created
+        like a thousand times. This makes debugging ref/deref easier
+
+2006-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
         - Changed the initialize callback to run from least derived class (parent
         class) to most derived class. This enables C++ style initialization,
         and derived class overriding of member data.

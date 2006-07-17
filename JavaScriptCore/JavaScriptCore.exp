@@ -26,6 +26,7 @@ _JSObjectMake
 _JSObjectMakeConstructorWithCallback
 _JSObjectMakeFunctionWithCallback
 _JSObjectMakeFunction
+_JSObjectMakeWithData
 _JSObjectSetPrivate
 _JSObjectSetProperty
 _JSObjectSetPropertyAtIndex

@@ -62,16 +62,15 @@ typedef unsigned JSPropertyAttributes;
 @abstract The callback invoked when an object is first created.
 @param ctx The execution context to use.
 @param object The JSObject being created.
-@param exception A pointer to a JSValueRef in which to return an exception, if any.
 @discussion If you named your function Initialize, you would declare it like this:
 
-void Initialize(JSContextRef ctx, JSObjectRef object, JSValueRef* exception);
+void Initialize(JSContextRef ctx, JSObjectRef object);
 
 Unlike the other object callbacks, the initialize callback is called on the least
 derived class (the parent class) first, and the most derived class last.
 */
 typedef void
-(*JSObjectInitializeCallback) (JSContextRef ctx, JSObjectRef object, JSValueRef* exception);
+(*JSObjectInitializeCallback) (JSContextRef ctx, JSObjectRef object);
 
 /*! 
 @typedef JSObjectFinalizeCallback
@@ -379,14 +378,29 @@ void JSClassRelease(JSClassRef jsClass);
 
 /*!
 @function
-@abstract Creates a JavaScript object with a given class and prototype.
+@abstract Creates a JavaScript object.
 @param ctx The execution context to use.
 @param jsClass The JSClass to assign to the object. Pass NULL to use the default object class.
 @param prototype The prototype to assign to the object. Pass NULL to use the default object prototype.
-@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
-@result A JSObject with the given class and prototype.
+@result A JSObject with the given class, prototype, and private data.
+@discussion The default object class does not allocate storage for private data, so you must provide a non-NULL JSClass if you want your object to be able to store private data.
 */
-JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, JSValueRef prototype, JSValueRef* exception);
+JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, JSValueRef prototype);
+
+/*!
+@function
+@abstract Creates a JavaScript object.
+@param ctx The execution context to use.
+@param jsClass The JSClass to assign to the object. Pass NULL to use the default object class.
+@param prototype The prototype to assign to the object. Pass NULL to use the default object prototype.
+@param data A void* to set as the object's private data. Pass NULL to specify no private data.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+@result A JSObject with the given class, prototype, and private data.
+@discussion The default object class does not allocate storage for private data, so you must provide a non-NULL JSClass if you want your object to be able to store private data.
+ 
+data will be set on the created object before the intialize methods in its class chain are called. This enables the initialize methods to retrieve and manipulate data through JSObjectGetPrivate.
+*/
+JSObjectRef JSObjectMakeWithData(JSContextRef ctx, JSClassRef jsClass, JSValueRef prototype, void* data);
 
 /*!
 @function
@@ -511,9 +525,9 @@ void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned p
 
 /*!
 @function
-@abstract Gets a pointer to private data from an object.
+@abstract Gets an object's private data.
 @param object A JSObject whose private data you want to get.
-@result A void* that points to the object's private data, if the object has private data, otherwise NULL.
+@result A void* that is the object's private data, if the object has private data, otherwise NULL.
 */
 void* JSObjectGetPrivate(JSObjectRef object);
 
@@ -521,9 +535,9 @@ void* JSObjectGetPrivate(JSObjectRef object);
 @function
 @abstract Sets a pointer to private data on an object.
 @param object A JSObject whose private data you want to set.
-@param data A void* that points to the object's private data.
+@param data A void* to set as the object's private data.
 @result true if the object can store private data, otherwise false.
-@discussion Only custom objects created with a JSClass can store private data.
+@discussion The default object class does not allocate storage for private data. Only objects created with a non-NULL JSClass can store private data.
 */
 bool JSObjectSetPrivate(JSObjectRef object, void* data);
 

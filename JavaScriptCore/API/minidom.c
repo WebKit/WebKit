@@ -64,16 +64,9 @@ int main(int argc, char* argv[])
     JSStringRelease(script);
     free(scriptUTF8);
 
-#if 0 // used for leak/finalize debugging    
-    int i;
-    for (i = 0; i < 1000; i++) {
-        JSObjectRef o = JSObjectMake(context, NULL, NULL);
-        (void)o;
-    }
-    JSGarbageCollect();
-#endif
-    
+    globalObject = 0;
     JSGlobalContextRelease(context);
+    JSGarbageCollect(context);
     printf("PASS: Program exited normally.\n");
     return 0;
 }

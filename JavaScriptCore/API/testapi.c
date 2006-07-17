@@ -100,7 +100,7 @@ static JSValueRef jsGlobalValue; // non-stack value for testing JSValueProtect()
 /* MyObject pseudo-class */
 
 static bool didInitialize = false;
-static void MyObject_initialize(JSContextRef context, JSObjectRef object, JSValueRef* exception)
+static void MyObject_initialize(JSContextRef context, JSObjectRef object)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -290,7 +290,7 @@ static JSClassRef MyObject_class(JSContextRef context)
     return jsClass;
 }
 
-static void Base_initialize(JSContextRef context, JSObjectRef object, JSValueRef* exception)
+static void Base_initialize(JSContextRef context, JSObjectRef object)
 {
     assert(!JSObjectGetPrivate(object));
     JSObjectSetPrivate(object, (void*)1);
@@ -315,7 +315,7 @@ static JSClassRef Base_class(JSContextRef context)
     return jsClass;
 }
 
-static void Derived_initialize(JSContextRef context, JSObjectRef object, JSValueRef* exception)
+static void Derived_initialize(JSContextRef context, JSObjectRef object)
 {
     assert((void*)1 == JSObjectGetPrivate(object));
     JSObjectSetPrivate(object, (void*)2);
@@ -361,7 +361,7 @@ static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjec
 {
     UNUSED_PARAM(constructorObject);
     
-    JSObjectRef result = JSObjectMake(context, NULL, 0, NULL);
+    JSObjectRef result = JSObjectMake(context, NULL, NULL);
     if (argumentCount > 0) {
         JSStringRef value = JSStringCreateWithUTF8CString("value");
         JSObjectSetProperty(context, result, value, arguments[0], kJSPropertyAttributeNone, NULL);
@@ -390,7 +390,7 @@ int main(int argc, char* argv[])
     JSValueRef jsZero = JSValueMakeNumber(context, 0);
     JSValueRef jsOne = JSValueMakeNumber(context, 1);
     JSValueRef jsOneThird = JSValueMakeNumber(context, 1.0 / 3.0);
-    JSObjectRef jsObjectNoProto = JSObjectMake(context, NULL, JSValueMakeNull(context), NULL);
+    JSObjectRef jsObjectNoProto = JSObjectMake(context, NULL, JSValueMakeNull(context));
 
     // FIXME: test funny utf8 characters
     JSStringRef jsEmptyIString = JSStringCreateWithUTF8CString("");
@@ -444,7 +444,7 @@ int main(int argc, char* argv[])
     assert(JSValueGetType(context, jsCFEmptyStringWithCharacters) == kJSTypeString);
 #endif // __APPLE__
 
-    JSObjectRef myObject = JSObjectMake(context, MyObject_class(context), NULL, NULL);
+    JSObjectRef myObject = JSObjectMake(context, MyObject_class(context), NULL);
     assert(didInitialize);
     JSStringRef myObjectIString = JSStringCreateWithUTF8CString("MyObject");
     JSObjectSetProperty(context, globalObject, myObjectIString, myObject, kJSPropertyAttributeNone, NULL);
@@ -558,7 +558,7 @@ int main(int argc, char* argv[])
     CFRelease(cfEmptyString);
 #endif // __APPLE__
     
-    jsGlobalValue = JSObjectMake(context, NULL, NULL, NULL);
+    jsGlobalValue = JSObjectMake(context, NULL, NULL);
     JSValueProtect(context, jsGlobalValue);
     JSGarbageCollect(context);
     assert(JSValueIsObject(context, jsGlobalValue));
@@ -666,7 +666,7 @@ int main(int argc, char* argv[])
     assert(!JSObjectSetPrivate(myConstructor, (void*)1));
     assert(!JSObjectGetPrivate(myConstructor));
     
-    o = JSObjectMake(context, NULL, NULL, NULL);
+    o = JSObjectMake(context, NULL, NULL);
     JSObjectSetProperty(context, o, jsOneIString, JSValueMakeNumber(context, 1), kJSPropertyAttributeNone, NULL);
     JSObjectSetProperty(context, o, jsCFIString,  JSValueMakeNumber(context, 1), kJSPropertyAttributeDontEnum, NULL);
     JSPropertyNameArrayRef nameArray = JSObjectCopyPropertyNames(context, o);
@@ -689,9 +689,7 @@ int main(int argc, char* argv[])
     v = JSObjectCallAsFunction(context, function, o, 0, NULL, NULL);
     assert(JSValueIsEqual(context, v, o, NULL));
     
-    exception = NULL;
-    o = JSObjectMake(context, Derived_class(context), NULL, &exception);
-    assert(!exception);
+    o = JSObjectMake(context, Derived_class(context), NULL);
     assert(JSObjectGetPrivate(o) == (void*)2);
     o = NULL;
     
@@ -712,8 +710,8 @@ int main(int argc, char* argv[])
     free(scriptUTF8);
 
     // Allocate a few dummies so that at least one will be collected
-    JSObjectMake(context, MyObject_class(context), NULL, NULL);
-    JSObjectMake(context, MyObject_class(context), NULL, NULL);
+    JSObjectMake(context, MyObject_class(context), NULL);
+    JSObjectMake(context, MyObject_class(context), NULL);
     JSGarbageCollect(context);
     assert(MyObject_didFinalize);
     assert(Base_didFinalize);

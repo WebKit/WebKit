@@ -156,6 +156,14 @@ static JSStaticValue JSNode_staticValues[] = {
     { 0, 0, 0, 0 }
 };
 
+static void JSNode_initialize(JSContextRef context, JSObjectRef object)
+{
+    Node* node = JSObjectGetPrivate(object);
+    assert(node);
+
+    Node_ref(node);
+}
+
 static void JSNode_finalize(JSObjectRef object)
 {
     Node* node = JSObjectGetPrivate(object);
@@ -170,6 +178,7 @@ static JSClassRef JSNode_class(JSContextRef context)
     if (!jsClass) {
         JSClassDefinition definition = kJSClassDefinitionNull;
         definition.staticValues = JSNode_staticValues;
+        definition.initialize = JSNode_initialize;
         definition.finalize = JSNode_finalize;
 
         jsClass = JSClassCreate(&definition);
@@ -181,7 +190,7 @@ JSObjectRef JSNode_prototype(JSContextRef context)
 {
     static JSObjectRef prototype;
     if (!prototype) {
-        prototype = JSObjectMake(context, JSNodePrototype_class(context), NULL, NULL);
+        prototype = JSObjectMake(context, JSNodePrototype_class(context), NULL);
         JSValueProtect(context, prototype);
     }
     return prototype;
@@ -189,11 +198,7 @@ JSObjectRef JSNode_prototype(JSContextRef context)
 
 JSObjectRef JSNode_new(JSContextRef context, Node* node)
 {
-    Node_ref(node);
-
-    JSObjectRef jsNode = JSObjectMake(context, JSNode_class(context), JSNode_prototype(context), NULL);
-    JSObjectSetPrivate(jsNode, node);
-    return jsNode;
+    return JSObjectMakeWithData(context, JSNode_class(context), JSNode_prototype(context), node);
 }
 
 JSObjectRef JSNode_construct(JSContextRef context, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

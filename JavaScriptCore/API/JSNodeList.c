@@ -88,10 +88,19 @@ static JSValueRef JSNodeList_getProperty(JSContextRef context, JSObjectRef thisO
     return NULL;
 }
 
+static void JSNodeList_initialize(JSContextRef context, JSObjectRef thisObject)
+{
+    NodeList* nodeList = JSObjectGetPrivate(thisObject);
+    assert(nodeList);
+    
+    NodeList_ref(nodeList);
+}
+
 static void JSNodeList_finalize(JSObjectRef thisObject)
 {
     NodeList* nodeList = JSObjectGetPrivate(thisObject);
     assert(nodeList);
+
     NodeList_deref(nodeList);
 }
 
@@ -102,6 +111,7 @@ static JSClassRef JSNodeList_class(JSContextRef context)
         JSClassDefinition definition = kJSClassDefinitionNull;
         definition.staticValues = JSNodeList_staticValues;
         definition.getProperty = JSNodeList_getProperty;
+        definition.initialize = JSNodeList_initialize;
         definition.finalize = JSNodeList_finalize;
 
         jsClass = JSClassCreate(&definition);
@@ -114,7 +124,7 @@ static JSObjectRef JSNodeList_prototype(JSContextRef context)
 {
     static JSObjectRef prototype;
     if (!prototype) {
-        prototype = JSObjectMake(context, JSNodeListPrototype_class(context), NULL, NULL);
+        prototype = JSObjectMake(context, JSNodeListPrototype_class(context), NULL);
         JSValueProtect(context, prototype);
     }
     return prototype;
@@ -122,9 +132,5 @@ static JSObjectRef JSNodeList_prototype(JSContextRef context)
 
 JSObjectRef JSNodeList_new(JSContextRef context, NodeList* nodeList)
 {
-    NodeList_ref(nodeList);
-    
-    JSObjectRef jsNodeList = JSObjectMake(context, JSNodeList_class(context), JSNodeList_prototype(context), NULL);
-    JSObjectSetPrivate(jsNodeList, nodeList);
-    return jsNodeList;
+    return JSObjectMakeWithData(context, JSNodeList_class(context), JSNodeList_prototype(context), nodeList);
 }

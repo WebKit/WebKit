@@ -198,23 +198,25 @@ function test()
     node.appendChild(child1);
     node.appendChild(child2);
 
-    for (var i = 0; i < node.childNodes.length + 1; i++) {
-        print("item " + i + ": " + node.childNodes.item(i));
+    var childNodes = node.childNodes;
+    
+    for (var i = 0; i < childNodes.length + 1; i++) {
+        print("item " + i + ": " + childNodes.item(i));
     }
     
-    for (var i = 0; i < node.childNodes.length + 1; i++) {
-        print(i + ": " + node.childNodes[i]);
+    for (var i = 0; i < childNodes.length + 1; i++) {
+        print(i + ": " + childNodes[i]);
     }
 
     node.removeChild(child1);
     node.replaceChild(child3, child2);
     
-    for (var i = 0; i < node.childNodes.length + 1; i++) {
-        print("item " + i + ": " + node.childNodes.item(i));
+    for (var i = 0; i < childNodes.length + 1; i++) {
+        print("item " + i + ": " + childNodes.item(i));
     }
 
-    for (var i = 0; i < node.childNodes.length + 1; i++) {
-        print(i + ": " + node.childNodes[i]);
+    for (var i = 0; i < childNodes.length + 1; i++) {
+        print(i + ": " + childNodes[i]);
     }
 
     try {
