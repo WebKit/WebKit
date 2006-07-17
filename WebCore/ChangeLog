@@ -1,3 +1,16 @@
+2006-07-17  David Hyatt  <hyatt@apple.com>
+
+        Back out the fix for 5564, since it turns out font:x-small; is a pretty
+        prominent IE-specific CSS hack.  Because Web sites rely on IE's incorrect
+        font parsing as a means of also correcting IE's incorrect font size rules.
+
+        This fixes Yahoo.com.
+
+        Reviewed by darin
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseFont):
+
 2006-07-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

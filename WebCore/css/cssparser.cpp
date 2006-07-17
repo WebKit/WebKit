@@ -2030,15 +2030,7 @@ bool CSSParser::parseFont(bool important)
         if (id) {
             if (id == CSS_VAL_NORMAL) {
                 // do nothing, it's the inital value for all three
-            }
-            /*
-              else if (id == CSS_VAL_INHERIT) {
-              // set all non set ones to inherit
-              // This is not that simple as the inherit could also apply to the following font-size.
-              // very ahrd to tell without looking ahead.
-              inherit = true;
-                } */
-            else if (id == CSS_VAL_ITALIC || id == CSS_VAL_OBLIQUE) {
+            } else if (id == CSS_VAL_ITALIC || id == CSS_VAL_OBLIQUE) {
                 if (font->style)
                     goto invalid;
                 font->style = new CSSPrimitiveValue(id);
@@ -2104,10 +2096,10 @@ bool CSSParser::parseFont(bool important)
     else if (validUnit(value, FLength|FPercent, strict))
         font->size = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
     value = valueList->next();
-    if (!font->size || (strict && !value))
+    if (!font->size || !value)
         goto invalid;
 
-    if (value && value->unit == Value::Operator && value->iValue == '/') {
+    if (value->unit == Value::Operator && value->iValue == '/') {
         // line-height
         value = valueList->next();
         if (!value)
@@ -2129,9 +2121,7 @@ bool CSSParser::parseFont(bool important)
     // font family must come now
     font->family = parseFontFamily();
 
-    if (!strict && !font->family)
-        font->family = new CSSValueList;
-    else if (valueList->current() || !font->family)
+    if (valueList->current() || !font->family)
         goto invalid;
 
     addProperty(CSS_PROP_FONT, font, important);
