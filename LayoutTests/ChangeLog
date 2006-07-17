@@ -1,3 +1,9 @@
+2006-07-16  Maciej Stachowiak  <mjs@apple.com>
+
+        - fixed typo in expected results
+
+        * fast/js/for-in-avoid-duplicates-expected.txt:
+
 2006-07-16  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan (new test, not the changes to existing ones).
