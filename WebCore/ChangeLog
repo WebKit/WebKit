@@ -1,3 +1,22 @@
+2006-07-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9943
+          <rdar://problem/4590613>
+          REGRESSION (Tiger-TOT): menus are offset to the right at http://movies.aol.com/movie-photo-bts/superman-returns
+
+        The problem turns out to be the fact that body.offsetLeft is returning a non-zero value.
+        I have no idea why the menus worked in Tiger Safari, because body.offsetLeft behavior has not changed.
+        Presumably some other bug that we fixed had been compensating.
+
+        Test: fast/html/body-offset-properties.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetLeft): Always return 0 for any object without an offsetParent.
+        (WebCore::RenderObject::offsetTop): Ditto.
+        (WebCore::RenderObject::offsetParent): Return 0 for the body (treat as a special case).
+
 2006-07-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.

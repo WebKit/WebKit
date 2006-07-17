@@ -1,3 +1,24 @@
+2006-07-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan (new test, not the changes to existing ones).
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9943
+          <rdar://problem/4590613>
+          REGRESSION (Tiger-TOT): menus are offset to the right at http://movies.aol.com/movie-photo-bts/superman-returns
+
+        * fast/html/body-offset-properties-expected.txt: Added.
+        * fast/html/body-offset-properties.html: Added.
+
+        * editing/execCommand/findString-2.html: Update to not depend on the buggy body.offseLeft/Top.
+        Instead hardcode the default body margin of 8.
+        * editing/pasteboard/drop-text-without-selection.html: Ditto.
+        * editing/selection/click-before-and-after-table.html: Ditto.
+        * editing/selection/mixed-editability-1.html: Ditto.
+        * fast/table/click-near-anonymous-table.html: Ditto.
+
+        * editing/selection/drag-to-contenteditable-iframe.html: Remove unnecessary use of body.offsetLeft/Top
+        that are always 0.
+
 2006-07-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

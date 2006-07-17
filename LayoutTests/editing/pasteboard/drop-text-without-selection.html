@@ -21,8 +21,9 @@ function runTest() {
 
     var link = document.getElementById("link");
 
-    var xOff = document.body.offsetLeft;
-    var yOff = document.body.offsetTop;
+    // The 8 here is the default margin on the body element.
+    var xOff = 8;
+    var yOff = 8;
     
     var x = xOff + link.offsetLeft + link.offsetWidth / 2;
     var y = yOff + link.offsetTop + link.offsetHeight / 2;

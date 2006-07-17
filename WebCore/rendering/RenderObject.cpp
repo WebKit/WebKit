@@ -557,12 +557,13 @@ void RenderObject::updateFirstLetter()
 
 int RenderObject::offsetLeft() const
 {
+    RenderObject* offsetPar = offsetParent();
+    if (!offsetPar)
+        return 0;
     int x = xPos();
     if (!isPositioned()) {
         if (isRelPositioned())
-            x += ((RenderBox*)this)->relativePositionOffsetX();
-        
-        RenderObject* offsetPar = offsetParent();
+            x += static_cast<const RenderBox*>(this)->relativePositionOffsetX();
         RenderObject* curr = parent();
         while (curr && curr != offsetPar) {
             x += curr->xPos();
@@ -574,11 +575,13 @@ int RenderObject::offsetLeft() const
 
 int RenderObject::offsetTop() const
 {
+    RenderObject* offsetPar = offsetParent();
+    if (!offsetPar)
+        return 0;
     int y = yPos();
     if (!isPositioned()) {
         if (isRelPositioned())
-            y += ((RenderBox*)this)->relativePositionOffsetY();
-        RenderObject* offsetPar = offsetParent();
+            y += static_cast<const RenderBox*>(this)->relativePositionOffsetY();
         RenderObject* curr = parent();
         while (curr && curr != offsetPar) {
             if (!curr->isTableRow())
@@ -592,6 +595,8 @@ int RenderObject::offsetTop() const
 RenderObject* RenderObject::offsetParent() const
 {
     // FIXME: It feels like this function could almost be written using containing blocks.
+    if (isBody())
+        return 0;
     bool skipTables = isPositioned() || isRelPositioned();
     RenderObject* curr = parent();
     while (curr && (!curr->element() || 

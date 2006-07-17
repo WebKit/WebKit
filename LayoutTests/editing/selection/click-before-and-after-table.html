@@ -24,9 +24,10 @@ else {
     window.layoutTestController.dumpAsText();
     var s, x, y, e, top, bottom, left, right;
     table = document.getElementById("table");
-    top = table.offsetParent.offsetTop + table.offsetTop;
+    // The 8 here is the default margin on the body element.
+    top = 8 + table.offsetTop;
+    left = 8 + table.offsetLeft;
     bottom = top + table.offsetHeight;
-    left = table.offsetParent.offsetLeft + table.offsetLeft;
     right = left + table.offsetWidth;
     
     x = right + 5;

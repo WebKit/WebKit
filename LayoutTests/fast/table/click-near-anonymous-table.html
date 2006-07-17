@@ -7,8 +7,9 @@
             if (!window.layoutTestController)
                 return;
             var target = document.getElementById("target");
-            var baseX = document.body.offsetLeft + target.offsetLeft;
-            var baseY = document.body.offsetTop + target.offsetTop;
+            // The 8 here is the default margin on the body element.
+            var baseX = 8 + target.offsetLeft;
+            var baseY = 8 + target.offsetTop;
             for (i = 0; i < target.children.length; i++) {
                 var div = target.children[i];
                 var clickX = baseX + target.offsetLeft + target.offsetWidth + 5;

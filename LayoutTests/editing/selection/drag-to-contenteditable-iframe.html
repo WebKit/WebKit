@@ -27,16 +27,16 @@ function step2()
     log("Abe should be outside the frame and inside it.");
     
     e = document.getElementById("dragme");
-    x = e.offsetLeft + e.offsetParent.offsetLeft + e.offsetWidth / 2;
-    y = e.offsetTop + e.offsetParent.offsetTop + e.offsetHeight / 2;
+    x = e.offsetLeft + e.offsetWidth / 2;
+    y = e.offsetTop + e.offsetHeight / 2;
 
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();
     eventSender.leapForward(1000);
     
     e = document.getElementById("frame");
-    x = e.offsetLeft + e.offsetParent.offsetLeft + e.offsetWidth / 2;
-    y = e.offsetTop + e.offsetParent.offsetTop + e.offsetHeight / 2;
+    x = e.offsetLeft + e.offsetWidth / 2;
+    y = e.offsetTop + e.offsetHeight / 2;
     
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
