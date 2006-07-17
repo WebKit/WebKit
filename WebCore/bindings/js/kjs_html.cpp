@@ -303,7 +303,7 @@ JSValue *JSHTMLDocument::getValueProperty(ExecState* exec, int token) const
     return jsNumber(view ? view->contentsWidth() : 0);
   case Dir:
     if (!body)
-      return jsUndefined();
+      return jsString("");
     return jsString(body->dir());
   case DesignMode:
     return jsString(doc.inDesignMode() ? "on" : "off");

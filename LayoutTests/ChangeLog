@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9954
+          REGRESSION: document.dir should return empty string in <head>
+
+        * fast/dom/document-dir-property-expected.txt: Added.
+        * fast/dom/document-dir-property.html: Added.
+
+2006-07-16  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
         * fast/dynamic/move-node-with-selection-expected.checksum:
         Removed "No newline at end of file" that snuck in as part of the "apply patch" process.
 

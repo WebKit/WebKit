@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9954
+          REGRESSION: document.dir should return empty string in <head>
+
+        Test: fast/dom/document-dir-property.html
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocument::getValueProperty): Return an empty string instead of an
+        undefined value for an unset document.dir property.
+
+2006-07-16  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
         * dom/NodeFilter.idl:
         Removed "No newline at end of file" that snuck in as part of the "apply patch" process.
         * manual-tests/input-empty-on-focus.html:
