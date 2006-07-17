@@ -1,3 +1,11 @@
+2006-07-17  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Add Apache 2 config file.
+        
+        * http/conf/apache2-httpd.conf: Added.
+
 2006-07-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
