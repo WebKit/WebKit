@@ -1,3 +1,15 @@
+2006-07-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Justin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9978
+          REGRESSION (r12949-r12988): Clicking the first letter on a line places the caret at the end of the previous line
+
+        * editing/selection/click-start-of-line-expected.checksum: Added.
+        * editing/selection/click-start-of-line-expected.png: Added.
+        * editing/selection/click-start-of-line-expected.txt: Added.
+        * editing/selection/click-start-of-line.html: Added.
+
 2006-07-18  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

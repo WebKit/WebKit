@@ -1,3 +1,17 @@
+2006-07-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9978
+          REGRESSION (r12949-r12988): Clicking the first letter on a line places the caret at the end of the previous line
+
+        Test: editing/selection/click-start-of-line.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForCoordinates): Changed to return downstream
+        affinity if the x coordinate is to the left of the middle of the first character
+        in the text box.
+
 2006-07-18  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

@@ -287,7 +287,7 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
             if (_x < absx + box->m_x + box->m_width)
                 // and the x coordinate is to the left of the right edge of this box
                 // check to see if position goes in this box
-                return VisiblePosition(element(), offset + box->m_start, VP_UPSTREAM_IF_POSSIBLE);
+                return VisiblePosition(element(), offset + box->m_start, offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
 
             if (!box->prevOnLine() && _x < absx + box->m_x)
                 // box is first on line
