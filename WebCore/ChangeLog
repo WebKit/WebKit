@@ -1,3 +1,18 @@
+2006-07-18  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9013
+        Let correct CSS custom cursor declarations parse
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue): Ignore any values following a custom CSS cursor URI, instead of
+        requiring that it is the only one in the list (which is actually illegal, according to the spec). 
+        This is only a temporary hack, with a real implementation to follow in bug 6001/6002.
+
+        * manual-tests/custom-cursors.html: Added a test for this issue.
+        * manual-tests/resources/helpCursor.tiff: A cursor image used in the test.
+
 2006-07-18  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Anders.
