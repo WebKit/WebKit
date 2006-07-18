@@ -1,3 +1,19 @@
+2006-07-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4621728>
+        REGRESSION: Selecting by dragging down creates selection in wrong direction, with certain steps
+        <rdar://problem/4604932>
+        REGRESSION: Dragging too far left on a line will select all lines above it.
+ 
+        No layout test because of 9980.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForCoordinates): Don't return positions inside editable roots
+        for coordinates outside those roots, except for coordinates outside a document that is entirely 
+        editable.
+
 2006-07-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

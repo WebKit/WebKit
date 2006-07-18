@@ -2616,8 +2616,10 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     int right = left + contentWidth();
 
     Node* n = element();
-
-    bool isEditableRoot = n && n->rootEditableElement() == n;
+    
+    // Don't return positions inside editable roots for coordinates outside those roots, except for coordinates outside
+    // a document that is entirely editable.
+    bool isEditableRoot = n && n->rootEditableElement() == n && !n->hasTagName(bodyTag) && !n->hasTagName(htmlTag);
 
     if (y < top || (isEditableRoot && (y < bottom && x < left))) {
         if (!isEditableRoot)
@@ -2683,8 +2685,7 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
         return VisiblePosition(n, 0, DOWNSTREAM);
     }
     
-    // see if any child blocks exist at this y coordinate
-    RenderObject* lastVisibleChild = 0;
+    // See if any child blocks exist at this y coordinate.
     for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
         if (renderer->height() == 0 || renderer->style()->visibility() != VISIBLE || renderer->isFloatingOrPositioned())
             continue;
@@ -2698,7 +2699,6 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
             bottom = top + contentHeight();
         if (y >= top && y < bottom)
             return renderer->positionForCoordinates(x, y);
-        lastVisibleChild = renderer;
     }
     
     return RenderFlow::positionForCoordinates(x, y);
