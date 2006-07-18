@@ -1471,6 +1471,11 @@ static bool debugWidget = true;
     }
 }
 
+- (void)setProhibitsMainFrameScrolling:(BOOL)prohibits
+{
+    [[[self mainFrame] _bridge] setProhibitsScrolling:YES];
+}
+
 - (BOOL)alwaysShowHorizontalScroller
 {
     WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];

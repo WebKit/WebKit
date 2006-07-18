@@ -43,9 +43,9 @@ namespace WebCore {
         int contentsY() const;
         IntSize scrollOffset() const;
         void scrollBy(int dx, int dy);
-        void scrollPointRecursively(int dx, int dy);
+        virtual void scrollPointRecursively(int dx, int dy);
 
-        void setContentsPos(int x, int y);
+        virtual void setContentsPos(int x, int y);
 
         virtual void setVScrollBarMode(ScrollBarMode);
         virtual void setHScrollBarMode(ScrollBarMode);

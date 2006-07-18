@@ -220,6 +220,13 @@ Could be worth adding to the API.
 - (BOOL)alwaysShowHorizontalScroller;
 
 /*!
+    @method setProhibitsMainFrameScrolling:
+    @abstract Prohibits scrolling in the WebView's main frame.  Used to "lock" a WebView
+    to a specific scroll position.
+  */
+- (void)setProhibitsMainFrameScrolling:(BOOL)prohibits;
+
+/*!
     @method _setAdditionalWebPlugInPaths:
     @abstract Sets additional plugin search paths for a specific WebView.
  */

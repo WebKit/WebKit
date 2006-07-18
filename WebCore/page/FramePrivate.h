@@ -103,6 +103,7 @@ namespace WebCore {
             , m_windowHasFocus(false)
             , m_inViewSourceMode(false)
             , frameCount(0)
+            , m_prohibitsScrolling(false)
         {
         }
 
@@ -229,6 +230,8 @@ namespace WebCore {
         bool m_inViewSourceMode;
 
         unsigned frameCount;
+
+        bool m_prohibitsScrolling;
     };
 }
 

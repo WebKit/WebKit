@@ -1,3 +1,25 @@
+2006-07-17  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4612079> need a way to prevent pages from scrolling to reveal elements that are focused
+        by script
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge setProhibitsScrolling:]):
+        * page/Frame.cpp:
+        (WebCore::Frame::prohibitsScrolling):
+        (WebCore::Frame::setProhibitsScrolling):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPointRecursively):
+        (WebCore::FrameView::setContentsPos):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+
 2006-07-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Harrison.

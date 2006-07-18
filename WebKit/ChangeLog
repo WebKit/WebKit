@@ -1,3 +1,16 @@
+2006-07-17  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4612079> need a way to prevent pages from scrolling to reveal elements that are focused
+        by script
+
+        * WebView/WebViewPrivate.h:
+        * WebView/WebView.m:
+        (-[WebView setProhibitsMainFrameScrolling:]):
+        New method.  Prohibits scrolling in the WebView's main frame.  Used to "lock" a WebView to a specific
+        scroll position.
+
 2006-07-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

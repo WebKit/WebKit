@@ -174,6 +174,9 @@ public:
     void updateDashboardRegions();
 #endif
 
+    virtual void scrollPointRecursively(int x, int y);
+    virtual void setContentsPos(int x, int y);
+
     void scheduleEvent(PassRefPtr<Event>, PassRefPtr<EventTargetNode>, bool tempEvent);
 
     void ref() { ++m_refCount; }

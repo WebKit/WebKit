@@ -2601,6 +2601,11 @@ static NSCharacterSet *_getPostSmartSet(void)
     return m_frame->inViewSourceMode();
 }
 
+- (void)setProhibitsScrolling:(BOOL)prohibits
+{
+    m_frame->setProhibitsScrolling(prohibits);
+}
+
 @end
 
 @implementation WebCoreFrameBridge (WebCoreBridgeInternal)
