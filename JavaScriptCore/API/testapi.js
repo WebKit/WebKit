@@ -105,3 +105,20 @@ shouldThrow("MyObject.nullGetSet = 1");
 shouldThrow("MyObject.nullGetSet");
 shouldThrow("MyObject.nullCall()");
 shouldThrow("MyObject.hasPropertyLie");
+
+derived = new Derived();
+
+// base properties and functions return 1 when called/gotten; derived, 2
+shouldBe("derived.baseProtoDup()", 2);
+shouldBe("derived.baseProto()", 1);
+shouldBe("derived.baseDup", 2);
+shouldBe("derived.baseOnly", 1);
+shouldBe("derived.protoOnly()", 2);
+shouldBe("derived.protoDup", 2);
+shouldBe("derived.derivedOnly", 2)
+
+// base properties throw 1 when set; derived, 2
+shouldBe("derived.baseDup = 0", 2);
+shouldBe("derived.baseOnly = 0", 1);
+shouldBe("derived.derivedOnly = 0", 2)
+shouldBe("derived.protoDup = 0", 2);

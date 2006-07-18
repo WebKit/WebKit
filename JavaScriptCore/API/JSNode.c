@@ -30,9 +30,7 @@
 #include "NodeList.h"
 #include "UnusedParam.h"
 
-static JSClassRef JSNode_class(JSContextRef context);
-
-static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef JSNode_appendChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(function);
@@ -56,7 +54,7 @@ static JSValueRef JSNodePrototype_appendChild(JSContextRef context, JSObjectRef 
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef JSNode_removeChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(function);
@@ -76,7 +74,7 @@ static JSValueRef JSNodePrototype_removeChild(JSContextRef context, JSObjectRef 
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef JSNodePrototype_replaceChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef JSNode_replaceChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(function);
@@ -98,23 +96,12 @@ static JSValueRef JSNodePrototype_replaceChild(JSContextRef context, JSObjectRef
     return JSValueMakeUndefined(context);
 }
 
-static JSStaticFunction JSNodePrototype_staticFunctions[] = {
-    { "appendChild", JSNodePrototype_appendChild, kJSPropertyAttributeDontDelete },
-    { "removeChild", JSNodePrototype_removeChild, kJSPropertyAttributeDontDelete },
-    { "replaceChild", JSNodePrototype_replaceChild, kJSPropertyAttributeDontDelete },
+static JSStaticFunction JSNode_staticFunctions[] = {
+    { "appendChild", JSNode_appendChild, kJSPropertyAttributeDontDelete },
+    { "removeChild", JSNode_removeChild, kJSPropertyAttributeDontDelete },
+    { "replaceChild", JSNode_replaceChild, kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
 };
-
-static JSClassRef JSNodePrototype_class(JSContextRef context)
-{
-    static JSClassRef jsClass;
-    if (!jsClass) {
-        JSClassDefinition definition = kJSClassDefinitionNull;
-        definition.staticFunctions = JSNodePrototype_staticFunctions;
-        jsClass = JSClassCreate(&definition);
-    }
-    return jsClass;
-}
 
 static JSValueRef JSNode_getNodeType(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
@@ -172,12 +159,13 @@ static void JSNode_finalize(JSObjectRef object)
     Node_deref(node);
 }
 
-static JSClassRef JSNode_class(JSContextRef context)
+JSClassRef JSNode_class(JSContextRef context)
 {
     static JSClassRef jsClass;
     if (!jsClass) {
-        JSClassDefinition definition = kJSClassDefinitionNull;
+        JSClassDefinition definition = kJSClassDefinitionEmpty;
         definition.staticValues = JSNode_staticValues;
+        definition.staticFunctions = JSNode_staticFunctions;
         definition.initialize = JSNode_initialize;
         definition.finalize = JSNode_finalize;
 
@@ -186,19 +174,9 @@ static JSClassRef JSNode_class(JSContextRef context)
     return jsClass;
 }
 
-JSObjectRef JSNode_prototype(JSContextRef context)
-{
-    static JSObjectRef prototype;
-    if (!prototype) {
-        prototype = JSObjectMake(context, JSNodePrototype_class(context), NULL);
-        JSValueProtect(context, prototype);
-    }
-    return prototype;
-}
-
 JSObjectRef JSNode_new(JSContextRef context, Node* node)
 {
-    return JSObjectMakeWithData(context, JSNode_class(context), JSNode_prototype(context), node);
+    return JSObjectMake(context, JSNode_class(context), node);
 }
 
 JSObjectRef JSNode_construct(JSContextRef context, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

@@ -28,7 +28,7 @@
 #include "JSNodeList.h"
 #include "UnusedParam.h"
 
-static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef JSNodeList_item(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount > 0) {
         NodeList* nodeList = JSObjectGetPrivate(thisObject);
@@ -41,22 +41,10 @@ static JSValueRef JSNodeListPrototype_item(JSContextRef context, JSObjectRef obj
     return JSValueMakeUndefined(context);
 }
 
-static JSStaticFunction JSNodeListPrototype_staticFunctions[] = {
-    { "item", JSNodeListPrototype_item, kJSPropertyAttributeDontDelete },
+static JSStaticFunction JSNodeList_staticFunctions[] = {
+    { "item", JSNodeList_item, kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
 };
-
-static JSClassRef JSNodeListPrototype_class(JSContextRef context)
-{
-    static JSClassRef jsClass;
-    if (!jsClass) {
-        JSClassDefinition definition = kJSClassDefinitionNull;
-        definition.staticFunctions = JSNodeListPrototype_staticFunctions;
-        jsClass = JSClassCreate(&definition);
-    }
-    
-    return jsClass;
-}
 
 static JSValueRef JSNodeList_length(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
@@ -108,8 +96,9 @@ static JSClassRef JSNodeList_class(JSContextRef context)
 {
     static JSClassRef jsClass;
     if (!jsClass) {
-        JSClassDefinition definition = kJSClassDefinitionNull;
+        JSClassDefinition definition = kJSClassDefinitionEmpty;
         definition.staticValues = JSNodeList_staticValues;
+        definition.staticFunctions = JSNodeList_staticFunctions;
         definition.getProperty = JSNodeList_getProperty;
         definition.initialize = JSNodeList_initialize;
         definition.finalize = JSNodeList_finalize;
@@ -120,17 +109,7 @@ static JSClassRef JSNodeList_class(JSContextRef context)
     return jsClass;
 }
 
-static JSObjectRef JSNodeList_prototype(JSContextRef context)
-{
-    static JSObjectRef prototype;
-    if (!prototype) {
-        prototype = JSObjectMake(context, JSNodeListPrototype_class(context), NULL);
-        JSValueProtect(context, prototype);
-    }
-    return prototype;
-}
-
 JSObjectRef JSNodeList_new(JSContextRef context, NodeList* nodeList)
 {
-    return JSObjectMakeWithData(context, JSNodeList_class(context), JSNodeList_prototype(context), nodeList);
+    return JSObjectMake(context, JSNodeList_class(context), nodeList);
 }

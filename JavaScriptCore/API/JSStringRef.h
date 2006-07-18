@@ -150,7 +150,7 @@ bool JSStringIsEqualToUTF8CString(JSStringRef a, const char* b);
 JSStringRef JSStringCreateWithCFString(CFStringRef string);
 /*!
 @function
-@abstract         Creates a CFString form a JavaScript string.
+@abstract         Creates a CFString from a JavaScript string.
 @param alloc      The alloc parameter to pass to CFStringCreate.
 @param string     The JSString to copy into the new CFString.
 @result           A CFString containing string. Ownership follows the Create Rule.

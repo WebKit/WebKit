@@ -143,9 +143,10 @@ void JSCallbackObject::put(ExecState* exec, const Identifier& propertyName, JSVa
             if (StaticValueEntry* entry = staticValues->get(propertyName.ustring().rep())) {
                 if (entry->attributes & kJSPropertyAttributeReadOnly)
                     return;
-                if (JSObjectSetPropertyCallback setProperty = entry->setProperty)
-                    setProperty(ctx, thisRef, propertyNameRef, valueRef, toRef(exec->exceptionSlot()));
-                else
+                if (JSObjectSetPropertyCallback setProperty = entry->setProperty) {
+                    if (setProperty(ctx, thisRef, propertyNameRef, valueRef, toRef(exec->exceptionSlot())))
+                        return;
+                } else
                     throwError(exec, ReferenceError, "Writable static value property defined with NULL setProperty callback.");
             }
         }

@@ -46,7 +46,7 @@ typedef struct OpaqueJSClass* JSClassRef;
 /*! @typedef JSPropertyNameArrayRef An array of JavaScript property names. */
 typedef struct OpaqueJSPropertyNameArray* JSPropertyNameArrayRef;
 
-/*! @typedef JSPropertyNameAccumulatorRef A data type used to collect a JavaScript object's property names. */
+/*! @typedef JSPropertyNameAccumulatorRef An ordered set used to collect the names of a JavaScript object's properties. */
 typedef struct OpaqueJSPropertyNameAccumulator* JSPropertyNameAccumulatorRef;
 
 

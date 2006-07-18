@@ -20,10 +20,11 @@ _JSObjectHasProperty
 _JSObjectIsConstructor
 _JSObjectIsFunction
 _JSObjectMake
-_JSObjectMakeConstructorWithCallback
+_JSObjectMakeConstructor
+_JSObjectMakeFunction
 _JSObjectMakeFunction
 _JSObjectMakeFunctionWithCallback
-_JSObjectMakeWithData
+_JSObjectMakeWithPrototype
 _JSObjectSetPrivate
 _JSObjectSetProperty
 _JSObjectSetPropertyAtIndex
@@ -260,7 +261,7 @@ __ZNK3KJS8JSObject9toBooleanEPNS_9ExecStateE
 __ZNK3KJS9ExecState18lexicalInterpreterEv
 __ZTVN3KJS19InternalFunctionImpE
 __ZTVN3KJS8JSObjectE
-_kJSClassDefinitionNull
+_kJSClassDefinitionEmpty
 _kjs_pcre_compile
 _kjs_pcre_exec
 _kjs_pcre_free

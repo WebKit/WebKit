@@ -31,10 +31,19 @@ namespace KJS {
 
 const ClassInfo JSCallbackConstructor::info = { "CallbackConstructor", 0, 0, 0 };
 
-JSCallbackConstructor::JSCallbackConstructor(ExecState* exec, JSObjectCallAsConstructorCallback callback)
+JSCallbackConstructor::JSCallbackConstructor(ExecState* exec, JSClassRef jsClass, JSObjectCallAsConstructorCallback callback)
     : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype())
+    , m_class(jsClass)
     , m_callback(callback)
 {
+    if (m_class)
+        JSClassRetain(jsClass);
+}
+
+JSCallbackConstructor::~JSCallbackConstructor()
+{
+    if (m_class)
+        JSClassRelease(m_class);
 }
 
 bool JSCallbackConstructor::implementsHasInstance() const
@@ -49,14 +58,18 @@ bool JSCallbackConstructor::implementsConstruct() const
 
 JSObject* JSCallbackConstructor::construct(ExecState* exec, const List &args)
 {
-    JSContextRef execRef = toRef(exec);
+    JSContextRef ctx = toRef(exec);
     JSObjectRef thisRef = toRef(this);
 
-    size_t argumentCount = args.size();
-    JSValueRef arguments[argumentCount];
-    for (size_t i = 0; i < argumentCount; i++)
-        arguments[i] = toRef(args[i]);
-    return toJS(m_callback(execRef, thisRef, argumentCount, arguments, toRef(exec->exceptionSlot())));
+    if (m_callback) {
+        size_t argumentCount = args.size();
+        JSValueRef arguments[argumentCount];
+        for (size_t i = 0; i < argumentCount; i++)
+            arguments[i] = toRef(args[i]);
+        return toJS(m_callback(ctx, thisRef, argumentCount, arguments, toRef(exec->exceptionSlot())));
+    }
+    
+    return toJS(JSObjectMake(ctx, m_class, 0));
 }
 
 } // namespace KJS

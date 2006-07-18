@@ -24,18 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "APICast.h"
+#include "JSCallbackObject.h"
 #include "JSClassRef.h"
 #include "JSObjectRef.h"
 #include "identifier.h"
 
 using namespace KJS;
 
-const JSClassDefinition kJSClassDefinitionNull = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+const JSClassDefinition kJSClassDefinitionEmpty = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-OpaqueJSClass::OpaqueJSClass(JSClassDefinition* definition) 
+OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass* protoClass) 
     : refCount(0)
     , className(definition->className)
     , parentClass(definition->parentClass)
+    , prototypeClass(0)
     , staticValues(0)
     , staticFunctions(0)
     , initialize(definition->initialize)
@@ -67,6 +70,9 @@ OpaqueJSClass::OpaqueJSClass(JSClassDefinition* definition)
             ++staticFunction;
         }
     }
+        
+    if (protoClass)
+        prototypeClass = JSClassRetain(protoClass);
 }
 
 OpaqueJSClass::~OpaqueJSClass()
@@ -80,4 +86,72 @@ OpaqueJSClass::~OpaqueJSClass()
         deleteAllValues(*staticFunctions);
         delete staticFunctions;
     }
+    
+    if (prototypeClass)
+        JSClassRelease(prototypeClass);
+}
+
+JSClassRef OpaqueJSClass::createNoPrototype(const JSClassDefinition* definition)
+{
+    return new OpaqueJSClass(definition, 0);
+}
+
+void clearReferenceToPrototype(JSObjectRef prototype)
+{
+    OpaqueJSClass* jsClass = static_cast<OpaqueJSClass*>(JSObjectGetPrivate(prototype));
+    ASSERT(jsClass);
+    jsClass->cachedPrototype = 0;
+}
+
+JSClassRef OpaqueJSClass::create(const JSClassDefinition* definition)
+{
+    if (JSStaticFunction* staticFunctions = definition->staticFunctions) {
+        // copy functions into a prototype class
+        JSClassDefinition protoDefinition = kJSClassDefinitionEmpty;
+        protoDefinition.staticFunctions = staticFunctions;
+        protoDefinition.finalize = clearReferenceToPrototype;
+        OpaqueJSClass* protoClass = new OpaqueJSClass(&protoDefinition, 0);
+
+        // remove functions from the original definition
+        JSClassDefinition objectDefinition = *definition;
+        objectDefinition.staticFunctions = 0;
+        return new OpaqueJSClass(&objectDefinition, protoClass);
+    }
+
+    return new OpaqueJSClass(definition, 0);
+}
+
+/*!
+// Doc here in case we make this public. (Hopefully we won't.)
+@function
+ @abstract Returns the prototype that will be used when constructing an object with a given class.
+ @param ctx The execution context to use.
+ @param jsClass A JSClass whose prototype you want to get.
+ @result The JSObject prototype that was automatically generated for jsClass, or NULL if no prototype was automatically generated. This is the prototype that will be used when constructing an object using jsClass.
+*/
+JSObject* OpaqueJSClass::prototype(JSContextRef ctx)
+{
+    /* Class (C++) and prototype (JS) inheritance are parallel, so:
+     *     (C++)      |        (JS)
+     *   ParentClass  |   ParentClassPrototype
+     *       ^        |          ^
+     *       |        |          |
+     *  DerivedClass  |  DerivedClassPrototype
+     */
+    
+    if (!prototypeClass)
+        return 0;
+    
+    ExecState* exec = toJS(ctx);
+    
+    if (!cachedPrototype) {
+        // Recursive, but should be good enough for our purposes
+        JSObject* parentPrototype = 0;
+        if (parentClass)
+            parentPrototype = parentClass->prototype(ctx); // can be null
+        if (!parentPrototype)
+            parentPrototype = exec->dynamicInterpreter()->builtinObjectPrototype();
+        cachedPrototype = new JSCallbackObject(exec, prototypeClass, parentPrototype, this); // set ourself as the object's private data, so it can clear our reference on destruction
+    }
+    return cachedPrototype;
 }

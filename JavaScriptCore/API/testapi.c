@@ -33,6 +33,7 @@
 
 #include <assert.h>
 #include <math.h>
+#include <setjmp.h>
 
 static JSGlobalContextRef context = 0;
 
@@ -98,14 +99,6 @@ static void assertEqualsAsCharactersPtr(JSValueRef value, const char* expectedVa
 static JSValueRef jsGlobalValue; // non-stack value for testing JSValueProtect()
 
 /* MyObject pseudo-class */
-
-static bool didInitialize = false;
-static void MyObject_initialize(JSContextRef context, JSObjectRef object)
-{
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(object);
-    didInitialize = true;
-}
 
 static bool MyObject_hasProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName)
 {
@@ -241,14 +234,6 @@ static JSValueRef MyObject_convertToType(JSContextRef context, JSObjectRef objec
     return NULL;
 }
 
-static bool MyObject_didFinalize = false;
-static void MyObject_finalize(JSObjectRef object)
-{
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(object);
-    MyObject_didFinalize = true;
-}
-
 static JSStaticValue evilStaticValues[] = {
     { "nullGetSet", 0, 0, kJSPropertyAttributeNone },
     { 0, 0, 0, 0 }
@@ -261,6 +246,7 @@ static JSStaticFunction evilStaticFunctions[] = {
 
 JSClassDefinition MyObject_definition = {
     0,
+    kJSClassAttributeNone,
     
     "MyObject",
     NULL,
@@ -268,8 +254,8 @@ JSClassDefinition MyObject_definition = {
     evilStaticValues,
     evilStaticFunctions,
     
-    MyObject_initialize,
-    MyObject_finalize,
+    NULL,
+    NULL,
     MyObject_hasProperty,
     MyObject_getProperty,
     MyObject_setProperty,
@@ -290,24 +276,74 @@ static JSClassRef MyObject_class(JSContextRef context)
     return jsClass;
 }
 
-static void Base_initialize(JSContextRef context, JSObjectRef object)
+static JSValueRef Base_get(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
-    assert(!JSObjectGetPrivate(object));
-    JSObjectSetPrivate(object, (void*)1);
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(propertyName);
+
+    return JSValueMakeNumber(ctx, 1); // distinguish base get form derived get
 }
 
-static bool Base_didFinalize;
+static bool Base_set(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
+{
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(value);
+
+    *exception = JSValueMakeNumber(ctx, 1); // distinguish base set from derived set
+    return true;
+}
+
+static JSValueRef Base_callAsFunction(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(function);
+    UNUSED_PARAM(thisObject);
+    UNUSED_PARAM(argumentCount);
+    UNUSED_PARAM(arguments);
+    
+    return JSValueMakeNumber(ctx, 1); // distinguish base call from derived call
+}
+
+static JSStaticFunction Base_staticFunctions[] = {
+    { "baseProtoDup", NULL, kJSPropertyAttributeNone },
+    { "baseProto", Base_callAsFunction, kJSPropertyAttributeNone },
+    { 0, 0, 0 }
+};
+
+static JSStaticValue Base_staticValues[] = {
+    { "baseDup", Base_get, Base_set, kJSPropertyAttributeNone },
+    { "baseOnly", Base_get, Base_set, kJSPropertyAttributeNone },
+    { 0, 0, 0, 0 }
+};
+
+static bool TestInitializeFinalize;
+static void Base_initialize(JSContextRef context, JSObjectRef object)
+{
+    if (TestInitializeFinalize) {
+        assert((void*)1 == JSObjectGetPrivate(object));
+        JSObjectSetPrivate(object, (void*)2);
+    }
+}
+
+static unsigned Base_didFinalize;
 static void Base_finalize(JSObjectRef object)
 {
-    assert((void*)3 == JSObjectGetPrivate(object));
-    Base_didFinalize = true;
+    if (TestInitializeFinalize) {
+        assert((void*)4 == JSObjectGetPrivate(object));
+        Base_didFinalize = true;
+    }
 }
 
 static JSClassRef Base_class(JSContextRef context)
 {
     static JSClassRef jsClass;
     if (!jsClass) {
-        JSClassDefinition definition = kJSClassDefinitionNull;
+        JSClassDefinition definition = kJSClassDefinitionEmpty;
+        definition.staticValues = Base_staticValues;
+        definition.staticFunctions = Base_staticFunctions;
         definition.initialize = Base_initialize;
         definition.finalize = Base_finalize;
         jsClass = JSClassCreate(&definition);
@@ -315,24 +351,75 @@ static JSClassRef Base_class(JSContextRef context)
     return jsClass;
 }
 
+static JSValueRef Derived_get(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
+{
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(propertyName);
+
+    return JSValueMakeNumber(ctx, 2); // distinguish base get form derived get
+}
+
+static bool Derived_set(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
+{
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(value);
+
+    *exception = JSValueMakeNumber(ctx, 2); // distinguish base set from derived set
+    return true;
+}
+
+static JSValueRef Derived_callAsFunction(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(function);
+    UNUSED_PARAM(thisObject);
+    UNUSED_PARAM(argumentCount);
+    UNUSED_PARAM(arguments);
+    
+    return JSValueMakeNumber(ctx, 2); // distinguish base call from derived call
+}
+
+static JSStaticFunction Derived_staticFunctions[] = {
+    { "protoOnly", Derived_callAsFunction, kJSPropertyAttributeNone },
+    { "protoDup", NULL, kJSPropertyAttributeNone },
+    { "baseProtoDup", Derived_callAsFunction, kJSPropertyAttributeNone },
+    { 0, 0, 0 }
+};
+
+static JSStaticValue Derived_staticValues[] = {
+    { "derivedOnly", Derived_get, Derived_set, kJSPropertyAttributeNone },
+    { "protoDup", Derived_get, Derived_set, kJSPropertyAttributeNone },
+    { "baseDup", Derived_get, Derived_set, kJSPropertyAttributeNone },
+    { 0, 0, 0, 0 }
+};
+
 static void Derived_initialize(JSContextRef context, JSObjectRef object)
 {
-    assert((void*)1 == JSObjectGetPrivate(object));
-    JSObjectSetPrivate(object, (void*)2);
+    if (TestInitializeFinalize) {
+        assert((void*)2 == JSObjectGetPrivate(object));
+        JSObjectSetPrivate(object, (void*)3);
+    }
 }
 
 static void Derived_finalize(JSObjectRef object)
 {
-    assert((void*)2 == JSObjectGetPrivate(object));
-    JSObjectSetPrivate(object, (void*)3);
+    if (TestInitializeFinalize) {
+        assert((void*)3 == JSObjectGetPrivate(object));
+        JSObjectSetPrivate(object, (void*)4);
+    }
 }
 
 static JSClassRef Derived_class(JSContextRef context)
 {
     static JSClassRef jsClass;
     if (!jsClass) {
-        JSClassDefinition definition = kJSClassDefinitionNull;
+        JSClassDefinition definition = kJSClassDefinitionEmpty;
         definition.parentClass = Base_class(context);
+        definition.staticValues = Derived_staticValues;
+        definition.staticFunctions = Derived_staticFunctions;
         definition.initialize = Derived_initialize;
         definition.finalize = Derived_finalize;
         jsClass = JSClassCreate(&definition);
@@ -373,11 +460,27 @@ static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjec
 
 static char* createStringWithContentsOfFile(const char* fileName);
 
+static void testInitializeFinalize()
+{
+    JSObjectRef o = JSObjectMake(context, Derived_class(context), (void*)1);
+    assert(JSObjectGetPrivate(o) == (void*)3);
+}
+
 int main(int argc, char* argv[])
 {
     UNUSED_PARAM(argc);
     UNUSED_PARAM(argv);
     
+    // Test garbage collection with a fresh context
+    context = JSGlobalContextCreate(NULL);
+    TestInitializeFinalize = true;
+    testInitializeFinalize();
+    JSGlobalContextRelease(context);
+    JSGarbageCollect(context);
+    TestInitializeFinalize = false;
+
+    assert(Base_didFinalize);
+
     context = JSGlobalContextCreate(NULL);
     
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
@@ -390,7 +493,7 @@ int main(int argc, char* argv[])
     JSValueRef jsZero = JSValueMakeNumber(context, 0);
     JSValueRef jsOne = JSValueMakeNumber(context, 1);
     JSValueRef jsOneThird = JSValueMakeNumber(context, 1.0 / 3.0);
-    JSObjectRef jsObjectNoProto = JSObjectMake(context, NULL, JSValueMakeNull(context));
+    JSObjectRef jsObjectNoProto = JSObjectMakeWithPrototype(context, NULL, NULL, JSValueMakeNull(context));
 
     // FIXME: test funny utf8 characters
     JSStringRef jsEmptyIString = JSStringCreateWithUTF8CString("");
@@ -445,7 +548,6 @@ int main(int argc, char* argv[])
 #endif // __APPLE__
 
     JSObjectRef myObject = JSObjectMake(context, MyObject_class(context), NULL);
-    assert(didInitialize);
     JSStringRef myObjectIString = JSStringCreateWithUTF8CString("MyObject");
     JSObjectSetProperty(context, globalObject, myObjectIString, myObject, kJSPropertyAttributeNone, NULL);
     JSStringRelease(myObjectIString);
@@ -659,12 +761,17 @@ int main(int argc, char* argv[])
     assert(!JSObjectGetPrivate(printFunction));
 
     JSStringRef myConstructorIString = JSStringCreateWithUTF8CString("MyConstructor");
-    JSObjectRef myConstructor = JSObjectMakeConstructorWithCallback(context, NULL, myConstructor_callAsConstructor);
+    JSObjectRef myConstructor = JSObjectMakeConstructor(context, NULL, myConstructor_callAsConstructor);
     JSObjectSetProperty(context, globalObject, myConstructorIString, myConstructor, kJSPropertyAttributeNone, NULL);
     JSStringRelease(myConstructorIString);
     
     assert(!JSObjectSetPrivate(myConstructor, (void*)1));
     assert(!JSObjectGetPrivate(myConstructor));
+    
+    string = JSStringCreateWithUTF8CString("Derived");
+    JSObjectRef derivedConstructor = JSObjectMakeConstructor(context, Derived_class(context), NULL);
+    JSObjectSetProperty(context, globalObject, string, derivedConstructor, kJSPropertyAttributeNone, NULL);
+    JSStringRelease(string);
     
     o = JSObjectMake(context, NULL, NULL);
     JSObjectSetProperty(context, o, jsOneIString, JSValueMakeNumber(context, 1), kJSPropertyAttributeNone, NULL);
@@ -677,10 +784,15 @@ int main(int argc, char* argv[])
     JSPropertyNameArrayRelease(nameArray);
     assert(count == 1); // jsCFString should not be enumerated
 
-    JSClassDefinition nullDefinition = kJSClassDefinitionNull;
+    JSClassDefinition nullDefinition = kJSClassDefinitionEmpty;
+    nullDefinition.attributes = kJSClassAttributeNoPrototype;
     JSClassRef nullClass = JSClassCreate(&nullDefinition);
     JSClassRelease(nullClass);
     
+    nullDefinition = kJSClassDefinitionEmpty;
+    nullClass = JSClassCreate(&nullDefinition);
+    JSClassRelease(nullClass);
+
     functionBody = JSStringCreateWithUTF8CString("return this;");
     function = JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, NULL);
     JSStringRelease(functionBody);
@@ -688,10 +800,6 @@ int main(int argc, char* argv[])
     assert(JSValueIsEqual(context, v, globalObject, NULL));
     v = JSObjectCallAsFunction(context, function, o, 0, NULL, NULL);
     assert(JSValueIsEqual(context, v, o, NULL));
-    
-    o = JSObjectMake(context, Derived_class(context), NULL);
-    assert(JSObjectGetPrivate(o) == (void*)2);
-    o = NULL;
     
     char* scriptUTF8 = createStringWithContentsOfFile("testapi.js");
     JSStringRef script = JSStringCreateWithUTF8CString(scriptUTF8);
@@ -709,13 +817,6 @@ int main(int argc, char* argv[])
     JSStringRelease(script);
     free(scriptUTF8);
 
-    // Allocate a few dummies so that at least one will be collected
-    JSObjectMake(context, MyObject_class(context), NULL);
-    JSObjectMake(context, MyObject_class(context), NULL);
-    JSGarbageCollect(context);
-    assert(MyObject_didFinalize);
-    assert(Base_didFinalize);
-
     JSStringRelease(jsEmptyIString);
     JSStringRelease(jsOneIString);
 #if defined(__APPLE__)
@@ -728,6 +829,8 @@ int main(int argc, char* argv[])
     JSStringRelease(badSyntax);
     
     JSGlobalContextRelease(context);
+    JSGarbageCollect(context);
+
     printf("PASS: Program exited normally.\n");
     return 0;
 }

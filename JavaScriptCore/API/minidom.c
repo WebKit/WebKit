@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     JSStringRelease(printIString);
     
     JSStringRef node = JSStringCreateWithUTF8CString("Node");
-    JSObjectSetProperty(context, globalObject, node, JSObjectMakeConstructorWithCallback(context, JSNode_prototype(context), JSNode_construct), kJSPropertyAttributeNone, NULL);
+    JSObjectSetProperty(context, globalObject, node, JSObjectMakeConstructor(context, JSNode_class(context), JSNode_construct), kJSPropertyAttributeNone, NULL);
     JSStringRelease(node);
     
     char* scriptUTF8 = createStringWithContentsOfFile("minidom.js");

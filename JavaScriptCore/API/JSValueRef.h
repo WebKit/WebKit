@@ -119,12 +119,11 @@ bool JSValueIsObject(JSContextRef ctx, JSValueRef value);
 
 /*!
 @function
-@abstract       Tests whether a JavaScript value is an object with a given 
-@param ctx  The execution context to use.
- class in its class chain.
-@param value    The JSValue to test.
- @result        true if value is an object and has jsClass in its class chain, 
- otherwise false.
+@abstract Tests whether a JavaScript value is an object with a given class in its class chain.
+@param ctx The execution context to use.
+@param value The JSValue to test.
+@param jsClass The JSClass to test against.
+@result true if value is an object and has jsClass in its class chain, otherwise false.
 */
 bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsClass);
 
@@ -252,11 +251,12 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
 // Garbage collection
 /*!
 @function
-@abstract       Protects a JavaScript value from garbage collection.
-@param ctx  The execution context to use.
-@param value    The JSValue to protect.
-@discussion     A value may be protected multiple times and must be unprotected an
- equal number of times before becoming eligible for garbage collection.
+@abstract Protects a JavaScript value from garbage collection.
+@param ctx The execution context to use.
+@param value The JSValue to protect.
+@discussion Use this method when you want to store a JSValue in a global or on the heap, where the garbage collector will not be able to discover your reference to it.
+ 
+A value may be protected multiple times and must be unprotected an equal number of times before becoming eligible for garbage collection.
 */
 void JSValueProtect(JSContextRef ctx, JSValueRef value);
 

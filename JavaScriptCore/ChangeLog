@@ -1,3 +1,43 @@
+2006-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        - Added automatic prototype creation for classes.
+        
+        A class stores a weak reference to a prototype, which is cleared when
+        the prototype is garbage collected, to avoid a reference cycle.
+        
+        We now have an attributes field in JSClassDefinition, that currently is
+        used only to override automatic prototype creation when you want to manage your
+        own prototypes, but can be extended in the future for other nefarious purposes.
+        
+        Similarly, we have JSObjectMake and JSObjectMakeWithPrototype, the latter
+        allowing you to manage your own prototypes.
+        
+        JSObjectMakeConstructor is more interesting now, able to make a constructor
+        on your behalf if you just give it a class.
+        
+        - Removed bogus old code from minidom.js.
+        
+        - Tweaked the headerdocs.
+        
+        - Added more GC testing, which caught some leaks, and tested more funny 
+        edge cases in lookup, which caught a lookup bug. Removed some testing 
+        we used to do with MyObject because it was redundant with the new, cool 
+        stuff.
+        
+        While fixing the lookup bug I retracted this change:
+        
+            "If a static setProperty callback returns 'false', to indicate that the
+            property was not set, we no longer forward the set request up the class
+            chain, because that's almost certainly not what the programmer expected."
+
+        Returning false when setting a static property is a little silly, but you can see
+        it being useful when shadowing a base class's static properties, and, regardless
+        of usefullness, this is the defined behavior of the setProperty callback.
+        
+        - Plus a little ASCII art, for the kids.
+
 2006-07-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.
