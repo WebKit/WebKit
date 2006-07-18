@@ -281,7 +281,11 @@ VisiblePosition SelectionController::modifyExtendingRightForward(TextGranularity
             pos = endOfParagraph(VisiblePosition(m_sel.end(), m_sel.affinity()));
             break;
         case DocumentBoundary:
-            pos = endOfDocument(pos);
+            pos = VisiblePosition(m_sel.end(), m_sel.affinity());
+            if (pos.deepEquivalent().node()->isContentEditable())
+                pos = endOfEditableContent(pos);
+            else
+                pos = endOfDocument(pos);
             break;
     }
     
@@ -326,8 +330,13 @@ VisiblePosition SelectionController::modifyMovingRightForward(TextGranularity gr
             pos = endOfParagraph(VisiblePosition(m_sel.end(), m_sel.affinity()));
             break;
         case DocumentBoundary:
-            pos = endOfDocument(VisiblePosition(m_sel.end(), m_sel.affinity()));
+            pos = VisiblePosition(m_sel.end(), m_sel.affinity());
+            if (pos.deepEquivalent().node()->isContentEditable())
+                pos = endOfEditableContent(pos);
+            else
+                pos = endOfDocument(pos);
             break;
+            
     }
     return pos;
 }
@@ -372,7 +381,11 @@ VisiblePosition SelectionController::modifyExtendingLeftBackward(TextGranularity
             pos = startOfParagraph(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
         case DocumentBoundary:
-            pos = startOfDocument(pos);
+            pos = VisiblePosition(m_sel.start(), m_sel.affinity());
+            if (pos.deepEquivalent().node()->isContentEditable())
+                pos = startOfEditableContent(pos);
+            else 
+                pos = startOfDocument(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
     }
     return pos;
@@ -411,7 +424,11 @@ VisiblePosition SelectionController::modifyMovingLeftBackward(TextGranularity gr
             pos = startOfParagraph(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
         case DocumentBoundary:
-            pos = startOfDocument(VisiblePosition(m_sel.start(), m_sel.affinity()));
+            pos = VisiblePosition(m_sel.start(), m_sel.affinity());
+            if (pos.deepEquivalent().node()->isContentEditable())
+                pos = startOfEditableContent(pos);
+            else 
+                pos = startOfDocument(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
     }
     return pos;

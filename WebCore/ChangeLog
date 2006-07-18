@@ -1,3 +1,19 @@
+2006-07-18  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9695
+        <rdar://problem/4614085> 
+        TOT REGRESSION: NativeTextArea: Text area does not respond to Cmd-UpArrow/Cmd-DownArrow (9695)
+        
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingRightForward):
+        (WebCore::SelectionController::modifyMovingRightForward):
+        (WebCore::SelectionController::modifyExtendingLeftBackward):
+        (WebCore::SelectionController::modifyMovingLeftBackward):
+        If the caret is inside an editable region, the beginning/end of the document should actually be the
+        beginning/end of the editable region.
+
 2006-07-17  Tim Omernick  <timo@apple.com>
 
         Reviewed by Maciej.
