@@ -1,3 +1,28 @@
+2006-07-18  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9959
+        REGRESSION: iframes stop rendering after 200th one on successive reloads
+        
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::attach):
+        (WebCore::HTMLFrameElement::close):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::insertedIntoDocument):
+        (WebCore::HTMLIFrameElement::willRemove):
+        Remove calls to incrementFrameCount and decrementFrameCount.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        Call incrementFrameCount here.
+        
+        (WebCore::Frame::~Frame):
+        Call disconnectOwnerElement.
+        
+        (WebCore::Frame::disconnectOwnerElement):
+        Call decrementFrameCount here.
+        
 2006-07-18  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

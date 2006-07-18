@@ -211,8 +211,6 @@ void HTMLFrameElement::attach()
     if (!frame)
         return;
 
-    frame->page()->incrementFrameCount();
-    
     AtomicString relativeURL = m_URL;
     if (relativeURL.isEmpty())
         relativeURL = "about:blank";
@@ -231,7 +229,6 @@ void HTMLFrameElement::close()
     Frame* frame = document()->frame();
     if (renderer() && frame) {
         frame->disconnectOwnerElement();
-        frame->page()->decrementFrameCount();
         if (Frame* childFrame = frame->tree()->child(m_name))
             childFrame->frameDetached();
     }

@@ -162,6 +162,9 @@ Frame::Frame(Page* page, Element* ownerElement)
     XMLNames::init();
 #endif
 
+    if (d->m_ownerElement)
+        d->m_page->incrementFrameCount();
+
     // FIXME: Frames were originally created with a refcount of 1, leave this
     // ref call here until we can straighten that out.
     ref();
@@ -194,6 +197,8 @@ Frame::~Frame()
             w = 0;
         }
 
+    disconnectOwnerElement();
+    
     if (d->m_domWindow)
         d->m_domWindow->disconnectFrame();
             
@@ -3583,6 +3588,9 @@ void Frame::started()
 
 void Frame::disconnectOwnerElement()
 {
+    if (d->m_ownerElement)
+        d->m_page->decrementFrameCount();
+        
     d->m_ownerElement = 0;
 }
 

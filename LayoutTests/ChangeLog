@@ -1,3 +1,13 @@
+2006-07-18  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9959
+        REGRESSION: iframes stop rendering after 200th one on successive reloads
+
+        * fast/frames/frame-limit-expected.txt: Added.
+        * fast/frames/frame-limit.html: Added.
+
 2006-07-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Alice.
