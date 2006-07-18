@@ -1,3 +1,12 @@
+2006-07-18  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Removed a misleading comment; we recently added support for the NPNVPluginElementNPObject
+        variable.
+
+        * bindings/npapi.h:
+
 2006-07-18  Timothy Hatcher  <timothy@apple.com>
 
         Made the following headers public:
