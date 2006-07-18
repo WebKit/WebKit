@@ -1,3 +1,15 @@
+2006-07-18  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+        
+        <rdar://problem/4636216> NetNewsWire fails to launch on 9A224 - missing symbols
+        
+        WebCore needs to add -sub_library libobjc to maintain
+        backwards compatibility with binaries linked with WebKit
+        before JavaScriptCore moved out of WebKit.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-07-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Justin.

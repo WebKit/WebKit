@@ -167,6 +167,7 @@
 		1CD4418E0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418A0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff */; };
 		1CD4418F0A4CE76F00A007AB /* northSouthResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418B0A4CE76F00A007AB /* northSouthResizeCursor.tiff */; };
 		1CD441900A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418C0A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff */; };
+		1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CFAE3220A6D6A3F0032593D /* libobjc.dylib */; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
 		448A29C00A46D9CB0030759F /* JSHTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */; };
 		448AD27C0A48137A0023D179 /* JSHTMLOptionsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */; };
@@ -1802,6 +1803,7 @@
 		1CD4418A0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = northEastSouthWestResizeCursor.tiff; sourceTree = "<group>"; };
 		1CD4418B0A4CE76F00A007AB /* northSouthResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = northSouthResizeCursor.tiff; sourceTree = "<group>"; };
 		1CD4418C0A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = northWestSouthEastResizeCursor.tiff; sourceTree = "<group>"; };
+		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* ClipboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
@@ -3447,6 +3449,7 @@
 				A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */,
 				DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */,
 				937256100A61564200B053B9 /* libsqlite3.dylib in Frameworks */,
+				1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3504,6 +3507,7 @@
 				9372560F0A61564200B053B9 /* libsqlite3.dylib */,
 				DD763BB10992C2C900740B8E /* libxml2.dylib */,
 				840633070731A77200DB1FD1 /* libxslt.dylib */,
+				1CFAE3220A6D6A3F0032593D /* libobjc.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -7296,6 +7300,10 @@
 				HEADER_SEARCH_PATHS_QUOTED_1 = "\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+				OTHER_LDFLAGS = (
+					"-sub_library",
+					libobjc,
+				);
 				PRODUCT_NAME = WebCore;
 			};
 			name = Debug;
@@ -7323,6 +7331,10 @@
 				HEADER_SEARCH_PATHS_QUOTED_1 = "\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+				OTHER_LDFLAGS = (
+					"-sub_library",
+					libobjc,
+				);
 				PRODUCT_NAME = WebCore;
 			};
 			name = Release;
@@ -7351,6 +7363,8 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				OTHER_LDFLAGS = (
+					"-sub_library",
+					libobjc,
 					"-umbrella",
 					WebKit,
 				);
