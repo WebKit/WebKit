@@ -1,3 +1,12 @@
+2006-07-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Harrison.
+        
+        - fixed <rdar://problem/4618089> Blot crashes when I paste in all the contents of http://www.apple.com/startpage/
+
+        * editing/htmlediting.cpp:
+        (WebCore::editingIgnoresContent):
+
 2006-07-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

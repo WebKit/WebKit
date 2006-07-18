@@ -60,7 +60,7 @@ bool editingIgnoresContent(const Node *node)
         return true;
     
     if (node->renderer())
-        return node->renderer()->isWidget() || node->renderer()->isImage() || node->renderer()->isHR();
+        return node->renderer()->isWidget() || node->renderer()->isImage() || node->renderer()->isHR() || node->renderer()->isTextArea() || node->renderer()->isTextField();
 
     return node->hasTagName(appletTag) ||
            node->hasTagName(embedTag) ||

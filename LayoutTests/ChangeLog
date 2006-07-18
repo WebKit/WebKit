@@ -1,3 +1,14 @@
+2006-07-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Test cases not reviewed but the corresponding fix was.
+        
+        - test cases for <rdar://problem/4618089> Blot crashes when I paste in all the contents of http://www.apple.com/startpage/
+
+        * editing/pasteboard/nested-blocks-with-text-area-expected.txt: Added.
+        * editing/pasteboard/nested-blocks-with-text-area.html: Added.
+        * editing/pasteboard/nested-blocks-with-text-field-expected.txt: Added.
+        * editing/pasteboard/nested-blocks-with-text-field.html: Added.
+
 2006-07-17  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
