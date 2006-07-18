@@ -32,9 +32,9 @@
 
 #import "DOMInternal.h"
 #import "DOMCSSInternal.h"
+#import "WebScriptObjectPrivate.h"
 
 #import <objc/objc-runtime.h>
-#import <JavaScriptCore/WebScriptObjectPrivate.h>
 
 // This file makes use of the ObjC DOM API, and the C++ DOM API, so we need to be careful about what
 // headers are included to avoid naming conflicts.

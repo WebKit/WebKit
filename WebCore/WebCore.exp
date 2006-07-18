@@ -119,6 +119,9 @@
 .objc_class_name_WebCoreStringTruncator
 .objc_class_name_WebCoreViewFactory
 .objc_class_name_WebDashboardRegion
+.objc_class_name_WebScriptObject
+.objc_class_name_WebScriptObjectPrivate
+.objc_class_name_WebUndefined
 _WebCoreDrawTextAtPoint
 _WebCoreFindFont
 _WebCorePageCacheStateKey

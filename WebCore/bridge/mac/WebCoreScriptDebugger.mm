@@ -28,8 +28,8 @@
 
 #include "config.h"
 #import "WebCoreScriptDebugger.h"
+#import "WebScriptObjectPrivate.h"
 
-#import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/debugger.h>
 #import <JavaScriptCore/context.h>
 

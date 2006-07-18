@@ -1,3 +1,13 @@
+2006-07-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4634874> WebScriptObject and WebUndefined are no longer defined by WebKit
+
+        Copy WebScriptObject.h from WebCore's private headers, not JavaScriptCore.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-07-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.

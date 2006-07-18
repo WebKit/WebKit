@@ -1,3 +1,32 @@
+2006-07-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4634874> WebScriptObject and WebUndefined are no longer defined by WebKit
+
+        Moves WebScriptObject and WebUndefined up to WebCore.
+        This change does create an upwards-dependancy on WebScriptObject existing
+        in the loaded process, but this code path in JavaScriptCore does not get used
+        unless it is through WebKit/WebCore. Moving all of the binding code out of
+        JavaScriptCore might make sense in the future.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/objc/WebScriptObject.h: Replaced.
+        * bindings/objc/WebScriptObject.mm: Removed.
+        * bindings/objc/WebScriptObjectPrivate.h: Removed.
+        * bindings/objc/objc_class.h:
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::~ObjcInstance):
+        * bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (convertValueToObjcObject):
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertObjcValueToValue):
+        (KJS::Bindings::createObjcInstanceForValue):
+
 2006-07-17  Darin Adler  <darin@apple.com>
 
         * API/JSBase.h: Fix comment formatting where things used to be lined up but

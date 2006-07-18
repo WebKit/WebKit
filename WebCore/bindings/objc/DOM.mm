@@ -28,6 +28,7 @@
 #import "DOM.h"
 
 #import "CDATASection.h"
+#import "csshelper.h"
 #import "CSSStyleSheet.h"
 #import "Comment.h"
 #import "DOMEventsInternal.h"
@@ -56,8 +57,7 @@
 #import "Range.h"
 #import "RenderImage.h"
 #import "TreeWalker.h"
-#import "csshelper.h"
-#import <JavaScriptCore/WebScriptObjectPrivate.h>
+#import "WebScriptObjectPrivate.h"
 #import <objc/objc-class.h>
 
 using WebCore::AtomicString;

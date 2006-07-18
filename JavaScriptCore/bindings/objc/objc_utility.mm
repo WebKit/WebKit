@@ -31,7 +31,7 @@
 #include "runtime_array.h"
 #include "runtime_object.h"
 
-#include "WebScriptObjectPrivate.h"
+#include "WebScriptObject.h"
 
 namespace KJS {
 namespace Bindings {
@@ -123,7 +123,9 @@ ObjcValue convertValueToObjcValue (ExecState *exec, JSValue *value, ObjcValueTyp
                 newExecutionContext->setInterpreter (interpreter);
                 executionContext = newExecutionContext;
             }
-            result.objectValue = [WebScriptObject _convertValueToObjcValue:value originExecutionContext:originExecutionContext executionContext:executionContext ];
+            if (!webScriptObjectClass)
+                webScriptObjectClass = NSClassFromString(@"WebScriptObject");
+            result.objectValue = [webScriptObjectClass _convertValueToObjcValue:value originExecutionContext:originExecutionContext executionContext:executionContext ];
         }
         break;
         
@@ -204,6 +206,11 @@ JSValue *convertNSStringToString(NSString *nsstring)
 JSValue *convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType type)
 {
     JSValue *aValue = NULL;
+    static ClassStructPtr webUndefinedClass = 0;
+    if (!webUndefinedClass)
+        webUndefinedClass = NSClassFromString(@"WebUndefined");
+    if (!webScriptObjectClass)
+        webScriptObjectClass = NSClassFromString(@"WebScriptObject");
 
     switch (type) {
         case ObjcObjectType:
@@ -218,7 +225,7 @@ JSValue *convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType t
                 */
                 if ([*obj isKindOfClass:[NSString class]]){
                     aValue = convertNSStringToString((NSString *)*obj);
-                } else if (*obj == [WebUndefined undefined]) {
+                } else if ([*obj isKindOfClass:webUndefinedClass]) {
                     return jsUndefined();
                 }  else if ((CFBooleanRef)*obj == kCFBooleanTrue) {
                     aValue = jsBoolean(true);
@@ -228,8 +235,8 @@ JSValue *convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType t
                     aValue = jsNumber([*obj doubleValue]);
                 } else if ([*obj isKindOfClass:[NSArray class]]) {
                     aValue = new RuntimeArray(exec, new ObjcArray(*obj));
-                } else if ([*obj isKindOfClass:[WebScriptObject class]]) {
-                    WebScriptObject *jsobject = (WebScriptObject *)*obj;
+                } else if ([*obj isKindOfClass:webScriptObjectClass]) {
+                    id<WebScriptObject> jsobject = (id<WebScriptObject>)*obj;
                     aValue = [jsobject _imp];
                 } else if (*obj == 0) {
                     return jsUndefined();
@@ -318,8 +325,10 @@ void *createObjcInstanceForValue(JSValue *value, const RootObject *origin, const
 {
     if (!value->isObject())
 	return 0;
+    if (!webScriptObjectClass)
+        webScriptObjectClass = NSClassFromString(@"WebScriptObject");
     JSObject *object = static_cast<JSObject *>(value);
-    return [[[WebScriptObject alloc] _initWithJSObject:object originExecutionContext:origin executionContext:current] autorelease];
+    return [[[webScriptObjectClass alloc] _initWithJSObject:object originExecutionContext:origin executionContext:current] autorelease];
 }
 
 JSObject *throwError(ExecState *exec, ErrorType type, NSString *message)

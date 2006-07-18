@@ -26,8 +26,8 @@
 #ifndef BINDINGS_OBJC_INSTANCE_H_
 #define BINDINGS_OBJC_INSTANCE_H_
 
-#include <objc_class.h>
-#include <objc_utility.h>
+#include <JavaScriptCore/objc_class.h>
+#include <JavaScriptCore/objc_utility.h>
 
 namespace KJS {
 

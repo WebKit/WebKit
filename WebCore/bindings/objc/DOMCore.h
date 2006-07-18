@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <JavaScriptCore/WebScriptObject.h>
+#import <WebCore/WebScriptObject.h>
 
 @class DOMDocument; 
 @class DOMDocumentType;

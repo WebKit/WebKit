@@ -1334,7 +1334,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/WebScriptObject.h",
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/WebScriptObject.h",
 			);
 			name = WebScriptObject.h;
 			outputPaths = (
@@ -1342,7 +1342,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$JAVASCRIPTCORE_PRIVATE_HEADERS_DIR/WebScriptObject.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/WebScriptObject.h\"";
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/WebScriptObject.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/WebScriptObject.h\"";
 		};
 		939811300824BF01008DF038 /* Frameworks (symlink) */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1500,7 +1500,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ -e s/JavaScriptCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMCore.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMCore.h\"";
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMCore.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMCore.h\"";
 		};
 		93AF52A908254D8F005D0156 /* DOMCSS.h */ = {
 			isa = PBXShellScriptBuildPhase;

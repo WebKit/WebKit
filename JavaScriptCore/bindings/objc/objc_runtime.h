@@ -28,13 +28,15 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include "runtime.h"
-#include "object.h"
+#include <JavaScriptCore/runtime.h>
+#include <JavaScriptCore/object.h>
 
-#include "objc_header.h"
+#include <JavaScriptCore/objc_header.h>
 
 namespace KJS {
 namespace Bindings {
+
+extern ClassStructPtr webScriptObjectClass;
 
 class ObjcInstance;
 

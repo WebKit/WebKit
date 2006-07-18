@@ -29,10 +29,12 @@
 #include "objc_instance.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
-#include <WebScriptObjectPrivate.h>
+#include "WebScriptObject.h"
 
 using namespace KJS;
 using namespace KJS::Bindings;
+
+ClassStructPtr<WebScriptObject> KJS::Bindings::webScriptObjectClass = 0;
 
 // ---------------------- ObjcMethod ----------------------
 
@@ -135,7 +137,9 @@ static id convertValueToObjcObject (ExecState* exec, JSValue* value)
         newRoot->setInterpreter(exec->dynamicInterpreter());
         root = newRoot;
     }
-    return [WebScriptObject _convertValueToObjcValue:value originExecutionContext:root executionContext:root ];
+    if (!webScriptObjectClass)
+        webScriptObjectClass = NSClassFromString(@"WebScriptObject");
+    return [webScriptObjectClass _convertValueToObjcValue:value originExecutionContext:root executionContext:root ];
 }
 
 void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JSValue* aValue) const

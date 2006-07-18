@@ -53,7 +53,7 @@ ObjcInstance::ObjcInstance(ObjectStructPtr instance)
 ObjcInstance::~ObjcInstance() 
 {
     if ([_instance respondsToSelector:@selector(finalizeForWebScript)])
-        [_instance finalizeForWebScript];
+        [_instance performSelector:@selector(finalizeForWebScript)];
     if (_instance)
         CFRelease(_instance);
 }

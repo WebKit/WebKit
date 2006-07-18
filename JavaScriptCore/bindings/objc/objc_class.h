@@ -26,7 +26,7 @@
 #ifndef KJS_BINDINGS_OBJC_CLASS_H
 #define KJS_BINDINGS_OBJC_CLASS_H
 
-#include "objc_runtime.h"
+#include <JavaScriptCore/objc_runtime.h>
 
 namespace KJS {
 namespace Bindings {

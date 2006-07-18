@@ -26,9 +26,8 @@
 #import "config.h"
 #import "WebScriptObjectPrivate.h"
 
-#import "objc_instance.h"
-#import "runtime_object.h"
-#import <wtf/UnusedParam.h>
+#import <JavaScriptCore/objc_instance.h>
+#import <JavaScriptCore/runtime_object.h>
 
 using namespace KJS;
 using namespace KJS::Bindings;
@@ -469,7 +468,6 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 + (id)allocWithZone:(NSZone *)zone
 {
-    UNUSED_PARAM(zone);
     static WebUndefined *sharedUndefined = 0;
     if (!sharedUndefined)
         sharedUndefined = [super allocWithZone:NULL];
@@ -483,18 +481,15 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 - (id)initWithCoder:(NSCoder *)coder
 {
-    UNUSED_PARAM(coder);
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
-    UNUSED_PARAM(encoder);
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    UNUSED_PARAM(zone);
     return self;
 }
 

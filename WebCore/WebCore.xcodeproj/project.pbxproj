@@ -160,6 +160,9 @@
 		1AE2AEC80A1D297B00B42B25 /* JSHTMLQuoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */; };
 		1AE2AEE60A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */; };
 		1AE2AEE70A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */; };
+		1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF347E0A6C405200ABE06E /* WebScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */; };
+		1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */; };
 		1CD4418D0A4CE76F00A007AB /* eastWestResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD441890A4CE76F00A007AB /* eastWestResizeCursor.tiff */; };
 		1CD4418E0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418A0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff */; };
 		1CD4418F0A4CE76F00A007AB /* northSouthResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418B0A4CE76F00A007AB /* northSouthResizeCursor.tiff */; };
@@ -1792,6 +1795,9 @@
 		1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLQuoteElement.h; sourceTree = "<group>"; };
 		1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBlockquoteElement.cpp; sourceTree = "<group>"; };
 		1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBlockquoteElement.h; sourceTree = "<group>"; };
+		1CAF347E0A6C405200ABE06E /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObject.h; sourceTree = "<group>"; };
+		1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptObject.mm; sourceTree = "<group>"; };
+		1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObjectPrivate.h; sourceTree = "<group>"; };
 		1CD441890A4CE76F00A007AB /* eastWestResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = eastWestResizeCursor.tiff; sourceTree = "<group>"; };
 		1CD4418A0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = northEastSouthWestResizeCursor.tiff; sourceTree = "<group>"; };
 		1CD4418B0A4CE76F00A007AB /* northSouthResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = northSouthResizeCursor.tiff; sourceTree = "<group>"; };
@@ -4990,6 +4996,9 @@
 		BC1A3794097C6FC40019F3D8 /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				1CAF347E0A6C405200ABE06E /* WebScriptObject.h */,
+				1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */,
+				1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */,
 				BC1A3797097C715F0019F3D8 /* DOM.h */,
 				BC1A3798097C715F0019F3D8 /* DOM.mm */,
 				BC1A3799097C715F0019F3D8 /* DOMCore.h */,
@@ -6381,6 +6390,8 @@
 				85217E030A5ECD4700DB8D00 /* XSLImportRule.h in Headers */,
 				E14842DE0A674934007E4D39 /* StreamingTextDecoderICU.h in Headers */,
 				E148432F0A674FC2007E4D39 /* StreamingTextDecoderMac.h in Headers */,
+				1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */,
+				1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7247,6 +7258,7 @@
 				93CF35AA0A6169F700543E52 /* AffineTransformCG.cpp in Sources */,
 				E14842FF0A674A31007E4D39 /* StreamingTextDecoderICU.cpp in Sources */,
 				E14843D60A6754A6007E4D39 /* StreamingTextDecoderMac.cpp in Sources */,
+				1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -69,12 +69,12 @@
 #import "WebCoreFrameBridge.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
+#import "WebScriptObjectPrivate.h"
 #import "csshelper.h"
 #import "htmlediting.h"
 #import "kjs_window.h"
 #import "visible_units.h"
 #import <JavaScriptCore/NP_jsobject.h>
-#import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/npruntime_impl.h>
 
 #undef _webcore_TIMING

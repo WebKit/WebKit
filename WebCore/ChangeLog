@@ -1,3 +1,26 @@
+2006-07-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4634874> WebScriptObject and WebUndefined are no longer defined by WebKit
+
+        Moves WebScriptObject and WebUndefined to WebCore.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMCore.h:
+        * bindings/objc/DOMInternal.mm:
+        * bindings/objc/DOMUtility.mm:
+        * bindings/objc/WebScriptObject.mm: Added.
+        (+[WebUndefined allocWithZone:]):
+        (-[WebUndefined initWithCoder:]):
+        (-[WebUndefined encodeWithCoder:]):
+        (-[WebUndefined copyWithZone:]):
+        * bindings/objc/WebScriptObjectPrivate.h: Added.
+        * bridge/mac/FrameMac.mm:
+        * bridge/mac/WebCoreScriptDebugger.mm:
+
 2006-07-17  David Hyatt  <hyatt@apple.com>
 
         Back out the fix for 5564, since it turns out font:x-small; is a pretty
