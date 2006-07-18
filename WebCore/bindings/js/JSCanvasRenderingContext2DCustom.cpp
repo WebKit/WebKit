@@ -184,7 +184,7 @@ JSValue* JSCanvasRenderingContext2D::drawImage(ExecState* exec, const List& args
     JSObject* o = static_cast<JSObject*>(args[0]);
     if (!o->isObject())
         return throwError(exec, TypeError);
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     if (o->inherits(&JSHTMLImageElement::info)) {
         HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl());
         switch (args.size()) {

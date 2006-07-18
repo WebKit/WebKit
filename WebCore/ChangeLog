@@ -1,5 +1,16 @@
 2006-07-17  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        <rdar://problem/4635281> JSCanvasRenderingContext2D::drawImage needs to initialize the exception code to zero
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::drawImage): initialize ec to zero
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage): initialize ec before earlier return
+
+2006-07-17  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Maciej.
 
         <rdar://problem/4634874> WebScriptObject and WebUndefined are no longer defined by WebKit

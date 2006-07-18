@@ -737,11 +737,11 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 {
     ASSERT(image);
 
+    ec = 0;
+
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-
-    ec = 0;
 
     FloatRect imageRect = FloatRect(FloatPoint(), size(image));
     if (!(imageRect.contains(srcRect) && srcRect.width() > 0 && srcRect.height() > 0 
