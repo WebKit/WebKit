@@ -1,5 +1,14 @@
 2006-07-17  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+        
+        <rdar://problem/4635311> REGRESSION: WebKit should call windowScriptObjectAvailable before attaching the script debugger
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge windowObjectCleared]):
+
+2006-07-17  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Maciej.
 
         <rdar://problem/4634874> WebScriptObject and WebUndefined are no longer defined by WebKit

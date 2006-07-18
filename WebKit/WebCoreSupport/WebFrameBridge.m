@@ -1499,11 +1499,11 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 - (void)windowObjectCleared
 {
     WebView *wv = [self webView];
+    [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:[self windowScriptObject]];
     if ([wv scriptDebugDelegate] || [WebScriptDebugServer listenerCount]) {
         [_frame _detachScriptDebugger]; // FIXME: remove this once <rdar://problem/4608404> is fixed
         [_frame _attachScriptDebugger];
     }
-    [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:[self windowScriptObject]];
 }
 
 - (int)spellCheckerDocumentTag
