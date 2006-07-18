@@ -25,6 +25,8 @@ div span#foo.test div:hover#bar a { margin: 2px; }
 <body>
 <pre id="result"></pre>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 var styleSheet = document.styleSheets.item(0);
 var s = "";
 for (var i = 0; i < styleSheet.cssRules.length; i++) {

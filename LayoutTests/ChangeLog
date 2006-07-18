@@ -1,3 +1,19 @@
+2006-07-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alice.
+
+        - convert a couple of tests to "dump as text" tests
+
+        * fast/dom/css-selectorText-expected.checksum: Removed.
+        * fast/dom/css-selectorText-expected.png: Removed.
+        * fast/dom/css-selectorText-expected.txt: Replaced render tree results with text results.
+        * fast/dom/css-selectorText.html: Added a call to layoutTestController.dumpAsText.
+
+        * fast/dom/css-shortHands-expected.checksum: Removed.
+        * fast/dom/css-shortHands-expected.png: Removed.
+        * fast/dom/css-shortHands-expected.txt: Replaced render tree results with text results.
+        * fast/dom/css-shortHands.html: Added a call to layoutTestController.dumpAsText.
+
 2006-07-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Justin.
