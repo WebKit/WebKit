@@ -1,3 +1,13 @@
+2006-07-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4631272> REGRESSION: Crash tabbing out of hostname field at autorestore.apple.com
+        
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::nextKeyViewInFrame):
+        Take into account that focus handlers can cause a node to be destroyed.
+        
 2006-07-19  David Hyatt  <hyatt@apple.com>
 
         Fix for 4638376.  The 1x1 solid color image optimization was broken when

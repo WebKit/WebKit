@@ -890,11 +890,16 @@ NSView* FrameMac::nextKeyViewInFrame(Node* node, SelectionDirection direction, b
             return nil;
         
         RenderObject* renderer = node->renderer();
+        
         if (!renderer->isWidget()) {
             static_cast<Element*>(node)->focus(); 
-            // The call to focus might have triggered event handlers that change the renderer type.
-            // FIXME: When all input elements are native, we won't need this extra check
-            if ((renderer = node->renderer()) && !renderer->isWidget()) {
+            // The call to focus might have triggered event handlers that causes the 
+            // current renderer to be destroyed.
+            if (!(renderer = node->renderer()))
+                continue;
+                
+            // FIXME: When all input elements are native, we should investigate if this extra check is needed
+            if (!renderer->isWidget()) {
                 [_bridge willMakeFirstResponderForNodeFocus];
                 return [_bridge documentView];
             } else if (focusCallResultedInViewBeingCreated)
