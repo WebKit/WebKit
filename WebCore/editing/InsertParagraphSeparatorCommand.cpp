@@ -142,7 +142,9 @@ void InsertParagraphSeparatorCommand::doApply()
     // FIXME: Turn into an InsertLineBreak in other cases where we don't want to do the splitting/cloning that
     // InsertParagraphSeparator does.
     Node* block = pos.node()->enclosingBlockFlowElement();
-    if (block->renderer() && block->renderer()->isTableCell()) {
+    if (!block ||
+        !block->parentNode() ||
+        block->renderer() && block->renderer()->isTableCell()) {
         EditCommandPtr cmd(new InsertLineBreakCommand(document())); 
         applyCommandToComposite(cmd);
         return;
@@ -185,8 +187,6 @@ void InsertParagraphSeparatorCommand::doApply()
     // Prepare for more general cases.
     Node *startNode = pos.node();
     Node *startBlock = startNode->enclosingBlockFlowElement();
-    if (!startBlock || !startBlock->parentNode())
-        return;
 
     bool isFirstInBlock = isStartOfBlock(visiblePos);
     bool isLastInBlock = isEndOfBlock(visiblePos);

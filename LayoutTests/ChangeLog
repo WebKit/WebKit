@@ -1,3 +1,15 @@
+2006-07-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4613519>
+        REGRESSION: Pasting text in native text area inserts text one character before it should (9527)
+
+        * fast/forms/paste-into-textarea-expected.checksum: Added.
+        * fast/forms/paste-into-textarea-expected.png: Added.
+        * fast/forms/paste-into-textarea-expected.txt: Added.
+        * fast/forms/paste-into-textarea.html: Added.
+
 2006-07-19  Anders Carlsson  <acarlsson@apple.com>
 
         * fast/js/pretty-print-expected.txt:
