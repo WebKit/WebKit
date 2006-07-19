@@ -24,4 +24,4 @@ layer at (0,0) size 800x600
               text run at (0,0) width 195: "this select box shouldn't be selected"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 1 of child 0 {#text} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 0 of child 3 {SELECT} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 1 {BR} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

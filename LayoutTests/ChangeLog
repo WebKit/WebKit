@@ -1,3 +1,19 @@
+2006-07-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4631972>
+        REGRESSION: Mail crashes when pasting entire contents of http://www.apple.com/support/ into a new mail message
+
+        * editing/pasteboard/4631972-expected.checksum: Added.
+        * editing/pasteboard/4631972-expected.png: Added.
+        * editing/pasteboard/4631972-expected.txt: Added.
+        * editing/pasteboard/4631972.html: Added.
+        * editing/selection/drag-to-contenteditable-iframe-expected.txt:
+        * editing/selection/replaced-boundaries-3-expected.checksum:
+        * editing/selection/replaced-boundaries-3-expected.txt:
+        * editing/selection/select-box-expected.txt:
+
 2006-07-19  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adele.

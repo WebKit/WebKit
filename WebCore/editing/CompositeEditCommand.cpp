@@ -553,24 +553,24 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
     Position paragraphStart = visibleParagraphStart.deepEquivalent().upstream();
     Position end = visibleEnd.deepEquivalent().upstream();
 
-    // Perform some sanity checks. If there are no VisiblePositions in
-    // the same block as pos then paragraphStart will be outside the paragraph
+    // If there are no VisiblePositions in the same block as pos then 
+    // paragraphStart will be outside the paragraph
     if (Range::compareBoundaryPoints(pos, paragraphStart) < 0)
         return;
 
     // Perform some checks to see if we need to perform work in this function.
-    if (paragraphStart.node()->isBlockFlow()) {
-        if (end.node()->isBlockFlow()) {
+    if (isBlock(paragraphStart.node())) {
+        if (isBlock(end.node())) {
             if (!end.node()->isAncestor(paragraphStart.node())) {
                 // If the paragraph end is a descendant of paragraph start, then we need to run
                 // the rest of this function. If not, we can bail here.
                 return;
             }
         }
-        else if (end.node()->enclosingBlockFlowElement() != paragraphStart.node()) {
-            // The paragraph end is in another block that is an ancestor of the paragraph start.
+        else if (enclosingBlock(end.node()) != paragraphStart.node()) {
+            // The visibleEnd.  It must be an ancestor of the paragraph start.
             // We can bail as we have a full block to work with.
-            ASSERT(paragraphStart.node()->isAncestor(end.node()->enclosingBlockFlowElement()));
+            ASSERT(paragraphStart.node()->isAncestor(enclosingBlock(end.node())));
             return;
         }
         else if (isEndOfDocument(visibleEnd)) {
@@ -588,7 +588,7 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
     
     insertNodeAt(newBlock.get(), paragraphStart.node(), paragraphStart.offset());
 
-    while (moveNode && !moveNode->isBlockFlow()) {
+    while (moveNode && !isBlock(moveNode)) {
         Node *next = moveNode->traverseNextSibling();
         removeNode(moveNode);
         appendNode(moveNode, newBlock.get());

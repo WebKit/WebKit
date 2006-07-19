@@ -58,6 +58,8 @@ Position previousVisuallyDistinctCandidate(const Position&);
 bool isEditablePosition(const Position&);
 bool isRichlyEditablePosition(const Position&);
 Element* editableRootForPosition(const Position&);
+bool isBlock(Node*);
+Node* enclosingBlock(Node*);
 
 void rebalanceWhitespaceInTextNode(Node*, unsigned start, unsigned length);
 const String& nonBreakingSpaceString();

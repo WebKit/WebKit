@@ -284,7 +284,7 @@ Position Position::upstream() const
         return Position();
     
     // iterate backward from there, looking for a qualified position
-    Node *block = startNode->enclosingBlockFlowOrTableElement();
+    Node *block = enclosingBlock(startNode);
     Position lastVisible = *this;
     Position currentPos = start;
     Node* originalRoot = node()->rootEditableElement();
@@ -297,7 +297,7 @@ Position Position::upstream() const
 
         // Don't enter a new enclosing block flow or table element.  There is code below that
         // terminates early if we're about to leave an enclosing block flow or table element.
-        if (block != currentNode->enclosingBlockFlowOrTableElement())
+        if (block != enclosingBlock(currentNode))
             return lastVisible;
 
         // skip position in unrendered or invisible node
@@ -313,7 +313,7 @@ Position Position::upstream() const
         // return lastVisible on the next iteration, but we terminate early to avoid calling previous()
         // beceause previous() for an offset 0 position calls nodeIndex(), which is O(n).
         // FIXME: Avoid calling previous on other offset 0 positions.
-        if (currentNode == currentNode->enclosingBlockFlowOrTableElement() && currentOffset == 0)
+        if (currentNode == enclosingBlock(currentNode) && currentOffset == 0)
             return lastVisible;
             
         // return position after replaced or BR elements
@@ -362,7 +362,7 @@ Position Position::downstream() const
         return Position();
 
     // iterate forward from there, looking for a qualified position
-    Node *block = startNode->enclosingBlockFlowOrTableElement();
+    Node *block = enclosingBlock(startNode);
     Position lastVisible = *this;
     Position currentPos = start;
     Node* originalRoot = node()->rootEditableElement();
@@ -379,7 +379,7 @@ Position Position::downstream() const
             break;
             
         // Do not enter a new enclosing block flow or table element, and don't leave the original one.
-        if (block != currentNode->enclosingBlockFlowOrTableElement())
+        if (block != enclosingBlock(currentNode))
             return lastVisible;
 
         // skip position in unrendered or invisible node
