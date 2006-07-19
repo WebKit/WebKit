@@ -1,3 +1,16 @@
+2006-07-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed by Darin & Maciej, reviewed by me.
+        
+        - Fixed <rdar://problem/4638934> Leopard 9A227: Installer crashes right 
+        after LCA and while preparing Installation
+
+        Compile release/production with NDEBUG set, to ensure binary compatibility
+        between JavaScriptGlue and JavaScriptCore. In debug builds, JavaScriptCore 
+        includes an extra debug data member in HashSet.
+        
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+
 === Safari-521.18 ===
 
 2006-07-15  Maciej Stachowiak  <mjs@apple.com>
