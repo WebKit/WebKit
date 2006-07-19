@@ -1,6 +1,6 @@
-//description(
-"This test checks that regexps and strings with are pretty-printed correctly"
-//);
+description(
+"This test checks that regexps and strings with special characters are pretty-printed correctly"
+);
 
 function f() {
     var re = /test/g;

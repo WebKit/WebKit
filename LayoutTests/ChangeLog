@@ -1,5 +1,13 @@
 2006-07-19  Anders Carlsson  <acarlsson@apple.com>
 
+        * fast/js/pretty-print-expected.txt:
+        Update result.
+        
+        * fast/js/resources/pretty-print.js:
+        Fix description string.
+
+2006-07-19  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin.
 
         <rdar://problem/4620655> REGRESSION(10.4.7-10.5): preview button for a blogger.com post doesn't work
