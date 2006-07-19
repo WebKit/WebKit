@@ -282,6 +282,8 @@ static void completeURLs(Node *node, const DeprecatedString &baseURL)
     }
 }
 
+// FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
+// FIXME: At least, annotation and style info should probably not be included in range.markupString()
 DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes, EAnnotateForInterchange annotate)
 {
     if (!range || range->isDetached())
@@ -309,22 +311,30 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
     Node *pastEnd = range->pastEndNode();
     Node *lastClosed = 0;
     DeprecatedPtrList<Node> ancestorsToClose;
+    bool prependNewline = false;
 
     // calculate the "default style" for this markup
     Position pos(doc->documentElement(), 0);
     RefPtr<CSSComputedStyleDeclaration> computedStyle = pos.computedStyle();
     RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle->copyInheritableProperties();
     
+    // FIXME: Shouldn't we do the interchangeNewLine and skip the node iff (annotate == AnnotateForInterchange)?
     Node *startNode = range->startNode();
     VisiblePosition visibleStart(range->startPosition(), VP_DEFAULT_AFFINITY);
     VisiblePosition visibleEnd(range->endPosition(), VP_DEFAULT_AFFINITY);
     if (!inSameBlock(visibleStart, visibleStart.next())) {
         if (visibleStart == visibleEnd.previous())
             return interchangeNewlineString;
-        markups.append(interchangeNewlineString);
+        
+        // remember to prepend newline later, after prepending any ancestors
+        prependNewline = true;
         startNode = startNode->traverseNextNode();
     }
     
+    Node *rangeStartNode = startNode;
+    int rangeStartOffset = startNode == range->startNode() ? range->startOffset(ec) : 0;
+    ASSERT(ec == 0);
+
     // Iterate through the nodes of the range.
     Node *next;
     for (Node *n = startNode; n != pastEnd; n = next) {
@@ -381,10 +391,6 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
             ancestorsToClose.append(n);
     }
     
-    Node *rangeStartNode = range->startNode();
-    int rangeStartOffset = range->startOffset(ec);
-    ASSERT(ec == 0);
-    
     // Add ancestors up to the common ancestor block so inline ancestors such as FONT and B are part of the markup.
     if (lastClosed) {
         for (Node *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
@@ -415,6 +421,8 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
         }
     }
 
+    if (prependNewline)
+        markups.prepend(interchangeNewlineString);
     if (annotate) {
         if (!inSameBlock(visibleEnd, visibleEnd.previous()))
             markups.append(interchangeNewlineString);
