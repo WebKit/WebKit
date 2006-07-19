@@ -7,6 +7,8 @@
 
         * bindings/npapi.h:
 
+=== Safari-521.18 ===
+
 2006-07-18  Timothy Hatcher  <timothy@apple.com>
 
         Made the following headers public:
