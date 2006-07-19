@@ -1,3 +1,15 @@
+2006-07-19  David Harrison  <harrison@apple.com>
+
+        <rdar://problem/4629307> -[DOMRange markupString] does not include the initial table element if it is at the beginning of the range
+        <rdar://problem/4062218> pasting in contents of web.apple.com strips off the <table> element from the first table
+
+        (this really only tests the symptoms of <rdar://problem/4062218>, because -[DOMRange markupString] is not testable)
+        
+        * editing/pasteboard/paste-table-003-expected.checksum: Added.
+        * editing/pasteboard/paste-table-003-expected.png: Added.
+        * editing/pasteboard/paste-table-003-expected.txt: Added.
+        * editing/pasteboard/paste-table-003.html: Added.
+
 2006-07-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele Peterson.

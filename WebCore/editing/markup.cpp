@@ -311,7 +311,6 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
     Node *pastEnd = range->pastEndNode();
     Node *lastClosed = 0;
     DeprecatedPtrList<Node> ancestorsToClose;
-    bool prependNewline = false;
 
     // calculate the "default style" for this markup
     Position pos(doc->documentElement(), 0);
@@ -325,15 +324,23 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
     if (!inSameBlock(visibleStart, visibleStart.next())) {
         if (visibleStart == visibleEnd.previous())
             return interchangeNewlineString;
-        
-        // remember to prepend newline later, after prepending any ancestors
-        prependNewline = true;
+            
+        // FIXME: This adds a newline, but a later add of the ancestor could go before that newline (e.g. when startNode is tbody,
+        // we will later add a table, but the interchangeNewlineString will appear between the table and the tbody! for now, that
+        // does not happen with tables because of code below that moves startNode to the table when at tbody)
+        markups.append(interchangeNewlineString);
         startNode = startNode->traverseNextNode();
     }
-    
-    Node *rangeStartNode = startNode;
-    int rangeStartOffset = startNode == range->startNode() ? range->startOffset(ec) : 0;
-    ASSERT(ec == 0);
+
+    // no use having a tbody without its table
+    // NOTE: need sibling check because startNode might be anonymous text (like newlines)
+    // FIXME: This would not be needed if ancestor adding applied to more than just the lastClosed
+    for (Node *n = startNode; n; n = n->nextSibling()) {
+        if (n->hasTagName(tbodyTag)) {
+            startNode = startNode->parent();
+            break;
+        }
+    }
 
     // Iterate through the nodes of the range.
     Node *next;
@@ -391,6 +398,10 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
             ancestorsToClose.append(n);
     }
     
+    Node *rangeStartNode = range->startNode();
+    int rangeStartOffset = range->startOffset(ec);
+    ASSERT(ec == 0);
+    
     // Add ancestors up to the common ancestor block so inline ancestors such as FONT and B are part of the markup.
     if (lastClosed) {
         for (Node *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
@@ -421,8 +432,6 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
         }
     }
 
-    if (prependNewline)
-        markups.prepend(interchangeNewlineString);
     if (annotate) {
         if (!inSameBlock(visibleEnd, visibleEnd.previous()))
             markups.append(interchangeNewlineString);

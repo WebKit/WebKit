@@ -1,3 +1,18 @@
+2006-07-19  David Harrison  <harrison@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4629307> -[DOMRange markupString] does not include the initial table element if it is at the beginning of the range
+        <rdar://problem/4062218> pasting in contents of web.apple.com strips off the <table> element from the first table
+        
+        Better patch than previous checkin.
+
+        * test: editing/pasteboard/paste-table-003.html
+        
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+        Make sure to include the table when including a tbody.
+
 === Safari-521.19 ===
 
 2006-07-19  David Harrison  <harrison@apple.com>

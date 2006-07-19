@@ -1,0 +1,38 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 5 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 9 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 2 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 57x24
+        RenderTableSection {TBODY} at (0,0) size 57x24
+          RenderTableRow {TR} at (0,2) size 57x20
+            RenderTableCell {TD} at (2,2) size 25x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 23x18
+                text run at (1,1) width 23: "one"
+            RenderTableCell {TD} at (29,2) size 26x20 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 24x18
+                text run at (1,1) width 24: "two"
+      RenderBlock {DIV} at (0,24) size 784x60
+        RenderTable {TABLE} at (0,0) size 57x42
+          RenderTableSection {TBODY} at (0,0) size 57x42
+            RenderTableRow {TR} at (0,2) size 57x38
+              RenderTableCell {TD} at (2,11) size 25x20 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 23x18
+                  text run at (1,1) width 23: "one"
+              RenderTableCell {TD} at (29,2) size 26x38 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 24x18
+                  text run at (1,1) width 24: "two"
+                RenderBR {BR} at (25,15) size 0x0
+                RenderBR {BR} at (1,19) size 0x18
+        RenderBlock (anonymous) at (0,42) size 784x18
+          RenderBR {BR} at (0,0) size 0x18
+caret: position 0 of child 2 {BR} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
