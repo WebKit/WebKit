@@ -1,3 +1,25 @@
+2006-07-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4620655> REGRESSION(10.4.7-10.5): preview button for a blogger.com post doesn't work
+        
+        * kjs/nodes2string.cpp:
+        (StringNode::streamTo):
+        Return the escaped string.
+        
+        (RegExpNode::streamTo):
+        Use the correct syntax.
+        
+        * kjs/function.cpp:
+        (KJS::escapeStringForPrettyPrinting):
+        * kjs/function.h:
+        Add escape function which escapes a string for pretty-printing so it can be parsed again.
+        
+        * wtf/unicode/icu/UnicodeIcu.h:
+        (WTF::Unicode::isPrintableChar):
+        New function.
+
 === Safari-521.19 ===
 
 2006-07-18  Maciej Stachowiak  <mjs@apple.com>

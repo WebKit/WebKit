@@ -918,4 +918,43 @@ JSValue *GlobalFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, c
   return res;
 }
 
+UString escapeStringForPrettyPrinting(const UString& s)
+{
+    UString escapedString;
+    
+    for (int i = 0; i < s.size(); i++) {
+        unsigned short c = s.data()[i].unicode();
+        
+        switch (c) {
+        case '\"':
+            escapedString += "\\\"";
+            break;
+        case '\n':
+            escapedString += "\\n";
+            break;
+        case '\r':
+            escapedString += "\\r";
+            break;
+        case '\t':
+            escapedString += "\\t";
+            break;
+        case '\\':
+            escapedString += "\\\\";
+            break;
+        default:
+            if (c < 128 && WTF::Unicode::isPrintableChar(c))
+                escapedString.append(c);
+            else {
+                char hexValue[7];
+            
+                snprintf(hexValue, 7, "\\u%04x", c);
+                escapedString += hexValue;
+            }
+        }
+    }
+    
+    return escapedString;    
+}
+
+
 } // namespace

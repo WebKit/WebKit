@@ -1,3 +1,13 @@
+2006-07-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4620655> REGRESSION(10.4.7-10.5): preview button for a blogger.com post doesn't work
+        
+        * fast/js/pretty-print-expected.txt: Added.
+        * fast/js/pretty-print.html: Added.
+        * fast/js/resources/pretty-print.js: Added.
+
 2006-07-19  David Harrison  <harrison@apple.com>
 
         <rdar://problem/4629307> -[DOMRange markupString] does not include the initial table element if it is at the beginning of the range

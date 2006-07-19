@@ -161,7 +161,7 @@ namespace KJS {
     int id;
   };
 
-
+UString escapeStringForPrettyPrinting(const UString& s);
 
 } // namespace
 

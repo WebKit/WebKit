@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include "nodes.h"
+#include "function.h"
 
 namespace KJS {
   /**
@@ -116,10 +117,13 @@ void NumberNode::streamTo(SourceStream &s) const { s << UString::from(value); }
 
 void StringNode::streamTo(SourceStream &s) const
 {
-  s << '"' << value << '"';
+  s << '"' << escapeStringForPrettyPrinting(value) << '"';
 }
 
-void RegExpNode::streamTo(SourceStream &s) const { s <<  pattern; }
+void RegExpNode::streamTo(SourceStream &s) const
+{ 
+    s << "/" <<  pattern << "/" << flags; 
+}
 
 void ThisNode::streamTo(SourceStream &s) const { s << "this"; }
 
