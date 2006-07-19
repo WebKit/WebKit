@@ -64,6 +64,7 @@ public:
     virtual void focus();
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
+    virtual void updateFocusAppearance();
 
     virtual const AtomicString& name() const;
 

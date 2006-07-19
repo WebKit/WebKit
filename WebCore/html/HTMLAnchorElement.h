@@ -40,6 +40,7 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
 
+    virtual bool supportsFocus() const;
     virtual bool isMouseFocusable() const;
     virtual bool isKeyboardFocusable() const;
     virtual bool isFocusable() const;

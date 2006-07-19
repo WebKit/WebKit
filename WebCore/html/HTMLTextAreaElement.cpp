@@ -196,31 +196,37 @@ bool HTMLTextAreaElement::isMouseFocusable() const
 
 void HTMLTextAreaElement::focus()
 {
-    if (renderer()) {
-        Document* doc = document();
-        if (doc->focusNode() == this)
-            return;
-        doc->updateLayout();
-        // FIXME: Should isFocusable do the updateLayout?
-        if (!isFocusable())
-            return;
-        doc->setFocusNode(this);
-
-        if (cachedSelStart == -1) {
-            ASSERT(cachedSelEnd == -1);
-            // If this is the first focus, set a caret at the end of the text.  
-            // This matches other browsers' behavior.
-            int max = static_cast<RenderTextControl*>(renderer())->text().length();
-            setSelectionRange(max, max);
-        } else
-            // Restore the cached selection.  This matches other browsers' behavior.
-            setSelectionRange(cachedSelStart, cachedSelEnd);
-
-        if (doc->frame())
-            doc->frame()->revealSelection();
+    Document* doc = document();
+    if (doc->focusNode() == this)
+        return;
+    doc->updateLayout();
+    if (!supportsFocus())
+        return;
+    doc->setFocusNode(this);
+    // FIXME: Should isFocusable do the updateLayout?
+    if (!isFocusable()) {
+        setNeedsFocusAppearanceUpdate(true);
         return;
     }
-    HTMLGenericFormElement::focus();
+    updateFocusAppearance();
+}
+
+void HTMLTextAreaElement::updateFocusAppearance()
+{
+    ASSERT(renderer());
+    
+    if (cachedSelStart == -1) {
+        ASSERT(cachedSelEnd == -1);
+        // If this is the first focus, set a caret at the end of the text.  
+        // This matches other browsers' behavior.
+        int max = static_cast<RenderTextControl*>(renderer())->text().length();
+        setSelectionRange(max, max);
+    } else
+        // Restore the cached selection.  This matches other browsers' behavior.
+        setSelectionRange(cachedSelStart, cachedSelEnd); 
+
+    if (document() && document()->frame())
+        document()->frame()->revealSelection();
 }
 
 void HTMLTextAreaElement::defaultEventHandler(Event *evt)

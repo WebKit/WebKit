@@ -27,7 +27,6 @@
 #include "config.h"
 #include "HTMLGenericFormElement.h"
 
-#include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLFormElement.h"

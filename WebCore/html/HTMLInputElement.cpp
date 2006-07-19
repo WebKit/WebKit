@@ -180,16 +180,28 @@ void HTMLInputElement::focus()
         if (doc->focusNode() == this)
             return;
         doc->updateLayout();
-        // FIXME: Should isFocusable do the updateLayout?
-        if (!isFocusable())
+        if (!supportsFocus())
             return;
         doc->setFocusNode(this);
-        select();
-        if (doc->frame())
-            doc->frame()->revealSelection();
+        // FIXME: Should isFocusable do the updateLayout?
+        if (!isFocusable()) {
+            setNeedsFocusAppearanceUpdate(true);
+            return;
+        }
+        updateFocusAppearance();
         return;
     }
     HTMLGenericFormElement::focus();
+}
+
+void HTMLInputElement::updateFocusAppearance()
+{
+    if (isNonWidgetTextField()) {
+        select();
+        if (document() && document()->frame())
+            document()->frame()->revealSelection();
+    } else
+        HTMLGenericFormElement::updateFocusAppearance();
 }
 
 void HTMLInputElement::dispatchFocusEvent()

@@ -59,6 +59,13 @@ HTMLAnchorElement::~HTMLAnchorElement()
 {
 }
 
+bool HTMLAnchorElement::supportsFocus() const
+{
+    if (isContentEditable())
+        return HTMLElement::supportsFocus();
+    return isFocusable() || (m_isLink && document() && !document()->haveStylesheetsLoaded());
+}
+
 bool HTMLAnchorElement::isFocusable() const
 {
     if (isContentEditable())

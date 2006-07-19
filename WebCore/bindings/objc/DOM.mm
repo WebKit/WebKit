@@ -1547,6 +1547,14 @@ static Class elementClass(const AtomicString& tagName)
         return 0;
 }
 
+- (BOOL)isFocused
+{
+    Element* impl = [self _element];
+    if (impl->document()->focusNode() == impl)
+        return YES;
+    return NO;
+}
+
 @end
 
 //------------------------------------------------------------------------------------------

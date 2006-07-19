@@ -1,3 +1,61 @@
+2006-07-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fix for: 
+        <rdar://problem/4422657> REGRESSION: member name field or password field should have focus after loading webmail.mac.com (7405)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7405
+
+        <rdar://problem/4614181> REGRESSION: Crash in WebCore::RenderTextField::text() when quoting post at the Ars Technica forum (9707)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9707
+
+        Needs an http test. (http://bugzilla.opendarwin.org/show_bug.cgi?id=10020)
+
+        These bugs were both cases where focus() was called on an element which didn't have a renderer yet because stylesheets hadn't finished loading yet.
+        Now, we detect this case and let setFocusNode be called.  And when the stylesheet finishes loading, and the element attaches, a timer will fire, 
+        which will cause the correct selection & scrolling behavior to occur. 
+
+        This fix removes selection and scrolling behavior from the focus method.  This code is now in a new method, updateFocusAppearance.
+        updateFocusAppearance can now be called directly from focus(), but it can also be called when a timer fires.  This timer gets set
+        up when an element attaches, and its already been focused by the focus method.  We have to use a timer, because updateFocusAppearance can cause
+        a layout to happen, and we don't want that to happen in the middle of attach().
+
+        * bindings/objc/DOM.mm: (-[DOMElement isFocused]): Added SPI for autofill.
+        * bindings/objc/DOMPrivate.h:
+
+        * dom/Element.cpp:
+        (WebCore::Element::Element): Initializes timer and needFocusAppearanceUpdate bool.
+        (WebCore::Element::attach): Checks needsFocusAppearanceUpdate, and if the node is focused, then starts the timer.
+        (WebCore::Element::focus): Updated to check supportsFocus before calling setFocusNode, 
+        and only requiring the element to be focusable now before updating focus appearance.
+        (WebCore::Element::updateFocusAppearance): Added. Separates the selection, and the scrolling from focusing the node.
+        (WebCore::Element::updateFocusAppearanceTimerFired): Stops the timer, and if the element is focusable, calls updateFocusAppearance.
+        (WebCore::Element::stopUpdateFocusAppearanceTimer):  Cancels timer, and setsNeedsFocusAppearanceUpdate(false).
+        (WebCore::Element::detach): Calls stopUpdateFocusAppearanceTimer.
+        (WebCore::Element::blur): ditto.
+        * dom/Element.h:
+        (WebCore::Element::needsFocusAppearanceUpdate): Added so the timer only fires when focus() methods have caused an element to be focused.
+        (WebCore::Element::setNeedsFocusAppearanceUpdate): Added so focus methods can set this flag.
+
+        * dom/Node.h: (WebCore::Node::supportsFocus): Added.  Base class just calls isFocusable.
+        * html/HTMLAnchorElement.h: Added supportsFocus.
+        * html/HTMLAnchorElement.cpp: (WebCore::HTMLAnchorElement::supportsFocus): Added. Checks for the case where stylesheets haven't loaded yet,
+        so we can still focus the node without a renderer, and when it gets a renderer, we'll update the focus appearance.
+        * html/HTMLGenericFormElement.h: (WebCore::HTMLGenericFormElement::supportsFocus): ditto.
+        * html/HTMLGenericFormElement.cpp: Removed include of Document.h since this is now in the header.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::focus): Updated to check supportsFocus before calling setFocusNode, 
+        and only requiring the element to be focusable now before updating focus appearance.
+        (WebCore::HTMLInputElement::updateFocusAppearance): Added. Separates the selection, and the scrolling from focusing the node.
+        * html/HTMLInputElement.h:
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::focus): Updated to check supportsFocus before calling setFocusNode, 
+        and only requiring the element to be focusable now before updating focus appearance.
+        (WebCore::HTMLTextAreaElement::updateFocusAppearance): Added. Separates the selection, and the scrolling from focusing the node.
+        * html/HTMLTextAreaElement.h:
+
 2006-07-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

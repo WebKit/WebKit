@@ -43,6 +43,7 @@
 - (NSData *)_imageTIFFRepresentation;
 - (NSURL *)_getURLAttribute:(NSString *)name;
 - (void *)_NPObject; // For subclasses to implement; we only allow NPObjects to be created for certain element types
+- (BOOL)isFocused;
 @end
 
 @interface DOMCSSStyleDeclaration (WebPrivate)

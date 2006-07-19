@@ -232,6 +232,7 @@ public:
     /**
      * Whether this node can receive the keyboard focus.
      */
+    virtual bool supportsFocus() const { return isFocusable(); }
     virtual bool isFocusable() const;
     virtual bool isKeyboardFocusable() const;
     virtual bool isMouseFocusable() const;

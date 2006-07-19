@@ -40,7 +40,10 @@ namespace WebCore {
 using namespace HTMLNames;
 
 Element::Element(const QualifiedName& qName, Document *doc)
-    : ContainerNode(doc), m_tagName(qName)
+    : ContainerNode(doc)
+    , m_updateFocusAppearanceTimer(this, &Element::updateFocusAppearanceTimerFired)
+    , m_needsFocusAppearanceUpdate(false)
+    , m_tagName(qName)
 {
 }
 
@@ -541,6 +544,14 @@ void Element::attach()
     createRendererIfNeeded();
 #endif
     ContainerNode::attach();
+    if (needsFocusAppearanceUpdate() && !m_updateFocusAppearanceTimer.isActive() && document()->focusNode() == this)
+        m_updateFocusAppearanceTimer.startOneShot(0);
+}
+
+void Element::detach()
+{
+    stopUpdateFocusAppearanceTimer();
+    ContainerNode::detach();
 }
 
 void Element::recalcStyle(StyleChange change)
@@ -838,14 +849,24 @@ void Element::focus()
 {
     Document* doc = document();
     doc->updateLayout();
-                
-    if (!isFocusable())
-        return;
     
+    if (!supportsFocus())
+        return;                
+        
     doc->setFocusNode(this);
-    
-    if (this == rootEditableElement()) {    
-        Frame* frame = doc->frame();
+
+    if (!isFocusable()) {
+        setNeedsFocusAppearanceUpdate(true);
+        return;
+    }
+        
+    updateFocusAppearance();
+}
+
+void Element::updateFocusAppearance()
+{
+    if (this == rootEditableElement()) { 
+        Frame* frame = document()->frame();
         if (!frame)
             return;
         
@@ -861,11 +882,29 @@ void Element::focus()
         renderer()->enclosingLayer()->scrollRectToVisible(getRect());
 }
 
+void Element::updateFocusAppearanceTimerFired(Timer<Element>*)
+{
+    stopUpdateFocusAppearanceTimer();
+    Document* doc = document();
+    doc->updateLayout();
+    if (isFocusable())
+        updateFocusAppearance();
+}
+    
 void Element::blur()
 {
+    stopUpdateFocusAppearanceTimer();
     Document* doc = document();
     if (doc->focusNode() == this)
         doc->setFocusNode(0);
+}
+
+void Element::stopUpdateFocusAppearanceTimer()
+{
+    if (m_updateFocusAppearanceTimer.isActive()) {
+        m_updateFocusAppearanceTimer.stop();
+        setNeedsFocusAppearanceUpdate(false);
+    }
 }
 
 }

@@ -75,6 +75,7 @@ public:
     virtual bool isMouseFocusable() const;
     virtual bool isKeyboardFocusable() const;
     virtual void focus();
+    virtual void updateFocusAppearance();
 
     String value() const;
     void setValue(const String&);
