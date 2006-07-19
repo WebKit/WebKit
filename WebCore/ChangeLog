@@ -1,3 +1,28 @@
+2006-07-19  David Hyatt  <hyatt@apple.com>
+
+        Fix for 4638376.  The 1x1 solid color image optimization was broken when
+        I re-architected image.  This patch restores the optimization for CG.  Cairo
+        will still need the optimization.
+
+        Reviewed by darin
+
+        WARNING: NO TEST CASES ADDED OR CHANGED (need test cases still)
+
+        * platform/Image.cpp:
+        (WebCore::Image::Image):
+        (WebCore::Image::invalidateData):
+        (WebCore::Image::cacheFrame):
+        * platform/Image.h:
+        (WebCore::Image::setIsPDF):
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::Image::checkForSolidColor):
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::initNativeData):
+        (WebCore::Image::invalidateNativeData):
+        (WebCore::Image::checkForSolidColor):
+        (WebCore::Image::draw):
+        (WebCore::Image::drawTiled):
+
 2006-07-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

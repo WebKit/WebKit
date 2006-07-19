@@ -27,6 +27,7 @@
 #ifndef IMAGE_H_
 #define IMAGE_H_
 
+#include "Color.h"
 #include "GraphicsTypes.h"
 #include "ImageSource.h"
 #include "IntSize.h"
@@ -130,7 +131,7 @@ public:
     ImageAnimationObserver* animationObserver() const { return m_animationObserver; }
 
     enum TileRule { StretchTile, RoundTile, RepeatTile };
-
+    
 #if __APPLE__
     // Accessors for native image formats.
     CGImageRef getCGImageRef();
@@ -139,9 +140,6 @@ public:
 
     // PDF
     void setIsPDF() { m_isPDF = true; }
-
-private:
-    void checkForSolidColor(CGImageRef);
 #endif
 
 private:
@@ -174,6 +172,9 @@ private:
     // Invalidation of native data.
     void invalidateNativeData();
 
+    // Checks to see if the image is a 1x1 solid color.  We optimize these images and just do a fill rect instead.
+    void checkForSolidColor();
+
     // Members
     Vector<char> m_data; // The encoded raw data for the image.
     ImageSource m_source;
@@ -192,16 +193,17 @@ private:
     mutable NSImage* m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
     mutable CFDataRef m_tiffRep; // Cached TIFF rep for frame 0.  Only built lazily if someone queries for one.
     PDFDocumentImage* m_PDFDoc;
-    CGColorRef m_solidColor; // Will be 0 if transparent.
-    bool m_isSolidColor : 1; // If the image is 1x1 with no alpha, we can just do a rect fill when painting/tiling.
-    bool m_isPDF : 1;
+    bool m_isPDF;
 #endif
 
-    bool m_animatingImageType : 1;  // Whether or not we're an image type that is capable of animating (GIF).
-    bool m_animationFinished : 1;  // Whether or not we've completed the entire animation.
+    Color m_solidColor;  // If we're a 1x1 solid color, this is the color to use to fill.
+    bool m_isSolidColor;  // Whether or not we are a 1x1 solid image.
 
-    mutable bool m_haveSize : 1; // Whether or not our |m_size| member variable has the final overall image size yet.
-    bool m_sizeAvailable : 1; // Whether or not we can obtain the size of the first image frame yet from ImageIO.
+    bool m_animatingImageType;  // Whether or not we're an image type that is capable of animating (GIF).
+    bool m_animationFinished;  // Whether or not we've completed the entire animation.
+
+    mutable bool m_haveSize; // Whether or not our |m_size| member variable has the final overall image size yet.
+    bool m_sizeAvailable; // Whether or not we can obtain the size of the first image frame yet from ImageIO.
 };
 
 }

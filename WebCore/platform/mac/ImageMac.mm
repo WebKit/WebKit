@@ -54,8 +54,6 @@ void Image::initNativeData()
 {
     m_nsImage = 0;
     m_tiffRep = 0;
-    m_solidColor = 0;
-    m_isSolidColor = 0;
     m_isPDF = false;
     m_PDFDoc = 0;
 }
@@ -78,12 +76,6 @@ void Image::invalidateNativeData()
     if (m_tiffRep) {
         CFRelease(m_tiffRep);
         m_tiffRep = 0;
-    }
-
-    m_isSolidColor = false;
-    if (m_solidColor) {
-        CFRelease(m_solidColor);
-        m_solidColor = 0;
     }
 }
 
@@ -109,47 +101,29 @@ bool Image::supportsType(const String& type)
 
 // Drawing Routines
 
-static void fillSolidColorInRect(GraphicsContext* context, CGColorRef color, CGRect rect, CompositeOperator op)
+void Image::checkForSolidColor()
 {
-    if (color) {
-        context->save();
-        CGContextSetFillColorWithColor(context->platformContext(), color);
-        context->setCompositeOperation(op);
-        CGContextFillRect(context->platformContext(), rect);
-        context->restore();
-    }
-}
-
-void Image::checkForSolidColor(CGImageRef image)
-{
-    m_isSolidColor = false;
-    if (m_solidColor) {
-        CFRelease(m_solidColor);
-        m_solidColor = 0;
-    }
-    
-    // Currently we only check for solid color in the important special case of a 1x1 image.
-    if (image && CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
-        CGFloat pixel[4]; // RGBA
-        CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
-// This #if won't be needed once the CG header that includes kCGBitmapByteOrder32Host is included in the OS.
-#if __ppc__
-        CGContextRef bmap = CGBitmapContextCreate(&pixel, 1, 1, 8*sizeof(float), sizeof(pixel), space,
-            kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents);
-#else
-        CGContextRef bmap = CGBitmapContextCreate(&pixel, 1, 1, 8*sizeof(float), sizeof(pixel), space,
-            kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
-#endif
-        if (bmap) {
-            GraphicsContext(bmap).setCompositeOperation(CompositeCopy);
-            CGRect dst = { {0, 0}, {1, 1} };
-            CGContextDrawImage(bmap, dst, image);
-            if (pixel[3] > 0)
-                m_solidColor = CGColorCreate(space,pixel);
-            m_isSolidColor = true;
-            CFRelease(bmap);
-        } 
-        CFRelease(space);
+    if (frameCount() > 1)
+        m_isSolidColor = false;
+    else {
+        CGImageRef image = frameAtIndex(0);
+        
+        // Currently we only check for solid color in the important special case of a 1x1 image.
+        if (image && CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
+            CGFloat pixel[4]; // RGBA
+            CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+            CGContextRef bmap = CGBitmapContextCreate(&pixel, 1, 1, 8*sizeof(float), sizeof(pixel), space,
+                kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
+            if (bmap) {
+                GraphicsContext(bmap).setCompositeOperation(CompositeCopy);
+                CGRect dst = { {0, 0}, {1, 1} };
+                CGContextDrawImage(bmap, dst, image);
+                m_solidColor = Color(int(pixel[0] * 255), int(pixel[1] * 255), int(pixel[2] * 255), int(pixel[3] * 255));
+                m_isSolidColor = true;
+                CFRelease(bmap);
+            } 
+            CFRelease(space);
+        }
     }
 }
 
@@ -216,13 +190,17 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRec
     if (!image) // If it's too early we won't have an image yet.
         return;
 
-    if (m_isSolidColor && m_currentFrame == 0)
-        return fillSolidColorInRect(ctxt, m_solidColor, ir, compositeOp);
+    if (m_isSolidColor && m_currentFrame == 0) {
+        if (m_solidColor.alpha() > 0) {
+            ctxt->setCompositeOperation(!m_solidColor.hasAlpha() && compositeOp == CompositeSourceOver ? CompositeCopy : compositeOp);
+            ctxt->fillRect(ir, m_solidColor);
+        }
+        return;
+    }
 
     CGContextRef context = ctxt->platformContext();
-
     ctxt->save();
-        
+
     // Get the height (in adjusted, i.e. scaled, coords) of the portion of the image
     // that is currently decoded.  This could be less that the actual height.
     CGSize selfSize = size();                          // full image size, in pixels
@@ -291,14 +269,17 @@ static void drawPattern(void* info, CGContextRef context)
 static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
 void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint,
-    const FloatSize& tileSize, CompositeOperator op)
+                      const FloatSize& tileSize, CompositeOperator op)
 {    
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
 
-    if (m_currentFrame == 0 && m_isSolidColor) {
-        fillSolidColorInRect(ctxt, m_solidColor, destRect, op);
+    if (m_isSolidColor && m_currentFrame == 0) {
+        if (m_solidColor.alpha() > 0) {
+            ctxt->setCompositeOperation(!m_solidColor.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
+            ctxt->fillRect(destRect, m_solidColor);
+        }
         return;
     }
 
@@ -372,14 +353,19 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 
 // FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
 void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule,
-    TileRule vRule, CompositeOperator op)
+                      TileRule vRule, CompositeOperator op)
 {    
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
 
-    if (m_currentFrame == 0 && m_isSolidColor)
-        return fillSolidColorInRect(ctxt, m_solidColor, dstRect, op);
+    if (m_isSolidColor && m_currentFrame == 0) {
+        if (m_solidColor.alpha() > 0) {
+            ctxt->setCompositeOperation(!m_solidColor.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
+            ctxt->fillRect(dstRect, m_solidColor);
+        }
+        return;
+    }
 
     ctxt->save();
 

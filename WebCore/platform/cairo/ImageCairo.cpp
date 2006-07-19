@@ -92,6 +92,12 @@ static void setCompositingOperation(cairo_t* context, CompositeOperator op, bool
         cairo_set_operator(context, CAIRO_OPERATOR_OVER);
 }
 
+void Image::checkForSolidColor()
+{
+    // FIXME: It's easy to implement this optimization. Just need to check the RGBA32 buffer to see if it is 1x1.
+    m_isSolidColor = false;
+}
+
 void Image::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatRect& src, CompositeOperator op)
 {
     cairo_t* context = ctxt->platformContext();

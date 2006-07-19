@@ -49,7 +49,7 @@ namespace WebCore {
 Image::Image()
 : m_currentFrame(0), m_frames(0), m_animationObserver(0),
   m_frameTimer(0), m_repetitionCount(0), m_repetitionsComplete(0),
-  m_animatingImageType(true), m_animationFinished(0),
+  m_isSolidColor(false), m_animatingImageType(true), m_animationFinished(false),
   m_haveSize(false), m_sizeAvailable(false)
 {
     initNativeData();
@@ -58,7 +58,7 @@ Image::Image()
 Image::Image(ImageAnimationObserver* observer, bool isPDF)
  : m_currentFrame(0), m_frames(0), m_animationObserver(0),
   m_frameTimer(0), m_repetitionCount(0), m_repetitionsComplete(0),
-  m_animatingImageType(true), m_animationFinished(0),
+  m_isSolidColor(false), m_animatingImageType(true), m_animationFinished(false),
   m_haveSize(false), m_sizeAvailable(false)
 {
     initNativeData();
@@ -81,6 +81,7 @@ void Image::invalidateData()
     // Destroy the cached images and release them.
     if (m_frames.size()) {
         m_frames.last().clear();
+        m_isSolidColor = false;
         invalidateNativeData();
     }
 }
@@ -99,6 +100,8 @@ void Image::cacheFrame(size_t index)
         m_frames.resize(numFrames);
 
     m_frames[index].m_frame = m_source.createFrameAtIndex(index);
+    checkForSolidColor();
+
     if (shouldAnimate())
         m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
     m_frames[index].m_hasAlpha = m_source.frameHasAlphaAtIndex(index);
