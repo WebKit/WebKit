@@ -1132,7 +1132,7 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = !id && validUnit(value, FNumber|FLength|FPercent, strict);
         break;
     case CSS_PROP_RESIZE: // none | both | horizontal | vertical | inherit
-        if (id == CSS_VAL_NONE || id == CSS_VAL_BOTH || id == CSS_VAL_HORIZONTAL || id == CSS_VAL_VERTICAL)
+        if (id == CSS_VAL_NONE || id == CSS_VAL_BOTH || id == CSS_VAL_HORIZONTAL || id == CSS_VAL_VERTICAL || id == CSS_VAL_AUTO)
             valid_primitive = true;
         break;
     // End of CSS3 properties

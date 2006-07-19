@@ -312,6 +312,7 @@ using namespace WebCore;
 {
     textAreasAreResizable = resizable;
     settings->setTextAreasAreResizable(resizable);
+    [self _updateAllViews];
 }
 
 - (BOOL)textAreasAreResizable

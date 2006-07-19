@@ -2658,6 +2658,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         case CSS_VAL_VERTICAL:
             r = RESIZE_VERTICAL;
             break;
+        case CSS_VAL_AUTO:
+            r = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
+            break;
         case CSS_VAL_NONE:
         default:
             r = RESIZE_NONE;

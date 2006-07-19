@@ -1,3 +1,20 @@
+2006-07-18  David Hyatt  <hyatt@apple.com>
+
+        Fix for radar 4611287, make resizable text fields opt-in rather than
+        opt-out.  Open source users will need to write the pref into their defaults
+        to see the resizers on textareas now.
+
+        Reviewed by mjs and adele
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreSettings.mm:
+        (-[WebCoreSettings setTextAreasAreResizable:]):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/html4.css:
+
 2006-07-18  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
