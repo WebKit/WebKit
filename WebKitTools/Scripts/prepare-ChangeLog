@@ -67,17 +67,20 @@ sub processPaths(\@);
 
 my $openChangeLogs = 0;
 my $showHelp = 0;
+my $updateChangeLogs = 1;
 my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
 my $parseOptionsResult =
     GetOptions("diff|d!" => \$spewDiff,
                "help|h!" => \$showHelp,
-               "open|o!" => \$openChangeLogs);
+               "open|o!" => \$openChangeLogs,
+               "update!" => \$updateChangeLogs);
 if (!$parseOptionsResult || $showHelp)
   {
     print STDERR basename($0) . " [-d|--diff] [-h|--help] [-o|--open] [svndir1 [svndir2 ...]]\n";
-    print STDERR "  -d|--diff  Spew diff to stdout when running\n";
-    print STDERR "  -h|--help  Show this help message\n";
-    print STDERR "  -o|--open  Open ChangeLogs in an editor when done\n";
+    print STDERR "  -d|--diff      Spew diff to stdout when running\n";
+    print STDERR "  -h|--help      Show this help message\n";
+    print STDERR "  -o|--open      Open ChangeLogs in an editor when done\n";
+    print STDERR "  --[no-]update  Update ChangeLogs from svn before adding entry (default: update)\n";
     exit 1;
   }
 
@@ -289,7 +292,7 @@ foreach my $prefix (sort keys %files)
   {
     $logs .= " ${prefix}ChangeLog";
   }
-if ($logs)
+if ($logs && $updateChangeLogs)
   {
     print STDERR "  Running 'svn update' to update ChangeLog files.\n";
     open ERRORS, "$SVN update -q$logs |" or die "The svn update of ChangeLog files failed: $!.\n";
