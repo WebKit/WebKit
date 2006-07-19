@@ -125,7 +125,7 @@ void Lexer::shift(unsigned int p)
     next2 = next3;
     do {
       if (pos >= length) {
-        next3 = 0;
+        next3 = -1;
         break;
       }
       next3 = code[pos++].uc;
@@ -188,7 +188,7 @@ int Lexer::lex()
       } else if (current == '/' && next1 == '*') {
         shift(1);
         state = InMultiLineComment;
-      } else if (current == 0) {
+      } else if (current == -1) {
         if (!terminator && !delimited) {
           // automatic semicolon insertion if program incomplete
           token = ';';
@@ -245,7 +245,7 @@ int Lexer::lex()
       if (current == stringType) {
         shift(1);
         setDone(String);
-      } else if (current == 0 || isLineTerminator()) {
+      } else if (isLineTerminator() || current == -1) {
         setDone(Bad);
       } else if (current == '\\') {
         state = InEscapeSequence;
@@ -320,12 +320,12 @@ int Lexer::lex()
           setDone(Other);
         } else
           state = Start;
-      } else if (current == 0) {
+      } else if (current == -1) {
         setDone(Eof);
       }
       break;
     case InMultiLineComment:
-      if (current == 0) {
+      if (current == -1) {
         setDone(Bad);
       } else if (isLineTerminator()) {
         nextLine();
@@ -804,6 +804,13 @@ void Lexer::record8(unsigned short c)
   buffer8[pos8++] = (char) c;
 }
 
+void Lexer::record16(int c)
+{
+  ASSERT(c >= 0);
+  ASSERT(c <= USHRT_MAX);
+  record16(UChar(static_cast<unsigned short>(c)));
+}
+
 void Lexer::record16(KJS::UChar c)
 {
   // enlarge buffer if full
@@ -825,7 +832,7 @@ bool Lexer::scanRegExp()
   bool inBrackets = false;
 
   while (1) {
-    if (isLineTerminator() || current == 0)
+    if (isLineTerminator() || current == -1)
       return false;
     else if (current != '/' || lastWasEscape == true || inBrackets == true)
     {

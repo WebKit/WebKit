@@ -1,3 +1,16 @@
+2006-07-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele Peterson.
+        
+        <rdar://problem/4589530> REGRESSION: null character in JS string causes parse error (works in Tiger and in other browsers)
+
+        * kjs/lexer.cpp:
+        (Lexer::shift):
+        (Lexer::lex):
+        (Lexer::record16):
+        (Lexer::scanRegExp):
+        * kjs/lexer.h:
+
 2006-07-18  Tim Omernick  <timo@apple.com>
 
         Reviewed by Tim Hatcher.

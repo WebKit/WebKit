@@ -1,3 +1,15 @@
+2006-07-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele Peterson.
+        
+        Test case for:
+        
+        <rdar://problem/4620646> REGRESSION(10.4.7-10.5): can't type into editing region when creating or editing a blogger.com post
+
+        * fast/js/null-char-in-string-expected.txt: Added.
+        * fast/js/null-char-in-string.html: Added.
+        * fast/js/resources/null-char-in-string.js: Added.
+
 2006-07-18  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
