@@ -1574,6 +1574,20 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
 }
 
+- (void)viewWillMoveToSuperview:(NSView *)newSuperview
+{
+    if (!newSuperview) {
+        // Stop the plug-in when it is removed from its superview.  It is not sufficient to do this in -viewWillMoveToWindow:nil, because
+        // the WebView might still has a hostWindow at that point, which prevents the plug-in from being destroyed.
+        // There is no need to start the plug-in when moving into a superview.  -viewDidMoveToWindow takes care of that.
+        [self stop];
+        
+        // Stop observing WebPreferencesChangedNotification -- we only need to observe this when installed in the view hierarchy.
+        // When not in the view hierarchy, -viewWillMoveToWindow: and -viewDidMoveToWindow will start/stop the plugin as needed.
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:nil];
+    }
+}
+
 - (void)viewDidMoveToWindow
 {
     [self resetTrackingRect];

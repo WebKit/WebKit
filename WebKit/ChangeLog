@@ -1,3 +1,15 @@
+2006-07-19  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4523432> safari crashed right after disabling "block pop up windows" (or other WebPreferences changes)
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView viewWillMoveToSuperview:]):
+        Stop the plug-in when it is removed from its superview.  It is not sufficient to do this in -viewWillMoveToWindow:nil, because
+        the WebView might still has a hostWindow at that point, which prevents the plug-in from being destroyed.
+        There is no need to start the plug-in when moving into a superview.  -viewDidMoveToWindow takes care of that.
+
 === Safari-521.19 ===
 
 2006-07-17  Tim Omernick  <timo@apple.com>
