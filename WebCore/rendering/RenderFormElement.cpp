@@ -84,7 +84,7 @@ void RenderFormElement::layout()
 void RenderFormElement::clicked(Widget*)
 {
     RenderArena* arena = ref();
-    PlatformMouseEvent event; // gets "current event"
+    PlatformMouseEvent event(PlatformMouseEvent::currentEvent);
     if (node())
         static_cast<EventTargetNode*>(node())->dispatchMouseEvent(event, clickEvent, event.clickCount());
     deref(arena);

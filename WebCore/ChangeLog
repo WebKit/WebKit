@@ -1,3 +1,32 @@
+2006-07-19  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8272
+        Use of window.open & window.close can cause crash
+
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/mac/PlatformMouseEventMac.mm:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        The default constructor now creates a "zero" event, and a new one was added to create the "current" one.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::handleMouseMoveEvent):
+        * rendering/RenderFormElement.cpp:
+        (WebCore::RenderFormElement::clicked): 
+        Updated for the above changes.
+
+        * platform/gdk/MouseEventGdk.cpp:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (PlatformMouseEvent::PlatformMouseEvent):
+        * platform/win/MouseEventWin.cpp:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (PlatformMouseEvent::PlatformMouseEvent):
+        Trying not to break other platforms.
+
+        * manual-tests/invalid-mouse-event.html: Added.
+
 2006-07-20  Maciej Stachowiak  <mjs@apple.com>
         
         Reviewed by Anders.

@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+const PlatformMouseEvent::CurrentEventTag PlatformMouseEvent::currentEvent = {};
+
 static MouseButton mouseButtonForEvent(NSEvent *event)
 {
     switch ([event type]) {
@@ -123,7 +125,7 @@ PlatformMouseEvent::PlatformMouseEvent(NSEvent* event)
 {
 }
 
-PlatformMouseEvent::PlatformMouseEvent()
+PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&)
     : m_button(LeftButton), m_clickCount(0), m_shiftKey(false), m_ctrlKey(false), m_altKey(false), m_metaKey(false)
 {
     NSEvent* event = [NSApp currentEvent];

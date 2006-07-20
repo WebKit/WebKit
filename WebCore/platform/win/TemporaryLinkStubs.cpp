@@ -155,7 +155,7 @@ Widget::FocusPolicy TextField::focusPolicy() const { notImplemented(); return No
 
 Cursor::Cursor(Image*) { notImplemented(); }
 
-PlatformMouseEvent::PlatformMouseEvent() { notImplemented(); }
+PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
 String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
 
 int WebCore::findNextSentenceFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }

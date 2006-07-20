@@ -1733,7 +1733,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                     BOOL startedDrag = [_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent sourceIsDHTML:_dragSrcIsDHTML DHTMLWroteData:wcWrotePasteboard];
                     if (!startedDrag && _dragSrcMayBeDHTML) {
                         // WebKit canned the drag at the last minute - we owe _dragSrc a DRAGEND event
-                        PlatformMouseEvent event;
+                        PlatformMouseEvent event(PlatformMouseEvent::currentEvent);
                         dispatchDragSrcEvent(dragendEvent, event);
                         _mouseDownMayStartDrag = false;
                     }
