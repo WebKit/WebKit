@@ -947,7 +947,11 @@ UString escapeStringForPrettyPrinting(const UString& s)
             else {
                 char hexValue[7];
             
+#if PLATFORM(WIN_OS)
+                _snprintf(hexValue, 7, "\\u%04x", c);
+#else
                 snprintf(hexValue, 7, "\\u%04x", c);
+#endif
                 escapedString += hexValue;
             }
         }
