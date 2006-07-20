@@ -1,3 +1,16 @@
+2006-07-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+        
+        - fixed layout test results that were affected by editing input
+        paste patch -- new results are actually more correct, handling
+        text fields properly as a replaced element.
+
+        * editing/selection/3690703-2-expected.txt:
+        * editing/selection/3690703-expected.txt:
+        * fast/events/div-focus-expected.txt:
+        * fast/text/textIteratorNilRenderer-expected.txt:
+
 2006-07-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
