@@ -1,3 +1,16 @@
+2006-07-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+        - fixed <rdar://problem/4634484> REGRESSION: Project Change Request form should have vertical scroll bar, but doesn't
+        
+        I couldn't figure out how to make an automated test case for this,
+        or even a manual one. It seems to be timing-related in some way.
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::close): detach the child frame from
+        its element, not the frame containing this element.
+
 2006-07-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
