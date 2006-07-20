@@ -100,7 +100,8 @@ void Image::cacheFrame(size_t index)
         m_frames.resize(numFrames);
 
     m_frames[index].m_frame = m_source.createFrameAtIndex(index);
-    checkForSolidColor();
+    if (m_frames[index].m_frame)
+        checkForSolidColor();
 
     if (shouldAnimate())
         m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
