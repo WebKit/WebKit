@@ -153,7 +153,7 @@
         
         * bridge/mac/FrameMac.mm:
         (WebCore::FrameMac::nextKeyViewInFrame):
-        Take into account that focus handlers can cause a node to be destroyed.
+        Take into account that focus handlers can cause a node's renderer to be destroyed.
         
 2006-07-19  David Hyatt  <hyatt@apple.com>
 
