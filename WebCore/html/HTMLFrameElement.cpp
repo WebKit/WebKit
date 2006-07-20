@@ -228,7 +228,6 @@ void HTMLFrameElement::close()
 {
     Frame* frame = document()->frame();
     if (renderer() && frame) {
-        //frame->disconnectOwnerElement();
         if (Frame* childFrame = frame->tree()->child(m_name)) {
             childFrame->frameDetached();
             childFrame->disconnectOwnerElement();

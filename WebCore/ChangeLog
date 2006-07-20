@@ -1,3 +1,12 @@
+2006-07-20  Maciej Stachowiak  <mjs@apple.com>
+        
+        Reviewed by Anders.
+
+        - delete line that I only commented in the last patch - meant to do this before landing
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::close): 
+
 2006-07-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.
