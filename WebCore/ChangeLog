@@ -1,3 +1,11 @@
+2006-07-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::nextKeyViewInFrame):
+        Hold a ref to the node in case it gets destroyed by an event handler.
+
 2006-07-19  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Darin.

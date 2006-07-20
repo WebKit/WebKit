@@ -877,22 +877,23 @@ String FrameMac::mimeTypeForFileName(const String& fileName) const
     return String();
 }
 
-NSView* FrameMac::nextKeyViewInFrame(Node* node, SelectionDirection direction, bool* focusCallResultedInViewBeingCreated)
+NSView* FrameMac::nextKeyViewInFrame(Node* n, SelectionDirection direction, bool* focusCallResultedInViewBeingCreated)
 {
     Document* doc = document();
     if (!doc)
         return nil;
     
+    RefPtr<Node> node = n;
     for (;;) {
         node = direction == SelectingNext
-            ? doc->nextFocusNode(node) : doc->previousFocusNode(node);
+            ? doc->nextFocusNode(node.get()) : doc->previousFocusNode(node.get());
         if (!node)
             return nil;
         
         RenderObject* renderer = node->renderer();
         
         if (!renderer->isWidget()) {
-            static_cast<Element*>(node)->focus(); 
+            static_cast<Element*>(node.get())->focus(); 
             // The call to focus might have triggered event handlers that causes the 
             // current renderer to be destroyed.
             if (!(renderer = node->renderer()))
