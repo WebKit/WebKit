@@ -121,7 +121,7 @@ ScrollBar::~ScrollBar()
     // But we don't need it for form elements, and for frames it doesn't work
     // well because of the way the NSViews are created in WebKit. So for now,
     // we'll just do it explictly for ScrollBar.
-    [bar removeFromSuperview];
+    removeFromSuperview();
 }
 
 bool ScrollBar::setValue(int v)

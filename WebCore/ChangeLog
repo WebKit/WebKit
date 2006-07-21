@@ -1,3 +1,19 @@
+2006-07-21  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Beth Dakin & John Sullivan.
+
+        <rdar://problem/4633717> 9A218: Reproducible crash in -[NSScroller mouseDown:]
+
+        Beth is in the middle of making a layout test for this; she will land it soon.
+
+        * platform/mac/ScrollBarMac.mm:
+        (ScrollBar::~ScrollBar):
+        Call Widget::removeFromSuperview() rather than -removeFromSuperview directly on the scroll bar view.
+        Widget::removeFromSuperview() obeys the "mustStayInWindow" flag, which is set while tracking the mouse
+        in view-based widgets to prevent their destruction while the tracking is in progress.
+        I searched around WebCore and this is the only Widget subclass that directly removes its view rather
+        than using removeFromSuperview().
+
 2006-07-21  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
