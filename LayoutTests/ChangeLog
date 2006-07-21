@@ -1,3 +1,15 @@
+2006-07-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/4641033>
+        REGRESSION: Pasting from web pages into Mail (or Blot) often loses most of the content
+
+        * editing/pasteboard/4641033-expected.checksum: Added.
+        * editing/pasteboard/4641033-expected.png: Added.
+        * editing/pasteboard/4641033-expected.txt: Added.
+        * editing/pasteboard/4641033.html: Added.
+
 2006-07-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

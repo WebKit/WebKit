@@ -352,6 +352,7 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
             continue;
         
         // Add the node to the markup.
+        // FIXME: Add markup for nodes without renderers to fix <rdar://problem/4062865>. Also see the three checks below.
         if (n->renderer()) {
             markups.append(startMarkup(n, range, annotate, defaultStyle.get()));
             if (nodes)
@@ -370,7 +371,7 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
                 if (!ancestorsToClose.isEmpty()) {
                     // Close up the ancestors.
                     while (Node *ancestor = ancestorsToClose.last()) {
-                        if (next != pastEnd && ancestor == next->parentNode())
+                        if (next != pastEnd && next->isAncestor(ancestor))
                             break;
                         // Not at the end of the range, close ancestors up to sibling of next node.
                         markups.append(endMarkup(ancestor));
@@ -378,11 +379,15 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
                         ancestorsToClose.removeLast();
                     }
                 } else {
-                    // No ancestors to close, but need to add ancestors not in range since next node is in another tree. 
                     if (next != pastEnd) {
                         Node *nextParent = next->parentNode();
                         if (n != nextParent) {
                             for (Node *parent = n->parent(); parent != 0 && parent != nextParent; parent = parent->parentNode()) {
+                                // All ancestors not in the ancestorsToClose list should either be a) unrendered:
+                                if (!parent->renderer())
+                                    continue;
+                                // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
+                                ASSERT(startNode->isAncestor(parent));
                                 markups.prepend(startMarkup(parent, range, annotate, defaultStyle.get()));
                                 markups.append(endMarkup(parent));
                                 if (nodes)

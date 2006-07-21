@@ -1,3 +1,20 @@
+2006-07-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/4641033>
+        REGRESSION: Pasting from web pages into Mail (or Blot) often loses most of the content
+        
+        * editing/markup.cpp:
+        (WebCore::createMarkup): We surround the currently accumulated markup with markup 
+        for ancestors of the startNode when the pre-order traversal leaves the trees rooted 
+        at those ancestors.  We assumed that any ancestors of the current node not in the 
+        ancestorsToClose list were those kind of ancestors.  But we don't add renderer-less 
+        containers to the ancestorsToClose list.  So, we were incorrectly surrounding the 
+        currently accumulated markup with markup for render-less containers.  Most of the
+        content at apple.com was being put inside an <optgroup> inside a <select> element.  
+        Then on Paste createContextualFragment would drop it.
+
 2006-07-21  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
