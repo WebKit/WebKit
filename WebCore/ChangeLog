@@ -1,3 +1,24 @@
+2006-07-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        fixed <rdar://problem/4611303> REGRESSION: repro crash in WebCore::EventTargetNode::dispatchWindowEvent at aeropostale.com
+        There was an attempt to deref an EventListener that got cleaned up in GC.  Changing Document's EventListener list from 
+        vanilla ptrs to refptrs to prevent GC, following EventTargetNode's proven example.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::clear):
+        (WebCore::Document::handleWindowEvent):
+        (WebCore::Document::getHTMLWindowEventListener):
+        (WebCore::Document::removeHTMLWindowEventListener):
+        (WebCore::Document::removeWindowEventListener):
+        (WebCore::Document::hasWindowEventListener):
+        Changed all of the list iterators to work with RefPtrs instead of vanilla ptrs
+
+        * dom/Document.h:
+        Changed the EventListener list to be a vanilla pointer list to a refptr list
+
 2006-07-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej
