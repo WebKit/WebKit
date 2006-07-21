@@ -1,5 +1,17 @@
 2006-07-20  Alice Liu  <alice.liu@apple.com>
 
+        Reviewed by Tim Omernick.
+
+        Fixed <rdar://problem/4621649> repro crash: Upload link causes crash on pages.google.com in Frame::nodeForWidget
+        added manual test because there is no way to change the value of an <input type=file> via the DOM.  It's not supported because it's a security risk. 
+
+        * manual-tests/remove-input-file-onchange.html: Added.
+        * platform/mac/FileButtonMac.mm:
+        (-[WebFileChooserButton chooseFilename:]):
+        swapped the calls to changeFilename and bridgeForWidget because changeFilename will destroy the widget that is accessed in bridgeForWidget 
+
+2006-07-20  Alice Liu  <alice.liu@apple.com>
+
         Reviewed by Adele.
 
         Fixed <rdar://problem/4532113> REGRESSION (NativeTextField): Crash occurs after modifying field then reloading page -[FormDelegate frameLayoutHasChanged:]

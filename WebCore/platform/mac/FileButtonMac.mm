@@ -284,8 +284,9 @@ using namespace WebCore;
 
 - (void)chooseFilename:(NSString *)filename
 {
-    [self changeFilename:filename];
+    // call bridgetForWidget before changeFilename because changeFilename can destroy the widget [Radar 46211649]
     WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(_widget);
+    [self changeFilename:filename];
     [bridge release];
 }
 
