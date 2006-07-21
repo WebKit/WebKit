@@ -40,6 +40,7 @@
 #include "markup.h"
 #include <wtf/Vector.h>
 #include <libxslt/imports.h>
+#include <libxslt/variables.h>
 #include <libxslt/xsltutils.h>
 
 namespace WebCore {
@@ -305,9 +306,20 @@ bool XSLTProcessor::transformToString(Node *sourceNode, DeprecatedString &mimeTy
     bool success = false;
     bool shouldFreeSourceDoc = false;
     if (xmlDocPtr sourceDoc = xmlDocPtrFromNode(sourceNode, shouldFreeSourceDoc)) {
+        xsltTransformContextPtr transformContext = xsltNewTransformContext(sheet, sourceDoc);
+
+        // This is a workaround for a bug in libxslt. 
+        // The bug has been fixed in version 1.1.13, so once we ship that this can be removed.
+        if (transformContext->globalVars == NULL)
+           transformContext->globalVars = xmlHashCreate(20);
+
         const char **params = xsltParamArrayFromParameterMap(m_parameters);
-        xmlDocPtr resultDoc = xsltApplyStylesheet(sheet, sourceDoc, params);
+        xsltQuoteUserParams(transformContext, params);
+        xmlDocPtr resultDoc = xsltApplyStylesheetUser(sheet, sourceDoc, 0, 0, 0, transformContext);
+        
+        xsltFreeTransformContext(transformContext);        
         freeXsltParamArray(params);
+        
         if (shouldFreeSourceDoc)
             xmlFreeDoc(sourceDoc);
         

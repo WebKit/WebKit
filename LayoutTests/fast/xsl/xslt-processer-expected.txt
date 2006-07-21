@@ -66,9 +66,9 @@ Success
 2.4 transform to same fragment twice:
 Success
 2.5 transformed fragment containing only text:
-****Failure**** (expected: "SUCCESS" actual: "")
+Success
 2.6 fragment using passed parameters:
-****Failure**** (expected: "SUCCESS" actual: "")
+Success
 
 3.0 DOMDocument transformToDocument(in DOMNode source):
 

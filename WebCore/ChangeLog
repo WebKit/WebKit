@@ -1,3 +1,15 @@
+2006-07-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4637807> REGRESSION: "Features & Options" page at volvocars.us fails
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::xsltParamArrayFromParameterMap):
+        Turns out parameters never worked. String parameters need to be escaped so we create a transform context,
+        add the parameters to it quoted and then use xsltApplyStylesheetUser which lets us pass the transform context to it.
+        This also works around a bug in libxslt where a hash table isn't allocated.
+
 2006-07-20  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Tim Omernick.

@@ -1,3 +1,15 @@
+2006-07-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4637807> REGRESSION: "Features & Options" page at volvocars.us fails
+        
+        * fast/xsl/xslt-processer-expected.txt:
+        This passes now.
+        
+        * fast/xsl/xslt-string-parameters-expected.txt: Added.
+        * fast/xsl/xslt-string-parameters.html: Added.
+
 2006-07-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Beth and John.
