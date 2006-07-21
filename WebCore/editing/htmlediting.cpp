@@ -100,18 +100,22 @@ int comparePositions(const Position& a, const Position& b)
     if (shadowAncestorB == nodeB)
         shadowAncestorB = 0;
 
+    int bias = 0;
     if (shadowAncestorA != shadowAncestorB) {
         if (shadowAncestorA) {
             nodeA = shadowAncestorA;
             offsetA = 0;
+            bias = 1;
         }
         if (shadowAncestorB) {
             nodeB = shadowAncestorB;
             offsetB = 0;
+            bias = -1;
         }
     }
 
-    return Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB);
+    int result = Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB);
+    return result ? result : bias;
 }
 
 Node* highestEditableRoot(const Position& position)

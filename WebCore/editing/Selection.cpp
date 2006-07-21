@@ -336,6 +336,8 @@ void Selection::adjustForEditableContent()
         if (endRoot || endEditableAncestor != baseEditableAncestor) {
             
             Position p = previousVisuallyDistinctCandidate(m_end);
+            if (p.isNull() && endRoot && endRoot->isShadowNode())
+                p = Position(endRoot->shadowParentNode(), maxDeepOffset(endRoot->shadowParentNode()));
             while (p.isNotNull() && !(lowestEditableAncestor(p.node()) == baseEditableAncestor && !isEditablePosition(p))) {
                 Node* root = editableRootForPosition(p);
                 Node* shadowParent = root && root->isShadowNode() ? root->shadowParentNode() : 0;
@@ -360,6 +362,8 @@ void Selection::adjustForEditableContent()
         Node* startEditableAncestor = lowestEditableAncestor(m_start.node());      
         if (startRoot || startEditableAncestor != baseEditableAncestor) {
             Position p = nextVisuallyDistinctCandidate(m_start);
+            if (p.isNull() && startRoot && startRoot->isShadowNode())
+                p = Position(startRoot->shadowParentNode(), 0);
             while (p.isNotNull() && !(lowestEditableAncestor(p.node()) == baseEditableAncestor && !isEditablePosition(p))) {
                 Node* root = editableRootForPosition(p);
                 Node* shadowParent = root && root->isShadowNode() ? root->shadowParentNode() : 0;

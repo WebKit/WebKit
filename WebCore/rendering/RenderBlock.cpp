@@ -2621,6 +2621,13 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     // a document that is entirely editable.
     bool isEditableRoot = n && n->rootEditableElement() == n && !n->hasTagName(bodyTag) && !n->hasTagName(htmlTag);
 
+    if (isReplaced()) {
+        if (y < absy || y < absy + height() && x < absx)
+            return VisiblePosition(n, caretMinOffset(), DOWNSTREAM);
+        if (y >= absy + height() || y >= absy && x >= absx + width())
+            return VisiblePosition(n, caretMaxOffset(), DOWNSTREAM);
+    }
+
     if (y < top || (isEditableRoot && (y < bottom && x < left))) {
         if (!isEditableRoot)
             if (RenderObject* c = firstChild()) {

@@ -1,3 +1,29 @@
+2006-07-21  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9312
+          REGRESSION: Selection bug in new text fields when selecting past the first letter
+
+        Test: editing/selection/select-from-textfield-outwards.html
+
+        * editing/Selection.cpp:
+        (WebCore::Selection::adjustForEditableContent): Added code to handle the case
+        where the selection starts (resp. ends) in the last (resp. first) visual position
+        inside an editable root.
+        * editing/htmlediting.cpp:
+        (WebCore::comparePositions): Fixed the case of comparing a position inside a shadow
+        tree with a position in the shadow ancestor.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForCoordinates): For coordinates outside a replaced
+        object, return the position just before (after) the element if the coordinates are above or
+        to the left (below or to the right).
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::caretMaxOffset): Changed to return 1 for replaced objects.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForCoordinates): Changed to return the last position
+        in the lowest text box if the y coordinate is below all text boxes.
+
 2006-07-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
