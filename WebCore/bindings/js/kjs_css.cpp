@@ -45,6 +45,8 @@
 #include "StyleSheetList.h"
 #include "kjs_dom.h"
 
+#include <kjs/string_object.h>
+
 #include "kjs_css.lut.h"
 
 using namespace WebCore;
@@ -146,8 +148,14 @@ JSValue* DOMCSSStyleDeclaration::cssPropertyGetter(ExecState* exec, JSObject* or
       return jsNumber(static_pointer_cast<CSSPrimitiveValue>(v)->getFloatValue(CSSPrimitiveValue::CSS_PX));
     return jsStringOrNull(v->cssText());
   }
+
   // If the property is a shorthand property (such as "padding"), 
   // it can only be accessed using getPropertyValue.
+  
+  // Make the SVG 'filter' attribute undetectable, to avoid confusion with the IE 'filter' attribute.
+  if (propertyName == "filter")
+      return new StringInstanceThatMasqueradesAsUndefined(exec->lexicalInterpreter()->builtinStringPrototype(), thisObj->m_impl->getPropertyValue(prop));
+
   return jsString(thisObj->m_impl->getPropertyValue(prop));
 }
 

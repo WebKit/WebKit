@@ -1,3 +1,21 @@
+2006-07-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        - Added support for strings that masquerade as undefined. Currently used
+        by WebCore to implement undetectable style.filter.
+        
+        The name is a little long, but it's only used in one line of code, so I
+        thought clarity should win over brevity.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/object.h:
+        * kjs/string_object.h:
+        (KJS::StringInstanceThatMasqueradesAsUndefined::StringInstanceThatMasqueradesAsUndefined):
+        (KJS::StringInstanceThatMasqueradesAsUndefined::masqueradeAsUndefined):
+        (KJS::StringInstanceThatMasqueradesAsUndefined::toBoolean):
+
 2006-07-20  Steve Falkenburg  <sfalken@apple.com>
 
         Fix the build

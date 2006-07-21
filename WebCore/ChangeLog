@@ -1,3 +1,24 @@
+2006-07-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+        
+        - Fixed <rdar://problem/4507265> REGRESSION: overlays don't work on 
+        HousingMaps.com (Google Maps-based site)
+        
+        - Made style.filter undetectable, like document.all.
+        
+        Unfortunately, the SVG spec-makers invented a CSS attribute named 'filter',
+        which conflicts with IE's custom CSS attribute by the same name. Web programs 
+        like the Google maps API test for style.filter, and assume it's the IE 
+        style.filter if they find it, so we need to make style.filter undetectable 
+        to avoid breaking them.
+        
+        An alternative solution would be to hotwire a delorean, go back in time,
+        and beg the web standards makers to make standards that work on the web.
+
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::cssPropertyGetter):
+
 2006-07-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
