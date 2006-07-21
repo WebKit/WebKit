@@ -428,7 +428,8 @@ public:
         DOMNODEREMOVEDFROMDOCUMENT_LISTENER  = 0x08,
         DOMNODEINSERTEDINTODOCUMENT_LISTENER = 0x10,
         DOMATTRMODIFIED_LISTENER             = 0x20,
-        DOMCHARACTERDATAMODIFIED_LISTENER    = 0x40
+        DOMCHARACTERDATAMODIFIED_LISTENER    = 0x40,
+        OVERFLOWCHANGED_LISTENER             = 0x80,
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }

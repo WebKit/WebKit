@@ -1,3 +1,17 @@
+2006-07-21  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        * dom/Document.h:
+        (WebCore::Document::):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::addEventListener):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        Only dispatch overflowchanged events if overflowchanged event listeners have been registered on the document.
+
 2006-07-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

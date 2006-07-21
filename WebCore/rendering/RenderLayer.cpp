@@ -1052,7 +1052,8 @@ RenderLayer::updateScrollInfoAfterLayout()
     computeScrollDimensions(&horizontalOverflow, &verticalOverflow);
 
     if (m_object->style()->overflowX() == OHIDDEN && m_object->style()->overflowY() == OHIDDEN) {
-        updateOverflowStatus(horizontalOverflow, verticalOverflow);
+        if (m_object->element()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
+            updateOverflowStatus(horizontalOverflow, verticalOverflow);
         return; // All we had to do was update the overflow status and dirty
     }
 
@@ -1133,7 +1134,9 @@ RenderLayer::updateScrollInfoAfterLayout()
         m_object->document()->setDashboardRegionsDirty(true);
 #endif
 
-    updateOverflowStatus(horizontalOverflow, verticalOverflow);
+    if (m_object->element()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
+        updateOverflowStatus(horizontalOverflow, verticalOverflow);
+    
     m_object->repaint();
 }
 
