@@ -89,7 +89,7 @@
     
     BOOL transparentBackground;
 
-    NSResponder *firstResponderAtMouseDownTime;
+    NSTextView *firstResponderTextViewAtMouseDownTime;
     
     WebDataSource *dataSource;
 }
@@ -102,7 +102,7 @@
 - (void)_updateFontPanel;
 - (unsigned int)_delegateDragSourceActionMask;
 - (BOOL)_canSmartCopyOrDelete;
-- (BOOL)_wasFirstResponderAtMouseDownTime:(NSResponder *)responder;
+- (BOOL)_textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView;
 - (void)_pauseNullEventsForAllNetscapePlugins;
 - (void)_resumeNullEventsForAllNetscapePlugins;
 - (void)_willMakeFirstResponderForNodeFocus;

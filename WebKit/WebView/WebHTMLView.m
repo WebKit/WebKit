@@ -256,7 +256,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     [pluginController release];
     [toolTip release];
     [compController release];
-    [firstResponderAtMouseDownTime release];
+    [firstResponderTextViewAtMouseDownTime release];
     [dataSource release];
     [highlighters release];
 
@@ -2703,8 +2703,17 @@ static WebHTMLView *lastHitView = nil;
     [_private->mouseDownEvent release];
     _private->mouseDownEvent = event;
 
-    [_private->firstResponderAtMouseDownTime release];
-    _private->firstResponderAtMouseDownTime = [[[self window] firstResponder] retain];
+    [_private->firstResponderTextViewAtMouseDownTime release];
+    
+    // The only code that checks this ivar only cares about NSTextViews. The code used to be more general,
+    // but it caused reference cycles leading to world leaks (see 4557386). We should be able to eliminate
+    // firstResponderTextViewAtMouseDownTime entirely when all the form controls are native widgets, because 
+    // the only caller (in WebCore) will be unnecessary.
+    NSResponder *firstResponder = [[self window] firstResponder];
+    if ([firstResponder isKindOfClass:[NSTextView class]])
+        _private->firstResponderTextViewAtMouseDownTime = [firstResponder retain];
+    else
+        _private->firstResponderTextViewAtMouseDownTime = nil;
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
@@ -2765,8 +2774,8 @@ static WebHTMLView *lastHitView = nil;
     }
 
 done:
-    [_private->firstResponderAtMouseDownTime release];
-    _private->firstResponderAtMouseDownTime = nil;
+    [_private->firstResponderTextViewAtMouseDownTime release];
+    _private->firstResponderTextViewAtMouseDownTime = nil;
 
     _private->handlingMouseDownEvent = NO;
     
@@ -4893,9 +4902,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [[self _bridge] smartInsertForString:pasteString replacingRange:rangeToReplace beforeString:beforeString afterString:afterString];
 }
 
-- (BOOL)_wasFirstResponderAtMouseDownTime:(NSResponder *)responder
+- (BOOL)_textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView
 {
-    return responder == _private->firstResponderAtMouseDownTime;
+    return textView == _private->firstResponderTextViewAtMouseDownTime;
 }
 
 - (void)_pauseNullEventsForAllNetscapePlugins

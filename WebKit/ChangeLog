@@ -1,3 +1,28 @@
+2006-07-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej
+
+        - WebKit part of fix for:
+        <rdar://problem/4557386> REGRESSION (419.3-521.19): repro Safari world leak involving 
+        closing tabs after clicking in a web page
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge textViewWasFirstResponderAtMouseDownTime:]):
+        renamed to be more specific (formerly wasFirstResponderAtMouseDownTime:)        
+        
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebHTMLView.m:
+        (-[WebTextCompleteController dealloc]):
+        updated for name change
+        (-[NSArray _setMouseDownEvent:]):
+        Now only retains the first responder if it's a textView, since that's the only case that the only client
+        actually cares about. This avoids a reference cycle caused by retaining self. This is the only substantive
+        part of the patch; all the rest is just renaming for clarity, and comments.
+        (-[NSArray mouseDown:]):
+        updated for name change
+        (-[WebHTMLView _textViewWasFirstResponderAtMouseDownTime:]):
+        renamed to be more specific (formerly _wasFirstResponderAtMouseDownTime:)        
+
 2006-07-19  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.

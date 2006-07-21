@@ -1461,7 +1461,11 @@ bool FrameMac::passMouseDownEventToWidget(Widget* widget)
         // In the case where we just became first responder, we should send the mouseDown:
         // to the NSTextField, not the NSTextField's editor. This code makes sure that happens.
         // If we don't do this, we see a flash of selected text when clicking in a text field.
-        if (![_bridge wasFirstResponderAtMouseDownTime:view] && [view isKindOfClass:[NSTextView class]]) {
+        // FIXME: This is the only caller of textViewWasFirstResponderAtMouseDownTime. When we
+        // eliminate all use of NSTextField/NSTextView in form fields we can eliminate this code,
+        // and textViewWasFirstResponderAtMouseDownTime:, and the instance variable WebHTMLView
+        // keeps solely to support textViewWasFirstResponderAtMouseDownTime:.
+        if ([view isKindOfClass:[NSTextView class]] && ![_bridge textViewWasFirstResponderAtMouseDownTime:(NSTextView *)view]) {
             NSView *superview = view;
             while (superview != nodeView) {
                 superview = [superview superview];

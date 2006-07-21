@@ -342,7 +342,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 }
 
 
-- (BOOL)wasFirstResponderAtMouseDownTime:(NSResponder *)responder;
+- (BOOL)textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView;
 {
     ASSERT(_frame != nil);
     NSView *documentView = [[_frame frameView] documentView];
@@ -350,7 +350,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         return NO;
     }
     WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
-    return [webHTMLView _wasFirstResponderAtMouseDownTime:responder];
+    return [webHTMLView _textViewWasFirstResponderAtMouseDownTime:textView];
 }
 
 - (void)closeWindowSoon
