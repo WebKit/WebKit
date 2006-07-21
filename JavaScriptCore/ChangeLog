@@ -1,6 +1,10 @@
+=== Safari-521.20 ===
+
 2006-07-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
+
+        <rdar://problem/4507265> REGRESSION: overlays don't work on HousingMaps.com (Google Maps-based site)
 
         - Added support for strings that masquerade as undefined. Currently used
         by WebCore to implement undetectable style.filter.
@@ -15,6 +19,8 @@
         (KJS::StringInstanceThatMasqueradesAsUndefined::StringInstanceThatMasqueradesAsUndefined):
         (KJS::StringInstanceThatMasqueradesAsUndefined::masqueradeAsUndefined):
         (KJS::StringInstanceThatMasqueradesAsUndefined::toBoolean):
+
+=== Safari-521.19 ===
 
 2006-07-20  Steve Falkenburg  <sfalken@apple.com>
 
@@ -44,8 +50,6 @@
         * wtf/unicode/icu/UnicodeIcu.h:
         (WTF::Unicode::isPrintableChar):
         New function.
-
-=== Safari-521.19 ===
 
 2006-07-18  Maciej Stachowiak  <mjs@apple.com>
 
