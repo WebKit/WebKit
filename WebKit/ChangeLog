@@ -1,3 +1,17 @@
+2006-07-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/4607572> REGRESSION (521.10.1 - 521.13): most context menu items missing when a form field is focused (common on google.com) (9680)
+
+        Do not use _isEditable call since that only checks if the current
+        selection or frame is editible. We now check if the currently clicked element
+        is a content editible area, a textarea, an isindex or an input element that
+        return YES to _isTextField.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]):
+
 2006-07-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej

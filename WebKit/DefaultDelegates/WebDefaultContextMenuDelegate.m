@@ -30,6 +30,7 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOM.h>
+#import <WebKit/DOMPrivate.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
@@ -344,8 +345,17 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
 
 - (NSArray *)webView:(WebView *)wv contextMenuItemsForElement:(NSDictionary *)element  defaultMenuItems:(NSArray *)defaultMenuItems
 {
+    BOOL contentEditible = NO;
+    id domElement = [element objectForKey:WebElementDOMNodeKey];
+    if ([domElement isKindOfClass:[DOMHTMLTextAreaElement class]] || [domElement isKindOfClass:[DOMHTMLIsIndexElement class]])
+        contentEditible = YES;
+    else if ([domElement isKindOfClass:[DOMHTMLInputElement class]])
+        contentEditible = [(DOMHTMLInputElement *)domElement _isTextField];
+    else if ([domElement isKindOfClass:[DOMHTMLElement class]])
+        contentEditible = [(DOMHTMLElement *)domElement isContentEditable];
+
     NSView *documentView = [[[element objectForKey:WebElementFrameKey] frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isEditable]) {
+    if ([documentView isKindOfClass:[WebHTMLView class]] && contentEditible) {
         return [self editingContextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
     } else {
         return [self contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
