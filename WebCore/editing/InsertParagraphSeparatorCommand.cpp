@@ -77,49 +77,7 @@ void InsertParagraphSeparatorCommand::applyStyleAfterInsertion()
         applyStyle(m_style.get());
 }
 
-static Node* embeddedSublist(Node* listItem)
-{
-    // check for sublist embedded in the list item
-    // NOTE: Must allow for collapsed sublist (i.e. no renderer), so just check DOM
-    for (Node* n = listItem->firstChild(); n; n = n->nextSibling()) {
-        if (isListElement(n))
-            return n;
-    }
-    
-    return 0;
-}
 
-static Node* appendedSublist(Node* listItem)
-{
-    // check for sublist between regular list items
-    // NOTE: Must allow for collapsed sublist (i.e. no renderer), so just check DOM
-    for (Node* n = listItem->nextSibling(); n; n = n->nextSibling()) {
-        if (isListElement(n))
-            return n;
-        if (n->renderer() && n->renderer()->isListItem())
-            return 0;
-    }
-    
-    return 0;
-}
-
-static Node* enclosingEmptyListItem(const VisiblePosition& visiblePos)
-{
-    // check that position is on a line by itself inside a list item
-    Node* listChildNode = enclosingListChild(visiblePos.deepEquivalent().node());
-    if (!listChildNode || !isStartOfParagraph(visiblePos) || !isEndOfParagraph(visiblePos))
-        return 0;
-    
-    // check for sublist embedded in the list item
-    if (embeddedSublist(listChildNode))
-        return 0;
-    
-    // check for sublist between regular list items
-    if (appendedSublist(listChildNode))
-        return 0;
-        
-    return listChildNode;
-}
 
 void InsertParagraphSeparatorCommand::doApply()
 {
@@ -162,26 +120,8 @@ void InsertParagraphSeparatorCommand::doApply()
 
     //---------------------------------------------------------------------
     // Handle special case of typing return on an empty list item
-    Node *emptyListItem = enclosingEmptyListItem(visiblePos);
-    if (emptyListItem) {
-        Node *listNode = emptyListItem->parentNode();
-        RefPtr<Node> newBlock = isListElement(listNode->parentNode()) ? createListItemElement(document()) : createDefaultParagraphElement(document());
-        
-        if (emptyListItem->renderer()->nextSibling()) {
-            if (emptyListItem->renderer()->previousSibling())
-                splitElement(static_cast<Element *>(listNode), emptyListItem);
-            insertNodeBefore(newBlock.get(), listNode);
-            removeNode(emptyListItem);
-        } else {
-            insertNodeAfter(newBlock.get(), listNode);
-            removeNode(emptyListItem->renderer()->previousSibling() ? emptyListItem : listNode);
-        }
-        
-        appendBlockPlaceholder(newBlock.get());
-        setEndingSelection(Position(newBlock.get(), 0), DOWNSTREAM);
-        applyStyleAfterInsertion();
+    if (breakOutOfEmptyListItem())
         return;
-    }
 
     //---------------------------------------------------------------------
     // Prepare for more general cases.

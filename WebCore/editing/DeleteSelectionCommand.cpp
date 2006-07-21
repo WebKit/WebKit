@@ -512,7 +512,7 @@ void DeleteSelectionCommand::doApply()
     // use the current ending selection.
     if (!m_hasSelectionToDelete)
         m_selectionToDelete = endingSelection();
-        
+    
     if (!m_selectionToDelete.isRange())
         return;
 

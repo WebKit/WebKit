@@ -104,6 +104,7 @@ Position positionOutsideContainingSpecialElement(const Position&, Node** contain
 
 Node* enclosingNodeWithTag(Node*, const QualifiedName&);
 Node* enclosingTableCell(Node*);
+Node* enclosingEmptyListItem(const VisiblePosition&);
 bool isListElement(Node*);
 Node* enclosingList(Node*);
 Node* outermostEnclosingList(Node*);

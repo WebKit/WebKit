@@ -335,11 +335,19 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity)
             SelectionController sc = SelectionController(endingSelection().start(), endingSelection().end(), SEL_DEFAULT_AFFINITY);
             sc.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
             
+            // When the caret is at the start of the editable area in an empty list item, break out of the list item.
+            if (endingSelection().visibleStart().previous(true).isNull()) {
+                if (breakOutOfEmptyListItem()) {
+                    typingAddedToOpenCommand();
+                    return;
+                }
+            }
+            
+            // When the caret is a) just after a table, or b) at the beginning of the paragraph after a table, select the table.
             Position upstreamStart = endingSelection().start().upstream();
             VisiblePosition visibleStart = endingSelection().visibleStart();
-            if (visibleStart == startOfParagraph(visibleStart))
+            if (isStartOfParagraph(visibleStart))
                 upstreamStart = visibleStart.previous(true).deepEquivalent().upstream();
-            // When deleting tables: Select the table first, then perform the deletion
             if (upstreamStart.node() && upstreamStart.node()->renderer() && upstreamStart.node()->renderer()->isTable() && upstreamStart.offset() == maxDeepOffset(upstreamStart.node())) {
                 setEndingSelection(Selection(Position(upstreamStart.node(), 0), endingSelection().start(), DOWNSTREAM));
                 typingAddedToOpenCommand();

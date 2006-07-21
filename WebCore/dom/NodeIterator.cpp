@@ -116,7 +116,7 @@ void NodeIterator::notifyBeforeNodeRemoval(Node* removedNode)
 {
     // Iterator is not affected if the removed node is the reference node and is the root.
     // or if removed node is not the reference node, or the ancestor of the reference node.
-    if (!removedNode || removedNode == root())
+    if (!removedNode || removedNode == root() || !removedNode->isAncestor(root()))
         return;
     bool willRemoveReferenceNode = removedNode == referenceNode();
     bool willRemoveReferenceNodeAncestor = referenceNode() && referenceNode()->isAncestor(removedNode);

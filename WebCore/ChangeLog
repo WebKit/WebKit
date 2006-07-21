@@ -1,3 +1,25 @@
+2006-07-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4548238>
+        REGRESSION: Can't remove the first OL/UL list item in a Mail's compose window
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem): 
+        Moved from InsertParagraphSeparator.  Does its own typing style restoration.
+        * editing/CompositeEditCommand.h:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Call breakOutOfEmptyListItem.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Call breakOutOfEmptyListItem if
+        the endingSelection is at the start of an editable region.
+        * editing/htmlediting.cpp:
+        (WebCore::embeddedSublist): Moved from InsertParagraphSeparator.
+        (WebCore::appendedSublist): Ditto.
+        (WebCore::enclosingEmptyListItem): Ditto.
+        * editing/htmlediting.h:
+
 === Safari-521.20 ===
 
 2006-07-21  Tim Omernick  <timo@apple.com>

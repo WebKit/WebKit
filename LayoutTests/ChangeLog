@@ -1,3 +1,15 @@
+2006-07-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4548238>
+        REGRESSION: Can't remove the first OL/UL list item in a Mail's compose window
+
+        * editing/deleting/delete-first-list-item-expected.checksum: Added.
+        * editing/deleting/delete-first-list-item-expected.png: Added.
+        * editing/deleting/delete-first-list-item-expected.txt: Added.
+        * editing/deleting/delete-first-list-item.html: Added.
+
 2006-07-21  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

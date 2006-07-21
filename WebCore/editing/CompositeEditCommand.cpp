@@ -28,6 +28,8 @@
 
 #include "AppendNodeCommand.h"
 #include "ApplyStyleCommand.h"
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "DeleteFromTextNodeCommand.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
@@ -729,6 +731,39 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
                                      TextIterator::rangeFromLocationAndLength(document(), destinationIndex + endIndex, 0)->startPosition(), 
                                      DOWNSTREAM));
     }
+}
+
+// FIXME: Send an appropriate shouldDeleteRange call.
+bool CompositeEditCommand::breakOutOfEmptyListItem()
+{
+    Node* emptyListItem = enclosingEmptyListItem(endingSelection().visibleStart());
+    if (!emptyListItem)
+        return false;
+        
+    RefPtr<CSSMutableStyleDeclaration> style = styleAtPosition(endingSelection().start());
+
+    Node *listNode = emptyListItem->parentNode();
+    RefPtr<Node> newBlock = isListElement(listNode->parentNode()) ? createListItemElement(document()) : createDefaultParagraphElement(document());
+    
+    if (emptyListItem->renderer()->nextSibling()) {
+        if (emptyListItem->renderer()->previousSibling())
+            splitElement(static_cast<Element *>(listNode), emptyListItem);
+        insertNodeBefore(newBlock.get(), listNode);
+        removeNode(emptyListItem);
+    } else {
+        insertNodeAfter(newBlock.get(), listNode);
+        removeNode(emptyListItem->renderer()->previousSibling() ? emptyListItem : listNode);
+    }
+    
+    appendBlockPlaceholder(newBlock.get());
+    setEndingSelection(Position(newBlock.get(), 0), DOWNSTREAM);
+    
+    CSSComputedStyleDeclaration endingStyle(endingSelection().start().node());
+    endingStyle.diff(style.get());
+    if (style->length() > 0)
+        applyStyle(style.get());
+    
+    return true;
 }
 
 PassRefPtr<Element> createBlockPlaceholderElement(Document* document)

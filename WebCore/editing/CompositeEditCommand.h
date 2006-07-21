@@ -90,9 +90,9 @@ protected:
     void deleteInsignificantText(const Position &start, const Position &end);
     void deleteInsignificantTextDownstream(const Position &);
 
-    Node *appendBlockPlaceholder(Node *);
+    Node *appendBlockPlaceholder(Node*);
     Node *insertBlockPlaceholder(const Position &pos);
-    Node *addBlockPlaceholderIfNeeded(Node *);
+    Node *addBlockPlaceholderIfNeeded(Node*);
     void removeBlockPlaceholder(const VisiblePosition&);
 
     void moveParagraphContentsToNewBlockIfNecessary(const Position &);
@@ -102,6 +102,8 @@ protected:
     
     void moveParagraph(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false, bool preserveStyle = true);
     void moveParagraphs(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false, bool preserveStyle = true);
+    
+    bool breakOutOfEmptyListItem();
 
     DeprecatedValueList<EditCommandPtr> m_cmds;
 };
