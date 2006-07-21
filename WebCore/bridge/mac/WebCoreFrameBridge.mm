@@ -902,10 +902,12 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     PlatformGraphicsContext* platformContext = static_cast<PlatformGraphicsContext*>([[NSGraphicsContext currentContext] graphicsPort]);
     
     ASSERT([[NSGraphicsContext currentContext] isFlipped]);
-    ASSERT(!m_frame->document() || m_frame->document()->printing() == m_frame->document()->renderer()->view()->printingMode());
     
     GraphicsContext context(platformContext);
     [self _setupRootForPrinting:YES];
+    
+    ASSERT(!m_frame->document() || m_frame->document()->printing() == m_frame->document()->renderer()->view()->printingMode());
+    
     m_frame->paint(&context, enclosingIntRect(rect));
     [self _setupRootForPrinting:NO];
 }

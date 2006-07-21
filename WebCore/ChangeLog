@@ -1,3 +1,14 @@
+2006-07-21  Beth Dakin  <bdakin@apple.com>
+        
+        Reviewed by Darin.
+
+        Just moving this assertion down a couple of lines. It was hitting 
+        every time you try to print a page because we put it too early in 
+        the function.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge drawRect:]):
+
 2006-07-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
