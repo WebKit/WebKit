@@ -52,6 +52,7 @@
 #include "HTMLGenericFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "HTMLInputElement.h"
 #include "ImageDocument.h"
 #include "MediaFeatureNames.h"
 #include "MouseEventWithHitTestResults.h"
@@ -280,6 +281,9 @@ void Frame::stopLoading(bool sendUnload)
   if (sendUnload) {
     if (d->m_doc) {
       if (d->m_bLoadEventEmitted && !d->m_bUnloadEventEmitted) {
+        Node* currentFocusNode = d->m_doc->focusNode();
+        if (currentFocusNode)
+            currentFocusNode->aboutToUnload();
         d->m_doc->dispatchWindowEvent(unloadEvent, false, false);
         if (d->m_doc)
           d->m_doc->updateRendering();

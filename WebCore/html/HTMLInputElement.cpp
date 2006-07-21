@@ -204,6 +204,12 @@ void HTMLInputElement::updateFocusAppearance()
         HTMLGenericFormElement::updateFocusAppearance();
 }
 
+void HTMLInputElement::aboutToUnload()
+{
+    if (isNonWidgetTextField() && document()->frame())
+        document()->frame()->textFieldDidEndEditing(this);
+}
+
 void HTMLInputElement::dispatchFocusEvent()
 {
     if (isNonWidgetTextField())

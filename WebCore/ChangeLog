@@ -1,3 +1,25 @@
+2006-07-20  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adele.
+
+        Fixed <rdar://problem/4532113> REGRESSION (NativeTextField): Crash occurs after modifying field then reloading page -[FormDelegate frameLayoutHasChanged:]
+        added a manual test because of the need to use AutoFill.
+
+        * dom/Node.h:
+        (WebCore::Node::aboutToUnload):
+        added virtual function prototype
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::aboutToUnload):
+        added implementation that sends textFieldDidEndEditing notification
+        * html/HTMLInputElement.h:
+        added virtual function prototype
+        * manual-tests/input-type-file-autocomplete-frame-1.html: Added.
+        * manual-tests/input-type-file-autocomplete-frame-2.html: Added.
+        * manual-tests/input-type-file-autocomplete-refresh.html: Added.
+        * page/Frame.cpp:
+        (WebCore::Frame::stopLoading):
+        before unloading, call aboutToUnload on the current focused node
+
 2006-07-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

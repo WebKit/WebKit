@@ -197,6 +197,11 @@ public:
     // but making parsing a special case in this respect should be avoided if possible.
     virtual void closeRenderer() { }
 
+    // Called by the frame right before dispatching an unloadEvent. [Radar 4532113]
+    // This is needed for HTMLInputElements to tell the frame that it is done editing 
+    // (sends textFieldDidEndEditing notification)
+    virtual void aboutToUnload() { }
+
     // For <link> and <style> elements.
     virtual void sheetLoaded() { }
 
