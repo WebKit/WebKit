@@ -1,3 +1,21 @@
+2006-07-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Beth and John.
+        
+        - fix recently broken layout tests that need updated results or test changes:
+
+        For these three, the selection ranges changed (for the better) due to my input
+        editing fix.
+        
+        * editing/selection/3690703-2-expected.txt:
+        * editing/selection/3690703-expected.txt:
+        * fast/text/textIteratorNilRenderer-expected.txt:
+
+        For this one, DumpRenderTree no longer shows resize corners by default, so turned
+        it on via style.
+        
+        * fast/css/resize-corner-tracking.html:
+
 2006-07-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.
