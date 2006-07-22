@@ -1,3 +1,20 @@
+2006-07-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4609195> Help Viewer loads empty window
+        (not getting didFailLoadingWithError: callback)
+
+        Call super's didFailWithError before _receivedMainResourceError
+        because _receivedMainResourceError will cause the datasource's
+        frame to be set to nil before the didFailLoadingWithError delegate
+        callback is sent. (This order is needed now that WebDataSource does
+        not hold on to the WebView; it uses the WebFrame to get to the WebView.
+        If the WebFrame is nil we can't get to the WebView's resource load delegate.)
+
+        * WebView/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader receivedError:]):
+
 === Safari-521.20 ===
 
 2006-07-21  Timothy Hatcher  <timothy@apple.com>
