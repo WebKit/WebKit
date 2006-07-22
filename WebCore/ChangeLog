@@ -1,3 +1,18 @@
+2006-07-21  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff & Maciej.
+
+        <rdar://problem/4632505> REGRESSION: Crash at WebCore::Widget::getView() const + 6
+
+        Geoff is working on a layout test for this.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::focusWindow):
+        (WebCore::FrameMac::unfocusWindow):
+        Check for a NULL view.  The view can be NULL if the frame has not yet loaded any data.  This fixes the crash, but the behavior is still
+        wrong -- we should focus the frame once it gets a view.  I've filed <rdar://problem/4645685> to track that.  It's not as urgent as this
+        crasher.
+        
 2006-07-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

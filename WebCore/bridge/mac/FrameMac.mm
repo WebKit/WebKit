@@ -634,17 +634,29 @@ void FrameMac::scheduleClose()
 void FrameMac::focusWindow()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     // If we're a top level window, bring the window to the front.
     if (!tree()->parent())
         [_bridge activateWindow];
-    NSView *view = d->m_view->getDocumentView();
-    if ([_bridge firstResponder] != view)
-        [_bridge makeFirstResponder:view];
+
+    // Might not have a view yet: this could be a child frame that has not yet received its first byte of data.
+    // FIXME: Should remember that the frame needs focus.  See <rdar://problem/4645685>.
+    if (d->m_view) {
+        NSView *view = d->m_view->getDocumentView();
+        if ([_bridge firstResponder] != view)
+            [_bridge makeFirstResponder:view];
+    }
+
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void FrameMac::unfocusWindow()
 {
+    // Might not have a view yet: this could be a child frame that has not yet received its first byte of data.
+    // FIXME: Should remember that the frame needs focus.  See <rdar://problem/4645685>.
+    if (!d->m_view)
+        return;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *view = d->m_view->getDocumentView();
     if ([_bridge firstResponder] == view) {
