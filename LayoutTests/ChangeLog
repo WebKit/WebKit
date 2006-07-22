@@ -1,3 +1,14 @@
+2006-07-21  Geoffrey Garen  <ggaren@apple.com>
+
+        RS by Adele.
+        
+        Test for whether focusing and/or blurring a frame before its content has loaded causes
+        a crash. <rdar://problem/4632505> REGRESSION: Crash at 
+        WebCore::Widget::getView() const + 6
+        
+        * http/tests/incremental/frame-focus-before-load-expected.txt: Added.
+        * http/tests/incremental/frame-focus-before-load.html: Added.
+
 2006-07-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
