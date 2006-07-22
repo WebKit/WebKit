@@ -908,40 +908,43 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
 {
+    DOMNode *node = item;
     if (outlineView == _private->treeOutlineView) {
-        if (!item && _private->searchResultsVisible)
+        if (!node && _private->searchResultsVisible)
             return [_private->searchResults count];
-        if (!item)
+        if (!node)
             return 1;
         if (!_private->ignoreWhitespace)
-            return [[item childNodes] length];
-        return [item _lengthOfChildNodesIgnoringWhitespace];
+            return [[node childNodes] length];
+        return [node _lengthOfChildNodesIgnoringWhitespace];
     }
     return 0;
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
 {
+    DOMNode *node = item;
     if (outlineView == _private->treeOutlineView) {
         if (!_private->ignoreWhitespace)
-            return [item hasChildNodes];
-        return ([item _firstChildSkippingWhitespace] ? YES : NO);
+            return [node hasChildNodes];
+        return ([node _firstChildSkippingWhitespace] ? YES : NO);
     }
     return NO;
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item
 {
+    DOMNode *parent = item;
     if (outlineView == _private->treeOutlineView) {
-        if (!item && _private->searchResultsVisible)
+        if (!parent && _private->searchResultsVisible)
             return [_private->searchResults objectAtIndex:index];
-        if (!item)
+        if (!parent)
             return [self rootDOMNode];
         id node = nil;
         if (!_private->ignoreWhitespace)
-            node = [[item childNodes] item:index];
+            node = [[parent childNodes] item:index];
         else
-            node = [item _childNodeAtIndexIgnoringWhitespace:index];
+            node = [parent _childNodeAtIndexIgnoringWhitespace:index];
         if (!node)
             return nil;
         // cache the node because NSOutlineView assumes we hold on to it
@@ -954,7 +957,8 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
 {
-    if (outlineView == _private->treeOutlineView && item) {
+    DOMNode *node = item;
+    if (outlineView == _private->treeOutlineView && node) {
         NSShadow *shadow = [[NSShadow alloc] init];
         [shadow setShadowColor:[NSColor blackColor]];
         [shadow setShadowBlurRadius:2.0];
@@ -963,12 +967,12 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         [para setLineBreakMode:NSLineBreakByTruncatingTail];
         
         NSDictionary *attrs = [[NSDictionary alloc] initWithObjectsAndKeys:[NSColor whiteColor], NSForegroundColorAttributeName, shadow, NSShadowAttributeName, para, NSParagraphStyleAttributeName, nil];
-        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[item _displayName] attributes:attrs];
+        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[node _displayName] attributes:attrs];
         [attrs release];
 
-        if ([item hasChildNodes] && ![outlineView isItemExpanded:item]) {
+        if ([node hasChildNodes] && ![outlineView isItemExpanded:node]) {
             attrs = [[NSDictionary alloc] initWithObjectsAndKeys:[NSColor colorWithCalibratedRed:1.0 green:1.0 blue:1.0 alpha:0.5], NSForegroundColorAttributeName, shadow, NSShadowAttributeName, para, NSParagraphStyleAttributeName, nil];
-            NSAttributedString *preview = [[NSAttributedString alloc] initWithString:[item _contentPreview] attributes:attrs];
+            NSAttributedString *preview = [[NSAttributedString alloc] initWithString:[node _contentPreview] attributes:attrs];
             [string appendAttributedString:preview];
             [attrs release];
             [preview release];
