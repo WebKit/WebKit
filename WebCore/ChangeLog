@@ -1,3 +1,16 @@
+2006-07-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10038
+        REGRESSION: Length of navigator.mimeTypes collection returns number of installed plugins, not number 
+        of registered mime types
+
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::MimeTypes::getValueProperty): Return the length of the mime types vector, not the plugins one.
+        (KJS::MimeTypes::getOwnPropertySlot): Fixed another typo, which prevented MimeTypes::getValueProperty()
+        from even being called.
+
 2006-07-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele and Tim Omernick.

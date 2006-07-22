@@ -1,3 +1,15 @@
+2006-07-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10038
+        REGRESSION: Length of navigator.mimeTypes collection returns number of installed plugins, not number 
+        of registered mime types
+
+        * fast/js/navigator-mimeTypes-length-expected.txt: Added.
+        * fast/js/navigator-mimeTypes-length.html: Added.
+        * fast/js/resources/navigator-mimeTypes-length.js: Added.
+
 2006-07-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
