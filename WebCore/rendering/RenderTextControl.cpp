@@ -156,6 +156,8 @@ void RenderTextControl::updateFromElement()
         if (value != oldText || !m_div->hasChildNodes()) {
             ExceptionCode ec = 0;
             m_div->setInnerText(value, ec);
+            if (document()->frame())
+                document()->frame()->clearUndoRedoOperations();
             setEdited(false);
         }
         element->setValueMatchesRenderer();

@@ -3045,7 +3045,19 @@ void FrameMac::registerCommandForRedo(const EditCommandPtr &cmd)
 void FrameMac::clearUndoRedoOperations()
 {
     if (_haveUndoRedoOperations) {
-        [[_bridge undoManager] removeAllActionsWithTarget:_bridge];
+        // workaround for <rdar://problem/4645507> NSUndoManager dies
+        // with uncaught exception when undo items cleared while
+        // groups are open
+        NSUndoManager *undoManager = [_bridge undoManager];
+        int groupingLevel = [undoManager groupingLevel];
+        for (int i = 0; i < groupingLevel; ++i)
+            [undoManager endUndoGrouping];
+        
+        [undoManager removeAllActionsWithTarget:_bridge];
+
+        for (int i = 0; i < groupingLevel; ++i)
+            [undoManager beginUndoGrouping];
+
         _haveUndoRedoOperations = NO;
     }
 }

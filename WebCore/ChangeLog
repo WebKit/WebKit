@@ -1,3 +1,19 @@
+2006-07-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4523976> REGRESSION (NativeTextField): Crash occurs when choosing "Undo Typing" after typing and setting the value
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::updateFromElement): Clear the undo
+        chain when the text control contents have been set
+        programmatically.
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::clearUndoRedoOperations): Before clearing undo
+        stack, close all open undo groups and then open an equal number,
+        since otherwise NSUndoManager ends up in an inconsistent state
+        leading to uncaught ObjC exceptions.
+
 2006-07-21  Beth Dakin  <bdakin@apple.com>
         
         Reviewed by Darin.
@@ -33,6 +49,7 @@
 
 === Safari-521.20 ===
 
+>>>>>>> .r15564
 2006-07-21  Tim Omernick  <timo@apple.com>
 
         Reviewed by Beth Dakin & John Sullivan.

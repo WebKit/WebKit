@@ -1,3 +1,12 @@
+2006-07-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4523976> REGRESSION (NativeTextField): Crash occurs when choosing "Undo Typing" after typing and setting the value
+        
+        * fast/forms/text-field-setvalue-crash-expected.txt: Added.
+        * fast/forms/text-field-setvalue-crash.html: Added.
+
 2006-07-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
