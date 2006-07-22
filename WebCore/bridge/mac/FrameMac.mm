@@ -653,7 +653,7 @@ void FrameMac::focusWindow()
 void FrameMac::unfocusWindow()
 {
     // Might not have a view yet: this could be a child frame that has not yet received its first byte of data.
-    // FIXME: Should remember that the frame needs focus.  See <rdar://problem/4645685>.
+    // FIXME: Should remember that the frame needs to unfocus.  See <rdar://problem/4645685>.
     if (!d->m_view)
         return;
 
