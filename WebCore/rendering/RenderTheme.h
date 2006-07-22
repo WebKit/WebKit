@@ -29,6 +29,7 @@ namespace WebCore {
 
 class Element;
 class RenderPopupMenu;
+class RenderMenuList;
 
 enum ControlState { HoverState, PressedState, FocusState, EnabledState, CheckedState, ReadOnlyState };
 
@@ -101,7 +102,7 @@ public:
     virtual Color platformInactiveSelectionForegroundColor() const;
 
     virtual int minimumTextSize(RenderStyle*) const { return 0; }
-    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*) = 0;
+    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*, RenderMenuList*) = 0;
 
 protected:
     // Methods for state querying

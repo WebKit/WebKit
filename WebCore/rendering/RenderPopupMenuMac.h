@@ -30,7 +30,7 @@ namespace WebCore {
 
 class RenderPopupMenuMac : public RenderPopupMenu {
 public:
-    RenderPopupMenuMac(Node*);
+    RenderPopupMenuMac(Node*, RenderMenuList*);
     ~RenderPopupMenuMac();
     
     virtual void clear();

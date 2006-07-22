@@ -690,9 +690,9 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRec
     updateFocusedState(popupButton, o);
 }
 
-RenderPopupMenu* RenderThemeMac::createPopupMenu(RenderArena* arena, Document* doc)
+RenderPopupMenu* RenderThemeMac::createPopupMenu(RenderArena* arena, Document* doc, RenderMenuList* menuList)
 {
-    return new (arena) RenderPopupMenuMac(doc);
+    return new (arena) RenderPopupMenuMac(doc, menuList);
 }
 
 int RenderThemeMac::minimumTextSize(RenderStyle* style) const

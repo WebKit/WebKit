@@ -33,7 +33,7 @@ class HTMLOptGroupElement;
 
 class RenderPopupMenu : public RenderBlock {
 public:
-    RenderPopupMenu(Node*);
+    RenderPopupMenu(Node*, RenderMenuList* menuList);
     
     virtual const char* renderName() const { return "RenderPopupMenu"; }
 
@@ -41,12 +41,15 @@ public:
     virtual void populate();
     virtual void showPopup(const IntRect&, FrameView*, int index) = 0;
     
-    RenderMenuList* menuList() { return static_cast<RenderMenuList*>(parent() ? parent()->parent() : 0); }
+    RenderMenuList* menuList() { return m_menuList; }
 
 protected:
     virtual void addSeparator() = 0;
     virtual void addGroupLabel(HTMLOptGroupElement*) = 0;
     virtual void addOption(HTMLOptionElement*) = 0;
+
+ private:
+    RenderMenuList* m_menuList;
 };
 
 }

@@ -57,7 +57,7 @@ public:
     virtual Color platformInactiveSelectionBackgroundColor() const;
     
     virtual int minimumTextSize(RenderStyle*) const;
-    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*);
+    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*, RenderMenuList*);
 
 protected:
     // Methods for each appearance value.

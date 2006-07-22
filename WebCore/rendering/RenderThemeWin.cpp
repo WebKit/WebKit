@@ -359,9 +359,9 @@ bool RenderThemeWin::paintTextArea(RenderObject* o, const RenderObject::PaintInf
     return paintTextField(o, i, r);
 }
 
-RenderPopupMenu* RenderThemeWin::createPopupMenu(RenderArena* arena, Document* doc)
+RenderPopupMenu* RenderThemeWin::createPopupMenu(RenderArena* arena, Document* doc, RenderMenuList* menuList)
 {
-    return new (arena) RenderPopupMenuWin(doc);
+    return new (arena) RenderPopupMenuWin(doc, menuList);
 }
 
 }

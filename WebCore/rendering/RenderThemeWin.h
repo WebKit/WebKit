@@ -72,7 +72,7 @@ public:
 
     virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*);
+    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*, RenderMenuList*);
 
 private:
     void addIntrinsicMargins(RenderStyle*) const;

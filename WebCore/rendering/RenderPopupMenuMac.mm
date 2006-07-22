@@ -34,8 +34,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderPopupMenuMac::RenderPopupMenuMac(Node* element)
-    : RenderPopupMenu(element)
+RenderPopupMenuMac::RenderPopupMenuMac(Node* element, RenderMenuList* menuList)
+    : RenderPopupMenu(element, menuList)
     , popup(nil)
 {
 }

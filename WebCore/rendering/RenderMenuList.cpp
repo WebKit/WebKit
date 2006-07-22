@@ -198,11 +198,10 @@ void RenderMenuList::showPopup()
     // This is important because otherwise we might try to create m_innerBlock
     // inside the showPopup call and it would fail.
     createInnerBlock();
-    RenderPopupMenu* menu = theme()->createPopupMenu(renderArena(), document());
+    RenderPopupMenu* menu = theme()->createPopupMenu(renderArena(), document(), this);
     RenderStyle* newStyle = new (renderArena()) RenderStyle;
     newStyle->inheritFrom(style());
     menu->setStyle(newStyle);
-    RenderFlexibleBox::addChild(menu);
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     menu->showPopup(absoluteBoundingBoxRect(), document()->view(),
         select->optionToListIndex(select->selectedIndex()));

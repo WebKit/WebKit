@@ -1,3 +1,36 @@
+2006-07-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele and Tim Omernick.
+
+        <rdar://problem/4641004> 9A224: Safari crashes in WebCore::RenderMenuList::showPopup when changing a input select field to input text field
+
+        Couldn't figure out how to make layout test, here's a manual test:
+        * manual-tests/remove-select-onchange.html: Added.
+        
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::showPopup): Don't add the RenderPopupMenu to the render
+        tree so it doesn't get destroyed if we do.
+        
+        The remaining changes are to let the RenderPopupMenu know its menu list w/o having
+        to be in the render tree:
+        
+        * rendering/RenderPopupMenu.cpp:
+        (WebCore::RenderPopupMenu::RenderPopupMenu):
+        * rendering/RenderPopupMenu.h:
+        (WebCore::RenderPopupMenu::menuList):
+        * rendering/RenderPopupMenuMac.h:
+        * rendering/RenderPopupMenuMac.mm:
+        (WebCore::RenderPopupMenuMac::RenderPopupMenuMac):
+        * rendering/RenderPopupMenuWin.h:
+        (WebCore::RenderPopupMenuWin::RenderPopupMenuWin):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::createPopupMenu):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::createPopupMenu):
+        * rendering/RenderThemeWin.h:
+
 2006-07-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
