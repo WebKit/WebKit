@@ -1,3 +1,16 @@
+2006-07-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4646318> REGRESSION: Ctrl-clicking on a selection containing a word doesn't display a complete contextual menu
+        
+        Show the editing context menu if the WebView is editible.
+        The original change only checked if the DOM element was editable,
+        and isContentEditable returns NO if entire WebView is editable.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]):
+
 2006-07-21  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.

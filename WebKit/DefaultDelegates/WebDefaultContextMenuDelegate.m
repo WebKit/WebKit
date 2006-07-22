@@ -347,7 +347,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
 {
     BOOL contentEditible = NO;
     id domElement = [element objectForKey:WebElementDOMNodeKey];
-    if ([domElement isKindOfClass:[DOMHTMLTextAreaElement class]] || [domElement isKindOfClass:[DOMHTMLIsIndexElement class]])
+    if ([wv isEditable] || [domElement isKindOfClass:[DOMHTMLTextAreaElement class]] || [domElement isKindOfClass:[DOMHTMLIsIndexElement class]])
         contentEditible = YES;
     else if ([domElement isKindOfClass:[DOMHTMLInputElement class]])
         contentEditible = [(DOMHTMLInputElement *)domElement _isTextField];
