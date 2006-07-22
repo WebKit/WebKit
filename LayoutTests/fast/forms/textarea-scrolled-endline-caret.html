@@ -1,0 +1,35 @@
+<head>
+<script>
+function test()
+{
+    var ta = document.getElementById('ta')
+    ta.focus();
+    // click
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        eventSender.mouseMoveTo(90, 20);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+    var res = document.getElementById('res');
+    if (ta.selectionEnd == 17)
+        res.innerHTML = "Test Succeeded";
+    else
+        res.innerHTML = "Test Failed: caret is at " + ta.selectionEnd;
+}
+</script>
+</head>
+<body onload="test()">
+<textarea id="ta">
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</textarea>
+<div id="res"></div>

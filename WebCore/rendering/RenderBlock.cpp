@@ -2664,24 +2664,29 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
         if (!firstRootBox())
             return VisiblePosition(n, 0, DOWNSTREAM);
             
-        if (y >= top && y < absy + firstRootBox()->topOverflow())
+        int contentsX = absx;
+        int contentsY = absy;
+        if (hasOverflowClip())
+            layer()->subtractScrollOffset(contentsX, contentsY); 
+
+        if (y >= top && y < contentsY + firstRootBox()->topOverflow())
             // y coordinate is above first root line box
             return VisiblePosition(positionForBox(firstRootBox()->firstLeafChild(), true), DOWNSTREAM);
         
         // look for the closest line box in the root box which is at the passed-in y coordinate
         for (RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox()) {
-            top = absy + root->topOverflow();
+            top = contentsY + root->topOverflow();
             // set the bottom based on whether there is a next root box
             if (root->nextRootBox())
-                bottom = absy + root->nextRootBox()->topOverflow();
+                bottom = contentsY + root->nextRootBox()->topOverflow();
             else
-                bottom = absy + root->bottomOverflow();
+                bottom = contentsY + root->bottomOverflow();
             // check if this root line box is located at this y coordinate
             if (y >= top && y < bottom && root->firstChild()) {
-                InlineBox* closestBox = root->closestLeafChildForXPos(x, absx);
+                InlineBox* closestBox = root->closestLeafChildForXPos(x, contentsX);
                 if (closestBox)
                     // pass the box a y position that is inside it
-                    return closestBox->object()->positionForCoordinates(x, absy + closestBox->m_y);
+                    return closestBox->object()->positionForCoordinates(x, contentsY + closestBox->m_y);
             }
         }
 

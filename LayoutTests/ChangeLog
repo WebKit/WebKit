@@ -1,3 +1,12 @@
+2006-07-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for: <rdar://problem/4643238> REGRESSION: Can't set insertion point at the end of a line of text
+
+        * fast/forms/textarea-scrolled-endline-caret-expected.txt: Added.
+        * fast/forms/textarea-scrolled-endline-caret.html: Added.
+
 2006-07-21  Geoffrey Garen  <ggaren@apple.com>
 
         RS by Adele.

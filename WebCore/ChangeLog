@@ -1,3 +1,14 @@
+2006-07-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for: <rdar://problem/4643238> REGRESSION: Can't set insertion point at the end of a line of text
+
+        Test: fast/forms/textarea-scrolled-endline-caret.html
+
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::positionForCoordinates):
+        When looking for the closest line box, take the scroll offset into account.
+
 2006-07-21  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff & Maciej.
