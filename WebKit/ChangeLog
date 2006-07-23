@@ -1,5 +1,30 @@
 2006-07-22  Timothy Hatcher  <timothy@apple.com>
 
+        Rolling out r15572.
+        
+        Bug 10062: REGRESSION: dom/xhtml/level2/html/HTMLIFrameElement11.xhtml asserts/crashes
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10062
+
+    2006-07-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4609195> Help Viewer loads empty window
+        (not getting didFailLoadingWithError: callback)
+
+        Call super's didFailWithError before _receivedMainResourceError
+        because _receivedMainResourceError will cause the datasource's
+        frame to be set to nil before the didFailLoadingWithError delegate
+        callback is sent. (This order is needed now that WebDataSource does
+        not hold on to the WebView; it uses the WebFrame to get to the WebView.
+        If the WebFrame is nil we can't get to the WebView's resource load delegate.)
+
+        * WebView/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader receivedError:]):
+
+
+2006-07-22  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Adele.
 
         <rdar://problem/4646318> REGRESSION: Ctrl-clicking on a selection containing a word doesn't display a complete contextual menu
