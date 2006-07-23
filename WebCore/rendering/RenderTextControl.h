@@ -40,7 +40,8 @@ public:
     virtual void updateFromElement();
     virtual bool canHaveChildren() const { return false; }
     virtual short baselinePosition( bool, bool ) const;
-
+    virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
+                             
     RenderStyle* createDivStyle(RenderStyle* startStyle);
 
     bool isEdited() const { return m_dirty; };

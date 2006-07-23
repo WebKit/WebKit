@@ -1,3 +1,18 @@
+2006-07-23  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        fixed <rdar://problem/4617841> REGRESSION (NativeTextField): You can move keyboard focus to a field without getting insertion point
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForCoordinates):
+        removed some unnecessary vertical position checks and added a fudge factor to be more forgiving for clicks near lines.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::nodeAtPoint):
+        added implementation
+        * rendering/RenderTextControl.h:
+        added function protocol
+
 2006-07-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -41,6 +41,10 @@ using namespace std;
 
 namespace WebCore {
 
+// Number of pixels to allow as a fudge factor when clicking above or below a line.
+// clicking up to verticalLineClickFudgeFactor pixels above a line will correspond to the closest point on the line.   
+const int verticalLineClickFudgeFactor= 3;
+
 using namespace HTMLNames;
 
 // Our MarginInfo state used when laying out block children.
@@ -2618,47 +2622,43 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
 
     Node* n = element();
     
-    // Don't return positions inside editable roots for coordinates outside those roots, except for coordinates outside
-    // a document that is entirely editable.
-    bool isEditableRoot = n && n->rootEditableElement() == n && !n->hasTagName(bodyTag) && !n->hasTagName(htmlTag);
+    // If we start inside the shadow tree, we will stay inside (even if the point is above or below).
+    if (!(n && n->isShadowNode())) {
+        // Don't return positions inside editable roots for coordinates outside those roots, except for coordinates outside
+        // a document that is entirely editable.
+        bool isEditableRoot = n && n->rootEditableElement() == n && !n->hasTagName(bodyTag) && !n->hasTagName(htmlTag);
 
-    if (isReplaced()) {
-        if (y < absy || y < absy + height() && x < absx)
-            return VisiblePosition(n, caretMinOffset(), DOWNSTREAM);
-        if (y >= absy + height() || y >= absy && x >= absx + width())
-            return VisiblePosition(n, caretMaxOffset(), DOWNSTREAM);
-    }
-
-    if (y < top || (isEditableRoot && (y < bottom && x < left))) {
-        if (!isEditableRoot)
-            if (RenderObject* c = firstChild()) {
-                VisiblePosition p = c->positionForCoordinates(x, y);
-                if (p.isNotNull())
-                    return p;
+        if (y < top || (isEditableRoot && (y < bottom && x < left))) {
+            if (!isEditableRoot)
+                if (RenderObject* c = firstChild()) {
+                    VisiblePosition p = c->positionForCoordinates(x, y);
+                    if (p.isNotNull())
+                        return p;
+                }
+            if (n) {
+                if (Node* sp = n->shadowParentNode())
+                    n = sp;
+                if (Node* p = n->parent())
+                    return VisiblePosition(p, n->nodeIndex(), DOWNSTREAM);
             }
-        if (n) {
-            if (Node* sp = n->shadowParentNode())
-                n = sp;
-            if (Node* p = n->parent())
-                return VisiblePosition(p, n->nodeIndex(), DOWNSTREAM);
+            return VisiblePosition(n, 0, DOWNSTREAM);
         }
-        return VisiblePosition(n, 0, DOWNSTREAM);
-    }
 
-    if (y >= bottom || (isEditableRoot && (y >= top && x >= right))) {
-        if (!isEditableRoot)
-            if (RenderObject* c = lastChild()) {
-                VisiblePosition p = c->positionForCoordinates(x, y);
-                if (p.isNotNull())
-                    return p;
+        if (y >= bottom || (isEditableRoot && (y >= top && x >= right))) {
+            if (!isEditableRoot)
+                if (RenderObject* c = lastChild()) {
+                    VisiblePosition p = c->positionForCoordinates(x, y);
+                    if (p.isNotNull())
+                        return p;
+                }
+            if (n) {
+                if (Node* sp = n->shadowParentNode())
+                    n = sp;
+                if (Node* p = n->parent())
+                    return VisiblePosition(p, n->nodeIndex() + 1, DOWNSTREAM);
             }
-        if (n) {
-            if (Node* sp = n->shadowParentNode())
-                n = sp;
-            if (Node* p = n->parent())
-                return VisiblePosition(p, n->nodeIndex() + 1, DOWNSTREAM);
+            return VisiblePosition(n, 0, DOWNSTREAM);
         }
-        return VisiblePosition(n, 0, DOWNSTREAM);
     }
 
     if (childrenInline()) {
@@ -2670,20 +2670,20 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
         if (hasOverflowClip())
             layer()->subtractScrollOffset(contentsX, contentsY); 
 
-        if (y >= top && y < contentsY + firstRootBox()->topOverflow())
+        if (y < contentsY + firstRootBox()->topOverflow() - verticalLineClickFudgeFactor)
             // y coordinate is above first root line box
             return VisiblePosition(positionForBox(firstRootBox()->firstLeafChild(), true), DOWNSTREAM);
         
         // look for the closest line box in the root box which is at the passed-in y coordinate
         for (RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox()) {
-            top = contentsY + root->topOverflow();
             // set the bottom based on whether there is a next root box
             if (root->nextRootBox())
+                // FIXME: make the break point halfway between the bottom of the previous root box and the top of the next root box
                 bottom = contentsY + root->nextRootBox()->topOverflow();
             else
-                bottom = contentsY + root->bottomOverflow();
+                bottom = contentsY + root->bottomOverflow() + verticalLineClickFudgeFactor;
             // check if this root line box is located at this y coordinate
-            if (y >= top && y < bottom && root->firstChild()) {
+            if (y < bottom && root->firstChild()) {
                 InlineBox* closestBox = root->closestLeafChildForXPos(x, contentsX);
                 if (closestBox)
                     // pass the box a y position that is inside it
