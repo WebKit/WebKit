@@ -118,6 +118,8 @@ public:
     InlineFlowBox* parent() const { return m_parent; }
     void setParent(InlineFlowBox* par) { m_parent = par; }
 
+    bool isChildOfParent();
+
     RootInlineBox* root();
     
     void setWidth(int w) { m_width = w; }

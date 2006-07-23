@@ -1,3 +1,35 @@
+2006-07-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej. (Patch by me, Maciej, and Harrison.)
+
+        Fix for <rdar://problem/4529398> WebCore crashes when pasting rich 
+        text - WebCore::InlineBox::root()
+
+        The initial rendering crash was due to a render object having a 
+        stale reference to an inline box that had already been deleted and 
+        then recreated in the exact same location in memory. (Crazy, I 
+        know.) The situation seemed pretty specific to list markers 
+        according to Hyatt according to Maciej, so that is what I patched 
+        specifically. Fixing this crash unearthed a separate editing crash 
+        where we were trying to insert a block into itself. I worked on 
+        that with Maciej and Harrison, and Harrison came up with a fix.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary): This is the fix for the editing crash. If paragraphStart is an atomic 
+        node, insert the new block into the parent instead.
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::isChildOfParent): This function is for 
+        posterity. It will help keep the linebox tree in check.
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine): Added assert.
+        (WebCore::InlineFlowBox::deleteLine): Added assert.
+        * rendering/ListMarkerBox.cpp:
+        (WebCore::ListMarkerBox::destroy): If this has a parent, call 
+        removeChild on this.
+        (WebCore::ListMarkerBox::operator delete):
+        * rendering/ListMarkerBox.h:
+
 2006-07-23  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin.

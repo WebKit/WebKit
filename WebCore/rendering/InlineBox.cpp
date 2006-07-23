@@ -155,6 +155,18 @@ bool InlineBox::nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int
     return object()->hitTest(i, x, y, tx, ty);
 }
 
+bool InlineBox::isChildOfParent()
+{
+    if (!m_parent)
+        return true;
+
+    for (InlineBox* box = m_parent->firstChild(); box; box = box->nextOnLine())
+        if (box == this)
+            return true;
+
+    return false;
+}
+
 RootInlineBox* InlineBox::root()
 { 
     if (m_parent)

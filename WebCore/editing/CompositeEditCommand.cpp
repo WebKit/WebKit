@@ -588,7 +588,13 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
         moveNode = moveNode->traverseNextNode();
     Node *endNode = end.node();
     
-    insertNodeAt(newBlock.get(), paragraphStart.node(), paragraphStart.offset());
+    if (!isAtomicNode(paragraphStart.node()))
+        insertNodeAt(newBlock.get(), paragraphStart.node(), paragraphStart.offset());
+    else {
+        ASSERT(paragraphStart.offset() <= 1);
+        ASSERT(paragraphStart.node()->parentNode());
+        insertNodeAt(newBlock.get(), paragraphStart.node()->parentNode(), paragraphStart.node()->nodeIndex() + paragraphStart.offset());
+    }
 
     while (moveNode && !isBlock(moveNode)) {
         Node *next = moveNode->traverseNextSibling();

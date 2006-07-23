@@ -33,6 +33,11 @@ class ListMarkerBox : public InlineBox
 {
 public:
     ListMarkerBox(RenderObject*);
+    virtual void destroy(RenderArena*);
+    
+    // Overridden to prevent the normal delete from being called.
+    void operator delete(void* ptr, size_t sz);
+    
     virtual bool isText() const;
 };
 
