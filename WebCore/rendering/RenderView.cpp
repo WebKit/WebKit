@@ -65,6 +65,8 @@ RenderView::RenderView(Node* node, FrameView *view)
 
     // Create a new root layer for our layer hierarchy.
     m_layer = new (node->document()->renderArena()) RenderLayer(this);
+    
+    m_flexBoxInFirstLayout = 0;
 }
 
 RenderView::~RenderView()

@@ -25,6 +25,8 @@
 #include "config.h"
 #include "RenderFlexibleBox.h"
 
+#include "RenderView.h"
+
 using namespace std;
 
 namespace WebCore {
@@ -318,7 +320,8 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
 
     // Update our scrollbars if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.
-    if (hasOverflowClip())
+    RenderObject* flexbox = view()->flexBoxInFirstLayout();
+    if (hasOverflowClip() && !(flexbox && flexbox != this && hasAncestor(flexbox)))
         m_layer->updateScrollInfoAfterLayout();
 
     // Repaint with our new bounds if they are different from our old bounds.
@@ -797,6 +800,12 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     // Our first pass is done without flexing.  We simply lay the children
     // out within the box.
     do {
+    
+        if (view()->flexBoxInFirstLayout() == this)
+            view()->setFlexBoxInFirstLayout(0);
+        else
+            view()->setFlexBoxInFirstLayout(this);
+            
         m_height = borderTop() + paddingTop();
         int minHeight = m_height + toAdd;
         m_overflowHeight = m_height;

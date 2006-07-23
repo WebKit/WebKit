@@ -95,6 +95,9 @@ public:
     void updateWidgetPositions();
     void addWidget(RenderObject *);
     void removeWidget(RenderObject *);
+    
+    void setFlexBoxInFirstLayout(RenderObject* r) { m_flexBoxInFirstLayout = r; }
+    RenderObject* flexBoxInFirstLayout() { return m_flexBoxInFirstLayout; }
 
 protected:
 
@@ -116,6 +119,8 @@ protected:
     typedef HashSet<RenderObject *> RenderObjectSet;
 
     RenderObjectSet m_widgets;
+    
+    RenderObject* m_flexBoxInFirstLayout;
 };
 
 }

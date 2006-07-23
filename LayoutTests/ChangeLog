@@ -1,3 +1,14 @@
+2006-07-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Test for: <rdar://problem/4644614> REGRESSION: Typing, pasting or dragging in new text areas causes unnecessary scrolling
+
+        * fast/forms/textarea-scrolled-type-expected.checksum: Added.
+        * fast/forms/textarea-scrolled-type-expected.png: Added.
+        * fast/forms/textarea-scrolled-type-expected.txt: Added.
+        * fast/forms/textarea-scrolled-type.html: Added.
+
 2006-07-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

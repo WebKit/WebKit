@@ -1,3 +1,20 @@
+2006-07-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fix for <rdar://problem/4644614> REGRESSION: Typing, pasting or dragging in new text areas causes unnecessary scrolling
+
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::layoutBlock): Don't updateScrollInfoAfterLayout if an ancestor flexible box is just on
+        its first layout.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): ditto.
+        (WebCore::RenderFlexibleBox::layoutVerticalBox): Let the view know if this flex box is doing its first pass at layout.
+
+        * rendering/RenderView.cpp: (WebCore::RenderView::RenderView): Caches a flexible box that's doing its first layout.
+        * rendering/RenderView.h:
+        (WebCore::RenderView::setFlexBoxInFirstLayout):
+        (WebCore::RenderView::flexBoxInFirstLayout):
+
 2006-07-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
