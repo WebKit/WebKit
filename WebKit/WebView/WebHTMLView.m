@@ -1488,17 +1488,14 @@ static WebHTMLView *lastHitView = nil;
 - (void)_web_layoutIfNeededRecursive:(NSRect)displayRect testDirtyRect:(bool)testDirtyRect
 {
     ASSERT(!_private->subviewsSetAside);
-    displayRect = NSIntersectionRect(displayRect, [self bounds]);
 
-    if (!testDirtyRect || [self needsDisplay]) {
-        if (testDirtyRect) {
-            NSRect dirtyRect = [self _dirtyRect];
-            displayRect = NSIntersectionRect(displayRect, dirtyRect);
-        }
-        if (!NSIsEmptyRect(displayRect)) {
-            [self _layoutIfNeeded];
-        }
+    displayRect = NSIntersectionRect(displayRect, [self bounds]);
+    if (testDirtyRect) {
+        NSRect dirtyRect = [self _dirtyRect];
+        displayRect = NSIntersectionRect(displayRect, dirtyRect);
     }
+    if (!NSIsEmptyRect(displayRect))
+        [self _layoutIfNeeded];
 
     [super _web_layoutIfNeededRecursive:displayRect testDirtyRect:NO];
 }

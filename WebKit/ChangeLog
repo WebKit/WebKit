@@ -1,3 +1,13 @@
+2006-07-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - Fix for <rdar://problem/4646276> CrashTracer: 7 crashes in Safari at com.apple.WebCore: WebCore::RenderTableSection::paint + 155
+
+        * WebView/WebHTMLView.m: (-[WebHTMLView _web_layoutIfNeededRecursive:testDirtyRect:]):
+        needsDisplay was returning NO even though the view has a dirty rect (see <rdar://problem/4647062>).  Since we know about
+        the dirty rect, we don't actually need to check needsDisplay.
+
 2006-07-22  Timothy Hatcher  <timothy@apple.com>
 
         Rolling out r15572.
