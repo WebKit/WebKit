@@ -1,3 +1,21 @@
+    2006-07-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Patch by Eric Albert, reviewed by Darin and me.
+        
+        - Fixed <rdar://problem/4645931> JavaScriptCore stack-scanning code 
+        crashes (Collector::markStackObjectsConservatively)
+        
+        * bindings/jni/jni_jsobject.cpp: On 64bit systems, jint is a long, not an
+        int.
+        (JavaJSObject::getSlot):
+        (JavaJSObject::setSlot):
+        * kjs/collector.cpp:
+        (KJS::Collector::markCurrentThreadConservatively): Use a pointer instead of
+        an int as 'dummy,' because on LP64 systems, an int is not pointer-aligned,
+        and we want to scan the stack for pointers.
+        * JavaScriptCore.xcodeproj/project.pbxproj: After a tense cease-fire, the 
+        XCode war has started up again!
+
 === Safari-521.20 ===
 
 2006-07-21  Geoffrey Garen  <ggaren@apple.com>

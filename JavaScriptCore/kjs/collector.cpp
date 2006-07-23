@@ -333,7 +333,7 @@ void Collector::markCurrentThreadConservatively()
 #error Need a way to get the stack base on this platform
 #endif
 
-    int dummy;
+    void *dummy;
     void *stackPointer = &dummy;
 
     markStackObjectsConservatively(stackPointer, stackBase);
