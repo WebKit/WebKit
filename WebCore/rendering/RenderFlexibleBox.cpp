@@ -803,7 +803,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     
         if (view()->flexBoxInFirstLayout() == this)
             view()->setFlexBoxInFirstLayout(0);
-        else
+        else if (!view()->flexBoxInFirstLayout())
             view()->setFlexBoxInFirstLayout(this);
             
         m_height = borderTop() + paddingTop();

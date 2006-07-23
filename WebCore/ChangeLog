@@ -1,5 +1,14 @@
 2006-07-23  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Darin.
+
+        Updating fix from last checkin.
+
+        * rendering/RenderFlexibleBox.cpp: (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        Only tell the view about this flexbox if there isn't another flexbox already cached.
+
+2006-07-23  Adele Peterson  <adele@apple.com>
+
         Reviewed by Maciej.
 
         - Fix for <rdar://problem/4644614> REGRESSION: Typing, pasting or dragging in new text areas causes unnecessary scrolling
