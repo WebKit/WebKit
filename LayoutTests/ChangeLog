@@ -1,3 +1,14 @@
+2006-07-23  David Harrison  <harrison@apple.com>
+
+        Reviewed by timo.
+
+        <rdar://problem/4646759> Mail crash editing To Do - WebCore::InsertTextCommand::prepareForTextInsertion
+
+        * editing/deleting/delete-mixed-editable-content-001-expected.checksum: Added.
+        * editing/deleting/delete-mixed-editable-content-001-expected.png: Added.
+        * editing/deleting/delete-mixed-editable-content-001-expected.txt: Added.
+        * editing/deleting/delete-mixed-editable-content-001.html: Added.
+
 2006-07-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

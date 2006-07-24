@@ -561,6 +561,8 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
 
     Node *n = startNode;
     while (n) {
+        if (n->isContentEditable() != startNode->isContentEditable())
+            break;
         RenderObject *r = n->renderer();
         if (!r) {
             n = n->traversePreviousNodePostOrder(startBlock);
