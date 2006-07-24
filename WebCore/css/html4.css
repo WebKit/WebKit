@@ -402,6 +402,7 @@ select {
     -webkit-appearance: menulist;
     box-sizing: border-box;
     -webkit-box-align: center;
+    -webkit-rtl-ordering: logical;
 }
 
 select[size],
