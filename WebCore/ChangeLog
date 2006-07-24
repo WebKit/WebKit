@@ -1,3 +1,14 @@
+2006-07-23  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adele.
+        Actually Adele figured out how to fix the layout test failures.  Landing this patch for her.  
+
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        When setting selection endpoints, don't traverse down into nodes where editing would ignore its contents. Use the parent node instead.  
+        (WebCore::nextLinePosition):
+        same as above
+
 2006-07-23  David Harrison  <harrison@apple.com>
 
         Reviewed by timo.
