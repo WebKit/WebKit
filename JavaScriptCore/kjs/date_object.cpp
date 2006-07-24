@@ -657,7 +657,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     fillStructuresUsingDateArgs(exec, args, 3, &ms, &t);
     break;
   case SetYear:
-    t.tm_year = args[0]->toInt32(exec) >= 1900 ? args[0]->toInt32(exec) - 1900 : args[0]->toInt32(exec);
+    t.tm_year = (args[0]->toInt32(exec) > 99 || args[0]->toInt32(exec) < 0) ? args[0]->toInt32(exec) - 1900 : args[0]->toInt32(exec);
     break;
   }
 
