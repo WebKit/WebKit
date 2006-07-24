@@ -1,0 +1,9 @@
+KCanvasResource {id="gblur" [type=FILTER]  [bounding box=at (-0.10,-0.10) size 1.20x1.20] [effect bounding box mode=0] [effects=[[type=GAUSSIAN-BLUR]  [subregion="at (0,0) size 800x600"] [std dev. x=0.00 y=0.00]]]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    KCanvasContainer {svg} at (0,0) size 87x40
+      KCanvasContainer {g} at (0,0) size 87x40 [opacity=0.50]
+        KCanvasItem {rect} at (0,0) size 87x40 [fill={[type=SOLID] [color=#008000]}] [filter=#gblur] [data="M0.00,0.00L87.00,0.00L87.00,40.00L0.00,40.00"]
+      RenderSVGText {text} at (0,0) size 785x18
+        RenderText {#text} at (0,0) size 139x18
+          text run at (0,0) width 139: "This should not crash."

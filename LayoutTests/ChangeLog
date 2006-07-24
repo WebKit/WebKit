@@ -1,3 +1,15 @@
+2006-07-24  Dave MacLachlan  <dmaclach@mac.com>
+
+        Reviewed by Darin and Alexey.
+        
+        Test for: <http://bugzilla.opendarwin.org/show_bug.cgi?id=8425> 
+        and <http://bugzilla.opendarwin.org/show_bug.cgi?id=6947>
+
+        * svg/custom/non-opaque-filters-expected.checksum: Added.
+        * svg/custom/non-opaque-filters-expected.png: Added.
+        * svg/custom/non-opaque-filters-expected.txt: Added.
+        * svg/custom/non-opaque-filters.svg: Added.
+
 2006-07-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.

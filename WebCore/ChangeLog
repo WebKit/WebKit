@@ -1,3 +1,29 @@
+2006-07-24  Dave MacLachlan  <dmaclach@mac.com>
+
+        Reviewed by Darin and Alexey.
+        
+        Fix for: <http://bugzilla.opendarwin.org/show_bug.cgi?id=8425> 
+        and <http://bugzilla.opendarwin.org/show_bug.cgi?id=6947>
+
+        Test: svg/custom/non-opaque-filters.svg
+
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::KCanvasFilterQuartz::prepareFilter):
+        We create an autorelease pool so we can control the deallocation of the
+        CIContext that we're creating. The CIContext retains the CGContext that 
+        you pass it internally so when the CIContext is released, the 
+        CGContext is released as well.
+        This is all fine and dandy unless you wrap the creation of the CIFilter
+        with a pair of CGBegin/EndTransparencyLayer calls which swap the context
+        out from underneath you. So if you start with context A, 
+        CGBeginTransparencyLayer swaps it out and gives you B. You create a CIFilter
+        with it and add a reference to B. CGEndTransparencyLayer swaps out B and
+        gives you back A. Autorelease pool comes and cleans up the Filter, and calls
+        release on A, but A never got the refcount in the first place. B did. BOOM!
+        So we create a pool, then do a retain, then release the pool so that we 
+        don't have to worry about the pool releasing it at a later time.
+        See <rdar://problem/4647735> for reduction of CGEndTransparencyLayer case
+
 2006-07-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
