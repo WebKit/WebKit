@@ -1,3 +1,17 @@
+2006-07-23  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by maciej.
+
+        Bug 9686: [Drosera] Need the ability to break into Drosera on Javascript exceptions
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9686
+
+        WebCore portion of the fix.
+
+        * bridge/mac/WebCoreScriptDebugger.h:
+        (-[WebScriptDebugger exceptionRaised:sourceId:line::]): Add delegate method.
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (WebCoreScriptDebuggerImp::exception): Call delegate method when an exception is raised.
+
 2006-07-23  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adele.

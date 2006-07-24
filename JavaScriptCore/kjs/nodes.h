@@ -109,6 +109,7 @@ namespace KJS {
     JSValue *throwUndefinedVariableError(ExecState *, const Identifier &);
 
     void setExceptionDetailsIfNeeded(ExecState*);
+    void debugExceptionIfNeeded(ExecState*, JSValue*);
 
     int m_line;
   private:

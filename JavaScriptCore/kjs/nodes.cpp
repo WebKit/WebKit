@@ -57,6 +57,7 @@ using namespace KJS;
     setExceptionDetailsIfNeeded(exec); \
     JSValue *ex = exec->exception(); \
     exec->clearException(); \
+    debugExceptionIfNeeded(exec, ex); \
     return Completion(Throw, ex); \
   } \
   if (Collector::isOutOfMemory()) \
@@ -65,6 +66,7 @@ using namespace KJS;
 #define KJS_CHECKEXCEPTIONVALUE \
   if (exec->hadException()) { \
     setExceptionDetailsIfNeeded(exec); \
+    debugExceptionIfNeeded(exec, exec->exception()); \
     return jsUndefined(); \
   } \
   if (Collector::isOutOfMemory()) \
@@ -73,6 +75,7 @@ using namespace KJS;
 #define KJS_CHECKEXCEPTIONLIST \
   if (exec->hadException()) { \
     setExceptionDetailsIfNeeded(exec); \
+    debugExceptionIfNeeded(exec, exec->exception()); \
     return List(); \
   } \
   if (Collector::isOutOfMemory()) \
@@ -266,6 +269,16 @@ void Node::setExceptionDetailsIfNeeded(ExecState *exec)
             exception->put(exec, "line", jsNumber(m_line));
             exception->put(exec, "sourceURL", jsString(currentSourceURL(exec)));
         }
+    }
+}
+
+void Node::debugExceptionIfNeeded(ExecState* exec, JSValue* exceptionValue)
+{
+    Debugger* dbg = exec->dynamicInterpreter()->debugger();
+    if (dbg && !dbg->hasHandledException(exec, exceptionValue)) {
+        bool cont = dbg->exception(exec, currentSourceId(exec), m_line, exceptionValue);
+        if (!cont)
+            dbg->imp()->abort();
     }
 }
 
@@ -2268,6 +2281,8 @@ Completion ThrowNode::execute(ExecState *exec)
 
   JSValue *v = expr->evaluate(exec);
   KJS_CHECKEXCEPTION
+
+  debugExceptionIfNeeded(exec, v);
 
   return Completion(Throw, v);
 }

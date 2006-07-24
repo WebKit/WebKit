@@ -80,6 +80,20 @@ void Debugger::detach(Interpreter* interp)
     } else
       p = &q->next;
   }
+
+  if (interp)
+    latestExceptions.remove(interp);
+  else
+    latestExceptions.clear();
+}
+
+bool Debugger::hasHandledException(ExecState *exec, JSValue *exception)
+{
+    if (latestExceptions.get(exec->dynamicInterpreter()).get() == exception)
+        return true;
+
+    latestExceptions.set(exec->dynamicInterpreter(), exception);
+    return false;
 }
 
 bool Debugger::sourceParsed(ExecState */*exec*/, int /*sourceId*/, const UString &/*sourceURL*/, 
@@ -94,7 +108,7 @@ bool Debugger::sourceUnused(ExecState */*exec*/, int /*sourceId*/)
 }
 
 bool Debugger::exception(ExecState */*exec*/, int /*sourceId*/, int /*lineno*/,
-                         JSObject */*exceptionObj*/)
+                         JSValue */*exception*/)
 {
   return true;
 }

@@ -329,4 +329,26 @@ static unsigned listenerCount = 0;
     [self suspendProcessIfPaused];
 }
 
+- (void)webView:(WebView *)webView   exceptionWasRaised:(WebScriptCallFrame *)frame
+                                               sourceId:(int)sid
+                                                   line:(int)lineno
+                                            forWebFrame:(WebFrame *)webFrame
+{
+    if (![listeners count])
+        return;
+
+    NSEnumerator *enumerator = [listeners objectEnumerator];
+    NSDistantObject <WebScriptDebugListener> *listener = nil;
+
+    while ((listener = [enumerator nextObject])) {
+        if ([[listener connectionForProxy] isValid])
+            [listener webView:webView exceptionWasRaised:frame sourceId:sid line:lineno forWebFrame:webFrame];
+    }
+
+    // check for messages from the listeners, so they can pause immediately
+    [[NSRunLoop currentRunLoop] runMode:NSConnectionReplyMode beforeDate:[NSDate distantPast]];
+
+    [self suspendProcessIfPaused];
+}
+
 @end

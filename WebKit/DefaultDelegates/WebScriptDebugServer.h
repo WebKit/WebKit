@@ -69,6 +69,11 @@ extern NSString *WebScriptDebugServerWillUnloadNotification;
                                                sourceId:(int)sid
                                                    line:(int)lineno
                                             forWebFrame:(WebFrame *)webFrame;
+
+- (void)webView:(WebView *)webView   exceptionWasRaised:(WebScriptCallFrame *)frame
+                                               sourceId:(int)sid
+                                                   line:(int)lineno
+                                            forWebFrame:(WebFrame *)webFrame;
 @end
 
 @protocol WebScriptDebugServer <NSObject>

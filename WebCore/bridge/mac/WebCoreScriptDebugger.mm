@@ -122,6 +122,15 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         }
         return true;
     }
+    virtual bool exception(ExecState *state, int sid, int lineno, JSValue *exception) {
+        if (!_nested) {
+            _nested = true;
+            [[_objc delegate] exceptionRaised:_current sourceId:sid line:lineno];
+            _nested = false;
+        }
+        return true;
+    }
+
 };
 
 

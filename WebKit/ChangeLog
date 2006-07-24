@@ -1,3 +1,23 @@
+2006-07-23  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Maciej.
+
+        Bug 9686: [Drosera] Need the ability to break into Drosera on Javascript exceptions
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9686
+
+        WebKit portion of the fix.
+
+        * DefaultDelegates/WebDefaultScriptDebugDelegate.m:
+        (-[WebDefaultScriptDebugDelegate webView:exceptionWasRaised:sourceId:line:forWebFrame:]):
+        * DefaultDelegates/WebScriptDebugServer.h:
+        * DefaultDelegates/WebScriptDebugServer.m:
+        (-[WebScriptDebugServer webView:exceptionWasRaised:sourceId:line:forWebFrame:]): Notify
+        listeners that an exception has been raised.
+        * WebView/WebScriptDebugDelegate.h:
+        * WebView/WebScriptDebugDelegate.m:
+        (-[WebScriptCallFrame exceptionRaised:sourceId:line:]): Dispatch through to delegate and
+        WebScriptDebugServer.
+
 2006-07-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
@@ -331,11 +351,11 @@
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9624
         REGRESSION: After ctrl-clicking in a EMPTY input or textarea field, the contextual menu shows "Search in Google" and "Search in Spotlight" as active menu items
-        
+
         * DefaultDelegates/WebDefaultContextMenuDelegate.m:
         (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
         Don't create Dictionary, Spotlight or Google lookup items if there's no selection.
-        
+
 2006-07-12  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Timothy.

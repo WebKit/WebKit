@@ -118,6 +118,14 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
         [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willLeaveCallFrame:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
 }
 
+- (void)exceptionRaised:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
+{
+    WebView *webView = [_webFrame webView];
+    [[webView _scriptDebugDelegateForwarder] webView:webView exceptionWasRaised:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
+    if ([WebScriptDebugServer listenerCount])
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView exceptionWasRaised:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
+}
+
 @end
 
 

@@ -1,3 +1,25 @@
+2006-07-23  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Maciej.
+
+        Bug 9686: [Drosera] Need the ability to break into Drosera on Javascript exceptions
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9686
+
+        JavaScriptCore portion of the fix.
+
+        * JavaScriptCore.exp: Update symbol for change in argument type.
+        * kjs/debugger.cpp:
+        (Debugger::detach): Clear map of recent exceptions.
+        (Debugger::hasHandledException): Track the most recent exception
+        thrown by an interpreter.
+        (Debugger::exception): Change exception argument to a JSValue.
+        * kjs/debugger.h:
+        * kjs/nodes.cpp:
+        (Node::debugExceptionIfNeeded): Notify the debugger of an exception
+        if it hasn't seen it before.
+        (ThrowNode::execute): Notify the debugger that an exception is being thrown.
+        * kjs/nodes.h:
+
     2006-07-23  Geoffrey Garen  <ggaren@apple.com>
 
         Patch by Eric Albert, reviewed by Darin and me.

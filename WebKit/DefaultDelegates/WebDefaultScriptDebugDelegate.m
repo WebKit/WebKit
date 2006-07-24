@@ -86,4 +86,11 @@ static WebDefaultScriptDebugDelegate *sharedDelegate = nil;
 {
 }
 
+- (void)webView:(WebView *)webView   exceptionWasRaised:(WebScriptCallFrame *)frame
+                                               sourceId:(int)sid
+                                                   line:(int)lineno
+                                            forWebFrame:(WebFrame *)webFrame
+{
+}
+
 @end
