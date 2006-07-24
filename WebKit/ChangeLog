@@ -1,3 +1,14 @@
+2006-07-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10009
+        REGRESSION: Schubert-IT PDF Plug-in not working for full page (works in frames)
+
+        * WebView/WebView.m:
+        (+[WebView _viewClass:andRepresentationClass:forMIMEType:]): If we've got a type supported by WebPDFView,
+        make sure to initialize the plugin database, in case a plugin wants to handle it.
+
 2006-07-23  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Maciej.

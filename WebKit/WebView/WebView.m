@@ -74,6 +74,7 @@
 #import "WebNSUserDefaultsExtras.h"
 #import "WebNSViewExtras.h"
 #import "WebPageBridge.h"
+#import "WebPDFView.h"
 #import "WebPluginDatabase.h"
 #import "WebPolicyDelegate.h"
 #import "WebPreferencesPrivate.h"
@@ -528,7 +529,7 @@ static bool debugWidget = true;
     Class viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType];
     Class repClass = [[WebDataSource _repTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType];
     
-    if (!viewClass || !repClass) {
+    if (!viewClass || !repClass || [[WebPDFView supportedMIMETypes] containsObject:MIMEType]) {
         // Our optimization to avoid loading the plug-in DB and image types for the HTML case failed.
         // Load the plug-in DB allowing plug-ins to install types.
         [WebPluginDatabase installedPlugins];
