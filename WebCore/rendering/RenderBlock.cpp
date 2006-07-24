@@ -2622,6 +2622,13 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
 
     Node* n = element();
     
+    if (isReplaced()) {
+        if (y < absy || y < absy + height() && x < absx)
+            return VisiblePosition(n, caretMinOffset(), DOWNSTREAM);
+        if (y >= absy + height() || y >= absy && x >= absx + width())
+            return VisiblePosition(n, caretMaxOffset(), DOWNSTREAM);
+    } 
+
     // If we start inside the shadow tree, we will stay inside (even if the point is above or below).
     if (!(n && n->isShadowNode())) {
         // Don't return positions inside editable roots for coordinates outside those roots, except for coordinates outside

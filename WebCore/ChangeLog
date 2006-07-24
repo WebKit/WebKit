@@ -1,3 +1,16 @@
+2006-07-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10083
+          REGRESSION (r15584): editing/selection/select-from-textfield-outwards failing
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForCoordinates): Added back change from the fix
+        for bug 9312: For coordinates outside a replaced object, return the position
+        just before (after) the element if the coordinates are above or to the left (below
+        or to the right).
+
 2006-07-23  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by maciej.
