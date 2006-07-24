@@ -1,3 +1,16 @@
+2006-07-24  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4641824> REGRESSION: Wikipedia widget fails to complete a search after pressing return key
+        
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        Don't eat enter events for search fields that have no enclosing form; they need to be passed to AppKit so
+        that onsearch can be invoked.
+        
+        * manual-tests/onsearch-enter.html: Added.
+
 2006-07-24  Dave MacLachlan  <dmaclach@mac.com>
 
         Reviewed by Darin and Alexey.

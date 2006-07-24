@@ -1361,7 +1361,7 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
         if (clickElement) {
             click(false);
             evt->setDefaultHandled();
-        } else if (clickDefaultFormButton) {
+        } else if (clickDefaultFormButton && (inputType() != SEARCH || form())) {
             if (form())
                 form()->submitClick();
             evt->setDefaultHandled();
