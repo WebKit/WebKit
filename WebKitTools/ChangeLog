@@ -1,3 +1,13 @@
+2006-07-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10060
+        Improve iExploder results parsing
+
+        * Scripts/run-iexploder-tests: Fix Apach logs parsing to produce a correct results 
+        in random mode, too.
+
 2006-07-18  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Timothy.
