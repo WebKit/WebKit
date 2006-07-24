@@ -104,6 +104,17 @@ void RootInlineBox::paintEllipsisBox(RenderObject::PaintInfo& i, int _tx, int _t
 }
 
 #if PLATFORM(MAC)
+void RootInlineBox::addHighlightOverflow()
+{
+    // Highlight acts as a selection inflation.
+    FloatRect rootRect(0, selectionTop(), width(), selectionHeight());
+    IntRect inflatedRect = enclosingIntRect(Mac(object()->document()->frame())->customHighlightLineRect(object()->style()->highlight(), rootRect));
+    m_leftOverflow = min(m_leftOverflow, inflatedRect.x());
+    m_rightOverflow = max(m_rightOverflow, inflatedRect.right());
+    m_topOverflow = min(m_topOverflow, inflatedRect.y());
+    m_bottomOverflow = max(m_bottomOverflow, inflatedRect.bottom());
+}
+
 void RootInlineBox::paintCustomHighlight(RenderObject::PaintInfo& i, int tx, int ty, const AtomicString& highlightType)
 {
     if (!object()->shouldPaintWithinRoot(i) || object()->style()->visibility() != VISIBLE || i.phase != PaintPhaseForeground)

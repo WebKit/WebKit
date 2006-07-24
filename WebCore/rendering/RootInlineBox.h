@@ -93,6 +93,7 @@ public:
     virtual void clearTruncation();
 
 #if PLATFORM(MAC)
+    void addHighlightOverflow();
     void paintCustomHighlight(RenderObject::PaintInfo& i, int tx, int ty, const AtomicString& highlightType);
 #endif
 

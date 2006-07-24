@@ -1,3 +1,23 @@
+2006-07-24  David Hyatt  <hyatt@apple.com>
+
+        Two bug fixes.
+
+        (1) Make sure to mark positioned objects that depend on line position to
+        mark themselves as needing layout when their line box placeholder gets
+        repositioned.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::position):
+       
+        (2) Improve highlighting to factor the inflation into overflow so that
+        invalidation and repainting will work properly.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::addHighlightOverflow):
+        * rendering/RootInlineBox.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2006-07-24  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adele.

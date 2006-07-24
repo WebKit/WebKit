@@ -1650,7 +1650,13 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         
                         // Now position our text runs vertically.
                         computeVerticalPositionsForLine(lineBox);
-        
+
+#if PLATFORM(MAC)
+                        // Highlight acts as an overflow inflation.
+                        if (style()->highlight() != nullAtom)
+                            lineBox->addHighlightOverflow();
+#endif
+
                         deleteBidiRuns(renderArena());
                     }
                 }
