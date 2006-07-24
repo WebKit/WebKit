@@ -360,10 +360,10 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)removeAllIcons
 {
-    NSEnumerator *keyEnumerator = [(NSDictionary *)_private->iconURLToPageURLs keyEnumerator];
-    NSString *iconURLString;
-    while ((iconURLString = [keyEnumerator nextObject]) != nil)
-        [self _forgetIconForIconURLString:iconURLString];
+    NSArray *keys = [(NSDictionary *)_private->iconURLToPageURLs allKeys];
+    unsigned count = [keys count];
+    for (unsigned i = 0; i < count; i++)
+        [self _forgetIconForIconURLString:[keys objectAtIndex:i]];
     
     // Delete entire file database immediately. This has at least three advantages over waiting for
     // _updateFileDatabase to execute:

@@ -1,3 +1,12 @@
+2006-07-24  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim O.
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase removeAllIcons]):
+        Make an array of the keys and iterate through it to avoid modifying the
+        dictionary while enumerating it.
+
 2006-07-24  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John and Darin.
