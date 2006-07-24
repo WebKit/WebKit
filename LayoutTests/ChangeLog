@@ -1,5 +1,17 @@
 2006-07-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Hyatt.
+
+        - repaint test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9669
+          Incomplete repaint when changing an inline's border
+
+        * fast/repaint/line-overflow-expected.checksum: Added.
+        * fast/repaint/line-overflow-expected.png: Added.
+        * fast/repaint/line-overflow-expected.txt: Added.
+        * fast/repaint/line-overflow.html: Added.
+
+2006-07-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Darin.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10075

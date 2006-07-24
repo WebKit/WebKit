@@ -1480,7 +1480,8 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     BidiState bidi;
 
     bool useRepaintRect = false;
-    IntRect repaintRect(0,0,0,0);
+    int repaintTop = 0;
+    int repaintBottom = 0;
 
     m_overflowHeight = 0;
     
@@ -1508,9 +1509,6 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     // Walk all the lines and delete our ellipsis line boxes if they exist.
     if (hasTextOverflow)
          deleteEllipsisLineBoxes();
-
-    int oldLineBottom = lastRootBox() ? lastRootBox()->bottomOverflow() : m_height;
-    int startLineBottom = 0;
 
     if (firstChild()) {
         // layout replaced elements
@@ -1595,11 +1593,13 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
             cleanLineBidiContext->ref();
         if (startLine) {
             useRepaintRect = true;
-            startLineBottom = startLine->bottomOverflow();
-            repaintRect.setY(min(m_height, startLine->topOverflow()));
+            repaintTop = m_height;
+            repaintBottom = m_height;
             RenderArena* arena = renderArena();
             RootInlineBox* box = startLine;
             while (box) {
+                repaintTop = min(repaintTop, box->topOverflow());
+                repaintBottom = max(repaintBottom, box->bottomOverflow());
                 RootInlineBox* next = box->nextRootBox();
                 box->deleteLine(arena);
                 box = next;
@@ -1612,7 +1612,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         bool endLineMatched = false;
         while (!end.atEnd()) {
             start = end;
-            if (endLine && (endLineMatched = matchedEndLine(start, bidi.status, bidi.context.get(), cleanLineStart, cleanLineBidiStatus, cleanLineBidiContext, endLine, endLineYPos)))
+            if (endLine && (endLineMatched = matchedEndLine(start, bidi.status, bidi.context.get(), cleanLineStart, cleanLineBidiStatus, cleanLineBidiContext, endLine, endLineYPos, repaintBottom, repaintTop)))
                 break;
 
             betweenMidpoints = false;
@@ -1661,8 +1661,13 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                     bidi.adjustEmbedding = false;
                 }
 
-                if (lineBox)
+                if (lineBox) {
                     lineBox->setLineBreakInfo(end.obj, end.pos, &bidi.status, bidi.context.get());
+                    if (useRepaintRect) {
+                        repaintTop = min(repaintTop, lineBox->topOverflow());
+                        repaintBottom = max(repaintBottom, lineBox->bottomOverflow());
+                    }
+                }
                 
                 m_firstLine = false;
                 newLine();
@@ -1676,12 +1681,6 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         
         if (endLine) {
             if (endLineMatched) {
-                // Note our current y-position for correct repainting when no lines move.  If no lines move, we still have to
-                // repaint up to the maximum of the bottom overflow of the old start line or the bottom overflow of the new last line.
-                int currYPos = max(startLineBottom, m_height);
-                if (lastRootBox())
-                    currYPos = max(currYPos, lastRootBox()->bottomOverflow());
-                
                 // Attach all the remaining lines, and then adjust their y-positions as needed.
                 for (RootInlineBox* line = endLine; line; line = line->nextRootBox())
                     line->attachLine();
@@ -1689,28 +1688,21 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                 // Now apply the offset to each line if needed.
                 int delta = m_height - endLineYPos;
                 if (delta) {
-                    for (RootInlineBox* line = endLine; line; line = line->nextRootBox())
+                    for (RootInlineBox* line = endLine; line; line = line->nextRootBox()) {
+                        repaintTop = min(repaintTop, line->topOverflow() + (delta < 0 ? delta : 0));
+                        repaintBottom = max(repaintBottom, line->bottomOverflow() + (delta > 0 ? delta : 0));
                         line->adjustPosition(0, delta);
+                    }
                 }
                 m_height = lastRootBox()->blockHeight();
-                m_overflowHeight = max(m_height, m_overflowHeight);
-                int bottomOfLine = lastRootBox()->bottomOverflow();
-                if (bottomOfLine > m_height && bottomOfLine > m_overflowHeight)
-                    m_overflowHeight = bottomOfLine;
-                if (delta)
-                    repaintRect.setHeight(max(m_overflowHeight-delta, m_overflowHeight) - repaintRect.y());
-                else
-                    repaintRect.setHeight(currYPos - repaintRect.y());
-            }
-            else {
+            } else {
                 // Delete all the remaining lines.
-                m_overflowHeight = max(m_height, m_overflowHeight);
                 InlineRunBox* line = endLine;
                 RenderArena* arena = renderArena();
                 while (line) {
+                    repaintTop = min(repaintTop, line->topOverflow());
+                    repaintBottom = max(repaintBottom, line->bottomOverflow());
                     InlineRunBox* next = line->nextLineBox();
-                    if (!next)
-                        repaintRect.setHeight(max(m_overflowHeight, line->bottomOverflow()) - repaintRect.y());
                     line->deleteLine(arena);
                     line = next;
                 }
@@ -1737,11 +1729,12 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     // See if any lines spill out of the block.  If so, we need to update our overflow width.
     checkLinesForOverflow();
 
+    IntRect repaintRect(0, 0, 0, 0);
     if (useRepaintRect) {
         repaintRect.setX(m_overflowLeft);
-        repaintRect.setWidth(max((int)m_width, m_overflowWidth) - m_overflowLeft);
-        if (repaintRect.height() == 0)
-            repaintRect.setHeight(max(oldLineBottom, m_overflowHeight) - repaintRect.y());
+        repaintRect.setWidth(m_overflowWidth - m_overflowLeft);
+        repaintRect.setY(repaintTop);
+        repaintRect.setHeight(repaintBottom - repaintTop);
         if (hasOverflowClip())
             // Don't allow this rect to spill out of our overflow box.
             repaintRect.intersect(IntRect(0, 0, m_width, m_height));
@@ -1805,9 +1798,6 @@ RootInlineBox* RenderBlock::determineStartPosition(bool fullLayout, BidiIterator
     previousLineBrokeCleanly = !last || last->endsWithBreak();
     if (last) {
         m_height = last->blockHeight();
-        int bottomOfLine = last->bottomOverflow();
-        if (bottomOfLine > m_height && bottomOfLine > m_overflowHeight)
-            m_overflowHeight = bottomOfLine;
         startObj = last->lineBreakObj();
         pos = last->lineBreakPos();
         bidi.status = last->lineBreakBidiStatus();
@@ -1846,7 +1836,7 @@ RootInlineBox* RenderBlock::determineEndPosition(RootInlineBox* startLine, BidiI
     cleanLineStart = BidiIterator(this, prev->lineBreakObj(), prev->lineBreakPos());
     cleanLineBidiStatus = prev->lineBreakBidiStatus();
     cleanLineBidiContext = prev->lineBreakBidiContext();
-    yPos = last->prevRootBox()->blockHeight();
+    yPos = prev->blockHeight();
     
     for (RootInlineBox* line = last; line; line = line->nextRootBox())
         line->extractLine(); // Disconnect all line boxes from their render objects while preserving
@@ -1856,8 +1846,8 @@ RootInlineBox* RenderBlock::determineEndPosition(RootInlineBox* startLine, BidiI
 }
 
 bool RenderBlock::matchedEndLine(const BidiIterator& start, const BidiStatus& status, BidiContext* context,
-                                 const BidiIterator& endLineStart, const BidiStatus& endLineStatus,
-                                 BidiContext* endLineContext, RootInlineBox*& endLine, int& endYPos)
+                                 const BidiIterator& endLineStart, const BidiStatus& endLineStatus, BidiContext* endLineContext, 
+                                 RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop)
 {
     if (start == endLineStart)
         return status == endLineStatus && *context == *endLineContext;
@@ -1881,6 +1871,8 @@ bool RenderBlock::matchedEndLine(const BidiIterator& start, const BidiStatus& st
                 RootInlineBox* boxToDelete = endLine;
                 RenderArena* arena = renderArena();
                 while (boxToDelete && boxToDelete != result) {
+                    repaintTop = min(repaintTop, boxToDelete->topOverflow());
+                    repaintBottom = max(repaintBottom, boxToDelete->bottomOverflow());
                     RootInlineBox* next = boxToDelete->nextRootBox();
                     boxToDelete->deleteLine(arena);
                     boxToDelete = next;
@@ -2548,8 +2540,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
 void RenderBlock::checkLinesForOverflow()
 {
-    // FIXME: Inline blocks can have overflow.  Need to understand when those objects are present on a line
-    // and factor that in somehow.
     m_overflowWidth = m_width;
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
         m_overflowLeft = min(curr->leftOverflow(), m_overflowLeft);

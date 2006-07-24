@@ -1,5 +1,27 @@
 2006-07-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9669
+          Incomplete repaint when changing an inline's border
+
+        Test: fast/repaint/line-overflow.html
+
+        * rendering/RenderBlock.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Added repaintTop and repaintBottom
+        variables to track the vertical edges of the area that changed, accounting for
+        lines that were deleted, inserted or moved. Removed unnecessary updating of
+        m_overflowHeight.
+        (WebCore::RenderBlock::determineStartPosition): Removed unnecessary updating of
+        m_overflowHeight.
+        (WebCore::RenderBlock::determineEndPosition):
+        (WebCore::RenderBlock::matchedEndLine): Added repaintTop and repaintBottom
+        arguments, which this method updates to account for deleted lines.
+        (WebCore::RenderBlock::checkLinesForOverflow): Removed outdated FIXME.
+
+2006-07-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Darin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10075
