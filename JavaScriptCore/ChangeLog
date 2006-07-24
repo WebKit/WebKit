@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4258
+        Date().toString() only includes GMT offset, not timezone string
+
+        Use the info in tm_zone to append timezone abbreviation
+        to Date().toString().
+
+        * kjs/date_object.cpp:
+        (KJS::formatTime):
+
+2006-07-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5257
         setYear() does not match FireFox/IE behavior
 
