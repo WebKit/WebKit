@@ -1,7 +1,7 @@
 2006-07-23  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adele.
-        Actually Adele figured out how to fix the layout test failures.  Landing this patch for her.  
+        Actually Adele figured out how to fix the layout test failures.  Landing this patch for her.  Layout test failures exposed but not caused by  r15584 (my patch earlier today).
 
         * editing/visible_units.cpp:
         (WebCore::previousLinePosition):
