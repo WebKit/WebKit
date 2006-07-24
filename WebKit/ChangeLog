@@ -1,3 +1,25 @@
+2006-07-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John and Darin.
+
+        <rdar://problem/4634290> Cannot selectively install a custom
+        scroller that differs from the default Aqua frame size.
+
+        Adds two new private methods to WebFrameView that allows
+        an application to set a custom scroll view class. This is needed
+        if the application wants to install a custom scroller that is wider
+        than the typical scroller, because NSScrollView does the content
+        rect calculations in a class method (ignoring custom scrollers.)
+        The _setScrollViewClass method requires the class to be a subclass
+        of WebDynamicScrollBarView, or nil can be passed to reset to the default class.
+        A new scroll view of the specified class will then replace the previous
+        one without the need to reload content of the frame.
+
+        * WebView/WebFrameView.m:
+        (-[WebFrameView _customScrollViewClass]):
+        (-[WebFrameView _setCustomScrollViewClass:]):
+        * WebView/WebFrameViewPrivate.h:
+
 2006-07-24  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

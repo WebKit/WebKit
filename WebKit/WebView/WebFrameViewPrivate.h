@@ -49,4 +49,17 @@
  */
 - (NSClipView *)_contentView;
 
+/*!
+    @method _customScrollViewClass
+    @result The custom scroll view class that is installed, nil if the default scroll view is being used.
+ */
+- (Class)_customScrollViewClass;
+
+/*!
+    @method _setCustomScrollViewClass:
+    @result Switches the WebFrameView's scroll view class, this class needs to be a subclass of WebDynamicScrollBarsView.
+    Passing nil will switch back to the default WebDynamicScrollBarsView class.
+ */
+- (void)_setCustomScrollViewClass:(Class)scrollViewClass;
+
 @end
