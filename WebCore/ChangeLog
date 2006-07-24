@@ -1,3 +1,14 @@
+2006-07-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10075
+          REGRESSION: Reversed pop-up text in visually-ordered Hebrew pages
+
+        Test: fast/forms/select-visual-hebrew.html
+
+        * css/html4.css: Set "-webkit-rtl-ordering: logical" on select elements.
+
 2006-07-24  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

@@ -1,3 +1,15 @@
+2006-07-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10075
+          REGRESSION: Reversed pop-up text in visually-ordered Hebrew pages
+
+        * fast/forms/select-visual-hebrew-expected.checksum: Added.
+        * fast/forms/select-visual-hebrew-expected.png: Added.
+        * fast/forms/select-visual-hebrew-expected.txt: Added.
+        * fast/forms/select-visual-hebrew.html: Added.
+
 2006-07-23  David Harrison  <harrison@apple.com>
 
         Reviewed by timo.
