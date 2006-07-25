@@ -84,9 +84,20 @@
 {
     // Calling _receivedMainResourceError will likely result in a call to release, so we must retain.
     [self retain];
-    WebDataSource *ds = [dataSource retain];
-    [dataSource _receivedMainResourceError:error complete:YES];
-    [super didFailWithError:error];
+    WebDataSource *ds = [dataSource retain]; // super's didFailWithError will release the datasource
+
+    if (!cancelledFlag) {
+        ASSERT(!reachedTerminalState);
+        [dataSource _didFailLoadingWithError:error forResource:identifier];
+    }
+
+    [ds _receivedMainResourceError:error complete:YES];
+
+    if (!cancelledFlag)
+        [self releaseResources];
+
+    ASSERT(reachedTerminalState);
+
     [ds release];
     [self release];
 }
