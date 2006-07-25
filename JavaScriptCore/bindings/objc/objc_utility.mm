@@ -93,6 +93,7 @@ bool convertJSMethodNameToObjc(const char *JSName, char *buffer, size_t bufferSi
     String          NSString
     wrapper         id
     Object          WebScriptObject
+    null            NSNull
     [], other       exception
 
 */
@@ -188,24 +189,25 @@ JSValue *convertNSStringToString(NSString *nsstring)
 }
 
 /*
-
     ObjC      to    JavaScript
-    char            Number
-    short
-    int
-    long
-    float
-    double
-    NSNumber        Number
-    NSString        String
-    NSArray         Array
-    id              Object wrapper
+    ----            ----------
+    char            number
+    short           number
+    int             number
+    long            number
+    float           number
+    double          number
+    NSNumber        boolean or number
+    NSString        string
+    NSArray         array
+    NSNull          null
+    WebScriptObject underlying JavaScript object
+    WebUndefined    undefined
+    id              object wrapper
     other           should not happen
-
 */
-JSValue *convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType type)
+JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType type)
 {
-    JSValue *aValue = NULL;
     static ClassStructPtr webUndefinedClass = 0;
     if (!webUndefinedClass)
         webUndefinedClass = NSClassFromString(@"WebUndefined");
@@ -213,65 +215,47 @@ JSValue *convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType t
         webScriptObjectClass = NSClassFromString(@"WebScriptObject");
 
     switch (type) {
-        case ObjcObjectType:
-            {
-                ObjectStructPtr *obj = (ObjectStructPtr *)buffer;
-
-                /*
-                    NSNumber to Number
-                    NSString to String
-                    NSArray  to Array
-                    id       to Object wrapper
-                */
-                if ([*obj isKindOfClass:[NSString class]]){
-                    aValue = convertNSStringToString((NSString *)*obj);
-                } else if ([*obj isKindOfClass:webUndefinedClass]) {
-                    return jsUndefined();
-                }  else if ((CFBooleanRef)*obj == kCFBooleanTrue) {
-                    aValue = jsBoolean(true);
-                } else if ((CFBooleanRef)*obj == kCFBooleanFalse) {
-                    aValue = jsBoolean(false);
-                } else if ([*obj isKindOfClass:[NSNumber class]]) {
-                    aValue = jsNumber([*obj doubleValue]);
-                } else if ([*obj isKindOfClass:[NSArray class]]) {
-                    aValue = new RuntimeArray(exec, new ObjcArray(*obj));
-                } else if ([*obj isKindOfClass:webScriptObjectClass]) {
-                    id<WebScriptObject> jsobject = (id<WebScriptObject>)*obj;
-                    aValue = [jsobject _imp];
-                } else if (*obj == 0) {
-                    return jsUndefined();
-                } else {
-		    aValue = Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)*obj);
-                }
-            }
-            break;
+        case ObjcObjectType: {
+            id obj = *(id*)buffer;
+            if ([obj isKindOfClass:[NSString class]])
+                return convertNSStringToString((NSString *)obj);
+            if ([obj isKindOfClass:webUndefinedClass])
+                return jsUndefined();
+            if ((CFBooleanRef)obj == kCFBooleanTrue)
+                return jsBoolean(true);
+            if ((CFBooleanRef)obj == kCFBooleanFalse)
+                return jsBoolean(false);
+            if ([obj isKindOfClass:[NSNumber class]])
+                return jsNumber([obj doubleValue]);
+            if ([obj isKindOfClass:[NSArray class]])
+                return new RuntimeArray(exec, new ObjcArray(obj));
+            if ([obj isKindOfClass:webScriptObjectClass])
+                return [obj _imp];
+            if ([obj isKindOfClass:[NSNull class]])
+                return jsNull();
+            if (obj == 0)
+                return jsUndefined();
+            return Instance::createRuntimeObject(Instance::ObjectiveCLanguage, obj);
+        }
         case ObjcCharType:
-            aValue = jsNumber(*(char *)buffer);
-            break;
+            return jsNumber(*(char *)buffer);
         case ObjcShortType:
-            aValue = jsNumber(*(short *)buffer);
-            break;
+            return jsNumber(*(short *)buffer);
         case ObjcIntType:
-            aValue = jsNumber(*(int *)buffer);
-            break;
+            return jsNumber(*(int *)buffer);
         case ObjcLongType:
-            aValue = jsNumber(*(long *)buffer);
-            break;
+            return jsNumber(*(long *)buffer);
         case ObjcFloatType:
-            aValue = jsNumber(*(float *)buffer);
-            break;
+            return jsNumber(*(float *)buffer);
         case ObjcDoubleType:
-            aValue = jsNumber(*(double *)buffer);
-            break;
+            return jsNumber(*(double *)buffer);
         default:
-            // Should never get here.  Argument types are filtered (and
-            // the assert above should have fired in the impossible case
-            // of an invalid type anyway).
+            // Should never get here. Argument types are filtered.
             fprintf(stderr, "%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)type);
             assert(false);
     }
     
-    return aValue;
+    return 0;
 }
 
 

@@ -135,11 +135,18 @@ static BOOL _allowsScriptsFullAccess = NO;
 {
     if (aSelector == @selector(removeBridgeRestrictions:))
         return NO;
+
+    if (aSelector == @selector(echo:))
+        return NO;
+
     return YES;
 }
 
 + (NSString *)webScriptNameForSelector:(SEL)aSelector
 {
+    if (aSelector == @selector(echo:))
+        return @"echo";
+  
     return nil;
 }
 
@@ -152,6 +159,11 @@ static BOOL _allowsScriptsFullAccess = NO;
     JSObjC *objc = [[JSObjC alloc] init];
     [container setValue:objc forKey:@"objc"];
     [objc release];
+}
+
+- (id)echo:(id)obj
+{
+    return obj;
 }
 
 @end

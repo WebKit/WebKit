@@ -1,3 +1,13 @@
+2006-07-24  Dan Waylonis  <waylonis@google.com>
+
+        Reviewed and tweaked a bit by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9902
+          jsNull and NSNull not properly converted between JS and ObjC
+
+        * bindings/objc/objc_utility.mm: (KJS::Bindings::convertObjcValueToValue):
+        Added case for converting NSNull to jsNull.
+
 2006-07-24  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

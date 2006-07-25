@@ -1,3 +1,12 @@
+2006-07-24  Dan Waylonis  <waylonis@google.com>
+
+        Reviewed and tweaked a bit by Darin.
+
+        - added some new tests that use "echo" including one for JavaScript null
+
+        * plugins/bindings-test-expected.txt: Added results.
+        * plugins/bindings-test.html: Added tests.
+
 2006-07-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele and Justin.

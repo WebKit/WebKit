@@ -1,3 +1,16 @@
+2006-07-24  Dan Waylonis  <waylonis@google.com>
+
+        Reviewed and tweaked a bunch by Darin.
+
+        Test: plugins/bindings-test.html
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9902
+          jsNull and NSNull not properly converted between JS and ObjC
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:originExecutionContext:executionContext:]):
+        Added case that converts jsNull to NSNull.
+
 2006-07-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele and Justin.

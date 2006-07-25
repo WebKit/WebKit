@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ static void _didExecute(WebScriptObject *obj)
     ExecState *exec = [obj _executionContext]->interpreter()->globalExec();
     KJSDidExecuteFunctionPtr func = Instance::didExecuteFunction();
     if (func)
-        func (exec, static_cast<JSObject*>([obj _executionContext]->rootObjectImp()));
+        func(exec, static_cast<JSObject*>([obj _executionContext]->rootObjectImp()));
 }
 
 - (void)_initializeWithObjectImp:(JSObject *)imp originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
@@ -56,13 +56,12 @@ static void _didExecute(WebScriptObject *obj)
     _private->executionContext = executionContext;    
     _private->originExecutionContext = originExecutionContext;    
 
-    addNativeReference (executionContext, imp);
+    addNativeReference(executionContext, imp);
 }
 
 - _initWithJSObject:(JSObject *)imp originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
 {
-    assert (imp != 0);
-    //assert (root != 0);
+    assert(imp != 0);
 
     self = [super init];
 
@@ -75,11 +74,10 @@ static void _didExecute(WebScriptObject *obj)
 
 - (JSObject *)_imp
 {
-    if (!_private->imp && _private->isCreatedByDOMWrapper) {
-        // Associate the WebScriptObject with the JS wrapper for the ObjC DOM
-        // wrapper.  This is done on lazily, on demand.
+    // Associate the WebScriptObject with the JS wrapper for the ObjC DOM wrapper.
+    // This is done on lazily, on demand.
+    if (!_private->imp && _private->isCreatedByDOMWrapper)
         [self _initializeScriptDOMNodeImp];
-    }
     return _private->imp;
 }
 
@@ -108,9 +106,8 @@ static void _didExecute(WebScriptObject *obj)
 {
     if ([self _originExecutionContext]) {
 	Interpreter *originInterpreter = [self _originExecutionContext]->interpreter();
-	if (originInterpreter) {
-	    return originInterpreter->isSafeScript ([self _executionContext]->interpreter());
-	}
+	if (originInterpreter)
+	    return originInterpreter->isSafeScript([self _executionContext]->interpreter());
     }
     return true;
 }
@@ -159,7 +156,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     
     for (i = 0; i < numObjects; i++) {
         id anObject = [array objectAtIndex:i];
-        aList.append (convertObjcValueToValue(exec, &anObject, ObjcObjectType));
+        aList.append(convertObjcValueToValue(exec, &anObject, ObjcObjectType));
     }
     return aList;
 }
@@ -180,7 +177,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     
     JSValue *v = convertObjcValueToValue(exec, &name, ObjcObjectType);
     Identifier identifier(v->toString(exec));
-    JSValue *func = [self _imp]->get (exec, identifier);
+    JSValue *func = [self _imp]->get(exec, identifier);
 
     if (!func || func->isUndefined()) {
         // Maybe throw an exception here?
@@ -191,10 +188,10 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     JSObject *funcImp = static_cast<JSObject*>(func);
     JSObject *thisObj = const_cast<JSObject*>([self _imp]);
     List argList = listFromNSArray(exec, args);
-    JSValue *result = funcImp->call (exec, thisObj, argList);
+    JSValue *result = funcImp->call(exec, thisObj, argList);
 
     if (exec->hadException()) {
-        LOG_EXCEPTION (exec);
+        LOG_EXCEPTION(exec);
         result = jsUndefined();
         exec->clearException();
     }
@@ -233,7 +230,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         result = jsUndefined();
     
     if (exec->hadException()) {
-        LOG_EXCEPTION (exec);
+        LOG_EXCEPTION(exec);
         result = jsUndefined();
         exec->clearException();
     }
@@ -258,10 +255,10 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     JSLock lock;
     JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
-    [self _imp]->put (exec, Identifier (v->toString(exec)), (convertObjcValueToValue(exec, &value, ObjcObjectType)));
+    [self _imp]->put(exec, Identifier(v->toString(exec)), convertObjcValueToValue(exec, &value, ObjcObjectType));
 
     if (exec->hadException()) {
-        LOG_EXCEPTION (exec);
+        LOG_EXCEPTION(exec);
         exec->clearException();
     }
 
@@ -281,10 +278,10 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     JSLock lock;
     JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
-    JSValue *result = [self _imp]->get (exec, Identifier (v->toString(exec)));
+    JSValue *result = [self _imp]->get(exec, Identifier(v->toString(exec)));
     
     if (exec->hadException()) {
-        LOG_EXCEPTION (exec);
+        LOG_EXCEPTION(exec);
         result = jsUndefined();
         exec->clearException();
     }
@@ -311,10 +308,10 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     JSLock lock;
     JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
-    [self _imp]->deleteProperty (exec, Identifier (v->toString(exec)));
+    [self _imp]->deleteProperty(exec, Identifier(v->toString(exec)));
 
     if (exec->hadException()) {
-        LOG_EXCEPTION (exec);
+        LOG_EXCEPTION(exec);
         exec->clearException();
     }
 
@@ -340,7 +337,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     return resultObj;
 }
 
-- (id)webScriptValueAtIndex:(unsigned int)index
+- (id)webScriptValueAtIndex:(unsigned)index
 {
     if (![self _executionContext])
         return nil;
@@ -352,10 +349,10 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     ASSERT(!exec->hadException());
 
     JSLock lock;
-    JSValue *result = [self _imp]->get (exec, (unsigned)index);
+    JSValue *result = [self _imp]->get(exec, index);
 
     if (exec->hadException()) {
-        LOG_EXCEPTION (exec);
+        LOG_EXCEPTION(exec);
         result = jsUndefined();
         exec->clearException();
     }
@@ -367,7 +364,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     return resultObj;
 }
 
-- (void)setWebScriptValueAtIndex:(unsigned int)index value:(id)value
+- (void)setWebScriptValueAtIndex:(unsigned)index value:(id)value
 {
     if (![self _executionContext])
         return;
@@ -379,10 +376,10 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     ASSERT(!exec->hadException());
 
     JSLock lock;
-    [self _imp]->put (exec, (unsigned)index, (convertObjcValueToValue(exec, &value, ObjcObjectType)));
+    [self _imp]->put(exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType));
 
     if (exec->hadException()) {
-        LOG_EXCEPTION (exec);
+        LOG_EXCEPTION(exec);
         exec->clearException();
     }
 
@@ -400,8 +397,8 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     // First see if we have a ObjC instance.
     if (value->isObject()) {
         JSObject *objectImp = static_cast<JSObject*>(value);
-	Interpreter *intepreter = executionContext->interpreter();
-	ExecState *exec = intepreter->globalExec();
+	Interpreter *interpreter = executionContext->interpreter();
+	ExecState *exec = interpreter->globalExec();
         JSLock lock;
 	
         if (objectImp->classInfo() != &RuntimeObjectImp::info) {
@@ -415,40 +412,48 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
             ObjcInstance *instance = static_cast<ObjcInstance*>(imp->getInternalInstance());
             if (instance)
                 return instance->getObject();
-        } else
-            // JS Object --> WebScriptObject
-	    return (id)intepreter->createLanguageInstanceForValue (exec, Instance::ObjectiveCLanguage, value->toObject(exec), originExecutionContext, executionContext);
-    } else if (value->isString()) {
-        // JS String --> NSString
+            return nil;
+        }
+
+        // JS Object --> WebScriptObject
+        return (id)interpreter->createLanguageInstanceForValue(exec, Instance::ObjectiveCLanguage,
+            value->toObject(exec), originExecutionContext, executionContext);
+    }
+
+    if (value->isString()) {
         UString u = value->getString();
-        NSString *string = [NSString stringWithCharacters:(const unichar*)u.data() length:u.size()];
-        return string;
-    } else if (value->isNumber())
-        // JS Number --> NSNumber
+        return [NSString stringWithCharacters:(const unichar*)u.data() length:u.size()];
+    }
+
+    if (value->isNumber())
         return [NSNumber numberWithDouble:value->getNumber()];
-    else if (value->isBoolean())
-        // JS Boolean --> NSNumber
+
+    if (value->isBoolean())
         return [NSNumber numberWithBool:value->getBoolean()];
-    else if (value->isUndefined())
-        // JS Undefined --> WebUndefined
+
+    if (value->isUndefined())
         return [WebUndefined undefined];
-    
-    // Other types (UnspecifiedType and NullType) converted to 0.
-    return 0;
+
+    if (value->isNull())
+        return [NSNull null];
+  
+    // Other types (e.g., UnspecifiedType) converted to nil.
+    // This should never happen.
+    return nil;
 }
 
 @end
 
 @interface WebScriptObject (WebKitCocoaBindings)
 
-- (unsigned int)count;
-- (id)objectAtIndex:(unsigned int)index;
+- (unsigned)count;
+- (id)objectAtIndex:(unsigned)index;
 
 @end
 
 @implementation WebScriptObject (WebKitCocoaBindings)
 
-- (unsigned int)count
+- (unsigned)count
 {
     id length = [self valueForKey:@"length"];
     if ([length respondsToSelector:@selector(intValue)])
@@ -457,7 +462,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         return 0;
 }
 
-- (id)objectAtIndex:(unsigned int)index
+- (id)objectAtIndex:(unsigned)index
 {
     return [self webScriptValueAtIndex:index];
 }

@@ -32,6 +32,21 @@ function doTest()
             result = e.name;
         }
         alert("objCPluginFunction()=" + result);
+
+        function echoTest(arg) {
+            var echo = objCPlugin.echo(arg);
+            var sameVal = (arg == echo) ? "same" : "different";
+            var sameType = (typeof(arg) == typeof(echo)) ? "same" : "different";
+
+            alert(arg + " = " + echo + " (" + sameVal + ")");
+            alert(typeof(arg) + " = " + typeof(echo) + " (" + sameType + ")");
+        }
+
+        // Test the echo function
+        echoTest("hello");
+        echoTest(42);
+        echoTest(null);
+        echoTest(new Array("one", "two"));
     }
     
     // Test the C plugin

@@ -1,3 +1,14 @@
+2006-07-24  Dan Waylonis  <waylonis@google.com>
+
+        Reviewed and tweaked a bit by Darin.
+
+        * DumpRenderTree/ObjCPlugin.m:
+        (+[ObjCPlugin isSelectorExcludedFromWebScript:]): Added "echo:".
+        (+[ObjCPlugin webScriptNameForSelector:]): Use the name "echo" for
+        "echo:" so it's nice to call from JavaScript.
+        (-[ObjCPlugin echo:]): Just returns the same object -- can be used
+        to test a round trip through Objective-C types.
+
 2006-07-24  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
