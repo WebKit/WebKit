@@ -330,8 +330,7 @@ bool Node::isContentEditable() const
 
 bool Node::isContentRichlyEditable() const
 {
-    Node* root = rootEditableElement();
-    return root && root->renderer() && root->renderer()->style()->userModify() != READ_WRITE_PLAINTEXT_ONLY;
+    return renderer() && renderer()->style()->userModify() == READ_WRITE;
 }
 
 IntRect Node::getRect() const

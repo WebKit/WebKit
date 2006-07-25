@@ -1,3 +1,14 @@
+2006-07-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin.
+
+        - Test for <rdar://problem/4632132> Changing style of content with mixed editability fails
+
+        * editing/style/apple-style-editable-mix-expected.checksum: Added.
+        * editing/style/apple-style-editable-mix-expected.png: Added.
+        * editing/style/apple-style-editable-mix-expected.txt: Added.
+        * editing/style/apple-style-editable-mix.html: Added.
+
 2006-07-24  Dave MacLachlan  <dmaclach@mac.com>
 
         Reviewed by Darin and Alexey.
