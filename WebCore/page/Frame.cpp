@@ -2449,22 +2449,26 @@ void Frame::removeEditingStyleFromBodyElement() const
     }
 }
 
-void Frame::applyEditingStyleToElement(Element *element) const
+void Frame::applyEditingStyleToElement(Element* element) const
 {
-    if (!element || !element->isHTMLElement())
+    if (!element)
         return;
-    
-    static_cast<HTMLElement*>(element)->setContentEditable("true");
+
+    CSSStyleDeclaration* style = element->style();
+    ASSERT(style);
+
+    ExceptionCode ec = 0;
+    style->setProperty(CSS_PROP_WORD_WRAP, "break-word", false, ec);
+    ASSERT(ec == 0);
+    style->setProperty(CSS_PROP__WEBKIT_NBSP_MODE, "space", false, ec);
+    ASSERT(ec == 0);
+    style->setProperty(CSS_PROP__WEBKIT_LINE_BREAK, "after-white-space", false, ec);
+    ASSERT(ec == 0);
 }
 
-void Frame::removeEditingStyleFromElement(Element *element) const
+void Frame::removeEditingStyleFromElement(Element*) const
 {
-    if (!element || !element->isHTMLElement())
-        return;
-        
-    static_cast<HTMLElement*>(element)->setContentEditable("false");        
 }
-
 
 bool Frame::isCharacterSmartReplaceExempt(const DeprecatedChar&, bool)
 {

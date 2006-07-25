@@ -1,3 +1,16 @@
+2006-07-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/4468458> Incoming HTML message is editable <body contenteditable="true">
+
+        * dom/Document.cpp:
+        (WebCore::Document::inDesignMode): Removed some spaces.
+        * page/Frame.cpp:
+        (WebCore::Frame::applyEditingStyleToElement): Just add CSS properties needed for editing.
+        (WebCore::Frame::removeEditingStyleFromElement): Made this a no-op, we'll remove
+        it eventually.
+
 2006-07-25  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.
