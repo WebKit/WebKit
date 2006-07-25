@@ -1024,12 +1024,7 @@ sub JSValueToNative
     my $type = $codeGenerator->StripModule($signature->type);
     
     if ($type eq "boolean") {
-        my $conv = $signature->extendedAttributes->{"ConvertUndefinedToTrue"};
-        if (defined $conv) {
-            return "valueToBooleanTreatUndefinedAsTrue(exec, $value)";
-        } else {
-            return "$value->toBoolean(exec)";
-        }
+        return "$value->toBoolean(exec)";
     } elsif ($type eq "unsigned long" or
              $type eq "long" or
              $type eq "unsigned short") {

@@ -1,3 +1,20 @@
+2006-07-25  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9717
+          Replace IDL ConvertUndefinedToTrue parameter attribute with Optional attribute
+
+        No test added because there is no change in functionality.
+
+        * bindings/js/kjs_binding.cpp: Removed valueToBooleanTreatUndefinedAsTrue() method.
+        * bindings/js/kjs_binding.h: Ditto.
+        * bindings/scripts/CodeGeneratorJS.pm: Removed support for ConvertUndefinedToTrue parameter attribute.
+        * dom/Element.h: Set default value to true for scrollIntoView() and scrollIntoViewIfNeeded() arguments.
+        * dom/Element.idl: Replaced ConvertUndefinedToTrue attribute with Optional attribute.
+          Fixed name of scrollIntoViewIfNeeded() argument to match implementation.
+        * page/DOMWindow.idl: Replaced ConvertUndefinedToTrue attribute with Optional attribute.
+
 2006-07-24  Dan Waylonis  <waylonis@google.com>
 
         Reviewed and tweaked a bunch by Darin.

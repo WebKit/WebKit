@@ -38,7 +38,7 @@ module window {
         // WebKit extensions
         CSSRuleList getMatchedCSSRules(in Element elt,
                                        in DOMString pseudoElt,
-                                       in [ConvertUndefinedToTrue] boolean authorOnly);
+                                       in [Optional] boolean authorOnly);
         readonly attribute double devicePixelRatio;
         
         // Global constructors

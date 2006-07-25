@@ -281,13 +281,6 @@ String valueToStringWithNullCheck(ExecState* exec, JSValue* val)
     return val->toString(exec);
 }
 
-bool valueToBooleanTreatUndefinedAsTrue(ExecState* exec, JSValue* val)
-{
-    if (val->isUndefined())
-        return true;
-    return val->toBoolean(exec);
-}
-
 static const char * const exceptionNames[] = {
     0,
     "INDEX_SIZE_ERR",
