@@ -1,5 +1,16 @@
 2006-07-25  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by adele
+        
+        <rdar://problem/4649560>
+        REGRESSION: Can't Select All when the body is contentEditable="true"
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::canonicalPosition): Allow descent from a non-editable html
+        element into an editable body as a convenience.
+
+2006-07-25  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
         
         <rdar://problem/4468458> Incoming HTML message is editable <body contenteditable="true">

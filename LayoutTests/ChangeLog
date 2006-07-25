@@ -1,3 +1,19 @@
+2006-07-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by adele
+        
+        <rdar://problem/4649560>
+        REGRESSION: Can't Select All when the body is contentEditable="true"
+
+        * editing/selection/select-all-005-expected.checksum: Added.
+        * editing/selection/select-all-005-expected.png: Added.
+        * editing/selection/select-all-005-expected.txt: Added.
+        * editing/selection/select-all-005.html: Added.
+        * editing/selection/select-all-006-expected.checksum: Added.
+        * editing/selection/select-all-006-expected.png: Added.
+        * editing/selection/select-all-006-expected.txt: Added.
+        * editing/selection/select-all-006.html: Added.
+
 2006-07-24  Dan Waylonis  <waylonis@google.com>
 
         Reviewed and tweaked a bit by Darin.
