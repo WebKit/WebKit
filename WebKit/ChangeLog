@@ -1,3 +1,18 @@
+2006-07-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele and Justin.
+
+        - update for change to require context when creating fragments from text
+          (needed to handle whitespace properly)
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:chosePlainText:]):
+        Added context parameter, pass through to bridge.
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]): Pass selection range as context
+        when calling above method.
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): Pass drag caret as context when
+        calling above method.
+
 2006-07-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

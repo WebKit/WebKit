@@ -395,11 +395,13 @@ void DeleteSelectionCommand::fixupWhitespace()
     updateLayout();
     // FIXME: isRenderedCharacter should be removed, and we should use VisiblePosition::characterAfter and VisiblePosition::characterBefore
     if (m_leadingWhitespace.isNotNull() && !m_leadingWhitespace.isRenderedCharacter()) {
-        Text *textNode = static_cast<Text *>(m_leadingWhitespace.node());
+        Text* textNode = static_cast<Text*>(m_leadingWhitespace.node());
+        ASSERT(!textNode->renderer() || textNode->renderer()->style()->collapseWhiteSpace());
         replaceTextInNode(textNode, m_leadingWhitespace.offset(), 1, nonBreakingSpaceString());
     }
     if (m_trailingWhitespace.isNotNull() && !m_trailingWhitespace.isRenderedCharacter()) {
-        Text *textNode = static_cast<Text *>(m_trailingWhitespace.node());
+        Text* textNode = static_cast<Text*>(m_trailingWhitespace.node());
+        ASSERT(!textNode->renderer() ||textNode->renderer()->style()->collapseWhiteSpace());
         replaceTextInNode(textNode, m_trailingWhitespace.offset(), 1, nonBreakingSpaceString());
     }
 }

@@ -3,7 +3,7 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 3 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -27,15 +27,12 @@ layer at (0,0) size 800x600
             text run at (251,0) width 384: " Copy/paste of a select element fails to include the options"
           RenderText {#text} at (635,0) size 4x18
             text run at (635,0) width 4: "."
-      RenderBlock {DIV} at (0,86) size 784x128
-        RenderBlock (anonymous) at (0,0) size 784x110
-          RenderImage {IMG} at (0,0) size 76x103
-          RenderText {#text} at (76,89) size 4x18
-            text run at (76,89) width 4: " "
-          RenderMenuList {SELECT} at (82,90) size 36x18
-        RenderBlock {DIV} at (0,110) size 784x18
-          RenderBR {BR} at (0,0) size 0x18
-      RenderBlock (anonymous) at (0,214) size 784x110
+      RenderBlock {DIV} at (0,86) size 784x110
+        RenderImage {IMG} at (0,0) size 76x103
+        RenderText {#text} at (76,89) size 4x18
+          text run at (76,89) width 4: " "
+        RenderMenuList {SELECT} at (82,90) size 36x18
+      RenderBlock (anonymous) at (0,196) size 784x110
         RenderImage {IMG} at (0,0) size 76x103
         RenderText {#text} at (76,89) size 4x18
           text run at (76,89) width 4: " "
@@ -45,4 +42,4 @@ layer at (0,0) size 800x600
               text run at (0,0) width 19: "    1"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-caret: position 0 of child 0 {BR} of child 3 {DIV} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 2 {SELECT} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document

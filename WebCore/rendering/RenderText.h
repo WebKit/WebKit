@@ -149,11 +149,10 @@ public:
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;
 
-    virtual int previousOffset (int current) const;
-    virtual int nextOffset (int current) const;
+    virtual int previousOffset(int current) const;
+    virtual int nextOffset(int current) const;
     
-    bool atLineWrap(InlineTextBox *box, int offset);
-    bool containsReversedText() { return m_containsReversedText; }
+    bool containsReversedText() const { return m_containsReversedText; }
     
 public:
     InlineTextBox * findNextInlineTextBox( int offset, int &pos ) const;

@@ -85,41 +85,53 @@ void InsertLineBreakCommand::doApply()
     if (selection.isNone())
         return;
 
-    RefPtr<Element> breakNode = createBreakElement(document());
-    Node* nodeToInsert = breakNode.get();
-    
     Position pos(selection.start().upstream());
 
     pos = positionAvoidingSpecialElementBoundary(pos);
 
-    if (isTabSpanTextNode(pos.node())) {
-        insertNodeAtTabSpanPosition(nodeToInsert, pos);
+    Node* styleNode = pos.node();
+    bool isTabSpan = isTabSpanTextNode(styleNode);
+    if (isTabSpan)
+        styleNode = styleNode->parentNode()->parentNode();
+    RenderObject* styleRenderer = styleNode->renderer();
+    bool useBreakElement = !styleRenderer || !styleRenderer->style()->preserveNewline();
+
+    RefPtr<Node> nodeToInsert;
+    if (useBreakElement)
+        nodeToInsert = createBreakElement(document());
+    else
+        nodeToInsert = document()->createTextNode("\n");
+        // FIXME: Need to merge text nodes when inserting just after or before text.
+    
+    if (isTabSpan) {
+        insertNodeAtTabSpanPosition(nodeToInsert.get(), pos);
         setEndingSelection(Position(nodeToInsert->traverseNextNode(), 0), DOWNSTREAM);
     } else if (isEndOfBlock(VisiblePosition(pos, selection.affinity()))) {
-        
         Node* block = pos.node()->enclosingBlockFlowElement();
         
-        // Insert an extra br if the inserted one will collapsed because of quirks mode.
-        if (!document()->inStrictMode() && !(pos.downstream().node()->hasTagName(brTag) && pos.downstream().offset() == 0)) {
-            insertNodeAt(nodeToInsert, pos.node(), pos.offset());
-            insertNodeAfter(createBreakElement(document()).get(), nodeToInsert);
-        } else
-            insertNodeAt(nodeToInsert, pos.node(), pos.offset());
+        // Insert an extra break element so that there will be a blank line after the last
+        // inserted line break. In HTML, a line break at the end of a block ends the last
+        // line in the block, while in editable text, a line break at the end of block
+        // creates a last blank line. We need an extra break element to get HTML to act
+        // the way editable text would.
+        bool haveBreak = pos.downstream().node()->hasTagName(brTag) && pos.downstream().offset() == 0;
+        insertNodeAt(nodeToInsert.get(), pos.node(), pos.offset());
+        if (!haveBreak)
+            insertNodeAfter(createBreakElement(document()).get(), nodeToInsert.get());
             
         setEndingSelection(Position(block, maxDeepOffset(block)), DOWNSTREAM);
-    }
-    else if (pos.offset() <= pos.node()->caretMinOffset()) {
+    } else if (pos.offset() <= pos.node()->caretMinOffset()) {
         LOG(Editing, "input newline case 2");
         // Insert node before downstream position, and place caret there as well. 
         Position endingPosition = pos.downstream();
-        insertNodeBeforePosition(nodeToInsert, endingPosition);
+        insertNodeBeforePosition(nodeToInsert.get(), endingPosition);
         setEndingSelection(endingPosition, DOWNSTREAM);
     } else if (pos.offset() >= pos.node()->caretMaxOffset()) {
         LOG(Editing, "input newline case 3");
         // Insert BR after this node. Place caret in the position that is downstream
         // of the current position, reckoned before inserting the BR in between.
         Position endingPosition = pos.downstream();
-        insertNodeAfterPosition(nodeToInsert, pos);
+        insertNodeAfterPosition(nodeToInsert.get(), pos);
         setEndingSelection(endingPosition, DOWNSTREAM);
     } else {
         // Split a text node
@@ -132,7 +144,7 @@ void InsertLineBreakCommand::doApply()
         RefPtr<Text> textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.start().offset(), ec));
         deleteTextFromNode(textNode, 0, pos.offset());
         insertNodeBefore(textBeforeNode.get(), textNode);
-        insertNodeBefore(nodeToInsert, textNode);
+        insertNodeBefore(nodeToInsert.get(), textNode);
         Position endingPosition = Position(textNode, 0);
         
         // Handle whitespace that occurs after the split
@@ -140,6 +152,7 @@ void InsertLineBreakCommand::doApply()
         if (!endingPosition.isRenderedCharacter()) {
             // Clear out all whitespace and insert one non-breaking space
             deleteInsignificantTextDownstream(endingPosition);
+            ASSERT(!textNode->renderer() || textNode->renderer()->style()->collapseWhiteSpace());
             insertTextIntoNode(textNode, 0, nonBreakingSpaceString());
         }
         
@@ -154,7 +167,8 @@ void InsertLineBreakCommand::doApply()
     
     if (typingStyle && typingStyle->length() > 0) {
         Selection selectionBeforeStyle = endingSelection();
-        applyStyle(typingStyle, Position(nodeToInsert, 0), Position(nodeToInsert, maxDeepOffset(nodeToInsert)));
+        applyStyle(typingStyle, Position(nodeToInsert.get(), 0),
+            Position(nodeToInsert.get(), maxDeepOffset(nodeToInsert.get())));
         setEndingSelection(selectionBeforeStyle);
     }
 

@@ -28,7 +28,6 @@
 #define Cache_h
 
 #include "CachePolicy.h"
-#include "DeprecatedPtrList.h"
 #include "PlatformString.h"
 #include <wtf/HashSet.h>
 

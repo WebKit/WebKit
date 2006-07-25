@@ -771,19 +771,19 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return m_frame->documentTypeString() + markupString;
 }
 
-- (NSArray *)nodesFromList:(DeprecatedPtrList<Node> *)nodeList
+- (NSArray *)nodesFromList:(Vector<Node*> *)nodesVector
 {
-    NSMutableArray *nodes = [NSMutableArray arrayWithCapacity:nodeList->count()];
-    for (DeprecatedPtrListIterator<Node> i(*nodeList); i.current(); ++i)
-        [nodes addObject:[DOMNode _nodeWith:i.current()]];
-
+    size_t size = nodesVector->size();
+    NSMutableArray *nodes = [NSMutableArray arrayWithCapacity:size];
+    for (size_t i = 0; i < size; ++i)
+        [nodes addObject:[DOMNode _nodeWith:(*nodesVector)[i]]];
     return nodes;
 }
 
 - (NSString *)markupStringFromNode:(DOMNode *)node nodes:(NSArray **)nodes
 {
     // FIXME: This is never "for interchange". Is that right? See the next method.
-    DeprecatedPtrList<Node> nodeList;
+    Vector<Node*> nodeList;
     NSString *markupString = createMarkup([node _node], IncludeNode, nodes ? &nodeList : 0).getNSString();
     if (nodes)
         *nodes = [self nodesFromList:&nodeList];
@@ -794,7 +794,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (NSString *)markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes
 {
     // FIXME: This is always "for interchange". Is that right? See the previous method.
-    DeprecatedPtrList<Node> nodeList;
+    Vector<Node*> nodeList;
     NSString *markupString = createMarkup([range _range], nodes ? &nodeList : 0, AnnotateForInterchange).getNSString();
     if (nodes)
         *nodes = [self nodesFromList:&nodeList];
@@ -1943,28 +1943,23 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         DeprecatedString::fromNSString(markupString), DeprecatedString::fromNSString(baseURLString)).get()];
 }
 
-- (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text
+- (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text inContext:(DOMRange *)context
 {
-    if (!m_frame || !m_frame->document() || !text)
-        return 0;
-    
-    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText(m_frame->document(), DeprecatedString::fromNSString(text)).get()];
+    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText([context _range], DeprecatedString::fromNSString(text)).get()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithNodesAsParagraphs:(NSArray *)nodes
 {
-    NSEnumerator *nodeEnum = [nodes objectEnumerator];
-    DOMNode *node;
-    DeprecatedPtrList<Node> nodeList;
-    
     if (!m_frame || !m_frame->document())
         return 0;
     
-    while ((node = [nodeEnum nextObject])) {
-        nodeList.append([node _node]);
-    }
+    NSEnumerator *nodeEnum = [nodes objectEnumerator];
+    Vector<Node*> nodesVector;
+    DOMNode *node;
+    while ((node = [nodeEnum nextObject]))
+        nodesVector.append([node _node]);
     
-    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromNodeList(m_frame->document(), nodeList).get()];
+    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromNodes(m_frame->document(), nodesVector).get()];
 }
 
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
@@ -1991,7 +1986,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
-    [self replaceSelectionWithFragment:[self documentFragmentWithText:text] selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
+    [self replaceSelectionWithFragment:[self documentFragmentWithText:text
+        inContext:[DOMRange _rangeWith:m_frame->selection().toRange().get()]]
+        selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
 }
 
 - (bool)canIncreaseSelectionListLevel

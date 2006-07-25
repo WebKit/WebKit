@@ -17,7 +17,6 @@ NSForegroundColor,NSToolTip,NSFont,NSObliqueness
 NSToolTip,NSForegroundColor,NSFont
 0.5
 undefined
-undefined
 NSDeviceRGBColorSpace 1 0.5 1 0.5
 
 

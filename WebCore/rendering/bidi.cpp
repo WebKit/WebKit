@@ -2474,7 +2474,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
     if (lBreak == start && !lBreak.obj->isBR()) {
         // we just add as much as possible
-        if (style()->whiteSpace() == PRE) {
+        if (style()->preserveNewline()) {
             // FIXME: Don't really understand this case.
             if (pos != 0) {
                 lBreak.obj = o;

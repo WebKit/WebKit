@@ -52,24 +52,20 @@ typedef HashMap<Node*, RefPtr<RenderingInfo> > RenderingInfoMap;
 
 // --- ReplacementFragment helper class
 
-class ReplacementFragment
+class ReplacementFragment : Noncopyable
 {
 public:
-    ReplacementFragment(Document*, DocumentFragment*, bool, Element*);
-    ~ReplacementFragment();
+    ReplacementFragment(Document*, DocumentFragment*, bool matchStyle, const Selection&);
 
-    Node *firstChild() const;
-    Node *lastChild() const;
+    Node* firstChild() const;
+    Node* lastChild() const;
 
-    Node *mergeStartNode() const;
+    Node* mergeStartNode() const;
 
     const RenderingInfoMap& renderingInfo() const { return m_renderingInfo; }
     const NodeVector& nodes() const { return m_nodes; }
 
-    EFragmentType type() const { return m_type; }
-    bool isEmpty() const { return m_type == EmptyFragment; }
-    bool isSingleTextNode() const { return m_type == SingleTextNodeFragment; }
-    bool isTreeFragment() const { return m_type == TreeFragment; }
+    bool isEmpty() const;
 
     bool hasMoreThanOneBlock() const { return m_hasMoreThanOneBlock; }
     bool hasInterchangeNewlineAtStart() const { return m_hasInterchangeNewlineAtStart; }
@@ -79,15 +75,11 @@ public:
     
     void removeNode(PassRefPtr<Node>);
 
-private:
-    // no copy construction or assignment
-    ReplacementFragment(const ReplacementFragment &);
-    ReplacementFragment &operator=(const ReplacementFragment &);
+private:    
+    static bool isInterchangeNewlineNode(const Node*);
+    static bool isInterchangeConvertedSpaceSpan(const Node*);
     
-    static bool isInterchangeNewlineNode(const Node *);
-    static bool isInterchangeConvertedSpaceSpan(const Node *);
-    
-    PassRefPtr<Node> insertFragmentForTestRendering();
+    PassRefPtr<Node> insertFragmentForTestRendering(Node* context);
     void saveRenderingInfo(Node*);
     void computeStylesUsingTestRendering(Node*);
     void removeUnrenderedNodes(Node*);
@@ -95,11 +87,10 @@ private:
     int renderedBlocks(Node*);
     void removeStyleNodes();
 
-    Node *enclosingBlock(Node *) const;
-    void removeNodePreservingChildren(Node *);
-    void insertNodeBefore(Node *node, Node *refNode);
+    Node* enclosingBlock(Node*) const;
+    void removeNodePreservingChildren(Node*);
+    void insertNodeBefore(Node* node, Node* refNode);
 
-    EFragmentType m_type;
     RefPtr<Document> m_document;
     RefPtr<DocumentFragment> m_fragment;
     RenderingInfoMap m_renderingInfo;
@@ -128,10 +119,10 @@ private:
 
     void updateNodesInserted(Node *);
     void fixupNodeStyles(const NodeVector&, const RenderingInfoMap&);
-    void removeEndBRIfNeeded(Node*);
+    bool shouldRemoveEndBR(Node*);
     
     bool shouldMergeStart(const ReplacementFragment&, const Selection&);
-    bool shouldMergeEnd(const VisiblePosition&, bool, bool);
+    bool shouldMergeEnd(const VisiblePosition&, bool selectionEndWasEndOfParagraph);
 
     RefPtr<Node> m_firstNodeInserted;
     RefPtr<Node> m_lastNodeInserted;

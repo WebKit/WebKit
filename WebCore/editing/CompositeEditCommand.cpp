@@ -372,8 +372,16 @@ void CompositeEditCommand::setNodeAttribute(Element *element, const QualifiedNam
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::rebalanceWhitespaceAt(const Position &position)
+void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
 {
+    Node* textNode = position.node();
+    if (!textNode || !textNode->isTextNode())
+        return;
+    if (static_cast<Text*>(textNode)->length() == 0)
+        return;
+    RenderObject* renderer = textNode->renderer();
+    if (renderer && !renderer->style()->collapseWhiteSpace())
+        return;
     EditCommandPtr cmd(new RebalanceWhitespaceCommand(document(), position));
     applyCommandToComposite(cmd);    
 }
@@ -382,12 +390,9 @@ void CompositeEditCommand::rebalanceWhitespace()
 {
     Selection selection = endingSelection();
     if (selection.isCaretOrRange()) {
-        EditCommandPtr startCmd(new RebalanceWhitespaceCommand(document(), endingSelection().start()));
-        applyCommandToComposite(startCmd);
-        if (selection.isRange()) {
-            EditCommandPtr endCmd(new RebalanceWhitespaceCommand(document(), endingSelection().end()));
-            applyCommandToComposite(endCmd);
-        }
+        rebalanceWhitespaceAt(endingSelection().start());
+        if (selection.isRange())
+            rebalanceWhitespaceAt(endingSelection().end());
     }
 }
 

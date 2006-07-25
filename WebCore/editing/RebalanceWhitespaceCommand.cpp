@@ -49,12 +49,12 @@ void RebalanceWhitespaceCommand::doApply()
 {
     if (m_position.isNull() || !m_position.node()->isTextNode())
         return;
-        
-    Text *textNode = static_cast<Text *>(m_position.node());
+
+    Text* textNode = static_cast<Text*>(m_position.node());
     String text = textNode->data();
-    if (text.length() == 0)
-        return;
-    
+    ASSERT(!text.isEmpty());
+    ASSERT(!textNode->renderer() || textNode->renderer()->style()->collapseWhiteSpace());
+
     int offset = m_position.offset();
     // If neither text[offset] nor text[offset - 1] are some form of whitespace, do nothing.
     if (!isWhitespace(text[offset])) {
@@ -102,4 +102,3 @@ bool RebalanceWhitespaceCommand::preservesTypingStyle() const
 }
 
 } // namespace WebCore
-

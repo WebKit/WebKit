@@ -259,13 +259,13 @@ String HTMLTextAreaElement::value() const
 
 void HTMLTextAreaElement::setValue(const String& value)
 {
-    DeprecatedString string = value.deprecatedString();
     // WebCoreTextArea normalizes line endings added by the user via the keyboard or pasting.
     // We must normalize line endings coming from JS.
-    string.replace("\r\n", "\n");
-    string.replace("\r", "\n");
+    DeprecatedString valueWithNormalizedLineEndings = value.deprecatedString();
+    valueWithNormalizedLineEndings.replace("\r\n", "\n");
+    valueWithNormalizedLineEndings.replace("\r", "\n");
     
-    m_value = String(string);
+    m_value = valueWithNormalizedLineEndings;
     setValueMatchesRenderer();
     if (renderer())
         renderer()->updateFromElement();
@@ -283,13 +283,14 @@ String HTMLTextAreaElement::defaultValue() const
 {
     String val = "";
 
-    // there may be comments - just grab the text nodes
+    // Since there may be comments, ignore nodes other than text nodes.
     for (Node* n = firstChild(); n; n = n->nextSibling())
         if (n->isTextNode())
             val += static_cast<Text*>(n)->data();
 
     // FIXME: We should only drop the first carriage return for the default
-    // value in the original source, not defaultValues set from JS.
+    // value in the original source, not defaultValues set from JS. This code
+    // will do both.
     if (val.length() >= 2 && val[0] == '\r' && val[1] == '\n')
         val.remove(0, 2);
     else if (val.length() >= 1 && (val[0] == '\r' || val[0] == '\n'))
@@ -300,18 +301,15 @@ String HTMLTextAreaElement::defaultValue() const
 
 void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
 {
-    // there may be comments - remove all the text nodes and replace them with one
-    DeprecatedPtrList<Node> toRemove;
-    Node *n;
-    for (n = firstChild(); n; n = n->nextSibling())
+    // To preserve comments, remove all the text nodes, then add a single one.
+    Vector<RefPtr<Node> > textNodes;
+    for (Node* n = firstChild(); n; n = n->nextSibling())
         if (n->isTextNode())
-            toRemove.append(n);
-    DeprecatedPtrListIterator<Node> it(toRemove);
+            textNodes.append(n);
     ExceptionCode ec = 0;
-    for (; it.current(); ++it) {
-        RefPtr<Node> n = it.current();
-        removeChild(n.get(), ec);
-    }
+    size_t size = textNodes.size();
+    for (size_t i = 0; i < size; ++i)
+        removeChild(textNodes[i].get(), ec);
     insertBefore(document()->createTextNode(defaultValue), firstChild(), ec);
     setValue(defaultValue);
 }

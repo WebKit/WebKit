@@ -1,3 +1,136 @@
+2006-07-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele and Justin.
+
+        - fix <rdar://problem/4613616> REGRESSION: some spaces typed in <textarea> are posted as non-breaking spaces (9630)
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=9630
+        - also fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=9939
+          REGRESSION: Pasting text into native text area with newline at end does not preserve newline
+        - removed some uses of DeprecatedPtrList in the markup code
+
+        Test: fast/forms/textarea-type-spaces.html
+        Test: fast/forms/textarea-paste-newline.html
+
+        * bindings/objc/DOMHTML.mm: (-[DOMHTMLDocument createDocumentFragmentWithText:]):
+        Updated call to pass a range -- in this case it is the range of the entire document,
+        so this will not handle the whitespace properly.
+
+        * bridge/mac/WebCoreFrameBridge.h: Added range context parameter to the
+        documentFragmentWithText: method, so we can handle whitespace properly.
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge nodesFromList:]): Changed from DeprecatedPtrList to Vector.
+        (-[WebCoreFrameBridge markupStringFromNode:nodes:]): Ditto.
+        (-[WebCoreFrameBridge markupStringFromRange:nodes:]): Ditto.
+        (-[WebCoreFrameBridge documentFragmentWithText:inContext:]): Added range context
+        parameter -- pass it on to createFragmentFromText.
+        (-[WebCoreFrameBridge documentFragmentWithNodesAsParagraphs:]): Changed from
+        DeprecatedPtrList to Vector.
+        (-[WebCoreFrameBridge replaceSelectionWithText:selectReplacement:smartReplace:]):
+        Pass the range of the current selection as context when creating the fragment.
+
+        * dom/Position.cpp: (WebCore::Position::inRenderedText): Replace range check with
+        a call to the new containsCaretOffset function -- helps make the caret work right when
+        it is past the end of the last line in a textarea.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt): Don't do anything if the
+        style does not call for collapsing whitespace.
+        (WebCore::CompositeEditCommand::rebalanceWhitespace): Call replaceWhitespaceAt
+        to share code, including the new logic mentioned above.
+
+        * editing/InsertLineBreakCommand.cpp: (WebCore::InsertLineBreakCommand::doApply):
+        Use a text node instead of a break element when inserting and the style is preserveNewline.
+
+        * editing/JSEditor.cpp: (WebCore::execRemoveFormat): Pass the selection range
+        to createFragmentFromText.
+
+        * editing/RebalanceWhitespaceCommand.cpp: (WebCore::RebalanceWhitespaceCommand::doApply):
+        Assert that we're in a style that collapses whitespace. It's the caller's responsibility
+        not to call otherwise.
+
+        * editing/ReplaceSelectionCommand.h: Removed unused destructor, type, isSingleTextNode,
+        isTreeFragment, m_type, and added a context parameter to inertFragmentForTestRendering.
+        Also changed the constructor to take a selection rather than a pointer to the root
+        editable element, replaced removeEndBRIfNeeded with shouldRemoveEndBR and removed an
+        unused parameter from shouldMergeEnd.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment): Removed code to set up m_type.
+        Compute root editable element from passed-in selection. Used the start of the selection
+        as a base node for style purposes for the test rendering. Removed the special case
+        "single text node" alternative to createFragmentFromText in the plain text case, since
+        createFragmentFromText now handles that correctly.
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering): Copy the whitespace
+        property from the source location when creating a temporary element for test rendering.
+        (WebCore::ReplacementFragment::shouldMergeEnd): Removed unneeded boolean
+        parameter fragmentHadInterchangeNewlineAtEnd, which is always false.
+        (WebCore::ReplaceSelectionCommand::doApply): Update for ReplacementFragment changes,
+        change code to not remove end BR when it can be re-used instead, don't call the
+        paragraph separator insertion when the position is at the start of a paragraph already,
+        removed redundant computation of identical "next" value, removed unneeded boolean
+        parameter to shouldMergeEnd, add case for merging when all we need to do is to delete
+        a newline character, removed unneeded code to set insertionPos after all code that uses
+        it, and  use spaces instead of non-breaking spaces when doing smart paste if the
+        context is one where we do not collapse white space.
+        (WebCore::ReplaceSelectionCommand::shouldRemoveEndBR): Renamed and changed to return
+        a boolean instead of doing the removal.
+
+        * editing/markup.h: Use Vector instead of DeprecatedPtrList. Change the
+        createFragmentFromText function to take a range for context instead of a document.
+        * editing/markup.cpp:
+        (WebCore::markup): Use Vector instead of DeprecatedPtrList.
+        (WebCore::createMarkup): Ditto.
+        (WebCore::createParagraphContentsFromString): Remove unneeded document parameter
+        and changed a couple places to use isEmpty instead of comparing with "".
+        (WebCore::createFragmentFromText): Given the new context parameter, if the context
+        is one that preserves newlines, then use "\n" instead of <br> elements.
+        (WebCore::createFragmentFromNodes): Use Vector instead of DeprecatedPtrList.
+
+        * html/HTMLElement.cpp: (WebCore::HTMLElement::setInnerText): Do not use <br>
+        elements if the context of this node is one where we preserve newlines.
+
+        * rendering/InlineTextBox.h:
+        * rendering/InlineTextBox.cpp: (WebCore::InlineTextBox::containsCaretOffset):
+        Added. Implements the appropriate rule for determining if a caret position is
+        in this line or not. Returns true for both one line and the next in cases where
+        affinity must be considered to determine which line the caret is on.
+
+        * rendering/RenderText.h: Make atLineWrap no longer be a member function.
+        * rendering/RenderText.cpp:
+        (WebCore::atLineWrap): Remove special rule about preserveNewline and isLineBreak,
+        which will no longer apply due to the new containsCaretOffset function logic.
+        (WebCore::RenderText::caretRect): Use containsCaretOffset.
+        (WebCore::RenderText::inlineBox): Ditto.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::updateFromElement): Make a placeholder <br> element
+        after calling setInnerText so that the last newline in the string has the effect
+        we expect outside the HTML world (an additional line).
+        (WebCore::RenderTextControl::setSelectionRange): Set granularity of the selection
+        too. The layout tests caught this problem, which needs a better solution long term.
+        (WebCore::RenderTextControl::text): Call textContent with the parameter false
+        so it will not include newlines for <br> elements. Now the only <br> element
+        that will ever be in the shadow DOM tree is the one to prevent collapsing, and
+        that one should not show up in the text value.
+
+        * rendering/bidi.cpp: (WebCore::RenderBlock::findNextLineBreak): Took a rule
+        that specifically called out the pre whitespace mode and made it work for all
+        the modes that preserve newlines. This makes sure we get a last line box for
+        text after the last "\n" even in cases where there is no <br> afterward.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::fixupWhitespace):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        Added assertions to make sure we don't do anything when we're not collapsing
+        whitespace.
+
+        * html/HTMLTextAreaElement.cpp: (WebCore::HTMLTextAreaElement::setDefaultValue):
+        Changed to use Vector instead of DeprecatedPtrList.
+
+        * editing/HTMLInterchange.cpp: Removed obsolete comment.
+
+        * loader/Cache.h: Removed a stray include.
+
 2006-07-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin.

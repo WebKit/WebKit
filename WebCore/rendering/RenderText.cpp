@@ -358,14 +358,9 @@ static RenderObject *lastRendererOnPrevLine(InlineBox *box)
     return lastChild->object();
 }
 
-bool RenderText::atLineWrap(InlineTextBox *box, int offset)
+static inline bool atLineWrap(InlineTextBox* box, int offset)
 {
-    if (box->nextTextBox() && !box->nextOnLine() && offset == box->m_start + box->m_len) {
-        if (!style()->preserveNewline() || !box->isLineBreak())
-            return true;
-    }
-    
-    return false;
+    return box->nextTextBox() && !box->nextOnLine() && offset == box->m_start + box->m_len;
 }
 
 IntRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
@@ -376,7 +371,7 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToE
     // Find the text box for the given offset
     InlineTextBox *box = 0;
     for (box = firstTextBox(); box; box = box->nextTextBox()) {
-        if ((offset >= box->m_start) && (offset <= box->m_start + box->m_len)) {
+        if (box->containsCaretOffset(offset)) {
             // Check if downstream affinity would make us move to the next line.
             if (atLineWrap(box, offset) && affinity == DOWNSTREAM) {
                 // Use the next text box
@@ -1113,21 +1108,19 @@ unsigned RenderText::caretMaxRenderedOffset() const
     return l;
 }
 
-InlineBox *RenderText::inlineBox(int offset, EAffinity affinity)
+InlineBox* RenderText::inlineBox(int offset, EAffinity affinity)
 {
-    for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (offset >= box->m_start && offset <= box->m_start + box->m_len) {
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+        if (box->containsCaretOffset(offset)) {
             if (atLineWrap(box, offset) && affinity == DOWNSTREAM)
                 return box->nextTextBox();
             return box;
         }
-        
-        if (offset < box->m_start) {
+        if (offset < box->m_start)
             // The offset we're looking for is before this node
             // this means the offset must be in content that is
             // not rendered.
             return box->prevTextBox() ? box->prevTextBox() : firstTextBox();
-        }
     }
     
     return 0;

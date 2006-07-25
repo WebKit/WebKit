@@ -1,3 +1,65 @@
+2006-07-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele and Justin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9630
+          REGRESSION: some spaces typed in <textarea> are posted as non-breaking spaces
+
+        * fast/forms/textarea-type-spaces-expected.txt: Added.
+        * fast/forms/textarea-type-spaces.html: Added.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9939
+          REGRESSION: Pasting text into native text area with newline at end does not preserve newline
+
+        * fast/forms/textarea-paste-newline-expected.txt: Added.
+        * fast/forms/textarea-paste-newline.html: Added.
+
+        - updated tests affected by above changes, results are equivalent or better
+
+        * editing/pasteboard/4641033-expected.checksum:
+        * editing/pasteboard/4641033-expected.png:
+        * editing/pasteboard/4641033-expected.txt:
+        * editing/pasteboard/paste-table-003-expected.checksum:
+        * editing/pasteboard/paste-table-003-expected.png:
+        * editing/pasteboard/paste-table-003-expected.txt:
+        * editing/pasteboard/paste-text-016-expected.txt:
+        * editing/pasteboard/quirks-mode-br-1-expected.txt:
+        * editing/pasteboard/quirks-mode-br-2-expected.txt:
+        * fast/forms/textarea-scrolled-type-expected.checksum:
+        * fast/forms/textarea-scrolled-type-expected.png:
+        * fast/forms/textarea-scrolled-type-expected.txt:
+
+        - changed a test to be a "dump as text" test
+
+        * fast/forms/paste-into-textarea-expected.txt:
+        * fast/forms/paste-into-textarea.html:
+        * fast/forms/paste-into-textarea-expected.checksum: Removed.
+        * fast/forms/paste-into-textarea-expected.png: Removed.
+
+        - changed a test to be a "dump as text" test, improved test a bit and also checked in new results
+
+        * fast/forms/textarea-scrolled-endline-caret-expected.txt:
+        * fast/forms/textarea-scrolled-endline-caret.html:
+
+        - fixed a test that was raising an exception every time it ran
+
+        * fast/forms/attributed-strings-expected.txt:
+        * fast/forms/attributed-strings.html:
+
+        - corrected checksums on a bunch of tests (pngs were right, but checksums wrong, apparently)
+
+        * editing/deleting/delete-to-select-table-expected.checksum:
+        * editing/selection/3690719-expected.checksum:
+        * editing/selection/clear-selection-expected.checksum:
+        * editing/undo/undo-misspellings-expected.checksum:
+
+        - added some missing pixel test results
+
+        * editing/pasteboard/nested-blocks-with-text-area-expected.checksum: Added.
+        * editing/pasteboard/nested-blocks-with-text-area-expected.png: Added.
+        * editing/pasteboard/nested-blocks-with-text-field-expected.checksum: Added.
+        * editing/pasteboard/nested-blocks-with-text-field-expected.png: Added.
+
 2006-07-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin.

@@ -2,20 +2,24 @@
 <script>
 function test()
 {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
     var ta = document.getElementById('ta')
+    var res = document.getElementById('res');
     ta.focus();
     // click
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.eventSender) {
         eventSender.mouseMoveTo(90, 20);
         eventSender.mouseDown();
         eventSender.mouseUp();
+        if (ta.selectionEnd == 17)
+            res.innerHTML = "Test Succeeded";
+        else
+            res.innerHTML = "Test Failed: caret is at " + ta.selectionEnd;
+    } else {
+        res.innerHTML = "Test can't run without event sender (part of DumpRenderTree). "
+            + "To test manually, click at the middle of the line marked 9 and check that the caret appears after the 9.";
     }
-    var res = document.getElementById('res');
-    if (ta.selectionEnd == 17)
-        res.innerHTML = "Test Succeeded";
-    else
-        res.innerHTML = "Test Failed: caret is at " + ta.selectionEnd;
 }
 </script>
 </head>
@@ -30,6 +34,6 @@ function test()
 7
 8
 9
-10
-</textarea>
+10</textarea>
 <div id="res"></div>
+</body>

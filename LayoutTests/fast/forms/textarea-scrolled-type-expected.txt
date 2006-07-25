@@ -1,18 +1,18 @@
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > DIV to 2 of #text > DIV toDOMRange:range from 3 of #text > DIV to 3 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 44 of #text > DIV to 44 of #text > DIV toDOMRange:range from 45 of #text > DIV to 45 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV to 3 of #text > DIV toDOMRange:range from 4 of #text > DIV to 4 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 45 of #text > DIV to 45 of #text > DIV toDOMRange:range from 46 of #text > DIV to 46 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV to 4 of #text > DIV toDOMRange:range from 5 of #text > DIV to 5 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 46 of #text > DIV to 46 of #text > DIV toDOMRange:range from 47 of #text > DIV to 47 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV to 5 of #text > DIV toDOMRange:range from 6 of #text > DIV to 6 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 47 of #text > DIV to 47 of #text > DIV toDOMRange:range from 48 of #text > DIV to 48 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > DIV to 6 of #text > DIV toDOMRange:range from 7 of #text > DIV to 7 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 48 of #text > DIV to 48 of #text > DIV toDOMRange:range from 49 of #text > DIV to 49 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -29,66 +29,48 @@ layer at (0,0) size 800x600
           text run at (167,101) width 4: " "
         RenderBR {BR} at (171,115) size 0x0
       RenderBlock {DIV} at (0,119) size 784x0
-layer at (11,29) size 161x91 clip at (11,29) size 146x91 scrollY 169 scrollHeight 260
+layer at (11,29) size 161x91 clip at (11,29) size 146x91 scrollY 182 scrollHeight 273
   RenderBlock {DIV} at (1,1) size 161x91
-    RenderText {#text} at (3,0) size 7x13
+    RenderText {#text} at (3,0) size 41x260
       text run at (3,0) width 7: "1"
-    RenderBR {BR} at (10,11) size 0x0
-    RenderText {#text} at (3,13) size 7x13
+      text run at (10,0) width 0: " "
       text run at (3,13) width 7: "2"
-    RenderBR {BR} at (10,24) size 0x0
-    RenderText {#text} at (3,26) size 7x13
+      text run at (10,13) width 0: " "
       text run at (3,26) width 7: "3"
-    RenderBR {BR} at (10,37) size 0x0
-    RenderText {#text} at (3,39) size 7x13
+      text run at (10,26) width 0: " "
       text run at (3,39) width 7: "4"
-    RenderBR {BR} at (10,50) size 0x0
-    RenderText {#text} at (3,52) size 7x13
+      text run at (10,39) width 0: " "
       text run at (3,52) width 7: "5"
-    RenderBR {BR} at (10,63) size 0x0
-    RenderText {#text} at (3,65) size 7x13
+      text run at (10,52) width 0: " "
       text run at (3,65) width 7: "6"
-    RenderBR {BR} at (10,76) size 0x0
-    RenderText {#text} at (3,78) size 7x13
+      text run at (10,65) width 0: " "
       text run at (3,78) width 7: "7"
-    RenderBR {BR} at (10,89) size 0x0
-    RenderText {#text} at (3,91) size 7x13
+      text run at (10,78) width 0: " "
       text run at (3,91) width 7: "8"
-    RenderBR {BR} at (10,102) size 0x0
-    RenderText {#text} at (3,104) size 7x13
+      text run at (10,91) width 0: " "
       text run at (3,104) width 7: "9"
-    RenderBR {BR} at (10,115) size 0x0
-    RenderText {#text} at (3,117) size 14x13
+      text run at (10,104) width 0: " "
       text run at (3,117) width 14: "10"
-    RenderBR {BR} at (17,128) size 0x0
-    RenderText {#text} at (3,130) size 14x13
+      text run at (17,117) width 0: " "
       text run at (3,130) width 14: "11"
-    RenderBR {BR} at (17,141) size 0x0
-    RenderText {#text} at (3,143) size 14x13
+      text run at (17,130) width 0: " "
       text run at (3,143) width 14: "12"
-    RenderBR {BR} at (17,154) size 0x0
-    RenderText {#text} at (3,156) size 14x13
+      text run at (17,143) width 0: " "
       text run at (3,156) width 14: "13"
-    RenderBR {BR} at (17,167) size 0x0
-    RenderText {#text} at (3,169) size 14x13
+      text run at (17,156) width 0: " "
       text run at (3,169) width 14: "14"
-    RenderBR {BR} at (17,180) size 0x0
-    RenderText {#text} at (3,182) size 14x13
+      text run at (17,169) width 0: " "
       text run at (3,182) width 14: "15"
-    RenderBR {BR} at (17,193) size 0x0
-    RenderText {#text} at (3,195) size 14x13
+      text run at (17,182) width 0: " "
       text run at (3,195) width 14: "16"
-    RenderBR {BR} at (17,206) size 0x0
-    RenderText {#text} at (3,208) size 14x13
+      text run at (17,195) width 0: " "
       text run at (3,208) width 14: "17"
-    RenderBR {BR} at (17,219) size 0x0
-    RenderText {#text} at (3,221) size 41x13
+      text run at (17,208) width 0: " "
       text run at (3,221) width 41: "18 Pass"
-    RenderBR {BR} at (44,232) size 0x0
-    RenderText {#text} at (3,234) size 14x13
+      text run at (44,221) width 0: " "
       text run at (3,234) width 14: "19"
-    RenderBR {BR} at (17,245) size 0x0
-    RenderText {#text} at (3,247) size 14x13
+      text run at (17,234) width 0: " "
       text run at (3,247) width 14: "20"
-    RenderBR {BR} at (17,258) size 0x0
-caret: position 7 of child 34 {#text} of child 0 {DIV} of child 3 {TEXTAREA} of child 1 {BODY} of child 0 {HTML} of document
+      text run at (17,247) width 0: " "
+    RenderBR {BR} at (3,260) size 0x13
+caret: position 49 of child 0 {#text} of child 0 {DIV} of child 3 {TEXTAREA} of child 1 {BODY} of child 0 {HTML} of document

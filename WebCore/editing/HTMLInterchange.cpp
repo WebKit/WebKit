@@ -48,7 +48,6 @@ DeprecatedString convertedSpaceString()
 
 } // end anonymous namespace
 
-// FIXME: convertHTMLTextToInterchangeFormat should probably be in the khtml namespace.
 // FIXME: Can't really do this work without taking whitespace mode into account.
 // This means that eventually this function needs to be eliminated or at least have
 // its parameters changed because it can't do its work on the string without knowing

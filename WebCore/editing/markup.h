@@ -28,6 +28,7 @@
 
 #include "HTMLInterchange.h"
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -37,18 +38,16 @@ namespace WebCore {
     class Range;
     class String;
 
-    template <class T> class DeprecatedPtrList;
-
     enum EChildrenOnly { IncludeNode, ChildrenOnly };
 
-    PassRefPtr<DocumentFragment> createFragmentFromText(Document*, const DeprecatedString &text);
-    PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String &markup, const String &baseURL);
-    PassRefPtr<DocumentFragment> createFragmentFromNodeList(Document*, const DeprecatedPtrList<Node> &nodeList);
+    PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String& text);
+    PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String& markup, const String& baseURL);
+    PassRefPtr<DocumentFragment> createFragmentFromNodes(Document*, const Vector<Node*>&);
 
-    DeprecatedString createMarkup(const Range *range,
-        DeprecatedPtrList<Node> *nodes = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange);
-    DeprecatedString createMarkup(const Node *node, EChildrenOnly = IncludeNode,
-        DeprecatedPtrList<Node> *nodes = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange);
+    DeprecatedString createMarkup(const Range*,
+        Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange);
+    DeprecatedString createMarkup(const Node*, EChildrenOnly = IncludeNode,
+        Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange);
 
 }
 

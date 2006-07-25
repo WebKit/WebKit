@@ -415,7 +415,7 @@ bool execRedo(Frame *frame, bool userInterface, const String &value)
 
 bool execRemoveFormat(Frame* frame, bool userInterface, const String& value)
 {
-    RefPtr<DocumentFragment> fragment = createFragmentFromText(frame->document(), frame->selection().toString().deprecatedString());
+    RefPtr<DocumentFragment> fragment = createFragmentFromText(frame->selection().toRange().get(), frame->selection().toString());
     EditCommandPtr(new ReplaceSelectionCommand(frame->document(), fragment.get(), false, false, false, false, EditActionUnspecified)).apply();
     return true;
 }

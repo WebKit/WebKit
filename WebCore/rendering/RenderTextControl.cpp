@@ -25,6 +25,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "HTMLBRElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
@@ -156,6 +157,8 @@ void RenderTextControl::updateFromElement()
         if (value != oldText || !m_div->hasChildNodes()) {
             ExceptionCode ec = 0;
             m_div->setInnerText(value, ec);
+            if (value.endsWith("\n") || value.endsWith("\r"))
+                m_div->appendChild(new HTMLBRElement(document()), ec);
             if (document()->frame())
                 document()->frame()->clearUndoRedoOperations();
             setEdited(false);
@@ -215,6 +218,9 @@ void RenderTextControl::setSelectionRange(int start, int end)
 
     SelectionController sel = SelectionController(startPosition, endPosition);
     document()->frame()->setSelection(sel);
+    // FIXME: Granularity is stored separately on the frame, but also in the selection controller.
+    // The granularity in the selection controller should be used, and then this line of code would not be needed.
+    document()->frame()->setSelectionGranularity(CharacterGranularity);
 }
 
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index)
@@ -262,7 +268,7 @@ void RenderTextControl::subtreeHasChanged()
 String RenderTextControl::text()
 {
     if (m_div)
-        return m_div->textContent(true).replace('\\', backslashAsCurrencySymbol());
+        return m_div->textContent().replace('\\', backslashAsCurrencySymbol());
     return String();
 }
 

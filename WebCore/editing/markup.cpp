@@ -242,12 +242,12 @@ static DeprecatedString endMarkup(const Node *node)
     return "";
 }
 
-static DeprecatedString markup(const Node *startNode, bool onlyIncludeChildren, bool includeSiblings, DeprecatedPtrList<Node> *nodes)
+static DeprecatedString markup(Node* startNode, bool onlyIncludeChildren, bool includeSiblings, Vector<Node*> *nodes)
 {
     // Doesn't make sense to only include children and include siblings.
     ASSERT(!(onlyIncludeChildren && includeSiblings));
     DeprecatedString me = "";
-    for (const Node *current = startNode; current != NULL; current = includeSiblings ? current->nextSibling() : NULL) {
+    for (Node* current = startNode; current != NULL; current = includeSiblings ? current->nextSibling() : NULL) {
         if (!onlyIncludeChildren) {
             if (nodes)
                 nodes->append(current);
@@ -284,7 +284,7 @@ static void completeURLs(Node *node, const DeprecatedString &baseURL)
 
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
-DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes, EAnnotateForInterchange annotate)
+DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotateForInterchange annotate)
 {
     if (!range || range->isDetached())
         return DeprecatedString();
@@ -310,7 +310,7 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
     DeprecatedStringList markups;
     Node *pastEnd = range->pastEndNode();
     Node *lastClosed = 0;
-    DeprecatedPtrList<Node> ancestorsToClose;
+    Vector<Node*> ancestorsToClose;
 
     // calculate the "default style" for this markup
     Position pos(doc->documentElement(), 0);
@@ -370,14 +370,15 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
             if (n->nextSibling() == 0 || next == pastEnd) {
                 if (!ancestorsToClose.isEmpty()) {
                     // Close up the ancestors.
-                    while (Node *ancestor = ancestorsToClose.last()) {
+                    do {
+                        Node *ancestor = ancestorsToClose.last();
                         if (next != pastEnd && next->isAncestor(ancestor))
                             break;
                         // Not at the end of the range, close ancestors up to sibling of next node.
                         markups.append(endMarkup(ancestor));
                         lastClosed = ancestor;
                         ancestorsToClose.removeLast();
-                    }
+                    } while (!ancestorsToClose.isEmpty());
                 } else {
                     if (next != pastEnd) {
                         Node *nextParent = next->parentNode();
@@ -474,16 +475,18 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
     return fragment.release();
 }
 
-DeprecatedString createMarkup(const Node *node, EChildrenOnly includeChildren,
-    DeprecatedPtrList<Node> *nodes, EAnnotateForInterchange annotate)
+DeprecatedString createMarkup(const Node* node, EChildrenOnly includeChildren,
+    Vector<Node*>* nodes, EAnnotateForInterchange annotate)
 {
     ASSERT(annotate == DoNotAnnotateForInterchange); // annotation not yet implemented for this code path
     node->document()->updateLayoutIgnorePendingStylesheets();
-    return markup(node, includeChildren, false, nodes);
+    return markup(const_cast<Node*>(node), includeChildren, false, nodes);
 }
 
-static void createParagraphContentsFromString(Document *document, Element *paragraph, const DeprecatedString &string)
+static void createParagraphContentsFromString(Element* paragraph, const DeprecatedString& string)
 {
+    Document* document = paragraph->document();
+
     ExceptionCode ec = 0;
     if (string.isEmpty()) {
         paragraph->appendChild(createBlockPlaceholderElement(document), ec);
@@ -501,7 +504,7 @@ static void createParagraphContentsFromString(Document *document, Element *parag
 
         // append the non-tab textual part
         if (!s.isEmpty()) {
-            if (tabText != "") {
+            if (!tabText.isEmpty()) {
                 paragraph->appendChild(createTabSpanElement(document, tabText), ec);
                 ASSERT(ec == 0);
                 tabText = "";
@@ -514,52 +517,76 @@ static void createParagraphContentsFromString(Document *document, Element *parag
 
         // there is a tab after every entry, except the last entry
         // (if the last character is a tab, the list gets an extra empty entry)
-        if (!tabList.isEmpty()) {
+        if (!tabList.isEmpty())
             tabText += '\t';
-        } else if (tabText != "") {
+        else if (!tabText.isEmpty()) {
             paragraph->appendChild(createTabSpanElement(document, tabText), ec);
             ASSERT(ec == 0);
         }
     }
 }
 
-PassRefPtr<DocumentFragment> createFragmentFromText(Document *document, const DeprecatedString &text)
+PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String& text)
 {
-    if (!document)
+    if (!context)
         return 0;
 
+    Node* styleNode = context->startNode();
+    if (!styleNode) {
+        styleNode = context->startPosition().node();
+        if (!styleNode)
+            return 0;
+    }
+
+    Document* document = styleNode->document();
     RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
     
-    if (!text.isEmpty()) {
-        DeprecatedString string = text;
+    if (text.isEmpty())
+        return fragment.release();
 
-        // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
-        string.replace("\r\n", "\n");
-        string.replace('\r', '\n');
-        DeprecatedStringList list = DeprecatedStringList::split('\n', string, true); // true gets us empty strings in the list
-        while (!list.isEmpty()) {
-            DeprecatedString s = list.first();
-            list.pop_front();
+    DeprecatedString string = text.deprecatedString();
+    string.replace("\r\n", "\n");
+    string.replace('\r', '\n');
 
-            ExceptionCode ec = 0;
+    ExceptionCode ec = 0;
+    RenderObject* renderer = styleNode->renderer();
+    if (renderer && renderer->style()->preserveNewline()) {
+        fragment->appendChild(document->createTextNode(string), ec);
+        ASSERT(ec == 0);
+        if (string.endsWith("\n")) {
             RefPtr<Element> element;
-            if (s.isEmpty() && list.isEmpty()) {
-                // For last line, use the "magic BR" rather than a P.
-                element = document->createElementNS(xhtmlNamespaceURI, "br", ec);
-                ASSERT(ec == 0);
-                element->setAttribute(classAttr, AppleInterchangeNewline);            
-            } else {
-                element = createDefaultParagraphElement(document);
-                createParagraphContentsFromString(document, element.get(), s);
-            }
-            fragment->appendChild(element.get(), ec);
+            element = document->createElementNS(xhtmlNamespaceURI, "br", ec);
+            ASSERT(ec == 0);
+            element->setAttribute(classAttr, AppleInterchangeNewline);            
+            fragment->appendChild(element.release(), ec);
             ASSERT(ec == 0);
         }
+        return fragment.release();
+    }
+
+    // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
+    DeprecatedStringList list = DeprecatedStringList::split('\n', string, true); // true gets us empty strings in the list
+    while (!list.isEmpty()) {
+        DeprecatedString s = list.first();
+        list.pop_front();
+
+        RefPtr<Element> element;
+        if (s.isEmpty() && list.isEmpty()) {
+            // For last line, use the "magic BR" rather than a P.
+            element = document->createElementNS(xhtmlNamespaceURI, "br", ec);
+            ASSERT(ec == 0);
+            element->setAttribute(classAttr, AppleInterchangeNewline);            
+        } else {
+            element = createDefaultParagraphElement(document);
+            createParagraphContentsFromString(element.get(), s);
+        }
+        fragment->appendChild(element.release(), ec);
+        ASSERT(ec == 0);
     }
     return fragment.release();
 }
 
-PassRefPtr<DocumentFragment> createFragmentFromNodeList(Document *document, const DeprecatedPtrList<Node> &nodeList)
+PassRefPtr<DocumentFragment> createFragmentFromNodes(Document *document, const Vector<Node*>& nodes)
 {
     if (!document)
         return 0;
@@ -567,9 +594,10 @@ PassRefPtr<DocumentFragment> createFragmentFromNodeList(Document *document, cons
     RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
 
     ExceptionCode ec = 0;
-    for (DeprecatedPtrListIterator<Node> i(nodeList); i.current(); ++i) {
+    size_t size = nodes.size();
+    for (size_t i = 0; i < size; ++i) {
         RefPtr<Element> element = createDefaultParagraphElement(document);
-        element->appendChild(i.current(), ec);
+        element->appendChild(nodes[i], ec);
         ASSERT(ec == 0);
         fragment->appendChild(element.release(), ec);
         ASSERT(ec == 0);

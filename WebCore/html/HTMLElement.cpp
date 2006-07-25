@@ -300,6 +300,9 @@ void HTMLElement::setInnerHTML(const String &html, ExceptionCode& ec)
         return;
     }
 
+    // FIXME: Add special case for when we had one text child and we just want to set its text?
+    // FIXME: Add special case for cases where we can use replaceChild?
+
     removeChildren();
     appendChild(fragment.release(), ec);
 }
@@ -319,8 +322,8 @@ void HTMLElement::setOuterHTML(const String &html, ExceptionCode& ec)
         return;
     }
 
-    // FIXME: Why doesn't this have code to merge neighboring text nodes the
-    // way setOuterText does?
+    // FIXME: Add special case for when we had one text child and we just want to set its text?
+    // FIXME: Why doesn't this have code to merge neighboring text nodes the way setOuterText does?
     parent->replaceChild(fragment.release(), this, ec);
 }
 
@@ -339,36 +342,60 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
         return;
     }
 
+    // FIXME: This doesn't take whitespace collapsing into account at all.
+    // FIXME: Add special case for when we had one text child and we just want to set its text?
+    // FIXME: Add special case for cases where we can use replaceChild?
+
     removeChildren();
 
-    // Add text nodes and <br> elements.
-    int length = text.length();
-    if (!text.contains('\n') && !text.contains('\r') && length)
+    if (!text.contains('\n') && !text.contains('\r')) {
+        if (text.isEmpty())
+            return;
         appendChild(new Text(document(), text), ec);
-    else {
-        ec = 0;
-        int lineStart = 0;
-        UChar prev = 0;
-        for (int i = 0; i < length; ++i) {
-            UChar c = text[i];
-            if (c == '\n' || c == '\r') {
-                if (i > lineStart) {
-                    appendChild(new Text(document(), text.substring(lineStart, i - lineStart)), ec);
-                    if (ec)
-                        return;
-                }
-                if (!(c == '\n' && i != 0 && prev == '\r')) {
-                    appendChild(new HTMLBRElement(document()), ec);
-                    if (ec)
-                        return;
-                }
-                lineStart = i + 1;
-            }
-            prev = c;
-        }
-        if (length > lineStart)
-            appendChild(new Text(document(), text.substring(lineStart, length - lineStart)), ec);
+        return;
     }
+
+    // FIXME: Do we need to be able to detect preserveNewline style even when there's no renderer?
+    // FIXME: Can the renderer be out of date here? Do we need to call updateRendering?
+    // For example, for the contents of textarea elements that are display:none?
+    RenderObject* r = renderer();
+    if (r && r->style()->preserveNewline()) {
+        if (!text.contains('\r')) {
+            appendChild(new Text(document(), text), ec);
+            return;
+        }
+        // FIXME: Stick with String once it has a replace that can do this.
+        DeprecatedString textWithConsistentLineBreaks = text.deprecatedString();
+        textWithConsistentLineBreaks.replace("\r\n", "\n");
+        textWithConsistentLineBreaks.replace('\r', '\n');
+        appendChild(new Text(document(), textWithConsistentLineBreaks), ec);
+        return;
+    }
+
+    // Add text nodes and <br> elements.
+    ec = 0;
+    int lineStart = 0;
+    UChar prev = 0;
+    int length = text.length();
+    for (int i = 0; i < length; ++i) {
+        UChar c = text[i];
+        if (c == '\n' || c == '\r') {
+            if (i > lineStart) {
+                appendChild(new Text(document(), text.substring(lineStart, i - lineStart)), ec);
+                if (ec)
+                    return;
+            }
+            if (!(c == '\n' && i != 0 && prev == '\r')) {
+                appendChild(new HTMLBRElement(document()), ec);
+                if (ec)
+                    return;
+            }
+            lineStart = i + 1;
+        }
+        prev = c;
+    }
+    if (length > lineStart)
+        appendChild(new Text(document(), text.substring(lineStart, length - lineStart)), ec);
 }
 
 void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
