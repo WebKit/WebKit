@@ -486,6 +486,8 @@
 		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; };
 		93A1EAA00A5634C9006960A0 /* ImageDocumentMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */; };
 		93A1EAA80A563508006960A0 /* ImageDocumentMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A1EAA70A563508006960A0 /* ImageDocumentMac.h */; };
+		93B0FD8A0A759BED0080AD44 /* StringImplMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B0FD880A759BED0080AD44 /* StringImplMac.mm */; };
+		93B0FD8B0A759BED0080AD44 /* StringMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B0FD890A759BED0080AD44 /* StringMac.mm */; };
 		93B70D5B09EB0C7C009D8468 /* JSDOMParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D3F09EB0C7C009D8468 /* JSDOMParser.cpp */; };
 		93B70D5C09EB0C7C009D8468 /* JSDOMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4009EB0C7C009D8468 /* JSDOMParser.h */; };
 		93B70D5D09EB0C7C009D8468 /* JSXMLHttpRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */; };
@@ -2204,6 +2206,8 @@
 		93A1EAA70A563508006960A0 /* ImageDocumentMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDocumentMac.h; sourceTree = "<group>"; };
 		93ABCE5D06E1A42E0085925B /* FormData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormData.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93ABCE5E06E1A42E0085925B /* FormData.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FormData.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		93B0FD880A759BED0080AD44 /* StringImplMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = StringImplMac.mm; sourceTree = "<group>"; };
+		93B0FD890A759BED0080AD44 /* StringMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = StringMac.mm; sourceTree = "<group>"; };
 		93B641F106E28C5C0055F610 /* FormDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FormDataMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93B641F206E28C5C0055F610 /* FormDataMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FormDataMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93B70D3F09EB0C7C009D8468 /* JSDOMParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMParser.cpp; sourceTree = "<group>"; };
@@ -3900,6 +3904,8 @@
 				93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */,
 				BC86FB8E061F5C23006BB822 /* SliderMac.mm */,
 				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */,
+				93B0FD880A759BED0080AD44 /* StringImplMac.mm */,
+				93B0FD890A759BED0080AD44 /* StringMac.mm */,
 				6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */,
 				9352071B09BD3BBB00F2038D /* TextBoundaries.mm */,
 				F587853802DE375901EA4122 /* TextBoxMac.mm */,
@@ -7286,6 +7292,8 @@
 				E14842FF0A674A31007E4D39 /* StreamingTextDecoderICU.cpp in Sources */,
 				E14843D60A6754A6007E4D39 /* StreamingTextDecoderMac.cpp in Sources */,
 				1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */,
+				93B0FD8A0A759BED0080AD44 /* StringImplMac.mm in Sources */,
+				93B0FD8B0A759BED0080AD44 /* StringMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

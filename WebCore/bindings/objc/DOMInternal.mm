@@ -106,29 +106,6 @@ void raiseDOMException(ExceptionCode ec)
 }
 
 //------------------------------------------------------------------------------------------
-// String/NSString bridging
-
-StringImpl::operator NSString *() const
-{
-    return [NSString stringWithCharacters:m_data length:m_length];
-}
-
-String::String(NSString* str)
-{
-    if (!str)
-        return;
-
-    CFIndex size = CFStringGetLength(reinterpret_cast<CFStringRef>(str));
-    if (size == 0)
-        m_impl = StringImpl::empty();
-    else {
-        Vector<UChar, 1024> buffer(size);
-        CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), buffer.data());
-        m_impl = new StringImpl(buffer.data(), size);
-    }
-}
-
-//------------------------------------------------------------------------------------------
 
 @implementation WebScriptObject (WebScriptObjectInternal)
 
