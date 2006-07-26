@@ -1,3 +1,12 @@
+2006-07-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by ap.
+
+        - fix debug-only information() string for table cells
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::information):
+
 2006-07-25  David Harrison  <harrison@apple.com>
 
         Reviewed by timo and Darin.
