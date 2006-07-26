@@ -1,3 +1,17 @@
+2006-07-25  David Harrison  <harrison@apple.com>
+
+        Reviewed by timo and Darin.
+
+        <rdar://problem/4618584> "Paste and Match Style" is not working in Mail (add SPI)
+        
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebView.m:
+        (-[WebView replaceSelectionWithNode:]):
+        (-[WebView _replaceSelectionWithNode:matchStyle:]):
+        * WebView/WebViewPrivate.h:
+        (-[WebView _replaceSelectionWithNode:matchStyle::]):
+        New SPI that is same as replaceSelectionWithNode: with added parameter whether to match existing style.
+
 2006-07-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele and Justin.

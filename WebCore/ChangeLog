@@ -1,3 +1,15 @@
+2006-07-25  David Harrison  <harrison@apple.com>
+
+        Reviewed by timo and Darin.
+
+        <rdar://problem/4618584> "Paste and Match Style" is not working in Mail (add SPI)
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge replaceSelectionWithNode:selectReplacement:smartReplace:matchStyle:]):
+        Add matchStyle parameter for use by WebKit.
+
 2006-07-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by adele
