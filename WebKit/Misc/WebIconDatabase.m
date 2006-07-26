@@ -459,13 +459,6 @@ NSSize WebIconLargeSize = {128, 128};
         return;
     }
 
-    if ([_private->iconURLsWithNoIcons containsObject:iconURL]) {
-        // Don't do any work if the icon URL is in the negative cache, it's not
-        // worth doing work just to record that this site is associated with
-        // a nonexistent icon
-        return;
-    }
-    
     // Keep track of which entries in pageURLToIconURL were created during private browsing so that they can be skipped
     // when saving to disk.
     if (_private->privateBrowsingEnabled)
@@ -473,7 +466,18 @@ NSSize WebIconLargeSize = {128, 128};
 
     [_private->pageURLToIconURL setObject:iconURL forKey:URL];
     [_private->iconURLToPageURLs _web_setObjectUsingSetIfNecessary:URL forKey:iconURL];
+
+    if ([_private->iconURLsWithNoIcons containsObject:iconURL]) {
+        // If the icon is in the negative cache (ie, there is no icon), avoid the
+        // work of delivering a notification for it or saving it to disk. This is a significant
+        // win on the iBench HTML test.
         
+        // This return must occur after the dictionary set calls above, so the icon record
+        // is properly retained. Otherwise, we'll forget that the site had no icon, and
+        // inefficiently request its icon again.
+        return;
+    }
+    
     [self _sendNotificationForURL:URL];
     [self _updateFileDatabase];
 }
