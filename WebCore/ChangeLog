@@ -1,3 +1,16 @@
+2006-07-26  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by John Sullivan (and Kevin and Timo).
+
+        landing this patch for John et al.  
+        Fixed <rdar://problem/4651380> REGRESSION (9A232->9A234): existing web clips don't render if you restart Dashboard
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        moved the call to didFirstLayout to above the check for needsLayout
+        because we need to call didFirstLayout for every webview, not just
+        ones we think need layout.  
+
 2006-07-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
