@@ -368,7 +368,7 @@ sub GenerateHeader
         push(@headerContent, "    static KJS::JSValue* indexGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);\n");
     }
     # Name getter
-    if ($dataNode->extendedAttributes->{"HasNameGetter"}) {
+    if ($dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
         push(@headerContent, "private:\n");
         push(@headerContent, "    static KJS::JSValue* nameGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);\n");
         push(@headerContent, "    static bool canGetItemsForName(KJS::ExecState*, $implClassName*, const AtomicString&);\n")
@@ -657,6 +657,17 @@ sub GenerateImplementation
         push(@implContent, "        return true;\n");
     }
     
+    my $hasNameGetterGeneration = sub {
+        push(@implContent, "    if (canGetItemsForName(exec, static_cast<$implClassName*>(impl()), propertyName)) {\n");
+        push(@implContent, "        slot.setCustom(this, nameGetter);\n");
+        push(@implContent, "        return true;\n");
+        push(@implContent, "    }\n");
+    };
+    
+    if ($dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
+        &$hasNameGetterGeneration();
+    }
+
     my $requiresManualLookup = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasNameGetter"};
     if ($requiresManualLookup) {
         push(@implContent, "    const HashEntry* entry = Lookup::findEntry(&${className}Table, propertyName);\n");
@@ -666,7 +677,7 @@ sub GenerateImplementation
         push(@implContent, "    }\n");
     }
     
-    if ($dataNode->extendedAttributes->{"HasNameGetter"}) {
+    if ($dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
         # if it has a prototype, we need to check that first too
         push(@implContent, "    if (prototype()->isObject() && static_cast<JSObject*>(prototype())->hasProperty(exec, propertyName))\n");
         push(@implContent, "        return false;\n");
@@ -679,13 +690,10 @@ sub GenerateImplementation
         push(@implContent, "        slot.setCustomIndex(this, u, indexGetter);\n");
         push(@implContent, "        return true;\n");
         push(@implContent, "    }\n");
-    }
-    
+    }    
+	
     if ($dataNode->extendedAttributes->{"HasNameGetter"}) {
-        push(@implContent, "    if (canGetItemsForName(exec, static_cast<$implClassName*>(impl()), propertyName)) {\n");
-        push(@implContent, "        slot.setCustom(this, nameGetter);\n");
-        push(@implContent, "        return true;\n");
-        push(@implContent, "    }\n");
+        &$hasNameGetterGeneration();
     }
     
     if ($requiresManualLookup) {

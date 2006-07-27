@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, HasIndexGetter, HasNameGetter] HTMLFormElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, HasIndexGetter, HasOverridingNameGetter] HTMLFormElement : HTMLElement {
         readonly attribute HTMLCollection  elements;
         readonly attribute long            length;
                  attribute DOMString       name;

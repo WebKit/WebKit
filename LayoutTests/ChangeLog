@@ -1,3 +1,13 @@
+2006-07-27  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by Darin.
+
+        Test for: http://bugzilla.opendarwin.org/show_bug.cgi?id=9867
+        REGRESSION: code that modifies form element in Firefox modifies form attribute in WebKit
+
+        * fast/forms/input-named-action-overrides-action-attribute-expected.txt: Added.
+        * fast/forms/input-named-action-overrides-action-attribute.html: Added.
+
 2006-07-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Anders.

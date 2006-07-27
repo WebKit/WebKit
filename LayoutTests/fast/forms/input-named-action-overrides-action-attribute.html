@@ -1,0 +1,11 @@
+<body onload="foo()"/>
+<form action="/">
+   <input type=hidden name="action" value="">
+</form>
+<span id="result"/>
+<script>
+   function foo() {
+      document.forms[0].action.value = "Passed";
+      document.getElementById("result").innerText = "Test " + (document.forms[0].action.value ? document.forms[0].action.value : "Failed");
+   }
+</script>
