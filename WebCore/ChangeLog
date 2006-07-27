@@ -1,3 +1,17 @@
+2006-07-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9938
+        Fix viewBox issues in Hixie's test
+
+        Do a more accurate and quicker job of parsing the viewBox
+        attribute. Handle properly on negative width/height and
+        invalid syntax in general.
+
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        (SVGFitToViewBox::parseViewBox):
+
 2006-07-27  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by ap.

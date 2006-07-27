@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    KCanvasContainer {svg} at (0,0) size 1x1
+      KCanvasItem {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L1.00,0.00L1.00,1.00L0.00,1.00"]
+      RenderSVGText {text} at (0,0) size 785x23
+        RenderText {#text} at (0,0) size 294x23
+          text run at (0,0) width 294: "There should be no red on this page."

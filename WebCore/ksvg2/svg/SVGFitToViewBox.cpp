@@ -28,6 +28,7 @@
 #include "StringImpl.h"
 
 #include "SVGNames.h"
+#include "svgpathparser.h"
 #include "SVGRect.h"
 #include "SVGSVGElement.h"
 #include "SVGAnimatedRect.h"
@@ -69,16 +70,57 @@ SVGAnimatedPreserveAspectRatio *SVGFitToViewBox::preserveAspectRatio() const
 
 void SVGFitToViewBox::parseViewBox(StringImpl *str)
 {
-    // allow for viewbox def with ',' or whitespace
+    double x = 0, y = 0, w = 0, h = 0;
     DeprecatedString viewbox = String(str).deprecatedString();
-    DeprecatedStringList points = DeprecatedStringList::split(' ', viewbox.replace(',', ' ').simplifyWhiteSpace());
+    const char *p = viewbox.latin1();
+    const char *end = p + viewbox.length();
+    const char *c = p;
+    p = parseCoord(c, x);
+    if (p == c)
+        goto bail_out;
+    if (*p == ',')
+        p++;
+    while (*p == ' ')
+        p++;
 
-    if (points.count() == 4) {
-        viewBox()->baseVal()->setX(points[0].toDouble());
-        viewBox()->baseVal()->setY(points[1].toDouble());
-        viewBox()->baseVal()->setWidth(points[2].toDouble());
-        viewBox()->baseVal()->setHeight(points[3].toDouble());
-    } else
+    c = p;
+    p = parseCoord(c, y);
+    if (p == c)
+        goto bail_out;
+
+    if (*p == ',')
+        p++;
+    while (*p == ' ')
+        p++;
+
+    c = p;
+    p = parseCoord(c, w);
+    if(w < 0.0 || p == c) // check that width is positive
+        goto bail_out;
+    if (*p == ',')
+        p++;
+    while (*p == ' ')
+        p++;
+
+    c = p;
+    p = parseCoord(c, h);
+    if (h < 0.0 || p == c) // check that height is positive
+        goto bail_out;
+    if (*p == ',')
+        p++;
+    while (*p == ' ')
+        p++;
+
+    if (p < end) // nothing should come after the last, fourth number
+        goto bail_out;
+
+    viewBox()->baseVal()->setX(x);
+    viewBox()->baseVal()->setY(y);
+    viewBox()->baseVal()->setWidth(w);
+    viewBox()->baseVal()->setHeight(h);
+    return;
+
+bail_out:
         fprintf(stderr, "WARNING: Malformed viewbox string: %s (l: %i)", viewbox.ascii(), viewbox.length());
 }
 

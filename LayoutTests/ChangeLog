@@ -1,3 +1,22 @@
+2006-07-27  Rob Buis  <buis@kde.org
+
+        Reviewed by Darin.
+
+        Add some tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=9938
+        Specifically the testcases are:
+
+        http://hixie.ch/tests/adhoc/svg/error/010.xml
+        http://hixie.ch/tests/adhoc/svg/error/011.xml
+
+        * svg/custom/invalid-viewbox1-expected.checksum: Added.
+        * svg/custom/invalid-viewbox1-expected.png: Added.
+        * svg/custom/invalid-viewbox1-expected.txt: Added.
+        * svg/custom/invalid-viewbox1.svg: Added.
+        * svg/custom/invalid-viewbox2-expected.checksum: Added.
+        * svg/custom/invalid-viewbox2-expected.png: Added.
+        * svg/custom/invalid-viewbox2-expected.txt: Added.
+        * svg/custom/invalid-viewbox2.svg: Added.
+
 2006-07-27  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by ap.
