@@ -1,3 +1,16 @@
+2006-07-26  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9901
+        XSLTProcessor cannot parse text nodes for INPUT ELEMENTS in an XSLT stylesheet
+
+        Test: fast/js/xhtml-serialize.html
+
+        * editing/markup.cpp:
+        (WebCore::endMarkup): If the element has child nodes, write a closing tag even if it 
+        is not permitted in HTML, to make it valid XML.
+
 2006-07-26  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by John Sullivan (and Kevin and Timo).

@@ -237,7 +237,7 @@ static inline bool shouldSelfClose(const Node *node)
 
 static DeprecatedString endMarkup(const Node *node)
 {
-    if (node->isElementNode() && !shouldSelfClose(node) && !doesHTMLForbidEndTag(node))
+    if (node->isElementNode() && !shouldSelfClose(node) && (node->hasChildNodes() || !doesHTMLForbidEndTag(node)))
         return "</" + static_cast<const Element*>(node)->nodeNamePreservingCase().deprecatedString() + ">";
     return "";
 }

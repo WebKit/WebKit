@@ -1,3 +1,14 @@
+2006-07-26  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9901
+        XSLTProcessor cannot parse text nodes for INPUT ELEMENTS in an XSLT stylesheet
+
+        * fast/js/resources/xhtml-serialize.js: Added.
+        * fast/js/xhtml-serialize-expected.txt: Added.
+        * fast/js/xhtml-serialize.html: Added.
+
 2006-07-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
