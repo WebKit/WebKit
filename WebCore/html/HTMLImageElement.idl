@@ -22,9 +22,7 @@ module html {
         attribute DOMString name;
         attribute DOMString align;
         attribute DOMString alt;
-        // FIXME: According to the DOM spec border should be of type DOMString
-        // see http://bugzilla.opendarwin.org/show_bug.cgi?id=8992
-        attribute long border;        
+        attribute DOMString border;        
         attribute long height;
         attribute long hspace;
         attribute boolean isMap;

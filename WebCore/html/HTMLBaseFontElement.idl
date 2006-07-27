@@ -22,9 +22,6 @@ module html {
     interface [LegacyParent=KJS::JSHTMLElement] HTMLBaseFontElement : HTMLElement {
         attribute DOMString color;
         attribute DOMString face;
-        
-        // FIXME: According to the DOM spec, this should be long instead of DOMString
-        // see http://bugzilla.opendarwin.org/show_bug.cgi?id=8992
-        attribute DOMString size;    
+        attribute long size;    
     };
 }

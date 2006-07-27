@@ -269,15 +269,14 @@ void HTMLImageElement::setAlt(const String& value)
     setAttribute(altAttr, value);
 }
 
-int HTMLImageElement::border() const
+String HTMLImageElement::border() const
 {
-    // ### return value in pixels
-    return getAttribute(borderAttr).toInt();
+    return getAttribute(borderAttr);
 }
 
-void HTMLImageElement::setBorder(int value)
+void HTMLImageElement::setBorder(const String &value)
 {
-    setAttribute(borderAttr, String::number(value));
+    setAttribute(borderAttr, value);
 }
 
 void HTMLImageElement::setHeight(int value)

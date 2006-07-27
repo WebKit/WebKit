@@ -1,3 +1,14 @@
+2006-07-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Anders.
+
+        Testcase for and from:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8992
+        Some HTML DOM attributes have incorrect types
+
+        * fast/dom/html-attribute-types-expected.txt: Added.
+        * fast/dom/html-attribute-types.html: Added.
+
 2006-07-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

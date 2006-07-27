@@ -1,3 +1,26 @@
+2006-07-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Anders.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8992
+        Some HTML DOM attributes have incorrect types
+
+        Adjust idl and dom source code for HTMLImageElement and
+        HTMLBaseFontElement to choose correct type for
+        HTMLImageElement::border and HTMLBaseFontElement::size
+        attributes.
+
+        * html/HTMLBaseFontElement.cpp:
+        (WebCore::HTMLBaseFontElement::size):
+        (WebCore::HTMLBaseFontElement::setSize):
+        * html/HTMLBaseFontElement.h:
+        * html/HTMLBaseFontElement.idl:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::border):
+        (WebCore::HTMLImageElement::setBorder):
+        * html/HTMLImageElement.h:
+        * html/HTMLImageElement.idl:
+
 2006-07-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
