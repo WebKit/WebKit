@@ -330,7 +330,7 @@ bool Node::isContentEditable() const
 
 bool Node::isContentRichlyEditable() const
 {
-    return renderer() && renderer()->style()->userModify() == READ_WRITE;
+    return parent() && parent()->isContentRichlyEditable();
 }
 
 IntRect Node::getRect() const

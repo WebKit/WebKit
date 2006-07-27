@@ -75,6 +75,7 @@ public:
     
     virtual bool isFocusable() const;
     virtual bool isContentEditable() const;
+    virtual bool isContentRichlyEditable() const;
     virtual String contentEditable() const;
     virtual void setContentEditable(MappedAttribute*);
     virtual void setContentEditable(const String&);

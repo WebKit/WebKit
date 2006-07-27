@@ -511,6 +511,23 @@ bool HTMLElement::isContentEditable() const
     return renderer()->style()->userModify() == READ_WRITE || renderer()->style()->userModify() == READ_WRITE_PLAINTEXT_ONLY;
 }
 
+bool HTMLElement::isContentRichlyEditable() const
+{
+    if (document()->frame() && document()->frame()->isContentEditable())
+        return true;
+
+    document()->updateRendering();
+
+    if (!renderer()) {
+        if (parentNode())
+            return parentNode()->isContentEditable();
+        else
+            return false;
+    }
+    
+    return renderer()->style()->userModify() == READ_WRITE;
+}
+
 String HTMLElement::contentEditable() const 
 {
     document()->updateRendering();

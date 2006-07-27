@@ -1,3 +1,15 @@
+2006-07-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/4652788>
+        REGRESSION: Can't change size or style of any text in message body
+
+        * editing/style/designmode-expected.checksum: Added.
+        * editing/style/designmode-expected.png: Added.
+        * editing/style/designmode-expected.txt: Added.
+        * editing/style/designmode.html: Added.
+
 2006-07-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by adele

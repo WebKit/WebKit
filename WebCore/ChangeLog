@@ -1,3 +1,18 @@
+2006-07-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/4652788>
+        REGRESSION: Can't change size or style of any text in message body
+
+        * dom/Node.cpp:
+        (WebCore::Node::isContentRichlyEditable): Mimic Node::isContentEditable.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isContentRichlyEditable): First check
+        the frame for editability, then userModify, like what
+        HTMLElement::isContentEditable() does.
+        * html/HTMLElement.h:
+
 2006-07-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by ap.
