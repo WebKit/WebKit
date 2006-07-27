@@ -1,3 +1,22 @@
+2006-07-27  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by ap.
+
+        Complex entities seem to fail on TOT
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6390
+        Use an alternative work-around to an XML Entity parsing bug.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::write):
+        (WebCore::hackAroundLibXMLEntityBug): added.
+        (WebCore::startElementNsHandler):
+        (WebCore::endElementNsHandler):
+        (WebCore::charactersHandler):
+        (WebCore::processingInstructionHandler):
+        (WebCore::cdataBlockHandler):
+        (WebCore::commentHandler):
+        (WebCore::getEntityHandler):
+
 2006-07-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
@@ -17,6 +36,7 @@
         Reviewed by ap.
 
         Enables getSVGDocument() support for HTMLObjectElement and HTMLEmbedElement
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9237
         This patch does not try to autogenerate anything, but enables the SVG functionality.
         Also fix HTMLObjectElement vspace and hspace to be numbers instead of strings to match IE & Firefox.
 

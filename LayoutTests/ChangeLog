@@ -1,3 +1,22 @@
+2006-07-27  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by ap.
+        
+        Complex entities seem to fail on TOT
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6390
+        Updated test cases now that this bug is fixed.
+
+        * fast/parser/entity-ignorable-whitespace-expected.txt:
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/render-elems-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-elems-03-t-expected.png:
+        * svg/W3C-SVG-1.1/render-elems-03-t-expected.txt:
+
 2006-07-27  Rob Buis  <buis@kde.org
 
         Reviewed by Darin.

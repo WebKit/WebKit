@@ -630,15 +630,18 @@ bool XMLTokenizer::write(const SegmentedString &s, bool /*appendData*/ )
     if (!m_context)
         initializeParserContext();
     
-    // Hack around libxml2's lack of encoding overide support by manually
-    // resetting the encoding to UTF-16 before every chunk.  Otherwise libxml
-    // will detect <?xml version="1.0" encoding="<encoding name>"?> blocks 
-    // and switch encodings, causing the parse to fail.
-    const DeprecatedChar BOM(0xFEFF);
-    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
-    xmlSwitchEncoding(m_context, BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
-    
-    xmlParseChunk(m_context, reinterpret_cast<const char *>(parseString.unicode()), sizeof(DeprecatedChar) * parseString.length(), 0);
+    // libXML throws an error if you try to switch the encoding for an empty string.
+    if (parseString.length()) {
+        // Hack around libxml2's lack of encoding overide support by manually
+        // resetting the encoding to UTF-16 before every chunk.  Otherwise libxml
+        // will detect <?xml version="1.0" encoding="<encoding name>"?> blocks 
+        // and switch encodings, causing the parse to fail.
+        const DeprecatedChar BOM(0xFEFF);
+        const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
+        xmlSwitchEncoding(m_context, BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
+        
+        xmlParseChunk(m_context, reinterpret_cast<const char *>(parseString.unicode()), sizeof(DeprecatedChar) * parseString.length(), 0);
+    }
     
     return false;
 }
@@ -1035,33 +1038,58 @@ inline XMLTokenizer *getTokenizer(void *closure)
     return static_cast<XMLTokenizer *>(ctxt->_private);
 }
 
+// This is a hack around http://bugzilla.gnome.org/show_bug.cgi?id=159219
+// Otherwise libxml seems to call all the SAX callbacks twice for any replaced entity.
+static inline bool hackAroundLibXMLEntityBug(void *closure)
+{
+    return static_cast<xmlParserCtxtPtr>(closure)->node;
+}
+
 static void startElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes)
 {
+    if (hackAroundLibXMLEntityBug(closure))
+        return;
+
     getTokenizer(closure)->startElementNs(localname, prefix, uri, nb_namespaces, namespaces, nb_attributes, nb_defaulted, libxmlAttributes);
 }
 
 static void endElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri)
 {
+    if (hackAroundLibXMLEntityBug(closure))
+        return;
+    
     getTokenizer(closure)->endElementNs();
 }
 
 static void charactersHandler(void *closure, const xmlChar *s, int len)
 {
+    if (hackAroundLibXMLEntityBug(closure))
+        return;
+    
     getTokenizer(closure)->characters(s, len);
 }
 
 static void processingInstructionHandler(void *closure, const xmlChar *target, const xmlChar *data)
 {
+    if (hackAroundLibXMLEntityBug(closure))
+        return;
+    
     getTokenizer(closure)->processingInstruction(target, data);
 }
 
 static void cdataBlockHandler(void *closure, const xmlChar *s, int len)
 {
+    if (hackAroundLibXMLEntityBug(closure))
+        return;
+    
     getTokenizer(closure)->cdataBlock(s, len);
 }
 
 static void commentHandler(void *closure, const xmlChar *comment)
 {
+    if (hackAroundLibXMLEntityBug(closure))
+        return;
+    
     getTokenizer(closure)->comment(comment);
 }
 
@@ -1124,10 +1152,6 @@ static xmlEntityPtr getEntityHandler(void *closure, const xmlChar *name)
     ent = xmlGetDocEntity(ctxt->myDoc, name);
     if (!ent && getTokenizer(closure)->isXHTMLDocument())
         ent = getXHTMLEntity(name);
-
-    // Work around a libxml SAX2 bug that causes charactersHandler to be called twice.
-    if (ent)
-        ctxt->replaceEntities = (ctxt->instate == XML_PARSER_ATTRIBUTE_VALUE) || (ent->etype != XML_INTERNAL_GENERAL_ENTITY);
     
     return ent;
 }
