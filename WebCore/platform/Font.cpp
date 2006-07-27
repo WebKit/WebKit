@@ -77,7 +77,7 @@ struct WidthIterator {
     float m_finalRoundingWidth;
     
 private:
-    UChar32 normalizeVoicingMarks();
+    UChar32 normalizeVoicingMarks(int currentCharacter);
 };
 
 WidthIterator::WidthIterator(const Font* font, const TextRun& run, const TextStyle& style, const FontData* substituteFontData)
@@ -140,7 +140,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
                 // Deal with Hiragana and Katakana voiced and semi-voiced syllables.
                 // Normalize into composed form, and then look for glyph with base + combined mark.
                 // Check above for character range to minimize performance impact.
-                UChar32 normalized = normalizeVoicingMarks();
+                UChar32 normalized = normalizeVoicingMarks(currentCharacter);
                 if (normalized) {
                     c = normalized;
                     clusterLength = 2;
@@ -289,9 +289,8 @@ bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer* glyphBuffer)
     return !glyphBuffer->isEmpty();
 }
 
-UChar32 WidthIterator::normalizeVoicingMarks()
+UChar32 WidthIterator::normalizeVoicingMarks(int currentCharacter)
 {
-    int currentCharacter = m_currentCharacter;
     if (currentCharacter + 1 < m_end) {
         if (u_getCombiningClass(m_run[currentCharacter + 1]) == HIRAGANA_KATAKANA_VOICING_MARKS) {
             // Normalize into composed form using 3.2 rules.

@@ -1,3 +1,18 @@
+2006-07-27  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Darin.
+
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10094
+          Japanese characters improperly rendering in TOT
+          
+        Test: fast/encoding/denormalised-voiced-japanese-chars.html
+
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::advance): pass currentCharacter to normalizeVoicingMarks
+        (WebCore::WidthIterator::normalizeVoicingMarks): turn the currentCharacter variable
+        into an argument as WidthIterator::advance doesn't update m_currentCharacter while
+        looping
+
 2006-07-27  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by ap.
