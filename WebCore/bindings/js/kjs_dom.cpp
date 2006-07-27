@@ -63,7 +63,9 @@
 #include "kjs_window.h"
 
 #if SVG_SUPPORT
+#include "JSSVGDocument.h"
 #include "JSSVGElementWrapperFactory.h"
+#include "SVGDocument.h"
 #include "SVGElement.h"
 #endif
 
@@ -941,6 +943,10 @@ JSValue* toJS(ExecState* exec, Document *n)
 
   if (n->isHTMLDocument())
     ret = new WebCore::JSHTMLDocument(exec, static_cast<HTMLDocument*>(n));
+#if SVG_SUPPORT
+  else if (n->isSVGDocument())
+    ret = new WebCore::JSSVGDocument(exec, static_cast<SVGDocument*>(n));
+#endif
   else
     ret = new JSDocument(exec, n);
 

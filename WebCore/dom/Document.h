@@ -222,6 +222,9 @@ public:
     // Other methods (not part of DOM)
     virtual bool isDocumentNode() const { return true; }
     virtual bool isHTMLDocument() const { return false; }
+#if SVG_SUPPORT
+    virtual bool isSVGDocument() const { return false; }
+#endif
     virtual bool isPluginDocument() const { return false; }
     
     CSSStyleSelector* styleSelector() const { return m_styleSelector; }

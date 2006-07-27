@@ -31,6 +31,11 @@
 #include "csshelper.h"
 #include "RenderPartObject.h"
 
+#if SVG_SUPPORT
+#include "ExceptionCode.h"
+#include "SVGDocument.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -204,5 +209,37 @@ void HTMLEmbedElement::setType(const String& value)
 {
     setAttribute(typeAttr, value);
 }
+
+#if SVG_SUPPORT
+Document* HTMLEmbedElement::contentDocument() const
+{
+    // FIXME: The frame loading code should be moved out of the render tree
+    // and into the DOM.  Once that happens, this function should look more like
+    // HTMLFrameElement::contentDocument() and not depend on the renderer.
+    RenderObject* object = renderer();
+    if (object && object->isWidget()) {
+        RenderWidget* renderWidget = static_cast<RenderWidget*>(object);
+        if (renderWidget) {
+            Widget* widget = renderWidget->widget();
+            if (widget && widget->isFrameView()) {
+                FrameView* frameView = static_cast<FrameView*>(widget);
+                if (frameView->frame())
+                    return frameView->frame()->document();
+            }
+        }
+    }
+    return 0;
+}
+
+SVGDocument* HTMLEmbedElement::getSVGDocument(ExceptionCode& ec) const
+{
+    Document* doc = contentDocument();
+    if (doc && doc->isSVGDocument())
+        return static_cast<SVGDocument*>(doc);
+    // Spec: http://www.w3.org/TR/SVG/struct.html#InterfaceGetSVGDocument
+    ec = NOT_SUPPORTED_ERR;
+    return 0;
+}
+#endif
 
 }

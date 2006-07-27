@@ -37,6 +37,8 @@ namespace WebCore {
     public:
         SVGDocument(SVGDOMImplementation *i, FrameView *view);
         virtual ~SVGDocument();
+        
+        virtual bool isSVGDocument() const { return true; }
 
         SVGSVGElement *rootElement() const;
         

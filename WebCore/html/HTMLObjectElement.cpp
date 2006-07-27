@@ -25,6 +25,7 @@
 #include "HTMLObjectElement.h"
 
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLFormElement.h"
 #include "HTMLDocument.h"
@@ -37,19 +38,23 @@
 #include "Text.h"
 #include "csshelper.h"
 
+#if SVG_SUPPORT
+#include "SVGDocument.h"
+#endif
+
 namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLObjectElement::HTMLObjectElement(Document *doc) 
-: HTMLPlugInElement(objectTag, doc)
-, m_imageLoader(0)
+    : HTMLPlugInElement(objectTag, doc)
+    , needWidgetUpdate(false)
+    , m_useFallbackContent(false)
+    , m_imageLoader(0)
+    , m_complete(false)
+    , m_docNamedItem(true)
 {
-    needWidgetUpdate = false;
-    m_useFallbackContent = false;
-    m_complete = false;
-    m_docNamedItem = true;
 }
 
 HTMLObjectElement::~HTMLObjectElement()
@@ -72,7 +77,7 @@ KJS::Bindings::Instance *HTMLObjectElement::getInstance() const
     if (m_instance)
         return m_instance.get();
 
-    if (RenderObject *r = renderer()) {
+    if (RenderObject* r = renderer()) {
         if (r->isWidget()) {
             if (Widget* widget = static_cast<RenderWidget*>(r)->widget()) {
                 // Call into the frame (and over the bridge) to pull the Bindings::Instance
@@ -105,9 +110,9 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
     int pos;
     if (attr->name() == typeAttr) {
         serviceType = val.deprecatedString().lower();
-        pos = serviceType.find( ";" );
-        if ( pos!=-1 )
-          serviceType = serviceType.left( pos );
+        pos = serviceType.find(";");
+        if (pos != -1)
+          serviceType = serviceType.left(pos);
         if (renderer())
           needWidgetUpdate = true;
         if (!isImageType() && m_imageLoader) {
@@ -155,23 +160,38 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
 
 Document* HTMLObjectElement::contentDocument() const
 {
-    // ###
+    // FIXME: The frame loading code should be moved out of the render tree
+    // and into the DOM.  Once that happens, this function should look more like
+    // HTMLFrameElement::contentDocument() and not depend on the renderer.
+    RenderObject* object = renderer();
+    if (object && object->isWidget()) {
+        RenderWidget* renderWidget = static_cast<RenderWidget*>(object);
+        if (renderWidget) {
+            Widget* widget = renderWidget->widget();
+            if (widget && widget->isFrameView()) {
+                FrameView* frameView = static_cast<FrameView*>(widget);
+                if (frameView->frame())
+                    return frameView->frame()->document();
+            }
+        }
+    }
     return 0;
 }
 
-bool HTMLObjectElement::rendererIsNeeded(RenderStyle *style)
+bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
 {
     if (m_useFallbackContent || isImageType())
         return HTMLPlugInElement::rendererIsNeeded(style);
 
-    Frame *frame = document()->frame();
+    // FIXME: This check is WRONG.  We should check the content before disabling, or do so at a later stage.
+    Frame* frame = document()->frame();
     if (!frame || !frame->pluginsEnabled())
         return false;
     
     return true;
 }
 
-RenderObject *HTMLObjectElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject *HTMLObjectElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     if (m_useFallbackContent)
         return RenderObject::createObject(this, style);
@@ -355,7 +375,7 @@ String HTMLObjectElement::code() const
     return getAttribute(codeAttr);
 }
 
-void HTMLObjectElement::setCode(const String &value)
+void HTMLObjectElement::setCode(const String& value)
 {
     setAttribute(codeAttr, value);
 }
@@ -365,7 +385,7 @@ String HTMLObjectElement::archive() const
     return getAttribute(archiveAttr);
 }
 
-void HTMLObjectElement::setArchive(const String &value)
+void HTMLObjectElement::setArchive(const String& value)
 {
     setAttribute(archiveAttr, value);
 }
@@ -375,7 +395,7 @@ String HTMLObjectElement::border() const
     return getAttribute(borderAttr);
 }
 
-void HTMLObjectElement::setBorder(const String &value)
+void HTMLObjectElement::setBorder(const String& value)
 {
     setAttribute(borderAttr, value);
 }
@@ -385,7 +405,7 @@ String HTMLObjectElement::codeBase() const
     return getAttribute(codebaseAttr);
 }
 
-void HTMLObjectElement::setCodeBase(const String &value)
+void HTMLObjectElement::setCodeBase(const String& value)
 {
     setAttribute(codebaseAttr, value);
 }
@@ -395,7 +415,7 @@ String HTMLObjectElement::codeType() const
     return getAttribute(codetypeAttr);
 }
 
-void HTMLObjectElement::setCodeType(const String &value)
+void HTMLObjectElement::setCodeType(const String& value)
 {
     setAttribute(codetypeAttr, value);
 }
@@ -405,7 +425,7 @@ String HTMLObjectElement::data() const
     return getAttribute(dataAttr);
 }
 
-void HTMLObjectElement::setData(const String &value)
+void HTMLObjectElement::setData(const String& value)
 {
     setAttribute(dataAttr, value);
 }
@@ -420,14 +440,14 @@ void HTMLObjectElement::setDeclare(bool declare)
     setAttribute(declareAttr, declare ? "" : 0);
 }
 
-String HTMLObjectElement::hspace() const
+int HTMLObjectElement::hspace() const
 {
-    return getAttribute(hspaceAttr);
+    return getAttribute(hspaceAttr).toInt();
 }
 
-void HTMLObjectElement::setHspace(const String &value)
+void HTMLObjectElement::setHspace(int value)
 {
-    setAttribute(hspaceAttr, value);
+    setAttribute(hspaceAttr, String::number(value));
 }
 
 String HTMLObjectElement::standby() const
@@ -435,7 +455,7 @@ String HTMLObjectElement::standby() const
     return getAttribute(standbyAttr);
 }
 
-void HTMLObjectElement::setStandby(const String &value)
+void HTMLObjectElement::setStandby(const String& value)
 {
     setAttribute(standbyAttr, value);
 }
@@ -455,7 +475,7 @@ String HTMLObjectElement::type() const
     return getAttribute(typeAttr);
 }
 
-void HTMLObjectElement::setType(const String &value)
+void HTMLObjectElement::setType(const String& value)
 {
     setAttribute(typeAttr, value);
 }
@@ -465,19 +485,31 @@ String HTMLObjectElement::useMap() const
     return getAttribute(usemapAttr);
 }
 
-void HTMLObjectElement::setUseMap(const String &value)
+void HTMLObjectElement::setUseMap(const String& value)
 {
     setAttribute(usemapAttr, value);
 }
 
-String HTMLObjectElement::vspace() const
+int HTMLObjectElement::vspace() const
 {
-    return getAttribute(vspaceAttr);
+    return getAttribute(vspaceAttr).toInt();
 }
 
-void HTMLObjectElement::setVspace(const String &value)
+void HTMLObjectElement::setVspace(int value)
 {
-    setAttribute(vspaceAttr, value);
+    setAttribute(vspaceAttr, String::number(value));
 }
+
+#if SVG_SUPPORT
+SVGDocument* HTMLObjectElement::getSVGDocument(ExceptionCode& ec) const
+{
+    Document* doc = contentDocument();
+    if (doc && doc->isSVGDocument())
+        return static_cast<SVGDocument*>(doc);
+    // Spec: http://www.w3.org/TR/SVG/struct.html#InterfaceGetSVGDocument
+    ec = NOT_SUPPORTED_ERR;
+    return 0;
+}
+#endif
 
 }

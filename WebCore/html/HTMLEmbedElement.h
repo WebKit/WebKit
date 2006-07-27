@@ -35,6 +35,8 @@ namespace KJS { namespace Bindings { class Instance; } }
 
 namespace WebCore {
 
+class SVGDocument;
+
 class HTMLEmbedElement : public HTMLPlugInElement
 {
 public:
@@ -64,6 +66,11 @@ public:
 
     String type() const;
     void setType(const String&);
+    
+#if SVG_SUPPORT
+    Document* contentDocument() const;
+    SVGDocument* getSVGDocument(ExceptionCode&) const;
+#endif
 
     DeprecatedString url;
     DeprecatedString pluginPage;

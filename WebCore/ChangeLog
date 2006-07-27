@@ -1,3 +1,52 @@
+2006-07-27  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by ap.
+
+        Enables getSVGDocument() support for HTMLObjectElement and HTMLEmbedElement
+        This patch does not try to autogenerate anything, but enables the SVG functionality.
+        Also fix HTMLObjectElement vspace and hspace to be numbers instead of strings to match IE & Firefox.
+
+        * bindings/js/kjs_dom.cpp:
+        (KJS::toJS):
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLElement::objectGetter):
+        (KJS::HTMLElementFunction::callAsFunction):
+        (KJS::JSHTMLElement::objectSetter):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::):
+        * dom/Document.h:
+        (WebCore::Document::isSVGDocument):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::contentDocument):
+        (WebCore::HTMLEmbedElement::getSVGDocument):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement):
+        (WebCore::HTMLObjectElement::getInstance):
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        (WebCore::HTMLObjectElement::contentDocument):
+        (WebCore::HTMLObjectElement::rendererIsNeeded):
+        (WebCore::HTMLObjectElement::createRenderer):
+        (WebCore::HTMLObjectElement::setCode):
+        (WebCore::HTMLObjectElement::setArchive):
+        (WebCore::HTMLObjectElement::setBorder):
+        (WebCore::HTMLObjectElement::setCodeBase):
+        (WebCore::HTMLObjectElement::setCodeType):
+        (WebCore::HTMLObjectElement::setData):
+        (WebCore::HTMLObjectElement::hspace):
+        (WebCore::HTMLObjectElement::setHspace):
+        (WebCore::HTMLObjectElement::setStandby):
+        (WebCore::HTMLObjectElement::setType):
+        (WebCore::HTMLObjectElement::setUseMap):
+        (WebCore::HTMLObjectElement::vspace):
+        (WebCore::HTMLObjectElement::setVspace):
+        (WebCore::HTMLObjectElement::getSVGDocument):
+        * html/HTMLObjectElement.h:
+        * ksvg2/svg/SVGDocument.h:
+        (WebCore::SVGDocument::isSVGDocument):
+        * rendering/RenderWidget.h:
+        (WebCore::RenderWidget::frameView):
+
 2006-07-26  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
