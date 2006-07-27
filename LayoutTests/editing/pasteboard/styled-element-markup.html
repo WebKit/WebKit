@@ -1,0 +1,11 @@
+<p>This tests copy/paste of styled elements, like images.  The image in the region below should be centered after its copied and pasted.</p>
+<div contenteditable="true" id="copy"><center><img src="../resources/abe.jpg"></center></div>
+<div contenteditable="true" id="paste"></div>
+
+<script>;
+window.getSelection().setPosition(document.getElementById("copy"));
+document.execCommand("SelectAll");
+document.execCommand("Copy");
+window.getSelection().setPosition(document.getElementById("paste"));
+document.execCommand("Paste");
+</script>

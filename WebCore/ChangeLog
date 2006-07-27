@@ -1,3 +1,16 @@
+2006-07-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4242293>
+        Poor paste fidelity of http://www.google.com/
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyle):  Fixed crasher with nil-check.
+        * editing/markup.cpp:
+        (WebCore::startMarkup): Style information wasn't added to an element if it had
+        attributes but no style attribute.
+
 2006-07-27  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by Darin.

@@ -1,3 +1,15 @@
+2006-07-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4242293>
+        Poor paste fidelity of http://www.google.com/
+
+        * editing/pasteboard/styled-element-markup-expected.checksum: Added.
+        * editing/pasteboard/styled-element-markup-expected.png: Added.
+        * editing/pasteboard/styled-element-markup-expected.txt: Added.
+        * editing/pasteboard/styled-element-markup.html: Added.
+
 2006-07-27  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by Darin.

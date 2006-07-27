@@ -589,7 +589,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
     if (start.offset() >= start.node()->caretMaxOffset())
         node = node->traverseNextNode();
 
-    if (end.node()->renderer()->isTable() && end.offset() == maxDeepOffset(end.node()))
+    if (end.node()->renderer() && end.node()->renderer()->isTable() && end.offset() == maxDeepOffset(end.node()))
         endNode = end.node()->lastDescendant();
     
     if (start.node() == endNode) {

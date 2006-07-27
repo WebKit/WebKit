@@ -171,24 +171,25 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
             }
             NamedAttrMap *attrs = el->attributes();
             unsigned length = attrs->length();
-            if (length == 0 && additionalStyle.length() > 0) {
+
+            for (unsigned int i = 0; i < length; i++) {
+                Attribute *attr = attrs->attributeItem(i);
+                String value = attr->value();
+                if (attr->name() == styleAttr && additionalStyle.length() > 0) {
+                    value += "; " + additionalStyle;
+                    additionalStyle = "";
+                }
+                // FIXME: Handle case where value has illegal characters in it, like "
+                if (documentIsHTML)
+                    markup += " " + attr->name().localName().deprecatedString();
+                else
+                    markup += " " + attr->name().toString().deprecatedString();
+                markup += "=\"" + escapeTextForMarkup(value.deprecatedString()) + "\"";
+            }
+            
+            if (additionalStyle.length() > 0)
                 // FIXME: Handle case where additionalStyle has illegal characters in it, like "
                 markup += " " +  styleAttr.localName().deprecatedString() + "=\"" + additionalStyle.deprecatedString() + "\"";
-            }
-            else {
-                for (unsigned int i=0; i<length; i++) {
-                    Attribute *attr = attrs->attributeItem(i);
-                    String value = attr->value();
-                    if (attr->name() == styleAttr && additionalStyle.length() > 0)
-                        value += "; " + additionalStyle;
-                    // FIXME: Handle case where value has illegal characters in it, like "
-                    if (documentIsHTML)
-                        markup += " " + attr->name().localName().deprecatedString();
-                    else
-                        markup += " " + attr->name().toString().deprecatedString();
-                    markup += "=\"" + escapeTextForMarkup(value.deprecatedString()) + "\"";
-                }
-            }
             
             if (shouldSelfClose(el)) {
                 if (el->isHTMLElement())
