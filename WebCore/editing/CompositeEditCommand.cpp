@@ -537,6 +537,9 @@ Node *CompositeEditCommand::addBlockPlaceholderIfNeeded(Node *node)
 
 void CompositeEditCommand::removeBlockPlaceholder(const VisiblePosition& visiblePosition)
 {
+    if (visiblePosition.isNull())
+        return;
+        
     Position p = visiblePosition.deepEquivalent().downstream();
     if (p.node()->hasTagName(brTag) && p.offset() == 0 && isEndOfBlock(visiblePosition) && isStartOfBlock(visiblePosition))
         removeNode(p.node());

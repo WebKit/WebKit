@@ -1,3 +1,21 @@
+2006-07-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4628409>
+        Safari crashes in CompositeEditCommand::removeBlockPlaceholder entering text in a web page form
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::removeBlockPlaceholder): 
+        A script on the page shrinks the textarea down to zero rows just
+        before insertion.  That gives the shadow div a zero height, removing
+        [div, 0] as a candidate for a VisiblePosition.  Then 
+        InsertTextCommand::input() tries to create a VisiblePosition from 
+        [div, 0] and fails.  A nil check is a quick fix.  Another might
+        be to make positions where there is a caret selection candidates.
+        Another might be to make any [div, 0] where div is a shadow div inside
+        a form element a candidate.
+
 2006-07-27  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Darin.

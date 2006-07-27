@@ -1,3 +1,13 @@
+2006-07-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4628409>
+        Safari crashes in CompositeEditCommand::removeBlockPlaceholder entering text in a web page form
+
+        * fast/forms/4628409-expected.txt: Added.
+        * fast/forms/4628409.html: Added.
+
 2006-07-27  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Darin.
