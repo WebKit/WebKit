@@ -1,3 +1,31 @@
+2006-07-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4242293>
+        Poor paste fidelity of http://www.google.com/
+
+        Removed one of the two extraneous newlines that are introduced on paste:
+        * editing/pasteboard/paste-table-003-expected.checksum:
+        * editing/pasteboard/paste-table-003-expected.png:
+        * editing/pasteboard/paste-table-003-expected.txt:
+        
+        Fewer pastes remove nodes containing the selection b/c of 
+        the changes to interchange newlines:
+        * editing/pasteboard/paste-line-endings-007-expected.txt:
+        * editing/pasteboard/paste-line-endings-008-expected.txt:
+        * editing/pasteboard/paste-line-endings-009-expected.txt:
+        
+        Added:
+        * editing/pasteboard/4242293-1-expected.checksum: Added.
+        * editing/pasteboard/4242293-1-expected.png: Added.
+        * editing/pasteboard/4242293-1-expected.txt: Added.
+        * editing/pasteboard/4242293-1.html: Added.
+        * editing/pasteboard/4242293-expected.checksum: Added.
+        * editing/pasteboard/4242293-expected.png: Added.
+        * editing/pasteboard/4242293-expected.txt: Added.
+        * editing/pasteboard/4242293.html: Added.
+
 2006-07-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Rolling out http://bugzilla.opendarwin.org/show_bug.cgi?id=6010 because of failing layout tests.

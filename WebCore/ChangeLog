@@ -1,3 +1,27 @@
+2006-07-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        More changes for:
+        <rdar://problem/4242293>
+        Poor paste fidelity of http://www.google.com/
+
+        * editing/markup.cpp:
+        (WebCore::needInterchangeNewlineAfter): Added.
+        (WebCore::createMarkup): 
+        Only add an interchangeNewline if we're annotating for interchange.  Can't test 
+        this until we expose createMarkup in non-annotate mode (I'd expose Range::toHTML).
+        Remove the FIXME about prepending the interchangeNewline before creating the rest 
+        of the markup.  Its correct to surround the interchangeNewline in ancestors of the
+        adjusted startNode.
+        Fixed the check to see if an interchangeNewline is needed (!inSameBlock).  This would
+        add an interchangeNewline for a selection that started before a table.
+        Removed the workaround for the bug where markup for a table was not included when 
+        selecting the contents of a table, since this change fixes the general problem of 
+        markup for ancestors of the startNode being left out.
+        Don't leave out ancestors of the startNode as we leave their subtrees.  Execute the
+        code to include them even if we closed ancestors in the ancestorsToClose list.
+
 2006-07-28  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.

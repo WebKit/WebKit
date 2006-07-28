@@ -283,6 +283,12 @@ static void completeURLs(Node *node, const DeprecatedString &baseURL)
     }
 }
 
+static bool needInterchangeNewlineAfter(const VisiblePosition& v)
+{
+    VisiblePosition next = v.next();
+    return isEndOfParagraph(v) && isStartOfParagraph(next) && !next.deepEquivalent().upstream().node()->hasTagName(brTag);
+}
+
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
 DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotateForInterchange annotate)
@@ -313,37 +319,22 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     Node *lastClosed = 0;
     Vector<Node*> ancestorsToClose;
 
-    // calculate the "default style" for this markup
+    // Calculate the "default style" for this markup.
     Position pos(doc->documentElement(), 0);
     RefPtr<CSSComputedStyleDeclaration> computedStyle = pos.computedStyle();
     RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle->copyInheritableProperties();
     
-    // FIXME: Shouldn't we do the interchangeNewLine and skip the node iff (annotate == AnnotateForInterchange)?
-    Node *startNode = range->startNode();
+    Node* startNode = range->startNode();
     VisiblePosition visibleStart(range->startPosition(), VP_DEFAULT_AFFINITY);
     VisiblePosition visibleEnd(range->endPosition(), VP_DEFAULT_AFFINITY);
-    if (!inSameBlock(visibleStart, visibleStart.next())) {
+    if (annotate && needInterchangeNewlineAfter(visibleStart)) {
         if (visibleStart == visibleEnd.previous())
             return interchangeNewlineString;
             
-        // FIXME: This adds a newline, but a later add of the ancestor could go before that newline (e.g. when startNode is tbody,
-        // we will later add a table, but the interchangeNewlineString will appear between the table and the tbody! for now, that
-        // does not happen with tables because of code below that moves startNode to the table when at tbody)
         markups.append(interchangeNewlineString);
-        startNode = startNode->traverseNextNode();
+        startNode = visibleStart.next().deepEquivalent().node();
     }
 
-    // no use having a tbody without its table
-    // NOTE: need sibling check because startNode might be anonymous text (like newlines)
-    // FIXME: This would not be needed if ancestor adding applied to more than just the lastClosed
-    for (Node *n = startNode; n; n = n->nextSibling()) {
-        if (n->hasTagName(tbodyTag)) {
-            startNode = startNode->parent();
-            break;
-        }
-    }
-
-    // Iterate through the nodes of the range.
     Node *next;
     for (Node *n = startNode; n != pastEnd; n = next) {
         next = n->traverseNextNode();
@@ -368,7 +359,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
             }
             
             // Check if the node is the last leaf of a tree.
-            if (n->nextSibling() == 0 || next == pastEnd) {
+            if (!n->nextSibling() || next == pastEnd) {
                 if (!ancestorsToClose.isEmpty()) {
                     // Close up the ancestors.
                     do {
@@ -380,23 +371,23 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                         lastClosed = ancestor;
                         ancestorsToClose.removeLast();
                     } while (!ancestorsToClose.isEmpty());
-                } else {
-                    if (next != pastEnd) {
-                        Node *nextParent = next->parentNode();
-                        if (n != nextParent) {
-                            for (Node *parent = n->parent(); parent != 0 && parent != nextParent; parent = parent->parentNode()) {
-                                // All ancestors not in the ancestorsToClose list should either be a) unrendered:
-                                if (!parent->renderer())
-                                    continue;
-                                // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
-                                ASSERT(startNode->isAncestor(parent));
-                                markups.prepend(startMarkup(parent, range, annotate, defaultStyle.get()));
-                                markups.append(endMarkup(parent));
-                                if (nodes)
-                                    nodes->append(parent);
-                                lastClosed = parent;
-                            }
-                        }
+                }
+                
+                // Surround the currently accumulated markup with markup for ancestors we never opened as we leave the subtree(s) rooted at those ancestors.
+                Node* nextParent = next ? next->parentNode() : 0;
+                if (next != pastEnd && n != nextParent) {
+                    Node* lastAncestorClosedOrSelf = n->isAncestor(lastClosed) ? lastClosed : n;
+                    for (Node *parent = lastAncestorClosedOrSelf->parent(); parent != 0 && parent != nextParent; parent = parent->parentNode()) {
+                        // All ancestors that aren't in the ancestorsToClose list should either be a) unrendered:
+                        if (!parent->renderer())
+                            continue;
+                        // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
+                        ASSERT(startNode->isAncestor(parent));
+                        markups.prepend(startMarkup(parent, range, annotate, defaultStyle.get()));
+                        markups.append(endMarkup(parent));
+                        if (nodes)
+                            nodes->append(parent);
+                        lastClosed = parent;
                     }
                 }
             }
@@ -439,10 +430,8 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
         }
     }
 
-    if (annotate) {
-        if (!inSameBlock(visibleEnd, visibleEnd.previous()))
-            markups.append(interchangeNewlineString);
-    }
+    if (annotate && needInterchangeNewlineAfter(visibleEnd.previous()))
+        markups.append(interchangeNewlineString);
 
     // Retain the Mail quote level by including all ancestor mail block quotes.
     for (Node *ancestor = commonAncestorBlock; ancestor; ancestor = ancestor->parentNode()) {
