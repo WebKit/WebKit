@@ -1,3 +1,22 @@
+2006-07-28  Adele Peterson  <adele@apple.com>
+
+        Rolling out http://bugzilla.opendarwin.org/show_bug.cgi?id=9753 because of failing layout tests.
+        SVG with width and height 100% leaves room for scrollbar on the right.
+
+        * kcanvas/RenderPath.cpp:
+        * kcanvas/RenderPath.h:
+        * kcanvas/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * ksvg2/svg/SVGCircleElement.cpp:
+        * ksvg2/svg/SVGCircleElement.h:
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        * ksvg2/svg/SVGEllipseElement.h:
+        * ksvg2/svg/SVGLineElement.cpp:
+        * ksvg2/svg/SVGLineElement.h:
+        * ksvg2/svg/SVGRectElement.cpp:
+        * ksvg2/svg/SVGRectElement.h:
+        * ksvg2/svg/SVGStyledElement.h:
+
 2006-07-27  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by darin.

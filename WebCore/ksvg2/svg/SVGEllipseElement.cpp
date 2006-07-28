@@ -104,17 +104,6 @@ const SVGStyledElement *SVGEllipseElement::pushAttributeContext(const SVGStyledE
     return restore;
 }
 
-bool SVGEllipseElement::hasPercentageValues() const
-{
-    if (cx()->baseVal()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        cy()->baseVal()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        rx()->baseVal()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        ry()->baseVal()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
-        return true;
-
-    return false;
-}
-
 }
 
 // vim:ts=4:noet
