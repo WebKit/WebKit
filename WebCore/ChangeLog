@@ -1,3 +1,28 @@
+2006-07-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Anders.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10135
+          Cleanup: remove useless parameters from RenderObject::position()
+
+        No test possible (no functionality change)
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::position):
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::position):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::position):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::position):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::position):
+        * rendering/RenderText.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::RenderBlock::computeVerticalPositionsForLine):
+
 2006-07-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

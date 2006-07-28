@@ -88,7 +88,7 @@ public:
     // shifted. -dwh
     void calcHorizontalMargins(const Length& ml, const Length& mr, int cw);
 
-    virtual void position(InlineBox* box, int from, int len, bool reverse, bool override);
+    virtual void position(InlineBox*);
     
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox=false);
 

@@ -757,7 +757,7 @@ public:
     bool usesLineWidth() const;
 
     // positioning of inline children (bidi)
-    virtual void position(InlineBox*, int, int, bool, bool) {}
+    virtual void position(InlineBox*) { }
 
     bool isTransparent() const { return style()->opacity() < 1.0f; }
     float opacity() const { return style()->opacity(); }

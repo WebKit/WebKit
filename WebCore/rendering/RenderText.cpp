@@ -958,12 +958,12 @@ InlineBox* RenderText::createInlineBox(bool, bool isRootLineBox, bool)
     return textBox;
 }
 
-void RenderText::position(InlineBox* box, int from, int len, bool reverse, bool override)
+void RenderText::position(InlineBox* box)
 {
     InlineTextBox *s = static_cast<InlineTextBox*>(box);
     
     // ### should not be needed!!!
-    if (len == 0) {
+    if (s->m_len == 0) {
         // We want the box to be destroyed.
         s->remove();
         s->destroy(renderArena());
@@ -971,13 +971,7 @@ void RenderText::position(InlineBox* box, int from, int len, bool reverse, bool 
         return;
     }
     
-    reverse = reverse && !style()->visuallyOrdered();
-    m_containsReversedText |= reverse;
-
-    s->m_reversed = reverse;
-    s->m_dirOverride = override || style()->visuallyOrdered();
-    s->m_start = from;
-    s->m_len = len;
+    m_containsReversedText |= s->m_reversed;
 }
 
 unsigned int RenderText::width(unsigned int from, unsigned int len, int xpos, bool firstLine) const

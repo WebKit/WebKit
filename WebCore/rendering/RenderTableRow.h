@@ -42,7 +42,7 @@ public:
     virtual bool isTableRow() const { return true; }
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual short lineHeight(bool) const { return 0; }
-    virtual void position(int, int, int, int, int, bool, bool, int) { }
+    virtual void position(InlineBox*) { }
     virtual void layout();
     virtual IntRect getAbsoluteRepaintRect();
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction action);

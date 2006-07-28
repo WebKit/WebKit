@@ -813,7 +813,10 @@ RootInlineBox* RenderBlock::constructLine(const BidiIterator& start, const BidiI
             if (r->box->isInlineTextBox()) {
                 InlineTextBox *text = static_cast<InlineTextBox*>(r->box);
                 text->setStart(r->start);
-                text->setLen(r->stop-r->start);
+                text->setLen(r->stop - r->start);
+                bool visuallyOrdered = r->obj->style()->visuallyOrdered();
+                text->m_reversed = r->level % 2 && !visuallyOrdered;
+                text->m_dirOverride = r->override || visuallyOrdered;
             }
         }
     }
@@ -995,7 +998,7 @@ void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox)
 
         // Position is used to properly position both replaced elements and
         // to update the static normal flow x/y of positioned elements.
-        r->obj->position(r->box, r->start, r->stop - r->start, r->level%2, r->override);
+        r->obj->position(r->box);
     }
 }
 

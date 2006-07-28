@@ -81,7 +81,7 @@ public:
     virtual unsigned length() const { return str->length(); }
     const UChar* text() const { return str->characters(); }
     unsigned stringLength() const { return str->length(); } // non virtual implementation of length()
-    virtual void position(InlineBox* box, int from, int len, bool reverse, bool override);
+    virtual void position(InlineBox*);
 
     virtual unsigned width(unsigned from, unsigned len, const Font*, int xpos) const;
     virtual unsigned width(unsigned from, unsigned len, int xpos, bool firstLine = false) const;
