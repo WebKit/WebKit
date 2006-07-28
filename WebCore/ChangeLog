@@ -1,3 +1,11 @@
+2006-07-28  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        Adding isContentEditable to DOMNode's private category. 
+
+        * bindings/objc/DOMPrivate.h:
+
 2006-07-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Rolling out http://bugzilla.opendarwin.org/show_bug.cgi?id=6010 because of failing layout tests.

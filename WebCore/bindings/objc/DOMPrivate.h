@@ -38,6 +38,10 @@
 - (NSColor *)_color;
 @end
 
+@interface DOMNode (WebPrivate)
+- (BOOL)isContentEditable;
+@end
+
 @interface DOMElement (WebPrivate)
 - (NSFont *)_font;
 - (NSData *)_imageTIFFRepresentation;

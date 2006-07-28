@@ -1,3 +1,14 @@
+2006-07-28  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        The context menu code should be checking isContentEditable
+        on DOMNode not just DOMElement. This is needed because DOMText
+        will be the node class of any text that is clicked.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]):
+
 2006-07-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej, inspired by John.
