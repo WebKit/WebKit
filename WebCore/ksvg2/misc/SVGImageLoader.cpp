@@ -37,8 +37,7 @@
 
 namespace WebCore {
 
-SVGImageLoader::SVGImageLoader(SVGImageElement* node)
-    : HTMLImageLoader(node)
+SVGImageLoader::SVGImageLoader(SVGImageElement *node) : HTMLImageLoader(node)
 {
 }
 
@@ -67,17 +66,6 @@ void SVGImageLoader::updateFromElement()
 
     if (RenderImage* renderer = static_cast<RenderImage*>(imageElement->renderer()))
         renderer->resetAnimation();
-}
-
-void SVGImageLoader::dispatchLoadEvent()
-{
-    if (!haveFiredLoadEvent() && image()) {
-        setHaveFiredLoadEvent(true);
-        if (image()->isErrorImage()) {
-            // FIXME: We're supposed to put the document in an "error state" per the spec.
-        } else
-            static_cast<SVGElement*>(element())->sendSVGLoadEventIfPossible(true);
-    }
 }
 
 }

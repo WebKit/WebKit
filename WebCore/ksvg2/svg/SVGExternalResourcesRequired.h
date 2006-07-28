@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGExternalResourcesRequiredImpl_H
-#define SVGExternalResourcesRequiredImpl_H
+#ifndef KSVG_SVGExternalResourcesRequiredImpl_H
+#define KSVG_SVGExternalResourcesRequiredImpl_H
 #if SVG_SUPPORT
 
 #include <wtf/RefPtr.h>
@@ -30,16 +30,6 @@ namespace WebCore {
     class MappedAttribute;
     class SVGAnimatedBoolean;
 
-    // FIXME: This is wrong for several reasons:
-    // 1. externalResourcesRequired is not animateable according to SVG 1.1 section 5.9
-    // 2. externalResourcesRequired should just be part of SVGElement, and default to "false" for all elements
-    /*
-     SPEC: Note that the SVG DOM 
-     defines the attribute externalResourcesRequired as being of type SVGAnimatedBoolean, whereas the 
-     SVG language definition says that externalResourcesRequired is not animated. Because the SVG 
-     language definition states that externalResourcesRequired cannot be animated, the animVal will 
-     always be the same as the baseVal.
-     */
     class SVGExternalResourcesRequired {
     public:
         SVGExternalResourcesRequired();

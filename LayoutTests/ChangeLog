@@ -1,3 +1,32 @@
+2006-07-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Rolling out http://bugzilla.opendarwin.org/show_bug.cgi?id=6010 because of failing layout tests.
+        Add better SVGLoad event support.
+
+        * svg/W3C-SVG-1.1/extend-namespace-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/extend-namespace-01-f-expected.png:
+        * svg/W3C-SVG-1.1/extend-namespace-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/interact-events-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/interact-events-01-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-dom-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-dom-01-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-dom-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-dom-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-dom-02-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-dom-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-dom-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-dom-03-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-dom-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-dom-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-dom-04-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-dom-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-dom-05-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-dom-05-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-dom-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-dom-06-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-dom-06-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-dom-06-b-expected.txt:
+
 2006-07-27  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by darin.

@@ -1,3 +1,41 @@
+2006-07-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Rolling out http://bugzilla.opendarwin.org/show_bug.cgi?id=6010 because of failing layout tests.
+        Add better SVGLoad event support.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        * html/HTMLImageLoader.h:
+        * ksvg2/misc/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::SVGImageLoader):
+        * ksvg2/misc/SVGImageLoader.h:
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::parseMappedAttribute):
+        * ksvg2/svg/SVGAnimatedBoolean.h:
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        (WebCore::SVGElement::parseMappedAttribute):
+        * ksvg2/svg/SVGElement.h:
+        (WebCore::SVGElement::adjustViewportClipping):
+        (WebCore::SVGElement::closeRenderer):
+        (WebCore::SVGElement::rendererIsNeeded):
+        (WebCore::SVGElement::isClosed):
+        (WebCore::svg_dynamic_cast):
+        * ksvg2/svg/SVGExternalResourcesRequired.h:
+        * ksvg2/svg/SVGImageElement.cpp:
+        (SVGImageElement::SVGImageElement):
+        * ksvg2/svg/SVGImageElement.h:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        * ksvg2/svg/SVGScriptElement.cpp:
+        (SVGScriptElement::SVGScriptElement):
+        (SVGScriptElement::parseMappedAttribute):
+        (SVGScriptElement::executeScript):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+
 2006-07-28  Adele Peterson  <adele@apple.com>
 
         Rolling out http://bugzilla.opendarwin.org/show_bug.cgi?id=9753 because of failing layout tests.

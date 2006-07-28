@@ -169,7 +169,8 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode&, 
     RefPtr<Event> evt(e);
     assert(!eventDispatchForbidden());
     assert(evt->target());
-    assert(!evt->type().isNull()); // JavaScript code could create an event with name
+    
+    // ### check that type specified
     
     // work out what nodes to send event to
     DeprecatedPtrList<Node> nodeChain;

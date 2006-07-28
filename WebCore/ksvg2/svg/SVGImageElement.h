@@ -63,9 +63,6 @@ namespace WebCore
 
         virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
-        
-    protected:
-        virtual bool haveLoadedRequiredResources();
 
     private:
         mutable RefPtr<SVGAnimatedLength> m_x;

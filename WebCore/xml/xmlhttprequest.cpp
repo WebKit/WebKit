@@ -213,12 +213,16 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
 void XMLHttpRequest::callReadyStateChangeListener()
 {
     if (m_doc && m_doc->frame() && m_onReadyStateChangeListener) {
-        RefPtr<Event> ev = new Event(readystatechangeEvent, true, true);
+        ExceptionCode ec;
+        RefPtr<Event> ev = m_doc->createEvent("HTMLEvents", ec);
+        ev->initEvent(readystatechangeEvent, true, true);
         m_onReadyStateChangeListener->handleEvent(ev.get(), true);
     }
     
     if (m_doc && m_doc->frame() && m_state == Completed && m_onLoadListener) {
-        RefPtr<Event> ev = new Event(loadEvent, true, true);
+        ExceptionCode ec;
+        RefPtr<Event> ev = m_doc->createEvent("HTMLEvents", ec);
+        ev->initEvent(loadEvent, true, true);
         m_onLoadListener->handleEvent(ev.get(), true);
     }
 }

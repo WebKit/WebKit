@@ -38,7 +38,7 @@ public:
 
     virtual void updateFromElement();
 
-    virtual void dispatchLoadEvent();
+    void dispatchLoadEvent();
 
     Element* element() const { return m_element; }
     bool imageComplete() const { return m_imageComplete; }
@@ -51,9 +51,6 @@ public:
 
 protected:
     void setLoadingImage(CachedImage*);
-    
-    bool haveFiredLoadEvent() { return m_firedLoad; }
-    void setHaveFiredLoadEvent(bool firedLoad) { m_firedLoad = firedLoad; }
 
 private:
     Element* m_element;
