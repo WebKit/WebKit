@@ -222,9 +222,7 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute *attr)
     const AtomicString& value = attr->value();
     if (!nearestViewportElement()) {
         // Only handle events if we're the outermost <svg> element
-        if (attr->name() == onloadAttr)
-            addSVGWindowEventListner(loadEvent, attr);
-        else if (attr->name() == onunloadAttr)
+        if (attr->name() == onunloadAttr)
             addSVGWindowEventListner(unloadEvent, attr);
         else if (attr->name() == onabortAttr)
             addSVGWindowEventListner(abortEvent, attr);

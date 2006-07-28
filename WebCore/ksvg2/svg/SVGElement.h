@@ -57,9 +57,6 @@ namespace WebCore {
 
         // Internal
         virtual void parseMappedAttribute(MappedAttribute*);
-
-        // To be implemented by any element which can establish new viewports...
-        virtual DeprecatedString adjustViewportClipping() const { return DeprecatedString::null; }
         
         virtual bool isStyled() const { return false; }
         virtual bool isStyledTransformable() const { return false; }
@@ -71,24 +68,21 @@ namespace WebCore {
         // For SVGTests
         virtual bool isValid() const { return true; }
         
-        virtual void closeRenderer() { m_closed = true; }
-        virtual bool rendererIsNeeded(RenderStyle *) { return false; }
-        virtual bool childShouldCreateRenderer(Node *) const;
+        virtual void closeRenderer();
+        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+        virtual bool childShouldCreateRenderer(Node*) const;
         
-        // helper:
-        bool isClosed() const { return m_closed; }
-
-    private:
-        bool m_closed;
-        void addSVGEventListener(const AtomicString& eventType, const Attribute* attr);
+        void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
+        
+    protected:
+        void addSVGEventListener(const AtomicString& eventType, const Attribute*);
+        virtual bool haveLoadedRequiredResources();
     };
-};
 
-namespace WebCore {
-    static inline SVGElement *svg_dynamic_cast(Node *node) {
-        SVGElement *svgElement = NULL;
+    static inline SVGElement* svg_dynamic_cast(Node* node) {
+        SVGElement* svgElement = 0;
         if (node && node->isSVGElement())
-            svgElement = static_cast<SVGElement *>(node);
+            svgElement = static_cast<SVGElement*>(node);
         return svgElement;
     }
 };
