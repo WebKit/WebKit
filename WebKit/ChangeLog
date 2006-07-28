@@ -2,6 +2,8 @@
 
         Reviewed by John.
 
+        <rdar://problem/4657473> REGRESSION: Spell check not available from contextual menu in Mail
+
         The context menu code should be checking isContentEditable
         on DOMNode not just DOMElement. This is needed because DOMText
         will be the node class of any text that is clicked.
