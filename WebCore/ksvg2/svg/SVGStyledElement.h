@@ -68,6 +68,8 @@ namespace WebCore
         // of the 'rect'. This function also returns the old attribute context, to be able to restore it...
         virtual const SVGStyledElement *pushAttributeContext(const SVGStyledElement *context);
 
+        virtual bool hasPercentageValues() const { return false; }
+
     protected:
         void updateCanvasItem(); // Handles "path data" object changes... (not for style/transform!)
 

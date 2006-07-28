@@ -1,3 +1,16 @@
+2006-07-10  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Test case for
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9753>
+        SVG with width and height 100% leaves room for scrollbar on the right.
+
+        * svg/custom/width-full-percentage-expected.txt: Added.
+        * svg/custom/width-full-percentage-expected.checksum: Added.
+        * svg/custom/width-full-percentage-expected.png: Added.
+        * svg/custom/width-full-percentage.svg: Added.
+
 2006-07-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

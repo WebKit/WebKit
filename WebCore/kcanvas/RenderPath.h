@@ -73,6 +73,8 @@ public:
 
     virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
 
+    bool hasPercentageValues() const;
+
 protected:
     virtual void drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const KCanvasPath*) const = 0;
 

@@ -115,6 +115,13 @@ void RenderSVGContainer::layout()
     if (selfNeedsLayout() && checkForRepaint)
         oldBounds = d->absoluteBounds;
 
+    RenderObject* child = firstChild();
+    while (child) {
+        if (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasPercentageValues())
+            child->setNeedsLayout(true);
+        child = child->nextSibling();
+    }
+    RenderContainer::layout();
     calcWidth();
     calcHeight();
 
@@ -122,8 +129,6 @@ void RenderSVGContainer::layout()
 
     if (selfNeedsLayout() && checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
-        
-    RenderContainer::layout();
 }
 
 void RenderSVGContainer::paint(PaintInfo &paintInfo, int parentX, int parentY)

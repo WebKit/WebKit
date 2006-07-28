@@ -1,3 +1,25 @@
+2006-07-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9753
+        SVG with width and height 100% leaves room for scrollbar on the right.
+
+        Relayout children of svg containers, except svg shapes that do not depend on percentages.
+
+        * kcanvas/RenderPath.cpp: (WebCore::RenderPath::hasPercentageValues):
+        * kcanvas/RenderPath.h:
+        * kcanvas/RenderSVGContainer.cpp: (WebCore::RenderSVGContainer::layout):
+        * ksvg2/svg/SVGCircleElement.cpp: (SVGCircleElement::hasPercentageValues):
+        * ksvg2/svg/SVGCircleElement.h:
+        * ksvg2/svg/SVGEllipseElement.cpp: (WebCore::SVGEllipseElement::hasPercentageValues):
+        * ksvg2/svg/SVGEllipseElement.h:
+        * ksvg2/svg/SVGLineElement.cpp: (SVGLineElement::hasPercentageValues):
+        * ksvg2/svg/SVGLineElement.h:
+        * ksvg2/svg/SVGRectElement.cpp: (WebCore::SVGRectElement::hasPercentageValues):
+        * ksvg2/svg/SVGRectElement.h:
+        * ksvg2/svg/SVGStyledElement.h: (WebCore::SVGStyledElement::hasPercentageValues):
+
 2006-07-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

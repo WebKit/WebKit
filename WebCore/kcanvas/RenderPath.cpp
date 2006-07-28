@@ -43,7 +43,7 @@ public:
     FloatRect strokeBbox;
     AffineTransform matrix;
     IntRect absoluteBounds;
-};        
+};
 
 // RenderPath
 RenderPath::RenderPath(RenderStyle* style, SVGStyledElement* node)
@@ -274,6 +274,11 @@ bool RenderPath::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, H
         return true;
     }
     return false;
+}
+
+bool RenderPath::hasPercentageValues() const
+{
+    return static_cast<SVGStyledElement*>(element())->hasPercentageValues();
 }
 
 }
