@@ -1,3 +1,13 @@
+2006-07-29  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10147
+        REGRESSION: custom attribute values set via javascript are not persistent
+
+        * fast/dom/Element/setAttribute-case-insensitivity-expected.txt: Added.
+        * fast/dom/Element/setAttribute-case-insensitivity.html: Added.
+
 2006-07-29  Darin Adler  <darin@apple.com>
 
         - rolled out the test for bug 9753, since we rolled out the fix

@@ -1,3 +1,15 @@
+2006-07-29  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10147
+        REGRESSION: custom attribute values set via javascript are not persistent
+
+        Test: fast/dom/Element/setAttribute-case-insensitivity.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute): Use the lowercased localName for retrieving the old value, too.
+
 2006-07-28  Timothy Hatcher  <timothy@apple.com>
 
         Suggested by Darin.
