@@ -1,3 +1,8 @@
+2006-07-29  Darin Adler  <darin@apple.com>
+
+        * tests/mozilla/expected.html: Update test results now that regress-185165.js
+        is succeeding. I suspect Anders fix for bug 4620655 is the reason.
+
 2006-07-29  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.
