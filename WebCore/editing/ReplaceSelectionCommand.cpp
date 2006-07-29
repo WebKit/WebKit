@@ -154,7 +154,7 @@ static bool isMailPasteAsQuotationNode(const Node *node)
 Node *ReplacementFragment::mergeStartNode() const
 {
     Node *node = m_fragment->firstChild();
-    while (node && isBlockFlow(node) && !isMailPasteAsQuotationNode(node))
+    while (node && wasBlock(node) && !isMailPasteAsQuotationNode(node))
         node = node->traverseNextNode();
     return node;
 }
@@ -171,13 +171,6 @@ bool ReplacementFragment::isInterchangeConvertedSpaceSpan(const Node *node)
     static String convertedSpaceSpanClassString(AppleConvertedSpace);
     return node->isHTMLElement() && 
            static_cast<const HTMLElement *>(node)->getAttribute(classAttr) == convertedSpaceSpanClassString;
-}
-
-Node *ReplacementFragment::enclosingBlock(Node *node) const
-{
-    while (node && !isBlockFlow(node))
-        node = node->parentNode();    
-    return node ? node : m_fragment.get();
 }
 
 void ReplacementFragment::removeNodePreservingChildren(Node *node)
@@ -266,14 +259,14 @@ void ReplacementFragment::restoreTestRenderingNodesToFragment(Node *holder)
     }
 }
 
-bool ReplacementFragment::isBlockFlow(Node* node) const
+bool ReplacementFragment::wasBlock(Node* node) const
 {
     RefPtr<RenderingInfo> info = m_renderingInfo.get(node);
     ASSERT(info);
     if (!info)
         return false;
     
-    return info->isBlockFlow();
+    return info->wasBlock();
 }
 
 static String &matchNearestBlockquoteColorString()
@@ -370,10 +363,10 @@ void ReplacementFragment::saveRenderingInfo(Node *holder)
     if (m_matchStyle) {
         // No style restoration will be done, so we don't need to save styles or keep a node vector.
         for (Node *node = holder->firstChild(); node; node = node->traverseNextNode(holder))
-            m_renderingInfo.add(node, new RenderingInfo(0, node->isBlockFlow()));
+            m_renderingInfo.add(node, new RenderingInfo(0, isBlock(node)));
     } else {
         for (Node *node = holder->firstChild(); node; node = node->traverseNextNode(holder)) {
-            m_renderingInfo.add(node, new RenderingInfo(styleForNode(node), node->isBlockFlow()));
+            m_renderingInfo.add(node, new RenderingInfo(styleForNode(node), isBlock(node)));
             m_nodes.append(node);
         }
     }
@@ -398,13 +391,13 @@ int ReplacementFragment::renderedBlocks(Node *holder)
     int count = 0;
     Node *prev = 0;
     for (Node *node = holder->firstChild(); node; node = node->traverseNextNode(holder)) {
-        if (node->isBlockFlow()) {
+        if (isBlock(node)) {
             if (!prev) {
                 count++;
                 prev = node;
             }
         } else {
-            Node *block = node->enclosingBlockFlowElement();
+            Node *block = enclosingBlock(node);
             if (block != prev) {
                 count++;
                 prev = block;
@@ -455,8 +448,8 @@ void ReplacementFragment::removeStyleNodes()
     }
 }
 
-RenderingInfo::RenderingInfo(PassRefPtr<CSSMutableStyleDeclaration> style, bool isBlockFlow = false)
-    : m_style(style), m_isBlockFlow(isBlockFlow)
+RenderingInfo::RenderingInfo(PassRefPtr<CSSMutableStyleDeclaration> style, bool wasBlock = false)
+    : m_style(style), m_wasBlock(wasBlock)
 {
 }
 
@@ -482,7 +475,7 @@ bool ReplaceSelectionCommand::shouldMergeStart(const ReplacementFragment& incomi
         return true;
         
     VisiblePosition visibleStart = destinationSelection.visibleStart();
-    Node* startBlock = destinationSelection.start().node()->enclosingBlockFlowElement();
+    Node* startBlock = enclosingBlock(destinationSelection.start().node());
 
     // <rdar://problem/4013642> Copied quoted word does not paste as a quote if pasted at the start of a line    
     if (isStartOfParagraph(visibleStart) && isMailBlockquote(incomingFragment.firstChild()))
@@ -542,7 +535,7 @@ void ReplaceSelectionCommand::doApply()
     VisiblePosition visibleStart(selection.start(), selection.affinity());
     VisiblePosition visibleEnd(selection.end(), selection.affinity());
     bool startAtStartOfBlock = isStartOfBlock(visibleStart);
-    Node* startBlock = selection.start().node()->enclosingBlockFlowElement();
+    Node* startBlock = enclosingBlock(selection.start().node());
 
     // Whether the first paragraph of the incoming fragment should be merged with content from visibleStart to startOfParagraph(visibleStart).
     bool mergeStart = shouldMergeStart(fragment, selection);
@@ -641,7 +634,7 @@ void ReplaceSelectionCommand::doApply()
             RefPtr<Node> node = refNode->nextSibling();
             fragment.removeNode(refNode);
             insertNodeAtAndUpdateNodesInserted(refNode.get(), startPos.node(), startPos.offset());
-            while (node && !fragment.isBlockFlow(node.get())) {
+            while (node && !fragment.wasBlock(node.get())) {
                 Node *next = node->nextSibling();
                 fragment.removeNode(node);
                 insertNodeAfterAndUpdateNodesInserted(node.get(), refNode.get());
@@ -668,20 +661,20 @@ void ReplaceSelectionCommand::doApply()
     if (fragment.firstChild()) {
         RefPtr<Node> refNode = fragment.firstChild();
         RefPtr<Node> node = refNode ? refNode->nextSibling() : 0;
-        Node* insertionBlock = insertionPos.node()->enclosingBlockFlowElement();
+        Node* insertionBlock = enclosingBlock(insertionPos.node());
         Node* insertionRoot = insertionPos.node()->rootEditableElement();
         bool insertionBlockIsRoot = insertionBlock == insertionRoot;
         VisiblePosition visibleInsertionPos(insertionPos);
         fragment.removeNode(refNode);
         // FIXME: The first two cases need to be rethought.  They're about preventing the nesting of 
         // incoming blocks in the block where the paste is being performed.  But, avoiding nesting doesn't 
-        // always produce the desired visual result, and the decisions are based on isBlockFlow, which 
+        // always produce the desired visual result, and the decisions are based on wasBlock, which 
         // we're getting rid of.
-        if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isStartOfBlock(visibleInsertionPos) && !m_lastNodeInserted)
+        if (!insertionBlockIsRoot && fragment.wasBlock(refNode.get()) && isStartOfBlock(visibleInsertionPos) && !m_lastNodeInserted)
             insertNodeBeforeAndUpdateNodesInserted(refNode.get(), insertionBlock);
-        else if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isEndOfBlock(visibleInsertionPos))
+        else if (!insertionBlockIsRoot && fragment.wasBlock(refNode.get()) && isEndOfBlock(visibleInsertionPos))
             insertNodeAfterAndUpdateNodesInserted(refNode.get(), insertionBlock);
-        else if (m_lastNodeInserted && !fragment.isBlockFlow(refNode.get())) {
+        else if (m_lastNodeInserted && !fragment.wasBlock(refNode.get())) {
             // A non-null m_lastNodeInserted means we've done merging above.  That means everything in the first paragraph 
             // of the fragment has been merged with everything up to the start of the paragraph where the paste was performed.  
             // refNode is the first node in the second paragraph of the fragment to paste.  Since it's inline, we can't 

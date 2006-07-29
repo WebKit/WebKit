@@ -1,3 +1,27 @@
+2006-07-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        First part of:
+        <rdar://problem/4515463>
+        REGRESSION: Blot and Mail both do a very poor job of pasting the main www.apple.com page
+        
+        Migrate to isBlock and enclosingBlock.
+        Changed RendereringInfo::isBlock and ReplacementFragment::isBlock
+        to wasBlock so that they don't conflict with isBlock and because
+        it's more descriptive.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::mergeStartNode):
+        (WebCore::ReplacementFragment::wasBlock):
+        (WebCore::ReplacementFragment::saveRenderingInfo):
+        (WebCore::ReplacementFragment::renderedBlocks):
+        (WebCore::RenderingInfo::RenderingInfo):
+        (WebCore::ReplaceSelectionCommand::shouldMergeStart):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::RenderingInfo::wasBlock):
+
 2006-07-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

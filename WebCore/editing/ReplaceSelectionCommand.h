@@ -41,10 +41,10 @@ public:
     RenderingInfo(PassRefPtr<CSSMutableStyleDeclaration>, bool);
     
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
-    bool isBlockFlow() const { return m_isBlockFlow; }
+    bool wasBlock() const { return m_wasBlock; }
 private:
     RefPtr<CSSMutableStyleDeclaration> m_style;
-    bool m_isBlockFlow;
+    bool m_wasBlock;
 };
 
 typedef Vector<RefPtr<Node> > NodeVector;
@@ -71,7 +71,7 @@ public:
     bool hasInterchangeNewlineAtStart() const { return m_hasInterchangeNewlineAtStart; }
     bool hasInterchangeNewlineAtEnd() const { return m_hasInterchangeNewlineAtEnd; }
     
-    bool isBlockFlow(Node*) const;
+    bool wasBlock(Node*) const;
     
     void removeNode(PassRefPtr<Node>);
 
@@ -86,8 +86,7 @@ private:
     void restoreTestRenderingNodesToFragment(Node*);
     int renderedBlocks(Node*);
     void removeStyleNodes();
-
-    Node* enclosingBlock(Node*) const;
+    
     void removeNodePreservingChildren(Node*);
     void insertNodeBefore(Node* node, Node* refNode);
 
