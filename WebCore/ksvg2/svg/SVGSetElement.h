@@ -39,7 +39,8 @@ namespace WebCore
     private:
         DeprecatedString m_savedTo;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

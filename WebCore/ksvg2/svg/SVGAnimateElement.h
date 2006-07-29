@@ -26,10 +26,9 @@
 
 #include "SVGAnimationElement.h"
 
-namespace WebCore
-{
-    class SVGAnimateElement : public SVGAnimationElement
-    {
+namespace WebCore {
+
+    class SVGAnimateElement : public SVGAnimationElement {
     public:
         SVGAnimateElement(const QualifiedName&, Document*);
         virtual ~SVGAnimateElement();
@@ -41,9 +40,10 @@ namespace WebCore
 
         DeprecatedString m_savedTo;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGAnimateElementImpl_H
 
 // vim:ts=4:noet

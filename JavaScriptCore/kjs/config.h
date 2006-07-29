@@ -23,8 +23,7 @@
 
 #else
 
-// FIXME: is this actually used or do other platforms generate their
-// own config.h?
+/* FIXME: is this actually used or do other platforms generate their own config.h? */
 
 #define HAVE_ERRNO_H 1
 #define HAVE_FUNC_ISINF 1
@@ -39,7 +38,7 @@
 
 #define HAVE_PCREPOSIX 1
 
-// FIXME: if all platforms have these, do they really need #defines?
+/* FIXME: if all platforms have these, do they really need #defines? */
 #define HAVE_STDINT_H 1
 #define HAVE_STRING_H 1
 

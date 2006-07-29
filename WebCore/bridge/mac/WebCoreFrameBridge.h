@@ -72,7 +72,7 @@ typedef enum {
 typedef enum {
     WebSelectionStateNone,
     WebSelectionStateCaret,
-    WebSelectionStateRange,
+    WebSelectionStateRange
 } WebSelectionState;
 
 typedef enum {
@@ -157,7 +157,7 @@ typedef enum {
     ObjectElementNone,
     ObjectElementImage,
     ObjectElementFrame,
-    ObjectElementPlugin,
+    ObjectElementPlugin
 } ObjectElementType;
 
 @protocol WebCoreOpenPanelResultListener <NSObject>

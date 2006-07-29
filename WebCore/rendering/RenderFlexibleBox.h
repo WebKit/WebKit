@@ -20,15 +20,14 @@
  *
  */
 
-#ifndef RENDER_FLEXIBLE_BOX_H
-#define RENDER_FLEXIBLE_BOX_H
+#ifndef RenderFlexibleBox_H
+#define RenderFlexibleBox_H
 
 #include "RenderBlock.h"
 
 namespace WebCore {
 
-class RenderFlexibleBox : public RenderBlock
-{
+class RenderFlexibleBox : public RenderBlock {
 public:
     RenderFlexibleBox(Node*);
     virtual ~RenderFlexibleBox();
@@ -44,13 +43,13 @@ public:
     virtual bool isFlexibleBox() const { return true; }
     virtual bool isFlexingChildren() const { return m_flexingChildren; }
     virtual bool isStretchingChildren() const { return m_stretchingChildren; }
-    
-    virtual const char *renderName() const;
+
+    virtual const char* renderName() const;
 
     void placeChild(RenderObject* child, int x, int y);
 
 protected:
-    int allowedChildFlex(RenderObject* child, bool expanding, unsigned int group);
+    int allowedChildFlex(RenderObject* child, bool expanding, unsigned group);
 
     bool hasMultipleLines() { return style()->boxLines() == MULTIPLE; }
     bool isVertical() { return style()->boxOrient() == VERTICAL; }
@@ -60,9 +59,6 @@ protected:
     bool m_stretchingChildren : 1;
 };
 
-}; // namespace
+} // namespace WebCore
 
-#endif // RENDER_FLEXIBLE_BOX_H
-
-
-
+#endif // RenderFlexibleBox_H

@@ -33,8 +33,7 @@
 
 namespace WebCore {
 
-class HTMLPlugInElement : public HTMLElement
-{
+class HTMLPlugInElement : public HTMLElement {
 public:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
     ~HTMLPlugInElement();
@@ -80,6 +79,6 @@ private:
     AtomicString m_frameName;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // HTMLPlugInElement_H

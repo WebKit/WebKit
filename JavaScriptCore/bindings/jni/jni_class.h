@@ -32,8 +32,7 @@ namespace KJS {
 
 namespace Bindings {
 
-class JavaClass : public Class
-{
+class JavaClass : public Class {
 public:
     JavaClass (jobject anInstance);
     ~JavaClass ();
@@ -70,4 +69,4 @@ private:
 
 } // namespace KJS
 
-#endif
+#endif // JNI_CLASS_H_

@@ -24,16 +24,15 @@
 #define KSVG_SVGAnimateTransformElementImpl_H
 #if SVG_SUPPORT
 
-#include <kcanvas/KCanvasMatrix.h>
-
 #include "ksvg.h"
 #include "SVGAnimationElement.h"
+#include <kcanvas/KCanvasMatrix.h>
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGTransform;
-    class SVGAnimateTransformElement : public SVGAnimationElement
-    {
+
+    class SVGAnimateTransformElement : public SVGAnimationElement {
     public:
         SVGAnimateTransformElement(const QualifiedName&, Document*);
         virtual ~SVGAnimateTransformElement();
@@ -64,9 +63,10 @@ namespace WebCore
         bool m_toRotateSpecialCase : 1;
         bool m_fromRotateSpecialCase : 1;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGAnimateTransformElementImpl_H
 
 // vim:ts=4:noet

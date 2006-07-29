@@ -34,7 +34,8 @@ namespace WebCore
         SVGFEFuncRElement(const QualifiedName&, Document*);
         virtual ~SVGFEFuncRElement();
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

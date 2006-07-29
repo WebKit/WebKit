@@ -68,7 +68,8 @@ namespace WebCore
     private:
         void calculateArc( bool relative, double &curx, double &cury, double angle, double x, double y, double r1, double r2, bool largeArcFlag, bool sweepFlag );
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

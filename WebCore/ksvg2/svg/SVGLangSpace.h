@@ -26,19 +26,14 @@
 
 #include "AtomicString.h"
 
-namespace WebCore
-{
-    class StringImpl;
-    class MappedAttribute;
-};
+namespace WebCore {
 
-namespace WebCore
-{
+    class MappedAttribute;
+    class StringImpl;
     class SVGAnimatedLength;
     class SVGAnimatedString;
 
-    class SVGLangSpace
-    {
+    class SVGLangSpace {
     public:
         SVGLangSpace();
         virtual ~SVGLangSpace();
@@ -56,9 +51,10 @@ namespace WebCore
         AtomicString m_lang;
         AtomicString m_space;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGLangSpaceImpl_H
 
 // vim:ts=4:noet

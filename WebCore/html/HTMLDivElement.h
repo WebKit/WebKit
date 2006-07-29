@@ -28,15 +28,14 @@
 
 namespace WebCore {
 
-class HTMLDivElement : public HTMLElement
-{
+class HTMLDivElement : public HTMLElement {
 public:
     HTMLDivElement(Document*);
     ~HTMLDivElement();
-    
+
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
-    
+
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(MappedAttribute*);
 
@@ -44,5 +43,6 @@ public:
     void setAlign(const String&);
 };
 
-}; //namespace
-#endif
+} // namespace WebCore
+
+#endif // HTMLDivElement_H

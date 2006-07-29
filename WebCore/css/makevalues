@@ -70,6 +70,6 @@ print "    if(id >= CSS_VAL_TOTAL || id == 0)"; \
 print "      return String();";\
 print "    else";\
 print "      return String(valueList[id]);"; \
-print "};"; \
+print "}"; \
 print ""; \
 }' >> CSSValueKeywords.c

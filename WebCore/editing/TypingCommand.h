@@ -30,8 +30,7 @@
 
 namespace WebCore {
 
-class TypingCommand : public CompositeEditCommand
-{
+class TypingCommand : public CompositeEditCommand {
 public:
     enum ETypingCommand { 
         DeleteKey, 
@@ -39,7 +38,7 @@ public:
         InsertText, 
         InsertLineBreak, 
         InsertParagraphSeparator,
-        InsertParagraphSeparatorInQuotedContent,
+        InsertParagraphSeparatorInQuotedContent
     };
 
     TypingCommand(Document *document, ETypingCommand, const String &text = "", bool selectInsertedText = false, TextGranularity granularity = CharacterGranularity);

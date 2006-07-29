@@ -25,7 +25,9 @@
  */
 
 #include "JSCallbackConstructor.h"
+
 #include "APICast.h"
+#include <wtf/Vector.h>
 
 namespace KJS {
 
@@ -63,7 +65,7 @@ JSObject* JSCallbackConstructor::construct(ExecState* exec, const List &args)
 
     if (m_callback) {
         size_t argumentCount = args.size();
-        JSValueRef arguments[argumentCount];
+        Vector<JSValueRef, 16> arguments(argumentCount);
         for (size_t i = 0; i < argumentCount; i++)
             arguments[i] = toRef(args[i]);
         return toJS(m_callback(ctx, thisRef, argumentCount, arguments, toRef(exec->exceptionSlot())));

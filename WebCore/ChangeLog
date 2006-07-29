@@ -1,3 +1,279 @@
+2006-07-29  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10080
+          Adopt pedantic changes from the Unity project to improve 
+          cross-compiler compatibility
+
+          Changes include:
+          * Removing trailing semicolon from namespace braces.
+          * Removing trailing comma from last enum declaration.
+          * Updating to match style guidelines.
+          * Adding missing newline to the end of the file.
+          * Turning on gcc warning for missing newline at the end of a source file
+            (GCC_WARN_ABOUT_MISSING_NEWLINE in Xcode, -Wnewline in gcc).
+          * Alphabetical sorting of Xcode source list files.
+          * Use abs() function from <math.h> instead of ABS() macro.
+          * Use C-style comments instead of C++ comments in files that might
+            be included by either C or C++ files.
+          * Use -numeric_limits<double>::infinity() instead of -HUGE_VAL.
+
+        * WebCore+SVG/DOMList.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCorePrefix.h:
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * bindings/js/JSXSLTProcessor.h:
+        * bindings/js/kjs_domnode.h:
+        (KJS::DOMNode::):
+        * bindings/objc/DOMCSS.h:
+        (-[DOMCSSValue enum]):
+        * bindings/objc/DOMCore.h:
+        (-[DOMImplementation createDocument:::]):
+        * bindings/objc/DOMEvents.h:
+        (-[DOMOverflowEvent enum]):
+        * bindings/objc/DOMRange.h:
+        * bindings/objc/DOMTraversal.h:
+        * bindings/objc/DOMXPath.h:
+        (-[DOMXPathNSResolver lookupNamespaceURI:]):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreKeyboardAccess.h:
+        * css/makeprop:
+        * css/makevalues:
+        * dom/ChildNodeList.h:
+        * dom/DocPtr.h:
+        * dom/Document.h:
+        (WebCore::Document::):
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::):
+        (WebCore::DocumentMarker::operator==):
+        (WebCore::DocumentMarker::operator!=):
+        * dom/EventTargetNode.h:
+        * dom/KeyboardEvent.h:
+        (WebCore::KeyboardEvent::):
+        * dom/NameNodeList.h:
+        (WebCore::NameNodeList::rootNodeChildrenChanged):
+        * dom/QualifiedName.cpp:
+        * editing/TypingCommand.h:
+        (WebCore::TypingCommand::):
+        * editing/UnlinkCommand.h:
+        (WebCore::UnlinkCommand::editingAction):
+        * html/FormDataList.h:
+        (WebCore::FormDataListItem::FormDataListItem):
+        (WebCore::FormDataList::appendData):
+        * html/HTMLBlockquoteElement.h:
+        * html/HTMLDivElement.h:
+        * html/HTMLFormElement.h:
+        * html/HTMLHRElement.h:
+        * html/HTMLHeadingElement.h:
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLParagraphElement.h:
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPreElement.h:
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::State::):
+        * icon/IconDatabase.cpp:
+        * icon/SQLStatement.cpp:
+        * kcanvas/KCanvasFilters.h:
+        (WebCore::):
+        (WebCore::KCanvasPoint3F::KCanvasPoint3F):
+        (WebCore::KCanvasFilter::KCanvasFilter):
+        (WebCore::KCanvasFilter::~KCanvasFilter):
+        (WebCore::KCanvasFilterEffect::~KCanvasFilterEffect):
+        (WebCore::KCComponentTransferFunction::KCComponentTransferFunction):
+        (WebCore::KCanvasFEConvolveMatrix::KCanvasFEConvolveMatrix):
+        (WebCore::KCLightSource::KCLightSource):
+        (WebCore::KCDistantLightSource::KCDistantLightSource):
+        (WebCore::KCPointLightSource::KCPointLightSource):
+        (WebCore::KCSpotLightSource::KCSpotLightSource):
+        (WebCore::KCanvasFEDiffuseLighting::KCanvasFEDiffuseLighting):
+        (WebCore::KCanvasFEDisplacementMap::KCanvasFEDisplacementMap):
+        (WebCore::KCanvasFEImage::KCanvasFEImage):
+        (WebCore::KCanvasFESpecularLighting::KCanvasFESpecularLighting):
+        * kcanvas/RenderSVGImage.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * ksvg2/css/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::InheritedFlags::):
+        (WebCore::SVGRenderStyle::NonInheritedFlags::):
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        (WebCore::):
+        * ksvg2/events/SVGZoomEvent.h:
+        * ksvg2/ksvg.h:
+        (WebCore::):
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/misc/SVGImageLoader.h:
+        * ksvg2/scripts/make_names.pl:
+        * ksvg2/svg/SVGAElement.h:
+        * ksvg2/svg/SVGAngle.h:
+        * ksvg2/svg/SVGAnimateColorElement.h:
+        * ksvg2/svg/SVGAnimateElement.h:
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGAnimatedAngle.h:
+        * ksvg2/svg/SVGAnimatedBoolean.h:
+        * ksvg2/svg/SVGAnimatedColor.h:
+        * ksvg2/svg/SVGAnimatedEnumeration.h:
+        * ksvg2/svg/SVGAnimatedInteger.h:
+        * ksvg2/svg/SVGAnimatedLength.h:
+        * ksvg2/svg/SVGAnimatedLengthList.h:
+        * ksvg2/svg/SVGAnimatedNumber.h:
+        * ksvg2/svg/SVGAnimatedNumberList.h:
+        * ksvg2/svg/SVGAnimatedPathData.h:
+        * ksvg2/svg/SVGAnimatedPoints.h:
+        * ksvg2/svg/SVGAnimatedPreserveAspectRatio.h:
+        * ksvg2/svg/SVGAnimatedRect.h:
+        * ksvg2/svg/SVGAnimatedString.h:
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        * ksvg2/svg/SVGAnimatedTransformList.h:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (SVGAnimationElement::calculateCurrentValueItem):
+        (SVGAnimationElement::calculateRelativeTimePercentage):
+        * ksvg2/svg/SVGAnimationElement.h:
+        (WebCore::):
+        * ksvg2/svg/SVGCircleElement.h:
+        * ksvg2/svg/SVGClipPathElement.h:
+        * ksvg2/svg/SVGColor.h:
+        * ksvg2/svg/SVGComponentTransferFunctionElement.h:
+        * ksvg2/svg/SVGCursorElement.h:
+        * ksvg2/svg/SVGDOMImplementation.h:
+        * ksvg2/svg/SVGDefsElement.h:
+        * ksvg2/svg/SVGDescElement.h:
+        * ksvg2/svg/SVGDocument.h:
+        * ksvg2/svg/SVGElement.h:
+        (WebCore::SVGElement::rendererIsNeeded):
+        (WebCore::svg_dynamic_cast):
+        * ksvg2/svg/SVGElementInstance.h:
+        * ksvg2/svg/SVGElementInstanceList.h:
+        * ksvg2/svg/SVGEllipseElement.h:
+        * ksvg2/svg/SVGExternalResourcesRequired.h:
+        * ksvg2/svg/SVGFEBlendElement.h:
+        * ksvg2/svg/SVGFEColorMatrixElement.h:
+        * ksvg2/svg/SVGFEComponentTransferElement.h:
+        * ksvg2/svg/SVGFECompositeElement.h:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.h:
+        * ksvg2/svg/SVGFEDisplacementMapElement.h:
+        * ksvg2/svg/SVGFEDistantLightElement.h:
+        * ksvg2/svg/SVGFEFloodElement.h:
+        * ksvg2/svg/SVGFEFuncAElement.h:
+        * ksvg2/svg/SVGFEFuncBElement.h:
+        * ksvg2/svg/SVGFEFuncGElement.h:
+        * ksvg2/svg/SVGFEFuncRElement.h:
+        * ksvg2/svg/SVGFEGaussianBlurElement.h:
+        * ksvg2/svg/SVGFEImageElement.h:
+        * ksvg2/svg/SVGFELightElement.h:
+        * ksvg2/svg/SVGFEMergeElement.h:
+        * ksvg2/svg/SVGFEMergeNodeElement.h:
+        * ksvg2/svg/SVGFEOffsetElement.h:
+        * ksvg2/svg/SVGFEPointLightElement.h:
+        * ksvg2/svg/SVGFESpecularLightingElement.h:
+        * ksvg2/svg/SVGFESpotLightElement.h:
+        * ksvg2/svg/SVGFETileElement.h:
+        * ksvg2/svg/SVGFETurbulenceElement.h:
+        * ksvg2/svg/SVGFilterElement.h:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.h:
+        * ksvg2/svg/SVGFitToViewBox.h:
+        * ksvg2/svg/SVGForeignObjectElement.cpp:
+        * ksvg2/svg/SVGForeignObjectElement.h:
+        * ksvg2/svg/SVGGElement.h:
+        * ksvg2/svg/SVGGradientElement.h:
+        * ksvg2/svg/SVGHelper.h:
+        (WebCore::):
+        * ksvg2/svg/SVGImageElement.h:
+        * ksvg2/svg/SVGLangSpace.h:
+        * ksvg2/svg/SVGLength.h:
+        * ksvg2/svg/SVGLengthList.h:
+        * ksvg2/svg/SVGLineElement.h:
+        * ksvg2/svg/SVGLinearGradientElement.h:
+        * ksvg2/svg/SVGList.h:
+        * ksvg2/svg/SVGLocatable.h:
+        * ksvg2/svg/SVGMarkerElement.h:
+        * ksvg2/svg/SVGMaskElement.h:
+        * ksvg2/svg/SVGMatrix.h:
+        * ksvg2/svg/SVGNumber.h:
+        * ksvg2/svg/SVGNumberList.h:
+        * ksvg2/svg/SVGPaint.h:
+        * ksvg2/svg/SVGPathElement.h:
+        * ksvg2/svg/SVGPathSeg.h:
+        * ksvg2/svg/SVGPathSegArc.h:
+        * ksvg2/svg/SVGPathSegClosePath.h:
+        * ksvg2/svg/SVGPathSegCurvetoCubic.h:
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmooth.h:
+        * ksvg2/svg/SVGPathSegCurvetoQuadratic.h:
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.h:
+        * ksvg2/svg/SVGPathSegLineto.h:
+        * ksvg2/svg/SVGPathSegLinetoHorizontal.h:
+        * ksvg2/svg/SVGPathSegLinetoVertical.h:
+        * ksvg2/svg/SVGPathSegList.h:
+        * ksvg2/svg/SVGPathSegMoveto.h:
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGPoint.h:
+        * ksvg2/svg/SVGPointList.h:
+        * ksvg2/svg/SVGPolyElement.h:
+        * ksvg2/svg/SVGPolygonElement.h:
+        * ksvg2/svg/SVGPolylineElement.h:
+        * ksvg2/svg/SVGPreserveAspectRatio.h:
+        * ksvg2/svg/SVGRadialGradientElement.h:
+        * ksvg2/svg/SVGRect.h:
+        * ksvg2/svg/SVGRectElement.h:
+        * ksvg2/svg/SVGSVGElement.h:
+        * ksvg2/svg/SVGScriptElement.h:
+        * ksvg2/svg/SVGSetElement.h:
+        * ksvg2/svg/SVGStopElement.h:
+        * ksvg2/svg/SVGStringList.h:
+        * ksvg2/svg/SVGStylable.h:
+        * ksvg2/svg/SVGStyleElement.h:
+        * ksvg2/svg/SVGStyledElement.h:
+        (WebCore::SVGStyledElement::rendererIsNeeded):
+        (WebCore::SVGStyledElement::canvasResource):
+        * ksvg2/svg/SVGStyledLocatableElement.h:
+        * ksvg2/svg/SVGStyledTransformableElement.h:
+        * ksvg2/svg/SVGSwitchElement.h:
+        * ksvg2/svg/SVGSymbolElement.h:
+        * ksvg2/svg/SVGTRefElement.h:
+        * ksvg2/svg/SVGTSpanElement.h:
+        * ksvg2/svg/SVGTests.h:
+        * ksvg2/svg/SVGTextContentElement.h:
+        * ksvg2/svg/SVGTextElement.h:
+        * ksvg2/svg/SVGTextPositioningElement.h:
+        * ksvg2/svg/SVGTitleElement.h:
+        * ksvg2/svg/SVGTransform.h:
+        * ksvg2/svg/SVGTransformList.h:
+        * ksvg2/svg/SVGTransformable.h:
+        * ksvg2/svg/SVGURIReference.h:
+        * ksvg2/svg/SVGUseElement.h:
+        * ksvg2/svg/SVGViewElement.h:
+        * ksvg2/svg/SVGZoomAndPan.h:
+        * ksvg2/svg/svgpathparser.h:
+        * page/Frame.h:
+        (WebCore::):
+        * platform/AffineTransform.h:
+        * platform/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        * platform/FontData.cpp:
+        (WebCore::FontData::FontData):
+        * platform/FontData.h:
+        * platform/TextBox.h:
+        (WebCore::TextBox::):
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::heapPop):
+        * platform/mac/FontCacheMac.mm:
+        * platform/mac/GlyphMapMac.cpp:
+        * platform/mac/WebFontCache.mm:
+        (betterChoice):
+        * rendering/DeprecatedRenderSelect.cpp:
+        (WebCore::DeprecatedRenderSelect::setWidgetWritingDirection):
+        * rendering/EllipsisBox.h:
+        * rendering/RenderBR.h:
+        (WebCore::RenderBR::renderName):
+        (WebCore::RenderBR::width):
+        * rendering/RenderBlock.h:
+        (WebCore::):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFlow.h:
+        (WebCore::RenderFlow::RenderFlow):
+        * rendering/RenderFrame.cpp:
+        * rendering/bidi.h:
+        * rendering/break_lines.cpp:
+
 2006-07-29  Rob Buis  <buis@kde.org>
 
         Reviewed by Geoff.

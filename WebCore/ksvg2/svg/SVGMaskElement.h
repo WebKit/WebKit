@@ -75,7 +75,8 @@ namespace WebCore
         KCanvasMasker *m_masker;
         bool m_dirty;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

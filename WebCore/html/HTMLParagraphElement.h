@@ -28,8 +28,7 @@
 
 namespace WebCore {
 
-class HTMLParagraphElement : public HTMLElement
-{
+class HTMLParagraphElement : public HTMLElement {
 public:
     HTMLParagraphElement(Document*);
 
@@ -44,5 +43,6 @@ public:
     void setAlign(const String&);
 };
 
-}; //namespace
-#endif
+} // namespace WebCore
+
+#endif // HTMLParagraphElement_H

@@ -50,7 +50,8 @@ namespace WebCore
     private:
         String m_type;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

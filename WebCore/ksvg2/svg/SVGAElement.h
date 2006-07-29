@@ -24,15 +24,16 @@
 #define KSVG_SVGAElementImpl_H
 #if SVG_SUPPORT
 
-#include "SVGTests.h"
-#include "SVGLangSpace.h"
-#include "SVGURIReference.h"
-#include "SVGStyledTransformableElement.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGLangSpace.h"
+#include "SVGStyledTransformableElement.h"
+#include "SVGTests.h"
+#include "SVGURIReference.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGAnimatedString;
+
     class SVGAElement : public SVGStyledTransformableElement,
                             public SVGURIReference,
                             public SVGTests,
@@ -59,9 +60,10 @@ namespace WebCore
     private:
         mutable RefPtr<SVGAnimatedString> m_target;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGAElementImpl_H
 
 // vim:ts=4:noet

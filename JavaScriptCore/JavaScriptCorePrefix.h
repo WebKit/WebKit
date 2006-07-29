@@ -28,7 +28,7 @@
 
 #ifdef __cplusplus
 
-// Work around bug 3553309 by re-including <ctype.h>.
+/* Work around bug 3553309 by re-including <ctype.h>. */
 #include <cctype>
 #define isalnum(c)      __istype((c), (_CTYPE_A|_CTYPE_D))
 #define isalpha(c)      __istype((c), _CTYPE_A)
@@ -49,6 +49,6 @@
 
 #endif
 
-// Work around bug with C++ library that screws up Objective-C++ when exception support is disabled.
+/* Work around bug with C++ library that screws up Objective-C++ when exception support is disabled. */
 #undef try
 #undef catch

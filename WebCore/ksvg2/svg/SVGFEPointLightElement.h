@@ -32,7 +32,8 @@ namespace WebCore
         virtual ~SVGFEPointLightElement();
         virtual KCLightSource *lightSource() const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

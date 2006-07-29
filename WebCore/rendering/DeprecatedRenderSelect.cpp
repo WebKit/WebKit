@@ -51,8 +51,7 @@ DeprecatedRenderSelect::DeprecatedRenderSelect(HTMLSelectElement* element)
 
 void DeprecatedRenderSelect::setWidgetWritingDirection()
 {
-    TextDirection d = style()->direction() == RTL ? RTL : LTR;
-    static_cast<ListBox*>(m_widget)->setWritingDirection(d);
+    static_cast<ListBox*>(m_widget)->setWritingDirection(style()->direction());
 }
 
 void DeprecatedRenderSelect::setStyle(RenderStyle* s)

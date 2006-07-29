@@ -47,7 +47,7 @@ enum {
     DOM_UNORDERED_NODE_SNAPSHOT_TYPE   = 6,
     DOM_ORDERED_NODE_SNAPSHOT_TYPE     = 7,
     DOM_ANY_UNORDERED_NODE_TYPE        = 8,
-    DOM_FIRST_ORDERED_NODE_TYPE        = 9,
+    DOM_FIRST_ORDERED_NODE_TYPE        = 9
 };
 
 @interface DOMXPathResult : DOMObject

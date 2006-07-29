@@ -40,10 +40,9 @@ class WidthMap;
 
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
-class FontData : Noncopyable
-{
+class FontData : Noncopyable {
 public:
-    FontData(const FontPlatformData& f);
+    FontData(const FontPlatformData&);
     ~FontData();
 
 public:
@@ -117,6 +116,6 @@ public:
 #endif
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // FONTDATA_H

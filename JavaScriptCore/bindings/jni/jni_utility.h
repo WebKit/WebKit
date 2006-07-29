@@ -43,11 +43,10 @@ typedef enum {
     double_type
 } JNIType;
 
-namespace KJS
-{
+namespace KJS {
 
-namespace Bindings 
-{
+namespace Bindings {
+
 class JavaParameter;
 
 const char *getCharactersFromJString(jstring aJString);
@@ -111,4 +110,4 @@ bool dispatchJNICall(const void *targetAppletView, jobject obj, bool isStatic, J
 
 } // namespace KJS
 
-#endif
+#endif // _JNI_UTILITY_H_

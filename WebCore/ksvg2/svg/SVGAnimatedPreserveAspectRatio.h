@@ -41,7 +41,8 @@ namespace WebCore
         virtual SVGPreserveAspectRatio *create() const;
         virtual void assign(SVGPreserveAspectRatio *src, SVGPreserveAspectRatio *dst) const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

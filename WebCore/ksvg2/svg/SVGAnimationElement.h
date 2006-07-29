@@ -24,54 +24,48 @@
 #define KSVG_SVGAnimationElementImpl_H
 #if SVG_SUPPORT
 
-#include "SVGTests.h"
-#include "SVGStringList.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGStringList.h"
+#include "SVGTests.h"
 
-namespace WebCore
-{
-    enum EFillMode
-    {
+namespace WebCore {
+
+    enum EFillMode {
         FILL_REMOVE = 0,
         FILL_FREEZE
     };
 
-    enum EAdditiveMode
-    {
+    enum EAdditiveMode {
         ADDITIVE_REPLACE = 0,
         ADDITIVE_SUM
     };
 
-    enum EAccumulateMode
-    {
+    enum EAccumulateMode {
         ACCUMULATE_NONE = 0,
         ACCUMULATE_SUM
     };
 
-    enum ECalcMode
-    {
+    enum ECalcMode {
         CALCMODE_DISCRETE = 0,
         CALCMODE_LINEAR,
         CALCMODE_PACED,
         CALCMODE_SPLINE
     };
 
-    enum ERestart
-    {
+    enum ERestart {
         RESTART_ALWAYS = 0,
         RESTART_WHENNOTACTIVE,
         RESTART_NEVER
     };
 
-    enum EAttributeType
-    {
+    enum EAttributeType {
         ATTRIBUTETYPE_CSS = 0,
         ATTRIBUTETYPE_XML,
         ATTRIBUTETYPE_AUTO
     };
 
-    enum EAnimationMode // internal
-    {
+    // internal
+    enum EAnimationMode {
         NO_ANIMATION = 0,
         TO_ANIMATION,
         BY_ANIMATION,
@@ -167,9 +161,10 @@ namespace WebCore
         RefPtr<SVGStringList> m_keyTimes;
         RefPtr<SVGStringList> m_keySplines;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGAnimationElementImpl_H
 
 // vim:ts=4:noet

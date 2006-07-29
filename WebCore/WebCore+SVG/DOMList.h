@@ -27,11 +27,10 @@
 #include "DeprecatedPtrList.h"
 #include "Shared.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     template<class T>
-    class DOMList : public Shared<DOMList<T> >
-    {
+    class DOMList : public Shared<DOMList<T> > {
     public:
         DOMList() : Shared<DOMList<T> >() { m_impl.setAutoDelete(false); }
         DOMList(const DOMList &other) { *this = other; }
@@ -119,9 +118,10 @@ namespace WebCore
     private:
         DeprecatedPtrList<T> m_impl;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KDOM_DOMList_H
 
 // vim:ts=4:noet

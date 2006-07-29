@@ -111,7 +111,8 @@ namespace WebCore
         bool m_largeArcFlag : 1;
         bool m_sweepFlag : 1;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

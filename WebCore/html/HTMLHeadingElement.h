@@ -21,7 +21,6 @@
  *
  */
 
-// -------------------------------------------------------------------------
 #ifndef HTMLHeadingElement_H
 #define HTMLHeadingElement_H
 
@@ -29,8 +28,7 @@
 
 namespace WebCore {
 
-class HTMLHeadingElement : public HTMLElement
-{
+class HTMLHeadingElement : public HTMLElement {
 public:
     HTMLHeadingElement(const QualifiedName&, Document*);
 
@@ -42,5 +40,6 @@ public:
     void setAlign(const String&);
 };
 
-}; //namespace
-#endif
+} // namespace WebCore
+
+#endif // HTMLHeadingElement_H

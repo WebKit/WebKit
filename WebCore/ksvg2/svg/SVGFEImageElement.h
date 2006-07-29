@@ -57,7 +57,8 @@ namespace WebCore {
         CachedImage *m_cachedImage;
         mutable KCanvasFEImage *m_filterEffect;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

@@ -28,8 +28,7 @@
 
 namespace WebCore {
 
-class HTMLMarqueeElement : public HTMLElement
-{
+class HTMLMarqueeElement : public HTMLElement {
 public:
     HTMLMarqueeElement(Document*);
     
@@ -45,5 +44,6 @@ private:
     int m_minimumDelay;
 };
 
-}; //namespace
-#endif
+} // namespace WebCore
+
+#endif // HTMLMarqueeElement_H

@@ -28,8 +28,7 @@
 
 namespace WebCore {
 
-class HTMLHRElement : public HTMLElement
-{
+class HTMLHRElement : public HTMLElement {
 public:
     HTMLHRElement(Document*);
     ~HTMLHRElement();
@@ -53,5 +52,6 @@ public:
     void setWidth(const String&);
 };
 
-}; //namespace
-#endif
+} // namespace WebCore
+
+#endif // HTMLHRElement_H

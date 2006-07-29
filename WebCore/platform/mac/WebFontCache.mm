@@ -26,7 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "WebFontCache.h"
+
+#import <math.h>
 
 #define SYNTHESIZED_FONT_TRAITS (NSBoldFontMask | NSItalicFontMask)
 
@@ -86,8 +89,8 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     int chosenWeightDelta = chosenWeight - desiredWeight;
     int candidateWeightDelta = candidateWeight - desiredWeight;
     
-    int chosenWeightDeltaMagnitude = ABS(chosenWeightDelta);
-    int candidateWeightDeltaMagnitude = ABS(candidateWeightDelta);
+    int chosenWeightDeltaMagnitude = abs(chosenWeightDelta);
+    int candidateWeightDeltaMagnitude = abs(candidateWeightDelta);
     
     // Smaller magnitude wins.
     // If both have same magnitude, tie breaker is that the smaller weight wins.

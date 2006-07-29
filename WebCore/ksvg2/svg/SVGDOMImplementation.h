@@ -57,9 +57,9 @@ namespace WebCore {
         bool m_animationContext : 1;
     };
 
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGDOMImplementationImpl_H
 
 // vim:ts=4:noet

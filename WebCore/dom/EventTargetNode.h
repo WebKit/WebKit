@@ -121,6 +121,6 @@ inline void allowEventDispatch() { }
 
 #endif // NDEBUG 
 
-} //namespace WebCore
+} // namespace WebCore
 
-#endif
+#endif // DOM_EventTargetNodeImpl_h

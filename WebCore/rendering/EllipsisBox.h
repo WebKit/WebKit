@@ -19,12 +19,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#ifndef EllipsisBox_H
+#define EllipsisBox_H
+
 #include "InlineBox.h"
 
 namespace WebCore {
 
-class EllipsisBox : public InlineBox
-{
+class EllipsisBox : public InlineBox {
 public:
     EllipsisBox(RenderObject* obj, const AtomicString& ellipsisStr, InlineFlowBox* p,
                 int w, int y, int h, int b, bool firstLine, InlineBox* markupBox)
@@ -49,4 +51,6 @@ private:
     InlineBox* m_markupBox;
 };
 
-}
+} // namespace WebCore
+
+#endif // EllipsisBox_H

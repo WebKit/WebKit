@@ -18,13 +18,15 @@
  *
  */
 
-// This prefix file is for use on Mac OS X only. It should contain only:
-//    1) files to precompile on Mac OS X for faster builds
-//    2) in one case at least: OS-X-specific performance bug workarounds
-//    3) the special trick to catch us using new or delete without including "config.h"
-// The project should be able to build without this header, although we rarely test that.
+/* This prefix file is for use on Mac OS X only. It should contain only:
+ *    1) files to precompile on Mac OS X for faster builds
+ *    2) in one case at least: OS-X-specific performance bug workarounds
+ *    3) the special trick to catch us using new or delete without including "config.h"
+ * The project should be able to build without this header, although we rarely test that.
+ */
 
-// Things that need to be defined globally should go into "config.h".
+
+/* Things that need to be defined globally should go into "config.h". */
 
 #ifdef __cplusplus
 #define NULL __null
@@ -54,7 +56,7 @@
 #include <cstddef>
 #include <new>
 
-// Work around bug 3553309 by re-including <ctype.h>.
+/* Work around bug 3553309 by re-including <ctype.h>. */
 #include <cctype>
 #define isalnum(c)      __istype((c), (_CTYPE_A|_CTYPE_D))
 #define isalpha(c)      __istype((c), _CTYPE_A)
@@ -94,6 +96,6 @@
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #endif
 
-// Work around bug with C++ library that screws up Objective-C++ when exception support is disabled.
+/* Work around bug with C++ library that screws up Objective-C++ when exception support is disabled. */
 #undef try
 #undef catch

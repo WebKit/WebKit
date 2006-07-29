@@ -26,10 +26,9 @@
 
 #include "SVGList.h"
 
-namespace WebCore
-{
-    class SVGStringList : public SVGList<StringImpl>
-    {
+namespace WebCore {
+
+    class SVGStringList : public SVGList<StringImpl> {
     public:
         SVGStringList(const SVGStyledElement *context = 0);
         virtual ~SVGStringList();
@@ -37,9 +36,10 @@ namespace WebCore
         // Internal
         void reset(const DeprecatedString &str);
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGStringListImpl_H
 
 // vim:ts=4:noet

@@ -24,13 +24,14 @@
 #define KCanvas_RenderSVGImage_H
 #if SVG_SUPPORT
 
-#include "RenderImage.h"
 #include "AffineTransform.h"
+#include "RenderImage.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGImageElement;
     class SVGPreserveAspectRatio;
+
     class RenderSVGImage : public RenderImage {
     public:
         RenderSVGImage(SVGImageElement *impl);
@@ -53,7 +54,7 @@ namespace WebCore
 
         virtual void computeAbsoluteRepaintRect(IntRect& r, bool f);
 
-        virtual bool RenderSVGImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction);
+        virtual bool nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction);
 
     private:
         void translateForAttributes();
@@ -61,9 +62,10 @@ namespace WebCore
         AffineTransform m_transform;
         IntRect m_absoluteBounds;
     };
-}
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KCanvas_RenderSVGImage_H
 
 // vim:ts=4:noet

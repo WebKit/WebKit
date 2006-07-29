@@ -26,19 +26,20 @@
 
 #include "Attr.h"
 #include "CSSPropertyNames.h"
-#include "DOMImplementation.h"
 #include "Document.h"
+#include "DOMImplementation.h"
+#include "ksvgcssproperties.h"
 #include "KSVGTimeScheduler.h"
 #include "PlatformString.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGHelper.h"
-#include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
+#include "SVGSVGElement.h"
 #include "SVGURIReference.h"
 #include "XLinkNames.h"
-#include "ksvgcssproperties.h"
 #include <float.h>
 #include <math.h>
+#include <wtf/Vector.h>
 
 using namespace WebCore;
 using namespace std;
@@ -531,15 +532,14 @@ int SVGAnimationElement::calculateCurrentValueItem(double timePercentage)
     unsigned long items = m_values->numberOfItems();
 
     // Calculate the relative time percentages for each 'fade'.
-    double startTimes[items]; startTimes[0] = 0.0;
-    for (unsigned int i = 1; i < items; ++i)
+    Vector<double> startTimes(items);
+    startTimes[0] = 0.0;
+    for (unsigned i = 1; i < items; ++i)
         startTimes[i] = (((2.0 * i)) / (items - 1)) / 2.0;
 
     int itemByPercentage = -1;
-    for (unsigned int i = 0; i < items - 1; ++i)
-    {
-        if (timePercentage >= startTimes[i] && timePercentage <= startTimes[i + 1])
-        {
+    for (unsigned i = 0; i < items - 1; ++i) {
+        if (timePercentage >= startTimes[i] && timePercentage <= startTimes[i + 1]) {
             itemByPercentage = i;
             break;
         }
@@ -556,8 +556,9 @@ double SVGAnimationElement::calculateRelativeTimePercentage(double timePercentag
     unsigned long items = m_values->numberOfItems();
 
     // Calculate the relative time percentages for each 'fade'.
-    double startTimes[items]; startTimes[0] = 0.0;
-    for (unsigned int i = 1; i < items; ++i)
+    Vector<double> startTimes(items);
+    startTimes[0] = 0.0;
+    for (unsigned i = 1; i < items; ++i)
         startTimes[i] = (((2.0 * i)) / (items - 1)) / 2.0;
 
     double beginTimePercentage = startTimes[currentItem];

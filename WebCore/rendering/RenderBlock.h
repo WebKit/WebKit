@@ -35,7 +35,7 @@ class RootInlineBox;
 
 enum CaretType {
     CursorCaret,
-    DragCaret,
+    DragCaret
 };
 
 class RenderBlock : public RenderFlow {
@@ -43,7 +43,7 @@ public:
     RenderBlock(Node*);
     virtual ~RenderBlock();
 
-    virtual const char *renderName() const;
+    virtual const char* renderName() const;
 
     // These two functions are overridden for inline-block.
     virtual short lineHeight(bool b, bool isRootLineBox=false) const;
@@ -117,9 +117,9 @@ public:
     void layoutBlockChildren(bool relayoutChildren);
     IntRect layoutInlineChildren(bool relayoutChildren);
 
-    void layoutPositionedObjects( bool relayoutChildren );
-    void insertPositionedObject(RenderObject *o);
-    void removePositionedObject(RenderObject *o);
+    void layoutPositionedObjects(bool relayoutChildren);
+    void insertPositionedObject(RenderObject*);
+    void removePositionedObject(RenderObject*);
     virtual void removePositionedObjects(RenderBlock*);
 
     virtual void positionListMarker() { }
@@ -128,8 +128,8 @@ public:
     virtual RenderObject* layoutLegend(bool relayoutChildren) { return 0; };
     
     // the implementation of the following functions is in bidi.cpp
-    void bidiReorderLine(const BidiIterator& start, const BidiIterator& end, BidiState &bidi );
-    RootInlineBox* determineStartPosition(bool fullLayout, BidiIterator& start, BidiState &bidi);
+    void bidiReorderLine(const BidiIterator& start, const BidiIterator& end, BidiState& bidi);
+    RootInlineBox* determineStartPosition(bool fullLayout, BidiIterator& start, BidiState& bidi);
     RootInlineBox* determineEndPosition(RootInlineBox* startBox, BidiIterator& cleanLineStart,
                                         BidiStatus& cleanLineBidiStatus, BidiContext*& cleanLineBidiContext,
                                         int& yPos);
@@ -139,9 +139,9 @@ public:
     int skipWhitespace(BidiIterator& , BidiState &);
     BidiIterator findNextLineBreak(BidiIterator& start, BidiState &info );
     RootInlineBox* constructLine(const BidiIterator& start, const BidiIterator& end);
-    InlineFlowBox* createLineBoxes(RenderObject* obj);
+    InlineFlowBox* createLineBoxes(RenderObject*);
     int tabWidth(bool isWhitespacePre);
-    void computeHorizontalPositionsForLine(RootInlineBox* lineBox, BidiState &bidi);
+    void computeHorizontalPositionsForLine(RootInlineBox* lineBox, BidiState& bidi);
     void computeVerticalPositionsForLine(RootInlineBox* lineBox);
     void checkLinesForOverflow();
     void deleteEllipsisLineBoxes();
@@ -446,6 +446,6 @@ protected:
     int m_tabWidth;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif // RENDER_BLOCK_H
+#endif // RenderBlock_H

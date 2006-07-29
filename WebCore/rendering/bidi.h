@@ -92,11 +92,11 @@ namespace WebCore {
         // Overridden to prevent the normal delete from being called.
         void operator delete(void*, size_t);
 
-private:
+    private:
         // The normal operator new is disallowed.
         void* operator new(size_t) throw();
 
-public:
+    public:
         int start;
         int stop;
 
@@ -114,6 +114,6 @@ public:
     struct BidiIterator;
     struct BidiState;
 
-};
+} // namespace WebCore
 
-#endif
+#endif // BIDI_H

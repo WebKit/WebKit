@@ -62,7 +62,8 @@ namespace WebCore
         mutable RefPtr<SVGAnimatedNumber> m_exponent;
         mutable RefPtr<SVGAnimatedNumber> m_offset;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

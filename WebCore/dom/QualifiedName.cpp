@@ -159,7 +159,7 @@ String QualifiedName::toString() const
 }
 
 // Global init routines
-DEFINE_GLOBAL(QualifiedName, anyName, nullAtom, starAtom, starAtom);
+DEFINE_GLOBAL(QualifiedName, anyName, nullAtom, starAtom, starAtom)
 
 void QualifiedName::init()
 {

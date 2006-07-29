@@ -40,7 +40,8 @@ namespace WebCore
     private:
         mutable KCanvasFEMerge *m_filterEffect;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

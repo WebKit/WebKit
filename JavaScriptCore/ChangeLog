@@ -1,3 +1,52 @@
+2006-07-29  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10080
+          Adopt pedantic changes from the Unity project to improve 
+          cross-compiler compatibility
+
+          Changes include:
+          * Removing trailing semicolon from namespace braces.
+          * Removing trailing comma from last enum declaration.
+          * Updating to match style guidelines.
+          * Adding missing newline to the end of the file.
+          * Turning on gcc warning for missing newline at the end of a source file
+            (GCC_WARN_ABOUT_MISSING_NEWLINE in Xcode, -Wnewline in gcc).
+          * Alphabetical sorting of Xcode source list files. 
+          * Replace use of non-portable variable-size array with Vector.
+          * Use C-style comments instead of C++ comments in files that might
+            be included by either C or C++ files.
+
+        * API/JSCallbackConstructor.cpp:
+        (KJS::JSCallbackConstructor::construct):
+        * API/JSCallbackFunction.cpp:
+        (KJS::JSCallbackFunction::callAsFunction):
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::construct):
+        (KJS::JSCallbackObject::callAsFunction):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCorePrefix.h:
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::fieldNamed):
+        * bindings/jni/jni_class.h:
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::JavaInstance):
+        (JavaInstance::valueOf):
+        * bindings/jni/jni_objc.mm:
+        (KJS::Bindings::dispatchJNICall):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaParameter::JavaParameter):
+        (JavaArray::JavaArray):
+        * bindings/jni/jni_runtime.h:
+        * bindings/jni/jni_utility.h:
+        * bindings/objc/objc_instance.h:
+        * bindings/runtime_array.h:
+        * kjs/collector.h:
+        * kjs/config.h:
+        * kjs/ustring.cpp:
+        * wtf/Platform.h:
+
 2006-07-29  Mike Emmel  <mike.emmel@gmail.com>
 
         Reviewed by Darin.

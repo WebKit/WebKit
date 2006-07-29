@@ -39,7 +39,8 @@ namespace WebCore
         virtual SVGRect *create() const;
         virtual void assign(SVGRect *src, SVGRect *dst) const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

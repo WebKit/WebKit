@@ -35,7 +35,8 @@ namespace WebCore
         SVGPathSegList(const SVGStyledElement *context = 0);
         virtual ~SVGPathSegList();
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

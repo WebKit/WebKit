@@ -44,7 +44,8 @@ namespace WebCore
     private:
         mutable RefPtr<SVGAnimatedString> m_in1;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

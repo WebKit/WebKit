@@ -33,25 +33,25 @@ namespace WebCore {
 /**
  * NodeList which lists all Nodes in a Element with a given "name=" tag
  */
-class NameNodeList : public NodeList
-{
+class NameNodeList : public NodeList {
 public:
-    NameNodeList( Node *doc, const String &t );
+    NameNodeList(Node* doc, const String& name);
 
     // DOM methods overridden from  parent classes
 
     virtual unsigned length() const;
-    virtual Node *item ( unsigned index ) const;
+    virtual Node* item(unsigned index) const;
 
     // Other methods (not part of DOM)
-    virtual void rootNodeChildrenChanged() {};
+    virtual void rootNodeChildrenChanged() { }
     virtual void rootNodeAttributeChanged() { NodeList::rootNodeChildrenChanged(); }
 
 protected:
-    virtual bool nodeMatches( Node *testNode ) const;
+    virtual bool nodeMatches(Node* testNode) const;
 
     String nodeName;
 };
 
-}; //namespace
-#endif
+} // namespace WebCore
+
+#endif // DOM_NameNodeListImpl_h

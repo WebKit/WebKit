@@ -51,7 +51,7 @@ JavaParameter::JavaParameter (JNIEnv *env, jstring type)
 {
     _type = JavaString (env, type);
     _JNIType = JNITypeFromClassName (_type.UTF8String());
-};
+}
 
 JavaField::JavaField (JNIEnv *env, jobject aField)
 {
@@ -372,7 +372,7 @@ JavaArray::JavaArray (jobject a, const char *t, const RootObject *r)
     _length = env->GetArrayLength((jarray)_array->_instance);
     _type = strdup(t);
     _root = r;
-};
+}
 
 JavaArray::~JavaArray () 
 {
@@ -384,7 +384,7 @@ JavaArray::JavaArray (const JavaArray &other) : Array()
 {
     _array = other._array;
     _type = strdup(other._type);
-};
+}
 
 void JavaArray::setValueAt(ExecState *exec, unsigned int index, JSValue *aValue) const
 {

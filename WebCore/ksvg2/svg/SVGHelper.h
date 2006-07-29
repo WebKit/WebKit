@@ -26,22 +26,20 @@
 
 #include "DeprecatedString.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGElement;
     class SVGStringList;
 
     // KSVG extension
-    enum LengthMode
-    {
+    enum LengthMode {
         LM_UNKNOWN = 0,
         LM_WIDTH,
         LM_HEIGHT,
         LM_OTHER
     };
 
-    class SVGHelper
-    {
+    class SVGHelper {
     public:
         static float PercentageOfViewport(float value, const SVGElement *viewportElement, LengthMode mode);
 
@@ -102,9 +100,10 @@ namespace WebCore
 
         return variable.get();
     }
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGHelper_H
 
 // vim:ts=4:noet

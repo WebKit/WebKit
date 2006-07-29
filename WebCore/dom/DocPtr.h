@@ -25,9 +25,8 @@
 
 namespace WebCore {
 
-template <class T> class DocPtr
-{
- public:
+template <class T> class DocPtr {
+public:
     DocPtr() : m_ptr(0) {}
     DocPtr(T *ptr) : m_ptr(ptr) { if (ptr) ptr->selfOnlyRef(); }
     DocPtr(const DocPtr &o) : m_ptr(o.m_ptr) { if (T *ptr = m_ptr) ptr->selfOnlyRefRef(); }

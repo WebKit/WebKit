@@ -38,7 +38,8 @@ namespace WebCore
         virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
         bool childShouldCreateRenderer(Node *child) const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

@@ -72,4 +72,4 @@ int nextBreakablePosition(const UChar* str, int pos, int len, bool breakNBSP)
     return i;
 }
 
-};
+} // namespace WebCore

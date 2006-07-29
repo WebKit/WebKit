@@ -37,7 +37,8 @@ namespace WebCore
         virtual SVGPointList *points() const = 0;
         virtual SVGPointList *animatedPoints() const = 0;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

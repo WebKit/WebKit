@@ -61,7 +61,8 @@ namespace WebCore
         mutable RefPtr<SVGMatrix> m_localMatrix;
         mutable RefPtr<SVGAnimatedTransformList> m_transform;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

@@ -57,10 +57,9 @@ typedef unsigned long long uint64_t;
     if(!(Group->Variable == Value)) \
         Group.access()->Variable = Value;
 
-namespace WebCore
-{
-    class SVGRenderStyle : public Shared<SVGRenderStyle>
-    {    
+namespace WebCore {
+
+    class SVGRenderStyle : public Shared<SVGRenderStyle> {    
     public:
         SVGRenderStyle();
         SVGRenderStyle(bool); // Used to create the default style.
@@ -119,16 +118,13 @@ namespace WebCore
 
     protected:
         // inherit
-        struct InheritedFlags
-        {
+        struct InheritedFlags {
             // 64 bit inherited, don't add to the struct, or the operator will break.
             bool operator==(const InheritedFlags &other) const { return _iflags == other._iflags; }
             bool operator!=(const InheritedFlags &other) const { return _iflags != other._iflags; }
 
-            union
-            {
-                struct
-                {
+            union {
+                struct {
                     unsigned _colorRendering : 2; // EColorRendering
                     unsigned _imageRendering : 2; // EImageRendering 
                     unsigned _shapeRendering : 2; // EShapeRendering 
@@ -149,16 +145,13 @@ namespace WebCore
         } svg_inherited_flags;
 
         // don't inherit
-        struct NonInheritedFlags
-        {
+        struct NonInheritedFlags {
             // 64 bit non-inherited, don't add to the struct, or the operator will break.
             bool operator==(const NonInheritedFlags &other) const { return _niflags == other._niflags; }
             bool operator!=(const NonInheritedFlags &other) const { return _niflags != other._niflags; }
 
-            union
-            {
-                struct
-                {
+            union {
+                struct {
                     unsigned _alignmentBaseline : 4; // EAlignmentBaseline 
                     unsigned _dominantBaseline : 4; // EDominantBaseline
                     // 24 bits unused
@@ -204,9 +197,10 @@ namespace WebCore
             svg_noninherited_flags.f._dominantBaseline = initialDominantBaseline();
         }
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGRenderStyle_H
 
 // vim:ts=4:noet

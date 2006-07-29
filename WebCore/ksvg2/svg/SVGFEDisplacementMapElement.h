@@ -56,7 +56,8 @@ namespace WebCore {
         mutable RefPtr<SVGAnimatedNumber> m_scale;
         mutable KCanvasFEDisplacementMap* m_filterEffect;
     };
-}
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif // KSVG_SVGFEDisplacementMapElementImpl_H

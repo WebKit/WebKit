@@ -27,10 +27,9 @@
 #include "SVGAnimatedTemplate.h"
 #include "SVGTransformList.h"
 
-namespace WebCore
-{
-    class SVGAnimatedTransformList : public SVGAnimatedTemplate<SVGTransformList>
-    {
+namespace WebCore {
+
+    class SVGAnimatedTransformList : public SVGAnimatedTemplate<SVGTransformList> {
     public:
         SVGAnimatedTransformList(const SVGStyledElement *context);
         virtual ~SVGAnimatedTransformList();
@@ -39,9 +38,10 @@ namespace WebCore
         virtual SVGTransformList *create() const;
         //virtual void assign(SVGTransformList *src, SVGTransformList *dst) const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGAnimatedTransformListImpl_H
 
 // vim:ts=4:noet

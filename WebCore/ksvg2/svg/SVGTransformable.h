@@ -26,36 +26,33 @@
 
 #include "SVGLocatable.h"
 
-class AffineTransform;
-
 namespace WebCore {
-    class Node;
+    
+    class AffineTransform;
     class AtomicString;
     class Attribute;
-};
-
-namespace WebCore
-{
+    class Node;
+    class SVGAnimatedTransformList;
     class SVGMatrix;
     class SVGTransformList;
-    class SVGAnimatedTransformList;
-    class SVGTransformable : public SVGLocatable
-    {
+
+    class SVGTransformable : public SVGLocatable {
     public:
         SVGTransformable();
         virtual ~SVGTransformable();
 
         // 'SVGTransformable' functions
-        virtual SVGAnimatedTransformList *transform() const = 0;
-        virtual SVGMatrix *localMatrix() const = 0;
+        virtual SVGAnimatedTransformList* transform() const = 0;
+        virtual SVGMatrix* localMatrix() const = 0;
         
-        virtual void updateLocalTransform(SVGTransformList *localTransforms) = 0;
+        virtual void updateLocalTransform(SVGTransformList*) = 0;
         
-        static void parseTransformAttribute(SVGTransformList *list, const AtomicString& transform);
+        static void parseTransformAttribute(SVGTransformList*, const AtomicString& transform);
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGTransformableImpl_H
 
 // vim:ts=4:noet

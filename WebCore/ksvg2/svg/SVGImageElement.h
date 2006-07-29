@@ -73,7 +73,8 @@ namespace WebCore
 
         SVGImageLoader m_imageLoader;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

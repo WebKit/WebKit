@@ -26,10 +26,9 @@
 
 #include "SVGAnimatedTemplate.h"
 
-namespace WebCore
-{
-    class SVGAnimatedString : public SVGAnimatedTemplate<StringImpl>
-    {
+namespace WebCore {
+
+    class SVGAnimatedString : public SVGAnimatedTemplate<StringImpl> {
     public:
         SVGAnimatedString(const SVGStyledElement *context);
         virtual ~SVGAnimatedString();
@@ -38,9 +37,10 @@ namespace WebCore
         virtual StringImpl *create() const;
         virtual void assign(StringImpl *src, StringImpl *dst) const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGAnimatedStringImpl_H
 
 // vim:ts=4:noet

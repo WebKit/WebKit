@@ -301,7 +301,7 @@ print "void init()
 		printDefinitions(\@attrs, "attributes", $attrsNamespace);
 	}
 
-	print "}\n\n} }";
+	print "}\n\n} }\n\n";
 	restoreSTDOUT();
 }
 
@@ -415,7 +415,7 @@ ${namespace}Element *${namespace}ElementFactory::create${namespace}Element(const
     return new ${namespace}Element(qName, doc);
 }
 
-}; // namespace
+} // namespace
 
 END
 ;

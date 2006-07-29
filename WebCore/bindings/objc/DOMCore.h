@@ -61,7 +61,7 @@ enum {
     DOM_SYNTAX_ERR                    = 12,
     DOM_INVALID_MODIFICATION_ERR      = 13,
     DOM_NAMESPACE_ERR                 = 14,
-    DOM_INVALID_ACCESS_ERR            = 15,
+    DOM_INVALID_ACCESS_ERR            = 15
 };
 
 @interface DOMImplementation : DOMObject
@@ -85,7 +85,7 @@ enum {
     DOM_DOCUMENT_NODE                 = 9,
     DOM_DOCUMENT_TYPE_NODE            = 10,
     DOM_DOCUMENT_FRAGMENT_NODE        = 11,
-    DOM_NOTATION_NODE                 = 12,
+    DOM_NOTATION_NODE                 = 12
 };
 
 @interface DOMNode : DOMObject

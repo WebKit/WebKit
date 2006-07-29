@@ -28,8 +28,7 @@
 
 namespace WebCore {
 
-class HTMLBlockquoteElement : public HTMLElement
-{
+class HTMLBlockquoteElement : public HTMLElement {
 public:
     HTMLBlockquoteElement(Document*);
     ~HTMLBlockquoteElement();
@@ -41,5 +40,6 @@ public:
     void setCite(const String&);
 };
 
-}; //namespace
-#endif
+} // namespace WebCore
+
+#endif // HTMLBlockquoteElement_H

@@ -25,12 +25,13 @@
 #if SVG_SUPPORT
 
 namespace WebCore {
+
     class FloatRect;
-    class SVGMatrix;
     class SVGElement;
+    class SVGMatrix;
     class SVGStyledElement;
-    class SVGLocatable
-    {
+
+    class SVGLocatable {
     public:
         SVGLocatable();
         virtual ~SVGLocatable();
@@ -51,9 +52,10 @@ namespace WebCore {
         static SVGMatrix* getCTM(const SVGElement*);
         static SVGMatrix* getScreenCTM(const SVGElement*);
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // SVGLocatable_H
 
 // vim:ts=4:noet

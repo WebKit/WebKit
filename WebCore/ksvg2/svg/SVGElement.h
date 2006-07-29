@@ -28,14 +28,13 @@
 #include "SVGNames.h"
 
 namespace WebCore {
-    class SVGMatrix;
-    class SVGSVGElement;
-    class SVGStyledElement;
-    class Ecma;
     class DocumentPtr;
+    class Ecma;
+    class SVGMatrix;
+    class SVGStyledElement;
+    class SVGSVGElement;
 
-    class SVGElement : public StyledElement
-    {
+    class SVGElement : public StyledElement {
     public:
         SVGElement(const QualifiedName&, Document*);
         virtual ~SVGElement();
@@ -72,28 +71,29 @@ namespace WebCore {
         virtual bool isValid() const { return true; }
         
         virtual void closeRenderer() { m_closed = true; }
-        virtual bool rendererIsNeeded(RenderStyle *) { return false; }
-        virtual bool childShouldCreateRenderer(Node *) const;
+        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+        virtual bool childShouldCreateRenderer(Node*) const;
         
         // helper:
         bool isClosed() const { return m_closed; }
 
     private:
         bool m_closed;
-        void addSVGEventListener(const AtomicString& eventType, const Attribute* attr);
+        void addSVGEventListener(const AtomicString& eventType, const Attribute*);
     };
-};
 
-namespace WebCore {
-    static inline SVGElement *svg_dynamic_cast(Node *node) {
-        SVGElement *svgElement = NULL;
+
+    static inline SVGElement* svg_dynamic_cast(Node* node)
+    {
+        SVGElement* svgElement = NULL;
         if (node && node->isSVGElement())
-            svgElement = static_cast<SVGElement *>(node);
+            svgElement = static_cast<SVGElement*>(node);
         return svgElement;
     }
-};
+
+} // namespace WebCore 
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGElementImpl_H
 
 // vim:ts=4:noet

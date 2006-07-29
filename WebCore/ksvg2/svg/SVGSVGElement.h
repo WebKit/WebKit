@@ -136,7 +136,8 @@ namespace WebCore
         bool m_useCurrentView;
         TimeScheduler* m_timeScheduler;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

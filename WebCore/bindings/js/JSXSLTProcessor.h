@@ -32,7 +32,7 @@
 
 namespace WebCore {
     class XSLTProcessor;
-};
+}
 
 // Eventually we should implement XSLTException:
 // http://lxr.mozilla.org/seamonkey/source/content/xsl/public/nsIXSLTException.idl
@@ -63,8 +63,8 @@ public:
     virtual JSObject *construct(ExecState *exec, const List &args) { return new JSXSLTProcessor(exec); }
 };
 
-};
+} // namespace KJS
 
-#endif
+#endif // XSLTProcessor_H
 
 #endif // KHTML_XSLT

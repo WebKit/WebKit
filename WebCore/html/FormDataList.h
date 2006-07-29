@@ -27,15 +27,15 @@
 #ifndef HTML_FormDataList_h
 #define HTML_FormDataList_h
 
+#include "DeprecatedValueList.h"
 #include "PlatformString.h"
 #include "TextEncoding.h"
-#include "DeprecatedValueList.h"
 
 namespace WebCore {
 
 struct FormDataListItem {
-    FormDataListItem(const DeprecatedCString &data) : m_data(data) { }
-    FormDataListItem(const DeprecatedString &path) : m_path(path) { }
+    FormDataListItem(const DeprecatedCString& data) : m_data(data) { }
+    FormDataListItem(const DeprecatedString& path) : m_path(path) { }
 
     DeprecatedString m_path;
     DeprecatedCString m_data;
@@ -45,15 +45,15 @@ class FormDataList {
 public:
     FormDataList(const TextEncoding&);
 
-    void appendData(const String &key, const String &value)
+    void appendData(const String& key, const String& value)
         { appendString(key.deprecatedString()); appendString(value.deprecatedString()); }
-    void appendData(const String &key, const DeprecatedString &value)
+    void appendData(const String& key, const DeprecatedString& value)
         { appendString(key.deprecatedString()); appendString(value); }
-    void appendData(const String &key, const DeprecatedCString &value)
+    void appendData(const String& key, const DeprecatedCString& value)
         { appendString(key.deprecatedString()); appendString(value); }
-    void appendData(const String &key, int value)
+    void appendData(const String& key, int value)
         { appendString(key.deprecatedString()); appendString(DeprecatedString::number(value)); }
-    void appendFile(const String &key, const String &filename);
+    void appendFile(const String& key, const String& filename);
 
     DeprecatedValueListConstIterator<FormDataListItem> begin() const
         { return m_list.begin(); }
@@ -61,13 +61,13 @@ public:
         { return m_list.end(); }
 
 private:
-    void appendString(const DeprecatedCString &s);
-    void appendString(const DeprecatedString &s);
+    void appendString(const DeprecatedCString&);
+    void appendString(const DeprecatedString&);
 
     TextEncoding m_encoding;
     DeprecatedValueList<FormDataListItem> m_list;
 };
 
-};
+} // namespace WebCore
 
-#endif
+#endif // HTML_FormDataList_h

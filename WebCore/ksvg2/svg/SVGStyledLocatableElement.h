@@ -24,15 +24,15 @@
 #define KSVG_SVGStyledLocatableElementImpl_H
 #if SVG_SUPPORT
 
-#include "SVGStyledElement.h"
 #include "SVGLocatable.h"
+#include "SVGStyledElement.h"
 
 namespace WebCore {
 
     class SVGMatrix;
     class SVGElement;
-    class SVGStyledLocatableElement : public SVGStyledElement, public SVGLocatable
-    {
+
+    class SVGStyledLocatableElement : public SVGStyledElement, public SVGLocatable {
     public:
         SVGStyledLocatableElement(const QualifiedName&, Document*);
         virtual ~SVGStyledLocatableElement();
@@ -40,17 +40,18 @@ namespace WebCore {
         virtual bool isStyledLocatable() const { return true; }
 
         // 'SVGStyledLocatableElement' functions
-        virtual SVGElement *nearestViewportElement() const;
-        virtual SVGElement *farthestViewportElement() const;
+        virtual SVGElement* nearestViewportElement() const;
+        virtual SVGElement* farthestViewportElement() const;
 
         virtual FloatRect getBBox() const;
-        virtual SVGMatrix *getCTM() const;
-        virtual SVGMatrix *getScreenCTM() const;
-        virtual SVGMatrix *getTransformToElement(SVGElement *element) const;
+        virtual SVGMatrix* getCTM() const;
+        virtual SVGMatrix* getScreenCTM() const;
+        virtual SVGMatrix* getTransformToElement(SVGElement*) const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGStyledLocatableElementImpl_H
 
 // vim:ts=4:noet

@@ -29,8 +29,7 @@
 
 namespace WebCore {
 
-    class SVGZoomEvent : public UIEvent
-    {
+    class SVGZoomEvent : public UIEvent {
     public:
         SVGZoomEvent();
         virtual ~SVGZoomEvent();
@@ -57,9 +56,10 @@ namespace WebCore {
         FloatPoint m_newTranslate;
         FloatPoint m_previousTranslate;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // SVGZoomEvent_H
 
 // vim:ts=4:noet

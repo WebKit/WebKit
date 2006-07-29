@@ -27,11 +27,10 @@
 #include "DOMList.h"
 #include <ksvg2/svg/SVGStyledElement.h>
 
-namespace WebCore
-{
+namespace WebCore {
+
     template<class T>
-    class SVGList : public DOMList<T>
-    {
+    class SVGList : public DOMList<T> {
     public:
         SVGList(const SVGStyledElement *context = 0)
         : DOMList<T>(), m_context(context) {}
@@ -87,9 +86,10 @@ namespace WebCore
     protected:
         const SVGStyledElement *m_context;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGList_H
 
 // vim:ts=4:noet

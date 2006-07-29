@@ -53,7 +53,7 @@ public:
         Attributes, NamespaceURI, Prefix, LocalName, OwnerDocument, InsertBefore,
         ReplaceChild, RemoveChild, AppendChild, HasAttributes, HasChildNodes,
         CloneNode, Normalize, IsSupported, Contains, IsSameNode, IsEqualNode, TextContent,
-        IsDefaultNamespace, LookupNamespaceURI, LookupPrefix,
+        IsDefaultNamespace, LookupNamespaceURI, LookupPrefix
     };
     
 protected:

@@ -25,8 +25,8 @@
 
 #include "SVGAnimatedTemplate.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGAnimatedColor : public SVGAnimatedTemplate<SVGColor>
     {
     public:
@@ -37,7 +37,8 @@ namespace WebCore
         virtual SVGColor *create() const;
         virtual void assign(SVGColor *src, SVGColor *dst) const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

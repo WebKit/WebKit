@@ -45,7 +45,8 @@ namespace WebCore
     private:
         void updateReferencedText();
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

@@ -35,7 +35,8 @@ namespace WebCore
         SVGPointList(const SVGStyledElement *context = 0);
         virtual ~SVGPointList();
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

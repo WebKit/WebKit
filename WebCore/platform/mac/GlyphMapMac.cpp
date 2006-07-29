@@ -28,11 +28,11 @@
 
 #include "config.h"
 #include "GlyphMap.h"
+
 #include "FontData.h"
 #include "WebCoreSystemInterface.h"
 
-namespace WebCore
-{
+namespace WebCore {
 
 bool GlyphMap::fillPage(GlyphPage* page, UChar* buffer, unsigned bufferLength, const FontData* fontData)
 {
@@ -65,4 +65,4 @@ bool GlyphMap::fillPage(GlyphPage* page, UChar* buffer, unsigned bufferLength, c
     return true;
 }
 
-}
+} // namespace WebCore

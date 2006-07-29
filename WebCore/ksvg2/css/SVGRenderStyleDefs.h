@@ -43,74 +43,61 @@
     Data Name() const { return (Data) svg_inherited_flags.f._##Name; } \
     static Data initial##Type() { return Initial; }
 
-namespace WebCore
-{
-    enum EWindRule
-    {
+namespace WebCore {
+
+    enum EWindRule {
         WR_NONZERO = 0, WR_EVENODD = 1
     };
 
-    enum ECapStyle
-    {
+    enum ECapStyle {
         CS_BUTT = 1, CS_ROUND = 2, CS_SQUARE = 3
     };
 
-    enum EJoinStyle
-    {
+    enum EJoinStyle {
         JS_MITER = 1, JS_ROUND = 2, JS_BEVEL = 3
     };
 
-    enum ETextAnchor
-    {
+    enum ETextAnchor {
         TA_START, TA_MIDDLE, TA_END
     };
 
-    enum EColorInterpolation
-    {
+    enum EColorInterpolation {
         CI_AUTO, CI_SRGB, CI_LINEARRGB
     };
 
-    enum EColorRendering
-    {
+    enum EColorRendering {
         CR_AUTO, CR_OPTIMIZESPEED, CR_OPTIMIZEQUALITY
     };
     
-    enum EImageRendering
-    {
+    enum EImageRendering {
         IR_AUTO, IR_OPTIMIZESPEED, IR_OPTIMIZEQUALITY
     };
 
-    enum EShapeRendering
-    {
+    enum EShapeRendering {
         SR_AUTO, SR_OPTIMIZESPEED, SR_CRISPEDGES, SR_GEOMETRICPRECISION
     };
 
-    enum ETextRendering
-    {
+    enum ETextRendering {
         TR_AUTO, TR_OPTIMIZESPEED, TR_OPTIMIZELEGIBILITY, TR_GEOMETRICPRECISION
     };
 
-    enum EWritingMode
-    {
+    enum EWritingMode {
         WM_LRTB, WM_LR, WM_RLTB, WM_RL, WM_TBRL, WM_TB
     };
     
-    enum EAlignmentBaseline
-    {
+    enum EAlignmentBaseline {
         AB_AUTO, AB_BASELINE, AB_BEFORE_EDGE, AB_TEXT_BEFORE_EDGE,
         AB_MIDDLE, AB_CENTRAL, AB_AFTER_EDGE, AB_TEXT_AFTER_EDGE,
         AB_IDEOGRAPHIC, AB_ALPHABETIC, AB_HANGING, AB_MATHEMATICAL
     };
 
-    enum EDominantBaseline
-    {
+    enum EDominantBaseline {
         DB_AUTO, DB_USE_SCRIPT, DB_NO_CHANGE, DB_RESET_SIZE,
         DB_IDEOGRAPHIC, DB_ALPHABETIC, DB_HANGING, DB_MATHEMATICAL,
         DB_CENTRAL, DB_MIDDLE, DB_TEXT_AFTER_EDGE, DB_TEXT_BEFORE_EDGE
     };
 
-    enum EPointerEvents
-    {
+    enum EPointerEvents {
         PE_NONE, PE_STROKE, PE_FILL, PE_PAINTED, PE_VISIBLE,
         PE_VISIBLE_STROKE, PE_VISIBLE_FILL, PE_VISIBLE_PAINTED, PE_ALL
     };
@@ -118,8 +105,7 @@ namespace WebCore
     class CSSValueList;
 
     // Inherited/Non-Inherited Style Datastructures
-    class StyleFillData : public Shared<StyleFillData>
-    {
+    class StyleFillData : public Shared<StyleFillData> {
     public:
         StyleFillData();
         StyleFillData(const StyleFillData &other);
@@ -137,8 +123,7 @@ namespace WebCore
         StyleFillData &operator=(const StyleFillData &);
     };
 
-    class StyleStrokeData : public Shared<StyleStrokeData>
-    {
+    class StyleStrokeData : public Shared<StyleStrokeData> {
     public:
         StyleStrokeData();
         StyleStrokeData(const StyleStrokeData &other);
@@ -162,8 +147,7 @@ namespace WebCore
         StyleStrokeData &operator=(const StyleStrokeData &);
     };
 
-    class StyleStopData : public Shared<StyleStopData>
-    {
+    class StyleStopData : public Shared<StyleStopData> {
     public:
         StyleStopData();
         StyleStopData(const StyleStopData &other);
@@ -181,8 +165,7 @@ namespace WebCore
         StyleStopData &operator=(const StyleStopData &);
     };
 
-    class StyleClipData : public Shared<StyleClipData>
-    {
+    class StyleClipData : public Shared<StyleClipData> {
     public:
         StyleClipData();
         StyleClipData(const StyleClipData &other);
@@ -199,8 +182,7 @@ namespace WebCore
         StyleClipData &operator=(const StyleClipData &);
     };
 
-    class StyleMaskData : public Shared<StyleMaskData>
-    {
+    class StyleMaskData : public Shared<StyleMaskData> {
     public:
         StyleMaskData();
         StyleMaskData(const StyleMaskData &other);
@@ -214,8 +196,7 @@ namespace WebCore
         StyleMaskData &operator=(const StyleMaskData &);
     };
 
-    class StyleMarkerData : public Shared<StyleMarkerData>
-    {
+    class StyleMarkerData : public Shared<StyleMarkerData> {
     public:
         StyleMarkerData();
         StyleMarkerData(const StyleMarkerData &other);
@@ -235,8 +216,7 @@ namespace WebCore
     };
 
     // Note : the rule for this class is, *no inheritance* of these props
-    class StyleMiscData : public Shared<StyleMiscData>
-    {
+    class StyleMiscData : public Shared<StyleMiscData> {
     public:
         StyleMiscData();
         StyleMiscData(const StyleMiscData &other);
@@ -254,9 +234,10 @@ namespace WebCore
     private:
         StyleMiscData &operator=(const StyleMiscData &);
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGRenderStyleDefs_H
 
 // vim:ts=4:noet

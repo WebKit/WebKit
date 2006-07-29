@@ -50,7 +50,8 @@ namespace WebCore
     private:
         mutable bool m_insideRenderSection;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

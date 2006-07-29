@@ -46,7 +46,7 @@ enum {
     DOM_IMPORT_RULE                = 3,
     DOM_MEDIA_RULE                 = 4,
     DOM_FONT_FACE_RULE             = 5,
-    DOM_PAGE_RULE                  = 6,
+    DOM_PAGE_RULE                  = 6
 };
 
 @interface DOMCSSRule : DOMObject
@@ -111,7 +111,7 @@ enum {
     DOM_CSS_INHERIT = 0,
     DOM_CSS_PRIMITIVE_VALUE = 1,
     DOM_CSS_VALUE_LIST = 2,
-    DOM_CSS_CUSTOM = 3,
+    DOM_CSS_CUSTOM = 3
 };
 
 @interface DOMCSSValue : DOMObject
@@ -147,7 +147,7 @@ enum {
     DOM_CSS_ATTR                       = 22,
     DOM_CSS_COUNTER                    = 23,
     DOM_CSS_RECT                       = 24,
-    DOM_CSS_RGBCOLOR                   = 25,
+    DOM_CSS_RGBCOLOR                   = 25
 };
 
 @interface DOMCSSPrimitiveValue : DOMCSSValue

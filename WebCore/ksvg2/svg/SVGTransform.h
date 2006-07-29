@@ -64,7 +64,7 @@ namespace WebCore {
         RefPtr<SVGMatrix> m_matrix;
     };
 
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

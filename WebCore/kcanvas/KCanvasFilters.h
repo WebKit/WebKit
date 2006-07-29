@@ -39,8 +39,7 @@ namespace WebCore {
 class KCanvasFilterQuartz;
 
 // Enumerations
-typedef enum
-{
+typedef enum {
     FE_DISTANT_LIGHT = 0,
     FE_POINT_LIGHT = 1,
     FE_SPOT_LIGHT = 2,
@@ -64,8 +63,19 @@ typedef enum
 
 class KCanvasPoint3F {
 public:
-    KCanvasPoint3F() : m_x(0), m_y(0), m_z(0) { }
-    KCanvasPoint3F(float x, float y, float z) : m_x(x), m_y(y), m_z(z) { }
+    KCanvasPoint3F()
+        : m_x(0)
+        , m_y(0)
+        , m_z(0)
+    {
+    }
+
+    KCanvasPoint3F(float x, float y, float z)
+        : m_x(x)
+        , m_y(y)
+        , m_z(z)
+    {
+    }
     
     float x() const { return m_x; }
     void setX(float x) { m_x = x; }
@@ -87,11 +97,10 @@ private:
 class KCanvasFilterEffect;
 class KRenderingDevice;
 
-class KCanvasFilter : public KCanvasResource
-{
+class KCanvasFilter : public KCanvasResource {
 public:
-    KCanvasFilter() { };
-    virtual ~KCanvasFilter() { };
+    KCanvasFilter() { }
+    virtual ~KCanvasFilter() { }
     
     virtual bool isFilter() const { return true; }
     
@@ -123,12 +132,11 @@ protected:
 
 KCanvasFilter *getFilterById(Document *document, const AtomicString &id);
 
-class KCanvasFilterEffect
-{
+class KCanvasFilterEffect {
 public:
     // this default constructor is only needed for gcc 3.3
     KCanvasFilterEffect() { }
-    virtual ~KCanvasFilterEffect() { };
+    virtual ~KCanvasFilterEffect() { }
 
     virtual KCFilterEffectType effectType() const { return FE_TURBULENCE; }
 
@@ -163,8 +171,7 @@ typedef enum {
     BM_LIGHTEN = 4
 } KCBlendModeType;
 
-class KCanvasFEBlend : public KCanvasFilterEffect
-{
+class KCanvasFEBlend : public KCanvasFilterEffect {
 public:
     DeprecatedString in2() const { return m_in2; }
     void setIn2(const DeprecatedString &in2) { m_in2 = in2; }
@@ -186,8 +193,7 @@ typedef enum {
     CMT_LUMINANCE_TO_ALPHA = 3
 } KCColorMatrixType;
 
-class KCanvasFEColorMatrix : public KCanvasFilterEffect
-{
+class KCanvasFEColorMatrix : public KCanvasFilterEffect {
 public:
     KCColorMatrixType type() const { return m_type; }
     void setType(KCColorMatrixType type) { m_type = type; }
@@ -210,9 +216,12 @@ typedef enum {
     CT_GAMMA = 4
 } KCComponentTransferType;
 
-struct KCComponentTransferFunction
-{
-    KCComponentTransferFunction() : type(CT_IDENTITY) {}
+struct KCComponentTransferFunction {
+    KCComponentTransferFunction()
+        : type(CT_IDENTITY)
+    {
+    }
+
     KCComponentTransferType type;
     Vector<float> tableValues;
     float slope;
@@ -222,8 +231,7 @@ struct KCComponentTransferFunction
     float offset;
 };
 
-class KCanvasFEComponentTransfer : public KCanvasFilterEffect
-{
+class KCanvasFEComponentTransfer : public KCanvasFilterEffect {
 public:    
     KCComponentTransferFunction redFunction() const { return m_redFunc; }
     void setRedFunction(const KCComponentTransferFunction& func) { m_redFunc = func; }
@@ -252,11 +260,10 @@ typedef enum {
     CO_OUT = 2,
     CO_ATOP = 3,
     CO_XOR = 4,
-    CO_ARITHMETIC = 5,
+    CO_ARITHMETIC = 5
 } KCCompositeOperationType;
 
-class KCanvasFEComposite : public KCanvasFilterEffect
-{
+class KCanvasFEComposite : public KCanvasFilterEffect {
 public:
     DeprecatedString in2() const { return m_in2; }
     void setIn2(const DeprecatedString &in2) { m_in2 = in2; }
@@ -290,10 +297,9 @@ typedef enum {
     EM_NONE = 2
 } KCEdgeModeType;
 
-class KCanvasFEConvolveMatrix : public KCanvasFilterEffect
-{
+class KCanvasFEConvolveMatrix : public KCanvasFilterEffect {
 public:
-    KCanvasFEConvolveMatrix() { };
+    KCanvasFEConvolveMatrix() { }
 
     FloatSize kernelSize() const { return m_kernelSize; }
     void setKernelSize(FloatSize kernelSize) { m_kernelSize = kernelSize; }
@@ -339,10 +345,12 @@ typedef enum{
 } KCLightType;
 
 //The light source for Diffuse/SpecularLighting
-class KCLightSource
-{
+class KCLightSource {
 public:
-    KCLightSource(KCLightType a_type) : m_type(a_type) { }
+    KCLightSource(KCLightType a_type)
+        : m_type(a_type)
+    {
+    }
     
     virtual ~KCLightSource() { }
     
@@ -354,11 +362,14 @@ private:
     KCLightType m_type;
 };
 
-class KCDistantLightSource : public KCLightSource
-{
+class KCDistantLightSource : public KCLightSource {
 public:
-    KCDistantLightSource(float azimuth, float elevation) :
-        KCLightSource(LS_DISTANT), m_azimuth(azimuth), m_elevation(elevation) { }
+    KCDistantLightSource(float azimuth, float elevation)
+        : KCLightSource(LS_DISTANT)
+        , m_azimuth(azimuth)
+        , m_elevation(elevation)
+    {
+    }
     
     float azimuth() const{ return m_azimuth; }
     float elevation() const{ return m_elevation; }
@@ -370,32 +381,40 @@ private:
     float m_elevation;
 };
 
-class KCPointLightSource : public KCLightSource
-{
+class KCPointLightSource : public KCLightSource {
 public:
-    KCPointLightSource(KCanvasPoint3F& position) : KCLightSource(LS_POINT), m_position(position) { }
+    KCPointLightSource(KCanvasPoint3F& position)
+        : KCLightSource(LS_POINT)
+        , m_position(position)
+    {
+    }
     
     const KCanvasPoint3F& position() const { return m_position; }
     
-    virtual TextStream &externalRepresentation(TextStream &) const;
+    virtual TextStream& externalRepresentation(TextStream&) const;
 
 private:
     KCanvasPoint3F m_position;
 };
 
-class KCSpotLightSource : public KCLightSource
-{
+class KCSpotLightSource : public KCLightSource {
 public:
-    KCSpotLightSource(KCanvasPoint3F& position, KCanvasPoint3F& direction, 
-        float specularExponent, float limitingConeAngle) : KCLightSource(LS_SPOT), 
-        m_position(position), m_direction(direction), m_specularExponent(specularExponent), m_limitingConeAngle(limitingConeAngle) { }
+    KCSpotLightSource(KCanvasPoint3F& position, KCanvasPoint3F& direction,float specularExponent, float limitingConeAngle) 
+        : KCLightSource(LS_SPOT)
+        , m_position(position)
+        , m_direction(direction)
+        , m_specularExponent(specularExponent)
+        , m_limitingConeAngle(limitingConeAngle)
+    {
+    }
     
     const KCanvasPoint3F& position() const { return m_position; }
     const KCanvasPoint3F& direction() const { return m_direction; }
     float specularExponent() const { return m_specularExponent; }
     float limitingConeAngle() const { return m_limitingConeAngle; }
     
-    virtual TextStream &externalRepresentation(TextStream &) const;
+    virtual TextStream& externalRepresentation(TextStream&) const;
+
 private:
     KCanvasPoint3F m_position;
     KCanvasPoint3F m_direction;
@@ -403,10 +422,12 @@ private:
     float          m_limitingConeAngle;
 };
 
-class KCanvasFEDiffuseLighting : public KCanvasFilterEffect
-{
+class KCanvasFEDiffuseLighting : public KCanvasFilterEffect {
 public:
-    KCanvasFEDiffuseLighting() : m_lightSource(0) { }
+    KCanvasFEDiffuseLighting()
+        : m_lightSource(0)
+    {
+    }
     ~KCanvasFEDiffuseLighting() { delete m_lightSource; }
 
     Color lightingColor() const { return m_lightingColor; }
@@ -445,10 +466,14 @@ typedef enum {
     CS_ALPHA = 3
 } KCChannelSelectorType;
 
-class KCanvasFEDisplacementMap : public KCanvasFilterEffect
-{
+class KCanvasFEDisplacementMap : public KCanvasFilterEffect {
 public:
-    KCanvasFEDisplacementMap() : m_xChannelSelector(CS_RED), m_yChannelSelector(CS_RED), m_scale(0) {}
+    KCanvasFEDisplacementMap()
+        : m_xChannelSelector(CS_RED)
+        , m_yChannelSelector(CS_RED)
+        , m_scale(0)
+    {
+    }
     
     DeprecatedString in2() const { return m_in2; }
     void setIn2(const DeprecatedString &in2) { m_in2 = in2; }
@@ -471,8 +496,7 @@ private:
     float m_scale;
 };
 
-class KCanvasFEFlood : public KCanvasFilterEffect
-{
+class KCanvasFEFlood : public KCanvasFilterEffect {
 public:
     Color floodColor() const { return m_floodColor; }
     void setFloodColor(const Color &color) { m_floodColor = color; }
@@ -487,8 +511,7 @@ private:
     float m_floodOpacity;
 };
 
-class KCanvasFEGaussianBlur : public KCanvasFilterEffect
-{
+class KCanvasFEGaussianBlur : public KCanvasFilterEffect {
 public:
     float stdDeviationX() const;
     void setStdDeviationX(float x);
@@ -503,10 +526,13 @@ private:
     float m_y;
 };
 
-class KCanvasFEImage : public KCanvasFilterEffect, public CachedResourceClient
-{
+class KCanvasFEImage : public KCanvasFilterEffect, public CachedResourceClient {
 public:
-    KCanvasFEImage(): m_cachedImage(0) { }
+    KCanvasFEImage()
+        : m_cachedImage(0)
+    {
+    }
+
     virtual ~KCanvasFEImage();
     
     // FIXME: Eventually we need to support <svg> (RenderObject *) as well as image data.
@@ -520,8 +546,7 @@ private:
     CachedImage* m_cachedImage;
 };
 
-class KCanvasFEMerge : public KCanvasFilterEffect
-{
+class KCanvasFEMerge : public KCanvasFilterEffect {
 public:
     DeprecatedStringList mergeInputs() const { return m_mergeInputs; }
     void setMergeInputs(const DeprecatedStringList &mergeInputs) { m_mergeInputs = mergeInputs; }
@@ -537,8 +562,7 @@ typedef enum {
     MO_DIALATE = 1
 } KCMorphologyOperatorType;
 
-class KCanvasFEMorphology : public KCanvasFilterEffect
-{
+class KCanvasFEMorphology : public KCanvasFilterEffect {
 public:
     KCMorphologyOperatorType morphologyOperator() const { return m_operator; }
     void setMorphologyOperator(KCMorphologyOperatorType _operator) { m_operator = _operator; }
@@ -557,8 +581,7 @@ private:
     float m_radiusY;
 };
 
-class KCanvasFEOffset : public KCanvasFilterEffect
-{
+class KCanvasFEOffset : public KCanvasFilterEffect {
 public:
     float dx() const { return m_dx; }
     void setDx(float dx) { m_dx = dx; }
@@ -573,10 +596,12 @@ private:
     float m_dy;
 };
 
-class KCanvasFESpecularLighting : public KCanvasFilterEffect
-{
+class KCanvasFESpecularLighting : public KCanvasFilterEffect {
 public:
-    KCanvasFESpecularLighting() : m_lightSource(0) { }
+    KCanvasFESpecularLighting()
+        : m_lightSource(0)
+    {
+    }
     ~KCanvasFESpecularLighting() { delete m_lightSource; }
 
     Color lightingColor() const { return m_lightingColor; }
@@ -619,8 +644,7 @@ typedef enum {
     TT_NOISE = 1
 } KCTurbulanceType;
 
-class KCanvasFETurbulence : public KCanvasFilterEffect
-{
+class KCanvasFETurbulence : public KCanvasFilterEffect {
 public:
     KCTurbulanceType type() const { return m_type; }
     void setType(KCTurbulanceType type) { m_type = type; }
@@ -651,8 +675,8 @@ private:
     KCTurbulanceType m_type;
 };
 
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 
-#endif
+#endif // KCanvasFilters_H

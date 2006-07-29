@@ -32,7 +32,7 @@ enum {
     // DOM range exception codes
     //
     DOM_BAD_BOUNDARYPOINTS_ERR        = 1,
-    DOM_INVALID_NODE_TYPE_ERR         = 2,
+    DOM_INVALID_NODE_TYPE_ERR         = 2
 };
 
 enum {
@@ -42,7 +42,7 @@ enum {
     DOM_START_TO_START                = 0,
     DOM_START_TO_END                  = 1,
     DOM_END_TO_END                    = 2,
-    DOM_END_TO_START                  = 3,
+    DOM_END_TO_START                  = 3
 };
 
 @interface DOMRange : DOMObject

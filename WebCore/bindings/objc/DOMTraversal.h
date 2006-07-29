@@ -31,7 +31,7 @@ enum {
     // Constants returned by acceptNode
     DOM_FILTER_ACCEPT                  = 1,
     DOM_FILTER_REJECT                  = 2,
-    DOM_FILTER_SKIP                    = 3,
+    DOM_FILTER_SKIP                    = 3
 };
 
 enum {
@@ -48,7 +48,7 @@ enum {
     DOM_SHOW_DOCUMENT                  = 0x00000100,
     DOM_SHOW_DOCUMENT_TYPE             = 0x00000200,
     DOM_SHOW_DOCUMENT_FRAGMENT         = 0x00000400,
-    DOM_SHOW_NOTATION                  = 0x00000800,
+    DOM_SHOW_NOTATION                  = 0x00000800
 };
 
 @protocol DOMNodeFilter <NSObject>

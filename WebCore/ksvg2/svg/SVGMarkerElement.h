@@ -74,7 +74,8 @@ namespace WebCore
         mutable RefPtr<SVGAnimatedAngle> m_orientAngle;
         KCanvasMarker *m_marker;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

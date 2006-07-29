@@ -28,20 +28,23 @@
 
 #include "config.h"
 #include "FontCache.h"
-#include "FontPlatformData.h"
+
 #include "Font.h"
 #include "FontFallbackList.h"
+#include "FontPlatformData.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 
-namespace WebCore
-{
+namespace WebCore {
 
-struct FontPlatformDataCacheKey
-{
+struct FontPlatformDataCacheKey {
     FontPlatformDataCacheKey(const AtomicString& family = AtomicString(), unsigned size = 0, bool bold = false, bool italic = false)
-    :m_family(family), m_size(size), m_bold(bold), m_italic(italic)
-    {}
+        : m_family(family)
+        , m_size(size)
+        , m_bold(bold)
+        , m_italic(italic)
+    {
+    }
 
     bool operator==(const FontPlatformDataCacheKey& other) const
     {
@@ -238,4 +241,4 @@ const FontData* FontCache::getFontData(const Font& font, int& familyIndex)
     return getCachedFontData(result);
 }
 
-}
+} // namespace WebCore

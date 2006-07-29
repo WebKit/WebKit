@@ -32,8 +32,7 @@ namespace WebCore {
     class SVGSVGElement;
     class SVGDOMImplementation;
 
-    class SVGDocument : public Document
-    {
+    class SVGDocument : public Document {
     public:
         SVGDocument(SVGDOMImplementation *i, FrameView *view);
         virtual ~SVGDocument();
@@ -45,10 +44,10 @@ namespace WebCore {
         void dispatchZoomEvent(float prevScale, float newScale);
         void dispatchScrollEvent();
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-
-#endif
+#endif // KSVG_SVGDocumentImpl_H
 
 // vim:ts=4:noet

@@ -43,7 +43,7 @@ class TextBox : public ScrollView {
     } WrapStyle;
 
     typedef enum {
-        PlainText,
+        PlainText
     } TextFormat;
 
     TextBox(Widget* parent);
@@ -55,7 +55,7 @@ class TextBox : public ScrollView {
     void setLineHeight(int lineHeight);
 
     void setCursorPosition(int, int);
-    void getCursorPosition(int *, int *) const;
+    void getCursorPosition(int*, int*) const;
 
     void setFont(const Font&);
 
@@ -94,6 +94,6 @@ class TextBox : public ScrollView {
     virtual bool checksDescendantsForFocus() const;
 };
 
-}
+} // namespace WebCore
 
 #endif /* TextBox_h */

@@ -17,6 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 #include "config.h"
+#include "JSCanvasRenderingContext2D.h"
 
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
@@ -28,7 +29,6 @@
 #include "HTMLImageElement.h"
 #include "JSCanvasGradient.h"
 #include "JSCanvasPattern.h"
-#include "JSCanvasRenderingContext2D.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "kjs_html.h"
@@ -326,4 +326,4 @@ JSValue* JSCanvasRenderingContext2D::createPattern(ExecState* exec, const List& 
     return 0;
 }
 
-}
+} // namespace WebCore

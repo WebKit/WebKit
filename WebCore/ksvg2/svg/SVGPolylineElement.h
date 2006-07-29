@@ -36,7 +36,8 @@ namespace WebCore
 
         virtual KCanvasPath* toPathData() const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

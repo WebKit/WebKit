@@ -99,7 +99,7 @@ bool SVGForeignObjectElement::childShouldCreateRenderer(Node *child) const
     return StyledElement::childShouldCreateRenderer(child);
 }
 
-};
+} // namespace WebCore
 
 // vim:ts=4:noet
 #endif // SVG_SUPPORT

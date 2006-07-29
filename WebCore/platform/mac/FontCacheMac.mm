@@ -28,15 +28,15 @@
 
 #import "config.h"
 #import "FontCache.h"
-#import "FontPlatformData.h"
+
 #import "Font.h"
-#import "WebFontCache.h"
-#import "WebCoreSystemInterface.h"
+#import "FontPlatformData.h"
 #import "ListBox.h"
 #import "WebCoreStringTruncator.h"
+#import "WebCoreSystemInterface.h"
+#import "WebFontCache.h"
 
-namespace WebCore
-{
+namespace WebCore {
 
 static bool getAppDefaultValue(CFStringRef key, int *v)
 {
@@ -222,4 +222,4 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     return result;
 }
 
-}
+} // namespace WebCore

@@ -41,7 +41,8 @@ namespace WebCore
         virtual void removedFromDocument();
         virtual void childrenChanged();
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

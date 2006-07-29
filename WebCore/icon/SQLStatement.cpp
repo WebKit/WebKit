@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #include "SQLDatabase.h"
 
-#include <wtf/Assertions.h>
 #include "Logging.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -352,5 +353,4 @@ bool SQLStatement::returnDoubleResults(int col, Vector<double>& v)
     return result;
 }
 
-}; // namespace WebCore
-
+} // namespace WebCore

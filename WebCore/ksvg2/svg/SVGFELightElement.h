@@ -67,7 +67,8 @@ namespace WebCore
         mutable RefPtr<SVGAnimatedNumber> m_limitingConeAngle;
         
     };
-}
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

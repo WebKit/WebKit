@@ -25,17 +25,15 @@
 #if SVG_SUPPORT
 
 #include "PlatformString.h"
-
 #include <ksvg2/svg/SVGHelper.h>
 
-class RenderPath;
+namespace WebCore {
 
-namespace WebCore
-{
+    class RenderPath;
     class SVGElement;
     class SVGStyledElement;
-    class SVGLength : public Shared<SVGLength>
-    {
+
+    class SVGLength : public Shared<SVGLength> {
     public:
         SVGLength(const SVGStyledElement* context, LengthMode mode = LM_UNKNOWN, const SVGElement* viewport = 0);
         virtual ~SVGLength();
@@ -93,9 +91,10 @@ namespace WebCore
         const SVGStyledElement *m_context;
         const SVGElement *m_viewportElement;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGLengthImpl_H
 
 // vim:ts=4:noet

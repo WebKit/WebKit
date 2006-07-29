@@ -71,6 +71,6 @@ print "    if(id >= CSS_PROP_TOTAL || id == 0)"; \
 print "      return String();";\
 print "    else";\
 print "      return String(propertyList[id]);"; \
-print "};"; \
+print "}"; \
 print ""; \
 }' >> CSSPropertyNames.c

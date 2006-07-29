@@ -28,13 +28,11 @@
 #include "Color.h"
 #include "PlatformString.h"
 
-namespace WebCore
-{
+namespace WebCore {
     class RGBColor;
     typedef int ExceptionCode;
     
-    class SVGColor : public CSSValue
-    {
+    class SVGColor : public CSSValue {
     public:
         SVGColor();
         SVGColor(const String& rgbColor);
@@ -68,9 +66,10 @@ namespace WebCore
         unsigned short m_colorType;
         String m_rgbColor;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGColorImpl_H
 
 // vim:ts=4:noet

@@ -30,15 +30,13 @@
 
 namespace WebCore {
 
-class UnlinkCommand : public CompositeEditCommand
-{
+class UnlinkCommand : public CompositeEditCommand {
 public:
     UnlinkCommand(Document*);
     virtual void doApply();
     virtual EditAction editingAction() const { return EditActionUnlink; }
-private:
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // UnlinkCommand_h

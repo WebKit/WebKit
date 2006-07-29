@@ -25,8 +25,8 @@
 #define KSVG_KCanvasRenderingStyle_H
 #if SVG_SUPPORT
 
-#include <kcanvas/KCanvasMatrix.h>
 #include "DeprecatedValueList.h"
+#include <kcanvas/KCanvasMatrix.h>
 
 namespace WebCore {
 
@@ -43,7 +43,6 @@ enum KCJoinStyle {
     JOIN_BEVEL = 3
 };
 
-
 // Special types
 typedef DeprecatedValueList<float> KCDashArray;
 
@@ -53,8 +52,8 @@ typedef DeprecatedValueList<float> KCDashArray;
     class KRenderingPaintServer;
     class RenderStyle;
     class RenderObject;
-    class KSVGPainterFactory
-    {
+
+    class KSVGPainterFactory {
     public:
         static KRenderingFillPainter fillPainter(const RenderStyle*, const RenderObject*);
         static KRenderingStrokePainter strokePainter(const RenderStyle*, const RenderObject*);
@@ -67,9 +66,10 @@ typedef DeprecatedValueList<float> KCDashArray;
 
         static double cssPrimitiveToLength(const RenderObject*, CSSValue*, double defaultValue = 0.0);
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_KCanvasRenderingStyle_H
 
 // vim:ts=4:noet

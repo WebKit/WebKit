@@ -56,4 +56,4 @@ void RenderFrame::viewCleared()
     }
 }
 
-}
+} // namespace WebCore

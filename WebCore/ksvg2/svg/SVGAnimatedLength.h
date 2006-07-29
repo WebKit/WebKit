@@ -43,7 +43,8 @@ namespace WebCore
         LengthMode m_mode;
         const SVGElement *m_viewportElement;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

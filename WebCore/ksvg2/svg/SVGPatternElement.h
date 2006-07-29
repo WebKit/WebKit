@@ -101,7 +101,8 @@ namespace WebCore
         void drawPatternContentIntoTile(const SVGPatternElement *target, const IntSize &newSize, KCanvasMatrix patternTransformMatrix) const;
         void notifyClientsToRepaint() const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

@@ -28,8 +28,7 @@
 
 namespace WebCore {
 
-class HTMLPreElement : public HTMLElement
-{
+class HTMLPreElement : public HTMLElement {
 public:
     HTMLPreElement(const QualifiedName&, Document*);
 
@@ -41,10 +40,11 @@ public:
 
     int width() const;
     void setWidth(int w);
-    
+
     bool wrap() const;
     void setWrap(bool b);
 };
 
-}; //namespace
-#endif
+} // namespace WebCore
+
+#endif // HTMLPreElement_H

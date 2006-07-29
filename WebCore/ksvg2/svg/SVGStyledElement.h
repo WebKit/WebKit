@@ -24,23 +24,22 @@
 #define KSVG_SVGStyledElementImpl_H
 #if SVG_SUPPORT
 
+#include "AffineTransform.h"
+#include "RenderStyle.h"
 #include "SVGElement.h"
 #include "SVGStylable.h"
-
-#include "AffineTransform.h"
 #include <kcanvas/KCanvasPath.h>
-#include "RenderStyle.h"
 
-namespace WebCore
-{
-    class RenderPath;
-    class KRenderingDevice;
-    class KCanvasResource;
-    class KCanvasRenderingStyle;
+namespace WebCore {
+
     class CSSStyleDeclaration;
+    class KCanvasRenderingStyle;
+    class KCanvasResource;
+    class KRenderingDevice;
+    class RenderPath;
     class RenderView;
-    class SVGStyledElement : public SVGElement
-    {
+
+    class SVGStyledElement : public SVGElement {
     public:
         SVGStyledElement(const QualifiedName&, Document*);
         virtual ~SVGStyledElement();
@@ -48,25 +47,25 @@ namespace WebCore
         virtual bool isStyled() const { return true; }
 
         // 'SVGStylable' functions
-        virtual SVGAnimatedString *className() const;
+        virtual SVGAnimatedString* className() const;
 
         // These need to be implemented.
-        virtual bool rendererIsNeeded(RenderStyle *) { return false; }
+        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
         virtual KCanvasPath* toPathData() const { return 0; }
-        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
-        virtual KCanvasResource *canvasResource() { return 0; }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+        virtual KCanvasResource* canvasResource() { return 0; }
         
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
-        RenderView *view() const;
+        RenderView* view() const;
         virtual void notifyAttributeChange() const;
-        virtual void attributeChanged(Attribute *attr, bool preserveDecls = false);
+        virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
         // Imagine we're a <rect> inside of a <pattern> section with patternContentUnits="objectBoundingBox"
         // and our 'width' attribute is set to 50%. When the pattern gets referenced it knows the "bbox"
         // of it's user and has to push the "active client's bbox" as new attribute context to all attributes
         // of the 'rect'. This function also returns the old attribute context, to be able to restore it...
-        virtual const SVGStyledElement *pushAttributeContext(const SVGStyledElement *context);
+        virtual const SVGStyledElement* pushAttributeContext(const SVGStyledElement* context);
 
     protected:
         void updateCanvasItem(); // Handles "path data" object changes... (not for style/transform!)
@@ -78,9 +77,10 @@ namespace WebCore
         // Optimized updating logic
         bool m_updateVectorial : 1;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGStyledElementImpl_H
 
 // vim:ts=4:noet

@@ -51,8 +51,8 @@ namespace KJS {
     static void finalCheck();
 #endif
 
-    static void protect(JSValue *);
-    static void unprotect(JSValue *);
+    static void protect(JSValue*);
+    static void unprotect(JSValue*);
 
     static size_t numInterpreters();
     static size_t numProtectedObjects();
@@ -65,13 +65,13 @@ namespace KJS {
 
     static void markProtectedObjects();
     static void markCurrentThreadConservatively();
-    static void markOtherThreadConservatively(Thread *thread);
+    static void markOtherThreadConservatively(Thread* thread);
     static void markStackObjectsConservatively();
-    static void markStackObjectsConservatively(void *start, void *end);
+    static void markStackObjectsConservatively(void* start, void* end);
 
     static bool memoryFull;
   };
 
-};
+} // namespace KJS
 
-#endif /* _KJSCOLLECTOR_H_ */
+#endif /* KJSCOLLECTOR_H_ */

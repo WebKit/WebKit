@@ -26,17 +26,13 @@
 
 #include "Shared.h"
 
-namespace WebCore
-{
-    class StringImpl;
-};
+namespace WebCore {
 
-namespace WebCore
-{
+    class StringImpl;
     class SVGMatrix;
     class SVGStyledElement;
-    class SVGPreserveAspectRatio : public Shared<SVGPreserveAspectRatio>
-    { 
+
+    class SVGPreserveAspectRatio : public Shared<SVGPreserveAspectRatio> { 
     public:
         SVGPreserveAspectRatio(const SVGStyledElement *context);
         virtual ~SVGPreserveAspectRatio();
@@ -61,9 +57,10 @@ namespace WebCore
 
         const SVGStyledElement *m_context;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGPreserveAspectRatioImpl_H
 
 // vim:ts=4:noet

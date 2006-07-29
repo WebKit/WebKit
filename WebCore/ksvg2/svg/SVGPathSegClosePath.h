@@ -38,7 +38,8 @@ namespace WebCore
         virtual String pathSegTypeAsLetter() const { return "Z"; }
         virtual String toString() const { return "Z"; }
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

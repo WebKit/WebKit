@@ -28,18 +28,17 @@
  */
 
 #include "config.h"
-#include "Font.h"
+#include "FontData.h"
 
 #include <wtf/MathExtras.h>
 
-namespace WebCore
-{
+namespace WebCore {
 
 FontData::FontData(const FontPlatformData& f)
-:m_font(f), m_treatAsFixedPitch(false),
- m_smallCapsFontData(0)
- {    
-    m_font = f;
+    : m_font(f)
+    , m_treatAsFixedPitch(false)
+    , m_smallCapsFontData(0)
+{    
     platformInit();
     
     // Nasty hack to determine if we should round or ceil space widths.
@@ -72,4 +71,4 @@ float FontData::widthForGlyph(Glyph glyph) const
     return width;
 }
 
-}
+} // namespace WebCore

@@ -48,7 +48,7 @@ JavaInstance::JavaInstance (jobject instance, const RootObject *r)
     _instance = new JObjectWrapper (instance);
     _class = 0;
     setExecutionContext (r);
-};
+}
 
 JavaInstance::~JavaInstance () 
 {
@@ -324,7 +324,7 @@ JSValue *JavaInstance::defaultValue (JSType hint) const
 JSValue *JavaInstance::valueOf() const 
 {
     return stringValue();
-};
+}
 
 JObjectWrapper::JObjectWrapper(jobject instance)
 : _refCount(0)

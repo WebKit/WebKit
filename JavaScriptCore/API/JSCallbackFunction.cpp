@@ -25,9 +25,11 @@
  */
 
 #include "JSCallbackFunction.h"
+
 #include "APICast.h"
 #include "function.h"
 #include "function_object.h"
+#include <wtf/Vector.h>
 
 namespace KJS {
 
@@ -52,7 +54,7 @@ JSValue* JSCallbackFunction::callAsFunction(ExecState* exec, JSObject* thisObj, 
     JSObjectRef thisObjRef = toRef(thisObj);
 
     size_t argumentCount = args.size();
-    JSValueRef arguments[argumentCount];
+    Vector<JSValueRef, 16> arguments(argumentCount);
     for (size_t i = 0; i < argumentCount; i++)
         arguments[i] = toRef(args[i]);
     return toJS(m_callback(execRef, thisRef, thisObjRef, argumentCount, arguments, toRef(exec->exceptionSlot())));

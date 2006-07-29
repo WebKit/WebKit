@@ -249,7 +249,7 @@ private:
             DiscardLF = 1 << 20, // FIXME: should clarify difference between skip and discard
             AllowYield = 1 << 21,
             LoadingExtScript = 1 << 22,
-            ForceSynchronous = 1 << 23,
+            ForceSynchronous = 1 << 23
         };
     
         void setBit(StateBits bit, bool value) 

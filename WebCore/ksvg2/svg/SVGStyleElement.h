@@ -26,15 +26,11 @@
 
 #include <SVGElement.h>
 
-namespace WebCore
-{
-    class CSSStyleSheet;
-};
+namespace WebCore {
 
-namespace WebCore
-{
-    class SVGStyleElement : public SVGElement
-    {
+    class CSSStyleSheet;
+
+    class SVGStyleElement : public SVGElement {
     public:
         SVGStyleElement(const QualifiedName&, Document*);
         virtual ~SVGStyleElement();
@@ -64,9 +60,10 @@ namespace WebCore
         RefPtr<CSSStyleSheet> m_sheet;
         bool m_loading;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGStyleElementImpl_H
 
 // vim:ts=4:noet

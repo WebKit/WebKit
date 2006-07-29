@@ -37,7 +37,8 @@ namespace WebCore
 
         void parse(const DeprecatedString &value, const SVGStyledElement *context, LengthMode mode);
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

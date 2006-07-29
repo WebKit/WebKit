@@ -49,7 +49,8 @@ namespace WebCore
         mutable RefPtr<SVGAnimatedString> m_in1;
         mutable KCanvasFETile *m_filterEffect;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

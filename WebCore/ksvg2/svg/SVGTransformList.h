@@ -27,10 +27,9 @@
 #include "SVGList.h"
 #include "SVGTransform.h"
 
-namespace WebCore
-{
-    class SVGTransformList : public SVGList<SVGTransform>
-    {
+namespace WebCore {
+
+    class SVGTransformList : public SVGList<SVGTransform> {
     public:
         SVGTransformList(const SVGStyledElement *context = 0);
         virtual ~SVGTransformList();
@@ -41,9 +40,10 @@ namespace WebCore
         // Internal use only
         SVGTransform *concatenate() const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGTransformListImpl_H
 
 // vim:ts=4:noet

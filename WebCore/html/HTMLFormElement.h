@@ -26,21 +26,17 @@
 #ifndef HTML_HTMLFormElementImpl_H
 #define HTML_HTMLFormElementImpl_H
 
-#include "HTMLElement.h"
 #include "HTMLCollection.h" 
-
-namespace WebCore {
-    class FormData;
-};
+#include "HTMLElement.h"
 
 namespace WebCore {
 
+class FormData;
 class HTMLGenericFormElement;
 class HTMLImageElement;
 class HTMLFormCollection;
 
-class HTMLFormElement : public HTMLElement
-{
+class HTMLFormElement : public HTMLElement {
 public:
     HTMLFormElement(Document*);
     virtual ~HTMLFormElement();
@@ -64,7 +60,7 @@ public:
 
     bool autoComplete() const { return m_autocomplete; }
 
-    virtual void parseMappedAttribute(MappedAttribute *attr);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
     void registerFormElement(HTMLGenericFormElement*);
     void removeFormElement(HTMLGenericFormElement*);
@@ -81,10 +77,10 @@ public:
     void setPreserveAcrossRemove(bool b) { m_preserveAcrossRemove = b; }
     bool preserveAcrossRemove() const { return m_preserveAcrossRemove; }
 
-    virtual bool isURLAttribute(Attribute *attr) const;
+    virtual bool isURLAttribute(Attribute*) const;
     
     void submitClick();
-    bool formWouldHaveSecureSubmission(const String &url);
+    bool formWouldHaveSecureSubmission(const String& url);
 
     String name() const;
     void setName(const String&);
@@ -130,6 +126,6 @@ private:
     String oldNameAttr;
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // HTML_HTMLFormElementImpl_H

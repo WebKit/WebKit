@@ -61,7 +61,8 @@ namespace WebCore
     private:
         double m_x;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

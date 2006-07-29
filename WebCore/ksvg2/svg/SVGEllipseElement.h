@@ -62,7 +62,8 @@ namespace WebCore
         mutable RefPtr<SVGAnimatedLength> m_rx;
         mutable RefPtr<SVGAnimatedLength> m_ry;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

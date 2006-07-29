@@ -25,15 +25,13 @@
 #if SVG_SUPPORT
 
 #include "AffineTransform.h"
-
 #include "Shared.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     typedef int ExceptionCode;
 
-    class SVGMatrix : public Shared<SVGMatrix>
-    { 
+    class SVGMatrix : public Shared<SVGMatrix> { 
     public:
         SVGMatrix();
         SVGMatrix(double a, double b, double c, double d, double e, double f);
@@ -100,9 +98,10 @@ namespace WebCore
         void setMatrix(const AffineTransform&);
         AffineTransform m_mat;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KSVG_SVGMatrixImpl_H
 
 // vim:ts=4:noet

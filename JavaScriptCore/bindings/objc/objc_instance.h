@@ -35,8 +35,7 @@ namespace Bindings {
 
 class ObjcClass;
 
-class ObjcInstance : public Instance
-{
+class ObjcInstance : public Instance {
 public:
     ObjcInstance(ObjectStructPtr instance);
         
@@ -63,7 +62,7 @@ public:
     virtual bool supportsSetValueOfUndefinedField();
     virtual void setValueOfUndefinedField(ExecState *exec, const Identifier &property, JSValue *aValue);
     
-    virtual JSValue *ObjcInstance::getValueOfField(ExecState *exec, const Field *aField) const;
+    virtual JSValue *getValueOfField(ExecState *exec, const Field *aField) const;
     virtual JSValue *getValueOfUndefinedField(ExecState *exec, const Identifier &property, JSType hint) const;
 
     ObjectStructPtr getObject() const { return _instance; }
@@ -83,4 +82,4 @@ private:
 
 } // namespace KJS
 
-#endif
+#endif // BINDINGS_OBJC_INSTANCE_H_

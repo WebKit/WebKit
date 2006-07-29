@@ -41,8 +41,7 @@ class NSGraphicsContext;
 
 namespace WebCore {
 
-class KRenderingDeviceContextQuartz : public KRenderingDeviceContext
-{
+class KRenderingDeviceContextQuartz : public KRenderingDeviceContext {
 public:
     KRenderingDeviceContextQuartz(CGContextRef context);
     virtual ~KRenderingDeviceContextQuartz();
@@ -66,8 +65,7 @@ private:
     NSGraphicsContext *m_nsGraphicsContext;
 };
 
-class KRenderingDeviceQuartz : public KRenderingDevice
-{
+class KRenderingDeviceQuartz : public KRenderingDevice {
 public:
     KRenderingDeviceQuartz() { }
     virtual ~KRenderingDeviceQuartz() { }
@@ -96,11 +94,11 @@ public:
     // filters (mostly debugging)
     static bool filtersEnabled();
     static void setFiltersEnabled(bool enabled);
-    static bool KRenderingDeviceQuartz::hardwareRenderingEnabled();
-    static void KRenderingDeviceQuartz::setHardwareRenderingEnabled(bool enabled);
+    static bool hardwareRenderingEnabled();
+    static void setHardwareRenderingEnabled(bool enabled);
 };
 
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif
+#endif // KRenderingDeviceQuartz_H

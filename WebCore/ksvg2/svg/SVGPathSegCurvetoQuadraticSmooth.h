@@ -69,7 +69,8 @@ namespace WebCore
         double m_x;
         double m_y;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

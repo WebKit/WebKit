@@ -61,7 +61,8 @@ namespace WebCore
 
         virtual void svgPolyTo(double x1, double y1, int nr) const;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

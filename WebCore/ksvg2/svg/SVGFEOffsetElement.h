@@ -54,7 +54,8 @@ namespace WebCore
         mutable RefPtr<SVGAnimatedNumber> m_dy;
         mutable KCanvasFEOffset *m_filterEffect;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

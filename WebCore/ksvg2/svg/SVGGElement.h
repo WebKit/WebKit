@@ -48,8 +48,7 @@ namespace WebCore
         virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
     };
 
-    class SVGDummyElement : public SVGGElement
-    {
+    class SVGDummyElement : public SVGGElement {
     public:
         SVGDummyElement(const QualifiedName&, Document*);
         virtual ~SVGDummyElement();
@@ -59,7 +58,8 @@ namespace WebCore
     private:
         AtomicString m_localName;
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif

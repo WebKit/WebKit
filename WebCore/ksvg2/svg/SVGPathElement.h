@@ -118,7 +118,8 @@ namespace WebCore
         virtual void svgArcTo(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag, bool abs = true);
         virtual void svgClosePath();
     };
-};
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
 #endif
