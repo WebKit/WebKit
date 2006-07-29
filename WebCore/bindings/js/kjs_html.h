@@ -51,7 +51,7 @@ namespace KJS {
     void putValueProperty(ExecState*, int token, JSValue*, int /*attr*/);
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { Title, Referrer, Domain, URL, Body, Location, Cookie,
+    enum { Title, Referrer, Domain, Body, Location, Cookie,
            Images, Applets, Embeds, Links, Forms, Anchors, Scripts, All, Clear, Open, Close,
            Write, WriteLn, GetElementsByName, CaptureEvents, ReleaseEvents,
            BgColor, FgColor, AlinkColor, LinkColor, VlinkColor, LastModified, Height, Width, Dir, DesignMode };

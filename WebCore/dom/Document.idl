@@ -148,6 +148,8 @@ module core {
 
         // IE extensions
 
+        readonly attribute DOMString URL;
+
         attribute [ConvertNullStringTo=Undefined] DOMString charset;
 
         readonly attribute [ConvertNullStringTo=Undefined] DOMString defaultCharset;

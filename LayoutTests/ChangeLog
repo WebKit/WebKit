@@ -1,3 +1,15 @@
+2006-07-29  Rob Buis  <buis@kde.org>
+
+        Reviewed by Geoff.
+
+        Updated test case result as a result of:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10151
+        ghostmap XHTML + SVG fails due to javascript undefined exception
+        The new test case result now should match the required spec result
+        and acts as a way to test document.URL on non-html documents.
+
+        * dom/xhtml/level2/html/HTMLDocument04-expected.txt:
+
 2006-07-29  Darin Adler  <darin@apple.com>
 
         - changed this test to a plain-text one and added text explaining what it tests

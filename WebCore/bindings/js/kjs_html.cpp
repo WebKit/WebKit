@@ -174,7 +174,6 @@ const ClassInfo JSHTMLDocument::info =
   title                 JSHTMLDocument::Title             DontDelete
   referrer              JSHTMLDocument::Referrer          DontDelete|ReadOnly
   domain                JSHTMLDocument::Domain            DontDelete
-  URL                   JSHTMLDocument::URL               DontDelete|ReadOnly
   body                  JSHTMLDocument::Body              DontDelete
   location              JSHTMLDocument::Location          DontDelete
   cookie                JSHTMLDocument::Cookie            DontDelete
@@ -249,8 +248,6 @@ JSValue *JSHTMLDocument::getValueProperty(ExecState* exec, int token) const
     return jsString(doc.referrer());
   case Domain:
     return jsString(doc.domain());
-  case URL:
-    return jsString(doc.URL());
   case Body:
     return toJS(exec, body);
   case Location:

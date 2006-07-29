@@ -1,3 +1,18 @@
+2006-07-29  Rob Buis  <buis@kde.org>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10151
+        ghostmap XHTML + SVG fails due to javascript undefined exception
+
+        Make sure document.URL works when called from a non-HTML document.
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocument::getValueProperty):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLDocument::):
+        * dom/Document.idl:
+
 2006-07-29  Mike Emmel  <mike.emmel@gmail.com>
 
         Reviewed and tweaked by Darin.
