@@ -82,10 +82,14 @@ void RenderListItem::destroy()
 
 static Node* enclosingList(Node* node)
 {
-    for (Node* n = node->parentNode(); n; n = n->parentNode())
+    Node* parent = node->parentNode();
+    for (Node* n = parent; n; n = n->parentNode())
         if (n->hasTagName(ulTag) || n->hasTagName(olTag))
             return n;
-    return 0;
+    // If there's no actual <ul> or <ol> list element, then our parent acts as
+    // our list for purposes of determining what other list items should be
+    // numbered as part of the same list.
+    return parent;
 }
 
 static RenderListItem* previousListItem(Node* list, RenderListItem* item)
@@ -98,8 +102,11 @@ static RenderListItem* previousListItem(Node* list, RenderListItem* item)
             if (list == otherList)
                 return static_cast<RenderListItem*>(o);
             // We found ourself inside another list; lets skip the rest of it.
+            // Use traverseNextNode() here because the other list itself may actually
+            // be a list item itself. We need to examine it, so we do this to counteract
+            // the traversePreviousNode() that will be done by the loop.
             if (otherList)
-                n = otherList;
+                n = otherList->traverseNextNode();
         }
     }
     return 0;

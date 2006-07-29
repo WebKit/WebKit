@@ -1,3 +1,15 @@
+2006-07-29  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Darin.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8587 / <rdar://problem/4631844>
+        REGRESSION: {display:list-item} items outside an ol or ul element don't number correctly
+
+        * fast/lists/ordered-list-with-no-ol-tag-expected.checksum: Added.
+        * fast/lists/ordered-list-with-no-ol-tag-expected.png: Added.
+        * fast/lists/ordered-list-with-no-ol-tag-expected.txt: Added.
+        * fast/lists/ordered-list-with-no-ol-tag.html: Added.
+
 2006-07-29  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

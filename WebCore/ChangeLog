@@ -1,3 +1,16 @@
+2006-07-29  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Darin.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8587 / <rdar://problem/4631844>
+        REGRESSION: {display:list-item} items outside an ol or ul element don't number correctly
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::enclosingList): If no real list element is found, use parent instead.
+        (WebCore::previousListItem): Check list elements to see if they are list items -- the
+        old code assumed that a list would never be a list item but this is entirely possible
+        with CSS and especially with the new rule that means any DOM element could act as a list.
+
 2006-07-29  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
