@@ -1,3 +1,12 @@
+2006-07-29  Darin Adler  <darin@apple.com>
+
+        - changed this test to a plain-text one and added text explaining what it tests
+
+        * fast/forms/input-named-action-overrides-action-attribute.html: Added explanation text,
+        got rid of some incorrect HTML syntax, added a call to dumpAsText(), and used a paragraph
+        element instead of a span element for the result.
+        * fast/forms/input-named-action-overrides-action-attribute-expected.txt: Updated.
+
 2006-07-29  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Darin.

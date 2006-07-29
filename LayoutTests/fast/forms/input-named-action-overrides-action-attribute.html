@@ -1,11 +1,15 @@
-<body onload="foo()"/>
+<body onload="test()">
 <form action="/">
    <input type=hidden name="action" value="">
 </form>
-<span id="result"/>
+<p>This tests that access to a form's element named "action" overrides the "action" property on a form element (from the HTML DOM).</p>
+<p>If the test passes, the next paragraph will say "Test Passed".</p>
+<p id="result"></p>
 <script>
-   function foo() {
-      document.forms[0].action.value = "Passed";
-      document.getElementById("result").innerText = "Test " + (document.forms[0].action.value ? document.forms[0].action.value : "Failed");
-   }
+    function test() {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+        document.forms[0].action.value = "Passed";
+        document.getElementById("result").innerText = "Test " + (document.forms[0].action.value ? document.forms[0].action.value : "Failed");
+    }
 </script>
