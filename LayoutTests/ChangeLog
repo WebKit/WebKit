@@ -1,3 +1,13 @@
+2006-07-29  Darin Adler  <darin@apple.com>
+
+        - rolled out the test for bug 9753, since we rolled out the fix
+          we'll bring back the test when we bring back the fix
+
+        * svg/custom/width-full-percentage-expected.checksum: Removed.
+        * svg/custom/width-full-percentage-expected.png: Removed.
+        * svg/custom/width-full-percentage-expected.txt: Removed.
+        * svg/custom/width-full-percentage.svg: Removed.
+
 2006-07-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
