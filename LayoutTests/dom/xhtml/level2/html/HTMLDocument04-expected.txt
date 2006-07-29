@@ -1,4 +1,3 @@
-ALERT: file:///Users/rwlbuis/svn/test/WebKit/LayoutTests/dom/xhtml/level2/html/HTMLDocument04.xhtml
 Test	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLDocument04
 Status	Success
 
