@@ -1,3 +1,26 @@
+2006-07-29  Mike Emmel  <mike.emmel@gmail.com>
+
+        Reviewed and tweaked by Darin.
+
+        - fixes for Linux build
+          (still might not compile, since Darin tweaked but was unable to test).
+
+        * WebCoreSources.bkl: Added some new sources, removed some obsolete ones.
+        * Projects/gdk/webcore-gdk.bkl: Added RenderPopupMenuGdk.cpp
+
+        * html/HTMLPlugInElement.h: Removed incorrect syntax with class name
+        before ::.
+
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/FrameGdk.cpp: Updated parameters of constructor. Moved a couple stubs
+        out of this file.
+        * platform/gdk/RenderPopupMenuGdk.h: Added.
+        * platform/gdk/RenderPopupMenuGdk.cpp: Added. Just a file full of empty stubs.
+        * platform/gdk/RenderThemeGdk.h:
+        * platform/gdk/RenderThemeGdk.cpp: (WebCore::RenderThemeGdk::createPopupMenu): Added.
+
+        * platform/gdk/TemporaryLinkStubs.cpp: Add some new stubs.
+
 2006-07-29  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Darin.

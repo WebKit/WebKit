@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<!-- $Id: gdklauncher.bkl,v 1.1 2006/04/27 23:38:34 eme018 Exp $ -->
 <!-- generate GnuMakefile with
 	bakefile -f gnu gdkwebcore.bkl
 	consider forcing includes agian

@@ -37,7 +37,7 @@ class HTMLPlugInElement : public HTMLElement
 {
 public:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
-    HTMLPlugInElement::~HTMLPlugInElement();
+    ~HTMLPlugInElement();
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttribute*);

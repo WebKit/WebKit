@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<!-- $Id: gtkWebCore.bkl 199 2005-07-05 20:44:34Z vslavik $ -->
 <!-- generate GnuMakefile with
 	bakefile -f gnu gtkwebcore.bkl
 	consider forcing includes agian
@@ -78,6 +77,7 @@
           platform/gdk/PageGdk.cpp
           platform/gdk/TransferJobManager.cpp
           platform/gdk/RenderThemeGdk.cpp
+          platform/gdk/RenderPopupMenuGdk.cpp
           platform/gdk/ScreenGdk.cpp
           platform/gdk/ScrollViewGdk.cpp
           platform/gdk/SharedTimerLinux.cpp

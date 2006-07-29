@@ -47,7 +47,6 @@
 #include "KURL.h"
 #include "ScrollBar.h"
 #include "JavaAppletWidget.h"
-#include "WebCoreScrollBar.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
 #include "CookieJar.h"
@@ -63,14 +62,15 @@
 #include "RenderThemeGdk.h"
 #include "TextBoundaries.h"
 #include "AXObjectCache.h"
+#include "DeprecatedString.h"
+#include "DeprecatedStringList.h"
+#include "SSLKeyGenerator.h"
 
 using namespace WebCore;
 
 static void notImplemented() { puts("Not yet implemented"); }
 
-
 void FrameView::updateBorder() { notImplemented(); }
-//bool FrameView::isFrameView() const { notImplemented(); return 0; }
 
 TextBox::TextBox(Widget*) { notImplemented(); }
 TextBox::~TextBox() { notImplemented(); }
@@ -181,14 +181,12 @@ bool FrameGdk::canUndo() const { notImplemented(); return 0; }
 void FrameGdk::registerCommandForRedo(WebCore::EditCommandPtr const&) { notImplemented(); }
 bool FrameGdk::runJavaScriptPrompt(String const&, String const&, String &) { notImplemented(); return 0; }
 bool FrameGdk::shouldInterruptJavaScript() { notImplemented(); return false; }
-//bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
 void FrameGdk::print() { notImplemented(); }
 KJS::Bindings::Instance* FrameGdk::getAppletInstanceForWidget(Widget*) { notImplemented(); return 0; }
 bool FrameGdk::passMouseDownEventToWidget(Widget*) { notImplemented(); return 0; }
 void FrameGdk::issueCutCommand() { notImplemented(); }
 void FrameGdk::issueCopyCommand() { notImplemented(); }
 void FrameGdk::openURLRequest(struct WebCore::ResourceRequest const&) { notImplemented(); }
-//bool FrameWin::passWheelEventToChildWidget(Node*) { notImplemented(); return 0; }
 void FrameGdk::issueUndoCommand() { notImplemented(); }
 String FrameGdk::mimeTypeForFileName(String const&) const { notImplemented(); return String(); }
 void FrameGdk::issuePasteCommand() { notImplemented(); }
@@ -250,8 +248,8 @@ bool FrameGdk::lastEventIsMouseUp() const { return false; }
 void FrameGdk::addMessageToConsole(String const&, unsigned int, String const&) { }
 bool FrameGdk::shouldChangeSelection(SelectionController const&, SelectionController const&, WebCore::EAffinity, bool) const { return true; }
 void FrameGdk::respondToChangedSelection(WebCore::SelectionController const&, bool) { }
-static int frameNumber = 0;
-Frame* FrameGdk::createFrame(KURL const&, String const&, RenderPart*, String const&) { return 0; }
+Frame* FrameGdk::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer) { return 0; }
+
 void FrameGdk::saveDocumentState() { }
 void FrameGdk::registerCommandForUndo(WebCore::EditCommandPtr const&) { }
 void FrameGdk::clearUndoRedoOperations(void) { }
@@ -380,3 +378,10 @@ FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, co
 void Font::drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const { notImplemented(); }
 float Font::floatWidthForComplexText(const TextRun&, const TextStyle&) const { notImplemented(); return 0; }
 int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int, bool) const { notImplemented(); return 0; }
+
+namespace WebCore {
+
+DeprecatedStringList supportedKeySizes(){return DeprecatedStringList();};
+DeprecatedString signedPublicKeyAndChallengeString(unsigned keySizeIndex, const DeprecatedString &challengeString, const KURL &url){return DeprecatedString();};
+
+}

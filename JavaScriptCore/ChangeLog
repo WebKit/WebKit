@@ -1,3 +1,12 @@
+2006-07-29  Mike Emmel  <mike.emmel@gmail.com>
+
+        Reviewed by Darin.
+
+        - fixes for Linux build
+
+        * JavaScriptCoreSources.bkl: Added new files to build, kjs/PropertyNameArray.cpp
+        and kjs/testkjs.cpp, and removed old files.
+
 2006-07-24  Dan Waylonis  <waylonis@google.com>
 
         Reviewed and tweaked a bit by Darin.

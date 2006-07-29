@@ -24,21 +24,21 @@
 		kjs/list.cpp
 		kjs/lookup.cpp
 		kjs/math_object.cpp
-		kjs/nodes.cpp
 		kjs/nodes2string.cpp
+		kjs/nodes.cpp
 		kjs/number_object.cpp
 		kjs/object.cpp
 		kjs/object_object.cpp
 		kjs/operations.cpp
 		kjs/Parser.cpp
 		kjs/property_map.cpp
+		kjs/PropertyNameArray.cpp
 		kjs/property_slot.cpp
-		kjs/reference.cpp
-		kjs/reference_list.cpp
 		kjs/regexp.cpp
 		kjs/regexp_object.cpp
 		kjs/scope_chain.cpp
 		kjs/string_object.cpp
+		kjs/testkjs.cpp
 		kjs/ustring.cpp
 		kjs/value.cpp
 

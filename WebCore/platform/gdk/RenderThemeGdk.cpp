@@ -24,6 +24,8 @@
 
 #include "config.h"
 #include "RenderThemeGdk.h"
+#include "RenderPopupMenuGdk.h"
+#include "Document.h"
 
 #include "GraphicsContext.h"
 #include <cairo.h>
@@ -153,6 +155,11 @@ ThemeData RenderThemeGdk::getThemeData(RenderObject* o)
 void RenderThemeGdk::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
 {
     addIntrinsicMargins(style);
+}
+
+RenderPopupMenu* RenderThemeGdk::createPopupMenu(RenderArena* arena, Document* doc)
+{
+    return new (arena) RenderPopupMenuGdk(doc);
 }
 
 }

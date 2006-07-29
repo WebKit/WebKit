@@ -58,6 +58,8 @@ public:
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
+    virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*);
+
 private:
     void addIntrinsicMargins(RenderStyle*) const;
     void close();

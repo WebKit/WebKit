@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <makefile>
-	<set append="1" var="WEBCORE_SOURCES_KWQ">
+     <set append="1" var="WEBCORE_SOURCES_KWQ">
 		
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_DERIVEDSOURCES">
@@ -65,6 +65,7 @@
 		DerivedSources/WebCore/JSHTMLModElement.cpp
 		DerivedSources/WebCore/JSHTMLOListElement.cpp
 		DerivedSources/WebCore/JSHTMLOptGroupElement.cpp
+		DerivedSources/WebCore/JSHTMLOptionsCollection.cpp
 		DerivedSources/WebCore/JSHTMLOptionElement.cpp
 		DerivedSources/WebCore/JSHTMLParagraphElement.cpp
 		DerivedSources/WebCore/JSHTMLParamElement.cpp
@@ -84,6 +85,7 @@
 		DerivedSources/WebCore/JSProcessingInstruction.cpp
 		DerivedSources/WebCore/JSRange.cpp
 		DerivedSources/WebCore/JSText.cpp
+		DerivedSources/WebCore/JSOverflowEvent.cpp
 		DerivedSources/WebCore/JSUIEvent.cpp
 		DerivedSources/WebCore/JSWheelEvent.cpp
 		DerivedSources/WebCore/JSXPathEvaluator.cpp
@@ -128,7 +130,6 @@
 		loader/FormData.cpp
 		loader/ImageDocument.cpp
 		loader/loader.cpp
-		loader/PluginDocument.cpp
 		loader/Request.cpp
 		loader/TextDocument.cpp
 		loader/PluginDocument.cpp
@@ -166,6 +167,7 @@
 		platform/RegularExpression.cpp
 		platform/SegmentedString.cpp
 		platform/StreamingTextDecoder.cpp
+		platform/StreamingTextDecoderICU.cpp
 		platform/String.cpp
 		platform/StringImpl.cpp
 		platform/TextEncoding.cpp
@@ -409,8 +411,6 @@
 		rendering/AutoTableLayout.cpp
 		rendering/bidi.cpp
 		rendering/break_lines.cpp
-		rendering/DeprecatedRenderSelect.cpp
-		rendering/DeprecatedSlider.cpp
 		rendering/EllipsisBox.cpp
 		rendering/FixedTableLayout.cpp
 		rendering/InlineBox.cpp
@@ -442,9 +442,11 @@
 		rendering/RenderLineEdit.cpp
 		rendering/RenderListItem.cpp
 		rendering/RenderListMarker.cpp
+		rendering/RenderMenuList.cpp
 		rendering/RenderObject.cpp
 		rendering/RenderPart.cpp
 		rendering/RenderPartObject.cpp
+		rendering/RenderPopupMenu.cpp
 		rendering/RenderReplaced.cpp
 		rendering/DeprecatedRenderSelect.cpp
 		rendering/DeprecatedSlider.cpp
@@ -490,6 +492,7 @@
 	<set append="1" var="WEBCORE_SOURCES_XML">
 		
 		xml/xmlhttprequest.cpp
+        xml/XSLImportRule.cpp
 		xml/XSLStyleSheet.cpp
 		xml/XSLTProcessor.cpp
 
@@ -532,6 +535,7 @@
 		dom/NodeFilterCondition.cpp
 		dom/NodeList.cpp
 		dom/Notation.cpp
+          dom/OverflowEvent.cpp
 		dom/Position.cpp
 		dom/ProcessingInstruction.cpp
 		dom/QualifiedName.cpp
@@ -700,8 +704,9 @@
 		bindings/js/JSCanvasRenderingContext2DCustom.cpp
 		bindings/js/JSDOMParser.cpp
 		bindings/js/JSHTMLElementWrapperFactory.cpp
-		bindings/js/JSHTMLFormElementCustom.cpp
+          bindings/js/JSHTMLFormElementCustom.cpp
 		bindings/js/JSHTMLInputElementBase.cpp
+          bindings/js/JSHTMLOptionsCollectionCustom.cpp
 		bindings/js/JSHTMLOptionElementConstructor.cpp
 		bindings/js/JSXMLHttpRequest.cpp
 		bindings/js/JSXMLSerializer.cpp
