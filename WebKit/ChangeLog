@@ -1,3 +1,24 @@
+2006-07-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by John Sullivan.
+
+         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9984
+          ASSERTION FAILURE: _private->mouseDownEvent != nil
+          (WebKit/WebView/WebHTMLView.m:4863 -[WebHTMLView(WebInternal) _delegateDragSourceActionMask])
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _setMouseDownEvent:]): Moved into the WebHTMLViewFileInternal category and changed
+        to accept nil.
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        Copy the hit HTMLView's mouse down event to the top HTMLView.
+        (-[WebHTMLView acceptsFirstMouse:]): Added a call to _setMouseDownEvent:nil before returning.
+        (-[WebHTMLView shouldDelayWindowOrderingForEvent:]): Added a call to _setMouseDownEvent:nil
+        before returning.
+        (-[WebHTMLView mouseUp:]): Added a call to _setMouseDownEvent:nil to clear the event set in
+        mouseDown: (and used during dragging).
+        (-[WebHTMLView _delegateDragSourceActionMask]): Copy the hit HTMLView's mouse down event to
+        the top HTMLView.
+
 2006-07-28  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.

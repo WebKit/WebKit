@@ -1,3 +1,13 @@
+2006-07-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by John Sullivan.
+
+        - manual test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9984
+          ASSERTION FAILURE: _private->mouseDownEvent != nil
+          (WebKit/WebView/WebHTMLView.m:4863 -[WebHTMLView(WebInternal) _delegateDragSourceActionMask])
+
+        * manual-tests/subview-click-assertion.html: Added.
+
 2006-07-29  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Darin.

@@ -199,6 +199,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 - (void)_writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard cachedAttributedString:(NSAttributedString *)attributedString;
 - (DOMRange *)_documentRange;
 - (WebFrameBridge *)_bridge;
+- (void)_setMouseDownEvent:(NSEvent *)event;
 @end
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
@@ -692,6 +693,33 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     if ([self _canSmartCopyOrDelete] && [types containsObject:WebSmartPastePboardType]) {
         [pasteboard setData:nil forType:WebSmartPastePboardType];
     }
+}
+
+- (void)_setMouseDownEvent:(NSEvent *)event
+{
+    ASSERT(!event || [event type] == NSLeftMouseDown || [event type] == NSRightMouseDown || [event type] == NSOtherMouseDown);
+
+    if (event == _private->mouseDownEvent)
+        return;
+
+    [event retain];
+    [_private->mouseDownEvent release];
+    _private->mouseDownEvent = event;
+
+    [_private->firstResponderTextViewAtMouseDownTime release];
+    
+    // The only code that checks this ivar only cares about NSTextViews. The code used to be more general,
+    // but it caused reference cycles leading to world leaks (see 4557386). We should be able to eliminate
+    // firstResponderTextViewAtMouseDownTime entirely when all the form controls are native widgets, because 
+    // the only caller (in WebCore) will be unnecessary.
+    if (event) {
+        NSResponder *firstResponder = [[self window] firstResponder];
+        if ([firstResponder isKindOfClass:[NSTextView class]])
+            _private->firstResponderTextViewAtMouseDownTime = [firstResponder retain];
+        else
+            _private->firstResponderTextViewAtMouseDownTime = nil;
+    } else
+        _private->firstResponderTextViewAtMouseDownTime = nil;
 }
 
 @end
@@ -1272,8 +1300,12 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_startDraggingImage:(NSImage *)wcDragImage at:(NSPoint)wcDragLoc operation:(NSDragOperation)op event:(NSEvent *)mouseDraggedEvent sourceIsDHTML:(BOOL)srcIsDHTML DHTMLWroteData:(BOOL)dhtmlWroteData
 {
     WebHTMLView *topHTMLView = [self _topHTMLView];
-    if (self != topHTMLView)
-        return [topHTMLView _startDraggingImage:wcDragImage at:wcDragLoc operation:op event:mouseDraggedEvent sourceIsDHTML:srcIsDHTML DHTMLWroteData:dhtmlWroteData];
+    if (self != topHTMLView) {
+        [topHTMLView _setMouseDownEvent:_private->mouseDownEvent];
+        BOOL result = [topHTMLView _startDraggingImage:wcDragImage at:wcDragLoc operation:op event:mouseDraggedEvent sourceIsDHTML:srcIsDHTML DHTMLWroteData:dhtmlWroteData];
+        [topHTMLView _setMouseDownEvent:nil];
+        return result;
+    }
 
     NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
     NSDictionary *element = [self elementAtPoint:mouseDownPoint allowShadowContent:YES];
@@ -2694,46 +2726,22 @@ static WebHTMLView *lastHitView = nil;
     return [[[self elementAtPoint:point allowShadowContent:YES] objectForKey:WebElementIsSelectedKey] boolValue];
 }
 
-- (void)_setMouseDownEvent:(NSEvent *)event
-{
-    ASSERT([event type] == NSLeftMouseDown || [event type] == NSRightMouseDown || [event type] == NSOtherMouseDown);
-
-    if (event == _private->mouseDownEvent) {
-        return;
-    }
-
-    [event retain];
-    [_private->mouseDownEvent release];
-    _private->mouseDownEvent = event;
-
-    [_private->firstResponderTextViewAtMouseDownTime release];
-    
-    // The only code that checks this ivar only cares about NSTextViews. The code used to be more general,
-    // but it caused reference cycles leading to world leaks (see 4557386). We should be able to eliminate
-    // firstResponderTextViewAtMouseDownTime entirely when all the form controls are native widgets, because 
-    // the only caller (in WebCore) will be unnecessary.
-    NSResponder *firstResponder = [[self window] firstResponder];
-    if ([firstResponder isKindOfClass:[NSTextView class]])
-        _private->firstResponderTextViewAtMouseDownTime = [firstResponder retain];
-    else
-        _private->firstResponderTextViewAtMouseDownTime = nil;
-}
-
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
 {
     NSView *hitView = [self _hitViewForEvent:event];
     WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
-    [hitHTMLView _setMouseDownEvent:event];
     
     if ([[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysAcceptsFirstMouse])
         return YES;
     
     if (hitHTMLView != nil) {
+        [hitHTMLView _setMouseDownEvent:event];
         [[hitHTMLView _bridge] setActivationEventNumber:[event eventNumber]];
-        return [hitHTMLView _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
-    } else {
+        BOOL result = [hitHTMLView _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
+        [hitHTMLView _setMouseDownEvent:nil];
+        return result;
+    } else
         return [hitView acceptsFirstMouse:event];
-    }
 }
 
 - (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)event
@@ -2742,10 +2750,11 @@ static WebHTMLView *lastHitView = nil;
     WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
     if (hitHTMLView != nil) {
         [hitHTMLView _setMouseDownEvent:event];
-        return [hitHTMLView _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
-    } else {
+        BOOL result = [hitHTMLView _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
+        [hitHTMLView _setMouseDownEvent:nil];
+        return result;
+    } else
         return [hitView shouldDelayWindowOrderingForEvent:event];
-    }
 }
 
 - (void)mouseDown:(NSEvent *)event
@@ -2901,6 +2910,8 @@ done:
 
 - (void)mouseUp:(NSEvent *)event
 {
+    [self _setMouseDownEvent:nil];
+
     NSInputManager *currentInputManager = [NSInputManager currentInputManager];
     if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
         return;
@@ -4868,11 +4879,15 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (unsigned)_delegateDragSourceActionMask
 {
-    WebHTMLView *topHTMLView = [self _topHTMLView];
-    if (self != topHTMLView)
-        return [topHTMLView _delegateDragSourceActionMask];
-
     ASSERT(_private->mouseDownEvent != nil);
+    WebHTMLView *topHTMLView = [self _topHTMLView];
+    if (self != topHTMLView) {
+        [topHTMLView _setMouseDownEvent:_private->mouseDownEvent];
+        unsigned result = [topHTMLView _delegateDragSourceActionMask];
+        [topHTMLView _setMouseDownEvent:nil];
+        return result;
+    }
+
     WebView *webView = [self _webView];
     NSPoint point = [webView convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
     _private->dragSourceActionMask = [[webView _UIDelegateForwarder] webView:webView dragSourceActionMaskForPoint:point];
