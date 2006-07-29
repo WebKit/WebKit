@@ -607,11 +607,6 @@ static Class elementClass(const AtomicString& tagName)
     return DOM_cast<Node *>(_internal);
 }
 
-- (BOOL)isContentEditable
-{
-    return [self _node]->isContentEditable();
-}
-
 - (const KJS::Bindings::RootObject *)_executionContext
 {
     if (Node *n = [self _node])
@@ -619,6 +614,15 @@ static Class elementClass(const AtomicString& tagName)
             return f->executionContextForDOM();
 
     return 0;
+}
+
+@end
+
+@implementation DOMNode (WebPrivate)
+
+- (BOOL)isContentEditable
+{
+    return [self _node]->isContentEditable();
 }
 
 @end

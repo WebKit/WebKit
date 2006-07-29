@@ -1,3 +1,13 @@
+2006-07-28  Timothy Hatcher  <timothy@apple.com>
+
+        Suggested by Darin.
+
+        Moving the implementation of isContentEditable to the
+        the WebPrivate category.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode isContentEditable]):
+
 2006-07-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
