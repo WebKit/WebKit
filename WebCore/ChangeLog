@@ -1,3 +1,14 @@
+2006-07-29  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10022
+        Bug 10022: REGRESSION: Crash in WebCore::XMLTokenizer::characters
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::resumeParsing): If the write() call resulted in new callbacks being
+        added, don't call through to end() just yet.
+
 2006-07-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by John Sullivan.
