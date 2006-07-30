@@ -173,8 +173,8 @@ void FunctionImp::processParameters(ExecState *exec, const List &args)
 
 #ifdef KJS_VERBOSE
   fprintf(stderr, "---------------------------------------------------\n"
-	  "processing parameters for %s call\n",
-	  name().isEmpty() ? "(internal)" : name().ascii());
+          "processing parameters for %s call\n",
+          name().isEmpty() ? "(internal)" : name().ascii());
 #endif
 
   if (param) {
@@ -184,13 +184,13 @@ void FunctionImp::processParameters(ExecState *exec, const List &args)
     while (p) {
       if (it != args.end()) {
 #ifdef KJS_VERBOSE
-	fprintf(stderr, "setting parameter %s ", p->name.ascii());
-	printInfo(exec,"to", *it);
+        fprintf(stderr, "setting parameter %s ", p->name.ascii());
+        printInfo(exec,"to", *it);
 #endif
-	variable->put(exec, p->name, v);
-	v = ++it;
+        variable->put(exec, p->name, v);
+        v = ++it;
       } else
-	variable->put(exec, p->name, jsUndefined());
+        variable->put(exec, p->name, jsUndefined());
       p = p->next.get();
     }
   }
@@ -300,7 +300,7 @@ Identifier FunctionImp::getParameterName(int index)
 const ClassInfo DeclaredFunctionImp::info = {"Function", &FunctionImp::info, 0, 0};
 
 DeclaredFunctionImp::DeclaredFunctionImp(ExecState *exec, const Identifier &n,
-					 FunctionBodyNode *b, const ScopeChain &sc)
+                                         FunctionBodyNode *b, const ScopeChain &sc)
   : FunctionImp(exec, n, b)
 {
   setScope(sc);
@@ -638,8 +638,8 @@ static JSValue *decode(ExecState *exec, const List &args, const char *do_not_une
         if (k <= len - 6 && p[1] == 'u'
             && isxdigit(p[2].uc) && isxdigit(p[3].uc)
             && isxdigit(p[4].uc) && isxdigit(p[5].uc)) {
-	  charLen = 6;
-	  u = Lexer::convertUnicode(p[2].uc, p[3].uc, p[4].uc, p[5].uc);
+          charLen = 6;
+          u = Lexer::convertUnicode(p[2].uc, p[3].uc, p[4].uc, p[5].uc);
         }
       }
       if (charLen && (u.uc == 0 || u.uc >= 128 || !strchr(do_not_unescape, u.low()))) {
@@ -891,10 +891,10 @@ JSValue *GlobalFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, c
         if (*c == UChar('%') && k <= len - 6 && *(c+1) == UChar('u')) {
           if (Lexer::isHexDigit((c+2)->uc) && Lexer::isHexDigit((c+3)->uc) &&
               Lexer::isHexDigit((c+4)->uc) && Lexer::isHexDigit((c+5)->uc)) {
-	  u = Lexer::convertUnicode((c+2)->uc, (c+3)->uc,
-				    (c+4)->uc, (c+5)->uc);
-	  c = &u;
-	  k += 5;
+          u = Lexer::convertUnicode((c+2)->uc, (c+3)->uc,
+                                    (c+4)->uc, (c+5)->uc);
+          c = &u;
+          k += 5;
           }
         } else if (*c == UChar('%') && k <= len - 3 &&
                    Lexer::isHexDigit((c+1)->uc) && Lexer::isHexDigit((c+2)->uc)) {
@@ -959,6 +959,5 @@ UString escapeStringForPrettyPrinting(const UString& s)
     
     return escapedString;    
 }
-
 
 } // namespace

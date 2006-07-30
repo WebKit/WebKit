@@ -160,12 +160,12 @@
     // Be really optimistic - assume that in the common case, the directory exists.
     BOOL isDirectory;
     if ([self fileExistsAtPath:path isDirectory:&isDirectory] && isDirectory) {
-	return YES;
+        return YES;
     }
 
     // Assume the next most common case is that the parent directory already exists
     if ([self createDirectoryAtPath:path attributes:attributes]) {
-	return YES;
+        return YES;
     }
 
     // Do it the hard way 
@@ -176,7 +176,7 @@
 {
     // Be optimistic - try just creating the file first, assuming intermediate directories exist. 
     if ([self createFileAtPath:path contents:contents attributes:attributes]) {
-	return YES;
+        return YES;
     }
 
     return ([self _webkit_createIntermediateDirectoriesForPath:path attributes:directoryAttributes] && [self createFileAtPath:path contents:contents attributes:attributes]);
@@ -189,13 +189,13 @@
 
     // For mysterious reasons, MNT_DOVOLFS is the flag for "supports resource fork"
     if ((statfs([path fileSystemRepresentation], &buf) == 0) && !(buf.f_flags & MNT_DOVOLFS)) {
-	NSString *lastPathComponent = [path lastPathComponent];
-	if ([lastPathComponent length] != 0 && ![lastPathComponent isEqualToString:@"/"]) {
-	    NSString *resourcePath = [[path stringByDeletingLastPathComponent] stringByAppendingString:[@"._" stringByAppendingString:lastPathComponent]];
-	    if (unlink([resourcePath fileSystemRepresentation]) != 0) {
-		result = NO;
-	    }
-	}
+        NSString *lastPathComponent = [path lastPathComponent];
+        if ([lastPathComponent length] != 0 && ![lastPathComponent isEqualToString:@"/"]) {
+            NSString *resourcePath = [[path stringByDeletingLastPathComponent] stringByAppendingString:[@"._" stringByAppendingString:lastPathComponent]];
+            if (unlink([resourcePath fileSystemRepresentation]) != 0) {
+                result = NO;
+            }
+        }
     }
 
     return result;

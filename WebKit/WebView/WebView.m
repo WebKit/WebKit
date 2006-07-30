@@ -444,7 +444,7 @@ static CFMutableSetRef allWebViewsSet;
 - (void)_addToAllWebViewsSet
 {
     if (!allWebViewsSet)
-	allWebViewsSet = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
+        allWebViewsSet = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
 
     CFSetSetValue(allWebViewsSet, self);
 }
@@ -463,15 +463,15 @@ static bool debugWidget = true;
     NSRect htmlViewRect = [[[[self mainFrame] frameView] documentView] frame];
 
     if (debugWidget) {
-	while (debugWidget) {
-	    sleep (1);
-	}
+        while (debugWidget) {
+            sleep (1);
+        }
     }
 
     NSLog (@"%s:   rect:  (%0.f,%0.f) %0.f %0.f, htmlViewRect:  (%0.f,%0.f) %0.f %0.f\n", 
-	__PRETTY_FUNCTION__, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height,
-	htmlViewRect.origin.x, htmlViewRect.origin.y, htmlViewRect.size.width, htmlViewRect.size.height
-	);
+        __PRETTY_FUNCTION__, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height,
+        htmlViewRect.origin.x, htmlViewRect.origin.y, htmlViewRect.size.width, htmlViewRect.size.height
+    );
 
     [super drawRect:rect];
 }
@@ -791,11 +791,11 @@ static bool debugWidget = true;
     // in the back forward list, and go to the current one.
 
     WebBackForwardList *bfList = [self backForwardList];
-    ASSERT(![bfList currentItem]);	// destination list should be empty
+    ASSERT(![bfList currentItem]); // destination list should be empty
 
     WebBackForwardList *otherBFList = [otherView backForwardList];
     if (![otherBFList currentItem]) {
-        return;		// empty back forward list, bail
+        return; // empty back forward list, bail
     }
 
     WebHistoryItem *newItemToGoTo = nil;
@@ -1398,7 +1398,7 @@ static bool debugWidget = true;
         }
         case WebDashboardBehaviorAllowWheelScrolling: {
             _private->dashboardBehaviorAllowWheelScrolling = flag;
-	    break;
+            break;
         }
     }
 }
@@ -1531,7 +1531,7 @@ static bool debugWidget = true;
     if (!self)
         return nil;
     
-    target = t;		// Non retained.
+    target = t; // Non retained.
     defaultTarget = dt;
     templateClass = aClass;
     return self;
@@ -1801,7 +1801,7 @@ NS_DURING
         frameName = [decoder decodeObjectForKey:@"FrameName"];
         groupName = [decoder decodeObjectForKey:@"GroupName"];
         preferences = [decoder decodeObjectForKey:@"Preferences"];
-	useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
+        useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
     } else {
         int version;
         [decoder decodeValueOfObjCType:@encode(int) at:&version];
@@ -1844,7 +1844,7 @@ NS_ENDHANDLER
         [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
         [encoder encodeObject:[self preferences] forKey:@"Preferences"];
-	[encoder encodeBool:_private->useBackForwardList forKey:@"UseBackForwardList"];
+        [encoder encodeBool:_private->useBackForwardList forKey:@"UseBackForwardList"];
     } else {
         int version = WebViewVersion;
         [encoder encodeValueOfObjCType:@encode(int) at:&version];
@@ -2172,7 +2172,6 @@ NS_ENDHANDLER
     return [[[self mainFrame] _bridge] windowScriptObject];
 }
 
-	
 // Get the appropriate user-agent string for a particular URL.
 // Since we no longer automatically spoof, this no longer requires looking at the URL.
 - (NSString *)userAgentForURL:(NSURL *)URL
@@ -2664,9 +2663,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [[self mainFrame] reload];
 }
 
-#define MinimumTextSizeMultiplier	0.5
-#define MaximumTextSizeMultiplier	3.0
-#define TextSizeMultiplierRatio		1.2
+#define MinimumTextSizeMultiplier       0.5
+#define MaximumTextSizeMultiplier       3.0
+#define TextSizeMultiplierRatio         1.2
 
 - (BOOL)canMakeTextSmaller
 {
@@ -2736,23 +2735,23 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     SEL action = [item action];
 
     if (action == @selector(goBack:)) {
-	return [self canGoBack];
+        return [self canGoBack];
     } else if (action == @selector(goForward:)) {
-	return [self canGoForward];
+        return [self canGoForward];
     } else if (action == @selector(makeTextLarger:)) {
-	return [self canMakeTextLarger];
+        return [self canMakeTextLarger];
     } else if (action == @selector(makeTextSmaller:)) {
-	return [self canMakeTextSmaller];
+        return [self canMakeTextSmaller];
     } else if (action == @selector(makeTextStandardSize:)) {
-	return [self canMakeTextStandardSize];
+        return [self canMakeTextStandardSize];
     } else if (action == @selector(reload:)) {
-	return [[self mainFrame] dataSource] != nil;
+        return [[self mainFrame] dataSource] != nil;
     } else if (action == @selector(stopLoading:)) {
-	return [self _isLoading];
+        return [self _isLoading];
     } else if (action == @selector(toggleContinuousSpellChecking:)) {
         BOOL checkMark = NO;
         BOOL retVal = NO;
-	if ([self _continuousCheckingAllowed]) {
+        if ([self _continuousCheckingAllowed]) {
             checkMark = [self isContinuousSpellCheckingEnabled];
             retVal = YES;
         }

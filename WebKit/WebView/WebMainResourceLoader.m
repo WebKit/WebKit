@@ -140,7 +140,7 @@
 -(void)continueAfterNavigationPolicy:(NSURLRequest *)_request formState:(WebFormState *)state
 {
     if (!_request) {
-	[self stopLoadingForPolicyChange];
+        [self stopLoadingForPolicyChange];
     }
 }
 
@@ -241,15 +241,15 @@
     {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         BOOL isRemote = ![URL isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:URL];
-	BOOL isRemoteWebArchive = isRemote && [MIMEType _webkit_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
+        BOOL isRemoteWebArchive = isRemote && [MIMEType _webkit_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
         if (![WebDataSource _canShowMIMEType:MIMEType] || isRemoteWebArchive) {
-	    [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:URL];
+            [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:URL];
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.
             if (!reachedTerminalState) {
                 [self stopLoadingForPolicyChange];
             }
-	    return;
-	}
+            return;
+        }
         break;
     }
     case WebPolicyDownload:
@@ -262,11 +262,11 @@
         return;
 
     case WebPolicyIgnore:
-	[self stopLoadingForPolicyChange];
-	return;
+        [self stopLoadingForPolicyChange];
+        return;
     
     default:
-	ASSERT_NOT_REACHED();
+        ASSERT_NOT_REACHED();
     }
 
     [self retain];
@@ -311,7 +311,7 @@
 -(void)checkContentPolicyForResponse:(NSURLResponse *)r
 {
     WebPolicyDecisionListener *l = [[WebPolicyDecisionListener alloc]
-				       _initWithTarget:self action:@selector(continueAfterContentPolicy:)];
+                                       _initWithTarget:self action:@selector(continueAfterContentPolicy:)];
     listener = l;
     policyResponse = [r retain];
 
@@ -431,8 +431,8 @@
 
         NSURLResponse *resp = [[NSURLResponse alloc] initWithURL:URL MIMEType:MIMEType
             expectedContentLength:0 textEncodingName:nil];
-	[self didReceiveResponse:resp];
-	[resp release];
+        [self didReceiveResponse:resp];
+        [resp release];
     } else {
         connection = [[NSURLConnection alloc] initWithRequest:r delegate:proxy];
     }

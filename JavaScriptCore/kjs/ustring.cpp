@@ -434,7 +434,7 @@ UString::UString(const UString &a, const UString &b)
     // b is empty
     m_rep = a.m_rep;
   } else if (aOffset + aSize == a.usedCapacity() && 4 * aSize >= bSize &&
-	     (-bOffset != b.usedPreCapacity() || aSize >= bSize)) {
+             (-bOffset != b.usedPreCapacity() || aSize >= bSize)) {
     // - a reaches the end of its buffer so it qualifies for shared append
     // - also, it's at least a quarter the length of b - appending to a much shorter
     //   string does more harm than good
@@ -576,7 +576,7 @@ UString UString::from(double d)
       strcpy(buf + i, result);
       i += length;
       for (int j = 0; j < decimalPoint - length; j++) {
-	buf[i++] = '0';
+        buf[i++] = '0';
       }
       buf[i] = '\0';
     } else {
@@ -877,11 +877,11 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
     d = 0.0;
     while (*(++c)) {
       if (*c >= '0' && *c <= '9')
-	d = d * 16.0 + *c - '0';
+        d = d * 16.0 + *c - '0';
       else if ((*c >= 'A' && *c <= 'F') || (*c >= 'a' && *c <= 'f'))
-	d = d * 16.0 + (*c & 0xdf) - 'A' + 10.0;
+        d = d * 16.0 + (*c & 0xdf) - 'A' + 10.0;
       else
-	break;
+        break;
     }
   } else {
     // regular number ?
@@ -893,13 +893,13 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
       // infinity ?
       d = 1.0;
       if (*c == '+')
-	c++;
+        c++;
       else if (*c == '-') {
-	d = -1.0;
-	c++;
+        d = -1.0;
+        c++;
       }
       if (strncmp(c, "Infinity", 8) != 0)
-	return NaN;
+        return NaN;
       d = d * Inf;
       c += 8;
     }
@@ -1112,7 +1112,7 @@ bool operator==(const UString& s1, const UString& s2)
     return false;
 
   return (memcmp(s1.m_rep->data(), s2.m_rep->data(),
-		 s1.m_rep->len * sizeof(UChar)) == 0);
+                 s1.m_rep->len * sizeof(UChar)) == 0);
 }
 
 bool operator==(const UString& s1, const char *s2)

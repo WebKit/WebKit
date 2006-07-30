@@ -52,16 +52,16 @@
 
 // Element dictionary keys
 extern NSString *WebElementDOMNodeKey;          // DOMNode of the element
-extern NSString *WebElementFrameKey;		// WebFrame of the element
-extern NSString *WebElementImageAltStringKey;	// NSString of the ALT attribute of the image element
-extern NSString *WebElementImageKey;		// NSImage of the image element
-extern NSString *WebElementImageRectKey;	// NSValue of an NSRect, the rect of the image element
-extern NSString *WebElementImageURLKey;		// NSURL of the image element
-extern NSString *WebElementIsSelectedKey; 	// NSNumber of BOOL indicating whether the element is selected or not 
-extern NSString *WebElementLinkURLKey;		// NSURL of the link if the element is within an anchor
-extern NSString *WebElementLinkTargetFrameKey;	// WebFrame of the target of the anchor
-extern NSString *WebElementLinkTitleKey;	// NSString of the title of the anchor
-extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anchor
+extern NSString *WebElementFrameKey;            // WebFrame of the element
+extern NSString *WebElementImageAltStringKey;   // NSString of the ALT attribute of the image element
+extern NSString *WebElementImageKey;            // NSImage of the image element
+extern NSString *WebElementImageRectKey;        // NSValue of an NSRect, the rect of the image element
+extern NSString *WebElementImageURLKey;         // NSURL of the image element
+extern NSString *WebElementIsSelectedKey;       // NSNumber of BOOL indicating whether the element is selected or not 
+extern NSString *WebElementLinkURLKey;          // NSURL of the link if the element is within an anchor
+extern NSString *WebElementLinkTargetFrameKey;  // WebFrame of the target of the anchor
+extern NSString *WebElementLinkTitleKey;        // NSString of the title of the anchor
+extern NSString *WebElementLinkLabelKey;        // NSString of the text within the anchor
 
 /*
     @discussion Notifications sent by WebView to mark the progress of loads.

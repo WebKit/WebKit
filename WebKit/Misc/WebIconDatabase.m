@@ -38,8 +38,8 @@
 
 #import "WebTypesInternal.h"
 
-NSString * const WebIconDatabaseVersionKey = 	@"WebIconDatabaseVersion";
-NSString * const WebURLToIconURLKey = 		@"WebSiteURLToIconURLKey";
+NSString * const WebIconDatabaseVersionKey =    @"WebIconDatabaseVersion";
+NSString * const WebURLToIconURLKey =           @"WebSiteURLToIconURLKey";
 
 NSString * const ObsoleteIconsOnDiskKey =       @"WebIconsOnDisk";
 NSString * const ObsoleteIconURLToURLsKey =     @"WebIconURLToSiteURLs";
@@ -197,12 +197,12 @@ NSSize WebIconLargeSize = {128, 128};
     NSMutableDictionary *icons = [self _iconsForIconURLString:iconURLString];
 
     if (!icons) {
-	if (![_private->iconURLsWithNoIcons containsObject:iconURLString]) {
+        if (![_private->iconURLsWithNoIcons containsObject:iconURLString]) {
            // We used to have this icon, but don't have it anymore for some reason. (Bug? Deleted from
            // disk behind our back?). Forget that we ever had it so it will be re-fetched next time.
-	    LOG_ERROR("WebIconDatabase used to contain %@, but the icon file is missing. Now forgetting that we ever knew about this icon.", iconURLString);
+            LOG_ERROR("WebIconDatabase used to contain %@, but the icon file is missing. Now forgetting that we ever knew about this icon.", iconURLString);
             [self _forgetIconForIconURLString:iconURLString];
-	}
+        }
         return [self defaultIconWithSize:size];
     }        
 
@@ -496,7 +496,7 @@ NSSize WebIconLargeSize = {128, 128};
 #endif
 
     return (([_private->iconURLToIcons objectForKey:iconURL] ||
-	     [_private->iconURLsWithNoIcons containsObject:iconURL] ||
+             [_private->iconURLsWithNoIcons containsObject:iconURL] ||
              [_private->iconsOnDiskWithURLs containsObject:iconURL]) &&
              [self _totalRetainCountForIconURLString:iconURL] > 0);
 }
@@ -551,9 +551,9 @@ NSSize WebIconLargeSize = {128, 128};
     int v = 0;
     // no version means first version
     if (version == nil) {
-	v = 1;
+        v = 1;
     } else if ([version isKindOfClass:[NSNumber class]]) {
-	v = [version intValue];
+        v = [version intValue];
     }
     
     // Get the site URL to icon URL dictionary from the file DB.
@@ -708,13 +708,13 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(iconURLString);
 
     if ([_private->iconURLsWithNoIcons containsObject:iconURLString])
-	return nil;
+        return nil;
     
     NSMutableDictionary *icons = [_private->iconURLToIcons objectForKey:iconURLString];
 
     if (icons)
-	return icons;
-	
+        return icons;
+        
     // Not in memory, check disk
     if(![_private->iconsOnDiskWithURLs containsObject:iconURLString])
         return nil;
@@ -725,8 +725,8 @@ NSSize WebIconLargeSize = {128, 128};
     NSData *iconData = [_private->fileDatabase objectForKey:iconURLString];
 
     if ([iconData isKindOfClass:[NSNull class]]) {
-	[_private->iconURLsWithNoIcons addObject:iconURLString];
-	return nil;
+        [_private->iconURLsWithNoIcons addObject:iconURLString];
+        return nil;
     }
     
     if (iconData) {

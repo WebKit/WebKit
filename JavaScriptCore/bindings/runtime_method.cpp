@@ -69,17 +69,17 @@ bool RuntimeMethod::getOwnPropertySlot(ExecState *exec, const Identifier& proper
 JSValue *RuntimeMethod::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
     if (_methodList.length() > 0) {
-	RuntimeObjectImp *imp;
-	
-	// If thisObj is the DOM object for a plugin, get the corresponding
-	// runtime object from the DOM object.
-	if (thisObj->classInfo() != &KJS::RuntimeObjectImp::info) {
-	    JSValue *runtimeObject = thisObj->get(exec, "__apple_runtime_object");
-	    imp = static_cast<RuntimeObjectImp*>(runtimeObject);
-	}
-	else {
-	    imp = static_cast<RuntimeObjectImp*>(thisObj);
-	}
+        RuntimeObjectImp *imp;
+        
+        // If thisObj is the DOM object for a plugin, get the corresponding
+        // runtime object from the DOM object.
+        if (thisObj->classInfo() != &KJS::RuntimeObjectImp::info) {
+            JSValue *runtimeObject = thisObj->get(exec, "__apple_runtime_object");
+            imp = static_cast<RuntimeObjectImp*>(runtimeObject);
+        }
+        else {
+            imp = static_cast<RuntimeObjectImp*>(thisObj);
+        }
         if (imp) {
             Instance *instance = imp->getInternalInstance();
             
@@ -106,4 +106,3 @@ Completion RuntimeMethod::execute(ExecState*)
 {
     return Completion(Normal, jsUndefined());
 }
-

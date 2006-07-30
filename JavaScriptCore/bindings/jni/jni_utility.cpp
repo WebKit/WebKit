@@ -295,18 +295,18 @@ jmethodID getMethodID (jobject obj, const char *name, const char *sig)
 {
     JNIEnv *env = getJNIEnv();
     jmethodID mid = 0;
-	
+        
     if ( env != NULL) {
     jclass cls = env->GetObjectClass(obj);
     if ( cls != NULL ) {
             mid = env->GetMethodID(cls, name, sig);
-	    if (!mid) {
+            if (!mid) {
                 env->ExceptionClear();
-		mid = env->GetStaticMethodID(cls, name, sig);
-		if (!mid) {
-		    env->ExceptionClear();
-		}
-	    }
+                mid = env->GetStaticMethodID(cls, name, sig);
+                if (!mid) {
+                    env->ExceptionClear();
+                }
+            }
         }
         env->DeleteLocalRef(cls);
     }
@@ -530,7 +530,7 @@ const char *getCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
     if (!s) {
         env->ExceptionDescribe();
         env->ExceptionClear();
-		fprintf (stderr, "\n");
+                fprintf (stderr, "\n");
     }
     return s;
 }
@@ -547,7 +547,7 @@ const jchar *getUCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
     if (!s) {
         env->ExceptionDescribe();
         env->ExceptionClear();
-		fprintf (stderr, "\n");
+                fprintf (stderr, "\n");
     }
     return s;
 }
@@ -738,38 +738,38 @@ jvalue convertValueToJValue (ExecState *exec, JSValue *value, JNIType _JNIType, 
             // First see if we have a Java instance.
             if (value->isObject()){
                 JSObject *objectImp = static_cast<JSObject*>(value);
-		if (objectImp->classInfo() == &RuntimeObjectImp::info) {
-		    RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(value);
-		    JavaInstance *instance = static_cast<JavaInstance*>(imp->getInternalInstance());
-		    result.l = instance->javaInstance();
-		}
-		else if (objectImp->classInfo() == &RuntimeArray::info) {
-		    RuntimeArray *imp = static_cast<RuntimeArray *>(value);
-		    JavaArray *array = static_cast<JavaArray*>(imp->getConcreteArray());
-		    result.l = array->javaArray();
-		}
+                if (objectImp->classInfo() == &RuntimeObjectImp::info) {
+                    RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(value);
+                    JavaInstance *instance = static_cast<JavaInstance*>(imp->getInternalInstance());
+                    result.l = instance->javaInstance();
+                }
+                else if (objectImp->classInfo() == &RuntimeArray::info) {
+                    RuntimeArray *imp = static_cast<RuntimeArray *>(value);
+                    JavaArray *array = static_cast<JavaArray*>(imp->getConcreteArray());
+                    result.l = array->javaArray();
+                }
             }
             
             // Now convert value to a string if the target type is a java.lang.string, and we're not
             // converting from a Null.
             if (result.l == 0 && strcmp(javaClassName, "java.lang.String") == 0) {
 #ifdef CONVERT_NULL_TO_EMPTY_STRING
-		if (value->isNull()) {
-		    JNIEnv *env = getJNIEnv();
-		    jchar buf[2];
-		    jobject javaString = env->functions->NewString (env, buf, 0);
-		    result.l = javaString;
-		}
-		else 
+                if (value->isNull()) {
+                    JNIEnv *env = getJNIEnv();
+                    jchar buf[2];
+                    jobject javaString = env->functions->NewString (env, buf, 0);
+                    result.l = javaString;
+                }
+                else 
 #else
-		if (!value->isNull())
+                if (!value->isNull())
 #endif
-		{
-		    UString stringValue = value->toString(exec);
-		    JNIEnv *env = getJNIEnv();
-		    jobject javaString = env->functions->NewString (env, (const jchar *)stringValue.data(), stringValue.size());
-		    result.l = javaString;
-		}
+                {
+                    UString stringValue = value->toString(exec);
+                    JNIEnv *env = getJNIEnv();
+                    jobject javaString = env->functions->NewString (env, (const jchar *)stringValue.data(), stringValue.size());
+                    result.l = javaString;
+                }
             }
         }
         break;

@@ -116,19 +116,19 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
             CInstance* instance = static_cast<CInstance*>(imp->getInternalInstance());
             NPObject* obj = instance->getObject();
             _NPN_RetainObject(obj);
-	    OBJECT_TO_NPVARIANT(obj, *result);
+            OBJECT_TO_NPVARIANT(obj, *result);
         } else {
-	    Interpreter *originInterpreter = exec->dynamicInterpreter();
+            Interpreter *originInterpreter = exec->dynamicInterpreter();
             const Bindings::RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
 
-	    Interpreter *interpreter = 0;
-	    if (originInterpreter->isGlobalObject(value)) {
-		interpreter = originInterpreter->interpreterForGlobalObject(value);
-	    }
+            Interpreter *interpreter = 0;
+            if (originInterpreter->isGlobalObject(value)) {
+                interpreter = originInterpreter->interpreterForGlobalObject(value);
+            }
 
-	    if (!interpreter)
-		interpreter = originInterpreter;
-		
+            if (!interpreter)
+                interpreter = originInterpreter;
+                
             const Bindings::RootObject *executionContext = rootForInterpreter(interpreter);
             if (!executionContext) {
                 Bindings::RootObject *newExecutionContext = new Bindings::RootObject(0);
@@ -136,9 +136,9 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
                 executionContext = newExecutionContext;
             }
     
-	    NPObject* obj = (NPObject *)exec->dynamicInterpreter()->createLanguageInstanceForValue(exec, Instance::CLanguage, value->toObject(exec), originExecutionContext, executionContext);
-	    OBJECT_TO_NPVARIANT(obj, *result);
-	}
+            NPObject* obj = (NPObject *)exec->dynamicInterpreter()->createLanguageInstanceForValue(exec, Instance::CLanguage, value->toObject(exec), originExecutionContext, executionContext);
+            OBJECT_TO_NPVARIANT(obj, *result);
+        }
     }
     else
         VOID_TO_NPVARIANT(*result);

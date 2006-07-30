@@ -72,9 +72,9 @@ static Identifier identifierFromNPIdentifier(const NPUTF8* name)
 static bool _isSafeScript(JavaScriptObject* obj)
 {
     if (obj->originExecutionContext) {
-	Interpreter* originInterpreter = obj->originExecutionContext->interpreter();
-	if (originInterpreter)
-	    return originInterpreter->isSafeScript(obj->executionContext->interpreter());
+        Interpreter* originInterpreter = obj->originExecutionContext->interpreter();
+        if (originInterpreter)
+            return originInterpreter->isSafeScript(obj->executionContext->interpreter());
     }
     return true;
 }
@@ -112,21 +112,21 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-	if (!_isSafeScript(obj))
-	    return false;
+        if (!_isSafeScript(obj))
+            return false;
 
         PrivateIdentifier* i = (PrivateIdentifier*)methodName;
         if (!i->isString)
             return false;
 
-	// Special case the "eval" method.
-	if (methodName == _NPN_GetStringIdentifier("eval")) {
-	    if (argCount != 1)
-		return false;
-	    if (args[0].type != NPVariantType_String)
-		return false;
-	    return _NPN_Evaluate(npp, o, (NPString *)&args[0].value.stringValue, result);
-	}
+        // Special case the "eval" method.
+        if (methodName == _NPN_GetStringIdentifier("eval")) {
+            if (argCount != 1)
+                return false;
+            if (args[0].type != NPVariantType_String)
+                return false;
+            return _NPN_Evaluate(npp, o, (NPString *)&args[0].value.stringValue, result);
+        }
 
         // Lookup the function object.
         ExecState* exec = obj->executionContext->interpreter()->globalExec();
@@ -163,8 +163,8 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
 
-	if (!_isSafeScript(obj))
-	    return false;
+        if (!_isSafeScript(obj))
+            return false;
 
         ExecState* exec = obj->executionContext->interpreter()->globalExec();
         
@@ -198,8 +198,8 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-	if (!_isSafeScript(obj))
-	    return false;
+        if (!_isSafeScript(obj))
+            return false;
 
         ExecState* exec = obj->executionContext->interpreter()->globalExec();
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
@@ -237,8 +237,8 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-	if (!_isSafeScript(obj))
-	    return false;
+        if (!_isSafeScript(obj))
+            return false;
 
         ExecState* exec = obj->executionContext->interpreter()->globalExec();
         JSLock lock;
@@ -260,8 +260,8 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-	if (!_isSafeScript(obj))
-	    return false;
+        if (!_isSafeScript(obj))
+            return false;
 
         ExecState* exec = obj->executionContext->interpreter()->globalExec();
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
@@ -288,8 +288,8 @@ bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-	if (!_isSafeScript(obj))
-	    return false;
+        if (!_isSafeScript(obj))
+            return false;
 
         ExecState* exec = obj->executionContext->interpreter()->globalExec();
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
@@ -309,8 +309,8 @@ bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-	if (!_isSafeScript(obj))
-	    return false;
+        if (!_isSafeScript(obj))
+            return false;
 
         PrivateIdentifier* i = (PrivateIdentifier*)methodName;
         if (!i->isString)

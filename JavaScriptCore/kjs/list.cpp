@@ -104,16 +104,16 @@ inline void ListImp::markValues()
 {
     int inlineSize = min(size, inlineValuesSize);
     for (int i = 0; i != inlineSize; ++i) {
-	if (!values[i]->marked()) {
-	    values[i]->mark();
-	}
+        if (!values[i]->marked()) {
+            values[i]->mark();
+        }
     }
 
     int overflowSize = size - inlineSize;
     for (int i = 0; i != overflowSize; ++i) {
-	if (!overflow[i]->marked()) {
-	    overflow[i]->mark();
-	}
+        if (!overflow[i]->marked()) {
+            overflow[i]->mark();
+        }
     }
 }
 
@@ -143,11 +143,11 @@ static inline ListImp *allocateListImp()
 {
     // Find a free one in the pool.
     if (poolUsed < poolSize) {
-	ListImp *imp = poolFreeList ? poolFreeList : &pool[0];
-	poolFreeList = imp->nextInFreeList ? imp->nextInFreeList : imp + 1;
-	imp->state = usedInPool;
-	poolUsed++;
-	return imp;
+        ListImp *imp = poolFreeList ? poolFreeList : &pool[0];
+        poolFreeList = imp->nextInFreeList ? imp->nextInFreeList : imp + 1;
+        imp->state = usedInPool;
+        poolUsed++;
+        return imp;
     }
     
     HeapListImp *imp = new HeapListImp;
@@ -217,9 +217,9 @@ void List::release()
 
     if (imp->state == usedInPool) {
         imp->state = unusedInPool;
-	imp->nextInFreeList = poolFreeList;
-	poolFreeList = imp;
-	poolUsed--;
+        imp->nextInFreeList = poolFreeList;
+        poolFreeList = imp;
+        poolUsed--;
     } else {
         assert(imp->state == usedOnHeap);
         HeapListImp *list = static_cast<HeapListImp *>(imp);

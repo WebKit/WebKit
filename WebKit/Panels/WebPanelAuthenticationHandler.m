@@ -41,10 +41,8 @@ WebPanelAuthenticationHandler *sharedHandler;
 
 + (id)sharedHandler
 {
-    if (sharedHandler == nil) {
-	sharedHandler = [[self alloc] init];
-    }
-
+    if (sharedHandler == nil)
+        sharedHandler = [[self alloc] init];
     return sharedHandler;
 }
 
@@ -54,7 +52,7 @@ WebPanelAuthenticationHandler *sharedHandler;
     if (self != nil) {
         windowToPanel = [[NSMutableDictionary alloc] init];
         challengeToWindow = [[NSMutableDictionary alloc] init];
-	windowToChallengeQueue = [[NSMutableDictionary alloc] init];
+        windowToChallengeQueue = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -71,9 +69,9 @@ WebPanelAuthenticationHandler *sharedHandler;
 {
     NSMutableArray *queue = [windowToChallengeQueue objectForKey:window];
     if (queue == nil) {
-	queue = [[NSMutableArray alloc] init];
-	[windowToChallengeQueue _webkit_setObject:queue forUncopiedKey:window];
-	[queue release];
+        queue = [[NSMutableArray alloc] init];
+        [windowToChallengeQueue _webkit_setObject:queue forUncopiedKey:window];
+        [queue release];
     }
     [queue addObject:challenge];
 }
@@ -82,23 +80,23 @@ WebPanelAuthenticationHandler *sharedHandler;
 {
     NSMutableArray *queue = [windowToChallengeQueue objectForKey:window];
     if (queue == nil) {
-	return;
+        return;
     }
 
     NSURLAuthenticationChallenge *challenge = [[queue objectAtIndex:0] retain];
     [queue removeObjectAtIndex:0];
     if ([queue count] == 0) {
-	[windowToChallengeQueue removeObjectForKey:window];
+        [windowToChallengeQueue removeObjectForKey:window];
     }
 
     NSURLCredential *latestCredential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:[challenge protectionSpace]];
 
     if ([latestCredential hasPassword]) {
-	[[challenge sender] useCredential:latestCredential forAuthenticationChallenge:challenge];
-	[challenge release];
-	return;
+        [[challenge sender] useCredential:latestCredential forAuthenticationChallenge:challenge];
+        [challenge release];
+        return;
     }
-								    
+                                                                    
     [self startAuthentication:challenge window:(window == WebModalDialogPretendWindow ? nil : window)];
     [challenge release];
 }
@@ -109,7 +107,7 @@ WebPanelAuthenticationHandler *sharedHandler;
     id window = w ? (id)w : (id)WebModalDialogPretendWindow;
 
     if ([windowToPanel objectForKey:window] != nil) {
-	[self enqueueChallenge:challenge forWindow:window];
+        [self enqueueChallenge:challenge forWindow:window];
         return;
     }
 
@@ -119,8 +117,8 @@ WebPanelAuthenticationHandler *sharedHandler;
     // unlikely (how would you be loading a page if you had an error
     // sheet up?)
     if ([w attachedSheet] != nil) {
-	[[challenge sender] cancelAuthenticationChallenge:challenge];
-	return;
+        [[challenge sender] cancelAuthenticationChallenge:challenge];
+        return;
     }
 
     WebAuthenticationPanel *panel = [[WebAuthenticationPanel alloc] initWithCallback:self selector:@selector(_authenticationDoneWithChallenge:result:)];
@@ -154,9 +152,9 @@ WebPanelAuthenticationHandler *sharedHandler;
     }
 
     if (credential == nil) {
-	[[challenge sender] cancelAuthenticationChallenge:challenge];
+        [[challenge sender] cancelAuthenticationChallenge:challenge];
     } else {
-	[[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
+        [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
     }
 
     [self tryNextChallengeForWindow:window];

@@ -106,41 +106,41 @@ void StringInstance::getPropertyNames(ExecState* exec, PropertyNameArray& proper
 const ClassInfo StringPrototype::info = {"String", &StringInstance::info, &stringTable, 0};
 /* Source for string_object.lut.h
 @begin stringTable 26
-  toString		StringProtoFunc::ToString	DontEnum|Function	0
-  valueOf		StringProtoFunc::ValueOf	DontEnum|Function	0
-  charAt		StringProtoFunc::CharAt	DontEnum|Function	1
-  charCodeAt		StringProtoFunc::CharCodeAt	DontEnum|Function	1
-  concat		StringProtoFunc::Concat	DontEnum|Function	1
-  indexOf		StringProtoFunc::IndexOf	DontEnum|Function	1
-  lastIndexOf		StringProtoFunc::LastIndexOf	DontEnum|Function	1
-  match			StringProtoFunc::Match	DontEnum|Function	1
-  replace		StringProtoFunc::Replace	DontEnum|Function	2
-  search		StringProtoFunc::Search	DontEnum|Function	1
-  slice			StringProtoFunc::Slice	DontEnum|Function	2
-  split			StringProtoFunc::Split	DontEnum|Function	2
-  substr		StringProtoFunc::Substr	DontEnum|Function	2
-  substring		StringProtoFunc::Substring	DontEnum|Function	2
-  toLowerCase		StringProtoFunc::ToLowerCase	DontEnum|Function	0
-  toUpperCase		StringProtoFunc::ToUpperCase	DontEnum|Function	0
-  toLocaleLowerCase	StringProtoFunc::ToLocaleLowerCase DontEnum|Function	0
-  toLocaleUpperCase     StringProtoFunc::ToLocaleUpperCase DontEnum|Function	0
+  toString              StringProtoFunc::ToString       DontEnum|Function       0
+  valueOf               StringProtoFunc::ValueOf        DontEnum|Function       0
+  charAt                StringProtoFunc::CharAt         DontEnum|Function       1
+  charCodeAt            StringProtoFunc::CharCodeAt     DontEnum|Function       1
+  concat                StringProtoFunc::Concat         DontEnum|Function       1
+  indexOf               StringProtoFunc::IndexOf        DontEnum|Function       1
+  lastIndexOf           StringProtoFunc::LastIndexOf    DontEnum|Function       1
+  match                 StringProtoFunc::Match          DontEnum|Function       1
+  replace               StringProtoFunc::Replace        DontEnum|Function       2
+  search                StringProtoFunc::Search         DontEnum|Function       1
+  slice                 StringProtoFunc::Slice          DontEnum|Function       2
+  split                 StringProtoFunc::Split          DontEnum|Function       2
+  substr                StringProtoFunc::Substr         DontEnum|Function       2
+  substring             StringProtoFunc::Substring      DontEnum|Function       2
+  toLowerCase           StringProtoFunc::ToLowerCase    DontEnum|Function       0
+  toUpperCase           StringProtoFunc::ToUpperCase    DontEnum|Function       0
+  toLocaleLowerCase     StringProtoFunc::ToLocaleLowerCase DontEnum|Function    0
+  toLocaleUpperCase     StringProtoFunc::ToLocaleUpperCase DontEnum|Function    0
 #
 # Under here: html extension, should only exist if KJS_PURE_ECMA is not defined
 # I guess we need to generate two hashtables in the .lut.h file, and use #ifdef
 # to select the right one... TODO. #####
-  big			StringProtoFunc::Big		DontEnum|Function	0
-  small			StringProtoFunc::Small	DontEnum|Function	0
-  blink			StringProtoFunc::Blink	DontEnum|Function	0
-  bold			StringProtoFunc::Bold	DontEnum|Function	0
-  fixed			StringProtoFunc::Fixed	DontEnum|Function	0
-  italics		StringProtoFunc::Italics	DontEnum|Function	0
-  strike		StringProtoFunc::Strike	DontEnum|Function	0
-  sub			StringProtoFunc::Sub		DontEnum|Function	0
-  sup			StringProtoFunc::Sup		DontEnum|Function	0
-  fontcolor		StringProtoFunc::Fontcolor	DontEnum|Function	1
-  fontsize		StringProtoFunc::Fontsize	DontEnum|Function	1
-  anchor		StringProtoFunc::Anchor	DontEnum|Function	1
-  link			StringProtoFunc::Link	DontEnum|Function	1
+  big                   StringProtoFunc::Big            DontEnum|Function       0
+  small                 StringProtoFunc::Small          DontEnum|Function       0
+  blink                 StringProtoFunc::Blink          DontEnum|Function       0
+  bold                  StringProtoFunc::Bold           DontEnum|Function       0
+  fixed                 StringProtoFunc::Fixed          DontEnum|Function       0
+  italics               StringProtoFunc::Italics        DontEnum|Function       0
+  strike                StringProtoFunc::Strike         DontEnum|Function       0
+  sub                   StringProtoFunc::Sub            DontEnum|Function       0
+  sup                   StringProtoFunc::Sup            DontEnum|Function       0
+  fontcolor             StringProtoFunc::Fontcolor      DontEnum|Function       1
+  fontsize              StringProtoFunc::Fontsize       DontEnum|Function       1
+  anchor                StringProtoFunc::Anchor         DontEnum|Function       1
+  link                  StringProtoFunc::Link           DontEnum|Function       1
 @end
 */
 // ECMA 15.5.4
@@ -487,35 +487,35 @@ JSValue *StringProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
     } else {
       // Exec
       if ((reg->flags() & RegExp::Global) == 0) {
-	// case without 'g' flag is handled like RegExp.prototype.exec
-	if (mstr.isNull()) {
-	  result = jsNull();
-	} else {
-	  result = regExpObj->arrayOfMatches(exec,mstr);
-	}
+        // case without 'g' flag is handled like RegExp.prototype.exec
+        if (mstr.isNull()) {
+          result = jsNull();
+        } else {
+          result = regExpObj->arrayOfMatches(exec,mstr);
+        }
       } else {
-	// return array of matches
-	List list;
-	int lastIndex = 0;
-	while (pos >= 0) {
+        // return array of matches
+        List list;
+        int lastIndex = 0;
+        while (pos >= 0) {
           if (mstr.isNull())
             list.append(jsUndefined());
           else
-	    list.append(jsString(mstr));
-	  lastIndex = pos;
-	  pos += mstr.isEmpty() ? 1 : mstr.size();
-	  mstr = regExpObj->performMatch(reg, u, pos, &pos);
-	}
-	if (imp)
-	  imp->put(exec, "lastIndex", jsNumber(lastIndex), DontDelete|DontEnum);
-	if (list.isEmpty()) {
-	  // if there are no matches at all, it's important to return
-	  // Null instead of an empty array, because this matches
-	  // other browsers and because Null is a false value.
-	  result = jsNull(); 
-	} else {
-	  result = exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
-	}
+            list.append(jsString(mstr));
+          lastIndex = pos;
+          pos += mstr.isEmpty() ? 1 : mstr.size();
+          mstr = regExpObj->performMatch(reg, u, pos, &pos);
+        }
+        if (imp)
+          imp->put(exec, "lastIndex", jsNumber(lastIndex), DontDelete|DontEnum);
+        if (list.isEmpty()) {
+          // if there are no matches at all, it's important to return
+          // Null instead of an empty array, because this matches
+          // other browsers and because Null is a false value.
+          result = jsNull(); 
+        } else {
+          result = exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
+        }
       }
     }
     delete tmpReg;
@@ -552,43 +552,43 @@ JSValue *StringProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
     if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpImp::info)) {
       RegExp *reg = static_cast<RegExpImp *>(a0)->regExp();
       if (u.isEmpty() && !reg->match(u, 0).isNull()) {
-	// empty string matched by regexp -> empty array
-	res->put(exec,lengthPropertyName, jsNumber(0));
-	break;
+        // empty string matched by regexp -> empty array
+        res->put(exec,lengthPropertyName, jsNumber(0));
+        break;
       }
       pos = 0;
       while (static_cast<uint32_t>(i) != limit && pos < u.size()) {
-	// TODO: back references
+        // TODO: back references
         int mpos;
         int *ovector = 0L;
-	UString mstr = reg->match(u, pos, &mpos, &ovector);
+        UString mstr = reg->match(u, pos, &mpos, &ovector);
         delete [] ovector; ovector = 0L;
-	if (mpos < 0)
-	  break;
-	pos = mpos + (mstr.isEmpty() ? 1 : mstr.size());
-	if (mpos != p0 || !mstr.isEmpty()) {
-	  res->put(exec,i, jsString(u.substr(p0, mpos-p0)));
-	  p0 = mpos + mstr.size();
-	  i++;
-	}
+        if (mpos < 0)
+          break;
+        pos = mpos + (mstr.isEmpty() ? 1 : mstr.size());
+        if (mpos != p0 || !mstr.isEmpty()) {
+          res->put(exec,i, jsString(u.substr(p0, mpos-p0)));
+          p0 = mpos + mstr.size();
+          i++;
+        }
       }
     } else {
       u2 = a0->toString(exec);
       if (u2.isEmpty()) {
-	if (u.isEmpty()) {
-	  // empty separator matches empty string -> empty array
-	  put(exec,lengthPropertyName, jsNumber(0));
-	  break;
-	} else {
-	  while (static_cast<uint32_t>(i) != limit && i < u.size()-1)
-	    res->put(exec, i++, jsString(u.substr(p0++, 1)));
-	}
+        if (u.isEmpty()) {
+          // empty separator matches empty string -> empty array
+          put(exec,lengthPropertyName, jsNumber(0));
+          break;
+        } else {
+          while (static_cast<uint32_t>(i) != limit && i < u.size()-1)
+            res->put(exec, i++, jsString(u.substr(p0++, 1)));
+        }
       } else {
-	while (static_cast<uint32_t>(i) != limit && (pos = u.find(u2, p0)) >= 0) {
-	  res->put(exec, i, jsString(u.substr(p0, pos-p0)));
-	  p0 = pos + u2.size();
-	  i++;
-	}
+        while (static_cast<uint32_t>(i) != limit && (pos = u.find(u2, p0)) >= 0) {
+          res->put(exec, i, jsString(u.substr(p0, pos-p0)));
+          p0 = pos + u2.size();
+          i++;
+        }
       }
     }
     // add remaining string, if any

@@ -1232,15 +1232,12 @@ JSValue *RelationalNode::evaluate(ExecState *exec)
                            "Value %s (result of expression %s) is not an object. Cannot be used with instanceof operator.", v2, expr2.get());
 
     JSObject *o2(static_cast<JSObject*>(v2));
-    if (!o2->implementsHasInstance()) {
+    if (!o2->implementsHasInstance())
       // According to the spec, only some types of objects "implement" the [[HasInstance]] property.
       // But we are supposed to throw an exception where the object does not "have" the [[HasInstance]]
       // property. It seems that all object have the property, but not all implement it, so in this
       // case we return false (consistent with mozilla)
       return jsBoolean(false);
-      //      return throwError(exec, TypeError,
-      //			"Object does not implement the [[HasInstance]] method." );
-    }
     return jsBoolean(o2->hasInstance(exec, v1));
   }
 
@@ -1813,7 +1810,7 @@ Completion ForNode::execute(ExecState *exec)
       v = expr2->evaluate(exec);
       KJS_CHECKEXCEPTION
       if (!v->toBoolean(exec))
-	return Completion(Normal, cval);
+        return Completion(Normal, cval);
     }
     // bail out on error
     KJS_CHECKEXCEPTION
@@ -2155,16 +2152,16 @@ Completion CaseBlockNode::evalBlock(ExecState *exec, JSValue *input)
       v = clause->evaluate(exec);
       KJS_CHECKEXCEPTION
       if (strictEqual(exec, input, v)) {
-	res = clause->evalStatements(exec);
-	if (res.complType() != Normal)
-	  return res;
-	while (a) {
-	  res = a->getClause()->evalStatements(exec);
-	  if (res.complType() != Normal)
-	    return res;
-	  a = a->getNext();
-	}
-	break;
+        res = clause->evalStatements(exec);
+        if (res.complType() != Normal)
+          return res;
+        while (a) {
+          res = a->getClause()->evalStatements(exec);
+          if (res.complType() != Normal)
+            return res;
+          a = a->getNext();
+        }
+        break;
       }
     }
 
@@ -2176,7 +2173,7 @@ Completion CaseBlockNode::evalBlock(ExecState *exec, JSValue *input)
     if (strictEqual(exec, input, v)) {
       res = clause->evalStatements(exec);
       if (res.complType() != Normal)
-	return res;
+        return res;
       goto step18;
     }
   }

@@ -116,13 +116,13 @@ static void millisecondsToTM(double milli, bool utc, tm *t);
 static CFDateFormatterStyle styleFromArgString(const UString& string, CFDateFormatterStyle defaultStyle)
 {
     if (string == "short")
-	return kCFDateFormatterShortStyle;
+        return kCFDateFormatterShortStyle;
     if (string == "medium")
-	return kCFDateFormatterMediumStyle;
+        return kCFDateFormatterMediumStyle;
     if (string == "long")
-	return kCFDateFormatterLongStyle;
+        return kCFDateFormatterLongStyle;
     if (string == "full")
-	return kCFDateFormatterFullStyle;
+        return kCFDateFormatterFullStyle;
     return defaultStyle;
 }
 
@@ -136,15 +136,15 @@ static UString formatLocaleDate(ExecState *exec, double time, bool includeDate, 
 
     UString arg0String = args[0]->toString(exec);
     if (arg0String == "custom" && !args[1]->isUndefined()) {
-	useCustomFormat = true;
-	customFormatString = args[1]->toString(exec);
+        useCustomFormat = true;
+        customFormatString = args[1]->toString(exec);
     } else if (includeDate && includeTime && !args[1]->isUndefined()) {
-	dateStyle = styleFromArgString(arg0String, dateStyle);
-	timeStyle = styleFromArgString(args[1]->toString(exec), timeStyle);
+        dateStyle = styleFromArgString(arg0String, dateStyle);
+        timeStyle = styleFromArgString(args[1]->toString(exec), timeStyle);
     } else if (includeDate && !args[0]->isUndefined()) {
-	dateStyle = styleFromArgString(arg0String, dateStyle);
+        dateStyle = styleFromArgString(arg0String, dateStyle);
     } else if (includeTime && !args[0]->isUndefined()) {
-	timeStyle = styleFromArgString(arg0String, timeStyle);
+        timeStyle = styleFromArgString(arg0String, timeStyle);
     }
 
     CFLocaleRef locale = CFLocaleCopyCurrent();
@@ -152,9 +152,9 @@ static UString formatLocaleDate(ExecState *exec, double time, bool includeDate, 
     CFRelease(locale);
 
     if (useCustomFormat) {
-	CFStringRef customFormatCFString = CFStringCreateWithCharacters(0, (UniChar *)customFormatString.data(), customFormatString.size());
-	CFDateFormatterSetFormat(formatter, customFormatCFString);
-	CFRelease(customFormatCFString);
+        CFStringRef customFormatCFString = CFStringCreateWithCharacters(0, (UniChar *)customFormatString.data(), customFormatString.size());
+        CFDateFormatterSetFormat(formatter, customFormatCFString);
+        CFRelease(customFormatCFString);
     }
 
     CFStringRef string = CFDateFormatterCreateStringWithAbsoluteTime(0, formatter, time - kCFAbsoluteTimeIntervalSince1970);
@@ -452,50 +452,50 @@ const ClassInfo DatePrototype::info = {"Date", &DateInstance::info, &dateTable, 
 /* Source for date_object.lut.h
    We use a negative ID to denote the "UTC" variant.
 @begin dateTable 61
-  toString		DateProtoFunc::ToString		DontEnum|Function	0
-  toUTCString		-DateProtoFunc::ToUTCString		DontEnum|Function	0
-  toDateString		DateProtoFunc::ToDateString		DontEnum|Function	0
-  toTimeString		DateProtoFunc::ToTimeString		DontEnum|Function	0
-  toLocaleString	DateProtoFunc::ToLocaleString	DontEnum|Function	0
-  toLocaleDateString	DateProtoFunc::ToLocaleDateString	DontEnum|Function	0
-  toLocaleTimeString	DateProtoFunc::ToLocaleTimeString	DontEnum|Function	0
-  valueOf		DateProtoFunc::ValueOf		DontEnum|Function	0
-  getTime		DateProtoFunc::GetTime		DontEnum|Function	0
-  getFullYear		DateProtoFunc::GetFullYear		DontEnum|Function	0
-  getUTCFullYear	-DateProtoFunc::GetFullYear		DontEnum|Function	0
-  toGMTString		-DateProtoFunc::ToGMTString		DontEnum|Function	0
-  getMonth		DateProtoFunc::GetMonth		DontEnum|Function	0
-  getUTCMonth		-DateProtoFunc::GetMonth		DontEnum|Function	0
-  getDate		DateProtoFunc::GetDate		DontEnum|Function	0
-  getUTCDate		-DateProtoFunc::GetDate		DontEnum|Function	0
-  getDay		DateProtoFunc::GetDay		DontEnum|Function	0
-  getUTCDay		-DateProtoFunc::GetDay		DontEnum|Function	0
-  getHours		DateProtoFunc::GetHours		DontEnum|Function	0
-  getUTCHours		-DateProtoFunc::GetHours		DontEnum|Function	0
-  getMinutes		DateProtoFunc::GetMinutes		DontEnum|Function	0
-  getUTCMinutes		-DateProtoFunc::GetMinutes		DontEnum|Function	0
-  getSeconds		DateProtoFunc::GetSeconds		DontEnum|Function	0
-  getUTCSeconds		-DateProtoFunc::GetSeconds		DontEnum|Function	0
-  getMilliseconds	DateProtoFunc::GetMilliSeconds	DontEnum|Function	0
-  getUTCMilliseconds	-DateProtoFunc::GetMilliSeconds	DontEnum|Function	0
-  getTimezoneOffset	DateProtoFunc::GetTimezoneOffset	DontEnum|Function	0
-  setTime		DateProtoFunc::SetTime		DontEnum|Function	1
-  setMilliseconds	DateProtoFunc::SetMilliSeconds	DontEnum|Function	1
-  setUTCMilliseconds	-DateProtoFunc::SetMilliSeconds	DontEnum|Function	1
-  setSeconds		DateProtoFunc::SetSeconds		DontEnum|Function	2
-  setUTCSeconds		-DateProtoFunc::SetSeconds		DontEnum|Function	2
-  setMinutes		DateProtoFunc::SetMinutes		DontEnum|Function	3
-  setUTCMinutes		-DateProtoFunc::SetMinutes		DontEnum|Function	3
-  setHours		DateProtoFunc::SetHours		DontEnum|Function	4
-  setUTCHours		-DateProtoFunc::SetHours		DontEnum|Function	4
-  setDate		DateProtoFunc::SetDate		DontEnum|Function	1
-  setUTCDate		-DateProtoFunc::SetDate		DontEnum|Function	1
-  setMonth		DateProtoFunc::SetMonth		DontEnum|Function	2
-  setUTCMonth		-DateProtoFunc::SetMonth		DontEnum|Function	2
-  setFullYear		DateProtoFunc::SetFullYear		DontEnum|Function	3
-  setUTCFullYear	-DateProtoFunc::SetFullYear		DontEnum|Function	3
-  setYear		DateProtoFunc::SetYear		DontEnum|Function	1
-  getYear		DateProtoFunc::GetYear		DontEnum|Function	0
+  toString              DateProtoFunc::ToString                 DontEnum|Function       0
+  toUTCString           -DateProtoFunc::ToUTCString             DontEnum|Function       0
+  toDateString          DateProtoFunc::ToDateString             DontEnum|Function       0
+  toTimeString          DateProtoFunc::ToTimeString             DontEnum|Function       0
+  toLocaleString        DateProtoFunc::ToLocaleString           DontEnum|Function       0
+  toLocaleDateString    DateProtoFunc::ToLocaleDateString       DontEnum|Function       0
+  toLocaleTimeString    DateProtoFunc::ToLocaleTimeString       DontEnum|Function       0
+  valueOf               DateProtoFunc::ValueOf                  DontEnum|Function       0
+  getTime               DateProtoFunc::GetTime                  DontEnum|Function       0
+  getFullYear           DateProtoFunc::GetFullYear              DontEnum|Function       0
+  getUTCFullYear        -DateProtoFunc::GetFullYear             DontEnum|Function       0
+  toGMTString           -DateProtoFunc::ToGMTString             DontEnum|Function       0
+  getMonth              DateProtoFunc::GetMonth                 DontEnum|Function       0
+  getUTCMonth           -DateProtoFunc::GetMonth                DontEnum|Function       0
+  getDate               DateProtoFunc::GetDate                  DontEnum|Function       0
+  getUTCDate            -DateProtoFunc::GetDate                 DontEnum|Function       0
+  getDay                DateProtoFunc::GetDay                   DontEnum|Function       0
+  getUTCDay             -DateProtoFunc::GetDay                  DontEnum|Function       0
+  getHours              DateProtoFunc::GetHours                 DontEnum|Function       0
+  getUTCHours           -DateProtoFunc::GetHours                DontEnum|Function       0
+  getMinutes            DateProtoFunc::GetMinutes               DontEnum|Function       0
+  getUTCMinutes         -DateProtoFunc::GetMinutes              DontEnum|Function       0
+  getSeconds            DateProtoFunc::GetSeconds               DontEnum|Function       0
+  getUTCSeconds         -DateProtoFunc::GetSeconds              DontEnum|Function       0
+  getMilliseconds       DateProtoFunc::GetMilliSeconds          DontEnum|Function       0
+  getUTCMilliseconds    -DateProtoFunc::GetMilliSeconds         DontEnum|Function       0
+  getTimezoneOffset     DateProtoFunc::GetTimezoneOffset        DontEnum|Function       0
+  setTime               DateProtoFunc::SetTime                  DontEnum|Function       1
+  setMilliseconds       DateProtoFunc::SetMilliSeconds          DontEnum|Function       1
+  setUTCMilliseconds    -DateProtoFunc::SetMilliSeconds         DontEnum|Function       1
+  setSeconds            DateProtoFunc::SetSeconds               DontEnum|Function       2
+  setUTCSeconds         -DateProtoFunc::SetSeconds              DontEnum|Function       2
+  setMinutes            DateProtoFunc::SetMinutes               DontEnum|Function       3
+  setUTCMinutes         -DateProtoFunc::SetMinutes              DontEnum|Function       3
+  setHours              DateProtoFunc::SetHours                 DontEnum|Function       4
+  setUTCHours           -DateProtoFunc::SetHours                DontEnum|Function       4
+  setDate               DateProtoFunc::SetDate                  DontEnum|Function       1
+  setUTCDate            -DateProtoFunc::SetDate                 DontEnum|Function       1
+  setMonth              DateProtoFunc::SetMonth                 DontEnum|Function       2
+  setUTCMonth           -DateProtoFunc::SetMonth                DontEnum|Function       2
+  setFullYear           DateProtoFunc::SetFullYear              DontEnum|Function       3
+  setUTCFullYear        -DateProtoFunc::SetFullYear             DontEnum|Function       3
+  setYear               DateProtoFunc::SetYear                  DontEnum|Function       1
+  getYear               DateProtoFunc::GetYear                  DontEnum|Function       0
 @end
 */
 // ECMA 15.9.4
@@ -1017,7 +1017,7 @@ static double parseDate(const UString &date)
             return NaN;
         dateString = newPosStr;
     } else if (*dateString == '/' && month == -1) {
-     	dateString++;
+        dateString++;
         // This looks like a MM/DD/YYYY date, not an RFC date.
         month = day - 1; // 0-based
         day = strtol(dateString, &newPosStr, 10);

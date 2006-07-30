@@ -36,9 +36,9 @@
 
 NSString *WebKitErrorDomain = @"WebKitErrorDomain";
 
-NSString * const WebKitErrorMIMETypeKey = 		@"WebKitErrorMIMETypeKey";
-NSString * const WebKitErrorPlugInNameKey = 		@"WebKitErrorPlugInNameKey";
-NSString * const WebKitErrorPlugInPageURLStringKey = 	@"WebKitErrorPlugInPageURLStringKey";
+NSString * const WebKitErrorMIMETypeKey =               @"WebKitErrorMIMETypeKey";
+NSString * const WebKitErrorPlugInNameKey =             @"WebKitErrorPlugInNameKey";
+NSString * const WebKitErrorPlugInPageURLStringKey =    @"WebKitErrorPlugInPageURLStringKey";
 
 // Policy errors
 #define WebKitErrorDescriptionCannotShowMIMEType UI_STRING("Cannot show content with specified mime type", "WebKitErrorCannotShowMIMEType description")
@@ -69,7 +69,7 @@ static NSMutableDictionary *descriptions = nil;
     NSDictionary *descriptionsDict;
     NSString *localizedDesc;
     NSDictionary *dict;
-	// insert a localized string here for those folks not savvy to our category methods
+    // insert a localized string here for those folks not savvy to our category methods
     descriptionsDict = [descriptions objectForKey:domain];
     localizedDesc = descriptionsDict ? [descriptionsDict objectForKey:[NSNumber numberWithInt:code]] : nil;
     dict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -111,7 +111,7 @@ static NSMutableDictionary *descriptions = nil;
     }
     if (pluginPageURL) {
         [userInfo setObject:[pluginPageURL _web_userVisibleString] forKey:WebKitErrorPlugInPageURLStringKey];
-    }	
+    }
     if (pluginName) {
         [userInfo setObject:pluginName forKey:WebKitErrorPlugInNameKey];
     }
@@ -129,8 +129,8 @@ static NSMutableDictionary *descriptions = nil;
 
 + (void)_webkit_addErrorsWithCodesAndDescriptions:(NSDictionary *)dictionary inDomain:(NSString *)domain
 {
-	if (!descriptions)
-		descriptions = [[NSMutableDictionary alloc] init];
+    if (!descriptions)
+        descriptions = [[NSMutableDictionary alloc] init];
 
     [descriptions setObject:dictionary forKey:domain];
 }
@@ -143,16 +143,16 @@ static void registerErrors()
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         // Policy errors
-        WebKitErrorDescriptionCannotShowMIMEType, 		[NSNumber numberWithInt: WebKitErrorCannotShowMIMEType],
-        WebKitErrorDescriptionCannotShowURL, 			[NSNumber numberWithInt: WebKitErrorCannotShowURL],
-        WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,[NSNumber numberWithInt: WebKitErrorFrameLoadInterruptedByPolicyChange],
+        WebKitErrorDescriptionCannotShowMIMEType,                   [NSNumber numberWithInt: WebKitErrorCannotShowMIMEType],
+        WebKitErrorDescriptionCannotShowURL,                        [NSNumber numberWithInt: WebKitErrorCannotShowURL],
+        WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   [NSNumber numberWithInt: WebKitErrorFrameLoadInterruptedByPolicyChange],
 
         // Plug-in and java errors
-        WebKitErrorDescriptionCannotFindPlugin,		[NSNumber numberWithInt: WebKitErrorCannotFindPlugIn],
-        WebKitErrorDescriptionCannotLoadPlugin,		[NSNumber numberWithInt: WebKitErrorCannotLoadPlugIn],
-        WebKitErrorDescriptionJavaUnavailable,		[NSNumber numberWithInt: WebKitErrorJavaUnavailable],
-        WebKitErrorDescriptionPlugInCancelledConnection,[NSNumber numberWithInt: WebKitErrorPlugInCancelledConnection],
-        WebKitErrorDescriptionPlugInWillHandleLoad,     [NSNumber numberWithInt: WebKitErrorPlugInWillHandleLoad],
+        WebKitErrorDescriptionCannotFindPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotFindPlugIn],
+        WebKitErrorDescriptionCannotLoadPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotLoadPlugIn],
+        WebKitErrorDescriptionJavaUnavailable,                      [NSNumber numberWithInt: WebKitErrorJavaUnavailable],
+        WebKitErrorDescriptionPlugInCancelledConnection,            [NSNumber numberWithInt: WebKitErrorPlugInCancelledConnection],
+        WebKitErrorDescriptionPlugInWillHandleLoad,                 [NSNumber numberWithInt: WebKitErrorPlugInWillHandleLoad],
         nil];
 
     [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];

@@ -59,8 +59,8 @@
 #import <objc/objc-runtime.h>
 
 // Send null events 50 times a second when active, so plug-ins like Flash get high frame rates.
-#define NullEventIntervalActive 	0.02
-#define NullEventIntervalNotActive	0.25
+#define NullEventIntervalActive         0.02
+#define NullEventIntervalNotActive      0.25
 
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
@@ -140,7 +140,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 + (void)initialize
 {
-	WKSendUserChangeNotifications();
+    WKSendUserChangeNotifications();
 }
 
 #pragma mark EVENTS
@@ -864,7 +864,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (void)keyUp:(NSEvent *)theEvent
 {
-	WKSendKeyEventToTSM(theEvent);
+    WKSendKeyEventToTSM(theEvent);
     
     // TSM won't send keyUp events so we have to send them ourselves.
     // Only send keyUp events after we receive the TSM callback because this is what plug-in expect from OS 9.
@@ -1334,19 +1334,19 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [plugin release];
     plugin = thePlugin;
 
-    NPP_New = 		[plugin NPP_New];
-    NPP_Destroy = 	[plugin NPP_Destroy];
-    NPP_SetWindow = 	[plugin NPP_SetWindow];
-    NPP_NewStream = 	[plugin NPP_NewStream];
-    NPP_WriteReady = 	[plugin NPP_WriteReady];
-    NPP_Write = 	[plugin NPP_Write];
-    NPP_StreamAsFile = 	[plugin NPP_StreamAsFile];
+    NPP_New =           [plugin NPP_New];
+    NPP_Destroy =       [plugin NPP_Destroy];
+    NPP_SetWindow =     [plugin NPP_SetWindow];
+    NPP_NewStream =     [plugin NPP_NewStream];
+    NPP_WriteReady =    [plugin NPP_WriteReady];
+    NPP_Write =         [plugin NPP_Write];
+    NPP_StreamAsFile =  [plugin NPP_StreamAsFile];
     NPP_DestroyStream = [plugin NPP_DestroyStream];
-    NPP_HandleEvent = 	[plugin NPP_HandleEvent];
-    NPP_URLNotify = 	[plugin NPP_URLNotify];
-    NPP_GetValue = 	[plugin NPP_GetValue];
-    NPP_SetValue = 	[plugin NPP_SetValue];
-    NPP_Print = 	[plugin NPP_Print];
+    NPP_HandleEvent =   [plugin NPP_HandleEvent];
+    NPP_URLNotify =     [plugin NPP_URLNotify];
+    NPP_GetValue =      [plugin NPP_GetValue];
+    NPP_SetValue =      [plugin NPP_SetValue];
+    NPP_Print =         [plugin NPP_Print];
 }
 
 - (void)setMIMEType:(NSString *)theMIMEType
@@ -1536,7 +1536,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     CGrafPtr port = GetWindowPort(windowRef);
     Rect bounds;
     GetPortBounds(port, &bounds);
-	WKCallDrawingNotification(port, &bounds);
+    WKCallDrawingNotification(port, &bounds);
 }
 #endif /* NP_NO_QUICKDRAW */
 
@@ -1969,17 +1969,16 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 // If the blank line is somewhere in the middle of postData, everything before is the header.
                 NSData *headerData = [postData subdataWithRange:NSMakeRange(0, location)];
                 NSMutableDictionary *header = [headerData _webkit_parseRFC822HeaderFields];
-		unsigned dataLength = [postData length] - location;
+                unsigned dataLength = [postData length] - location;
 
-		// Sometimes plugins like to set Content-Length themselves when they post,
-		// but WebFoundation does not like that. So we will remove the header
-		// and instead truncate the data to the requested length.
-		NSString *contentLength = [header objectForKey:@"Content-Length"];
+                // Sometimes plugins like to set Content-Length themselves when they post,
+                // but WebFoundation does not like that. So we will remove the header
+                // and instead truncate the data to the requested length.
+                NSString *contentLength = [header objectForKey:@"Content-Length"];
 
-		if (contentLength != nil) {
-		    dataLength = MIN((unsigned)[contentLength intValue], dataLength);
-		}
-		[header removeObjectForKey:@"Content-Length"];
+                if (contentLength != nil)
+                    dataLength = MIN((unsigned)[contentLength intValue], dataLength);
+                [header removeObjectForKey:@"Content-Length"];
 
                 if ([header count] > 0) {
                     [request setAllHTTPHeaderFields:header];

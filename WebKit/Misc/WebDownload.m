@@ -51,9 +51,8 @@
                       delegate:(id)delegate
                          proxy:(NSURLConnectionDelegateProxy *)proxy;
 - (id)_initWithRequest:(NSURLRequest *)request
-			  delegate:(id)delegate
-			 directory:(NSString *)directory;
-						 
+              delegate:(id)delegate
+             directory:(NSString *)directory;
 @end
 
 @interface WebDownloadInternal : NSObject
@@ -84,17 +83,17 @@
 - (BOOL)respondsToSelector:(SEL)selector
 {
     if (selector == @selector(downloadDidBegin:) ||
-	selector == @selector(download:willSendRequest:redirectResponse:) ||
-	selector == @selector(download:didReceiveResponse:) ||
-	selector == @selector(download:didReceiveDataOfLength:) ||
-	selector == @selector(download:shouldDecodeSourceDataOfMIMEType:) ||
-	selector == @selector(download:decideDestinationWithSuggestedFilename:) ||
-	selector == @selector(download:didCreateDestination:) ||
-	selector == @selector(downloadDidFinish:) ||
-	selector == @selector(download:didFailWithError:) ||
-	selector == @selector(download:shouldBeginChildDownloadOfSource:delegate:) ||
-	selector == @selector(download:didBeginChildDownload:)) {
-	return [realDelegate respondsToSelector:selector];
+        selector == @selector(download:willSendRequest:redirectResponse:) ||
+        selector == @selector(download:didReceiveResponse:) ||
+        selector == @selector(download:didReceiveDataOfLength:) ||
+        selector == @selector(download:shouldDecodeSourceDataOfMIMEType:) ||
+        selector == @selector(download:decideDestinationWithSuggestedFilename:) ||
+        selector == @selector(download:didCreateDestination:) ||
+        selector == @selector(downloadDidFinish:) ||
+        selector == @selector(download:didFailWithError:) ||
+        selector == @selector(download:shouldBeginChildDownloadOfSource:delegate:) ||
+        selector == @selector(download:didBeginChildDownload:)) {
+        return [realDelegate respondsToSelector:selector];
     }
 
     return [super respondsToSelector:selector];
@@ -113,23 +112,23 @@
 - (void)download:(NSURLDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if ([realDelegate respondsToSelector:@selector(download:didReceiveAuthenticationChallenge:)]) {
-	[realDelegate download:download didReceiveAuthenticationChallenge:challenge];
+        [realDelegate download:download didReceiveAuthenticationChallenge:challenge];
     } else {
-	NSWindow *window = nil;
-	if ([realDelegate respondsToSelector:@selector(downloadWindowForAuthenticationSheet:)]) {
-	    window = [realDelegate downloadWindowForAuthenticationSheet:(WebDownload *)download];
-	}
+        NSWindow *window = nil;
+        if ([realDelegate respondsToSelector:@selector(downloadWindowForAuthenticationSheet:)]) {
+            window = [realDelegate downloadWindowForAuthenticationSheet:(WebDownload *)download];
+        }
 
-	[[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window];
+        [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window];
     }
 }
 
 - (void)download:(NSURLDownload *)download didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if ([realDelegate respondsToSelector:@selector(download:didCancelAuthenticationChallenge:)]) {
-	[realDelegate download:download didCancelAuthenticationChallenge:challenge];
+        [realDelegate download:download didCancelAuthenticationChallenge:challenge];
     } else {
-	[[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:challenge];
+        [[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:challenge];
     }
 }
 
@@ -197,7 +196,7 @@
     self = [super init];
     if (self != nil) {
         // _webInternal can be set up before init by _setRealDelegate
-	if (_webInternal == nil) {
+        if (_webInternal == nil) {
             _webInternal = [[WebDownloadInternal alloc] init];
         }
     }

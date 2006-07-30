@@ -62,19 +62,19 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 - (void)webView: (WebView *)wv decidePolicyForMIMEType:(NSString *)type
                                                request:(NSURLRequest *)request
                                                  frame:(WebFrame *)frame
-		                      decisionListener:(WebPolicyDecisionListener *)listener;
+                                      decisionListener:(WebPolicyDecisionListener *)listener;
 {
     if ([[request URL] isFileURL]) {
-	BOOL isDirectory;
-	[[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
-	
-	if (isDirectory) {
-	    [listener ignore];
-	} else if([WebView canShowMIMEType:type]) {
-	    [listener use];
-	} else{
-	    [listener ignore];
-	}
+        BOOL isDirectory;
+        [[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
+        
+        if (isDirectory) {
+            [listener ignore];
+        } else if([WebView canShowMIMEType:type]) {
+            [listener use];
+        } else{
+            [listener ignore];
+        }
     } else if ([WebView canShowMIMEType:type]) {
         [listener use];
     } else {
@@ -90,15 +90,15 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
     WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
 
     if ([WebView _canHandleRequest:request]) {
-	[listener use];
+        [listener use];
     } else if (navType == WebNavigationTypePlugInRequest) {
-	[listener use];
+        [listener use];
     } else {
-	// A file URL shouldn't fall through to here, but if it did,
-	// it would be a security risk to open it.
-	if (![[request URL] isFileURL]) {
-	    [[NSWorkspace sharedWorkspace] openURL:[request URL]];
-	}
+        // A file URL shouldn't fall through to here, but if it did,
+        // it would be a security risk to open it.
+        if (![[request URL] isFileURL]) {
+            [[NSWorkspace sharedWorkspace] openURL:[request URL]];
+        }
         [listener ignore];
     }
 }

@@ -67,7 +67,7 @@ bool convertJSMethodNameToObjc(const char *JSName, char *buffer, size_t bufferSi
             *dp = *sp;
         } else if (*sp == '_')
             *dp = ':';
-	else
+        else
             *dp = *sp;
 
         // If a future coder puts funny ++ operators above, we might write off the end 
@@ -103,21 +103,21 @@ ObjcValue convertValueToObjcValue (ExecState *exec, JSValue *value, ObjcValueTyp
     double d = 0;
 
     if (value->isNumber() || value->isString() || value->isBoolean())
-	d = value->toNumber(exec);
-	
+        d = value->toNumber(exec);
+        
     switch (type){
         case ObjcObjectType: {
-	    Interpreter *originInterpreter = exec->dynamicInterpreter();
+            Interpreter *originInterpreter = exec->dynamicInterpreter();
             const RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
 
-	    Interpreter *interpreter = 0;
-	    if (originInterpreter->isGlobalObject(value)) {
-		interpreter = originInterpreter->interpreterForGlobalObject (value);
-	    }
+            Interpreter *interpreter = 0;
+            if (originInterpreter->isGlobalObject(value)) {
+                interpreter = originInterpreter->interpreterForGlobalObject (value);
+            }
 
-	    if (!interpreter)
-		interpreter = originInterpreter;
-		
+            if (!interpreter)
+                interpreter = originInterpreter;
+                
             const RootObject *executionContext = rootForInterpreter(interpreter);
             if (!executionContext) {
                 RootObject *newExecutionContext = new RootObject(0);
@@ -308,7 +308,7 @@ ObjcValueType objcValueTypeForType (const char *type)
 void *createObjcInstanceForValue(JSValue *value, const RootObject *origin, const RootObject *current)
 {
     if (!value->isObject())
-	return 0;
+        return 0;
     if (!webScriptObjectClass)
         webScriptObjectClass = NSClassFromString(@"WebScriptObject");
     JSObject *object = static_cast<JSObject *>(value);

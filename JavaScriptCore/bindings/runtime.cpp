@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,13 +37,11 @@ namespace KJS { namespace Bindings {
 
 void deleteMethodList(CFAllocatorRef, const void* value)
 {
-        const MethodList* methodList = static_cast<const MethodList*>(value);
-        int end = methodList->length();
-        for (int i = 0; i < end; i++) {
-            delete methodList->methodAt(i);
-        }
-        
-        delete methodList;
+    const MethodList* methodList = static_cast<const MethodList*>(value);
+    int end = methodList->length();
+    for (int i = 0; i < end; i++)
+        delete methodList->methodAt(i);    
+    delete methodList;
 }
 
 void deleteMethod(CFAllocatorRef, const void* value)
@@ -133,25 +131,25 @@ Instance *Instance::createBindingForLanguageInstance(BindingLanguage language, v
     Instance *newInstance = 0;
     
     switch (language) {
-	case Instance::JavaLanguage: {
-	    newInstance = new Bindings::JavaInstance((jobject)nativeInstance, executionContext);
-	    break;
-	}
-	case Instance::ObjectiveCLanguage: {
-	    newInstance = new Bindings::ObjcInstance((ObjectStructPtr)nativeInstance);
-	    break;
-	}
-	case Instance::CLanguage: {
-	    newInstance = new Bindings::CInstance((NPObject *)nativeInstance);
-	    break;
-	}
-	default:
-	    break;
+        case Instance::JavaLanguage: {
+            newInstance = new Bindings::JavaInstance((jobject)nativeInstance, executionContext);
+            break;
+        }
+        case Instance::ObjectiveCLanguage: {
+            newInstance = new Bindings::ObjcInstance((ObjectStructPtr)nativeInstance);
+            break;
+        }
+        case Instance::CLanguage: {
+            newInstance = new Bindings::CInstance((NPObject *)nativeInstance);
+            break;
+        }
+        default:
+            break;
     }
 
     if (newInstance)
-	newInstance->setExecutionContext(executionContext);
-	
+        newInstance->setExecutionContext(executionContext);
+        
     return newInstance;
 }
 
@@ -168,26 +166,26 @@ void *Instance::createLanguageInstanceForValue(ExecState*, BindingLanguage langu
     void *result = 0;
     
     if (!value->isObject())
-	return 0;
+        return 0;
 
     JSObject *imp = static_cast<JSObject*>(value);
     
     switch (language) {
-	case Instance::ObjectiveCLanguage: {
-	    result = createObjcInstanceForValue(value, origin, current);
-	    break;
-	}
-	case Instance::CLanguage: {
-	    result = _NPN_CreateScriptObject(0, imp, origin, current);
-	    break;
-	}
-	case Instance::JavaLanguage: {
-	    // FIXME:  factor creation of jni_jsobjects, also remove unnecessary thread
-	    // invocation code.
-	    break;
-	}
-	default:
-	    break;
+        case Instance::ObjectiveCLanguage: {
+            result = createObjcInstanceForValue(value, origin, current);
+            break;
+        }
+        case Instance::CLanguage: {
+            result = _NPN_CreateScriptObject(0, imp, origin, current);
+            break;
+        }
+        case Instance::JavaLanguage: {
+            // FIXME:  factor creation of jni_jsobjects, also remove unnecessary thread
+            // invocation code.
+            break;
+        }
+        default:
+            break;
     }
     
     return result;

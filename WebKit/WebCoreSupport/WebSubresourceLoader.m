@@ -60,10 +60,10 @@
 }
 
 + (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-				   withRequest:(NSMutableURLRequest *)newRequest
+                                   withRequest:(NSMutableURLRequest *)newRequest
                                  customHeaders:(NSDictionary *)customHeaders
-				      referrer:(NSString *)referrer 
-				 forDataSource:(WebDataSource *)source
+                                      referrer:(NSString *)referrer 
+                                 forDataSource:(WebDataSource *)source
 {
     WebSubresourceLoader *loader = [[[self alloc] initWithLoader:rLoader dataSource:source] autorelease];
     
@@ -72,7 +72,7 @@
     NSEnumerator *e = [customHeaders keyEnumerator];
     NSString *key;
     while ((key = [e nextObject])) {
-	[newRequest addValue:[customHeaders objectForKey:key] forHTTPHeaderField:key];
+        [newRequest addValue:[customHeaders objectForKey:key] forHTTPHeaderField:key];
     }
 
     // Use the original request's cache policy for two reasons:
@@ -148,7 +148,7 @@
     NSURLRequest *clientRequest = [super willSendRequest:newRequest redirectResponse:redirectResponse];
     
     if (clientRequest != nil && oldURL != [clientRequest URL] && ![oldURL isEqual:[clientRequest URL]])
-	[coreLoader redirectedToURL:[clientRequest URL]];
+        [coreLoader redirectedToURL:[clientRequest URL]];
 
     return clientRequest;
 }

@@ -105,9 +105,9 @@ static void _didExecute(WebScriptObject *obj)
 - (BOOL)_isSafeScript
 {
     if ([self _originExecutionContext]) {
-	Interpreter *originInterpreter = [self _originExecutionContext]->interpreter();
-	if (originInterpreter)
-	    return originInterpreter->isSafeScript([self _executionContext]->interpreter());
+        Interpreter *originInterpreter = [self _originExecutionContext]->interpreter();
+        if (originInterpreter)
+            return originInterpreter->isSafeScript([self _executionContext]->interpreter());
     }
     return true;
 }
@@ -167,7 +167,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         return nil;
 
     if (![self _isSafeScript])
-	return nil;
+        return nil;
 
     // Lookup the function object.
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
@@ -210,7 +210,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         return nil;
     
     if (![self _isSafeScript])
-	return nil;
+        return nil;
     
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
     ASSERT(!exec->hadException());
@@ -248,7 +248,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         return;
 
     if (![self _isSafeScript])
-	return;
+        return;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
     ASSERT(!exec->hadException());
@@ -271,7 +271,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         return nil;
         
     if (![self _isSafeScript])
-	return nil;
+        return nil;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
     ASSERT(!exec->hadException());
@@ -301,7 +301,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         return;
         
     if (![self _isSafeScript])
-	return;
+        return;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
     ASSERT(!exec->hadException());
@@ -322,7 +322,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 {
     if (![self _isSafeScript])
         // This is a workaround for a gcc 3.3 internal compiler error.
-	return @"Undefined";
+        return @"Undefined";
 
     JSLock lock;
     JSObject *thisObj = const_cast<JSObject*>([self _imp]);
@@ -343,7 +343,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         return nil;
 
     if (![self _isSafeScript])
-	return nil;
+        return nil;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
     ASSERT(!exec->hadException());
@@ -370,7 +370,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         return;
 
     if (![self _isSafeScript])
-	return;
+        return;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
     ASSERT(!exec->hadException());
@@ -397,15 +397,15 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     // First see if we have a ObjC instance.
     if (value->isObject()) {
         JSObject *objectImp = static_cast<JSObject*>(value);
-	Interpreter *interpreter = executionContext->interpreter();
-	ExecState *exec = interpreter->globalExec();
+        Interpreter *interpreter = executionContext->interpreter();
+        ExecState *exec = interpreter->globalExec();
         JSLock lock;
-	
+        
         if (objectImp->classInfo() != &RuntimeObjectImp::info) {
-	    JSValue *runtimeObject = objectImp->get(exec, "__apple_runtime_object");
-	    if (runtimeObject && runtimeObject->isObject())
-		objectImp = static_cast<RuntimeObjectImp*>(runtimeObject);
-	}
+            JSValue *runtimeObject = objectImp->get(exec, "__apple_runtime_object");
+            if (runtimeObject && runtimeObject->isObject())
+                objectImp = static_cast<RuntimeObjectImp*>(runtimeObject);
+        }
 
         if (objectImp->classInfo() == &RuntimeObjectImp::info) {
             RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(objectImp);

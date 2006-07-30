@@ -128,28 +128,28 @@
             break;
         }
         
-	// We are trying to identify RSS or Atom. RSS has a top-level
-	// element of either <rss> or <rdf>. However, there are
-	// non-RSS RDF files, so in the case of <rdf> we further look
-	// for a <channel> element. In the case of an Atom file, a
-	// top-level <feed> element is all we need to see. Only tags
-	// starting with <? or <! can precede the root element. We
-	// bail if we don't find an <rss>, <feed> or <rdf> element
-	// right after those.
+        // We are trying to identify RSS or Atom. RSS has a top-level
+        // element of either <rss> or <rdf>. However, there are
+        // non-RSS RDF files, so in the case of <rdf> we further look
+        // for a <channel> element. In the case of an Atom file, a
+        // top-level <feed> element is all we need to see. Only tags
+        // starting with <? or <! can precede the root element. We
+        // bail if we don't find an <rss>, <feed> or <rdf> element
+        // right after those.
         
-	if (foundRDF) {
-	    if (strncasecmp(hit, "<channel", strlen("<channel")) == 0) {
-		return @"application/rss+xml";
-	    }
-	} else if (strncasecmp(hit, "<rdf", strlen("<rdf")) == 0) {
-	    foundRDF = TRUE;
-	} else if (strncasecmp(hit, "<rss", strlen("<rss")) == 0) {
-	    return @"application/rss+xml";
-	} else if (strncasecmp(hit, "<feed", strlen("<feed")) == 0) {
-	    return @"application/atom+xml";
-	} else if (strncasecmp(hit, "<?", strlen("<?")) != 0 && strncasecmp(hit, "<!", strlen("<!")) != 0) {
-	    return nil;
-	}
+        if (foundRDF) {
+            if (strncasecmp(hit, "<channel", strlen("<channel")) == 0) {
+                return @"application/rss+xml";
+            }
+        } else if (strncasecmp(hit, "<rdf", strlen("<rdf")) == 0) {
+            foundRDF = TRUE;
+        } else if (strncasecmp(hit, "<rss", strlen("<rss")) == 0) {
+            return @"application/rss+xml";
+        } else if (strncasecmp(hit, "<feed", strlen("<feed")) == 0) {
+            return @"application/atom+xml";
+        } else if (strncasecmp(hit, "<?", strlen("<?")) != 0 && strncasecmp(hit, "<!", strlen("<!")) != 0) {
+            return nil;
+        }
         
         // Skip the "<" and continue.
         remaining -= (hit + 1) - p;
@@ -184,8 +184,8 @@
         }
         
         // If we found a "<", look for "<html>" or "<a " or "<script".
-        if (strncasecmp(hit, "<html>", 	strlen("<html>")) == 0 ||
-            strncasecmp(hit, "<a ", 	strlen("<a ")) == 0 ||
+        if (strncasecmp(hit, "<html>",  strlen("<html>")) == 0 ||
+            strncasecmp(hit, "<a ",     strlen("<a ")) == 0 ||
             strncasecmp(hit, "<script", strlen("<script")) == 0 ||
             strncasecmp(hit, "<title>", strlen("<title>")) == 0) {
             return @"text/html";

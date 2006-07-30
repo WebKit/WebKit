@@ -66,10 +66,10 @@
 
 @interface MyFirstInterface : NSObject
 {
-	int myInt;
-	MySecondInterface *mySecondInterface;
-	id jsobject;
-	NSString *string;
+    int myInt;
+    MySecondInterface *mySecondInterface;
+    id jsobject;
+    NSString *string;
 }
 
 - (int)getInt;
@@ -105,27 +105,27 @@
 /*
 - (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args;
 {
-	NSLog (@"Call to undefined method %@", name);
-	NSLog (@"%d args\n", [args count]);
-	int i;
-	for (i = 0; i < [args count]; i++) {
-		NSLog (@"%d: %@\n", i, [args objectAtIndex:i]);
-	}
-	return @"success";
+    NSLog (@"Call to undefined method %@", name);
+    NSLog (@"%d args\n", [args count]);
+    int i;
+    for (i = 0; i < [args count]; i++) {
+            NSLog (@"%d: %@\n", i, [args objectAtIndex:i]);
+    }
+    return @"success";
 }
 */
 
 /*
 - (id)valueForUndefinedKey:(NSString *)key
 {
-	NSLog (@"%s:  key = %@", __PRETTY_FUNCTION__, key);
-	return @"aValue";
+    NSLog (@"%s:  key = %@", __PRETTY_FUNCTION__, key);
+    return @"aValue";
 }
 */
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key
 {
-	NSLog (@"%s:  key = %@", __PRETTY_FUNCTION__, key);
+    NSLog (@"%s:  key = %@", __PRETTY_FUNCTION__, key);
 }
 
 - init
@@ -156,7 +156,7 @@
 
 - (NSString *)getString
 {
-	return string;
+    return string;
 }
 
 - (MySecondInterface *)getMySecondInterface 
