@@ -1,3 +1,13 @@
+2006-07-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+        
+        - Tweaked the checkout and build instructions to make them simpler and
+        clearer.
+
+        * building/build.html:
+        * building/checkout.html:
+
 2006-06-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

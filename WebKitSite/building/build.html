@@ -5,31 +5,35 @@
 
 <h2>Building WebKit</h2>
 
-<p>Before you build WebKit, you'll need to <a href="checkout.html">check out</a> sources. Next make sure that you have Xcode 2.3, which is the latest version at this point.<p>
+<p>Building WebKit requires a <a href="checkout.html">WebKit source tree</a> and <a href="http://developer.apple.com/tools/xcode/">Xcode</a> version 2.3 or greater.<p>
 
 <ol>
-
-<li><p>To start a build, use the <tt>build-webkit</tt> script.</p>
-<p class="code">WebKitTools/Scripts/build-webkit</p>
-<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>build-webkit</tt> without specifying the path to the script.</p>
+<li><p>Type this command to build WebKit:</p>
+<p class="code">WebKit/WebKitTools/Scripts/build-webkit</p>
+<p>Use the <tt>--debug</tt> option for a debug build, which includes debugging symbols and assertions:</p>
+<p class="code">WebKit/WebKitTools/Scripts/build-webkit --debug</p>
 </li>
-
-<li><p>Once the frameworks are built, you'll probably want to run Safari using the newly-built WebKit. To do that, use the <tt>run-safari</tt> script.</p>
-<p class="code">WebKitTools/Scripts/run-safari</p>
-<p>This script sets up the <tt>DYLD_FRAMEWORK_PATH</tt> environment variable, which will cause the system loader to use the
-frameworks you built from your Xcode build products directory instead of the ones installed in /System/Library/Frameworks,
-so it will start the version of Safari from the Applications directory with the WebKit frameworks you just built.</p>
+<li><p>To set a default build configuration for <tt>build-webkit</tt>, use the <tt>set-webkit-configuration</tt> script:</p>
+<p class="code">WebKit/WebKitTools/Scripts/set-webkit-configuration --debug</p>
+<p class="code">WebKit/WebKitTools/Scripts/set-webkit-configuration --release</p>
 </li>
-
 </ol>
 
-<p>If you have specified custom location for the build products directory in Xcode preferences, the frameworks will be built in that directory.
-If you haven't, the build products will be put in a directory named WebKitBuild alongside the source code directories.</p>
-<p>By default, the scripts will do a Release build, which is optimized and doesn't have debugging code, like assertions, compiled in.
-If you'd prefer to do a Debug build, then execute this command:</p>
-<p class="code">WebKitTools/Scripts/set-webkit-configuration --debug</p>
-<p>You can also pass the configuration on the command line to any of the build commands.</p>
-<p>More information about building WebKit can be found on its <a href="http://www.opendarwin.org/wiki/index.php/WebKit">wiki</a>.</p>
+<p>By default, <tt>build-webkit</tt> places build products in WebKit/WebKitBuild. If your Xcode preferences specify a custom build products location, <tt>webkit-build</tt> places build products there.</p>
+<p>More information about building WebKit is available on the <a href="http://www.opendarwin.org/wiki/index.php/WebKit">WebKit Wiki</a>.</p>
+
+<h2>Running Safari with the WebKit You Built</h2>
+<ol>
+<li><p>Type this command to run Safari with the WebKit you built:</p>
+<p class="code">WebKit/WebKitTools/Scripts/run-safari</p>
+</li>
+</ol>
+<p>The <tt>run-safari</tt> script sets the <tt>DYLD_FRAMEWORK_PATH</tt> environment variable to point to your build products, 
+and then launches /Applications/Safari.app. <tt>DYLD_FRAMEWORK_PATH</tt> tells the system loader to prefer your build products over the frameworks installed in /System/Library/Frameworks.</p>
+
+<hr>
+<p>It's handy to put <tt>WebKit/WebKitTools/Scripts</tt> in your shell path so you can type commands like <tt>build-webkit</tt> without specifying a full path.</p>
+
 
 <?php
 	include("../footer.inc");

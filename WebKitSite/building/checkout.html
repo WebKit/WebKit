@@ -2,27 +2,29 @@
 $title = "Getting the Code";
 include("../header.inc");
 ?>
+<h2>Getting WebKit</h2>
+<p>To download a pre-built bundle containing the latest WebKit, visit <a href="http://nightly.webkit.org/">WebKit Nightly Builds</a>, maintained by Mark Rowe.</p>
+
 <h2>Getting the Code</h2>
-
-<p>Below are step by step instructions for how to check out the WebKit source code.
-One of our contributors, Mark Rowe, has also made available <a href="http://nightly.webkit.org/">WebKit nightly builds</a> for those just interested in testing.
-Follow the instructions below to obtain the code via subversion (svn).</p>
-
+<p>To download the WebKit source tree:</p>
 <ol>
-<li><p>Install a Subversion Client.</p>
-<p>The Subversion (svn) tool is required to access the WebKit source code.  Download the 
-Mac OS X <a href="http://metissian.com/downloads/macosx/subversion/subversion-client-1.3.1.dmg">Subversion installer</a> and double-click to install.</p>
-<li><p>Open the Terminal application.</p>
-<p>Terminal can be found in the Utilities folder; a quick way to open the folder is the Finder Go menu.</p>
-<li><p>Type this command to check out the entire WebKit source tree:</p>
+<li><p>Install a Subversion Client</p>
+<p>Subversion (svn) is the source code management tool used by the WebKit OpenSource Project. To download the
+Mac OS X Subversion client, <a href="http://metissian.com/downloads/macosx/subversion/subversion-client-1.3.1.dmg">click here</a>.</p>
+<li><p>Open Terminal</p>
+<p>Terminal resides in /Applications/Utilities. The Finder Go menu provides a quick way to navigate there.</p>
+<li><p>Type this command to check out the WebKit source tree:</p>
 <p class="code">svn checkout svn://anonsvn.opensource.apple.com/svn/webkit/trunk WebKit</p>
 </li>
-<p>After the checkout completes you should have all the source code on your system.  The next step is
-<a href="build.html">building</a> the code.</p>
 </ol>
-<p>Once you have checked out the code, you can update it at any time using the following command:</p>
-<p class="code">WebKitTools/Scripts/update-webkit</p>
-<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>update-webkit</tt> without specifying the path to the script.</p>
+<p>Once the checkout has finished, the next step is
+<a href="build.html">building WebKit</a>.</p>
+
+<h2>Keeping up to Date</h2>
+<p>Type this command to update your source tree:</p>
+<p class="code">WebKit/WebKitTools/Scripts/update-webkit</p>
+<hr>
+<p>It's handy to put <tt>WebKit/WebKitTools/Scripts</tt> in your shell path so you can type commands like <tt>update-webkit</tt> without specifying a full path.</p>
 <?php
 include("../footer.inc");
 ?>
