@@ -1,3 +1,15 @@
+2006-07-30  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by gramps!
+
+        Remove some unused SVG code.
+
+        * ksvg2/ecma/Ecma.cpp: Removed.
+        * ksvg2/ecma/Ecma.h: Removed.
+        * ksvg2/ecma/GlobalObject.cpp: remove a couple dead functions.
+        * ksvg2/ecma/GlobalObject.h: add a comment about this dead code.
+        * ksvg2/ecma/SVGLookup.h: Removed.
+
 2006-07-29  Darin Adler  <darin@apple.com>
 
         - Removed tabs from these source files that still had them.

@@ -19,8 +19,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_GlobalObject_H
-#define KSVG_GlobalObject_H
+#ifndef GlobalObject_H
+#define GlobalObject_H
 #if SVG_SUPPORT
 
 #include <kdom/ecma/GlobalObject.h>
@@ -28,17 +28,17 @@
 namespace WebCore
 {
     class Document;
-}
-
-namespace WebCore
-{
+    
+    // FIXME: This is all dead code.  This will need to be
+    // rolled into the Window object at some point (using the new idl binding method)
+    // This is left here only as example code for when the move occurs
+    
     class GlobalObject : public GlobalObject
     {
     public:
         GlobalObject(Document *doc);
         virtual ~GlobalObject();
 
-        virtual void afterTimeout() const;
         virtual KJS::JSValue *get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const;
 
         // EcmaScript specific stuff - only needed for GlobalObject
