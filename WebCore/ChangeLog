@@ -1,3 +1,8 @@
+2006-07-31  Anders Carlsson  <acarlsson@apple.com>
+
+        * css/CSSPrimitiveValue.cpp:
+        Fix windows build.
+
 2006-07-31  Geoffrey Garen  <ggaren@apple.com>
 
         Reinstating my last change. Everything builds now.

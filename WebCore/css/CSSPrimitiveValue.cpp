@@ -30,6 +30,8 @@
 #include "Pair.h"
 #include "RenderStyle.h"
 
+#include <ctype.h>
+
 namespace WebCore {
 
 // "ident" from the CSS tokenizer, minus backslash-escape sequences
