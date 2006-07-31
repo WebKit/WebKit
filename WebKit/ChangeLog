@@ -17,7 +17,8 @@
 
         Reviewed by Tim Hatcher.
 
-        - some improvements for the inspector
+        Bug 10163: some improvements for the inspector
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10163
 
         * WebInspector/WebInspector.m:
         (+[WebInspector sharedWebInspector:]): Fixed bug that could cause the inspector
