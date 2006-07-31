@@ -2,6 +2,13 @@
 
         Reviewed by Tim Hatcher.
 
+        * WebInspector/webInspector/inspector.js: Fix bug where a null property value
+        leads to an empty style pane.
+
+2006-07-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
         - some improvements for the inspector
 
         * WebInspector/WebInspector.m:

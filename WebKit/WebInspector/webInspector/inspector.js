@@ -641,12 +641,14 @@ function styleRuleSelect(event)
 
 function populateStyleListItem(li, prop, name)
 {
-    var value = prop.style.getPropertyValue(name);
-
     var span = document.createElement("span");
     span.className = "property";
     span.textContent = name;
     li.appendChild(span);
+
+    var value = prop.style.getPropertyValue(name);
+    if (!value)
+        return;
 
     span = document.createElement("span");
     span.className = "value";
