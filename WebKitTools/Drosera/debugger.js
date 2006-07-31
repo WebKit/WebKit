@@ -850,6 +850,12 @@ function willLeaveCallFrame(sourceId, line)
         steppingStack--;
 }
 
+function exceptionWasRaised(sourceId, line)
+{
+    pause();
+    willExecuteStatement(sourceId, line);
+}
+
 function showConsoleWindow()
 {
     if (!consoleWindow)

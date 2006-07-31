@@ -1,3 +1,17 @@
+2006-07-30  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Maciej.
+
+        Bug 9686: [Drosera] Need the ability to break into Drosera on Javascript exceptions
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9686
+
+        * Drosera/DebuggerDocument.m:
+        (-[WebScriptObject switchToServerNamed:]): Remove as listener before resuming to
+        ensure that the server does not try and notify us of events related to the resumption.
+        (-[WebScriptObject webView:exceptionWasRaised:sourceId:line:forWebFrame:]): Delegate
+        call through to JavaScript.
+        * Drosera/debugger.js: Pause debugger when exception is raised.
+
 2006-07-29  Mike Emmel  <mike.emmel@gmail.com>
 
         Reviewed by Darin.

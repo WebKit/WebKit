@@ -276,8 +276,8 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     if (server) {
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:[(NSDistantObject *)server connectionForProxy]];
         if ([[(NSDistantObject *)server connectionForProxy] isValid]) {
-            [self resume];
             [server removeListener:self];
+            [self resume];
         }
     }
 
@@ -640,5 +640,15 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     id old = currentFrame;
     currentFrame = [[frame caller] retain];
     [old release];
+}
+
+- (void)webView:(WebView *)view exceptionWasRaised:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
+{
+    if (!webViewLoaded)
+        return;
+
+    NSArray *args = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
+    [[webView windowScriptObject] callWebScriptMethod:@"exceptionWasRaised" withArguments:args];
+    [args release];
 }
 @end
