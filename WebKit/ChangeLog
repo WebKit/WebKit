@@ -1,3 +1,16 @@
+2006-07-31  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/4658194> REGRESSION: "Search in Google"
+        and "Search in Spotlight" fail to work on text selected in a frame
+
+        Use selectedFrame to get the frame with the text selection.
+
+        * WebView/WebView.m:
+        (-[WebView _searchWithGoogleFromMenu:]):
+        (-[WebView _searchWithSpotlightFromMenu:]):
+
 2006-07-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

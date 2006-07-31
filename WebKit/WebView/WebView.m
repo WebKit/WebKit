@@ -3408,7 +3408,7 @@ static WebFrameView *containingFrameView(NSView *view)
 
 - (void)_searchWithGoogleFromMenu:(id)sender
 {
-    id documentView = [[[self mainFrame] frameView] documentView];
+    id documentView = [[[self selectedFrame] frameView] documentView];
     if (![documentView conformsToProtocol:@protocol(WebDocumentText)]) {
         return;
     }
@@ -3433,7 +3433,7 @@ static WebFrameView *containingFrameView(NSView *view)
 
 - (void)_searchWithSpotlightFromMenu:(id)sender
 {
-    id documentView = [[[self mainFrame] frameView] documentView];
+    id documentView = [[[self selectedFrame] frameView] documentView];
     if (![documentView conformsToProtocol:@protocol(WebDocumentText)]) {
         return;
     }
