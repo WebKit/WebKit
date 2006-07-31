@@ -423,4 +423,12 @@ String::operator UString() const
     return UString(reinterpret_cast<const KJS::UChar*>(m_impl->characters()), m_impl->length());
 }
 
+#ifndef NDEBUG
+// For debugging only -- leaks memory
+String* string(const char* s)
+{
+    return new String(s);
 }
+#endif
+
+} // namespace WebCore
