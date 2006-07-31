@@ -373,7 +373,7 @@ function updateElementAttributes()
         span = document.createElement("span");
         span.className = "value";
         span.textContent = attr.value;
-        span.title = span.textContent;
+        span.title = attr.value;
         li.appendChild(span);
 
         if (attr.style) {
@@ -450,7 +450,7 @@ function updateStylePane()
 
         var propertyCount = [];
 
-        var computedStyle = focusedNode.ownerDocument.defaultView.getComputedStyle(focusedNode, "");
+        var computedStyle = focusedNode.ownerDocument.defaultView.getComputedStyle(focusedNode);
         if (computedStyle && computedStyle.length) {
             var computedObj = {
                 isComputedStyle: true,
@@ -510,19 +510,22 @@ function updateStylePane()
 
             var cell = document.createElement("div");
             cell.className = "cell selector";
-            cell.title = styleRules[i].selectorText;
-            cell.textContent = cell.title;
+            var text = styleRules[i].selectorText;
+            cell.textContent = text;
+            cell.title = text;
             row.appendChild(cell);
 
             cell = document.createElement("div");
             cell.className = "cell stylesheet";
+            var sheet;
             if (styleRules[i].subtitle != null)
-                cell.title = styleRules[i].subtitle;
+                sheet = styleRules[i].subtitle;
             else if (styleRules[i].parentStyleSheet && styleRules[i].parentStyleSheet.href)
-                cell.title = styleRules[i].parentStyleSheet.href;
+                sheet = styleRules[i].parentStyleSheet.href;
             else
-                cell.title = "inline stylesheet";
-            cell.textContent = cell.title;
+                sheet = "inline stylesheet";
+            cell.textContent = sheet;
+            cell.title = sheet;
             row.appendChild(cell);
 
             row.styleRuleIndex = i;
@@ -657,6 +660,7 @@ function populateStyleListItem(li, prop, name)
     if (priority.length)
         textValue += " !" + priority;
     span.textContent = textValue;
+    span.title = textValue;
     li.appendChild(span);
 
     var colors = value.match(/(rgb\([0-9]+, [0-9]+, [0-9]+\))|(rgba\([0-9]+, [0-9]+, [0-9]+, [0-9]+\))/g);
@@ -778,8 +782,47 @@ function selectMappedStyleRule(attrName)
     switchPane("style");
 }
 
+function setMetric(style, name, suffix)
+{
+    var value = style.getPropertyValue(name + suffix);
+    if (value == "" || value == "0px")
+        value = "\u2012";
+    else
+        value = value.replace(/px$/, "");
+    document.getElementById(name).textContent = value;
+}
+
+function setBoxMetrics(style, box, suffix)
+{
+    setMetric(style, box + "-left", suffix);
+    setMetric(style, box + "-right", suffix);
+    setMetric(style, box + "-top", suffix);
+    setMetric(style, box + "-bottom", suffix);
+}
+
 function updateMetricsPane()
 {
+    var style;
+    var focusedNode = Inspector.focusedDOMNode();
+    if (focusedNode.nodeType == Node.ELEMENT_NODE)
+        style = focusedNode.ownerDocument.defaultView.getComputedStyle(focusedNode);
+    if (!style || style.length == 0) {
+        document.getElementById("noMetrics").style.display = null;
+        document.getElementById("marginBoxTable").style.display = "none";
+        return;
+    }
+
+    document.getElementById("noMetrics").style.display = "none";
+    document.getElementById("marginBoxTable").style.display = null;
+
+    setBoxMetrics(style, "margin", "");
+    setBoxMetrics(style, "border", "-width");
+    setBoxMetrics(style, "padding", "");
+
+    var size = style.getPropertyValue("width").replace(/px$/, "")
+        + " \u00D7 "
+        + style.getPropertyValue("height").replace(/px$/, "");
+    document.getElementById("content").textContent = size;
 }
 
 function updatePropertiesPane()
@@ -805,6 +848,7 @@ function updatePropertiesPane()
         span = document.createElement("span");
         span.className = "value";
         span.textContent = value;
+        span.title = value;
         li.appendChild(span);
 
         list.appendChild(li);

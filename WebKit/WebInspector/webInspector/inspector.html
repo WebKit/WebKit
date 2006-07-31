@@ -107,7 +107,28 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <div id="stylePropertiesScrollbar" class="scrollbar"></div>
         </div>
     </div>
-    <div id="metricsPane" class="pane" style="display: none; text-align: center"><br /><br /><br />(not finished)</div>
+    <div id="metricsPane" class="pane" style="display: none">
+        <div id="noMetrics" style="display: none">No metrics</div>
+        <table class="boxModelTable" id="marginBoxTable" cellpadding=0 cellspacing=0>
+            <tr><td valign="top"><div style="position:relative"><div class="boxModelLabel">margin</div></div></td><td id="margin-top"></td><td></td></tr>
+            <tr><td class="horizontalCell" id="margin-left"></td><td>
+                <table class="boxModelTable" id="borderBoxTable" cellpadding=0 cellspacing=0>
+                    <tr><td valign="top"><div style="position:relative"><div class="boxModelLabel">border</div></div></td><td id="border-top"></td><td></td></tr>
+                    <tr><td class="horizontalCell" id="border-left"></td><td>
+                        <table class="boxModelTable" id="paddingBoxTable" cellpadding=0 cellspacing=0>
+                            <tr><td valign="top"><div style="position:relative"><div class="boxModelLabel">padding</div></div></td><td id="padding-top"></td><td></td></tr>
+                            <tr><td class="horizontalCell" id="padding-left"></td><td>
+                                <div id="content"></div></div>
+                            </td><td class="horizontalCell" id="padding-right"></td></tr>
+                            <tr><td></td><td id="padding-bottom"></td><td></td></tr>
+                        </table>
+                    </td><td class="horizontalCell" id="border-right"></td></tr>
+                    <tr><td></td><td id="border-bottom"></td><td></td></tr>
+                </table>
+            </td><td class="horizontalCell" id="margin-right"></td></tr>
+            <tr><td></td><td id="margin-bottom"></td><td></td></tr>
+        </table>
+    </div>
     <div id="propertiesPane" class="pane" style="display: none">
         <div id="jsProperties" class="scrollArea">
             <div class="view"><div id="jsPropertiesScrollview"><ul class="propertyList" id="jsPropertiesList"></ul></div></div>

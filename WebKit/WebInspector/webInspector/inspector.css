@@ -875,3 +875,49 @@ button.toggle.right {
 .propertyList li .value {
     color: rgb(255,255,180);
 }
+
+.boxModelTable td {
+    text-align: center;
+    min-width: 10px;
+}
+
+.boxModelTable .horizontalCell {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+#marginBoxTable {
+    border: 1px dashed;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+}
+
+#borderBoxTable {
+    border: 1px solid
+}
+
+#paddingBoxTable {
+    border: 1px grey dashed
+}
+
+#content {
+    border: 1px grey solid;
+    padding: 10px
+}
+
+.boxModelLabel {
+    position: absolute;
+    color: grey;
+    text-shadow: none;
+    left: 2px;
+    font-size: 9px;
+}
+
+#noMetrics {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-top: 40%;
+}

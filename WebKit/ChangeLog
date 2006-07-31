@@ -1,3 +1,17 @@
+2006-07-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10168
+          add a first cut at a Metrics pane to the inspector
+
+        * WebInspector/webInspector/inspector.css: Add styles for the new metrics pane.
+        * WebInspector/webInspector/inspector.html: Add the new metrics pane, starting with
+        the table to show the box model.
+        * WebInspector/webInspector/inspector.js: Add the new metrics pane. Add back some
+        "title" attributes so we have more tooltips. Removed the optional parameter to
+        getComputedStyle.
+
 2006-07-31  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John.
@@ -17,8 +31,8 @@
 
         Reviewed by Tim Hatcher.
 
-        Bug 10163: some improvements for the inspector
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10163
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10163
+          some improvements for the inspector
 
         * WebInspector/WebInspector.m:
         (+[WebInspector sharedWebInspector:]): Fixed bug that could cause the inspector
