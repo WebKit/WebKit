@@ -1,3 +1,13 @@
+2006-07-31  Darin Adler  <darin@apple.com>
+
+        * editing/pasteboard/paste-table-002-expected.txt: Corrected one result
+        affected by my recent change to getComputedStyle.
+
+        * editing/pasteboard/paste-table-002.html: Converted to a text test, since
+        it dumps the serialized form of hte result.
+        * editing/pasteboard/paste-table-002-expected.checksum: Removed.
+        * editing/pasteboard/paste-table-002-expected.png: Removed.
+
 2006-07-30  Darin Adler  <darin@apple.com>
 
         - test that displays all computed style -- demonstrates bug fixes I just

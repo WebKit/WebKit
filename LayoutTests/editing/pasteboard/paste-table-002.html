@@ -57,6 +57,8 @@ ghijk
 <script>
 runEditingTest();
 log(root.innerHTML);
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 </script>
 
 </body>
