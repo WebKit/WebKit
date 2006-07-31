@@ -1,3 +1,23 @@
+2006-07-31  David Hyatt  <hyatt@apple.com>
+
+        Partial fix for 5453.  Improve overflow so that when it changes
+        dynamically from scroll/auto to hidden that we properly hide the
+        scrollbars.  Also refine the dirty dashboard region updating so that
+        it only happens if the scrollbars genuinely come and go.
+
+        Also eliminate the extra repaint of the entire block.  This should not be
+        necessary, since the scrollbars repaint themselves already and children
+        will repaint already if they move.
+
+        Reviewed by darin
+
+        Adding test case from bug into fast/overflow/dynamic-hidden.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+
 2006-07-31  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by justin

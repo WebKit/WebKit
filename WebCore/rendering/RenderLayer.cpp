@@ -884,36 +884,54 @@ void RenderLayer::valueChanged(Widget*)
         scrollToOffset(newX, newY, false);
 }
 
-void
-RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
+void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
 {
-    if (hasScrollbar && !m_hBar) {
+    if (hasScrollbar == (m_hBar != 0))
+        return;
+
+    if (hasScrollbar) {
         FrameView* scrollView = m_object->element()->document()->view();
         m_hBar = new ScrollBar(HorizontalScrollBar);
         m_hBar->setClient(this);
         scrollView->addChild(m_hBar, 0, -50000);
-    } else if (!hasScrollbar && m_hBar) {
+    } else {
         FrameView* scrollView = m_object->element()->document()->view();
         scrollView->removeChild(m_hBar);
         delete m_hBar;
         m_hBar = 0;
     }
+    
+#if __APPLE__
+    // Force an update since we know the scrollbars have changed things.
+    if (m_object->document()->hasDashboardRegions())
+        m_object->document()->setDashboardRegionsDirty(true);
+#endif
+
 }
 
-void
-RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
+void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 {
-    if (hasScrollbar && !m_vBar) {
+    if (hasScrollbar == (m_vBar != 0))
+        return;
+
+    if (hasScrollbar) {
         FrameView* scrollView = m_object->element()->document()->view();
         m_vBar = new ScrollBar(VerticalScrollBar);
         m_vBar->setClient(this);
         scrollView->addChild(m_vBar, 0, -50000);
-    } else if (!hasScrollbar && m_vBar) {
+    } else {
         FrameView* scrollView = m_object->element()->document()->view();
         scrollView->removeChild(m_vBar);
         delete m_vBar;
         m_vBar = 0;
     }
+    
+#if __APPLE__
+    // Force an update since we know the scrollbars have changed things.
+    if (m_object->document()->hasDashboardRegions())
+        m_object->document()->setDashboardRegionsDirty(true);
+#endif
+
 }
 
 int
@@ -1051,12 +1069,6 @@ RenderLayer::updateScrollInfoAfterLayout()
     bool horizontalOverflow, verticalOverflow;
     computeScrollDimensions(&horizontalOverflow, &verticalOverflow);
 
-    if (m_object->style()->overflowX() == OHIDDEN && m_object->style()->overflowY() == OHIDDEN) {
-        if (m_object->element()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
-            updateOverflowStatus(horizontalOverflow, verticalOverflow);
-        return; // All we had to do was update the overflow status and dirty
-    }
-
     if (m_object->style()->overflowX() != OMARQUEE) {
         // Layout may cause us to be in an invalid scroll position.  In this case we need
         // to pull our scroll offsets back to the max (or push them up to the min).
@@ -1077,6 +1089,13 @@ RenderLayer::updateScrollInfoAfterLayout()
     if (m_object->style()->overflowY() == OSCROLL)
         m_vBar->setEnabled(verticalOverflow);
 
+    // A dynamic change from a scrolling overflow to overflow:hidden means we need to get rid of any
+    // scrollbars that may be present.
+    if (m_object->style()->overflowX() == OHIDDEN && haveHorizontalBar)
+        setHasHorizontalScrollbar(false);
+    if (m_object->style()->overflowY() == OHIDDEN && haveVerticalBar)
+        setHasVerticalScrollbar(false);
+    
     // overflow:auto may need to lay out again if scrollbars got added/removed.
     bool scrollbarsChanged = (m_object->hasAutoHorizontalScrollbar() && haveHorizontalBar != horizontalOverflow) || 
                              (m_object->hasAutoVerticalScrollbar() && haveVerticalBar != verticalOverflow);    
@@ -1128,16 +1147,8 @@ RenderLayer::updateScrollInfoAfterLayout()
                                    m_object->height() - m_object->borderTop() - m_object->borderBottom()));
     }
  
-#if __APPLE__
-    // Force an update since we know the scrollbars have changed things.
-    if (m_object->document()->hasDashboardRegions())
-        m_object->document()->setDashboardRegionsDirty(true);
-#endif
-
     if (m_object->element()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(horizontalOverflow, verticalOverflow);
-    
-    m_object->repaint();
 }
 
 void
