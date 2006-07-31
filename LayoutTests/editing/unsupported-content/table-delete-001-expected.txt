@@ -21,7 +21,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > TD > TR > TBODY > TABLE > DIV > DIV > BODY > HTML > #document to 2 of TABLE > DIV > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of SPAN > FONT > DIV > DIV > BODY > HTML > #document to 1 of SPAN > FONT > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -65,9 +65,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
           RenderText {#text} at (2,2) size 62x28
             text run at (2,2) width 62: "before"
-          RenderInline {FONT} at (0,0) size 0x22
-            RenderInline {SPAN} at (0,0) size 0x18
-              RenderBR {BR} at (64,24) size 0x0
+          RenderBR {BR} at (64,24) size 0x0
           RenderText {#text} at (2,30) size 45x28
             text run at (2,30) width 45: "after"
 caret: position 0 of child 2 {#text} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

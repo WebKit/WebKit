@@ -1,3 +1,22 @@
+2006-07-31  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by justin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9507>
+        Empty style spans created in applyInlineStyle
+        <rdar://problem/4515463>
+        REGRESSION: Blot and Mail both do a very poor job of pasting the main www.apple.com page        
+
+        * editing/pasteboard/paste-4039777-fix-expected.txt:
+        * editing/pasteboard/testcase-9507-expected.checksum: Added.
+        * editing/pasteboard/testcase-9507-expected.png: Added.
+        * editing/pasteboard/testcase-9507-expected.txt: Added.
+        * editing/pasteboard/testcase-9507.html: Added.
+        * editing/unsupported-content/table-delete-001-expected.txt:
+        * editing/selection/selectNode-expected.png:
+        * editing/selection/selectNode-expected.checksum:
+        * editing/selection/selectNode-expected.txt:
+
 2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Darin.
@@ -13,7 +32,7 @@
         affected by my recent change to getComputedStyle.
 
         * editing/pasteboard/paste-table-002.html: Converted to a text test, since
-        it dumps the serialized form of hte result.
+        it dumps the serialized form of the result.
         * editing/pasteboard/paste-table-002-expected.checksum: Removed.
         * editing/pasteboard/paste-table-002-expected.png: Removed.
 

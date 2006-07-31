@@ -585,16 +585,28 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
     
     Node* node = start.node();
     Node* endNode = end.node();
+    
+    bool rangeIsEmpty = false;
 
-    if (start.offset() >= start.node()->caretMaxOffset())
+    if (start.offset() >= start.node()->caretMaxOffset()) {
         node = node->traverseNextNode();
+        Position newStart = Position(node, 0);
+        if (Range::compareBoundaryPoints(end, newStart) < 0)
+            rangeIsEmpty = true;
+    }
 
     if (end.node()->renderer() && end.node()->renderer()->isTable() && end.offset() == maxDeepOffset(end.node()))
         endNode = end.node()->lastDescendant();
     
-    if (start.node() == endNode) {
+    if (node == endNode) {
         addInlineStyleIfNeeded(style, node, node);
-    } else {
+    } else if (!rangeIsEmpty) {
+        // If the end node is an ancestor of the start node then we need
+        // to replace endNode with its next sibling to ensure that the
+        // exit condition node == endNode is reached
+        if (node->isAncestor(endNode))
+            endNode = endNode->traverseNextSibling();
+    
         while (1) {
             if (node->childNodeCount() == 0 && node->renderer() && node->renderer()->isInline() && node->isContentRichlyEditable()) {
                 Node *runStart = node;
