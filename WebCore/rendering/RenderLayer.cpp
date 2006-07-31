@@ -893,7 +893,7 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
         FrameView* scrollView = m_object->element()->document()->view();
         m_hBar = new ScrollBar(HorizontalScrollBar);
         m_hBar->setClient(this);
-        scrollView->addChild(m_hBar, 0, -50000);
+        scrollView->addChild(m_hBar);
     } else {
         FrameView* scrollView = m_object->element()->document()->view();
         scrollView->removeChild(m_hBar);
@@ -918,7 +918,7 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
         FrameView* scrollView = m_object->element()->document()->view();
         m_vBar = new ScrollBar(VerticalScrollBar);
         m_vBar->setClient(this);
-        scrollView->addChild(m_vBar, 0, -50000);
+        scrollView->addChild(m_vBar);
     } else {
         FrameView* scrollView = m_object->element()->document()->view();
         scrollView->removeChild(m_vBar);
@@ -986,14 +986,14 @@ RenderLayer::positionScrollbars(const IntRect& absBounds)
     int resizeControlSize = max(resizeControlRect().height() - 1, 0);
     if (m_vBar) {
         m_vBar->move(absBounds.right() - m_object->borderRight() - m_vBar->width(),
-            absBounds.y() + m_object->borderTop());
+                     absBounds.y() + m_object->borderTop());
         m_vBar->resize(m_vBar->width(), absBounds.height() - (m_object->borderTop() + m_object->borderBottom()) - (m_hBar ? m_hBar->height() - 1 : resizeControlSize));
     }
 
     resizeControlSize = max(resizeControlRect().width() - 1, 0);
     if (m_hBar) {
         m_hBar->move(absBounds.x() + m_object->borderLeft(),
-            absBounds.bottom() - m_object->borderBottom() - m_hBar->height());
+                     absBounds.bottom() - m_object->borderBottom() - m_hBar->height());
         m_hBar->resize(absBounds.width() - (m_object->borderLeft() + m_object->borderRight()) - (m_vBar ? m_vBar->width() - 1 : resizeControlSize), m_hBar->height());
     }
 }
