@@ -1,3 +1,13 @@
+2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10167
+        Bug 10167: REGRESSION(r15688): ASSERTION FAILED: _private->mouseDownEvent != nil in layout tests
+
+        * DumpRenderTree/EventSendingController.m: Don't set the mouse down flag
+        in keyDown handler.
+
 2006-07-30  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Maciej.

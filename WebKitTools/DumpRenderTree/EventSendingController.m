@@ -292,10 +292,8 @@ NSArray *webkitDomEventProperties;
     
 
     NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
-    if (subView) {
+    if (subView)
         [subView keyDown:event];
-        down = YES;
-    }
 }
 
 - (void)enableDOMUIEventLogging:(WebScriptObject *)node

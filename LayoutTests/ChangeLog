@@ -1,3 +1,12 @@
+2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10167
+        Bug 10167: REGRESSION(r15688): ASSERTION FAILED: _private->mouseDownEvent != nil in layout tests
+
+        * fast/events/objc-event-api-expected.txt: Update test results.
+
 2006-07-31  Darin Adler  <darin@apple.com>
 
         * editing/pasteboard/paste-table-002-expected.txt: Corrected one result
