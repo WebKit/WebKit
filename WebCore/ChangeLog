@@ -1,5 +1,9 @@
 2006-07-31  Geoffrey Garen  <ggaren@apple.com>
 
+        Reinstating my last change. Everything builds now.
+        
+2006-07-31  Geoffrey Garen  <ggaren@apple.com>
+
         Backing out my last change because it causes a build failure in some
         configurations. This seems to be the cleanest way to get svn to cooperate.
 

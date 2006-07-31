@@ -2680,7 +2680,7 @@
 		A871DFDF0A15376B00B12A68 /* RenderReplaced.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderReplaced.h; sourceTree = "<group>"; };
 		A871DFE00A15376B00B12A68 /* RenderWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderWidget.h; sourceTree = "<group>"; };
 		A871DFE10A15376B00B12A68 /* RenderWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderWidget.cpp; sourceTree = "<group>"; };
-		A884283D09308C1C00B6D461 /* DOMList.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A884283D09308C1C00B6D461 /* DOMList.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; indentWidth = 4; path = DOMList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A890DF1B0930974800513F88 /* SVGStyledTransformableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGStyledTransformableElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A890DF1C0930974800513F88 /* SVGStyledTransformableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStyledTransformableElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A890DF1D0930974800513F88 /* SVGStyledLocatableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGStyledLocatableElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3502,14 +3502,12 @@
 				F523D32402DE4478018635CA /* dom */,
 				93309D86099E64910056E581 /* editing */,
 				93EEC1EC09C2877700C515D1 /* html */,
-				5126E6B60A2E3AEF005C29FA /* icon */,
 				A8C0FB51089701F700BA5114 /* kcanvas */,
 				A8C0F6E9089701F100BA5114 /* ksvg2 */,
 				BCB16BFB0979C38700467741 /* loader */,
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
 				F523D2F302DE443B018635CA /* rendering */,
-				A8C0F6DC089701F100BA5114 /* WebCore+SVG */,
 				E1F0424309839389006694EA /* xml */,
 				1A7629570A0740A000989F5B /* xpath */,
 				656580EC09D12B20000E61D7 /* Derived Sources */,
@@ -3562,87 +3560,9 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		1A7629570A0740A000989F5B /* xpath */ = {
+		14DFB33F0A7DF7630018F769 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
-				1A7629580A0740A000989F5B /* impl */,
-				1A7629750A0740A000989F5B /* XPathEvaluator.cpp */,
-				1A7629760A0740A000989F5B /* XPathEvaluator.h */,
-				1A7629770A0740A000989F5B /* XPathEvaluator.idl */,
-				1A7629780A0740A000989F5B /* XPathExpression.cpp */,
-				1A7629790A0740A000989F5B /* XPathExpression.h */,
-				1A76297A0A0740A000989F5B /* XPathExpression.idl */,
-				1A76297B0A0740A000989F5B /* XPathNamespace.cpp */,
-				1A76297C0A0740A000989F5B /* XPathNamespace.h */,
-				1A76297D0A0740A000989F5B /* XPathNSResolver.cpp */,
-				1A76297E0A0740A000989F5B /* XPathNSResolver.h */,
-				1A76297F0A0740A000989F5B /* XPathNSResolver.idl */,
-				1A7629800A0740A000989F5B /* XPathResult.cpp */,
-				1A7629810A0740A000989F5B /* XPathResult.h */,
-				1A7629820A0740A000989F5B /* XPathResult.idl */,
-			);
-			path = xpath;
-			sourceTree = "<group>";
-		};
-		1A7629580A0740A000989F5B /* impl */ = {
-			isa = PBXGroup;
-			children = (
-				1A7629590A0740A000989F5B /* XPathExpressionNode.cpp */,
-				1A76295A0A0740A000989F5B /* XPathExpressionNode.h */,
-				1A7629610A0740A000989F5B /* XPathFunctions.cpp */,
-				1A7629620A0740A000989F5B /* XPathFunctions.h */,
-				1A7629720A0740A000989F5B /* XPathGrammar.y */,
-				1A5D938C0A0B9ACC00B1121F /* XPathParser.cpp */,
-				1A5D938D0A0B9ACC00B1121F /* XPathParser.h */,
-				1A7629650A0740A000989F5B /* XPathPath.cpp */,
-				1A7629660A0740A000989F5B /* XPathPath.h */,
-				1A7629670A0740A000989F5B /* XPathPredicate.cpp */,
-				1A7629680A0740A000989F5B /* XPathPredicate.h */,
-				1A7629690A0740A000989F5B /* XPathStep.cpp */,
-				1A76296A0A0740A000989F5B /* XPathStep.h */,
-				1A76296E0A0740A000989F5B /* XPathUtil.cpp */,
-				1A76296F0A0740A000989F5B /* XPathUtil.h */,
-				1A6931750A0CD4FA00C127FE /* XPathValue.cpp */,
-				1A6931740A0CD4FA00C127FE /* XPathValue.h */,
-				1A7629700A0740A000989F5B /* XPathVariableReference.cpp */,
-				1A7629710A0740A000989F5B /* XPathVariableReference.h */,
-			);
-			path = impl;
-			sourceTree = "<group>";
-		};
-		5126E6B60A2E3AEF005C29FA /* icon */ = {
-			isa = PBXGroup;
-			children = (
-				516149EC0A525E3A003DFC7A /* SiteIcon.cpp */,
-				5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */,
-				5126E6BA0A2E3B12005C29FA /* IconDatabase.h */,
-				51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */,
-				51D3EA140A3D24D300BADA35 /* SQLDatabase.h */,
-				51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */,
-				51F11E140A48C2920034A24E /* SQLTransaction.cpp */,
-			);
-			path = icon;
-			sourceTree = "<group>";
-		};
-		656580EC09D12B20000E61D7 /* Derived Sources */ = {
-			isa = PBXGroup;
-			children = (
-				656581AC09D14EE6000E61D7 /* CharsetData.cpp */,
-				656581AD09D14EE6000E61D7 /* ColorData.c */,
-				6565814409D13043000E61D7 /* CSSGrammar.cpp */,
-				650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */,
-				656580ED09D12B20000E61D7 /* CSSPropertyNames.c */,
-				656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */,
-				656580EF09D12B20000E61D7 /* CSSPropertyNames.h */,
-				656580F109D12B20000E61D7 /* CSSPropertyNames.strip */,
-				6565814609D13043000E61D7 /* CSSValueKeywords.c */,
-				6565814709D13043000E61D7 /* CSSValueKeywords.gperf */,
-				6565814809D13043000E61D7 /* CSSValueKeywords.h */,
-				6565814A09D13043000E61D7 /* CSSValueKeywords.strip */,
-				6565811C09D12DB2000E61D7 /* DocTypeStrings.cpp */,
-				6565814B09D13043000E61D7 /* HTMLEntityNames.c */,
-				A8D06B380A265DCD005E7203 /* HTMLNames.cpp */,
-				A8D06B370A265DCD005E7203 /* HTMLNames.h */,
 				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
 				65DF31D909D1C123000BE325 /* JSAttr.h */,
 				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
@@ -3829,6 +3749,92 @@
 				1A762C710A074F2600989F5B /* JSXPathResult.cpp */,
 				1A762C720A074F2600989F5B /* JSXPathResult.h */,
 				656581D909D1508D000E61D7 /* JSXSLTProcessor.lut.h */,
+			);
+			name = "Derived Sources";
+			path = DerivedSources/WebCore;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1A7629570A0740A000989F5B /* xpath */ = {
+			isa = PBXGroup;
+			children = (
+				1A7629580A0740A000989F5B /* impl */,
+				1A7629750A0740A000989F5B /* XPathEvaluator.cpp */,
+				1A7629760A0740A000989F5B /* XPathEvaluator.h */,
+				1A7629770A0740A000989F5B /* XPathEvaluator.idl */,
+				1A7629780A0740A000989F5B /* XPathExpression.cpp */,
+				1A7629790A0740A000989F5B /* XPathExpression.h */,
+				1A76297A0A0740A000989F5B /* XPathExpression.idl */,
+				1A76297B0A0740A000989F5B /* XPathNamespace.cpp */,
+				1A76297C0A0740A000989F5B /* XPathNamespace.h */,
+				1A76297D0A0740A000989F5B /* XPathNSResolver.cpp */,
+				1A76297E0A0740A000989F5B /* XPathNSResolver.h */,
+				1A76297F0A0740A000989F5B /* XPathNSResolver.idl */,
+				1A7629800A0740A000989F5B /* XPathResult.cpp */,
+				1A7629810A0740A000989F5B /* XPathResult.h */,
+				1A7629820A0740A000989F5B /* XPathResult.idl */,
+			);
+			path = xpath;
+			sourceTree = "<group>";
+		};
+		1A7629580A0740A000989F5B /* impl */ = {
+			isa = PBXGroup;
+			children = (
+				1A7629590A0740A000989F5B /* XPathExpressionNode.cpp */,
+				1A76295A0A0740A000989F5B /* XPathExpressionNode.h */,
+				1A7629610A0740A000989F5B /* XPathFunctions.cpp */,
+				1A7629620A0740A000989F5B /* XPathFunctions.h */,
+				1A7629720A0740A000989F5B /* XPathGrammar.y */,
+				1A5D938C0A0B9ACC00B1121F /* XPathParser.cpp */,
+				1A5D938D0A0B9ACC00B1121F /* XPathParser.h */,
+				1A7629650A0740A000989F5B /* XPathPath.cpp */,
+				1A7629660A0740A000989F5B /* XPathPath.h */,
+				1A7629670A0740A000989F5B /* XPathPredicate.cpp */,
+				1A7629680A0740A000989F5B /* XPathPredicate.h */,
+				1A7629690A0740A000989F5B /* XPathStep.cpp */,
+				1A76296A0A0740A000989F5B /* XPathStep.h */,
+				1A76296E0A0740A000989F5B /* XPathUtil.cpp */,
+				1A76296F0A0740A000989F5B /* XPathUtil.h */,
+				1A6931750A0CD4FA00C127FE /* XPathValue.cpp */,
+				1A6931740A0CD4FA00C127FE /* XPathValue.h */,
+				1A7629700A0740A000989F5B /* XPathVariableReference.cpp */,
+				1A7629710A0740A000989F5B /* XPathVariableReference.h */,
+			);
+			path = impl;
+			sourceTree = "<group>";
+		};
+		5126E6B60A2E3AEF005C29FA /* icon */ = {
+			isa = PBXGroup;
+			children = (
+				516149EC0A525E3A003DFC7A /* SiteIcon.cpp */,
+				5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */,
+				5126E6BA0A2E3B12005C29FA /* IconDatabase.h */,
+				51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */,
+				51D3EA140A3D24D300BADA35 /* SQLDatabase.h */,
+				51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */,
+				51F11E140A48C2920034A24E /* SQLTransaction.cpp */,
+			);
+			path = icon;
+			sourceTree = "<group>";
+		};
+		656580EC09D12B20000E61D7 /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				656581AC09D14EE6000E61D7 /* CharsetData.cpp */,
+				656581AD09D14EE6000E61D7 /* ColorData.c */,
+				6565814409D13043000E61D7 /* CSSGrammar.cpp */,
+				650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */,
+				656580ED09D12B20000E61D7 /* CSSPropertyNames.c */,
+				656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */,
+				656580EF09D12B20000E61D7 /* CSSPropertyNames.h */,
+				656580F109D12B20000E61D7 /* CSSPropertyNames.strip */,
+				6565814609D13043000E61D7 /* CSSValueKeywords.c */,
+				6565814709D13043000E61D7 /* CSSValueKeywords.gperf */,
+				6565814809D13043000E61D7 /* CSSValueKeywords.h */,
+				6565814A09D13043000E61D7 /* CSSValueKeywords.strip */,
+				6565811C09D12DB2000E61D7 /* DocTypeStrings.cpp */,
+				6565814B09D13043000E61D7 /* HTMLEntityNames.c */,
+				A8D06B380A265DCD005E7203 /* HTMLNames.cpp */,
+				A8D06B370A265DCD005E7203 /* HTMLNames.h */,
 				656581DA09D1508D000E61D7 /* kjs_css.lut.h */,
 				656581DB09D1508D000E61D7 /* kjs_dom.lut.h */,
 				656581DC09D1508D000E61D7 /* kjs_events.lut.h */,
@@ -4487,14 +4493,6 @@
 			path = js;
 			sourceTree = "<group>";
 		};
-		A8C0F6DC089701F100BA5114 /* WebCore+SVG */ = {
-			isa = PBXGroup;
-			children = (
-				A884283D09308C1C00B6D461 /* DOMList.h */,
-			);
-			path = "WebCore+SVG";
-			sourceTree = "<group>";
-		};
 		A8C0F6E9089701F100BA5114 /* ksvg2 */ = {
 			isa = PBXGroup;
 			children = (
@@ -4566,6 +4564,7 @@
 		A8C0F7FC089701F300BA5114 /* svg */ = {
 			isa = PBXGroup;
 			children = (
+				A884283D09308C1C00B6D461 /* DOMList.h */,
 				A8C0F7FF089701F300BA5114 /* SVGAElement.cpp */,
 				A8C0F800089701F300BA5114 /* SVGAElement.h */,
 				A8C0F801089701F300BA5114 /* SVGAngle.cpp */,
@@ -4983,6 +4982,7 @@
 		BC1A3793097C6FB10019F3D8 /* js */ = {
 			isa = PBXGroup;
 			children = (
+				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
 				93B70D3F09EB0C7C009D8468 /* JSDOMParser.cpp */,
@@ -5066,6 +5066,7 @@
 		BCB16BFB0979C38700467741 /* loader */ = {
 			isa = PBXGroup;
 			children = (
+				5126E6B60A2E3AEF005C29FA /* icon */,
 				93A1EAA20A5634D8006960A0 /* mac */,
 				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
 				BCB16BFF0979C3BD00467741 /* Cache.h */,
