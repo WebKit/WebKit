@@ -1600,6 +1600,23 @@
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildStyle section */
+		D95E5C690A7DD4F7004E3105 /* Development */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Development;
+		};
+		D95E5C6A0A7DD4F7004E3105 /* Deployment */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Deployment;
+		};
+/* End PBXBuildStyle section */
+
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1614,57 +1631,57 @@
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
 		1403B99509EB13AF00797C7F /* DOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindow.h; sourceTree = "<group>"; };
 		1403B99609EB13AF00797C7F /* DOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindow.cpp; sourceTree = "<group>"; };
-		1403BA0B09EB18C700797C7F /* JSDOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindow.cpp; sourceTree = "<group>"; };
-		1403BA0E09EB18F800797C7F /* JSDOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMWindow.h; sourceTree = "<group>"; };
+		1403BA0B09EB18C700797C7F /* JSDOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMWindow.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSDOMWindow.cpp; sourceTree = "<group>"; };
+		1403BA0E09EB18F800797C7F /* JSDOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSDOMWindow.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSDOMWindow.h; sourceTree = "<group>"; };
 		14115AF909F847D600CA4FC1 /* NodeFilter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NodeFilter.idl; sourceTree = "<group>"; };
 		14115B5109F84B7100CA4FC1 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
-		14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilter.cpp; sourceTree = "<group>"; };
-		14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNodeFilter.h; sourceTree = "<group>"; };
+		14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSNodeFilter.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSNodeFilter.cpp; sourceTree = "<group>"; };
+		14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSNodeFilter.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSNodeFilter.h; sourceTree = "<group>"; };
 		141B94E509EC4223000E9413 /* MouseEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = MouseEvent.idl; sourceTree = "<group>"; };
 		141B94EE09EC425A000E9413 /* UIEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = UIEvent.idl; sourceTree = "<group>"; };
 		142011AE0A003117008303F9 /* CSSStyleDeclaration.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSStyleDeclaration.idl; sourceTree = "<group>"; };
-		142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleDeclaration.cpp; sourceTree = "<group>"; };
-		142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSStyleDeclaration.h; sourceTree = "<group>"; };
+		142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSCSSStyleDeclaration.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSStyleDeclaration.cpp; sourceTree = "<group>"; };
+		142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSCSSStyleDeclaration.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSStyleDeclaration.h; sourceTree = "<group>"; };
 		14813BF309EDF88E00F757E1 /* IDLParser.pm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; name = IDLParser.pm; path = scripts/IDLParser.pm; sourceTree = "<group>"; };
 		14CF787109F587CA00EB3665 /* CSSValue.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValue.idl; sourceTree = "<group>"; };
-		14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValue.cpp; sourceTree = "<group>"; };
-		14CF78A509F58CD800EB3665 /* JSCSSValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSValue.h; sourceTree = "<group>"; };
+		14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSCSSValue.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSValue.cpp; sourceTree = "<group>"; };
+		14CF78A509F58CD800EB3665 /* JSCSSValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSCSSValue.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSValue.h; sourceTree = "<group>"; };
 		14CF7A7009F5CF9A00EB3665 /* CSSRule.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSRule.idl; sourceTree = "<group>"; };
-		14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRule.cpp; sourceTree = "<group>"; };
-		14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSRule.h; sourceTree = "<group>"; };
+		14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSCSSRule.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSRule.cpp; sourceTree = "<group>"; };
+		14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSCSSRule.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSRule.h; sourceTree = "<group>"; };
 		14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = KeyboardEvent.idl; sourceTree = "<group>"; };
 		14D0C82409FF0EF5006B36D9 /* kjs_domnode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_domnode.h; sourceTree = "<group>"; };
 		14DC0D0B09FECFA4007B0235 /* Node.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Node.idl; sourceTree = "<group>"; };
-		14DC0D3509FED073007B0235 /* JSNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNode.cpp; sourceTree = "<group>"; };
-		14DC0D3609FED073007B0235 /* JSNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNode.h; sourceTree = "<group>"; };
+		14DC0D3509FED073007B0235 /* JSNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSNode.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSNode.cpp; sourceTree = "<group>"; };
+		14DC0D3609FED073007B0235 /* JSNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSNode.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSNode.h; sourceTree = "<group>"; };
 		14E836D209F8512000B85AE4 /* Event.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Event.idl; sourceTree = "<group>"; };
-		14E8378309F85D1C00B85AE4 /* JSEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSEvent.cpp; sourceTree = "<group>"; };
-		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEvent.h; sourceTree = "<group>"; };
+		14E8378309F85D1C00B85AE4 /* JSEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSEvent.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSEvent.cpp; sourceTree = "<group>"; };
+		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSEvent.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSEvent.h; sourceTree = "<group>"; };
 		14EC267D09CA07E000E1EEEC /* EventTargetNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetNode.h; sourceTree = "<group>"; };
 		14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetNode.cpp; sourceTree = "<group>"; };
 		1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OverflowEvent.cpp; sourceTree = "<group>"; };
 		1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OverflowEvent.h; sourceTree = "<group>"; };
 		1A0D57380A5C7812007EDD4C /* OverflowEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = OverflowEvent.idl; sourceTree = "<group>"; };
-		1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSOverflowEvent.cpp; sourceTree = "<group>"; };
-		1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSOverflowEvent.h; sourceTree = "<group>"; };
+		1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSOverflowEvent.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSOverflowEvent.cpp; sourceTree = "<group>"; };
+		1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSOverflowEvent.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSOverflowEvent.h; sourceTree = "<group>"; };
 		1A1D137E0A5325520064BF5F /* DOMXPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMXPath.h; sourceTree = "<group>"; };
 		1A1D137F0A5325520064BF5F /* DOMXPath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMXPath.mm; sourceTree = "<group>"; };
 		1A1D13C90A5329090064BF5F /* DOMXPathInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMXPathInternal.h; sourceTree = "<group>"; };
 		1A494BBB0A122DCD00FDAFC1 /* HTMLElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLElement.idl; sourceTree = "<group>"; };
-		1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElement.cpp; sourceTree = "<group>"; };
-		1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLElement.h; sourceTree = "<group>"; };
+		1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLElement.cpp; sourceTree = "<group>"; };
+		1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLElement.h; sourceTree = "<group>"; };
 		1A494E290A12354300FDAFC1 /* HTMLDocument.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDocument.idl; sourceTree = "<group>"; };
-		1A494E320A12358A00FDAFC1 /* JSHTMLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDocument.cpp; sourceTree = "<group>"; };
-		1A494E330A12358B00FDAFC1 /* JSHTMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLDocument.h; sourceTree = "<group>"; };
+		1A494E320A12358A00FDAFC1 /* JSHTMLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLDocument.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLDocument.cpp; sourceTree = "<group>"; };
+		1A494E330A12358B00FDAFC1 /* JSHTMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLDocument.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLDocument.h; sourceTree = "<group>"; };
 		1A494ED50A123F1A00FDAFC1 /* DocumentFragment.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentFragment.idl; sourceTree = "<group>"; };
-		1A494EDC0A123F4C00FDAFC1 /* JSDocumentFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentFragment.cpp; sourceTree = "<group>"; };
-		1A494EDD0A123F4C00FDAFC1 /* JSDocumentFragment.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDocumentFragment.h; sourceTree = "<group>"; };
+		1A494EDC0A123F4C00FDAFC1 /* JSDocumentFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSDocumentFragment.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSDocumentFragment.cpp; sourceTree = "<group>"; };
+		1A494EDD0A123F4C00FDAFC1 /* JSDocumentFragment.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSDocumentFragment.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSDocumentFragment.h; sourceTree = "<group>"; };
 		1A4A2DBA0A1B83A800C807F8 /* HTMLAppletElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLAppletElement.idl; sourceTree = "<group>"; };
 		1A4A2DD30A1B845100C807F8 /* HTMLAnchorElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLAnchorElement.idl; sourceTree = "<group>"; };
-		1A4A2DEB0A1B852A00C807F8 /* JSHTMLAnchorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAnchorElement.cpp; sourceTree = "<group>"; };
-		1A4A2DEC0A1B852A00C807F8 /* JSHTMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLAnchorElement.h; sourceTree = "<group>"; };
-		1A4A2DED0A1B852A00C807F8 /* JSHTMLAppletElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAppletElement.cpp; sourceTree = "<group>"; };
-		1A4A2DEE0A1B852A00C807F8 /* JSHTMLAppletElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLAppletElement.h; sourceTree = "<group>"; };
+		1A4A2DEB0A1B852A00C807F8 /* JSHTMLAnchorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLAnchorElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLAnchorElement.cpp; sourceTree = "<group>"; };
+		1A4A2DEC0A1B852A00C807F8 /* JSHTMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLAnchorElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLAnchorElement.h; sourceTree = "<group>"; };
+		1A4A2DED0A1B852A00C807F8 /* JSHTMLAppletElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLAppletElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLAppletElement.cpp; sourceTree = "<group>"; };
+		1A4A2DEE0A1B852A00C807F8 /* JSHTMLAppletElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLAppletElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLAppletElement.h; sourceTree = "<group>"; };
 		1A5D938C0A0B9ACC00B1121F /* XPathParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathParser.cpp; sourceTree = "<group>"; };
 		1A5D938D0A0B9ACC00B1121F /* XPathParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathParser.h; sourceTree = "<group>"; };
 		1A6931740A0CD4FA00C127FE /* XPathValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPathValue.h; sourceTree = "<group>"; };
@@ -1702,35 +1719,35 @@
 		1A7629820A0740A000989F5B /* XPathResult.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathResult.idl; sourceTree = "<group>"; };
 		1A7629D30A07425100989F5B /* XPathGrammar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathGrammar.cpp; sourceTree = "<group>"; };
 		1A7629D40A07425100989F5B /* XPathGrammar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathGrammar.h; sourceTree = "<group>"; };
-		1A762C6B0A074F2600989F5B /* JSXPathEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathEvaluator.cpp; sourceTree = "<group>"; };
-		1A762C6C0A074F2600989F5B /* JSXPathEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXPathEvaluator.h; sourceTree = "<group>"; };
-		1A762C6D0A074F2600989F5B /* JSXPathExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathExpression.cpp; sourceTree = "<group>"; };
-		1A762C6E0A074F2600989F5B /* JSXPathExpression.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXPathExpression.h; sourceTree = "<group>"; };
-		1A762C6F0A074F2600989F5B /* JSXPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathNSResolver.cpp; sourceTree = "<group>"; };
-		1A762C700A074F2600989F5B /* JSXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXPathNSResolver.h; sourceTree = "<group>"; };
-		1A762C710A074F2600989F5B /* JSXPathResult.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathResult.cpp; sourceTree = "<group>"; };
-		1A762C720A074F2600989F5B /* JSXPathResult.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXPathResult.h; sourceTree = "<group>"; };
+		1A762C6B0A074F2600989F5B /* JSXPathEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSXPathEvaluator.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSXPathEvaluator.cpp; sourceTree = "<group>"; };
+		1A762C6C0A074F2600989F5B /* JSXPathEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSXPathEvaluator.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSXPathEvaluator.h; sourceTree = "<group>"; };
+		1A762C6D0A074F2600989F5B /* JSXPathExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSXPathExpression.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSXPathExpression.cpp; sourceTree = "<group>"; };
+		1A762C6E0A074F2600989F5B /* JSXPathExpression.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSXPathExpression.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSXPathExpression.h; sourceTree = "<group>"; };
+		1A762C6F0A074F2600989F5B /* JSXPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSXPathNSResolver.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSXPathNSResolver.cpp; sourceTree = "<group>"; };
+		1A762C700A074F2600989F5B /* JSXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSXPathNSResolver.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSXPathNSResolver.h; sourceTree = "<group>"; };
+		1A762C710A074F2600989F5B /* JSXPathResult.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSXPathResult.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSXPathResult.cpp; sourceTree = "<group>"; };
+		1A762C720A074F2600989F5B /* JSXPathResult.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSXPathResult.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSXPathResult.h; sourceTree = "<group>"; };
 		1A8083730A4C7CDA00DFB6A7 /* DOMCSSInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMCSSInternal.h; sourceTree = "<group>"; };
 		1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDocument.cpp; sourceTree = "<group>"; };
 		1A820D900A13EBA600AF843C /* ImageDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageDocument.h; sourceTree = "<group>"; };
 		1A85B17D0A1B183600D8C87C /* HTMLHtmlElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLHtmlElement.idl; sourceTree = "<group>"; };
-		1A85B18D0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLHtmlElement.cpp; sourceTree = "<group>"; };
-		1A85B18E0A1B18A200D8C87C /* JSHTMLHtmlElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLHtmlElement.h; sourceTree = "<group>"; };
+		1A85B18D0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLHtmlElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLHtmlElement.cpp; sourceTree = "<group>"; };
+		1A85B18E0A1B18A200D8C87C /* JSHTMLHtmlElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLHtmlElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLHtmlElement.h; sourceTree = "<group>"; };
 		1A85B1CB0A1B22DC00D8C87C /* HTMLOListElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLOListElement.idl; sourceTree = "<group>"; };
 		1A85B1D10A1B235B00D8C87C /* HTMLDListElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDListElement.idl; sourceTree = "<group>"; };
 		1A85B1D50A1B236C00D8C87C /* HTMLUListElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLUListElement.idl; sourceTree = "<group>"; };
 		1A85B1D90A1B23A400D8C87C /* HTMLDirectoryElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDirectoryElement.idl; sourceTree = "<group>"; };
-		1A85B1E00A1B240500D8C87C /* JSHTMLDirectoryElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDirectoryElement.cpp; sourceTree = "<group>"; };
-		1A85B1E10A1B240500D8C87C /* JSHTMLDirectoryElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLDirectoryElement.h; sourceTree = "<group>"; };
-		1A85B1E20A1B240500D8C87C /* JSHTMLDListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDListElement.cpp; sourceTree = "<group>"; };
-		1A85B1E30A1B240500D8C87C /* JSHTMLDListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLDListElement.h; sourceTree = "<group>"; };
-		1A85B1E40A1B240500D8C87C /* JSHTMLOListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOListElement.cpp; sourceTree = "<group>"; };
-		1A85B1E50A1B240500D8C87C /* JSHTMLOListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOListElement.h; sourceTree = "<group>"; };
-		1A85B20E0A1B258700D8C87C /* JSHTMLUListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLUListElement.cpp; sourceTree = "<group>"; };
-		1A85B20F0A1B258700D8C87C /* JSHTMLUListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLUListElement.h; sourceTree = "<group>"; };
+		1A85B1E00A1B240500D8C87C /* JSHTMLDirectoryElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLDirectoryElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLDirectoryElement.cpp; sourceTree = "<group>"; };
+		1A85B1E10A1B240500D8C87C /* JSHTMLDirectoryElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLDirectoryElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLDirectoryElement.h; sourceTree = "<group>"; };
+		1A85B1E20A1B240500D8C87C /* JSHTMLDListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLDListElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLDListElement.cpp; sourceTree = "<group>"; };
+		1A85B1E30A1B240500D8C87C /* JSHTMLDListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLDListElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLDListElement.h; sourceTree = "<group>"; };
+		1A85B1E40A1B240500D8C87C /* JSHTMLOListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLOListElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLOListElement.cpp; sourceTree = "<group>"; };
+		1A85B1E50A1B240500D8C87C /* JSHTMLOListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLOListElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLOListElement.h; sourceTree = "<group>"; };
+		1A85B20E0A1B258700D8C87C /* JSHTMLUListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLUListElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLUListElement.cpp; sourceTree = "<group>"; };
+		1A85B20F0A1B258700D8C87C /* JSHTMLUListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLUListElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLUListElement.h; sourceTree = "<group>"; };
 		1A85B2AD0A1B2A6D00D8C87C /* HTMLDivElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDivElement.idl; sourceTree = "<group>"; };
-		1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDivElement.cpp; sourceTree = "<group>"; };
-		1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLDivElement.h; sourceTree = "<group>"; };
+		1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLDivElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLDivElement.cpp; sourceTree = "<group>"; };
+		1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLDivElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLDivElement.h; sourceTree = "<group>"; };
 		1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
 		1AC694C50A3B1676003F5049 /* PluginDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDocument.cpp; sourceTree = "<group>"; };
 		1AC694C60A3B1676003F5049 /* PluginDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginDocument.h; sourceTree = "<group>"; };
@@ -1742,64 +1759,64 @@
 		1AE2A9F50A1CDA5700B42B25 /* HTMLFontElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLFontElement.idl; sourceTree = "<group>"; };
 		1AE2A9F80A1CDA5700B42B25 /* HTMLHeadingElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLHeadingElement.idl; sourceTree = "<group>"; };
 		1AE2A9F90A1CDA5700B42B25 /* HTMLHRElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLHRElement.idl; sourceTree = "<group>"; };
-		1AE2AA0A0A1CDAB300B42B25 /* JSHTMLAreaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAreaElement.cpp; sourceTree = "<group>"; };
-		1AE2AA0B0A1CDAB300B42B25 /* JSHTMLAreaElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLAreaElement.h; sourceTree = "<group>"; };
-		1AE2AA0C0A1CDAB300B42B25 /* JSHTMLBaseFontElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBaseFontElement.cpp; sourceTree = "<group>"; };
-		1AE2AA0D0A1CDAB300B42B25 /* JSHTMLBaseFontElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBaseFontElement.h; sourceTree = "<group>"; };
-		1AE2AA0E0A1CDAB300B42B25 /* JSHTMLBodyElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBodyElement.cpp; sourceTree = "<group>"; };
-		1AE2AA0F0A1CDAB300B42B25 /* JSHTMLBodyElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBodyElement.h; sourceTree = "<group>"; };
-		1AE2AA100A1CDAB300B42B25 /* JSHTMLBRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBRElement.cpp; sourceTree = "<group>"; };
-		1AE2AA110A1CDAB300B42B25 /* JSHTMLBRElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBRElement.h; sourceTree = "<group>"; };
-		1AE2AA120A1CDAB300B42B25 /* JSHTMLFieldSetElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFieldSetElement.cpp; sourceTree = "<group>"; };
-		1AE2AA130A1CDAB300B42B25 /* JSHTMLFieldSetElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLFieldSetElement.h; sourceTree = "<group>"; };
-		1AE2AA140A1CDAB300B42B25 /* JSHTMLFontElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFontElement.cpp; sourceTree = "<group>"; };
-		1AE2AA150A1CDAB300B42B25 /* JSHTMLFontElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLFontElement.h; sourceTree = "<group>"; };
-		1AE2AA1A0A1CDAB400B42B25 /* JSHTMLHeadingElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLHeadingElement.cpp; sourceTree = "<group>"; };
-		1AE2AA1B0A1CDAB400B42B25 /* JSHTMLHeadingElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLHeadingElement.h; sourceTree = "<group>"; };
-		1AE2AA1C0A1CDAB400B42B25 /* JSHTMLHRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLHRElement.cpp; sourceTree = "<group>"; };
-		1AE2AA1D0A1CDAB400B42B25 /* JSHTMLHRElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLHRElement.h; sourceTree = "<group>"; };
+		1AE2AA0A0A1CDAB300B42B25 /* JSHTMLAreaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLAreaElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLAreaElement.cpp; sourceTree = "<group>"; };
+		1AE2AA0B0A1CDAB300B42B25 /* JSHTMLAreaElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLAreaElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLAreaElement.h; sourceTree = "<group>"; };
+		1AE2AA0C0A1CDAB300B42B25 /* JSHTMLBaseFontElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLBaseFontElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLBaseFontElement.cpp; sourceTree = "<group>"; };
+		1AE2AA0D0A1CDAB300B42B25 /* JSHTMLBaseFontElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLBaseFontElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLBaseFontElement.h; sourceTree = "<group>"; };
+		1AE2AA0E0A1CDAB300B42B25 /* JSHTMLBodyElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLBodyElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLBodyElement.cpp; sourceTree = "<group>"; };
+		1AE2AA0F0A1CDAB300B42B25 /* JSHTMLBodyElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLBodyElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLBodyElement.h; sourceTree = "<group>"; };
+		1AE2AA100A1CDAB300B42B25 /* JSHTMLBRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLBRElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLBRElement.cpp; sourceTree = "<group>"; };
+		1AE2AA110A1CDAB300B42B25 /* JSHTMLBRElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLBRElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLBRElement.h; sourceTree = "<group>"; };
+		1AE2AA120A1CDAB300B42B25 /* JSHTMLFieldSetElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLFieldSetElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLFieldSetElement.cpp; sourceTree = "<group>"; };
+		1AE2AA130A1CDAB300B42B25 /* JSHTMLFieldSetElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLFieldSetElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLFieldSetElement.h; sourceTree = "<group>"; };
+		1AE2AA140A1CDAB300B42B25 /* JSHTMLFontElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLFontElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLFontElement.cpp; sourceTree = "<group>"; };
+		1AE2AA150A1CDAB300B42B25 /* JSHTMLFontElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLFontElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLFontElement.h; sourceTree = "<group>"; };
+		1AE2AA1A0A1CDAB400B42B25 /* JSHTMLHeadingElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLHeadingElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLHeadingElement.cpp; sourceTree = "<group>"; };
+		1AE2AA1B0A1CDAB400B42B25 /* JSHTMLHeadingElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLHeadingElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLHeadingElement.h; sourceTree = "<group>"; };
+		1AE2AA1C0A1CDAB400B42B25 /* JSHTMLHRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLHRElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLHRElement.cpp; sourceTree = "<group>"; };
+		1AE2AA1D0A1CDAB400B42B25 /* JSHTMLHRElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLHRElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLHRElement.h; sourceTree = "<group>"; };
 		1AE2AA790A1CDC6100B42B25 /* HTMLImageElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLImageElement.idl; sourceTree = "<group>"; };
 		1AE2AA850A1CDCCE00B42B25 /* HTMLIsIndexElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLIsIndexElement.idl; sourceTree = "<group>"; };
-		1AE2AA930A1CDD2D00B42B25 /* JSHTMLImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLImageElement.cpp; sourceTree = "<group>"; };
-		1AE2AA940A1CDD2D00B42B25 /* JSHTMLImageElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLImageElement.h; sourceTree = "<group>"; };
-		1AE2AA950A1CDD2D00B42B25 /* JSHTMLIsIndexElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLIsIndexElement.cpp; sourceTree = "<group>"; };
-		1AE2AA960A1CDD2D00B42B25 /* JSHTMLIsIndexElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLIsIndexElement.h; sourceTree = "<group>"; };
+		1AE2AA930A1CDD2D00B42B25 /* JSHTMLImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLImageElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLImageElement.cpp; sourceTree = "<group>"; };
+		1AE2AA940A1CDD2D00B42B25 /* JSHTMLImageElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLImageElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLImageElement.h; sourceTree = "<group>"; };
+		1AE2AA950A1CDD2D00B42B25 /* JSHTMLIsIndexElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLIsIndexElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLIsIndexElement.cpp; sourceTree = "<group>"; };
+		1AE2AA960A1CDD2D00B42B25 /* JSHTMLIsIndexElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLIsIndexElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLIsIndexElement.h; sourceTree = "<group>"; };
 		1AE2AABE0A1CDD8300B42B25 /* HTMLLabelElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLLabelElement.idl; sourceTree = "<group>"; };
 		1AE2AACC0A1CDDDB00B42B25 /* HTMLLegendElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLLegendElement.idl; sourceTree = "<group>"; };
 		1AE2AAE60A1CE52E00B42B25 /* HTMLLIElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLLIElement.idl; sourceTree = "<group>"; };
 		1AE2AAF70A1CE58600B42B25 /* HTMLMapElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMapElement.idl; sourceTree = "<group>"; };
 		1AE2AB070A1CE5CF00B42B25 /* HTMLModElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLModElement.idl; sourceTree = "<group>"; };
-		1AE2AB170A1CE63B00B42B25 /* JSHTMLLabelElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLLabelElement.cpp; sourceTree = "<group>"; };
-		1AE2AB180A1CE63B00B42B25 /* JSHTMLLabelElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLLabelElement.h; sourceTree = "<group>"; };
-		1AE2AB190A1CE63B00B42B25 /* JSHTMLLegendElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLLegendElement.cpp; sourceTree = "<group>"; };
-		1AE2AB1A0A1CE63B00B42B25 /* JSHTMLLegendElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLLegendElement.h; sourceTree = "<group>"; };
-		1AE2AB1B0A1CE63B00B42B25 /* JSHTMLLIElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLLIElement.cpp; sourceTree = "<group>"; };
-		1AE2AB1C0A1CE63B00B42B25 /* JSHTMLLIElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLLIElement.h; sourceTree = "<group>"; };
-		1AE2AB1D0A1CE63B00B42B25 /* JSHTMLMapElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMapElement.cpp; sourceTree = "<group>"; };
-		1AE2AB1E0A1CE63B00B42B25 /* JSHTMLMapElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLMapElement.h; sourceTree = "<group>"; };
-		1AE2AB1F0A1CE63B00B42B25 /* JSHTMLModElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLModElement.cpp; sourceTree = "<group>"; };
-		1AE2AB200A1CE63B00B42B25 /* JSHTMLModElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLModElement.h; sourceTree = "<group>"; };
+		1AE2AB170A1CE63B00B42B25 /* JSHTMLLabelElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLLabelElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLLabelElement.cpp; sourceTree = "<group>"; };
+		1AE2AB180A1CE63B00B42B25 /* JSHTMLLabelElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLLabelElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLLabelElement.h; sourceTree = "<group>"; };
+		1AE2AB190A1CE63B00B42B25 /* JSHTMLLegendElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLLegendElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLLegendElement.cpp; sourceTree = "<group>"; };
+		1AE2AB1A0A1CE63B00B42B25 /* JSHTMLLegendElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLLegendElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLLegendElement.h; sourceTree = "<group>"; };
+		1AE2AB1B0A1CE63B00B42B25 /* JSHTMLLIElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLLIElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLLIElement.cpp; sourceTree = "<group>"; };
+		1AE2AB1C0A1CE63B00B42B25 /* JSHTMLLIElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLLIElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLLIElement.h; sourceTree = "<group>"; };
+		1AE2AB1D0A1CE63B00B42B25 /* JSHTMLMapElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLMapElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLMapElement.cpp; sourceTree = "<group>"; };
+		1AE2AB1E0A1CE63B00B42B25 /* JSHTMLMapElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLMapElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLMapElement.h; sourceTree = "<group>"; };
+		1AE2AB1F0A1CE63B00B42B25 /* JSHTMLModElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLModElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLModElement.cpp; sourceTree = "<group>"; };
+		1AE2AB200A1CE63B00B42B25 /* JSHTMLModElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLModElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLModElement.h; sourceTree = "<group>"; };
 		1AE2AB610A1CE7CA00B42B25 /* HTMLParagraphElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLParagraphElement.idl; sourceTree = "<group>"; };
 		1AE2AB720A1CE81500B42B25 /* HTMLParamElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLParamElement.idl; sourceTree = "<group>"; };
 		1AE2AB850A1CE85000B42B25 /* HTMLPreElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLPreElement.idl; sourceTree = "<group>"; };
 		1AE2AB960A1CE88D00B42B25 /* HTMLScriptElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLScriptElement.idl; sourceTree = "<group>"; };
-		1AE2AB9E0A1CE90500B42B25 /* JSHTMLParagraphElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLParagraphElement.cpp; sourceTree = "<group>"; };
-		1AE2AB9F0A1CE90500B42B25 /* JSHTMLParagraphElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLParagraphElement.h; sourceTree = "<group>"; };
-		1AE2ABA00A1CE90500B42B25 /* JSHTMLParamElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLParamElement.cpp; sourceTree = "<group>"; };
-		1AE2ABA10A1CE90500B42B25 /* JSHTMLParamElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLParamElement.h; sourceTree = "<group>"; };
-		1AE2ABA20A1CE90500B42B25 /* JSHTMLPreElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLPreElement.cpp; sourceTree = "<group>"; };
-		1AE2ABA30A1CE90500B42B25 /* JSHTMLPreElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLPreElement.h; sourceTree = "<group>"; };
-		1AE2ABA40A1CE90500B42B25 /* JSHTMLScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLScriptElement.cpp; sourceTree = "<group>"; };
-		1AE2ABA50A1CE90500B42B25 /* JSHTMLScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLScriptElement.h; sourceTree = "<group>"; };
+		1AE2AB9E0A1CE90500B42B25 /* JSHTMLParagraphElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLParagraphElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLParagraphElement.cpp; sourceTree = "<group>"; };
+		1AE2AB9F0A1CE90500B42B25 /* JSHTMLParagraphElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLParagraphElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLParagraphElement.h; sourceTree = "<group>"; };
+		1AE2ABA00A1CE90500B42B25 /* JSHTMLParamElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLParamElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLParamElement.cpp; sourceTree = "<group>"; };
+		1AE2ABA10A1CE90500B42B25 /* JSHTMLParamElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLParamElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLParamElement.h; sourceTree = "<group>"; };
+		1AE2ABA20A1CE90500B42B25 /* JSHTMLPreElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLPreElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLPreElement.cpp; sourceTree = "<group>"; };
+		1AE2ABA30A1CE90500B42B25 /* JSHTMLPreElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLPreElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLPreElement.h; sourceTree = "<group>"; };
+		1AE2ABA40A1CE90500B42B25 /* JSHTMLScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLScriptElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLScriptElement.cpp; sourceTree = "<group>"; };
+		1AE2ABA50A1CE90500B42B25 /* JSHTMLScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLScriptElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLScriptElement.h; sourceTree = "<group>"; };
 		1AE2AE430A1D269E00B42B25 /* HTMLMenuElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMenuElement.idl; sourceTree = "<group>"; };
-		1AE2AE590A1D26F200B42B25 /* JSHTMLMenuElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMenuElement.cpp; sourceTree = "<group>"; };
-		1AE2AE5A0A1D26F200B42B25 /* JSHTMLMenuElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLMenuElement.h; sourceTree = "<group>"; };
+		1AE2AE590A1D26F200B42B25 /* JSHTMLMenuElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLMenuElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLMenuElement.cpp; sourceTree = "<group>"; };
+		1AE2AE5A0A1D26F200B42B25 /* JSHTMLMenuElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLMenuElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLMenuElement.h; sourceTree = "<group>"; };
 		1AE2AEA30A1D28E800B42B25 /* HTMLQuoteElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLQuoteElement.idl; sourceTree = "<group>"; };
 		1AE2AEA70A1D291900B42B25 /* HTMLBlockquoteElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLBlockquoteElement.idl; sourceTree = "<group>"; };
-		1AE2AEC30A1D297B00B42B25 /* JSHTMLQuoteElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLQuoteElement.cpp; sourceTree = "<group>"; };
-		1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLQuoteElement.h; sourceTree = "<group>"; };
-		1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBlockquoteElement.cpp; sourceTree = "<group>"; };
-		1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBlockquoteElement.h; sourceTree = "<group>"; };
+		1AE2AEC30A1D297B00B42B25 /* JSHTMLQuoteElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLQuoteElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLQuoteElement.cpp; sourceTree = "<group>"; };
+		1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLQuoteElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLQuoteElement.h; sourceTree = "<group>"; };
+		1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLBlockquoteElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLBlockquoteElement.cpp; sourceTree = "<group>"; };
+		1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLBlockquoteElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLBlockquoteElement.h; sourceTree = "<group>"; };
 		1CAF347E0A6C405200ABE06E /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObject.h; sourceTree = "<group>"; };
 		1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptObject.mm; sourceTree = "<group>"; };
 		1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObjectPrivate.h; sourceTree = "<group>"; };
@@ -1810,8 +1827,8 @@
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* ClipboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
-		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
+		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLOptionsCollection.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
+		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLOptionsCollection.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFeatureNames.cpp; sourceTree = "<group>"; };
@@ -1882,10 +1899,10 @@
 		656581AD09D14EE6000E61D7 /* ColorData.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ColorData.c; sourceTree = "<group>"; };
 		656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = UserAgentStyleSheets.h; sourceTree = "<group>"; };
 		656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = UserAgentStyleSheetsData.cpp; sourceTree = "<group>"; };
-		656581D609D1508D000E61D7 /* JSDOMParser.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMParser.lut.h; sourceTree = "<group>"; };
-		656581D709D1508D000E61D7 /* JSXMLHttpRequest.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequest.lut.h; sourceTree = "<group>"; };
-		656581D809D1508D000E61D7 /* JSXMLSerializer.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXMLSerializer.lut.h; sourceTree = "<group>"; };
-		656581D909D1508D000E61D7 /* JSXSLTProcessor.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXSLTProcessor.lut.h; sourceTree = "<group>"; };
+		656581D609D1508D000E61D7 /* JSDOMParser.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSDOMParser.lut.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSDOMParser.lut.h; sourceTree = "<group>"; };
+		656581D709D1508D000E61D7 /* JSXMLHttpRequest.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSXMLHttpRequest.lut.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSXMLHttpRequest.lut.h; sourceTree = "<group>"; };
+		656581D809D1508D000E61D7 /* JSXMLSerializer.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSXMLSerializer.lut.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSXMLSerializer.lut.h; sourceTree = "<group>"; };
+		656581D909D1508D000E61D7 /* JSXSLTProcessor.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSXSLTProcessor.lut.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSXSLTProcessor.lut.h; sourceTree = "<group>"; };
 		656581DA09D1508D000E61D7 /* kjs_css.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_css.lut.h; sourceTree = "<group>"; };
 		656581DB09D1508D000E61D7 /* kjs_dom.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_dom.lut.h; sourceTree = "<group>"; };
 		656581DC09D1508D000E61D7 /* kjs_events.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_events.lut.h; sourceTree = "<group>"; };
@@ -1934,8 +1951,8 @@
 		6593923509AE4346002C531F /* KURL.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KURL.cpp; sourceTree = "<group>"; };
 		6593923609AE4346002C531F /* KURL.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KURL.h; sourceTree = "<group>"; };
 		6593923909AE435C002C531F /* KURLMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KURLMac.mm; sourceTree = "<group>"; };
-		659DDC8009E198BA001BF3C6 /* JSDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocument.cpp; sourceTree = "<group>"; };
-		659DDC8109E198BA001BF3C6 /* JSDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDocument.h; sourceTree = "<group>"; };
+		659DDC8009E198BA001BF3C6 /* JSDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSDocument.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSDocument.cpp; sourceTree = "<group>"; };
+		659DDC8109E198BA001BF3C6 /* JSDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSDocument.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSDocument.h; sourceTree = "<group>"; };
 		65A21467097A329100B9050A /* Page.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Page.h; sourceTree = "<group>"; };
 		65A21482097A3F5300B9050A /* FrameTree.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FrameTree.cpp; sourceTree = "<group>"; };
 		65A21483097A3F5300B9050A /* FrameTree.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameTree.h; sourceTree = "<group>"; };
@@ -1951,36 +1968,36 @@
 		65CBFEF70974F607001DAC25 /* FrameView.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FrameView.cpp; sourceTree = "<group>"; };
 		65CBFEF80974F607001DAC25 /* FrameView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameView.h; sourceTree = "<group>"; };
 		65D1C1C909932B22000CB324 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Plugin.h; sourceTree = "<group>"; };
-		65DF31D809D1C122000BE325 /* JSAttr.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSAttr.cpp; sourceTree = "<group>"; };
-		65DF31D909D1C123000BE325 /* JSAttr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSAttr.h; sourceTree = "<group>"; };
-		65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCharacterData.cpp; sourceTree = "<group>"; };
-		65DF31E009D1CC60000BE325 /* JSCharacterData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCharacterData.h; sourceTree = "<group>"; };
-		65DF31E109D1CC60000BE325 /* JSDocumentType.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentType.cpp; sourceTree = "<group>"; };
-		65DF31E209D1CC60000BE325 /* JSDocumentType.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDocumentType.h; sourceTree = "<group>"; };
-		65DF31E309D1CC60000BE325 /* JSDOMImplementation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMImplementation.cpp; sourceTree = "<group>"; };
-		65DF31E409D1CC60000BE325 /* JSDOMImplementation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMImplementation.h; sourceTree = "<group>"; };
-		65DF31E509D1CC60000BE325 /* JSElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSElement.cpp; sourceTree = "<group>"; };
-		65DF31E609D1CC60000BE325 /* JSElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSElement.h; sourceTree = "<group>"; };
-		65DF31E709D1CC60000BE325 /* JSMutationEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationEvent.cpp; sourceTree = "<group>"; };
-		65DF31E809D1CC60000BE325 /* JSMutationEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSMutationEvent.h; sourceTree = "<group>"; };
-		65DF31E909D1CC60000BE325 /* JSNotation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotation.cpp; sourceTree = "<group>"; };
-		65DF31EA09D1CC60000BE325 /* JSNotation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNotation.h; sourceTree = "<group>"; };
-		65DF31EB09D1CC60000BE325 /* JSProcessingInstruction.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSProcessingInstruction.cpp; sourceTree = "<group>"; };
-		65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSProcessingInstruction.h; sourceTree = "<group>"; };
-		65DF31ED09D1CC60000BE325 /* JSRange.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSRange.cpp; sourceTree = "<group>"; };
-		65DF31EE09D1CC60000BE325 /* JSRange.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSRange.h; sourceTree = "<group>"; };
-		65DF31EF09D1CC60000BE325 /* JSText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSText.cpp; sourceTree = "<group>"; };
-		65DF31F009D1CC60000BE325 /* JSText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSText.h; sourceTree = "<group>"; };
-		65DF31F109D1CC60000BE325 /* JSWheelEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSWheelEvent.cpp; sourceTree = "<group>"; };
-		65DF31F209D1CC60000BE325 /* JSWheelEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSWheelEvent.h; sourceTree = "<group>"; };
-		65DF322D09D1DDBC000BE325 /* JSEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSEntity.cpp; sourceTree = "<group>"; };
-		65DF322E09D1DDBC000BE325 /* JSEntity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEntity.h; sourceTree = "<group>"; };
-		65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasGradient.cpp; sourceTree = "<group>"; };
-		65DF323409D1DE65000BE325 /* JSCanvasGradient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCanvasGradient.h; sourceTree = "<group>"; };
-		65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasPattern.cpp; sourceTree = "<group>"; };
-		65DF323609D1DE65000BE325 /* JSCanvasPattern.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCanvasPattern.h; sourceTree = "<group>"; };
-		65DF323709D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2D.cpp; sourceTree = "<group>"; };
-		65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext2D.h; sourceTree = "<group>"; };
+		65DF31D809D1C122000BE325 /* JSAttr.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSAttr.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSAttr.cpp; sourceTree = "<group>"; };
+		65DF31D909D1C123000BE325 /* JSAttr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSAttr.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSAttr.h; sourceTree = "<group>"; };
+		65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSCharacterData.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCharacterData.cpp; sourceTree = "<group>"; };
+		65DF31E009D1CC60000BE325 /* JSCharacterData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSCharacterData.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCharacterData.h; sourceTree = "<group>"; };
+		65DF31E109D1CC60000BE325 /* JSDocumentType.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSDocumentType.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSDocumentType.cpp; sourceTree = "<group>"; };
+		65DF31E209D1CC60000BE325 /* JSDocumentType.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSDocumentType.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSDocumentType.h; sourceTree = "<group>"; };
+		65DF31E309D1CC60000BE325 /* JSDOMImplementation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMImplementation.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSDOMImplementation.cpp; sourceTree = "<group>"; };
+		65DF31E409D1CC60000BE325 /* JSDOMImplementation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSDOMImplementation.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSDOMImplementation.h; sourceTree = "<group>"; };
+		65DF31E509D1CC60000BE325 /* JSElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSElement.cpp; sourceTree = "<group>"; };
+		65DF31E609D1CC60000BE325 /* JSElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSElement.h; sourceTree = "<group>"; };
+		65DF31E709D1CC60000BE325 /* JSMutationEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSMutationEvent.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSMutationEvent.cpp; sourceTree = "<group>"; };
+		65DF31E809D1CC60000BE325 /* JSMutationEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSMutationEvent.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSMutationEvent.h; sourceTree = "<group>"; };
+		65DF31E909D1CC60000BE325 /* JSNotation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSNotation.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSNotation.cpp; sourceTree = "<group>"; };
+		65DF31EA09D1CC60000BE325 /* JSNotation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSNotation.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSNotation.h; sourceTree = "<group>"; };
+		65DF31EB09D1CC60000BE325 /* JSProcessingInstruction.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSProcessingInstruction.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSProcessingInstruction.cpp; sourceTree = "<group>"; };
+		65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSProcessingInstruction.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSProcessingInstruction.h; sourceTree = "<group>"; };
+		65DF31ED09D1CC60000BE325 /* JSRange.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSRange.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSRange.cpp; sourceTree = "<group>"; };
+		65DF31EE09D1CC60000BE325 /* JSRange.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSRange.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSRange.h; sourceTree = "<group>"; };
+		65DF31EF09D1CC60000BE325 /* JSText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSText.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSText.cpp; sourceTree = "<group>"; };
+		65DF31F009D1CC60000BE325 /* JSText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSText.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSText.h; sourceTree = "<group>"; };
+		65DF31F109D1CC60000BE325 /* JSWheelEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSWheelEvent.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSWheelEvent.cpp; sourceTree = "<group>"; };
+		65DF31F209D1CC60000BE325 /* JSWheelEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSWheelEvent.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSWheelEvent.h; sourceTree = "<group>"; };
+		65DF322D09D1DDBC000BE325 /* JSEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSEntity.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSEntity.cpp; sourceTree = "<group>"; };
+		65DF322E09D1DDBC000BE325 /* JSEntity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSEntity.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSEntity.h; sourceTree = "<group>"; };
+		65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSCanvasGradient.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCanvasGradient.cpp; sourceTree = "<group>"; };
+		65DF323409D1DE65000BE325 /* JSCanvasGradient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSCanvasGradient.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCanvasGradient.h; sourceTree = "<group>"; };
+		65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSCanvasPattern.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCanvasPattern.cpp; sourceTree = "<group>"; };
+		65DF323609D1DE65000BE325 /* JSCanvasPattern.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSCanvasPattern.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCanvasPattern.h; sourceTree = "<group>"; };
+		65DF323709D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSCanvasRenderingContext2D.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCanvasRenderingContext2D.cpp; sourceTree = "<group>"; };
+		65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSCanvasRenderingContext2D.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCanvasRenderingContext2D.h; sourceTree = "<group>"; };
 		65F537D809B2B20F00F3DC4A /* CharsetNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CharsetNames.h; sourceTree = "<group>"; };
 		65F5382009B2B55700F3DC4A /* character-sets.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "character-sets.txt"; sourceTree = "<group>"; };
 		65F5382109B2B55700F3DC4A /* make-charset-table.pl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; path = "make-charset-table.pl"; sourceTree = "<group>"; };
@@ -2049,10 +2066,10 @@
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
 		9307059009E0C75800B17FE4 /* CSSPrimitiveValue.idl */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; path = CSSPrimitiveValue.idl; sourceTree = "<group>"; };
 		930705C709E0C95F00B17FE4 /* Counter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Counter.idl; sourceTree = "<group>"; };
-		930705D709E0C9B700B17FE4 /* JSCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCounter.cpp; sourceTree = "<group>"; };
-		930705D909E0C9BF00B17FE4 /* JSCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCounter.h; sourceTree = "<group>"; };
-		930705E809E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSPrimitiveValue.cpp; sourceTree = "<group>"; };
-		930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSPrimitiveValue.h; sourceTree = "<group>"; };
+		930705D709E0C9B700B17FE4 /* JSCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSCounter.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCounter.cpp; sourceTree = "<group>"; };
+		930705D909E0C9BF00B17FE4 /* JSCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSCounter.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCounter.h; sourceTree = "<group>"; };
+		930705E809E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSCSSPrimitiveValue.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSPrimitiveValue.cpp; sourceTree = "<group>"; };
+		930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSCSSPrimitiveValue.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSPrimitiveValue.h; sourceTree = "<group>"; };
 		9307061309E0CA8200B17FE4 /* DerivedSources.make */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; path = DerivedSources.make; sourceTree = "<group>"; usesTabs = 1; };
 		930CAAD609C495B600229C04 /* CanvasRenderingContext2D.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasRenderingContext2D.idl; sourceTree = "<group>"; };
 		930CAB8809C49EFA00229C04 /* CanvasGradient.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasGradient.idl; sourceTree = "<group>"; };
@@ -2179,8 +2196,8 @@
 		938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLElementWrapperFactory.h; sourceTree = "<group>"; };
 		938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElementWrapperFactory.cpp; sourceTree = "<group>"; };
 		938E662509F09956008A48EC /* HTMLCanvasElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLCanvasElement.idl; sourceTree = "<group>"; };
-		938E665F09F09B81008A48EC /* JSHTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLCanvasElement.cpp; sourceTree = "<group>"; };
-		938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLCanvasElement.h; sourceTree = "<group>"; };
+		938E665F09F09B81008A48EC /* JSHTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLCanvasElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLCanvasElement.cpp; sourceTree = "<group>"; };
+		938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSHTMLCanvasElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLCanvasElement.h; sourceTree = "<group>"; };
 		938E683B09F0BD7A008A48EC /* GraphicsTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsTypes.h; sourceTree = "<group>"; };
 		938E685309F0BE04008A48EC /* GraphicsTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsTypes.cpp; sourceTree = "<group>"; };
 		9394E0A403AA5BBE008635CE /* WebCorePageState.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCorePageState.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2353,23 +2370,23 @@
 		A80E734C0A199C77007FB8C5 /* StyleBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBase.cpp; sourceTree = "<group>"; };
 		A80E79960A19BD21007FB8C5 /* Rect.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Rect.idl; sourceTree = "<group>"; };
 		A80E79FC0A19C307007FB8C5 /* HTMLMetaElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLMetaElement.idl; sourceTree = "<group>"; };
-		A80E7A150A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMetaElement.cpp; sourceTree = "<group>"; };
-		A80E7A160A19C3D6007FB8C5 /* JSHTMLMetaElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLMetaElement.h; sourceTree = "<group>"; };
+		A80E7A150A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLMetaElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLMetaElement.cpp; sourceTree = "<group>"; };
+		A80E7A160A19C3D6007FB8C5 /* JSHTMLMetaElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLMetaElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLMetaElement.h; sourceTree = "<group>"; };
 		A80E7AAE0A19D1F1007FB8C5 /* HTMLTitleElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLTitleElement.idl; sourceTree = "<group>"; };
 		A80E7AAF0A19D1F1007FB8C5 /* HTMLBaseElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLBaseElement.idl; sourceTree = "<group>"; };
 		A80E7AB00A19D1F1007FB8C5 /* HTMLLinkElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLLinkElement.idl; sourceTree = "<group>"; };
 		A80E7AB10A19D1F1007FB8C5 /* HTMLHeadElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLHeadElement.idl; sourceTree = "<group>"; };
 		A80E7AB20A19D1F1007FB8C5 /* HTMLStyleElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLStyleElement.idl; sourceTree = "<group>"; };
-		A80E7B020A19D606007FB8C5 /* JSHTMLTitleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTitleElement.h; sourceTree = "<group>"; };
-		A80E7B030A19D606007FB8C5 /* JSHTMLLinkElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLLinkElement.h; sourceTree = "<group>"; };
-		A80E7B040A19D606007FB8C5 /* JSHTMLStyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLStyleElement.h; sourceTree = "<group>"; };
-		A80E7B050A19D606007FB8C5 /* JSHTMLStyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLStyleElement.cpp; sourceTree = "<group>"; };
-		A80E7B060A19D606007FB8C5 /* JSHTMLLinkElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLLinkElement.cpp; sourceTree = "<group>"; };
-		A80E7B070A19D606007FB8C5 /* JSHTMLBaseElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBaseElement.h; sourceTree = "<group>"; };
-		A80E7B080A19D606007FB8C5 /* JSHTMLBaseElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBaseElement.cpp; sourceTree = "<group>"; };
-		A80E7B090A19D606007FB8C5 /* JSHTMLTitleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTitleElement.cpp; sourceTree = "<group>"; };
-		A80E7B0A0A19D606007FB8C5 /* JSHTMLHeadElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLHeadElement.cpp; sourceTree = "<group>"; };
-		A80E7B0B0A19D606007FB8C5 /* JSHTMLHeadElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLHeadElement.h; sourceTree = "<group>"; };
+		A80E7B020A19D606007FB8C5 /* JSHTMLTitleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLTitleElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLTitleElement.h; sourceTree = "<group>"; };
+		A80E7B030A19D606007FB8C5 /* JSHTMLLinkElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLLinkElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLLinkElement.h; sourceTree = "<group>"; };
+		A80E7B040A19D606007FB8C5 /* JSHTMLStyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLStyleElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLStyleElement.h; sourceTree = "<group>"; };
+		A80E7B050A19D606007FB8C5 /* JSHTMLStyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLStyleElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLStyleElement.cpp; sourceTree = "<group>"; };
+		A80E7B060A19D606007FB8C5 /* JSHTMLLinkElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLLinkElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLLinkElement.cpp; sourceTree = "<group>"; };
+		A80E7B070A19D606007FB8C5 /* JSHTMLBaseElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLBaseElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLBaseElement.h; sourceTree = "<group>"; };
+		A80E7B080A19D606007FB8C5 /* JSHTMLBaseElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLBaseElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLBaseElement.cpp; sourceTree = "<group>"; };
+		A80E7B090A19D606007FB8C5 /* JSHTMLTitleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLTitleElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLTitleElement.cpp; sourceTree = "<group>"; };
+		A80E7B0A0A19D606007FB8C5 /* JSHTMLHeadElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLHeadElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLHeadElement.cpp; sourceTree = "<group>"; };
+		A80E7B0B0A19D606007FB8C5 /* JSHTMLHeadElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLHeadElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLHeadElement.h; sourceTree = "<group>"; };
 		A80E7E160A1A7CCB007FB8C5 /* HTMLTextAreaElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLTextAreaElement.idl; sourceTree = "<group>"; };
 		A80E7E170A1A7CCB007FB8C5 /* HTMLInputElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLInputElement.idl; sourceTree = "<group>"; };
 		A80E7E180A1A7CCB007FB8C5 /* HTMLOptionElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLOptionElement.idl; sourceTree = "<group>"; };
@@ -2377,16 +2394,16 @@
 		A80E7E550A1A7FB3007FB8C5 /* HTMLButtonElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLButtonElement.idl; sourceTree = "<group>"; };
 		A80E7E630A1A82EC007FB8C5 /* JSHTMLInputElementBase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLInputElementBase.h; sourceTree = "<group>"; };
 		A80E7E640A1A82EC007FB8C5 /* JSHTMLInputElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLInputElementBase.cpp; sourceTree = "<group>"; };
-		A80E7E8D0A1A83E3007FB8C5 /* JSHTMLInputElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLInputElement.h; sourceTree = "<group>"; };
-		A80E7E8E0A1A83E3007FB8C5 /* JSHTMLInputElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLInputElement.cpp; sourceTree = "<group>"; };
-		A80E7E8F0A1A83E3007FB8C5 /* JSHTMLOptionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionElement.h; sourceTree = "<group>"; };
-		A80E7E900A1A83E3007FB8C5 /* JSHTMLOptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionElement.cpp; sourceTree = "<group>"; };
-		A80E7E910A1A83E3007FB8C5 /* JSHTMLOptGroupElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptGroupElement.h; sourceTree = "<group>"; };
-		A80E7E920A1A83E3007FB8C5 /* JSHTMLOptGroupElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptGroupElement.cpp; sourceTree = "<group>"; };
-		A80E7E930A1A83E3007FB8C5 /* JSHTMLTextAreaElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTextAreaElement.h; sourceTree = "<group>"; };
-		A80E7E940A1A83E3007FB8C5 /* JSHTMLTextAreaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTextAreaElement.cpp; sourceTree = "<group>"; };
-		A80E7E950A1A83E3007FB8C5 /* JSHTMLButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLButtonElement.h; sourceTree = "<group>"; };
-		A80E7E960A1A83E3007FB8C5 /* JSHTMLButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLButtonElement.cpp; sourceTree = "<group>"; };
+		A80E7E8D0A1A83E3007FB8C5 /* JSHTMLInputElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLInputElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLInputElement.h; sourceTree = "<group>"; };
+		A80E7E8E0A1A83E3007FB8C5 /* JSHTMLInputElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLInputElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLInputElement.cpp; sourceTree = "<group>"; };
+		A80E7E8F0A1A83E3007FB8C5 /* JSHTMLOptionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLOptionElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLOptionElement.h; sourceTree = "<group>"; };
+		A80E7E900A1A83E3007FB8C5 /* JSHTMLOptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLOptionElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLOptionElement.cpp; sourceTree = "<group>"; };
+		A80E7E910A1A83E3007FB8C5 /* JSHTMLOptGroupElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLOptGroupElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLOptGroupElement.h; sourceTree = "<group>"; };
+		A80E7E920A1A83E3007FB8C5 /* JSHTMLOptGroupElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLOptGroupElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLOptGroupElement.cpp; sourceTree = "<group>"; };
+		A80E7E930A1A83E3007FB8C5 /* JSHTMLTextAreaElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLTextAreaElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLTextAreaElement.h; sourceTree = "<group>"; };
+		A80E7E940A1A83E3007FB8C5 /* JSHTMLTextAreaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLTextAreaElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLTextAreaElement.cpp; sourceTree = "<group>"; };
+		A80E7E950A1A83E3007FB8C5 /* JSHTMLButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLButtonElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLButtonElement.h; sourceTree = "<group>"; };
+		A80E7E960A1A83E3007FB8C5 /* JSHTMLButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLButtonElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLButtonElement.cpp; sourceTree = "<group>"; };
 		A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasTreeDebug.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasTreeDebug.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A81369AE097374F500D74463 /* HTMLIsIndexElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLIsIndexElement.h; sourceTree = "<group>"; };
@@ -2448,8 +2465,8 @@
 		A826E8AD0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionElementConstructor.cpp; sourceTree = "<group>"; };
 		A82FC33B08CBB07C00EFEE23 /* SVGCursorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGCursorElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A82FC33C08CBB07C00EFEE23 /* SVGCursorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCursorElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A833B4B80A27311D00D57664 /* JSSVGDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGDocument.h; sourceTree = "<group>"; };
-		A833B4B90A27311D00D57664 /* JSSVGDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGDocument.cpp; sourceTree = "<group>"; };
+		A833B4B80A27311D00D57664 /* JSSVGDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSSVGDocument.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGDocument.h; sourceTree = "<group>"; };
+		A833B4B90A27311D00D57664 /* JSSVGDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGDocument.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGDocument.cpp; sourceTree = "<group>"; };
 		A833B9930A2B77D500D57664 /* SVGDocument.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGDocument.idl; sourceTree = "<group>"; };
 		A833BA750A2BA3D400D57664 /* JSSVGRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGRect.h; sourceTree = "<group>"; };
 		A833BA770A2BA3D400D57664 /* JSSVGRect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGRect.cpp; sourceTree = "<group>"; };
@@ -2463,24 +2480,24 @@
 		A833BEA20A2C329300D57664 /* SVGNumber.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGNumber.idl; sourceTree = "<group>"; };
 		A833BEC80A2C33E800D57664 /* SVGColor.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGColor.idl; sourceTree = "<group>"; };
 		A833BEDD0A2C344B00D57664 /* SVGMatrix.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGMatrix.idl; sourceTree = "<group>"; };
-		A833BF160A2C3A9500D57664 /* JSSVGMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGMatrix.h; sourceTree = "<group>"; };
-		A833BF170A2C3A9500D57664 /* JSSVGMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGMatrix.cpp; sourceTree = "<group>"; };
-		A833BF180A2C3A9500D57664 /* JSSVGColor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGColor.h; sourceTree = "<group>"; };
-		A833BF190A2C3A9500D57664 /* JSSVGColor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGColor.cpp; sourceTree = "<group>"; };
-		A833C08E0A2C4F3F00D57664 /* JSSVGSVGElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGSVGElement.cpp; sourceTree = "<group>"; };
-		A833C08F0A2C4F3F00D57664 /* JSSVGSVGElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGSVGElement.h; sourceTree = "<group>"; };
+		A833BF160A2C3A9500D57664 /* JSSVGMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSSVGMatrix.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGMatrix.h; sourceTree = "<group>"; };
+		A833BF170A2C3A9500D57664 /* JSSVGMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGMatrix.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGMatrix.cpp; sourceTree = "<group>"; };
+		A833BF180A2C3A9500D57664 /* JSSVGColor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSSVGColor.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGColor.h; sourceTree = "<group>"; };
+		A833BF190A2C3A9500D57664 /* JSSVGColor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGColor.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGColor.cpp; sourceTree = "<group>"; };
+		A833C08E0A2C4F3F00D57664 /* JSSVGSVGElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGSVGElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGSVGElement.cpp; sourceTree = "<group>"; };
+		A833C08F0A2C4F3F00D57664 /* JSSVGSVGElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSSVGSVGElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGSVGElement.h; sourceTree = "<group>"; };
 		A833C0A80A2C4FEC00D57664 /* SVGAngle.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAngle.idl; sourceTree = "<group>"; };
 		A833C0A90A2C4FEC00D57664 /* SVGTransform.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGTransform.idl; sourceTree = "<group>"; };
-		A833C0ED0A2C513300D57664 /* JSSVGElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGElement.h; sourceTree = "<group>"; };
-		A833C0EE0A2C513300D57664 /* JSSVGAnimatedLength.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAnimatedLength.h; sourceTree = "<group>"; };
-		A833C0EF0A2C513300D57664 /* JSSVGTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGTransform.cpp; sourceTree = "<group>"; };
-		A833C0F00A2C513300D57664 /* JSSVGAngle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAngle.h; sourceTree = "<group>"; };
-		A833C0F10A2C513300D57664 /* JSSVGAnimatedLength.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimatedLength.cpp; sourceTree = "<group>"; };
-		A833C0F20A2C513300D57664 /* JSSVGAngle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAngle.cpp; sourceTree = "<group>"; };
-		A833C0F30A2C513300D57664 /* JSSVGElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElement.cpp; sourceTree = "<group>"; };
-		A833C0F40A2C513300D57664 /* JSSVGLength.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGLength.cpp; sourceTree = "<group>"; };
-		A833C0F50A2C513300D57664 /* JSSVGLength.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGLength.h; sourceTree = "<group>"; };
-		A833C0F60A2C513300D57664 /* JSSVGTransform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGTransform.h; sourceTree = "<group>"; };
+		A833C0ED0A2C513300D57664 /* JSSVGElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSSVGElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGElement.h; sourceTree = "<group>"; };
+		A833C0EE0A2C513300D57664 /* JSSVGAnimatedLength.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSSVGAnimatedLength.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGAnimatedLength.h; sourceTree = "<group>"; };
+		A833C0EF0A2C513300D57664 /* JSSVGTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGTransform.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGTransform.cpp; sourceTree = "<group>"; };
+		A833C0F00A2C513300D57664 /* JSSVGAngle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSSVGAngle.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGAngle.h; sourceTree = "<group>"; };
+		A833C0F10A2C513300D57664 /* JSSVGAnimatedLength.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGAnimatedLength.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGAnimatedLength.cpp; sourceTree = "<group>"; };
+		A833C0F20A2C513300D57664 /* JSSVGAngle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGAngle.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGAngle.cpp; sourceTree = "<group>"; };
+		A833C0F30A2C513300D57664 /* JSSVGElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGElement.cpp; sourceTree = "<group>"; };
+		A833C0F40A2C513300D57664 /* JSSVGLength.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGLength.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGLength.cpp; sourceTree = "<group>"; };
+		A833C0F50A2C513300D57664 /* JSSVGLength.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSSVGLength.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGLength.h; sourceTree = "<group>"; };
+		A833C0F60A2C513300D57664 /* JSSVGTransform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSSVGTransform.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGTransform.h; sourceTree = "<group>"; };
 		A833C5E70A2CCBA400D57664 /* SVGElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGElement.idl; sourceTree = "<group>"; };
 		A833C6D60A2CEA7700D57664 /* JSSVGElementWrapperFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGElementWrapperFactory.h; sourceTree = "<group>"; };
 		A833C6D70A2CEA7700D57664 /* JSSVGElementWrapperFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElementWrapperFactory.cpp; sourceTree = "<group>"; };
@@ -2597,12 +2614,12 @@
 		A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		A85D7A8C0879EC64006A9172 /* AffineTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AffineTransform.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A85D7A8D0879EC64006A9172 /* AffineTransform.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AffineTransform.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A86629C909DA2B47009633A5 /* JSUIEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSUIEvent.h; sourceTree = "<group>"; };
-		A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSUIEvent.cpp; sourceTree = "<group>"; };
-		A86629CB09DA2B47009633A5 /* JSMouseEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSMouseEvent.h; sourceTree = "<group>"; };
-		A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMouseEvent.cpp; sourceTree = "<group>"; };
-		A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSKeyboardEvent.h; sourceTree = "<group>"; };
-		A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyboardEvent.cpp; sourceTree = "<group>"; };
+		A86629C909DA2B47009633A5 /* JSUIEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSUIEvent.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSUIEvent.h; sourceTree = "<group>"; };
+		A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSUIEvent.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSUIEvent.cpp; sourceTree = "<group>"; };
+		A86629CB09DA2B47009633A5 /* JSMouseEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSMouseEvent.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSMouseEvent.h; sourceTree = "<group>"; };
+		A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSMouseEvent.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSMouseEvent.cpp; sourceTree = "<group>"; };
+		A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSKeyboardEvent.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSKeyboardEvent.h; sourceTree = "<group>"; };
+		A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSKeyboardEvent.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSKeyboardEvent.cpp; sourceTree = "<group>"; };
 		A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInElement.h; sourceTree = "<group>"; };
 		A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInElement.cpp; sourceTree = "<group>"; };
 		A871D44E0A127CBC00B12A68 /* HTMLParamElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLParamElement.h; sourceTree = "<group>"; };
@@ -3041,13 +3058,13 @@
 		A8CFF79F0A156978000A4234 /* HTMLModElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLModElement.cpp; sourceTree = "<group>"; };
 		A8CFF7A00A156978000A4234 /* HTMLBRElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLBRElement.h; sourceTree = "<group>"; };
 		A8CFF7A10A156978000A4234 /* HTMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLAnchorElement.h; sourceTree = "<group>"; };
-		A8D05FA50A23B301005E7203 /* JSCSSRuleList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRuleList.cpp; sourceTree = "<group>"; };
-		A8D05FA60A23B301005E7203 /* JSCSSRuleList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSRuleList.h; sourceTree = "<group>"; };
-		A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValueList.cpp; sourceTree = "<group>"; };
-		A8D05FAA0A23B30F005E7203 /* JSCSSValueList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSValueList.h; sourceTree = "<group>"; };
+		A8D05FA50A23B301005E7203 /* JSCSSRuleList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSCSSRuleList.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSRuleList.cpp; sourceTree = "<group>"; };
+		A8D05FA60A23B301005E7203 /* JSCSSRuleList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSCSSRuleList.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSRuleList.h; sourceTree = "<group>"; };
+		A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSCSSValueList.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSValueList.cpp; sourceTree = "<group>"; };
+		A8D05FAA0A23B30F005E7203 /* JSCSSValueList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSCSSValueList.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSCSSValueList.h; sourceTree = "<group>"; };
 		A8D064EF0A23BFEA005E7203 /* HTMLFormElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLFormElement.idl; sourceTree = "<group>"; };
-		A8D064F90A23C0CC005E7203 /* JSHTMLFormElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormElement.cpp; sourceTree = "<group>"; };
-		A8D064FA0A23C0CC005E7203 /* JSHTMLFormElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLFormElement.h; sourceTree = "<group>"; };
+		A8D064F90A23C0CC005E7203 /* JSHTMLFormElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLFormElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLFormElement.cpp; sourceTree = "<group>"; };
+		A8D064FA0A23C0CC005E7203 /* JSHTMLFormElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLFormElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSHTMLFormElement.h; sourceTree = "<group>"; };
 		A8D0651B0A23C1FE005E7203 /* CSSRuleList.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSRuleList.idl; sourceTree = "<group>"; };
 		A8D0651C0A23C1FE005E7203 /* CSSValueList.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValueList.idl; sourceTree = "<group>"; };
 		A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormElementCustom.cpp; sourceTree = "<group>"; };
@@ -3485,14 +3502,12 @@
 				F523D32402DE4478018635CA /* dom */,
 				93309D86099E64910056E581 /* editing */,
 				93EEC1EC09C2877700C515D1 /* html */,
-				5126E6B60A2E3AEF005C29FA /* icon */,
 				A8C0FB51089701F700BA5114 /* kcanvas */,
 				A8C0F6E9089701F100BA5114 /* ksvg2 */,
 				BCB16BFB0979C38700467741 /* loader */,
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
 				F523D2F302DE443B018635CA /* rendering */,
-				A8C0F6DC089701F100BA5114 /* WebCore+SVG */,
 				E1F0424309839389006694EA /* xml */,
 				1A7629570A0740A000989F5B /* xpath */,
 				656580EC09D12B20000E61D7 /* Derived Sources */,
@@ -3626,192 +3641,6 @@
 				6565814B09D13043000E61D7 /* HTMLEntityNames.c */,
 				A8D06B380A265DCD005E7203 /* HTMLNames.cpp */,
 				A8D06B370A265DCD005E7203 /* HTMLNames.h */,
-				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
-				65DF31D909D1C123000BE325 /* JSAttr.h */,
-				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
-				65DF323409D1DE65000BE325 /* JSCanvasGradient.h */,
-				65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */,
-				65DF323609D1DE65000BE325 /* JSCanvasPattern.h */,
-				65DF323709D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp */,
-				65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */,
-				65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */,
-				65DF31E009D1CC60000BE325 /* JSCharacterData.h */,
-				930705D709E0C9B700B17FE4 /* JSCounter.cpp */,
-				930705D909E0C9BF00B17FE4 /* JSCounter.h */,
-				930705E809E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp */,
-				930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */,
-				14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */,
-				14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */,
-				A8D05FA50A23B301005E7203 /* JSCSSRuleList.cpp */,
-				A8D05FA60A23B301005E7203 /* JSCSSRuleList.h */,
-				142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */,
-				142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */,
-				14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */,
-				14CF78A509F58CD800EB3665 /* JSCSSValue.h */,
-				A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */,
-				A8D05FAA0A23B30F005E7203 /* JSCSSValueList.h */,
-				659DDC8009E198BA001BF3C6 /* JSDocument.cpp */,
-				659DDC8109E198BA001BF3C6 /* JSDocument.h */,
-				1A494EDC0A123F4C00FDAFC1 /* JSDocumentFragment.cpp */,
-				1A494EDD0A123F4C00FDAFC1 /* JSDocumentFragment.h */,
-				65DF31E109D1CC60000BE325 /* JSDocumentType.cpp */,
-				65DF31E209D1CC60000BE325 /* JSDocumentType.h */,
-				65DF31E309D1CC60000BE325 /* JSDOMImplementation.cpp */,
-				65DF31E409D1CC60000BE325 /* JSDOMImplementation.h */,
-				656581D609D1508D000E61D7 /* JSDOMParser.lut.h */,
-				1403BA0B09EB18C700797C7F /* JSDOMWindow.cpp */,
-				1403BA0E09EB18F800797C7F /* JSDOMWindow.h */,
-				65DF31E509D1CC60000BE325 /* JSElement.cpp */,
-				65DF31E609D1CC60000BE325 /* JSElement.h */,
-				65DF322D09D1DDBC000BE325 /* JSEntity.cpp */,
-				65DF322E09D1DDBC000BE325 /* JSEntity.h */,
-				14E8378309F85D1C00B85AE4 /* JSEvent.cpp */,
-				14E8378D09F85D4F00B85AE4 /* JSEvent.h */,
-				1A4A2DEB0A1B852A00C807F8 /* JSHTMLAnchorElement.cpp */,
-				1A4A2DEC0A1B852A00C807F8 /* JSHTMLAnchorElement.h */,
-				1A4A2DED0A1B852A00C807F8 /* JSHTMLAppletElement.cpp */,
-				1A4A2DEE0A1B852A00C807F8 /* JSHTMLAppletElement.h */,
-				1AE2AA0A0A1CDAB300B42B25 /* JSHTMLAreaElement.cpp */,
-				1AE2AA0B0A1CDAB300B42B25 /* JSHTMLAreaElement.h */,
-				A80E7B080A19D606007FB8C5 /* JSHTMLBaseElement.cpp */,
-				A80E7B070A19D606007FB8C5 /* JSHTMLBaseElement.h */,
-				1AE2AA0C0A1CDAB300B42B25 /* JSHTMLBaseFontElement.cpp */,
-				1AE2AA0D0A1CDAB300B42B25 /* JSHTMLBaseFontElement.h */,
-				1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */,
-				1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */,
-				1AE2AA0E0A1CDAB300B42B25 /* JSHTMLBodyElement.cpp */,
-				1AE2AA0F0A1CDAB300B42B25 /* JSHTMLBodyElement.h */,
-				1AE2AA100A1CDAB300B42B25 /* JSHTMLBRElement.cpp */,
-				1AE2AA110A1CDAB300B42B25 /* JSHTMLBRElement.h */,
-				A80E7E960A1A83E3007FB8C5 /* JSHTMLButtonElement.cpp */,
-				A80E7E950A1A83E3007FB8C5 /* JSHTMLButtonElement.h */,
-				938E665F09F09B81008A48EC /* JSHTMLCanvasElement.cpp */,
-				938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */,
-				1A85B1E00A1B240500D8C87C /* JSHTMLDirectoryElement.cpp */,
-				1A85B1E10A1B240500D8C87C /* JSHTMLDirectoryElement.h */,
-				1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */,
-				1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */,
-				1A85B1E20A1B240500D8C87C /* JSHTMLDListElement.cpp */,
-				1A85B1E30A1B240500D8C87C /* JSHTMLDListElement.h */,
-				1A494E320A12358A00FDAFC1 /* JSHTMLDocument.cpp */,
-				1A494E330A12358B00FDAFC1 /* JSHTMLDocument.h */,
-				1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */,
-				1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */,
-				1AE2AA120A1CDAB300B42B25 /* JSHTMLFieldSetElement.cpp */,
-				1AE2AA130A1CDAB300B42B25 /* JSHTMLFieldSetElement.h */,
-				1AE2AA140A1CDAB300B42B25 /* JSHTMLFontElement.cpp */,
-				1AE2AA150A1CDAB300B42B25 /* JSHTMLFontElement.h */,
-				A8D064F90A23C0CC005E7203 /* JSHTMLFormElement.cpp */,
-				A8D064FA0A23C0CC005E7203 /* JSHTMLFormElement.h */,
-				A80E7B0A0A19D606007FB8C5 /* JSHTMLHeadElement.cpp */,
-				A80E7B0B0A19D606007FB8C5 /* JSHTMLHeadElement.h */,
-				1AE2AA1A0A1CDAB400B42B25 /* JSHTMLHeadingElement.cpp */,
-				1AE2AA1B0A1CDAB400B42B25 /* JSHTMLHeadingElement.h */,
-				1AE2AA1C0A1CDAB400B42B25 /* JSHTMLHRElement.cpp */,
-				1AE2AA1D0A1CDAB400B42B25 /* JSHTMLHRElement.h */,
-				1A85B18D0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp */,
-				1A85B18E0A1B18A200D8C87C /* JSHTMLHtmlElement.h */,
-				1AE2AA930A1CDD2D00B42B25 /* JSHTMLImageElement.cpp */,
-				1AE2AA940A1CDD2D00B42B25 /* JSHTMLImageElement.h */,
-				A80E7E8E0A1A83E3007FB8C5 /* JSHTMLInputElement.cpp */,
-				A80E7E8D0A1A83E3007FB8C5 /* JSHTMLInputElement.h */,
-				1AE2AA950A1CDD2D00B42B25 /* JSHTMLIsIndexElement.cpp */,
-				1AE2AA960A1CDD2D00B42B25 /* JSHTMLIsIndexElement.h */,
-				1AE2AB170A1CE63B00B42B25 /* JSHTMLLabelElement.cpp */,
-				1AE2AB180A1CE63B00B42B25 /* JSHTMLLabelElement.h */,
-				1AE2AB190A1CE63B00B42B25 /* JSHTMLLegendElement.cpp */,
-				1AE2AB1A0A1CE63B00B42B25 /* JSHTMLLegendElement.h */,
-				1AE2AB1B0A1CE63B00B42B25 /* JSHTMLLIElement.cpp */,
-				1AE2AB1C0A1CE63B00B42B25 /* JSHTMLLIElement.h */,
-				A80E7B060A19D606007FB8C5 /* JSHTMLLinkElement.cpp */,
-				A80E7B030A19D606007FB8C5 /* JSHTMLLinkElement.h */,
-				1AE2AB1D0A1CE63B00B42B25 /* JSHTMLMapElement.cpp */,
-				1AE2AB1E0A1CE63B00B42B25 /* JSHTMLMapElement.h */,
-				1AE2AE590A1D26F200B42B25 /* JSHTMLMenuElement.cpp */,
-				1AE2AE5A0A1D26F200B42B25 /* JSHTMLMenuElement.h */,
-				A80E7A150A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp */,
-				A80E7A160A19C3D6007FB8C5 /* JSHTMLMetaElement.h */,
-				1AE2AB1F0A1CE63B00B42B25 /* JSHTMLModElement.cpp */,
-				1AE2AB200A1CE63B00B42B25 /* JSHTMLModElement.h */,
-				1A85B1E40A1B240500D8C87C /* JSHTMLOListElement.cpp */,
-				1A85B1E50A1B240500D8C87C /* JSHTMLOListElement.h */,
-				A80E7E920A1A83E3007FB8C5 /* JSHTMLOptGroupElement.cpp */,
-				A80E7E910A1A83E3007FB8C5 /* JSHTMLOptGroupElement.h */,
-				A80E7E900A1A83E3007FB8C5 /* JSHTMLOptionElement.cpp */,
-				A80E7E8F0A1A83E3007FB8C5 /* JSHTMLOptionElement.h */,
-				448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */,
-				448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */,
-				1AE2AB9E0A1CE90500B42B25 /* JSHTMLParagraphElement.cpp */,
-				1AE2AB9F0A1CE90500B42B25 /* JSHTMLParagraphElement.h */,
-				1AE2ABA00A1CE90500B42B25 /* JSHTMLParamElement.cpp */,
-				1AE2ABA10A1CE90500B42B25 /* JSHTMLParamElement.h */,
-				1AE2ABA20A1CE90500B42B25 /* JSHTMLPreElement.cpp */,
-				1AE2ABA30A1CE90500B42B25 /* JSHTMLPreElement.h */,
-				1AE2AEC30A1D297B00B42B25 /* JSHTMLQuoteElement.cpp */,
-				1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */,
-				1AE2ABA40A1CE90500B42B25 /* JSHTMLScriptElement.cpp */,
-				1AE2ABA50A1CE90500B42B25 /* JSHTMLScriptElement.h */,
-				A80E7B050A19D606007FB8C5 /* JSHTMLStyleElement.cpp */,
-				A80E7B040A19D606007FB8C5 /* JSHTMLStyleElement.h */,
-				A80E7E940A1A83E3007FB8C5 /* JSHTMLTextAreaElement.cpp */,
-				A80E7E930A1A83E3007FB8C5 /* JSHTMLTextAreaElement.h */,
-				A80E7B090A19D606007FB8C5 /* JSHTMLTitleElement.cpp */,
-				A80E7B020A19D606007FB8C5 /* JSHTMLTitleElement.h */,
-				1A85B20E0A1B258700D8C87C /* JSHTMLUListElement.cpp */,
-				1A85B20F0A1B258700D8C87C /* JSHTMLUListElement.h */,
-				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
-				A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */,
-				A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */,
-				A86629CB09DA2B47009633A5 /* JSMouseEvent.h */,
-				65DF31E709D1CC60000BE325 /* JSMutationEvent.cpp */,
-				65DF31E809D1CC60000BE325 /* JSMutationEvent.h */,
-				14DC0D3509FED073007B0235 /* JSNode.cpp */,
-				14DC0D3609FED073007B0235 /* JSNode.h */,
-				14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */,
-				14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */,
-				65DF31E909D1CC60000BE325 /* JSNotation.cpp */,
-				65DF31EA09D1CC60000BE325 /* JSNotation.h */,
-				1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */,
-				1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */,
-				65DF31EB09D1CC60000BE325 /* JSProcessingInstruction.cpp */,
-				65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */,
-				65DF31ED09D1CC60000BE325 /* JSRange.cpp */,
-				65DF31EE09D1CC60000BE325 /* JSRange.h */,
-				A833C0F20A2C513300D57664 /* JSSVGAngle.cpp */,
-				A833C0F00A2C513300D57664 /* JSSVGAngle.h */,
-				A833C0F10A2C513300D57664 /* JSSVGAnimatedLength.cpp */,
-				A833C0EE0A2C513300D57664 /* JSSVGAnimatedLength.h */,
-				A833BF190A2C3A9500D57664 /* JSSVGColor.cpp */,
-				A833BF180A2C3A9500D57664 /* JSSVGColor.h */,
-				A833B4B90A27311D00D57664 /* JSSVGDocument.cpp */,
-				A833B4B80A27311D00D57664 /* JSSVGDocument.h */,
-				A833C0F30A2C513300D57664 /* JSSVGElement.cpp */,
-				A833C0ED0A2C513300D57664 /* JSSVGElement.h */,
-				A833C0F40A2C513300D57664 /* JSSVGLength.cpp */,
-				A833C0F50A2C513300D57664 /* JSSVGLength.h */,
-				A833BF170A2C3A9500D57664 /* JSSVGMatrix.cpp */,
-				A833BF160A2C3A9500D57664 /* JSSVGMatrix.h */,
-				A833C08E0A2C4F3F00D57664 /* JSSVGSVGElement.cpp */,
-				A833C08F0A2C4F3F00D57664 /* JSSVGSVGElement.h */,
-				A833C0EF0A2C513300D57664 /* JSSVGTransform.cpp */,
-				A833C0F60A2C513300D57664 /* JSSVGTransform.h */,
-				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
-				65DF31F009D1CC60000BE325 /* JSText.h */,
-				A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */,
-				A86629C909DA2B47009633A5 /* JSUIEvent.h */,
-				65DF31F109D1CC60000BE325 /* JSWheelEvent.cpp */,
-				65DF31F209D1CC60000BE325 /* JSWheelEvent.h */,
-				656581D709D1508D000E61D7 /* JSXMLHttpRequest.lut.h */,
-				656581D809D1508D000E61D7 /* JSXMLSerializer.lut.h */,
-				1A762C6B0A074F2600989F5B /* JSXPathEvaluator.cpp */,
-				1A762C6C0A074F2600989F5B /* JSXPathEvaluator.h */,
-				1A762C6D0A074F2600989F5B /* JSXPathExpression.cpp */,
-				1A762C6E0A074F2600989F5B /* JSXPathExpression.h */,
-				1A762C6F0A074F2600989F5B /* JSXPathNSResolver.cpp */,
-				1A762C700A074F2600989F5B /* JSXPathNSResolver.h */,
-				1A762C710A074F2600989F5B /* JSXPathResult.cpp */,
-				1A762C720A074F2600989F5B /* JSXPathResult.h */,
-				656581D909D1508D000E61D7 /* JSXSLTProcessor.lut.h */,
 				656581DA09D1508D000E61D7 /* kjs_css.lut.h */,
 				656581DB09D1508D000E61D7 /* kjs_dom.lut.h */,
 				656581DC09D1508D000E61D7 /* kjs_events.lut.h */,
@@ -4470,14 +4299,6 @@
 			path = js;
 			sourceTree = "<group>";
 		};
-		A8C0F6DC089701F100BA5114 /* WebCore+SVG */ = {
-			isa = PBXGroup;
-			children = (
-				A884283D09308C1C00B6D461 /* DOMList.h */,
-			);
-			path = "WebCore+SVG";
-			sourceTree = "<group>";
-		};
 		A8C0F6E9089701F100BA5114 /* ksvg2 */ = {
 			isa = PBXGroup;
 			children = (
@@ -4549,6 +4370,7 @@
 		A8C0F7FC089701F300BA5114 /* svg */ = {
 			isa = PBXGroup;
 			children = (
+				A884283D09308C1C00B6D461 /* DOMList.h */,
 				A8C0F7FF089701F300BA5114 /* SVGAElement.cpp */,
 				A8C0F800089701F300BA5114 /* SVGAElement.h */,
 				A8C0F801089701F300BA5114 /* SVGAngle.cpp */,
@@ -4783,9 +4605,9 @@
 				A890DF1B0930974800513F88 /* SVGStyledTransformableElement.h */,
 				A8C0F8C8089701F400BA5114 /* SVGStyleElement.cpp */,
 				A8C0F8C9089701F400BA5114 /* SVGStyleElement.h */,
-				A833C7440A2CEC8F00D57664 /* SVGSVGElement.idl */,
 				A8C0F8CA089701F400BA5114 /* SVGSVGElement.cpp */,
 				A8C0F8CB089701F400BA5114 /* SVGSVGElement.h */,
+				A833C7440A2CEC8F00D57664 /* SVGSVGElement.idl */,
 				A8C0F8CC089701F400BA5114 /* SVGSwitchElement.cpp */,
 				A8C0F8CD089701F400BA5114 /* SVGSwitchElement.h */,
 				A8C0F8CE089701F400BA5114 /* SVGSymbolElement.cpp */,
@@ -4966,6 +4788,7 @@
 		BC1A3793097C6FB10019F3D8 /* js */ = {
 			isa = PBXGroup;
 			children = (
+				D95E5C970A7DD593004E3105 /* Derived Sources */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
 				93B70D3F09EB0C7C009D8468 /* JSDOMParser.cpp */,
@@ -5049,6 +4872,7 @@
 		BCB16BFB0979C38700467741 /* loader */ = {
 			isa = PBXGroup;
 			children = (
+				5126E6B60A2E3AEF005C29FA /* icon */,
 				93A1EAA20A5634D8006960A0 /* mac */,
 				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
 				BCB16BFF0979C3BD00467741 /* Cache.h */,
@@ -5221,6 +5045,200 @@
 				93B780C909B3B7FE00690162 /* WidgetClient.h */,
 			);
 			path = platform;
+			sourceTree = "<group>";
+		};
+		D95E5C970A7DD593004E3105 /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
+				65DF31D909D1C123000BE325 /* JSAttr.h */,
+				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
+				65DF323409D1DE65000BE325 /* JSCanvasGradient.h */,
+				65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */,
+				65DF323609D1DE65000BE325 /* JSCanvasPattern.h */,
+				65DF323709D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp */,
+				65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */,
+				65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */,
+				65DF31E009D1CC60000BE325 /* JSCharacterData.h */,
+				930705D709E0C9B700B17FE4 /* JSCounter.cpp */,
+				930705D909E0C9BF00B17FE4 /* JSCounter.h */,
+				930705E809E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp */,
+				930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */,
+				14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */,
+				14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */,
+				A8D05FA50A23B301005E7203 /* JSCSSRuleList.cpp */,
+				A8D05FA60A23B301005E7203 /* JSCSSRuleList.h */,
+				142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */,
+				142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */,
+				14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */,
+				14CF78A509F58CD800EB3665 /* JSCSSValue.h */,
+				A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */,
+				A8D05FAA0A23B30F005E7203 /* JSCSSValueList.h */,
+				659DDC8009E198BA001BF3C6 /* JSDocument.cpp */,
+				659DDC8109E198BA001BF3C6 /* JSDocument.h */,
+				1A494EDC0A123F4C00FDAFC1 /* JSDocumentFragment.cpp */,
+				1A494EDD0A123F4C00FDAFC1 /* JSDocumentFragment.h */,
+				65DF31E109D1CC60000BE325 /* JSDocumentType.cpp */,
+				65DF31E209D1CC60000BE325 /* JSDocumentType.h */,
+				65DF31E309D1CC60000BE325 /* JSDOMImplementation.cpp */,
+				65DF31E409D1CC60000BE325 /* JSDOMImplementation.h */,
+				656581D609D1508D000E61D7 /* JSDOMParser.lut.h */,
+				1403BA0B09EB18C700797C7F /* JSDOMWindow.cpp */,
+				1403BA0E09EB18F800797C7F /* JSDOMWindow.h */,
+				65DF31E509D1CC60000BE325 /* JSElement.cpp */,
+				65DF31E609D1CC60000BE325 /* JSElement.h */,
+				65DF322D09D1DDBC000BE325 /* JSEntity.cpp */,
+				65DF322E09D1DDBC000BE325 /* JSEntity.h */,
+				14E8378309F85D1C00B85AE4 /* JSEvent.cpp */,
+				14E8378D09F85D4F00B85AE4 /* JSEvent.h */,
+				1A4A2DEB0A1B852A00C807F8 /* JSHTMLAnchorElement.cpp */,
+				1A4A2DEC0A1B852A00C807F8 /* JSHTMLAnchorElement.h */,
+				1A4A2DED0A1B852A00C807F8 /* JSHTMLAppletElement.cpp */,
+				1A4A2DEE0A1B852A00C807F8 /* JSHTMLAppletElement.h */,
+				1AE2AA0A0A1CDAB300B42B25 /* JSHTMLAreaElement.cpp */,
+				1AE2AA0B0A1CDAB300B42B25 /* JSHTMLAreaElement.h */,
+				A80E7B080A19D606007FB8C5 /* JSHTMLBaseElement.cpp */,
+				A80E7B070A19D606007FB8C5 /* JSHTMLBaseElement.h */,
+				1AE2AA0C0A1CDAB300B42B25 /* JSHTMLBaseFontElement.cpp */,
+				1AE2AA0D0A1CDAB300B42B25 /* JSHTMLBaseFontElement.h */,
+				1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */,
+				1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */,
+				1AE2AA0E0A1CDAB300B42B25 /* JSHTMLBodyElement.cpp */,
+				1AE2AA0F0A1CDAB300B42B25 /* JSHTMLBodyElement.h */,
+				1AE2AA100A1CDAB300B42B25 /* JSHTMLBRElement.cpp */,
+				1AE2AA110A1CDAB300B42B25 /* JSHTMLBRElement.h */,
+				A80E7E960A1A83E3007FB8C5 /* JSHTMLButtonElement.cpp */,
+				A80E7E950A1A83E3007FB8C5 /* JSHTMLButtonElement.h */,
+				938E665F09F09B81008A48EC /* JSHTMLCanvasElement.cpp */,
+				938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */,
+				1A85B1E00A1B240500D8C87C /* JSHTMLDirectoryElement.cpp */,
+				1A85B1E10A1B240500D8C87C /* JSHTMLDirectoryElement.h */,
+				1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */,
+				1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */,
+				1A85B1E20A1B240500D8C87C /* JSHTMLDListElement.cpp */,
+				1A85B1E30A1B240500D8C87C /* JSHTMLDListElement.h */,
+				1A494E320A12358A00FDAFC1 /* JSHTMLDocument.cpp */,
+				1A494E330A12358B00FDAFC1 /* JSHTMLDocument.h */,
+				1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */,
+				1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */,
+				1AE2AA120A1CDAB300B42B25 /* JSHTMLFieldSetElement.cpp */,
+				1AE2AA130A1CDAB300B42B25 /* JSHTMLFieldSetElement.h */,
+				1AE2AA140A1CDAB300B42B25 /* JSHTMLFontElement.cpp */,
+				1AE2AA150A1CDAB300B42B25 /* JSHTMLFontElement.h */,
+				A8D064F90A23C0CC005E7203 /* JSHTMLFormElement.cpp */,
+				A8D064FA0A23C0CC005E7203 /* JSHTMLFormElement.h */,
+				A80E7B0A0A19D606007FB8C5 /* JSHTMLHeadElement.cpp */,
+				A80E7B0B0A19D606007FB8C5 /* JSHTMLHeadElement.h */,
+				1AE2AA1A0A1CDAB400B42B25 /* JSHTMLHeadingElement.cpp */,
+				1AE2AA1B0A1CDAB400B42B25 /* JSHTMLHeadingElement.h */,
+				1AE2AA1C0A1CDAB400B42B25 /* JSHTMLHRElement.cpp */,
+				1AE2AA1D0A1CDAB400B42B25 /* JSHTMLHRElement.h */,
+				1A85B18D0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp */,
+				1A85B18E0A1B18A200D8C87C /* JSHTMLHtmlElement.h */,
+				1AE2AA930A1CDD2D00B42B25 /* JSHTMLImageElement.cpp */,
+				1AE2AA940A1CDD2D00B42B25 /* JSHTMLImageElement.h */,
+				A80E7E8E0A1A83E3007FB8C5 /* JSHTMLInputElement.cpp */,
+				A80E7E8D0A1A83E3007FB8C5 /* JSHTMLInputElement.h */,
+				1AE2AA950A1CDD2D00B42B25 /* JSHTMLIsIndexElement.cpp */,
+				1AE2AA960A1CDD2D00B42B25 /* JSHTMLIsIndexElement.h */,
+				1AE2AB170A1CE63B00B42B25 /* JSHTMLLabelElement.cpp */,
+				1AE2AB180A1CE63B00B42B25 /* JSHTMLLabelElement.h */,
+				1AE2AB190A1CE63B00B42B25 /* JSHTMLLegendElement.cpp */,
+				1AE2AB1A0A1CE63B00B42B25 /* JSHTMLLegendElement.h */,
+				1AE2AB1B0A1CE63B00B42B25 /* JSHTMLLIElement.cpp */,
+				1AE2AB1C0A1CE63B00B42B25 /* JSHTMLLIElement.h */,
+				A80E7B060A19D606007FB8C5 /* JSHTMLLinkElement.cpp */,
+				A80E7B030A19D606007FB8C5 /* JSHTMLLinkElement.h */,
+				1AE2AB1D0A1CE63B00B42B25 /* JSHTMLMapElement.cpp */,
+				1AE2AB1E0A1CE63B00B42B25 /* JSHTMLMapElement.h */,
+				1AE2AE590A1D26F200B42B25 /* JSHTMLMenuElement.cpp */,
+				1AE2AE5A0A1D26F200B42B25 /* JSHTMLMenuElement.h */,
+				A80E7A150A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp */,
+				A80E7A160A19C3D6007FB8C5 /* JSHTMLMetaElement.h */,
+				1AE2AB1F0A1CE63B00B42B25 /* JSHTMLModElement.cpp */,
+				1AE2AB200A1CE63B00B42B25 /* JSHTMLModElement.h */,
+				1A85B1E40A1B240500D8C87C /* JSHTMLOListElement.cpp */,
+				1A85B1E50A1B240500D8C87C /* JSHTMLOListElement.h */,
+				A80E7E920A1A83E3007FB8C5 /* JSHTMLOptGroupElement.cpp */,
+				A80E7E910A1A83E3007FB8C5 /* JSHTMLOptGroupElement.h */,
+				A80E7E900A1A83E3007FB8C5 /* JSHTMLOptionElement.cpp */,
+				A80E7E8F0A1A83E3007FB8C5 /* JSHTMLOptionElement.h */,
+				448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */,
+				448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */,
+				1AE2AB9E0A1CE90500B42B25 /* JSHTMLParagraphElement.cpp */,
+				1AE2AB9F0A1CE90500B42B25 /* JSHTMLParagraphElement.h */,
+				1AE2ABA00A1CE90500B42B25 /* JSHTMLParamElement.cpp */,
+				1AE2ABA10A1CE90500B42B25 /* JSHTMLParamElement.h */,
+				1AE2ABA20A1CE90500B42B25 /* JSHTMLPreElement.cpp */,
+				1AE2ABA30A1CE90500B42B25 /* JSHTMLPreElement.h */,
+				1AE2AEC30A1D297B00B42B25 /* JSHTMLQuoteElement.cpp */,
+				1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */,
+				1AE2ABA40A1CE90500B42B25 /* JSHTMLScriptElement.cpp */,
+				1AE2ABA50A1CE90500B42B25 /* JSHTMLScriptElement.h */,
+				A80E7B050A19D606007FB8C5 /* JSHTMLStyleElement.cpp */,
+				A80E7B040A19D606007FB8C5 /* JSHTMLStyleElement.h */,
+				A80E7E940A1A83E3007FB8C5 /* JSHTMLTextAreaElement.cpp */,
+				A80E7E930A1A83E3007FB8C5 /* JSHTMLTextAreaElement.h */,
+				A80E7B090A19D606007FB8C5 /* JSHTMLTitleElement.cpp */,
+				A80E7B020A19D606007FB8C5 /* JSHTMLTitleElement.h */,
+				1A85B20E0A1B258700D8C87C /* JSHTMLUListElement.cpp */,
+				1A85B20F0A1B258700D8C87C /* JSHTMLUListElement.h */,
+				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
+				A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */,
+				A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */,
+				A86629CB09DA2B47009633A5 /* JSMouseEvent.h */,
+				65DF31E709D1CC60000BE325 /* JSMutationEvent.cpp */,
+				65DF31E809D1CC60000BE325 /* JSMutationEvent.h */,
+				14DC0D3509FED073007B0235 /* JSNode.cpp */,
+				14DC0D3609FED073007B0235 /* JSNode.h */,
+				14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */,
+				14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */,
+				65DF31E909D1CC60000BE325 /* JSNotation.cpp */,
+				65DF31EA09D1CC60000BE325 /* JSNotation.h */,
+				1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */,
+				1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */,
+				65DF31EB09D1CC60000BE325 /* JSProcessingInstruction.cpp */,
+				65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */,
+				65DF31ED09D1CC60000BE325 /* JSRange.cpp */,
+				65DF31EE09D1CC60000BE325 /* JSRange.h */,
+				A833C0F20A2C513300D57664 /* JSSVGAngle.cpp */,
+				A833C0F00A2C513300D57664 /* JSSVGAngle.h */,
+				A833C0F10A2C513300D57664 /* JSSVGAnimatedLength.cpp */,
+				A833C0EE0A2C513300D57664 /* JSSVGAnimatedLength.h */,
+				A833BF190A2C3A9500D57664 /* JSSVGColor.cpp */,
+				A833BF180A2C3A9500D57664 /* JSSVGColor.h */,
+				A833B4B90A27311D00D57664 /* JSSVGDocument.cpp */,
+				A833B4B80A27311D00D57664 /* JSSVGDocument.h */,
+				A833C0F30A2C513300D57664 /* JSSVGElement.cpp */,
+				A833C0ED0A2C513300D57664 /* JSSVGElement.h */,
+				A833C0F40A2C513300D57664 /* JSSVGLength.cpp */,
+				A833C0F50A2C513300D57664 /* JSSVGLength.h */,
+				A833BF170A2C3A9500D57664 /* JSSVGMatrix.cpp */,
+				A833BF160A2C3A9500D57664 /* JSSVGMatrix.h */,
+				A833C08E0A2C4F3F00D57664 /* JSSVGSVGElement.cpp */,
+				A833C08F0A2C4F3F00D57664 /* JSSVGSVGElement.h */,
+				A833C0EF0A2C513300D57664 /* JSSVGTransform.cpp */,
+				A833C0F60A2C513300D57664 /* JSSVGTransform.h */,
+				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
+				65DF31F009D1CC60000BE325 /* JSText.h */,
+				A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */,
+				A86629C909DA2B47009633A5 /* JSUIEvent.h */,
+				65DF31F109D1CC60000BE325 /* JSWheelEvent.cpp */,
+				65DF31F209D1CC60000BE325 /* JSWheelEvent.h */,
+				656581D709D1508D000E61D7 /* JSXMLHttpRequest.lut.h */,
+				656581D809D1508D000E61D7 /* JSXMLSerializer.lut.h */,
+				1A762C6B0A074F2600989F5B /* JSXPathEvaluator.cpp */,
+				1A762C6C0A074F2600989F5B /* JSXPathEvaluator.h */,
+				1A762C6D0A074F2600989F5B /* JSXPathExpression.cpp */,
+				1A762C6E0A074F2600989F5B /* JSXPathExpression.h */,
+				1A762C6F0A074F2600989F5B /* JSXPathNSResolver.cpp */,
+				1A762C700A074F2600989F5B /* JSXPathNSResolver.h */,
+				1A762C710A074F2600989F5B /* JSXPathResult.cpp */,
+				1A762C720A074F2600989F5B /* JSXPathResult.h */,
+				656581D909D1508D000E61D7 /* JSXSLTProcessor.lut.h */,
+			);
+			name = "Derived Sources";
+			path = ..;
 			sourceTree = "<group>";
 		};
 		E1F0424309839389006694EA /* xml */ = {
@@ -6443,6 +6461,12 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				D95E5C690A7DD4F7004E3105 /* Development */,
+				D95E5C6A0A7DD4F7004E3105 /* Deployment */,
+			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

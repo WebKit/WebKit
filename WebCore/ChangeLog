@@ -1,3 +1,21 @@
+2006-07-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        Moved files around to make WebCore's structure clearer
+        and easier to explain.
+
+        DerivedSources/JS* -> bindings/js/DerivedSources/ (so JS* files
+        show up when you search inside bindings/js/, but are marked, at
+        the same time, as files that you should not edit manually)
+
+        WebCore+SVG/DOMList.h -> ksvg2/svg/ (only files inside ksvg2/svg/
+        use DOMList.h)
+
+        icon -> loader/icon
+
+        I tested that everything still builds.
+
 2006-07-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
