@@ -1,3 +1,11 @@
+2006-07-31  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by John.
+
+        * Plugins/WebPluginDatabase.m:
+        (-[WebPluginDatabase refresh]):
+        Create a mutable set instead of a mutable array.
+
 2006-07-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

@@ -200,7 +200,7 @@ static NSArray *additionalWebPlugInPaths;
 - (void)refresh
 {
     NSEnumerator *directoryEnumerator = [[self _plugInPaths] objectEnumerator];
-    NSMutableSet *uniqueFilenames = [[NSMutableArray alloc] init];
+    NSMutableSet *uniqueFilenames = [[NSMutableSet alloc] init];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSMutableSet *newPlugins = [[NSMutableSet alloc] init];
     NSString *pluginDirectory;
