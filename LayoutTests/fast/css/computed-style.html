@@ -1,0 +1,63 @@
+<script>
+function test() {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    var style = document.defaultView.getComputedStyle(document.body);
+    var text = "";
+    for (var i = 0; i != style.length; ++i) {
+        var name = style[i];
+        var value = style.getPropertyValue(name);
+        text += name + ": " + value + ";\n";
+    }
+    document.getElementById("exposed").textContent = text;
+    var others = [
+        "background-position",
+        "border-spacing",
+        "overflow",
+        "-webkit-match-nearest-mail-blockquote-color",
+        "-webkit-text-size-adjust",
+    ];
+    var unimplemented = [
+        "background",
+        "border",
+        "border-bottom",
+        "border-color",
+        "border-left",
+        "border-right",
+        "border-style",
+        "border-top",
+        "border-width",
+        "clip",
+        "content",
+        "counter-increment",
+        "counter-reset",
+        "font",
+        "font-stretch",
+        "list-style",
+        "margin",
+        "-webkit-marquee",
+        "-webkit-marquee-speed",
+        "outline",
+        "outline-color",
+        "outline-offset",
+        "outline-width",
+        "padding",
+        "page",
+        "quotes",
+        "size",
+    ];
+    text = "";
+    for (var i = 0; i != others.length; ++i) {
+        var name = others[i];
+        var value = style.getPropertyValue(name);
+        text += name + ": " + value + ";\n";
+    }
+    document.getElementById("hidden").textContent = text;
+}
+</script>
+<body onload="test()">
+<p>Attributes that are exposed in the CSS computed style object:</p>
+<p id="exposed" style="white-space: pre"></p>
+<p>Other attributes that the computed style class supports:</p>
+<p id="hidden" style="white-space: pre"></p>
+</body>

@@ -1,3 +1,12 @@
+2006-07-30  Darin Adler  <darin@apple.com>
+
+        - test that displays all computed style -- demonstrates bug fixes I just
+          made to the computed style class and also acts as a regression test for
+          the existence of all of them and the basic format for a default object
+
+        * fast/css/computed-style-expected.txt: Added.
+        * fast/css/computed-style.html: Added.
+
 2006-07-29  Rob Buis  <buis@kde.org>
 
         Reviewed by Geoff.

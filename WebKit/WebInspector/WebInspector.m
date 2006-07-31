@@ -29,17 +29,18 @@
 #import "WebInspector.h"
 #import "WebInspectorInternal.h"
 
-#import "WebInspectorPanel.h"
-#import "WebInspectorOutlineView.h"
-#import "WebNodeHighlight.h"
-#import "WebView.h"
-#import "WebViewPrivate.h"
-#import "WebHTMLView.h"
 #import "WebFrame.h"
 #import "WebFrameInternal.h"
-#import "WebLocalizableStrings.h"
+#import "WebHTMLView.h"
+#import "WebInspectorOutlineView.h"
+#import "WebInspectorPanel.h"
 #import "WebKitNSStringExtras.h"
+#import "WebLocalizableStrings.h"
+#import "WebNodeHighlight.h"
+#import "WebPreferences.h"
 #import "WebTypesInternal.h"
+#import "WebView.h"
+#import "WebViewPrivate.h"
 
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMHTML.h>
@@ -58,11 +59,13 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 #pragma mark -
 
 @implementation WebInspector
+
 + (WebInspector *)sharedWebInspector
 {
     static WebInspector *_sharedWebInspector = nil;
     if (!_sharedWebInspector) {
-        _sharedWebInspector = [[self alloc] initWithWebFrame:nil];
+        _sharedWebInspector = [[[self alloc] init] autorelease];
+        CFRetain(_sharedWebInspector);
         _sharedWebInspector->_private->isSharedInspector = YES;
     }
     return _sharedWebInspector;
@@ -93,7 +96,6 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)dealloc
 {
-    [self close];
     [_private release];
     [super dealloc];
 }
@@ -104,7 +106,8 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 {
     NSWindow *window = [super window];
     if (!window) {
-        NSPanel *window = [[WebInspectorPanel alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 350.0, 550.0) styleMask:(NSBorderlessWindowMask | NSUtilityWindowMask) backing:NSBackingStoreBuffered defer:YES];
+        NSPanel *window = [[WebInspectorPanel alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 350.0, 550.0)\
+            styleMask:(NSBorderlessWindowMask | NSUtilityWindowMask) backing:NSBackingStoreBuffered defer:YES];
         [window setBackgroundColor:[NSColor clearColor]];
         [window setOpaque:NO];
         [window setHasShadow:YES];
@@ -119,13 +122,22 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         [window setDelegate:self];
         [window setMinSize:NSMakeSize(280.0, 450.0)];
 
+        // Keep preferences separate from the rest of the client.
+        // One reason this is good is that it keeps the inspector out of history via "private browsing".
+        WebPreferences *preferences = [[WebPreferences alloc] init];
+        [preferences setPrivateBrowsingEnabled:YES];
+
         _private->webView = [[WebView alloc] initWithFrame:[[window contentView] frame] frameName:nil groupName:nil];
+        [_private->webView setPreferences:preferences];
         [_private->webView setFrameLoadDelegate:self];
         [_private->webView setUIDelegate:self];
         [_private->webView setDrawsBackground:NO];
+        [_private->webView setProhibitsMainFrameScrolling:YES];
         [_private->webView _setDashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows to:YES];
         [_private->webView _setDashboardBehavior:WebDashboardBehaviorAlwaysAcceptsFirstMouse to:YES];
         [[_private->webView windowScriptObject] setValue:self forKey:@"Inspector"];
+
+        [preferences release];
 
         [window setContentView:_private->webView];
 
@@ -247,7 +259,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
             // only scroll if the bounds isn't in the visible rect and dosen't contain the visible rect
             if (needsScroll) {
-                // scroll to the parent element if we arn't focued on an element
+                // scroll to the parent element if we aren't focused on an element
                 DOMElement *element = (DOMElement *)_private->focusedNode;
                 if (![element isKindOfClass:[DOMElement class]])
                     element = (DOMElement *)[element parentNode];

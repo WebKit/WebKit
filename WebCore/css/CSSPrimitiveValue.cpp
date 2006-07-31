@@ -32,20 +32,72 @@
 
 namespace WebCore {
 
-// Quotes the string if it needs quoting.
-// We use single quotes for now beause markup.cpp uses double quotes.
-static String quoteStringIfNeeded(const String &string)
+// "ident" from the CSS tokenizer, minus backslash-escape sequences
+static bool isCSSTokenizerIdentifier(const String& string)
 {
-    // For now, just do this for strings that start with "#" to fix Korean font names that start with "#".
-    // Post-Tiger, we should isLegalIdentifier instead after working out all the ancillary issues.
-    if (string[0] != '#')
-        return string;
+    const UChar* p = string.characters();
+    const UChar* end = p + string.length();
 
-    // FIXME: Also need to transform control characters into \ sequences.
+    // -?
+    if (p != end && p[0] == '-')
+        ++p;
+
+    // {nmstart}
+    if (p == end || !(p[0] == '_' || isalpha(p[0]) || p[0] >= 128))
+        return false;
+    ++p;
+
+    // {nmchar}*
+    for (; p != end; ++p)
+        if (!(p[0] == '_' || p[0] == '-' || isalnum(p[0]) || p[0] >= 128))
+            return false;
+
+    return true;
+}
+
+// "url" from the CSS tokenizer, minus backslash-escape sequences
+static bool isCSSTokenizerURL(const String& string)
+{
+    const UChar* p = string.characters();
+    const UChar* end = p + string.length();
+
+    for (; p != end; ++p)
+        switch (p[0]) {
+            case '!':
+            case '#':
+            case '$':
+            case '%':
+            case '&':
+            case '*':
+            case '-':
+            case '~':
+                break;
+            default:
+                if (p[0] < 128)
+                    return false;
+        }
+
+    return true;
+}
+
+// We use single quotes for now because markup.cpp uses double quotes.
+static String quoteString(const String& string)
+{
+    // FIXME: Also need to escape characters like '\n'.
     String s = string;
     s.replace('\\', "\\\\");
     s.replace('\'', "\\'");
     return "'" + s + "'";
+}
+
+static String quoteStringIfNeeded(const String& string)
+{
+    return isCSSTokenizerIdentifier(string) ? string : quoteString(string);
+}
+
+static String quoteURLIfNeeded(const String& string)
+{
+    return isCSSTokenizerURL(string) ? string : quoteString(string);
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue()
@@ -458,7 +510,7 @@ String CSSPrimitiveValue::cssText() const
             text = quoteStringIfNeeded(m_value.string);
             break;
         case CSS_URI:
-            text = "url(" + String(m_value.string) + ")";
+            text = "url(" + quoteURLIfNeeded(m_value.string) + ")";
             break;
         case CSS_IDENT:
             text = getValueName(m_value.ident);

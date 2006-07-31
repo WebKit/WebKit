@@ -1,3 +1,38 @@
+2006-07-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - some improvements for the benefit of the style pane of the inspector
+
+        * css/CSSComputedStyleDeclaration.cpp: Removed background-position
+        and border-spacing from the list of properties that show up in
+        computed style, because of background-position-x, background-position-y,
+        -webkit-border-horizontal-spacing and -webkit-border-vertical-spacing.
+        (WebCore::valueForLength): Added handling for undefinedLength, intrinsic,
+        and min-intrinsic.
+        (WebCore::primitiveValueFromLength): Removed code that would add a
+        space to the string for no good reason.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Added a
+        special case for a line clamp of -1, which should come back as "none"
+        rather than an actual "-1".
+        (WebCore::CSSComputedStyleDeclaration::length): Return 0 if the
+        declaration has no corresponding node or no renderer.
+        (WebCore::CSSComputedStyleDeclaration::item): Check against length()
+        so that the two stay consistent rather than using a constant.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isCSSTokenizerIdentifier): Added.
+        (WebCore::isCSSTokenizerURL): Added.
+        (WebCore::quoteString): Added.
+        (WebCore::quoteStringIfNeeded): Changed to quote strings in many more
+        cases -- any cases where they would not parse in the CSS parser otherwise.
+        The main case this affects is font names with spaces in them.
+        (WebCore::quoteURLIfNeeded): Added.
+        (WebCore::CSSPrimitiveValue::cssText): Use quoteURLIfNeeded in the case
+        where we're making the text form of a URI.
+
+        * css/tokenizer.flex: Whitespace tweaks to line things up better.
+
 2006-07-30  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by gramps!

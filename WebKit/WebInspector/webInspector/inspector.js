@@ -28,56 +28,148 @@
 
 var Inspector = null;
 
+// Property values to omit in the computed style list.
+// If a property has this value, it will be omitted.
+// Note we do not provide a value for "display", "height", or "width", for example,
+// since we always want to display those.
+var typicalStylePropertyValue = {
+    "-webkit-background-clip": "border",
+    "-webkit-background-composite": "source-over",
+    "-webkit-background-origin": "padding",
+    "-webkit-background-size": "auto auto",
+    "-webkit-border-horizontal-spacing": "0px",
+    "-webkit-border-vertical-spacing": "0px",
+    "-webkit-box-align": "stretch",
+    "-webkit-box-direction": "normal",
+    "-webkit-box-flex": "0",
+    "-webkit-box-flex-group": "1",
+    "-webkit-box-lines": "single",
+    "-webkit-box-ordinal-group": "1",
+    "-webkit-box-orient": "horizontal",
+    "-webkit-box-pack": "start",
+    "-webkit-highlight": "none",
+    "-webkit-line-break": "normal",
+    "-webkit-line-clamp": "none",
+    "-webkit-marquee-direction": "auto",
+    "-webkit-marquee-increment": "6px",
+    "-webkit-marquee-repetition": "infinite",
+    "-webkit-marquee-style": "scroll",
+    "-webkit-nbsp-mode": "normal",
+    "-webkit-text-decorations-in-effect": "none",
+    "-webkit-user-modify": "read-only",
+    "background-attachment": "scroll",
+    "background-color": "rgba(0, 0, 0, 0)",
+    "background-image": "none",
+    "background-position-x": "auto",
+    "background-position-y": "auto",
+    "background-repeat": "repeat",
+    "border-bottom-color": "rgba(0, 0, 0, 0)",
+    "border-bottom-style": "none",
+    "border-bottom-width": "0px",
+    "border-collapse": "separate",
+    "border-left-color": "rgba(0, 0, 0, 0)",
+    "border-left-style": "none",
+    "border-left-width": "0px",
+    "border-right-color": "rgba(0, 0, 0, 0)",
+    "border-right-style": "none",
+    "border-right-width": "0px",
+    "border-top-color": "rgba(0, 0, 0, 0)",
+    "border-top-style": "none",
+    "border-top-width": "0px",
+    "bottom": "auto",
+    "caption-side": "top",
+    "clear": "none",
+    "color": "rgb(0, 0, 0)",
+    "cursor": "auto",
+    "direction": "ltr",
+    "empty-cells": "show",
+    "float": "none",
+    "font-style": "normal",
+    "font-variant": "normal",
+    "font-weight": "normal",
+    "left": "auto",
+    "letter-spacing": "normal",
+    "line-height": "normal",
+    "list-style-image": "none",
+    "list-style-position": "outside",
+    "list-style-type": "disc",
+    "margin-bottom": "0px",
+    "margin-left": "0px",
+    "margin-right": "0px",
+    "margin-top": "0px",
+    "max-height": "none",
+    "max-width": "none",
+    "min-height": "0px",
+    "min-width": "0px",
+    "opacity": "1",
+    "orphans": "2",
+    "outline-style": "none",
+    "overflow": "visible",
+    "overflow-x": "visible",
+    "overflow-y": "visible",
+    "padding-bottom": "0px",
+    "padding-left": "0px",
+    "padding-right": "0px",
+    "padding-top": "0px",
+    "page-break-after": "auto",
+    "page-break-before": "auto",
+    "page-break-inside": "auto",
+    "position": "static",
+    "right": "auto",
+    "table-layout": "auto",
+    "text-align": "auto",
+    "text-decoration": "none",
+    "text-indent": "0px",
+    "text-shadow": "none",
+    "text-transform": "none",
+    "top": "auto",
+    "unicode-bidi": "normal",
+    "vertical-align": "baseline",
+    "visibility": "visible",
+    "white-space": "normal",
+    "widows": "2",
+    "word-spacing": "0px",
+    "word-wrap": "normal",
+    "z-index": "normal",
+};
+
+// "Nicknames" for some common values that are easier to read.
+var valueNickname = {
+    "rgb(0, 0, 0)": "black",
+    "rgb(255, 255, 255)": "white",
+    "rgba(0, 0, 0, 0)": "transparent",
+};
+
+function setUpScrollbar(id)
+{
+    var bar = new AppleVerticalScrollbar(document.getElementById(id));
+
+    bar.setTrackStart("Images/scrollTrackTop.png", 18);
+    bar.setTrackMiddle("Images/scrollTrackMiddle.png");
+    bar.setTrackEnd("Images/scrollTrackBottom.png", 18);
+    bar.setThumbStart("Images/scrollThumbTop.png", 9);
+    bar.setThumbMiddle("Images/scrollThumbMiddle.png");
+    bar.setThumbEnd("Images/scrollThumbBottom.png", 9);
+
+    return bar;
+}
+
 function loaded()
 {
-    treeScrollbar = new AppleVerticalScrollbar(document.getElementById("treeScrollbar"));
+    treeScrollbar = setUpScrollbar("treeScrollbar");
 
-    treeScrollbar.setTrackStart("Images/scrollTrackTop.png", 18);
-    treeScrollbar.setTrackMiddle("Images/scrollTrackMiddle.png");
-    treeScrollbar.setTrackEnd("Images/scrollTrackBottom.png", 18);
-    treeScrollbar.setThumbStart("Images/scrollThumbTop.png", 9);
-    treeScrollbar.setThumbMiddle("Images/scrollThumbMiddle.png");
-    treeScrollbar.setThumbEnd("Images/scrollThumbBottom.png", 9);
-
-    nodeContentsScrollbar = new AppleVerticalScrollbar(document.getElementById("nodeContentsScrollbar"));
-    nodeContentsScrollArea = new AppleScrollArea(document.getElementById("nodeContentsScrollview"), nodeContentsScrollbar);
-
-    nodeContentsScrollbar.setTrackStart("Images/scrollTrackTop.png", 18);
-    nodeContentsScrollbar.setTrackMiddle("Images/scrollTrackMiddle.png");
-    nodeContentsScrollbar.setTrackEnd("Images/scrollTrackBottom.png", 18);
-    nodeContentsScrollbar.setThumbStart("Images/scrollThumbTop.png", 9);
-    nodeContentsScrollbar.setThumbMiddle("Images/scrollThumbMiddle.png");
-    nodeContentsScrollbar.setThumbEnd("Images/scrollThumbBottom.png", 9);
-
-    elementAttributesScrollbar = new AppleVerticalScrollbar(document.getElementById("elementAttributesScrollbar"));
-    elementAttributesScrollArea = new AppleScrollArea(document.getElementById("elementAttributesScrollview"), elementAttributesScrollbar);
+    nodeContentsScrollArea = new AppleScrollArea(document.getElementById("nodeContentsScrollview"),
+        setUpScrollbar("nodeContentsScrollbar"));
+    elementAttributesScrollArea = new AppleScrollArea(document.getElementById("elementAttributesScrollview"),
+        setUpScrollbar("elementAttributesScrollbar"));
     
-    elementAttributesScrollbar.setTrackStart("Images/scrollTrackTop.png", 18);
-    elementAttributesScrollbar.setTrackMiddle("Images/scrollTrackMiddle.png");
-    elementAttributesScrollbar.setTrackEnd("Images/scrollTrackBottom.png", 18);
-    elementAttributesScrollbar.setThumbStart("Images/scrollThumbTop.png", 9);
-    elementAttributesScrollbar.setThumbMiddle("Images/scrollThumbMiddle.png");
-    elementAttributesScrollbar.setThumbEnd("Images/scrollThumbBottom.png", 9);
-    
-    styleRulesScrollbar = new AppleVerticalScrollbar(document.getElementById("styleRulesScrollbar"));
-    styleRulesScrollArea = new AppleScrollArea(document.getElementById("styleRulesScrollview"), styleRulesScrollbar);
+    styleRulesScrollArea = new AppleScrollArea(document.getElementById("styleRulesScrollview"),
+        setUpScrollbar("styleRulesScrollbar"));
+    stylePropertiesScrollArea = new AppleScrollArea(document.getElementById("stylePropertiesScrollview"),
+        setUpScrollbar("stylePropertiesScrollbar"));
 
-    styleRulesScrollbar.setTrackStart("Images/scrollTrackTop.png", 18);
-    styleRulesScrollbar.setTrackMiddle("Images/scrollTrackMiddle.png");
-    styleRulesScrollbar.setTrackEnd("Images/scrollTrackBottom.png", 18);
-    styleRulesScrollbar.setThumbStart("Images/scrollThumbTop.png", 9);
-    styleRulesScrollbar.setThumbMiddle("Images/scrollThumbMiddle.png");
-    styleRulesScrollbar.setThumbEnd("Images/scrollThumbBottom.png", 9);
-
-    stylePropertiesScrollbar = new AppleVerticalScrollbar(document.getElementById("stylePropertiesScrollbar"));
-    stylePropertiesScrollArea = new AppleScrollArea(document.getElementById("stylePropertiesScrollview"), stylePropertiesScrollbar);
-
-    stylePropertiesScrollbar.setTrackStart("Images/scrollTrackTop.png", 18);
-    stylePropertiesScrollbar.setTrackMiddle("Images/scrollTrackMiddle.png");
-    stylePropertiesScrollbar.setTrackEnd("Images/scrollTrackBottom.png", 18);
-    stylePropertiesScrollbar.setThumbStart("Images/scrollThumbTop.png", 9);
-    stylePropertiesScrollbar.setThumbMiddle("Images/scrollThumbMiddle.png");
-    stylePropertiesScrollbar.setThumbEnd("Images/scrollThumbBottom.png", 9);
+    jsPropertiesScrollArea = new AppleScrollArea(document.getElementById("jsPropertiesScrollview"),
+        setUpScrollbar("jsPropertiesScrollbar"));
 
     treeScrollbar._getViewToContentRatio = function() {
         var contentHeight = Inspector.treeViewScrollHeight();
@@ -134,14 +226,13 @@ function loaded()
             this.horizontalScrollTo(offsetX);
     }
 
-    // Change the standard show/hide to include the parentNode.
-    // This lets out content reflow when hidden.
+    // Change the standard show/hide to include the entire scrollbar.
+    // This lets the content reflow to use the additional space when the scrollbar is hidden.
     AppleScrollbar.prototype.hide = function() {
         this._track.style.display = "none";
         this.scrollbar.style.display = "none";
         this.hidden = true;
     }
-
     AppleScrollbar.prototype.show = function() {
         this._track.style.display = "block";
         this.scrollbar.style.display = null;
@@ -156,13 +247,11 @@ function loaded()
 
 function refreshScrollbars()
 {
-    if (currentPane == "node") {
-        nodeContentsScrollArea.refresh();
-        elementAttributesScrollArea.refresh();
-    } else if (currentPane == "style") {
-        styleRulesScrollArea.refresh();
-        stylePropertiesScrollArea.refresh();
-    }
+    elementAttributesScrollArea.refresh();
+    jsPropertiesScrollArea.refresh();
+    nodeContentsScrollArea.refresh();
+    stylePropertiesScrollArea.refresh();
+    styleRulesScrollArea.refresh();
 }
 
 var searchActive = false;
@@ -188,21 +277,9 @@ function performSearch(query)
     Inspector.searchPerformed(query);
 }
 
-function resultsWithXpathQuery(query)
-{
-    var nodeList = null;
-    try {
-        var focusedNode = Inspector.focusedDOMNode();
-        nodeList = focusedNode.document.evaluate(query, focusedNode.document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    } catch(err) {
-        // ignore any exceptions. the query might be malformed, but we allow that
-    }
-    return nodeList;
-}
-
 var tabNames = ["node","metrics","style","properties"];
 var currentPane = "node";
-var paneUpdateState = new Array();
+var paneUpdateState = [];
 var noSelection = false;
 
 function toggleNoSelection(state)
@@ -262,40 +339,6 @@ function nodeTypeName(node)
     return "(unknown)";
 }
 
-function xpathForNode(node)
-{
-    var path = "";
-    while (node) {
-        if (node.nodeType == Node.DOCUMENT_NODE) {
-            path = "/" + path;
-        } else {
-            if (node.nodeName == "HTML" || node.nodeName == "BODY") {
-                path = node.nodeName.toLowerCase() + (path.length ? "/" + path : "");
-            } else {
-                var index = 1;
-                var child = (node.parentNode ? node.parentNode.firstChild : null);
-                while (child) {
-                    if (node == child)
-                        break;
-                    if (child.nodeName == node.nodeName)
-                        index++;
-                    child = child.nextSibling;
-                }
-                
-                var name = node.nodeName.toLowerCase();
-                if (node.nodeType == Node.TEXT_NODE)
-                    name = "text()";
-
-                path = name + "[" + index + "]" + (path.length ? "/" + path : "");
-            }
-        }
-
-        node = node.parentNode;
-    }
-
-    return path;
-}
-
 function updatePanes()
 {
     for (var i = 0; i < tabNames.length; i++)
@@ -346,7 +389,8 @@ function updateElementAttributes()
     elementAttributesScrollArea.refresh();
 }
 
-function updateNodePane() {
+function updateNodePane()
+{
     var focusedNode = Inspector.focusedDOMNode();
 
     if (focusedNode.nodeType == Node.TEXT_NODE || focusedNode.nodeType == Node.COMMENT_NODE) {
@@ -384,33 +428,36 @@ function updateNodePane() {
 var styleRules = null;
 var selectedStyleRuleIndex = 0;
 var styleProperties = null;
-var expandedStyleShorthands = new Array();
+var expandedStyleShorthands = [];
 
 function updateStylePane()
 {
     var focusedNode = Inspector.focusedDOMNode();
+    if (focusedNode.nodeType == Node.TEXT_NODE && focusedNode.parentNode && focusedNode.parentNode.nodeType == Node.ELEMENT_NODE)
+        focusedNode = focusedNode.parentNode;
     var rulesArea = document.getElementById("styleRulesScrollview");
     var propertiesArea = document.getElementById("stylePropertiesTree");
 
     rulesArea.innerHTML = "";
     propertiesArea.innerHTML = "";
-    styleRules = new Array();
-    styleProperties = new Array();
+    styleRules = [];
+    styleProperties = [];
 
     if (focusedNode.nodeType == Node.ELEMENT_NODE) {
         document.getElementById("styleRules").style.display = null;
         document.getElementById("styleProperties").style.display = null;
         document.getElementById("noStyle").style.display = "none";
 
-        var propertyCount = new Array();
+        var propertyCount = [];
 
         var computedStyle = focusedNode.ownerDocument.defaultView.getComputedStyle(focusedNode, "");
-        if (computedStyle) {
-            var computedObj = new Object();
-            computedObj.computedStyle = true;
-            computedObj.selectorText = "Computed Style";
-            computedObj.style = computedStyle;
-            computedObj.subtitle = "";
+        if (computedStyle && computedStyle.length) {
+            var computedObj = {
+                isComputedStyle: true,
+                selectorText: "Computed Style",
+                style: computedStyle,
+                subtitle: "",
+            };
             styleRules.push(computedObj);
         }
 
@@ -418,14 +465,15 @@ function updateStylePane()
         for (var i = 0; i < focusedNode.attributes.length; i++) {
             var attr = focusedNode.attributes[i];
             if (attr.style) {
-                var attrStyle = new Object();
-                attrStyle.attr = attr.name;
+                var attrStyle = {
+                    attrName: attr.name,
+                    style: attr.style,
+                    subtitle: "element\u2019s \u201C" + attr.name + "\u201D attribute",
+                };
                 attrStyle.selectorText = focusedNodeName + "[" + attr.name;
                 if (attr.value.length)
                     attrStyle.selectorText += "=" + attr.value;
                 attrStyle.selectorText += "]";
-                attrStyle.style = attr.style;
-                attrStyle.subtitle = "element's \"" + attr.name + "\" attribute";
                 styleRules.push(attrStyle);
             }
         }
@@ -438,10 +486,11 @@ function updateStylePane()
         }
 
         if (focusedNode.style.length) {
-            var inlineStyle = new Object();
-            inlineStyle.selectorText = "Inline Style Attribute";
-            inlineStyle.style = focusedNode.style;
-            inlineStyle.subtitle = "element's \"style\" attribute";
+            var inlineStyle = {
+                selectorText: "Inline Style Attribute",
+                style: focusedNode.style,
+                subtitle: "element\u2019s \u201Cstyle\u201D attribute",
+            };
             styleRules.push(inlineStyle);
         }
 
@@ -450,13 +499,13 @@ function updateStylePane()
 
         var priorityUsed = false;
         for (var i = (styleRules.length - 1); i >= 0; --i) {
-            styleProperties[i] = new Array();
+            styleProperties[i] = [];
 
             var row = document.createElement("div");
             row.className = "row";
             if (i == selectedStyleRuleIndex)
                 row.className += " focused";
-            if (styleRules[i].computedStyle)
+            if (styleRules[i].isComputedStyle)
                 row.className += " computedStyle";
 
             var cell = document.createElement("div");
@@ -480,7 +529,7 @@ function updateStylePane()
             row.addEventListener("click", styleRuleSelect, true);
 
             var style = styleRules[i].style;
-            var styleShorthandLookup = new Array();
+            var styleShorthandLookup = [];
             for (var j = 0; j < style.length; j++) {
                 var prop = null;
                 var name = style[j];
@@ -494,11 +543,12 @@ function updateStylePane()
                 if (prop) {
                     prop.subProperties.push(name);
                 } else {
-                    prop = new Object();
-                    prop.style = style;
-                    prop.subProperties = new Array(name);
-                    prop.unusedProperties = new Array();
-                    prop.name = (shorthand ? shorthand : name);
+                    prop = {
+                        style: style,
+                        subProperties: [name],
+                        unusedProperties: [],
+                        name: (shorthand ? shorthand : name),
+                    };
                     styleProperties[i].push(prop);
                     if (shorthand) {
                         styleShorthandLookup[shorthand] = prop;
@@ -511,7 +561,7 @@ function updateStylePane()
                     }
                 }
 
-                if (styleRules[i].computedStyle)
+                if (styleRules[i].isComputedStyle)
                     continue;
 
                 if (!propertyCount[name]) {
@@ -522,7 +572,7 @@ function updateStylePane()
                 }
             }
 
-            if (styleRules[i].computedStyle && styleRules.length > 1) {
+            if (styleRules[i].isComputedStyle && styleRules.length > 1) {
                 var divider = document.createElement("hr");
                 divider.className = "divider";
                 rulesArea.insertBefore(divider, rulesArea.firstChild);
@@ -536,11 +586,11 @@ function updateStylePane()
 
         if (priorityUsed) {
             // walk the properties again and account for !important
-            var priorityCount = new Array();
+            var priorityCount = [];
             for (var i = 0; i < styleRules.length; i++) {
-                var style = styleRules[i].style;
-                if (style.computedStyle)
+                if (styleRules[i].isComputedStyle)
                     continue;
+                var style = styleRules[i].style;
                 for (var j = 0; j < styleProperties[i].length; j++) {
                     var prop = styleProperties[i][j];
                     for (var k = 0; k < prop.subProperties.length; k++) {
@@ -589,6 +639,35 @@ function styleRuleSelect(event)
     updateStyleProperties();
 }
 
+function populateStyleListItem(li, prop, name)
+{
+    var value = prop.style.getPropertyValue(name);
+
+    var span = document.createElement("span");
+    span.className = "property";
+    span.textContent = name;
+    li.appendChild(span);
+
+    span = document.createElement("span");
+    span.className = "value";
+    var textValue = valueNickname[value] ? valueNickname[value] : value;
+    var priority = prop.style.getPropertyPriority(name);
+    if (priority.length)
+        textValue += " !" + priority;
+    span.textContent = textValue;
+    li.appendChild(span);
+
+    var colors = value.match(/(rgb\([0-9]+, [0-9]+, [0-9]+\))|(rgba\([0-9]+, [0-9]+, [0-9]+, [0-9]+\))/g);
+    if (colors) {
+        for (var k = 0; k < colors.length; k++) {
+            var swatch = document.createElement("span");
+            swatch.className = "colorSwatch";
+            swatch.style.backgroundColor = colors[k];
+            li.appendChild(swatch);
+        }
+    }
+}
+
 function updateStyleProperties()
 {
     var focusedNode = Inspector.focusedDOMNode();
@@ -601,38 +680,31 @@ function updateStyleProperties()
     }
 
     var properties = styleProperties[selectedStyleRuleIndex];
+    var omitTypicalValues = styleRules[selectedStyleRuleIndex].isComputedStyle;
     for (var i = 0; i < properties.length; i++) {
         var prop = properties[i];
+        var name = prop.name;
+        if (omitTypicalValues && typicalStylePropertyValue[name] == prop.style.getPropertyValue(name))
+            continue;
+
         var mainli = document.createElement("li");
         if (prop.subProperties.length > 1) {
             mainli.className = "hasChildren";
-            if (expandedStyleShorthands[prop.name])
+            if (expandedStyleShorthands[name])
                 mainli.className += " expanded";
-            mainli.shorthand = prop.name;
+            mainli.shorthand = name;
             var button = document.createElement("button");
             button.addEventListener("click", toggleStyleShorthand, false);
             mainli.appendChild(button);
         }
 
-        var span = document.createElement("span");
-        span.className = "property";
-        span.textContent = prop.name;
-        mainli.appendChild(span);
-
-        span = document.createElement("span");
-        span.className = "value";
-        span.title = prop.style.getPropertyValue(prop.name);
-        if (prop.style.getPropertyPriority(prop.name).length)
-            span.title += " !" + prop.style.getPropertyPriority(prop.name);
-        span.textContent = span.title;
-        mainli.appendChild(span);
-
+        populateStyleListItem(mainli, prop, name);
         propertiesTree.appendChild(mainli);
 
         var overloadCount = 0;
         if (prop.subProperties && prop.subProperties.length > 1) {
             var subTree = document.createElement("ul");
-            if (!expandedStyleShorthands[prop.name])
+            if (!expandedStyleShorthands[name])
                 subTree.style.display = "none";
 
             for (var j = 0; j < prop.subProperties.length; j++) {
@@ -641,31 +713,19 @@ function updateStyleProperties()
                 if (prop.style.isPropertyImplicit(name) || prop.style.getPropertyValue(name) == "initial")
                     li.className = "implicit";
 
-                if (prop.unusedProperties[name] || prop.unusedProperties[prop.name]) {
+                if (prop.unusedProperties[name] || prop.unusedProperties[name]) {
                     li.className += " overloaded";
                     overloadCount++;
                 }
 
-                var span = document.createElement("span");
-                span.className = "property";
-                span.textContent = name;
-                li.appendChild(span);
-
-                span = document.createElement("span");
-                span.className = "value";
-                span.title = prop.style.getPropertyValue(name);
-                if (prop.style.getPropertyPriority(name).length)
-                    span.title += " !" + prop.style.getPropertyPriority(name);
-                span.textContent = span.title;
-                li.appendChild(span);
-
+                populateStyleListItem(li, prop, name);
                 subTree.appendChild(li);
             }
 
             propertiesTree.appendChild(subTree);
         }
 
-        if (prop.unusedProperties[prop.name] || overloadCount == prop.subProperties.length)
+        if (prop.unusedProperties[name] || overloadCount == prop.subProperties.length)
             mainli.className += " overloaded";
     }
 
@@ -694,7 +754,7 @@ function selectMappedStyleRule(attrName)
         updateStylePane();
 
     for (var i = 0; i < styleRules.length; i++)
-        if (styleRules[i].attr == attrName)
+        if (styleRules[i].attrName == attrName)
             break;
 
     selectedStyleRuleIndex = i;
@@ -722,4 +782,31 @@ function updateMetricsPane()
 
 function updatePropertiesPane()
 {
+    // FIXME: Like the style pane, this should have a top item that's "all properties"
+    // and separate items for each item in the prototype chain. For now, we implement
+    // only the "all properties" part, and only for enumerable properties.
+
+    var focusedNode = Inspector.focusedDOMNode();
+    var list = document.getElementById("jsPropertiesList");
+    list.innerHTML = "";
+
+    for (var name in focusedNode) {
+        var li = document.createElement("li");
+
+        var span = document.createElement("span");
+        span.className = "property";
+        span.textContent = name;
+        li.appendChild(span);
+
+        var value = focusedNode[name];
+
+        span = document.createElement("span");
+        span.className = "value";
+        span.textContent = value;
+        li.appendChild(span);
+
+        list.appendChild(li);
+    }
+
+    jsPropertiesScrollArea.refresh();
 }

@@ -1,3 +1,51 @@
+2006-07-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - some improvements for the inspector
+
+        * WebInspector/WebInspector.m:
+        (+[WebInspector sharedWebInspector:]): Fixed bug that could cause the inspector
+        to be garbage collected if used in an application with GC enabled.
+        (-[WebInspector dealloc]): Removed a call to a non-existent close method.
+        (-[WebInspector window]): Added a custom WebPreferences object and called
+        setPrivateBrowsingEnabled:YES so the inspector won't appear in the history menu.
+        Also call setProhibitsMainFrameScrolling:YES to try to get rid of trouble where
+        the inspector scrolls when dragging.
+
+        * WebInspector/webInspector/inspector.css: Added style for the new color swatch,
+        and JavaScript properties. More of the style should be shared between the panes,
+        but this should be OK for now.
+
+        * WebInspector/webInspector/inspector.html: Added a first cut at a JavaScript
+        properties pane. Needs work, but better than nothing.
+
+        * WebInspector/webInspector/inspector.js: Lots of improvements:
+        - Omit "typical" property values from computed style display, making it much shorter.
+        - Use the words "black", "white", and "transparent" when appropriate for color values.
+        - Refactored the loaded() function to get rid of repetitive scrollbar setup.
+        - Added a new scrollarea for the JavaScript properties pane.
+        - Simplified refreshScrollbars() -- we now refresh all scrollbars every time, which does no harm.
+        - Removed unused resultsWithXpathQuery().
+        - Use [] instead of "new Array()" and {} instead of "new Object()".
+        - Removed unused xpathForNode().
+        - Changed style pane to display the style for a text node's parent instead of saying
+          it can't display the style for text.
+        - Fixed regression I caused a while back by checking the length of a computed style
+          and not trying to display anything if its length is 0. Before this change and the
+          corresponding change in WebCore, we'd see a complete list of all styles with the
+          empty string as the value for each one.
+        - Changed the name of the computedStyle flag on the style rules array to isComputedStyle
+          to make it easier to understand it's a boolean.
+        - Fixed an error in the code that does !important scanning where it was trying to
+          do a special case for computed style, but was checking the computed style flag on
+          the wrong object.
+        - Added populateStyleListItem() function to factor out things in common between the
+          items in the top level list and the expanded tree for shorthand properties.
+        - Added code to make a color swatch next to the textual representation for any
+          property that contains a color.
+        - Implemented a first cut at a simple JavaScript properties pane.
+
 2006-07-29  Darin Adler  <darin@apple.com>
 
         - Removed tabs from these source files that still had them.

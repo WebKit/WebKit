@@ -60,7 +60,7 @@ button {
     left: 0;
     right: 0;
     color: white;
-    font-family: Lucida Grande, sans-serif;
+    font-family: 'Lucida Grande', sans-serif;
     font-size: 12px;
     text-shadow: black 0px 1px 2px;
 }
@@ -825,4 +825,53 @@ button.toggle.right {
 
 .treeList li.overloaded {
     text-decoration: line-through;
+}
+
+.colorSwatch {
+    display: inline-block;
+    margin-left: 4px;
+    width: 7px;
+    height: 7px;
+    border: 1px solid rgb(180,180,112);
+}
+
+#propertiesPane {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+#jsProperties {
+    -webkit-box-flex: 1;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+}
+
+.propertyList {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    white-space: nowrap;
+}
+
+.propertyList ul {
+    list-style-type: none;
+    -webkit-padding-start: 10px;
+}
+
+.propertyList li {
+    line-height: 14px;
+    height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.propertyList li span {
+    -webkit-user-select: text;
+}
+
+.propertyList li .property::after {
+    content: ": ";
+}
+
+.propertyList li .value {
+    color: rgb(255,255,180);
 }
