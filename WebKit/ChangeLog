@@ -1,3 +1,47 @@
+2006-08-01  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4480737> Flash crashes after it replaces itself via a document.write()
+        
+        I kind of hate to do this, but this is the best way to work around buggy plug-ins like Flash that assume that
+        NPP_Destroy() cannot be called while the browser is calling one of its other plug-in functions.  The classic
+        situation is a plug-in that replaces itself via an NPN_Invoke() that executes a document.write().
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendEvent:]):
+        Call -willCallPlugInFunction and -didCallPlugInFunction around calls to the NPP_* functions.
+        (-[WebBaseNetscapePluginView setWindowIfNecessary]):
+        ditto
+        (-[WebBaseNetscapePluginView start]):
+        It should not be possible to start a plug-in instance while we are calling into it (one of those chicken/egg
+        problems).  Added a sanity-checking assertion.
+        (-[WebBaseNetscapePluginView stop]):
+        If we're already calling a plug-in function, do not call NPP_Destroy().  The plug-in function we are calling
+        may assume that its instance->pdata, or other memory freed by NPP_Destroy(), is valid and unchanged until said
+        plugin-function returns.
+        (-[WebBaseNetscapePluginView pluginScriptableObject]):
+        Call -willCallPlugInFunction and -didCallPlugInFunction around calls to the NPP_* functions.
+        (-[WebBaseNetscapePluginView willCallPlugInFunction]):
+        Increment plug-in function call depth.
+        (-[WebBaseNetscapePluginView didCallPlugInFunction]):
+        Decrement plug-in function call depth.  Stop if we're supposed to stop.
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]):
+        Call -willCallPlugInFunction and -didCallPlugInFunction around calls to the NPP_* functions.
+        (-[WebBaseNetscapePluginView webFrame:didFinishLoadWithReason:]):
+        ditto
+        (-[WebBaseNetscapePluginView _printedPluginBitmap]):
+        ditto
+
+        * Plugins/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:]):
+        Call -willCallPlugInFunction and -didCallPlugInFunction around calls to the NPP_* functions.
+        (-[WebBaseNetscapePluginStream _destroyStream]):
+        ditto
+        (-[WebBaseNetscapePluginStream _deliverData]):
+        ditto
+
 2006-08-01  Maciej Stachowiak  <mjs@apple.com>
 
         - fix build after last change

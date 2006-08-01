@@ -221,7 +221,9 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 
     // FIXME: Need a way to check if stream is seekable
 
+    [pluginView willCallPlugInFunction];
     NPError npErr = NPP_NewStream(instance, (char *)[MIMEType UTF8String], &stream, NO, &transferMode);
+    [pluginView didCallPlugInFunction];
     LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", responseURL, MIMEType, npErr);
 
     if (npErr != NPERR_NO_ERROR) {
@@ -272,7 +274,9 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
             ASSERT(path != NULL);
             char *carbonPath = CarbonPathFromPOSIXPath(path);
             ASSERT(carbonPath != NULL);
+            [pluginView willCallPlugInFunction];
             NPP_StreamAsFile(instance, &stream, carbonPath);
+            [pluginView didCallPlugInFunction];
 
             // Delete the file after calling NPP_StreamAsFile(), instead of in -dealloc/-finalize.  It should be OK
             // to delete the file here -- NPP_StreamAsFile() is always called immediately before NPP_DestroyStream()
@@ -286,7 +290,9 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
         }
         
         NPError npErr;
+        [pluginView willCallPlugInFunction];
         npErr = NPP_DestroyStream(instance, &stream, reason);
+        [pluginView didCallPlugInFunction];
         LOG(Plugins, "NPP_DestroyStream responseURL=%@ error=%d", responseURL, npErr);
         
         stream.ndata = nil;
@@ -294,7 +300,9 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     
     if (sendNotification) {
         // NPP_URLNotify expects the request URL, not the response URL.
+        [pluginView willCallPlugInFunction];
         NPP_URLNotify(instance, [requestURL _web_URLCString], reason, notifyData);
+        [pluginView didCallPlugInFunction];
         LOG(Plugins, "NPP_URLNotify requestURL=%@ reason=%d", requestURL, reason);
     }
     
@@ -383,7 +391,9 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     int32 totalBytesDelivered = 0;
     
     while (totalBytesDelivered < totalBytes) {
+        [pluginView willCallPlugInFunction];
         int32 deliveryBytes = NPP_WriteReady(instance, &stream);
+        [pluginView didCallPlugInFunction];
         LOG(Plugins, "NPP_WriteReady responseURL=%@ bytes=%d", responseURL, deliveryBytes);
         
         if (deliveryBytes <= 0) {
@@ -393,7 +403,9 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
         } else {
             deliveryBytes = MIN(deliveryBytes, totalBytes - totalBytesDelivered);
             NSData *subdata = [deliveryData subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
+            [pluginView willCallPlugInFunction];
             deliveryBytes = NPP_Write(instance, &stream, offset, [subdata length], (void *)[subdata bytes]);
+            [pluginView didCallPlugInFunction];
             if (deliveryBytes < 0) {
                 // Netscape documentation says that a negative result from NPP_Write means cancel the load.
                 [self cancelLoadAndDestroyStreamWithError:[self _pluginCancelledConnectionError]];

@@ -76,6 +76,8 @@ typedef union PluginPort {
     BOOL currentEventIsUserGesture;
     BOOL isTransparent;
     BOOL isCompletelyObscured;
+    BOOL shouldStopSoon;
+    unsigned pluginFunctionCallDepth;
     
     DOMElement *element;
     
@@ -129,7 +131,20 @@ typedef union PluginPort {
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow;
 - (void)viewDidMoveToHostWindow;
 
-/* Returns the NPObject that represents the plugin interface. */
+// Returns the NPObject that represents the plugin interface.
 - (void *)pluginScriptableObject;
+
+// -willCallPlugInFunction must be called before calling any of the NPP_* functions for this view's NPP instance.
+// This is necessary to ensure that plug-ins are not destroyed while WebKit calls into them.  Some plug-ins (Flash
+// at least) are written with the assumption that nothing they do in their plug-in functions can cause NPP_Destroy()
+// to be called.  Unfortunately, this is not true, especially if the plug-in uses NPN_Invoke() to execute a
+// document.write(), which clears the document and destroys the plug-in.
+// See <rdar://problem/4480737>.
+- (void)willCallPlugInFunction;
+
+// -didCallPlugInFunction should be called after returning from a plug-in function.  It should be called exactly
+// once for every call to -willCallPlugInFunction.
+// See <rdar://problem/4480737>.
+- (void)didCallPlugInFunction;
 
 @end

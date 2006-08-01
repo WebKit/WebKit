@@ -610,7 +610,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // Temporarily retain self in case the plug-in view is released while sending an event. 
     [[self retain] autorelease];
     
+    [self willCallPlugInFunction];
     BOOL acceptedEvent = NPP_HandleEvent(instance, event);
+    [self didCallPlugInFunction];
     
     currentEventIsUserGesture = NO;
     
@@ -1069,7 +1071,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         // A CoreGraphics or OpenGL plugin's window may only be set while the plugin is being updated
         ASSERT((drawingModel != NPDrawingModelCoreGraphics && drawingModel != NPDrawingModelOpenGL) || [NSView focusView] == self);
         
+        [self willCallPlugInFunction];
         npErr = NPP_SetWindow(instance, &window);
+        [self didCallPlugInFunction];
         inSetWindow = NO;
 
 #ifndef NDEBUG
@@ -1207,6 +1211,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // browser window.  Windowless plug-ins are rendered off-screen, then copied into the main browser window.
     window.type = NPWindowTypeWindow;
     
+    // NPN_New(), which creates the plug-in instance, should never be called while calling a plug-in function for that instance.
+    ASSERT(pluginFunctionCallDepth == 0);
+
     [[self class] setCurrentPluginView:self];
     NPError npErr = NPP_New((char *)[MIMEType cString], instance, mode, argsCount, cAttributes, cValues, NULL);
     [[self class] setCurrentPluginView:nil];
@@ -1253,6 +1260,15 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (void)stop
 {
+    // If we're already calling a plug-in function, do not call NPP_Destroy().  The plug-in function we are calling
+    // may assume that its instance->pdata, or other memory freed by NPP_Destroy(), is valid and unchanged until said
+    // plugin-function returns.
+    // See <rdar://problem/4480737>.
+    if (pluginFunctionCallDepth > 0) {
+        shouldStopSoon = YES;
+        return;
+    }
+    
     [self removeTrackingRect];
 
     if (!isStarted) {
@@ -1694,7 +1710,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     if (NPP_GetValue) {
         void *value = 0;
+        [self willCallPlugInFunction];
         NPError npErr = NPP_GetValue (instance, NPPVpluginScriptableNPObject, (void *)&value);
+        [self didCallPlugInFunction];
         if (npErr == NPERR_NO_ERROR) {
             return value;
         }
@@ -1702,6 +1720,24 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return (void *)0;
 }
 
+- (void)willCallPlugInFunction
+{
+    // Could try to prevent infinite recursion here, but it's probably not worth the effort.
+    pluginFunctionCallDepth++;
+}
+
+- (void)didCallPlugInFunction
+{
+    ASSERT(pluginFunctionCallDepth > 0);
+    pluginFunctionCallDepth--;
+    
+    // If -stop was called while we were calling into a plug-in function, and we're no longer
+    // inside a plug-in function, stop now.
+    if (pluginFunctionCallDepth == 0 && shouldStopSoon) {
+        shouldStopSoon = NO;
+        [self stop];
+    }
+}
 
 @end
 
@@ -1750,7 +1786,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         // FIXME: If the result is a string, we probably want to put that string into the frame, just
         // like we do in KHTMLPartBrowserExtension::openURLRequest.
         if ([JSPluginRequest sendNotification]) {
+            [self willCallPlugInFunction];
             NPP_URLNotify(instance, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);
+            [self didCallPlugInFunction];
         }
     } else if ([result length] > 0) {
         // Don't call NPP_NewStream and other stream methods if there is no JS result to deliver. This is what Mozilla does.
@@ -1777,7 +1815,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     ASSERT(pluginRequest != nil);
     ASSERT([pluginRequest sendNotification]);
         
+    [self willCallPlugInFunction];
     NPP_URLNotify(instance, [[[pluginRequest request] URL] _web_URLCString], reason, [pluginRequest notifyData]);
+    [self didCallPlugInFunction];
     
     [pendingFrameLoads removeObjectForKey:webFrame];
     [webFrame _setInternalLoadDelegate:nil];
@@ -2369,7 +2409,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     npPrint.print.embedPrint.platformPrint = printGWorld;
     
     // Tell the plugin to print into the GWorld
+    [self willCallPlugInFunction];
     NPP_Print(instance, &npPrint);
+    [self didCallPlugInFunction];
 
     // Don't need the GWorld anymore
     DisposeGWorld(printGWorld);
