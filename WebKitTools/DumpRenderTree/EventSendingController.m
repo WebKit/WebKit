@@ -38,11 +38,11 @@
 
 NSPoint lastMousePosition;
 NSArray *webkitDomEventNames;
-NSArray *webkitDomEventProperties;
 
 @implementation EventSendingController
 
-+ (void)initialize {
++ (void)initialize
+{
     webkitDomEventNames = [[NSArray alloc] initWithObjects:
         @"abort",
         @"beforecopy",
@@ -89,11 +89,6 @@ NSArray *webkitDomEventProperties;
         @"unload",
         @"zoom",
         nil];
-    
-    webkitDomEventProperties = [[NSArray alloc] initWithObjects:
-        @"clientX",
-        @"clientY",
-        nil];
 }
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
@@ -120,15 +115,6 @@ NSArray *webkitDomEventProperties;
     if (aSelector == @selector(enableDOMUIEventLogging:))
         return @"enableDOMUIEventLogging";
     return nil;
-}
-
-- (id)init
-{
-    lastMousePosition = NSMakePoint(0, 0);
-    down = NO;
-    clickCount = 0;
-    lastClick = 0;
-    return self;
 }
 
 - (double)currentEventTime
@@ -199,12 +185,13 @@ NSArray *webkitDomEventProperties;
 
 - (void)mouseMoveToX:(int)x Y:(int)y
 {
-    lastMousePosition = NSMakePoint(x, [[frame webView] frame].size.height - y);
+    NSView *view = [frame webView];
+    lastMousePosition = [view convertPoint:NSMakePoint(x, [view frame].size.height - y) toView:nil];
     NSEvent *event = [NSEvent mouseEventWithType:(down ? NSLeftMouseDragged : NSMouseMoved) 
                                         location:lastMousePosition 
                                    modifierFlags:nil 
                                        timestamp:[self currentEventTime]
-                                    windowNumber:[[[frame webView] window] windowNumber] 
+                                    windowNumber:[[view window] windowNumber] 
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
                                       clickCount:(down ? clickCount : 0) 
@@ -344,10 +331,10 @@ NSArray *webkitDomEventProperties;
     
     if ([event isKindOfClass:[DOMMouseEvent class]]) {
         printf("  button:        %d\n", [(DOMMouseEvent*)event button]);
-        printf("  screenX:       %d\n", [(DOMMouseEvent*)event screenX]);
-        printf("  screenY:       %d (flipped)\n", (int) [[[NSScreen screens] objectAtIndex:0] frame].size.height - [(DOMMouseEvent*)event screenY]);
         printf("  clientX:       %d\n", [(DOMMouseEvent*)event clientX]);
         printf("  clientY:       %d\n", [(DOMMouseEvent*)event clientY]);
+        printf("  screenX:       %d\n", [(DOMMouseEvent*)event screenX]);
+        printf("  screenY:       %d\n", [(DOMMouseEvent*)event screenY]);
         printf("  modifier keys: c:%d s:%d a:%d m:%d\n", 
                [(DOMMouseEvent*)event ctrlKey] ? 1 : 0, 
                [(DOMMouseEvent*)event shiftKey] ? 1 : 0, 
@@ -376,10 +363,10 @@ NSArray *webkitDomEventProperties;
     }
     
     if ([event isKindOfClass:[DOMWheelEvent class]]) {
-        printf("  screenX:       %d\n", [(DOMWheelEvent*)event screenX]);
-        printf("  screenY:       %d (flipped)\n", (int) [[[NSScreen screens] objectAtIndex:0] frame].size.height - [(DOMWheelEvent*)event screenY]);
         printf("  clientX:       %d\n", [(DOMWheelEvent*)event clientX]);
         printf("  clientY:       %d\n", [(DOMWheelEvent*)event clientY]);
+        printf("  screenX:       %d\n", [(DOMWheelEvent*)event screenX]);
+        printf("  screenY:       %d\n", [(DOMWheelEvent*)event screenY]);
         printf("  modifier keys: c:%d s:%d a:%d m:%d\n", 
                [(DOMWheelEvent*)event ctrlKey] ? 1 : 0, 
                [(DOMWheelEvent*)event shiftKey] ? 1 : 0, 

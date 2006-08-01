@@ -1,3 +1,13 @@
+2006-07-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10171
+          REGRESSION: failing layout test: fast/events/objc-event-api.html
+
+        * fast/events/objc-event-api-expected.txt: Updated test results for changes in the
+        DumpRenderTree tool.
+
 2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Maciej.

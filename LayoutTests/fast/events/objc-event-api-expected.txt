@@ -6,10 +6,10 @@ event type:      mouseover
   detail:        0
   view:          OK (document: OK)
   button:        0
-  screenX:       -9900
-  screenY:       -9500 (flipped)
   clientX:       100
   clientY:       100
+  screenX:       -9900
+  screenY:       -9900
   modifier keys: c:0 s:0 a:0 m:0
 event type:      mousedown
   target:        <div>
@@ -19,10 +19,10 @@ event type:      mousedown
   detail:        1
   view:          OK (document: OK)
   button:        0
-  screenX:       -9900
-  screenY:       -9500 (flipped)
   clientX:       100
   clientY:       100
+  screenX:       -9900
+  screenY:       -9900
   modifier keys: c:0 s:0 a:0 m:0
 event type:      selectstart
   target:        <div>
@@ -39,10 +39,10 @@ event type:      mouseup
   detail:        1
   view:          OK (document: OK)
   button:        0
-  screenX:       -9900
-  screenY:       -9500 (flipped)
   clientX:       100
   clientY:       100
+  screenX:       -9900
+  screenY:       -9900
   modifier keys: c:0 s:0 a:0 m:0
 event type:      click
   target:        <div>
@@ -52,10 +52,23 @@ event type:      click
   detail:        1
   view:          OK (document: OK)
   button:        0
-  screenX:       -9900
-  screenY:       -9500 (flipped)
   clientX:       100
   clientY:       100
+  screenX:       -9900
+  screenY:       -9900
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      mousemove
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    0
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  clientX:       100
+  clientY:       100
+  screenX:       -9900
+  screenY:       -9900
   modifier keys: c:0 s:0 a:0 m:0
 event type:      keydown
   target:        <body>
@@ -161,10 +174,10 @@ event type:      mousemove
   detail:        0
   view:          OK (document: OK)
   button:        0
-  screenX:       -9600
-  screenY:       -9550 (flipped)
   clientX:       400
   clientY:       150
+  screenX:       -9600
+  screenY:       -9850
   modifier keys: c:0 s:0 a:0 m:0
 event type:      mousedown
   target:        <div>
@@ -174,10 +187,10 @@ event type:      mousedown
   detail:        2
   view:          OK (document: OK)
   button:        0
-  screenX:       -9600
-  screenY:       -9550 (flipped)
   clientX:       400
   clientY:       150
+  screenX:       -9600
+  screenY:       -9850
   modifier keys: c:0 s:0 a:0 m:0
 event type:      selectstart
   target:        <div>
@@ -194,10 +207,10 @@ event type:      mousedown
   detail:        3
   view:          OK (document: OK)
   button:        0
-  screenX:       -9600
-  screenY:       -9550 (flipped)
   clientX:       400
   clientY:       150
+  screenX:       -9600
+  screenY:       -9850
   modifier keys: c:0 s:0 a:0 m:0
 event type:      selectstart
   target:        <div>
@@ -214,10 +227,10 @@ event type:      mouseout
   detail:        0
   view:          OK (document: OK)
   button:        0
-  screenX:       -9999
-  screenY:       -9401 (flipped)
   clientX:       1
   clientY:       1
+  screenX:       -9999
+  screenY:       -9999
   modifier keys: c:0 s:0 a:0 m:0
   relatedTarget: DOMHTMLHtmlElement (nodeName: HTML)
 event type:      mouseover
@@ -228,10 +241,10 @@ event type:      mouseover
   detail:        0
   view:          OK (document: OK)
   button:        0
-  screenX:       -9999
-  screenY:       -9401 (flipped)
   clientX:       1
   clientY:       1
+  screenX:       -9999
+  screenY:       -9999
   modifier keys: c:0 s:0 a:0 m:0
   relatedTarget: DOMHTMLDivElement (nodeName: DIV)
 event type:      mousemove
@@ -242,10 +255,10 @@ event type:      mousemove
   detail:        0
   view:          OK (document: OK)
   button:        0
-  screenX:       -9999
-  screenY:       -9401 (flipped)
   clientX:       1
   clientY:       1
+  screenX:       -9999
+  screenY:       -9999
   modifier keys: c:0 s:0 a:0 m:0
 event type:      selectstart
   target:        <html>
@@ -261,23 +274,23 @@ event type:      mouseup
   detail:        0
   view:          OK (document: OK)
   button:        0
-  screenX:       -9999
-  screenY:       -9401 (flipped)
   clientX:       1
   clientY:       1
+  screenX:       -9999
+  screenY:       -9999
   modifier keys: c:0 s:0 a:0 m:0
-event type:      mouseout
+event type:      mousemove
   target:        <html>
   eventPhase:    3
   bubbles:       1
-  cancelable:    1
+  cancelable:    0
   detail:        0
   view:          OK (document: OK)
   button:        0
-  screenX:       0
-  screenY:       0 (flipped)
-  clientX:       -1
-  clientY:       601
+  clientX:       1
+  clientY:       1
+  screenX:       -9999
+  screenY:       -9999
   modifier keys: c:0 s:0 a:0 m:0
 Test
 This tests that DOMEvents are correctly handed to the ObjC API. See bug 9181.

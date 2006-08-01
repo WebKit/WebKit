@@ -1,3 +1,26 @@
+2006-07-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10171
+          REGRESSION: failing layout test: fast/events/objc-event-api.html
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): Add pose so we can implement +[NSEvent mouseLocation]. Put the window at a predictable
+        location in flipped coordinates, since those are the coordinates that we use.
+        (+[DumpRenderTreeEvent mouseLocation]): Implement this, since it's used for mouse event handling
+        inside WebHTMLView.
+
+        * DumpRenderTree/EventSendingController.m:
+        (+[EventSendingController initialize]): Removed unused webkitDomEventProperties array.
+        (-[EventSendingController init]): Removed, since the whole thing was a no-op.
+        (-[EventSendingController mouseMoveToX:Y:]): Convert the x,y pair to window coordinates. The old code
+        probably worked OK, but this is needed to be correct.
+        (-[EventSendingController handleEvent:]): Put clientX/Y before screenX/Y and removed the flipping
+        code from screenY. We didn't really need to flip screenY -- what was actually happening was that the
+        position that DumpRenderTree chose was in non-flipped coordinates, and with that fixed we can just
+        dump the screenY as-is.
+
 2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Darin.
