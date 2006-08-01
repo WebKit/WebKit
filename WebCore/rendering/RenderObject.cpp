@@ -897,20 +897,18 @@ void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2
                               BorderSide s, Color c, const Color& textcolor, EBorderStyle style,
                               int adjbw1, int adjbw2, bool invalidisInvert)
 {
-    int width = (s==BSTop||s==BSBottom?y2-y1:x2-x1);
+    int width = (s == BSTop || s == BSBottom ? y2 - y1 : x2 - x1);
 
-    if(style == DOUBLE && width < 3)
+    if (style == DOUBLE && width < 3)
         style = SOLID;
 
-    if(!c.isValid()) {
-        if(invalidisInvert)
-        {
+    if (!c.isValid()) {
+        if (invalidisInvert)
             // FIXME: The original KHTML did XOR here -- what do we want to do instead?
             c = Color::white;
-        }
         else {
             if (style == INSET || style == OUTSET || style == RIDGE || style == GROOVE)
-                c.setRgb(238, 238, 238);
+                c.setRGB(238, 238, 238);
             else
                 c = textcolor;
         }

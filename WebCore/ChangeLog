@@ -1,3 +1,37 @@
+2006-07-31  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=9955
+        Colors scaled from [0, 1] range to [0, 255] incorrectly
+        
+        Fixes scaling issue and fixes Color to follow style guidelines.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * platform/Color.cpp:
+        (WebCore::calcHue):
+        (WebCore::makeRGBAFromHSLA):
+        (WebCore::Color::Color):
+        (WebCore::Color::name):
+        (WebCore::Color::setNamedColor):
+        (WebCore::Color::light):
+        (WebCore::Color::dark):
+        (WebCore::blend):
+        * platform/Color.h:
+        (WebCore::Color::Color):
+        (WebCore::Color::isValid):
+        (WebCore::Color::red):
+        (WebCore::Color::green):
+        (WebCore::Color::blue):
+        (WebCore::Color::alpha):
+        (WebCore::Color::rgb):
+        (WebCore::Color::setRGB):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBorder):
+
 2006-07-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10158

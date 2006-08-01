@@ -28,6 +28,7 @@
 
 #include "DeprecatedString.h"
 #include "PlatformString.h"
+#include <math.h>
 #include <wtf/Assertions.h>
 
 #include "ColorData.c"
@@ -48,16 +49,16 @@ RGBA32 makeRGBA(int r, int g, int b, int a)
 
 double calcHue(double temp1, double temp2, double hueVal)
 {
-    if (hueVal < 0)
+    if (hueVal < 0.0)
         hueVal++;
-    else if (hueVal > 1)
+    else if (hueVal > 1.0)
         hueVal--;
-    if (hueVal * 6 < 1)
-        return temp1 + (temp2 - temp1) * hueVal * 6;
-    if (hueVal * 2 < 1)
+    if (hueVal * 6.0 < 1.0)
+        return temp1 + (temp2 - temp1) * hueVal * 6.0;
+    if (hueVal * 2.0 < 1.0)
         return temp2;
-    if (hueVal * 3 < 2)
-        return temp1 + (temp2 - temp1) * (2.0 / 3.0 - hueVal) * 6;
+    if (hueVal * 3.0 < 2.0)
+        return temp1 + (temp2 - temp1) * (2.0 / 3.0 - hueVal) * 6.0;
     return temp1;
 }
 
@@ -66,15 +67,22 @@ double calcHue(double temp1, double temp2, double hueVal)
 // explanation available at http://en.wikipedia.org/wiki/HSL_color_space 
 
 // all values are in the range of 0 to 1.0
-RGBA32 makeRGBAFromHSLA(double h, double s, double l, double a)
+RGBA32 makeRGBAFromHSLA(double hue, double saturation, double lightness, double alpha)
 {
-    double temp2 = l < 0.5 ? l * (1.0 + s) : l + s - l * s;
-    double temp1 = 2.0 * l - temp2;
+    const double scaleFactor = nextafter(256.0, 0.0);
     
-    return makeRGBA(static_cast<int>(calcHue(temp1, temp2, h + 1.0 / 3.0) * 255), 
-                    static_cast<int>(calcHue(temp1, temp2, h) * 255),
-                    static_cast<int>(calcHue(temp1, temp2, h - 1.0 / 3.0) * 255),
-                    static_cast<int>(a * 255));
+    if (!saturation) {
+        int greyValue = static_cast<int>(lightness * scaleFactor);
+        return makeRGBA(greyValue, greyValue, greyValue, static_cast<int>(alpha * scaleFactor));
+    }
+
+    double temp2 = lightness < 0.5 ? lightness * (1.0 + saturation) : lightness + saturation - lightness * saturation;
+    double temp1 = 2.0 * lightness - temp2;
+    
+    return makeRGBA(static_cast<int>(calcHue(temp1, temp2, hue + 1.0 / 3.0) * scaleFactor), 
+                    static_cast<int>(calcHue(temp1, temp2, hue) * scaleFactor),
+                    static_cast<int>(calcHue(temp1, temp2, hue - 1.0 / 3.0) * scaleFactor),
+                    static_cast<int>(alpha * scaleFactor));
 }
 
 // originally moved here from the CSS parser
@@ -114,7 +122,7 @@ int differenceSquared(const Color& c1, const Color& c2)
 Color::Color(const String& name)
 {
     if (name.startsWith("#"))
-        valid = parseHexColor(name.substring(1), color);
+        m_valid = parseHexColor(name.substring(1), m_color);
     else
         setNamedColor(name);
 }
@@ -122,32 +130,29 @@ Color::Color(const String& name)
 Color::Color(const char* name)
 {
     if (name[0] == '#')
-        valid = parseHexColor(&name[1], color);
+        m_valid = parseHexColor(&name[1], m_color);
     else {
         const NamedColor* foundColor = findColor(name, strlen(name));
-        color = foundColor ? foundColor->RGBValue : 0;
-        color |= 0xFF000000;
-        valid = foundColor;
+        m_color = foundColor ? foundColor->RGBValue : 0;
+        m_color |= 0xFF000000;
+        m_valid = foundColor;
     }
 }
 
 String Color::name() const
 {
-    String name;
     if (alpha() < 0xFF)
-        name = String::sprintf("#%02X%02X%02X%02X", red(), green(), blue(), alpha());
-    else
-        name = String::sprintf("#%02X%02X%02X", red(), green(), blue());
-    return name;
+        return String::sprintf("#%02X%02X%02X%02X", red(), green(), blue(), alpha());
+    return String::sprintf("#%02X%02X%02X", red(), green(), blue());
 }
 
 void Color::setNamedColor(const String& name)
 {
     DeprecatedString dname = name.deprecatedString();
     const NamedColor* foundColor = dname.isAllASCII() ? findColor(dname.latin1(), dname.length()) : 0;
-    color = foundColor ? foundColor->RGBValue : 0;
-    color |= 0xFF000000;
-    valid = foundColor;
+    m_color = foundColor ? foundColor->RGBValue : 0;
+    m_color |= 0xFF000000;
+    m_valid = foundColor;
 }
 
 const float undefinedHue = -1;
@@ -222,34 +227,43 @@ static void convertHSVToRGB(float h, float s, float v, float& r, float& g, float
     }
 }
 
-
 Color Color::light() const
 {
+    const float scaleFactor = nextafterf(256.0f, 0.0f);
+
     float r, g, b, a, h, s, v;
     getRGBA(r, g, b, a);
     convertRGBToHSV(r, g, b, h, s, v);
     v = max(0.0f, min(v + 0.33f, 1.0f));
     convertHSVToRGB(h, s, v, r, g, b);
-    return Color((int)(r * 255), (int)(g * 255), (int)(b * 255), (int)(a * 255));
+    return Color(static_cast<int>(r * scaleFactor),
+                 static_cast<int>(g * scaleFactor),
+                 static_cast<int>(b * scaleFactor),
+                 static_cast<int>(a * scaleFactor));
 }
 
 Color Color::dark() const
 {
+    const float scaleFactor = nextafterf(256.0f, 0.0f);
+
     float r, g, b, a, h, s, v;
     getRGBA(r, g, b, a);
     convertRGBToHSV(r, g, b, h, s, v);
     v = max(0.0f, min(v - 0.33f, 1.0f));
     convertHSVToRGB(h, s, v, r, g, b);
-    return Color((int)(r * 255), (int)(g * 255), (int)(b * 255), (int)(a * 255));
+    return Color(static_cast<int>(r * scaleFactor),
+                 static_cast<int>(g * scaleFactor),
+                 static_cast<int>(b * scaleFactor),
+                 static_cast<int>(a * scaleFactor));
 }
 
 static int blend(int c, int a)
 {
     // We use white.
-    float alpha = (float)(a) / 255;
+    float alpha = a / 255.0f;
     int whiteBlend = 255 - a;
     c -= whiteBlend;
-    return (int)(c / alpha);
+    return static_cast<int>(c / alpha);
 }
 
 const int cStartAlpha = 153; // 60%
@@ -294,4 +308,4 @@ void Color::getRGBA(double& r, double& g, double& b, double& a) const
     a = alpha() / 255.0;
 }
 
-}
+} // namespace WebCore

@@ -1,3 +1,17 @@
+2006-07-31  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - tests changed by http://bugzilla.opendarwin.org/show_bug.cgi?id=9955
+        Colors scaled from [0, 1] range to [0, 255] incorrectly
+
+        * fast/css/hsl-color-expected.checksum:
+        * fast/css/hsl-color-expected.png:
+        * fast/css/hsl-color-expected.txt:
+        * fast/forms/input-disabled-color-expected.checksum:
+        * fast/forms/input-disabled-color-expected.png:
+        * fast/forms/input-disabled-color-expected.txt:
+
 2006-07-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10158

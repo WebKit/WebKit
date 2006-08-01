@@ -86,7 +86,7 @@ layer at (169,77) size 142x13 scrollWidth 158
     RenderText {#text} at (1,0) size 156x13
       text run at (1,0) width 156: "This text field is not disabled"
 layer at (13,100) size 142x13 scrollWidth 357
-  RenderBlock {DIV} at (3,3) size 142x13 [color=#AA0000]
+  RenderBlock {DIV} at (3,3) size 142x13 [color=#AB0000]
     RenderText {#text} at (1,0) size 355x13
       text run at (1,0) width 355: "The text in this disabled field should displayed as dimmed or grey"
 layer at (169,100) size 142x13 scrollWidth 158
@@ -102,7 +102,7 @@ layer at (169,123) size 142x13 scrollWidth 158
     RenderText {#text} at (1,0) size 156x13
       text run at (1,0) width 156: "This text field is not disabled"
 layer at (13,146) size 142x13 scrollWidth 357
-  RenderBlock {DIV} at (3,3) size 142x13 [color=#AAAAAA]
+  RenderBlock {DIV} at (3,3) size 142x13 [color=#ABABAB]
     RenderText {#text} at (1,0) size 355x13
       text run at (1,0) width 355: "The text in this disabled field should displayed as dimmed or grey"
 layer at (169,146) size 142x13 scrollWidth 158
@@ -118,7 +118,7 @@ layer at (169,169) size 142x13 scrollWidth 158
     RenderText {#text} at (1,0) size 156x13
       text run at (1,0) width 156: "This text field is not disabled"
 layer at (13,192) size 142x13 scrollWidth 357
-  RenderBlock {DIV} at (3,3) size 142x13 [color=#AAAAAA]
+  RenderBlock {DIV} at (3,3) size 142x13 [color=#ABABAB]
     RenderText {#text} at (1,0) size 355x13
       text run at (1,0) width 355: "The text in this disabled field should displayed as dimmed or grey"
 layer at (169,192) size 142x13 scrollWidth 158
@@ -126,7 +126,7 @@ layer at (169,192) size 142x13 scrollWidth 158
     RenderText {#text} at (1,0) size 156x13
       text run at (1,0) width 156: "This text field is not disabled"
 layer at (13,215) size 142x13 scrollWidth 357
-  RenderBlock {DIV} at (3,3) size 142x13 [color=#2B2B2B]
+  RenderBlock {DIV} at (3,3) size 142x13 [color=#2C2C2C]
     RenderText {#text} at (1,0) size 355x13
       text run at (1,0) width 355: "The text in this disabled field should displayed as dimmed or grey"
 layer at (169,215) size 142x13 scrollWidth 158
@@ -142,7 +142,7 @@ layer at (169,238) size 142x13 scrollWidth 158
     RenderText {#text} at (1,0) size 156x13
       text run at (1,0) width 156: "This text field is not disabled"
 layer at (13,261) size 142x13 scrollWidth 357
-  RenderBlock {DIV} at (3,3) size 142x13 [color=#2B2B2B]
+  RenderBlock {DIV} at (3,3) size 142x13 [color=#2C2C2C]
     RenderText {#text} at (1,0) size 355x13
       text run at (1,0) width 355: "The text in this disabled field should displayed as dimmed or grey"
 layer at (169,261) size 142x13 scrollWidth 158
