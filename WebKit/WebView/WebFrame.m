@@ -1162,7 +1162,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             
             //LOG(Loading, "%@:  checking complete, current state WEBFRAMESTATE_COMMITTED", [self name]);
             if (![ds isLoading]) {
-                ASSERT([[self frameView] documentView]);
+                WebFrameView *thisView = [self frameView];
+                NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
+                ASSERT(thisDocumentView != nil);
 
                 [self _markLoadComplete];
 
