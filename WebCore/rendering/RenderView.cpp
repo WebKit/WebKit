@@ -188,7 +188,7 @@ void RenderView::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     if (view() && elt) {
         RenderLayer* layer = elt->renderer()->enclosingLayer();
         if (layer->isTransparent() || layer->transparentAncestor())
-            frameView()->useSlowRepaints();
+            frameView()->setUseSlowRepaints();
     }
     
     if ((firstChild() && firstChild()->style()->visibility() == VISIBLE) || !view())
@@ -198,7 +198,7 @@ void RenderView::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     // Only fill with white if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
     if (elt || view()->isTransparent())
-        frameView()->useSlowRepaints(); // The parent must show behind the child.
+        frameView()->setUseSlowRepaints(); // The parent must show behind the child.
     else
         i.p->fillRect(i.r, Color(Color::white));
 }

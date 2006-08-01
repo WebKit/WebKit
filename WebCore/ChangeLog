@@ -1,5 +1,30 @@
 2006-07-31  David Hyatt  <hyatt@apple.com>
 
+        Fix for bug 10179, digg.com scrolls slowly.  Improve fixed positioning
+        and fixed backgrounds so that a count of them is kept on the FrameView.
+        This allows us to switch slow scrolling on and off as these objects come
+        and go.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::useSlowRepaints):
+        (WebCore::FrameView::setUseSlowRepaints):
+        (WebCore::FrameView::addSlowRepaintObject):
+        (WebCore::FrameView::removeSlowRepaintObject):
+        * page/FrameView.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
+2006-07-31  David Hyatt  <hyatt@apple.com>
+
         Begin disentangling of scrollbar logic in preparation for engine-implemented
         scrollbars.  Split ScrollBar into two classes, an abstract base (still named
         ScrollBar) and a new PlatformScrollBar subclass.  This subclass is used only

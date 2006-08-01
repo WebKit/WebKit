@@ -2128,6 +2128,19 @@ void RenderObject::setStyle(RenderStyle *style)
         m_hasOverflowClip = false;
     }
 
+    if (view()->frameView()) {
+        // FIXME: A better solution would be to only invalidate the fixed regions when scrolling.  It's overkill to
+        // prevent the entire view from blitting on a scroll.
+        bool oldStyleSlowScroll = style && (style->position() == FixedPosition || style->hasFixedBackgroundImage());
+        bool newStyleSlowScroll = m_style && (m_style->position() == FixedPosition || m_style->hasFixedBackgroundImage());
+        if (oldStyleSlowScroll != newStyleSlowScroll) {
+            if (oldStyleSlowScroll)
+                view()->frameView()->removeSlowRepaintObject();
+            if (newStyleSlowScroll)
+                view()->frameView()->addSlowRepaintObject();
+        }
+    }
+
     RenderStyle *oldStyle = m_style;
     m_style = style;
 

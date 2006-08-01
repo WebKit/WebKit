@@ -1086,12 +1086,6 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
         else
             theme()->adjustStyle(this, style, e);
     }
-
-    // Only use slow repaints if we actually have a background image.
-    // FIXME: We only need to invalidate the fixed regions when scrolling.  It's total overkill to
-    // prevent the entire view from blitting on a scroll.
-    if (style->hasFixedBackgroundImage() && view)
-        view->useSlowRepaints();
 }
 
 void CSSStyleSelector::updateFont()
@@ -2211,18 +2205,17 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         switch(primitiveValue->getIdent())
         {
         case CSS_VAL_STATIC:
-            p = StaticPosition; break;
+            p = StaticPosition;
+            break;
         case CSS_VAL_RELATIVE:
-            p = RelativePosition; break;
+            p = RelativePosition;
+            break;
         case CSS_VAL_ABSOLUTE:
-            p = AbsolutePosition; break;
+            p = AbsolutePosition;
+            break;
         case CSS_VAL_FIXED:
-            {
-                if (view)
-                    view->useSlowRepaints();
-                p = FixedPosition;
-                break;
-            }
+            p = FixedPosition;
+            break;
         default:
             return;
         }

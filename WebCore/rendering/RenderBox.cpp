@@ -499,7 +499,7 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
             isTransparent = view()->frameView()->isTransparent();
         
         if (isTransparent)
-            view()->frameView()->useSlowRepaints(); // The parent must show behind the child.
+            view()->frameView()->setUseSlowRepaints(); // The parent must show behind the child.
         else
             bgColor = Color::white;
     }
