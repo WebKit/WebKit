@@ -26,42 +26,42 @@
  */
 
 #include "config.h"
-#include "TransferJobManager.h"
+#include "ResourceLoaderManager.h"
 
-#include "TransferJob.h"
-#include "TransferJobInternal.h"
+#include "ResourceLoader.h"
+#include "ResourceLoaderInternal.h"
 
 namespace WebCore {
 
 const int selectTimeoutMS = 5;
 const double pollTimeSeconds = 0.05;
 
-TransferJobManager::TransferJobManager()
+ResourceLoaderManager::ResourceLoaderManager()
     : m_useSimple(false)
-    , jobs(new HashSet<TransferJob*>)
-    , m_downloadTimer(this, &TransferJobManager::downloadTimerCallback)
+    , jobs(new HashSet<ResourceLoader*>)
+    , m_downloadTimer(this, &ResourceLoaderManager::downloadTimerCallback)
 {
     curl_global_init(CURL_GLOBAL_ALL);
     curlMultiHandle = curl_multi_init();
 }
 
-TransferJobManager* TransferJobManager::get()
+ResourceLoaderManager* ResourceLoaderManager::get()
 {
-    static TransferJobManager* singleton;
+    static ResourceLoaderManager* singleton;
     if (!singleton)
-        singleton = new TransferJobManager;
+        singleton = new ResourceLoaderManager;
     return singleton;
 }
 
-void TransferJobManager::useSimpleTransfer(bool useSimple)
+void ResourceLoaderManager::useSimpleTransfer(bool useSimple)
 {
     m_useSimple = useSimple;
 }
 
 static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* obj)
 {
-    TransferJob* job = static_cast<TransferJob*>(obj);
-    TransferJobInternal* d = job->getInternal();
+    ResourceLoader* job = static_cast<ResourceLoader*>(obj);
+    ResourceLoaderInternal* d = job->getInternal();
     int totalSize = size * nmemb;
     d->client->receivedData(job, static_cast<char*>(ptr), totalSize);
     return totalSize;
@@ -73,16 +73,16 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
     return totalSize;
 }
 
-void TransferJobManager::downloadTimerCallback(Timer<TransferJobManager>* timer)
+void ResourceLoaderManager::downloadTimerCallback(Timer<ResourceLoaderManager>* timer)
 {
     if (jobs->isEmpty()) {
         m_downloadTimer.stop();
         return;
     }
     if (m_useSimple) {
-        for (HashSet<TransferJob*>::iterator it = jobs->begin(); it != jobs->end(); ++it) {
-            TransferJob* job = *it;
-            TransferJobInternal* d = job->getInternal();
+        for (HashSet<ResourceLoader*>::iterator it = jobs->begin(); it != jobs->end(); ++it) {
+            ResourceLoader* job = *it;
+            ResourceLoaderInternal* d = job->getInternal();
             CURLcode res = curl_easy_perform(d->m_handle);
             if (res != CURLE_OK)
                 printf("Error WITH JOB %d\n", res);
@@ -122,19 +122,19 @@ void TransferJobManager::downloadTimerCallback(Timer<TransferJobManager>* timer)
 
         // check the curl messages indicating completed transfers
         // and free their resources
-        TransferJob* job;
+        ResourceLoader* job;
         int nmsgs;
         while (CURLMsg* msg = curl_multi_info_read(curlMultiHandle, &nmsgs)) {
             if (msg->msg == CURLMSG_DONE) {
                 // find the node which has same d->m_handle as completed transfer
                 CURL* chandle = msg->easy_handle;
                 assert(chandle);
-                TransferJob *job;
+                ResourceLoader *job;
                 curl_easy_getinfo(chandle, CURLINFO_PRIVATE, &job);
                 assert(job); //fixme: assert->if ?
                 // if found, delete it
                 if (job) {
-                    TransferJobInternal *d = job->getInternal();
+                    ResourceLoaderInternal *d = job->getInternal();
                     switch (msg->data.result) {
                         case CURLE_OK: {
                             // use this to authenticate
@@ -161,9 +161,9 @@ void TransferJobManager::downloadTimerCallback(Timer<TransferJobManager>* timer)
         m_downloadTimer.startOneShot(pollTimeSeconds);
 }
 
-void TransferJobManager::remove(TransferJob* job)
+void ResourceLoaderManager::remove(ResourceLoader* job)
 {
-    TransferJobInternal* d = job->getInternal();
+    ResourceLoaderInternal* d = job->getInternal();
     if (!d->m_handle)
         return;
     if (jobs->contains(job))
@@ -179,10 +179,10 @@ void TransferJobManager::remove(TransferJob* job)
     }
 }
 
-void TransferJobManager::add(TransferJob* job)
+void ResourceLoaderManager::add(ResourceLoader* job)
 {
     bool startTimer = jobs->isEmpty();
-    TransferJobInternal* d = job->getInternal();
+    ResourceLoaderInternal* d = job->getInternal();
     DeprecatedString url = d->URL.url();
     d->m_handle = curl_easy_init();
     curl_easy_setopt(d->m_handle, CURLOPT_PRIVATE, job);
@@ -214,7 +214,7 @@ void TransferJobManager::add(TransferJob* job)
         m_downloadTimer.startOneShot(pollTimeSeconds);
 }
 
-void TransferJobManager::cancel(TransferJob* job)
+void ResourceLoaderManager::cancel(ResourceLoader* job)
 {
     remove(job);
     job->setError(1);

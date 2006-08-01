@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TransferJobWin_H
-#define TransferJobWin_H
+#ifndef ResourceLoaderWin_H
+#define ResourceLoaderWin_H
 
 #include <windows.h>
 

@@ -43,8 +43,8 @@
 #include "RenderFrame.h"
 #include "cairo.h"
 #include "cairo-win32.h"
-#include "TransferJob.h"
-#include "TransferJobWin.h"
+#include "ResourceLoader.h"
+#include "ResourceLoaderWin.h"
 #pragma warning(pop)
 
 using namespace WebCore;
@@ -374,16 +374,16 @@ HRESULT WebFrame::loadDataSource(WebDataSource* dataSource)
                 d->frame->didOpenURL(kurl);
                 d->frame->begin(kurl);
                 String methodString(method, SysStringLen(method));
-                TransferJob* job;
+                ResourceLoader* job;
                 const FormData* formData = 0;
                 if (wcscmp(method, TEXT("GET"))) {
                     WebMutableURLRequest* requestImpl = static_cast<WebMutableURLRequest*>(request);
                     formData = requestImpl->formData();
                 }
                 if (formData)
-                    job = new TransferJob(this, methodString, kurl, *formData);
+                    job = new ResourceLoader(this, methodString, kurl, *formData);
                 else
-                    job = new TransferJob(this, methodString, kurl);
+                    job = new ResourceLoader(this, methodString, kurl);
                 job->start(d->frame->document()->docLoader());
                 IWebFrameLoadDelegate* frameLoadDelegate;
                 if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
@@ -462,14 +462,14 @@ int WebFrame::getObjectCacheSize()
     return cacheSize * multiplier;
 }
 
-// TransferJobClient
+// ResourceLoaderClient
 
-void WebFrame::receivedRedirect(TransferJob*, const KURL&)
+void WebFrame::receivedRedirect(ResourceLoader*, const KURL&)
 {
     //FIXME
 }
 
-void WebFrame::receivedResponse(TransferJob*, PlatformResponse)
+void WebFrame::receivedResponse(ResourceLoader*, PlatformResponse)
 {
     if (m_provisionalDataSource) {
         m_dataSource = m_provisionalDataSource;
@@ -477,18 +477,18 @@ void WebFrame::receivedResponse(TransferJob*, PlatformResponse)
     }
 }
 
-void WebFrame::receivedData(TransferJob*, const char* data, int length)
+void WebFrame::receivedData(ResourceLoader*, const char* data, int length)
 {
     d->frame->write(data, length);
 }
 
-void WebFrame::receivedAllData(TransferJob* /*job*/)
+void WebFrame::receivedAllData(ResourceLoader* /*job*/)
 {
     m_quickRedirectComing = false;
     m_loadType = WebFrameLoadTypeStandard;
 }
 
-void WebFrame::receivedAllData(TransferJob* job, PlatformData data)
+void WebFrame::receivedAllData(ResourceLoader* job, PlatformData data)
 {
     IWebFrameLoadDelegate* frameLoadDelegate;
     if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {

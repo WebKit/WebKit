@@ -27,7 +27,7 @@
 #ifndef loader_h
 #define loader_h
 
-#include "TransferJobClient.h"
+#include "ResourceLoaderClient.h"
 #include <wtf/HashMap.h>
 #include "DeprecatedPtrList.h"
 
@@ -46,7 +46,7 @@ namespace WebCore {
     class Request;
     class String;
 
-    class Loader : TransferJobClient
+    class Loader : ResourceLoaderClient
     {
     public:
         Loader();
@@ -60,17 +60,17 @@ namespace WebCore {
         void removeBackgroundDecodingRequest(Request*);
         
         // may return 0
-        TransferJob* jobForRequest(const String& URL) const;
+        ResourceLoader* jobForRequest(const String& URL) const;
 
     private:
-        virtual void receivedResponse(TransferJob*, PlatformResponse);
-        virtual void receivedData(TransferJob*, const char*, int);
-        virtual void receivedAllData(TransferJob*, PlatformData);
+        virtual void receivedResponse(ResourceLoader*, PlatformResponse);
+        virtual void receivedData(ResourceLoader*, const char*, int);
+        virtual void receivedAllData(ResourceLoader*, PlatformData);
 
         void servePendingRequests();
 
         DeprecatedPtrList<Request> m_requestsPending;
-        typedef HashMap<TransferJob*, Request*> RequestMap;
+        typedef HashMap<ResourceLoader*, Request*> RequestMap;
         RequestMap m_requestsLoading;
 
         DeprecatedPtrList<Request> m_requestsBackgroundDecoding;

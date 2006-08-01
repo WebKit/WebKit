@@ -42,7 +42,7 @@
 #include "FramePrivate.h"
 #include "GraphicsContext.h"
 #include "HTMLDocument.h"
-#include "TransferJob.h"
+#include "ResourceLoader.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
@@ -137,7 +137,7 @@ bool FrameGdk::openURL(const KURL& url)
 {
     didOpenURL(url);
     begin(url);
-    TransferJob* job = new TransferJob(this, "GET", url);
+    ResourceLoader* job = new ResourceLoader(this, "GET", url);
     job->start(document()->docLoader());
     return true;
 }
@@ -153,7 +153,7 @@ void FrameGdk::urlSelected(const ResourceRequest& request)
     printf("------------------> LOADING NEW URL %s \n", url.url().ascii());
     didOpenURL(url);
     begin(url);
-    TransferJob* job = new TransferJob(this, "GET", url);
+    ResourceLoader* job = new ResourceLoader(this, "GET", url);
     job->start(document()->docLoader());
 }
 
@@ -304,12 +304,12 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
     }
 }
 
-void FrameGdk::receivedData(TransferJob* job, const char* data, int length)
+void FrameGdk::receivedData(ResourceLoader* job, const char* data, int length)
 {
     write(data, length);
 }
 
-void FrameGdk::receivedAllData(TransferJob* job, PlatformData data)
+void FrameGdk::receivedAllData(ResourceLoader* job, PlatformData data)
 {
     end();
 }

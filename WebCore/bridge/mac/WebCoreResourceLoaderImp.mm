@@ -26,7 +26,7 @@
 #include "config.h"
 #import "WebCoreResourceLoaderImp.h"
 
-#import "TransferJob.h"
+#import "ResourceLoader.h"
 #import "KURL.h"
 #import "loader.h"
 #import <wtf/Assertions.h>
@@ -35,7 +35,7 @@ using namespace WebCore;
 
 @implementation WebCoreResourceLoaderImp
 
-- (id)initWithJob:(TransferJob *)job;
+- (id)initWithJob:(ResourceLoader *)job;
 {
     [super init];
 
@@ -63,7 +63,7 @@ using namespace WebCore;
 {
     ASSERT(url);
     ASSERT(_job);
-    if (TransferJobClient* client = _job->client())
+    if (ResourceLoaderClient* client = _job->client())
         client->receivedRedirect(_job, KURL(url));
 }
 
@@ -71,7 +71,7 @@ using namespace WebCore;
 {
     ASSERT(data);
     ASSERT(_job);
-    if (TransferJobClient* client = _job->client())
+    if (ResourceLoaderClient* client = _job->client())
         client->receivedData(_job, (const char *)[data bytes], [data length]);
 }
 
@@ -87,13 +87,13 @@ using namespace WebCore;
 
 - (void)finishJobAndHandle:(NSData *)data
 {
-    TransferJob* job = _job;
+    ResourceLoader* job = _job;
     id <WebCoreResourceHandle> handle = _handle;
     _job = 0;
     _handle = nil;
 
     if (job) {
-        if (TransferJobClient* client = job->client()) {
+        if (ResourceLoaderClient* client = job->client()) {
             client->receivedAllData(job, data);
             client->receivedAllData(job);
         }

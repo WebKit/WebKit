@@ -33,7 +33,7 @@
 #include "PlatformString.h"
 #include "RegularExpression.h"
 #include "TextEncoding.h"
-#include "TransferJob.h"
+#include "ResourceLoader.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>
 #include <wtf/Vector.h>
@@ -316,12 +316,12 @@ void XMLHttpRequest::send(const String& body)
         if (!m_encoding.isValid())   // FIXME: report an error?
             m_encoding = TextEncoding(UTF8Encoding);
 
-        m_job = new TransferJob(m_async ? this : 0, m_method, m_url, m_encoding.fromUnicode(body.deprecatedString()));
+        m_job = new ResourceLoader(m_async ? this : 0, m_method, m_url, m_encoding.fromUnicode(body.deprecatedString()));
     } else {
         // FIXME: HEAD requests just crash; see <rdar://4460899> and the commented out tests in http/tests/xmlhttprequest/methods.html.
         if (m_method == "HEAD")
             m_method = "GET";
-        m_job = new TransferJob(m_async ? this : 0, m_method, m_url);
+        m_job = new ResourceLoader(m_async ? this : 0, m_method, m_url);
     }
 
     if (m_requestHeaders.length())
@@ -500,7 +500,7 @@ void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const KURL
     receivedAllData(0);
 }
 
-void XMLHttpRequest::receivedAllData(TransferJob*)
+void XMLHttpRequest::receivedAllData(ResourceLoader*)
 {
     if (m_responseHeaders.isEmpty() && m_job)
         m_responseHeaders = m_job->queryMetaData("HTTP-Headers");
@@ -526,13 +526,13 @@ void XMLHttpRequest::receivedAllData(TransferJob*)
     }
 }
 
-void XMLHttpRequest::receivedRedirect(TransferJob*, const KURL& m_url)
+void XMLHttpRequest::receivedRedirect(ResourceLoader*, const KURL& m_url)
 {
     if (!urlMatchesDocumentDomain(m_url))
         abort();
 }
 
-void XMLHttpRequest::receivedData(TransferJob*, const char *data, int len)
+void XMLHttpRequest::receivedData(ResourceLoader*, const char *data, int len)
 {
     if (m_responseHeaders.isEmpty() && m_job)
         m_responseHeaders = m_job->queryMetaData("HTTP-Headers");

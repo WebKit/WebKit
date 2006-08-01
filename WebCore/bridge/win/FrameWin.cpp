@@ -34,7 +34,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "Plugin.h"
 #include "RenderFrame.h"
-#include "TransferJob.h"
+#include "ResourceLoader.h"
 #include <windows.h>
 
 namespace WebCore {

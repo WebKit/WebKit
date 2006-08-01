@@ -1,3 +1,124 @@
+2006-07-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber-stamped by Tim Hatcher.
+
+        - renamed TransferJob to ResourceLoader
+
+        * Projects/gdk/webcore-gdk.bkl:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bridge/mac/FrameMac.mm:
+        * bridge/mac/WebCoreResourceLoaderImp.h:
+        * bridge/mac/WebCoreResourceLoaderImp.mm:
+        (-[WebCoreResourceLoaderImp redirectedToURL:]):
+        (-[WebCoreResourceLoaderImp addData:]):
+        (-[WebCoreResourceLoaderImp finishJobAndHandle:]):
+        * bridge/win/FrameWin.cpp:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::openFunc):
+        * loader/Cache.cpp:
+        * loader/LoaderFunctions.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::receivedAllData):
+        (WebCore::Loader::receivedResponse):
+        (WebCore::Loader::receivedData):
+        (WebCore::Loader::cancelRequests):
+        (WebCore::Loader::jobForRequest):
+        * loader/loader.h:
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::ServeSynchronousRequest):
+        * platform/ResourceLoader.cpp: Added.
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::isErrorPage):
+        (WebCore::ResourceLoader::error):
+        (WebCore::ResourceLoader::setError):
+        (WebCore::ResourceLoader::queryMetaData):
+        (WebCore::ResourceLoader::addMetaData):
+        (WebCore::ResourceLoader::kill):
+        (WebCore::ResourceLoader::url):
+        (WebCore::ResourceLoader::postData):
+        (WebCore::ResourceLoader::method):
+        (WebCore::ResourceLoader::client):
+        * platform/ResourceLoader.h: Added.
+        (WebCore::ResourceLoader::getInternal):
+        * platform/ResourceLoaderClient.h: Added.
+        (WebCore::ResourceLoaderClient::~ResourceLoaderClient):
+        (WebCore::ResourceLoaderClient::receivedRedirect):
+        (WebCore::ResourceLoaderClient::receivedResponse):
+        (WebCore::ResourceLoaderClient::receivedData):
+        (WebCore::ResourceLoaderClient::receivedAllData):
+        * platform/ResourceLoaderInternal.h: Added.
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/TransferJob.cpp: Removed.
+        * platform/TransferJob.h: Removed.
+        * platform/TransferJobClient.h: Removed.
+        * platform/TransferJobInternal.h: Removed.
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::openURL):
+        (WebCore::FrameGdk::urlSelected):
+        (WebCore::FrameGdk::receivedData):
+        (WebCore::FrameGdk::receivedAllData):
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/ResourceLoaderCurl.cpp: Added.
+        (WebCore::ResourceLoaderInternal::~ResourceLoaderInternal):
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::cancel):
+        * platform/gdk/ResourceLoaderManager.cpp: Added.
+        (WebCore::ResourceLoaderManager::ResourceLoaderManager):
+        (WebCore::ResourceLoaderManager::get):
+        (WebCore::ResourceLoaderManager::useSimpleTransfer):
+        (WebCore::writeCallback):
+        (WebCore::ResourceLoaderManager::downloadTimerCallback):
+        (WebCore::ResourceLoaderManager::remove):
+        (WebCore::ResourceLoaderManager::add):
+        (WebCore::ResourceLoaderManager::cancel):
+        * platform/gdk/ResourceLoaderManager.h: Added.
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (WebCore::ServeSynchronousRequest):
+        (WebCore::ResourceLoader::assembleResponseHeaders):
+        (WebCore::ResourceLoader::retrieveCharset):
+        * platform/gdk/TransferJobCurl.cpp: Removed.
+        * platform/gdk/TransferJobManager.cpp: Removed.
+        * platform/gdk/TransferJobManager.h: Removed.
+        * platform/mac/ResourceLoaderMac.mm: Added.
+        (WebCore::ResourceLoaderInternal::~ResourceLoaderInternal):
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::assembleResponseHeaders):
+        (WebCore::ResourceLoader::retrieveCharset):
+        (WebCore::ResourceLoader::setLoader):
+        (WebCore::ResourceLoader::receivedResponse):
+        (WebCore::ResourceLoader::cancel):
+        * platform/mac/TransferJobMac.mm: Removed.
+        * platform/win/ResourceLoaderWin.cpp: Added.
+        (WebCore::addToOutstandingJobs):
+        (WebCore::lookupResourceLoader):
+        (WebCore::ResourceLoaderWndProc):
+        (WebCore::initializeOffScreenResourceLoaderWindow):
+        (WebCore::ResourceLoaderInternal::~ResourceLoaderInternal):
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::fileLoadTimer):
+        (WebCore::ResourceLoader::cancel):
+        * platform/win/ResourceLoaderWin.h: Added.
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::ServeSynchronousRequest):
+        (WebCore::ResourceLoader::assembleResponseHeaders):
+        (WebCore::ResourceLoader::retrieveCharset):
+        * platform/win/TransferJobWin.cpp: Removed.
+        * platform/win/TransferJobWin.h: Removed.
+        * xml/XSLTProcessor.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::receivedAllData):
+        (WebCore::XMLHttpRequest::receivedRedirect):
+        (WebCore::XMLHttpRequest::receivedData):
+        * xml/xmlhttprequest.h:
+
 2006-07-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

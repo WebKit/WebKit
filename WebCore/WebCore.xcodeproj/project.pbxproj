@@ -196,11 +196,11 @@
 		651B4D8609AC83370029F1EF /* DeprecatedStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = 651B4D8409AC83370029F1EF /* DeprecatedStringList.h */; };
 		651B4D8F09AC859F0029F1EF /* DeprecatedStringListMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 651B4D8E09AC859F0029F1EF /* DeprecatedStringListMac.mm */; };
 		6522BCDF09C9DAA800C9BA7A /* ResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 6522BCDE09C9DAA800C9BA7A /* ResourceRequest.h */; };
-		6545F67009B82FED0013006F /* TransferJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6545F66C09B82FED0013006F /* TransferJob.cpp */; };
-		6545F67109B82FED0013006F /* TransferJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 6545F66D09B82FED0013006F /* TransferJob.h */; };
-		6545F67209B82FED0013006F /* TransferJobClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 6545F66E09B82FED0013006F /* TransferJobClient.h */; };
-		6545F67309B82FED0013006F /* TransferJobInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6545F66F09B82FED0013006F /* TransferJobInternal.h */; };
-		6545F67609B830180013006F /* TransferJobMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6545F67509B830180013006F /* TransferJobMac.mm */; };
+		6545F67009B82FED0013006F /* ResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6545F66C09B82FED0013006F /* ResourceLoader.cpp */; };
+		6545F67109B82FED0013006F /* ResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6545F66D09B82FED0013006F /* ResourceLoader.h */; };
+		6545F67209B82FED0013006F /* ResourceLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 6545F66E09B82FED0013006F /* ResourceLoaderClient.h */; };
+		6545F67309B82FED0013006F /* ResourceLoaderInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6545F66F09B82FED0013006F /* ResourceLoaderInternal.h */; };
+		6545F67609B830180013006F /* ResourceLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6545F67509B830180013006F /* ResourceLoaderMac.mm */; };
 		654EC611097778F500DAB52C /* WebCoreFrameBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		654EC612097778F500DAB52C /* WebCoreFrameBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */; };
 		6550B69D099DF0270090D781 /* CDATASection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B693099DF0270090D781 /* CDATASection.cpp */; };
@@ -1602,23 +1602,6 @@
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		14DFB2000A7DF2550018F769 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		14DFB2010A7DF2550018F769 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1865,11 +1848,11 @@
 		651B4D8409AC83370029F1EF /* DeprecatedStringList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DeprecatedStringList.h; sourceTree = "<group>"; };
 		651B4D8E09AC859F0029F1EF /* DeprecatedStringListMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DeprecatedStringListMac.mm; sourceTree = "<group>"; };
 		6522BCDE09C9DAA800C9BA7A /* ResourceRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceRequest.h; sourceTree = "<group>"; };
-		6545F66C09B82FED0013006F /* TransferJob.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TransferJob.cpp; sourceTree = "<group>"; };
-		6545F66D09B82FED0013006F /* TransferJob.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TransferJob.h; sourceTree = "<group>"; };
-		6545F66E09B82FED0013006F /* TransferJobClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TransferJobClient.h; sourceTree = "<group>"; };
-		6545F66F09B82FED0013006F /* TransferJobInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TransferJobInternal.h; sourceTree = "<group>"; };
-		6545F67509B830180013006F /* TransferJobMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = TransferJobMac.mm; sourceTree = "<group>"; };
+		6545F66C09B82FED0013006F /* ResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoader.cpp; sourceTree = "<group>"; };
+		6545F66D09B82FED0013006F /* ResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceLoader.h; sourceTree = "<group>"; };
+		6545F66E09B82FED0013006F /* ResourceLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderClient.h; sourceTree = "<group>"; };
+		6545F66F09B82FED0013006F /* ResourceLoaderInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderInternal.h; sourceTree = "<group>"; };
+		6545F67509B830180013006F /* ResourceLoaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceLoaderMac.mm; sourceTree = "<group>"; };
 		6548E24809E1E04D00AF8020 /* Document.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Document.idl; sourceTree = "<group>"; };
 		654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameBridge.h; sourceTree = "<group>"; };
 		654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreFrameBridge.mm; sourceTree = "<group>"; };
@@ -3925,7 +3908,7 @@
 				9352071B09BD3BBB00F2038D /* TextBoundaries.mm */,
 				F587853802DE375901EA4122 /* TextBoxMac.mm */,
 				F587851202DE375901EA4122 /* TextFieldMac.mm */,
-				6545F67509B830180013006F /* TransferJobMac.mm */,
+				6545F67509B830180013006F /* ResourceLoaderMac.mm */,
 				F5517DC2031AB56301A80180 /* WebCoreHistory.h */,
 				F5517DC3031AB56301A80180 /* WebCoreHistory.m */,
 				84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */,
@@ -5236,10 +5219,10 @@
 				F58786BF02DE3B8601EA4122 /* TextStream.h */,
 				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
-				6545F66C09B82FED0013006F /* TransferJob.cpp */,
-				6545F66D09B82FED0013006F /* TransferJob.h */,
-				6545F66E09B82FED0013006F /* TransferJobClient.h */,
-				6545F66F09B82FED0013006F /* TransferJobInternal.h */,
+				6545F66C09B82FED0013006F /* ResourceLoader.cpp */,
+				6545F66D09B82FED0013006F /* ResourceLoader.h */,
+				6545F66E09B82FED0013006F /* ResourceLoaderClient.h */,
+				6545F66F09B82FED0013006F /* ResourceLoaderInternal.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				93B780C909B3B7FE00690162 /* WidgetClient.h */,
@@ -6081,9 +6064,9 @@
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
 				BCEB377609B7BB0D00CB38B1 /* FontFallbackList.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */,
-				6545F67109B82FED0013006F /* TransferJob.h in Headers */,
-				6545F67209B82FED0013006F /* TransferJobClient.h in Headers */,
-				6545F67309B82FED0013006F /* TransferJobInternal.h in Headers */,
+				6545F67109B82FED0013006F /* ResourceLoader.h in Headers */,
+				6545F67209B82FED0013006F /* ResourceLoaderClient.h in Headers */,
+				6545F67309B82FED0013006F /* ResourceLoaderInternal.h in Headers */,
 				935FBC4509BA00B900E230B1 /* EventListener.h in Headers */,
 				935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */,
 				AB23A31309BBA7760067CC53 /* HTMLTextFieldInnerElement.h in Headers */,
@@ -6468,12 +6451,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				14DFB2000A7DF2550018F769 /* Development */,
-				14DFB2010A7DF2550018F769 /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -6982,8 +6959,8 @@
 				BCEB377309B7BA3900CB38B1 /* FontMac.mm in Sources */,
 				C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */,
 				A823A75C09B6E53900B60641 /* GraphicsContext.cpp in Sources */,
-				6545F67009B82FED0013006F /* TransferJob.cpp in Sources */,
-				6545F67609B830180013006F /* TransferJobMac.mm in Sources */,
+				6545F67009B82FED0013006F /* ResourceLoader.cpp in Sources */,
+				6545F67609B830180013006F /* ResourceLoaderMac.mm in Sources */,
 				AB23A31209BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp in Sources */,
 				AB23A32709BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp in Sources */,
 				9352071D09BD3BBB00F2038D /* TextBoundaries.mm in Sources */,

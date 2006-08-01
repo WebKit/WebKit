@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TransferJobClient_h
-#define TransferJobClient_h
+#ifndef ResourceLoaderClient_h
+#define ResourceLoaderClient_h
 
 #ifdef __APPLE__
 #ifdef __OBJC__
@@ -48,16 +48,16 @@ namespace WebCore {
 #endif
 
     class KURL;
-    class TransferJob;
+    class ResourceLoader;
 
-    class TransferJobClient {
+    class ResourceLoaderClient {
     public:
-        virtual ~TransferJobClient() { }
-        virtual void receivedRedirect(TransferJob*, const KURL&) { }
-        virtual void receivedResponse(TransferJob*, PlatformResponse) { }
-        virtual void receivedData(TransferJob*, const char*, int) { }
-        virtual void receivedAllData(TransferJob*) { }
-        virtual void receivedAllData(TransferJob*, PlatformData) { }
+        virtual ~ResourceLoaderClient() { }
+        virtual void receivedRedirect(ResourceLoader*, const KURL&) { }
+        virtual void receivedResponse(ResourceLoader*, PlatformResponse) { }
+        virtual void receivedData(ResourceLoader*, const char*, int) { }
+        virtual void receivedAllData(ResourceLoader*) { }
+        virtual void receivedAllData(ResourceLoader*, PlatformData) { }
     };
 
 }

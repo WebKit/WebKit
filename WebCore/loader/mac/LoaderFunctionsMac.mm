@@ -36,7 +36,7 @@
 #import "WebCoreResourceLoaderImp.h"
 #import "Logging.h"
 #import "Request.h"
-#import "TransferJob.h"
+#import "ResourceLoader.h"
 #import "WebCoreFrameBridge.h"
 #import "loader.h"
 #import <wtf/Vector.h>
@@ -121,7 +121,7 @@ NSString *HeaderStringFromDictionary(NSDictionary *headers, int statusCode)
     return headerString;
 }
 
-Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, TransferJob *job, KURL &finalURL, DeprecatedString &responseHeaders)
+Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, ResourceLoader *job, KURL &finalURL, DeprecatedString &responseHeaders)
 {
     FrameMac *frame = static_cast<FrameMac *>(docLoader->frame());
     

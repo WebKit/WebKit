@@ -1535,19 +1535,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\TransferJob.cpp"
+				RelativePath="..\..\platform\ResourceLoader.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\TransferJob.h"
+				RelativePath="..\..\platform\ResourceLoader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\TransferJobClient.h"
+				RelativePath="..\..\platform\ResourceLoaderClient.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\TransferJobInternal.h"
+				RelativePath="..\..\platform\ResourceLoaderInternal.h"
 				>
 			</File>
 			<File
@@ -1638,11 +1638,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\platform\win\TransferJobWin.cpp"
+					RelativePath="..\..\platform\win\ResourceLoaderWin.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\platform\win\TransferJobWin.h"
+					RelativePath="..\..\platform\win\ResourceLoaderWin.h"
 					>
 				</File>
 				<File

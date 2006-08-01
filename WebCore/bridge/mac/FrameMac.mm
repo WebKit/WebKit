@@ -65,7 +65,7 @@
 #import "RenderTheme.h"
 #import "RenderView.h"
 #import "TextIterator.h"
-#import "TransferJob.h"
+#import "ResourceLoader.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"

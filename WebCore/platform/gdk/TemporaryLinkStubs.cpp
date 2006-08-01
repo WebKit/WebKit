@@ -58,7 +58,7 @@
 #include "RenderTheme.h"
 #include "FrameGdk.h"
 #include "BrowserExtensionGdk.h"
-#include "TransferJob.h"
+#include "ResourceLoader.h"
 #include "RenderThemeGdk.h"
 #include "TextBoundaries.h"
 #include "AXObjectCache.h"
@@ -166,7 +166,7 @@ int WebCore::findNextWordFromIndex(UChar const*, int, int, bool) { notImplemente
 
 namespace WebCore {
 
-Vector<char> ServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,DeprecatedString&) { notImplemented(); return Vector<char>(); }
+Vector<char> ServeSynchronousRequest(Loader*,DocLoader*,ResourceLoader*,KURL&,DeprecatedString&) { notImplemented(); return Vector<char>(); }
 
 }
 
@@ -235,8 +235,8 @@ unsigned PlugInInfoStore::pluginCount() const { return 0; }
 bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { return false; }
 void WebCore::refreshPlugins(bool) { }
 
-void WebCore::TransferJob::assembleResponseHeaders() const { }
-void WebCore::TransferJob::retrieveCharset() const { }
+void WebCore::ResourceLoader::assembleResponseHeaders() const { }
+void WebCore::ResourceLoader::retrieveCharset() const { }
 
 void FrameGdk::restoreDocumentState() { }
 void FrameGdk::partClearedInBegin() { }

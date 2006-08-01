@@ -25,33 +25,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TransferJobManager_H_
-#define TransferJobManager_H_
+#ifndef ResourceLoaderManager_H_
+#define ResourceLoaderManager_H_
 
 #include "Frame.h"
 #include "Timer.h"
-#include "TransferJobClient.h"
+#include "ResourceLoaderClient.h"
 #include <curl/curl.h>
 
 namespace WebCore {
 
-class TransferJobManager {
+class ResourceLoaderManager {
 public:
-    static TransferJobManager* get();
-    void add(TransferJob*);
-    void cancel(TransferJob*);
+    static ResourceLoaderManager* get();
+    void add(ResourceLoader*);
+    void cancel(ResourceLoader*);
 
     // If true, don't multiplex downloads: download completely one at a time.
     void useSimpleTransfer(bool useSimple);
 
 private:
-    TransferJobManager();
-    void downloadTimerCallback(Timer<TransferJobManager>*);
-    void remove(TransferJob*);
+    ResourceLoaderManager();
+    void downloadTimerCallback(Timer<ResourceLoaderManager>*);
+    void remove(ResourceLoader*);
 
     bool m_useSimple;
-    HashSet<TransferJob*>* jobs;
-    Timer<TransferJobManager> m_downloadTimer;
+    HashSet<ResourceLoader*>* jobs;
+    Timer<ResourceLoaderManager> m_downloadTimer;
     CURLM* curlMultiHandle; // not freed
 
     // curl filehandles to poll with select

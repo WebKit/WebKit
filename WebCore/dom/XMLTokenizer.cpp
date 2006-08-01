@@ -40,7 +40,7 @@
 #include "HTMLTokenizer.h"
 #include "LoaderFunctions.h"
 #include "ProcessingInstruction.h"
-#include "TransferJob.h"
+#include "ResourceLoader.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <wtf/Vector.h>
@@ -458,7 +458,7 @@ static void* openFunc(const char* uri)
         return &globalDescriptor;
 
     KURL finalURL;
-    TransferJob* job = new TransferJob(0, "GET", uri);
+    ResourceLoader* job = new ResourceLoader(0, "GET", uri);
     DeprecatedString headers;
     Vector<char> data = ServeSynchronousRequest(Cache::loader(), globalDocLoader, job, finalURL, headers);
     

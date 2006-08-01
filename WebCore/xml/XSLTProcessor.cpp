@@ -35,7 +35,7 @@
 #include "HTMLTokenizer.h"
 #include "LoaderFunctions.h"
 #include "Text.h"
-#include "TransferJob.h"
+#include "ResourceLoader.h"
 #include "loader.h"
 #include "markup.h"
 #include <wtf/Vector.h>
@@ -82,7 +82,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar *uri,
             KURL url((const char*)base, (const char*)uri);
             xmlFree(base);
             KURL finalURL;
-            TransferJob* job = new TransferJob(0, "GET", url);
+            ResourceLoader* job = new ResourceLoader(0, "GET", url);
             DeprecatedString headers;
             xmlGenericErrorFunc oldErrorFunc = xmlGenericError;
             void *oldErrorContext = xmlGenericErrorContext;

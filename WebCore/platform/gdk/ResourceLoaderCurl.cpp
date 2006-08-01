@@ -26,32 +26,32 @@
  */
 
 #include "config.h"
-#include "TransferJob.h"
+#include "ResourceLoader.h"
 
 #include "DocLoader.h"
-#include "TransferJobInternal.h"
-#include "TransferJobManager.h"
+#include "ResourceLoaderInternal.h"
+#include "ResourceLoaderManager.h"
 
 namespace WebCore {
 
-TransferJobInternal::~TransferJobInternal()
+ResourceLoaderInternal::~ResourceLoaderInternal()
 {
 }
 
-TransferJob::~TransferJob()
+ResourceLoader::~ResourceLoader()
 {
     cancel();
 }
 
-bool TransferJob::start(DocLoader* docLoader)
+bool ResourceLoader::start(DocLoader* docLoader)
 {
-    TransferJobManager::get()->add(this);
+    ResourceLoaderManager::get()->add(this);
     return true;
 }
 
-void TransferJob::cancel()
+void ResourceLoader::cancel()
 {
-    TransferJobManager::get()->cancel(this);
+    ResourceLoaderManager::get()->cancel(this);
 }
 
 } // namespace WebCore

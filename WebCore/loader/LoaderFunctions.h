@@ -49,9 +49,9 @@ class KURL;
 class Loader;
 class Request;
 class String;
-class TransferJob;
+class ResourceLoader;
 
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, TransferJob*, KURL& finalURL, DeprecatedString& headers);
+Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceLoader*, KURL& finalURL, DeprecatedString& headers);
 
 void CheckCacheObjectStatus(DocLoader*, CachedResource*);
 bool CheckIfReloading(DocLoader*);

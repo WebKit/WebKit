@@ -173,7 +173,7 @@
 		platform/TextEncoding.cpp
 		platform/TextStream.cpp
 		platform/Timer.cpp
-		platform/TransferJob.cpp
+		platform/ResourceLoader.cpp
 		platform/Widget.cpp
 
 	</set>
@@ -196,7 +196,7 @@
 		platform/win/SharedTimerWin.cpp
 		platform/win/SystemTimeWin.cpp
 		platform/win/TemporaryLinkStubs.cpp
-		platform/win/TransferJobWin.cpp
+		platform/win/ResourceLoaderWin.cpp
 		platform/win/WidgetWin.cpp
 
 	</set>

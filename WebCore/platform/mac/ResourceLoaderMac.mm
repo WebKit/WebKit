@@ -24,8 +24,8 @@
  */
 
 #import "config.h"
-#import "TransferJob.h"
-#import "TransferJobInternal.h"
+#import "ResourceLoader.h"
+#import "ResourceLoaderInternal.h"
 
 #import "BlockExceptions.h"
 #import "DocLoader.h"
@@ -41,13 +41,13 @@
 
 namespace WebCore {
     
-TransferJobInternal::~TransferJobInternal()
+ResourceLoaderInternal::~ResourceLoaderInternal()
 {
     HardRelease(response);
     HardRelease(loader);
 }
 
-TransferJob::~TransferJob()
+ResourceLoader::~ResourceLoader()
 {
     // This will cancel the handle, and who knows what that could do
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -56,7 +56,7 @@ TransferJob::~TransferJob()
     delete d;
 }
 
-bool TransferJob::start(DocLoader* docLoader)
+bool ResourceLoader::start(DocLoader* docLoader)
 {
     FrameMac *frame = Mac(docLoader->frame());
     
@@ -92,7 +92,7 @@ bool TransferJob::start(DocLoader* docLoader)
     return true;
 }
 
-void TransferJob::assembleResponseHeaders() const
+void ResourceLoader::assembleResponseHeaders() const
 {
     if (!d->assembledResponseHeaders) {
         if ([d->response isKindOfClass:[NSHTTPURLResponse class]]) {
@@ -104,7 +104,7 @@ void TransferJob::assembleResponseHeaders() const
     }
 }
 
-void TransferJob::retrieveCharset() const
+void ResourceLoader::retrieveCharset() const
 {
     if (!d->retrievedCharset) {
         NSString *charset = [d->response textEncodingName];
@@ -114,14 +114,14 @@ void TransferJob::retrieveCharset() const
     }
 }
 
-void TransferJob::setLoader(WebCoreResourceLoaderImp *loader)
+void ResourceLoader::setLoader(WebCoreResourceLoaderImp *loader)
 {
     HardRetain(loader);
     HardRelease(d->loader);
     d->loader = loader;
 }
 
-void TransferJob::receivedResponse(NSURLResponse* response)
+void ResourceLoader::receivedResponse(NSURLResponse* response)
 {
     d->assembledResponseHeaders = false;
     d->retrievedCharset = false;
@@ -131,7 +131,7 @@ void TransferJob::receivedResponse(NSURLResponse* response)
         d->client->receivedResponse(this, response);
 }
 
-void TransferJob::cancel()
+void ResourceLoader::cancel()
 {
     [d->loader jobCanceledLoad];
 }

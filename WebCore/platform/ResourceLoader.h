@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TransferJob_H_
-#define TransferJob_H_
+#ifndef ResourceLoader_H_
+#define ResourceLoader_H_
 
 #include "StringHash.h"
 #include "Timer.h"
-#include "TransferJobClient.h" // for PlatformResponse
+#include "ResourceLoaderClient.h" // for PlatformResponse
 #include <wtf/HashMap.h>
 
 #ifdef WIN32
@@ -56,13 +56,13 @@ namespace WebCore {
 class DocLoader;
 class FormData;
 class KURL;
-class TransferJobInternal;
+class ResourceLoaderInternal;
 
-class TransferJob {
+class ResourceLoader {
 public:
-    TransferJob(TransferJobClient*, const String& method, const KURL&);
-    TransferJob(TransferJobClient*, const String& method, const KURL&, const FormData& postData);
-    ~TransferJob();
+    ResourceLoader(ResourceLoaderClient*, const String& method, const KURL&);
+    ResourceLoader(ResourceLoaderClient*, const String& method, const KURL&, const FormData& postData);
+    ~ResourceLoader();
 
     bool start(DocLoader*);
 
@@ -83,18 +83,18 @@ public:
     void setLoader(WebCoreResourceLoaderImp*);
 #endif
 #if WIN32
-    void fileLoadTimer(Timer<TransferJob>* timer);
+    void fileLoadTimer(Timer<ResourceLoader>* timer);
     friend void __stdcall transferJobStatusCallback(HINTERNET, DWORD_PTR, DWORD, LPVOID, DWORD);
-    friend LRESULT __stdcall TransferJobWndProc(HWND, unsigned message, WPARAM, LPARAM);
+    friend LRESULT __stdcall ResourceLoaderWndProc(HWND, unsigned message, WPARAM, LPARAM);
 #endif
 
 #if PLATFORM(GDK)
-    TransferJobInternal * getInternal() { return d;}
+    ResourceLoaderInternal * getInternal() { return d;}
 #endif
 
     void cancel();
     
-    TransferJobClient* client() const;
+    ResourceLoaderClient* client() const;
 
     void receivedResponse(PlatformResponse);
 
@@ -102,9 +102,9 @@ private:
     void assembleResponseHeaders() const;
     void retrieveCharset() const;
 
-    TransferJobInternal* d;
+    ResourceLoaderInternal* d;
 };
 
 }
 
-#endif // TransferJob_H_
+#endif // ResourceLoader_H_

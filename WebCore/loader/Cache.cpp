@@ -35,7 +35,7 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "Image.h"
-#include "TransferJob.h"
+#include "ResourceLoader.h"
 #include "loader.h"
 
 using namespace std;

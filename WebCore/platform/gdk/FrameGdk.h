@@ -29,7 +29,7 @@
 #define FrameGdk_H_
 
 #include "Frame.h"
-#include "TransferJobClient.h"
+#include "ResourceLoaderClient.h"
 #include <gdk/gdk.h>
 
 namespace WebCore {
@@ -41,7 +41,7 @@ public:
     virtual void openURL(const DeprecatedString&) = 0;
 };
 
-class FrameGdk : public Frame, TransferJobClient {
+class FrameGdk : public Frame, ResourceLoaderClient {
 public:
     FrameGdk(Page*, Element*);
     FrameGdk(GdkDrawable*);
@@ -126,8 +126,8 @@ public:
 
     bool keyPress(const PlatformKeyboardEvent&);
 
-    virtual void receivedData(TransferJob*, const char*, int);
-    virtual void receivedAllData(TransferJob*,PlatformData);
+    virtual void receivedData(ResourceLoader*, const char*, int);
+    virtual void receivedAllData(ResourceLoader*,PlatformData);
 
     IntRect frameGeometry() const;
     void setFrameGeometry(const IntRect&);

@@ -75,7 +75,7 @@
           platform/gdk/KeyEventGdk.cpp
           platform/gdk/MouseEventGdk.cpp
           platform/gdk/PageGdk.cpp
-          platform/gdk/TransferJobManager.cpp
+          platform/gdk/ResourceLoaderManager.cpp
           platform/gdk/RenderThemeGdk.cpp
           platform/gdk/RenderPopupMenuGdk.cpp
           platform/gdk/ScreenGdk.cpp
@@ -83,7 +83,7 @@
           platform/gdk/SharedTimerLinux.cpp
           platform/gdk/SystemTimeLinux.cpp
           platform/gdk/TemporaryLinkStubs.cpp
-          platform/gdk/TransferJobCurl.cpp
+          platform/gdk/ResourceLoaderCurl.cpp
           platform/gdk/WheelEventGdk.cpp
           platform/gdk/WidgetGdk.cpp
 		</sources>

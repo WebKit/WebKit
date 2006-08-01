@@ -24,40 +24,40 @@
  */
 
 #include "config.h"
-#include "TransferJob.h"
-#include "TransferJobInternal.h"
+#include "ResourceLoader.h"
+#include "ResourceLoaderInternal.h"
 
 #include "LoaderFunctions.h"
 #include "Logging.h"
 
 namespace WebCore {
 
-TransferJob::TransferJob(TransferJobClient* client, const String& method, const KURL& url)
-    : d(new TransferJobInternal(this, client, method, url))
+ResourceLoader::ResourceLoader(ResourceLoaderClient* client, const String& method, const KURL& url)
+    : d(new ResourceLoaderInternal(this, client, method, url))
 {
 }
 
-TransferJob::TransferJob(TransferJobClient* client, const String& method, const KURL& url, const FormData& postData)
-    : d(new TransferJobInternal(this, client, method, url, postData))
+ResourceLoader::ResourceLoader(ResourceLoaderClient* client, const String& method, const KURL& url, const FormData& postData)
+    : d(new ResourceLoaderInternal(this, client, method, url, postData))
 {
 }
 
-bool TransferJob::isErrorPage() const
+bool ResourceLoader::isErrorPage() const
 {
     return d->status != 0;
 }
 
-int TransferJob::error() const
+int ResourceLoader::error() const
 {
     return d->status;
 }
 
-void TransferJob::setError(int e)
+void ResourceLoader::setError(int e)
 {
     d->status = e;
 }
 
-String TransferJob::queryMetaData(const String& key) const
+String ResourceLoader::queryMetaData(const String& key) const
 {
     if (key == "HTTP-Headers") {
         assembleResponseHeaders();
@@ -71,39 +71,39 @@ String TransferJob::queryMetaData(const String& key) const
     return d->metaData.get(key); 
 }
 
-void TransferJob::addMetaData(const String& key, const String& value)
+void ResourceLoader::addMetaData(const String& key, const String& value)
 {
     d->metaData.set(key, value);
 }
 
-void TransferJob::addMetaData(const HashMap<String, String>& keysAndValues)
+void ResourceLoader::addMetaData(const HashMap<String, String>& keysAndValues)
 {
     HashMap<String, String>::const_iterator end = keysAndValues.end();
     for (HashMap<String, String>::const_iterator it = keysAndValues.begin(); it != end; ++it)
         d->metaData.set(it->first, it->second);
 }
 
-void TransferJob::kill()
+void ResourceLoader::kill()
 {
     delete this;
 }
 
-KURL TransferJob::url() const
+KURL ResourceLoader::url() const
 {
     return d->URL;
 }
 
-FormData TransferJob::postData() const
+FormData ResourceLoader::postData() const
 {
     return d->postData;
 }
 
-String TransferJob::method() const
+String ResourceLoader::method() const
 {
     return d->method;
 }
 
-TransferJobClient* TransferJob::client() const
+ResourceLoaderClient* ResourceLoader::client() const
 {
     return d->client;
 }
