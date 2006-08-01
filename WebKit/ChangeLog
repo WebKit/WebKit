@@ -1,3 +1,18 @@
+2006-07-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - omit the margin and padding boxes for display types where they are ignored
+        - use CSS instead of properties for table spacing and padding as suggested by Tim H.
+
+        * WebInspector/webInspector/inspector.css: Added rules for spacing and padding.
+        Added rules that hide the margin and padding boxes (borders and all but the center cell)
+        when the hide attribute is present.
+        * WebInspector/webInspector/inspector.html: Added classes for the rules above.
+        Removed cellpadding and cellspacing attributes.
+        * WebInspector/webInspector/inspector.js: Added code to hide/show the margin and
+        padding boxes based on the display type.
+
 2006-07-31  Duncan Wilcox  <duncan@mclink.it>
 
         Reviewed by Darin.

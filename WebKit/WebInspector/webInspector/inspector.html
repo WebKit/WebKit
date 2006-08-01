@@ -109,24 +109,29 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </div>
     <div id="metricsPane" class="pane" style="display: none">
         <div id="noMetrics" style="display: none">No metrics</div>
-        <table class="boxModelTable" id="marginBoxTable" cellpadding=0 cellspacing=0>
-            <tr><td valign="top"><div style="position:relative"><div class="boxModelLabel">margin</div></div></td><td id="margin-top"></td><td></td></tr>
-            <tr><td class="horizontalCell" id="margin-left"></td><td>
-                <table class="boxModelTable" id="borderBoxTable" cellpadding=0 cellspacing=0>
-                    <tr><td valign="top"><div style="position:relative"><div class="boxModelLabel">border</div></div></td><td id="border-top"></td><td></td></tr>
+        <table class="boxModelTable" id="marginBoxTable">
+            <tr class="marginBox">
+                <td valign="top"><div style="position:relative"><div class="boxModelLabel">margin</div></div></td>
+                <td id="margin-top"></td><td></td></tr>
+            <tr><td class="marginBox horizontalCell" id="margin-left"></td><td>
+                <table class="boxModelTable" id="borderBoxTable">
+                    <tr><td valign="top"><div style="position:relative"><div class="boxModelLabel">border</div></div></td>
+                        <td id="border-top"></td><td></td></tr>
                     <tr><td class="horizontalCell" id="border-left"></td><td>
-                        <table class="boxModelTable" id="paddingBoxTable" cellpadding=0 cellspacing=0>
-                            <tr><td valign="top"><div style="position:relative"><div class="boxModelLabel">padding</div></div></td><td id="padding-top"></td><td></td></tr>
-                            <tr><td class="horizontalCell" id="padding-left"></td><td>
-                                <div id="content"></div></div>
-                            </td><td class="horizontalCell" id="padding-right"></td></tr>
-                            <tr><td></td><td id="padding-bottom"></td><td></td></tr>
+                        <table class="boxModelTable" id="paddingBoxTable">
+                            <tr class="paddingBox">
+                                <td valign="top"><div style="position:relative"><div class="boxModelLabel">padding</div></div></td>
+                                <td id="padding-top"></td><td></td></tr>
+                            <tr><td class="paddingBox horizontalCell" id="padding-left"></td><td>
+                                <div id="content"></div>
+                            </td><td class="paddingBox horizontalCell" id="padding-right"></td></tr>
+                            <tr class="paddingBox"><td></td><td id="padding-bottom"></td><td></td></tr>
                         </table>
                     </td><td class="horizontalCell" id="border-right"></td></tr>
                     <tr><td></td><td id="border-bottom"></td><td></td></tr>
                 </table>
-            </td><td class="horizontalCell" id="margin-right"></td></tr>
-            <tr><td></td><td id="margin-bottom"></td><td></td></tr>
+            </td><td class="marginBox horizontalCell" id="margin-right"></td></tr>
+            <tr class="marginBox"><td></td><td id="margin-bottom"></td><td></td></tr>
         </table>
     </div>
     <div id="propertiesPane" class="pane" style="display: none">

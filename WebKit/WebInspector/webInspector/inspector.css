@@ -876,9 +876,14 @@ button.toggle.right {
     color: rgb(255,255,180);
 }
 
+.boxModelTable {
+    border-spacing: 0px;
+}
+
 .boxModelTable td {
     text-align: center;
     min-width: 10px;
+    padding: 0px;
 }
 
 .boxModelTable .horizontalCell {
@@ -920,4 +925,12 @@ button.toggle.right {
     color: rgba(255,255,255,0.4);
     text-align: center;
     margin-top: 40%;
+}
+
+#marginBoxTable[hide], #paddingBoxTable[hide] {
+    border: 0px
+}
+
+#marginBoxTable[hide] .marginBox, #paddingBoxTable[hide] .paddingBox {
+    display: none
 }

@@ -140,6 +140,27 @@ var valueNickname = {
     "rgba(0, 0, 0, 0)": "transparent",
 };
 
+// Display types for which margin is ignored.
+var noMarginDisplayType = {
+    "table-cell": "no",
+    "table-column": "no",
+    "table-column-group": "no",
+    "table-footer-group": "no",
+    "table-header-group": "no",
+    "table-row": "no",
+    "table-row-group": "no",
+};
+
+// Display types for which padding is ignored.
+var noPaddingDisplayType = {
+    "table-column": "no",
+    "table-column-group": "no",
+    "table-footer-group": "no",
+    "table-header-group": "no",
+    "table-row": "no",
+    "table-row-group": "no",
+};
+
 function setUpScrollbar(id)
 {
     var bar = new AppleVerticalScrollbar(document.getElementById(id));
@@ -823,6 +844,16 @@ function updateMetricsPane()
         + " \u00D7 "
         + style.getPropertyValue("height").replace(/px$/, "");
     document.getElementById("content").textContent = size;
+
+    if (noMarginDisplayType[style.display] == "no")
+        document.getElementById("marginBoxTable").setAttribute("hide", "yes");
+    else
+        document.getElementById("marginBoxTable").removeAttribute("hide");
+
+    if (noPaddingDisplayType[style.display] == "no")
+        document.getElementById("paddingBoxTable").setAttribute("hide", "yes");
+    else
+        document.getElementById("paddingBoxTable").removeAttribute("hide");
 }
 
 function updatePropertiesPane()
