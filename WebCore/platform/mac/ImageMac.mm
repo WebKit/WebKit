@@ -192,8 +192,10 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRec
 
     if (m_isSolidColor && m_currentFrame == 0) {
         if (m_solidColor.alpha() > 0) {
+            ctxt->save();
             ctxt->setCompositeOperation(!m_solidColor.hasAlpha() && compositeOp == CompositeSourceOver ? CompositeCopy : compositeOp);
             ctxt->fillRect(ir, m_solidColor);
+            ctxt->restore();
         }
         return;
     }
@@ -277,8 +279,10 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 
     if (m_isSolidColor && m_currentFrame == 0) {
         if (m_solidColor.alpha() > 0) {
+            ctxt->save();
             ctxt->setCompositeOperation(!m_solidColor.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
             ctxt->fillRect(destRect, m_solidColor);
+            ctxt->restore();
         }
         return;
     }
@@ -361,8 +365,10 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
 
     if (m_isSolidColor && m_currentFrame == 0) {
         if (m_solidColor.alpha() > 0) {
+            ctxt->save();
             ctxt->setCompositeOperation(!m_solidColor.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
             ctxt->fillRect(dstRect, m_solidColor);
+            ctxt->restore();
         }
         return;
     }

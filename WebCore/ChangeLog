@@ -1,3 +1,17 @@
+2006-07-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10158
+          REGRESSION: Selection highlight is dark and opaque when solid-color images are used
+
+        Reviewed by Darin.
+
+        Pixel test: fast/backgrounds/solid-color-context-restore.html
+
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::draw): Added calls to preserve the graphics context
+        around the painting of a solid color image.
+        (WebCore::Image::drawTiled): Ditto.
+
 2006-07-31  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber-stamped by Tim Hatcher.

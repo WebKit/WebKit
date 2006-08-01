@@ -1,3 +1,15 @@
+2006-07-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10158
+          REGRESSION: Selection highlight is dark and opaque when solid-color images are used
+
+        Reviewed by Darin.
+
+        * fast/backgrounds/solid-color-context-restore-expected.checksum: Added.
+        * fast/backgrounds/solid-color-context-restore-expected.png: Added.
+        * fast/backgrounds/solid-color-context-restore-expected.txt: Added.
+        * fast/backgrounds/solid-color-context-restore.html: Added.
+
 2006-07-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
