@@ -33,6 +33,8 @@ var currentFile = -1;
 var currentRow = null;
 var currentStack = null;
 var currentCallFrame = null;
+var lastStatement = null;
+var frameLineNumberStack = new Array();
 var previousFiles = new Array();
 var nextFiles = new Array();
 var isResizingColumn = false;
@@ -646,6 +648,11 @@ function selectStackFrame(event)
     addStyleClass(this, "current");
     this.callFrame.loadVariables();
     currentCallFrame = this.callFrame;
+
+    if (frameLineNumberInfo = frameLineNumberStack[this.callFrame.index - 1])
+        jumpToLine(frameLineNumberInfo[0], frameLineNumberInfo[1]);
+    else if (this.callFrame.index == 0)
+        jumpToLine(lastStatement[0], lastStatement[1]);
 }
 
 function selectVariable(event)
@@ -785,6 +792,39 @@ function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
         loadFile(fileIndex, true);
 }
 
+function jumpToLine(sourceId, line)
+{
+    var script = scripts[sourceId];
+    if (line <= 0 || !script)
+        return;
+
+    var file = files[script.file];
+    if (!file)
+        return;
+
+    if (currentFile != script.file)
+        loadFile(script.file, true);
+    if (currentRow)
+        removeStyleClass(currentRow, "current");
+    if (!file.element)
+        return;
+    if (line > file.element.firstChild.childNodes.length)
+        return;
+
+    currentRow = file.element.firstChild.childNodes.item(line - 1);
+    if (!currentRow)
+        return;
+
+    addStyleClass(currentRow, "current");
+
+    var sourcesDiv = document.getElementById("sources");
+    var sourcesDocument = document.getElementById("sources").contentDocument;
+    var parent = sourcesDocument.body;
+    var offset = totalOffsetTop(currentRow, parent);
+    if (offset < (parent.scrollTop + 20) || offset > (parent.scrollTop + sourcesDiv.clientHeight - 20))
+        parent.scrollTop = totalOffsetTop(currentRow, parent) - (sourcesDiv.clientHeight / 2) + 10;
+}
+
 function willExecuteStatement(sourceId, line, fromLeavingFrame)
 {
     var script = scripts[sourceId];
@@ -795,6 +835,8 @@ function willExecuteStatement(sourceId, line, fromLeavingFrame)
     if (!file)
         return;
 
+    lastStatement = [sourceId, line];
+
     if (pauseOnNextStatement || file.breakpoints[line] == 1 || (steppingOver && !steppingStack)) {
         pause();
         pauseOnNextStatement = false;
@@ -802,29 +844,8 @@ function willExecuteStatement(sourceId, line, fromLeavingFrame)
     }
 
     if (isPaused()) {
-        if (currentFile != script.file)
-            loadFile(script.file, true);
-        if (currentRow)
-            removeStyleClass(currentRow, "current");
-        if (!file.element)
-            return;
-        if (line > file.element.firstChild.childNodes.length)
-            return;
-
         updateFunctionStack();
-
-        currentRow = file.element.firstChild.childNodes.item(line - 1);
-        if (!currentRow)
-            return;
-
-        addStyleClass(currentRow, "current");
-
-        var sourcesDiv = document.getElementById("sources");
-        var sourcesDocument = document.getElementById("sources").contentDocument;
-        var parent = sourcesDocument.body;
-        var offset = totalOffsetTop(currentRow, parent);
-        if (offset < (parent.scrollTop + 20) || offset > (parent.scrollTop + sourcesDiv.clientHeight - 20))
-            parent.scrollTop = totalOffsetTop(currentRow, parent) - (sourcesDiv.clientHeight / 2) + 10;
+        jumpToLine(sourceId, line);
     }
 }
 
@@ -832,6 +853,9 @@ function didEnterCallFrame(sourceId, line)
 {
     if (steppingOver || steppingOut)
         steppingStack++;
+
+    if (lastStatement)
+        frameLineNumberStack.unshift(lastStatement);
     willExecuteStatement(sourceId, line);
 }
 
@@ -840,6 +864,7 @@ function willLeaveCallFrame(sourceId, line)
     if (line <= 0)
         resume();
     willExecuteStatement(sourceId, line, true);
+    frameLineNumberStack.shift();
     if (!steppingStack)
         steppingOver = false;
     if (steppingOut && !steppingStack) {
@@ -853,7 +878,8 @@ function willLeaveCallFrame(sourceId, line)
 function exceptionWasRaised(sourceId, line)
 {
     pause();
-    willExecuteStatement(sourceId, line);
+    updateFunctionStack();
+    jumpToLine(sourceId, line);
 }
 
 function showConsoleWindow()

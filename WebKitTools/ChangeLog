@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10178
+        Bug 10178: [Drosera] Selecting a frame in the stack list should take you to that location in the source
+
+        * Drosera/debugger.js:  Keep a stack that contains the source file and line number references for outer
+        frames.  Use this stack to determine which file and line to highlight when a stack frame is selected.
+
+2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Darin.
+
         http://bugzilla.opendarwin.org/show_bug.cgi?id=10175
         Bug 10175: [Drosera] Anonymous functions show up as "(global scope)" in stack list
 
