@@ -1,3 +1,12 @@
+2006-08-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Beth.
+
+        - revert part of my last fix that broke the Safari bookmarks view
+        
+        * WebView/WebFrame.m:
+        (-[WebFrame _checkLoadCompleteForThisFrame]): still send layout message for non-HTML views
+
 2006-08-01  Tim Omernick  <timo@apple.com>
 
         Reviewed by Anders.

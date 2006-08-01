@@ -1170,6 +1170,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // Maybe there are bugs because of that, or extra work we can skip because
                 // the new page is ready.
 
+                // Tell the just loaded document to layout.  This may be necessary
+                // for non-html content that needs a layout message.
+                if (!([[self dataSource] _isDocumentHTML])) {
+                    [thisDocumentView setNeedsLayout:YES];
+                    [thisDocumentView layout];
+                    [thisDocumentView setNeedsDisplay:YES];
+                }
+                 
                 // If the user had a scroll point scroll to it.  This will override
                 // the anchor point.  After much discussion it was decided by folks
                 // that the user scroll point should override the anchor point.
