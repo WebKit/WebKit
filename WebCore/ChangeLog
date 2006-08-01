@@ -1,3 +1,17 @@
+2006-07-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John and Anders.
+
+        - Fix for <rdar://problem/4380576> onChange does not get called when field changed by return key
+
+        Test: fast/forms/onchange-enter-submit.html
+
+        Blur (which will fire onChange appropriately) before submitting a form when pressing Enter.
+        This matches the sequence of events fired in WinIE.
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLSelectElement.cpp: (WebCore::HTMLSelectElement::defaultEventHandler):
+
 2006-07-31  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Kevin.

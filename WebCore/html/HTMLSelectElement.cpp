@@ -478,7 +478,10 @@ void HTMLSelectElement::defaultEventHandler(Event *evt)
             return;
         String keyIdentifier = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
         if (form() && keyIdentifier == "Enter") {
-            form()->submitClick();
+            blur();
+            // Make sure the form hasn't been destroyed during the blur.
+            if (form())
+                form()->submitClick();
             evt->setDefaultHandled();
         }
         if ((keyIdentifier == "Down" || keyIdentifier == "Up" || keyIdentifier == "U+000020") && renderer() && shouldUseMenuList()) {
