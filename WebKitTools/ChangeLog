@@ -1,3 +1,13 @@
+2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10182
+        Bug 10182: [Drosera] Evaluating expressions in Console is slow when current frame has many variables
+
+        * Drosera/console.js: String.indexOf returns -1 when the string is not found.
+        Correct the logic to not reload local variable list unless an '=' character is in the expression.
+
 2006-07-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

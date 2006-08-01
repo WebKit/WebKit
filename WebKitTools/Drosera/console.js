@@ -70,6 +70,6 @@ function sendScript(script)
     history.appendChild(row);
     history.scrollTop = history.scrollHeight;
 
-    if (script.indexOf("="))
+    if (script.indexOf("=") >= 0)
         mainWindow.currentCallFrame.loadVariables();
 }
