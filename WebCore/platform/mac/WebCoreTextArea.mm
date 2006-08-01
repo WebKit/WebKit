@@ -35,6 +35,7 @@
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "RenderReplaced.h"
+#import "WidgetClient.h"
 #import <wtf/Assertions.h>
 
 using namespace std;

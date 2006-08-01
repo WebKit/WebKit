@@ -58,6 +58,7 @@
 #include "MouseEventWithHitTestResults.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "PlatformScrollBar.h"
 #include "PlugInInfoStore.h"
 #include "Plugin.h"
 #include "PluginDocument.h"

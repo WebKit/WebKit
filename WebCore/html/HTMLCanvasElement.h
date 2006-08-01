@@ -40,6 +40,7 @@ namespace WebCore {
 class CanvasRenderingContext2D;
 typedef CanvasRenderingContext2D CanvasRenderingContext;
 class FloatRect;
+class GraphicsContext;
 
 class HTMLCanvasElement : public HTMLElement {
 public:

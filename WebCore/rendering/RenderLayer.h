@@ -46,7 +46,7 @@
 
 #include "RenderObject.h"
 #include "Timer.h"
-#include "WidgetClient.h"
+#include "ScrollBar.h"
 
 namespace WebCore {
 
@@ -58,6 +58,7 @@ class RenderStyle;
 class RenderTable;
 class RenderText;
 class ScrollBar;
+class PlatformScrollBar;
 
 class ClipRects
 {
@@ -139,7 +140,7 @@ private:
     EMarqueeDirection m_direction : 4;
 };
 
-class RenderLayer : WidgetClient {
+class RenderLayer : public ScrollBarClient {
 public:
     enum ScrollBehavior {
         noScroll,
@@ -167,7 +168,7 @@ public:
     static ScrollBehavior getPartialBehavior(const ScrollAlignment& s) { return s.m_rectPartial; }
     static ScrollBehavior getHiddenBehavior(const ScrollAlignment& s) { return s.m_rectHidden; }
 
-    static ScrollBar* gScrollBar;
+    static PlatformScrollBar* gScrollBar;
     
     RenderLayer(RenderObject*);
     ~RenderLayer();
@@ -235,6 +236,8 @@ public:
     void setHasVerticalScrollbar(bool hasScrollbar);
     ScrollBar* horizontalScrollbar() { return m_hBar; }
     ScrollBar* verticalScrollbar() { return m_vBar; }
+    PlatformScrollBar* horizontalScrollbarWidget() const;
+    PlatformScrollBar* verticalScrollbarWidget() const;
     int verticalScrollbarWidth();
     int horizontalScrollbarHeight();
     void positionScrollbars(const IntRect& absBounds);
@@ -244,7 +247,6 @@ public:
     void paintScrollbars(GraphicsContext*, const IntRect& damageRect);
     void paintResizeControl(GraphicsContext*);
     void updateScrollInfoAfterLayout();
-    void slotValueChanged(int);
     bool scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier=1.0);
     void autoscroll();
     bool shouldAutoscroll();
@@ -340,7 +342,7 @@ private:
 
     bool shouldBeOverflowOnly() const;
 
-    virtual void valueChanged(Widget*);
+    virtual void valueChanged(ScrollBar*);
 
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
 protected:   

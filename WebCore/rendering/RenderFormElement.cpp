@@ -29,6 +29,7 @@
 #include "EventNames.h"
 #include "HTMLGenericFormElement.h"
 #include "PlatformMouseEvent.h"
+#include "Widget.h"
 
 namespace WebCore {
 

@@ -1,3 +1,55 @@
+2006-07-31  David Hyatt  <hyatt@apple.com>
+
+        Begin disentangling of scrollbar logic in preparation for engine-implemented
+        scrollbars.  Split ScrollBar into two classes, an abstract base (still named
+        ScrollBar) and a new PlatformScrollBar subclass.  This subclass is used only
+        by platforms that want to continue to use a platform scrollbar (rather than
+        the engine one).
+
+        Reviewed by darin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLCanvasElement.h:
+        * page/Frame.cpp:
+        * platform/PlatformScrollBar.h: Added.
+        (WebCore::PlatformScrollBar::isWidget):
+        * platform/ScrollBar.h:
+        (WebCore::ScrollBarClient::~ScrollBarClient):
+        (WebCore::ScrollBar::~ScrollBar):
+        (WebCore::ScrollBar::orientation):
+        (WebCore::ScrollBar::value):
+        (WebCore::ScrollBar::client):
+        * platform/mac/PlatformScrollBarMac.mm: Added.
+        (-[WebCoreScrollBar initWithPlatformScrollBar:]):
+        (-[WebCoreScrollBar detachPlatformScrollBar]):
+        (-[WebCoreScrollBar scroll:]):
+        (-[WebCoreScrollBar widget]):
+        (-[WebCoreScrollBar mouseDown:]):
+        (WebCore::PlatformScrollBar::PlatformScrollBar):
+        (WebCore::PlatformScrollBar::~PlatformScrollBar):
+        (WebCore::PlatformScrollBar::setScrollBarValue):
+        (WebCore::PlatformScrollBar::setKnobProportion):
+        (WebCore::PlatformScrollBar::scrollbarHit):
+        (WebCore::PlatformScrollBar::width):
+        (WebCore::PlatformScrollBar::height):
+        (WebCore::PlatformScrollBar::setRect):
+        (WebCore::PlatformScrollBar::setEnabled):
+        (WebCore::PlatformScrollBar::paint):
+        * platform/mac/ScrollBarMac.mm: Removed.
+        * platform/mac/WebCoreTextArea.mm:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isPointInScrollbar):
+        * rendering/RenderFormElement.cpp:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::horizontalScrollbarWidget):
+        (WebCore::RenderLayer::verticalScrollbarWidget):
+        (WebCore::RenderLayer::valueChanged):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::positionScrollbars):
+        * rendering/RenderLayer.h:
+        * rendering/RenderWidget.h:
+
 2006-07-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by John and Anders.

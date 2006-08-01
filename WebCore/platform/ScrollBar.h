@@ -26,16 +26,11 @@
 #ifndef ScrollBar_h
 #define ScrollBar_h
 
-#include "Widget.h"
-
-#ifdef __OBJC__
-@class NSScroller;
-#else
-class NSScroller;
-typedef int NSScrollerPart;
-#endif
-
 namespace WebCore {
+
+class GraphicsContext;
+class IntRect;
+class ScrollBar;
 
 enum ScrollDirection {
     ScrollUp,
@@ -53,25 +48,43 @@ enum ScrollGranularity {
 
 enum ScrollBarOrientation { HorizontalScrollBar, VerticalScrollBar };
 
-class ScrollBar : public Widget {
+class ScrollBarClient {
 public:
-    ScrollBar(ScrollBarOrientation);
-    virtual ~ScrollBar();
+    virtual ~ScrollBarClient() {}
+    virtual void valueChanged(ScrollBar*) = 0;
+};
 
-    ScrollBarOrientation orientation() { return m_orientation; }
+class ScrollBar {
+protected:
+    ScrollBar(ScrollBarClient*, ScrollBarOrientation);
 
-    int value() { return m_currentPos; }
-    bool setValue(int v);
+public:
+    virtual ~ScrollBar() {}
+
+    virtual bool isWidget() const = 0;
+
+    ScrollBarOrientation orientation() const { return m_orientation; }
+    int value() const { return m_currentPos; } 
+    
+    virtual void setScrollBarValue(int) = 0;
+    virtual void setKnobProportion(int visibleSize, int totalSize) = 0;
 
     void setSteps(int lineStep, int pageStep);
-    void setKnobProportion(int visibleSize, int totalSize);
     
-    bool scrollbarHit(NSScrollerPart);
-    void valueChanged();
+    bool setValue(int);
     
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0);
     
-private:
+    virtual int width() const = 0;
+    virtual int height() const = 0;
+    virtual void setRect(const IntRect&) = 0;
+    virtual void setEnabled(bool) = 0;
+    virtual void paint(GraphicsContext*, const IntRect& damageRect) = 0;
+
+protected:
+    ScrollBarClient* client() const { return m_client; }
+
+    ScrollBarClient* m_client;
     ScrollBarOrientation m_orientation;
     int m_visibleSize;
     int m_totalSize;

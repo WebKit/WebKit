@@ -25,6 +25,7 @@
 #define RenderWidget_H
 
 #include "RenderReplaced.h"
+#include "WidgetClient.h"
 
 namespace WebCore {
 

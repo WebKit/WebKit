@@ -61,6 +61,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SelectionController.h"
+#include "PlatformScrollBar.h" 
 
 #if SVG_SUPPORT
 #include "SVGNames.h"
@@ -79,7 +80,7 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-ScrollBar* RenderLayer::gScrollBar = 0;
+PlatformScrollBar* RenderLayer::gScrollBar = 0;
 
 #ifndef NDEBUG
 static bool inRenderLayerDestroy;
@@ -860,7 +861,21 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& offsetFro
     }
 }
 
-void RenderLayer::valueChanged(Widget*)
+PlatformScrollBar* RenderLayer::horizontalScrollbarWidget() const
+{
+    if (m_hBar && m_hBar->isWidget())
+        return static_cast<PlatformScrollBar*>(m_hBar);
+    return 0;
+}
+
+PlatformScrollBar* RenderLayer::verticalScrollbarWidget() const
+{
+    if (m_vBar && m_vBar->isWidget())
+        return static_cast<PlatformScrollBar*>(m_vBar);
+    return 0;
+}
+
+void RenderLayer::valueChanged(ScrollBar*)
 {
     // Update scroll position from scroll bars.
 
@@ -891,12 +906,15 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
 
     if (hasScrollbar) {
         FrameView* scrollView = m_object->element()->document()->view();
-        m_hBar = new ScrollBar(HorizontalScrollBar);
-        m_hBar->setClient(this);
-        scrollView->addChild(m_hBar);
+        m_hBar = new PlatformScrollBar(this, HorizontalScrollBar); // FIXME: Abstract the creation once we have engine-created scrollbars.
+        if (m_hBar->isWidget())
+            scrollView->addChild(horizontalScrollbarWidget());
     } else {
-        FrameView* scrollView = m_object->element()->document()->view();
-        scrollView->removeChild(m_hBar);
+        if (m_hBar->isWidget()) {
+            FrameView* scrollView = m_object->element()->document()->view();
+            scrollView->removeChild(horizontalScrollbarWidget());
+        }
+        
         delete m_hBar;
         m_hBar = 0;
     }
@@ -916,12 +934,15 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 
     if (hasScrollbar) {
         FrameView* scrollView = m_object->element()->document()->view();
-        m_vBar = new ScrollBar(VerticalScrollBar);
-        m_vBar->setClient(this);
-        scrollView->addChild(m_vBar);
-    } else {
-        FrameView* scrollView = m_object->element()->document()->view();
-        scrollView->removeChild(m_vBar);
+        m_vBar = new PlatformScrollBar(this, VerticalScrollBar); // FIXME: Abstract the creation once we have engine-created scrollbars.
+        if (m_vBar->isWidget())
+            scrollView->addChild(verticalScrollbarWidget());
+    } else { 
+        if (m_vBar->isWidget()) {
+            FrameView* scrollView = m_object->element()->document()->view();
+            scrollView->removeChild(verticalScrollbarWidget());
+        }
+
         delete m_vBar;
         m_vBar = 0;
     }
@@ -984,18 +1005,18 @@ void
 RenderLayer::positionScrollbars(const IntRect& absBounds)
 {
     int resizeControlSize = max(resizeControlRect().height() - 1, 0);
-    if (m_vBar) {
-        m_vBar->move(absBounds.right() - m_object->borderRight() - m_vBar->width(),
-                     absBounds.y() + m_object->borderTop());
-        m_vBar->resize(m_vBar->width(), absBounds.height() - (m_object->borderTop() + m_object->borderBottom()) - (m_hBar ? m_hBar->height() - 1 : resizeControlSize));
-    }
+    if (m_vBar)
+        m_vBar->setRect(IntRect(absBounds.right() - m_object->borderRight() - m_vBar->width(),
+                                absBounds.y() + m_object->borderTop(),
+                                m_vBar->width(),
+                                absBounds.height() - (m_object->borderTop() + m_object->borderBottom()) - (m_hBar ? m_hBar->height() - 1 : resizeControlSize)));
 
     resizeControlSize = max(resizeControlRect().width() - 1, 0);
-    if (m_hBar) {
-        m_hBar->move(absBounds.x() + m_object->borderLeft(),
-                     absBounds.bottom() - m_object->borderBottom() - m_hBar->height());
-        m_hBar->resize(absBounds.width() - (m_object->borderLeft() + m_object->borderRight()) - (m_vBar ? m_vBar->width() - 1 : resizeControlSize), m_hBar->height());
-    }
+    if (m_hBar)
+        m_hBar->setRect(IntRect(absBounds.x() + m_object->borderLeft(),
+                                absBounds.bottom() - m_object->borderBottom() - m_hBar->height(),
+                                absBounds.width() - (m_object->borderLeft() + m_object->borderRight()) - (m_vBar ? m_vBar->width() - 1 : resizeControlSize),
+                                m_hBar->height()));
 }
 
 int RenderLayer::scrollWidth()
