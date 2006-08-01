@@ -87,6 +87,8 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     while (frame) {
         if ([frame functionName])
             [result addObject:[frame functionName]];
+        else if ([frame caller])
+            [result addObject:@"(anonymous function)"];
         else
             [result addObject:@"(global scope)"];
         frame = [frame caller];

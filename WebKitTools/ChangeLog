@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10175
+        Bug 10175: [Drosera] Anonymous functions show up as "(global scope)" in stack list
+
+        * Drosera/DebuggerDocument.m:
+        (-[WebScriptObject currentFunctionStack]): If the frame has a caller it isn't the global scope.
+
+2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Darin.
+
         http://bugzilla.opendarwin.org/show_bug.cgi?id=10167
         Bug 10167: REGRESSION(r15688): ASSERTION FAILED: _private->mouseDownEvent != nil in layout tests
 
