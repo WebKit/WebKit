@@ -1,3 +1,18 @@
+2006-07-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - removed obsolete cell margin hack
+
+        * rendering/RenderBox.cpp: (WebCore::RenderBox::calcVerticalMargins):
+        Set top and bottom margins to 0 for table cells instead of -16384.
+        No effect on layout (including layout tests).
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Added a few comments about differences between this class and the
+        what the CSS specification says about computed style.
+
 2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Maciej.

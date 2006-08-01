@@ -52,8 +52,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-#define TABLECELLMARGIN -0x4000
-
 RenderBox::RenderBox(Node* node)
     : RenderObject(node)
 {
@@ -1430,10 +1428,9 @@ int RenderBox::availableHeightUsing(const Length& h) const
 
 void RenderBox::calcVerticalMargins()
 {
-    if( isTableCell() ) {
-        // table margins are basically infinite
-        m_marginTop = TABLECELLMARGIN;
-        m_marginBottom = TABLECELLMARGIN;
+    if (isTableCell()) {
+        m_marginTop = 0;
+        m_marginBottom = 0;
         return;
     }
 
