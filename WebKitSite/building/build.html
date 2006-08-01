@@ -31,6 +31,31 @@
 <p>The <tt>run-safari</tt> script sets the <tt>DYLD_FRAMEWORK_PATH</tt> environment variable to point to your build products, 
 and then launches /Applications/Safari.app. <tt>DYLD_FRAMEWORK_PATH</tt> tells the system loader to prefer your build products over the frameworks installed in /System/Library/Frameworks.</p>
 
+<h2>Debugging the WebKit You Built in Xcode</h2>
+<ol>
+<li><p>Open a project</p>
+<p>Each WebKit component -- JavaScriptCore, WebCore, and WebKit -- contains its own Xcode project. Open the project belonging to the component you want to debug.</p>
+</li>
+<li><p>Set the project's build products location</p>
+<p>To find the WebKit you built, Xcode needs to know the build products location that <tt>build-webkit</tt> used. You can set the build products location from the project's Info window.</p>
+<img src="info-tab.png"></img>
+</li>
+<li><p>Set the project's active build configuration</p>
+<p>Xcode also needs to know the build configuration you used. You can set the active build configuration from the project's Build window.</p>
+<img src="build-window.png"></img>
+</li>
+<li><p>Add a custom executable to the project</p>
+<p>Choose any WebKit application you want to use for debugging. To use Safari, select /Applications/Safari.app.</p>
+<img src="custom-executable.png"></img>
+</li>
+<li><p>Set the project's active executable</p>
+<p>Choose the executable you just added. You can set the active build configuration from the project's Build window, pictured above.</p>
+</li>
+<li><p>Close and re-open the project</p>
+<p>This will force Xcode to discover generated source files, which output to your build products location.</p>
+</li>
+</ol>
+
 <hr>
 <p>It's handy to put <tt>WebKit/WebKitTools/Scripts</tt> in your shell path so you can type commands like <tt>build-webkit</tt> without specifying a full path.</p>
 

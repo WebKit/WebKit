@@ -1,3 +1,14 @@
+2006-08-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+        
+        - Added instructions for debugging in Xcode
+
+        * building/build-window.png: Added.
+        * building/build.html:
+        * building/custom-executable.png: Added.
+        * building/info-tab.png: Added.
+
 2006-07-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth.
