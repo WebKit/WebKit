@@ -1,3 +1,21 @@
+2006-08-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        - some refactoring in preparation for moving more stuff to WebFrameLoader.
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _clearDataSource]): 
+        (-[WebFrame _detachFromParent]):
+        (-[WebFrame _commitProvisionalLoad]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _clearProvisionalLoad]):
+        (-[WebFrame _markLoadComplete]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame _startProvisionalLoad:]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrame stopLoading]):
+
 2006-07-31  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Tim Hatcher.

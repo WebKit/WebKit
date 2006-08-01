@@ -556,6 +556,11 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     [[self webView] setMainFrameDocumentReady:NO];  // stop giving out the actual DOMDocument to observers
 }
 
+- (void)_clearDataSource
+{
+    [self _setDataSource:nil];
+}
+
 - (void)_detachFromParent
 {
     WebFrameBridge *bridge = [_private->bridge retain];
@@ -569,7 +574,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
     [_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
 
-    [self _setDataSource:nil];
+    [self _clearDataSource];
     [_private setWebFrameView:nil];
 
     [self retain]; // retain self temporarily because dealloc can re-enter this method
@@ -674,6 +679,13 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 }
 
+- (void)_commitProvisionalLoad
+{
+    [self _setDataSource:_private->provisionalDataSource];
+    [self _setProvisionalDataSource: nil];
+    [self _setState:WebFrameStateCommittedPage];
+}
+
 - (void)_transitionToCommitted:(NSDictionary *)pageCache
 {
     ASSERT([self webView] != nil);
@@ -707,13 +719,8 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
             if (pd != _private->provisionalDataSource)
                 return;
 
-            // Set the committed data source on the frame.
-            [self _setDataSource:_private->provisionalDataSource];
-                
-            [self _setProvisionalDataSource: nil];
+            [self _commitProvisionalLoad];
 
-            [self _setState: WebFrameStateCommittedPage];
-        
             // Handle adding the URL to the back/forward list.
             WebDataSource *ds = [self dataSource];
             NSString *ptitle = [ds pageTitle];
@@ -1081,6 +1088,18 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
+- (void)_clearProvisionalLoad
+{
+    [self _setProvisionalDataSource:nil];
+    [[self webView] _progressCompleted:self];
+    [self _setState:WebFrameStateComplete];
+}
+
+- (void)_markLoadComplete
+{
+    [self _setState:WebFrameStateComplete];
+}
+
 - (void)_checkLoadCompleteForThisFrame
 {
     ASSERT([self webView] != nil);
@@ -1119,15 +1138,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     [self _stopLoadingSubframes];
                     [pd _stopLoading];
 
-
                     // Finish resetting the load state, but only if another load hasn't been started by the
                     // delegate callback.
                     if (pd == _private->provisionalDataSource) {
-                        [self _setProvisionalDataSource:nil];
-                        
-                        [[self webView] _progressCompleted:self];
-                        
-                        [self _setState:WebFrameStateComplete];
+                        [self _clearProvisionalLoad];
                     } else {
                         NSURL *unreachableURL = [_private->provisionalDataSource unreachableURL];
                         if (unreachableURL != nil && [unreachableURL isEqual:[[pd request] URL]]) {
@@ -1148,28 +1162,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             
             //LOG(Loading, "%@:  checking complete, current state WEBFRAMESTATE_COMMITTED", [self name]);
             if (![ds isLoading]) {
-                WebFrameView *thisView = [self frameView];
-                NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
-                ASSERT(thisDocumentView != nil);
+                ASSERT([[self frameView] documentView]);
 
-                // FIXME: need to avoid doing this in the non-HTML case or the bridge may assert.
-                // Should instead make sure the bridge/part is in the proper state even for
-                // non-HTML content, or make a call to the document and let it deal with the bridge.
-
-                [self _setState:WebFrameStateComplete];
+                [self _markLoadComplete];
 
                 // FIXME: Is this subsequent work important if we already navigated away?
                 // Maybe there are bugs because of that, or extra work we can skip because
                 // the new page is ready.
 
-                // Tell the just loaded document to layout.  This may be necessary
-                // for non-html content that needs a layout message.
-                if (!([[self dataSource] _isDocumentHTML])) {
-                    [thisDocumentView setNeedsLayout:YES];
-                    [thisDocumentView layout];
-                    [thisDocumentView setNeedsDisplay:YES];
-                }
-                 
                 // If the user had a scroll point scroll to it.  This will override
                 // the anchor point.  After much discussion it was decided by folks
                 // that the user scroll point should override the anchor point.
@@ -2258,6 +2258,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [_private->provisionalDataSource _startLoading];
 }
 
+- (void)_startProvisionalLoad:(WebDataSource *)dataSource
+{
+    [self _setProvisionalDataSource:dataSource];
+    [self _setState:WebFrameStateProvisional];
+}
+
 -(void)_continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
 {
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
@@ -2297,15 +2303,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     [self stopLoading];
     [self _setLoadType:loadType];
-    [self _setProvisionalDataSource:dataSource];
-    [dataSource release];
 
+    [self _startProvisionalLoad:dataSource];
+
+    [dataSource release];
     [self _setPolicyDataSource:nil];
     
-    // We tell the documentView provisionalDataSourceChanged:
-    // once it has been created by the WebView.
-    
-    [self _setState: WebFrameStateProvisional];
     
     if (self == [[self webView] mainFrame])
         LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
@@ -2985,7 +2988,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [_private->provisionalDataSource _stopLoading];
     [_private->dataSource _stopLoading];
 
-    [self _setProvisionalDataSource:nil];
+    [self _clearProvisionalDataSource];
 
     _private->isStoppingLoad = NO;
 }
