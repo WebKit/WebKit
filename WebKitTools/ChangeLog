@@ -1,3 +1,10 @@
+2006-08-01  Darin Adler  <darin@apple.com>
+
+        - fix a bug in my recent change where the mouse position at the end of
+          the last test would affect the results of the next test
+
+        * DumpRenderTree/DumpRenderTree.m: (dumpRenderTree): Set lastMousePosition to 0.
+
 2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Maciej.

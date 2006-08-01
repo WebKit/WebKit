@@ -750,6 +750,7 @@ static void dumpRenderTree(const char *pathOrURL)
     repaintSweepHorizontally = repaintSweepHorizontallyDefault;
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
+    lastMousePosition = NSMakePoint(0, 0);
 
     if (currentTest != nil)
         CFRelease(currentTest);

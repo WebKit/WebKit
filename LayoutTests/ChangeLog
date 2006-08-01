@@ -1,3 +1,10 @@
+2006-08-01  Darin Adler  <darin@apple.com>
+
+        - updated a test affected by changes to the DumpRenderTree tool
+          to return a current mouse position
+
+        * fast/inline/dirtyLinesForInline-expected.txt: Updated.
+
 2006-07-31  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.
