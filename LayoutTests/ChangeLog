@@ -1,3 +1,19 @@
+2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9738
+        Bug 9738: Unqualified :hover selector ignored in strict parsing mode
+
+        * fast/selectors/unqualified-hover-quirks-expected.checksum: Added.
+        * fast/selectors/unqualified-hover-quirks-expected.png: Added.
+        * fast/selectors/unqualified-hover-quirks-expected.txt: Added.
+        * fast/selectors/unqualified-hover-quirks.html: Added.
+        * fast/selectors/unqualified-hover-strict-expected.checksum: Added.
+        * fast/selectors/unqualified-hover-strict-expected.png: Added.
+        * fast/selectors/unqualified-hover-strict-expected.txt: Added.
+        * fast/selectors/unqualified-hover-strict.html: Added.
+
 2006-07-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by John and Anders.

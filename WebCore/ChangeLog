@@ -1,3 +1,14 @@
+2006-07-31  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9738
+        Bug 9738: Unqualified :hover selector ignored in strict parsing mode
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::checkSelector): Restrict the :hover and :active
+        exclusion based on onlyHoverActive to quirks mode.
+
 2006-07-31  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 10179, digg.com scrolls slowly.  Improve fixed positioning

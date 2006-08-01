@@ -1244,7 +1244,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, Element *e)
         return false;
     
     // disallow *:hover, *:active, and *:hover:active except for links
-    if (onlyHoverActive && subject) {
+    if (!strictParsing && onlyHoverActive && subject) {
         if (pseudoState == PseudoUnknown)
             checkPseudoState(e);
 
