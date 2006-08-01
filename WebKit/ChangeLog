@@ -1,3 +1,15 @@
+2006-08-01  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Anders.
+
+        Fixed an assertion failure I ran into while debugging <rdar://problem/4652683>.
+
+        * Plugins/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView redeliverStream]):
+        Don't clear the "instance" ivar here.  This code was refactored here from the old WebNetscapePluginRepresentation,
+        which also had an "instance" ivar.  It is never appropriate to clear a plug-in view's instance.  That is done when
+        the plug-in is destroyed.
+
 2006-08-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

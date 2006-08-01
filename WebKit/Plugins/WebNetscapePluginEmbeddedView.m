@@ -180,7 +180,6 @@
         // Deliver what has not been passed to the plug-in up to this point.
         if (_dataLengthReceived > 0) {
             NSData *data = [[[self dataSource] data] subdataWithRange:NSMakeRange(0, _dataLengthReceived)];
-            instance = NULL;
             _dataLengthReceived = 0;
             [self pluginView:self receivedData:data];
             if (![[self dataSource] isLoading]) {
