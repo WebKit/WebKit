@@ -1,3 +1,17 @@
+2006-07-31  Duncan Wilcox  <duncan@mclink.it>
+
+        Reviewed by Darin.
+
+        Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=10159>
+        "REGRESSION: delegate returning no menu elements crashes webkit"
+
+        No automated test, because there's no way to programmatically open a context menu,
+        no manual test because there's no way to customize the context menu delegate.
+
+        * WebView/WebView.m:
+        (-[WebView _menuForElement:defaultItems:]): Make sure the context menu returned
+        some menu items before accessing the first one.
+
 2006-07-31  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.

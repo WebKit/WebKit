@@ -721,7 +721,7 @@ static bool debugWidget = true;
             // items. This shouldn't affect any clients other than Mail since the tags for the three items
             // were not public API. We can remove this code when we no longer support previously-built versions
             // of Mail on Tiger. See 4498606 for more details.
-            if (([[defaultMenuItems objectAtIndex:0] tag] == WebMenuItemTagSearchInSpotlight) && ([[menuItems objectAtIndex:0] isSeparatorItem])) {
+            if ([menuItems count] && ([[defaultMenuItems objectAtIndex:0] tag] == WebMenuItemTagSearchInSpotlight) && ([[menuItems objectAtIndex:0] isSeparatorItem])) {
                 ASSERT([[menuItems objectAtIndex:1] isSeparatorItem]);
                 ASSERT([[defaultMenuItems objectAtIndex:1] tag] == WebMenuItemTagSearchWeb);
                 ASSERT([[defaultMenuItems objectAtIndex:2] isSeparatorItem]);
