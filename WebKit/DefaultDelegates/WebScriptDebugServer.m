@@ -215,8 +215,10 @@ static unsigned listenerCount = 0;
 
 - (void)webView:(WebView *)webView didLoadMainResourceForDataSource:(WebDataSource *)dataSource
 {
-    if (![listeners count])
+    if (![listeners count] || inCallback)
         return;
+
+    inCallback = YES;
 
     NSEnumerator *enumerator = [listeners objectEnumerator];
     NSDistantObject <WebScriptDebugListener> *listener = nil;
@@ -225,6 +227,8 @@ static unsigned listenerCount = 0;
         if ([[listener connectionForProxy] isValid])
             [listener webView:webView didLoadMainResourceForDataSource:dataSource];
     }
+
+    inCallback = NO;
 }
 
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
@@ -233,8 +237,10 @@ static unsigned listenerCount = 0;
                                                sourceId:(int)sid
                                             forWebFrame:(WebFrame *)webFrame
 {
-    if (![listeners count])
+    if (![listeners count] || inCallback)
         return;
+
+    inCallback = YES;
 
     NSEnumerator *enumerator = [listeners objectEnumerator];
     NSDistantObject <WebScriptDebugListener> *listener = nil;
@@ -243,6 +249,8 @@ static unsigned listenerCount = 0;
         if ([[listener connectionForProxy] isValid])
             [listener webView:webView didParseSource:source baseLineNumber:lineNumber fromURL:url sourceId:sid forWebFrame:webFrame];
     }
+
+    inCallback = NO;
 }
 
 - (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
@@ -251,8 +259,10 @@ static unsigned listenerCount = 0;
                                               withError:(NSError *)error
                                             forWebFrame:(WebFrame *)webFrame
 {
-    if (![listeners count])
+    if (![listeners count] || inCallback)
         return;
+
+    inCallback = YES;
 
     NSEnumerator *enumerator = [listeners objectEnumerator];
     NSDistantObject <WebScriptDebugListener> *listener = nil;
@@ -261,6 +271,8 @@ static unsigned listenerCount = 0;
         if ([[listener connectionForProxy] isValid])
             [listener webView:webView failedToParseSource:source baseLineNumber:lineNumber fromURL:url withError:error forWebFrame:webFrame];
     }
+
+    inCallback = NO;
 }
 
 - (void)webView:(WebView *)webView    didEnterCallFrame:(WebScriptCallFrame *)frame
@@ -268,8 +280,10 @@ static unsigned listenerCount = 0;
                                                    line:(int)lineno
                                             forWebFrame:(WebFrame *)webFrame
 {
-    if (![listeners count])
+    if (![listeners count] || inCallback)
         return;
+
+    inCallback = YES;
 
     NSEnumerator *enumerator = [listeners objectEnumerator];
     NSDistantObject <WebScriptDebugListener> *listener = nil;
@@ -279,10 +293,9 @@ static unsigned listenerCount = 0;
             [listener webView:webView didEnterCallFrame:frame sourceId:sid line:lineno forWebFrame:webFrame];
     }
 
-    // check for messages from the listeners, so they can pause immediately
-    [[NSRunLoop currentRunLoop] runMode:NSConnectionReplyMode beforeDate:[NSDate distantPast]];
-
     [self suspendProcessIfPaused];
+
+    inCallback = NO;
 }
 
 - (void)webView:(WebView *)webView willExecuteStatement:(WebScriptCallFrame *)frame
@@ -290,8 +303,10 @@ static unsigned listenerCount = 0;
                                                    line:(int)lineno
                                             forWebFrame:(WebFrame *)webFrame
 {
-    if (![listeners count])
+    if (![listeners count] || inCallback)
         return;
+
+    inCallback = YES;
 
     NSEnumerator *enumerator = [listeners objectEnumerator];
     NSDistantObject <WebScriptDebugListener> *listener = nil;
@@ -301,10 +316,9 @@ static unsigned listenerCount = 0;
             [listener webView:webView willExecuteStatement:frame sourceId:sid line:lineno forWebFrame:webFrame];
     }
 
-    // check for messages from the listeners, so they can pause immediately
-    [[NSRunLoop currentRunLoop] runMode:NSConnectionReplyMode beforeDate:[NSDate distantPast]];
-
     [self suspendProcessIfPaused];
+
+    inCallback = NO;
 }
 
 - (void)webView:(WebView *)webView   willLeaveCallFrame:(WebScriptCallFrame *)frame
@@ -312,8 +326,10 @@ static unsigned listenerCount = 0;
                                                    line:(int)lineno
                                             forWebFrame:(WebFrame *)webFrame
 {
-    if (![listeners count])
+    if (![listeners count] || inCallback)
         return;
+
+    inCallback = YES;
 
     NSEnumerator *enumerator = [listeners objectEnumerator];
     NSDistantObject <WebScriptDebugListener> *listener = nil;
@@ -323,10 +339,9 @@ static unsigned listenerCount = 0;
             [listener webView:webView willLeaveCallFrame:frame sourceId:sid line:lineno forWebFrame:webFrame];
     }
 
-    // check for messages from the listeners, so they can pause immediately
-    [[NSRunLoop currentRunLoop] runMode:NSConnectionReplyMode beforeDate:[NSDate distantPast]];
-
     [self suspendProcessIfPaused];
+
+    inCallback = NO;
 }
 
 - (void)webView:(WebView *)webView   exceptionWasRaised:(WebScriptCallFrame *)frame
@@ -334,8 +349,10 @@ static unsigned listenerCount = 0;
                                                    line:(int)lineno
                                             forWebFrame:(WebFrame *)webFrame
 {
-    if (![listeners count])
+    if (![listeners count] || inCallback)
         return;
+
+    inCallback = YES;
 
     NSEnumerator *enumerator = [listeners objectEnumerator];
     NSDistantObject <WebScriptDebugListener> *listener = nil;
@@ -345,10 +362,9 @@ static unsigned listenerCount = 0;
             [listener webView:webView exceptionWasRaised:frame sourceId:sid line:lineno forWebFrame:webFrame];
     }
 
-    // check for messages from the listeners, so they can pause immediately
-    [[NSRunLoop currentRunLoop] runMode:NSConnectionReplyMode beforeDate:[NSDate distantPast]];
-
     [self suspendProcessIfPaused];
+
+    inCallback = NO;
 }
 
 @end

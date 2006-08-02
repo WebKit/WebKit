@@ -33,6 +33,7 @@
     NSConnection *serverConnection;
     NSString *serverName;
     NSMutableSet *listeners;
+    BOOL inCallback;
     BOOL paused;
     BOOL step;
 }

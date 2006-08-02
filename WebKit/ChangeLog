@@ -1,3 +1,33 @@
+2006-08-02  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 10200: [Drosera] Deadlock between Drosera and Safari while loading page
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10200
+
+        Prevent reentrancy in our debugger callbacks. This was causing a deadlock in Drosera because
+        suspendProcessIfPaused was being called during a DO call into Safari.
+
+        Preventing reentrancy also prevents scripts that Drosera injects and evaluates from showing
+        up in rare cases (such as a iframe loading about:blank). I thought this would prevent cases
+        where you call a function from the console and expect it to break on a breakpoint in them, but
+        this appears to never have worked even without this change. When that is figured out we can
+        reconsider a better solution to reentrancy. I have filed that as bug 10214.
+
+        I also removed the NSRunLoop runMode:beforeDate: calls since DO handles this for us since
+        we don't use "onway void" as the return type for the callbacks. Note: using onway void for
+        the listener callbacks causes bad synchronization issues and obscure crashes.
+
+        * DefaultDelegates/WebScriptDebugServer.m:
+        (-[WebScriptDebugServer webView:didLoadMainResourceForDataSource:]):
+        (-[WebScriptDebugServer webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:]):
+        (-[WebScriptDebugServer webView:failedToParseSource:baseLineNumber:fromURL:withError:forWebFrame:]):
+        (-[WebScriptDebugServer webView:didEnterCallFrame:sourceId:line:forWebFrame:]):
+        (-[WebScriptDebugServer webView:willExecuteStatement:sourceId:line:forWebFrame:]):
+        (-[WebScriptDebugServer webView:willLeaveCallFrame:sourceId:line:forWebFrame:]):
+        (-[WebScriptDebugServer webView:exceptionWasRaised:sourceId:line:forWebFrame:]):
+        * DefaultDelegates/WebScriptDebugServerPrivate.h:
+
 2006-08-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
