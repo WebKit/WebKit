@@ -1,3 +1,17 @@
+2006-08-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3438
+          incorrect display of transparent 1x1 PNGs
+
+        Test: fast/replaced/image-solid-color-with-alpha.html
+
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::checkForSolidColor): Changed to divide each color component
+        by the alpha component. You need to do that since the bitmap context has
+        premultiplied alpha but m_solidColor should be non-premultiplied.
+
 2006-08-02  Adam Roben  <aroben@apple.com>
 
         Reviewed by Brady.

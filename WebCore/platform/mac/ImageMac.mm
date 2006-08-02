@@ -118,7 +118,10 @@ void Image::checkForSolidColor()
                 GraphicsContext(bmap).setCompositeOperation(CompositeCopy);
                 CGRect dst = { {0, 0}, {1, 1} };
                 CGContextDrawImage(bmap, dst, image);
-                m_solidColor = Color(int(pixel[0] * 255), int(pixel[1] * 255), int(pixel[2] * 255), int(pixel[3] * 255));
+                if (pixel[3] == 0)
+                    m_solidColor = Color(0, 0, 0, 0);
+                else
+                    m_solidColor = Color(int(pixel[0] / pixel[3] * 255), int(pixel[1] / pixel[3] * 255), int(pixel[2] / pixel[3] * 255), int(pixel[3] * 255));
                 m_isSolidColor = true;
                 CFRelease(bmap);
             } 

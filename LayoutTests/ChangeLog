@@ -1,3 +1,19 @@
+2006-08-02  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - pixel test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3438
+          incorrect display of transparent 1x1 PNGs
+
+        * fast/replaced/image-solid-color-with-alpha-expected.checksum: Added.
+        * fast/replaced/image-solid-color-with-alpha-expected.png: Added.
+        * fast/replaced/image-solid-color-with-alpha-expected.txt: Added.
+        * fast/replaced/image-solid-color-with-alpha.html: Added.
+        * fast/replaced/img-1x1-expected.checksum: Removed.
+        * fast/replaced/img-1x1-expected.png: Removed.
+        * fast/replaced/img-1x1-expected.txt: Removed.
+        * fast/replaced/img-1x1.html: Removed.
+
 2006-08-01  Darin Adler  <darin@apple.com>
 
         - updated a test affected by changes to the DumpRenderTree tool
