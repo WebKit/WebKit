@@ -1,3 +1,12 @@
+2006-08-02  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Darin.
+
+        - Fixed build
+
+        * kjs/date_object.cpp:
+        (KJS::formatTime):
+
 2006-07-29  Darin Adler  <darin@apple.com>
 
         - Removed tabs from these source files that still had them.

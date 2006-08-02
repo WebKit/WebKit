@@ -207,10 +207,16 @@ static UString formatTime(const tm &t, bool utc)
         snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.tm_hour, t.tm_min, t.tm_sec);
     } else {
         int offset = abs(gmtoffset(t));
-        if (t.tm_zone) {
+#if PLATFORM(WIN_OS)
+        char tzname[70];
+        strftime(tzname, sizeof(tzname), "%Z", &t);
+#else
+        const char *tzname = t.tm_zone;
+#endif
+        if (tzname) {
             snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d (%s)",
                 t.tm_hour, t.tm_min, t.tm_sec,
-                gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60, t.tm_zone);
+                gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60, tzname);
         } else {
             snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d",
                 t.tm_hour, t.tm_min, t.tm_sec,
