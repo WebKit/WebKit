@@ -29,18 +29,22 @@
 #import <WebKit/WebFrameLoader.h>
 
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebMainResourceLoader.h>
+#import <WebKit/WebKitLogging.h>
+#import <WebKit/WebViewInternal.h>
 
 @implementation WebFrameLoader
 
-- (id)initWithDataSource:(WebDataSource *)ds
+- (id)initWithWebFrame:(WebFrame *)wf
 {
     self = [super init];
-    if (self)
-        dataSource = ds;
+    if (self) {
+        webFrame = wf;
+        state = WebFrameStateCommittedPage;
+    }
     return self;    
 }
 
@@ -51,6 +55,9 @@
     [subresourceLoaders release];
     [plugInStreamLoaders release];
     [iconLoader release];
+    [dataSource release];
+    [provisionalDataSource release];
+    
     [super dealloc];
 }
 
@@ -157,10 +164,10 @@
 
 - (BOOL)startLoadingMainResourceWithRequest:(NSMutableURLRequest *)request identifier:(id)identifier
 {
-    mainResourceLoader = [[WebMainResourceLoader alloc] initWithDataSource:dataSource];
+    mainResourceLoader = [[WebMainResourceLoader alloc] initWithDataSource:provisionalDataSource];
     
     [mainResourceLoader setIdentifier:identifier];
-    [[dataSource webFrame] _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
+    [[provisionalDataSource webFrame] _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
     if (![mainResourceLoader loadWithRequest:request]) {
         // FIXME: if this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?
@@ -176,6 +183,149 @@
 - (void)stopLoadingWithError:(NSError *)error
 {
     [mainResourceLoader cancelWithError:error];
+}
+
+- (WebDataSource *)dataSource
+{
+    return dataSource; 
+}
+
+- (void)_setDataSource:(WebDataSource *)ds
+{
+    if (ds == nil && dataSource == nil)
+        return;
+    
+    ASSERT(ds != dataSource);
+    
+    [webFrame _prepareForDataSourceReplacement];
+    [dataSource _setWebFrame:nil];
+    
+    [ds retain];
+    [dataSource release];
+    dataSource = ds;
+
+    [ds _setWebFrame:webFrame];
+}
+
+- (void)clearDataSource
+{
+    [self _setDataSource:nil];
+}
+
+- (WebDataSource *)provisionalDataSource 
+{
+    return provisionalDataSource; 
+}
+
+- (void)_setProvisionalDataSource: (WebDataSource *)d
+{
+    ASSERT(!d || !provisionalDataSource);
+
+    if (provisionalDataSource != dataSource)
+        [provisionalDataSource _setWebFrame:nil];
+
+    [d retain];
+    [provisionalDataSource release];
+    provisionalDataSource = d;
+
+    [d _setWebFrame:webFrame];
+}
+
+- (void)_clearProvisionalDataSource
+{
+    [self _setProvisionalDataSource:nil];
+}
+
+- (WebFrameState)state
+{
+    return state;
+}
+
+#ifndef NDEBUG
+static const char * const stateNames[] = {
+    "WebFrameStateProvisional",
+    "WebFrameStateCommittedPage",
+    "WebFrameStateComplete"
+};
+#endif
+
+static CFAbsoluteTime _timeOfLastCompletedLoad;
+
++ (CFAbsoluteTime)timeOfLastCompletedLoad
+{
+    return _timeOfLastCompletedLoad;
+}
+
+- (void)_setState:(WebFrameState)newState
+{
+    LOG(Loading, "%@:  transition from %s to %s", [webFrame name], stateNames[state], stateNames[newState]);
+    if ([webFrame webView])
+        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [webFrame name], stateNames[state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[webFrame webView] mainFrame] dataSource] _loadingStartedTime]);
+    
+    if (newState == WebFrameStateComplete && webFrame == [[webFrame webView] mainFrame])
+        LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
+    
+    state = newState;
+    
+    if (state == WebFrameStateProvisional)
+        [webFrame _provisionalLoadStarted];
+    else if (state == WebFrameStateComplete) {
+        [webFrame _frameLoadCompleted];
+        _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
+        [dataSource _stopRecordingResponses];
+    }
+}
+
+- (void)clearProvisionalLoad
+{
+    [self _setProvisionalDataSource:nil];
+    [[webFrame webView] _progressCompleted:webFrame];
+    [self _setState:WebFrameStateComplete];
+}
+
+- (void)markLoadComplete
+{
+    [self _setState:WebFrameStateComplete];
+}
+
+- (void)commitProvisionalLoad
+{
+    [self stopLoadingSubresources];
+    [self stopLoadingPlugIns];
+
+    [self _setDataSource:provisionalDataSource];
+    [self _setProvisionalDataSource:nil];
+    [self _setState:WebFrameStateCommittedPage];
+}
+
+- (void)stopLoading
+{
+    [provisionalDataSource _stopLoading];
+    [dataSource _stopLoading];
+    [self _clearProvisionalDataSource];
+}
+
+// FIXME: poor method name; also why is this not part of startProvisionalLoad:?
+- (void)startLoading
+{
+    [provisionalDataSource _startLoading];
+}
+
+- (void)startProvisionalLoad:(WebDataSource *)ds
+{
+    [self _setProvisionalDataSource:ds];
+    [self _setState:WebFrameStateProvisional];
+}
+
+- (void)setupForReplace
+{
+    [self _setState:WebFrameStateProvisional];
+    WebDataSource *old = provisionalDataSource;
+    provisionalDataSource = dataSource;
+    dataSource = nil;
+    [old release];
+    
+    [webFrame _detachChildren];
 }
 
 @end

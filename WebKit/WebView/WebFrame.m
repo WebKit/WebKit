@@ -39,6 +39,7 @@
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebFormDataStream.h>
 #import <WebKit/WebFrameLoadDelegate.h>
+#import <WebKit/WebFrameLoader.h>
 #import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHistoryPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
@@ -65,14 +66,6 @@
 #import <WebKitSystemInterface.h>
 
 #import <objc/objc-runtime.h>
-
-#ifndef NDEBUG
-static const char * const stateNames[] = {
-    "WebFrameStateProvisional",
-    "WebFrameStateCommittedPage",
-    "WebFrameStateComplete"
-};
-#endif
 
 /*
 Here is the current behavior matrix for four types of navigations:
@@ -172,10 +165,9 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 {
 @public
     WebFrameView *webFrameView;
-    WebDataSource *dataSource;
-    WebDataSource *provisionalDataSource;
+    WebFrameLoader *frameLoader;
+
     WebFrameBridge *bridge;
-    WebFrameState state;
     WebFrameLoadType loadType;
     WebHistoryItem *currentItem;        // BF item for our current content
     WebHistoryItem *provisionalItem;    // BF item for where we're trying to go
@@ -211,10 +203,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (void)setWebFrameView:(WebFrameView *)v;
 - (WebFrameView *)webFrameView;
-- (void)setDataSource:(WebDataSource *)d;
-- (WebDataSource *)dataSource;
-- (void)setProvisionalDataSource:(WebDataSource *)d;
-- (WebDataSource *)provisionalDataSource;
 - (WebFrameLoadType)loadType;
 - (void)setLoadType:(WebFrameLoadType)loadType;
 
@@ -236,7 +224,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
         return nil;
     }
     
-    state = WebFrameStateComplete;
     loadType = WebFrameLoadTypeStandard;
     
     return self;
@@ -245,8 +232,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (void)dealloc
 {
     [webFrameView release];
-    [dataSource release];
-    [provisionalDataSource release];
 
     [currentItem release];
     [provisionalItem release];
@@ -274,23 +259,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [v retain];
     [webFrameView release];
     webFrameView = v;
-}
-
-- (WebDataSource *)dataSource { return dataSource; }
-- (void)setDataSource: (WebDataSource *)d
-{
-    [d retain];
-    [dataSource release];
-    dataSource = d;
-}
-
-- (WebDataSource *)provisionalDataSource { return provisionalDataSource; }
-- (void)setProvisionalDataSource: (WebDataSource *)d
-{
-    ASSERT(!d || !provisionalDataSource);
-    [d retain];
-    [provisionalDataSource release];
-    provisionalDataSource = d;
 }
 
 - (WebFrameLoadType)loadType { return loadType; }
@@ -551,14 +519,9 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     for (WebFrame *child = [self _firstChildFrame]; child; child = [child _nextSiblingFrame])
         [child _closeOldDataSources];
 
-    if (_private->dataSource)
+    if ([_private->frameLoader dataSource])
         [[[self webView] _frameLoadDelegateForwarder] webView:[self webView] willCloseFrame:self];
     [[self webView] setMainFrameDocumentReady:NO];  // stop giving out the actual DOMDocument to observers
-}
-
-- (void)_clearDataSource
-{
-    [self _setDataSource:nil];
 }
 
 - (void)_detachFromParent
@@ -574,7 +537,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
     [_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
 
-    [self _clearDataSource];
+    [_private->frameLoader clearDataSource];
     [_private setWebFrameView:nil];
 
     [self retain]; // retain self temporarily because dealloc can re-enter this method
@@ -590,47 +553,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     [self release];
 }
 
-- (void)_setDataSource:(WebDataSource *)ds
-{
-    if (ds == nil && _private->dataSource == nil) {
-        return;
-    }
-
-    ASSERT(ds != _private->dataSource);
-
-    if (_private->dataSource) {
-        // Make sure that any work that is triggered by resigning first reponder can get done.
-        // The main example where this came up is the textDidEndEditing that is sent to the
-        // FormsDelegate (3223413).  We need to do this before _detachChildren, since that will
-        // remove the views as a side-effect of freeing the bridge, at which point we can't
-        // post the FormDelegate messages.
-        //
-        // Note that this can also take FirstResponder away from a child of our frameView that
-        // is not in a child frame's view.  This is OK because we are in the process
-        // of loading new content, which will blow away all editors in this top frame, and if
-        // a non-editor is firstReponder it will not be affected by endEditingFor:.
-        // Potentially one day someone could write a DocView whose editors were not all
-        // replaced by loading new content, but that does not apply currently.
-        NSView *frameView = [self frameView];
-        NSWindow *window = [frameView window];
-        NSResponder *firstResp = [window firstResponder];
-        if ([firstResp isKindOfClass:[NSView class]]
-            && [(NSView *)firstResp isDescendantOf:frameView])
-        {
-            [window endEditingFor:firstResp];
-        }
-
-        [self _detachChildren];
-
-        [_private->dataSource _setWebFrame:nil];
-    } else {
-        ASSERT(![self _childFrameCount]);
-    }
-
-    [_private setDataSource:ds];
-    [ds _setWebFrame:self];
-}
-
 - (void)_setLoadType: (WebFrameLoadType)t
 {
     [_private setLoadType:t];
@@ -643,10 +565,9 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
 - (void)_makeDocumentView
 {
-    NSView <WebDocumentView> *documentView = [_private->webFrameView _makeDocumentViewForDataSource:_private->dataSource];
-    if (!documentView) {
+    NSView <WebDocumentView> *documentView = [_private->webFrameView _makeDocumentViewForDataSource:[_private->frameLoader dataSource]];
+    if (!documentView)
         return;
-    }
 
     // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
     WebFrameView *v = _private->webFrameView;
@@ -656,13 +577,13 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
     // Call setDataSource on the document view after it has been placed in the view hierarchy.
     // This what we for the top-level view, so should do this for views in subframes as well.
-    [documentView setDataSource:_private->dataSource];
+    [documentView setDataSource:[_private->frameLoader dataSource]];
 }
 
 - (void)_receivedMainResourceError:(NSError *)error
 {
-    if ([self _state] == WebFrameStateProvisional) {
-        NSURL *failedURL = [[_private->provisionalDataSource _originalRequest] URL];
+    if ([_private->frameLoader state] == WebFrameStateProvisional) {
+        NSURL *failedURL = [[[_private->frameLoader provisionalDataSource] _originalRequest] URL];
         // When we are pre-commit, the currentItem is where the pageCache data resides
         NSDictionary *pageCache = [[_private currentItem] pageCache];
         [[self _bridge] didNotOpenURL:failedURL pageCache:pageCache];
@@ -679,18 +600,11 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 }
 
-- (void)_commitProvisionalLoad
-{
-    [self _setDataSource:_private->provisionalDataSource];
-    [self _setProvisionalDataSource: nil];
-    [self _setState:WebFrameStateCommittedPage];
-}
-
 - (void)_transitionToCommitted:(NSDictionary *)pageCache
 {
     ASSERT([self webView] != nil);
     
-    switch ([self _state]) {
+    switch ([_private->frameLoader state]) {
         case WebFrameStateProvisional:
         {
             [[[[self frameView] _scrollView] contentView] setCopiesOnScroll:YES];
@@ -699,7 +613,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
             if (loadType == WebFrameLoadTypeForward ||
                 loadType == WebFrameLoadTypeBack ||
                 loadType == WebFrameLoadTypeIndexedBackForward ||
-                (loadType == WebFrameLoadTypeReload && [_private->provisionalDataSource unreachableURL] != nil))
+                (loadType == WebFrameLoadTypeReload && [[_private->frameLoader provisionalDataSource] unreachableURL] != nil))
             {
                 // Once committed, we want to use current item for saving DocState, and
                 // the provisional item for restoring state.
@@ -714,12 +628,12 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
             // The call to closeURL invokes the unload event handler, which can execute arbitrary
             // JavaScript. If the script initiates a new load, we need to abandon the current load,
             // or the two will stomp each other.
-            WebDataSource *pd = _private->provisionalDataSource;
+            WebDataSource *pd = [_private->frameLoader provisionalDataSource];
             [[self _bridge] closeURL];
-            if (pd != _private->provisionalDataSource)
+            if (pd != [_private->frameLoader provisionalDataSource])
                 return;
 
-            [self _commitProvisionalLoad];
+            [_private->frameLoader commitProvisionalLoad];
 
             // Handle adding the URL to the back/forward list.
             WebDataSource *ds = [self dataSource];
@@ -933,15 +847,9 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 }
 
-- (WebFrameState)_state
-{
-    return _private->state;
-}
-
-static CFAbsoluteTime _timeOfLastCompletedLoad;
 + (CFAbsoluteTime)_timeOfLastCompletedLoad
 {
-    return _timeOfLastCompletedLoad;
+    return [WebFrameLoader timeOfLastCompletedLoad];
 }
 
 - (BOOL)_createPageCacheForItem:(WebHistoryItem *)item
@@ -961,85 +869,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [pageCache setObject:[[self frameView] documentView] forKey: WebPageCacheDocumentViewKey];
     }
     return YES;
-}
-
-- (void)_setState: (WebFrameState)newState
-{
-    LOG(Loading, "%@:  transition from %s to %s", [self name], stateNames[_private->state], stateNames[newState]);
-    if ([self webView])
-        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [self name], stateNames[_private->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self webView] mainFrame] dataSource] _loadingStartedTime]);
-    
-    if (newState == WebFrameStateComplete && self == [[self webView] mainFrame]){
-        LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
-    }
-    
-    _private->state = newState;
-    
-    if (_private->state == WebFrameStateProvisional) {
-        _private->firstLayoutDone = NO;
-        [_private->bridge provisionalLoadStarted];
-    
-        // FIXME: This is OK as long as no one resizes the window,
-        // but in the case where someone does, it means garbage outside
-        // the occupied part of the scroll view.
-        [[[self frameView] _scrollView] setDrawsBackground:NO];
-
-        // Cache the page, if possible.
-        // Don't write to the cache if in the middle of a redirect, since we will want to
-        // store the final page we end up on.
-        // No point writing to the cache on a reload or loadSame, since we will just write
-        // over it again when we leave that page.
-        WebHistoryItem *item = [_private currentItem];
-        WebFrameLoadType loadType = [self _loadType];
-        if ([self _canCachePage]
-            && [_private->bridge canCachePage]
-            && item
-            && !_private->quickRedirectComing
-            && loadType != WebFrameLoadTypeReload 
-            && loadType != WebFrameLoadTypeReloadAllowingStaleData
-            && loadType != WebFrameLoadTypeSame
-            && ![[self dataSource] isLoading]
-            && ![[self dataSource] _isStopping])
-        {
-            if ([[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]]) {
-                if (![item pageCache]){
-
-                    // Add the items to this page's cache.
-                    if ([self _createPageCacheForItem:item]) {
-                        LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
-
-                        // See if any page caches need to be purged after the addition of this
-                        // new page cache.
-                        [self _purgePageCache];
-                    }
-                    else {
-                        LOG(PageCache, "NOT saving page to back/forward cache, unable to create items, %@\n", [[self dataSource] _URL]);
-                    }
-                }
-            }
-            else {
-                // Put the document into a null state, so it can be restored correctly.
-                [_private->bridge clear];
-            }
-        }
-        else {
-            LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
-        }
-    }
-    
-    if (_private->state == WebFrameStateComplete) {
-        NSScrollView *sv = [[self frameView] _scrollView];
-        if ([[self webView] drawsBackground])
-            [sv setDrawsBackground:YES];
-        [_private setPreviousItem:nil];
-        _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
-
-        [[self dataSource] _stopRecordingResponses];
-
-        // After a canceled provisional load, firstLayoutDone is NO. Reset it to YES if we're displaying a page.
-        if (_private->dataSource)
-            _private->firstLayoutDone = YES;
-    }
 }
 
 // Called after we send an openURL:... down to WebCore.
@@ -1088,23 +917,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
-- (void)_clearProvisionalLoad
-{
-    [self _setProvisionalDataSource:nil];
-    [[self webView] _progressCompleted:self];
-    [self _setState:WebFrameStateComplete];
-}
-
-- (void)_markLoadComplete
-{
-    [self _setState:WebFrameStateComplete];
-}
-
 - (void)_checkLoadCompleteForThisFrame
 {
     ASSERT([self webView] != nil);
 
-    switch ([self _state]) {
+    switch ([_private->frameLoader state]) {
         case WebFrameStateProvisional:
         {
             if (_private->delegateIsHandlingProvisionalLoadError)
@@ -1140,10 +957,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
                     // Finish resetting the load state, but only if another load hasn't been started by the
                     // delegate callback.
-                    if (pd == _private->provisionalDataSource) {
-                        [self _clearProvisionalLoad];
-                    } else {
-                        NSURL *unreachableURL = [_private->provisionalDataSource unreachableURL];
+                    if (pd == [_private->frameLoader provisionalDataSource])
+                        [_private->frameLoader clearProvisionalLoad];
+                    else {
+                        NSURL *unreachableURL = [[_private->frameLoader provisionalDataSource] unreachableURL];
                         if (unreachableURL != nil && [unreachableURL isEqual:[[pd request] URL]]) {
                             shouldReset = NO;
                         }
@@ -1166,7 +983,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
                 ASSERT(thisDocumentView != nil);
 
-                [self _markLoadComplete];
+                [_private->frameLoader markLoadComplete];
 
                 // FIXME: Is this subsequent work important if we already navigated away?
                 // Maybe there are bugs because of that, or extra work we can skip because
@@ -1269,11 +1086,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->delegateIsHandlingUnimplementablePolicy = NO;
 }
 
-- (void)_clearProvisionalDataSource
-{
-    [self _setProvisionalDataSource:nil];
-}
-
 // helper method that determines whether the subframes described by the item's subitems
 // match our own current frameset
 - (BOOL)_childFramesMatchItem:(WebHistoryItem *)item
@@ -1354,7 +1166,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
         // We always call scrollToAnchorWithURL here, even if the URL doesn't have an
         // anchor fragment. This is so we'll keep the WebCore Frame's URL up-to-date.
-        [[_private->dataSource _bridge] scrollToAnchorWithURL:[item URL]];
+        [_private->bridge scrollToAnchorWithURL:[item URL]];
     
         // must do this maintenance here, since we don't go through a real page reload
         [_private setCurrentItem:item];
@@ -2265,13 +2077,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [_private->listener release];
         _private->listener = nil;
     }
-    [_private->provisionalDataSource _startLoading];
-}
-
-- (void)_startProvisionalLoad:(WebDataSource *)dataSource
-{
-    [self _setProvisionalDataSource:dataSource];
-    [self _setState:WebFrameStateProvisional];
+    [_private->frameLoader startLoading];
 }
 
 -(void)_continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
@@ -2314,7 +2120,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self stopLoading];
     [self _setLoadType:loadType];
 
-    [self _startProvisionalLoad:dataSource];
+    [_private->frameLoader startProvisionalLoad:dataSource];
 
     [dataSource release];
     [self _setPolicyDataSource:nil];
@@ -2330,7 +2136,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         NSDictionary *pageCache = [[_private provisionalItem] pageCache];
         if ([pageCache objectForKey:WebCorePageCacheStateKey]){
             LOG (PageCache, "Restoring page from back/forward cache, %@\n", [[_private provisionalItem] URL]);
-            [_private->provisionalDataSource _loadFromPageCache:pageCache];
+            [[_private->frameLoader provisionalDataSource] _loadFromPageCache:pageCache];
             return;
         }
     }
@@ -2371,15 +2177,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                  formState:formState
                                    andCall:self
                               withSelector:@selector(_continueLoadRequestAfterNavigationPolicy:formState:)];
-}
-
-- (void)_setProvisionalDataSource: (WebDataSource *)d
-{
-    if (_private->provisionalDataSource != _private->dataSource) {
-        [_private->provisionalDataSource _setWebFrame:nil];
-    }
-    [_private setProvisionalDataSource: d];
-    [d _setWebFrame:self];
 }
 
 // used to decide to use loadType=Same
@@ -2512,6 +2309,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [_private setWebFrameView:fv];
         [fv _setWebFrame:self];
     }
+    
+    _private->frameLoader = [[WebFrameLoader alloc] initWithWebFrame:self];
     
     ++WebFrameCount;
     
@@ -2657,16 +2456,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->firstLayoutDone = YES;
 }
 
-- (void)_setupForReplace
-{
-    [self _setState:WebFrameStateProvisional];
-    WebDataSource *old = _private->provisionalDataSource;
-    _private->provisionalDataSource = _private->dataSource;
-    _private->dataSource = nil;
-    [old release];
-        
-    [self _detachChildren];
-}
 
 - (BOOL)_hasSelection
 {
@@ -2812,6 +2601,100 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [_private->inspectors removeObject:inspector];
 }
 
+- (WebFrameLoader *)_frameLoader
+{
+    return _private->frameLoader;
+}
+
+- (void)_provisionalLoadStarted
+{
+    _private->firstLayoutDone = NO;
+    [_private->bridge provisionalLoadStarted];
+    
+    // FIXME: This is OK as long as no one resizes the window,
+    // but in the case where someone does, it means garbage outside
+    // the occupied part of the scroll view.
+    [[[self frameView] _scrollView] setDrawsBackground:NO];
+    
+    // Cache the page, if possible.
+    // Don't write to the cache if in the middle of a redirect, since we will want to
+    // store the final page we end up on.
+    // No point writing to the cache on a reload or loadSame, since we will just write
+    // over it again when we leave that page.
+    WebHistoryItem *item = [_private currentItem];
+    WebFrameLoadType loadType = [self _loadType];
+    if ([self _canCachePage]
+        && [_private->bridge canCachePage]
+    && item
+    && !_private->quickRedirectComing
+    && loadType != WebFrameLoadTypeReload 
+    && loadType != WebFrameLoadTypeReloadAllowingStaleData
+    && loadType != WebFrameLoadTypeSame
+    && ![[self dataSource] isLoading]
+    && ![[self dataSource] _isStopping]) {
+        if ([[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]]) {
+            if (![item pageCache]){
+                
+                // Add the items to this page's cache.
+                if ([self _createPageCacheForItem:item]) {
+                    LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
+                    
+                    // See if any page caches need to be purged after the addition of this
+                    // new page cache.
+                    [self _purgePageCache];
+                }
+                else
+                    LOG(PageCache, "NOT saving page to back/forward cache, unable to create items, %@\n", [[self dataSource] _URL]);
+            }
+        } else
+            // Put the document into a null state, so it can be restored correctly.
+            [_private->bridge clear];
+    } else
+        LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
+}
+
+- (void)_prepareForDataSourceReplacement
+{
+    if (![_private->frameLoader dataSource]) {
+        ASSERT(![self _childFrameCount]);
+        return;
+    }
+    
+    // Make sure that any work that is triggered by resigning first reponder can get done.
+    // The main example where this came up is the textDidEndEditing that is sent to the
+    // FormsDelegate (3223413).  We need to do this before _detachChildren, since that will
+    // remove the views as a side-effect of freeing the bridge, at which point we can't
+    // post the FormDelegate messages.
+    //
+    // Note that this can also take FirstResponder away from a child of our frameView that
+    // is not in a child frame's view.  This is OK because we are in the process
+    // of loading new content, which will blow away all editors in this top frame, and if
+    // a non-editor is firstReponder it will not be affected by endEditingFor:.
+    // Potentially one day someone could write a DocView whose editors were not all
+    // replaced by loading new content, but that does not apply currently.
+    NSView *frameView = [self frameView];
+    NSWindow *window = [frameView window];
+    NSResponder *firstResp = [window firstResponder];
+    if ([firstResp isKindOfClass:[NSView class]]
+        && [(NSView *)firstResp isDescendantOf:frameView])
+    {
+        [window endEditingFor:firstResp];
+    }
+    
+    [self _detachChildren];
+}
+
+- (void)_frameLoadCompleted
+{
+    NSScrollView *sv = [[self frameView] _scrollView];
+    if ([[self webView] drawsBackground])
+        [sv setDrawsBackground:YES];
+    [_private setPreviousItem:nil];
+    // After a canceled provisional load, firstLayoutDone is NO. Reset it to YES if we're displaying a page.
+    if ([_private->frameLoader dataSource])
+        _private->firstLayoutDone = YES;
+}
+
 @end
 
 @implementation WebFormState : NSObject
@@ -2912,12 +2795,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (WebDataSource *)provisionalDataSource
 {
-    return [_private provisionalDataSource];
+    return [_private->frameLoader provisionalDataSource];
 }
 
 - (WebDataSource *)dataSource
 {
-    return [_private dataSource];
+    return [_private->frameLoader dataSource];
 }
 
 - (void)loadRequest:(NSURLRequest *)request
@@ -2995,10 +2878,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
     [self _stopLoadingSubframes];
-    [_private->provisionalDataSource _stopLoading];
-    [_private->dataSource _stopLoading];
-
-    [self _clearProvisionalDataSource];
+    [_private->frameLoader stopLoading];
 
     _private->isStoppingLoad = NO;
 }

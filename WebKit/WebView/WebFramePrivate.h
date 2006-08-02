@@ -83,15 +83,11 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_detachFromParent;
 - (void)_detachChildren;
 - (void)_closeOldDataSources;
-- (void)_setDataSource:(WebDataSource *)d;
 - (void)_commitProvisionalLoad:(NSDictionary *)pageCache;
-- (WebFrameState)_state;
-- (void)_setState:(WebFrameState)newState;
 - (void)_checkLoadCompleteForThisFrame;
 - (void)_handledOnloadEvents;
 - (void)_checkLoadComplete;
 - (WebFrameBridge *)_bridge;
-- (void)_clearProvisionalDataSource;
 - (void)_setLoadType:(WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;
 
@@ -133,8 +129,6 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_receivedMainResourceError:(NSError *)error;
 
 - (void)_loadDataSource:(WebDataSource *)dataSource withLoadType:(WebFrameLoadType)type formState:(WebFormState *)formState;
-
-- (void)_setProvisionalDataSource:(WebDataSource *)d;
 
 + (CFAbsoluteTime)_timeOfLastCompletedLoad;
 - (BOOL)_canCachePage;

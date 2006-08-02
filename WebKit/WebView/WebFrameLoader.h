@@ -27,6 +27,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import <WebKit/WebFramePrivate.h>
 
 @class WebDataSource;
 @class WebMainResourceLoader;
@@ -44,10 +45,13 @@
     NSMutableArray *plugInStreamLoaders;
     WebIconLoader *iconLoader;
     
+    WebFrame *webFrame;
     WebDataSource *dataSource;
+    WebDataSource *provisionalDataSource;
+    WebFrameState state;
 }
 
-- (id)initWithDataSource:(WebDataSource *)ds;
+- (id)initWithWebFrame:(WebFrame *)wf;
 // FIXME: should really split isLoadingIcon from hasLoadedIcon, no?
 - (BOOL)hasIconLoader;
 - (void)loadIconWithRequest:(NSURLRequest *)request;
@@ -67,5 +71,17 @@
 - (void)cancelMainResourceLoad;
 - (BOOL)startLoadingMainResourceWithRequest:(NSMutableURLRequest *)request identifier:(id)identifier;
 - (void)stopLoadingWithError:(NSError *)error;
+- (void)clearProvisionalLoad;
+- (void)stopLoading;
+- (void)markLoadComplete;
+- (void)commitProvisionalLoad;
+- (void)startLoading;
+- (void)startProvisionalLoad:(WebDataSource *)dataSource;
+- (WebDataSource *)dataSource;
+- (WebDataSource *)provisionalDataSource;
+- (WebFrameState)state;
+- (void)clearDataSource;
+- (void)setupForReplace;
++ (CFAbsoluteTime)timeOfLastCompletedLoad;
 
 @end

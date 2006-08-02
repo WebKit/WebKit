@@ -1,3 +1,78 @@
+2006-08-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+        
+        - Change things around so WebFrameLoader tracks the main and provisional data source,
+        as well as the frame load state, pulling much code out of WebFrame along the way.
+        
+        The most significant aspects of this change are:
+        
+        - management of WebDataSources and WebFrameState was moved into WebFrameLoader
+        - there is now just one WebFrameLoader shared between the primary and provisional data source
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _updateLoading]):
+        (-[WebDataSource _loadIcon]):
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (-[WebDataSource _stopLoading]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _addSubresourceLoader:]):
+        (-[WebDataSource _removeSubresourceLoader:]):
+        (-[WebDataSource _addPlugInStreamLoader:]):
+        (-[WebDataSource _removePlugInStreamLoader:]):
+        (-[WebDataSource _defersCallbacksChanged]):
+        (-[WebDataSource _stopLoadingWithError:]):
+        (-[WebDataSource _revertToProvisionalState]):
+        (-[WebDataSource _setupForReplaceByMIMEType:]):
+        (-[WebDataSource initWithRequest:]):
+        (-[WebDataSource data]):
+        (-[WebDataSource isLoading]):
+        * WebView/WebFrame.m:
+        (-[WebFramePrivate init]):
+        (-[WebFramePrivate dealloc]):
+        (-[WebFrame _closeOldDataSources]):
+        (-[WebFrame _detachFromParent]):
+        (-[WebFrame _makeDocumentView]):
+        (-[WebFrame _receivedMainResourceError:]):
+        (-[WebFrame _transitionToCommitted:]):
+        (+[WebFrame _timeOfLastCompletedLoad]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _continueAfterWillSubmitForm:]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrame _initWithWebFrameView:webView:bridge:]):
+        (-[WebFrame _frameLoader]):
+        (-[WebFrame _provisionalLoadStarted]):
+        (-[WebFrame _prepareForDataSourceReplacement]):
+        (-[WebFrame _frameLoadCompleted]):
+        (-[WebFrame provisionalDataSource]):
+        (-[WebFrame dataSource]):
+        (-[WebFrame stopLoading]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameLoader.h:
+        * WebView/WebFrameLoader.m:
+        (-[WebFrameLoader initWithWebFrame:]):
+        (-[WebFrameLoader dealloc]):
+        (-[WebFrameLoader dataSource]):
+        (-[WebFrameLoader _setDataSource:]):
+        (-[WebFrameLoader clearDataSource]):
+        (-[WebFrameLoader provisionalDataSource]):
+        (-[WebFrameLoader _setProvisionalDataSource:]):
+        (-[WebFrameLoader _clearProvisionalDataSource]):
+        (-[WebFrameLoader state]):
+        (+[WebFrameLoader timeOfLastCompletedLoad]):
+        (-[WebFrameLoader _setState:]):
+        (-[WebFrameLoader clearProvisionalLoad]):
+        (-[WebFrameLoader markLoadComplete]):
+        (-[WebFrameLoader commitProvisionalLoad]):
+        (-[WebFrameLoader stopLoading]):
+        (-[WebFrameLoader startLoading]):
+        (-[WebFrameLoader startProvisionalLoad:]):
+        (-[WebFrameLoader setupForReplace]):
+        * WebView/WebFramePrivate.h:
+
 2006-08-01  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.
