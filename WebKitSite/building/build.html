@@ -13,13 +13,9 @@
 <p>Use the <tt>--debug</tt> option for a debug build, which includes debugging symbols and assertions:</p>
 <p class="code">WebKit/WebKitTools/Scripts/build-webkit --debug</p>
 </li>
-<li><p>To set a default build configuration for <tt>build-webkit</tt>, use the <tt>set-webkit-configuration</tt> script:</p>
-<p class="code">WebKit/WebKitTools/Scripts/set-webkit-configuration --debug</p>
-<p class="code">WebKit/WebKitTools/Scripts/set-webkit-configuration --release</p>
-</li>
 </ol>
 
-<p>By default, <tt>build-webkit</tt> places build products in WebKit/WebKitBuild. If your Xcode preferences specify a custom build products location, <tt>webkit-build</tt> places build products there.</p>
+<p>By default, <tt>build-webkit</tt> places build products in WebKit/WebKitBuild. If your Xcode preferences specify a custom build products location, <tt>build-webkit</tt> places build products there.</p>
 <p>More information about building WebKit is available on the <a href="http://www.opendarwin.org/wiki/index.php/WebKit">WebKit Wiki</a>.</p>
 
 <h2>Running Safari with the WebKit You Built</h2>
@@ -27,9 +23,19 @@
 <li><p>Type this command to run Safari with the WebKit you built:</p>
 <p class="code">WebKit/WebKitTools/Scripts/run-safari</p>
 </li>
+<p>Use the <tt>--debug</tt> option for a debug build:</p>
+<p class="code">WebKit/WebKitTools/Scripts/run-safari --debug</p>
 </ol>
 <p>The <tt>run-safari</tt> script sets the <tt>DYLD_FRAMEWORK_PATH</tt> environment variable to point to your build products, 
 and then launches /Applications/Safari.app. <tt>DYLD_FRAMEWORK_PATH</tt> tells the system loader to prefer your build products over the frameworks installed in /System/Library/Frameworks.</p>
+
+<h2>Setting a Default</h2>
+<ol>
+<li><p>To set a default build configuration for <tt>build-webkit</tt> and other scripts, use the <tt>set-webkit-configuration</tt> script:</p>
+<p class="code">WebKit/WebKitTools/Scripts/set-webkit-configuration --debug</p>
+<p class="code">WebKit/WebKitTools/Scripts/set-webkit-configuration --release</p>
+</li>
+</ol>
 
 <h2>Debugging the WebKit You Built in Xcode</h2>
 <ol>
@@ -49,10 +55,14 @@ and then launches /Applications/Safari.app. <tt>DYLD_FRAMEWORK_PATH</tt> tells t
 <img src="custom-executable.png"></img>
 </li>
 <li><p>Set the project's active executable</p>
-<p>Choose the executable you just added. You can set the active build configuration from the project's Build window, pictured above.</p>
+<p>You can set the active executable from the project's Build window. Choose the executable you just added.</p>
 </li>
 <li><p>Close and re-open the project</p>
-<p>This will force Xcode to discover generated source files, which output to your build products location.</p>
+<p>This will force Xcode to discover generated source files, which output to your build products location, allowing you to set breakpoints in them.</p>
+</li>
+<li><p>Launch the debugger</p>
+<p>In the Debugger window, click the "Debug" button.</p>
+<img src="debug.png"></img>
 </li>
 </ol>
 

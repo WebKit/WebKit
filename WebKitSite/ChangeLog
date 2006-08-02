@@ -1,3 +1,12 @@
+2006-08-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by TimO.
+        
+        Tweaked the build instructions a bit.
+
+        * building/build.html:
+        * building/debug.png: Added.
+
 2006-08-02  Darin Adler  <darin@apple.com>
 
         * building/checkout.html: Fix a typo: "OpenSource" instead of "Open Source".
