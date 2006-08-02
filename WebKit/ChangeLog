@@ -1,3 +1,20 @@
+2006-08-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+        
+        - fix assertion failure on layout tests by stopping plugins from loading at a clearly defined time
+        - add more assertions for safety
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]): Removed obsolete comment.
+        (-[WebDataSource _updateLoading]): Add assertion ensuring this method is only called
+        at a time when this data source is the one that might be loading for a frame.
+        (-[WebDataSource _stopLoading]): Stop loading plugins as a FIXME suggests we should.
+        * WebView/WebFrameLoader.m:
+        (-[WebFrameLoader isLoadingPlugIns]): New helper method.
+        (-[WebFrameLoader isLoading]): Consider plugin loads too - otherwise we won't stop them
+        at stopLoading time.
+
 2006-08-02  Adam Roben  <aroben@apple.com>
 
         Reviewed by Brady.

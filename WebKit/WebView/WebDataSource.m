@@ -149,8 +149,6 @@
 
 - (void)dealloc
 {
-    // The WebView is only retained while loading, but this object is also
-    // retained while loading, so no need to release here
     ASSERT(!loading);
 
     [resourceData release];
@@ -291,7 +289,11 @@
 
 - (void)_updateLoading
 {
-    [self _setLoading:[[_private->webFrame _frameLoader] isLoading]];
+    WebFrameLoader *frameLoader = [_private->webFrame _frameLoader];
+    ASSERT((self == [frameLoader dataSource] && [frameLoader state] != WebFrameStateProvisional) ||
+           (self == [frameLoader provisionalDataSource] && [frameLoader state] == WebFrameStateProvisional));
+
+    [self _setLoading:[frameLoader isLoading]];
 }
 
 - (void)_setData:(NSData *)data
@@ -419,7 +421,7 @@
     }
     
     [[_private->webFrame _frameLoader] stopLoadingSubresources];
-    // FIXME: why not stop loading plugins here?
+    [[_private->webFrame _frameLoader] stopLoadingPlugIns];
     
     _private->stopping = NO;
     

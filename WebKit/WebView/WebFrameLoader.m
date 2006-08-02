@@ -121,9 +121,14 @@
     return [subresourceLoaders count];
 }
 
+- (BOOL)isLoadingPlugIns
+{
+    return [plugInStreamLoaders count];
+}
+
 - (BOOL)isLoading
 {
-    return [self isLoadingMainResource] || [self isLoadingSubresources];
+    return [self isLoadingMainResource] || [self isLoadingSubresources] || [self isLoadingPlugIns];
 }
 
 - (void)stopLoadingSubresources
