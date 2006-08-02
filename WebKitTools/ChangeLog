@@ -1,3 +1,14 @@
+2006-08-02  Niels Leenheer  <niels.leenheer@gmail.com>
+
+        Reviewed by Timothy.
+
+        Bug 9931: [Drosera] Needs a cool icon
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9931
+
+        * Drosera/Drosera.icns: Added.
+        * Drosera/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/Info.plist:
+
 2006-08-01  Darin Adler  <darin@apple.com>
 
         - fix a bug in my recent change where the mouse position at the end of

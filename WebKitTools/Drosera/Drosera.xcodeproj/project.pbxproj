@@ -15,6 +15,7 @@
 		1C27ABC60A413B720016ECF4 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C27ABC50A413B720016ECF4 /* WebKit.framework */; };
 		1C27AC200A413D2D0016ECF4 /* debugger.html in Resources */ = {isa = PBXBuildFile; fileRef = 1C27AC1F0A413D2D0016ECF4 /* debugger.html */; };
 		1C27B1260A421D870016ECF4 /* debugger.js in Resources */ = {isa = PBXBuildFile; fileRef = 1C27AC230A413D660016ECF4 /* debugger.js */; };
+		1C3487980A81208400101C5C /* Drosera.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1C3487970A81208400101C5C /* Drosera.icns */; };
 		1C4FF7440A44F52C0000D05D /* debugger.css in Resources */ = {isa = PBXBuildFile; fileRef = 1C4FF7430A44F5260000D05D /* debugger.css */; };
 		1C4FF7540A44F6320000D05D /* gutter.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C4FF7530A44F6320000D05D /* gutter.png */; };
 		1C4FF9210A45F3520000D05D /* glossyHeader.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C4FF91F0A45F3520000D05D /* glossyHeader.png */; };
@@ -79,6 +80,7 @@
 		1C27ABC50A413B720016ECF4 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		1C27AC1F0A413D2D0016ECF4 /* debugger.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = debugger.html; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C27AC230A413D660016ECF4 /* debugger.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = debugger.js; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		1C3487970A81208400101C5C /* Drosera.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Drosera.icns; sourceTree = "<group>"; };
 		1C4FF7430A44F5260000D05D /* debugger.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = debugger.css; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C4FF7530A44F6320000D05D /* gutter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gutter.png; sourceTree = "<group>"; };
 		1C4FF91F0A45F3520000D05D /* glossyHeader.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glossyHeader.png; sourceTree = "<group>"; };
@@ -276,6 +278,7 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1C3487970A81208400101C5C /* Drosera.icns */,
 				2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */,
 				2A37F4B4FDCFA73011CA2CEA /* Debugger.nib */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
@@ -404,6 +407,7 @@
 				1C6F84550A58EE06004FCD89 /* console.css in Resources */,
 				1C6F84560A58EE06004FCD89 /* console.html in Resources */,
 				1C6F86730A59A18B004FCD89 /* console.js in Resources */,
+				1C3487980A81208400101C5C /* Drosera.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
