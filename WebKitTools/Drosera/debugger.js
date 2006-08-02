@@ -674,8 +674,6 @@ function loadFile(fileIndex, manageNavLists)
         files[currentFile].element.style.display = "none";
 
     if (!file.loaded) {
-        file.source = file.source.replace(/\r\n|\r/, "\n"); // normalize line endings
-
         var sourcesDocument = document.getElementById("sources").contentDocument;
         var sourcesDiv = sourcesDocument.body;
         var sourceDiv = sourcesDocument.createElement("div");
@@ -686,7 +684,8 @@ function loadFile(fileIndex, manageNavLists)
         var table = sourcesDocument.createElement("table");
         sourceDiv.appendChild(table);
 
-        var lines = syntaxHighlight(file.source).split("\n");
+        var normalizedSource = file.source.replace(/\r\n|\r/, "\n"); // normalize line endings
+        var lines = syntaxHighlight(normalizedSource).split("\n");
         for( var i = 0; i < lines.length; i++ ) {
             var tr = sourcesDocument.createElement("tr");
             var td = sourcesDocument.createElement("td");
@@ -756,6 +755,7 @@ function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
     var fileIndex = filesLookup[url];
     var file = files[fileIndex];
     var firstLoad = false;
+
     if (!fileIndex || !file) {
         fileIndex = files.length + 1;
         if (url.length)

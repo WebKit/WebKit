@@ -1,3 +1,23 @@
+2006-08-02  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 9632: [Drosera] syntax highlighting is slow (reproducible 40 second hang)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9632
+
+        Do not change the file source when normalizing the line endings.
+        We use this file source to compare against new versions of the source
+        as it comes in, so we can skip re-syntax highlighting if they are the same.
+        The problem is apparent on yahoo.com since they have mixed line endings and
+        once we normalize them the source will always be different. This was
+        compounded by the fact that yahoo has around 40 inline scripts. Each
+        inline script causes us to check if the main document has more loaded,
+        that is when we compare the source strings. Since they are always different
+        we would syntax highlight yahoo.com 40 times! We do check source length before
+        doing a more expensive string comparison, but the lengths were the same.
+
+        * Drosera/debugger.js:
+
 2006-08-02  Niels Leenheer  <niels.leenheer@gmail.com>
 
         Reviewed by Timothy.
