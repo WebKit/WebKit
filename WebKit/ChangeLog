@@ -1,3 +1,12 @@
+2006-08-02  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Brady.
+
+        - Rename TransferJob to ResourceLoader (this file was forgotten in an
+        earlier change by Maciej)
+
+        * COM/WebView.cpp:
+
 2006-08-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.

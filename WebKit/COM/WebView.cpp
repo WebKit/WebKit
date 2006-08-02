@@ -33,7 +33,7 @@
 #include "WebBackForwardList.h"
 
 #pragma warning( push, 0 )
-#include "TransferJobClient.h"
+#include "ResourceLoaderClient.h"
 #include "FrameWin.h"
 #include "Document.h"
 #include "FrameView.h"
