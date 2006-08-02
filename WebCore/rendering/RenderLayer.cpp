@@ -899,26 +899,49 @@ void RenderLayer::valueChanged(ScrollBar*)
         scrollToOffset(newX, newY, false);
 }
 
+ScrollBar* RenderLayer::createScrollbar(ScrollBarOrientation orientation)
+{
+    if (ScrollBar::hasPlatformScrollBars()) {
+        PlatformScrollBar* widget = new PlatformScrollBar(this, orientation);
+        m_object->element()->document()->view()->addChild(widget);
+        return widget;
+    }
+    
+    // FIXME: Create scrollbars using the engine.
+    return 0;
+}
+
+void RenderLayer::destroyScrollbar(ScrollBarOrientation orientation)
+{
+    if (orientation == HorizontalScrollBar) {
+        if (m_hBar->isWidget()) {
+            m_object->element()->document()->view()->removeChild(horizontalScrollbarWidget());
+            delete m_hBar;
+            m_hBar = 0;
+        }
+        
+        // FIXME: Destroy the engine scrollbar.
+    } else {
+        if (m_vBar->isWidget()) {
+            m_object->element()->document()->view()->removeChild(verticalScrollbarWidget());
+            delete m_vBar;
+            m_vBar = 0;
+        }
+        
+        // FIXME: Destroy the engine scrollbar.
+    }
+}
+
 void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
 {
     if (hasScrollbar == (m_hBar != 0))
         return;
 
-    if (hasScrollbar) {
-        FrameView* scrollView = m_object->element()->document()->view();
-        m_hBar = new PlatformScrollBar(this, HorizontalScrollBar); // FIXME: Abstract the creation once we have engine-created scrollbars.
-        if (m_hBar->isWidget())
-            scrollView->addChild(horizontalScrollbarWidget());
-    } else {
-        if (m_hBar->isWidget()) {
-            FrameView* scrollView = m_object->element()->document()->view();
-            scrollView->removeChild(horizontalScrollbarWidget());
-        }
-        
-        delete m_hBar;
-        m_hBar = 0;
-    }
-    
+    if (hasScrollbar)
+        m_hBar = createScrollbar(HorizontalScrollBar);
+    else
+        destroyScrollbar(HorizontalScrollBar);
+
 #if __APPLE__
     // Force an update since we know the scrollbars have changed things.
     if (m_object->document()->hasDashboardRegions())
@@ -933,20 +956,10 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
         return;
 
     if (hasScrollbar) {
-        FrameView* scrollView = m_object->element()->document()->view();
-        m_vBar = new PlatformScrollBar(this, VerticalScrollBar); // FIXME: Abstract the creation once we have engine-created scrollbars.
-        if (m_vBar->isWidget())
-            scrollView->addChild(verticalScrollbarWidget());
-    } else { 
-        if (m_vBar->isWidget()) {
-            FrameView* scrollView = m_object->element()->document()->view();
-            scrollView->removeChild(verticalScrollbarWidget());
-        }
+        m_vBar = createScrollbar(VerticalScrollBar);
+    } else
+        destroyScrollbar(VerticalScrollBar);
 
-        delete m_vBar;
-        m_vBar = 0;
-    }
-    
 #if __APPLE__
     // Force an update since we know the scrollbars have changed things.
     if (m_object->document()->hasDashboardRegions())

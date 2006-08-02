@@ -1,3 +1,19 @@
+2006-08-02  David Hyatt  <hyatt@apple.com>
+
+        Abstract RenderLayer scrollbar creation and destruction so that there
+        is a clean spot in which to drop in engine scrollbar stuff.
+
+        Reviewed by timo
+
+        * platform/ScrollBar.h:
+        (WebCore::ScrollBar::hasPlatformScrollBars):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::destroyScrollbar):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        * rendering/RenderLayer.h:
+
 2006-08-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

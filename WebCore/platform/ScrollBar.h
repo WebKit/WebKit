@@ -81,6 +81,15 @@ public:
     virtual void setEnabled(bool) = 0;
     virtual void paint(GraphicsContext*, const IntRect& damageRect) = 0;
 
+    static bool hasPlatformScrollBars() {
+        // To use the platform's built-in scrollbars by default add to this ifdef.
+#if PLATFORM(MAC)
+        return true;
+#else
+        return false;  // The engine will create scrollbars (so the RenderTheme will need to support scrollbar painting).
+#endif
+    }
+
 protected:
     ScrollBarClient* client() const { return m_client; }
 
