@@ -232,6 +232,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (void)dealloc
 {
     [webFrameView release];
+    [frameLoader release];
 
     [currentItem release];
     [provisionalItem release];

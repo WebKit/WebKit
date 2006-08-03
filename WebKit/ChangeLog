@@ -1,3 +1,11 @@
+2006-08-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - fix storage leak
+
+        * WebView/WebFrame.m: (-[WebFramePrivate dealloc]): Release the frame loader.
+
 2006-08-02  Timothy Hatcher  <timothy@apple.com>
 
         Rubber stamped by Maciej.
