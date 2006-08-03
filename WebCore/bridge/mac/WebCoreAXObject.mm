@@ -1362,7 +1362,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 
 - (id)doAXTextMarkerRangeForUnorderedTextMarkers: (NSArray *) markers
 {
-#if MARKERARRAY_SELF_TEST
+#if defined(MARKERARRAY_SELF_TEST) && MARKERARRAY_SELF_TEST
     WebCoreTextMarkerRange *tmr = [self getSelectedTextMarkerRange];
     WebCoreTextMarker *tm1 = AXTextMarkerRangeCopyEndMarker(tmr);
     WebCoreTextMarker *tm2 = AXTextMarkerRangeCopyStartMarker(tmr);

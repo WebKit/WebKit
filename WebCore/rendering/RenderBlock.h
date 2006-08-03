@@ -266,7 +266,7 @@ public:
     int leftSelectionOffset(RenderBlock* rootBlock, int y);
     int rightSelectionOffset(RenderBlock* rootBlock, int y);
 
-#if !NDEBUG
+#ifndef NDEBUG
     virtual void dump(TextStream *stream, DeprecatedString ind = "") const;
 #endif
 

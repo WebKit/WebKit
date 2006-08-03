@@ -214,7 +214,7 @@ sub printNamesHeaderFile
 	}
 	
 	my $lowerNamespace = lc($namespacePrefix);
-	print "#if !DOM_${namespace}NAMES_HIDE_GLOBALS\n";
+	print "#ifndef DOM_${namespace}NAMES_HIDE_GLOBALS\n";
     print "// Namespace\n";
     print "extern const WebCore::AtomicString ${lowerNamespace}NamespaceURI;\n\n";
 
@@ -250,7 +250,7 @@ sub printNamesCppFile
 
 print "#include \"config.h\"\n";
 
-print "#if AVOID_STATIC_CONSTRUCTORS\n";
+print "#ifdef AVOID_STATIC_CONSTRUCTORS\n";
 print "#define DOM_${namespace}NAMES_HIDE_GLOBALS 1\n";
 print "#else\n";
 print "#define QNAME_DEFAULT_CONSTRUCTOR 1\n";

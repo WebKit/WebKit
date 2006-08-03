@@ -43,6 +43,7 @@
 #include "ResourceLoader.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
 #ifdef KHTML_XSLT
@@ -63,12 +64,11 @@ using namespace HTMLNames;
 
 const int maxErrors = 25;
 
-typedef HashMap<StringImpl *, StringImpl *> PrefixForNamespaceMap;
+typedef HashMap<StringImpl*, StringImpl*> PrefixForNamespaceMap;
 
 class PendingCallbacks;
 
-class XMLTokenizer : public Tokenizer, public CachedResourceClient
-{
+class XMLTokenizer : public Tokenizer, public CachedResourceClient {
 public:
     XMLTokenizer(Document *, FrameView * = 0);
     XMLTokenizer(DocumentFragment *, Element *);
@@ -922,7 +922,7 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
     if (m_parserStopped)
         return;
 
-#if WIN32
+#if PLATFORM(WIN_OS)
     char m[1024];
     vsnprintf(m, sizeof(m) - 1, message, args);
 #else
@@ -935,7 +935,7 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
     else
         handleError(type, m, lineNumber(), columnNumber());
 
-#if !WIN32
+#if !PLATFORM(WIN_OS)
     free(m);
 #endif
 }

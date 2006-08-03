@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#if AVOID_STATIC_CONSTRUCTORS
+#ifdef AVOID_STATIC_CONSTRUCTORS
 #define DOM_EVENT_NAMES_HIDE_GLOBALS 1
 #endif
 

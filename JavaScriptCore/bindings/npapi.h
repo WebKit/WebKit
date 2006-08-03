@@ -115,7 +115,7 @@ typedef unsigned short uint16;
 
 #ifndef _UINT32
 #define _UINT32
-#if __LP64__
+#ifdef __LP64__
 typedef unsigned int uint32;
 #else /* __LP64__ */
 typedef unsigned long uint32;
@@ -129,7 +129,7 @@ typedef short int16;
 
 #ifndef _INT32
 #define _INT32
-#if __LP64__
+#ifdef __LP64__
 typedef int int32;
 #else /* __LP64__ */
 typedef long int32;

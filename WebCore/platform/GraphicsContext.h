@@ -26,18 +26,20 @@
 #ifndef GraphicsContext_h
 #define GraphicsContext_h
 
-#include "Font.h"
 #include "FloatRect.h"
+#include "Font.h"
 #include "Image.h"
 #include "IntRect.h"
 #include "Pen.h"
 #include "TextDirection.h"
-#include <wtf/Noncopyable.h>
 #include <unicode/umachine.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 
+// FIXME: how should Cairo figure into the platform macros?
 #if __APPLE__
 typedef struct CGContext PlatformGraphicsContext;
-#elif WIN32
+#elif PLATFORM(WIN)
 typedef struct HDC__* HDC;
 typedef struct _cairo PlatformGraphicsContext;
 #elif PLATFORM(GDK)
@@ -158,7 +160,7 @@ namespace WebCore {
         KRenderingDeviceContext* createRenderingDeviceContext();
 #endif
 
-#if WIN32
+#if PLATFORM(WIN)
         GraphicsContext(HDC); // FIXME: To be removed.
 #endif
 
@@ -177,6 +179,6 @@ namespace WebCore {
         GraphicsContextPlatformPrivate* m_data;
     };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // GraphicsContext_h

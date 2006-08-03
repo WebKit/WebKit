@@ -1,3 +1,32 @@
+2006-08-03  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10176
+          Make WebCore compile with -Wundef
+
+          * Adds -Wundef flag to Xcode project
+          * Converts #ifs to #ifdef and #ifndefs where needed.
+          * Added #define YYMAXDEPTH 10000 in kjs/grammar.y
+            to fix a warning from within Bison.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/jni/jni_jsobject.cpp:
+        (JavaJSObject::getSlot):
+        (JavaJSObject::setSlot):
+        * bindings/npapi.h:
+        * bindings/objc/objc_class.mm:
+        (KJS::Bindings::ObjcClass::methodsNamed):
+        (KJS::Bindings::ObjcClass::fieldNamed):
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcMethod::getMethodSignature):
+        (ObjcField::name):
+        (ObjcField::type):
+        * kjs/grammar.y:
+        * kjs/identifier.h:
+
 2006-08-03  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John Sullivan.

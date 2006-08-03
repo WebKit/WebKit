@@ -106,7 +106,7 @@ void GraphicsContext::drawFocusRing(const Color& color)
     ASSERT(view);
 
     const NSRect* drawRects;
-#if defined(__LP64__)
+#ifdef __LP64__
     long count;
 #else
     int count;

@@ -100,7 +100,7 @@ public:
     RenderTable* table() const { return static_cast<RenderTable*>(parent()->parent()->parent()); }
     RenderTableSection* section() const { return static_cast<RenderTableSection*>(parent()->parent()); }
 
-#if !NDEBUG
+#ifndef NDEBUG
     virtual void dump(TextStream *stream, DeprecatedString ind = "") const;
 #endif
 

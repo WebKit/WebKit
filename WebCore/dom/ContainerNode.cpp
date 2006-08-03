@@ -783,7 +783,7 @@ void ContainerNode::setActive(bool down, bool pause)
             // to repaint the "down" state of the control is about the same time as it would take to repaint the
             // "up" state.  Once you assume this, you can just delay for 100ms - that time (assuming that after you
             // leave this method, it will be about that long before the flush of the up state happens again).
-#if HAVE_FUNC_USLEEP
+#ifdef HAVE_FUNC_USLEEP
             double startTime = currentTime();
 #endif
 
@@ -792,7 +792,7 @@ void ContainerNode::setActive(bool down, bool pause)
             
             // FIXME: Find a substitute for usleep for Win32.
             // Better yet, come up with a way of doing this that doesn't use this sort of thing at all.            
-#if HAVE_FUNC_USLEEP
+#ifdef HAVE_FUNC_USLEEP
             // Now pause for a small amount of time (1/10th of a second from before we repainted in the pressed state)
             double remainingTime = 0.1 - (currentTime() - startTime);
             if (remainingTime > 0)

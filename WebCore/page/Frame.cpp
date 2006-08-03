@@ -46,13 +46,13 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
-#include "HTMLViewSourceDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLGenericFormElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
-#include "HTMLInputElement.h"
+#include "HTMLViewSourceDocument.h"
 #include "ImageDocument.h"
 #include "MediaFeatureNames.h"
 #include "MouseEventWithHitTestResults.h"
@@ -63,24 +63,25 @@
 #include "Plugin.h"
 #include "PluginDocument.h"
 #include "RenderPart.h"
-#include "RenderTheme.h"
 #include "RenderTextControl.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "SegmentedString.h"
 #include "TextDocument.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
+#include "XMLTokenizer.h"
 #include "cssstyleselector.h"
 #include "htmlediting.h"
 #include "kjs_window.h"
 #include "markup.h"
 #include "visible_units.h"
-#include "XMLTokenizer.h"
 #include "xmlhttprequest.h"
 #include <math.h>
 #include <sys/types.h>
+#include <wtf/Platform.h>
 
-#if !WIN32
+#if !PLATFORM(WIN_OS)
 #include <unistd.h>
 #endif
 

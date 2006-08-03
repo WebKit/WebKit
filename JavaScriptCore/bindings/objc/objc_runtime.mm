@@ -57,7 +57,7 @@ int ObjcMethod::numParameters() const
 
 NSMethodSignature* ObjcMethod::getMethodSignature() const
 {
-#if OBJC_API_VERSION >= 2
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
     return [_objcClass instanceMethodSignatureForSelector:sel_registerName(_selector)];
 #else
     return [_objcClass instanceMethodSignatureForSelector:(SEL)_selector];
@@ -89,7 +89,7 @@ ObjcField::ObjcField(CFStringRef name)
 
 const char* ObjcField::name() const 
 {
-#if OBJC_API_VERSION >= 2
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
     if (_ivar)
         return ivar_getName(_ivar);
 #else
@@ -101,7 +101,7 @@ const char* ObjcField::name() const
 
 RuntimeType ObjcField::type() const 
 { 
-#if OBJC_API_VERSION >= 2
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
     if (_ivar)
         return ivar_getTypeEncoding(_ivar);
 #else

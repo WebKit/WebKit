@@ -133,7 +133,7 @@ public:
     String(CFStringRef);
     CFStringRef createCFString() const { return m_impl ? m_impl->createCFString() : CFSTR(""); }
 #endif
-#if __OBJC__
+#ifdef __OBJC__
     String(NSString*);
     operator NSString*() const { if (!m_impl) return @""; return *m_impl; }
 #endif

@@ -47,7 +47,7 @@
 #define LEFT_TO_RIGHT_OVERRIDE 0x202D
 #define RIGHT_TO_LEFT_OVERRIDE 0x202E
 
-#if defined(__LP64__)
+#ifdef __LP64__
 #define URefCon void*
 #else
 #define URefCon UInt32

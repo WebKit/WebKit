@@ -96,7 +96,7 @@ namespace WebCore { namespace EventNames {
     \
 // end of DOM_EVENT_NAMES_FOR_EACH
 
-#if !DOM_EVENT_NAMES_HIDE_GLOBALS
+#ifndef DOM_EVENT_NAMES_HIDE_GLOBALS
     #define DOM_EVENT_NAMES_DECLARE(name) extern const AtomicString name##Event;
     DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_DECLARE)
     #undef DOM_EVENT_NAMES_DECLARE

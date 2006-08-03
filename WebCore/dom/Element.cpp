@@ -540,7 +540,7 @@ void Element::removedFromDocument()
 
 void Element::attach()
 {
-#if SPEED_DEBUG < 1
+#if !defined(SPEED_DEBUG) || SPEED_DEBUG < 1
     createRendererIfNeeded();
 #endif
     ContainerNode::attach();

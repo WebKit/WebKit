@@ -23,15 +23,16 @@
 
 #include "Frame.h"
 #include "Page.h"
-#include <wtf/Vector.h>
 #include <stdarg.h>
+#include <wtf/Platform.h>
+#include <wtf/Vector.h>
 
 using std::swap;
 
 namespace WebCore {
 
-// This belongs in some header file where multiple clients can share it.
-#if WIN32
+// FIXME: This belongs in some header file where multiple clients can share it.
+#if PLATFORM(WIN_OS)
 int snprintf(char* str, size_t size, const char* format, ...)
 {
     va_list args;

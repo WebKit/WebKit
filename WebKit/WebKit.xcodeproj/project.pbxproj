@@ -1895,6 +1895,7 @@
 					"-Wbad-function-cast",
 					"-Wmissing-declarations",
 					"-Wnested-externs",
+					"-Wundef",
 				);
 			};
 			name = Debug;
@@ -1935,6 +1936,7 @@
 					"-Wbad-function-cast",
 					"-Wmissing-declarations",
 					"-Wnested-externs",
+					"-Wundef",
 				);
 			};
 			name = Release;
@@ -1971,6 +1973,7 @@
 					"-Wbad-function-cast",
 					"-Wmissing-declarations",
 					"-Wnested-externs",
+					"-Wundef",
 				);
 			};
 			name = Production;

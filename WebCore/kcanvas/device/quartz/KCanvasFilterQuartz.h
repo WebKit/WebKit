@@ -27,7 +27,7 @@
 
 #import "KCanvasFilters.h"
 
-#if __OBJC__
+#ifdef __OBJC__
 @class CIFilter;
 @class CIImage;
 #else

@@ -35,7 +35,7 @@ typedef NSUInteger WebNSUInteger;
 #endif
 
 #ifndef CGFLOAT_DEFINED
-#if __LP64__
+#ifdef __LP64__
 typedef double CGFloat;
 #else
 typedef float CGFloat;

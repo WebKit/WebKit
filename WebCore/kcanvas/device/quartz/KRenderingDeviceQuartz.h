@@ -33,7 +33,7 @@
 typedef struct CGRect CGRect;
 typedef struct CGContext *CGContextRef;
 
-#if __OBJC__
+#ifdef __OBJC__
 @class NSGraphicsContext;
 #else
 class NSGraphicsContext;

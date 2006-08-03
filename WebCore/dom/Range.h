@@ -110,8 +110,8 @@ public:
 
     Position editingStartPosition() const;
 
-#if !NDEBUG
-    void formatForDebugger(char *buffer, unsigned length) const;
+#ifndef NDEBUG
+    void formatForDebugger(char* buffer, unsigned length) const;
 #endif
 
 private:

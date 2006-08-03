@@ -1583,6 +1583,7 @@
 					"-Wwrite-strings",
 					"-Wno-format-y2k",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Debug;
@@ -1623,6 +1624,7 @@
 					"-Wwrite-strings",
 					"-Wno-format-y2k",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Release;
@@ -1669,6 +1671,7 @@
 					"-Wwrite-strings",
 					"-Wno-format-y2k",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Production;
@@ -1763,6 +1766,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Debug;
@@ -1801,6 +1805,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Release;
@@ -1836,6 +1841,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Production;

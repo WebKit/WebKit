@@ -38,7 +38,7 @@ FloatSize::operator CGSize() const
     return CGSizeMake(m_width, m_height);
 }
 
-#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 
 FloatSize::FloatSize(const NSSize& s) : m_width(s.width), m_height(s.height)
 {

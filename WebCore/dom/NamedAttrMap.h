@@ -30,7 +30,7 @@
 #include "Element.h"
 #include "NamedNodeMap.h"
 
-#if __OBJC__
+#ifdef __OBJC__
 #define id id_AVOID_KEYWORD
 #endif
 

@@ -410,7 +410,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 }
 
 // FIXME: <rdar://problem/4561772> HIWebView and HIViewAdapter need to be reworked for 64-bit
-#if !__LP64__
+#ifndef __LP64__
 
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder
 {
@@ -613,7 +613,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 }
 
 // FIXME: <rdar://problem/4561772> HIWebView and HIViewAdapter need to be reworked for 64-bit
-#if !__LP64__
+#ifndef __LP64__
 
 - (void)selectKeyViewFollowingView:(NSView *)aView {
 	HIViewRef	view = NULL;

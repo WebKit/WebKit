@@ -22,14 +22,15 @@
 
 #include "config.h"
 
-#if AVOID_STATIC_CONSTRUCTORS
+#ifdef AVOID_STATIC_CONSTRUCTORS
 #define CSS_MEDIAQUERY_NAMES_HIDE_GLOBALS 1
 #endif
 
 #include "MediaFeatureNames.h"
 #include "StaticConstructors.h"
 
-namespace WebCore { namespace MediaFeatureNames {
+namespace WebCore {
+namespace MediaFeatureNames {
 
 #define DEFINE_MEDIAFEATURE_GLOBAL(name, str) \
     DEFINE_GLOBAL(AtomicString, name##MediaFeature, str)
@@ -50,4 +51,5 @@ void init()
     }
 }
 
-} }
+} // namespace MediaFeatureNames
+} // namespace WebCore

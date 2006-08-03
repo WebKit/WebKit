@@ -27,7 +27,7 @@
  */
 
 // <rdar://problem/4561772> HIWebView needs to be reworked to not use QuickDraw, needed for 64-bit
-#if !__LP64__
+#ifndef __LP64__
 
 #include "HIWebView.h"
 
@@ -1400,7 +1400,7 @@ HIWebViewEventHandler(
 					GetEventParameter( inEvent, kEventParamControlDataBuffer, typePtr, NULL,
 							sizeof( Ptr ), NULL, &ptr );
 
-#if __LP64__
+#ifdef __LP64__
 					GetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt64, NULL, sizeof(Size), NULL, &size);
 #else
 					GetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt32, NULL, sizeof(Size), NULL, &size);
@@ -1421,7 +1421,7 @@ HIWebViewEventHandler(
 						}
 
 						outSize = sizeof( ControlKind );
-#if __LP64__
+#ifdef __LP64__
                         SetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt64, sizeof(Size), &outSize);
 #else
                         SetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt32, sizeof(Size), &outSize);

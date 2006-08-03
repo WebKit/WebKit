@@ -28,6 +28,7 @@
 
 #include "ScrollBarMode.h"
 #include "Widget.h"
+#include <wtf/Platform.h>
 
 namespace WebCore {
     class FloatRect;
@@ -76,7 +77,7 @@ namespace WebCore {
         NSView* getDocumentView() const;
 #endif
 
-#if WIN32
+#if PLATFORM(WIN)
         ScrollView();
         ~ScrollView();
     private:
@@ -87,7 +88,7 @@ namespace WebCore {
         ScrollViewPrivate* m_data;
 #endif
 
-#if  PLATFORM(GDK)
+#if PLATFORM(GDK)
         void updateView(const IntRect&, bool now = false);
         virtual void setDrawable(GdkDrawable* drawable);
         virtual void setFrameGeometry(const IntRect&);
@@ -102,6 +103,6 @@ namespace WebCore {
 #endif
     };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ScrollView_H

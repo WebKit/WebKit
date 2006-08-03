@@ -65,7 +65,7 @@
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; indentWidth = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1422E86709DE3BCE00749B87 /* testjsglue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = testjsglue.cpp; sourceTree = "<group>"; };
-		1422E87709DE3BE800749B87 /* testjsglue */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testjsglue; sourceTree = BUILT_PRODUCTS_DIR; };
+		1422E87709DE3BE800749B87 /* testjsglue */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = testjsglue; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD66F3D508F73ED700C75FD7 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD66F3D608F73ED700C75FD7 /* JavaScriptGlue.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JavaScriptGlue.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD66F3F508F7401B00C75FD7 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -442,6 +442,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Debug;
@@ -479,6 +480,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Release;
@@ -512,6 +514,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Production;

@@ -595,7 +595,7 @@ static void appendRun(BidiState &bidi)
 {
     if (emptyRun || !bidi.eor.obj)
         return;
-#if BIDI_DEBUG > 1
+#if defined(BIDI_DEBUG) && BIDI_DEBUG > 1
     kdDebug(6041) << "appendRun: dir="<<(int)dir<<endl;
 #endif
 
@@ -1759,7 +1759,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
 
     return repaintRect;
 
-#if BIDI_DEBUG > 1
+#if defined(BIDI_DEBUG) && BIDI_DEBUG > 1
     kdDebug(6041) << " ------- bidi end " << this << " -------" << endl;
 #endif
 }

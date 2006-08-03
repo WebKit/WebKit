@@ -9,7 +9,7 @@
 
 #include "WebNetscapeDeprecatedFunctions.h"
 
-#if !__LP64__
+#ifndef __LP64__
 
 OSErr WebGetDiskFragment(const FSSpec *fileSpec, UInt32 offset, UInt32 length, ConstStr63Param fragName, CFragLoadOptions options, CFragConnectionID *connID, Ptr *mainAddr, Str255 errMessage)
 {

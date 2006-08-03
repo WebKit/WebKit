@@ -27,20 +27,21 @@
 #define INTRECT_H_
 
 #include "IntPoint.h"
+#include <wtf/Platform.h>
 
 #if __APPLE__
 
 typedef struct CGRect CGRect;
 
-#if NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGRect NSRect;
 #else
 typedef struct _NSRect NSRect;
 #endif
 
-#endif
+#endif // __APPLE__
 
-#if WIN32
+#if PLATFORM(WIN)
 typedef struct tagRECT RECT;
 #endif
 
@@ -90,18 +91,20 @@ public:
     void intersect(const IntRect&);
     void unite(const IntRect&);
 
-    void inflateX(int dx) {
+    void inflateX(int dx)
+    {
         m_location.setX(m_location.x() - dx);
         m_size.setWidth(m_size.width() + dx + dx);
     }
-    void inflateY(int dy) {
+    void inflateY(int dy)
+    {
         m_location.setY(m_location.y() - dy);
         m_size.setHeight(m_size.height() + dy + dy);
     }
     void inflate(int d) { inflateX(d); inflateY(d); }
     void scale(float s);
 
-#if WIN32
+#if PLATFORM(WIN)
     IntRect(const RECT&);
     operator RECT() const;
 #endif
@@ -110,7 +113,7 @@ public:
 
     operator CGRect() const;
 
-#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     operator NSRect() const;
 #endif
 
@@ -149,7 +152,7 @@ inline bool operator!=(const IntRect& a, const IntRect& b)
 
 IntRect enclosingIntRect(const CGRect&);
 
-#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 
 IntRect enclosingIntRect(const NSRect&);
 
@@ -157,6 +160,6 @@ IntRect enclosingIntRect(const NSRect&);
 
 #endif
 
-}
+} // namespace WebCore
 
-#endif
+#endif // INTRECT_H_

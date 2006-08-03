@@ -3982,6 +3982,8 @@
 				935C475E09AC4CAE00A6AAB4 /* HistoryMac.mm */,
 				F58784FF02DE375901EA4122 /* JavaAppletWidget.mm */,
 				93E47C5B09BE2BBB0019C5C1 /* PageMac.mm */,
+				55998A5A052B59CC0017A6C1 /* WebCoreAXObject.h */,
+				55998A5B052B59CC0017A6C1 /* WebCoreAXObject.mm */,
 				F5B2A4FC02E2220F018635CB /* WebCoreCache.h */,
 				F5B2A4FD02E2220F018635CB /* WebCoreCache.mm */,
 				BEF7EEA005FF8F0D009717EE /* WebCoreEditCommand.h */,
@@ -4015,8 +4017,6 @@
 				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
 				5150C2A10702629000AF642C /* WebDashboardRegion.h */,
 				5150C2A50702629800AF642C /* WebDashboardRegion.m */,
-				55998A5A052B59CC0017A6C1 /* WebCoreAXObject.h */,
-				55998A5B052B59CC0017A6C1 /* WebCoreAXObject.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -5187,6 +5187,10 @@
 				F587868202DE3B8601EA4122 /* PopUpButton.h */,
 				F587852B02DE375901EA4122 /* RegularExpression.cpp */,
 				F58786B302DE3B8601EA4122 /* RegularExpression.h */,
+				6545F66C09B82FED0013006F /* ResourceLoader.cpp */,
+				6545F66D09B82FED0013006F /* ResourceLoader.h */,
+				6545F66E09B82FED0013006F /* ResourceLoaderClient.h */,
+				6545F66F09B82FED0013006F /* ResourceLoaderInternal.h */,
 				9385F761098D9C3100D90D24 /* Screen.h */,
 				BC7B2AF80450824100A8000F /* ScrollBar.h */,
 				9353673E09AED79200D35CD6 /* ScrollBarMode.h */,
@@ -5219,10 +5223,6 @@
 				F58786BF02DE3B8601EA4122 /* TextStream.h */,
 				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
-				6545F66C09B82FED0013006F /* ResourceLoader.cpp */,
-				6545F66D09B82FED0013006F /* ResourceLoader.h */,
-				6545F66E09B82FED0013006F /* ResourceLoaderClient.h */,
-				6545F66F09B82FED0013006F /* ResourceLoaderInternal.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				93B780C909B3B7FE00690162 /* WidgetClient.h */,
@@ -7436,6 +7436,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Debug;
@@ -7473,6 +7474,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Release;
@@ -7507,6 +7509,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
+					"-Wundef",
 				);
 			};
 			name = Production;

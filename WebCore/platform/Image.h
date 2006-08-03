@@ -34,7 +34,7 @@
 #include "FloatSize.h"
 
 #if __APPLE__
-#if __OBJC__
+#ifdef __OBJC__
 @class NSImage;
 #else
 class NSImage;

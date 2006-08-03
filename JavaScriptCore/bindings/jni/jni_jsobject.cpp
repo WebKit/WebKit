@@ -244,7 +244,7 @@ void JavaJSObject::removeMember(jstring memberName) const
 
 jobject JavaJSObject::getSlot(jint index) const
 {
-#if __LP64__
+#ifdef __LP64__
     JS_LOG ("index = %d\n", index);
 #else
     JS_LOG ("index = %ld\n", index);
@@ -261,7 +261,7 @@ jobject JavaJSObject::getSlot(jint index) const
 
 void JavaJSObject::setSlot(jint index, jobject value) const
 {
-#if __LP64__
+#ifdef __LP64__
     JS_LOG ("index = %d, value = %p\n", index, value);
 #else
     JS_LOG ("index = %ld, value = %p\n", index, value);

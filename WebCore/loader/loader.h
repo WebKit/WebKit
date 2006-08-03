@@ -31,7 +31,7 @@
 #include <wtf/HashMap.h>
 #include "DeprecatedPtrList.h"
 
-#if __OBJC__
+#ifdef __OBJC__
 @class NSData;
 @class NSURLResponse;
 #else

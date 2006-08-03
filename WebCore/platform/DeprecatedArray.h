@@ -27,6 +27,7 @@
 #define ARRAY_H_
 
 #include "ArrayImpl.h"
+#include <wtf/Platform.h>
 
 namespace WebCore {
 
@@ -51,7 +52,7 @@ public:
 
     T &operator[](int i) { return *(T *)impl.at(i); }
     const T &operator[](int i) const { return *(T *)impl.at(i); }
-#if WIN32
+#if PLATFORM(WIN_OS)
     // FIXME: Look into this strange compile error on Win32.
     T &operator[](unsigned i) { return *(T *)impl.at(i); }
     const T &operator[](unsigned i) const { return *(T *)impl.at(i); }
@@ -66,6 +67,6 @@ public:
 
 typedef DeprecatedArray<char> DeprecatedByteArray;
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ARRAY_H_

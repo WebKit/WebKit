@@ -38,7 +38,7 @@ FloatPoint::operator CGPoint() const
     return CGPointMake(m_x, m_y);
 }
 
-#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 
 FloatPoint::FloatPoint(const NSPoint& p) : m_x(p.x), m_y(p.y)
 {

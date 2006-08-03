@@ -50,7 +50,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 @implementation WebNetscapePluginPackage
 
-#if !__LP64__
+#ifndef __LP64__
 + (void)initialize
 {
     // The Shockwave plugin requires a valid file in CurApRefNum.
@@ -265,7 +265,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if (isBundle)
         CFBundleUnloadExecutable(cfBundle);
     else
-#if !__LP64__
+#ifndef __LP64__
         // CFM is not supported in 64-bit
         WebCloseConnection(&connID);
 #endif
@@ -326,7 +326,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
                 goto abort;
         }
     } else {
-#if __LP64__
+#ifdef __LP64__
         // CFM is not supported in 64-bit
         goto abort;
 #else

@@ -27,7 +27,7 @@
  */
 
 // <rdar://problem/4561772> HIWebView needs to be reworked to not use QuickDraw, needed for 64-bit
-#if !__LP64__
+#ifndef __LP64__
 
 #include "CarbonUtils.h"
 #import <WebKitSystemInterface.h>

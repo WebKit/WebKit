@@ -27,6 +27,7 @@
 #define PlatformKeyboardEvent_h
 
 #include "PlatformString.h"
+#include <wtf/Platform.h>
 
 #ifdef __OBJC__
 @class NSEvent;
@@ -34,7 +35,7 @@
 class NSEvent;
 #endif
 
-#if WIN32
+#if PLATFORM(WIN)
 typedef struct HWND__ *HWND;
 typedef unsigned    WPARAM;
 typedef long        LPARAM;
@@ -65,7 +66,7 @@ namespace WebCore {
         PlatformKeyboardEvent(NSEvent*, bool forceAutoRepeat = false);
 #endif
 
-#ifdef WIN32
+#if PLATFORM(WIN)
         PlatformKeyboardEvent(HWND, WPARAM, LPARAM);
 #endif
 

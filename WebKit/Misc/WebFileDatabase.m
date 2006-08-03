@@ -210,7 +210,7 @@ static void UniqueFilePathForKey(id key, char *buffer)
         hash2 = (37 * hash2) ^ s[cnt];
     }
 
-#if __LP64__
+#ifdef __LP64__
     snprintf(buffer, UniqueFilePathSize, "%.2u/%.2u/%.10u-%.10u.cache", ((hash1 & 0xff) >> 4), ((hash2 & 0xff) >> 4), hash1, hash2);
 #else
     snprintf(buffer, UniqueFilePathSize, "%.2lu/%.2lu/%.10lu-%.10lu.cache", ((hash1 & 0xff) >> 4), ((hash2 & 0xff) >> 4), hash1, hash2);

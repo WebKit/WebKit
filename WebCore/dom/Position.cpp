@@ -654,7 +654,7 @@ void Position::debugPosition(const char *msg) const
         fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, node()->nodeName().deprecatedString().latin1(), node(), offset());
 }
 
-#if !NDEBUG
+#ifndef NDEBUG
 
 void Position::formatForDebugger(char *buffer, unsigned length) const
 {

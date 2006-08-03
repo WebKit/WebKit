@@ -363,10 +363,10 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
         if (!scriptSrc.isEmpty() && m_doc->frame()) {
             // forget what we just got; load from src url instead
             if (!parser->skipMode() && !followingFrameset) {
-    #if INSTRUMENT_LAYOUT_SCHEDULING
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
                 if (!m_doc->ownerElement())
                     printf("Requesting script at time %d\n", m_doc->elapsedTime());
-    #endif
+#endif
                 // The parser might have been stopped by for example a window.close call in an earlier script.
                 // If so, we don't want to load scripts.
                 if (!m_parserStopped && (cs = m_doc->docLoader()->requestScript(scriptSrc, scriptSrcCharset) ))
@@ -376,13 +376,12 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
             } else
                 scriptNode = 0;
             scriptSrc=DeprecatedString::null;
-        }
-        else {
-    #ifdef TOKEN_DEBUG
+        } else {
+#ifdef TOKEN_DEBUG
             kdDebug( 6036 ) << "---START SCRIPT---" << endl;
             kdDebug( 6036 ) << DeprecatedString(scriptCode, scriptCodeSize) << endl;
             kdDebug( 6036 ) << "---END SCRIPT---" << endl;
-    #endif
+#endif
             scriptNode = 0;
             // Parse scriptCode containing <script> info
             doScriptExec = true;
@@ -477,7 +476,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const DeprecatedString& str,
     SegmentedString prependingSrc;
     currentPrependingSrc = &prependingSrc;
 
-#if INSTRUMENT_LAYOUT_SCHEDULING
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!m_doc->ownerElement())
         printf("beginning script execution at %d\n", m_doc->elapsedTime());
 #endif
@@ -488,7 +487,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const DeprecatedString& str,
 
     state.setAllowYield(true);
 
-#if INSTRUMENT_LAYOUT_SCHEDULING
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!m_doc->ownerElement())
         printf("ending script execution at %d\n", m_doc->elapsedTime());
 #endif
@@ -808,7 +807,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
         }
         case TagName:
         {
-#if defined(TOKEN_DEBUG) &&  TOKEN_DEBUG > 1
+#if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
             qDebug("TagName");
 #endif
             if (searchCount > 0)
@@ -1289,7 +1288,7 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startT
                 (m_doc->documentElement()->id() != ID_HTML || m_doc->body()))) {*/
             // Schedule the timer to keep processing as soon as possible.
             m_timer.startOneShot(0);
-#if INSTRUMENT_LAYOUT_SCHEDULING
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
             if (currentTime() - startTime > tokenizerTimeDelay)
                 printf("Deferring processing of data because 500ms elapsed away from event loop.\n");
 #endif
@@ -1335,7 +1334,7 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
     bool wasInWrite = inWrite;
     inWrite = true;
     
-#if INSTRUMENT_LAYOUT_SCHEDULING
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!m_doc->ownerElement())
         printf("Beginning write at time %d\n", m_doc->elapsedTime());
 #endif
@@ -1453,7 +1452,7 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
         }
     }
     
-#if INSTRUMENT_LAYOUT_SCHEDULING
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!m_doc->ownerElement())
         printf("Ending write at time %d\n", m_doc->elapsedTime());
 #endif
@@ -1487,7 +1486,7 @@ bool HTMLTokenizer::processingData() const
 
 void HTMLTokenizer::timerFired(Timer<HTMLTokenizer>*)
 {
-#if INSTRUMENT_LAYOUT_SCHEDULING
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!m_doc->ownerElement())
         printf("Beginning timer write at time %d\n", m_doc->elapsedTime());
 #endif
@@ -1661,7 +1660,7 @@ void HTMLTokenizer::enlargeScriptBuffer(int len)
 
 void HTMLTokenizer::notifyFinished(CachedResource*)
 {
-#if INSTRUMENT_LAYOUT_SCHEDULING
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!m_doc->ownerElement())
         printf("script loaded at %d\n", m_doc->elapsedTime());
 #endif
@@ -1689,7 +1688,7 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
         RefPtr<Node> n = scriptNode;
         scriptNode = 0;
 
-#if INSTRUMENT_LAYOUT_SCHEDULING
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
         if (!m_doc->ownerElement())
             printf("external script beginning execution at %d\n", m_doc->elapsedTime());
 #endif
@@ -1706,7 +1705,7 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
         finished = pendingScripts.isEmpty();
         if (finished) {
             m_state.setLoadingExtScript(false);
-#if INSTRUMENT_LAYOUT_SCHEDULING
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
             if (!m_doc->ownerElement())
                 printf("external script finished execution at %d\n", m_doc->elapsedTime());
 #endif

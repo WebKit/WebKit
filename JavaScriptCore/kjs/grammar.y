@@ -36,6 +36,8 @@
 // Not sure why, but yacc doesn't add this define along with the others.
 #define yylloc kjsyylloc
 
+#define YYMAXDEPTH 10000
+
 /* default values for bison */
 #define YYDEBUG 0
 #if !PLATFORM(DARWIN)

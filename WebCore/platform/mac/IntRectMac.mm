@@ -42,7 +42,7 @@ IntRect enclosingIntRect(const CGRect& rect)
     return IntRect(l, t, r - l, b - t);
 }
 
-#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 
 IntRect::operator NSRect() const
 {

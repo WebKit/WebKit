@@ -27,8 +27,8 @@
 #include "config.h"
 #include "StreamingTextDecoderICU.h"
 
-#include <wtf/Assertions.h>
 #include <unicode/unorm.h>
+#include <wtf/Assertions.h>
 
 using std::min;
 
@@ -273,7 +273,7 @@ DeprecatedString StreamingTextDecoderICU::convert(const unsigned char* chs, int 
     }
 
     //#define PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE 1000
-#if PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE
+#ifdef PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE
     DeprecatedString result;
     int chunkSize;
     for (int i = 0; i != len; i += chunkSize) {

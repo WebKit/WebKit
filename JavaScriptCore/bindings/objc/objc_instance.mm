@@ -124,7 +124,7 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
     method = static_cast<ObjcMethod*>(methodList.methodAt(0));
     NSMethodSignature* signature = method->getMethodSignature();
     NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
-#if OBJC_API_VERSION >= 2
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
     [invocation setSelector:sel_registerName(method->name())];
 #else
     [invocation setSelector:(SEL)method->name()];

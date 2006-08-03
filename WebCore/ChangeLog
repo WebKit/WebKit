@@ -1,3 +1,116 @@
+2006-08-03  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10176
+          Make WebCore compile with -Wundef
+
+          * Adds -Wundef flag to Xcode project
+          * Converts #ifs to #ifdef and #ifndefs where needed.
+          * Replaces #ifdef WIN32 with #if PLATFORM(WIN_OS) or PLATFORM(WIN)
+            (and in one instance in config.h with #if !COMPILER(MSVC))
+          * Added #define YYMAXDEPTH 10000 in XPathGrammar.y and CSSGrammar.y
+            to fix a warning from within Bison.
+          * Cleaned up style a little in surrounding code.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject doAXTextMarkerRangeForUnorderedTextMarkers:]):
+        * config.h:
+        * css/CSSGrammar.y:
+        * css/MediaFeatureNames.cpp:
+        * css/MediaFeatureNames.h:
+        * css/cssparser.cpp:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::setActive):
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        * dom/Element.h:
+        * dom/EventNames.cpp:
+        * dom/EventNames.h:
+        * dom/NamedAttrMap.h:
+        * dom/Position.cpp:
+        * dom/QualifiedName.cpp:
+        * dom/QualifiedName.h:
+        * dom/Range.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::error):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::scriptExecution):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::continueProcessing):
+        (WebCore::HTMLTokenizer::write):
+        (WebCore::HTMLTokenizer::timerFired):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/scripts/make_names.pl:
+        * loader/CachedResource.h:
+        * loader/LoaderFunctions.h:
+        * loader/loader.h:
+        * page/Frame.cpp:
+        * page/FrameTree.cpp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::clear):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::layoutTimerFired):
+        (WebCore::FrameView::scheduleRelayout):
+        (WebCore::FrameView::unscheduleRelayout):
+        * platform/AtomicString.cpp:
+        * platform/AtomicString.h:
+        * platform/Cursor.h:
+        * platform/DeprecatedArray.h:
+        * platform/DeprecatedString.cpp:
+        (WebCore::allocateHandle):
+        (WebCore::initializeHandleNodeBlock):
+        (WebCore::freeHandle):
+        * platform/FloatPoint.h:
+        * platform/FloatRect.h:
+        * platform/FloatSize.h:
+        * platform/GraphicsContext.h:
+        * platform/Image.h:
+        * platform/IntPoint.h:
+        * platform/IntRect.h:
+        (WebCore::IntRect::inflateX):
+        (WebCore::IntRect::inflateY):
+        * platform/IntSize.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformString.h:
+        * platform/ResourceLoader.h:
+        * platform/ResourceLoaderInternal.h:
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/ScrollView.h:
+        * platform/StaticConstructors.h:
+        * platform/StreamingTextDecoderICU.cpp:
+        (WebCore::StreamingTextDecoderICU::convert):
+        * platform/StringImpl.h:
+        * platform/Widget.h:
+        * platform/mac/BlockExceptions.mm:
+        * platform/mac/ColorMac.mm:
+        (+[WebCoreControlTintObserver WebCore]):
+        * platform/mac/FloatPointMac.mm:
+        * platform/mac/FloatRectMac.mm:
+        * platform/mac/FloatSizeMac.mm:
+        * platform/mac/FontMac.mm:
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/mac/IntPointMac.mm:
+        * platform/mac/IntRectMac.mm:
+        * platform/mac/IntSizeMac.mm:
+        * platform/mac/WebCoreSystemInterface.h:
+        * rendering/RenderBlock.h:
+        * rendering/RenderTableCell.h:
+        * rendering/bidi.cpp:
+        (WebCore::appendRun):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::parseErrorFunc):
+        * xpath/impl/XPathGrammar.y:
+
 2006-08-03  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej and Beth.

@@ -38,6 +38,7 @@
 #include "XPathVariableReference.h"
 
 #define YYDEBUG 0
+#define YYMAXDEPTH 10000
 #define YYPARSE_PARAM parserParameter
 #define PARSER static_cast<Parser*>(parserParameter)
 

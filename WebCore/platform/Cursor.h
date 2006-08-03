@@ -26,7 +26,9 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#ifdef WIN32
+#include <wtf/Platform.h>
+
+#if PLATFORM(WIN)
 #include <windows.h>
 #elif PLATFORM(GDK)
 #include <gdk/gdk.h>
@@ -44,7 +46,7 @@ namespace WebCore {
 
     class Image;
 
-#ifdef WIN32
+#if PLATFORM(WIN)
     typedef HCURSOR PlatformCursor;
 #elif defined(__APPLE__)
     typedef NSCursor* PlatformCursor;
@@ -92,6 +94,6 @@ namespace WebCore {
     const Cursor& columnResizeCursor();
     const Cursor& rowResizeCursor();
 
-}
+} // namespace WebCore
 
-#endif
+#endif // CURSOR_H

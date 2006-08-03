@@ -7,7 +7,7 @@
  *
  */
 
-#if !__LP64__
+#ifndef __LP64__
 
 #import <CoreServices/CoreServices.h>
 

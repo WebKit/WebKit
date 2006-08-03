@@ -161,7 +161,7 @@ static IMP swizzleInstanceMethod(Class class, SEL selector, IMP newImplementatio
     Method method = class_getInstanceMethod(class, selector);
     ASSERT(method);
     IMP oldIMP;
-#if OBJC_API_VERSION > 0
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
     oldIMP = method_setImplementation(method, newImplementation);
 #else
     oldIMP = method->method_imp;

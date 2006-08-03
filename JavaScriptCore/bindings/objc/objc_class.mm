@@ -93,7 +93,7 @@ MethodList ObjcClass::methodsNamed(const char* JSName, Instance*) const
 
     ClassStructPtr thisClass = _isa;
     while (thisClass && methodList.length() < 1) {
-#if OBJC_API_VERSION >= 2
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
         unsigned numMethodsInClass = 0;
         MethodStructPtr* objcMethodList = class_copyMethodList(thisClass, &numMethodsInClass);
 #else
@@ -103,7 +103,7 @@ MethodList ObjcClass::methodsNamed(const char* JSName, Instance*) const
             unsigned numMethodsInClass = objcMethodList->method_count;
 #endif
             for (unsigned i = 0; i < numMethodsInClass; i++) {
-#if OBJC_API_VERSION >= 2
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
                 MethodStructPtr objcMethod = objcMethodList[i];
                 SEL objcMethodSelector = method_getName(objcMethod);
                 const char* objcMethodSelectorName = sel_getName(objcMethodSelector);
@@ -132,7 +132,7 @@ MethodList ObjcClass::methodsNamed(const char* JSName, Instance*) const
                     break;
                 }
             }
-#if OBJC_API_VERSION >= 2
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
             thisClass = class_getSuperclass(thisClass);
             free(objcMethodList);
 #else
@@ -191,7 +191,7 @@ Field* ObjcClass::fieldNamed(const char* name, Instance* instance) const
         // introspection.
 
         while (thisClass) {
-#if OBJC_API_VERSION >= 2
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
             unsigned numFieldsInClass = 0;
             IvarStructPtr* ivarsInClass = class_copyIvarList(thisClass, &numFieldsInClass);
 #else
@@ -200,7 +200,7 @@ Field* ObjcClass::fieldNamed(const char* name, Instance* instance) const
                 unsigned numFieldsInClass = fieldsInClass->ivar_count;
 #endif
                 for (unsigned i = 0; i < numFieldsInClass; i++) {
-#if OBJC_API_VERSION >= 2
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
                     IvarStructPtr objcIVar = ivarsInClass[i];
                     const char* objcIvarName = ivar_getName(objcIVar);
 #else
@@ -226,7 +226,7 @@ Field* ObjcClass::fieldNamed(const char* name, Instance* instance) const
                         break;
                     }
                 }
-#if OBJC_API_VERSION >= 2
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
             thisClass = class_getSuperclass(thisClass);
             free(ivarsInClass);
 #else

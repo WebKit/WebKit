@@ -26,11 +26,11 @@
 #if SVG_SUPPORT
 
 #include "DataRef.h"
-
 #include <ksvg2/svg/SVGPaint.h>
 #include <ksvg2/css/SVGRenderStyleDefs.h>
+#include <wtf/Platform.h>
 
-#if WIN32
+#if PLATFORM(WIN_OS)
 typedef unsigned long long uint64_t;
 #endif
 

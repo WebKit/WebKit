@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "BlockExceptions.h"
+
 #import <wtf/Assertions.h>
 
 void ReportBlockedObjCException(NSException *localException)

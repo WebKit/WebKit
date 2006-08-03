@@ -1,3 +1,14 @@
+2006-08-03  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10176
+          Make WebCore compile with -Wundef
+
+          * Adds -Wundef flag to Xcode project
+
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+
 2006-07-29  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.

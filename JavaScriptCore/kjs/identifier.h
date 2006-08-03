@@ -82,7 +82,7 @@ namespace KJS {
         static PassRefPtr<UString::Rep> add(UString::Rep *);
     };
     
-#if !KJS_IDENTIFIER_HIDE_GLOBALS
+#ifndef KJS_IDENTIFIER_HIDE_GLOBALS
     extern const Identifier nullIdentifier;
 
     inline const Identifier &Identifier::null()
@@ -117,7 +117,7 @@ namespace KJS {
         macro(valueOf)
 
     // Define external global variables for all property names above (and one more).
-#if !KJS_IDENTIFIER_HIDE_GLOBALS
+#ifndef KJS_IDENTIFIER_HIDE_GLOBALS
     extern const Identifier specialPrototypePropertyName;
 
     #define KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL(name) extern const Identifier name ## PropertyName;
@@ -125,6 +125,6 @@ namespace KJS {
     #undef KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL
 #endif
 
-}
+} // namespace KJS
 
-#endif
+#endif // KJS_IDENTIFIER_H

@@ -25,7 +25,7 @@
 
 #include <wtf/Vector.h>
 
-#if __OBJC__
+#ifdef __OBJC__
 @class NSDictionary;
 @class NSString;
 @class NSURLResponse;

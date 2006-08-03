@@ -102,7 +102,9 @@ namespace WebCore {
         PE_VISIBLE_STROKE, PE_VISIBLE_FILL, PE_VISIBLE_PAINTED, PE_ALL
     };
     
+    class CSSValue;
     class CSSValueList;
+    class SVGPaint;
 
     // Inherited/Non-Inherited Style Datastructures
     class StyleFillData : public Shared<StyleFillData> {

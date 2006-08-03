@@ -27,7 +27,7 @@
  */
 
 // <rdar://problem/4561772> HIWebView needs to be reworked to not use QuickDraw, needed for 64-bit
-#if !__LP64__
+#ifndef __LP64__
 
 #import "HIViewAdapter.h"
 
@@ -65,7 +65,7 @@ static NSView *_webkit_NSView_nextValidKeyView(id self, SEL _cmd);
         Method setNeedsDisplayMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(setNeedsDisplay:));
         ASSERT(setNeedsDisplayMethod);
         ASSERT(!oldNSViewSetNeedsDisplayIMP);
-#if OBJC_API_VERSION > 0
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
         oldNSViewSetNeedsDisplayIMP = method_setImplementation(setNeedsDisplayMethod, (IMP)_webkit_NSView_setNeedsDisplay);
 #else
         oldNSViewSetNeedsDisplayIMP = setNeedsDisplayMethod->method_imp;
@@ -76,7 +76,7 @@ static NSView *_webkit_NSView_nextValidKeyView(id self, SEL _cmd);
         Method setNeedsDisplayInRectMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(setNeedsDisplayInRect:));
         ASSERT(setNeedsDisplayInRectMethod);
         ASSERT(!oldNSViewSetNeedsDisplayInRectIMP);
-#if OBJC_API_VERSION > 0
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
         oldNSViewSetNeedsDisplayInRectIMP = method_setImplementation(setNeedsDisplayInRectMethod, (IMP)_webkit_NSView_setNeedsDisplayInRect);
 #else
         oldNSViewSetNeedsDisplayInRectIMP = setNeedsDisplayInRectMethod->method_imp;
@@ -87,7 +87,7 @@ static NSView *_webkit_NSView_nextValidKeyView(id self, SEL _cmd);
         Method nextValidKeyViewMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(nextValidKeyView));
         ASSERT(nextValidKeyViewMethod);
         ASSERT(!oldNSViewNextValidKeyViewIMP);
-#if OBJC_API_VERSION > 0
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
         oldNSViewNextValidKeyViewIMP = method_setImplementation(nextValidKeyViewMethod, (IMP)_webkit_NSView_nextValidKeyView);
 #else
         oldNSViewNextValidKeyViewIMP = nextValidKeyViewMethod->method_imp;

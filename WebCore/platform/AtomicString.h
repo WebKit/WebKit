@@ -114,7 +114,7 @@ inline bool equalIgnoringCase(const char* a, const AtomicString& b) { return equ
 inline bool equalIgnoringCase(const String& a, const AtomicString& b) { return equalIgnoringCase(a.impl(), b.impl()); }
 
 // Define external global variables for the commonly used atomic strings.
-#if !ATOMICSTRING_HIDE_GLOBALS
+#ifndef ATOMICSTRING_HIDE_GLOBALS
     extern const AtomicString nullAtom;
     extern const AtomicString emptyAtom;
     extern const AtomicString textAtom;
@@ -122,6 +122,6 @@ inline bool equalIgnoringCase(const String& a, const AtomicString& b) { return e
     extern const AtomicString starAtom;
 #endif
 
-}
+} // namespace WebCore
 
-#endif
+#endif // AtomicString_h

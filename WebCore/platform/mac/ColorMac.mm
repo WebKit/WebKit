@@ -66,7 +66,7 @@ NSColor* nsColor(const Color& color)
                 if (cachedRGBAValues[i] == c)
                     return cachedColors[i];
 
-#if COLORMATCH_EVERYTHING
+#ifdef COLORMATCH_EVERYTHING
             NSColor* result = [NSColor colorWithCalibratedRed:color.red() / 255.0
                                                         green:color.green() / 255.0
                                                          blue:color.blue() / 255.0
