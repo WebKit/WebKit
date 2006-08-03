@@ -35,6 +35,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebFrameInternal.h> 
+#import <WebKit/WebFrameLoader.h> 
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
@@ -1886,9 +1887,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     NSURL *URL = [request URL];
 
-    if (!URL) {
+    if (!URL) 
         return NPERR_INVALID_URL;
-    }
+
+    // don't let a plugin start any loads if it is no longer part of a document that is being
+    // displayed
+    if ([self dataSource] !=  [[[self webFrame] _frameLoader] activeDataSource])
+        return NPERR_GENERIC_ERROR;
     
     NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     if (JSString != nil) {
@@ -1921,17 +1926,16 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request frameName:target notifyData:notifyData sendNotification:sendNotification didStartFromUserGesture:currentEventIsUserGesture];
         [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
         [pluginRequest release];
-        if (target) {
+        if (target)
             CFRelease(target);
-        }
     } else {
         WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc] initWithRequest:request 
                                                                              pluginPointer:instance 
                                                                                 notifyData:notifyData 
                                                                           sendNotification:sendNotification];
-        if (!stream) {
+        if (!stream)
             return NPERR_INVALID_URL;
-        }
+
         [streams addObject:stream];
         [stream start];
         [stream release];
