@@ -101,12 +101,13 @@ bool ImageTokenizer::writeRawData(const char* data, int len)
 void ImageTokenizer::stopParsing()
 {
     Tokenizer::stopParsing();
-    m_imageElement->cachedImage()->error();
+    if (m_imageElement)
+        m_imageElement->cachedImage()->error();
 }
 
 void ImageTokenizer::finish()
 {
-    if (!m_parserStopped) {
+    if (!m_parserStopped && m_imageElement) {
         CachedImage* cachedImage = m_imageElement->cachedImage();
         Vector<char>& buffer = cachedImage->bufferData(0, 0, 0);
         cachedImage->data(buffer, true);
