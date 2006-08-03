@@ -37,11 +37,12 @@
 @class NSURLResponse;
 @class WebDataSource;
 @class WebResource;
+@class WebFrameLoader;
 
 @interface WebLoader : NSObject
 {
 @protected
-    WebDataSource *dataSource;
+    WebFrameLoader *frameLoader;
     NSURLConnection *connection;
     NSURLRequest *request;
     BOOL reachedTerminalState;
@@ -67,8 +68,8 @@
 
 - (BOOL)loadWithRequest:(NSURLRequest *)request;
 
-- (void)setDataSource:(WebDataSource *)d;
-- (WebDataSource *)dataSource;
+- (void)setFrameLoader:(WebFrameLoader *)fl;
+- (WebFrameLoader *)frameLoader;
 
 - (void)cancel;
 - (void)cancelWithError:(NSError *)error;

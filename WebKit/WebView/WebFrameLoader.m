@@ -70,7 +70,7 @@
 {
     ASSERT(!iconLoader);
     iconLoader = [[WebIconLoader alloc] initWithRequest:request];
-    [iconLoader setDataSource:dataSource];
+    [iconLoader setFrameLoader:self];
     [iconLoader loadWithRequest:request];
 }
 
@@ -169,7 +169,7 @@
 
 - (BOOL)startLoadingMainResourceWithRequest:(NSMutableURLRequest *)request identifier:(id)identifier
 {
-    mainResourceLoader = [[WebMainResourceLoader alloc] initWithDataSource:provisionalDataSource];
+    mainResourceLoader = [[WebMainResourceLoader alloc] initWithFrameLoader:self];
     
     [mainResourceLoader setIdentifier:identifier];
     [[provisionalDataSource webFrame] _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
@@ -293,10 +293,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _setState:WebFrameStateComplete];
 }
 
+- (void)clearIconLoader
+{
+    [iconLoader release];
+    iconLoader = nil;
+}
+
 - (void)commitProvisionalLoad
 {
     [self stopLoadingSubresources];
     [self stopLoadingPlugIns];
+    [self clearIconLoader];
 
     [self _setDataSource:provisionalDataSource];
     [self _setProvisionalDataSource:nil];
@@ -331,6 +338,188 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [old release];
     
     [webFrame _detachChildren];
+}
+
+- (WebDataSource *)activeDataSource
+{
+    if (state == WebFrameStateProvisional)
+        return provisionalDataSource;
+
+    return dataSource;
+}
+
+- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL
+{
+    return [[self activeDataSource] _archivedSubresourceForURL:URL];
+}
+
+- (BOOL)_defersCallbacks
+{
+    return [[self activeDataSource] _defersCallbacks];
+}
+
+- (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest
+{
+    return [[self activeDataSource] _identifierForInitialRequest:clientRequest];
+}
+
+- (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse
+{
+    return [[self activeDataSource] _willSendRequest:clientRequest forResource:identifier redirectResponse:redirectResponse];
+}
+
+- (void)_didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
+{
+    return [[self activeDataSource] _didReceiveAuthenticationChallenge:currentWebChallenge forResource:identifier];
+}
+
+- (void)_didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
+{
+    return [[self activeDataSource] _didCancelAuthenticationChallenge:currentWebChallenge forResource:identifier];
+}
+
+- (void)_didReceiveResponse:(NSURLResponse *)r forResource:(id)identifier
+{
+    return [[self activeDataSource] _didReceiveResponse:r forResource:identifier];
+}
+
+- (void)_didReceiveData:(NSData *)data contentLength:(int)lengthReceived forResource:(id)identifier
+{
+    return [[self activeDataSource] _didReceiveData:data contentLength:lengthReceived forResource:identifier];
+}
+
+- (void)_didFinishLoadingForResource:(id)identifier
+{
+    return [[self activeDataSource] _didFinishLoadingForResource:identifier];
+}
+
+- (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier
+{
+    return [[self activeDataSource] _didFailLoadingWithError:error forResource:identifier];
+}
+
+- (BOOL)_privateBrowsingEnabled
+{
+    return [[self activeDataSource] _privateBrowsingEnabled];
+}
+
+- (void)_addPlugInStreamLoader:(WebLoader *)loader
+{
+    return [[self activeDataSource] _addPlugInStreamLoader:loader];
+}
+
+- (void)_removePlugInStreamLoader:(WebLoader *)loader
+{
+    return [[self activeDataSource] _removePlugInStreamLoader:loader];
+}
+
+- (void)_finishedLoadingResource
+{
+    return [[self activeDataSource] _finishedLoadingResource];
+}
+
+- (void)_receivedError:(NSError *)error
+{
+    return [[self activeDataSource] _receivedError:error];
+}
+
+- (void)_addSubresourceLoader:(WebLoader *)loader
+{
+    return [[self activeDataSource] _addSubresourceLoader:loader];
+}
+
+- (void)_removeSubresourceLoader:(WebLoader *)loader
+{
+    return [[self activeDataSource] _removeSubresourceLoader:loader];
+}
+
+- (NSURLRequest *)_originalRequest
+{
+    return [[self activeDataSource] _originalRequest];
+}
+
+- (WebFrame *)webFrame
+{
+    return [[self activeDataSource] webFrame];
+}
+
+- (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
+{
+    WebDataSource *ds = [self activeDataSource];
+    [ds retain];
+    [ds _receivedMainResourceError:error complete:isComplete];
+    [ds release];
+}
+
+- (NSURLRequest *)initialRequest
+{
+    return [[self activeDataSource] initialRequest];
+}
+
+- (void)_receivedData:(NSData *)data
+{
+    [[self activeDataSource] _receivedData:data];
+}
+
+- (void)_setRequest:(NSURLRequest *)request
+{
+    [[self activeDataSource] _setRequest:request];
+}
+
+- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(WKNSURLConnectionDelegateProxyPtr)proxy
+{
+    [[self activeDataSource] _downloadWithLoadingConnection:connection request:request response:r proxy:proxy];
+}
+
+- (void)_handleFallbackContent
+{
+    [[self activeDataSource] _handleFallbackContent];
+}
+
+- (BOOL)_isStopping
+{
+    return [[self activeDataSource] _isStopping];
+}
+
+- (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener
+{
+    [[self activeDataSource] _decidePolicyForMIMEType:MIMEType decisionListener:listener];
+}
+
+- (void)_setupForReplaceByMIMEType:(NSString *)newMIMEType
+{
+    [[self activeDataSource] _setupForReplaceByMIMEType:newMIMEType];
+}
+
+- (void)_setResponse:(NSURLResponse *)response
+{
+    [[self activeDataSource] _setResponse:response];
+}
+
+- (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete
+{
+    [[self activeDataSource] _mainReceivedError:error complete:isComplete];
+}
+
+- (void)_finishedLoading
+{
+    [[self activeDataSource] _finishedLoading];
+}
+
+- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar complete:(BOOL)isComplete
+{
+    [[self activeDataSource] _mainReceivedBytesSoFar:bytesSoFar complete:isComplete];
+}
+
+- (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iLoader
+{
+    ASSERT(iLoader == iconLoader);
+    [[self activeDataSource] _iconLoaderReceivedPageIcon:iLoader];
+}
+
+- (NSURL *)_URL
+{
+    return [[self activeDataSource] _URL];
 }
 
 @end

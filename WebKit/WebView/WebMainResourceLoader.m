@@ -38,6 +38,7 @@
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrameView.h>
+#import <WebKit/WebFrameLoader.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
@@ -51,12 +52,12 @@
 
 @implementation WebMainResourceLoader
 
-- (id)initWithDataSource:(WebDataSource *)ds
+- (id)initWithFrameLoader:(WebFrameLoader *)fl
 {
     self = [super init];
     
     if (self) {
-        [self setDataSource:ds];
+        [self setFrameLoader:fl];
         proxy = WKCreateNSURLConnectionDelegateProxy();
         [proxy setDelegate:self];
     }
@@ -84,21 +85,21 @@
 {
     // Calling _receivedMainResourceError will likely result in a call to release, so we must retain.
     [self retain];
-    WebDataSource *ds = [dataSource retain]; // super's didFailWithError will release the datasource
+    WebFrameLoader *fl = [frameLoader retain]; // super's didFailWithError will release the frameLoader
 
     if (!cancelledFlag) {
         ASSERT(!reachedTerminalState);
-        [dataSource _didFailLoadingWithError:error forResource:identifier];
+        [frameLoader _didFailLoadingWithError:error forResource:identifier];
     }
 
-    [ds _receivedMainResourceError:error complete:YES];
+    [fl _receivedMainResourceError:error complete:YES];
 
     if (!cancelledFlag)
         [self releaseResources];
 
     ASSERT(reachedTerminalState);
 
-    [ds release];
+    [fl release];
     [self release];
 }
 
@@ -117,9 +118,9 @@
     [self retain];
 
     [self cancelContentPolicy];
-    [dataSource retain];
-    [dataSource _receivedMainResourceError:error complete:YES];
-    [dataSource release];
+    [frameLoader retain];
+    [frameLoader _receivedMainResourceError:error complete:YES];
+    [frameLoader release];
     [super cancelWithError:error];
 
     [self release];
@@ -154,7 +155,7 @@
     else if (redirectResponse && [redirectResponse isKindOfClass:[NSHTTPURLResponse class]]) {
         int status = [(NSHTTPURLResponse *)redirectResponse statusCode];
         if (((status >= 301 && status <= 303) || status == 307)
-            && [[[dataSource initialRequest] HTTPMethod] isEqualToString:@"POST"]) {
+            && [[[frameLoader initialRequest] HTTPMethod] isEqualToString:@"POST"]) {
             result = YES;
         }
     }
@@ -165,7 +166,7 @@
 - (void)addData:(NSData *)data
 {
     [super addData:data];
-    [dataSource _receivedData:data];
+    [frameLoader _receivedData:data];
 }
 
 - (void)saveResource
@@ -192,7 +193,7 @@
     NSMutableURLRequest *mutableRequest = nil;
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
-    if ([[dataSource webFrame] _isMainFrame]) {
+    if ([[frameLoader webFrame] _isMainFrame]) {
         mutableRequest = [newRequest mutableCopy];
         [mutableRequest setMainDocumentURL:URL];
     }
@@ -219,13 +220,13 @@
 
     // Don't set this on the first request.  It is set
     // when the main load was started.
-    [dataSource _setRequest:newRequest];
+    [frameLoader _setRequest:newRequest];
     
-    [[dataSource webFrame] _checkNavigationPolicyForRequest:newRequest
-                                                 dataSource:dataSource
-                                                  formState:nil
-                                                    andCall:self
-                                               withSelector:@selector(continueAfterNavigationPolicy:formState:)];
+    [[frameLoader webFrame] _checkNavigationPolicyForRequest:newRequest
+                                                  dataSource:[frameLoader activeDataSource]
+                                                   formState:nil
+                                                     andCall:self
+                                                withSelector:@selector(continueAfterNavigationPolicy:formState:)];
 
     [self release];
     return newRequest;
@@ -243,7 +244,7 @@
         BOOL isRemote = ![URL isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:URL];
         BOOL isRemoteWebArchive = isRemote && [MIMEType _webkit_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
         if (![WebDataSource _canShowMIMEType:MIMEType] || isRemoteWebArchive) {
-            [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:URL];
+            [[frameLoader webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:URL];
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.
             if (!reachedTerminalState) {
                 [self stopLoadingForPolicyChange];
@@ -254,7 +255,7 @@
     }
     case WebPolicyDownload:
         [proxy setDelegate:nil];
-        [dataSource _downloadWithLoadingConnection:connection request:request response:r proxy:proxy];
+        [frameLoader _downloadWithLoadingConnection:connection request:request response:r proxy:proxy];
         [proxy release];
         proxy = nil;
 
@@ -275,8 +276,8 @@
         int status = [(NSHTTPURLResponse *)r statusCode];
         if (status < 200 || status >= 300) {
             // Handle <object> fallback for error cases.
-            DOMHTMLElement *hostElement = [[[self dataSource] webFrame] frameElement];
-            [dataSource _handleFallbackContent];
+            DOMHTMLElement *hostElement = [[frameLoader webFrame] frameElement];
+            [frameLoader _handleFallbackContent];
             if (hostElement && [hostElement isKindOfClass:[DOMHTMLObjectElement class]])
                 // object elements are no longer rendered after we fallback, so don't
                 // keep trying to process data from their load
@@ -289,7 +290,7 @@
         [super didReceiveResponse:r];
     }
 
-    if (![dataSource _isStopping] && ([URL _webkit_shouldLoadAsEmptyDocument] || [WebView _representationExistsForURLScheme:[URL scheme]])) {
+    if (![frameLoader _isStopping] && ([URL _webkit_shouldLoadAsEmptyDocument] || [WebView _representationExistsForURLScheme:[URL scheme]])) {
         [self didFinishLoading];
     }
     
@@ -299,12 +300,12 @@
 -(void)continueAfterContentPolicy:(WebPolicyAction)policy
 {
     NSURLResponse *r = [policyResponse retain];
-    BOOL isStopping = [dataSource _isStopping];
+    BOOL isStopping = [frameLoader _isStopping];
 
     [self cancelContentPolicy];
-    if (!isStopping){
+    if (!isStopping)
         [self continueAfterContentPolicy:policy response:r];
-    }
+
     [r release];
 }
 
@@ -316,7 +317,7 @@
     policyResponse = [r retain];
 
     [l retain];
-    [dataSource _decidePolicyForMIMEType:[r MIMEType] decisionListener:listener];
+    [frameLoader _decidePolicyForMIMEType:[r MIMEType] decisionListener:listener];
     [l release];
 }
 
@@ -324,12 +325,12 @@
 - (void)didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![self defersCallbacks]);
-    ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![[dataSource _webView] defersCallbacks]);
+    ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![frameLoader _defersCallbacks]);
 
     LOG(Loading, "main content type: %@", [r MIMEType]);
     
     if (loadingMultipartContent) {
-        [[self dataSource] _setupForReplaceByMIMEType:[r MIMEType]];
+        [frameLoader _setupForReplaceByMIMEType:[r MIMEType]];
         [self clearResourceData];
     }
     
@@ -349,7 +350,7 @@
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [dataSource _setResponse:r];
+    [frameLoader _setResponse:r];
     _contentLength = [r expectedContentLength];
 
     [self checkContentPolicyForResponse:r];
@@ -361,14 +362,14 @@
     ASSERT(data);
     ASSERT([data length] != 0);
     ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource _webView] defersCallbacks]);
+    ASSERT(![frameLoader _defersCallbacks]);
  
-    LOG(Loading, "URL = %@, data = %p, length %d", [dataSource _URL], data, [data length]);
+    LOG(Loading, "URL = %@, data = %p, length %d", [frameLoader _URL], data, [data length]);
 
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [dataSource _mainReceivedBytesSoFar:_bytesReceived complete:NO];
+    [frameLoader _mainReceivedBytesSoFar:_bytesReceived complete:NO];
     
     [super didReceiveData:data lengthReceived:lengthReceived];
     _bytesReceived += [data length];
@@ -379,16 +380,16 @@
 
 - (void)didFinishLoading
 {
-    ASSERT([[dataSource _URL] _webkit_shouldLoadAsEmptyDocument] || ![self defersCallbacks]);
-    ASSERT([[dataSource _URL] _webkit_shouldLoadAsEmptyDocument] || ![[dataSource _webView] defersCallbacks]);
+    ASSERT([[frameLoader _URL] _webkit_shouldLoadAsEmptyDocument] || ![self defersCallbacks]);
+    ASSERT([[frameLoader _URL] _webkit_shouldLoadAsEmptyDocument] || ![frameLoader _defersCallbacks]);
 
-    LOG(Loading, "URL = %@", [dataSource _URL]);
+    LOG(Loading, "URL = %@", [frameLoader _URL]);
         
     // Calls in this method will most likely result in a call to release, so we must retain.
     [self retain];
 
-    [dataSource _finishedLoading];
-    [dataSource _mainReceivedBytesSoFar:_bytesReceived complete:YES];
+    [frameLoader _finishedLoading];
+    [frameLoader _mainReceivedBytesSoFar:_bytesReceived complete:YES];
     [super didFinishLoading];
 
     [self release];
@@ -397,7 +398,7 @@
 - (void)didFailWithError:(NSError *)error
 {
     ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource _webView] defersCallbacks]);
+    ASSERT(![frameLoader _defersCallbacks]);
 
     [self receivedError:error];
 }
@@ -408,7 +409,7 @@
 
     ASSERT(connection == nil);
     ASSERT(shouldLoadEmptyBeforeRedirect || ![self defersCallbacks]);
-    ASSERT(shouldLoadEmptyBeforeRedirect || ![[dataSource _webView] defersCallbacks]);
+    ASSERT(shouldLoadEmptyBeforeRedirect || ![frameLoader _defersCallbacks]);
 
     // Send this synthetic delegate callback since clients expect it, and
     // we no longer send the callback from within NSURLConnection for

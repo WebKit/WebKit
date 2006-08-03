@@ -515,7 +515,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                   URL:URL
                                         customHeaders:customHeaders
                                              referrer:(hideReferrer ? nil : [self referrer])
-                                        forDataSource:[self dataSource]];
+                                       forFrameLoader:[[self webFrame] _frameLoader]];
 }
 
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)postData
@@ -536,7 +536,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                         customHeaders:customHeaders
                                              postData:postData
                                              referrer:(hideReferrer ? nil : [self referrer])
-                                        forDataSource:[self dataSource]];
+                                       forFrameLoader:[[self webFrame] _frameLoader]];
 }
 
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data

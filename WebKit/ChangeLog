@@ -1,3 +1,111 @@
+2006-08-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+        
+        - remove use of WebDataSource from WebLoader and subclasses, just have them talk to the
+        WebFrameLoader instead. 
+        
+        For now this is done by forarding all the calls.
+
+        * Misc/WebIconLoader.m:
+        (-[WebIconLoader didFinishLoading]):
+        * Plugins/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]):
+        (-[WebNetscapePluginStream start]):
+        (-[WebNetscapePlugInStreamLoader didFinishLoading]):
+        (-[WebNetscapePlugInStreamLoader didFailWithError:]):
+        (-[WebNetscapePlugInStreamLoader cancelWithError:]):
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge startLoadingResource:withMethod:URL:customHeaders:]):
+        (-[WebFrameBridge startLoadingResource:withMethod:URL:customHeaders:postData:]):
+        * WebCoreSupport/WebSubresourceLoader.h:
+        * WebCoreSupport/WebSubresourceLoader.m:
+        (-[WebSubresourceLoader initWithLoader:frameLoader:]):
+        (+[WebSubresourceLoader startLoadingResource:withRequest:customHeaders:referrer:forFrameLoader:]):
+        (+[WebSubresourceLoader startLoadingResource:withMethod:URL:customHeaders:referrer:forFrameLoader:]):
+        (+[WebSubresourceLoader startLoadingResource:withMethod:URL:customHeaders:postData:referrer:forFrameLoader:]):
+        (-[WebSubresourceLoader receivedError:]):
+        (-[WebSubresourceLoader signalFinish]):
+        (-[WebSubresourceLoader didFailWithError:]):
+        (-[WebSubresourceLoader cancel]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _updateLoading]):
+        (-[WebDataSource textEncodingName]):
+        (-[WebDataSource _mainReceivedBytesSoFar:complete:]):
+        * WebView/WebFrameLoader.h:
+        * WebView/WebFrameLoader.m:
+        (-[WebFrameLoader loadIconWithRequest:]):
+        (-[WebFrameLoader startLoadingMainResourceWithRequest:identifier:]):
+        (-[WebFrameLoader clearIconLoader]):
+        (-[WebFrameLoader commitProvisionalLoad]):
+        (-[WebFrameLoader activeDataSource]):
+        (-[WebFrameLoader _archivedSubresourceForURL:]):
+        (-[WebFrameLoader _defersCallbacks]):
+        (-[WebFrameLoader _identifierForInitialRequest:]):
+        (-[WebFrameLoader _willSendRequest:forResource:redirectResponse:]):
+        (-[WebFrameLoader _didReceiveAuthenticationChallenge:forResource:]):
+        (-[WebFrameLoader _didCancelAuthenticationChallenge:forResource:]):
+        (-[WebFrameLoader _didReceiveResponse:forResource:]):
+        (-[WebFrameLoader _didReceiveData:contentLength:forResource:]):
+        (-[WebFrameLoader _didFinishLoadingForResource:]):
+        (-[WebFrameLoader _didFailLoadingWithError:forResource:]):
+        (-[WebFrameLoader _privateBrowsingEnabled]):
+        (-[WebFrameLoader _addPlugInStreamLoader:]):
+        (-[WebFrameLoader _removePlugInStreamLoader:]):
+        (-[WebFrameLoader _finishedLoadingResource]):
+        (-[WebFrameLoader _receivedError:]):
+        (-[WebFrameLoader _addSubresourceLoader:]):
+        (-[WebFrameLoader _removeSubresourceLoader:]):
+        (-[WebFrameLoader _originalRequest]):
+        (-[WebFrameLoader webFrame]):
+        (-[WebFrameLoader _receivedMainResourceError:complete:]):
+        (-[WebFrameLoader initialRequest]):
+        (-[WebFrameLoader _receivedData:]):
+        (-[WebFrameLoader _setRequest:]):
+        (-[WebFrameLoader _downloadWithLoadingConnection:request:response:proxy:]):
+        (-[WebFrameLoader _handleFallbackContent]):
+        (-[WebFrameLoader _isStopping]):
+        (-[WebFrameLoader _decidePolicyForMIMEType:decisionListener:]):
+        (-[WebFrameLoader _setupForReplaceByMIMEType:]):
+        (-[WebFrameLoader _setResponse:]):
+        (-[WebFrameLoader _mainReceivedError:complete:]):
+        (-[WebFrameLoader _finishedLoading]):
+        (-[WebFrameLoader _mainReceivedBytesSoFar:complete:]):
+        (-[WebFrameLoader _iconLoaderReceivedPageIcon:]):
+        (-[WebFrameLoader _URL]):
+        * WebView/WebLoader.h:
+        * WebView/WebLoader.m:
+        (-[NSURLProtocol releaseResources]):
+        (-[NSURLProtocol loadWithRequest:]):
+        (-[NSURLProtocol setFrameLoader:]):
+        (-[NSURLProtocol frameLoader]):
+        (-[NSURLProtocol willSendRequest:redirectResponse:]):
+        (-[NSURLProtocol didReceiveAuthenticationChallenge:]):
+        (-[NSURLProtocol didCancelAuthenticationChallenge:]):
+        (-[NSURLProtocol didReceiveResponse:]):
+        (-[NSURLProtocol didReceiveData:lengthReceived:]):
+        (-[NSURLProtocol signalFinish]):
+        (-[NSURLProtocol didFailWithError:]):
+        (-[NSURLProtocol willCacheResponse:]):
+        (-[NSURLProtocol cancelWithError:]):
+        * WebView/WebMainResourceLoader.h:
+        * WebView/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader initWithFrameLoader:]):
+        (-[WebMainResourceLoader receivedError:]):
+        (-[WebMainResourceLoader cancelWithError:]):
+        (-[WebMainResourceLoader _isPostOrRedirectAfterPost:redirectResponse:]):
+        (-[WebMainResourceLoader addData:]):
+        (-[WebMainResourceLoader willSendRequest:redirectResponse:]):
+        (-[WebMainResourceLoader continueAfterContentPolicy:response:]):
+        (-[WebMainResourceLoader continueAfterContentPolicy:]):
+        (-[WebMainResourceLoader checkContentPolicyForResponse:]):
+        (-[WebMainResourceLoader didReceiveResponse:]):
+        (-[WebMainResourceLoader didReceiveData:lengthReceived:]):
+        (-[WebMainResourceLoader didFinishLoading]):
+        (-[WebMainResourceLoader didFailWithError:]):
+        (-[WebMainResourceLoader loadWithRequestNow:]):
+
 2006-08-03  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.

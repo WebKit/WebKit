@@ -29,6 +29,7 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/WebCoreIconDatabaseBridge.h>
+#import <WebKit/WebFrameLoader.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -109,7 +110,7 @@
     } else {
         [[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
     }
-    [dataSource _iconLoaderReceivedPageIcon:self];    
+    [frameLoader _iconLoaderReceivedPageIcon:self];    
     [icon release];
     
     [super didFinishLoading];

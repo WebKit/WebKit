@@ -28,11 +28,13 @@
 
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKitSystemInterface.h>
 
 @class WebDataSource;
 @class WebMainResourceLoader;
 @class WebIconLoader;
 @class WebLoader;
+@class WebResource;
 
 @interface WebFrameLoader : NSObject
 {
@@ -79,9 +81,46 @@
 - (void)startProvisionalLoad:(WebDataSource *)dataSource;
 - (WebDataSource *)dataSource;
 - (WebDataSource *)provisionalDataSource;
+- (WebDataSource *)activeDataSource;
 - (WebFrameState)state;
 - (void)clearDataSource;
 - (void)setupForReplace;
 + (CFAbsoluteTime)timeOfLastCompletedLoad;
+
+- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL;
+- (BOOL)_defersCallbacks;
+- (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest;
+- (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse;
+- (void)_didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier;
+- (void)_didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier;
+- (void)_didReceiveResponse:(NSURLResponse *)r forResource:(id)identifier;
+- (void)_didReceiveData:(NSData *)data contentLength:(int)lengthReceived forResource:(id)identifier;
+- (void)_didFinishLoadingForResource:(id)identifier;
+- (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier;
+- (BOOL)_privateBrowsingEnabled;
+- (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier;
+- (void)_addPlugInStreamLoader:(WebLoader *)loader;
+- (void)_removePlugInStreamLoader:(WebLoader *)loader;
+- (void)_finishedLoadingResource;
+- (void)_receivedError:(NSError *)error;
+- (void)_addSubresourceLoader:(WebLoader *)loader;
+- (void)_removeSubresourceLoader:(WebLoader *)loader;
+- (NSURLRequest *)_originalRequest;
+- (WebFrame *)webFrame;
+- (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete;
+- (NSURLRequest *)initialRequest;
+- (void)_receivedData:(NSData *)data;
+- (void)_setRequest:(NSURLRequest *)request;
+- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(WKNSURLConnectionDelegateProxyPtr)proxy;
+- (void)_handleFallbackContent;
+- (BOOL)_isStopping;
+- (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener;
+- (void)_setupForReplaceByMIMEType:(NSString *)newMIMEType;
+- (void)_setResponse:(NSURLResponse *)response;
+- (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete;
+- (void)_finishedLoading;
+- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar complete:(BOOL)isComplete;
+- (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader;
+- (NSURL *)_URL;
 
 @end

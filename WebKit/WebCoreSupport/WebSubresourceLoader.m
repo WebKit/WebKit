@@ -32,6 +32,7 @@
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFormDataStream.h>
 #import <WebKit/WebFrameInternal.h>
+#import <WebKit/WebFrameLoader.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebNSURLRequestExtras.h>
 
@@ -42,13 +43,13 @@
 
 @implementation WebSubresourceLoader
 
-- initWithLoader:(id <WebCoreResourceLoader>)l dataSource:(WebDataSource *)s
+- initWithLoader:(id <WebCoreResourceLoader>)l frameLoader:(WebFrameLoader *)fl
 {
     [super init];
     
     coreLoader = [l retain];
 
-    [self setDataSource: s];
+    [self setFrameLoader:fl];
     
     return self;
 }
@@ -63,17 +64,16 @@
                                    withRequest:(NSMutableURLRequest *)newRequest
                                  customHeaders:(NSDictionary *)customHeaders
                                       referrer:(NSString *)referrer 
-                                 forDataSource:(WebDataSource *)source
+                                forFrameLoader:(WebFrameLoader *)fl
 {
-    WebSubresourceLoader *loader = [[[self alloc] initWithLoader:rLoader dataSource:source] autorelease];
+    WebSubresourceLoader *loader = [[[self alloc] initWithLoader:rLoader frameLoader:fl] autorelease];
     
-    [source _addSubresourceLoader:loader];
+    [fl _addSubresourceLoader:loader];
 
     NSEnumerator *e = [customHeaders keyEnumerator];
     NSString *key;
-    while ((key = [e nextObject])) {
+    while ((key = [e nextObject]))
         [newRequest addValue:[customHeaders objectForKey:key] forHTTPHeaderField:key];
-    }
 
     // Use the original request's cache policy for two reasons:
     // 1. For POST requests, we mutate the cache policy for the main resource,
@@ -84,10 +84,10 @@
     if ([newRequest _web_isConditionalRequest])
         [newRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     else
-        [newRequest setCachePolicy:[[source _originalRequest] cachePolicy]];
+        [newRequest setCachePolicy:[[fl _originalRequest] cachePolicy]];
     [newRequest _web_setHTTPReferrer:referrer];
     
-    [[source webFrame] _addExtraFieldsToRequest:newRequest mainResource:NO alwaysFromRequest:NO];
+    [[fl webFrame] _addExtraFieldsToRequest:newRequest mainResource:NO alwaysFromRequest:NO];
             
     if (![loader loadWithRequest:newRequest])
         loader = nil;
@@ -100,7 +100,7 @@
                                            URL:(NSURL *)URL
                                  customHeaders:(NSDictionary *)customHeaders
                                       referrer:(NSString *)referrer
-                                 forDataSource:(WebDataSource *)source
+                                 forFrameLoader:(WebFrameLoader *)fl
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
 
@@ -108,7 +108,7 @@
     if (![method isEqualToString:@"GET"])
         [newRequest setHTTPMethod:method];
 
-    WebSubresourceLoader *loader = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
+    WebSubresourceLoader *loader = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forFrameLoader:fl];
     [newRequest release];
 
     return loader;
@@ -120,7 +120,7 @@
                                  customHeaders:(NSDictionary *)customHeaders
                                       postData:(NSArray *)postData
                                       referrer:(NSString *)referrer
-                                 forDataSource:(WebDataSource *)source
+                                forFrameLoader:(WebFrameLoader *)fl
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
 
@@ -130,7 +130,7 @@
 
     webSetHTTPBody(newRequest, postData);
 
-    WebSubresourceLoader *loader = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
+    WebSubresourceLoader *loader = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forFrameLoader:fl];
     [newRequest release];
 
     return loader;
@@ -139,7 +139,7 @@
 
 - (void)receivedError:(NSError *)error
 {
-    [dataSource _receivedError:error];
+    [frameLoader _receivedError:error];
 }
 
 - (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse;
@@ -198,8 +198,8 @@
 
 - (void)signalFinish
 {
-    [dataSource _removeSubresourceLoader:self];
-    [dataSource _finishedLoadingResource];
+    [frameLoader _removeSubresourceLoader:self];
+    [frameLoader _finishedLoadingResource];
     [super signalFinish];
 }
 
@@ -224,7 +224,7 @@
     [self retain];
     
     [coreLoader reportError];
-    [dataSource _removeSubresourceLoader:self];
+    [frameLoader _removeSubresourceLoader:self];
     [self receivedError:error];
     [super didFailWithError:error];
 
@@ -237,7 +237,7 @@
     [self retain];
         
     [coreLoader cancel];
-    [dataSource _removeSubresourceLoader:self];
+    [frameLoader _removeSubresourceLoader:self];
     [self receivedError:[self cancelledError]];
     [super cancel];
 

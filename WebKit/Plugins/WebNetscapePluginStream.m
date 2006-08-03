@@ -31,12 +31,14 @@
 #import <WebKit/WebLoader.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourceInternal.h>
+#import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebViewInternal.h>
+#import <WebKit/WebFrameLoader.h>
 
 #import <Foundation/NSURLConnection.h>
 
@@ -79,7 +81,7 @@
     }
 
     _loader = [[WebNetscapePlugInStreamLoader alloc] initWithStream:self view:view]; 
-    [_loader setDataSource:[view dataSource]];
+    [_loader setFrameLoader:[[view webFrame] _frameLoader]];
     
     isTerminated = NO;
 
@@ -97,11 +99,11 @@
 {
     ASSERT(request);
 
-    [[_loader dataSource] _addPlugInStreamLoader:_loader];
+    [[_loader frameLoader] _addPlugInStreamLoader:_loader];
 
     BOOL succeeded = [_loader loadWithRequest:request];
     if (!succeeded) {
-        [[_loader dataSource] _removePlugInStreamLoader:_loader];
+        [[_loader frameLoader] _removePlugInStreamLoader:_loader];
     }
 }
 
@@ -181,8 +183,8 @@
     // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
     [self retain];
 
-    [[self dataSource] _removePlugInStreamLoader:self];
-    [[self dataSource] _finishedLoadingResource];
+    [frameLoader _removePlugInStreamLoader:self];
+    [frameLoader _finishedLoadingResource];
     [stream finishedLoadingWithData:[self resourceData]];
     [super didFinishLoading];
 
@@ -196,8 +198,8 @@
     // one example of this is 3266216
     [self retain];
 
-    [[self dataSource] _removePlugInStreamLoader:self];
-    [[self dataSource] _receivedError:error];
+    [[self frameLoader] _removePlugInStreamLoader:self];
+    [[self frameLoader] _receivedError:error];
     [stream destroyStreamWithError:error];
     [super didFailWithError:error];
 
@@ -209,7 +211,7 @@
     // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
     [self retain];
 
-    [[self dataSource] _removePlugInStreamLoader:self];
+    [[self frameLoader] _removePlugInStreamLoader:self];
     [super cancelWithError:error];
 
     [self release];

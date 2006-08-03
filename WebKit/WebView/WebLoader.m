@@ -35,9 +35,10 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
+#import <WebKit/WebFrameLoader.h>
+
 #import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebResourcePrivate.h>
@@ -131,8 +132,8 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [connection release];
     connection = nil;
 
-    [dataSource release];
-    dataSource = nil;
+    [frameLoader release];
+    frameLoader = nil;
     
     [resource release];
     resource = nil;
@@ -236,7 +237,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     r = clientRequest;
     
     if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
-        resource = [dataSource _archivedSubresourceForURL:originalURL];
+        resource = [frameLoader _archivedSubresourceForURL:originalURL];
         if (resource != nil) {
             if ([self _canUseResourceWithResponse:[resource _response]]) {
                 [resource retain];
@@ -276,21 +277,20 @@ static BOOL NSURLConnectionSupportsBufferedData;
     return defersCallbacks;
 }
 
-- (void)setDataSource:(WebDataSource *)d
+- (void)setFrameLoader:(WebFrameLoader *)fl
 {
-    ASSERT(d);
-    ASSERT([d _webView]);
+    ASSERT(fl);
     
-    [d retain];
-    [dataSource release];
-    dataSource = d;
+    [fl retain];
+    [frameLoader release];
+    frameLoader = fl;
 
-    [self setDefersCallbacks:[dataSource _defersCallbacks]];
+    [self setDefersCallbacks:[frameLoader _defersCallbacks]];
 }
 
-- (WebDataSource *)dataSource
+- (WebFrameLoader *)frameLoader
 {
-    return dataSource;
+    return frameLoader;
 }
 
 - (void)addData:(NSData *)data
@@ -354,9 +354,9 @@ static BOOL NSURLConnectionSupportsBufferedData;
         haveDataSchemeRequest = YES;
     
     if (identifier == nil)
-        identifier = [dataSource _identifierForInitialRequest:clientRequest];
+        identifier = [frameLoader _identifierForInitialRequest:clientRequest];
 
-    updatedRequest = [dataSource _willSendRequest:clientRequest forResource:identifier redirectResponse:redirectResponse];
+    updatedRequest = [frameLoader _willSendRequest:clientRequest forResource:identifier redirectResponse:redirectResponse];
 
     if (!haveDataSchemeRequest)
         newRequest = updatedRequest;
@@ -398,7 +398,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     currentConnectionChallenge = [challenge retain];;
     currentWebChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:self];
 
-    [dataSource _didReceiveAuthenticationChallenge:currentWebChallenge forResource:identifier];
+    [frameLoader _didReceiveAuthenticationChallenge:currentWebChallenge forResource:identifier];
 
     [self release];
 }
@@ -413,7 +413,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [dataSource _didCancelAuthenticationChallenge:currentWebChallenge forResource:identifier];
+    [frameLoader _didCancelAuthenticationChallenge:currentWebChallenge forResource:identifier];
     [self release];
 }
 
@@ -435,7 +435,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [response release];
     response = r;
 
-    [dataSource _didReceiveResponse:r forResource:identifier];
+    [frameLoader _didReceiveResponse:r forResource:identifier];
 
     [self release];
 }
@@ -454,7 +454,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     
     [self addData:data];
     
-    [dataSource _didReceiveData:data contentLength:lengthReceived forResource:identifier];
+    [frameLoader _didReceiveData:data contentLength:lengthReceived forResource:identifier];
 
     [self release];
 }
@@ -468,7 +468,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (void)signalFinish
 {
     signalledFinish = YES;
-    [dataSource _didFinishLoadingForResource:identifier];
+    [frameLoader _didFinishLoadingForResource:identifier];
 }
 
 - (void)didFinishLoading
@@ -498,7 +498,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
 
-    [dataSource _didFailLoadingWithError:error forResource:identifier];
+    [frameLoader _didFailLoadingWithError:error forResource:identifier];
 
     [self releaseResources];
     [self release];
@@ -507,7 +507,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (NSCachedURLResponse *)willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
     // When in private browsing mode, prevent caching to disk
-    if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && [dataSource _privateBrowsingEnabled]) {
+    if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && [frameLoader _privateBrowsingEnabled]) {
         cachedResponse = [[[NSCachedURLResponse alloc] initWithResponse:[cachedResponse response]
                                                                    data:[cachedResponse data]
                                                                userInfo:[cachedResponse userInfo]
@@ -616,7 +616,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(deliverResource) object:nil];
     [connection cancel];
 
-    [dataSource _didFailLoadingWithError:error forResource:identifier];
+    [frameLoader _didFailLoadingWithError:error forResource:identifier];
 
     [self releaseResources];
 }
