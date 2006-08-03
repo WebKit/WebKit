@@ -1,5 +1,19 @@
 2006-08-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10198
+          REGRESSION: WebKit r15750 crashes while loading anthem.com
+
+        Test: fast/overflow/generated-content-crash.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout): Added a null check for
+        the renderer's element. Generated content does not have an element and
+        therefore does not need to maintain overflow status.
+
+2006-08-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Anders.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10202

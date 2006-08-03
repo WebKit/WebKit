@@ -1181,7 +1181,7 @@ RenderLayer::updateScrollInfoAfterLayout()
                                    m_object->height() - m_object->borderTop() - m_object->borderBottom()));
     }
  
-    if (m_object->element()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
+    if (m_object->element() && m_object->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(horizontalOverflow, verticalOverflow);
 }
 
