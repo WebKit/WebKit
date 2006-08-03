@@ -86,10 +86,8 @@ static IntPoint globalPositionForEvent(NSEvent *event)
         case NSOtherMouseUp:
         case NSOtherMouseDragged:
         case NSMouseMoved:
-        case NSScrollWheel: {
-            NSPoint point = [[event window] convertBaseToScreen:[event locationInWindow]];
-            return IntPoint(flipScreenPoint(point));
-        }
+        case NSScrollWheel:
+            return IntPoint(flipScreenPoint([[event window] convertBaseToScreen:[event locationInWindow]]));
         default:
             return IntPoint();
     }

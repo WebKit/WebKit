@@ -41,8 +41,8 @@ namespace WebCore {
     FloatRect scaleWidgetRectToScreen(FloatRect, Widget*);
 
 #if PLATFORM(MAC)
-    NSRect flipScreenRect(NSRect rect);
-    NSPoint flipScreenPoint(NSPoint point);
+    NSRect flipScreenRect(NSRect);
+    NSPoint flipScreenPoint(NSPoint);
 #endif
     
 }

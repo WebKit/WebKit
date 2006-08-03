@@ -1,3 +1,22 @@
+2006-08-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - clean up "flip"-related code a tiny bit
+
+        * platform/Screen.h: Removed redundant parameter names.
+        * platform/mac/ScreenMac.mm:
+        (WebCore::flipScreenRect): Changed to call flipScreenPoint so we only have one
+        copy of the flipping code.
+        (WebCore::flipScreenPoint): Fixed indentation.
+
+        * bridge/mac/WebCoreFrameBridge.mm: (globalPoint): Removed type casts and
+        simplified a bit.
+
+        * platform/mac/PlatformMouseEventMac.mm: (WebCore::globalPositionForEvent):
+        * platform/mac/WheelEventMac.mm: (WebCore::globalPositionForEvent):
+        Removed unneeded local variable.
+
 2006-08-02  David Hyatt  <hyatt@apple.com>
 
         Abstract RenderLayer scrollbar creation and destruction so that there

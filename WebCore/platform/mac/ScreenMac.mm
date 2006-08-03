@@ -41,14 +41,14 @@ static NSScreen* screen(Widget* widget)
 
 NSRect flipScreenRect(NSRect rect)
 {
-    rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
+    rect.origin = flipScreenPoint(rect.origin);
     return rect;
 }
 
 NSPoint flipScreenPoint(NSPoint point)
 {
-  point.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - point.y;
-  return point;
+    point.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - point.y;
+    return point;
 }
 
 FloatRect scaleScreenRectToWidget(FloatRect rect, Widget* widget)

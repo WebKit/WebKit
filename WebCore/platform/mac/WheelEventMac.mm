@@ -45,10 +45,8 @@ static IntPoint positionForEvent(NSEvent *event)
 static IntPoint globalPositionForEvent(NSEvent *event)
 {
     switch ([event type]) {
-        case NSScrollWheel: {
-            NSPoint point = [[event window] convertBaseToScreen:[event locationInWindow]];
-            return IntPoint(flipScreenPoint(point));
-        }
+        case NSScrollWheel:
+            return IntPoint(flipScreenPoint([[event window] convertBaseToScreen:[event locationInWindow]]));
         default:
             return IntPoint();
     }

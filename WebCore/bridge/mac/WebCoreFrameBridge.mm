@@ -2316,8 +2316,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 static IntPoint globalPoint(NSWindow* window, NSPoint windowPoint)
 {
-    NSPoint screenPoint = [window convertBaseToScreen:windowPoint];
-    return IntPoint((int)screenPoint.x, (int)(flipScreenPoint(screenPoint).y));
+    return IntPoint(flipScreenPoint([window convertBaseToScreen:windowPoint]));
 }
 
 static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDraggingInfo> info)
