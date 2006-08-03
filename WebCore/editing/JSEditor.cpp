@@ -189,7 +189,7 @@ String valueStyle(Frame *frame, int propertyID)
 
 bool execBackColor(Frame *frame, bool userInterface, const String &value)
 {
-    return execStyleChange(frame,  CSS_PROP_BACKGROUND_COLOR, value);
+    return execStyleChange(frame, CSS_PROP_BACKGROUND_COLOR, value);
 }
 
 bool execBold(Frame *frame, bool userInterface, const String &value)
@@ -258,7 +258,7 @@ bool execFontSizeDelta(Frame *frame, bool userInterface, const String &value)
 
 bool execForeColor(Frame *frame, bool userInterface, const String &value)
 {
-    return execStyleChange(frame,  CSS_PROP_COLOR, value);
+    return execStyleChange(frame, CSS_PROP_COLOR, value);
 }
 
 bool execFormatBlock(Frame *frame, bool userInterface, const String &value)
@@ -643,7 +643,7 @@ CommandMap *createCommandDictionary()
 
     static const EditorCommand commands[] = {
 
-        { "BackColor", { execBackColor, enabledAnyRangeSelection, stateNone, valueBackColor } },
+        { "BackColor", { execBackColor, enabledAnyRichlyEditableRangeSelection, stateNone, valueBackColor } },
         { "Bold", { execBold, enabledAnyRichlyEditableSelection, stateBold, valueNull } },
         { "Copy", { execCopy, enabledAnyRangeSelection, stateNone, valueNull } },
         { "CreateLink", { execCreateLink, enabledAnyRichlyEditableRangeSelection, stateNone, valueNull } },
@@ -656,6 +656,7 @@ CommandMap *createCommandDictionary()
         { "ForeColor", { execForeColor, enabledAnySelection, stateNone, valueForeColor } },
         { "FormatBlock", { execFormatBlock, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
         { "ForwardDelete", { execForwardDelete, enabledAnyEditableSelection, stateNone, valueNull } },
+        { "HiliteColor", { execBackColor, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
         { "Indent", { execIndent, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
         { "InsertHorizontalRule", { execInsertHorizontalRule, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
         { "InsertHTML", { execInsertHTML, enabledAnyEditableSelection, stateNone, valueNull } },

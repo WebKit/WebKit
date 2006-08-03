@@ -1,3 +1,16 @@
+2006-08-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=10225>
+        GMail Editor: Change Hilite Color doesn't work
+
+        * editing/JSEditor.cpp: Added support for execCommand("HiliteColor", ...).
+        It's what GMail uses to implement text hiliting.  It's just a synonym for BackColor.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::nodeWillBeRemoved): Moved a comment
+        a more appropriate place.
+
 2006-08-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Adele and Darin.
