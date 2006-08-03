@@ -1,3 +1,11 @@
+2006-08-03  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by John Sullivan.
+
+       * wtf/HashSet.h:
+        (WTF::::operator):
+        Return *this in operator=
+
 2006-08-03  Adam Roben  <aroben@apple.com>
 
         Reviewed by Anders.
