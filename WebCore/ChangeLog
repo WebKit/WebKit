@@ -1,5 +1,15 @@
 2006-08-03  Adam Roben  <aroben@apple.com>
 
+        Reviewed by Maciej and Beth.
+
+        Fix use-after-dispose heap corruption bug.
+
+        * rendering/ListMarkerBox.cpp:
+        (WebCore::ListMarkerBox::destroy): Only call removeChild if we're not
+        destroying the document
+
+2006-08-03  Adam Roben  <aroben@apple.com>
+
         Reviewed by Anders.
 
         - Fixed Windows build.

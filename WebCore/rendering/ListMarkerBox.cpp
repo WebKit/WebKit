@@ -45,7 +45,7 @@ void ListMarkerBox::destroy(RenderArena* arena)
     #ifndef NDEBUG
         listMarkerBoxDetach = true;
     #endif
-    if (m_parent)
+    if (!object()->documentBeingDestroyed() && m_parent)
         m_parent->removeChild(this);
     delete this;
     #ifndef NDEBUG
