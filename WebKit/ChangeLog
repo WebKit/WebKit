@@ -1,5 +1,14 @@
 2006-08-02  Timothy Hatcher  <timothy@apple.com>
 
+        Rubber stamped by Maciej.
+
+        Adding back resultsWithXpathQuery, removed by Darin's earlier change.
+        This function is called from ObjC, but not used from JavaScript.
+
+        * WebInspector/webInspector/inspector.js:
+
+2006-08-02  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Darin.
 
         Bug 10200: [Drosera] Deadlock between Drosera and Safari while loading page
