@@ -9,7 +9,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV to 0 of #text > DIV toDOMRange:range from 0 of #text > DIV to 5 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Success: document.queryCommandEnabled("BackColor") == true
+Success: document.queryCommandEnabled("BackColor") == false
 Success: document.queryCommandEnabled("Bold") == false
 Success: document.queryCommandEnabled("Copy") == true
 Success: document.queryCommandEnabled("CreateLink") == false

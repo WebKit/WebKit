@@ -1,3 +1,10 @@
+2006-08-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        * fast/forms/plaintext-mode-1-expected.txt:
+        * fast/forms/plaintext-mode-1.html:
+
 2006-08-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
