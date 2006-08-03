@@ -1,0 +1,42 @@
+<body style="margin: 0;">
+<p>
+    This is a test for <i><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=10177">http://bugzilla.opendarwin.org/show_bug.cgi?id=10177</a>
+    REGRESSION: Successfully dragging text into a disabled field</i>.
+</p>
+<hr>
+<input id="field" disabled>
+dragging <span id="text">this text</span> into the text field should not succeed.
+<script>
+function runTest() {
+    var text = document.getElementById("text");
+
+    window.getSelection().setBaseAndExtent(text, 0, text, 1);
+    
+    if (!window.layoutTestController)
+        return;
+
+    layoutTestController.waitUntilDone();
+
+    var x = text.offsetLeft + text.offsetWidth / 2;
+    var y = text.offsetTop + text.offsetHeight / 2;
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    // Wait a moment so that the mouseDown will kick off a drag instead of starting a new selection.
+    eventSender.leapForward(1000);
+    
+    // We will to go to great length to prove that we're dragging!
+    eventSender.mouseMoveTo(x + 400, y);
+
+    var field = document.getElementById("field");
+    
+    x = field.offsetLeft + field.offsetWidth / 2;
+    y = field.offsetTop + field.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+    setTimeout('layoutTestController.notifyDone();', 5000);
+}
+
+runTest();
+</script>
+</body>

@@ -80,7 +80,7 @@ RenderStyle* RenderTextControl::createDivStyle(RenderStyle* startStyle)
     divStyle->inheritFrom(startStyle);
     divStyle->setDisplay(BLOCK);
     divStyle->setBoxFlex(1.0f);
-    divStyle->setUserModify(element->isReadOnlyControl() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
+    divStyle->setUserModify(element->isReadOnlyControl() || element->disabled() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
 
     if (m_multiLine) {
         // Forward overflow properties.
@@ -143,7 +143,7 @@ void RenderTextControl::updateFromElement()
     }
 
     HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
-    m_div->renderer()->style()->setUserModify(element->isReadOnlyControl() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
+    m_div->renderer()->style()->setUserModify(element->isReadOnlyControl() || element->disabled() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
     String value;
     if (m_multiLine)
         value = static_cast<HTMLTextAreaElement*>(element)->value().copy();    

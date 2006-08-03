@@ -1,3 +1,17 @@
+2006-08-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Adele and Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10177
+          REGRESSION: Successfully dragging text into a disabled field
+
+        * fast/forms/textfield-drag-into-disabled-expected.checksum: Added.
+        * fast/forms/textfield-drag-into-disabled-expected.png: Added.
+        * fast/forms/textfield-drag-into-disabled-expected.txt: Added.
+        * fast/forms/textfield-drag-into-disabled.html: Added.
+
+        * fast/forms/input-disabled-color-expected.txt: Updated.
+
 2006-08-03  Jonathan Johnsson  <jonathanjohnsson@gmail.com>
 
         Reviewed by Darin.

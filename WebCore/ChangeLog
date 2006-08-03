@@ -1,5 +1,19 @@
 2006-08-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Adele and Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10177
+          REGRESSION: Successfully dragging text into a disabled field
+
+        Test: fast/forms/textfield-drag-into-disabled.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createDivStyle): Changed to set -webkit-user-modify
+        to read-only on the inner div if the control is disabled.       
+        (WebCore::RenderTextControl::updateFromElement): Ditto.
+
+2006-08-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Darin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10198
