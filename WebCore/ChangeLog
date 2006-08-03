@@ -1,3 +1,25 @@
+2006-08-03  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Anders.
+
+        - Fixed Windows build.
+
+        * platform/Color.cpp:
+        (WebCore::makeRGBAFromHSLA): Whitespace change
+        * platform/win/TemporaryLinkStubs.cpp: Add new method stubs
+        (PlatformScrollBar::PlatformScrollBar):
+        (PlatformScrollBar::~PlatformScrollBar):
+        (PlatformScrollBar::width):
+        (PlatformScrollBar::height):
+        (PlatformScrollBar::setEnabled):
+        (PlatformScrollBar::paint):
+        (PlatformScrollBar::setScrollBarValue):
+        (PlatformScrollBar::setKnobProportion):
+        (PlatformScrollBar::setRect):
+        (ScrollBar::ScrollBar):
+        (ScrollBar::scroll):
+        (ScrollBar::setValue):
+
 2006-08-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs

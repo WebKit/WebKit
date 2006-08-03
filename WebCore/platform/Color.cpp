@@ -30,6 +30,7 @@
 #include "PlatformString.h"
 #include <math.h>
 #include <wtf/Assertions.h>
+#include <wtf/MathExtras.h>
 
 #include "ColorData.c"
 
@@ -70,7 +71,7 @@ double calcHue(double temp1, double temp2, double hueVal)
 RGBA32 makeRGBAFromHSLA(double hue, double saturation, double lightness, double alpha)
 {
     const double scaleFactor = nextafter(256.0, 0.0);
-    
+
     if (!saturation) {
         int greyValue = static_cast<int>(lightness * scaleFactor);
         return makeRGBA(greyValue, greyValue, greyValue, static_cast<int>(alpha * scaleFactor));

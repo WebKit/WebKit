@@ -41,6 +41,9 @@ inline double round(double num) { return num > 0 ? floor(num + 0.5) : ceil(num -
 inline float roundf(float num) { return num > 0 ? floorf(num + 0.5f) : ceilf(num - 0.5f); }
 inline bool signbit(double num) { return _copysign(1.0, num) < 0; }
 
+inline double nextafter(double x, double y) { return _nextafter(x, y); }
+inline float nextafterf(float x, float y) { return x > y ? x - FLT_EPSILON : x + FLT_EPSILON; }
+
 #if COMPILER(MSVC)
 
 // Work around a bug in the Microsoft CRT, where fmod(x, +-infinity) yields NaN instead of x.

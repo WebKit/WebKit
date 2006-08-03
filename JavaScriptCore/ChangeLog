@@ -1,3 +1,14 @@
+2006-08-03  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Anders.
+
+        - Fixed Windows build
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * wtf/MathExtras.h: Implement inline versions of these functions
+        (nextafter):
+        (nextafterf):
+
 2006-08-02  Adam Roben  <aroben@apple.com>
 
         Reviewed by Darin.

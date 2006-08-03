@@ -43,9 +43,9 @@
 #include "loader.h"
 #include "FrameView.h"
 #include "KURL.h"
+#include "PlatformScrollBar.h"
 #include "ScrollBar.h"
 #include "JavaAppletWidget.h"
-#include "ScrollBar.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
 #include "CookieJar.h"
@@ -349,11 +349,20 @@ IntSize PopUpButton::sizeHint() const { return IntSize(); }
 IntRect PopUpButton::frameGeometry() const { return IntRect(); }
 void PopUpButton::setFrameGeometry(IntRect const&) { }
 
-ScrollBar::ScrollBar(ScrollBarOrientation) { }
-ScrollBar::~ScrollBar() { }
+PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation) : ScrollBar(client, orientation) { }
+PlatformScrollBar::~PlatformScrollBar() { }
+int PlatformScrollBar::width() const { return 0; }
+int PlatformScrollBar::height() const { return 0; }
+void PlatformScrollBar::setEnabled(bool) { }
+void PlatformScrollBar::paint(GraphicsContext*, const IntRect& damageRect) { }
+void PlatformScrollBar::setScrollBarValue(int v) { }
+void PlatformScrollBar::setKnobProportion(int visibleSize, int totalSize) { }
+void PlatformScrollBar::setRect(const IntRect&) { }
+
+ScrollBar::ScrollBar(ScrollBarClient*, ScrollBarOrientation) { }
 void ScrollBar::setSteps(int, int) { }
-bool ScrollBar::scroll(ScrollDirection, ScrollGranularity, float) { return 0; }
-bool ScrollBar::setValue(int) { return 0; }
+bool ScrollBar::scroll(ScrollDirection, ScrollGranularity, float) { return false; }
+bool ScrollBar::setValue(int) { return false; }
 void ScrollBar::setKnobProportion(int, int) { }
 
 ListBox::ListBox() { }
