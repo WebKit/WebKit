@@ -6,6 +6,8 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIconFile</key>
+	<string>Drosera</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.webkit.drosera.launcher</string>
 	<key>CFBundleInfoDictionaryVersion</key>

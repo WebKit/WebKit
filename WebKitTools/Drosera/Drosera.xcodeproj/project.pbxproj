@@ -52,6 +52,7 @@
 		1CD8D5690A49041C00E5677B /* launcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CD8D5680A49041C00E5677B /* launcher.m */; };
 		1CD8D56C0A49043E00E5677B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		1CD8D5A60A49102900E5677B /* Drosera.app in Resources */ = {isa = PBXBuildFile; fileRef = 8D15AC370486D014006FF6A4 /* Drosera.app */; };
+		5D2C827F0A816BA700C193FD /* Drosera.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1C3487970A81208400101C5C /* Drosera.icns */; };
 		8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */; };
 		8D15AC2E0486D014006FF6A4 /* Debugger.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B4FDCFA73011CA2CEA /* Debugger.nib */; };
 		8D15AC310486D014006FF6A4 /* DebuggerDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* DebuggerDocument.m */; settings = {ATTRIBUTES = (); }; };
@@ -129,7 +130,7 @@
 		2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32DBCF750370BD2300C91783 /* Drosera.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Drosera.pch; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		8D15AC370486D014006FF6A4 /* Drosera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drosera.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D15AC370486D014006FF6A4 /* Drosera.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Drosera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -358,6 +359,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D2C827F0A816BA700C193FD /* Drosera.icns in Resources */,
 				1CD8D5A60A49102900E5677B /* Drosera.app in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

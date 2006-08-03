@@ -176,6 +176,8 @@ NSArray *webkitDomEventNames;
             
             if (dragOperation != NSDragOperationNone)
                 [webView performDragOperation:draggingInfo];
+            else
+                [webView draggingExited:draggingInfo];
             [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] endedAt:lastMousePosition operation:dragOperation];
             [draggingInfo release];
             draggingInfo = nil;

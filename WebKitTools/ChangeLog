@@ -1,3 +1,22 @@
+2006-08-03  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Darin.
+
+        Bug 10224: [Drosera] Drosera icon should be set on DroseraLauncher so it appears in nightly builds
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10224
+
+        * Drosera/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/LauncherInfo.plist:
+
+2006-08-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        - fix ASSERTION FAILURE: draggingDocumentView == nil in -[WebViewPrivate dealloc]
+          when a test performs an unsuccessful drag and drop operation.
+
+        * DumpRenderTree/EventSendingController.m:
+        (-[EventSendingController mouseUp]): Added a call to -draggingExited: if the
+        drag operation for the mouse release is NSDragOperationNone.
+
 2006-08-02  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
