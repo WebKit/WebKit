@@ -1,3 +1,14 @@
+2006-08-04  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by NOBODY (build fix).
+
+        * WebCoreSupport/WebSubresourceLoader.m: REALLY moved to Loader/
+        * WebView/WebFrameLoader.h: REALLY moved to Loader/
+        * WebView/WebFrameLoader.m: REALLY moved to Loader/
+        * WebView/WebLoader.h: REALLY moved to Loader/
+        * WebView/WebLoader.m: REALLY moved to Loader/
+        * WebView/WebMainResourceLoader.m: REALLY moved to Loader/
+
 2006-08-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
