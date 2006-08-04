@@ -2431,6 +2431,11 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderObject* floatToRem
 
 int RenderBlock::getClearDelta(RenderObject *child)
 {
+    // There is no need to compute clearance if we have no floats.
+    if (!m_floatingObjects)
+        return 0;
+    
+    // At least one float is present.  We need to perform the clearance computation.
     bool clearSet = child->style()->clear() != CNONE;
     int bottom = 0;
     switch (child->style()->clear()) {

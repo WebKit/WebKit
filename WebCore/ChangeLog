@@ -1,3 +1,16 @@
+2006-08-03  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 10229, don't bother trying to clear when no floats are
+        present.  I suspect there's still a bug in the math that follows, but
+        this fix is safer in that it just does the obvious thing (and doesn't
+        compute any clearance if no floats are even around).
+
+        Reviewed by maciej
+
+        * ChangeLog:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::getClearDelta):
+
 2006-08-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
