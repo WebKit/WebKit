@@ -34,7 +34,7 @@
 {
     NSRect frame = [self frame];
 
-    NSSize bestSize = [[self cell] cellSizeForBounds:NSMakeRect(0, 0, frame.size.width, 10000.0)];
+    NSSize bestSize = [[self cell] cellSizeForBounds:NSMakeRect(0.0f, 0.0f, frame.size.width, 10000.0f)];
     
     float heightDelta = bestSize.height - frame.size.height;
 

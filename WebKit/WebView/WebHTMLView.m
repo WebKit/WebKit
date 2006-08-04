@@ -121,26 +121,26 @@ void _NSResetKillRingOperationFlag(void);
 // print in IE and Camino. This lets them use fewer sheets than they
 // would otherwise, which is presumably why other browsers do this.
 // Wide pages will be scaled down more than this.
-#define PrintingMinimumShrinkFactor     1.25
+#define PrintingMinimumShrinkFactor     1.25f
 
 // This number determines how small we are willing to reduce the page content
 // in order to accommodate the widest line. If the page would have to be
 // reduced smaller to make the widest line fit, we just clip instead (this
 // behavior matches MacIE and Mozilla, at least)
-#define PrintingMaximumShrinkFactor     2.0
+#define PrintingMaximumShrinkFactor     2.0f
 
-#define AUTOSCROLL_INTERVAL             0.1
+#define AUTOSCROLL_INTERVAL             0.1f
 
-#define DRAG_LABEL_BORDER_X             4.0
-#define DRAG_LABEL_BORDER_Y             2.0
-#define DRAG_LABEL_RADIUS               5.0
-#define DRAG_LABEL_BORDER_Y_OFFSET              2.0
+#define DRAG_LABEL_BORDER_X             4.0f
+#define DRAG_LABEL_BORDER_Y             2.0f
+#define DRAG_LABEL_RADIUS               5.0f
+#define DRAG_LABEL_BORDER_Y_OFFSET              2.0f
 
-#define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP        120.0
-#define MAX_DRAG_LABEL_WIDTH                    320.0
+#define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP        120.0f
+#define MAX_DRAG_LABEL_WIDTH                    320.0f
 
-#define DRAG_LINK_LABEL_FONT_SIZE   11.0
-#define DRAG_LINK_URL_FONT_SIZE   10.0
+#define DRAG_LINK_LABEL_FONT_SIZE   11.0f
+#define DRAG_LINK_URL_FONT_SIZE   10.0f
 
 // Any non-zero value will do, but using something recognizable might help us debug some day.
 #define TRACKING_RECT_TAG 0xBADFACE
@@ -1247,48 +1247,48 @@ static WebHTMLView *lastHitView = nil;
     }
     
     NSSize imageSize, urlStringSize;
-    imageSize.width = labelSize.width + DRAG_LABEL_BORDER_X * 2;
-    imageSize.height = labelSize.height + DRAG_LABEL_BORDER_Y * 2;
+    imageSize.width = labelSize.width + DRAG_LABEL_BORDER_X * 2.0f;
+    imageSize.height = labelSize.height + DRAG_LABEL_BORDER_Y * 2.0f;
     if (drawURLString) {
         urlStringSize.width = [urlString _web_widthWithFont: urlFont];
         urlStringSize.height = [urlFont ascender] - [urlFont descender];
         imageSize.height += urlStringSize.height;
         if (urlStringSize.width > MAX_DRAG_LABEL_WIDTH) {
-            imageSize.width = MAX(MAX_DRAG_LABEL_WIDTH + DRAG_LABEL_BORDER_X * 2, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP);
+            imageSize.width = MAX(MAX_DRAG_LABEL_WIDTH + DRAG_LABEL_BORDER_X * 2.0f, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP);
             clipURLString = YES;
         } else {
-            imageSize.width = MAX(labelSize.width + DRAG_LABEL_BORDER_X * 2, urlStringSize.width + DRAG_LABEL_BORDER_X * 2);
+            imageSize.width = MAX(labelSize.width + DRAG_LABEL_BORDER_X * 2.0f, urlStringSize.width + DRAG_LABEL_BORDER_X * 2.0f);
         }
     }
     NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
     [dragImage lockFocus];
     
-    [[NSColor colorWithCalibratedRed: 0.7 green: 0.7 blue: 0.7 alpha: 0.8] set];
+    [[NSColor colorWithCalibratedRed: 0.7f green: 0.7f blue: 0.7f alpha: 0.8f] set];
     
     // Drag a rectangle with rounded corners/
     NSBezierPath *path = [NSBezierPath bezierPath];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(0,0, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(0,imageSize.height - DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS * 2, imageSize.height - DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS * 2,0, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
+    [path appendBezierPathWithOvalInRect: NSMakeRect(0.0f, 0.0f, DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f)];
+    [path appendBezierPathWithOvalInRect: NSMakeRect(0, imageSize.height - DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f)];
+    [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS * 2.0f, imageSize.height - DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f)];
+    [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS * 2.0f, 0.0f, DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f)];
     
-    [path appendBezierPathWithRect: NSMakeRect(DRAG_LABEL_RADIUS, 0, imageSize.width - DRAG_LABEL_RADIUS * 2, imageSize.height)];
-    [path appendBezierPathWithRect: NSMakeRect(0, DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 10, imageSize.height - 2 * DRAG_LABEL_RADIUS)];
-    [path appendBezierPathWithRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS - 20,DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 20, imageSize.height - 2 * DRAG_LABEL_RADIUS)];
+    [path appendBezierPathWithRect: NSMakeRect(DRAG_LABEL_RADIUS, 0.0f, imageSize.width - DRAG_LABEL_RADIUS * 2.0f, imageSize.height)];
+    [path appendBezierPathWithRect: NSMakeRect(0.0f, DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 10.0f, imageSize.height - 2.0f * DRAG_LABEL_RADIUS)];
+    [path appendBezierPathWithRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS - 20.0f, DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 20.0f, imageSize.height - 2.0f * DRAG_LABEL_RADIUS)];
     [path fill];
         
-    NSColor *topColor = [NSColor colorWithCalibratedWhite:0.0 alpha:0.75];
-    NSColor *bottomColor = [NSColor colorWithCalibratedWhite:1.0 alpha:0.5];
+    NSColor *topColor = [NSColor colorWithCalibratedWhite:0.0f alpha:0.75f];
+    NSColor *bottomColor = [NSColor colorWithCalibratedWhite:1.0f alpha:0.5f];
     if (drawURLString) {
         if (clipURLString)
-            urlString = [WebStringTruncator centerTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:urlFont];
+            urlString = [WebStringTruncator centerTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2.0f) withFont:urlFont];
 
         [urlString _web_drawDoubledAtPoint:NSMakePoint(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y - [urlFont descender]) 
              withTopColor:topColor bottomColor:bottomColor font:urlFont];
     }
 
     if (clipLabelString)
-        label = [WebStringTruncator rightTruncateString: label toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:labelFont];
+        label = [WebStringTruncator rightTruncateString: label toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2.0f) withFont:labelFont];
     [label _web_drawDoubledAtPoint:NSMakePoint (DRAG_LABEL_BORDER_X, imageSize.height - DRAG_LABEL_BORDER_Y_OFFSET - [labelFont pointSize])
              withTopColor:topColor bottomColor:bottomColor font:labelFont];
     
@@ -1497,13 +1497,13 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_web_setPrintingModeRecursive
 {
-    [self _setPrinting:YES minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:NO];
+    [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
     [super _web_setPrintingModeRecursive];
 }
 
 - (void)_web_clearPrintingModeRecursive
 {
-    [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:NO];
+    [self _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
     [super _web_clearPrintingModeRecursive];
 }
 
@@ -2519,7 +2519,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)layout
 {
-    [self layoutToMinimumPageWidth:0.0 maximumPageWidth:0.0 adjustingViewSize:NO];
+    [self layoutToMinimumPageWidth:0.0f maximumPageWidth:0.0f adjustingViewSize:NO];
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event
@@ -3056,7 +3056,7 @@ done:
         WebFrame *subframe = [subframes objectAtIndex:i];
         WebFrameView *frameView = [subframe frameView];
         if ([[subframe dataSource] _isDocumentHTML]) {
-            [(WebHTMLView *)[frameView documentView] _setPrinting:printing minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:adjustViewSize];
+            [(WebHTMLView *)[frameView documentView] _setPrinting:printing minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:adjustViewSize];
         }
     }
 
@@ -3087,12 +3087,12 @@ done:
     // If the WebHTMLView itself is what we're printing, then we will never have to do this.
     BOOL wasInPrintingMode = _private->printing;
     if (!wasInPrintingMode)
-        [self _setPrinting:YES minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:NO];
+        [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
 
     [[self _bridge] adjustPageHeightNew:newBottom top:oldTop bottom:oldBottom limit:bottomLimit];
     
     if (!wasInPrintingMode)
-        [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:NO];
+        [self _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
 }
 
 - (float)_availablePaperWidthForPrintOperation:(NSPrintOperation *)printOperation
@@ -3106,11 +3106,11 @@ done:
     float viewWidth = NSWidth([self bounds]);
     if (viewWidth < 1) {
         LOG_ERROR("%@ has no width when printing", self);
-        return 1.0;
+        return 1.0f;
     }
 
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
-    float maxShrinkToFitScaleFactor = 1/PrintingMaximumShrinkFactor;
+    float maxShrinkToFitScaleFactor = 1.0f / PrintingMaximumShrinkFactor;
     float shrinkToFitScaleFactor = [self _availablePaperWidthForPrintOperation:printOperation]/viewWidth;
     return userScaleFactor * MAX(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor);
 }
@@ -3126,13 +3126,13 @@ done:
 // This is used for Carbon printing. At some point we might want to make this public API.
 - (void)setPageWidthForPrinting:(float)pageWidth
 {
-    [self _setPrinting:NO minimumPageWidth:0. maximumPageWidth:0. adjustViewSize:NO];
+    [self _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
     [self _setPrinting:YES minimumPageWidth:pageWidth maximumPageWidth:pageWidth adjustViewSize:YES];
 }
 
 - (void)_endPrintMode
 {
-    [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:YES];
+    [self _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:YES];
     [[self window] setAutodisplay:YES];
 }
 
@@ -3172,12 +3172,12 @@ done:
     
     // If we are a frameset just print with the layout we have onscreen, otherwise relayout
     // according to the paper size
-    float minLayoutWidth = 0.0;
-    float maxLayoutWidth = 0.0;
+    float minLayoutWidth = 0.0f;
+    float maxLayoutWidth = 0.0f;
     if (![[self _bridge] isFrameSet]) {
         float paperWidth = [self _availablePaperWidthForPrintOperation:[NSPrintOperation currentOperation]];
-        minLayoutWidth = paperWidth*PrintingMinimumShrinkFactor;
-        maxLayoutWidth = paperWidth*PrintingMaximumShrinkFactor;
+        minLayoutWidth = paperWidth * PrintingMinimumShrinkFactor;
+        maxLayoutWidth = paperWidth * PrintingMaximumShrinkFactor;
     }
     [self _setPrinting:YES minimumPageWidth:minLayoutWidth maximumPageWidth:maxLayoutWidth adjustViewSize:YES]; // will relayout
     NSPrintOperation *printOperation = [NSPrintOperation currentOperation];
@@ -3926,12 +3926,12 @@ done:
 
 - (NSFont *)_originalFontA
 {
-    return [[NSFontManager sharedFontManager] fontWithFamily:@"Helvetica" traits:0 weight:STANDARD_WEIGHT size:10];
+    return [[NSFontManager sharedFontManager] fontWithFamily:@"Helvetica" traits:0 weight:STANDARD_WEIGHT size:10.0f];
 }
 
 - (NSFont *)_originalFontB
 {
-    return [[NSFontManager sharedFontManager] fontWithFamily:@"Times" traits:(NSBoldFontMask | NSItalicFontMask) weight:STANDARD_BOLD_WEIGHT size:12];
+    return [[NSFontManager sharedFontManager] fontWithFamily:@"Times" traits:(NSBoldFontMask | NSItalicFontMask) weight:STANDARD_BOLD_WEIGHT size:12.0f];
 }
 
 - (void)_addToStyle:(DOMCSSStyleDeclaration *)style fontA:(NSFont *)a fontB:(NSFont *)b
@@ -5329,7 +5329,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [_tableView release];
     
     _popupWindow = [[NSWindow alloc] initWithContentRect:scrollFrame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
-    [_popupWindow setAlphaValue:0.88];
+    [_popupWindow setAlphaValue:0.88f];
     [_popupWindow setContentView:scrollView];
     [scrollView release];
     [_popupWindow setHasShadow:YES];
@@ -5351,12 +5351,12 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     windowFrame.origin = [[_view window] convertBaseToScreen:[_view convertPoint:wordStart toView:nil]];
     windowFrame.size.height = numberToShow * [_tableView rowHeight] + (numberToShow + 1) * [_tableView intercellSpacing].height;
     windowFrame.origin.y -= windowFrame.size.height;
-    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont systemFontOfSize:12.0], NSFontAttributeName, nil];
-    float maxWidth = 0.0;
+    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont systemFontOfSize:12.0f], NSFontAttributeName, nil];
+    float maxWidth = 0.0f;
     int maxIndex = -1;
     int i;
     for (i = 0; i < numberToShow; i++) {
-        float width = ceil([[_completions objectAtIndex:i] sizeWithAttributes:attributes].width);
+        float width = ceilf([[_completions objectAtIndex:i] sizeWithAttributes:attributes].width);
         if (width > maxWidth) {
             maxWidth = width;
             maxIndex = i;
@@ -5364,11 +5364,11 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     }
     windowFrame.size.width = 100;
     if (maxIndex >= 0) {
-        maxWidth = ceil([NSScrollView frameSizeForContentSize:NSMakeSize(maxWidth, 100) hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSNoBorder].width);
-        maxWidth = ceil([NSWindow frameRectForContentRect:NSMakeRect(0, 0, maxWidth, 100) styleMask:NSBorderlessWindowMask].size.width);
-        maxWidth += 5.0;
+        maxWidth = ceilf([NSScrollView frameSizeForContentSize:NSMakeSize(maxWidth, 100.0f) hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSNoBorder].width);
+        maxWidth = ceilf([NSWindow frameRectForContentRect:NSMakeRect(0.0f, 0.0f, maxWidth, 100.0f) styleMask:NSBorderlessWindowMask].size.width);
+        maxWidth += 5.0f;
         windowFrame.size.width = MAX(maxWidth, windowFrame.size.width);
-        maxWidth = MIN(400.0, windowFrame.size.width);
+        maxWidth = MIN(400.0f, windowFrame.size.width);
     }
     [_popupWindow setFrame:windowFrame display:NO];
     

@@ -28,7 +28,7 @@
 
 #import <AppKit/AppKit.h>
 
-#define WebDragImageAlpha 0.75
+#define WebDragImageAlpha 0.75f
 
 @class DOMElement;
 @class WebFrameView;

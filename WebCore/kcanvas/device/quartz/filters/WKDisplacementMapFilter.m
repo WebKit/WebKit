@@ -38,10 +38,10 @@ static CIKernel *displacementMapFilter = nil;
                      [NSArray arrayWithObjects:kCICategoryStylize, kCICategoryVideo,
                          kCICategoryStillImage, kCICategoryNonSquarePixels,nil], kCIAttributeFilterCategories,
                      [NSDictionary dictionaryWithObjectsAndKeys:
-                         [CIVector vectorWithX:1.0 Y:0.0 Z:0.0 W:0.0],
+                         [CIVector vectorWithX:1.0f Y:0.0f Z:0.0f W:0.0f],
                          kCIAttributeDefault, nil], @"inputXChannelSelector",   
                      [NSDictionary dictionaryWithObjectsAndKeys:
-                         [CIVector vectorWithX:0.0 Y:1.0 Z:0.0 W:0.0],
+                         [CIVector vectorWithX:0.0f Y:1.0f Z:0.0f W:0.0f],
                          kCIAttributeDefault, nil], @"inputYChannelSelector",                  
                      [NSDictionary dictionaryWithObjectsAndKeys:
                          [NSNumber numberWithDouble:0.0], kCIAttributeDefault,

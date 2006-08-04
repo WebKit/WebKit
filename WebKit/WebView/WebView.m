@@ -2663,9 +2663,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [[self mainFrame] reload];
 }
 
-#define MinimumTextSizeMultiplier       0.5
-#define MaximumTextSizeMultiplier       3.0
-#define TextSizeMultiplierRatio         1.2
+#define MinimumTextSizeMultiplier       0.5f
+#define MaximumTextSizeMultiplier       3.0f
+#define TextSizeMultiplierRatio         1.2f
 
 - (BOOL)canMakeTextSmaller
 {
@@ -2681,7 +2681,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (IBAction)makeTextSmaller:(id)sender
 {
-    float newScale = _private->textSizeMultiplier/TextSizeMultiplierRatio;
+    float newScale = _private->textSizeMultiplier / TextSizeMultiplierRatio;
     BOOL canShrinkMore = newScale > MinimumTextSizeMultiplier;
     [self _performTextSizingSelector:@selector(_makeTextSmaller:) withObject:sender onTrackingDocs:canShrinkMore selForNonTrackingDocs:@selector(_canMakeTextSmaller) newScaleFactor:newScale];
 }
@@ -2717,14 +2717,14 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)canMakeTextStandardSize
 {
-    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
-    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:0];
+    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0f;
+    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:0.0f];
 }
 
 - (IBAction)makeTextStandardSize:(id)sender
 {
-    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
-    [self _performTextSizingSelector:@selector(_makeTextStandardSize:) withObject:sender onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:1.0];
+    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0f;
+    [self _performTextSizingSelector:@selector(_makeTextStandardSize:) withObject:sender onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:1.0f];
 }
 
 #define VALIDATE(name) \

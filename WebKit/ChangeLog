@@ -1,3 +1,74 @@
+2006-08-04  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10192
+          Make WebCore (and friends) compile with -Wshorten-64-to-32
+
+          * Adds 'f' to float literals where expecting a float.
+          * Use ceilf() instead of ceil() when assigning to a float.
+          * Adds explicit casts where OK.
+          
+          NOTE: The -Wshorten-64-to-32 flag was not added for WebKit
+          because there are still a few places where no error handling 
+          is in place.  The flag can be added as soon as those are worked
+          out.
+
+        * Misc/WebNSControlExtras.m:
+        (-[NSControl sizeToFitAndAdjustWindowHeight]):
+        * Misc/WebNSImageExtras.m:
+        (-[NSImage _web_scaleToMaxSize:]):
+        * Misc/WebNSViewExtras.h:
+        * Misc/WebNSViewExtras.m:
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebBaseNetscapePluginView drawRect:]):
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge expiresTimeForResponse:]):
+        * WebInspector/WebInspector.m:
+        (-[NSWindow window]):
+        (-[WebInspector treeViewScrollTo:]):
+        (-[WebInspector _updateSystemColors]):
+        (-[WebInspector webView:plugInViewWithArguments:]):
+        (-[WebInspector outlineView:objectValueForTableColumn:byItem:]):
+        * WebInspector/WebInspectorOutlineView.m:
+        (-[WebInspectorOutlineView _highlightRow:clipRect:]):
+        * WebInspector/WebNodeHighlight.m:
+        (-[WebNodeHighlight initWithBounds:andRects:forView:]):
+        * WebInspector/WebNodeHighlightView.m:
+        (-[WebNodeHighlightView roundedRect:withRadius:]):
+        (-[WebNodeHighlightView initWithHighlight:andRects:forView:]):
+        (-[WebNodeHighlightView drawRect:]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _opened]):
+        * WebView/WebFrameView.m:
+        (-[WebFrameView initWithFrame:]):
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _dragImageForLinkElement:]):
+        (-[WebHTMLView _web_setPrintingModeRecursive]):
+        (-[WebHTMLView _web_clearPrintingModeRecursive]):
+        (-[NSArray layout]):
+        (-[NSArray _setPrinting:minimumPageWidth:maximumPageWidth:adjustViewSize:]):
+        (-[NSArray adjustPageHeightNew:top:bottom:limit:]):
+        (-[NSArray _scaleFactorForPrintOperation:]):
+        (-[NSArray setPageWidthForPrinting:]):
+        (-[NSArray _endPrintMode]):
+        (-[NSArray knowsPageRange:]):
+        (-[NSArray _originalFontA]):
+        (-[NSArray _originalFontB]):
+        (-[WebTextCompleteController _buildUI]):
+        (-[WebTextCompleteController _placePopupWindow:]):
+        * WebView/WebPDFView.m:
+        (-[WebPDFView _makeTextStandardSize:]):
+        (-[WebPDFView selectionImageForcingWhiteText:]):
+        (-[PDFPrefUpdatingProxy forwardInvocation:]):
+        * WebView/WebPreferences.m:
+        (-[WebPreferences _floatValueForKey:]):
+        * WebView/WebView.m:
+        (-[WebView makeTextSmaller:]):
+        (-[WebView canMakeTextStandardSize]):
+        (-[WebView makeTextStandardSize:]):
+
 2006-08-04  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by NOBODY (build fix).

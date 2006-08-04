@@ -298,7 +298,7 @@ NS_ENDHANDLER
 - (float)_floatValueForKey:(NSString *)key
 {
     id o = [self _valueForKey:key];
-    return [o respondsToSelector:@selector(floatValue)] ? [o floatValue] : 0.0;
+    return [o respondsToSelector:@selector(floatValue)] ? [o floatValue] : 0.0f;
 }
 
 - (void)_setFloatValue:(float)value forKey:(NSString *)key

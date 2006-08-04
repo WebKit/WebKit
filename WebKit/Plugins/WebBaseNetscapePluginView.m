@@ -479,7 +479,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 {
                     GLsizei width, height;
                     if ([self _getAGLOffscreenBuffer:NULL width:&width height:&height])
-                        glViewport(0.0, 0.0, width, height);
+                        glViewport(0, 0, width, height);
                 }
                 break;
                 
@@ -1497,8 +1497,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             CGContextRef cgContext = [[NSGraphicsContext currentContext] graphicsPort];
             CGContextSaveGState(cgContext);
             NSRect bounds = [self bounds];
-            CGContextTranslateCTM(cgContext, 0.0, NSHeight(bounds));
-            CGContextScaleCTM(cgContext, 1.0, -1.0);
+            CGContextTranslateCTM(cgContext, 0.0f, NSHeight(bounds));
+            CGContextScaleCTM(cgContext, 1.0f, -1.0f);
             [printedPluginBitmap drawInRect:bounds];
             CGContextRestoreGState(cgContext);
         }
@@ -1512,13 +1512,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             CGContextRef cgContext = [[NSGraphicsContext currentContext] graphicsPort];
             CGContextSaveGState(cgContext);
             NSRect bounds = [self bounds];
-            CGContextTranslateCTM(cgContext, 0.0, NSHeight(bounds));
-            CGContextScaleCTM(cgContext, 1.0, -1.0);
+            CGContextTranslateCTM(cgContext, 0.0f, NSHeight(bounds));
+            CGContextScaleCTM(cgContext, 1.0f, -1.0f);
             
             // Copy 'rect' from the offscreen buffer to this view (the flip above makes this sort of tricky)
             NSRect flippedRect = rect;
             flippedRect.origin.y = NSMaxY(bounds) - NSMaxY(flippedRect);
-            [aglOffscreenImage drawInRect:flippedRect fromRect:flippedRect operation:NSCompositeSourceOver fraction:1.0];
+            [aglOffscreenImage drawInRect:flippedRect fromRect:flippedRect operation:NSCompositeSourceOver fraction:1.0f];
             CGContextRestoreGState(cgContext);
         }
     }

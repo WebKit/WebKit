@@ -61,7 +61,7 @@ static CIKernel *discreteTransferFilter = nil;
     CISampler *inputSampler = [CISampler samplerWithImage: inputImage];
     CISampler *tableSampler = [CISampler samplerWithImage: inputTable keysAndValues:kCISamplerFilterMode, kCISamplerFilterNearest, kCISamplerWrapMode, kCISamplerWrapClamp, nil];
     NSArray *args = [NSArray arrayWithObjects:inputSampler, tableSampler, inputSelector, 
-        [NSNumber numberWithFloat:[inputTable extent].size.width-1.0], @"definition", [inputSampler definition], nil];
+        [NSNumber numberWithFloat:[inputTable extent].size.width - 1.0f], @"definition", [inputSampler definition], nil];
     return [self apply:discreteTransferFilter arguments:args options:nil];
 }
 

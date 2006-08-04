@@ -54,8 +54,8 @@ NSString *WebNodeHighlightExpiredNotification = @"WebNodeHighlightExpiredNotific
     }
 
     // adjust size and position for rect padding that the view adds
-    bounds.origin.y -= 3.0;
-    bounds.origin.x -= 3.0;
+    bounds.origin.y -= 3.0f;
+    bounds.origin.x -= 3.0f;
     bounds.size = [_webNodeHighlightView frame].size;
 
     NSRect windowBounds = [view convertRect:bounds toView:nil];

@@ -7460,6 +7460,7 @@
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
 					"-Wundef",
+					"-Wshorten-64-to-32",
 				);
 			};
 			name = Debug;
@@ -7498,6 +7499,7 @@
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
 					"-Wundef",
+					"-Wshorten-64-to-32",
 				);
 			};
 			name = Release;
@@ -7533,6 +7535,7 @@
 					"-Wno-unused-parameter",
 					"-Wno-long-double",
 					"-Wundef",
+					"-Wshorten-64-to-32",
 				);
 			};
 			name = Production;

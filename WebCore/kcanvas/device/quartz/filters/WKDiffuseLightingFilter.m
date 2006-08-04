@@ -37,7 +37,7 @@ static CIKernel *diffuseLightingFilter = nil;
                      [NSArray arrayWithObjects:kCICategoryStylize, kCICategoryVideo,
                          kCICategoryStillImage, kCICategoryNonSquarePixels,nil], kCIAttributeFilterCategories,
                      [NSDictionary dictionaryWithObjectsAndKeys:
-                         [CIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0],
+                         [CIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:1.0f],
                          kCIAttributeDefault, nil], @"inputLightingColor",
                      [NSDictionary dictionaryWithObjectsAndKeys:
                          [NSNumber numberWithDouble:0.0], kCIAttributeMin,

@@ -34,7 +34,7 @@
 
 - (void)_web_scaleToMaxSize:(NSSize)size
 {
-    float heightResizeDelta = 0.0, widthResizeDelta = 0.0, resizeDelta = 0.0;
+    float heightResizeDelta = 0.0f, widthResizeDelta = 0.0f, resizeDelta = 0.0f;
     NSSize originalSize = [self size];
 
     if(originalSize.width > size.width){

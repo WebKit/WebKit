@@ -70,7 +70,7 @@ static CIKernel *spotLightFilter = nil;
 
 - (CIImage *)outputImage
 {
-    float coscutoff = cos([inputLimitingConeAngle floatValue]);
+    float coscutoff = cosf([inputLimitingConeAngle floatValue]);
     if (coscutoff < 0) 
         coscutoff = -coscutoff;
     return [self apply:spotLightFilter, inputLightVectors, inputLightDirection, inputSpecularExponent, [NSNumber numberWithFloat:coscutoff], nil];

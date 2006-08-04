@@ -639,7 +639,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     NSTimeInterval expiration = [response _calculatedExpiration];
     expiration += kCFAbsoluteTimeIntervalSince1970;
-    return expiration > MAX_TIME_T ? MAX_TIME_T : expiration;
+    
+    return expiration > MAX_TIME_T ? MAX_TIME_T : (time_t)expiration;
 }
 
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction

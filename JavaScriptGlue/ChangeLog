@@ -1,3 +1,14 @@
+2006-08-04  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10192
+          Make WebCore (and friends) compile with -Wshorten-64-to-32
+
+          * Adds -Wshorten-64-to-32 flag to Xcode project.
+
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+
 2006-08-03  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.

@@ -902,7 +902,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
             id identifier;
             NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[response URL]];
             [self _requestFromDelegateForRequest:request identifier:&identifier error:&error];
-            [self _sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[response expectedContentLength] error:error];
+            [self _sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:(unsigned)[response expectedContentLength] error:error];
             [request release];
         }
         

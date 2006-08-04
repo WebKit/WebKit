@@ -35,11 +35,11 @@
 {
     NSBezierPath *path = [[NSBezierPath alloc] init];
 
-    NSRect irect = NSInsetRect( rect, radius, radius );
-    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMinX(irect), NSMinY(irect)) radius:radius startAngle:180. endAngle:270.];
-    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMaxX(irect), NSMinY(irect)) radius:radius startAngle:270. endAngle:360.];
-    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMaxX(irect), NSMaxY(irect)) radius:radius startAngle:0. endAngle:90.];
-    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMinX(irect), NSMaxY(irect)) radius:radius startAngle:90. endAngle:180.];
+    NSRect irect = NSInsetRect(rect, radius, radius);
+    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMinX(irect), NSMinY(irect)) radius:radius startAngle:180.0f endAngle:270.0f];
+    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMaxX(irect), NSMinY(irect)) radius:radius startAngle:270.0f endAngle:360.0f];
+    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMaxX(irect), NSMaxY(irect)) radius:radius startAngle:0.0f endAngle:90.0f];
+    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMinX(irect), NSMaxY(irect)) radius:radius startAngle:90.0f endAngle:180.0f];
     [path closePath];
 
     return [path autorelease];
@@ -60,14 +60,14 @@
 
     if([rects count] == 1) {
         NSValue *value = (NSValue *)[rects objectAtIndex:0];
-        rect = NSInsetRect([value rectValue], -1.0, -1.0);
+        rect = NSInsetRect([value rectValue], -1.0f, -1.0f);
         rect = NSIntersectionRect(rect, visibleRect);
         if (!NSIsEmptyRect(rect))
-            path = [[self roundedRect:rect withRadius:3.0] retain];
+            path = [[self roundedRect:rect withRadius:3.0f] retain];
 
         // shift everything to the corner
         NSAffineTransform *transform = [[NSAffineTransform alloc] init];
-        [transform translateXBy:(NSMinX(rect) * -1.0) + 2.5 yBy:(NSMinY(rect) * -1.0) + 2.5];
+        [transform translateXBy:(NSMinX(rect) * -1.0f) + 2.5f yBy:(NSMinY(rect) * -1.0f) + 2.5f];
         [path transformUsingAffineTransform:transform];
         [straightPath transformUsingAffineTransform:transform];
         [transform release];
@@ -84,7 +84,7 @@
             rect = NSIntersectionRect([value rectValue], visibleRect);
             if (!NSIsEmptyRect(rect)) {
                 [straightPath appendBezierPathWithRect:rect];
-                [path appendBezierPath:[self roundedRect:rect withRadius:3.0]];
+                [path appendBezierPath:[self roundedRect:rect withRadius:3.0f]];
             }
         }
 
@@ -99,14 +99,14 @@
 
         // multiple rects we get from WebCore need flipped to show up correctly
         NSAffineTransform *transform = [[NSAffineTransform alloc] init];
-        [transform scaleXBy:1.0 yBy:-1.0];
+        [transform scaleXBy:1.0f yBy:-1.0f];
         [path transformUsingAffineTransform:transform];
         [straightPath transformUsingAffineTransform:transform];
         [transform release];
 
         // shift everything to the corner
         transform = [[NSAffineTransform alloc] init];
-        [transform translateXBy:(NSMinX(rect) * -1.0) + 2.5 yBy:NSMaxY(rect) + 2.5];
+        [transform translateXBy:(NSMinX(rect) * -1.0f) + 2.5f yBy:NSMaxY(rect) + 2.5f];
         [path transformUsingAffineTransform:transform];
         [straightPath transformUsingAffineTransform:transform];
         [transform release];
@@ -123,8 +123,8 @@
 
     // make the drawing area larger for the focus ring blur
     rect = [path bounds];
-    rect.size.width += 5.0;
-    rect.size.height += 5.0;
+    rect.size.width += 5.0f;
+    rect.size.height += 5.0f;
     [self setFrameSize:rect.size];
 
     // draw into an image
@@ -134,7 +134,7 @@
 
     if (straightPath) {
         [[NSColor redColor] set];
-        [path setLineWidth:4.0];
+        [path setLineWidth:4.0f];
         [path stroke];
 
         // clear the center to eliminate thick inner strokes for overlapping rects
@@ -143,12 +143,12 @@
 
         // stroke the straight line path with a light color to show any inner rects
         [[NSGraphicsContext currentContext] setCompositingOperation:NSCompositeDestinationOver];
-        [[[NSColor redColor] colorWithAlphaComponent:0.6] set];
-        [straightPath setLineWidth:1.0];
+        [[[NSColor redColor] colorWithAlphaComponent:0.6f] set];
+        [straightPath setLineWidth:1.0f];
         [straightPath stroke];
     } else {
         [[NSColor redColor] set];
-        [path setLineWidth:2.0];
+        [path setLineWidth:2.0f];
         [path stroke];
     }
 
@@ -180,6 +180,6 @@
     else if (alpha < 0.0)
         alpha = 0.0;
 
-    [_highlightRingImage drawInRect:rect fromRect:rect operation:NSCompositeCopy fraction:alpha];
+    [_highlightRingImage drawInRect:rect fromRect:rect operation:NSCompositeCopy fraction:(float)alpha];
 }
 @end

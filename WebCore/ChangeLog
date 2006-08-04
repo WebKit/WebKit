@@ -1,3 +1,28 @@
+2006-08-04  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10192
+          Make WebCore (and friends) compile with -Wshorten-64-to-32
+
+          * Adds -Wshorten-64-to-32 flag to Xcode project.
+          * Adds 'f' to float literals where expecting a float.
+          * Use cosf() instead of cos() when assigning to a float.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/device/quartz/filters/WKDiffuseLightingFilter.m:
+        (+[WKDiffuseLightingFilter initialize]):
+        * kcanvas/device/quartz/filters/WKDiscreteTransferFilter.m:
+        (-[WKDiscreteTransferFilter outputImage]):
+        * kcanvas/device/quartz/filters/WKDisplacementMapFilter.m:
+        (+[WKDisplacementMapFilter initialize]):
+        * kcanvas/device/quartz/filters/WKSpecularLightingFilter.m:
+        (+[WKSpecularLightingFilter initialize]):
+        * kcanvas/device/quartz/filters/WKSpotLightFilter.m:
+        (-[WKSpotLightFilter outputImage]):
+        * kcanvas/device/quartz/filters/WKTableTransferFilter.m:
+        (-[WKTableTransferFilter outputImage]):
+
 2006-08-03  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 10229, don't bother trying to clear when no floats are

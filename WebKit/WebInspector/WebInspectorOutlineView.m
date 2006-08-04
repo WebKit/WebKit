@@ -43,8 +43,8 @@
 - (void)_highlightRow:(int)row clipRect:(NSRect)clip {
     NSColor *selectionColor = nil;
     if ([[self window] firstResponder] == self && [[self window] isKeyWindow])
-        selectionColor = [[NSColor alternateSelectedControlColor] colorWithAlphaComponent:0.333];
-    selectionColor = [[NSColor alternateSelectedControlColor] colorWithAlphaComponent:0.45];
+        selectionColor = [[NSColor alternateSelectedControlColor] colorWithAlphaComponent:0.333f];
+    selectionColor = [[NSColor alternateSelectedControlColor] colorWithAlphaComponent:0.45f];
 
     if ([self numberOfColumns] > 0) {
         NSRect highlight = [self rectOfRow:row];
@@ -61,14 +61,14 @@
             if ([NSGraphicsContext currentContextDrawingToScreen]) {
                 NSBezierPath *path = [[NSBezierPath alloc] init];
 
-                float radius = 6.0;
+                float radius = 6.0f;
                 NSRect irect = NSInsetRect(highlight, radius, radius);
                 if (!solid)
-                    irect = NSInsetRect(irect, 1.0, 1.0);
-                [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMinX(irect), NSMinY(irect)) radius:radius startAngle:180. endAngle:270.];
-                [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMaxX(irect), NSMinY(irect)) radius:radius startAngle:270. endAngle:360.];
-                [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMaxX(irect), NSMaxY(irect)) radius:radius startAngle:0. endAngle:90.];
-                [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMinX(irect), NSMaxY(irect)) radius:radius startAngle:90. endAngle:180.];
+                    irect = NSInsetRect(irect, 1.0f, 1.0f);
+                [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMinX(irect), NSMinY(irect)) radius:radius startAngle:180.0f endAngle:270.0f];
+                [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMaxX(irect), NSMinY(irect)) radius:radius startAngle:270.0f endAngle:360.0f];
+                [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMaxX(irect), NSMaxY(irect)) radius:radius startAngle:0.0f endAngle:90.0f];
+                [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMinX(irect), NSMaxY(irect)) radius:radius startAngle:90.0f endAngle:180.0f];
                 [path closePath];
 
                 NSRectClip(clip);
@@ -76,7 +76,7 @@
                 if (solid) {
                     [path fill];
                 } else {
-                    [path setLineWidth:2.0];
+                    [path setLineWidth:2.0f];
                     [path stroke];
                 }
 

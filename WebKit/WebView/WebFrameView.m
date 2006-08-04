@@ -333,14 +333,14 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     
     _private = [[WebFrameViewPrivate alloc] init];
 
-    WebDynamicScrollBarsView *scrollView  = [[WebDynamicScrollBarsView alloc] initWithFrame:NSMakeRect(0,0,frame.size.width,frame.size.height)];
+    WebDynamicScrollBarsView *scrollView  = [[WebDynamicScrollBarsView alloc] initWithFrame:NSMakeRect(0.0f, 0.0f, frame.size.width, frame.size.height)];
     _private->frameScrollView = scrollView;
     [scrollView setContentView:[[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
     [scrollView setDrawsBackground:NO];
     [scrollView setHasVerticalScroller:NO];
     [scrollView setHasHorizontalScroller:NO];
     [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [scrollView setLineScroll:40.0];
+    [scrollView setLineScroll:40.0f];
     [self addSubview:scrollView];
     // don't call our overridden version here; we need to make the standard NSView link between us
     // and our subview so that previousKeyView and previousValidKeyView work as expected. This works

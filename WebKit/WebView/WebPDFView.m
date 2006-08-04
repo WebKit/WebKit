@@ -800,7 +800,7 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 
 - (IBAction)_makeTextStandardSize:(id)sender
 {
-    [PDFSubviewProxy setScaleFactor:1.0];
+    [PDFSubviewProxy setScaleFactor:1.0f];
 }
 
 - (BOOL)_tracksCommonSizeFactor
@@ -866,7 +866,7 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     [attributedString removeAttribute:NSBackgroundColorAttributeName range:wholeStringRange];
     [attributedString removeAttribute:NSUnderlineStyleAttributeName range:wholeStringRange];
     if (forceWhiteText)
-        [attributedString addAttribute:NSForegroundColorAttributeName value:[NSColor colorWithDeviceWhite:1.0 alpha:1.0] range:wholeStringRange];
+        [attributedString addAttribute:NSForegroundColorAttributeName value:[NSColor colorWithDeviceWhite:1.0f alpha:1.0f] range:wholeStringRange];
     [attributedString endEditing];
     
     NSImage* selectionImage = [[[NSImage alloc] initWithSize:[self selectionImageRect].size] autorelease];
@@ -992,7 +992,7 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     [invocation invokeWithTarget:PDFSubview];
 
     WebPreferences *prefs = [[view->dataSource _webView] preferences];
-    float scaleFactor = [PDFSubview autoScales] ? 0.0 : [PDFSubview scaleFactor];
+    float scaleFactor = [PDFSubview autoScales] ? 0.0f : [PDFSubview scaleFactor];
     [prefs setPDFScaleFactor:scaleFactor];
     [prefs setPDFDisplayMode:[PDFSubview displayMode]];
 }

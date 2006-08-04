@@ -106,7 +106,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 {
     NSWindow *window = [super window];
     if (!window) {
-        NSPanel *window = [[WebInspectorPanel alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 350.0, 550.0)\
+        NSPanel *window = [[WebInspectorPanel alloc] initWithContentRect:NSMakeRect(60.0f, 200.0f, 350.0f, 550.0f)\
             styleMask:(NSBorderlessWindowMask | NSUtilityWindowMask) backing:NSBackingStoreBuffered defer:YES];
         [window setBackgroundColor:[NSColor clearColor]];
         [window setOpaque:NO];
@@ -120,7 +120,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         [window setMovableByWindowBackground:YES];
         [window setHidesOnDeactivate:NO];
         [window setDelegate:self];
-        [window setMinSize:NSMakeSize(280.0, 450.0)];
+        [window setMinSize:NSMakeSize(280.0f, 450.0f)];
 
         // Keep preferences separate from the rest of the client.
         // One reason this is good is that it keeps the inspector out of history via "private browsing".
@@ -415,8 +415,8 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 - (void)treeViewScrollTo:(float)number
 {
     float bottom = NSHeight([_private->treeOutlineView frame]) - NSHeight([_private->treeScrollView documentVisibleRect]);
-    number = MAX(0.0, MIN(bottom, number));
-    [[_private->treeScrollView contentView] scrollToPoint:NSMakePoint(0.0, number)];
+    number = MAX(0.0f, MIN(bottom, number));
+    [[_private->treeScrollView contentView] scrollToPoint:NSMakePoint(0.0f, number)];
 }
 
 - (float)treeViewOffsetTop
@@ -773,7 +773,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     if (!_private->webViewLoaded)
         return;
 
-    CGFloat red = 0.0, green = 0.0, blue = 0.0;
+    CGFloat red = 0.0f, green = 0.0f, blue = 0.0f;
     NSColor *color = [[NSColor alternateSelectedControlColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     [color getRed:&red green:&green blue:&blue alpha:NULL];
 
@@ -869,7 +869,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     NSDictionary *attributes = [arguments objectForKey:@"WebPlugInAttributesKey"];
     if ([[attributes objectForKey:@"type"] isEqualToString:@"application/x-inspector-tree"]) {
         if (!_private->treeOutlineView) {
-            _private->treeScrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0.0, 0.0, 250.0, 100.0)];
+            _private->treeScrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0.0f, 0.0f, 250.0f, 100.0f)];
             [_private->treeScrollView setDrawsBackground:NO];
             [_private->treeScrollView setBorderType:NSNoBorder];
             [_private->treeScrollView setVerticalScroller:NO];
@@ -886,15 +886,15 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
             [_private->treeOutlineView sendActionOn:(NSLeftMouseUpMask | NSLeftMouseDownMask | NSLeftMouseDraggedMask)];
             [_private->treeOutlineView setFocusRingType:NSFocusRingTypeNone];
             [_private->treeOutlineView setAutoresizesOutlineColumn:NO];
-            [_private->treeOutlineView setRowHeight:15.0];
+            [_private->treeOutlineView setRowHeight:15.0f];
             [_private->treeOutlineView setTarget:self];
             [_private->treeOutlineView setDoubleAction:@selector(_focusRootNode:)];
-            [_private->treeOutlineView setIndentationPerLevel:12.0];
+            [_private->treeOutlineView setIndentationPerLevel:12.0f];
             [_private->treeScrollView setDocumentView:_private->treeOutlineView];
 
             NSCell *headerCell = [[NSCell alloc] initTextCell:@""];
             NSCell *dataCell = [[NSCell alloc] initTextCell:@""];
-            [dataCell setFont:[NSFont systemFontOfSize:11.0]];
+            [dataCell setFont:[NSFont systemFontOfSize:11.0f]];
 
             NSTableColumn *tableColumn = [[NSTableColumn alloc] initWithIdentifier:@"node"];
             [tableColumn setHeaderCell:headerCell];
@@ -973,8 +973,8 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     if (outlineView == _private->treeOutlineView && node) {
         NSShadow *shadow = [[NSShadow alloc] init];
         [shadow setShadowColor:[NSColor blackColor]];
-        [shadow setShadowBlurRadius:2.0];
-        [shadow setShadowOffset:NSMakeSize(2.0,-2.0)];
+        [shadow setShadowBlurRadius:2.0f];
+        [shadow setShadowOffset:NSMakeSize(2.0f, -2.0f)];
         NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [para setLineBreakMode:NSLineBreakByTruncatingTail];
         
@@ -983,7 +983,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         [attrs release];
 
         if ([node hasChildNodes] && ![outlineView isItemExpanded:node]) {
-            attrs = [[NSDictionary alloc] initWithObjectsAndKeys:[NSColor colorWithCalibratedRed:1.0 green:1.0 blue:1.0 alpha:0.5], NSForegroundColorAttributeName, shadow, NSShadowAttributeName, para, NSParagraphStyleAttributeName, nil];
+            attrs = [[NSDictionary alloc] initWithObjectsAndKeys:[NSColor colorWithCalibratedRed:1.0f green:1.0f blue:1.0f alpha:0.5f], NSForegroundColorAttributeName, shadow, NSShadowAttributeName, para, NSParagraphStyleAttributeName, nil];
             NSAttributedString *preview = [[NSAttributedString alloc] initWithString:[node _contentPreview] attributes:attrs];
             [string appendAttributedString:preview];
             [attrs release];
