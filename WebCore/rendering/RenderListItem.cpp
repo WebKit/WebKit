@@ -193,8 +193,7 @@ void RenderListItem::updateMarkerLocation()
         }
         
         if (markerPar != lineBoxParent || !m_marker->minMaxKnown()) {
-            if (markerPar)
-                markerPar->removeChild(m_marker);
+            m_marker->remove();
             if (!lineBoxParent)
                 lineBoxParent = this;
             lineBoxParent->addChild(m_marker, lineBoxParent->firstChild());

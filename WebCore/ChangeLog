@@ -1,3 +1,24 @@
+2006-08-04  David Hyatt  <hyatt@apple.com>
+
+        Back out the fix for list marker crashes.  The actual bug here is that
+        there is a confusing mismatch between remove() and removeChild() in the
+        render tree.  remove() does a little bit of extra work that removeChild
+        should be doing instead (so that remove() can just be a shorthand for
+        removeChild).
+
+        This conservative fix does not solve the remove/removeChild mismatch
+        but instead just changes the list marker updating code to use remove
+        instead.
+
+        Reviewed by beth
+
+        Test Case: fast/lists/dynamic-marker-crash.html
+
+        * rendering/ListMarkerBox.cpp:
+        * rendering/ListMarkerBox.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateMarkerLocation):
+
 2006-08-04  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.
