@@ -1,3 +1,14 @@
+2006-08-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Geoff's rubber stamp
+
+        Fix a build break on Intel hardware causes by adapting stricter
+        compiler warnings (-Wshorten-64-to-32)
+
+        * API/testapi.c:
+        (assertEqualsAsNumber): manually cast some doubles to floats
+        (main): ditto
+
 2006-08-04  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.
