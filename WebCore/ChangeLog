@@ -1,5 +1,18 @@
 2006-08-04  David Hyatt  <hyatt@apple.com>
 
+        Fix for Radar bug #4644045, regression where dragging selection no longer
+        works for floats contained inside layers.  I added an optimization to
+        refine dirty rect checking for layers, and it incorrectly excluded floats
+        from the paint bounds since PaintPhaseSelection was not considered when
+        analyzing the floatRect().
+
+        Reviewed by beth
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+
+2006-08-04  David Hyatt  <hyatt@apple.com>
+
         Fix remove() so that it is equivalent to calling removeChild on the
         parent.  This involved moving three operations that remove did.
 

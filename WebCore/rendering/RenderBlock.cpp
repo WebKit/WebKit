@@ -1240,7 +1240,7 @@ void RenderBlock::paint(PaintInfo& i, int _tx, int _ty)
         bool intersectsOverflowBox = overflowBox.intersects(i.r);
         if (!intersectsOverflowBox) {
             // Check floats next.
-            if (i.phase != PaintPhaseFloat)
+            if (i.phase != PaintPhaseFloat && i.phase != PaintPhaseSelection)
                 return;
             IntRect floatBox = floatRect();
             floatBox.inflate(maximalOutlineSize(i.phase));
