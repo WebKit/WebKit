@@ -1,3 +1,13 @@
+2006-08-03  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/4667460> Windowless OpenGL plug-ins render incorrectly on PowerPC
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView _aglOffscreenImageForDrawingInRect:]):
+        Fixed color component swapping so that it works on both x86 and PPC.  See comments.
+
 2006-08-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher's rubber stamp

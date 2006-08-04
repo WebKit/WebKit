@@ -2754,15 +2754,19 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     GLsizei width, height;
     if (![self _getAGLOffscreenBuffer:&offscreenBuffer width:&width height:&height])
         return nil;
-    
+        
+#if defined(__i386__) || defined(__x86_64__)
     // Make sure drawingInRect is inside the offscreen buffer because we're about to directly modify the bits inside drawingInRect
     drawingInRect = NSIntersectionRect(drawingInRect, NSMakeRect(0, 0, width, height));
-    
-    // The offscreen buffer, being an OpenGL framebuffer, is in BGRA format.  We need to swap the blue and red channels before trying
-    // to wrap the buffer in an NSBitmapImageRep, which only understands RGBA and ARGB.
-    // This is where drawingInRect comes into play.  If only a small region of the plug-in is being redrawn, then it would be a waste
-    // to convert the entire image from BGRA to RGBA.  Since we know what region of the image will ultimately be drawn to screen, we
-    // restrict the channel swapping to just that region within the offscreen buffer.
+
+    // The offscreen buffer, being an OpenGL framebuffer, is in BGRA format on x86.  We need to swap the blue and red channels before
+    // wrapping the buffer in an NSBitmapImageRep, which only supports RGBA and ARGB.
+    // On PowerPC, the OpenGL framebuffer is in ARGB format.  Since that is a format that NSBitmapImageRep supports, all that is
+    // needed on PowerPC is to pass the NSAlphaFirstBitmapFormat flag when creating the NSBitmapImageRep.  On x86, we need to swap the
+    // framebuffer color components such that they are in ARGB order, as they are on PowerPC.
+    // If only a small region of the plug-in is being redrawn, then it would be a waste to convert the entire image from BGRA to ARGB.
+    // Since we know what region of the image will ultimately be drawn to screen (drawingInRect), we restrict the channel swapping to
+    // just that region within the offscreen buffer.
     GLsizei rowBytes = width * 4;
     GLvoid *swizzleImageBase = (unsigned char *)offscreenBuffer + (int)(NSMinY(drawingInRect) * rowBytes) + (int)(NSMinX(drawingInRect) * 4);
     vImage_Buffer vImage = {
@@ -2771,12 +2775,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         width: NSWidth(drawingInRect),
         rowBytes: rowBytes
     };
-    uint8_t vImagePermuteMap[4] = { 2, 1, 0, 3 }; // Where { 0, 1, 2, 3 } would leave the channels unchanged; this map flips channels 0 and 2
+    uint8_t vImagePermuteMap[4] = { 3, 2, 1, 0 }; // Where { 0, 1, 2, 3 } would leave the channels unchanged; this map converts BGRA to ARGB
     vImage_Error vImageError = vImagePermuteChannels_ARGB8888(&vImage, &vImage, vImagePermuteMap, 0);
     if (vImageError) {
         LOG_ERROR("Could not convert BGRA image to ARGB: %d", vImageError);
         return nil;
     }
+#endif /* defined(__i386__) || defined(__x86_64__) */
     
     NSBitmapImageRep *aglBitmap = [[NSBitmapImageRep alloc]
         initWithBitmapDataPlanes:(unsigned char **)&offscreenBuffer
@@ -2787,7 +2792,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                         hasAlpha:YES
                         isPlanar:NO
                   colorSpaceName:NSDeviceRGBColorSpace
-                    bitmapFormat:0
+                    bitmapFormat:NSAlphaFirstBitmapFormat
                      bytesPerRow:width * 4
                     bitsPerPixel:32];
     if (!aglBitmap) {
