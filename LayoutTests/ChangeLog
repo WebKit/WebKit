@@ -1,5 +1,14 @@
 2006-08-03  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by harrison
+        
+        * editing/style/non-inheritable-styles-expected.checksum: Added.
+        * editing/style/non-inheritable-styles-expected.png: Added.
+        * editing/style/non-inheritable-styles-expected.txt: Added.
+        * editing/style/non-inheritable-styles.html: Added.
+
+2006-08-03  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
 
         * fast/forms/plaintext-mode-1-expected.txt:

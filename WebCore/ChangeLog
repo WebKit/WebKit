@@ -1,3 +1,17 @@
+2006-08-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4641033/4515463/4052426/4046570/4053718/4053724/4060115/4062858>
+        Copy/Paste fidelity was bad.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        * editing/markup.cpp:
+        (WebCore::startMarkup): We were not adding non-inheritable styles
+        to the markup for an element unless they were in the elements inline
+        style declaration.
+
 2006-08-03  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.

@@ -595,17 +595,18 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
             rangeIsEmpty = true;
     }
 
+    // If end is [table, maxDeepOffset(table)], that means that the table is selected, and we want to visit
+    // contents of the table, instead of stopping at it.
     if (end.node()->renderer() && end.node()->renderer()->isTable() && end.offset() == maxDeepOffset(end.node()))
         endNode = end.node()->lastDescendant();
+    // If the end node is an ancestor of the start node then a pre-order
+    // traversal will never reach it.  Adjust it so that this won't happen.
+    if (node->isAncestor(endNode))
+        endNode = endNode->lastDescendant();
     
     if (node == endNode) {
         addInlineStyleIfNeeded(style, node, node);
     } else if (!rangeIsEmpty) {
-        // If the end node is an ancestor of the start node then we need
-        // to replace endNode with its next sibling to ensure that the
-        // exit condition node == endNode is reached
-        if (node->isAncestor(endNode))
-            endNode = endNode->traverseNextSibling();
     
         while (1) {
             if (node->childNodeCount() == 0 && node->renderer() && node->renderer()->isInline() && node->isContentRichlyEditable()) {
