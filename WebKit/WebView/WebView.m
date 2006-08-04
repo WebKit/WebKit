@@ -97,9 +97,9 @@
 
 #import <WebCore/WebCoreTextRenderer.h>
 
-#if __ppc__ || __ppc64__
+#if defined(__ppc__) || defined(__ppc64__)
 #define PROCESSOR "PPC"
-#elif __i386__ || __x86_64__
+#elif defined(__i386__) || defined(__x86_64__)
 #define PROCESSOR "Intel"
 #else
 #error Unknown architecture

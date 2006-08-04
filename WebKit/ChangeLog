@@ -1,3 +1,10 @@
+2006-08-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher's rubber stamp
+        Fixed Intel build break caused by weinig's -W change in r15781
+
+        * WebView/WebView.m: wrapped cpu-dependent defs with defined() macro
+
 2006-08-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
@@ -116,6 +123,7 @@
         (-[WebMainResourceLoader didFailWithError:]):
         (-[WebMainResourceLoader loadWithRequestNow:]):
 
+>>>>>>> .r15785
 2006-08-03  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.
