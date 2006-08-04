@@ -170,6 +170,9 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
         oldChild->setNeedsLayoutAndMinMaxRecalc();
         oldChild->repaint();
         
+        // If we have a line box wrapper, delete it.
+        oldChild->deleteLineBoxWrapper();
+
         // Keep our layer hierarchy updated.
         oldChild->removeLayers(enclosingLayer());
         
@@ -211,6 +214,11 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
 
 void RenderContainer::removeChild(RenderObject* oldChild)
 {
+    // We do this here instead of in removeChildNode, since the only extremely low-level uses of remove/appendChildNode
+    // cannot affect the positioned object list, and the floating object list is irrelevant (since the list gets cleared on
+    // layout anyway).
+    oldChild->removeFromObjectLists();
+    
     removeChildNode(oldChild);
 }
 

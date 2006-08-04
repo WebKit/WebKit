@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderWidget.h"
 
+#include "AXObjectCache.h" 
 #include "Document.h"
 #include "Element.h"
 #include "EventNames.h"
@@ -69,6 +70,8 @@ void RenderWidget::destroy()
 
     if (RenderView *c = view())
         c->removeWidget(this);
+
+    document()->axObjectCache()->remove(this);
 
     remove();
 

@@ -1,5 +1,35 @@
 2006-08-04  David Hyatt  <hyatt@apple.com>
 
+        Fix remove() so that it is equivalent to calling removeChild on the
+        parent.  This involved moving three operations that remove did.
+
+        (1) Move the accessibility object cache removal into the destroy methods,
+        since this really should just happen when a render object is going away.
+
+        (2) removeFromObjectLists shifted into removeChild, which means it will
+        now be called more often (this is a correct change).  Note that there is
+        also now a new guard on removeFromObjectLists so that it won't do any
+        work unless the document is not being destroyed.
+
+        (3) The big one.  deleteLineBoxWrapper was not getting called to clean up
+        the line box tree.  This moved right into RenderContainer's removeChildNode so
+        that it is now done even in the lowest level RenderContainer removal primitive.
+
+        Reviewed by beth
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeChildNode):
+        (WebCore::RenderContainer::removeChild):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::removeFromObjectLists):
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::remove):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
+2006-08-04  David Hyatt  <hyatt@apple.com>
+
         Back out the fix for list marker crashes.  The actual bug here is that
         there is a confusing mismatch between remove() and removeChild() in the
         render tree.  remove() does a little bit of extra work that removeChild
