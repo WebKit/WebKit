@@ -1,3 +1,32 @@
+2006-08-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - moved all loader code that is slated to be moved down to WebCore to a new Loader directory
+        
+        (next step is to remove dependencies on the rest of WebKit from this directory)
+
+        * Loader/WebNetscapePlugInStreamLoader.h: Added.
+        * Loader/WebNetscapePlugInStreamLoader.m: Added. Cut out of WebNetscapePluginStream.m
+        (-[WebNetscapePlugInStreamLoader initWithStream:view:]):
+        (-[WebNetscapePlugInStreamLoader isDone]):
+        (-[WebNetscapePlugInStreamLoader releaseResources]):
+        (-[WebNetscapePlugInStreamLoader didReceiveResponse:]):
+        (-[WebNetscapePlugInStreamLoader didReceiveData:lengthReceived:]):
+        (-[WebNetscapePlugInStreamLoader didFinishLoading]):
+        (-[WebNetscapePlugInStreamLoader didFailWithError:]):
+        (-[WebNetscapePlugInStreamLoader cancelWithError:]):
+        * Plugins/WebNetscapePluginStream.m:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebCoreSupport/WebSubresourceLoader.h: Moved to Loader/
+        * WebCoreSupport/WebSubresourceLoader.m: Moved to Loader/
+        * WebView/WebFrameLoader.h: Moved to Loader/
+        * WebView/WebFrameLoader.m: Moved to Loader/
+        * WebView/WebLoader.h: Moved to Loader/
+        * WebView/WebLoader.m: Moved to Loader/
+        * WebView/WebMainResourceLoader.h: Moved to Loader/
+        * WebView/WebMainResourceLoader.m: Moved to Loader/
+
 2006-08-03  Tim Omernick  <timo@apple.com>
 
         Reviewed by Kevin Decker.

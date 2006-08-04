@@ -36,20 +36,12 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebNetscapePluginStreamLoader.h>
 #import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebFrameLoader.h>
 
 #import <Foundation/NSURLConnection.h>
-
-@interface WebNetscapePlugInStreamLoader : WebLoader
-{
-    WebNetscapePluginStream *stream;
-    WebBaseNetscapePluginView *view;
-}
-- initWithStream:(WebNetscapePluginStream *)theStream view:(WebBaseNetscapePluginView *)theView;
-- (BOOL)isDone;
-@end
 
 @implementation WebNetscapePluginStream
 
@@ -121,100 +113,3 @@
 
 @end
 
-@implementation WebNetscapePlugInStreamLoader
-
-- initWithStream:(WebNetscapePluginStream *)theStream view:(WebBaseNetscapePluginView *)theView
-{
-    [super init];
-    stream = [theStream retain];
-    view = [theView retain];
-    return self;
-}
-
-- (BOOL)isDone
-{
-    return stream == nil;
-}
-
-- (void)releaseResources
-{
-    [stream release];
-    stream = nil;
-    [view release];
-    view = nil;
-    [super releaseResources];
-}
-
-- (void)didReceiveResponse:(NSURLResponse *)theResponse
-{
-    // retain/release self in this delegate method since the additional processing can do
-    // anything including possibly releasing self; one example of this is 3266216
-    [self retain];
-    [stream startStreamWithResponse:theResponse];
-    
-    // Don't continue if the stream is cancelled in startStreamWithResponse or didReceiveResponse.
-    if (stream) {
-        [super didReceiveResponse:theResponse];
-        if (stream) {
-            if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
-                ([(NSHTTPURLResponse *)theResponse statusCode] >= 400 || [(NSHTTPURLResponse *)theResponse statusCode] < 100)) {
-                NSError *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                                            code:NSURLErrorFileDoesNotExist
-                                                            URL:[theResponse URL]];
-                [stream cancelLoadAndDestroyStreamWithError:error];
-            }
-        }
-    }
-    [self release];
-}
-
-- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
-{
-    // retain/release self in this delegate method since the additional processing can do
-    // anything including possibly releasing self; one example of this is 3266216
-    [self retain];
-    [stream receivedData:data];
-    [super didReceiveData:data lengthReceived:lengthReceived];
-    [self release];
-}
-
-- (void)didFinishLoading
-{
-    // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
-    [self retain];
-
-    [frameLoader _removePlugInStreamLoader:self];
-    [frameLoader _finishedLoadingResource];
-    [stream finishedLoadingWithData:[self resourceData]];
-    [super didFinishLoading];
-
-    [self release];
-}
-
-- (void)didFailWithError:(NSError *)error
-{
-    // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
-    // The other additional processing can do anything including possibly releasing self;
-    // one example of this is 3266216
-    [self retain];
-
-    [[self frameLoader] _removePlugInStreamLoader:self];
-    [[self frameLoader] _receivedError:error];
-    [stream destroyStreamWithError:error];
-    [super didFailWithError:error];
-
-    [self release];
-}
-
-- (void)cancelWithError:(NSError *)error
-{
-    // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
-    [self retain];
-
-    [[self frameLoader] _removePlugInStreamLoader:self];
-    [super cancelWithError:error];
-
-    [self release];
-}
-
-@end
