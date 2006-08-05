@@ -396,8 +396,15 @@ void RenderView::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
         o = o->nextInPreOrder();
     }
 
-    if (!m_frameView)
+    if (!m_frameView) {
+        // We built the maps, but we aren't going to use them.
+        // We need to delete the values, otherwise they'll all leak!
+        deleteAllValues(oldSelectedObjects);
+        deleteAllValues(newSelectedObjects);
+        deleteAllValues(oldSelectedBlocks);
+        deleteAllValues(newSelectedBlocks);
         return;
+    }
 
     // Have any of the old selected objects changed compared to the new selection?
     for (SelectedObjectMap::iterator i = oldSelectedObjects.begin(); i != oldObjectsEnd; ++i) {
