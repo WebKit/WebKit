@@ -1,3 +1,15 @@
+2006-08-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10213
+          REGRESSION: Crash in WebCore::RenderLayer::isTransparent involving <iframe> and <select>
+
+        * fast/frames/iframe-option-crash-expected.checksum: Added.
+        * fast/frames/iframe-option-crash-expected.png: Added.
+        * fast/frames/iframe-option-crash-expected.txt: Added.
+        * fast/frames/iframe-option-crash.xhtml: Added.
+
 2006-08-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

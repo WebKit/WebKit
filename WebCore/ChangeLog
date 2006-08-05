@@ -1,3 +1,15 @@
+2006-08-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10213
+          REGRESSION: Crash in WebCore::RenderLayer::isTransparent involving <iframe> and <select>
+
+        Test: fast/frames/iframe-option-crash.xhtml
+
+        * rendering/RenderView.cpp: (WebCore::RenderView::paintBoxDecorations):
+        Check for a nil renderer.
+
 2006-08-04  David Hyatt  <hyatt@apple.com>
 
         Fix for Radar bug #4644045, regression where dragging selection no longer
