@@ -37,6 +37,7 @@
 #define yylloc kjsyylloc
 
 #define YYMAXDEPTH 10000
+#define YYENABLE_NLS 0
 
 /* default values for bison */
 #define YYDEBUG 0

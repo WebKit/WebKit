@@ -37,6 +37,8 @@
 #include "XPathPredicate.h"
 #include "XPathVariableReference.h"
 
+#define YYENABLE_NLS 0
+#define YYLTYPE_IS_TRIVIAL 1
 #define YYDEBUG 0
 #define YYMAXDEPTH 10000
 #define YYPARSE_PARAM parserParameter

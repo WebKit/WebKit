@@ -117,6 +117,8 @@ static inline int getValueID(const char* tagStr, int len)
     return val->id;
 }
 
+#define YYENABLE_NLS 0
+#define YYLTYPE_IS_TRIVIAL 1
 #define YYMAXDEPTH 10000
 #define YYDEBUG 0
 #define YYPARSE_PARAM parser
