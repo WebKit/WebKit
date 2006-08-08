@@ -25,12 +25,12 @@
 #include "SVGTests.h"
 
 #include "Language.h"
-#include "SVGDOMImplementation.h"
 #include "SVGElement.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
 #include "Attr.h"
+#include "DOMImplementation.h"
 
 namespace WebCore {
 
@@ -68,7 +68,7 @@ bool SVGTests::isValid() const
     for(unsigned long i = 0;i < list->numberOfItems();i++)
     {
         String value = String(list->getItem(i));
-        if(value.isEmpty() || !SVGDOMImplementation::instance()->hasFeature(value.impl(), 0))
+        if(value.isEmpty() || !DOMImplementation::instance()->hasFeature(value, String()))
             return false;
     }
 

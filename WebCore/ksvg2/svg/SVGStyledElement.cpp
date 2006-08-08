@@ -33,7 +33,6 @@
 #include "RenderView.h"
 #include "RenderPath.h"
 #include "SVGAnimatedString.h"
-#include "SVGDOMImplementation.h"
 #include "SVGElement.h"
 #include "SVGHelper.h"
 #include "SVGMatrix.h"

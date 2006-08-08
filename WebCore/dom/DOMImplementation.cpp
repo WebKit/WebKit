@@ -34,6 +34,11 @@
 #include "RegularExpression.h"
 #include "TextDocument.h"
 
+#ifdef SVG_SUPPORT
+#include "SVGNames.h"
+#include "SVGDocument.h"
+#endif
+
 namespace WebCore {
 
 // FIXME: An implementation of this is still waiting for me to understand the distinction between
@@ -45,6 +50,95 @@ static bool qualifiedNameIsMalformed(const String&)
 {
     return false;
 }
+
+#ifdef SVG_SUPPORT
+
+#define SVGFEATURE2(name, value) AtomicString SVGFEATURE_##name(#value); \
+                            svgFeatures.add(SVGFEATURE_##name.impl());
+#define SVGFEATURE(feature) AtomicString SVGFEATURE_##feature(#feature); \
+                            svgFeatures.add(SVGFEATURE_##feature.impl());
+
+bool isSVG10Feature(const String &feature)
+{
+    static bool initialized = false;
+    static HashSet<StringImpl*, CaseInsensitiveHash> svgFeatures;
+    if (!initialized) {
+        // TODO: features need to be uncommented when we implement them
+        // 1.0 features
+        SVGFEATURE2(SVG, svg)
+        SVGFEATURE2(SVG_STATIC, svg.static)
+//      SVGFEATURE2(SVG_ANIMATION, svg.animation)
+//      SVGFEATURE2(SVG_DYNAMIC, svg.dynamic)
+//      SVGFEATURE2(DOM_SVG_ANIMATION, svg.dom.animation)
+//      SVGFEATURE2(DOM_SVG_DYNAMIC, svg.dom.dynamic)
+        SVGFEATURE2(DOM, dom)
+        SVGFEATURE2(DOM_SVG, dom.svg)
+        SVGFEATURE2(DOM_SVG_STATIC, dom.svg.static)
+//      SVGFEATURE2(SVG_ALL, svg.all)
+//      SVGFEATURE2(DOM_SVG_ALL, dom.svg.all)
+        initialized = true;
+    }
+    return svgFeatures.contains(feature.impl());
+}
+
+bool isSVG11Feature(const String &feature)
+{
+    static bool initialized = false;
+    static HashSet<StringImpl*, CaseInsensitiveHash> svgFeatures;
+    if (!initialized) {
+        // TODO: features need to be uncommented when we implement them
+        // 1.1 features
+        SVGFEATURE(SVG)
+        SVGFEATURE(SVGDOM)
+        SVGFEATURE2(SVG_STATIC, SVG-static)
+        SVGFEATURE2(SVGDOM_STATIC, SVGDOM-static)
+//      SVGFEATURE2(SVG_ANIMATION, SVG-animation)
+//      SVGFEATURE2(SVGDOM_ANIMATION, SVGDOM-animation)
+//      SVGFEATURE2(SVG_DYNAMIC, SVG-dynamic)
+//      SVGFEATURE2(SVGDOM_DYNAMIC, SVGDOM-dynamic)
+        SVGFEATURE(CoreAttribute)
+        SVGFEATURE(Structure)
+        SVGFEATURE(BasicStructure)
+        SVGFEATURE(ContainerAttribute)
+        SVGFEATURE(ConditionalProcessing)
+        SVGFEATURE(Image)
+        SVGFEATURE(Style)
+        SVGFEATURE(ViewportAttribute)
+        SVGFEATURE(Shape)
+//      SVGFEATURE(Text)
+//      SVGFEATURE(BasicText)
+        SVGFEATURE(PaintAttribute)
+        SVGFEATURE(BasicPaintAttribute)
+        SVGFEATURE(OpacityAttribute)
+        SVGFEATURE(GraphicsAttribute)
+        SVGFEATURE(BaseGraphicsAttribute)
+        SVGFEATURE(Marker)
+//      SVGFEATURE(ColorProfile)
+        SVGFEATURE(Gradient)
+        SVGFEATURE(Pattern)
+        SVGFEATURE(Clip)
+        SVGFEATURE(BasicClip)
+        SVGFEATURE(Mask)
+//      SVGFEATURE(Filter)
+//      SVGFEATURE(BasicFilter)
+        SVGFEATURE(DocumentEventsAttribute)
+        SVGFEATURE(GraphicalEventsAttribute)
+        SVGFEATURE(AnimationEventsAttribute)
+//      SVGFEATURE(Cursor)
+        SVGFEATURE(Hyperlinking)
+        SVGFEATURE(XlinkAttribute)
+//      SVGFEATURE(ExternalResourcesRequired)
+//      SVGFEATURE(View)
+        SVGFEATURE(Script)
+//      SVGFEATURE(Animation)
+//      SVGFEATURE(Font)
+//      SVGFEATURE(BasicFont)
+        SVGFEATURE(Extensibility)
+        initialized = true;
+    }
+    return svgFeatures.contains(feature.impl());
+}
+#endif
 
 DOMImplementation::~DOMImplementation()
 {
@@ -69,6 +163,18 @@ bool DOMImplementation::hasFeature (const String& feature, const String& version
         return version.isEmpty() || version == "2.0";
     if (lower == "xpath")
         return version.isEmpty() || version == "3.0";
+
+#ifdef SVG_SUPPORT
+    if ((version.isEmpty() || version == "1.1") && feature.startsWith("http://www.w3.org/tr/svg11/feature#", false)) {
+        if (isSVG11Feature(feature.right(feature.length() - 35)))
+            return true;
+    }
+
+    if ((version.isEmpty() || version == "1.0") && feature.startsWith("org.w3c.", false)) {
+        if (isSVG10Feature(feature.right(feature.length() - 8)))
+            return true;
+    }
+#endif
     
     return false;
 }
@@ -132,6 +238,9 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
         if (qualifiedNameIsMalformed(qualifiedName) ||
             (colonpos >= 0 && namespaceURI.isNull()) ||
             (colonpos == 3 && qualifiedName[0] == 'x' && qualifiedName[1] == 'm' && qualifiedName[2] == 'l' &&
+#ifdef SVG_SUPPORT
+             namespaceURI != SVGNames::svgNamespaceURI &&
+#endif
              namespaceURI != "http://www.w3.org/XML/1998/namespace")) {
 
             ec = NAMESPACE_ERR;
@@ -146,7 +255,13 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
         return 0;
     }
 
-    RefPtr<Document> doc = new Document(this, 0);
+    RefPtr<Document> doc;
+#ifdef SVG_SUPPORT
+    if (namespaceURI == SVGNames::svgNamespaceURI)
+        doc = new SVGDocument(this, 0);
+    else
+#endif
+        doc = new Document(this, 0);
 
     // now get the interesting parts of the doctype
     if (doctype)
@@ -213,5 +328,12 @@ PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& tit
     d->write("<html><head><title>" + title + "</title></head><body></body></html>");
     return d.release();
 }
+
+#ifdef SVG_SUPPORT
+PassRefPtr<SVGDocument> DOMImplementation::createSVGDocument(FrameView* v)
+{
+    return new SVGDocument(this, v);
+}
+#endif
 
 }

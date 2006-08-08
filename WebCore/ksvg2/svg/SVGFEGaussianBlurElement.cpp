@@ -37,7 +37,6 @@
 #include "SVGFEGaussianBlurElement.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGAnimatedString.h"
-#include "SVGDOMImplementation.h"
 
 using namespace WebCore;
 

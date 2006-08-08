@@ -30,11 +30,11 @@ namespace WebCore {
 
     class SVGElement;
     class SVGSVGElement;
-    class SVGDOMImplementation;
+    class DOMImplementation;
 
     class SVGDocument : public Document {
     public:
-        SVGDocument(SVGDOMImplementation *i, FrameView *view);
+        SVGDocument(DOMImplementation *i, FrameView *view);
         virtual ~SVGDocument();
         
         virtual bool isSVGDocument() const { return true; }

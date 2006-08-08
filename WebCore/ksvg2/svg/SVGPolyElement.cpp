@@ -26,7 +26,6 @@
 
 #include "Attr.h"
 #include "Document.h"
-#include "SVGDOMImplementation.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGPointList.h"

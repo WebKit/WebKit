@@ -26,14 +26,13 @@
 
 #include "EventNames.h"
 #include "ExceptionCode.h"
-#include "SVGDOMImplementation.h"
 #include "SVGElement.h"
 #include "SVGSVGElement.h"
 #include "SVGZoomEvent.h"
 
 namespace WebCore {
 
-SVGDocument::SVGDocument(SVGDOMImplementation *i, FrameView *view) : Document(i, view)
+SVGDocument::SVGDocument(DOMImplementation *i, FrameView *view) : Document(i, view)
 {
 }
 

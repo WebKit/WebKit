@@ -33,7 +33,6 @@
 #include "SVGRenderStyle.h"
 #include "SVGFETileElement.h"
 #include "SVGAnimatedString.h"
-#include "SVGDOMImplementation.h"
 
 using namespace WebCore;
 

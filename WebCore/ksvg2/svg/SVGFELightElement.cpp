@@ -36,7 +36,6 @@
 #include "SVGAnimatedString.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGAnimatedEnumeration.h"
-#include "SVGDOMImplementation.h"
 
 using namespace WebCore;
 

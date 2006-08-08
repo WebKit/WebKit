@@ -1,3 +1,14 @@
+2006-08-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Test case for
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=10230>
+        SVGDOMImplementation should die (and be rolled into DOMImplementation)
+
+        * svg/custom/svg-features-expected.txt: Added.
+        * svg/custom/svg-features.html: Added.
+
 2006-08-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

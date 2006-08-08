@@ -32,7 +32,6 @@
 #include "SVGRenderStyle.h"
 #include "SVGStopElement.h"
 #include "SVGAnimatedNumber.h"
-#include "SVGDOMImplementation.h"
 
 using namespace WebCore;
 

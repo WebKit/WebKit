@@ -35,7 +35,6 @@
 #include "SVGMatrix.h"
 #include "SVGTransformable.h"
 #include "SVGStyledElement.h"
-#include "SVGDOMImplementation.h"
 #include "SVGAnimatedTransformList.h"
 #include "ksvg.h"
 

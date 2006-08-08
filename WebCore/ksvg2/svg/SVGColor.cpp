@@ -25,7 +25,6 @@
 #include "SVGColor.h"
 
 #include "DeprecatedStringList.h"
-#include "SVGDOMImplementation.h"
 #include "ksvg.h"
 
 namespace WebCore {

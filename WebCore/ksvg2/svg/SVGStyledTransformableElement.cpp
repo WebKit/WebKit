@@ -34,7 +34,6 @@
 #include "SVGDocument.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGStyledElement.h"
-#include "SVGDOMImplementation.h"
 #include "SVGAnimatedTransformList.h"
 
 using namespace WebCore;

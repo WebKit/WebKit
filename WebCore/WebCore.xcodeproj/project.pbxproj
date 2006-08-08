@@ -1052,8 +1052,6 @@
 		A88AD44A095248F0001DD196 /* SVGDescElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F836089701F300BA5114 /* SVGDescElement.h */; };
 		A88AD44B095248F0001DD196 /* SVGDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F837089701F300BA5114 /* SVGDocument.cpp */; };
 		A88AD44C095248F0001DD196 /* SVGDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F838089701F300BA5114 /* SVGDocument.h */; };
-		A88AD44D095248F0001DD196 /* SVGDOMImplementation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F839089701F300BA5114 /* SVGDOMImplementation.cpp */; };
-		A88AD44E095248F0001DD196 /* SVGDOMImplementation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F83A089701F300BA5114 /* SVGDOMImplementation.h */; };
 		A88AD44F095248F0001DD196 /* SVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F83B089701F300BA5114 /* SVGElement.cpp */; };
 		A88AD450095248F0001DD196 /* SVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F83C089701F300BA5114 /* SVGElement.h */; };
 		A88AD452095248F0001DD196 /* SVGElementInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F83E089701F300BA5114 /* SVGElementInstance.h */; };
@@ -2747,8 +2745,6 @@
 		A8C0F836089701F300BA5114 /* SVGDescElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGDescElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F837089701F300BA5114 /* SVGDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGDocument.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F838089701F300BA5114 /* SVGDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGDocument.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F839089701F300BA5114 /* SVGDOMImplementation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGDOMImplementation.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F83A089701F300BA5114 /* SVGDOMImplementation.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGDOMImplementation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F83B089701F300BA5114 /* SVGElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F83C089701F300BA5114 /* SVGElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F83D089701F300BA5114 /* SVGElementInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGElementInstance.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -4616,8 +4612,6 @@
 				A8C0F837089701F300BA5114 /* SVGDocument.cpp */,
 				A8C0F838089701F300BA5114 /* SVGDocument.h */,
 				A833B9930A2B77D500D57664 /* SVGDocument.idl */,
-				A8C0F839089701F300BA5114 /* SVGDOMImplementation.cpp */,
-				A8C0F83A089701F300BA5114 /* SVGDOMImplementation.h */,
 				A8C0F83B089701F300BA5114 /* SVGElement.cpp */,
 				A8C0F83C089701F300BA5114 /* SVGElement.h */,
 				A833C5E70A2CCBA400D57664 /* SVGElement.idl */,
@@ -5749,7 +5743,6 @@
 				A88AD448095248F0001DD196 /* SVGDefsElement.h in Headers */,
 				A88AD44A095248F0001DD196 /* SVGDescElement.h in Headers */,
 				A88AD44C095248F0001DD196 /* SVGDocument.h in Headers */,
-				A88AD44E095248F0001DD196 /* SVGDOMImplementation.h in Headers */,
 				A88AD450095248F0001DD196 /* SVGElement.h in Headers */,
 				A88AD452095248F0001DD196 /* SVGElementInstance.h in Headers */,
 				A88AD454095248F0001DD196 /* SVGElementInstanceList.h in Headers */,
@@ -6668,7 +6661,6 @@
 				A88AD447095248F0001DD196 /* SVGDefsElement.cpp in Sources */,
 				A88AD449095248F0001DD196 /* SVGDescElement.cpp in Sources */,
 				A88AD44B095248F0001DD196 /* SVGDocument.cpp in Sources */,
-				A88AD44D095248F0001DD196 /* SVGDOMImplementation.cpp in Sources */,
 				A88AD44F095248F0001DD196 /* SVGElement.cpp in Sources */,
 				A88AD455095248F0001DD196 /* SVGEllipseElement.cpp in Sources */,
 				A88AD457095248F0001DD196 /* SVGExternalResourcesRequired.cpp in Sources */,

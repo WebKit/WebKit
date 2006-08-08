@@ -1,3 +1,55 @@
+2006-08-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10230
+        SVGDOMImplementation should die (and be rolled into DOMImplementation)
+
+        Delete SVGDOMImplementation and references to it. The
+        svg specific functionality is now in DOMImplementation.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMImplementation.cpp:
+        (WebCore::svgFeatureSet):
+        (WebCore::DOMImplementation::hasFeature):
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createSVGDocument):
+        * dom/DOMImplementation.h:
+        * ksvg2/bindings/idl/svg/SVGDOMImplementation.idl: Removed.
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        * ksvg2/svg/SVGColor.cpp:
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        * ksvg2/svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::SVGDocument):
+        * ksvg2/svg/SVGDocument.h:
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::isSupported):
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        * ksvg2/svg/SVGFELightElement.cpp:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        * ksvg2/svg/SVGFETileElement.cpp:
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        * ksvg2/svg/SVGPolyElement.cpp:
+        * ksvg2/svg/SVGStopElement.cpp:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        * ksvg2/svg/SVGTests.cpp:
+        (WebCore::SVGTests::isValid):
+        * ksvg2/svg/SVGTransformable.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::begin):
+
 2006-08-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders and John

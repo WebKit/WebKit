@@ -38,7 +38,6 @@
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedString.h"
 #include "SVGAnimatedTransformList.h"
-#include "SVGDOMImplementation.h"
 #include "SVGHelper.h"
 #include "SVGMatrix.h"
 #include "SVGNames.h"

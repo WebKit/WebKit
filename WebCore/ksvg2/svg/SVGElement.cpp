@@ -26,11 +26,11 @@
 
 #include "Attr.h"
 #include "Document.h"
+#include "DOMImplementation.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "PlatformString.h"
-#include "SVGDOMImplementation.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
@@ -54,7 +54,7 @@ SVGElement::~SVGElement()
 
 bool SVGElement::isSupported(StringImpl* feature, StringImpl* version) const
 {
-    if (SVGDOMImplementation::instance()->hasFeature(feature, version))
+    if (DOMImplementation::instance()->hasFeature(feature, version))
         return true;
 
     return DOMImplementation::instance()->hasFeature(feature, version);

@@ -34,7 +34,6 @@
 #include "SVGAnimatedNumber.h"
 #include "SVGAnimatedString.h"
 #include "SVGFELightElement.h"
-#include "SVGDOMImplementation.h"
 #include "SVGFEDiffuseLightingElement.h"
 
 namespace WebCore {

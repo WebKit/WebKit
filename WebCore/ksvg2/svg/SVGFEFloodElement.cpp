@@ -28,7 +28,6 @@
 #include "DeprecatedStringList.h"
 #include "RenderView.h"
 #include "SVGAnimatedString.h"
-#include "SVGDOMImplementation.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"

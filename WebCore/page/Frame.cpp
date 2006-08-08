@@ -89,8 +89,8 @@
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #include "XMLNames.h"
+#include "SVGDocument.h"
 #include "SVGDocumentExtensions.h"
-#include "SVGDOMImplementation.h"
 #endif
 
 using namespace std;
@@ -583,7 +583,7 @@ void Frame::begin(const KURL& url)
 
 #if SVG_SUPPORT
   if (d->m_request.m_responseMIMEType == "image/svg+xml")
-    d->m_doc = SVGDOMImplementation::instance()->createDocument(d->m_view.get());
+    d->m_doc = DOMImplementation::instance()->createSVGDocument(d->m_view.get());
   else
 #endif
   if (DOMImplementation::isXMLMIMEType(d->m_request.m_responseMIMEType))
