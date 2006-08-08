@@ -47,6 +47,12 @@ namespace WebCore {
 IconDatabase* IconDatabase::m_sharedInstance = 0;
 const int IconDatabase::currentDatabaseVersion = 3;
 
+// Icons expire once a day
+const int IconDatabase::iconExpirationTime = 60*60*24; 
+// Absent icons are rechecked once a week
+const int IconDatabase::missingIconExpirationTime = 60*60*24*7; 
+
+
 IconDatabase* IconDatabase::sharedIconDatabase()
 {
     if (!m_sharedInstance) {
@@ -150,12 +156,12 @@ void IconDatabase::recreateDatabase()
         m_db.close();
         return;
     }
-    if (!m_db.executeCommand("CREATE TABLE Icon (iconID INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT NOT NULL UNIQUE ON CONFLICT FAIL, expires INTEGER);")) {
+    if (!m_db.executeCommand("CREATE TABLE Icon (iconID INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT NOT NULL UNIQUE ON CONFLICT FAIL, stamp INTEGER);")) {
         LOG_ERROR("Could not create Icon table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return;
     }
-    if (!m_db.executeCommand("CREATE TABLE IconResource (iconID integer NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,data BLOB, touch INTEGER);")) {
+    if (!m_db.executeCommand("CREATE TABLE IconResource (iconID integer NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, data BLOB);")) {
         LOG_ERROR("Could not create IconResource table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return;
@@ -170,7 +176,11 @@ void IconDatabase::recreateDatabase()
         m_db.close();
         return;
     }
-    
+    if (!m_db.executeCommand("CREATE TRIGGER update_icon_timestamp AFTER UPDATE ON IconResource BEGIN UPDATE Icon SET stamp = strftime('%s','now') WHERE iconID = new.iconID; END;")) {
+        LOG_ERROR("Unable to create update_icon_timestamp trigger in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
+        m_db.close();
+        return;
+    }
 }    
 
 void IconDatabase::createPrivateTables()
@@ -178,10 +188,10 @@ void IconDatabase::createPrivateTables()
     if (!m_db.executeCommand("CREATE TEMP TABLE TempPageURL (url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID INTEGER NOT NULL ON CONFLICT FAIL);")) 
         LOG_ERROR("Could not create TempPageURL table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
 
-    if (!m_db.executeCommand("CREATE TEMP TABLE TempIcon (iconID INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT NOT NULL UNIQUE ON CONFLICT FAIL, expires INTEGER);")) 
+    if (!m_db.executeCommand("CREATE TEMP TABLE TempIcon (iconID INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT NOT NULL UNIQUE ON CONFLICT FAIL, stamp INTEGER);")) 
         LOG_ERROR("Could not create TempIcon table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
 
-    if (!m_db.executeCommand("CREATE TEMP TABLE TempIconResource (iconID INTERGER NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,data BLOB, touch INTEGER);")) 
+    if (!m_db.executeCommand("CREATE TEMP TABLE TempIconResource (iconID INTERGER NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,data BLOB);")) 
         LOG_ERROR("Could not create TempIconResource table in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
 
     if (!m_db.executeCommand("CREATE TEMP TRIGGER temp_create_icon_resource AFTER INSERT ON TempIcon BEGIN INSERT INTO TempIconResource (iconID, data) VALUES (new.iconID, NULL); END;")) 
@@ -230,6 +240,11 @@ Vector<unsigned char> hexStringToVector(const String& s)
     if (s[0] != 'X' || s[1] != '\'') {
         LOG(IconDatabase, "hexStringToVector() - string is invalid SQL HEX-string result - %s", s.ascii().data());
         return Vector<unsigned char>();
+    }
+    if (!m_db.executeCommand("CREATE TRIGGER update_icon_timestamp AFTER UPDATE ON IconResource BEGIN UPDATE Icon SET stamp = strftime('%s','now') WHERE iconID = new.iconID; END;")) {
+        LOG_ERROR("Unable to create update_icon_timestamp trigger in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
+        m_db.close();
+        return;        
     }
 
     Vector<unsigned char> result;
@@ -359,12 +374,17 @@ void IconDatabase::setPrivateBrowsingEnabled(bool flag)
 
 Image* IconDatabase::iconForPageURL(const String& url, const IntSize& size, bool cache)
 {   
+    String iconURL;
+
     // We may have a SiteIcon for this specific PageURL...
     if (m_pageURLToSiteIcons.contains(url))
         return m_pageURLToSiteIcons.get(url)->getImage(size);
     
-    // Otherwise see if we even have an IconURL for this PageURL
-    String iconURL = iconURLForPageURL(url);
+    // Otherwise see if we even have an IconURL for this PageURL...
+    // The weird flow here is because we declare the iconURL variable up above, but MAY not have retrieved the string yet
+    // Trying to keep out excessive SQLite calls, which the pageURL->iconURL mapping incur
+    if (iconURL.isEmpty())
+        iconURL = iconURLForPageURL(url);
     if (iconURL.isEmpty())
         return 0;
     
@@ -383,6 +403,54 @@ Image* IconDatabase::iconForPageURL(const String& url, const IntSize& size, bool
     return icon->getImage(size);
 }
 
+// FIXME 4667425 - this check needs to see if the icon's data is empty or not and apply
+// iconExpirationTime to present icons, and missingIconExpirationTime for missing icons
+bool IconDatabase::isIconExpiredForIconURL(const String& _iconURL)
+{
+    if (_iconURL.isEmpty()) 
+        return true;
+        
+    String iconURL = _iconURL;
+    iconURL.replace('\'', "''");
+    
+    int stamp;
+    if (m_privateBrowsingEnabled) {
+        stamp = SQLStatement(m_db, "SELECT TempIcon.stamp FROM TempIcon WHERE TempIcon.url = '" + iconURL + "';").getColumnInt(0);
+        if (stamp)
+            return (time(NULL) - stamp) > iconExpirationTime;
+    }
+    stamp = SQLStatement(m_db, "SELECT Icon.stamp FROM Icon WHERE Icon.url = '" + iconURL + "';").getColumnInt(0);
+    LOG(IconDatabase, "Icon stamped at %i, now is %i", stamp, time(NULL));
+
+    if (stamp)
+        return (time(NULL) - stamp) > iconExpirationTime;
+    return false;
+}
+
+bool IconDatabase::isIconExpiredForPageURL(const String& _pageURL)
+{
+    // We don't want to encourage kicking off any loads for an empty url, so this
+    // case will always return false
+    if (_pageURL.isEmpty()) 
+        return false;
+        
+    String pageURL = _pageURL;
+    pageURL.replace('\'', "''");
+    
+    int stamp;
+    if (m_privateBrowsingEnabled) {
+        stamp = SQLStatement(m_db, "SELECT TempIcon.stamp FROM TempIcon, TempPageURL WHERE TempPageURL.url = '" + pageURL + "' AND TempIcon.iconID = TempPageURL.iconID").getColumnInt(0);
+        if (stamp)
+            return (time(NULL) - stamp) > iconExpirationTime;
+    }
+    stamp = SQLStatement(m_db, "SELECT Icon.stamp FROM Icon, PageURL WHERE PageURL.url = '" + pageURL + "' AND Icon.iconID = PageURL.iconID").getColumnInt(0);
+    
+    LOG(IconDatabase, "Icon stamped at %i, now is %i", stamp, time(NULL));
+    if (stamp)
+        return (time(NULL) - stamp) > iconExpirationTime;
+    return false;
+}
+    
 String IconDatabase::iconURLForPageURL(const String& _pageURL)
 {
     if (_pageURL.isEmpty()) 
@@ -564,6 +632,11 @@ void IconDatabase::setIconDataForIconURL(const void* data, int size, const Strin
         return;
     }
     
+    // First, if we already have a SiteIcon in memory, let's update its image data
+    if (m_iconURLToSiteIcons.contains(_iconURL))
+        m_iconURLToSiteIcons.get(_iconURL)->manuallySetImageData((unsigned char*)data, size);
+
+    // Next, we actually commit the image data to the database
     String iconURL = _iconURL;
     iconURL.replace('\'', "''");
 
@@ -689,6 +762,11 @@ void IconDatabase::setIconURLForPageURL(const String& _iconURL, const String& _p
     } else {
         iconID = establishIconIDForEscapedIconURL(iconURL);
         pageTable = "PageURL";
+    }
+    
+    if (!iconID) {
+        LOG_ERROR("Failed to establish an ID for iconURL %s", iconURL.ascii().data());
+        return;
     }
     
     performSetIconURLForPageURL(iconID, pageTable, pageURL);

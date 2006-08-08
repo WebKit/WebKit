@@ -1,3 +1,37 @@
+2006-08-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders and John
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase init]):
+        (-[WebIconDatabase isIconExpiredForIconURL:]): Get if an icon expired
+        (-[WebIconDatabase isIconExpiredForPageURL:]): Ditto
+        (-[WebIconDatabase _setIconURL:forURL:]):
+        (-[WebIconDatabase _sendNotificationForURL:]): Moved to WebKitPendingPublic for use outside of WebIconDatabase
+        (-[WebIconDatabase loadIconFromURL:]): Allow a load outside the context of a page load
+        * Misc/WebIconDatabasePrivate.h:
+
+        * Misc/WebIconLoader.m:
+        (-[WebIconLoader didFinishLoading]): fixed up the "flipping the switch" #defs a bit
+        (-[WebIconLoader willSendRequest:redirectResponse:]): override to allow a load
+        outside of the context of a page load
+
+        * WebCoreSupport/WebIconDatabaseBridge.h: Added.
+        * WebCoreSupport/WebIconDatabaseBridge.m: Added.
+        (-[WebIconDatabaseBridge init]):
+        (-[WebIconDatabaseBridge dealloc]):
+        (-[WebIconDatabaseBridge loadIconFromURL:]):  Kick off a load on an icon outside
+        of the context of any page load
+        (-[WebIconDatabaseBridge _setIconData:forIconURL:]):  WebKit side of bridge method
+        (-[WebIconDatabaseBridge _setHaveNoIconForIconURL:]):  WebKit side of bridge method
+        (-[WebIconDatabaseBridge releaseCachedLoaderForIconURL:]): 
+        (+[WebIconDatabaseBridge sharedBridgeInstance]): Moved this from WebCore to WebKit
+        so both sides of the bridge get the WebKit version
+        * WebKit.xcodeproj/project.pbxproj: Added some files
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _loadIcon]): Added check for reload/expired icon to force
+        a load even if we already have it
+
 2006-08-04  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.

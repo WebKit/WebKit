@@ -1,3 +1,33 @@
+2006-08-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders and John
+
+        Icons can now refresh when new data is sent from WebKit, both on disk and in memory
+
+        * bridge/mac/WebCoreIconDatabaseBridge.h:
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (WebCore::IconDatabase::loadIconFromURL):  Allows WebCore/Kit to kick off a load
+        outside of any greater context
+        (-[WebCoreIconDatabaseBridge isIconExpiredForIconURL:]):
+        (-[WebCoreIconDatabaseBridge isIconExpiredForPageURL:]): Allows WebKit
+        to get whether or not an icon has expired
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::recreateDatabase): Changed database schema slightly
+        (WebCore::IconDatabase::createPrivateTables): Changed database schema slightly
+        (WebCore::IconDatabase::iconForPageURL): 
+        (WebCore::IconDatabase::isIconExpiredForIconURL): Get if an icon has expired
+        (WebCore::IconDatabase::isIconExpiredForPageURL): Get if an icon has expired
+        (WebCore::IconDatabase::setIconDataForIconURL): Force a refresh of the in memory
+        image when new icon data is loaded
+        (WebCore::IconDatabase::setIconURLForPageURL): added a check for null iconID
+
+        * loader/icon/IconDatabase.h: added/changed some methods
+        * loader/icon/SiteIcon.cpp:
+        (SiteIcon::getImage): simplified/removed debugging code
+        (SiteIcon::manuallySetImageData): allow the image data to be changed when new icon
+        data is loaded
+
 2006-08-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.

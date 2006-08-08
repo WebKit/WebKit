@@ -27,18 +27,19 @@
 namespace WebCore { 
 class IconDatabase; 
 class Image;
+class String;
 } 
 typedef WebCore::IconDatabase WebCoreIconDatabase;
 #else
 @class WebCoreIconDatabase;
 #endif
+@class WebCoreIconDatabaseBridge;
 
 @interface WebCoreIconDatabaseBridge : NSObject
 {
+    WebCoreIconDatabaseBridge *_sharedInstance;
     WebCoreIconDatabase *_iconDB;
 }
-+ (WebCoreIconDatabaseBridge *)sharedBridgeInstance;
-
 - (BOOL)openSharedDatabaseWithPath:(NSString *)path;
 - (void)closeSharedDatabase;
 - (BOOL)isOpen;
@@ -49,6 +50,9 @@ typedef WebCore::IconDatabase WebCoreIconDatabase;
 - (void)retainIconForURL:(NSString *)url;
 - (void)releaseIconForURL:(NSString *)url;
 
+- (BOOL)isIconExpiredForIconURL:(NSString *)iconURL;
+- (BOOL)isIconExpiredForPageURL:(NSString *)pageURL;
+
 - (void)setPrivateBrowsingEnabled:(BOOL)flag;
 - (BOOL)privateBrowsingEnabled;
 
@@ -57,8 +61,20 @@ typedef WebCore::IconDatabase WebCoreIconDatabase;
 - (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)url;
 - (BOOL)_hasIconForIconURL:(NSString *)iconURL;
 
-
 @end
 
 
+// The WebCoreIconDatabaseBridge protocol contains methods for use by the WebCore side of the bridge.
 
+@protocol WebCoreIconDatabaseBridge
++ (WebCoreIconDatabaseBridge *)sharedBridgeInstance;
+- (void)loadIconFromURL:(NSString *)iconURL;
+@end
+
+
+// This interface definition allows those who hold a WebCoreIconDatabaseBridge * to call all the methods
+// in the WebCoreIconDatabaseBridge protocol without requiring the base implementation to supply the methods.
+// This idiom is appropriate because WebCoreIconDatabaseBridge is an abstract class.
+
+@interface WebCoreIconDatabaseBridge (SubclassResponsibility) <WebCoreIconDatabaseBridge>
+@end

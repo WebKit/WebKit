@@ -31,6 +31,7 @@
 
 @class WebFileDatabase;
 @class WebCoreIconDatabaseBridge;
+@class WebDataSource;
 
 @interface WebIconDatabasePrivate : NSObject {
 
@@ -77,6 +78,18 @@ extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
    and to send out the notification WebIconDatabaseDidRemoveAllIconsNotification.
 */
 - (void)removeAllIcons;
+
+/*!
+   @method isIconExpiredForIconURL:
+   @discussion Returns whether or not the icon at the specified URL is expired in the DB
+*/
+- (BOOL)isIconExpiredForIconURL:(NSString *)iconURL;
+
+/*!
+   @method isIconExpiredForPageURL:
+   @discussion Returns whether or not the icon associated with the specified URL is expired in the DB
+*/
+- (BOOL)isIconExpiredForPageURL:(NSString *)pageURL;
 @end
 
 @interface WebIconDatabase (WebPrivate)
@@ -91,5 +104,8 @@ extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
 - (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)URL;
 
 - (BOOL)_hasIconForIconURL:(NSString *)iconURL;
+- (void)_sendNotificationForURL:(NSString *)URL;
+
+- (void)loadIconFromURL:(NSString *)iconURL;
 
 @end

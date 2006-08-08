@@ -56,30 +56,37 @@ Image* SiteIcon::getImage(const IntSize& size)
 
         if (!imageData.size())
             return 0;
-
-        int checksum;
-        checksum = 0;
-#ifndef NDEBUG
-        for (unsigned int i=0; i<imageData.size(); ++i) 
-            checksum += imageData[i];
-#endif
-
-        NativeBytePtr nativeData = 0;
-        // FIXME - Any other platform will need their own method to create NativeBytePtr from the void*
-#ifdef __APPLE__
-        nativeData = CFDataCreate(NULL, imageData.data(), imageData.size());
-#endif
-        m_image = new Image();
+        manuallySetImageData(imageData.data(), imageData.size());
         
-        if (m_image->setNativeData(nativeData, true)) {
-            LOG(IconDatabase, "%s\nImage Creation SUCCESSFUL - %i bytes of data with a checksum of %i", m_iconURL.ascii().data(), imageData.size(), checksum);
-            return m_image;
-        }
-        LOG(IconDatabase, "%s\nImage Creation FAILURE - %i bytes of data with a checksum of %i", m_iconURL.ascii().data(), imageData.size(), checksum);
-        delete m_image;
-        return m_image = 0;
+        return m_image;
     }
     return 0;
+}
+
+void SiteIcon::manuallySetImageData(unsigned char* data, int size)
+{
+    if (!data)
+        ASSERT(!size);
+        
+    NativeBytePtr nativeData = 0;
+    // FIXME - Any other platform will need their own method to create NativeBytePtr from the void*
+#ifdef __APPLE__
+    nativeData = CFDataCreate(NULL, data, size);
+#endif
+
+    // It's okay to delete the raw image data here. Any existing clients using this icon will be
+    // managing an image that was created with a copy of this raw image data.
+    // FIXME: The IconDatabase interface would be more robust if it were cleaned up to never
+    // expose this raw image data.
+    if (m_image)
+        delete m_image;
+    m_image = new Image();
+
+    if (!m_image->setNativeData(nativeData, true)) {
+        LOG(IconDatabase, "Manual image data for iconURL '%s' FAILED", m_iconURL.ascii().data());
+        delete m_image;
+        m_image = 0;
+    }
 }
 
 void SiteIcon::resetExpiration(time_t newExpiration)

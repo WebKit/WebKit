@@ -34,7 +34,7 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
 
-#import <WebCore/WebCoreIconDatabaseBridge.h>
+#import <WebKit/WebIconDatabaseBridge.h>
 
 #import "WebTypesInternal.h"
 
@@ -76,7 +76,6 @@ NSSize WebIconLargeSize = {128, 128};
 - (void)_retainOriginalIconsOnDisk;
 - (void)_releaseOriginalIconsOnDisk;
 - (void)_resetCachedWebPreferences:(NSNotification *)notification;
-- (void)_sendNotificationForURL:(NSString *)URL;
 - (int)_totalRetainCountForIconURLString:(NSString *)iconURLString;
 - (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons;
 - (NSMutableDictionary *)_iconsBySplittingRepresentationsOfIcon:(NSImage *)icon;
@@ -124,7 +123,7 @@ NSSize WebIconLargeSize = {128, 128};
     _isClosing = NO;
 
 #ifdef ICONDEBUG
-    _private->databaseBridge = [WebCoreIconDatabaseBridge sharedBridgeInstance];
+    _private->databaseBridge = [WebIconDatabaseBridge sharedBridgeInstance];
     if (_private->databaseBridge) {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
@@ -381,6 +380,16 @@ NSSize WebIconLargeSize = {128, 128};
                                                         object:self
                                                       userInfo:nil];
 }
+- (BOOL)isIconExpiredForIconURL:(NSString *)iconURL
+{
+    return [_private->databaseBridge isIconExpiredForIconURL:iconURL];
+}
+
+- (BOOL)isIconExpiredForPageURL:(NSString *)pageURL
+{
+    return [_private->databaseBridge isIconExpiredForPageURL:pageURL];
+}
+
 @end
 
 @implementation WebIconDatabase (WebPrivate)
@@ -451,6 +460,7 @@ NSSize WebIconLargeSize = {128, 128};
     
 #ifdef ICONDEBUG
     [_private->databaseBridge _setIconURL:iconURL forURL:URL];
+    [self _sendNotificationForURL:URL];
     return;
 #endif
 
@@ -499,6 +509,22 @@ NSSize WebIconLargeSize = {128, 128};
              [_private->iconURLsWithNoIcons containsObject:iconURL] ||
              [_private->iconsOnDiskWithURLs containsObject:iconURL]) &&
              [self _totalRetainCountForIconURLString:iconURL] > 0);
+}
+
+- (void)_sendNotificationForURL:(NSString *)URL
+{
+    ASSERT(URL);
+    
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:URL
+                                                         forKey:WebIconNotificationUserInfoURLKey];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidAddIconNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+}
+
+- (void)loadIconFromURL:(NSString *)iconURL
+{
+    [_private->databaseBridge loadIconFromURL:iconURL];
 }
 
 @end
@@ -926,17 +952,6 @@ NSSize WebIconLargeSize = {128, 128};
         [_private->iconURLsBoundDuringPrivateBrowsing removeAllObjects];
         [_private->pageURLsBoundDuringPrivateBrowsing removeAllObjects];
     }
-}
-
-- (void)_sendNotificationForURL:(NSString *)URL
-{
-    ASSERT(URL);
-    
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:URL
-                                                         forKey:WebIconNotificationUserInfoURLKey];
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidAddIconNotification
-                                                        object:self
-                                                      userInfo:userInfo];
 }
 
 - (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons

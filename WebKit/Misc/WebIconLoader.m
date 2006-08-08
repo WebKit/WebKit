@@ -28,9 +28,9 @@
 #import <WebKit/WebIconLoader.h>
 
 #import <JavaScriptCore/Assertions.h>
-#import <WebCore/WebCoreIconDatabaseBridge.h>
 #import <WebKit/WebFrameLoader.h>
 #import <WebKit/WebIconDatabase.h>
+#import <WebKit/WebIconDatabaseBridge.h>
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebKitLogging.h>
 
@@ -88,32 +88,54 @@
 
 - (void)didFinishLoading
 {
+#ifndef ICONDEBUG
     NSImage *icon;
-
+#endif
 
     NS_DURING
         NSData *data = [self resourceData];
             
-        #ifdef ICONDEBUG
+#ifdef ICONDEBUG
         if (data) {
-            [[WebCoreIconDatabaseBridge sharedBridgeInstance] _setIconData:data forIconURL:[[self URL] _web_originalDataAsString]];
+            [[WebIconDatabaseBridge sharedBridgeInstance] _setIconData:data forIconURL:[[self URL] _web_originalDataAsString]];
             LOG(IconDatabase, "NewDB - Icon data set for URL %@", [[self URL] _web_originalDataAsString]);
         }
-        #endif
-
+#else
         icon = [data length] > 0 ? [[NSImage alloc] initWithData:data] : nil;
+#endif
     NS_HANDLER
+#ifndef ICONDEBUG
         icon = nil;
+#endif
     NS_ENDHANDLER
+    
+#ifndef ICONDEBUG
     if ([[icon representations] count] > 0) {
         [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:[[self URL] _web_originalDataAsString]];
     } else {
         [[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
     }
+#endif
+    
     [frameLoader _iconLoaderReceivedPageIcon:self];    
+    
+#ifndef ICONDEBUG
     [icon release];
+#endif
     
     [super didFinishLoading];
+}
+
+- (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse;
+{
+    ASSERT(!reachedTerminalState);
+    
+    // We now allow a WebIconLoader without an associated WebDataSource for kicking off a contextless icon load,
+    // so we override this special case in WebIconLoader only.  If we passed this through to the super class version,
+    // it would pass back a nil Request so the icon wouldn't actually load because it is designed to be part of a page load
+    if (!frameLoader) 
+        return newRequest;
+    return [super willSendRequest:newRequest redirectResponse:redirectResponse];
 }
 
 // We don't ever want to prompt for authentication just for a site icon, so

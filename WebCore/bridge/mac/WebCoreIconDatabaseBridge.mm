@@ -33,15 +33,15 @@
 
 using namespace WebCore;
 
-@implementation WebCoreIconDatabaseBridge
 
-+ (WebCoreIconDatabaseBridge *)sharedBridgeInstance;
+void WebCore::IconDatabase::loadIconFromURL(const String& url)
 {
-    static WebCoreIconDatabaseBridge *sharedBridgeInstance = nil;
-    if (sharedBridgeInstance) 
-        return sharedBridgeInstance;
-    return sharedBridgeInstance = [[WebCoreIconDatabaseBridge alloc] init];
+    if (url.isEmpty())
+        return;
+    [[WebCoreIconDatabaseBridge sharedBridgeInstance] loadIconFromURL:(NSString *)url];
 }
+
+@implementation WebCoreIconDatabaseBridge
 
 - (BOOL)openSharedDatabaseWithPath:(NSString *)path;
 {
@@ -66,6 +66,16 @@ using namespace WebCore;
 - (BOOL)isOpen;
 {
     return _iconDB != 0;
+}
+
+- (BOOL)isIconExpiredForIconURL:(NSString *)iconURL
+{
+    return _iconDB ? _iconDB->isIconExpiredForIconURL(iconURL) : NO;
+}
+
+- (BOOL)isIconExpiredForPageURL:(NSString *)pageURL
+{
+    return _iconDB ? _iconDB->isIconExpiredForPageURL(pageURL) : NO;
 }
 
 - (void)setPrivateBrowsingEnabled:(BOOL)flag;
@@ -177,5 +187,8 @@ using namespace WebCore;
     
     return _iconDB->hasIconForIconURL(String(iconURL));
 }
+
+
+
 
 @end
