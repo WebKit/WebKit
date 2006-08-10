@@ -480,10 +480,14 @@ using namespace HTMLNames;
 
     if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
+
+        // Checkboxes return their state as an integer. 0 for off, 1 for on.
         if (input->inputType() == HTMLInputElement::CHECKBOX ||
             input->inputType() == HTMLInputElement::RADIO)
-            // Checkboxes return their state as an integer. 0 for off, 1 for on.
             return [NSNumber numberWithInt:input->checked()];
+        
+        if (input->isTextField())
+            return (NSString*)input->value();
     }
     
     // FIXME: We might need to implement a value here for more types
