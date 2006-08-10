@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGFEBlendElementImpl_H
 #define KSVG_SVGFEBlendElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "KCanvasFilters.h"

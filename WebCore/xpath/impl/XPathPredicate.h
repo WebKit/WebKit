@@ -27,7 +27,7 @@
 #ifndef XPathPredicate_H
 #define XPathPredicate_H
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "XPathExpressionNode.h"
 

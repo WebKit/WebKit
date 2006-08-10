@@ -27,7 +27,7 @@
 #ifndef XPathValue_H
 #define XPathValue_H
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "PlatformString.h"
 #include "XPathUtil.h"

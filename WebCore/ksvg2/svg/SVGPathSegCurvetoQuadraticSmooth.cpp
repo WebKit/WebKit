@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGPathSegCurvetoQuadraticSmooth.h"
 #include "SVGStyledElement.h"
 

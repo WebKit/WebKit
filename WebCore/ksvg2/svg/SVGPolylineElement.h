@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGPolylineElementImpl_H
 #define KSVG_SVGPolylineElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGPolyElement.h"
 

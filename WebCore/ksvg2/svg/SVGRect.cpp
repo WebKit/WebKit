@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGHelper.h"
 #include "SVGRect.h"
 #include "SVGStyledElement.h"

@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGAnimatedPathData.h"
 
 using namespace WebCore;

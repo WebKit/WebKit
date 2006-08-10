@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGAnimatedColor.h"
 
 using namespace WebCore;

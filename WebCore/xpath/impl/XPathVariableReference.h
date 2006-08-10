@@ -26,7 +26,7 @@
 #ifndef XPathVariableReference_H
 #define XPathVariableReference_H
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "XPathExpressionNode.h"
 

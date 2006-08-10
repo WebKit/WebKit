@@ -60,7 +60,7 @@ namespace WebCore {
     class GraphicsContextPlatformPrivate;
     class Path;
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     class KRenderingDeviceContext;
 #endif
 
@@ -156,7 +156,7 @@ namespace WebCore {
         void rotate(float angleInRadians);
         void translate(const FloatSize&);
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
         KRenderingDeviceContext* createRenderingDeviceContext();
 #endif
 

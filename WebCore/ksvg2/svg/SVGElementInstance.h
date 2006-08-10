@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGElementInstanceImpl_H
 #define KSVG_SVGElementInstanceImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <kdom/events/EventTarget.h>
 

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGTransformableImpl_H
 #define KSVG_SVGTransformableImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGLocatable.h"
 

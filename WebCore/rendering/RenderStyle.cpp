@@ -603,7 +603,7 @@ RenderStyle::RenderStyle()
     , m_affectedByAttributeSelectors(false)
     , m_unique(false)
     , m_ref(0)
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     , m_svgStyle(defaultStyle->m_svgStyle)
 #endif
 {
@@ -630,7 +630,7 @@ RenderStyle::RenderStyle(bool)
     css3InheritedData.init();
     inherited.init();
     
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     m_svgStyle.init();
 #endif
 }
@@ -651,7 +651,7 @@ RenderStyle::RenderStyle(const RenderStyle& o)
     , m_affectedByAttributeSelectors(false)
     , m_unique(false)
     , m_ref(0)
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     , m_svgStyle(o.m_svgStyle)
 #endif
 {
@@ -662,7 +662,7 @@ void RenderStyle::inheritFrom(const RenderStyle* inheritParent)
     css3InheritedData = inheritParent->css3InheritedData;
     inherited = inheritParent->inherited;
     inherited_flags = inheritParent->inherited_flags;
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     if (m_svgStyle != inheritParent->m_svgStyle)
         m_svgStyle.access()->inheritFrom(inheritParent->m_svgStyle.get());
 #endif
@@ -684,7 +684,7 @@ bool RenderStyle::operator==(const RenderStyle& o) const
             css3NonInheritedData == o.css3NonInheritedData &&
             css3InheritedData == o.css3InheritedData &&
             inherited == o.inherited
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
             && m_svgStyle == o.m_svgStyle
 #endif
             ;
@@ -751,7 +751,7 @@ bool RenderStyle::inheritedNotEqual( RenderStyle *other ) const
 {
     return inherited_flags != other->inherited_flags ||
            inherited != other->inherited ||
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
            m_svgStyle->inheritedNotEqual(other->m_svgStyle.get()) ||
 #endif
            css3InheritedData != other->css3InheritedData;
@@ -774,7 +774,7 @@ bool RenderStyle::inheritedNotEqual( RenderStyle *other ) const
 */
 RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 {
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     // This is horribly inefficient.  Eventually we'll have to integrate
     // this more directly by calling: Diff svgDiff = svgStyle->diff(other)
     // and then checking svgDiff and returning from the appropriate places below.

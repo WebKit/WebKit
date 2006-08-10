@@ -61,7 +61,7 @@ module window {
         // We just use Document for this.
         attribute DocumentConstructor XMLDocument;
         
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;
 #endif

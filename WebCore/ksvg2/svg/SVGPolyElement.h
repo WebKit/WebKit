@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGPolyElementImpl_H
 #define KSVG_SVGPolyElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGTests.h"
 #include "svgpathparser.h"

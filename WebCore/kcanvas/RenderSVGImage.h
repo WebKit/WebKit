@@ -22,7 +22,7 @@
 
 #ifndef KCanvas_RenderSVGImage_H
 #define KCanvas_RenderSVGImage_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"
 #include "RenderImage.h"

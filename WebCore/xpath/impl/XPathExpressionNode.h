@@ -27,7 +27,7 @@
 #ifndef XPathExpressionNode_H
 #define XPathExpressionNode_H
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "StringHash.h"
 #include <wtf/HashMap.h>

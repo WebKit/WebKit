@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGFETileElementImpl_H
 #define KSVG_SVGFETileElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "KCanvasFilters.h"

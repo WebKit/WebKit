@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGFEFuncBElementImpl_H
 #define KSVG_SVGFEFuncBElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGComponentTransferFunctionElement.h"
 

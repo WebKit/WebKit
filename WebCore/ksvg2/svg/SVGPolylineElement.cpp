@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGPointList.h"
 #include "SVGPolylineElement.h"
 

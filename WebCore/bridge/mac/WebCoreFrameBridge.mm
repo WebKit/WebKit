@@ -378,7 +378,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         @"application/atom+xml",
         @"application/x-webarchive",
         @"multipart/x-mixed-replace",
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
         @"image/svg+xml",
 #endif
         nil];

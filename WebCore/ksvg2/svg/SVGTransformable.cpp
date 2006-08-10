@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "RegularExpression.h"
 #include "DeprecatedStringList.h"
 #include <wtf/RefPtr.h>

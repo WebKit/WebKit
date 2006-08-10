@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGAnimatedPathDataImpl_H
 #define KSVG_SVGAnimatedPathDataImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 namespace WebCore
 {

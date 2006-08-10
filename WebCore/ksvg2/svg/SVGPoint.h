@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGPointImpl_H
 #define KSVG_SVGPointImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "Shared.h"
 

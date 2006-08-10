@@ -27,7 +27,7 @@
 #ifndef XPathParser_H
 #define XPathParser_H
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "XPathStep.h"
 #include "XPathPredicate.h"

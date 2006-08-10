@@ -50,7 +50,7 @@
 #include <libxslt/xslt.h>
 #endif
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #endif
@@ -801,7 +801,7 @@ void XMLTokenizer::endElementNs()
     
     // don't load external scripts for standalone documents (for now)
     if (n->isElementNode() && m_view && (static_cast<Element*>(n)->hasTagName(scriptTag) 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
                                          || static_cast<Element*>(n)->hasTagName(SVGNames::scriptTag)
 #endif
                                          )) {
@@ -816,7 +816,7 @@ void XMLTokenizer::endElementNs()
         
         if (static_cast<Element*>(n)->hasTagName(scriptTag))
             scriptHref = scriptElement->getAttribute(srcAttr);
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
         else if (static_cast<Element*>(n)->hasTagName(SVGNames::scriptTag))
             scriptHref = scriptElement->getAttribute(XLinkNames::hrefAttr);
 #endif
@@ -1290,7 +1290,7 @@ void XMLTokenizer::insertErrorMessageBlock()
         rootElement->appendChild(body, ec);
         documentElement = body.get();
     }
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     else if (documentElement->namespaceURI() == SVGNames::svgNamespaceURI) {
         // Until our SVG implementation has text support, it is best if we 
         // wrap the erroneous SVG document in an xhtml document and render

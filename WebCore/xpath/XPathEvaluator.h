@@ -27,7 +27,7 @@
 #ifndef XPathEvaluator_H
 #define XPathEvaluator_H
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "Shared.h"
 #include <wtf/Forward.h>

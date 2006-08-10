@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGPathSegArcImpl_H
 #define KSVG_SVGPathSegArcImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGPathSeg.h"
 

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGStyledElementImpl_H
 #define KSVG_SVGStyledElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"
 #include "RenderStyle.h"

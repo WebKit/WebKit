@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGAnimateColorElement.h"
 #include "KSVGTimeScheduler.h"
 #include "PlatformString.h"

@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathParser.h"
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "ExceptionCode.h"
 #include "StringHash.h"

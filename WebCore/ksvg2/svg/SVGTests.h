@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGTestsImpl_H
 #define KSVG_SVGTestsImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <wtf/RefPtr.h>
 

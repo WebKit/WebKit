@@ -22,7 +22,7 @@
 
 #ifndef KCanvasResourceListener_H
 #define KCanvasResourceListener_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 class KCanvasResourceListener
 {

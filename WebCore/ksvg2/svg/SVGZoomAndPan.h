@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGZoomAndPanImpl_H
 #define KSVG_SVGZoomAndPanImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 namespace WebCore {
 

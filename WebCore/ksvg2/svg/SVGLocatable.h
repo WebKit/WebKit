@@ -22,7 +22,7 @@
 
 #ifndef SVGLocatable_H
 #define SVGLocatable_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 namespace WebCore {
 

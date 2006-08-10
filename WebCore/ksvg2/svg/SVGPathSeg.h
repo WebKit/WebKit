@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGPathSegImpl_H
 #define KSVG_SVGPathSegImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "PlatformString.h"
 

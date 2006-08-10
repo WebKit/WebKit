@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGStringListImpl_H
 #define KSVG_SVGStringListImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGList.h"
 

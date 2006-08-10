@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathEvaluator.h"
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "ExceptionCode.h"
 #include "Node.h"

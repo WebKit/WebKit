@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGPointListImpl_H
 #define KSVG_SVGPointListImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGList.h"
 #include "SVGPoint.h"

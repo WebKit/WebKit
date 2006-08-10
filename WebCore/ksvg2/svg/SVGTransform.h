@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGTransformImpl_H
 #define KSVG_SVGTransformImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "Shared.h"
 #include <wtf/RefPtr.h>

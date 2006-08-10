@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGTextElementImpl_H
 #define KSVG_SVGTextElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGTextPositioningElement.h"
 #include "SVGTransformable.h"

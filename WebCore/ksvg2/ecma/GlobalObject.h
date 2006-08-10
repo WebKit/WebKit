@@ -21,7 +21,7 @@
 
 #ifndef GlobalObject_H
 #define GlobalObject_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <kdom/ecma/GlobalObject.h>
 

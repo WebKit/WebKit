@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGExternalResourcesRequiredImpl_H
 #define KSVG_SVGExternalResourcesRequiredImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <wtf/RefPtr.h>
 

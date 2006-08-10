@@ -37,7 +37,7 @@
 #include "SelectionController.h"
 #include <wtf/Vector.h>
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "KCanvasTreeDebug.h"
 #include "RenderSVGContainer.h"
 #endif
@@ -46,7 +46,7 @@ namespace WebCore {
 
 static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*, const IntRect& paintDirtyRect, int indent = 0);
 
-#if !SVG_SUPPORT
+#ifndef SVG_SUPPORT
 static TextStream &operator<<(TextStream &ts, const IntRect &r)
 {
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
@@ -243,7 +243,7 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
 
 void write(TextStream &ts, const RenderObject &o, int indent)
 {
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     // FIXME:  A hackish way to doing our own "virtual" dispatch
     if (o.isRenderPath()) {
         write(ts, static_cast<const RenderPath&>(o), indent);
@@ -414,7 +414,7 @@ DeprecatedString externalRepresentation(RenderObject* o)
     DeprecatedString s;
     if (o) {
         TextStream ts(&s);
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
         ts.precision(2);
         writeRenderResources(ts, o->document());
 #endif

@@ -44,7 +44,7 @@
 #include "Shared.h"
 #include "DeprecatedValueList.h"
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGRenderStyle.h"
 #endif
 
@@ -1045,7 +1045,7 @@ protected:
     bool m_unique : 1;
     int m_ref;
     
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     DataRef<SVGRenderStyle> m_svgStyle;
 #endif
     
@@ -1579,7 +1579,7 @@ public:
     void setLineClamp(int c) { SET_VAR(css3NonInheritedData, lineClamp, c); }
     void setTextSizeAdjust(bool b) { SET_VAR(css3InheritedData, textSizeAdjust, b); }
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     const SVGRenderStyle* svgStyle() const { return m_svgStyle.get(); }
     SVGRenderStyle* accessSVGStyle() { return m_svgStyle.access(); }
 #endif

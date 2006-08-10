@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGAnimateTransformElementImpl_H
 #define KSVG_SVGAnimateTransformElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "ksvg.h"
 #include "SVGAnimationElement.h"

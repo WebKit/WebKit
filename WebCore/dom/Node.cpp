@@ -891,7 +891,7 @@ void Node::createRendererIfNeeded()
     
     RenderObject *parentRenderer = parent->renderer();
     if (parentRenderer && parentRenderer->canHaveChildren()
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
         && parent->childShouldCreateRenderer(this)
 #endif
         ) {

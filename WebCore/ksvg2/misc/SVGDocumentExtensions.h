@@ -22,7 +22,7 @@
 #ifndef SVGDocumentExtensions_H
 #define SVGDocumentExtensions_H
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>

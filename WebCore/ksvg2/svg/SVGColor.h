@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGColorImpl_H
 #define KSVG_SVGColorImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "CSSValue.h"
 #include "Color.h"

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGAngleImpl_H
 #define KSVG_SVGAngleImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "PlatformString.h"
 

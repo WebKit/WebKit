@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGNumberImpl_H
 #define KSVG_SVGNumberImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "Shared.h"
 

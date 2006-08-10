@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGAnimatedAngleImpl_H
 #define KSVG_SVGAnimatedAngleImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGAngle.h"
 #include "SVGAnimatedTemplate.h"

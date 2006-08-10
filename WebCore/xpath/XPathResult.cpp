@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathResult.h"
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "EventListener.h"
 #include "EventNames.h"

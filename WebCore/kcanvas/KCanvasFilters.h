@@ -23,7 +23,7 @@
 
 #ifndef KCanvasFilters_H
 #define KCanvasFilters_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "DeprecatedStringList.h"
 #include "KCanvasResources.h"

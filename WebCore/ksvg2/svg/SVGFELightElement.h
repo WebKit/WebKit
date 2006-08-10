@@ -21,7 +21,7 @@
 
 #ifndef KSVG_SVGFELightElementImpl_H
 #define KSVG_SVGFELightElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGElement.h"
 #include "KCanvasFilters.h"

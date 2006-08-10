@@ -21,7 +21,7 @@
 
 #ifndef JSSVGLazyEventListener_H
 #define JSSVGLazyEventListener_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "kjs_events.h"
 

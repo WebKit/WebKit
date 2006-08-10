@@ -200,7 +200,7 @@ sub GenerateHeader
     push(@headerContent, "\n#ifndef $className" . "_H");
     push(@headerContent, "\n#define $className" . "_H\n\n");
     
-    push(@headerContent, "#if ${conditional}_SUPPORT\n\n") if $conditional;
+    push(@headerContent, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
     
     if (exists $dataNode->extendedAttributes->{"LegacyParent"}) {
         push(@headerContent, GetLegacyHeaderIncludes($dataNode->extendedAttributes->{"LegacyParent"}));
@@ -444,7 +444,7 @@ sub GenerateImplementation
   push(@implContentHeader, "\n");
   push(@implContentHeader,, "#include \"config.h\"\n\n");
   
-  push(@implContentHeader, "#if ${conditional}_SUPPORT\n\n") if $conditional;
+  push(@implContentHeader, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
   
   push(@implContentHeader, "#include \"$className.h\"\n\n");
 

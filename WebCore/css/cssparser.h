@@ -152,7 +152,7 @@ namespace WebCore {
         CSSPrimitiveValue* parseColor();
         CSSPrimitiveValue* parseColorFromValue(Value*);
         
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
         bool parseSVGValue(int propId, bool important);
         CSSValue* parseSVGPaint();
         CSSValue* parseSVGColor();

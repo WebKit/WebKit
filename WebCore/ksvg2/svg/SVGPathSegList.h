@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGPathSegListImpl_H
 #define KSVG_SVGPathSegListImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGList.h"
 #include "SVGPathSeg.h"

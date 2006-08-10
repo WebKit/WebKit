@@ -85,7 +85,7 @@
 #include <unistd.h>
 #endif
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #include "XMLNames.h"
@@ -159,7 +159,7 @@ Frame::Frame(Page* page, Element* ownerElement)
     QualifiedName::init();
     MediaFeatureNames::init();
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     SVGNames::init();
     XLinkNames::init();
     XMLNames::init();
@@ -581,7 +581,7 @@ void Frame::begin(const KURL& url)
   if (!d->m_url.isEmpty())
     baseurl = d->m_url;
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
   if (d->m_request.m_responseMIMEType == "image/svg+xml")
     d->m_doc = DOMImplementation::instance()->createSVGDocument(d->m_view.get());
   else
@@ -2916,7 +2916,7 @@ void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, fl
 
 PausedTimeouts *Frame::pauseTimeouts()
 {
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     if (d->m_doc && d->m_doc->svgExtensions())
         d->m_doc->accessSVGExtensions()->pauseAnimations();
 #endif
@@ -2930,7 +2930,7 @@ PausedTimeouts *Frame::pauseTimeouts()
 
 void Frame::resumeTimeouts(PausedTimeouts* t)
 {
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     if (d->m_doc && d->m_doc->svgExtensions())
         d->m_doc->accessSVGExtensions()->unpauseAnimations();
 #endif

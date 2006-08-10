@@ -27,7 +27,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGRenderStyle.h"
 
 using namespace WebCore;

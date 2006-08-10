@@ -27,7 +27,7 @@
 #ifndef XPathNamespace_H
 #define XPathNamespace_H
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "AtomicString.h"
 #include "Node.h"

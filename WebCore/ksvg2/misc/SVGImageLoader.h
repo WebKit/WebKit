@@ -21,7 +21,7 @@
 
 #ifndef KSVG_SVGImageLoader_H
 #define KSVG_SVGImageLoader_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "HTMLImageLoader.h"
 

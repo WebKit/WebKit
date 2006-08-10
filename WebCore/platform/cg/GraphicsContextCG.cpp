@@ -482,7 +482,7 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     CGContextEOClip(context);
 }
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 KRenderingDeviceContext* GraphicsContext::createRenderingDeviceContext()
 {
     return new KRenderingDeviceContextQuartz(platformContext());

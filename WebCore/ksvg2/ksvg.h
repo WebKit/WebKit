@@ -22,7 +22,7 @@
 
 #ifndef KSVG_H
 #define KSVG_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 /**
  * @short General namespace specific definitions.

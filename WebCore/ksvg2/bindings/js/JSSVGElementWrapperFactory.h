@@ -19,7 +19,7 @@
 #ifndef JSSVGELEMENTWRAPPERFACTORY_H
 #define JSSVGELEMENTWRAPPERFACTORY_H
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <wtf/Forward.h>
 

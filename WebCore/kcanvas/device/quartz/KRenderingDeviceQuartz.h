@@ -26,7 +26,7 @@
 
 #ifndef KRenderingDeviceQuartz_H
 #define KRenderingDeviceQuartz_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #import <kcanvas/device/KRenderingDevice.h>
 

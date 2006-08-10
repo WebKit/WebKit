@@ -62,7 +62,7 @@
 #include "kjs_traversal.h"
 #include "kjs_window.h"
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "JSSVGDocument.h"
 #include "JSSVGElementWrapperFactory.h"
 #include "SVGDocument.h"
@@ -943,7 +943,7 @@ JSValue* toJS(ExecState* exec, Document *n)
 
   if (n->isHTMLDocument())
     ret = new WebCore::JSHTMLDocument(exec, static_cast<HTMLDocument*>(n));
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
   else if (n->isSVGDocument())
     ret = new WebCore::JSSVGDocument(exec, static_cast<SVGDocument*>(n));
 #endif
@@ -986,7 +986,7 @@ JSValue* toJS(ExecState* exec, PassRefPtr<Node> node)
     case Node::ELEMENT_NODE:
       if (n->isHTMLElement())
         ret = createJSHTMLWrapper(exec, static_pointer_cast<HTMLElement>(node));
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
       else if (n->isSVGElement())
         ret = createJSSVGWrapper(exec, static_pointer_cast<SVGElement>(node));
 #endif

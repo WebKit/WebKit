@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "XPathFunctions.h"
 #include "XPathNSResolver.h"

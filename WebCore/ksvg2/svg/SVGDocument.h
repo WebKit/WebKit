@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGDocumentImpl_H
 #define KSVG_SVGDocumentImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "Document.h"
 

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGAnimatedLengthListImpl_H
 #define KSVG_SVGAnimatedLengthListImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGAnimatedTemplate.h"
 #include "SVGLengthList.h"

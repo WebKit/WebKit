@@ -23,7 +23,7 @@
 
 #ifndef KSVG_TimeScheduler_H
 #define KSVG_TimeScheduler_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <wtf/HashSet.h>
 

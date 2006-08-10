@@ -23,7 +23,7 @@
 
 #ifndef KCanvasImage_H
 #define KCanvasImage_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <kcanvas/KCanvasResources.h>
 

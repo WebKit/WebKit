@@ -27,7 +27,7 @@
 #ifndef XPathNSResolver_H
 #define XPathNSResolver_H
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "Shared.h"
 #include <wtf/Forward.h>

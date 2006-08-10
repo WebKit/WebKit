@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGPathSegClosePathImpl_H
 #define KSVG_SVGPathSegClosePathImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <ksvg2/svg/SVGPathSeg.h>
 

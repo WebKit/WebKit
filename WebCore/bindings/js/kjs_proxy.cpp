@@ -26,7 +26,7 @@
 #include "Frame.h"
 #include "JSDOMWindow.h"
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "JSSVGLazyEventListener.h"
 #endif
 
@@ -99,7 +99,7 @@ EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, cons
     return new JSLazyEventListener(functionName, code, Window::retrieveWindow(m_frame), node, m_handlerLineno);
 }
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 EventListener* KJSProxy::createSVGEventHandler(const String& functionName, const String& code, Node* node)
 {
     initScriptIfNeeded();

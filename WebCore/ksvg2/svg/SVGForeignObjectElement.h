@@ -21,7 +21,7 @@
 
 #ifndef KSVG_SVGForeignObjectElementImpl_H
 #define KSVG_SVGForeignObjectElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGTests.h"
 #include "SVGLangSpace.h"

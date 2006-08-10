@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGLengthListImpl_H
 #define KSVG_SVGLengthListImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGList.h"
 #include "SVGLength.h"

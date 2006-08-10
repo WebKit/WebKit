@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGStopElementImpl_H
 #define KSVG_SVGStopElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGStyledElement.h"
 

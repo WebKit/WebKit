@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGMatrixImpl_H
 #define KSVG_SVGMatrixImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"
 #include "Shared.h"

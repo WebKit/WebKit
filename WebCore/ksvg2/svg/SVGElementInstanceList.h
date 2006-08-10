@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGElementInstanceListImpl_H
 #define KSVG_SVGElementInstanceListImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGList.h"
 #include "SVGElementInstance.h"

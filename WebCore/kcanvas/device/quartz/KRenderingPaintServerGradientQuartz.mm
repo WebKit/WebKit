@@ -26,7 +26,7 @@
 
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #import "KRenderingPaintServerQuartz.h"
 #import "QuartzSupport.h"
 

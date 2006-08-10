@@ -22,7 +22,7 @@
 
 #ifndef KCanvasCreator_H
 #define KCanvasCreator_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <kcanvas/KCanvasPath.h>
 

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGAnimatedEnumerationImpl_H
 #define KSVG_SVGAnimatedEnumerationImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "Shared.h"
 

@@ -751,7 +751,7 @@ RenderBlock* RenderObject::containingBlock() const
     } else {
         while (o && ((o->isInline() && !o->isReplaced()) || o->isTableRow() || o->isTableSection()
                      || o->isTableCol() || o->isFrameSet()
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
                      || o->isKCanvasContainer()
 #endif
                      ))
@@ -2902,7 +2902,7 @@ InlineBox *RenderObject::inlineBox(int offset, EAffinity affinity)
     return inlineBoxWrapper();
 }
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 FloatRect RenderObject::relativeBBox(bool) const
 {

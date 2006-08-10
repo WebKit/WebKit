@@ -23,7 +23,7 @@
 
 #ifndef KRenderingPaintServer_H
 #define KRenderingPaintServer_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <kcanvas/KCanvasResources.h>
 

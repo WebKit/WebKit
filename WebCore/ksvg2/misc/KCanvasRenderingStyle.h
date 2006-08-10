@@ -23,7 +23,7 @@
 
 #ifndef KSVG_KCanvasRenderingStyle_H
 #define KSVG_KCanvasRenderingStyle_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "DeprecatedValueList.h"
 #include <kcanvas/KCanvasMatrix.h>

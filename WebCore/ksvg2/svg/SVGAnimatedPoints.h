@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGAnimatedPointsImpl_H
 #define KSVG_SVGAnimatedPointsImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 namespace WebCore
 {

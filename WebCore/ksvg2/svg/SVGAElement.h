@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGAElementImpl_H
 #define KSVG_SVGAElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"

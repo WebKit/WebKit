@@ -21,7 +21,7 @@
 
 #ifndef KSVG_SVGAnimatedColorImpl_H
 #define KSVG_SVGAnimatedColorImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGAnimatedTemplate.h"
 

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGCursorElementImpl_H
 #define KSVG_SVGCursorElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "Image.h"
 

@@ -22,7 +22,7 @@
  
 #ifndef SVGZoomEvent_H
 #define SVGZoomEvent_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "FloatRect.h"
 #include "UIEvent.h"

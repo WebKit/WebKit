@@ -23,7 +23,7 @@
 
 #ifndef KCanvasPath_H
 #define KCanvasPath_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "DeprecatedValueList.h"
 #include <wtf/Assertions.h>

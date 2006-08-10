@@ -19,7 +19,7 @@
 
 #ifndef __SVGPATHPARSER_H__
 #define __SVGPATHPARSER_H__
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 namespace WebCore
 {

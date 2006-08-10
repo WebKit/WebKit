@@ -22,7 +22,7 @@
 
 #ifndef KCanvasMatrix_H
 #define KCanvasMatrix_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"
 

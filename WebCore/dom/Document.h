@@ -89,7 +89,7 @@ namespace WebCore {
     class Text;
     class Tokenizer;
     class TreeWalker;
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
     class XPathEvaluator;
     class XPathExpression;
     class XPathNSResolver;
@@ -100,7 +100,7 @@ namespace WebCore {
     struct DashboardRegionValue;
 #endif
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     class SVGDocumentExtensions;
 #endif
 
@@ -222,7 +222,7 @@ public:
     // Other methods (not part of DOM)
     virtual bool isDocumentNode() const { return true; }
     virtual bool isHTMLDocument() const { return false; }
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     virtual bool isSVGDocument() const { return false; }
 #endif
     virtual bool isPluginDocument() const { return false; }
@@ -583,7 +583,7 @@ public:
 
     void finishedParsing();
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
     // XPathEvaluator methods
     PassRefPtr<XPathExpression> createExpression(const String& expression,
                                                  XPathNSResolver* resolver,
@@ -749,7 +749,7 @@ public:
     HTMLInputElement* checkedRadioButtonForGroup(AtomicStringImpl* name, HTMLFormElement* form);
     void removeRadioButtonGroup(AtomicStringImpl* name, HTMLFormElement* form);
     
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     const SVGDocumentExtensions* svgExtensions();
     SVGDocumentExtensions* accessSVGExtensions();
 #endif
@@ -789,11 +789,11 @@ private:
     HTMLCollection::CollectionInfo m_collectionInfo[HTMLCollection::UnnamedCollectionTypes];
     HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo> m_nameCollectionInfo[HTMLCollection::CollectionTypes - HTMLCollection::UnnamedCollectionTypes];
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
     RefPtr<XPathEvaluator> m_xpathEvaluator;
 #endif
     
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     SVGDocumentExtensions* m_svgExtensions;
 #endif
     

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGFilterElementImpl_H
 #define KSVG_SVGFilterElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGLangSpace.h"
 #include "SVGURIReference.h"

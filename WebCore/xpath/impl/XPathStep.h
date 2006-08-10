@@ -27,7 +27,7 @@
 #ifndef XPathStep_H
 #define XPathStep_H
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "Node.h"
 #include "XPathExpressionNode.h"

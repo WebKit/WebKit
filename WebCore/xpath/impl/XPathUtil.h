@@ -27,7 +27,7 @@
 #ifndef XPathUtil_H
 #define XPathUtil_H
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include <wtf/Vector.h>
 

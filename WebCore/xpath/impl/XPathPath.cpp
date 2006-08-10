@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathPath.h"
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "Document.h"
 #include "XPathPredicate.h"

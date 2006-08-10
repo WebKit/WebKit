@@ -19,7 +19,7 @@
 
 #ifndef KSVG_SVGFEDistantLightElementImpl_H
 #define KSVG_SVGFEDistantLightElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGFELightElement.h"
 

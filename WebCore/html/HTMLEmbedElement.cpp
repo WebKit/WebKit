@@ -31,7 +31,7 @@
 #include "csshelper.h"
 #include "RenderPartObject.h"
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "ExceptionCode.h"
 #include "SVGDocument.h"
 #endif
@@ -210,7 +210,7 @@ void HTMLEmbedElement::setType(const String& value)
     setAttribute(typeAttr, value);
 }
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 Document* HTMLEmbedElement::contentDocument() const
 {
     // FIXME: The frame loading code should be moved out of the render tree

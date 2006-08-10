@@ -38,7 +38,7 @@
 #include "Text.h"
 #include "csshelper.h"
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGDocument.h"
 #endif
 
@@ -500,7 +500,7 @@ void HTMLObjectElement::setVspace(int value)
     setAttribute(vspaceAttr, String::number(value));
 }
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 SVGDocument* HTMLObjectElement::getSVGDocument(ExceptionCode& ec) const
 {
     Document* doc = contentDocument();

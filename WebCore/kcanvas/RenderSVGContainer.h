@@ -22,7 +22,7 @@
 
 #ifndef KCanvasContainer_H
 #define KCanvasContainer_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "kcanvas/RenderPath.h"
 #include "RenderContainer.h"

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGPathSegCurvetoQuadraticSmoothImpl_H
 #define KSVG_SVGPathSegCurvetoQuadraticSmoothImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGPathSeg.h"
 

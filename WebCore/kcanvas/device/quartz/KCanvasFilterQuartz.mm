@@ -26,7 +26,7 @@
 
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #import "KCanvasFilterQuartz.h"
 
 #import "BlockExceptions.h"

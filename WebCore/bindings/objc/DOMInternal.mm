@@ -75,7 +75,7 @@ void removeDOMWrapper(DOMObjectInternal* impl)
 NSString * const DOMException = @"DOMException";
 NSString * const DOMRangeException = @"DOMRangeException";
 NSString * const DOMEventException = @"DOMEventException";
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 NSString * const DOMXPathException = @"DOMXPathException";
 #endif // XPATH_SUPPORT
 
@@ -92,7 +92,7 @@ void raiseDOMException(ExceptionCode ec)
     } else if (ec >= EventExceptionOffset && ec <= EventExceptionMax) {
         name = DOMEventException;
         code -= EventExceptionOffset;
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
     } else if (ec >= XPathExceptionOffset && ec <= XPathExceptionMax) {
         name = DOMXPathException;
         code -= XPathExceptionOffset;

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGHelper_H
 #define KSVG_SVGHelper_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "DeprecatedString.h"
 

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGFEMergeNodeElementImpl_H
 #define KSVG_SVGFEMergeNodeElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <SVGElement.h>
 

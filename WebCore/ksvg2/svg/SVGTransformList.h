@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGTransformListImpl_H
 #define KSVG_SVGTransformListImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGList.h"
 #include "SVGTransform.h"

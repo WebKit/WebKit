@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGTSpanElementImpl_H
 #define KSVG_SVGTSpanElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGTextPositioningElement.h"
 

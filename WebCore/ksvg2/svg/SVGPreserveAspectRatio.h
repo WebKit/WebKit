@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGPreserveAspectRatioImpl_H
 #define KSVG_SVGPreserveAspectRatioImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "Shared.h"
 

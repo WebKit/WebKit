@@ -22,7 +22,7 @@
 
 #ifndef RenderSVGText_H
 #define RenderSVGText_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "RenderBlock.h"
 #include "AffineTransform.h"

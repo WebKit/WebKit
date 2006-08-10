@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathNamespace.h"
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "Element.h"
 

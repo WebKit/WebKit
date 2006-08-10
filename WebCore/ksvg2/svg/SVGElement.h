@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGElementImpl_H
 #define KSVG_SVGElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "StyledElement.h"
 #include "SVGNames.h"

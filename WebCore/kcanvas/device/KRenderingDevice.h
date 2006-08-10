@@ -22,7 +22,7 @@
 
 #ifndef KRenderingDevice_H
 #define KRenderingDevice_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingPaintServer.h>

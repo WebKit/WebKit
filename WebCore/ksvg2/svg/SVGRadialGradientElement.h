@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGRadialGradientElementImpl_H
 #define KSVG_SVGRadialGradientElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <SVGGradientElement.h>
 

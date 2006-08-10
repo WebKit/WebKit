@@ -1280,7 +1280,7 @@ bool CSSParser::parseValue(int propId, bool important)
         return parseShorthand(propId, properties, 3, important);
     }
     default:
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
         if (parseSVGValue(propId, important))
             return true;
 #endif

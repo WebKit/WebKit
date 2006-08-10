@@ -22,7 +22,7 @@
 
 #ifndef KRenderingPaintServerGradient_H
 #define KRenderingPaintServerGradient_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <kcanvas/device/KRenderingPaintServer.h>
 

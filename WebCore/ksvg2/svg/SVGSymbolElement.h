@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGSymbolElementImpl_H
 #define KSVG_SVGSymbolElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGLangSpace.h"
 #include "SVGFitToViewBox.h"

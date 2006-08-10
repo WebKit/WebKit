@@ -114,7 +114,7 @@ module core {
         Node adoptNode(in Node source)
             raises (DOMException);
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
         // DOM Level 3 XPath (XPathEvaluator interface)
         XPathExpression createExpression(in DOMString expression,
                                          in XPathNSResolver resolver)

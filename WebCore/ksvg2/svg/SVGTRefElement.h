@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGTRefElementImpl_H
 #define KSVG_SVGTRefElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGURIReference.h"
 #include "SVGTextPositioningElement.h"

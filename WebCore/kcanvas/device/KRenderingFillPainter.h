@@ -22,7 +22,7 @@
 
 #ifndef KRenderingFillPainter_H
 #define KRenderingFillPainter_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include <kcanvas/KCanvasPath.h>
 

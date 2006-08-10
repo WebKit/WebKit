@@ -20,7 +20,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "SVGDocumentExtensions.h"
 
 #include "Document.h"

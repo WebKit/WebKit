@@ -41,7 +41,7 @@
 #include "MediaQuery.h"
 #include "MediaQueryExp.h"
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "ksvgcssproperties.h"
 #include "ksvgcssvalues.h"
 #endif
@@ -951,7 +951,7 @@ property:
         const char* s = str.ascii();
         int l = str.length();
         $$ = getPropertyID(s, l);
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
         if ($$ == 0)
             $$ = SVG::getSVGCSSPropertyID(s, l);
 #endif
@@ -1007,7 +1007,7 @@ term:
   | IDENT maybe_space {
       DeprecatedString str = deprecatedString($1);
       $$.id = getValueID(str.lower().latin1(), str.length());
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
       if ($$.id == 0)
           $$.id = SVG::getSVGCSSValueID(str.lower().latin1(), str.length());
 #endif

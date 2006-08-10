@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathVariableReference.h"
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "Node.h"
 #include "XPathValue.h"

@@ -25,7 +25,7 @@
 
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #import "KCanvasMaskerQuartz.h"
 
 #import "SVGRenderStyle.h"

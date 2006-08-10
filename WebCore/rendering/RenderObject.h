@@ -270,7 +270,7 @@ public:
     virtual bool isFrameSet() const { return false; }
     virtual bool isApplet() const { return false; }
     
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     virtual bool isKCanvasContainer() const { return false; }
     virtual bool isRenderPath() const { return false; }
     virtual FloatRect relativeBBox(bool includeStroke = true) const;

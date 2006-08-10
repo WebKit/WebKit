@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGCircleElementImpl_H
 #define KSVG_SVGCircleElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGTests.h"
 #include "SVGLangSpace.h"

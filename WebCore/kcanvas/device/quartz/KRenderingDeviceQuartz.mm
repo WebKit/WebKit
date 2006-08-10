@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #import "KRenderingDeviceQuartz.h"
 
 #import "FoundationExtras.h"

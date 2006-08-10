@@ -28,7 +28,7 @@
 
 #ifndef KSVG_SVGRenderStyleDefs_H
 #define KSVG_SVGRenderStyleDefs_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "DeprecatedString.h"
 

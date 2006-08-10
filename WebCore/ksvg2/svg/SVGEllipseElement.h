@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGEllipseElementImpl_H
 #define KSVG_SVGEllipseElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGTests.h"
 #include "SVGLangSpace.h"

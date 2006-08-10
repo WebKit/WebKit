@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGScriptElementImpl_H
 #define KSVG_SVGScriptElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGElement.h"
 #include "SVGURIReference.h"

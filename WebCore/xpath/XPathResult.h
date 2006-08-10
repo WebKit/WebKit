@@ -27,7 +27,7 @@
 #ifndef XPathResult_H
 #define XPathResult_H
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "Shared.h"
 #include "XPathValue.h"

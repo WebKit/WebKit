@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGLangSpaceImpl_H
 #define KSVG_SVGLangSpaceImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "AtomicString.h"
 

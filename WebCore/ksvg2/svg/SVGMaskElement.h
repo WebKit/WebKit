@@ -21,7 +21,7 @@
 
 #ifndef KSVG_SVGMaskElementImpl_H
 #define KSVG_SVGMaskElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGTests.h"
 #include "SVGLangSpace.h"

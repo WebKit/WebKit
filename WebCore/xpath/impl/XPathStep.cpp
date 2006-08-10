@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathStep.h"
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "NamedAttrMap.h"
 #include "XPathNSResolver.h"

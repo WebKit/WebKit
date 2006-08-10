@@ -22,7 +22,7 @@
 
 #ifndef KDOM_DOMList_H
 #define KDOM_DOMList_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "DeprecatedPtrList.h"
 #include "Shared.h"

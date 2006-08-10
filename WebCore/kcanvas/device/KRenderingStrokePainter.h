@@ -22,7 +22,7 @@
 
 #ifndef KRenderingStrokePainter_H
 #define KRenderingStrokePainter_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "KCanvasRenderingStyle.h"
 

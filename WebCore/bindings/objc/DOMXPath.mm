@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #import "DOMXPath.h"
 #import "DOMInternal.h"

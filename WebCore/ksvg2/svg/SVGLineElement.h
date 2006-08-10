@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGLineElementImpl_H
 #define KSVG_SVGLineElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGTests.h"
 #include "SVGLangSpace.h"

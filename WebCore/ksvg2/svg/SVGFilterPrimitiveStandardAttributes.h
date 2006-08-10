@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGFilterPrimitiveStandardAttributesImpl_H
 #define KSVG_SVGFilterPrimitiveStandardAttributesImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGStyledElement.h"
 

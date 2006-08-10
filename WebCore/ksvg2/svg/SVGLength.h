@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGLengthImpl_H
 #define KSVG_SVGLengthImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "PlatformString.h"
 #include <ksvg2/svg/SVGHelper.h>

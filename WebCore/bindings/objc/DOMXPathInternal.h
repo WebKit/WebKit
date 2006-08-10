@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #import "DOMXPath.h"
 #import "XPathExpression.h"

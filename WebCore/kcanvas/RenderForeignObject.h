@@ -22,7 +22,7 @@
 
 #ifndef RenderForeignObject_H
 #define RenderForeignObject_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "RenderBlock.h"
 #include "AffineTransform.h"

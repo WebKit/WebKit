@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "KRenderingPaintServerSolid.h"
 #include "TextStream.h"
 #include "KCanvasTreeDebug.h"

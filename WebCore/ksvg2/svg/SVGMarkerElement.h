@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGMarkerElementImpl_H
 #define KSVG_SVGMarkerElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "KCanvasResources.h"
 #include "SVGExternalResourcesRequired.h"

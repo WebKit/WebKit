@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGDOMImplementationImpl_H
 #define KSVG_SVGDOMImplementationImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "DOMImplementation.h"
 

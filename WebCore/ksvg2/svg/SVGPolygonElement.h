@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGPolygonElementImpl_H
 #define KSVG_SVGPolygonElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGPolyElement.h"
 

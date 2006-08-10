@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGList_H
 #define KSVG_SVGList_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "DOMList.h"
 #include <ksvg2/svg/SVGStyledElement.h>

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGStyledTransformableElementImpl_H
 #define KSVG_SVGStyledTransformableElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGStyledLocatableElement.h"
 #include "SVGTransformable.h"

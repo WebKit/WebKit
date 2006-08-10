@@ -22,7 +22,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "KRenderingDevice.h"
 
 namespace WebCore {

@@ -23,7 +23,7 @@
 
 #ifndef KSVG_SVGRenderStyle_H
 #define KSVG_SVGRenderStyle_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "DataRef.h"
 #include <ksvg2/svg/SVGPaint.h>

@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGAnimationElementImpl_H
 #define KSVG_SVGAnimationElementImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "SVGExternalResourcesRequired.h"
 #include "SVGStringList.h"

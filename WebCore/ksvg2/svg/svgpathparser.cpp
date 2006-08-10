@@ -19,7 +19,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "svgpathparser.h"
 #include "DeprecatedString.h"
 #include <math.h>

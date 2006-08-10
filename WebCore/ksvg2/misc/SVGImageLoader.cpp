@@ -20,7 +20,7 @@
 */
 
 #include "config.h"
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "Attr.h"
 #include "DocLoader.h"

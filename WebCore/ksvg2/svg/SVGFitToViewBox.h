@@ -22,7 +22,7 @@
 
 #ifndef KSVG_SVGFitToViewBoxImpl_H
 #define KSVG_SVGFitToViewBoxImpl_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 namespace WebCore {
     class Attribute;

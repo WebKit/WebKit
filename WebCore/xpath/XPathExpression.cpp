@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathExpression.h"
 
-#if XPATH_SUPPORT
+#ifdef XPATH_SUPPORT
 
 #include "PlatformString.h"
 #include "Document.h"

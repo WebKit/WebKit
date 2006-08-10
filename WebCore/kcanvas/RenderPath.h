@@ -24,7 +24,7 @@
 
 #ifndef KCanvasItem_H
 #define KCanvasItem_H
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #include "DeprecatedValueList.h"
 #include "FloatRect.h"

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 
 #import "KCanvasRenderingStyle.h" // for all the CAP_BUTT contstants, etc.
 
