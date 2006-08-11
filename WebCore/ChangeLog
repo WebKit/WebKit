@@ -1,5 +1,14 @@
 2006-08-12  Oliver  <ojh16@student.canterbury.ac.nz>
 
+        Rubber stamped by tim
+
+        Removed commented out code
+
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+
+2006-08-12  Oliver  <ojh16@student.canterbury.ac.nz>
+
         Reviewed by geoff
 
         Fixed regression in SVG image layout
