@@ -94,9 +94,6 @@ public:
     String protocol() const;
     String search() const;
     String text() const;
-    
-protected:
-    bool m_hasTarget : 1;
 };
 
 } //namespace

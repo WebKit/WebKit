@@ -46,13 +46,11 @@ using namespace EventNames;
 HTMLAnchorElement::HTMLAnchorElement(Document* doc)
     : HTMLElement(aTag, doc)
 {
-    m_hasTarget = false;
 }
 
 HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document* doc)
     : HTMLElement(tagName, doc)
 {
-    m_hasTarget = false;
 }
 
 HTMLAnchorElement::~HTMLAnchorElement()
@@ -191,11 +189,12 @@ void HTMLAnchorElement::setActive(bool down, bool pause)
 
 void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    if (attr->name() == hrefAttr)
+    if (attr->name() == hrefAttr) {
+        bool wasLink = m_isLink;
         m_isLink = !attr->isNull();
-    else if (attr->name() == targetAttr)
-        m_hasTarget = !attr->isNull();
-    else if (attr->name() == nameAttr ||
+        if (wasLink != m_isLink)
+            setChanged();
+    } else if (attr->name() == nameAttr ||
              attr->name() == titleAttr ||
              attr->name() == relAttr) {
         // Do nothing.

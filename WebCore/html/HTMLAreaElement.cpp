@@ -62,8 +62,6 @@ void HTMLAreaElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == coordsAttr) {
         delete [] m_coords;
         m_coords = attr->value().toCoordsArray(m_coordsLen);
-    } else if (attr->name() == targetAttr) {
-        m_hasTarget = !attr->isNull();
     } else if (attr->name() == altAttr || attr->name() == accesskeyAttr) {
         // Do nothing.
     } else

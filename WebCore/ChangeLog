@@ -1,3 +1,19 @@
+2006-08-11  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 10349, make sure to call setChanged when an anchor changes
+        from not being a link to being a link (and vice versa).
+
+        Test is in fast/dynamic/link-href-change.html
+
+        Reviewed by darin
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement):
+        (WebCore::HTMLAnchorElement::parseMappedAttribute):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::parseMappedAttribute):
+
 2006-08-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
