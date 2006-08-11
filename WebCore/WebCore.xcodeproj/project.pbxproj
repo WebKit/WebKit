@@ -58,36 +58,8 @@
 		1A4A2DF00A1B852A00C807F8 /* JSHTMLAnchorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A2DEC0A1B852A00C807F8 /* JSHTMLAnchorElement.h */; };
 		1A4A2DF10A1B852A00C807F8 /* JSHTMLAppletElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A2DED0A1B852A00C807F8 /* JSHTMLAppletElement.cpp */; };
 		1A4A2DF20A1B852A00C807F8 /* JSHTMLAppletElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A2DEE0A1B852A00C807F8 /* JSHTMLAppletElement.h */; };
-		1A5D938E0A0B9ACC00B1121F /* XPathParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5D938C0A0B9ACC00B1121F /* XPathParser.cpp */; };
-		1A5D938F0A0B9ACC00B1121F /* XPathParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5D938D0A0B9ACC00B1121F /* XPathParser.h */; };
-		1A6931760A0CD4FA00C127FE /* XPathValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6931740A0CD4FA00C127FE /* XPathValue.h */; };
-		1A6931770A0CD4FA00C127FE /* XPathValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6931750A0CD4FA00C127FE /* XPathValue.cpp */; };
 		1A6938010A11100A00C127FE /* TextDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6937FF0A11100A00C127FE /* TextDocument.cpp */; };
 		1A6938020A11100A00C127FE /* TextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6938000A11100A00C127FE /* TextDocument.h */; };
-		1A7629830A0740A000989F5B /* XPathExpressionNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629590A0740A000989F5B /* XPathExpressionNode.cpp */; };
-		1A7629840A0740A000989F5B /* XPathExpressionNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A76295A0A0740A000989F5B /* XPathExpressionNode.h */; };
-		1A76298A0A0740A000989F5B /* XPathFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629610A0740A000989F5B /* XPathFunctions.cpp */; };
-		1A76298B0A0740A000989F5B /* XPathFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7629620A0740A000989F5B /* XPathFunctions.h */; };
-		1A76298E0A0740A000989F5B /* XPathPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629650A0740A000989F5B /* XPathPath.cpp */; };
-		1A76298F0A0740A000989F5B /* XPathPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7629660A0740A000989F5B /* XPathPath.h */; };
-		1A7629900A0740A000989F5B /* XPathPredicate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629670A0740A000989F5B /* XPathPredicate.cpp */; };
-		1A7629910A0740A000989F5B /* XPathPredicate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7629680A0740A000989F5B /* XPathPredicate.h */; };
-		1A7629920A0740A000989F5B /* XPathStep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629690A0740A000989F5B /* XPathStep.cpp */; };
-		1A7629930A0740A000989F5B /* XPathStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A76296A0A0740A000989F5B /* XPathStep.h */; };
-		1A7629970A0740A000989F5B /* XPathUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A76296E0A0740A000989F5B /* XPathUtil.cpp */; };
-		1A7629980A0740A000989F5B /* XPathUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A76296F0A0740A000989F5B /* XPathUtil.h */; };
-		1A7629990A0740A000989F5B /* XPathVariableReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629700A0740A000989F5B /* XPathVariableReference.cpp */; };
-		1A76299A0A0740A000989F5B /* XPathVariableReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7629710A0740A000989F5B /* XPathVariableReference.h */; };
-		1A76299D0A0740A000989F5B /* XPathEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629750A0740A000989F5B /* XPathEvaluator.cpp */; };
-		1A76299E0A0740A000989F5B /* XPathEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7629760A0740A000989F5B /* XPathEvaluator.h */; };
-		1A7629A00A0740A000989F5B /* XPathExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629780A0740A000989F5B /* XPathExpression.cpp */; };
-		1A7629A10A0740A000989F5B /* XPathExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7629790A0740A000989F5B /* XPathExpression.h */; };
-		1A7629A30A0740A000989F5B /* XPathNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A76297B0A0740A000989F5B /* XPathNamespace.cpp */; };
-		1A7629A40A0740A000989F5B /* XPathNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A76297C0A0740A000989F5B /* XPathNamespace.h */; };
-		1A7629A50A0740A000989F5B /* XPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A76297D0A0740A000989F5B /* XPathNSResolver.cpp */; };
-		1A7629A60A0740A000989F5B /* XPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A76297E0A0740A000989F5B /* XPathNSResolver.h */; };
-		1A7629A80A0740A000989F5B /* XPathResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629800A0740A000989F5B /* XPathResult.cpp */; };
-		1A7629A90A0740A000989F5B /* XPathResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7629810A0740A000989F5B /* XPathResult.h */; };
 		1A7629D50A07425100989F5B /* XPathGrammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629D30A07425100989F5B /* XPathGrammar.cpp */; };
 		1A7629D60A07425100989F5B /* XPathGrammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7629D40A07425100989F5B /* XPathGrammar.h */; };
 		1A762C730A074F2600989F5B /* JSXPathEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A762C6B0A074F2600989F5B /* JSXPathEvaluator.cpp */; };
@@ -114,6 +86,34 @@
 		1A85B2B60A1B2AC700D8C87C /* JSHTMLDivElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */; };
 		1A85B2B70A1B2AC700D8C87C /* JSHTMLDivElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */; };
 		1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */; };
+		1AB7FC680A8B92EC00D9D37B /* XPathEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */; };
+		1AB7FC690A8B92EC00D9D37B /* XPathEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */; };
+		1AB7FC6B0A8B92EC00D9D37B /* XPathExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC4A0A8B92EC00D9D37B /* XPathExpression.cpp */; };
+		1AB7FC6C0A8B92EC00D9D37B /* XPathExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC4B0A8B92EC00D9D37B /* XPathExpression.h */; };
+		1AB7FC6E0A8B92EC00D9D37B /* XPathExpressionNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC4D0A8B92EC00D9D37B /* XPathExpressionNode.cpp */; };
+		1AB7FC6F0A8B92EC00D9D37B /* XPathExpressionNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC4E0A8B92EC00D9D37B /* XPathExpressionNode.h */; };
+		1AB7FC700A8B92EC00D9D37B /* XPathFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC4F0A8B92EC00D9D37B /* XPathFunctions.cpp */; };
+		1AB7FC710A8B92EC00D9D37B /* XPathFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC500A8B92EC00D9D37B /* XPathFunctions.h */; };
+		1AB7FC730A8B92EC00D9D37B /* XPathNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC520A8B92EC00D9D37B /* XPathNamespace.cpp */; };
+		1AB7FC740A8B92EC00D9D37B /* XPathNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC530A8B92EC00D9D37B /* XPathNamespace.h */; };
+		1AB7FC750A8B92EC00D9D37B /* XPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC540A8B92EC00D9D37B /* XPathNSResolver.cpp */; };
+		1AB7FC760A8B92EC00D9D37B /* XPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC550A8B92EC00D9D37B /* XPathNSResolver.h */; };
+		1AB7FC780A8B92EC00D9D37B /* XPathParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC570A8B92EC00D9D37B /* XPathParser.cpp */; };
+		1AB7FC790A8B92EC00D9D37B /* XPathParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC580A8B92EC00D9D37B /* XPathParser.h */; };
+		1AB7FC7A0A8B92EC00D9D37B /* XPathPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC590A8B92EC00D9D37B /* XPathPath.cpp */; };
+		1AB7FC7B0A8B92EC00D9D37B /* XPathPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC5A0A8B92EC00D9D37B /* XPathPath.h */; };
+		1AB7FC7C0A8B92EC00D9D37B /* XPathPredicate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC5B0A8B92EC00D9D37B /* XPathPredicate.cpp */; };
+		1AB7FC7D0A8B92EC00D9D37B /* XPathPredicate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC5C0A8B92EC00D9D37B /* XPathPredicate.h */; };
+		1AB7FC7E0A8B92EC00D9D37B /* XPathResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC5D0A8B92EC00D9D37B /* XPathResult.cpp */; };
+		1AB7FC7F0A8B92EC00D9D37B /* XPathResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC5E0A8B92EC00D9D37B /* XPathResult.h */; };
+		1AB7FC810A8B92EC00D9D37B /* XPathStep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC600A8B92EC00D9D37B /* XPathStep.cpp */; };
+		1AB7FC820A8B92EC00D9D37B /* XPathStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC610A8B92EC00D9D37B /* XPathStep.h */; };
+		1AB7FC830A8B92EC00D9D37B /* XPathUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC620A8B92EC00D9D37B /* XPathUtil.cpp */; };
+		1AB7FC840A8B92EC00D9D37B /* XPathUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC630A8B92EC00D9D37B /* XPathUtil.h */; };
+		1AB7FC850A8B92EC00D9D37B /* XPathValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC640A8B92EC00D9D37B /* XPathValue.cpp */; };
+		1AB7FC860A8B92EC00D9D37B /* XPathValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC650A8B92EC00D9D37B /* XPathValue.h */; };
+		1AB7FC870A8B92EC00D9D37B /* XPathVariableReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC660A8B92EC00D9D37B /* XPathVariableReference.cpp */; };
+		1AB7FC880A8B92EC00D9D37B /* XPathVariableReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */; };
 		1AC694C70A3B1676003F5049 /* PluginDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC694C50A3B1676003F5049 /* PluginDocument.cpp */; };
 		1AC694C80A3B1676003F5049 /* PluginDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC694C60A3B1676003F5049 /* PluginDocument.h */; };
 		1AE2AA1E0A1CDAB400B42B25 /* JSHTMLAreaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AA0A0A1CDAB300B42B25 /* JSHTMLAreaElement.cpp */; };
@@ -1665,41 +1665,8 @@
 		1A4A2DEC0A1B852A00C807F8 /* JSHTMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLAnchorElement.h; sourceTree = "<group>"; };
 		1A4A2DED0A1B852A00C807F8 /* JSHTMLAppletElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAppletElement.cpp; sourceTree = "<group>"; };
 		1A4A2DEE0A1B852A00C807F8 /* JSHTMLAppletElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLAppletElement.h; sourceTree = "<group>"; };
-		1A5D938C0A0B9ACC00B1121F /* XPathParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathParser.cpp; sourceTree = "<group>"; };
-		1A5D938D0A0B9ACC00B1121F /* XPathParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathParser.h; sourceTree = "<group>"; };
-		1A6931740A0CD4FA00C127FE /* XPathValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPathValue.h; sourceTree = "<group>"; };
-		1A6931750A0CD4FA00C127FE /* XPathValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPathValue.cpp; sourceTree = "<group>"; };
 		1A6937FF0A11100A00C127FE /* TextDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextDocument.cpp; sourceTree = "<group>"; };
 		1A6938000A11100A00C127FE /* TextDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextDocument.h; sourceTree = "<group>"; };
-		1A7629590A0740A000989F5B /* XPathExpressionNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathExpressionNode.cpp; sourceTree = "<group>"; };
-		1A76295A0A0740A000989F5B /* XPathExpressionNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathExpressionNode.h; sourceTree = "<group>"; };
-		1A7629610A0740A000989F5B /* XPathFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathFunctions.cpp; sourceTree = "<group>"; };
-		1A7629620A0740A000989F5B /* XPathFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathFunctions.h; sourceTree = "<group>"; };
-		1A7629650A0740A000989F5B /* XPathPath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathPath.cpp; sourceTree = "<group>"; };
-		1A7629660A0740A000989F5B /* XPathPath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathPath.h; sourceTree = "<group>"; };
-		1A7629670A0740A000989F5B /* XPathPredicate.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathPredicate.cpp; sourceTree = "<group>"; };
-		1A7629680A0740A000989F5B /* XPathPredicate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathPredicate.h; sourceTree = "<group>"; };
-		1A7629690A0740A000989F5B /* XPathStep.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathStep.cpp; sourceTree = "<group>"; };
-		1A76296A0A0740A000989F5B /* XPathStep.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathStep.h; sourceTree = "<group>"; };
-		1A76296E0A0740A000989F5B /* XPathUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathUtil.cpp; sourceTree = "<group>"; };
-		1A76296F0A0740A000989F5B /* XPathUtil.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathUtil.h; sourceTree = "<group>"; };
-		1A7629700A0740A000989F5B /* XPathVariableReference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathVariableReference.cpp; sourceTree = "<group>"; };
-		1A7629710A0740A000989F5B /* XPathVariableReference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathVariableReference.h; sourceTree = "<group>"; };
-		1A7629720A0740A000989F5B /* XPathGrammar.y */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.yacc; path = XPathGrammar.y; sourceTree = "<group>"; };
-		1A7629750A0740A000989F5B /* XPathEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathEvaluator.cpp; sourceTree = "<group>"; };
-		1A7629760A0740A000989F5B /* XPathEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathEvaluator.h; sourceTree = "<group>"; };
-		1A7629770A0740A000989F5B /* XPathEvaluator.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathEvaluator.idl; sourceTree = "<group>"; };
-		1A7629780A0740A000989F5B /* XPathExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathExpression.cpp; sourceTree = "<group>"; };
-		1A7629790A0740A000989F5B /* XPathExpression.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathExpression.h; sourceTree = "<group>"; };
-		1A76297A0A0740A000989F5B /* XPathExpression.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathExpression.idl; sourceTree = "<group>"; };
-		1A76297B0A0740A000989F5B /* XPathNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathNamespace.cpp; sourceTree = "<group>"; };
-		1A76297C0A0740A000989F5B /* XPathNamespace.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathNamespace.h; sourceTree = "<group>"; };
-		1A76297D0A0740A000989F5B /* XPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathNSResolver.cpp; sourceTree = "<group>"; };
-		1A76297E0A0740A000989F5B /* XPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathNSResolver.h; sourceTree = "<group>"; };
-		1A76297F0A0740A000989F5B /* XPathNSResolver.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathNSResolver.idl; sourceTree = "<group>"; };
-		1A7629800A0740A000989F5B /* XPathResult.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathResult.cpp; sourceTree = "<group>"; };
-		1A7629810A0740A000989F5B /* XPathResult.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathResult.h; sourceTree = "<group>"; };
-		1A7629820A0740A000989F5B /* XPathResult.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathResult.idl; sourceTree = "<group>"; };
 		1A7629D30A07425100989F5B /* XPathGrammar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathGrammar.cpp; sourceTree = "<group>"; };
 		1A7629D40A07425100989F5B /* XPathGrammar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathGrammar.h; sourceTree = "<group>"; };
 		1A762C6B0A074F2600989F5B /* JSXPathEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathEvaluator.cpp; sourceTree = "<group>"; };
@@ -1732,6 +1699,39 @@
 		1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDivElement.cpp; sourceTree = "<group>"; };
 		1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLDivElement.h; sourceTree = "<group>"; };
 		1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
+		1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathEvaluator.cpp; sourceTree = "<group>"; };
+		1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathEvaluator.h; sourceTree = "<group>"; };
+		1AB7FC490A8B92EC00D9D37B /* XPathEvaluator.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathEvaluator.idl; sourceTree = "<group>"; };
+		1AB7FC4A0A8B92EC00D9D37B /* XPathExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathExpression.cpp; sourceTree = "<group>"; };
+		1AB7FC4B0A8B92EC00D9D37B /* XPathExpression.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathExpression.h; sourceTree = "<group>"; };
+		1AB7FC4C0A8B92EC00D9D37B /* XPathExpression.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathExpression.idl; sourceTree = "<group>"; };
+		1AB7FC4D0A8B92EC00D9D37B /* XPathExpressionNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathExpressionNode.cpp; sourceTree = "<group>"; };
+		1AB7FC4E0A8B92EC00D9D37B /* XPathExpressionNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathExpressionNode.h; sourceTree = "<group>"; };
+		1AB7FC4F0A8B92EC00D9D37B /* XPathFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathFunctions.cpp; sourceTree = "<group>"; };
+		1AB7FC500A8B92EC00D9D37B /* XPathFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathFunctions.h; sourceTree = "<group>"; };
+		1AB7FC510A8B92EC00D9D37B /* XPathGrammar.y */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.yacc; path = XPathGrammar.y; sourceTree = "<group>"; };
+		1AB7FC520A8B92EC00D9D37B /* XPathNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathNamespace.cpp; sourceTree = "<group>"; };
+		1AB7FC530A8B92EC00D9D37B /* XPathNamespace.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathNamespace.h; sourceTree = "<group>"; };
+		1AB7FC540A8B92EC00D9D37B /* XPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathNSResolver.cpp; sourceTree = "<group>"; };
+		1AB7FC550A8B92EC00D9D37B /* XPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathNSResolver.h; sourceTree = "<group>"; };
+		1AB7FC560A8B92EC00D9D37B /* XPathNSResolver.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathNSResolver.idl; sourceTree = "<group>"; };
+		1AB7FC570A8B92EC00D9D37B /* XPathParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathParser.cpp; sourceTree = "<group>"; };
+		1AB7FC580A8B92EC00D9D37B /* XPathParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathParser.h; sourceTree = "<group>"; };
+		1AB7FC590A8B92EC00D9D37B /* XPathPath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathPath.cpp; sourceTree = "<group>"; };
+		1AB7FC5A0A8B92EC00D9D37B /* XPathPath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathPath.h; sourceTree = "<group>"; };
+		1AB7FC5B0A8B92EC00D9D37B /* XPathPredicate.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathPredicate.cpp; sourceTree = "<group>"; };
+		1AB7FC5C0A8B92EC00D9D37B /* XPathPredicate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathPredicate.h; sourceTree = "<group>"; };
+		1AB7FC5D0A8B92EC00D9D37B /* XPathResult.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathResult.cpp; sourceTree = "<group>"; };
+		1AB7FC5E0A8B92EC00D9D37B /* XPathResult.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathResult.h; sourceTree = "<group>"; };
+		1AB7FC5F0A8B92EC00D9D37B /* XPathResult.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathResult.idl; sourceTree = "<group>"; };
+		1AB7FC600A8B92EC00D9D37B /* XPathStep.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathStep.cpp; sourceTree = "<group>"; };
+		1AB7FC610A8B92EC00D9D37B /* XPathStep.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathStep.h; sourceTree = "<group>"; };
+		1AB7FC620A8B92EC00D9D37B /* XPathUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathUtil.cpp; sourceTree = "<group>"; };
+		1AB7FC630A8B92EC00D9D37B /* XPathUtil.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathUtil.h; sourceTree = "<group>"; };
+		1AB7FC640A8B92EC00D9D37B /* XPathValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathValue.cpp; sourceTree = "<group>"; };
+		1AB7FC650A8B92EC00D9D37B /* XPathValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathValue.h; sourceTree = "<group>"; };
+		1AB7FC660A8B92EC00D9D37B /* XPathVariableReference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathVariableReference.cpp; sourceTree = "<group>"; };
+		1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathVariableReference.h; sourceTree = "<group>"; };
 		1AC694C50A3B1676003F5049 /* PluginDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDocument.cpp; sourceTree = "<group>"; };
 		1AC694C60A3B1676003F5049 /* PluginDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginDocument.h; sourceTree = "<group>"; };
 		1AE2A9F00A1CDA5700B42B25 /* HTMLAreaElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLAreaElement.idl; sourceTree = "<group>"; };
@@ -3492,7 +3492,6 @@
 				BCF1A5BA097832090061A123 /* platform */,
 				F523D2F302DE443B018635CA /* rendering */,
 				E1F0424309839389006694EA /* xml */,
-				1A7629570A0740A000989F5B /* xpath */,
 				656580EC09D12B20000E61D7 /* Derived Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
@@ -3736,54 +3735,6 @@
 			name = "Derived Sources";
 			path = DerivedSources/WebCore;
 			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1A7629570A0740A000989F5B /* xpath */ = {
-			isa = PBXGroup;
-			children = (
-				1A7629580A0740A000989F5B /* impl */,
-				1A7629750A0740A000989F5B /* XPathEvaluator.cpp */,
-				1A7629760A0740A000989F5B /* XPathEvaluator.h */,
-				1A7629770A0740A000989F5B /* XPathEvaluator.idl */,
-				1A7629780A0740A000989F5B /* XPathExpression.cpp */,
-				1A7629790A0740A000989F5B /* XPathExpression.h */,
-				1A76297A0A0740A000989F5B /* XPathExpression.idl */,
-				1A76297B0A0740A000989F5B /* XPathNamespace.cpp */,
-				1A76297C0A0740A000989F5B /* XPathNamespace.h */,
-				1A76297D0A0740A000989F5B /* XPathNSResolver.cpp */,
-				1A76297E0A0740A000989F5B /* XPathNSResolver.h */,
-				1A76297F0A0740A000989F5B /* XPathNSResolver.idl */,
-				1A7629800A0740A000989F5B /* XPathResult.cpp */,
-				1A7629810A0740A000989F5B /* XPathResult.h */,
-				1A7629820A0740A000989F5B /* XPathResult.idl */,
-			);
-			path = xpath;
-			sourceTree = "<group>";
-		};
-		1A7629580A0740A000989F5B /* impl */ = {
-			isa = PBXGroup;
-			children = (
-				1A7629590A0740A000989F5B /* XPathExpressionNode.cpp */,
-				1A76295A0A0740A000989F5B /* XPathExpressionNode.h */,
-				1A7629610A0740A000989F5B /* XPathFunctions.cpp */,
-				1A7629620A0740A000989F5B /* XPathFunctions.h */,
-				1A7629720A0740A000989F5B /* XPathGrammar.y */,
-				1A5D938C0A0B9ACC00B1121F /* XPathParser.cpp */,
-				1A5D938D0A0B9ACC00B1121F /* XPathParser.h */,
-				1A7629650A0740A000989F5B /* XPathPath.cpp */,
-				1A7629660A0740A000989F5B /* XPathPath.h */,
-				1A7629670A0740A000989F5B /* XPathPredicate.cpp */,
-				1A7629680A0740A000989F5B /* XPathPredicate.h */,
-				1A7629690A0740A000989F5B /* XPathStep.cpp */,
-				1A76296A0A0740A000989F5B /* XPathStep.h */,
-				1A76296E0A0740A000989F5B /* XPathUtil.cpp */,
-				1A76296F0A0740A000989F5B /* XPathUtil.h */,
-				1A6931750A0CD4FA00C127FE /* XPathValue.cpp */,
-				1A6931740A0CD4FA00C127FE /* XPathValue.h */,
-				1A7629700A0740A000989F5B /* XPathVariableReference.cpp */,
-				1A7629710A0740A000989F5B /* XPathVariableReference.h */,
-			);
-			path = impl;
-			sourceTree = "<group>";
 		};
 		5126E6B60A2E3AEF005C29FA /* icon */ = {
 			isa = PBXGroup;
@@ -5227,6 +5178,39 @@
 		E1F0424309839389006694EA /* xml */ = {
 			isa = PBXGroup;
 			children = (
+				1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */,
+				1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */,
+				1AB7FC490A8B92EC00D9D37B /* XPathEvaluator.idl */,
+				1AB7FC4A0A8B92EC00D9D37B /* XPathExpression.cpp */,
+				1AB7FC4B0A8B92EC00D9D37B /* XPathExpression.h */,
+				1AB7FC4C0A8B92EC00D9D37B /* XPathExpression.idl */,
+				1AB7FC4D0A8B92EC00D9D37B /* XPathExpressionNode.cpp */,
+				1AB7FC4E0A8B92EC00D9D37B /* XPathExpressionNode.h */,
+				1AB7FC4F0A8B92EC00D9D37B /* XPathFunctions.cpp */,
+				1AB7FC500A8B92EC00D9D37B /* XPathFunctions.h */,
+				1AB7FC510A8B92EC00D9D37B /* XPathGrammar.y */,
+				1AB7FC520A8B92EC00D9D37B /* XPathNamespace.cpp */,
+				1AB7FC530A8B92EC00D9D37B /* XPathNamespace.h */,
+				1AB7FC540A8B92EC00D9D37B /* XPathNSResolver.cpp */,
+				1AB7FC550A8B92EC00D9D37B /* XPathNSResolver.h */,
+				1AB7FC560A8B92EC00D9D37B /* XPathNSResolver.idl */,
+				1AB7FC570A8B92EC00D9D37B /* XPathParser.cpp */,
+				1AB7FC580A8B92EC00D9D37B /* XPathParser.h */,
+				1AB7FC590A8B92EC00D9D37B /* XPathPath.cpp */,
+				1AB7FC5A0A8B92EC00D9D37B /* XPathPath.h */,
+				1AB7FC5B0A8B92EC00D9D37B /* XPathPredicate.cpp */,
+				1AB7FC5C0A8B92EC00D9D37B /* XPathPredicate.h */,
+				1AB7FC5D0A8B92EC00D9D37B /* XPathResult.cpp */,
+				1AB7FC5E0A8B92EC00D9D37B /* XPathResult.h */,
+				1AB7FC5F0A8B92EC00D9D37B /* XPathResult.idl */,
+				1AB7FC600A8B92EC00D9D37B /* XPathStep.cpp */,
+				1AB7FC610A8B92EC00D9D37B /* XPathStep.h */,
+				1AB7FC620A8B92EC00D9D37B /* XPathUtil.cpp */,
+				1AB7FC630A8B92EC00D9D37B /* XPathUtil.h */,
+				1AB7FC640A8B92EC00D9D37B /* XPathValue.cpp */,
+				1AB7FC650A8B92EC00D9D37B /* XPathValue.h */,
+				1AB7FC660A8B92EC00D9D37B /* XPathVariableReference.cpp */,
+				1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */,
 				A833C7F60A2CF1D800D57664 /* xmlattrs.in */,
 				E1F0424409839389006694EA /* xmlhttprequest.cpp */,
 				E1F0424509839389006694EA /* xmlhttprequest.h */,
@@ -6163,25 +6147,11 @@
 				14D0C82509FF0EF5006B36D9 /* kjs_domnode.h in Headers */,
 				142011B70A003133008303F9 /* JSCSSStyleDeclaration.h in Headers */,
 				BCC71A130A0FF94D0014EE6E /* GlyphBuffer.h in Headers */,
-				1A7629840A0740A000989F5B /* XPathExpressionNode.h in Headers */,
-				1A76298B0A0740A000989F5B /* XPathFunctions.h in Headers */,
-				1A76298F0A0740A000989F5B /* XPathPath.h in Headers */,
-				1A7629910A0740A000989F5B /* XPathPredicate.h in Headers */,
-				1A7629930A0740A000989F5B /* XPathStep.h in Headers */,
-				1A7629980A0740A000989F5B /* XPathUtil.h in Headers */,
-				1A76299A0A0740A000989F5B /* XPathVariableReference.h in Headers */,
-				1A76299E0A0740A000989F5B /* XPathEvaluator.h in Headers */,
-				1A7629A10A0740A000989F5B /* XPathExpression.h in Headers */,
-				1A7629A40A0740A000989F5B /* XPathNamespace.h in Headers */,
-				1A7629A60A0740A000989F5B /* XPathNSResolver.h in Headers */,
-				1A7629A90A0740A000989F5B /* XPathResult.h in Headers */,
 				1A7629D60A07425100989F5B /* XPathGrammar.h in Headers */,
 				1A762C740A074F2600989F5B /* JSXPathEvaluator.h in Headers */,
 				1A762C760A074F2600989F5B /* JSXPathExpression.h in Headers */,
 				1A762C780A074F2600989F5B /* JSXPathNSResolver.h in Headers */,
 				1A762C7A0A074F2600989F5B /* JSXPathResult.h in Headers */,
-				1A5D938F0A0B9ACC00B1121F /* XPathParser.h in Headers */,
-				1A6931760A0CD4FA00C127FE /* XPathValue.h in Headers */,
 				A871D4560A127CBC00B12A68 /* HTMLPlugInElement.h in Headers */,
 				A871D4580A127CBC00B12A68 /* HTMLParamElement.h in Headers */,
 				A871D45A0A127CBC00B12A68 /* HTMLObjectElement.h in Headers */,
@@ -6411,6 +6381,20 @@
 				BCAA90A00A7EB03A008B1229 /* PlatformScrollBar.h in Headers */,
 				85EC9AFA0A71A2C600EEEAED /* FontData.h in Headers */,
 				85EC9AFB0A71A2C600EEEAED /* Language.h in Headers */,
+				1AB7FC690A8B92EC00D9D37B /* XPathEvaluator.h in Headers */,
+				1AB7FC6C0A8B92EC00D9D37B /* XPathExpression.h in Headers */,
+				1AB7FC6F0A8B92EC00D9D37B /* XPathExpressionNode.h in Headers */,
+				1AB7FC710A8B92EC00D9D37B /* XPathFunctions.h in Headers */,
+				1AB7FC740A8B92EC00D9D37B /* XPathNamespace.h in Headers */,
+				1AB7FC760A8B92EC00D9D37B /* XPathNSResolver.h in Headers */,
+				1AB7FC790A8B92EC00D9D37B /* XPathParser.h in Headers */,
+				1AB7FC7B0A8B92EC00D9D37B /* XPathPath.h in Headers */,
+				1AB7FC7D0A8B92EC00D9D37B /* XPathPredicate.h in Headers */,
+				1AB7FC7F0A8B92EC00D9D37B /* XPathResult.h in Headers */,
+				1AB7FC820A8B92EC00D9D37B /* XPathStep.h in Headers */,
+				1AB7FC840A8B92EC00D9D37B /* XPathUtil.h in Headers */,
+				1AB7FC860A8B92EC00D9D37B /* XPathValue.h in Headers */,
+				1AB7FC880A8B92EC00D9D37B /* XPathVariableReference.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7033,26 +7017,12 @@
 				BCFE8E320A02A1D30009E61D /* WebCoreTextRenderer.mm in Sources */,
 				14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */,
 				142011B60A003133008303F9 /* JSCSSStyleDeclaration.cpp in Sources */,
-				1A7629830A0740A000989F5B /* XPathExpressionNode.cpp in Sources */,
-				1A76298A0A0740A000989F5B /* XPathFunctions.cpp in Sources */,
-				1A5D938E0A0B9ACC00B1121F /* XPathParser.cpp in Sources */,
-				1A76298E0A0740A000989F5B /* XPathPath.cpp in Sources */,
-				1A7629900A0740A000989F5B /* XPathPredicate.cpp in Sources */,
-				1A7629920A0740A000989F5B /* XPathStep.cpp in Sources */,
-				1A7629970A0740A000989F5B /* XPathUtil.cpp in Sources */,
-				1A7629990A0740A000989F5B /* XPathVariableReference.cpp in Sources */,
-				1A76299D0A0740A000989F5B /* XPathEvaluator.cpp in Sources */,
-				1A7629A00A0740A000989F5B /* XPathExpression.cpp in Sources */,
-				1A7629A30A0740A000989F5B /* XPathNamespace.cpp in Sources */,
-				1A7629A50A0740A000989F5B /* XPathNSResolver.cpp in Sources */,
-				1A7629A80A0740A000989F5B /* XPathResult.cpp in Sources */,
 				1A7629D50A07425100989F5B /* XPathGrammar.cpp in Sources */,
 				1A762C730A074F2600989F5B /* JSXPathEvaluator.cpp in Sources */,
 				1A762C750A074F2600989F5B /* JSXPathExpression.cpp in Sources */,
 				1A762C770A074F2600989F5B /* JSXPathNSResolver.cpp in Sources */,
 				1A762C790A074F2600989F5B /* JSXPathResult.cpp in Sources */,
 				936BDD1D0A031AEB004DF4AB /* GraphicsContextCG.cpp in Sources */,
-				1A6931770A0CD4FA00C127FE /* XPathValue.cpp in Sources */,
 				A871D4570A127CBC00B12A68 /* HTMLPlugInElement.cpp in Sources */,
 				A871D4590A127CBC00B12A68 /* HTMLParamElement.cpp in Sources */,
 				A871D45B0A127CBC00B12A68 /* HTMLObjectElement.cpp in Sources */,
@@ -7283,6 +7253,20 @@
 				BCAA90C30A7EBA60008B1229 /* ScrollBar.cpp in Sources */,
 				93B0FD8A0A759BED0080AD44 /* StringImplMac.mm in Sources */,
 				93B0FD8B0A759BED0080AD44 /* StringMac.mm in Sources */,
+				1AB7FC680A8B92EC00D9D37B /* XPathEvaluator.cpp in Sources */,
+				1AB7FC6B0A8B92EC00D9D37B /* XPathExpression.cpp in Sources */,
+				1AB7FC6E0A8B92EC00D9D37B /* XPathExpressionNode.cpp in Sources */,
+				1AB7FC700A8B92EC00D9D37B /* XPathFunctions.cpp in Sources */,
+				1AB7FC730A8B92EC00D9D37B /* XPathNamespace.cpp in Sources */,
+				1AB7FC750A8B92EC00D9D37B /* XPathNSResolver.cpp in Sources */,
+				1AB7FC780A8B92EC00D9D37B /* XPathParser.cpp in Sources */,
+				1AB7FC7A0A8B92EC00D9D37B /* XPathPath.cpp in Sources */,
+				1AB7FC7C0A8B92EC00D9D37B /* XPathPredicate.cpp in Sources */,
+				1AB7FC7E0A8B92EC00D9D37B /* XPathResult.cpp in Sources */,
+				1AB7FC810A8B92EC00D9D37B /* XPathStep.cpp in Sources */,
+				1AB7FC830A8B92EC00D9D37B /* XPathUtil.cpp in Sources */,
+				1AB7FC850A8B92EC00D9D37B /* XPathValue.cpp in Sources */,
+				1AB7FC870A8B92EC00D9D37B /* XPathVariableReference.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

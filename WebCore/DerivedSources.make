@@ -31,7 +31,7 @@ VPATH = \
     $(WebCore)/dom \
     $(WebCore)/html \
     $(WebCore)/page \
-    $(WebCore)/xpath \
+    $(WebCore)/xml \
     $(WebCore)/ksvg2/svg \
     $(WebCore)/ksvg2/bindings/js \
 #
@@ -203,7 +203,7 @@ CSSGrammar.cpp : css/CSSGrammar.y
 
 # XPath grammar
 
-XPathGrammar.cpp : xpath/impl/XPathGrammar.y $(PROJECT_FILE)
+XPathGrammar.cpp : xml/XPathGrammar.y $(PROJECT_FILE)
 	bison -d -p xpathyy $< -o $@
 	touch XPathGrammar.cpp.h
 	touch XPathGrammar.hpp
@@ -295,4 +295,4 @@ JS_BINDINGS_SCRIPTS = \
 #
 
 JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
-	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES)" --generator JS --include dom --include html --include xpath --include ksvg2/svg --outputdir  . $<
+	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES)" --generator JS --include dom --include html --include xml --include ksvg2/svg --outputdir  . $<

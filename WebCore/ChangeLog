@@ -1,3 +1,46 @@
+2006-08-10  Anders Carlsson  <acarlsson@apple.com>
+
+        Rubber-stamped by Maciej.
+
+        Move xpath to xml.
+        
+        * DerivedSources.make:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * xpath/XPathEvaluator.cpp: Removed.
+        * xpath/XPathEvaluator.h: Removed.
+        * xpath/XPathEvaluator.idl: Removed.
+        * xpath/XPathExpression.cpp: Removed.
+        * xpath/XPathExpression.h: Removed.
+        * xpath/XPathExpression.idl: Removed.
+        * xpath/XPathNSResolver.cpp: Removed.
+        * xpath/XPathNSResolver.h: Removed.
+        * xpath/XPathNSResolver.idl: Removed.
+        * xpath/XPathNamespace.cpp: Removed.
+        * xpath/XPathNamespace.h: Removed.
+        * xpath/XPathResult.cpp: Removed.
+        * xpath/XPathResult.h: Removed.
+        * xpath/XPathResult.idl: Removed.
+        * xpath/impl/XPathExpressionNode.cpp: Removed.
+        * xpath/impl/XPathExpressionNode.h: Removed.
+        * xpath/impl/XPathFunctions.cpp: Removed.
+        * xpath/impl/XPathFunctions.h: Removed.
+        * xpath/impl/XPathGrammar.y: Removed.
+        * xpath/impl/XPathParser.cpp: Removed.
+        * xpath/impl/XPathParser.h: Removed.
+        * xpath/impl/XPathPath.cpp: Removed.
+        * xpath/impl/XPathPath.h: Removed.
+        * xpath/impl/XPathPredicate.cpp: Removed.
+        * xpath/impl/XPathPredicate.h: Removed.
+        * xpath/impl/XPathStep.cpp: Removed.
+        * xpath/impl/XPathStep.h: Removed.
+        * xpath/impl/XPathUtil.cpp: Removed.
+        * xpath/impl/XPathUtil.h: Removed.
+        * xpath/impl/XPathValue.cpp: Removed.
+        * xpath/impl/XPathValue.h: Removed.
+        * xpath/impl/XPathVariableReference.cpp: Removed.
+        * xpath/impl/XPathVariableReference.h: Removed.
+
 2006-08-10  David Harrison  <harrison@apple.com>
 
         Reviewed by John Sullivan.
