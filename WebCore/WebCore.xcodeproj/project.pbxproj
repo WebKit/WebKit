@@ -1325,9 +1325,7 @@
 		A8EA73C90A1900E300A8EF5F /* RenderFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B50A1900E300A8EF5F /* RenderFormElement.h */; };
 		A8EA73CA0A1900E300A8EF5F /* RenderLegend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */; };
 		A8EA73CB0A1900E300A8EF5F /* RenderLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B70A1900E300A8EF5F /* RenderLabel.h */; };
-		A8EA73CD0A1900E300A8EF5F /* RenderImageButton.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B90A1900E300A8EF5F /* RenderImageButton.h */; };
 		A8EA73CE0A1900E300A8EF5F /* RenderTextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73BA0A1900E300A8EF5F /* RenderTextArea.h */; };
-		A8EA73CF0A1900E300A8EF5F /* RenderImageButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73BB0A1900E300A8EF5F /* RenderImageButton.cpp */; };
 		A8EA73D10A1900E300A8EF5F /* RenderLegend.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */; };
 		A8EA73D20A1900E300A8EF5F /* RenderLineEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73BE0A1900E300A8EF5F /* RenderLineEdit.cpp */; };
 		A8EA73D30A1900E300A8EF5F /* RenderFormElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73BF0A1900E300A8EF5F /* RenderFormElement.cpp */; };
@@ -3082,9 +3080,7 @@
 		A8EA73B50A1900E300A8EF5F /* RenderFormElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFormElement.h; sourceTree = "<group>"; };
 		A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLegend.cpp; sourceTree = "<group>"; };
 		A8EA73B70A1900E300A8EF5F /* RenderLabel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLabel.h; sourceTree = "<group>"; };
-		A8EA73B90A1900E300A8EF5F /* RenderImageButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderImageButton.h; sourceTree = "<group>"; };
 		A8EA73BA0A1900E300A8EF5F /* RenderTextArea.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextArea.h; sourceTree = "<group>"; };
-		A8EA73BB0A1900E300A8EF5F /* RenderImageButton.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderImageButton.cpp; sourceTree = "<group>"; };
 		A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLegend.h; sourceTree = "<group>"; };
 		A8EA73BE0A1900E300A8EF5F /* RenderLineEdit.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLineEdit.cpp; sourceTree = "<group>"; };
 		A8EA73BF0A1900E300A8EF5F /* RenderFormElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFormElement.cpp; sourceTree = "<group>"; };
@@ -5391,8 +5387,6 @@
 				BCEA482B097D93020094C9E4 /* RenderHTMLCanvas.h */,
 				BCEA4836097D93020094C9E4 /* RenderImage.cpp */,
 				BCEA4837097D93020094C9E4 /* RenderImage.h */,
-				A8EA73BB0A1900E300A8EF5F /* RenderImageButton.cpp */,
-				A8EA73B90A1900E300A8EF5F /* RenderImageButton.h */,
 				BCEA4838097D93020094C9E4 /* RenderInline.cpp */,
 				BCEA4839097D93020094C9E4 /* RenderInline.h */,
 				A8EA73C00A1900E300A8EF5F /* RenderLabel.cpp */,
@@ -6207,7 +6201,6 @@
 				A8EA73C70A1900E300A8EF5F /* RenderFileButton.h in Headers */,
 				A8EA73C90A1900E300A8EF5F /* RenderFormElement.h in Headers */,
 				A8EA73CB0A1900E300A8EF5F /* RenderLabel.h in Headers */,
-				A8EA73CD0A1900E300A8EF5F /* RenderImageButton.h in Headers */,
 				A8EA73CE0A1900E300A8EF5F /* RenderTextArea.h in Headers */,
 				A8EA73D10A1900E300A8EF5F /* RenderLegend.h in Headers */,
 				A8EA79F10A1916DF00A8EF5F /* HTMLOListElement.h in Headers */,
@@ -7078,7 +7071,6 @@
 				A8EA73C60A1900E300A8EF5F /* RenderFileButton.cpp in Sources */,
 				A8EA73C80A1900E300A8EF5F /* RenderTextArea.cpp in Sources */,
 				A8EA73CA0A1900E300A8EF5F /* RenderLegend.cpp in Sources */,
-				A8EA73CF0A1900E300A8EF5F /* RenderImageButton.cpp in Sources */,
 				A8EA73D20A1900E300A8EF5F /* RenderLineEdit.cpp in Sources */,
 				A8EA73D30A1900E300A8EF5F /* RenderFormElement.cpp in Sources */,
 				A8EA73D40A1900E300A8EF5F /* RenderLabel.cpp in Sources */,

@@ -150,7 +150,7 @@ using namespace HTMLNames;
 
 -(BOOL)isImageButton
 {
-    return m_renderer->isImage() && static_cast<RenderImage*>(m_renderer)->isImageButton();
+    return m_renderer->isImage() && m_renderer->element() && m_renderer->element()->hasTagName(inputTag);
 }
 
 -(Element *)mouseButtonListener

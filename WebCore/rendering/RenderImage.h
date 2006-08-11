@@ -45,7 +45,6 @@ public:
     virtual const char* renderName() const { return "RenderImage"; }
 
     virtual bool isImage() const { return true; }
-    virtual bool isImageButton() const { return false; }
     
     virtual void paint(PaintInfo&, int tx, int ty);
 
