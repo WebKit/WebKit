@@ -1,3 +1,11 @@
+2006-08-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Revert an over-optimization step that messed up the HashSet lookup.
+
+        * dom/DOMImplementation.cpp:
+
 2006-08-12  Oliver  <ojh16@student.canterbury.ac.nz>
 
         Rubber stamped by tim

@@ -53,87 +53,90 @@ static bool qualifiedNameIsMalformed(const String&)
 
 #ifdef SVG_SUPPORT
 
-#define SVGFEATURE2(name, value) AtomicString SVGFEATURE_##name(#value); \
-                            svgFeatures.add(SVGFEATURE_##name.impl());
-#define SVGFEATURE(feature) AtomicString SVGFEATURE_##feature(#feature); \
-                            svgFeatures.add(SVGFEATURE_##feature.impl());
+static void addString(HashSet<StringImpl*, CaseInsensitiveHash>& set, const
+char* string)
+{
+    StringImpl* s = new StringImpl(string);
+    s->ref();
+    set.add(s);
+}
 
-bool isSVG10Feature(const String &feature)
+static bool isSVG10Feature(const String &feature)
 {
     static bool initialized = false;
     static HashSet<StringImpl*, CaseInsensitiveHash> svgFeatures;
     if (!initialized) {
         // TODO: features need to be uncommented when we implement them
         // 1.0 features
-        SVGFEATURE2(SVG, svg)
-        SVGFEATURE2(SVG_STATIC, svg.static)
-//      SVGFEATURE2(SVG_ANIMATION, svg.animation)
-//      SVGFEATURE2(SVG_DYNAMIC, svg.dynamic)
-//      SVGFEATURE2(DOM_SVG_ANIMATION, svg.dom.animation)
-//      SVGFEATURE2(DOM_SVG_DYNAMIC, svg.dom.dynamic)
-        SVGFEATURE2(DOM, dom)
-        SVGFEATURE2(DOM_SVG, dom.svg)
-        SVGFEATURE2(DOM_SVG_STATIC, dom.svg.static)
-//      SVGFEATURE2(SVG_ALL, svg.all)
-//      SVGFEATURE2(DOM_SVG_ALL, dom.svg.all)
+        addString(svgFeatures, "svg");
+        addString(svgFeatures, "svg.static");
+//      addString(svgFeatures, "svg.animation");
+//      addString(svgFeatures, "svg.dynamic");
+//      addString(svgFeatures, "svg.dom.animation");
+//      addString(svgFeatures, "svg.dom.dynamic");
+        addString(svgFeatures, "dom");
+        addString(svgFeatures, "dom.svg");
+        addString(svgFeatures, "dom.svg.static");
+//      addString(svgFeatures, "svg.all");
+//      addString(svgFeatures, "dom.svg.all");
         initialized = true;
     }
     return svgFeatures.contains(feature.impl());
 }
 
-bool isSVG11Feature(const String &feature)
+static bool isSVG11Feature(const String &feature)
 {
     static bool initialized = false;
     static HashSet<StringImpl*, CaseInsensitiveHash> svgFeatures;
     if (!initialized) {
         // TODO: features need to be uncommented when we implement them
         // 1.1 features
-        SVGFEATURE(SVG)
-        SVGFEATURE(SVGDOM)
-        SVGFEATURE2(SVG_STATIC, SVG-static)
-        SVGFEATURE2(SVGDOM_STATIC, SVGDOM-static)
-//      SVGFEATURE2(SVG_ANIMATION, SVG-animation)
-//      SVGFEATURE2(SVGDOM_ANIMATION, SVGDOM-animation)
-//      SVGFEATURE2(SVG_DYNAMIC, SVG-dynamic)
-//      SVGFEATURE2(SVGDOM_DYNAMIC, SVGDOM-dynamic)
-        SVGFEATURE(CoreAttribute)
-        SVGFEATURE(Structure)
-        SVGFEATURE(BasicStructure)
-        SVGFEATURE(ContainerAttribute)
-        SVGFEATURE(ConditionalProcessing)
-        SVGFEATURE(Image)
-        SVGFEATURE(Style)
-        SVGFEATURE(ViewportAttribute)
-        SVGFEATURE(Shape)
-//      SVGFEATURE(Text)
-//      SVGFEATURE(BasicText)
-        SVGFEATURE(PaintAttribute)
-        SVGFEATURE(BasicPaintAttribute)
-        SVGFEATURE(OpacityAttribute)
-        SVGFEATURE(GraphicsAttribute)
-        SVGFEATURE(BaseGraphicsAttribute)
-        SVGFEATURE(Marker)
-//      SVGFEATURE(ColorProfile)
-        SVGFEATURE(Gradient)
-        SVGFEATURE(Pattern)
-        SVGFEATURE(Clip)
-        SVGFEATURE(BasicClip)
-        SVGFEATURE(Mask)
-//      SVGFEATURE(Filter)
-//      SVGFEATURE(BasicFilter)
-        SVGFEATURE(DocumentEventsAttribute)
-        SVGFEATURE(GraphicalEventsAttribute)
-        SVGFEATURE(AnimationEventsAttribute)
-//      SVGFEATURE(Cursor)
-        SVGFEATURE(Hyperlinking)
-        SVGFEATURE(XlinkAttribute)
-//      SVGFEATURE(ExternalResourcesRequired)
-//      SVGFEATURE(View)
-        SVGFEATURE(Script)
-//      SVGFEATURE(Animation)
-//      SVGFEATURE(Font)
-//      SVGFEATURE(BasicFont)
-        SVGFEATURE(Extensibility)
+        addString(svgFeatures, "SVG");
+        addString(svgFeatures, "SVGDOM");
+        addString(svgFeatures, "SVG-static");
+        addString(svgFeatures, "SVGDOM-static");
+//      addString(svgFeatures, "SVG-animation);
+//      addString(svgFeatures, "SVGDOM-animation);
+//      addString(svgFeatures, "SVG-dynamic);
+//      addString(svgFeatures, "SVGDOM-dynamic);
+        addString(svgFeatures, "CoreAttribute");
+        addString(svgFeatures, "Structure");
+        addString(svgFeatures, "BasicStructure");
+        addString(svgFeatures, "ContainerAttribute");
+        addString(svgFeatures, "ConditionalProcessing");
+        addString(svgFeatures, "Image");
+        addString(svgFeatures, "Style");
+        addString(svgFeatures, "ViewportAttribute");
+        addString(svgFeatures, "Shape");
+//      addString(svgFeatures, "Text");
+//      addString(svgFeatures, "BasicText");
+        addString(svgFeatures, "PaintAttribute");
+        addString(svgFeatures, "BasicPaintAttribute");
+        addString(svgFeatures, "OpacityAttribute");
+        addString(svgFeatures, "GraphicsAttribute");
+        addString(svgFeatures, "BaseGraphicsAttribute");
+        addString(svgFeatures, "Marker");
+//      addString(svgFeatures, "ColorProfile");
+        addString(svgFeatures, "Gradient");
+        addString(svgFeatures, "Pattern");
+        addString(svgFeatures, "Clip");
+        addString(svgFeatures, "BasicClip");
+        addString(svgFeatures, "Mask");
+//      addString(svgFeatures, "Filter");
+//      addString(svgFeatures, "BasicFilter");
+        addString(svgFeatures, "DocumentEventsAttribute");
+        addString(svgFeatures, "GraphicalEventsAttribute");
+        addString(svgFeatures, "AnimationEventsAttribute");
+//      addString(svgFeatures, "Cursor");
+        addString(svgFeatures, "Hyperlinking");
+        addString(svgFeatures, "XlinkAttribute");
+//      addString(svgFeatures, "ExternalResourcesRequired");
+//      addString(svgFeatures, "View");
+        addString(svgFeatures, "Script");
+//      addString(svgFeatures, "Animation");
+//      addString(svgFeatures, "Font");
+//      addString(svgFeatures, "BasicFont");
+        addString(svgFeatures, "Extensibility");
         initialized = true;
     }
     return svgFeatures.contains(feature.impl());
