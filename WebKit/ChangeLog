@@ -1,3 +1,14 @@
+2006-08-11  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+        
+        Needed for <rdar://problem/4678070>.
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendEvent:]):
+        Changed an assertion to an early return.  It should be possible to send events, especially updateEvt (for image capturing
+        purposes), to off-screen plug-ins.  It just doesn't work right now.  See <rdar://problem/4318269>.
+
 2006-08-11  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

@@ -554,7 +554,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (BOOL)sendEvent:(EventRecord *)event
 {
-    ASSERT([self window]);
+    if (![self window])
+        return NO;
     ASSERT(event);
    
     // If at any point the user clicks or presses a key from within a plugin, set the 
