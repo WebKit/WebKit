@@ -537,7 +537,7 @@ void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, Exc
     // finally add the new element
     if (ec == 0) {
         add(option, before, ec);
-        if (diff >= 0)
+        if (diff >= 0 && option->selected())
             setSelectedIndex(index, !m_multiple);
     }
 }

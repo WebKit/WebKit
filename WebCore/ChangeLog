@@ -1,3 +1,15 @@
+2006-08-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
+        - Fix for <rdar://problem/4656274> 
+        REGRESSION: option elements are selected when added regardless of "selected" property
+
+        Test: fast/forms/option-constructor-selected.html
+
+        * html/HTMLSelectElement.cpp: (WebCore::HTMLSelectElement::setOption):
+        When adding an option element, check that the option element is selected before calling setSelectedIndex.
+
 2006-08-11  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 10349, make sure to call setChanged when an anchor changes

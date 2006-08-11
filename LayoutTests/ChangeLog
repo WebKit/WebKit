@@ -1,3 +1,13 @@
+2006-08-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
+        Test case for <rdar://problem/4656274> 
+        REGRESSION: option elements are selected when added regardless of "selected" property
+
+        * fast/forms/option-constructor-selected-expected.txt: Added.
+        * fast/forms/option-constructor-selected.html: Added.
+
 2006-08-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
