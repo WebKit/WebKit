@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (262,79) size 0x0
         RenderText {#text} at (0,84) size 42x18
           text run at (0,84) width 42: "image "
-        RenderImageButton {INPUT} at (42,97) size 10x1
+        RenderImage {INPUT} at (42,97) size 10x1
         RenderText {#text} at (52,84) size 4x18
           text run at (52,84) width 4: " "
         RenderBR {BR} at (56,98) size 0x0

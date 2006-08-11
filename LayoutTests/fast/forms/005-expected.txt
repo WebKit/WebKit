@@ -7,5 +7,5 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 44x54
           RenderTableRow {TR} at (0,0) size 44x54
             RenderTableCell {TD} at (0,0) size 44x54 [r=0 c=0 rs=1 cs=1]
-              RenderImageButton {INPUT} at (2,2) size 40x50
+              RenderImage {INPUT} at (2,2) size 40x50
               RenderText {#text} at (0,0) size 0x0
