@@ -144,7 +144,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     context->concatCTM(localTransform());
     translateForAttributes();
     
-    FloatRect boundingBox = relativeBBox(true);
+    FloatRect boundingBox = FloatRect(0, 0, width(), height());//relativeBBox(true);
     const SVGRenderStyle *svgStyle = style()->svgStyle();
             
     if (KCanvasClipper *clipper = getClipperById(document(), svgStyle->clipPath().mid(1)))
