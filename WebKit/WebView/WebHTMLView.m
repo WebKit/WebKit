@@ -129,6 +129,16 @@ void _NSResetKillRingOperationFlag(void);
 // behavior matches MacIE and Mozilla, at least)
 #define PrintingMaximumShrinkFactor     2.0f
 
+// This number determines how short the last printed page of a multi-page print session
+// can be before we try to shrink the scale in order to reduce the number of pages, and
+// thus eliminate the orphan.
+#define LastPrintedPageOrphanRatio      0.1f
+
+// This number determines the amount the scale factor is adjusted to try to eliminate orphans.
+// It has no direct mathematical relationship to LastPrintedPageOrphanRatio, due to variable
+// numbers of pages, logic to avoid breaking elements, and CSS-supplied hard page breaks.
+#define PrintingOrphanShrinkAdjustment  1.1f
+
 #define AUTOSCROLL_INTERVAL             0.1f
 
 #define DRAG_LABEL_BORDER_X             4.0f
@@ -3198,14 +3208,29 @@ done:
     float totalScaleFactor = [self _scaleFactorForPrintOperation:printOperation];
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     [_private->pageRects release];
+    float fullPageHeight = floorf([self _calculatePrintHeight]/totalScaleFactor);
     NSArray *newPageRects = [[self _bridge] computePageRectsWithPrintWidthScaleFactor:userScaleFactor
-                                                                          printHeight:floorf([self _calculatePrintHeight]/totalScaleFactor)];
+                                                                          printHeight:fullPageHeight];
+    
     // AppKit gets all messed up if you give it a zero-length page count (see 3576334), so if we
     // hit that case we'll pass along a degenerate 1 pixel square to print. This will print
     // a blank page (with correct-looking header and footer if that option is on), which matches
     // the behavior of IE and Camino at least.
     if ([newPageRects count] == 0)
         newPageRects = [NSArray arrayWithObject:[NSValue valueWithRect:NSMakeRect(0, 0, 1, 1)]];
+    else if ([newPageRects count] > 1) {
+        // If the last page is a short orphan, try adjusting the print height slightly to see if this will squeeze the
+        // content onto one fewer page. If it does, use the adjusted scale. If not, use the original scale.
+        float lastPageHeight = NSHeight([[newPageRects lastObject] rectValue]);
+        if (lastPageHeight/fullPageHeight < LastPrintedPageOrphanRatio) {
+            NSArray *adjustedPageRects = [[self _bridge] computePageRectsWithPrintWidthScaleFactor:userScaleFactor
+                                                                                       printHeight:fullPageHeight*PrintingOrphanShrinkAdjustment];
+            // Use the adjusted rects only if the page count went down
+            if ([adjustedPageRects count] < [newPageRects count])
+                newPageRects = adjustedPageRects;
+        }
+    }
+    
     _private->pageRects = [newPageRects retain];
     
     range->length = [_private->pageRects count];

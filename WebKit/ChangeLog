@@ -1,3 +1,16 @@
+2006-08-11  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        - fixed <rdar://problem/4522894> Would be nice if Safari shrank pages a little if necessary 
+        to avoid printing an almost-empty page
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray knowsPageRange:]):
+        If the last page has a short-enough orphan (< 1/10 of the page height is the number I pulled
+        out of ... the air), then we adjust the scale factor slightly and check whether this reduces
+        the page count and thus eliminates the orphan.
+        
 2006-08-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders and John
