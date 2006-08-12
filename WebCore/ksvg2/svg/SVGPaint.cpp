@@ -25,25 +25,29 @@
 #include "ksvg.h"
 #include "SVGPaint.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGPaint::SVGPaint() : SVGColor()
+SVGPaint::SVGPaint()
+    : SVGColor()
 {
     m_paintType = SVG_PAINTTYPE_UNKNOWN;
 }
 
-SVGPaint::SVGPaint(StringImpl *uri) : SVGColor()
+SVGPaint::SVGPaint(StringImpl *uri)
+    : SVGColor()
 {
     m_paintType = SVG_PAINTTYPE_URI;
     setUri(uri);
 }
 
-SVGPaint::SVGPaint(unsigned short paintType) : SVGColor()
+SVGPaint::SVGPaint(unsigned short paintType)
+    : SVGColor()
 {
     m_paintType = paintType;
 }
 
-SVGPaint::SVGPaint(unsigned short paintType, StringImpl *uri, StringImpl *rgbPaint, StringImpl *) : SVGColor(rgbPaint)
+SVGPaint::SVGPaint(unsigned short paintType, StringImpl *uri, StringImpl *rgbPaint, StringImpl *)
+    : SVGColor(rgbPaint)
 {
     m_paintType = paintType;
     setUri(uri);
@@ -88,6 +92,8 @@ String SVGPaint::cssText() const
         return "url(" + m_uri + ")";
 
     return SVGColor::cssText();
+}
+
 }
 
 // vim:ts=4:noet

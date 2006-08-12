@@ -1,3 +1,20 @@
+2006-08-11  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by andersca.
+        
+        Updated results, and new test for:
+        The outermost <svg> element needs to clip itself
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5358
+
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.png:
+        * svg/W3C-SVG-1.1/masking-path-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-03-b-expected.png:
+        * svg/custom/svg-overflow-types-expected.checksum: Added.
+        * svg/custom/svg-overflow-types-expected.png: Added.
+        * svg/custom/svg-overflow-types-expected.txt: Added.
+        * svg/custom/svg-overflow-types.svg: Added.
+
 2006-08-11  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady.

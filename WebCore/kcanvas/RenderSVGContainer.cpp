@@ -85,7 +85,8 @@ bool RenderSVGContainer::canHaveChildren() const
     
 bool RenderSVGContainer::requiresLayer()
 {
-    return false;
+    // Only allow an <svg> element to generate a layer when it's positioned in a non-SVG context
+    return (isPositioned() || isRelPositioned()) && (parent() && !parent()->element()->isSVGElement());
 }
 
 short RenderSVGContainer::lineHeight(bool b, bool isRootLineBox) const
@@ -126,7 +127,7 @@ void RenderSVGContainer::layout()
     RenderContainer::layout();
 }
 
-void RenderSVGContainer::paint(PaintInfo &paintInfo, int parentX, int parentY)
+void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
     if (paintInfo.p->paintingDisabled())
         return;
@@ -165,8 +166,11 @@ void RenderSVGContainer::paint(PaintInfo &paintInfo, int parentX, int parentY)
         parentX = parentY = 0;
     }
     
-    if (!viewport().isEmpty())
+    if (!viewport().isEmpty()) {
+        if (style()->overflowX() != OVISIBLE)
+            paintInfo.p->addClip(enclosingIntRect(viewport())); // FIXME: Eventually we'll want float-precision clipping
         deviceContext->concatCTM(AffineTransform().translate(viewport().x(), viewport().y()));
+    }
     
     if (!localTransform().isIdentity())
         deviceContext->concatCTM(localTransform());

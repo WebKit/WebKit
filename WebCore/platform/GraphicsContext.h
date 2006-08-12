@@ -54,6 +54,7 @@ namespace WebCore {
     const int cMisspellingLinePatternWidth = 4;
     const int cMisspellingLinePatternGapWidth = 1;
 
+    class AffineTransform;
     class DeprecatedString;
     class Font;
     class GraphicsContextPrivate;
@@ -155,6 +156,8 @@ namespace WebCore {
         void scale(const FloatSize&);
         void rotate(float angleInRadians);
         void translate(const FloatSize&);
+        
+        void concatCTM(const AffineTransform&);
 
 #ifdef SVG_SUPPORT
         KRenderingDeviceContext* createRenderingDeviceContext();

@@ -247,16 +247,19 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == SVGNames::heightAttr) {
         height()->baseVal()->setValueAsString(value.impl());
         addCSSProperty(attr, CSS_PROP_HEIGHT, value);
-    } else
-    {
-        if(SVGTests::parseMappedAttribute(attr)) return;
-        if(SVGLangSpace::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+    } else {
+        if (SVGTests::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
         if (SVGFitToViewBox::parseMappedAttribute(attr)) {
             if (renderer())
                 static_cast<RenderSVGContainer*>(renderer())->setViewBox(FloatRect(viewBox()->baseVal()->x(), viewBox()->baseVal()->y(), viewBox()->baseVal()->width(), viewBox()->baseVal()->height()));
         }
-        if(SVGZoomAndPan::parseMappedAttribute(attr)) return;
+        if (SVGZoomAndPan::parseMappedAttribute(attr))
+            return;
 
         SVGStyledLocatableElement::parseMappedAttribute(attr);
     }

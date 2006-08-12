@@ -1,3 +1,27 @@
+2006-08-11  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by andersca.
+
+        The outermost <svg> element needs to clip itself
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5358
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): adjust for SVG overflow rules
+        * kcanvas/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::requiresLayer): only require layers for absolute/relative positioning of outermost SVG
+        (WebCore::RenderSVGContainer::paint):
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h: remove dead methods
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm: remove dead methods
+        (WebCore::KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz):
+        * ksvg2/svg/SVGPaint.cpp: spacing changes
+        (WebCore::SVGPaint::SVGPaint): spacing cleanup
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute): spacing cleanup
+        * platform/GraphicsContext.h: Added concatCTM
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::concatCTM): Added.
+
 2006-08-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

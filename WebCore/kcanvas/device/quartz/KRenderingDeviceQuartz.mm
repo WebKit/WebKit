@@ -44,7 +44,9 @@
 
 namespace WebCore {
 
-KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz(CGContextRef context) : m_cgContext(CGContextRetain(context)), m_nsGraphicsContext(0)
+KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz(CGContextRef context)
+    : m_cgContext(CGContextRetain(context))
+    , m_nsGraphicsContext(0)
 {
     ASSERT(m_cgContext);
 }
@@ -68,16 +70,6 @@ KCanvasMatrix KRenderingDeviceContextQuartz::ctm() const
 {
     CGAffineTransform contextCTM = CGContextGetCTM(m_cgContext);
     return KCanvasMatrix(contextCTM.a, contextCTM.b, contextCTM.c, contextCTM.d, contextCTM.tx, contextCTM.ty);
-}
-
-IntRect KRenderingDeviceContextQuartz::mapFromVisual(const IntRect &rect)
-{
-    return IntRect();
-}
-
-IntRect KRenderingDeviceContextQuartz::mapToVisual(const IntRect &rect)
-{
-    return IntRect();
 }
 
 void KRenderingDeviceContextQuartz::clearPath()

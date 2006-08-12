@@ -1086,6 +1086,21 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
         else
             theme()->adjustStyle(this, style, e);
     }
+    
+#ifdef SVG_SUPPORT
+    if (e->isSVGElement()) {
+        // Spec: http://www.w3.org/TR/SVG/masking.html#OverflowProperty
+        if (style->overflowY() == OSCROLL)
+            style->setOverflowY(OHIDDEN);
+        else if (style->overflowY() == OAUTO)
+            style->setOverflowY(OVISIBLE);
+        
+        if (style->overflowX() == OSCROLL)
+            style->setOverflowX(OHIDDEN);
+        else if (style->overflowX() == OAUTO)
+            style->setOverflowX(OVISIBLE);
+    }
+#endif
 }
 
 void CSSStyleSelector::updateFont()
