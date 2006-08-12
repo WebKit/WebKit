@@ -1,3 +1,15 @@
+2006-08-12  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by hyatt and mjs.
+
+        Fix two missing null checks causing layout test crashes.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): check e for null (null for pseudo styles)
+        * kcanvas/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::requiresLayer): check parent()->element() for null
+
+
 2006-08-11  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by andersca.

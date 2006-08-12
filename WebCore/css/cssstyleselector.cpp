@@ -1088,7 +1088,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
     }
     
 #ifdef SVG_SUPPORT
-    if (e->isSVGElement()) {
+    if (e && e->isSVGElement()) {
         // Spec: http://www.w3.org/TR/SVG/masking.html#OverflowProperty
         if (style->overflowY() == OSCROLL)
             style->setOverflowY(OHIDDEN);

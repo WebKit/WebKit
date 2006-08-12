@@ -86,7 +86,7 @@ bool RenderSVGContainer::canHaveChildren() const
 bool RenderSVGContainer::requiresLayer()
 {
     // Only allow an <svg> element to generate a layer when it's positioned in a non-SVG context
-    return (isPositioned() || isRelPositioned()) && (parent() && !parent()->element()->isSVGElement());
+    return (isPositioned() || isRelPositioned()) && (parent() && parent()->element() && !parent()->element()->isSVGElement());
 }
 
 short RenderSVGContainer::lineHeight(bool b, bool isRootLineBox) const
