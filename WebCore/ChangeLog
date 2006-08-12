@@ -1,3 +1,39 @@
+2006-08-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Renamed a method/parameter for clarity and consistency, as well as some style
+        cleanups and removing some ridiculously verbose log messages.
+        Also added an _isEmpty method to the database and bridge for WebKit's use.
+        Finally, added a central way for both WebKit and WebCore to get the icon database filename
+
+        * bridge/mac/WebCoreIconDatabaseBridge.h:  Added _isEmpty and defaultDatabaseFilename
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:  Removed an unnecessary semicolon off most of these methods
+        (-[WebCoreIconDatabaseBridge openSharedDatabaseWithPath:]):
+        (-[WebCoreIconDatabaseBridge closeSharedDatabase]):
+        (-[WebCoreIconDatabaseBridge isOpen]):
+        (-[WebCoreIconDatabaseBridge _isEmpty]):  Added
+        (-[WebCoreIconDatabaseBridge setPrivateBrowsingEnabled:]):
+        (-[WebCoreIconDatabaseBridge privateBrowsingEnabled]):
+        (-[WebCoreIconDatabaseBridge iconForPageURL:withSize:]):
+        (-[WebCoreIconDatabaseBridge iconURLForPageURL:]):
+        (-[WebCoreIconDatabaseBridge defaultIconWithSize:]):
+        (-[WebCoreIconDatabaseBridge retainIconForURL:]):
+        (-[WebCoreIconDatabaseBridge releaseIconForURL:]):
+        (-[WebCoreIconDatabaseBridge _setIconData:forIconURL:]):
+        (-[WebCoreIconDatabaseBridge _setHaveNoIconForIconURL:]):
+        (-[WebCoreIconDatabaseBridge _setIconURL:forPageURL:]):
+        (-[WebCoreIconDatabaseBridge _hasIconForIconURL:]):
+        (-[WebCoreIconDatabaseBridge defaultDatabaseFilename]):  Added
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultDatabaseFilename):  Added
+        (WebCore::IconDatabase::open):  
+        (WebCore::IconDatabase::isEmpty):  Added
+        (WebCore::IconDatabase::retainIconForURL):  Removed log message
+        (WebCore::IconDatabase::releaseIconForURL):  Removed log message
+        * loader/icon/IconDatabase.h: 
+
 2006-08-11  David Hyatt  <hyatt@apple.com>
 
         Eliminate RenderImageButton.

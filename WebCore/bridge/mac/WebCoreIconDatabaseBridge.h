@@ -56,11 +56,14 @@ typedef WebCore::IconDatabase WebCoreIconDatabase;
 - (void)setPrivateBrowsingEnabled:(BOOL)flag;
 - (BOOL)privateBrowsingEnabled;
 
+- (NSString *)defaultDatabaseFilename;
+
 - (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL;
 - (void)_setHaveNoIconForIconURL:(NSString *)iconURL;
-- (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)url;
+- (void)_setIconURL:(NSString *)iconURL forPageURL:(NSString *)pageURL;
 - (BOOL)_hasIconForIconURL:(NSString *)iconURL;
 
+- (BOOL)_isEmpty;
 @end
 
 

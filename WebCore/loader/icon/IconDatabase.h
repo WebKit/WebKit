@@ -85,6 +85,8 @@ public:
     bool open(const String& path);
     bool isOpen() { return m_db.isOpen(); }
     void close();
+    
+    bool isEmpty();
  
     Image* iconForPageURL(const String&, const IntSize&, bool cache = true);
     Image* iconForIconURL(const String&, const IntSize&, bool cache = true);
@@ -109,6 +111,8 @@ public:
     void setHaveNoIconForIconURL(const String&);
     void setIconURLForPageURL(const String& iconURL, const String& pageURL);
 
+    static const String& defaultDatabaseFilename();
+    
     static const int currentDatabaseVersion;    
     static const int iconExpirationTime;
     static const int missingIconExpirationTime;

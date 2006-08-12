@@ -1,3 +1,18 @@
+2006-08-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John, Timo, Adele, and Darin
+
+        In addition to a few style/good-practice cleanups, this patch will convert the old icon database
+        format to the WebCore format if the WebCore db is empty (implying this conversion has yet to take
+        place).  After the conversion, it will delete all traces of the old format to free the unneeded space
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase init]):  
+        (-[WebIconDatabase _setIconURL:forURL:]):  Changed the bridge's name for this method to be more clear
+        (-[WebIconDatabase _createFileDatabase]):  
+        (-[WebIconDatabase _iconDataForIconURL:]):  This grabs the raw data for use in the conversion function
+        (-[WebIconDatabase _convertToWebCoreFormat]):  This does the actual conversion
+
 2006-08-11  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

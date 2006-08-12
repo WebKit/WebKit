@@ -53,7 +53,7 @@ NSString *WebIconDatabaseDidRemoveAllIconsNotification =   @"WebIconDatabaseDidR
 NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
 NSString *WebIconDatabaseEnabledDefaultsKey =   @"WebIconDatabaseEnabled";
 
-NSString *WebIconDatabasePath = @"~/Library/Safari/Icons";
+NSString *WebIconDatabasePath = @"~/Library/Icons";
 
 NSSize WebIconSmallSize = {16, 16};
 NSSize WebIconMediumSize = {32, 32};
@@ -81,6 +81,8 @@ NSSize WebIconLargeSize = {128, 128};
 - (NSMutableDictionary *)_iconsBySplittingRepresentationsOfIcon:(NSImage *)icon;
 - (NSImage *)_iconFromDictionary:(NSMutableDictionary *)icons forSize:(NSSize)size cache:(BOOL)cache;
 - (void)_scaleIcon:(NSImage *)icon toSize:(NSSize)size;
+- (NSData *)_iconDataForIconURL:(NSString *)iconURLString;
+- (void)_convertToWebCoreFormat; 
 @end
 
 @implementation WebIconDatabase
@@ -135,6 +137,8 @@ NSSize WebIconLargeSize = {128, 128};
         databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
         [_private->databaseBridge openSharedDatabaseWithPath:databaseDirectory];
     }
+    
+    [self _convertToWebCoreFormat];
 #else
     _private->databaseBridge = nil;
 #endif
@@ -156,13 +160,17 @@ NSSize WebIconLargeSize = {128, 128};
     [[NSNotificationCenter defaultCenter] 
             addObserver:self selector:@selector(_resetCachedWebPreferences:) 
                    name:WebPreferencesChangedNotification object:nil];
-    
-
+                   
+    // FIXME - Once the new iconDB is the only game in town, we need to remove any of the WebFileDatabase code
+    // that is threaded and expects certain files to exist - certain files we rip right out from underneath it
+    // in the _convertToWebCoreFormat method
+#ifdef ICONDEBUG
     // Retain icons on disk then release them once clean-up has begun.
     // This gives the client the opportunity to retain them before they are erased.
     [self _retainOriginalIconsOnDisk];
     [self performSelector:@selector(_releaseOriginalIconsOnDisk) withObject:nil afterDelay:0];
-    
+#endif
+
     return self;
 }
 
@@ -459,7 +467,7 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(_private->pageURLToIconURL);
     
 #ifdef ICONDEBUG
-    [_private->databaseBridge _setIconURL:iconURL forURL:URL];
+    [_private->databaseBridge _setIconURL:iconURL forPageURL:URL];
     [self _sendNotificationForURL:URL];
     return;
 #endif
@@ -537,7 +545,7 @@ NSSize WebIconLargeSize = {128, 128};
     NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
 
     if (!databaseDirectory) {
-        databaseDirectory = @"~/Library/Icons";
+        databaseDirectory = WebIconDatabasePath;
         [defaults setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
     }
     databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
@@ -1033,6 +1041,82 @@ NSSize WebIconLargeSize = {128, 128};
     double duration = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "scaling icon took %f seconds.", duration);
 #endif
+}
+
+- (NSData *)_iconDataForIconURL:(NSString *)iconURLString
+{
+    ASSERT(iconURLString);
+    
+    NSData *iconData = [_private->fileDatabase objectForKey:iconURLString];
+    
+    if ((id)iconData == (id)[NSNull null]) 
+        return nil;
+        
+    return iconData;
+}
+
+- (void)_convertToWebCoreFormat
+{
+    ASSERT(_private);
+    ASSERT(_private->databaseBridge);
+    
+    // If the WebCore Icon Database is not empty, we assume that this conversion has already
+    // taken place and skip the rest of the steps 
+    if (![_private->databaseBridge _isEmpty])
+        return;
+                
+    NSEnumerator *enumerator = [_private->pageURLToIconURL keyEnumerator];
+    NSString *url, *iconURL;
+    
+    // First, we'll iterate through the PageURL->IconURL map
+    while ((url = [enumerator nextObject]) != nil) {
+        iconURL = [_private->pageURLToIconURL objectForKey:url];
+        if (!iconURL)
+            continue;
+        [_private->databaseBridge _setIconURL:iconURL forPageURL:url];
+    }    
+    
+    // Second, we'll iterate through the icon data we do have
+    enumerator = [_private->iconsOnDiskWithURLs objectEnumerator];
+    NSData *iconData;
+    
+    while ((url = [enumerator nextObject]) != nil) {
+        iconData = [self _iconDataForIconURL:url];
+        if (iconData)
+            [_private->databaseBridge _setIconData:iconData forIconURL:url];
+        else {
+            // This really *shouldn't* happen, so it'd be good to track down why it might happen in a debug build
+            // however, we do know how to handle it gracefully in release
+            LOG_ERROR("%@ is marked as having an icon on disk, but we couldn't get the data for it", url);
+            [_private->databaseBridge _setHaveNoIconForIconURL:url];
+        }
+    }
+    
+    // Finally, we'll iterate through the negative cache we have
+    enumerator = [_private->iconURLsWithNoIcons objectEnumerator];
+    while ((url = [enumerator nextObject]) != nil) 
+        [_private->databaseBridge _setHaveNoIconForIconURL:url];
+   
+    // After we're done converting old style icons over to webcore icons, we delete the entire directory hierarchy 
+    // for the old icon DB
+    NSString *iconPath = [[NSUserDefaults standardUserDefaults] objectForKey:WebIconDatabaseDirectoryDefaultsKey];
+    if (!iconPath)
+        iconPath = WebIconDatabasePath;
+    
+    NSString *fullIconPath = [iconPath stringByExpandingTildeInPath];    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    enumerator = [[fileManager directoryContentsAtPath:fullIconPath] objectEnumerator];
+    
+    NSString *databaseFilename = [_private->databaseBridge defaultDatabaseFilename];
+
+    NSString *file;
+    while ((file = [enumerator nextObject]) != nil) {
+        if ([file isEqualTo:databaseFilename])
+            continue;
+        NSString *filePath = [fullIconPath stringByAppendingPathComponent:file];
+        if (![fileManager  removeFileAtPath:filePath handler:nil])
+            LOG_ERROR("Failed to delete %@ from old icon directory", filePath);
+    }
 }
 
 @end
