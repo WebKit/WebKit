@@ -365,8 +365,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 window.clipRect.left + nPort.qdPort.portx, window.clipRect.top + nPort.qdPort.porty,
                 window.clipRect.right + nPort.qdPort.portx, window.clipRect.bottom + nPort.qdPort.porty);
             
-            // Clip to dirty region when updating in "windowless" mode (transparent)
-            if (forUpdate && isTransparent) {
+            // Clip to dirty region so plug-in does not draw over already-drawn regions of the window that are
+            // not going to be redrawn this update.  This forces plug-ins to play nice with z-index ordering.
+            if (forUpdate) {
                 RgnHandle viewClipRegion = NewRgn();
                 
                 // Get list of dirty rects from the opaque ancestor -- WebKit does some tricks with invalidation and

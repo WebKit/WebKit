@@ -1,3 +1,16 @@
+2006-08-11  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin.
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=10111> - Menu flickers over Flash content
+        <rdar://problem/3052546> Plugins don't work with z-index (overlapping elements, etc.)
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        Don't just clip to the dirty region for "transparent" plug-ins -- do it for all plug-ins.  This is a
+        generally useful thing to do, as it prevents the plug-in from drawing over parts of the window that
+        have already been drawn and are not expected to be redrawn in the same update.
+
 2006-08-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John, Timo, Adele, and Darin
