@@ -30,8 +30,6 @@
 
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebKitNSStringExtras.h>
 
 NSString *WebDataProtocolScheme = @"applewebdata";
 static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
@@ -225,11 +223,16 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 // that will handle our custom protocol.
 @implementation WebDataProtocol
 
+static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
+{
+    return [a caseInsensitiveCompare:b] == NSOrderedSame;
+}
+
 +(BOOL)_webIsDataProtocolURL:(NSURL *)URL
 {
     ASSERT(URL);
     NSString *scheme = [URL scheme];
-    return scheme && [scheme _webkit_isCaseInsensitiveEqualToString:WebDataProtocolScheme];
+    return scheme && isCaseInsensitiveEqual(scheme, WebDataProtocolScheme);
 }
 
 +(BOOL)canInitWithRequest:(NSURLRequest *)request
@@ -258,11 +261,13 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
         [client URLProtocolDidFinishLoading:self];
         [response release];
     } else {
-        int resultCode;
-
-        resultCode = NSURLErrorResourceUnavailable;
-
-        [client URLProtocol:self didFailWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain code:resultCode URL:[request URL]]];
+        NSError *error = [[[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorResourceUnavailable userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+            [request URL], @"NSErrorFailingURLKey",
+            [[request URL] absoluteString], @"NSErrorFailingURLStringKey",
+            nil, NSLocalizedDescriptionKey,
+            nil]] autorelease];
+        
+        [client URLProtocol:self didFailWithError:error];
     }
 }
 

@@ -566,7 +566,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self performSelector:@selector(deliverArchivedResources) withObject:nil afterDelay:0];
 }
 
-static BOOL isCaseSensitiveEqual(NSString *a, NSString *b)
+static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 {
     return [a caseInsensitiveCompare:b] == NSOrderedSame;
 }
@@ -591,7 +591,7 @@ static BOOL isCaseSensitiveEqual(NSString *a, NSString *b)
         return NO;
     } else if ([theRequest valueForHTTPHeaderField:@"Cache-Control"] != nil) {
         return NO;
-    } else if (isCaseSensitiveEqual(@"POST", [theRequest HTTPMethod])) {
+    } else if (isCaseInsensitiveEqual(@"POST", [theRequest HTTPMethod])) {
         return NO;
     } else {
         return YES;

@@ -1,3 +1,18 @@
+2006-08-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Beth.
+        
+        - removed non-Loader WebKit dependencies from WebDataProtocol for
+        real (whoops) and fix some typos.
+
+        * Loader/WebDataProtocol.m:
+        (isCaseInsensitiveEqual): Added.
+        (+[WebDataProtocol _webIsDataProtocolURL:]): Avoid WebKit calls.
+        (-[WebDataProtocol startLoading]): ditto
+        * Loader/WebFrameLoader.m:
+        (isCaseInsensitiveEqual): Fixed spelling from isCaseSensitiveEqual.
+        (-[WebFrameLoader _canUseResourceForRequest:]): Use proper call.
+
 2006-08-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
