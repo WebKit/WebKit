@@ -1,3 +1,13 @@
+2006-08-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Brady.
+        
+        - move WebFormDataStream from WebView to Loader
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebFormDataStream.h: Removed.
+        * WebView/WebFormDataStream.m: Removed.
+
 2006-08-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady.
