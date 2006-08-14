@@ -80,13 +80,13 @@
     [self release];
 }
 
-- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived allAtOnce:(BOOL)allAtOnce
 {
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
     [stream receivedData:data];
-    [super didReceiveData:data lengthReceived:lengthReceived];
+    [super didReceiveData:data lengthReceived:lengthReceived allAtOnce:(BOOL)allAtOnce];
     [self release];
 }
 

@@ -39,10 +39,8 @@
 @interface WebFrameLoader : NSObject
 {
 @public
-    // Client for main resource.
     WebMainResourceLoader *mainResourceLoader;
     
-    // Clients for other resources.
     NSMutableArray *subresourceLoaders;
     NSMutableArray *plugInStreamLoaders;
     WebIconLoader *iconLoader;
@@ -51,6 +49,8 @@
     WebDataSource *dataSource;
     WebDataSource *provisionalDataSource;
     WebFrameState state;
+    
+    NSMutableDictionary *pendingArchivedResources;
 }
 
 - (id)initWithWebFrame:(WebFrame *)wf;
@@ -122,5 +122,12 @@
 - (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar complete:(BOOL)isComplete;
 - (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader;
 - (NSURL *)_URL;
+
+- (NSError *)cancelledErrorWithRequest:(NSURLRequest *)request;
+- (BOOL)willUseArchiveForRequest:(NSURLRequest *)r originalURL:(NSURL *)originalURL loader:(WebLoader *)loader;
+- (BOOL)archiveLoadPendingForLoader:(WebLoader *)loader;
+- (void)deliverArchivedResourcesAfterDelay;
+- (void)cancelPendingArchiveLoadForLoader:(WebLoader *)loader;
+- (void)clearArchivedResources;
 
 @end

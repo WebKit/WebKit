@@ -163,9 +163,9 @@
     return result;
 }
 
-- (void)addData:(NSData *)data
+- (void)addData:(NSData *)data allAtOnce:(BOOL)allAtOnce
 {
-    [super addData:data];
+    [super addData:data allAtOnce:allAtOnce];
     [frameLoader _receivedData:data];
 }
 
@@ -357,7 +357,7 @@
     [self release];
 }
 
-- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived allAtOnce:(BOOL)allAtOnce
 {
     ASSERT(data);
     ASSERT([data length] != 0);
@@ -371,7 +371,7 @@
     [self retain];
     [frameLoader _mainReceivedBytesSoFar:_bytesReceived complete:NO];
     
-    [super didReceiveData:data lengthReceived:lengthReceived];
+    [super didReceiveData:data lengthReceived:lengthReceived allAtOnce:allAtOnce];
     _bytesReceived += [data length];
 
     LOG(Loading, "%d of %d", _bytesReceived, _contentLength);

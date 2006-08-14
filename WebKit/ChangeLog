@@ -1,3 +1,49 @@
+2006-08-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - remove all non-Loader dependencies from WebLoader
+        
+        As part of this I moved WebDataProtocol to the loader directory
+        and removed dependencies on the rest of WebKit from that too.
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader setDefersCallbacks:]):
+        (-[WebFrameLoader stopLoading]):
+        (-[WebFrameLoader cancelledErrorWithRequest:]):
+        (-[WebFrameLoader clearArchivedResources]):
+        (-[WebFrameLoader deliverArchivedResources]):
+        (-[WebFrameLoader deliverArchivedResourcesAfterDelay]):
+        (isCaseSensitiveEqual):
+        (-[WebFrameLoader _canUseResourceForRequest:]):
+        (-[WebFrameLoader _canUseResourceWithResponse:]):
+        (-[WebFrameLoader pendingArchivedResources]):
+        (-[WebFrameLoader willUseArchiveForRequest:originalURL:loader:]):
+        (-[WebFrameLoader archiveLoadPendingForLoader:]):
+        (-[WebFrameLoader cancelPendingArchiveLoadForLoader:]):
+        * Loader/WebLoader.h:
+        * Loader/WebLoader.m:
+        (-[NSURLProtocol releaseResources]):
+        (-[NSURLProtocol loadWithRequest:]):
+        (-[NSURLProtocol setDefersCallbacks:]):
+        (-[NSURLProtocol addData:allAtOnce:]):
+        (-[NSURLProtocol resourceData]):
+        (-[NSURLProtocol didReceiveData:lengthReceived:allAtOnce:]):
+        (-[NSURLProtocol connection:didReceiveData:lengthReceived:]):
+        (-[NSURLProtocol cancelWithError:]):
+        (-[NSURLProtocol cancelledError]):
+        * Loader/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader addData:allAtOnce:]):
+        (-[WebMainResourceLoader didReceiveData:lengthReceived:allAtOnce:]):
+        * Loader/WebNetscapePlugInStreamLoader.m:
+        (-[WebNetscapePlugInStreamLoader didReceiveData:lengthReceived:allAtOnce:]):
+        * Loader/WebSubresourceLoader.m:
+        (-[WebSubresourceLoader didReceiveData:lengthReceived:allAtOnce:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataProtocol.h: Removed.
+        * WebView/WebDataProtocol.m: Removed.
+
 2006-08-11  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.

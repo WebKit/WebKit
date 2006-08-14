@@ -184,7 +184,7 @@
     }
 }
 
-- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived allAtOnce:(BOOL)allAtOnce
 {
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
@@ -192,7 +192,7 @@
     // A subresource loader does not load multipart sections progressively, don't deliver any data to the coreLoader yet
     if (!loadingMultipartContent)
         [coreLoader addData:data];
-    [super didReceiveData:data lengthReceived:lengthReceived];
+    [super didReceiveData:data lengthReceived:lengthReceived allAtOnce:allAtOnce];
     [self release];
 }
 

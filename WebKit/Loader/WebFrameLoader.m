@@ -35,6 +35,8 @@
 #import <WebKit/WebMainResourceLoader.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebViewInternal.h>
+#import <WebKit/WebKitErrorsPrivate.h>
+#import <WebKit/WebResourcePrivate.h>
 
 @implementation WebFrameLoader
 
@@ -103,6 +105,8 @@
     e = [plugInStreamLoaders objectEnumerator];
     while ((loader = [e nextObject]))
         [loader setDefersCallbacks:defers];
+
+    [self deliverArchivedResourcesAfterDelay];
 }
 
 - (void)stopLoadingPlugIns
@@ -315,6 +319,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [provisionalDataSource _stopLoading];
     [dataSource _stopLoading];
     [self _clearProvisionalDataSource];
+    [self clearArchivedResources];
 }
 
 // FIXME: poor method name; also why is this not part of startProvisionalLoad:?
@@ -520,6 +525,123 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (NSURL *)_URL
 {
     return [[self activeDataSource] _URL];
+}
+
+- (NSError *)cancelledErrorWithRequest:(NSURLRequest *)request
+{
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                      code:NSURLErrorCancelled
+                                       URL:[request URL]];
+}
+
+- (void)clearArchivedResources
+{
+    [pendingArchivedResources removeAllObjects];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(deliverArchivedResources) object:nil];
+}
+
+- (void)deliverArchivedResources
+{
+    if (![pendingArchivedResources count] || [self _defersCallbacks])
+        return;
+        
+    NSEnumerator *keyEnum = [pendingArchivedResources keyEnumerator];
+    WebLoader *loader;
+    while ((loader = [keyEnum nextObject])) {
+        WebResource *resource = [pendingArchivedResources objectForKey:loader];
+        [loader didReceiveResponse:[resource _response]];
+        NSData *data = [resource data];
+        [loader didReceiveData:data lengthReceived:[data length] allAtOnce:YES];
+        [loader didFinishLoading];
+    }
+    
+    [pendingArchivedResources removeAllObjects];
+}
+
+- (void)deliverArchivedResourcesAfterDelay
+{
+    if (![pendingArchivedResources count] || [self _defersCallbacks])
+        return;
+    
+    [self performSelector:@selector(deliverArchivedResources) withObject:nil afterDelay:0];
+}
+
+static BOOL isCaseSensitiveEqual(NSString *a, NSString *b)
+{
+    return [a caseInsensitiveCompare:b] == NSOrderedSame;
+}
+
+// The following 2 methods are copied from [NSHTTPURLProtocol _cachedResponsePassesValidityChecks] and modified for our needs.
+// FIXME: It would be nice to eventually to share this code somehow.
+- (BOOL)_canUseResourceForRequest:(NSURLRequest *)theRequest
+{
+    NSURLRequestCachePolicy policy = [theRequest cachePolicy];
+    
+    if (policy == NSURLRequestReturnCacheDataElseLoad) {
+        return YES;
+    } else if (policy == NSURLRequestReturnCacheDataDontLoad) {
+        return YES;
+    } else if (policy == NSURLRequestReloadIgnoringCacheData) {
+        return NO;
+    } else if ([theRequest valueForHTTPHeaderField:@"must-revalidate"] != nil) {
+        return NO;
+    } else if ([theRequest valueForHTTPHeaderField:@"proxy-revalidate"] != nil) {
+        return NO;
+    } else if ([theRequest valueForHTTPHeaderField:@"If-Modified-Since"] != nil) {
+        return NO;
+    } else if ([theRequest valueForHTTPHeaderField:@"Cache-Control"] != nil) {
+        return NO;
+    } else if (isCaseSensitiveEqual(@"POST", [theRequest HTTPMethod])) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
+- (BOOL)_canUseResourceWithResponse:(NSURLResponse *)theResponse
+{
+    if (WKGetNSURLResponseMustRevalidate(theResponse)) {
+        return NO;
+    } else if (WKGetNSURLResponseCalculatedExpiration(theResponse) - CFAbsoluteTimeGetCurrent() < 1) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
+- (NSMutableDictionary *)pendingArchivedResources
+{
+    if (!pendingArchivedResources)
+        pendingArchivedResources = [[NSMutableDictionary alloc] init];
+    
+    return pendingArchivedResources;
+}
+
+- (BOOL)willUseArchiveForRequest:(NSURLRequest *)r originalURL:(NSURL *)originalURL loader:(WebLoader *)loader
+{
+    if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
+        WebResource *resource = [self _archivedSubresourceForURL:originalURL];
+        if (resource && [self _canUseResourceWithResponse:[resource _response]]) {
+            [[self pendingArchivedResources] setObject:resource forKey:loader];
+            // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
+            [self deliverArchivedResourcesAfterDelay];
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (BOOL)archiveLoadPendingForLoader:(WebLoader *)loader
+{
+    return [pendingArchivedResources objectForKey:loader] != nil;
+}
+
+- (void)cancelPendingArchiveLoadForLoader:(WebLoader *)loader
+{
+    [pendingArchivedResources removeObjectForKey:loader];
+    
+    if (![pendingArchivedResources count])
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(deliverArchivedResources) object:nil];
 }
 
 @end

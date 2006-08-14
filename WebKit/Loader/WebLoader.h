@@ -35,8 +35,6 @@
 @class NSURLCredential;
 @class NSURLRequest;
 @class NSURLResponse;
-@class WebDataSource;
-@class WebResource;
 @class WebFrameLoader;
 
 @interface WebLoader : NSObject
@@ -55,11 +53,8 @@
     NSURLAuthenticationChallenge *currentConnectionChallenge;
     NSURLAuthenticationChallenge *currentWebChallenge;
     BOOL defersCallbacks;
-    BOOL waitingToDeliverResource;
-    BOOL deliveredResource;
     NSURL *originalURL;
     NSMutableData *resourceData;
-    WebResource *resource;
 #ifndef NDEBUG
     BOOL isInitializingConnection;
 #endif
@@ -73,18 +68,17 @@
 
 - (void)cancel;
 - (void)cancelWithError:(NSError *)error;
+- (NSError *)cancelledError;
 
 - (void)setDefersCallbacks:(BOOL)defers;
 - (BOOL)defersCallbacks;
-
-- (NSError *)cancelledError;
 
 - (void)setIdentifier:(id)ident;
 
 - (void)releaseResources;
 - (NSURLResponse *)response;
 
-- (void)addData:(NSData *)data;
+- (void)addData:(NSData *)data allAtOnce:(BOOL)allAtOnce;
 - (NSData *)resourceData;
 - (void)clearResourceData;
 
@@ -93,11 +87,12 @@
 - (void)didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 - (void)didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 - (void)didReceiveResponse:(NSURLResponse *)r;
-- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived;
+- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived allAtOnce:(BOOL)allAtOnce;
 - (void)willStopBufferingData:(NSData *)data;
 - (void)didFinishLoading;
 - (void)didFailWithError:(NSError *)error;
 - (NSCachedURLResponse *)willCacheResponse:(NSCachedURLResponse *)cachedResponse;
+
 
 // Used to work around the fact that you don't get any more NSURLConnection callbacks until you return from the first one.
 + (BOOL)inConnectionCallback;

@@ -35,14 +35,7 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebKitErrors.h>
-#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebFrameLoader.h>
-
-#import <WebKit/WebNSURLRequestExtras.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebResourcePrivate.h>
-#import <WebKitSystemInterface.h>
 
 static unsigned inNSURLConnectionCallback;
 static BOOL NSURLConnectionSupportsBufferedData;
@@ -135,9 +128,6 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [frameLoader release];
     frameLoader = nil;
     
-    [resource release];
-    resource = nil;
-    
     [resourceData release];
     resourceData = nil;
 
@@ -153,102 +143,25 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [super dealloc];
 }
 
-- (void)deliverResource
-{
-    ASSERT(resource);
-    ASSERT(waitingToDeliverResource);
-    
-    if (!defersCallbacks) {
-        [self didReceiveResponse:[resource _response]];
-        NSData *data = [resource data];
-        [self didReceiveData:data lengthReceived:[data length]];
-        [self didFinishLoading];
-        deliveredResource = YES;
-        waitingToDeliverResource = NO;
-    }
-}
-
-- (void)deliverResourceAfterDelay
-{
-    if (resource && !defersCallbacks && !waitingToDeliverResource && !deliveredResource) {
-        [self performSelector:@selector(deliverResource) withObject:nil afterDelay:0];
-        waitingToDeliverResource = YES;
-    }
-}
-
-// The following 2 methods are copied from [NSHTTPURLProtocol _cachedResponsePassesValidityChecks] and modified for our needs.
-// FIXME: It would be nice to eventually to share this code somehow.
-- (BOOL)_canUseResourceForRequest:(NSURLRequest *)theRequest
-{
-    NSURLRequestCachePolicy policy = [theRequest cachePolicy];
-        
-    if (policy == NSURLRequestReturnCacheDataElseLoad) {
-        return YES;
-    } else if (policy == NSURLRequestReturnCacheDataDontLoad) {
-        return YES;
-    } else if (policy == NSURLRequestReloadIgnoringCacheData) {
-        return NO;
-    } else if ([theRequest valueForHTTPHeaderField:@"must-revalidate"] != nil) {
-        return NO;
-    } else if ([theRequest valueForHTTPHeaderField:@"proxy-revalidate"] != nil) {
-        return NO;
-    } else if ([theRequest valueForHTTPHeaderField:@"If-Modified-Since"] != nil) {
-        return NO;
-    } else if ([theRequest valueForHTTPHeaderField:@"Cache-Control"] != nil) {
-        return NO;
-    } else if ([[theRequest HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
-        return NO;
-    } else {
-        return YES;
-    }
-}
-
-- (BOOL)_canUseResourceWithResponse:(NSURLResponse *)theResponse
-{
-    if (WKGetNSURLResponseMustRevalidate(theResponse)) {
-        return NO;
-    } else if (WKGetNSURLResponseCalculatedExpiration(theResponse) - CFAbsoluteTimeGetCurrent() < 1) {
-        return NO;
-    } else {
-        return YES;
-    }
-}
-
 - (BOOL)loadWithRequest:(NSURLRequest *)r
 {
     ASSERT(connection == nil);
-    ASSERT(resource == nil);
+    ASSERT(![frameLoader archiveLoadPendingForLoader:self]);
     
     NSURL *URL = [[r URL] retain];
     [originalURL release];
     originalURL = URL;
     
-    deliveredResource = NO;
-    waitingToDeliverResource = NO;
-
     NSURLRequest *clientRequest = [self willSendRequest:r redirectResponse:nil];
     if (clientRequest == nil) {
-        NSError *badURLError = [NSError _webKitErrorWithDomain:NSURLErrorDomain 
-                                                          code:NSURLErrorCancelled
-                                                           URL:[r URL]];
-        [self didFailWithError:badURLError];
+        NSError *cancelledError = [frameLoader cancelledErrorWithRequest:r];
+        [self didFailWithError:cancelledError];
         return NO;
     }
     r = clientRequest;
     
-    if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
-        resource = [frameLoader _archivedSubresourceForURL:originalURL];
-        if (resource != nil) {
-            if ([self _canUseResourceWithResponse:[resource _response]]) {
-                [resource retain];
-                // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
-                [self deliverResourceAfterDelay];
-                return YES;
-            } else {
-                resource = nil;
-            }
-        }
-    }
+    if ([frameLoader willUseArchiveForRequest:r originalURL:originalURL loader:self])
+        return YES;
     
 #ifndef NDEBUG
     isInitializingConnection = YES;
@@ -269,7 +182,6 @@ static BOOL NSURLConnectionSupportsBufferedData;
     defersCallbacks = defers;
     WKSetNSURLConnectionDefersCallbacks(connection, defers);
     // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
-    [self deliverResourceAfterDelay];
 }
 
 - (BOOL)defersCallbacks
@@ -293,37 +205,34 @@ static BOOL NSURLConnectionSupportsBufferedData;
     return frameLoader;
 }
 
-- (void)addData:(NSData *)data
+- (void)addData:(NSData *)data allAtOnce:(BOOL)allAtOnce
 {
-    // Don't buffer data if we're loading it from a WebResource.
-    if (resource == nil) {
-        if (NSURLConnectionSupportsBufferedData) {
-            // Buffer data only if the connection has handed us the data because is has stopped buffering it.
-            if (resourceData != nil) {
-                [resourceData appendData:data];
-            }
-        } else {
-            if (resourceData == nil) {
-                resourceData = [[NSMutableData alloc] init];
-            }
+    if (allAtOnce) {
+        resourceData = [data copy];
+        return;
+    }
+        
+    if (NSURLConnectionSupportsBufferedData) {
+        // Buffer data only if the connection has handed us the data because is has stopped buffering it.
+        if (resourceData != nil)
             [resourceData appendData:data];
-        }
+    } else {
+        if (resourceData == nil)
+            resourceData = [[NSMutableData alloc] init];
+        [resourceData appendData:data];
     }
 }
 
 - (NSData *)resourceData
 {
-    if (resource != nil) {
-        return [resource data];
-    }
-    if (resourceData != nil) {
+    if (resourceData)
         // Retain and autorelease resourceData since releaseResources (which releases resourceData) may be called 
         // before the caller of this method has an opporuntity to retain the returned data (4070729).
         return [[resourceData retain] autorelease];
-    }
-    if (NSURLConnectionSupportsBufferedData) {
+
+    if (NSURLConnectionSupportsBufferedData)
         return [connection _bufferedData];
-    }
+
     return nil;
 }
 
@@ -440,7 +349,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [self release];
 }
 
-- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived allAtOnce:(BOOL)allAtOnce
 {
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData: in a way that invalidates them. This
@@ -452,7 +361,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
     
-    [self addData:data];
+    [self addData:data allAtOnce:allAtOnce];
     
     [frameLoader _didReceiveData:data contentLength:lengthReceived forResource:identifier];
 
@@ -553,7 +462,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 {
     ASSERT(con == connection);
     ++inNSURLConnectionCallback;
-    [self didReceiveData:data lengthReceived:lengthReceived];
+    [self didReceiveData:data lengthReceived:lengthReceived allAtOnce:NO];
     --inNSURLConnectionCallback;
 }
 
@@ -613,7 +522,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [currentWebChallenge release];
     currentWebChallenge = nil;
 
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(deliverResource) object:nil];
+    [frameLoader cancelPendingArchiveLoadForLoader:self];
     [connection cancel];
 
     [frameLoader _didFailLoadingWithError:error forResource:identifier];
@@ -626,13 +535,6 @@ static BOOL NSURLConnectionSupportsBufferedData;
     if (!reachedTerminalState) {
         [self cancelWithError:[self cancelledError]];
     }
-}
-
-- (NSError *)cancelledError
-{
-    return [NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                      code:NSURLErrorCancelled
-                                       URL:[request URL]];
 }
 
 - (void)setIdentifier: ident
@@ -651,6 +553,11 @@ static BOOL NSURLConnectionSupportsBufferedData;
 + (BOOL)inConnectionCallback
 {
     return inNSURLConnectionCallback != 0;
+}
+
+- (NSError *)cancelledError
+{
+    return [frameLoader cancelledErrorWithRequest:request];
 }
 
 @end
