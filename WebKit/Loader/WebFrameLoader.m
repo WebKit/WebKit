@@ -644,4 +644,9 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(deliverArchivedResources) object:nil];
 }
 
+- (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f
+{
+    [webFrame _addExtraFieldsToRequest:request mainResource:mainResource alwaysFromRequest:f];
+}
+
 @end

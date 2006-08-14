@@ -1,3 +1,21 @@
+2006-08-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady.
+        
+        - remove WebKit dependencies from WebSubresourceLoader, except WebFormDataStream
+        
+        (WebFormDataStream will be moved into the Loader directory soon)
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _addExtraFieldsToRequest:mainResource:alwaysFromRequest:]):
+        * Loader/WebSubresourceLoader.m:
+        (isConditionalRequest):
+        (hasCaseInsensitivePrefix):
+        (isFileURLString):
+        (setHTTPReferrer):
+        (+[WebSubresourceLoader startLoadingResource:withRequest:customHeaders:referrer:forFrameLoader:]):
+
 2006-08-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

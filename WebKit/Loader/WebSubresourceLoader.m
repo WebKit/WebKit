@@ -29,17 +29,10 @@
 #import <WebKit/WebSubresourceLoader.h>
 
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebFormDataStream.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebFrameLoader.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebNSURLRequestExtras.h>
-
 #import <Foundation/NSURLResponse.h>
-
 #import <WebCore/WebCoreResourceLoader.h>
-#import <WebKitSystemInterface.h>
+#import <WebKit/WebFormDataStream.h>
+#import <WebKit/WebFrameLoader.h>
 
 @implementation WebSubresourceLoader
 
@@ -58,6 +51,43 @@
 {
     [coreLoader release];
     [super dealloc];
+}
+
+static BOOL isConditionalRequest(NSURLRequest *request)
+{
+    if ([request valueForHTTPHeaderField:@"If-Match"] ||
+        [request valueForHTTPHeaderField:@"If-Modified-Since"] ||
+        [request valueForHTTPHeaderField:@"If-None-Match"] ||
+        [request valueForHTTPHeaderField:@"If-Range"] ||
+        [request valueForHTTPHeaderField:@"If-Unmodified-Since"])
+        return YES;
+    return NO;
+}
+
+static BOOL hasCaseInsensitivePrefix(NSString *str, NSString *prefix)
+{
+    return str && ([str rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound);
+}
+
+static BOOL isFileURLString(NSString *URL)
+{
+    return hasCaseInsensitivePrefix(URL, @"file:");
+}
+
+#define WebReferrer     (@"Referer")
+
+static void setHTTPReferrer(NSMutableURLRequest *request, NSString *theReferrer)
+{
+    // Do not set the referrer to a string that refers to a file URL.
+    // That is a potential security hole.
+    if (isFileURLString(theReferrer))
+        return;
+    
+    // Don't allow empty Referer: headers; some servers refuse them
+    if([theReferrer length] == 0)
+        theReferrer = nil;
+    
+    [request setValue:theReferrer forHTTPHeaderField:WebReferrer];
 }
 
 + (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
@@ -81,13 +111,13 @@
     // 2. Delegates that modify the cache policy using willSendRequest: should
     //    not affect any other resources. Such changes need to be done
     //    per request.
-    if ([newRequest _web_isConditionalRequest])
+    if (isConditionalRequest(newRequest))
         [newRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     else
         [newRequest setCachePolicy:[[fl _originalRequest] cachePolicy]];
-    [newRequest _web_setHTTPReferrer:referrer];
+    setHTTPReferrer(newRequest, referrer);
     
-    [[fl webFrame] _addExtraFieldsToRequest:newRequest mainResource:NO alwaysFromRequest:NO];
+    [fl _addExtraFieldsToRequest:newRequest mainResource:NO alwaysFromRequest:NO];
             
     if (![loader loadWithRequest:newRequest])
         loader = nil;
