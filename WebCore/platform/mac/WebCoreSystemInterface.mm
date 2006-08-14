@@ -53,3 +53,15 @@ void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);
 void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
 void (*wkSetUpFontCache)(size_t);
+void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
+void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
+void (*wkSignalCFReadStreamError)(CFReadStreamRef stream, CFStreamError *error);
+CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRef, void *), 
+    void (*formFinalize)(CFReadStreamRef, void *), 
+    Boolean (*formOpen)(CFReadStreamRef, CFStreamError *, Boolean *, void *), 
+    CFIndex (*formRead)(CFReadStreamRef, UInt8 *, CFIndex, CFStreamError *, Boolean *, void *), 
+    Boolean (*formCanRead)(CFReadStreamRef, void *), 
+    void (*formClose)(CFReadStreamRef, void *), 
+    void (*formSchedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *), 
+    void (*formUnschedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *),
+    void *context);

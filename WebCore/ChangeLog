@@ -1,3 +1,13 @@
+2006-08-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady.
+
+        - removed WebKit-level dependencies from WebFormDataStream. Use WebCore version of system interface
+
+        * WebCore.exp: export new functions
+        * platform/mac/WebCoreSystemInterface.h: Added CFReadStream related functions
+        * platform/mac/WebCoreSystemInterface.mm: ditto
+
 2006-08-13  Maks Orlovich  <maksim@kde.org>
 
         Reviewed (and tweaked a little) by Maciej.

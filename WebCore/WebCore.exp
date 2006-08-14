@@ -132,8 +132,9 @@ _WebCoreTextFloatWidth
 _wkCGContextGetShouldSmoothFonts
 _wkClearGlyphVector
 _wkConvertCharToGlyphs
-_wkDrawBezeledTextFieldCell
+_wkCreateCustomCFReadStream
 _wkDrawBezeledTextArea
+_wkDrawBezeledTextFieldCell
 _wkDrawFocusRing
 _wkFontSmoothingModeIsLCD
 _wkGetATSStyleGroup
@@ -156,3 +157,6 @@ _wkSetCGFontRenderingMode
 _wkSetDragImage
 _wkSetPatternPhaseInUserSpace
 _wkSetUpFontCache
+_wkSignalCFReadStreamEnd
+_wkSignalCFReadStreamError
+_wkSignalCFReadStreamHasBytes

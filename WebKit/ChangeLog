@@ -1,5 +1,18 @@
 2006-08-14  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Brady.
+        
+        - removed WebKit-level dependencies from WebFormDataStream. Use WebCore version of system interface
+
+        * Loader/WebFormDataStream.m:
+        (formCanRead):
+        (formEventCallback):
+        (webSetHTTPBody):
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+
+2006-08-14  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Brady.
         
         - move WebFormDataStream from WebView to Loader

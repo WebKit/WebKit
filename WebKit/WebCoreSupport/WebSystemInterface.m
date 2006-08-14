@@ -66,6 +66,10 @@ void InitWebCoreSystemInterface(void)
     INIT(SetDragImage);
     INIT(SetPatternPhaseInUserSpace);
     INIT(SetUpFontCache);
+    INIT(SignalCFReadStreamEnd);
+    INIT(SignalCFReadStreamHasBytes);
+    INIT(SignalCFReadStreamError);
+    INIT(CreateCustomCFReadStream);
 
     didInit = true;
 }
