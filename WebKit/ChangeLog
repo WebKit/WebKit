@@ -20,12 +20,12 @@
         The way of detecting a failed icon load before was to try and construct
         an image from the icon and if that image construction failed, mark the icon
         as missing.  
-        A much more efficient way is to check for a 404 response.  We'll still
-        check for invalid image data, but most servers will correctly return 404 
-        on a missing icon.
+        A much more efficient way is to check for an error response.  We'll still
+        check for invalid image data, but most servers will correctly return an HTTP 
+        error on a missing icon.
         
         * Misc/WebIconLoader.m:
-        (-[WebIconLoader didFinishLoading]): Added check for 404 response
+        (-[WebIconLoader didFinishLoading]): Added check for http error response
 
 2006-08-13  Maciej Stachowiak  <mjs@apple.com>
 
