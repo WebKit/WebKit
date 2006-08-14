@@ -362,7 +362,7 @@ static void fillStructuresUsingDateArgs(ExecState *exec, const List &args, int m
 const ClassInfo DateInstance::info = {"Date", 0, 0, 0};
 
 DateInstance::DateInstance(JSObject *proto)
-  : JSObject(proto)
+  : JSWrapperObject(proto)
 {
 }
 
@@ -534,6 +534,8 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   if (!thisObj->inherits(&DateInstance::info))
     return throwError(exec, TypeError);
 
+  DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+
   JSValue *result = 0;
   UString s;
 #if !PLATFORM(DARWIN)
@@ -544,7 +546,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     oldlocale = setlocale(LC_ALL, 0);
   // FIXME: Where's the code to set the locale back to oldlocale?
 #endif
-  JSValue *v = thisObj->internalValue();
+  JSValue *v = thisDateObj->internalValue();
   double milli = v->toNumber(exec);
   if (isNaN(milli)) {
     switch (id) {
@@ -645,7 +647,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   case SetTime:
     milli = roundValue(exec, args[0]);
     result = jsNumber(milli);
-    thisObj->setInternalValue(result);
+    thisDateObj->setInternalValue(result);
     break;
   case SetMilliSeconds:
     fillStructuresUsingTimeArgs(exec, args, 1, &ms, &t);
@@ -677,7 +679,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
       id == SetMinutes || id == SetHours || id == SetDate ||
       id == SetMonth || id == SetFullYear ) {
     result = jsNumber(makeTime(&t, ms, utc));
-    thisObj->setInternalValue(result);
+    thisDateObj->setInternalValue(result);
   }
   
   return result;
@@ -734,7 +736,7 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
     value = utc;
   } else if (numArgs == 1) {
     if (args[0]->isObject(&DateInstance::info))
-      value = static_cast<JSObject*>(args[0])->internalValue()->toNumber(exec);
+      value = static_cast<DateInstance*>(args[0])->internalValue()->toNumber(exec);
     else {
       JSValue* primitive = args[0]->toPrimitive(exec);
       if (primitive->isString())

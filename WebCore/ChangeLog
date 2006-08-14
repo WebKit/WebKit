@@ -1,3 +1,15 @@
+2006-08-13  Maks Orlovich  <maksim@kde.org>
+
+        Reviewed (and tweaked a little) by Maciej.
+        
+        - shrank the size of JSObject by 8 bytes and made the corresponding reduction to the cell size, resulting
+        in a 1.2% speed improvement on JS iBench (and probably overall memory savings).
+
+        The WebCore part of this is to expect only FunctionImp to have a scope, not all JSObjects.
+        
+        * bindings/js/kjs_events.cpp:
+        (KJS::JSLazyEventListener::parseCode):
+
 2006-08-12  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by hyatt and mjs.

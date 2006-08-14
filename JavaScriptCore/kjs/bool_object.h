@@ -23,10 +23,11 @@
 #define BOOL_OBJECT_H_
 
 #include "function_object.h"
+#include "JSWrapperObject.h"
 
 namespace KJS {
 
-  class BooleanInstance : public JSObject {
+  class BooleanInstance : public JSWrapperObject {
   public:
     BooleanInstance(JSObject *proto);
 

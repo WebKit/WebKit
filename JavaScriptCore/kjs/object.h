@@ -412,55 +412,7 @@ namespace KJS {
      */
     virtual bool hasInstance(ExecState *exec, JSValue *value);
 
-    /**
-     * Returns the scope of this object. This is used when execution declared
-     * functions - the execution context for the function is initialized with
-     * extra object in it's scope. An example of this is functions declared
-     * inside other functions:
-     *
-     * \code
-     * function f() {
-     *
-     *   function b() {
-     *     return prototype;
-     *   }
-     *
-     *   var x = 4;
-     *   // do some stuff
-     * }
-     * f.prototype = new String();
-     * \endcode
-     *
-     * When the function f.b is executed, its scope will include properties of
-     * f. So in the example above the return value of f.b() would be the new
-     * String object that was assigned to f.prototype.
-     *
-     * @param exec The current execution state
-     * @return The function's scope
-     */
-    const ScopeChain &scope() const { return _scope; }
-    void setScope(const ScopeChain &s) { _scope = s; }
-
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
-
-    /**
-     * Returns the internal value of the object. This is used for objects such
-     * as String and Boolean which are wrappers for native types. The interal
-     * value is the actual value represented by the wrapper objects.
-     *
-     * @see ECMA 8.6.2
-     * @return The internal value of the object
-     */
-    JSValue *internalValue() const;
-
-    /**
-     * Sets the internal value of the object
-     *
-     * @see internalValue()
-     *
-     * @param v The new internal value
-     */
-    void setInternalValue(JSValue *v);
 
     virtual JSValue *toPrimitive(ExecState *exec, JSType preferredType = UnspecifiedType) const;
     virtual bool toBoolean(ExecState *exec) const;
@@ -507,8 +459,6 @@ namespace KJS {
   private:
     const HashEntry* findPropertyHashEntry( const Identifier& propertyName ) const;
     JSValue *_proto;
-    JSValue *_internalValue;
-    ScopeChain _scope;
   };
 
   /**
@@ -555,7 +505,6 @@ JSObject *throwError(ExecState *, ErrorType);
 inline JSObject::JSObject(JSValue* proto, bool destructorIsThreadSafe)
     : JSCell(destructorIsThreadSafe)
     , _proto(proto)
-    , _internalValue(0)
 {
     assert(proto);
 }
@@ -563,18 +512,7 @@ inline JSObject::JSObject(JSValue* proto, bool destructorIsThreadSafe)
 inline JSObject::JSObject(bool destructorIsThreadSafe)
     : JSCell(destructorIsThreadSafe)
     , _proto(jsNull())
-    , _internalValue(0)
 {
-}
-
-inline JSValue *JSObject::internalValue() const
-{
-    return _internalValue;
-}
-
-inline void JSObject::setInternalValue(JSValue *v)
-{
-    _internalValue = v;
 }
 
 inline JSValue *JSObject::prototype() const
@@ -646,6 +584,7 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState *exec, const Identifie
 
     return false;
 }
+
 
 // FIXME: Put this function in a separate file named something like scope_chain_mark.h -- can't put it in scope_chain.h since it depends on JSObject.
 

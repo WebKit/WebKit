@@ -62,6 +62,12 @@ FunctionImp::FunctionImp(ExecState *exec, const Identifier &n, FunctionBodyNode*
 {
 }
 
+void FunctionImp::mark()
+{
+    InternalFunctionImp::mark();
+    _scope.mark();
+}
+
 FunctionImp::~FunctionImp()
 {
 }

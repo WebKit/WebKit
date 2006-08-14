@@ -95,6 +95,8 @@
 		65B174F609D100FA00820339 /* number_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B174F209D100FA00820339 /* number_object.lut.h */; };
 		65B174F809D100FA00820339 /* string_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B174F409D100FA00820339 /* string_object.lut.h */; };
 		65C647B4093EF8D60022C380 /* RefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C647B3093EF8D60022C380 /* RefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65C7A1730A8EAACB00FA37EA /* JSWrapperObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */; };
+		65C7A1740A8EAACB00FA37EA /* JSWrapperObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65D6D87F09B5A32E0002E4D7 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D6D87E09B5A32E0002E4D7 /* Platform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65D7D19C08F10B5B0015ABD8 /* FastMallocInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */; };
 		65DFC93008EA173A00F7300B /* HashFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92A08EA173A00F7300B /* HashFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -443,6 +445,8 @@
 		65B174F409D100FA00820339 /* string_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = string_object.lut.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* protect.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = protect.h; sourceTree = "<group>"; tabWidth = 8; };
 		65C647B3093EF8D60022C380 /* RefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RefPtr.h; sourceTree = "<group>"; tabWidth = 8; };
+		65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapperObject.cpp; sourceTree = "<group>"; };
+		65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSWrapperObject.h; sourceTree = "<group>"; };
 		65D6D87E09B5A32E0002E4D7 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FastMallocInternal.h; sourceTree = "<group>"; tabWidth = 8; };
 		65DFC92A08EA173A00F7300B /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashFunctions.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -825,6 +829,8 @@
 		65417200039E01BA0058BFEB /* kjs */ = {
 			isa = PBXGroup;
 			children = (
+				65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */,
+				65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */,
 				65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */,
 				65400C100A69BAF200509887 /* PropertyNameArray.h */,
 				938772E5038BFE19008635CE /* array_instance.h */,
@@ -1111,6 +1117,7 @@
 				1440FCE30A51E46B0005F061 /* JSClassRef.h in Headers */,
 				65400C120A69BAF200509887 /* PropertyNameArray.h in Headers */,
 				1CAF34890A6C421700ABE06E /* WebScriptObject.h in Headers */,
+				65C7A1740A8EAACB00FA37EA /* JSWrapperObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1396,6 +1403,7 @@
 				1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */,
 				1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */,
 				65400C110A69BAF200509887 /* PropertyNameArray.cpp in Sources */,
+				65C7A1730A8EAACB00FA37EA /* JSWrapperObject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

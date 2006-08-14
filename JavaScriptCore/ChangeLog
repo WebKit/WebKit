@@ -1,3 +1,63 @@
+2006-08-13  Maks Orlovich  <maksim@kde.org>
+
+        Reviewed (and tweaked a little) by Maciej.
+        
+        - shrank the size of JSObject by 8 bytes and made the corresponding reduction to the cell size, resulting
+        in a 1.2% speed improvement on JS iBench (and probably overall memory savings).
+
+        This was done by removing _scope and _internalValue data members
+        from JSObject and moving them only to the subclasses that actually
+        make use of them.
+        
+        * kjs/object.cpp: 
+        (KJS::JSObject::mark): No need to mark scope or internal value here.
+        * kjs/object.h:
+        (KJS::JSObject::JSObject): Don't initialize them.
+        * kjs/JSWrapperObject.cpp: Added. New base class for object types that
+        wrap primitive values (Number, String, Boolean, Date).
+        (KJS::JSWrapperObject::mark): 
+        * kjs/JSWrapperObject.h: Added.
+        (KJS::JSWrapperObject::JSWrapperObject):
+        (KJS::JSWrapperObject::internalValue):
+        (KJS::JSWrapperObject::setInternalValue):
+        * kjs/array_object.cpp:
+        (ArrayPrototype::ArrayPrototype): Don't set useless internal value.
+        * kjs/bool_object.cpp:
+        (BooleanInstance::BooleanInstance): Inherit from JSWrapperObject.
+        (BooleanProtoFunc::callAsFunction): Fixed to account for fact that not all
+        JSObjects have an internal value.
+        (BooleanObjectImp::construct): ditto.
+        * kjs/bool_object.h:
+        * kjs/collector.cpp: Lowered cell size to 48.
+        (KJS::Collector::allocate): meaningless whitespace change
+        * kjs/date_object.cpp:
+        (KJS::DateInstance::DateInstance): Inherit from JSWrapperObject.
+        (KJS::DateProtoFunc::callAsFunction): adjusted for move of internalValue
+        (KJS::DateObjectImp::construct): ditto
+        * kjs/date_object.h:
+        * kjs/error_object.cpp:
+        (ErrorPrototype::ErrorPrototype): don't set internal value
+        * kjs/function.cpp: move _scope and related handling here
+        (KJS::FunctionImp::mark): mark scope
+        * kjs/function.h:
+        (KJS::FunctionImp::scope): moved here from JSObject
+        (KJS::FunctionImp::setScope): ditto
+        * kjs/number_object.cpp:
+        (NumberInstance::NumberInstance): inherit from JSWrapperObject
+        (NumberProtoFunc::callAsFunction): adjusted
+        (NumberObjectImp::construct): adjusted
+        * kjs/number_object.h: shring RegExp-related objects a little
+        * kjs/regexp_object.cpp:
+        (RegExpPrototype::RegExpPrototype): Adjust for size tweaks
+        (RegExpObjectImp::RegExpObjectImp): ditto
+        * kjs/regexp_object.h:
+        * kjs/string_object.cpp:
+        (StringInstance::StringInstance): inherit from JSWrapperObject
+        (StringProtoFunc::callAsFunction): adjusted
+        * kjs/string_object.h:
+        * JavaScriptCore.exp: Exported new methods as needed.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added new files to build.
+
 2006-08-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Geoff's rubber stamp

@@ -22,13 +22,14 @@
 #define DATE_OBJECT_H
 
 #include "internal.h"
+#include "JSWrapperObject.h"
 
 namespace KJS {
 
     class FunctionPrototype;
     class ObjectPrototype;
 
-    class DateInstance : public JSObject {
+    class DateInstance : public JSWrapperObject {
     public:
         DateInstance(JSObject *proto);
         

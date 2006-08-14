@@ -36,7 +36,7 @@ using namespace KJS;
 const ClassInfo NumberInstance::info = {"Number", 0, 0, 0};
 
 NumberInstance::NumberInstance(JSObject *proto)
-  : JSObject(proto)
+  : JSWrapperObject(proto)
 {
 }
 // ------------------------------ NumberPrototype ---------------------------
@@ -147,7 +147,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
   if (!thisObj->inherits(&NumberInstance::info))
     return throwError(exec, TypeError);
 
-  JSValue *v = thisObj->internalValue();
+  JSValue *v = static_cast<NumberInstance*>(thisObj)->internalValue();
   switch (id) {
   case ToString: {
     double dradix = 10;
@@ -460,7 +460,7 @@ bool NumberObjectImp::implementsConstruct() const
 JSObject *NumberObjectImp::construct(ExecState *exec, const List &args)
 {
   JSObject *proto = exec->lexicalInterpreter()->builtinNumberPrototype();
-  JSObject *obj(new NumberInstance(proto));
+  NumberInstance *obj(new NumberInstance(proto));
 
   double n;
   if (args.isEmpty())

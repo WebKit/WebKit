@@ -1,4 +1,3 @@
-
 _JSCheckScriptSyntax
 _JSClassCreate
 _JSClassRelease
@@ -151,6 +150,7 @@ __ZN3KJS14StringInstance3putEPNS_9ExecStateERKNS_10IdentifierEPNS_7JSValueEi
 __ZN3KJS14StringInstance4infoE
 __ZN3KJS14StringInstanceC1EPNS_8JSObjectERKNS_7UStringE
 __ZN3KJS14StringInstanceC2EPNS_8JSObjectERKNS_7UStringE
+__ZN3KJS15JSWrapperObject4markEv
 __ZN3KJS15SavedPropertiesC1Ev
 __ZN3KJS15SavedPropertiesD1Ev
 __ZN3KJS16RuntimeObjectImp4infoE
@@ -269,6 +269,7 @@ __ZNK3KJS8JSObject9classNameEv
 __ZNK3KJS8JSObject9toBooleanEPNS_9ExecStateE
 __ZNK3KJS9ExecState18lexicalInterpreterEv
 __ZTVN3KJS14StringInstanceE
+__ZTVN3KJS15JSWrapperObjectE
 __ZTVN3KJS19InternalFunctionImpE
 __ZTVN3KJS8JSObjectE
 _kJSClassDefinitionEmpty

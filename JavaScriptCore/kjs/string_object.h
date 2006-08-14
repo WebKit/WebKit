@@ -23,10 +23,11 @@
 #define STRING_OBJECT_H_
 
 #include "function_object.h"
+#include "JSWrapperObject.h"
 
 namespace KJS {
 
-  class StringInstance : public JSObject {
+  class StringInstance : public JSWrapperObject {
   public:
     StringInstance(JSObject *proto);
     StringInstance(JSObject *proto, const UString &string);

@@ -60,7 +60,7 @@ using std::max;
 namespace KJS {
 
 // tunable parameters
-const size_t MINIMUM_CELL_SIZE = 56;
+const size_t MINIMUM_CELL_SIZE = 48;
 const size_t BLOCK_SIZE = (8 * 4096);
 const size_t SPARE_EMPTY_BLOCKS = 2;
 const size_t MIN_ARRAY_SIZE = 14;
@@ -123,7 +123,6 @@ void* Collector::allocate(size_t s)
   
   if (s > CELL_SIZE) {
     // oversize allocator
-
     size_t usedOversizeCells = heap.usedOversizeCells;
     size_t numOversizeCells = heap.numOversizeCells;
 

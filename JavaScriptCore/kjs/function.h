@@ -61,10 +61,42 @@ namespace KJS {
 
     RefPtr<FunctionBodyNode> body;
 
+    /**
+     * Returns the scope of this object. This is used when execution declared
+     * functions - the execution context for the function is initialized with
+     * extra object in it's scope. An example of this is functions declared
+     * inside other functions:
+     *
+     * \code
+     * function f() {
+     *
+     *   function b() {
+     *     return prototype;
+     *   }
+     *
+     *   var x = 4;
+     *   // do some stuff
+     * }
+     * f.prototype = new String();
+     * \endcode
+     *
+     * When the function f.b is executed, its scope will include properties of
+     * f. So in the example above the return value of f.b() would be the new
+     * String object that was assigned to f.prototype.
+     *
+     * @param exec The current execution state
+     * @return The function's scope
+     */
+    const ScopeChain &scope() const { return _scope; }
+    void setScope(const ScopeChain &s) { _scope = s; }
+
+    virtual void mark();
   protected:
     OwnPtr<Parameter> param;
 
   private:
+    ScopeChain _scope;
+
     static JSValue *argumentsGetter(ExecState *, JSObject *, const Identifier &, const PropertySlot&);
     static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier &, const PropertySlot&);
 

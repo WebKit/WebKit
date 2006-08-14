@@ -33,7 +33,7 @@ using namespace KJS;
 const ClassInfo BooleanInstance::info = {"Boolean", 0, 0, 0};
 
 BooleanInstance::BooleanInstance(JSObject *proto)
-  : JSObject(proto)
+  : JSWrapperObject(proto)
 {
 }
 
@@ -71,7 +71,7 @@ JSValue *BooleanProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, co
 
   // execute "toString()" or "valueOf()", respectively
 
-  JSValue *v = thisObj->internalValue();
+  JSValue *v = static_cast<BooleanInstance*>(thisObj)->internalValue();
   assert(v);
 
   if (id == ToString)
@@ -100,7 +100,7 @@ bool BooleanObjectImp::implementsConstruct() const
 // ECMA 15.6.2
 JSObject *BooleanObjectImp::construct(ExecState *exec, const List &args)
 {
-  JSObject *obj(new BooleanInstance(exec->lexicalInterpreter()->builtinBooleanPrototype()));
+  BooleanInstance *obj(new BooleanInstance(exec->lexicalInterpreter()->builtinBooleanPrototype()));
 
   bool b;
   if (args.size() > 0)

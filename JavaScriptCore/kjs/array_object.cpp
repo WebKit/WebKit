@@ -412,7 +412,6 @@ const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, &arrayTab
 ArrayPrototype::ArrayPrototype(ExecState*, ObjectPrototype* objProto)
   : ArrayInstance(objProto, 0)
 {
-  setInternalValue(jsNull());
 }
 
 bool ArrayPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
