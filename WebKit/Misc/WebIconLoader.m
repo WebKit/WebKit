@@ -88,42 +88,45 @@
 
 - (void)didFinishLoading
 {
-#ifndef ICONDEBUG
+#ifdef ICONDEBUG
+    NSData *data;
+        
+    id response = [self response];
+    if ([response isKindOfClass:[NSHTTPURLResponse class]] && ([response statusCode] < 200 || [response statusCode] > 299))
+        data = nil;
+    else
+        data = [self resourceData];
+    
+    if (data) {
+        [[WebIconDatabaseBridge sharedBridgeInstance] _setIconData:data forIconURL:[[self URL] _web_originalDataAsString]];
+        LOG(IconDatabase, "NewDB - Icon data set for URL %@", [[self URL] _web_originalDataAsString]);
+    } else {
+        [[WebIconDatabaseBridge sharedBridgeInstance] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
+        LOG(IconDatabase, "NewDB - No icon for URL %@", [[self URL] _web_originalDataAsString]);
+    }
+    [frameLoader _iconLoaderReceivedPageIcon:self];
+    [super didFinishLoading];
+#else
     NSImage *icon;
-#endif
-
+    
     NS_DURING
         NSData *data = [self resourceData];
-            
-#ifdef ICONDEBUG
-        if (data) {
-            [[WebIconDatabaseBridge sharedBridgeInstance] _setIconData:data forIconURL:[[self URL] _web_originalDataAsString]];
-            LOG(IconDatabase, "NewDB - Icon data set for URL %@", [[self URL] _web_originalDataAsString]);
-        }
-#else
         icon = [data length] > 0 ? [[NSImage alloc] initWithData:data] : nil;
-#endif
     NS_HANDLER
-#ifndef ICONDEBUG
         icon = nil;
-#endif
     NS_ENDHANDLER
     
-#ifndef ICONDEBUG
+
     if ([[icon representations] count] > 0) {
         [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:[[self URL] _web_originalDataAsString]];
     } else {
         [[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
     }
-#endif
-    
+
     [frameLoader _iconLoaderReceivedPageIcon:self];    
-    
-#ifndef ICONDEBUG
     [icon release];
-#endif
-    
     [super didFinishLoading];
+#endif
 }
 
 - (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse;
