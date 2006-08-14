@@ -704,15 +704,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     NSTimeInterval interval;
 
-    // Send null events less frequently when the actual window is not key.  Also, allow the DB
-    // to override this behavior and send full speed events to non key windows.
     // If the plugin is completely obscured (scrolled out of view, for example), then we will
     // send null events at a reduced rate.
-    if (!isCompletelyObscured && ([[self window] isKeyWindow] || [[self webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns]))
-        interval = NullEventIntervalActive;
-    else
-        interval = NullEventIntervalNotActive;
-    
+    interval = !isCompletelyObscured ? NullEventIntervalActive : NullEventIntervalNotActive;    
     nullEventTimer = [[NSTimer scheduledTimerWithTimeInterval:interval
                                                        target:self
                                                      selector:@selector(sendNullEvent)
