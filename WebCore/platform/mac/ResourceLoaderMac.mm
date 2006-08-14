@@ -58,18 +58,18 @@ ResourceLoader::~ResourceLoader()
 
 bool ResourceLoader::start(DocLoader* docLoader)
 {
-    FrameMac *frame = Mac(docLoader->frame());
-    
+    FrameMac* frame = Mac(docLoader->frame());
     if (!frame) {
         delete this;
         return false;
     }
-    
+
     WebCoreFrameBridge* bridge = frame->bridge();
 
     frame->didTellBridgeAboutLoad(url().url());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     WebCoreResourceLoaderImp* resourceLoader = [[WebCoreResourceLoaderImp alloc] initWithJob:this];
 
     id <WebCoreResourceHandle> handle;
@@ -86,10 +86,14 @@ bool ResourceLoader::start(DocLoader* docLoader)
         handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict];
     [resourceLoader setHandle:handle];
     [resourceLoader release];
-    return handle != nil;
+
+    if (handle)
+        return true;
+
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    return true;
+    delete this;
+    return false;
 }
 
 void ResourceLoader::assembleResponseHeaders() const

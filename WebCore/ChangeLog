@@ -1,3 +1,19 @@
+2006-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed some storage leaks
+          (part of http://bugzilla.opendarwin.org/show_bug.cgi?id=10259)
+
+        * platform/mac/ResourceLoaderMac.mm: (WebCore::ResourceLoader::start):
+        Rearrange code so that "delete this" is called any time the function returns
+        false -- ownership was inconsistent before.
+
+        * rendering/RenderContainer.cpp: (WebCore::RenderContainer::removeChildNode):
+        Call deleteLineBoxWrapper even when documentBeingDestroyed() is true, because
+        some of what it does has to be done during destruction. A little awkward since
+        I preserved the order of operations. Perhaps we could structure this better later.
+
 2006-08-14  David Harrison  <harrison@apple.com>
 
         Reviewed by John Sullivan and Geoff Garen.

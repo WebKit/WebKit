@@ -169,10 +169,12 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     if (!documentBeingDestroyed()) {
         oldChild->setNeedsLayoutAndMinMaxRecalc();
         oldChild->repaint();
+    }
         
-        // If we have a line box wrapper, delete it.
-        oldChild->deleteLineBoxWrapper();
+    // If we have a line box wrapper, delete it.
+    oldChild->deleteLineBoxWrapper();
 
+    if (!documentBeingDestroyed()) {
         // Keep our layer hierarchy updated.
         oldChild->removeLayers(enclosingLayer());
         
