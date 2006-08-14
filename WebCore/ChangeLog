@@ -1,5 +1,18 @@
 2006-08-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10204
+          REGRESSION: title tag parsing problem breaks Travelocity and Google Analytics pages
+
+        Test: fast/parser/title-error-test.html
+
+        * html/HTMLParser.cpp: (WebCore::HTMLParser::handleError): Fixed an error
+        handling case that was skipping until a </style> tag in code that was shared
+        between both <title> and <style>. Also rearranged the code a tiny bit.
+
+2006-08-14  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - fixed some storage leaks
@@ -86,7 +99,6 @@
         * bindings/js/kjs_events.cpp:
         (KJS::JSLazyEventListener::parseCode):
 
->>>>>>> .r15854
 2006-08-12  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by hyatt and mjs.

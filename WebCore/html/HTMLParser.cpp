@@ -437,19 +437,19 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
             if (!head)
                 createHead();
             if (head) {
-                Node *newNode = head->addChild(n);
-                if (newNode) {
-                    pushBlock(localName, tagPriority);
-                    setCurrent(newNode);
-                    if (!n->attached() && !m_fragment)
-                        n->attach();
-                } else {
-                    setSkipMode(styleTag);
+                Node* newNode = head->addChild(n);
+                if (!newNode) {
+                    setSkipMode(h->tagQName());
                     return false;
                 }
+                pushBlock(localName, tagPriority);
+                setCurrent(newNode);
+                if (!n->attached() && !m_fragment)
+                    n->attach();
                 return true;
-            } else if(inBody) {
-                setSkipMode(styleTag);
+            }
+            if (inBody) {
+                setSkipMode(h->tagQName());
                 return false;
             }
         } else if (h->hasLocalName(bodyTag)) {
