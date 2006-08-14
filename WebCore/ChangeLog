@@ -1,3 +1,14 @@
+2006-08-14  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 10385, add more support for crappy pseudo-XML-in-HTML.
+
+        Reviewed by ggaren
+
+        Added fast/parser/bad-xml-slash.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+
 2006-08-14  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

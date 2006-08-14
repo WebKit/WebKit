@@ -928,7 +928,10 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             int ll = min(src.length(), CBUFLEN-cBufferPos);
             while(ll--) {
                 UChar curchar = *src;
-                if (curchar <= '>' && (curchar >= '=' || curchar <= ' ')) {
+                // If we encounter a "/" when scanning an attribute name, treat it as a delimiter.  However, we only do
+                // this if we have actual attribute contents.  This allows the degenerate case of <input type=checkbox checked/>
+                // to work (despite it being utterly invalid).
+                if (curchar <= '>' && (curchar >= '=' || curchar <= ' ' || (curchar == '/' && attrName.length() > 0))) {
                     cBuffer[cBufferPos] = '\0';
                     attrName = AtomicString(cBuffer);
                     dest = buffer;
