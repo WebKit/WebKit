@@ -36,6 +36,7 @@
 #import "FrameMac.h"
 #import "HTMLAreaElement.h"
 #import "HTMLCollection.h"
+#import "HTMLFrameElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLMapElement.h"
 #import "HTMLNames.h"
@@ -529,6 +530,14 @@ using namespace HTMLNames;
         }
     } else if ([self isAttachment])
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
+
+    if (m_renderer->isRenderView()) {
+        Node* owner = m_renderer->document()->ownerElement();
+        if (owner && (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag))) {
+            HTMLFrameElement* frameElement = static_cast<HTMLFrameElement*>(owner);
+            return (NSString*)frameElement->name();
+        }
+    }
     
     return nil;
 }
@@ -661,6 +670,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
             NSAccessibilityPositionAttribute,
             NSAccessibilitySizeAttribute,
             NSAccessibilityTitleAttribute,
+            NSAccessibilityDescriptionAttribute,
             NSAccessibilityValueAttribute,
             NSAccessibilityFocusedAttribute,
             NSAccessibilityEnabledAttribute,
@@ -1774,9 +1784,9 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 - (RenderObject *) rendererForView:(NSView *)view
 {
     // check for WebCore NSView that lets us find its widget
-    Frame* docPart = m_renderer->document()->frame();
-    if (docPart) {
-        DOMElement *domElement = [Mac(docPart)->bridge() elementForView:view];
+    Frame* frame = m_renderer->document()->frame();
+    if (frame) {
+        DOMElement *domElement = [Mac(frame)->bridge() elementForView:view];
         if (domElement)
             return [domElement _element]->renderer();
     }
@@ -1788,11 +1798,11 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         bridge = [bridgeHolder webCoreBridge];
     }
 
-    FrameMac *frame = [bridge impl];
-    if (!frame)
+    FrameMac *frameMac = [bridge impl];
+    if (!frameMac)
         return NULL;
         
-    Document *document = frame->document();
+    Document *document = frameMac->document();
     if (!document)
         return NULL;
         
