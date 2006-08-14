@@ -58,7 +58,7 @@ all : \
     JSCounter.h \
     JSCSSStyleDeclaration.h \
     JSDOMImplementation.h \
-    JSDOMParser.lut.h \
+    JSDOMParser.h \
     JSDOMWindow.h \
     JSDocument.h \
     JSDocumentFragment.h \
@@ -141,7 +141,7 @@ all : \
     JSXPathResult.h \
     JSWheelEvent.h \
     JSXMLHttpRequest.lut.h \
-    JSXMLSerializer.lut.h \
+    JSXMLSerializer.h \
     JSXSLTProcessor.lut.h \
     SVGElementFactory.cpp \
     SVGNames.cpp \

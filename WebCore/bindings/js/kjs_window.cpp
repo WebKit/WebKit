@@ -33,7 +33,6 @@
 #include "HTMLDocument.h"
 #include "JSCSSRule.h"
 #include "JSCSSValue.h"
-#include "JSDOMParser.h"
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
 #include "JSHTMLOptionElementConstructor.h"
@@ -42,7 +41,6 @@
 #include "JSNodeFilter.h"
 #include "JSRange.h"
 #include "JSXMLHttpRequest.h"
-#include "JSXMLSerializer.h"
 #include "Settings.h"
 #include "Logging.h"
 #include "Page.h"
@@ -255,8 +253,6 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   Image         Window::Image           DontDelete
   Option        Window::Option          DontDelete
   XMLHttpRequest        Window::XMLHttpRequest  DontDelete
-  XMLSerializer Window::XMLSerializer   DontDelete
-  DOMParser     Window::DOMParser_      DontDelete
   XSLTProcessor Window::XSLTProcessor_  DontDelete
   alert         Window::Alert           DontDelete|Function 1
   confirm       Window::Confirm         DontDelete|Function 1
@@ -792,10 +788,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return new JSHTMLOptionElementConstructor(exec, m_frame->document());
     case XMLHttpRequest:
       return new JSXMLHttpRequestConstructorImp(exec, m_frame->document());
-    case XMLSerializer:
-      return new JSXMLSerializerConstructorImp(exec);
-    case DOMParser_:
-      return new DOMParserConstructorImp(exec, m_frame->document());
 #ifdef KHTML_XSLT
     case XSLTProcessor_:
       return new XSLTProcessorConstructorImp(exec);

@@ -1,7 +1,6 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -18,33 +17,19 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef JSXMLSerializer_H
-#define JSXMLSerializer_H
+#ifndef DOMParser_H
+#define DOMParser_H
 
-#include "kjs_binding.h"
-
-namespace KJS {
-    class JSEventListener;
-}
+#include "Shared.h"
+#include "Document.h"
 
 namespace WebCore {
+    class String;
+    
+    class DOMParser : public Shared<DOMParser> {
+    public:
+        PassRefPtr<Document> parseFromString(const String& str, const String& contentType);
+    };
+}
 
-  class JSXMLSerializerConstructorImp : public KJS::DOMObject {
-  public:
-    JSXMLSerializerConstructorImp(KJS::ExecState*);
-    virtual bool implementsConstruct() const;
-    virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List& args);
-  };
-
-  class JSXMLSerializer : public KJS::DOMObject {
-  public:
-    JSXMLSerializer(KJS::ExecState*);
-    virtual bool toBoolean(KJS::ExecState*) const { return true; }
-    virtual const KJS::ClassInfo* classInfo() const { return &info; }
-    static const KJS::ClassInfo info;
-    enum { SerializeToString };
-  };
-
-} // namespace
-
-#endif
+#endif // XMLSerializer.h

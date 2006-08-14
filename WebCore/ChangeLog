@@ -1,3 +1,33 @@
+2006-08-11  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10353
+        XMLSerializer and DOMParser should have real implementations
+        
+        Make real implementation files for DOMParser and XMLSerializer and wrap them
+        using our bindings generation.
+        
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMParser.cpp: Removed.
+        * bindings/js/JSDOMParser.h: Removed.
+        * bindings/js/JSXMLSerializer.cpp: Removed.
+        * bindings/js/JSXMLSerializer.h: Removed.
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * page/DOMWindow.idl:
+        * xml/DOMParser.cpp: Added.
+        (WebCore::DOMParser::parseFromString):
+        * xml/DOMParser.h: Added.
+        * xml/DOMParser.idl: Added.
+        * xml/XMLSerializer.cpp: Added.
+        (WebCore::XMLSerializer::serializeToString):
+        * xml/XMLSerializer.h: Added.
+        * xml/XMLSerializer.idl: Added.
+
 2006-08-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady.
@@ -20,6 +50,7 @@
         * bindings/js/kjs_events.cpp:
         (KJS::JSLazyEventListener::parseCode):
 
+>>>>>>> .r15854
 2006-08-12  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by hyatt and mjs.
@@ -142,6 +173,7 @@
 
         * dom/DOMImplementation.cpp:
 
+>>>>>>> .r15841
 2006-08-12  Oliver  <ojh16@student.canterbury.ac.nz>
 
         Rubber stamped by tim

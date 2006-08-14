@@ -48,6 +48,7 @@ module window {
         attribute CSSValueConstructor CSSValue;
         attribute DocumentConstructor Document;
         attribute DocumentFragmentConstructor DocumentFragment;
+        attribute DOMParserConstructor DOMParser;
         attribute ElementConstructor Element;
         attribute EventConstructor Event;
         attribute HTMLElementConstructor HTMLElement;
@@ -60,6 +61,8 @@ module window {
         // Mozilla has a separate XMLDocument object for XML documents. 
         // We just use Document for this.
         attribute DocumentConstructor XMLDocument;
+        
+        attribute XMLSerializerConstructor XMLSerializer;
         
 #ifdef XPATH_SUPPORT
         attribute XPathEvaluatorConstructor XPathEvaluator;
