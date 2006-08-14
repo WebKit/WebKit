@@ -32,6 +32,8 @@
 		22E42A4F0A5B9F620003275B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22E42A4E0A5B9F620003275B /* OpenGL.framework */; };
 		22E42A9A0A5BA4D00003275B /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22E42A990A5BA4D00003275B /* AGL.framework */; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51700DAA0A9052A700DAAA8E /* WebIconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 51700DA80A9052A700DAAA8E /* WebIconLoader.h */; };
+		51700DAB0A9052A700DAAA8E /* WebIconLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 51700DA90A9052A700DAAA8E /* WebIconLoader.m */; };
 		51E4D3990A886B5E00ECEE2C /* WebIconDatabaseBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E4D3970A886B5E00ECEE2C /* WebIconDatabaseBridge.h */; };
 		51E4D39A0A886B5E00ECEE2C /* WebIconDatabaseBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E4D3980A886B5E00ECEE2C /* WebIconDatabaseBridge.m */; };
 		650F74E409E488F70020118A /* WebUnarchivingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F74E209E488F70020118A /* WebUnarchivingState.h */; };
@@ -77,7 +79,6 @@
 		939810160824BF01008DF038 /* WebCoreStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = F59EAE3E0253C7EE018635CA /* WebCoreStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810180824BF01008DF038 /* WebIconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = F528E3E9031E91AD01CA2ACA /* WebIconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810190824BF01008DF038 /* WebIconDatabasePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F528E3EB031E91AD01CA2ACA /* WebIconDatabasePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9398101A0824BF01008DF038 /* WebIconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = F5934C8802E894F50197FBCF /* WebIconLoader.h */; settings = {ATTRIBUTES = (); }; };
 		9398101B0824BF01008DF038 /* WebKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2568C72C0174912D0ECA149E /* WebKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9398101C0824BF01008DF038 /* WebKitErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = F5927D4E02D26C5E01CA2DBB /* WebKitErrors.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9398101D0824BF01008DF038 /* WebKitLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AEB17D032C1735008635CE /* WebKitLogging.h */; settings = {ATTRIBUTES = (); }; };
@@ -196,7 +197,6 @@
 		939810BE0824BF01008DF038 /* WebURLsWithTitles.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E0A76F02B8FEE401C1A525 /* WebURLsWithTitles.m */; };
 		939810BF0824BF01008DF038 /* WebCoreStatistics.m in Sources */ = {isa = PBXBuildFile; fileRef = F59EAE410253C8DE018635CA /* WebCoreStatistics.m */; };
 		939810C10824BF01008DF038 /* WebIconDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = F528E3EA031E91AD01CA2ACA /* WebIconDatabase.m */; };
-		939810C20824BF01008DF038 /* WebIconLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = F5934C8902E894F50197FBCF /* WebIconLoader.m */; };
 		939810C30824BF01008DF038 /* WebKitLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 93AEB17E032C1735008635CE /* WebKitLogging.m */; };
 		939810C40824BF01008DF038 /* WebKitNSStringExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 7082F570038EADAA00A80180 /* WebKitNSStringExtras.m */; };
 		939810C50824BF01008DF038 /* WebKitStatistics.m in Sources */ = {isa = PBXBuildFile; fileRef = F53444CF02E87CBA018635CA /* WebKitStatistics.m */; };
@@ -346,6 +346,8 @@
 		515E27CF0458CA4B00CA2D3A /* WebDefaultUIDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultUIDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDefaultUIDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		516F296F03A6C45A00CA2D3A /* WebHistoryItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		51700DA80A9052A700DAAA8E /* WebIconLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebIconLoader.h; sourceTree = "<group>"; };
+		51700DA90A9052A700DAAA8E /* WebIconLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebIconLoader.m; sourceTree = "<group>"; };
 		51863EFC065419EB00E9E8DD /* WebJavaPlugIn.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebJavaPlugIn.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51A8B52E04282B5900CA2D3A /* WebFrameView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51A8B52F04282B5900CA2D3A /* WebFrameView.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebFrameView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -518,8 +520,6 @@
 		F5883BE0025E5E9D01000102 /* WebNullPluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNullPluginView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5883BE1025E5E9D01000102 /* WebNullPluginView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNullPluginView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5927D4E02D26C5E01CA2DBB /* WebKitErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitErrors.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5934C8802E894F50197FBCF /* WebIconLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebIconLoader.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5934C8902E894F50197FBCF /* WebIconLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebIconLoader.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F59668C802AD2923018635CA /* WebStringTruncator.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebStringTruncator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F59668C902AD2923018635CA /* WebStringTruncator.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebStringTruncator.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F59EAE3E0253C7EE018635CA /* WebCoreStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreStatistics.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -680,8 +680,6 @@
 				F528E3E9031E91AD01CA2ACA /* WebIconDatabase.h */,
 				F528E3EA031E91AD01CA2ACA /* WebIconDatabase.m */,
 				F528E3EB031E91AD01CA2ACA /* WebIconDatabasePrivate.h */,
-				F5934C8802E894F50197FBCF /* WebIconLoader.h */,
-				F5934C8902E894F50197FBCF /* WebIconLoader.m */,
 				BE07CEA9047538F000CA289C /* WebFileDatabase.h */,
 				BE07CEAA047538F000CA289C /* WebFileDatabase.m */,
 				BE07CEAB047538F000CA289C /* WebLRUFileList.h */,
@@ -803,6 +801,8 @@
 				651A93860A83F883007FEDF0 /* WebDataProtocol.m */,
 				654B3C290A82C47200E1AE3D /* WebFrameLoader.h */,
 				654B3C2A0A82C47200E1AE3D /* WebFrameLoader.m */,
+				51700DA80A9052A700DAAA8E /* WebIconLoader.h */,
+				51700DA90A9052A700DAAA8E /* WebIconLoader.m */,
 				654B3C2B0A82C47200E1AE3D /* WebLoader.h */,
 				654B3C2C0A82C47200E1AE3D /* WebLoader.m */,
 				654B3C2D0A82C47200E1AE3D /* WebMainResourceLoader.h */,
@@ -1071,7 +1071,6 @@
 				939810160824BF01008DF038 /* WebCoreStatistics.h in Headers */,
 				939810180824BF01008DF038 /* WebIconDatabase.h in Headers */,
 				939810190824BF01008DF038 /* WebIconDatabasePrivate.h in Headers */,
-				9398101A0824BF01008DF038 /* WebIconLoader.h in Headers */,
 				9398101B0824BF01008DF038 /* WebKit.h in Headers */,
 				9398101C0824BF01008DF038 /* WebKitErrors.h in Headers */,
 				9398101D0824BF01008DF038 /* WebKitLogging.h in Headers */,
@@ -1215,6 +1214,7 @@
 				654B3C3B0A82C47200E1AE3D /* WebSubresourceLoader.h in Headers */,
 				651A93870A83F883007FEDF0 /* WebDataProtocol.h in Headers */,
 				51E4D3990A886B5E00ECEE2C /* WebIconDatabaseBridge.h in Headers */,
+				51700DAA0A9052A700DAAA8E /* WebIconLoader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1600,7 +1600,6 @@
 				939810BE0824BF01008DF038 /* WebURLsWithTitles.m in Sources */,
 				939810BF0824BF01008DF038 /* WebCoreStatistics.m in Sources */,
 				939810C10824BF01008DF038 /* WebIconDatabase.m in Sources */,
-				939810C20824BF01008DF038 /* WebIconLoader.m in Sources */,
 				939810C30824BF01008DF038 /* WebKitLogging.m in Sources */,
 				939810C40824BF01008DF038 /* WebKitNSStringExtras.m in Sources */,
 				939810C50824BF01008DF038 /* WebKitStatistics.m in Sources */,
@@ -1699,6 +1698,7 @@
 				654B3C3C0A82C47200E1AE3D /* WebSubresourceLoader.m in Sources */,
 				651A93880A83F883007FEDF0 /* WebDataProtocol.m in Sources */,
 				51E4D39A0A886B5E00ECEE2C /* WebIconDatabaseBridge.m in Sources */,
+				51700DAB0A9052A700DAAA8E /* WebIconLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
