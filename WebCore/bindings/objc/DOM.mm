@@ -2124,9 +2124,7 @@ static Class elementClass(const AtomicString& tagName)
 
 - (void)detach
 {
-    ExceptionCode ec = 0;
-    [self _nodeIterator]->detach(ec);
-    raiseOnDOMError(ec);
+    [self _nodeIterator]->detach();
 }
 
 @end

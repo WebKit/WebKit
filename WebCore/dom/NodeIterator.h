@@ -42,7 +42,7 @@ namespace WebCore {
 
         Node* nextNode(ExceptionCode&);
         Node* previousNode(ExceptionCode&);
-        void detach(ExceptionCode&);
+        void detach();
 
         Node* referenceNode() const { return m_referenceNode.get(); }
         bool pointerBeforeReferenceNode() const { return m_beforeReferenceNode; }

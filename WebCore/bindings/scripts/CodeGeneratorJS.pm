@@ -259,7 +259,12 @@ sub GenerateHeader
     # Class info
     push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &info; }\n");
     push(@headerContent, "    static const KJS::ClassInfo info;\n");
-    
+
+    # Custom mark function
+    if ($dataNode->extendedAttributes->{"CustomMarkFunction"}) {
+        push(@headerContent, "\n    virtual void mark();\n\n");
+    }
+
     # Constructor object getter
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
         push(@headerContent, "    static KJS::JSValue* getConstructor(KJS::ExecState*);\n")
@@ -1171,10 +1176,6 @@ sub NativeToJSValue
     } elsif ($type eq "HTMLCanvasElement") {
         $implIncludes{"kjs_dom.h"} = 1;
         $implIncludes{"HTMLCanvasElement.h"} = 1;
-        return "toJS(exec, $value)";
-    } elsif ($type eq "NodeIterator" or
-             $type eq "TreeWalker") {
-        $implIncludes{"kjs_traversal.h"} = 1;
         return "toJS(exec, $value)";
     } elsif ($type eq "DOMWindow") {
         $implIncludes{"kjs_window.h"} = 1;

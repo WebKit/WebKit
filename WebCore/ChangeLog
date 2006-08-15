@@ -1,3 +1,35 @@
+2006-08-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10393
+        Autogenerate NodeIterator and TreeWalker.
+        
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+        
+        * bindings/js/JSNodeIteratorCustom.cpp: Added.
+        (WebCore::JSNodeIterator::mark):
+        * bindings/js/JSTreeWalkerCustom.cpp: Added.
+        (WebCore::JSTreeWalker::mark):
+        
+        * bindings/js/kjs_traversal.cpp:
+        * bindings/js/kjs_traversal.h:
+        Remove implementations of DOMNodeIterator and DOMTreeWalker.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Add "CustomMarkFunction" attribute for classes where mark() needs to be overridden.
+        
+        * bindings/objc/DOM.mm:
+        (-[DOMNodeIterator detach]):
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::detach):
+        * dom/NodeIterator.h:
+        Get rid of exception in detach, it isn't used at all and this function can't throw an exception according to the spec.
+        * dom/NodeIterator.idl: Added.
+        * dom/TreeWalker.idl: Added.
+
 2006-08-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John
@@ -86,6 +118,7 @@
         (-[WebCoreAXObject rendererForView:]):
         Clean up some old naming.
 
+>>>>>>> .r15865
 2006-08-11  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

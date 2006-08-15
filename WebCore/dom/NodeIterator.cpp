@@ -100,7 +100,7 @@ Node* NodeIterator::previousNode(ExceptionCode&)
     return node;
 }
 
-void NodeIterator::detach(ExceptionCode&)
+void NodeIterator::detach()
 {
     if (!detached() && document())
         document()->detachNodeIterator(this);

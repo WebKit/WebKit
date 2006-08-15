@@ -118,6 +118,7 @@ all : \
     JSMutationEvent.h \
     JSNode.h \
     JSNodeFilter.h \
+	JSNodeIterator.h \
     JSNotation.h \
 	JSOverflowEvent.h \
     JSProcessingInstruction.h \
@@ -134,6 +135,7 @@ all : \
     JSSVGSVGElement.h \
     JSSVGTransform.h \
     JSText.h \
+	JSTreeWalker.h \
     JSUIEvent.h \
     JSXPathEvaluator.h \
     JSXPathExpression.h \
