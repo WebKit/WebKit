@@ -76,7 +76,7 @@
 
 - (WebResource *)archivedResourceForURL:(NSURL *)URL
 {
-    return [archivedResources objectForKey:URL];
+    return [archivedResources objectForKey:[URL _web_originalDataAsString]];
 }
 
 - (WebArchive *)popSubframeArchiveWithFrameName:(NSString *)frameName

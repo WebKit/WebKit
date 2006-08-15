@@ -1,3 +1,16 @@
+2006-08-15  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Darin.
+        
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10314
+          WebUnarchivingState archivedResourceForURL: doesn't work
+
+        * WebView/WebUnarchivingState.m:
+        (-[WebUnarchivingState archivedResourceForURL:]):
+        Fixed to get objects from the archived resources dictionary using
+        the URL as a string instead of as the URL itself (as this is how
+        the data is put into the dictionary).
+
 2006-08-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Beth.
