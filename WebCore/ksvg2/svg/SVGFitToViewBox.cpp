@@ -22,21 +22,19 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "DeprecatedStringList.h"
 
 #include "Attr.h"
-#include "StringImpl.h"
-
-#include "SVGNames.h"
-#include "svgpathparser.h"
-#include "SVGRect.h"
-#include "SVGSVGElement.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGAnimatedRect.h"
 #include "SVGFitToViewBox.h"
+#include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
+#include "SVGRect.h"
+#include "SVGSVGElement.h"
+#include "StringImpl.h"
+#include "svgpathparser.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGFitToViewBox::SVGFitToViewBox()
 {
@@ -46,10 +44,9 @@ SVGFitToViewBox::~SVGFitToViewBox()
 {
 }
 
-SVGAnimatedRect *SVGFitToViewBox::viewBox() const
+SVGAnimatedRect* SVGFitToViewBox::viewBox() const
 {
-    if(!m_viewBox)
-    {
+    if (!m_viewBox) {
         //const SVGStyledElement *context = dynamic_cast<const SVGStyledElement *>(this);
         m_viewBox = new SVGAnimatedRect(0); // FIXME: 0 is a hack
     }
@@ -57,10 +54,9 @@ SVGAnimatedRect *SVGFitToViewBox::viewBox() const
     return m_viewBox.get();
 }
 
-SVGAnimatedPreserveAspectRatio *SVGFitToViewBox::preserveAspectRatio() const
+SVGAnimatedPreserveAspectRatio* SVGFitToViewBox::preserveAspectRatio() const
 {
-    if(!m_preserveAspectRatio)
-    {
+    if (!m_preserveAspectRatio) {
         //const SVGStyledElement *context = dynamic_cast<const SVGStyledElement *>(this);
         m_preserveAspectRatio = new SVGAnimatedPreserveAspectRatio(0); // FIXME: 0 is a hack
     }
@@ -68,7 +64,7 @@ SVGAnimatedPreserveAspectRatio *SVGFitToViewBox::preserveAspectRatio() const
     return m_preserveAspectRatio.get();
 }
 
-void SVGFitToViewBox::parseViewBox(StringImpl *str)
+void SVGFitToViewBox::parseViewBox(StringImpl* str)
 {
     double x = 0, y = 0, w = 0, h = 0;
     DeprecatedString viewbox = String(str).deprecatedString();
@@ -120,13 +116,13 @@ void SVGFitToViewBox::parseViewBox(StringImpl *str)
     viewBox()->baseVal()->setHeight(h);
     return;
 
-bail_out:
-        fprintf(stderr, "WARNING: Malformed viewbox string: %s (l: %i)", viewbox.ascii(), viewbox.length());
+bail_out:;
+    // FIXME: Per the spec we are supposed to set the document into an "error state" here.
 }
 
-SVGMatrix *SVGFitToViewBox::viewBoxToViewTransform(float viewWidth, float viewHeight) const
+SVGMatrix* SVGFitToViewBox::viewBoxToViewTransform(float viewWidth, float viewHeight) const
 {
-    SVGRect *viewBoxRect = viewBox()->baseVal();
+    SVGRect* viewBoxRect = viewBox()->baseVal();
     if(viewBoxRect->width() == 0 || viewBoxRect->height() == 0)
         return SVGSVGElement::createSVGMatrix();
 
@@ -135,20 +131,19 @@ SVGMatrix *SVGFitToViewBox::viewBoxToViewTransform(float viewWidth, float viewHe
             0, 0, viewWidth, viewHeight);
 }
 
-bool SVGFitToViewBox::parseMappedAttribute(MappedAttribute *attr)
+bool SVGFitToViewBox::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (attr->name() == SVGNames::viewBoxAttr)
-    {
+    if (attr->name() == SVGNames::viewBoxAttr) {
         parseViewBox(attr->value().impl());
         return true;
-    }
-    else if (attr->name() == SVGNames::preserveAspectRatioAttr)
-    {
+    } else if (attr->name() == SVGNames::preserveAspectRatioAttr) {
         preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(attr->value().impl());
         return true;
     }
 
     return false;
+}
+
 }
 
 // vim:ts=4:noet

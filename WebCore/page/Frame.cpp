@@ -2039,8 +2039,7 @@ void dispatchEditableContentChangedEvent(Node* root)
         return;
         
     ExceptionCode ec = 0;
-    RefPtr<Event> evt = new Event(khtmlEditableContentChangedEvent, false, false);
-    EventTargetNodeCast(root)->dispatchEvent(evt, ec, true);
+    EventTargetNodeCast(root)->dispatchEvent(new Event(khtmlEditableContentChangedEvent, false, false), ec, true);
 }
 
 void Frame::appliedEditing(EditCommandPtr& cmd)

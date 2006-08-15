@@ -27,6 +27,7 @@
 #include "Attr.h"
 #include "Document.h"
 #include "DOMImplementation.h"
+#include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
@@ -44,7 +45,6 @@ using namespace EventNames;
 
 SVGElement::SVGElement(const QualifiedName& tagName, Document* doc)
     : StyledElement(tagName, doc)
-    , m_closed(false)
 {
 }
 
@@ -132,7 +132,9 @@ void SVGElement::addSVGEventListener(const AtomicString& eventType, const Attrib
 void SVGElement::parseMappedAttribute(MappedAttribute *attr)
 {
     // standard events
-    if (attr->name() == onclickAttr)
+    if (attr->name() == onloadAttr)
+        addSVGEventListener(loadEvent, attr);
+    else if (attr->name() == onclickAttr)
         addSVGEventListener(clickEvent, attr);
     else if (attr->name() == onmousedownAttr)
         addSVGEventListener(mousedownEvent, attr);
@@ -150,6 +152,41 @@ void SVGElement::parseMappedAttribute(MappedAttribute *attr)
         addSVGEventListener(DOMFocusOutEvent, attr);
     else
         StyledElement::parseMappedAttribute(attr);
+}
+
+bool SVGElement::haveLoadedRequiredResources()
+{
+    Node* child = fastFirstChild();
+    while (child) {
+        if (child->isSVGElement() && !static_cast<SVGElement*>(child)->haveLoadedRequiredResources())
+            return false;
+        child = child->nextSibling();
+    }
+    return true;
+}
+
+void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
+{
+    RefPtr<SVGElement> currentTarget = this;
+    while (currentTarget && currentTarget->haveLoadedRequiredResources()) {
+        RefPtr<Node> parent;
+        if (sendParentLoadEvents)
+            parent = currentTarget->parentNode(); // save the next parent to dispatch too incase dispatching the event changes the tree
+        
+        // FIXME: This malloc could be avoided by walking the tree first to check if any listeners are present: http://bugzilla.opendarwin.org/show_bug.cgi?id=10264
+        RefPtr<Event> event = new Event(loadEvent, false, false);
+        event->setTarget(currentTarget.get());
+        ExceptionCode ignored = 0;
+        dispatchGenericEvent(event.release(), ignored, false);
+        currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : 0;
+    }
+}
+
+void SVGElement::closeRenderer()
+{
+    // closeRenderer() is called when the close tag is reached for an element (e.g. </svg>)
+    // we send SVGLoad events here if we can, otherwise they'll be sent when any required loads finish
+    sendSVGLoadEventIfPossible();
 }
 
 bool SVGElement::childShouldCreateRenderer(Node *child) const

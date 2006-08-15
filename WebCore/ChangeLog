@@ -1,3 +1,49 @@
+2006-08-14  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by darin and mjs.
+        
+        Add better SVGLoad event support.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6010
+        There will still need to be additional support added for <link> and <script> elements.
+        Not all of the error -> loaded -> error transition cases work yet.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        * html/HTMLImageLoader.h:
+        (WebCore::HTMLImageLoader::haveFiredLoadEvent):
+        (WebCore::HTMLImageLoader::setHaveFiredLoadEvent):
+        * ksvg2/misc/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::SVGImageLoader):
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        * ksvg2/misc/SVGImageLoader.h:
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::parseMappedAttribute):
+        * ksvg2/svg/SVGAnimatedBoolean.h:
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        (WebCore::SVGElement::parseMappedAttribute):
+        (WebCore::SVGElement::haveLoadedRequiredResources):
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible):
+        (WebCore::SVGElement::closeRenderer):
+        * ksvg2/svg/SVGElement.h:
+        (WebCore::SVGElement::rendererIsNeeded):
+        (WebCore::svg_dynamic_cast):
+        * ksvg2/svg/SVGExternalResourcesRequired.h:
+        * ksvg2/svg/SVGImageElement.cpp:
+        (SVGImageElement::SVGImageElement):
+        (SVGImageElement::haveLoadedRequiredResources):
+        * ksvg2/svg/SVGImageElement.h:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        * ksvg2/svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::SVGScriptElement):
+        (WebCore::SVGScriptElement::parseMappedAttribute):
+        (WebCore::SVGScriptElement::executeScript):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener): use new Event() instead of createEvent
+
 2006-08-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

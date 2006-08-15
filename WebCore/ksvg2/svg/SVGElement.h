@@ -56,9 +56,6 @@ namespace WebCore {
 
         // Internal
         virtual void parseMappedAttribute(MappedAttribute*);
-
-        // To be implemented by any element which can establish new viewports...
-        virtual DeprecatedString adjustViewportClipping() const { return DeprecatedString::null; }
         
         virtual bool isStyled() const { return false; }
         virtual bool isStyledTransformable() const { return false; }
@@ -70,16 +67,15 @@ namespace WebCore {
         // For SVGTests
         virtual bool isValid() const { return true; }
         
-        virtual void closeRenderer() { m_closed = true; }
+        virtual void closeRenderer();
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
         virtual bool childShouldCreateRenderer(Node*) const;
         
-        // helper:
-        bool isClosed() const { return m_closed; }
+        void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
 
     private:
-        bool m_closed;
         void addSVGEventListener(const AtomicString& eventType, const Attribute*);
+        virtual bool haveLoadedRequiredResources();
     };
 
 

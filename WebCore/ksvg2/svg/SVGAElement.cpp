@@ -61,14 +61,16 @@ void SVGAElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == SVGNames::targetAttr) {
         target()->setBaseVal(value.impl());
     } else {
-        if(SVGURIReference::parseMappedAttribute(attr))
-        {
+        if (SVGURIReference::parseMappedAttribute(attr)) {
             m_isLink = attr->value() != 0;
             return;
         }
-        if(SVGTests::parseMappedAttribute(attr)) return;
-        if(SVGLangSpace::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;        
+        if (SVGTests::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
 }

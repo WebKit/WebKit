@@ -35,6 +35,7 @@ namespace WebCore {
         virtual ~SVGImageLoader();
         
         virtual void updateFromElement();
+        virtual void dispatchLoadEvent();
     };
 
 } // namespace WebCore

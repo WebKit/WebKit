@@ -1,12 +1,11 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0) size 479.50x450
-      KCanvasContainer {g} at (0,0) size 450x450
-        KCanvasItem {rect} at (0,0) size 450x450 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L450.00,0.00L450.00,450.00L0.00,450.00"]
-        RenderSVGText {text} at (0,0) size 465x72
-          RenderText {#text} at (0,0) size 418x72
-            text run at (0,0) width 418: "Removing DOM Elements is"
-            text run at (0,36) width 213: "not supported"
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
+      KCanvasContainer {g} at (0,0) size 0x0
+        KCanvasItem {rect} at (inf,inf) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data=""]
+        RenderSVGText {text} at (0,0) size 465x18
+          RenderText {#text} at (0,0) size 148x18
+            text run at (0,0) width 148: "DOM API is supported"
       RenderSVGText {text} at (0,0) size 465x36
         RenderText {#text} at (0,0) size 198x36
           text run at (0,0) width 198: "$Revision: 1.1 $"
