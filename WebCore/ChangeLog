@@ -1,3 +1,12 @@
+2006-08-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Tim H.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10394
+        Bug 10394: WebKit Release and Production configurations should enable dead code stripping
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-08-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
