@@ -33,7 +33,6 @@
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "RenderTextArea.h"
 #include "RenderTextControl.h"
 #include "Text.h"
 #include "RenderStyle.h"
@@ -259,7 +258,7 @@ String HTMLTextAreaElement::value() const
 
 void HTMLTextAreaElement::setValue(const String& value)
 {
-    // WebCoreTextArea normalizes line endings added by the user via the keyboard or pasting.
+    // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
     // We must normalize line endings coming from JS.
     DeprecatedString valueWithNormalizedLineEndings = value.deprecatedString();
     valueWithNormalizedLineEndings.replace("\r\n", "\n");

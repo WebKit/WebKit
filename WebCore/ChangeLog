@@ -1,3 +1,28 @@
+2006-08-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Hyatt.
+        Tweaked and landed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10399
+        Bug 10399: RenderTextArea is unused
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Removed RenderTextArea source files.
+
+        * html/HTMLTextAreaElement.cpp: Removed include of RenderTextArea.h.
+        * html/HTMLTextAreaElement.h: Removed forward declaration of RenderTextArea.
+
+        * platform/mac/WidgetMac.mm: (WebCore::Widget::paint): Updated a comment.
+
+        * platform/TextBox.h: Removed.
+        * platform/mac/TextBoxMac.mm: Removed.
+        * platform/mac/WebCoreTextArea.h: Removed.
+        * platform/mac/WebCoreTextArea.mm: Removed.
+        * rendering/RenderTextArea.cpp: Removed.
+        * rendering/RenderTextArea.h: Removed.
+
 2006-08-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by THE OTHER Maciej...

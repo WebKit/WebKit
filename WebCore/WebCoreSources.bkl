@@ -456,7 +456,6 @@
 		rendering/RenderTableRow.cpp
 		rendering/RenderTableSection.cpp
 		rendering/RenderText.cpp
-		rendering/RenderTextArea.cpp
 		rendering/RenderTextControl.cpp
 		rendering/RenderTextFragment.cpp
 		rendering/RenderTheme.cpp

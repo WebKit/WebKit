@@ -30,11 +30,7 @@
 
 namespace WebCore {
 
-class RenderTextArea;
-
 class HTMLTextAreaElement : public HTMLGenericFormElement {
-    friend class RenderTextArea;
-
 public:
     enum WrapMethod { ta_NoWrap, ta_Virtual, ta_Physical };
 

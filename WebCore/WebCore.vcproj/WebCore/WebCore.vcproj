@@ -3191,14 +3191,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderTextArea.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderTextArea.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\RenderTextControl.cpp"
 				>
 			</File>

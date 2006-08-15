@@ -62,9 +62,7 @@ protected:
 private:
     // Don't use this class directly -- use JSNode instead
     friend class WebCore::JSNode;
-    DOMNode();
     DOMNode(ExecState*, WebCore::Node *n);
-    DOMNode(WebCore::Node *n);
 };
 
 } // namespace KJS

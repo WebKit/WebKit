@@ -575,8 +575,6 @@
 		93F1998A08245E59001E9ABC /* RegularExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B302DE3B8601EA4122 /* RegularExpression.h */; };
 		93F1998C08245E59001E9ABC /* RenderTreeAsText.h in Headers */ = {isa = PBXBuildFile; fileRef = 93955A4103D72932008635CE /* RenderTreeAsText.h */; };
 		93F1998D08245E59001E9ABC /* WebCoreResourceLoaderImp.h in Headers */ = {isa = PBXBuildFile; fileRef = 93386B90037045B3008635CE /* WebCoreResourceLoaderImp.h */; };
-		93F1999708245E59001E9ABC /* WebCoreTextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = F587853502DE375901EA4122 /* WebCoreTextArea.h */; };
-		93F1999908245E59001E9ABC /* TextBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786BE02DE3B8601EA4122 /* TextBox.h */; };
 		93F1999A08245E59001E9ABC /* WebCoreTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = F587851B02DE375901EA4122 /* WebCoreTextField.h */; };
 		93F1999B08245E59001E9ABC /* TextStream.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786BF02DE3B8601EA4122 /* TextStream.h */; };
 		93F1999D08245E59001E9ABC /* DeprecatedValueList.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C202DE3B8601EA4122 /* DeprecatedValueList.h */; };
@@ -629,8 +627,6 @@
 		93F19A3C08245E59001E9ABC /* DeprecatedPtrListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587851602DE375901EA4122 /* DeprecatedPtrListImpl.cpp */; };
 		93F19A3F08245E59001E9ABC /* WebCoreTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851C02DE375901EA4122 /* WebCoreTextField.mm */; };
 		93F19A4A08245E59001E9ABC /* RegularExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852B02DE375901EA4122 /* RegularExpression.cpp */; };
-		93F19A5108245E59001E9ABC /* WebCoreTextArea.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587853602DE375901EA4122 /* WebCoreTextArea.mm */; };
-		93F19A5308245E59001E9ABC /* TextBoxMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587853802DE375901EA4122 /* TextBoxMac.mm */; };
 		93F19A5408245E59001E9ABC /* TextStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853902DE375901EA4122 /* TextStream.cpp */; };
 		93F19A5608245E59001E9ABC /* DeprecatedValueListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */; };
 		93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F587855502DE375901EA4122 /* WebCoreViewFactory.m */; };
@@ -1330,11 +1326,9 @@
 		A8EA73C50A1900E300A8EF5F /* RenderLineEdit.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B10A1900E300A8EF5F /* RenderLineEdit.h */; };
 		A8EA73C60A1900E300A8EF5F /* RenderFileButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73B20A1900E300A8EF5F /* RenderFileButton.cpp */; };
 		A8EA73C70A1900E300A8EF5F /* RenderFileButton.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B30A1900E300A8EF5F /* RenderFileButton.h */; };
-		A8EA73C80A1900E300A8EF5F /* RenderTextArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73B40A1900E300A8EF5F /* RenderTextArea.cpp */; };
 		A8EA73C90A1900E300A8EF5F /* RenderFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B50A1900E300A8EF5F /* RenderFormElement.h */; };
 		A8EA73CA0A1900E300A8EF5F /* RenderLegend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */; };
 		A8EA73CB0A1900E300A8EF5F /* RenderLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B70A1900E300A8EF5F /* RenderLabel.h */; };
-		A8EA73CE0A1900E300A8EF5F /* RenderTextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73BA0A1900E300A8EF5F /* RenderTextArea.h */; };
 		A8EA73D10A1900E300A8EF5F /* RenderLegend.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */; };
 		A8EA73D20A1900E300A8EF5F /* RenderLineEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73BE0A1900E300A8EF5F /* RenderLineEdit.cpp */; };
 		A8EA73D30A1900E300A8EF5F /* RenderFormElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73BF0A1900E300A8EF5F /* RenderFormElement.cpp */; };
@@ -3097,11 +3091,9 @@
 		A8EA73B10A1900E300A8EF5F /* RenderLineEdit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLineEdit.h; sourceTree = "<group>"; };
 		A8EA73B20A1900E300A8EF5F /* RenderFileButton.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFileButton.cpp; sourceTree = "<group>"; };
 		A8EA73B30A1900E300A8EF5F /* RenderFileButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFileButton.h; sourceTree = "<group>"; };
-		A8EA73B40A1900E300A8EF5F /* RenderTextArea.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextArea.cpp; sourceTree = "<group>"; };
 		A8EA73B50A1900E300A8EF5F /* RenderFormElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFormElement.h; sourceTree = "<group>"; };
 		A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLegend.cpp; sourceTree = "<group>"; };
 		A8EA73B70A1900E300A8EF5F /* RenderLabel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLabel.h; sourceTree = "<group>"; };
-		A8EA73BA0A1900E300A8EF5F /* RenderTextArea.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextArea.h; sourceTree = "<group>"; };
 		A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLegend.h; sourceTree = "<group>"; };
 		A8EA73BE0A1900E300A8EF5F /* RenderLineEdit.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLineEdit.cpp; sourceTree = "<group>"; };
 		A8EA73BF0A1900E300A8EF5F /* RenderFormElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFormElement.cpp; sourceTree = "<group>"; };
@@ -3420,9 +3412,6 @@
 		F587851B02DE375901EA4122 /* WebCoreTextField.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTextField.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851C02DE375901EA4122 /* WebCoreTextField.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreTextField.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587852B02DE375901EA4122 /* RegularExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegularExpression.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587853502DE375901EA4122 /* WebCoreTextArea.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTextArea.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587853602DE375901EA4122 /* WebCoreTextArea.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreTextArea.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587853802DE375901EA4122 /* TextBoxMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextBoxMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853902DE375901EA4122 /* TextStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextStream.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853B02DE375901EA4122 /* DeprecatedValueListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedValueListImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedValueListImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3441,7 +3430,6 @@
 		F587869902DE3B8601EA4122 /* DeprecatedPtrList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedPtrList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786AD02DE3B8601EA4122 /* DeprecatedPtrQueue.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedPtrQueue.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786B302DE3B8601EA4122 /* RegularExpression.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RegularExpression.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58786BE02DE3B8601EA4122 /* TextBox.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TextBox.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786BF02DE3B8601EA4122 /* TextStream.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TextStream.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786C202DE3B8601EA4122 /* DeprecatedValueList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedValueList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58EF58E02DFDFB7018635CA /* WebCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.exports; path = WebCore.exp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3876,7 +3864,6 @@
 				93B0FD890A759BED0080AD44 /* StringMac.mm */,
 				6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */,
 				9352071B09BD3BBB00F2038D /* TextBoundaries.mm */,
-				F587853802DE375901EA4122 /* TextBoxMac.mm */,
 				F587851202DE375901EA4122 /* TextFieldMac.mm */,
 				6545F67509B830180013006F /* ResourceLoaderMac.mm */,
 				F5517DC2031AB56301A80180 /* WebCoreHistory.h */,
@@ -3885,8 +3872,6 @@
 				84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */,
 				93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */,
 				93EB169409F880B00091F8FF /* WebCoreSystemInterface.mm */,
-				F587853502DE375901EA4122 /* WebCoreTextArea.h */,
-				F587853602DE375901EA4122 /* WebCoreTextArea.mm */,
 				F587851B02DE375901EA4122 /* WebCoreTextField.h */,
 				F587851C02DE375901EA4122 /* WebCoreTextField.mm */,
 				BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */,
@@ -5180,7 +5165,6 @@
 				93CD4FDD0995F9EA007ECC97 /* StringImpl.h */,
 				93E62D990985F41600E1B5E3 /* SystemTime.h */,
 				9352071809BD3BA500F2038D /* TextBoundaries.h */,
-				F58786BE02DE3B8601EA4122 /* TextBox.h */,
 				9353686A09AF78F600D35CD6 /* TextDirection.h */,
 				657BD74B09AFDC54005A2056 /* TextEncoding.cpp */,
 				657BD74C09AFDC54005A2056 /* TextEncoding.h */,
@@ -5460,8 +5444,6 @@
 				A8DF4AE50980C42C0052981B /* RenderTableSection.h */,
 				BCEA484C097D93020094C9E4 /* RenderText.cpp */,
 				BCEA484D097D93020094C9E4 /* RenderText.h */,
-				A8EA73B40A1900E300A8EF5F /* RenderTextArea.cpp */,
-				A8EA73BA0A1900E300A8EF5F /* RenderTextArea.h */,
 				AB67D1A6097F3AE300F9392E /* RenderTextControl.cpp */,
 				AB67D1A7097F3AE300F9392E /* RenderTextControl.h */,
 				BCEA484E097D93020094C9E4 /* RenderTextFragment.cpp */,
@@ -5650,8 +5632,6 @@
 				93F1998A08245E59001E9ABC /* RegularExpression.h in Headers */,
 				93F1998C08245E59001E9ABC /* RenderTreeAsText.h in Headers */,
 				93F1998D08245E59001E9ABC /* WebCoreResourceLoaderImp.h in Headers */,
-				93F1999708245E59001E9ABC /* WebCoreTextArea.h in Headers */,
-				93F1999908245E59001E9ABC /* TextBox.h in Headers */,
 				93F1999A08245E59001E9ABC /* WebCoreTextField.h in Headers */,
 				93F1999B08245E59001E9ABC /* TextStream.h in Headers */,
 				93F1999D08245E59001E9ABC /* DeprecatedValueList.h in Headers */,
@@ -6230,7 +6210,6 @@
 				A8EA73C70A1900E300A8EF5F /* RenderFileButton.h in Headers */,
 				A8EA73C90A1900E300A8EF5F /* RenderFormElement.h in Headers */,
 				A8EA73CB0A1900E300A8EF5F /* RenderLabel.h in Headers */,
-				A8EA73CE0A1900E300A8EF5F /* RenderTextArea.h in Headers */,
 				A8EA73D10A1900E300A8EF5F /* RenderLegend.h in Headers */,
 				A8EA79F10A1916DF00A8EF5F /* HTMLOListElement.h in Headers */,
 				A8EA79F20A1916DF00A8EF5F /* HTMLUListElement.h in Headers */,
@@ -6456,7 +6435,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -6470,8 +6448,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -6568,8 +6544,6 @@
 				93F19A3C08245E59001E9ABC /* DeprecatedPtrListImpl.cpp in Sources */,
 				93F19A3F08245E59001E9ABC /* WebCoreTextField.mm in Sources */,
 				93F19A4A08245E59001E9ABC /* RegularExpression.cpp in Sources */,
-				93F19A5108245E59001E9ABC /* WebCoreTextArea.mm in Sources */,
-				93F19A5308245E59001E9ABC /* TextBoxMac.mm in Sources */,
 				93F19A5408245E59001E9ABC /* TextStream.cpp in Sources */,
 				93F19A5608245E59001E9ABC /* DeprecatedValueListImpl.cpp in Sources */,
 				93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */,
@@ -7103,7 +7077,6 @@
 				BC6DADFA0A19602B00E5CD14 /* WebFontCache.mm in Sources */,
 				A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */,
 				A8EA73C60A1900E300A8EF5F /* RenderFileButton.cpp in Sources */,
-				A8EA73C80A1900E300A8EF5F /* RenderTextArea.cpp in Sources */,
 				A8EA73CA0A1900E300A8EF5F /* RenderLegend.cpp in Sources */,
 				A8EA73D20A1900E300A8EF5F /* RenderLineEdit.cpp in Sources */,
 				A8EA73D30A1900E300A8EF5F /* RenderFormElement.cpp in Sources */,

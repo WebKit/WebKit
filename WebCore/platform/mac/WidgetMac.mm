@@ -360,7 +360,7 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
     if (p->paintingDisabled())
         return;
     NSView *view = getOuterView();
-    // WebCoreTextArea and WebCoreTextField both rely on the fact that we use this particular
+    // WebCoreTextField relies on the fact that we use this particular
     // NSView display method. If you change this, be sure to update them as well.
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
