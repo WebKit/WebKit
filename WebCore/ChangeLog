@@ -1,3 +1,31 @@
+2006-08-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        The changes are plentiful, but small, mostly to improve performance
+        1) Add a bool flag to SiteIcon to stop it from querying the database over and over
+        2) Added a pageURL->iconURL hashmap to cache database results, as an optimization
+        3) Fix a bug in setIconURLForPageURL code where the pageURL would still point to an old icon
+        4) Added isIconURLRetained() to optimize the retain count check
+        5) Prune old, unused code
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::imageDataForIconID): Removed unused code
+        (WebCore::IconDatabase::imageDataForIconURL): Removed unused code
+        (WebCore::IconDatabase::imageDataForPageURL): Removed unused code
+        (WebCore::IconDatabase::isIconExpiredForIconURL): Removed LOG msg
+        (WebCore::IconDatabase::isIconExpiredForPageURL): Removed LOG msg
+        (WebCore::IconDatabase::iconURLForPageURL): Added a hashmap cache to avoid common queries
+        (WebCore::IconDatabase::releaseIconForURL): Changed to is isRetained() instead of retainCount()
+        (WebCore::IconDatabase::isIconURLRetained): Added - we don't care about the actual retain count
+          for an icon so much as whether or not it is retained
+        (WebCore::IconDatabase::setIconURLForPageURL): If the new and old iconURLs are the same, skip the
+          SQLite code
+        * loader/icon/IconDatabase.h:  Added new methods/variables
+        * loader/icon/SiteIcon.cpp:
+        (SiteIcon::SiteIcon): Added a flag so it only queries the database for icon data once
+        (SiteIcon::getImage): Ditto
+
 2006-08-14  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 10385, add more support for crappy pseudo-XML-in-HTML.

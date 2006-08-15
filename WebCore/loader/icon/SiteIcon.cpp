@@ -33,6 +33,7 @@ using namespace WebCore;
 SiteIcon::SiteIcon(const String& url)
     : m_iconURL(url)
     , m_image(0)
+    , m_dataQueried(false)
 {
 
 }
@@ -49,11 +50,14 @@ Image* SiteIcon::getImage(const IntSize& size)
     // What we really need to do is keep a hashmap of Images based on size and make a copy when/if we create a new one
     if (m_image)
         return m_image;
+    if (m_dataQueried)
+        return 0;
     
     if (IconDatabase::m_sharedInstance) {
         Vector<unsigned char> imageData = IconDatabase::m_sharedInstance->imageDataForIconURL(m_iconURL);
         LOG(IconDatabase, "For URL %s, we got a buffer of size %i", m_iconURL.ascii().data(), imageData.size());
-
+        
+        m_dataQueried = true;
         if (!imageData.size())
             return 0;
         manuallySetImageData(imageData.data(), imageData.size());

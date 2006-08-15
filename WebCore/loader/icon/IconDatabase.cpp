@@ -220,78 +220,9 @@ void IconDatabase::deletePrivateTables()
     m_db.executeCommand("DROP TABLE TempIconResource;");
 }
 
-// FIXME - This is a DIRTY, dirty workaround for a problem that we're seeing where certain blobs are having a corrupt buffer
-// returned when we get the result as a const void* blob.  Getting the blob as a textual representation is 100% accurate so this hack
-// does an in place hex-to-character from the textual representation of the icon data.  After I manage to follow up with Adam Swift, the OSX sqlite maintainer,
-// who is too busy to help me until after 7-4-06, this NEEEEEEEEEEEEEEDS to be changed. 
-// *SIGH*
-#ifdef BLOB_WORKAROUND
-unsigned char hexToUnsignedChar(UChar h, UChar l)
-{
-    unsigned char c;
-    if (h >= '0' && h <= '9')
-        c = h - '0';
-    else if (h >= 'A' && h <= 'F')
-        c = h - 'A' + 10;
-    else {
-        LOG_ERROR("Failed to parse TEXT result from SQL BLOB query");
-        return 0;
-    }
-    c *= 16;
-    if (l >= '0' && l <= '9')
-        c += l - '0';
-    else if (l >= 'A' && l <= 'F')
-        c += l - 'A' + 10;
-    else {
-        LOG_ERROR("Failed to parse TEXT result from SQL BLOB query");
-        return 0;
-    }    
-    return c;
-}
-
-Vector<unsigned char> hexStringToVector(const String& s)
-{
-    LOG(IconDatabase, "hexStringToVector() - s.length is %i", s.length());
-    if (s[0] != 'X' || s[1] != '\'') {
-        LOG(IconDatabase, "hexStringToVector() - string is invalid SQL HEX-string result - %s", s.ascii().data());
-        return Vector<unsigned char>();
-    }
-    if (!m_db.executeCommand("CREATE TRIGGER update_icon_timestamp AFTER UPDATE ON IconResource BEGIN UPDATE Icon SET stamp = strftime('%s','now') WHERE iconID = new.iconID; END;")) {
-        LOG_ERROR("Unable to create update_icon_timestamp trigger in icon.db (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
-        m_db.close();
-        return;        
-    }
-
-    Vector<unsigned char> result;
-    result.reserveCapacity(s.length() / 2);
-    const UChar* data = s.characters() + 2;
-    int count = 0;
-    while (data[0] != '\'') {
-        if (data[1] == '\'') {
-            LOG_ERROR("Invalid HEX TEXT data for BLOB query");
-            return Vector<unsigned char>();
-        }
-        result.append(hexToUnsignedChar(data[0], data[1]));
-        data++;
-        data++;
-        count++;
-    }
-    
-    LOG(IconDatabase, "Finished atoi() - %i iterations, result size %i", count, result.size());
-    return result;
-}
-#endif
-
 Vector<unsigned char> IconDatabase::imageDataForIconID(int id)
 {
-#ifdef BLOB_WORKAROUND
-    String blob = SQLStatement(m_db, String::sprintf("SELECT quote(data) FROM IconResource WHERE iconid = %i", id)).getColumnText(0);
-    if (blob.isEmpty())
-        return Vector<unsigned char>();
-    return hexStringToVector(blob);
-#else
     return SQLStatement(m_db, String::sprintf("SELECT data FROM IconResource WHERE iconid = %i", id)).getColumnBlobAsVector(0);
-#endif
 }
 
 Vector<unsigned char> IconDatabase::imageDataForIconURL(const String& _iconURL)
@@ -299,28 +230,7 @@ Vector<unsigned char> IconDatabase::imageDataForIconURL(const String& _iconURL)
     //Escape single quotes for SQL 
     String iconURL = _iconURL;
     iconURL.replace('\'', "''");
-    
-#ifdef BLOB_WORKAROUND
-    LOG(IconDatabase, "imageDataForIconURL called with BLOB_WORKAROUND set");
-    String blob;
-     
-    // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
-    if (m_privateBrowsingEnabled) {
-        blob = SQLStatement(m_db, "SELECT quote(TempIconResource.data) FROM TempIconResource, TempIcon WHERE TempIcon.url = '" + iconURL + "' AND TempIconResource.iconID = TempIcon.iconID;").getColumnText(0);
-        if (!blob.isEmpty()) {
-            LOG(IconDatabase, "Icon data pulled from temp tables");
-            return hexStringToVector(blob);
-        }
-    } 
-    
-    // It wasn't found there, so lets check the main tables
-    blob = SQLStatement(m_db, "SELECT quote(IconResource.data) FROM IconResource, Icon WHERE Icon.url = '" + iconURL + "' AND IconResource.iconID = Icon.iconID;").getColumnText(0);
-    if (blob.isEmpty())
-        return Vector<unsigned char>();
-    
-    return hexStringToVector(blob);
-#else    
-    LOG(IconDatabase, "imageDataForIconURL called using preferred method");
+      
     // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
     if (m_privateBrowsingEnabled) {    
         Vector<unsigned char> blob = SQLStatement(m_db, "SELECT TempIconResource.data FROM TempIconResource, TempIcon WHERE TempIcon.url = '" + iconURL + "' AND TempIconResource.iconID = TempIcon.iconID;").getColumnBlobAsVector(0);
@@ -332,7 +242,6 @@ Vector<unsigned char> IconDatabase::imageDataForIconURL(const String& _iconURL)
     
     // It wasn't found there, so lets check the main tables
     return SQLStatement(m_db, "SELECT IconResource.data FROM IconResource, Icon WHERE Icon.url = '" + iconURL + "' AND IconResource.iconID = Icon.iconID;").getColumnBlobAsVector(0);
-#endif
 }
 
 Vector<unsigned char> IconDatabase::imageDataForPageURL(const String& _pageURL)
@@ -341,24 +250,6 @@ Vector<unsigned char> IconDatabase::imageDataForPageURL(const String& _pageURL)
     String pageURL = _pageURL;
     pageURL.replace('\'', "''");
     
-#ifdef BLOB_WORKAROUND
-    String blob;
-    // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
-    if (m_privateBrowsingEnabled) {
-        blob = SQLStatement(m_db, "SELECT quote(TempIconResource.data) FROM TempIconResource, TempPageURL WHERE TempPageURL.url = '" + pageURL + "' AND TempIconResource.iconID = TempPageURL.iconID;").getColumnText(0);
-        if (!blob.isEmpty()) {
-            LOG(IconDatabase, "Icon data pulled from temp tables");
-            return hexStringToVector(blob);
-        }
-    } 
-    
-    // It wasn't found there, so lets check the main tables
-    blob = SQLStatement(m_db, "SELECT quote(IconResource.data) FROM IconResource, PageURL WHERE PageURL.url = '" + pageURL + "' AND IconResource.iconID = PageURL.iconID;").getColumnText(0);
-    if (blob.isEmpty())
-        return Vector<unsigned char>();
-    
-    return hexStringToVector(blob);
-#else
     LOG(IconDatabase, "imageDataForIconURL called using preferred method");
     // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
     if (m_privateBrowsingEnabled) {    
@@ -371,7 +262,6 @@ Vector<unsigned char> IconDatabase::imageDataForPageURL(const String& _pageURL)
     
     // It wasn't found there, so lets check the main tables
     return SQLStatement(m_db, "SELECT IconResource.data FROM IconResource, PageURL WHERE PageURL.url = '" + pageURL + "' AND IconResource.iconID = PageURL.iconID;").getColumnBlobAsVector(0);
-#endif
 }
 
 void IconDatabase::setPrivateBrowsingEnabled(bool flag)
@@ -435,8 +325,7 @@ bool IconDatabase::isIconExpiredForIconURL(const String& _iconURL)
             return (time(NULL) - stamp) > iconExpirationTime;
     }
     stamp = SQLStatement(m_db, "SELECT Icon.stamp FROM Icon WHERE Icon.url = '" + iconURL + "';").getColumnInt(0);
-    LOG(IconDatabase, "Icon stamped at %i, now is %i", stamp, time(NULL));
-
+    
     if (stamp)
         return (time(NULL) - stamp) > iconExpirationTime;
     return false;
@@ -459,8 +348,6 @@ bool IconDatabase::isIconExpiredForPageURL(const String& _pageURL)
             return (time(NULL) - stamp) > iconExpirationTime;
     }
     stamp = SQLStatement(m_db, "SELECT Icon.stamp FROM Icon, PageURL WHERE PageURL.url = '" + pageURL + "' AND Icon.iconID = PageURL.iconID").getColumnInt(0);
-    
-    LOG(IconDatabase, "Icon stamped at %i, now is %i", stamp, time(NULL));
     if (stamp)
         return (time(NULL) - stamp) > iconExpirationTime;
     return false;
@@ -470,6 +357,9 @@ String IconDatabase::iconURLForPageURL(const String& _pageURL)
 {
     if (_pageURL.isEmpty()) 
         return String();
+        
+    if (m_pageURLToIconURLMap.contains(_pageURL))
+        return m_pageURLToIconURLMap.get(_pageURL);
         
     String pageURL = _pageURL;
     pageURL.replace('\'', "''");
@@ -481,7 +371,10 @@ String IconDatabase::iconURLForPageURL(const String& _pageURL)
             return iconURL;
     }
     
-    return SQLStatement(m_db, "SELECT Icon.url FROM Icon, PageURL WHERE PageURL.url = '" + pageURL + "' AND Icon.iconID = PageURL.iconID").getColumnText16(0);
+    String iconURL = SQLStatement(m_db, "SELECT Icon.url FROM Icon, PageURL WHERE PageURL.url = '" + pageURL + "' AND Icon.iconID = PageURL.iconID").getColumnText16(0);
+    if (!iconURL.isEmpty())
+        m_pageURLToIconURLMap.set(_pageURL, iconURL);
+    return iconURL;
 }
 
 Image* IconDatabase::defaultIcon(const IntSize& size)
@@ -557,10 +450,9 @@ void IconDatabase::releaseIconForURL(const String& _url)
     // And now see if we can wipe the icon itself
     if (iconURL.isEmpty())
         return;
-    retainCount = totalRetainCountForIconURL(iconURL);
-    
+        
     // If the icon has other retainers, we're all done - bail
-    if (retainCount)
+    if (isIconURLRetained(iconURL))
         return;
         
     LOG(IconDatabase, "No retainers for Icon URL %s - forgetting icon altogether", iconURL.ascii().data());
@@ -585,6 +477,17 @@ void IconDatabase::releaseIconForURL(const String& _url)
         delete icon1;
     else if (icon2)
         delete icon2;
+}
+
+bool IconDatabase::isIconURLRetained(const String& _iconURL)
+{
+    if (_iconURL.isEmpty())
+        return false;
+        
+    String iconURL = _iconURL;
+    iconURL.replace('\'', "''");
+    
+    return SQLStatement(m_db, "SELECT count FROM PageRetain WHERE url IN(SELECT PageURL.url FROM PageURL, Icon WHERE PageURL.iconID = Icon.iconID AND Icon.url = '" + iconURL + "') LIMIT 1;").returnsAtLeastOneResult();
 }
 
 int IconDatabase::totalRetainCountForIconURL(const String& _iconURL)
@@ -752,7 +655,7 @@ int64_t IconDatabase::establishIconIDForEscapedIconURL(const String& iconURL, bo
 }
 
 void IconDatabase::setHaveNoIconForIconURL(const String& _iconURL)
-{    
+{   
     setIconDataForIconURL(0, 0, _iconURL);
 }
 
@@ -760,6 +663,11 @@ void IconDatabase::setIconURLForPageURL(const String& _iconURL, const String& _p
 {
     ASSERT(!_iconURL.isEmpty());
     ASSERT(!_pageURL.isEmpty());
+    
+    // If the urls already map to each other, bail.
+    // This happens surprisingly often, and seems to cream iBench performance
+    if (m_pageURLToIconURLMap.get(_pageURL) == _iconURL)
+        return;
     
     String iconURL = _iconURL;
     iconURL.replace('\'',"''");
@@ -781,6 +689,11 @@ void IconDatabase::setIconURLForPageURL(const String& _iconURL, const String& _p
         return;
     }
     
+    // Cache the mapping...
+    m_pageURLToIconURLMap.set(_pageURL, _iconURL);
+    // Change the cached pageURL->iconURL mapping
+    m_pageURLToSiteIcons.set(_pageURL, m_iconURLToSiteIcons.get(_iconURL));
+    // Update the DB
     performSetIconURLForPageURL(iconID, pageTable, pageURL);
 }
 

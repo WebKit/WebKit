@@ -67,6 +67,11 @@ private:
     time_t m_expire;
     Image* m_image;
     
+    // This allows us to cache whether or not a SiteIcon has queried the database for its data yet
+    // We assume we only have to do that once per object and any subsequent updating of the image
+    // data will be via manuallySetImageData()
+    bool m_dataQueried;
+    
     // FIXME - Right now WebCore::Image doesn't have a very good API for accessing multiple representations
     // Even the NSImage way of doing things that we do in WebKit isn't very clean...  once we come up with a 
     // better way of handling that, we'll likely have a map of size-to-images similar to below
@@ -137,7 +142,8 @@ private:
     
     // Add up the retain count for an iconURL
     int totalRetainCountForIconURL(const String&);
-    
+    bool isIconURLRetained(const String&);
+
     bool isEnabled();
     
     // Do a quick check to make sure the database tables are in place and the db version is current
@@ -188,6 +194,8 @@ private:
     typedef HashMap<String, SiteIcon*> SiteIconMap;
     SiteIconMap m_pageURLToSiteIcons;
     SiteIconMap m_iconURLToSiteIcons;
+    
+    HashMap<String,String> m_pageURLToIconURLMap;
 };
 
 } //namespace WebCore
