@@ -29,11 +29,12 @@
 #import <Foundation/Foundation.h>
 
 #import <WebKit/npfunctions.h>
+#import <WebKit/WebPlugInStreamLoaderDelegate.h>
 
 @class WebBaseNetscapePluginView;
 @class NSURLResponse;
 
-@interface WebBaseNetscapePluginStream : NSObject
+@interface WebBaseNetscapePluginStream : NSObject<WebPlugInStreamLoaderDelegate>
 {
     NSMutableData *deliveryData;
     NSURL *requestURL;
@@ -78,19 +79,9 @@
          expectedContentLength:(long long)expectedContentLength
               lastModifiedDate:(NSDate *)lastModifiedDate
                       MIMEType:(NSString *)MIMEType;
-- (void)startStreamWithResponse:(NSURLResponse *)r;
 
 // cancelLoadWithError cancels the NSURLConnection and informs WebKit of the load error.
 // This method is overriden by subclasses.
 - (void)cancelLoadWithError:(NSError *)error;
-
-// destroyStreamWithError tells the plug-in that the load is completed (error == nil) or ended in error.
-- (void)destroyStreamWithError:(NSError *)error;
-
-// cancelLoadAndDestoryStreamWithError calls cancelLoadWithError: then destroyStreamWithError:.
-- (void)cancelLoadAndDestroyStreamWithError:(NSError *)error;
-
-- (void)receivedData:(NSData *)data;
-- (void)finishedLoadingWithData:(NSData *)data;
 
 @end

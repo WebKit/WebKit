@@ -1,3 +1,18 @@
+2006-08-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - remove WebKit dependencies from WebPlugInStreamLoader via a protocol veil of ignorance
+
+        * Loader/WebNetscapePlugInStreamLoader.h:
+        * Loader/WebNetscapePlugInStreamLoader.m:
+        (-[WebNetscapePlugInStreamLoader initWithDelegate:frameLoader:]):
+        * Loader/WebPlugInStreamLoaderDelegate.h: Added.
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-08-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Tim H.

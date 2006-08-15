@@ -30,11 +30,9 @@
 
 #import <WebKit/WebFrameLoader.h>
 
-#import <WebKit/WebNetscapePluginStream.h>
-
 @implementation WebNetscapePlugInStreamLoader
 
-- (id)initWithStream:(WebNetscapePluginStream *)theStream frameLoader:(WebFrameLoader *)fl
+- (id)initWithDelegate:(NSObject<WebPlugInStreamLoaderDelegate> *)theStream frameLoader:(WebFrameLoader *)fl;
 {
     [super init];
     stream = [theStream retain];

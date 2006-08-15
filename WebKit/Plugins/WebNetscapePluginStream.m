@@ -72,7 +72,7 @@
         [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
     }
 
-    _loader = [[WebNetscapePlugInStreamLoader alloc] initWithStream:self frameLoader:[[view webFrame] _frameLoader]]; 
+    _loader = [[WebNetscapePlugInStreamLoader alloc] initWithDelegate:self frameLoader:[[view webFrame] _frameLoader]]; 
     
     isTerminated = NO;
 

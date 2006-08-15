@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@class NSURLResponse;
+@class NSError;
+@class NSData;
 
-#import <WebKit/WebLoader.h>
-#import <WebKit/WebPlugInStreamLoaderDelegate.h>
+@protocol WebPlugInStreamLoaderDelegate
 
-@class WebNetscapePluginStream;
+- (void)startStreamWithResponse:(NSURLResponse *)r;
 
-@interface WebNetscapePlugInStreamLoader : WebLoader
-{
-    NSObject<WebPlugInStreamLoaderDelegate> *stream;
-}
-- (id)initWithDelegate:(NSObject<WebPlugInStreamLoaderDelegate> *)theStream frameLoader:(WebFrameLoader *)fl;
-- (BOOL)isDone;
+    // destroyStreamWithError tells the plug-in that the load is completed (error == nil) or ended in error.
+- (void)destroyStreamWithError:(NSError *)error;
+
+// cancelLoadAndDestoryStreamWithError calls cancelLoadWithError: then destroyStreamWithError:.
+- (void)cancelLoadAndDestroyStreamWithError:(NSError *)error;
+
+- (void)receivedData:(NSData *)data;
+- (void)finishedLoadingWithData:(NSData *)data;
+
 @end
-
