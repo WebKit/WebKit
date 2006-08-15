@@ -1,3 +1,15 @@
+2006-08-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        - fixed REGRESSION: crash when leaving youtube page while movie is still loading
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10398
+
+        * Loader/WebNetscapePlugInStreamLoader.m:
+        (-[WebNetscapePlugInStreamLoader initWithStream:view:]): Set the frame loader for this stream.
+        (-[WebNetscapePlugInStreamLoader cancelWithError:]): Make sure to destroy the stream as well;
+        otherwise, when we try to clean up later, we won't have the right context.
+
 2006-08-14  David Hyatt  <hyatt@apple.com>
 
         Fix for Radar bug 4478840, Safari should not reduce null events sent to

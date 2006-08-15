@@ -1,3 +1,14 @@
+2006-08-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Test case not reviewed but the patch was reviewed by Tim Omernick.
+        
+        - test case for REGRESSION: crash when leaving youtube page while movie is still loading
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10398
+
+        * http/tests/plugins/interrupted-get-url.html: Added.
+        * http/tests/plugins/resources/interrupted-get-url-success.html: Added.
+        * http/tests/plugins/resources/slow-resource.pl: Added.
+
 2006-08-14  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

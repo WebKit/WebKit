@@ -32,14 +32,16 @@
 
 #import <WebKit/WebNetscapePluginStream.h>
 #import <WebKit/WebKitErrorsPrivate.h>
+#import <WebKit/WebFrameInternal.h>
 
 @implementation WebNetscapePlugInStreamLoader
 
-- initWithStream:(WebNetscapePluginStream *)theStream view:(WebBaseNetscapePluginView *)theView
+- (id)initWithStream:(WebNetscapePluginStream *)theStream view:(WebBaseNetscapePluginView *)theView
 {
     [super init];
     stream = [theStream retain];
     view = [theView retain];
+    [self setFrameLoader:[[theView webFrame] _frameLoader]];
     return self;
 }
 
@@ -124,6 +126,7 @@
     [self retain];
 
     [[self frameLoader] _removePlugInStreamLoader:self];
+    [stream destroyStreamWithError:error];
     [super cancelWithError:error];
 
     [self release];
