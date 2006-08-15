@@ -1,5 +1,23 @@
 2006-08-14  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Beth.
+        
+        - remove many (but not all) WebKit dependencies from WebNetscapePlugInStreamLoader (it still 
+        depends on WebNetscapePluginStream).
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader fileDoesNotExistErrorWithResponse:]):
+        * Loader/WebNetscapePlugInStreamLoader.h:
+        * Loader/WebNetscapePlugInStreamLoader.m:
+        (-[WebNetscapePlugInStreamLoader initWithStream:frameLoader:]):
+        (-[WebNetscapePlugInStreamLoader releaseResources]):
+        (-[WebNetscapePlugInStreamLoader didReceiveResponse:]):
+        * Plugins/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]):
+
+2006-08-14  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Tim Omernick.
         
         - fixed REGRESSION: crash when leaving youtube page while movie is still loading

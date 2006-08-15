@@ -534,6 +534,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                        URL:[request URL]];
 }
 
+- (NSError *)fileDoesNotExistErrorWithResponse:(NSURLResponse *)response
+{
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                                code:NSURLErrorFileDoesNotExist
+                                                 URL:[response URL]];    
+}
+
 - (void)clearArchivedResources
 {
     [pendingArchivedResources removeAllObjects];

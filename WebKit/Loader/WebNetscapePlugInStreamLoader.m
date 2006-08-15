@@ -31,17 +31,14 @@
 #import <WebKit/WebFrameLoader.h>
 
 #import <WebKit/WebNetscapePluginStream.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebFrameInternal.h>
 
 @implementation WebNetscapePlugInStreamLoader
 
-- (id)initWithStream:(WebNetscapePluginStream *)theStream view:(WebBaseNetscapePluginView *)theView
+- (id)initWithStream:(WebNetscapePluginStream *)theStream frameLoader:(WebFrameLoader *)fl
 {
     [super init];
     stream = [theStream retain];
-    view = [theView retain];
-    [self setFrameLoader:[[theView webFrame] _frameLoader]];
+    [self setFrameLoader:fl];
     return self;
 }
 
@@ -54,8 +51,6 @@
 {
     [stream release];
     stream = nil;
-    [view release];
-    view = nil;
     [super releaseResources];
 }
 
@@ -72,9 +67,7 @@
         if (stream) {
             if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
                 ([(NSHTTPURLResponse *)theResponse statusCode] >= 400 || [(NSHTTPURLResponse *)theResponse statusCode] < 100)) {
-                NSError *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                                            code:NSURLErrorFileDoesNotExist
-                                                            URL:[theResponse URL]];
+                NSError *error = [frameLoader fileDoesNotExistErrorWithResponse:theResponse];
                 [stream cancelLoadAndDestroyStreamWithError:error];
             }
         }

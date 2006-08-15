@@ -124,6 +124,7 @@
 - (NSURL *)_URL;
 
 - (NSError *)cancelledErrorWithRequest:(NSURLRequest *)request;
+- (NSError *)fileDoesNotExistErrorWithResponse:(NSURLResponse *)response;
 - (BOOL)willUseArchiveForRequest:(NSURLRequest *)r originalURL:(NSURL *)originalURL loader:(WebLoader *)loader;
 - (BOOL)archiveLoadPendingForLoader:(WebLoader *)loader;
 - (void)deliverArchivedResourcesAfterDelay;
