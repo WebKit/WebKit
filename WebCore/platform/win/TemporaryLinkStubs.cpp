@@ -387,3 +387,4 @@ void RenderPopupMenuWin::addOption(HTMLOptionElement*) { notImplemented(); }
 
 bool RenderThemeWin::paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { notImplemented(); return false; }
 void RenderThemeWin::adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const { notImplemented(); }
+void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) const {}

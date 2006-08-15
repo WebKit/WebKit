@@ -170,7 +170,7 @@ void RenderMenuList::calcMinMaxWidth()
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value());
     else
-        m_maxWidth = max(m_optionsWidth, theme()->minimumTextSize(style()));
+        m_maxWidth = max(m_optionsWidth, theme()->minimumMenuListSize(style()));
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxWidth = max(m_maxWidth, calcContentBoxWidth(style()->minWidth().value()));

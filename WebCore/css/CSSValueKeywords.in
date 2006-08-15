@@ -34,7 +34,11 @@ icon
 menu
 message-box
 small-caption
+-webkit-mini-control
+-webkit-small-control
+-webkit-control
 status-bar
+
 #
 # CSS_PROP_FONT_STYLE:
 #

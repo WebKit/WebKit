@@ -62,6 +62,7 @@ public:
     void setComputedSize(float s) { m_computedSize = s; }
     void setSpecifiedSize(float s) { m_specifiedSize = s; }
     void setItalic(bool i) { m_italic = i; }
+    void setBold(bool b) { m_weight = (b ? cBoldWeight : cNormalWeight); }
     void setSmallCaps(bool c) { m_smallCaps = c; }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setWeight(unsigned w) { m_weight = w; }

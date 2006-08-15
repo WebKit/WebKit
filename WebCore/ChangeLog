@@ -1,3 +1,37 @@
+2006-08-15  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 3303, support CSS2 system fonts.  This patch adds a new API
+        to RenderTheme for obtaining a system font. In addition to supporting
+        the CSS2 values, extensions have been added for the 3 control sizes on
+        Mac.  The UA stylesheet now uses -webkit-small-control and no longer hardcodes
+        Lucida Grande 11px.  This means that controls in Safari should now respect
+        haxies that modify the default fonts on controls.
+
+        Reviewed by beth
+
+        Added fast/css/css2-system-fonts.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSValueKeywords.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/html4.css:
+        * platform/FontDescription.h:
+        (WebCore::FontDescription::setBold):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (RenderThemeWin::systemFont):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::calcMinMaxWidth):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::minimumMenuListSize):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemFont):
+        (WebCore::RenderThemeMac::minimumMenuListSize):
+        * rendering/RenderThemeWin.h:
+
 2006-08-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

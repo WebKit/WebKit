@@ -294,10 +294,9 @@ button {
     -webkit-appearance: button;
 }
 
-/* If we add support for CSS2 system fonts, then we won't have to hard code Lucida Grande here. */
 input, textarea, select, button {
     margin: 0__qem;
-    font: 11px 'Lucida Grande';
+    font: -webkit-small-control;
     color: initial;
     text-align: -webkit-auto;
     letter-spacing: normal;

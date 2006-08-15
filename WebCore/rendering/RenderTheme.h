@@ -101,7 +101,10 @@ public:
     virtual Color platformActiveSelectionForegroundColor() const;
     virtual Color platformInactiveSelectionForegroundColor() const;
 
-    virtual int minimumTextSize(RenderStyle*) const { return 0; }
+    // System fonts.
+    virtual void systemFont(int propId, FontDescription&) const = 0;
+
+    virtual int minimumMenuListSize(RenderStyle*) const { return 0; }
     virtual RenderPopupMenu* createPopupMenu(RenderArena*, Document*, RenderMenuList*) = 0;
 
 protected:

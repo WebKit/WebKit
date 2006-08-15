@@ -22,6 +22,7 @@
 #import "config.h"
 #import "RenderThemeMac.h"
 
+#import "CSSValueKeywords.h"
 #import "Document.h"
 #import "FoundationExtras.h"
 #import "FrameView.h"
@@ -74,6 +75,68 @@ Color RenderThemeMac::platformInactiveSelectionBackgroundColor() const
 {
     NSColor* color = [[NSColor secondarySelectedControlColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     return Color((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
+}
+
+void RenderThemeMac::systemFont(int propId, FontDescription& fontDescription) const
+{
+    static FontDescription systemFont;
+    static FontDescription smallSystemFont;
+    static FontDescription menuFont;
+    static FontDescription labelFont;
+    static FontDescription miniControlFont;
+    static FontDescription smallControlFont;
+    static FontDescription controlFont;
+    
+    FontDescription* cachedDesc;
+    NSFont* font = nil;
+    switch (propId) {
+        case CSS_VAL_SMALL_CAPTION:
+            cachedDesc = &smallSystemFont;
+            if (!smallSystemFont.isAbsoluteSize())
+                font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
+            break;
+        case CSS_VAL_MENU:
+            cachedDesc = &menuFont;
+            if (!menuFont.isAbsoluteSize())
+                font = [NSFont menuFontOfSize:[NSFont systemFontSize]];
+            break;
+        case CSS_VAL_STATUS_BAR:
+            cachedDesc = &labelFont;
+            if (!labelFont.isAbsoluteSize())
+                font = [NSFont labelFontOfSize:[NSFont labelFontSize]];
+            break;
+        case CSS_VAL__WEBKIT_MINI_CONTROL:
+            cachedDesc = &miniControlFont;
+            if (!miniControlFont.isAbsoluteSize())
+                font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSMiniControlSize]];
+            break;
+        case CSS_VAL__WEBKIT_SMALL_CONTROL:
+            cachedDesc = &smallControlFont;
+            if (!smallControlFont.isAbsoluteSize())
+                font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]];
+            break;
+        case CSS_VAL__WEBKIT_CONTROL:
+            cachedDesc = &controlFont;
+            if (!controlFont.isAbsoluteSize())
+                font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSRegularControlSize]];
+            break;
+        default:
+            cachedDesc = &systemFont;
+            if (!systemFont.isAbsoluteSize())
+                font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+    }
+    
+    if (font) {
+        cachedDesc->setIsAbsoluteSize(true);
+        cachedDesc->setGenericFamily(FontDescription::SerifFamily);
+        cachedDesc->firstFamily().setFamily([font familyName]);
+        cachedDesc->setComputedSize([font pointSize]);
+        cachedDesc->setSpecifiedSize([font pointSize]);
+        NSFontTraitMask traits = [[NSFontManager sharedFontManager] traitsOfFont:font];
+        cachedDesc->setBold(traits & NSBoldFontMask);
+        cachedDesc->setItalic(traits & NSItalicFontMask);
+    }
+    fontDescription = *cachedDesc;
 }
 
 bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData& border, 
@@ -698,7 +761,7 @@ RenderPopupMenu* RenderThemeMac::createPopupMenu(RenderArena* arena, Document* d
     return new (arena) RenderPopupMenuMac(doc, menuList);
 }
 
-int RenderThemeMac::minimumTextSize(RenderStyle* style) const
+int RenderThemeMac::minimumMenuListSize(RenderStyle* style) const
 {
     int fontSize = style->fontSize();
     if (fontSize >= 13)

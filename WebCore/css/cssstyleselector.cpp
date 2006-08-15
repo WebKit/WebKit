@@ -3394,6 +3394,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             style->setLineHeight(RenderStyle::initialLineHeight());
             if (style->setFontDescription(fontDescription))
                 fontDirty = true;
+        } else if (primitiveValue) {
+            style->setLineHeight(RenderStyle::initialLineHeight());
+            FontDescription fontDescription;
+            theme()->systemFont(primitiveValue->getIdent(), fontDescription);
+            if (style->setFontDescription(fontDescription))
+                fontDirty = true;
         } else if (value->isFontValue()) {
             FontValue *font = static_cast<FontValue*>(value);
             if (!font->style || !font->variant || !font->weight ||
