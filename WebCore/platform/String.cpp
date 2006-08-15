@@ -235,6 +235,13 @@ const UChar* String::characters() const
     return m_impl->characters();
 }
 
+const UChar* String::charactersWithNullTermination()
+{
+    if (!m_impl)
+        return 0;
+    return m_impl->charactersWithNullTermination();
+}
+
 DeprecatedString String::deprecatedString() const
 {
     if (!m_impl)

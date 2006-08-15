@@ -1,3 +1,28 @@
+2006-08-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::charactersWithNullTermination):
+        Add new function which calls StringImpl::charactersWithNullTermination.
+        
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::init):
+        (WebCore::StringImpl::append):
+        (WebCore::StringImpl::insert):
+        (WebCore::StringImpl::truncate):
+        (WebCore::StringImpl::remove):
+        Set m_hasTerminatingNullCharacter to false;
+        
+        (WebCore::StringImpl::charactersWithNullTermination):
+        If the string already has a terminating null character, simply return it. Otherwise,
+        realloc to make room for one and set m_hasTerminatingNullCharacter to true;
+
+        * platform/StringImpl.h:
+        (WebCore::StringImpl::StringImpl):
+        Add m_hasTerminatingNullCharacter.
+
 2006-08-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

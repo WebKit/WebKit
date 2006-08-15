@@ -87,6 +87,7 @@ void StringImpl::init(const char* str, unsigned len)
 {
     m_hash = 0;
     m_inTable = false;
+    m_hasTerminatingNullCharacter = false;
     m_length = len;
     if (!m_length || !str) {
         m_data = 0;
@@ -106,6 +107,7 @@ void StringImpl::init(const UChar* str, unsigned len)
 {
     m_hash = 0;
     m_inTable = false;
+    m_hasTerminatingNullCharacter = false;
     m_length = len;
     if (!m_length || !str) {
         m_data = 0;
@@ -123,6 +125,18 @@ StringImpl::~StringImpl()
     deleteUCharVector(m_data);
 }
 
+UChar* StringImpl::charactersWithNullTermination()
+{
+    if (m_hasTerminatingNullCharacter)
+        return m_data;
+    
+    m_data = static_cast<UChar*>(fastRealloc(m_data, (m_length + 1) * sizeof(UChar)));
+    m_data[m_length] = 0;
+    m_hasTerminatingNullCharacter = true;
+    
+    return m_data;
+}
+
 void StringImpl::append(const StringImpl* str)
 {
     assert(!m_inTable);
@@ -135,6 +149,7 @@ void StringImpl::append(const StringImpl* str)
         deleteUCharVector(m_data);
         m_data = c;
         m_length = newlen;
+        m_hasTerminatingNullCharacter = false;
     }
 }
 
@@ -152,6 +167,7 @@ void StringImpl::append(UChar c)
     deleteUCharVector(m_data);
     m_data = nc;
     m_length++;
+    m_hasTerminatingNullCharacter = false;
 }
 
 void StringImpl::insert(const StringImpl* str, unsigned pos)
@@ -170,6 +186,7 @@ void StringImpl::insert(const StringImpl* str, unsigned pos)
         deleteUCharVector(m_data);
         m_data = c;
         m_length = newlen;
+        m_hasTerminatingNullCharacter = false;
     }
 }
 
@@ -184,6 +201,7 @@ void StringImpl::truncate(int len)
     deleteUCharVector(m_data);
     m_data = c;
     m_length = len;
+    m_hasTerminatingNullCharacter = false;
 }
 
 void StringImpl::remove(unsigned pos, int len)
@@ -203,6 +221,7 @@ void StringImpl::remove(unsigned pos, int len)
     deleteUCharVector(m_data);
     m_data = c;
     m_length = newLen;
+    m_hasTerminatingNullCharacter = false;
 }
 
 StringImpl* StringImpl::split(unsigned pos)

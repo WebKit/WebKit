@@ -58,7 +58,8 @@ public:
 
     unsigned length() const;
     const UChar* characters() const;
-
+    const UChar* charactersWithNullTermination();
+    
     UChar operator[](unsigned i) const; // if i >= length(), returns 0
     
     bool contains(UChar c) const { return find(c) != -1; }
