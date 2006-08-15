@@ -1,3 +1,14 @@
+2006-08-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fix for <rdar://problem/4680207> REGRESSION: select-all should fire onSelect event for text fields and textareas (9518)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9518
+
+        Test: fast/forms/onselect-selectall.html
+
+        * page/Frame.cpp: (WebCore::Frame::selectAll): Call notifyRendererOfSelectionChange with userTriggered = true so that onSelect will fire.
+
 2006-08-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

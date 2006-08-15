@@ -1964,6 +1964,7 @@ void Frame::selectAll()
     
     selectContentsOfNode(root);
     selectFrameElementInParentIfFullySelected();
+    notifyRendererOfSelectionChange(true);
 }
 
 bool Frame::selectContentsOfNode(Node* node)
