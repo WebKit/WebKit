@@ -2,6 +2,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (130,70) size 260x210
+        KCanvasContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (0,0) size 465x18
           RenderText {#text} at (0,0) size 245x17
             text run at (0,0) width 245: "Rectangle should be red not green"

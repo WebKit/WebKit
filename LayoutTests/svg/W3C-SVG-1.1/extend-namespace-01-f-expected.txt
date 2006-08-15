@@ -3,6 +3,7 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (126.05,61.42) size 242.55x213.97
         KCanvasContainer {g} at (0,0) size 0x0
+          KCanvasContainer {defs} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {#text} at (0,0) size 349x17
               text run at (0,0) width 349: "Pie chart built from data in a different namespace."

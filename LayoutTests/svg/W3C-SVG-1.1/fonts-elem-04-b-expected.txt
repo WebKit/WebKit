@@ -2,6 +2,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (164.27,81.41) size 211.17x161.13
+        KCanvasContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (0,0) size 465x36
           RenderText {#text} at (0,0) size 391x36
             text run at (0,0) width 391: "External SVG font element (css)"

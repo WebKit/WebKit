@@ -17,6 +17,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (0,0) size 465x14
           RenderText {#text} at (0,0) size 142x14
             text run at (0,0) width 142: "Filters: feSpecularLighting"
+        KCanvasContainer {defs} at (0,0) size 0x0
         KCanvasContainer {g} at (90,50) size 280x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {#text} at (0,0) size 291x18

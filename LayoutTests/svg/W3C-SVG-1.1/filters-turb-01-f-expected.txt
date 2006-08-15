@@ -9,6 +9,7 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (25,25) size 400x230
         KCanvasContainer {g} at (25,25) size 400x230
+          KCanvasContainer {defs} at (0,0) size 0x0
           KCanvasItem {rect} at (25,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb1] [data="M25.00,25.00L125.00,25.00L125.00,100.00L25.00,100.00"]
           RenderSVGText {text} at (0,0) size 465x12
             RenderText {#text} at (0,0) size 82x12

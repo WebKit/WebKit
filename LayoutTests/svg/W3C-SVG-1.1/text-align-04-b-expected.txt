@@ -5,6 +5,11 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (0,0) size 465x45
           RenderText {#text} at (0,0) size 346x44
             text run at (0,0) width 346: "Test of 'text-anchor'"
+        KCanvasContainer {defs} at (0,0) size 0x0
+          RenderSVGText {text} at (0,0) size 465x18
+            RenderText {#text} at (0,0) size 75x18
+              text run at (0,0) width 75: "end text tref"
+          KCanvasItem {path} at (-5,260) size 225x0 [fill={[type=SOLID] [color=#000000]}] [data="M-5.00,260.00L220.00,260.00"]
         RenderSVGText {text} at (0,0) size 465x34
           RenderText {#text} at (0,0) size 218x33
             text run at (0,0) width 218: "Tspan, tref, toap"

@@ -1,5 +1,23 @@
 2006-08-14  Eric Seidel  <eric@eseidel.com>
 
+        Reviewed by mjs.
+
+        <mask>, <marker>, <pattern> inside <defs> do not work
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6548
+
+        * ksvg2/svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::SVGDefsElement): moved to .cpp file
+        (WebCore::SVGDefsElement::isValid): moved to .cpp file
+        (WebCore::SVGDefsElement::rendererIsNeeded): Added.
+        (WebCore::SVGDefsElement::createRenderer): Added.
+        * ksvg2/svg/SVGDefsElement.h:
+        * ksvg2/svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::SVGGElement): adjusted spacing
+        (WebCore::SVGGElement::parseMappedAttribute): adjusted spacing
+        (WebCore::SVGDummyElement::SVGDummyElement): adjusted spacing
+
+2006-08-14  Eric Seidel  <eric@eseidel.com>
+
         Reviewed by darin and mjs.
         
         Add better SVGLoad event support.

@@ -8,6 +8,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (0,0) size 465x34
           RenderText {#text} at (0,0) size 463x33
             text run at (0,0) width 463: "and many-to-many chars to glyphs"
+        KCanvasContainer {defs} at (0,0) size 0x0
         KCanvasContainer {g} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 465x0
           RenderSVGText {text} at (0,0) size 465x69

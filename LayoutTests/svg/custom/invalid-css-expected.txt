@@ -5,6 +5,7 @@ KCanvasResource {id="marker1" [type=MARKER] [angle=0.00] [ref x=5.00 y=5.00]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 334.17x150.83
+      KCanvasContainer {defs} at (0,0) size 0x0
       KCanvasContainer {marker} at (0,0) size 16.67x16.67
         KCanvasItem {rect} at (0,0) size 16.67x16.67 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,10.00L0.00,10.00"]
       RenderSVGText {text} at (0,0) size 785x18

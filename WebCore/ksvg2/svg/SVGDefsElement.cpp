@@ -23,15 +23,39 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include "SVGDefsElement.h"
+#include "RenderSVGContainer.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGDefsElement::SVGDefsElement(const QualifiedName& tagName, Document *doc) : SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
+SVGDefsElement::SVGDefsElement(const QualifiedName& tagName, Document *doc)
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
 {
 }
 
 SVGDefsElement::~SVGDefsElement()
 {
+}
+
+bool SVGDefsElement::isValid() const
+{
+    return SVGTests::isValid();
+}
+
+bool SVGDefsElement::rendererIsNeeded(RenderStyle* style)
+{
+    return StyledElement::rendererIsNeeded(style);
+}
+
+RenderObject* SVGDefsElement::createRenderer(RenderArena* arena, RenderStyle* style)
+{
+    RenderSVGContainer* defsContainer = new (arena) RenderSVGContainer(this);
+    defsContainer->setDrawsContents(false); // defs contents will be explicitly referenced and individually drawn.
+    return defsContainer;
+}
+
 }
 
 // vim:ts=4:noet

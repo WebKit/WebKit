@@ -2,6 +2,7 @@ KRenderingPaintServer {id="Gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000F
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
+      KCanvasContainer {defs} at (0,0) size 0x0
       KCanvasContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
         RenderSVGText {text} at (0,0) size 465x78
           RenderText {#text} at (0,0) size 420x78

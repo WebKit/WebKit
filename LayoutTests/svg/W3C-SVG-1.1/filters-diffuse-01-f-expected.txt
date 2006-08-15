@@ -14,6 +14,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (0,0) size 465x14
           RenderText {#text} at (0,0) size 140x14
             text run at (0,0) width 140: "Filters: feDiffuseLighting"
+        KCanvasContainer {defs} at (0,0) size 0x0
         KCanvasContainer {g} at (90,80) size 190x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {#text} at (0,0) size 291x18

@@ -28,9 +28,13 @@
 #include <kcanvas/RenderSVGContainer.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGGElement::SVGGElement(const QualifiedName& tagName, Document *doc) : SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
+SVGGElement::SVGGElement(const QualifiedName& tagName, Document *doc)
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
 {
 }
 
@@ -40,9 +44,12 @@ SVGGElement::~SVGGElement()
 
 void SVGGElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    if(SVGTests::parseMappedAttribute(attr)) return;
-    if(SVGLangSpace::parseMappedAttribute(attr)) return;
-    if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
     SVGStyledTransformableElement::parseMappedAttribute(attr);
 }
 
@@ -52,7 +59,9 @@ RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style
 }
 
 // Helper class for <use> support
-SVGDummyElement::SVGDummyElement(const QualifiedName& tagName, Document *doc) : SVGGElement(tagName, doc),  m_localName("dummy")
+SVGDummyElement::SVGDummyElement(const QualifiedName& tagName, Document *doc)
+    : SVGGElement(tagName, doc)
+    ,  m_localName("dummy")
 {
 }
 
@@ -63,6 +72,8 @@ SVGDummyElement::~SVGDummyElement()
 const AtomicString& SVGDummyElement::localName() const
 {
     return m_localName;
+}
+
 }
 
 // vim:ts=4:noet

@@ -8,6 +8,7 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 629x419
       KCanvasContainer {g} at (0.50,0.50) size 629x419
         KCanvasContainer {svg} at (0.36,0.36) size 449.29x299.29
+          KCanvasContainer {defs} at (0,0) size 0x0
           KCanvasItem {rect} at (0.36,0.36) size 449.29x299.29 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L629.00,1.00L629.00,419.00L1.00,419.00"]
           KCanvasContainer {g} at (0.36,0.36) size 449.29x299.29
             KCanvasItem {rect} at (0.36,0.36) size 449.29x299.29 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L629.00,1.00L629.00,419.00L1.00,419.00"]
