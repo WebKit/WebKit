@@ -43,6 +43,11 @@
 
 @interface WebPluginDatabase (Internal)
 + (NSArray *)_defaultPlugInPaths;
+- (NSArray *)_plugInPaths;
+- (void)_addPlugin:(WebBasePluginPackage *)plugin;
+- (void)_removePlugin:(WebBasePluginPackage *)plugin;
+- (NSMutableSet *)_scanForNewPlugins;
+- (void)_applicationWillTerminate;
 @end
 
 @implementation WebPluginDatabase
@@ -55,6 +60,12 @@ static WebPluginDatabase *database = nil;
         database = [[WebPluginDatabase alloc] init];
         [database setPlugInPaths:[self _defaultPlugInPaths]];
         [database refresh];
+        
+        // Clear the global plug-in database on app exit
+        [[NSNotificationCenter defaultCenter] addObserver:database
+                                                 selector:@selector(_applicationWillTerminate)
+                                                     name:NSApplicationWillTerminateNotification
+                                                   object:NSApp];
     }
     
     return database;
@@ -128,7 +139,7 @@ static WebPluginDatabase *database = nil;
 
 - (NSArray *)plugins
 {
-    return [plugins allObjects];
+    return [plugins allValues];
 }
 
 static NSArray *additionalWebPlugInPaths;
@@ -159,7 +170,10 @@ static NSArray *additionalWebPlugInPaths;
 
 - (void)close
 {
-    [plugins makeObjectsPerformSelector:@selector(wasRemovedFromPluginDatabase:) withObject:self];
+    NSEnumerator *pluginEnumerator = [[self plugins] objectEnumerator];
+    WebBasePluginPackage *plugin;
+    while ((plugin = [pluginEnumerator nextObject]) != nil)
+        [self _removePlugin:plugin];
     [plugins release];
     plugins = nil;
 }
@@ -183,100 +197,59 @@ static NSArray *additionalWebPlugInPaths;
     [super dealloc];
 }
 
-- (NSArray *)_plugInPaths
-{
-    if (self == database && additionalWebPlugInPaths) {
-        // Add additionalWebPlugInPaths to the global WebPluginDatabase.  We do this here for
-        // backward compatibility with earlier versions of the +setAdditionalWebPlugInPaths: SPI,
-        // which simply saved a copy of the additional paths and did not cause the plugin DB to 
-        // refresh.  See Radars 4608487 and 4609047.
-        NSMutableArray *modifiedPlugInPaths = [[plugInPaths mutableCopy] autorelease];
-        [modifiedPlugInPaths addObjectsFromArray:additionalWebPlugInPaths];
-        return modifiedPlugInPaths;
-    } else
-        return plugInPaths;
-}
-
 - (void)refresh
 {
-    NSEnumerator *directoryEnumerator = [[self _plugInPaths] objectEnumerator];
-    NSMutableSet *uniqueFilenames = [[NSMutableSet alloc] init];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSMutableSet *newPlugins = [[NSMutableSet alloc] init];
-    NSString *pluginDirectory;
+    // This method does a bit of autoreleasing, so create an autorelease pool to ensure that calling
+    // -refresh multiple times does not bloat the default pool.
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
-    // Create a new set of plug-ins.
-    while ((pluginDirectory = [directoryEnumerator nextObject]) != nil) {
-        NSEnumerator *filenameEnumerator = [[fileManager directoryContentsAtPath:pluginDirectory] objectEnumerator];
-        NSString *filename;
-        while ((filename = [filenameEnumerator nextObject]) != nil) {
-            if (![uniqueFilenames containsObject:filename]) {
-                [uniqueFilenames addObject:filename];
-                NSString *pluginPath = [pluginDirectory stringByAppendingPathComponent:filename];
-                WebBasePluginPackage *pluginPackage = [WebBasePluginPackage pluginWithPath:pluginPath];
-                if (pluginPackage) {
-                    [newPlugins addObject:pluginPackage];
-                }
-            }
-        }
-    }
-    
-    [uniqueFilenames release];
-    
-    //  Remove all uninstalled plug-ins and add the new plug-ins.
-    if (plugins) {
-        // Unregister plug-in views and representations
-        NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
-        WebBasePluginPackage *pluginPackage;
-        while ((pluginPackage = [pluginEnumerator nextObject])) {
-            NSEnumerator *MIMETypeEnumerator = [pluginPackage MIMETypeEnumerator];
-            NSString *MIMEType;
-            while ((MIMEType = [MIMETypeEnumerator nextObject])) {
-                if ([registeredMIMETypes containsObject:MIMEType]) {
-                    if (self == database)
-                        [WebView _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
-                    [registeredMIMETypes removeObject:MIMEType];
-                }
-            }
-        }
-        
-        NSMutableSet *pluginsToUnload = [plugins mutableCopy];
-        [pluginsToUnload minusSet:newPlugins];
-        [newPlugins minusSet:plugins];
-#if !LOG_DISABLED
-        if ([newPlugins count] > 0) {
-            LOG(Plugins, "New plugins:\n%@", newPlugins);
-        }
-        if ([pluginsToUnload count] > 0) {
-            LOG(Plugins, "Removed plugins:\n%@", pluginsToUnload);
-        }
-#endif
-        // Unload plugins
-        [pluginsToUnload makeObjectsPerformSelector:@selector(wasRemovedFromPluginDatabase:) withObject:self];
-        [plugins minusSet:pluginsToUnload];
-        [pluginsToUnload release];
+    // Create map from plug-in path to WebBasePluginPackage
+    if (!plugins)
+        plugins = [[NSMutableDictionary alloc] initWithCapacity:12];
 
-        // Add new plugins
-        [plugins unionSet:newPlugins];
-        [newPlugins makeObjectsPerformSelector:@selector(wasAddedToPluginDatabase:) withObject:self];
-        [newPlugins release];
-    } else {
-        LOG(Plugins, "Plugin database initialization:\n%@", newPlugins);
-        plugins = newPlugins;
-        [newPlugins makeObjectsPerformSelector:@selector(wasAddedToPluginDatabase:) withObject:self];
-    }
-    
-    // Build a list of MIME types.
-    NSMutableSet *MIMETypes = [[NSMutableSet alloc] init];
+    // Find all plug-ins on disk
+    NSMutableSet *newPlugins = [self _scanForNewPlugins];
+
+    // Find plug-ins to remove from database (i.e., plug-ins that no longer exist on disk)
+    NSMutableSet *pluginsToRemove = [NSMutableSet set];
     NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
     WebBasePluginPackage *plugin;
     while ((plugin = [pluginEnumerator nextObject]) != nil) {
-        [MIMETypes addObjectsFromArray:[[plugin MIMETypeEnumerator] allObjects]];
+        // Any plug-ins that were removed from disk since the last refresh should be removed from
+        // the database.
+        if (![newPlugins containsObject:plugin])
+            [pluginsToRemove addObject:plugin];
+            
+        // Remove every member of 'plugins' from 'newPlugins'.  After this loop exits, 'newPlugins'
+        // will be the set of new plug-ins that should be added to the database.
+        [newPlugins removeObject:plugin];
     }
+
+#if !LOG_DISABLED
+    if ([newPlugins count] > 0)
+        LOG(Plugins, "New plugins:\n%@", newPlugins);
+    if ([pluginsToRemove count] > 0)
+        LOG(Plugins, "Removed plugins:\n%@", pluginsToRemove);
+#endif
+
+    // Remove plugins from database
+    pluginEnumerator = [pluginsToRemove objectEnumerator];
+    while ((plugin = [pluginEnumerator nextObject]) != nil) 
+        [self _removePlugin:plugin];
+    
+    // Add new plugins to database
+    pluginEnumerator = [newPlugins objectEnumerator];
+    while ((plugin = [pluginEnumerator nextObject]) != nil)
+        [self _addPlugin:plugin];
+
+    // Build a list of MIME types.
+    NSMutableSet *MIMETypes = [[NSMutableSet alloc] init];
+    pluginEnumerator = [plugins objectEnumerator];
+    while ((plugin = [pluginEnumerator nextObject]) != nil)
+        [MIMETypes addObjectsFromArray:[[plugin MIMETypeEnumerator] allObjects]];
     
     // Register plug-in views and representations.
-    NSEnumerator *MIMEEnumerator = [[MIMETypes allObjects] objectEnumerator];
-    [MIMETypes release];
+    NSEnumerator *MIMEEnumerator = [MIMETypes objectEnumerator];
     NSString *MIMEType;
     while ((MIMEType = [MIMEEnumerator nextObject]) != nil) {
         if ([WebView canShowMIMETypeAsHTML:MIMEType])
@@ -294,6 +267,9 @@ static NSArray *additionalWebPlugInPaths;
             [WebView registerViewClass:[WebHTMLView class] representationClass:[WebHTMLRepresentation class] forMIMEType:MIMEType];
         [registeredMIMETypes addObject:MIMEType];
     }
+    [MIMETypes release];
+    
+    [pool release];
 }
 
 - (BOOL)isMIMETypeRegistered:(NSString *)MIMEType
@@ -317,6 +293,93 @@ static NSArray *additionalWebPlugInPaths;
         @"/Library/Internet Plug-Ins",
         [[NSBundle mainBundle] builtInPlugInsPath],
         nil];
+}
+
+- (NSArray *)_plugInPaths
+{
+    if (self == database && additionalWebPlugInPaths) {
+        // Add additionalWebPlugInPaths to the global WebPluginDatabase.  We do this here for
+        // backward compatibility with earlier versions of the +setAdditionalWebPlugInPaths: SPI,
+        // which simply saved a copy of the additional paths and did not cause the plugin DB to 
+        // refresh.  See Radars 4608487 and 4609047.
+        NSMutableArray *modifiedPlugInPaths = [[plugInPaths mutableCopy] autorelease];
+        [modifiedPlugInPaths addObjectsFromArray:additionalWebPlugInPaths];
+        return modifiedPlugInPaths;
+    } else
+        return plugInPaths;
+}
+
+- (void)_addPlugin:(WebBasePluginPackage *)plugin
+{
+    ASSERT(plugin);
+    NSString *pluginPath = [plugin path];
+    ASSERT(pluginPath);
+    [plugins setObject:plugin forKey:pluginPath];
+    [plugin wasAddedToPluginDatabase:self];
+}
+
+- (void)_removePlugin:(WebBasePluginPackage *)plugin
+{    
+    ASSERT(plugin);
+
+    // Unregister plug-in's MIME type registrations
+    NSEnumerator *MIMETypeEnumerator = [plugin MIMETypeEnumerator];
+    NSString *MIMEType;
+    while ((MIMEType = [MIMETypeEnumerator nextObject])) {
+        if ([registeredMIMETypes containsObject:MIMEType]) {
+            if (self == database)
+                [WebView _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
+            [registeredMIMETypes removeObject:MIMEType];
+        }
+    }
+
+    // Remove plug-in from database
+    NSString *pluginPath = [plugin path];
+    ASSERT(pluginPath);
+    [plugin retain];
+    [plugins removeObjectForKey:pluginPath];
+    [plugin wasRemovedFromPluginDatabase:self];
+    [plugin release];
+}
+
+- (NSMutableSet *)_scanForNewPlugins
+{
+    NSMutableSet *newPlugins = [[[NSMutableSet alloc] init] autorelease];
+    NSEnumerator *directoryEnumerator = [[self _plugInPaths] objectEnumerator];
+    NSMutableSet *uniqueFilenames = [[NSMutableSet alloc] init];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *pluginDirectory;
+    while ((pluginDirectory = [directoryEnumerator nextObject]) != nil) {
+        // Get contents of each plug-in directory
+        NSEnumerator *filenameEnumerator = [[fileManager directoryContentsAtPath:pluginDirectory] objectEnumerator];
+        NSString *filename;
+        while ((filename = [filenameEnumerator nextObject]) != nil) {
+            // Unique plug-ins by filename
+            if ([uniqueFilenames containsObject:filename])
+                continue;
+            [uniqueFilenames addObject:filename];
+            
+            // Create a plug-in package for this path
+            NSString *pluginPath = [pluginDirectory stringByAppendingPathComponent:filename];
+            WebBasePluginPackage *pluginPackage = [plugins objectForKey:pluginPath];
+            if (!pluginPackage)
+                pluginPackage = [WebBasePluginPackage pluginWithPath:pluginPath];
+            if (pluginPackage)
+                [newPlugins addObject:pluginPackage];
+        }
+    }
+    [uniqueFilenames release];
+    
+    return newPlugins;
+}
+
+- (void)_applicationWillTerminate
+{
+    ASSERT(self == database);
+    // Remove all plug-ins from database.  Netscape plug-ins have "destructor functions" that should be called
+    // when the browser unloads the plug-in.  These functions can do important things, such as closing/deleting files,
+    // so it is important to ensure that they are properly called when the application terminates.
+    [self close];
 }
 
 @end

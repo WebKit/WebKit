@@ -1201,6 +1201,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     ASSERT(NPP_New);
 
+    // Open the plug-in package so it remains loaded while this instance uses it
+    [plugin open];
+    
     // Initialize drawingModel to an invalid value so that we can detect when the plugin does not specify a drawingModel
     drawingModel = -1;
     
@@ -1226,6 +1229,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         LOG(Plugins, "Plugin only supports QuickDraw, but QuickDraw is unavailable: %@", plugin);
         NPP_Destroy(instance, NULL);
         instance->pdata = NULL;
+        [plugin close];
         return NO;
 #endif
     }
@@ -1233,6 +1237,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     LOG(Plugins, "NPP_New: %d", npErr);
     if (npErr != NPERR_NO_ERROR) {
         LOG_ERROR("NPP_New failed with error: %d", npErr);
+        [plugin close];
         return NO;
     }
     
@@ -1296,6 +1301,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     LOG(Plugins, "NPP_Destroy: %d", npErr);
 
     instance->pdata = NULL;
+    
+    // This instance no longer needs the plug-in package
+    [plugin close];
     
     // We usually remove the key event handler in resignFirstResponder but it is possible that resignFirstResponder 
     // may never get called so we can't completely rely on it.

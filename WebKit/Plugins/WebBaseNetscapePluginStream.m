@@ -200,10 +200,6 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 {
     ASSERT(!isTerminated);
     
-    if (![[pluginView plugin] isLoaded]) {
-        return;
-    }
-    
     [self setResponseURL:URL];
     [self setMIMEType:theMIMEType];
     
@@ -262,9 +258,8 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)_destroyStream
 {
-    if (isTerminated || ![[pluginView plugin] isLoaded]) {
+    if (isTerminated)
         return;
-    }
     
     ASSERT(reason != WEB_REASON_NONE);
     ASSERT([deliveryData length] == 0);
@@ -345,9 +340,8 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)finishedLoadingWithData:(NSData *)data
 {
-    if (![[pluginView plugin] isLoaded] || !stream.ndata) {
+    if (!stream.ndata)
         return;
-    }
     
     if ((transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) && !path) {
         path = strdup("/tmp/WebKitPlugInStreamXXXXXX");
@@ -383,9 +377,8 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)_deliverData
 {
-    if (![[pluginView plugin] isLoaded] || !stream.ndata || [deliveryData length] == 0) {
+    if (!stream.ndata || [deliveryData length] == 0)
         return;
-    }
     
     int32 totalBytes = [deliveryData length];
     int32 totalBytesDelivered = 0;

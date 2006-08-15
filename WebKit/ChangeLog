@@ -1,3 +1,95 @@
+2006-08-15  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8980>
+        ASSERTION FAILED: !isLoaded (WebKit/WebKit/Plugins/WebBasePluginPackage.m:228 -[WebBasePluginPackage dealloc])
+
+        <rdar://problem/4526052> intermittent assertion failure in -[WebBasePluginPackage dealloc] running layout tests (8980)
+        
+        * Plugins/WebPluginDatabase.h:
+        * Plugins/WebPluginDatabase.m:
+        (+[WebPluginDatabase installedPlugins]):
+        Observe NSApplicationWillTerminateNotification so we can unload plug-ins on quit.
+        (-[WebPluginDatabase plugins]):
+        'plugins' is now a dictionary.
+        (-[WebPluginDatabase close]):
+        Call new -_removePlugin: method.
+        (-[WebPluginDatabase refresh]):
+        Moved parts of this method out into other methods: -_addPlugin:, -_removePlugin:, and -_scanForNewPlugins.
+        (-[WebPluginDatabase _plugInPaths]):
+        No changes; just moved in file.
+        (-[WebPluginDatabase _addPlugin:]):
+        New method.  Refactored from -refresh.  Adds a plug-in to the database.
+        (-[WebPluginDatabase _removePlugin:]):
+        New method.  Refactored from -refresh.  Remove a plug-in from the database.
+        (-[WebPluginDatabase _scanForNewPlugins]):
+        New method.  Refactored from -refresh.  Returns the list of plug-in packages on disk.
+        (-[WebPluginDatabase _applicationWillTerminate]):
+        New method.  Called when the application terminates.  Closes the plug-in database so that all plug-ins are
+        removed from the DB (and unloaded if necessary).
+
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage initWithPath:]):
+        Try to create the NSBundle first, so if the file is not a valid bundle we bail out early.  This
+        avoids some stat()s and allocations during the plug-in refresh process.
+        (-[WebBasePluginPackage isLoaded]):
+        Removed.
+        (-[WebBasePluginPackage load]):
+        Base class for plug-in packages now always loads "successfully".
+        (-[WebBasePluginPackage dealloc]):
+        Removed this assertion.  The base plug-in package class has no concept of
+        "unloading".
+        (-[WebBasePluginPackage finalize]):
+        ditto.
+        (-[WebBasePluginPackage wasRemovedFromPluginDatabase:]):
+        Moved code to unload plug-in package to WebNetscapePluginPackage.  Not all plug-in
+        packages can be "unloaded".
+
+        * Plugins/WebNetscapePluginPackage.h:
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage _unloadWithShutdown:]):
+        Combined old -unload and -unloadWithoutShutdown methods into this new one.
+        (-[WebNetscapePluginPackage initWithPath:]):
+        Call new unload method.
+        (-[WebNetscapePluginPackage load]):
+        ditto
+        (-[WebNetscapePluginPackage wasRemovedFromPluginDatabase:]):
+        ditto
+        (-[WebNetscapePluginPackage open]):
+        New method.  Called when a plug-in instance starts running.
+        (-[WebNetscapePluginPackage close]):
+        New method.  Called when a plug-in instance stops running.  When all plug-in instances
+        close the plug-in package, and the plug-in package is removed from the database, the plug-in
+        is unloaded.
+
+        * Plugins/WebPluginPackage.m:
+        (-[WebPluginPackage initWithPath:]):
+        (-[WebPluginPackage load]):
+        Made this a bit more efficient by checking if the bundle is already loaded.
+        (-[WebBasePluginPackage unload]):
+        Removed.
+        (-[WebBasePluginPackage isLoaded]):
+        Removed.
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView start]):
+        Open the plug-in package so it remains loaded while this instance uses it.
+        (-[WebBaseNetscapePluginView stop]):
+        Close the plug-in package when the plug-in instance is stopped.
+        
+        * Plugins/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:]):
+        This check is not necessary.  Netscape plug-in packages are never unloaded until all their instances have
+        been stopped, and a Netscape plug-in instance will stop its streams when it is stopped.
+        (-[WebBaseNetscapePluginStream _destroyStream]):
+        ditto
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]):
+        ditto
+        (-[WebBaseNetscapePluginStream _deliverData]):
+        ditto
+
 2006-08-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Tim H.

@@ -51,16 +51,12 @@
 {
     NSMutableSet *pluginDatabases;
     
-    BOOL isLoaded;
-    
     NSString *name;
     NSString *path;
     NSString *pluginDescription;
 
     NSBundle *bundle;
     CFBundleRef cfBundle;
-    
-    NSDate *lastModifiedDate;
 
     NSDictionary *MIMEToDescription;
     NSDictionary *MIMEToExtensions;
@@ -75,15 +71,12 @@
 - (BOOL)getPluginInfoFromPLists;
 
 - (BOOL)load;
-- (void)unload;
-- (BOOL)isLoaded;
 
 - (NSString *)name;
 - (NSString *)path;
 - (NSString *)filename;
 - (NSString *)pluginDescription;
 - (NSBundle *)bundle;
-- (NSDate *)lastModifiedDate;
 
 - (NSEnumerator *)extensionEnumerator;
 - (NSEnumerator *)MIMETypeEnumerator;

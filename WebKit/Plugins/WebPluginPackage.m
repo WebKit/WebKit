@@ -42,7 +42,8 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
 
 - initWithPath:(NSString *)pluginPath
 {
-    [super initWithPath:pluginPath];
+    if (!(self = [super initWithPath:pluginPath]))
+        return nil;
 
     if (bundle == nil) {
         [self release];
@@ -81,35 +82,21 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
 
 - (BOOL)load
 {
-    if (isLoaded) {
-        return YES;
-    }
-    
 #if !LOG_DISABLED
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
 #endif
     
-    [bundle principalClass];
-    isLoaded = [bundle isLoaded];
-    if (!isLoaded) {
-        return NO;
+    // Load the bundle
+    if (![bundle isLoaded]) {
+        if (![bundle load])
+            return NO;
     }
-
+    
 #if !LOG_DISABLED
     CFAbsoluteTime duration = CFAbsoluteTimeGetCurrent() - start;
     LOG(Plugins, "principalClass took %f seconds for: %@", duration, [self name]);
 #endif
     return [super load];
-}
-
-- (void)unload
-{
-    isLoaded = NO;
-}
-
-- (BOOL)isLoaded
-{
-    return [bundle isLoaded];
 }
 
 @end

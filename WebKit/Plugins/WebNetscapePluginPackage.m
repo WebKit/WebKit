@@ -48,6 +48,10 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #define RealPlayerAppIndentifier                @"com.RealNetworks.RealOne Player"
 #define RealPlayerPluginFilename                @"RealPlayer Plugin"
 
+@interface WebNetscapePluginPackage (Internal)
+- (void)_unloadWithShutdown:(BOOL)shutdown;
+@end
+
 @implementation WebNetscapePluginPackage
 
 #ifndef __LP64__
@@ -233,7 +237,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     // Initializing a plugin package can cause it to be loaded.  If there was an error initializing the plugin package,
     // ensure that it is unloaded before deallocating it (WebBasePluginPackage requires & asserts this).
     if (![self _initWithPath:pluginPath]) {
-        [self unload];
+        [self _unloadWithShutdown:YES];
         [self release];
         return nil;
     }
@@ -248,32 +252,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     else
         return WebMachOExecutableType;
 }
-
-- (BOOL)isLoaded
-{
-    return isLoaded;
-}
-
-- (void)unloadWithoutShutdown
-{
-    if (!isLoaded)
-        return;
-
-    if (resourceRef != -1)
-        [self closeResourceFile:resourceRef];
-
-    if (isBundle)
-        CFBundleUnloadExecutable(cfBundle);
-    else
-#ifndef __LP64__
-        // CFM is not supported in 64-bit
-        WebCloseConnection(&connID);
-#endif
-
-    LOG(Plugins, "Plugin Unloaded");
-    isLoaded = NO;
-}
-
 
 - (void)launchRealPlayer
 {
@@ -562,20 +540,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return [super load];
 
 abort:
-    [self unloadWithoutShutdown];
+    [self _unloadWithShutdown:NO];
     return NO;
-}
-    
-- (void)unload
-{
-    if (!isLoaded)
-        return;
-    
-    LOG(Plugins, "Unloading %@...", name);
-
-    NPP_Shutdown();
-
-    [self unloadWithoutShutdown];
 }
 
 - (NPP_SetWindowProcPtr)NPP_SetWindow
@@ -641,6 +607,39 @@ abort:
     return NPP_Print;
 }
 
+- (void)wasRemovedFromPluginDatabase:(WebPluginDatabase *)database
+{
+    [super wasRemovedFromPluginDatabase:database];
+    
+    // Unload when removed from final plug-in database
+    if ([pluginDatabases count] == 0)
+        [self _unloadWithShutdown:YES];
+}
+
+- (void)open
+{
+    instanceCount++;
+    
+    // Handle the case where all instances close a plug-in package, but another
+    // instance opens the package before it is unloaded (which only happens when
+    // the plug-in database is refreshed)
+    needsUnload = NO;
+    
+    if (!isLoaded) {
+        // Should load when the first instance opens the plug-in package
+        ASSERT(instanceCount == 1);
+        [self load];
+    }
+}
+
+- (void)close
+{
+    ASSERT(instanceCount > 0);
+    instanceCount--;
+    if (instanceCount == 0 && needsUnload)
+        [self _unloadWithShutdown:YES];
+}
+
 @end
 
 
@@ -677,3 +676,38 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
     }
     return (TransitionVector)newGlue;
 }
+
+@implementation WebNetscapePluginPackage (Internal)
+
+- (void)_unloadWithShutdown:(BOOL)shutdown
+{
+    if (!isLoaded)
+        return;
+    
+    LOG(Plugins, "Unloading %@...", name);
+
+    // Cannot unload a plug-in package while an instance is still using it
+    if (instanceCount > 0) {
+        needsUnload = YES;
+        return;
+    }
+
+    if (shutdown && NPP_Shutdown)
+        NPP_Shutdown();
+
+    if (resourceRef != -1)
+        [self closeResourceFile:resourceRef];
+
+    if (isBundle)
+        CFBundleUnloadExecutable(cfBundle);
+    else
+#ifndef __LP64__
+        // CFM is not supported in 64-bit
+        WebCloseConnection(&connID);
+#endif
+
+    LOG(Plugins, "Plugin Unloaded");
+    isLoaded = NO;
+}
+
+@end

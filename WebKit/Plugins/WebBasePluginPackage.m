@@ -97,12 +97,18 @@
 
 - (id)initWithPath:(NSString *)pluginPath
 {
-    self = [super init];
-    extensionToMIME = [[NSMutableDictionary alloc] init];
+    if (!(self = [super init]))
+        return nil;
+        
     path = [[self pathByResolvingSymlinksAndAliasesInPath:pluginPath] retain];
     bundle = [[NSBundle alloc] initWithPath:path];
+    if (!bundle) {
+        [self release];
+        return nil;
+    }
     cfBundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:path]);
-    lastModifiedDate = [[[[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:YES] objectForKey:NSFileModificationDate] retain];
+    extensionToMIME = [[NSMutableDictionary alloc] init];
+    
     return self;
 }
 
@@ -209,26 +215,16 @@
     return [self getPluginInfoFromBundleAndMIMEDictionary:MIMETypes];
 }
 
-- (BOOL)isLoaded
-{
-    return isLoaded;
-}
-
 - (BOOL)load
 {
-    if (isLoaded && bundle && !BP_CreatePluginMIMETypesPreferences)
+    if (bundle && !BP_CreatePluginMIMETypesPreferences)
         BP_CreatePluginMIMETypesPreferences = (BP_CreatePluginMIMETypesPreferencesFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("BP_CreatePluginMIMETypesPreferences"));
-    return isLoaded;
-}
-
-- (void)unload
-{
+    
+    return YES;
 }
 
 - (void)dealloc
 {
-    ASSERT(!isLoaded);
-    
     ASSERT(!pluginDatabases || [pluginDatabases count] == 0);
     [pluginDatabases release];
     
@@ -243,16 +239,12 @@
     [bundle release];
     if (cfBundle)
         CFRelease(cfBundle);
-
-    [lastModifiedDate release];
     
     [super dealloc];
 }
 
 - (void)finalize
 {
-    ASSERT(!isLoaded);
-
     ASSERT(!pluginDatabases || [pluginDatabases count] == 0);
     [pluginDatabases release];
 
@@ -312,11 +304,6 @@
     return bundle;
 }
 
-- (NSDate *)lastModifiedDate
-{
-    return lastModifiedDate;
-}
-
 - (void)setName:(NSString *)theName
 {
     [name release];
@@ -370,18 +357,6 @@
         name, path, [MIMEToExtensions description], [MIMEToDescription description], pluginDescription];
 }
 
-- (BOOL)isEqual:(id)object
-{
-    return ([object isKindOfClass:[WebBasePluginPackage class]] &&
-            [[object name] isEqualToString:name] &&
-            [[object lastModifiedDate] isEqual:lastModifiedDate]);
-}
-
-- (WebNSUInteger)hash
-{
-    return [[name stringByAppendingString:[lastModifiedDate description]] hash];
-}
-
 - (BOOL)isQuickTimePlugIn
 {
     NSString *bundleIdentifier = [[self bundle] bundleIdentifier];
@@ -430,9 +405,6 @@
     ASSERT([pluginDatabases containsObject:database]);
 
     [pluginDatabases removeObject:database];
-
-    if ([pluginDatabases count] == 0)
-        [self unload];
 }
 
 @end
