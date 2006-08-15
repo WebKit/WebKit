@@ -1,3 +1,9 @@
+2006-08-15  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by TimH.
+
+        * projects/svg/status.xml: updated to reflect current SVG status
+
 2006-08-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by TimO.

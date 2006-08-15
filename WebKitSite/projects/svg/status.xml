@@ -24,9 +24,8 @@
             <element>
                 <name>svg</name>
                 <url>http://www.w3.org/TR/SVG11/struct.html#SVGElement</url>
+                <status>Implemented</status>
                 <issues>
-                    <issue>overflow: hidden; is not respected <bug>5358</bug></issue>
-                    <issue>image/svg+xml should use SVGDocumentImpl <bug>5978</bug></issue>
                     <issue>bounding box relative percentages fail <bug>6003</bug></issue>
                 </issues>
             </element>
@@ -221,6 +220,7 @@
             <element>
                 <name>marker</name>
                 <url>http://www.w3.org/TR/SVG11/painting.html#MarkerElement</url>
+                <status>Implemented</status>
                 <issues>
                     <issue>Clip path issues <bug>5967</bug></issue>
                 </issues>
@@ -278,6 +278,7 @@
             <element>
                 <name>pattern</name>
                 <url>http://www.w3.org/TR/SVG11/pservers.html#PatternElement</url>
+                <status>Implemented</status>
                 <issues>
                     <issue>Patterns seem to have minor coordinate space issues <bug>6003</bug></issue>
                 </issues>
@@ -308,7 +309,6 @@
                 <status>Partial</status>
                 <issues>
                     <issue>does not support maskUnits or maskContentUnits <bug>6409</bug></issue>
-                    <issue>simple &lt;mask&gt; crashes Safari+SVG <bug>6548</bug></issue>
                 </issues>
             </element>
         </elements>
@@ -522,7 +522,8 @@
                 <url>http://www.w3.org/TR/SVG11/script.html#ScriptElement</url>
                 <status>Implemented</status>
                 <issues>
-                    <issue>SVG JavaScript bindings are busted <bug>4249</bug></issue>
+                    <issue>SVG JavaScript bindings do not correctly support multiple inheritance <bug>9229</bug></issue>
+                    <issue>Most SVG JS bindings are still broken <bug>9190</bug></issue>
                 </issues>
             </element>
         </elements>
@@ -634,9 +635,9 @@
             <element>
                 <name>foreignObject</name>
                 <url>http://www.w3.org/TR/SVG11/extend.html#ForeignObjectElement</url>
-                <status>Implemented</status>
                 <issues>
                     <issue>&lt;input type="search"&gt; renders twice within &lt;foreignObject&gt; <bug>6582</bug></issue>
+                    <issue>object inside foreignObject limits extent of SVG <bug>9856</bug></issue>
                 </issues>
             </element>
         </elements>
