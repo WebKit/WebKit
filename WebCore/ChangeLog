@@ -1,3 +1,21 @@
+2006-08-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by THE OTHER Maciej...
+
+        Two small fixes -
+        1) Renamed retain/release methods to add PageUrl in - we're being consistent and clear in the WebCore API
+        2) Fixed a bug where a null SiteIcon reference would be added into the pageURLToSiteIcon map causing a
+        null dereference later
+
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (-[WebCoreIconDatabaseBridge retainIconForURL:]):  Changed IconDatabase method name
+        (-[WebCoreIconDatabaseBridge releaseIconForURL:]):  ditto
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::retainIconForPageURL):  Name change
+        (WebCore::IconDatabase::releaseIconForPageURL):  ditto
+        (WebCore::IconDatabase::setIconURLForPageURL):  Added the null site-icon check when changing a PageURL's iconURL
+        * loader/icon/IconDatabase.h:  Some renames
+
 2006-08-14  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by mjs.

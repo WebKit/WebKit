@@ -149,14 +149,14 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
 {
     ASSERT(_iconDB);
     ASSERT(url);
-    _iconDB->retainIconForURL(String(url));
+    _iconDB->retainIconForPageURL(String(url));
 }
 
 - (void)releaseIconForURL:(NSString *)url
 {
     ASSERT(_iconDB);
     ASSERT(url);
-    _iconDB->releaseIconForURL(String(url));
+    _iconDB->releaseIconForPageURL(String(url));
 }
 
 - (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL

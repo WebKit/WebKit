@@ -382,7 +382,7 @@ Image* IconDatabase::defaultIcon(const IntSize& size)
     return 0;
 }
 
-void IconDatabase::retainIconForURL(const String& _url)
+void IconDatabase::retainIconForPageURL(const String& _url)
 {
     if (_url.isEmpty())
         return;
@@ -398,7 +398,7 @@ void IconDatabase::retainIconForURL(const String& _url)
         
 }
 
-void IconDatabase::releaseIconForURL(const String& _url)
+void IconDatabase::releaseIconForPageURL(const String& _url)
 {
     if (_url.isEmpty())
         return;
@@ -691,8 +691,11 @@ void IconDatabase::setIconURLForPageURL(const String& _iconURL, const String& _p
     
     // Cache the mapping...
     m_pageURLToIconURLMap.set(_pageURL, _iconURL);
-    // Change the cached pageURL->iconURL mapping
-    m_pageURLToSiteIcons.set(_pageURL, m_iconURLToSiteIcons.get(_iconURL));
+    // Change the cached pageURL->SiteIcon mapping based on the new iconURL
+    if (m_iconURLToSiteIcons.contains(_iconURL))
+        m_pageURLToSiteIcons.set(_pageURL, m_iconURLToSiteIcons.get(_iconURL));
+    else
+        m_pageURLToSiteIcons.remove(_pageURL);
     // Update the DB
     performSetIconURLForPageURL(iconID, pageTable, pageURL);
 }

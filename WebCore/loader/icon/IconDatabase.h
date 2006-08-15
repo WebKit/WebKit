@@ -98,8 +98,8 @@ public:
     String iconURLForPageURL(const String&);
     Image* defaultIcon(const IntSize&);
 
-    void retainIconForURL(const String&);
-    void releaseIconForURL(const String&);
+    void retainIconForPageURL(const String&);
+    void releaseIconForPageURL(const String&);
     
     void setPrivateBrowsingEnabled(bool flag);
     bool getPrivateBrowsingEnabled() { return m_privateBrowsingEnabled; }
