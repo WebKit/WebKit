@@ -1,5 +1,14 @@
 2006-08-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
+        Reviewed by Tim H.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10384
+        Bug 10384: Switch to DWARF for Release configuration
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2006-08-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
         Reviewed by Hyatt.
         Tweaked and landed by Darin.
 

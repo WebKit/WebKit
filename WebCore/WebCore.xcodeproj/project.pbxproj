@@ -7431,6 +7431,7 @@
 		149C284508902B11008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
