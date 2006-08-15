@@ -1,86 +1,42 @@
-2006-08-15  David Hyatt  <hyatt@apple.com>
-
-        Fix for bug 3303, support CSS2 system fonts.  This patch adds a new API
-        to RenderTheme for obtaining a system font. In addition to supporting
-        the CSS2 values, extensions have been added for the 3 control sizes on
-        Mac.  The UA stylesheet now uses -webkit-small-control and no longer hardcodes
-        Lucida Grande 11px.  This means that controls in Safari should now respect
-        haxies that modify the default fonts on controls.
-
-        Reviewed by beth
-
-        Added fast/css/css2-system-fonts.html
-
-        * WebCore.xcodeproj/project.pbxproj:
-        * css/CSSValueKeywords.in:
-        * css/cssparser.cpp:
-        (WebCore::CSSParser::parseValue):
-        * css/cssstyleselector.cpp:
-        (WebCore::CSSStyleSelector::applyProperty):
-        * css/html4.css:
-        * platform/FontDescription.h:
-        (WebCore::FontDescription::setBold):
-        * platform/win/TemporaryLinkStubs.cpp:
-        (RenderThemeWin::systemFont):
-        * rendering/RenderMenuList.cpp:
-        (WebCore::RenderMenuList::calcMinMaxWidth):
-        * rendering/RenderTheme.h:
-        (WebCore::RenderTheme::minimumMenuListSize):
-        * rendering/RenderThemeMac.h:
-        * rendering/RenderThemeMac.mm:
-        (WebCore::RenderThemeMac::systemFont):
-        (WebCore::RenderThemeMac::minimumMenuListSize):
-        * rendering/RenderThemeWin.h:
-
-2006-08-15  Adele Peterson  <adele@apple.com>
-
-        Reviewed by Maciej.
-
-        - Fix for <rdar://problem/4680207> REGRESSION: select-all should fire onSelect event for text fields and textareas (9518)
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9518
-
-        Test: fast/forms/onselect-selectall.html
-
-        * page/Frame.cpp: (WebCore::Frame::selectAll): Call notifyRendererOfSelectionChange with userTriggered = true so that onSelect will fire.
-
-2006-08-15  Anders Carlsson  <acarlsson@apple.com>
+2006-08-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
-
-        * platform/PlatformString.h:
-        * platform/String.cpp:
-        (WebCore::String::charactersWithNullTermination):
-        Add new function which calls StringImpl::charactersWithNullTermination.
         
-        * platform/StringImpl.cpp:
-        (WebCore::StringImpl::init):
-        (WebCore::StringImpl::append):
-        (WebCore::StringImpl::insert):
-        (WebCore::StringImpl::truncate):
-        (WebCore::StringImpl::remove):
-        Set m_hasTerminatingNullCharacter to false;
+        - This patch reworks a previous fix for <rdar://problem/3524912> repro 
+        crash in KHTMLParser::parseToken, due to parser's current element being 
+        destroyed (www.gnnetcom.dk), along with subsequent adjustments to fix
+        leaks.
         
-        (WebCore::StringImpl::charactersWithNullTermination):
-        If the string already has a terminating null character, simply return it. Otherwise,
-        realloc to make room for one and set m_hasTerminatingNullCharacter to true;
-
-        * platform/StringImpl.h:
-        (WebCore::StringImpl::StringImpl):
-        Add m_hasTerminatingNullCharacter.
-
-2006-08-15  Adele Peterson  <adele@apple.com>
-
-        Reviewed by Adam.
-
-        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9926
-        REGRESSION: pop-up looks bad because <option> respects color but not background-color
-
-        * rendering/RenderPopupMenuMac.mm:
-        (WebCore::RenderPopupMenuMac::addGroupLabel): Removed code to set foreground color in NSMenu. 
-        Added a FIXME that we need to handle both foreground and background color. (9846)
-        (WebCore::RenderPopupMenuMac::addOption): ditto.
-        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::adjustMenuListStyle):
-        For the aqua look, set the foreground color to black.
+        The previous solutions caused a ~2% performance regression on iBench HTML,
+        due to RefPtr churn. The optimizations here gain back that ~2% plus ~1% more,
+        for a total win of ~3% vs current TOT.
+        
+        We can merge this fix to the branch to fix <rdar://problem/4661982> 
+        (crash in KHTMLParser::popBlock).
+        
+        The solution here is:
+        (1) Don't let the parser ref document nodes -- that causes leaks.
+        (2) Handle ref/deref manually, to avoid RefPtr churn. Specifically, when 
+        moving a node between stacks or to/from 'current', rather than deref'ing
+        and then ref'ing again, simply move the node, along with its refcount, to
+        its new location, and overwrite its old location.
+ 
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLStackElem::HTMLStackElem):
+        (WebCore::HTMLStackElem::derefNode):
+        (WebCore::HTMLParser::HTMLParser):
+        (WebCore::HTMLParser::setCurrent):
+        (WebCore::HTMLParser::insertNode):
+        (WebCore::HTMLParser::popNestedHeaderTag):
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        (WebCore::HTMLParser::reopenResidualStyleTags):
+        (WebCore::HTMLParser::pushBlock):
+        (WebCore::HTMLParser::popBlock):
+        (WebCore::HTMLParser::popOneBlockCommon):
+        (WebCore::HTMLParser::popOneBlock):
+        (WebCore::HTMLParser::moveOneBlockToStack):
+        * html/HTMLParser.h:
 
 2006-08-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
@@ -318,7 +274,6 @@
         (-[WebCoreAXObject rendererForView:]):
         Clean up some old naming.
 
->>>>>>> .r15865
 2006-08-11  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
@@ -493,7 +448,6 @@
 
         * dom/DOMImplementation.cpp:
 
->>>>>>> .r15841
 2006-08-12  Oliver  <ojh16@student.canterbury.ac.nz>
 
         Rubber stamped by tim

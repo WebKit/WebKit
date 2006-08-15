@@ -60,127 +60,30 @@ const UChar nonBreakingSpace = 0xa0;
  * @internal
  */
 
-    class RefNonDocNodePtr
-    {
-    public:
-        RefNonDocNodePtr() : m_ptr(0) {}
-        RefNonDocNodePtr(Node* ptr) : m_ptr(ptr), m_isDoc(ptr->isDocumentNode()) { if (!m_isDoc && ptr) ptr->ref(); }
-        RefNonDocNodePtr(const RefNonDocNodePtr& o) : m_ptr(o.m_ptr), m_isDoc(o.m_isDoc) { if (!m_isDoc && m_ptr) m_ptr->ref(); }
-
-        ~RefNonDocNodePtr() { if (!m_isDoc && m_ptr) m_ptr->deref(); }
-        
-        Node *get() const { return m_ptr; }
-        
-        Node& operator*() const { return *m_ptr; }
-        Node *operator->() const { return m_ptr; }
-        
-        bool operator!() const { return !m_ptr; }
-    
-        // This conversion operator allows implicit conversion to bool but not to other integer types.
-        typedef Node* (RefNonDocNodePtr::*UnspecifiedBoolType)() const;
-        operator UnspecifiedBoolType() const { return m_ptr ? &RefNonDocNodePtr::get : 0; }
-        
-        RefNonDocNodePtr& operator=(const RefNonDocNodePtr&);
-        RefNonDocNodePtr& operator=(Node*);
-        RefNonDocNodePtr& operator=(RefPtr<Node>&);
-
-    private:
-        Node* m_ptr;
-        bool m_isDoc;
-    };
-    
-    inline RefNonDocNodePtr& RefNonDocNodePtr::operator=(const RefNonDocNodePtr& o)
-    {
-        Node* optr = o.get();
-        if (!o.m_isDoc && optr)
-            optr->ref();
-        Node* ptr = m_ptr;
-        m_ptr = optr;
-        if (!m_isDoc && ptr)
-            ptr->deref();
-        m_isDoc = o.m_isDoc;
-        return *this;
-    }
-    
-    inline RefNonDocNodePtr& RefNonDocNodePtr::operator=(Node* optr)
-    {
-        bool o_isDoc = optr->isDocumentNode();
-        if (!o_isDoc && optr)
-            optr->ref();
-        Node* ptr = m_ptr;
-        m_ptr = optr;
-        if (!m_isDoc && ptr)
-            ptr->deref();
-        m_isDoc = o_isDoc;
-        return *this;
-    }
-
-    inline RefNonDocNodePtr& RefNonDocNodePtr::operator=(RefPtr<Node>& o)
-    {
-        Node* optr = o.get();
-        bool o_isDoc = optr->isDocumentNode();
-        if (!o_isDoc && optr)
-            optr->ref();
-        Node* ptr = m_ptr;
-        m_ptr = optr;
-        if (!m_isDoc && ptr)
-            ptr->deref();
-        m_isDoc = o_isDoc;
-        return *this;
-    }
-
-    inline bool operator==(const RefNonDocNodePtr& a, const RefNonDocNodePtr& b)
-    { 
-        return a.get() == b.get(); 
-    }
-
-    inline bool operator==(const RefNonDocNodePtr& a, Node* b)
-    { 
-        return a.get() == b; 
-    }
-    
-    inline bool operator==(Node* a, const RefNonDocNodePtr& b) 
-    {
-        return a == b.get(); 
-    }
-    
-    inline bool operator!=(const RefNonDocNodePtr& a, const RefNonDocNodePtr& b)
-    { 
-        return a.get() != b.get(); 
-    }
-
-    inline bool operator!=(const RefNonDocNodePtr& a, Node* b)
-    {
-        return a.get() != b; 
-    }
-
-    inline bool operator!=(Node* a, const RefNonDocNodePtr& b)
-    { 
-        return a != b.get(); 
-    }
-    
-
-
 class HTMLStackElem
 {
 public:
-    HTMLStackElem(const AtomicString& _tagName,
-                  int _level,
-                  Node *_node,
-                  HTMLStackElem * _next
-        )
-        :
-        tagName(_tagName),
-        level(_level),
-        strayTableContent(false),
-        node(_node),
-        next(_next)
-        { }
+    HTMLStackElem(const AtomicString& t, int lvl, Node* n, bool r, HTMLStackElem* nx)
+        : tagName(t)
+        , level(lvl)
+        , strayTableContent(false)
+        , node(n)
+        , didRefNode(r)
+        , next(nx)
+    {
+    }
+
+    void derefNode()
+    {
+        if (didRefNode)
+            node->deref();
+    }
 
     AtomicString tagName;
     int level;
     bool strayTableContent;
-    RefNonDocNodePtr node;
+    Node* node;
+    bool didRefNode;
     HTMLStackElem* next;
 };
 
@@ -210,7 +113,7 @@ public:
 HTMLParser::HTMLParser(Document* doc) 
     : document(doc)
     , current(0)
-    , currentIsReferenced(false)
+    , didRefCurrent(false)
     , blockStack(0)
     , m_fragment(false)
 {
@@ -220,7 +123,7 @@ HTMLParser::HTMLParser(Document* doc)
 HTMLParser::HTMLParser(DocumentFragment* frag)
     : document(frag->document())
     , current(0)
-    , currentIsReferenced(false)
+    , didRefCurrent(false)
     , blockStack(0)
     , m_fragment(true)
 {
@@ -257,15 +160,15 @@ void HTMLParser::reset()
     discard_until = nullAtom;
 }
 
-void HTMLParser::setCurrent(Node *newCurrent) 
+void HTMLParser::setCurrent(Node* newCurrent) 
 {
-    bool newCurrentIsReferenced = newCurrent && newCurrent != doc();
-    if (newCurrentIsReferenced) 
+    bool didRefNewCurrent = newCurrent && newCurrent != doc();
+    if (didRefNewCurrent) 
         newCurrent->ref(); 
-    if (currentIsReferenced) 
+    if (didRefCurrent) 
         current->deref(); 
     current = newCurrent;
-    currentIsReferenced = newCurrentIsReferenced;
+    didRefCurrent = didRefNewCurrent;
 }
 
 PassRefPtr<Node> HTMLParser::parseToken(Token *t)
@@ -361,27 +264,35 @@ bool HTMLParser::insertNode(Node *n, bool flat)
         
     // let's be stupid and just try to insert it.
     // this should work if the document is well-formed
-    Node *newNode = current->addChild(n);
-    if (newNode) {
-        // don't push elements without end tags (e.g., <img>) on the stack
-        bool parentAttached = current->attached();
-        if (tagPriority > 0 && !flat) {
-            pushBlock(localName, tagPriority);
-            if (newNode == current)
-                popBlock(localName);
-            else
-                setCurrent(newNode);
-            if (parentAttached && !n->attached() && !m_fragment)
-                n->attach();
-        } else {
-            if (parentAttached && !n->attached() && !m_fragment)
-                n->attach();
-            n->closeRenderer();
-        }
-
-        return true;
-    } else
+    Node* newNode = current->addChild(n);
+    if (!newNode)
         return handleError(n, flat, localName, tagPriority); // Try to handle the error.
+
+    // don't push elements without end tags (e.g., <img>) on the stack
+    bool parentAttached = current->attached();
+    if (tagPriority > 0 && !flat) {
+        pushBlock(localName, tagPriority);
+        if (newNode == current)
+            popBlock(localName);
+        else {
+            // The pushBlock function transfers ownership of current to the block stack
+            // so we're guaranteed that didRefCurrent is false. The code below is an
+            // optimized version of setCurrent that takes advantage of that fact and also
+            // assumes that newNode is neither 0 nor a pointer to the document.
+            ASSERT(!didRefCurrent);
+            newNode->ref(); 
+            current = newNode;
+            didRefCurrent = true;
+        }
+        if (parentAttached && !n->attached() && !m_fragment)
+            n->attach();
+    } else {
+        if (parentAttached && !n->attached() && !m_fragment)
+            n->attach();
+        n->closeRenderer();
+    }
+
+    return true;
 }
 
 bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, int tagPriority)
@@ -965,7 +876,7 @@ void HTMLParser::popNestedHeaderTag()
         }
         if (currNode && !isInline(currNode))
             return;
-        currNode = curr->node.get();
+        currNode = curr->node;
     }
 }
 
@@ -1076,9 +987,9 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 
     if (!curr || !maxElem || !isAffectedByResidualStyle(maxElem->tagName)) return;
 
-    Node* residualElem = prev->node.get();
-    Node* blockElem = prevMaxElem ? prevMaxElem->node.get() : current;
-    Node* parentElem = elem->node.get();
+    Node* residualElem = prev->node;
+    Node* blockElem = prevMaxElem ? prevMaxElem->node : current;
+    Node* parentElem = elem->node;
 
     // Check to see if the reparenting that is going to occur is allowed according to the DOM.
     // FIXME: We should either always allow it or perform an additional fixup instead of
@@ -1098,7 +1009,9 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
             HTMLStackElem* nextElem = currElem->next;
             if (!isResidualStyleTag(currElem->tagName)) {
                 prevElem->next = nextElem;
+                prevElem->derefNode();
                 prevElem->node = currElem->node;
+                prevElem->didRefNode = currElem->didRefNode;
                 delete currElem;
             }
             else
@@ -1119,18 +1032,22 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
         while (currElem->node != residualElem) {
             if (isResidualStyleTag(currElem->node->localName())) {
                 // Create a clone of this element.
-                RefPtr<Node> currNode = currElem->node->cloneNode(false);
+                // We call release to get a raw pointer since we plan to hand over ownership to currElem.
+                Node* currNode = currElem->node->cloneNode(false).release();
 
                 // Change the stack element's node to point to the clone.
+                // The stack element adopts the reference we obtained above by calling release().
+                currElem->derefNode();
                 currElem->node = currNode;
+                currElem->didRefNode = true;
                 
                 // Attach the previous node as a child of this new node.
                 if (prevNode)
                     currNode->appendChild(prevNode, ec);
                 else // The new parent for the block element is going to be the innermost clone.
-                    parentElem = currNode.get();
+                    parentElem = currNode;
                                 
-                prevNode = currNode.get();
+                prevNode = currNode;
             }
             
             currElem = currElem->next;
@@ -1190,7 +1107,9 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
         currElem = currElem->next;
     }
     prevElem->next = elem->next;
+    prevElem->derefNode();
     prevElem->node = elem->node;
+    prevElem->didRefNode = elem->didRefNode;
     delete elem;
     
     // Step 7: Reopen intermediate inlines, e.g., <b><p><i>Foo</b>Goo</p>.
@@ -1200,8 +1119,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     while (curr && curr != maxElem) {
         // We will actually schedule this tag for reopening
         // after we complete the close of this entire block.
-        Node* currNode = current;
-        if (isResidualStyleTag(curr->tagName)) {
+        if (isResidualStyleTag(curr->tagName))
             // We've overloaded the use of stack elements and are just reusing the
             // struct with a slightly different meaning to the variables.  Instead of chaining
             // from innermost to outermost, we build up a list of all the tags we need to reopen
@@ -1210,11 +1128,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
             // We also set curr->node to be the actual element that corresponds to the ID stored in
             // curr->id rather than the node that you should pop to when the element gets pulled off
             // the stack.
-            popOneBlock(false);
-            curr->node = currNode;
-            curr->next = residualStyleStack;
-            residualStyleStack = curr;
-        }
+            moveOneBlockToStack(residualStyleStack);
         else
             popOneBlock();
 
@@ -1261,15 +1175,16 @@ void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTab
         
         // Advance to the next tag that needs to be reopened.
         HTMLStackElem* next = elem->next;
+        elem->derefNode();
         delete elem;
         elem = next;
     }
 }
 
-void HTMLParser::pushBlock(const AtomicString& tagName, int _level)
+void HTMLParser::pushBlock(const AtomicString& tagName, int level)
 {
-    HTMLStackElem *Elem = new HTMLStackElem(tagName, _level, current, blockStack);
-    blockStack = Elem;
+    blockStack = new HTMLStackElem(tagName, level, current, didRefCurrent, blockStack);
+    didRefCurrent = false;
 }
 
 void HTMLParser::popBlock(const AtomicString& _tagName)
@@ -1326,8 +1241,7 @@ void HTMLParser::popBlock(const AtomicString& _tagName)
 
             // Schedule this tag for reopening
             // after we complete the close of this entire block.
-            Node* currNode = current;
-            if (isAffectedByStyle && isResidualStyleTag(Elem->tagName)) {
+            if (isAffectedByStyle && isResidualStyleTag(Elem->tagName))
                 // We've overloaded the use of stack elements and are just reusing the
                 // struct with a slightly different meaning to the variables.  Instead of chaining
                 // from innermost to outermost, we build up a list of all the tags we need to reopen
@@ -1336,11 +1250,7 @@ void HTMLParser::popBlock(const AtomicString& _tagName)
                 // We also set Elem->node to be the actual element that corresponds to the ID stored in
                 // Elem->id rather than the node that you should pop to when the element gets pulled off
                 // the stack.
-                popOneBlock(false);
-                Elem->next = residualStyleStack;
-                Elem->node = currNode;
-                residualStyleStack = Elem;
-            }
+                moveOneBlockToStack(residualStyleStack);
             else
                 popOneBlock();
             Elem = blockStack;
@@ -1350,7 +1260,7 @@ void HTMLParser::popBlock(const AtomicString& _tagName)
     reopenResidualStyleTags(residualStyleStack, malformedTableParent);
 }
 
-void HTMLParser::popOneBlock(bool delBlock)
+inline HTMLStackElem* HTMLParser::popOneBlockCommon()
 {
     HTMLStackElem* elem = blockStack;
 
@@ -1360,13 +1270,47 @@ void HTMLParser::popOneBlock(bool delBlock)
         current->closeRenderer();
 
     blockStack = elem->next;
-    setCurrent(elem->node.get());
+    current = elem->node;
+    didRefCurrent = elem->didRefNode;
 
     if (elem->strayTableContent)
         inStrayTableContent--;
-    
-    if (delBlock)
-        delete elem;
+
+    return elem;
+}
+
+void HTMLParser::popOneBlock()
+{
+    // Store the current node before popOneBlockCommon overwrites it.
+    Node* lastCurrent = current;
+    bool didRefLastCurrent = didRefCurrent;
+
+    delete popOneBlockCommon();
+
+    if (didRefLastCurrent)
+        lastCurrent->deref();
+}
+
+void HTMLParser::moveOneBlockToStack(HTMLStackElem*& head)
+{
+    // We'll be using the stack element we're popping, but for the current node.
+    // See the two callers for details.
+
+    // Store the current node before popOneBlockCommon overwrites it.
+    Node* lastCurrent = current;
+    bool didRefLastCurrent = didRefCurrent;
+
+    // Pop the block, but don't deref the current node as popOneBlock does because
+    // we'll be using the pointer in the new stack element.
+    HTMLStackElem* elem = popOneBlockCommon();
+
+    // Transfer the current node into the stack element.
+    // No need to deref the old elem->node because popOneBlockCommon transferred
+    // it into the current/didRefCurrent fields.
+    elem->node = lastCurrent;
+    elem->didRefNode = didRefLastCurrent;
+    elem->next = head;
+    head = elem;
 }
 
 void HTMLParser::popInlineBlocks()

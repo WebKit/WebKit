@@ -1,3 +1,10 @@
+2006-08-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout test for <rdar://problem/4661982> (crash in KHTMLParser::popBlock)
+
+        * fast/parser/remove-node-stack-expected.txt: Added.
+        * fast/parser/remove-node-stack.html: Added.
+
 2006-08-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
