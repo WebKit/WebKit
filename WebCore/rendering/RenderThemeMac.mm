@@ -661,6 +661,9 @@ void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
     // White-space is locked to pre
     style->setWhiteSpace(PRE);
 
+    // Set the foreground color to black when we have the aqua look
+    style->setColor(Color::black);
+
     // Set the button's vertical size.
     setButtonSize(style);
 

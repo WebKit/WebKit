@@ -1,3 +1,17 @@
+2006-08-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9926
+        REGRESSION: pop-up looks bad because <option> respects color but not background-color
+
+        * rendering/RenderPopupMenuMac.mm:
+        (WebCore::RenderPopupMenuMac::addGroupLabel): Removed code to set foreground color in NSMenu. 
+        Added a FIXME that we need to handle both foreground and background color. (9846)
+        (WebCore::RenderPopupMenuMac::addOption): ditto.
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::adjustMenuListStyle):
+        For the aqua look, set the foreground color to black.
+
 2006-08-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Tim H.
