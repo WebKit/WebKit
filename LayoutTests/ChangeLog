@@ -1,5 +1,11 @@
 2006-08-14  Maciej Stachowiak  <mjs@apple.com>
 
+        Missing expected results for last test.
+
+        * http/tests/plugins/interrupted-get-url-expected.txt: Added.
+
+2006-08-14  Maciej Stachowiak  <mjs@apple.com>
+
         Test case not reviewed but the patch was reviewed by Tim Omernick.
         
         - test case for REGRESSION: crash when leaving youtube page while movie is still loading
