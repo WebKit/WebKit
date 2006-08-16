@@ -32,7 +32,6 @@
 #import <WebKitSystemInterface.h>
 
 @class WebPolicyDecisionListener;
-@class WebDataSource;
 
 @interface WebMainResourceLoader : WebLoader
 {

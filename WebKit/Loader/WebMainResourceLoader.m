@@ -32,21 +32,11 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
+#import <JavaScriptCore/Assertions.h>
 
-#import <WebKit/DOMHTML.h>
 #import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebDocument.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebFrameLoader.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebKitErrors.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebViewInternal.h>
+#import <WebKit/WebFrameLoader.h>
 
 // FIXME: More that is in common with WebSubresourceLoader should move up into WebLoader.
 
@@ -128,7 +118,7 @@
 
 - (NSError *)interruptForPolicyChangeError
 {
-    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadInterruptedByPolicyChange URL:[request URL]];
+    return [frameLoader interruptForPolicyChangeErrorWithRequest:request];
 }
 
 -(void)stopLoadingForPolicyChange
@@ -188,12 +178,10 @@
 
     NSURL *URL = [newRequest URL];
 
-    LOG(Redirect, "URL = %@", URL);
-
     NSMutableURLRequest *mutableRequest = nil;
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
-    if ([[frameLoader webFrame] _isMainFrame]) {
+    if ([frameLoader isLoadingMainFrame]) {
         mutableRequest = [newRequest mutableCopy];
         [mutableRequest setMainDocumentURL:URL];
     }
@@ -232,6 +220,30 @@
     return newRequest;
 }
 
+static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
+{
+    return [a caseInsensitiveCompare:b] == NSOrderedSame;
+}
+
+#define URL_BYTES_BUFFER_LENGTH 2048
+
+static BOOL shouldLoadAsEmptyDocument(NSURL *url)
+{
+    UInt8 *buffer = (UInt8 *)malloc(URL_BYTES_BUFFER_LENGTH);
+    CFIndex bytesFilled = CFURLGetBytes((CFURLRef)url, buffer, URL_BYTES_BUFFER_LENGTH);
+    if (bytesFilled == -1) {
+        CFIndex bytesToAllocate = CFURLGetBytes((CFURLRef)url, NULL, 0);
+        buffer = (UInt8 *)realloc(buffer, bytesToAllocate);
+        bytesFilled = CFURLGetBytes((CFURLRef)url, buffer, bytesToAllocate);
+        ASSERT(bytesFilled == bytesToAllocate);
+    }
+    
+    BOOL result = (bytesFilled == 0) || (bytesFilled > 5 && strncmp((char *)buffer, "about:", 6) == 0);
+    free(buffer);
+
+    return result;
+}
+
 -(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(NSURLResponse *)r
 {
     NSURL *URL = [request URL];
@@ -242,9 +254,9 @@
     {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         BOOL isRemote = ![URL isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:URL];
-        BOOL isRemoteWebArchive = isRemote && [MIMEType _webkit_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
-        if (![WebDataSource _canShowMIMEType:MIMEType] || isRemoteWebArchive) {
-            [[frameLoader webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:URL];
+        BOOL isRemoteWebArchive = isRemote && isCaseInsensitiveEqual(@"application/x-webarchive", MIMEType);
+        if (![WebFrameLoader _canShowMIMEType:MIMEType] || isRemoteWebArchive) {
+            [frameLoader cannotShowMIMETypeForURL:URL];
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.
             if (!reachedTerminalState) {
                 [self stopLoadingForPolicyChange];
@@ -275,12 +287,13 @@
     if ([r isKindOfClass:[NSHTTPURLResponse class]]) {
         int status = [(NSHTTPURLResponse *)r statusCode];
         if (status < 200 || status >= 300) {
-            // Handle <object> fallback for error cases.
-            DOMHTMLElement *hostElement = [[frameLoader webFrame] frameElement];
+            BOOL hostedByObject = [frameLoader isHostedByObjectElement];
+
             [frameLoader _handleFallbackContent];
-            if (hostElement && [hostElement isKindOfClass:[DOMHTMLObjectElement class]])
-                // object elements are no longer rendered after we fallback, so don't
-                // keep trying to process data from their load
+            // object elements are no longer rendered after we fallback, so don't
+            // keep trying to process data from their load
+
+            if (hostedByObject)
                 [self cancel];
         }
     }
@@ -290,7 +303,7 @@
         [super didReceiveResponse:r];
     }
 
-    if (![frameLoader _isStopping] && ([URL _webkit_shouldLoadAsEmptyDocument] || [WebView _representationExistsForURLScheme:[URL scheme]])) {
+    if (![frameLoader _isStopping] && (shouldLoadAsEmptyDocument(URL) || [WebFrameLoader _representationExistsForURLScheme:[URL scheme]])) {
         [self didFinishLoading];
     }
     
@@ -324,11 +337,9 @@
 
 - (void)didReceiveResponse:(NSURLResponse *)r
 {
-    ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![self defersCallbacks]);
-    ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![frameLoader _defersCallbacks]);
+    ASSERT(shouldLoadAsEmptyDocument([r URL]) || ![self defersCallbacks]);
+    ASSERT(shouldLoadAsEmptyDocument([r URL]) || ![frameLoader _defersCallbacks]);
 
-    LOG(Loading, "main content type: %@", [r MIMEType]);
-    
     if (loadingMultipartContent) {
         [frameLoader _setupForReplaceByMIMEType:[r MIMEType]];
         [self clearResourceData];
@@ -337,16 +348,6 @@
     if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"])
         loadingMultipartContent = YES;
         
-    // FIXME: This is a workaround to make web archive files work with Foundations that
-    // are too old to know about web archive files. We should remove this before we ship.
-    NSURL *URL = [r URL];
-    if ([[[URL path] pathExtension] _webkit_isCaseInsensitiveEqualToString:@"webarchive"]) {
-        r = [[[NSURLResponse alloc] initWithURL:URL 
-                                       MIMEType:@"application/x-webarchive"
-                          expectedContentLength:[r expectedContentLength] 
-                               textEncodingName:[r textEncodingName]] autorelease];
-    }
-    
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
@@ -364,8 +365,6 @@
     ASSERT(![self defersCallbacks]);
     ASSERT(![frameLoader _defersCallbacks]);
  
-    LOG(Loading, "URL = %@, data = %p, length %d", [frameLoader _URL], data, [data length]);
-
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
@@ -374,17 +373,14 @@
     [super didReceiveData:data lengthReceived:lengthReceived allAtOnce:allAtOnce];
     _bytesReceived += [data length];
 
-    LOG(Loading, "%d of %d", _bytesReceived, _contentLength);
     [self release];
 }
 
 - (void)didFinishLoading
 {
-    ASSERT([[frameLoader _URL] _webkit_shouldLoadAsEmptyDocument] || ![self defersCallbacks]);
-    ASSERT([[frameLoader _URL] _webkit_shouldLoadAsEmptyDocument] || ![frameLoader _defersCallbacks]);
+    ASSERT(shouldLoadAsEmptyDocument([frameLoader _URL]) || ![self defersCallbacks]);
+    ASSERT(shouldLoadAsEmptyDocument([frameLoader _URL]) || ![frameLoader _defersCallbacks]);
 
-    LOG(Loading, "URL = %@", [frameLoader _URL]);
-        
     // Calls in this method will most likely result in a call to release, so we must retain.
     [self retain];
 
@@ -405,7 +401,7 @@
 
 - (NSURLRequest *)loadWithRequestNow:(NSURLRequest *)r
 {
-    BOOL shouldLoadEmptyBeforeRedirect = [[r URL] _webkit_shouldLoadAsEmptyDocument];
+    BOOL shouldLoadEmptyBeforeRedirect = shouldLoadAsEmptyDocument([r URL]);
 
     ASSERT(connection == nil);
     ASSERT(shouldLoadEmptyBeforeRedirect || ![self defersCallbacks]);
@@ -416,18 +412,18 @@
     // initial requests.
     r = [self willSendRequest:r redirectResponse:nil];
     NSURL *URL = [r URL];
-    BOOL shouldLoadEmpty = [URL _webkit_shouldLoadAsEmptyDocument];
+    BOOL shouldLoadEmpty = shouldLoadAsEmptyDocument(URL);
 
     if (shouldLoadEmptyBeforeRedirect && !shouldLoadEmpty && [self defersCallbacks]) {
         return r;
     }
 
-    if (shouldLoadEmpty || [WebDataSource _representationExistsForURLScheme:[URL scheme]]) {
+    if (shouldLoadEmpty || [WebFrameLoader _representationExistsForURLScheme:[URL scheme]]) {
         NSString *MIMEType;
         if (shouldLoadEmpty) {
             MIMEType = @"text/html";
         } else {
-            MIMEType = [WebDataSource _generatedMIMETypeForURLScheme:[URL scheme]];
+            MIMEType = [WebFrameLoader _generatedMIMETypeForURLScheme:[URL scheme]];
         }
 
         NSURLResponse *resp = [[NSURLResponse alloc] initWithURL:URL MIMEType:MIMEType
@@ -448,7 +444,7 @@
     BOOL defer = [self defersCallbacks];
     if (defer) {
         NSURL *URL = [r URL];
-        BOOL shouldLoadEmpty = [URL _webkit_shouldLoadAsEmptyDocument];
+        BOOL shouldLoadEmpty = shouldLoadAsEmptyDocument(URL);
         if (shouldLoadEmpty) {
             defer = NO;
         }

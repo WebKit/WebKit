@@ -37,6 +37,7 @@
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebResourcePrivate.h>
+#import <WebKit/DOMHTML.h>
 
 @implementation WebFrameLoader
 
@@ -654,6 +655,43 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 - (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f
 {
     [webFrame _addExtraFieldsToRequest:request mainResource:mainResource alwaysFromRequest:f];
+}
+
+- (void)cannotShowMIMETypeForURL:(NSURL *)URL
+{
+    [webFrame _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:URL];    
+}
+
+- (NSError *)interruptForPolicyChangeErrorWithRequest:(NSURLRequest *)request
+{
+    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadInterruptedByPolicyChange URL:[request URL]];
+}
+
+- (BOOL)isHostedByObjectElement
+{
+    // Handle <object> fallback for error cases.            
+    DOMHTMLElement *hostElement = [webFrame frameElement];
+    return hostElement && [hostElement isKindOfClass:[DOMHTMLObjectElement class]];
+}
+
+- (BOOL)isLoadingMainFrame
+{
+    return [webFrame _isMainFrame];
+}
+
++ (BOOL)_canShowMIMEType:(NSString *)MIMEType
+{
+    return [WebDataSource _canShowMIMEType:MIMEType];
+}
+
++ (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme
+{
+    return [WebDataSource _representationExistsForURLScheme:URLScheme];
+}
+
++ (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
+{
+    return [WebDataSource _generatedMIMETypeForURLScheme:URLScheme];
 }
 
 @end

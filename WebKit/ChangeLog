@@ -1,3 +1,31 @@
+2006-08-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele (preliminary version) and later by Kevin.
+        
+        - remove most WebKit dependencies from WebMainResourceLoader.
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader cannotShowMIMETypeForURL:]):
+        (-[WebFrameLoader interruptForPolicyChangeErrorWithRequest:]):
+        (-[WebFrameLoader isHostedByObjectElement]):
+        (-[WebFrameLoader isLoadingMainFrame]):
+        (+[WebFrameLoader _canShowMIMEType:]):
+        (+[WebFrameLoader _representationExistsForURLScheme:]):
+        (+[WebFrameLoader _generatedMIMETypeForURLScheme:]):
+        * Loader/WebMainResourceLoader.h:
+        * Loader/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader interruptForPolicyChangeError]):
+        (-[WebMainResourceLoader willSendRequest:redirectResponse:]):
+        (isCaseInsensitiveEqual):
+        (shouldLoadAsEmptyDocument):
+        (-[WebMainResourceLoader continueAfterContentPolicy:response:]):
+        (-[WebMainResourceLoader didReceiveResponse:]):
+        (-[WebMainResourceLoader didReceiveData:lengthReceived:allAtOnce:]):
+        (-[WebMainResourceLoader didFinishLoading]):
+        (-[WebMainResourceLoader loadWithRequestNow:]):
+        (-[WebMainResourceLoader loadWithRequest:]):
+
 2006-08-15  Tim Omernick  <timo@apple.com>
 
         Reviewed by Kevin Decker.
