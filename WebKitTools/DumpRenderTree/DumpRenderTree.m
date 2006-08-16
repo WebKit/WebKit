@@ -328,9 +328,8 @@ int main(int argc, const char *argv[])
         }
     } else {
         printSeparators = (optind < argc-1 || (dumpPixels && dumpTree));
-        for (int i = optind; i != argc; ++i) {
+        for (int i = optind; i != argc; ++i)
             dumpRenderTree(argv[i]);
-        }
     }
     
     [webView setFrameLoadDelegate:nil];
@@ -607,7 +606,8 @@ static void dump(void)
             || aSelector == @selector(testRepaint)
             || aSelector == @selector(repaintSweepHorizontally)
             || aSelector == @selector(clearBackForwardList)
-            || aSelector == @selector(keepWebHistory))
+            || aSelector == @selector(keepWebHistory)
+            || aSelector == @selector(setAcceptsEditing:))
         return NO;
     return YES;
 }
@@ -618,6 +618,8 @@ static void dump(void)
         return @"setWindowIsKey";
     if (aSelector == @selector(setMainFrameIsFirstResponder:))
         return @"setMainFrameIsFirstResponder";
+    if (aSelector == @selector(setAcceptsEditing:))
+        return @"setAcceptsEditing";
     return nil;
 }
 
@@ -717,6 +719,11 @@ static void dump(void)
     return nil;
 }
 
+- (void)setAcceptsEditing:(BOOL)newAcceptsEditing
+{
+    [(EditingDelegate *)[[frame webView] editingDelegate] setAcceptsEditing:newAcceptsEditing];
+}
+
 @end
 
 static void dumpRenderTree(const char *pathOrURL)
@@ -739,6 +746,7 @@ static void dumpRenderTree(const char *pathOrURL)
         return;
     }
 
+    [(EditingDelegate *)[[frame webView] editingDelegate] setAcceptsEditing:YES];
     done = NO;
     readyToDump = NO;
     waitToDump = NO;

@@ -1,3 +1,35 @@
+2006-08-15  Duncan Wilcox  <duncan@mclink.it>
+
+        Reviewed and tweaked by Darin.
+
+        - added DumpRenderTree support so editing delegate can be made to refuse edits
+          to enable tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=10129
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]): Add setAcceptsEditing:
+        to the list of methods.
+        (+[LayoutTestController webScriptNameForSelector:]): Use the name setAcceptsEditing,
+        without the colon, for the JavaScript name.
+        (-[LayoutTestController setAcceptsEditing:]): Added. Calls through to the editing
+        delegate.
+        (dumpRenderTree): Set the acceptsEditing flag to YES before each test.
+
+        * DumpRenderTree/EditingDelegate.h: Added an "acceptsEditing" flag and getter and
+        setter methods to the class.
+        * DumpRenderTree/EditingDelegate.m:
+        (-[EditingDelegate init]): Initialize acceptsEditing to YES.
+        (-[EditingDelegate webView:shouldBeginEditingInDOMRange:]): Instead of always returning YES,
+        return the value of acceptsEditing.
+        (-[EditingDelegate webView:shouldEndEditingInDOMRange:]): Ditto.
+        (-[EditingDelegate webView:shouldInsertNode:replacingDOMRange:givenAction:]): Ditto.
+        (-[EditingDelegate webView:shouldInsertText:replacingDOMRange:givenAction:]): Ditto.
+        (-[EditingDelegate webView:shouldDeleteDOMRange:]): Ditto.
+        (-[EditingDelegate webView:shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        Ditto.
+        (-[EditingDelegate webView:shouldApplyStyle:toElementsInDOMRange:]): Ditto.
+        (-[EditingDelegate webView:shouldChangeTypingStyle:toStyle:]): Ditto.
+        (-[EditingDelegate setAcceptsEditing:]): Added.
+
 2006-08-03  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Darin.

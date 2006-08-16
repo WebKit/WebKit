@@ -61,16 +61,25 @@
 
 @implementation EditingDelegate
 
+- (id)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    acceptsEditing = YES;
+    return self;
+}
+
 - (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range
 {
     printf("EDITING DELEGATE: shouldBeginEditingInDOMRange:%s\n", [[range dump] UTF8String]);
-    return YES;
+    return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldEndEditingInDOMRange:(DOMRange *)range
 {
     printf("EDITING DELEGATE: shouldEndEditingInDOMRange:%s\n", [[range dump] UTF8String]);
-    return YES;
+    return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldInsertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action
@@ -82,7 +91,7 @@
     };
 
     printf("EDITING DELEGATE: shouldInsertNode:%s replacingDOMRange:%s givenAction:%s\n", [[node dumpPath] UTF8String], [[range dump] UTF8String], insertactionstring[action]);
-    return YES;
+    return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action
@@ -94,13 +103,13 @@
     };
 
     printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n", [[text description] UTF8String], [[range dump] UTF8String], insertactionstring[action]);
-    return YES;
+    return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldDeleteDOMRange:(DOMRange *)range
 {
     printf("EDITING DELEGATE: shouldDeleteDOMRange:%s\n", [[range dump] UTF8String]);
-    return YES;
+    return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
@@ -115,19 +124,19 @@
     };
 
     printf("EDITING DELEGATE: shouldChangeSelectedDOMRange:%s toDOMRange:%s affinity:%s stillSelecting:%s\n", [[currentRange dump] UTF8String], [[proposedRange dump] UTF8String], affinitystring[selectionAffinity], boolstring[flag]);
-    return YES;
+    return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldApplyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range
 {
     printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n", [[style description] UTF8String], [[range dump] UTF8String]);
-    return YES;
+    return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldChangeTypingStyle:(DOMCSSStyleDeclaration *)currentStyle toStyle:(DOMCSSStyleDeclaration *)proposedStyle
 {
     printf("EDITING DELEGATE: shouldChangeTypingStyle:%s toStyle:%s\n", [[currentStyle description] UTF8String], [[proposedStyle description] UTF8String]);
-    return YES;
+    return acceptsEditing;
 }
 
 - (void)webViewDidBeginEditing:(NSNotification *)notification
@@ -154,6 +163,11 @@
 {
     if (!doneLoading())
         printf("EDITING DELEGATE: webViewDidChangeSelection:%s\n", [[notification name] UTF8String]);
+}
+
+- (void)setAcceptsEditing:(BOOL)newAcceptsEditing
+{
+    acceptsEditing = newAcceptsEditing;
 }
 
 @end
