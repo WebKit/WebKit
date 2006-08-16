@@ -23,7 +23,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 9 of #text > DIV > DIV > BODY > HTML > #document to 9 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 9 of #text > DIV > DIV > DIV > BODY > HTML > #document to 9 of #text > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -39,13 +39,15 @@ layer at (0,0) size 800x600
           text run at (712,0) width 40 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}:"
           text run at (752,0) width 32: "1234"
       RenderBlock {DIV} at (0,52) size 784x36
-        RenderBlock {DIV} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 72x18
-            text run at (0,0) width 32: "1234"
-            text run at (32,0) width 36 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}"
-            text run at (68,0) width 4: ":"
-        RenderBlock {DIV} at (0,18) size 784x18
-          RenderText {#text} at (712,0) size 72x18
-            text run at (712,0) width 40 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}:"
-            text run at (752,0) width 32: "1234"
-caret: position 9 of child 0 {#text} of child 2 {DIV} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+        RenderBlock {DIV} at (0,0) size 784x36
+          RenderBlock {DIV} at (0,0) size 784x18
+            RenderText {#text} at (0,0) size 72x18
+              text run at (0,0) width 32: "1234"
+              text run at (32,0) width 36 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}"
+              text run at (68,0) width 4: ":"
+          RenderBlock {DIV} at (0,18) size 784x18
+            RenderText {#text} at (712,0) size 72x18
+              text run at (712,0) width 40 RTL: "\x{5E9}\x{5D3}\x{5D2}\x{5DB}:"
+              text run at (752,0) width 32: "1234"
+          RenderBlock (anonymous) at (0,36) size 784x0
+caret: position 9 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document

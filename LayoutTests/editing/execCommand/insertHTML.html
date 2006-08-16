@@ -30,7 +30,7 @@ function editingTest() {
 
 <body>
 <p>This is a test of execCommand(insertHTML, ...).  It selects the contents of an editable div, d, deletes it, then calls execCommand(insertHTML, d.innerHTML).  d.innerHTML should be what it was when the test began.</p>
-<div id="test" contenteditable="true"><p>hello<table style="display:inline" border=1><tr><td>1</td><td>2</td></tr></table><b>world</b>!</p></div>
+<div id="test" contenteditable="true">hello<table style="display:inline" border=1><tr><td>1</td><td>2</td></tr></table><b>world</b>!</div>
 <ul id="console"></ul>
 <script>
 runEditingTest();

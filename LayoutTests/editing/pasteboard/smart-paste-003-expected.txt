@@ -38,4 +38,5 @@ layer at (0,0) size 800x600
             text run at (36,2) width 40: " test"
           RenderText {#text} at (76,2) size 40x28
             text run at (76,2) width 40: " test"
+        RenderBlock (anonymous) at (0,32) size 784x0
 caret: position 5 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

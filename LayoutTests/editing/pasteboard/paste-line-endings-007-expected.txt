@@ -12,7 +12,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 9 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 9 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -46,9 +46,10 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (2,2) size 780x28
             RenderText {#text} at (0,0) size 78x28
               text run at (0,0) width 78: "line one"
+            RenderBR {BR} at (78,22) size 0x0
           RenderBlock {DIV} at (2,30) size 780x28
             RenderText {#text} at (0,0) size 7x28
               text run at (0,0) width 7: "l"
             RenderText {#text} at (7,0) size 72x28
               text run at (7,0) width 72: "ine two"
-caret: position 1 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 2 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -532,7 +532,8 @@ void DeleteSelectionCommand::doApply()
     Position downstreamEnd = m_selectionToDelete.end().downstream();
     m_needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart()) &&
                         isEndOfParagraph(m_selectionToDelete.visibleEnd()) &&
-                        !(downstreamEnd.node()->hasTagName(brTag) && downstreamEnd.offset() == 0);
+                        !(downstreamEnd.node()->hasTagName(brTag) && downstreamEnd.offset() == 0) &&
+                        !(downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->style()->preserveNewline() && m_selectionToDelete.visibleEnd().characterAfter() == '\n');
     
     // set up our state
     initializePositionData();

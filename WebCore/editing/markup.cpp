@@ -423,12 +423,13 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
             bool breakAtEnd = false;
             if (commonAncestorBlock == ancestor) {
                 // Include ancestors that are required to retain the appearance of the copied markup.
-                if (ancestor->hasTagName(listingTag)
+                if (annotate &&
+                    (ancestor->hasTagName(listingTag)
                         || ancestor->hasTagName(olTag)
                         || ancestor->hasTagName(preTag)
                         || ancestor->hasTagName(tableTag)
                         || ancestor->hasTagName(ulTag)
-                        || ancestor->hasTagName(xmpTag)) {
+                        || ancestor->hasTagName(xmpTag))) {
                     breakAtEnd = true;
                 } else
                     break;
@@ -447,10 +448,12 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
         markups.append(interchangeNewlineString);
 
     // Retain the Mail quote level by including all ancestor mail block quotes.
-    for (Node *ancestor = commonAncestorBlock; ancestor; ancestor = ancestor->parentNode()) {
-        if (isMailBlockquote(ancestor)) {
-            markups.prepend(startMarkup(ancestor, range, annotate, defaultStyle.get()));
-            markups.append(endMarkup(ancestor));
+    if (annotate) {
+        for (Node *ancestor = commonAncestorBlock; ancestor; ancestor = ancestor->parentNode()) {
+            if (isMailBlockquote(ancestor)) {
+                markups.prepend(startMarkup(ancestor, range, annotate, defaultStyle.get()));
+                markups.append(endMarkup(ancestor));
+            }
         }
     }
     

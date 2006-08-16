@@ -2,7 +2,7 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 1 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 1 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (16,2) size 12x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 8x18
                   text run at (2,2) width 8: "2"
-        RenderBlock {DIV} at (0,46) size 784x18
+        RenderBlock (anonymous) at (0,46) size 784x18
           RenderText {#text} at (0,0) size 8x18
             text run at (0,0) width 8: "x"
       RenderBlock {P} at (0,114) size 784x36

@@ -10,7 +10,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of BLOCKQUOTE > DIV > BODY > HTML > #document to 0 of BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of BLOCKQUOTE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -34,13 +34,14 @@ layer at (0,0) size 800x600
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
             RenderText {#text} at (0,0) size 32x28
               text run at (0,0) width 32: "foo"
-      RenderBlock {DIV} at (0,182) size 784x184 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x28
-          RenderText {#text} at (0,0) size 12x28
-            text run at (0,0) width 12: "x"
-        RenderBlock {BLOCKQUOTE} at (54,66) size 676x28
-          RenderText {#text} at (0,0) size 32x28
-            text run at (0,0) width 32: "foo"
-        RenderBlock {BLOCKQUOTE} at (54,118) size 676x28
-          RenderBR {BR} at (0,0) size 0x28
-caret: position 0 of child 0 {BR} of child 2 {BLOCKQUOTE} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+      RenderBlock {DIV} at (0,182) size 784x56 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 12x28
+          text run at (14,14) width 12: "x"
+      RenderBlock {DIV} at (0,238) size 784x156 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,38) size 756x80
+          RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
+            RenderText {#text} at (0,0) size 32x28
+              text run at (0,0) width 32: "foo"
+          RenderBlock {BLOCKQUOTE} at (40,52) size 676x28
+            RenderBR {BR} at (0,0) size 0x28
+caret: position 0 of child 0 {BR} of child 1 {BLOCKQUOTE} of child 0 {DIV} of child 8 {DIV} of child 1 {BODY} of child 0 {HTML} of document

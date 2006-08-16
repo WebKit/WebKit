@@ -14,7 +14,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertText:Bar replacingDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > SPAN > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -22,7 +22,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x288 [border: (2px solid #0000FF)]
+      RenderBlock {P} at (0,0) size 784x36
+        RenderInline {B} at (0,0) size 171x18
+          RenderText {#text} at (0,0) size 171x18
+            text run at (0,0) width 171: "This demonstrates a bug:"
+        RenderText {#text} at (171,0) size 757x36
+          text run at (171,0) width 586: " two adjacent text nodes render with a line break between them and cause focus ring drawing"
+          text run at (0,18) width 116: "problems (10428)."
+      RenderBlock {DIV} at (0,52) size 784x288 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x84
           RenderText {#text} at (0,0) size 67x28
             text run at (0,0) width 67: "Tests: "
@@ -47,14 +54,19 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,132) size 756x28
             RenderText {#text} at (0,0) size 155x28
               text run at (0,0) width 155: "(case sensitive)."
-      RenderBlock {DIV} at (0,312) size 784x32 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 153x28
-          RenderInline {SPAN} at (0,0) size 78x28
-            RenderText {#text} at (2,2) size 78x28
-              text run at (2,2) width 78: "Foo Bar"
-          RenderText {#text} at (80,2) size 40x28
-            text run at (80,2) width 40: " baz"
-          RenderText {#text} at (120,2) size 35x28
-            text run at (120,2) width 35: "Bar"
-        RenderText {#text} at (0,0) size 0x0
-caret: position 3 of child 2 {#text} of child 1 {SPAN} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+      RenderBlock {DIV} at (0,364) size 784x60 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (2,2) size 780x28
+          RenderInline {SPAN} at (0,0) size 118x28
+            RenderInline {SPAN} at (0,0) size 78x28
+              RenderText {#text} at (0,0) size 78x28
+                text run at (0,0) width 78: "Foo Bar"
+            RenderText {#text} at (78,0) size 40x28
+              text run at (78,0) width 40: " baz"
+        RenderBlock (anonymous) at (2,30) size 780x0
+        RenderBlock (anonymous) at (2,30) size 780x28
+          RenderInline {SPAN} at (0,0) size 35x28
+            RenderText {#text} at (0,0) size 35x28
+              text run at (0,0) width 35: "Bar"
+          RenderText {#text} at (35,0) size 6x28
+            text run at (35,0) width 6: " "
+caret: position 1 of child 2 {#text} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

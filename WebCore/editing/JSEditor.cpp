@@ -283,7 +283,7 @@ bool execInsertHorizontalRule(Frame* frame, bool userInterface, const String& va
     if (ec)
         return false;
     
-    EditCommandPtr(new ReplaceSelectionCommand(frame->document(), fragment.get(), false, false, false, false, EditActionUnspecified)).apply();
+    EditCommandPtr(new ReplaceSelectionCommand(frame->document(), fragment.get(), false, false, false, true, EditActionUnspecified)).apply();
     return true;
 }
 
@@ -416,7 +416,7 @@ bool execRedo(Frame *frame, bool userInterface, const String &value)
 bool execRemoveFormat(Frame* frame, bool userInterface, const String& value)
 {
     RefPtr<DocumentFragment> fragment = createFragmentFromText(frame->selection().toRange().get(), frame->selection().toString());
-    EditCommandPtr(new ReplaceSelectionCommand(frame->document(), fragment.get(), false, false, false, false, EditActionUnspecified)).apply();
+    EditCommandPtr(new ReplaceSelectionCommand(frame->document(), fragment.get(), false, false, false, true, EditActionUnspecified)).apply();
     return true;
 }
 

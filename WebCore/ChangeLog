@@ -1,3 +1,78 @@
+2006-08-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by thatcher
+        
+        First part of fix for:
+        <rdar://problem/4384589>
+        Mail hung on paste text
+        
+        Fixes:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8592>
+        Extra line left after deleting whitespace:pre text
+        <rdar://problem/4128080> Paste as HTML does not yield equivalent style
+        <rdar://problem/4046469> Box styles on first element aren't copied/pasted
+        Copy/paste of arstechnica.com
+        
+        Here's how we avoid adding redundant style information on paste: insert 
+        the fragment and do a test rendering, save away style information for 
+        every node in the fragment, remove all style information from the fragment, 
+        remove the fragment, insert it into the appropriate place in the document, 
+        then restore only those styles gathered during the test insertion that aren't
+        redundant.  Restoring the styles in this way results in an ApplyStyleCommand 
+        and a layout for nearly every inserted node.  
+        Instead we want to insert the fragment into the document without removing the 
+        style information, then mark style nodes and inline style declarations for 
+        removal if they are redundant, and sweep to remove them.  This means that we 
+        can't rely on ReplacementFragment::wasBlock anymore, because blocks will now 
+        have style spans around them.  This patch removes the use of wasBlock in 
+        ReplaceSelectionCommand.
+        
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Added code
+        to remove the line placeholder left after a move from preserveNewline text.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply): Don't add a placeholder if 
+        we're deleting a paragraph in preserveNewline text.
+        * editing/JSEditor.cpp: Pass true to prevent nesting.
+        * editing/ReplaceSelectionCommand.cpp: Removed wasBlock and friends.
+        (WebCore::ReplacementFragment::ReplacementFragment): Ditto.
+        (WebCore::ReplacementFragment::saveRenderingInfo): Ditto.
+        (WebCore::RenderingInfo::RenderingInfo): Ditto.
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (WebCore::ReplaceSelectionCommand::shouldMergeStart): Combined the to/from
+        merging rules into one method.
+        (WebCore::ReplaceSelectionCommand::shouldMergeEnd):
+        (WebCore::ReplaceSelectionCommand::shouldMerge):
+        (WebCore::ReplaceSelectionCommand::doApply): 
+        Don't do nesting prevention when pasting into an empty paragraph, this
+        fixes 4046469, the common cause of paste fidelity bugs, but needs
+        to be tweaked a little because this can lead to margin/border build-up
+        on repeated copy/pastes.
+        Don't track startPos in addition to insertionPos.  It was never used.
+        Fixed a bug where a fragment starting with an interchange newline would
+        cause content to be put outside of an editable region when pasting at the 
+        very end of it.
+        Adjust insertionPos before insertion (not during) and do not consult wasBlock
+        to decide whether or not to do so.
+        Changed the way we do the start merge: insert the fragment, then stich 
+        paragraphs together, in the same way that we do the end merge.  This 
+        doesn't require wasBlock and fixes bugs.
+        Replaced some uses of insertionPos with endOfInsertedContent.
+        Fixed a bug in the expansion of the last incoming br (a "collapsed" br
+        is one where !isStartOfParagraph([br,0])).
+        Removed the special case code that did the end merge for the preserveNewline 
+        case, since this patch fixes the moveParagraph bug in the preserveNewline case.
+        Removed some unused variables.
+        (WebCore::ReplaceSelectionCommand::shouldRemoveEndBR): An endBR that was 
+        holding a line open should always be displaced by inserted content, unless 
+        the inserted content ends with a br.
+        (WebCore::ReplaceSelectionCommand::updateNodesInserted):
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::RenderingInfo::style):
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Only add mail blockquotes and list/table/pre when
+        annotate is true (when we're creating markup for the pasteboard).
+
 2006-08-16  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Brady Eidson

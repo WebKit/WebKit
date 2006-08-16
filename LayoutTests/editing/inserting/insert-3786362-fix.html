@@ -27,9 +27,12 @@ function editingTest() {
 
 <title>Editing Test</title> 
 </head> 
-<body contenteditable id="root">
-<div class="editing" id="test">a<br><br>b</div>
+<body>
+<p><b>This demonstrates a bug:</b> copying an empty line that's implemented with a br doesn't put an interchange newline on the pasteboard.  There should be two blank lines after the 'a'.</p>
+<div contenteditable="true" id="test">
+<div class="editing">a<br><br>b</div>
 <div class="editing"></div>
+</div>
 
 <script>
 runEditingTest();

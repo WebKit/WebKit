@@ -2,7 +2,7 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 0 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -22,15 +22,13 @@ layer at (0,0) size 800x600
             text run at (0,0) width 8: "x"
           RenderText {#text} at (8,0) size 21x18
             text run at (8,0) width 21: "foo"
-        RenderBlock {DIV} at (0,18) size 784x36
-          RenderBlock (anonymous) at (0,0) size 784x0
-            RenderInline {SPAN} at (0,0) size 0x0
-          RenderBlock (anonymous) at (0,0) size 784x18
-            RenderBlock {DIV} at (0,0) size 784x18
-              RenderText {#text} at (0,0) size 20x18
-                text run at (0,0) width 20: "bar"
-          RenderBlock (anonymous) at (0,18) size 784x18
-            RenderInline {SPAN} at (0,0) size 0x0
-            RenderText {#text} at (0,0) size 8x18
-              text run at (0,0) width 8: "x"
-caret: position 0 of child 1 {#text} of child 2 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+          RenderInline {SPAN} at (0,0) size 0x18
+        RenderBlock (anonymous) at (0,18) size 784x18
+          RenderBlock {DIV} at (0,0) size 784x18
+            RenderText {#text} at (0,0) size 20x18
+              text run at (0,0) width 20: "bar"
+        RenderBlock (anonymous) at (0,36) size 784x18
+          RenderInline {SPAN} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 8x18
+            text run at (0,0) width 8: "x"
+caret: position 0 of child 3 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document

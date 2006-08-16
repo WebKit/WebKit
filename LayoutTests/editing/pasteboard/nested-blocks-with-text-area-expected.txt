@@ -13,7 +13,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (29,0) size 725x36
           text run at (29,0) width 725: "This test checks that pasing in a combination of nested blocks where one starts with a text field doesn't crash or fail "
           text run at (359,18) width 65: "assertions."
-      RenderBlock (anonymous) at (0,36) size 784x0
       RenderBlock {DIV} at (0,36) size 784x36
         RenderBlock {DIV} at (0,0) size 784x36
           RenderTextField {TEXTAREA} at (302,2) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]

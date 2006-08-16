@@ -715,14 +715,18 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
 
     ASSERT(destination.deepEquivalent().node()->inDocument());
     
-    // Deleting a paragraph leaves a placeholder (it always does when a whole paragraph is deleted).
-    // We remove it and prune its parents since we want to remove all traces of the paragraph we're moving.
-    Node* placeholder = endingSelection().end().downstream().node();
-    ASSERT(placeholder->hasTagName(brTag));
     // There are bugs in deletion when it removes a fully selected table/list.  It expands and removes the entire table/list, but will let content
     // before and after the table/list collapse onto one line.
-    if (placeholder->hasTagName(brTag) && isStartOfParagraph(endingSelection().visibleStart()) && isEndOfParagraph(endingSelection().visibleStart()))
-        removeNodeAndPruneAncestors(placeholder);
+    VisiblePosition caretAfterDelete = endingSelection().visibleStart();
+    if (isStartOfParagraph(caretAfterDelete) && isEndOfParagraph(caretAfterDelete)) {
+        // Note: We want the rightmost candidate.
+        Position position = caretAfterDelete.deepEquivalent().downstream();
+        Node* node = position.node();
+        if (node->hasTagName(brTag))
+            removeNodeAndPruneAncestors(node);
+        else if (node->renderer() && node->renderer()->style()->preserveNewline() && caretAfterDelete.characterAfter() == '\n')
+            deleteTextFromNode(static_cast<Text*>(node), position.offset(), 1);
+    }
 
     // Add a br if pruning an empty block level element caused a collapse.  For example:
     // foo^
@@ -737,7 +741,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     destinationIndex = TextIterator::rangeLength(startToDestinationRange.get());
     
     setEndingSelection(destination);
-    EditCommandPtr cmd(new ReplaceSelectionCommand(document(), fragment.get(), true, false, !preserveStyle, true));
+    EditCommandPtr cmd(new ReplaceSelectionCommand(document(), fragment.get(), true, false, !preserveStyle, false));
     applyCommandToComposite(cmd);
     
     if (preserveSelection && startIndex != -1) {

@@ -53,8 +53,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
       m_fragment(fragment),
       m_matchStyle(matchStyle), 
       m_hasInterchangeNewlineAtStart(false), 
-      m_hasInterchangeNewlineAtEnd(false), 
-      m_hasMoreThanOneBlock(false)
+      m_hasInterchangeNewlineAtEnd(false)
 {
     if (!m_document)
         return;
@@ -125,7 +124,6 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
     
     saveRenderingInfo(holder.get());
     removeUnrenderedNodes(holder.get());
-    m_hasMoreThanOneBlock = renderedBlocks(holder.get()) > 1;
     restoreTestRenderingNodesToFragment(holder.get());
     removeNode(holder);
     removeStyleNodes();
@@ -144,19 +142,6 @@ Node *ReplacementFragment::firstChild() const
 Node *ReplacementFragment::lastChild() const 
 { 
     return m_fragment->lastChild(); 
-}
-
-static bool isMailPasteAsQuotationNode(const Node *node)
-{
-    return node && static_cast<const Element *>(node)->getAttribute("class") == ApplePasteAsQuotation;
-}
-
-Node *ReplacementFragment::mergeStartNode() const
-{
-    Node *node = m_fragment->firstChild();
-    while (node && wasBlock(node) && !isMailPasteAsQuotationNode(node))
-        node = node->traverseNextNode();
-    return node;
 }
 
 bool ReplacementFragment::isInterchangeNewlineNode(const Node *node)
@@ -259,16 +244,6 @@ void ReplacementFragment::restoreTestRenderingNodesToFragment(Node *holder)
     }
 }
 
-bool ReplacementFragment::wasBlock(Node* node) const
-{
-    RefPtr<RenderingInfo> info = m_renderingInfo.get(node);
-    ASSERT(info);
-    if (!info)
-        return false;
-    
-    return info->wasBlock();
-}
-
 static String &matchNearestBlockquoteColorString()
 {
     static String matchNearestBlockquoteColorString = "match";
@@ -363,10 +338,10 @@ void ReplacementFragment::saveRenderingInfo(Node *holder)
     if (m_matchStyle) {
         // No style restoration will be done, so we don't need to save styles or keep a node vector.
         for (Node *node = holder->firstChild(); node; node = node->traverseNextNode(holder))
-            m_renderingInfo.add(node, new RenderingInfo(0, isBlock(node)));
+            m_renderingInfo.add(node, new RenderingInfo(0));
     } else {
         for (Node *node = holder->firstChild(); node; node = node->traverseNextNode(holder)) {
-            m_renderingInfo.add(node, new RenderingInfo(styleForNode(node), isBlock(node)));
+            m_renderingInfo.add(node, new RenderingInfo(styleForNode(node)));
             m_nodes.append(node);
         }
     }
@@ -383,29 +358,6 @@ void ReplacementFragment::removeUnrenderedNodes(Node *holder)
 
     for (DeprecatedPtrListIterator<Node> it(unrendered); it.current(); ++it)
         removeNode(it.current());
-}
-
-// FIXME: This counts two blocks for <span><div>foo</div></span>.  Get rid of uses of hasMoreThanOneBlock so that we can get rid of this function.
-int ReplacementFragment::renderedBlocks(Node *holder)
-{
-    int count = 0;
-    Node *prev = 0;
-    for (Node *node = holder->firstChild(); node; node = node->traverseNextNode(holder)) {
-        if (isBlock(node)) {
-            if (!prev) {
-                count++;
-                prev = node;
-            }
-        } else {
-            Node *block = enclosingBlock(node);
-            if (block != prev) {
-                count++;
-                prev = block;
-            }
-        }
-    }
-    
-    return count;
 }
 
 void ReplacementFragment::removeStyleNodes()
@@ -448,72 +400,68 @@ void ReplacementFragment::removeStyleNodes()
     }
 }
 
-RenderingInfo::RenderingInfo(PassRefPtr<CSSMutableStyleDeclaration> style, bool wasBlock = false)
-    : m_style(style), m_wasBlock(wasBlock)
+RenderingInfo::RenderingInfo(PassRefPtr<CSSMutableStyleDeclaration> style)
+    : m_style(style)
 {
 }
 
-ReplaceSelectionCommand::ReplaceSelectionCommand(Document *document, DocumentFragment *fragment, bool selectReplacement, bool smartReplace, bool matchStyle, bool forceMergeStart, EditAction editAction) 
+ReplaceSelectionCommand::ReplaceSelectionCommand(Document* document, DocumentFragment* fragment, bool selectReplacement, bool smartReplace, bool matchStyle, bool preventNesting, EditAction editAction) 
     : CompositeEditCommand(document),
       m_selectReplacement(selectReplacement), 
       m_smartReplace(smartReplace),
       m_matchStyle(matchStyle),
       m_documentFragment(fragment),
-      m_forceMergeStart(forceMergeStart),
+      m_preventNesting(preventNesting),
       m_editAction(editAction)
 {
 }
 
-ReplaceSelectionCommand::~ReplaceSelectionCommand()
+bool ReplaceSelectionCommand::shouldMergeStart(bool selectionStartWasStartOfParagraph, bool fragmentHasInterchangeNewlineAtStart)
 {
-}
-
-// FIXME: This will soon operate on the fragment after it's been inserted so that it can check renderers and create visible positions.
-bool ReplaceSelectionCommand::shouldMergeStart(const ReplacementFragment& incomingFragment, const Selection& destinationSelection)
-{
-    if (m_forceMergeStart)
-        return true;
+    VisiblePosition startOfInsertedContent(Position(m_firstNodeInserted.get(), 0));
+    VisiblePosition prev = startOfInsertedContent.previous(true);
+    if (prev.isNull())
+        return false;
         
-    VisiblePosition visibleStart = destinationSelection.visibleStart();
-    Node* startBlock = enclosingBlock(destinationSelection.start().node());
-
-    // <rdar://problem/4013642> Copied quoted word does not paste as a quote if pasted at the start of a line    
-    if (isStartOfParagraph(visibleStart) && isMailBlockquote(incomingFragment.firstChild()))
-        return false;
-    
-    // Don't pull content out of a list item.
-    // FIXMEs: Use an enclosing element getter that uses the render tree once this function is called after the fragment
-    // that's been placed into the document.
-    if (enclosingList(incomingFragment.mergeStartNode()) || enclosingNodeWithTag(incomingFragment.mergeStartNode(), tdTag))
-        return false;
-    
-    // Merge if this is an empty editable subtree, to prevent an extra level of block nesting.
-    if (startBlock == startBlock->rootEditableElement() && isStartOfBlock(visibleStart) && isEndOfBlock(visibleStart))
-        return true;
-    
-    if (!incomingFragment.hasInterchangeNewlineAtStart() && 
-        (!isStartOfParagraph(visibleStart) || !incomingFragment.hasInterchangeNewlineAtEnd() && !incomingFragment.hasMoreThanOneBlock()))
-       return true;
-    
-    return false;
+    return !selectionStartWasStartOfParagraph && 
+           !fragmentHasInterchangeNewlineAtStart &&
+           isStartOfParagraph(startOfInsertedContent) && 
+           !startOfInsertedContent.deepEquivalent().node()->hasTagName(brTag) &&
+           shouldMerge(startOfInsertedContent, prev);
 }
 
-bool ReplaceSelectionCommand::shouldMergeEnd(const VisiblePosition& endOfInsertedContent, bool selectionEndWasEndOfParagraph)
+bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
 {
-    Node* endNode = endOfInsertedContent.deepEquivalent().node();
-    Node* nextNode = endOfInsertedContent.next().deepEquivalent().node();
-    // FIXME: Unify the naming scheme for these enclosing element getters.
+    VisiblePosition endOfInsertedContent(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
+    VisiblePosition next = endOfInsertedContent.next(true);
+    if (next.isNull())
+        return false;
+
     return !selectionEndWasEndOfParagraph &&
            isEndOfParagraph(endOfInsertedContent) && 
-           nearestMailBlockquote(endNode) == nearestMailBlockquote(nextNode) &&
-           enclosingListChild(endNode) == enclosingListChild(nextNode) &&
-           enclosingTableCell(endNode) == enclosingTableCell(nextNode) &&
-           !endNode->hasTagName(hrTag);
+           !endOfInsertedContent.deepEquivalent().node()->hasTagName(brTag) &&
+           shouldMerge(endOfInsertedContent, next);
+}
+
+bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& from, const VisiblePosition& to)
+{
+    if (from.isNull() || to.isNull())
+        return false;
+        
+    Node* fromNode = from.deepEquivalent().node();
+    Node* toNode = to.deepEquivalent().node();
+    
+    return nearestMailBlockquote(fromNode) == nearestMailBlockquote(toNode) &&
+           !enclosingBlock(fromNode)->hasTagName(blockquoteTag) &&
+           enclosingListChild(fromNode) == enclosingListChild(toNode) &&
+           enclosingTableCell(fromNode) == enclosingTableCell(toNode) &&
+           !(fromNode->renderer() && fromNode->renderer()->isTable()) &&
+           !(toNode->renderer() && toNode->renderer()->isTable()) && 
+           !fromNode->hasTagName(hrTag) && !toNode->hasTagName(hrTag);
 }
 
 void ReplaceSelectionCommand::doApply()
 {
-    // collect information about the current selection, prior to deleting the selection
     Selection selection = endingSelection();
     ASSERT(selection.isCaretOrRange());
     ASSERT(selection.start().node());
@@ -532,19 +480,18 @@ void ReplaceSelectionCommand::doApply()
     if (m_matchStyle)
         m_insertionStyle = styleAtPosition(selection.start());
     
-    VisiblePosition visibleStart(selection.start(), selection.affinity());
-    VisiblePosition visibleEnd(selection.end(), selection.affinity());
-    bool startAtStartOfBlock = isStartOfBlock(visibleStart);
-    Node* startBlock = enclosingBlock(selection.start().node());
-
-    // Whether the first paragraph of the incoming fragment should be merged with content from visibleStart to startOfParagraph(visibleStart).
-    bool mergeStart = shouldMergeStart(fragment, selection);
+    VisiblePosition visibleStart = selection.visibleStart();
+    VisiblePosition visibleEnd = selection.visibleEnd();
     
-    bool endWasEndOfParagraph = isEndOfParagraph(visibleEnd);
-
-    Position startPos = selection.start();
+    bool selectionEndWasEndOfParagraph = isEndOfParagraph(visibleEnd);
+    bool selectionStartWasStartOfParagraph = isStartOfParagraph(visibleStart);
     
-    // delete the current range selection, or insert paragraph for caret selection, as needed
+    if (selectionStartWasStartOfParagraph && selectionEndWasEndOfParagraph ||
+        enclosingBlock(visibleStart.deepEquivalent().node()) == currentRoot)
+        m_preventNesting = false;
+    
+    Position insertionPos = selection.start();
+    
     if (selection.isRange()) {
         // When the end of the selection being pasted into is at the end of a paragraph, and that selection
         // spans multiple blocks, not merging may leave an empty line.
@@ -552,7 +499,6 @@ void ReplaceSelectionCommand::doApply()
         // will leave hanging block(s).
         bool mergeBlocksAfterDelete = isEndOfParagraph(visibleEnd) || isStartOfBlock(visibleStart);
         deleteSelection(false, mergeBlocksAfterDelete, true);
-        updateLayout();
         visibleStart = endingSelection().visibleStart();
         if (fragment.hasInterchangeNewlineAtStart()) {
             if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
@@ -561,44 +507,50 @@ void ReplaceSelectionCommand::doApply()
             } else
                 insertParagraphSeparator();
         }
-        startPos = endingSelection().start();
+        insertionPos = endingSelection().start();
     } 
     else {
         ASSERT(selection.isCaret());
         if (fragment.hasInterchangeNewlineAtStart()) {
-            if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
-                if (!isEndOfDocument(visibleStart))
-                    setEndingSelection(visibleStart.next());
-            } else 
+            VisiblePosition next = visibleStart.next(true);
+            if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart) && next.isNotNull())
+                setEndingSelection(next);
+            else 
                 insertParagraphSeparator();
         }
         // We split the current paragraph in two to avoid nesting the blocks from the fragment inside the current block.
         // For example paste <div>foo</div><div>bar</div><div>baz</div> into <div>x^x</div>, where ^ is the caret.  
         // As long as the  div styles are the same, visually you'd expect: <div>xbar</div><div>bar</div><div>bazx</div>, 
         // not <div>xbar<div>bar</div><div>bazx</div></div>
-        // FIXME: If this code is really about preventing block nesting, then the check should be !isEndOfBlock(visibleStart) and we 
-        // should split the block in two, instead of inserting a paragraph separator. In the meantime, it appears that code below 
-        // depends on this split happening when the paste position is not the start or end of a paragraph.
-        if (!isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
+        if (m_preventNesting && !isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
             insertParagraphSeparator();
-            setEndingSelection(VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY).previous());
+            setEndingSelection(endingSelection().visibleStart().previous());
         }
-        startPos = endingSelection().start();
+        insertionPos = endingSelection().start();
     }
     
     // NOTE: This would be an incorrect usage of downstream() if downstream() were changed to mean the last position after 
     // p that maps to the same visible position as p (since in the case where a br is at the end of a block and collapsed 
     // away, there are positions after the br which map to the same visible position as [br, 0]).  
-    Node* endBR = startPos.downstream().node()->hasTagName(brTag) ? startPos.downstream().node() : 0;
+    Node* endBR = insertionPos.downstream().node()->hasTagName(brTag) ? insertionPos.downstream().node() : 0;
     
-    if (startAtStartOfBlock && startBlock->inDocument())
-        startPos = Position(startBlock, 0);
+    Node* startBlock = enclosingBlock(insertionPos.node());
+    
+    // Adjust insertionPos to prevent nesting.
+    if (m_preventNesting) {
+        ASSERT(startBlock != currentRoot);
+        VisiblePosition visibleInsertionPos(insertionPos);
+        if (isEndOfBlock(visibleInsertionPos) && !(isStartOfBlock(visibleInsertionPos) && fragment.hasInterchangeNewlineAtEnd()))
+            insertionPos = positionAfterNode(startBlock);
+        else if (isStartOfBlock(visibleInsertionPos))
+            insertionPos = positionBeforeNode(startBlock);
+    }
 
-    // paste into run of tabs splits the tab span
-    startPos = positionOutsideTabSpan(startPos);
+    // Paste into run of tabs splits the tab span.
+    insertionPos = positionOutsideTabSpan(insertionPos);
     
-    // paste at start or end of link goes outside of link
-    startPos = positionAvoidingSpecialElementBoundary(startPos);
+    // Paste at start or end of link goes outside of link.
+    insertionPos = positionAvoidingSpecialElementBoundary(insertionPos);
 
     Frame *frame = document()->frame();
     
@@ -607,115 +559,51 @@ void ReplaceSelectionCommand::doApply()
     frame->clearTypingStyle();
     setTypingStyle(0);    
     
-    // done if there is nothing to add
+    // We're finished if there is nothing to add.
     if (!fragment.firstChild())
         return;
     
-    // 1) Add the first paragraph of the incoming fragment, merging it with the paragraph that contained the 
-    // start of the selection that was pasted into.
-    // 2) Add everything else.
-    // 3) Restore the styles of inserted nodes (since styles were removed during the test insertion).
-    // 4) Do one of the following: a) if there was a br at the end of the fragment, expand it if it collapsed 
-    // because of quirks mode, b) merge the last paragraph of the incoming fragment with the paragraph that contained the 
+    // 1) Insert the content.
+    // 2) Restore the styles of inserted nodes (since styles were removed during the test insertion).
+    // 3) Merge the start of the added content with the content before the position being pasted into.
+    // 4) Do one of the following: a) expand the last br if the fragment ends with one and it collapsed,
+    // b) merge the last paragraph of the incoming fragment with the paragraph that contained the 
     // end of the selection that was pasted into, or c) handle an interchange newline at the end of the 
     // incoming fragment.
     // 5) Add spaces for smart replace.
     // 6) Select the replacement if requested, and match style if requested.
-        
-    // initially, we say the insertion point is the start of selection
-    updateLayout();
-    Position insertionPos = startPos;
-
-    // Add the first paragraph.
-    if (mergeStart) {
-        RefPtr<Node> refNode = fragment.mergeStartNode();
-        if (refNode) {
-            Node *parent = refNode->parentNode();
-            RefPtr<Node> node = refNode->nextSibling();
-            fragment.removeNode(refNode);
-            insertNodeAtAndUpdateNodesInserted(refNode.get(), startPos.node(), startPos.offset());
-            while (node && !fragment.wasBlock(node.get())) {
-                Node *next = node->nextSibling();
-                fragment.removeNode(node);
-                insertNodeAfterAndUpdateNodesInserted(node.get(), refNode.get());
-                refNode = node;
-                node = next;
-            }
-
-            // remove any ancestors we emptied, except the root itself which cannot be removed
-            while (parent && parent->parentNode() && parent->childNodeCount() == 0) {
-                Node *nextParent = parent->parentNode();
-                fragment.removeNode(parent);
-                parent = nextParent;
-            }
-        }
-        
-        // update insertion point to be at the end of the last block inserted
-        if (m_lastNodeInserted) {
-            updateLayout();
-            insertionPos = Position(m_lastNodeInserted.get(), m_lastNodeInserted->caretMaxOffset());
-        }
+    
+    VisiblePosition startOfInsertedContent, endOfInsertedContent;
+    
+    RefPtr<Node> refNode = fragment.firstChild();
+    RefPtr<Node> node = refNode->nextSibling();
+    
+    fragment.removeNode(refNode);
+    insertNodeAtAndUpdateNodesInserted(refNode.get(), insertionPos.node(), insertionPos.offset());
+    
+    while (node) {
+        Node* next = node->nextSibling();
+        fragment.removeNode(node);
+        insertNodeAfterAndUpdateNodesInserted(node.get(), refNode.get());
+        refNode = node;
+        node = next;
     }
     
-    // Add everything else.
-    if (fragment.firstChild()) {
-        RefPtr<Node> refNode = fragment.firstChild();
-        RefPtr<Node> node = refNode ? refNode->nextSibling() : 0;
-        Node* insertionBlock = enclosingBlock(insertionPos.node());
-        Node* insertionRoot = insertionPos.node()->rootEditableElement();
-        bool insertionBlockIsRoot = insertionBlock == insertionRoot;
-        VisiblePosition visibleInsertionPos(insertionPos);
-        fragment.removeNode(refNode);
-        // FIXME: The first two cases need to be rethought.  They're about preventing the nesting of 
-        // incoming blocks in the block where the paste is being performed.  But, avoiding nesting doesn't 
-        // always produce the desired visual result, and the decisions are based on wasBlock, which 
-        // we're getting rid of.
-        if (!insertionBlockIsRoot && fragment.wasBlock(refNode.get()) && isStartOfBlock(visibleInsertionPos) && !m_lastNodeInserted)
-            insertNodeBeforeAndUpdateNodesInserted(refNode.get(), insertionBlock);
-        else if (!insertionBlockIsRoot && fragment.wasBlock(refNode.get()) && isEndOfBlock(visibleInsertionPos))
-            insertNodeAfterAndUpdateNodesInserted(refNode.get(), insertionBlock);
-        else if (m_lastNodeInserted && !fragment.wasBlock(refNode.get())) {
-            // A non-null m_lastNodeInserted means we've done merging above.  That means everything in the first paragraph 
-            // of the fragment has been merged with everything up to the start of the paragraph where the paste was performed.  
-            // refNode is the first node in the second paragraph of the fragment to paste.  Since it's inline, we can't 
-            // insert it at insertionPos, because it wouldn't end up in its own paragraph.
-
-            // FIXME: Code above does paragraph splitting and so we are assured that visibleInsertionPos is the end of
-            // a paragraph, but the above splitting should eventually be only about preventing nesting.
-            ASSERT(isEndOfParagraph(visibleInsertionPos));
-            VisiblePosition next = visibleInsertionPos.next();
-            if (next.isNull() || next.rootEditableElement() != insertionRoot) {
-                setEndingSelection(visibleInsertionPos);
-                insertParagraphSeparator();
-                next = visibleInsertionPos.next();
-            }
-            
-            Position pos = next.deepEquivalent().downstream();
-            insertNodeAtAndUpdateNodesInserted(refNode.get(), pos.node(), pos.offset());
-        } else {
-            insertNodeAtAndUpdateNodesInserted(refNode.get(), insertionPos.node(), insertionPos.offset());
-        }
-        
-        while (node) {
-            Node* next = node->nextSibling();
-            fragment.removeNode(node);
-            insertNodeAfterAndUpdateNodesInserted(node.get(), refNode.get());
-            refNode = node;
-            node = next;
-        }
-        updateLayout();
-        insertionPos = Position(m_lastNodeInserted.get(), m_lastNodeInserted->caretMaxOffset());
-    }
-
+    endOfInsertedContent = VisiblePosition(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
+    startOfInsertedContent = VisiblePosition(Position(m_firstNodeInserted.get(), 0));
+    
+    // We inserted before the startBlock to prevent nesting, and the content before the startBlock wasn't in its own block and
+    // didn't have a br after it, so the inserted content ended up in the same paragraph.
+    if (insertionPos.node() == startBlock->parentNode() && (unsigned)insertionPos.offset() < startBlock->nodeIndex() && !isStartOfParagraph(startOfInsertedContent))
+        insertNodeAt(createBreakElement(document()).get(), startOfInsertedContent.deepEquivalent().node(), startOfInsertedContent.deepEquivalent().offset());
+    
     Position lastPositionToSelect;
     
     bool interchangeNewlineAtEnd = fragment.hasInterchangeNewlineAtEnd();
-    bool lastNodeInsertedWasBR = m_lastNodeInserted->hasTagName(brTag);
 
     if (shouldRemoveEndBR(endBR)) {
-        if (interchangeNewlineAtEnd || lastNodeInsertedWasBR) {
+        if (interchangeNewlineAtEnd) {
             interchangeNewlineAtEnd = false;
-            lastNodeInsertedWasBR = false;
             m_lastNodeInserted = endBR;
             lastPositionToSelect = VisiblePosition(Position(m_lastNodeInserted.get(), 0)).deepEquivalent();
         } else
@@ -726,16 +614,26 @@ void ReplaceSelectionCommand::doApply()
     if (!m_matchStyle)
         fixupNodeStyles(fragment.nodes(), fragment.renderingInfo());
         
-    VisiblePosition endOfInsertedContent(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
-    VisiblePosition startOfInsertedContent(Position(m_firstNodeInserted.get(), 0));    
+    if (shouldMergeStart(selectionStartWasStartOfParagraph, fragment.hasInterchangeNewlineAtStart())) {
+        VisiblePosition destination = startOfInsertedContent.previous();
+        VisiblePosition startOfParagraphToMove = startOfInsertedContent;
+
+        moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
+        m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().downstream().node();
+        if (!m_lastNodeInserted->inDocument())
+            m_lastNodeInserted = endingSelection().visibleEnd().deepEquivalent().downstream().node();
+    
+    }
+            
+    endOfInsertedContent = VisiblePosition(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
+    startOfInsertedContent = VisiblePosition(Position(m_firstNodeInserted.get(), 0));
     
     if (interchangeNewlineAtEnd) {
-        VisiblePosition pos(insertionPos);
-        VisiblePosition next = pos.next();
+        VisiblePosition next = endOfInsertedContent.next(true);
 
-        if (endWasEndOfParagraph || !isEndOfParagraph(pos) || next.rootEditableElement() != currentRoot) {
-            if (!isStartOfParagraph(pos)) {
-                setEndingSelection(pos.deepEquivalent().downstream(), DOWNSTREAM);
+        if (selectionEndWasEndOfParagraph || !isEndOfParagraph(endOfInsertedContent) || next.isNull()) {
+            if (!isStartOfParagraph(endOfInsertedContent)) {
+                setEndingSelection(endOfInsertedContent);
                 insertParagraphSeparator();
 
                 // Select up to the paragraph separator that was added.
@@ -747,44 +645,32 @@ void ReplaceSelectionCommand::doApply()
             lastPositionToSelect = next.deepEquivalent().downstream();
         }
 
-    } else if (lastNodeInsertedWasBR) {
+    } else if (m_lastNodeInserted->hasTagName(brTag)) {
         // We want to honor the last incoming line break, so, if it will collapse away because of quirks mode, 
         // add an extra one.
         // FIXME: This will expand a br inside a block: <div><br></div>
         // FIXME: Should we expand all incoming brs that collapse because of quirks mode?
-        if (!document()->inStrictMode() && isEndOfBlock(VisiblePosition(Position(m_lastNodeInserted.get(), 0))))
+        if (!document()->inStrictMode() && isEndOfBlock(endOfInsertedContent) && !isStartOfParagraph(endOfInsertedContent))
             insertNodeBeforeAndUpdateNodesInserted(createBreakElement(document()).get(), m_lastNodeInserted.get());
             
-    } else if (shouldMergeEnd(endOfInsertedContent, endWasEndOfParagraph)) {
-        // Make sure that content after the end of the selection being pasted into is in the same paragraph as the 
-        // last bit of content that was inserted.
+    } else if (shouldMergeEnd(selectionEndWasEndOfParagraph)) {
+    
+        // Merging two paragraphs will destroy the moved one's block styles.  Always move forward to preserve
+        // the block style of the paragraph already in the document, unless the paragraph to move would include the
+        // what was the start of the selection that was pasted into.
+        bool mergeForward = !inSameParagraph(startOfInsertedContent, endOfInsertedContent) || isStartOfParagraph(startOfInsertedContent);
         
-        Position downstreamEnd = endOfInsertedContent.deepEquivalent().downstream();
-        Position upstreamOnePastEnd = endOfInsertedContent.next().deepEquivalent().upstream();
-        Node* node = downstreamEnd.node();
-        int offset = downstreamEnd.offset();
-        if (node && node == upstreamOnePastEnd.node() && offset + 1 == upstreamOnePastEnd.offset() && node->isTextNode()) {
-            // Special case for removing a newline character.
-            Text* textNode = static_cast<Text*>(node);
-            if (textNode->length() == 1)
-                removeNodeAndPruneAncestors(textNode);
-            else
-                deleteTextFromNode(textNode, offset, 1);
-        } else {
-            // Merging two paragraphs will destroy the moved one's block styles.  Always move forward to preserve
-            // the block style of the paragraph already in the document, unless the paragraph to move would include the
-            // what was the start of the selection that was pasted into.
-            bool mergeForward = !inSameParagraph(startOfInsertedContent, endOfInsertedContent);
-            
-            VisiblePosition destination = mergeForward ? endOfInsertedContent.next() : endOfInsertedContent;
-            VisiblePosition startOfParagraphToMove = mergeForward ? startOfParagraph(endOfInsertedContent) : endOfInsertedContent.next();
+        VisiblePosition destination = mergeForward ? endOfInsertedContent.next() : endOfInsertedContent;
+        VisiblePosition startOfParagraphToMove = mergeForward ? startOfParagraph(endOfInsertedContent) : endOfInsertedContent.next();
 
-            moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
-            // Merging forward will remove m_lastNodeInserted from the document.
-            // FIXME: Maintain positions for the start and end of inserted content instead of keeping nodes.  The nodes are
-            // only ever used to create positions where inserted content starts/ends.
-            if (mergeForward)
-                m_lastNodeInserted = destination.previous().deepEquivalent().node();
+        moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
+        // Merging forward will remove m_lastNodeInserted from the document.
+        // FIXME: Maintain positions for the start and end of inserted content instead of keeping nodes.  The nodes are
+        // only ever used to create positions where inserted content starts/ends.
+        if (mergeForward) {
+            m_lastNodeInserted = destination.previous().deepEquivalent().node();
+            if (!m_firstNodeInserted->inDocument())
+                m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().node();
         }
     }
     
@@ -839,9 +725,9 @@ bool ReplaceSelectionCommand::shouldRemoveEndBR(Node* endBR)
     return
         // The br is collapsed away and so is unnecessary.
         !document()->inStrictMode() && isEndOfBlock(visiblePos) && !isStartOfParagraph(visiblePos) ||
-        // A br that was originally holding a line open should be displaced by inserted content.
+        // A br that was originally holding a line open should be displaced by inserted content or turned into a line break.
         // A br that was originally acting as a line break should still be acting as a line break, not as a placeholder.
-        isStartOfParagraph(visiblePos) && isEndOfParagraph(visiblePos);
+        isStartOfParagraph(visiblePos) && isEndOfParagraph(visiblePos) && !m_lastNodeInserted->hasTagName(brTag);
 }
 
 void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositionToSelect)
@@ -907,7 +793,6 @@ void ReplaceSelectionCommand::updateNodesInserted(Node *node)
     if (!node)
         return;
 
-    m_lastTopNodeInserted = node;
     if (!m_firstNodeInserted)
         m_firstNodeInserted = node;
     

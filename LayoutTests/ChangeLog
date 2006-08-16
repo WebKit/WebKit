@@ -1,3 +1,127 @@
+2006-08-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by thatcher
+        
+        Added:
+        * editing/pasteboard/interchange-newline-4-expected.checksum: Added.
+        * editing/pasteboard/interchange-newline-4-expected.png: Added.
+        * editing/pasteboard/interchange-newline-4-expected.txt: Added.
+        * editing/pasteboard/interchange-newline-4.html: Added.
+        * editing/deleting/paragraph-in-preserveNewline-expected.checksum: Added.
+        * editing/deleting/paragraph-in-preserveNewline-expected.png: Added.
+        * editing/deleting/paragraph-in-preserveNewline-expected.txt: Added.
+        * editing/deleting/paragraph-in-preserveNewline.html: Added.
+        
+        Equivalent render trees, fixes, or bugs exposed (10427, 10428):
+        * editing/execCommand/insertHTML-expected.checksum:
+        * editing/execCommand/insertHTML-expected.png:
+        * editing/execCommand/insertHTML-expected.txt:
+        * editing/execCommand/insertHTML.html:
+        * editing/execCommand/insertHorizontalRule-expected.checksum:
+        * editing/execCommand/insertHorizontalRule-expected.png:
+        * editing/execCommand/insertHorizontalRule-expected.txt:
+        * editing/inserting/insert-3786362-fix-expected.checksum:
+        * editing/inserting/insert-3786362-fix-expected.png:
+        * editing/inserting/insert-3786362-fix-expected.txt:
+        * editing/inserting/insert-3786362-fix.html:
+        * editing/inserting/insert-3907422-fix-expected.txt:
+        * editing/pasteboard/3976872-expected.checksum:
+        * editing/pasteboard/3976872-expected.png:
+        * editing/pasteboard/3976872-expected.txt:
+        * editing/pasteboard/4076267-3-expected.checksum:
+        * editing/pasteboard/4076267-3-expected.png:
+        * editing/pasteboard/4076267-3-expected.txt:
+        * editing/pasteboard/4076267-3.html:
+        * editing/pasteboard/4076267-expected.checksum:
+        * editing/pasteboard/4076267-expected.png:
+        * editing/pasteboard/4076267-expected.txt:
+        * editing/pasteboard/4076267.html:
+        * editing/pasteboard/4242293-1-expected.txt:
+        * editing/pasteboard/4242293-expected.checksum:
+        * editing/pasteboard/4242293-expected.png:
+        * editing/pasteboard/4242293-expected.txt:
+        * editing/pasteboard/4631972-expected.txt:
+        * editing/pasteboard/8145-1-expected.txt:
+        * editing/pasteboard/8145-3-expected.txt:
+        * editing/pasteboard/block-wrappers-necessary-expected.txt:
+        * editing/pasteboard/copy-paste-bidi-expected.txt:
+        * editing/pasteboard/display-block-on-spans-expected.checksum:
+        * editing/pasteboard/display-block-on-spans-expected.png:
+        * editing/pasteboard/display-block-on-spans-expected.txt:
+        * editing/pasteboard/interchange-newline-1-expected.txt:
+        * editing/pasteboard/merge-end-1-expected.checksum:
+        * editing/pasteboard/merge-end-1-expected.png:
+        * editing/pasteboard/merge-end-1-expected.txt:
+        * editing/pasteboard/merge-end-1.html:
+        * editing/pasteboard/merge-end-2-expected.checksum:
+        * editing/pasteboard/merge-end-2-expected.png:
+        * editing/pasteboard/merge-end-2-expected.txt:
+        * editing/pasteboard/merge-end-2.html:
+        * editing/pasteboard/merge-end-4-expected.txt:
+        * editing/pasteboard/merge-end-list-expected.txt:
+        * editing/pasteboard/merge-end-table-expected.checksum:
+        * editing/pasteboard/merge-end-table-expected.png:
+        * editing/pasteboard/merge-end-table-expected.txt:
+        * editing/pasteboard/nested-blocks-with-text-area-expected.txt:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.txt:
+        * editing/pasteboard/paste-4039777-fix-expected.checksum:
+        * editing/pasteboard/paste-4039777-fix-expected.png:
+        * editing/pasteboard/paste-4039777-fix-expected.txt:
+        * editing/pasteboard/paste-line-endings-002-expected.txt:
+        * editing/pasteboard/paste-line-endings-004-expected.txt:
+        * editing/pasteboard/paste-line-endings-007-expected.txt:
+        * editing/pasteboard/paste-line-endings-008-expected.txt:
+        * editing/pasteboard/paste-line-endings-009-expected.txt:
+        * editing/pasteboard/paste-match-style-002-expected.txt:
+        * editing/pasteboard/paste-pre-001-expected.txt:
+        * editing/pasteboard/paste-pre-002-expected.txt:
+        * editing/pasteboard/paste-table-001-expected.checksum:
+        * editing/pasteboard/paste-table-001-expected.png:
+        * editing/pasteboard/paste-table-001-expected.txt:
+        * editing/pasteboard/paste-table-003-expected.txt:
+        * editing/pasteboard/paste-text-001-expected.txt:
+        * editing/pasteboard/paste-text-003-expected.txt:
+        * editing/pasteboard/paste-text-007-expected.checksum:
+        * editing/pasteboard/paste-text-007-expected.png:
+        * editing/pasteboard/paste-text-007-expected.txt:
+        * editing/pasteboard/paste-text-008-expected.txt:
+        * editing/pasteboard/paste-text-009-expected.txt:
+        * editing/pasteboard/paste-text-010-expected.txt:
+        * editing/pasteboard/paste-text-011-expected.txt:
+        * editing/pasteboard/paste-text-012-expected.checksum:
+        * editing/pasteboard/paste-text-012-expected.png:
+        * editing/pasteboard/paste-text-012-expected.txt:
+        * editing/pasteboard/paste-text-012.html:
+        * editing/pasteboard/paste-text-013-expected.checksum:
+        * editing/pasteboard/paste-text-013-expected.png:
+        * editing/pasteboard/paste-text-013-expected.txt:
+        * editing/pasteboard/paste-text-015-expected.txt:
+        * editing/pasteboard/paste-text-017-expected.txt:
+        * editing/pasteboard/paste-text-019-expected.checksum:
+        * editing/pasteboard/paste-text-019-expected.png:
+        * editing/pasteboard/paste-text-019-expected.txt:
+        * editing/pasteboard/paste-text-019.html:
+        * editing/pasteboard/paste-text-at-tabspan-001-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-002-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-003-expected.txt:
+        * editing/pasteboard/pasting-object-expected.txt:
+        * editing/pasteboard/prevent-block-nesting-01-expected.txt:
+        * editing/pasteboard/quirks-mode-br-1-expected.txt:
+        * editing/pasteboard/smart-paste-001-expected.txt:
+        * editing/pasteboard/smart-paste-002-expected.txt:
+        * editing/pasteboard/smart-paste-003-expected.txt:
+        * editing/pasteboard/smart-paste-004-expected.txt:
+        * editing/pasteboard/smart-paste-005-expected.txt:
+        * editing/pasteboard/smart-paste-006-expected.txt:
+        * editing/pasteboard/smart-paste-007-expected.txt:
+        * editing/pasteboard/smart-paste-008-expected.txt:
+        * editing/pasteboard/undoable-fragment-removes-expected.checksum:
+        * editing/pasteboard/undoable-fragment-removes-expected.png:
+        * editing/pasteboard/undoable-fragment-removes-expected.txt:
+        * editing/pasteboard/undoable-fragment-removes.html:
+        * editing/style/smoosh-styles-001-expected.txt:
+        * editing/style/smoosh-styles-002-expected.txt:
+
 2006-08-15  Jonas Witt <jonas.witt@gmail.com>
 
         Reviewed by Darin.
