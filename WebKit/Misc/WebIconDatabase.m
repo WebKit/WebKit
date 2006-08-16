@@ -393,11 +393,6 @@ NSSize WebIconLargeSize = {128, 128};
     return [_private->databaseBridge isIconExpiredForIconURL:iconURL];
 }
 
-- (BOOL)isIconExpiredForPageURL:(NSString *)pageURL
-{
-    return [_private->databaseBridge isIconExpiredForPageURL:pageURL];
-}
-
 @end
 
 @implementation WebIconDatabase (WebPrivate)

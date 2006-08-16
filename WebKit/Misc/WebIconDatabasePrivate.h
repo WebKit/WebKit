@@ -85,11 +85,6 @@ extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
 */
 - (BOOL)isIconExpiredForIconURL:(NSString *)iconURL;
 
-/*!
-   @method isIconExpiredForPageURL:
-   @discussion Returns whether or not the icon associated with the specified URL is expired in the DB
-*/
-- (BOOL)isIconExpiredForPageURL:(NSString *)pageURL;
 @end
 
 @interface WebIconDatabase (WebPrivate)

@@ -1,3 +1,11 @@
+2006-08-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        * Misc/WebIconDatabase.m: Pruned unused method
+        * Misc/WebIconDatabasePrivate.h: Ditto
+
+
 2006-08-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele (preliminary version) and later by Kevin.
