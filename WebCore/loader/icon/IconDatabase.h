@@ -88,7 +88,7 @@ public:
     static IconDatabase* sharedIconDatabase();
     
     bool open(const String& path);
-    bool isOpen() { return m_db.isOpen(); }
+    bool isOpen() { return m_mainDB.isOpen() && m_privateBrowsingDB.isOpen(); }
     void close();
     
     bool isEmpty();
@@ -107,7 +107,6 @@ public:
     bool hasIconForIconURL(const String&);
 
     bool isIconExpiredForIconURL(const String&);
-    bool isIconExpiredForPageURL(const String&);
     
     // TODO - The following 3 methods were considered private in WebKit - analyze the impact of making them
     // public here in WebCore - I don't see any real badness with doing that...  after all if Chuck Norris wants to muck
@@ -125,7 +124,11 @@ private:
     IconDatabase();
     ~IconDatabase();
     
-    // Remove the Icon and IconResource entry for this icon, as well as the SiteIcon object in memory
+    // This tries to get the iconID for the IconURL and, if it doesn't exist and createIfNecessary is true,
+    // it will create the entry and return the new iconID
+    int64_t establishIconIDForIconURL(SQLDatabase&, const String&, bool createIfNecessary = true);
+
+    // Remove the current database entry for this IconURL
     void forgetIconForIconURLFromDatabase(const String&);
     
     // Wipe all icons from the DB
@@ -140,43 +143,20 @@ private:
     // via a timer fire
     void pruneUnretainedIcons(Timer<IconDatabase>*);
     
-    // Add up the retain count for an iconURL
-    int totalRetainCountForIconURL(const String&);
+    // Determine if an IconURL is still retained by anyone
     bool isIconURLRetained(const String&);
-
-    bool isEnabled();
     
     // Do a quick check to make sure the database tables are in place and the db version is current
-    bool isValidDatabase();
+    bool isValidDatabase(SQLDatabase&);
     
-    // Delete all tables from the database
-    void clearDatabase();
+    // Delete all tables from the given database
+    void clearDatabaseTables(SQLDatabase&);
     
-    // Create the tables and triggers for the on-disk database
-    void recreateDatabase();
-
-    // Create/Delete the temporary, in-memory tables used for private browsing
-    void createPrivateTables();
-    void deletePrivateTables();
+    // Create the tables and triggers for the given database.
+    void createDatabaseTables(SQLDatabase&);
     
-    // The following four methods will either find the iconID for a given iconURL or, if the iconURL
-    // isn't in the table yet and you don't pass a false flag, will create an entry and return the resulting iconID
-    int64_t establishIconIDForIconURL(const String&, bool create = true);
-    int64_t establishIconIDForEscapedIconURL(const String&, bool create = true);
-    int64_t establishTemporaryIconIDForIconURL(const String&, bool create = true);
-    int64_t establishTemporaryIconIDForEscapedIconURL(const String&, bool create = true);
-    
-    // Since we store data in both the ondisk tables and temporary tables, these methods will do the work 
-    // for either case
-    void performSetIconURLForPageURL(int64_t iconID, const String& pageTable, const String& pageURL);
-    void performSetIconDataForIconID(int64_t iconID, const String& resourceTable, const void* data, int size);
-    
-    // The following three methods follow the sqlite convention for blob data
-    // They return a const void* which is a pointer to the data buffer, and store
-    // the size of the data buffer in the int& parameter
-    Vector<unsigned char> imageDataForIconID(int);
+    // Returns the image data for the given IconURL, checking both databases if necessary
     Vector<unsigned char> imageDataForIconURL(const String&);
-    Vector<unsigned char> imageDataForPageURL(const String&);
     
     // FIXME: This method is currently implemented in WebCoreIconDatabaseBridge so we can be in ObjC++ and fire off a loader in Webkit
     // Once all of the loader logic is sufficiently moved into WebCore we need to move this implementation to IconDatabase.cpp
@@ -186,7 +166,10 @@ private:
     static IconDatabase* m_sharedInstance;
     static const int DefaultCachedPageCount;
     
-    SQLDatabase m_db;
+    SQLDatabase m_mainDB;
+    SQLDatabase m_privateBrowsingDB;
+    SQLDatabase* m_currentDB;
+    
     bool m_privateBrowsingEnabled;
     
     Timer<IconDatabase> m_startupTimer;

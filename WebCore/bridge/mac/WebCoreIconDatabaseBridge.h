@@ -51,7 +51,6 @@ typedef WebCore::IconDatabase WebCoreIconDatabase;
 - (void)releaseIconForURL:(NSString *)url;
 
 - (BOOL)isIconExpiredForIconURL:(NSString *)iconURL;
-- (BOOL)isIconExpiredForPageURL:(NSString *)pageURL;
 
 - (void)setPrivateBrowsingEnabled:(BOOL)flag;
 - (BOOL)privateBrowsingEnabled;

@@ -1,3 +1,58 @@
+2006-08-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Major refactoring of new iconDB:
+        -Instead of private browsing being handled by in-memory tables, it's now handled
+         by a separate in-memory database with the same table names.  This allows us to 
+         re-use the same SQL on either the main or private-browsing database
+        -So it follows, I broke out much of the SQL queries into seperate methods suffixed with
+         "Query" that take a database as the method's argument so the same language can run on
+         both private and main tables
+        -Now that we have two DBs, moved the retain/release count to the m_mainDB
+        -While I was at it, updated the schema to combine the Icon and IconResource table - cuts 
+         down on some high-usage, low value queries which were too expensive
+        -Ditched the _url -> url convention for escaping urls for SQL.  Now its url and escapedURL
+        -Pruned tons of unused methods from previous revisions
+
+     * bridge/mac/WebCoreIconDatabaseBridge.h: Removed isIconExpiredForPageURL as it was never used 
+        * bridge/mac/WebCoreIconDatabaseBridge.mm: Ditto
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase): Updated initializer list
+        (WebCore::IconDatabase::open): Sets up both databases
+        (WebCore::IconDatabase::close): Closes both databases
+        (WebCore::IconDatabase::isEmpty): Queries both databases for at least 1 record
+        (WebCore::IconDatabase::isValidDatabase): Reflect the updated schema
+        (WebCore::IconDatabase::clearDatabaseTables): Ditto - and takes DB as a parameter
+        (WebCore::IconDatabase::createDatabaseTables): Ditto
+        (WebCore::IconDatabase::imageDataForIconURL): style cleanup, and using a query-function
+        (WebCore::IconDatabase::setPrivateBrowsingEnabled): Resets private DB instead of private tables
+        (WebCore::IconDatabase::isIconExpiredForIconURL): Uses a query-function on each DB
+        (WebCore::IconDatabase::iconURLForPageURL): Uses a query-function on each DB
+        (WebCore::IconDatabase::retainIconForPageURL): Retain count DB changes 
+        (WebCore::IconDatabase::releaseIconForPageURL): Ditto
+        (WebCore::IconDatabase::isIconURLRetained): Determine if it's time to prune a released icon yet
+        (WebCore::IconDatabase::forgetIconForIconURLFromDatabase): Alot simpler
+        (WebCore::IconDatabase::setIconDataForIconURL): Style cleanup
+        (WebCore::IconDatabase::setHaveNoIconForIconURL): Ditto
+        (WebCore::IconDatabase::setIconURLForPageURL): Ditto - and using a query-function
+        (WebCore::IconDatabase::establishIconIDForIconURL): Style cleanup
+        (WebCore::IconDatabase::pruneUnreferencedIcons): DB name change
+        (WebCore::IconDatabase::pruneUnretainedIcons): Ditto
+        (WebCore::IconDatabase::hasIconForIconURL): Simpler, using a query-function
+        (WebCore::IconDatabase::~IconDatabase):
+        (WebCore::pageURLTableIsEmptyQuery): Self-explanatory SQL query
+        (WebCore::imageDataForIconURLQuery): Self-explanatory SQL query
+        (WebCore::timeStampForIconURLQuery): Self-explanatory SQL query
+        (WebCore::iconURLForPageURLQuery): Self-explanatory SQL query
+        (WebCore::forgetPageURLQuery): Self-explanatory SQL query
+        (WebCore::setIconIDForPageURLQuery): Self-explanatory SQL query
+        (WebCore::getIconIDForIconURLQuery): Self-explanatory SQL query
+        (WebCore::addIconForIconURLQuery): Self-explanatory SQL query
+        (WebCore::hasIconForIconURLQuery): Self-explanatory SQL query
+     * loader/icon/IconDatabase.h: Some new/changed methods, pruned methods, and new comments
+        (WebCore::IconDatabase::isOpen):  Changed our meaning of "isOpen" to reflect the 2 databases
+
 2006-08-15  Jonas Witt <jonas.witt@gmail.com>
 
         Reviewed by Darin.

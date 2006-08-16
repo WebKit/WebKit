@@ -78,11 +78,6 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
     return _iconDB ? _iconDB->isIconExpiredForIconURL(iconURL) : NO;
 }
 
-- (BOOL)isIconExpiredForPageURL:(NSString *)pageURL
-{
-    return _iconDB ? _iconDB->isIconExpiredForPageURL(pageURL) : NO;
-}
-
 - (void)setPrivateBrowsingEnabled:(BOOL)flag
 {
     if (_iconDB)
