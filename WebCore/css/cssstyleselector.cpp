@@ -3399,8 +3399,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             FontDescription fontDescription;
             theme()->systemFont(primitiveValue->getIdent(), fontDescription);
             // Double-check and see if the theme did anything.  If not, don't bother updating the font.
-            if (fontDescription.isAbsoluteSize() && style->setFontDescription(fontDescription))
-                fontDirty = true;
+            if (fontDescription.isAbsoluteSize()) {
+                // Handle the zoom factor.
+                fontDescription.setComputedSize(getComputedSizeFromSpecifiedSize(fontDescription.isAbsoluteSize(), fontDescription.specifiedSize()));
+                if (style->setFontDescription(fontDescription))
+                    fontDirty = true;
+            }
         } else if (value->isFontValue()) {
             FontValue *font = static_cast<FontValue*>(value);
             if (!font->style || !font->variant || !font->weight ||
