@@ -1,3 +1,12 @@
+2006-08-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by mjs.
+        
+        Build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * wtf/Assertions.h:
+
 2006-08-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Tim H.

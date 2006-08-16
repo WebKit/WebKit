@@ -44,7 +44,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="&#x0D;&#x0A;"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;../../../icu/include"
 				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C"
@@ -86,7 +85,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Vector.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Assertions.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\VectorTraits.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\RefPtr.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Platform.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\FastMalloc.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\MathExtras.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\WTF.lib&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\os-win32&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Vector.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Assertions.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\VectorTraits.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\RefPtr.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Platform.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\FastMalloc.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\MathExtras.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashMap.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashTable.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashTraits.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashFunctions.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32\stdint.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\os-win32&quot;&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\WTF.lib&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -119,7 +118,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="&#x0D;&#x0A;"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;../../../icu/include"
 				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C;NDEBUG"
 				ExceptionHandling="0"
@@ -158,7 +156,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Vector.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Assertions.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\VectorTraits.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\RefPtr.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Platform.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\FastMalloc.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\WTF.lib&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\os-win32&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Vector.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Assertions.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\VectorTraits.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\RefPtr.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Platform.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\FastMalloc.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashMap.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashTable.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashTraits.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashFunctions.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32\stdint.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\os-win32&quot;&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\WTF.lib&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -314,6 +312,14 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\JSLock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSWrapperObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSWrapperObject.h"
 				>
 			</File>
 			<File
