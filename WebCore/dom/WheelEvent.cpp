@@ -48,6 +48,29 @@ WheelEvent::WheelEvent(bool horizontal, int wheelDelta, AbstractView* view,
 {
 }
 
+void WheelEvent::initWheelEvent(bool horizontal, int wheelDelta, AbstractView* view,
+                                int screenX, int screenY, int pageX, int pageY,
+                                bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+{
+    if (dispatched())
+        return;
+    
+    initUIEvent(horizontal ? khtmlHorizontalmousewheelEvent : mousewheelEvent, 
+                true, true, view, 0);
+    
+    m_screenX = screenX;
+    m_screenY = screenY;
+    m_ctrlKey = ctrlKey;
+    m_altKey = altKey;
+    m_shiftKey = shiftKey;
+    m_metaKey = metaKey;
+    m_horizontal = horizontal;
+    m_wheelDelta = wheelDelta;
+    
+    initCoordinates(pageX, pageY);
+}
+
+
 bool WheelEvent::isWheelEvent() const
 {
     return true;

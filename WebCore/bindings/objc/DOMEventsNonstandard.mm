@@ -28,6 +28,7 @@
 #import "DOMPrivate.h"
 
 #import "DOMEventsInternal.h"
+#import "DOMViewsInternal.h"
 #import "DOMInternal.h"
 #import "KeyboardEvent.h"
 #import "WheelEvent.h"
@@ -89,6 +90,13 @@ ALLOW_DOM_CAST(Event)
 - (int)wheelDelta
 {
     return [self _wheelEvent]->wheelDelta();
+}
+
+- (void)initWheelEvent:(BOOL)horizontal :(int)wheelDelta :(DOMAbstractView *)viewArg :(int)screenXArg :(int)screenYArg :(int)clientX :(int)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg
+{
+    [self _wheelEvent]->initWheelEvent(horizontal, wheelDelta, [viewArg _abstractView], 
+        screenXArg, screenYArg, clientX, clientY,
+        ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg);
 }
 
 @end

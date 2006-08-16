@@ -79,3 +79,12 @@
 @interface DOMHTMLSelectElement(FormsAutoFillTransition)
 - (void)_activateItemAtIndex:(int)index;
 @end
+
+@interface DOMKeyboardEvent(PublicPending)
+- (void)initKeyboardEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(NSString *)keyIdentifierArg :(unsigned)keyLocationArg :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg;
+@end
+
+@interface DOMWheelEvent(PublicPending)
+- (void)initWheelEvent:(BOOL)horizontal :(int)wheelDelta :(DOMAbstractView *)viewArg :(int)screenXArg :(int)screenYArg :(int)clientX :(int)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg;
+@end
+

@@ -99,7 +99,8 @@ NSArray *webkitDomEventNames;
             || aSelector == @selector(mouseMoveToX:Y:)
             || aSelector == @selector(leapForward:)
             || aSelector == @selector(keyDown:withModifiers:)
-            || aSelector == @selector(enableDOMUIEventLogging:))
+            || aSelector == @selector(enableDOMUIEventLogging:)
+            || aSelector == @selector(fireKeyboardEventsToElement:))
         return NO;
     return YES;
 }
@@ -114,6 +115,8 @@ NSArray *webkitDomEventNames;
         return @"keyDown";
     if (aSelector == @selector(enableDOMUIEventLogging:))
         return @"enableDOMUIEventLogging";
+    if (aSelector == @selector(fireKeyboardEventsToElement:))
+        return @"fireKeyboardEventsToElement";
     return nil;
 }
 
@@ -377,6 +380,38 @@ NSArray *webkitDomEventNames;
         printf("  isHorizontal:  %d\n", [(DOMWheelEvent*)event isHorizontal] ? 1 : 0);
         printf("  wheelDelta:    %d\n", [(DOMWheelEvent*)event wheelDelta]);
     }
+}
+
+// FIXME: It's not good to have a test hard-wired into this controller like this.
+// Instead we need to get testing framework based on the Objective-C bindings
+// to work well enough that we can test that way instead.
+- (void)fireKeyboardEventsToElement:(WebScriptObject *)element {
+    
+    if (![element isKindOfClass:[DOMHTMLElement class]]) {
+        return;
+    }
+    
+    DOMHTMLElement *target = (DOMHTMLElement*)element;
+    DOMDocument *document = [target ownerDocument];
+    
+    // Keyboard Event 1
+    
+    DOMEvent *domEvent = [document createEvent:@"KeyboardEvent"];
+    [(DOMKeyboardEvent*)domEvent initKeyboardEvent:@"keydown" :YES :YES :[document defaultView] :@"U+000041" :0 :YES :NO :NO :NO];
+    [target dispatchEvent:domEvent];  
+        
+    // Keyboard Event 2
+    
+    domEvent = [document createEvent:@"KeyboardEvent"];
+    [(DOMKeyboardEvent*)domEvent initKeyboardEvent:@"keypress" :YES :YES :[document defaultView] :@"U+000045" :1 :NO :YES :NO :NO];
+    [target dispatchEvent:domEvent];    
+    
+    // Keyboard Event 3
+    
+    domEvent = [document createEvent:@"KeyboardEvent"];
+    [(DOMKeyboardEvent*)domEvent initKeyboardEvent:@"keyup" :YES :YES :[document defaultView] :@"U+000056" :0 :NO :NO :NO :NO];
+    [target dispatchEvent:domEvent];   
+    
 }
 
 @end

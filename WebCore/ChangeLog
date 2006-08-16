@@ -1,3 +1,22 @@
+2006-08-15  Jonas Witt <jonas.witt@gmail.com>
+
+        Reviewed by Darin.
+
+        - added ObjC wrappers for the KeyboardEvent and WheelEvent initializers
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=9736
+
+        * bindings/objc/DOMEvents.mm:
+        (-[DOMKeyboardEvent initKeyboardEvent::::::::::]):
+        * bindings/objc/DOMEventsNonstandard.mm:
+        (-[DOMWheelEvent initWheelEvent:::::::::::]):
+        * bindings/objc/DOMPrivate.h:
+
+        - added an initializer for the WheelEvent
+
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::initWheelEvent):
+        * dom/WheelEvent.h:
+
 2006-08-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Tim H.

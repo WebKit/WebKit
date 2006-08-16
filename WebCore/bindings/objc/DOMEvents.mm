@@ -213,6 +213,11 @@ ALLOW_DOM_CAST(Event)
     return NO;
 }
 
+- (void)initKeyboardEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(NSString *)keyIdentifierArg :(unsigned)keyLocationArg :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg {
+    [self _keyboardEvent]->initKeyboardEvent(typeArg, canBubbleArg, cancelableArg,
+        [viewArg _abstractView], keyIdentifierArg, keyLocationArg, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, false);
+}
+
 @end
 
 @implementation DOMMouseEvent

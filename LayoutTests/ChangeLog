@@ -1,3 +1,13 @@
+2006-08-15  Jonas Witt <jonas.witt@gmail.com>
+
+        Reviewed by Darin.
+
+        - added a test to check keyboard events fired from the ObjC API:
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=9736
+
+        * fast/events/objc-keyboard-event-creation-expected.txt: Added.
+        * fast/events/objc-keyboard-event-creation.html: Added.
+
 2006-08-15  Geoffrey Garen  <ggaren@apple.com>
 
         Layout test for <rdar://problem/4661982> (crash in KHTMLParser::popBlock)

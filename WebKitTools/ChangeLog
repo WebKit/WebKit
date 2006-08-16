@@ -1,3 +1,16 @@
+2006-08-15  Jonas Witt <jonas.witt@gmail.com>
+
+        Reviewed by Darin.
+
+        - added a function to create a few DOMKeyboardEvents and dispatch
+          them to a specified HTML element
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=9736
+
+        * DumpRenderTree/EventSendingController.m:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (-[EventSendingController fireKeyboardEventsToElement:]):
+
 2006-08-15  Duncan Wilcox  <duncan@mclink.it>
 
         Reviewed and tweaked by Darin.

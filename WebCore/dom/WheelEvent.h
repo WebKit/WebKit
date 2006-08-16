@@ -37,6 +37,10 @@ namespace WebCore {
         WheelEvent(bool horizontal, int wheelDelta, AbstractView*,
                    int screenX, int screenY, int pageX, int pageY,
                    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
+
+        void initWheelEvent(bool horizontal, int wheelDelta, AbstractView*,
+                            int screenX, int screenY, int pageX, int pageY,
+                            bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
         
         bool isHorizontal() const { return m_horizontal; }
         int wheelDelta() const { return m_wheelDelta; }
