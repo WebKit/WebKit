@@ -1,3 +1,13 @@
+2006-08-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Brady Eidson
+        
+        - fixed <rdar://problem/4637156> underlines appearing in white selection text
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintDecorations):
+        bail out if phase is PaintPhaseSelection and forceWhiteText is true
+
 2006-08-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John

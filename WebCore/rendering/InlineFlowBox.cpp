@@ -716,6 +716,10 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
     if (object()->style()->htmlHacks() || !object()->shouldPaintWithinRoot(i) ||
         object()->style()->visibility() != VISIBLE)
         return;
+    
+    // We don't want underlines or other decorations when we're trying to draw nothing but the selection as white text.
+    if (i.phase == PaintPhaseSelection && i.forceWhiteText)
+        return;
 
     GraphicsContext* p = i.p;
     _tx += m_x;
