@@ -1,3 +1,15 @@
+2006-08-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by thatcher
+
+        Equivalent render tree:
+        * fast/events/ondragenter-expected.checksum:
+        * fast/events/ondragenter-expected.txt:
+        
+        Patch exposed a bug (10449):
+        * fast/lists/drag-into-marker.html: Removed.
+        * fast/lists/drag-into-marker.html-disabled: Added.
+
 2006-08-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher
