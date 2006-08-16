@@ -75,6 +75,36 @@ bool AffineTransform::isIdentity() const
     return CGAffineTransformIsIdentity(m_transform);
 }
 
+double AffineTransform::m11() const
+{
+    return m_transform.a;
+}
+
+double AffineTransform::m12() const
+{
+    return m_transform.b;
+}
+
+double AffineTransform::m21() const
+{
+    return m_transform.c;
+}
+
+double AffineTransform::m22() const
+{
+    return m_transform.d;
+}
+
+double AffineTransform::dx() const
+{
+    return m_transform.tx;
+}
+
+double AffineTransform::dy() const
+{
+    return m_transform.ty;
+}
+
 void AffineTransform::reset()
 {
     m_transform = CGAffineTransformIdentity;

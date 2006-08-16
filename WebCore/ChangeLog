@@ -1,3 +1,19 @@
+2006-08-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Anders.
+
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10447
+        AffineTransform should be multi-platform compatible
+
+        * platform/AffineTransform.h:
+        * platform/cg/AffineTransformCG.cpp:
+        (WebCore::AffineTransform::m11):
+        (WebCore::AffineTransform::m12):
+        (WebCore::AffineTransform::m21):
+        (WebCore::AffineTransform::m22):
+        (WebCore::AffineTransform::dx):
+        (WebCore::AffineTransform::dy):
+
 2006-08-16  David Hyatt  <hyatt@apple.com>
 
         Fix an issue with CSS2 system fonts where they did not respect text

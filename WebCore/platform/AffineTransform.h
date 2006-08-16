@@ -27,10 +27,10 @@
 #define AffineTransform_h
 
 #if __APPLE__
-
-// FIXME: Implementation is currently completely CG-specific, but soon to be fixed.
-
 #include <ApplicationServices/ApplicationServices.h>
+#elif PLATFORM(QT)
+#include <QMatrix>
+#endif
 
 namespace WebCore {
 
@@ -41,7 +41,11 @@ class AffineTransform {
 public:
     AffineTransform();
     AffineTransform(double a, double b, double c, double d, double tx, double ty);
+#if __APPLE__
     AffineTransform(CGAffineTransform transform);
+#elif PLATFORM(QT)
+    AffineTransform(const QMatrix &matrix);
+#endif
 
     void setMatrix(double a, double b, double c, double d, double tx, double ty);
     void map(double x, double y, double *x2, double *y2) const;
@@ -50,12 +54,12 @@ public:
     
     bool isIdentity() const;
     
-    double m11() const { return m_transform.a; }
-    double m12() const { return m_transform.b; }
-    double m21() const { return m_transform.c; }
-    double m22() const { return m_transform.d; }
-    double dx() const { return m_transform.tx; }
-    double dy() const { return m_transform.ty; }
+    double m11() const;
+    double m12() const;
+    double m21() const;
+    double m22() const;
+    double dx() const;
+    double dy() const;
 
     void reset();
     
@@ -68,18 +72,24 @@ public:
     bool isInvertible() const;
     AffineTransform invert() const;
 
+#if __APPLE__
     operator CGAffineTransform() const;
+#elif PLATFORM(QT)
+    operator QMatrix() const;
+#endif
 
     bool operator==(const AffineTransform&) const;
     AffineTransform& operator*=(const AffineTransform&);
     AffineTransform operator*(const AffineTransform&);
     
 private:
+#if __APPLE__
     CGAffineTransform m_transform;
+#elif PLATFORM(QT)
+    QMatrix m_transform;
+#endif
 };
 
 } // namespace WebCore
-
-#endif // __APPLE__
 
 #endif // AffineTransform_h
