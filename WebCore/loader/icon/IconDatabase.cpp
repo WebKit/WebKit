@@ -43,7 +43,13 @@
 namespace WebCore {
 
 IconDatabase* IconDatabase::m_sharedInstance = 0;
-const int IconDatabase::currentDatabaseVersion = 3;
+
+// This version number is in the DB and marks the current generation of the schema
+// Theoretically once the switch is flipped this should never change
+// Currently, an out-of-date schema causes the DB to be wiped and reset.  This isn't 
+// so bad during development but in the future, we would need to write a conversion
+// function to advance older released schemas to "current"
+const int IconDatabase::currentDatabaseVersion = 4;
 
 // Icons expire once a day
 const int IconDatabase::iconExpirationTime = 60*60*24; 

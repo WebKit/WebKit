@@ -1,5 +1,13 @@
 2006-08-16  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by John
+
+        Updated the DB version number and added a helpful comment explaining its meaning
+
+        * loader/icon/IconDatabase.cpp:
+
+2006-08-16  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Maciej
 
         Major refactoring of new iconDB:
