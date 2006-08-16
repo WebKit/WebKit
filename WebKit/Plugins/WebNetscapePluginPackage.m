@@ -700,10 +700,11 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
 
     if (isBundle)
         CFBundleUnloadExecutable(cfBundle);
-    else
 #ifndef __LP64__
+    else {
         // CFM is not supported in 64-bit
         WebCloseConnection(&connID);
+    }
 #endif
 
     LOG(Plugins, "Plugin Unloaded");

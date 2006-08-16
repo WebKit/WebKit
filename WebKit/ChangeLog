@@ -1,5 +1,17 @@
 2006-08-15  Tim Omernick  <timo@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage _unloadWithShutdown:]):
+        Fixed a subtle problem with the 64-bit debug build -- as written, this would LOG() on 64-bit and do nothing on
+        32-bit!
+        * Plugins/WebPluginDatabase.m:
+        (-[WebPluginDatabase _scanForNewPlugins]):
+        Use +[NSMutableSet set] here.
+
+2006-08-15  Tim Omernick  <timo@apple.com>
+
         Reviewed by Darin Adler.
 
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=8980>

@@ -344,7 +344,7 @@ static NSArray *additionalWebPlugInPaths;
 
 - (NSMutableSet *)_scanForNewPlugins
 {
-    NSMutableSet *newPlugins = [[[NSMutableSet alloc] init] autorelease];
+    NSMutableSet *newPlugins = [NSMutableSet set];
     NSEnumerator *directoryEnumerator = [[self _plugInPaths] objectEnumerator];
     NSMutableSet *uniqueFilenames = [[NSMutableSet alloc] init];
     NSFileManager *fileManager = [NSFileManager defaultManager];
