@@ -1,3 +1,10 @@
+2006-08-17  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        * bindings/npapi.h:
+        Fix ifdef.
+
 2006-08-15  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by mjs.

@@ -50,11 +50,11 @@
 #define JRIEnv  void
 #endif
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #    ifndef XP_WIN
 #        define XP_WIN 1
 #    endif /* XP_WIN */
-#endif /* _WINDOWS */
+#endif /* _WIN32 */
 
 #ifdef __MWERKS__
 #    define _declspec __declspec
