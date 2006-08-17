@@ -148,8 +148,15 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarker(WebCoreTextMarker* t
     if (!m_idsInUse.contains(textMarkerData.axID))
         return VisiblePosition();
 
-    // return the position from the data we stored earlier
-    return VisiblePosition(textMarkerData.node, textMarkerData.offset, textMarkerData.affinity);
+    // generate a VisiblePosition from the data we stored earlier
+    VisiblePosition visiblePos = VisiblePosition(textMarkerData.node, textMarkerData.offset, textMarkerData.affinity);
+
+    // make sure the node and offset still match (catches stale markers). affinity is not critical for this.
+    Position deepPos = visiblePos.deepEquivalent();
+    if (deepPos.node() != textMarkerData.node || deepPos.offset() != textMarkerData.offset)
+        return VisiblePosition();
+    
+    return visiblePos;
 }
 
 void AXObjectCache::childrenChanged(RenderObject* renderer)
