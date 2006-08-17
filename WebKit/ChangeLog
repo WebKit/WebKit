@@ -1,3 +1,17 @@
+2006-08-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/4633896> -[WebView close] should clear all delegates and call setHostWindow:nil
+        <rdar://problem/4649759> Crash when selecting View Source menu using Chinese (-[WebView _close])
+
+        Check to make sure _private is not null. A WebView can be dealloced before _private is setup.
+        Set the _private->closed flag at the beginning of _close to prevent reentry.
+        Set the host window and all the delegates to nil in _close.
+
+        * WebView/WebView.m:
+        (-[WebView _close]):
+
 2006-08-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

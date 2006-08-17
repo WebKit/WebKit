@@ -592,15 +592,25 @@ static bool debugWidget = true;
 
 - (void)_close
 {
-    if (_private->closed)
+    if (!_private || _private->closed)
         return;
+    _private->closed = YES;
 
     [self _removeFromAllWebViewsSet];
+
     [self setGroupName:nil];
+    [self setHostWindow:nil];
+    [self setDownloadDelegate:nil];
+    [self setEditingDelegate:nil];
+    [self setFrameLoadDelegate:nil];
+    [self setPolicyDelegate:nil];
+    [self setResourceLoadDelegate:nil];
+    [self setScriptDebugDelegate:nil];
+    [self setUIDelegate:nil];
 
     // To avoid leaks, call removeDragCaret in case it wasn't called after moveDragCaretToPoint.
     [self removeDragCaret];
-    
+
     [[self mainFrame] _detachFromParent];
     [_private->_pageBridge close];
     [_private->_pageBridge release];
@@ -628,8 +638,6 @@ static bool debugWidget = true;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     [WebPreferences _removeReferenceForIdentifier: [self preferencesIdentifier]];
-
-    _private->closed = YES;
 }
 
 + (NSString *)_MIMETypeForFile:(NSString *)path
