@@ -2,6 +2,14 @@
 
         Reviewed by Kevin Decker.
 
+        <rdar://problem/4606857> WebKit: WebPreferencesChangedNotification not exported in 64-bit
+
+        * WebKit.LP64.exp:
+
+2006-08-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Kevin Decker.
+
         <rdar://problem/4633896> -[WebView close] should clear all delegates and call setHostWindow:nil
         <rdar://problem/4649759> Crash when selecting View Source menu using Chinese (-[WebView _close])
 
