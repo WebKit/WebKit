@@ -1,5 +1,80 @@
 2006-08-17  David Harrison  <harrison@apple.com>
 
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4671069> REGRESSION: Popup buttons in web pages aren't exposed as AXPopupButtons
+
+        Accessorized RenderMenuList objects.
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject mouseButtonListener]):
+        Trivial formatting.
+        
+        (-[WebCoreAXObject actionElement]):
+        Return the HTMLSelectElement.
+        
+        (-[WebCoreAXObject firstChild]):
+        (-[WebCoreAXObject lastChild]):
+        (-[WebCoreAXObject previousSibling]):
+        (-[WebCoreAXObject nextSibling]):
+        (-[WebCoreAXObject parentObject]):
+        (-[WebCoreAXObject parentObjectUnignored]):
+        (-[WebCoreAXObject isAttachment]):
+        (-[WebCoreAXObject attachmentView]):
+        Trivial formatting.
+
+        (-[WebCoreAXObject role]):
+        Return NSAccessibilityPopUpButtonRole.
+
+        (-[WebCoreAXObject subrole]):
+        Trivial formatting.
+        
+        (-[WebCoreAXObject roleDescription]):
+        Return NSAccessibilityPopUpButtonRole.
+        
+        (-[WebCoreAXObject textUnderElement]):
+        Trivial formatting.
+
+        (-[WebCoreAXObject value]):
+        Return the RenderMenuList::text().
+        
+        (-[WebCoreAXObject position]):
+         Trivial formatting.
+
+        (-[WebCoreAXObject accessibilityIsIgnored]):
+        - Ignore popup menu items because AppKit does.
+        - Remove redundant check for buttonTag (earlier isControl() check suffices).
+        
+        (-[WebCoreAXObject accessibilityAttributeNames]):
+        (-[WebCoreAXObject accessibilityActionNames]):
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        Trivial formatting.
+        
+        (-[WebCoreAXObject doAXTextMarkerRangeForUnorderedTextMarkers:]):
+        Removed old debugging code that is no longer needed.
+        Trivial formatting.
+        
+        (-[WebCoreAXObject doAXSentenceTextMarkerRangeForTextMarker:]):
+        (-[WebCoreAXObject doAXParagraphTextMarkerRangeForTextMarker:]):
+        (-[WebCoreAXObject removeAXObjectID]):
+        Trivial formatting.
+        
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::accessKeyAction):
+        Call click() instead of focus().
+        
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::text):
+        Added for easy access to popup's current text.
+        
+        * rendering/RenderMenuList.h:
+        (WebCore::RenderMenuList::isMenuList):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isMenuList):
+        Added so popups can be identified.
+
+2006-08-17  David Harrison  <harrison@apple.com>
+
         Reviewed by Maciej.
 
         <rdar://problem/4527201> REGRESSION: AXTextMarkerRangeForUnorderedTextMarkers returns out of order range

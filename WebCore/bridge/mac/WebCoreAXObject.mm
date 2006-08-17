@@ -26,9 +26,6 @@
 #include "config.h"
 #import "WebCoreAXObject.h"
 
-// need this until accesstool supports arrays of markers
-#define MARKERARRAY_SELF_TEST 0
-
 #import "DOMInternal.h"
 #import "Document.h"
 #import "EventNames.h"
@@ -40,8 +37,10 @@
 #import "HTMLInputElement.h"
 #import "HTMLMapElement.h"
 #import "HTMLNames.h"
+#import "HTMLSelectElement.h"
 #import "RenderImage.h"
 #import "RenderListMarker.h"
+#import "RenderMenuList.h"
 #import "RenderTheme.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
@@ -161,6 +160,7 @@ using namespace HTMLNames;
         if (elt->getHTMLEventListener(clickEvent) || elt->getHTMLEventListener(mousedownEvent) || elt->getHTMLEventListener(mouseupEvent))
             return static_cast<Element*>(elt);
     }
+
     return 0;
 }
 
@@ -174,7 +174,7 @@ using namespace HTMLNames;
             return input;
     }
 
-    if ([self isImageButton])
+    if ([self isImageButton] || m_renderer->isMenuList())
         return static_cast<Element*>(m_renderer->element());
 
     Element * elt = [self anchorElement];
@@ -188,6 +188,7 @@ using namespace HTMLNames;
 {
     if (!m_renderer || !m_renderer->firstChild())
         return nil;
+
     return m_renderer->document()->axObjectCache()->get(m_renderer->firstChild());
 }
 
@@ -195,6 +196,7 @@ using namespace HTMLNames;
 {
     if (!m_renderer || !m_renderer->lastChild())
         return nil;
+
     return m_renderer->document()->axObjectCache()->get(m_renderer->lastChild());
 }
 
@@ -202,6 +204,7 @@ using namespace HTMLNames;
 {
     if (!m_renderer || !m_renderer->previousSibling())
         return nil;
+
     return m_renderer->document()->axObjectCache()->get(m_renderer->previousSibling());
 }
 
@@ -209,6 +212,7 @@ using namespace HTMLNames;
 {
     if (!m_renderer || !m_renderer->nextSibling())
         return nil;
+
     return m_renderer->document()->axObjectCache()->get(m_renderer->nextSibling());
 }
 
@@ -219,6 +223,7 @@ using namespace HTMLNames;
 
     if (!m_renderer || !m_renderer->parent())
         return nil;
+
     return m_renderer->document()->axObjectCache()->get(m_renderer->parent());
 }
 
@@ -227,8 +232,8 @@ using namespace HTMLNames;
     WebCoreAXObject* obj = [self parentObject];
     if ([obj accessibilityIsIgnored])
         return [obj parentObjectUnignored];
-    else
-        return obj;
+
+    return obj;
 }
 
 -(void)addChildrenToArray:(NSMutableArray*)array
@@ -281,7 +286,6 @@ using namespace HTMLNames;
     
     // assert that a widget is a replaced element that is not an image
     ASSERT(!result || (m_renderer->isReplaced() && !m_renderer->isImage()));
-    
     return result;
 }
 
@@ -293,7 +297,7 @@ using namespace HTMLNames;
     Widget* widget = renderWidget->widget();
     if (widget)
          return widget->getView();
-    
+
     return nil;
 }
 
@@ -335,6 +339,9 @@ using namespace HTMLNames;
             return NSAccessibilityTextFieldRole;
     }
     
+    if (m_renderer->isMenuList())
+        return NSAccessibilityPopUpButtonRole;
+
     if (m_renderer->isBlockFlow())
         return NSAccessibilityGroupRole;
     if ([self isAttachment])
@@ -347,7 +354,7 @@ using namespace HTMLNames;
 {
     if ([self isAttachment])
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
-    
+
     return nil;
 }
 
@@ -368,6 +375,9 @@ using namespace HTMLNames;
     if ([role isEqualToString:NSAccessibilityButtonRole])
         return NSAccessibilityRoleDescription(NSAccessibilityButtonRole, nil);
     
+    if ([role isEqualToString:NSAccessibilityPopUpButtonRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityPopUpButtonRole, nil);
+   
     if ([role isEqualToString:NSAccessibilityStaticTextRole])
         return NSAccessibilityRoleDescription(NSAccessibilityStaticTextRole, nil);
 
@@ -446,6 +456,8 @@ using namespace HTMLNames;
         }
     }
 
+    // return nil for anonymous text because it is non-trivial to get
+    // the actual text and, so far, that is not needed
     return nil;
 }
 
@@ -456,6 +468,9 @@ using namespace HTMLNames;
 
     if (m_renderer->isText())
         return [self textUnderElement];
+    
+    if (m_renderer->isMenuList())
+        return static_cast<RenderMenuList*>(m_renderer)->text();
     
     if (m_renderer->isListMarker())
         return static_cast<RenderListMarker*>(m_renderer)->text().getNSString();
@@ -577,6 +592,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         NSView* view = m_renderer->view()->frameView()->getDocumentView();
         point = [[view window] convertBaseToScreen: [view convertPoint: point toView:nil]];
     }
+
     return [NSValue valueWithPoint: point];
 }
 
@@ -588,9 +604,16 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
 -(BOOL)accessibilityIsIgnored
 {
+    // ignore invisible element
     if (!m_renderer || m_renderer->style()->visibility() != VISIBLE)
         return YES;
 
+    // ignore popup menu items because AppKit does
+    for (RenderObject* parent = m_renderer->parent(); parent; parent = parent->parent()) {
+        if (parent->isMenuList())
+            return YES;
+    }
+    
     // NOTE: BRs always have text boxes now, so the text box check here can be removed
     if (m_renderer->isText())
         return m_renderer->isBR() || !static_cast<RenderText*>(m_renderer)->firstTextBox();
@@ -602,17 +625,14 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (m_areaElement || (m_renderer->element() && m_renderer->element()->isLink()))
         return NO;
 
-    // All controls must be examined.
+    // all controls are accessible
     if (m_renderer->element() && m_renderer->element()->isControl())
         return NO;
 
     if (m_renderer->isBlockFlow() && m_renderer->childrenInline())
         return !static_cast<RenderBlock*>(m_renderer)->firstLineBox() && ![self mouseButtonListener];
 
-    return (!m_renderer->isListMarker() && !m_renderer->isRenderView() && 
-            !m_renderer->isImage() &&
-            !(m_renderer->element() && m_renderer->element()->isHTMLElement() &&
-              m_renderer->element()->hasTagName(buttonTag)));
+    return (!m_renderer->isListMarker() && !m_renderer->isRenderView() && !m_renderer->isImage());
 }
 
 - (NSArray *)accessibilityAttributeNames
@@ -687,8 +707,10 @@ static IntRect boundingBoxRect(RenderObject* obj)
     
     if (m_renderer && m_renderer->isRenderView())
         return webAreaAttrs;
+
     if (m_areaElement || (m_renderer && !m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isLink()))
         return anchorAttrs;
+
     return attributes;
 }
 
@@ -701,6 +723,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
             actions = [[NSArray alloc] initWithObjects: NSAccessibilityPressAction, nil];
         return actions;
     }
+
     return nil;
 }
 
@@ -848,9 +871,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
         }
     }
 
-    if ([attributeName isEqualToString: @"AXVisited"]) {
+    if ([attributeName isEqualToString: @"AXVisited"])
         return [NSNumber numberWithBool: m_renderer->style()->pseudoState() == PseudoVisited];
-    }
     
     if ([attributeName isEqualToString: NSAccessibilityTitleAttribute])
         return [self title];
@@ -1376,12 +1398,6 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 
 - (id)doAXTextMarkerRangeForUnorderedTextMarkers: (NSArray *) markers
 {
-#if defined(MARKERARRAY_SELF_TEST) && MARKERARRAY_SELF_TEST
-    WebCoreTextMarkerRange *tmr = [self getSelectedTextMarkerRange];
-    WebCoreTextMarker *tm1 = AXTextMarkerRangeCopyEndMarker(tmr);
-    WebCoreTextMarker *tm2 = AXTextMarkerRangeCopyStartMarker(tmr);
-    markers = [NSArray arrayWithObjects: (id) tm1, (id) tm2, nil];
-#endif
     // get and validate the markers
     if ([markers count] < 2)
         return nil;
@@ -1492,7 +1508,6 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition startPosition = startOfSentence(visiblePos);
     VisiblePosition endPosition = endOfSentence(startPosition);
-
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
@@ -1501,7 +1516,6 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition startPosition = startOfParagraph(visiblePos);
     VisiblePosition endPosition = endOfParagraph(startPosition);
-
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
@@ -1932,6 +1946,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 {
     if (!m_id)
         return;
+        
     m_renderer->document()->axObjectCache()->removeAXID(self);
 }
 

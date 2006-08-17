@@ -138,6 +138,12 @@ void RenderMenuList::setText(const String& s)
     }
 }
 
+
+String RenderMenuList::text()
+{
+    return m_buttonText ? m_buttonText->data() : String();
+}
+
 void RenderMenuList::paintObject(PaintInfo& i, int x, int y)
 {
     // Push a clip.

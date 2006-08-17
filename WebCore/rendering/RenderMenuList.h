@@ -33,6 +33,8 @@ class RenderMenuList : public RenderFlexibleBox {
 public:
     RenderMenuList(HTMLSelectElement*);
 
+    virtual bool isMenuList() const { return true; }
+
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
     virtual void removeChild(RenderObject*);
     virtual bool createsAnonymousWrapper() const { return true; }
@@ -51,6 +53,8 @@ public:
 
     void setOptionsChanged(bool c) { m_optionsChanged = c; }
     void valueChanged(unsigned listIndex);
+
+    String text();
 
 private:
     void createInnerBlock();
