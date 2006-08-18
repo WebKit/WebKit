@@ -25,8 +25,16 @@
 #define KJS_UNICODE_QT4_H
 
 #include <QChar>
+#include <QString>
+
+#include <config.h>
+#include <kjs/ustring.h>
 
 #include "../UnicodeCategory.h"
+#include "../UnicodeDecomposition.h"
+#include "../UnicodeDirection.h"
+
+#include <stdint.h>
 
 namespace WTF {
   namespace Unicode {
@@ -40,6 +48,11 @@ namespace WTF {
       return strLength;
     }
 
+    inline uint16_t toLower(uint16_t ch)
+    {
+      return QChar(ch).toLower().unicode();
+    }
+
     inline int toUpper(uint16_t* str, int strLength, uint16_t*& destIfNeeded)
     {
       destIfNeeded = 0;
@@ -50,9 +63,19 @@ namespace WTF {
       return strLength;
     }
 
+    inline uint16_t toUpper(uint16_t ch)
+    {
+      return QChar(ch).toUpper().unicode();
+    }
+
     inline bool isFormatChar(int32_t c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Other_Format;
+    }
+
+    inline bool isPrintableChar(int32_t c)
+    {
+      return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isPrint(); 
     }
 
     inline bool isSeparatorSpace(int32_t c)
@@ -60,77 +83,38 @@ namespace WTF {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Separator_Space;
     }
 
-    inline CharCategory category(int32_t c)
+    inline bool isSpace(int32_t c)
     {
-      // FIXME: implement support for non-BMP code points
-      if ((c & 0xffff0000) != 0)
-        return NoCategory;
-
-      switch (QChar((unsigned short)c).category()) {
-        case QChar::Mark_NonSpacing:
-          return Mark_NonSpacing;
-        case QChar::Mark_SpacingCombining:
-          return Mark_SpacingCombining;
-        case QChar::Mark_Enclosing:
-          return Mark_Enclosing;
-        case QChar::Number_DecimalDigit:
-          return Number_DecimalDigit;
-        case QChar::Number_Letter:
-          return Number_Letter;
-        case QChar::Number_Other:
-          return Number_Other;
-        case QChar::Separator_Space:
-          return Separator_Space;
-        case QChar::Separator_Line:
-          return Separator_Line;
-        case QChar::Separator_Paragraph:
-          return Separator_Paragraph;
-        case QChar::Other_Control:
-          return Other_Control;
-        case QChar::Other_Format:
-          return Other_Format;
-        case QChar::Other_Surrogate:
-          return Other_Surrogate;
-        case QChar::Other_PrivateUse:
-          return Other_PrivateUse;
-        case QChar::Other_NotAssigned:
-          return Other_NotAssigned;
-        case QChar::Letter_Uppercase:
-          return Letter_Uppercase;
-        case QChar::Letter_Lowercase:
-          return Letter_Lowercase;
-        case QChar::Letter_Titlecase:
-          return Letter_Titlecase;
-        case QChar::Letter_Modifier:
-          return Letter_Modifier;
-        case QChar::Letter_Other:
-          return Letter_Other;
-        case QChar::Punctuation_Connector:
-          return Punctuation_Connector;
-        case QChar::Punctuation_Dash:
-          return Punctuation_Dash;
-        case QChar::Punctuation_Open:
-          return Punctuation_Open;
-        case QChar::Punctuation_Close:
-          return Punctuation_Close;
-        case QChar::Punctuation_InitialQuote:
-          return Punctuation_InitialQuote;
-        case QChar::Punctuation_FinalQuote:
-          return Punctuation_FinalQuote;
-        case QChar::Punctuation_Other:
-          return Punctuation_Other;
-        case QChar::Symbol_Math:
-          return Symbol_Math;
-        case QChar::Symbol_Currency:
-          return Symbol_Currency;
-        case QChar::Symbol_Modifier:
-          return Symbol_Modifier;
-        case QChar::Symbol_Other:
-          return Symbol_Other;
-        default:
-          return NoCategory;
-      }
+      return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isSpace();
     }
+
+    inline bool isPunct(int32_t c)
+    {
+      return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isPunct();
+    }
+
+    inline bool isDigit(int32_t c)
+    {
+      return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isDigit();
+    }
+
+    inline uint16_t mirroredChar(uint16_t c)
+    {
+      return QChar(c).mirroredChar().unicode();
+    }
+
+    inline int compare(const KJS::UChar *a, const KJS::UChar *b, int len, bool caseSensitive = true)
+    {
+      const QString left(reinterpret_cast<const QChar *>(a), len);
+      const QString right(reinterpret_cast<const QChar *>(b), len);
+      return left.compare(right, caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive);
+    }
+
+    Direction direction(int c);
+
+    CharCategory category(int c);
+
+    Decomposition decomposition(int c);
   }
 }
 

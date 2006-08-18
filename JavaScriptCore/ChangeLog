@@ -1,5 +1,31 @@
 2006-08-17  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Maciej. Landed by rwlbuis.
+
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10463
+        WTF Changes needed for Qt platform code.
+
+        * wtf/Platform.h:
+        * wtf/unicode/UnicodeDecomposition.h: Added.
+        (WTF::Unicode::):
+        * wtf/unicode/UnicodeDirection.h: Added.
+        (WTF::Unicode::):
+        * wtf/unicode/qt4/UnicodeQt4.cpp: Added.
+        (WTF::Unicode::direction):
+        (WTF::Unicode::category):
+        (WTF::Unicode::decomposition):
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isSpace):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::isDigit):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::compare):
+
+2006-08-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric. Landed by rwlbuis.
 
         Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10464
