@@ -1,3 +1,13 @@
+2006-08-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric. Landed by rwlbuis.
+
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10464
+        Offer a cmake build system for Qt platform.
+
+        * CMakeLists.txt: Added.
+        * pcre/CMakeLists.txt: Added.
+
 2006-08-17  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

@@ -1,0 +1,234 @@
+
+project(kjs-unity)
+
+MESSAGE(STATUS "Missing CMakeFiles.txt into wtf directory")
+add_subdirectory( wtf )
+add_subdirectory( pcre )
+
+# Configuration checks
+check_library_exists(pthread pthread_attr_get_np "" HAVE_PTHREAD_ATTR_GET_NP)
+check_library_exists(pthread pthread_getattr_np "" HAVE_PTHREAD_GETATTR_NP)
+
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/pcre
+    ${CMAKE_CURRENT_BINARY_DIR}/kjs
+    ${CMAKE_CURRENT_SOURCE_DIR}/kjs
+
+    ${QT_INCLUDES}
+)
+
+if(WIN32)
+  include_directories( ${KDEWIN32_INCLUDES} )
+endif(WIN32)
+
+set(CREATE_HASH_TABLE ${CMAKE_CURRENT_SOURCE_DIR}/kjs/create_hash_table )
+
+macro(CREATE_LUT _srcs_LIST _in_FILE _out_FILE _dep_FILE)
+
+   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_out_FILE}
+      COMMAND ${PERL_EXECUTABLE} ${CREATE_HASH_TABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${_in_FILE} -i > ${CMAKE_CURRENT_BINARY_DIR}/${_out_FILE}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_in_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/${_dep_FILE} )
+   set( ${_srcs_LIST}  ${${_srcs_LIST}} ${CMAKE_CURRENT_BINARY_DIR}/${_out_FILE})
+endmacro(CREATE_LUT)
+
+create_lut(kjs-unity_LIB_SRCS kjs/date_object.cpp kjs/date_object.lut.h kjs/date_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/number_object.cpp kjs/number_object.lut.h kjs/number_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/string_object.cpp kjs/string_object.lut.h kjs/string_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/array_object.cpp kjs/array_object.lut.h kjs/array_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/math_object.cpp kjs/math_object.lut.h kjs/math_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/regexp_object.cpp kjs/regexp_object.lut.h kjs/regexp_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/keywords.table kjs/lexer.lut.h kjs/lexer.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/keywords.table kjs/lexer.lut.h kjs/lexer.cpp)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/kjs/grammar.cpp ${CMAKE_CURRENT_BINARY_DIR}/kjs/grammar.h
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+
+  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/kjs
+  COMMAND ${BISON_EXECUTABLE} -d -p kjsyy ${CMAKE_CURRENT_SOURCE_DIR}/kjs/grammar.y
+  COMMAND mv grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/kjs/grammar.cpp
+  COMMAND mv grammar.tab.h ${CMAKE_CURRENT_BINARY_DIR}/kjs/grammar.h
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kjs/grammar.y
+)
+
+########### next target ###############
+
+kde4_add_library(wtf-unity SHARED
+    wtf/TCSystemAlloc.cpp
+    wtf/Assertions.cpp
+    wtf/HashTable.cpp
+    wtf/FastMalloc.cpp
+)
+
+set(kjs-unity_LIB_SRCS
+    ${kjs-unity_LIB_SRCS}
+    wtf/unicode/qt4/UnicodeQt4.cpp
+    kjs/JSWrapperObject.cpp
+	kjs/PropertyNameArray.cpp
+	kjs/array_object.cpp
+	kjs/bool_object.cpp
+	kjs/collector.cpp
+	kjs/Context.cpp
+	kjs/date_object.cpp
+	kjs/debugger.cpp
+	kjs/dtoa.cpp
+	kjs/error_object.cpp
+	kjs/fpconst.cpp
+	kjs/function.cpp
+	kjs/function_object.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/kjs/grammar.cpp
+	kjs/identifier.cpp
+	kjs/internal.cpp
+	kjs/interpreter.cpp
+    kjs/JSImmediate.cpp
+	kjs/JSLock.cpp 
+	kjs/lexer.cpp
+	kjs/list.cpp
+	kjs/lookup.cpp
+	kjs/math_object.cpp
+	kjs/nodes.cpp
+	kjs/nodes2string.cpp
+	kjs/number_object.cpp
+	kjs/object.cpp
+	kjs/object_object.cpp
+	kjs/operations.cpp
+	kjs/Parser.cpp
+	kjs/property_map.cpp
+	kjs/property_slot.cpp
+	kjs/regexp.cpp
+	kjs/regexp_object.cpp
+	kjs/scope_chain.cpp
+	kjs/string_object.cpp
+	kjs/ustring.cpp
+	kjs/value.cpp
+	kjs/ExecState.cpp
+)
+
+kde4_add_library(kjs-unity STATIC ${kjs-unity_LIB_SRCS})
+
+if(UNIX)
+   target_link_libraries(kjs-unity  ${KDE4_KDECORE_LIBS} m )
+else(UNIX)
+   target_link_libraries(kjs-unity  ${KDE4_KDECORE_LIBS})
+endif(UNIX)
+
+target_link_libraries(kjs-unity wtf-unity)
+set_target_properties(kjs-unity PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+install(TARGETS kjs-unity  DESTINATION ${LIB_INSTALL_DIR} )
+
+project(kjs-unity)
+
+MESSAGE(STATUS "Missing CMakeFiles.txt into wtf directory")
+add_subdirectory( wtf )
+add_subdirectory( pcre )
+
+# Configuration checks
+check_library_exists(pthread pthread_attr_get_np "" HAVE_PTHREAD_ATTR_GET_NP)
+check_library_exists(pthread pthread_getattr_np "" HAVE_PTHREAD_GETATTR_NP)
+
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/pcre
+    ${CMAKE_CURRENT_BINARY_DIR}/kjs
+    ${CMAKE_CURRENT_SOURCE_DIR}/kjs
+
+    ${QT_INCLUDES}
+)
+
+if(WIN32)
+  include_directories( ${KDEWIN32_INCLUDES} )
+endif(WIN32)
+
+set(CREATE_HASH_TABLE ${CMAKE_CURRENT_SOURCE_DIR}/kjs/create_hash_table )
+
+macro(CREATE_LUT _srcs_LIST _in_FILE _out_FILE _dep_FILE)
+
+   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_out_FILE}
+      COMMAND ${PERL_EXECUTABLE} ${CREATE_HASH_TABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${_in_FILE} -i > ${CMAKE_CURRENT_BINARY_DIR}/${_out_FILE}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_in_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/${_dep_FILE} )
+   set( ${_srcs_LIST}  ${${_srcs_LIST}} ${CMAKE_CURRENT_BINARY_DIR}/${_out_FILE})
+endmacro(CREATE_LUT)
+
+create_lut(kjs-unity_LIB_SRCS kjs/date_object.cpp kjs/date_object.lut.h kjs/date_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/number_object.cpp kjs/number_object.lut.h kjs/number_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/string_object.cpp kjs/string_object.lut.h kjs/string_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/array_object.cpp kjs/array_object.lut.h kjs/array_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/math_object.cpp kjs/math_object.lut.h kjs/math_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/regexp_object.cpp kjs/regexp_object.lut.h kjs/regexp_object.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/keywords.table kjs/lexer.lut.h kjs/lexer.cpp)
+create_lut(kjs-unity_LIB_SRCS kjs/keywords.table kjs/lexer.lut.h kjs/lexer.cpp)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/kjs/grammar.cpp ${CMAKE_CURRENT_BINARY_DIR}/kjs/grammar.h
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+
+  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/kjs
+  COMMAND ${BISON_EXECUTABLE} -d -p kjsyy ${CMAKE_CURRENT_SOURCE_DIR}/kjs/grammar.y
+  COMMAND mv grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/kjs/grammar.cpp
+  COMMAND mv grammar.tab.h ${CMAKE_CURRENT_BINARY_DIR}/kjs/grammar.h
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kjs/grammar.y
+)
+
+########### next target ###############
+
+kde4_add_library(wtf-unity SHARED
+    wtf/TCSystemAlloc.cpp
+    wtf/Assertions.cpp
+    wtf/HashTable.cpp
+    wtf/FastMalloc.cpp
+)
+
+set(kjs-unity_LIB_SRCS
+    ${kjs-unity_LIB_SRCS}
+    wtf/unicode/qt4/UnicodeQt4.cpp
+    kjs/JSWrapperObject.cpp
+	kjs/PropertyNameArray.cpp
+	kjs/array_object.cpp
+	kjs/bool_object.cpp
+	kjs/collector.cpp
+	kjs/Context.cpp
+	kjs/date_object.cpp
+	kjs/debugger.cpp
+	kjs/dtoa.cpp
+	kjs/error_object.cpp
+	kjs/fpconst.cpp
+	kjs/function.cpp
+	kjs/function_object.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/kjs/grammar.cpp
+	kjs/identifier.cpp
+	kjs/internal.cpp
+	kjs/interpreter.cpp
+    kjs/JSImmediate.cpp
+	kjs/JSLock.cpp 
+	kjs/lexer.cpp
+	kjs/list.cpp
+	kjs/lookup.cpp
+	kjs/math_object.cpp
+	kjs/nodes.cpp
+	kjs/nodes2string.cpp
+	kjs/number_object.cpp
+	kjs/object.cpp
+	kjs/object_object.cpp
+	kjs/operations.cpp
+	kjs/Parser.cpp
+	kjs/property_map.cpp
+	kjs/property_slot.cpp
+	kjs/regexp.cpp
+	kjs/regexp_object.cpp
+	kjs/scope_chain.cpp
+	kjs/string_object.cpp
+	kjs/ustring.cpp
+	kjs/value.cpp
+	kjs/ExecState.cpp
+)
+
+kde4_add_library(kjs-unity STATIC ${kjs-unity_LIB_SRCS})
+
+if(UNIX)
+   target_link_libraries(kjs-unity  ${KDE4_KDECORE_LIBS} m )
+else(UNIX)
+   target_link_libraries(kjs-unity  ${KDE4_KDECORE_LIBS})
+endif(UNIX)
+
+target_link_libraries(kjs-unity wtf-unity)
+set_target_properties(kjs-unity PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+install(TARGETS kjs-unity  DESTINATION ${LIB_INSTALL_DIR} )
