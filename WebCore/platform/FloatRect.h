@@ -39,6 +39,10 @@ typedef struct CGRect NSRect;
 typedef struct _NSRect NSRect;
 #endif
 
+#endif // __APPLE__
+
+#if PLATFORM(QT)
+class QRectF;
 #endif
 
 namespace WebCore {
@@ -105,6 +109,9 @@ public:
     operator NSRect() const;
 #endif
 
+#elif PLATFORM(QT)
+    FloatRect(const QRectF&);
+    operator QRectF() const;
 #endif
 
 private:

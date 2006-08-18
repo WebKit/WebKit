@@ -43,6 +43,8 @@ typedef struct _NSRect NSRect;
 
 #if PLATFORM(WIN)
 typedef struct tagRECT RECT;
+#elif PLATFORM(QT)
+class QRect;
 #endif
 
 namespace WebCore {
@@ -107,6 +109,9 @@ public:
 #if PLATFORM(WIN)
     IntRect(const RECT&);
     operator RECT() const;
+#elif PLATFORM(QT)
+    IntRect(const QRect&);
+    operator QRect() const;
 #endif
 
 #if __APPLE__

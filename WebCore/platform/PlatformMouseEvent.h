@@ -47,6 +47,10 @@ typedef long LPARAM;
 typedef union _GdkEvent GdkEvent;
 #endif
 
+#if PLATFORM(QT)
+class QMouseEvent;
+#endif
+
 namespace WebCore {
 
     // These button numbers match the one used in the DOM API.
@@ -99,6 +103,9 @@ namespace WebCore {
 #endif
 #if PLATFORM(GDK) 
         PlatformMouseEvent(GdkEvent*);
+#endif
+#if PLATFORM(QT)
+        PlatformMouseEvent(QMouseEvent*, int clickCount);
 #endif
 
     private:

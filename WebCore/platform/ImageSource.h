@@ -31,6 +31,8 @@
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
+#elif PLATFORM(QT)
+class QImage;
 #else
 struct _cairo_surface;
 typedef struct _cairo_surface cairo_surface_t;
@@ -44,6 +46,11 @@ class IntSize;
 typedef CGImageSourceRef NativeImageSourcePtr;
 typedef CGImageRef NativeImagePtr;
 typedef CFDataRef NativeBytePtr;
+#elif PLATFORM(QT)
+class ImageDecoder;
+typedef ImageDecoder* NativeImageSourcePtr;
+typedef const Vector<char>* NativeBytePtr;
+typedef QImage* NativeImagePtr;
 #else
 class ImageDecoder;
 typedef ImageDecoder* NativeImageSourcePtr;

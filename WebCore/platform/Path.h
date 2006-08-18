@@ -28,6 +28,9 @@
 
 #if __APPLE__
 typedef struct CGPath PlatformPath;
+#elif PLATFORM(QT)
+class QPainterPath;
+typedef QPainterPath PlatformPath;
 #else
 typedef void PlatformPath;
 #endif

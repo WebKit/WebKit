@@ -32,6 +32,8 @@
 #include <windows.h>
 #elif PLATFORM(GDK)
 #include <gdk/gdk.h>
+#elif PLATFORM(QT)
+#include <QCursor>
 #endif
 
 #ifdef __APPLE__
@@ -52,13 +54,20 @@ namespace WebCore {
     typedef NSCursor* PlatformCursor;
 #elif PLATFORM(GDK)
     typedef GdkCursor* PlatformCursor;
+#elif PLATFORM(QT)
+    typedef QCursor PlatformCursor;
 #else
     typedef void* PlatformCursor;
 #endif
 
     class Cursor {
     public:
-        Cursor() : m_impl(0) { }
+        Cursor()
+#if !PLATFORM(QT)
+        : m_impl(0)
+#endif
+        { }
+
         Cursor(Image*);
         Cursor(const Cursor&);
         ~Cursor();

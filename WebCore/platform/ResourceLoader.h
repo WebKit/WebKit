@@ -89,8 +89,8 @@ public:
     friend LRESULT __stdcall ResourceLoaderWndProc(HWND, unsigned message, WPARAM, LPARAM);
 #endif
 
-#if PLATFORM(GDK)
-    ResourceLoaderInternal * getInternal() { return d;}
+#if PLATFORM(GDK) || PLATFORM(QT)
+    ResourceLoaderInternal* getInternal() { return d; }
 #endif
 
     void cancel();

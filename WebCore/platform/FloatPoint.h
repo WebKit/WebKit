@@ -28,6 +28,7 @@
 #define FLOATPOINT_H_
 
 #include "FloatSize.h"
+#include <wtf/Platform.h>
 
 #if __APPLE__
 
@@ -39,6 +40,10 @@ typedef struct CGPoint NSPoint;
 typedef struct _NSPoint NSPoint;
 #endif
 
+#endif
+
+#if PLATFORM(QT)
+class QPointF;
 #endif
 
 namespace WebCore {
@@ -68,6 +73,11 @@ public:
     operator NSPoint() const;
 #endif
 
+#endif
+
+#if PLATFORM(QT)
+    FloatPoint(const QPointF&);
+    operator QPointF() const;
 #endif
 
 private:

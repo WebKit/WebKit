@@ -44,6 +44,9 @@ typedef struct HDC__* HDC;
 typedef struct _cairo PlatformGraphicsContext;
 #elif PLATFORM(GDK)
 typedef struct _cairo PlatformGraphicsContext;
+#elif PLATFORM(QT)
+class QPainter;
+typedef QPainter PlatformGraphicsContext;
 #else
 typedef void PlatformGraphicsContext;
 #endif

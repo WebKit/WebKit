@@ -26,6 +26,8 @@
 #ifndef COLOR_H_
 #define COLOR_H_
 
+#include <wtf/Platform.h>
+
 #if __APPLE__
 
 #ifdef __OBJC__
@@ -36,6 +38,10 @@ class NSColor;
 
 typedef struct CGColor* CGColorRef;
 
+#endif // __APPLE__
+
+#if PLATFORM(QT)
+class QColor;
 #endif
 
 namespace WebCore {
@@ -82,6 +88,11 @@ public:
     Color dark() const;
 
     Color blendWithWhite() const;
+
+#if PLATFORM(QT)
+    Color(const QColor&);
+    operator QColor() const;
+#endif
 
     static const RGBA32 black = 0xFF000000;
     static const RGBA32 white = 0xFFFFFFFF;

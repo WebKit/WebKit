@@ -31,6 +31,10 @@
 #include "ScrollView.h"
 #include "TextDirection.h"
 
+#if PLATFORM(QT)
+class QListWidget;
+#endif
+
 namespace WebCore {
 
 enum ListBoxItemType {
@@ -84,7 +88,16 @@ public:
     static void clearCachedTextRenderers();
     void setFont(const Font&);
 
+#if PLATFORM(QT)
+    virtual void setParentWidget(QWidget*);
+#endif
+
 private:
+#if PLATFORM(QT)
+    QListWidget* m_listWidget;
+    SelectionMode m_selectionMode;
+#endif
+
     void appendItem(const DeprecatedString &, ListBoxItemType, bool);
 
     // A Vector<ListBoxItem> might be more efficient for large lists.

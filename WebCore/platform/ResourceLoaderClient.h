@@ -41,6 +41,9 @@ namespace WebCore {
 #ifdef __APPLE__
     typedef NSData* PlatformData;
     typedef NSURLResponse* PlatformResponse;
+#elif PLATFORM(QT)
+    typedef void* PlatformData;
+    typedef char* PlatformResponse;
 #else
     // Not sure what the strategy for this will be on other platforms.
     typedef struct PlatformDataStruct *PlatformData;

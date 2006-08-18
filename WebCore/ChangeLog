@@ -2,6 +2,38 @@
 
         Reviewed by Eric. Landed by rwlbuis.
 
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10466
+        WebKit should have Qt platform support.
+
+        * platform/Color.h:
+        * platform/Cursor.h:
+        (WebCore::Cursor::Cursor):
+        * platform/FloatPoint.h:
+        * platform/FloatRect.h:
+        * platform/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::glyphAt):
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+        * platform/GraphicsContext.h:
+        * platform/ImageSource.h:
+        * platform/IntPoint.h:
+        * platform/IntRect.h:
+        * platform/IntSize.h:
+        * platform/ListBox.h:
+        * platform/Path.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/ResourceLoader.h:
+        * platform/ResourceLoaderClient.h:
+        * platform/ResourceLoaderInternal.h:
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+
+2006-08-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric. Landed by rwlbuis.
+
         Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10465
         General WebKit Linux build fixes.
 

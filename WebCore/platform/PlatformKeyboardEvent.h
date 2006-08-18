@@ -45,6 +45,9 @@ typedef long        LPARAM;
 typedef union _GdkEvent GdkEvent;
 #endif
 
+#if PLATFORM(QT)
+class QKeyEvent;
+#endif
 
 namespace WebCore {
 
@@ -72,6 +75,10 @@ namespace WebCore {
 
 #if PLATFORM(GDK)
         PlatformKeyboardEvent(GdkEvent*);
+#endif
+
+#if PLATFORM(QT)
+        PlatformKeyboardEvent(QKeyEvent*, bool isKeyUp);
 #endif
 
     private:
