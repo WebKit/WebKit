@@ -1,3 +1,54 @@
+ 2006-08-18  Nikolas Zimmermann  <zimmermann@kde.org>
+ 
+         Reviewed by Eric. Landed by rwlbuis.
+ 
+         Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10470
+         The Qt platform needs a KCanvas device.
+ 
+         * kcanvas/device/qt/KCanvasClipperQt.cpp: Added.
+         (WebCore::KCanvasClipperQt::applyClip):
+         * kcanvas/device/qt/KCanvasClipperQt.h: Added.
+         (WebCore::KCanvasClipperQt::KCanvasClipperQt):
+         * kcanvas/device/qt/KCanvasPathQt.cpp: Added.
+         (WebCore::KCanvasPathQt::KCanvasPathQt):
+         (WebCore::KCanvasPathQt::~KCanvasPathQt):
+         (WebCore::KCanvasPathQt::isEmpty):
+         (WebCore::KCanvasPathQt::moveTo):
+         (WebCore::KCanvasPathQt::lineTo):
+         (WebCore::KCanvasPathQt::curveTo):
+         (WebCore::KCanvasPathQt::closeSubpath):
+         (WebCore::KCanvasPathQt::boundingBox):
+         (WebCore::KCanvasPathQt::strokeBoundingBox):
+         (WebCore::KCanvasPathQt::strokeContainsPoint):
+         (WebCore::KCanvasPathQt::containsPoint):
+         * kcanvas/device/qt/KCanvasPathQt.h: Added.
+         (WebCore::KCanvasPathQt::qtPath):
+         * kcanvas/device/qt/KRenderingDeviceQt.cpp: Added.
+         (WebCore::KRenderingDeviceContextQt::KRenderingDeviceContextQt):
+         (WebCore::KRenderingDeviceContextQt::~KRenderingDeviceContextQt):
+         (WebCore::KRenderingDeviceContextQt::concatCTM):
+         (WebCore::KRenderingDeviceContextQt::ctm):
+         (WebCore::KRenderingDeviceContextQt::mapFromVisual):
+         (WebCore::KRenderingDeviceContextQt::mapToVisual):
+         (WebCore::KRenderingDeviceContextQt::clearPath):
+         (WebCore::KRenderingDeviceContextQt::addPath):
+         (WebCore::KRenderingDeviceContextQt::createGraphicsContext):
+         (WebCore::KRenderingDeviceContextQt::painter):
+         (WebCore::KRenderingDeviceContextQt::pathBBox):
+         (WebCore::KRenderingDeviceContextQt::setFillRule):
+         (WebCore::KRenderingDeviceContextQt::fillPath):
+         (WebCore::KRenderingDeviceContextQt::strokePath):
+         (WebCore::KRenderingDeviceQt::KRenderingDeviceQt):
+         (WebCore::KRenderingDeviceQt::~KRenderingDeviceQt):
+         (WebCore::KRenderingDeviceQt::popContext):
+         (WebCore::KRenderingDeviceQt::pushContext):
+         (WebCore::KRenderingDeviceQt::qtContext):
+         (WebCore::KRenderingDeviceQt::contextForImage):
+         (WebCore::KRenderingDeviceQt::stringForPath):
+         (WebCore::KRenderingDeviceQt::createResource):
+         (WebCore::KRenderingDeviceQt::createPaintServer):
+         (WebCore::KRenderingDeviceQt::createFilterEffect):
+
 2006-08-17  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric. Landed by rwlbuis.
