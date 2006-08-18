@@ -2,6 +2,25 @@
 
         Reviewed by Eric. Landed by rwlbuis.
 
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10465
+        General WebKit Linux build fixes.
+
+        * kcanvas/KCanvasFilters.cpp:
+        (WebCore::operator<<):
+        * kcanvas/RenderSVGImage.cpp:
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        * page/Frame.h:
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::deleteBindingURIs):
+        * xml/DOMParser.cpp:
+
+2006-08-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric. Landed by rwlbuis.
+
         Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10464
         Offer a cmake build system for Qt platform.
 

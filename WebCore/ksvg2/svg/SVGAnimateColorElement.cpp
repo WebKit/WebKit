@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGSVGElement.h"
+#include <math.h>
 
 namespace WebCore {
 

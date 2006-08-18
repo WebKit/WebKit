@@ -21,7 +21,7 @@
 #include "DOMParser.h"
 
 #include "DOMImplementation.h"
-#include "String.h"
+#include "PlatformString.h"
 
 namespace WebCore {
     

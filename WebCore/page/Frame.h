@@ -784,6 +784,9 @@ public:
 #if PLATFORM(GDK)
   friend class FrameGdk;
 #endif
+#if PLATFORM(QT)
+  friend class FrameQt;
+#endif
 
   RenderObject::NodeInfo nodeInfoAtPoint(const IntPoint&, bool allowShadowContent);
   bool hasSelection();

@@ -26,9 +26,7 @@
 
 #include "Attr.h"
 #include "GraphicsContext.h"
-#include "KCanvasMaskerQuartz.h"
 #include "KCanvasRenderingStyle.h"
-#include "KCanvasResourcesQuartz.h"
 #include "KRenderingDevice.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedPreserveAspectRatio.h"

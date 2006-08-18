@@ -30,6 +30,7 @@
 #include "TextStream.h"
 #include "KCanvasTreeDebug.h"
 #include <wtf/Assertions.h>
+#include <math.h>
 
 namespace WebCore {
 
@@ -242,6 +243,7 @@ static TextStream &operator<<(TextStream &ts, const KCComponentTransferFunction 
             break;
         case CT_TABLE:
         case CT_DISCRETE:
+        {
             ts << " [table values=";
             Vector<float>::const_iterator itr=func.tableValues.begin();
             if (itr != func.tableValues.end()) {
@@ -252,6 +254,7 @@ static TextStream &operator<<(TextStream &ts, const KCComponentTransferFunction 
             }
             ts << "]";
             break;
+        }
         case CT_LINEAR:
             ts << " [slope=" << func.slope << "]"
                << " [intercept=" << func.intercept << "]";

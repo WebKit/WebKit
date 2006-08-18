@@ -43,6 +43,7 @@
 #include "ksvgcssvalues.h"
 #include "ksvgcssproperties.h"
 #include <stdlib.h>
+#include <math.h>
 
 #define HANDLE_INHERIT(prop, Prop) \
 if (isInherit) \

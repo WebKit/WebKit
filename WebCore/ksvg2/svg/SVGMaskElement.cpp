@@ -38,6 +38,7 @@
 #include "ksvg.h"
 #include "Attr.h"
 #include <wtf/OwnPtr.h>
+#include <math.h>
 
 namespace WebCore {
 
