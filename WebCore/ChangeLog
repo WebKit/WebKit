@@ -1,3 +1,202 @@
+2006-08-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric. Landed by rwlbuis.
+
+        First chunk of the implementation for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+
+        WebKit should have Qt platform support
+
+        * platform/qt/ComboBoxQt.cpp: Added.
+        (WebCore::PlatformComboBox::PlatformComboBox):
+        (WebCore::PlatformComboBox::~PlatformComboBox):
+        (WebCore::PlatformComboBox::setParentWidget):
+        (WebCore::PlatformComboBox::clear):
+        (WebCore::PlatformComboBox::appendItem):
+        (WebCore::PlatformComboBox::appendGroupLabel):
+        (WebCore::PlatformComboBox::appendSeparator):
+        (WebCore::PlatformComboBox::setCurrentItem):
+        (WebCore::PlatformComboBox::sizeHint):
+        (WebCore::PlatformComboBox::frameGeometry):
+        (WebCore::PlatformComboBox::setFrameGeometry):
+        (WebCore::PlatformComboBox::baselinePosition):
+        (WebCore::PlatformComboBox::setFont):
+        (WebCore::PlatformComboBox::focusPolicy):
+        (WebCore::PlatformComboBox::itemSelected):
+        (WebCore::PlatformComboBox::setWritingDirection):
+        (WebCore::PlatformComboBox::populate):
+        (WebCore::PlatformComboBox::populateMenu):
+        * platform/qt/LineEditQt.cpp: Added.
+        (WebCore::PlatformLineEdit::PlatformLineEdit):
+        (WebCore::PlatformLineEdit::~PlatformLineEdit):
+        (WebCore::PlatformLineEdit::setParentWidget):
+        (WebCore::PlatformLineEdit::setColors):
+        (WebCore::PlatformLineEdit::setAlignment):
+        (WebCore::PlatformLineEdit::setCursorPosition):
+        (WebCore::PlatformLineEdit::cursorPosition):
+        (WebCore::PlatformLineEdit::setEdited):
+        (WebCore::PlatformLineEdit::edited):
+        (WebCore::PlatformLineEdit::setFont):
+        (WebCore::PlatformLineEdit::setMaxLength):
+        (WebCore::PlatformLineEdit::maxLength):
+        (WebCore::PlatformLineEdit::setReadOnly):
+        (WebCore::PlatformLineEdit::isReadOnly):
+        (WebCore::PlatformLineEdit::setText):
+        (WebCore::PlatformLineEdit::text):
+        (WebCore::PlatformLineEdit::setWritingDirection):
+        (WebCore::PlatformLineEdit::selectAll):
+        (WebCore::PlatformLineEdit::hasSelectedText):
+        (WebCore::PlatformLineEdit::selectionStart):
+        (WebCore::PlatformLineEdit::selectedText):
+        (WebCore::PlatformLineEdit::setSelection):
+        (WebCore::PlatformLineEdit::sizeForCharacterWidth):
+        (WebCore::PlatformLineEdit::baselinePosition):
+        (WebCore::PlatformLineEdit::focusPolicy):
+        (WebCore::PlatformLineEdit::checksDescendantsForFocus):
+        (WebCore::PlatformLineEdit::setLiveSearch):
+        (WebCore::PlatformLineEdit::setAutoSaveName):
+        (WebCore::PlatformLineEdit::setMaxResults):
+        (WebCore::PlatformLineEdit::setPlaceholderString):
+        (WebCore::PlatformLineEdit::addSearchResult):
+        * platform/qt/ListBoxQt.cpp: Added.
+        (WebCore::ListBox::ListBox):
+        (WebCore::ListBox::~ListBox):
+        (WebCore::ListBox::setParentWidget):
+        (WebCore::ListBox::sizeForNumberOfLines):
+        (WebCore::ListBox::setSelectionMode):
+        (WebCore::ListBox::clear):
+        (WebCore::ListBox::doneAppendingItems):
+        (WebCore::ListBox::setSelected):
+        (WebCore::ListBox::isSelected):
+        (WebCore::ListBox::setEnabled):
+        (WebCore::ListBox::isEnabled):
+        (WebCore::ListBox::setWritingDirection):
+        (WebCore::ListBox::focusPolicy):
+        (WebCore::ListBox::checksDescendantsForFocus):
+        (WebCore::ListBox::clearCachedTextRenderers):
+        (WebCore::ListBox::setFont):
+        (WebCore::ListBox::appendItem):
+        * platform/qt/ScrollViewQt.cpp: Added.
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::~ScrollView):
+        (WebCore::ScrollView::setParentWidget):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::setContentsPos):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::contentsX):
+        (WebCore::ScrollView::contentsY):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::viewportToContents):
+        (WebCore::ScrollView::contentsToViewport):
+        (WebCore::ScrollView::scrollOffset):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::hScrollBarMode):
+        (WebCore::ScrollView::vScrollBarMode):
+        (WebCore::ScrollView::suppressScrollBars):
+        (WebCore::ScrollView::setHScrollBarMode):
+        (WebCore::ScrollView::setVScrollBarMode):
+        (WebCore::ScrollView::setScrollBarsMode):
+        (WebCore::ScrollView::setStaticBackground):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        (WebCore::ScrollView::scrollPointRecursively):
+        (WebCore::ScrollView::inWindow):
+        * platform/qt/TextEditQt.cpp: Added.
+        (WebCore::PlatformTextEdit::PlatformTextEdit):
+        (WebCore::PlatformTextEdit::~PlatformTextEdit):
+        (WebCore::PlatformTextEdit::setParentWidget):
+        (WebCore::PlatformTextEdit::setColors):
+        (WebCore::PlatformTextEdit::setAlignment):
+        (WebCore::PlatformTextEdit::setLineHeight):
+        (WebCore::PlatformTextEdit::setCursorPosition):
+        (WebCore::PlatformTextEdit::getCursorPosition):
+        (WebCore::PlatformTextEdit::setFont):
+        (WebCore::PlatformTextEdit::setReadOnly):
+        (WebCore::PlatformTextEdit::isReadOnly):
+        (WebCore::PlatformTextEdit::setDisabled):
+        (WebCore::PlatformTextEdit::isDisabled):
+        (WebCore::PlatformTextEdit::hasSelectedText):
+        (WebCore::PlatformTextEdit::setText):
+        (WebCore::PlatformTextEdit::text):
+        (WebCore::PlatformTextEdit::textWithHardLineBreaks):
+        (WebCore::PlatformTextEdit::focusPolicy):
+        (WebCore::PlatformTextEdit::setWordWrap):
+        (WebCore::PlatformTextEdit::wordWrap):
+        (WebCore::PlatformTextEdit::setScrollBarModes):
+        (WebCore::PlatformTextEdit::setWritingDirection):
+        (WebCore::PlatformTextEdit::selectionStart):
+        (WebCore::PlatformTextEdit::selectionEnd):
+        (WebCore::PlatformTextEdit::setSelectionStart):
+        (WebCore::PlatformTextEdit::setSelectionEnd):
+        (WebCore::PlatformTextEdit::selectAll):
+        (WebCore::PlatformTextEdit::setSelectionRange):
+        (WebCore::PlatformTextEdit::sizeWithColumnsAndRows):
+        (WebCore::PlatformTextEdit::checksDescendantsForFocus):
+        * platform/qt/WidgetQt.cpp: Added.
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::WidgetPrivate::~WidgetPrivate):
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::setClient):
+        (WebCore::Widget::client):
+        (WebCore::Widget::frameGeometry):
+        (WebCore::Widget::hasFocus):
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::clearFocus):
+        (WebCore::Widget::font):
+        (WebCore::Widget::setFont):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::setQWidget):
+        (WebCore::Widget::qwidget):
+        (WebCore::Widget::setParentWidget):
+        (WebCore::Widget::parentWidget):
+        (WebCore::Widget::setFrameGeometry):
+        (WebCore::Widget::mapFromGlobal):
+        (WebCore::Widget::scaleFactor):
+        (WebCore::Widget::lockDrawingFocus):
+        (WebCore::Widget::unlockDrawingFocus):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::enableFlushDrawing):
+        (WebCore::Widget::isEnabled):
+        (WebCore::Widget::setIsSelected):
+        (WebCore::Widget::disableFlushDrawing):
+        (WebCore::Widget::setEnabled):
+        (WebCore::Widget::focusPolicy):
+
+2006-08-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric. Landed by rwlbuis.
+
+        First chunk of the implementation for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+
+        WebKit should have Qt platform support
+
+        * platform/qt/ColorQt.cpp: Added.
+        (WebCore::Color::Color):
+        (WebCore::Color::operator QColor):
+        * platform/qt/FloatPointQt.cpp: Added.
+        (WebCore::FloatPoint::FloatPoint):
+        (WebCore::FloatPoint::operator QPointF):
+        * platform/qt/FloatRectQt.cpp: Added.
+        (WebCore::FloatRect::FloatRect):
+        (WebCore::FloatRect::operator QRectF):
+        * platform/qt/IntPointQt.cpp: Added.
+        (WebCore::IntPoint::IntPoint):
+        (WebCore::IntPoint::operator QPoint):
+        * platform/qt/IntRectQt.cpp: Added.
+        (WebCore::IntRect::IntRect):
+        (WebCore::IntRect::operator QRect):
+        * platform/qt/IntSizeQt.cpp: Added.
+        (WebCore::IntSize::IntSize):
+        (WebCore::IntSize::operator QSize):
+
  2006-08-18  Nikolas Zimmermann  <zimmermann@kde.org>
  
          Reviewed by Eric. Landed by rwlbuis.
