@@ -2,6 +2,81 @@
 
         Reviewed by Eric. Landed by rwlbuis.
 
+        Next chunk of the implementation for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+
+        WebKit should have Qt platform support
+
+        * platform/qt/AffineTransformQt.cpp: Added.
+        (WebCore::AffineTransform::AffineTransform):
+        (WebCore::AffineTransform::setMatrix):
+        (WebCore::AffineTransform::map):
+        (WebCore::AffineTransform::mapRect):
+        (WebCore::AffineTransform::isIdentity):
+        (WebCore::AffineTransform::m11):
+        (WebCore::AffineTransform::m12):
+        (WebCore::AffineTransform::m21):
+        (WebCore::AffineTransform::m22):
+        (WebCore::AffineTransform::dx):
+        (WebCore::AffineTransform::dy):
+        (WebCore::AffineTransform::reset):
+        (WebCore::AffineTransform::scale):
+        (WebCore::AffineTransform::rotate):
+        (WebCore::AffineTransform::translate):
+        (WebCore::AffineTransform::shear):
+        (WebCore::AffineTransform::det):
+        (WebCore::AffineTransform::invert):
+        (WebCore::AffineTransform::operator QMatrix):
+        (WebCore::AffineTransform::operator==):
+        (WebCore::AffineTransform::operator*=):
+        (WebCore::AffineTransform::operator*):
+        * platform/qt/BrowserExtensionQt.cpp: Added.
+        (WebCore::BrowserExtensionQt::BrowserExtensionQt):
+        (WebCore::BrowserExtensionQt::canRunModal):
+        (WebCore::BrowserExtensionQt::createNewWindow):
+        (WebCore::BrowserExtensionQt::canRunModalNow):
+        (WebCore::BrowserExtensionQt::runModal):
+        (WebCore::BrowserExtensionQt::goBackOrForward):
+        (WebCore::BrowserExtensionQt::historyURL):
+        (WebCore::BrowserExtensionQt::setTypedIconURL):
+        (WebCore::BrowserExtensionQt::setIconURL):
+        (WebCore::BrowserExtensionQt::getHistoryLength):
+        * platform/qt/BrowserExtensionQt.h: Added.
+        * platform/qt/CookieJarQt.cpp: Added.
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+        * platform/qt/PageQt.cpp: Added.
+        (WebCore::rootWindowForFrame):
+        (WebCore::Page::windowRect):
+        (WebCore::Page::setWindowRect):
+        * platform/qt/PathQt.cpp: Added.
+        (WebCore::Path::Path):
+        (WebCore::Path::~Path):
+        (WebCore::Path::operator=):
+        (WebCore::Path::contains):
+        (WebCore::Path::translate):
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::clear):
+        * platform/qt/ScreenQt.cpp: Added.
+        (WebCore::screenRect):
+        (WebCore::screenDepth):
+        (WebCore::usableScreenRect):
+
+
+2006-08-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric. Landed by rwlbuis.
+
         First chunk of the implementation for:
         http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
 
