@@ -7,6 +7,24 @@
 
         WebKit should have Qt platform support
 
+        * platform/qt/KeyboardCodes.h: Added.
+        * platform/qt/PlatformKeyboardEventQt.cpp: Added.
+        (WebCore::keyIdentifierForQtKeyCode):
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/qt/PlatformMouseEventQt.cpp: Added.
+        (WebCore::):
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
+2006-08-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric. Landed by rwlbuis.
+
+        Next chunk of the implementation for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+
+        WebKit should have Qt platform support
+
         * platform/qt/AffineTransformQt.cpp: Added.
         (WebCore::AffineTransform::AffineTransform):
         (WebCore::AffineTransform::setMatrix):
