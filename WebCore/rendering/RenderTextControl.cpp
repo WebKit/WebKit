@@ -249,6 +249,7 @@ int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos)
 
 void RenderTextControl::subtreeHasChanged()
 {
+    bool wasPreviouslyEdited = isEdited();
     setEdited(true);
     HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
     if (m_multiLine) {
@@ -258,7 +259,7 @@ void RenderTextControl::subtreeHasChanged()
         HTMLInputElement* input = static_cast<HTMLInputElement*>(element);
         if (input) {
             input->setValueFromRenderer(text());
-            if (!isEdited())
+            if (!wasPreviouslyEdited)
                 document()->frame()->textFieldDidBeginEditing(input);
             document()->frame()->textDidChangeInTextField(input);
         }
