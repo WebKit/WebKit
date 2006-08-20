@@ -32,7 +32,6 @@
 #include "Widget.h"
 
 #include "Cursor.h"
-#include "HelperQt.h"
 #include "Font.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
@@ -40,6 +39,8 @@
 
 #include <QDebug>
 #include <QWidget>
+
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
 
@@ -111,7 +112,7 @@ const Font& Widget::font() const
 void Widget::setFont(const Font& font)
 {
     if (data->m_widget)
-        data->m_widget->setFont(toQFont(font));
+        data->m_widget->setFont(font);
 }
 
 void Widget::setCursor(const Cursor& cursor)

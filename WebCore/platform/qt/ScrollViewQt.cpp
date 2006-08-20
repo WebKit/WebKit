@@ -36,10 +36,11 @@
 
 #include "FrameQt.h"
 #include "CanvasQt.h"
-#include "HelperQt.h"
 
 #include <QScrollBar>
 #include <QScrollArea>
+
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
 

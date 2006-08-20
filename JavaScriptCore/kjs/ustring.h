@@ -38,8 +38,6 @@ namespace DOM {
   class AtomicString;
 }
 class KJScript;
-class QString;
-class QConstString;
 
 namespace KJS {
 
@@ -247,18 +245,14 @@ namespace KJS {
     UString(const UString &s) : m_rep(s.m_rep) {}
     /**
      * Convenience declaration only ! You'll be on your own to write the
-     * implementation for a construction from QString.
+     * implementation for a construction from DOM::DOMString.
      *
      * Note: feel free to contact me if you want to see a dummy header for
      * your favorite FooString class here !
      */
-    UString(const QString&);
-    /**
-     * Convenience declaration only ! See UString(const QString&).
-     */
     UString(const DOM::DOMString&);
     /**
-     * Convenience declaration only ! See UString(const QString&).
+     * Convenience declaration only ! See UString(const DOM::DOMString&).
      */
     UString(const DOM::AtomicString&);
 
@@ -330,17 +324,9 @@ namespace KJS {
     CString UTF8String() const;
 
     /**
-     * @see UString(const QString&).
+     * @see UString(const DOM::DOMString&).
      */
     DOM::DOMString domString() const;
-    /**
-     * @see UString(const QString&).
-     */
-    QString qstring() const;
-    /**
-     * @see UString(const QString&).
-     */
-    QConstString qconststring() const;
 
     /**
      * Assignment operator.

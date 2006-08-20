@@ -1,3 +1,40 @@
+2006-08-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej. Landed by rwlbuis.
+
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10463
+        WebKit should have Qt platform support
+
+        Removing HelperQt.h usage by creating appropriate operators
+        constructor in some of the platform classes, as suggested by Darin.
+
+        * CMakeLists.txt:
+        * platform/DeprecatedString.h:
+        * platform/Font.h:
+        * platform/PlatformString.h:
+        * platform/qt/ComboBoxQt.cpp:
+        (WebCore::PlatformComboBox::appendItem):
+        (WebCore::PlatformComboBox::appendGroupLabel):
+        (WebCore::PlatformComboBox::setFont):
+        * platform/qt/LineEditQt.cpp:
+        (WebCore::PlatformLineEdit::setFont):
+        (WebCore::PlatformLineEdit::setText):
+        (WebCore::PlatformLineEdit::text):
+        (WebCore::PlatformLineEdit::selectedText):
+        * platform/qt/ListBoxQt.cpp:
+        (WebCore::ListBox::setFont):
+        (WebCore::ListBox::appendItem):
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/qt/StringQt.cpp: Added.
+        (WebCore::String::String):
+        (WebCore::String::operator QString):
+        (WebCore::DeprecatedString::operator QString):
+        * platform/qt/TextEditQt.cpp:
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::setFont):
+
 2006-08-18  Steve Falkenburg  <sfalken@apple.com>
 
         Rubber stamped by adele.

@@ -29,8 +29,8 @@
 #include <QScrollBar>
 #include <QListWidget>
 
+#include "Font.h"
 #include "IntSize.h"
-#include "HelperQt.h"
 #include "ListBox.h"
 
 namespace WebCore {
@@ -167,14 +167,14 @@ void ListBox::clearCachedTextRenderers()
 
 void ListBox::setFont(const Font& font)
 {
-    m_listWidget->setFont(toQFont(font));
+    m_listWidget->setFont(font);
 }
 
 void ListBox::appendItem(const DeprecatedString& string, ListBoxItemType type, bool enabled)
 {
     // FIXME: take into account type/enabled...
     Q_ASSERT(m_listWidget != 0);
-    (void) new QListWidgetItem(toQString(string), m_listWidget); // No this does not leak...
+    (void) new QListWidgetItem(string, m_listWidget); // No this does not leak...
 }
 
 };

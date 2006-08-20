@@ -60,7 +60,7 @@ add_definitions ( -DQT3_SUPPORT -Wno-undef -Wno-unused-parameter )
 IF (USE_WEBKIT_SVG_SUPPORT)
 add_definitions ( -DSVG_SUPPORT=1 )
 ENDIF (USE_WEBKIT_SVG_SUPPORT)
-	
+
 check_cxx_compiler_flag(-Wno-variadic-macros __KDE_HAVE_WVARIADIC_MACROS)
 
 IF(__KDE_HAVE_WVARIADIC_MACROS)
@@ -557,10 +557,10 @@ set(WebCore_SRCS
     bindings/js/JSHTMLFormElementCustom.cpp
     bindings/js/JSHTMLOptionElementConstructor.cpp
     bindings/js/JSHTMLOptionsCollectionCustom.cpp
-	bindings/js/JSHTMLInputElementBase.cpp
+    bindings/js/JSHTMLInputElementBase.cpp
     bindings/js/JSXMLHttpRequest.cpp
-	bindings/js/JSNodeIteratorCustom.cpp
-	bindings/js/JSTreeWalkerCustom.cpp
+    bindings/js/JSNodeIteratorCustom.cpp
+    bindings/js/JSTreeWalkerCustom.cpp
     bindings/js/JSXSLTProcessor.cpp
 
     css/cssparser.cpp
@@ -635,7 +635,7 @@ set(WebCore_SRCS
     dom/QualifiedName.cpp
     dom/Document.cpp
     dom/Attr.cpp
-	dom/OverflowEvent.cpp
+    dom/OverflowEvent.cpp
     dom/RegisteredEventListener.cpp
     dom/EventTargetNode.cpp
     dom/BeforeUnloadEvent.cpp
@@ -698,9 +698,9 @@ set(WebCore_SRCS
     xml/XSLStyleSheet.cpp
     xml/XSLTProcessor.cpp
     xml/XSLImportRule.cpp
-	xml/DOMParser.cpp
-	xml/XMLSerializer.cpp
-	xml/xmlhttprequest.cpp
+    xml/DOMParser.cpp
+    xml/XMLSerializer.cpp
+    xml/xmlhttprequest.cpp
 #   icon/IconDatabase.cpp
 #   icon/SQLTransaction.cpp
 #   icon/SQLStatement.cpp
@@ -820,9 +820,9 @@ set(WebCore_SRCS
     loader/Decoder.cpp
     loader/FormData.cpp
     platform/AtomicString.cpp
-	platform/AffineTransform.cpp
+    platform/AffineTransform.cpp
     platform/TextStream.cpp
-	platform/Widget.cpp
+    platform/Widget.cpp
     platform/GlyphWidthMap.cpp
     platform/Pen.cpp
     platform/Image.cpp
@@ -838,9 +838,9 @@ set(WebCore_SRCS
     platform/FloatPoint.cpp
     platform/SegmentedString.cpp
     platform/StreamingTextDecoder.cpp
-	platform/StreamingTextDecoderICU.cpp
+    platform/StreamingTextDecoderICU.cpp
     platform/DeprecatedString.cpp
-	platform/DeprecatedCString.cpp
+    platform/DeprecatedCString.cpp
     platform/TextEncoding.cpp
     platform/GraphicsContext.cpp
     platform/Logging.cpp
@@ -850,7 +850,8 @@ set(WebCore_SRCS
     platform/StringImpl.cpp
     platform/FloatRect.cpp
     platform/ResourceLoader.cpp
-	platform/qt/AffineTransformQt.cpp
+    platform/qt/AffineTransformQt.cpp
+    platform/qt/StringQt.cpp
     platform/qt/ColorQt.cpp
     platform/qt/GlyphMapQt.cpp
     platform/qt/BrowserExtensionQt.cpp
@@ -861,10 +862,10 @@ set(WebCore_SRCS
     platform/qt/TemporaryLinkStubs.cpp
     platform/qt/CursorQt.cpp
     platform/qt/WidgetQt.cpp
-    platform/qt/SystemTimeLinux.cpp
+    platform/qt/SystemTimeQt.cpp
     platform/qt/RenderThemeQt.cpp
     platform/qt/FontDataQt.cpp
-    platform/qt/SharedTimerLinux.cpp
+    platform/qt/SharedTimerQt.cpp
     platform/qt/ResourceLoaderCurl.cpp
     platform/qt/ResourceLoaderManager.cpp
     platform/qt/FloatPointQt.cpp
@@ -906,7 +907,7 @@ set(WebCore_SRCS
     rendering/RenderPartObject.cpp
     rendering/RenderView.cpp
     rendering/RenderMenuList.cpp
-	rendering/InlineFlowBox.cpp
+    rendering/InlineFlowBox.cpp
     rendering/RenderListMarker.cpp
     rendering/RenderImage.cpp
     rendering/RenderTheme.cpp
@@ -951,7 +952,7 @@ set(WebCore_SRCS
     rendering/RenderFlexibleBox.cpp
     rendering/RenderApplet.cpp
     rendering/RenderLegend.cpp
-	rendering/RenderTextControl.cpp
+    rendering/RenderTextControl.cpp
     rendering/RenderTextFragment.cpp
     rendering/RenderBR.cpp
     rendering/InlineTextBox.cpp
@@ -1007,7 +1008,7 @@ set(WebCore_SRCS
 )
 
 
-kde4_automoc(platform/qt/SharedTimerLinux.cpp)
+kde4_automoc(platform/qt/SharedTimerQt.cpp)
 
 kde4_add_library(WebCore-unity SHARED  ${WebCore_SRCS})
 

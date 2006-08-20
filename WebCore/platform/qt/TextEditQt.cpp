@@ -34,7 +34,8 @@
 #include "PlatformTextEdit.h"
 #include "PlatformString.h"
 #include "IntSize.h"
-#include "HelperQt.h"
+
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
 

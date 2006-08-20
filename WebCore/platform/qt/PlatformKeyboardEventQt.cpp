@@ -26,7 +26,6 @@
  */
 
 #include "config.h"
-#include "HelperQt.h"
 #include "KeyboardCodes.h"
 #include "PlatformKeyboardEvent.h"
 
@@ -422,8 +421,8 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event, bool isKeyUp)
 {
-    m_text = fromQString(event->text());
-    m_unmodifiedText = fromQString(event->text()); // TODO: not correct
+    m_text = event->text();
+    m_unmodifiedText = event->text(); // TODO: not correct
     m_keyIdentifier = keyIdentifierForQtKeyCode(event->key());
     m_isKeyUp = isKeyUp;
     m_autoRepeat = event->isAutoRepeat();

@@ -39,7 +39,6 @@ namespace KJS {
         
         const UString &ustring() const { return _ustring; }
         DOM::DOMString domString() const;
-        QString qstring() const;
         
         const UChar *data() const { return _ustring.data(); }
         int size() const { return _ustring.size(); }

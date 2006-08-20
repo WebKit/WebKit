@@ -31,7 +31,6 @@
 
 #include "Widget.h"
 #include "IntRect.h"
-#include "HelperQt.h"
 #include "FloatRect.h"
 
 #include <QApplication>

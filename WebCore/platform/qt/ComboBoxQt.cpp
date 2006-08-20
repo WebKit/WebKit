@@ -31,7 +31,8 @@
 #include "PlatformComboBox.h"
 #include "IntSize.h"
 #include "IntRect.h"
-#include "HelperQt.h"
+
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
 
@@ -65,13 +66,13 @@ void PlatformComboBox::clear()
 
 void PlatformComboBox::appendItem(const DeprecatedString& text, bool enabled)
 {
-    m_comboBox->addItem(toQString(text));
+    m_comboBox->addItem(text);
 }
 
 void PlatformComboBox::appendGroupLabel(const DeprecatedString& text)
 {
     // TODO: Group label?
-    m_comboBox->addItem(toQString(text));
+    m_comboBox->addItem(text);
 }
 
 void PlatformComboBox::appendSeparator()
@@ -107,7 +108,7 @@ int PlatformComboBox::baselinePosition(int height) const
 
 void PlatformComboBox::setFont(const Font& font)
 {
-    m_comboBox->setFont(toQFont(font));
+    m_comboBox->setFont(font);
 }
 
 Widget::FocusPolicy PlatformComboBox::focusPolicy() const

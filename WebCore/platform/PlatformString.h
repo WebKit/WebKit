@@ -33,6 +33,10 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#if PLATFORM(QT)
+class QString;
+#endif
+
 namespace WebCore {
 
 /**
@@ -134,9 +138,15 @@ public:
     String(CFStringRef);
     CFStringRef createCFString() const { return m_impl ? m_impl->createCFString() : CFSTR(""); }
 #endif
+
 #ifdef __OBJC__
     String(NSString*);
     operator NSString*() const { if (!m_impl) return @""; return *m_impl; }
+#endif
+
+#if PLATFORM(QT)
+    String(const QString&);
+    operator QString() const;
 #endif
 
 #ifndef NDEBUG
