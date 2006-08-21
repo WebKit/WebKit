@@ -2,7 +2,60 @@
 
         Reviewed by Maciej.
 
-        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10463
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+        WebKit should have Qt platform support
+
+        * platform/qt/CursorQt.cpp: Added.
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::~Cursor):
+        (WebCore::Cursor::operator=):
+        (WebCore::Cursors::Cursors::self):
+        (WebCore::moveCursor):
+        (WebCore::crossCursor):
+        (WebCore::handCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::waitCursor):
+        (WebCore::helpCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        * platform/qt/RenderThemeQt.cpp: Added.
+        (WebCore::RenderThemeQt::RenderThemeQt):
+        (WebCore::RenderThemeQt::supportsHover):
+        (WebCore::RenderThemeQt::paintCheckbox):
+        (WebCore::RenderThemeQt::paintRadio):
+        (WebCore::theme):
+        (WebCore::RenderThemeQt::isControlStyled):
+        (WebCore::RenderThemeQt::controlSupportsTints):
+        (WebCore::RenderThemeQt::systemFont):
+        (WebCore::RenderThemeQt::createPopupMenu):
+        (WebCore::RenderThemeQt::addIntrinsicMargins):
+        (WebCore::RenderThemeQt::stylePainterAndWidgetForPaintInfo):
+        (WebCore::RenderThemeQt::setCheckboxSize):
+        (WebCore::RenderThemeQt::setRadioSize):
+        (WebCore::RenderThemeQt::supportsFocus):
+        (WebCore::RenderThemeQt::applyTheme):
+        (WebCore::RenderThemeQt::adjustButtonStyle):
+        (WebCore::RenderThemeQt::paintButton):
+        (WebCore::RenderThemeQt::adjustTextFieldStyle):
+        (WebCore::RenderThemeQt::paintTextField):
+
+2006-08-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
         WebKit should have Qt platform support
 
         * platform/qt/SharedTimerQt.cpp: Added.
