@@ -1,3 +1,11 @@
+2006-08-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej's rubberstamp
+
+        Removed stale file references from the Xcode.proj
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-08-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Maciej. Landed by rwlbuis.
