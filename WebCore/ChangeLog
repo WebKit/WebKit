@@ -1,5 +1,106 @@
 2006-08-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Eric.
+
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+        WebKit should have Qt platform support
+
+        * platform/qt/TemporaryLinkStubs.cpp: Added.
+        (JavaAppletWidget::JavaAppletWidget):
+        (Font::selectionRectForComplexText):
+        (Font::offsetForPositionForComplexText):
+        (WebCore::refreshPlugins):
+        (WebCore::focusRingColor):
+        (Image::drawTiled):
+        (WebCore::TextField::selectAll):
+        (WebCore::TextField::addSearchResult):
+        (WebCore::TextField::selectionStart):
+        (WebCore::TextField::hasSelectedText):
+        (WebCore::TextField::selectedText):
+        (WebCore::TextField::setAutoSaveName):
+        (WebCore::TextField::checksDescendantsForFocus):
+        (WebCore::TextField::setSelection):
+        (WebCore::TextField::setMaxResults):
+        (WebCore::TextField::edited):
+        (WebCore::TextField::focusPolicy):
+        (WebCore::TextField::TextField):
+        (WebCore::TextField::~TextField):
+        (WebCore::TextField::setFont):
+        (WebCore::TextField::setAlignment):
+        (WebCore::TextField::setWritingDirection):
+        (WebCore::TextField::maxLength):
+        (WebCore::TextField::setMaxLength):
+        (WebCore::TextField::text):
+        (WebCore::TextField::setText):
+        (WebCore::TextField::cursorPosition):
+        (WebCore::TextField::setCursorPosition):
+        (WebCore::TextField::setEdited):
+        (WebCore::TextField::setReadOnly):
+        (WebCore::TextField::setPlaceholderString):
+        (WebCore::TextField::setColors):
+        (WebCore::TextField::sizeForCharacterWidth):
+        (WebCore::TextField::baselinePosition):
+        (WebCore::TextField::setLiveSearch):
+        (WebCore::Slider::Slider):
+        (WebCore::Slider::sizeHint):
+        (WebCore::Slider::~Slider):
+        (WebCore::Slider::setValue):
+        (WebCore::Slider::setMaxValue):
+        (WebCore::Slider::setMinValue):
+        (WebCore::Slider::setFont):
+        (WebCore::Slider::value):
+        (WebCore::Slider::focusPolicy):
+        (WebCore::ScrollBar::ScrollBar):
+        (WebCore::ScrollBar::setSteps):
+        (WebCore::ScrollBar::scroll):
+        (WebCore::ScrollBar::setValue):
+        (WebCore::ScrollBar::setKnobProportion):
+        (WebCore::PlatformScrollBar::PlatformScrollBar):
+        (WebCore::PlatformScrollBar::~PlatformScrollBar):
+        (WebCore::PlatformScrollBar::width):
+        (WebCore::PlatformScrollBar::height):
+        (WebCore::PlatformScrollBar::setEnabled):
+        (WebCore::PlatformScrollBar::paint):
+        (WebCore::PlatformScrollBar::setScrollBarValue):
+        (WebCore::PlatformScrollBar::setKnobProportion):
+        (WebCore::PlatformScrollBar::setRect):
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        (WebCore::CheckCacheObjectStatus):
+        (WebCore::CheckIfReloading):
+        (WebCore::ServeSynchronousRequest):
+        (WebCore::historyContains):
+        (WebCore::submitButtonDefaultLabel):
+        (WebCore::inputElementAltText):
+        (WebCore::resetButtonDefaultLabel):
+        (WebCore::defaultLanguage):
+        (WebCore::findNextSentenceFromIndex):
+        (WebCore::findSentenceBoundary):
+        (WebCore::findNextWordFromIndex):
+        (WebCore::findWordBoundary):
+        (Frame::setNeedsReapplyStyles):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::searchableIndexIntroduction):
+        (WebCore::setFocusRingColorChangeFunction):
+        (FrameView::updateBorder):
+        (loadResourceIntoArray):
+        (PlugInInfoStore::createPluginInfoForPluginAtIndex):
+        (PlugInInfoStore::pluginCount):
+        (WebCore::PlugInInfoStore::supportsMIMEType):
+        (FileButton::FileButton):
+        (FileButton::click):
+        (FileButton::sizeForCharacterWidth):
+        (FileButton::focusPolicy):
+        (FileButton::frameGeometry):
+        (FileButton::setFilename):
+        (FileButton::baselinePosition):
+        (FileButton::setFrameGeometry):
+        (FileButton::setDisabled):
+        (WebCore::supportedKeySizes):
+        (WebCore::signedPublicKeyAndChallengeString):
+
+2006-08-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Maciej.
 
         Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
