@@ -1,3 +1,19 @@
+2006-08-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady.
+        
+        - pull a bit of WebDataSource code into WebFrameLoader
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _receivedError:]):
+        (-[WebFrameLoader webFrame]):
+        (-[WebFrameLoader _handleFallbackContent]):
+        (+[WebFrameLoader _canShowMIMEType:]):
+        (+[WebFrameLoader _representationExistsForURLScheme:]):
+        (+[WebFrameLoader _generatedMIMETypeForURLScheme:]):
+        * WebView/WebDataSource.m:
+        * WebView/WebDataSourceInternal.h:
+
 2006-08-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Kevin Decker.

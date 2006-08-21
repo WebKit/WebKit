@@ -38,6 +38,7 @@
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/DOMHTML.h>
+#import <WebKit/WebFrameBridge.h>
 
 @implementation WebFrameLoader
 
@@ -426,7 +427,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_receivedError:(NSError *)error
 {
-    return [[self activeDataSource] _receivedError:error];
+    [[self webFrame] _checkLoadComplete];
 }
 
 - (void)_addSubresourceLoader:(WebLoader *)loader
@@ -446,7 +447,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (WebFrame *)webFrame
 {
-    return [[self activeDataSource] webFrame];
+    return webFrame;
 }
 
 - (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
@@ -479,7 +480,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_handleFallbackContent
 {
-    [[self activeDataSource] _handleFallbackContent];
+    [[webFrame _bridge] handleFallbackContent];
 }
 
 - (BOOL)_isStopping
@@ -681,17 +682,17 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType
 {
-    return [WebDataSource _canShowMIMEType:MIMEType];
+    return [WebView canShowMIMEType:MIMEType];
 }
 
 + (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme
 {
-    return [WebDataSource _representationExistsForURLScheme:URLScheme];
+    return [WebView _representationExistsForURLScheme:URLScheme];
 }
 
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
 {
-    return [WebDataSource _generatedMIMETypeForURLScheme:URLScheme];
+    return [WebView _generatedMIMETypeForURLScheme:URLScheme];
 }
 
 @end

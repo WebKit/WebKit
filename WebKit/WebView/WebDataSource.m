@@ -1261,11 +1261,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
 }
 
-- (void)_receivedError:(NSError *)error
-{
-    [[self webFrame] _checkLoadComplete];
-}
-
 - (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete
 {
     if (![self webFrame])
@@ -1277,26 +1272,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         [self _setPrimaryLoadComplete:YES];
         [[self webFrame] _checkLoadComplete];
     }
-}
-
-+ (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
-{
-    return [WebView _generatedMIMETypeForURLScheme:URLScheme];
-}
-
-+ (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme
-{
-    return [WebView _representationExistsForURLScheme:URLScheme];
-}
-
-+ (BOOL)_canShowMIMEType:(NSString *)MIMEType
-{
-    return [WebView canShowMIMEType:MIMEType];
-}
-
-- (void)_handleFallbackContent
-{
-    [[[self webFrame] _bridge] handleFallbackContent];
 }
 
 - (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener
