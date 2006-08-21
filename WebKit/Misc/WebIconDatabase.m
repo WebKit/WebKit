@@ -164,7 +164,7 @@ NSSize WebIconLargeSize = {128, 128};
     // FIXME - Once the new iconDB is the only game in town, we need to remove any of the WebFileDatabase code
     // that is threaded and expects certain files to exist - certain files we rip right out from underneath it
     // in the _convertToWebCoreFormat method
-#ifdef ICONDEBUG
+#ifndef ICONDEBUG
     // Retain icons on disk then release them once clean-up has begun.
     // This gives the client the opportunity to retain them before they are erased.
     [self _retainOriginalIconsOnDisk];
@@ -187,10 +187,6 @@ NSSize WebIconLargeSize = {128, 128};
 
 #ifdef ICONDEBUG        
     NSImage* image = [_private->databaseBridge iconForPageURL:URL withSize:size];
-    if (image)
-        LOG(IconDatabase, "NewDB has image for %@", URL);
-    else
-        LOG(IconDatabase, "NewDB has no image for %@", URL);
         
     // FIXME - We currently don't embed the default icon in the new WebCore IconDB, so we'll return the old version of it;
     return image ? image : [self defaultIconWithSize:size];
@@ -495,12 +491,12 @@ NSSize WebIconLargeSize = {128, 128};
     [self _updateFileDatabase];
 }
 
-- (BOOL)_hasIconForIconURL:(NSString *)iconURL;
+- (BOOL)_hasEntryForIconURL:(NSString *)iconURL;
 {
     ASSERT([self _isEnabled]);
 
 #ifdef ICONDEBUG
-    BOOL result = [_private->databaseBridge _hasIconForIconURL:iconURL];
+    BOOL result = [_private->databaseBridge _hasEntryForIconURL:iconURL];
     if (result)
         LOG(IconDatabase, "NewDB has icon for IconURL %@", iconURL);
     else

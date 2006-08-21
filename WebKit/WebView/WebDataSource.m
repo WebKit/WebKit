@@ -310,13 +310,18 @@
     
     // Bind the URL of the original request and the final URL to the icon URL.
     [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[self _URL] _web_originalDataAsString]];
-    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[[self _originalRequest] URL] _web_originalDataAsString]];
-    
+    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[[self _originalRequest] URL] _web_originalDataAsString]];    
+}
+
+- (void)_notifyIconChanged:(NSURL *)iconURL
+{
+    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
     
     if ([self webFrame] == [[self _webView] mainFrame])
         [[self _webView] _willChangeValueForKey:_WebMainFrameIconKey];
     
-    NSImage *icon = [iconDB iconForURL:[[self _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
+    NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForURL:[[self _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
+    
     [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
                                             didReceiveIcon:icon
                                                   forFrame:[self webFrame]];
@@ -347,10 +352,12 @@
         // If we have the icon already, we'll still see if we're manually reloading or if the icon is expired
         // If so, kick off a reload of the icon
         // If we don't have the icon already, kick off the initial load
-        if ([[WebIconDatabase sharedIconDatabase] _hasIconForIconURL:[_private->iconURL _web_originalDataAsString]]) {
+        if ([[WebIconDatabase sharedIconDatabase] _hasEntryForIconURL:[_private->iconURL _web_originalDataAsString]]) {
+            [self _updateIconDatabaseWithURL:_private->iconURL];
             if ([[self webFrame] _loadType] == WebFrameLoadTypeReload || [[WebIconDatabase sharedIconDatabase] isIconExpiredForIconURL:[_private->iconURL _web_originalDataAsString]])
                 [[WebIconDatabase sharedIconDatabase] loadIconFromURL:[_private->iconURL _web_originalDataAsString]];
-            [self _updateIconDatabaseWithURL:_private->iconURL];
+            else
+                [self _notifyIconChanged:_private->iconURL];
         } else {
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->iconURL];
             [[self webFrame] _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
@@ -800,6 +807,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 - (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader
 {
     [self _updateIconDatabaseWithURL:_private->iconURL];
+    [self _notifyIconChanged:_private->iconURL];
 }
 
 - (void)_setIconURL:(NSURL *)URL

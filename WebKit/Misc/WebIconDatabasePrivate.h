@@ -98,7 +98,7 @@ extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
 // Called by WebDataSource to bind a web site URL to a icon URL and icon image.
 - (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)URL;
 
-- (BOOL)_hasIconForIconURL:(NSString *)iconURL;
+- (BOOL)_hasEntryForIconURL:(NSString *)iconURL;
 - (void)_sendNotificationForURL:(NSString *)URL;
 
 - (void)loadIconFromURL:(NSString *)iconURL;

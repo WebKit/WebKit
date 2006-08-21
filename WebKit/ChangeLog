@@ -1,3 +1,22 @@
+2006-08-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        -Renamed an internal only method for clarity
+        -Tweaked WebDataSource for notification purposes with the new expiring icons
+        -Fixed a bug with the ICONDEBUG flag
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase init]):
+        (-[WebIconDatabase iconForURL:withSize:cache:]): #ifdef bug fixed
+        (-[WebIconDatabase _hasEntryForIconURL:]): Renamed for clarity
+        * Misc/WebIconDatabasePrivate.h:
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _updateIconDatabaseWithURL:]):
+        (-[WebDataSource _notifyIconChanged:]):
+        (-[WebDataSource _loadIcon]):
+        (-[WebDataSource _iconLoaderReceivedPageIcon:]):
+
 2006-08-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady.
