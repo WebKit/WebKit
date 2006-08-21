@@ -1,5 +1,35 @@
 2006-08-21  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Anders
+
+        -Added timer-based, deferred deletion of database records - PageURLs and Icons handled seperately
+         In the near future, we'll also have timer-based deferred *addition* of database records
+        -Keep retain/release counts in a hash instead of a DB table
+        -Keep only one hash record for the SiteIcons
+        -Renamed some methods for clarity
+
+        * bridge/mac/WebCoreIconDatabaseBridge.h: Renamed method for clarity
+        * bridge/mac/WebCoreIconDatabaseBridge.mm: Ditto
+        (-[WebCoreIconDatabaseBridge _hasEntryForIconURL:]): Ditto
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::open): Added new timer setup
+        (WebCore::IconDatabase::iconForPageURL): Only work with one hash of the SiteIcons
+        (WebCore::IconDatabase::retainIconForPageURL): Keep count in a hash
+        (WebCore::IconDatabase::releaseIconForPageURL): Keep count in a hash, use deferred deletion
+        (WebCore::IconDatabase::retainIconURL): Added
+        (WebCore::IconDatabase::releaseIconURL): Added
+        (WebCore::IconDatabase::forgetPageURL):  Added
+        (WebCore::IconDatabase::isIconURLRetained): New and improved simplicity
+        (WebCore::IconDatabase::setIconDataForIconURL): Cleanup
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::pruneUnretainedIconsOnStartup): Renamed
+        (WebCore::IconDatabase::pruneIconsPendingDeletion): Added
+        (WebCore::IconDatabase::hasEntryForIconURL): Renamed for clarity
+        * loader/icon/IconDatabase.h: Added multiple stuffs
+
+2006-08-21  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Maciej's rubberstamp
 
         Removed stale file references from the Xcode.proj

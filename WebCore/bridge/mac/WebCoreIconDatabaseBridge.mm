@@ -180,12 +180,12 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
     _iconDB->setIconURLForPageURL(String(iconURL), String(pageURL));
 }
 
-- (BOOL)_hasIconForIconURL:(NSString *)iconURL
+- (BOOL)_hasEntryForIconURL:(NSString *)iconURL
 {
     ASSERT(_iconDB);
     ASSERT(iconURL);
     
-    return _iconDB->hasIconForIconURL(String(iconURL));
+    return _iconDB->hasEntryForIconURL(iconURL);
 }
 
 - (NSString *)defaultDatabaseFilename

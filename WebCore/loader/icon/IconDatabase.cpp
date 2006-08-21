@@ -92,7 +92,8 @@ IconDatabase* IconDatabase::sharedIconDatabase()
 IconDatabase::IconDatabase()
     : m_currentDB(&m_mainDB)
     , m_privateBrowsingEnabled(false)
-    , m_startupTimer(this, &IconDatabase::pruneUnretainedIcons)
+    , m_startupTimer(this, &IconDatabase::pruneUnretainedIconsOnStartup)
+    , m_pruneTimer(this, &IconDatabase::pruneIconsPendingDeletion)
 {
     
 }
@@ -139,8 +140,13 @@ bool IconDatabase::open(const String& databasePath)
         LOG_ERROR("Unabled to open in-memory database for private browsing - %s", m_privateBrowsingDB.lastErrorMsg());
 
     // Only if we successfully remained open will we start our "initial purge timer"
-    if (isOpen())
+    // rdar://4690949 - when we have deferred reads and writes all the way in, the prunetimer
+    // will become "deferredTimer" or something along those lines, and will be set only when
+    // a deferred read/write is queued
+    if (isOpen()) {
         m_startupTimer.startOneShot(0);
+        m_pruneTimer.startRepeating(10);
+    }
     
     return isOpen();
 }
@@ -248,33 +254,21 @@ void IconDatabase::setPrivateBrowsingEnabled(bool flag)
     }
 }
 
-Image* IconDatabase::iconForPageURL(const String& url, const IntSize& size, bool cache)
+Image* IconDatabase::iconForPageURL(const String& pageURL, const IntSize& size, bool cache)
 {   
-    String iconURL;
-
-    // We may have a SiteIcon for this specific PageURL...
-    if (m_pageURLToSiteIcons.contains(url))
-        return m_pageURLToSiteIcons.get(url)->getImage(size);
-    
-    // Otherwise see if we even have an IconURL for this PageURL...
-    // The weird flow here is because we declare the iconURL variable up above, but MAY not have retrieved the string yet
-    // Trying to keep out excessive SQLite calls, which the pageURL->iconURL mapping incur
-    if (iconURL.isEmpty())
-        iconURL = iconURLForPageURL(url);
+    // See if we even have an IconURL for this PageURL...
+    String iconURL = iconURLForPageURL(pageURL);
     if (iconURL.isEmpty())
         return 0;
     
-    // If we do, maybe we have an image for this IconURL
+    // If we do, maybe we have a SiteIcon for this IconURL
     if (m_iconURLToSiteIcons.contains(iconURL)) {
         SiteIcon* icon = m_iconURLToSiteIcons.get(iconURL);
-        // Assign this SiteIcon to this PageURL for faster lookup in the future
-        m_pageURLToSiteIcons.set(url, icon);
         return icon->getImage(size);
     }
         
     // If we don't have either, we have to create the SiteIcon
     SiteIcon* icon = new SiteIcon(iconURL);
-    m_pageURLToSiteIcons.set(url, icon);
     m_iconURLToSiteIcons.set(iconURL, icon);
     return icon->getImage(size);
 }
@@ -333,15 +327,26 @@ void IconDatabase::retainIconForPageURL(const String& pageURL)
     if (pageURL.isEmpty())
         return;
         
-    String escapedPageURL = pageURL;
-    escapedPageURL.replace('\'', "''");
+    int retainCount;
     
-    int retainCount = SQLStatement(m_mainDB, "SELECT count FROM PageRetain WHERE url = '" + escapedPageURL + "';").getColumnInt(0);
-    ASSERT(retainCount > -1);
-    
-    if (!m_mainDB.executeCommand("INSERT INTO PageRetain VALUES ('" + escapedPageURL + "', " + String::number(retainCount + 1) + ");"))
-        LOG_ERROR("Failed to increment retain count for url %s", pageURL.ascii().data());
+    // If we don't have the retain count for this page, we need to setup records of its retain
+    // Otherwise, get the count and increment it
+    if (!m_pageURLToRetainCount.contains(pageURL)) {
+        // If this pageURL is marked for deletion, bring it back from the brink
+        m_pageURLsPendingDeletion.remove(pageURL);
         
+        // The new retain count will be 1
+        retainCount = 1;
+        
+         // If we have an iconURL for this pageURL, we'll now retain the iconURL
+        String iconURL = iconURLForPageURL(pageURL);
+        if (!iconURL.isEmpty())
+            retainIconURL(iconURL);
+
+    } else
+        retainCount = m_pageURLToRetainCount.get(pageURL) + 1;
+        
+    m_pageURLToRetainCount.set(pageURL, retainCount);        
 }
 
 void IconDatabase::releaseIconForPageURL(const String& pageURL)
@@ -349,89 +354,92 @@ void IconDatabase::releaseIconForPageURL(const String& pageURL)
     if (pageURL.isEmpty())
         return;
         
-    String escapedPageURL = pageURL;
-    escapedPageURL.replace('\'', "''");
-    
-    SQLStatement sql(m_mainDB, "SELECT count FROM PageRetain WHERE url = '" + escapedPageURL + "';");
-    switch (sql.prepareAndStep()) {
-        case SQLITE_ROW:
-            break;
-        case SQLITE_DONE:
-            LOG_ERROR("Released icon for url %s that had not been retained", pageURL.ascii().data());
-            return;
-        default:
-            LOG_ERROR("Error retrieving retain count for url %s", pageURL.ascii().data());
-            return;
+    // Check if this pageURL is actually retained
+    if(!m_pageURLToRetainCount.contains(pageURL)) {
+        LOG_ERROR("Attempting to release icon for URL %s which is not retained", pageURL.ascii().data());
+        return;
     }
     
-    int retainCount = sql.getColumnInt(0);
-    sql.finalize();
-    
-    // If the retain count SOMEHOW gets to zero or less, we need to explore further, but also bail right here
-    // as getting an inconsistent retain count won't harm the browsing experience, but if we over-release
-    // we may end up doing something stupid with the SiteIcon objects
+    // Get its retain count
+    int retainCount = m_pageURLToRetainCount.get(pageURL);
     ASSERT(retainCount > 0);
-    if (retainCount < 1) {
-        LOG_ERROR("Attempting to release icon for URL %s - already fully released", pageURL.ascii().data());
+    
+    // If it still has a positive retain count, store the new count and bail
+    if (--retainCount) {
+        m_pageURLToRetainCount.set(pageURL, retainCount);
         return;
     }
     
-    --retainCount;
-    if (!m_mainDB.executeCommand("INSERT INTO PageRetain VALUES ('" + escapedPageURL + "', " + String::number(retainCount) + ");"))
-        LOG_ERROR("Failed to decrement retain count for url %s", pageURL.ascii().data());
-        
-    // If we still have a positve retain count, we're done - lets bail
-    if (retainCount)
-        return;
+    LOG(IconDatabase, "No more retainers for PageURL %s", pageURL.ascii().data());
     
-    // Grab the iconURL for later use...
-    String iconURL = iconURLForPageURL(pageURL);
+    // Otherwise, remove all record of the retain count
+    m_pageURLToRetainCount.remove(pageURL);   
     
-    // The retain count is zilch so we can wipe this PageURL's retain count
-    if (!m_mainDB.executeCommand("DELETE FROM PageRetain WHERE url = '" + escapedPageURL + "';"))
-        LOG_ERROR("Failed to delete retain record for url %s", pageURL.ascii().data());
-    // And its record in the current DB
-    forgetPageURLQuery(*m_currentDB, pageURL);
+    // Then mark this pageURL for deletion
+    m_pageURLsPendingDeletion.add(pageURL);
             
-    // And now see if we can wipe the icon itself
-    if (iconURL.isEmpty())
-        return;
-        
-    // If the icon has other retainers, we're all done - bail
-    if (isIconURLRetained(iconURL))
-        return;
-        
-    LOG(IconDatabase, "No retainers for Icon URL %s - forgetting icon altogether", iconURL.ascii().data());
-
-    // Wipe it from the database...
-    forgetIconForIconURLFromDatabase(iconURL);
-
-    // And then from the SiteIcons
-    SiteIcon* icon1;
-    SiteIcon* icon2;
-    if ((icon1 = m_pageURLToSiteIcons.get(pageURL)))
-        m_pageURLToSiteIcons.remove(pageURL);
-    if ((icon2 = m_iconURLToSiteIcons.get(iconURL)))
-        m_iconURLToSiteIcons.remove(iconURL);
-    
-    // If we got the reference to the SiteIcon from each map, make sure we don't delete it twice
-    if (icon1 && icon2) {
-        ASSERT(icon1 == icon2);
-        icon2 = 0;
-    }
-    delete icon1;
-    delete icon2;
+    // Grab the iconURL and release it
+    String iconURL = iconURLForPageURL(pageURL);
+    if (!iconURL.isEmpty())
+        releaseIconURL(iconURL);
 }
 
+void IconDatabase::retainIconURL(const String& iconURL)
+{
+    ASSERT(!iconURL.isEmpty());
+    
+    if (m_iconURLToRetainCount.contains(iconURL)) {
+        ASSERT(m_iconURLToRetainCount.get(iconURL) > 0);
+        m_iconURLToRetainCount.set(iconURL, m_iconURLToRetainCount.get(iconURL) + 1);
+    } else {
+        m_iconURLToRetainCount.set(iconURL, 1);
+        if (m_iconURLsPendingDeletion.contains(iconURL))
+            m_iconURLsPendingDeletion.remove(iconURL);
+    }
+}
+
+void IconDatabase::releaseIconURL(const String& iconURL)
+{
+    ASSERT(!iconURL.isEmpty());
+    
+    // If the iconURL has no retain count, we can bail
+    if (!m_iconURLToRetainCount.contains(iconURL))
+        return;
+    
+    // Otherwise, decrement it
+    int retainCount = m_iconURLToRetainCount.get(iconURL) - 1;
+    ASSERT(retainCount > -1);
+    
+    // If the icon is still retained, store the count and bail
+    if (retainCount) {
+        m_iconURLToRetainCount.set(iconURL, retainCount);
+        return;
+    }
+    
+    LOG(IconDatabase, "No more retainers for IconURL %s", iconURL.ascii().data());
+    
+    // Otherwise, this icon is toast.  Remove all traces of its retain count...
+    m_iconURLToRetainCount.remove(iconURL);
+    
+    // And since we delay the actual deletion of icons, so lets add it to that queue
+    m_iconURLsPendingDeletion.add(iconURL);
+}
+
+void IconDatabase::forgetPageURL(const String& pageURL)
+{
+    // Remove the PageURL->IconURL mapping
+    m_pageURLToIconURLMap.remove(pageURL);
+    
+    // And remove this pageURL from the DB
+    forgetPageURLQuery(*m_currentDB, pageURL);
+}
+    
 bool IconDatabase::isIconURLRetained(const String& iconURL)
 {
     if (iconURL.isEmpty())
         return false;
         
-    String escapedIconURL = iconURL;
-    escapedIconURL.replace('\'', "''");
-    
-    return SQLStatement(m_mainDB, "SELECT count FROM PageRetain WHERE url IN(SELECT PageURL.url FROM PageURL, Icon WHERE PageURL.iconID = Icon.iconID AND Icon.url = '" + escapedIconURL + "') LIMIT 1;").returnsAtLeastOneResult();
+    return m_iconURLToRetainCount.contains(iconURL);
 }
 
 void IconDatabase::forgetIconForIconURLFromDatabase(const String& iconURL)
@@ -463,20 +471,20 @@ void IconDatabase::forgetIconForIconURLFromDatabase(const String& iconURL)
 void IconDatabase::setIconDataForIconURL(const void* data, int size, const String& iconURL)
 {
     ASSERT(size > -1);
-    if (iconURL.isEmpty())
-        return;
     if (size)
         ASSERT(data);
     else
         data = 0;
+        
+    if (iconURL.isEmpty())
+        return;
     
     // First, if we already have a SiteIcon in memory, let's update its image data
     if (m_iconURLToSiteIcons.contains(iconURL))
         m_iconURLToSiteIcons.get(iconURL)->manuallySetImageData((unsigned char*)data, size);
 
     // Next, we actually commit the image data to the database
-
-    // Start by making sure there's an entry for this IconURL in the database
+    // Start by making sure there's an entry for this IconURL in the current database
     int64_t iconID = establishIconIDForIconURL(*m_currentDB, iconURL, true);
     ASSERT(iconID);
     
@@ -511,25 +519,24 @@ void IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pag
     // This happens surprisingly often, and seems to cream iBench performance
     if (m_pageURLToIconURLMap.get(pageURL) == iconURL)
         return;
+
+    // If this pageURL is retained, we have some work to do on the IconURL retain counts
+    if (m_pageURLToRetainCount.contains(pageURL)) {
+        String oldIconURL = m_pageURLToIconURLMap.get(pageURL);
+        if (!oldIconURL.isEmpty())
+            releaseIconURL(oldIconURL);
+        retainIconURL(iconURL);
+    }
     
-    // Cache the mapping...
+    // Cache the pageURL->iconURL map
     m_pageURLToIconURLMap.set(pageURL, iconURL);
-    
-    // Change the cached pageURL->SiteIcon mapping based on the new iconURL
-    if (m_iconURLToSiteIcons.contains(iconURL))
-        m_pageURLToSiteIcons.set(pageURL, m_iconURLToSiteIcons.get(iconURL));
-    else
-        m_pageURLToSiteIcons.remove(pageURL);
 
     // Store it in the database
     int64_t iconID = establishIconIDForIconURL(*m_currentDB, iconURL);
-
     if (!iconID) {
         LOG_ERROR("Failed to establish an ID for iconURL %s", iconURL.ascii().data());
         return;
     }
-    
-    // Update the DB
     setIconIDForPageURLQuery(*m_currentDB, iconID, pageURL);
 }
 
@@ -561,28 +568,65 @@ void IconDatabase::pruneUnreferencedIcons(int numberToPrune)
     }
 }
 
-void IconDatabase::pruneUnretainedIcons(Timer<IconDatabase>* timer)
+void IconDatabase::pruneUnretainedIconsOnStartup(Timer<IconDatabase>*)
 {
     if (!isOpen())
         return;
         
 // FIXME - The PageURL delete and the pruneunreferenced icons need to be in an atomic transaction
 #ifndef NDEBUG
-    double start = CFAbsoluteTimeGetCurrent();
+    CFTimeInterval start = CFAbsoluteTimeGetCurrent();
 #endif
-    if (!m_mainDB.executeCommand("DELETE FROM PageURL WHERE PageURL.url NOT IN(SELECT url FROM PageRetain WHERE count > 0);"))
-        LOG_ERROR("Failed to delete unretained PageURLs from DB - %s", m_mainDB.lastErrorMsg());
+    
+    // FIXME - rdar://4690949 - Need to prune unretained pageURLs here
+    LOG_ERROR("pruneUnretainedIconsOnStartup is still unimplemented");
     pruneUnreferencedIcons(-1);
+
 #ifndef NDEBUG
-    double duration = CFAbsoluteTimeGetCurrent() - start;
-    LOG(IconDatabase, "Pruning unretained icons took %d seconds", duration);
+    CFTimeInterval duration = CFAbsoluteTimeGetCurrent() - start;
+    LOG(IconDatabase, "Pruning unretained icons took %.4f seconds", duration);
     if (duration > 1.0) 
-        LOG_ERROR("Pruning unretained icons took %d seconds - this is much too long!", duration);
+        LOG_ERROR("Pruning unretained icons took %.4f seconds - this is much too long!", duration);
 #endif
 }
 
+void IconDatabase::pruneIconsPendingDeletion(Timer<IconDatabase>*)
+{
+#ifndef NDEBUG
+    CFTimeInterval start = CFAbsoluteTimeGetCurrent();
+#endif
 
-bool IconDatabase::hasIconForIconURL(const String& iconURL)
+    // First lets wipe all the pageURLs
+    HashSet<String>::iterator i = m_pageURLsPendingDeletion.begin();
+    for (;i != m_pageURLsPendingDeletion.end(); ++i) {    
+        forgetPageURL(*i);
+        LOG(IconDatabase, "Deleted PageURL %s", (*i).ascii().data());
+    }
+    m_pageURLsPendingDeletion.clear();
+
+    // Then get rid of all traces of the icons and IconURLs
+    SiteIcon* icon;    
+    for (i = m_iconURLsPendingDeletion.begin();i != m_iconURLsPendingDeletion.end(); ++i) {
+        // Forget the SiteIcon
+        icon = m_iconURLToSiteIcons.get(*i);
+        m_iconURLToSiteIcons.remove(*i);
+        delete icon;
+        
+        // Forget the IconURL from the database
+        forgetIconForIconURLFromDatabase(*i);
+        LOG(IconDatabase, "Deleted icon %s", (*i).ascii().data());   
+    }
+    m_iconURLsPendingDeletion.clear();
+    
+#ifndef NDEBUG
+    CFTimeInterval duration = CFAbsoluteTimeGetCurrent() - start;
+    LOG(IconDatabase, "Wiping the items pending-deletion took %.4f seconds", duration);
+    if (duration > 1.0) 
+        LOG_ERROR("Wiping the items pending-deletion took %.4f seconds - this is much too long!", duration);
+#endif
+}
+
+bool IconDatabase::hasEntryForIconURL(const String& iconURL)
 {
     if (iconURL.isEmpty())
         return false;
