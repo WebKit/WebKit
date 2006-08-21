@@ -1,3 +1,22 @@
+2006-08-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10463
+        WebKit should have Qt platform support
+
+        * platform/qt/SharedTimerQt.cpp: Added.
+        (WebCore:setSharedTimerFiredFunction):
+        (WebCore::setSharedTimerFireTime):
+        (WebCore::stopSharedTimer):
+        * platform/qt/SharedTimerQt.h: Added.
+        (WebCore::SharedTimerQt::SharedTimerQt):
+        (WebCore::SharedTimerQt::~SharedTimerQt):
+        (WebCore::SharedTimerQt::inst):
+        (WebCore::SharedTimerQt::fire):
+        * platform/qt/SystemTimeQt.cpp: Added.
+        (WebCore::currentTime):
+
 2006-08-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John
