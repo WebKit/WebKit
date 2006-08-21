@@ -1,0 +1,9 @@
+This test checks whether XSLTProcessor.transformToFragment() does not crash when the target document does not have a root node.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

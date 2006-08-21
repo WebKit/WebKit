@@ -1,3 +1,14 @@
+2006-08-21  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10429
+          XSLTProcessor.transformToFragment crashes if the owner document is empty
+
+        * fast/js/resources/xslt-fragment-in-empty-doc.js: Added.
+        * fast/js/xslt-fragment-in-empty-doc-expected.txt: Added.
+        * fast/js/xslt-fragment-in-empty-doc.html: Added.
+
 2006-08-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher

@@ -1,0 +1,23 @@
+description(
+"This test checks whether XSLTProcessor.transformToFragment() does not crash when the target document does not have a root node."
+);
+
+var xml = (new DOMParser()).parseFromString('<doc/>', 'application/xml');
+var xsl = (new DOMParser()).parseFromString(
+    '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">' +
+    '<xsl:output method="xml" omit-xml-declaration="yes"/>' +
+    ' <xsl:template match="doc">SUCCESS</xsl:template>' +
+    '</xsl:stylesheet>', 
+    'application/xml');
+
+var p = new XSLTProcessor;
+p.importStylesheet(xsl);
+var ownerDocument = document.implementation.createDocument("", "", null);
+var f = p.transformToFragment(xml, ownerDocument);
+
+// Firefox throws an exception here, while WebKit doesn't:
+// "An attempt was made to create or change an object in a way which is incorrect with regard to namespaces."
+ownerDocument = document.implementation.createDocument("", null, null);
+f = p.transformToFragment(xml, ownerDocument);
+
+var successfullyParsed = true;

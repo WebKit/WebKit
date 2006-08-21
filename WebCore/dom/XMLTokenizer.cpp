@@ -578,6 +578,10 @@ XMLTokenizer::XMLTokenizer(DocumentFragment *fragment, Element *parentElement)
             break;
         parentElement = static_cast<Element *>(n);
     }
+    
+    if (elemStack.isEmpty())
+        return;
+    
     for (Element *element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
         if (NamedAttrMap *attrs = element->attributes()) {
             for (unsigned i = 0; i < attrs->length(); i++) {
