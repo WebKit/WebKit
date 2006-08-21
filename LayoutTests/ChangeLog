@@ -1,3 +1,14 @@
+2006-08-21  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Darin.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6252
+        JavaScript 1.6 Array.lastIndexOf
+
+        * fast/js/array-lastIndexOf-expected.txt: Added.
+        * fast/js/array-lastIndexOf.html: Added.
+        * fast/js/resources/array-lastIndexOf.js: Added.
+
 2006-08-21  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Eric.

@@ -403,6 +403,7 @@ const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, &arrayTab
   forEach        ArrayProtoFunc::ForEach        DontEnum|Function 1
   some           ArrayProtoFunc::Some           DontEnum|Function 1
   indexOf        ArrayProtoFunc::IndexOf        DontEnum|Function 1
+  lastIndexOf    ArrayProtoFunc::LastIndexOf    DontEnum|Function 1
   filter         ArrayProtoFunc::Filter         DontEnum|Function 1
   map            ArrayProtoFunc::Map            DontEnum|Function 1
 @end
@@ -891,7 +892,32 @@ JSValue *ArrayProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
 
     return jsNumber(-1);
   }
+  case LastIndexOf: {
+       // JavaScript 1.6 Extension by Mozilla
+      // Documentation: http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:Array:lastIndexOf 
 
+    int index = length - 1;
+    double d = args[1]->toInteger(exec);
+
+    if (d < 0) {
+        d += length;
+        if (d < 0) 
+            return jsNumber(-1);
+    }
+    if (d < length)
+        index = static_cast<int>(d);
+          
+    JSValue* searchElement = args[0];
+    for (; index >= 0; --index) {
+        JSValue* e = getProperty(exec, thisObj, index);
+        if (!e)
+            e = jsUndefined();
+        if (strictEqual(exec, searchElement, e))
+            return jsNumber(index);
+    }
+          
+    return jsNumber(-1);
+}
   default:
     assert(0);
     result = 0;
