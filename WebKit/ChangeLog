@@ -1,5 +1,14 @@
 2006-08-21  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by John
+
+        Quick ICONDEBUG flag fix
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase _applicationWillTerminate:]):
+
+2006-08-21  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Anders
 
         -Renamed an internal only method for clarity

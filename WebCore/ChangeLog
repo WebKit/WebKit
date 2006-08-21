@@ -1,3 +1,22 @@
+2006-08-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        -Defers writing to the database via a timer and handles starting the timer
+         intelligently
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::open): Don't start the update timer by default
+        (WebCore::IconDatabase::close): Call syncDatabase()
+        (WebCore::IconDatabase::setPrivateBrowsingEnabled): Call syncDatabase()
+        (WebCore::IconDatabase::setIconURLForPageURL): Setup the cached url, but defer the DB call
+        (WebCore::IconDatabase::setIconURLForPageURLInDatabase): Actually commit the url to the DB
+        (WebCore::IconDatabase::pruneUnretainedIconsOnStartup):
+        (WebCore::IconDatabase::updateDatabase): The updateTimer calls this, which just calls syncDatabase()
+        (WebCore::IconDatabase::syncDatabase): Add and remove pending pageURLs and iconURLs, and stop the updateTimer
+        * loader/icon/IconDatabase.h:
+
 2006-08-21  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Eric.

@@ -698,9 +698,11 @@ NSSize WebIconLargeSize = {128, 128};
     // Should only cause a write if user quit before 3 seconds after the last _updateFileDatabase
     [_private->fileDatabase sync];
     
+#ifdef ICONDEBUG
     [_private->databaseBridge closeSharedDatabase];
     [_private->databaseBridge release];
     _private->databaseBridge = nil;
+#endif
     _isClosing = YES;
 }
 
