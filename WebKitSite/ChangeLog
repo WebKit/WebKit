@@ -1,3 +1,31 @@
+2006-08-21  Timothy Hatcher  <timothy@apple.com>
+
+        Stamped by Maciej.
+        
+        Changes many opendarwin.org links to the proper webkit.org version.
+
+        * blog/wp-content/themes/webkit/sidebar.php:
+        * blog/wp-content/themes/webkit/style.css:
+        * building/build.html:
+        * coding/contributing.html:
+        * contact.html:
+        * index.html:
+        * nav.inc:
+        * projects/compat/hitlist.html:
+        * projects/css/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html:
+        * projects/html/index.html:
+        * projects/javascript/index.html:
+        * projects/svg/index.html:
+        * projects/svg/svg-status.xsl:
+        * projects/xslt/index.html:
+        * quality/bugpriorities.html:
+        * quality/bugzilla.html:
+        * quality/leakhunting.html:
+        * quality/lifecycle.html:
+        * quality/reporting.html:
+
 2006-08-15  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by TimH.
