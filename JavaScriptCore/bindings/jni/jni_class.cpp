@@ -25,93 +25,92 @@
 #include "config.h"
 #include <jni_class.h>
 
+#include "identifier.h"
 #include <jni_utility.h>
 #include <jni_runtime.h>
 
 using namespace KJS::Bindings;
 
-JavaClass::JavaClass (jobject anInstance)
+JavaClass::JavaClass(jobject anInstance)
 {
     jobject aClass = callJNIObjectMethod(anInstance, "getClass", "()Ljava/lang/Class;");
     
     if (!aClass) {
-        fprintf (stderr, "%s:  unable to call getClass on instance %p\n", __PRETTY_FUNCTION__, anInstance);
+        fprintf(stderr, "%s:  unable to call getClass on instance %p\n", __PRETTY_FUNCTION__, anInstance);
         return;
     }
     
     jstring className = (jstring)callJNIObjectMethod(aClass, "getName", "()Ljava/lang/String;");
-    const char *classNameC = getCharactersFromJString (className);
-    _name = strdup (classNameC);
+    const char *classNameC = getCharactersFromJString(className);
+    _name = strdup(classNameC);
     releaseCharactersForJString(className, classNameC);
 
     int i;
     JNIEnv *env = getJNIEnv();
     
     // Get the fields
-    jarray fields = (jarray)callJNIObjectMethod (aClass, "getFields", "()[Ljava/lang/reflect/Field;");
-    int numFields = env->GetArrayLength (fields);    
-    _fields = CFDictionaryCreateMutable(NULL, numFields, &kCFTypeDictionaryKeyCallBacks, &FieldDictionaryValueCallBacks);
+    jarray fields = (jarray)callJNIObjectMethod(aClass, "getFields", "()[Ljava/lang/reflect/Field;");
+    int numFields = env->GetArrayLength(fields);    
     for (i = 0; i < numFields; i++) {
-        jobject aJField = env->GetObjectArrayElement ((jobjectArray)fields, i);
-        Field *aField = new JavaField (env, aJField); // deleted when the dictionary is destroyed
-        CFStringRef fieldName = CFStringCreateWithCString(NULL, aField->name(), kCFStringEncodingASCII);
-        CFDictionaryAddValue ((CFMutableDictionaryRef)_fields, fieldName, aField);
-        CFRelease (fieldName);
-        env->DeleteLocalRef (aJField);
+        jobject aJField = env->GetObjectArrayElement((jobjectArray)fields, i);
+        Field *aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
+        _fields.set(Identifier(aField->name()).ustring().rep(), aField);
+        env->DeleteLocalRef(aJField);
     }
     
     // Get the methods
-    jarray methods = (jarray)callJNIObjectMethod (aClass, "getMethods", "()[Ljava/lang/reflect/Method;");
-    int numMethods = env->GetArrayLength (methods);    
-    _methods = CFDictionaryCreateMutable(NULL, numMethods, &kCFTypeDictionaryKeyCallBacks, &MethodListDictionaryValueCallBacks);
+    jarray methods = (jarray)callJNIObjectMethod(aClass, "getMethods", "()[Ljava/lang/reflect/Method;");
+    int numMethods = env->GetArrayLength(methods);
     for (i = 0; i < numMethods; i++) {
-        jobject aJMethod = env->GetObjectArrayElement ((jobjectArray)methods, i);
-        Method *aMethod = new JavaMethod (env, aJMethod); // deleted when the dictionary is destroyed
-        CFStringRef methodName = CFStringCreateWithCString(NULL, aMethod->name(), kCFStringEncodingASCII);
-        MethodList *methodList = (MethodList *)CFDictionaryGetValue ((CFMutableDictionaryRef)_methods, methodName);
+        jobject aJMethod = env->GetObjectArrayElement((jobjectArray)methods, i);
+        Method *aMethod = new JavaMethod(env, aJMethod); // deleted in the JavaClass destructor
+        MethodList *methodList = _methods.get(Identifier(aMethod->name()).ustring().rep());
         if (!methodList) {
             methodList = new MethodList();
-            CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, methodName, methodList);
+            _methods.set(Identifier(aMethod->name()).ustring().rep(), methodList);
         }
-        methodList->addMethod (aMethod);
-        CFRelease (methodName);
-        env->DeleteLocalRef (aJMethod);
+        methodList->addMethod(aMethod);
+        env->DeleteLocalRef(aJMethod);
     }
     
     // Get the constructors
     jarray constructors = (jarray)callJNIObjectMethod (aClass, "getConstructors", "()[Ljava/lang/reflect/Constructor;");
-    _numConstructors = env->GetArrayLength (constructors);    
+    _numConstructors = env->GetArrayLength(constructors);    
     _constructors = new JavaConstructor[_numConstructors];
     for (i = 0; i < _numConstructors; i++) {
-        jobject aConstructor = env->GetObjectArrayElement ((jobjectArray)constructors, i);
-        _constructors[i] = JavaConstructor (env, aConstructor);
-        env->DeleteLocalRef (aConstructor);
+        jobject aConstructor = env->GetObjectArrayElement((jobjectArray)constructors, i);
+        _constructors[i] = JavaConstructor(env, aConstructor);
+        env->DeleteLocalRef(aConstructor);
     }
 }
 
-JavaClass::~JavaClass () {
+JavaClass::~JavaClass() {
     free((void *)_name);
-    CFRelease (_fields);
-    CFRelease (_methods);
+    deleteAllValues(_fields);
+    
+    MethodListMap::const_iterator end = _methods.end();
+    for (MethodListMap::const_iterator it = _methods.begin(); it != end; ++it) {
+        const MethodList* methodList = it->second;
+        int length = methodList->length();
+        for (int i = 0; i < length; i++)
+            delete methodList->methodAt(i);    
+        delete methodList;
+    }
     delete [] _constructors;
 }
 
-MethodList JavaClass::methodsNamed(const char *name, Instance*) const
+MethodList JavaClass::methodsNamed(const Identifier& identifier, Instance*) const
 {
-    CFStringRef methodName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
-    MethodList *methodList = (MethodList *)CFDictionaryGetValue(_methods, methodName);
-    CFRelease (methodName);
+    MethodList *methodList = _methods.get(identifier.ustring().rep());
+    
     if (methodList)
         return *methodList;
     return MethodList();
 }
 
-Field *JavaClass::fieldNamed(const char *name, Instance*) const
+Field *JavaClass::fieldNamed(const Identifier& identifier, Instance*) const
 {
-    CFStringRef fieldName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
-    Field *aField = (Field *)CFDictionaryGetValue(_fields, fieldName);
-    CFRelease (fieldName);
-    return aField;
+    return _fields.get(identifier.ustring().rep());
 }
 
 bool JavaClass::isNumberClass() const

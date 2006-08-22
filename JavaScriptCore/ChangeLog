@@ -1,3 +1,38 @@
+2006-08-22  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+        
+        Switch over the NPAPI and Java bindings to using HashMaps instead of dictionaries.
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/c/c_class.cpp:
+        (KJS::Bindings::CClass::CClass):
+        (KJS::Bindings::CClass::~CClass):
+        (KJS::Bindings::CClass::classForIsA):
+        (KJS::Bindings::CClass::methodsNamed):
+        (KJS::Bindings::CClass::fieldNamed):
+        * bindings/c/c_class.h:
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::JavaClass):
+        (JavaClass::~JavaClass):
+        (JavaClass::methodsNamed):
+        (JavaClass::fieldNamed):
+        * bindings/jni/jni_class.h:
+        * bindings/objc/objc_class.h:
+        * bindings/objc/objc_class.mm:
+        (KJS::Bindings::deleteMethod):
+        (KJS::Bindings::deleteField):
+        (KJS::Bindings::):
+        (KJS::Bindings::ObjcClass::methodsNamed):
+        (KJS::Bindings::ObjcClass::fieldNamed):
+        * bindings/runtime.cpp:
+        * bindings/runtime.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::fieldGetter):
+        (RuntimeObjectImp::getOwnPropertySlot):
+        (RuntimeObjectImp::put):
+        (RuntimeObjectImp::canPut):
+
 2006-08-21  Vladimir Olexa  <vladimir.olexa@gmail.com>
 
         Reviewed by Darin.

@@ -44,8 +44,8 @@ public:
     
     virtual const char *name() const;
     
-    virtual MethodList methodsNamed(const char *name, Instance *instance) const;
-    virtual Field *fieldNamed(const char *name, Instance *instance) const;
+    virtual MethodList methodsNamed(const Identifier&, Instance *instance) const;
+    virtual Field *fieldNamed(const Identifier&, Instance *instance) const;
 
     virtual JSValue *fallbackObject(ExecState *exec, Instance *instance, const Identifier &propertyName);
     

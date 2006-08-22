@@ -29,6 +29,7 @@
 #include "c_instance.h"
 #include "c_runtime.h"
 #include "npruntime_impl.h"
+#include "identifier.h"
 
 // FIXME: Should use HashMap instead of CFDictionary for better performance and for portability.
 
@@ -38,27 +39,26 @@ namespace Bindings {
 CClass::CClass(NPClass* aClass)
 {
     _isa = aClass;
-    _methods = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &MethodDictionaryValueCallBacks);
-    _fields = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &FieldDictionaryValueCallBacks);
 }
 
 CClass::~CClass()
 {
-    CFRelease(_methods);
-    CFRelease(_fields);
+    deleteAllValues(_methods);
+    deleteAllValues(_fields);
 }
     
-static CFMutableDictionaryRef classesByIsA = 0;
+typedef HashMap<NPClass*, CClass*> ClassesByIsAMap;
+static ClassesByIsAMap* classesByIsA = 0;
 
 CClass* CClass::classForIsA(NPClass* isa)
 {
     if (!classesByIsA)
-        classesByIsA = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
+        classesByIsA = new ClassesByIsAMap;
 
-    CClass* aClass = (CClass*)CFDictionaryGetValue(classesByIsA, isa);
+    CClass* aClass = classesByIsA->get(isa);
     if (!aClass) {
         aClass = new CClass(isa);
-        CFDictionaryAddValue(classesByIsA, isa, aClass);
+        classesByIsA->set(isa, aClass);
     }
 
     return aClass;
@@ -69,50 +69,42 @@ const char* CClass::name() const
     return "";
 }
 
-MethodList CClass::methodsNamed(const char* _name, Instance* instance) const
+MethodList CClass::methodsNamed(const Identifier& identifier, Instance* instance) const
 {
     MethodList methodList;
 
-    CFStringRef methodName = CFStringCreateWithCString(NULL, _name, kCFStringEncodingASCII);
-    Method* method = (Method*)CFDictionaryGetValue(_methods, methodName);
+    Method* method = _methods.get(identifier.ustring().rep());
     if (method) {
-        CFRelease(methodName);
         methodList.addMethod(method);
         return methodList;
     }
 
-    NPIdentifier ident = _NPN_GetStringIdentifier(_name);
+    NPIdentifier ident = _NPN_GetStringIdentifier(identifier.ascii());
     const CInstance* inst = static_cast<const CInstance*>(instance);
     NPObject* obj = inst->getObject();
     if (_isa->hasMethod && _isa->hasMethod(obj, ident)){
-        Method* aMethod = new CMethod(ident); // deleted when the dictionary is destroyed
-        CFDictionaryAddValue(_methods, methodName, aMethod);
+        Method* aMethod = new CMethod(ident); // deleted in the CClass destructor
+        _methods.set(identifier.ustring().rep(), aMethod);
         methodList.addMethod(aMethod);
     }
-
-    CFRelease(methodName);
+    
     return methodList;
 }
 
 
-Field* CClass::fieldNamed(const char* name, Instance* instance) const
+Field* CClass::fieldNamed(const Identifier& identifier, Instance* instance) const
 {
-    CFStringRef fieldName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
-    Field* aField = (Field *)CFDictionaryGetValue(_fields, fieldName);
-    if (aField) {
-        CFRelease(fieldName);
+    Field* aField = _fields.get(identifier.ustring().rep());
+    if (aField)
         return aField;
-    }
-
-    NPIdentifier ident = _NPN_GetStringIdentifier(name);
+    
+    NPIdentifier ident = _NPN_GetStringIdentifier(identifier.ascii());
     const CInstance* inst = static_cast<const CInstance*>(instance);
     NPObject* obj = inst->getObject();
     if (_isa->hasProperty && _isa->hasProperty(obj, ident)){
-        aField = new CField(ident); // deleted when the dictionary is destroyed
-        CFDictionaryAddValue(_fields, fieldName, aField);
+        aField = new CField(ident); // deleted in the CClass destructor
+        _fields.set(identifier.ustring().rep(), aField);
     }
-
-    CFRelease(fieldName);
     return aField;
 }
 

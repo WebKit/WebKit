@@ -28,6 +28,7 @@
 
 #include "npruntime.h"
 #include "runtime.h"
+#include <wtf/HashMap.h>
 
 namespace KJS {
 namespace Bindings {
@@ -41,8 +42,8 @@ public:
     virtual ~CClass();
 
     virtual const char* name() const;    
-    virtual MethodList methodsNamed(const char* name, Instance*) const;
-    virtual Field* fieldNamed(const char* name, Instance*) const;
+    virtual MethodList methodsNamed(const Identifier&, Instance*) const;
+    virtual Field* fieldNamed(const Identifier&, Instance*) const;
 
     virtual Constructor* constructorAt(int) const { return 0; }
     virtual int numConstructors() const { return 0; }
@@ -52,8 +53,8 @@ private:
     CClass& operator=(const CClass&); // prohibit assignment
 
     NPClass* _isa;
-    CFMutableDictionaryRef _methods;
-    CFMutableDictionaryRef _fields;
+    mutable MethodMap _methods;
+    mutable FieldMap _fields;
 };
 
 } // namespace Bindings

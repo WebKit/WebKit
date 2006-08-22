@@ -27,6 +27,7 @@
 #define JNI_CLASS_H_
 
 #include <jni_runtime.h>
+#include <wtf/HashMap.h>
 
 namespace KJS {
 
@@ -39,9 +40,9 @@ public:
 
     virtual const char *name() const { return _name; };
     
-    virtual MethodList methodsNamed(const char *name, Instance *instance) const;
+    virtual MethodList methodsNamed(const Identifier&, Instance *instance) const;
     
-    virtual Field *fieldNamed(const char *name, Instance *instance) const;
+    virtual Field *fieldNamed(const Identifier&, Instance *instance) const;
     
     virtual Constructor *constructorAt(int i) const {
         return &_constructors[i]; 
@@ -59,8 +60,8 @@ private:
     JavaClass &operator=(const JavaClass &other); // prevent copying
     
     const char *_name;
-    CFDictionaryRef _fields;
-    CFDictionaryRef _methods;
+    FieldMap _fields;
+    MethodListMap _methods;
     JavaConstructor *_constructors;
     int _numConstructors;
 };
