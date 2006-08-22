@@ -1,5 +1,15 @@
 2006-08-21  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        Bug 9302: WebKit nightly download image says ~2.5 MB when
+        universal binaries make it ~5.0 MB
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9302
+        
+        * images/download.png:
+
+2006-08-21  Timothy Hatcher  <timothy@apple.com>
+
         Stamped by Maciej.
         
         Changes many opendarwin.org links to the proper webkit.org version.
