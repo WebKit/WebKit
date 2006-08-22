@@ -1,3 +1,122 @@
+2006-08-22  Trey Matteson  <trey@usa.net>
+
+        Reviewed by ggaren.
+
+        Introducing a small test suite for bugs related to various navigation techniques,
+        e.g., back/forward, reload, various redirect flavors, POST, POST-then-redirect,
+        within-page anchors.  Most of the tests are done with and without an enclosing frameset.
+        The tests verify the content of the final page (which may include restored form
+        state), scroll location (also sometimes restored), and the full content of the
+        back-forward list.
+
+        * fast/overflow/scrollRevealButton-expected.txt:
+           Updated to include scroll location that is now emitted.
+        * http/tests/navigation/anchor-basic-expected.txt: Added.
+        * http/tests/navigation/anchor-basic.html: Added.
+        * http/tests/navigation/anchor-frames-expected.txt: Added.
+        * http/tests/navigation/anchor-frames.html: Added.
+        * http/tests/navigation/anchor-goback-expected.txt: Added.
+        * http/tests/navigation/anchor-goback.html: Added.
+        * http/tests/navigation/anchor-subframeload-expected.txt: Added.
+        * http/tests/navigation/anchor-subframeload.html: Added.
+        * http/tests/navigation/error404-basic-expected.txt: Added.
+        * http/tests/navigation/error404-basic.html: Added.
+        * http/tests/navigation/error404-frames-expected.txt: Added.
+        * http/tests/navigation/error404-frames.html: Added.
+        * http/tests/navigation/error404-goback-expected.txt: Added.
+        * http/tests/navigation/error404-goback.html: Added.
+        * http/tests/navigation/error404-subframeload-expected.txt: Added.
+        * http/tests/navigation/error404-subframeload.html: Added.
+        * http/tests/navigation/javascriptlink-basic-expected.txt: Added.
+        * http/tests/navigation/javascriptlink-basic.html: Added.
+        * http/tests/navigation/javascriptlink-frames-expected.txt: Added.
+        * http/tests/navigation/javascriptlink-frames.html: Added.
+        * http/tests/navigation/javascriptlink-goback-expected.txt: Added.
+        * http/tests/navigation/javascriptlink-goback.html: Added.
+        * http/tests/navigation/javascriptlink-subframeload-expected.txt: Added.
+        * http/tests/navigation/javascriptlink-subframeload.html: Added.
+        * http/tests/navigation/metaredirect-basic-expected.txt: Added.
+        * http/tests/navigation/metaredirect-basic.html: Added.
+        * http/tests/navigation/metaredirect-frames-expected.txt: Added.
+        * http/tests/navigation/metaredirect-frames.html: Added.
+        * http/tests/navigation/metaredirect-goback-expected.txt: Added.
+        * http/tests/navigation/metaredirect-goback.html: Added.
+        * http/tests/navigation/metaredirect-subframeload-expected.txt: Added.
+        * http/tests/navigation/metaredirect-subframeload.html: Added.
+        * http/tests/navigation/post-basic-expected.txt: Added.
+        * http/tests/navigation/post-basic.html: Added.
+        * http/tests/navigation/post-frames-expected.txt: Added.
+        * http/tests/navigation/post-frames-goback1.html-disabled: Added.
+        * http/tests/navigation/post-frames.html: Added.
+        * http/tests/navigation/post-goback1-expected.txt: Added.
+        * http/tests/navigation/post-goback1.html: Added.
+        * http/tests/navigation/post-goback2-expected.txt: Added.
+        * http/tests/navigation/post-goback2.html: Added.
+        * http/tests/navigation/postredirect-basic-expected.txt: Added.
+        * http/tests/navigation/postredirect-basic.html: Added.
+        * http/tests/navigation/postredirect-frames-expected.txt: Added.
+        * http/tests/navigation/postredirect-frames-goback1.html-disabled: Added.
+        * http/tests/navigation/postredirect-frames.html: Added.
+        * http/tests/navigation/postredirect-goback1-expected.txt: Added.
+        * http/tests/navigation/postredirect-goback1.html: Added.
+        * http/tests/navigation/postredirect-goback2-expected.txt: Added.
+        * http/tests/navigation/postredirect-goback2.html: Added.
+        * http/tests/navigation/redirect302-basic-expected.txt: Added.
+        * http/tests/navigation/redirect302-basic.html: Added.
+        * http/tests/navigation/redirect302-frames-expected.txt: Added.
+        * http/tests/navigation/redirect302-frames.html: Added.
+        * http/tests/navigation/redirect302-goback-expected.txt: Added.
+        * http/tests/navigation/redirect302-goback.html: Added.
+        * http/tests/navigation/redirect302-subframeload-expected.txt: Added.
+        * http/tests/navigation/redirect302-subframeload.html: Added.
+        * http/tests/navigation/relativeanchor-basic-expected.txt: Added.
+        * http/tests/navigation/relativeanchor-basic.html: Added.
+        * http/tests/navigation/relativeanchor-frames-expected.txt: Added.
+        * http/tests/navigation/relativeanchor-frames.html: Added.
+        * http/tests/navigation/relativeanchor-goback-expected.txt: Added.
+        * http/tests/navigation/relativeanchor-goback.html: Added.
+        * http/tests/navigation/resources/error404.pl: Added.
+        * http/tests/navigation/resources/frameset.pl: Added.
+        * http/tests/navigation/resources/javascriptlink.html: Added.
+        * http/tests/navigation/resources/metaredirect.html: Added.
+        * http/tests/navigation/resources/otherpage.html: Added.
+        * http/tests/navigation/resources/postresult.pl: Added.
+        * http/tests/navigation/resources/redirect302.pl: Added.
+        * http/tests/navigation/resources/slowmetaredirect.html: Added.
+        * http/tests/navigation/resources/slowtimerredirect.html: Added.
+        * http/tests/navigation/resources/success200.html: Added.
+        * http/tests/navigation/resources/testcode.js: Added.
+        * http/tests/navigation/resources/timerredirect.html: Added.
+        * http/tests/navigation/slowmetaredirect-basic-expected.txt: Added.
+        * http/tests/navigation/slowmetaredirect-basic.html: Added.
+        * http/tests/navigation/slowtimerredirect-basic-expected.txt: Added.
+        * http/tests/navigation/slowtimerredirect-basic.html: Added.
+        * http/tests/navigation/success200-basic-expected.txt: Added.
+        * http/tests/navigation/success200-basic.html: Added.
+        * http/tests/navigation/success200-frames-expected.txt: Added.
+        * http/tests/navigation/success200-frames-goback.html-disabled: Added.
+        * http/tests/navigation/success200-frames-loadsame-expected.txt: Added.
+        * http/tests/navigation/success200-frames-loadsame.html: Added.
+        * http/tests/navigation/success200-frames-reload.html-disabled: Added.
+        * http/tests/navigation/success200-frames.html: Added.
+        * http/tests/navigation/success200-goback-expected.txt: Added.
+        * http/tests/navigation/success200-goback.html: Added.
+        * http/tests/navigation/success200-loadsame-expected.txt: Added.
+        * http/tests/navigation/success200-loadsame.html: Added.
+        * http/tests/navigation/success200-reload-expected.txt: Added.
+        * http/tests/navigation/success200-reload.html: Added.
+        * http/tests/navigation/success200-subframeload-expected.txt: Added.
+        * http/tests/navigation/success200-subframeload-goback.html-disabled: Added.
+        * http/tests/navigation/success200-subframeload.html: Added.
+        * http/tests/navigation/timerredirect-basic-expected.txt: Added.
+        * http/tests/navigation/timerredirect-basic.html: Added.
+        * http/tests/navigation/timerredirect-frames-expected.txt: Added.
+        * http/tests/navigation/timerredirect-frames.html: Added.
+        * http/tests/navigation/timerredirect-goback-expected.txt: Added.
+        * http/tests/navigation/timerredirect-goback.html: Added.
+        * http/tests/navigation/timerredirect-subframeload-expected.txt: Added.
+        * http/tests/navigation/timerredirect-subframeload.html: Added.
+
 2006-08-22  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

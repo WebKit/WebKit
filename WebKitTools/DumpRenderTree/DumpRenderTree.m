@@ -34,6 +34,7 @@
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebEditingDelegate.h>
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebPreferences.h>
@@ -41,6 +42,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebHistoryItemPrivate.h>
 
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
 #import <objc/objc-runtime.h>                       // for class_poseAs
@@ -76,7 +78,7 @@
 @interface LayoutTestController : NSObject
 @end
 
-static void dumpRenderTree(const char *pathOrURL);
+static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
 
 WebFrame *frame = 0;
@@ -84,11 +86,25 @@ DumpRenderTreeDraggingInfo *draggingInfo = 0;
 
 static volatile BOOL done;
 static NavigationController *navigationController;
-static BOOL readyToDump;
-static BOOL waitToDump;
+
+// Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
+// - There is no load in progress
+// - There is no work queued up (see workQueue var, below)
+// - waitToDump==NO.  This means either waitUntilDone was never called, or it was called
+//       and notifyDone was called subsequently.
+// Note that the call to notifyDone and the end of the load can happen in either order.
+
+// This is the topmost frame that is loading, during a given load, or nil when no load is 
+// in progress.  Usually this is the same as the main frame, but not always.  In the case
+// where a frameset is loaded, and then new content is loaded into one of the child frames,
+// that child frame is the "topmost frame that is loading".
+static WebFrame *topLoadingFrame;     // !nil iff a load is in progress
+static BOOL waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone() has not yet been called
+
 static BOOL dumpAsText;
 static BOOL dumpSelectionRect;
 static BOOL dumpTitleChanges;
+static BOOL dumpBackForwardList;
 static int dumpPixels = NO;
 static int dumpAllPixels = NO;
 static BOOL readFromWindow = NO;
@@ -100,9 +116,15 @@ static int dumpTree = YES;
 static BOOL printSeparators;
 static NSString *currentTest = nil;
 static NSPasteboard *localPasteboard;
+static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of the previous test
 static BOOL windowIsKey = YES;
 static unsigned char* screenCaptureBuffer;
 static CGColorSpaceRef sharedColorSpace;
+// a queue of NSInvocations, queued by callouts from the test, to be exec'ed when the load is done
+static NSMutableArray *workQueue = nil;
+// to prevent infinite loops, only the first page of a test can add to a work queue
+// (since we may well come back to that same page)
+BOOL workQueueFrozen;
 
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
@@ -290,6 +312,8 @@ int main(int argc, const char *argv[])
     [window orderBack:nil];
     [window setAutodisplay:NO];
 
+    workQueue = [[NSMutableArray alloc] init];
+
     [webView setContinuousSpellCheckingEnabled:YES];
 
     makeLargeMallocFailSilently();
@@ -323,15 +347,17 @@ int main(int argc, const char *argv[])
             if (strlen(filenameBuffer) == 0)
                 continue;
                 
-            dumpRenderTree(filenameBuffer);
+            runTest(filenameBuffer);
             fflush(stdout);
         }
     } else {
         printSeparators = (optind < argc-1 || (dumpPixels && dumpTree));
         for (int i = optind; i != argc; ++i)
-            dumpRenderTree(argv[i]);
+            runTest(argv[i]);
     }
     
+    [workQueue release];
+
     [webView setFrameLoadDelegate:nil];
     [webView setEditingDelegate:nil];
     [webView setUIDelegate:nil];
@@ -362,6 +388,50 @@ int main(int argc, const char *argv[])
     return 0;
 }
 
+static int compareHistoryItems(id item1, id item2, void *context)
+{
+    return [[item1 target] caseInsensitiveCompare:[item2 target]];
+}
+
+static void dumpHistoryItem(WebHistoryItem *item, int indent, BOOL current)
+{
+    int start = 0;
+    if (current) {
+        printf("curr->");
+        start = 6;
+    }
+    for (int i = start; i < indent; i++)
+        putchar(' ');
+    printf("%s", [[item URLString] UTF8String]);
+    NSString *target = [item target];
+    if (target && [target length] > 0)
+        printf(" (in frame \"%s\")", [target UTF8String]);
+    if ([item isTargetItem])
+        printf("  **nav target**");
+    putchar('\n');
+    NSArray *kids = [item children];
+    if (kids) {
+        // must sort to eliminate arbitrary result ordering which defeats reproducible testing
+        kids = [kids sortedArrayUsingFunction:&compareHistoryItems context:nil];
+        for (unsigned i = 0; i < [kids count]; i++)
+            dumpHistoryItem([kids objectAtIndex:i], indent+4, NO);
+    }
+}
+
+static void dumpFrameScrollPosition(WebFrame *f)
+{
+    NSPoint scrollPosition = [[[[f frameView] documentView] superview] bounds].origin;
+    if (ABS(scrollPosition.x) > 0.00000001 || ABS(scrollPosition.y) > 0.00000001) {
+        if ([f parentFrame] != nil)
+            printf("frame '%s' ", [[f name] UTF8String]);
+        printf("scrolled to %.f,%.f\n", scrollPosition.x, scrollPosition.y);
+    }
+    NSArray *kids = [f childFrames];
+    if (kids)
+        for (unsigned i = 0; i < [kids count]; i++)
+            dumpFrameScrollPosition([kids objectAtIndex:i]);
+}
+
 static void dump(void)
 {
     NSString *result = nil;
@@ -386,11 +456,40 @@ static void dump(void)
             printf("ERROR: nil result from %s", dumpAsText ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");
         else {
             fputs([result UTF8String], stdout);
-            if (!dumpAsText) {
-                NSPoint scrollPosition = [[[[frame frameView] documentView] superview] bounds].origin;
-                if (scrollPosition.x != 0 || scrollPosition.y != 0)
-                    printf("scrolled to %0.f,%0.f\n", scrollPosition.x, scrollPosition.y);
+            if (!dumpAsText)
+                dumpFrameScrollPosition(frame);
+        }
+
+        if (dumpBackForwardList) {
+            printf("\n============== Back Forward List ==============\n");
+            WebBackForwardList *bfList = [[frame webView] backForwardList];
+
+            // Print out all items in the list after prevTestBFItem, which was from the previous test
+            // Gather items from the end of the list, the print them out from oldest to newest
+            NSMutableArray *itemsToPrint = [[NSMutableArray alloc] init];
+            for (int i = [bfList forwardListCount]; i > 0; i--) {
+                WebHistoryItem *item = [bfList itemAtIndex:i];
+                // something is wrong if the item from the last test is in the forward part of the b/f list
+                assert(item != prevTestBFItem);
+                [itemsToPrint addObject:item];
             }
+            
+            assert([bfList currentItem] != prevTestBFItem);
+            [itemsToPrint addObject:[bfList currentItem]];
+            int currentItemIndex = [itemsToPrint count] - 1;
+
+            for (int i = -1; i >= -[bfList backListCount]; i--) {
+                WebHistoryItem *item = [bfList itemAtIndex:i];
+                if (item == prevTestBFItem)
+                    break;
+                [itemsToPrint addObject:item];
+            }
+
+            for (int i = [itemsToPrint count]-1; i >= 0; i--) {
+                dumpHistoryItem([itemsToPrint objectAtIndex:i], 8, i == currentItemIndex);
+            }
+            [itemsToPrint release];
+            printf("===============================================\n");
         }
 
         if (printSeparators)
@@ -489,21 +588,44 @@ static void dump(void)
 
 @implementation WaitUntilDoneDelegate
 
+// Exec messages in the work queue until they're all done, or one of them starts a new load
+- (void)processWork:(id)dummy
+{
+    // quit doing work once a load is in progress
+    while ([workQueue count] > 0 && !topLoadingFrame) {
+        [[workQueue objectAtIndex:0] invoke];
+        [workQueue removeObjectAtIndex:0];
+    }
+    
+    // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
+    if (!topLoadingFrame && !waitToDump)
+        dump();
+}
+
 - (void)webView:(WebView *)c locationChangeDone:(NSError *)error forDataSource:(WebDataSource *)dataSource
 {
-    if ([dataSource webFrame] == frame) {
-        if (waitToDump)
-            readyToDump = YES;
-        else
-            dump();
+    if ([dataSource webFrame] == topLoadingFrame) {
+        topLoadingFrame = nil;
+        workQueueFrozen = YES;      // first complete load freezes the queue for the rest of this test
+        if (!waitToDump) {
+            if ([workQueue count] > 0)
+                [self performSelector:@selector(processWork:) withObject:nil afterDelay:0];
+            else
+                dump();
+        }
     }
+}
+
+- (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)f
+{
+    // Make sure we only set this once per test.  If it gets cleared, and then set again, we might
+    // end up doing two dumps for one test.
+    if (!topLoadingFrame && !done)
+        topLoadingFrame = f;
 }
 
 - (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)f
 {
-    if (frame == f)
-        readyToDump = NO;
-
     windowIsKey = YES;
     NSView *documentView = [[frame frameView] documentView];
     [[[frame webView] window] makeFirstResponder:documentView];
@@ -599,12 +721,18 @@ static void dump(void)
             || aSelector == @selector(notifyDone)
             || aSelector == @selector(dumpAsText)
             || aSelector == @selector(dumpTitleChanges)
+            || aSelector == @selector(dumpBackForwardList)
             || aSelector == @selector(setWindowIsKey:)
             || aSelector == @selector(setMainFrameIsFirstResponder:)
             || aSelector == @selector(dumpSelectionRect)
             || aSelector == @selector(display)
             || aSelector == @selector(testRepaint)
             || aSelector == @selector(repaintSweepHorizontally)
+            || aSelector == @selector(queueBackNavigation:)
+            || aSelector == @selector(queueForwardNavigation:)
+            || aSelector == @selector(queueReload)
+            || aSelector == @selector(queueScript:)
+            || aSelector == @selector(queueLoad:target:)
             || aSelector == @selector(clearBackForwardList)
             || aSelector == @selector(keepWebHistory)
             || aSelector == @selector(setAcceptsEditing:))
@@ -618,6 +746,14 @@ static void dump(void)
         return @"setWindowIsKey";
     if (aSelector == @selector(setMainFrameIsFirstResponder:))
         return @"setMainFrameIsFirstResponder";
+    if (aSelector == @selector(queueBackNavigation:))
+        return @"queueBackNavigation";
+    if (aSelector == @selector(queueForwardNavigation:))
+        return @"queueForwardNavigation";
+    if (aSelector == @selector(queueScript:))
+        return @"queueScript";
+    if (aSelector == @selector(queueLoad:target:))
+        return @"queueLoad";
     if (aSelector == @selector(setAcceptsEditing:))
         return @"setAcceptsEditing";
     return nil;
@@ -654,7 +790,7 @@ static void dump(void)
 
 - (void)notifyDone
 {
-    if (waitToDump && readyToDump)
+    if (waitToDump && !topLoadingFrame && [workQueue count] == 0)
         dump();
     waitToDump = NO;
 }
@@ -672,6 +808,11 @@ static void dump(void)
 - (void)dumpTitleChanges
 {
     dumpTitleChanges = YES;
+}
+
+- (void)dumpBackForwardList
+{
+    dumpBackForwardList = YES;
 }
 
 - (void)setWindowIsKey:(BOOL)flag
@@ -719,6 +860,72 @@ static void dump(void)
     return nil;
 }
 
+- (void)_addWorkForTarget:(id)target selector:(SEL)selector arg1:(id)arg1 arg2:(id)arg2
+{
+    if (workQueueFrozen)
+        return;
+    NSMethodSignature *sig = [target methodSignatureForSelector:selector];
+    NSInvocation *work = [NSInvocation invocationWithMethodSignature:sig];
+    [work retainArguments];
+    [work setTarget:target];
+    [work setSelector:selector];
+    if (arg1) {
+        [work setArgument:&arg1 atIndex:2];
+        if (arg2)
+            [work setArgument:&arg2 atIndex:3];
+    }
+    [workQueue addObject:work];
+}
+
+- (void)_doLoad:(NSURL *)url target:(NSString *)target
+{
+    WebFrame *targetFrame;
+    if (target && ![target isKindOfClass:[WebUndefined class]])
+        targetFrame = [frame findFrameNamed:target];
+    else
+        targetFrame = frame;
+    [targetFrame loadRequest:[NSURLRequest requestWithURL:url]];
+}
+
+- (void)_doBackOrForwardNavigation:(NSNumber *)index
+{
+    int bfIndex = [index intValue];
+    if (bfIndex == 1)
+        [[frame webView] goForward];
+    if (bfIndex == -1)
+        [[frame webView] goBack];
+    else {        
+        WebBackForwardList *bfList = [[frame webView] backForwardList];
+        [[frame webView] goToBackForwardItem:[bfList itemAtIndex:bfIndex]];
+    }
+}
+
+- (void)queueBackNavigation:(int)howFarBack
+{
+    [self _addWorkForTarget:self selector:@selector(_doBackOrForwardNavigation:) arg1:[NSNumber numberWithInt:-howFarBack] arg2:nil];
+}
+
+- (void)queueForwardNavigation:(int)howFarForward
+{
+    [self _addWorkForTarget:self selector:@selector(_doBackOrForwardNavigation:) arg1:[NSNumber numberWithInt:howFarForward] arg2:nil];
+}
+
+- (void)queueReload
+{
+    [self _addWorkForTarget:[frame webView] selector:@selector(reload:) arg1:self arg2:nil];
+}
+
+- (void)queueScript:(NSString *)script
+{
+    [self _addWorkForTarget:[frame webView] selector:@selector(stringByEvaluatingJavaScriptFromString:) arg1:script arg2:nil];
+}
+
+- (void)queueLoad:(NSString *)URLString target:(NSString *)target
+{
+    NSURL *URL = [NSURL URLWithString:URLString relativeToURL:[[[frame dataSource] response] URL]];
+    [self _addWorkForTarget:self selector:@selector(_doLoad:target:) arg1:URL arg2:target];
+}
+
 - (void)setAcceptsEditing:(BOOL)newAcceptsEditing
 {
     [(EditingDelegate *)[[frame webView] editingDelegate] setAcceptsEditing:newAcceptsEditing];
@@ -726,7 +933,7 @@ static void dump(void)
 
 @end
 
-static void dumpRenderTree(const char *pathOrURL)
+static void runTest(const char *pathOrURL)
 {
     CFStringRef pathOrURLString = CFStringCreateWithCString(NULL, pathOrURL, kCFStringEncodingUTF8);
     if (!pathOrURLString) {
@@ -748,11 +955,12 @@ static void dumpRenderTree(const char *pathOrURL)
 
     [(EditingDelegate *)[[frame webView] editingDelegate] setAcceptsEditing:YES];
     done = NO;
-    readyToDump = NO;
+    topLoadingFrame = nil;
     waitToDump = NO;
     dumpAsText = NO;
     dumpSelectionRect = NO;
     dumpTitleChanges = NO;
+    dumpBackForwardList = NO;
     readFromWindow = NO;
     testRepaint = testRepaintDefault;
     repaintSweepHorizontally = repaintSweepHorizontallyDefault;
@@ -763,6 +971,10 @@ static void dumpRenderTree(const char *pathOrURL)
     if (currentTest != nil)
         CFRelease(currentTest);
     currentTest = (NSString *)pathOrURLString;
+    [prevTestBFItem release];
+    prevTestBFItem = [[[[frame webView] backForwardList] currentItem] retain];
+    [workQueue removeAllObjects];
+    workQueueFrozen = NO;
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [frame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];

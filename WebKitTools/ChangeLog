@@ -1,3 +1,46 @@
+2006-08-22  Trey Matteson  <trey@usa.net>
+
+        Reviewed by ggaren.
+
+        Added support for a new set of browser navigation tests.  The main feature
+        is the ability for a test to queue up a set of future actions that will
+        happen after that first page is loaded.  This is used to simulate a sequence
+        of user actions such as filling out forms, loading additional pages or
+        going back.  In addition we can now dump out the state of the back/forward
+        list, and the scroll position is dumped if not at 0,0.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main):  Init new state
+        (compareHistoryItems):  New utility to support sorting.
+        (dumpHistoryItem):  Write out a WebHistoryItem and kids.
+        (dumpFrameScrollPosition):  Write out the scroll position.
+        (dump):  Optionally write b/f list or scroll position.
+        (-[WaitUntilDoneDelegate processWork:]):  Perform queued work.
+        (-[WaitUntilDoneDelegate webView:locationChangeDone:forDataSource:]):
+        Kick off any queued actions.  Fixed for the case of loads started in
+        a subframe instead of the root frame.
+        (-[WaitUntilDoneDelegate webView:didStartProvisionalLoadForFrame:]):
+        Grab the topmost frame that is being loaded.  Do this as early as possible,
+        instead of in didCommitLoadForFrame.
+        (-[WaitUntilDoneDelegate webView:didCommitLoadForFrame:]):
+        Noting a load has started now happens in previous method.
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):  Boilerplate
+        (+[LayoutTestController webScriptNameForSelector:]):  Boilerplate
+        (-[LayoutTestController notifyDone]):  readyToDump var is subsumed by
+        topFrameLoading
+        (-[LayoutTestController dumpBackForwardList]):  New impl, just set a bit.
+        (-[LayoutTestController _addWorkForTarget:selector:arg1:arg2:]):
+        Add new work to the queue.
+        (-[LayoutTestController _doLoad:target:]):  Do a queued load.
+        (-[LayoutTestController _doBackOrForwardNav:]):  Do a queued back/forward.
+        (-[LayoutTestController scheduleBackNav:]):  Ways for scripts to queue actions
+        (-[LayoutTestController scheduleForwardNav:]):
+        (-[LayoutTestController scheduleReload]):
+        (-[LayoutTestController scheduleScript:]):
+        (-[LayoutTestController scheduleLoad:target:]):
+        (runTest):  Clear new state for each test.  Renamed from "dumpRenderTree"
+        since it's not one of the functions that does any dumping.
+
 2006-08-15  Jonas Witt <jonas.witt@gmail.com>
 
         Reviewed by Darin.
