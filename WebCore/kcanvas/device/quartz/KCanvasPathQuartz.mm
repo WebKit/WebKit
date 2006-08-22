@@ -97,6 +97,8 @@ FloatRect KCanvasPathQuartz::strokeBoundingBox(const KRenderingStrokePainter& st
     // perhaps it would be sufficien to just outset the fill bbox by
     // the stroke width - that should be way cheaper and simpler than
     // what we do here.
+    if (isEmpty())
+        return CGRectNull;
 
     CGContextRef context = scratchContext();
     CGContextSaveGState(context);

@@ -1,3 +1,18 @@
+2006-08-22  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10405
+        REPRO: SVG Maze crashes in RenderPath code
+
+        Do not render a path when it is empty so maze15.svg does not crash anymore.
+        Also get rid of a runtime warning issued by CGContextGetPathBoundingBox.
+
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * kcanvas/device/quartz/KCanvasPathQuartz.mm:
+        (WebCore::KCanvasPathQuartz::strokeBoundingBox):
+
 2006-08-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

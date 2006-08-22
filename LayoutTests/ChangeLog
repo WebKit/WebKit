@@ -1,3 +1,16 @@
+2006-08-22  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase needed for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10405
+        REPRO: SVG Maze crashes in RenderPath code
+
+        * svg/custom/dynamic-empty-path-expected.checksum: Added.
+        * svg/custom/dynamic-empty-path-expected.png: Added.
+        * svg/custom/dynamic-empty-path-expected.txt: Added.
+        * svg/custom/dynamic-empty-path.svg: Added.
+
 2006-08-21  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Eric.
