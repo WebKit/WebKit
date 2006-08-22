@@ -1,5 +1,17 @@
 2006-08-22  David Harrison  <harrison@apple.com>
 
+        Reviewed by John.
+
+        <rdar://problem/4522205> Represent controls in AXAttributedStringForTextMarkerRange
+
+        Treat controls as replaced elements, so that AXAttributedStringForTextMarkerRange will, too.
+        
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+        Include controls.
+
+2006-08-22  David Harrison  <harrison@apple.com>
+
         Reviewed by Maciej.
 
         <rdar://problem/4407336> Some non-text elements return AXTextMarkerRangeForUIElement with equal start and end marker

@@ -157,7 +157,7 @@ void TextIterator::advance()
                 // FIXME: What about CDATA_SECTION_NODE?
                 if (renderer->style()->visibility() == VISIBLE)
                     m_handledNode = handleTextNode();
-            } else if (renderer && (renderer->isImage() || renderer->isWidget())) {
+            } else if (renderer && (renderer->isImage() || renderer->isWidget() || (renderer->element() && renderer->element()->isControl()))) {
                 if (renderer->style()->visibility() == VISIBLE)
                     m_handledNode = handleReplacedElement();
             } else
