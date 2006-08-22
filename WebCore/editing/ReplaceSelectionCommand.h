@@ -36,18 +36,6 @@ class DocumentFragment;
 
 enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
 
-class RenderingInfo : public Shared<RenderingInfo> {
-public:
-    RenderingInfo(PassRefPtr<CSSMutableStyleDeclaration>);
-    
-    CSSMutableStyleDeclaration* style() const { return m_style.get(); }
-private:
-    RefPtr<CSSMutableStyleDeclaration> m_style;
-};
-
-typedef Vector<RefPtr<Node> > NodeVector;
-typedef HashMap<Node*, RefPtr<RenderingInfo> > RenderingInfoMap;
-
 // --- ReplacementFragment helper class
 
 class ReplacementFragment : Noncopyable
@@ -58,11 +46,6 @@ public:
     Node* firstChild() const;
     Node* lastChild() const;
 
-    Node* mergeStartNode() const;
-
-    const RenderingInfoMap& renderingInfo() const { return m_renderingInfo; }
-    const NodeVector& nodes() const { return m_nodes; }
-
     bool isEmpty() const;
     
     bool hasInterchangeNewlineAtStart() const { return m_hasInterchangeNewlineAtStart; }
@@ -70,24 +53,16 @@ public:
     
     void removeNode(PassRefPtr<Node>);
 
-private:    
-    static bool isInterchangeNewlineNode(const Node*);
-    static bool isInterchangeConvertedSpaceSpan(const Node*);
-    
+private:
     PassRefPtr<Node> insertFragmentForTestRendering(Node* context);
-    void saveRenderingInfo(Node*);
-    void computeStylesUsingTestRendering(Node*);
     void removeUnrenderedNodes(Node*);
     void restoreTestRenderingNodesToFragment(Node*);
-    void removeStyleNodes();
     
     void removeNodePreservingChildren(Node*);
     void insertNodeBefore(Node* node, Node* refNode);
 
     RefPtr<Document> m_document;
     RefPtr<DocumentFragment> m_fragment;
-    RenderingInfoMap m_renderingInfo;
-    NodeVector m_nodes;
     bool m_matchStyle;
     bool m_hasInterchangeNewlineAtStart;
     bool m_hasInterchangeNewlineAtEnd;
@@ -109,12 +84,13 @@ private:
     void insertNodeBeforeAndUpdateNodesInserted(Node *insertChild, Node *refChild);
 
     void updateNodesInserted(Node*);
-    void fixupNodeStyles(const NodeVector&, const RenderingInfoMap&);
     bool shouldRemoveEndBR(Node*);
     
     bool shouldMergeStart(bool, bool);
     bool shouldMergeEnd(bool);
     bool shouldMerge(const VisiblePosition&, const VisiblePosition&);
+    
+    void removeRedundantStyles();
 
     RefPtr<Node> m_firstNodeInserted;
     RefPtr<Node> m_lastNodeInserted;

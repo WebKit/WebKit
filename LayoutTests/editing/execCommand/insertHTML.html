@@ -17,19 +17,12 @@ function editingTest() {
     selectAllCommand();
     deleteCommand();
     insertHTMLCommand(html);
-
-    var results = d.innerHTML.toLowerCase();
-
-    if (html == results)
-        log("Success");
-    else
-        log("Failure.  Called execCommand(innerHTML, " + html + ") and the results of calling innerHTML afterword were: " + results);
 }
 </script>
 </head>
 
 <body>
-<p>This is a test of execCommand(insertHTML, ...).  It selects the contents of an editable div, d, deletes it, then calls execCommand(insertHTML, d.innerHTML).  d.innerHTML should be what it was when the test began.</p>
+<p>This is a test of execCommand(insertHTML, ...).  The contents of the editable div below should be the same before and after the test.</p>
 <div id="test" contenteditable="true">hello<table style="display:inline" border=1><tr><td>1</td><td>2</td></tr></table><b>world</b>!</div>
 <ul id="console"></ul>
 <script>

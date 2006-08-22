@@ -1,3 +1,60 @@
+2006-08-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/4052343&4052343&4426622> Mail hung on paste text
+        
+        Bugs exposed:
+        * editing/pasteboard/paste-4039777-fix-expected.checksum:
+        * editing/pasteboard/paste-4039777-fix-expected.png:
+        * editing/pasteboard/paste-4039777-fix-expected.txt:
+        * editing/deleting/delete-3857753-fix-expected.txt:
+        * editing/pasteboard/styled-element-markup-expected.checksum:
+        * editing/pasteboard/styled-element-markup-expected.png:
+        * editing/pasteboard/styled-element-markup-expected.txt:
+        * editing/execCommand/insertHTML-expected.checksum:
+        * editing/execCommand/insertHTML-expected.png:
+        * editing/execCommand/insertHTML-expected.txt:
+        * editing/execCommand/insertHTML.html:
+        
+        Removed some empty style spans, font tags are replaced by style spans
+        in a couple of cases:
+        * editing/deleting/merge-different-styles-expected.txt:
+        * editing/deleting/pruning-after-merge-1-expected.txt:
+        * editing/deleting/pruning-after-merge-2-expected.txt:
+        * editing/inserting/insert-3786362-fix-expected.txt:
+        * editing/pasteboard/block-wrappers-necessary-expected.txt:
+        * editing/pasteboard/display-block-on-spans-expected.txt:
+        * editing/pasteboard/merge-end-table-expected.txt:
+        * editing/pasteboard/paste-4035648-fix-expected.txt:
+        * editing/pasteboard/paste-line-endings-001-expected.txt:
+        * editing/pasteboard/paste-line-endings-006-expected.txt:
+        * editing/pasteboard/paste-list-001-expected.txt:
+        * editing/pasteboard/paste-pre-001-expected.txt:
+        * editing/pasteboard/paste-pre-002-expected.txt:
+        * editing/pasteboard/paste-table-001-expected.txt:
+        * editing/pasteboard/paste-table-002-expected.txt:
+        * editing/pasteboard/paste-text-001-expected.txt:
+        * editing/pasteboard/paste-text-002-expected.txt:
+        * editing/pasteboard/paste-text-003-expected.txt:
+        * editing/pasteboard/paste-text-004-expected.txt:
+        * editing/pasteboard/paste-text-005-expected.txt:
+        * editing/pasteboard/paste-text-006-expected.txt:
+        * editing/pasteboard/paste-text-011-expected.txt:
+        * editing/pasteboard/paste-text-012-expected.txt:
+        * editing/pasteboard/paste-text-013-expected.txt:
+        * editing/pasteboard/paste-text-014-expected.txt:
+        * editing/pasteboard/paste-text-015-expected.txt:
+        * editing/pasteboard/paste-text-016-expected.txt:
+        * editing/pasteboard/paste-text-017-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-001-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-002-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-003-expected.txt:
+        * editing/pasteboard/styled-element-markup.html:
+        * editing/pasteboard/testcase-9507-expected.txt:
+        * editing/style/smoosh-styles-001-expected.txt:
+        * editing/style/smoosh-styles-002-expected.txt:
+
 2006-08-22  Trey Matteson  <trey@usa.net>
 
         Reviewed by ggaren.
