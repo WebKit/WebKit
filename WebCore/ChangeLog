@@ -1,3 +1,20 @@
+2006-08-22  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4077676> Inline hole line adheres to the Japanese characters in inline hole
+
+        This happens because the underline is always 2 pixels thick, and placed 3 pixels above the bottom of the text box.
+
+        Test case added:
+        * manual-tests/inline-input-marking.html: Added.
+        Check that underlining of the inline input hole does not obscure the glyphs.
+        
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintMarkedTextUnderline):
+        Position underline at bottom of text box.
+        Height of underline is reduced to 1 px when font's descent is less than or equal to 2 px.
+
 2006-08-22  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

@@ -677,8 +677,11 @@ void InlineTextBox::paintMarkedTextUnderline(GraphicsContext* pt, int _tx, int _
         width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, textPos() + start, m_firstLine);
     }
 
-    int underlineOffset = m_height - 3;
-    pt->setPen(Pen(underline.color, underline.thick ? 2 : 0));
+    int lineThickness = 0;
+    if (underline.thick)
+        lineThickness = ((m_height - m_baseline) > 2) ? 2 : 1;
+    int underlineOffset = m_height - lineThickness;
+    pt->setPen(Pen(underline.color, lineThickness));
     pt->drawLineForText(IntPoint(_tx + start, _ty), underlineOffset, width, textObject()->document()->printing());
 }
 
