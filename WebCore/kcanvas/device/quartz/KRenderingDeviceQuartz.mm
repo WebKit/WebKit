@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ *               2006 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +33,6 @@
 #import "KCanvasFilterQuartz.h"
 #import "KCanvasItemQuartz.h"
 #import "KCanvasMaskerQuartz.h"
-#import "KCanvasMatrix.h"
 #import "KCanvasPathQuartz.h"
 #import "KCanvasResourcesQuartz.h"
 #import "KRenderingFillPainter.h"
@@ -57,19 +57,17 @@ KRenderingDeviceContextQuartz::~KRenderingDeviceContextQuartz()
     HardRelease(m_nsGraphicsContext);
 }
 
-KCanvasMatrix KRenderingDeviceContextQuartz::concatCTM(const KCanvasMatrix &worldMatrix)
+AffineTransform KRenderingDeviceContextQuartz::concatCTM(const AffineTransform& worldMatrix)
 {
-    KCanvasMatrix ret = ctm();
-    CGAffineTransform wMatrix = CGAffineTransformMake(worldMatrix.a(), worldMatrix.b(), worldMatrix.c(),
-                                                     worldMatrix.d(), worldMatrix.e(), worldMatrix.f());
+    AffineTransform ret = ctm();
+    CGAffineTransform wMatrix = worldMatrix;
     CGContextConcatCTM(m_cgContext, wMatrix);
     return ret;
 }
 
-KCanvasMatrix KRenderingDeviceContextQuartz::ctm() const
+AffineTransform KRenderingDeviceContextQuartz::ctm() const
 {
-    CGAffineTransform contextCTM = CGContextGetCTM(m_cgContext);
-    return KCanvasMatrix(contextCTM.a, contextCTM.b, contextCTM.c, contextCTM.d, contextCTM.tx, contextCTM.ty);
+    return CGContextGetCTM(m_cgContext);
 }
 
 void KRenderingDeviceContextQuartz::clearPath()

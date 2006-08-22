@@ -38,7 +38,6 @@ class SVGStyledElement;
 
 class KCanvasPath;
 class RenderSVGContainer;
-class KCanvasMatrix;
 
 class RenderPath : public RenderObject
 {

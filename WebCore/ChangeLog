@@ -2,6 +2,63 @@
 
         Reviewed by Eric.
 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10491
+        KCanvasMatrix removal
+
+        Remove KCanvasMatrix from project, using AffineTransform instead.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasMatrix.cpp: Removed.
+        * kcanvas/KCanvasMatrix.h: Removed.
+        * kcanvas/KCanvasResources.cpp:
+        (WebCore::KCanvasMarker::draw):
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/RenderForeignObject.cpp:
+        * kcanvas/RenderPath.h:
+        * kcanvas/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::viewportTransform):
+        (WebCore::RenderSVGContainer::getAspectRatio):
+        * kcanvas/RenderSVGContainer.h:
+        * kcanvas/RenderSVGText.cpp:
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (WebCore::KRenderingPaintServerGradient::gradientTransform):
+        (WebCore::KRenderingPaintServerGradient::setGradientTransform):
+        (WebCore::KRenderingPaintServerGradient::externalRepresentation):
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        * kcanvas/device/KRenderingPaintServerPattern.cpp:
+        (WebCore::KRenderingPaintServerPattern::patternTransform):
+        (WebCore::KRenderingPaintServerPattern::setPatternTransform):
+        (WebCore::KRenderingPaintServerPattern::externalRepresentation):
+        * kcanvas/device/KRenderingPaintServerPattern.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceContextQuartz::concatCTM):
+        (WebCore::KRenderingDeviceContextQuartz::ctm):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (WebCore::KRenderingPaintServerGradientQuartz::renderPath):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (WebCore::KRenderingPaintServerPatternQuartz::setup):
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (SVGLinearGradientElement::buildGradient):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::fillAttributesFromReferencePattern):
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient):
+
+2006-08-22  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
         http://bugzilla.opendarwin.org/show_bug.cgi?id=10405
         REPRO: SVG Maze crashes in RenderPath code
 

@@ -29,7 +29,6 @@
 #include "IntRect.h"
 #include "RenderSVGContainer.h"
 #include "KCanvasImage.h"
-#include "KCanvasMatrix.h"
 #include "KCanvasTreeDebug.h"
 #include "KRenderingDevice.h"
 #include "RenderPath.h"
@@ -224,23 +223,22 @@ void KCanvasMarker::draw(GraphicsContext* context, const FloatRect& rect, double
 {
     if(m_marker)
     {
-        KCanvasMatrix translation;
+        AffineTransform translation;
         translation.translate(x, y);
 
-        KCanvasMatrix rotation;
-        rotation.setOperationMode(OPS_POSTMUL);
-        rotation.translate(-m_refX, -m_refY);
-        rotation.scale(m_scaleX, m_scaleY);
-        rotation.rotate(m_angle > -1 ? m_angle : angle);
-        
+        AffineTransform rotation;
         // stroke width
         if(m_useStrokeWidth)
             rotation.scale(strokeWidth, strokeWidth);
+        rotation.rotate(m_angle > -1 ? m_angle : angle);
+        rotation.scale(m_scaleX, m_scaleY);
+        rotation.translate(-m_refX, -m_refY);
 
         // FIXME: PaintInfo should be passed into this method instead.
         // FIXME: bounding box fractions lost
         RenderObject::PaintInfo info(context, enclosingIntRect(rect), PaintPhaseForeground, 0, 0, 0);
-        m_marker->setLocalTransform(rotation.multiply(translation).matrix());
+        rotation = rotation * translation;
+        m_marker->setLocalTransform(rotation);
         static_cast<RenderSVGContainer *>(m_marker)->setDrawsContents(true);
         m_marker->paint(info, 0, 0);
         static_cast<RenderSVGContainer *>(m_marker)->setDrawsContents(false);

@@ -25,7 +25,6 @@
 #include "RenderForeignObject.h"
 
 #include "GraphicsContext.h"
-#include "KCanvasMatrix.h"
 #include "KRenderingDevice.h"
 #include "SVGAnimatedLength.h"
 #include "SVGForeignObjectElement.h"

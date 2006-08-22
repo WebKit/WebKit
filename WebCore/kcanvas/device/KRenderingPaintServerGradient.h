@@ -39,7 +39,6 @@ inline KCGradientStop makeGradientStop(float offset, const Color& color) { retur
 
 TextStream& operator<<(TextStream&, KCGradientSpreadMethod);
 
-class KCanvasMatrix;
 class KRenderingPaintServerGradient : public KRenderingPaintServer
 {
 public:
@@ -61,8 +60,8 @@ public:
     bool boundingBoxMode() const;
     void setBoundingBoxMode(bool mode = true);
 
-    KCanvasMatrix gradientTransform() const;
-    void setGradientTransform(const KCanvasMatrix &mat);
+    AffineTransform gradientTransform() const;
+    void setGradientTransform(const AffineTransform&);
     
     KCanvasResourceListener *listener() const;
     void setListener(KCanvasResourceListener *listener);

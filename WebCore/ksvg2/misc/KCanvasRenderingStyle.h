@@ -26,7 +26,6 @@
 #ifdef SVG_SUPPORT
 
 #include "DeprecatedValueList.h"
-#include <kcanvas/KCanvasMatrix.h>
 
 namespace WebCore {
 

@@ -36,7 +36,6 @@
 #include "SVGLinearGradientElement.h"
 #include "SVGAnimatedTransformList.h"
 
-#include <kcanvas/KCanvasMatrix.h>
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
@@ -110,9 +109,9 @@ void SVGLinearGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
     float _x2 = x2()->baseVal()->value(), _y2 = y2()->baseVal()->value();
 
     KRenderingPaintServerLinearGradient *grad = static_cast<KRenderingPaintServerLinearGradient *>(_grad);
-    KCanvasMatrix mat;
+    AffineTransform mat;
     if(gradientTransform()->baseVal()->numberOfItems() > 0)
-        mat = KCanvasMatrix(gradientTransform()->baseVal()->consolidate()->matrix()->matrix());
+        mat = gradientTransform()->baseVal()->consolidate()->matrix()->matrix();
 
     DeprecatedString ref = String(href()->baseVal()).deprecatedString();
     KRenderingPaintServer *pserver = getPaintServerById(document(), ref.mid(1));

@@ -22,10 +22,10 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "KCanvasMatrix.h"
 #include "KCanvasImage.h"
 #include "KRenderingPaintServerPattern.h"
 
+#include "AffineTransform.h"
 #include "TextStream.h"
 #include "KCanvasTreeDebug.h"
 
@@ -43,7 +43,7 @@ public:
     ~Private() { delete tile; }
 
     KCanvasImage *tile;
-    KCanvasMatrix patternTransform;
+    AffineTransform patternTransform;
     FloatRect bbox;
     bool useBoundingBoxMode;
     KCanvasResourceListener *listener;
@@ -88,12 +88,12 @@ void KRenderingPaintServerPattern::setTile(KCanvasImage *tile)
     d->tile = tile;
 }
 
-KCanvasMatrix KRenderingPaintServerPattern::patternTransform() const
+AffineTransform KRenderingPaintServerPattern::patternTransform() const
 {
     return d->patternTransform;
 }
 
-void KRenderingPaintServerPattern::setPatternTransform(const KCanvasMatrix &mat)
+void KRenderingPaintServerPattern::setPatternTransform(const AffineTransform& mat)
 {
     d->patternTransform = mat;
 }
@@ -119,8 +119,8 @@ TextStream &KRenderingPaintServerPattern::externalRepresentation(TextStream &ts)
         << " [bbox=" << bbox() << "]";
     if (!boundingBoxMode())
         ts << " [bounding box mode=" << boundingBoxMode() << "]";        
-    if (!patternTransform().matrix().isIdentity())
-        ts << " [pattern transform=" << patternTransform().matrix() << "]";
+    if (!patternTransform().isIdentity())
+        ts << " [pattern transform=" << patternTransform() << "]";
     return ts;
 }
 

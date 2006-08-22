@@ -25,7 +25,6 @@
 #include "Attr.h"
 
 #include <kcanvas/RenderPath.h>
-#include <kcanvas/KCanvasMatrix.h>
 
 #include "SVGAngle.h"
 #include "SVGMatrix.h"

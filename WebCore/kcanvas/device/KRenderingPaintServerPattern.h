@@ -51,8 +51,8 @@ public:
     KCanvasImage *tile() const;
     void setTile(KCanvasImage *tile);
 
-    KCanvasMatrix patternTransform() const;
-    void setPatternTransform(const KCanvasMatrix &mat);
+    AffineTransform patternTransform() const;
+    void setPatternTransform(const AffineTransform&);
 
     KCanvasResourceListener *listener() const;
     void setListener(KCanvasResourceListener *listener);

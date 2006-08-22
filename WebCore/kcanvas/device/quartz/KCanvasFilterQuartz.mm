@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Dave MacLachlan (dmaclach@mac.com)
+ *               2006 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,7 @@
 #ifdef SVG_SUPPORT
 #import "KCanvasFilterQuartz.h"
 
+#import "AffineTransform.h"
 #import "BlockExceptions.h"
 #import "CachedImage.h"
 #import "FoundationExtras.h"

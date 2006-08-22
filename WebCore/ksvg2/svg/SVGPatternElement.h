@@ -97,8 +97,8 @@ namespace WebCore
         
     private:
         // notifyAttributeChange helpers:
-        void fillAttributesFromReferencePattern(const SVGPatternElement *target, KCanvasMatrix &patternTransformMatrix) const;
-        void drawPatternContentIntoTile(const SVGPatternElement *target, const IntSize &newSize, KCanvasMatrix patternTransformMatrix) const;
+        void fillAttributesFromReferencePattern(const SVGPatternElement *target, AffineTransform& patternTransformMatrix) const;
+        void drawPatternContentIntoTile(const SVGPatternElement *target, const IntSize &newSize, AffineTransform patternTransformMatrix) const;
         void notifyClientsToRepaint() const;
     };
 

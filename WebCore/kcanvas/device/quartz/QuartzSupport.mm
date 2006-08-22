@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ *               2006 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +30,6 @@
 #import "QuartzSupport.h"
 
 #import "GraphicsContext.h"
-#import "KCanvasMatrix.h"
 #import "KCanvasResourcesQuartz.h"
 #import "KRenderingFillPainter.h"
 #import "KRenderingStrokePainter.h"

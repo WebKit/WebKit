@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *               2006 Alexander Kellett <lypanov@kde.org>
+ *               2006 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +37,6 @@
 #import "KRenderingPaintServer.h"
 #import "KRenderingFillPainter.h"
 #import "KRenderingStrokePainter.h"
-#import "KCanvasMatrix.h"
 #import "KRenderingDevice.h"
 
 #import "Logging.h"
@@ -166,7 +166,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
             
     // Patterns don't seem to resepect the CTM unless we make them...
     CGAffineTransform ctm = CGContextGetCTM(context);
-    CGAffineTransform transform = CGAffineTransform(patternTransform().matrix());
+    CGAffineTransform transform = patternTransform();
     transform = CGAffineTransformConcat(transform, ctm);
 
     CGSize phase = CGSizeMake(bbox().x(), bbox().y());

@@ -26,7 +26,6 @@
 #include "RenderSVGText.h"
 
 #include "GraphicsContext.h"
-#include "KCanvasMatrix.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "SVGAnimatedLengthList.h"

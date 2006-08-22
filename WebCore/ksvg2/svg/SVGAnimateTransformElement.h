@@ -26,7 +26,6 @@
 
 #include "ksvg.h"
 #include "SVGAnimationElement.h"
-#include <kcanvas/KCanvasMatrix.h>
 
 namespace WebCore {
 

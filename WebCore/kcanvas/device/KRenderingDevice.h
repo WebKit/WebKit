@@ -30,15 +30,14 @@
 namespace WebCore {
 
 // aka where to draw
-class KCanvasMatrix;
 class KRenderingDeviceContext
 {
 public:
     KRenderingDeviceContext() { }
     virtual ~KRenderingDeviceContext() { }
 
-    virtual KCanvasMatrix concatCTM(const KCanvasMatrix &worldMatrix) = 0;
-    virtual KCanvasMatrix ctm() const = 0;
+    virtual AffineTransform concatCTM(const AffineTransform&) = 0;
+    virtual AffineTransform ctm() const = 0;
         
     virtual void clearPath() = 0;
     virtual void addPath(const KCanvasPath*) = 0;

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ *               2006 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,8 +47,8 @@ public:
     KRenderingDeviceContextQuartz(CGContextRef context);
     virtual ~KRenderingDeviceContextQuartz();
     
-    virtual KCanvasMatrix concatCTM(const KCanvasMatrix &worldMatrix);
-    virtual KCanvasMatrix ctm() const;
+    virtual AffineTransform concatCTM(const AffineTransform&);
+    virtual AffineTransform ctm() const;
     
     virtual void clearPath();
     virtual void addPath(const KCanvasPath*);
