@@ -1,3 +1,16 @@
+2006-08-22  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10402
+        REPRO: SVG crashes inside gradient code
+
+        Make sure we do not try to update the canvas resource/gradient paintserver when it is not yet built.
+
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (SVGGradientElement::notifyAttributeChange):
+        (SVGGradientElement::resourceNotification):
+
 2006-08-22  David Harrison  <harrison@apple.com>
 
         Reviewed by John.

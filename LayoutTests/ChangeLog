@@ -2,6 +2,19 @@
 
         Reviewed by Eric.
 
+        Testcase for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10402
+        REPRO: SVG crashes inside gradient code
+
+        * svg/custom/gradient-attr-update-expected.checksum: Added.
+        * svg/custom/gradient-attr-update-expected.png: Added.
+        * svg/custom/gradient-attr-update-expected.txt: Added.
+        * svg/custom/gradient-attr-update.svg: Added.
+
+2006-08-22  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
         Testcase needed for:
         http://bugzilla.opendarwin.org/show_bug.cgi?id=10405
         REPRO: SVG Maze crashes in RenderPath code
