@@ -39,6 +39,7 @@
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/DOMHTML.h>
 #import <WebKit/WebFrameBridge.h>
+#import <WebKit/WebPreferences.h>
 
 @implementation WebFrameLoader
 
@@ -88,11 +89,13 @@
     if (!plugInStreamLoaders)
         plugInStreamLoaders = [[NSMutableArray alloc] init];
     [plugInStreamLoaders addObject:loader];
+    [[self activeDataSource] _setLoading:YES];
 }
 
 - (void)removePlugInStreamLoader:(WebLoader *)loader
 {
     [plugInStreamLoaders removeObject:loader];
+    [[self activeDataSource] _updateLoading];
 }    
 
 - (void)setDefersCallbacks:(BOOL)defers
@@ -150,11 +153,13 @@
     if (subresourceLoaders == nil)
         subresourceLoaders = [[NSMutableArray alloc] init];
     [subresourceLoaders addObject:loader];
+    [[self activeDataSource] _setLoading:YES];
 }
 
 - (void)removeSubresourceLoader:(WebLoader *)loader
 {
     [subresourceLoaders removeObject:loader];
+    [[self activeDataSource] _updateLoading];
 }
 
 - (NSData *)mainResourceData
@@ -377,67 +382,47 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
 {
-    return [[self activeDataSource] _didReceiveAuthenticationChallenge:currentWebChallenge forResource:identifier];
+    [[self activeDataSource] _didReceiveAuthenticationChallenge:currentWebChallenge forResource:identifier];
 }
 
 - (void)_didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
 {
-    return [[self activeDataSource] _didCancelAuthenticationChallenge:currentWebChallenge forResource:identifier];
+    [[self activeDataSource] _didCancelAuthenticationChallenge:currentWebChallenge forResource:identifier];
 }
 
 - (void)_didReceiveResponse:(NSURLResponse *)r forResource:(id)identifier
 {
-    return [[self activeDataSource] _didReceiveResponse:r forResource:identifier];
+    [[self activeDataSource] _didReceiveResponse:r forResource:identifier];
 }
 
 - (void)_didReceiveData:(NSData *)data contentLength:(int)lengthReceived forResource:(id)identifier
 {
-    return [[self activeDataSource] _didReceiveData:data contentLength:lengthReceived forResource:identifier];
+    [[self activeDataSource] _didReceiveData:data contentLength:lengthReceived forResource:identifier];
 }
 
 - (void)_didFinishLoadingForResource:(id)identifier
 {
-    return [[self activeDataSource] _didFinishLoadingForResource:identifier];
+    [[self activeDataSource] _didFinishLoadingForResource:identifier];
 }
 
 - (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier
 {
-    return [[self activeDataSource] _didFailLoadingWithError:error forResource:identifier];
+    [[self activeDataSource] _didFailLoadingWithError:error forResource:identifier];
 }
 
 - (BOOL)_privateBrowsingEnabled
 {
-    return [[self activeDataSource] _privateBrowsingEnabled];
-}
-
-- (void)_addPlugInStreamLoader:(WebLoader *)loader
-{
-    return [[self activeDataSource] _addPlugInStreamLoader:loader];
-}
-
-- (void)_removePlugInStreamLoader:(WebLoader *)loader
-{
-    return [[self activeDataSource] _removePlugInStreamLoader:loader];
+    return [[[webFrame webView] preferences] privateBrowsingEnabled];
 }
 
 - (void)_finishedLoadingResource
 {
-    return [[self activeDataSource] _finishedLoadingResource];
+    [webFrame _checkLoadComplete];
 }
 
 - (void)_receivedError:(NSError *)error
 {
-    [[self webFrame] _checkLoadComplete];
-}
-
-- (void)_addSubresourceLoader:(WebLoader *)loader
-{
-    return [[self activeDataSource] _addSubresourceLoader:loader];
-}
-
-- (void)_removeSubresourceLoader:(WebLoader *)loader
-{
-    return [[self activeDataSource] _removeSubresourceLoader:loader];
+    [webFrame _checkLoadComplete];
 }
 
 - (NSURLRequest *)_originalRequest
@@ -510,12 +495,20 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_finishedLoading
 {
-    [[self activeDataSource] _finishedLoading];
-}
+    WebDataSource *ds = [self activeDataSource];
+    
+    [self retain];
+    [ds _finishedLoading];
 
-- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar complete:(BOOL)isComplete
-{
-    [[self activeDataSource] _mainReceivedBytesSoFar:bytesSoFar complete:isComplete];
+    if ([ds _mainDocumentError] || ![ds webFrame]) {
+        [self release];
+        return;
+    }
+
+    [ds _setPrimaryLoadComplete:YES];
+    [webFrame _checkLoadComplete];
+
+    [self release];
 }
 
 - (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iLoader

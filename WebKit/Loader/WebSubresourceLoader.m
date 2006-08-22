@@ -98,7 +98,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *theReferrer)
 {
     WebSubresourceLoader *loader = [[[self alloc] initWithLoader:rLoader frameLoader:fl] autorelease];
     
-    [fl _addSubresourceLoader:loader];
+    [fl addSubresourceLoader:loader];
 
     NSEnumerator *e = [customHeaders keyEnumerator];
     NSString *key;
@@ -228,7 +228,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *theReferrer)
 
 - (void)signalFinish
 {
-    [frameLoader _removeSubresourceLoader:self];
+    [frameLoader removeSubresourceLoader:self];
     [frameLoader _finishedLoadingResource];
     [super signalFinish];
 }
@@ -254,7 +254,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *theReferrer)
     [self retain];
     
     [coreLoader reportError];
-    [frameLoader _removeSubresourceLoader:self];
+    [frameLoader removeSubresourceLoader:self];
     [self receivedError:error];
     [super didFailWithError:error];
 
@@ -267,7 +267,7 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *theReferrer)
     [self retain];
         
     [coreLoader cancel];
-    [frameLoader _removeSubresourceLoader:self];
+    [frameLoader removeSubresourceLoader:self];
     [self receivedError:[self cancelledError]];
     [super cancel];
 

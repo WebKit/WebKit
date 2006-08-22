@@ -265,9 +265,8 @@
 - (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement
 {
     DOMDocumentFragment *fragment = [self _documentFragmentWithArchive:archive];
-    if (fragment) {
+    if (fragment)
         [[self _bridge] replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:NO matchStyle:NO];
-    }
 }
 
 - (WebView *)_webView
@@ -304,6 +303,7 @@
 
 - (void)_updateIconDatabaseWithURL:(NSURL *)iconURL
 {
+    // MOVABLE
     ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
     
     WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
@@ -334,9 +334,8 @@
 {
     // Don't load an icon if 1) this is not the main frame 2) we ended in error
     // 3) they aren't saved by the DB
-    if ([self webFrame] != [[self _webView] mainFrame] || _private->mainDocumentError || ![[WebIconDatabase sharedIconDatabase] _isEnabled]) {
+    if ([self webFrame] != [[self _webView] mainFrame] || _private->mainDocumentError || ![[WebIconDatabase sharedIconDatabase] _isEnabled])
         return;
-    }
 
     if (!_private->iconURL) {
         // No icon URL from the LINK tag so try the server's root.
@@ -367,7 +366,7 @@
     }
 }
 
-- (void)_setPrimaryLoadComplete: (BOOL)flag
+- (void)_setPrimaryLoadComplete:(BOOL)flag
 {
     _private->primaryLoadComplete = flag;
     
@@ -391,6 +390,7 @@
 
 - (NSError *)_cancelledError
 {
+    // MOVABLE
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain
                                       code:NSURLErrorCancelled
                                        URL:[self _URL]];
@@ -487,30 +487,6 @@
     
     if (![[_private->webFrame _frameLoader] startLoadingMainResourceWithRequest:_private->request identifier:identifier])
         [self _updateLoading];
-}
-
-- (void)_addSubresourceLoader:(WebLoader *)loader
-{
-    [[_private->webFrame _frameLoader] addSubresourceLoader:loader];
-    [self _setLoading:YES];
-}
-
-- (void)_removeSubresourceLoader:(WebLoader *)loader
-{
-    [[_private->webFrame _frameLoader] removeSubresourceLoader:loader];
-    [self _updateLoading];
-}
-
-- (void)_addPlugInStreamLoader:(WebLoader *)loader
-{
-    [[_private->webFrame _frameLoader] addPlugInStreamLoader:loader];
-    [self _setLoading:YES];
-}
-
-- (void)_removePlugInStreamLoader:(WebLoader *)loader
-{
-    [[_private->webFrame _frameLoader] removePlugInStreamLoader:loader];
-    [self _updateLoading];
 }
 
 - (BOOL)_isStopping
@@ -692,6 +668,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
+    // MOVABLE
     static NSMutableDictionary *repTypes = nil;
     static BOOL addedImageTypes = NO;
     
@@ -715,6 +692,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 + (Class)_representationClassForMIMEType:(NSString *)MIMEType
 {
+    // MOVABLE
     Class repClass;
     return [WebView _viewClass:nil andRepresentationClass:&repClass forMIMEType:MIMEType] ? repClass : nil;
 }
@@ -749,6 +727,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_commitLoadWithData:(NSData *)data
 {
+    // MOVABLE
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
     // by starting a new load, so retain temporarily.
     [self retain];
@@ -783,6 +762,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
 {
+    // MOVABLE
     WebFrameBridge *bridge = [[self webFrame] _bridge];
     
     // Retain the bridge because the stop may release the last reference to it.
@@ -806,6 +786,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader
 {
+    // MOVABLE
     [self _updateIconDatabaseWithURL:_private->iconURL];
     [self _notifyIconChanged:_private->iconURL];
 }
@@ -946,11 +927,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
                  proxy:proxy];
 }
 
-- (BOOL)_privateBrowsingEnabled
-{
-    return [[[self _webView] preferences] privateBrowsingEnabled];
-}    
-
 - (NSURLRequest *)_originalRequest
 {
     return _private->originalRequestCopy;
@@ -1035,6 +1011,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (BOOL)_isDocumentHTML
 {
+    // MOVABLE
     NSString *MIMEType = [[self response] MIMEType];
     return [WebView canShowMIMETypeAsHTML:MIMEType];
 }
@@ -1244,28 +1221,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         if (!_private->unarchivingState)
             _private->unarchivingState = [[WebUnarchivingState alloc] init];
         [_private->unarchivingState addResource:subresource];
-    }
-}
-
-- (void)_finishedLoadingResource
-{
-    [[self webFrame] _checkLoadComplete];
-}
-
-- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar complete:(BOOL)isComplete
-{
-    WebFrame *frame = [self webFrame];
-    
-    // The frame may be nil if a previously cancelled load is still making progress callbacks.
-    if (frame == nil)
-        return;
-        
-    // This resource has completed, so check if the load is complete for this frame and its ancestors
-    if (isComplete) {
-        // If the load is complete, mark the primary load as done.  The primary load is the load
-        // of the main document.  Other resources may still be arriving.
-        [self _setPrimaryLoadComplete:YES];
-        [frame _checkLoadComplete];
     }
 }
 

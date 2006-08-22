@@ -1,3 +1,56 @@
+2006-08-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady.
+        
+        - move more code from WebDataSource to WebFrameLoader
+        
+        Also marked a few more methods in WebDataSource as likely MOVABLE in a future round, since they do not
+        use any of WebDataSource's private data.
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader addPlugInStreamLoader:]):
+        (-[WebFrameLoader removePlugInStreamLoader:]):
+        (-[WebFrameLoader addSubresourceLoader:]):
+        (-[WebFrameLoader removeSubresourceLoader:]):
+        (-[WebFrameLoader _didReceiveAuthenticationChallenge:forResource:]):
+        (-[WebFrameLoader _didCancelAuthenticationChallenge:forResource:]):
+        (-[WebFrameLoader _didReceiveResponse:forResource:]):
+        (-[WebFrameLoader _didReceiveData:contentLength:forResource:]):
+        (-[WebFrameLoader _didFinishLoadingForResource:]):
+        (-[WebFrameLoader _didFailLoadingWithError:forResource:]):
+        (-[WebFrameLoader _privateBrowsingEnabled]):
+        (-[WebFrameLoader _finishedLoadingResource]):
+        (-[WebFrameLoader _receivedError:]):
+        (-[WebFrameLoader _finishedLoading]):
+        * Loader/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader didReceiveData:lengthReceived:allAtOnce:]):
+        (-[WebMainResourceLoader didFinishLoading]):
+        * Loader/WebNetscapePlugInStreamLoader.m:
+        (-[WebNetscapePlugInStreamLoader didFinishLoading]):
+        (-[WebNetscapePlugInStreamLoader didFailWithError:]):
+        (-[WebNetscapePlugInStreamLoader cancelWithError:]):
+        * Loader/WebSubresourceLoader.m:
+        (+[WebSubresourceLoader startLoadingResource:withRequest:customHeaders:referrer:forFrameLoader:]):
+        (-[WebSubresourceLoader signalFinish]):
+        (-[WebSubresourceLoader didFailWithError:]):
+        (-[WebSubresourceLoader cancel]):
+        * Plugins/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream start]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _replaceSelectionWithArchive:selectReplacement:]):
+        (-[WebDataSource _updateIconDatabaseWithURL:]):
+        (-[WebDataSource _loadIcon]):
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (-[WebDataSource _cancelledError]):
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        (+[WebDataSource _representationClassForMIMEType:]):
+        (-[WebDataSource _commitLoadWithData:]):
+        (-[WebDataSource _receivedMainResourceError:complete:]):
+        (-[WebDataSource _iconLoaderReceivedPageIcon:]):
+        (-[WebDataSource _isDocumentHTML]):
+        * WebView/WebDataSourceInternal.h:
+
 2006-08-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John

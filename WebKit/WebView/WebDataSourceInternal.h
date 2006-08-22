@@ -50,8 +50,6 @@
 @protocol WebDocumentRepresentation;
 
 @interface WebDataSource (WebInternal)
-- (void)_addPlugInStreamLoader:(WebLoader *)loader;
-- (void)_removePlugInStreamLoader:(WebLoader *)loader;
 - (void)_stopLoadingWithError:(NSError *)error;
 - (void)_setTitle:(NSString *)title;
 - (NSString *)_overrideEncoding;
@@ -60,8 +58,6 @@
 - (NSString *)_overrideEncoding;
 - (void)_setIconURL:(NSURL *)URL;
 - (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType;
-- (void)_addSubresourceLoader:(WebLoader *)loader;
-- (void)_removeSubresourceLoader:(WebLoader *)loader;
 - (NSURLRequest *)_originalRequest;
 - (WebView *)_webView;
 - (WebResource *)_archivedSubresourceForURL:(NSURL *)URL;
@@ -106,8 +102,6 @@
 - (void)_startLoading;
 - (void)_loadFromPageCache:(NSDictionary *)pageCache;
 - (DOMElement *)_imageElementWithImageResource:(WebResource *)resource;
-- (void)_finishedLoadingResource;
-- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar complete:(BOOL)isComplete;
 - (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete;
 - (BOOL)_defersCallbacks;
 - (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest;
@@ -121,5 +115,6 @@
 - (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(WKNSURLConnectionDelegateProxyPtr) proxy;
 - (BOOL)_privateBrowsingEnabled;
 - (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener;
-
+- (void)_setLoading:(BOOL)loading;
+- (void)_updateLoading;
 @end

@@ -90,11 +90,11 @@
 {
     ASSERT(request);
 
-    [[_loader frameLoader] _addPlugInStreamLoader:_loader];
+    [[_loader frameLoader] addPlugInStreamLoader:_loader];
 
     BOOL succeeded = [_loader loadWithRequest:request];
     if (!succeeded) {
-        [[_loader frameLoader] _removePlugInStreamLoader:_loader];
+        [[_loader frameLoader] removePlugInStreamLoader:_loader];
     }
 }
 

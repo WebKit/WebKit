@@ -88,7 +88,7 @@
     // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
     [self retain];
 
-    [frameLoader _removePlugInStreamLoader:self];
+    [frameLoader removePlugInStreamLoader:self];
     [frameLoader _finishedLoadingResource];
     [stream finishedLoadingWithData:[self resourceData]];
     [super didFinishLoading];
@@ -103,7 +103,7 @@
     // one example of this is 3266216
     [self retain];
 
-    [[self frameLoader] _removePlugInStreamLoader:self];
+    [[self frameLoader] removePlugInStreamLoader:self];
     [[self frameLoader] _receivedError:error];
     [stream destroyStreamWithError:error];
     [super didFailWithError:error];
@@ -116,7 +116,7 @@
     // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
     [self retain];
 
-    [[self frameLoader] _removePlugInStreamLoader:self];
+    [[self frameLoader] removePlugInStreamLoader:self];
     [stream destroyStreamWithError:error];
     [super cancelWithError:error];
 

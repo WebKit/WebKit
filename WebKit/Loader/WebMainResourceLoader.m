@@ -368,7 +368,6 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [frameLoader _mainReceivedBytesSoFar:_bytesReceived complete:NO];
     
     [super didReceiveData:data lengthReceived:lengthReceived allAtOnce:allAtOnce];
     _bytesReceived += [data length];
@@ -385,7 +384,6 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
     [self retain];
 
     [frameLoader _finishedLoading];
-    [frameLoader _mainReceivedBytesSoFar:_bytesReceived complete:YES];
     [super didFinishLoading];
 
     [self release];
