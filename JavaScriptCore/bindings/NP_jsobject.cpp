@@ -59,16 +59,6 @@ static NPClass noScriptClass = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 NPClass* NPScriptObjectClass = &javascriptClass;
 static NPClass* NPNoScriptObjectClass = &noScriptClass;
 
-static Identifier identifierFromNPIdentifier(const NPUTF8* name)
-{
-    NPUTF16 *methodName;
-    unsigned UTF16Length;
-    convertUTF8ToUTF16(name, -1, &methodName, &UTF16Length); // requires free() of returned memory.
-    Identifier identifier((const KJS::UChar*)methodName, UTF16Length);
-    free(methodName);
-    return identifier;
-}
-
 static bool _isSafeScript(JavaScriptObject* obj)
 {
     if (obj->originExecutionContext) {

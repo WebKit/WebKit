@@ -180,4 +180,14 @@ JSValue *convertNPVariantToValue(ExecState*, const NPVariant* variant)
     return jsUndefined();
 }
 
+Identifier identifierFromNPIdentifier(const NPUTF8* name)
+{
+    NPUTF16 *methodName;
+    unsigned UTF16Length;
+    convertUTF8ToUTF16(name, -1, &methodName, &UTF16Length); // requires free() of returned memory.
+    Identifier identifier((const KJS::UChar*)methodName, UTF16Length);
+    free(methodName);
+    return identifier;
+}
+
 } }

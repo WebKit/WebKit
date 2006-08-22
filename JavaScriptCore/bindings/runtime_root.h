@@ -37,8 +37,9 @@ namespace Bindings {
 class RootObject;
 
 typedef RootObject *(*FindRootObjectForNativeHandleFunctionPtr)(void *);
+typedef HashCountedSet<JSObject*> ReferencesSet;
 
-extern CFMutableDictionaryRef findReferenceDictionary(JSObject *imp);
+extern ReferencesSet* findReferenceSet(JSObject *imp);
 extern const RootObject *rootForImp (JSObject *imp);
 extern const RootObject *rootForInterpreter (Interpreter *interpreter);
 extern void addNativeReference (const RootObject *root, JSObject *imp);

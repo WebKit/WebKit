@@ -29,56 +29,29 @@
 #include "npruntime_priv.h"
 
 #include "c_utility.h"
-#include <CoreFoundation/CoreFoundation.h>
-
-// FIXME: Use HashMap instead of CFDictionary for better performance and portability.
+#include <wtf/HashMap.h>
+#include "identifier.h"
 
 using namespace KJS::Bindings;
 
-static Boolean stringIdentifierEqual(const void* value1, const void* value2)
+typedef HashMap<RefPtr<KJS::UString::Rep>, PrivateIdentifier*> StringIdentifierMap;
+
+static StringIdentifierMap* getStringIdentifierMap()
 {
-    return strcmp((const char*)value1, (const char*)value2) == 0;
+    static StringIdentifierMap* stringIdentifierMap = 0;
+    if (!stringIdentifierMap)
+        stringIdentifierMap = new StringIdentifierMap;
+    return stringIdentifierMap;
 }
 
-static CFHashCode stringIdentifierHash(const void* value)
+typedef HashMap<int, PrivateIdentifier*> IntIdentifierMap;
+
+static IntIdentifierMap* getIntIdentifierMap()
 {
-    const unsigned char* key = (const unsigned char*)value;
-    unsigned len = strlen((const char*)key);
-    unsigned result = len;
-
-    if (len <= 16) {
-        unsigned cnt = len;
-        while (cnt--)
-            result = result * 257 + *key++;
-    } else {
-        unsigned cnt;
-        for (cnt = 8; cnt > 0; cnt--)
-            result = result * 257 + *key++;
-        key += (len - 16);
-        for (cnt = 8; cnt > 0; cnt--)
-            result = result * 257 + *key++;
-    }
-    result += (result << (len & 31));
-
-    return result;
-}
-
-static CFMutableDictionaryRef getStringIdentifierDictionary()
-{
-    static CFMutableDictionaryRef stringIdentifierDictionary = 0;
-    if (!stringIdentifierDictionary) {
-        CFDictionaryKeyCallBacks stringIdentifierCallbacks = { 0, NULL, NULL, NULL, stringIdentifierEqual, stringIdentifierHash };
-        stringIdentifierDictionary = CFDictionaryCreateMutable(NULL, 0, &stringIdentifierCallbacks, NULL);
-    }
-    return stringIdentifierDictionary;
-}
-
-static CFMutableDictionaryRef getIntIdentifierDictionary()
-{
-    static CFMutableDictionaryRef intIdentifierDictionary = 0;
-    if (!intIdentifierDictionary)
-        intIdentifierDictionary = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
-    return intIdentifierDictionary;
+    static IntIdentifierMap* intIdentifierMap = 0;
+    if (!intIdentifierMap)
+        intIdentifierMap = new IntIdentifierMap;
+    return intIdentifierMap;
 }
 
 NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)
@@ -88,16 +61,15 @@ NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)
     if (name) {
         PrivateIdentifier* identifier = 0;
         
-        identifier = (PrivateIdentifier*)CFDictionaryGetValue(getStringIdentifierDictionary(), name);
+        identifier = getStringIdentifierMap()->get(identifierFromNPIdentifier(name).ustring().rep());
         if (identifier == 0) {
             identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
             // We never release identifier names, so this dictionary will grow, as will
             // the memory for the identifier name strings.
             identifier->isString = true;
-            const char* identifierName = strdup(name);
-            identifier->value.string = identifierName;
+            identifier->value.string = strdup(name);
 
-            CFDictionaryAddValue(getStringIdentifierDictionary(), identifierName, identifier);
+            getStringIdentifierMap()->set(identifierFromNPIdentifier(name).ustring().rep(), identifier);
         }
         return (NPIdentifier)identifier;
     }
@@ -119,14 +91,14 @@ NPIdentifier _NPN_GetIntIdentifier(int32_t intid)
 {
     PrivateIdentifier* identifier = 0;
     
-    identifier = (PrivateIdentifier*)CFDictionaryGetValue(getIntIdentifierDictionary(), (const void*)intid);
+    identifier = getIntIdentifierMap()->get(intid);
     if (identifier == 0) {
         identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
         // We never release identifier names, so this dictionary will grow.
         identifier->isString = false;
         identifier->value.number = intid;
 
-        CFDictionaryAddValue(getIntIdentifierDictionary(), (const void*)intid, identifier);
+        getIntIdentifierMap()->set(intid, identifier);
     }
     return (NPIdentifier)identifier;
 }

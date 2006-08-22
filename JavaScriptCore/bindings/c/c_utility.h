@@ -31,6 +31,7 @@
 namespace KJS {
 
 class ExecState;
+class Identifier;
 class JSValue;
 
 namespace Bindings {
@@ -52,6 +53,7 @@ void convertUTF8ToUTF16(const NPUTF8* UTF8Chars, int UTF8Length, NPUTF16** UTF16
 void coerceValueToNPVariantStringType(ExecState*, JSValue*, NPVariant* result);
 void convertValueToNPVariant(ExecState*, JSValue*, NPVariant* result);
 JSValue* convertNPVariantToValue(ExecState*, const NPVariant*);
+Identifier identifierFromNPIdentifier(const NPUTF8* name);
 
 struct PrivateIdentifier {
     union {

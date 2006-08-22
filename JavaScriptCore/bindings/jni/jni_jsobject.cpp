@@ -127,7 +127,7 @@ jvalue JavaJSObject::invoke (JSObjectCallContext *context)
     
                 case Finalize: {
                     JSObject *imp = jlong_to_impptr(nativeHandle);
-                    if (findReferenceDictionary(imp) == 0) {
+                    if (findReferenceSet(imp) == 0) {
                         // We may have received a finalize method call from the VM 
                         // AFTER removing our last reference to the Java instance.
                         JS_LOG ("finalize called on instance we have already removed.\n");
