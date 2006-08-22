@@ -752,16 +752,31 @@ bool isEndOfBlock(const VisiblePosition &pos)
 
 // ---------
 
+VisiblePosition startOfDocument(const Node* node)
+{
+    if (!node)
+        return VisiblePosition();
+    
+    return VisiblePosition(node->document()->documentElement(), 0, DOWNSTREAM);
+}
+
 VisiblePosition startOfDocument(const VisiblePosition &c)
 {
-    Element* documentElement = c.deepEquivalent().documentElement();
-    return documentElement ? VisiblePosition(documentElement, 0, DOWNSTREAM) : VisiblePosition();
+    return startOfDocument(c.deepEquivalent().node());
+}
+
+VisiblePosition endOfDocument(const Node* node)
+{
+    if (!node || !node->document())
+        return VisiblePosition();
+    
+    Element* doc = node->document()->documentElement();
+    return VisiblePosition(doc, doc->childNodeCount(), DOWNSTREAM);
 }
 
 VisiblePosition endOfDocument(const VisiblePosition &c)
 {
-    Element* documentElement = c.deepEquivalent().documentElement();
-    return documentElement ? VisiblePosition(documentElement, documentElement->childNodeCount(), DOWNSTREAM) : VisiblePosition();
+    return endOfDocument(c.deepEquivalent().node());
 }
 
 bool inSameDocument(const VisiblePosition &a, const VisiblePosition &b)

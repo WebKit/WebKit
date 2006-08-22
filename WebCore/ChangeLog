@@ -1,3 +1,38 @@
+2006-08-21  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/4471481> Represent misspellings in AXAttributedStringForTextMarkerRange
+
+        Added support for the NSAccessibilityMisspelledTextAttribute.
+        
+        Test cases added: None.  Manual AX testing is way too awkward, and automated testing
+        is not possible.  See following bug...
+            <rdar://problem/4256882> Need automated testing support for accessibility APIs
+
+        * bridge/mac/WebCoreAXObject.mm:
+        Lots of trivial formatting in many methods.
+        
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        Fixed AXStartTextMarker and AXEndTextMarker to use startOfDocument and endOfDocument, instead of
+        of positionForCoordinates. I had seen erroneous endOfDocument results while testing the spelling
+        attribute.
+
+        (WebCore::AXAttributeStringSetSpelling): 
+        New. Adds the NSAccessibilityMisspelledTextAttribute for misspelled words.
+
+        (-[WebCoreAXObject AXAttributedStringAppendText:]):
+        Added call to AXAttributeStringSetSpelling.
+        
+        * editing/visible_units.cpp:
+        (WebCore::startOfDocument):
+        (WebCore::endOfDocument):
+        Added for AXStartTextMarker/AXEndTextMarker fix, these forms of the familiar functions take a Node*,
+        so a previously existing VisiblePosition is not required.
+        
+        * editing/visible_units.h:
+        Declare new forms of startOfDocument and endOfDocument.
+
 2006-08-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

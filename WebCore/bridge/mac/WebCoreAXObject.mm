@@ -58,7 +58,7 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 // FIXME: This will eventually need to really localize.
-#define UI_STRING(string, comment) ((NSString *)[NSString stringWithUTF8String:(string)])
+#define UI_STRING(string, comment) ((NSString*)[NSString stringWithUTF8String:(string)])
 
 @implementation WebCoreAXObject
 
@@ -153,7 +153,7 @@ using namespace HTMLNames;
     return m_renderer->isImage() && m_renderer->element() && m_renderer->element()->hasTagName(inputTag);
 }
 
--(Element *)mouseButtonListener
+-(Element*)mouseButtonListener
 {
     // FIXME: Do the continuation search like anchorElement does
     for (EventTargetNode* elt = static_cast<EventTargetNode*>(m_renderer->element()); elt; elt = static_cast<EventTargetNode*>(elt->parentNode())) {
@@ -164,7 +164,7 @@ using namespace HTMLNames;
     return 0;
 }
 
--(Element *)actionElement
+-(Element*)actionElement
 {
     if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
@@ -177,7 +177,7 @@ using namespace HTMLNames;
     if ([self isImageButton] || m_renderer->isMenuList())
         return static_cast<Element*>(m_renderer->element());
 
-    Element * elt = [self anchorElement];
+    Element* elt = [self anchorElement];
     if (!elt)
         elt = [self mouseButtonListener];
 
@@ -371,7 +371,7 @@ using namespace HTMLNames;
     // FIXME 3447564: It would be better to call some AppKit API to get these strings
     // (which would be the best way to localize them)
     
-    NSString *role = [self role];
+    NSString* role = [self role];
     if ([role isEqualToString:NSAccessibilityButtonRole])
         return NSAccessibilityRoleDescription(NSAccessibilityButtonRole, nil);
     
@@ -635,7 +635,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return (!m_renderer->isListMarker() && !m_renderer->isRenderView() && !m_renderer->isImage());
 }
 
-- (NSArray *)accessibilityAttributeNames
+- (NSArray*)accessibilityAttributeNames
 {
     static NSArray* attributes = nil;
     static NSArray* anchorAttrs = nil;
@@ -727,16 +727,16 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return nil;
 }
 
-- (NSString *)accessibilityActionDescription:(NSString *)action
+- (NSString*)accessibilityActionDescription:(NSString*)action
 {
     // we have no custom actions
     return NSAccessibilityActionDescription(action);
 }
 
-- (void)accessibilityPerformAction:(NSString *)action
+- (void)accessibilityPerformAction:(NSString*)action
 {
     if ([action isEqualToString:NSAccessibilityPressAction]) {
-        Element *actionElement = [self actionElement];
+        Element* actionElement = [self actionElement];
         if (!actionElement)
             return;
 
@@ -747,12 +747,12 @@ static IntRect boundingBoxRect(RenderObject* obj)
     }
 }
 
-- (WebCoreTextMarkerRange *) textMarkerRangeFromMarkers: (WebCoreTextMarker *) textMarker1 andEndMarker:(WebCoreTextMarker *) textMarker2
+- (WebCoreTextMarkerRange*) textMarkerRangeFromMarkers: (WebCoreTextMarker*) textMarker1 andEndMarker:(WebCoreTextMarker*) textMarker2
 {
     return [[WebCoreViewFactory sharedFactory] textMarkerRangeWithStart:textMarker1 end:textMarker2];
 }
 
-- (WebCoreTextMarker *) textMarkerForVisiblePosition: (VisiblePosition)visiblePos
+- (WebCoreTextMarker*) textMarkerForVisiblePosition: (VisiblePosition)visiblePos
 {
     if (visiblePos.isNull())
         return nil;
@@ -760,54 +760,54 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return m_renderer->document()->axObjectCache()->textMarkerForVisiblePosition(visiblePos);
 }
 
-- (VisiblePosition) visiblePositionForTextMarker: (WebCoreTextMarker *)textMarker
+- (VisiblePosition) visiblePositionForTextMarker: (WebCoreTextMarker*)textMarker
 {
     return m_renderer->document()->axObjectCache()->visiblePositionForTextMarker(textMarker);
 }
 
-- (VisiblePosition) visiblePositionForStartOfTextMarkerRange: (WebCoreTextMarkerRange *)textMarkerRange
+- (VisiblePosition) visiblePositionForStartOfTextMarkerRange: (WebCoreTextMarkerRange*)textMarkerRange
 {
     return [self visiblePositionForTextMarker:[[WebCoreViewFactory sharedFactory] startOfTextMarkerRange:textMarkerRange]];
 }
 
-- (VisiblePosition) visiblePositionForEndOfTextMarkerRange: (WebCoreTextMarkerRange *) textMarkerRange
+- (VisiblePosition) visiblePositionForEndOfTextMarkerRange: (WebCoreTextMarkerRange*) textMarkerRange
 {
     return [self visiblePositionForTextMarker:[[WebCoreViewFactory sharedFactory] endOfTextMarkerRange:textMarkerRange]];
 }
 
-- (WebCoreTextMarkerRange *) textMarkerRangeFromVisiblePositions: (VisiblePosition) startPosition andEndPos: (VisiblePosition) endPosition
+- (WebCoreTextMarkerRange*) textMarkerRangeFromVisiblePositions: (VisiblePosition) startPosition andEndPos: (VisiblePosition) endPosition
 {
-    WebCoreTextMarker *startTextMarker = [self textMarkerForVisiblePosition: startPosition];
-    WebCoreTextMarker *endTextMarker   = [self textMarkerForVisiblePosition: endPosition];
+    WebCoreTextMarker* startTextMarker = [self textMarkerForVisiblePosition: startPosition];
+    WebCoreTextMarker* endTextMarker   = [self textMarkerForVisiblePosition: endPosition];
     return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
 
-- (WebCoreTextMarkerRange *)textMarkerRange
+- (WebCoreTextMarkerRange*)textMarkerRange
 {
     if (!m_renderer)
         return nil;
         
-    WebCoreTextMarker *startTextMarker = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMinOffset(), VP_DEFAULT_AFFINITY)];
-    WebCoreTextMarker *endTextMarker   = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMaxRenderedOffset(), VP_DEFAULT_AFFINITY)];
+    WebCoreTextMarker* startTextMarker = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMinOffset(), VP_DEFAULT_AFFINITY)];
+    WebCoreTextMarker* endTextMarker   = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMaxRenderedOffset(), VP_DEFAULT_AFFINITY)];
     return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
 
-- (Document *)topDocument
+- (Document*)topDocument
 {
     return m_renderer->document()->topDocument();
 }
 
-- (RenderObject *)topRenderer
+- (RenderObject*)topRenderer
 {
     return m_renderer->document()->topDocument()->renderer();
 }
 
-- (FrameView *)topView
+- (FrameView*)topView
 {
     return m_renderer->document()->topDocument()->renderer()->view()->frameView();
 }
 
-- (id)accessibilityAttributeValue:(NSString *)attributeName
+- (id)accessibilityAttributeValue:(NSString*)attributeName
 {
     if (!m_renderer)
         return nil;
@@ -838,13 +838,13 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
     if (m_renderer->isRenderView()) {
         if ([attributeName isEqualToString: @"AXLinkUIElements"]) {
-            NSMutableArray *links = [NSMutableArray arrayWithCapacity: 32];
+            NSMutableArray* links = [NSMutableArray arrayWithCapacity: 32];
             RefPtr<HTMLCollection> coll = m_renderer->document()->links();
-            Node *curr = coll->firstItem();
+            Node* curr = coll->firstItem();
             while (curr) {
-                RenderObject *obj = curr->renderer();
+                RenderObject* obj = curr->renderer();
                 if (obj) {
-                    WebCoreAXObject *axobj = obj->document()->axObjectCache()->get(obj);
+                    WebCoreAXObject* axobj = obj->document()->axObjectCache()->get(obj);
                     ASSERT([[axobj role] isEqualToString:@"AXLink"]);
                     if (![axobj accessibilityIsIgnored])
                         [links addObject: axobj];
@@ -922,22 +922,16 @@ static IntRect boundingBoxRect(RenderObject* obj)
         return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
     }
     
-    if ([attributeName isEqualToString: @"AXStartTextMarker"]) {
-        // FIXME: should use startOfDocument here
-        VisiblePosition startPos = [self topRenderer]->positionForCoordinates (0, 0);
-        return (id) [self textMarkerForVisiblePosition: startPos];
-    }
+    if ([attributeName isEqualToString: @"AXStartTextMarker"])
+        return (id) [self textMarkerForVisiblePosition: startOfDocument(m_renderer->element())];
 
-    if ([attributeName isEqualToString: @"AXEndTextMarker"]) {
-        // FIXME: should use endOfDocument here
-        VisiblePosition endPos = [self topRenderer]->positionForCoordinates (LONG_MAX, LONG_MAX);
-        return (id) [self textMarkerForVisiblePosition: endPos];
-    }
+    if ([attributeName isEqualToString: @"AXEndTextMarker"])
+        return (id) [self textMarkerForVisiblePosition: endOfDocument(m_renderer->element())];
 
     return nil;
 }
 
-- (NSArray *)accessibilityParameterizedAttributeNames
+- (NSArray* )accessibilityParameterizedAttributeNames
 {
     static NSArray* paramAttributes = nil;
     if (paramAttributes == nil) {
@@ -974,13 +968,13 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return paramAttributes;
 }
 
-- (id)doAXUIElementForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXUIElementForTextMarker: (WebCoreTextMarker* ) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
         return nil;
 
-    RenderObject * obj = visiblePos.deepEquivalent().node()->renderer();
+    RenderObject* obj = visiblePos.deepEquivalent().node()->renderer();
     if (!obj)
         return nil;
     
@@ -992,7 +986,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return (id)[uiElement textMarkerRange];
 }
 
-- (id)doAXLineForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXLineForTextMarker: (WebCoreTextMarker* ) textMarker
 {
     unsigned int    lineCount = 0;
     VisiblePosition savedVisiblePos;
@@ -1016,7 +1010,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return [NSNumber numberWithUnsignedInt:lineCount];
 }
 
-- (id)doAXTextMarkerRangeForLine: (NSNumber *) lineNumber
+- (id)doAXTextMarkerRangeForLine: (NSNumber*) lineNumber
 {
     unsigned lineCount = [lineNumber unsignedIntValue];
     if (lineCount == 0 || !m_renderer) return nil;
@@ -1046,7 +1040,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXStringForTextMarkerRange: (WebCoreTextMarkerRange *) textMarkerRange
+- (id)doAXStringForTextMarkerRange: (WebCoreTextMarkerRange*) textMarkerRange
 {
     // extract the start and end VisiblePosition
     VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
@@ -1067,10 +1061,10 @@ static IntRect boundingBoxRect(RenderObject* obj)
 - (id)doAXTextMarkerForPosition: (NSPoint) point
 {
     // convert absolute point to view coordinates
-    FrameView *docView = [self topView];
-    NSView *view = docView->getDocumentView();
-    RenderObject *renderer = [self topRenderer];
-    Node *innerNode = NULL;
+    FrameView* docView = [self topView];
+    NSView* view = docView->getDocumentView();
+    RenderObject* renderer = [self topRenderer];
+    Node* innerNode = NULL;
     NSPoint ourpoint;
     
     // locate the node containing the point
@@ -1091,17 +1085,17 @@ static IntRect boundingBoxRect(RenderObject* obj)
             break;
 
         // descend into widget (FRAME, IFRAME, OBJECT...)
-        Widget *widget = static_cast<RenderWidget *>(renderer)->widget();
+        Widget* widget = static_cast<RenderWidget*>(renderer)->widget();
         if (!widget || !widget->isFrameView())
             break;
-        Frame *frame = static_cast<FrameView *>(widget)->frame();
+        Frame* frame = static_cast<FrameView*>(widget)->frame();
         if (!frame)
             break;
-        Document *document = frame->document();
+        Document* document = frame->document();
         if (!document)
             break;
         renderer = document->renderer();
-        docView = static_cast<FrameView *>(widget);
+        docView = static_cast<FrameView*>(widget);
         view = docView->getDocumentView();
     }
     
@@ -1110,7 +1104,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return (id) [self textMarkerForVisiblePosition:pos];
 }
 
-- (id)doAXBoundsForTextMarkerRange: (WebCoreTextMarkerRange *) textMarkerRange
+- (id)doAXBoundsForTextMarkerRange: (WebCoreTextMarkerRange*) textMarkerRange
 {
 
     // extract the start and end VisiblePosition
@@ -1130,8 +1124,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
     // try to use the document view from the selection, so that nested WebAreas work,
     // but fall back to the top level doc if we do not find it easily
-    FrameView *docView = NULL;
-    RenderObject * renderer = startVisiblePosition.deepEquivalent().node()->renderer();
+    FrameView* docView = NULL;
+    RenderObject* renderer = startVisiblePosition.deepEquivalent().node()->renderer();
     if (renderer) {
         Document* doc = renderer->document();
         if (doc)
@@ -1139,7 +1133,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     }
     if (!docView)
         docView = [self topView];
-    NSView * view = docView->getView();
+    NSView* view = docView->getView();
 
     // if the selection spans lines, the rectangle is to extend
     // across the width of the view
@@ -1158,10 +1152,10 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return [NSValue valueWithRect:rect];
 }
 
-static CGColorRef CreateCGColorIfDifferent(NSColor *nsColor, CGColorRef existingColor)
+static CGColorRef CreateCGColorIfDifferent(NSColor* nsColor, CGColorRef existingColor)
 {
     // get color information assuming NSDeviceRGBColorSpace 
-    NSColor *rgbColor = [nsColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+    NSColor* rgbColor = [nsColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     if (rgbColor == nil)
         rgbColor = [NSColor blackColor];
     CGFloat components[4];
@@ -1180,7 +1174,7 @@ static CGColorRef CreateCGColorIfDifferent(NSColor *nsColor, CGColorRef existing
     return cgColor;
 }
 
-static void AXAttributeStringSetColor(NSMutableAttributedString *attrString, NSString *attribute, NSColor* color, NSRange range)
+static void AXAttributeStringSetColor(NSMutableAttributedString* attrString, NSString* attribute, NSColor* color, NSRange range)
 {
     if (color != nil) {
         CGColorRef existingColor = (CGColorRef) [attrString attribute:attribute atIndex:range.location effectiveRange:nil];
@@ -1193,7 +1187,7 @@ static void AXAttributeStringSetColor(NSMutableAttributedString *attrString, NSS
         [attrString removeAttribute:attribute range:range];
 }
 
-static void AXAttributeStringSetNumber(NSMutableAttributedString *attrString, NSString *attribute, NSNumber* number, NSRange range)
+static void AXAttributeStringSetNumber(NSMutableAttributedString* attrString, NSString* attribute, NSNumber* number, NSRange range)
 {
     if (number != nil)
         [attrString addAttribute:attribute value:number range:range];
@@ -1201,9 +1195,9 @@ static void AXAttributeStringSetNumber(NSMutableAttributedString *attrString, NS
         [attrString removeAttribute:attribute range:range];
 }
 
-static void AXAttributeStringSetFont(NSMutableAttributedString *attrString, NSString *attribute, NSFont* font, NSRange range)
+static void AXAttributeStringSetFont(NSMutableAttributedString* attrString, NSString* attribute, NSFont* font, NSRange range)
 {
-    NSDictionary *dict;
+    NSDictionary* dict;
     
     if (font != nil) {
         dict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -1219,9 +1213,9 @@ static void AXAttributeStringSetFont(NSMutableAttributedString *attrString, NSSt
     
 }
 
-static void AXAttributeStringSetStyle(NSMutableAttributedString *attrString, RenderObject *renderer, NSRange range)
+static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
 {
-    RenderStyle *style = renderer->style();
+    RenderStyle* style = renderer->style();
 
     // set basic font info
     AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style->font().getNSFont(), range);
@@ -1275,7 +1269,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString *attrString, Ren
     }
 }
 
-static void AXAttributeStringSetElement(NSMutableAttributedString *attrString, NSString *attribute, id element, NSRange range)
+static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, NSString* attribute, id element, NSRange range)
 {
     if (element != nil) {
         // make a serialiazable AX object
@@ -1284,18 +1278,17 @@ static void AXAttributeStringSetElement(NSMutableAttributedString *attrString, N
             [attrString addAttribute:attribute value:(id)axElement range:range];
             CFRelease(axElement);
         }
-    } else {
+    } else
         [attrString removeAttribute:attribute range:range];
-    }
 }
 
-static WebCoreAXObject *AXLinkElementForNode (Node *node)
+static WebCoreAXObject* AXLinkElementForNode (Node* node)
 {
-    RenderObject *obj = node->renderer();
+    RenderObject* obj = node->renderer();
     if (!obj)
         return nil;
 
-    WebCoreAXObject *axObj = obj->document()->axObjectCache()->get(obj);
+    WebCoreAXObject* axObj = obj->document()->axObjectCache()->get(obj);
     HTMLAnchorElement* anchor = [axObj anchorElement];
     if (!anchor || !anchor->renderer())
         return nil;
@@ -1303,10 +1296,39 @@ static WebCoreAXObject *AXLinkElementForNode (Node *node)
     return anchor->renderer()->document()->axObjectCache()->get(anchor->renderer());
 }
 
-static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* nodeImpl, const UChar* chars, int length)
+static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, Node* node, int offset, NSRange range)
+{
+    Vector<DocumentMarker> markers = node->renderer()->document()->markersForNode(node);
+    Vector<DocumentMarker>::iterator markerIt = markers.begin();
+
+    unsigned endOffset = (unsigned)offset + range.length;
+    for ( ; markerIt != markers.end(); markerIt++) {
+        DocumentMarker marker = *markerIt;
+        
+        if (marker.type != DocumentMarker::Spelling)
+            continue;
+        
+        if (marker.endOffset <= (unsigned)offset)
+            continue;
+        
+        if (marker.startOffset > endOffset)
+            break;
+        
+        // add misspelling attribute for the intersection of the marker and the range
+        int rStart = range.location + (marker.startOffset - offset);
+        int rLength = MIN(marker.endOffset, endOffset) - marker.startOffset;
+        NSRange spellRange = NSMakeRange(rStart, rLength);
+        AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, [NSNumber numberWithBool:YES], spellRange);
+        
+        if (marker.endOffset > endOffset + 1)
+            break;
+    }
+}
+
+static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, int offset, const UChar* chars, int length)
 {
     // skip invisible text
-    if (!nodeImpl->renderer())
+    if (!node->renderer())
         return;
         
     // easier to calculate the range before appending the string
@@ -1324,11 +1346,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     [attrString removeAttribute:NSAccessibilityAttachmentTextAttribute range:attrStringRange];
     
     // set new attributes
-    AXAttributeStringSetStyle(attrString, nodeImpl->renderer(), attrStringRange);
-    AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AXLinkElementForNode(nodeImpl), attrStringRange);
+    AXAttributeStringSetStyle(attrString, node->renderer(), attrStringRange);
+    AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AXLinkElementForNode(node), attrStringRange);
+    
+    // do spelling last because it tends to break up the range
+    AXAttributeStringSetSpelling(attrString, node, offset, attrStringRange);
 }
 
-static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrString, Node *replacedNode)
+static void AXAttributedStringAppendReplaced (NSMutableAttributedString* attrString, Node* replacedNode)
 {
     static const UniChar attachmentChar = NSAttachmentCharacter;
 
@@ -1346,7 +1371,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     }
         
     // create an AX object, but skip it if it is not supposed to be seen
-    WebCoreAXObject *obj = replacedNode->renderer()->document()->axObjectCache()->get(replacedNode->renderer());
+    WebCoreAXObject* obj = replacedNode->renderer()->document()->axObjectCache()->get(replacedNode->renderer());
     if ([obj accessibilityIsIgnored])
         return;
     
@@ -1363,7 +1388,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     AXAttributeStringSetElement(attrString, NSAccessibilityAttachmentTextAttribute, obj, attrStringRange);
 }
 
-- (id)doAXAttributedStringForTextMarkerRange: (WebCoreTextMarkerRange *) textMarkerRange
+- (id)doAXAttributedStringForTextMarkerRange: (WebCoreTextMarkerRange*) textMarkerRange
 {
     // extract the start and end VisiblePosition
     VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
@@ -1375,20 +1400,20 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         return nil;
     
     // iterate over the range to build the AX attributed string
-    NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] init];
+    NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
     TextIterator it(makeRange(startVisiblePosition, endVisiblePosition).get());
     while (!it.atEnd()) {
-        // locate the node for this range
+        // locate the node and starting offset for this range
         int exception = 0;
-        Node *nodeImpl = it.range()->startContainer(exception);
-        ASSERT(nodeImpl == it.range()->endContainer(exception));
+        Node* node = it.range()->startContainer(exception);
+        ASSERT(node == it.range()->endContainer(exception));
+        int offset = it.range()->startOffset(exception);
         
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
-        if (it.length() != 0) {
-            AXAttributedStringAppendText(attrString, nodeImpl, it.characters(), it.length());
-        } else {
-            AXAttributedStringAppendReplaced(attrString, nodeImpl->childNode(it.range()->startOffset(exception)));
-        }
+        if (it.length() != 0)
+            AXAttributedStringAppendText(attrString, node, offset, it.characters(), it.length());
+        else
+            AXAttributedStringAppendReplaced(attrString, node->childNode(offset));
         
         it.advance();
     }
@@ -1396,14 +1421,14 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return [attrString autorelease];
 }
 
-- (id)doAXTextMarkerRangeForUnorderedTextMarkers: (NSArray *) markers
+- (id)doAXTextMarkerRangeForUnorderedTextMarkers: (NSArray*) markers
 {
     // get and validate the markers
     if ([markers count] < 2)
         return nil;
     
-    WebCoreTextMarker *textMarker1 = (WebCoreTextMarker *) [markers objectAtIndex:0];
-    WebCoreTextMarker *textMarker2 = (WebCoreTextMarker *) [markers objectAtIndex:1];
+    WebCoreTextMarker* textMarker1 = (WebCoreTextMarker*) [markers objectAtIndex:0];
+    WebCoreTextMarker* textMarker2 = (WebCoreTextMarker*) [markers objectAtIndex:1];
     if (![[WebCoreViewFactory sharedFactory] objectIsTextMarker:textMarker1] || ![[WebCoreViewFactory sharedFactory] objectIsTextMarker:textMarker2])
         return nil;
     
@@ -1415,8 +1440,8 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     
     // use the SelectionController class to do the ordering
     // NOTE: Perhaps we could add a SelectionController method to indicate direction, based on m_baseIsStart
-    WebCoreTextMarker *startTextMarker;
-    WebCoreTextMarker *endTextMarker;
+    WebCoreTextMarker* startTextMarker;
+    WebCoreTextMarker* endTextMarker;
     SelectionController   sel(visiblePos1, visiblePos2);
     if (sel.base() == sel.start()) {
         startTextMarker = textMarker1;
@@ -1430,7 +1455,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
 
-- (id)doAXNextTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXNextTextMarkerForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition nextVisiblePos = visiblePos.next();
@@ -1440,7 +1465,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition:nextVisiblePos];
 }
 
-- (id)doAXPreviousTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXPreviousTextMarkerForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition previousVisiblePos = visiblePos.previous();
@@ -1450,7 +1475,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition:previousVisiblePos];
 }
 
-- (id)doAXLeftWordTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXLeftWordTextMarkerRangeForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition startPosition = startOfWord(visiblePos, LeftWordIfOnBoundary);
@@ -1459,7 +1484,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXRightWordTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXRightWordTextMarkerRangeForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition startPosition = startOfWord(visiblePos, RightWordIfOnBoundary);
@@ -1468,7 +1493,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXLeftLineTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXLeftLineTextMarkerRangeForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1485,7 +1510,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXRightLineTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXRightLineTextMarkerRangeForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1501,7 +1526,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXSentenceTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXSentenceTextMarkerRangeForTextMarker: (WebCoreTextMarker*) textMarker
 {
     // NOTE: BUG FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -1511,7 +1536,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXParagraphTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXParagraphTextMarkerRangeForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition startPosition = startOfParagraph(visiblePos);
@@ -1519,7 +1544,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXNextWordEndTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXNextWordEndTextMarkerForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1534,7 +1559,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition:endPosition];
 }
 
-- (id)doAXPreviousWordStartTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXPreviousWordStartTextMarkerForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1549,7 +1574,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition:startPosition];
 }
 
-- (id)doAXNextLineEndTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXNextLineEndTextMarkerForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1564,7 +1589,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: endPosition];
 }
 
-- (id)doAXPreviousLineStartTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXPreviousLineStartTextMarkerForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1579,7 +1604,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
 
-- (id)doAXNextSentenceEndTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXNextSentenceEndTextMarkerForTextMarker: (WebCoreTextMarker*) textMarker
 {
     // NOTE: BUG FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -1596,7 +1621,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: endPosition];
 }
 
-- (id)doAXPreviousSentenceStartTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXPreviousSentenceStartTextMarkerForTextMarker: (WebCoreTextMarker*) textMarker
 {
     // NOTE: BUG FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -1613,7 +1638,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
 
-- (id)doAXNextParagraphEndTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXNextParagraphEndTextMarkerForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1628,7 +1653,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: endPosition];
 }
 
-- (id)doAXPreviousParagraphStartTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
+- (id)doAXPreviousParagraphStartTextMarkerForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1643,7 +1668,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
 
-- (id)doAXLengthForTextMarkerRange: (WebCoreTextMarkerRange *) textMarkerRange
+- (id)doAXLengthForTextMarkerRange: (WebCoreTextMarkerRange*) textMarkerRange
 {
     // NOTE: BUG Multi-byte support
     CFStringRef string = (CFStringRef) [self doAXStringForTextMarkerRange: textMarkerRange];
@@ -1653,13 +1678,13 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return [NSNumber numberWithInt:CFStringGetLength(string)];
 }
 
-- (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
+- (id)accessibilityAttributeValue:(NSString*)attribute forParameter:(id)parameter
 {
-    WebCoreTextMarker *     textMarker = nil;
-    WebCoreTextMarkerRange *textMarkerRange = nil;
-    NSNumber *              number = nil;
-    NSArray *               array = nil;
-    WebCoreAXObject *          uiElement = nil;
+    WebCoreTextMarker*      textMarker = nil;
+    WebCoreTextMarkerRange* textMarkerRange = nil;
+    NSNumber*               number = nil;
+    NSArray*                array = nil;
+    WebCoreAXObject*        uiElement = nil;
     NSPoint                 point = {0.0, 0.0};
     bool                    pointSet = false;
     
@@ -1671,13 +1696,13 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     // NOTE: This assumes nil is not a valid parameter, because it is indistinguishable from
     // a parameter of the wrong type.
     if ([[WebCoreViewFactory sharedFactory] objectIsTextMarker:parameter])
-        textMarker = (WebCoreTextMarker *) parameter;
+        textMarker = (WebCoreTextMarker*) parameter;
 
     else if ([[WebCoreViewFactory sharedFactory] objectIsTextMarkerRange:parameter])
-        textMarkerRange = (WebCoreTextMarkerRange *) parameter;
+        textMarkerRange = (WebCoreTextMarkerRange*) parameter;
 
     else if ([parameter isKindOfClass:[WebCoreAXObject self]])
-        uiElement = (WebCoreAXObject *) parameter;
+        uiElement = (WebCoreAXObject*) parameter;
 
     else if ([parameter isKindOfClass:[NSNumber self]])
         number = parameter;
@@ -1685,9 +1710,9 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     else if ([parameter isKindOfClass:[NSArray self]])
         array = parameter;
     
-    else if ([parameter isKindOfClass:[NSValue self]] && strcmp([(NSValue *)parameter objCType], @encode(NSPoint)) == 0) {
+    else if ([parameter isKindOfClass:[NSValue self]] && strcmp([(NSValue*)parameter objCType], @encode(NSPoint)) == 0) {
         pointSet = true;
-        point = [(NSValue *)parameter pointValue];
+        point = [(NSValue*)parameter pointValue];
 
     } else {
         // got a parameter of a type we never use
@@ -1795,28 +1820,28 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return NSAccessibilityUnignoredAncestor(obj->document()->axObjectCache()->get(obj));
 }
 
-- (RenderObject *) rendererForView:(NSView *)view
+- (RenderObject*) rendererForView:(NSView*)view
 {
     // check for WebCore NSView that lets us find its widget
     Frame* frame = m_renderer->document()->frame();
     if (frame) {
-        DOMElement *domElement = [Mac(frame)->bridge() elementForView:view];
+        DOMElement* domElement = [Mac(frame)->bridge() elementForView:view];
         if (domElement)
             return [domElement _element]->renderer();
     }
     
     // check for WebKit NSView that lets us find its bridge
-    WebCoreFrameBridge *bridge = nil;
+    WebCoreFrameBridge* bridge = nil;
     if ([view conformsToProtocol:@protocol(WebCoreBridgeHolder)]) {
         NSView<WebCoreBridgeHolder>* bridgeHolder = (NSView<WebCoreBridgeHolder>*)view;
         bridge = [bridgeHolder webCoreBridge];
     }
 
-    FrameMac *frameMac = [bridge impl];
+    FrameMac* frameMac = [bridge impl];
     if (!frameMac)
         return NULL;
         
-    Document *document = frameMac->document();
+    Document* document = frameMac->document();
     if (!document)
         return NULL;
         
@@ -1829,9 +1854,9 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 
 // _accessibilityParentForSubview is called by AppKit when moving up the tree
 // we override it so that we can return our WebCoreAXObject parent of an AppKit AX object
-- (id)_accessibilityParentForSubview:(NSView *)subview
+- (id)_accessibilityParentForSubview:(NSView*)subview
 {   
-    RenderObject *renderer = [self rendererForView:subview];
+    RenderObject* renderer = [self rendererForView:subview];
     if (!renderer)
         return nil;
         
@@ -1842,7 +1867,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 - (id)accessibilityFocusedUIElement
 {
     // NOTE: BUG support nested WebAreas
-    Node *focusNode = m_renderer->document()->focusNode();
+    Node* focusNode = m_renderer->document()->focusNode();
     if (!focusNode || !focusNode->renderer())
         return nil;
 
@@ -1870,7 +1895,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return NO;
 }
 
-- (void)doSetAXSelectedTextMarkerRange: (WebCoreTextMarkerRange *)textMarkerRange
+- (void)doSetAXSelectedTextMarkerRange: (WebCoreTextMarkerRange*)textMarkerRange
 {
     // extract the start and end VisiblePosition
     VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
@@ -1887,14 +1912,14 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     [self topDocument]->frame()->setSelection(sel);
 }
 
-- (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attributeName;
+- (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName;
 {
-    WebCoreTextMarkerRange *textMarkerRange = nil;
-    NSNumber *              number = nil;
+    WebCoreTextMarkerRange* textMarkerRange = nil;
+    NSNumber*               number = nil;
 
     // decode the parameter
     if ([[WebCoreViewFactory sharedFactory] objectIsTextMarkerRange:value])
-        textMarkerRange = (WebCoreTextMarkerRange *) value;
+        textMarkerRange = (WebCoreTextMarkerRange*) value;
 
     else if ([value isKindOfClass:[NSNumber self]])
         number = value;
