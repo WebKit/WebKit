@@ -1,3 +1,24 @@
+2006-08-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        <rdar://4690949> - New IconDB: Need to prune unretained icons on startup
+
+        Added a flag to track whether or not the initial pruning has taken place on startup
+        If that flag is not set, IconURL retain counts will be tracked in a temporary db table
+        in addition to the in-memory hash.  Then when the timer fires after initial retains
+        are complete, we prune those icons not in the retain table, prune dangling PageURL
+        references, delete the temporary table, and set the flag - and carry on as normal
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase): initialize the flag
+        (WebCore::IconDatabase::open): changed the schema of the temporary table
+        (WebCore::IconDatabase::retainIconURL): store the icon retain to the temp table if starting up
+        (WebCore::IconDatabase::releaseIconURL): ditto
+        (WebCore::IconDatabase::pruneUnretainedIconsOnStartup): remove all icons *not* in the retain table, then
+          wipe all the PageURLs who no longer point to a valid IconURL
+        * loader/icon/IconDatabase.h:
+
 2006-08-21  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Eric.

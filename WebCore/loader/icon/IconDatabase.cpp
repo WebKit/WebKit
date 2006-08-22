@@ -94,6 +94,7 @@ IconDatabase::IconDatabase()
     , m_privateBrowsingEnabled(false)
     , m_startupTimer(this, &IconDatabase::pruneUnretainedIconsOnStartup)
     , m_updateTimer(this, &IconDatabase::updateDatabase)
+    , m_initialPruningComplete(false)
 {
     
 }
@@ -127,7 +128,7 @@ bool IconDatabase::open(const String& databasePath)
 
     // We're going to track an icon's retain count in a temp table in memory so we can cross reference it to to the on disk tables
     bool result;
-    result = m_mainDB.executeCommand("CREATE TEMP TABLE PageRetain (url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,count INTEGER NOT NULL ON CONFLICT FAIL);");
+    result = m_mainDB.executeCommand("CREATE TEMP TABLE IconRetain (url TEXT);");
     // Creating an in-memory temp table should never, ever, ever fail
     ASSERT(result);
     
@@ -397,7 +398,18 @@ void IconDatabase::retainIconURL(const String& iconURL)
         m_iconURLToRetainCount.set(iconURL, 1);
         if (m_iconURLsPendingDeletion.contains(iconURL))
             m_iconURLsPendingDeletion.remove(iconURL);
-    }
+            
+        // If we haven't done initial pruning, we store this retain record in the temporary in-memory table
+        // Note we only keep the URL in the temporary table, not the full retain count, because for pruning-considerations
+        // we only care *if* an icon is retained - not the full count.  This call to retainIconURL incremented the IconURL's
+        // retain count from 0 to 1 therefore we may store it in the temporary table
+        if (!m_initialPruningComplete) {
+            String escapedIconURL = iconURL;
+            escapedIconURL.replace('\'', "''");
+            if (!m_mainDB.executeCommand("INSERT INTO IconRetain VALUES ('" + escapedIconURL + "');"))
+                LOG_ERROR("Failed to record icon retention in temporary table for IconURL %s", iconURL.ascii().data());
+        }
+    }   
 }
 
 void IconDatabase::releaseIconURL(const String& iconURL)
@@ -425,6 +437,17 @@ void IconDatabase::releaseIconURL(const String& iconURL)
     
     // And since we delay the actual deletion of icons, so lets add it to that queue
     m_iconURLsPendingDeletion.add(iconURL);
+    
+    // If we haven't done initial pruning, we remove this retain record from the temporary in-memory table
+    // Note we only keep the URL in the temporary table, not the full retain count, because for pruning-considerations
+    // we only care *if* an icon is retained - not the full count.  This call to retainIconURL decremented the IconURL's
+    // retain count from 1 to 0 therefore we may remove it from the temporary table
+    if (!m_initialPruningComplete) {
+        String escapedIconURL = iconURL;
+        escapedIconURL.replace('\'', "''");
+        if (!m_mainDB.executeCommand("DELETE FROM IconRetain WHERE url='" + escapedIconURL + "';"))
+            LOG_ERROR("Failed to delete record of icon retention from temporary table for IconURL %s", iconURL.ascii().data());
+    }
 }
 
 void IconDatabase::forgetPageURL(const String& pageURL)
@@ -575,33 +598,34 @@ int64_t IconDatabase::establishIconIDForIconURL(SQLDatabase& db, const String& i
     return addIconForIconURLQuery(db, iconURL);
 }
 
-void IconDatabase::pruneUnreferencedIcons(int numberToPrune)
-{
-    if (!numberToPrune || !isOpen())
-        return;
-    
-    if (numberToPrune > 0) {
-        if (!m_mainDB.executeCommand(String::sprintf("DELETE FROM Icon WHERE Icon.iconID IN (SELECT Icon.iconID FROM Icon WHERE Icon.iconID NOT IN(SELECT PageURL.iconID FROM PageURL) LIMIT %i);", numberToPrune)))
-            LOG_ERROR("Failed to prune %i unreferenced icons from the DB - %s", numberToPrune, m_mainDB.lastErrorMsg());
-    } else {
-        if (!m_mainDB.executeCommand("DELETE FROM Icon WHERE Icon.iconID IN (SELECT Icon.iconID FROM Icon WHERE Icon.iconID NOT IN(SELECT PageURL.iconID FROM PageURL));"))
-            LOG_ERROR("Failed to prune all unreferenced icons from the DB - %s", m_mainDB.lastErrorMsg());
-    }
-}
-
 void IconDatabase::pruneUnretainedIconsOnStartup(Timer<IconDatabase>*)
 {
     if (!isOpen())
         return;
         
+    // This function should only be called once per run, and ideally only via the timer
+    // on program startup
+    ASSERT(!m_initialPruningComplete);
+
 #ifndef NDEBUG
     CFTimeInterval start = CFAbsoluteTimeGetCurrent();
 #endif
     
-    // FIXME - rdar://4690949 - Need to prune unretained pageURLs here
-    LOG_ERROR("pruneUnretainedIconsOnStartup is still unimplemented");
-    pruneUnreferencedIcons(-1);
-
+    // rdar://4690949 - Need to prune unretained iconURLs here, then prune out all pageURLs that reference
+    // nonexistent icons
+    
+    // First wipe all IconURLs that aren't retained
+    if (!m_mainDB.executeCommand("DELETE FROM Icon WHERE Icon.URL NOT IN (SELECT * FROM IconRetain);"))
+        LOG_ERROR("Failed to execute SQL to prune unretained icons from the on-disk tables");
+    // Then wipe all PageURLs whose IconURLs are now missing
+    if (!m_mainDB.executeCommand("DELETE FROM PageURL WHERE NOT EXISTS (SELECT * FROM Icon WHERE PageURL.iconID = Icon.iconID);"))
+        LOG_ERROR("Failed to prune dangling PageURLs from the DB");
+    // Finally wipe the temporary IconRetain table
+    if (!m_mainDB.executeCommand("DROP TABLE IconRetain;"))
+        LOG_ERROR("Failed to remove temporary IconRetain table");
+        
+    m_initialPruningComplete = true;
+    
 #ifndef NDEBUG
     CFTimeInterval duration = CFAbsoluteTimeGetCurrent() - start;
     LOG(IconDatabase, "Pruning unretained icons took %.4f seconds", duration);

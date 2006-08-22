@@ -141,10 +141,6 @@ private:
     // Wipe all icons from the DB
     void removeAllIcons();
     
-    // Removes icons from the db that no longer have any PageURLs pointing to them
-    // If numberToPrune is negative, ALL dangling icons will be pruned
-    void pruneUnreferencedIcons(int numberToPrune);
-    
     // Called by the startup timer, this method removes all icons that are unretained
     // after initial retains are complete
     void pruneUnretainedIconsOnStartup(Timer<IconDatabase>*);
@@ -193,6 +189,8 @@ private:
     
     Timer<IconDatabase> m_startupTimer;
     Timer<IconDatabase> m_updateTimer;
+    
+    bool m_initialPruningComplete;
     
     typedef HashMap<String, SiteIcon*> SiteIconMap;
     SiteIconMap m_iconURLToSiteIcons;
