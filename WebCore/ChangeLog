@@ -1,3 +1,15 @@
+2006-08-22  David Harrison  <harrison@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4407336> Some non-text elements return AXTextMarkerRangeForUIElement with equal start and end marker
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject textMarkerRange]):
+        Use 0 and maxDeepOffset(), instead of caretMinOffset() and caretMaxRenderedOffset().
+        Check for VisiblePositions being equal.  If so, adjust end one to its next().
+        That happens with, e.g., buttons.
+
 2006-08-22  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

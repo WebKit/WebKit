@@ -33,6 +33,7 @@
 #import "FrameMac.h"
 #import "HTMLAreaElement.h"
 #import "HTMLCollection.h"
+#import "htmlediting.h"
 #import "HTMLFrameElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLMapElement.h"
@@ -786,9 +787,21 @@ static IntRect boundingBoxRect(RenderObject* obj)
 {
     if (!m_renderer)
         return nil;
-        
-    WebCoreTextMarker* startTextMarker = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMinOffset(), VP_DEFAULT_AFFINITY)];
-    WebCoreTextMarker* endTextMarker   = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMaxRenderedOffset(), VP_DEFAULT_AFFINITY)];
+    
+    // construct VisiblePositions for start and end
+    Node* node = m_renderer->element();
+    VisiblePosition visiblePos1 = VisiblePosition(node, 0, VP_DEFAULT_AFFINITY);
+    VisiblePosition visiblePos2 = VisiblePosition(node, maxDeepOffset(node), VP_DEFAULT_AFFINITY);
+    
+    // the VisiblePositions are equal for nodes like buttons, so adjust for that
+    if (visiblePos1 == visiblePos2) {
+        visiblePos2 = visiblePos2.next();
+        if (visiblePos2.isNull())
+            visiblePos2 = visiblePos1;
+    }
+    
+    WebCoreTextMarker* startTextMarker = [self textMarkerForVisiblePosition: visiblePos1];
+    WebCoreTextMarker* endTextMarker   = [self textMarkerForVisiblePosition: visiblePos2];
     return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
 
