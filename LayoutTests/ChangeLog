@@ -1,3 +1,17 @@
+2006-08-21  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10419
+        XSLTProcessor transformToFragment fails because of an XML declaration
+
+        * fast/xsl/transformToFragment-XML-declaration-expected.txt: Added.
+        * fast/xsl/transformToFragment-XML-declaration.html: Added.
+
+        * fast/xsl/xslt-extra-content-at-end-expected.checksum:
+        * fast/xsl/xslt-extra-content-at-end-expected.png:
+        * fast/xsl/xslt-extra-content-at-end-expected.txt: Updated for a changed error reporting.
+
 2006-08-21  Vladimir Olexa  <vladimir.olexa@gmail.com>
 
         Reviewed by Darin.
