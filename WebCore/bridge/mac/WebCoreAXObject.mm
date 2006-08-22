@@ -302,6 +302,46 @@ using namespace HTMLNames;
     return nil;
 }
 
+static int headingLevel(RenderObject* renderer)
+{
+    if (!renderer->isBlockFlow())
+        return 0;
+        
+    Node* node = renderer->element();
+    if (!node)
+        return 0;
+    
+    if (node->hasTagName(h1Tag))
+        return 1;
+    
+    if (node->hasTagName(h2Tag))
+        return 2;
+    
+    if (node->hasTagName(h3Tag))
+        return 3;
+    
+    if (node->hasTagName(h4Tag))
+        return 4;
+    
+    if (node->hasTagName(h5Tag))
+        return 5;
+    
+    if (node->hasTagName(h6Tag))
+        return 6;
+
+    return 0;
+}
+
+-(int)headingLevel
+{
+    return headingLevel(m_renderer);
+}
+
+-(BOOL)isHeading
+{
+    return [self headingLevel] != 0;
+}
+
 -(NSString*)role
 {
     if (!m_renderer)
@@ -343,6 +383,9 @@ using namespace HTMLNames;
     if (m_renderer->isMenuList())
         return NSAccessibilityPopUpButtonRole;
 
+    if ([self isHeading])
+        return @"AXHeading";
+        
     if (m_renderer->isBlockFlow())
         return NSAccessibilityGroupRole;
     if ([self isAttachment])
@@ -408,6 +451,9 @@ using namespace HTMLNames;
     
     if ([role isEqualToString:@"AXImageMap"])
         return UI_STRING("image map", "accessibility role description for image map");
+
+    if ([role isEqualToString:@"AXHeading"])
+        return UI_STRING("heading", "accessibility role description for headings");
     
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }
@@ -494,6 +540,9 @@ using namespace HTMLNames;
     
     if ([self isAttachment])
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityValueAttribute];
+
+    if ([self isHeading])
+        return [NSNumber numberWithInt:[self headingLevel]];
 
     if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
@@ -1282,6 +1331,16 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     }
 }
 
+static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
+{
+    int parentHeadingLevel = headingLevel(renderer->parent());
+    
+    if (parentHeadingLevel)
+        [attrString addAttribute:@"AXHeadingLevel" value:[NSNumber numberWithInt:parentHeadingLevel] range:range];
+    else
+        [attrString removeAttribute:@"AXHeadingLevel" range:range];
+}
+
 static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, NSString* attribute, id element, NSRange range)
 {
     if (element != nil) {
@@ -1360,6 +1419,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     
     // set new attributes
     AXAttributeStringSetStyle(attrString, node->renderer(), attrStringRange);
+    AXAttributeStringSetHeadingLevel(attrString, node->renderer(), attrStringRange);
     AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AXLinkElementForNode(node), attrStringRange);
     
     // do spelling last because it tends to break up the range
