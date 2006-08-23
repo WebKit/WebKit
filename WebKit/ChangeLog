@@ -1,5 +1,18 @@
 2006-08-22  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+
+        <rdar://problem/4683948> REGRESSION: Assertion failure in [FrameProgressEntry addChild:forDataSource:] (fandango.com)
+        
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader addSubresourceLoader:]): Add a WebKit-level assertion that should fire when this bad
+        situation occurs.
+        * Loader/WebSubresourceLoader.m:
+        (+[WebSubresourceLoader startLoadingResource:withRequest:customHeaders:referrer:forFrameLoader:]): Prevent
+        the situation from occuring.
+
+2006-08-22  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders.
         
         - pull more WebDataSource code into WebFrameLoader

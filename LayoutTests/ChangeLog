@@ -1,5 +1,16 @@
 2006-08-22  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+
+        - test for <rdar://problem/4683948> REGRESSION: Assertion failure in [FrameProgressEntry addChild:forDataSource:] (fandango.com)
+        
+        (I both added a WebKit assertion that would fail under this test, and then did a fix to make it not fire)
+        
+        * fast/loader/start-load-in-unload-expected.txt: Added.
+        * fast/loader/start-load-in-unload.html: Added.
+
+2006-08-22  Maciej Stachowiak  <mjs@apple.com>
+
         Fix for broken tests.
 
         - made newly added CGI scripts executable

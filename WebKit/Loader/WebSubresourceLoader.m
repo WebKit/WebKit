@@ -96,6 +96,9 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *theReferrer)
                                       referrer:(NSString *)referrer 
                                 forFrameLoader:(WebFrameLoader *)fl
 {
+    if ([fl state] == WebFrameStateProvisional)
+        return nil;
+
     WebSubresourceLoader *loader = [[[self alloc] initWithLoader:rLoader frameLoader:fl] autorelease];
     
     [fl addSubresourceLoader:loader];

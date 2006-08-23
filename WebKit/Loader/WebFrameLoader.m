@@ -154,6 +154,7 @@
 
 - (void)addSubresourceLoader:(WebLoader *)loader
 {
+    ASSERT(!provisionalDataSource);
     if (subresourceLoaders == nil)
         subresourceLoaders = [[NSMutableArray alloc] init];
     [subresourceLoaders addObject:loader];
