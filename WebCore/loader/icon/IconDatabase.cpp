@@ -47,7 +47,7 @@ IconDatabase* IconDatabase::m_sharedInstance = 0;
 // Currently, an out-of-date schema causes the DB to be wiped and reset.  This isn't 
 // so bad during development but in the future, we would need to write a conversion
 // function to advance older released schemas to "current"
-const int IconDatabase::currentDatabaseVersion = 4;
+const int IconDatabase::currentDatabaseVersion = 5;
 
 // Icons expire once a day
 const int IconDatabase::iconExpirationTime = 60*60*24; 
@@ -203,13 +203,8 @@ void IconDatabase::createDatabaseTables(SQLDatabase& db)
         db.close();
         return;
     }
-    if (!db.executeCommand("CREATE TABLE Icon (iconID INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT NOT NULL UNIQUE ON CONFLICT FAIL, stamp INTEGER, data BLOB);")) {
+    if (!db.executeCommand("CREATE TABLE Icon (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, stamp INTEGER, data BLOB);")) {
         LOG_ERROR("Could not create Icon table in database (%i) - %s", db.lastError(), db.lastErrorMsg());
-        db.close();
-        return;
-    }
-    if (!db.executeCommand("CREATE TRIGGER update_icon_timestamp AFTER UPDATE ON Icon BEGIN UPDATE Icon SET stamp = strftime('%s','now') WHERE iconID = new.iconID; END;")) {
-        LOG_ERROR("Could not create timestamp updater in database (%i) - %s", db.lastError(), db.lastErrorMsg());
         db.close();
         return;
     }
@@ -264,15 +259,16 @@ Image* IconDatabase::iconForPageURL(const String& pageURL, const IntSize& size, 
     if (iconURL.isEmpty())
         return 0;
     
-    // If we do, maybe we have a SiteIcon for this IconURL
-    if (m_iconURLToSiteIcons.contains(iconURL)) {
-        SiteIcon* icon = m_iconURLToSiteIcons.get(iconURL);
-        return icon->getImage(size);
+    // If we do, maybe we have a IconDataCache for this IconURL
+    IconDataCache* icon = getOrCreateIconDataCache(iconURL);
+    
+    // If it's a new IconDataCache object that doesn't have its imageData set yet,
+    // we'll read in that image data now
+    if (icon->imageDataStatus() == ImageDataStatusUnknown) {
+        Vector<unsigned char> data = imageDataForIconURL(iconURL);
+        icon->setImageData(data.data(), data.size());
     }
         
-    // If we don't have either, we have to create the SiteIcon
-    SiteIcon* icon = new SiteIcon(iconURL);
-    m_iconURLToSiteIcons.set(iconURL, icon);
     return icon->getImage(size);
 }
 
@@ -283,6 +279,12 @@ bool IconDatabase::isIconExpiredForIconURL(const String& iconURL)
     if (iconURL.isEmpty()) 
         return true;
     
+    // If we have a IconDataCache, then it definitely has the Timestamp in it
+    IconDataCache* icon = m_iconURLToIconDataCacheMap.get(iconURL);
+    if (icon) 
+        return time(NULL) - icon->getTimestamp() > iconExpirationTime;
+            
+    // Otherwise, we'll get the timestamp from the DB and use it
     int stamp;
     if (m_privateBrowsingEnabled) {
         stamp = timeStampForIconURLQuery(m_privateBrowsingDB, iconURL);
@@ -293,6 +295,7 @@ bool IconDatabase::isIconExpiredForIconURL(const String& iconURL)
     stamp = timeStampForIconURLQuery(m_mainDB, iconURL);
     if (stamp)
         return (time(NULL) - stamp) > iconExpirationTime;
+    
     return false;
 }
     
@@ -391,9 +394,9 @@ void IconDatabase::retainIconURL(const String& iconURL)
 {
     ASSERT(!iconURL.isEmpty());
     
-    if (m_iconURLToRetainCount.contains(iconURL)) {
-        ASSERT(m_iconURLToRetainCount.get(iconURL) > 0);
-        m_iconURLToRetainCount.set(iconURL, m_iconURLToRetainCount.get(iconURL) + 1);
+    if (int retainCount = m_iconURLToRetainCount.get(iconURL)) {
+        ASSERT(retainCount > 0);
+        m_iconURLToRetainCount.set(iconURL, retainCount + 1);
     } else {
         m_iconURLToRetainCount.set(iconURL, 1);
         if (m_iconURLsPendingDeletion.contains(iconURL))
@@ -493,6 +496,32 @@ void IconDatabase::forgetIconForIconURLFromDatabase(const String& iconURL)
         LOG_ERROR("Unable to drop all PageURL for IconURL", iconURL.ascii().data()); 
 }
 
+IconDataCache* IconDatabase::getOrCreateIconDataCache(const String& iconURL)
+{
+    IconDataCache* icon;
+    if ((icon = m_iconURLToIconDataCacheMap.get(iconURL)))
+        return icon;
+        
+    icon = new IconDataCache(iconURL);
+    m_iconURLToIconDataCacheMap.set(iconURL, icon);
+    
+    // Get the most current time stamp for this IconURL
+    int timestamp = 0;
+    if (m_privateBrowsingEnabled)
+        timestamp = timeStampForIconURLQuery(m_privateBrowsingDB, iconURL);
+    if (!timestamp)
+        timestamp = timeStampForIconURLQuery(m_mainDB, iconURL);
+        
+    // If we can't get a timestamp for this URL, then it is a new icon and we initialize its timestamp now
+    if (!timestamp) {
+        icon->setTimestamp(time(NULL));
+        m_iconDataCachesPendingUpdate.add(icon);
+    } else 
+        icon->setTimestamp(timestamp);
+        
+    return icon;
+}
+
 void IconDatabase::setIconDataForIconURL(const void* data, int size, const String& iconURL)
 {
     ASSERT(size > -1);
@@ -504,30 +533,17 @@ void IconDatabase::setIconDataForIconURL(const void* data, int size, const Strin
     if (iconURL.isEmpty())
         return;
     
-    // First, if we already have a SiteIcon in memory, let's update its image data
-    if (m_iconURLToSiteIcons.contains(iconURL))
-        m_iconURLToSiteIcons.get(iconURL)->manuallySetImageData((unsigned char*)data, size);
+    // Get the IconDataCache for this IconURL (note, IconDataCacheForIconURL will create it if necessary)
+    IconDataCache* icon = getOrCreateIconDataCache(iconURL);
+    
+    // Set the data in the IconDataCache
+    icon->setImageData((unsigned char*)data, size);
+    
+    // Update the timestamp in the IconDataCache to NOW
+    icon->setTimestamp(time(NULL));
 
-    // Next, we actually commit the image data to the database
-    // Start by making sure there's an entry for this IconURL in the current database
-    int64_t iconID = establishIconIDForIconURL(*m_currentDB, iconURL, true);
-    ASSERT(iconID);
-    
-    // First we create and prepare the SQLStatement
-    // The following statement also works to set the icon data to NULL because sqlite defaults unbound ? parameters to NULL
-    SQLStatement sql(*m_currentDB, "UPDATE Icon SET data = ? WHERE iconID = ?;");
-    sql.prepare();
-        
-    // Then we bind the icondata and iconID to the SQLStatement
-    if (data)
-        sql.bindBlob(1, data, size);
-    sql.bindInt64(2, iconID);
-    
-    // Finally we step and make sure the step was successful
-    if (sql.step() != SQLITE_DONE)
-        LOG_ERROR("Unable to set icon data for iconURL %s", iconURL.ascii().data());
-        
-    return;
+    // Mark the IconDataCache as requiring an update to the database
+    m_iconDataCachesPendingUpdate.add(icon);
 }
 
 void IconDatabase::setHaveNoIconForIconURL(const String& iconURL)
@@ -567,7 +583,7 @@ void IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pag
     m_pageURLToIconURLMap.set(pageURL, iconURL);
     
     // And mark this mapping to be added to the database
-    m_pageURLsPendingAddition.set(pageURL, iconURL);
+    m_pageURLsPendingAddition.add(pageURL);
     
     // Then start the timer to commit this change - or further delay the timer if it
     // was already started
@@ -646,28 +662,35 @@ void IconDatabase::syncDatabase()
 #endif
 
     // First we'll do the pending additions
-    for (HashMap<String, String>::iterator i = m_pageURLsPendingAddition.begin(); i != m_pageURLsPendingAddition.end(); ++i) {
-        // The HashMap maps PageURL->IconURL, but the method takes IconURL then PageURL - so this ordering is correct
-        setIconURLForPageURLInDatabase(i->second, i->first);
-        LOG(IconDatabase, "Commited IconURL %s for PageURL %s to database", (i->second).ascii().data(), (i->first).ascii().data());
+    // Starting with the IconDataCaches that need updating/insertion
+    for (HashSet<IconDataCache*>::iterator i = m_iconDataCachesPendingUpdate.begin(), end = m_iconDataCachesPendingUpdate.end(); i != end; ++i) {
+        (*i)->writeToDatabase(*m_currentDB);
+        LOG(IconDatabase, "Wrote IconDataCache for IconURL %s with timestamp of %lli to the DB", (*i)->getIconURL().ascii().data(), (*i)->getTimestamp());
+    }
+    m_iconDataCachesPendingUpdate.clear();
+    
+    HashSet<String>::iterator i = m_pageURLsPendingAddition.begin(), end = m_pageURLsPendingAddition.end();
+    for (; i != end; ++i) {
+        setIconURLForPageURLInDatabase(m_pageURLToIconURLMap.get(*i), *i);
+        LOG(IconDatabase, "Commited IconURL for PageURL %s to database", (*i).ascii().data());
     }
     m_pageURLsPendingAddition.clear();
     
     // Then we'll do the pending deletions
     // First lets wipe all the pageURLs
-    HashSet<String>::iterator i = m_pageURLsPendingDeletion.begin();
-    for (; i != m_pageURLsPendingDeletion.end(); ++i) {    
+    for (i = m_pageURLsPendingDeletion.begin(), end = m_pageURLsPendingDeletion.end(); i != end; ++i) {    
         forgetPageURL(*i);
         LOG(IconDatabase, "Deleted PageURL %s", (*i).ascii().data());
     }
     m_pageURLsPendingDeletion.clear();
 
     // Then get rid of all traces of the icons and IconURLs
-    SiteIcon* icon;    
-    for (i = m_iconURLsPendingDeletion.begin(); i != m_iconURLsPendingDeletion.end(); ++i) {
-        // Forget the SiteIcon
-        icon = m_iconURLToSiteIcons.get(*i);
-        m_iconURLToSiteIcons.remove(*i);
+    IconDataCache* icon;    
+    for (i = m_iconURLsPendingDeletion.begin(), end = m_iconURLsPendingDeletion.end(); i != end; ++i) {
+        // Forget the IconDataCache
+        icon = m_iconURLToIconDataCacheMap.get(*i);
+        if (icon)
+            m_iconURLToIconDataCacheMap.remove(*i);
         delete icon;
         
         // Forget the IconURL from the database
@@ -693,7 +716,7 @@ bool IconDatabase::hasEntryForIconURL(const String& iconURL)
         return false;
         
     // First check the in memory mapped icons...
-    if (m_iconURLToSiteIcons.contains(iconURL))
+    if (m_iconURLToIconDataCacheMap.contains(iconURL))
         return true;
 
     // Then we'll check the main database

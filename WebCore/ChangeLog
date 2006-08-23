@@ -1,3 +1,35 @@
+2006-08-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        The role of the SiteIcon is now the original intention - to be a cache of data relating to an Icon
+        As such, I'm renaming it to IconDataCache.
+        Also, the IconDatabase has to manually set the image data on the IconDataCache and also sets the 
+        TimeStamp when an icon is created or the data is changed.
+        IconDataCache now has a method to write itself *to* a given database, instead of read itself from one.
+        IconDatabase schema changes to have the timestamp set manually instead of via a trigger.
+        The overall purpose of this change is to cache the timestamp, killing off a very common SQL query.
+
+        * WebCore.xcodeproj/project.pbxproj: Renamed a file
+        * loader/icon/IconDataCache.cpp: Added.
+        (IconDataCache::IconDataCache):
+        (IconDataCache::getImage): Now either returns the stored image, or 0 - no attempt to grab data
+        (IconDataCache::manuallySetImageData): Delete the old image and create the new one
+        (IconDataCache::writeToDatabase): Write the current iconURL, data, and timestamp to the given DB
+        (IconDataCache::imageDataStatus): Determine if an IconDataCache is new without data versus actually having null data
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::createDatabaseTables): Changed DB schema to version 5 (hopefully the final version)
+        (WebCore::IconDatabase::iconForPageURL): 
+        (WebCore::IconDatabase::isIconExpiredForIconURL): Uses the timestamp in the IconDataCache object instead of always querying
+        (WebCore::IconDatabase::getOrCreateIconDataCache): Added, to handle creation of new IconDataCache when appropriate
+        (WebCore::IconDatabase::setIconDataForIconURL): Puts data in SiteIcon then marks it for a future write
+        (WebCore::IconDatabase::syncDatabase): Now syncs SiteIconsPendingUpdate
+        * loader/icon/IconDatabase.h:
+        (WebCore::IconDataCache::getTimestamp):
+        (WebCore::IconDataCache::setTimestamp):
+        * loader/icon/SiteIcon.cpp: Removed.
+
+
 2006-08-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

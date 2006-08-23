@@ -50,28 +50,38 @@ namespace WTF {
 namespace WebCore { 
 
 class Image;
+
+typedef enum {
+    ImageDataStatusPresent, ImageDataStatusMissing, ImageDataStatusUnknown
+} ImageDataStatus;
     
-class SiteIcon {
+class IconDataCache {
 public:
-    SiteIcon(const String& url); 
-    ~SiteIcon();
+    IconDataCache(const String& url); 
+    ~IconDataCache();
     
-    void resetExpiration(time_t newExpiration = 0);
-    time_t getExpiration();
+    time_t getTimestamp() { return m_stamp; }
+    void setTimestamp(time_t stamp) { m_stamp = stamp; }
         
     Image* getImage(const IntSize&);    
     String getIconURL() { return m_iconURL; }
 
-    void manuallySetImageData(unsigned char* data, int size);
+    void setImageData(unsigned char* data, int size);
+    
+    void writeToDatabase(SQLDatabase& db);
+    
+    ImageDataStatus imageDataStatus();
+    
 private:
     String m_iconURL;
-    time_t m_expire;
+    time_t m_stamp;
     Image* m_image;
     
-    // This allows us to cache whether or not a SiteIcon has queried the database for its data yet
-    // We assume we only have to do that once per object and any subsequent updating of the image
-    // data will be via manuallySetImageData()
-    bool m_dataQueried;
+    // This allows us to cache whether or not a SiteIcon has had its data set yet
+    // This helps the IconDatabase know if it has to set the data on a new object or not,
+    // and also to determine if the icon is missing data or if it just hasn't been brought
+    // in from the DB yet
+    bool m_dataSet;
     
     // FIXME - Right now WebCore::Image doesn't have a very good API for accessing multiple representations
     // Even the NSImage way of doing things that we do in WebKit isn't very clean...  once we come up with a 
@@ -129,6 +139,9 @@ private:
     // This tries to get the iconID for the IconURL and, if it doesn't exist and createIfNecessary is true,
     // it will create the entry and return the new iconID
     int64_t establishIconIDForIconURL(SQLDatabase&, const String&, bool createIfNecessary = true);
+    
+    // This method returns the SiteIcon for the given IconURL and, if it doesn't exist it creates it first
+    IconDataCache* getOrCreateIconDataCache(const String& iconURL);
 
     // Remove traces of the given pageURL
     void forgetPageURL(const String& pageURL);
@@ -142,7 +155,7 @@ private:
     void removeAllIcons();
     
     // Called by the startup timer, this method removes all icons that are unretained
-    // after initial retains are complete
+    // after initial retains are complete, and pageURLs that are dangling
     void pruneUnretainedIconsOnStartup(Timer<IconDatabase>*);
     
     // Called by the prune timer, this method periodically removes all the icons in the pending-deletion
@@ -192,11 +205,11 @@ private:
     
     bool m_initialPruningComplete;
     
-    typedef HashMap<String, SiteIcon*> SiteIconMap;
-    SiteIconMap m_iconURLToSiteIcons;
+    HashMap<String, IconDataCache*> m_iconURLToIconDataCacheMap;
+    HashSet<IconDataCache*> m_iconDataCachesPendingUpdate;
     
     HashMap<String, String> m_pageURLToIconURLMap;
-    HashMap<String, String> m_pageURLsPendingAddition;
+    HashSet<String> m_pageURLsPendingAddition;
 
     // This will keep track of the retaincount for each pageURL
     HashMap<String, int> m_pageURLToRetainCount;
