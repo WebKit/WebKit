@@ -114,6 +114,4 @@
 - (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(WKNSURLConnectionDelegateProxyPtr) proxy;
 - (BOOL)_privateBrowsingEnabled;
 - (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener;
-- (void)_setLoading:(BOOL)loading;
-- (void)_updateLoading;
 @end

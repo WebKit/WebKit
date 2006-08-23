@@ -1,5 +1,25 @@
 2006-08-22  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Brady.
+        
+        - remove "loading" flag from WebDataSource and code that manages it; it is redundat.
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader addPlugInStreamLoader:]):
+        (-[WebFrameLoader removePlugInStreamLoader:]):
+        (-[WebFrameLoader addSubresourceLoader:]):
+        (-[WebFrameLoader removeSubresourceLoader:]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (-[WebDataSource _stopLoading]):
+        (-[WebDataSource _prepareForLoadStart]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource isLoading]):
+        * WebView/WebDataSourceInternal.h:
+
+2006-08-22  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
 
         <rdar://problem/4683948> REGRESSION: Assertion failure in [FrameProgressEntry addChild:forDataSource:] (fandango.com)
