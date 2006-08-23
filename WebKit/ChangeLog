@@ -1,5 +1,15 @@
 2006-08-23  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by John Sullivan
+
+        /me crosses fingers
+        Flip the switch to the new Icon Database
+        Massive code pruning is coming up
+
+        * WebKitPrefix.h: Flipped the switch
+
+2006-08-23  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Beth
         Since I just pushed the default URL icon from WebKit to WebCore, but
         WebKit was still using its version of the default icon, this patch makes it
