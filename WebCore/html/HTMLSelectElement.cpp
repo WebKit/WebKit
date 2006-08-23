@@ -39,8 +39,15 @@
 #include "HTMLOptionsCollection.h"
 #include "KeyboardEvent.h"
 #include "RenderMenuList.h"
+#include "RenderPopupMenu.h"
 #include "cssstyleselector.h"
 #include <wtf/Vector.h>
+
+#if PLATFORM(MAC)
+#define ARROW_KEYS_POP_MENU 1
+#else
+#define ARROW_KEYS_POP_MENU 0
+#endif
 
 namespace WebCore {
 
@@ -471,28 +478,50 @@ void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, 
 
 void HTMLSelectElement::defaultEventHandler(Event *evt)
 {
+    RenderMenuList* menuList = static_cast<RenderMenuList*>(renderer());
+
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
     if (evt->type() == keypressEvent) {
         if (!renderer() || !evt->isKeyboardEvent())
             return;
         String keyIdentifier = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
+        bool handled = false;
+#if ARROW_KEYS_POP_MENU
         if (form() && keyIdentifier == "Enter") {
             blur();
             // Make sure the form hasn't been destroyed during the blur.
             if (form())
                 form()->submitClick();
-            evt->setDefaultHandled();
+            handled = true;
         }
         if ((keyIdentifier == "Down" || keyIdentifier == "Up" || keyIdentifier == "U+000020") && renderer() && shouldUseMenuList()) {
             focus();
-            static_cast<RenderMenuList*>(renderer())->showPopup();
-            evt->setDefaultHandled();
+            menuList->showPopup();
+            handled = true;
         }
+#else
+        int index = optionToListIndex(selectedIndex());
+        if (keyIdentifier == "Down" || keyIdentifier == "Right") {
+            if (index < listItems().size() - 1)
+                setSelectedIndex(++index);
+            handled = true;
+        } else if (keyIdentifier == "Up" || keyIdentifier == "Left") {
+            if (index > 0)
+                setSelectedIndex(--index);
+            handled = true;
+        }
+#endif
+        if (handled)
+            evt->setDefaultHandled();
+
     }
     if (evt->type() == mousedownEvent && renderer() && shouldUseMenuList()) {
         focus();
-        static_cast<RenderMenuList*>(renderer())->showPopup();
+        if (menuList->popupIsVisible())
+            menuList->hidePopup();
+        else
+            menuList->showPopup();
         evt->setDefaultHandled();
     }
 

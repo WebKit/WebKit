@@ -40,7 +40,8 @@ public:
     virtual void clear() = 0;
     virtual void populate();
     virtual void showPopup(const IntRect&, FrameView*, int index) = 0;
-    
+    virtual void hidePopup() = 0;
+
     RenderMenuList* menuList() { return m_menuList; }
 
 protected:

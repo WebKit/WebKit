@@ -1,3 +1,23 @@
+2006-08-23  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Darin, Adele.
+
+        Some popup refactoring/cleanup.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::defaultEventHandler):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::RenderMenuList):
+        (WebCore::RenderMenuList::~RenderMenuList):
+        (WebCore::RenderMenuList::showPopup):
+        (WebCore::RenderMenuList::hidePopup):
+        * rendering/RenderMenuList.h:
+        (WebCore::RenderMenuList::popup):
+        (WebCore::RenderMenuList::popupIsVisible):
+        * rendering/RenderPopupMenu.h:
+        * rendering/RenderPopupMenuMac.h:
+        (WebCore::RenderPopupMenuMac::hidePopup):
+
 2006-08-23  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Anders. Landed by rwlbuis.

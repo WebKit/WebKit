@@ -28,10 +28,12 @@
 namespace WebCore {
 
 class HTMLSelectElement;
+class RenderPopupMenu;
 
 class RenderMenuList : public RenderFlexibleBox {
 public:
     RenderMenuList(HTMLSelectElement*);
+    ~RenderMenuList();
 
     virtual bool isMenuList() const { return true; }
 
@@ -49,7 +51,10 @@ public:
 
     virtual void calcMinMaxWidth();
 
+    RenderPopupMenu* popup() const { return m_popup; }
+    bool popupIsVisible() const { return m_popupIsVisible; }
     void showPopup();
+    void hidePopup();
 
     void setOptionsChanged(bool c) { m_optionsChanged = c; }
     void valueChanged(unsigned listIndex);
@@ -65,6 +70,9 @@ private:
 
     bool m_optionsChanged;
     int m_optionsWidth;
+
+    RenderPopupMenu* m_popup;
+    bool m_popupIsVisible;
 };
 
 }
