@@ -1,3 +1,14 @@
+2006-08-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Fix for broken tests.
+
+        - made newly added CGI scripts executable
+
+        * http/tests/navigation/resources/error404.pl:
+        * http/tests/navigation/resources/frameset.pl:
+        * http/tests/navigation/resources/postresult.pl:
+        * http/tests/navigation/resources/redirect302.pl:
+        
 2006-08-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
