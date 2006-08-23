@@ -1,3 +1,83 @@
+2006-08-23  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Alexey. Landed by rwlbuis.
+
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+        WebKit should have Qt platform support (Part II)
+
+        * platform/qt/GraphicsContextQt.cpp: Added.
+        (WebCore::toQtCompositionMode):
+        (WebCore::toQtLineCap):
+        (WebCore::toQtLineJoin):
+        (WebCore::TransparencyLayer::TransparencyLayer):
+        (WebCore::TransparencyLayer::cleanup):
+        (WebCore::TextShadow::TextShadow):
+        (WebCore::TextShadow::isNull):
+        (WebCore::GraphicsContextPlatformPrivate::p):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::platformContext):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::adjustLineToPixelBounderies):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::addClip):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::setFocusRingClip):
+        (WebCore::GraphicsContext::clearFocusRingClip):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLineForMisspelling):
+        (WebCore::GraphicsContext::roundToDevicePixels):
+        (WebCore::GraphicsContext::setShadow):
+        (WebCore::GraphicsContext::clearShadow):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::setLineWidth):
+        (WebCore::GraphicsContext::setLineCap):
+        (WebCore::GraphicsContext::setLineJoin):
+        (WebCore::GraphicsContext::setMiterLimit):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        (WebCore::GraphicsContext::createRenderingDeviceContext):
+        * platform/qt/ImageQt.cpp: Added.
+        (WebCore::FrameData::clear):
+        (WebCore::Image::initNativeData):
+        (WebCore::Image::destroyNativeData):
+        (WebCore::Image::invalidateNativeData):
+        (WebCore::Image::loadResource):
+        (WebCore::Image::supportsType):
+        (WebCore::Image::draw):
+        (WebCore::Image::drawTiled):
+        (WebCore::Image::checkForSolidColor):
+        * platform/qt/ImageSourceQt.cpp: Added.
+        (WebCore::createDecoder):
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::ImageSource::~ImageSource):
+        (WebCore::ImageSource::initialized):
+        (WebCore::ImageSource::setData):
+        (WebCore::ImageSource::isSizeAvailable):
+        (WebCore::ImageSource::size):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::frameCount):
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+
 2006-08-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adele
