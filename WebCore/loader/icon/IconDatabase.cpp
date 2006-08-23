@@ -93,6 +93,7 @@ IconDatabase* IconDatabase::sharedIconDatabase()
 
 IconDatabase::IconDatabase()
     : m_currentDB(&m_mainDB)
+    , m_defaultIconDataCache(0)
     , m_privateBrowsingEnabled(false)
     , m_startupTimer(this, &IconDatabase::pruneUnretainedIconsOnStartup)
     , m_updateTimer(this, &IconDatabase::updateDatabase)
@@ -328,7 +329,12 @@ String IconDatabase::iconURLForPageURL(const String& pageURL)
 
 Image* IconDatabase::defaultIcon(const IntSize& size)
 {
-    return 0;
+    if (!m_defaultIconDataCache) {
+        m_defaultIconDataCache = new IconDataCache("urlIcon");
+        m_defaultIconDataCache->loadImageFromResource("urlIcon");
+    }
+    
+    return m_defaultIconDataCache->getImage(size);
 }
 
 void IconDatabase::retainIconForPageURL(const String& pageURL)

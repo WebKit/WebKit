@@ -1,3 +1,19 @@
+2006-08-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adele
+
+        Moved default URL icon from WebKit to WebCore
+
+        * Resources/urlIcon.tiff: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/icon/IconDataCache.cpp:
+        (WebCore::IconDataCache::loadImageFromResource):
+        * loader/icon/IconDataCache.h:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::defaultIcon):
+        * loader/icon/IconDatabase.h:
+
 2006-08-23  Adam Roben  <aroben@apple.com>
 
         Reviewed by Darin, Adele.

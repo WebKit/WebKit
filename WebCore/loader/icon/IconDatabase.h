@@ -153,11 +153,12 @@ private:
     void loadIconFromURL(const String&);
     
     static IconDatabase* m_sharedInstance;
-    static const int DefaultCachedPageCount;
-    
+        
     SQLDatabase m_mainDB;
     SQLDatabase m_privateBrowsingDB;
     SQLDatabase* m_currentDB;
+    
+    IconDataCache* m_defaultIconDataCache;
     
     bool m_privateBrowsingEnabled;
     

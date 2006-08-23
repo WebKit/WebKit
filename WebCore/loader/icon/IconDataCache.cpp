@@ -86,6 +86,15 @@ void IconDataCache::setImageData(unsigned char* data, int size)
     m_dataSet = true;
 }
 
+void IconDataCache::loadImageFromResource(const char* resource)
+{
+    if (!resource)
+        return;
+    delete m_image;
+    m_image = Image::loadResource(resource);
+    m_dataSet = true;
+}
+
 void IconDataCache::writeToDatabase(SQLDatabase& db)
 {
     if (m_iconURL.isEmpty())
