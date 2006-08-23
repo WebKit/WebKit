@@ -1,3 +1,28 @@
+2006-08-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Added escapeSQLString() - a helper to escape strings to be used in textual SQL queries
+
+        * WebCore.xcodeproj/project.pbxproj: Reordered some files
+        * loader/icon/IconDataCache.cpp: Use the new escapeSQLString()
+        (WebCore::IconDataCache::writeToDatabase):
+        * loader/icon/IconDatabase.cpp: Use the new escapeSQLString() throughout
+        (WebCore::IconDatabase::retainIconURL):
+        (WebCore::IconDatabase::releaseIconURL):
+        (WebCore::IconDatabase::forgetIconForIconURLFromDatabase):
+        (WebCore::IconDatabase::establishIconIDForIconURL):
+        (WebCore::imageDataForIconURLQuery):
+        (WebCore::timeStampForIconURLQuery):
+        (WebCore::iconURLForPageURLQuery):
+        (WebCore::forgetPageURLQuery):
+        (WebCore::setIconIDForPageURLQuery):
+        (WebCore::getIconIDForIconURLQuery):
+        (WebCore::addIconForIconURLQuery):
+        (WebCore::hasIconForIconURLQuery):
+        * loader/icon/SQLDatabase.h:
+        (WebCore::escapeSQLString): Added
+
 2006-08-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady.

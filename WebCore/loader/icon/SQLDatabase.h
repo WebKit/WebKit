@@ -70,13 +70,19 @@ public:
     
     int lastError() { return m_db ? sqlite3_errcode(m_db) : SQLITE_ERROR; }
     const char* lastErrorMsg() { return sqlite3_errmsg(m_db); }
-    
 private:
     String   m_path;
     sqlite3* m_db;
     int m_lastError;
     
 }; // class SQLDatabase
+
+inline String escapeSQLString(const String& s)
+{
+    String es = s;
+    es.replace('\'', "''");
+    return es;
+}
 
 } // namespace WebCore
 

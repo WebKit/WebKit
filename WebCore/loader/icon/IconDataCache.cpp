@@ -92,8 +92,7 @@ void IconDataCache::writeToDatabase(SQLDatabase& db)
         return;
     
     // First we create and prepare the SQLStatement    
-    String escapedIconURL = m_iconURL;
-    escapedIconURL.replace('\'', "''");
+    String escapedIconURL = escapeSQLString(m_iconURL);
     // The following statement works no matter what in version 5 of the DB schema because we have the table
     // replace any url entry with the new data if it already exists
     SQLStatement sql(db, "INSERT INTO Icon (url,stamp,data) VALUES ('" + escapedIconURL + "', ?, ?);");

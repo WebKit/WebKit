@@ -410,8 +410,7 @@ void IconDatabase::retainIconURL(const String& iconURL)
         // we only care *if* an icon is retained - not the full count.  This call to retainIconURL incremented the IconURL's
         // retain count from 0 to 1 therefore we may store it in the temporary table
         if (!m_initialPruningComplete) {
-            String escapedIconURL = iconURL;
-            escapedIconURL.replace('\'', "''");
+            String escapedIconURL = escapeSQLString(iconURL);
             if (!m_mainDB.executeCommand("INSERT INTO IconRetain VALUES ('" + escapedIconURL + "');"))
                 LOG_ERROR("Failed to record icon retention in temporary table for IconURL %s", iconURL.ascii().data());
         }
@@ -449,8 +448,7 @@ void IconDatabase::releaseIconURL(const String& iconURL)
     // we only care *if* an icon is retained - not the full count.  This call to retainIconURL decremented the IconURL's
     // retain count from 1 to 0 therefore we may remove it from the temporary table
     if (!m_initialPruningComplete) {
-        String escapedIconURL = iconURL;
-        escapedIconURL.replace('\'', "''");
+        String escapedIconURL = escapeSQLString(iconURL);
         if (!m_mainDB.executeCommand("DELETE FROM IconRetain WHERE url='" + escapedIconURL + "';"))
             LOG_ERROR("Failed to delete record of icon retention from temporary table for IconURL %s", iconURL.ascii().data());
     }
@@ -489,9 +487,6 @@ void IconDatabase::forgetIconForIconURLFromDatabase(const String& iconURL)
         LOG_ERROR("Attempting to forget icon for IconURL %s, though we don't have it in the database", iconURL.ascii().data());
         return;
     }
-        
-    String escapedIconURL = iconURL;
-    escapedIconURL.replace('\'', "''");
     
     if (!m_currentDB->executeCommand(String::sprintf("DELETE FROM Icon WHERE Icon.iconID = %lli;", iconID)))
         LOG_ERROR("Unable to drop Icon for IconURL", iconURL.ascii().data()); 
@@ -605,8 +600,7 @@ void IconDatabase::setIconURLForPageURLInDatabase(const String& iconURL, const S
 
 int64_t IconDatabase::establishIconIDForIconURL(SQLDatabase& db, const String& iconURL, bool createIfNecessary)
 {
-    String escapedIconURL = iconURL;
-    escapedIconURL.replace('\'', "''");
+    String escapedIconURL = escapeSQLString(iconURL);
     
     // Get the iconID thats already in this database and return it - or return 0 if we're read-only
     int64_t iconID = getIconIDForIconURLQuery(db, iconURL);
@@ -748,53 +742,44 @@ static bool pageURLTableIsEmptyQuery(SQLDatabase& db)
 
 static void imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, Vector<unsigned char>& result)
 {
-    String escapedIconURL = iconURL;
-    escapedIconURL.replace('\'', "''");
+    String escapedIconURL = escapeSQLString(iconURL);
     SQLStatement(db, "SELECT Icon.data FROM Icon WHERE Icon.url = '" + escapedIconURL + "';").getColumnBlobAsVector(0, result);
 }
 
 static int timeStampForIconURLQuery(SQLDatabase& db, const String& iconURL)
 {
-    String escapedIconURL = iconURL;
-    escapedIconURL.replace('\'', "''");
+    String escapedIconURL = escapeSQLString(iconURL);
     return SQLStatement(db, "SELECT Icon.stamp FROM Icon WHERE Icon.url = '" + escapedIconURL + "';").getColumnInt(0);
 }
 
-
 static String iconURLForPageURLQuery(SQLDatabase& db, const String& pageURL)
 {
-    String escapedPageURL = pageURL;
-    escapedPageURL.replace('\'', "''");
+    String escapedPageURL = escapeSQLString(pageURL);
     return SQLStatement(db, "SELECT Icon.url FROM Icon, PageURL WHERE PageURL.url = '" + escapedPageURL + "' AND Icon.iconID = PageURL.iconID").getColumnText16(0);
 }
 
 static void forgetPageURLQuery(SQLDatabase& db, const String& pageURL)
 {
-    String escapedPageURL = pageURL;
-    escapedPageURL.replace('\'', "''");
-    
+    String escapedPageURL = escapeSQLString(pageURL);
     db.executeCommand("DELETE FROM PageURL WHERE url = '" + escapedPageURL + "';");
 }
 
 static void setIconIDForPageURLQuery(SQLDatabase& db, int64_t iconID, const String& pageURL)
 {
-    String escapedPageURL = pageURL;
-    escapedPageURL.replace('\'', "''");
+    String escapedPageURL = escapeSQLString(pageURL);
     if (!db.executeCommand("INSERT INTO PageURL (url, iconID) VALUES ('" + escapedPageURL + "', " + String::number(iconID) + ");"))
         LOG_ERROR("Failed to set iconid %lli for PageURL %s", iconID, pageURL.ascii().data());
 }
 
 static int64_t getIconIDForIconURLQuery(SQLDatabase& db, const String& iconURL)
 {
-    String escapedIconURL = iconURL;
-    escapedIconURL.replace('\'', "''");
+    String escapedIconURL = escapeSQLString(iconURL);
     return SQLStatement(db, "SELECT Icon.iconID FROM Icon WHERE Icon.url = '" + escapedIconURL + "';").getColumnInt64(0);
 }
 
 static int64_t addIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
 {
-    String escapedIconURL = iconURL;
-    escapedIconURL.replace('\'', "''");
+    String escapedIconURL = escapeSQLString(iconURL);
     if (db.executeCommand("INSERT INTO Icon (url) VALUES ('" + escapedIconURL + "');"))
         return db.lastInsertRowID();
     return 0;
@@ -802,8 +787,7 @@ static int64_t addIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
 
 static bool hasIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
 {
-    String escapedIconURL = iconURL;
-    escapedIconURL.replace('\'', "''");
+    String escapedIconURL = escapeSQLString(iconURL);
     return SQLStatement(db, "SELECT Icon.iconID FROM Icon WHERE Icon.url = '" + escapedIconURL + "';").returnsAtLeastOneResult();
 }
 
