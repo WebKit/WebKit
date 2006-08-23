@@ -82,12 +82,10 @@ public:
     virtual void paint(GraphicsContext*, const IntRect& damageRect) = 0;
 
     static bool hasPlatformScrollBars() {
-        // To use the platform's built-in scrollbars by default add to this ifdef.
-#if PLATFORM(MAC)
+        // To use the platform's built-in scrollbars by default, return true.  We may
+        // support styled engine scrollbars someday, and some platforms may wish to not
+        // implement a platform scrollbar at all by default.  That's what this method is for.
         return true;
-#else
-        return false;  // The engine will create scrollbars (so the RenderTheme will need to support scrollbar painting).
-#endif
     }
 
 protected:

@@ -1,3 +1,11 @@
+2006-08-23  David Hyatt  <hyatt@apple.com>
+
+        Remove the ifdef for platform scrollbars vs. engine scrollbars until
+        engine scrollbars actually exist.
+
+        * platform/ScrollBar.h:
+        (WebCore::ScrollBar::hasPlatformScrollBars):
+
 2006-08-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
