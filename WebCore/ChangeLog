@@ -1,3 +1,15 @@
+2006-08-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Kevin
+
+        Added a check in getTIFFRepresentation to not proceed if the frame count is zero
+        This is an error condition that was handled gracefully before - in certain circumstances
+        the call to CGImageDestinationCreateWithData will spam the Console if it is passed null/empty data
+        or invalid data.  This small change bails out before that call if that call will definitely fail
+
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::getTIFFRepresentation):
+
 2006-08-22  David Harrison  <harrison@apple.com>
 
         Backed out my last change (r15966) because it broke lots of layout tests.

@@ -136,6 +136,12 @@ CFDataRef Image::getTIFFRepresentation()
         return m_tiffRep;
     
     unsigned numFrames = frameCount();
+    
+    // If numFrames is zero, we know for certain this image doesn't have valid data
+    // Even though the call to CGImageDestinationCreateWithData will fail and we'll handle it gracefully,
+    // in certain circumstances that call will spam the console with an error message
+    if (!numFrames)
+        return 0;
     CFMutableDataRef data = CFDataCreateMutable(0, 0);
     // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
     CGImageDestinationRef destination = CGImageDestinationCreateWithData(data, CFSTR("public.tiff"), numFrames, 0);
