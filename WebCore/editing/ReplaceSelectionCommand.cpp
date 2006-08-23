@@ -435,8 +435,11 @@ void ReplaceSelectionCommand::doApply()
     bool selectionEndWasEndOfParagraph = isEndOfParagraph(visibleEnd);
     bool selectionStartWasStartOfParagraph = isStartOfParagraph(visibleStart);
     
+    Node* startBlock = enclosingBlock(visibleStart.deepEquivalent().node());
+    
     if (selectionStartWasStartOfParagraph && selectionEndWasEndOfParagraph ||
-        enclosingBlock(visibleStart.deepEquivalent().node()) == currentRoot)
+        startBlock == currentRoot ||
+        startBlock->renderer() && startBlock->renderer()->isListItem())
         m_preventNesting = false;
     
     Position insertionPos = selection.start();
@@ -457,8 +460,7 @@ void ReplaceSelectionCommand::doApply()
                 insertParagraphSeparator();
         }
         insertionPos = endingSelection().start();
-    } 
-    else {
+    } else {
         ASSERT(selection.isCaret());
         if (fragment.hasInterchangeNewlineAtStart()) {
             VisiblePosition next = visibleStart.next(true);
@@ -483,7 +485,7 @@ void ReplaceSelectionCommand::doApply()
     // away, there are positions after the br which map to the same visible position as [br, 0]).  
     Node* endBR = insertionPos.downstream().node()->hasTagName(brTag) ? insertionPos.downstream().node() : 0;
     
-    Node* startBlock = enclosingBlock(insertionPos.node());
+    startBlock = enclosingBlock(insertionPos.node());
     
     // Adjust insertionPos to prevent nesting.
     if (m_preventNesting) {

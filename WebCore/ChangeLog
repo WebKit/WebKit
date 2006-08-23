@@ -1,3 +1,14 @@
+2006-08-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=10449>
+        REGRESSION(r15918): drag-into-marker.html failing
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Don't avoid nesting
+        in a list item.
+
 2006-08-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Kevin

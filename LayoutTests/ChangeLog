@@ -1,6 +1,17 @@
 2006-08-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=10449>
+        REGRESSION(r15918): drag-into-marker.html failing
+
+        * editing/pasteboard/paste-list-001-expected.txt:
+        * fast/lists/drag-into-marker.html: Added.
+        * fast/lists/drag-into-marker.html-disabled: Removed.
+
+2006-08-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
 
         <rdar://problem/4052343&4052343&4426622> Mail hung on paste text
         
