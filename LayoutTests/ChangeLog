@@ -1,3 +1,11 @@
+2006-08-22  Trey Matteson  <trey@usa.net>
+
+        Reviewed by NOBODY
+        
+        This test update was missing from the patch I posted, and ggarren just checked in.
+
+        * fast/overflow/scrollRevealButton-expected.txt:
+
 2006-08-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
