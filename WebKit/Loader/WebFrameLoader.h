@@ -27,14 +27,30 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#import <WebKit/WebFramePrivate.h>
-#import <WebKitSystemInterface.h>
 
 @class WebDataSource;
 @class WebMainResourceLoader;
 @class WebIconLoader;
 @class WebLoader;
 @class WebResource;
+@class WebFrame;
+@class WebPolicyDecisionListener;
+
+typedef enum {
+    WebFrameStateProvisional,
+    
+    // This state indicates we are ready to commit to a page,
+    // which means the view will transition to use the new data source.
+    WebFrameStateCommittedPage,
+    
+    WebFrameStateComplete
+} WebFrameState;
+
+typedef enum {
+    WebPolicyUse,
+    WebPolicyDownload,
+    WebPolicyIgnore,
+} WebPolicyAction;
 
 @interface WebFrameLoader : NSObject
 {
@@ -49,6 +65,8 @@
     WebDataSource *dataSource;
     WebDataSource *provisionalDataSource;
     WebFrameState state;
+    
+    WebPolicyDecisionListener *listener;
     
     NSMutableDictionary *pendingArchivedResources;
 }
@@ -107,15 +125,14 @@
 - (NSURLRequest *)initialRequest;
 - (void)_receivedData:(NSData *)data;
 - (void)_setRequest:(NSURLRequest *)request;
-- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(WKNSURLConnectionDelegateProxyPtr)proxy;
+- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(id)proxy;
 - (void)_handleFallbackContent;
 - (BOOL)_isStopping;
-- (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener;
 - (void)_setupForReplaceByMIMEType:(NSString *)newMIMEType;
 - (void)_setResponse:(NSURLResponse *)response;
 - (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete;
 - (void)_finishedLoading;
-- (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader;
+- (void)_iconLoaderReceivedPageIcon:(NSURL *)iconURL;
 - (NSURL *)_URL;
 
 - (NSError *)cancelledErrorWithRequest:(NSURLRequest *)request;
@@ -133,5 +150,10 @@
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType;
 + (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
-                                                                                                      
+- (void)_updateIconDatabaseWithURL:(NSURL *)iconURL;
+- (void)_notifyIconChanged:(NSURL *)iconURL;
+- (void)_checkNavigationPolicyForRequest:(NSURLRequest *)newRequest andCall:(id)obj withSelector:(SEL)sel;
+- (void)_checkContentPolicyForMIMEType:(NSString *)MIMEType andCall:(id)obj withSelector:(SEL)sel;
+- (void)cancelContentPolicy;
+
 @end

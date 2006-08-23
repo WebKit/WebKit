@@ -1,3 +1,16 @@
+2006-08-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - added some SPI indirections to support the following in WebKit/Loader:
+            - pull more WebDataSource code into WebFrameLoader
+            - make WebMainResourceLoader not depend on WebKit or on SPI
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2006-08-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

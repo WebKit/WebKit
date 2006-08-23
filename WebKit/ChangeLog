@@ -1,3 +1,49 @@
+2006-08-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - pull more WebDataSource code into WebFrameLoader
+        - make WebMainResourceLoader not depend on WebKit or on SPI
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _downloadWithLoadingConnection:request:response:proxy:]):
+        (-[WebFrameLoader _updateIconDatabaseWithURL:]):
+        (-[WebFrameLoader _notifyIconChanged:]):
+        (-[WebFrameLoader _iconLoaderReceivedPageIcon:]):
+        (-[WebFrameLoader _checkNavigationPolicyForRequest:andCall:withSelector:]):
+        (-[WebFrameLoader _checkContentPolicyForMIMEType:andCall:withSelector:]):
+        (-[WebFrameLoader cancelContentPolicy]):
+        * Loader/WebIconLoader.m:
+        (-[WebIconLoader didFinishLoading]):
+        * Loader/WebLoader.m:
+        (-[NSURLProtocol loadWithRequest:]):
+        (-[NSURLProtocol setDefersCallbacks:]):
+        * Loader/WebMainResourceLoader.h:
+        * Loader/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader initWithFrameLoader:]):
+        (-[WebMainResourceLoader dealloc]):
+        (-[WebMainResourceLoader cancelWithError:]):
+        (-[WebMainResourceLoader continueAfterNavigationPolicy:formState:]):
+        (-[WebMainResourceLoader willSendRequest:redirectResponse:]):
+        (-[WebMainResourceLoader continueAfterContentPolicy:]):
+        (-[WebMainResourceLoader checkContentPolicy]):
+        (-[WebMainResourceLoader didReceiveResponse:]):
+        * Plugins/WebPluginContainerCheck.m:
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _loadIcon]):
+        (-[WebDataSource _cancelledError]):
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        (+[WebDataSource _representationClassForMIMEType:]):
+        (-[WebDataSource _commitLoadWithData:]):
+        (-[WebDataSource _isDocumentHTML]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebFramePrivate.h:
+        * WebView/WebPolicyDelegate.m:
+        * WebView/WebPolicyDelegatePrivate.h:
+
 2006-08-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady.

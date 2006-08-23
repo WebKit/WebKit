@@ -34,6 +34,7 @@
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/Assertions.h>
 
+#import <WebCore/WebCoreSystemInterface.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebFrameLoader.h>
@@ -48,7 +49,7 @@
     
     if (self) {
         [self setFrameLoader:fl];
-        proxy = WKCreateNSURLConnectionDelegateProxy();
+        proxy = wkCreateNSURLConnectionDelegateProxy();
         [proxy setDelegate:self];
     }
 
@@ -59,6 +60,7 @@
 {
     [_initialRequest release];
 
+    [_response release];
     [proxy setDelegate:nil];
     [proxy release];
     
@@ -93,21 +95,12 @@
     [self release];
 }
 
-- (void)cancelContentPolicy
-{
-    [listener _invalidate];
-    [listener release];
-    listener = nil;
-    [policyResponse release];
-    policyResponse = nil;
-}
-
 -(void)cancelWithError:(NSError *)error
 {
     // Calling _receivedMainResourceError will likely result in a call to release, so we must retain.
     [self retain];
 
-    [self cancelContentPolicy];
+    [frameLoader cancelContentPolicy];
     [frameLoader retain];
     [frameLoader _receivedMainResourceError:error complete:YES];
     [frameLoader release];
@@ -128,11 +121,10 @@
     [self release];
 }
 
--(void)continueAfterNavigationPolicy:(NSURLRequest *)_request formState:(WebFormState *)state
+-(void)continueAfterNavigationPolicy:(NSURLRequest *)_request formState:(id)state
 {
-    if (!_request) {
+    if (!_request)
         [self stopLoadingForPolicyChange];
-    }
 }
 
 - (BOOL)_isPostOrRedirectAfterPost:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
@@ -210,11 +202,7 @@
     // when the main load was started.
     [frameLoader _setRequest:newRequest];
     
-    [[frameLoader webFrame] _checkNavigationPolicyForRequest:newRequest
-                                                  dataSource:[frameLoader activeDataSource]
-                                                   formState:nil
-                                                     andCall:self
-                                                withSelector:@selector(continueAfterNavigationPolicy:formState:)];
+    [frameLoader _checkNavigationPolicyForRequest:newRequest andCall:self withSelector:@selector(continueAfterNavigationPolicy:formState:)];
 
     [self release];
     return newRequest;
@@ -312,28 +300,17 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
 
 -(void)continueAfterContentPolicy:(WebPolicyAction)policy
 {
-    NSURLResponse *r = [policyResponse retain];
     BOOL isStopping = [frameLoader _isStopping];
 
-    [self cancelContentPolicy];
+    [frameLoader cancelContentPolicy];
     if (!isStopping)
-        [self continueAfterContentPolicy:policy response:r];
-
-    [r release];
+        [self continueAfterContentPolicy:policy response:_response];
 }
 
--(void)checkContentPolicyForResponse:(NSURLResponse *)r
+-(void)checkContentPolicy
 {
-    WebPolicyDecisionListener *l = [[WebPolicyDecisionListener alloc]
-                                       _initWithTarget:self action:@selector(continueAfterContentPolicy:)];
-    listener = l;
-    policyResponse = [r retain];
-
-    [l retain];
-    [frameLoader _decidePolicyForMIMEType:[r MIMEType] decisionListener:listener];
-    [l release];
+    [frameLoader _checkContentPolicyForMIMEType:[_response MIMEType] andCall:self withSelector:@selector(continueAfterContentPolicy:)];
 }
-
 
 - (void)didReceiveResponse:(NSURLResponse *)r
 {
@@ -354,7 +331,8 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
     [frameLoader _setResponse:r];
     _contentLength = [r expectedContentLength];
 
-    [self checkContentPolicyForResponse:r];
+    _response = [r retain];
+    [self checkContentPolicy];
     [self release];
 }
 

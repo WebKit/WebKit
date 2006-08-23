@@ -301,35 +301,6 @@
     _private->resourceData = data;
 }
 
-- (void)_updateIconDatabaseWithURL:(NSURL *)iconURL
-{
-    // MOVABLE
-    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
-    
-    WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
-    
-    // Bind the URL of the original request and the final URL to the icon URL.
-    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[self _URL] _web_originalDataAsString]];
-    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[[self _originalRequest] URL] _web_originalDataAsString]];    
-}
-
-- (void)_notifyIconChanged:(NSURL *)iconURL
-{
-    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
-    
-    if ([self webFrame] == [[self _webView] mainFrame])
-        [[self _webView] _willChangeValueForKey:_WebMainFrameIconKey];
-    
-    NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForURL:[[self _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
-    
-    [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
-                                            didReceiveIcon:icon
-                                                  forFrame:[self webFrame]];
-    
-    if ([self webFrame] == [[self _webView] mainFrame])
-        [[self _webView] _didChangeValueForKey:_WebMainFrameIconKey];
-}
-
 - (void)_loadIcon
 {
     // Don't load an icon if 1) this is not the main frame 2) we ended in error
@@ -352,11 +323,11 @@
         // If so, kick off a reload of the icon
         // If we don't have the icon already, kick off the initial load
         if ([[WebIconDatabase sharedIconDatabase] _hasEntryForIconURL:[_private->iconURL _web_originalDataAsString]]) {
-            [self _updateIconDatabaseWithURL:_private->iconURL];
+            [[_private->webFrame _frameLoader] _updateIconDatabaseWithURL:_private->iconURL];
             if ([[self webFrame] _loadType] == WebFrameLoadTypeReload || [[WebIconDatabase sharedIconDatabase] isIconExpiredForIconURL:[_private->iconURL _web_originalDataAsString]])
                 [[WebIconDatabase sharedIconDatabase] loadIconFromURL:[_private->iconURL _web_originalDataAsString]];
             else
-                [self _notifyIconChanged:_private->iconURL];
+                [[_private->webFrame _frameLoader] _notifyIconChanged:_private->iconURL];
         } else {
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->iconURL];
             [[self webFrame] _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
@@ -390,7 +361,6 @@
 
 - (NSError *)_cancelledError
 {
-    // MOVABLE
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain
                                       code:NSURLErrorCancelled
                                        URL:[self _URL]];
@@ -668,7 +638,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
-    // MOVABLE
     static NSMutableDictionary *repTypes = nil;
     static BOOL addedImageTypes = NO;
     
@@ -692,7 +661,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 + (Class)_representationClassForMIMEType:(NSString *)MIMEType
 {
-    // MOVABLE
     Class repClass;
     return [WebView _viewClass:nil andRepresentationClass:&repClass forMIMEType:MIMEType] ? repClass : nil;
 }
@@ -727,7 +695,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_commitLoadWithData:(NSData *)data
 {
-    // MOVABLE
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
     // by starting a new load, so retain temporarily.
     [self retain];
@@ -782,13 +749,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
     [[self webFrame] _receivedMainResourceError:error];
     [self _mainReceivedError:error complete:isComplete];
-}
-
-- (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader
-{
-    // MOVABLE
-    [self _updateIconDatabaseWithURL:_private->iconURL];
-    [self _notifyIconChanged:_private->iconURL];
 }
 
 - (void)_setIconURL:(NSURL *)URL
@@ -1011,7 +971,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (BOOL)_isDocumentHTML
 {
-    // MOVABLE
     NSString *MIMEType = [[self response] MIMEType];
     return [WebView canShowMIMETypeAsHTML:MIMEType];
 }

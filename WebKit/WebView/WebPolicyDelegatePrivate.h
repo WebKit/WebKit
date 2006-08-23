@@ -35,12 +35,6 @@ typedef enum {
     WebNavigationTypePlugInRequest =  WebNavigationTypeOther + 1
 } WebExtraNavigationType;
 
-typedef enum {
-    WebPolicyUse,
-    WebPolicyDownload,
-    WebPolicyIgnore,
-} WebPolicyAction;
-
 @class WebPolicyDecisionListenerPrivate;
 
 @interface WebPolicyDecisionListener : NSObject <WebPolicyDecisionListener, WebFormSubmissionListener>

@@ -65,3 +65,5 @@ CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRe
     void (*formSchedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *), 
     void (*formUnschedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *),
     void *context);
+void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
+id (*wkCreateNSURLConnectionDelegateProxy)(void);

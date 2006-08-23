@@ -70,6 +70,8 @@ void InitWebCoreSystemInterface(void)
     INIT(SignalCFReadStreamHasBytes);
     INIT(SignalCFReadStreamError);
     INIT(CreateCustomCFReadStream);
-
+    INIT(SetNSURLConnectionDefersCallbacks);
+    INIT(CreateNSURLConnectionDelegateProxy);
+    
     didInit = true;
 }

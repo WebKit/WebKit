@@ -29,17 +29,13 @@
 #import <Foundation/Foundation.h>
 
 #import <WebKit/WebLoader.h>
-#import <WebKitSystemInterface.h>
-
-@class WebPolicyDecisionListener;
 
 @interface WebMainResourceLoader : WebLoader
 {
     int _contentLength; // for logging only
     int _bytesReceived; // for logging only
-    WebPolicyDecisionListener *listener;
-    NSURLResponse *policyResponse;
-    WKNSURLConnectionDelegateProxyPtr proxy;
+    NSURLResponse *_response;
+    id proxy;
     NSURLRequest *_initialRequest;
 }
 

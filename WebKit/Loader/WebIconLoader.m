@@ -104,7 +104,7 @@
         [[WebIconDatabaseBridge sharedBridgeInstance] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
         LOG(IconDatabase, "NewDB - No icon for URL %@", [[self URL] _web_originalDataAsString]);
     }
-    [frameLoader _iconLoaderReceivedPageIcon:self];
+    [frameLoader _iconLoaderReceivedPageIcon:[self URL]];
     [super didFinishLoading];
 #else
     NSImage *icon;
@@ -123,7 +123,7 @@
         [[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
     }
 
-    [frameLoader _iconLoaderReceivedPageIcon:self];    
+    [frameLoader _iconLoaderReceivedPageIcon:[self URL]];
     [icon release];
     [super didFinishLoading];
 #endif

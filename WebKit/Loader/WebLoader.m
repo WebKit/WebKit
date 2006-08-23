@@ -36,6 +36,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebFrameLoader.h>
+#import <WebCore/WebCoreSystemInterface.h>
 
 static unsigned inNSURLConnectionCallback;
 static BOOL NSURLConnectionSupportsBufferedData;
@@ -170,9 +171,8 @@ static BOOL NSURLConnectionSupportsBufferedData;
 #ifndef NDEBUG
     isInitializingConnection = NO;
 #endif
-    if (defersCallbacks) {
-        WKSetNSURLConnectionDefersCallbacks(connection, YES);
-    }
+    if (defersCallbacks)
+        wkSetNSURLConnectionDefersCallbacks(connection, YES);
 
     return YES;
 }
@@ -180,7 +180,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (void)setDefersCallbacks:(BOOL)defers
 {
     defersCallbacks = defers;
-    WKSetNSURLConnectionDefersCallbacks(connection, defers);
+    wkSetNSURLConnectionDefersCallbacks(connection, defers);
     // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
 }
 

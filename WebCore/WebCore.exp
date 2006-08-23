@@ -133,6 +133,7 @@ _wkCGContextGetShouldSmoothFonts
 _wkClearGlyphVector
 _wkConvertCharToGlyphs
 _wkCreateCustomCFReadStream
+_wkCreateNSURLConnectionDelegateProxy
 _wkDrawBezeledTextArea
 _wkDrawBezeledTextFieldCell
 _wkDrawFocusRing
@@ -155,6 +156,7 @@ _wkPopupMenu
 _wkReleaseStyleGroup
 _wkSetCGFontRenderingMode
 _wkSetDragImage
+_wkSetNSURLConnectionDefersCallbacks
 _wkSetPatternPhaseInUserSpace
 _wkSetUpFontCache
 _wkSignalCFReadStreamEnd

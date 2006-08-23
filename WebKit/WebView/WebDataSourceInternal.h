@@ -41,7 +41,6 @@
 @class WebLoader;
 @class WebFrameBridge;
 @class WebHistoryItem;
-@class WebIconLoader;
 @class WebMainResourceLoader;
 @class WebPolicyDecisionListener;
 @class WebResource;

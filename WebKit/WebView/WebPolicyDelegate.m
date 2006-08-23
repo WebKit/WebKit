@@ -27,6 +27,7 @@
  */
 
 #import "WebPolicyDelegatePrivate.h"
+#import "WebFrameLoader.h"
 
 #import <objc/objc-runtime.h>
 

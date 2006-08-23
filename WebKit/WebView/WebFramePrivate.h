@@ -49,16 +49,6 @@
 @class WebView;
 
 typedef enum {
-    WebFrameStateProvisional,
-    
-    // This state indicates we are ready to commit to a page,
-    // which means the view will transition to use the new data source.
-    WebFrameStateCommittedPage,
-
-    WebFrameStateComplete
-} WebFrameState;
-
-typedef enum {
     WebFrameLoadTypeStandard,
     WebFrameLoadTypeBack,
     WebFrameLoadTypeForward,

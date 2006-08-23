@@ -40,6 +40,10 @@
 #import <WebKit/DOMHTML.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebPreferences.h>
+#import <WebKit/WebIconDatabasePrivate.h>
+#import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebFrameLoadDelegate.h>
+
 
 @implementation WebFrameLoader
 
@@ -458,7 +462,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[self activeDataSource] _setRequest:request];
 }
 
-- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(WKNSURLConnectionDelegateProxyPtr)proxy
+- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(id)proxy
 {
     [[self activeDataSource] _downloadWithLoadingConnection:connection request:request response:r proxy:proxy];
 }
@@ -471,11 +475,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (BOOL)_isStopping
 {
     return [[self activeDataSource] _isStopping];
-}
-
-- (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener
-{
-    [[self activeDataSource] _decidePolicyForMIMEType:MIMEType decisionListener:listener];
 }
 
 - (void)_setupForReplaceByMIMEType:(NSString *)newMIMEType
@@ -511,10 +510,37 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self release];
 }
 
-- (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iLoader
+- (void)_updateIconDatabaseWithURL:(NSURL *)iconURL
 {
-    ASSERT(iLoader == iconLoader);
-    [[self activeDataSource] _iconLoaderReceivedPageIcon:iLoader];
+    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
+    
+    WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
+    
+    // Bind the URL of the original request and the final URL to the icon URL.
+    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[[self activeDataSource] _URL] _web_originalDataAsString]];
+    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[[[self activeDataSource] _originalRequest] URL] _web_originalDataAsString]];    
+}
+
+- (void)_notifyIconChanged:(NSURL *)iconURL
+{
+    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
+    ASSERT(webFrame == [[webFrame webView] mainFrame]);
+
+    [[webFrame webView] _willChangeValueForKey:_WebMainFrameIconKey];
+    
+    NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForURL:[[[self activeDataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
+    
+    [[[webFrame webView] _frameLoadDelegateForwarder] webView:[webFrame webView]
+                                               didReceiveIcon:icon
+                                                     forFrame:webFrame];
+    
+    [[webFrame webView] _didChangeValueForKey:_WebMainFrameIconKey];
+}
+
+- (void)_iconLoaderReceivedPageIcon:(NSURL *)iconURL
+{
+    [self _updateIconDatabaseWithURL:iconURL];
+    [self _notifyIconChanged:iconURL];
 }
 
 - (NSURL *)_URL
@@ -686,6 +712,32 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
 {
     return [WebView _generatedMIMETypeForURLScheme:URLScheme];
+}
+
+- (void)_checkNavigationPolicyForRequest:(NSURLRequest *)newRequest andCall:(id)obj withSelector:(SEL)sel
+{
+    [webFrame _checkNavigationPolicyForRequest:newRequest
+                                    dataSource:[self activeDataSource]
+                                     formState:nil
+                                       andCall:obj
+                                  withSelector:sel];
+}
+
+- (void)_checkContentPolicyForMIMEType:(NSString *)MIMEType andCall:(id)obj withSelector:(SEL)sel
+{
+    WebPolicyDecisionListener *l = [[WebPolicyDecisionListener alloc] _initWithTarget:obj action:sel];
+    listener = l;
+    
+    [l retain];
+    [[self activeDataSource] _decidePolicyForMIMEType:MIMEType decisionListener:l];
+    [l release];
+}
+
+- (void)cancelContentPolicy
+{
+    [listener _invalidate];
+    [listener release];
+    listener = nil;
 }
 
 @end
