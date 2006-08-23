@@ -26,8 +26,6 @@
 #ifndef SQLDatabase_H
 #define SQLDatabase_H
 
-#include "config.h"
-
 #include "PlatformString.h"
 #include <sqlite3.h>
 #include <wtf/Noncopyable.h>
@@ -79,80 +77,6 @@ private:
     int m_lastError;
     
 }; // class SQLDatabase
-
-class SQLTransaction : public Noncopyable
-{
-public:
-    SQLTransaction(SQLDatabase& db, bool start = false);
-    ~SQLTransaction();
-    
-    void begin();
-    void commit();
-    void rollback();
-    
-private:
-    SQLDatabase& m_db;
-    bool m_began;
-
-};
-
-class SQLStatement : public Noncopyable
-{
-public:
-    SQLStatement(SQLDatabase& db, const String&);
-    ~SQLStatement();
-    
-    int prepare();
-    bool isPrepared() { return m_statement; }
-    int bindBlob(int index, const void* blob, int size, bool copy = true);
-    int bindText(int index, const char* text, bool copy = true);
-    int bindInt64(int index, int64_t integer);
-
-    int step();
-    int finalize();
-    int reset();
-    
-    int prepareAndStep() { prepare();  return step(); }
-    
-    // prepares, steps, and finalizes the query.
-    // returns true if all 3 steps succeed with step() returning SQLITE_DONE
-    // returns false otherwise  
-    bool executeCommand();
-    
-    // prepares, steps, and finalizes.  
-    // returns true is step() returns SQLITE_ROW
-    // returns false otherwise
-    bool returnsAtLeastOneResult();
-    
-    // Returns -1 on last-step failing.  Otherwise, returns number of rows
-    // returned in the last step()
-    int columnCount();
-    
-    String getColumnName(int col);
-    String getColumnName16(int col);
-    String getColumnText(int col);
-    String getColumnText16(int col);
-    double getColumnDouble(int col);
-    int getColumnInt(int col);
-    int64_t getColumnInt64(int col);
-    const void* getColumnBlob(int col, int& size);
-    Vector<unsigned char> getColumnBlobAsVector(int col);
-
-    bool returnTextResults(int col, Vector<String>& v);
-    bool returnTextResults16(int col, Vector<String>& v);
-    bool returnIntResults(int col, Vector<int>& v);
-    bool returnInt64Results(int col, Vector<int64_t>& v);
-    bool returnDoubleResults(int col, Vector<double>& v);
-
-    int lastError() { return m_database.lastError(); }
-    const char* lastErrorMsg() { return m_database.lastErrorMsg(); }
-    
-private:
-    SQLDatabase& m_database;
-    String      m_query;
-
-    sqlite3_stmt* m_statement;
-};
 
 } // namespace WebCore
 

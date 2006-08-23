@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IconDatabase.h"
 
+#include "IconDataCache.h"
 #include "Image.h"
 #include "Logging.h"
 #include "PlatformString.h"
@@ -33,6 +34,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
+#include "SQLStatement.h"
 
 
 // FIXME - One optimization to be made when this is no longer in flux is to make query construction smarter - that is queries that are created from
@@ -63,23 +65,23 @@ const String& IconDatabase::defaultDatabaseFilename()
 }
 
 // Query - Checks for at least 1 entry in the PageURL table
-bool pageURLTableIsEmptyQuery(SQLDatabase&);
+static bool pageURLTableIsEmptyQuery(SQLDatabase&);
 // Query - Returns the time stamp for an Icon entry
-int timeStampForIconURLQuery(SQLDatabase&, const String& iconURL);    
+static int timeStampForIconURLQuery(SQLDatabase&, const String& iconURL);    
 // Query - Returns the IconURL for a PageURL
-String iconURLForPageURLQuery(SQLDatabase&, const String& pageURL);    
+static String iconURLForPageURLQuery(SQLDatabase&, const String& pageURL);    
 // Query - Checks for the existence of the given IconURL in the Icon table
-bool hasIconForIconURLQuery(SQLDatabase& db, const String& iconURL);
+static bool hasIconForIconURLQuery(SQLDatabase& db, const String& iconURL);
 // Query - Deletes a PageURL from the PageURL table
-void forgetPageURLQuery(SQLDatabase& db, const String& pageURL);
+static void forgetPageURLQuery(SQLDatabase& db, const String& pageURL);
 // Query - Sets the Icon.iconID for a PageURL in the PageURL table
-void setIconIDForPageURLQuery(SQLDatabase& db, int64_t, const String&);
+static void setIconIDForPageURLQuery(SQLDatabase& db, int64_t, const String&);
 // Query - Returns the iconID for the given IconURL
-int64_t getIconIDForIconURLQuery(SQLDatabase& db, const String& iconURL);
+static int64_t getIconIDForIconURLQuery(SQLDatabase& db, const String& iconURL);
 // Query - Creates the Icon entry for the given IconURL and returns the resulting iconID
-int64_t addIconForIconURLQuery(SQLDatabase& db, const String& iconURL);
+static int64_t addIconForIconURLQuery(SQLDatabase& db, const String& iconURL);
 // Query - Returns the image data from the given database for the given IconURL
-Vector<unsigned char> imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL);   
+static void imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, Vector<unsigned char>& result);
 
 IconDatabase* IconDatabase::sharedIconDatabase()
 {
@@ -220,17 +222,17 @@ void IconDatabase::createDatabaseTables(SQLDatabase& db)
     }
 }    
 
-Vector<unsigned char> IconDatabase::imageDataForIconURL(const String& iconURL)
+void IconDatabase::imageDataForIconURL(const String& iconURL, Vector<unsigned char>& result)
 {      
     // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
     if (m_privateBrowsingEnabled) {    
-        Vector<unsigned char> blob = imageDataForIconURLQuery(m_privateBrowsingDB, iconURL);
-        if (!blob.isEmpty())
-            return blob;
+        imageDataForIconURLQuery(m_privateBrowsingDB, iconURL, result);
+        if (!result.isEmpty())
+            return;
     } 
     
     // It wasn't found there, so lets check the main tables
-    return imageDataForIconURLQuery(m_mainDB, iconURL);
+    imageDataForIconURLQuery(m_mainDB, iconURL, result);
 }
 
 void IconDatabase::setPrivateBrowsingEnabled(bool flag)
@@ -265,7 +267,8 @@ Image* IconDatabase::iconForPageURL(const String& pageURL, const IntSize& size, 
     // If it's a new IconDataCache object that doesn't have its imageData set yet,
     // we'll read in that image data now
     if (icon->imageDataStatus() == ImageDataStatusUnknown) {
-        Vector<unsigned char> data = imageDataForIconURL(iconURL);
+        Vector<unsigned char> data;
+        imageDataForIconURL(iconURL, data);
         icon->setImageData(data.data(), data.size());
     }
         
@@ -738,19 +741,19 @@ IconDatabase::~IconDatabase()
 }
 
 // Query helper functions
-bool pageURLTableIsEmptyQuery(SQLDatabase& db)
+static bool pageURLTableIsEmptyQuery(SQLDatabase& db)
 {
     return !(SQLStatement(db, "SELECT iconID FROM PageURL LIMIT 1;").returnsAtLeastOneResult());
 }
 
-Vector<unsigned char> imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL)
+static void imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, Vector<unsigned char>& result)
 {
     String escapedIconURL = iconURL;
     escapedIconURL.replace('\'', "''");
-    return SQLStatement(db, "SELECT Icon.data FROM Icon WHERE Icon.url = '" + escapedIconURL + "';").getColumnBlobAsVector(0);
+    SQLStatement(db, "SELECT Icon.data FROM Icon WHERE Icon.url = '" + escapedIconURL + "';").getColumnBlobAsVector(0, result);
 }
 
-int timeStampForIconURLQuery(SQLDatabase& db, const String& iconURL)
+static int timeStampForIconURLQuery(SQLDatabase& db, const String& iconURL)
 {
     String escapedIconURL = iconURL;
     escapedIconURL.replace('\'', "''");
@@ -758,14 +761,14 @@ int timeStampForIconURLQuery(SQLDatabase& db, const String& iconURL)
 }
 
 
-String iconURLForPageURLQuery(SQLDatabase& db, const String& pageURL)
+static String iconURLForPageURLQuery(SQLDatabase& db, const String& pageURL)
 {
     String escapedPageURL = pageURL;
     escapedPageURL.replace('\'', "''");
     return SQLStatement(db, "SELECT Icon.url FROM Icon, PageURL WHERE PageURL.url = '" + escapedPageURL + "' AND Icon.iconID = PageURL.iconID").getColumnText16(0);
 }
 
-void forgetPageURLQuery(SQLDatabase& db, const String& pageURL)
+static void forgetPageURLQuery(SQLDatabase& db, const String& pageURL)
 {
     String escapedPageURL = pageURL;
     escapedPageURL.replace('\'', "''");
@@ -773,7 +776,7 @@ void forgetPageURLQuery(SQLDatabase& db, const String& pageURL)
     db.executeCommand("DELETE FROM PageURL WHERE url = '" + escapedPageURL + "';");
 }
 
-void setIconIDForPageURLQuery(SQLDatabase& db, int64_t iconID, const String& pageURL)
+static void setIconIDForPageURLQuery(SQLDatabase& db, int64_t iconID, const String& pageURL)
 {
     String escapedPageURL = pageURL;
     escapedPageURL.replace('\'', "''");
@@ -781,14 +784,14 @@ void setIconIDForPageURLQuery(SQLDatabase& db, int64_t iconID, const String& pag
         LOG_ERROR("Failed to set iconid %lli for PageURL %s", iconID, pageURL.ascii().data());
 }
 
-int64_t getIconIDForIconURLQuery(SQLDatabase& db, const String& iconURL)
+static int64_t getIconIDForIconURLQuery(SQLDatabase& db, const String& iconURL)
 {
     String escapedIconURL = iconURL;
     escapedIconURL.replace('\'', "''");
     return SQLStatement(db, "SELECT Icon.iconID FROM Icon WHERE Icon.url = '" + escapedIconURL + "';").getColumnInt64(0);
 }
 
-int64_t addIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
+static int64_t addIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
 {
     String escapedIconURL = iconURL;
     escapedIconURL.replace('\'', "''");
@@ -797,7 +800,7 @@ int64_t addIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
     return 0;
 }
 
-bool hasIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
+static bool hasIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
 {
     String escapedIconURL = iconURL;
     escapedIconURL.replace('\'', "''");

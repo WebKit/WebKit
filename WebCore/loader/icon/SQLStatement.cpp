@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "SQLDatabase.h"
+#include "SQLStatement.h"
 
 #include "Logging.h"
 #include <wtf/Assertions.h>
@@ -216,23 +216,29 @@ int64_t SQLStatement::getColumnInt64(int col)
     return sqlite3_column_int64(m_statement, col);
 }
     
-Vector<unsigned char> SQLStatement::getColumnBlobAsVector(int col)
+void SQLStatement::getColumnBlobAsVector(int col, Vector<unsigned char>& result)
 {
-    if (!m_statement)
-        if (prepareAndStep() != SQLITE_ROW)
-            return Vector<unsigned char>();
-    if (columnCount() <= col)
-        return Vector<unsigned char>();
+    if (!m_statement && prepareAndStep() != SQLITE_ROW) {
+        result.clear();
+        return;
+    }
+
+    if (columnCount() <= col) {
+        result.clear();
+        return;
+    }
+
  
     const void* blob = sqlite3_column_blob(m_statement, col);
-    if (!blob) 
-        return Vector<unsigned char>();
+    if (!blob) {
+        result.clear();
+        return;
+    }
         
     int size = sqlite3_column_bytes(m_statement, col);
-    Vector<unsigned char> result((size_t)size);
+    result.resize((size_t)size);
     for (int i = 0; i < size; ++i)
         result[i] = ((const unsigned char*)blob)[i];
-    return result;
 }
 
 const void* SQLStatement::getColumnBlob(int col, int& size)

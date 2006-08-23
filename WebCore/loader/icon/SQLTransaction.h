@@ -23,45 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "SQLTransaction.h"
+#ifndef SQLTransaction_H
+#define SQLTransaction_H
 
-#include "SQLDatabase.h"
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-SQLTransaction::SQLTransaction(SQLDatabase& db, bool start)
-    : m_db(db)
-    , m_began(false)
-{
-    if (start)
-        begin();
-}
+class SQLDatabase;
 
-SQLTransaction::~SQLTransaction()
+class SQLTransaction : public Noncopyable
 {
-    if (m_began) 
-        rollback();
-}
+public:
+    SQLTransaction(SQLDatabase& db, bool start = false);
+    ~SQLTransaction();
     
-void SQLTransaction::begin()
-{
-    if (!m_began)
-        m_began = m_db.executeCommand("BEGIN;");
-}
-
-void SQLTransaction::commit()
-{
-    if (m_began) {
-        if (m_db.executeCommand("COMMIT;"))
-            m_began = false;
-    }
-}
-
-void SQLTransaction::rollback()
-{
-    if (m_began)
-        m_db.executeCommand("ROLLBACK;");
-}
+    void begin();
+    void commit();
+    void rollback();
     
+private:
+    SQLDatabase& m_db;
+    bool m_began;
+
+};
+
 } // namespace WebCore
+
+#endif // SQLTransation_H
+

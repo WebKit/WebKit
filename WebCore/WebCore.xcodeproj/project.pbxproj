@@ -247,6 +247,9 @@
 		6565820009D1508D000E61D7 /* SVGNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581E909D1508D000E61D7 /* SVGNames.h */; };
 		6565820209D1508D000E61D7 /* XLinkNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581EB09D1508D000E61D7 /* XLinkNames.h */; };
 		6565821309D15111000E61D7 /* ksvgcssvalues.h in Headers */ = {isa = PBXBuildFile; fileRef = 6565820F09D15111000E61D7 /* ksvgcssvalues.h */; };
+		657429170A9C2D0B00C52C97 /* IconDataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 657429140A9C2D0B00C52C97 /* IconDataCache.h */; };
+		657429180A9C2D0B00C52C97 /* SQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 657429150A9C2D0B00C52C97 /* SQLStatement.h */; };
+		657429190A9C2D0B00C52C97 /* SQLTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 657429160A9C2D0B00C52C97 /* SQLTransaction.h */; };
 		65743B52097076F8001E7CEF /* RenderSVGText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65743B50097076F8001E7CEF /* RenderSVGText.cpp */; };
 		65743B53097076F8001E7CEF /* RenderSVGText.h in Headers */ = {isa = PBXBuildFile; fileRef = 65743B51097076F8001E7CEF /* RenderSVGText.h */; };
 		657BD74D09AFDC54005A2056 /* StreamingTextDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 657BD74909AFDC54005A2056 /* StreamingTextDecoder.cpp */; };
@@ -1922,6 +1925,9 @@
 		6565820E09D15111000E61D7 /* ksvgcssvalues.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ksvgcssvalues.gperf; sourceTree = "<group>"; };
 		6565820F09D15111000E61D7 /* ksvgcssvalues.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ksvgcssvalues.h; sourceTree = "<group>"; };
 		6565821009D15111000E61D7 /* ksvgcssvalues.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ksvgcssvalues.in; sourceTree = "<group>"; };
+		657429140A9C2D0B00C52C97 /* IconDataCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDataCache.h; sourceTree = "<group>"; };
+		657429150A9C2D0B00C52C97 /* SQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SQLStatement.h; sourceTree = "<group>"; };
+		657429160A9C2D0B00C52C97 /* SQLTransaction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SQLTransaction.h; sourceTree = "<group>"; };
 		65743B50097076F8001E7CEF /* RenderSVGText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGText.cpp; sourceTree = "<group>"; };
 		65743B51097076F8001E7CEF /* RenderSVGText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGText.h; sourceTree = "<group>"; };
 		657BD74909AFDC54005A2056 /* StreamingTextDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = StreamingTextDecoder.cpp; sourceTree = "<group>"; };
@@ -3744,6 +3750,9 @@
 			isa = PBXGroup;
 			children = (
 				5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */,
+				657429140A9C2D0B00C52C97 /* IconDataCache.h */,
+				657429150A9C2D0B00C52C97 /* SQLStatement.h */,
+				657429160A9C2D0B00C52C97 /* SQLTransaction.h */,
 				5126E6BA0A2E3B12005C29FA /* IconDatabase.h */,
 				5186C0550A9C21470034FE94 /* IconDataCache.cpp */,
 				51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */,
@@ -6389,6 +6398,9 @@
 				1ACE53F70A8D19470022947D /* JSXMLSerializer.h in Headers */,
 				1A750D5D0A90DEE1000FF215 /* JSTreeWalker.h in Headers */,
 				1A750D8E0A90E521000FF215 /* JSNodeIterator.h in Headers */,
+				657429170A9C2D0B00C52C97 /* IconDataCache.h in Headers */,
+				657429180A9C2D0B00C52C97 /* SQLStatement.h in Headers */,
+				657429190A9C2D0B00C52C97 /* SQLTransaction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

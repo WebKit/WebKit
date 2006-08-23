@@ -22,13 +22,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include "IconDatabase.h"
+
+#include "config.h"
+#include "IconDataCache.h"
 
 #include "Logging.h"
 #include "Image.h"
 #include <limits.h>
+#include "SQLStatement.h"
 
-using namespace WebCore;
+
+namespace WebCore {
 
 IconDataCache::IconDataCache(const String& url)
     : m_iconURL(url)
@@ -117,5 +121,4 @@ ImageDataStatus IconDataCache::imageDataStatus()
     return ImageDataStatusPresent;
 }
 
-    
-
+} // namespace WebCore    

@@ -1,3 +1,47 @@
+2006-08-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady.
+
+        - assorted style cleanup of icon loader code:
+        
+        - wrapped all implementation files in namespace WebCore {} instead of "using namespace WebCore;" at top
+        - split headers to be one per class, to match impl files
+        - made files that are purely local in IconDatabase.cpp static
+        - make each impl file include config.h as first header (and no config.h includes in other headers)
+        - avoid multiple copies of Vector<unsigned char> for image data
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/icon/IconDataCache.cpp:
+        * loader/icon/IconDataCache.h: Added.
+        (WebCore::):
+        (WebCore::IconDataCache::getTimestamp):
+        (WebCore::IconDataCache::setTimestamp):
+        (WebCore::IconDataCache::getIconURL):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::imageDataForIconURL):
+        (WebCore::IconDatabase::iconForPageURL):
+        (WebCore::pageURLTableIsEmptyQuery):
+        (WebCore::imageDataForIconURLQuery):
+        (WebCore::timeStampForIconURLQuery):
+        (WebCore::iconURLForPageURLQuery):
+        (WebCore::forgetPageURLQuery):
+        (WebCore::setIconIDForPageURLQuery):
+        (WebCore::getIconIDForIconURLQuery):
+        (WebCore::addIconForIconURLQuery):
+        (WebCore::hasIconForIconURLQuery):
+        * loader/icon/IconDatabase.h:
+        * loader/icon/SQLDatabase.cpp:
+        * loader/icon/SQLDatabase.h:
+        * loader/icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::getColumnBlobAsVector):
+        * loader/icon/SQLStatement.h: Added.
+        (WebCore::SQLStatement::isPrepared):
+        (WebCore::SQLStatement::prepareAndStep):
+        (WebCore::SQLStatement::lastError):
+        (WebCore::SQLStatement::lastErrorMsg):
+        * loader/icon/SQLTransaction.cpp:
+        * loader/icon/SQLTransaction.h: Added.
+
 2006-08-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
