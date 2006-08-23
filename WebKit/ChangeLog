@@ -1,3 +1,13 @@
+2006-08-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Beth
+        Since I just pushed the default URL icon from WebKit to WebCore, but
+        WebKit was still using its version of the default icon, this patch makes it
+        use the WebCore version
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase defaultIconWithSize:]):
+
 2006-08-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady.

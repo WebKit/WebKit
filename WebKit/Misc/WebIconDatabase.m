@@ -235,6 +235,10 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(size.width);
     ASSERT(size.height);
     
+#ifdef ICONDEBUG
+    return [_private->databaseBridge defaultIconWithSize:size];
+#endif
+    
     if (!_private->defaultIcons) {
         NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"url_icon" ofType:@"tiff"];
         if (path) {
