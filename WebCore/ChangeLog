@@ -1,3 +1,10 @@
+2006-08-22  David Harrison  <harrison@apple.com>
+
+        Backed out my last change (r15966) because it broke lots of layout tests.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+
 2006-08-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
