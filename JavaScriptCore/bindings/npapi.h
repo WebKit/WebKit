@@ -91,6 +91,10 @@
     #include <X11/Xutil.h>
 #endif
 
+#ifdef XP_WIN
+    #include <windows.h>
+#endif
+
 #if defined(XP_MACOSX) && defined(__LP64__)
     #define NP_NO_QUICKDRAW
 #endif

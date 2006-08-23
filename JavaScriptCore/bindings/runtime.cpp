@@ -29,8 +29,10 @@
 #include "JSLock.h"
 #include "NP_jsobject.h"
 #include "c_instance.h"
+#if PLATFORM(MAC)
 #include "jni_instance.h"
 #include "objc_instance.h"
+#endif
 #include "runtime_object.h"
 
 namespace KJS { namespace Bindings {
@@ -112,6 +114,7 @@ Instance *Instance::createBindingForLanguageInstance(BindingLanguage language, v
     Instance *newInstance = 0;
     
     switch (language) {
+#if PLATFORM(MAC)
         case Instance::JavaLanguage: {
             newInstance = new Bindings::JavaInstance((jobject)nativeInstance, executionContext);
             break;
@@ -120,6 +123,7 @@ Instance *Instance::createBindingForLanguageInstance(BindingLanguage language, v
             newInstance = new Bindings::ObjcInstance((ObjectStructPtr)nativeInstance);
             break;
         }
+#endif
         case Instance::CLanguage: {
             newInstance = new Bindings::CInstance((NPObject *)nativeInstance);
             break;
@@ -152,17 +156,19 @@ void *Instance::createLanguageInstanceForValue(ExecState*, BindingLanguage langu
     JSObject *imp = static_cast<JSObject*>(value);
     
     switch (language) {
+#if PLATFORM(MAC)
         case Instance::ObjectiveCLanguage: {
             result = createObjcInstanceForValue(value, origin, current);
-            break;
-        }
-        case Instance::CLanguage: {
-            result = _NPN_CreateScriptObject(0, imp, origin, current);
             break;
         }
         case Instance::JavaLanguage: {
             // FIXME:  factor creation of jni_jsobjects, also remove unnecessary thread
             // invocation code.
+            break;
+        }
+#endif
+        case Instance::CLanguage: {
+            result = _NPN_CreateScriptObject(0, imp, origin, current);
             break;
         }
         default:

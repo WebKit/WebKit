@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
-#include "jni_jsobject.h"
+
 #include "object.h"
 #include "runtime_root.h"
 #include <wtf/HashCountedSet.h>
@@ -160,6 +160,7 @@ void KJS::Bindings::removeNativeReference (JSObject *imp)
     }
 }
 
+#if PLATFORM(MAC)
 // May only be set by dispatchToJavaScriptThread().
 static CFRunLoopSourceRef completionSource;
 
@@ -281,7 +282,7 @@ void RootObject::setFindRootObjectForNativeHandleFunction(FindRootObjectForNativ
     Bindings::RootObject::_performJavaScriptSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
     CFRunLoopAddSource(Bindings::RootObject::_runLoop, Bindings::RootObject::_performJavaScriptSource, kCFRunLoopDefaultMode);
 }
-
+#endif
 // Must be called when the applet is shutdown.
 void RootObject::removeAllNativeReferences ()
 {

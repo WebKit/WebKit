@@ -1,3 +1,23 @@
+2006-08-23  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Make the bindings compile without CoreFoundation.
+        
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * bindings/c/c_instance.cpp:
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertUTF8ToUTF16):
+        * bindings/npapi.h:
+        * bindings/runtime.cpp:
+        (KJS::Bindings::Instance::createBindingForLanguageInstance):
+        (KJS::Bindings::Instance::createLanguageInstanceForValue):
+        * bindings/runtime_root.cpp:
+        * bindings/runtime_root.h:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::createLanguageInstanceForValue):
+        * kjs/interpreter.h:
+
 2006-08-22  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

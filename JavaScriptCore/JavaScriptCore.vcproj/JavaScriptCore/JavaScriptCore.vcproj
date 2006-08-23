@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="JavaScriptCore"
 	ProjectGUID="{011D10F1-B656-4A1B-A0C3-3842F02122C5}"
 	RootNamespace="JavaScriptCore"
@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni"
 				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -660,6 +660,110 @@
 			</File>
 			<File
 				RelativePath="..\..\pcre\ucpinternal.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Bindings"
+			>
+			<File
+				RelativePath="..\..\bindings\c\c_class.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\c\c_class.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\c\c_instance.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\c\c_instance.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\c\c_runtime.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\c\c_runtime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\c\c_utility.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\c\c_utility.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\NP_jsobject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\NP_jsobject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\npapi.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\npruntime.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\npruntime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\npruntime_impl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\npruntime_priv.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\runtime.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\runtime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\runtime_array.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\runtime_array.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\runtime_method.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\runtime_method.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\runtime_object.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\runtime_object.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\runtime_root.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bindings\runtime_root.h"
 				>
 			</File>
 		</Filter>

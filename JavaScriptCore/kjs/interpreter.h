@@ -304,9 +304,7 @@ namespace KJS {
      */
     virtual bool isSafeScript(const Interpreter*) { return true; }
   
-#if PLATFORM(MAC)
     virtual void *createLanguageInstanceForValue(ExecState*, int language, JSObject* value, const Bindings::RootObject* origin, const Bindings::RootObject* current);
-#endif
 
     // This is a workaround to avoid accessing the global variables for these identifiers in
     // important property lookup functions, to avoid taking PIC branches in Mach-O binaries

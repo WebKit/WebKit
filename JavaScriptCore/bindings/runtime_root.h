@@ -27,7 +27,9 @@
 #define RUNTIME_ROOT_H_
 
 #include "interpreter.h"
+#if PLATFORM(MAC)
 #include "jni_jsobject.h"
+#endif
 #include "protect.h"
 
 namespace KJS {
@@ -60,7 +62,7 @@ public:
 
     void removeAllNativeReferences ();
 
-
+#if PLATFORM(MAC)
     // Must be called from the thread that will be used to access JavaScript.
     static void setFindRootObjectForNativeHandleFunction(FindRootObjectForNativeHandleFunctionPtr aFunc);
     static FindRootObjectForNativeHandleFunctionPtr findRootObjectForNativeHandleFunction() {
@@ -71,7 +73,7 @@ public:
     static CFRunLoopSourceRef performJavaScriptSource() { return _performJavaScriptSource; }
     
     static void dispatchToJavaScriptThread(JSObjectCallContext *context);
-    
+#endif
     const void *nativeHandle() const { return _nativeHandle; }
 
 private:
@@ -79,9 +81,11 @@ private:
     ProtectedPtr<JSObject> _imp;
     Interpreter *_interpreter;
 
+#if PLATFORM(MAC)
     static FindRootObjectForNativeHandleFunctionPtr _findRootObjectForNativeHandleFunctionPtr;
     static CFRunLoopRef _runLoop;
     static CFRunLoopSourceRef _performJavaScriptSource;
+#endif
 };
 
 } // namespace Bindings
