@@ -62,7 +62,7 @@ void VisiblePosition::init(const Position& position, EAffinity affinity)
 
 VisiblePosition VisiblePosition::next(bool stayInEditableContent) const
 {
-    VisiblePosition next(nextVisiblePosition(m_deepPosition), m_affinity);
+    VisiblePosition next(nextVisuallyDistinctCandidate(m_deepPosition), m_affinity);
     
     if (!stayInEditableContent || next.isNull())
         return next;
@@ -81,7 +81,7 @@ VisiblePosition VisiblePosition::next(bool stayInEditableContent) const
 VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
 {
     // find first previous DOM position that is visible
-    Position pos = previousVisiblePosition(m_deepPosition);
+    Position pos = previousVisuallyDistinctCandidate(m_deepPosition);
     
     // return null visible position if there is no previous visible position
     if (pos.atStart())
@@ -114,50 +114,6 @@ VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
     return lastEditablePositionBeforePositionInRoot(prev.deepEquivalent(), highestRoot);
 }
 
-Position VisiblePosition::previousVisiblePosition(const Position& pos)
-{
-    if (!pos.inRenderedContent()) {
-        Position current = pos;
-        while (!current.atStart()) {
-            current = current.previous(UsingComposedCharacters);
-            if (current.inRenderedContent())
-                return current;
-        }
-        return Position();
-    }
-
-    Position downstreamStart = pos.downstream();
-    Position current = pos;
-    while (!current.atStart()) {
-        current = current.previous(UsingComposedCharacters);
-        if (current.inRenderedContent() && downstreamStart != current.downstream())
-            return current;
-    }
-    return Position();
-}
-
-Position VisiblePosition::nextVisiblePosition(const Position& pos)
-{
-    if (!pos.inRenderedContent()) {
-        Position current = pos;
-        while (!current.atEnd()) {
-            current = current.next(UsingComposedCharacters);
-            if (current.inRenderedContent())
-                return current;
-        }
-        return Position();
-    }
-
-    Position downstreamStart = pos.downstream();
-    Position current = pos;
-    while (!current.atEnd()) {
-        current = current.next(UsingComposedCharacters);
-        if (current.inRenderedContent() && downstreamStart != current.downstream())
-            return current;
-    }
-    return Position();
-}
-
 Position VisiblePosition::canonicalPosition(const Position& position)
 {
     // FIXME (9535):  Canonicalizing to the leftmost candidate means that if we're at a line wrap, we will 
@@ -180,8 +136,8 @@ Position VisiblePosition::canonicalPosition(const Position& position)
 
     // When neither upstream or downstream gets us to a candidate (upstream/downstream won't leave 
     // blocks or enter new ones), we search forward and backward until we find one.
-    Position next = nextVisiblePosition(position);
-    Position prev = previousVisiblePosition(position);
+    Position next = nextCandidate(position);
+    Position prev = previousCandidate(position);
     Node* nextNode = next.node();
     Node* prevNode = prev.node();
 
@@ -216,11 +172,6 @@ Position VisiblePosition::canonicalPosition(const Position& position)
         return prev;
         
     return next;
-}
-
-int VisiblePosition::maxOffset(const Node *node)
-{
-    return node->offsetInCharacters() ? (int)static_cast<const CharacterData *>(node)->length() : (int)node->childNodeCount();
 }
 
 UChar VisiblePosition::characterAfter() const
