@@ -1,3 +1,14 @@
+2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric. Landed by rwlbuis.
+
+        Add QtLauncher (was testunity before), which provides a
+        standalone "browser" to test the Qt platform stuff.
+
+        * QtLauncher/CMakeLists.txt: Added.
+        * QtLauncher/main.cpp: Added.
+        (main):
+
 2006-08-22  Trey Matteson  <trey@usa.net>
 
         Reviewed by ggaren.
