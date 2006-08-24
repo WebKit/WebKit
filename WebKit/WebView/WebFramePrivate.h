@@ -48,6 +48,11 @@
 @class WebScriptDebugger;
 @class WebView;
 
+// Keys for accessing the values in the page cache dictionary.
+extern NSString *WebPageCacheEntryDateKey;
+extern NSString *WebPageCacheDataSourceKey;
+extern NSString *WebPageCacheDocumentViewKey;
+
 typedef enum {
     WebFrameLoadTypeStandard,
     WebFrameLoadTypeBack,
@@ -59,11 +64,6 @@ typedef enum {
     WebFrameLoadTypeInternal,
     WebFrameLoadTypeReplace
 } WebFrameLoadType;
-
-// Keys for accessing the values in the page cache dictionary.
-extern NSString *WebPageCacheEntryDateKey;
-extern NSString *WebPageCacheDataSourceKey;
-extern NSString *WebPageCacheDocumentViewKey;
 
 @interface WebFrame (WebPrivate)
 
@@ -101,8 +101,6 @@ extern NSString *WebPageCacheDocumentViewKey;
 
 - (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow;
 - (void)_viewDidMoveToHostWindow;
-
-- (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding;
 
 - (void)_addChild:(WebFrame *)child;
 

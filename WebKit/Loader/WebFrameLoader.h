@@ -28,6 +28,9 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import <WebKit/WebFramePrivate.h>
+
+@class WebArchive;
 @class WebDataSource;
 @class WebMainResourceLoader;
 @class WebIconLoader;
@@ -155,5 +158,9 @@ typedef enum {
 - (void)_checkNavigationPolicyForRequest:(NSURLRequest *)newRequest andCall:(id)obj withSelector:(SEL)sel;
 - (void)_checkContentPolicyForMIMEType:(NSString *)MIMEType andCall:(id)obj withSelector:(SEL)sel;
 - (void)cancelContentPolicy;
+- (void)_loadRequest:(NSURLRequest *)request archive:(WebArchive *)archive;
+- (void)reload;
+- (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding;
+- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState;
 
 @end

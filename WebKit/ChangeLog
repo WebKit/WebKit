@@ -1,3 +1,30 @@
+2006-08-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady.
+        
+        - move WebFrame code that creates WebDataSources down to WebFrameLoader, in preparation
+        for WebFrameLoader just holding on to WebDocumentLoadState
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _loadRequest:archive:]):
+        (-[WebFrameLoader _loadRequest:triggeringAction:loadType:formState:]):
+        (-[WebFrameLoader _reloadAllowingStaleDataWithOverrideEncoding:]):
+        (-[WebFrameLoader reload]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrame _shouldReloadToHandleUnreachableURLFromRequest:]):
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame loadArchive:]):
+        (-[WebFrame reload]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFramePrivate.h:
+        * WebView/WebView.m:
+        (-[WebView setCustomTextEncodingName:]):
+
 2006-08-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

@@ -50,7 +50,7 @@
 #import "WebFormDelegatePrivate.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
-#import "WebFramePrivate.h"
+#import "WebFrameLoader.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentation.h"
 #import "WebHTMLViewInternal.h"
@@ -2150,7 +2150,7 @@ NS_ENDHANDLER
     if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding]) {
         return;
     }
-    [[self mainFrame] _reloadAllowingStaleDataWithOverrideEncoding:encoding];
+    [[[self mainFrame] _frameLoader] _reloadAllowingStaleDataWithOverrideEncoding:encoding];
 }
 
 - (NSString *)_mainFrameOverrideEncoding

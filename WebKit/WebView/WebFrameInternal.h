@@ -70,6 +70,7 @@
 - (void)_provisionalLoadStarted;
 - (void)_prepareForDataSourceReplacement;
 - (void)_frameLoadCompleted;
+- (BOOL)_shouldReloadToHandleUnreachableURLFromRequest:(NSURLRequest *)request;
 
 @end
 

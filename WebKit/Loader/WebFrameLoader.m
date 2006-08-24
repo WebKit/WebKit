@@ -43,7 +43,8 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebFrameLoadDelegate.h>
-
+#import <WebKit/WebDataProtocol.h>
+#import <WebKit/WebKitNSStringExtras.h>
 
 @implementation WebFrameLoader
 
@@ -731,6 +732,106 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     [listener _invalidate];
     [listener release];
     listener = nil;
+}
+
+- (void)_loadRequest:(NSURLRequest *)request archive:(WebArchive *)archive
+{
+    WebFrameLoadType loadType;
+    
+    // note this copies request
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    NSMutableURLRequest *r = [newDataSource request];
+    [webFrame _addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
+    if ([webFrame _shouldTreatURLAsSameAsCurrent:[request URL]]) {
+        [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+        loadType = WebFrameLoadTypeSame;
+    } else
+        loadType = WebFrameLoadTypeStandard;
+    
+    [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
+    [newDataSource _addToUnarchiveState:archive];
+    
+    // When we loading alternate content for an unreachable URL that we're
+    // visiting in the b/f list, we treat it as a reload so the b/f list 
+    // is appropriately maintained.
+    if ([webFrame _shouldReloadToHandleUnreachableURLFromRequest:request]) {
+        ASSERT(loadType == WebFrameLoadTypeStandard);
+        loadType = WebFrameLoadTypeReload;
+    }
+    
+    [webFrame _loadDataSource:newDataSource withLoadType:loadType formState:nil];
+    [newDataSource release];
+}
+
+- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState
+{
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    [newDataSource _setTriggeringAction:action];
+
+    [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
+
+    [webFrame _loadDataSource:newDataSource withLoadType:loadType formState:formState];
+
+    [newDataSource release];
+}
+
+- (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding
+{
+    WebDataSource *ds = [self dataSource];
+    if (ds == nil)
+        return;
+
+    NSMutableURLRequest *request = [[ds request] mutableCopy];
+    NSURL *unreachableURL = [ds unreachableURL];
+    if (unreachableURL != nil)
+        [request setURL:unreachableURL];
+
+    [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    [request release];
+    
+    [newDataSource _setOverrideEncoding:encoding];
+
+    [webFrame _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReloadAllowingStaleData formState:nil];
+    
+    [newDataSource release];
+}
+
+- (void)reload
+{
+    WebDataSource *ds = [self dataSource];
+    if (ds == nil)
+        return;
+
+    NSMutableURLRequest *initialRequest = [ds request];
+    
+    // If a window is created by javascript, its main frame can have an empty but non-nil URL.
+    // Reloading in this case will lose the current contents (see 4151001).
+    if ([[[[ds request] URL] absoluteString] length] == 0)
+        return;
+
+    // Replace error-page URL with the URL we were trying to reach.
+    NSURL *unreachableURL = [initialRequest _webDataRequestUnreachableURL];
+    if (unreachableURL != nil)
+        initialRequest = [NSURLRequest requestWithURL:unreachableURL];
+    
+    // initWithRequest copies the request
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:initialRequest];
+    NSMutableURLRequest *request = [newDataSource request];
+
+    [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+
+    // If we're about to rePOST, set up action so the app can warn the user
+    if ([[request HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
+        NSDictionary *action = [webFrame _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:[request URL]];
+        [newDataSource _setTriggeringAction:action];
+    }
+
+    [newDataSource _setOverrideEncoding:[ds _overrideEncoding]];
+    
+    [webFrame _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload formState:nil];
+
+    [newDataSource release];
 }
 
 @end

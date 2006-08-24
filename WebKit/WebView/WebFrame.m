@@ -135,7 +135,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 @end
 
 @interface WebFrame (ForwardDecls)
-- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState;
 - (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 - (NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
 
@@ -344,64 +343,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     [request _webDataRequestSetUnreachableURL:unreachableURL];
     [request _webDataRequestSetMIMEType: MIMEType ? MIMEType : (NSString *)@"text/html"];
     return request;
-}
-
-- (BOOL)_shouldReloadToHandleUnreachableURLFromRequest:(NSURLRequest *)request
-{
-    NSURL *unreachableURL = [request _webDataRequestUnreachableURL];
-    if (unreachableURL == nil) {
-        return NO;
-    }
-    
-    if (_private->policyLoadType != WebFrameLoadTypeForward
-        && _private->policyLoadType != WebFrameLoadTypeBack
-        && _private->policyLoadType != WebFrameLoadTypeIndexedBackForward) {
-        return NO;
-    }
-    
-    // We only treat unreachableURLs specially during the delegate callbacks
-    // for provisional load errors and navigation policy decisions. The former
-    // case handles well-formed URLs that can't be loaded, and the latter
-    // case handles malformed URLs and unknown schemes. Loading alternate content
-    // at other times behaves like a standard load.
-    WebDataSource *compareDataSource = nil;
-    if (_private->delegateIsDecidingNavigationPolicy || _private->delegateIsHandlingUnimplementablePolicy) {
-        compareDataSource = _private->policyDataSource;
-    } else if (_private->delegateIsHandlingProvisionalLoadError) {
-        compareDataSource = [self provisionalDataSource];
-    }
-    
-    return compareDataSource != nil && [unreachableURL isEqual:[[compareDataSource request] URL]];
-}
-
-- (void)_loadRequest:(NSURLRequest *)request archive:(WebArchive *)archive
-{
-    WebFrameLoadType loadType;
-    
-    // note this copies request
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-    NSMutableURLRequest *r = [newDataSource request];
-    [self _addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
-    if ([self _shouldTreatURLAsSameAsCurrent:[request URL]]) {
-        [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-        loadType = WebFrameLoadTypeSame;
-    } else {
-        loadType = WebFrameLoadTypeStandard;
-    }
-    
-    [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
-    [newDataSource _addToUnarchiveState:archive];
-    
-    // When we loading alternate content for an unreachable URL that we're
-    // visiting in the b/f list, we treat it as a reload so the b/f list 
-    // is appropriately maintained.
-    if ([self _shouldReloadToHandleUnreachableURLFromRequest:request]) {
-        ASSERT(loadType == WebFrameLoadTypeStandard);
-        loadType = WebFrameLoadTypeReload;
-    }
-    
-    [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];
-    [newDataSource release];
 }
 
 // helper method used in various nav cases below
@@ -1265,7 +1206,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 action = [self _actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemOriginalURL];
             }
 
-            [self _loadRequest:request triggeringAction:action loadType:loadType formState:nil];
+            [_private->frameLoader _loadRequest:request triggeringAction:action loadType:loadType formState:nil];
             [request release];
         }
     }
@@ -1341,18 +1282,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [backForwardList goToItem:item];
         [self _recursiveGoToItem:item fromItem:currItem withLoadType:type];
     }
-}
-
-- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState
-{
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-    [newDataSource _setTriggeringAction:action];
-
-    [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
-
-    [self _loadDataSource:newDataSource withLoadType:loadType formState:formState];
-
-    [newDataSource release];
 }
 
 -(NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL
@@ -1663,7 +1592,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     [[webView _UIDelegateForwarder] webViewShow:webView];
 
     [[self _bridge] setOpener:[frame _bridge]];
-    [frame _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
+    [_private->frameLoader _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
 }
 
 
@@ -1741,7 +1670,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     } else {
         // must grab this now, since this load may stop the previous load and clear this flag
         BOOL isRedirect = _private->quickRedirectComing;
-        [self _loadRequest:request triggeringAction:action loadType:loadType formState:formState];
+        [_private->frameLoader _loadRequest:request triggeringAction:action loadType:loadType formState:formState];
         if (isRedirect) {
             LOG(Redirect, "%@(%p) _private->quickRedirectComing was %d", [self name], self, (int)isRedirect);
             _private->quickRedirectComing = NO;
@@ -1832,7 +1761,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         WebFrame *targetFrame = [self findFrameNamed:target];
 
         if (targetFrame != nil) {
-            [targetFrame _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
+            [[targetFrame _frameLoader] _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
         } else {
             [self _checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
         }
@@ -1841,7 +1770,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         return;
     }
 
-    [self _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
+    [_private->frameLoader _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
 
     [request release];
     [formState release];
@@ -1966,29 +1895,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 {
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
         [[[frame frameView] documentView] viewDidMoveToHostWindow];
-}
-
-- (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding
-{
-    WebDataSource *dataSource = [self dataSource];
-    if (dataSource == nil) {
-        return;
-    }
-
-    NSMutableURLRequest *request = [[dataSource request] mutableCopy];
-    NSURL *unreachableURL = [dataSource unreachableURL];
-    if (unreachableURL != nil) {
-        [request setURL:unreachableURL];
-    }
-    [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-    [request release];
-    
-    [newDataSource _setOverrideEncoding:encoding];
-
-    [self _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReloadAllowingStaleData formState:nil];
-    
-    [newDataSource release];
 }
 
 - (void)_addChild:(WebFrame *)child
@@ -2696,6 +2602,34 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         _private->firstLayoutDone = YES;
 }
 
+- (BOOL)_shouldReloadToHandleUnreachableURLFromRequest:(NSURLRequest *)request
+{
+    NSURL *unreachableURL = [request _webDataRequestUnreachableURL];
+    if (unreachableURL == nil) {
+        return NO;
+    }
+    
+    if (_private->policyLoadType != WebFrameLoadTypeForward
+        && _private->policyLoadType != WebFrameLoadTypeBack
+        && _private->policyLoadType != WebFrameLoadTypeIndexedBackForward) {
+        return NO;
+    }
+    
+    // We only treat unreachableURLs specially during the delegate callbacks
+    // for provisional load errors and navigation policy decisions. The former
+    // case handles well-formed URLs that can't be loaded, and the latter
+    // case handles malformed URLs and unknown schemes. Loading alternate content
+    // at other times behaves like a standard load.
+    WebDataSource *compareDataSource = nil;
+    if (_private->delegateIsDecidingNavigationPolicy || _private->delegateIsHandlingUnimplementablePolicy) {
+        compareDataSource = _private->policyDataSource;
+    } else if (_private->delegateIsHandlingProvisionalLoadError) {
+        compareDataSource = [self provisionalDataSource];
+    }
+    
+    return compareDataSource != nil && [unreachableURL isEqual:[[compareDataSource request] URL]];
+}
+
 @end
 
 @implementation WebFormState : NSObject
@@ -2810,7 +2744,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     // after loading is finished or aborted.
     _private->loadType = WebFrameLoadTypeStandard;
     
-    [self _loadRequest:request archive:nil];
+    [_private->frameLoader _loadRequest:request archive:nil];
 }
 
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
@@ -2864,7 +2798,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                                             textEncodingName:[mainResource textEncodingName]
                                                      baseURL:[mainResource URL]
                                               unreachableURL:nil];
-        [self _loadRequest:request archive:archive];
+        [_private->frameLoader _loadRequest:request archive:archive];
     }
 }
 
@@ -2886,41 +2820,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
 - (void)reload
 {
-    WebDataSource *dataSource = [self dataSource];
-    if (dataSource == nil)
-        return;
-
-    NSMutableURLRequest *initialRequest = [dataSource request];
-    
-    // If a window is created by javascript, its main frame can have an empty but non-nil URL.
-    // Reloading in this case will lose the current contents (see 4151001).
-    if ([[[[dataSource request] URL] absoluteString] length] == 0) {
-        return;
-    }
-
-    // Replace error-page URL with the URL we were trying to reach.
-    NSURL *unreachableURL = [initialRequest _webDataRequestUnreachableURL];
-    if (unreachableURL != nil) {
-        initialRequest = [NSURLRequest requestWithURL:unreachableURL];
-    }
-    
-    // initWithRequest copies the request
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:initialRequest];
-    NSMutableURLRequest *request = [newDataSource request];
-
-    [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-
-    // If we're about to rePOST, set up action so the app can warn the user
-    if ([[request HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
-        NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:[request URL]];
-        [newDataSource _setTriggeringAction:action];
-    }
-
-    [newDataSource _setOverrideEncoding:[dataSource _overrideEncoding]];
-    
-    [self _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload formState:nil];
-
-    [newDataSource release];
+    [_private->frameLoader reload];
 }
 
 - (WebFrame *)findFrameNamed:(NSString *)name
