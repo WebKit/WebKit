@@ -24,10 +24,10 @@
 
 #include "IntRect.h"
 #include "RenderPathQt.h"
-#include "KCanvasMatrix.h"
 #include "KCanvasPathQt.h"
-#include "KCanvasClipperQt.h"
+#include "AffineTransform.h"
 #include "GraphicsContext.h"
+#include "KCanvasClipperQt.h"
 #include "KRenderingDeviceQt.h"
 #include "KRenderingPaintServerSolidQt.h"
 #include "KRenderingPaintServerGradientQt.h"
@@ -37,7 +37,7 @@ namespace WebCore {
 
 KRenderingDeviceContextQt::KRenderingDeviceContextQt(QPainter* painter)
     : m_painter(painter)
-      , m_path()
+    , m_path()
 {
     Q_ASSERT(m_painter != 0);
 }
@@ -46,16 +46,16 @@ KRenderingDeviceContextQt::~KRenderingDeviceContextQt()
 {
 }
 
-KCanvasMatrix KRenderingDeviceContextQt::concatCTM(const KCanvasMatrix& worldMatrix)
+AffineTransform KRenderingDeviceContextQt::concatCTM(const AffineTransform& worldMatrix)
 {
-    KCanvasMatrix ret = ctm();
-    m_painter->setMatrix(worldMatrix.matrix(), true);
+    AffineTransform ret = ctm();
+    m_painter->setMatrix(worldMatrix, true);
     return ret;
 }
 
-KCanvasMatrix KRenderingDeviceContextQt::ctm() const
+AffineTransform KRenderingDeviceContextQt::ctm() const
 {
-    return KCanvasMatrix(m_painter->matrix());
+    return AffineTransform(m_painter->matrix());
 }
 
 IntRect KRenderingDeviceContextQt::mapFromVisual(const IntRect& rect)

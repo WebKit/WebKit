@@ -26,7 +26,7 @@
 #include <QPointF>
 
 #include "RenderStyle.h"
-#include "KCanvasMatrix.h"
+#include "AffineTransform.h"
 #include "KRenderingDeviceQt.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingFillPainter.h"
@@ -95,13 +95,12 @@ bool KRenderingPaintServerLinearGradientQt::setup(KRenderingDeviceContext* conte
     qtContext->painter().setBrush(Qt::NoBrush);
 
     QLinearGradient gradient(QPointF(x1, y1), QPointF(x2, y2));
-    if (spreadMethod() == SPREADMETHOD_REPEAT) {
+    if (spreadMethod() == SPREADMETHOD_REPEAT)
         gradient.setSpread(QGradient::RepeatSpread);
-    } else if (spreadMethod() == SPREADMETHOD_REFLECT) {
+    else if (spreadMethod() == SPREADMETHOD_REFLECT)
         gradient.setSpread(QGradient::ReflectSpread);
-    } else {
+    else
         gradient.setSpread(QGradient::PadSpread);
-    }
 
     double opacity = 1.0;
 
@@ -164,7 +163,7 @@ bool KRenderingPaintServerRadialGradientQt::setup(KRenderingDeviceContext* conte
 
     qtContext->painter().setPen(Qt::NoPen);
     qtContext->painter().setBrush(Qt::NoBrush);
-    QMatrix mat = qtContext->ctm().matrix();
+    QMatrix mat = qtContext->ctm();
 
     double cx, fx, cy, fy, r;
     if (boundingBoxMode()) {
@@ -207,20 +206,19 @@ bool KRenderingPaintServerRadialGradientQt::setup(KRenderingDeviceContext* conte
     }
 
     QRadialGradient gradient(QPointF(cx, cy), gradientRadius(), QPointF(fx + cx, fy + cy));
-    if (spreadMethod() == SPREADMETHOD_REPEAT) {
+    if (spreadMethod() == SPREADMETHOD_REPEAT)
         gradient.setSpread(QGradient::RepeatSpread);
-    } else if (spreadMethod() == SPREADMETHOD_REFLECT) {
+    else if (spreadMethod() == SPREADMETHOD_REFLECT)
         gradient.setSpread(QGradient::ReflectSpread);
-    } else {
+    else
         gradient.setSpread(QGradient::PadSpread);
-    }
 
     double opacity = 1.0;
 
     // TODO: Gradient transform + opacity fixes! 
 
-    // KCanvasMatrix gradientTrans = gradientTransform();
-    // gradientTrans.qmatrix().map(cx, cy, &cx, &cy);
+    // AffineTransform gradientTrans = gradientTransform();
+    // gradientTrans.map(cx, cy, &cx, &cy);
     // qtContext->painter().setMatrix(mat);
 
     if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle)) {

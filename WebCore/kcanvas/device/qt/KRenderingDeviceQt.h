@@ -36,8 +36,8 @@ public:
     KRenderingDeviceContextQt(QPainter*);
     virtual ~KRenderingDeviceContextQt();
 
-    virtual KCanvasMatrix concatCTM(const KCanvasMatrix&);
-    virtual KCanvasMatrix ctm() const;
+    virtual AffineTransform concatCTM(const AffineTransform&);
+    virtual AffineTransform ctm() const;
 
     virtual IntRect mapFromVisual(const IntRect&);
     virtual IntRect mapToVisual(const IntRect&);
