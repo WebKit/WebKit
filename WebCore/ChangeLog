@@ -1,3 +1,31 @@
+2006-08-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alice
+
+        <rdar://problem/4697973> - Unacceptable delay on startup
+        <rdar://problem/4690949> - Need to correctly prune unretained pageurls and icons on startup
+
+        This patch was started by me and finished by Mark Rowe - we now special case all retains during
+        startup into one huge sql transaction.  Also we track PageURL retains instead of IconURLs so pruning works right.
+        Testing with reasonable sets of bookmarks/history (3000), startup time is neglibile.  Testing with a huge set of 
+        bookmarks (40,000), startup has a noticable delay, but reasonable, and is inline with shipping safari which also 
+        has a noticeable delay.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::open): adding an initialStartupTransaction and pageRetainStatement
+        (WebCore::IconDatabase::close): do cleanup on the initialStartupSQL stuff
+        (WebCore::IconDatabase::retainIconForPageURL): Track initial PageURL retains in the temporary table
+        (WebCore::IconDatabase::releaseIconForPageURL): Ditto
+        (WebCore::IconDatabase::retainIconURL): We no longer special case this on startup
+        (WebCore::IconDatabase::releaseIconURL): We no longer special case this on startup
+        (WebCore::IconDatabase::pruneUnretainedIconsOnStartup): Handle the big transaction correctly and quickly
+        (WebCore::IconDatabase::syncDatabase): Change the timing log message
+        * loader/icon/IconDatabase.h:
+        * loader/icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::bindText16): Added this - for reusing commonly used statements by just rebinding parameters.
+        * loader/icon/SQLStatement.h:
+
 2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed/landed by Adam.

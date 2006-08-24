@@ -133,6 +133,16 @@ int SQLStatement::bindText(int index, const char* text, bool copy)
     return lastError();
 }
 
+int SQLStatement::bindText16(int index, const String& text, bool copy)
+{
+    if (copy)
+        sqlite3_bind_text16(m_statement, index, text.characters(), sizeof(UChar) * text.length(), SQLITE_TRANSIENT);
+    else
+        sqlite3_bind_text16(m_statement, index, text.characters(), sizeof(UChar) * text.length(), SQLITE_STATIC);
+    return lastError();
+}
+
+
 int SQLStatement::bindInt64(int index, int64_t integer)
 {
     return sqlite3_bind_int64(m_statement, index, integer);

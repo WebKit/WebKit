@@ -51,6 +51,8 @@ namespace WebCore {
 
 class Image;
 class IconDataCache;
+class SQLTransaction;
+class SQLStatement;
 
 class IconDatabase
 {
@@ -166,6 +168,8 @@ private:
     Timer<IconDatabase> m_updateTimer;
     
     bool m_initialPruningComplete;
+    SQLTransaction* m_initialPruningTransaction;
+    SQLStatement* m_preparedPageRetainInsertStatement;
     
     HashMap<String, IconDataCache*> m_iconURLToIconDataCacheMap;
     HashSet<IconDataCache*> m_iconDataCachesPendingUpdate;
