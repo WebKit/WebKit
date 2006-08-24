@@ -1453,7 +1453,6 @@
 		BC837C730A9D0D1A006B186A /* FloatRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C680A9D0D1A006B186A /* FloatRectCG.cpp */; };
 		BC837C740A9D0D1A006B186A /* FloatSizeCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C690A9D0D1A006B186A /* FloatSizeCG.cpp */; };
 		BC837C750A9D0D1A006B186A /* ImageCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C6A0A9D0D1A006B186A /* ImageCG.cpp */; };
-		BC837C760A9D0D1A006B186A /* ImageCG.cpp.orig in Resources */ = {isa = PBXBuildFile; fileRef = BC837C6B0A9D0D1A006B186A /* ImageCG.cpp.orig */; };
 		BC837C770A9D0D1A006B186A /* ImageSourceCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C6C0A9D0D1A006B186A /* ImageSourceCG.cpp */; };
 		BC837C780A9D0D1A006B186A /* IntPointCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C6D0A9D0D1A006B186A /* IntPointCG.cpp */; };
 		BC837C790A9D0D1A006B186A /* IntRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C6E0A9D0D1A006B186A /* IntRectCG.cpp */; };
@@ -3248,7 +3247,6 @@
 		BC837C680A9D0D1A006B186A /* FloatRectCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRectCG.cpp; sourceTree = "<group>"; };
 		BC837C690A9D0D1A006B186A /* FloatSizeCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatSizeCG.cpp; sourceTree = "<group>"; };
 		BC837C6A0A9D0D1A006B186A /* ImageCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageCG.cpp; sourceTree = "<group>"; };
-		BC837C6B0A9D0D1A006B186A /* ImageCG.cpp.orig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ImageCG.cpp.orig; sourceTree = "<group>"; };
 		BC837C6C0A9D0D1A006B186A /* ImageSourceCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSourceCG.cpp; sourceTree = "<group>"; };
 		BC837C6D0A9D0D1A006B186A /* IntPointCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntPointCG.cpp; sourceTree = "<group>"; };
 		BC837C6E0A9D0D1A006B186A /* IntRectCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntRectCG.cpp; sourceTree = "<group>"; };
@@ -4022,7 +4020,6 @@
 				BC837C690A9D0D1A006B186A /* FloatSizeCG.cpp */,
 				936BDD1C0A031AEB004DF4AB /* GraphicsContextCG.cpp */,
 				BC837C6A0A9D0D1A006B186A /* ImageCG.cpp */,
-				BC837C6B0A9D0D1A006B186A /* ImageCG.cpp.orig */,
 				BC837C6C0A9D0D1A006B186A /* ImageSourceCG.cpp */,
 				BC837C6D0A9D0D1A006B186A /* IntPointCG.cpp */,
 				BC837C6E0A9D0D1A006B186A /* IntRectCG.cpp */,
@@ -6547,7 +6544,6 @@
 				1CD441900A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff in Resources */,
 				1A750D880A90E394000FF215 /* NodeIterator.idl in Resources */,
 				5115095C0A9CE04700901013 /* urlIcon.tiff in Resources */,
-				BC837C760A9D0D1A006B186A /* ImageCG.cpp.orig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
