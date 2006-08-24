@@ -79,7 +79,7 @@ void SVGTransformable::parseTransformAttribute(SVGTransformList *list, const Ato
             break;
 
         if (subtransform[0].startsWith(";") || subtransform[0].startsWith(","))
-            subtransform[0] = subtransform[0].right(subtransform[0].length() - 1);
+            subtransform[0] = subtransform[0].mid(1).stripWhiteSpace();
 
         RefPtr<SVGTransform> t(new SVGTransform());
 

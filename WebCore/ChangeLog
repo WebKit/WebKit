@@ -1,3 +1,15 @@
+2006-08-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10524
+        svg transform: comma delimiting breaks display
+
+        Properly parse transforms which use ',' as seperators.
+
+        * ksvg2/svg/SVGTransformable.cpp:
+        (SVGTransformable::parseTransformAttribute):
+
 2006-08-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

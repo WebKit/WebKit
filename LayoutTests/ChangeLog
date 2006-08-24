@@ -1,3 +1,16 @@
+2006-08-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcase for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10524
+        svg transform: comma delimiting breaks display
+
+        * svg/custom/transform-scale-parse-expected.checksum: Added.
+        * svg/custom/transform-scale-parse-expected.png: Added.
+        * svg/custom/transform-scale-parse-expected.txt: Added.
+        * svg/custom/transform-scale-parse.svg: Added.
+
 2006-08-22  Trey Matteson  <trey@usa.net>
 
         Reviewed by NOBODY
