@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class AtomicString;
+class Color;
 class CSSProperty;
 class CSSStyleSelector;
 class Clipboard;
@@ -153,7 +154,10 @@ public:
 
     bool isTransparent() const;
     void setTransparent(bool isTransparent);
-    
+
+    Color baseBackgroundColor() const;
+    void setBaseBackgroundColor(Color);
+
     void scheduleRelayout();
     void scheduleRelayoutOfSubtree(Node*);
     void unscheduleRelayout();

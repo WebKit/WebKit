@@ -514,7 +514,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
     WebFrameView *v = _private->webFrameView;
     [_private->bridge createFrameViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
-    [self _updateDrawsBackground];
+    [self _updateBackground];
     [_private->bridge installInFrame:[v _scrollView]];
 
     // Call setDataSource on the document view after it has been placed in the view hierarchy.
@@ -2236,18 +2236,24 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return result;
 }
 
-- (void)_updateDrawsBackground
+- (void)_updateBackground
 {
     BOOL drawsBackground = [[self webView] drawsBackground];
+    NSColor *backgroundColor = [[self webView] backgroundColor];
 
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
-        // FIXME: why not the other way for scroll view?
+        // Never call setDrawsBackground:YES on the scroll view or the background color will
+        // flash between pages loads, very noticeable during the PLT.
         if (!drawsBackground)
             [[[frame frameView] _scrollView] setDrawsBackground:NO];
+        [[[frame frameView] _scrollView] setBackgroundColor:backgroundColor];
         id documentView = [[frame frameView] documentView];
         if ([documentView respondsToSelector:@selector(setDrawsBackground:)])
             [documentView setDrawsBackground:drawsBackground];
+        if ([documentView respondsToSelector:@selector(setBackgroundColor:)])
+            [documentView setBackgroundColor:backgroundColor];
         [[frame _bridge] setDrawsBackground:drawsBackground];
+        [[frame _bridge] setBaseBackgroundColor:backgroundColor];
     }
 }
 

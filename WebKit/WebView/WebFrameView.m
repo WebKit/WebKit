@@ -478,7 +478,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if ([self documentView] == nil) {
         // Need to paint ourselves if there's no documentView to do it instead.
         if ([[self _webView] drawsBackground]) {
-            [[NSColor whiteColor] set];
+            [[[self _webView] backgroundColor] set];
             NSRectFill(rect);
         }
     } else {

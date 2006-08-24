@@ -1,5 +1,24 @@
 2006-08-24  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Hyatt.
+
+        WebView API to allow changing the background color that draws under transparent page backgrounds.
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _makeDocumentView]):
+        (-[WebFrame _updateBackground]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameView.m:
+        (-[WebFrameView drawRect:]):
+        * WebView/WebView.m:
+        (-[WebView setBackgroundColor:]):
+        (-[WebView backgroundColor]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView setDrawsBackground:]):
+        * WebView/WebViewPrivate.h:
+
+2006-08-24  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Darin.
 
         Fix for Mail stationary. Selecting a stationary item would cause this exception.

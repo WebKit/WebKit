@@ -73,6 +73,7 @@ public:
     {
         repaintRects = 0;
         isTransparent = false;
+        baseBackgroundColor = Color::white;
         vmode = hmode = ScrollBarAuto;
         needToInitScrollBars = true;
         reset();
@@ -147,7 +148,8 @@ public:
     bool needToInitScrollBars;
     bool mousePressed;
     bool isTransparent;
-    
+    Color baseBackgroundColor;
+
     Timer<FrameView> hoverTimer;
     
     RenderLayer* m_resizeLayer;
@@ -1305,6 +1307,18 @@ bool FrameView::isTransparent() const
 void FrameView::setTransparent(bool isTransparent)
 {
     d->isTransparent = isTransparent;
+}
+
+Color FrameView::baseBackgroundColor() const
+{
+    return d->baseBackgroundColor;
+}
+
+void FrameView::setBaseBackgroundColor(Color bc)
+{
+    if (!bc.isValid())
+        bc = Color::white;
+    d->baseBackgroundColor = bc;
 }
 
 void FrameView::scheduleHoverStateUpdate()

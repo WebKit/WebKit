@@ -498,17 +498,25 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
         
         if (isTransparent)
             view()->frameView()->setUseSlowRepaints(); // The parent must show behind the child.
-        else
-            bgColor = Color::white;
     }
 
     // Paint the color first underneath all images.
-    if (!bgLayer->next() && bgColor.isValid() && bgColor.alpha() > 0) {
+    if (!bgLayer->next()) {
         IntRect rect(_tx, clipy, w, cliph);
-        // If we have an alpha and we are painting the root element, go ahead and blend with white.
-        if (bgColor.alpha() < 0xFF && isRoot() && !view()->frameView()->isTransparent())
-            p->fillRect(rect, Color(Color::white));
-        p->fillRect(rect, bgColor);
+        // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
+        if (isRoot() && (!bgColor.isValid() || bgColor.alpha() < 0xFF) && !view()->frameView()->isTransparent()) {
+            Color baseColor = view()->frameView()->baseBackgroundColor();
+            if (baseColor.alpha() > 0) {
+                p->save();
+                p->setCompositeOperation(CompositeCopy);
+                p->fillRect(rect, baseColor);
+                p->restore();
+            } else
+                p->clearRect(rect);
+        }
+
+        if (bgColor.isValid() && bgColor.alpha() > 0)
+            p->fillRect(rect, bgColor);
     }
     
     // no progressive loading of the background image

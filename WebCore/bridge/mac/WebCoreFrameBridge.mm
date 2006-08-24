@@ -1568,6 +1568,18 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame->document()->axObjectCache()->get(root);
 }
 
+- (void)setBaseBackgroundColor:(NSColor *)backgroundColor
+{
+    if (m_frame && m_frame->view()) {
+        NSColor *deviceColor = [backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+        Color color = Color(makeRGBA((int)(255 * [deviceColor redComponent]),
+                                     (int)(255 * [deviceColor blueComponent]),
+                                     (int)(255 * [deviceColor greenComponent]),
+                                     (int)(255 * [deviceColor alphaComponent])));
+        m_frame->view()->setBaseBackgroundColor(color);
+    }
+}
+
 - (void)setDrawsBackground:(BOOL)drawsBackground
 {
     if (m_frame && m_frame->view())

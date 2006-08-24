@@ -117,6 +117,23 @@ typedef enum {
 + (BOOL)_scriptDebuggerEnabled;
 
 /*!
+    @method setBackgroundColor:
+    @param backgroundColor Color to use as the default background.
+    @abstract Sets what color the receiver draws under transparent page background colors and images.
+    This color is also used when no page is loaded. A color with alpha should only be used when the receiver is
+    in a non-opaque window, since the color is drawn using NSCompositeCopy.
+*/
+- (void)setBackgroundColor:(NSColor *)backgroundColor;
+
+/*!
+    @method backgroundColor
+    @result Returns the background color drawn under transparent page background colors and images.
+    This color is also used when no page is loaded. A color with alpha should only be used when the receiver is
+    in a non-opaque window, since the color is drawn using NSCompositeCopy.
+*/
+- (NSColor *)backgroundColor;
+
+/*!
 Could be worth adding to the API.
  @method loadItemsFromOtherView:
  @abstract Loads the view with the contents of the other view, including its backforward list.

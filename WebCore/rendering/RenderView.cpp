@@ -199,8 +199,16 @@ void RenderView::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     // no background in the child document should show the parent's background.
     if (elt || view()->isTransparent())
         frameView()->setUseSlowRepaints(); // The parent must show behind the child.
-    else
-        i.p->fillRect(i.r, Color(Color::white));
+    else {
+        Color baseColor = frameView()->baseBackgroundColor();
+        if (baseColor.alpha() > 0) {
+            i.p->save();
+            i.p->setCompositeOperation(CompositeCopy);
+            i.p->fillRect(i.r, baseColor);
+            i.p->restore();
+        } else
+            i.p->clearRect(i.r);
+    }
 }
 
 void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)

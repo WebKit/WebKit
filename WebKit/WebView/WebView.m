@@ -281,6 +281,8 @@ macro(yankAndSelect) \
     BOOL tabKeyCyclesThroughElements;
     BOOL tabKeyCyclesThroughElementsChanged;
 
+    NSColor *backgroundColor;
+
     NSString *mediaStyle;
     
     NSView <WebDocumentDragging> *draggingDocumentView;
@@ -1528,6 +1530,23 @@ static bool debugWidget = true;
     } while (frame);
 }
 
+- (void)setBackgroundColor:(NSColor *)backgroundColor
+{
+    if ([_private->backgroundColor isEqual:backgroundColor])
+        return;
+
+    id old = _private->backgroundColor;
+    _private->backgroundColor = [backgroundColor retain];
+    [old release];
+
+    [[self mainFrame] _updateBackground];
+}
+
+- (NSColor *)backgroundColor
+{
+    return _private->backgroundColor;
+}
+
 @end
 
 
@@ -1717,6 +1736,7 @@ NSMutableDictionary *countInvocations;
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
     _private->smartInsertDeleteEnabled = YES;
+    _private->backgroundColor = [[NSColor whiteColor] retain];
 
     NSRect f = [self frame];
     WebFrameView *frameView = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
@@ -2600,7 +2620,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     if (_private->drawsBackground == drawsBackground)
         return;
     _private->drawsBackground = drawsBackground;
-    [[self mainFrame] _updateDrawsBackground];
+    [[self mainFrame] _updateBackground];
 }
 
 - (BOOL)drawsBackground

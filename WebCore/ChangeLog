@@ -1,3 +1,23 @@
+2006-08-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Hyatt.
+
+        Allow changing the background color WebCore draws under transparent page backgrounds.
+        No automated way to test. All tests pass, no performance regression.
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge setBaseBackgroundColor:]):
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        (WebCore::FrameView::baseBackgroundColor):
+        (WebCore::FrameView::setBaseBackgroundColor):
+        * page/FrameView.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
 2006-08-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.
