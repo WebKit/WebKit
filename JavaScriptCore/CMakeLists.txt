@@ -11,6 +11,8 @@ check_library_exists(pthread pthread_getattr_np "" HAVE_PTHREAD_GETATTR_NP)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/pcre
+    ${CMAKE_CURRENT_SOURCE_DIR}/bindings
+    ${CMAKE_CURRENT_SOURCE_DIR}/bindings/c
     ${CMAKE_CURRENT_BINARY_DIR}/kjs
     ${CMAKE_CURRENT_SOURCE_DIR}/kjs
 
@@ -63,6 +65,17 @@ kde4_add_library(wtf-unity SHARED
 set(kjs-unity_LIB_SRCS
     ${kjs-unity_LIB_SRCS}
     wtf/unicode/qt4/UnicodeQt4.cpp
+    bindings/NP_jsobject.cpp
+    bindings/npruntime.cpp
+    bindings/runtime_array.cpp
+    bindings/runtime.cpp
+    bindings/runtime_method.cpp
+    bindings/runtime_object.cpp
+    bindings/runtime_root.cpp
+    bindings/c/c_class.cpp
+    bindings/c/c_instance.cpp
+    bindings/c/c_runtime.cpp
+    bindings/c/c_utility.cpp
     kjs/JSWrapperObject.cpp
 	kjs/PropertyNameArray.cpp
 	kjs/array_object.cpp

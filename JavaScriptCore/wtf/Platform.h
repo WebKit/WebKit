@@ -84,7 +84,7 @@
 /* PLATFORM(CAIRO) */
 #if PLATFORM(MAC)
 #define KXMLCORE_PLATFORM_CG 1
-#else
+#elif !PLATFORM(QT)
 #define KXMLCORE_PLATFORM_CAIRO 1
 #endif
 

@@ -1,3 +1,13 @@
+2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed, tweaked and landed by ap
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+        WebKit should have Qt platform support (Part II)
+
+        * CMakeLists.txt: Adjust to Anders' build fixes.
+        * wtf/Platform.h: Fix define for the Qt platform (we don't use/need Cairo.)
+
 2006-08-23  David Hyatt  <hyatt@apple.com>
 
         Fix Platform.h to include #defines for graphics features.
