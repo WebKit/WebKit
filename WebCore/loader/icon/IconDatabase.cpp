@@ -371,7 +371,7 @@ void IconDatabase::retainIconForPageURL(const String& pageURL)
                 m_preparedPageRetainInsertStatement->prepare();
             }
             m_preparedPageRetainInsertStatement->reset();
-            m_preparedPageRetainInsertStatement->bindText16(0, pageURL);
+            m_preparedPageRetainInsertStatement->bindText16(1, pageURL);
             if (m_preparedPageRetainInsertStatement->step() != SQLITE_DONE)
                 LOG_ERROR("Failed to record icon retention in temporary table for IconURL %s", pageURL.ascii().data());
             return;
