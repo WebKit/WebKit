@@ -29,16 +29,17 @@
 namespace WebCore {
 
     class FloatRect;
-    class Widget;
+    class Page;
 
-    int screenDepth(Widget*);
-    int screenDepthPerComponent(Widget*);
-    bool screenIsMonochrome(Widget*);
-    FloatRect screenRect(Widget*);
-    FloatRect usableScreenRect(Widget*);
+    int screenDepth(const Page*);
+    int screenDepthPerComponent(const Page*);
+    bool screenIsMonochrome(const Page*);
+    FloatRect screenRect(const Page*);
+    FloatRect usableScreenRect(const Page*);
 
-    FloatRect scaleScreenRectToWidget(FloatRect, Widget*);
-    FloatRect scaleWidgetRectToScreen(FloatRect, Widget*);
+    FloatRect scaleScreenRectToPageCoordinates(const FloatRect&, const Page*);
+    FloatRect scalePageRectToScreenCoordinates(const FloatRect&, const Page*);
+    float scaleFactor(const Page*);
 
 #if PLATFORM(MAC)
     NSRect flipScreenRect(NSRect);

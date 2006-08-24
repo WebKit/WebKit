@@ -27,6 +27,7 @@
 #include "RenderObject.h"
 
 #include "AXObjectCache.h" 
+#include "AffineTransform.h"
 #include "CachedImage.h"
 #include "Decoder.h"
 #include "Document.h"
@@ -36,8 +37,6 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
-#include "TextStream.h"
-#include "AffineTransform.h"
 #include "Position.h"
 #include "RenderArena.h"
 #include "RenderFlexibleBox.h"
@@ -50,6 +49,8 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "Screen.h"
+#include "TextStream.h"
 #include "cssstyleselector.h"
 #include <algorithm>
 
@@ -2783,10 +2784,10 @@ void RenderObject::addDashboardRegions (DeprecatedValueList<DashboardRegionValue
             region.bounds.setX(x + styleRegion.offset.left.value());
             region.bounds.setY(y + styleRegion.offset.top.value());
             
-            float scaleFactor = document()->view() ? document()->view()->scaleFactor() : 1.0f;
-            if (scaleFactor != 1.0f) {
-                region.bounds.scale(scaleFactor);
-                region.clip.scale(scaleFactor);
+            float pageScaleFactor = document()->frame() ? scaleFactor(document()->frame()->page()) : 1.0f;
+            if (pageScaleFactor != 1.0f) {
+                region.bounds.scale(pageScaleFactor);
+                region.clip.scale(pageScaleFactor);
             }
             
             regions.append(region);

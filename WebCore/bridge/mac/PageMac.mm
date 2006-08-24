@@ -29,19 +29,11 @@
 namespace WebCore {
 
 Page::Page(WebCorePageBridge* bridge)
-: m_frameCount(0)
-, m_widget(0)
-, m_bridge(bridge)
+    : m_frameCount(0)
+    , m_bridge(bridge)
 
 {
     init();
-}
-
-Widget* Page::widget() const
-{
-    if (!m_widget)
-        m_widget = new Widget([bridge() outerView]);
-    return m_widget;
 }
 
 // These methods scale between window and WebView coordinates because JavaScript/DOM operations 
@@ -49,12 +41,12 @@ Widget* Page::widget() const
 
 FloatRect Page::windowRect() const
 {
-    return scaleScreenRectToWidget(flipScreenRect([bridge() windowFrame]), widget());
+    return scaleScreenRectToPageCoordinates(flipScreenRect([bridge() windowFrame]), this);
 }
 
 void Page::setWindowRect(const FloatRect& r)
 {
-    [bridge() setWindowFrame:flipScreenRect(scaleWidgetRectToScreen(r, widget()))];
+    [bridge() setWindowFrame:flipScreenRect(scalePageRectToScreenCoordinates(r, this))];
 }
 
 }

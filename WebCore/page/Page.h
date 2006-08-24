@@ -18,19 +18,23 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef PAGE_H
-#define PAGE_H
+#ifndef Page_h
+#define Page_h
 
 #include "PlatformString.h"
 #include "SelectionController.h"
 #include <wtf/HashSet.h>
 
-#if __APPLE__
+#if PLATFORM(MAC)
 #ifdef __OBJC__
 @class WebCorePageBridge;
 #else
 class WebCorePageBridge;
 #endif
+#endif
+
+#if PLATFORM(WIN)
+typedef struct HWND__* HWND;
 #endif
 
 namespace WebCore {
@@ -40,7 +44,7 @@ namespace WebCore {
     class FloatRect;
     class Settings;
     class Widget;
-    
+
     class Page : Noncopyable {
     public:
         ~Page();
@@ -48,23 +52,22 @@ namespace WebCore {
         void setMainFrame(PassRefPtr<Frame>);
         Frame* mainFrame() const { return m_mainFrame.get(); }
 
-        FloatRect windowRect() const;
         void setWindowRect(const FloatRect&);
+        FloatRect windowRect() const;
 
         void setGroupName(const String&);
         String groupName() const { return m_groupName; }
+
         const HashSet<Page*>* frameNamespace() const;
         static const HashSet<Page*>* frameNamespace(const String&);
 
         void incrementFrameCount() { ++m_frameCount; }
         void decrementFrameCount() { --m_frameCount; }
         int frameCount() const { return m_frameCount; }
-        
-        Widget* widget() const;
 
         static void setNeedsReapplyStyles();
         static void setNeedsReapplyStylesForSettingsChange(Settings*);
-        
+
         // FIXME: Replace this with a function on the selection controller or change it to Selection instead?
         void setDragCaret(const SelectionController&);
         SelectionController& dragCaret() const; // FIXME: Change to pointer?
@@ -75,7 +78,8 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(WIN_OS)
-        Page();
+        Page(HWND);
+        HWND windowHandle() const { return m_windowHandle; }
 #endif
 
     private:
@@ -87,11 +91,15 @@ namespace WebCore {
         String m_groupName;
         mutable SelectionController m_dragCaret;
 
-#if __APPLE__
+#if PLATFORM(MAC)
         WebCorePageBridge* m_bridge;
+#endif
+
+#if PLATFORM(WIN_OS)
+        HWND m_windowHandle;
 #endif
     };
 
 } // namespace WebCore
     
-#endif // PAGE_H
+#endif // Page_h

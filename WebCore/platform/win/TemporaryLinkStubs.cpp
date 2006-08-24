@@ -300,6 +300,8 @@ void GraphicsContext::translate(const FloatSize&) { }
 void GraphicsContext::rotate(float) { }
 void GraphicsContext::scale(const FloatSize&) { }
 
+Page::Page(HWND) { }
+
 Path::Path(){ }
 Path::~Path(){ }
 Path::Path(const Path&){ }

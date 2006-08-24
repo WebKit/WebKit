@@ -175,24 +175,24 @@ bool Screen::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
 
 JSValue* Screen::getValueProperty(ExecState*, int token) const
 {
-  Widget* widget = m_frame ? m_frame->view() : 0;
+  Page* page = m_frame ? m_frame->page() : 0;
 
   switch (token) {
   case Height:
-    return jsNumber(screenRect(widget).height());
+    return jsNumber(screenRect(page).height());
   case Width:
-    return jsNumber(screenRect(widget).width());
+    return jsNumber(screenRect(page).width());
   case ColorDepth:
   case PixelDepth:
-    return jsNumber(screenDepth(widget));
+    return jsNumber(screenDepth(page));
   case AvailLeft:
-    return jsNumber(usableScreenRect(widget).x() - screenRect(widget).x());
+    return jsNumber(usableScreenRect(page).x() - screenRect(page).x());
   case AvailTop:
-    return jsNumber(usableScreenRect(widget).y() - screenRect(widget).y());
+    return jsNumber(usableScreenRect(page).y() - screenRect(page).y());
   case AvailHeight:
-    return jsNumber(usableScreenRect(widget).height());
+    return jsNumber(usableScreenRect(page).height());
   case AvailWidth:
-    return jsNumber(usableScreenRect(widget).width());
+    return jsNumber(usableScreenRect(page).width());
   default:
     return jsUndefined();
   }
@@ -615,7 +615,7 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
     // - help: boolFeature(features, "help", true), makes help icon appear in dialog (what does it do on Windows?)
     // - unadorned: trusted && boolFeature(features, "unadorned");
 
-    FloatRect screenRect = usableScreenRect(openerWindow->frame()->view());
+    FloatRect screenRect = usableScreenRect(openerWindow->frame()->page());
 
     wargs.width = floatFeature(features, "dialogwidth", 100, screenRect.width(), 620); // default here came from frame size of dialog in MacIE
     wargs.widthSet = true;
@@ -1508,6 +1508,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     return jsUndefined();
 
   FrameView *widget = frame->view();
+  Page* page = frame->page();
   JSValue *v = args[0];
   UString s = v->toString(exec);
   String str = s;
@@ -1552,7 +1553,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       WindowArgs windowArgs;
       String features = args[2]->isUndefinedOrNull() ? UString() : args[2]->toString(exec);
       parseWindowFeatures(features, windowArgs);
-      constrainToVisible(screenRect(widget), windowArgs);
+      constrainToVisible(screenRect(page), windowArgs);
       
       // prepare arguments
       KURL url;
@@ -1634,45 +1635,45 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       widget->setContentsPos(args[0]->toInt32(exec), args[1]->toInt32(exec));
     return jsUndefined();
   case Window::MoveBy:
-    if (args.size() >= 2 && widget) {
-      FloatRect r = frame->page()->windowRect();
+    if (args.size() >= 2 && page) {
+      FloatRect r = page->windowRect();
       r.move(args[0]->toNumber(exec), args[1]->toNumber(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      if (screenRect(widget).contains(r))
-        frame->page()->setWindowRect(r);
+      if (screenRect(page).contains(r))
+        page->setWindowRect(r);
     }
     return jsUndefined();
   case Window::MoveTo:
-    if (args.size() >= 2 && widget) {
-      FloatRect r = frame->page()->windowRect();
-      FloatRect sr = screenRect(widget);
+    if (args.size() >= 2 && page) {
+      FloatRect r = page->windowRect();
+      FloatRect sr = screenRect(page);
       r.setLocation(sr.location());
       r.move(args[0]->toNumber(exec), args[1]->toNumber(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
       if (sr.contains(r))
-        frame->page()->setWindowRect(r);
+        page->setWindowRect(r);
     }
     return jsUndefined();
   case Window::ResizeBy:
-    if (args.size() >= 2 && widget) {
-      FloatRect r = frame->page()->windowRect();
+    if (args.size() >= 2 && page) {
+      FloatRect r = page->windowRect();
       FloatSize dest = r.size() + FloatSize(args[0]->toNumber(exec), args[1]->toNumber(exec));
-      FloatRect sg = screenRect(widget);
+      FloatRect sg = screenRect(page);
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom()
            && dest.width() >= 100 && dest.height() >= 100)
-        frame->page()->setWindowRect(FloatRect(r.location(), dest));
+        page->setWindowRect(FloatRect(r.location(), dest));
     }
     return jsUndefined();
   case Window::ResizeTo:
-    if (args.size() >= 2 && widget) {
-      FloatRect r = frame->page()->windowRect();
+    if (args.size() >= 2 && page) {
+      FloatRect r = page->windowRect();
       FloatSize dest = FloatSize(args[0]->toNumber(exec), args[1]->toNumber(exec));
-      FloatRect sg = screenRect(widget);
+      FloatRect sg = screenRect(page);
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom() &&
            dest.width() >= 100 && dest.height() >= 100)
-        frame->page()->setWindowRect(FloatRect(r.location(), dest));
+        page->setWindowRect(FloatRect(r.location(), dest));
     }
     return jsUndefined();
   case Window::SetTimeout:

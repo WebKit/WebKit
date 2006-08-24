@@ -28,36 +28,36 @@
 
 #include "IntRect.h"
 #include "FloatRect.h"
-#include "Widget.h"
+#include "Page.h"
 #include <windows.h>
 
 namespace WebCore {
 
-FloatRect scaleScreenRectToWidget(FloatRect rect, Widget*)
+FloatRect scaleScreenRectToPageCoordinates(const FloatRect& rect, const Page*)
 {
     return rect;
 }
 
-FloatRect scaleWidgetRectToScreen(FloatRect rect, Widget*)
+FloatRect scalePageRectToScreenCoordinates(const FloatRect& rect, const Page*)
 {
     return rect;
 }
     
-static MONITORINFOEX monitorInfoForWidget(Widget* widget)
+static MONITORINFOEX monitorInfo(const Page* page)
 {
-    HMONITOR monitor = MonitorFromWindow(widget->windowHandle(), MONITOR_DEFAULTTOPRIMARY);
+    HMONITOR monitor = MonitorFromWindow(page->windowHandle(), MONITOR_DEFAULTTOPRIMARY);
     MONITORINFOEX info;
     info.cbSize = sizeof(MONITORINFOEX);
     GetMonitorInfo(monitor, &info);
     return info;
 }
 
-FloatRect WebCore::screenRect(Widget* widget)
+FloatRect screenRect(const Page* page)
 {
-    return monitorInfoForWidget(widget).rcMonitor;
+    return monitorInfo(page).rcMonitor;
 }
 
-int WebCore::screenDepth(Widget* widget)
+int screenDepth(const Page*)
 {
     DEVMODE deviceInfo;
     deviceInfo.dmSize = sizeof(DEVMODE);
@@ -66,9 +66,14 @@ int WebCore::screenDepth(Widget* widget)
     return deviceInfo.dmBitsPerPel;
 }
 
-FloatRect WebCore::usableScreenRect(Widget* widget)
+FloatRect usableScreenRect(const Page* page)
 {
-    return monitorInfoForWidget(widget).rcWork;
+    return monitorInfo(page).rcWork;
 }
 
+float scaleFactor(const Page* page)
+{
+    return 1.0f;
 }
+
+} // namespace WebCore

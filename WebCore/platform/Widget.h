@@ -99,8 +99,6 @@ namespace WebCore {
 
         virtual IntPoint mapFromGlobal(const IntPoint&) const;
 
-        float scaleFactor() const;
-
         bool hasFocus() const;
         void setFocus();
         void clearFocus();

@@ -31,10 +31,11 @@
 #include "CanvasRenderingContext2D.h"
 #include "CanvasStyle.h"
 #include "Document.h"
-#include "FrameView.h"
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "RenderHTMLCanvas.h"
+#include "Screen.h"
 #include <math.h>
 
 namespace WebCore {
@@ -154,9 +155,9 @@ void HTMLCanvasElement::createDrawingContext() const
 
     float unscaledWidth = width();
     float unscaledHeight = height();
-    float scaleFactor = document()->view() ? document()->view()->scaleFactor() : 1.0f;
-    float wf = ceilf(unscaledWidth * scaleFactor);
-    float hf = ceilf(unscaledHeight * scaleFactor);
+    float pageScaleFactor = document()->frame() ? scaleFactor(document()->frame()->page()) : 1.0f;
+    float wf = ceilf(unscaledWidth * pageScaleFactor);
+    float hf = ceilf(unscaledHeight * pageScaleFactor);
     
     if (!(wf > 0 && wf < UINT_MAX && hf > 0 && hf < UINT_MAX))
         return;

@@ -49,7 +49,6 @@ void Page::init()
 Page::~Page()
 {
     m_mainFrame->setView(0);
-    delete m_widget;
     setGroupName(String());
     allPages->remove(this);
     

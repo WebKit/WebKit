@@ -1,3 +1,21 @@
+2006-08-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        Frame refactoring: changed FrameView clients so they no longer assume that
+        FrameViews are Widgets that can tell you things about the platform, in 
+        preparation for divorcing FrameViews from heavy-weight Widgets altogether.
+
+        This patch makes Page, rather than Widget, responsible for answering
+        questions about the screen (scale factor, color depth, etc.). Refactoring 
+        aside, I think this makes more sense, since (a) the screen has nothing to do 
+        with any particular widget and (b) Page was already half-responsible for
+        answering those questions, anyway.
+
+        Plus some random Windows build fix goodness.
+
+        Layout tests still pass.
+
 2006-08-24  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Hyatt.
