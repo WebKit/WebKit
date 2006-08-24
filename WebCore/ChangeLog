@@ -1,5 +1,97 @@
 2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed and landed by Anders.
+
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+        WebKit should have Qt platform support
+
+        * CMakeLists.txt:
+        * platform/qt/FrameQt.cpp: Added.
+        (WebCore::doScroll):
+        (WebCore::FrameView::isFrameView):
+        (WebCore::FrameQt::FrameQt):
+        (WebCore::FrameQt::init):
+        (WebCore::FrameQt::~FrameQt):
+        (WebCore::FrameQt::openURL):
+        (WebCore::FrameQt::submitForm):
+        (WebCore::FrameQt::urlSelected):
+        (WebCore::FrameQt::userAgent):
+        (WebCore::FrameQt::runJavaScriptAlert):
+        (WebCore::FrameQt::runJavaScriptConfirm):
+        (WebCore::FrameQt::locationbarVisible):
+        (WebCore::FrameQt::setTitle):
+        (WebCore::FrameQt::createFrame):
+        (WebCore::FrameQt::passWheelEventToChildWidget):
+        (WebCore::FrameQt::passSubframeEventToSubframe):
+        (WebCore::FrameQt::objectContentType):
+        (WebCore::FrameQt::createPlugin):
+        (WebCore::FrameQt::passMouseDownEventToWidget):
+        (WebCore::FrameQt::menubarVisible):
+        (WebCore::FrameQt::personalbarVisible):
+        (WebCore::FrameQt::statusbarVisible):
+        (WebCore::FrameQt::toolbarVisible):
+        (WebCore::FrameQt::createEmptyDocument):
+        (WebCore::FrameQt::markedTextRange):
+        (WebCore::FrameQt::incomingReferrer):
+        (WebCore::FrameQt::mimeTypeForFileName):
+        (WebCore::FrameQt::markMisspellingsInAdjacentWords):
+        (WebCore::FrameQt::markMisspellings):
+        (WebCore::FrameQt::lastEventIsMouseUp):
+        (WebCore::FrameQt::saveDocumentState):
+        (WebCore::FrameQt::restoreDocumentState):
+        (WebCore::FrameQt::openURLRequest):
+        (WebCore::FrameQt::scheduleClose):
+        (WebCore::FrameQt::unfocusWindow):
+        (WebCore::FrameQt::focusWindow):
+        (WebCore::FrameQt::overrideMediaType):
+        (WebCore::FrameQt::addMessageToConsole):
+        (WebCore::FrameQt::runJavaScriptPrompt):
+        (WebCore::FrameQt::getEmbedInstanceForWidget):
+        (WebCore::FrameQt::getObjectInstanceForWidget):
+        (WebCore::FrameQt::getAppletInstanceForWidget):
+        (WebCore::FrameQt::registerCommandForUndo):
+        (WebCore::FrameQt::registerCommandForRedo):
+        (WebCore::FrameQt::clearUndoRedoOperations):
+        (WebCore::FrameQt::issueUndoCommand):
+        (WebCore::FrameQt::issueRedoCommand):
+        (WebCore::FrameQt::issueCutCommand):
+        (WebCore::FrameQt::issueCopyCommand):
+        (WebCore::FrameQt::issuePasteCommand):
+        (WebCore::FrameQt::issuePasteAndMatchStyleCommand):
+        (WebCore::FrameQt::issueTransposeCommand):
+        (WebCore::FrameQt::respondToChangedSelection):
+        (WebCore::FrameQt::respondToChangedContents):
+        (WebCore::FrameQt::shouldChangeSelection):
+        (WebCore::FrameQt::partClearedInBegin):
+        (WebCore::FrameQt::canGoBackOrForward):
+        (WebCore::FrameQt::handledOnloadEvents):
+        (WebCore::FrameQt::canPaste):
+        (WebCore::FrameQt::canRedo):
+        (WebCore::FrameQt::canUndo):
+        (WebCore::FrameQt::print):
+        (WebCore::FrameQt::shouldInterruptJavaScript):
+        (WebCore::FrameQt::keyEvent):
+        (WebCore::FrameQt::receivedResponse):
+        (WebCore::FrameQt::receivedData):
+        (WebCore::FrameQt::receivedAllData):
+        (WebCore::FrameQt::setFrameGeometry):
+        * platform/qt/FrameQt.h: Added.
+        * platform/qt/ScrollViewCanvasQt.cpp: Added.
+        (WebCore::ScrollViewCanvasQt::ScrollViewCanvasQt):
+        (WebCore::ScrollViewCanvasQt::paintEvent):
+        (WebCore::ScrollViewCanvasQt::sizeHint):
+        (WebCore::ScrollViewCanvasQt::mouseMoveEvent):
+        (WebCore::ScrollViewCanvasQt::mousePressEvent):
+        (WebCore::ScrollViewCanvasQt::mouseReleaseEvent):
+        (WebCore::ScrollViewCanvasQt::keyPressEvent):
+        (WebCore::ScrollViewCanvasQt::keyReleaseEvent):
+        (WebCore::ScrollViewCanvasQt::handleKeyEvent):
+        * platform/qt/ScrollViewCanvasQt.h: Added.
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::setParentWidget):
+
+2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by ap.
 
         Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10467

@@ -67,7 +67,7 @@ IF(__KDE_HAVE_WVARIADIC_MACROS)
   add_definitions ( -Wno-variadic-macros )
 ENDIF(__KDE_HAVE_WVARIADIC_MACROS)
 
-kde4_automoc(platform/qt/CanvasQt.cpp)
+kde4_automoc(platform/qt/ScrollViewCanvasQt.cpp)
 
 # rules for generated files
 IF (USE_WEBKIT_SVG_SUPPORT)
@@ -885,7 +885,7 @@ set(WebCore_SRCS
 #   platform/qt/FileButtonQt.cpp
     platform/qt/FrameQt.cpp
 #   platform/qt/TextEditQt.cpp
-    platform/qt/CanvasQt.cpp
+    platform/qt/ScrollViewCanvasQt.cpp
     platform/qt/PlatformMouseEventQt.cpp
     platform/qt/PlatformKeyboardEventQt.cpp
     platform/image-decoders/bmp/BMPImageDecoder.cpp

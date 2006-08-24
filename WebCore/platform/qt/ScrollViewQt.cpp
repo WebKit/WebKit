@@ -35,7 +35,7 @@
 #include "IntPoint.h"
 
 #include "FrameQt.h"
-#include "CanvasQt.h"
+#include "ScrollViewCanvasQt.h"
 
 #include <QScrollBar>
 #include <QScrollArea>
@@ -62,7 +62,7 @@ void ScrollView::setParentWidget(QWidget* parent)
 
     // 'isFrameView()' can not be called yet in the constructor!
     if (isFrameView()) {
-        CanvasQt* canvas = new CanvasQt(this, m_area);
+        ScrollViewCanvasQt* canvas = new ScrollViewCanvasQt(this, m_area);
 
         setQWidget(m_area);
         m_area->setWidget(canvas);
