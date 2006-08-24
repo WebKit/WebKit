@@ -1,3 +1,12 @@
+2006-08-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - added an assert to make it slightly easier to debug the common case of
+          calling document() on a node of 0
+
+        * dom/Node.h: (WebCore::Node::document): ASSERT(this).
+
 2006-08-23  David Hyatt  <hyatt@apple.com>
 
         Refactor Cairo and CoreGraphics to use platform ifdefs.  This patch

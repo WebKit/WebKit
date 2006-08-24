@@ -264,10 +264,11 @@ public:
 
     // Returns the document associated with this node. This method never returns NULL, except in the case 
     // of a DocumentType node that is not used with any Document yet. A Document node returns itself.
-    Document* document() const 
-    { 
+    Document* document() const
+    {
+      ASSERT(this);
       ASSERT(m_document || nodeType() == DOCUMENT_TYPE_NODE && !inDocument());
-      return m_document.get(); 
+      return m_document.get();
     }
     void setDocument(Document*);
 
