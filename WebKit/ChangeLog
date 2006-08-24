@@ -1,5 +1,18 @@
 2006-08-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Adele.
+        
+        - fix assertion which I accidentally changed to one that sometimes fails
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10531
+        
+        * Loader/WebDocumentLoadState.m:
+        (-[WebDocumentLoadState dealloc]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource dealloc]):
+
+2006-08-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Brady.
         
         - move WebFrame code that creates WebDataSources down to WebFrameLoader, in preparation

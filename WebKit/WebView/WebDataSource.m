@@ -149,8 +149,6 @@
 
 - (void)dealloc
 {
-    ASSERT(![[webFrame _frameLoader] isLoading]);
-
     [loadState release];
     
     [representation release];
@@ -1055,6 +1053,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)dealloc
 {
+    ASSERT([[_private->webFrame _frameLoader] activeDataSource] != self || ![[_private->webFrame _frameLoader] isLoading]);
+
     --WebDataSourceCount;
     
     [_private release];

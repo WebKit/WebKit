@@ -49,8 +49,6 @@
 
 - (void)dealloc
 {
-    ASSERT(![frameLoader isLoading]);
-
     [mainResourceData release];
 
     [super dealloc];
