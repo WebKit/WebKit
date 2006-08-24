@@ -563,6 +563,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\wtf\Platform.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\wtf\RefPtr.h"
 				>
 			</File>
