@@ -34,7 +34,7 @@ public:
     RenderPathQt(RenderStyle*, SVGStyledElement*);
 
 protected:
-    virtual void drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const KCanvasPath *) const;
+    virtual void drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const KCanvasPath*) const;
 };
 
 }

@@ -39,8 +39,8 @@ namespace WebCore {
 
 class FontPlatformData {
 public:
-    FontPlatformData(const FontPlatformData& other);
-    FontPlatformData& operator=(const FontPlatformData& other);
+    FontPlatformData(const FontPlatformData&);
+    FontPlatformData& operator=(const FontPlatformData&);
 
     class Deleted { };
     FontPlatformData(Deleted);
@@ -56,7 +56,7 @@ public:
 
     unsigned hash() const;
 
-    bool operator==(const FontPlatformData& other) const;
+    bool operator==(const FontPlatformData&) const;
 
 private:
     QFont m_font;

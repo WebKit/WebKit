@@ -31,8 +31,8 @@ namespace WebCore {
 
 void KCanvasClipperQt::applyClip(const FloatRect& boundingBox) const
 {
-    KRenderingDeviceContext *context = renderingDevice()->currentContext();
-    KRenderingDeviceContextQt *qtContext = static_cast<KRenderingDeviceContextQt *>(context);
+    KRenderingDeviceContext* context = renderingDevice()->currentContext();
+    KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
     if (m_clipData.count() < 1)
         return;
 
@@ -48,7 +48,7 @@ void KCanvasClipperQt::applyClip(const FloatRect& boundingBox) const
         if (clipData.windRule() != clipRule)
             heterogenousClipRules = true;
        
-        QPainterPath path = static_cast<KCanvasPathQt *>(clipData.path.get())->qtPath(); 
+        QPainterPath path = static_cast<KCanvasPathQt*>(clipData.path.get())->qtPath(); 
         if (path.isEmpty())
             continue;
 
@@ -104,11 +104,10 @@ void KCanvasClipperQt::applyClip(const FloatRect& boundingBox) const
         // we would have to detect such, draw to a mask, and then clip
         // to that mask
         // if (!CGContextIsPathEmpty(cgContext)) {
-            if (clipRule == RULE_EVENODD) {
+            if (clipRule == RULE_EVENODD)
                 newPath.setFillRule(Qt::OddEvenFill);
-            } else {
+            else
                 newPath.setFillRule(Qt::WindingFill);
-            }
         // }
     }
 

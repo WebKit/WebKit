@@ -1,5 +1,127 @@
 2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed/landed by Adam.
+
+        Final cleanup to conform to WebKit coding style!
+
+        * kcanvas/device/qt/KCanvasClipperQt.cpp:
+        (WebCore::KCanvasClipperQt::applyClip):
+        * kcanvas/device/qt/KCanvasClipperQt.h:
+        * kcanvas/device/qt/KCanvasPathQt.cpp:
+        * kcanvas/device/qt/KCanvasPathQt.h:
+        * kcanvas/device/qt/KRenderingDeviceQt.cpp:
+        * kcanvas/device/qt/KRenderingDeviceQt.h:
+        * kcanvas/device/qt/KRenderingPaintServerGradientQt.cpp:
+        (WebCore::KRenderingPaintServerLinearGradientQt::KRenderingPaintServerLinearGradientQt):
+        (WebCore::KRenderingPaintServerRadialGradientQt::KRenderingPaintServerRadialGradientQt):
+        * kcanvas/device/qt/KRenderingPaintServerGradientQt.h:
+        * kcanvas/device/qt/KRenderingPaintServerPatternQt.cpp:
+        (WebCore::KRenderingPaintServerPatternQt::KRenderingPaintServerPatternQt):
+        * kcanvas/device/qt/KRenderingPaintServerPatternQt.h:
+        * kcanvas/device/qt/KRenderingPaintServerQt.cpp:
+        (WebCore::KRenderingPaintServerQt::setPenProperties):
+        * kcanvas/device/qt/KRenderingPaintServerQt.h:
+        * kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp:
+        (WebCore::KRenderingPaintServerSolidQt::KRenderingPaintServerSolidQt):
+        (WebCore::KRenderingPaintServerSolidQt::renderPath):
+        * kcanvas/device/qt/KRenderingPaintServerSolidQt.h:
+        * kcanvas/device/qt/RenderPathQt.cpp:
+        * kcanvas/device/qt/RenderPathQt.h:
+        * platform/qt/AffineTransformQt.cpp:
+        * platform/qt/BrowserExtensionQt.cpp:
+        * platform/qt/BrowserExtensionQt.h:
+        * platform/qt/ColorQt.cpp:
+        (WebCore::Color::Color):
+        * platform/qt/ComboBoxQt.cpp:
+        (WebCore::PlatformComboBox::PlatformComboBox):
+        (WebCore::PlatformComboBox::~PlatformComboBox):
+        (WebCore::PlatformComboBox::setParentWidget):
+        (WebCore::PlatformComboBox::appendGroupLabel):
+        * platform/qt/CookieJarQt.cpp:
+        * platform/qt/CursorQt.cpp:
+        (WebCore::Cursors::Cursors::self):
+        * platform/qt/FloatPointQt.cpp:
+        * platform/qt/FloatRectQt.cpp:
+        * platform/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/qt/FontDataQt.cpp:
+        * platform/qt/FontPlatformData.h:
+        * platform/qt/FontPlatformDataQt.cpp:
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::operator QFont):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::openURL):
+        (WebCore::FrameQt::submitForm):
+        (WebCore::FrameQt::urlSelected):
+        (WebCore::FrameQt::keyEvent):
+        * platform/qt/FrameQt.h:
+        * platform/qt/GlyphMapQt.cpp:
+        * platform/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::setFocusRingClip):
+        (WebCore::GraphicsContext::clip):
+        * platform/qt/ImageQt.cpp:
+        (WebCore::Image::draw):
+        (WebCore::Image::drawTiled):
+        * platform/qt/ImageSourceQt.cpp:
+        * platform/qt/IntPointQt.cpp:
+        * platform/qt/IntRectQt.cpp:
+        * platform/qt/IntSizeQt.cpp:
+        * platform/qt/LineEditQt.cpp:
+        (WebCore::PlatformLineEdit::PlatformLineEdit):
+        (WebCore::PlatformLineEdit::~PlatformLineEdit):
+        (WebCore::PlatformLineEdit::setParentWidget):
+        (WebCore::PlatformLineEdit::addSearchResult):
+        * platform/qt/ListBoxQt.cpp:
+        (WebCore::ListBox::ListBox):
+        (WebCore::ListBox::~ListBox):
+        (WebCore::ListBox::setParentWidget):
+        * platform/qt/PageQt.cpp:
+        (WebCore::Page::windowRect):
+        (WebCore::Page::setWindowRect):
+        * platform/qt/PathQt.cpp:
+        (WebCore::Path::addArc):
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/qt/PlatformMouseEventQt.cpp:
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::getStylePainterAndWidgetFromPaintInfo):
+        (WebCore::RenderThemeQt::applyTheme):
+        (WebCore::RenderThemeQt::paintButton):
+        (WebCore::RenderThemeQt::paintTextField):
+        * platform/qt/ResourceLoaderCurl.cpp:
+        (WebCore::ResourceLoader::assembleResponseHeaders):
+        (WebCore::ResourceLoader::retrieveCharset):
+        (WebCore::ResourceLoader::receivedResponse):
+        * platform/qt/ResourceLoaderManager.cpp:
+        (WebCore::ResourceLoaderManager::add):
+        * platform/qt/ResourceLoaderManager.h:
+        * platform/qt/ScreenQt.cpp:
+        * platform/qt/ScrollViewCanvasQt.cpp:
+        (WebCore::ScrollViewCanvasQt::handleKeyEvent):
+        * platform/qt/ScrollViewCanvasQt.h:
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/qt/SharedTimerQt.cpp:
+        * platform/qt/SharedTimerQt.h:
+        (WebCore::SharedTimerQt::inst):
+        * platform/qt/StringQt.cpp:
+        * platform/qt/SystemTimeQt.cpp:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        * platform/qt/TextEditQt.cpp:
+        (WebCore::PlatformTextEdit::PlatformTextEdit):
+        (WebCore::PlatformTextEdit::~PlatformTextEdit):
+        (WebCore::PlatformTextEdit::setParentWidget):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::setQWidget):
+
+2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed and landed by Anders.
 
         Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10467

@@ -49,7 +49,8 @@ public:
     virtual void submitForm(const String& method, const KURL&, const FormData*) = 0;
 };
 
-class FrameQt : public Frame, public ResourceLoaderClient {
+class FrameQt : public Frame,
+                public ResourceLoaderClient {
 public:
     FrameQt(QWidget* parent);
     FrameQt();
@@ -136,7 +137,7 @@ public:
 
     virtual void receivedResponse(ResourceLoader*, PlatformResponse);
     virtual void receivedData(ResourceLoader*, const char*, int);
-    virtual void receivedAllData(ResourceLoader*,PlatformData);
+    virtual void receivedAllData(ResourceLoader*, PlatformData);
 
     void setFrameGeometry(const IntRect&);
 

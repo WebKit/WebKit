@@ -29,15 +29,14 @@
  */
 
 #include "config.h"
-#include "Widget.h"
 
-#include "Cursor.h"
 #include "Font.h"
-#include "GraphicsContext.h"
+#include "Widget.h"
+#include "Cursor.h"
 #include "IntRect.h"
 #include "RenderObject.h"
+#include "GraphicsContext.h"
 
-#include <QDebug>
 #include <QWidget>
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
@@ -133,7 +132,7 @@ void Widget::hide()
         data->m_widget->hide();
 }
 
-void Widget::setQWidget(QWidget*child)
+void Widget::setQWidget(QWidget* child)
 {
     delete data->m_widget;
     data->m_widget = child;

@@ -113,7 +113,7 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dst,
     // Set the compositing operation.
     ctxt->setCompositeOperation(op);
 
-    QPainter *painter(ctxt->platformContext());
+    QPainter* painter(ctxt->platformContext());
 
     // Test using example site at
     // http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html    
@@ -158,7 +158,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
 
     // Set the compositing operation.
     ctxt->setCompositeOperation(op);
-    QPainter *p = ctxt->platformContext();
+    QPainter* p = ctxt->platformContext();
     p->drawTiledPixmap(dstRect, pix);
 
     ctxt->restore();

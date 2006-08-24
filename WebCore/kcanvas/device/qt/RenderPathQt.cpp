@@ -21,10 +21,10 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include <QDebug>
-
 #include "config.h"
 #include "RenderPathQt.h"
+
+#include <QDebug>
 
 namespace WebCore {
     

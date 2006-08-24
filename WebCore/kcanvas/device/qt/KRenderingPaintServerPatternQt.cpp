@@ -42,7 +42,7 @@ namespace WebCore {
 // KRenderingPaintServerPatternQt
 KRenderingPaintServerPatternQt::KRenderingPaintServerPatternQt()
     : KRenderingPaintServerPattern()
-      , KRenderingPaintServerQt()
+    , KRenderingPaintServerQt()
 {
 }
 

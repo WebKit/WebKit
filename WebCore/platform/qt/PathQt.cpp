@@ -133,8 +133,8 @@ void Path::addArc(const FloatPoint& p, float r, float sar, float ear, bool antic
 
     double span = 0;
 
-    double xs     = xc - radius;
-    double ys     = yc - radius;
+    double xs = xc - radius;
+    double ys = yc - radius;
     double width  = radius*2;
     double height = radius*2;
 
@@ -143,7 +143,7 @@ void Path::addArc(const FloatPoint& p, float r, float sar, float ear, bool antic
     else if (anticlockwise && (sa < ea))
         span -= 360;
 
-    //### this is also due to switched coordinate system
+    // this is also due to switched coordinate system
     // we would end up with a 0 span instead of 360
     if (!(qFuzzyCompare(span + (ea - sa), 0.0) &&
           qFuzzyCompare(abs(span), 360.0))) {
@@ -152,6 +152,7 @@ void Path::addArc(const FloatPoint& p, float r, float sar, float ear, bool antic
 
     m_path->moveTo(QPointF(xc + radius  * cos(sar),
                           yc - radius  * sin(sar)));
+
     m_path->arcTo(xs, ys, width, height, sa, span);
 }
 

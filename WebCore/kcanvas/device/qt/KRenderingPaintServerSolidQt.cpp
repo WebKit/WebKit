@@ -37,7 +37,7 @@ namespace WebCore {
 
 KRenderingPaintServerSolidQt::KRenderingPaintServerSolidQt()
     : KRenderingPaintServerSolid()
-      , KRenderingPaintServerQt()
+    , KRenderingPaintServerQt()
 {
 }
 
@@ -96,7 +96,7 @@ void KRenderingPaintServerSolidQt::teardown(KRenderingDeviceContext*, const Rend
 void KRenderingPaintServerSolidQt::renderPath(KRenderingDeviceContext* context, const RenderPath* path, KCPaintTargetType type) const
 {
     RenderStyle* renderStyle = path->style();
-    KRenderingDeviceContextQt *qtContext = static_cast<KRenderingDeviceContextQt*>(context);
+    KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
 
     if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle))
         qtContext->fillPath();

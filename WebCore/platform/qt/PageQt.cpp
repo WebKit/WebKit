@@ -27,7 +27,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <QDebug>
 #include <QWidget>
 
 #include "config.h"
@@ -55,14 +54,11 @@ FloatRect Page::windowRect() const
     if (!widget)
         return FloatRect();
 
-    qDebug() << " Page::windowRect() -> " << (QRectF) widget->geometry();
     return (IntRect) widget->geometry();
 }
 
 void Page::setWindowRect(const FloatRect& r)
 {
-    qDebug() << " Page::setWindowRect() -> " << (QRectF) r;
-
     QWidget* widget = rootWindowForFrame(mainFrame());
     if (widget)
         widget->setGeometry(QRect(qRound(r.x()), qRound(r.y()), qRound(r.width()), qRound(r.height())));

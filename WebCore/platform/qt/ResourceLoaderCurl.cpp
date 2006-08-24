@@ -65,7 +65,7 @@ void ResourceLoader::assembleResponseHeaders() const
         d->responseHeaders = DeprecatedString::fromUtf8(d->response.toUtf8(), d->response.length());
         d->assembledResponseHeaders = true;
  
-        // TODO: Move the client activation to receivedResponse(), once
+        // FIXME: Move the client activation to receivedResponse(), once
         // we use KIO, and receivedResponse() is called only once.
         if (d->client) {
             d->client->receivedResponse(const_cast<ResourceLoader *>(this), (char *) d->response.data());
@@ -81,7 +81,7 @@ void ResourceLoader::retrieveCharset() const
         d->retrievedCharset = true;
     }
 
-    // TODO: We can just parse the headers here, but once we use KIO
+    // FIXME: We can just parse the headers here, but once we use KIO
     // we can set the response parameter to sth. else than a "char*".
     // I save my time but not implementing it for now :-)
     notImplemented();
@@ -94,7 +94,7 @@ void ResourceLoader::receivedResponse(char* response)
     d->assembledResponseHeaders = false;
     d->retrievedCharset = false;
 
-    // TODO: This is flawed:
+    // FIXME: This is flawed:
     // - usually receivedResponse() should be called _once_, when the
     //   response is available - seems very unflexible to do that with libcurl
     //   (so let's wait until it dies and do it properly with KIO then.)

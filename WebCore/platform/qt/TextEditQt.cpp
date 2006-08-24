@@ -24,10 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <QDebug>
+#include "config.h"
+
 #include <QTextEdit>
 
-#include <config.h>
 #include "GraphicsTypes.h"
 #include "ScrollView.h"
 #include "TextDirection.h"
@@ -42,17 +42,14 @@ namespace WebCore {
 PlatformTextEdit::PlatformTextEdit(Widget* parent)
     : ScrollView()
 {
-    qDebug("PlatformTextEdit::PlatformTextEdit(), this=%p", this);
 }
 
 PlatformTextEdit::~PlatformTextEdit()
 {
-    qDebug("PlatformTextEdit::~PlatformTextEdit()");
 }
 
 void PlatformTextEdit::setParentWidget(QWidget* parent)
 {
-    qDebug("PlatformTextEdit::setParentWidget(), parent=%p", parent);
     Widget::setParentWidget(parent);
 
     QTextEdit *widget = new QTextEdit(parent, "");

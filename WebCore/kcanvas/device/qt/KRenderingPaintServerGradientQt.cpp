@@ -51,7 +51,7 @@ void fill_color_array(QGradient& gradient, const Vector<KCGradientStop>& stops, 
 // KRenderingPaintServerLinearGradientQt
 KRenderingPaintServerLinearGradientQt::KRenderingPaintServerLinearGradientQt()
     : KRenderingPaintServerLinearGradient()
-      , KRenderingPaintServerQt()
+    , KRenderingPaintServerQt()
 {
 }
 
@@ -148,6 +148,7 @@ void KRenderingPaintServerLinearGradientQt::draw(KRenderingDeviceContext* contex
 // KRenderingPaintServerRadialGradientQt
 KRenderingPaintServerRadialGradientQt::KRenderingPaintServerRadialGradientQt()
     : KRenderingPaintServerRadialGradient()
+    , KRenderingPaintServerQt()
 {
 }
 

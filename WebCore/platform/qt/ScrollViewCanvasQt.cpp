@@ -29,10 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include "ScrollViewCanvasQt.h"
 #include "ScrollViewCanvasQt.moc"
 
-#include "config.h"
 #include "FrameQt.h"
 #include "FrameView.h"
 #include "TypingCommand.h"
@@ -42,7 +43,6 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformKeyboardEvent.h"
 
-#include <QDebug>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMouseEvent>
@@ -149,10 +149,11 @@ void ScrollViewCanvasQt::handleKeyEvent(QKeyEvent* ev, bool isKeyUp)
                     TypingCommand::insertText(frame->document(), kevent.text(), false);
 
             }
+
             handled = true;
         }
         
-        // TODO: doScroll stuff()!
+        // FIXME: doScroll stuff()!
     }
 }
 

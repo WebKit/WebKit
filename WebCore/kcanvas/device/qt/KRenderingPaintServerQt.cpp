@@ -41,18 +41,16 @@ KRenderingPaintServerQt::~KRenderingPaintServerQt()
 void KRenderingPaintServerQt::setPenProperties(const KRenderingStrokePainter& strokePainter, QPen& pen) const
 {
     pen.setWidthF(strokePainter.strokeWidth());
-    if (strokePainter.strokeCapStyle() == CAP_BUTT) {
+    if (strokePainter.strokeCapStyle() == CAP_BUTT)
         pen.setCapStyle(Qt::FlatCap);
-    } else if (strokePainter.strokeCapStyle() == CAP_ROUND) {
+    else if (strokePainter.strokeCapStyle() == CAP_ROUND)
         pen.setCapStyle(Qt::RoundCap);
-    }
 
     if(strokePainter.strokeJoinStyle() == JOIN_MITER) {
         pen.setJoinStyle(Qt::MiterJoin);
         pen.setMiterLimit((qreal)strokePainter.strokeMiterLimit());
-    } else if(strokePainter.strokeJoinStyle() == JOIN_ROUND) {
+    else if(strokePainter.strokeJoinStyle() == JOIN_ROUND)
         pen.setJoinStyle(Qt::RoundJoin);
-    }
 
     KCDashArray dashes = strokePainter.dashArray();
     unsigned int dashLength = !dashes.isEmpty() ? dashes.count() : 0;

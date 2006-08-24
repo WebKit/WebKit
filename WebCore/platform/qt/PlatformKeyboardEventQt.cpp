@@ -316,7 +316,7 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
             return VK_Z; //  (5A) Z key case 'z': case 'Z': return 0x5A;
         case Qt::Key_Meta:
             return VK_LWIN; // (5B) Left Windows key (Microsoft Natural keyboard)
-        //case Qt::Key_Meta_R: TODO: What to do here?
+        //case Qt::Key_Meta_R: FIXME: What to do here?
         //    return VK_RWIN; // (5C) Right Windows key (Natural keyboard)
             // VK_APPS (5D) Applications key (Natural keyboard)
             // VK_SLEEP (5F) Computer Sleep key
@@ -422,7 +422,7 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event, bool isKeyUp)
 {
     m_text = event->text();
-    m_unmodifiedText = event->text(); // TODO: not correct
+    m_unmodifiedText = event->text(); // FIXME: not correct
     m_keyIdentifier = keyIdentifierForQtKeyCode(event->key());
     m_isKeyUp = isKeyUp;
     m_autoRepeat = event->isAutoRepeat();

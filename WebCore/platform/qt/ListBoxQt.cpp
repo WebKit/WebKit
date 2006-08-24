@@ -42,17 +42,14 @@ ListBox::ListBox()
     , _width(0.0)
     , _widthGood(false)
 {
-    qDebug("ListBox::ListBox(), this=%p", this);
 }
 
 ListBox::~ListBox()
 {
-    qDebug("ListBox::~ListBox(), this=%p", this);
 }
 
 void ListBox::setParentWidget(QWidget* parent)
 {
-    qDebug("ListBox::setParentWidget(), parent=%p", parent);
     ScrollView::setParentWidget(parent);
 
     Q_ASSERT(m_listWidget == 0);

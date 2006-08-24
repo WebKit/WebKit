@@ -137,7 +137,7 @@ struct TransparencyLayer
     }
 
     QPixmap pixmap;
-    QPainter *painter;
+    QPainter* painter;
     qreal opacity;
 };
 
@@ -195,7 +195,7 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p)
     painter = p;
     redirect = 0;
 
-    // TODO: Maybe only enable in SVG mode?
+    // FIXME: Maybe only enable in SVG mode?
     painter->setRenderHint(QPainter::Antialiasing);
 }
 
@@ -205,7 +205,7 @@ GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
 
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
     : m_common(createGraphicsContextPrivate())
-      , m_data(new GraphicsContextPlatformPrivate(context))
+    , m_data(new GraphicsContextPlatformPrivate(context))
 {
     setPaintingDisabled(!context);
 }
@@ -243,7 +243,7 @@ void GraphicsContext::drawTextShadow(const TextRun& run, const IntPoint& point, 
     if (m_data->shadow.isNull())
         return;
 
-    TextShadow *shadow = &m_data->shadow;
+    TextShadow* shadow = &m_data->shadow;
 
     if (shadow->blur <= 0) {
         Pen p = pen();
@@ -252,7 +252,7 @@ void GraphicsContext::drawTextShadow(const TextRun& run, const IntPoint& point, 
         setPen(p);
     } else {
         const int thickness = shadow->blur;
-        // ### OPTIMIZE: limit the area to only the actually painted area + 2*thickness
+        // FIXME: OPTIMIZE: limit the area to only the actually painted area + 2*thickness
         const int w = m_data->p().device()->width();
         const int h = m_data->p().device()->height();
         const QRgb color = qRgb(255, 255, 255);
@@ -421,7 +421,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const IntPoint* points)
     if (paintingDisabled())
         return;
 
-    m_data->p().drawConvexPolygon((QPoint*)points, npoints);
+    m_data->p().drawConvexPolygon(reinterpret_cast<const QPoint*>(points), npoints);
 }
 
 void GraphicsContext::fillRect(const IntRect& rect, const Color& c)
@@ -458,7 +458,7 @@ void GraphicsContext::drawFocusRing(const Color& color)
     notImplemented();
 }
 
-void GraphicsContext::setFocusRingClip(const IntRect &rect)
+void GraphicsContext::setFocusRingClip(const IntRect& rect)
 {
     if (paintingDisabled())
         return;
@@ -626,7 +626,7 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
     m_data->p().setCompositionMode(toQtCompositionMode(op));
 }
 
-void GraphicsContext::clip(const Path &path)
+void GraphicsContext::clip(const Path& path)
 {
     if (paintingDisabled())
         return;

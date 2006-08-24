@@ -34,7 +34,7 @@
 #include "DeprecatedString.h"
 #include "FontDescription.h"
 
-#include <QDebug>
+#include <QHash>
 #include <QFontInfo>
 
 namespace WebCore {

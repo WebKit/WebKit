@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+
 #include "PlatformString.h"
 #include "DeprecatedString.h"
 

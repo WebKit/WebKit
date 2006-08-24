@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-Color::Color(const QColor &c)
+Color::Color(const QColor& c)
     : m_color(makeRGBA(c.red(), c.green(), c.blue(), c.alpha()))
 {
     m_valid = c.isValid();

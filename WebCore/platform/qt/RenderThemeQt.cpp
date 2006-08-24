@@ -23,12 +23,12 @@
  *
  */
 
+#include "config.h"
+
 #include <QStyle>
 #include <QWidget>
 #include <QPainter>
 #include <QStyleOptionButton>
-
-#include "config.h"
 
 #include "RenderTheme.h"
 #include "GraphicsContext.h"
@@ -79,7 +79,7 @@ private:
 
     bool supportsFocus(EAppearance) const;
 
-    bool stylePainterAndWidgetForPaintInfo(const RenderObject::PaintInfo&, QStyle*&, QPainter*&, QWidget*&) const;
+    bool getStylePainterAndWidgetFromPaintInfo(const RenderObject::PaintInfo&, QStyle*&, QPainter*&, QWidget*&) const;
     EAppearance applyTheme(QStyleOption&, RenderObject*) const;
 };
 
@@ -149,7 +149,7 @@ void RenderThemeQt::addIntrinsicMargins(RenderStyle* style) const
     }
 }
 
-bool RenderThemeQt::stylePainterAndWidgetForPaintInfo(const RenderObject::PaintInfo& i, QStyle*& style, QPainter*& painter, QWidget*& widget) const
+bool RenderThemeQt::getStylePainterAndWidgetFromPaintInfo(const RenderObject::PaintInfo& i, QStyle*& style, QPainter*& painter, QWidget*& widget) const
 {
     painter = (i.p ? static_cast<QPainter*>(i.p->platformContext()) : 0);
     widget = (painter ? static_cast<QWidget*>(painter->device()) : 0);
@@ -202,7 +202,8 @@ EAppearance RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
         option.state &= ~QStyle::State_Enabled;
 
     if (isReadOnlyControl(o))
-        option.state |= QStyle::State_ReadOnly; // Readonly is supported on textfields.
+        // Readonly is supported on textfields.
+        option.state |= QStyle::State_ReadOnly;
 
     if (supportsFocus(o->style()->appearance()) && isFocused(o))
         option.state |= QStyle::State_HasFocus;
@@ -231,7 +232,7 @@ bool RenderThemeQt::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
     QPainter* painter = 0;
     QWidget* widget = 0;
     
-    if (!stylePainterAndWidgetForPaintInfo(i, style, painter, widget))
+    if (!getStylePainterAndWidgetFromPaintInfo(i, style, painter, widget))
         return true;
     
     QStyleOptionButton option;
@@ -262,7 +263,7 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
     QPainter* painter = 0;
     QWidget* widget = 0;
     
-    if (!stylePainterAndWidgetForPaintInfo(i, style, painter, widget))
+    if (!getStylePainterAndWidgetFromPaintInfo(i, style, painter, widget))
         return true;
   
     QStyleOption option;
@@ -272,7 +273,7 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
     Q_ASSERT(appearance == TextFieldAppearance);
 
     // Now paint the text field.
-    // TODO: this is not enough for sure! (use 'option'...)
+    // FIXME: this is not enough for sure! (use 'option'...)
     painter->drawRect(r);
 
     return false;

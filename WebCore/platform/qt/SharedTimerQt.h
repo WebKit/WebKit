@@ -29,11 +29,8 @@
 #define SharedTimerQtQt_H
 
 #include "SharedTimerQt.h"
-
 #include "SystemTime.h"
-#include <wtf/Assertions.h>
-#include <stdio.h>
-#include <stdlib.h>
+
 #include <QTimer>
 
 namespace WebCore {
@@ -53,7 +50,7 @@ protected:
     }
 
 public:
-    static SharedTimerQt *inst()
+    static SharedTimerQt* inst()
     {
         if (!s_self)
             s_self = new SharedTimerQt();
