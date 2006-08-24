@@ -1,3 +1,41 @@
+2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by ap.
+
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+        WebKit should have Qt platform support
+
+        * platform/qt/FontCacheQt.cpp: Added.
+        (WebCore::FontCache::platformInit):
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/qt/FontDataQt.cpp: Added.
+        (WebCore::FontData::platformInit):
+        (WebCore::FontData::platformDestroy):
+        (WebCore::FontData::smallCapsFontData):
+        (WebCore::FontData::containsCharacters):
+        (WebCore::FontData::determinePitch):
+        (WebCore::FontData::platformWidthForGlyph):
+        * platform/qt/FontPlatformData.h: Added.
+        * platform/qt/FontPlatformDataQt.cpp: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::isFixedPitch):
+        (WebCore::FontPlatformData::setFont):
+        (WebCore::FontPlatformData::font):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        * platform/qt/FontQt.cpp: Added.
+        (WebCore::Font::operator QFont):
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        * platform/qt/GlyphMapQt.cpp: Added.
+        (WebCore::GlyphMap::fillPage):
+
 2006-08-24  David Harrison  <harrison@apple.com>
 
         Reinstate r15966 because layout test changes are correct.
