@@ -92,7 +92,7 @@ extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
 - (BOOL)_isEnabled;
 
 // Called by WebIconLoader after loading an icon.
-- (void)_setIcon:(NSImage *)icon forIconURL:(NSString *)iconURL;
+- (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL;
 - (void)_setHaveNoIconForIconURL:(NSString *)iconURL;
 
 // Called by WebDataSource to bind a web site URL to a icon URL and icon image.

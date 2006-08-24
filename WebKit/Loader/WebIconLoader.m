@@ -97,34 +97,12 @@
     else
         data = [self resourceData];
     
-    if (data) {
-        [[WebIconDatabaseBridge sharedBridgeInstance] _setIconData:data forIconURL:[[self URL] _web_originalDataAsString]];
-        LOG(IconDatabase, "NewDB - Icon data set for URL %@", [[self URL] _web_originalDataAsString]);
-    } else {
-        [[WebIconDatabaseBridge sharedBridgeInstance] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
-        LOG(IconDatabase, "NewDB - No icon for URL %@", [[self URL] _web_originalDataAsString]);
-    }
-    [frameLoader _iconLoaderReceivedPageIcon:[self URL]];
-    [super didFinishLoading];
-#else
-    NSImage *icon;
-    
-    NS_DURING
-        NSData *data = [self resourceData];
-        icon = [data length] > 0 ? [[NSImage alloc] initWithData:data] : nil;
-    NS_HANDLER
-        icon = nil;
-    NS_ENDHANDLER
-    
-
-    if ([[icon representations] count] > 0) {
-        [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:[[self URL] _web_originalDataAsString]];
-    } else {
+    if (data) 
+        [[WebIconDatabase sharedIconDatabase] _setIconData:data forIconURL:[[self URL] _web_originalDataAsString]];
+    else 
         [[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
-    }
-
+    
     [frameLoader _iconLoaderReceivedPageIcon:[self URL]];
-    [icon release];
     [super didFinishLoading];
 #endif
 }

@@ -1,3 +1,30 @@
+2006-08-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        First pass at pruning unused WebIconDatabase code.  Focus on removing methods that simply
+        have no place in the new DB at all.  A few renames and a few important FIXMEs result, but no
+        functionality changes.
+
+        * Loader/WebIconLoader.m:
+        (-[WebIconLoader didFinishLoading]): Call to WebIconDatabase instead of directly to the bridge
+        * Misc/WebIconDatabase.h:
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase init]):
+        (-[WebIconDatabase iconForURL:withSize:cache:]):
+        (-[WebIconDatabase iconURLForURL:]):
+        (-[WebIconDatabase defaultIconWithSize:]):
+        (-[WebIconDatabase retainIconForURL:]):
+        (-[WebIconDatabase releaseIconForURL:]):
+        (-[WebIconDatabase removeAllIcons]):
+        (-[WebIconDatabase _setIconData:forIconURL:]):
+        (-[WebIconDatabase _setHaveNoIconForIconURL:]):
+        (-[WebIconDatabase _setIconURL:forURL:]):
+        (-[WebIconDatabase _hasEntryForIconURL:]):
+        (-[WebIconDatabase _applicationWillTerminate:]):
+        (-[WebIconDatabase _resetCachedWebPreferences:]):
+        * Misc/WebIconDatabasePrivate.h: Changed setIcon: to setIconData:
+
 2006-08-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.
