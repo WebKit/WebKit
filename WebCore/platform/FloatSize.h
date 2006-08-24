@@ -27,6 +27,8 @@
 #ifndef FloatSize_h
 #define FloatSize_h
 
+#include <wtf/Platform.h>
+
 #if PLATFORM(CG)
 typedef struct CGSize CGSize;
 #endif

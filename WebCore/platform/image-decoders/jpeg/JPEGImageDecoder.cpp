@@ -39,7 +39,7 @@
 #include "JPEGImageDecoder.h"
 #include <assert.h>
 
-#if PLATFORM(CAIRO)
+#if PLATFORM(CAIRO) || PLATFORM(QT)
 
 extern "C" {
 #include "jpeglib.h"

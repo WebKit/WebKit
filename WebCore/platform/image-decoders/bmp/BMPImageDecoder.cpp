@@ -26,7 +26,7 @@
 #include "config.h"
 #include "BMPImageDecoder.h"
 
-#if PLATFORM(CAIRO)
+#if PLATFORM(CAIRO) || PLATFORM(QT)
 
 namespace WebCore
 {

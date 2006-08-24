@@ -1,3 +1,25 @@
+2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed/landed by Adam.
+
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+        WebKit should have Qt platform support
+
+        * CMakeLists.txt:
+            Remove KCanvasMatrix.cpp because it no longer exists
+            Remove platform/qt/test
+        * platform/FloatSize.h:
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        * platform/image-decoders/xbm/XBMImageDecoder.cpp:
+            Added PLATFORM(QT) hooks in the image-decoders/, as they also need
+            to work for Qt, not only for Cairo.
+        * platform/qt/qt-encodings.txt: Added (required for build).
+
 2006-08-24  Adam Roben  <aroben@apple.com>
 
         Fixing a typo from last patch.

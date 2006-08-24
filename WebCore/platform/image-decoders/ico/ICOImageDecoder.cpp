@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ICOImageDecoder.h"
 
-#if PLATFORM(CAIRO)
+#if PLATFORM(CAIRO) || PLATFORM(QT)
 
 namespace WebCore
 {

@@ -44,7 +44,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/bmp
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/image-decoders/png
    ${CMAKE_CURRENT_SOURCE_DIR}/platform/qt
-   ${CMAKE_CURRENT_SOURCE_DIR}/WebCore+SVG 
+   ${CMAKE_CURRENT_SOURCE_DIR}/WebCore+SVG
    ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/kjs
    ${CMAKE_CURRENT_SOURCE_DIR}/../JavaScriptCore/
    ${CMAKE_CURRENT_SOURCE_DIR}/../
@@ -519,7 +519,6 @@ set (SVG_STUFF
     kcanvas/KCanvasResources.cpp
     kcanvas/RenderSVGImage.cpp
     kcanvas/RenderForeignObject.cpp
-    kcanvas/KCanvasMatrix.cpp
  )
 ENDIF(USE_WEBKIT_SVG_SUPPORT)
 
@@ -1027,5 +1026,3 @@ target_link_libraries(WebCore-unity
   pcre-unity
 
 )
-
-add_subdirectory( platform/qt/test )

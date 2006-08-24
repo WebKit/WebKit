@@ -26,7 +26,7 @@
 #include "GIFImageDecoder.h"
 #include "GIFImageReader.h"
 
-#if PLATFORM(CAIRO)
+#if PLATFORM(CAIRO) || PLATFORM(QT)
 
 namespace WebCore {
 
