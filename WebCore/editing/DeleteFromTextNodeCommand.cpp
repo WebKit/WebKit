@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(Document *document, Text *node, int offset, int count)
-    : EditCommand(document), m_node(node), m_offset(offset), m_count(count)
+DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(Text *node, int offset, int count)
+    : EditCommand(node->document()), m_node(node), m_offset(offset), m_count(count)
 {
     ASSERT(m_node);
     ASSERT(m_offset >= 0);

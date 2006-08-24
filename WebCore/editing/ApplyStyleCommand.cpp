@@ -280,8 +280,8 @@ ApplyStyleCommand::ApplyStyleCommand(Document* document, CSSStyleDeclaration* st
 {
 }
 
-ApplyStyleCommand::ApplyStyleCommand(Document* document, Element* element, bool removeOnly, EditAction editingAction)
-    : CompositeEditCommand(document)
+ApplyStyleCommand::ApplyStyleCommand(Element* element, bool removeOnly, EditAction editingAction)
+    : CompositeEditCommand(element->document())
     , m_style(new CSSMutableStyleDeclaration())
     , m_editingAction(editingAction)
     , m_propertyLevel(PropertyDefault)

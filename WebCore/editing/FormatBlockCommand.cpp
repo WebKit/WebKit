@@ -38,9 +38,8 @@ using namespace HTMLNames;
 
 FormatBlockCommand::FormatBlockCommand(Document* document, const String& tagName) 
     : CompositeEditCommand(document), m_tagName(tagName)
-{}
-
-
+{
+}
 
 bool FormatBlockCommand::modifyRange()
 {

@@ -26,26 +26,30 @@
 #ifndef Selection_h
 #define Selection_h
 
-#include "Position.h"
-#include "VisiblePosition.h"
 #include "TextGranularity.h"
+#include "VisiblePosition.h"
 
 namespace WebCore {
 
 class Position;
 
-class Selection
-{
+const EAffinity SEL_DEFAULT_AFFINITY = DOWNSTREAM;
+
+class Selection {
 public:
     enum EState { NONE, CARET, RANGE };
     enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
-#define SEL_DEFAULT_AFFINITY DOWNSTREAM
 
     Selection();
-    Selection(const Position &, EAffinity);
-    Selection(const Position &, const Position &, EAffinity);
-    Selection(const Range *, EAffinity = DOWNSTREAM);
+
+    Selection(const Position&, EAffinity);
+    Selection(const Position&, const Position&, EAffinity);
+
+    Selection(const Range*, EAffinity = SEL_DEFAULT_AFFINITY);
     
+    Selection(const VisiblePosition&);
+    Selection(const VisiblePosition&, const VisiblePosition&);
+
     static Selection selectionFromContentsOfNode(Node*);
 
     EState state() const { return m_state; }
@@ -53,8 +57,8 @@ public:
     void setAffinity(EAffinity affinity) { m_affinity = affinity; }
     EAffinity affinity() const { return m_affinity; }
 
-    void setBase(Position base) { m_base = base; }
-    void setExtent(Position extent) { m_extent = extent; }
+    void setBase(const Position& base) { m_base = base; }
+    void setExtent(const Position& extent) { m_extent = extent; }
     Position base() const { return m_base; }
     Position extent() const { return m_extent; }
     Position start() const { return m_start; }
@@ -103,12 +107,12 @@ private:
     bool m_baseIsFirst;               // true if base is before the extent
 };
 
-inline bool operator==(const Selection &a, const Selection &b)
+inline bool operator==(const Selection& a, const Selection& b)
 {
     return a.start() == b.start() && a.end() == b.end() && a.affinity() == b.affinity() && a.granularity() == b.granularity();
 }
 
-inline bool operator!=(const Selection &a, const Selection &b)
+inline bool operator!=(const Selection& a, const Selection& b)
 {
     return !(a == b);
 }

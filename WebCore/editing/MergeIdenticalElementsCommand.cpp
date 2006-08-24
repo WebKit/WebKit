@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(Document *document, Element *first, Element *second)
-    : EditCommand(document), m_element1(first), m_element2(second)
+MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(Element* first, Element* second)
+    : EditCommand(first->document()), m_element1(first), m_element2(second)
 {
     ASSERT(m_element1);
     ASSERT(m_element2);

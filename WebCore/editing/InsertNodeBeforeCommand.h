@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __insert_node_before_command_h__
-#define __insert_node_before_command_h__
+#ifndef insert_node_before_command_h__
+#define insert_node_before_command_h__
 
 #include "EditCommand.h"
 
 namespace WebCore {
 
-class InsertNodeBeforeCommand : public EditCommand
-{
+class InsertNodeBeforeCommand : public EditCommand {
 public:
-    InsertNodeBeforeCommand(Document *, Node *insertChild, Node *refChild);
-    virtual ~InsertNodeBeforeCommand() { }
+    InsertNodeBeforeCommand(PassRefPtr<Node>, Node* refChild);
 
     virtual void doApply();
     virtual void doUnapply();
 
-    Node *insertChild() const { return m_insertChild.get(); }
-    Node *refChild() const { return m_refChild.get(); }
+    Node* insertChild() const { return m_insertChild.get(); }
+    Node* refChild() const { return m_refChild.get(); }
 
 private:
     RefPtr<Node> m_insertChild;
@@ -49,4 +47,4 @@ private:
 
 } // namespace WebCore
 
-#endif // __insert_node_before_command_h__
+#endif // insert_node_before_command_h__

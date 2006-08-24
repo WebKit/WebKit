@@ -57,8 +57,8 @@ DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDel
 {
 }
 
-DeleteSelectionCommand::DeleteSelectionCommand(Document *document, const Selection &selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace)
-    : CompositeEditCommand(document), 
+DeleteSelectionCommand::DeleteSelectionCommand(const Selection& selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace)
+    : CompositeEditCommand(selection.start().node()->document()), 
       m_hasSelectionToDelete(true), 
       m_smartDelete(smartDelete), 
       m_mergeBlocksAfterDelete(mergeBlocksAfterDelete),
@@ -72,7 +72,7 @@ DeleteSelectionCommand::DeleteSelectionCommand(Document *document, const Selecti
 }
 
 void DeleteSelectionCommand::initializeStartEnd()
- {
+{
     Node* startSpecialContainer = 0;
     Node* endSpecialContainer = 0;
  

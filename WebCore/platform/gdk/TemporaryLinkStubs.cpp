@@ -178,7 +178,7 @@ KJS::Bindings::Instance* FrameGdk::getObjectInstanceForWidget(Widget *) { notImp
 KJS::Bindings::Instance* FrameGdk::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
 bool FrameGdk::canRedo() const { notImplemented(); return 0; }
 bool FrameGdk::canUndo() const { notImplemented(); return 0; }
-void FrameGdk::registerCommandForRedo(WebCore::EditCommandPtr const&) { notImplemented(); }
+void FrameGdk::registerCommandForRedo(PassRefPtr<WebCore::EditCommand>) { notImplemented(); }
 bool FrameGdk::runJavaScriptPrompt(String const&, String const&, String &) { notImplemented(); return 0; }
 bool FrameGdk::shouldInterruptJavaScript() { notImplemented(); return false; }
 void FrameGdk::print() { notImplemented(); }
@@ -251,7 +251,7 @@ void FrameGdk::respondToChangedSelection(WebCore::SelectionController const&, bo
 Frame* FrameGdk::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer) { return 0; }
 
 void FrameGdk::saveDocumentState() { }
-void FrameGdk::registerCommandForUndo(WebCore::EditCommandPtr const&) { }
+void FrameGdk::registerCommandForUndo(PassRefPtr<WebCore::EditCommand>) { }
 void FrameGdk::clearUndoRedoOperations(void) { }
 String FrameGdk::incomingReferrer() const { return String(); }
 void FrameGdk::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { }

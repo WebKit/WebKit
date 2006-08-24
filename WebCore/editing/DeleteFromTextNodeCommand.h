@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,21 +29,17 @@
 #include "EditCommand.h"
 
 namespace WebCore {
-    class Text;
-}
 
-namespace WebCore {
+class Text;
 
-class DeleteFromTextNodeCommand : public EditCommand
-{
+class DeleteFromTextNodeCommand : public EditCommand {
 public:
-    DeleteFromTextNodeCommand(Document *document, Text *node, int offset, int count);
-    virtual ~DeleteFromTextNodeCommand() { }
+    DeleteFromTextNodeCommand(Text*, int offset, int count);
 
     virtual void doApply();
     virtual void doUnapply();
 
-    Text *node() const { return m_node.get(); }
+    Text* node() const { return m_node.get(); }
     int offset() const { return m_offset; }
     int count() const { return m_count; }
 
@@ -56,4 +52,4 @@ private:
 
 } // namespace WebCore
 
-#endif // __delete_from_text_node_command_h__
+#endif // delete_from_text_node_command_h__

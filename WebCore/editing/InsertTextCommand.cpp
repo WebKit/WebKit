@@ -139,10 +139,10 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
         applyStyle(typingStyle);
 
     if (!selectInsertedText)
-        setEndingSelection(endingSelection().end(), endingSelection().affinity());
+        setEndingSelection(Selection(endingSelection().end(), endingSelection().affinity()));
 }
 
-Position InsertTextCommand::insertTab(Position pos)
+Position InsertTextCommand::insertTab(const Position& pos)
 {
     Position insertPos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent();
         

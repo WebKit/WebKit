@@ -23,62 +23,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __modify_selection_list_level_h__
-#define __modify_selection_list_level_h__
+#ifndef modify_selection_list_level_h__
+#define modify_selection_list_level_h__
 
 #include "CompositeEditCommand.h"
 
 namespace WebCore {
 
-// ModifySelectionListLevelCommand provides functions useful for both increasing and decreasing the list
-// level.  So, it is the base class of IncreaseSelectionListLevelCommand and DecreaseSelectionListLevelCommand.
+// ModifySelectionListLevelCommand provides functions useful for both increasing and decreasing the list level.
+// It is the base class of IncreaseSelectionListLevelCommand and DecreaseSelectionListLevelCommand.
 // It is not used on its own.
-class ModifySelectionListLevelCommand : public CompositeEditCommand
-{
-public:
-    ModifySelectionListLevelCommand(Document* document);
-    
-private:
-    virtual bool preservesTypingStyle() const;
-    
+class ModifySelectionListLevelCommand : public CompositeEditCommand {
 protected:
+    ModifySelectionListLevelCommand(Document*);
+    
     void appendSiblingNodeRange(Node* startNode, Node* endNode, Node* newParent);
     void insertSiblingNodeRangeBefore(Node* startNode, Node* endNode, Node* refNode);
     void insertSiblingNodeRangeAfter(Node* startNode, Node* endNode, Node* refNode);
+
+private:
+    virtual bool preservesTypingStyle() const;    
 };
 
-// IncreaseSelectionListLevelCommand moves the selected list items one level deeper
-typedef enum EListType { InheritedListType, OrderedList, UnorderedList };
-
-class IncreaseSelectionListLevelCommand : public ModifySelectionListLevelCommand
-{
+// IncreaseSelectionListLevelCommand moves the selected list items one level deeper.
+class IncreaseSelectionListLevelCommand : public ModifySelectionListLevelCommand {
 public:
     static bool canIncreaseSelectionListLevel(Document*);
     static Node* increaseSelectionListLevel(Document*);
     static Node* increaseSelectionListLevelOrdered(Document*);
     static Node* increaseSelectionListLevelUnordered(Document*);
 
-    IncreaseSelectionListLevelCommand(Document* document, EListType);
-    Node*       listElement();
+private:
+    enum Type { InheritedListType, OrderedList, UnorderedList };
+    static Node* increaseSelectionListLevelWithType(Document*, Type listType);
+
+    IncreaseSelectionListLevelCommand(Document*, Type);
     virtual void doApply();
 
-private:
-    EListType   m_listType;
-    Node*       m_listElement;
+    Type m_listType;
+    RefPtr<Node> m_listElement;
 };
 
-// DecreaseSelectionListLevelCommand moves the selected list items one level shallower
-class DecreaseSelectionListLevelCommand : public ModifySelectionListLevelCommand
-{
+// DecreaseSelectionListLevelCommand moves the selected list items one level shallower.
+class DecreaseSelectionListLevelCommand : public ModifySelectionListLevelCommand {
 public:
     static bool canDecreaseSelectionListLevel(Document*);
     static void decreaseSelectionListLevel(Document*);
 
-    DecreaseSelectionListLevelCommand(Document* document);
-
+private:
+    DecreaseSelectionListLevelCommand(Document*);
     virtual void doApply();
 };
 
 } // namespace WebCore
 
-#endif // __modify_selection_list_level_h__
+#endif // modify_selection_list_level_h__

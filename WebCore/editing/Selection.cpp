@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,32 +44,47 @@ Selection::Selection()
 {
 }
 
-Selection::Selection(const Position &pos, EAffinity affinity)
-    : m_base(pos), m_extent(pos)
+Selection::Selection(const Position& pos, EAffinity affinity)
+    : m_base(pos)
+    , m_extent(pos)
     , m_affinity(affinity)
     , m_granularity(CharacterGranularity)
-    , m_state(NONE)
-    , m_baseIsFirst(true)
 {
     validate();
 }
 
-Selection::Selection(const Position &base, const Position &extent, EAffinity affinity)
-    : m_base(base), m_extent(extent)
+Selection::Selection(const Position& base, const Position& extent, EAffinity affinity)
+    : m_base(base)
+    , m_extent(extent)
     , m_affinity(affinity)
     , m_granularity(CharacterGranularity)
-    , m_state(NONE)
-    , m_baseIsFirst(true)
 {
     validate();
 }
 
-Selection::Selection(const Range *range, EAffinity affinity)
-    : m_base(range->startPosition()), m_extent(range->endPosition())
+Selection::Selection(const VisiblePosition& pos)
+    : m_base(pos.deepEquivalent())
+    , m_extent(pos.deepEquivalent())
+    , m_affinity(pos.affinity())
+    , m_granularity(CharacterGranularity)
+{
+    validate();
+}
+
+Selection::Selection(const VisiblePosition& base, const VisiblePosition& extent)
+    : m_base(base.deepEquivalent())
+    , m_extent(extent.deepEquivalent())
+    , m_affinity(base.affinity())
+    , m_granularity(CharacterGranularity)
+{
+    validate();
+}
+
+Selection::Selection(const Range* range, EAffinity affinity)
+    : m_base(range->startPosition())
+    , m_extent(range->endPosition())
     , m_affinity(affinity)
     , m_granularity(CharacterGranularity)
-    , m_state(NONE)
-    , m_baseIsFirst(true)
 {
     validate();
 }
@@ -299,9 +314,9 @@ void Selection::adjustForEditableContent()
     if (m_base.isNull() || m_start.isNull() || m_end.isNull())
         return;
 
-    Node *baseRoot = m_base.node()->rootEditableElement();
-    Node *startRoot = m_start.node()->rootEditableElement();
-    Node *endRoot = m_end.node()->rootEditableElement();
+    Node* baseRoot = m_base.node()->rootEditableElement();
+    Node* startRoot = m_start.node()->rootEditableElement();
+    Node* endRoot = m_end.node()->rootEditableElement();
     
     Node* baseEditableAncestor = lowestEditableAncestor(m_base.node());
     

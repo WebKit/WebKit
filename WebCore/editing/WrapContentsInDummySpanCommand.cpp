@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand(Document *document, Element *element)
-    : EditCommand(document), m_element(element)
+WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand(Element* element)
+    : EditCommand(element->document()), m_element(element)
 {
     ASSERT(m_element);
 }

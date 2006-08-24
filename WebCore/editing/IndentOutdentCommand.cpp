@@ -96,10 +96,8 @@ Node* IndentOutdentCommand::splitTreeToNode(Node* start, Node* end, bool splitAn
     for (node = start; node && node->parent() != end; node = node->parent()) {
         VisiblePosition positionInParent(Position(node->parent(), 0), DOWNSTREAM);
         VisiblePosition positionInNode(Position(node, 0), DOWNSTREAM);
-        if (positionInParent != positionInNode) {
-            EditCommandPtr cmd(new SplitElementCommand(document(), static_cast<Element*>(node->parent()), node));
-            applyCommandToComposite(cmd);
-        }
+        if (positionInParent != positionInNode)
+            applyCommandToComposite(new SplitElementCommand(static_cast<Element*>(node->parent()), node));
     }
     if (splitAncestor)
         return splitTreeToNode(end, end->parent());
@@ -171,18 +169,17 @@ void IndentOutdentCommand::outdentParagraph()
 
     // Handle the list case
     bool inList = false;
-    InsertListCommand::EListType typeOfList;
+    InsertListCommand::Type typeOfList;
     if (enclosingNode->hasTagName(olTag)) {
         inList = true;
-        typeOfList = InsertListCommand::OrderedListType;
+        typeOfList = InsertListCommand::OrderedList;
     } else if (enclosingNode->hasTagName(ulTag)) {
         inList = true;
-        typeOfList = InsertListCommand::UnorderedListType;
+        typeOfList = InsertListCommand::UnorderedList;
     }
     if (inList) {
         // Use InsertListCommand to remove the selection from the list
-        EditCommandPtr cmd(new InsertListCommand(document(), typeOfList, ""));
-        applyCommandToComposite(cmd);
+        applyCommandToComposite(new InsertListCommand(document(), typeOfList, ""));
         return;
     }
     // The selection is inside a blockquote
@@ -227,7 +224,7 @@ void IndentOutdentCommand::outdentRegion()
     while (endOfCurrentParagraph != endAfterSelection) {
         VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
         if (endOfCurrentParagraph == endOfLastParagraph)
-            setEndingSelection(originalSelectionEnd, DOWNSTREAM);
+            setEndingSelection(Selection(originalSelectionEnd, DOWNSTREAM));
         else
             setEndingSelection(endOfCurrentParagraph);
         outdentParagraph();

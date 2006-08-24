@@ -195,7 +195,7 @@ namespace WebCore {
         bool m_bCleared : 1;
         bool m_isActive : 1;
 
-        EditCommandPtr m_lastEditCommand;
+        RefPtr<EditCommand> m_lastEditCommand;
         int m_xPosForVerticalArrowNavigation;
         RefPtr<CSSMutableStyleDeclaration> m_typingStyle;
 

@@ -38,8 +38,7 @@ enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
 
 // --- ReplacementFragment helper class
 
-class ReplacementFragment : Noncopyable
-{
+class ReplacementFragment : Noncopyable {
 public:
     ReplacementFragment(Document*, DocumentFragment*, bool matchStyle, const Selection&);
 
@@ -68,20 +67,21 @@ private:
     bool m_hasInterchangeNewlineAtEnd;
 };
 
-class ReplaceSelectionCommand : public CompositeEditCommand
-{
+class ReplaceSelectionCommand : public CompositeEditCommand {
 public:
-    ReplaceSelectionCommand(Document*, DocumentFragment*, bool selectReplacement=true, bool smartReplace=false, bool matchStyle=false, bool preventNesting=true, EditAction action=EditActionPaste);
+    ReplaceSelectionCommand(Document*, PassRefPtr<DocumentFragment>,
+        bool selectReplacement = true, bool smartReplace = false, bool matchStyle = false, bool preventNesting = true,
+        EditAction = EditActionPaste);
     
     virtual void doApply();
     virtual EditAction editingAction() const;
 
 private:
-    void completeHTMLReplacement(const Position &lastPositionToSelect);
+    void completeHTMLReplacement(const Position& lastPositionToSelect);
 
-    void insertNodeAfterAndUpdateNodesInserted(Node *insertChild, Node *refChild);
-    void insertNodeAtAndUpdateNodesInserted(Node *insertChild, Node *refChild, int offset);
-    void insertNodeBeforeAndUpdateNodesInserted(Node *insertChild, Node *refChild);
+    void insertNodeAfterAndUpdateNodesInserted(Node* insertChild, Node* refChild);
+    void insertNodeAtAndUpdateNodesInserted(Node* insertChild, Node* refChild, int offset);
+    void insertNodeBeforeAndUpdateNodesInserted(Node* insertChild, Node* refChild);
 
     void updateNodesInserted(Node*);
     bool shouldRemoveEndBR(Node*);
@@ -105,4 +105,4 @@ private:
 
 } // namespace WebCore
 
-#endif // __replace_selection_command_h__
+#endif // replace_selection_command_h__

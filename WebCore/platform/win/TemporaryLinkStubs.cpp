@@ -176,7 +176,7 @@ KJS::Bindings::Instance* FrameWin::getObjectInstanceForWidget(Widget *) { notImp
 KJS::Bindings::Instance* FrameWin::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
 bool FrameWin::canRedo() const { notImplemented(); return 0; }
 bool FrameWin::canUndo() const { notImplemented(); return 0; }
-void FrameWin::registerCommandForRedo(WebCore::EditCommandPtr const&) { notImplemented(); }
+void FrameWin::registerCommandForRedo(PassRefPtr<WebCore::EditCommand>) { notImplemented(); }
 bool FrameWin::runJavaScriptPrompt(String const&,String const&,String &) { notImplemented(); return 0; }
 bool FrameWin::shouldInterruptJavaScript() { notImplemented(); return false; }
 bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
@@ -256,7 +256,7 @@ void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,boo
 static int frameNumber = 0;
 Frame* FrameWin::createFrame(KURL const&,String const&,Element*,String const&) { return 0; }
 void FrameWin::saveDocumentState() { }
-void FrameWin::registerCommandForUndo(WebCore::EditCommandPtr const&) { }
+void FrameWin::registerCommandForUndo(PassRefPtr<WebCore::EditCommand>) { }
 void FrameWin::clearUndoRedoOperations(void) { }
 String FrameWin::incomingReferrer() const { return String(); }
 void FrameWin::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { }

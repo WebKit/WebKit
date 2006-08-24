@@ -105,7 +105,7 @@ void InsertLineBreakCommand::doApply()
     
     if (isTabSpan) {
         insertNodeAtTabSpanPosition(nodeToInsert.get(), pos);
-        setEndingSelection(Position(nodeToInsert->traverseNextNode(), 0), DOWNSTREAM);
+        setEndingSelection(Selection(Position(nodeToInsert->traverseNextNode(), 0), DOWNSTREAM));
     } else if (isEndOfBlock(VisiblePosition(pos, selection.affinity()))) {
         Node* block = pos.node()->enclosingBlockFlowElement();
         
@@ -119,20 +119,20 @@ void InsertLineBreakCommand::doApply()
         if (!haveBreak)
             insertNodeAfter(createBreakElement(document()).get(), nodeToInsert.get());
             
-        setEndingSelection(Position(block, maxDeepOffset(block)), DOWNSTREAM);
+        setEndingSelection(Selection(Position(block, maxDeepOffset(block)), DOWNSTREAM));
     } else if (pos.offset() <= pos.node()->caretMinOffset()) {
         LOG(Editing, "input newline case 2");
         // Insert node before downstream position, and place caret there as well. 
         Position endingPosition = pos.downstream();
         insertNodeBeforePosition(nodeToInsert.get(), endingPosition);
-        setEndingSelection(endingPosition, DOWNSTREAM);
+        setEndingSelection(Selection(endingPosition, DOWNSTREAM));
     } else if (pos.offset() >= pos.node()->caretMaxOffset()) {
         LOG(Editing, "input newline case 3");
         // Insert BR after this node. Place caret in the position that is downstream
         // of the current position, reckoned before inserting the BR in between.
         Position endingPosition = pos.downstream();
         insertNodeAfterPosition(nodeToInsert.get(), pos);
-        setEndingSelection(endingPosition, DOWNSTREAM);
+        setEndingSelection(Selection(endingPosition, DOWNSTREAM));
     } else {
         // Split a text node
         LOG(Editing, "input newline case 4");
@@ -156,7 +156,7 @@ void InsertLineBreakCommand::doApply()
             insertTextIntoNode(textNode, 0, nonBreakingSpaceString());
         }
         
-        setEndingSelection(endingPosition, DOWNSTREAM);
+        setEndingSelection(Selection(endingPosition, DOWNSTREAM));
     }
 
     // Handle the case where there is a typing style.

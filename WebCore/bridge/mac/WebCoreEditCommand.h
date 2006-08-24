@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
     class EditCommand;
 }
@@ -32,7 +34,7 @@ namespace WebCore {
     WebCore::EditCommand *m_command;   
 }
 
-+ (WebCoreEditCommand *)commandWithEditCommand:(WebCore::EditCommand *)command;
++ (WebCoreEditCommand *)commandWithEditCommand:(PassRefPtr<WebCore::EditCommand>)command;
 - (WebCore::EditCommand *)command;
 
 @end

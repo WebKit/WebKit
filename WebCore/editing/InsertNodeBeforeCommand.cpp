@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-InsertNodeBeforeCommand::InsertNodeBeforeCommand(Document *document, Node *insertChild, Node *refChild)
-    : EditCommand(document), m_insertChild(insertChild), m_refChild(refChild)
+InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, Node* refChild)
+    : EditCommand(refChild->document()), m_insertChild(insertChild), m_refChild(refChild)
 {
     ASSERT(m_insertChild);
     ASSERT(m_refChild);

@@ -3032,26 +3032,27 @@ void FrameMac::cleanupPluginRootObjects()
     m_rootObjects.clear();
 }
 
-void FrameMac::registerCommandForUndoOrRedo(const EditCommandPtr &cmd, bool isRedo)
+void FrameMac::registerCommandForUndoOrRedo(PassRefPtr<EditCommand> cmd, bool isRedo)
 {
-    ASSERT(cmd.get());
-    WebCoreEditCommand *kwq = [WebCoreEditCommand commandWithEditCommand:cmd.get()];
-    NSUndoManager *undoManager = [_bridge undoManager];
-    [undoManager registerUndoWithTarget:_bridge selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:kwq];
-    NSString *actionName = [_bridge nameForUndoAction:static_cast<WebUndoAction>(cmd.editingAction())];
+    ASSERT(cmd);
+    WebUndoAction action = static_cast<WebUndoAction>(cmd->editingAction());
+    NSUndoManager* undoManager = [_bridge undoManager];
+    WebCoreEditCommand* command = [WebCoreEditCommand commandWithEditCommand:cmd];
+    NSString* actionName = [_bridge nameForUndoAction:action];
+    [undoManager registerUndoWithTarget:_bridge selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:command];
     if (actionName)
         [undoManager setActionName:actionName];
     _haveUndoRedoOperations = YES;
 }
 
-void FrameMac::registerCommandForUndo(const EditCommandPtr &cmd)
+void FrameMac::registerCommandForUndo(PassRefPtr<EditCommand> cmd)
 {
-    registerCommandForUndoOrRedo(cmd, NO);
+    registerCommandForUndoOrRedo(cmd, false);
 }
 
-void FrameMac::registerCommandForRedo(const EditCommandPtr &cmd)
+void FrameMac::registerCommandForRedo(PassRefPtr<EditCommand> cmd)
 {
-    registerCommandForUndoOrRedo(cmd, YES);
+    registerCommandForUndoOrRedo(cmd, true);
 }
 
 void FrameMac::clearUndoRedoOperations()

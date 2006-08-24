@@ -23,35 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef jsediting_h__
-#define jsediting_h__
+#ifndef JSEditor_h
+#define JSEditor_h
 
-#include "PlatformString.h"
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class DeprecatedString;
 class Document;
+class String;
 
-class JSEditor {
-
+class JSEditor : Noncopyable {
 public:
-    JSEditor(Document *doc) : m_doc(doc) { }
+    JSEditor(Document* document) : m_document(document) { }
 
-    bool execCommand(const String &command, bool userInterface, const String &value);
-    bool queryCommandEnabled(const String &command);
-    bool queryCommandIndeterm(const String &command);
-    bool queryCommandState(const String &command);
-    bool queryCommandSupported(const String &command);
-    String queryCommandValue(const String &command);
+    bool execCommand(const String& command, bool userInterface, const String& parameter);
+    bool queryCommandEnabled(const String& command);
+    bool queryCommandIndeterm(const String& command);
+    bool queryCommandState(const String& command);
+    bool queryCommandSupported(const String& command);
+    String queryCommandValue(const String& command);
 
-    static void setSupportsPasteCommand(bool flag=true);
+    static void setSupportsPasteCommand(bool flag = true);
 
 private:
-    JSEditor(const JSEditor &);
-    JSEditor &operator=(const JSEditor &);
-
-    Document *m_doc;
+    Document* m_document;
 };
 
 } // end namespace WebCore

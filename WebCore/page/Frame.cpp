@@ -234,7 +234,7 @@ bool Frame::didOpenURL(const KURL& url)
   cancelRedirection();
   
   // clear last edit command
-  d->m_lastEditCommand = EditCommandPtr();
+  d->m_lastEditCommand = 0;
   
   closeURL();
 
@@ -1267,9 +1267,7 @@ void Frame::setFocusNodeIfNeeded()
     if (!document() || d->m_selection.isNone() || !d->m_isActive)
         return;
 
-    Node *startNode = d->m_selection.start().node();
-    Node *target = startNode ? startNode->rootEditableElement() : 0;
-    
+    Node* target = d->m_selection.rootEditableElement();
     if (target) {
         RenderObject* renderer = target->renderer();
 
@@ -1959,9 +1957,7 @@ void Frame::selectAll()
     if (!d->m_doc)
         return;
     
-    Node *startNode = d->m_selection.start().node();
-    Node *root = startNode && startNode->isContentEditable() ? startNode->rootEditableElement() : d->m_doc->documentElement();
-    
+    Node* root = d->m_selection.isContentEditable() ? d->m_selection.rootEditableElement() : d->m_doc->documentElement();
     selectContentsOfNode(root);
     selectFrameElementInParentIfFullySelected();
     notifyRendererOfSelectionChange(true);
@@ -2029,76 +2025,77 @@ void Frame::textDidChangeInTextArea(Element* input)
 {
 }
 
-EditCommandPtr Frame::lastEditCommand()
+EditCommand* Frame::lastEditCommand()
 {
-    return d->m_lastEditCommand;
+    return d->m_lastEditCommand.get();
 }
 
-void dispatchEditableContentChangedEvent(Node* root)
+static void dispatchEditableContentChangedEvents(const EditCommand& command)
 {
-    if (!root)
-        return;
-        
-    ExceptionCode ec = 0;
-    EventTargetNodeCast(root)->dispatchEvent(new Event(khtmlEditableContentChangedEvent, false, false), ec, true);
+     Element* startRoot = command.startingRootEditableElement();
+     Element* endRoot = command.endingRootEditableElement();
+     ExceptionCode ec;
+     if (startRoot)
+         startRoot->dispatchEvent(new Event(khtmlEditableContentChangedEvent, false, false), ec, true);
+     if (endRoot && endRoot != startRoot)
+         endRoot->dispatchEvent(new Event(khtmlEditableContentChangedEvent, false, false), ec, true);
 }
 
-void Frame::appliedEditing(EditCommandPtr& cmd)
+void Frame::appliedEditing(PassRefPtr<EditCommand> cmd)
 {
-    SelectionController sel(cmd.endingSelection());
+    dispatchEditableContentChangedEvents(*cmd);
+ 
+    SelectionController sel(cmd->endingSelection());
     if (shouldChangeSelection(sel))
         setSelection(sel, false);
     
-    dispatchEditableContentChangedEvent(!selection().isNone() ? selection().start().node()->rootEditableElement() : 0);
-
     // Now set the typing style from the command. Clear it when done.
     // This helps make the case work where you completely delete a piece
     // of styled text and then type a character immediately after.
     // That new character needs to take on the style of the just-deleted text.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    if (cmd.typingStyle()) {
-        setTypingStyle(cmd.typingStyle());
-        cmd.setTypingStyle(0);
+    if (cmd->typingStyle()) {
+        setTypingStyle(cmd->typingStyle());
+        cmd->setTypingStyle(0);
     }
 
     // Command will be equal to last edit command only in the case of typing
-    if (d->m_lastEditCommand == cmd) {
-        assert(cmd.isTypingCommand());
-    }
+    if (d->m_lastEditCommand == cmd)
+        assert(cmd->isTypingCommand());
     else {
         // Only register a new undo command if the command passed in is
         // different from the last command
+        d->m_lastEditCommand = cmd.get();
         registerCommandForUndo(cmd);
-        d->m_lastEditCommand = cmd;
     }
     respondToChangedContents();
 }
 
-void Frame::unappliedEditing(EditCommandPtr& cmd)
+void Frame::unappliedEditing(PassRefPtr<EditCommand> cmd)
 {
-    SelectionController sel(cmd.startingSelection());
+    dispatchEditableContentChangedEvents(*cmd);
+
+    SelectionController sel(cmd->startingSelection());
     if (shouldChangeSelection(sel))
         setSelection(sel, true);
-    
-    dispatchEditableContentChangedEvent(!selection().isNone() ? selection().start().node()->rootEditableElement() : 0);
         
+    d->m_lastEditCommand = 0;
     registerCommandForRedo(cmd);
     respondToChangedContents();
-    d->m_lastEditCommand = EditCommandPtr::emptyCommand();
 }
 
-void Frame::reappliedEditing(EditCommandPtr& cmd)
+void Frame::reappliedEditing(PassRefPtr<EditCommand> cmd)
 {
-    SelectionController sel(cmd.endingSelection());
+    dispatchEditableContentChangedEvents(*cmd);
+
+    SelectionController sel(cmd->startingSelection());
     if (shouldChangeSelection(sel))
         setSelection(sel, true);
-    
-    dispatchEditableContentChangedEvent(!selection().isNone() ? selection().start().node()->rootEditableElement() : 0);
         
+    d->m_lastEditCommand = 0;
     registerCommandForUndo(cmd);
     respondToChangedContents();
-    d->m_lastEditCommand = EditCommandPtr::emptyCommand();
 }
 
 CSSMutableStyleDeclaration *Frame::typingStyle() const
@@ -2220,10 +2217,8 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction edit
     // Handle block styles, substracting these from the typing style.
     RefPtr<CSSMutableStyleDeclaration> blockStyle = mutableStyle->copyBlockProperties();
     blockStyle->diff(mutableStyle.get());
-    if (document() && blockStyle->length() > 0) {
-        EditCommandPtr cmd(new ApplyStyleCommand(document(), blockStyle.get(), editingAction));
-        cmd.apply();
-    }
+    if (document() && blockStyle->length() > 0)
+        applyCommand(new ApplyStyleCommand(document(), blockStyle.get(), editingAction));
     
     // Set the remaining style as the typing style.
     d->m_typingStyle = mutableStyle.release();
@@ -2240,10 +2235,8 @@ void Frame::applyStyle(CSSStyleDeclaration *style, EditAction editingAction)
             break;
         }
         case Selection::RANGE:
-            if (document() && style) {
-                EditCommandPtr cmd(new ApplyStyleCommand(document(), style, editingAction));
-                cmd.apply();
-            }
+            if (document() && style)
+                applyCommand(new ApplyStyleCommand(document(), style, editingAction));
             break;
     }
 }
@@ -2256,10 +2249,8 @@ void Frame::applyParagraphStyle(CSSStyleDeclaration *style, EditAction editingAc
             break;
         case Selection::CARET:
         case Selection::RANGE:
-            if (document() && style) {
-                EditCommandPtr cmd(new ApplyStyleCommand(document(), style, editingAction, ApplyStyleCommand::ForceBlockProperties));
-                cmd.apply();
-            }
+            if (document() && style)
+                applyCommand(new ApplyStyleCommand(document(), style, editingAction, ApplyStyleCommand::ForceBlockProperties));
             break;
     }
 }

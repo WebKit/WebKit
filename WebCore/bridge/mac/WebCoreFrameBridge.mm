@@ -1967,7 +1967,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!m_frame->hasSelection() || !fragment)
         return;
     
-    EditCommandPtr(new ReplaceSelectionCommand(m_frame->document(), [fragment _fragment], selectReplacement, smartReplace, matchStyle)).apply();
+    applyCommand(new ReplaceSelectionCommand(m_frame->document(), [fragment _fragment], selectReplacement, smartReplace, matchStyle));
     [self ensureSelectionVisible];
 }
 
@@ -2083,8 +2083,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove
 {
-    Position base = m_frame->dragCaret().base();
-    EditCommandPtr(new MoveSelectionCommand(m_frame->document(), [selectionFragment _fragment], base, smartMove)).apply();
+    applyCommand(new MoveSelectionCommand([selectionFragment _fragment], m_frame->dragCaret().base(), smartMove));
 }
 
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
@@ -2159,7 +2158,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!m_frame->hasSelection())
         return;
     
-    EditCommandPtr(new DeleteSelectionCommand(m_frame->document(), smartDelete)).apply();
+    applyCommand(new DeleteSelectionCommand(m_frame->document(), smartDelete));
 }
 
 - (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity

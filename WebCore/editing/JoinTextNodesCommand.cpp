@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-JoinTextNodesCommand::JoinTextNodesCommand(Document *document, Text *text1, Text *text2)
-    : EditCommand(document), m_text1(text1), m_text2(text2)
+JoinTextNodesCommand::JoinTextNodesCommand(Text *text1, Text *text2)
+    : EditCommand(text1->document()), m_text1(text1), m_text2(text2)
 {
     ASSERT(m_text1);
     ASSERT(m_text2);

@@ -38,7 +38,7 @@ class Position;
 class String;
 class VisiblePosition;
 
-const unsigned short NON_BREAKING_SPACE = 0xa0;
+const UChar NON_BREAKING_SPACE = 0xa0;
 
 Position rangeCompliantEquivalent(const Position&);
 Position rangeCompliantEquivalent(const VisiblePosition&);

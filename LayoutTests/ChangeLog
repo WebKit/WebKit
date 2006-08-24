@@ -1,3 +1,13 @@
+2006-08-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10169
+          REGRESSION: NativeTextArea: Text dragged from <input type=text> to textarea disappears
+
+        * fast/forms/drag-into-textarea-expected.txt: Added.
+        * fast/forms/drag-into-textarea.html: Added.
+
 2006-08-24  David Harrison  <harrison@apple.com>
 
         Updated expected results for this change:

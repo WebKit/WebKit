@@ -1,0 +1,18 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV to 0 of DIV givenAction:WebViewInsertActionDropped
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > DIV to 39 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This tests dragging text from an input element into a text area element.
+
+When the test is run, the follow text field should be empty:
+
+
+
+And the following text area should have text in it:
+
+
+
+Test succeeded!
+
+

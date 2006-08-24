@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,75 +27,69 @@
 #define composite_edit_command_h__
 
 #include "EditCommand.h"
-#include "DeprecatedValueList.h"
-
-namespace WebCore {
-    class CSSStyleDeclaration;
-    class String;
-    class Text;
-    class QualifiedName;
-}
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class CompositeEditCommand : public EditCommand
-{
+class CSSStyleDeclaration;
+class Text;
+
+class CompositeEditCommand : public EditCommand {
 public:
-    CompositeEditCommand(Document *);
+    CompositeEditCommand(Document*);
 
-    virtual void doUnapply();
-    virtual void doReapply();
+    bool isFirstCommand(EditCommand* c) { return !m_commands.isEmpty() && m_commands.first() == c; }
 
 protected:
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands
     //
-    void appendNode(Node *appendChild, Node *parentNode);
-    void applyCommandToComposite(EditCommandPtr &);
-    void applyStyle(CSSStyleDeclaration *style, EditAction editingAction=EditActionChangeAttributes);
-    void applyStyle(CSSStyleDeclaration *style, Position start, Position end, EditAction editingAction=EditActionChangeAttributes);
+    void appendNode(Node* appendChild, Node* parentNode);
+    void applyCommandToComposite(PassRefPtr<EditCommand>);
+    void applyStyle(CSSStyleDeclaration*, EditAction = EditActionChangeAttributes);
+    void applyStyle(CSSStyleDeclaration*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes);
     void applyStyledElement(Element*);
     void removeStyledElement(Element*);
     void deleteKeyPressed();
-    void deleteSelection(bool smartDelete=false, bool mergeBlocksAfterDelete=true, bool replace=false);
-    void deleteSelection(const Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true, bool replace=false);
-    virtual void deleteTextFromNode(Text *node, int offset, int count);
-    void inputText(const String &text, bool selectInsertedText = false);
-    void insertNodeAfter(Node *insertChild, Node *refChild);
-    void insertNodeAt(Node *insertChild, Node *refChild, int offset);
-    void insertNodeBefore(Node *insertChild, Node *refChild);
+    void deleteSelection(bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false);
+    void deleteSelection(const Selection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false);
+    virtual void deleteTextFromNode(Text* node, int offset, int count);
+    void inputText(const String&, bool selectInsertedText = false);
+    void insertNodeAfter(Node* insertChild, Node* refChild);
+    void insertNodeAt(Node* insertChild, Node* refChild, int offset);
+    void insertNodeBefore(Node* insertChild, Node* refChild);
     void insertParagraphSeparator();
-    void insertTextIntoNode(Text *node, int offset, const String &text);
-    void joinTextNodes(Text *text1, Text *text2);
+    void insertTextIntoNode(Text* node, int offset, const String& text);
+    void joinTextNodes(Text*, Text*);
     void rebalanceWhitespace();
-    void rebalanceWhitespaceAt(const Position &position);
-    void removeCSSProperty(CSSStyleDeclaration *, int property);
-    void removeNodeAttribute(Element *, const QualifiedName& attribute);
-    void removeChildrenInRange(Node *node, int from, int to);
+    void rebalanceWhitespaceAt(const Position&);
+    void removeCSSProperty(CSSStyleDeclaration*, int property);
+    void removeNodeAttribute(Element*, const QualifiedName& attribute);
+    void removeChildrenInRange(Node*, int from, int to);
     virtual void removeNode(Node*);
     void removeNodePreservingChildren(Node*);
-    void removeNodeAndPruneAncestors(Node* node);
-    void prune(PassRefPtr<Node> node);
-    void replaceTextInNode(Text *node, int offset, int count, const String &replacementText);
-    Position positionOutsideTabSpan(const Position& pos);
-    void insertNodeAtTabSpanPosition(Node *node, const Position& pos);
-    void setNodeAttribute(Element *, const QualifiedName& attribute, const String &);
-    void splitTextNode(Text *text, int offset);
-    void splitElement(Element *element, Node *atChild);
-    void mergeIdenticalElements(Element *first, Element *second);
-    void wrapContentsInDummySpan(Element *element);
-    void splitTextNodeContainingElement(Text *text, int offset);
+    void removeNodeAndPruneAncestors(Node*);
+    void prune(PassRefPtr<Node>);
+    void replaceTextInNode(Text* node, int offset, int count, const String& replacementText);
+    Position positionOutsideTabSpan(const Position&);
+    void insertNodeAtTabSpanPosition(Node*, const Position&);
+    void setNodeAttribute(Element*, const QualifiedName& attribute, const String& value);
+    void splitTextNode(Text*, int offset);
+    void splitElement(Element*, Node* atChild);
+    void mergeIdenticalElements(Element*, Element*);
+    void wrapContentsInDummySpan(Element*);
+    void splitTextNodeContainingElement(Text*, int offset);
 
-    void deleteInsignificantText(Text *, int start, int end);
-    void deleteInsignificantText(const Position &start, const Position &end);
-    void deleteInsignificantTextDownstream(const Position &);
+    void deleteInsignificantText(Text*, int start, int end);
+    void deleteInsignificantText(const Position& start, const Position& end);
+    void deleteInsignificantTextDownstream(const Position&);
 
     Node *appendBlockPlaceholder(Node*);
-    Node *insertBlockPlaceholder(const Position &pos);
+    Node *insertBlockPlaceholder(const Position&);
     Node *addBlockPlaceholderIfNeeded(Node*);
     void removeBlockPlaceholder(const VisiblePosition&);
 
-    void moveParagraphContentsToNewBlockIfNecessary(const Position &);
+    void moveParagraphContentsToNewBlockIfNecessary(const Position&);
     
     void pushAnchorElementDown(Node*);
     void pushPartiallySelectedAnchorElementsDown();
@@ -105,9 +99,13 @@ protected:
     
     bool breakOutOfEmptyListItem();
 
-    DeprecatedValueList<EditCommandPtr> m_cmds;
+    Vector<RefPtr<EditCommand> > m_commands;
+
+private:
+    virtual void doUnapply();
+    virtual void doReapply();
 };
 
 } // namespace WebCore
 
-#endif // __composite_edit_command_h__
+#endif // composite_edit_command_h__

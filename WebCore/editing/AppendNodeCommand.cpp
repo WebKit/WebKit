@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,35 +28,34 @@
 
 namespace WebCore {
 
-AppendNodeCommand::AppendNodeCommand(Document *document, Node *appendChild, Node *parentNode)
-    : EditCommand(document), m_appendChild(appendChild), m_parentNode(parentNode)
+AppendNodeCommand::AppendNodeCommand(Node* parentNode, PassRefPtr<Node> childToAppend)
+    : EditCommand(parentNode->document()), m_parentNode(parentNode), m_childToAppend(childToAppend)
 {
-    ASSERT(m_appendChild);
+    ASSERT(m_childToAppend);
     ASSERT(m_parentNode);
 }
 
 void AppendNodeCommand::doApply()
 {
-    ASSERT(m_appendChild);
+    ASSERT(m_childToAppend);
     ASSERT(m_parentNode);
     // If the child to append is already in a tree, appending it will remove it from it's old location
     // in an non-undoable way.  We might eventually find it useful to do an undoable remove in this case.
-    ASSERT(!m_appendChild->parent());
+    ASSERT(!m_childToAppend->parent());
     ASSERT(m_parentNode->isContentEditable() || !m_parentNode->attached());
 
     ExceptionCode ec = 0;
-    m_parentNode->appendChild(m_appendChild.get(), ec);
+    m_parentNode->appendChild(m_childToAppend.get(), ec);
     ASSERT(ec == 0);
 }
 
 void AppendNodeCommand::doUnapply()
 {
-    ASSERT(m_appendChild);
+    ASSERT(m_childToAppend);
     ASSERT(m_parentNode);
-    ASSERT(state() == Applied);
 
     ExceptionCode ec = 0;
-    m_parentNode->removeChild(m_appendChild.get(), ec);
+    m_parentNode->removeChild(m_childToAppend.get(), ec);
     ASSERT(ec == 0);
 }
 

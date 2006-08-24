@@ -54,88 +54,88 @@ namespace {
 bool supportsPasteCommand = false;
 
 struct CommandImp {
-    bool (*execFn)(Frame *frame, bool userInterface, const String &value);
-    bool (*enabledFn)(Frame *frame);
-    Frame::TriState (*stateFn)(Frame *frame);
-    String (*valueFn)(Frame *frame);
+    bool (*execFn)(Frame*, bool userInterface, const String& value);
+    bool (*enabledFn)(Frame*);
+    Frame::TriState (*stateFn)(Frame*);
+    String (*valueFn)(Frame*);
 };
 
-typedef HashMap<StringImpl *, const CommandImp *, CaseInsensitiveHash> CommandMap;
+typedef HashMap<StringImpl*, const CommandImp*, CaseInsensitiveHash> CommandMap;
 
-CommandMap *createCommandDictionary();
+CommandMap* createCommandDictionary();
 
-const CommandImp *commandImp(const String &command)
+const CommandImp* commandImp(const String& command)
 {
-    static CommandMap *commandDictionary = createCommandDictionary();
+    static CommandMap* commandDictionary = createCommandDictionary();
     return commandDictionary->get(command.impl());
 }
 
 } // anonymous namespace
 
-bool JSEditor::execCommand(const String &command, bool userInterface, const String &value)
+bool JSEditor::execCommand(const String& command, bool userInterface, const String& value)
 {
-    const CommandImp *cmd = commandImp(command);
+    const CommandImp* cmd = commandImp(command);
     if (!cmd)
         return false;
-    Frame *frame = m_doc->frame();
+    Frame* frame = m_document->frame();
     if (!frame)
         return false;
-    m_doc->updateLayoutIgnorePendingStylesheets();
-    return cmd->enabledFn(frame) && cmd->execFn(frame,  userInterface, value);
+    m_document->updateLayoutIgnorePendingStylesheets();
+    return cmd->enabledFn(frame) && cmd->execFn(frame, userInterface, value);
 }
 
-bool JSEditor::queryCommandEnabled(const String &command)
+bool JSEditor::queryCommandEnabled(const String& command)
 {
-    const CommandImp *cmd = commandImp(command);
+    const CommandImp* cmd = commandImp(command);
     if (!cmd)
         return false;
-    Frame *frame = m_doc->frame();
+    Frame* frame = m_document->frame();
     if (!frame)
         return false;
-    m_doc->updateLayoutIgnorePendingStylesheets();
+    m_document->updateLayoutIgnorePendingStylesheets();
     return cmd->enabledFn(frame);
 }
 
-bool JSEditor::queryCommandIndeterm(const String &command)
+bool JSEditor::queryCommandIndeterm(const String& command)
 {
-    const CommandImp *cmd = commandImp(command);
+    const CommandImp* cmd = commandImp(command);
     if (!cmd)
         return false;
-    Frame *frame = m_doc->frame();
+    Frame* frame = m_document->frame();
     if (!frame)
         return false;
-    m_doc->updateLayoutIgnorePendingStylesheets();
+    m_document->updateLayoutIgnorePendingStylesheets();
     return cmd->stateFn(frame) == Frame::mixedTriState;
 }
 
-bool JSEditor::queryCommandState(const String &command)
+bool JSEditor::queryCommandState(const String& command)
 {
-    const CommandImp *cmd = commandImp(command);
+    const CommandImp* cmd = commandImp(command);
     if (!cmd)
         return false;
-    Frame *frame = m_doc->frame();
+    Frame* frame = m_document->frame();
     if (!frame)
         return false;
-    m_doc->updateLayoutIgnorePendingStylesheets();
+    m_document->updateLayoutIgnorePendingStylesheets();
     return cmd->stateFn(frame) != Frame::falseTriState;
 }
 
-bool JSEditor::queryCommandSupported(const String &command)
+bool JSEditor::queryCommandSupported(const String& command)
 {
     if (!supportsPasteCommand && command.lower() == "paste")
         return false;
     return commandImp(command) != 0;
 }
 
-String JSEditor::queryCommandValue(const String &command)
+String JSEditor::queryCommandValue(const String& command)
 {
-    const CommandImp *cmd = commandImp(command);
+    const CommandImp* cmd = commandImp(command);
     if (!cmd)
         return String();
-    Frame *frame = m_doc->frame();
+    Frame* frame = m_document->frame();
     if (!frame)
         return String();
-    m_doc->updateLayoutIgnorePendingStylesheets();
+    m_document->updateLayoutIgnorePendingStylesheets();
     return cmd->valueFn(frame);
 }
 
@@ -150,7 +150,7 @@ void JSEditor::setSupportsPasteCommand(bool flag)
 
 namespace {
 
-bool execStyleChange(Frame *frame, int propertyID, const String &propertyValue)
+bool execStyleChange(Frame* frame, int propertyID, const String& propertyValue)
 {
     RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
     style->setProperty(propertyID, propertyValue);
@@ -158,26 +158,26 @@ bool execStyleChange(Frame *frame, int propertyID, const String &propertyValue)
     return true;
 }
 
-bool execStyleChange(Frame *frame, int propertyID, const char *propertyValue)
+bool execStyleChange(Frame* frame, int propertyID, const char* propertyValue)
 {
-    return execStyleChange(frame,  propertyID, String(propertyValue));
+    return execStyleChange(frame, propertyID, String(propertyValue));
 }
 
-Frame::TriState stateStyle(Frame *frame, int propertyID, const char *desiredValue)
+Frame::TriState stateStyle(Frame* frame, int propertyID, const char* desiredValue)
 {
     RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
     style->setProperty(propertyID, desiredValue);
     return frame->selectionHasStyle(style.get());
 }
 
-bool selectionStartHasStyle(Frame *frame, int propertyID, const char *desiredValue)
+bool selectionStartHasStyle(Frame* frame, int propertyID, const char* desiredValue)
 {
     RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
     style->setProperty(propertyID, desiredValue);
     return frame->selectionStartHasStyle(style.get());
 }
 
-String valueStyle(Frame *frame, int propertyID)
+String valueStyle(Frame* frame, int propertyID)
 {
     return frame->selectionStartStylePropertyValue(propertyID);
 }
@@ -187,18 +187,18 @@ String valueStyle(Frame *frame, int propertyID)
 // execCommand implementations
 //
 
-bool execBackColor(Frame *frame, bool userInterface, const String &value)
+bool execBackColor(Frame* frame, bool, const String& value)
 {
     return execStyleChange(frame, CSS_PROP_BACKGROUND_COLOR, value);
 }
 
-bool execBold(Frame *frame, bool userInterface, const String &value)
+bool execBold(Frame* frame, bool, const String&)
 {
-    bool isBold = selectionStartHasStyle(frame,  CSS_PROP_FONT_WEIGHT, "bold");
-    return execStyleChange(frame,  CSS_PROP_FONT_WEIGHT, isBold ? "normal" : "bold");
+    bool isBold = selectionStartHasStyle(frame, CSS_PROP_FONT_WEIGHT, "bold");
+    return execStyleChange(frame, CSS_PROP_FONT_WEIGHT, isBold ? "normal" : "bold");
 }
 
-bool execCopy(Frame *frame, bool userInterface, const String &value)
+bool execCopy(Frame* frame, bool, const String&)
 {
     frame->copyToPasteboard();
     return true;
@@ -213,63 +213,62 @@ bool execCreateLink(Frame* frame, bool userInterface, const String& value)
     if (value.isEmpty())
         return false;
     
-    EditCommandPtr(new CreateLinkCommand(frame->document(), value)).apply();
+    applyCommand(new CreateLinkCommand(frame->document(), value));
     return true;
 }
 
-bool execCut(Frame *frame, bool userInterface, const String &value)
+bool execCut(Frame* frame, bool, const String&)
 {
     frame->cutToPasteboard();
     return true;
 }
 
-bool execDelete(Frame *frame, bool userInterface, const String &value)
+bool execDelete(Frame* frame, bool, const String&)
 {
     TypingCommand::deleteKeyPressed(frame->document(), frame->selectionGranularity() == WordGranularity);
     return true;
 }
 
 // FIXME: Come up with a way to send more parameters to execCommand so that we can support all of the features of Frame::findString.
-bool execFindString(Frame *frame, bool userInterface, const String &value)
+bool execFindString(Frame* frame, bool, const String& value)
 {
     return frame->findString(value, true, false, true);
 }
 
-bool execForwardDelete(Frame *frame, bool userInterface, const String &value)
+bool execForwardDelete(Frame* frame, bool, const String&)
 {
     TypingCommand::forwardDeleteKeyPressed(frame->document());
     return true;
 }
 
-bool execFontName(Frame *frame, bool userInterface, const String &value)
+bool execFontName(Frame* frame, bool, const String& value)
 {
-    return execStyleChange(frame,  CSS_PROP_FONT_FAMILY, value);
+    return execStyleChange(frame, CSS_PROP_FONT_FAMILY, value);
 }
 
-bool execFontSize(Frame *frame, bool userInterface, const String &value)
+bool execFontSize(Frame* frame, bool, const String& value)
 {
-    return execStyleChange(frame,  CSS_PROP_FONT_SIZE, value);
+    return execStyleChange(frame, CSS_PROP_FONT_SIZE, value);
 }
 
-bool execFontSizeDelta(Frame *frame, bool userInterface, const String &value)
+bool execFontSizeDelta(Frame* frame, bool, const String& value)
 {
-    return execStyleChange(frame,  CSS_PROP__WEBKIT_FONT_SIZE_DELTA, value);
+    return execStyleChange(frame, CSS_PROP__WEBKIT_FONT_SIZE_DELTA, value);
 }
 
-bool execForeColor(Frame *frame, bool userInterface, const String &value)
+bool execForeColor(Frame* frame, bool, const String& value)
 {
     return execStyleChange(frame, CSS_PROP_COLOR, value);
 }
 
-bool execFormatBlock(Frame *frame, bool userInterface, const String &value)
+bool execFormatBlock(Frame* frame, bool, const String& value)
 {
     String tagName = value.lower();
     if (tagName[0] == '<' && tagName[tagName.length() - 1] == '>')
         tagName = tagName.substring(1, tagName.length() - 2);
     if (!validBlockTag(tagName))
         return false;
-
-    EditCommandPtr(new FormatBlockCommand(frame->document(), tagName)).apply();
+    applyCommand(new FormatBlockCommand(frame->document(), tagName));
     return true;
 }
 
@@ -283,17 +282,15 @@ bool execInsertHorizontalRule(Frame* frame, bool userInterface, const String& va
     if (ec)
         return false;
     
-    EditCommandPtr(new ReplaceSelectionCommand(frame->document(), fragment.get(), false, false, false, true, EditActionUnspecified)).apply();
+    applyCommand(new ReplaceSelectionCommand(frame->document(), fragment.release(),
+        false, false, false, true, EditActionUnspecified));
     return true;
 }
 
 bool execInsertHTML(Frame* frame, bool userInterface, const String& value)
 {
-    DeprecatedString baseURL = "";
-    bool selectReplacement = false;
-    RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), value.deprecatedString(), baseURL);
-    EditCommandPtr cmd(new ReplaceSelectionCommand(frame->document(), fragment.get(), selectReplacement));
-    cmd.apply();
+    Document* document = frame->document();
+    applyCommand(new ReplaceSelectionCommand(frame->document(), createFragmentFromMarkup(document, value, ""), false));
     return true;
 }
 
@@ -311,103 +308,103 @@ bool execInsertImage(Frame* frame, bool userInterface, const String& value)
     if (ec)
         return false;
     
-    EditCommandPtr(new ReplaceSelectionCommand(frame->document(), fragment.get(), false)).apply();
+    applyCommand(new ReplaceSelectionCommand(frame->document(), fragment.release(), false));
     return true;
 }
 
-bool execIndent(Frame *frame, bool userInterface, const String &value)
+bool execIndent(Frame* frame, bool, const String&)
 {
-    EditCommandPtr(new IndentOutdentCommand(frame->document(), IndentOutdentCommand::Indent)).apply();
+    applyCommand(new IndentOutdentCommand(frame->document(), IndentOutdentCommand::Indent));
     return true;
 }
 
-bool execInsertLineBreak(Frame *frame, bool userInterface, const String &value)
+bool execInsertLineBreak(Frame* frame, bool, const String&)
 {
     TypingCommand::insertLineBreak(frame->document());
     return true;
 }
 
-bool execInsertParagraph(Frame *frame, bool userInterface, const String &value)
+bool execInsertParagraph(Frame* frame, bool, const String&)
 {
     TypingCommand::insertParagraphSeparator(frame->document());
     return true;
 }
 
-bool execInsertNewlineInQuotedContent(Frame *frame, bool userInterface, const String &value)
+bool execInsertNewlineInQuotedContent(Frame* frame, bool, const String&)
 {
     TypingCommand::insertParagraphSeparatorInQuotedContent(frame->document());
     return true;
 }
 
-bool execInsertText(Frame *frame, bool userInterface, const String &value)
+bool execInsertText(Frame* frame, bool, const String& value)
 {
     TypingCommand::insertText(frame->document(), value);
     return true;
 }
 
-bool execInsertUnorderedList(Frame *frame, bool userInterface, const String &value)
+bool execInsertUnorderedList(Frame* frame, bool, const String& value)
 {
-    EditCommandPtr(new InsertListCommand(frame->document(), InsertListCommand::UnorderedListType, value)).apply();
+    applyCommand(new InsertListCommand(frame->document(), InsertListCommand::UnorderedList, value));
     return true;
 }
 
-bool execInsertOrderedList(Frame *frame, bool userInterface, const String &value)
+bool execInsertOrderedList(Frame* frame, bool, const String& value)
 {
-    EditCommandPtr(new InsertListCommand(frame->document(), InsertListCommand::OrderedListType, value)).apply();
+    applyCommand(new InsertListCommand(frame->document(), InsertListCommand::OrderedList, value));
     return true;
 }
 
-bool execItalic(Frame *frame, bool userInterface, const String &value)
+bool execItalic(Frame* frame, bool, const String&)
 {
-    bool isItalic = selectionStartHasStyle(frame,  CSS_PROP_FONT_STYLE, "italic");
-    return execStyleChange(frame,  CSS_PROP_FONT_STYLE, isItalic ? "normal" : "italic");
+    bool isItalic = selectionStartHasStyle(frame, CSS_PROP_FONT_STYLE, "italic");
+    return execStyleChange(frame, CSS_PROP_FONT_STYLE, isItalic ? "normal" : "italic");
 }
 
-bool execJustifyCenter(Frame *frame, bool userInterface, const String &value)
+bool execJustifyCenter(Frame* frame, bool, const String&)
 {
-    return execStyleChange(frame,  CSS_PROP_TEXT_ALIGN, "center");
+    return execStyleChange(frame, CSS_PROP_TEXT_ALIGN, "center");
 }
 
-bool execJustifyFull(Frame *frame, bool userInterface, const String &value)
+bool execJustifyFull(Frame* frame, bool, const String&)
 {
-    return execStyleChange(frame,  CSS_PROP_TEXT_ALIGN, "justify");
+    return execStyleChange(frame, CSS_PROP_TEXT_ALIGN, "justify");
 }
 
-bool execJustifyLeft(Frame *frame, bool userInterface, const String &value)
+bool execJustifyLeft(Frame* frame, bool, const String&)
 {
-    return execStyleChange(frame,  CSS_PROP_TEXT_ALIGN, "left");
+    return execStyleChange(frame, CSS_PROP_TEXT_ALIGN, "left");
 }
 
-bool execJustifyRight(Frame *frame, bool userInterface, const String &value)
+bool execJustifyRight(Frame* frame, bool, const String&)
 {
-    return execStyleChange(frame,  CSS_PROP_TEXT_ALIGN, "right");
+    return execStyleChange(frame, CSS_PROP_TEXT_ALIGN, "right");
 }
 
-bool execOutdent(Frame *frame, bool userInterface, const String &value)
+bool execOutdent(Frame* frame, bool, const String&)
 {
-    EditCommandPtr(new IndentOutdentCommand(frame->document(), IndentOutdentCommand::Outdent)).apply();
+    applyCommand(new IndentOutdentCommand(frame->document(), IndentOutdentCommand::Outdent));
     return true;
 }
 
-bool execPaste(Frame *frame, bool userInterface, const String &value)
+bool execPaste(Frame* frame, bool, const String&)
 {
     frame->pasteFromPasteboard();
     return true;
 }
 
-bool execPasteAndMatchStyle(Frame *frame, bool userInterface, const String &value)
+bool execPasteAndMatchStyle(Frame* frame, bool, const String&)
 {
     frame->pasteAndMatchStyle();
     return true;
 }
 
-bool execPrint(Frame *frame, bool userInterface, const String &value)
+bool execPrint(Frame* frame, bool, const String&)
 {
     frame->print();
     return true;
 }
 
-bool execRedo(Frame *frame, bool userInterface, const String &value)
+bool execRedo(Frame* frame, bool, const String&)
 {
     frame->redo();
     return true;
@@ -415,58 +412,59 @@ bool execRedo(Frame *frame, bool userInterface, const String &value)
 
 bool execRemoveFormat(Frame* frame, bool userInterface, const String& value)
 {
-    RefPtr<DocumentFragment> fragment = createFragmentFromText(frame->selection().toRange().get(), frame->selection().toString());
-    EditCommandPtr(new ReplaceSelectionCommand(frame->document(), fragment.get(), false, false, false, true, EditActionUnspecified)).apply();
+    applyCommand(new ReplaceSelectionCommand(frame->document(),
+        createFragmentFromText(frame->selection().toRange().get(), frame->selection().toString()),
+        false, false, false, true, EditActionUnspecified));
     return true;
 }
 
-bool execSelectAll(Frame *frame, bool userInterface, const String &value)
+bool execSelectAll(Frame* frame, bool, const String&)
 {
     frame->selectAll();
     return true;
 }
 
-bool execStrikethrough(Frame *frame, bool userInterface, const String &value)
+bool execStrikethrough(Frame* frame, bool, const String&)
 {
     bool isStrikethrough = selectionStartHasStyle(frame,  CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT, "line-through");
-    return execStyleChange(frame,  CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT, isStrikethrough ? "none" : "line-through");
+    return execStyleChange(frame, CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT, isStrikethrough ? "none" : "line-through");
 }
 
-bool execSubscript(Frame *frame, bool userInterface, const String &value)
+bool execSubscript(Frame* frame, bool, const String&)
 {
     return execStyleChange(frame,  CSS_PROP_VERTICAL_ALIGN, "sub");
 }
 
-bool execSuperscript(Frame *frame, bool userInterface, const String &value)
+bool execSuperscript(Frame* frame, bool, const String&)
 {
     return execStyleChange(frame,  CSS_PROP_VERTICAL_ALIGN, "super");
 }
 
-bool execTranspose(Frame *frame, bool userInterface, const String &value)
+bool execTranspose(Frame* frame, bool, const String&)
 {
     frame->transpose();
     return true;
 }
 
-bool execUnderline(Frame *frame, bool userInterface, const String &value)
+bool execUnderline(Frame* frame, bool, const String&)
 {
     bool isUnderlined = selectionStartHasStyle(frame,  CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT, "underline");
     return execStyleChange(frame,  CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT, isUnderlined ? "none" : "underline");
 }
 
-bool execUndo(Frame *frame, bool userInterface, const String &value)
+bool execUndo(Frame* frame, bool, const String&)
 {
     frame->undo();
     return true;
 }
 
-bool execUnlink(Frame *frame, bool userInterface, const String &value)
+bool execUnlink(Frame* frame, bool, const String&)
 {
-    EditCommandPtr(new UnlinkCommand(frame->document())).apply();
+    applyCommand(new UnlinkCommand(frame->document()));
     return true;
 }
 
-bool execUnselect(Frame *frame, bool userInterface, const String &value)
+bool execUnselect(Frame* frame, bool, const String&)
 {
     // FIXME: 6498 Should just be able to call m_frame->selection().clear()
     frame->setSelection(SelectionController());
@@ -483,62 +481,62 @@ bool execUnselect(Frame *frame, bool userInterface, const String &value)
 //     Supported = The command is supported by this object.
 //     Enabled =   The command is available and enabled.
 
-bool enabled(Frame *frame)
+bool enabled(Frame*)
 {
     return true;
 }
 
-bool enabledAnyCaret(Frame *frame)
+bool enabledAnyCaret(Frame* frame)
 {
     return frame->selection().isCaret() && frame->selection().isContentEditable();
 }
 
-bool enabledAnySelection(Frame *frame)
+bool enabledAnySelection(Frame* frame)
 {
     return frame->selection().isCaretOrRange();
 }
 
-bool enabledAnyEditableSelection(Frame *frame)
+bool enabledAnyEditableSelection(Frame* frame)
 {
     return frame->selection().isCaretOrRange() && frame->selection().isContentEditable();
 }
 
-bool enabledAnyRichlyEditableSelection(Frame *frame)
+bool enabledAnyRichlyEditableSelection(Frame* frame)
 {
     return frame->selection().isCaretOrRange() && frame->selection().isContentRichlyEditable();
 }
 
-bool enabledPaste(Frame *frame)
+bool enabledPaste(Frame* frame)
 {
     return supportsPasteCommand && frame->canPaste();
 }
 
-bool enabledPasteAndMatchStyle(Frame *frame)
+bool enabledPasteAndMatchStyle(Frame* frame)
 {
     return supportsPasteCommand && frame->canPaste();
 }
 
-bool enabledAnyRangeSelection(Frame *frame)
+bool enabledAnyRangeSelection(Frame* frame)
 {
     return frame->selection().isRange();
 }
 
-bool enabledAnyEditableRangeSelection(Frame *frame)
+bool enabledAnyEditableRangeSelection(Frame* frame)
 {
     return frame->selection().isRange() && frame->selection().isContentEditable();
 }
 
-bool enabledAnyRichlyEditableRangeSelection(Frame *frame)
+bool enabledAnyRichlyEditableRangeSelection(Frame* frame)
 {
     return frame->selection().isRange() && frame->selection().isContentRichlyEditable();
 }
 
-bool enabledRedo(Frame *frame)
+bool enabledRedo(Frame* frame)
 {
     return frame->canRedo();
 }
 
-bool enabledUndo(Frame *frame)
+bool enabledUndo(Frame* frame)
 {
     return frame->canUndo();
 }
@@ -560,44 +558,44 @@ bool enabledUndo(Frame *frame)
 // Then, queryCommandIndeterm should return "no" in the case where
 // all the text is either all bold or not-bold and and "yes" for partially-bold text.
 
-Frame::TriState stateNone(Frame *frame)
+Frame::TriState stateNone(Frame*)
 {
     return Frame::falseTriState;
 }
 
-Frame::TriState stateBold(Frame *frame)
+Frame::TriState stateBold(Frame* frame)
 {
-    return stateStyle(frame,  CSS_PROP_FONT_WEIGHT, "bold");
+    return stateStyle(frame, CSS_PROP_FONT_WEIGHT, "bold");
 }
 
-Frame::TriState stateItalic(Frame *frame)
+Frame::TriState stateItalic(Frame* frame)
 {
-    return stateStyle(frame,  CSS_PROP_FONT_STYLE, "italic");
+    return stateStyle(frame, CSS_PROP_FONT_STYLE, "italic");
 }
 
-Frame::TriState stateList(Frame *frame)
+Frame::TriState stateList(Frame* frame)
 {
     return frame->selectionListState();
 }
 
-Frame::TriState stateStrikethrough(Frame *frame)
+Frame::TriState stateStrikethrough(Frame* frame)
 {
-    return stateStyle(frame,  CSS_PROP_TEXT_DECORATION, "line-through");
+    return stateStyle(frame, CSS_PROP_TEXT_DECORATION, "line-through");
 }
 
-Frame::TriState stateSubscript(Frame *frame)
+Frame::TriState stateSubscript(Frame* frame)
 {
-    return stateStyle(frame,  CSS_PROP_VERTICAL_ALIGN, "sub");
+    return stateStyle(frame, CSS_PROP_VERTICAL_ALIGN, "sub");
 }
 
-Frame::TriState stateSuperscript(Frame *frame)
+Frame::TriState stateSuperscript(Frame* frame)
 {
-    return stateStyle(frame,  CSS_PROP_VERTICAL_ALIGN, "super");
+    return stateStyle(frame, CSS_PROP_VERTICAL_ALIGN, "super");
 }
 
-Frame::TriState stateUnderline(Frame *frame)
+Frame::TriState stateUnderline(Frame* frame)
 {
-    return stateStyle(frame,  CSS_PROP_TEXT_DECORATION, "underline");
+    return stateStyle(frame, CSS_PROP_TEXT_DECORATION, "underline");
 }
 
 // =============================================================================================
@@ -605,41 +603,41 @@ Frame::TriState stateUnderline(Frame *frame)
 // queryCommandValue implementations
 //
 
-String valueNull(Frame *frame)
+String valueNull(Frame*)
 {
     return String();
 }
 
-String valueBackColor(Frame *frame)
+String valueBackColor(Frame* frame)
 {
-    return valueStyle(frame,  CSS_PROP_BACKGROUND_COLOR);
+    return valueStyle(frame, CSS_PROP_BACKGROUND_COLOR);
 }
 
-String valueFontName(Frame *frame)
+String valueFontName(Frame* frame)
 {
-    return valueStyle(frame,  CSS_PROP_FONT_FAMILY);
+    return valueStyle(frame, CSS_PROP_FONT_FAMILY);
 }
 
-String valueFontSize(Frame *frame)
+String valueFontSize(Frame* frame)
 {
-    return valueStyle(frame,  CSS_PROP_FONT_SIZE);
+    return valueStyle(frame, CSS_PROP_FONT_SIZE);
 }
 
-String valueFontSizeDelta(Frame *frame)
+String valueFontSizeDelta(Frame* frame)
 {
-    return valueStyle(frame,  CSS_PROP__WEBKIT_FONT_SIZE_DELTA);
+    return valueStyle(frame, CSS_PROP__WEBKIT_FONT_SIZE_DELTA);
 }
 
-String valueForeColor(Frame *frame)
+String valueForeColor(Frame* frame)
 {
-    return valueStyle(frame,  CSS_PROP_COLOR);
+    return valueStyle(frame, CSS_PROP_COLOR);
 }
 
 // =============================================================================================
 
-CommandMap *createCommandDictionary()
+CommandMap* createCommandDictionary()
 {
-    struct EditorCommand { const char *name; CommandImp imp; };
+    struct EditorCommand { const char* name; CommandImp imp; };
 
     static const EditorCommand commands[] = {
 
@@ -739,7 +737,7 @@ CommandMap *createCommandDictionary()
         // Unbookmark (not supported)
     };
 
-    CommandMap *commandMap = new CommandMap;
+    CommandMap* commandMap = new CommandMap;
 
     const int numCommands = sizeof(commands) / sizeof(commands[0]);
     for (int i = 0; i < numCommands; ++i) {

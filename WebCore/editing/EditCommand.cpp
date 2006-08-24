@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,170 +26,33 @@
 #include "config.h"
 #include "EditCommand.h"
 
+#include "CompositeEditCommand.h"
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "Document.h"
+#include "Element.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "SelectionController.h"
 #include "VisiblePosition.h"
-#include "CSSComputedStyleDeclaration.h"
-#include "CSSMutableStyleDeclaration.h"
-#include "EventNames.h"
 #include "htmlediting.h"
 
 namespace WebCore {
 
 using namespace EventNames;
 
-#define IF_IMPL_NULL_RETURN_ARG(arg) do { \
-        if (*this == 0) { return arg; } \
-    } while (0)
-        
-#define IF_IMPL_NULL_RETURN do { \
-        if (*this == 0) { return; } \
-    } while (0)
-
-EditCommandPtr::EditCommandPtr()
-{
-}
-
-EditCommandPtr::EditCommandPtr(EditCommand *impl) : RefPtr<EditCommand>(impl)
-{
-}
-
-bool EditCommandPtr::isCompositeStep() const
-{
-    IF_IMPL_NULL_RETURN_ARG(false);        
-    return get()->isCompositeStep();
-}
-
-bool EditCommandPtr::isInsertTextCommand() const
-{
-    IF_IMPL_NULL_RETURN_ARG(false);        
-    return get()->isInsertTextCommand();
-}
-
-bool EditCommandPtr::isTypingCommand() const
-{
-    IF_IMPL_NULL_RETURN_ARG(false);        
-    return get()->isTypingCommand();
-}
-
-void EditCommandPtr::apply() const
-{
-    IF_IMPL_NULL_RETURN;
-    get()->apply();
-}
-
-void EditCommandPtr::unapply() const
-{
-    IF_IMPL_NULL_RETURN;
-    get()->unapply();
-}
-
-void EditCommandPtr::reapply() const
-{
-    IF_IMPL_NULL_RETURN;
-    get()->reapply();
-}
-
-EditAction EditCommandPtr::editingAction() const
-{
-    IF_IMPL_NULL_RETURN_ARG(EditActionUnspecified);
-    return get()->editingAction();
-}
-
-Document * const EditCommandPtr::document() const
-{
-    IF_IMPL_NULL_RETURN_ARG(0);
-    return get()->document();
-}
-
-Selection EditCommandPtr::startingSelection() const
-{
-    IF_IMPL_NULL_RETURN_ARG(Selection());
-    return get()->startingSelection();
-}
-
-Selection EditCommandPtr::endingSelection() const
-{
-    IF_IMPL_NULL_RETURN_ARG(Selection());
-    return get()->endingSelection();
-}
-
-void EditCommandPtr::setStartingSelection(const Selection &s) const
-{
-    IF_IMPL_NULL_RETURN;
-    get()->setStartingSelection(s);
-}
-
-void EditCommandPtr::setStartingSelection(const VisiblePosition &p) const
-{
-    IF_IMPL_NULL_RETURN;
-    get()->setStartingSelection(p);
-}
-
-void EditCommandPtr::setStartingSelection(const Position &p, EAffinity affinity) const
-{
-    IF_IMPL_NULL_RETURN;
-    Selection s = Selection(p, affinity);
-    get()->setStartingSelection(s);
-}
-
-void EditCommandPtr::setEndingSelection(const Selection &s) const
-{
-    IF_IMPL_NULL_RETURN;
-    get()->setEndingSelection(s);
-}
-
-void EditCommandPtr::setEndingSelection(const VisiblePosition &p) const
-{
-    IF_IMPL_NULL_RETURN;
-    get()->setEndingSelection(p);
-}
-
-void EditCommandPtr::setEndingSelection(const Position &p, EAffinity affinity) const
-{
-    IF_IMPL_NULL_RETURN;
-    Selection s = Selection(p, affinity);
-    get()->setEndingSelection(s);
-}
-
-CSSMutableStyleDeclaration *EditCommandPtr::typingStyle() const
-{
-    IF_IMPL_NULL_RETURN_ARG(0);
-    return get()->typingStyle();
-}
-
-void EditCommandPtr::setTypingStyle(PassRefPtr<CSSMutableStyleDeclaration> style) const
-{
-    IF_IMPL_NULL_RETURN;
-    get()->setTypingStyle(style);
-}
-
-EditCommandPtr EditCommandPtr::parent() const
-{
-    IF_IMPL_NULL_RETURN_ARG(0);
-    return get()->parent();
-}
-
-void EditCommandPtr::setParent(const EditCommandPtr &cmd) const
-{
-    IF_IMPL_NULL_RETURN;
-    get()->setParent(cmd.get());
-}
-
-EditCommandPtr &EditCommandPtr::emptyCommand()
-{
-    static EditCommandPtr m_emptyCommand;
-    return m_emptyCommand;
-}
-
-EditCommand::EditCommand(Document *document) 
-    : m_document(document), m_state(NotApplied), m_parent(0)
+EditCommand::EditCommand(Document* document) 
+    : m_document(document)
+    , m_startingSelection(document->frame()->selection().selection())
+    , m_endingSelection(m_startingSelection)
+    , m_startingRootEditableElement(m_startingSelection.rootEditableElement())
+    , m_endingRootEditableElement(m_startingRootEditableElement)
+    , m_parent(0)
 {
     ASSERT(m_document);
     ASSERT(m_document->frame());
-    m_startingSelection = m_document->frame()->selection().selection();
-    m_endingSelection = m_startingSelection;
+    setStartingSelection(m_document->frame()->selection().selection());
+    setEndingSelection(m_startingSelection);
 }
 
 EditCommand::~EditCommand()
@@ -200,12 +63,10 @@ void EditCommand::apply()
 {
     ASSERT(m_document);
     ASSERT(m_document->frame());
-    ASSERT(state() == NotApplied);
  
-    Frame *frame = m_document->frame();
+    Frame* frame = m_document->frame();
     
-    bool topLevel = !isCompositeStep();
-    if (topLevel) {
+    if (!m_parent) {
         if (!endingSelection().isContentRichlyEditable()) {
             switch (editingAction()) {
                 case EditActionTyping:
@@ -221,20 +82,17 @@ void EditCommand::apply()
             }
         }
     }
-    
+
     doApply();
-    
-    m_state = Applied;
 
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     if (!preservesTypingStyle())
         setTypingStyle(0);
 
-    if (topLevel) {
+    if (!m_parent) {
         updateLayout();
-        EditCommandPtr cmd(this);
-        frame->appliedEditing(cmd);
+        frame->appliedEditing(this);
     }
 }
 
@@ -242,18 +100,14 @@ void EditCommand::unapply()
 {
     ASSERT(m_document);
     ASSERT(m_document->frame());
-    ASSERT(state() == Applied);
  
-    Frame *frame = m_document->frame();
+    Frame* frame = m_document->frame();
     
     doUnapply();
-    
-    m_state = NotApplied;
 
-    if (!isCompositeStep()) {
+    if (!m_parent) {
         updateLayout();
-        EditCommandPtr cmd(this);
-        frame->unappliedEditing(cmd);
+        frame->unappliedEditing(this);
     }
 }
 
@@ -261,18 +115,14 @@ void EditCommand::reapply()
 {
     ASSERT(m_document);
     ASSERT(m_document->frame());
-    ASSERT(state() == NotApplied);
  
-    Frame *frame = m_document->frame();
+    Frame* frame = m_document->frame();
     
     doReapply();
-    
-    m_state = Applied;
 
-    if (!isCompositeStep()) {
+    if (!m_parent) {
         updateLayout();
-        EditCommandPtr cmd(this);
-        frame->reappliedEditing(cmd);
+        frame->reappliedEditing(this);
     }
 }
 
@@ -286,44 +136,24 @@ EditAction EditCommand::editingAction() const
     return EditActionUnspecified;
 }
 
-void EditCommand::setStartingSelection(const Selection &s)
+void EditCommand::setStartingSelection(const Selection& s)
 {
-    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
+    Element* root = s.rootEditableElement();
+    for (EditCommand* cmd = this; cmd; cmd = cmd->m_parent) {
         cmd->m_startingSelection = s;
-}
-
-void EditCommand::setStartingSelection(const VisiblePosition &p)
-{
-    Selection s = Selection(p.deepEquivalent(), p.affinity());
-    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
-        cmd->m_startingSelection = s;
-}
-
-void EditCommand::setStartingSelection(const Position &p, EAffinity affinity)
-{
-    Selection s = Selection(p, affinity);
-    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
-        cmd->m_startingSelection = s;
+        cmd->m_startingRootEditableElement = root;
+        if (!cmd->m_parent || cmd->m_parent->isFirstCommand(cmd))
+            break;
+    }
 }
 
 void EditCommand::setEndingSelection(const Selection &s)
 {
-    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
+    Element* root = s.rootEditableElement();
+    for (EditCommand* cmd = this; cmd; cmd = cmd->m_parent) {
         cmd->m_endingSelection = s;
-}
-
-void EditCommand::setEndingSelection(const VisiblePosition &p)
-{
-    Selection s = Selection(p.deepEquivalent(), p.affinity());
-    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
-        cmd->m_endingSelection = s;
-}
-
-void EditCommand::setEndingSelection(const Position &p, EAffinity affinity)
-{
-    Selection s = Selection(p, affinity);
-    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
-        cmd->m_endingSelection = s;
+        cmd->m_endingRootEditableElement = root;
+    }
 }
 
 void EditCommand::setTypingStyle(PassRefPtr<CSSMutableStyleDeclaration> style)
@@ -371,6 +201,22 @@ PassRefPtr<CSSMutableStyleDeclaration> EditCommand::styleAtPosition(const Positi
 void EditCommand::updateLayout() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
+}
+
+void EditCommand::setParent(CompositeEditCommand* parent)
+{
+    ASSERT(parent);
+    ASSERT(!m_parent);
+    m_parent = parent;
+    m_startingSelection = parent->m_endingSelection;
+    m_endingSelection = parent->m_endingSelection;
+    m_startingRootEditableElement = parent->m_endingRootEditableElement;
+    m_endingRootEditableElement = parent->m_endingRootEditableElement;
+}
+
+void applyCommand(PassRefPtr<EditCommand> command)
+{
+    command->apply();
 }
 
 } // namespace WebCore

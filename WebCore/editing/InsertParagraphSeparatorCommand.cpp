@@ -100,11 +100,8 @@ void InsertParagraphSeparatorCommand::doApply()
     // FIXME: Turn into an InsertLineBreak in other cases where we don't want to do the splitting/cloning that
     // InsertParagraphSeparator does.
     Node* block = pos.node()->enclosingBlockFlowElement();
-    if (!block ||
-        !block->parentNode() ||
-        block->renderer() && block->renderer()->isTableCell()) {
-        EditCommandPtr cmd(new InsertLineBreakCommand(document())); 
-        applyCommandToComposite(cmd);
+    if (!block || !block->parentNode() || block->renderer() && block->renderer()->isTableCell()) {
+        applyCommandToComposite(new InsertLineBreakCommand(document()));
         return;
     }
     
@@ -157,7 +154,7 @@ void InsertParagraphSeparatorCommand::doApply()
             insertNodeAfter(blockToInsert.get(), startBlock);
 
         appendBlockPlaceholder(blockToInsert.get());
-        setEndingSelection(Position(blockToInsert.get(), 0), DOWNSTREAM);
+        setEndingSelection(Selection(Position(blockToInsert.get(), 0), DOWNSTREAM));
         applyStyleAfterInsertion();
         return;
     }
@@ -179,9 +176,9 @@ void InsertParagraphSeparatorCommand::doApply()
 
         insertNodeBefore(blockToInsert.get(), refNode);
         appendBlockPlaceholder(blockToInsert.get());
-        setEndingSelection(Position(blockToInsert.get(), 0), DOWNSTREAM);
+        setEndingSelection(Selection(Position(blockToInsert.get(), 0), DOWNSTREAM));
         applyStyleAfterInsertion();
-        setEndingSelection(pos, DOWNSTREAM);
+        setEndingSelection(Selection(pos, DOWNSTREAM));
         return;
     }
 
@@ -293,7 +290,7 @@ void InsertParagraphSeparatorCommand::doApply()
         }
     }
 
-    setEndingSelection(Position(blockToInsert.get(), 0), DOWNSTREAM);
+    setEndingSelection(Selection(Position(blockToInsert.get(), 0), DOWNSTREAM));
     applyStyleAfterInsertion();
 }
 

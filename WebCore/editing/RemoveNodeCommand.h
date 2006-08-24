@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __remove_node_command_h__
-#define __remove_node_command_h__
+#ifndef remove_node_command_h__
+#define remove_node_command_h__
 
 #include "EditCommand.h"
 
 namespace WebCore {
 
-class RemoveNodeCommand : public EditCommand
-{
+class RemoveNodeCommand : public EditCommand {
 public:
-    RemoveNodeCommand(Document *, Node *);
-    virtual ~RemoveNodeCommand() { }
+    RemoveNodeCommand(Node*);
 
     virtual void doApply();
     virtual void doUnapply();
 
-    Node *node() const { return m_removeChild.get(); }
+    Node* node() const { return m_removeChild.get(); }
 
 private:
     RefPtr<Node> m_removeChild;
@@ -49,4 +47,4 @@ private:
 
 } // namespace WebCore
 
-#endif // __remove_node_command_h__
+#endif // remove_node_command_h__

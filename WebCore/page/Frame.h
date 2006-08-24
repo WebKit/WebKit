@@ -58,7 +58,7 @@ class CSSMutableStyleDeclaration;
 class CSSStyleDeclaration;
 class DrawContentsEvent;
 class DOMWindow;
-class EditCommandPtr;
+class EditCommand;
 class FramePrivate;
 class FrameTree;
 class KJSProxy;
@@ -420,22 +420,22 @@ public:
   /**
    * Returns the most recent edit command applied.
    */
-  EditCommandPtr lastEditCommand();
+  EditCommand* lastEditCommand();
 
   /**
    * Called when editing has been applied.
    */
-  void appliedEditing(EditCommandPtr&);
+  void appliedEditing(PassRefPtr<EditCommand>);
 
   /**
    * Called when editing has been unapplied.
    */
-  void unappliedEditing(EditCommandPtr&);
+  void unappliedEditing(PassRefPtr<EditCommand>);
 
   /**
    * Called when editing has been reapplied.
    */
-  void reappliedEditing(EditCommandPtr&);
+  void reappliedEditing(PassRefPtr<EditCommand>);
 
   /**
    * Returns the typing style for the document.
@@ -552,8 +552,8 @@ public:
   virtual void unfocusWindow() = 0;
   virtual void createEmptyDocument() = 0;
   virtual Range* markedTextRange() const = 0;
-  virtual void registerCommandForUndo(const EditCommandPtr&) = 0;
-  virtual void registerCommandForRedo(const EditCommandPtr&) = 0;
+  virtual void registerCommandForUndo(PassRefPtr<EditCommand>) = 0;
+  virtual void registerCommandForRedo(PassRefPtr<EditCommand>) = 0;
   virtual void clearUndoRedoOperations() = 0;
   virtual void issueUndoCommand() = 0;
   virtual void issueRedoCommand() = 0;

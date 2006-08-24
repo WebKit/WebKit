@@ -27,17 +27,17 @@
 #import "WebCoreEditCommand.h"
 
 #import "EditCommand.h"
+#import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
 
 @implementation WebCoreEditCommand
 
-- (id)initWithEditCommand:(EditCommand *)command
+- (id)initWithEditCommand:(PassRefPtr<WebCore::EditCommand>)command
 {
     ASSERT(command);
     [super init];
-    m_command = command;
-    command->ref();
+    m_command = command.release();
     return self;
 }
 
@@ -53,7 +53,7 @@ using namespace WebCore;
     [super finalize];
 }
 
-+ (WebCoreEditCommand *)commandWithEditCommand:(EditCommand *)command
++ (WebCoreEditCommand *)commandWithEditCommand:(PassRefPtr<WebCore::EditCommand>)command
 {
     return [[[WebCoreEditCommand alloc] initWithEditCommand:command] autorelease];
 }

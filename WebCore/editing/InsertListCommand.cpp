@@ -45,9 +45,10 @@ Node* InsertListCommand::fixOrphanedListChild(Node* node)
     return listElement.get();
 }
 
-InsertListCommand::InsertListCommand(Document* document, EListType type, const String& id) 
+InsertListCommand::InsertListCommand(Document* document, Type type, const String& id) 
     : CompositeEditCommand(document), m_type(type), m_id(id), m_forceCreateList(false)
-{}
+{
+}
 
 bool InsertListCommand::modifyRange()
 {
@@ -94,7 +95,7 @@ void InsertListCommand::doApply()
         return;
     
     Node* selectionNode = endingSelection().start().node();
-    const QualifiedName listTag = (m_type == OrderedListType) ? olTag : ulTag;
+    const QualifiedName listTag = (m_type == OrderedList) ? olTag : ulTag;
     Node* listChildNode = enclosingListChild(selectionNode);
     bool switchListType = false;
     if (listChildNode) {
@@ -162,7 +163,7 @@ void InsertListCommand::doApply()
             appendNode(listItemElement.get(), nextList);
         else {
             // Create the list.
-            RefPtr<Element> listElement = m_type == OrderedListType ? createOrderedListElement(document()) : createUnorderedListElement(document());
+            RefPtr<Element> listElement = m_type == OrderedList ? createOrderedListElement(document()) : createUnorderedListElement(document());
             static_cast<HTMLElement*>(listElement.get())->setId(m_id);
             appendNode(listItemElement.get(), listElement.get());
             insertNodeAt(listElement.get(), start.deepEquivalent().node(), start.deepEquivalent().offset());

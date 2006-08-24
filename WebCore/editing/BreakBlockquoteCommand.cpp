@@ -26,6 +26,7 @@
 #include "config.h"
 #include "BreakBlockquoteCommand.h"
 
+#include "DeprecatedPtrList.h"
 #include "Element.h"
 #include "HTMLNames.h"
 #include "Text.h"
@@ -155,7 +156,7 @@ void BreakBlockquoteCommand::doApply()
     }
     
     // Put the selection right before the break.
-    setEndingSelection(Position(breakNode.get(), 0), DOWNSTREAM);
+    setEndingSelection(Selection(Position(breakNode.get(), 0), DOWNSTREAM));
     rebalanceWhitespace();
 }
 

@@ -66,8 +66,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const String &blockPlaceholderClassString();
-
 CompositeEditCommand::CompositeEditCommand(Document *document) 
     : EditCommand(document)
 {
@@ -75,139 +73,115 @@ CompositeEditCommand::CompositeEditCommand(Document *document)
 
 void CompositeEditCommand::doUnapply()
 {
-    if (m_cmds.count() == 0)
-        return;
-    
-    DeprecatedValueList<EditCommandPtr>::ConstIterator end;
-    for (DeprecatedValueList<EditCommandPtr>::ConstIterator it = m_cmds.fromLast(); it != end; --it)
-        (*it)->unapply();
-
-    setState(NotApplied);
+    size_t size = m_commands.size();
+    for (size_t i = size; i != 0; --i)
+        m_commands[i - 1]->unapply();
 }
 
 void CompositeEditCommand::doReapply()
 {
-    if (m_cmds.count() == 0)
-        return;
-
-    for (DeprecatedValueList<EditCommandPtr>::ConstIterator it = m_cmds.begin(); it != m_cmds.end(); ++it)
-        (*it)->reapply();
-
-    setState(Applied);
+    size_t size = m_commands.size();
+    for (size_t i = 0; i != size; ++i)
+        m_commands[i]->reapply();
 }
 
 //
 // sugary-sweet convenience functions to help create and apply edit commands in composite commands
 //
-void CompositeEditCommand::applyCommandToComposite(EditCommandPtr &cmd)
+void CompositeEditCommand::applyCommandToComposite(PassRefPtr<EditCommand> cmd)
 {
-    cmd.setStartingSelection(endingSelection());
-    cmd.setEndingSelection(endingSelection());
-    cmd.setParent(this);
-    cmd.apply();
-    m_cmds.append(cmd);
+    cmd->setParent(this);
+    cmd->apply();
+    m_commands.append(cmd);
 }
 
-void CompositeEditCommand::applyStyle(CSSStyleDeclaration *style, EditAction editingAction)
+void CompositeEditCommand::applyStyle(CSSStyleDeclaration* style, EditAction editingAction)
 {
-    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, editingAction));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new ApplyStyleCommand(document(), style, editingAction));
 }
 
-void CompositeEditCommand::applyStyle(CSSStyleDeclaration *style, Position start, Position end, EditAction editingAction)
+void CompositeEditCommand::applyStyle(CSSStyleDeclaration* style, const Position& start, const Position& end, EditAction editingAction)
 {
-    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, start, end, editingAction));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new ApplyStyleCommand(document(), style, start, end, editingAction));
 }
 
 void CompositeEditCommand::applyStyledElement(Element* element)
 {
-    EditCommandPtr cmd(new ApplyStyleCommand(document(), element, false));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new ApplyStyleCommand(element, false));
 }
 
 void CompositeEditCommand::removeStyledElement(Element* element)
 {
-    EditCommandPtr cmd(new ApplyStyleCommand(document(), element, true));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new ApplyStyleCommand(element, true));
 }
 
 void CompositeEditCommand::insertParagraphSeparator()
 {
-    EditCommandPtr cmd(new InsertParagraphSeparatorCommand(document()));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new InsertParagraphSeparatorCommand(document()));
 }
 
-void CompositeEditCommand::insertNodeBefore(Node *insertChild, Node *refChild)
+void CompositeEditCommand::insertNodeBefore(Node* insertChild, Node* refChild)
 {
     ASSERT(!refChild->hasTagName(bodyTag));
-    EditCommandPtr cmd(new InsertNodeBeforeCommand(document(), insertChild, refChild));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new InsertNodeBeforeCommand(insertChild, refChild));
 }
 
-void CompositeEditCommand::insertNodeAfter(Node *insertChild, Node *refChild)
+void CompositeEditCommand::insertNodeAfter(Node* insertChild, Node* refChild)
 {
     ASSERT(!refChild->hasTagName(bodyTag));
-    if (refChild->parentNode()->lastChild() == refChild) {
+    if (refChild->parentNode()->lastChild() == refChild)
         appendNode(insertChild, refChild->parentNode());
-    }
     else {
         ASSERT(refChild->nextSibling());
         insertNodeBefore(insertChild, refChild->nextSibling());
     }
 }
 
-void CompositeEditCommand::insertNodeAt(Node *insertChild, Node *refChild, int offset)
+void CompositeEditCommand::insertNodeAt(Node* insertChild, Node* refChild, int offset)
 {
     if (canHaveChildrenForEditing(refChild)) {
-        Node *child = refChild->firstChild();
+        Node* child = refChild->firstChild();
         for (int i = 0; child && i < offset; i++)
             child = child->nextSibling();
         if (child)
             insertNodeBefore(insertChild, child);
         else
             appendNode(insertChild, refChild);
-    }
-    else if (refChild->caretMinOffset() >= offset) {
+    } else if (refChild->caretMinOffset() >= offset) {
         insertNodeBefore(insertChild, refChild);
-    } 
-    else if (refChild->isTextNode() && refChild->caretMaxOffset() > offset) {
+    } else if (refChild->isTextNode() && refChild->caretMaxOffset() > offset) {
         splitTextNode(static_cast<Text *>(refChild), offset);
         insertNodeBefore(insertChild, refChild);
-    } 
-    else {
+    } else {
         insertNodeAfter(insertChild, refChild);
     }
 }
 
-void CompositeEditCommand::appendNode(Node *appendChild, Node *parent)
+void CompositeEditCommand::appendNode(Node* newChild, Node* parent)
 {
     ASSERT(canHaveChildrenForEditing(parent));
-    EditCommandPtr cmd(new AppendNodeCommand(document(), appendChild, parent));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new AppendNodeCommand(parent, newChild));
 }
 
-void CompositeEditCommand::removeChildrenInRange(Node *node, int from, int to)
+void CompositeEditCommand::removeChildrenInRange(Node* node, int from, int to)
 {
-    Node *nodeToRemove = node->childNode(from);
+    Node* nodeToRemove = node->childNode(from);
     for (int i = from; i < to; i++) {
         ASSERT(nodeToRemove);
-        Node *next = nodeToRemove->nextSibling();
+        Node* next = nodeToRemove->nextSibling();
         removeNode(nodeToRemove);
         nodeToRemove = next;
     }
 }
 
-void CompositeEditCommand::removeNode(Node *removeChild)
+void CompositeEditCommand::removeNode(Node* removeChild)
 {
-    EditCommandPtr cmd(new RemoveNodeCommand(document(), removeChild));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new RemoveNodeCommand(removeChild));
 }
 
-void CompositeEditCommand::removeNodePreservingChildren(Node *removeChild)
+void CompositeEditCommand::removeNodePreservingChildren(Node* removeChild)
 {
-    EditCommandPtr cmd(new RemoveNodePreservingChildrenCommand(document(), removeChild));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new RemoveNodePreservingChildrenCommand(removeChild));
 }
 
 void CompositeEditCommand::removeNodeAndPruneAncestors(Node* node)
@@ -244,71 +218,60 @@ void CompositeEditCommand::prune(PassRefPtr<Node> node)
 
 void CompositeEditCommand::splitTextNode(Text *text, int offset)
 {
-    EditCommandPtr cmd(new SplitTextNodeCommand(document(), text, offset));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new SplitTextNodeCommand(text, offset));
 }
 
-void CompositeEditCommand::splitElement(Element *element, Node *atChild)
+void CompositeEditCommand::splitElement(Element* element, Node* atChild)
 {
-    EditCommandPtr cmd(new SplitElementCommand(document(), element, atChild));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new SplitElementCommand(element, atChild));
 }
 
-void CompositeEditCommand::mergeIdenticalElements(Element *first, Element *second)
+void CompositeEditCommand::mergeIdenticalElements(Element* first, Element* second)
 {
     ASSERT(!first->isAncestor(second) && second != first);
     if (first->nextSibling() != second) {
         removeNode(second);
         insertNodeAfter(second, first);
     }
-    EditCommandPtr cmd(new MergeIdenticalElementsCommand(document(), first, second));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new MergeIdenticalElementsCommand(first, second));
 }
 
-void CompositeEditCommand::wrapContentsInDummySpan(Element *element)
+void CompositeEditCommand::wrapContentsInDummySpan(Element* element)
 {
-    EditCommandPtr cmd(new WrapContentsInDummySpanCommand(document(), element));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new WrapContentsInDummySpanCommand(element));
 }
 
 void CompositeEditCommand::splitTextNodeContainingElement(Text *text, int offset)
 {
-    EditCommandPtr cmd(new SplitTextNodeContainingElementCommand(document(), text, offset));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new SplitTextNodeContainingElementCommand(text, offset));
 }
 
 void CompositeEditCommand::joinTextNodes(Text *text1, Text *text2)
 {
-    EditCommandPtr cmd(new JoinTextNodesCommand(document(), text1, text2));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new JoinTextNodesCommand(text1, text2));
 }
 
 void CompositeEditCommand::inputText(const String &text, bool selectInsertedText)
 {
-    InsertTextCommand *impl = new InsertTextCommand(document());
-    EditCommandPtr cmd(impl);
-    applyCommandToComposite(cmd);
-    impl->input(text, selectInsertedText);
+    RefPtr<InsertTextCommand> command = new InsertTextCommand(document());
+    applyCommandToComposite(command);
+    command->input(text, selectInsertedText);
 }
 
 void CompositeEditCommand::insertTextIntoNode(Text *node, int offset, const String &text)
 {
-    EditCommandPtr cmd(new InsertIntoTextNodeCommand(document(), node, offset, text));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new InsertIntoTextNodeCommand(node, offset, text));
 }
 
 void CompositeEditCommand::deleteTextFromNode(Text *node, int offset, int count)
 {
-    EditCommandPtr cmd(new DeleteFromTextNodeCommand(document(), node, offset, count));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new DeleteFromTextNodeCommand(node, offset, count));
 }
 
 void CompositeEditCommand::replaceTextInNode(Text *node, int offset, int count, const String &replacementText)
 {
-    EditCommandPtr deleteCommand(new DeleteFromTextNodeCommand(document(), node, offset, count));
-    applyCommandToComposite(deleteCommand);
-    EditCommandPtr insertCommand(new InsertIntoTextNodeCommand(document(), node, offset, replacementText));
-    applyCommandToComposite(insertCommand);
+    applyCommandToComposite(new DeleteFromTextNodeCommand(node, offset, count));
+    applyCommandToComposite(new InsertIntoTextNodeCommand(node, offset, replacementText));
 }
 
 Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
@@ -316,7 +279,7 @@ Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
     if (!isTabSpanTextNode(pos.node()))
         return pos;
     
-    Node *tabSpan = tabSpanNode(pos.node());
+    Node* tabSpan = tabSpanNode(pos.node());
     
     if (pos.offset() <= pos.node()->caretMinOffset())
         return positionBeforeNode(tabSpan);
@@ -328,7 +291,7 @@ Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
     return positionBeforeNode(tabSpan);
 }
 
-void CompositeEditCommand::insertNodeAtTabSpanPosition(Node *node, const Position& pos)
+void CompositeEditCommand::insertNodeAtTabSpanPosition(Node* node, const Position& pos)
 {
     // insert node before, after, or at split of tab span
     Position insertPos = positionOutsideTabSpan(pos);
@@ -337,39 +300,31 @@ void CompositeEditCommand::insertNodeAtTabSpanPosition(Node *node, const Positio
 
 void CompositeEditCommand::deleteSelection(bool smartDelete, bool mergeBlocksAfterDelete, bool replace)
 {
-    if (endingSelection().isRange()) {
-        EditCommandPtr cmd(new DeleteSelectionCommand(document(), smartDelete, mergeBlocksAfterDelete, replace));
-        applyCommandToComposite(cmd);
-    }
+    if (endingSelection().isRange())
+        applyCommandToComposite(new DeleteSelectionCommand(document(), smartDelete, mergeBlocksAfterDelete, replace));
 }
 
 void CompositeEditCommand::deleteSelection(const Selection &selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace)
 {
-    if (selection.isRange()) {
-        EditCommandPtr cmd(new DeleteSelectionCommand(document(), selection, smartDelete, mergeBlocksAfterDelete, replace));
-        applyCommandToComposite(cmd);
-    }
+    if (selection.isRange())
+        applyCommandToComposite(new DeleteSelectionCommand(selection, smartDelete, mergeBlocksAfterDelete, replace));
 }
 
 void CompositeEditCommand::removeCSSProperty(CSSStyleDeclaration *decl, int property)
 {
-    EditCommandPtr cmd(new RemoveCSSPropertyCommand(document(), decl, property));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new RemoveCSSPropertyCommand(document(), decl, property));
 }
 
-void CompositeEditCommand::removeNodeAttribute(Element *element, const QualifiedName& attribute)
+void CompositeEditCommand::removeNodeAttribute(Element* element, const QualifiedName& attribute)
 {
-    String value = element->getAttribute(attribute);
-    if (value.isEmpty())
+    if (element->getAttribute(attribute).isNull())
         return;
-    EditCommandPtr cmd(new RemoveNodeAttributeCommand(document(), element, attribute));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new RemoveNodeAttributeCommand(element, attribute));
 }
 
-void CompositeEditCommand::setNodeAttribute(Element *element, const QualifiedName& attribute, const String &value)
+void CompositeEditCommand::setNodeAttribute(Element* element, const QualifiedName& attribute, const String &value)
 {
-    EditCommandPtr cmd(new SetNodeAttributeCommand(document(), element, attribute, value));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new SetNodeAttributeCommand(element, attribute, value));
 }
 
 void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
@@ -382,8 +337,7 @@ void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
     RenderObject* renderer = textNode->renderer();
     if (renderer && !renderer->style()->collapseWhiteSpace())
         return;
-    EditCommandPtr cmd(new RebalanceWhitespaceCommand(document(), position));
-    applyCommandToComposite(cmd);    
+    applyCommandToComposite(new RebalanceWhitespaceCommand(position));    
 }
 
 void CompositeEditCommand::rebalanceWhitespace()
@@ -396,13 +350,13 @@ void CompositeEditCommand::rebalanceWhitespace()
     }
 }
 
-void CompositeEditCommand::deleteInsignificantText(Text *textNode, int start, int end)
+void CompositeEditCommand::deleteInsignificantText(Text* textNode, int start, int end)
 {
     if (!textNode || !textNode->renderer() || start >= end)
         return;
 
-    RenderText *textRenderer = static_cast<RenderText *>(textNode->renderer());
-    InlineTextBox *box = textRenderer->firstTextBox();
+    RenderText* textRenderer = static_cast<RenderText*>(textNode->renderer());
+    InlineTextBox* box = textRenderer->firstTextBox();
     if (!box) {
         // whole text node is empty
         removeNode(textNode);
@@ -414,7 +368,7 @@ void CompositeEditCommand::deleteInsignificantText(Text *textNode, int start, in
         return;
 
     int removed = 0;
-    InlineTextBox *prevBox = 0;
+    InlineTextBox* prevBox = 0;
     RefPtr<StringImpl> str;
 
     // This loop structure works to process all gaps preceding a box,
@@ -457,7 +411,7 @@ void CompositeEditCommand::deleteInsignificantText(Text *textNode, int start, in
     }
 }
 
-void CompositeEditCommand::deleteInsignificantText(const Position &start, const Position &end)
+void CompositeEditCommand::deleteInsignificantText(const Position& start, const Position& end)
 {
     if (start.isNull() || end.isNull())
         return;
@@ -465,35 +419,30 @@ void CompositeEditCommand::deleteInsignificantText(const Position &start, const 
     if (Range::compareBoundaryPoints(start, end) >= 0)
         return;
 
-    Node *node = start.node();
-    while (node) {
-        Node *next = node->traverseNextNode();
-    
+    Node* next;
+    for (Node* node = start.node(); node; node = next) {
+        next = node->traverseNextNode();
         if (node->isTextNode()) {
-            Text *textNode = static_cast<Text *>(node);
-            bool isStartNode = node == start.node();
-            bool isEndNode = node == end.node();
-            int startOffset = isStartNode ? start.offset() : 0;
-            int endOffset = isEndNode ? end.offset() : textNode->length();
+            Text* textNode = static_cast<Text*>(node);
+            int startOffset = node == start.node() ? start.offset() : 0;
+            int endOffset = node == end.node() ? end.offset() : textNode->length();
             deleteInsignificantText(textNode, startOffset, endOffset);
         }
-            
         if (node == end.node())
             break;
-        node = next;
     }
 }
 
-void CompositeEditCommand::deleteInsignificantTextDownstream(const Position &pos)
+void CompositeEditCommand::deleteInsignificantTextDownstream(const Position& pos)
 {
     Position end = VisiblePosition(pos, VP_DEFAULT_AFFINITY).next().deepEquivalent().downstream();
     deleteInsignificantText(pos, end);
 }
 
-Node *CompositeEditCommand::appendBlockPlaceholder(Node *node)
+Node* CompositeEditCommand::appendBlockPlaceholder(Node* node)
 {
     if (!node)
-        return NULL;
+        return 0;
     
     // Should assert isBlockFlow || isInlineFlow when deletion improves.  See 4244964.
     ASSERT(node->renderer());
@@ -503,10 +452,10 @@ Node *CompositeEditCommand::appendBlockPlaceholder(Node *node)
     return placeholder.get();
 }
 
-Node *CompositeEditCommand::insertBlockPlaceholder(const Position &pos)
+Node* CompositeEditCommand::insertBlockPlaceholder(const Position& pos)
 {
     if (pos.isNull())
-        return NULL;
+        return 0;
 
     // Should assert isBlockFlow || isInlineFlow when deletion improves.  See 4244964.
     ASSERT(pos.node()->renderer());
@@ -516,23 +465,23 @@ Node *CompositeEditCommand::insertBlockPlaceholder(const Position &pos)
     return placeholder.get();
 }
 
-Node *CompositeEditCommand::addBlockPlaceholderIfNeeded(Node *node)
+Node* CompositeEditCommand::addBlockPlaceholderIfNeeded(Node* node)
 {
     if (!node)
-        return false;
+        return 0;
 
     updateLayout();
 
     RenderObject *renderer = node->renderer();
     if (!renderer || !renderer->isBlockFlow())
-        return false;
+        return 0;
     
     // append the placeholder to make sure it follows
     // any unrendered blocks
     if (renderer->height() == 0 || (renderer->isListItem() && renderer->isEmpty()))
         return appendBlockPlaceholder(node);
 
-    return NULL;
+    return 0;
 }
 
 void CompositeEditCommand::removeBlockPlaceholder(const VisiblePosition& visiblePosition)
@@ -543,11 +492,9 @@ void CompositeEditCommand::removeBlockPlaceholder(const VisiblePosition& visible
     Position p = visiblePosition.deepEquivalent().downstream();
     if (p.node()->hasTagName(brTag) && p.offset() == 0 && isEndOfBlock(visiblePosition) && isStartOfBlock(visiblePosition))
         removeNode(p.node());
-        
-    return;
 }
 
-void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Position &pos)
+void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Position& pos)
 {
     if (pos.isNull())
         return;
@@ -591,10 +538,10 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
 
     RefPtr<Node> newBlock = createDefaultParagraphElement(document());
 
-    Node *moveNode = paragraphStart.node();
+    Node* moveNode = paragraphStart.node();
     if (paragraphStart.offset() >= paragraphStart.node()->caretMaxOffset())
         moveNode = moveNode->traverseNextNode();
-    Node *endNode = end.node();
+    Node* endNode = end.node();
     
     if (!isAtomicNode(paragraphStart.node()))
         insertNodeAt(newBlock.get(), paragraphStart.node(), paragraphStart.offset());
@@ -605,7 +552,7 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
     }
 
     while (moveNode && !isBlock(moveNode)) {
-        Node *next = moveNode->traverseNextSibling();
+        Node* next = moveNode->traverseNextSibling();
         removeNode(moveNode);
         appendNode(moveNode, newBlock.get());
         if (moveNode == endNode)
@@ -618,7 +565,6 @@ Node* enclosingAnchorElement(Node* node)
 {
     while (node && !(node->isElementNode() && node->isLink()))
         node = node->parentNode();
-    
     return node;
 }
 
@@ -741,8 +687,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     destinationIndex = TextIterator::rangeLength(startToDestinationRange.get());
     
     setEndingSelection(destination);
-    EditCommandPtr cmd(new ReplaceSelectionCommand(document(), fragment.get(), true, false, !preserveStyle, false));
-    applyCommandToComposite(cmd);
+    applyCommandToComposite(new ReplaceSelectionCommand(document(), fragment.get(), true, false, !preserveStyle, false));
     
     if (preserveSelection && startIndex != -1) {
         setEndingSelection(Selection(TextIterator::rangeFromLocationAndLength(document(), destinationIndex + startIndex, 0)->startPosition(), 
@@ -760,12 +705,12 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
         
     RefPtr<CSSMutableStyleDeclaration> style = styleAtPosition(endingSelection().start());
 
-    Node *listNode = emptyListItem->parentNode();
+    Node* listNode = emptyListItem->parentNode();
     RefPtr<Node> newBlock = isListElement(listNode->parentNode()) ? createListItemElement(document()) : createDefaultParagraphElement(document());
     
     if (emptyListItem->renderer()->nextSibling()) {
         if (emptyListItem->renderer()->previousSibling())
-            splitElement(static_cast<Element *>(listNode), emptyListItem);
+            splitElement(static_cast<Element*>(listNode), emptyListItem);
         insertNodeBefore(newBlock.get(), listNode);
         removeNode(emptyListItem);
     } else {
@@ -774,7 +719,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     }
     
     appendBlockPlaceholder(newBlock.get());
-    setEndingSelection(Position(newBlock.get(), 0), DOWNSTREAM);
+    setEndingSelection(Selection(Position(newBlock.get(), 0), DOWNSTREAM));
     
     CSSComputedStyleDeclaration endingStyle(endingSelection().start().node());
     endingStyle.diff(style.get());
@@ -789,14 +734,9 @@ PassRefPtr<Element> createBlockPlaceholderElement(Document* document)
     ExceptionCode ec = 0;
     RefPtr<Element> breakNode = document->createElementNS(xhtmlNamespaceURI, "br", ec);
     ASSERT(ec == 0);
-    breakNode->setAttribute(classAttr, blockPlaceholderClassString());
+    static String classString = "webkit-block-placeholder";
+    breakNode->setAttribute(classAttr, classString);
     return breakNode.release();
-}
-
-static const String &blockPlaceholderClassString()
-{
-    static String blockPlaceholderClassString = "webkit-block-placeholder";
-    return blockPlaceholderClassString;
 }
 
 } // namespace WebCore

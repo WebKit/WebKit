@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-SplitTextNodeCommand::SplitTextNodeCommand(Document *document, Text *text, int offset)
-    : EditCommand(document), m_text2(text), m_offset(offset)
+SplitTextNodeCommand::SplitTextNodeCommand(Text* text, int offset)
+    : EditCommand(text->document()), m_text2(text), m_offset(offset)
 {
     ASSERT(m_text2);
     ASSERT(m_text2->length() > 0);

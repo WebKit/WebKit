@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __remove_node_preserving_children_command_h__
-#define __remove_node_preserving_children_command_h__
+#ifndef remove_node_preserving_children_command_h__
+#define remove_node_preserving_children_command_h__
 
 #include "CompositeEditCommand.h"
 
 namespace WebCore {
 
-class RemoveNodePreservingChildrenCommand : public CompositeEditCommand
-{
+class RemoveNodePreservingChildrenCommand : public CompositeEditCommand {
 public:
-    RemoveNodePreservingChildrenCommand(Document *, Node *);
-    virtual ~RemoveNodePreservingChildrenCommand() { }
+    RemoveNodePreservingChildrenCommand(Node*);
 
     virtual void doApply();
 
-    Node *node() const { return m_node.get(); }
+    Node* node() const { return m_node.get(); }
 
 private:
     RefPtr<Node> m_node;
@@ -46,4 +44,4 @@ private:
 
 } // namespace WebCore
 
-#endif // __remove_node_preserving_children_command_h__
+#endif // remove_node_preserving_children_command_h__

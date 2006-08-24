@@ -1,3 +1,276 @@
+2006-08-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10169
+          REGRESSION: NativeTextArea: Text dragged from <input type=text> to textarea disappears
+        - eliminate the EditCommandPtr class from editing; use PassRefPtr and RefPtr instead
+        - other editing-related cleanup
+
+        Test: fast/forms/drag-into-textarea.html
+
+        * bridge/mac/FrameMac.h: Changed EditCommandPtr parameters to use PassRefPtr<EditCommand> instead.
+        * bridge/win/FrameWin.h: Ditto.
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::registerCommandForUndoOrRedo): Ditto.
+        (WebCore::FrameMac::registerCommandForUndo): Ditto.
+        (WebCore::FrameMac::registerCommandForRedo): Ditto.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+        Use applyCommand instead of EditCommandPtr. Also remove now-unneeded document parameter.
+        (-[WebCoreFrameBridge moveSelectionToDragCaret:smartMove:]): Ditto.
+        (-[WebCoreFrameBridge deleteSelectionWithSmartDelete:]): Ditto.
+
+        * editing/AppendNodeCommand.h: Removed document parameter from constructor. Changed new child
+        parameter to be a PassRefPtr. Reversed order of child and parent parameters.
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::AppendNodeCommand): Ditto.
+        (WebCore::AppendNodeCommand::doApply): Ditto.
+        (WebCore::AppendNodeCommand::doUnapply): Ditto.
+
+        * editing/ApplyStyleCommand.h: Removed document parameter from constructor.
+        * editing/ApplyStyleCommand.cpp: (WebCore::ApplyStyleCommand::ApplyStyleCommand): Ditto.
+
+        * editing/BreakBlockquoteCommand.h: Removed unneeded include of DeprecatedPtrList.h.
+        * editing/BreakBlockquoteCommand.cpp: Moved the include of DeprecatedPtrList.h here.
+        (WebCore::BreakBlockquoteCommand::doApply): Changed code to construct a Selection explicitly
+        since setEndingSelection is no longer overloaded for Position.
+
+        * editing/CompositeEditCommand.h: Added isFirstCommand function. Changed m_cmds from
+        a DeprecatedValueList<EditCommandPtr> to a Vector<RefPtr<EditCommand>> and renamed it
+        m_commands and made both doUnapply and doReapply private.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::doUnapply): Rewrote to use m_commands.
+        (WebCore::CompositeEditCommand::doReapply): Ditto.
+        (WebCore::CompositeEditCommand::applyCommandToComposite): Removed code to explicitly set up
+        starting and ending selection -- now done inside setParent. Rewrote to use m_commands.
+        (WebCore::CompositeEditCommand::applyStyle): Changed to not use EditCommandPtr.
+        (WebCore::CompositeEditCommand::applyStyledElement): Ditto.
+        (WebCore::CompositeEditCommand::removeStyledElement): Ditto.
+        (WebCore::CompositeEditCommand::insertParagraphSeparator): Ditto.
+        (WebCore::CompositeEditCommand::insertNodeBefore): Ditto.
+        (WebCore::CompositeEditCommand::appendNode): Ditto.
+        (WebCore::CompositeEditCommand::removeNode): Ditto.
+        (WebCore::CompositeEditCommand::removeNodePreservingChildren): Ditto.
+        (WebCore::CompositeEditCommand::splitTextNode): Ditto.
+        (WebCore::CompositeEditCommand::splitElement): Ditto.
+        (WebCore::CompositeEditCommand::mergeIdenticalElements): Ditto.
+        (WebCore::CompositeEditCommand::wrapContentsInDummySpan): Ditto.
+        (WebCore::CompositeEditCommand::splitTextNodeContainingElement): Ditto.
+        (WebCore::CompositeEditCommand::joinTextNodes): Ditto.
+        (WebCore::CompositeEditCommand::inputText): Ditto.
+        (WebCore::CompositeEditCommand::insertTextIntoNode): Ditto.
+        (WebCore::CompositeEditCommand::deleteTextFromNode): Ditto.
+        (WebCore::CompositeEditCommand::replaceTextInNode): Ditto.
+        (WebCore::CompositeEditCommand::deleteSelection): Ditto.
+        (WebCore::CompositeEditCommand::removeCSSProperty): Ditto.
+        (WebCore::CompositeEditCommand::removeNodeAttribute): Ditto. Also fixed a bug where the code
+        would not remove an empty attribute -- will not come up in practice, but wrong in theory.
+        (WebCore::CompositeEditCommand::setNodeAttribute): Changed to not use EditCommandPtr.
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt): Ditto.
+        (WebCore::CompositeEditCommand::deleteInsignificantText): Rewrote to use a for loop.
+        (WebCore::CompositeEditCommand::moveParagraphs): Changed to not use EditCommandPtr.
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem): Changed code to construct a
+        Selection explicitly since setEndingSelection is no longer overloaded for Position.
+        (WebCore::createBlockPlaceholderElement): Collapsed this code so that the
+        block placeholder class string is no longer spread across multiple functions.
+        Perhaps we can get rid of this altogether at some point.
+
+        * editing/DeleteFromTextNodeCommand.h: Removed unneeded document parameter from one constructor.
+        Also removed unneeded destructor.
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::DeleteFromTextNodeCommand): Ditto.
+
+        * editing/DeleteSelectionCommand.h: Removed unneeded document parameter from one constructor.
+        * editing/DeleteSelectionCommand.cpp: (WebCore::DeleteSelectionCommand::DeleteSelectionCommand): Ditto.
+
+        * editing/EditCommand.h: Removed ECommandState, isCompositeStep(), parent(), state(), setState(),
+        and most overloads of setStartingSelection() and setEndingSelection(). Made document() protected
+        and non-virtual. Made setStartingSelection() setEndingSelection(), and styleAtPosition() protected.
+        Made doApply(), doUnapply(), and doReapply() private. Added startingRootEditableElement(),
+        endingRootEditableElement(), m_startingRootEditableElement, and m_endingRootEditableElement, which
+        are needed so we can determine which editable elements an editing operation affects. Changed setParent()
+        and m_parent to use CompositeEditCommand instead of EditCommand. Removed EditCommandPtr. Added
+        applyCommand() function that's convenient to use on a newly-created command.
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand): Removed initialization for m_state, and added it for starting
+        and ending root editable elements.
+        (WebCore::EditCommand::apply): Simplified check for top level by just checking m_parent. Removed
+        code to assert and set m_start. Eliminated use of EditCommandPtr.
+        (WebCore::EditCommand::unapply): Ditto.
+        (WebCore::EditCommand::reapply): Ditto.
+        (WebCore::EditCommand::setStartingSelection): Changed to set root editable element too. Also made this
+        not change the starting selection of the parent unless this is the first command in the parent -- didn't
+        make sense the way it was.
+        (WebCore::EditCommand::setEndingSelection): Changed to set root editable element too.
+        (WebCore::EditCommand::setParent): Added code to set the starting and ending selection on the child
+        based on the ending selection of the parent, formerly done by callers.
+        (WebCore::applyCommand): Added.
+
+        * editing/FormatBlockCommand.h: Tweaked formatting.
+        * editing/FormatBlockCommand.cpp: (WebCore::FormatBlockCommand::FormatBlockCommand): Ditto.
+        * editing/InsertLineBreakCommand.h: Ditto.
+        * editing/InsertLineBreakCommand.cpp: (WebCore::InsertLineBreakCommand::doApply):
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::splitTreeToNode): Removed use of EditCommandPtr.
+        (WebCore::IndentOutdentCommand::outdentParagraph): Updated for change to list type enum.
+        (WebCore::IndentOutdentCommand::outdentRegion): Removed use of EditCommandPtr.
+
+        * editing/InsertIntoTextNodeCommand.h: Removed unneeded document parameter to constructor.
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::InsertIntoTextNodeCommand): Ditto.
+
+        * editing/InsertListCommand.h: Renamed EListType to EList, and took the "Type" suffix off
+        the constants.
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::InsertListCommand): Ditto.
+        (WebCore::InsertListCommand::doApply): Ditto.
+
+        * editing/InsertNodeBeforeCommand.h: Removed unneeded document parameter from constructor
+        and changed the parameter of the node to insert to a PassRefPtr.
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::InsertNodeBeforeCommand): Ditto.
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Remvoed use of EditCommandPtr.
+
+        * editing/InsertTextCommand.h: Changed insertTab to take const Position&.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input): Ditto.
+        (WebCore::InsertTextCommand::insertTab): Ditto.
+
+        * editing/JSEditor.h: Tweaked formatting and names.
+        * editing/JSEditor.cpp: Ditto. Also changed places that use EditCommandPtr.
+
+        * editing/JoinTextNodesCommand.h: Removed unneeeded document pointer
+        * editing/JoinTextNodesCommand.cpp:
+        (WebCore::JoinTextNodesCommand::JoinTextNodesCommand): Ditto.
+        * editing/MergeIdenticalElementsCommand.h: Ditto.
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::MergeIdenticalElementsCommand): Ditto.
+
+        * editing/ModifySelectionListLevel.h: Changed EListType to be named Type and be a member of
+        IncreaseSelectionListLevelCommand. Also changed m_listElement to be a RefPtr<Node>.
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::getStartEndListChildren): Changed parameters to be references instead of pointers.
+        (WebCore::IncreaseSelectionListLevelCommand::IncreaseSelectionListLevelCommand):
+        Changed to use Type instead of EListType.
+        (WebCore::canIncreaseListLevel): Changed parameters to be references instead of pointers.
+        (WebCore::IncreaseSelectionListLevelCommand::doApply): Updated for change to canIncreaseListLevel.
+        (WebCore::IncreaseSelectionListLevelCommand::canIncreaseSelectionListLevel): Ditto.
+        (WebCore::IncreaseSelectionListLevelCommand::increaseSelectionListLevelWithType):
+        Changed to not use EditCommandPtr.
+        (WebCore::canDecreaseListLevel): Changed parameters to be references instead of pointers.
+        (WebCore::DecreaseSelectionListLevelCommand::doApply): Updated for change to canDecreaseListLevel.
+        (WebCore::DecreaseSelectionListLevelCommand::canDecreaseSelectionListLevel): Ditto.
+        (WebCore::DecreaseSelectionListLevelCommand::decreaseSelectionListLevel): Changed to not use
+        EditCommandPtr.
+
+        * editing/MoveSelectionCommand.h: Removed unnecessary document parameter and changed the fragment
+        parameter to be a PassRefPtr.
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::MoveSelectionCommand): Ditto.
+        (WebCore::MoveSelectionCommand::doApply): Got rid of use of EditCommandPtr.
+
+        * editing/RebalanceWhitespaceCommand.h: Removed unnecessary document parameter.
+        * editing/RebalanceWhitespaceCommand.cpp:
+        (WebCore::RebalanceWhitespaceCommand::RebalanceWhitespaceCommand): Ditto.
+        (WebCore::RebalanceWhitespaceCommand::doApply): Got rid of use of EditCommandPtr.
+
+        * editing/RemoveCSSPropertyCommand.h: Tweaked formatting.
+
+        * editing/RemoveNodeAttributeCommand.h: Removed unnecessary document parameter.
+        * editing/RemoveNodeAttributeCommand.cpp:
+        (WebCore::RemoveNodeAttributeCommand::RemoveNodeAttributeCommand): Ditto.
+
+        * editing/RemoveNodeCommand.h: Removed unnecessary document parameter.
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::RemoveNodeCommand): Ditto.
+
+        * editing/RemoveNodePreservingChildrenCommand.h: Removed unnecessary document parameter.
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        (WebCore::RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand): Ditto.
+
+        * editing/ReplaceSelectionCommand.h: Change fragment parameter to a PassRefPtr.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment): Ditto.
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand): Ditto.
+        (WebCore::ReplaceSelectionCommand::doApply): Ditto.
+        (WebCore::ReplaceSelectionCommand::completeHTMLReplacement): Ditto.
+
+        * editing/Selection.h: Changed SEL_DEFAULT_AFFINITY to be a constant rather than
+        a macro. Added constructors that take visible positions. Changed setBase and
+        setExtent to take const Position& for better efficiency.
+        * editing/Selection.cpp:
+        (WebCore::Selection::Selection): Removed unnecessary double initialization of m_state
+        and m_baseIsFirst in existing constructors. Added VisiblePosition-based constructors.
+
+        * editing/SetNodeAttributeCommand.h: Removed unnneeded document parameter.
+        * editing/SetNodeAttributeCommand.cpp:
+        (WebCore::SetNodeAttributeCommand::SetNodeAttributeCommand): Ditto.
+
+        * editing/SplitElementCommand.h: Removed unnneeded document parameter.
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::SplitElementCommand): Ditto.
+
+        * editing/SplitTextNodeCommand.h: Removed unnneeded document parameter.
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::SplitTextNodeCommand): Ditto.
+
+        * editing/SplitTextNodeContainingElementCommand.h: Removed unnneeded document parameter.
+        * editing/SplitTextNodeContainingElementCommand.cpp:
+        (WebCore::SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand): Ditto.
+
+        * editing/TypingCommand.h: Replaced uses of EditCommandPtr with EditCommand*.
+        Renamed openForMoveTyping() with isOpenForMoreTyping().
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Updated to remove use of EditCommandPtr.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+        (WebCore::TypingCommand::insertText): Ditto.
+        (WebCore::TypingCommand::insertLineBreak): Ditto.
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent): Ditto.
+        (WebCore::TypingCommand::insertParagraphSeparator): Ditto.
+        (WebCore::TypingCommand::isOpenForMoreTypingCommand): Ditto.
+        (WebCore::TypingCommand::closeTyping): Ditto.
+        (WebCore::TypingCommand::typingAddedToOpenCommand): Ditto.
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines): Ditto.
+
+        * editing/WrapContentsInDummySpanCommand.h: Removed unnneeded document parameter.
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand): Ditto.
+
+        * editing/htmlediting.h: Changed type of NON_BREAKING_SPACE to UChar instead of
+        unsigned short.
+
+        * page/Frame.h: Changed lastEditCommand() to return an EditCommand* and changed
+        appliedEditing(), unappliedEditing(), reappliedEditing(), registerCommandForUndo(),
+        and registerCommandForRedo() to take PassRefPtr<EditCommand>.
+        * page/FramePrivate.h: Changed m_lastEditCommand to be a RefPtr<EditCommand>.
+        * page/Frame.cpp:
+        (WebCore::Frame::didOpenURL): Fixed for change to m_lastEditCommand.
+        (WebCore::Frame::setFocusNodeIfNeeded): Call the rootEditableElement function
+        from Selection to simplify the code.
+        (WebCore::Frame::selectAll): Ditto.
+        (WebCore::Frame::lastEditCommand): Updated for change to m_lastEditCommand.
+        (WebCore::dispatchEditableContentChangedEvents): Added. This sends an event to
+        both of the root editable elements involved in a change -- the start selection
+        might be in a different element than the end selection.
+        (WebCore::Frame::appliedEditing): Changed to call dispatchEditableContentChangedEvents,
+        and to do it before setting the ending selection. Also update to use PassRefPtr instead
+        of EditCommandPtr and change the order of setting m_lastEditCommand since passing it
+        to registerCommandForUndo will take ownership and set it to 0.
+        (WebCore::Frame::unappliedEditing): Ditto.
+        (WebCore::Frame::reappliedEditing): Ditto.
+        (WebCore::Frame::computeAndSetTypingStyle): Updated for removal of EditCommandPtr.
+        (WebCore::Frame::applyStyle): Ditto.
+        (WebCore::Frame::applyParagraphStyle): Ditto.
+
+        * platform/gdk/FrameGdk.h: Updated for above changes.
+        * platform/gdk/TemporaryLinkStubs.cpp: Updated for above changes.
+        * platform/win/TemporaryLinkStubs.cpp: Updated for above changes.
+
 2006-08-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alice
