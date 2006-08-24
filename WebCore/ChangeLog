@@ -1,3 +1,10 @@
+2006-08-24  Adam Roben  <aroben@apple.com>
+
+        Fixing a typo from last patch.
+
+        * kcanvas/device/qt/KRenderingPaintServerQt.cpp:
+        (WebCore::KRenderingPaintServerQt::setPenProperties):
+
 2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed/landed by Adam.
