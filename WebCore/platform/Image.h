@@ -33,7 +33,7 @@
 #include "IntSize.h"
 #include "FloatSize.h"
 
-#if __APPLE__
+#if PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSImage;
 #else
@@ -132,7 +132,7 @@ public:
 
     enum TileRule { StretchTile, RoundTile, RepeatTile };
     
-#if __APPLE__
+#if PLATFORM(MAC)
     // Accessors for native image formats.
     CGImageRef getCGImageRef();
     NSImage* getNSImage();
@@ -189,7 +189,7 @@ private:
     int m_repetitionCount; // How many total animation loops we should do.
     int m_repetitionsComplete;  // How many repetitions we've finished.
 
-#if __APPLE__
+#if PLATFORM(MAC)
     mutable NSImage* m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
     mutable CFDataRef m_tiffRep; // Cached TIFF rep for frame 0.  Only built lazily if someone queries for one.
     PDFDocumentImage* m_PDFDoc;

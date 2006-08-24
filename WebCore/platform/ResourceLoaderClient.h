@@ -26,7 +26,7 @@
 #ifndef ResourceLoaderClient_h
 #define ResourceLoaderClient_h
 
-#ifdef __APPLE__
+#if PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSData;
 @class NSURLResponse;
@@ -38,7 +38,7 @@ class NSURLResponse;
 
 namespace WebCore {
 
-#ifdef __APPLE__
+#if PLATFORM(MAC)
     typedef NSData* PlatformData;
     typedef NSURLResponse* PlatformResponse;
 #elif PLATFORM(QT)

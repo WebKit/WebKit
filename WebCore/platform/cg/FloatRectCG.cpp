@@ -21,25 +21,27 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #include "config.h"
-#include "FloatSize.h"
+#include "FloatRect.h"
+
+#if PLATFORM(CG)
+
+#include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-
-FloatSize::FloatSize(const NSSize& s) : m_width(s.width), m_height(s.height)
+FloatRect::FloatRect(const CGRect& r) : m_location(r.origin), m_size(r.size)
 {
 }
 
-FloatSize::operator NSSize() const
+FloatRect::operator CGRect() const
 {
-    return NSMakeSize(m_width, m_height);
+    return CGRectMake(x(), y(), width(), height());
 }
 
-#endif
-
 }
+
+#endif // PLATFORM(CG)

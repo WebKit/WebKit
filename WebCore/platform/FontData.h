@@ -68,7 +68,7 @@ public:
     GlyphData glyphDataForCharacter(UChar32 c) const { return m_characterToGlyphMap.glyphDataForCharacter(c, this); }
     void setGlyphDataForCharacter(UChar32 c, Glyph glyph, const FontData* fontData) const { m_characterToGlyphMap.setGlyphDataForCharacter(c, glyph, fontData); }
 
-#if __APPLE__
+#if PLATFORM(MAC)
     NSFont* getNSFont() const { return m_font.font; }
 #endif
 
@@ -103,7 +103,7 @@ public:
 
     mutable FontData* m_smallCapsFontData;
 
-#if __APPLE__
+#if PLATFORM(MAC)
     void* m_styleGroup;
     float m_syntheticBoldOffset;
     mutable ATSUStyle m_ATSUStyle;

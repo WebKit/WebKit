@@ -26,7 +26,10 @@
 #include "config.h"
 #include "ImageSource.h"
 
+#if PLATFORM(CG)
+
 #include "IntSize.h"
+#include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
 
@@ -168,5 +171,6 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
     return true;
 }
 
-
 }
+
+#endif // PLATFORM(CG)

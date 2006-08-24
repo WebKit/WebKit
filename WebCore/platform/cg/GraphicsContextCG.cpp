@@ -23,20 +23,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#define _USE_MATH_DEFINES 1
 #include "config.h"
 #include "GraphicsContext.h"
 
+#if PLATFORM(CG)
+
 #include "AffineTransform.h"
-#include "KRenderingDeviceQuartz.h"
 #include "Path.h"
+#include "wtf/mathextras.h"
+
+#ifdef SVG_SUPPORT
+#include "KRenderingDeviceQuartz.h"
+#endif
+
+#include "GraphicsContextPlatformPrivate.h"
 
 using namespace std;
 
 namespace WebCore {
 
-// NSColor, NSBezierPath, and NSGraphicsContext
-// calls in this file are all exception-safe, so we don't block
-// exceptions for those.
+GraphicsContext::GraphicsContext(CGContextRef cgContext)
+    : m_common(createGraphicsContextPrivate())
+    , m_data(new GraphicsContextPlatformPrivate(cgContext))
+{
+    setPaintingDisabled(!cgContext);
+}
+
+GraphicsContext::~GraphicsContext()
+{
+    destroyGraphicsContextPrivate(m_common);
+    delete m_data;
+}
+
+void GraphicsContext::setFocusRingClip(const IntRect& r)
+{
+    // This method only exists to work around bugs in Mac focus ring clipping.
+    m_data->m_focusRingClip = r;
+}
+
+void GraphicsContext::clearFocusRingClip()
+{
+    // This method only exists to work around bugs in Mac focus ring clipping.
+    m_data->m_focusRingClip = IntRect();
+}
+
+CGContextRef GraphicsContext::platformContext() const
+{
+    ASSERT(!paintingDisabled());
+    ASSERT(m_data->m_cgContext);
+    return m_data->m_cgContext;
+}
 
 static void setCGFillColor(CGContextRef context, const Color& color)
 {
@@ -75,7 +112,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
         CGContextFillRect(context, rect);
     }
 
-    if (pen().style() != Pen::Pen::NoPen) {
+    if (pen().style() != Pen::NoPen) {
         setCGFillColor(context, pen().color());
         CGRect rects[4] = {
             FloatRect(rect.x(), rect.y(), rect.width(), 1),
@@ -94,7 +131,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         return;
 
     Pen::PenStyle penStyle = pen().style();
-    if (penStyle == Pen::Pen::NoPen)
+    if (penStyle == Pen::NoPen)
         return;
     float width = pen().width();
     if (width < 1)
@@ -727,3 +764,5 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int wi
 }
 
 }
+
+#endif // PLATFORM(CG)

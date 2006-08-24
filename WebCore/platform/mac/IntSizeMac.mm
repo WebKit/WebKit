@@ -28,15 +28,6 @@
 
 namespace WebCore {
 
-IntSize::IntSize(const CGSize& s) : m_width(static_cast<int>(s.width)), m_height(static_cast<int>(s.height))
-{
-}
-
-IntSize::operator CGSize() const
-{
-    return CGSizeMake(m_width, m_height);
-}
-
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 
 IntSize::IntSize(const NSSize& s) : m_width(static_cast<int>(s.width)), m_height(static_cast<int>(s.height))

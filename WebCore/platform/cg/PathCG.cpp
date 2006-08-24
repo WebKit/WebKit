@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Path.h"
 
+#if PLATFORM(CG)
+
 #include "FloatRect.h"
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -125,3 +127,5 @@ void Path::clear()
 }
 
 }
+
+#endif // PLATFORM(CG)

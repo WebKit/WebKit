@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Image.h"
 
+#if PLATFORM(CAIRO)
+
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include <cairo.h>
@@ -212,3 +214,5 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
 }
 
 }
+
+#endif // PLATFORM(CAIRO)

@@ -29,17 +29,17 @@
 
 #include "FloatPoint.h"
 
-#if __APPLE__
-
+#if PLATFORM(CG)
 typedef struct CGRect CGRect;
+#endif
 
+#if PLATFORM(MAC)
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGRect NSRect;
 #else
 typedef struct _NSRect NSRect;
 #endif
-
-#endif // __APPLE__
+#endif
 
 #if PLATFORM(QT)
 class QRectF;
@@ -99,17 +99,17 @@ public:
     void inflate(float d) { inflateX(d); inflateY(d); }
     void scale(float s);
 
-#if __APPLE__
-
+#if PLATFORM(CG)
     FloatRect(const CGRect&);
     operator CGRect() const;
+#endif
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     FloatRect(const NSRect&);
     operator NSRect() const;
 #endif
 
-#elif PLATFORM(QT)
+#if PLATFORM(QT)
     FloatRect(const QRectF&);
     operator QRectF() const;
 #endif

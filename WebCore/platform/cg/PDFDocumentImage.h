@@ -26,6 +26,8 @@
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
 
+#if PLATFORM(CG)
+
 #include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
@@ -53,3 +55,5 @@ namespace WebCore {
     };
 
 }
+
+#endif // PLATFORM(CG)

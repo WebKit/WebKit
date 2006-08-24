@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2005 Nokia.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,23 +23,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
+
 #include "config.h"
-#include "FloatSize.h"
+#include "FloatPoint.h"
+
+#if PLATFORM(CG)
+
+#include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-
-FloatSize::FloatSize(const NSSize& s) : m_width(s.width), m_height(s.height)
+FloatPoint::FloatPoint(const CGPoint& p) : m_x(p.x), m_y(p.y)
 {
 }
 
-FloatSize::operator NSSize() const
+FloatPoint::operator CGPoint() const
 {
-    return NSMakeSize(m_width, m_height);
+    return CGPointMake(m_x, m_y);
 }
 
-#endif
-
 }
+
+#endif // PLATFORM(CG)

@@ -30,16 +30,16 @@
 #include "FloatSize.h"
 #include <wtf/Platform.h>
 
-#if __APPLE__
-
+#if PLATFORM(CG)
 typedef struct CGPoint CGPoint;
+#endif
 
+#if PLATFORM(MAC)
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGPoint NSPoint;
 #else
 typedef struct _NSPoint NSPoint;
 #endif
-
 #endif
 
 #if PLATFORM(QT)
@@ -63,16 +63,14 @@ public:
     void setY(float y) { m_y = y; }
     void move(float dx, float dy) { m_x += dx; m_y += dy; }
 
-#if __APPLE__
-
+#if PLATFORM(CG)
     FloatPoint(const CGPoint&);
     operator CGPoint() const;
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    FloatPoint(const NSPoint&);
-    operator NSPoint() const;
 #endif
 
+#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+    FloatPoint(const NSPoint&);
+    operator NSPoint() const;
 #endif
 
 #if PLATFORM(QT)

@@ -26,7 +26,9 @@
 #ifndef AffineTransform_h
 #define AffineTransform_h
 
-#if __APPLE__
+#include "config.h"
+
+#if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #elif PLATFORM(QT)
 #include <QMatrix>
@@ -41,7 +43,7 @@ class AffineTransform {
 public:
     AffineTransform();
     AffineTransform(double a, double b, double c, double d, double tx, double ty);
-#if __APPLE__
+#if PLATFORM(CG)
     AffineTransform(CGAffineTransform transform);
 #elif PLATFORM(QT)
     AffineTransform(const QMatrix &matrix);
@@ -72,7 +74,7 @@ public:
     bool isInvertible() const;
     AffineTransform invert() const;
 
-#if __APPLE__
+#if PLATFORM(CG)
     operator CGAffineTransform() const;
 #elif PLATFORM(QT)
     operator QMatrix() const;
@@ -83,7 +85,7 @@ public:
     AffineTransform operator*(const AffineTransform&);
     
 private:
-#if __APPLE__
+#if PLATFORM(CG)
     CGAffineTransform m_transform;
 #elif PLATFORM(QT)
     QMatrix m_transform;

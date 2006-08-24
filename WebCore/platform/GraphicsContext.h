@@ -36,19 +36,19 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Platform.h>
 
-// FIXME: how should Cairo figure into the platform macros?
-#if __APPLE__
+#if PLATFORM(CG)
 typedef struct CGContext PlatformGraphicsContext;
-#elif PLATFORM(WIN)
-typedef struct HDC__* HDC;
-typedef struct _cairo PlatformGraphicsContext;
-#elif PLATFORM(GDK)
+#elif PLATFORM(CAIRO)
 typedef struct _cairo PlatformGraphicsContext;
 #elif PLATFORM(QT)
 class QPainter;
 typedef QPainter PlatformGraphicsContext;
 #else
 typedef void PlatformGraphicsContext;
+#endif
+
+#if PLATFORM(WIN)
+typedef struct HDC__* HDC;
 #endif
 
 namespace WebCore {

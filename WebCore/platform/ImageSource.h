@@ -29,11 +29,11 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-#if __APPLE__
+#if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #elif PLATFORM(QT)
 class QImage;
-#else
+#elif PLATFORM(CAIRO)
 struct _cairo_surface;
 typedef struct _cairo_surface cairo_surface_t;
 #endif
@@ -42,7 +42,7 @@ namespace WebCore {
 
 class IntSize;
 
-#if __APPLE__
+#if PLATFORM(CG)
 typedef CGImageSourceRef NativeImageSourcePtr;
 typedef CGImageRef NativeImagePtr;
 typedef CFDataRef NativeBytePtr;

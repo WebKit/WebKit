@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2005 Nokia.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +22,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-#include "config.h"
-#include "FloatSize.h"
 
-namespace WebCore {
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-
-FloatSize::FloatSize(const NSSize& s) : m_width(s.width), m_height(s.height)
+namespace WebCore
 {
-}
 
-FloatSize::operator NSSize() const
-{
-    return NSMakeSize(m_width, m_height);
-}
+class GraphicsContextPlatformPrivate {
+public:
+    GraphicsContextPlatformPrivate(CGContextRef cgContext)
+    :m_cgContext(cgContext)
+    {
+        CGContextRetain(m_cgContext);
+    }
+    
+    ~GraphicsContextPlatformPrivate()
+    {
+        CGContextRelease(m_cgContext);
+    }
 
-#endif
+    CGContextRef m_cgContext;
+    IntRect m_focusRingClip; // Work around CG bug in focus ring clipping.
+};
 
 }

@@ -28,17 +28,17 @@
 
 #include <wtf/Platform.h>
 
-#if __APPLE__
-
+#if PLATFORM(CG)
 typedef struct CGSize CGSize;
+#endif
 
+#if PLATFORM(MAC)
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGSize NSSize;
 #else
 typedef struct _NSSize NSSize;
 #endif
-
-#endif // __APPLE__
+#endif
 
 #if PLATFORM(WIN)
 typedef struct tagSIZE SIZE;
@@ -78,16 +78,14 @@ public:
         *this = expandedTo(IntSize());
     }
 
-#if __APPLE__
-
+#if PLATFORM(CG)
     explicit IntSize(const CGSize&); // don't do this implicitly since it's lossy
     operator CGSize() const;
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    explicit IntSize(const NSSize &); // don't do this implicitly since it's lossy
-    operator NSSize() const;
 #endif
 
+#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+    explicit IntSize(const NSSize &); // don't do this implicitly since it's lossy
+    operator NSSize() const;
 #endif
 
 #if PLATFORM(WIN)

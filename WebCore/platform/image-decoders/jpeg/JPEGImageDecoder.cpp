@@ -39,6 +39,8 @@
 #include "JPEGImageDecoder.h"
 #include <assert.h>
 
+#if PLATFORM(CAIRO)
+
 extern "C" {
 #include "jpeglib.h"
 }
@@ -504,3 +506,5 @@ void JPEGImageDecoder::jpegComplete()
 }
 
 }
+
+#endif // PLATFORM(CAIRO)

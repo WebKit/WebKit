@@ -116,7 +116,7 @@ class Font {
 public:
     Font();
     Font(const FontDescription&, short letterSpacing, short wordSpacing);
-#if __APPLE__
+#if PLATFORM(MAC)
     Font(const FontPlatformData& fontPlatformData); // This constructor is only used by Mac-specific code that already has a native font.
 #endif
     ~Font();
@@ -168,7 +168,7 @@ public:
     unsigned weight() const { return m_fontDescription.weight(); }
     bool bold() const { return m_fontDescription.bold(); }
 
-#if __APPLE__
+#if PLATFORM(MAC)
     NSFont* getNSFont() const { return primaryFont()->getNSFont(); }
 #endif
 

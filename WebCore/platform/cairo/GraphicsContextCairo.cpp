@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
+#if PLATFORM(CAIRO)
+
 #include "FloatRect.h"
 #include "Font.h"
 #include "IntRect.h"
@@ -445,3 +447,5 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
 }
 
 }
+
+#endif // PLATFORM(CAIRO)

@@ -29,17 +29,17 @@
 #include "IntPoint.h"
 #include <wtf/Platform.h>
 
-#if __APPLE__
-
+#if PLATFORM(CG)
 typedef struct CGRect CGRect;
+#endif
 
+#if PLATFORM(MAC)
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGRect NSRect;
 #else
 typedef struct _NSRect NSRect;
 #endif
-
-#endif // __APPLE__
+#endif
 
 #if PLATFORM(WIN)
 typedef struct tagRECT RECT;
@@ -114,14 +114,12 @@ public:
     operator QRect() const;
 #endif
 
-#if __APPLE__
-
+#if PLATFORM(CG)
     operator CGRect() const;
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    operator NSRect() const;
 #endif
 
+#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+    operator NSRect() const;
 #endif
 
 private:
@@ -153,16 +151,12 @@ inline bool operator!=(const IntRect& a, const IntRect& b)
     return a.location() != b.location() || a.size() != b.size();
 }
 
-#if __APPLE__
-
+#if PLATFORM(CG)
 IntRect enclosingIntRect(const CGRect&);
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-
-IntRect enclosingIntRect(const NSRect&);
-
 #endif
 
+#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+IntRect enclosingIntRect(const NSRect&);
 #endif
 
 } // namespace WebCore

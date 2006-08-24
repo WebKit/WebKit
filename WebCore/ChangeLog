@@ -1,5 +1,82 @@
 2006-08-23  David Hyatt  <hyatt@apple.com>
 
+        Refactor Cairo and CoreGraphics to use platform ifdefs.  This patch
+        separates the graphics engines from their respective platforms and replaces
+        #ifdef PLATFORM(MAC) and PLATFORM(WIN) with PLATFORM(CG) and PLATFORM(CAIRO).
+
+        Reviewed by darin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/AffineTransform.h:
+        * platform/Color.h:
+        * platform/Cursor.h:
+        * platform/FloatPoint.h:
+        * platform/FloatRect.h:
+        * platform/FloatSize.h:
+        * platform/Font.h:
+        * platform/FontData.h:
+        * platform/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::glyphAt):
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+        * platform/GraphicsContext.h:
+        * platform/Image.h:
+        * platform/ImageSource.h:
+        * platform/IntPoint.h:
+        * platform/IntRect.h:
+        * platform/IntSize.h:
+        * platform/ResourceLoader.h:
+        * platform/ResourceLoaderClient.h:
+        * platform/Widget.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        * platform/cairo/ImageCairo.cpp:
+        * platform/cairo/ImageSourceCairo.cpp:
+        * platform/cg/AffineTransformCG.cpp:
+        * platform/cg/FloatPointCG.cpp: Added.
+        * platform/cg/FloatRectCG.cpp: Added.
+        * platform/cg/FloatSizeCG.cpp: Added.
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::setFocusRingClip):
+        (WebCore::GraphicsContext::clearFocusRingClip):
+        (WebCore::GraphicsContext::platformContext):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        * platform/cg/GraphicsContextPlatformPrivate.h: Added.
+        (WebCore::GraphicsContextPlatformPrivate:::m_cgContext):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        * platform/cg/ImageCG.cpp: Added.
+        (WebCore::Image::drawTiled):
+        * platform/cg/ImageSourceCG.cpp: Added.
+        * platform/cg/IntPointCG.cpp: Added.
+        * platform/cg/IntRectCG.cpp: Added.
+        * platform/cg/IntSizeCG.cpp: Added.
+        * platform/cg/PDFDocumentImage.cpp: Added.
+        (WebCore::PDFDocumentImage::adjustCTM):
+        * platform/cg/PDFDocumentImage.h: Added.
+        * platform/cg/PathCG.cpp:
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        * platform/image-decoders/xbm/XBMImageDecoder.cpp:
+        * platform/mac/FloatPointMac.mm:
+        * platform/mac/FloatRectMac.mm:
+        * platform/mac/FloatSizeMac.mm:
+        * platform/mac/GraphicsContextMac.mm:
+        * platform/mac/ImageMac.mm:
+        * platform/mac/ImageSourceMac.cpp: Removed.
+        * platform/mac/IntPointMac.mm:
+        * platform/mac/IntRectMac.mm:
+        * platform/mac/IntSizeMac.mm:
+        * platform/mac/PDFDocumentImage.h: Removed.
+        * platform/mac/PDFDocumentImage.mm: Removed.
+
+2006-08-23  David Hyatt  <hyatt@apple.com>
+
         Remove the ifdef for platform scrollbars vs. engine scrollbars until
         engine scrollbars actually exist.
 

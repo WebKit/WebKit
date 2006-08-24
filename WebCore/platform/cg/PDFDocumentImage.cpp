@@ -23,8 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "PDFDocumentImage.h"
+#define _USE_MATH_DEFINES 1
+#include "config.h"
+#include "PDFDocumentImage.h"
+
+#if PLATFORM(CG)
 
 #import "GraphicsContext.h"
 
@@ -58,8 +61,8 @@ void PDFDocumentImage::adjustCTM(GraphicsContext* context) const
 
     // calculate rotated x and y edges of the corp box. if they're negative, it means part of the image has
     // been rotated outside of the bounds and we need to shift over the image so it lies inside the bounds again
-    NSPoint rx = NSMakePoint(width * cosa, width * sina);
-    NSPoint ry = NSMakePoint(-height * sina, height * cosa);
+    CGPoint rx = CGPointMake(width * cosa, width * sina);
+    CGPoint ry = CGPointMake(-height * sina, height * cosa);
 
     // adjust so we are at the crop box origin
     const CGFloat zero = 0;
@@ -136,3 +139,5 @@ void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& srcRect, 
 }
 
 }
+
+#endif // PLATFORM(CG)

@@ -264,12 +264,9 @@
 		6582A15909999D6D00BEEB6D /* FloatRectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14B09999D6C00BEEB6D /* FloatRectMac.mm */; };
 		6582A15A09999D6D00BEEB6D /* FloatSizeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14C09999D6C00BEEB6D /* FloatSizeMac.mm */; };
 		6582A15B09999D6D00BEEB6D /* ImageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14D09999D6C00BEEB6D /* ImageMac.mm */; };
-		6582A15C09999D6D00BEEB6D /* ImageSourceMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14E09999D6D00BEEB6D /* ImageSourceMac.cpp */; };
 		6582A15D09999D6D00BEEB6D /* IntPointMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14F09999D6D00BEEB6D /* IntPointMac.mm */; };
 		6582A15E09999D6D00BEEB6D /* IntRectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15009999D6D00BEEB6D /* IntRectMac.mm */; };
 		6582A15F09999D6D00BEEB6D /* IntSizeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15109999D6D00BEEB6D /* IntSizeMac.mm */; };
-		6582A16009999D6D00BEEB6D /* PDFDocumentImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 6582A15209999D6D00BEEB6D /* PDFDocumentImage.h */; };
-		6582A16109999D6D00BEEB6D /* PDFDocumentImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15309999D6D00BEEB6D /* PDFDocumentImage.mm */; };
 		6582A16209999D6D00BEEB6D /* ScreenMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15409999D6D00BEEB6D /* ScreenMac.mm */; };
 		6582A16309999D6D00BEEB6D /* SystemTimeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */; };
 		6582A17809999EA000BEEB6D /* DeprecatedStringMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A17709999EA000BEEB6D /* DeprecatedStringMac.mm */; };
@@ -1452,6 +1449,18 @@
 		BC73E3190978AFFC00EDFF8A /* IntPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E3180978AFFB00EDFF8A /* IntPoint.h */; };
 		BC73E3920978CED700EDFF8A /* FloatPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E3900978CED700EDFF8A /* FloatPoint.cpp */; };
 		BC73E3930978CED700EDFF8A /* FloatPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E3910978CED700EDFF8A /* FloatPoint.h */; };
+		BC837C720A9D0D1A006B186A /* FloatPointCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C670A9D0D1A006B186A /* FloatPointCG.cpp */; };
+		BC837C730A9D0D1A006B186A /* FloatRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C680A9D0D1A006B186A /* FloatRectCG.cpp */; };
+		BC837C740A9D0D1A006B186A /* FloatSizeCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C690A9D0D1A006B186A /* FloatSizeCG.cpp */; };
+		BC837C750A9D0D1A006B186A /* ImageCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C6A0A9D0D1A006B186A /* ImageCG.cpp */; };
+		BC837C760A9D0D1A006B186A /* ImageCG.cpp.orig in Resources */ = {isa = PBXBuildFile; fileRef = BC837C6B0A9D0D1A006B186A /* ImageCG.cpp.orig */; };
+		BC837C770A9D0D1A006B186A /* ImageSourceCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C6C0A9D0D1A006B186A /* ImageSourceCG.cpp */; };
+		BC837C780A9D0D1A006B186A /* IntPointCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C6D0A9D0D1A006B186A /* IntPointCG.cpp */; };
+		BC837C790A9D0D1A006B186A /* IntRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C6E0A9D0D1A006B186A /* IntRectCG.cpp */; };
+		BC837C7A0A9D0D1A006B186A /* IntSizeCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C6F0A9D0D1A006B186A /* IntSizeCG.cpp */; };
+		BC837C7B0A9D0D1A006B186A /* PDFDocumentImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC837C700A9D0D1A006B186A /* PDFDocumentImage.cpp */; };
+		BC837C7C0A9D0D1A006B186A /* PDFDocumentImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BC837C710A9D0D1A006B186A /* PDFDocumentImage.h */; };
+		BC837CB60A9D10FE006B186A /* GraphicsContextPlatformPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC837CB50A9D10FE006B186A /* GraphicsContextPlatformPrivate.h */; };
 		BC92F1DD0A40AEA300AC0746 /* DeprecatedSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC92F1DB0A40AEA300AC0746 /* DeprecatedSlider.cpp */; };
 		BC92F1DE0A40AEA300AC0746 /* DeprecatedSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = BC92F1DC0A40AEA300AC0746 /* DeprecatedSlider.h */; };
 		BC9C328B09933A6E001D6924 /* ImageAnimationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */; };
@@ -1602,6 +1611,23 @@
 		FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418D097596C9000540BE /* SVGImageLoader.cpp */; };
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		BC837C570A9D0AA0006B186A /* Development */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Development;
+		};
+		BC837C580A9D0AA0006B186A /* Deployment */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Deployment;
+		};
+/* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
@@ -1943,12 +1969,9 @@
 		6582A14B09999D6C00BEEB6D /* FloatRectMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatRectMac.mm; sourceTree = "<group>"; };
 		6582A14C09999D6C00BEEB6D /* FloatSizeMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatSizeMac.mm; sourceTree = "<group>"; };
 		6582A14D09999D6C00BEEB6D /* ImageMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageMac.mm; sourceTree = "<group>"; };
-		6582A14E09999D6D00BEEB6D /* ImageSourceMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSourceMac.cpp; sourceTree = "<group>"; };
 		6582A14F09999D6D00BEEB6D /* IntPointMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntPointMac.mm; sourceTree = "<group>"; };
 		6582A15009999D6D00BEEB6D /* IntRectMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntRectMac.mm; sourceTree = "<group>"; };
 		6582A15109999D6D00BEEB6D /* IntSizeMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntSizeMac.mm; sourceTree = "<group>"; };
-		6582A15209999D6D00BEEB6D /* PDFDocumentImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PDFDocumentImage.h; sourceTree = "<group>"; };
-		6582A15309999D6D00BEEB6D /* PDFDocumentImage.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFDocumentImage.mm; sourceTree = "<group>"; };
 		6582A15409999D6D00BEEB6D /* ScreenMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenMac.mm; sourceTree = "<group>"; };
 		6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SystemTimeMac.cpp; sourceTree = "<group>"; };
 		6582A17709999EA000BEEB6D /* DeprecatedStringMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DeprecatedStringMac.mm; sourceTree = "<group>"; };
@@ -3221,6 +3244,18 @@
 		BC73E3910978CED700EDFF8A /* FloatPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatPoint.h; sourceTree = "<group>"; };
 		BC7B2AF80450824100A8000F /* ScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScrollBarMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BC837C670A9D0D1A006B186A /* FloatPointCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPointCG.cpp; sourceTree = "<group>"; };
+		BC837C680A9D0D1A006B186A /* FloatRectCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRectCG.cpp; sourceTree = "<group>"; };
+		BC837C690A9D0D1A006B186A /* FloatSizeCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatSizeCG.cpp; sourceTree = "<group>"; };
+		BC837C6A0A9D0D1A006B186A /* ImageCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageCG.cpp; sourceTree = "<group>"; };
+		BC837C6B0A9D0D1A006B186A /* ImageCG.cpp.orig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ImageCG.cpp.orig; sourceTree = "<group>"; };
+		BC837C6C0A9D0D1A006B186A /* ImageSourceCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSourceCG.cpp; sourceTree = "<group>"; };
+		BC837C6D0A9D0D1A006B186A /* IntPointCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntPointCG.cpp; sourceTree = "<group>"; };
+		BC837C6E0A9D0D1A006B186A /* IntRectCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntRectCG.cpp; sourceTree = "<group>"; };
+		BC837C6F0A9D0D1A006B186A /* IntSizeCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntSizeCG.cpp; sourceTree = "<group>"; };
+		BC837C700A9D0D1A006B186A /* PDFDocumentImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PDFDocumentImage.cpp; sourceTree = "<group>"; };
+		BC837C710A9D0D1A006B186A /* PDFDocumentImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PDFDocumentImage.h; sourceTree = "<group>"; };
+		BC837CB50A9D10FE006B186A /* GraphicsContextPlatformPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GraphicsContextPlatformPrivate.h; sourceTree = "<group>"; };
 		BC86FB8D061F5C23006BB822 /* Slider.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Slider.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC86FB8E061F5C23006BB822 /* SliderMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SliderMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC92F1DB0A40AEA300AC0746 /* DeprecatedSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedSlider.cpp; sourceTree = "<group>"; };
@@ -3843,7 +3878,6 @@
 				BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */,
 				935367E809AF77EF00D35CD6 /* GraphicsContextMac.mm */,
 				6582A14D09999D6C00BEEB6D /* ImageMac.mm */,
-				6582A14E09999D6D00BEEB6D /* ImageSourceMac.cpp */,
 				6582A14F09999D6D00BEEB6D /* IntPointMac.mm */,
 				6582A15009999D6D00BEEB6D /* IntRectMac.mm */,
 				6582A15109999D6D00BEEB6D /* IntSizeMac.mm */,
@@ -3853,8 +3887,6 @@
 				F587851402DE375901EA4122 /* ListBoxMac.mm */,
 				935207BF09BD412000F2038D /* LocalizedStringsMac.mm */,
 				65F5382409B2B57500F3DC4A /* mac-encodings.txt */,
-				6582A15209999D6D00BEEB6D /* PDFDocumentImage.h */,
-				6582A15309999D6D00BEEB6D /* PDFDocumentImage.mm */,
 				935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */,
 				A82398A709B3ACF500B60641 /* PlugInInfoStoreMac.mm */,
 				F58784D202DE375901EA4122 /* PopUpButtonMac.mm */,
@@ -3985,8 +4017,20 @@
 			isa = PBXGroup;
 			children = (
 				93CF35A90A6169F700543E52 /* AffineTransformCG.cpp */,
+				BC837C670A9D0D1A006B186A /* FloatPointCG.cpp */,
+				BC837C680A9D0D1A006B186A /* FloatRectCG.cpp */,
+				BC837C690A9D0D1A006B186A /* FloatSizeCG.cpp */,
 				936BDD1C0A031AEB004DF4AB /* GraphicsContextCG.cpp */,
+				BC837C6A0A9D0D1A006B186A /* ImageCG.cpp */,
+				BC837C6B0A9D0D1A006B186A /* ImageCG.cpp.orig */,
+				BC837C6C0A9D0D1A006B186A /* ImageSourceCG.cpp */,
+				BC837C6D0A9D0D1A006B186A /* IntPointCG.cpp */,
+				BC837C6E0A9D0D1A006B186A /* IntRectCG.cpp */,
+				BC837C6F0A9D0D1A006B186A /* IntSizeCG.cpp */,
 				93032CC709AEC34300F82A18 /* PathCG.cpp */,
+				BC837CB50A9D10FE006B186A /* GraphicsContextPlatformPrivate.h */,
+				BC837C700A9D0D1A006B186A /* PDFDocumentImage.cpp */,
+				BC837C710A9D0D1A006B186A /* PDFDocumentImage.h */,
 			);
 			path = cg;
 			sourceTree = "<group>";
@@ -5970,7 +6014,6 @@
 				93CD4FEC0995FD2A007ECC97 /* PlatformString.h in Headers */,
 				BC6B7ECF0998AC7F0052867B /* ImageSource.h in Headers */,
 				6582A14009999CD600BEEB6D /* DeprecatedString.h in Headers */,
-				6582A16009999D6D00BEEB6D /* PDFDocumentImage.h in Headers */,
 				A7638A8B09958EA50007E14F /* WKDisplacementMapFilter.h in Headers */,
 				A7638A970995965D0007E14F /* SVGFEDisplacementMapElement.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
@@ -6404,6 +6447,8 @@
 				657429170A9C2D0B00C52C97 /* IconDataCache.h in Headers */,
 				657429180A9C2D0B00C52C97 /* SQLStatement.h in Headers */,
 				657429190A9C2D0B00C52C97 /* SQLTransaction.h in Headers */,
+				BC837C7C0A9D0D1A006B186A /* PDFDocumentImage.h in Headers */,
+				BC837CB60A9D10FE006B186A /* GraphicsContextPlatformPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6437,6 +6482,12 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				BC837C570A9D0AA0006B186A /* Development */,
+				BC837C580A9D0AA0006B186A /* Deployment */,
+			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -6496,6 +6547,7 @@
 				1CD441900A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff in Resources */,
 				1A750D880A90E394000FF215 /* NodeIterator.idl in Resources */,
 				5115095C0A9CE04700901013 /* urlIcon.tiff in Resources */,
+				BC837C760A9D0D1A006B186A /* ImageCG.cpp.orig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6865,11 +6917,9 @@
 				6582A15909999D6D00BEEB6D /* FloatRectMac.mm in Sources */,
 				6582A15A09999D6D00BEEB6D /* FloatSizeMac.mm in Sources */,
 				6582A15B09999D6D00BEEB6D /* ImageMac.mm in Sources */,
-				6582A15C09999D6D00BEEB6D /* ImageSourceMac.cpp in Sources */,
 				6582A15D09999D6D00BEEB6D /* IntPointMac.mm in Sources */,
 				6582A15E09999D6D00BEEB6D /* IntRectMac.mm in Sources */,
 				6582A15F09999D6D00BEEB6D /* IntSizeMac.mm in Sources */,
-				6582A16109999D6D00BEEB6D /* PDFDocumentImage.mm in Sources */,
 				6582A16209999D6D00BEEB6D /* ScreenMac.mm in Sources */,
 				6582A16309999D6D00BEEB6D /* SystemTimeMac.cpp in Sources */,
 				6582A17809999EA000BEEB6D /* DeprecatedStringMac.mm in Sources */,
@@ -7276,6 +7326,15 @@
 				1A750DD40A90E729000FF215 /* JSNodeIteratorCustom.cpp in Sources */,
 				1A750E340A90F89F000FF215 /* JSTreeWalkerCustom.cpp in Sources */,
 				5186C0560A9C21470034FE94 /* IconDataCache.cpp in Sources */,
+				BC837C720A9D0D1A006B186A /* FloatPointCG.cpp in Sources */,
+				BC837C730A9D0D1A006B186A /* FloatRectCG.cpp in Sources */,
+				BC837C740A9D0D1A006B186A /* FloatSizeCG.cpp in Sources */,
+				BC837C750A9D0D1A006B186A /* ImageCG.cpp in Sources */,
+				BC837C770A9D0D1A006B186A /* ImageSourceCG.cpp in Sources */,
+				BC837C780A9D0D1A006B186A /* IntPointCG.cpp in Sources */,
+				BC837C790A9D0D1A006B186A /* IntRectCG.cpp in Sources */,
+				BC837C7A0A9D0D1A006B186A /* IntSizeCG.cpp in Sources */,
+				BC837C7B0A9D0D1A006B186A /* PDFDocumentImage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

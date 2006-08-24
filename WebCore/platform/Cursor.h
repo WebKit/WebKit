@@ -36,7 +36,7 @@
 #include <QCursor>
 #endif
 
-#ifdef __APPLE__
+#if PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSCursor;
 #else
@@ -50,7 +50,7 @@ namespace WebCore {
 
 #if PLATFORM(WIN)
     typedef HCURSOR PlatformCursor;
-#elif defined(__APPLE__)
+#elif PLATFORM(MAC)
     typedef NSCursor* PlatformCursor;
 #elif PLATFORM(GDK)
     typedef GdkCursor* PlatformCursor;

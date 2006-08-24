@@ -26,6 +26,8 @@
 #import "config.h"
 #import "GraphicsContext.h"
 
+#import "../cg/GraphicsContextPlatformPrivate.h"
+
 #import "WebCoreSystemInterface.h"
 
 // FIXME: More of this should use CoreGraphics instead of AppKit.
@@ -36,51 +38,6 @@ namespace WebCore {
 // NSColor, NSBezierPath, and NSGraphicsContext
 // calls in this file are all exception-safe, so we don't block
 // exceptions for those.
-
-class GraphicsContextPlatformPrivate {
-public:
-    GraphicsContextPlatformPrivate(CGContextRef);
-    ~GraphicsContextPlatformPrivate();
-
-    CGContextRef m_cgContext;
-    IntRect m_focusRingClip; // Work around CG bug in focus ring clipping.
-};
-
-GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(CGContextRef cgContext)
-{
-    m_cgContext = cgContext;
-    CGContextRetain(m_cgContext);
-}
-
-GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
-{
-    CGContextRelease(m_cgContext);
-}
-
-GraphicsContext::GraphicsContext(CGContextRef cgContext)
-    : m_common(createGraphicsContextPrivate())
-    , m_data(new GraphicsContextPlatformPrivate(cgContext))
-{
-    setPaintingDisabled(!cgContext);
-}
-
-GraphicsContext::~GraphicsContext()
-{
-    destroyGraphicsContextPrivate(m_common);
-    delete m_data;
-}
-
-void GraphicsContext::setFocusRingClip(const IntRect& r)
-{
-    // This method only exists to work around bugs in Mac focus ring clipping.
-    m_data->m_focusRingClip = r;
-}
-
-void GraphicsContext::clearFocusRingClip()
-{
-    // This method only exists to work around bugs in Mac focus ring clipping.
-    m_data->m_focusRingClip = IntRect();
-}
 
 void GraphicsContext::drawFocusRing(const Color& color)
 {
@@ -130,13 +87,6 @@ void GraphicsContext::drawFocusRing(const Color& color)
     CGColorRelease(colorRef);
 
     CGPathRelease(focusRingPath);
-}
-
-CGContextRef GraphicsContext::platformContext() const
-{
-    ASSERT(!paintingDisabled());
-    ASSERT(m_data->m_cgContext);
-    return m_data->m_cgContext;
 }
 
 void GraphicsContext::setCompositeOperation(CompositeOperator op)

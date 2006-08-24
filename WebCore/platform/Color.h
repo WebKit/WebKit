@@ -28,17 +28,17 @@
 
 #include <wtf/Platform.h>
 
-#if __APPLE__
-
+#if PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSColor;
 #else
 class NSColor;
 #endif
+#endif
 
+#if PLATFORM(CG)
 typedef struct CGColor* CGColorRef;
-
-#endif // __APPLE__
+#endif
 
 #if PLATFORM(QT)
 class QColor;
@@ -119,8 +119,11 @@ inline bool operator!=(const Color& a, const Color& b)
 Color focusRingColor();
 void setFocusRingColorChangeFunction(void (*)());
 
-#if __APPLE__
+#if PLATFORM(MAC)
 NSColor* nsColor(const Color&);
+#endif
+
+#if PLATFORM(CG)
 CGColorRef cgColor(const Color&);
 #endif
 

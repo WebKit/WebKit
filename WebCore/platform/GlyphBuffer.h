@@ -34,9 +34,9 @@
 #define MAX_GLYPH_EXPANSION 4
 #define GLYPH_BUFFER_SIZE 2048
 
-#if __APPLE__
+#if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
-#elif PLATFORM(WIN) || PLATFORM(GDK)
+#elif PLATFORM(CAIRO)
 #include <cairo.h>
 #include "FloatSize.h"
 #elif PLATFORM(QT)
@@ -50,10 +50,10 @@ namespace WebCore
 typedef unsigned short Glyph;
 class FontData;
 
-#if __APPLE__
+#if PLATFORM(CG)
 typedef Glyph GlyphBufferGlyph;
 typedef CGSize GlyphBufferAdvance;
-#elif PLATFORM(WIN) || PLATFORM(GDK)
+#elif PLATFORM(CAIRO)
 typedef cairo_glyph_t GlyphBufferGlyph;
 typedef FloatSize GlyphBufferAdvance;
 #elif PLATFORM(QT)
@@ -98,18 +98,18 @@ public:
 
     Glyph glyphAt(int index) const
     {
-#if __APPLE__ || PLATFORM(QT)
+#if PLATFORM(CG) || PLATFORM(QT)
         return m_glyphs[index];
-#elif PLATFORM(WIN) || PLATFORM(GDK)
+#elif PLATFORM(CAIRO)
         return m_glyphs[index].index;
 #endif
     }
 
     float advanceAt(int index) const
     {
-#if __APPLE__
+#if PLATFORM(CG)
         return m_advances[index].width;
-#elif PLATFORM(WIN) || PLATFORM(GDK) || PLATFORM(QT)
+#elif PLATFORM(CAIRO) || PLATFORM(QT)
         return m_advances[index].width();
 #endif
     }
@@ -117,13 +117,13 @@ public:
     void add(Glyph glyph, const FontData* font, float width)
     {
         m_fontData.append(font);
-#if __APPLE__
+#if PLATFORM(CG)
         m_glyphs.append(glyph);
         CGSize advance;
         advance.width = width;
         advance.height = 0;
         m_advances.append(advance);
-#elif PLATFORM(WIN) || PLATFORM(GDK)
+#elif PLATFORM(CAIRO)
         cairo_glyph_t cairoGlyph;
         cairoGlyph.index = glyph;
         cairoGlyph.y = 0;

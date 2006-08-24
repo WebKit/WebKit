@@ -27,19 +27,21 @@
 #include "config.h"
 #include "FloatSize.h"
 
+#if PLATFORM(CG)
+
+#include <ApplicationServices/ApplicationServices.h>
+
 namespace WebCore {
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-
-FloatSize::FloatSize(const NSSize& s) : m_width(s.width), m_height(s.height)
+FloatSize::FloatSize(const CGSize& s) : m_width(s.width), m_height(s.height)
 {
 }
 
-FloatSize::operator NSSize() const
+FloatSize::operator CGSize() const
 {
-    return NSMakeSize(m_width, m_height);
+    return CGSizeMake(m_width, m_height);
 }
 
-#endif
-
 }
+
+#endif // PLATFORM(CG)
