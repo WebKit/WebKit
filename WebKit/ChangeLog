@@ -1,3 +1,86 @@
+2006-08-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+        
+        - refactoring of WebDataSource in preparation for moving a bunch of it to a new class
+        
+        - minimize WebDataSourceInternal.h to be only methods called from outside WebDataSource
+        - reduce Private category implementation to be only the SPI methods
+        - make new Internal and FileInternal categories which contain the
+        remainder (depending on whether they are called from outside of
+        WebDataSource)
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _setMainDocumentError:]):
+        (addTypesFromClass):
+        (+[WebDataSource _representationClassForMIMEType:]):
+        (-[WebDataSource _commitIfReady]):
+        (-[WebDataSource _commitLoadWithData:]):
+        (-[WebDataSource _doesProgressiveLoadWithMIMEType:]):
+        (-[WebDataSource _addResponse:]):
+        (-[WebDataSource _revertToProvisionalState]):
+        (-[WebDataSource _mainDocumentError]):
+        (-[WebDataSource _addSubframeArchives:]):
+        (-[WebDataSource _fileWrapperForURL:]):
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        (-[WebDataSource _decidePolicyForMIMEType:decisionListener:]):
+        (-[WebDataSource _finishedLoading]):
+        (-[WebDataSource _setResponse:]):
+        (-[WebDataSource _setRequest:]):
+        (-[WebDataSource _setupForReplaceByMIMEType:]):
+        (-[WebDataSource _receivedMainResourceError:complete:]):
+        (-[WebDataSource _mainReceivedError:complete:]):
+        (-[WebDataSource _defersCallbacks]):
+        (-[WebDataSource _downloadWithLoadingConnection:request:response:proxy:]):
+        (-[WebDataSource _didFailLoadingWithError:forResource:]):
+        (-[WebDataSource _didFinishLoadingForResource:]):
+        (-[WebDataSource _didReceiveData:contentLength:forResource:]):
+        (-[WebDataSource _didReceiveResponse:forResource:]):
+        (-[WebDataSource _didCancelAuthenticationChallenge:forResource:]):
+        (-[WebDataSource _didReceiveAuthenticationChallenge:forResource:]):
+        (-[WebDataSource _willSendRequest:forResource:redirectResponse:]):
+        (-[WebDataSource _identifierForInitialRequest:]):
+        (-[WebDataSource _archivedSubresourceForURL:]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _stopRecordingResponses]):
+        (-[WebDataSource _loadingStartedTime]):
+        (-[WebDataSource _replaceSelectionWithArchive:selectReplacement:]):
+        (-[WebDataSource _documentFragmentWithArchive:]):
+        (-[WebDataSource _documentFragmentWithImageResource:]):
+        (-[WebDataSource _imageElementWithImageResource:]):
+        (-[WebDataSource _title]):
+        (-[WebDataSource _isStopping]):
+        (-[WebDataSource _setWebFrame:]):
+        (-[WebDataSource _URL]):
+        (-[WebDataSource _loadFromPageCache:]):
+        (-[WebDataSource _popSubframeArchiveWithName:]):
+        (-[WebDataSource _setIsClientRedirect:]):
+        (-[WebDataSource _setURL:]):
+        (-[WebDataSource _setLastCheckedRequest:]):
+        (-[WebDataSource _defersCallbacksChanged]):
+        (-[WebDataSource _lastCheckedRequest]):
+        (-[WebDataSource _stopLoading]):
+        (-[WebDataSource _bridge]):
+        (-[WebDataSource _webView]):
+        (-[WebDataSource _triggeringAction]):
+        (-[WebDataSource _setTriggeringAction:]):
+        (-[WebDataSource __adoptRequest:]):
+        (-[WebDataSource _isDocumentHTML]):
+        (-[WebDataSource _stopLoadingWithError:]):
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (-[WebDataSource _responses]):
+        (-[WebDataSource _makeRepresentation]):
+        (-[WebDataSource _isClientRedirect]):
+        (-[WebDataSource _originalRequest]):
+        (-[WebDataSource _URLForHistory]):
+        (-[WebDataSource _addToUnarchiveState:]):
+        (-[WebDataSource _setOverrideEncoding:]):
+        (-[WebDataSource _setIconURL:]):
+        (-[WebDataSource _setIconURL:withType:]):
+        (-[WebDataSource _overrideEncoding]):
+        (-[WebDataSource _setTitle:]):
+        * WebView/WebDataSourceInternal.h:
+
 2006-08-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan
