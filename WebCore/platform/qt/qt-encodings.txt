@@ -1,0 +1,12 @@
+# The items on the left are names of TextEncodingID values
+# The items on the right are IANA character set names. Names listed in character-sets.txt are not
+# repeated here; mentioning any one character set from a group in there pulls in all the aliases in
+# that group.
+
+WinLatin1Encoding: windows-1252, winlatin1, xansi
+Latin1Encoding: ISO-8859-1, 88591
+ASCIIEncoding: US-ASCII, isoir6us
+UTF16Encoding: ISO-10646-UCS-2, ucs2, unicode, utf16
+UTF16Encoding, BigEndian: UTF-16BE, unicodefffe
+UTF16Encoding, LittleEndian: UTF-16LE, unicodefeff
+UTF8Encoding: UTF-8, unicode11utf8, unicode20utf8, xunicode20utf8
