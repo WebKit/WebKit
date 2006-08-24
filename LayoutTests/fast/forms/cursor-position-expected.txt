@@ -6,6 +6,7 @@ This test sets a non-standard line endings, sets selection, then sets a standard
 
 If this test succeeded, you should see 2 lines saying "10, 10" below.
 
+
 10, 10
 10, 10
 

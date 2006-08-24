@@ -1,3 +1,58 @@
+2006-08-24  David Harrison  <harrison@apple.com>
+
+        Updated expected results for this change:
+        
+        <rdar://problem/4522205> Represent controls in AXAttributedStringForTextMarkerRange
+
+        * editing/selection/anchor-focus1-expected.txt:
+        * editing/selection/anchor-focus2-expected.txt:
+        * editing/selection/anchor-focus3-expected.txt:
+        * editing/selection/move-begin-end-expected.txt:
+        * fast/dom/Element/onclick-case-expected.txt:
+        * fast/dom/HTMLInputElement/size-as-number-expected.txt:
+        * fast/dom/document-all-input-expected.txt:
+        * fast/dom/option-properties-expected.txt:
+        * fast/events/objc-keyboard-event-creation-expected.txt:
+        * fast/events/onsubmit-bubbling-expected.txt:
+        * fast/forms/access-key-expected.txt:
+        * fast/forms/activate-and-disabled-elements-expected.txt:
+        * fast/forms/button-in-forms-collection-expected.txt:
+        * fast/forms/check-box-enter-key-expected.txt:
+        * fast/forms/cursor-position-expected.txt:
+        * fast/forms/display-none-in-onchange-keyboard-expected.txt:
+        * fast/forms/domstring-replace-crash-expected.txt:
+        * fast/forms/double-focus-expected.txt:
+        * fast/forms/element-by-name-expected.txt:
+        * fast/forms/empty-get-expected.txt:
+        * fast/forms/focus-expected.txt:
+        * fast/forms/form-get-multipart-expected.txt:
+        * fast/forms/form-get-multipart2-expected.txt:
+        * fast/forms/form-get-multipart3-expected.txt:
+        * fast/forms/form-post-urlencoded-expected.txt:
+        * fast/forms/input-appearance-elementFromPoint-expected.txt:
+        * fast/forms/input-appearance-maxlength-expected.txt:
+        * fast/forms/input-changing-value-expected.txt:
+        * fast/forms/input-delete-expected.txt:
+        * fast/forms/input-selection-hidden-expected.txt:
+        * fast/forms/input-selection-restore-expected.txt:
+        * fast/forms/input-text-enter-expected.txt:
+        * fast/forms/input-truncate-newline-expected.txt:
+        * fast/forms/legend-access-key-expected.txt:
+        * fast/forms/onchange-enter-submit-expected.txt:
+        * fast/forms/onselect-textarea-expected.txt:
+        * fast/forms/onselect-textfield-expected.txt:
+        * fast/forms/paste-into-textarea-expected.txt:
+        * fast/forms/plaintext-mode-1-expected.txt:
+        * fast/forms/select-remove-option-expected.txt:
+        * fast/forms/select-replace-option-expected.txt:
+        * fast/forms/select-reset-expected.txt:
+        * fast/forms/selection-functions-expected.txt:
+        * fast/forms/text-field-setvalue-crash-expected.txt:
+        * fast/forms/textarea-crlf-expected.txt:
+        * fast/forms/textarea-scrolled-endline-caret-expected.txt:
+        * fast/forms/textarea-setvalue-submit-expected.txt:
+        * fast/forms/textfield-focus-out-expected.txt:
+
 2006-08-24  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
