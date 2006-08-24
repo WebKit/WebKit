@@ -1,3 +1,15 @@
+2006-08-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for Mail stationary. Selecting a stationary item would cause this exception.
+        *** -[WebSubresourceLoader copyWithZone:]: selector not recognized
+        Uncaught exception - *** -[WebSubresourceLoader copyWithZone:]: selector not recognized
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader willUseArchiveForRequest:originalURL:loader:]):
+        Use _webkit_setObject:forUncopiedKey: when addign the resource to pendingArchivedResources.
+
 2006-08-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.

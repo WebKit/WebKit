@@ -45,6 +45,7 @@
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebKitNSStringExtras.h>
+#import "WebNSDictionaryExtras.h"
 
 @implementation WebFrameLoader
 
@@ -644,7 +645,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
         WebResource *resource = [self _archivedSubresourceForURL:originalURL];
         if (resource && [self _canUseResourceWithResponse:[resource _response]]) {
-            [[self pendingArchivedResources] setObject:resource forKey:loader];
+            [[self pendingArchivedResources] _webkit_setObject:resource forUncopiedKey:loader];
             // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
             [self deliverArchivedResourcesAfterDelay];
             return YES;
