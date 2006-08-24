@@ -65,11 +65,13 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMHTML.h>
 #import <WebKitSystemInterface.h>
+#import "WebDocumentLoadState.h"
 
 @interface WebDataSourcePrivate : NSObject
 {
     @public
-    NSData *resourceData;
+    
+    WebDocumentLoadState *loadState;
     
     id <WebDocumentRepresentation> representation;
     
@@ -149,7 +151,8 @@
 {
     ASSERT(![[webFrame _frameLoader] isLoading]);
 
-    [resourceData release];
+    [loadState release];
+    
     [representation release];
     [request release];
     [originalRequest release];
@@ -179,13 +182,6 @@
     [_private->representation release];
     _private->representation = [representation retain];
     _private->representationFinishedLoading = NO;
-}
-
-- (void)_setData:(NSData *)data
-{
-    [data retain];
-    [_private->resourceData release];
-    _private->resourceData = data;
 }
 
 - (void)_loadIcon
@@ -727,6 +723,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [frame retain];
     [_private->webFrame release];
     _private->webFrame = frame;
+
+    [_private->loadState setFrameLoader:[frame _frameLoader]];
     
     [self _defersCallbacksChanged];
     // no need to do _defersCallbacksChanged for subframes since they too
@@ -891,7 +889,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         [self _loadIcon];
         
         if ([[_private->webFrame _frameLoader] isLoadingMainResource]) {
-            [self _setData:[[_private->webFrame _frameLoader] mainResourceData]];
+            [_private->loadState setMainResourceData:[[_private->webFrame _frameLoader] mainResourceData]];
             [[_private->webFrame _frameLoader] releaseMainResourceLoader];
         }
         
@@ -1040,6 +1038,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
     
     _private = [[WebDataSourcePrivate alloc] init];
+    
+    _private->loadState = [[WebDocumentLoadState alloc] initWithRequest:request];
+    
     _private->originalRequest = [request retain];
     _private->originalRequestCopy = [request copy];
     
@@ -1070,7 +1071,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (NSData *)data
 {
-    return _private->resourceData != nil ? _private->resourceData : [[_private->webFrame _frameLoader] mainResourceData];
+    return [_private->loadState mainResourceData];
 }
 
 - (id <WebDocumentRepresentation>)representation

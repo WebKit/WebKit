@@ -57,6 +57,8 @@
 		6550B7C7099EFAE90090D781 /* WebArchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B7C5099EFAE90090D781 /* WebArchiver.h */; };
 		6550B7C8099EFAE90090D781 /* WebArchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 6550B7C6099EFAE90090D781 /* WebArchiver.m */; };
 		658A40960A14853B005E6987 /* WebDataSourceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 658A40950A14853B005E6987 /* WebDataSourceInternal.h */; };
+		659044280A9D3B4200E89459 /* WebDocumentLoadState.h in Headers */ = {isa = PBXBuildFile; fileRef = 659044260A9D3B4200E89459 /* WebDocumentLoadState.h */; };
+		659044290A9D3B4200E89459 /* WebDocumentLoadState.m in Sources */ = {isa = PBXBuildFile; fileRef = 659044270A9D3B4200E89459 /* WebDocumentLoadState.m */; };
 		65A0006908527D1A005620FA /* libWebKitSystemInterface.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A0006808527D1A005620FA /* libWebKitSystemInterface.a */; };
 		65A734610A923948001B57E8 /* WebPlugInStreamLoaderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A734600A923948001B57E8 /* WebPlugInStreamLoaderDelegate.h */; };
 		65C7F42C0979DE640022E453 /* WebPageBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7F42A0979DE640022E453 /* WebPageBridge.h */; };
@@ -387,6 +389,8 @@
 		6578F5DF045F817400000128 /* WebDownload.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDownload.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65836F5E07EE425900682F95 /* WebPluginContainerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginContainerPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		658A40950A14853B005E6987 /* WebDataSourceInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDataSourceInternal.h; sourceTree = "<group>"; };
+		659044260A9D3B4200E89459 /* WebDocumentLoadState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDocumentLoadState.h; sourceTree = "<group>"; };
+		659044270A9D3B4200E89459 /* WebDocumentLoadState.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebDocumentLoadState.m; sourceTree = "<group>"; };
 		65A0006808527D1A005620FA /* libWebKitSystemInterface.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitSystemInterface.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		65A734600A923948001B57E8 /* WebPlugInStreamLoaderDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlugInStreamLoaderDelegate.h; sourceTree = "<group>"; };
 		65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebUIDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -800,6 +804,8 @@
 			isa = PBXGroup;
 			children = (
 				65A734600A923948001B57E8 /* WebPlugInStreamLoaderDelegate.h */,
+				659044260A9D3B4200E89459 /* WebDocumentLoadState.h */,
+				659044270A9D3B4200E89459 /* WebDocumentLoadState.m */,
 				6538B1C60A90596D00A07522 /* WebFormDataStream.h */,
 				6538B1C70A90596D00A07522 /* WebFormDataStream.m */,
 				651A93850A83F883007FEDF0 /* WebDataProtocol.h */,
@@ -1219,6 +1225,7 @@
 				51700DAA0A9052A700DAAA8E /* WebIconLoader.h in Headers */,
 				6538B1C80A90596D00A07522 /* WebFormDataStream.h in Headers */,
 				65A734610A923948001B57E8 /* WebPlugInStreamLoaderDelegate.h in Headers */,
+				659044280A9D3B4200E89459 /* WebDocumentLoadState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1703,6 +1710,7 @@
 				51E4D39A0A886B5E00ECEE2C /* WebIconDatabaseBridge.m in Sources */,
 				51700DAB0A9052A700DAAA8E /* WebIconLoader.m in Sources */,
 				6538B1C90A90596E00A07522 /* WebFormDataStream.m in Sources */,
+				659044290A9D3B4200E89459 /* WebDocumentLoadState.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

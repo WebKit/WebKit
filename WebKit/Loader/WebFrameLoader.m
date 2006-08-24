@@ -220,8 +220,6 @@
     [ds retain];
     [dataSource release];
     dataSource = ds;
-
-    [ds _setWebFrame:webFrame];
 }
 
 - (void)clearDataSource
@@ -244,8 +242,6 @@
     [d retain];
     [provisionalDataSource release];
     provisionalDataSource = d;
-
-    [d _setWebFrame:webFrame];
 }
 
 - (void)_clearProvisionalDataSource

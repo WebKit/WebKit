@@ -2,6 +2,35 @@
 
         Reviewed by Adele.
         
+        - started factoring most of the guts of WebDataSource into a new class
+        
+        WebDocumentLoadState is decoupled from the rest of WebKit and will
+        be moved down to WebCore. I only moved one of the data fields of
+        WebDataSource for now.
+
+        * Loader/WebDocumentLoadState.h: Added.
+        * Loader/WebDocumentLoadState.m: Added.
+        (-[WebDocumentLoadState initWithRequest:]): New class.
+        (-[WebDocumentLoadState dealloc]):
+        (-[WebDocumentLoadState setFrameLoader:]):
+        (-[WebDocumentLoadState setMainResourceData:]):
+        (-[WebDocumentLoadState mainResourceData]):
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _setDataSource:]): Remove redundant _setWebFrame: call,
+        it would have been called already by this point.
+        (-[WebFrameLoader _setProvisionalDataSource:]): ditto.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _setWebFrame:]):
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (-[WebDataSource initWithRequest:]):
+        (-[WebDataSource data]):
+
+2006-08-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+        
         - refactoring of WebDataSource in preparation for moving a bunch of it to a new class
         
         - minimize WebDataSourceInternal.h to be only methods called from outside WebDataSource
