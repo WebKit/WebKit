@@ -39,9 +39,6 @@ namespace WebCore {
 
 class FontPlatformData {
 public:
-    FontPlatformData(const FontPlatformData&);
-    FontPlatformData& operator=(const FontPlatformData&);
-
     class Deleted { };
     FontPlatformData(Deleted);
 
@@ -51,15 +48,16 @@ public:
 
     bool isFixedPitch();
 
-    void setFont(const QFont&);
     QFont font() const;
+    QFont* fontPtr() const;
 
     unsigned hash() const;
 
     bool operator==(const FontPlatformData&) const;
 
 private:
-    QFont m_font;
+    QFont* m_font;
+    FontDescription m_fontDescription;
 };
 
 }

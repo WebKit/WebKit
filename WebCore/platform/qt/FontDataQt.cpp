@@ -39,6 +39,7 @@
 #include "GlyphBuffer.h"
 #include "FontDescription.h"
 
+#include <QFont>
 #include <QFontMetrics>
 
 namespace WebCore {
@@ -56,6 +57,7 @@ void FontData::platformInit()
 
 void FontData::platformDestroy()
 {
+    delete m_font.fontPtr();
 }
 
 FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const

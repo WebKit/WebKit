@@ -34,38 +34,28 @@
 #include "DeprecatedString.h"
 #include "FontDescription.h"
 
-#include <QHash>
 #include <QFontInfo>
 
 namespace WebCore {
 
 FontPlatformData::FontPlatformData()
+    : m_font(0)
 {
 }
 
 FontPlatformData::FontPlatformData(Deleted)
+    : m_font((QFont*) -1)
 {
 }
 
 FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const AtomicString& familyName)
+    : m_font(new QFont("Times New Roman", 12))
+    , m_fontDescription(fontDescription)
 {
-    QFont font("Times New Roman", 12);
-    font.setFamily(familyName.domString());
-    font.setPixelSize(fontDescription.computedSize());
-    font.setItalic(fontDescription.italic());
-    font.setWeight(fontDescription.weight());
-    setFont(font);
-}
-
-FontPlatformData::FontPlatformData(const FontPlatformData& other)
-    : m_font(other.m_font)
-{
-}
-
-FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
-{
-    m_font = other.m_font;
-    return *this;
+    m_font->setFamily(familyName.domString());
+    m_font->setPixelSize(fontDescription.computedSize());
+    m_font->setItalic(fontDescription.italic());
+    m_font->setWeight(fontDescription.weight());
 }
 
 FontPlatformData::~FontPlatformData()
@@ -74,27 +64,37 @@ FontPlatformData::~FontPlatformData()
 
 bool FontPlatformData::isFixedPitch()
 {
-    return QFontInfo(m_font).fixedPitch();
-}
-
-void FontPlatformData::setFont(const QFont& other)
-{
-    m_font = other;
+    return QFontInfo(*m_font).fixedPitch();
 }
 
 QFont FontPlatformData::font() const
+{
+    if (m_font)
+        return *m_font;
+
+    return QFont();
+}
+
+QFont* FontPlatformData::fontPtr() const
 {
     return m_font;
 }
 
 unsigned FontPlatformData::hash() const
 {
-    return qHash(&m_font);
+    return StringImpl::computeHash((UChar*) &m_fontDescription, sizeof(FontDescription) / sizeof(UChar));
 }
 
 bool FontPlatformData::operator==(const FontPlatformData& other) const
 {
-    return (other.m_font == m_font);
+    if (m_font == other.m_font)
+        return true;
+
+    if (!m_font || m_font == (QFont*) -1 ||
+        !other.m_font || other.m_font == (QFont*) -1)
+        return false;
+
+    return (*m_font == *other.m_font);
 }
 
 }

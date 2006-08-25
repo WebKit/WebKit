@@ -2,6 +2,24 @@
 
         Reviewed/landed by Adam.
 
+        Finally fix font caching. WebKit+Qt now works
+        out of the box without any further patches :-)
+
+        * platform/qt/FontDataQt.cpp:
+        (WebCore::FontData::platformDestroy):
+        * platform/qt/FontPlatformData.h:
+        * platform/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::isFixedPitch):
+        (WebCore::FontPlatformData::font):
+        (WebCore::FontPlatformData::fontPtr):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+
+2006-08-25  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed/landed by Adam.
+
         Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10559
         Confirm to WebKit style guide - last fixes :-)
 
