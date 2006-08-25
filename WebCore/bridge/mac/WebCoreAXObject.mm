@@ -36,6 +36,7 @@
 #import "htmlediting.h"
 #import "HTMLFrameElement.h"
 #import "HTMLInputElement.h"
+#import "HTMLLabelElement.h"
 #import "HTMLMapElement.h"
 #import "HTMLNames.h"
 #import "HTMLSelectElement.h"
@@ -563,6 +564,19 @@ static int headingLevel(RenderObject* renderer)
     return nil;
 }
 
+static HTMLLabelElement* labelForElement(Element* element)
+{
+    RefPtr<NodeList> list = element->document()->getElementsByTagName("label");
+    unsigned len = list->length();
+    for (unsigned i = 0; i < len; i++) {
+        HTMLLabelElement* label = static_cast<HTMLLabelElement*>(list->item(i));
+        if (label->formElement() == element)
+            return label;
+    }
+    
+    return 0;
+}
+
 -(NSString*)title
 {
     if (!m_renderer || m_areaElement || !m_renderer->element())
@@ -570,13 +584,20 @@ static int headingLevel(RenderObject* renderer)
     
     if (m_renderer->element()->hasTagName(buttonTag))
         return [self textUnderElement];
+        
     if (m_renderer->element()->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
         if (input->isTextButton())
             return input->value();
+
+        HTMLLabelElement* label = labelForElement(input);
+        if (label)
+            return label->innerText();
     }
+    
     if (m_renderer->element()->isLink())
         return [self textUnderElement];
+        
     if ([self isAttachment])
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
     

@@ -1,3 +1,16 @@
+2006-08-25  David Harrison  <harrison@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4416432> Radio buttons and Checkboxes in AXWebAreas don't fill in their AXTitle attribute
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (labelForElement):
+        New. Returns the HTMLLabelElement, if any, for the specified Element.
+        
+        (-[WebCoreAXObject title]):
+        For input elements, return the innerHTML() of the labelForElement().
+
 2006-08-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher
