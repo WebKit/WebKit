@@ -292,19 +292,19 @@ bool IconDatabase::isIconExpiredForIconURL(const String& iconURL)
     // If we have a IconDataCache, then it definitely has the Timestamp in it
     IconDataCache* icon = m_iconURLToIconDataCacheMap.get(iconURL);
     if (icon) 
-        return time(NULL) - icon->getTimestamp() > iconExpirationTime;
+        return (int)currentTime() - icon->getTimestamp() > iconExpirationTime;
             
     // Otherwise, we'll get the timestamp from the DB and use it
     int stamp;
     if (m_privateBrowsingEnabled) {
         stamp = timeStampForIconURLQuery(m_privateBrowsingDB, iconURL);
         if (stamp)
-            return (time(NULL) - stamp) > iconExpirationTime;
+            return ((int)currentTime() - stamp) > iconExpirationTime;
     }
     
     stamp = timeStampForIconURLQuery(m_mainDB, iconURL);
     if (stamp)
-        return (time(NULL) - stamp) > iconExpirationTime;
+        return ((int)currentTime() - stamp) > iconExpirationTime;
     
     return false;
 }
@@ -533,7 +533,7 @@ IconDataCache* IconDatabase::getOrCreateIconDataCache(const String& iconURL)
         
     // If we can't get a timestamp for this URL, then it is a new icon and we initialize its timestamp now
     if (!timestamp) {
-        icon->setTimestamp(time(NULL));
+        icon->setTimestamp((int)currentTime());
         m_iconDataCachesPendingUpdate.add(icon);
     } else 
         icon->setTimestamp(timestamp);
@@ -559,7 +559,7 @@ void IconDatabase::setIconDataForIconURL(const void* data, int size, const Strin
     icon->setImageData((unsigned char*)data, size);
     
     // Update the timestamp in the IconDataCache to NOW
-    icon->setTimestamp(time(NULL));
+    icon->setTimestamp((int)currentTime());
 
     // Mark the IconDataCache as requiring an update to the database
     m_iconDataCachesPendingUpdate.add(icon);
