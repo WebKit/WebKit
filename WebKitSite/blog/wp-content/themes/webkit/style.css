@@ -97,6 +97,10 @@ acronym, abbr, span.caps
 	text-align: center;
 	}
 
+#sk2-footer {
+    display: none;
+    }
+
 /* Begin Images */
 p img {
 	padding: 0;

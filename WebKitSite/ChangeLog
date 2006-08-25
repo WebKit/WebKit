@@ -1,3 +1,12 @@
+2006-08-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10444
+          Navigation links overlap the Spam Karma 2 footer
+
+        * blog/wp-content/themes/webkit/style.css: Hide the footer altogether.
+
 2006-08-21  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
