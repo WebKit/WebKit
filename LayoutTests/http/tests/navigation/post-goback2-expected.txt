@@ -50,7 +50,7 @@ layer at (0,0) size 785x1550
         RenderText {#text} at (18,229) size 130x37
           text run at (18,229) width 130: " option #2"
         RenderBR {BR} at (148,258) size 0x0
-        RenderMenuList {SELECT} at (2,268) size 255x18
+        RenderMenuList {SELECT} at (2,268) size 255x18 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (8,2) size 224x13
             RenderText at (0,0) size 225x13
               text run at (0,0) width 225: "Value set by User that should be Restored"

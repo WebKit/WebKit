@@ -1079,12 +1079,8 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
     style->adjustBackgroundLayers();
 
     // Let the theme also have a crack at adjusting the style.
-    if (style->hasAppearance()) {
-        if (m_hasUAAppearance && theme()->isControlStyled(style, m_borderData, m_backgroundData, m_backgroundColor))
-            style->setAppearance(NoAppearance);
-        else
-            theme()->adjustStyle(this, style, e);
-    }
+    if (style->hasAppearance())
+        theme()->adjustStyle(this, style, e, m_hasUAAppearance, m_borderData, m_backgroundData, m_backgroundColor);
     
 #ifdef SVG_SUPPORT
     if (e && e->isSVGElement()) {

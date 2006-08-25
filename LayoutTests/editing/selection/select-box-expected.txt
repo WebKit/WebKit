@@ -64,7 +64,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x22
           RenderText {#text} at (0,1) size 71x18
             text run at (0,1) width 71: "select box: "
-          RenderMenuList {SELECT} at (73,2) size 38x18
+          RenderMenuList {SELECT} at (73,2) size 38x18 [bgcolor=#FFFFFF]
             RenderBlock (anonymous) at (8,2) size 7x13
               RenderText at (0,0) size 7x13
                 text run at (0,0) width 7: "1"

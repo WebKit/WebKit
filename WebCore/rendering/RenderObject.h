@@ -702,9 +702,9 @@ public:
         BSTop, BSBottom, BSLeft, BSRight
     };
     void drawBorderArc(GraphicsContext*, int x, int y, float thickness, IntSize radius, int angleStart,
-        int angleSpan, BorderSide, Color, EBorderStyle, bool firstCorner);
+        int angleSpan, BorderSide, Color, const Color& textcolor, EBorderStyle, bool firstCorner);
     void drawBorder(GraphicsContext*, int x1, int y1, int x2, int y2, BorderSide,
-        Color, const Color& textcolor, EBorderStyle, int adjbw1, int adjbw2, bool invalidisInvert = false);
+        Color, const Color& textcolor, EBorderStyle, int adjbw1, int adjbw2);
 
     virtual void setTable(RenderTable*) {};
 

@@ -811,11 +811,18 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
 }
 
 void RenderObject::drawBorderArc(GraphicsContext* p, int x, int y, float thickness, IntSize radius, int angleStart, 
-    int angleSpan, BorderSide s, Color c, EBorderStyle style, bool firstCorner)
+    int angleSpan, BorderSide s, Color c, const Color& textColor, EBorderStyle style, bool firstCorner)
 {
     if ((style == DOUBLE && ((thickness / 2) < 3)) || 
         ((style == RIDGE || style == GROOVE) && ((thickness / 2) < 2)))
         style = SOLID;
+    
+    if (!c.isValid()) {
+        if (style == INSET || style == OUTSET || style == RIDGE || style == GROOVE)
+            c.setRGB(238, 238, 238);
+        else
+            c = textColor;
+    }
     
     switch (style) {
         case BNONE:
@@ -896,7 +903,7 @@ void RenderObject::drawBorderArc(GraphicsContext* p, int x, int y, float thickne
 
 void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2,
                               BorderSide s, Color c, const Color& textcolor, EBorderStyle style,
-                              int adjbw1, int adjbw2, bool invalidisInvert)
+                              int adjbw1, int adjbw2)
 {
     int width = (s == BSTop || s == BSBottom ? y2 - y1 : x2 - x1);
 
@@ -904,15 +911,10 @@ void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2
         style = SOLID;
 
     if (!c.isValid()) {
-        if (invalidisInvert)
-            // FIXME: The original KHTML did XOR here -- what do we want to do instead?
-            c = Color::white;
-        else {
-            if (style == INSET || style == OUTSET || style == RIDGE || style == GROOVE)
-                c.setRGB(238, 238, 238);
-            else
-                c = textcolor;
-        }
+        if (style == INSET || style == OUTSET || style == RIDGE || style == GROOVE)
+            c.setRGB(238, 238, 238);
+        else
+            c = textcolor;
     }
 
     switch(style)
@@ -1072,31 +1074,31 @@ void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2
             p->drawRect(IntRect(x1, y1, x2 - x1, y2 - y1));
             return;
         }
-        IntPoint quad[4];
+        FloatPoint quad[4];
         switch (s) {
             case BSTop:
-                quad[0] = IntPoint(x1 + max(-adjbw1, 0), y1);
-                quad[1] = IntPoint(x1 + max( adjbw1, 0), y2);
-                quad[2] = IntPoint(x2 - max( adjbw2, 0), y2);
-                quad[3] = IntPoint(x2 - max(-adjbw2, 0), y1);
+                quad[0] = FloatPoint(x1 + max(-adjbw1, 0), y1);
+                quad[1] = FloatPoint(x1 + max( adjbw1, 0), y2);
+                quad[2] = FloatPoint(x2 - max( adjbw2, 0), y2);
+                quad[3] = FloatPoint(x2 - max(-adjbw2, 0), y1);
                 break;
             case BSBottom:
-                quad[0] = IntPoint(x1 + max( adjbw1, 0), y1);
-                quad[1] = IntPoint(x1 + max(-adjbw1, 0), y2);
-                quad[2] = IntPoint(x2 - max(-adjbw2, 0), y2);
-                quad[3] = IntPoint(x2 - max( adjbw2, 0), y1);
+                quad[0] = FloatPoint(x1 + max( adjbw1, 0), y1);
+                quad[1] = FloatPoint(x1 + max(-adjbw1, 0), y2);
+                quad[2] = FloatPoint(x2 - max(-adjbw2, 0), y2);
+                quad[3] = FloatPoint(x2 - max( adjbw2, 0), y1);
                 break;
             case BSLeft:
-                quad[0] = IntPoint(x1, y1 + max(-adjbw1, 0));
-                quad[1] = IntPoint(x1, y2 - max(-adjbw2, 0));
-                quad[2] = IntPoint(x2, y2 - max( adjbw2, 0));
-                quad[3] = IntPoint(x2, y1 + max( adjbw1, 0));
+                quad[0] = FloatPoint(x1, y1 + max(-adjbw1, 0));
+                quad[1] = FloatPoint(x1, y2 - max(-adjbw2, 0));
+                quad[2] = FloatPoint(x2, y2 - max( adjbw2, 0));
+                quad[3] = FloatPoint(x2, y1 + max( adjbw1, 0));
                 break;
             case BSRight:
-                quad[0] = IntPoint(x1, y1 + max( adjbw1, 0));
-                quad[1] = IntPoint(x1, y2 - max( adjbw2, 0));
-                quad[2] = IntPoint(x2, y2 - max(-adjbw2, 0));
-                quad[3] = IntPoint(x2, y1 + max(-adjbw1, 0));
+                quad[0] = FloatPoint(x1, y1 + max( adjbw1, 0));
+                quad[1] = FloatPoint(x1, y2 - max( adjbw2, 0));
+                quad[2] = FloatPoint(x2, y2 - max(-adjbw2, 0));
+                quad[3] = FloatPoint(x2, y1 + max(-adjbw1, 0));
                 break;
         }
         p->drawConvexPolygon(4, quad);
@@ -1323,7 +1325,7 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
             
             // Draw upper left arc
             drawBorderArc(p, leftX, leftY, thickness, topLeft, firstAngleStart, firstAngleSpan,
-                BSTop, tc, ts, true);
+                BSTop, tc, style->color(), ts, true);
             if (applyLeftInnerClip)
                 p->restore();
             
@@ -1338,7 +1340,7 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
             
             // Draw upper right arc
             drawBorderArc(p, rightX, leftY, thickness, topRight, secondAngleStart, secondAngleSpan,
-                BSTop, tc, ts, false);
+                BSTop, tc, style->color(), ts, false);
             if (applyRightInnerClip)
                 p->restore();
         }
@@ -1393,7 +1395,7 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
             
             // Draw lower left arc
             drawBorderArc(p, leftX, leftY, thickness, bottomLeft, firstAngleStart, firstAngleSpan,
-                BSBottom, bc, bs, true);
+                BSBottom, bc, style->color(), bs, true);
             if (applyLeftInnerClip)
                 p->restore();
                 
@@ -1408,7 +1410,7 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
             
             // Draw lower right arc
             drawBorderArc(p, rightX, leftY, thickness, bottomRight, secondAngleStart, secondAngleSpan,
-                BSBottom, bc, bs, false);
+                BSBottom, bc, style->color(), bs, false);
             if (applyRightInnerClip)
                 p->restore();
         }
@@ -1456,7 +1458,7 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
             
             // Draw top left arc
             drawBorderArc(p, topX, topY, thickness, topLeft, firstAngleStart, firstAngleSpan,
-                BSLeft, lc, ls, true);
+                BSLeft, lc, style->color(), ls, true);
             if (applyTopInnerClip)
                 p->restore();
             
@@ -1471,7 +1473,7 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
             
             // Draw bottom left arc
             drawBorderArc(p, topX, bottomY, thickness, bottomLeft, secondAngleStart, secondAngleSpan,
-                BSLeft, lc, ls, false);
+                BSLeft, lc, style->color(), ls, false);
             if (applyBottomInnerClip)
                 p->restore();
         }
@@ -1519,7 +1521,7 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
             
             // Draw top right arc
             drawBorderArc(p, topX, topY, thickness, topRight, firstAngleStart, firstAngleSpan,
-                BSRight, rc, rs, true);
+                BSRight, rc, style->color(), rs, true);
             if (applyTopInnerClip)
                 p->restore();
             
@@ -1534,7 +1536,7 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
             
             // Draw bottom right arc
             drawBorderArc(p, topX, bottomY, thickness, bottomRight, secondAngleStart, secondAngleSpan,
-                BSRight, rc, rs, false);
+                BSRight, rc, style->color(), rs, false);
             if (applyBottomInnerClip)
                 p->restore();
         }
@@ -1647,19 +1649,19 @@ void RenderObject::paintOutline(GraphicsContext* p, int _tx, int _ty, int w, int
     
     drawBorder(p, _tx-ow, _ty-ow, _tx, _ty+h+ow, BSLeft,
                Color(oc), style->color(),
-               os, ow, ow, true);
+               os, ow, ow);
 
     drawBorder(p, _tx-ow, _ty-ow, _tx+w+ow, _ty, BSTop,
                Color(oc), style->color(),
-               os, ow, ow, true);
+               os, ow, ow);
 
     drawBorder(p, _tx+w, _ty-ow, _tx+w+ow, _ty+h+ow, BSRight,
                Color(oc), style->color(),
-               os, ow, ow, true);
+               os, ow, ow);
 
     drawBorder(p, _tx-ow, _ty+h, _tx+w+ow, _ty+h+ow, BSBottom,
                Color(oc), style->color(),
-               os, ow, ow, true);
+               os, ow, ow);
 
 }
 

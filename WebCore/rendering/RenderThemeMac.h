@@ -83,6 +83,9 @@ protected:
     virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 
+    virtual bool paintMenuListButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    
 private:
     IntRect inflateRect(const IntRect&, const IntSize&, const int* margins) const;
 
@@ -119,6 +122,7 @@ private:
     const IntSize* popupButtonSizes() const;
     const int* popupButtonMargins() const;
     const int* popupButtonPadding(NSControlSize) const;
+    void paintMenuListButtonGradients(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
 private:
     NSButtonCell* checkbox;

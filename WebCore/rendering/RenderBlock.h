@@ -278,13 +278,12 @@ public:
 
 protected:
     void newLine();
+    virtual bool hasLineIfEmpty() const;
 
 private:
     Position positionForBox(InlineBox *box, bool start=true) const;
     Position positionForRenderer(RenderObject *renderer, bool start=true) const;
-    
-    bool hasLineIfEmpty() const;
-    
+        
 protected:
     struct FloatingObject {
         enum Type {

@@ -1,3 +1,92 @@
+2006-08-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        New tests and updated tests for styled selects.
+
+        * fast/borders/borderRadiusInvalidColor-expected.checksum: Added.
+        * fast/borders/borderRadiusInvalidColor-expected.png: Added.
+        * fast/borders/borderRadiusInvalidColor-expected.txt: Added.
+        * fast/borders/borderRadiusInvalidColor.html: Added.
+
+        * fast/forms/select-baseline-expected.checksum: Added.
+        * fast/forms/select-baseline-expected.png: Added.
+        * fast/forms/select-baseline-expected.txt: Added.
+        * fast/forms/select-baseline.html: Added.
+
+        * editing/pasteboard/4641033-expected.txt:
+        * editing/selection/replaced-boundaries-3-expected.txt:
+        * editing/selection/select-box-expected.txt:
+        * fast/block/margin-collapse/103-expected.txt:
+        * fast/forms/001-expected.checksum:
+        * fast/forms/001-expected.png:
+        * fast/forms/001-expected.txt:
+        * fast/forms/003-expected.txt:
+        * fast/forms/004-expected.txt:
+        * fast/forms/HTMLOptionElement_label01-expected.txt:
+        * fast/forms/HTMLOptionElement_label02-expected.txt:
+        * fast/forms/HTMLOptionElement_label03-expected.txt:
+        * fast/forms/HTMLOptionElement_label04-expected.txt:
+        * fast/forms/HTMLOptionElement_label06-expected.txt:
+        * fast/forms/HTMLOptionElement_label07-expected.txt:
+        * fast/forms/form-element-geometry-expected.checksum:
+        * fast/forms/form-element-geometry-expected.png:
+        * fast/forms/form-element-geometry-expected.txt:
+        * fast/forms/option-script-expected.txt:
+        * fast/forms/option-text-clip-expected.txt:
+        * fast/forms/select-change-listbox-to-popup-expected.txt:
+        * fast/forms/select-selected-expected.txt:
+        * fast/forms/select-style-expected.txt:
+        * fast/forms/select-visual-hebrew-expected.txt:
+        * fast/invalid/014-expected.txt:
+        * fast/parser/document-write-option-expected.txt:
+        * fast/replaced/width100percent-expected.txt:
+        * http/tests/navigation/anchor-basic-expected.txt:
+        * http/tests/navigation/anchor-frames-expected.txt:
+        * http/tests/navigation/anchor-goback-expected.txt:
+        * http/tests/navigation/anchor-subframeload-expected.txt:
+        * http/tests/navigation/javascriptlink-basic-expected.txt:
+        * http/tests/navigation/javascriptlink-frames-expected.txt:
+        * http/tests/navigation/javascriptlink-goback-expected.txt:
+        * http/tests/navigation/javascriptlink-subframeload-expected.txt:
+        * http/tests/navigation/metaredirect-basic-expected.txt:
+        * http/tests/navigation/metaredirect-frames-expected.txt:
+        * http/tests/navigation/metaredirect-goback-expected.txt:
+        * http/tests/navigation/metaredirect-subframeload-expected.txt:
+        * http/tests/navigation/post-goback2-expected.txt:
+        * http/tests/navigation/postredirect-goback2-expected.txt:
+        * http/tests/navigation/redirect302-basic-expected.txt:
+        * http/tests/navigation/redirect302-frames-expected.txt:
+        * http/tests/navigation/redirect302-goback-expected.txt:
+        * http/tests/navigation/redirect302-subframeload-expected.txt:
+        * http/tests/navigation/relativeanchor-basic-expected.txt:
+        * http/tests/navigation/relativeanchor-frames-expected.txt:
+        * http/tests/navigation/relativeanchor-goback-expected.txt:
+        * http/tests/navigation/slowmetaredirect-basic-expected.txt:
+        * http/tests/navigation/slowtimerredirect-basic-expected.txt:
+        * http/tests/navigation/success200-basic-expected.txt:
+        * http/tests/navigation/success200-frames-expected.txt:
+        * http/tests/navigation/success200-frames-loadsame-expected.txt:
+        * http/tests/navigation/success200-goback-expected.txt:
+        * http/tests/navigation/success200-loadsame-expected.txt:
+        * http/tests/navigation/success200-reload-expected.txt:
+        * http/tests/navigation/success200-subframeload-expected.txt:
+        * http/tests/navigation/timerredirect-basic-expected.txt:
+        * http/tests/navigation/timerredirect-frames-expected.txt:
+        * http/tests/navigation/timerredirect-goback-expected.txt:
+        * http/tests/navigation/timerredirect-subframeload-expected.txt:
+        * tables/mozilla/bugs/bug1188-expected.txt:
+        * tables/mozilla/bugs/bug18359-expected.txt:
+        * tables/mozilla/bugs/bug2479-3-expected.txt:
+        * tables/mozilla/bugs/bug2479-4-expected.txt:
+        * tables/mozilla/bugs/bug29326-expected.txt:
+        * tables/mozilla/bugs/bug33855-expected.txt:
+        * tables/mozilla/bugs/bug4382-expected.txt:
+        * tables/mozilla/bugs/bug96334-expected.txt:
+        * tables/mozilla/core/margins-expected.txt:
+        * tables/mozilla/dom/tableDom-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+
 2006-08-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.

@@ -50,6 +50,8 @@ public:
     virtual const char* renderName() const { return "RenderButton"; }
 
 protected:
+    virtual bool hasLineIfEmpty() const { return true; }
+
     RenderText* m_buttonText;
     RenderBlock* m_inner;
 };

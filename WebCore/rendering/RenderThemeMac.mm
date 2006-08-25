@@ -144,9 +144,6 @@ bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData&
 {
     if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance)
         return style->border() != border;
-    // FIXME: We should allow menulists to be styled- but not until we have a good design for styled popups.
-    if (style->appearance() == MenulistAppearance)
-        return false;
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }
 
@@ -265,8 +262,6 @@ short RenderThemeMac::baselinePosition(const RenderObject* o) const
 {
     if (o->style()->appearance() == CheckboxAppearance || o->style()->appearance() == RadioAppearance)
         return o->marginTop() + o->height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
-    if (o->style()->appearance() == MenulistAppearance)
-        return o->marginTop() + o->height() - 5; // This is to match AppKit.  There might be a better way to calculate this though.
     return RenderTheme::baselinePosition(o);
 }
 
@@ -678,9 +673,9 @@ const int* RenderThemeMac::popupButtonPadding(NSControlSize size) const
 {
     static const int padding[3][4] = 
     {
-        { 0, 26, 0, 8 },
-        { 0, 23, 0, 8 },
-        { 0, 22, 0, 10 }
+        { 2, 26, 3, 8 },
+        { 2, 23, 3, 8 },
+        { 2, 22, 3, 10 }
     };
     return padding[size];
 }
@@ -706,6 +701,169 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInf
         
     [popupButton drawWithFrame:inflatedRect inView:o->view()->frameView()->getDocumentView()];
     [popupButton setControlView:nil];
+    return false;
+}
+
+const float baseFontSize = 11.0;
+const float baseArrowHeight = 4.0;
+const float baseArrowWidth = 5.0;
+const float baseSpaceBetweenArrows = 2.0;
+const int arrowPaddingLeft = 6;
+const int arrowPaddingRight = 6;
+const int paddingBeforeSeparator = 4;
+const int baseBorderRadius = 5;
+const int styledPopupPaddingLeft = 8;
+const int styledPopupPaddingTop = 1;
+const int styledPopupPaddingBottom = 2;
+
+static void TopGradientInterpolate( void *info, float const *inData, float *outData )
+{
+    static float dark[4] = { 1, 1, 1, 0.4 };
+    static float light[4] = { 1, 1, 1, 0.15 };
+    float a = inData[0];
+    int i = 0;
+    for( i = 0; i < 4; i++ )
+        outData[i] = ( 1.0 - a ) * dark[i] + a * light[i];
+}
+
+static void BottomGradientInterpolate( void *info, float const *inData, float *outData )
+{
+    static float dark[4] = { 1, 1, 1, 0 };
+    static float light[4] = { 1, 1, 1, 0.3 };
+    float a = inData[0];
+    int i = 0;
+    for( i = 0; i < 4; i++ )
+        outData[i] = ( 1.0 - a ) * dark[i] + a * light[i];
+}
+
+static void MainGradientInterpolate( void *info, float const *inData, float *outData )
+{
+    static float dark[4] = { 0, 0, 0, 0.15 };
+    static float light[4] = { 0, 0, 0, 0 };
+    float a = inData[0];
+    int i = 0;
+    for( i = 0; i < 4; i++ )
+        outData[i] = ( 1.0 - a ) * dark[i] + a * light[i];
+}
+
+void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    CGContextRef context = i.p->platformContext();
+        
+    i.p->save();
+
+    int radius = o->style()->borderTopLeftRadius().width();
+    
+    CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();    
+
+    IntRect topGradient(r.x(), r.y(), r.width(), r.height() / 2.0);
+    struct CGFunctionCallbacks topCallbacks = { 0, TopGradientInterpolate, NULL };
+    CGFunctionRef topFunction = CGFunctionCreate( NULL, 1, NULL, 4, NULL, &topCallbacks );
+    CGShadingRef topShading = CGShadingCreateAxial( cspace, CGPointMake(topGradient.x(),  topGradient.y()), 
+                            CGPointMake(topGradient.x(), topGradient.bottom()), topFunction, false, false );
+
+    IntRect bottomGradient(r.x() + radius, r.y() + r.height() / 2.0, r.width() - 2 * radius, r.height() / 2.0);
+    struct CGFunctionCallbacks bottomCallbacks = { 0, BottomGradientInterpolate, NULL };
+    CGFunctionRef bottomFunction = CGFunctionCreate( NULL, 1, NULL, 4, NULL, &bottomCallbacks );
+    CGShadingRef bottomShading = CGShadingCreateAxial( cspace, CGPointMake(bottomGradient.x(),  bottomGradient.y()), 
+                            CGPointMake(bottomGradient.x(), bottomGradient.bottom()), bottomFunction, false, false );
+
+    struct CGFunctionCallbacks mainCallbacks = { 0, MainGradientInterpolate, NULL };
+    CGFunctionRef mainFunction = CGFunctionCreate( NULL, 1, NULL, 4, NULL, &mainCallbacks );
+    CGShadingRef mainShading = CGShadingCreateAxial( cspace, CGPointMake(r.x(),  r.y()), 
+                            CGPointMake(r.x(), r.bottom()), mainFunction, false, false );
+
+    CGShadingRef leftShading = CGShadingCreateAxial( cspace, CGPointMake(r.x(),  r.y()), 
+                            CGPointMake(r.x() + radius, r.y()), mainFunction, false, false );                        
+
+    CGShadingRef rightShading = CGShadingCreateAxial( cspace, CGPointMake(r.right(),  r.y()), 
+                            CGPointMake(r.right() - radius, r.y()), mainFunction, false, false );                             
+    i.p->save();
+    CGContextClipToRect(context, r);
+    i.p->addRoundedRectClip(r, 
+        o->style()->borderTopLeftRadius(), o->style()->borderTopRightRadius(),
+        o->style()->borderBottomLeftRadius(), o->style()->borderBottomRightRadius());
+    CGContextDrawShading(context, mainShading);  
+    i.p->restore();      
+
+    i.p->save();
+    CGContextClipToRect(context, topGradient);
+    i.p->addRoundedRectClip(topGradient, 
+        o->style()->borderTopLeftRadius(), o->style()->borderTopRightRadius(),
+        IntSize(), IntSize());
+    CGContextDrawShading(context, topShading);  
+    i.p->restore();      
+
+    i.p->save();
+    CGContextClipToRect(context, bottomGradient);
+    i.p->addRoundedRectClip(bottomGradient, 
+        IntSize(), IntSize(),
+        o->style()->borderBottomLeftRadius(), o->style()->borderBottomRightRadius());
+    CGContextDrawShading(context, bottomShading); 
+    i.p->restore();
+    
+    i.p->save();
+    CGContextClipToRect(context, r);
+    i.p->addRoundedRectClip(r, 
+        o->style()->borderTopLeftRadius(), o->style()->borderTopRightRadius(),
+        o->style()->borderBottomLeftRadius(), o->style()->borderBottomRightRadius());
+    CGContextDrawShading(context, leftShading);
+    CGContextDrawShading(context, rightShading);
+    i.p->restore();
+    
+    i.p->restore();
+}
+
+bool RenderThemeMac::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{        
+    i.p->save();
+        
+    IntRect bounds = IntRect(r.x() + o->style()->borderLeftWidth(), 
+                             r.y() + o->style()->borderTopWidth(), 
+                             r.width() - o->style()->borderLeftWidth() - o->style()->borderRightWidth(),
+                             r.height() - o->style()->borderTopWidth() - o->style()->borderBottomWidth());
+    // Draw the gradients to give the styled popup menu a button appearance
+    paintMenuListButtonGradients(o, i, bounds);
+                
+    float fontScale = o->style()->fontSize() / baseFontSize;
+    float centerY = bounds.y() + bounds.height() / 2.0;
+    float arrowHeight = baseArrowHeight * fontScale;
+    float arrowWidth = baseArrowWidth * fontScale;    
+    float leftEdge = bounds.right() - arrowPaddingRight - arrowWidth;
+    float spaceBetweenArrows = baseSpaceBetweenArrows * fontScale;
+    
+    i.p->setFillColor(o->style()->color());
+    i.p->setPen(Pen(o->style()->color()));
+    
+    FloatPoint arrow1[3];
+    arrow1[0] = FloatPoint(leftEdge, centerY - spaceBetweenArrows / 2.0);
+    arrow1[1] = FloatPoint(leftEdge + arrowWidth, centerY - spaceBetweenArrows / 2.0);
+    arrow1[2] = FloatPoint(leftEdge + arrowWidth / 2.0, centerY - spaceBetweenArrows / 2.0 - arrowHeight);
+
+    // Draw the top arrow
+    i.p->drawConvexPolygon(3, arrow1, true);
+
+    FloatPoint arrow2[3];
+    arrow2[0] = FloatPoint(leftEdge, centerY + spaceBetweenArrows / 2.0);
+    arrow2[1] = FloatPoint(leftEdge + arrowWidth, centerY + spaceBetweenArrows / 2.0);
+    arrow2[2] = FloatPoint(leftEdge + arrowWidth / 2.0, centerY + spaceBetweenArrows / 2.0 + arrowHeight);   
+    
+    // Draw the bottom arrow
+    i.p->drawConvexPolygon(3, arrow2, true); 
+    
+    Color leftSeparatorColor(0, 0, 0, 40);
+    Color rightSeparatorColor(255, 255, 255, 40);
+    int separatorSpace = 2;
+    int leftEdgeOfSeparator = leftEdge - arrowPaddingLeft;
+    
+    // Draw the separator to the left of the arrows
+    i.p->setPen(Pen(leftSeparatorColor));
+    i.p->drawLine(IntPoint(leftEdgeOfSeparator, bounds.y()), IntPoint(leftEdgeOfSeparator, bounds.bottom()));
+
+    i.p->setPen(Pen(rightSeparatorColor));
+    i.p->drawLine(IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.y()), IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.bottom()));
+
+    i.p->restore();
     return false;
 }
 
@@ -737,6 +895,30 @@ void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
     // a reasonable control size, but once that control size is determined, we throw that font away and use the appropriate
     // system font for the control size instead.
     setFontFromControlSize(selector, style, controlSize);
+}
+
+void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    // Add in intrinsic margins if the font size isn't too small
+    if (style->fontSize() >= 11)
+        addIntrinsicMargins(style, NSRegularControlSize);
+        
+    float fontScale = style->fontSize() / baseFontSize;
+    float arrowWidth = baseArrowWidth * fontScale;
+    
+    // We're overriding the padding to allow for the arrow control.  WinIE doesn't honor padding on selects, so
+    // this shouldn't cause problems on the web.  If IE7 changes that, we should reconsider this.
+    style->setPaddingLeft(Length(styledPopupPaddingLeft, Fixed));
+    style->setPaddingRight(Length(arrowWidth + arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator, Fixed));
+    style->setPaddingTop(Length(styledPopupPaddingTop, Fixed));
+    style->setPaddingBottom(Length(styledPopupPaddingBottom, Fixed));
+    
+    if (style->hasBorderRadius()) {
+        style->setBorderRadius(IntSize(baseBorderRadius + fontScale - 1, baseBorderRadius + fontScale - 1));
+    }
+    
+    const int minHeight = 15;
+    style->setMinHeight(Length(minHeight, Fixed));
 }
 
 void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRect& r)

@@ -43,13 +43,15 @@ public:
     // metrics and defaults given the contents of the style.  This includes sophisticated operations like
     // selection of control size based off the font, the disabling of appearance when certain other properties like
     // "border" are set, or if the appearance is not supported by the theme.
-    void adjustStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e);
+    void adjustStyle(CSSStyleSelector*, RenderStyle*, Element*, 
+                    bool UAHasAppearance, const BorderData&, const BackgroundLayer&, const Color& backgroundColor);
     
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates
     // whether the CSS border/background should also be painted.
     bool paint(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     bool paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
+    bool paintDecorations(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
 
     // The remaining methods should be implemented by the platform-specific portion of the theme, e.g.,
     // RenderThemeMac.cpp for Mac OS X.
@@ -139,6 +141,8 @@ protected:
     virtual void adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
     virtual bool paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
 
+    virtual void adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
+    virtual bool paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
 };
 
 // Function to obtain the theme.  This is implemented in your platform-specific theme implementation to hand

@@ -3331,19 +3331,23 @@ int RenderBlock::getBaselineOfLastLineBox() const
 
     if (childrenInline()) {
         if (!firstLineBox() && hasLineIfEmpty())
-            return RenderFlow::baselinePosition(true) + borderTop() + paddingTop();
+            return RenderFlow::baselinePosition(true, true) + borderTop() + paddingTop();
         if (m_lastLineBox)
             return m_lastLineBox->yPos() + m_lastLineBox->baseline();
         return -1;
     }
     else {
+        bool haveNormalFlowChild = false;
         for (RenderObject* curr = lastChild(); curr; curr = curr->previousSibling()) {
             if (!curr->isFloatingOrPositioned()) {
+                haveNormalFlowChild = true;
                 int result = curr->getBaselineOfLastLineBox();
                 if (result != -1)
                     return curr->yPos() + result; // Translate to our coordinate space.
             }
         }
+        if (!haveNormalFlowChild && hasLineIfEmpty())
+            return RenderFlow::baselinePosition(true, true) + borderTop() + paddingTop();
     }
 
     return -1;

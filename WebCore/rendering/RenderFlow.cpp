@@ -742,8 +742,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
                BSLeft,
                oc, style()->color(), os,
                (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.right() - 1) <= thisline.x() ? ow : -ow),
-               (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.right() - 1) <= thisline.x() ? ow : -ow),
-               true);
+               (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.right() - 1) <= thisline.x() ? ow : -ow));
     
     // right edge
     drawBorder(p,
@@ -754,8 +753,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
                BSRight,
                oc, style()->color(), os,
                (lastline.isEmpty() || lastline.right() < thisline.right() || (thisline.right() - 1) <= lastline.x() ? ow : -ow),
-               (nextline.isEmpty() || nextline.right() <= thisline.right() || (thisline.right() - 1) <= nextline.x() ? ow : -ow),
-               true);
+               (nextline.isEmpty() || nextline.right() <= thisline.right() || (thisline.right() - 1) <= nextline.x() ? ow : -ow));
     // upper edge
     if (thisline.x() < lastline.x())
         drawBorder(p,
@@ -765,8 +763,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
                    t ,
                    BSTop, oc, style()->color(), os,
                    ow,
-                   (!lastline.isEmpty() && tx + lastline.x() + 1 < r + ow) ? -ow : ow,
-                   true);
+                   (!lastline.isEmpty() && tx + lastline.x() + 1 < r + ow) ? -ow : ow);
     
     if (lastline.right() < thisline.right())
         drawBorder(p,
@@ -776,8 +773,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
                    t ,
                    BSTop, oc, style()->color(), os,
                    (!lastline.isEmpty() && l - ow < tx + lastline.right()) ? -ow : ow,
-                   ow,
-                   true);
+                   ow);
     
     // lower edge
     if (thisline.x() < nextline.x())
@@ -788,8 +784,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
                    b + ow,
                    BSBottom, oc, style()->color(), os,
                    ow,
-                   (!nextline.isEmpty() && tx + nextline.x() + 1 < r + ow) ? -ow : ow,
-                   true);
+                   (!nextline.isEmpty() && tx + nextline.x() + 1 < r + ow) ? -ow : ow);
     
     if (nextline.right() < thisline.right())
         drawBorder(p,
@@ -799,8 +794,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* p, int tx, int ty, const I
                    b + ow,
                    BSBottom, oc, style()->color(), os,
                    (!nextline.isEmpty() && l - ow < tx + nextline.right()) ? -ow : ow,
-                   ow,
-                   true);
+                   ow);
 }
 
 }

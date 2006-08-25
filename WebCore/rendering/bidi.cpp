@@ -1750,7 +1750,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     }
 
     if (!firstLineBox() && hasLineIfEmpty())
-        m_height += lineHeight(true);
+        m_height += lineHeight(true, true);
 
     // See if we have any lines that spill out of our block.  If we do, then we will possibly need to
     // truncate text.

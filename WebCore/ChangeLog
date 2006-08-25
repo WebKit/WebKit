@@ -1,3 +1,67 @@
+2006-08-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Enable styling for popup menus. Also fixed baseline calculation for buttons and selects.
+
+        Tests:   fast/forms/select-baseline.html
+                 fast/borders/borderRadiusInvalidColor.html
+        updated: fast/forms/select-style-expected.txt and more...
+
+        * css/html4.css: Added style rules for styled select elements.
+
+        * platform/GraphicsContext.h: Added argument for antialiasing.
+        * platform/cg/GraphicsContextCG.cpp: (WebCore::GraphicsContext::drawConvexPolygon): ditto.
+        * platform/cairo/GraphicsContextCairo.cpp: (WebCore::GraphicsContext::drawConvexPolygon): ditto.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBorderArc): Added textColor argument so this can be used when the border color is invalid.
+        (WebCore::RenderObject::drawBorder): Removed invalidisInvert since its dead code 
+         (any callers that set this to true were already ensuring that their color was valid).
+         Updated drawConvexPolygon call to use FloatPoints instead of IntPoints.
+        (WebCore::RenderObject::paintBorder): Updated to remove invalidisInvert argument from drawBorder call.
+        (WebCore::RenderObject::paintOutline): ditto.
+        * rendering/RenderFlow.cpp: (WebCore::RenderFlow::paintOutlineForLine): ditto.
+        * rendering/RenderObject.h: Updated arguments for drawBorder and drawBorderArc.
+
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::getBaselineOfLastLineBox): Changed isRootLineBox argument to true when setting line height.
+          Added case for when there's no children to check for hasLineIfEmpty.
+        * rendering/RenderBlock.h:
+        * rendering/bidi.cpp: (WebCore::RenderBlock::layoutInlineChildren): Changed isRootLineBox argument to true when setting line height.
+        * rendering/RenderButton.h: (WebCore::RenderButton::hasLineIfEmpty): Added so buttons always get a line height.
+        * rendering/RenderMenuList.h: (WebCore::RenderMenuList::hasLineIfEmpty): ditto.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox): Added code to check hasLineIfEmpty to give flex boxes line height.
+        (WebCore::RenderFlexibleBox::layoutVerticalBox): ditto.
+
+        * css/cssstyleselector.cpp: (WebCore::CSSStyleSelector::adjustRenderStyle): Moved the appearance adjustment code into adjust style.
+        * rendering/RenderBox.cpp: (WebCore::RenderBox::paintBoxDecorations): Lets the theme paint "decorations", like the arrow control and gradients
+         immediately after painting the background.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle): This now checks whether the control is styled, and adjusts the appearance property appropriately.
+        For styled selects, instead of setting the appearance to none, which is what we do for other styled controls, we set the appearance
+        to MenulistButtonAppearance, which indicates that we will draw the arrow controls and button appearance in the engine.
+        (WebCore::RenderTheme::paintDecorations): Added. Paints MenulistButtonAppearance in a different function, 
+         so the arrow control will draw at the right time (after the background).
+        (WebCore::RenderTheme::paint): Added case for MenulistButtonAppearance.
+        (WebCore::RenderTheme::paintBorderOnly): ditto.
+        (WebCore::RenderTheme::isControlContainer): Removed cases for MenuListAppearance and MenulistButtonAppearance since the baseline is no longer provided by the theme.
+        (WebCore::RenderTheme::adjustMenuListButtonStyle): Added.
+        * rendering/RenderTheme.h: (WebCore::RenderTheme::paintMenuListButton): Added.
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::isControlStyled): Removed code that made selects unstyle-able.
+        (WebCore::RenderThemeMac::baselinePosition): Removed cases for MenuListAppearance and MenulistButtonAppearance.
+        (WebCore::RenderThemeMac::popupButtonPadding): Added top and bottom padding so empty popups have the right baseline.
+        (WebCore::TopGradientInterpolate): Added.
+        (WebCore::BottomGradientInterpolate): Added.
+        (WebCore::MainGradientInterpolate): Added.
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients): Added.  Draws gradients for styled popup menu button appearance.
+        (WebCore::RenderThemeMac::paintMenuListButton): Calls paintMenuListButtonGradients, and draws arrow control.
+        (WebCore::RenderThemeMac::adjustMenuListButtonStyle): Added to set padding and border radius to account for the arrow control size and font size.
+
 2006-08-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam

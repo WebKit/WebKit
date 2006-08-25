@@ -31,7 +31,7 @@ layer at (0,0) size 999x585
                         RenderTableSection {TBODY} at (2,2) size 187x30
                           RenderTableRow {TR} at (0,2) size 187x26
                             RenderTableCell {TD} at (2,2) size 183x26 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
-                              RenderMenuList {SELECT} at (4,4) size 175x18
+                              RenderMenuList {SELECT} at (4,4) size 175x18 [bgcolor=#FFFFFF]
                                 RenderBlock (anonymous) at (8,2) size 144x13
                                   RenderText at (0,0) size 144x13
                                     text run at (0,0) width 144: "USE THIS JAVASCRIPT HERE"

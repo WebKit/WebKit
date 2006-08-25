@@ -367,7 +367,7 @@ input[type="button"], input[type="submit"], input[type="reset"], button {
     box-sizing: border-box
 }
 
-input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, button:disabled {
+input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, button:disabled, select:disabled {
     color: GrayText
 }
 
@@ -402,14 +402,23 @@ select {
     box-sizing: border-box;
     -webkit-box-align: center;
     -webkit-rtl-ordering: logical;
+    color: black;
+    border: 1px solid;
+    -webkit-border-radius: 5px;
+    background-color: white;
+    white-space: pre;
 }
 
 select[size],
 select[multiple],
 select[size][multiple] {
+    // FIXME: When converting the list box implementation, remove these.
     -webkit-appearance: none;
     -webkit-box-align: initial;
     box-sizing: initial;
+    color: initial;
+    border: initial;
+    background-color: initial;
 }
  
 select[size="0"],
@@ -417,6 +426,10 @@ select[size="1"] {
     -webkit-appearance: menulist;
     box-sizing: border-box;
     -webkit-box-align: center;
+    color: black;
+    border: 1px solid;
+    -webkit-border-radius: 5px;
+    background-color: white;
 }
 
 optgroup {

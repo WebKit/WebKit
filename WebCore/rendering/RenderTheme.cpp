@@ -35,8 +35,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e)
+void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e, 
+                              bool UAHasAppearance, const BorderData& border, const BackgroundLayer& background, const Color& backgroundColor)
 {
+
     // Force inline and table display styles to be inline-block (except for table- which is block)
     if (style->display() == INLINE || style->display() == INLINE_TABLE || style->display() == TABLE_ROW_GROUP || 
         style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_FOOTER_GROUP ||
@@ -46,6 +48,13 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
     else if (style->display() == COMPACT || style->display() == RUN_IN || style->display() == LIST_ITEM || style->display() == TABLE)
         style->setDisplay(BLOCK);
     
+    if (UAHasAppearance && theme()->isControlStyled(style, border, background, backgroundColor)) {
+        if (style->appearance() == MenulistAppearance)
+            style->setAppearance(MenulistButtonAppearance);
+        else
+            style->setAppearance(NoAppearance);
+    }
+
     // Call the appropriate style adjustment method based off the appearance value.
     switch (style->appearance()) {
         case CheckboxAppearance:
@@ -62,6 +71,8 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
             return adjustTextAreaStyle(selector, style, e);
         case MenulistAppearance:
             return adjustMenuListStyle(selector, style, e);
+        case MenulistButtonAppearance:
+            return adjustMenuListButtonStyle(selector, style, e);
         default:
             break;
     }
@@ -92,6 +103,7 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& i, const
             return paintButton(o, i, r);
         case MenulistAppearance:
             return paintMenuList(o, i, r);
+        case MenulistButtonAppearance:
         case TextFieldAppearance:
         case TextAreaAppearance:
             return true;
@@ -113,6 +125,32 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
             return paintTextField(o, i, r);
         case TextAreaAppearance:
             return paintTextArea(o, i, r);
+        case MenulistButtonAppearance:
+            return true;
+        case CheckboxAppearance:
+        case RadioAppearance:
+        case PushButtonAppearance:
+        case SquareButtonAppearance:
+        case ButtonAppearance:
+        case MenulistAppearance:
+        default:
+            break;
+    }
+    
+    return false;
+}
+
+bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    if (i.p->paintingDisabled())
+        return false;
+        
+    // Call the appropriate paint method based off the appearance value.
+    switch (o->style()->appearance()) {
+        case MenulistButtonAppearance:
+            return paintMenuListButton(o, i, r);
+        case TextFieldAppearance:
+        case TextAreaAppearance:
         case CheckboxAppearance:
         case RadioAppearance:
         case PushButtonAppearance:
@@ -173,7 +211,7 @@ bool RenderTheme::isControlContainer(EAppearance appearance) const
 {
     // There are more leaves than this, but we'll patch this function as we add support for
     // more controls.
-    return appearance != CheckboxAppearance && appearance != RadioAppearance && appearance != MenulistAppearance;
+    return appearance != CheckboxAppearance && appearance != RadioAppearance;
 }
 
 bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& border, const BackgroundLayer& background,
@@ -313,6 +351,10 @@ void RenderTheme::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* s
 }
 
 void RenderTheme::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+}
+
+void RenderTheme::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
 }
 

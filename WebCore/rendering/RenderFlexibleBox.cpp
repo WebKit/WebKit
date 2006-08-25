@@ -284,7 +284,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
         layoutHorizontalBox(relayoutChildren);
     else
         layoutVerticalBox(relayoutChildren);
-    
+
     int oldHeight = m_height;
     calcHeight();
     if (oldHeight != m_height) {
@@ -418,6 +418,10 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
 
             child = iterator.next();
         }
+        
+        if (!iterator.first() && hasLineIfEmpty())
+            m_height += lineHeight(true, true);
+        
         m_height += toAdd;
 
         // Always make sure our overflowheight is at least our height.
@@ -873,6 +877,10 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         }
 
         yPos = m_height;
+        
+        if (!iterator.first() && hasLineIfEmpty())
+            m_height += lineHeight(true, true);
+    
         m_height += toAdd;
 
         // Negative margins can cause our height to shrink below our minimal height (border/padding).
@@ -1043,7 +1051,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     // So that the calcHeight in layoutBlock() knows to relayout positioned objects because of
     // a height change, we revert our height back to the intrinsic height before returning.
     if (heightSpecified)
-        m_height = oldHeight;    
+        m_height = oldHeight; 
 }
 
 void RenderFlexibleBox::placeChild(RenderObject* child, int x, int y)
