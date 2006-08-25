@@ -157,8 +157,8 @@ void WebCore::findWordBoundary(UChar const* str, int len, int position, int* sta
 
 void Frame::setNeedsReapplyStyles() { notImplemented(); }
 
-int WebCore::screenDepthPerComponent(Widget*) { notImplemented(); return 0; }
-bool WebCore::screenIsMonochrome(Widget*) { notImplemented(); return false; }
+int WebCore::screenDepthPerComponent(const Page*) { notImplemented(); return 0; }
+bool WebCore::screenIsMonochrome(const Page*) { notImplemented(); return false; }
 
 String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
 

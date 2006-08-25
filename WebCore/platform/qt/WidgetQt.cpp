@@ -169,11 +169,6 @@ IntPoint Widget::mapFromGlobal(const IntPoint& p) const
     return data->m_widget->mapFromGlobal(p);
 }
 
-float Widget::scaleFactor() const
-{
-    return 1.0f;
-}
-
 GraphicsContext* Widget::lockDrawingFocus()
 {
     notImplemented();

@@ -2,6 +2,24 @@
 
         Reviewed/landed by Adam.
 
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10561
+        Qt platform build fixes.
+
+        * platform/qt/FrameQt.h:
+        * platform/qt/ScreenQt.cpp:
+        (WebCore::qwidgetForPage):
+        (WebCore::screenRect):
+        (WebCore::screenDepth):
+        (WebCore::usableScreenRect):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        * platform/qt/WidgetQt.cpp:
+
+2006-08-25  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed/landed by Adam.
+
         Finally fix font caching. WebKit+Qt now works
         out of the box without any further patches :-)
 
