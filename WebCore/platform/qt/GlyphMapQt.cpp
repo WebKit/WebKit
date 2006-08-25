@@ -36,9 +36,8 @@ namespace WebCore {
 
 bool GlyphMap::fillPage(GlyphPage* page, UChar* buffer, unsigned bufferLength, const FontData* fontData)
 {
-    for (unsigned i = 0; i < bufferLength; i++) {
+    for (unsigned i = 0; i < bufferLength; i++)
         page->setGlyphDataForIndex(i, buffer[i], fontData);
-    }
 
     return true;
 }

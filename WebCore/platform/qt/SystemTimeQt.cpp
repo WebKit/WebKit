@@ -36,7 +36,7 @@ double currentTime()
 {
     time_t ttime;
     time(&ttime);
-    return (double) ttime;
+    return (double)ttime;
 }
 
 }

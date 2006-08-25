@@ -36,6 +36,10 @@ class NSURLResponse;
 #endif
 #endif
 
+#if PLATFORM(QT)
+#include <QString>
+#endif
+
 namespace WebCore {
 
 #if PLATFORM(MAC)
@@ -43,7 +47,7 @@ namespace WebCore {
     typedef NSURLResponse* PlatformResponse;
 #elif PLATFORM(QT)
     typedef void* PlatformData;
-    typedef char* PlatformResponse;
+    typedef QString PlatformResponse;
 #else
     // Not sure what the strategy for this will be on other platforms.
     typedef struct PlatformDataStruct *PlatformData;

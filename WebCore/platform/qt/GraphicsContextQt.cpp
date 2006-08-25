@@ -30,6 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include "GraphicsContext.h"
 #include "Path.h"
 
@@ -53,34 +55,34 @@ namespace WebCore {
 static QPainter::CompositionMode toQtCompositionMode(CompositeOperator op)
 {
     switch (op) {
-    case CompositeClear:
-        return QPainter::CompositionMode_Clear;
-    case CompositeCopy:
-        return QPainter::CompositionMode_Source;
-    case CompositeSourceOver:
-        return QPainter::CompositionMode_SourceOver;
-    case CompositeSourceIn:
-        return QPainter::CompositionMode_SourceIn;
-    case CompositeSourceOut:
-        return QPainter::CompositionMode_SourceOut;
-    case CompositeSourceAtop:
-        return QPainter::CompositionMode_SourceAtop;
-    case CompositeDestinationOver:
-        return QPainter::CompositionMode_DestinationOver;
-    case CompositeDestinationIn:
-        return QPainter::CompositionMode_DestinationIn;
-    case CompositeDestinationOut:
-        return QPainter::CompositionMode_DestinationOut;
-    case CompositeDestinationAtop:
-        return QPainter::CompositionMode_DestinationAtop;
-    case CompositeXOR:
-        return QPainter::CompositionMode_Xor;
-    case CompositePlusDarker:
-        return QPainter::CompositionMode_SourceOver;
-    case CompositeHighlight:
-        return QPainter::CompositionMode_SourceOver;
-    case CompositePlusLighter:
-        return QPainter::CompositionMode_SourceOver;
+        case CompositeClear:
+            return QPainter::CompositionMode_Clear;
+        case CompositeCopy:
+            return QPainter::CompositionMode_Source;
+        case CompositeSourceOver:
+            return QPainter::CompositionMode_SourceOver;
+        case CompositeSourceIn:
+            return QPainter::CompositionMode_SourceIn;
+        case CompositeSourceOut:
+            return QPainter::CompositionMode_SourceOut;
+        case CompositeSourceAtop:
+            return QPainter::CompositionMode_SourceAtop;
+        case CompositeDestinationOver:
+            return QPainter::CompositionMode_DestinationOver;
+        case CompositeDestinationIn:
+            return QPainter::CompositionMode_DestinationIn;
+        case CompositeDestinationOut:
+            return QPainter::CompositionMode_DestinationOut;
+        case CompositeDestinationAtop:
+            return QPainter::CompositionMode_DestinationAtop;
+        case CompositeXOR:
+            return QPainter::CompositionMode_Xor;
+        case CompositePlusDarker:
+            return QPainter::CompositionMode_SourceOver;
+        case CompositeHighlight:
+            return QPainter::CompositionMode_SourceOver;
+        case CompositePlusLighter:
+            return QPainter::CompositionMode_SourceOver;
     }
 
     return QPainter::CompositionMode_SourceOver;
@@ -89,12 +91,12 @@ static QPainter::CompositionMode toQtCompositionMode(CompositeOperator op)
 static Qt::PenCapStyle toQtLineCap(LineCap lc)
 {
     switch (lc) {
-    case ButtCap:
-        return Qt::FlatCap;
-    case RoundCap:
-        return Qt::RoundCap;
-    case SquareCap:
-        return Qt::SquareCap;
+        case ButtCap:
+            return Qt::FlatCap;
+        case RoundCap:
+            return Qt::RoundCap;
+        case SquareCap:
+            return Qt::SquareCap;
     }
 
     return Qt::FlatCap;
@@ -103,12 +105,12 @@ static Qt::PenCapStyle toQtLineCap(LineCap lc)
 static Qt::PenJoinStyle toQtLineJoin(LineJoin lj)
 {
     switch (lj) {
-    case MiterJoin:
-        return Qt::SvgMiterJoin;
-    case RoundJoin:
-        return Qt::RoundJoin;
-    case BevelJoin:
-        return Qt::BevelJoin;
+        case MiterJoin:
+            return Qt::SvgMiterJoin;
+        case RoundJoin:
+            return Qt::RoundJoin;
+        case BevelJoin:
+            return Qt::BevelJoin;
     }
 
     return Qt::MiterJoin;
@@ -144,9 +146,9 @@ struct TransparencyLayer
 struct TextShadow
 {
     TextShadow()
-    : x(0)
-    , y(0)
-    , blur(0)
+        : x(0)
+        , y(0)
+        , blur(0)
     {
     }
 
@@ -165,7 +167,7 @@ public:
     GraphicsContextPlatformPrivate(QPainter* painter);
     ~GraphicsContextPlatformPrivate();
 
-    inline QPainter& p()
+    QPainter& p()
     {
         if (layers.isEmpty()) {
             if (redirect)

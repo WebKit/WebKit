@@ -74,9 +74,8 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* obj)
     ResourceLoader* job = static_cast<ResourceLoader*>(obj);
     ResourceLoaderInternal* d = job->getInternal();
  
-    if (job->method() == "POST") {
+    if (job->method() == "POST")
         job->receivedResponse(ptr);
-    }
     
     int totalSize = size * nmemb;
     return totalSize;
@@ -140,12 +139,12 @@ void ResourceLoaderManager::downloadTimerCallback(Timer<ResourceLoaderManager>* 
                 // find the node which has same d->m_handle as completed transfer
                 CURL* chandle = msg->easy_handle;
                 assert(chandle);
-                ResourceLoader *job;
+                ResourceLoader* job;
                 curl_easy_getinfo(chandle, CURLINFO_PRIVATE, &job);
                 assert(job); //fixme: assert->if ?
                 // if found, delete it
                 if (job) {
-                    ResourceLoaderInternal *d = job->getInternal();
+                    ResourceLoaderInternal* d = job->getInternal();
                     switch (msg->data.result) {
                         case CURLE_OK: {
                             // use this to authenticate
@@ -211,7 +210,7 @@ void ResourceLoaderManager::add(ResourceLoader* job)
     if (job->method() == "POST") {
         DeprecatedString postData = job->postData().flattenToString();
 
-        char *postDataString = (char *) malloc(postData.length() + 1);
+        char* postDataString = (char*)malloc(postData.length() + 1);
         strncpy(postDataString, postData.ascii(), postData.length());
         postDataString[postData.length()] = '\0';
 

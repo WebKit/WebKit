@@ -27,11 +27,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
+
 #include <QWidget>
 
-#include "config.h"
 #include "Page.h"
-
 #include "IntRect.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -54,7 +54,7 @@ FloatRect Page::windowRect() const
     if (!widget)
         return FloatRect();
 
-    return (IntRect) widget->geometry();
+    return IntRect(widget->geometry());
 }
 
 void Page::setWindowRect(const FloatRect& r)

@@ -49,7 +49,7 @@ FloatRect screenRect(Widget* widget)
     if (!dw)
         return FloatRect();
 
-    return (IntRect) dw->screenGeometry(qw);
+    return IntRect(dw->screenGeometry(qw));
 }
 
 int screenDepth(Widget* widget)
@@ -72,7 +72,7 @@ FloatRect usableScreenRect(Widget* widget)
     if (!dw)
         return FloatRect();
 
-    return (IntRect) dw->availableGeometry(qw);
+    return IntRect(dw->availableGeometry(qw));
 }
 
 }

@@ -26,9 +26,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
+
 #include <QLineEdit>
 
-#include <config.h>
 #include "GraphicsTypes.h"
 #include "TextDirection.h"
 #include "Widget.h"

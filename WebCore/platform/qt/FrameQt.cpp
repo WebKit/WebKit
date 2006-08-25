@@ -67,18 +67,18 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 {
     // FIXME: The scrolling done here should be done in the default handlers
     // of the elements rather than here in the part.
-    if(!r)
+    if (!r)
         return;
 
     //broken since it calls scroll on scrollbars
     //and we have none now
     //r->scroll(direction, KWQScrollWheel, multiplier);
-    if(!r->layer())
+    if (!r->layer())
         return;
 
     int x = r->layer()->scrollXOffset();
     int y = r->layer()->scrollYOffset();
-    if(isHorizontal)
+    if (isHorizontal)
         x += multiplier;
     else
         y += multiplier;
@@ -94,7 +94,6 @@ bool FrameView::isFrameView() const
 FrameQt::FrameQt()
     : Frame(new Page, 0)
 {
-    qDebug("FrameQt::FrameQt");
     init();
 
     page()->setMainFrame(this);
@@ -141,7 +140,6 @@ FrameQt::~FrameQt()
 
 bool FrameQt::openURL(const KURL& url)
 {
-    qDebug("openURL(%s)", url.url().latin1());
     didOpenURL(url);
 
     // FIXME: Use mimetype logic from KIO!
@@ -157,16 +155,14 @@ bool FrameQt::openURL(const KURL& url)
 
 void FrameQt::submitForm(const ResourceRequest& request)
 {
-    qDebug("FrameQt::submitForm()");
-
     // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
-    if(d->m_submittedFormURL == request.url())
+    if (d->m_submittedFormURL == request.url())
         return;
 
     d->m_submittedFormURL = request.url();
 
     /* FIXME: Once we have a KPart - named "FramePartQt" - we can let that inherit from FrameQtClient and implement the functions...)
-    if(m_client)
+    if (m_client)
         m_client->submitForm(request.doPost() ? "POST" : "GET", request.url(), &request.postData);
     */
 
@@ -212,7 +208,7 @@ bool FrameQt::locationbarVisible()
 
 void FrameQt::setTitle(const String& title)
 {
-    if(view() && view()->parentWidget())
+    if (view() && view()->parentWidget())
         view()->parentWidget()->setWindowTitle(title);
 }
 
@@ -230,7 +226,7 @@ bool FrameQt::passWheelEventToChildWidget(Node*)
 
 bool FrameQt::passSubframeEventToSubframe(MouseEventWithHitTestResults& mev, Frame*)
 {
-    if(mev.targetNode() == 0)
+    if (mev.targetNode() == 0)
         return true;
  
     return false;
@@ -381,12 +377,12 @@ KJS::Bindings::Instance* FrameQt::getAppletInstanceForWidget(Widget*)
     return 0;
 }
 
-void FrameQt::registerCommandForUndo(const EditCommandPtr&)
+void FrameQt::registerCommandForUndo(PassRefPtr<EditCommand>)
 {
     notImplemented();
 }
 
-void FrameQt::registerCommandForRedo(const EditCommandPtr&)
+void FrameQt::registerCommandForRedo(PassRefPtr<EditCommand>)
 {
     notImplemented();
 }
@@ -499,21 +495,21 @@ bool FrameQt::keyEvent(const PlatformKeyboardEvent& keyEvent)
     // Check for cases where we are too early for events -- possible unmatched key up
     // from pressing return in the location bar.
     Document* doc = document();
-    if(!doc)
+    if (!doc)
         return false;
 
     Node* node = doc->focusNode();
-    if(!node) {
+    if (!node) {
         if (doc->isHTMLDocument())
             node = doc->body();
         else
             node = doc->documentElement();
 
-        if(!node)
+        if (!node)
             return false;
     }
 
-    if(!keyEvent.isKeyUp())
+    if (!keyEvent.isKeyUp())
         prepareForUserAction();
 
     result = !EventTargetNodeCast(node)->dispatchKeyEvent(keyEvent);
@@ -539,7 +535,7 @@ void FrameQt::receivedAllData(ResourceLoader* job, PlatformData data)
 
 void FrameQt::setFrameGeometry(const IntRect& r)
 {
-    setFrameGeometry((QRect) r);
+    setFrameGeometry(QRect(r));
 }
 
 }

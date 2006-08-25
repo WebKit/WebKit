@@ -47,17 +47,14 @@ namespace WebCore {
 ScrollView::ScrollView()
     : m_area(new QScrollArea(0))
 {
-    qDebug("ScrollView::ScrollView()");
 }
 
 ScrollView::~ScrollView()
 {
-    qDebug("ScrollView::~ScrollView()");
 }
 
 void ScrollView::setParentWidget(QWidget* parent)
 {
-    qDebug("ScrollView::setParentWidget(), parent=%p", parent);
     Widget::setParentWidget(parent);
 
     // 'isFrameView()' can not be called yet in the constructor!
@@ -229,7 +226,6 @@ void ScrollView::setStaticBackground(bool flag)
 
 void ScrollView::addChild(Widget* child, int x, int y)
 {
-    qDebug("ScrollView::addChild(), child=%p, x=%i, y=%i", child, x, y);
     Q_ASSERT(child != 0);
     Q_ASSERT(m_area && m_area->widget());
 

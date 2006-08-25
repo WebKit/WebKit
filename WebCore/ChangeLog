@@ -1,3 +1,69 @@
+2006-08-25  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed/landed by Adam.
+
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10559
+        Confirm to WebKit style guide - last fixes :-)
+
+        * platform/ResourceLoaderClient.h:
+        * platform/qt/ComboBoxQt.cpp:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::doScroll):
+        (WebCore::FrameQt::FrameQt):
+        (WebCore::FrameQt::openURL):
+        (WebCore::FrameQt::submitForm):
+        (WebCore::FrameQt::setTitle):
+        (WebCore::FrameQt::passSubframeEventToSubframe):
+        (WebCore::FrameQt::registerCommandForUndo):
+        (WebCore::FrameQt::registerCommandForRedo):
+        (WebCore::FrameQt::keyEvent):
+        (WebCore::FrameQt::setFrameGeometry):
+        * platform/qt/GlyphMapQt.cpp:
+        (WebCore::GlyphMap::fillPage):
+        * platform/qt/GraphicsContextQt.cpp:
+        (WebCore::toQtCompositionMode):
+        (WebCore::toQtLineCap):
+        (WebCore::toQtLineJoin):
+        (WebCore::TextShadow::TextShadow):
+        (WebCore::GraphicsContextPlatformPrivate::p):
+        * platform/qt/ImageQt.cpp:
+        (WebCore::FrameData::clear):
+        (WebCore::Image::supportsType):
+        * platform/qt/IntSizeQt.cpp:
+        * platform/qt/LineEditQt.cpp:
+        * platform/qt/ListBoxQt.cpp:
+        * platform/qt/PageQt.cpp:
+        (WebCore::Page::windowRect):
+        * platform/qt/PathQt.cpp:
+        (WebCore::Path::~Path):
+        * platform/qt/ResourceLoaderCurl.cpp:
+        (WebCore::ResourceLoader::assembleResponseHeaders):
+        (WebCore::ResourceLoader::retrieveCharset):
+        (WebCore::ResourceLoader::receivedResponse):
+        * platform/qt/ResourceLoaderManager.cpp:
+        (WebCore::headerCallback):
+        (WebCore::ResourceLoaderManager::downloadTimerCallback):
+        (WebCore::ResourceLoaderManager::add):
+        * platform/qt/ScreenQt.cpp:
+        (WebCore::screenRect):
+        (WebCore::usableScreenRect):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::~ScrollView):
+        (WebCore::ScrollView::setParentWidget):
+        (WebCore::ScrollView::addChild):
+        * platform/qt/SharedTimerQt.cpp:
+        (WebCore::setSharedTimerFiredFunction):
+        * platform/qt/SharedTimerQt.h:
+        (WebCore::SharedTimerQt::SharedTimerQt):
+        (WebCore::SharedTimerQt::fire):
+        * platform/qt/SystemTimeQt.cpp:
+        (WebCore::currentTime):
+        * platform/qt/TextEditQt.cpp:
+        (WebCore::PlatformTextEdit::setParentWidget):
+        (WebCore::PlatformTextEdit::text):
+        (WebCore::PlatformTextEdit::sizeWithColumnsAndRows):
+
 2006-08-24  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

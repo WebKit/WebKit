@@ -25,9 +25,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include <QSize>
 
-#include "config.h"
 #include "IntSize.h"
 
 namespace WebCore {

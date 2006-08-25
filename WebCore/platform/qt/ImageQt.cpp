@@ -51,7 +51,7 @@ void FrameData::clear()
 {
     if (m_frame) {
         m_frame = 0;
-        m_duration = 0.;
+        m_duration = 0.0f;
         m_hasAlpha = true;
     }
 }
@@ -82,8 +82,6 @@ Image* Image::loadResource(const char* name)
 
 bool Image::supportsType(const String& type)
 {
-    qDebug() << "does support image format? "<< type;
-
     QList<QByteArray> formats = QImageReader::supportedImageFormats();
     foreach(QByteArray format, formats) {
         if (format == (QString) type)
