@@ -985,10 +985,10 @@ static IntRect boundingBoxRect(RenderObject* obj)
     }
     
     if ([attributeName isEqualToString: @"AXStartTextMarker"])
-        return (id) [self textMarkerForVisiblePosition: startOfDocument(m_renderer->element())];
+        return (id) [self textMarkerForVisiblePosition: startOfDocument(m_renderer->document()->topDocument())];
 
     if ([attributeName isEqualToString: @"AXEndTextMarker"])
-        return (id) [self textMarkerForVisiblePosition: endOfDocument(m_renderer->element())];
+        return (id) [self textMarkerForVisiblePosition: endOfDocument(m_renderer->document()->topDocument())];
 
     return nil;
 }
