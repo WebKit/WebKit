@@ -1,5 +1,14 @@
 2006-08-24  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _updateBackground]): reworded the comment about scroll view and setDrawsBackground:YES
+        * WebView/WebView.m:
+        (-[WebViewPrivate dealloc]): release the background color
+
+2006-08-24  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Hyatt.
 
         WebView API to allow changing the background color that draws under transparent page backgrounds.

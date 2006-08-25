@@ -395,6 +395,7 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
     [backForwardList release];
     [applicationNameForUserAgent release];
     [userAgent release];
+    [backgroundColor release];
     
     [preferences release];
     [settings release];

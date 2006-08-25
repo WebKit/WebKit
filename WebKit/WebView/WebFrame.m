@@ -2242,8 +2242,8 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     NSColor *backgroundColor = [[self webView] backgroundColor];
 
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
-        // Never call setDrawsBackground:YES on the scroll view or the background color will
-        // flash between pages loads, very noticeable during the PLT.
+        // Never call setDrawsBackground:YES here on the scroll view or the background color will
+        // flash between pages loads. setDrawsBackground:YES will be called in WebFrame's _frameLoadCompleted.
         if (!drawsBackground)
             [[[frame frameView] _scrollView] setDrawsBackground:NO];
         [[[frame frameView] _scrollView] setBackgroundColor:backgroundColor];
