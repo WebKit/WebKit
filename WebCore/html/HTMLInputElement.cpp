@@ -474,13 +474,17 @@ int HTMLInputElement::selectionStart() const
         case RESET:
         case SUBMIT:
             break;
-        case PASSWORD:
         case SEARCH:
             return static_cast<RenderLineEdit*>(renderer())->selectionStart();
         case TEXT:
             if (document()->focusNode() != this && cachedSelStart >= 0)
                 return cachedSelStart;
             return static_cast<RenderTextControl*>(renderer())->selectionStart();
+        case PASSWORD:
+            if (renderer()->style()->appearance() == TextFieldAppearance)
+                return static_cast<RenderTextControl*>(renderer())->selectionStart();
+            else
+                return static_cast<RenderLineEdit*>(renderer())->selectionStart();
     }
     return 0;
 }
@@ -502,13 +506,17 @@ int HTMLInputElement::selectionEnd() const
         case RESET:
         case SUBMIT:
             break;
-        case PASSWORD:
         case SEARCH:
             return static_cast<RenderLineEdit*>(renderer())->selectionEnd();
         case TEXT:
             if (document()->focusNode() != this && cachedSelEnd >= 0)
                 return cachedSelEnd;
             return static_cast<RenderTextControl*>(renderer())->selectionEnd();
+        case PASSWORD:
+            if (renderer()->style()->appearance() == TextFieldAppearance)
+                return static_cast<RenderTextControl*>(renderer())->selectionEnd();
+            else
+                return static_cast<RenderLineEdit*>(renderer())->selectionEnd();
     }
     return 0;
 }
@@ -530,12 +538,17 @@ void HTMLInputElement::setSelectionStart(int start)
         case RESET:
         case SUBMIT:
             break;
-        case PASSWORD:
         case SEARCH:
             static_cast<RenderLineEdit*>(renderer())->setSelectionStart(start);
             break;
         case TEXT:
             static_cast<RenderTextControl*>(renderer())->setSelectionStart(start);
+            break;
+        case PASSWORD:
+            if (renderer()->style()->appearance() == TextFieldAppearance)
+                static_cast<RenderTextControl*>(renderer())->setSelectionStart(start);
+            else
+                static_cast<RenderLineEdit*>(renderer())->setSelectionStart(start);
             break;
     }
 }
@@ -557,12 +570,17 @@ void HTMLInputElement::setSelectionEnd(int end)
         case RESET:
         case SUBMIT:
             break;
-        case PASSWORD:
         case SEARCH:
             static_cast<RenderLineEdit*>(renderer())->setSelectionEnd(end);
             break;
         case TEXT:
             static_cast<RenderTextControl*>(renderer())->setSelectionEnd(end);
+            break;
+        case PASSWORD:
+            if (renderer()->style()->appearance() == TextFieldAppearance)
+                static_cast<RenderTextControl*>(renderer())->setSelectionEnd(end);
+            else
+                static_cast<RenderLineEdit*>(renderer())->setSelectionEnd(end);
             break;
     }
 }
@@ -586,12 +604,17 @@ void HTMLInputElement::select()
         case FILE:
             static_cast<RenderFileButton*>(renderer())->select();
             break;
-        case PASSWORD:
         case SEARCH:
             static_cast<RenderLineEdit*>(renderer())->select();
             break;
         case TEXT:
             static_cast<RenderTextControl*>(renderer())->select();
+            break;
+        case PASSWORD:
+            if (renderer()->style()->appearance() == TextFieldAppearance)
+                static_cast<RenderTextControl*>(renderer())->select();
+            else
+                static_cast<RenderLineEdit*>(renderer())->select();
             break;
     }
 }
@@ -613,12 +636,17 @@ void HTMLInputElement::setSelectionRange(int start, int end)
         case RESET:
         case SUBMIT:
             break;
-        case PASSWORD:
         case SEARCH:
             static_cast<RenderLineEdit*>(renderer())->setSelectionRange(start, end);
             break;
         case TEXT:
             static_cast<RenderTextControl*>(renderer())->setSelectionRange(start, end);
+            break;
+        case PASSWORD:
+            if (renderer()->style()->appearance() == TextFieldAppearance)
+                static_cast<RenderTextControl*>(renderer())->setSelectionRange(start, end);
+            else
+                static_cast<RenderLineEdit*>(renderer())->setSelectionRange(start, end);
             break;
     }
 }
@@ -836,13 +864,17 @@ RenderObject *HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *
         case IMAGE:
             return new (arena) RenderImage(this);
         case ISINDEX:
-        case PASSWORD:
         case SEARCH:
             return new (arena) RenderLineEdit(this);
         case RANGE:
             return new (arena) DeprecatedSlider(this);
         case TEXT:
             return new (arena) RenderTextControl(this, false);
+        case PASSWORD:
+            if (style->appearance() == TextFieldAppearance)
+                return new (arena) RenderTextControl(this, false);
+            else
+                return new (arena) RenderLineEdit(this);                
     }
     assert(false);
     return 0;

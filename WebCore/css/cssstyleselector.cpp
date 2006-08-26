@@ -4003,6 +4003,21 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         fontDirty = true;
         break;
     }
+    case CSS_PROP__WEBKIT_TEXT_SECURITY: {
+        HANDLE_INHERIT_AND_INITIAL(textSecurity, TextSecurity)
+        if (!primitiveValue) break;
+        ETextSecurity textSecurity= TSNONE;
+        switch(primitiveValue->getIdent())
+        {
+            case CSS_VAL_DISC:      textSecurity= TSDISC;
+                                    break;
+            case CSS_VAL_CIRCLE:    textSecurity= TSCIRCLE;
+                                    break;
+            case CSS_VAL_SQUARE:    textSecurity= TSSQUARE;
+                                    break;
+        }
+        style->setTextSecurity(textSecurity);
+    }
 #if __APPLE__
     case CSS_PROP__WEBKIT_DASHBOARD_REGION: {
         HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)

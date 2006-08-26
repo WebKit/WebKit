@@ -1,5 +1,49 @@
 2006-08-25  Adele Peterson  <adele@apple.com>
 
+        Patch by Francisco, Reviewed by me.
+
+        Preparation for switch to new text field implementation of password field.
+
+        Added -webkit-text-security property.
+
+        Tests: updated fast/css/computed-style-expected.txt
+
+        * css/CSSPropertyNames.in: Added -webkit-text-security.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Added cases for textSecurity.
+        * css/cssparser.cpp: (WebCore::CSSParser::parseValue): ditto.
+        * css/cssstyleselector.cpp: (WebCore::CSSStyleSelector::applyProperty): ditto.
+        * css/html4.css: Added style for password field to use -webkit-text-security.
+
+        * html/HTMLInputElement.cpp: Check appearance property to decide which renderer to use.
+        (WebCore::HTMLInputElement::selectionStart):
+        (WebCore::HTMLInputElement::selectionEnd):
+        (WebCore::HTMLInputElement::setSelectionStart):
+        (WebCore::HTMLInputElement::setSelectionEnd):
+        (WebCore::HTMLInputElement::select):
+        (WebCore::HTMLInputElement::setSelectionRange):
+        (WebCore::HTMLInputElement::createRenderer):
+        * html/HTMLInputElement.h: (WebCore::HTMLInputElement::isNonWidgetTextField): Added check for password.
+
+        * platform/StringImpl.cpp: (WebCore::StringImpl::secure): Added. Converts a string to replace 
+         characters with one character, like a bullet.
+        * platform/StringImpl.h:
+
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleCSS3InheritedData::StyleCSS3InheritedData): Initialize textSecurity.
+        (WebCore::RenderStyle::diff): Added case for textSecurity.
+        * rendering/RenderStyle.h:
+        (WebCore::):
+        (WebCore::RenderStyle::textSecurity): Added.
+        (WebCore::RenderStyle::setTextSecurity): Added.
+        (WebCore::RenderStyle::initialTextSecurity): Added.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setStyle): Added case for textSecurity.
+        (WebCore::RenderText::setText): ditto.
+
+2006-08-25  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         Enable styling for popup menus. Also fixed baseline calculation for buttons and selects.

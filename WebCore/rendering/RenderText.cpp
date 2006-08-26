@@ -111,9 +111,11 @@ void RenderText::setStyle(RenderStyle *_style)
         bool needToTransformText = (!style() && _style->textTransform() != TTNONE) ||
                                    (style() && style()->textTransform() != _style->textTransform());
 
+        bool needToSecureText = (!style() && _style->textSecurity() != TSNONE);
+
         RenderObject::setStyle( _style );
 
-        if (needToTransformText) {
+        if (needToTransformText || needToSecureText) {
             RefPtr<StringImpl> textToTransform = originalString();
             if (textToTransform)
                 setText(textToTransform.get(), true);
@@ -873,6 +875,10 @@ void RenderText::setTextWithOffset(StringImpl *text, unsigned offset, unsigned l
     setText(text, force);
 }
 
+#define BULLET_CHAR 0x2022
+#define SQUARE_CHAR 0x25AA
+#define CIRCLE_CHAR 0x25E6
+
 void RenderText::setText(StringImpl *text, bool force)
 {
     if (!text)
@@ -905,6 +911,21 @@ void RenderText::setText(StringImpl *text, bool force)
                 case LOWERCASE:  str = str->lower();       break;
                 case NONE:
                 default:;
+            }
+            
+            switch(style()->textSecurity())
+            {
+                case TSDISC:
+                    str= str->secure(BULLET_CHAR);
+                    break;
+                case TSCIRCLE:
+                    str= str->secure(CIRCLE_CHAR);
+                    break;
+                case TSSQUARE: 
+                    str= str->secure(SQUARE_CHAR);
+                    break;
+                case TSNONE:
+                    break;
             }
         }
     }

@@ -136,6 +136,7 @@ static const int computedProperties[] = {
     CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT,
     CSS_PROP_TEXT_INDENT,
     CSS_PROP_TEXT_SHADOW,
+    CSS_PROP__WEBKIT_TEXT_SECURITY,
     CSS_PROP_TEXT_TRANSFORM,
     CSS_PROP_TOP,
     CSS_PROP_UNICODE_BIDI,
@@ -1110,6 +1111,21 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         return valueForLength(style->textIndent());
     case CSS_PROP_TEXT_SHADOW:
         return valueForShadow(style->textShadow());
+    case CSS_PROP__WEBKIT_TEXT_SECURITY:
+    {
+        switch (style->textSecurity()) {
+            case TSNONE:
+                return new CSSPrimitiveValue(CSS_VAL_NONE);
+            case TSDISC:
+                return new CSSPrimitiveValue(CSS_VAL_DISC);
+            case TSCIRCLE:
+                return new CSSPrimitiveValue(CSS_VAL_CIRCLE);
+            case TSSQUARE:
+                return new CSSPrimitiveValue(CSS_VAL_SQUARE);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST:
         if (style->textSizeAdjust()) 
             return new CSSPrimitiveValue(CSS_VAL_AUTO);

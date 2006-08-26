@@ -92,6 +92,7 @@ text-decoration: none;
 -webkit-text-decorations-in-effect: none;
 text-indent: 0px;
 text-shadow: none;
+-webkit-text-security: none;
 text-transform: none;
 top: auto;
 unicode-bidi: normal;

@@ -330,7 +330,17 @@ textarea {
     resize: auto;
 }
 
-input[type="password"], input[type="search"], input[type="hidden"], input[type="image"], input[type="file"] {
+input[type="password"] {
+    // FIXME: Remove these when switching over to the new implementation for password fields.    
+    -webkit-appearance:none;
+    background-color: initial;
+    border:initial;
+    padding:initial;
+
+    -webkit-text-security: disc;
+}
+
+input[type="search"], input[type="hidden"], input[type="image"], input[type="file"] {
     -webkit-appearance: initial;
     padding: initial;
     background-color: initial;
@@ -518,7 +528,6 @@ input[type="checkbox"]:focus,
 input[type="file"]:focus,
 input[type="hidden"]:focus,
 input[type="image"]:focus,
-input[type="password"]:focus,
 input[type="radio"]:focus,
 input[type="reset"]:focus,
 input[type="search"]:focus,

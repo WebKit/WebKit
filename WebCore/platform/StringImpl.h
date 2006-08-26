@@ -101,6 +101,7 @@ public:
     bool isLower() const;
     StringImpl* lower() const;
     StringImpl* upper() const;
+    StringImpl* secure(UChar aChar) const;
     StringImpl* capitalize(UChar previousCharacter) const;
     StringImpl* foldCase() const;
 

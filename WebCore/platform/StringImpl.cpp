@@ -461,6 +461,16 @@ StringImpl* StringImpl::upper() const
     return c;
 }
 
+StringImpl* StringImpl::secure(UChar aChar) const
+{
+    StringImpl* c= new StringImpl;
+    c->m_data = newUCharVector(c->m_length= m_length);
+    
+    u_memset(c->m_data, aChar, m_length);
+    
+    return c;
+}
+
 StringImpl* StringImpl::foldCase() const
 {
     StringImpl* c = new StringImpl;

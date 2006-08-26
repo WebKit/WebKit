@@ -1,5 +1,11 @@
 2006-08-25  Adele Peterson  <adele@apple.com>
 
+        Updated results for addition of -webkit-text-security.
+
+        * fast/css/computed-style-expected.txt:
+
+2006-08-25  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         New tests and updated tests for styled selects.

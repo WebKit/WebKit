@@ -457,6 +457,7 @@ bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) c
 
 StyleCSS3InheritedData::StyleCSS3InheritedData()
     : textShadow(0)
+    , textSecurity(RenderStyle::initialTextSecurity())
     , userModify(READ_ONLY)
     , wordWrap(WBNORMAL)
     , nbspMode(NBNORMAL)
@@ -471,6 +472,7 @@ StyleCSS3InheritedData::StyleCSS3InheritedData(const StyleCSS3InheritedData& o)
     : Shared<StyleCSS3InheritedData>()
     , textShadow(o.textShadow ? new ShadowData(*o.textShadow) : 0)
     , highlight(o.highlight)
+    , textSecurity(o.textSecurity)
     , userModify(o.userModify)
     , wordWrap(o.wordWrap)
     , nbspMode(o.nbspMode)
@@ -835,7 +837,8 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
          visual->colspan != other->visual->colspan ||
          visual->counter_increment != other->visual->counter_increment ||
          visual->counter_reset != other->visual->counter_reset ||
-         css3NonInheritedData->textOverflow != other->css3NonInheritedData->textOverflow)
+         css3NonInheritedData->textOverflow != other->css3NonInheritedData->textOverflow ||
+         (css3InheritedData->textSecurity != other->css3InheritedData->textSecurity))
         return Layout;
    
     // changes causing Layout changes:
