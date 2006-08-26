@@ -1213,7 +1213,7 @@ void RenderLayer::paintResizeControl(GraphicsContext* c)
         return;
     
     if (!m_resizeCornerImage)
-        m_resizeCornerImage = Image::loadResource("textAreaResizeCorner");
+        m_resizeCornerImage = Image::loadPlatformResource("textAreaResizeCorner");
 
     IntPoint imagePoint(resizeControlRect().right() - m_resizeCornerImage->width(), resizeControlRect().bottom() - m_resizeCornerImage->height());
     c->drawImage(m_resizeCornerImage, imagePoint);

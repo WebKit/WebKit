@@ -33,7 +33,9 @@
 #include "GraphicsContext.h"
 #include "PDFDocumentImage.h"
 #include "PlatformString.h"
+#if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"
+#endif
 
 namespace WebCore {
 
@@ -50,35 +52,6 @@ void FrameData::clear()
 // ================================================
 // Image Class
 // ================================================
-
-void Image::initNativeData()
-{
-    m_nsImage = 0;
-    m_tiffRep = 0;
-    m_isPDF = false;
-    m_PDFDoc = 0;
-}
-
-void Image::destroyNativeData()
-{
-    delete m_PDFDoc;
-}
-
-void Image::invalidateNativeData()
-{
-    if (m_frames.size() != 1)
-        return;
-
-    if (m_nsImage) {
-        CFRelease(m_nsImage);
-        m_nsImage = 0;
-    }
-
-    if (m_tiffRep) {
-        CFRelease(m_tiffRep);
-        m_tiffRep = 0;
-    }
-}
 
 // Drawing Routines
 
@@ -109,39 +82,6 @@ void Image::checkForSolidColor()
             CFRelease(space);
         }
     }
-}
-
-CFDataRef Image::getTIFFRepresentation()
-{
-    if (m_tiffRep)
-        return m_tiffRep;
-    
-    unsigned numFrames = frameCount();
-    
-    // If numFrames is zero, we know for certain this image doesn't have valid data
-    // Even though the call to CGImageDestinationCreateWithData will fail and we'll handle it gracefully,
-    // in certain circumstances that call will spam the console with an error message
-    if (!numFrames)
-        return 0;
-    CFMutableDataRef data = CFDataCreateMutable(0, 0);
-    // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
-    CGImageDestinationRef destination = CGImageDestinationCreateWithData(data, CFSTR("public.tiff"), numFrames, 0);
-    if (!destination)
-        return 0;
-
-    for (unsigned i = 0; i < numFrames; ++i ) {
-        CGImageRef cgImage = frameAtIndex(i);
-        if (!cgImage) {
-            CFRelease(destination);
-            return 0;    
-        }
-        CGImageDestinationAddImage(destination, cgImage, 0);
-    }
-    CGImageDestinationFinalize(destination);
-    CFRelease(destination);
-
-    m_tiffRep = data;
-    return m_tiffRep;
 }
 
 CGImageRef Image::getCGImageRef()
@@ -311,7 +251,10 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 
         ctxt->save();
 
+#if PLATFORM(MAC)
+        // FIXME: Really want a public API for this.
         wkSetPatternPhaseInUserSpace(context, CGPointMake(oneTileRect.origin.x, oneTileRect.origin.y));
+#endif
 
         CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
         CGContextSetFillColorSpace(context, patternSpace);
@@ -402,7 +345,10 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
         if (vRule == Image::RepeatTile)
             vPhase -= fmodf(ir.size.height, scaleY * tileSize.height) / 2.0f;
         
+#if PLATFORM(MAC)
+        // FIXME: Really want a public API for this.
         wkSetPatternPhaseInUserSpace(context, CGPointMake(ir.origin.x - hPhase, ir.origin.y - vPhase));
+#endif
 
         CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
         CGContextSetFillColorSpace(context, patternSpace);

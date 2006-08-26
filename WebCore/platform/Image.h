@@ -99,7 +99,7 @@ public:
     Image(ImageAnimationObserver* observer, bool isPDF = false);
     ~Image();
     
-    static Image* loadResource(const char *name);
+    static Image* loadPlatformResource(const char *name);
     static bool supportsType(const String& type);
 
     bool isNull() const;
@@ -134,12 +134,12 @@ public:
     
 #if PLATFORM(MAC)
     // Accessors for native image formats.
-    CGImageRef getCGImageRef();
     NSImage* getNSImage();
     CFDataRef getTIFFRepresentation();
+#endif
 
-    // PDF
-    void setIsPDF() { m_isPDF = true; }
+#if PLATFORM(CG)
+    CGImageRef getCGImageRef();
 #endif
 
 private:
@@ -163,14 +163,11 @@ private:
     void startAnimation();
     void advanceAnimation(Timer<Image>* timer);
     
-    // Constructor for native data.
-    void initNativeData();
-
-    // Destructor for native data.
-    void destroyNativeData();
+    // Constructor for OS-specific data.
+    void initPlatformData();
 
     // Invalidation of native data.
-    void invalidateNativeData();
+    void invalidatePlatformData();
 
     // Checks to see if the image is a 1x1 solid color.  We optimize these images and just do a fill rect instead.
     void checkForSolidColor();
@@ -192,6 +189,9 @@ private:
 #if PLATFORM(MAC)
     mutable NSImage* m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
     mutable CFDataRef m_tiffRep; // Cached TIFF rep for frame 0.  Only built lazily if someone queries for one.
+#endif
+
+#if PLATFORM(CG)
     PDFDocumentImage* m_PDFDoc;
     bool m_isPDF;
 #endif

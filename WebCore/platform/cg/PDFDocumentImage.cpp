@@ -29,7 +29,7 @@
 
 #if PLATFORM(CG)
 
-#import "GraphicsContext.h"
+#include "GraphicsContext.h"
 
 using namespace std;
 

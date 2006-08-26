@@ -88,7 +88,7 @@ void Cache::init()
         nullImage = new Image;
 
     if (!brokenImage)
-        brokenImage = Image::loadResource("missingImage");
+        brokenImage = Image::loadPlatformResource("missingImage");
 
     if (!m_loader)
         m_loader = new Loader();

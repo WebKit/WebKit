@@ -150,7 +150,7 @@ bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData&
 void RenderThemeMac::paintResizeControl(GraphicsContext* c, const IntRect& r)
 {
     if (!resizeCornerImage)
-        resizeCornerImage = Image::loadResource("textAreaResizeCorner");
+        resizeCornerImage = Image::loadPlatformResource("textAreaResizeCorner");
 
     IntPoint imagePoint(r.right() - resizeCornerImage->width(), r.bottom() - resizeCornerImage->height());
     c->drawImage(resizeCornerImage, imagePoint);

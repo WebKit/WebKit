@@ -40,7 +40,29 @@ namespace WebCore {
 // Image Class
 // ================================================
 
-Image* Image::loadResource(const char *name)
+void Image::initPlatformData()
+{
+    m_nsImage = 0;
+    m_tiffRep = 0;
+}
+
+void Image::invalidatePlatformData()
+{
+    if (m_frames.size() != 1)
+        return;
+
+    if (m_nsImage) {
+        CFRelease(m_nsImage);
+        m_nsImage = 0;
+    }
+
+    if (m_tiffRep) {
+        CFRelease(m_tiffRep);
+        m_tiffRep = 0;
+    }
+}
+
+Image* Image::loadPlatformResource(const char *name)
 {
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreFrameBridge class]];
     NSString *imagePath = [bundle pathForResource:[NSString stringWithUTF8String:name] ofType:@"tiff"];
@@ -58,6 +80,39 @@ bool Image::supportsType(const String& type)
     // FIXME: Would be better if this was looking in a set rather than an NSArray.
     // FIXME: Would be better not to convert to an NSString just to check if a type is supported.
     return [[WebCoreFrameBridge supportedImageResourceMIMETypes] containsObject:type];
+}
+
+CFDataRef Image::getTIFFRepresentation()
+{
+    if (m_tiffRep)
+        return m_tiffRep;
+    
+    unsigned numFrames = frameCount();
+    
+    // If numFrames is zero, we know for certain this image doesn't have valid data
+    // Even though the call to CGImageDestinationCreateWithData will fail and we'll handle it gracefully,
+    // in certain circumstances that call will spam the console with an error message
+    if (!numFrames)
+        return 0;
+    CFMutableDataRef data = CFDataCreateMutable(0, 0);
+    // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
+    CGImageDestinationRef destination = CGImageDestinationCreateWithData(data, CFSTR("public.tiff"), numFrames, 0);
+    if (!destination)
+        return 0;
+
+    for (unsigned i = 0; i < numFrames; ++i ) {
+        CGImageRef cgImage = frameAtIndex(i);
+        if (!cgImage) {
+            CFRelease(destination);
+            return 0;    
+        }
+        CGImageDestinationAddImage(destination, cgImage, 0);
+    }
+    CGImageDestinationFinalize(destination);
+    CFRelease(destination);
+
+    m_tiffRep = data;
+    return m_tiffRep;
 }
 
 NSImage* Image::getNSImage()

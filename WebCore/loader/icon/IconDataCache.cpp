@@ -91,7 +91,7 @@ void IconDataCache::loadImageFromResource(const char* resource)
     if (!resource)
         return;
     delete m_image;
-    m_image = Image::loadResource(resource);
+    m_image = Image::loadPlatformResource(resource);
     m_dataSet = true;
 }
 

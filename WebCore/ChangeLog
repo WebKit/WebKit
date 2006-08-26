@@ -1,3 +1,70 @@
+2006-08-25  David Hyatt  <hyatt@apple.com>
+
+        More refactoring of image to disentangle graphics (e.g., Cairo) from
+        platform (e.g., Windows).
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        Add ImageWin to project.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::init):
+        * loader/icon/IconDataCache.cpp:
+        (WebCore::IconDataCache::loadImageFromResource):
+        Renamed loadResource to loadPlatformResource to try to make it more clear
+        that this call is implemented on each OS (and not by graphics libraries).
+
+        * platform/Image.cpp:
+        (WebCore::Image::Image):
+        (WebCore::Image::~Image):
+        (WebCore::Image::invalidateData):
+        (WebCore::Image::size):
+        (WebCore::Image::setData):
+        (WebCore::Image::setNativeData):
+        Fix up the PDF code to not be considered platform data any more, since
+        PDF rendering is not for a specific OS.
+
+        Renamed the methods that set OS-specific data (like NSImage) to PlatformData
+        instead of NativeData.
+
+        * platform/Image.h:
+        Shifted the PDF members into CG defines.  Made CGImageRef a CG define.
+        Renamed methods to reflect that they are OS-specific and not
+        graphics-library-specific.
+       
+        * platform/cairo/ImageCairo.cpp:
+        Removed the platform data methods.  Other platforms besides Windows that
+        use Cairo will need to account for this change by adding these methods
+        to their OS Image***.cpp file.
+
+        * platform/cg/ImageCG.cpp:
+        (WebCore::Image::drawTiled):
+        Add FIXMEs to the wkpattern stuff.
+
+        * platform/cg/PDFDocumentImage.cpp:
+        Shouldn't have #imports in .cpp.
+
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::initPlatformData):
+        (WebCore::Image::invalidatePlatformData):
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::Image::getTIFFRepresentation):
+        Add the platform data initializers to the Mac Image file.   Move the
+        TIFF representation there as well, since this is only used by Mac code.
+
+        * platform/win/ImageWin.cpp: Added.
+        (WebCore::Image::initPlatformData):
+        (WebCore::Image::invalidatePlatformData):
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::Image::supportsType):
+        Similar work for Windows.  Add stubs for possible future HBITMAP returns
+        in the platform data methods.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintResizeControl):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintResizeControl):
+        loadResource -> loadPlatformResource
+
 2006-08-26  Adam Roben  <aroben@apple.com>
 
         Rubber-stamped by Adele.

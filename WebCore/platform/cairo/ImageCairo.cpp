@@ -33,9 +33,6 @@
 #include <cairo.h>
 #include <math.h>
 
-// This function loads resources from WebKit
-Vector<char> loadResourceIntoArray(const char*);
-
 namespace WebCore {
 
 void FrameData::clear()
@@ -51,32 +48,6 @@ void FrameData::clear()
 // ================================================
 // Image Class
 // ================================================
-
-void Image::initNativeData()
-{
-}
-
-void Image::destroyNativeData()
-{
-}
-
-void Image::invalidateNativeData()
-{
-}
-
-Image* Image::loadResource(const char *name)
-{
-    Vector<char> arr = loadResourceIntoArray(name);
-    Image* img = new Image;
-    img->setNativeData(&arr, true);
-    return img;
-}
-
-bool Image::supportsType(const String& type)
-{
-    // FIXME: Implement.
-    return false;
-}
 
 // Drawing Routines
 
