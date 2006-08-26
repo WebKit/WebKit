@@ -1,3 +1,12 @@
+2006-08-26  Adam Roben  <aroben@apple.com>
+
+        Rubber-stamped by Adele.
+
+        Fixed build.
+
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawConvexPolygon):
+
 2006-08-25  Adele Peterson  <adele@apple.com>
 
         Patch by Francisco, Reviewed by me.
