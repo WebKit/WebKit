@@ -26,7 +26,7 @@
 #ifndef Path_h
 #define Path_h
 
-#if __APPLE__
+#if PLATFORM(CG)
 typedef struct CGPath PlatformPath;
 #elif PLATFORM(QT)
 class QPainterPath;

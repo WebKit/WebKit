@@ -1,5 +1,11 @@
 2006-08-26  David Hyatt  <hyatt@apple.com>
 
+        Fix the ifdef in Path.h to be CG.
+
+        * platform/Path.h:
+
+2006-08-26  David Hyatt  <hyatt@apple.com>
+
         Fix Mac build bustage (lots of float/int confusion).  I am not sure
         whether rounding was desired or not... this is just a band-aid to get
         the build working again.
