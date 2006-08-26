@@ -60,19 +60,15 @@ void FrameData::clear()
 // Image Class
 // ================================================
 
-void Image::initNativeData()
+void Image::initPlatformData()
 {
 }
 
-void Image::destroyNativeData()
+void Image::invalidatePlatformData()
 {
 }
 
-void Image::invalidateNativeData()
-{
-}
-
-Image* Image::loadResource(const char* name)
+Image* Image::loadPlatformResource(const char* name)
 {
     Vector<char> arr = loadResourceIntoArray(name);
     Image* img = new Image();

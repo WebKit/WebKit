@@ -418,12 +418,13 @@ void GraphicsContext::drawArc(const IntRect& rect, float thickness,
     m_data->p().setPen(oldPen);
 }
 
-void GraphicsContext::drawConvexPolygon(size_t npoints, const IntPoint* points)
+void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points, bool shouldAntialias)
 {
     if (paintingDisabled())
         return;
 
-    m_data->p().drawConvexPolygon(reinterpret_cast<const QPoint*>(points), npoints);
+    // FIXME: Take 'shouldAntialias' into account...
+    m_data->p().drawConvexPolygon(reinterpret_cast<const QPointF*>(points), npoints);
 }
 
 void GraphicsContext::fillRect(const IntRect& rect, const Color& c)
