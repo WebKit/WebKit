@@ -1394,6 +1394,10 @@
 		A8FEFB0B0979F472005839FD /* RenderForeignObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB090979F472005839FD /* RenderForeignObject.cpp */; };
 		A8FEFB310979F4F6005839FD /* SVGForeignObjectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElement.cpp */; };
 		A8FEFB320979F4F6005839FD /* SVGForeignObjectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB300979F4F6005839FD /* SVGForeignObjectElement.h */; };
+		AA84FC850AA0FE08007699AF /* JSSVGMetadataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA84FC830AA0FE08007699AF /* JSSVGMetadataElement.cpp */; };
+		AA84FC860AA0FE08007699AF /* JSSVGMetadataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AA84FC840AA0FE08007699AF /* JSSVGMetadataElement.h */; };
+		AAC8DAB10AA1002000DC0907 /* SVGMetadataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */; };
+		AAC8DAB20AA1002000DC0907 /* SVGMetadataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */; };
 		AB23A31209BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */; };
 		AB23A31309BBA7760067CC53 /* HTMLTextFieldInnerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */; };
 		AB23A32709BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */; };
@@ -1610,23 +1614,6 @@
 		FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418D097596C9000540BE /* SVGImageLoader.cpp */; };
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXBuildStyle section */
-		BC57BF170AA0243000A43CF1 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		BC57BF180AA0243000A43CF1 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
@@ -3181,6 +3168,10 @@
 		A8FEFB090979F472005839FD /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
 		A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGForeignObjectElement.cpp; sourceTree = "<group>"; };
 		A8FEFB300979F4F6005839FD /* SVGForeignObjectElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGForeignObjectElement.h; sourceTree = "<group>"; };
+		AA84FC830AA0FE08007699AF /* JSSVGMetadataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGMetadataElement.cpp; sourceTree = "<group>"; };
+		AA84FC840AA0FE08007699AF /* JSSVGMetadataElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGMetadataElement.h; sourceTree = "<group>"; };
+		AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMetadataElement.cpp; sourceTree = "<group>"; };
+		AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGMetadataElement.h; sourceTree = "<group>"; };
 		AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTextFieldInnerElement.cpp; sourceTree = "<group>"; };
 		AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLTextFieldInnerElement.h; sourceTree = "<group>"; };
 		AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BeforeTextInsertedEvent.cpp; sourceTree = "<group>"; };
@@ -3585,6 +3576,8 @@
 		14DFB33F0A7DF7630018F769 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				AA84FC830AA0FE08007699AF /* JSSVGMetadataElement.cpp */,
+				AA84FC840AA0FE08007699AF /* JSSVGMetadataElement.h */,
 				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
 				65DF31D909D1C123000BE325 /* JSAttr.h */,
 				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
@@ -4550,6 +4543,8 @@
 		A8C0F7FC089701F300BA5114 /* svg */ = {
 			isa = PBXGroup;
 			children = (
+				AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */,
+				AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */,
 				A884283D09308C1C00B6D461 /* DOMList.h */,
 				A8C0F7FF089701F300BA5114 /* SVGAElement.cpp */,
 				A8C0F800089701F300BA5114 /* SVGAElement.h */,
@@ -6446,6 +6441,8 @@
 				657429190A9C2D0B00C52C97 /* SQLTransaction.h in Headers */,
 				BC837C7C0A9D0D1A006B186A /* PDFDocumentImage.h in Headers */,
 				BC837CB60A9D10FE006B186A /* GraphicsContextPlatformPrivate.h in Headers */,
+				AA84FC860AA0FE08007699AF /* JSSVGMetadataElement.h in Headers */,
+				AAC8DAB20AA1002000DC0907 /* SVGMetadataElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6479,12 +6476,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				BC57BF170AA0243000A43CF1 /* Development */,
-				BC57BF180AA0243000A43CF1 /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -7331,6 +7322,8 @@
 				BC837C790A9D0D1A006B186A /* IntRectCG.cpp in Sources */,
 				BC837C7A0A9D0D1A006B186A /* IntSizeCG.cpp in Sources */,
 				BC837C7B0A9D0D1A006B186A /* PDFDocumentImage.cpp in Sources */,
+				AA84FC850AA0FE08007699AF /* JSSVGMetadataElement.cpp in Sources */,
+				AAC8DAB10AA1002000DC0907 /* SVGMetadataElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

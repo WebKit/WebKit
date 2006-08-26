@@ -23,10 +23,12 @@
 #include "JSSVGElementWrapperFactory.h"
 
 #include "JSSVGSVGElement.h"
+#include "JSSVGMetadataElement.h"
 
 #include "SVGNames.h"
 
 #include "SVGSVGElement.h"
+#include "SVGMetadataElement.h"
 
 using namespace KJS;
 
@@ -40,6 +42,7 @@ typedef DOMNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEl
 
 #define FOR_EACH_TAG(macro) \
     macro(svg, SVG) \
+    macro(metadata, Metadata) \
     // end of macro
 
 #define CREATE_WRAPPER_FUNCTION(tag, name) \

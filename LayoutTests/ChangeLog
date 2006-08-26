@@ -1,3 +1,16 @@
+2006-08-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10558
+        SVG should have support for <metadata> element
+
+        * svg/custom/create-metadata-element-expected.checksum: Added.
+        * svg/custom/create-metadata-element-expected.png: Added.
+        * svg/custom/create-metadata-element-expected.txt: Added.
+        * svg/custom/create-metadata-element.svg: Added.
+
 2006-08-25  Adele Peterson  <adele@apple.com>
 
         Updated results for addition of -webkit-text-security.

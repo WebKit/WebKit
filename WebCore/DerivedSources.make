@@ -130,6 +130,7 @@ all : \
     JSSVGElement.h \
     JSSVGLength.h \
     JSSVGMatrix.h \
+    JSSVGMetadataElement.h \
     JSSVGPointTable.cpp \
     JSSVGRectTable.cpp \
     JSSVGSVGElement.h \

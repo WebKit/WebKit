@@ -1,3 +1,22 @@
+2006-08-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10558
+        SVG should have support for <metadata> element
+
+        Add support for metadata tag.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/bindings/js/JSSVGElementWrapperFactory.cpp:
+        * ksvg2/svg/SVGMetadataElement.cpp: Added.
+        (SVGMetadataElement::SVGMetadataElement):
+        (SVGMetadataElement::~SVGMetadataElement):
+        * ksvg2/svg/SVGMetadataElement.h: Added.
+        * ksvg2/svg/SVGMetadataElement.idl: Added.
+        * ksvg2/svg/svgtags.in:
+
 2006-08-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
