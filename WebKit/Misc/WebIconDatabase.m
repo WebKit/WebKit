@@ -112,6 +112,17 @@ NSSize WebIconLargeSize = {128, 128};
     }
     
     [self _createFileDatabase];
+    
+    _private->iconURLToIcons = [[NSMutableDictionary alloc] init];
+    _private->iconURLToExtraRetainCount = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+    _private->pageURLToRetainCount = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+    _private->iconsToEraseWithURLs = [[NSMutableSet alloc] init];
+    _private->iconsToSaveWithURLs = [[NSMutableSet alloc] init];
+    _private->iconURLsWithNoIcons = [[NSMutableSet alloc] init];
+    _private->iconURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
+    _private->pageURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
+    _private->privateBrowsingEnabled = [[WebPreferences standardPreferences] privateBrowsingEnabled];
+    
     [self _loadIconDictionaries];
 
 #ifdef ICONDEBUG
@@ -130,16 +141,6 @@ NSSize WebIconLargeSize = {128, 128};
     
     [self _convertToWebCoreFormat];
 #endif
-
-    _private->iconURLToIcons = [[NSMutableDictionary alloc] init];
-    _private->iconURLToExtraRetainCount = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-    _private->pageURLToRetainCount = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-    _private->iconsToEraseWithURLs = [[NSMutableSet alloc] init];
-    _private->iconsToSaveWithURLs = [[NSMutableSet alloc] init];
-    _private->iconURLsWithNoIcons = [[NSMutableSet alloc] init];
-    _private->iconURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
-    _private->pageURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
-    _private->privateBrowsingEnabled = [[WebPreferences standardPreferences] privateBrowsingEnabled];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(_applicationWillTerminate:)
