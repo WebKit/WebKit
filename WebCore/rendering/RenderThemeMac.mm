@@ -756,13 +756,13 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const RenderO
     
     CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();    
 
-    IntRect topGradient(r.x(), r.y(), r.width(), r.height() / 2.0);
+    FloatRect topGradient(r.x(), r.y(), r.width(), r.height() / 2.0);
     struct CGFunctionCallbacks topCallbacks = { 0, TopGradientInterpolate, NULL };
     CGFunctionRef topFunction = CGFunctionCreate( NULL, 1, NULL, 4, NULL, &topCallbacks );
     CGShadingRef topShading = CGShadingCreateAxial( cspace, CGPointMake(topGradient.x(),  topGradient.y()), 
                             CGPointMake(topGradient.x(), topGradient.bottom()), topFunction, false, false );
 
-    IntRect bottomGradient(r.x() + radius, r.y() + r.height() / 2.0, r.width() - 2 * radius, r.height() / 2.0);
+    FloatRect bottomGradient(r.x() + radius, r.y() + r.height() / 2.0, r.width() - 2 * radius, r.height() / 2.0);
     struct CGFunctionCallbacks bottomCallbacks = { 0, BottomGradientInterpolate, NULL };
     CGFunctionRef bottomFunction = CGFunctionCreate( NULL, 1, NULL, 4, NULL, &bottomCallbacks );
     CGShadingRef bottomShading = CGShadingCreateAxial( cspace, CGPointMake(bottomGradient.x(),  bottomGradient.y()), 
@@ -788,7 +788,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const RenderO
 
     i.p->save();
     CGContextClipToRect(context, topGradient);
-    i.p->addRoundedRectClip(topGradient, 
+    i.p->addRoundedRectClip(enclosingIntRect(topGradient), 
         o->style()->borderTopLeftRadius(), o->style()->borderTopRightRadius(),
         IntSize(), IntSize());
     CGContextDrawShading(context, topShading);  
@@ -796,7 +796,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const RenderO
 
     i.p->save();
     CGContextClipToRect(context, bottomGradient);
-    i.p->addRoundedRectClip(bottomGradient, 
+    i.p->addRoundedRectClip(enclosingIntRect(bottomGradient), 
         IntSize(), IntSize(),
         o->style()->borderBottomLeftRadius(), o->style()->borderBottomRightRadius());
     CGContextDrawShading(context, bottomShading); 
@@ -854,7 +854,7 @@ bool RenderThemeMac::paintMenuListButton(RenderObject* o, const RenderObject::Pa
     Color leftSeparatorColor(0, 0, 0, 40);
     Color rightSeparatorColor(255, 255, 255, 40);
     int separatorSpace = 2;
-    int leftEdgeOfSeparator = leftEdge - arrowPaddingLeft;
+    int leftEdgeOfSeparator = int(leftEdge - arrowPaddingLeft); // FIXME: Round?
     
     // Draw the separator to the left of the arrows
     i.p->setPen(Pen(leftSeparatorColor));
@@ -909,13 +909,12 @@ void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector* selector, Rende
     // We're overriding the padding to allow for the arrow control.  WinIE doesn't honor padding on selects, so
     // this shouldn't cause problems on the web.  If IE7 changes that, we should reconsider this.
     style->setPaddingLeft(Length(styledPopupPaddingLeft, Fixed));
-    style->setPaddingRight(Length(arrowWidth + arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator, Fixed));
+    style->setPaddingRight(Length(int(ceilf(arrowWidth + arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator)), Fixed));
     style->setPaddingTop(Length(styledPopupPaddingTop, Fixed));
     style->setPaddingBottom(Length(styledPopupPaddingBottom, Fixed));
     
-    if (style->hasBorderRadius()) {
-        style->setBorderRadius(IntSize(baseBorderRadius + fontScale - 1, baseBorderRadius + fontScale - 1));
-    }
+    if (style->hasBorderRadius())
+        style->setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
     
     const int minHeight = 15;
     style->setMinHeight(Length(minHeight, Fixed));

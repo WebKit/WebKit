@@ -1,3 +1,14 @@
+2006-08-26  David Hyatt  <hyatt@apple.com>
+
+        Fix Mac build bustage (lots of float/int confusion).  I am not sure
+        whether rounding was desired or not... this is just a band-aid to get
+        the build working again.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintMenuListButton):
+        (WebCore::RenderThemeMac::adjustMenuListButtonStyle):
+
 2006-08-25  David Hyatt  <hyatt@apple.com>
 
         More refactoring of image to disentangle graphics (e.g., Cairo) from
