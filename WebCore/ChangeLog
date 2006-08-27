@@ -1,3 +1,13 @@
+2006-08-27  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fix switch logic.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::setHScrollBarMode):
+        (WebCore::ScrollView::setVScrollBarMode):
+
 2006-08-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
