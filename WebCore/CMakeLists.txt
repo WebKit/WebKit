@@ -75,6 +75,7 @@ set(IDL_BINDINGS_SVG
 # ksvg2/svg/SVGNumber.idl
 # ksvg2/svg/SVGPoint.idl
 # ksvg2/svg/SVGRect.idl
+# ksvg2/svg/SVGEvent.idl
 
   ksvg2/svg/SVGAngle.idl
   ksvg2/svg/SVGMatrix.idl
@@ -85,6 +86,7 @@ set(IDL_BINDINGS_SVG
   ksvg2/svg/SVGColor.idl
   ksvg2/svg/SVGDocument.idl
   ksvg2/svg/SVGSVGElement.idl
+  ksvg2/svg/SVGMetadataElement.idl
 )
 ENDIF (USE_WEBKIT_SVG_SUPPORT)
 
@@ -485,6 +487,7 @@ set (SVG_STUFF
     ksvg2/svg/SVGPathSegLinetoHorizontal.cpp
     ksvg2/svg/SVGStopElement.cpp
     ksvg2/svg/SVGDefsElement.cpp
+    ksvg2/svg/SVGMetadataElement.cpp
 #   ksvg2/ecma/GlobalObject.cpp
 #   ksvg2/ecma/Ecma.cpp
     ksvg2/misc/SVGImageLoader.cpp

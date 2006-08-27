@@ -1,3 +1,11 @@
+2006-08-27  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by Anders.
+
+        Fix Qt build (add SVGMetaDataElement.cpp to build system)
+
+        * CMakeLists.txt:
+
 2006-08-27  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by andersca.
