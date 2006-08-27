@@ -762,12 +762,16 @@ StringImpl* StringImpl::replace(UChar pattern, const StringImpl* str)
 {
     int slen = str ? str->length() : 0;
     int index = 0;
-    StringImpl* result = this;
-    while ((index = result->find(pattern, index)) >= 0) {
-        result = result->replace(index, 1, str);
+    StringImpl* oldResult = this;
+    StringImpl* newResult;
+    while ((index = oldResult->find(pattern, index)) >= 0) {
+        newResult = oldResult->replace(index, 1, str);
+        if (oldResult != this)
+            delete oldResult;
+        oldResult = newResult;
         index += slen;
     }
-    return result;
+    return oldResult;
 }
 
 bool equal(const StringImpl* a, const StringImpl* b)

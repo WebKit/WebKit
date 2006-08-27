@@ -1,3 +1,12 @@
+2006-08-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Plugged a leak in StringImpl::replace()
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::replace):
+
 2006-08-27  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by Anders.
