@@ -786,7 +786,14 @@ sub openDumpRenderTreeIfNeeded()
 {
     return if $toolOpen;
 
+    # Save some requires variables for the linux environment...
+    my $homeDir = $ENV{'HOME'};
+    my $dbusAddress = $ENV{'DBUS_SESSION_BUS_ADDRESS'};
+
     local %ENV;
+    $ENV{DISPLAY} = ":0" if isQt();
+    $ENV{HOME} = $homeDir if isQt();
+    $ENV{DBUS_SESSION_BUS_ADDRESS} = $dbusAddress if isQt();
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
     $ENV{MallocStackLogging} = 1 if $checkLeaks;

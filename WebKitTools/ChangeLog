@@ -1,3 +1,23 @@
+2006-08-27  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric, landed by Anders.
+
+        Add DumpRenderTree support for Qt/Linux.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/CMakeLists.txt: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp: Added.
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::~DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::readStdin):
+        (WebCore::DumpRenderTree::checkLoaded):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp: Added.
+        (main):
+        * Scripts/build-dumprendertree:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric. Landed by rwlbuis.

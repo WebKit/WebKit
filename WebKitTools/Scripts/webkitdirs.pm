@@ -125,6 +125,11 @@ sub determineConfiguration
     } else {
         $configuration = "Release";
     }
+
+    if (isQt()) {
+        # We only support one build type for now
+        $configuration = "";
+    }
 }
 
 sub determineConfigurationProductDir
@@ -257,6 +262,10 @@ sub builtDylibPathForName
     if (isCygwin()) {
         return "$baseProductDir/$framework.intermediate/$configuration/$framework.intermediate/$framework.lib";
     }
+    if (isQt()) {
+        return "$baseProductDir/../../../$framework";
+    }
+
     die "Unsupported platform, can't determine built library locations.";
 }
 
@@ -273,8 +282,14 @@ sub checkFrameworks
 
 sub hasSVGSupport
 {
-    return 0 if isCygwin(); 
+    return 0 if isCygwin();
+
     my $path = shift;
+
+    if ((isQt()) and ($path =~ /WebCore/)) {
+        $path .= "/../lib/libWebCore-unity.so";
+    }
+
     open NM, "-|", "nm", $path or die;
     my $hasSVGSupport = 0;
     while (<NM>) {
@@ -288,10 +303,10 @@ sub removeLibraryDependingOnSVG
 {
     my $frameworkName = shift;
     my $shouldHaveSVG = shift;
-    
+
     my $path = builtDylibPathForName($frameworkName);
     return unless -x $path;
-    
+
     my $hasSVG = hasSVGSupport($path);
     system "rm -f $path" if ($shouldHaveSVG xor $hasSVG);
 }
@@ -308,6 +323,10 @@ sub checkWebCoreSVGSupport
     return $hasSVG;
 }
 
+sub isQt()
+{
+    return ($^O eq "linux") and defined($ENV{'QTDIR'})
+}
 
 sub isCygwin()
 {
