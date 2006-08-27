@@ -1,3 +1,26 @@
+2006-08-27  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by andersca.
+
+        No logic changes.  Just cleanup.
+
+        * ksvg2/svg/SVGAngle.cpp:
+        (SVGAngle::SVGAngle):
+        (SVGAngle::unitType):
+        (SVGAngle::valueAsString):
+        (SVGAngle::newValueSpecifiedUnits):
+        (SVGAngle::convertToSpecifiedUnits):
+        * ksvg2/svg/SVGAngle.h:
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::unitType):
+        (WebCore::SVGLength::newValueSpecifiedUnits):
+        (WebCore::SVGLength::convertToSpecifiedUnits):
+        (WebCore::SVGLength::updateValue):
+        (WebCore::SVGLength::updateValueInSpecifiedUnits):
+        * ksvg2/svg/SVGLength.h:
+        * platform/BitmapImage.cpp: Removed.
+        * platform/BitmapImage.h: Removed.
+
 2006-08-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

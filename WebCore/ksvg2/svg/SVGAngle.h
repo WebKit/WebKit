@@ -32,7 +32,7 @@ namespace WebCore {
 
     class SVGAngle : public Shared<SVGAngle> {
     public:
-        SVGAngle(const SVGStyledElement *context);
+        SVGAngle(const SVGStyledElement* context);
         virtual ~SVGAngle();
         
         enum SVGAngleType {
@@ -43,7 +43,7 @@ namespace WebCore {
             SVG_ANGLETYPE_GRAD              = 4
         };
 
-        unsigned short unitType() const;
+        SVGAngleType unitType() const;
 
         void setValue(float);
         float value() const; 
@@ -68,7 +68,7 @@ namespace WebCore {
         void setContext(const SVGStyledElement*);
 
     private:
-        unsigned short m_unitType;
+        SVGAngleType m_unitType;
         float m_value;
         float m_valueInSpecifiedUnits;
         mutable String m_valueAsString;

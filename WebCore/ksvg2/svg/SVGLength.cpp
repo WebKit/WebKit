@@ -37,7 +37,6 @@
 
 #include <math.h>
 
-using namespace WebCore;
 using namespace std;
 
 // keep track of textual description of the unit type
@@ -50,6 +49,8 @@ static const char* UnitText[] =
     "in", "pt",
     "pc"
 };
+
+namespace WebCore {
 
 SVGLength::SVGLength(const SVGStyledElement *context, LengthMode mode, const SVGElement *viewport)
     : Shared<SVGLength>()
@@ -68,7 +69,7 @@ SVGLength::~SVGLength()
 {
 }
 
-unsigned short SVGLength::unitType() const
+SVGLength::SVGLengthType SVGLength::unitType() const
 {
     return m_unitType;
 }
@@ -157,13 +158,13 @@ String SVGLength::valueAsString() const
 void SVGLength::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
 {
     m_valueInSpecifiedUnits = valueInSpecifiedUnits;
-    m_unitType = unitType;
+    m_unitType = (SVGLengthType)unitType;
     updateValue();
 }
 
 void SVGLength::convertToSpecifiedUnits(unsigned short unitType)
 {
-    m_unitType = unitType;
+    m_unitType = (SVGLengthType)unitType;
     updateValueInSpecifiedUnits();
 }
 
@@ -225,6 +226,10 @@ void SVGLength::updateValue(bool notify)
                 m_requiresLayout = true;
             }
             break;
+        case SVG_LENGTHTYPE_UNKNOWN:
+        case SVG_LENGTHTYPE_NUMBER:
+        case SVG_LENGTHTYPE_PERCENTAGE:
+            break;
     }
     if (notify && m_context)
         m_context->notifyAttributeChange();
@@ -264,6 +269,9 @@ bool SVGLength::updateValueInSpecifiedUnits(bool notify)
         case SVG_LENGTHTYPE_PC:
             m_valueInSpecifiedUnits = m_value / dpi() * 6.0;
             break;
+        case SVG_LENGTHTYPE_UNKNOWN:
+        case SVG_LENGTHTYPE_NUMBER:
+            break;
     };
     
     if (notify && m_context)
@@ -290,6 +298,8 @@ const SVGStyledElement *SVGLength::context() const
 void SVGLength::setContext(const SVGStyledElement *context)
 {
     m_context = context;
+}
+
 }
 
 // vim:ts=4:noet

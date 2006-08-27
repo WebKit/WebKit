@@ -20,13 +20,11 @@
     Boston, MA 02111-1307, USA.
 */
 
-//#include "SVGAngle.h"
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include <math.h>
 
 #include <ksvg2/ksvg.h>
-//#include <kdom/ecma/Ecma.h>
 
 #include "SVGAngle.h"
 #include "SVGHelper.h"
@@ -38,19 +36,20 @@ const double deg2grad = 400.0 / 360.0;
 
 #define rad2grad deg2grad / deg2rad
 
-SVGAngle::SVGAngle(const SVGStyledElement *context) : Shared<SVGAngle>()
+SVGAngle::SVGAngle(const SVGStyledElement* context)
+    : Shared<SVGAngle>()
+    , m_unitType(SVG_ANGLETYPE_UNKNOWN)
+    , m_value(0)
+    , m_valueInSpecifiedUnits(0)
+    , m_context(context)
 {
-    m_unitType = SVG_ANGLETYPE_UNKNOWN;
-    m_valueInSpecifiedUnits = 0;
-    m_value = 0;
-    m_context = context;
 }
 
 SVGAngle::~SVGAngle()
 {
 }
 
-unsigned short SVGAngle::unitType() const
+SVGAngle::SVGAngleType SVGAngle::unitType() const
 {
     return m_unitType;
 }
@@ -122,6 +121,8 @@ String SVGAngle::valueAsString() const
         case SVG_ANGLETYPE_GRAD:
             m_valueAsString += "grad";
             break;
+        case SVG_ANGLETYPE_UNKNOWN:
+            break;
     }
     
     return m_valueAsString;
@@ -129,7 +130,7 @@ String SVGAngle::valueAsString() const
 
 void SVGAngle::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
 {
-    m_unitType = unitType;
+    m_unitType = (SVGAngleType)unitType;
     m_valueInSpecifiedUnits = valueInSpecifiedUnits;
     calculate();
 }
@@ -152,7 +153,7 @@ void SVGAngle::convertToSpecifiedUnits(unsigned short unitType)
     else if (m_unitType == SVG_ANGLETYPE_GRAD && unitType == SVG_ANGLETYPE_DEG)
         m_valueInSpecifiedUnits /= deg2grad;
 
-    m_unitType = unitType;
+    m_unitType = (SVGAngleType)unitType;
 }
 
 // Helpers
