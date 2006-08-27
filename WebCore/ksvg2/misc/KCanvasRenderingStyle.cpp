@@ -26,7 +26,6 @@
 
 #include "CSSValueList.h"
 #include "Document.h"
-#include "KCanvasPath.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "KRenderingFillPainter.h"
@@ -178,7 +177,7 @@ KRenderingFillPainter KSVGPainterFactory::fillPainter(const RenderStyle* style, 
 {
     KRenderingFillPainter fillPainter;
     
-    fillPainter.setFillRule(style->svgStyle()->fillRule() == WR_NONZERO ? RULE_NONZERO : RULE_EVENODD);
+    fillPainter.setFillRule(style->svgStyle()->fillRule());
     fillPainter.setOpacity(style->svgStyle()->fillOpacity());
 
     return fillPainter;

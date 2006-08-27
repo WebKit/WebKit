@@ -187,7 +187,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
      */
 
     case SVGCSS_PROP_POINTER_EVENTS:
-    // visiblePainted | visibleFill | visibleStroke | visible |
+    // none | visiblePainted | visibleFill | visibleStroke | visible |
     // painted | fill | stroke | none | all | inherit
         if (id == CSS_VAL_VISIBLE || id == CSS_VAL_NONE ||
           (id >= SVGCSS_VAL_VISIBLEPAINTED && id <= SVGCSS_VAL_ALL))

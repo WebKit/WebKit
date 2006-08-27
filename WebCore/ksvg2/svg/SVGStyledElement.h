@@ -28,7 +28,7 @@
 #include "RenderStyle.h"
 #include "SVGElement.h"
 #include "SVGStylable.h"
-#include <kcanvas/KCanvasPath.h>
+#include "Path.h"
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ namespace WebCore {
 
         // These need to be implemented.
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
-        virtual KCanvasPath* toPathData() const { return 0; }
+        virtual Path toPathData() const { return Path(); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual KCanvasResource* canvasResource() { return 0; }
         

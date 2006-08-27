@@ -33,6 +33,7 @@
 #include "RenderStyle.h"
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/RenderSVGText.h>
+#include "FloatRect.h"
 
 namespace WebCore {
 

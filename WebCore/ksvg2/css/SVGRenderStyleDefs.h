@@ -31,6 +31,7 @@
 #ifdef SVG_SUPPORT
 
 #include "DeprecatedString.h"
+#include "Path.h"
 
 // Helper macros for 'SVGRenderStyle'
 #define SVG_RS_DEFINE_ATTRIBUTE(Data, Type, Name, Initial) \
@@ -44,10 +45,6 @@
     static Data initial##Type() { return Initial; }
 
 namespace WebCore {
-
-    enum EWindRule {
-        WR_NONZERO = 0, WR_EVENODD = 1
-    };
 
     enum ECapStyle {
         CS_BUTT = 1, CS_ROUND = 2, CS_SQUARE = 3

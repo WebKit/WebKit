@@ -101,7 +101,7 @@ namespace WebCore
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
         virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
-        virtual KCanvasPath* toPathData() const;
+        virtual Path toPathData() const;
 
     private:
         mutable RefPtr<SVGPathSegList> m_pathSegList;

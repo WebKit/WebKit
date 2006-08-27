@@ -299,10 +299,10 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             switch (primitiveValue->getIdent())
             {
                 case SVGCSS_VAL_NONZERO:
-                    svgstyle->setClipRule(WR_NONZERO);
+                    svgstyle->setClipRule(RULE_NONZERO);
                     break;
                 case SVGCSS_VAL_EVENODD:
-                    svgstyle->setClipRule(WR_EVENODD);
+                    svgstyle->setClipRule(RULE_EVENODD);
                     break;
                 default:
                     break;
@@ -319,10 +319,10 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             switch (primitiveValue->getIdent())
             {
                 case SVGCSS_VAL_NONZERO:
-                    svgstyle->setFillRule(WR_NONZERO);
+                    svgstyle->setFillRule(RULE_NONZERO);
                     break;
                 case SVGCSS_VAL_EVENODD:
-                    svgstyle->setFillRule(WR_EVENODD);
+                    svgstyle->setFillRule(RULE_EVENODD);
                 default:
                     return;
             }

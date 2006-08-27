@@ -287,10 +287,10 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
 
 void SVGPatternElement::notifyClientsToRepaint() const
 {
-    const KCanvasItemList &clients = m_paintServer->clients();
+    const RenderPathList &clients = m_paintServer->clients();
 
-    KCanvasItemList::ConstIterator it = clients.begin();
-    KCanvasItemList::ConstIterator end = clients.end();
+    RenderPathList::ConstIterator it = clients.begin();
+    RenderPathList::ConstIterator end = clients.end();
 
     for(; it != end; ++it)
     {

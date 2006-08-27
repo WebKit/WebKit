@@ -41,7 +41,6 @@
 #include <kcanvas/RenderSVGContainer.h>
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasImage.h>
-#include <kcanvas/KCanvasPath.h>
 #include <wtf/Assertions.h>
 
 using namespace WebCore;

@@ -42,6 +42,29 @@ TextStream &operator<<(TextStream& ts, const KCanvasResource& r)
     return r.externalRepresentation(ts); 
 }
 
+//WindRule
+TextStream &operator<<(TextStream &ts, WindRule rule)
+{
+    switch (rule) 
+    {
+        case RULE_NONZERO:
+            ts << "NON-ZERO"; break;
+        case RULE_EVENODD:
+            ts << "EVEN-ODD"; break;
+    }
+    return ts;
+}
+
+//KCClipData
+TextStream &operator<<(TextStream &ts, const KCClipData &d)
+{
+    ts << "[winding=" << d.windRule() << "]";
+    if (d.bboxUnits)
+        ts << " [bounding box mode=" << d.bboxUnits  << "]";    
+    ts << " [path=" << d.path.debugString() << "]";
+    return ts;
+}
+
 // KCanvasResource
 KCanvasResource::KCanvasResource()
 {
@@ -59,15 +82,15 @@ void KCanvasResource::addClient(const RenderPath *item)
     m_clients.append(item);
 }
 
-const KCanvasItemList &KCanvasResource::clients() const
+const RenderPathList &KCanvasResource::clients() const
 {
     return m_clients;
 }
 
 void KCanvasResource::invalidate()
 {
-    KCanvasItemList::ConstIterator it = m_clients.begin();
-    KCanvasItemList::ConstIterator end = m_clients.end();
+    RenderPathList::ConstIterator it = m_clients.begin();
+    RenderPathList::ConstIterator end = m_clients.end();
 
     for(; it != end; ++it)
         const_cast<RenderPath *>(*it)->repaint();
@@ -102,7 +125,7 @@ void KCanvasClipper::resetClipData()
     m_clipData.clear();
 }
 
-void KCanvasClipper::addClipData(KCanvasPath* path, KCWindRule rule, bool bboxUnits)
+void KCanvasClipper::addClipData(const Path& path, WindRule rule, bool bboxUnits)
 {
     m_clipData.addPath(path, rule, bboxUnits);
 }

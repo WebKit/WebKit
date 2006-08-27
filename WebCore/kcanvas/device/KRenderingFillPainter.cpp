@@ -38,7 +38,7 @@ public:
     }
 
     float opacity;
-    KCWindRule fillRule;
+    WindRule fillRule;
 };
 
 KRenderingFillPainter::KRenderingFillPainter() : d(new Private())
@@ -50,12 +50,12 @@ KRenderingFillPainter::~KRenderingFillPainter()
     delete d;
 }
 
-KCWindRule KRenderingFillPainter::fillRule() const
+WindRule KRenderingFillPainter::fillRule() const
 {
     return d->fillRule;
 }
 
-void KRenderingFillPainter::setFillRule(KCWindRule rule)
+void KRenderingFillPainter::setFillRule(WindRule rule)
 {
     d->fillRule = rule;
 }

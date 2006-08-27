@@ -1,3 +1,13 @@
+2006-08-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Changed test result because of:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10557
+        KCanvasPath should be replace by platform/Path
+
+        * svg/W3C-SVG-1.1/struct-dom-06-b-expected.txt:
+
 2006-08-26  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by hyatt.

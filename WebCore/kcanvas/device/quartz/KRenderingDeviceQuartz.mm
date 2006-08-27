@@ -33,7 +33,6 @@
 #import "KCanvasFilterQuartz.h"
 #import "KCanvasItemQuartz.h"
 #import "KCanvasMaskerQuartz.h"
-#import "KCanvasPathQuartz.h"
 #import "KCanvasResourcesQuartz.h"
 #import "KRenderingFillPainter.h"
 #import "KRenderingPaintServerQuartz.h"
@@ -75,9 +74,9 @@ void KRenderingDeviceContextQuartz::clearPath()
     CGContextBeginPath(m_cgContext);
 }
 
-void KRenderingDeviceContextQuartz::addPath(const KCanvasPath *path)
+void KRenderingDeviceContextQuartz::addPath(const Path& path)
 {
-    CGContextAddPath(m_cgContext, static_cast<const KCanvasPathQuartz*>(path)->cgPath());
+    CGContextAddPath(m_cgContext, path.platformPath());
 }
 
 NSGraphicsContext *KRenderingDeviceContextQuartz::nsGraphicsContext()
@@ -163,26 +162,6 @@ KRenderingDeviceContext *KRenderingDeviceQuartz::contextForImage(KCanvasImage *i
 }
 
 #pragma mark -
-#pragma mark Path Management
-
-KCanvasPath* KRenderingDeviceQuartz::createPath() const
-{
-    return new KCanvasPathQuartz();
-}
-
-DeprecatedString KRenderingDeviceQuartz::stringForPath(const KCanvasPath *path)
-{
-    DeprecatedString result;
-    if (path) {
-        CGPathRef cgPath = static_cast<const KCanvasPathQuartz *>(path)->cgPath();
-        CFStringRef pathString = CFStringFromCGPath(cgPath);
-        result = DeprecatedString::fromCFString(pathString);
-        CFRelease(pathString);
-    }
-    return result;
-}
-
-#pragma mark -
 #pragma mark Resource Creation
 
 KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintServerType &type) const
@@ -205,7 +184,7 @@ KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintSe
     return newServer;
 }
 
-RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, RenderStyle *style, SVGStyledElement *node, KCanvasPath* path) const
+RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, RenderStyle *style, SVGStyledElement *node, const Path& path) const
 {
     RenderPath *item = new (arena) KCanvasItemQuartz(style, node);
     item->setPath(path);

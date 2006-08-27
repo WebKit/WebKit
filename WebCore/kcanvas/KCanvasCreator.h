@@ -24,9 +24,12 @@
 #define KCanvasCreator_H
 #ifdef SVG_SUPPORT
 
-#include <kcanvas/KCanvasPath.h>
-
 namespace WebCore {
+
+class Path;
+class FloatPoint;
+class FloatRect;
+class FloatSize;
 
 class KCanvasCreator
 {
@@ -37,11 +40,11 @@ public:
     static KCanvasCreator *self();
 
     // Canvas path creation
-    KCanvasPath* createRoundedRectangle(float x, float y, float width, float height, float rx, float ry) const;
-    KCanvasPath* createRectangle(float x, float y, float width, float height) const;
-    KCanvasPath* createEllipse(float cx, float cy, float rx, float ry) const;
-    KCanvasPath* createCircle(float cx, float cy, float r) const;
-    KCanvasPath* createLine(float x1, float y1, float x2, float y2) const;
+    Path createRoundedRectangle(const FloatRect&, const FloatSize&) const;
+    Path createRectangle(const FloatRect&) const;
+    Path createEllipse(const FloatPoint&, float rx, float ry) const;
+    Path createCircle(const FloatPoint&, float r) const;
+    Path createLine(const FloatPoint&, const FloatPoint&) const;
 
 private:
     static KCanvasCreator *s_creator;

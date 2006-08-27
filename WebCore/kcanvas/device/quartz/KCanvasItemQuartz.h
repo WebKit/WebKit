@@ -37,7 +37,9 @@ public:
     KCanvasItemQuartz(RenderStyle*, SVGStyledElement*);
     virtual ~KCanvasItemQuartz() { }
     
-    virtual void drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const KCanvasPath*) const;
+    virtual bool strokeContains(const FloatPoint& point) const;
+    virtual void drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const Path&) const;
+    virtual FloatRect strokeBBox() const;
 };
 
 }

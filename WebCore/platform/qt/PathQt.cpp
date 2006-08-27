@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
+ *               2006 Rob Buis   <buis@kde.org>
  *
  * All rights reserved.
  *
@@ -29,8 +30,10 @@
 #include "Path.h"
 
 #include "FloatRect.h"
+#include "PlatformString.h"
 #include <QPainterPath>
 #include <QMatrix>
+#include <QString>
 
 #include <math.h>
 
@@ -61,9 +64,15 @@ Path& Path::operator=(const Path& other)
     return *this;
 }
 
-bool Path::contains(const FloatPoint& point) const
+bool Path::contains(const FloatPoint& point, WindRule rule) const
 {
-    return m_path->contains(point);
+    Qt::FillRule savedRule = m_path->fillRule();
+    m_path->setFillRule(rule == RULE_EVENODD ? Qt::OddEvenFill : Qt::WindingFill);
+
+    bool contains = m_path->contains(point);
+
+    m_path->setFillRule(savedRule);
+    return contains;
 }
 
 void Path::translate(const FloatSize& size)
@@ -168,6 +177,46 @@ void Path::addEllipse(const FloatRect& r)
 void Path::clear()
 {
     *m_path = QPainterPath();
+}
+
+bool Path::isEmpty() const
+{
+    return m_path->isEmpty();
+}
+
+String Path::debugString() const
+{
+    QString ret;
+    for (int i = 0; i < m_path->elementCount(); ++i) {
+        const QPainterPath::Element &cur = m_path->elementAt(i);
+
+        switch (cur.type) {
+            case QPainterPath::MoveToElement:
+                ret += QString("M %1 %2").arg(cur.x).arg(cur.y);
+                break;
+            case QPainterPath::LineToElement:
+                ret += QString("L %1 %2").arg(cur.x).arg(cur.y);
+                break;
+            case QPainterPath::CurveToElement:
+            {
+                const QPainterPath::Element &c1 = m_path->elementAt(i + 1);
+                const QPainterPath::Element &c2 = m_path->elementAt(i + 2);
+
+                Q_ASSERT(c1.type == QPainterPath::CurveToDataElement);
+                Q_ASSERT(c2.type == QPainterPath::CurveToDataElement);
+
+                ret += QString("C %1 %2 %3 %4 %5 %6").arg(cur.x).arg(cur.y).arg(c1.x).arg(c1.y).arg(c2.x).arg(c2.y);
+
+                i += 2;
+                break;
+            }
+            case QPainterPath::CurveToDataElement:
+                Q_ASSERT(false);
+                break;
+        }
+    }
+
+    return ret;
 }
 
 }

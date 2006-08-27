@@ -125,41 +125,62 @@ void applyStrokeStyleToContext(CGContextRef context, RenderStyle* renderStyle, c
     applyStrokeStyleToContext(context, strokePainter);
 }
 
-void CGPathToCFStringApplierFunction(void *info, const CGPathElement *element)
+CGContextRef scratchContext()
 {
-    CFMutableStringRef string = (CFMutableStringRef)info;
-    CFStringRef typeString = CFSTR("");
-    CGPoint *points = element->points;
-    switch(element->type) {
-    case kCGPathElementMoveToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("M%.2f,%.2f"), points[0].x, points[0].y);
-        break;
-    case kCGPathElementAddLineToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("L%.2f,%.2f"), points[0].x, points[0].y);
-        break;
-    case kCGPathElementAddQuadCurveToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("Q%.2f,%.2f,%.2f,%.2f"),
-                points[0].x, points[0].y, points[1].x, points[1].y);
-        break;
-    case kCGPathElementAddCurveToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("C%.2f,%.2f,%.2f,%.2f,%.2f,%.2f"),
-                points[0].x, points[0].y, points[1].x, points[1].y,
-                points[2].x, points[2].y);
-        break;
-    case kCGPathElementCloseSubpath:
-        typeString = CFSTR("X"); break;
-    }
+    static CGContextRef scratch = 0;
+    if (!scratch) {
+        CFMutableDataRef empty = CFDataCreateMutable(NULL, 0);
+        CGDataConsumerRef consumer = CGDataConsumerCreateWithCFData(empty);
+        scratch = CGPDFContextCreate(consumer, NULL, NULL);
+        CGDataConsumerRelease(consumer);
+        CFRelease(empty);
+
+        CGFloat black[4] = {0, 0, 0, 1};
+        CGContextSetFillColor(scratch, black);
+        CGContextSetStrokeColor(scratch, black);
+     }
+    return scratch;
 }
 
-CFStringRef CFStringFromCGPath(CGPathRef path)
+FloatRect strokeBoundingBox(const Path& path, const KRenderingStrokePainter& strokePainter)
+ {
+    // the bbox might grow if the path is stroked.
+    // and CGPathGetBoundingBox doesn't support that, so we'll have
+    // to make an alternative call...
+ 
+    // FIXME: since this is mainly used to decide what to repaint,
+    // perhaps it would be sufficien to just outset the fill bbox by
+    // the stroke width - that should be way cheaper and simpler than
+    // what we do here.
+ 
+    CGPathRef cgPath = path.platformPath();
+
+    CGContextRef context = scratchContext();
+    CGContextSaveGState(context);
+
+    CGContextBeginPath(context);
+    CGContextAddPath(context, cgPath);
+    applyStrokeStyleToContext(context, strokePainter);
+    CGContextReplacePathWithStrokedPath(context);
+    CGRect box = CGContextGetPathBoundingBox(context);
+        
+    CGContextRestoreGState(context);
+
+    return FloatRect(box);
+}
+
+bool pathContainsPoint(CGMutablePathRef cgPath, const FloatPoint& point, CGPathDrawingMode drawMode)
 {
-    if (!path)
-        return 0;
+   CGContextRef context = scratchContext();
+   CGContextSaveGState(context);
+   
+   CGContextBeginPath(context);
+   CGContextAddPath(context, cgPath);
+   bool hitSuccess = CGContextPathContainsPoint(context, point, drawMode);
 
-    CFMutableStringRef string = CFStringCreateMutable(NULL, 0);
-    CGPathApply(path, string, CGPathToCFStringApplierFunction);
+   CGContextRestoreGState(context);
 
-    return string;
+   return hitSuccess;
 }
 
 }

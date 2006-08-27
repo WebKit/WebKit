@@ -36,7 +36,6 @@
 #import "KRenderingFillPainter.h"
 #import "KRenderingStrokePainter.h"
 
-#import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 #import "KCanvasFilterQuartz.h"
 #import "KCanvasResourcesQuartz.h"
@@ -163,7 +162,7 @@ static void drawStartAndMidMarkers(void *info, const CGPathElement *element)
     data.elementIndex++;
 }
 
-void KCanvasItemQuartz::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& rect, const KCanvasPath *path) const
+void KCanvasItemQuartz::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& rect, const Path& path) const
 {
     Document *doc = document();
     const SVGRenderStyle *svgStyle = style()->svgStyle();
@@ -179,12 +178,35 @@ void KCanvasItemQuartz::drawMarkersIfNeeded(GraphicsContext* context, const Floa
 
     DrawMarkersData data(context, startMarker, midMarker, strokeWidth);
 
-    CGPathRef cgPath = static_cast<const KCanvasPathQuartz*>(path)->cgPath();
+    CGPathRef cgPath = path.platformPath();
     CGPathApply(cgPath, &data, drawStartAndMidMarkers);
 
     data.previousMarkerData.marker = endMarker;
     data.previousMarkerData.type = End;
     drawMarkerWithData(context, data.previousMarkerData);
+}
+
+FloatRect KCanvasItemQuartz::strokeBBox() const
+{
+    if (KSVGPainterFactory::isStroked(style())) {
+        KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(style(), this);
+        return strokeBoundingBox(path(), strokePainter);
+    }
+
+    return path().boundingRect();
+}
+
+
+bool KCanvasItemQuartz::strokeContains(const FloatPoint& point) const
+{
+    if (path().isEmpty())
+        return false;
+
+    if (!KSVGPainterFactory::strokePaintServer(style(), this))
+        return false;
+
+    CGMutablePathRef cgPath = path().platformPath();
+    return pathContainsPoint(cgPath, point, kCGPathStroke);
 }
 
 }

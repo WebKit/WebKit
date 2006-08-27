@@ -28,6 +28,7 @@
 
 #include "KRenderingDevice.h"
 #include "RenderSVGContainer.h"
+#include "Path.h"
 
 namespace WebCore {
 
@@ -49,11 +50,16 @@ KCanvasCreator *KCanvasCreator::self()
     return s_creator;
 }
 
-KCanvasPath* KCanvasCreator::createRoundedRectangle(float x, float y, float width, float height, float rx, float ry) const
+Path KCanvasCreator::createRoundedRectangle(const FloatRect& box, const FloatSize& roundingRadii) const
 {
-    KCanvasPath* path = renderingDevice()->createPath();
-
-    if (width <= 0.0f || height <= 0.0f || !path)
+    Path path;
+    float x = box.x();
+    float y = box.y();
+    float width = box.width();
+    float height = box.height();
+    float rx = roundingRadii.width();
+    float ry = roundingRadii.height();
+    if (width <= 0.0f || height <= 0.0f)
         return path;
 
     double nrx = rx, nry = ry;
@@ -67,52 +73,58 @@ KCanvasPath* KCanvasCreator::createRoundedRectangle(float x, float y, float widt
     if (nry > height / 2)
         nry = height / 2;
 
-    path->moveTo(x + nrx, y);
+    path.moveTo(FloatPoint(x + nrx, y));
 
     if (nrx < width / 2)
-        path->lineTo(x + width - rx, y);
+        path.addLineTo(FloatPoint(x + width - rx, y));
 
-    path->curveTo(x + width - nrx * (1 - 0.552), y, x + width, y + nry * (1 - 0.552), x + width, y + nry);
+    path.addBezierCurveTo(FloatPoint(x + width - nrx * (1 - 0.552), y), FloatPoint(x + width, y + nry * (1 - 0.552)), FloatPoint(x + width, y + nry));
 
     if (nry < height / 2)
-        path->lineTo(x + width, y + height - nry);
+        path.addLineTo(FloatPoint(x + width, y + height - nry));
 
-    path->curveTo(x + width, y + height - nry * (1 - 0.552), x + width - nrx * (1 - 0.552), y + height, x + width - nrx, y + height);
+    path.addBezierCurveTo(FloatPoint(x + width, y + height - nry * (1 - 0.552)), FloatPoint(x + width - nrx * (1 - 0.552), y + height), FloatPoint(x + width - nrx, y + height));
 
     if (nrx < width / 2)
-        path->lineTo(x + nrx, y + height);
+        path.addLineTo(FloatPoint(x + nrx, y + height));
 
-    path->curveTo(x + nrx * (1 - 0.552), y + height, x, y + height - nry * (1 - 0.552), x, y + height - nry);
+    path.addBezierCurveTo(FloatPoint(x + nrx * (1 - 0.552), y + height), FloatPoint(x, y + height - nry * (1 - 0.552)), FloatPoint(x, y + height - nry));
 
     if (nry < height / 2)
-        path->lineTo(x, y + nry);
+        path.addLineTo(FloatPoint(x, y + nry));
 
-    path->curveTo(x, y + nry * (1 - 0.552), x + nrx * (1 - 0.552), y, x + nrx, y);
+    path.addBezierCurveTo(FloatPoint(x, y + nry * (1 - 0.552)), FloatPoint(x + nrx * (1 - 0.552), y), FloatPoint(x + nrx, y));
 
-    path->closeSubpath();
+    path.closeSubpath();
+
     return path;
 }
 
-KCanvasPath* KCanvasCreator::createRectangle(float x, float y, float width, float height) const
+Path KCanvasCreator::createRectangle(const FloatRect& box) const
 {
-    KCanvasPath* path = renderingDevice()->createPath();
-    
-    if (width <= 0.0f || height <= 0.0f || !path)
+    Path path;
+    float x = box.x();
+    float y = box.y();
+    float width = box.width();
+    float height = box.height();
+    if (width < 0.0f || height < 0.0f)
         return path;
     
-    path->moveTo(x, y);
-    path->lineTo(x + width, y);
-    path->lineTo(x + width, y + height);
-    path->lineTo(x, y + height);
-    path->closeSubpath();
+    path.moveTo(FloatPoint(x, y));
+    path.addLineTo(FloatPoint(x + width, y));
+    path.addLineTo(FloatPoint(x + width, y + height));
+    path.addLineTo(FloatPoint(x, y + height));
+    path.closeSubpath();
+
     return path;
 }
 
-KCanvasPath* KCanvasCreator::createEllipse(float cx, float cy, float rx, float ry) const
+Path KCanvasCreator::createEllipse(const FloatPoint&c, float rx, float ry) const
 {
-    KCanvasPath* path = renderingDevice()->createPath();
-
-    if (rx <= 0.0f || ry <= 0.0f || !path)
+    float cx = c.x();
+    float cy = c.y();
+    Path path;
+    if (rx <= 0.0f || ry <= 0.0f)
         return path;
 
     // Ellipse creation - nice & clean agg2 code
@@ -134,29 +146,30 @@ KCanvasPath* KCanvasCreator::createEllipse(float cx, float cy, float rx, float r
 
         step++;
         if(step == 1)
-            path->moveTo(x, y);
+            path.moveTo(FloatPoint(x, y));
         else
-            path->lineTo(x, y);
+            path.addLineTo(FloatPoint(x, y));
     }
 
-    path->closeSubpath();
+    path.closeSubpath();
+
     return path;
 }
 
-KCanvasPath* KCanvasCreator::createCircle(float cx, float cy, float r) const
+Path KCanvasCreator::createCircle(const FloatPoint& c, float r) const
 {
-    return createEllipse(cx, cy, r, r);
+    return createEllipse(c, r, r);
 }
 
-KCanvasPath* KCanvasCreator::createLine(float x1, float y1, float x2, float y2) const
+Path KCanvasCreator::createLine(const FloatPoint& start, const FloatPoint& end) const
 {
-    KCanvasPath* path = renderingDevice()->createPath();
-    
-    if ((x1 == x2 && y1 == y2) || !path)
+    Path path;
+    if (start.x() == end.x() && start.y() == end.y())
         return path;
 
-    path->moveTo(x1, y1);
-    path->lineTo(x2, y2);
+    path.moveTo(start);
+    path.addLineTo(end);
+
     return path;
 }
 

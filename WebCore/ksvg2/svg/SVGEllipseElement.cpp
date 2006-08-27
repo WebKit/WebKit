@@ -24,6 +24,8 @@
 #ifdef SVG_SUPPORT
 #include "Attr.h"
 
+#include "FloatPoint.h"
+
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGEllipseElement.h"
@@ -82,12 +84,12 @@ void SVGEllipseElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-KCanvasPath* SVGEllipseElement::toPathData() const
+Path SVGEllipseElement::toPathData() const
 {
     float _cx = cx()->baseVal()->value(), _cy = cy()->baseVal()->value();
     float _rx = rx()->baseVal()->value(), _ry = ry()->baseVal()->value();
 
-    return KCanvasCreator::self()->createEllipse(_cx, _cy, _rx, _ry);
+    return KCanvasCreator::self()->createEllipse(FloatPoint(_cx, _cy), _rx, _ry);
 }
 
 const SVGStyledElement *SVGEllipseElement::pushAttributeContext(const SVGStyledElement *context)

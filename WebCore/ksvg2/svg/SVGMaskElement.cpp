@@ -28,7 +28,6 @@
 #include "GraphicsContext.h"
 #include "RenderSVGContainer.h"
 #include "KCanvasImage.h"
-#include "KCanvasPath.h"
 #include "KRenderingDevice.h"
 #include "SVGAnimatedLength.h"
 #include "SVGHelper.h"

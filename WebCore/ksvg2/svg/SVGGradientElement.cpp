@@ -111,8 +111,8 @@ void SVGGradientElement::notifyAttributeChange() const
     
     m_resource->invalidate();  // should this be added to build gradient?
     
-    const KCanvasItemList &clients = m_resource->clients();
-    for(KCanvasItemList::ConstIterator it = clients.begin(); it != clients.end(); ++it)
+    const RenderPathList &clients = m_resource->clients();
+    for(RenderPathList::ConstIterator it = clients.begin(); it != clients.end(); ++it)
     {
         const RenderPath *current = (*it);
         SVGStyledElement *styled = (current ? static_cast<SVGStyledElement *>(current->element()) : 0);

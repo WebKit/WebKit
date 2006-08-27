@@ -24,11 +24,14 @@
 #define KCanvasResources_H
 #ifdef SVG_SUPPORT
 
-#include <kcanvas/RenderPath.h>
-#include <kcanvas/KCanvasPath.h>
+#include "DeprecatedValueList.h"
+#include "Path.h"
+#include "RenderPath.h"
 #include <kcanvas/KCanvasResourceListener.h>
 
 namespace WebCore {
+
+typedef DeprecatedValueList<const RenderPath *> RenderPathList;
 
 class TextStream;
 
@@ -54,7 +57,7 @@ public:
     virtual void invalidate();
     void addClient(const RenderPath *item);
 
-    const KCanvasItemList &clients() const;
+    const RenderPathList &clients() const;
     
     DeprecatedString idInRegistry() const;
     void setIdInRegistry(const DeprecatedString& newId);
@@ -67,8 +70,32 @@ public:
     
     virtual TextStream& externalRepresentation(TextStream &) const; 
 private:
-    KCanvasItemList m_clients;
+    RenderPathList m_clients;
     DeprecatedString registryId;
+};
+
+// Clipping paths
+struct KCClipData
+{
+    WindRule windRule() const { return m_windRule; }
+    WindRule m_windRule;
+    bool bboxUnits : 1;
+    Path path;
+};
+
+class KCClipDataList : public DeprecatedValueList<KCClipData>
+{
+public:
+    KCClipDataList() { }
+
+    inline void addPath(const Path& pathData, WindRule windRule, bool bboxUnits)
+    {
+        KCClipData clipData;
+        clipData.bboxUnits = bboxUnits;
+        clipData.m_windRule = windRule;
+        clipData.path = pathData;
+        append(clipData);
+    }
 };
 
 class KCanvasClipper : public KCanvasResource
@@ -80,7 +107,7 @@ public:
     virtual bool isClipper() const { return true; }
 
     void resetClipData();
-    void addClipData(KCanvasPath *path, KCWindRule rule, bool bboxUnits);
+    void addClipData(const Path& path, WindRule rule, bool bboxUnits);
     
     virtual void applyClip(const FloatRect& boundingBox) const = 0;
 
@@ -146,6 +173,8 @@ private:
     bool m_useStrokeWidth;
 };
 
+
+
 KCanvasResource *getResourceById(Document *document, const AtomicString &id);
 KCanvasMarker *getMarkerById(Document *document, const AtomicString &id);
 KCanvasClipper *getClipperById(Document *document, const AtomicString &id);
@@ -153,6 +182,8 @@ KCanvasMasker *getMaskerById(Document *document, const AtomicString &id);
 KRenderingPaintServer *getPaintServerById(Document *document, const AtomicString &id);
 
 TextStream &operator<<(TextStream &ts, const KCanvasResource &r);
+TextStream &operator<<(TextStream &ts, WindRule rule);
+TextStream &operator<<(TextStream &ts, const KCClipData &d);
 
 }
 

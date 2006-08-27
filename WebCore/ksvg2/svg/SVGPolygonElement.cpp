@@ -39,20 +39,21 @@ SVGPolygonElement::~SVGPolygonElement()
 {
 }
 
-KCanvasPath* SVGPolygonElement::toPathData() const
+Path SVGPolygonElement::toPathData() const
 {
+    Path polyData;
     int len = points()->numberOfItems();
     if(len < 1)
-        return 0;
+        return polyData;
     
-    KCanvasPath* polyData = renderingDevice()->createPath();
-    polyData->moveTo(points()->getItem(0)->x(), points()->getItem(0)->y());
+    polyData.moveTo(FloatPoint(points()->getItem(0)->x(), points()->getItem(0)->y()));
     for (int i = 1; i < len; ++i) {
         SVGPoint *p = points()->getItem(i);
-        polyData->lineTo(p->x(), p->y());
+        polyData.addLineTo(FloatPoint(p->x(), p->y()));
     }
 
-    polyData->closeSubpath();
+    polyData.closeSubpath();
+
     return polyData;
 }
 

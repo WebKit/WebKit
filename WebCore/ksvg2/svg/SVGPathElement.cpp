@@ -379,14 +379,14 @@ SVGPathSegList *SVGPathElement::animatedNormalizedPathSegList() const
 }
 
 // FIXME: This probably belongs on SVGPathSegList instead. -- ecs 12/5/05
-KCanvasPath* SVGPathElement::toPathData() const
+Path SVGPathElement::toPathData() const
 {
+    Path pathData;
     // TODO : also support non-normalized mode, at least in dom structure
     int len = pathSegList()->numberOfItems();
     if(len < 1)
-        return 0;
+        return pathData;
 
-    KCanvasPath* pathData = renderingDevice()->createPath();
     for(int i = 0; i < len; ++i)
     {
         SVGPathSeg *p = pathSegList()->getItem(i);
@@ -395,25 +395,25 @@ KCanvasPath* SVGPathElement::toPathData() const
             case PATHSEG_MOVETO_ABS:
             {
                 SVGPathSegMovetoAbs *moveTo = static_cast<SVGPathSegMovetoAbs *>(p);
-                pathData->moveTo(moveTo->x(), moveTo->y());
+                pathData.moveTo(FloatPoint(moveTo->x(), moveTo->y()));
                 break;
             }
             case PATHSEG_LINETO_ABS:
             {
                 SVGPathSegLinetoAbs *lineTo = static_cast<SVGPathSegLinetoAbs *>(p);
-                pathData->lineTo(lineTo->x(), lineTo->y());
+                pathData.addLineTo(FloatPoint(lineTo->x(), lineTo->y()));
                 break;
             }
             case PATHSEG_CURVETO_CUBIC_ABS:
             {
                 SVGPathSegCurvetoCubicAbs *curveTo = static_cast<SVGPathSegCurvetoCubicAbs *>(p);
-                pathData->curveTo(curveTo->x1(), curveTo->y1(),
-                                 curveTo->x2(), curveTo->y2(),
-                                 curveTo->x(), curveTo->y());
+                pathData.addBezierCurveTo(FloatPoint(curveTo->x1(), curveTo->y1()),
+                                 FloatPoint(curveTo->x2(), curveTo->y2()),
+                                 FloatPoint(curveTo->x(), curveTo->y()));
                 break;
             }
             case PATHSEG_CLOSEPATH:
-                pathData->closeSubpath();
+                pathData.closeSubpath();
             default:
                 break;
         }

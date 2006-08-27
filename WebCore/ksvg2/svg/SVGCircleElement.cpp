@@ -24,6 +24,8 @@
 #ifdef SVG_SUPPORT
 #include "Attr.h"
 
+#include "FloatPoint.h"
+
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGCircleElement.h"
@@ -75,12 +77,12 @@ void SVGCircleElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-KCanvasPath* SVGCircleElement::toPathData() const
+Path SVGCircleElement::toPathData() const
 {
     float _cx = cx()->baseVal()->value(), _cy = cy()->baseVal()->value();
     float _r = r()->baseVal()->value();
 
-    return KCanvasCreator::self()->createCircle(_cx, _cy, _r);
+    return KCanvasCreator::self()->createCircle(FloatPoint(_cx, _cy), _r);
 }
 
 const SVGStyledElement *SVGCircleElement::pushAttributeContext(const SVGStyledElement *context)

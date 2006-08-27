@@ -24,7 +24,7 @@
 #define KRenderingFillPainter_H
 #ifdef SVG_SUPPORT
 
-#include <kcanvas/KCanvasPath.h>
+#include "Path.h"
 
 namespace WebCore {
 
@@ -36,8 +36,8 @@ public:
     KRenderingFillPainter();
     virtual ~KRenderingFillPainter();
 
-    KCWindRule fillRule() const;
-    void setFillRule(KCWindRule rule);
+    WindRule fillRule() const;
+    void setFillRule(WindRule rule);
 
     float opacity() const;
     void setOpacity(float opacity);

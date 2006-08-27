@@ -1,3 +1,141 @@
+2006-08-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10557
+        KCanvasPath should be replace by platform/Path
+
+        Refactoring out the KCanvasPath class.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasCreator.cpp:
+        (WebCore::KCanvasCreator::createRoundedRectangle):
+        (WebCore::KCanvasCreator::createRectangle):
+        (WebCore::KCanvasCreator::createEllipse):
+        (WebCore::KCanvasCreator::createCircle):
+        (WebCore::KCanvasCreator::createLine):
+        * kcanvas/KCanvasCreator.h:
+        * kcanvas/KCanvasPath.cpp: Removed.
+        * kcanvas/KCanvasPath.h: Removed.
+        * kcanvas/KCanvasResources.cpp:
+        (WebCore::operator<<):
+        (WebCore::KCanvasResource::clients):
+        (WebCore::KCanvasResource::invalidate):
+        (WebCore::KCanvasClipper::addClipData):
+        * kcanvas/KCanvasResources.h:
+        (WebCore::KCClipData::windRule):
+        (WebCore::KCClipDataList::KCClipDataList):
+        (WebCore::KCClipDataList::addPath):
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (WebCore::operator<<):
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::fillContains):
+        (WebCore::RenderPath::relativeBBox):
+        (WebCore::RenderPath::setPath):
+        (WebCore::RenderPath::path):
+        (WebCore::RenderPath::paint):
+        (WebCore::RenderPath::nodeAtPoint):
+        * kcanvas/RenderPath.h:
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/KRenderingFillPainter.cpp:
+        (WebCore::KRenderingFillPainter::fillRule):
+        (WebCore::KRenderingFillPainter::setFillRule):
+        * kcanvas/device/KRenderingFillPainter.h:
+        * kcanvas/device/qt/KCanvasClipperQt.cpp:
+        (WebCore::KCanvasClipperQt::applyClip):
+        * kcanvas/device/qt/KCanvasPathQt.cpp: Removed.
+        * kcanvas/device/qt/KCanvasPathQt.h: Removed.
+        * kcanvas/device/qt/KRenderingDeviceQt.cpp:
+        (WebCore::KRenderingDeviceContextQt::addPath):
+        (WebCore::KRenderingDeviceContextQt::setFillRule):
+        (WebCore::KRenderingDeviceQt::createItem):
+        * kcanvas/device/qt/KRenderingDeviceQt.h:
+        * kcanvas/device/qt/RenderPathQt.cpp:
+        (WebCore::RenderPathQt::drawMarkersIfNeeded):
+        (WebCore::RenderPathQt::strokeContains):
+        (WebCore::getPathStroke):
+        (WebCore::RenderPathQt::strokeBBox):
+        * kcanvas/device/qt/RenderPathQt.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (WebCore::KCanvasItemQuartz::drawMarkersIfNeeded):
+        (WebCore::KCanvasItemQuartz::strokeBBox):
+        (WebCore::KCanvasItemQuartz::strokeContains):
+        * kcanvas/device/quartz/KCanvasPathQuartz.h: Removed.
+        * kcanvas/device/quartz/KCanvasPathQuartz.mm: Removed.
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (WebCore::KCanvasClipperQuartz::applyClip):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceContextQuartz::addPath):
+        (WebCore::KRenderingDeviceQuartz::createItem):
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (WebCore::scratchContext):
+        (WebCore::strokeBoundingBox):
+        (WebCore::pathContainsPoint):
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::InheritedFlags::):
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::fillPainter):
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (SVGCircleElement::toPathData):
+        * ksvg2/svg/SVGCircleElement.h:
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (SVGClipPathElement::canvasResource):
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::toPathData):
+        * ksvg2/svg/SVGEllipseElement.h:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (SVGGradientElement::notifyAttributeChange):
+        * ksvg2/svg/SVGImageElement.cpp:
+        * ksvg2/svg/SVGLineElement.cpp:
+        (SVGLineElement::toPathData):
+        * ksvg2/svg/SVGLineElement.h:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::toPathData):
+        * ksvg2/svg/SVGPathElement.h:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::notifyClientsToRepaint):
+        * ksvg2/svg/SVGPolygonElement.cpp:
+        (SVGPolygonElement::toPathData):
+        * ksvg2/svg/SVGPolygonElement.h:
+        * ksvg2/svg/SVGPolylineElement.cpp:
+        (SVGPolylineElement::toPathData):
+        * ksvg2/svg/SVGPolylineElement.h:
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::toPathData):
+        * ksvg2/svg/SVGRectElement.h:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::createRenderer):
+        * ksvg2/svg/SVGStyledElement.h:
+        (WebCore::SVGStyledElement::toPathData):
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        * ksvg2/svg/SVGTextElement.cpp:
+        * platform/Path.h:
+        (WebCore::):
+        (WebCore::Path::setWindingRule):
+        (WebCore::Path::windingRule):
+        * platform/cg/PathCG.cpp:
+        (WebCore::Path::contains):
+        (WebCore::Path::isEmpty):
+        (WebCore::CGPathToCFStringApplierFunction):
+        (WebCore::CFStringFromCGPath):
+        (WebCore::Path::debugString):
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::openURL):
+        * platform/qt/PathQt.cpp:
+        (WebCore::Path::contains):
+        (WebCore::Path::isEmpty):
+        (WebCore::Path::debugString):
+
 2006-08-26  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by hyatt.

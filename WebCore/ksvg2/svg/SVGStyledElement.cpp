@@ -68,10 +68,10 @@ SVGAnimatedString* SVGStyledElement::className() const
 
 RenderObject* SVGStyledElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    RefPtr<KCanvasPath> pathData = toPathData();
-    if (!pathData)
+    Path pathData = toPathData();
+    if (pathData.isEmpty())
         return 0;
-    return renderingDevice()->createItem(arena, style, this, pathData.get());
+    return renderingDevice()->createItem(arena, style, this, pathData);
 }
 
 void SVGStyledElement::parseMappedAttribute(MappedAttribute* attr)

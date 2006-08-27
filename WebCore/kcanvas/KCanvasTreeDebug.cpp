@@ -291,7 +291,7 @@ static TextStream &operator<<(TextStream &ts, const RenderPath &o)
     
     writeStyle(ts, o);
     
-    ts << " [data=\"" << renderingDevice()->stringForPath(o.path()) << "\"]";
+    ts << " [data=\"" << o.path().debugString() << "\"]";
     
     return ts;
 }

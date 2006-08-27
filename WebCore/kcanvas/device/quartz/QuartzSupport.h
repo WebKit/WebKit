@@ -29,9 +29,15 @@
 
 namespace WebCore {
 
+typedef struct CGPath *CGMutablePathRef;
+
+class Path;
 class IntRect;
+class FloatRect;
+class FloatPoint;
 class RenderStyle;
 class RenderObject;
+class KRenderingStrokePainter;
 
 #ifndef NDEBUG
 void debugDumpCGImageToFile(NSString *filename, CGImageRef image, int width, int height);
@@ -45,6 +51,9 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
 
 void applyStrokeStyleToContext(CGContextRef, const KRenderingStrokePainter&);
 void applyStrokeStyleToContext(CGContextRef, RenderStyle*, const RenderObject*);
+
+FloatRect strokeBoundingBox(const Path& path, const KRenderingStrokePainter& strokePainter);
+bool pathContainsPoint(CGMutablePathRef cgPath, const FloatPoint& point, CGPathDrawingMode drawMode);
 
 static inline CGLineCap CGLineCapFromKC(KCCapStyle cap)
 {

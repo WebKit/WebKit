@@ -34,7 +34,7 @@ namespace WebCore
         SVGPolylineElement(const QualifiedName&, Document*);
         virtual ~SVGPolylineElement();
 
-        virtual KCanvasPath* toPathData() const;
+        virtual Path toPathData() const;
     };
 
 } // namespace WebCore

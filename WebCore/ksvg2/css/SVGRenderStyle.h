@@ -78,11 +78,11 @@ namespace WebCore {
         SVG_RS_DEFINE_ATTRIBUTE(EDominantBaseline, DominantBaseline, dominantBaseline, DB_AUTO)
 
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(ECapStyle, CapStyle, capStyle, CS_BUTT)
-        SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EWindRule, ClipRule, clipRule, WR_NONZERO)
+        SVG_RS_DEFINE_ATTRIBUTE_INHERITED(WindRule, ClipRule, clipRule, RULE_NONZERO)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EColorInterpolation, ColorInterpolation, colorInterpolation, CI_SRGB)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EColorInterpolation, ColorInterpolationFilters, colorInterpolationFilters, CI_LINEARRGB)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EColorRendering, ColorRendering, colorRendering, CR_AUTO)
-        SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EWindRule, FillRule, fillRule, WR_NONZERO)
+        SVG_RS_DEFINE_ATTRIBUTE_INHERITED(WindRule, FillRule, fillRule, RULE_NONZERO)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EImageRendering, ImageRendering, imageRendering, IR_AUTO)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EJoinStyle, JoinStyle, joinStyle, JS_MITER)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EPointerEvents, PointerEvents, pointerEvents, PE_VISIBLE_PAINTED)
@@ -129,8 +129,8 @@ namespace WebCore {
                     unsigned _imageRendering : 2; // EImageRendering 
                     unsigned _shapeRendering : 2; // EShapeRendering 
                     unsigned _textRendering : 2; // ETextRendering
-                    unsigned _clipRule : 1; // EWindRule
-                    unsigned _fillRule : 1; // EWindRule
+                    unsigned _clipRule : 1; // WindRule
+                    unsigned _fillRule : 1; // WindRule
                     unsigned _capStyle : 2; // ECapStyle
                     unsigned _joinStyle : 2; // EJoinStyle
                     unsigned _textAnchor : 2; // ETextAnchor

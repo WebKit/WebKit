@@ -100,7 +100,7 @@ void SVGRectElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-KCanvasPath* SVGRectElement::toPathData() const
+Path SVGRectElement::toPathData() const
 {
     float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
     float _width = width()->baseVal()->value(), _height = height()->baseVal()->value();
@@ -111,10 +111,10 @@ KCanvasPath* SVGRectElement::toPathData() const
     {
         float _rx = hasRx ? rx()->baseVal()->value() : ry()->baseVal()->value();
         float _ry = hasRy ? ry()->baseVal()->value() : rx()->baseVal()->value();
-        return KCanvasCreator::self()->createRoundedRectangle(_x, _y, _width, _height, _rx, _ry);
+        return KCanvasCreator::self()->createRoundedRectangle(FloatRect(_x, _y, _width, _height), FloatSize(_rx, _ry));
     }
 
-    return KCanvasCreator::self()->createRectangle(_x, _y, _width, _height);
+    return KCanvasCreator::self()->createRectangle(FloatRect(_x, _y, _width, _height));
 }
 
 const SVGStyledElement *SVGRectElement::pushAttributeContext(const SVGStyledElement *context)

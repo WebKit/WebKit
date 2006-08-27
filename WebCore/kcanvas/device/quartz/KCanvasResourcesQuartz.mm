@@ -32,7 +32,6 @@
 #import "GraphicsContext.h"
 #import "KCanvasFilterQuartz.h"
 #import "KCanvasMaskerQuartz.h"
-#import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 #import "QuartzSupport.h"
 
@@ -46,7 +45,7 @@ void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const
         return;
 
     BOOL heterogenousClipRules = NO;
-    KCWindRule clipRule = m_clipData[0].windRule();
+    WindRule clipRule = m_clipData[0].windRule();
 
     context->clearPath();
 
@@ -57,8 +56,7 @@ void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const
         if (data.windRule() != clipRule)
             heterogenousClipRules = YES;
         
-        KCanvasPathQuartz *path = static_cast<KCanvasPathQuartz*>(data.path.get());        
-        CGPathRef clipPath = static_cast<KCanvasPathQuartz*>(path)->cgPath();
+        CGPathRef clipPath = data.path.platformPath();
 
         if (data.bboxUnits) {
             CGMutablePathRef transformedPath = CGPathCreateMutable();

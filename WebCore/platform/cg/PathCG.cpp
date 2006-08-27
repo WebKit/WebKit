@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ *                     2006 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,7 @@
 #if PLATFORM(CG)
 
 #include "FloatRect.h"
+#include "PlatformString.h"
 #include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
@@ -56,9 +58,9 @@ Path& Path::operator=(const Path& other)
     return *this;
 }
 
-bool Path::contains(const FloatPoint& point) const
+bool Path::contains(const FloatPoint &point, WindRule rule) const
 {
-    return CGPathContainsPoint(m_path, 0, point, false);
+    return CGPathContainsPoint(m_path, 0, point, rule == RULE_EVENODD ? true : false);
 }
 
 void Path::translate(const FloatSize& size)
@@ -124,6 +126,63 @@ void Path::clear()
 {
     CGPathRelease(m_path);
     m_path = CGPathCreateMutable();
+}
+
+bool Path::isEmpty() const
+{
+    return CGPathIsEmpty(m_path);
+ }
+
+void CGPathToCFStringApplierFunction(void *info, const CGPathElement *element)
+{
+    CFMutableStringRef string = (CFMutableStringRef)info;
+    CFStringRef typeString = CFSTR("");
+    CGPoint *points = element->points;
+    switch(element->type) {
+    case kCGPathElementMoveToPoint:
+        CFStringAppendFormat(string, 0, CFSTR("M%.2f,%.2f"), points[0].x, points[0].y);
+        break;
+    case kCGPathElementAddLineToPoint:
+        CFStringAppendFormat(string, 0, CFSTR("L%.2f,%.2f"), points[0].x, points[0].y);
+        break;
+    case kCGPathElementAddQuadCurveToPoint:
+        CFStringAppendFormat(string, 0, CFSTR("Q%.2f,%.2f,%.2f,%.2f"),
+                points[0].x, points[0].y, points[1].x, points[1].y);
+        break;
+    case kCGPathElementAddCurveToPoint:
+        CFStringAppendFormat(string, 0, CFSTR("C%.2f,%.2f,%.2f,%.2f,%.2f,%.2f"),
+                points[0].x, points[0].y, points[1].x, points[1].y,
+                points[2].x, points[2].y);
+        break;
+    case kCGPathElementCloseSubpath:
+        typeString = CFSTR("X"); break;
+    }
+}
+
+CFStringRef CFStringFromCGPath(CGPathRef path)
+{
+    if (!path)
+        return 0;
+
+    CFMutableStringRef string = CFStringCreateMutable(NULL, 0);
+    CGPathApply(path, string, CGPathToCFStringApplierFunction);
+
+    return string;
+}
+
+
+#pragma mark -
+#pragma mark Path Management
+
+String Path::debugString() const
+{
+    String result;
+    if (!isEmpty()) {
+        CFStringRef pathString = CFStringFromCGPath(m_path);
+        result = String(pathString);
+        CFRelease(pathString);
+    }
+    return result;
 }
 
 }

@@ -23,7 +23,6 @@
 
 #include "config.h"
 
-#include "KCanvasPathQt.h"
 #include "KCanvasClipperQt.h"
 #include "KRenderingDeviceQt.h"
 
@@ -41,14 +40,14 @@ void KCanvasClipperQt::applyClip(const FloatRect& boundingBox) const
     QPainterPath newPath;
 
     bool heterogenousClipRules = false;
-    KCWindRule clipRule = m_clipData[0].windRule();
+    WindRule clipRule = m_clipData[0].windRule();
 
     for (unsigned int x = 0; x < m_clipData.count(); x++) {
         KCClipData clipData = m_clipData[x];
         if (clipData.windRule() != clipRule)
             heterogenousClipRules = true;
        
-        QPainterPath path = static_cast<KCanvasPathQt*>(clipData.path.get())->qtPath(); 
+        QPainterPath path = *(clipData.path.platformPath());
         if (path.isEmpty())
             continue;
 

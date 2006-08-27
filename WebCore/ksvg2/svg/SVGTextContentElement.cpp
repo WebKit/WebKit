@@ -30,6 +30,8 @@
 #include "SVGTextContentElement.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedEnumeration.h"
+#include "FloatPoint.h"
+#include "FloatRect.h"
 
 using namespace WebCore;
 
