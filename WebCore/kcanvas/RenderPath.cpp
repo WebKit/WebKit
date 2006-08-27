@@ -263,15 +263,73 @@ void RenderPath::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int
     rects.append(getAbsoluteRepaintRect());
 }
 
+RenderPath::PointerEventsHitRules RenderPath::pointerEventsHitRules()
+{
+    PointerEventsHitRules hitRules;
+    
+    switch (style()->svgStyle()->pointerEvents())
+    {
+        case PE_VISIBLE_PAINTED:
+            hitRules.requireVisible = true;
+            hitRules.requireFill = true;
+            hitRules.requireStroke = true;
+            hitRules.canHitFill = true;
+            hitRules.canHitStroke = true;
+            break;
+        case PE_VISIBLE_FILL:
+            hitRules.requireVisible = true;
+            hitRules.canHitFill = true;
+            break;
+        case PE_VISIBLE_STROKE:
+            hitRules.requireVisible = true;
+            hitRules.canHitStroke = true;
+            break;
+        case PE_VISIBLE:
+            hitRules.requireVisible = true;
+            hitRules.canHitFill = true;
+            hitRules.canHitStroke = true;
+            break;
+        case PE_PAINTED:
+            hitRules.requireFill = true;
+            hitRules.requireStroke = true;
+            hitRules.canHitFill = true;
+            hitRules.canHitStroke = true;
+            break;
+        case PE_FILL:
+            hitRules.canHitFill = true;
+            break;
+        case PE_STROKE:
+            hitRules.canHitStroke = true;
+            break;
+        case PE_ALL:
+            hitRules.canHitFill = true;
+            hitRules.canHitStroke = true;
+            break;
+        case PE_NONE:
+            // nothing to do here, defaults are all false.
+            break;
+    }
+    return hitRules;
+}
+
 bool RenderPath::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     // We only draw in the forground phase, so we only hit-test then.
     if (hitTestAction != HitTestForeground)
         return false;
-
-    if (strokeContains(FloatPoint(_x, _y)) || fillContains(FloatPoint(_x, _y))) {
-        setInnerNode(info);
-        return true;
+    
+    PointerEventsHitRules hitRules = pointerEventsHitRules();
+    
+    bool isVisible = (style()->visibility() == VISIBLE);
+    if (isVisible || !hitRules.requireVisible) {
+        bool hasFill = (style()->svgStyle()->fillPaint() && style()->svgStyle()->fillPaint()->paintType() != SVG_PAINTTYPE_NONE);
+        bool hasStroke = (style()->svgStyle()->strokePaint() && style()->svgStyle()->strokePaint()->paintType() != SVG_PAINTTYPE_NONE);
+        FloatPoint hitPoint(_x,_y);
+        if ((hitRules.canHitStroke && (hasStroke || !hitRules.requireStroke) && strokeContains(hitPoint))
+            || (hitRules.canHitFill && (hasFill || !hitRules.requireFill) && fillContains(hitPoint))) {
+            setInnerNode(info);
+            return true;
+        }
     }
     return false;
 }

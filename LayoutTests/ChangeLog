@@ -1,3 +1,15 @@
+2006-08-26  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by hyatt.
+        
+        Test case for: pointer-events does not work.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10415
+
+        * svg/custom/pointer-events-path-expected.checksum: Added.
+        * svg/custom/pointer-events-path-expected.png: Added.
+        * svg/custom/pointer-events-path-expected.txt: Added.
+        * svg/custom/pointer-events-path.svg: Added.
+
 2006-08-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

@@ -1,3 +1,25 @@
+2006-08-26  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by hyatt.
+
+        pointer-events attribute does not work.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10415
+
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::pointerEventsHitRules): new function to contain pointer-events hit logic
+        (WebCore::RenderPath::nodeAtPoint): respect pointer-events property
+        * kcanvas/RenderPath.h:
+        (WebCore::RenderPath::PointerEventsHitRules::PointerEventsHitRules):
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * ksvg2/svg/SVGPaint.cpp: Fix this to use a real enum value
+        (WebCore::SVGPaint::SVGPaint):
+        (WebCore::SVGPaint::paintType):
+        (WebCore::SVGPaint::uri):
+        (WebCore::SVGPaint::setUri):
+        (WebCore::SVGPaint::setPaint):
+        * ksvg2/svg/SVGPaint.h:
+
 2006-08-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

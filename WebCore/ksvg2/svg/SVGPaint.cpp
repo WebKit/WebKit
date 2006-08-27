@@ -29,27 +29,27 @@ namespace WebCore {
 
 SVGPaint::SVGPaint()
     : SVGColor()
+    , m_paintType(SVG_PAINTTYPE_UNKNOWN)
 {
-    m_paintType = SVG_PAINTTYPE_UNKNOWN;
 }
 
-SVGPaint::SVGPaint(StringImpl *uri)
+SVGPaint::SVGPaint(StringImpl* uri)
     : SVGColor()
+    , m_paintType(SVG_PAINTTYPE_URI)
 {
-    m_paintType = SVG_PAINTTYPE_URI;
     setUri(uri);
 }
 
-SVGPaint::SVGPaint(unsigned short paintType)
+SVGPaint::SVGPaint(SVGPaintType paintType)
     : SVGColor()
+    , m_paintType(paintType)
 {
-    m_paintType = paintType;
 }
 
-SVGPaint::SVGPaint(unsigned short paintType, StringImpl *uri, StringImpl *rgbPaint, StringImpl *)
+SVGPaint::SVGPaint(SVGPaintType paintType, StringImpl* uri, StringImpl* rgbPaint, StringImpl*)
     : SVGColor(rgbPaint)
+    , m_paintType(paintType)
 {
-    m_paintType = paintType;
     setUri(uri);
 }
 
@@ -57,22 +57,22 @@ SVGPaint::~SVGPaint()
 {
 }
 
-unsigned short SVGPaint::paintType() const
+SVGPaintType SVGPaint::paintType() const
 {
     return m_paintType;
 }
 
-StringImpl *SVGPaint::uri() const
+StringImpl* SVGPaint::uri() const
 {
     return m_uri.impl();
 }
 
-void SVGPaint::setUri(StringImpl *uri)
+void SVGPaint::setUri(StringImpl* uri)
 {
     m_uri = uri;
 }
 
-void SVGPaint::setPaint(unsigned short paintType, StringImpl *uri, StringImpl *rgbPaint, StringImpl *)
+void SVGPaint::setPaint(SVGPaintType paintType, StringImpl* uri, StringImpl* rgbPaint, StringImpl*)
 {
     m_paintType = paintType;
 

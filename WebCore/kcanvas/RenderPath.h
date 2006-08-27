@@ -71,13 +71,32 @@ public:
     virtual void absoluteRects(DeprecatedValueList<IntRect>& rects, int tx, int ty);
 
     virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
+    
+    // FIXME: When the other SVG classes get pointer-events support this should be moved elsewhere
+    struct PointerEventsHitRules {
+        PointerEventsHitRules()
+        : requireVisible(false)
+        , requireFill(false)
+        , requireStroke(false)
+        , canHitStroke(false)
+        , canHitFill(false)
+    {}
+        
+        bool requireVisible;
+        bool requireFill;
+        bool requireStroke;
+        bool canHitStroke;
+        bool canHitFill;  
+    };
 
 protected:
     virtual void drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const KCanvasPath*) const = 0;
 
 private:
     FloatRect strokeBBox() const;
-    FloatPoint mapAbsolutePointToLocal(const FloatPoint& point) const;
+    FloatPoint mapAbsolutePointToLocal(const FloatPoint&) const;
+    
+    PointerEventsHitRules pointerEventsHitRules();
 
     class Private;
     Private *d;
