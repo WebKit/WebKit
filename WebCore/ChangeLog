@@ -2,6 +2,35 @@
 
         Reviewed and landed by Anders.
 
+        Remove most annoying notImplemented() usages and
+        implement some missing ScrollViewQt functions.
+        Much nicer output when invoking run-webkit-tests.
+
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::saveDocumentState):
+        (WebCore::FrameQt::restoreDocumentState):
+        (WebCore::FrameQt::clearUndoRedoOperations):
+        (WebCore::FrameQt::partClearedInBegin):
+        * platform/qt/ResourceLoaderManager.cpp:
+        (WebCore::headerCallback):
+        (WebCore::ResourceLoaderManager::downloadTimerCallback):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::suppressScrollBars):
+        (WebCore::ScrollView::setStaticBackground):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::historyContains):
+        (WebCore::CheckCacheObjectStatus):
+        (WebCore::CheckIfReloading):
+        (loadResourceIntoArray):
+        (WebCore::PlugInInfoStore::supportsMIMEType):
+
+2006-08-27  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by Anders.
+
         Fix Qt build (add SVGMetaDataElement.cpp to build system)
 
         * CMakeLists.txt:

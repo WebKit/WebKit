@@ -68,6 +68,7 @@ void ScrollView::setParentWidget(QWidget* parent)
 
 void ScrollView::updateContents(const IntRect& updateRect, bool now)
 {
+    // FIXME: We don't force updating with now=true here...
     if (m_area->widget())
         m_area->widget()->update(updateRect);
 }
@@ -184,7 +185,8 @@ ScrollBarMode ScrollView::vScrollBarMode() const
 
 void ScrollView::suppressScrollBars(bool suppressed, bool repaintOnSuppress)
 {
-    notImplemented();
+    // FIXME: Is this correct?
+    setScrollBarsMode(ScrollBarAlwaysOff);
 }
 
 void ScrollView::setHScrollBarMode(ScrollBarMode newMode)
@@ -227,7 +229,7 @@ void ScrollView::setScrollBarsMode(ScrollBarMode newMode)
 
 void ScrollView::setStaticBackground(bool flag)
 {
-    notImplemented();
+    // no-op
 }
 
 void ScrollView::addChild(Widget* child, int x, int y)
@@ -235,12 +237,16 @@ void ScrollView::addChild(Widget* child, int x, int y)
     Q_ASSERT(child != 0);
     Q_ASSERT(m_area && m_area->widget());
 
+    // Ignore offscreen position initialization
+    if (x != -500000)
+        child->move(x, y);
+
     child->setParentWidget(m_area->widget());
 }
 
 void ScrollView::removeChild(Widget*)
 { 
-    notImplemented();
+    // no-op
 }
 
 void ScrollView::scrollPointRecursively(int x, int y)

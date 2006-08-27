@@ -138,12 +138,12 @@ void PlatformScrollBar::setRect(const IntRect&) { notImplemented(); }
 
 PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
 
-void CheckCacheObjectStatus(DocLoader*, CachedResource*) { notImplemented(); }
-bool CheckIfReloading(WebCore::DocLoader*) { notImplemented(); return false; }
+void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
+bool CheckIfReloading(WebCore::DocLoader*) { return false; }
 Vector<char> ServeSynchronousRequest(Loader*, DocLoader*, ResourceLoader*, KURL&, DeprecatedString&) { notImplemented(); return Vector<char>(); }
 }
 
-bool WebCore::historyContains(DeprecatedString const&) { notImplemented(); return false; }
+bool WebCore::historyContains(DeprecatedString const&) { return false; }
 String WebCore::submitButtonDefaultLabel() { return "Submit"; }
 String WebCore::inputElementAltText() { return DeprecatedString(); }
 String WebCore::resetButtonDefaultLabel() { return "Reset"; }
@@ -168,11 +168,11 @@ void FrameView::updateBorder() { notImplemented(); }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 
-Vector<char> loadResourceIntoArray(const char* ) { notImplemented(); return Vector<char>(); }
+Vector<char> loadResourceIntoArray(const char*) { return Vector<char>(); }
 
 PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0; }
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
-bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { notImplemented(); return false; }
+bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { return false; }
 
 FileButton::FileButton(Frame*) { notImplemented(); }
 void FileButton::click(bool) { notImplemented(); }

@@ -72,7 +72,6 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* obj)
 static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* obj)
 {
     ResourceLoader* job = static_cast<ResourceLoader*>(obj);
-    ResourceLoaderInternal* d = job->getInternal();
  
     if (job->method() == "POST")
         job->receivedResponse(ptr);
@@ -116,14 +115,8 @@ void ResourceLoaderManager::downloadTimerCallback(Timer<ResourceLoaderManager>* 
         retval = ::select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
         switch (retval) {
             case -1:                        // select error
-#ifndef NDEBUG
-                printf("%s, select error(%d)\n", __PRETTY_FUNCTION__,retval);
-#endif
                 /* fallthrough*/
             case 0:                 // select timeout
-#ifndef NDEBUG
-                printf("%s, select timeout %d\n", __PRETTY_FUNCTION__,retval);
-#endif
                 /* fallthrough. this can be the first perform to be made */
             default:                        // 1+ descriptors have data
                 while (CURLM_CALL_MULTI_PERFORM == curl_multi_perform(curlMultiHandle, &nrunning))
@@ -132,7 +125,6 @@ void ResourceLoaderManager::downloadTimerCallback(Timer<ResourceLoaderManager>* 
 
         // check the curl messages indicating completed transfers
         // and free their resources
-        ResourceLoader* job;
         int nmsgs;
         while (CURLMsg* msg = curl_multi_info_read(curlMultiHandle, &nmsgs)) {
             if (msg->msg == CURLMSG_DONE) {
