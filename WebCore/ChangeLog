@@ -3,7 +3,7 @@
         Reviewed by Anders
 
         -Changed all of the commonly used queries to keep around pre-prepared statements and bind
-        their arguments instead of constructing a messy.  
+        their arguments instead of constructing a new, messy, string appended statement each time
         -Changed some code in pruneUnretainedIconsOnStartup regarding transactions
 
         * loader/icon/IconDatabase.cpp:
