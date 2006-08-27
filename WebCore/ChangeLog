@@ -1,3 +1,29 @@
+2006-08-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        -Changed all of the commonly used queries to keep around pre-prepared statements and bind
+        their arguments instead of constructing a messy.  
+        -Changed some code in pruneUnretainedIconsOnStartup regarding transactions
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase): Initializers
+        (WebCore::IconDatabase::close): Wipe all the preprepared statements
+        (WebCore::IconDatabase::pruneUnretainedIconsOnStartup): Better handling of transactions
+        (WebCore::readySQLStatement): Make sure a preprepared statement is ready to go for a fooQuery()
+        (WebCore::IconDatabase::pageURLTableIsEmptyQuery): Added a comment
+        (WebCore::IconDatabase::imageDataForIconURLQuery): Use preprepared statement + binding
+        (WebCore::IconDatabase::timeStampForIconURLQuery): ditto
+        (WebCore::IconDatabase::iconURLForPageURLQuery): ditto
+        (WebCore::IconDatabase::forgetPageURLQuery): ditto
+        (WebCore::IconDatabase::setIconIDForPageURLQuery): ditto
+        (WebCore::IconDatabase::getIconIDForIconURLQuery): ditto
+        (WebCore::IconDatabase::addIconForIconURLQuery): ditto
+        (WebCore::IconDatabase::hasIconForIconURLQuery): ditto
+        * loader/icon/IconDatabase.h: Added fooQuery() and *m_fooStatements
+        * loader/icon/SQLStatement.h:
+        (WebCore::SQLStatement::database): Added
+
 2006-08-27  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

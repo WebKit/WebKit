@@ -149,6 +149,42 @@ private:
     // Releases an iconURL, putting it on the pending delete queue if it's totally released
     void releaseIconURL(const String& iconURL);
     
+    // Query - Checks for at least 1 entry in the PageURL table
+    bool pageURLTableIsEmptyQuery(SQLDatabase&);
+    
+    // Query - Returns the time stamp for an Icon entry
+    int timeStampForIconURLQuery(SQLDatabase&, const String& iconURL);    
+    SQLStatement *m_timeStampForIconURLStatement;
+    
+    // Query - Returns the IconURL for a PageURL
+    String iconURLForPageURLQuery(SQLDatabase&, const String& pageURL);    
+    SQLStatement *m_iconURLForPageURLStatement;
+    
+    // Query - Checks for the existence of the given IconURL in the Icon table
+    bool hasIconForIconURLQuery(SQLDatabase& db, const String& iconURL);
+    SQLStatement *m_hasIconForIconURLStatement;
+    
+    // Query - Deletes a PageURL from the PageURL table
+    void forgetPageURLQuery(SQLDatabase& db, const String& pageURL);
+    SQLStatement *m_forgetPageURLStatement;
+    
+    // Query - Sets the Icon.iconID for a PageURL in the PageURL table
+    void setIconIDForPageURLQuery(SQLDatabase& db, int64_t, const String&);
+    SQLStatement *m_setIconIDForPageURLStatement;
+    
+    // Query - Returns the iconID for the given IconURL
+    int64_t getIconIDForIconURLQuery(SQLDatabase& db, const String& iconURL);
+    SQLStatement *m_getIconIDForIconURLStatement;
+    
+    // Query - Creates the Icon entry for the given IconURL and returns the resulting iconID
+    int64_t addIconForIconURLQuery(SQLDatabase& db, const String& iconURL);
+    SQLStatement *m_addIconForIconURLStatement;
+    
+    // Query - Returns the image data from the given database for the given IconURL
+    void imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, Vector<unsigned char>& result);
+    SQLStatement *m_imageDataForIconURLStatement;
+
+
     // FIXME: This method is currently implemented in WebCoreIconDatabaseBridge so we can be in ObjC++ and fire off a loader in Webkit
     // Once all of the loader logic is sufficiently moved into WebCore we need to move this implementation to IconDatabase.cpp
     // using WebCore-style loaders

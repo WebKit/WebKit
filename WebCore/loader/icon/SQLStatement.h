@@ -87,6 +87,7 @@ public:
     int lastError() { return m_database.lastError(); }
     const char* lastErrorMsg() { return m_database.lastErrorMsg(); }
     
+    SQLDatabase* database() { return &m_database; }
 private:
     SQLDatabase& m_database;
     String      m_query;

@@ -61,25 +61,6 @@ const String& IconDatabase::defaultDatabaseFilename()
     return defaultDatabaseFilename;
 }
 
-// Query - Checks for at least 1 entry in the PageURL table
-static bool pageURLTableIsEmptyQuery(SQLDatabase&);
-// Query - Returns the time stamp for an Icon entry
-static int timeStampForIconURLQuery(SQLDatabase&, const String& iconURL);    
-// Query - Returns the IconURL for a PageURL
-static String iconURLForPageURLQuery(SQLDatabase&, const String& pageURL);    
-// Query - Checks for the existence of the given IconURL in the Icon table
-static bool hasIconForIconURLQuery(SQLDatabase& db, const String& iconURL);
-// Query - Deletes a PageURL from the PageURL table
-static void forgetPageURLQuery(SQLDatabase& db, const String& pageURL);
-// Query - Sets the Icon.iconID for a PageURL in the PageURL table
-static void setIconIDForPageURLQuery(SQLDatabase& db, int64_t, const String&);
-// Query - Returns the iconID for the given IconURL
-static int64_t getIconIDForIconURLQuery(SQLDatabase& db, const String& iconURL);
-// Query - Creates the Icon entry for the given IconURL and returns the resulting iconID
-static int64_t addIconForIconURLQuery(SQLDatabase& db, const String& iconURL);
-// Query - Returns the image data from the given database for the given IconURL
-static void imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, Vector<unsigned char>& result);
-
 IconDatabase* IconDatabase::sharedIconDatabase()
 {
     if (!m_sharedInstance) {
@@ -89,7 +70,15 @@ IconDatabase* IconDatabase::sharedIconDatabase()
 }
 
 IconDatabase::IconDatabase()
-    : m_currentDB(&m_mainDB)
+    : m_timeStampForIconURLStatement(0)
+    , m_iconURLForPageURLStatement(0)
+    , m_hasIconForIconURLStatement(0)
+    , m_forgetPageURLStatement(0)
+    , m_setIconIDForPageURLStatement(0)
+    , m_getIconIDForIconURLStatement(0)
+    , m_addIconForIconURLStatement(0)
+    , m_imageDataForIconURLStatement(0)
+    , m_currentDB(&m_mainDB)
     , m_defaultIconDataCache(0)
     , m_privateBrowsingEnabled(false)
     , m_startupTimer(this, &IconDatabase::pruneUnretainedIconsOnStartup)
@@ -161,7 +150,16 @@ void IconDatabase::close()
     if (m_preparedPageRetainInsertStatement)
         m_preparedPageRetainInsertStatement->finalize();
     delete m_preparedPageRetainInsertStatement;
+
     syncDatabase();
+    delete m_timeStampForIconURLStatement;
+    delete m_iconURLForPageURLStatement;
+    delete m_hasIconForIconURLStatement;
+    delete m_forgetPageURLStatement;
+    delete m_setIconIDForPageURLStatement;
+    delete m_getIconIDForIconURLStatement;
+    delete m_addIconForIconURLStatement;
+    delete m_imageDataForIconURLStatement;
     m_mainDB.close();
     m_privateBrowsingDB.close();
 }
@@ -648,16 +646,20 @@ void IconDatabase::pruneUnretainedIconsOnStartup(Timer<IconDatabase>*)
     // rdar://4690949 - Need to prune unretained iconURLs here, then prune out all pageURLs that reference
     // nonexistent icons
     
-    // First wipe all PageURLs and Icons that aren't retained
+    // Finalize the PageRetain statement
+    delete m_preparedPageRetainInsertStatement;
+    m_preparedPageRetainInsertStatement = 0;
+    
+    // Commit all of the PageRetains and start a new transaction for the pruning dirty-work
+    m_initialPruningTransaction->commit();
+    m_initialPruningTransaction->begin();
+    
+    // Then wipe all PageURLs and Icons that aren't retained
     if (!m_mainDB.executeCommand("DELETE FROM PageURL WHERE PageURL.url NOT IN (SELECT url FROM PageRetain);") ||
         !m_mainDB.executeCommand("DELETE FROM Icon WHERE Icon.iconID NOT IN (SELECT iconID FROM PageURL);") ||
-        !m_mainDB.executeCommand("DROP TABLE PageRetain;")) {
+        !m_mainDB.executeCommand("DROP TABLE PageRetain;"))
         LOG_ERROR("Failed to execute SQL to prune unretained pages and icons from the on-disk tables");
-        m_initialPruningTransaction->rollback();
-    } else
-        m_initialPruningTransaction->commit();
-    delete m_initialPruningTransaction;
-    m_initialPruningTransaction = 0;
+    
     
     // Since we lazily retained the pageURLs without getting the iconURLs or retaining the iconURLs, 
     // we need to do that now
@@ -677,12 +679,12 @@ void IconDatabase::pruneUnretainedIconsOnStartup(Timer<IconDatabase>*)
     if (result != SQLITE_DONE)
         LOG_ERROR("Error reading PageURL->IconURL mappings from on-disk DB");
     sql.finalize();
-
-    if (m_preparedPageRetainInsertStatement) {
-        m_preparedPageRetainInsertStatement->finalize();
-        delete m_preparedPageRetainInsertStatement;
-        m_preparedPageRetainInsertStatement = 0;
-    }
+    
+    // Commit the transaction and do some cleanup
+    m_initialPruningTransaction->commit();
+    delete m_initialPruningTransaction;
+    m_initialPruningTransaction = 0;
+    
     m_initialPruningComplete = true;
     
 #ifndef NDEBUG
@@ -782,61 +784,109 @@ IconDatabase::~IconDatabase()
     close();
 }
 
-// Query helper functions
-static bool pageURLTableIsEmptyQuery(SQLDatabase& db)
+// readySQLStatement() handles two things
+// 1 - If the SQLDatabase& argument is different, the statement must be destroyed and remade.  This happens when the user
+//     switches to and from private browsing
+// 2 - Lazy construction of the Statement in the first place, in case we've never made this query before
+inline void readySQLStatement(SQLStatement*& statement, SQLDatabase& db, const String& str)
 {
-    return !(SQLStatement(db, "SELECT iconID FROM PageURL LIMIT 1;").returnsAtLeastOneResult());
+    if (statement && statement->database() != &db) {
+        delete statement;
+        statement = 0;
+    }
+    if (!statement) {
+        statement = new SQLStatement(db, str);
+        statement->prepare();
+    }
 }
 
-static void imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, Vector<unsigned char>& result)
-{
-    String escapedIconURL = escapeSQLString(iconURL);
-    SQLStatement(db, "SELECT Icon.data FROM Icon WHERE Icon.url = '" + escapedIconURL + "';").getColumnBlobAsVector(0, result);
+// Any common IconDatabase query should be seperated into a fooQuery() and a *m_fooStatement.  
+// This way we can lazily construct the SQLStatment for a query on its first use, then reuse the Statement binding
+// the new parameter as needed
+// The statement must be deleted in IconDatabase::close() before the actual SQLDatabase::close() call
+// Also, m_fooStatement must be reset() before fooQuery() returns otherwise we will constantly get "database file locked" 
+// errors in various combinations of queries
+
+bool IconDatabase::pageURLTableIsEmptyQuery(SQLDatabase& db)
+{  
+    // We won't make this use a m_fooStatement because its not really a "common" query
+    return !SQLStatement(db, "SELECT iconID FROM PageURL LIMIT 1;").returnsAtLeastOneResult();
 }
 
-static int timeStampForIconURLQuery(SQLDatabase& db, const String& iconURL)
+void IconDatabase::imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, Vector<unsigned char>& result)
 {
-    String escapedIconURL = escapeSQLString(iconURL);
-    return SQLStatement(db, "SELECT Icon.stamp FROM Icon WHERE Icon.url = '" + escapedIconURL + "';").getColumnInt(0);
+    readySQLStatement(m_imageDataForIconURLStatement, db, "SELECT Icon.data FROM Icon WHERE Icon.url = (?);");
+    m_imageDataForIconURLStatement->bindText16(1, iconURL, false);
+    m_imageDataForIconURLStatement->step();
+    m_imageDataForIconURLStatement->getColumnBlobAsVector(0, result);
+    m_imageDataForIconURLStatement->reset();
 }
 
-static String iconURLForPageURLQuery(SQLDatabase& db, const String& pageURL)
+int IconDatabase::timeStampForIconURLQuery(SQLDatabase& db, const String& iconURL)
 {
-    String escapedPageURL = escapeSQLString(pageURL);
-    return SQLStatement(db, "SELECT Icon.url FROM Icon, PageURL WHERE PageURL.url = '" + escapedPageURL + "' AND Icon.iconID = PageURL.iconID").getColumnText16(0);
+    readySQLStatement(m_timeStampForIconURLStatement, db, "SELECT Icon.stamp FROM Icon WHERE Icon.url = (?);");
+    m_timeStampForIconURLStatement->bindText16(1, iconURL, false);
+    m_timeStampForIconURLStatement->step();
+    int result = m_timeStampForIconURLStatement->getColumnInt(0);
+    m_timeStampForIconURLStatement->reset();
+    return result;
 }
 
-static void forgetPageURLQuery(SQLDatabase& db, const String& pageURL)
+String IconDatabase::iconURLForPageURLQuery(SQLDatabase& db, const String& pageURL)
 {
-    String escapedPageURL = escapeSQLString(pageURL);
-    db.executeCommand("DELETE FROM PageURL WHERE url = '" + escapedPageURL + "';");
+    readySQLStatement(m_iconURLForPageURLStatement, db, "SELECT Icon.url FROM Icon, PageURL WHERE PageURL.url = (?) AND Icon.iconID = PageURL.iconID;");
+    m_iconURLForPageURLStatement->bindText16(1, pageURL, false);
+    m_iconURLForPageURLStatement->step();
+    String result = m_iconURLForPageURLStatement->getColumnText16(0);
+    m_iconURLForPageURLStatement->reset();
+    return result;
 }
 
-static void setIconIDForPageURLQuery(SQLDatabase& db, int64_t iconID, const String& pageURL)
+void IconDatabase::forgetPageURLQuery(SQLDatabase& db, const String& pageURL)
 {
-    String escapedPageURL = escapeSQLString(pageURL);
-    if (!db.executeCommand("INSERT INTO PageURL (url, iconID) VALUES ('" + escapedPageURL + "', " + String::number(iconID) + ");"))
-        LOG_ERROR("Failed to set iconid %lli for PageURL %s", iconID, pageURL.ascii().data());
+    readySQLStatement(m_forgetPageURLStatement, db, "DELETE FROM PageURL WHERE url = (?);");
+    m_forgetPageURLStatement->bindText16(1, pageURL, false);
+    m_forgetPageURLStatement->step();
+    m_forgetPageURLStatement->reset();
 }
 
-static int64_t getIconIDForIconURLQuery(SQLDatabase& db, const String& iconURL)
+void IconDatabase::setIconIDForPageURLQuery(SQLDatabase& db, int64_t iconID, const String& pageURL)
 {
-    String escapedIconURL = escapeSQLString(iconURL);
-    return SQLStatement(db, "SELECT Icon.iconID FROM Icon WHERE Icon.url = '" + escapedIconURL + "';").getColumnInt64(0);
+    readySQLStatement(m_setIconIDForPageURLStatement, db, "INSERT INTO PageURL (url, iconID) VALUES ((?), ?);");
+    m_setIconIDForPageURLStatement->bindText16(1, pageURL, false);
+    m_setIconIDForPageURLStatement->bindInt64(2, iconID);
+    m_setIconIDForPageURLStatement->step();
+    m_setIconIDForPageURLStatement->reset();
 }
 
-static int64_t addIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
+int64_t IconDatabase::getIconIDForIconURLQuery(SQLDatabase& db, const String& iconURL)
 {
-    String escapedIconURL = escapeSQLString(iconURL);
-    if (db.executeCommand("INSERT INTO Icon (url) VALUES ('" + escapedIconURL + "');"))
-        return db.lastInsertRowID();
-    return 0;
+    readySQLStatement(m_getIconIDForIconURLStatement, db, "SELECT Icon.iconID FROM Icon WHERE Icon.url = (?);");
+    m_getIconIDForIconURLStatement->bindText16(1, iconURL, false);
+    m_getIconIDForIconURLStatement->step();
+    int64_t result = m_getIconIDForIconURLStatement->getColumnInt64(0);
+    m_getIconIDForIconURLStatement->reset();
+    return result;
 }
 
-static bool hasIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
+int64_t IconDatabase::addIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
 {
-    String escapedIconURL = escapeSQLString(iconURL);
-    return SQLStatement(db, "SELECT Icon.iconID FROM Icon WHERE Icon.url = '" + escapedIconURL + "';").returnsAtLeastOneResult();
+    readySQLStatement(m_addIconForIconURLStatement, db, "INSERT INTO Icon (url) VALUES ((?));");
+    m_addIconForIconURLStatement->bindText16(1, iconURL, false);
+    int64_t result = 0;
+    if (m_addIconForIconURLStatement->step() == SQLITE_OK)
+        result = db.lastInsertRowID();
+    m_addIconForIconURLStatement->reset();
+    return result;
+}
+
+bool IconDatabase::hasIconForIconURLQuery(SQLDatabase& db, const String& iconURL)
+{
+    readySQLStatement(m_hasIconForIconURLStatement, db, "SELECT Icon.iconID FROM Icon WHERE Icon.url = (?);");
+    m_hasIconForIconURLStatement->bindText16(1, iconURL, false);
+    bool result = m_hasIconForIconURLStatement->step() == SQLITE_ROW;
+    m_hasIconForIconURLStatement->reset();
+    return result;
 }
 
 } //namespace WebCore
