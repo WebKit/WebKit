@@ -58,11 +58,19 @@ void FontData::platformInit()
 void FontData::platformDestroy()
 {
     delete m_font.fontPtr();
+    delete m_smallCapsFontData;
 }
 
 FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
-    return 0;
+    if (!m_smallCapsFontData) {
+        FontDescription desc = FontDescription(fontDescription);
+        desc.setSpecifiedSize(0.70f * fontDescription.computedSize());
+        const FontPlatformData* pdata = new FontPlatformData(desc, desc.family().family());
+        m_smallCapsFontData = new FontData(*pdata);
+    }
+
+    return m_smallCapsFontData;
 }
 
 bool FontData::containsCharacters(const UChar* characters, int length) const

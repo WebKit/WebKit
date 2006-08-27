@@ -1,3 +1,14 @@
+2006-08-27  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Tim H.
+
+        Fix crash in LayoutTests/css1/font_properties/font.html,
+        by implementing FontData::smallCapsFontData.
+
+        * platform/qt/FontDataQt.cpp:
+        (WebCore::FontData::platformDestroy):
+        (WebCore::FontData::smallCapsFontData):
+
 2006-08-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
