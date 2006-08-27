@@ -48,6 +48,7 @@ add_definitions( -DBUILDING_QT__=1 )
 add_subdirectory( JavaScriptCore ) 
 add_subdirectory( WebCore ) 
 add_subdirectory( WebKitTools/QtLauncher )
+add_subdirectory( WebKitTools/DumpRenderTree/DumpRenderTree.qtproj )
 
 include_directories ( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
 
