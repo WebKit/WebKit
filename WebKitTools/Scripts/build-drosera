@@ -45,7 +45,7 @@ my @options = XcodeOptions();
 chdir "WebKitTools/Drosera" or die;
 my $result;
 if (isOSX()) {
-	print "xcodebuild -project Drosera.xcodeproj ", @options, "\n";
+    print "xcodebuild -project Drosera.xcodeproj ", join(" ", @options), "\n";
     $result = system "xcodebuild", "-project", "Drosera.xcodeproj", @options;
 } else {
     die "Building not defined for this platform!\n";

@@ -1,3 +1,9 @@
+2006-08-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        * Scripts/build-drosera: Fix behavior when there are multiple options.
+
 2006-08-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Anders.
