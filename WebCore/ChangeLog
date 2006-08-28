@@ -1,3 +1,12 @@
+2006-08-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Rewrote StringImpl::replace(UChar, StringImpl*)
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::replace):
+
 2006-08-27  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

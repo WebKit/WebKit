@@ -758,20 +758,45 @@ StringImpl* StringImpl::replace(unsigned index, unsigned len, const StringImpl* 
     return m_data;
 }
 
-StringImpl* StringImpl::replace(UChar pattern, const StringImpl* str)
+StringImpl* StringImpl::replace(UChar pattern, const StringImpl* replacement)
 {
-    int slen = str ? str->length() : 0;
-    int index = 0;
-    StringImpl* oldResult = this;
-    StringImpl* newResult;
-    while ((index = oldResult->find(pattern, index)) >= 0) {
-        newResult = oldResult->replace(index, 1, str);
-        if (oldResult != this)
-            delete oldResult;
-        oldResult = newResult;
-        index += slen;
+    if (!replacement)
+        return this;
+        
+    int repStrLength = replacement->length();
+    int srcSegmentStart = 0;
+    int matchCount = 0;
+    
+    // Count the matches
+    while ((srcSegmentStart = find(pattern, srcSegmentStart)) >= 0) {
+        ++matchCount;
+        ++srcSegmentStart;
     }
-    return oldResult;
+    
+    // Create the new StringImpl;
+    StringImpl* dst = new StringImpl();
+    dst->m_length = m_length - matchCount + (matchCount * repStrLength);
+    dst->m_data = newUCharVector(dst->m_length);
+    
+    // Construct the new data
+    int srcSegmentEnd;
+    int srcSegmentLength;
+    srcSegmentStart = 0;
+    int dstOffset = 0;
+    
+    while ((srcSegmentEnd = find(pattern, srcSegmentStart)) >= 0) {
+        srcSegmentLength = srcSegmentEnd - srcSegmentStart;
+        memcpy(dst->m_data + dstOffset, m_data + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+        dstOffset += srcSegmentLength;
+        memcpy(dst->m_data + dstOffset, replacement->m_data, repStrLength * sizeof(UChar));
+        dstOffset += repStrLength;
+        srcSegmentStart = srcSegmentEnd + 1;
+    }
+
+    srcSegmentLength = m_length - srcSegmentStart;
+    memcpy(dst->m_data + dstOffset, m_data + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+    
+    return dst;
 }
 
 bool equal(const StringImpl* a, const StringImpl* b)
