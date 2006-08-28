@@ -30,8 +30,10 @@
 #include <QPainter>
 #include <QStyleOptionButton>
 
+#include "Document.h"
 #include "RenderTheme.h"
 #include "GraphicsContext.h"
+#include "RenderPopupMenuQt.h"
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
 
@@ -116,10 +118,9 @@ void RenderThemeQt::systemFont(int propId, FontDescription& fontDescription) con
     // no-op
 }
 
-RenderPopupMenu* RenderThemeQt::createPopupMenu(RenderArena*, Document*, RenderMenuList*)
+RenderPopupMenu* RenderThemeQt::createPopupMenu(RenderArena* arena, Document* doc, RenderMenuList* menuList)
 {
-    notImplemented();
-    return 0;
+    return new (arena) RenderPopupMenuQt(doc, menuList);
 }
 
 void RenderThemeQt::addIntrinsicMargins(RenderStyle* style) const

@@ -3,6 +3,29 @@
         Reviewed and landed by ap.
 
         Fixes one chunk of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10604
+        Provide stub implementation of RenderPopupMenuQt.
+
+        * CMakeLists.txt:
+        * platform/qt/RenderPopupMenuQt.cpp: Added.
+        (WebCore::RenderPopupMenuQt::RenderPopupMenuQt):
+        (WebCore::RenderPopupMenuQt::~RenderPopupMenuQt):
+        (WebCore::RenderPopupMenuQt::clear):
+        (WebCore::RenderPopupMenuQt::populate):
+        (WebCore::RenderPopupMenuQt::showPopup):
+        (WebCore::RenderPopupMenuQt::hidePopup):
+        (WebCore::RenderPopupMenuQt::addSeparator):
+        (WebCore::RenderPopupMenuQt::addGroupLabel):
+        (WebCore::RenderPopupMenuQt::addOption):
+        * platform/qt/RenderPopupMenuQt.h: Added.
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::systemFont):
+        (WebCore::RenderThemeQt::createPopupMenu):
+
+2006-08-28  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by ap.
+
+        Fixes one chunk of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10604
         Offer QString -> DeprecatedString conversion.
 
         * platform/DeprecatedString.h:

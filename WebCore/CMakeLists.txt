@@ -866,6 +866,7 @@ set(WebCore_SRCS
     platform/qt/RenderThemeQt.cpp
     platform/qt/FontDataQt.cpp
     platform/qt/SharedTimerQt.cpp
+    platform/qt/RenderPopupMenuQt.cpp
     platform/qt/ResourceLoaderCurl.cpp
     platform/qt/ResourceLoaderManager.cpp
     platform/qt/FloatPointQt.cpp
@@ -907,6 +908,7 @@ set(WebCore_SRCS
     rendering/RenderPartObject.cpp
     rendering/RenderView.cpp
     rendering/RenderMenuList.cpp
+    rendering/RenderPopupMenu.cpp
     rendering/InlineFlowBox.cpp
     rendering/RenderListMarker.cpp
     rendering/RenderImage.cpp
