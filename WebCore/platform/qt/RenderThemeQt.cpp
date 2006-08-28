@@ -113,7 +113,7 @@ bool RenderThemeQt::controlSupportsTints(const RenderObject* o) const
 
 void RenderThemeQt::systemFont(int propId, FontDescription& fontDescription) const
 {
-    notImplemented();
+    // no-op
 }
 
 RenderPopupMenu* RenderThemeQt::createPopupMenu(RenderArena*, Document*, RenderMenuList*)

@@ -118,7 +118,7 @@ void DumpRenderTree::checkLoaded()
             QApplication::exit();
         }
     } else
-        QTimer::singleShot(20, this, SLOT(checkLoaded()));
+        QTimer::singleShot(10, this, SLOT(checkLoaded()));
 }
 
 }

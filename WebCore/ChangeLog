@@ -1,3 +1,13 @@
+2006-08-28  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Tim Hatcher.
+        
+        Fixes one chunk of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10604
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::systemFont):
+        Remove annoying notImplemented() usage in systemFont()
+
 2006-08-28  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

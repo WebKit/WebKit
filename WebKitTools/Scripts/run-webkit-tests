@@ -94,14 +94,22 @@ my $verbose = 0;
 my $expectedTag = "expected";
 if (isCygwin()) {
     $expectedTag = "expected-win";
+} elsif (isQt()) {
+    $expectedTag = "expected-qt";
 }
+
 my $actualTag = "actual";
 if (isCygwin()) {
     $actualTag = "actual-win";
+} elsif (isQt()) {
+    $actualTag = "actual-qt";
 }
+
 my $diffsTag = "diffs";
 if (isCygwin()) {
     $actualTag = "diffs-win";
+} elsif (isQt()) {
+    $actualTag = "diffs-qt";
 }
 
 my $usage =
