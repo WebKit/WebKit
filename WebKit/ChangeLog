@@ -1,3 +1,24 @@
+2006-08-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Major prune of unnecessary WebFileDatabase code.  In the end, what
+        useful code that remains in WebFileDatabase will likely be moved directly
+        into WebIconDatabase
+
+        * Misc/WebFileDatabase.h:
+        * Misc/WebFileDatabase.m:
+        (-[WebFileDatabase initWithPath:]):
+        (-[WebFileDatabase objectForKey:]):
+        (-[WebFileDatabase open]):
+        (-[WebFileDatabase close]):
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase _createFileDatabase]):
+        (-[WebIconDatabase _loadIconDictionaries]):
+        * Misc/WebLRUFileList.h: Removed.
+        * Misc/WebLRUFileList.m: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-08-27  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
