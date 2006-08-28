@@ -271,6 +271,7 @@ void Frame::didExplicitOpen()
   // Cancelling redirection here works for all cases because document.open 
   // implicitly precedes document.write.
   cancelRedirection(); 
+  d->m_url = d->m_doc->URL();
 }
 
 void Frame::stopLoading(bool sendUnload)

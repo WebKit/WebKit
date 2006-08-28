@@ -1108,6 +1108,16 @@ Tokenizer *Document::createTokenizer()
 
 void Document::open()
 {
+    // This is work that we should probably do in clear(), but we can't have it
+    // happen when implicitOpen() is called unless we reorganize Frame code.
+    if (Document *parent = parentDocument()) {
+        setURL(parent->baseURL());
+        setBaseURL(parent->baseURL());
+    }
+    else
+        setURL(DeprecatedString());
+        
+
     if ((frame() && frame()->isLoadingMainResource()) || (tokenizer() && tokenizer()->executingScript()))
         return;
 
@@ -1115,12 +1125,6 @@ void Document::open()
 
     if (frame())
         frame()->didExplicitOpen();
-
-    // This is work that we should probably do in clear(), but we can't have it
-    // happen when implicitOpen() is called unless we reorganize Frame code.
-    setURL(DeprecatedString());
-    if (Document *parent = parentDocument())
-        setBaseURL(parent->baseURL());
 }
 
 void Document::cancelParsing()

@@ -1,3 +1,16 @@
+2006-08-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Geoff.
+
+        Fixed <rdar://problem/4548537> Document.domain and other attributes are blank for an iframe created with document.write
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+        set the document's url to the parent's url and re-located the code that does this to occur before calling the frame's didExplicitOpen()
+        * page/Frame.cpp:
+        (WebCore::Frame::didExplicitOpen):
+        set the frame's url to the document's url
+
 2006-08-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adele and Adam

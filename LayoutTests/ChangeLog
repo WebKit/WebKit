@@ -1,3 +1,12 @@
+2006-08-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Geoff.
+
+       Added tests for <rdar://problem/4548537> Document.domain and other attributes are blank for an iframe created with document.write
+
+        * http/tests/misc/iframe-domain-test-expected.txt: Added.
+        * http/tests/misc/iframe-domain-test.html: Added.
+
 2006-08-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
