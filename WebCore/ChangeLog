@@ -1,3 +1,14 @@
+2006-08-25  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4517383> Hide all images used for spacing purpose in AX
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityIsIgnored]):
+        Check for one-dimensional image
+        Check whether rendered image was stretched from one-dimensional file image
+
 2006-08-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

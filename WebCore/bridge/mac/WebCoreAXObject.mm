@@ -703,7 +703,23 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (m_renderer->isBlockFlow() && m_renderer->childrenInline())
         return !static_cast<RenderBlock*>(m_renderer)->firstLineBox() && ![self mouseButtonListener];
 
-    return (!m_renderer->isListMarker() && !m_renderer->isRenderView() && !m_renderer->isImage());
+    // ignore images seemingly used as spacers
+    if (m_renderer->isImage()) {
+        // check for one-dimensional image
+        if (m_renderer->height() <= 1 || m_renderer->width() <= 1)
+            return YES;
+        
+        // check whether rendered image was stretched from one-dimensional file image
+        RenderImage* image = static_cast<RenderImage*>(m_renderer);
+        if (image->cachedImage()) {
+            IntSize imageSize = image->cachedImage()->imageSize();
+            return (imageSize.height() <= 1 || imageSize.width() <= 1);
+        }
+        
+        return NO;
+    }
+    
+    return (!m_renderer->isListMarker() && !m_renderer->isRenderView());
 }
 
 - (NSArray*)accessibilityAttributeNames
