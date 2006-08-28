@@ -773,6 +773,10 @@ StringImpl* StringImpl::replace(UChar pattern, const StringImpl* replacement)
         ++srcSegmentStart;
     }
     
+    // If we have 0 matches, we don't have to do any more work
+    if (!matchCount)
+        return this;
+    
     // Create the new StringImpl;
     StringImpl* dst = new StringImpl();
     dst->m_length = m_length - matchCount + (matchCount * repStrLength);

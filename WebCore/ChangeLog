@@ -1,3 +1,12 @@
+2006-08-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adele and Adam
+
+        Added an optimization to return early if there's no replacements to be made
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::replace):
+
 2006-08-28  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by ap.
