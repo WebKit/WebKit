@@ -1060,6 +1060,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
             @"AXPreviousSentenceStartTextMarkerForTextMarker",
             @"AXNextParagraphEndTextMarkerForTextMarker",
             @"AXPreviousParagraphStartTextMarkerForTextMarker",
+            @"AXStyleTextMarkerRangeForTextMarker",
             @"AXLengthForTextMarkerRange",
             nil];
     }
@@ -1778,6 +1779,63 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString* attrStr
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
 
+static VisiblePosition startOfStyleRange (const VisiblePosition visiblePos)
+{
+    RenderObject* renderer = visiblePos.deepEquivalent().node()->renderer();
+    RenderObject* startRenderer = renderer;
+    RenderStyle* style = renderer->style();
+    
+    // traverse backward by renderer to look for style change
+    for (RenderObject* r = renderer->previousInPreOrder(); r; r = r->previousInPreOrder()) {
+        // skip non-leaf nodes
+        if (r->firstChild())
+            continue;
+        
+        // stop at style change
+        if (r->style() != style)
+            break;
+            
+        // remember match
+        startRenderer = r;
+    }
+    
+    return VisiblePosition(startRenderer->node(), 0, VP_DEFAULT_AFFINITY);
+}
+
+static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
+{
+    RenderObject* renderer = visiblePos.deepEquivalent().node()->renderer();
+    RenderObject* endRenderer = renderer;
+    RenderStyle* style = renderer->style();
+
+    // traverse forward by renderer to look for style change
+    for (RenderObject* r = renderer->nextInPreOrder(); r; r = r->nextInPreOrder()) {
+        // skip non-leaf nodes
+        if (r->firstChild())
+            continue;
+        
+        // stop at style change
+        if (r->style() != style)
+            break;
+        
+        // remember match
+        endRenderer = r;
+    }
+    
+    return VisiblePosition(endRenderer->node(), maxDeepOffset(endRenderer->node()), VP_DEFAULT_AFFINITY);
+}
+
+- (id)doAXStyleTextMarkerRangeForTextMarker: (WebCoreTextMarker*) textMarker
+{
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (visiblePos.isNull())
+        return nil;
+
+    VisiblePosition startPosition = startOfStyleRange(visiblePos);
+    VisiblePosition endPosition = endOfStyleRange(visiblePos);
+    return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
+}
+
 - (id)doAXLengthForTextMarkerRange: (WebCoreTextMarkerRange*) textMarkerRange
 {
     // NOTE: BUG Multi-byte support
@@ -1906,7 +1964,10 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString* attrStr
 
     if ([attribute isEqualToString: @"AXPreviousParagraphStartTextMarkerForTextMarker"])
         return [self doAXPreviousParagraphStartTextMarkerForTextMarker: textMarker];
-        
+    
+    if ([attribute isEqualToString: @"AXStyleTextMarkerRangeForTextMarker"])
+        return [self doAXStyleTextMarkerRangeForTextMarker: textMarker];
+    
     if ([attribute isEqualToString: @"AXLengthForTextMarkerRange"])
         return [self doAXLengthForTextMarkerRange: textMarkerRange];
 

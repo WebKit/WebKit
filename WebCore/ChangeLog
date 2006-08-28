@@ -1,4 +1,24 @@
-2006-08-25  David Harrison  <harrison@apple.com>
+2006-08-28  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/3942647> Support AXStyleTextMarkerRangeForTextMarker parameterized attribute
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityParameterizedAttributeNames]):
+        Add AXStyleTextMarkerRangeForTextMarker.
+        
+        (startOfStyleRange):
+        (endOfStyleRange):
+        Return first/last VisiblePosition in range having the same style has the specified VisiblePosition.
+
+        (-[WebCoreAXObject doAXStyleTextMarkerRangeForTextMarker:]):
+        Return AXTextMarkerRange for startOfStyleRange/endOfStyleRange of the specified AXTextMarker.
+        
+        (-[WebCoreAXObject accessibilityAttributeValue:forParameter:]):
+        Call doAXStyleTextMarkerRangeForTextMarker for AXStyleTextMarkerRangeForTextMarker.
+
+2006-08-28  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
 
