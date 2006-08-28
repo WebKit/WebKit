@@ -133,6 +133,8 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
     if (variable == NPPVpluginScriptableNPObject) {
         void **v = (void **)value;
         PluginObject *obj = instance->pdata;
+        // Return value is expected to be retained
+        browser->retainobject((NPObject *)obj);
         *v = obj;
         return NPERR_NO_ERROR;
     }

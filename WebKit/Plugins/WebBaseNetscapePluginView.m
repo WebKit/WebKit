@@ -1711,18 +1711,19 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
 }
 
-- (void *)pluginScriptableObject
+- (NPObject *)createPluginScriptableObject
 {
-    if (NPP_GetValue) {
-        void *value = 0;
-        [self willCallPlugInFunction];
-        NPError npErr = NPP_GetValue (instance, NPPVpluginScriptableNPObject, (void *)&value);
-        [self didCallPlugInFunction];
-        if (npErr == NPERR_NO_ERROR) {
-            return value;
-        }
-    }
-    return (void *)0;
+    if (!NPP_GetValue)
+        return NULL;
+        
+    void *value = NULL;
+    [self willCallPlugInFunction];
+    NPError error = NPP_GetValue(instance, NPPVpluginScriptableNPObject, (void *)&value);
+    [self didCallPlugInFunction];
+    if (error != NPERR_NO_ERROR)
+        return NULL;
+    
+    return value;
 }
 
 - (void)willCallPlugInFunction

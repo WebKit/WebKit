@@ -1,3 +1,52 @@
+2006-08-28  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Part of <rdar://problem/4481553> NetscapeMoviePlugIn example code scripting doesn't work in Firefox (4319)
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4319>: NetscapeMoviePlugIn example code scripting doesn't work
+        in Firefox
+
+        No test cases added, since this is essentially a leak fix.
+
+        A brief history of NPP_GetValue(), NPObjects, and reference counting.
+
+        Earlier versions of WebKit incorrectly interpreted the NPRuntime reference counting rules.  We failed to take
+        into account the fact that plug-ins are required to retain NPObjects before returning them.  This creates several
+        classes of interesting plug-ins:
+
+        1) Plug-ins tested in WebKit and other browsers.  These plug-ins may have WebKit-specific workarounds to not retain
+           the returned NPObject, thus avoiding the memory leak in WebKit.
+
+        2) Plug-ins tested only in other browsers.  These plug-ins must already retain their NPObjects, since other browsers
+           implemented the NPRuntime retain/release rules correctly.  These plug-ins likely work in WebKit, but probably leak
+           NPObjects since WebKit adds its own retain in addition to the plug-in's retain.
+
+        3) Plug-ins tested only in WebKit, that fail to retain their NPObjects before returning them.
+           Such plug-ins are guaranteed to crash in other browsers due to the missing expected retain.  These plug-ins
+           work in older WebKits because WebKit did not expect the plug-in to retain the NPObject.  Now that our retain
+           rules match other browsers, these plug-ins may crash due to the difference in retain/release behavior.  We could
+           potentially detect that situation and correct it here, but I consider it a bug that the plug-in did not follow the
+           documented NPRuntime reference counting rules.  Furthermore, it is extremely unlikely that someone would develop
+           a Netscape plug-in and test it *only* in WebKit.  The entire purpose of creating a Netscape plugin is so that it
+           works in all browsers!
+
+        4) Plug-ins tested only in WebKit, that properly retain their NPObjects before returning them.
+           These plug-ins probably work in other browsers, and leak their NPObjects in older WebKits because of WebKit's
+           extra retain.  A developer of this type of plug-in is probably unaware of the NPObject leak.  A more savvy developer
+           would create a plug-in that fits into category #1.
+        
+        I am changing our NPP_GetValue() behavior to match Firefox and other browsers -- the plug-in is now expected to retain the
+        returned NPObject, and the browser is expected to release it when done.  This means that plug-ins in category #3 need to be
+        changed so that they don't crash in Safari.  However, such plug-ins already crash in every other browser, so I do not feel that
+        this needs to be handled specifically by WebKit.
+
+        * bridge/mac/FrameMac.mm:
+        Changed -pluginScriptableObject to -createPluginScriptableObject to make clearer the contract that the method must return a
+        retained NPObject.  Also changed it to return an actual NPObject* instead of a void*.  There is only one caller of this method,
+        and only one implementor.  Using void* here is a needless abstraction.  It's an NPObject*!  Admit it!
+        (WebCore::getInstanceForView):
+        Release the NPObject after creating the bindings instance.  This is the actual bug fix.
+
 2006-08-28  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Geoff.

@@ -1,3 +1,17 @@
+2006-08-28  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Part of <rdar://problem/4481553> NetscapeMoviePlugIn example code scripting doesn't work in Firefox (4319)
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4319>: NetscapeMoviePlugIn example code scripting doesn't work
+        in Firefox
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView createPluginScriptableObject]):
+        Renamed this method (see corresponding WebCore ChangeLog entry for an explanation).
+        Style changes.
+
 2006-08-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher's rubberstamp

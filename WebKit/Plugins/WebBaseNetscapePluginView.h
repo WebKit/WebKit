@@ -132,7 +132,8 @@ typedef union PluginPort {
 - (void)viewDidMoveToHostWindow;
 
 // Returns the NPObject that represents the plugin interface.
-- (void *)pluginScriptableObject;
+// The return value is expected to be retained.
+- (NPObject *)createPluginScriptableObject;
 
 // -willCallPlugInFunction must be called before calling any of the NPP_* functions for this view's NPP instance.
 // This is necessary to ensure that plug-ins are not destroyed while WebKit calls into them.  Some plug-ins (Flash

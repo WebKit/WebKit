@@ -1,3 +1,16 @@
+2006-08-16  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Part of <rdar://problem/4481553> NetscapeMoviePlugIn example code scripting doesn't work in Firefox (4319)
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4319>: NetscapeMoviePlugIn example code scripting doesn't work
+        in Firefox
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
+        (NPP_GetValue):
+        WebKit's NPP_GetValue() reference counting behavior has been changed to match Firefox.  NPObject return values
+        are expected to be retained by the plug-in, and released by the caller.
+
 2006-08-28  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Tim Hatcher.

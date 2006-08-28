@@ -81,7 +81,7 @@
 
 @interface NSObject (WebPlugIn)
 - (id)objectForWebScript;
-- (void *)pluginScriptableObject;
+- (NPObject *)createPluginScriptableObject;
 @end
 
 using namespace std;
@@ -2997,11 +2997,16 @@ static KJS::Bindings::Instance *getInstanceForView(NSView *aView)
             return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::ObjectiveCLanguage, object, executionContext);
         }
     }
-    else if ([aView respondsToSelector:@selector(pluginScriptableObject)]){
-        void *object = [aView pluginScriptableObject];
+    else if ([aView respondsToSelector:@selector(createPluginScriptableObject)]) {
+        NPObject *object = [aView createPluginScriptableObject];
         if (object) {
-            KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
-            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::CLanguage, object, executionContext);
+            KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction()(aView);
+            KJS::Bindings::Instance *instance = KJS::Bindings::Instance::createBindingForLanguageInstance(KJS::Bindings::Instance::CLanguage, object, executionContext);
+            
+            // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
+            _NPN_ReleaseObject(object);
+            
+            return instance;
         }
     }
     return 0;
