@@ -338,6 +338,7 @@ NSSize WebIconLargeSize = {128, 128};
     databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
     
     _private->fileDatabase = [[WebFileDatabase alloc] initWithPath:databaseDirectory];
+    [_private->fileDatabase setSizeLimit:20000000];
     [_private->fileDatabase open];
 }
 
@@ -380,8 +381,11 @@ NSSize WebIconLargeSize = {128, 128};
     NSMutableDictionary *pageURLToIconURL = nil;
     if (v <= WebIconDatabaseCurrentVersion) {
         pageURLToIconURL = [fileDB objectForKey:WebURLToIconURLKey];
-        // Removing old unnecessary mapping files is unecessary here as it will
-        // happen after the conversion to WebCore format when we wipe everything
+        // Remove the old unnecessary mapping files.
+        if (v < WebIconDatabaseCurrentVersion) {
+            [fileDB removeObjectForKey:ObsoleteIconsOnDiskKey];
+            [fileDB removeObjectForKey:ObsoleteIconURLToURLsKey];
+        }        
     }
     
     // Must double-check all values read from disk. If any are bogus, we just throw out the whole icon cache.

@@ -1,3 +1,44 @@
+2006-08-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher's rubberstamp
+
+        Rolled out my last change (16070 - pruning WebFileDatabase code) as it caused a difficult-to-track down
+        failure in layout tests on a release build.
+
+        * Misc/WebFileDatabase.h:
+        * Misc/WebFileDatabase.m:
+        (+[WebFileDatabaseOp opWithCode:key:object:]):
+        (-[WebFileDatabaseOp initWithCode:key:object:]):
+        (-[WebFileDatabaseOp opcode]):
+        (-[WebFileDatabaseOp key]):
+        (-[WebFileDatabaseOp object]):
+        (-[WebFileDatabaseOp perform:]):
+        (-[WebFileDatabaseOp dealloc]):
+        (SetThreadPriority):
+        (-[WebFileDatabase _createLRUList:]):
+        (-[WebFileDatabase _truncateToSizeLimit:]):
+        (+[WebFileDatabase _syncLoop:]):
+        (databaseInit):
+        (-[WebFileDatabase setTimer]):
+        (-[WebFileDatabase setObject:forKey:]):
+        (-[WebFileDatabase removeObjectForKey:]):
+        (-[WebFileDatabase removeAllObjects]):
+        (-[WebFileDatabase objectForKey:]):
+        (-[WebFileDatabase performSetObject:forKey:]):
+        (-[WebFileDatabase performRemoveObjectForKey:]):
+        (-[WebFileDatabase open]):
+        (-[WebFileDatabase close]):
+        (-[WebFileDatabase lazySync:]):
+        (-[WebFileDatabase sync]):
+        (-[WebFileDatabase sizeLimit]):
+        (-[WebFileDatabase count]):
+        (-[WebFileDatabase usage]):
+        (-[WebFileDatabase setSizeLimit:]):
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase _createFileDatabase]):
+        (-[WebIconDatabase _loadIconDictionaries]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-08-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

@@ -26,47 +26,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import <CoreFoundation/CoreFoundation.h>
 
+typedef struct WebLRUFileList WebLRUFileList;
 
-@interface WebFileDatabase : NSObject
-{
-    NSString *path;
-    unsigned count;
-    BOOL isOpen;
-    unsigned sizeLimit;
-    unsigned usage;
-    
-    struct WebLRUFileList *lru;
-    NSMutableArray *ops;
-    NSMutableDictionary *setCache;
-    NSMutableSet *removeCache;
-    
-    NSTimer *timer;
-    NSTimeInterval touch;
-    NSRecursiveLock *mutex;
-}
+WebLRUFileList *WebLRUFileListCreate(void);
+void WebLRUFileListRelease(WebLRUFileList *list);
 
-- (void)setObject:(id)object forKey:(id)key;
-- (void)removeObjectForKey:(id)key;
-- (void)removeAllObjects;
-- (id)objectForKey:(id)key;
+int WebLRUFileListRebuildFileDataUsingRootDirectory(WebLRUFileList *list, const char *path);
 
-- (id)initWithPath:(NSString *)thePath;
+unsigned int WebLRUFileListRemoveFileWithPath(WebLRUFileList *list, const char *path);
+void WebLRUFileListTouchFileWithPath(WebLRUFileList *list, const char *path);
+void WebLRUFileListSetFileData(WebLRUFileList *list, const char *path, unsigned long fileSize, CFTimeInterval time);
 
-- (void)open;
-- (void)close;
-- (void)sync;
+Boolean WebLRUFileListGetPathOfOldestFile(WebLRUFileList *list, char *buffer, unsigned int length);
+unsigned int WebLRUFileListRemoveOldestFileFromList(WebLRUFileList *list);
 
-- (NSString *)path;
-- (BOOL)isOpen;
+Boolean WebLRUFileListContainsItem(WebLRUFileList *list, const char *path);
+unsigned int WebLRUFileListGetFileSize(WebLRUFileList *list, const char *path);
+unsigned int WebLRUFileListCountItems(WebLRUFileList *list);
+unsigned int WebLRUFileListGetTotalSize(WebLRUFileList *list);
+void WebLRUFileListRemoveAllFilesFromList(WebLRUFileList *list);
 
-- (unsigned)count;
-- (unsigned)sizeLimit;
-- (void)setSizeLimit:(unsigned)limit;
-- (unsigned)usage;
-
-- (void)performSetObject:(id)object forKey:(id)key;
-- (void)performRemoveObjectForKey:(id)key;
-
-@end
+NSString *WebLRUFileListDescription(WebLRUFileList *list);
