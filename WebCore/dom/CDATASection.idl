@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,22 +19,7 @@
 
 module core {
 
-    interface [LegacyParent=KJS::DOMEventTargetNode] Attr : EventTargetNode {
-
-        // DOM Level 1
-
-        readonly attribute [ConvertNullStringTo=Null] DOMString name;
-        readonly attribute boolean specified;
-                 attribute [ConvertNullStringTo=Null] DOMString value 
-                     setter raises (DOMException);
-
-        // DOM Level 2
-
-        readonly attribute Element ownerElement;
-        
-        // extensions
-
-        readonly attribute [ObjCCatagory=DOMAttrExtensions] CSSStyleDeclaration style;
+    interface CDATASection : Text {
     };
 
 }

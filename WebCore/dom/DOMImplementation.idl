@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,24 +29,24 @@ module core {
 
         // DOM Level 2
 
-        DocumentType createDocumentType(in DOMString qualifiedName,
-                                        in DOMString publicId,
-                                        in DOMString systemId)
+        [UsesPassRefPtr] DocumentType createDocumentType(in DOMString qualifiedName,
+                                                         in DOMString publicId,
+                                                         in DOMString systemId)
             raises(DOMException);
-        Document createDocument(in [ConvertNullToNullString] DOMString namespaceURI, 
-                                in [ConvertNullToNullString] DOMString qualifiedName, 
-                                in [ConvertNullToNullString] DocumentType doctype)
+        [UsesPassRefPtr] Document createDocument(in [ConvertNullToNullString] DOMString namespaceURI, 
+                                                 in [ConvertNullToNullString] DOMString qualifiedName, 
+                                                 in [ConvertNullToNullString] DocumentType doctype)
             raises(DOMException);
 
         // DOMImplementationCSS interface from DOM Level 2 CSS
 
-        CSSStyleSheet createCSSStyleSheet(in DOMString title,
-                                          in DOMString media)
+        [ObjCCatagory=DOMImplementationCSS, UsesPassRefPtr] CSSStyleSheet createCSSStyleSheet(in DOMString title,
+                                                                                              in DOMString media)
             raises(DOMException);
 
         // HTMLDOMImplementation interface from DOM Level 2 HTML
 
-        HTMLDocument createHTMLDocument(in DOMString title);
+        [ObjCCatagory=DOMImplementationExtensions, UsesPassRefPtr] HTMLDocument createHTMLDocument(in DOMString title);
     };
 
 }

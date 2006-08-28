@@ -2483,26 +2483,6 @@ void removeWrapperForRGB(RGBA32 value)
 
 //------------------------------------------------------------------------------------------
 
-@implementation DOMObject (DOMLinkStyle)
-
-- (DOMStyleSheet *)sheet
-{
-    StyleSheet *sheet;
-
-    if ([self isKindOfClass:[DOMProcessingInstruction class]])
-        sheet = static_cast<ProcessingInstruction*>([(DOMProcessingInstruction *)self _node])->sheet();
-    else if ([self isKindOfClass:[DOMHTMLLinkElement class]])
-        sheet = static_cast<HTMLLinkElement*>([(DOMHTMLLinkElement *)self _node])->sheet();
-    else if ([self isKindOfClass:[DOMHTMLStyleElement class]])
-        sheet = static_cast<HTMLStyleElement*>([(DOMHTMLStyleElement *)self _node])->sheet();
-    else
-        return nil;
-
-    return [DOMStyleSheet _DOMStyleSheetWith:sheet];
-}
-
-@end
-
 @implementation DOMDocument (DOMViewCSS)
 
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt

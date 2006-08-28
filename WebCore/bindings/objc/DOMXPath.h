@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +25,8 @@
  */
 
 #import <WebCore/DOMCore.h>
+#import <WebCore/DOMDocument.h>
+#import <WebCore/DOMObject.h>
 
 extern NSString * const DOMXPathException;
 
@@ -64,10 +67,4 @@ enum {
 
 @interface DOMXPathExpression : DOMObject
 - (DOMXPathResult *)evaluate:(DOMNode *)contextNode :(unsigned short)type :(DOMXPathResult *)result;
-@end
-
-@interface DOMDocument (DOMDocumentXPath)
-- (DOMXPathExpression *)createExpression:(NSString *)expression :(id <DOMXPathNSResolver>)resolver;
-- (id <DOMXPathNSResolver>)createNSResolver:(DOMNode *)nodeResolver;
-- (DOMXPathResult *)evaluate:(NSString *)expression :(DOMNode *)contextNode :(id <DOMXPathNSResolver>)resolver :(unsigned short)type :(DOMXPathResult *)result;
 @end

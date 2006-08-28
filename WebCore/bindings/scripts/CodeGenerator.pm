@@ -71,7 +71,6 @@ sub ProcessDocument
   $useDocument = shift;
   
   my $ifaceName = $useGenerator;
-  $ifaceName =~ s/\b(\w)/\U$1/g; # Make first letter of each word uppercase
   $ifaceName = "CodeGenerator$ifaceName";
 
   # Dynamically load external code generation perl module...

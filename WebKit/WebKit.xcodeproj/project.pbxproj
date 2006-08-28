@@ -872,19 +872,17 @@
 		9C7CABBB0190A37C0ECA16EA /* WebView */ = {
 			isa = PBXGroup;
 			children = (
-				658A40950A14853B005E6987 /* WebDataSourceInternal.h */,
-				650F74E209E488F70020118A /* WebUnarchivingState.h */,
-				650F74E309E488F70020118A /* WebUnarchivingState.m */,
-				6550B7C5099EFAE90090D781 /* WebArchiver.h */,
-				6550B7C6099EFAE90090D781 /* WebArchiver.m */,
 				F52CA6BD02DF9D0F018635CA /* HTML */,
 				51E94C0706C02CA300A9B09E /* PDF */,
 				8373435A0624EE0D00F3B289 /* WebArchive.h */,
 				8373435B0624EE0D00F3B289 /* WebArchive.m */,
+				6550B7C5099EFAE90090D781 /* WebArchiver.h */,
+				6550B7C6099EFAE90090D781 /* WebArchiver.m */,
 				933D659903413FF2008635CE /* WebClipView.h */,
 				933D659A03413FF2008635CE /* WebClipView.m */,
 				39446070020F50ED0ECA1767 /* WebDataSource.h */,
 				39446071020F50ED0ECA1767 /* WebDataSource.m */,
+				658A40950A14853B005E6987 /* WebDataSourceInternal.h */,
 				39446072020F50ED0ECA1767 /* WebDataSourcePrivate.h */,
 				35081DAE02B6D4F50ACA2ACA /* WebDocument.h */,
 				ED21B9810528F7AA003299AC /* WebDocumentInternal.h */,
@@ -920,6 +918,8 @@
 				7E6FEF0708985A7200C44C3F /* WebScriptDebugDelegatePrivate.h */,
 				515E27CC0458C86500CA2D3A /* WebUIDelegate.h */,
 				65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */,
+				650F74E209E488F70020118A /* WebUnarchivingState.h */,
+				650F74E309E488F70020118A /* WebUnarchivingState.m */,
 				51A8B579042834F700CA2D3A /* WebView.h */,
 				51A8B57A042834F700CA2D3A /* WebView.m */,
 				930D02BB06275F640076701E /* WebViewInternal.h */,
@@ -1238,6 +1238,24 @@
 			buildPhases = (
 				93AF528708254B33005D0156 /* DOM.h */,
 				93AF52A708254D8B005D0156 /* DOMCore.h */,
+				8526D74D0A8FEF02009234B1 /* DOMAttr.h */,
+				85311F690A8F9091005125C9 /* DOMCDATASection.h */,
+				8526D6BF0A8FE60B009234B1 /* DOMCharacterData.h */,
+				85311F720A8F90F6005125C9 /* DOMComment.h */,
+				856C89DE0A90E383005C687B /* DOMDocument.h */,
+				85C9066F0A8FD11C00C37D91 /* DOMDocumentFragment.h */,
+				85C905F30A8FCCB200C37D91 /* DOMDocumentType.h */,
+				8539B5650A903EB900366C2D /* DOMDOMImplementation.h */,
+				85A5C5E10A9032B300F91F2C /* DOMElement.h */,
+				85311F750A8F9168005125C9 /* DOMEntity.h */,
+				85311F880A8F91FE005125C9 /* DOMEntityReference.h */,
+				8526D7EA0A8FF64C009234B1 /* DOMNamedNodeMap.h */,
+				856C8A930A90F54F005C687B /* DOMNode.h */,
+				85A85B590A902C3200A5CF3A /* DOMNodeList.h */,
+				85311FE90A8F98B9005125C9 /* DOMNotation.h */,
+				856C8B7B0A9129B8005C687B /* DOMObject.h */,
+				853120130A8F9A52005125C9 /* DOMProcessingInstruction.h */,
+				8526D6410A8FDB84009234B1 /* DOMText.h */,
 				93AF52A908254D8F005D0156 /* DOMCSS.h */,
 				93AF52A508254D87005D0156 /* DOMEvents.h */,
 				93AF52A308254D81005D0156 /* DOMExtensions.h */,
@@ -1328,6 +1346,294 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMXPath.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMXPath.h\"";
+		};
+		8526D6410A8FDB84009234B1 /* DOMText.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMText.h",
+			);
+			name = DOMText.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMText.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMText.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMText.h\"";
+		};
+		8526D6BF0A8FE60B009234B1 /* DOMCharacterData.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMCharacterData.h",
+			);
+			name = DOMCharacterData.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMCharacterData.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMCharacterData.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMCharacterData.h\"";
+		};
+		8526D74D0A8FEF02009234B1 /* DOMAttr.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMAttr.h",
+			);
+			name = DOMAttr.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMAttr.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMAttr.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMAttr.h\"";
+		};
+		8526D7EA0A8FF64C009234B1 /* DOMNamedNodeMap.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMNamedNodeMap.h",
+			);
+			name = DOMNamedNodeMap.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMNamedNodeMap.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMNamedNodeMap.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMNamedNodeMap.h\"";
+		};
+		85311F690A8F9091005125C9 /* DOMCDATASection.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMCDATASection.h",
+			);
+			name = DOMCDATASection.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMCDATASection.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMCDATASection.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMCDATASection.h\"";
+		};
+		85311F720A8F90F6005125C9 /* DOMComment.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMComment.h",
+			);
+			name = DOMComment.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMComment.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMComment.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMComment.h\"";
+		};
+		85311F750A8F9168005125C9 /* DOMEntity.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMEntity.h",
+			);
+			name = DOMEntity.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMEntity.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMEntity.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMEntity.h\"";
+		};
+		85311F880A8F91FE005125C9 /* DOMEntityReference.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMEntityReference.h",
+			);
+			name = DOMEntityReference.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMEntityReference.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMEntityReference.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMEntityReference.h\"";
+		};
+		85311FE90A8F98B9005125C9 /* DOMNotation.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMNotation.h",
+			);
+			name = DOMNotation.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMNotation.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMNotation.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMNotation.h\"";
+		};
+		853120130A8F9A52005125C9 /* DOMProcessingInstruction.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMProcessingInstruction.h",
+			);
+			name = DOMProcessingInstruction.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMProcessingInstruction.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMProcessingInstruction.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMProcessingInstruction.h\"";
+		};
+		8539B5650A903EB900366C2D /* DOMDOMImplementation.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMDOMImplementation.h",
+			);
+			name = DOMDOMImplementation.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMDOMImplementation.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMDOMImplementation.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMDOMImplementation.h\"";
+		};
+		856C89DE0A90E383005C687B /* DOMDocument.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMDocument.h",
+			);
+			name = DOMDocument.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMDocument.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMDocument.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMDocument.h\"";
+		};
+		856C8A930A90F54F005C687B /* DOMNode.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMNode.h",
+			);
+			name = DOMNode.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMNode.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMNode.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMNode.h\"";
+		};
+		856C8B7B0A9129B8005C687B /* DOMObject.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMObject.h",
+			);
+			name = DOMObject.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMObject.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMObject.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMObject.h\"";
+		};
+		85A5C5E10A9032B300F91F2C /* DOMElement.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMElement.h",
+			);
+			name = DOMElement.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMElement.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMElement.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMElement.h\"";
+		};
+		85A85B590A902C3200A5CF3A /* DOMNodeList.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMNodeList.h",
+			);
+			name = DOMNodeList.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMNodeList.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMNodeList.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMNodeList.h\"";
+		};
+		85C905F30A8FCCB200C37D91 /* DOMDocumentType.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMDocumentType.h",
+			);
+			name = DOMDocumentType.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMDocumentType.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMDocumentType.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMDocumentType.h\"";
+		};
+		85C9066F0A8FD11C00C37D91 /* DOMDocumentFragment.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMDocumentFragment.h",
+			);
+			name = DOMDocumentFragment.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/DOMDocumentFragment.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMDocumentFragment.h\" > \"$TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/DOMDocumentFragment.h\"";
 		};
 		9339323E0825A64200AADA6B /* npruntime.h */ = {
 			isa = PBXShellScriptBuildPhase;

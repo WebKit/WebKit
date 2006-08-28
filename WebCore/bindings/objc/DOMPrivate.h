@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,9 +25,11 @@
  */
 
 #import <WebCore/DOMCSS.h>
-#import <WebCore/DOMHTML.h>
-#import <WebCore/DOMRange.h>
+#import <WebCore/DOMElement.h>
 #import <WebCore/DOMEvents.h>
+#import <WebCore/DOMHTML.h>
+#import <WebCore/DOMNode.h>
+#import <WebCore/DOMRange.h>
 
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText
@@ -87,4 +90,3 @@
 @interface DOMWheelEvent(PublicPending)
 - (void)initWheelEvent:(BOOL)horizontal :(int)wheelDelta :(DOMAbstractView *)viewArg :(int)screenXArg :(int)screenYArg :(int)clientX :(int)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg;
 @end
-

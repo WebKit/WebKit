@@ -24,21 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DOMAttr.h>
-#import <WebCore/DOMCDATASection.h>
-#import <WebCore/DOMCharacterData.h>
-#import <WebCore/DOMComment.h>
-#import <WebCore/DOMDOMImplementation.h>
-#import <WebCore/DOMDocument.h>
-#import <WebCore/DOMDocumentFragment.h>
-#import <WebCore/DOMDocumentType.h>
-#import <WebCore/DOMElement.h>
-#import <WebCore/DOMEntity.h>
-#import <WebCore/DOMEntityReference.h>
-#import <WebCore/DOMNamedNodeMap.h>
-#import <WebCore/DOMNode.h>
-#import <WebCore/DOMNodeList.h>
-#import <WebCore/DOMNotation.h>
-#import <WebCore/DOMObject.h>
-#import <WebCore/DOMProcessingInstruction.h>
-#import <WebCore/DOMText.h>
+#import <WebCore/WebScriptObject.h>
+
+@class DOMStyleSheet;
+
+typedef unsigned long long DOMTimeStamp;
+
+extern NSString * const DOMException;
+
+// DOM exception codes
+enum {
+    DOM_INDEX_SIZE_ERR                = 1,
+    DOM_DOMSTRING_SIZE_ERR            = 2,
+    DOM_HIERARCHY_REQUEST_ERR         = 3,
+    DOM_WRONG_DOCUMENT_ERR            = 4,
+    DOM_INVALID_CHARACTER_ERR         = 5,
+    DOM_NO_DATA_ALLOWED_ERR           = 6,
+    DOM_NO_MODIFICATION_ALLOWED_ERR   = 7,
+    DOM_NOT_FOUND_ERR                 = 8,
+    DOM_NOT_SUPPORTED_ERR             = 9,
+    DOM_INUSE_ATTRIBUTE_ERR           = 10,
+    DOM_INVALID_STATE_ERR             = 11,
+    DOM_SYNTAX_ERR                    = 12,
+    DOM_INVALID_MODIFICATION_ERR      = 13,
+    DOM_NAMESPACE_ERR                 = 14,
+    DOM_INVALID_ACCESS_ERR            = 15
+};
+
+
+typedef struct DOMObjectInternal DOMObjectInternal;
+
+@interface DOMObject : WebScriptObject <NSCopying>
+{
+    DOMObjectInternal *_internal;
+}
+@end
+
+@interface DOMObject (DOMLinkStyle)
+- (DOMStyleSheet *)sheet;
+@end

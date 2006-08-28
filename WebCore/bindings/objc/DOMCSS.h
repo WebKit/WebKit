@@ -23,6 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import <WebCore/DOMCore.h>
+#import <WebCore/DOMDOMImplementation.h>
+#import <WebCore/DOMDocument.h>
+#import <WebCore/DOMElement.h>
+#import <WebCore/DOMObject.h>
 #import <WebCore/DOMStylesheets.h>
 
 @class DOMCounter;
@@ -32,6 +37,10 @@
 @class DOMCSSValue;
 @class DOMRect;
 @class DOMRGBColor;
+
+@interface DOMDocument (DOMViewCSS)
+- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt;
+@end
 
 @interface DOMCSSRuleList : DOMObject
 - (unsigned)length;
@@ -183,10 +192,6 @@ enum {
 - (NSString *)identifier;
 - (NSString *)listStyle;
 - (NSString *)separator;
-@end
-
-@interface DOMElement (DOMElementCSSInlineStyle)
-- (DOMCSSStyleDeclaration *)style;
 @end
 
 @interface DOMCSSStyleDeclaration (DOMCSS2Properties)
@@ -441,16 +446,4 @@ enum {
 - (DOMCSSRuleList *)cssRules;
 - (unsigned)insertRule:(NSString *)rule :(unsigned)index;
 - (void)deleteRule:(unsigned)index;
-@end
-
-@interface DOMDocument (DOMViewCSS)
-- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt;
-@end
-
-@interface DOMDocument (DOMDocumentCSS)
-- (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt;
-@end
-
-@interface DOMImplementation (DOMImplementationCSS)
-- (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media;
 @end

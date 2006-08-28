@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +27,51 @@
 
 #import "DOM.h"
 
+#import "DOMAttr.h"
+#import "DOMCDATASection.h"
+#import "DOMComment.h"
+#import "DOMDOMImplementation.h"
+#import "DOMDocument.h"
+#import "DOMDocumentFragment.h"
+#import "DOMDocumentType.h"
+#import "DOMElement.h"
+#import "DOMEntityReference.h"
+#import "DOMNamedNodeMap.h"
+#import "DOMNode.h"
+#import "DOMNodeList.h"
+#import "DOMObject.h"
+#import "DOMProcessingInstruction.h"
+#import "DOMText.h"
+
 namespace WebCore {
+    class Attr;
+    class CDATASection;
     class CSSStyleDeclaration;
     class CSSStyleSheet;
-    class DocumentFragment;
+    class Comment;
+    class DOMImplementationFront;
     class Document;
+    class DocumentFragment;
     class DocumentType;
     class Element;
-    class NodeFilter;
-    class Node;
-    class NodeIterator;
+    class EntityReference;
     class NamedNodeMap;
+    class Node;
+    class NodeFilter;
+    class NodeIterator;
     class NodeList;
+    class ProcessingInstruction;
     class Range;
     class StyleSheetList;
+    class Text;
     class TreeWalker;
 
     typedef int ExceptionCode;
 }
+
+@interface DOMObject (WebCoreInternal)
+- (id)_init;
+@end
 
 @interface DOMNode (WebCoreInternal)
 + (DOMNode *)_nodeWith:(WebCore::Node *)impl;
@@ -58,9 +86,44 @@ namespace WebCore {
 + (DOMNodeList *)_nodeListWith:(WebCore::NodeList *)impl;
 @end
 
+@interface DOMText (WebCoreInternal)
++ (DOMText *)_textWith:(WebCore::Text *)impl;
+@end
+
+@interface DOMComment (WebCoreInternal)
++ (DOMComment *)_commentWith:(WebCore::Comment *)impl;
+@end
+
+@interface DOMCDATASection (WebCoreInternal)
++ (DOMCDATASection *)_CDATASectionWith:(WebCore::CDATASection *)impl;
+@end
+
+@interface DOMProcessingInstruction (WebCoreInternal)
++ (DOMProcessingInstruction *)_processingInstructionWith:(WebCore::ProcessingInstruction *)impl;
+@end
+
+@interface DOMEntityReference (WebCoreInternal)
++ (DOMEntityReference *)_entityReferenceWith:(WebCore::EntityReference *)impl;
+@end
+
 @interface DOMElement (WebCoreInternal)
 + (DOMElement *)_elementWith:(WebCore::Element *)impl;
 - (WebCore::Element *)_element;
+@end
+
+@interface DOMAttr (WebCoreInternal)
++ (DOMAttr *)_attrWith:(WebCore::Attr *)impl;
+- (WebCore::Attr *)_attr;
+@end
+
+@interface DOMDocumentType (WebCoreInternal)
++ (DOMDocumentType *)_documentTypeWith:(WebCore::DocumentType *)impl;
+- (WebCore::DocumentType *)_documentType;
+@end
+
+@interface DOMImplementation (WebCoreInternal)
++ (DOMImplementation *)_DOMImplementationWith:(WebCore::DOMImplementationFront *)impl;
+- (WebCore::DOMImplementationFront *)_DOMImplementation;
 @end
 
 @interface DOMDocument (WebCoreInternal)
@@ -85,10 +148,6 @@ namespace WebCore {
 
 @interface DOMTreeWalker (WebCoreInternal)
 + (DOMTreeWalker *)_treeWalkerWith:(WebCore::TreeWalker *)impl filter:(id <DOMNodeFilter>)filter;
-@end
-
-@interface DOMObject (WebCoreInternal)
-- (id)_init;
 @end
 
 @interface DOMCSSStyleDeclaration (WebCoreInternal)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +25,9 @@
  */
 
 #import <WebCore/DOMCore.h>
+#import <WebCore/DOMDocument.h>
+#import <WebCore/DOMObject.h>
 
 @interface DOMAbstractView : DOMObject
 - (DOMDocument *)document;
-@end
-
-@interface DOMDocument (DOMDocumentView)
-- (DOMAbstractView *)defaultView;
 @end

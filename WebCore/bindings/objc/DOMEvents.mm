@@ -378,15 +378,3 @@ ALLOW_DOM_CAST(Event)
 }
 
 @end
-
-@implementation DOMDocument (DOMDocumentEvent)
-
-- (DOMEvent *)createEvent:(NSString *)eventType
-{
-    ExceptionCode ec = 0;
-    RefPtr<Event> event = [self _document]->createEvent(eventType, ec);
-    raiseOnDOMError(ec);
-    return [DOMEvent _eventWith:event.get()];
-}
-
-@end

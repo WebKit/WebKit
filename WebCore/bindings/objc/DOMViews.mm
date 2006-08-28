@@ -79,12 +79,3 @@ ALLOW_DOM_CAST(DOMWindow)
 }
 
 @end
-
-@implementation DOMDocument (DOMDocumentView)
-
-- (DOMAbstractView *)defaultView
-{
-    return [DOMAbstractView _abstractViewWith:[self _document]->defaultView()];
-}
-
-@end

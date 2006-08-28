@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import <WebCore/DOMAttr.h>
 #import <WebCore/DOMCSS.h>
+#import <WebCore/DOMDOMImplementation.h>
+#import <WebCore/DOMDocument.h>
+#import <WebCore/DOMElement.h>
 #import <WebCore/DOMHTML.h>
+#import <WebCore/DOMNode.h>
 #import <WebCore/DOMRange.h>
 
 @class NSColor;
 @class NSImage;
-
-@interface DOMImplementation (DOMImplementationExtensions)
-- (DOMHTMLDocument *)createHTMLDocument:(NSString *)title;
-@end
+@class DOMHTMLCollection;
 
 @interface DOMDocument (DOMDocumentCSSExtensions)
 - (DOMCSSStyleDeclaration *)createCSSStyleDeclaration;
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt;
+@end
+
+@interface DOMElement (DOMElementAppKitExtensions)
+- (NSImage *)image;
 @end
 
 @interface DOMHTMLDocument (DOMHTMLDocumentExtensions)
@@ -58,22 +65,6 @@
 - (void)setContentEditable:(NSString *)contentEditable;
 - (BOOL)isContentEditable;
 - (NSString *)titleDisplayString;
-
-- (int)offsetLeft;
-- (int)offsetTop;
-- (int)offsetWidth;
-- (int)offsetHeight;
-- (DOMHTMLElement *)offsetParent;
-
-- (int)clientWidth;
-- (int)clientHeight;
-
-- (int)scrollLeft;
-- (void)setScrollLeft:(int)scroll;
-- (int)scrollTop;
-- (void)setScrollTop:(int)scroll;
-- (int)scrollWidth;
-- (int)scrollHeight;
 @end
 
 @interface DOMHTMLEmbedElement : DOMHTMLElement
@@ -96,28 +87,13 @@
 - (NSColor *)color;
 @end
 
-@interface DOMAttr (DOMAttrExtensions)
-- (DOMCSSStyleDeclaration *)style;
-@end
-
 @interface DOMCSSStyleDeclaration (DOMCSSStyleDeclarationExtensions)
 - (NSString *)getPropertyShorthand:(NSString *)propertyName;
 - (BOOL)isPropertyImplicit:(NSString *)propertyName;
 @end
 
-@interface DOMNode (DOMNodeExtensions)
-- (NSRect)boundingBox;
-- (NSArray *)lineBoxRects;
-@end
-
 @interface DOMRange (DOMRangeExtensions)
 - (NSString *)text;
-@end
-
-@interface DOMElement (DOMElementExtensions)
-- (NSImage *)image;
-- (void)scrollIntoView:(BOOL)alignTop;
-- (void)scrollIntoViewIfNeeded:(BOOL)centerIfNeeded;
 @end
 
 @interface DOMHTMLInputElement (DOMHTMLInputElementExtensions)

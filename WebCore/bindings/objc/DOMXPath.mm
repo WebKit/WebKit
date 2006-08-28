@@ -272,37 +272,4 @@ using WebCore::XPathResult;
 
 @end
 
-@implementation DOMDocument (DOMDocumentXPath)
-
-- (DOMXPathExpression *)createExpression:(NSString *)expression :(id <DOMXPathNSResolver>)resolver
-{
-    if (resolver && ![resolver isMemberOfClass:[DOMNativeXPathNSResolver class]])
-        [NSException raise:NSGenericException format:@"createExpression currently does not work with custom NS resolvers"];
-    
-    DOMNativeXPathNSResolver *nativeResolver = (DOMNativeXPathNSResolver *)resolver;
-    ExceptionCode ec = 0;
-    DOMXPathExpression *result = [DOMXPathExpression _xpathExpressionWith:[self _document]->createExpression(expression, [nativeResolver _xpathNSResolver], ec).get()];
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (id <DOMXPathNSResolver>)createNSResolver:(DOMNode *)nodeResolver
-{
-    return [DOMNativeXPathNSResolver _xpathNSResolverWith:[self _document]->createNSResolver([nodeResolver _node]).get()];
-}
-
-- (DOMXPathResult *)evaluate:(NSString *)expression :(DOMNode *)contextNode :(id <DOMXPathNSResolver>)resolver :(unsigned short)type :(DOMXPathResult *)result
-{
-    if (resolver && ![resolver isMemberOfClass:[DOMNativeXPathNSResolver class]])
-        [NSException raise:NSGenericException format:@"createExpression currently does not work with custom NS resolvers"];
-    
-    DOMNativeXPathNSResolver *nativeResolver = (DOMNativeXPathNSResolver *)resolver;
-    ExceptionCode ec = 0;
-    DOMXPathResult *_result = [DOMXPathResult _xpathResultWith:[self _document]->evaluate(expression, [contextNode _node], [nativeResolver _xpathNSResolver], type, [result _xpathResult], ec).get()];
-    raiseOnDOMError(ec);
-    return _result;
-}
-
-@end
-
 #endif // XPATH_SUPPORT

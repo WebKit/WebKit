@@ -1,4 +1,5 @@
 # Copyright (C) 2006 Apple Computer, Inc. All rights reserved.
+# Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com> 
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 VPATH = \
     $(WebCore) \
     $(WebCore)/bindings/js \
+    $(WebCore)/bindings/objc \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/html \
@@ -44,6 +46,22 @@ all : \
     CharsetData.cpp \
     ColorData.c \
     DocTypeStrings.cpp \
+    DOMAttr.h \
+    DOMCDATASection.h \
+    DOMCharacterData.h \
+    DOMComment.h \
+    DOMDOMImplementation.h \
+    DOMDocument.h \
+    DOMDocumentFragment.h \
+    DOMDocumentType.h \
+    DOMElement.h \
+    DOMEntity.h \
+    DOMEntityReference.h \
+    DOMNamedNodeMap.h \
+    DOMNodeList.h \
+    DOMNotation.h \
+    DOMProcessingInstruction.h \
+    DOMText.h \
     HTMLEntityNames.c \
     JSAttr.h \
     JSCSSPrimitiveValue.h \
@@ -286,6 +304,19 @@ ksvgcssvalues.h :
 	echo > ksvgcssvalues.h
 
 endif
+
+# new-style Objective-C bindings
+
+OBJC_BINDINGS_SCRIPTS = \
+    bindings/scripts/CodeGenerator.pm \
+    bindings/scripts/CodeGeneratorObjC.pm \
+    bindings/scripts/IDLParser.pm \
+    bindings/scripts/IDLStructure.pm \
+    bindings/scripts/generate-bindings.pl \
+#
+
+DOM%.h : %.idl $(OBJC_BINDINGS_SCRIPTS)
+	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES)" --generator ObjC --include dom --include html --include xpath --include ksvg2/svg --outputdir  . $<
 
 # new-style JavaScript bindings
 

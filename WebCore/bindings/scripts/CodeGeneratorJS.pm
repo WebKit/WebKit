@@ -2,7 +2,8 @@
 # KDOM IDL parser
 #
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
-# Copyright (C) 2006 Anders Carlsson <andersca@mac.com> 
+# Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
+# Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2006 Apple Computer, Inc.
 #
 # This file is part of the KDE project
@@ -57,22 +58,22 @@ EOF
 # Default constructor
 sub new
 {
-	my $object = shift;
-	my $reference = { };
-	
-	$codeGenerator = shift;
-	$outputDir = shift;
-	
-	bless($reference, $object);
-	return $reference;
+    my $object = shift;
+    my $reference = { };
+
+    $codeGenerator = shift;
+    $outputDir = shift;
+
+    bless($reference, $object);
+    return $reference;
 }
 
 sub finish
 {
-	my $object = shift;
-	
-	# Commit changes!
-	$object->WriteData();
+    my $object = shift;
+
+    # Commit changes!
+    $object->WriteData();
 }
 
 sub leftShift($$) {
@@ -83,11 +84,11 @@ sub leftShift($$) {
 # Params: 'domClass' struct
 sub GenerateInterface
 {
-	my $object = shift;
-	my $dataNode = shift;
-	
-	# FIXME: Check dates to see if we need to re-generate anything
-	
+    my $object = shift;
+    my $dataNode = shift;
+
+    $object->RemoveExcludedAttributesAndFunctions($dataNode);
+
     # Start actual generation..
     $object->GenerateHeader($dataNode);
     $object->GenerateImplementation($dataNode);
@@ -109,6 +110,32 @@ sub GenerateModule
     my $dataNode = shift;  
     
     $module = $dataNode->module;    
+}
+
+sub RemoveExcludedAttributesAndFunctions
+{
+    my $object = shift;
+    my $dataNode = shift;
+
+    my $i = 0;
+    while ($i < scalar(@{$dataNode->attributes})) {
+        my $lang = ${$dataNode->attributes}[$i]->signature->extendedAttributes->{"Exclude"};
+        if ($lang and $lang eq "JS") {
+            splice(@{$dataNode->attributes}, $i, 1);
+        } else {
+            $i++;
+        }
+    }
+
+    $i = 0;
+    while ($i < scalar(@{$dataNode->functions})) {
+        my $lang = ${$dataNode->functions}[$i]->signature->extendedAttributes->{"Exclude"};
+        if ($lang and $lang eq "JS") {
+            splice(@{$dataNode->functions}, $i, 1);
+        } else {
+            $i++;
+        }
+    }
 }
 
 sub GetParentClassName
@@ -211,11 +238,11 @@ sub GenerateHeader
             push(@headerContent, "#include \"kjs_binding.h\"\n");
         }
     }
-  
+
+    my $numConstants = @{$dataNode->constants};
     my $numAttributes = @{$dataNode->attributes};
     my $numFunctions = @{$dataNode->functions};
-    my $numConstants = @{$dataNode->constants};
-    
+
     push(@headerContent, "\nnamespace WebCore {\n\n");
     
     # Implementation class forward declaration
@@ -696,7 +723,7 @@ sub GenerateImplementation
         push(@implContent, "        return true;\n");
         push(@implContent, "    }\n");
     }    
-	
+    
     if ($dataNode->extendedAttributes->{"HasNameGetter"}) {
         &$hasNameGetterGeneration();
     }

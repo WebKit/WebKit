@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,17 +29,17 @@
 #import "DOM.h"
 
 #import "CDATASection.h"
-#import "csshelper.h"
 #import "CSSStyleSheet.h"
 #import "Comment.h"
 #import "DOMEventsInternal.h"
+#import "DOMHTML.h"
 #import "DOMImplementationFront.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
+#import "DeprecatedValueList.h"
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentType.h"
-#import "Entity.h"
 #import "EntityReference.h"
 #import "Event.h"
 #import "EventListener.h"
@@ -47,37 +48,57 @@
 #import "HTMLDocument.h"
 #import "HTMLNames.h"
 #import "HTMLPlugInElement.h"
+#import "IntRect.h"
 #import "NodeFilter.h"
 #import "NodeFilterCondition.h"
 #import "NodeIterator.h"
 #import "NodeList.h"
-#import "Notation.h"
 #import "ProcessingInstruction.h"
 #import "QualifiedName.h"
 #import "Range.h"
 #import "RenderImage.h"
+#import "Text.h"
 #import "TreeWalker.h"
 #import "WebScriptObjectPrivate.h"
+#import "csshelper.h"
+
+// From old DOMCore.h
+#import "DOMNode.h"
+#import "DOMObject.h"
+
+// Generated Objective-C Bindings
+#import "DOMAttr.h"
+#import "DOMCDATASection.h"
+#import "DOMCharacterData.h"
+#import "DOMComment.h"
+#import "DOMDOMImplementation.h"
+#import "DOMDocument.h"
+#import "DOMDocumentFragment.h"
+#import "DOMDocumentType.h"
+#import "DOMElement.h"
+#import "DOMEntity.h"
+#import "DOMEntityReference.h"
+#import "DOMNamedNodeMap.h"
+#import "DOMNodeList.h"
+#import "DOMNotation.h"
+#import "DOMProcessingInstruction.h"
+#import "DOMText.h"
+
 #import <objc/objc-class.h>
 
 using WebCore::AtomicString;
 using WebCore::AtomicStringImpl;
 using WebCore::Attr;
-using WebCore::CharacterData;
-using WebCore::DeprecatedValueList;
 using WebCore::Document;
 using WebCore::DocumentFragment;
-using WebCore::DocumentType;
 using WebCore::DOMImplementationFront;
 using WebCore::Element;
-using WebCore::Entity;
 using WebCore::Event;
 using WebCore::EventListener;
 using WebCore::ExceptionCode;
 using WebCore::HTMLDocument;
 using WebCore::HTMLElement;
 using WebCore::FrameMac;
-using WebCore::IntRect;
 using WebCore::KURL;
 using WebCore::NamedNodeMap;
 using WebCore::Node;
@@ -85,31 +106,14 @@ using WebCore::NodeFilter;
 using WebCore::NodeFilterCondition;
 using WebCore::NodeIterator;
 using WebCore::NodeList;
-using WebCore::Notation;
-using WebCore::ProcessingInstruction;
 using WebCore::QualifiedName;
 using WebCore::Range;
 using WebCore::RenderImage;
 using WebCore::RenderObject;
 using WebCore::String;
-using WebCore::Text;
 using WebCore::TreeWalker;
 
 using namespace WebCore::HTMLNames;
-
-@interface DOMAttr (WebCoreInternal)
-+ (DOMAttr *)_attrWith:(Attr *)impl;
-- (Attr *)_attr;
-@end
-
-@interface DOMDocumentType (WebCoreInternal)
-- (DocumentType *)_documentType;
-@end
-
-@interface DOMImplementation (WebCoreInternal)
-+ (DOMImplementation *)_DOMImplementationWith:(DOMImplementationFront *)impl;
-- (DOMImplementationFront *)_DOMImplementation;
-@end
 
 class ObjCEventListener : public EventListener {
 public:
@@ -131,41 +135,9 @@ typedef HashMap<AtomicStringImpl*, Class> ObjCClassMap;
 static ObjCClassMap* elementClassMap;
 static ListenerMap* listenerMap;
 
+
 //------------------------------------------------------------------------------------------
 // DOMObject
-
-@implementation DOMObject
-
-// Prevent creation of DOM objects by clients who just "[[xxx alloc] init]".
-- (id)init
-{
-    [NSException raise:NSGenericException format:@"+[%@ init]: should never be used", NSStringFromClass([self class])];
-    [self release];
-    return nil;
-}
-
-- (void)dealloc
-{
-    if (_internal) {
-        removeDOMWrapper(_internal);
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        removeDOMWrapper(_internal);
-    }
-    [super finalize];
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-@end
 
 @implementation DOMObject (WebCoreInternal)
 
@@ -176,270 +148,9 @@ static ListenerMap* listenerMap;
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // DOMNode
-
-@implementation DOMNode
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<Node *>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<Node *>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (NSString *)description
-{
-    if (!_internal) {
-        return [NSString stringWithFormat:@"<%@: null>",
-            [[self class] description], self];
-    }
-    NSString *value = [self nodeValue];
-    if (value) {
-        return [NSString stringWithFormat:@"<%@ [%@]: %p '%@'>",
-            [[self class] description], [self nodeName], _internal, value];
-    }
-    return [NSString stringWithFormat:@"<%@ [%@]: %p>",
-        [[self class] description], [self nodeName], _internal];
-}
-
-- (NSString *)nodeName
-{
-    return [self _node]->nodeName();
-}
-
-- (NSString *)nodeValue
-{
-    // Documentation says we can raise a DOMSTRING_SIZE_ERR.
-    // However, the lower layer does not report that error up to us.
-    return [self _node]->nodeValue();
-}
-
-- (void)setNodeValue:(NSString *)string
-{
-    ASSERT(string);
-    
-    ExceptionCode ec = 0;
-    [self _node]->setNodeValue(string, ec);
-    raiseOnDOMError(ec);
-}
-
-- (unsigned short)nodeType
-{
-    return [self _node]->nodeType();
-}
-
-- (DOMNode *)parentNode
-{
-    return [DOMNode _nodeWith:[self _node]->parentNode()];
-}
-
-- (DOMNodeList *)childNodes
-{
-    return [DOMNodeList _nodeListWith:[self _node]->childNodes().get()];
-}
-
-- (DOMNode *)firstChild
-{
-    return [DOMNode _nodeWith:[self _node]->firstChild()];
-}
-
-- (DOMNode *)lastChild
-{
-    return [DOMNode _nodeWith:[self _node]->lastChild()];
-}
-
-- (DOMNode *)previousSibling
-{
-    return [DOMNode _nodeWith:[self _node]->previousSibling()];
-}
-
-- (DOMNode *)nextSibling
-{
-    return [DOMNode _nodeWith:[self _node]->nextSibling()];
-}
-
-- (DOMNamedNodeMap *)attributes
-{
-    // DOM level 2 core specification says: 
-    // A NamedNodeMap containing the attributes of this node (if it is an Element) or null otherwise.
-    return nil;
-}
-
-- (DOMDocument *)ownerDocument
-{
-    return [DOMDocument _documentWith:[self _node]->document()];
-}
-
-- (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild
-{
-    ASSERT(newChild);
-    ASSERT(refChild);
-
-    ExceptionCode ec = 0;
-    if ([self _node]->insertBefore([newChild _node], [refChild _node], ec))
-        return newChild;
-    raiseOnDOMError(ec);
-    return nil;
-}
-
-- (DOMNode *)replaceChild:(DOMNode *)newChild :(DOMNode *)oldChild
-{
-    ASSERT(newChild);
-    ASSERT(oldChild);
-
-    ExceptionCode ec = 0;
-    if ([self _node]->replaceChild([newChild _node], [oldChild _node], ec))
-        return oldChild;
-    raiseOnDOMError(ec);
-    return nil;
-}
-
-- (DOMNode *)removeChild:(DOMNode *)oldChild
-{
-    ASSERT(oldChild);
-
-    ExceptionCode ec = 0;
-    if ([self _node]->removeChild([oldChild _node], ec))
-        return oldChild;
-    raiseOnDOMError(ec);
-    return nil;
-}
-
-- (DOMNode *)appendChild:(DOMNode *)newChild
-{
-    ASSERT(newChild);
-
-    ExceptionCode ec = 0;
-    if ([self _node]->appendChild([newChild _node], ec))
-        return newChild;
-    raiseOnDOMError(ec);
-    return nil;
-}
-
-- (BOOL)hasChildNodes
-{
-    return [self _node]->hasChildNodes();
-}
-
-- (DOMNode *)cloneNode:(BOOL)deep
-{
-    return [DOMNode _nodeWith:[self _node]->cloneNode(deep).get()];
-}
-
-- (void)normalize
-{
-    [self _node]->normalize();
-}
-
-- (BOOL)isSupported:(NSString *)feature :(NSString *)version
-{
-    ASSERT(feature);
-    ASSERT(version);
-
-    return [self _node]->isSupported(feature, version);
-}
-
-- (NSString *)namespaceURI
-{
-    return [self _node]->namespaceURI();
-}
-
-- (NSString *)prefix
-{
-    return [self _node]->prefix();
-}
-
-- (void)setPrefix:(NSString *)prefix
-{
-    ASSERT(prefix);
-
-    ExceptionCode ec = 0;
-    String prefixStr(prefix);
-    [self _node]->setPrefix(prefixStr.impl(), ec);
-    raiseOnDOMError(ec);
-}
-
-- (NSString *)localName
-{
-    return [self _node]->localName();
-}
-
-- (BOOL)hasAttributes
-{
-    return [self _node]->hasAttributes();
-}
-
-- (BOOL)isSameNode:(DOMNode *)other
-{
-    return [self _node]->isSameNode([other _node]);
-}
-
-- (BOOL)isEqualNode:(DOMNode *)other
-{
-    return [self _node]->isEqualNode([other _node]);
-}
-
-- (BOOL)isDefaultNamespace:(NSString *)namespaceURI
-{
-    return [self _node]->isDefaultNamespace(namespaceURI);
-}
-
-- (NSString *)lookupPrefix:(NSString *)namespaceURI
-{
-    return [self _node]->lookupPrefix(namespaceURI);
-}
-
-- (NSString *)lookupNamespaceURI:(NSString *)prefix
-{
-    return [self _node]->lookupNamespaceURI(prefix);
-}
-
-- (NSString *)textContent
-{
-    return [self _node]->textContent();
-}
-
-- (void)setTextContent:(NSString *)text
-{
-    ExceptionCode ec = 0;
-    [self _node]->setTextContent(text, ec);
-    raiseOnDOMError(ec);
-}
-
-- (NSRect)boundingBox
-{
-    WebCore::RenderObject *renderer = [self _node]->renderer();
-    if (renderer)
-        return renderer->absoluteBoundingBoxRect();
-    return NSZeroRect;
-}
-
-- (NSArray *)lineBoxRects
-{
-    WebCore::RenderObject *renderer = [self _node]->renderer();
-    if (renderer) {
-        NSMutableArray *results = [[NSMutableArray alloc] init];
-        DeprecatedValueList<IntRect> rects = renderer->lineBoxRects();
-        if (!rects.isEmpty()) {
-            for (DeprecatedValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it)
-                [results addObject:[NSValue valueWithRect:*it]];
-        }
-        return [results autorelease];
-    }
-    return nil;
-}
-
-@end
 
 static void addElementClass(const QualifiedName& tag, Class objCClass)
 {
@@ -529,6 +240,22 @@ static Class elementClass(const AtomicString& tagName)
 
 @implementation DOMNode (WebCoreInternal)
 
+// FIXME: should this go in the main implementation?
+- (NSString *)description
+{
+    if (!_internal) {
+        return [NSString stringWithFormat:@"<%@: null>",
+            [[self class] description], self];
+    }
+    NSString *value = [self nodeValue];
+    if (value) {
+        return [NSString stringWithFormat:@"<%@ [%@]: %p '%@'>",
+            [[self class] description], [self nodeName], _internal, value];
+    }
+    return [NSString stringWithFormat:@"<%@ [%@]: %p>",
+        [[self class] description], [self nodeName], _internal];
+}
+
 - (id)_initWithNode:(Node *)impl
 {
     ASSERT(impl);
@@ -609,10 +336,10 @@ static Class elementClass(const AtomicString& tagName)
 
 - (const KJS::Bindings::RootObject *)_executionContext
 {
-    if (Node *n = [self _node])
+    if (Node *n = [self _node]) {
         if (FrameMac *f = Mac(n->document()->frame()))
             return f->executionContextForDOM();
-
+    }
     return 0;
 }
 
@@ -627,6 +354,7 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
+// FIXME: this should be auto-genenerate in DOMNode.mm
 @implementation DOMNode (DOMEventTarget)
 
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
@@ -661,100 +389,9 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // DOMNamedNodeMap
-
-@implementation DOMNamedNodeMap
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<NamedNodeMap *>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<NamedNodeMap *>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (NamedNodeMap *)_namedNodeMap
-{
-    return DOM_cast<NamedNodeMap *>(_internal);
-}
-
-- (DOMNode *)getNamedItem:(NSString *)name
-{
-    ASSERT(name);
-
-    return [DOMNode _nodeWith:[self _namedNodeMap]->getNamedItem(name).get()];
-}
-
-- (DOMNode *)setNamedItem:(DOMNode *)arg
-{
-    ASSERT(arg);
-
-    int exception = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _namedNodeMap]->setNamedItem([arg _node], exception).get()];
-    raiseOnDOMError(exception);
-    return result;
-}
-
-- (DOMNode *)removeNamedItem:(NSString *)name
-{
-    ASSERT(name);
-
-    int exception = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _namedNodeMap]->removeNamedItem(name, exception).get()];
-    raiseOnDOMError(exception);
-    return result;
-}
-
-- (DOMNode *)item:(unsigned)index
-{
-    return [DOMNode _nodeWith:[self _namedNodeMap]->item(index).get()];
-}
-
-- (unsigned)length
-{
-    return [self _namedNodeMap]->length();
-}
-
-- (DOMNode *)getNamedItemNS:(NSString *)namespaceURI :(NSString *)localName
-{
-    if (!namespaceURI || !localName) {
-        return nil;
-    }
-
-    return [DOMNode _nodeWith:[self _namedNodeMap]->getNamedItemNS(namespaceURI, localName).get()];
-}
-
-- (DOMNode *)setNamedItemNS:(DOMNode *)arg
-{
-    ASSERT(arg);
-
-    int exception = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _namedNodeMap]->setNamedItemNS([arg _node], exception).get()];
-    raiseOnDOMError(exception);
-    return result;
-}
-
-- (DOMNode *)removeNamedItemNS:(NSString *)namespaceURI :(NSString *)localName
-{
-    ASSERT(namespaceURI);
-    ASSERT(localName);
-
-    int exception = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _namedNodeMap]->removeNamedItemNS(namespaceURI, localName, exception).get()];
-    raiseOnDOMError(exception);
-    return result;
-}
-
-@end
 
 @implementation DOMNamedNodeMap (WebCoreInternal)
 
@@ -784,43 +421,9 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // DOMNodeList
-
-@implementation DOMNodeList
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<NodeList *>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<NodeList *>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (NodeList *)_nodeList
-{
-    return DOM_cast<NodeList *>(_internal);
-}
-
-- (DOMNode *)item:(unsigned)index
-{
-    return [DOMNode _nodeWith:[self _nodeList]->item(index)];
-}
-
-- (unsigned)length
-{
-    return [self _nodeList]->length();
-}
-
-@end
 
 @implementation DOMNodeList (WebCoreInternal)
 
@@ -850,77 +453,9 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // DOMImplementation
-
-@implementation DOMImplementation
-
-- (void)dealloc
-{
-    if (_internal)
-        DOM_cast<DOMImplementationFront *>(_internal)->deref();
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal)
-        DOM_cast<DOMImplementationFront *>(_internal)->deref();
-    [super finalize];
-}
-
-- (BOOL)hasFeature:(NSString *)feature :(NSString *)version
-{
-    ASSERT(feature);
-    ASSERT(version);
-
-    return [self _DOMImplementation]->hasFeature(feature, version);
-}
-
-- (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName :(NSString *)publicId :(NSString *)systemId
-{
-    ASSERT(qualifiedName);
-    ASSERT(publicId);
-    ASSERT(systemId);
-
-    ExceptionCode ec = 0;
-    RefPtr<DocumentType> impl = [self _DOMImplementation]->createDocumentType(qualifiedName, publicId, systemId, ec);
-    raiseOnDOMError(ec);
-    return static_cast<DOMDocumentType *>([DOMNode _nodeWith:impl.get()]);
-}
-
-- (DOMDocument *)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(DOMDocumentType *)doctype
-{
-    ASSERT(namespaceURI);
-    ASSERT(qualifiedName);
-
-    ExceptionCode ec = 0;
-    RefPtr<Document> impl = [self _DOMImplementation]->createDocument(namespaceURI, qualifiedName, [doctype _documentType], ec);
-    raiseOnDOMError(ec);
-    return static_cast<DOMDocument *>([DOMNode _nodeWith:impl.get()]);
-}
-
-- (DOMHTMLDocument *)createHTMLDocument:(NSString *)title
-{
-    RefPtr<HTMLDocument> impl = [self _DOMImplementation]->createHTMLDocument(title);
-    return static_cast<DOMHTMLDocument *>([DOMNode _nodeWith:impl.get()]);
-}
-@end
-
-@implementation DOMImplementation (DOMImplementationCSS)
-
-- (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media
-{
-    ASSERT(title);
-    ASSERT(media);
-
-    ExceptionCode ec = 0;
-    DOMCSSStyleSheet *result = [DOMCSSStyleSheet _CSSStyleSheetWith:[self _DOMImplementation]->createCSSStyleSheet(title, media, ec).get()];
-    raiseOnDOMError(ec);
-    return result;
-}
-
-@end
  
 @implementation DOMImplementation (WebCoreInternal)
 
@@ -955,12 +490,9 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // DOMDocumentFragment
-
-@implementation DOMDocumentFragment
-
-@end
 
 @implementation DOMDocumentFragment (WebCoreInternal)
 
@@ -976,180 +508,11 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // DOMDocument
 
-@implementation DOMDocument
-
-- (DOMNode *)adoptNode:(DOMNode *)source
-{
-    ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _document]->adoptNode([source _node], ec).get()];
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (DOMDocumentType *)doctype
-{
-    return static_cast<DOMDocumentType *>([DOMNode _nodeWith:[self _document]->doctype()]);
-}
-
-- (DOMImplementation *)implementation
-{
-    return [DOMImplementation _DOMImplementationWith:implementationFront([self _document])];
-}
-
-- (DOMElement *)documentElement
-{
-    return static_cast<DOMElement *>([DOMNode _nodeWith:[self _document]->documentElement()]);
-}
-
-- (DOMElement *)createElement:(NSString *)tagName
-{
-    ASSERT(tagName);
-
-    ExceptionCode ec = 0;
-    DOMElement *result = static_cast<DOMElement *>([DOMNode _nodeWith:[self _document]->createElement(tagName, ec).get()]);
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (DOMDocumentFragment *)createDocumentFragment
-{
-    return static_cast<DOMDocumentFragment *>([DOMNode _nodeWith:[self _document]->createDocumentFragment().get()]);
-}
-
-- (DOMText *)createTextNode:(NSString *)data
-{
-    ASSERT(data);
-    return static_cast<DOMText *>([DOMNode _nodeWith:[self _document]->createTextNode(data).get()]);
-}
-
-- (DOMComment *)createComment:(NSString *)data
-{
-    ASSERT(data);
-    return static_cast<DOMComment *>([DOMNode _nodeWith:[self _document]->createComment(data).get()]);
-}
-
-- (DOMCDATASection *)createCDATASection:(NSString *)data
-{
-    ASSERT(data);
-    int exception = 0;
-    DOMCDATASection *result = static_cast<DOMCDATASection *>([DOMNode _nodeWith:[self _document]->createCDATASection(data, exception).get()]);
-    raiseOnDOMError(exception);
-    return result;
-}
-
-- (DOMProcessingInstruction *)createProcessingInstruction:(NSString *)target :(NSString *)data
-{
-    ASSERT(target);
-    ASSERT(data);
-    int exception = 0;
-    DOMProcessingInstruction *result = static_cast<DOMProcessingInstruction *>([DOMNode _nodeWith:[self _document]->createProcessingInstruction(target, data, exception).get()]);
-    raiseOnDOMError(exception);
-    return result;
-}
-
-- (DOMAttr *)createAttribute:(NSString *)name
-{
-    ASSERT(name);
-    int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWith:[self _document]->createAttribute(name, exception).get()];
-    raiseOnDOMError(exception);
-    return result;
-}
-
-- (DOMEntityReference *)createEntityReference:(NSString *)name
-{
-    ASSERT(name);
-    int exception = 0;
-    DOMEntityReference *result = static_cast<DOMEntityReference *>([DOMNode _nodeWith:[self _document]->createEntityReference(name, exception).get()]);
-    raiseOnDOMError(exception);
-    return result;
-}
-
-- (DOMNodeList *)getElementsByTagName:(NSString *)tagname
-{
-    ASSERT(tagname);
-    return [DOMNodeList _nodeListWith:[self _document]->getElementsByTagName(tagname).get()];
-}
-
-- (DOMNode *)importNode:(DOMNode *)importedNode :(BOOL)deep
-{
-    ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _document]->importNode([importedNode _node], deep, ec).get()];
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (DOMElement *)createElementNS:(NSString *)namespaceURI :(NSString *)qualifiedName
-{
-    ASSERT(namespaceURI);
-    ASSERT(qualifiedName);
-
-    ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _document]->createElementNS(namespaceURI, qualifiedName, ec).get()];
-    raiseOnDOMError(ec);
-    return static_cast<DOMElement *>(result);
-}
-
-- (DOMAttr *)createAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName
-{
-    ASSERT(namespaceURI);
-    ASSERT(qualifiedName);
-
-    int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWith:[self _document]->createAttributeNS(namespaceURI, qualifiedName, exception).get()];
-    raiseOnDOMError(exception);
-    return result;
-}
-
-- (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName
-{
-    ASSERT(namespaceURI);
-    ASSERT(localName);
-
-    return [DOMNodeList _nodeListWith:[self _document]->getElementsByTagNameNS(namespaceURI, localName).get()];
-}
-
-- (DOMElement *)getElementById:(NSString *)elementId
-{
-    ASSERT(elementId);
-
-    return static_cast<DOMElement *>([DOMNode _nodeWith:[self _document]->getElementById(elementId)]);
-}
-
-@end
-
-@implementation DOMDocument (DOMDocumentRange)
-
-- (DOMRange *)createRange
-{
-    return [DOMRange _rangeWith:[self _document]->createRange().get()];
-}
-
-@end
-
-@implementation DOMDocument (DOMDocumentCSS)
-
-- (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt
-{
-    Element *element = [elt _element];
-    String pseudoEltString(pseudoElt);
-    return [DOMCSSStyleDeclaration _styleDeclarationWith:[self _document]->getOverrideStyle(element, pseudoEltString.impl())];
-}
-
-@end
-
-@implementation DOMDocument (DOMDocumentStyle)
-
-- (DOMStyleSheetList *)styleSheets
-{
-    return [DOMStyleSheetList _styleSheetListWith:[self _document]->styleSheets()];
-}
-
-@end
-
+// FIXME: this should be auto-genenerate in DOMDocument.mm
 @implementation DOMDocument (DOMDocumentExtensions)
 
 - (DOMCSSStyleDeclaration *)createCSSStyleDeclaration
@@ -1178,121 +541,9 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
-//------------------------------------------------------------------------------------------
-// DOMCharacterData
-
-@implementation DOMCharacterData
-
-- (CharacterData *)_characterData
-{
-    return static_cast<CharacterData *>(DOM_cast<Node *>(_internal));
-}
-
-- (NSString *)data
-{
-    // Documentation says we can raise a DOMSTRING_SIZE_ERR.
-    // However, the lower layer does not report that error up to us.
-    return [self _characterData]->data();
-}
-
-- (void)setData:(NSString *)data
-{
-    ASSERT(data);
-    
-    ExceptionCode ec = 0;
-    [self _characterData]->setData(data, ec);
-    raiseOnDOMError(ec);
-}
-
-- (unsigned)length
-{
-    return [self _characterData]->length();
-}
-
-- (NSString *)substringData:(unsigned)offset :(unsigned)count
-{
-    ExceptionCode ec = 0;
-    NSString *result = [self _characterData]->substringData(offset, count, ec);
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (void)appendData:(NSString *)arg
-{
-    ASSERT(arg);
-    
-    ExceptionCode ec = 0;
-    [self _characterData]->appendData(arg, ec);
-    raiseOnDOMError(ec);
-}
-
-- (void)insertData:(unsigned)offset :(NSString *)arg
-{
-    ASSERT(arg);
-    
-    ExceptionCode ec = 0;
-    [self _characterData]->insertData(offset, arg, ec);
-    raiseOnDOMError(ec);
-}
-
-- (void)deleteData:(unsigned)offset :(unsigned) count
-{
-    ExceptionCode ec = 0;
-    [self _characterData]->deleteData(offset, count, ec);
-    raiseOnDOMError(ec);
-}
-
-- (void)replaceData:(unsigned)offset :(unsigned)count :(NSString *)arg
-{
-    ASSERT(arg);
-
-    ExceptionCode ec = 0;
-    [self _characterData]->replaceData(offset, count, arg, ec);
-    raiseOnDOMError(ec);
-}
-
-@end
 
 //------------------------------------------------------------------------------------------
 // DOMAttr
-
-@implementation DOMAttr
-
-- (NSString *)name
-{
-    return [self _attr]->nodeName();
-}
-
-- (BOOL)specified
-{
-    return [self _attr]->specified();
-}
-
-- (NSString *)value
-{
-    return [self _attr]->nodeValue();
-}
-
-- (void)setValue:(NSString *)value
-{
-    ASSERT(value);
-
-    ExceptionCode ec = 0;
-    [self _attr]->setValue(value, ec);
-    raiseOnDOMError(ec);
-}
-
-- (DOMElement *)ownerElement
-{
-    return [DOMElement _elementWith:[self _attr]->ownerElement()];
-}
-
-- (DOMCSSStyleDeclaration *)style
-{
-    return [DOMCSSStyleDeclaration _styleDeclarationWith: [self _attr]->style()];
-}
-
-@end
 
 @implementation DOMAttr (WebCoreInternal)
 
@@ -1309,171 +560,27 @@ static Class elementClass(const AtomicString& tagName)
 @end
 
 //------------------------------------------------------------------------------------------
+// DOMDocumentType
+
+@implementation DOMDocumentType (WebCoreInternal)
+
++ (DOMDocumentType *)_documentTypeWith:(WebCore::DocumentType *)impl;
+{
+    return static_cast<DOMDocumentType *>([DOMNode _nodeWith:impl]);
+}
+
+- (WebCore::DocumentType *)_documentType;
+{
+    return static_cast<WebCore::DocumentType *>(DOM_cast<WebCore::Node *>(_internal));
+}
+
+@end
+
+//------------------------------------------------------------------------------------------
 // DOMElement
 
-@implementation DOMElement
-
-- (NSString *)tagName
-{
-    return [self _element]->nodeName();
-}
-
-- (DOMNamedNodeMap *)attributes
-{
-    return [DOMNamedNodeMap _namedNodeMapWith:[self _element]->attributes()];
-}
-
-- (NSString *)getAttribute:(NSString *)name
-{
-    ASSERT(name);
-    return [self _element]->getAttribute(name);
-}
-
-- (void)setAttribute:(NSString *)name :(NSString *)value
-{
-    ASSERT(name);
-    ASSERT(value);
-
-    int exception = 0;
-    [self _element]->setAttribute(name, value, exception);
-    raiseOnDOMError(exception);
-}
-
-- (void)removeAttribute:(NSString *)name
-{
-    ASSERT(name);
-
-    int exception = 0;
-    [self _element]->removeAttribute(name, exception);
-    raiseOnDOMError(exception);
-}
-
-- (DOMAttr *)getAttributeNode:(NSString *)name
-{
-    ASSERT(name);
-
-    return [DOMAttr _attrWith:[self _element]->getAttributeNode(name).get()];
-}
-
-- (DOMAttr *)setAttributeNode:(DOMAttr *)newAttr
-{
-    ASSERT(newAttr);
-
-    int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWith:[self _element]->setAttributeNode([newAttr _attr], exception).get()];
-    raiseOnDOMError(exception);
-    return result;
-}
-
-- (DOMAttr *)removeAttributeNode:(DOMAttr *)oldAttr
-{
-    ASSERT(oldAttr);
-
-    int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWith:[self _element]->removeAttributeNode([oldAttr _attr], exception).get()];
-    raiseOnDOMError(exception);
-    return result;
-}
-
-- (DOMNodeList *)getElementsByTagName:(NSString *)name
-{
-    ASSERT(name);
-
-    return [DOMNodeList _nodeListWith:[self _element]->getElementsByTagName(name).get()];
-}
-
-- (NSString *)getAttributeNS:(NSString *)namespaceURI :(NSString *)localName
-{
-    ASSERT(namespaceURI);
-    ASSERT(localName);
-
-    return [self _element]->getAttributeNS(namespaceURI, localName);
-}
-
-- (void)setAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName :(NSString *)value
-{
-    ASSERT(namespaceURI);
-    ASSERT(qualifiedName);
-    ASSERT(value);
-
-    int exception = 0;
-    [self _element]->setAttributeNS(namespaceURI, qualifiedName, value, exception);
-    raiseOnDOMError(exception);
-}
-
-- (void)removeAttributeNS:(NSString *)namespaceURI :(NSString *)localName
-{
-    ASSERT(namespaceURI);
-    ASSERT(localName);
-
-    int exception = 0;
-    [self _element]->removeAttributeNS(namespaceURI, localName, exception);
-    raiseOnDOMError(exception);
-}
-
-- (DOMAttr *)getAttributeNodeNS:(NSString *)namespaceURI :(NSString *)localName
-{
-    ASSERT(namespaceURI);
-    ASSERT(localName);
-
-    return [DOMAttr _attrWith:[self _element]->getAttributeNodeNS(namespaceURI, localName).get()];
-}
-
-- (DOMAttr *)setAttributeNodeNS:(DOMAttr *)newAttr
-{
-    ASSERT(newAttr);
-
-    int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWith:[self _element]->setAttributeNodeNS([newAttr _attr], exception).get()];
-    raiseOnDOMError(exception);
-    return result;
-}
-
-- (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName
-{
-    ASSERT(namespaceURI);
-    ASSERT(localName);
-
-    return [DOMNodeList _nodeListWith:[self _element]->getElementsByTagNameNS(namespaceURI, localName).get()];
-}
-
-- (BOOL)hasAttribute:(NSString *)name
-{
-    ASSERT(name);
-
-    return [self _element]->hasAttribute(name);
-}
-
-- (BOOL)hasAttributeNS:(NSString *)namespaceURI :(NSString *)localName
-{
-    ASSERT(namespaceURI);
-    ASSERT(localName);
-
-    return [self _element]->hasAttributeNS(namespaceURI, localName);
-}
-
-- (void)focus
-{
-    [self _element]->focus();
-}
-
-- (void)blur
-{
-    [self _element]->blur();
-}
-
-@end
-
-@implementation DOMElement (DOMElementCSSInlineStyle)
-
-- (DOMCSSStyleDeclaration *)style
-{
-    return [DOMCSSStyleDeclaration _styleDeclarationWith:[self _element]->style()];
-}
-
-@end
-
-@implementation DOMElement (DOMElementExtensions)
+// FIXME: this should be auto-genenerate in DOMElement.mm
+@implementation DOMElement (DOMElementAppKitExtensions)
 
 - (NSImage*)image
 {
@@ -1484,16 +591,6 @@ static Class elementClass(const AtomicString& tagName)
             return img->cachedImage()->image()->getNSImage();
     }
     return nil;
-}
-
-- (void)scrollIntoView:(BOOL)alignTop
-{
-    [self _element]->scrollIntoView(alignTop);
-}
-
-- (void)scrollIntoViewIfNeeded:(BOOL)centerIfNeeded
-{
-    [self _element]->scrollIntoViewIfNeeded(centerIfNeeded);
 }
 
 @end
@@ -1561,172 +658,71 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // DOMText
 
-@implementation DOMText
+@implementation DOMText (WebCoreInternal)
 
-- (Text *)_text
++ (DOMText *)_textWith:(WebCore::Text *)impl
 {
-    return static_cast<Text *>(DOM_cast<Node *>(_internal));
-}
-
-- (DOMText *)splitText:(unsigned)offset
-{
-    ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _text]->splitText(offset, ec)];
-    raiseOnDOMError(ec);
-    return static_cast<DOMText *>(result);
+    return static_cast<DOMText *>([DOMNode _nodeWith:impl]);
 }
 
 @end
+
 
 //------------------------------------------------------------------------------------------
 // DOMComment
 
-@implementation DOMComment
+@implementation DOMComment (WebCoreInternal)
+
++ (DOMComment *)_commentWith:(WebCore::Comment *)impl
+{
+    return static_cast<DOMComment *>([DOMNode _nodeWith:impl]);
+}
 
 @end
+
 
 //------------------------------------------------------------------------------------------
 // DOMCDATASection
 
-@implementation DOMCDATASection
+@implementation DOMCDATASection (WebCoreInternal)
 
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMDocumentType
-
-@implementation DOMDocumentType
-
-- (NSString *)name
++ (DOMCDATASection *)_CDATASectionWith:(WebCore::CDATASection *)impl;
 {
-    return [self _documentType]->publicId();
-}
-
-- (DOMNamedNodeMap *)entities
-{
-    return [DOMNamedNodeMap _namedNodeMapWith:[self _documentType]->entities()];
-}
-
-- (DOMNamedNodeMap *)notations
-{
-    return [DOMNamedNodeMap _namedNodeMapWith:[self _documentType]->notations()];
-}
-
-- (NSString *)publicId
-{
-    return [self _documentType]->publicId();
-}
-
-- (NSString *)systemId
-{
-    return [self _documentType]->systemId();
-}
-
-- (NSString *)internalSubset
-{
-    return [self _documentType]->internalSubset();
+    return static_cast<DOMCDATASection *>([DOMNode _nodeWith:impl]);
 }
 
 @end
 
-@implementation DOMDocumentType (WebCoreInternal)
-
-- (DocumentType *)_documentType
-{
-    return static_cast<DocumentType *>(DOM_cast<Node *>(_internal));
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMNotation
-
-@implementation DOMNotation
-
-- (Notation *)_notation
-{
-    return static_cast<Notation *>(DOM_cast<Node *>(_internal));
-}
-
-- (NSString *)publicId
-{
-    return [self _notation]->publicId();
-}
-
-- (NSString *)systemId
-{
-    return [self _notation]->systemId();
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMEntity
-
-@implementation DOMEntity
-
-- (Entity *)_entity
-{
-    return static_cast<Entity *>(DOM_cast<Node *>(_internal));
-}
-
-- (NSString *)publicId
-{
-    return [self _entity]->publicId();
-}
-
-- (NSString *)systemId
-{
-    return [self _entity]->systemId();
-}
-
-- (NSString *)notationName
-{
-    return [self _entity]->notationName();
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMEntityReference
-
-@implementation DOMEntityReference
-
-@end
 
 //------------------------------------------------------------------------------------------
 // DOMProcessingInstruction
 
-@implementation DOMProcessingInstruction
+@implementation DOMProcessingInstruction (WebCoreInternal)
 
-- (ProcessingInstruction *)_processingInstruction
++ (DOMProcessingInstruction *)_processingInstructionWith:(WebCore::ProcessingInstruction *)impl;
 {
-    return static_cast<ProcessingInstruction *>(DOM_cast<Node *>(_internal));
-}
-
-- (NSString *)target
-{
-    return [self _processingInstruction]->target();
-}
-
-- (NSString *)data
-{
-    return [self _processingInstruction]->data();
-}
-
-- (void)setData:(NSString *)data
-{
-    ASSERT(data);
-
-    ExceptionCode ec = 0;
-    [self _processingInstruction]->setData(data, ec);
-    raiseOnDOMError(ec);
+    return static_cast<DOMProcessingInstruction *>([DOMNode _nodeWith:impl]);
 }
 
 @end
+
+
+//------------------------------------------------------------------------------------------
+// DOMProcessingInstruction
+
+@implementation DOMEntityReference (WebCoreInternal)
+
++ (DOMEntityReference *)_entityReferenceWith:(WebCore::EntityReference *)impl;
+{
+    return static_cast<DOMEntityReference *>([DOMNode _nodeWith:impl]);
+}
+
+@end
+
 
 //------------------------------------------------------------------------------------------
 // DOMRange
@@ -1986,9 +982,9 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
-//------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------------------
+// DOMNodeFilter
 
 @implementation DOMNodeFilter
 
@@ -2042,6 +1038,9 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
+
+//------------------------------------------------------------------------------------------
+// DOMNodeIterator
 
 @implementation DOMNodeIterator
 
@@ -2145,6 +1144,10 @@ static Class elementClass(const AtomicString& tagName)
 }
 
 @end
+
+
+//------------------------------------------------------------------------------------------
+// DOMTreeWalker
 
 @implementation DOMTreeWalker
 
@@ -2274,7 +1277,11 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
-class ObjCNodeFilterCondition : public NodeFilterCondition 
+
+//------------------------------------------------------------------------------------------
+// ObjCNodeFilterCondition
+
+class ObjCNodeFilterCondition : public NodeFilterCondition
 {
 public:
     ObjCNodeFilterCondition(id <DOMNodeFilter>);
@@ -2307,6 +1314,11 @@ short ObjCNodeFilterCondition::acceptNode(Node* node) const
     return [m_filter acceptNode:[DOMNode _nodeWith:node]];
 }
 
+
+//------------------------------------------------------------------------------------------
+// DOMDocument (DOMDocumentTraversal)
+
+// FIXME: this should be auto-genenerate in DOMDocument.mm
 @implementation DOMDocument (DOMDocumentTraversal)
 
 - (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
@@ -2332,6 +1344,10 @@ short ObjCNodeFilterCondition::acceptNode(Node* node) const
 }
 
 @end
+
+
+//------------------------------------------------------------------------------------------
+// ObjCEventListener
 
 ObjCEventListener* ObjCEventListener::find(id <DOMEventListener> listener)
 {
