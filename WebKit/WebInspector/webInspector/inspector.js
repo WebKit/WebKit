@@ -115,6 +115,7 @@ var typicalStylePropertyValue = {
     "page-break-before": "auto",
     "page-break-inside": "auto",
     "position": "static",
+    "resize": "none",
     "right": "auto",
     "table-layout": "auto",
     "text-align": "auto",

@@ -1,3 +1,11 @@
+2006-08-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        * WebInspector/webInspector/inspector.js: Add "resize: none" to the list of
+        default values for CSS properties so it will be omitted from most displays
+        of computed style.
+
 2006-08-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
