@@ -1,3 +1,9 @@
+2006-08-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        * kjs/list.h: Use explicit in constructor (as appropriate).
+
 2006-08-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed, tweaked and landed by ap

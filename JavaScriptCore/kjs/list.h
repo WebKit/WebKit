@@ -48,7 +48,7 @@ namespace KJS {
     class List {
     public:
         List();
-        List(bool needsMarking);
+        explicit List(bool needsMarking);
         ~List() { deref(); }
 
         List(const List &b) : _impBase(b._impBase), _needsMarking(false) {
