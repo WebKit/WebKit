@@ -1,4 +1,4 @@
-MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKitTools
+MODULES = Drosera
 
 all:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; if [ $$? -ne 0 ]; then break; fi; done

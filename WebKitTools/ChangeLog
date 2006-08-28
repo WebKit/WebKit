@@ -1,3 +1,13 @@
+2006-08-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        Drosera will be built when you type make.
+
+        * Drosera/Makefile: Added.
+        * Makefile: Added.
+        * Makefile.shared: Added.
+
 2006-08-27  Anders Carlsson  <acarlsson@apple.com>
 
         Forgot to add these.

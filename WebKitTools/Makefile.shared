@@ -1,0 +1,17 @@
+XCODE_OPTIONS = `perl -I../Scripts -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
+
+all:
+	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
+
+debug d development dev develop: force
+	../Scripts/set-webkit-configuration --debug
+	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
+
+release r deployment dep deploy: force
+	../Scripts/set-webkit-configuration --release
+	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
+
+clean:
+	xcodebuild -alltargets clean $(XCODE_OPTIONS)
+
+force: ;
