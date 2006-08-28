@@ -1,5 +1,16 @@
 2006-08-28  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed and landed by ap.
+
+        Fixes one chunk of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10604
+        Offer QString -> DeprecatedString conversion.
+
+        * platform/DeprecatedString.h:
+        * platform/qt/StringQt.cpp:
+        (WebCore::DeprecatedString::DeprecatedString):
+
+2006-08-28  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Tim Hatcher.
         
         Fixes one chunk of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10604
