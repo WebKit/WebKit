@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceLoader_H_
-#define ResourceLoader_H_
+#ifndef ResourceLoader_h
+#define ResourceLoader_h
 
 #include "ResourceLoaderClient.h" // for PlatformResponse
 #include "StringHash.h"
@@ -83,7 +83,8 @@ public:
 #if PLATFORM(MAC)
     void setLoader(WebCoreResourceLoaderImp*);
 #endif
-#if PLATFORM(WIN)
+
+#if USE(WININET)
     void fileLoadTimer(Timer<ResourceLoader>* timer);
     friend void __stdcall transferJobStatusCallback(HINTERNET, DWORD_PTR, DWORD, LPVOID, DWORD);
     friend LRESULT __stdcall ResourceLoaderWndProc(HWND, unsigned message, WPARAM, LPARAM);
@@ -108,4 +109,4 @@ private:
 
 }
 
-#endif // ResourceLoader_H_
+#endif // ResourceLoader_h

@@ -26,6 +26,11 @@
 #ifndef ResourceLoaderClient_h
 #define ResourceLoaderClient_h
 
+#include <wtf/Platform.h>
+#if USE(CFNETWORK)
+#include <CFNetwork/CFURLResponsePriv.h>
+#endif
+
 #if PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSData;
@@ -42,7 +47,10 @@ class NSURLResponse;
 
 namespace WebCore {
 
-#if PLATFORM(MAC)
+#if USE(CFNETWORK)
+    typedef void* PlatformData; // unused for now
+    typedef CFURLResponseRef PlatformResponse;
+#elif PLATFORM(MAC)
     typedef NSData* PlatformData;
     typedef NSURLResponse* PlatformResponse;
 #elif PLATFORM(QT)
@@ -50,8 +58,8 @@ namespace WebCore {
     typedef QString PlatformResponse;
 #else
     // Not sure what the strategy for this will be on other platforms.
-    typedef struct PlatformDataStruct *PlatformData;
-    typedef struct PlatformResponseStruct *PlatformResponse;
+    typedef struct PlatformDataStruct* PlatformData;
+    typedef struct PlatformResponseStruct* PlatformResponse;
 #endif
 
     class KURL;

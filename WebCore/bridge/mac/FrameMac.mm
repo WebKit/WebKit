@@ -1505,17 +1505,12 @@ bool FrameMac::passMouseDownEventToWidget(Widget* widget)
     BOOL wasDeferringLoading = [_bridge defersLoading];
     if (!wasDeferringLoading)
         [_bridge setDefersLoading:YES];
-    BOOL wasDeferringTimers = isDeferringTimers();
-    if (!wasDeferringTimers)
-        setDeferringTimers(true);
 
     ASSERT(!_sendingEventToSubview);
     _sendingEventToSubview = true;
     [view mouseDown:_currentEvent];
     _sendingEventToSubview = false;
     
-    if (!wasDeferringTimers)
-        setDeferringTimers(false);
     if (!wasDeferringLoading)
         [_bridge setDefersLoading:NO];
 

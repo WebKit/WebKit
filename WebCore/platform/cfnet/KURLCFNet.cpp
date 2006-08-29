@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "SharedTimer.h"
-
-#include <CoreFoundation/CoreFoundation.h>
-#include <wtf/Assertions.h>
+#include "KURL.h"
+using namespace std;
 
 namespace WebCore {
 
-static CFRunLoopTimerRef sharedTimer;
-static void (*sharedTimerFiredFunction)();
-
-void setSharedTimerFiredFunction(void (*f)())
+#if PLATFORM(CF)
+CFURLRef KURL::createCFURL() const
 {
-    ASSERT(!sharedTimerFiredFunction || sharedTimerFiredFunction == f);
-
-    sharedTimerFiredFunction = f;
+    const UInt8 *bytes = (const UInt8 *)urlString.latin1();
+    // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components
+    // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
+    // could either be a malformed string or bytes in a different encoding, like Shift-JIS, so we fall back
+    // onto using ISO Latin-1 in those cases.
+    CFURLRef result = CFURLCreateAbsoluteURLWithBytes(0, bytes, urlString.length(), kCFStringEncodingUTF8, 0, true);
+    if (!result)
+        result = CFURLCreateAbsoluteURLWithBytes(0, bytes, urlString.length(), kCFStringEncodingISOLatin1, 0, true);
+    return result;
 }
-
-static void timerFired(CFRunLoopTimerRef, void*)
-{
-    sharedTimerFiredFunction();
-}
-
-void setSharedTimerFireTime(double fireTime)
-{
-    ASSERT(sharedTimerFiredFunction);
-
-    if (sharedTimer) {
-        CFRunLoopTimerInvalidate(sharedTimer);
-        CFRelease(sharedTimer);
-    }
-
-    CFAbsoluteTime fireDate = fireTime - kCFAbsoluteTimeIntervalSince1970;
-    sharedTimer = CFRunLoopTimerCreate(0, fireDate, 0, 0, 0, timerFired, 0);
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopCommonModes);
-}
-
-void stopSharedTimer()
-{
-    if (sharedTimer) {
-        CFRunLoopTimerInvalidate(sharedTimer);
-        CFRelease(sharedTimer);
-        sharedTimer = 0;
-    }
-}
+#endif
 
 }

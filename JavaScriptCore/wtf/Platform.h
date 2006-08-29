@@ -165,4 +165,12 @@
 #define KXMLCORE_USE_ICU_UNICODE 1
 #endif
 
+#if PLATFORM(MAC)
+#define KXMLCORE_PLATFORM_CF 1
+#endif
+
+#if PLATFORM(WIN)
+#define KXMLCORE_USE_WININET 1
+#endif
+
 #endif /* KXMLCORE_PLATFORM_H */

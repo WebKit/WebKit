@@ -134,7 +134,7 @@ void Loader::receivedAllData(ResourceLoader* job, PlatformData allData)
     } else {
         docLoader->setLoadInProgress(true);
         object->data(req->buffer(), true);
-#ifdef __APPLE__
+#if PLATFORM(MAC)
         object->setAllData(allData);
 #endif
         docLoader->setLoadInProgress(false);

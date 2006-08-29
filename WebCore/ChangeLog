@@ -1,3 +1,45 @@
+2006-08-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        Added support for experimental CFNetwork-based loader (not turned on yet).
+        
+        While I was there, I did the following platform cleanup:
+        - Windows now uses USE(WININET) instead of PLATFORM(WIN_OS), to match the
+          USE(CFNETWORK) idiom.
+        - Removed some #includes of windows.h in platform-independent headers.
+        - Changed #ifdef __APPLE__ to PLATFORM(MAC)
+        - Fixed some build bustage, including case-sensitive filesystem bustage.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::receivedAllData):
+        * platform/Cursor.h:
+        * platform/KURL.h:
+        * platform/ResourceLoader.h:
+        * platform/ResourceLoaderClient.h:
+        * platform/ResourceLoaderInternal.h:
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/cfnet/KURLCFNet.cpp: Added.
+        (WebCore::KURL::createCFURL):
+        * platform/cfnet/ResourceLoaderCFNet.cpp: Added.
+        (WebCore::willSendRequest):
+        (WebCore::didReceiveChallenge):
+        (WebCore::didCancelChallenge):
+        (WebCore::didReceiveResponse):
+        (WebCore::didReceiveData):
+        (WebCore::didFinishLoading):
+        (WebCore::didFail):
+        (WebCore::willCacheResponse):
+        (WebCore::addHeadersFromString):
+        (WebCore::ResourceLoaderInternal::~ResourceLoaderInternal):
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::arrayFromFormData):
+        (WebCore::emptyPerform):
+        (WebCore::runLoaderThread):
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::cancel):
+        * platform/win/CursorWin.cpp:
+
 2006-08-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

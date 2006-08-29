@@ -29,7 +29,8 @@
 #include <wtf/Platform.h>
 
 #if PLATFORM(WIN)
-#include <windows.h>
+typedef struct HICON__* HICON;
+typedef HICON HCURSOR;
 #elif PLATFORM(GDK)
 #include <gdk/gdk.h>
 #elif PLATFORM(QT)

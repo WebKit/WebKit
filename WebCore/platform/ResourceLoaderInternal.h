@@ -24,15 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceLoaderInternal_H_
-#define ResourceLoaderInternal_H_
+#ifndef ResourceLoaderInternal_h
+#define ResourceLoaderInternal_h
 
 #include "FormData.h"
 #include "KURL.h"
 #include <wtf/HashMap.h>
 #include <wtf/Platform.h>
 
-#if PLATFORM(WIN)
+#if USE(CFNETWORK)
+#include <CFNetwork/CFURLConnectionPriv.h>
+#endif
+
+#if USE(WININET)
 typedef void* HANDLE;
 #endif
 
@@ -61,11 +65,13 @@ namespace WebCore {
             , method(method)
             , assembledResponseHeaders(true)
             , retrievedCharset(true)
-#if __APPLE__
+#if USE(CFNETWORK)
+            , m_connection(0)
+#elif PLATFORM(MAC)
             , loader(nil)
             , response(nil)
 #endif
-#if PLATFORM(WIN)
+#if USE(WININET)
             , m_fileHandle(0)
             , m_fileLoadTimer(job, &ResourceLoader::fileLoadTimer)
             , m_resourceHandle(0)
@@ -91,11 +97,13 @@ namespace WebCore {
             , postData(p)
             , assembledResponseHeaders(true)
             , retrievedCharset(true)
-#if __APPLE__
+#if USE(CFNETWORK)
+            , m_connection(0)
+#elif PLATFORM(MAC)
             , loader(nil)
             , response(nil)
 #endif
-#if PLATFORM(WIN)
+#if USE(WININET)
             , m_fileHandle(0)
             , m_fileLoadTimer(job, &ResourceLoader::fileLoadTimer)
             , m_resourceHandle(0)
@@ -127,11 +135,13 @@ namespace WebCore {
         bool retrievedCharset;
         DeprecatedString responseHeaders;
         
-#if __APPLE__
+#if USE(CFNETWORK)
+        CFURLConnectionRef m_connection;
+#elif PLATFORM(MAC)
         WebCoreResourceLoaderImp* loader;
         NSURLResponse* response;
 #endif
-#if PLATFORM(WIN)
+#if USE(WININET)
         HANDLE m_fileHandle;
         Timer<ResourceLoader> m_fileLoadTimer;
         HINTERNET m_resourceHandle;
@@ -151,9 +161,8 @@ namespace WebCore {
         CURL *m_handle;
         QString response;
 #endif
-
         };
 
 } // namespace WebCore
 
-#endif // ResourceLoaderInternal_H_
+#endif // ResourceLoaderInternal_h

@@ -53,6 +53,7 @@ KURL::KURL(NSURL *url)
         parse("", 0);
 }
 
+#if PLATFORM(CF)
 CFURLRef KURL::createCFURL() const
 {
     const UInt8 *bytes = (const UInt8 *)urlString.latin1();
@@ -65,6 +66,7 @@ CFURLRef KURL::createCFURL() const
         result = CFURLCreateAbsoluteURLWithBytes(0, bytes, urlString.length(), kCFStringEncodingISOLatin1, 0, true);
     return result;
 }
+#endif
 
 NSURL *KURL::getNSURL() const
 {
