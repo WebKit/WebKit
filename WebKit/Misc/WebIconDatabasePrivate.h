@@ -36,29 +36,8 @@
 @interface WebIconDatabasePrivate : NSObject {
 
 @public
-    WebFileDatabase *fileDatabase;
     WebCoreIconDatabaseBridge *databaseBridge;
-
-    NSMutableDictionary *iconURLToIcons;
-    NSMutableDictionary *iconURLToPageURLs;
-    NSMutableDictionary *pageURLToIconURL;
-    CFMutableDictionaryRef pageURLToRetainCount;
-    CFMutableDictionaryRef iconURLToExtraRetainCount;
     
-    NSMutableSet *iconsOnDiskWithURLs;
-    NSMutableSet *iconsToEraseWithURLs;
-    NSMutableSet *iconsToSaveWithURLs;
-    NSMutableSet *iconURLsWithNoIcons;
-    NSMutableSet *originalIconsOnDiskWithURLs;
-    NSMutableSet *pageURLsBoundDuringPrivateBrowsing;
-    NSMutableSet *iconURLsBoundDuringPrivateBrowsing;
-    
-    int cleanupCount;
-
-    BOOL didCleanup;
-    BOOL waitingToCleanup;
-    BOOL privateBrowsingEnabled;
-
     NSMutableDictionary *htmlIcons;
     NSMutableDictionary *defaultIcons;
 }

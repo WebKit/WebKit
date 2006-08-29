@@ -88,7 +88,6 @@
 
 - (void)didFinishLoading
 {
-#ifdef ICONDEBUG
     NSData *data;
         
     id response = [self response];
@@ -104,7 +103,6 @@
     
     [frameLoader _iconLoaderReceivedPageIcon:[self URL]];
     [super didFinishLoading];
-#endif
 }
 
 - (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse;

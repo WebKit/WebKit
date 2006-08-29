@@ -28,7 +28,6 @@
 #import <WebKit/WebIconDatabase.h>
 
 #import <WebKit/WebIconDatabasePrivate.h>
-#import <WebKit/WebFileDatabase.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -40,11 +39,6 @@
 
 NSString * const WebIconDatabaseVersionKey =    @"WebIconDatabaseVersion";
 NSString * const WebURLToIconURLKey =           @"WebSiteURLToIconURLKey";
-
-NSString * const ObsoleteIconsOnDiskKey =       @"WebIconsOnDisk";
-NSString * const ObsoleteIconURLToURLsKey =     @"WebIconURLToSiteURLs";
-
-static const int WebIconDatabaseCurrentVersion = 2;
 
 NSString *WebIconDatabaseDidAddIconNotification =          @"WebIconDatabaseDidAddIconNotification";
 NSString *WebIconNotificationUserInfoURLKey =              @"WebIconNotificationUserInfoURLKey";
@@ -59,21 +53,15 @@ NSSize WebIconSmallSize = {16, 16};
 NSSize WebIconMediumSize = {32, 32};
 NSSize WebIconLargeSize = {128, 128};
 
-@interface NSMutableDictionary (WebIconDatabase)
-- (void)_web_setObjectUsingSetIfNecessary:(id)object forKey:(id)key;
-@end
+#define UniqueFilePathSize (34)
 
 @interface WebIconDatabase (WebInternal)
-- (void)_clearDictionaries;
-- (void)_createFileDatabase;
-- (void)_loadIconDictionaries;
 - (NSImage *)_iconForFileURL:(NSString *)fileURL withSize:(NSSize)size;
 - (void)_resetCachedWebPreferences:(NSNotification *)notification;
 - (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons;
 - (NSMutableDictionary *)_iconsBySplittingRepresentationsOfIcon:(NSImage *)icon;
 - (NSImage *)_iconFromDictionary:(NSMutableDictionary *)icons forSize:(NSSize)size cache:(BOOL)cache;
 - (void)_scaleIcon:(NSImage *)icon toSize:(NSSize)size;
-- (NSData *)_iconDataForIconURL:(NSString *)iconURLString;
 - (void)_convertToWebCoreFormat; 
 @end
 
@@ -82,20 +70,10 @@ NSSize WebIconLargeSize = {128, 128};
 + (WebIconDatabase *)sharedIconDatabase
 {
     static WebIconDatabase *database = nil;
-    
-    if (!database) {
-#if !LOG_DISABLED
-        double start = CFAbsoluteTimeGetCurrent();
-#endif
+    if (!database)
         database = [[WebIconDatabase alloc] init];
-#if !LOG_DISABLED
-        LOG(Timing, "initializing icon database with %d sites and %d icons took %f", 
-            [database->_private->pageURLToIconURL count], [database->_private->iconURLToPageURLs count], (CFAbsoluteTimeGetCurrent() - start));
-#endif
-    }
     return database;
 }
-
 
 - init
 {
@@ -103,45 +81,41 @@ NSSize WebIconLargeSize = {128, 128};
     
     _private = [[WebIconDatabasePrivate alloc] init];
 
+    // Check the user defaults and see if the icon database should even be enabled if not, we can bail from init right here
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *initialDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], WebIconDatabaseEnabledDefaultsKey, nil];
     [defaults registerDefaults:initialDefaults];
     [initialDefaults release];
     if (![defaults boolForKey:WebIconDatabaseEnabledDefaultsKey]) {
+        _private->databaseBridge = nil;
+        return self;
+    }
+        
+    // Get/create the shared database bridge - bail if we fail
+    _private->databaseBridge = [WebIconDatabaseBridge sharedBridgeInstance];
+    if (!_private->databaseBridge) {
+        LOG_ERROR("Unable to create IconDatabaseBridge");
         return self;
     }
     
-    [self _createFileDatabase];
-    
-    _private->iconURLToIcons = [[NSMutableDictionary alloc] init];
-    _private->iconURLToExtraRetainCount = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-    _private->pageURLToRetainCount = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-    _private->iconsToEraseWithURLs = [[NSMutableSet alloc] init];
-    _private->iconsToSaveWithURLs = [[NSMutableSet alloc] init];
-    _private->iconURLsWithNoIcons = [[NSMutableSet alloc] init];
-    _private->iconURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
-    _private->pageURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
-    _private->privateBrowsingEnabled = [[WebPreferences standardPreferences] privateBrowsingEnabled];
-    
-    [self _loadIconDictionaries];
-
-#ifdef ICONDEBUG
-    _private->databaseBridge = [WebIconDatabaseBridge sharedBridgeInstance];
-    if (_private->databaseBridge) {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
-
-        if (!databaseDirectory) {
-            databaseDirectory = WebIconDatabasePath;
-            [defaults setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
-        }
-        databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
-        [_private->databaseBridge openSharedDatabaseWithPath:databaseDirectory];
+    // Figure out the directory we should be using for the icon.db
+    NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
+    if (!databaseDirectory) {
+        databaseDirectory = WebIconDatabasePath;
+        [defaults setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
     }
+    databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
     
+    // Open the WebCore icon database
+    [_private->databaseBridge openSharedDatabaseWithPath:databaseDirectory];
+    [_private->databaseBridge setPrivateBrowsingEnabled:[[WebPreferences standardPreferences] privateBrowsingEnabled]];
+    
+    // <rdar://problem/4674552> New IconDB: New Safari icon database needs to convert from the old icons on first load 
+    // We call this method on each load - it determines, on its own, whether or not we actually need to do the conversion and 
+    // returns early if the conversion is already done
     [self _convertToWebCoreFormat];
-#endif
     
+    // Register for important notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(_applicationWillTerminate:)
                                                  name:NSApplicationWillTerminateNotification
@@ -149,10 +123,6 @@ NSSize WebIconLargeSize = {128, 128};
     [[NSNotificationCenter defaultCenter] 
             addObserver:self selector:@selector(_resetCachedWebPreferences:) 
                    name:WebPreferencesChangedNotification object:nil];
-                   
-    // FIXME - Once the new iconDB is the only game in town, we need to remove any of the WebFileDatabase code
-    // that is threaded and expects certain files to exist - certain files we rip right out from underneath it
-    // in the _convertToWebCoreFormat method
 
     return self;
 }
@@ -165,14 +135,12 @@ NSSize WebIconLargeSize = {128, 128};
     if (!URL || ![self _isEnabled])
         return [self defaultIconWithSize:size];
 
-    // <rdar://problem/4697934> - Move the handling of FileURLs to WebCore and implement in ObjC++
+    // FIXME - <rdar://problem/4697934> - Move the handling of FileURLs to WebCore and implement in ObjC++
     if ([URL _webkit_isFileURL])
         return [self _iconForFileURL:URL withSize:size];
-
-#ifdef ICONDEBUG        
+      
     NSImage* image = [_private->databaseBridge iconForPageURL:URL withSize:size];
     return image ? image : [self defaultIconWithSize:size];
-#endif
 }
 
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size
@@ -185,10 +153,8 @@ NSSize WebIconLargeSize = {128, 128};
     if (![self _isEnabled])
         return nil;
         
-#ifdef ICONDEBUG
     NSString* iconurl = [_private->databaseBridge iconURLForPageURL:URL];
     return iconurl;
-#endif
 }
 
 - (NSImage *)defaultIconWithSize:(NSSize)size
@@ -196,9 +162,7 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(size.width);
     ASSERT(size.height);
     
-#ifdef ICONDEBUG
     return [_private->databaseBridge defaultIconWithSize:size];
-#endif
 }
 
 - (void)retainIconForURL:(NSString *)URL
@@ -207,10 +171,7 @@ NSSize WebIconLargeSize = {128, 128};
     if (![self _isEnabled])
         return;
 
-#ifdef ICONDEBUG
     [_private->databaseBridge retainIconForURL:URL];
-    return;
-#endif
 }
 
 - (void)releaseIconForURL:(NSString *)pageURL
@@ -219,10 +180,7 @@ NSSize WebIconLargeSize = {128, 128};
     if (![self _isEnabled])
         return;
 
-#ifdef ICONDEBUG
     [_private->databaseBridge releaseIconForURL:pageURL];
-    return;
-#endif
 }
 @end
 
@@ -246,7 +204,8 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (BOOL)_isEnabled
 {
-    return (_private->fileDatabase != nil);
+    // If we weren't enabled on startup, we marked the databaseBridge as nil
+    return _private->databaseBridge != nil;
 }
 
 - (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL
@@ -254,7 +213,7 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(data);
     ASSERT(iconURL);
     ASSERT([self _isEnabled]);   
-    
+
     [_private->databaseBridge _setIconData:data forIconURL:iconURL];
 }
 
@@ -263,12 +222,8 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(iconURL);
     ASSERT([self _isEnabled]);
 
-#ifdef ICONDEBUG
     [_private->databaseBridge _setHaveNoIconForIconURL:iconURL];
-    return;
-#endif
 }
-
 
 - (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)URL
 {
@@ -276,7 +231,6 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(URL);
     ASSERT([self _isEnabled]);
     
-#ifdef ICONDEBUG
     // FIXME - The following comment is a holdover from the old icon DB, which handled missing icons
     // differently than the new db.  It would return early if the icon is in the negative cache,
     // avoiding the notification.  We should explore and see if a similar optimization can take place-
@@ -293,17 +247,13 @@ NSSize WebIconLargeSize = {128, 128};
     
     [_private->databaseBridge _setIconURL:iconURL forPageURL:URL];
     [self _sendNotificationForURL:URL];
-    return;
-#endif
 }
 
 - (BOOL)_hasEntryForIconURL:(NSString *)iconURL;
 {
     ASSERT([self _isEnabled]);
 
-#ifdef ICONDEBUG
     return [_private->databaseBridge _hasEntryForIconURL:iconURL];
-#endif
 }
 
 - (void)_sendNotificationForURL:(NSString *)URL
@@ -326,115 +276,11 @@ NSSize WebIconLargeSize = {128, 128};
 
 @implementation WebIconDatabase (WebInternal)
 
-- (void)_createFileDatabase
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
-
-    if (!databaseDirectory) {
-        databaseDirectory = WebIconDatabasePath;
-        [defaults setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
-    }
-    databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
-    
-    _private->fileDatabase = [[WebFileDatabase alloc] initWithPath:databaseDirectory];
-    [_private->fileDatabase setSizeLimit:20000000];
-    [_private->fileDatabase open];
-}
-
-- (void)_clearDictionaries
-{
-    [_private->pageURLToIconURL release];
-    [_private->iconURLToPageURLs release];
-    [_private->iconsOnDiskWithURLs release];
-    [_private->originalIconsOnDiskWithURLs release];
-    [_private->iconURLsBoundDuringPrivateBrowsing release];
-    [_private->pageURLsBoundDuringPrivateBrowsing release];
-    _private->pageURLToIconURL = [[NSMutableDictionary alloc] init];
-    _private->iconURLToPageURLs = [[NSMutableDictionary alloc] init];
-    _private->iconsOnDiskWithURLs = [[NSMutableSet alloc] init];
-    _private->originalIconsOnDiskWithURLs = [[NSMutableSet alloc] init];
-    _private->iconURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
-    _private->pageURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
-}
-
-- (void)_loadIconDictionaries
-{
-    WebFileDatabase *fileDB = _private->fileDatabase;
-    
-    // fileDB should be non-nil here because it should have been created by _createFileDatabase 
-    if (!fileDB) {
-        LOG_ERROR("Couldn't load icon dictionaries because file database didn't exist");
-        return;
-    }
-    
-    NSNumber *version = [fileDB objectForKey:WebIconDatabaseVersionKey];
-    int v = 0;
-    // no version means first version
-    if (version == nil) {
-        v = 1;
-    } else if ([version isKindOfClass:[NSNumber class]]) {
-        v = [version intValue];
-    }
-    
-    // Get the site URL to icon URL dictionary from the file DB.
-    NSMutableDictionary *pageURLToIconURL = nil;
-    if (v <= WebIconDatabaseCurrentVersion) {
-        pageURLToIconURL = [fileDB objectForKey:WebURLToIconURLKey];
-        // Remove the old unnecessary mapping files.
-        if (v < WebIconDatabaseCurrentVersion) {
-            [fileDB removeObjectForKey:ObsoleteIconsOnDiskKey];
-            [fileDB removeObjectForKey:ObsoleteIconURLToURLsKey];
-        }        
-    }
-    
-    // Must double-check all values read from disk. If any are bogus, we just throw out the whole icon cache.
-    // We expect this to be nil if the icon cache has been cleared, so we shouldn't whine in that case.
-    if (![pageURLToIconURL isKindOfClass:[NSMutableDictionary class]]) {
-        if (pageURLToIconURL)
-            LOG_ERROR("Clearing icon cache because bad value %@ was found on disk, expected an NSMutableDictionary", pageURLToIconURL);
-        [self _clearDictionaries];
-        return;
-    }
-
-    // Keep a set of icon URLs on disk so we know what we need to write out or remove.
-    NSMutableSet *iconsOnDiskWithURLs = [NSMutableSet setWithArray:[pageURLToIconURL allValues]];
-
-    // Reverse pageURLToIconURL so we have an icon URL to page URLs dictionary. 
-    NSMutableDictionary *iconURLToPageURLs = [NSMutableDictionary dictionaryWithCapacity:[_private->iconsOnDiskWithURLs count]];
-    NSEnumerator *enumerator = [pageURLToIconURL keyEnumerator];
-    NSString *URL;
-    while ((URL = [enumerator nextObject])) {
-        NSString *iconURL = (NSString *)[pageURLToIconURL objectForKey:URL];
-        // Must double-check all values read from disk. If any are bogus, we just throw out the whole icon cache.
-        if (![URL isKindOfClass:[NSString class]] || ![iconURL isKindOfClass:[NSString class]]) {
-            LOG_ERROR("Clearing icon cache because either %@ or %@ was a bad value on disk, expected both to be NSStrings", URL, iconURL);
-            [self _clearDictionaries];
-            return;
-        }
-        [iconURLToPageURLs _web_setObjectUsingSetIfNecessary:URL forKey:iconURL];
-    }
-
-    ASSERT(!_private->pageURLToIconURL);
-    ASSERT(!_private->iconURLToPageURLs);
-    ASSERT(!_private->iconsOnDiskWithURLs);
-    ASSERT(!_private->originalIconsOnDiskWithURLs);
-    
-    _private->pageURLToIconURL = [pageURLToIconURL retain];
-    _private->iconURLToPageURLs = [iconURLToPageURLs retain];
-    _private->iconsOnDiskWithURLs = [iconsOnDiskWithURLs retain];
-    _private->originalIconsOnDiskWithURLs = [iconsOnDiskWithURLs copy];
-}
-
-
-
 - (void)_applicationWillTerminate:(NSNotification *)notification
 {
-#ifdef ICONDEBUG
     [_private->databaseBridge closeSharedDatabase];
     [_private->databaseBridge release];
     _private->databaseBridge = nil;
-#endif
 }
 
 
@@ -471,10 +317,7 @@ NSSize WebIconLargeSize = {128, 128};
 {
     BOOL privateBrowsingEnabledNow = [[WebPreferences standardPreferences] privateBrowsingEnabled];
 
-#ifdef ICONDEBUG
     [_private->databaseBridge setPrivateBrowsingEnabled:privateBrowsingEnabledNow];
-    return;
-#endif
 }
 
 - (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons
@@ -558,11 +401,91 @@ NSSize WebIconLargeSize = {128, 128};
 #endif
 }
 
-- (NSData *)_iconDataForIconURL:(NSString *)iconURLString
+// This hashing String->filename algorithm came from WebFileDatabase.m and is what was used in the 
+// WebKit Icon Database
+static void legacyIconDatabaseFilePathForKey(id key, char *buffer)
+{
+    const char *s;
+    UInt32 hash1;
+    UInt32 hash2;
+    CFIndex len;
+    CFIndex cnt;
+    
+    s = [[[[key description] lowercaseString] stringByStandardizingPath] UTF8String];
+    len = strlen(s);
+
+    // compute first hash    
+    hash1 = len;
+    for (cnt = 0; cnt < len; cnt++) {
+        hash1 += (hash1 << 8) + s[cnt];
+    }
+    hash1 += (hash1 << (len & 31));
+
+    // compute second hash    
+    hash2 = len;
+    for (cnt = 0; cnt < len; cnt++) {
+        hash2 = (37 * hash2) ^ s[cnt];
+    }
+
+#ifdef __LP64__
+    snprintf(buffer, UniqueFilePathSize, "%.2u/%.2u/%.10u-%.10u.cache", ((hash1 & 0xff) >> 4), ((hash2 & 0xff) >> 4), hash1, hash2);
+#else
+    snprintf(buffer, UniqueFilePathSize, "%.2lu/%.2lu/%.10lu-%.10lu.cache", ((hash1 & 0xff) >> 4), ((hash2 & 0xff) >> 4), hash1, hash2);
+#endif
+}
+
+// This method of getting an object from the filesystem is taken from the old 
+// WebKit Icon Database
+static id objectFromPathForKey(NSString *databasePath, id key)
+{
+    ASSERT(key);
+    id result = nil;
+
+    // Use the key->filename hashing the old WebKit IconDatabase used
+    char uniqueKey[UniqueFilePathSize];    
+    legacyIconDatabaseFilePathForKey(key, uniqueKey);
+    
+    // Get the data from this file and setup for the un-archiving
+    NSString *filePath = [[NSString alloc] initWithFormat:@"%@/%s", databasePath, uniqueKey];
+    NSData *data = [[NSData alloc] initWithContentsOfFile:filePath];
+    NSUnarchiver *unarchiver = nil;
+    
+    NS_DURING
+        if (data) {
+            unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
+            if (unarchiver) {
+                id fileKey = [unarchiver decodeObject];
+                NSLog(@"%@", fileKey);
+                if ([fileKey isEqual:key]) {
+                    id object = [unarchiver decodeObject];
+                    NSLog(@"%@", object);
+                    if (object) {
+                        // Decoded objects go away when the unarchiver does, so we need to
+                        // retain this so we can return it to our caller.
+                        result = [[object retain] autorelease];
+                        LOG(IconDatabase, "read disk cache file - %@", key);
+                    }
+                }
+            }
+        }
+    NS_HANDLER
+        LOG(IconDatabase, "cannot unarchive cache file - %@", key);
+        result = nil;
+    NS_ENDHANDLER
+
+    [unarchiver release];
+    [data release];
+    [filePath release];
+    
+    return result;
+}
+
+static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *iconURLString)
 {
     ASSERT(iconURLString);
+    ASSERT(databasePath);
     
-    NSData *iconData = [_private->fileDatabase objectForKey:iconURLString];
+    NSData *iconData = objectFromPathForKey(databasePath, iconURLString);
     
     if ((id)iconData == (id)[NSNull null]) 
         return nil;
@@ -575,28 +498,49 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(_private);
     ASSERT(_private->databaseBridge);
     
+    
     // If the WebCore Icon Database is not empty, we assume that this conversion has already
     // taken place and skip the rest of the steps 
-    if (![_private->databaseBridge _isEmpty])
+    if (![_private->databaseBridge _isEmpty]) {
         return;
-                
-    NSEnumerator *enumerator = [_private->pageURLToIconURL keyEnumerator];
+    }
+
+    // Get the directory the old icon database *should* be in
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
+    if (!databaseDirectory) {
+        databaseDirectory = WebIconDatabasePath;
+        [defaults setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
+    }
+    databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
+
+    // With this directory, get the PageURLToIconURL map that was saved to disk
+    NSMutableDictionary *pageURLToIconURL = objectFromPathForKey(databaseDirectory, WebURLToIconURLKey);
+
+    // If the retrieved object was not a valid NSMutableDictionary, then we have no valid
+    // icons to convert
+    if (![pageURLToIconURL isKindOfClass:[NSMutableDictionary class]])
+        pageURLToIconURL = nil;
+    
+    NSEnumerator *enumerator = [pageURLToIconURL keyEnumerator];
     NSString *url, *iconURL;
     
     // First, we'll iterate through the PageURL->IconURL map
     while ((url = [enumerator nextObject]) != nil) {
-        iconURL = [_private->pageURLToIconURL objectForKey:url];
+        iconURL = [pageURLToIconURL objectForKey:url];
         if (!iconURL)
             continue;
         [_private->databaseBridge _setIconURL:iconURL forPageURL:url];
     }    
-    
-    // Second, we'll iterate through the icon data we do have
-    enumerator = [_private->iconsOnDiskWithURLs objectEnumerator];
+
+    // Second, we'll get a list of the unique IconURLs we have
+    NSMutableSet *iconsOnDiskWithURLs = [NSMutableSet setWithArray:[pageURLToIconURL allValues]];
+    enumerator = [iconsOnDiskWithURLs objectEnumerator];
     NSData *iconData;
     
+    // And iterate through them, adding the icon data to the new icon database
     while ((url = [enumerator nextObject]) != nil) {
-        iconData = [self _iconDataForIconURL:url];
+        iconData = iconDataFromPathForIconURL(databaseDirectory, url);
         if (iconData)
             [_private->databaseBridge _setIconData:iconData forIconURL:url];
         else {
@@ -606,21 +550,11 @@ NSSize WebIconLargeSize = {128, 128};
             [_private->databaseBridge _setHaveNoIconForIconURL:url];
         }
     }
-    
-    // Finally, we'll iterate through the negative cache we have
-    enumerator = [_private->iconURLsWithNoIcons objectEnumerator];
-    while ((url = [enumerator nextObject]) != nil) 
-        [_private->databaseBridge _setHaveNoIconForIconURL:url];
-   
+
     // After we're done converting old style icons over to webcore icons, we delete the entire directory hierarchy 
-    // for the old icon DB
-    NSString *iconPath = [[NSUserDefaults standardUserDefaults] objectForKey:WebIconDatabaseDirectoryDefaultsKey];
-    if (!iconPath)
-        iconPath = WebIconDatabasePath;
-    
-    NSString *fullIconPath = [iconPath stringByExpandingTildeInPath];    
+    // for the old icon DB (skipping the new iconDB, which will likely be in the same directory)
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    enumerator = [[fileManager directoryContentsAtPath:fullIconPath] objectEnumerator];
+    enumerator = [[fileManager directoryContentsAtPath:databaseDirectory] objectEnumerator];
     
     NSString *databaseFilename = [_private->databaseBridge defaultDatabaseFilename];
 
@@ -628,7 +562,7 @@ NSSize WebIconLargeSize = {128, 128};
     while ((file = [enumerator nextObject]) != nil) {
         if ([file isEqualTo:databaseFilename])
             continue;
-        NSString *filePath = [fullIconPath stringByAppendingPathComponent:file];
+        NSString *filePath = [databaseDirectory stringByAppendingPathComponent:file];
         if (![fileManager  removeFileAtPath:filePath handler:nil])
             LOG_ERROR("Failed to delete %@ from old icon directory", filePath);
     }
@@ -636,24 +570,7 @@ NSSize WebIconLargeSize = {128, 128};
 
 @end
 
+// This empty implementation must exist 
 @implementation WebIconDatabasePrivate
-
 @end
 
-@implementation NSMutableDictionary (WebIconDatabase)
-
-- (void)_web_setObjectUsingSetIfNecessary:(id)object forKey:(id)key
-{
-    id previousObject = [self objectForKey:key];
-    if (previousObject == nil) {
-        [self setObject:object forKey:key];
-    } else if ([previousObject isKindOfClass:[NSMutableSet class]]) {
-        [previousObject addObject:object];
-    } else {
-        NSMutableSet *objects = [[NSMutableSet alloc] initWithObjects:previousObject, object, nil];
-        [self setObject:objects forKey:key];
-        [objects release];
-    }
-}
-
-@end

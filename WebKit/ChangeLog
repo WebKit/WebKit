@@ -1,3 +1,42 @@
+2006-08-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Short of a few small snippets that still need to be pushed to WebCore, this
+        is a final prune of WebIconDatabase.  WebFileDatabase and WebLRUFileList are gone
+        and the small remaining snippets of WebFileDatabase code that were still important
+        are now in static functions in WebIconDatabase.m
+
+        * Loader/WebIconLoader.m:
+        (-[WebIconLoader didFinishLoading]): Removed the flag
+        * Misc/WebFileDatabase.h: Removed.
+        * Misc/WebFileDatabase.m: Removed.
+        * Misc/WebIconDatabase.m:
+        (+[WebIconDatabase sharedIconDatabase]):
+        (-[WebIconDatabase init]):
+        (-[WebIconDatabase iconForURL:withSize:cache:]):
+        (-[WebIconDatabase iconURLForURL:]):
+        (-[WebIconDatabase defaultIconWithSize:]):
+        (-[WebIconDatabase retainIconForURL:]):
+        (-[WebIconDatabase releaseIconForURL:]):
+        (-[WebIconDatabase _isEnabled]):
+        (-[WebIconDatabase _setIconData:forIconURL:]):
+        (-[WebIconDatabase _setHaveNoIconForIconURL:]):
+        (-[WebIconDatabase _setIconURL:forURL:]):
+        (-[WebIconDatabase _hasEntryForIconURL:]):
+        (-[WebIconDatabase _applicationWillTerminate:]):
+        (-[WebIconDatabase _resetCachedWebPreferences:]):
+        (uniqueFilePathForKey): Added from WebFileDatabase
+        (objectFromPathForKey): Added from WebFileDatabase
+        (iconDataFromPathForIconURL):
+        (-[WebIconDatabase _convertToWebCoreFormat]): Make use of static functions and local variables
+          instead of using WebFileDatabase and WebIconDatabase variables that are now obsolete
+        * Misc/WebIconDatabasePrivate.h: Removed alot of obsoleted members
+        * Misc/WebLRUFileList.h: Removed.
+        * Misc/WebLRUFileList.m: Removed.
+        * WebKit.xcodeproj/project.pbxproj: Deleted 4 files
+        * WebKitPrefix.h: Removed ICONDEBUG
+
 2006-08-28  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin Adler.
