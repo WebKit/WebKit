@@ -2488,24 +2488,24 @@ void removeWrapperForRGB(RGBA32 value)
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
     Element* element = [elt _element];
-    AbstractView* defaultView = [self _document]->defaultView();
+    AbstractView* dv = [self _document]->defaultView();
     String pseudoEltString(pseudoElt);
     
-    if (!defaultView)
+    if (!dv)
         return nil;
     
-    return [DOMCSSStyleDeclaration _styleDeclarationWith:defaultView->getComputedStyle(element, pseudoEltString.impl()).get()];
+    return [DOMCSSStyleDeclaration _styleDeclarationWith:dv->getComputedStyle(element, pseudoEltString.impl()).get()];
 }
 
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt
 {
-    AbstractView* defaultView = [self _document]->defaultView();
+    AbstractView* dv = [self _document]->defaultView();
 
-    if (!defaultView)
+    if (!dv)
         return nil;
     
     // The parameter of "false" is handy for the DOM inspector and lets us see user agent and user rules.
-    return [DOMCSSRuleList _ruleListWith:defaultView->getMatchedCSSRules([elt _element], String(pseudoElt).impl(), false).get()];
+    return [DOMCSSRuleList _ruleListWith:dv->getMatchedCSSRules([elt _element], String(pseudoElt).impl(), false).get()];
 }
 
 @end

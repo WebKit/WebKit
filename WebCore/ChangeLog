@@ -1,3 +1,21 @@
+2006-08-29  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Eric.
+
+        Bug 10632: Objective-C DOM should use the @property syntax for DOM attributes
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10632
+
+        Generate @property when MACOSX_DEPLOYMENT_TARGET is >= 10.5.
+        This is backwards compatible with the getter/setter methods.
+        Generate setter arguments with a "new" prefix to avoid the property
+        name conflict warning. Also removes some whitespace and the comments
+        that we added to the headers. This makes the headers look like what we ship now.
+
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMDocument getComputedStyle::]): renamed a local variable to avoid the property name conflict.
+        (-[DOMDocument getMatchedCSSRules::]): ditto.
+        * bindings/scripts/CodeGeneratorObjC.pm: generate @property in the headers.
+
 2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by Anders.

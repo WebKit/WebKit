@@ -37,7 +37,6 @@ my %headerForwardDeclarationsForProtocols = ();
 my $exceptionInit = "WebCore::ExceptionCode ec = 0;";
 my $exceptionRaiseOnError = "raiseOnDOMError(ec);";
 
-
 # Default Licence Templates
 my $headerLicenceTemplate = << "EOF";
 /*
@@ -395,7 +394,6 @@ sub AddIncludesForType
         $implIncludes{"DOMImplementationFront.h"} = 1;
     }
 
-
     # Add type specific internal types.
     $implIncludes{"DOMHTMLInternal.h"} = 1 if ($type =~ /^HTML/);
 
@@ -439,6 +437,7 @@ sub GenerateHeader
             
             push(@headerConstants, $output);
         }
+
         my $combinedConstants = join(",\n", @headerConstants);
 
         # FIXME: the formatting of the enums should line up the equal signs.
@@ -475,30 +474,38 @@ sub GenerateHeader
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
             my $catagory = $attribute->signature->extendedAttributes->{"ObjCCatagory"};
 
-            # - GETTER
-            my $getter = "- (" . $attributeType . ")" . $attributeName . ";\n";
-            
-            if ($catagory) {
-                push(@{ $hashOfCatagories{$catagory} }, $getter);
-            } else {
-                push(@headerAttributes, $getter);
-            }
+            if ($ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5) {
+                my $property = "\@property" . ($attributeIsReadonly ? "(readonly)" : "") . " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . ";\n";
 
-            
-            # - SETTER
-            if (!$attributeIsReadonly) {
-                my $setter = "- (void)set" . ucfirst($attributeName) . ":(" . $attributeType . ")" . $attributeName . ";\n";
-                
                 if ($catagory) {
-                    push(@{ $hashOfCatagories{$catagory} }, $setter);
+                    push(@{ $hashOfCatagories{$catagory} }, $property);
                 } else {
-                    push(@headerAttributes, $setter);
+                    push(@headerAttributes, $property);
+                }
+            } else {
+                # - GETTER
+                my $getter = "- (" . $attributeType . ")" . $attributeName . ";\n";
+
+                if ($catagory) {
+                    push(@{ $hashOfCatagories{$catagory} }, $getter);
+                } else {
+                    push(@headerAttributes, $getter);
+                }
+
+                # - SETTER
+                if (!$attributeIsReadonly) {
+                    my $setter = "- (void)set" . ucfirst($attributeName) . ":(" . $attributeType . ")new" . ucfirst($attributeName) . ";\n";
+                    
+                    if ($catagory) {
+                        push(@{ $hashOfCatagories{$catagory} }, $setter);
+                    } else {
+                        push(@headerAttributes, $setter);
+                    }
                 }
             }
         }
 
         if (@headerAttributes > 0) {
-            push(@headerContent, "\n// Attributes\n");
             push(@headerContent, @headerAttributes);
         }
     }
@@ -537,17 +544,16 @@ sub GenerateHeader
         }
 
         if (@headerFunctions > 0) {
-            push(@headerContent, "\n// Methods\n");
+            push(@headerContent, "\n");
             push(@headerContent, @headerFunctions);
         }
     }
 
     # - End @interface 
-    push(@headerContent, "\n\@end\n");
+    push(@headerContent, "\@end\n");
     
     # Add additional Catagories (if any)
     if (scalar(keys(%hashOfCatagories))) {
-        
         foreach(sort(keys(%hashOfCatagories))) {
             my $catagory = $_;
 
@@ -574,7 +580,6 @@ sub GenerateImplementation
     my $className = GetClassName($interfaceName);
     my $implClassName = GetImplClassName($interfaceName);
     my $parentImplClassName = GetParentImplClassName($dataNode);
-
 
     my $numAttributes = @{$dataNode->attributes};
     my $numFunctions = @{$dataNode->functions};
@@ -626,7 +631,6 @@ sub GenerateImplementation
     if ($hasFunctionsOrAttributes) {
         if ($parentImplClassName eq "Object") {
             # Only generate 'dealloc' and 'finalize' methods for direct subclasses of DOMObject.
-
             push(@implContent, "- (void)dealloc\n");
             push(@implContent, "{\n");
             push(@implContent, "    if (_internal)\n");
@@ -645,9 +649,7 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, "    return DOM_cast<$implClassName *>(_internal);\n");
             push(@implContent, "}\n\n");
-
         } else {
-    
             my $internalBaseType;
             if ($interfaceName eq "CSSPrimitiveValue") {
                 # FIXME: this should be a regex matching CSS...Value.
@@ -658,6 +660,7 @@ sub GenerateImplementation
             } else {
                 $internalBaseType = "WebCore::Node"
             }
+
             push(@implContent, "- ($implClassName *)$internalCastingName\n");
             push(@implContent, "{\n");
             push(@implContent, "    return static_cast<$implClassName *>(DOM_cast<$internalBaseType *>(_internal));\n");
@@ -736,14 +739,14 @@ sub GenerateImplementation
 
             # - SETTER
             if (!$attributeIsReadonly) {
-            
                 # Exception handling
                 my $hasSetterException = @{$attribute->setterExceptions};
                 
                 $attributeName = "set" . ucfirst($attributeName);
                 my $setterName = "set" . ucfirst($interfaceName);
+                my $argName = "new" . ucfirst($interfaceName);
 
-                my $setterSig = "- (void)$setterName:($attributeType)$interfaceName\n";
+                my $setterSig = "- (void)$setterName:($attributeType)$argName\n";
                 
                 push(@implContent, $setterSig);
                 push(@implContent, "{\n");
@@ -751,13 +754,13 @@ sub GenerateImplementation
                 if ($hasSetterException) {
                     # FIXME: asserts exsist in the exsisting bindings, but I am unsure why they are 
                     # there in the first place;
-                    push(@implContent, "    ASSERT($interfaceName);\n\n");
+                    push(@implContent, "    ASSERT($argName);\n\n");
                 
                     push(@implContent, "    $exceptionInit\n");
-                    push(@implContent, "    $implementation->$attributeName($interfaceName, ec);\n");
+                    push(@implContent, "    $implementation->$attributeName($argName, ec);\n");
                     push(@implContent, "    $exceptionRaiseOnError\n");
                 } else {
-                    push(@implContent, "    $implementation->$attributeName($interfaceName);\n");
+                    push(@implContent, "    $implementation->$attributeName($argName);\n");
                 }
                 
                 push(@implContent, "}\n\n");
@@ -819,7 +822,6 @@ sub GenerateImplementation
 
             if ($returnType eq "void") {
                 # Special case 'void' return type.
-
                 my $functionContentHead = "$implementation->$functionName(";
                 my $functionContentTail = ");";
                 my $content = "";
@@ -846,9 +848,7 @@ sub GenerateImplementation
                 } else {
                     push(@functionContent, "    $content\n");
                 }
-
             } else {
-                
                 my $functionContentHead = $implementation . "->" . $functionName . "(";
                 my $functionContentTail = ")";
 
@@ -892,7 +892,6 @@ sub GenerateImplementation
                     }
                 }
                 
-                
                 if ($raisesExceptions) {
                     # Differentiated between when the return type is a pointer and
                     # not for white space issue (ie. Foo *result vs. int result).
@@ -921,6 +920,7 @@ sub GenerateImplementation
                 push(@implContent, "        [NSException raise:NSGenericException format:\@\"createExpression currently does not work with custom NS resolvers\"];\n");
                 push(@implContent, "    DOMNativeXPathNSResolver *nativeResolver = (DOMNativeXPathNSResolver *)$paramName;\n\n");
             }
+
             push(@implContent, @functionContent);
             push(@implContent, "}\n\n");
             
@@ -952,7 +952,7 @@ sub WriteData
         @implContent = "";    
         %implIncludes = ();
     }
-        
+
     if (defined($HEADER)) {
         # Write content to file.
         print $HEADER @headerContentHeader;
