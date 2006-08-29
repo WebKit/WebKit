@@ -1,5 +1,16 @@
 2006-08-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Eric.
+
+        Implementing font hashing properly, fixes weird crashes in HashMap.
+
+        * platform/qt/FontPlatformData.h:
+        * platform/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::hash):
+
+2006-08-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by ggaren.
 
         Fix scrollbars to reappear after the first layouting.

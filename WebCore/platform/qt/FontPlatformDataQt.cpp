@@ -34,6 +34,7 @@
 #include "DeprecatedString.h"
 #include "FontDescription.h"
 
+#include <QHash>
 #include <QFontInfo>
 
 namespace WebCore {
@@ -50,7 +51,6 @@ FontPlatformData::FontPlatformData(Deleted)
 
 FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const AtomicString& familyName)
     : m_font(new QFont("Times New Roman", 12))
-    , m_fontDescription(fontDescription)
 {
     m_font->setFamily(familyName.domString());
     m_font->setPixelSize(fontDescription.computedSize());
@@ -82,7 +82,7 @@ QFont* FontPlatformData::fontPtr() const
 
 unsigned FontPlatformData::hash() const
 {
-    return StringImpl::computeHash((UChar*) &m_fontDescription, sizeof(FontDescription) / sizeof(UChar));
+    return qHash(m_font);
 }
 
 bool FontPlatformData::operator==(const FontPlatformData& other) const
