@@ -1,3 +1,12 @@
+2006-08-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolling out a change I included by accident in my last commit.
+        
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::passMouseDownEventToWidget):
+        * platform/mac/SharedTimerMac.cpp:
+        (WebCore::setSharedTimerFireTime):
+
 2006-08-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
