@@ -23,11 +23,6 @@
 
 namespace WebCore {
 
-CFStringRef StringImpl::createCFString() const
-{
-    return CFStringCreateWithCharacters(NULL, m_data, m_length);
-}
-
 StringImpl::operator NSString *() const
 {
     return [NSString stringWithCharacters:m_data length:m_length];

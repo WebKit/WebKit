@@ -19,23 +19,13 @@
  */
 
 #include "config.h"
-#include "PlatformString.h"
+#include "StringImpl.h"
 
 namespace WebCore {
 
-String::String(NSString* str)
+CFStringRef StringImpl::createCFString() const
 {
-    if (!str)
-        return;
-
-    CFIndex size = CFStringGetLength(reinterpret_cast<CFStringRef>(str));
-    if (size == 0)
-        m_impl = StringImpl::empty();
-    else {
-        Vector<UChar, 1024> buffer(size);
-        CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), buffer.data());
-        m_impl = new StringImpl(buffer.data(), size);
-    }
+    return CFStringCreateWithCharacters(NULL, m_data, m_length);
 }
 
 }

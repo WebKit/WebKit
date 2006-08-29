@@ -32,7 +32,7 @@
 #include <unicode/umachine.h>
 #include <limits.h>
 
-#if __APPLE__
+#if PLATFORM(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -121,7 +121,7 @@ public:
 
     Vector<char> ascii() const;
 
-#if __APPLE__
+#if PLATFORM(CF)
     StringImpl(CFStringRef);
     CFStringRef createCFString() const;
 #endif

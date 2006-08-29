@@ -1,3 +1,22 @@
+2006-08-29  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin and Geoff.
+
+        Move the CF String functions to separate files in platform/cf.
+        Also, move the files in platform/cfnet to platform/cf.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PlatformString.h:
+        * platform/StringImpl.h:
+        * platform/cf/StringCF.cpp: Added.
+        (WebCore::String::String):
+        * platform/cf/StringImplCF.cpp: Added.
+        (WebCore::StringImpl::createCFString):
+        * platform/cfnet/KURLCFNet.cpp: Removed.
+        * platform/cfnet/ResourceLoaderCFNet.cpp: Removed.
+        * platform/mac/StringImplMac.mm:
+        * platform/mac/StringMac.mm:
+
 2006-08-29  Geoffrey Garen  <ggaren@apple.com>
 
         Rolling out a change I included by accident in my last commit.
