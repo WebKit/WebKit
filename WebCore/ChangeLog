@@ -1,3 +1,43 @@
+2006-08-28  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric, landed by Anders.
+
+        Fixes one chunk of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10604
+
+        Finish Unity merging. Remove libcurl usage, in favour of KIO.
+        This makes the regression testing fly! IO processing is way faster now.
+
+        * CMakeLists.txt:
+        * platform/ResourceLoaderInternal.h:
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::openURL):
+        (WebCore::FrameQt::submitForm):
+        (WebCore::FrameQt::urlSelected):
+        (WebCore::FrameQt::createEmptyDocument):
+        (WebCore::FrameQt::receivedData):
+        (WebCore::FrameQt::receivedAllData):
+        * platform/qt/FrameQt.h:
+        * platform/qt/ResourceLoaderCurl.cpp: Removed.
+        * platform/qt/ResourceLoaderManager.cpp:
+        (WebCore::ResourceLoaderManager::ResourceLoaderManager):
+        (WebCore::ResourceLoaderManager::~ResourceLoaderManager):
+        (WebCore::ResourceLoaderManager::self):
+        (WebCore::ResourceLoaderManager::slotData):
+        (WebCore::ResourceLoaderManager::slotMimetype):
+        (WebCore::ResourceLoaderManager::slotResult):
+        (WebCore::ResourceLoaderManager::remove):
+        (WebCore::ResourceLoaderManager::add):
+        * platform/qt/ResourceLoaderManager.h:
+        * platform/qt/ResourceLoaderQt.cpp: Added.
+        (WebCore::ResourceLoaderInternal::~ResourceLoaderInternal):
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::cancel):
+        (WebCore::ResourceLoader::assembleResponseHeaders):
+        (WebCore::ResourceLoader::retrieveCharset):
+        (WebCore::ResourceLoader::receivedResponse):
+
 2006-08-29  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Eric.

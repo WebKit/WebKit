@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,52 +22,45 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceLoaderManager_H_
-#define ResourceLoaderManager_H_
+#ifndef ResourceLoaderManager_H
+#define ResourceLoaderManager_H
+
+#include <QMap>
+#include <QObject>
 
 #include "Frame.h"
 #include "Timer.h"
-#include "ResourceLoaderClient.h"
-#include <curl/curl.h>
+#include "ResourceLoader.h"
 
 namespace WebCore {
 
-class ResourceLoaderManager {
+class ResourceLoaderManager : public QObject {
+Q_OBJECT
 public:
-    static ResourceLoaderManager* get();
+    static ResourceLoaderManager* self();
+
     void add(ResourceLoader*);
     void cancel(ResourceLoader*);
 
-    // If true, don't multiplex downloads: download completely one at a time.
-    void useSimpleTransfer(bool useSimple);
-
+public Q_SLOTS:
+    void slotData(KIO::Job*, const QByteArray& data);
+    void slotMimetype(KIO::Job*, const QString& type);
+    void slotResult(KJob*);
+    
 private:
     ResourceLoaderManager();
-    void downloadTimerCallback(Timer<ResourceLoaderManager>*);
+    ~ResourceLoaderManager();
+
     void remove(ResourceLoader*);
 
-    bool m_useSimple;
-    HashSet<ResourceLoader*>* jobs;
-    Timer<ResourceLoaderManager> m_downloadTimer;
-    CURLM* curlMultiHandle; // not freed
-
-    // curl filehandles to poll with select
-    fd_set fdread;
-    fd_set fdwrite;
-    fd_set fdexcep;
-
-    int maxfd;
-    char error_buffer[CURL_ERROR_SIZE];
-
-    // NULL-terminated list of supported protocols
-    const char* const* curl_protocols; // not freed
+    // KIO Job <-> WebKit Job mapping
+    QMap<ResourceLoader*, KIO::Job*> m_jobToKioMap;
+    QMap<KIO::Job*, ResourceLoader*> m_kioToJobMap;
 };
 
 }
 
 #endif
-
-// vim: ts=4 sw=4 et

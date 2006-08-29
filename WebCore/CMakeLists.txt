@@ -67,7 +67,9 @@ IF(__KDE_HAVE_WVARIADIC_MACROS)
   add_definitions ( -Wno-variadic-macros )
 ENDIF(__KDE_HAVE_WVARIADIC_MACROS)
 
+kde4_automoc(platform/qt/SharedTimerQt.cpp)
 kde4_automoc(platform/qt/ScrollViewCanvasQt.cpp)
+kde4_automoc(platform/qt/ResourceLoaderManager.cpp)
 
 # rules for generated files
 IF (USE_WEBKIT_SVG_SUPPORT)
@@ -867,8 +869,8 @@ set(WebCore_SRCS
     platform/qt/FontDataQt.cpp
     platform/qt/SharedTimerQt.cpp
     platform/qt/RenderPopupMenuQt.cpp
-    platform/qt/ResourceLoaderCurl.cpp
     platform/qt/ResourceLoaderManager.cpp
+    platform/qt/ResourceLoaderQt.cpp
     platform/qt/FloatPointQt.cpp
     platform/qt/ListBoxQt.cpp
     platform/qt/FloatRectQt.cpp
@@ -1009,9 +1011,6 @@ set(WebCore_SRCS
     ${WebCore-unity-IDLGeneratedSources}
 )
 
-
-kde4_automoc(platform/qt/SharedTimerQt.cpp)
-
 kde4_add_library(WebCore-unity SHARED  ${WebCore_SRCS})
 
 target_link_libraries(WebCore-unity
@@ -1023,9 +1022,8 @@ target_link_libraries(WebCore-unity
   ${LIBXSLT_LIBRARIES}
   ${LIBXML2_LIBRARIES}
   icuuc
-  curl
+  kio
   wtf-unity
   kjs-unity
   pcre-unity
-
 )

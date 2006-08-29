@@ -1,8 +1,6 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2005, 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- 
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,13 +26,14 @@
  */
 
 #include "config.h"
-#include "ResourceLoader.h"
+
+#include <kio/job.h>
 
 #include "DocLoader.h"
-#include "ResourceLoaderInternal.h"
+#include "ResourceLoader.h"
+#include "DeprecatedString.h"
 #include "ResourceLoaderManager.h"
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
+#include "ResourceLoaderInternal.h"
 
 namespace WebCore {
 
@@ -47,41 +46,45 @@ ResourceLoader::~ResourceLoader()
     cancel();
 }
 
-bool ResourceLoader::start(DocLoader* docLoader)
+bool ResourceLoader::start(DocLoader*)
 {
-    ResourceLoaderManager::get()->add(this);
+    ResourceLoaderManager::self()->add(this);
     return true;
 }
 
 void ResourceLoader::cancel()
 {
-    ResourceLoaderManager::get()->cancel(this);
+    ResourceLoaderManager::self()->cancel(this);
 }
 
 void ResourceLoader::assembleResponseHeaders() const
 {
     if (!d->assembledResponseHeaders) {
-        d->responseHeaders = DeprecatedString::fromUtf8(d->response.toUtf8(), d->response.length());
+        d->responseHeaders = d->m_response;
         d->assembledResponseHeaders = true;
- 
-        // FIXME: Move the client activation to receivedResponse(), once
-        // we use KIO, and receivedResponse() is called only once.
-        if (d->client)
-            d->client->receivedResponse(const_cast<ResourceLoader*>(this), d->response);
-
-        d->response = QString(); // Reset
+        d->m_response = QString(); // Reset
     }
 }
 
 void ResourceLoader::retrieveCharset() const
 {
-    if (!d->retrievedCharset)
+    if (!d->retrievedCharset) {
         d->retrievedCharset = true;
 
-    // FIXME: We can just parse the headers here, but once we use KIO
-    // we can set the response parameter to sth. else than a "char*".
-    // I save my time but not implementing it for now :-)
-    notImplemented();
+        int pos = d->responseHeaders.find("content-type:", 0, false);
+
+        if (pos > -1) {
+            pos += 13;
+            int index = d->responseHeaders.find('\n', pos);
+            QString type = d->responseHeaders.mid(pos, (index - pos));
+            index = type.indexOf(';');
+
+            if (index > -1) {
+                QString encoding = type.mid(index + 1).remove(QRegExp("charset[ ]*=[ ]*", Qt::CaseInsensitive)).trimmed();
+                d->metaData.set("charset", encoding);
+            }
+        }
+    }
 }
 
 void ResourceLoader::receivedResponse(QString response)
@@ -90,18 +93,10 @@ void ResourceLoader::receivedResponse(QString response)
 
     d->assembledResponseHeaders = false;
     d->retrievedCharset = false;
+    d->m_response = response;
 
-    // FIXME: This is flawed:
-    // - usually receivedResponse() should be called _once_, when the
-    //   response is available - seems very unflexible to do that with libcurl
-    //   (so let's wait until it dies and do it properly with KIO then.)
-    // - QString::fromLatin1() is also wrong, of course.
-    //
-    // Anyway, let's collect the response data here, as the ResourceLoaderManager
-    // calls us for every line of the header it receives.
-    d->response += response;
+    if (d->client)
+        d->client->receivedResponse(const_cast<ResourceLoader*>(this), response);
 }
 
 } // namespace WebCore
-
-// vim: ts=4 sw=4 et
