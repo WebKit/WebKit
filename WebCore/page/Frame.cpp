@@ -2090,7 +2090,7 @@ void Frame::reappliedEditing(PassRefPtr<EditCommand> cmd)
 {
     dispatchEditableContentChangedEvents(*cmd);
 
-    SelectionController sel(cmd->startingSelection());
+    SelectionController sel(cmd->endingSelection());
     if (shouldChangeSelection(sel))
         setSelection(sel, true);
         

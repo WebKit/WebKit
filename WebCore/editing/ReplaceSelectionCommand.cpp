@@ -568,7 +568,9 @@ void ReplaceSelectionCommand::doApply()
     if (shouldMergeStart(selectionStartWasStartOfParagraph, fragment.hasInterchangeNewlineAtStart())) {
         VisiblePosition destination = startOfInsertedContent.previous();
         VisiblePosition startOfParagraphToMove = startOfInsertedContent;
-
+        
+        // FIXME: Maintain positions for the start and end of inserted content instead of keeping nodes.  The nodes are
+        // only ever used to create positions where inserted content starts/ends.
         moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
         m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().downstream().node();
         if (!m_lastNodeInserted->inDocument())
