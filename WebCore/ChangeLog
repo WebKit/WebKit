@@ -1,5 +1,15 @@
 2006-08-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed and landed by ap.
+
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10629.
+        Drawing convex polygons is broken in the Qt platform.
+
+        * platform/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawConvexPolygon):
+
+2006-08-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric.
 
         Implementing font hashing properly, fixes weird crashes in HashMap.

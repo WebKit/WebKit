@@ -35,10 +35,11 @@
 #include "GraphicsContext.h"
 #include "Path.h"
 
+#include <QStack>
 #include <QPainter>
+#include <QPolygonF>
 #include <QPainterPath>
 #include <QPaintDevice>
-#include <QStack>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -423,8 +424,18 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     if (paintingDisabled())
         return;
 
-    // FIXME: Take 'shouldAntialias' into account...
-    m_data->p().drawConvexPolygon(reinterpret_cast<const QPointF*>(points), npoints);
+    if (npoints <= 1)
+        return;
+
+    QPolygonF polygon(npoints);
+
+    for (size_t i = 0; i < npoints; i++)
+        polygon << points[i];
+
+    m_data->p().save();
+    m_data->p().setRenderHint(QPainter::Antialiasing, shouldAntialias);
+    m_data->p().drawConvexPolygon(polygon);
+    m_data->p().restore();
 }
 
 void GraphicsContext::fillRect(const IntRect& rect, const Color& c)
