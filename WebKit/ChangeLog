@@ -1,3 +1,12 @@
+2006-08-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatchers rubber stamp
+
+        Removed some accidentally left-in console spew during the conversion to the new DB
+ 
+        * Misc/WebIconDatabase.m:
+        (objectFromPathForKey): Nuked some NSLogs
+
 2006-08-29  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin Adler.

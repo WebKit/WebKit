@@ -455,10 +455,8 @@ static id objectFromPathForKey(NSString *databasePath, id key)
             unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
             if (unarchiver) {
                 id fileKey = [unarchiver decodeObject];
-                NSLog(@"%@", fileKey);
                 if ([fileKey isEqual:key]) {
                     id object = [unarchiver decodeObject];
-                    NSLog(@"%@", object);
                     if (object) {
                         // Decoded objects go away when the unarchiver does, so we need to
                         // retain this so we can return it to our caller.
