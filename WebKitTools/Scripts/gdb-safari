@@ -33,6 +33,7 @@ use Getopt::Long;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
+use File::Temp qw/:mktemp/;
 
 setConfiguration();
 my $productDir = productDir();
@@ -45,8 +46,13 @@ die "Can't find gdb executable. Is gdb installed?\n" unless -x $gdbPath;
 # Check to see that all the frameworks are built.
 checkFrameworks();
 
-# Set up DYLD_FRAMEWORK_PATH to point to the product directory.
-$ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+# Put a command to set DYLD_FRAMEWORK_PATH in a temp file.
+my ($fh, $path) = mkstemp("/tmp/gdb-safari-XXXX");
+print $fh "set env DYLD_FRAMEWORK_PATH $productDir\n";
 
+# Start up Safari.
 print "Start Safari under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-exec $gdbPath, $safariPath or die;
+exec $gdbPath, "-x", $path, $safariPath or die;
+
+# Delete the temporary file.
+unlink0($fh, $path) or die "Error unlinking file $path safely"; 
