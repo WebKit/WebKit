@@ -1,3 +1,14 @@
+2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by Anders.
+
+        Fix time calculation, by using a correct calculation. Calling time()
+        returns a number of seconds, aka. an integer. Fix it by using gettimeofday().
+        Patch originally proposed by Ronan Meneu <rmeneu@origyn.fr>
+
+        * platform/qt/SystemTimeQt.cpp:
+        (WebCore::currentTime):
+
 2006-08-29  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
