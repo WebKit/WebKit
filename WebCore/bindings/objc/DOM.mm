@@ -84,6 +84,12 @@
 #import "DOMProcessingInstruction.h"
 #import "DOMText.h"
 
+// Generated Objective-C Bindings
+#import "DOMHTMLCollection.h"
+#import "DOMHTMLElement.h"
+#import "DOMHTMLFormElement.h"
+#import "DOMHTMLOptionsCollection.h"
+
 #import <objc/objc-class.h>
 
 using WebCore::AtomicString;

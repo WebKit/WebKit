@@ -20,17 +20,22 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, HasIndexGetter, HasOverridingNameGetter] HTMLFormElement : HTMLElement {
-        readonly attribute [UsesPassRefPtr] HTMLCollection  elements;
-        readonly attribute long            length;
-                 attribute DOMString       name;
-                 attribute DOMString       acceptCharset;
-                 attribute DOMString       action;
-                 attribute DOMString       enctype;
-                 attribute DOMString       method;
-                 attribute DOMString       target;
-        
-        void               submit();
-        void               reset();
+    interface HTMLTableRowElement : HTMLElement {
+
+        readonly attribute long            rowIndex;
+        readonly attribute long            sectionRowIndex;
+        readonly attribute [UsesPassRefPtr] HTMLCollection  cells;
+                 attribute DOMString       align;
+                 attribute DOMString       bgColor;
+                 attribute DOMString       ch;
+                 attribute DOMString       chOff;
+                 attribute DOMString       vAlign;
+
+        HTMLElement        insertCell(in long index)
+            raises(DOMException);
+        void               deleteCell(in long index)
+            raises(DOMException);
+
     };
+
 }

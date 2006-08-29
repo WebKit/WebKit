@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,7 +20,7 @@
 
 module html {
     interface [LegacyParent=KJS::JSHTMLElement] HTMLMapElement : HTMLElement {
-        readonly attribute HTMLCollection areas;
+        readonly attribute [UsesPassRefPtr] HTMLCollection areas;
         attribute DOMString name;
     };
 }

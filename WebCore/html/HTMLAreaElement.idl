@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,13 +31,13 @@ module html {
         attribute DOMString target;
         
         // IE Extensions
-        readonly attribute DOMString hash;
-        readonly attribute DOMString host;
-        readonly attribute DOMString hostname;
-        readonly attribute DOMString pathname;
-        readonly attribute DOMString port;
-        readonly attribute DOMString protocol;
-        readonly attribute DOMString search;
+        readonly attribute [Exclude=ObjC] DOMString hash;
+        readonly attribute [Exclude=ObjC] DOMString host;
+        readonly attribute [Exclude=ObjC] DOMString hostname;
+        readonly attribute [Exclude=ObjC] DOMString pathname;
+        readonly attribute [Exclude=ObjC] DOMString port;
+        readonly attribute [Exclude=ObjC] DOMString protocol;
+        readonly attribute [Exclude=ObjC] DOMString search;
     };
 
 }

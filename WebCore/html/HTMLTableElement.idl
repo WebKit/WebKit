@@ -1,0 +1,64 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+module html {
+
+    interface HTMLTableElement : HTMLElement {
+
+        // FIXME: the dom spec states that the following 3 attributes
+        // could raise excepetions on setting.
+                 attribute HTMLTableCaptionElement caption
+                     /*setter raises (DOMException)*/;
+                 attribute HTMLTableSectionElement tHead
+                     /*setter raises (DOMException)*/;
+                 attribute HTMLTableSectionElement tFoot
+                     /*setter raises (DOMException)*/;
+
+        readonly attribute [UsesPassRefPtr] HTMLCollection rows;
+        readonly attribute [UsesPassRefPtr] HTMLCollection tBodies;
+                 attribute DOMString align;
+                 attribute DOMString bgColor;
+                 attribute DOMString border;
+                 attribute DOMString cellPadding;
+                 attribute DOMString cellSpacing;
+
+        // FIXME: the obj-c attribute is called frameBorders
+                 attribute DOMString frame;
+
+                 attribute DOMString rules;
+                 attribute DOMString summary;
+                 attribute DOMString width;
+
+        HTMLElement        createTHead();
+        void               deleteTHead();
+        HTMLElement        createTFoot();
+        void               deleteTFoot();
+        HTMLElement        createCaption();
+        void               deleteCaption();
+
+        HTMLElement insertRow(in long index)
+            raises (DOMException);
+
+        void deleteRow(in long index)
+            raises (DOMException);
+
+    };
+
+}

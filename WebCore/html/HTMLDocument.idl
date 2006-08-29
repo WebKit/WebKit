@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +22,38 @@
 module html {
 
     interface [LegacyParent=KJS::JSHTMLDocument, GenerateConstructor] HTMLDocument : Document {
+
+                 attribute [Exclude=JS] DOMString title;
+        readonly attribute [Exclude=JS] DOMString referrer;
+        readonly attribute [Exclude=JS] DOMString domain;
+        readonly attribute [Exclude=JS] DOMString URL;
+                
+        // FIXME: the DOM spec does NOT have this attribute
+        // raising an exception.
+                 attribute [Exclude=JS] HTMLElement body
+                     setter raises (DOMException);
+                     
+        readonly attribute [UsesPassRefPtr, Exclude=JS] HTMLCollection images;
+        readonly attribute [UsesPassRefPtr, Exclude=JS] HTMLCollection applets;
+        readonly attribute [UsesPassRefPtr, Exclude=JS] HTMLCollection links;
+        readonly attribute [UsesPassRefPtr, Exclude=JS] HTMLCollection forms;
+        readonly attribute [UsesPassRefPtr, Exclude=JS] HTMLCollection anchors;
+        
+        // FIXME: the DOM spec states that this attribute can 
+        // raise an exception on setting.
+                 attribute [Exclude=JS] DOMString cookie
+                     /*setter raises (DOMException)*/;
+
+        [Exclude=JS] void               open();
+        [Exclude=JS] void               close();
+        [Exclude=JS] void               write(in DOMString text);
+        [Exclude=JS] void               writeln(in DOMString text);
+        [Exclude=JS] NodeList           getElementsByName(in DOMString elementName);
+
+        // non-standard
+
+        [Exclude=JS] Element            getElementById(in DOMString elementId);
+
     };
 
 }

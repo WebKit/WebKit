@@ -33,6 +33,8 @@
 #import <WebCore/DOMNode.h>
 #import <WebCore/DOMRange.h>
 
+#import <WebCore/DOMHTMLElement.h>
+
 @class NSColor;
 @class NSImage;
 @class DOMHTMLCollection;
@@ -51,20 +53,30 @@
 - (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text;
 @end
 
-@interface DOMHTMLElement (DOMHTMLElementExtensions)
-- (NSString *)innerHTML;
-- (void)setInnerHTML:(NSString *)innerHTML;
-- (NSString *)innerText;
-- (void)setInnerText:(NSString *)innerText;
-- (NSString *)outerHTML;
-- (void)setOuterHTML:(NSString *)outerHTML;
-- (NSString *)outerText;
-- (void)setOuterText:(NSString *)outerText;
-- (DOMHTMLCollection *)children;
-- (NSString *)contentEditable;
-- (void)setContentEditable:(NSString *)contentEditable;
-- (BOOL)isContentEditable;
-- (NSString *)titleDisplayString;
+@interface DOMHTMLInputElement (DOMHTMLInputElementExtensions)
+- (NSString *)altDisplayString;
+- (NSURL *)absoluteImageURL;
+@end
+
+@interface DOMHTMLImageElement (DOMHTMLImageElementExtensions)
+- (NSString *)altDisplayString;
+- (NSURL *)absoluteImageURL;
+@end
+
+@interface DOMHTMLObjectElement (DOMHTMLObjectElementExtensions)
+- (NSURL *)absoluteImageURL;
+@end
+
+@interface DOMHTMLAnchorElement (DOMHTMLAnchorElementExtensions)
+- (NSURL *)absoluteLinkURL;
+@end
+
+@interface DOMHTMLAreaElement (DOMHTMLAreaElementExtensions)
+- (NSURL *)absoluteLinkURL;
+@end
+
+@interface DOMHTMLLinkElement (DOMHTMLLinkElementExtensions)
+- (NSURL *)absoluteLinkURL;
 @end
 
 @interface DOMHTMLEmbedElement : DOMHTMLElement
@@ -94,30 +106,4 @@
 
 @interface DOMRange (DOMRangeExtensions)
 - (NSString *)text;
-@end
-
-@interface DOMHTMLInputElement (DOMHTMLInputElementExtensions)
-- (NSString *)altDisplayString;
-- (NSURL *)absoluteImageURL;
-@end
-
-@interface DOMHTMLImageElement (DOMHTMLImageElementExtensions)
-- (NSString *)altDisplayString;
-- (NSURL *)absoluteImageURL;
-@end
-
-@interface DOMHTMLObjectElement (DOMHTMLObjectElementExtensions)
-- (NSURL *)absoluteImageURL;
-@end
-
-@interface DOMHTMLAnchorElement (DOMHTMLAnchorElementExtensions)
-- (NSURL *)absoluteLinkURL;
-@end
-
-@interface DOMHTMLAreaElement (DOMHTMLAreaElementExtensions)
-- (NSURL *)absoluteLinkURL;
-@end
-
-@interface DOMHTMLLinkElement (DOMHTMLLinkElementExtensions)
-- (NSURL *)absoluteLinkURL;
 @end

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,9 +38,9 @@ module html {
         void     select();
 
        // WinIE & FireFox extension:
-                 attribute long selectionStart;
-                 attribute long selectionEnd;
-        void setSelectionRange(in long start, in long end);
+                 attribute [Exclude=ObjC] long selectionStart;
+                 attribute [Exclude=ObjC] long selectionEnd;
+        [Exclude=ObjC] void setSelectionRange(in long start, in long end);
     };
 
 }

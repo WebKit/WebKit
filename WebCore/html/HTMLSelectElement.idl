@@ -1,0 +1,56 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+module html {
+
+    interface HTMLSelectElement : HTMLElement {
+
+        readonly attribute DOMString       type;
+                 attribute long            selectedIndex;
+                 attribute DOMString       value;
+        
+        // Modified in DOM Level 2:
+        // FIXME: the version of this attribute according to the
+        // dom spec is commented out below it.
+        readonly attribute long            length;
+              /* attribute unsigned long   length
+                    setter raises (DOMException); */
+
+        readonly attribute HTMLFormElement form;
+
+        // Modified in DOM Level 2:
+        readonly attribute [UsesPassRefPtr] HTMLOptionsCollection options;
+
+                 attribute boolean         disabled;
+                 attribute boolean         multiple;
+                 attribute DOMString       name;
+                 attribute long            size;
+                 attribute long            tabIndex;
+        
+        void               add(in HTMLElement element, 
+                               in HTMLElement before)
+            raises(DOMException);
+        void               remove(in long index);
+        void               blur();
+        void               focus();
+
+    };
+
+}

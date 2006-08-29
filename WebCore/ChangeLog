@@ -1,3 +1,54 @@
+2006-08-29  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10628
+          Auto-generate the remaining Objective-C DOM bindings
+
+          Auto-generates DOMHTMLCollection, DOMHTMLElement, DOMHTMLFormElement,
+          and DOMHTMLOptionsCollection, and lays groundwork for the rest of the 
+          HTML DOM bindings by adding/fixing the appropriate IDL's and updating
+          the CodeGeneratorObjC.pm build script.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTML.h:
+        * bindings/objc/DOMHTML.mm:
+        * bindings/objc/DOMHTMLInternal.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLBaseFontElement.idl:
+        * html/HTMLBodyElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLCollection.idl: Added.
+        * html/HTMLDocument.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameElement.idl: Added.
+        * html/HTMLFrameSetElement.idl: Added.
+        * html/HTMLIFrameElement.idl: Added.
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLLabelElement.idl:
+        * html/HTMLLegendElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLMapElement.idl:
+        * html/HTMLObjectElement.idl: Added.
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLPreElement.idl:
+        * html/HTMLSelectElement.idl: Added.
+        * html/HTMLStyleElement.idl:
+        * html/HTMLTableCaptionElement.idl: Added.
+        * html/HTMLTableCellElement.idl: Added.
+        * html/HTMLTableColElement.idl: Added.
+        * html/HTMLTableElement.idl: Added.
+        * html/HTMLTableRowElement.idl: Added.
+        * html/HTMLTableSectionElement.idl: Added.
+        * html/HTMLTextAreaElement.idl:
+
 2006-08-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by ap.

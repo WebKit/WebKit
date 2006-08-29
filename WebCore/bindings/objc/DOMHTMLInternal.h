@@ -25,9 +25,24 @@
 
 #import "DOMHTML.h"
 
+#import "DOMHTMLCollection.h"
+#import "DOMHTMLElement.h"
+#import "DOMHTMLFormElement.h"
+#import "DOMHTMLOptionsCollection.h"
+
 namespace WebCore {
+    class HTMLCollection;
     class HTMLDocument;
+    class HTMLElement;
+    class HTMLFormElement;
+    class HTMLImageElement;
+    class HTMLInputElement;
+    class HTMLObjectElement;
     class HTMLOptionsCollection;
+    class HTMLTableCaptionElement;
+    class HTMLTableCellElement;
+    class HTMLTableElement;
+    class HTMLTableSectionElement;
 }
 
 @interface DOMHTMLOptionsCollection (WebCoreInternal)
@@ -36,4 +51,49 @@ namespace WebCore {
 
 @interface DOMHTMLDocument (WebCoreInternal)
 + (DOMHTMLDocument *)_HTMLDocumentWith:(WebCore::HTMLDocument *)impl;
+@end
+
+@interface DOMHTMLCollection (WebCoreInternal)
++ (DOMHTMLCollection *)_collectionWith:(WebCore::HTMLCollection *)impl;
+@end
+
+@interface DOMHTMLElement (WebCoreInternal)
++ (DOMHTMLElement *)_elementWith:(WebCore::HTMLElement *)impl;
+- (WebCore::HTMLElement *)_HTMLElement;
+@end
+
+@interface DOMHTMLFormElement (WebCoreInternal)
++ (DOMHTMLFormElement *)_formElementWith:(WebCore::HTMLFormElement *)impl;
+@end
+
+@interface DOMHTMLTableCaptionElement (WebCoreInternal)
++ (DOMHTMLTableCaptionElement *)_tableCaptionElementWith:(WebCore::HTMLTableCaptionElement *)impl;
+- (WebCore::HTMLTableCaptionElement *)_tableCaptionElement;
+@end
+
+@interface DOMHTMLTableSectionElement (WebCoreInternal)
++ (DOMHTMLTableSectionElement *)_tableSectionElementWith:(WebCore::HTMLTableSectionElement *)impl;
+- (WebCore::HTMLTableSectionElement *)_tableSectionElement;
+@end
+
+@interface DOMHTMLTableElement (WebCoreInternal)
++ (DOMHTMLTableElement *)_tableElementWith:(WebCore::HTMLTableElement *)impl;
+- (WebCore::HTMLTableElement *)_tableElement;
+@end
+
+@interface DOMHTMLTableCellElement (WebCoreInternal)
++ (DOMHTMLTableCellElement *)_tableCellElementWith:(WebCore::HTMLTableCellElement *)impl;
+- (WebCore::HTMLTableCellElement *)_tableCellElement;
+@end
+
+@interface DOMHTMLImageElement (WebCoreInternal)
+- (WebCore::HTMLImageElement *)_HTMLImageElement;
+@end
+
+@interface DOMHTMLObjectElement (WebCoreInternal)
+- (WebCore::HTMLObjectElement *)_objectElement;
+@end
+
+@interface DOMHTMLInputElement (WebCoreInternal)
+- (WebCore::HTMLInputElement *)_HTMLInputElement;
 @end

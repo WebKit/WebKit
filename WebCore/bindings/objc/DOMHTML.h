@@ -25,23 +25,13 @@
 
 #import <WebCore/DOMCore.h>
 
-@class DOMHTMLElement;
-@class DOMHTMLFormElement;
+#import <WebCore/DOMHTMLCollection.h>
+#import <WebCore/DOMHTMLElement.h>
+#import <WebCore/DOMHTMLFormElement.h>
+#import <WebCore/DOMHTMLOptionsCollection.h>
+
 @class DOMHTMLTableCaptionElement;
 @class DOMHTMLTableSectionElement;
-
-@interface DOMHTMLCollection : DOMObject
-- (unsigned)length;
-- (DOMNode *)item:(unsigned)index;
-- (DOMNode *)namedItem:(NSString *)name;
-@end
-
-@interface DOMHTMLOptionsCollection : DOMObject
-- (unsigned)length;
-- (void)setLength:(unsigned)length;
-- (DOMNode *)item:(unsigned)index;
-- (DOMNode *)namedItem:(NSString *)name;
-@end
 
 @interface DOMHTMLDocument : DOMDocument
 - (NSString *)title;
@@ -64,19 +54,6 @@
 - (void)writeln:(NSString *)text;
 - (DOMElement *)getElementById:(NSString *)elementId;
 - (DOMNodeList *)getElementsByName:(NSString *)elementName;
-@end
-
-@interface DOMHTMLElement : DOMElement
-- (NSString *)idName;
-- (void)setIdName:(NSString *)idName;
-- (NSString *)title;
-- (void)setTitle:(NSString *)title;
-- (NSString *)lang;
-- (void)setLang:(NSString *)lang;
-- (NSString *)dir;
-- (void)setDir:(NSString *)dir;
-- (NSString *)className;
-- (void)setClassName:(NSString *)className;
 @end
 
 @interface DOMHTMLHtmlElement : DOMHTMLElement
@@ -161,25 +138,6 @@
 - (void)setText:(NSString *)text;
 - (NSString *)vLink;
 - (void)setVLink:(NSString *)vLink;
-@end
-
-@interface DOMHTMLFormElement : DOMHTMLElement
-- (DOMHTMLCollection *)elements;
-- (int)length;
-- (NSString *)name;
-- (void)setName:(NSString *)name;
-- (NSString *)acceptCharset;
-- (void)setAcceptCharset:(NSString *)acceptCharset;
-- (NSString *)action;
-- (void)setAction:(NSString *)action;
-- (NSString *)enctype;
-- (void)setEnctype:(NSString *)enctype;
-- (NSString *)method;
-- (void)setMethod:(NSString *)method;
-- (NSString *)target;
-- (void)setTarget:(NSString *)target;
-- (void)submit;
-- (void)reset;
 @end
 
 @interface DOMHTMLSelectElement : DOMHTMLElement

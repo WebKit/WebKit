@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,7 +21,31 @@
 module html {
 
     interface [GenerateConstructor] HTMLElement : Element {
+
         attribute DOMString title;
+        attribute [Exclude=JS] DOMString id;
+        attribute [Exclude=JS] DOMString lang;
+        attribute [Exclude=JS] DOMString dir;
+        attribute [Exclude=JS] DOMString className;
+
+        // extensions
+
+        attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString innerHTML
+            setter raises (DOMException);
+        attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString innerText
+            setter raises (DOMException);
+        attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString outerHTML
+            setter raises (DOMException);
+        attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString outerText
+            setter raises (DOMException);
+
+        readonly attribute [UsesPassRefPtr, ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] HTMLCollection children;
+
+        attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString contentEditable;
+        readonly attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] boolean isContentEditable;
+
+        readonly attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString titleDisplayString;
+
     };
 
 }

@@ -20,17 +20,19 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, HasIndexGetter, HasOverridingNameGetter] HTMLFormElement : HTMLElement {
-        readonly attribute [UsesPassRefPtr] HTMLCollection  elements;
-        readonly attribute long            length;
+    interface HTMLFrameElement : HTMLElement {
+
+                 attribute DOMString       frameBorder;
+                 attribute DOMString       longDesc;
+                 attribute DOMString       marginHeight;
+                 attribute DOMString       marginWidth;
                  attribute DOMString       name;
-                 attribute DOMString       acceptCharset;
-                 attribute DOMString       action;
-                 attribute DOMString       enctype;
-                 attribute DOMString       method;
-                 attribute DOMString       target;
-        
-        void               submit();
-        void               reset();
+                 attribute boolean         noResize;
+                 attribute DOMString       scrolling;
+                 attribute DOMString       src;
+        // Introduced in DOM Level 2:
+        readonly attribute Document        contentDocument;
+
     };
+
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,12 +20,18 @@
 
 module html {
 
+    // FIXME: the spec say that HTMLOptionsCollection should not have a parent class
+
     interface [LegacyParent=KJS::JSHTMLCollection, HasCustomIndexSetter] HTMLOptionsCollection : HTMLCollection {
-                 attribute          long                 selectedIndex;
-                 attribute [Custom] long                 length
+                 attribute [Exclude=ObjC] long selectedIndex;
+                 attribute [Custom] long length
                         setter raises (DOMException);
 
-        void               add(in HTMLOptionElement option, in [Optional] unsigned long index)
+        [Exclude=ObjC] void add(in HTMLOptionElement option, in [Optional] unsigned long index)
              raises (DOMException);
+             
+        [Exclude=JS] Node item(in unsigned long index);
+        [Exclude=JS] Node namedItem(in DOMString name);
+
     };
 }

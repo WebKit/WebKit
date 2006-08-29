@@ -222,6 +222,8 @@ sub GetParentImplClassName
     # special cases
     if ($parent eq "EventTargetNode") {
         $parent = "Node";
+    } elsif ($parent eq "HTMLCollection") {
+        $parent = "Object";
     }
 
     return $parent;
@@ -393,6 +395,10 @@ sub AddIncludesForType
         $implIncludes{"DOMImplementationFront.h"} = 1;
     }
 
+
+    # Add type specific internal types.
+    $implIncludes{"DOMHTMLInternal.h"} = 1 if ($type =~ /^HTML/);
+
     # Default, include the same named file (the implementation) and the same name prefixed with "DOM". 
     $implIncludes{"$type.h"} = 1;
     $implIncludes{"DOM$type.h"} = 1;
@@ -457,6 +463,14 @@ sub GenerateHeader
             AddForwardDeclarationsForType($attribute->signature->type);
 
             my $attributeName = $attribute->signature->name;
+            if ($attributeName eq "id") {
+                # Special case attribute id to be idName to avoid Obj-C nameing conflict.
+                $attributeName .= "Name";
+            } elsif ($attributeName eq "frame") {
+                # Special case attribute frame to be frameBorders.
+                $attributeName .= "Borders";
+            }
+
             my $attributeType = GetObjCType($attribute->signature->type);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
             my $catagory = $attribute->signature->extendedAttributes->{"ObjCCatagory"};
@@ -662,8 +676,17 @@ sub GenerateImplementation
             my $attributeType = GetObjCType($attribute->signature->type);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
 
+            my $interfaceName = $attributeName;
+            if ($attributeName eq "id") {
+                # Special case attribute id to be idName to avoid Obj-C nameing conflict.
+                $interfaceName .= "Name";
+            } elsif ($attributeName eq "frame") {
+                # Special case attribute frame to be frameBorders.
+                $interfaceName .= "Borders";
+            }
+
             # - GETTER
-            my $getterSig = "- ($attributeType)$attributeName\n";
+            my $getterSig = "- ($attributeType)$interfaceName\n";
             
             # Exception handling
             my $hasGetterException = @{$attribute->getterExceptions};
@@ -677,10 +700,16 @@ sub GenerateImplementation
             my $attributeTypeSansPtr = $attributeType;
             $attributeTypeSansPtr =~ s/ \*$//; # Remove trailing " *" from pointer types.
             my $typeMaker = GetObjCTypeMaker($attribute->signature->type);
+            
+            # Special cases
             if ($attributeTypeSansPtr eq "DOMImplementation") {
                 # FIXME: We have to special case DOMImplementation until DOMImplementationFront is removed
                 $getterContentHead = "[$attributeTypeSansPtr $typeMaker:implementationFront($implementation";
                 $getterContentTail .= "]";
+            } elsif ($attributeName =~ /(\w+)DisplayString$/) {
+                my $attributeToDisplay = $1;
+                $getterContentHead = "$implementation->$attributeToDisplay().replace(\'\\\\\', [self _element]->document()->backslashAsCurrencySymbol()";
+                $implIncludes{"Document.h"} = 1;
             } elsif ($typeMaker ne "") {
                 # Surround getter with TypeMaker
                 $getterContentHead = "[$attributeTypeSansPtr $typeMaker:" . $getterContentHead;
@@ -688,7 +717,7 @@ sub GenerateImplementation
             }
             
             if ($attribute->signature->extendedAttributes->{"UsesPassRefPtr"}) {
-                $getterContentTail = ").get(" . $functionContentTail;
+                $getterContentTail = ").get(" . $getterContentTail;
             }
             
             my $getterContent;
@@ -711,8 +740,10 @@ sub GenerateImplementation
                 # Exception handling
                 my $hasSetterException = @{$attribute->setterExceptions};
                 
-                my $setterName = "set" . ucfirst($attributeName);
-                my $setterSig = "- (void)$setterName:($attributeType)$attributeName\n";
+                $attributeName = "set" . ucfirst($attributeName);
+                my $setterName = "set" . ucfirst($interfaceName);
+
+                my $setterSig = "- (void)$setterName:($attributeType)$interfaceName\n";
                 
                 push(@implContent, $setterSig);
                 push(@implContent, "{\n");
@@ -720,13 +751,13 @@ sub GenerateImplementation
                 if ($hasSetterException) {
                     # FIXME: asserts exsist in the exsisting bindings, but I am unsure why they are 
                     # there in the first place;
-                    push(@implContent, "    ASSERT($attributeName);\n\n");
+                    push(@implContent, "    ASSERT($interfaceName);\n\n");
                 
                     push(@implContent, "    $exceptionInit\n");
-                    push(@implContent, "    $implementation->$setterName($attributeName, ec);\n");
+                    push(@implContent, "    $implementation->$attributeName($interfaceName, ec);\n");
                     push(@implContent, "    $exceptionRaiseOnError\n");
                 } else {
-                    push(@implContent, "    $implementation->$setterName($attributeName);\n");
+                    push(@implContent, "    $implementation->$attributeName($interfaceName);\n");
                 }
                 
                 push(@implContent, "}\n\n");

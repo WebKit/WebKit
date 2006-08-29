@@ -98,80 +98,9 @@ using namespace HTMLNames;
 // FIXME: This code should be using the impl methods instead of doing so many get/setAttribute calls.
 // FIXME: This code should be generated.
 
-@interface DOMHTMLCollection (WebCoreInternal)
-+ (DOMHTMLCollection *)_collectionWith:(HTMLCollection *)impl;
-@end
-
-@interface DOMHTMLElement (WebCoreInternal)
-+ (DOMHTMLElement *)_elementWith:(HTMLElement *)impl;
-- (HTMLElement *)_HTMLElement;
-@end
-
-@interface DOMHTMLFormElement (WebCoreInternal)
-+ (DOMHTMLFormElement *)_formElementWith:(HTMLFormElement *)impl;
-@end
-
-@interface DOMHTMLTableCaptionElement (WebCoreInternal)
-+ (DOMHTMLTableCaptionElement *)_tableCaptionElementWith:(HTMLTableCaptionElement *)impl;
-- (HTMLTableCaptionElement *)_tableCaptionElement;
-@end
-
-@interface DOMHTMLTableSectionElement (WebCoreInternal)
-+ (DOMHTMLTableSectionElement *)_tableSectionElementWith:(HTMLTableSectionElement *)impl;
-- (HTMLTableSectionElement *)_tableSectionElement;
-@end
-
-@interface DOMHTMLTableElement (WebCoreInternal)
-+ (DOMHTMLTableElement *)_tableElementWith:(HTMLTableElement *)impl;
-- (HTMLTableElement *)_tableElement;
-@end
-
-@interface DOMHTMLTableCellElement (WebCoreInternal)
-+ (DOMHTMLTableCellElement *)_tableCellElementWith:(HTMLTableCellElement *)impl;
-- (HTMLTableCellElement *)_tableCellElement;
-@end
 
 //------------------------------------------------------------------------------------------
-
-@implementation DOMHTMLCollection
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<HTMLCollection*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<HTMLCollection*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (HTMLCollection *)_collection
-{
-    return DOM_cast<HTMLCollection*>(_internal);
-}
-
-- (unsigned)length
-{
-    return [self _collection]->length();
-}
-
-- (DOMNode *)item:(unsigned)index
-{
-    return [DOMNode _nodeWith:[self _collection]->item(index)];
-}
-
-- (DOMNode *)namedItem:(NSString *)name
-{
-    return [DOMNode _nodeWith:[self _collection]->namedItem(name)];
-}
-
-@end
+// DOMHTMLCollection
 
 @implementation DOMHTMLCollection (WebCoreInternal)
 
@@ -201,23 +130,11 @@ using namespace HTMLNames;
 
 @end
 
-@implementation DOMHTMLOptionsCollection
 
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<HTMLOptionsCollection*>(_internal)->deref();
-    }
-    [super dealloc];
-}
+//------------------------------------------------------------------------------------------
+// DOMHTMLOptionsCollection
 
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<HTMLOptionsCollection*>(_internal)->deref();
-    }
-    [super finalize];
-}
+@implementation DOMHTMLOptionsCollection (WebCoreInternal)
 
 - (id)_initWithOptionsCollection:(HTMLOptionsCollection *)impl
 {
@@ -243,88 +160,11 @@ using namespace HTMLNames;
     return [[[self alloc] _initWithOptionsCollection:impl] autorelease];
 }
 
-- (HTMLOptionsCollection *)_optionsCollection
-{
-    return DOM_cast<HTMLOptionsCollection*>(_internal);
-}
-
-- (unsigned)length
-{
-    return [self _optionsCollection]->length();
-}
-
-- (void)setLength:(unsigned)length
-{
-    ExceptionCode ec;
-    [self _optionsCollection]->setLength(length, ec);
-    raiseOnDOMError(ec);
-}
-
-- (DOMNode *)item:(unsigned)index
-{
-    return [DOMNode _nodeWith:[self _optionsCollection]->item(index)];
-}
-
-- (DOMNode *)namedItem:(NSString *)name
-{
-    return [DOMNode _nodeWith:[self _optionsCollection]->namedItem(name)];
-}
-
 @end
 
-@implementation DOMHTMLElement
 
-- (NSString *)idName
-{
-    return [self _HTMLElement]->getAttribute(idAttr);
-}
-
-- (void)setIdName:(NSString *)idName
-{
-    [self _HTMLElement]->setAttribute(idAttr, idName);
-}
-
-- (NSString *)title
-{
-    return [self _HTMLElement]->title();
-}
-
-- (void)setTitle:(NSString *)title
-{
-    [self _HTMLElement]->setTitle(title);
-}
-
-- (NSString *)lang
-{
-    return [self _HTMLElement]->lang();
-}
-
-- (void)setLang:(NSString *)lang
-{
-    [self _HTMLElement]->setLang(lang);
-}
-
-- (NSString *)dir
-{
-    return [self _HTMLElement]->dir();
-}
-
-- (void)setDir:(NSString *)dir
-{
-    [self _HTMLElement]->setDir(dir);
-}
-
-- (NSString *)className
-{
-    return [self _HTMLElement]->className();
-}
-
-- (void)setClassName:(NSString *)className
-{
-    [self _HTMLElement]->setClassName(className);
-}
-
-@end
+//------------------------------------------------------------------------------------------
+// DOMHTMLElement
 
 @implementation DOMHTMLElement (WebCoreInternal)
 
@@ -340,83 +180,9 @@ using namespace HTMLNames;
 
 @end
 
-@implementation DOMHTMLElement (DOMHTMLElementExtensions)
 
-- (NSString *)titleDisplayString
-{
-    return [self _HTMLElement]->title().replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
-}
-
-- (NSString *)innerHTML
-{
-    return [self _HTMLElement]->innerHTML();
-}
-
-- (void)setInnerHTML:(NSString *)innerHTML
-{
-    int exception = 0;
-    [self _HTMLElement]->setInnerHTML(innerHTML, exception);
-    raiseOnDOMError(exception);
-}
-
-- (NSString *)outerHTML
-{
-    return [self _HTMLElement]->outerHTML();
-}
-
-- (void)setOuterHTML:(NSString *)outerHTML
-{
-    int exception = 0;
-    [self _HTMLElement]->setOuterHTML(outerHTML, exception);
-    raiseOnDOMError(exception);
-}
-
-- (NSString *)innerText
-{
-    return [self _HTMLElement]->innerText();
-}
-
-- (void)setInnerText:(NSString *)innerText
-{
-    int exception = 0;
-    [self _HTMLElement]->setInnerText(innerText, exception);
-    raiseOnDOMError(exception);
-}
-
-- (NSString *)outerText
-{
-    return [self _HTMLElement]->outerText();
-}
-
-- (void)setOuterText:(NSString *)outerText
-{
-    int exception = 0;
-    [self _HTMLElement]->setOuterText(outerText, exception);
-    raiseOnDOMError(exception);
-}
-
-- (DOMHTMLCollection *)children
-{
-    HTMLCollection *collection = new HTMLCollection([self _HTMLElement], HTMLCollection::NodeChildren);
-    return [DOMHTMLCollection _collectionWith:collection];
-}
-
-- (NSString *)contentEditable
-{
-    return [self _HTMLElement]->contentEditable();
-}
-
-- (void)setContentEditable:(NSString *)contentEditable
-{
-    [self _HTMLElement]->setContentEditable(contentEditable);
-}
-
-- (BOOL)isContentEditable
-{
-    return [self _HTMLElement]->isContentEditable();
-}
-
-@end
+//------------------------------------------------------------------------------------------
+// DOMHTMLDocument
 
 @implementation DOMHTMLDocument
 
@@ -918,95 +684,9 @@ using namespace HTMLNames;
 
 @end
 
-@implementation DOMHTMLFormElement
 
-- (HTMLFormElement *)_formElement
-{
-    return static_cast<HTMLFormElement*>(DOM_cast<Node*>(_internal));
-}
-
-- (DOMHTMLCollection *)elements
-{
-    HTMLCollection *collection = new HTMLFormCollection([self _formElement]);
-    return [DOMHTMLCollection _collectionWith:collection];
-}
-
-- (int)length
-{
-    return [self _formElement]->length();
-}
-
-- (NSString *)name
-{
-    return [self _formElement]->getAttribute(nameAttr);
-}
-
-- (void)setName:(NSString *)name
-{
-    [self _formElement]->setAttribute(nameAttr, name);
-}
-
-- (NSString *)acceptCharset
-{
-    return [self _formElement]->getAttribute(accept_charsetAttr);
-}
-
-- (void)setAcceptCharset:(NSString *)acceptCharset
-{
-    [self _formElement]->setAttribute(accept_charsetAttr, acceptCharset);
-}
-
-- (NSString *)action
-{
-    return [self _formElement]->getAttribute(actionAttr);
-}
-
-- (void)setAction:(NSString *)action
-{
-    [self _formElement]->setAttribute(actionAttr, action);
-}
-
-- (NSString *)enctype
-{
-    return [self _formElement]->getAttribute(enctypeAttr);
-}
-
-- (void)setEnctype:(NSString *)enctype
-{
-    [self _formElement]->setAttribute(enctypeAttr, enctype);
-}
-
-- (NSString *)method
-{
-    return [self _formElement]->getAttribute(methodAttr);
-}
-
-- (void)setMethod:(NSString *)method
-{
-    [self _formElement]->setAttribute(methodAttr, method);
-}
-
-- (NSString *)target
-{
-    return [self _formElement]->getAttribute(targetAttr);
-}
-
-- (void)setTarget:(NSString *)target
-{
-    [self _formElement]->setAttribute(targetAttr, target);
-}
-
-- (void)submit
-{
-    [self _formElement]->submit(false);
-}
-
-- (void)reset
-{
-    [self _formElement]->reset();
-}
-
-@end
+//------------------------------------------------------------------------------------------
+// DOMHTMLFormElement
 
 @implementation DOMHTMLFormElement (WebCoreInternal)
 
@@ -1016,6 +696,10 @@ using namespace HTMLNames;
 }
 
 @end
+
+
+//------------------------------------------------------------------------------------------
+// DOMHTMLIsIndexElement
 
 @implementation DOMHTMLIsIndexElement
 

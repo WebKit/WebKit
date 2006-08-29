@@ -22,6 +22,6 @@ module html {
     interface [LegacyParent=KJS::JSHTMLElement] HTMLBaseFontElement : HTMLElement {
         attribute DOMString color;
         attribute DOMString face;
-        attribute long size;    
+        attribute long size;
     };
 }
