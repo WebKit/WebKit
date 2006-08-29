@@ -252,6 +252,8 @@ static NSArray *additionalWebPlugInPaths;
     NSEnumerator *MIMEEnumerator = [MIMETypes objectEnumerator];
     NSString *MIMEType;
     while ((MIMEType = [MIMEEnumerator nextObject]) != nil) {
+        [registeredMIMETypes addObject:MIMEType];
+
         if ([WebView canShowMIMETypeAsHTML:MIMEType])
             // Don't allow plug-ins to override our core HTML types.
             continue;
@@ -265,7 +267,6 @@ static NSArray *additionalWebPlugInPaths;
         
         if (self == database)
             [WebView registerViewClass:[WebHTMLView class] representationClass:[WebHTMLRepresentation class] forMIMEType:MIMEType];
-        [registeredMIMETypes addObject:MIMEType];
     }
     [MIMETypes release];
     

@@ -1,3 +1,17 @@
+2006-08-29  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/4688618> REGRESSION(10.4.7-9A241): JMol java applet fails in Safari not Firefox
+
+        No layout test for now because Java doesn't work in DumpRenderTree.
+
+        * Plugins/WebPluginDatabase.m:
+        (-[WebPluginDatabase refresh]):
+        Add each plug-in MIME type to registeredMIMETypes, even if we don't register a document view class for the
+        MIME type.  This fixes -[WebPluginDatabase isMIMETypeRegistered:] and thus fallback content for Java applets
+        (we were always rendering fallback content, if any, for Java applets).
+
 2006-08-29  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
