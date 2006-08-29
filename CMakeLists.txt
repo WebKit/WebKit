@@ -17,8 +17,6 @@ find_program(GPERF_EXECUTABLE gperf)
 # quick check the libicu is available
 find_path(LIBICU_INCLUDE_DIR unicode/umachine.h )
 
-find_path(LIBCURL_INCLUDE_DIR curl/curl.h )
-
 if (NOT BISON_EXECUTABLE)
    message(FATAL_ERROR "Could not find bison")
 endif (NOT BISON_EXECUTABLE)
@@ -30,10 +28,6 @@ endif (NOT GPERF_EXECUTABLE)
 if (NOT LIBICU_INCLUDE_DIR)
    message(FATAL_ERROR "libicu not found, cannot create unity without it")
 endif (NOT LIBICU_INCLUDE_DIR)
-
-if (NOT LIBCURL_INCLUDE_DIR)
-   message(FATAL_ERROR "libcurl not found, cannot create unity without it")
-endif (NOT LIBCURL_INCLUDE_DIR)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DQT3_SUPPORT -DHAVE_CONFIG_H=1)
 link_directories (${KDE4_LIB_DIR})
