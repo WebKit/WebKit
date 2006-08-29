@@ -743,6 +743,50 @@
 		A7B97B850979C3A1000E8EB1 /* WKTableTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B740979C3A1000E8EB1 /* WKTableTransferFilter.cikernel */; };
 		A7B97B860979C3A1000E8EB1 /* WKTableTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B750979C3A1000E8EB1 /* WKTableTransferFilter.h */; };
 		A7B97B870979C3A1000E8EB1 /* WKTableTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B760979C3A1000E8EB1 /* WKTableTransferFilter.m */; };
+		A80B12C60AA469A30058DF92 /* JSSVGPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B129A0AA469A20058DF92 /* JSSVGPathElement.cpp */; };
+		A80B12C70AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothRel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B129B0AA469A20058DF92 /* JSSVGPathSegCurvetoCubicSmoothRel.cpp */; };
+		A80B12C80AA469A30058DF92 /* JSSVGPathSegLinetoVerticalAbs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B129C0AA469A20058DF92 /* JSSVGPathSegLinetoVerticalAbs.cpp */; };
+		A80B12C90AA469A30058DF92 /* JSSVGPathSegClosePath.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B129D0AA469A20058DF92 /* JSSVGPathSegClosePath.h */; };
+		A80B12CA0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B129E0AA469A20058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.h */; };
+		A80B12CB0AA469A30058DF92 /* JSSVGPathSegMovetoRel.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B129F0AA469A20058DF92 /* JSSVGPathSegMovetoRel.h */; };
+		A80B12CC0AA469A30058DF92 /* JSSVGPathSegLinetoRel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12A00AA469A30058DF92 /* JSSVGPathSegLinetoRel.cpp */; };
+		A80B12CD0AA469A30058DF92 /* JSSVGPathSegClosePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12A10AA469A30058DF92 /* JSSVGPathSegClosePath.cpp */; };
+		A80B12CE0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicAbs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12A20AA469A30058DF92 /* JSSVGPathSegCurvetoCubicAbs.cpp */; };
+		A80B12CF0AA469A30058DF92 /* JSSVGPathSegLinetoAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12A30AA469A30058DF92 /* JSSVGPathSegLinetoAbs.h */; };
+		A80B12D10AA469A30058DF92 /* JSSVGPathSegMovetoAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12A50AA469A30058DF92 /* JSSVGPathSegMovetoAbs.h */; };
+		A80B12D20AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalRel.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12A60AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalRel.h */; };
+		A80B12D30AA469A30058DF92 /* JSSVGPathSegMovetoRel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12A70AA469A30058DF92 /* JSSVGPathSegMovetoRel.cpp */; };
+		A80B12D40AA469A30058DF92 /* JSSVGPathSegLinetoVerticalRel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12A80AA469A30058DF92 /* JSSVGPathSegLinetoVerticalRel.cpp */; };
+		A80B12D50AA469A30058DF92 /* JSSVGPathSeg.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12A90AA469A30058DF92 /* JSSVGPathSeg.h */; };
+		A80B12D60AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalRel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12AA0AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalRel.cpp */; };
+		A80B12D70AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticRel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12AB0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticRel.cpp */; };
+		A80B12D80AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothRel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12AC0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothRel.cpp */; };
+		A80B12D90AA469A30058DF92 /* JSSVGPathSegLinetoVerticalAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12AD0AA469A30058DF92 /* JSSVGPathSegLinetoVerticalAbs.h */; };
+		A80B12DA0AA469A30058DF92 /* JSSVGPathSegLinetoRel.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12AE0AA469A30058DF92 /* JSSVGPathSegLinetoRel.h */; };
+		A80B12DB0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12AF0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothAbs.h */; };
+		A80B12DC0AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalAbs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12B00AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalAbs.cpp */; };
+		A80B12DD0AA469A30058DF92 /* JSSVGPathSegMovetoAbs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12B10AA469A30058DF92 /* JSSVGPathSegMovetoAbs.cpp */; };
+		A80B12DE0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12B20AA469A30058DF92 /* JSSVGPathSegCurvetoCubicAbs.h */; };
+		A80B12DF0AA469A30058DF92 /* JSSVGPathSeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12B30AA469A30058DF92 /* JSSVGPathSeg.cpp */; };
+		A80B12E00AA469A30058DF92 /* JSSVGPathSegArcRel.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12B40AA469A30058DF92 /* JSSVGPathSegArcRel.h */; };
+		A80B12E10AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticRel.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12B50AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticRel.h */; };
+		A80B12E20AA469A30058DF92 /* JSSVGPathSegArcRel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12B60AA469A30058DF92 /* JSSVGPathSegArcRel.cpp */; };
+		A80B12E30AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothAbs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12B70AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothAbs.cpp */; };
+		A80B12E40AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12B80AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp */; };
+		A80B12E50AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12B90AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticAbs.h */; };
+		A80B12E60AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticAbs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12BA0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticAbs.cpp */; };
+		A80B12E70AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothRel.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12BB0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothRel.h */; };
+		A80B12E80AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12BC0AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalAbs.h */; };
+		A80B12EA0AA469A30058DF92 /* JSSVGPathSegLinetoAbs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12BE0AA469A30058DF92 /* JSSVGPathSegLinetoAbs.cpp */; };
+		A80B12EB0AA469A30058DF92 /* JSSVGPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12BF0AA469A30058DF92 /* JSSVGPathElement.h */; };
+		A80B12EC0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicRel.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12C00AA469A30058DF92 /* JSSVGPathSegCurvetoCubicRel.h */; };
+		A80B12ED0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicRel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12C10AA469A30058DF92 /* JSSVGPathSegCurvetoCubicRel.cpp */; };
+		A80B12EE0AA469A30058DF92 /* JSSVGPathSegArcAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12C20AA469A30058DF92 /* JSSVGPathSegArcAbs.h */; };
+		A80B12EF0AA469A30058DF92 /* JSSVGPathSegLinetoVerticalRel.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12C30AA469A30058DF92 /* JSSVGPathSegLinetoVerticalRel.h */; };
+		A80B12F00AA469A30058DF92 /* JSSVGPathSegArcAbs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B12C40AA469A30058DF92 /* JSSVGPathSegArcAbs.cpp */; };
+		A80B12F10AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothRel.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B12C50AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothRel.h */; };
+		A80B133E0AA46EC30058DF92 /* JSSVGAnimatedNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80B133C0AA46EC30058DF92 /* JSSVGAnimatedNumber.cpp */; };
+		A80B133F0AA46EC30058DF92 /* JSSVGAnimatedNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = A80B133D0AA46EC30058DF92 /* JSSVGAnimatedNumber.h */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
 		A80E6CE50A1989CA007FB8C5 /* CSSBorderImageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */; };
 		A80E6CE60A1989CA007FB8C5 /* CSSPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */; };
@@ -2437,6 +2481,50 @@
 		A7B97B740979C3A1000E8EB1 /* WKTableTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKTableTransferFilter.cikernel; sourceTree = "<group>"; };
 		A7B97B750979C3A1000E8EB1 /* WKTableTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKTableTransferFilter.h; sourceTree = "<group>"; };
 		A7B97B760979C3A1000E8EB1 /* WKTableTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKTableTransferFilter.m; sourceTree = "<group>"; };
+		A80B129A0AA469A20058DF92 /* JSSVGPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathElement.cpp; sourceTree = "<group>"; };
+		A80B129B0AA469A20058DF92 /* JSSVGPathSegCurvetoCubicSmoothRel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCurvetoCubicSmoothRel.cpp; sourceTree = "<group>"; };
+		A80B129C0AA469A20058DF92 /* JSSVGPathSegLinetoVerticalAbs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegLinetoVerticalAbs.cpp; sourceTree = "<group>"; };
+		A80B129D0AA469A20058DF92 /* JSSVGPathSegClosePath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegClosePath.h; sourceTree = "<group>"; };
+		A80B129E0AA469A20058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegCurvetoQuadraticSmoothAbs.h; sourceTree = "<group>"; };
+		A80B129F0AA469A20058DF92 /* JSSVGPathSegMovetoRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegMovetoRel.h; sourceTree = "<group>"; };
+		A80B12A00AA469A30058DF92 /* JSSVGPathSegLinetoRel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegLinetoRel.cpp; sourceTree = "<group>"; };
+		A80B12A10AA469A30058DF92 /* JSSVGPathSegClosePath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegClosePath.cpp; sourceTree = "<group>"; };
+		A80B12A20AA469A30058DF92 /* JSSVGPathSegCurvetoCubicAbs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCurvetoCubicAbs.cpp; sourceTree = "<group>"; };
+		A80B12A30AA469A30058DF92 /* JSSVGPathSegLinetoAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegLinetoAbs.h; sourceTree = "<group>"; };
+		A80B12A50AA469A30058DF92 /* JSSVGPathSegMovetoAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegMovetoAbs.h; sourceTree = "<group>"; };
+		A80B12A60AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegLinetoHorizontalRel.h; sourceTree = "<group>"; };
+		A80B12A70AA469A30058DF92 /* JSSVGPathSegMovetoRel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegMovetoRel.cpp; sourceTree = "<group>"; };
+		A80B12A80AA469A30058DF92 /* JSSVGPathSegLinetoVerticalRel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegLinetoVerticalRel.cpp; sourceTree = "<group>"; };
+		A80B12A90AA469A30058DF92 /* JSSVGPathSeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSeg.h; sourceTree = "<group>"; };
+		A80B12AA0AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalRel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegLinetoHorizontalRel.cpp; sourceTree = "<group>"; };
+		A80B12AB0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticRel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCurvetoQuadraticRel.cpp; sourceTree = "<group>"; };
+		A80B12AC0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothRel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCurvetoQuadraticSmoothRel.cpp; sourceTree = "<group>"; };
+		A80B12AD0AA469A30058DF92 /* JSSVGPathSegLinetoVerticalAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegLinetoVerticalAbs.h; sourceTree = "<group>"; };
+		A80B12AE0AA469A30058DF92 /* JSSVGPathSegLinetoRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegLinetoRel.h; sourceTree = "<group>"; };
+		A80B12AF0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegCurvetoCubicSmoothAbs.h; sourceTree = "<group>"; };
+		A80B12B00AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalAbs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegLinetoHorizontalAbs.cpp; sourceTree = "<group>"; };
+		A80B12B10AA469A30058DF92 /* JSSVGPathSegMovetoAbs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegMovetoAbs.cpp; sourceTree = "<group>"; };
+		A80B12B20AA469A30058DF92 /* JSSVGPathSegCurvetoCubicAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegCurvetoCubicAbs.h; sourceTree = "<group>"; };
+		A80B12B30AA469A30058DF92 /* JSSVGPathSeg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSeg.cpp; sourceTree = "<group>"; };
+		A80B12B40AA469A30058DF92 /* JSSVGPathSegArcRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegArcRel.h; sourceTree = "<group>"; };
+		A80B12B50AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegCurvetoQuadraticRel.h; sourceTree = "<group>"; };
+		A80B12B60AA469A30058DF92 /* JSSVGPathSegArcRel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegArcRel.cpp; sourceTree = "<group>"; };
+		A80B12B70AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothAbs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCurvetoCubicSmoothAbs.cpp; sourceTree = "<group>"; };
+		A80B12B80AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp; sourceTree = "<group>"; };
+		A80B12B90AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegCurvetoQuadraticAbs.h; sourceTree = "<group>"; };
+		A80B12BA0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticAbs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCurvetoQuadraticAbs.cpp; sourceTree = "<group>"; };
+		A80B12BB0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegCurvetoQuadraticSmoothRel.h; sourceTree = "<group>"; };
+		A80B12BC0AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegLinetoHorizontalAbs.h; sourceTree = "<group>"; };
+		A80B12BE0AA469A30058DF92 /* JSSVGPathSegLinetoAbs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegLinetoAbs.cpp; sourceTree = "<group>"; };
+		A80B12BF0AA469A30058DF92 /* JSSVGPathElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathElement.h; sourceTree = "<group>"; };
+		A80B12C00AA469A30058DF92 /* JSSVGPathSegCurvetoCubicRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegCurvetoCubicRel.h; sourceTree = "<group>"; };
+		A80B12C10AA469A30058DF92 /* JSSVGPathSegCurvetoCubicRel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCurvetoCubicRel.cpp; sourceTree = "<group>"; };
+		A80B12C20AA469A30058DF92 /* JSSVGPathSegArcAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegArcAbs.h; sourceTree = "<group>"; };
+		A80B12C30AA469A30058DF92 /* JSSVGPathSegLinetoVerticalRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegLinetoVerticalRel.h; sourceTree = "<group>"; };
+		A80B12C40AA469A30058DF92 /* JSSVGPathSegArcAbs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegArcAbs.cpp; sourceTree = "<group>"; };
+		A80B12C50AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGPathSegCurvetoCubicSmoothRel.h; sourceTree = "<group>"; };
+		A80B133C0AA46EC30058DF92 /* JSSVGAnimatedNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimatedNumber.cpp; sourceTree = "<group>"; };
+		A80B133D0AA46EC30058DF92 /* JSSVGAnimatedNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGAnimatedNumber.h; sourceTree = "<group>"; };
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
 		A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageValue.cpp; sourceTree = "<group>"; };
 		A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValue.h; sourceTree = "<group>"; };
@@ -3684,8 +3772,6 @@
 		14DFB33F0A7DF7630018F769 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
-				AA84FC830AA0FE08007699AF /* JSSVGMetadataElement.cpp */,
-				AA84FC840AA0FE08007699AF /* JSSVGMetadataElement.h */,
 				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
 				65DF31D909D1C123000BE325 /* JSAttr.h */,
 				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
@@ -3844,6 +3930,8 @@
 				A833C0F00A2C513300D57664 /* JSSVGAngle.h */,
 				A833C0F10A2C513300D57664 /* JSSVGAnimatedLength.cpp */,
 				A833C0EE0A2C513300D57664 /* JSSVGAnimatedLength.h */,
+				A80B133C0AA46EC30058DF92 /* JSSVGAnimatedNumber.cpp */,
+				A80B133D0AA46EC30058DF92 /* JSSVGAnimatedNumber.h */,
 				A833BF190A2C3A9500D57664 /* JSSVGColor.cpp */,
 				A833BF180A2C3A9500D57664 /* JSSVGColor.h */,
 				A833B4B90A27311D00D57664 /* JSSVGDocument.cpp */,
@@ -3854,6 +3942,50 @@
 				A833C0F50A2C513300D57664 /* JSSVGLength.h */,
 				A833BF170A2C3A9500D57664 /* JSSVGMatrix.cpp */,
 				A833BF160A2C3A9500D57664 /* JSSVGMatrix.h */,
+				AA84FC830AA0FE08007699AF /* JSSVGMetadataElement.cpp */,
+				AA84FC840AA0FE08007699AF /* JSSVGMetadataElement.h */,
+				A80B129A0AA469A20058DF92 /* JSSVGPathElement.cpp */,
+				A80B12BF0AA469A30058DF92 /* JSSVGPathElement.h */,
+				A80B12B30AA469A30058DF92 /* JSSVGPathSeg.cpp */,
+				A80B12A90AA469A30058DF92 /* JSSVGPathSeg.h */,
+				A80B12C40AA469A30058DF92 /* JSSVGPathSegArcAbs.cpp */,
+				A80B12C20AA469A30058DF92 /* JSSVGPathSegArcAbs.h */,
+				A80B12B60AA469A30058DF92 /* JSSVGPathSegArcRel.cpp */,
+				A80B12B40AA469A30058DF92 /* JSSVGPathSegArcRel.h */,
+				A80B12A10AA469A30058DF92 /* JSSVGPathSegClosePath.cpp */,
+				A80B129D0AA469A20058DF92 /* JSSVGPathSegClosePath.h */,
+				A80B12A20AA469A30058DF92 /* JSSVGPathSegCurvetoCubicAbs.cpp */,
+				A80B12B20AA469A30058DF92 /* JSSVGPathSegCurvetoCubicAbs.h */,
+				A80B12C10AA469A30058DF92 /* JSSVGPathSegCurvetoCubicRel.cpp */,
+				A80B12C00AA469A30058DF92 /* JSSVGPathSegCurvetoCubicRel.h */,
+				A80B12B70AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothAbs.cpp */,
+				A80B12AF0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothAbs.h */,
+				A80B129B0AA469A20058DF92 /* JSSVGPathSegCurvetoCubicSmoothRel.cpp */,
+				A80B12C50AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothRel.h */,
+				A80B12BA0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticAbs.cpp */,
+				A80B12B90AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticAbs.h */,
+				A80B12AB0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticRel.cpp */,
+				A80B12B50AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticRel.h */,
+				A80B12B80AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp */,
+				A80B129E0AA469A20058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.h */,
+				A80B12AC0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothRel.cpp */,
+				A80B12BB0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothRel.h */,
+				A80B12BE0AA469A30058DF92 /* JSSVGPathSegLinetoAbs.cpp */,
+				A80B12A30AA469A30058DF92 /* JSSVGPathSegLinetoAbs.h */,
+				A80B12B00AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalAbs.cpp */,
+				A80B12BC0AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalAbs.h */,
+				A80B12AA0AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalRel.cpp */,
+				A80B12A60AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalRel.h */,
+				A80B12A00AA469A30058DF92 /* JSSVGPathSegLinetoRel.cpp */,
+				A80B12AE0AA469A30058DF92 /* JSSVGPathSegLinetoRel.h */,
+				A80B129C0AA469A20058DF92 /* JSSVGPathSegLinetoVerticalAbs.cpp */,
+				A80B12AD0AA469A30058DF92 /* JSSVGPathSegLinetoVerticalAbs.h */,
+				A80B12A80AA469A30058DF92 /* JSSVGPathSegLinetoVerticalRel.cpp */,
+				A80B12C30AA469A30058DF92 /* JSSVGPathSegLinetoVerticalRel.h */,
+				A80B12B10AA469A30058DF92 /* JSSVGPathSegMovetoAbs.cpp */,
+				A80B12A50AA469A30058DF92 /* JSSVGPathSegMovetoAbs.h */,
+				A80B12A70AA469A30058DF92 /* JSSVGPathSegMovetoRel.cpp */,
+				A80B129F0AA469A20058DF92 /* JSSVGPathSegMovetoRel.h */,
 				A833C08E0A2C4F3F00D57664 /* JSSVGSVGElement.cpp */,
 				A833C08F0A2C4F3F00D57664 /* JSSVGSVGElement.h */,
 				A833C0EF0A2C513300D57664 /* JSSVGTransform.cpp */,
@@ -6653,6 +6785,28 @@
 				BC837CB60A9D10FE006B186A /* GraphicsContextPlatformPrivate.h in Headers */,
 				AA84FC860AA0FE08007699AF /* JSSVGMetadataElement.h in Headers */,
 				AAC8DAB20AA1002000DC0907 /* SVGMetadataElement.h in Headers */,
+				A80B12C90AA469A30058DF92 /* JSSVGPathSegClosePath.h in Headers */,
+				A80B12CA0AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.h in Headers */,
+				A80B12CB0AA469A30058DF92 /* JSSVGPathSegMovetoRel.h in Headers */,
+				A80B12CF0AA469A30058DF92 /* JSSVGPathSegLinetoAbs.h in Headers */,
+				A80B12D10AA469A30058DF92 /* JSSVGPathSegMovetoAbs.h in Headers */,
+				A80B12D20AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalRel.h in Headers */,
+				A80B12D50AA469A30058DF92 /* JSSVGPathSeg.h in Headers */,
+				A80B12D90AA469A30058DF92 /* JSSVGPathSegLinetoVerticalAbs.h in Headers */,
+				A80B12DA0AA469A30058DF92 /* JSSVGPathSegLinetoRel.h in Headers */,
+				A80B12DB0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothAbs.h in Headers */,
+				A80B12DE0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicAbs.h in Headers */,
+				A80B12E00AA469A30058DF92 /* JSSVGPathSegArcRel.h in Headers */,
+				A80B12E10AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticRel.h in Headers */,
+				A80B12E50AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticAbs.h in Headers */,
+				A80B12E70AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothRel.h in Headers */,
+				A80B12E80AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalAbs.h in Headers */,
+				A80B12EB0AA469A30058DF92 /* JSSVGPathElement.h in Headers */,
+				A80B12EC0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicRel.h in Headers */,
+				A80B12EE0AA469A30058DF92 /* JSSVGPathSegArcAbs.h in Headers */,
+				A80B12EF0AA469A30058DF92 /* JSSVGPathSegLinetoVerticalRel.h in Headers */,
+				A80B12F10AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothRel.h in Headers */,
+				A80B133F0AA46EC30058DF92 /* JSSVGAnimatedNumber.h in Headers */,
 				85DF2C5C0AA341F600AD64C5 /* DOMHTMLFormElement.h in Headers */,
 				85DF2EED0AA387CB00AD64C5 /* DOMHTMLElement.h in Headers */,
 				85DF2F8E0AA3C88100AD64C5 /* DOMHTMLCollection.h in Headers */,
@@ -7559,6 +7713,28 @@
 				BC837C7B0A9D0D1A006B186A /* PDFDocumentImage.cpp in Sources */,
 				AA84FC850AA0FE08007699AF /* JSSVGMetadataElement.cpp in Sources */,
 				AAC8DAB10AA1002000DC0907 /* SVGMetadataElement.cpp in Sources */,
+				A80B12C60AA469A30058DF92 /* JSSVGPathElement.cpp in Sources */,
+				A80B12C70AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothRel.cpp in Sources */,
+				A80B12C80AA469A30058DF92 /* JSSVGPathSegLinetoVerticalAbs.cpp in Sources */,
+				A80B12CC0AA469A30058DF92 /* JSSVGPathSegLinetoRel.cpp in Sources */,
+				A80B12CD0AA469A30058DF92 /* JSSVGPathSegClosePath.cpp in Sources */,
+				A80B12CE0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicAbs.cpp in Sources */,
+				A80B12D30AA469A30058DF92 /* JSSVGPathSegMovetoRel.cpp in Sources */,
+				A80B12D40AA469A30058DF92 /* JSSVGPathSegLinetoVerticalRel.cpp in Sources */,
+				A80B12D60AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalRel.cpp in Sources */,
+				A80B12D70AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticRel.cpp in Sources */,
+				A80B12D80AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothRel.cpp in Sources */,
+				A80B12DC0AA469A30058DF92 /* JSSVGPathSegLinetoHorizontalAbs.cpp in Sources */,
+				A80B12DD0AA469A30058DF92 /* JSSVGPathSegMovetoAbs.cpp in Sources */,
+				A80B12DF0AA469A30058DF92 /* JSSVGPathSeg.cpp in Sources */,
+				A80B12E20AA469A30058DF92 /* JSSVGPathSegArcRel.cpp in Sources */,
+				A80B12E30AA469A30058DF92 /* JSSVGPathSegCurvetoCubicSmoothAbs.cpp in Sources */,
+				A80B12E40AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp in Sources */,
+				A80B12E60AA469A30058DF92 /* JSSVGPathSegCurvetoQuadraticAbs.cpp in Sources */,
+				A80B12EA0AA469A30058DF92 /* JSSVGPathSegLinetoAbs.cpp in Sources */,
+				A80B12ED0AA469A30058DF92 /* JSSVGPathSegCurvetoCubicRel.cpp in Sources */,
+				A80B12F00AA469A30058DF92 /* JSSVGPathSegArcAbs.cpp in Sources */,
+				A80B133E0AA46EC30058DF92 /* JSSVGAnimatedNumber.cpp in Sources */,
 				85DF2C5D0AA341F600AD64C5 /* DOMHTMLFormElement.mm in Sources */,
 				85DF2EEE0AA387CB00AD64C5 /* DOMHTMLElement.mm in Sources */,
 				85DF2F8F0AA3C88100AD64C5 /* DOMHTMLCollection.mm in Sources */,

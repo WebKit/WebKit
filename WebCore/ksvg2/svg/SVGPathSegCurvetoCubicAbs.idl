@@ -25,13 +25,18 @@
 
 module svg
 {
-  interface [Conditional=SVG] SVGPathSegLinetoVerticalAbs : SVGPathSeg { 
+  interface [Conditional=SVG] SVGPathSegCurvetoCubicAbs : SVGPathSeg { 
+             attribute float   x;
+                         // raises DOMException on setting
              attribute float   y;
                          // raises DOMException on setting
-  };
-
-  interface [Conditional=SVG] SVGPathSegLinetoVerticalRel : SVGPathSeg { 
-             attribute float   y;
+             attribute float   x1;
+                         // raises DOMException on setting
+             attribute float   y1;
+                         // raises DOMException on setting
+             attribute float   x2;
+                         // raises DOMException on setting
+             attribute float   y2;
                          // raises DOMException on setting
   };
 };

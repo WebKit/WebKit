@@ -29,9 +29,4 @@ module svg
              attribute float   x;
                          // raises DOMException on setting
   };
-  
-  interface [Conditional=SVG] SVGPathSegLinetoHorizontalRel : SVGPathSeg { 
-             attribute float   x;
-                         // raises DOMException on setting
-  };
 };

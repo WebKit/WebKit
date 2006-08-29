@@ -140,25 +140,47 @@ all : \
     JSMutationEvent.h \
     JSNode.h \
     JSNodeFilter.h \
-	JSNodeIterator.h \
+    JSNodeIterator.h \
     JSNotation.h \
-	JSOverflowEvent.h \
+    JSOverflowEvent.h \
     JSProcessingInstruction.h \
     JSRange.h \
     JSSVGAngle.h \
     JSSVGAnimatedLength.h \
+    JSSVGAnimatedNumber.h \
     JSSVGColor.h \
     JSSVGDocument.h \
     JSSVGElement.h \
     JSSVGLength.h \
     JSSVGMatrix.h \
     JSSVGMetadataElement.h \
+    JSSVGPathElement.h \
+    JSSVGPathSeg.h \
+    JSSVGPathSegArcAbs.h \
+    JSSVGPathSegArcRel.h \
+    JSSVGPathSegClosePath.h \
+    JSSVGPathSegCurvetoCubicAbs.h \
+    JSSVGPathSegCurvetoCubicRel.h \
+    JSSVGPathSegCurvetoCubicSmoothAbs.h \
+    JSSVGPathSegCurvetoCubicSmoothRel.h \
+    JSSVGPathSegCurvetoQuadraticAbs.h \
+    JSSVGPathSegCurvetoQuadraticRel.h \
+    JSSVGPathSegCurvetoQuadraticSmoothAbs.h \
+    JSSVGPathSegCurvetoQuadraticSmoothRel.h \
+    JSSVGPathSegLinetoAbs.h \
+    JSSVGPathSegLinetoHorizontalAbs.h \
+    JSSVGPathSegLinetoHorizontalRel.h \
+    JSSVGPathSegLinetoRel.h \
+    JSSVGPathSegLinetoVerticalAbs.h \
+    JSSVGPathSegLinetoVerticalRel.h \
+    JSSVGPathSegMovetoAbs.h \
+    JSSVGPathSegMovetoRel.h \
     JSSVGPointTable.cpp \
     JSSVGRectTable.cpp \
     JSSVGSVGElement.h \
     JSSVGTransform.h \
     JSText.h \
-	JSTreeWalker.h \
+    JSTreeWalker.h \
     JSUIEvent.h \
     JSXPathEvaluator.h \
     JSXPathExpression.h \

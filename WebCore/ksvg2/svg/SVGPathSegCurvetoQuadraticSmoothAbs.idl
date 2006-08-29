@@ -25,37 +25,10 @@
 
 module svg
 {
-  interface [Conditional=SVG] SVGPathSegArcAbs : SVGPathSeg { 
+  interface [Conditional=SVG] SVGPathSegCurvetoQuadraticSmoothAbs : SVGPathSeg { 
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
-                         // raises DOMException on setting
-             attribute float   r1;
-                         // raises DOMException on setting
-             attribute float   r2;
-                         // raises DOMException on setting
-             attribute float   angle;
-                         // raises DOMException on setting
-             attribute boolean largeArcFlag;
-                         // raises DOMException on setting
-             attribute boolean sweepFlag;
-                         // raises DOMException on setting
-  };
-  
-  interface [Conditional=SVG] SVGPathSegArcRel : SVGPathSeg { 
-             attribute float   x;
-                         // raises DOMException on setting
-             attribute float   y;
-                         // raises DOMException on setting
-             attribute float   r1;
-                         // raises DOMException on setting
-             attribute float   r2;
-                         // raises DOMException on setting
-             attribute float   angle;
-                         // raises DOMException on setting
-             attribute boolean largeArcFlag;
-                         // raises DOMException on setting
-             attribute boolean sweepFlag;
                          // raises DOMException on setting
   };
 };

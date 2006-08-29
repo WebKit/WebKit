@@ -178,6 +178,10 @@ sub AddIncludesForType
     # reorganization, we won't need these special cases.
     if ($codeGenerator->IsPrimitiveType($type)
         or $type eq "DOMString" or $type eq "DOMObject" or $type eq "RGBColor" or $type eq "Rect") {
+    } elsif ($type =~ /SVGPathSeg/) {
+        $joinedName = $type;
+        $joinedName =~ s/Abs|Rel//;
+        $implIncludes{"${joinedName}.h"} = 1;
     } else {
         # default, include the same named file
         $implIncludes{"${type}.h"} = 1;
@@ -1044,6 +1048,7 @@ sub TypeCanFailConversion
            $type eq "XPathEvaluator" or
            $type eq "XPathNSResolver" or
            $type eq "XPathResult" or
+           $type eq "SVGPathSeg" or
            $type eq "SVGMatrix" or
            $type eq "SVGRect" or
            $type eq "SVGElement" or
@@ -1223,6 +1228,12 @@ sub NativeToJSValue
              $type eq "SVGNumber") {
         $implIncludes{"JS$type.h"} = 1;
         return "getJS$type(exec, $value)";
+    } elsif ($type =~ /SVGPathSeg/) {
+        $implIncludes{"JS$type.h"} = 1;
+        $joinedName = $type;
+        $joinedName =~ s/Abs|Rel//;
+        $implIncludes{"$joinedName.h"} = 1;
+        return "toJS(exec, $value)";
     }
 
     # Default, include header with same name.

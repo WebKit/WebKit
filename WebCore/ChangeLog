@@ -1,3 +1,55 @@
+2006-08-29  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by kevin.
+
+        Re-enable path-related SVG JavaScript bindings.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10623
+        Split all SVGPathSeg*.idl files into Abs and Rel pieces.
+        Move all SVGPath*.idl files into ksvg2/svg
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm: Special case Abs and Rel header includes
+        * ksvg2/bindings/idl/svg/SVGAnimatedNumber.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathElement.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSeg.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSegArc.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSegClosePath.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoCubic.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoCubicSmooth.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoQuadratic.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoQuadraticSmooth.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSegLineto.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSegLinetoHorizontal.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSegLinetoVertical.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSegList.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPathSegMoveto.idl: Removed.
+        * ksvg2/ksvg.h: move SVGPathSegment enum
+        * ksvg2/svg/SVGPathElement.cpp: move SVGPathSegment enum
+        (WebCore::SVGPathElement::toPathData):
+        * ksvg2/svg/SVGPathSeg.cpp:
+        (WebCore::SVGPathSeg::SVGPathSeg):
+        * ksvg2/svg/SVGPathSeg.h:
+        (WebCore::SVGPathSeg::):
+        * ksvg2/svg/SVGPathSegArcAbs.idl: Added.
+        * ksvg2/svg/SVGPathSegArcRel.idl: Added.
+        * ksvg2/svg/SVGPathSegCurvetoCubicAbs.idl: Added.
+        * ksvg2/svg/SVGPathSegCurvetoCubicRel.idl: Added.
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmoothAbs.idl: Added.
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmoothRel.idl: Added.
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticAbs.idl: Added.
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticRel.idl: Added.
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl: Added.
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothRel.idl: Added.
+        * ksvg2/svg/SVGPathSegLinetoAbs.idl: Added.
+        * ksvg2/svg/SVGPathSegLinetoHorizontalAbs.idl: Added.
+        * ksvg2/svg/SVGPathSegLinetoHorizontalRel.idl: Added.
+        * ksvg2/svg/SVGPathSegLinetoRel.idl: Added.
+        * ksvg2/svg/SVGPathSegLinetoVerticalAbs.idl: Added.
+        * ksvg2/svg/SVGPathSegLinetoVerticalRel.idl: Added.
+        * ksvg2/svg/SVGPathSegMovetoAbs.idl: Added.
+        * ksvg2/svg/SVGPathSegMovetoRel.idl: Added.
+
 2006-08-28  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric, landed by Anders.
