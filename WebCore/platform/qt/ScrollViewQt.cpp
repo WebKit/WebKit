@@ -183,10 +183,9 @@ ScrollBarMode ScrollView::vScrollBarMode() const
     return ScrollBarAuto;
 }
 
-void ScrollView::suppressScrollBars(bool suppressed, bool repaintOnSuppress)
+void ScrollView::suppressScrollBars(bool suppressed, bool /* repaintOnSuppress */)
 {
-    // FIXME: Is this correct?
-    setScrollBarsMode(ScrollBarAlwaysOff);
+    setScrollBarsMode(suppressed ? ScrollBarAlwaysOff : ScrollBarAuto);
 }
 
 void ScrollView::setHScrollBarMode(ScrollBarMode newMode)

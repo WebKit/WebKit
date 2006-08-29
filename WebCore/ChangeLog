@@ -1,3 +1,12 @@
+2006-08-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by ggaren.
+
+        Fix scrollbars to reappear after the first layouting.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::suppressScrollBars):
+
 2006-08-29  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin and Geoff.
