@@ -84,11 +84,33 @@ set(IDL_BINDINGS_SVG
   ksvg2/svg/SVGTransform.idl
   ksvg2/svg/SVGLength.idl
   ksvg2/svg/SVGAnimatedLength.idl
+  ksvg2/svg/SVGAnimatedNumber.idl
   ksvg2/svg/SVGElement.idl
   ksvg2/svg/SVGColor.idl
   ksvg2/svg/SVGDocument.idl
   ksvg2/svg/SVGSVGElement.idl
   ksvg2/svg/SVGMetadataElement.idl
+  ksvg2/svg/SVGPathElement.idl
+  ksvg2/svg/SVGPathSeg.idl
+  ksvg2/svg/SVGPathSegArcAbs.idl
+  ksvg2/svg/SVGPathSegArcRel.idl
+  ksvg2/svg/SVGPathSegClosePath.idl
+  ksvg2/svg/SVGPathSegCurvetoCubicAbs.idl
+  ksvg2/svg/SVGPathSegCurvetoCubicRel.idl
+  ksvg2/svg/SVGPathSegCurvetoCubicSmoothAbs.idl
+  ksvg2/svg/SVGPathSegCurvetoCubicSmoothRel.idl
+  ksvg2/svg/SVGPathSegCurvetoQuadraticAbs.idl
+  ksvg2/svg/SVGPathSegCurvetoQuadraticRel.idl
+  ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl
+  ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothRel.idl
+  ksvg2/svg/SVGPathSegLinetoAbs.idl
+  ksvg2/svg/SVGPathSegLinetoHorizontalAbs.idl
+  ksvg2/svg/SVGPathSegLinetoHorizontalRel.idl
+  ksvg2/svg/SVGPathSegLinetoRel.idl
+  ksvg2/svg/SVGPathSegLinetoVerticalAbs.idl
+  ksvg2/svg/SVGPathSegLinetoVerticalRel.idl
+  ksvg2/svg/SVGPathSegMovetoAbs.idl
+  ksvg2/svg/SVGPathSegMovetoRel.idl
 )
 ENDIF (USE_WEBKIT_SVG_SUPPORT)
 

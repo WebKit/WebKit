@@ -1,3 +1,11 @@
+2006-08-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.
+
+        Add path-related SVG JavaScript bindings to generation.
+
+        * CMakeLists.txt:
+
 2006-08-29  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by kevin.
