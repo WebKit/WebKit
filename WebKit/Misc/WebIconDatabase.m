@@ -189,8 +189,16 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)removeAllIcons
 {
-    // FIXME - <rdar://problem/4678414>
-    // Need to create a bridge method that calls through to WebCore and performs a wipe of the DB there
+    // <rdar://problem/4678414> - New IconDB needs to delete icons when asked
+
+    if (![self _isEnabled])
+        return;
+        
+    [_private->databaseBridge removeAllIcons];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidRemoveAllIconsNotification
+                                                        object:self
+                                                      userInfo:nil];
 }
 
 - (BOOL)isIconExpiredForIconURL:(NSString *)iconURL

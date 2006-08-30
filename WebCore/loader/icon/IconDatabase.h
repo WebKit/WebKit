@@ -65,6 +65,8 @@ public:
     bool isOpen() { return m_mainDB.isOpen() && m_privateBrowsingDB.isOpen(); }
     void close();
     
+    void removeAllIcons();
+    
     bool isEmpty();
  
     Image* iconForPageURL(const String&, const IntSize&, bool cache = true);
@@ -112,10 +114,7 @@ private:
     void forgetIconForIconURLFromDatabase(const String&);
     
     void setIconURLForPageURLInDatabase(const String&, const String&);
-    
-    // Wipe all icons from the DB
-    void removeAllIcons();
-    
+        
     // Called by the startup timer, this method removes all icons that are unretained
     // after initial retains are complete, and pageURLs that are dangling
     void pruneUnretainedIconsOnStartup(Timer<IconDatabase>*);
@@ -132,10 +131,7 @@ private:
     
     // Do a quick check to make sure the database tables are in place and the db version is current
     bool isValidDatabase(SQLDatabase&);
-    
-    // Delete all tables from the given database
-    void clearDatabaseTables(SQLDatabase&);
-    
+        
     // Create the tables and triggers for the given database.
     void createDatabaseTables(SQLDatabase&);
     
@@ -183,6 +179,7 @@ private:
     void imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, Vector<unsigned char>& result);
     SQLStatement *m_imageDataForIconURLStatement;
 
+    void deleteAllPreparedStatements(bool withSync);
 
     // FIXME: This method is currently implemented in WebCoreIconDatabaseBridge so we can be in ObjC++ and fire off a loader in Webkit
     // Once all of the loader logic is sufficiently moved into WebCore we need to move this implementation to IconDatabase.cpp

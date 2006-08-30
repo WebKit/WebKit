@@ -1,5 +1,28 @@
 2006-08-29  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Kevin Decker (Sarge)
+
+        <rdar://problem/4678414> - New IconDB needs to delete icons when asked
+        <rdar://problem/4707718> - If user's Icon directory is unwritable, Safari will crash at startup
+
+        * bridge/mac/WebCoreIconDatabaseBridge.h:
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (-[WebCoreIconDatabaseBridge removeAllIcons]):  Added
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open): If DB file is not writeable, create an in-memory DB for this session
+        (WebCore::IconDatabase::close): Use new deleteAllPreparedStatements()
+        (WebCore::IconDatabase::removeAllIcons): Actually implemented
+        (WebCore::IconDatabase::deleteAllPreparedStatements): Added for convinience/consistency
+        (WebCore::IconDatabase::setPrivateBrowsingEnabled): Use new SQLDatabase::clearAllTables()
+        * loader/icon/IconDatabase.h:
+        * loader/icon/SQLDatabase.cpp:
+        (WebCore::SQLDatabase::clearAllTables): Moved this from IconDatabase as it actually belongs here
+        (WebCore::SQLDatabase::vacuum): Added
+        * loader/icon/SQLDatabase.h:
+        (WebCore::SQLDatabase::path): changed name from getPath()
+
+2006-08-29  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Alice
 
         Added a truth value to setIconURLForPageURL so WebKit can avoid sending a notification

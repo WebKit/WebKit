@@ -43,6 +43,7 @@ typedef WebCore::IconDatabase WebCoreIconDatabase;
 - (BOOL)openSharedDatabaseWithPath:(NSString *)path;
 - (void)closeSharedDatabase;
 - (BOOL)isOpen;
+- (void)removeAllIcons;
 
 - (NSImage *)iconForPageURL:(NSString *)url withSize:(NSSize)size;
 - (NSString *)iconURLForPageURL:(NSString *)url;

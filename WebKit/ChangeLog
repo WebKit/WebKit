@@ -1,5 +1,14 @@
 2006-08-29  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Kevin Decker (Sarge)
+
+        <rdar://problem/4678414> - New IconDB needs to delete icons when asked
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase removeAllIcons]): Call through to WebCore to remove icons, then send notification
+
+2006-08-29  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Alice
 
         Added a truth value check for to setIconURL:forURL so WebKit can avoid sending a notification

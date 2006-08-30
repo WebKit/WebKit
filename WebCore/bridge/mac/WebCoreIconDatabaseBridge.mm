@@ -68,6 +68,12 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
     return _iconDB != 0;
 }
 
+- (void)removeAllIcons
+{
+    if (_iconDB)
+        _iconDB->removeAllIcons();
+}
+
 - (BOOL)_isEmpty
 {
     return _iconDB ? _iconDB->isEmpty() : NO;

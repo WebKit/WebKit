@@ -119,6 +119,29 @@ bool SQLDatabase::tableExists(const String& tablename)
     return sql.step() == SQLITE_ROW;
 }
 
+void SQLDatabase::clearAllTables()
+{
+    String query = "SELECT name FROM sqlite_master WHERE type='table';";
+    Vector<String> tables;
+    if (!SQLStatement(*this, query).returnTextResults16(0, tables)) {
+        LOG(IconDatabase, "Unable to retrieve list of tables from database");
+        return;
+    }
+    
+    for (Vector<String>::iterator table = tables.begin(); table != tables.end(); ++table ) {
+        if (*table == "sqlite_sequence")
+            continue;
+        if (!executeCommand("DROP TABLE " + *table))
+            LOG(IconDatabase, "Unable to drop table %s", (*table).ascii().data());
+    }
+}
+
+void SQLDatabase::runVacuumCommand()
+{
+    if (!executeCommand("VACUUM;"))
+        LOG(IconDatabase, "Unable to vacuum database - %s", lastErrorMsg());
+}
+
 int64_t SQLDatabase::lastInsertRowID()
 {
     if (!m_db)

@@ -43,13 +43,15 @@ public:
 
     bool open(const String& filename);
     bool isOpen() { return m_db; }
-    String getPath(){ return m_path; }
+    String path(){ return m_path; }
     void close();
 
     bool executeCommand(const String&);
     bool returnsAtLeastOneResult(const String&);
     
     bool tableExists(const String&);
+    void clearAllTables();
+    void runVacuumCommand();
     
     int64_t lastInsertRowID();
 

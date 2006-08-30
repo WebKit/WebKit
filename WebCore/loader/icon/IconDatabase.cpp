@@ -104,16 +104,19 @@ bool IconDatabase::open(const String& databasePath)
     else
         dbFilename = databasePath + "/" + defaultDatabaseFilename();
 
-    // Now, we'll see if we can open the on-disk table
-    // If we can't, this ::open() failed and we should bail now
+    // <rdar://problem/4707718> - If user's Icon directory is unwritable, Safari will crash at startup
+    // Now, we'll see if we can open the on-disk database.  If we can't, we'll log the error and open it as
+    // an in-memory database so the user will have icons during their current browsing session
+    
     if (!m_mainDB.open(dbFilename)) {
-        LOG(IconDatabase, "Unable to open icon database at path %s", dbFilename.ascii().data());
-        return false;
+        LOG_ERROR("Unable to open icon database at path %s - %s", dbFilename.ascii().data(), m_mainDB.lastErrorMsg());
+        if (!m_mainDB.open(":memory:"))
+            LOG_ERROR("Unable to open in-memory database for browsing - %s", m_mainDB.lastErrorMsg());
     }
     
     if (!isValidDatabase(m_mainDB)) {
         LOG(IconDatabase, "%s is missing or in an invalid state - reconstructing", dbFilename.ascii().data());
-        clearDatabaseTables(m_mainDB);
+        m_mainDB.clearAllTables();
         createDatabaseTables(m_mainDB);
     }
 
@@ -132,7 +135,7 @@ bool IconDatabase::open(const String& databasePath)
     
     // Open the in-memory table for private browsing
     if (!m_privateBrowsingDB.open(":memory:"))
-        LOG_ERROR("Unabled to open in-memory database for private browsing - %s", m_privateBrowsingDB.lastErrorMsg());
+        LOG_ERROR("Unable to open in-memory database for private browsing - %s", m_privateBrowsingDB.lastErrorMsg());
 
     // Only if we successfully remained open will we start our "initial purge timer"
     // rdar://4690949 - when we have deferred reads and writes all the way in, the prunetimer
@@ -146,22 +149,83 @@ bool IconDatabase::open(const String& databasePath)
 
 void IconDatabase::close()
 {
-    delete m_initialPruningTransaction;
-    if (m_preparedPageRetainInsertStatement)
-        m_preparedPageRetainInsertStatement->finalize();
-    delete m_preparedPageRetainInsertStatement;
-
-    syncDatabase();
-    delete m_timeStampForIconURLStatement;
-    delete m_iconURLForPageURLStatement;
-    delete m_hasIconForIconURLStatement;
-    delete m_forgetPageURLStatement;
-    delete m_setIconIDForPageURLStatement;
-    delete m_getIconIDForIconURLStatement;
-    delete m_addIconForIconURLStatement;
-    delete m_imageDataForIconURLStatement;
+    // This will close all the SQL statements and transactions we have open,
+    // syncing the DB at the appropriate point
+    deleteAllPreparedStatements(true);
+ 
     m_mainDB.close();
     m_privateBrowsingDB.close();
+}
+
+void IconDatabase::removeAllIcons()
+{
+    // We don't need to sync anything anymore since we're wiping everything.  
+    // So we can kill the update timer, and clear all the hashes of "items that need syncing"
+    m_updateTimer.stop();
+    m_iconDataCachesPendingUpdate.clear();
+    m_pageURLsPendingAddition.clear();
+    m_pageURLsPendingDeletion.clear();
+    m_iconURLsPendingDeletion.clear();
+    
+    //  Now clear all in-memory URLs and Icons
+    m_pageURLToIconURLMap.clear();
+    m_pageURLToRetainCount.clear();
+    m_iconURLToRetainCount.clear();
+    
+    HashMap<String, IconDataCache*>::iterator i = m_iconURLToIconDataCacheMap.begin();
+    HashMap<String, IconDataCache*>::iterator end = m_iconURLToIconDataCacheMap.end();
+    for (; i != end; ++i)
+        delete i->second;
+    m_iconURLToIconDataCacheMap.clear();
+        
+    // Wipe any pre-prepared statements, otherwise resetting the SQLDatabases themselves will fail
+    deleteAllPreparedStatements(false);
+    
+    // The easiest way to wipe the in-memory database is by closing and reopening it
+    m_privateBrowsingDB.close();
+    if (!m_privateBrowsingDB.open(":memory:"))
+        LOG_ERROR("Unable to open in-memory database for private browsing - %s", m_privateBrowsingDB.lastErrorMsg());
+    createDatabaseTables(m_privateBrowsingDB);
+        
+    // To reset the on-disk database, we'll wipe all its tables then vacuum it
+    // This is easier and safer than closing it, deleting the file, and recreating from scratch
+    m_mainDB.clearAllTables();
+    m_mainDB.runVacuumCommand();
+    createDatabaseTables(m_mainDB);
+}
+
+// There are two instances where you'd want to deleteAllPreparedStatements - one with sync, and one without
+// A - Closing down the database on application exit - in this case, you *do* want to save the icons out
+// B - Resetting the DB via removeAllIcons() - in this case, you *don't* want to sync, because it would be a waste of time
+void IconDatabase::deleteAllPreparedStatements(bool withSync)
+{
+    // Must wipe the initial retain statement before the initial transaction
+    delete m_preparedPageRetainInsertStatement;
+    m_preparedPageRetainInsertStatement = 0;
+    delete m_initialPruningTransaction;
+    m_initialPruningTransaction = 0;
+
+    // Sync, if desired
+    if (withSync)
+        syncDatabase();
+        
+    // Order doesn't matter on these
+    delete m_timeStampForIconURLStatement;
+    m_timeStampForIconURLStatement = 0;
+    delete m_iconURLForPageURLStatement;
+    m_iconURLForPageURLStatement = 0;
+    delete m_hasIconForIconURLStatement;
+    m_hasIconForIconURLStatement = 0;
+    delete m_forgetPageURLStatement;
+    m_forgetPageURLStatement = 0;
+    delete m_setIconIDForPageURLStatement;
+    m_setIconIDForPageURLStatement = 0;
+    delete m_getIconIDForIconURLStatement;
+    m_getIconIDForIconURLStatement = 0;
+    delete m_addIconForIconURLStatement;
+    m_addIconForIconURLStatement = 0;
+    delete m_imageDataForIconURLStatement;
+    m_imageDataForIconURLStatement = 0;
 }
 
 bool IconDatabase::isEmpty()
@@ -185,22 +249,6 @@ bool IconDatabase::isValidDatabase(SQLDatabase& db)
     }
     
     return true;
-}
-
-void IconDatabase::clearDatabaseTables(SQLDatabase& db)
-{
-    String query = "SELECT name FROM sqlite_master WHERE type='table';";
-    Vector<String> tables;
-    if (!SQLStatement(db, query).returnTextResults16(0, tables)) {
-        LOG(IconDatabase, "Unable to retrieve list of tables from database");
-        return;
-    }
-    
-    for (Vector<String>::iterator table = tables.begin(); table != tables.end(); ++table ) {
-        if (!db.executeCommand("DROP TABLE " + *table)) {
-            LOG(IconDatabase, "Unable to drop table %s", (*table).ascii().data());
-        }
-    }
 }
 
 void IconDatabase::createDatabaseTables(SQLDatabase& db)
@@ -254,7 +302,7 @@ void IconDatabase::setPrivateBrowsingEnabled(bool flag)
         createDatabaseTables(m_privateBrowsingDB);
         m_currentDB = &m_privateBrowsingDB;
     } else {
-        clearDatabaseTables(m_privateBrowsingDB);
+        m_privateBrowsingDB.clearAllTables();
         m_currentDB = &m_mainDB;
     }
 }
