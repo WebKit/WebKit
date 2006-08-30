@@ -1,3 +1,17 @@
+2006-08-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alice
+
+        Added a truth value to setIconURLForPageURL so WebKit can avoid sending a notification
+        This is a win on the iBench
+
+        * bridge/mac/WebCoreIconDatabaseBridge.h:
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (-[WebCoreIconDatabaseBridge _setIconURL:forPageURL:]):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        * loader/icon/IconDatabase.h:
+
 2006-08-29  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Brady.

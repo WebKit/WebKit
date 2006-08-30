@@ -1,5 +1,15 @@
 2006-08-29  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Alice
+
+        Added a truth value check for to setIconURL:forURL so WebKit can avoid sending a notification
+        This is a win on the iBench
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase _setIconURL:forURL:]):
+
+2006-08-29  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Tim Hatchers rubber stamp
 
         Removed some accidentally left-in console spew during the conversion to the new DB

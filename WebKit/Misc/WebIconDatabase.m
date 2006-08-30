@@ -231,22 +231,11 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(URL);
     ASSERT([self _isEnabled]);
     
-    // FIXME - The following comment is a holdover from the old icon DB, which handled missing icons
-    // differently than the new db.  It would return early if the icon is in the negative cache,
-    // avoiding the notification.  We should explore and see if a similar optimization can take place-
-        // If the icon is in the negative cache (ie, there is no icon), avoid the
-        // work of delivering a notification for it or saving it to disk. This is a significant
-        // win on the iBench HTML test.
-        
-    // FIXME - The following comment is also a holdover - if the iconURL->pageURL mapping was already the
-    // same, the notification would again be avoided - we should try to do this, too.
-        // Don't do any work if the icon URL is already bound to the site URL
-    
-    // A possible solution for both of these is to have the bridge method return a BOOL saying "Yes, notify" or
-    // "no, don't bother notifying"
-    
-    [_private->databaseBridge _setIconURL:iconURL forPageURL:URL];
-    [self _sendNotificationForURL:URL];
+    // If this iconURL already maps to this pageURL, don't bother sending the notification
+    // The WebCore::IconDatabase returns TRUE if we should send the notification, and false if we shouldn't.
+    // This is a measurable win on the iBench - about 1% worth on average
+    if ([_private->databaseBridge _setIconURL:iconURL forPageURL:URL])
+        [self _sendNotificationForURL:URL];
 }
 
 - (BOOL)_hasEntryForIconURL:(NSString *)iconURL;

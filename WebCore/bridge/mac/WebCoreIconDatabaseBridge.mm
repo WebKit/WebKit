@@ -171,13 +171,13 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
     _iconDB->setHaveNoIconForIconURL(String(iconURL));
 }
 
-- (void)_setIconURL:(NSString *)iconURL forPageURL:(NSString *)pageURL
+- (BOOL)_setIconURL:(NSString *)iconURL forPageURL:(NSString *)pageURL
 {
     ASSERT(_iconDB);
     ASSERT(iconURL);
     ASSERT(pageURL);
     
-    _iconDB->setIconURLForPageURL(String(iconURL), String(pageURL));
+    return _iconDB->setIconURLForPageURL(String(iconURL), String(pageURL));
 }
 
 - (BOOL)_hasEntryForIconURL:(NSString *)iconURL

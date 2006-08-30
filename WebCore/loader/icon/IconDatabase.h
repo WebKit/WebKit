@@ -82,12 +82,11 @@ public:
 
     bool isIconExpiredForIconURL(const String&);
     
-    // TODO - The following 3 methods were considered private in WebKit - analyze the impact of making them
-    // public here in WebCore - I don't see any real badness with doing that...  after all if Chuck Norris wants to muck
-    // around with the icons in his database, he's going to anyway
     void setIconDataForIconURL(const void* data, int size, const String&);
     void setHaveNoIconForIconURL(const String&);
-    void setIconURLForPageURL(const String& iconURL, const String& pageURL);
+    
+    // Returns true if the set actually took place, false if the mapping already existed
+    bool setIconURLForPageURL(const String& iconURL, const String& pageURL);
 
     static const String& defaultDatabaseFilename();
     

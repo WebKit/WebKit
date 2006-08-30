@@ -59,7 +59,7 @@ typedef WebCore::IconDatabase WebCoreIconDatabase;
 
 - (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL;
 - (void)_setHaveNoIconForIconURL:(NSString *)iconURL;
-- (void)_setIconURL:(NSString *)iconURL forPageURL:(NSString *)pageURL;
+- (BOOL)_setIconURL:(NSString *)iconURL forPageURL:(NSString *)pageURL;
 - (BOOL)_hasEntryForIconURL:(NSString *)iconURL;
 
 - (BOOL)_isEmpty;
