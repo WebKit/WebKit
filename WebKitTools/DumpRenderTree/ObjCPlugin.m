@@ -26,6 +26,7 @@
 
 #import "ObjCPlugin.h"
 #import <objc/objc-runtime.h>
+#import <WebKit/WebKit.h>
 
 
 // === NSObject category to expose almost everything to JavaScript ===
@@ -139,6 +140,9 @@ static BOOL _allowsScriptsFullAccess = NO;
     if (aSelector == @selector(echo:))
         return NO;
 
+    if (aSelector == @selector(throwIfArgumentIsNotHello:))
+      return NO;
+
     return YES;
 }
 
@@ -146,7 +150,10 @@ static BOOL _allowsScriptsFullAccess = NO;
 {
     if (aSelector == @selector(echo:))
         return @"echo";
-  
+
+    if (aSelector == @selector(throwIfArgumentIsNotHello:))
+      return @"throwIfArgumentIsNotHello";
+
     return nil;
 }
 
@@ -164,6 +171,12 @@ static BOOL _allowsScriptsFullAccess = NO;
 - (id)echo:(id)obj
 {
     return obj;
+}
+
+- (void)throwIfArgumentIsNotHello:(NSString *)str 
+{
+    if (![str isEqualToString:@"Hello"]) 
+        [WebScriptObject throwException:[NSString stringWithFormat:@"%@ != Hello", str]];
 }
 
 @end

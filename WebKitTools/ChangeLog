@@ -1,3 +1,14 @@
+2006-08-29  waylonis  <waylonis@google.com>
+
+        Reviewed by ggaren.
+
+        - Verification of exceptions thrown in a plugin.  Test for bug 10114.
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/ObjCPlugin.m:
+        (+[ObjCPlugin isSelectorExcludedFromWebScript:]):
+        (+[ObjCPlugin webScriptNameForSelector:]):
+        (-[ObjCPlugin throwIfArgumentIsNotHello:]):
+
 2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Tim H.
