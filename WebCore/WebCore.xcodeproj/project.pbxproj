@@ -177,6 +177,26 @@
 		1AE2AEE70A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */; };
 		1AE42F6A0AA4B8CB00C8612D /* StringCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE42F680AA4B8CB00C8612D /* StringCF.cpp */; };
 		1AE42F6B0AA4B8CB00C8612D /* StringImplCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE42F690AA4B8CB00C8612D /* StringImplCF.cpp */; };
+		1C11CCB50AA6093700DADB20 /* DOMNotation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85CA96E80A9624E900690CCF /* DOMNotation.h */; };
+		1C11CCB60AA6093700DADB20 /* DOMComment.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85089CD10A98C42700A275AA /* DOMComment.h */; };
+		1C11CCB70AA6093700DADB20 /* DOMNamedNodeMap.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8518DD760A9CF31B0091B7A6 /* DOMNamedNodeMap.h */; };
+		1C11CCB80AA6093700DADB20 /* DOMHTMLOptionsCollection.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85DF2F990AA3CAE500AD64C5 /* DOMHTMLOptionsCollection.h */; };
+		1C11CCB90AA6093700DADB20 /* DOMEntityReference.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85089CD50A98C42800A275AA /* DOMEntityReference.h */; };
+		1C11CCBA0AA6093700DADB20 /* DOMHTMLCollection.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85DF2F8C0AA3C88100AD64C5 /* DOMHTMLCollection.h */; };
+		1C11CCBB0AA6093700DADB20 /* DOMHTMLFormElement.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85DF2C100AA341F600AD64C5 /* DOMHTMLFormElement.h */; };
+		1C11CCBC0AA6093700DADB20 /* DOMAttr.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85D389B00A991A7F00282145 /* DOMAttr.h */; };
+		1C11CCBD0AA6093700DADB20 /* DOMDocument.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85ACABAE0A9CAF8000671E90 /* DOMDocument.h */; };
+		1C11CCBE0AA6093700DADB20 /* DOMNodeList.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85ACAA890A9B759C00671E90 /* DOMNodeList.h */; };
+		1C11CCBF0AA6093700DADB20 /* DOMEntity.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85CA96B60A9621A600690CCF /* DOMEntity.h */; };
+		1C11CCC00AA6093700DADB20 /* DOMDocumentType.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85CA975A0A962E5400690CCF /* DOMDocumentType.h */; };
+		1C11CCC10AA6093700DADB20 /* DOMDOMImplementation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8518DCE70A9CC80C0091B7A6 /* DOMDOMImplementation.h */; };
+		1C11CCC20AA6093700DADB20 /* DOMText.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85ACA99A0A9B575900671E90 /* DOMText.h */; };
+		1C11CCC30AA6093700DADB20 /* DOMProcessingInstruction.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85F56A780A98CE3700ADB60A /* DOMProcessingInstruction.h */; };
+		1C11CCC40AA6093700DADB20 /* DOMElement.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85ACA9BE0A9B5FA500671E90 /* DOMElement.h */; };
+		1C11CCC50AA6093700DADB20 /* DOMCharacterData.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85ACA9840A9B520300671E90 /* DOMCharacterData.h */; };
+		1C11CCC60AA6093700DADB20 /* DOMDocumentFragment.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85089CD30A98C42800A275AA /* DOMDocumentFragment.h */; };
+		1C11CCC70AA6093700DADB20 /* DOMCDATASection.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85089CCF0A98C42700A275AA /* DOMCDATASection.h */; };
+		1C11CCC80AA6093700DADB20 /* DOMHTMLElement.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85DF2EEB0AA387CB00AD64C5 /* DOMHTMLElement.h */; };
 		1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF347E0A6C405200ABE06E /* WebScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */; };
 		1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */; };
@@ -357,17 +377,17 @@
 		85089CC80A98C22600A275AA /* Comment.idl in Resources */ = {isa = PBXBuildFile; fileRef = 85089CC70A98C22600A275AA /* Comment.idl */; };
 		85089CCA0A98C2AB00A275AA /* CDATASection.idl in Resources */ = {isa = PBXBuildFile; fileRef = 85089CC90A98C2AB00A275AA /* CDATASection.idl */; };
 		85089CCC0A98C33A00A275AA /* EntityReference.idl in Resources */ = {isa = PBXBuildFile; fileRef = 85089CCB0A98C33A00A275AA /* EntityReference.idl */; };
-		85089CD70A98C42800A275AA /* DOMCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CCF0A98C42700A275AA /* DOMCDATASection.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85089CD70A98C42800A275AA /* DOMCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CCF0A98C42700A275AA /* DOMCDATASection.h */; settings = {ATTRIBUTES = (); }; };
 		85089CD80A98C42800A275AA /* DOMCDATASection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85089CD00A98C42700A275AA /* DOMCDATASection.mm */; };
-		85089CD90A98C42800A275AA /* DOMComment.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CD10A98C42700A275AA /* DOMComment.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85089CD90A98C42800A275AA /* DOMComment.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CD10A98C42700A275AA /* DOMComment.h */; settings = {ATTRIBUTES = (); }; };
 		85089CDA0A98C42800A275AA /* DOMComment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85089CD20A98C42700A275AA /* DOMComment.mm */; };
-		85089CDB0A98C42800A275AA /* DOMDocumentFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CD30A98C42800A275AA /* DOMDocumentFragment.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85089CDB0A98C42800A275AA /* DOMDocumentFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CD30A98C42800A275AA /* DOMDocumentFragment.h */; settings = {ATTRIBUTES = (); }; };
 		85089CDC0A98C42800A275AA /* DOMDocumentFragment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85089CD40A98C42800A275AA /* DOMDocumentFragment.mm */; };
-		85089CDD0A98C42800A275AA /* DOMEntityReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CD50A98C42800A275AA /* DOMEntityReference.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85089CDD0A98C42800A275AA /* DOMEntityReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CD50A98C42800A275AA /* DOMEntityReference.h */; settings = {ATTRIBUTES = (); }; };
 		85089CDE0A98C42800A275AA /* DOMEntityReference.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85089CD60A98C42800A275AA /* DOMEntityReference.mm */; };
-		8518DCE90A9CC80D0091B7A6 /* DOMDOMImplementation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8518DCE70A9CC80C0091B7A6 /* DOMDOMImplementation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8518DCE90A9CC80D0091B7A6 /* DOMDOMImplementation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8518DCE70A9CC80C0091B7A6 /* DOMDOMImplementation.h */; settings = {ATTRIBUTES = (); }; };
 		8518DCEA0A9CC80D0091B7A6 /* DOMDOMImplementation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8518DCE80A9CC80D0091B7A6 /* DOMDOMImplementation.mm */; };
-		8518DD780A9CF31B0091B7A6 /* DOMNamedNodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 8518DD760A9CF31B0091B7A6 /* DOMNamedNodeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8518DD780A9CF31B0091B7A6 /* DOMNamedNodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 8518DD760A9CF31B0091B7A6 /* DOMNamedNodeMap.h */; settings = {ATTRIBUTES = (); }; };
 		8518DD790A9CF31B0091B7A6 /* DOMNamedNodeMap.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8518DD770A9CF31B0091B7A6 /* DOMNamedNodeMap.mm */; };
 		85217E020A5ECD4700DB8D00 /* XSLImportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85217E000A5ECD4700DB8D00 /* XSLImportRule.cpp */; };
 		85217E030A5ECD4700DB8D00 /* XSLImportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 85217E010A5ECD4700DB8D00 /* XSLImportRule.h */; };
@@ -385,37 +405,37 @@
 		856C89FD0A90F068005C687B /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 856C89FB0A90F068005C687B /* DOMNode.mm */; };
 		856C8AE40A912649005C687B /* DOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 856C8AE20A912649005C687B /* DOMObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		856C8AE50A912649005C687B /* DOMObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 856C8AE30A912649005C687B /* DOMObject.mm */; };
-		85ACA9860A9B520300671E90 /* DOMCharacterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACA9840A9B520300671E90 /* DOMCharacterData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85ACA9860A9B520300671E90 /* DOMCharacterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACA9840A9B520300671E90 /* DOMCharacterData.h */; settings = {ATTRIBUTES = (); }; };
 		85ACA9870A9B520300671E90 /* DOMCharacterData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85ACA9850A9B520300671E90 /* DOMCharacterData.mm */; };
-		85ACA99C0A9B575900671E90 /* DOMText.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACA99A0A9B575900671E90 /* DOMText.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85ACA99C0A9B575900671E90 /* DOMText.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACA99A0A9B575900671E90 /* DOMText.h */; settings = {ATTRIBUTES = (); }; };
 		85ACA99D0A9B575900671E90 /* DOMText.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85ACA99B0A9B575900671E90 /* DOMText.mm */; };
-		85ACA9C00A9B5FA500671E90 /* DOMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACA9BE0A9B5FA500671E90 /* DOMElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85ACA9C00A9B5FA500671E90 /* DOMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACA9BE0A9B5FA500671E90 /* DOMElement.h */; settings = {ATTRIBUTES = (); }; };
 		85ACA9C10A9B5FA500671E90 /* DOMElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85ACA9BF0A9B5FA500671E90 /* DOMElement.mm */; };
 		85ACA9FB0A9B631000671E90 /* NamedNodeMap.idl in Resources */ = {isa = PBXBuildFile; fileRef = 85ACA9F90A9B631000671E90 /* NamedNodeMap.idl */; };
 		85ACA9FC0A9B631000671E90 /* NodeList.idl in Resources */ = {isa = PBXBuildFile; fileRef = 85ACA9FA0A9B631000671E90 /* NodeList.idl */; };
-		85ACAA8D0A9B759C00671E90 /* DOMNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACAA890A9B759C00671E90 /* DOMNodeList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85ACAA8D0A9B759C00671E90 /* DOMNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACAA890A9B759C00671E90 /* DOMNodeList.h */; settings = {ATTRIBUTES = (); }; };
 		85ACAA8E0A9B759C00671E90 /* DOMNodeList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85ACAA8A0A9B759C00671E90 /* DOMNodeList.mm */; };
-		85ACABB00A9CAF8000671E90 /* DOMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACABAE0A9CAF8000671E90 /* DOMDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85ACABB00A9CAF8000671E90 /* DOMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACABAE0A9CAF8000671E90 /* DOMDocument.h */; settings = {ATTRIBUTES = (); }; };
 		85ACABB10A9CAF8000671E90 /* DOMDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85ACABAF0A9CAF8000671E90 /* DOMDocument.mm */; };
-		85CA96B80A9621A600690CCF /* DOMEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 85CA96B60A9621A600690CCF /* DOMEntity.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85CA96B80A9621A600690CCF /* DOMEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 85CA96B60A9621A600690CCF /* DOMEntity.h */; settings = {ATTRIBUTES = (); }; };
 		85CA96B90A9621A600690CCF /* DOMEntity.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85CA96B70A9621A600690CCF /* DOMEntity.mm */; };
-		85CA96EA0A9624E900690CCF /* DOMNotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 85CA96E80A9624E900690CCF /* DOMNotation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85CA96EA0A9624E900690CCF /* DOMNotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 85CA96E80A9624E900690CCF /* DOMNotation.h */; settings = {ATTRIBUTES = (); }; };
 		85CA96EB0A9624E900690CCF /* DOMNotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85CA96E90A9624E900690CCF /* DOMNotation.mm */; };
-		85CA975C0A962E5400690CCF /* DOMDocumentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 85CA975A0A962E5400690CCF /* DOMDocumentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85CA975C0A962E5400690CCF /* DOMDocumentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 85CA975A0A962E5400690CCF /* DOMDocumentType.h */; settings = {ATTRIBUTES = (); }; };
 		85CA975D0A962E5400690CCF /* DOMDocumentType.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85CA975B0A962E5400690CCF /* DOMDocumentType.mm */; };
-		85D389B20A991A7F00282145 /* DOMAttr.h in Headers */ = {isa = PBXBuildFile; fileRef = 85D389B00A991A7F00282145 /* DOMAttr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85D389B20A991A7F00282145 /* DOMAttr.h in Headers */ = {isa = PBXBuildFile; fileRef = 85D389B00A991A7F00282145 /* DOMAttr.h */; settings = {ATTRIBUTES = (); }; };
 		85D389B30A991A7F00282145 /* DOMAttr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85D389B10A991A7F00282145 /* DOMAttr.mm */; };
-		85DF2C5C0AA341F600AD64C5 /* DOMHTMLFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85DF2C100AA341F600AD64C5 /* DOMHTMLFormElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85DF2C5C0AA341F600AD64C5 /* DOMHTMLFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85DF2C100AA341F600AD64C5 /* DOMHTMLFormElement.h */; settings = {ATTRIBUTES = (); }; };
 		85DF2C5D0AA341F600AD64C5 /* DOMHTMLFormElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85DF2C110AA341F600AD64C5 /* DOMHTMLFormElement.mm */; };
-		85DF2EED0AA387CB00AD64C5 /* DOMHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85DF2EEB0AA387CB00AD64C5 /* DOMHTMLElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85DF2EED0AA387CB00AD64C5 /* DOMHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85DF2EEB0AA387CB00AD64C5 /* DOMHTMLElement.h */; settings = {ATTRIBUTES = (); }; };
 		85DF2EEE0AA387CB00AD64C5 /* DOMHTMLElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85DF2EEC0AA387CB00AD64C5 /* DOMHTMLElement.mm */; };
-		85DF2F8E0AA3C88100AD64C5 /* DOMHTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 85DF2F8C0AA3C88100AD64C5 /* DOMHTMLCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85DF2F8E0AA3C88100AD64C5 /* DOMHTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 85DF2F8C0AA3C88100AD64C5 /* DOMHTMLCollection.h */; settings = {ATTRIBUTES = (); }; };
 		85DF2F8F0AA3C88100AD64C5 /* DOMHTMLCollection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85DF2F8D0AA3C88100AD64C5 /* DOMHTMLCollection.mm */; };
-		85DF2F9B0AA3CAE500AD64C5 /* DOMHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 85DF2F990AA3CAE500AD64C5 /* DOMHTMLOptionsCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85DF2F9B0AA3CAE500AD64C5 /* DOMHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 85DF2F990AA3CAE500AD64C5 /* DOMHTMLOptionsCollection.h */; settings = {ATTRIBUTES = (); }; };
 		85DF2F9C0AA3CAE500AD64C5 /* DOMHTMLOptionsCollection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85DF2F9A0AA3CAE500AD64C5 /* DOMHTMLOptionsCollection.mm */; };
 		85EC9AFA0A71A2C600EEEAED /* FontData.h in Headers */ = {isa = PBXBuildFile; fileRef = 85EC9AF80A71A2C600EEEAED /* FontData.h */; };
 		85EC9AFB0A71A2C600EEEAED /* Language.h in Headers */ = {isa = PBXBuildFile; fileRef = 85EC9AF90A71A2C600EEEAED /* Language.h */; };
-		85F56A7A0A98CE3700ADB60A /* DOMProcessingInstruction.h in Headers */ = {isa = PBXBuildFile; fileRef = 85F56A780A98CE3700ADB60A /* DOMProcessingInstruction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85F56A7A0A98CE3700ADB60A /* DOMProcessingInstruction.h in Headers */ = {isa = PBXBuildFile; fileRef = 85F56A780A98CE3700ADB60A /* DOMProcessingInstruction.h */; settings = {ATTRIBUTES = (); }; };
 		85F56A7B0A98CE3700ADB60A /* DOMProcessingInstruction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85F56A790A98CE3700ADB60A /* DOMProcessingInstruction.mm */; };
 		93032CC809AEC34300F82A18 /* PathCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93032CC709AEC34300F82A18 /* PathCG.cpp */; };
 		93032CCA09AEC34B00F82A18 /* Path.h in Headers */ = {isa = PBXBuildFile; fileRef = 93032CC909AEC34B00F82A18 /* Path.h */; };
@@ -1715,6 +1735,38 @@
 			remoteInfo = "Derived Sources";
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1C11CCB40AA6093700DADB20 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Versions/A/PrivateHeaders;
+			dstSubfolderSpec = 1;
+			files = (
+				1C11CCB50AA6093700DADB20 /* DOMNotation.h in CopyFiles */,
+				1C11CCB60AA6093700DADB20 /* DOMComment.h in CopyFiles */,
+				1C11CCB70AA6093700DADB20 /* DOMNamedNodeMap.h in CopyFiles */,
+				1C11CCB80AA6093700DADB20 /* DOMHTMLOptionsCollection.h in CopyFiles */,
+				1C11CCB90AA6093700DADB20 /* DOMEntityReference.h in CopyFiles */,
+				1C11CCBA0AA6093700DADB20 /* DOMHTMLCollection.h in CopyFiles */,
+				1C11CCBB0AA6093700DADB20 /* DOMHTMLFormElement.h in CopyFiles */,
+				1C11CCBC0AA6093700DADB20 /* DOMAttr.h in CopyFiles */,
+				1C11CCBD0AA6093700DADB20 /* DOMDocument.h in CopyFiles */,
+				1C11CCBE0AA6093700DADB20 /* DOMNodeList.h in CopyFiles */,
+				1C11CCBF0AA6093700DADB20 /* DOMEntity.h in CopyFiles */,
+				1C11CCC00AA6093700DADB20 /* DOMDocumentType.h in CopyFiles */,
+				1C11CCC10AA6093700DADB20 /* DOMDOMImplementation.h in CopyFiles */,
+				1C11CCC20AA6093700DADB20 /* DOMText.h in CopyFiles */,
+				1C11CCC30AA6093700DADB20 /* DOMProcessingInstruction.h in CopyFiles */,
+				1C11CCC40AA6093700DADB20 /* DOMElement.h in CopyFiles */,
+				1C11CCC50AA6093700DADB20 /* DOMCharacterData.h in CopyFiles */,
+				1C11CCC60AA6093700DADB20 /* DOMDocumentFragment.h in CopyFiles */,
+				1C11CCC70AA6093700DADB20 /* DOMCDATASection.h in CopyFiles */,
+				1C11CCC80AA6093700DADB20 /* DOMHTMLElement.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
@@ -6822,6 +6874,7 @@
 			buildConfigurationList = 149C283908902B11008A9EFC /* Build configuration list for PBXNativeTarget "WebCore" */;
 			buildPhases = (
 				93F198A608245E59001E9ABC /* Headers */,
+				1C11CCB40AA6093700DADB20 /* CopyFiles */,
 				93F199FD08245E59001E9ABC /* Resources */,
 				93F19A0C08245E59001E9ABC /* Sources */,
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
@@ -6844,6 +6897,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -6857,6 +6911,8 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,

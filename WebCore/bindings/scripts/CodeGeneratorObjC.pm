@@ -424,7 +424,7 @@ sub GenerateHeader
     @headerContentHeader = split("\r", $headerLicenceTemplate);
 
     # - INCLUDES -
-    push(@headerContentHeader, "\n#import \"$parentClassName.h\" // parent class\n\n");
+    push(@headerContentHeader, "\n#import <WebCore/$parentClassName.h> // parent class\n\n");
 
     # - Add constants.
     if ($numConstants > 0) {

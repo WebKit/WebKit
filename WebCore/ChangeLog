@@ -1,3 +1,14 @@
+2006-08-30  Timothy Hatcher  <timothy@apple.com>
+
+        Rubber-stamped by Brady.
+
+        Fix for the generated headers to make the build work
+        during "installhdrs" builds. Also export DOM headers
+        using the #import <WebCore/DOM*.h> syntax.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+
 2006-08-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Kevin Decker (Sarge)
