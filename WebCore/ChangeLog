@@ -1,3 +1,13 @@
+2006-08-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin's rubberstamp
+
+        We apparently have a fancy delateAllValues() helper for HashMap/Sets - I'll use that instead
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::removeAllIcons):
+
 2006-08-29  waylonis  <waylonis@google.com>
 
         Reviewed, tweaked by ggaren.

@@ -172,10 +172,7 @@ void IconDatabase::removeAllIcons()
     m_pageURLToRetainCount.clear();
     m_iconURLToRetainCount.clear();
     
-    HashMap<String, IconDataCache*>::iterator i = m_iconURLToIconDataCacheMap.begin();
-    HashMap<String, IconDataCache*>::iterator end = m_iconURLToIconDataCacheMap.end();
-    for (; i != end; ++i)
-        delete i->second;
+    deleteAllValues(m_iconURLToIconDataCacheMap);
     m_iconURLToIconDataCacheMap.clear();
         
     // Wipe any pre-prepared statements, otherwise resetting the SQLDatabases themselves will fail
