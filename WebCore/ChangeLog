@@ -1,3 +1,13 @@
+2006-08-29  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Brady.
+
+        Fixed <rdar://problem/4702021> REGRESSION: WebClip and Weather widgets shift downward vertically on screen after I drag them out from dashboard configure bar
+
+        * platform/mac/ScreenMac.mm:
+        (WebCore::flipScreenRect):
+        reverted the one line in this method back to what it was before r15765.  This changed caused window.screenY to be incorrect.  
+
 2006-08-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

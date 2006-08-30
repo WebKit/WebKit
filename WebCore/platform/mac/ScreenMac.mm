@@ -42,7 +42,7 @@ static NSScreen* screen(const Page* page)
 
 NSRect flipScreenRect(NSRect rect)
 {
-    rect.origin = flipScreenPoint(rect.origin);
+    rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
     return rect;
 }
 
