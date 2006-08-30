@@ -1597,12 +1597,12 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_canCopy
 {
     // Copying can be done regardless of whether you can edit.
-    return [self _hasSelection];
+    return [self _hasSelection] && [[self _bridge] mayCopy];
 }
 
 - (BOOL)_canCut
 {
-    return [self _hasSelection] && [self _isEditable];
+    return [self _canCopy] && [self _isEditable];
 }
 
 - (BOOL)_canDelete
@@ -2177,7 +2177,7 @@ static WebHTMLView *lastHitView = nil;
     } else if (action == @selector(copy:)) {
         return [bridge mayDHTMLCopy] || [self _canCopy];
     } else if (action == @selector(cut:)) {
-        return [bridge mayDHTMLCut] || [self _canDelete];
+        return [bridge mayDHTMLCut] || [self _canCut];
     } else if (action == @selector(delete:)) {
         return [self _canDelete];
     } else if (action == @selector(_ignoreSpellingFromMenu:)

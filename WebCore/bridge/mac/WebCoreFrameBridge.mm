@@ -766,6 +766,11 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return WebSelectionStateNone;
 }
 
+- (BOOL)mayCopy
+{
+    return m_frame->mayCopy();
+}
+
 - (NSString *)_stringWithDocumentTypeStringAndMarkupString:(NSString *)markupString
 {
     return m_frame->documentTypeString() + markupString;
@@ -2429,32 +2434,32 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
 
 - (BOOL)mayDHTMLCut
 {
-    return m_frame->mayCut();
+    return m_frame->mayDHTMLCut();
 }
 
 - (BOOL)mayDHTMLCopy
 {
-    return m_frame->mayCopy();
+    return m_frame->mayDHTMLCopy();
 }
 
 - (BOOL)mayDHTMLPaste
 {
-    return m_frame->mayPaste();
+    return m_frame->mayDHTMLPaste();
 }
 
 - (BOOL)tryDHTMLCut
 {
-    return m_frame->tryCut();
+    return m_frame->tryDHTMLCut();
 }
 
 - (BOOL)tryDHTMLCopy
 {
-    return m_frame->tryCopy();
+    return m_frame->tryDHTMLCopy();
 }
 
 - (BOOL)tryDHTMLPaste
 {
-    return m_frame->tryPaste();
+    return m_frame->tryDHTMLPaste();
 }
 
 - (DOMRange *)rangeOfCharactersAroundCaret

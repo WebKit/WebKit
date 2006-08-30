@@ -1722,7 +1722,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                         _dragClipboard->setDragImageElement(_dragSrc.get(), IntPoint() + delta);
                     } 
 
-                    _mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, m_mouseDown);
+                    _mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, m_mouseDown) && mayCopy();
                     // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
                     // image can still be changed as we drag, but not the pasteboard data.
                     _dragClipboard->setAccessPolicy(ClipboardMac::ImageWritable);
@@ -1833,23 +1833,26 @@ bool FrameMac::dispatchCPPEvent(const AtomicString &eventType, ClipboardMac::Acc
 // We need to use onbeforecopy as a real menu enabler because we allow elements that are not
 // normally selectable to implement copy/paste (like divs, or a document body).
 
-bool FrameMac::mayCut()
+bool FrameMac::mayDHTMLCut()
 {
-    return !dispatchCPPEvent(beforecutEvent, ClipboardMac::Numb);
+    return mayCopy() && !dispatchCPPEvent(beforecutEvent, ClipboardMac::Numb);
 }
 
-bool FrameMac::mayCopy()
+bool FrameMac::mayDHTMLCopy()
 {
-    return !dispatchCPPEvent(beforecopyEvent, ClipboardMac::Numb);
+    return mayCopy() && !dispatchCPPEvent(beforecopyEvent, ClipboardMac::Numb);
 }
 
-bool FrameMac::mayPaste()
+bool FrameMac::mayDHTMLPaste()
 {
     return !dispatchCPPEvent(beforepasteEvent, ClipboardMac::Numb);
 }
 
-bool FrameMac::tryCut()
+bool FrameMac::tryDHTMLCut()
 {
+    if (!mayCopy())
+        return false;
+
     // Must be done before oncut adds types and data to the pboard,
     // also done for security, as it erases data from the last copy/paste.
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray array] owner:nil];
@@ -1857,8 +1860,11 @@ bool FrameMac::tryCut()
     return !dispatchCPPEvent(cutEvent, ClipboardMac::Writable);
 }
 
-bool FrameMac::tryCopy()
+bool FrameMac::tryDHTMLCopy()
 {
+    if (!mayCopy())
+        return false;
+
     // Must be done before oncopy adds types and data to the pboard,
     // also done for security, as it erases data from the last copy/paste.
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray array] owner:nil];
@@ -1866,7 +1872,7 @@ bool FrameMac::tryCopy()
     return !dispatchCPPEvent(copyEvent, ClipboardMac::Writable);
 }
 
-bool FrameMac::tryPaste()
+bool FrameMac::tryDHTMLPaste()
 {
     return !dispatchCPPEvent(pasteEvent, ClipboardMac::Readable);
 }

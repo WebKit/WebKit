@@ -217,12 +217,12 @@ public:
     void dragSourceMovedTo(const PlatformMouseEvent&);
     void dragSourceEndedAt(const PlatformMouseEvent&, NSDragOperation);
 
-    bool mayCut();
-    bool mayCopy();
-    bool mayPaste();
-    bool tryCut();
-    bool tryCopy();
-    bool tryPaste();
+    bool mayDHTMLCut();
+    bool mayDHTMLCopy();
+    bool mayDHTMLPaste();
+    bool tryDHTMLCut();
+    bool tryDHTMLCopy();
+    bool tryDHTMLPaste();
     
     bool sendContextMenuEvent(NSEvent*);
 

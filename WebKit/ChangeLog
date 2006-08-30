@@ -1,3 +1,17 @@
+2006-08-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebKit part of fix for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10576
+        Disallow copy from new password fields
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _canCopy]): Now also calls across the bridge to ask if it mayCopy.
+        (-[WebHTMLView _canCut]): Calls _canCopy now.
+        (-[NSArray validateUserInterfaceItem:]): Calls _canCut when validating the "Cut" menu item.
+         This used to call _canDelete (which used to be the same as _canCut), but now _canCut also checks _canCopy.
+
 2006-08-30  Karl Adam  <karladam@yahoo-inc.com>
 
         Reviewed by Eric and Tim H.

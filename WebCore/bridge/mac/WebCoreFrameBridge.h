@@ -334,6 +334,8 @@ typedef enum {
 - (BOOL)isSelectionRichlyEditable;
 - (WebSelectionState)selectionState;
 
+- (BOOL)mayCopy;
+
 - (NSAttributedString *)selectedAttributedString;
 - (NSString *)selectedString;
 

@@ -337,7 +337,7 @@ input[type="password"] {
     border:initial;
     padding:initial;
 
-    -webkit-text-security: disc;
+    -webkit-text-security: disc !important;
 }
 
 input[type="search"], input[type="hidden"], input[type="image"], input[type="file"] {

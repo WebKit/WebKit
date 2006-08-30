@@ -485,6 +485,7 @@ public:
   void cutToPasteboard();
   void pasteFromPasteboard();
   void pasteAndMatchStyle();
+  bool mayCopy();
   virtual bool canPaste() const = 0;
   void redo();
   void undo();

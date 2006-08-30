@@ -1,3 +1,35 @@
+2006-08-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - WebCore part of fix for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10576
+        Disallow copy from new password fields
+
+        * page/Frame.cpp: (WebCore::Frame::mayCopy): Added. Checks to see if the selection is within a password field.
+        * page/Frame.h: Added mayCopy.
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::handleMouseMoveEvent): Checks mayCopy before starting a drag.
+        (WebCore::FrameMac::mayDHTMLCut): Renamed to match the bridge method.  This also checks mayCopy now.
+        (WebCore::FrameMac::mayDHTMLCopy): ditto.
+        (WebCore::FrameMac::tryDHTMLCut): ditto.
+        (WebCore::FrameMac::tryDHTMLCopy): ditto.
+        (WebCore::FrameMac::mayDHTMLPaste): Renamed to match the bridge function.
+        (WebCore::FrameMac::tryDHTMLPaste): ditto.
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge mayCopy]): Calls the renamed method on frame.
+        (-[WebCoreFrameBridge mayDHTMLCut]): ditto.
+        (-[WebCoreFrameBridge mayDHTMLCopy]): ditto.
+        (-[WebCoreFrameBridge mayDHTMLPaste]): ditto.
+        (-[WebCoreFrameBridge tryDHTMLCut]): ditto.
+        (-[WebCoreFrameBridge tryDHTMLCopy]): ditto.
+        (-[WebCoreFrameBridge tryDHTMLPaste]): ditto.
+
+        * css/html4.css: Added !important to the -webkit-text-security property for password fields.
+
 2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Tim H.
