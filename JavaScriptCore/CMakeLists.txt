@@ -127,4 +127,6 @@ endif(UNIX)
 
 target_link_libraries(kjs-unity wtf-unity)
 set_target_properties(kjs-unity PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
-install(TARGETS kjs-unity  DESTINATION ${LIB_INSTALL_DIR} )
+
+install (TARGETS wtf-unity DESTINATION ${LIB_INSTALL_DIR})
+install (TARGETS kjs-unity DESTINATION ${LIB_INSTALL_DIR})

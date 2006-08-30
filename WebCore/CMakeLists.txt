@@ -1,9 +1,6 @@
 
 project( WebCore )
 
-# Global switch for SVG support
-SET (USE_WEBKIT_SVG_SUPPORT 1)
-
 include (CheckCXXCompilerFlag)
 
 include_directories(
@@ -56,11 +53,6 @@ include_directories( ${LIBXML2_INCLUDE_DIR} ${QT_INCLUDES}
   )
 
 add_definitions ( -DQT3_SUPPORT -Wno-undef -Wno-unused-parameter )
-
-IF (USE_WEBKIT_SVG_SUPPORT)
-add_definitions ( -DSVG_SUPPORT=1 )
-ENDIF (USE_WEBKIT_SVG_SUPPORT)
-
 check_cxx_compiler_flag(-Wno-variadic-macros __KDE_HAVE_WVARIADIC_MACROS)
 
 IF(__KDE_HAVE_WVARIADIC_MACROS)
@@ -72,7 +64,7 @@ kde4_automoc(platform/qt/ScrollViewCanvasQt.cpp)
 kde4_automoc(platform/qt/ResourceLoaderManager.cpp)
 
 # rules for generated files
-IF (USE_WEBKIT_SVG_SUPPORT)
+IF (WEBKIT_USE_SVG_SUPPORT)
 set(IDL_BINDINGS_SVG
 # ksvg2/svg/SVGNumber.idl
 # ksvg2/svg/SVGPoint.idl
@@ -112,7 +104,7 @@ set(IDL_BINDINGS_SVG
   ksvg2/svg/SVGPathSegMovetoAbs.idl
   ksvg2/svg/SVGPathSegMovetoRel.idl
 )
-ENDIF (USE_WEBKIT_SVG_SUPPORT)
+ENDIF (WEBKIT_USE_SVG_SUPPORT)
 
 set(IDL_BINDINGS
   css/CSSValue.idl
@@ -215,7 +207,7 @@ set(WebCore-unity-IDLGeneratedSources )
 foreach (idl ${IDL_BINDINGS})
    get_filename_component(_basename ${idl} NAME_WE)
    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.cpp ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.h
-      COMMAND perl -I${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts ${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts/generate-bindings.pl  --defines \"SVG_SUPPORT=${USE_WEBKIT_SVG_SUPPORT}\" --generator JS --include dom --include html --include xml --include ksvg2/svg --outputdir ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${idl}
+      COMMAND perl -I${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts ${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts/generate-bindings.pl  --defines \"SVG_SUPPORT=${WEBKIT_USE_SVG_SUPPORT}\" --generator JS --include dom --include html --include xml --include ksvg2/svg --outputdir ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${idl}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${idl} )
    set(WebCore-unity-IDLGeneratedSources ${WebCore-unity-IDLGeneratedSources} ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.cpp ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.h )
 endforeach (idl)
@@ -247,10 +239,10 @@ create_lut(WebCore-unity_LIB_SRCS bindings/js/JSXMLHttpRequest.cpp JSXMLHttpRequ
 create_lut(WebCore-unity_LIB_SRCS bindings/js/JSXSLTProcessor.cpp JSXSLTProcessor.lut.h bindings/js/JSXSLTProcessor.cpp)
 create_cpp_lut(bindings/js/JSHTMLInputElementBase.cpp JSHTMLInputElementBaseTable.cpp bindings/js/JSHTMLInputElementBase.cpp)
 
-IF (USE_WEBKIT_SVG_SUPPORT)
+IF (WEBKIT_USE_SVG_SUPPORT)
   create_cpp_lut(ksvg2/bindings/js/JSSVGPoint.cpp JSSVGPointTable.cpp ksvg2/bindings/js/JSSVGPoint.cpp)
   create_cpp_lut(ksvg2/bindings/js/JSSVGRect.cpp JSSVGRectTable.cpp ksvg2/bindings/js/JSSVGRect.cpp)
-ENDIF (USE_WEBKIT_SVG_SUPPORT)
+ENDIF (WEBKIT_USE_SVG_SUPPORT)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp
   COMMAND flex -t < ${CMAKE_CURRENT_SOURCE_DIR}/css/tokenizer.flex | perl ${CMAKE_CURRENT_SOURCE_DIR}/css/maketokenizer > ${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp
@@ -367,7 +359,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/CharacterData.cpp
 )
 
 # source stuff
-IF (USE_WEBKIT_SVG_SUPPORT)
+IF (WEBKIT_USE_SVG_SUPPORT)
 set (SVG_STUFF
     ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/svg/SVGNames.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/svg/SVGElementFactory.cpp
@@ -545,8 +537,7 @@ set (SVG_STUFF
     kcanvas/RenderSVGImage.cpp
     kcanvas/RenderForeignObject.cpp
  )
-ENDIF(USE_WEBKIT_SVG_SUPPORT)
-
+ENDIF(WEBKIT_USE_SVG_SUPPORT)
 
 set(WebCore_SRCS
 
@@ -1036,7 +1027,6 @@ set(WebCore_SRCS
 kde4_add_library(WebCore-unity SHARED  ${WebCore_SRCS})
 
 target_link_libraries(WebCore-unity
-
   ${QT_QT3SUPPORT_LIBRARY}
   ${QT_QTCORE_LIBRARY}
   ${QT_QTSVG_LIBRARY}
@@ -1049,3 +1039,5 @@ target_link_libraries(WebCore-unity
   kjs-unity
   pcre-unity
 )
+
+install (TARGETS WebCore-unity DESTINATION ${LIB_INSTALL_DIR})

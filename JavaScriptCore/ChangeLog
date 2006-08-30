@@ -1,3 +1,13 @@
+2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Tim H.
+
+        Commit KDE related tweaks, to be able to
+        differentiate between a Qt-only or a KDE build.
+
+        * CMakeLists.txt: Install wtf-unity library.
+        * wtf/Platform.h: Add define for the KDE platform.
+
 2006-08-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

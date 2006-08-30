@@ -1,3 +1,13 @@
+2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Tim H.
+
+        Commit KDE related tweaks, to be able to
+        differentiate between a Qt-only or a KDE build.
+
+        * CMakeLists.txt: Move global variables up to trunk/CMakeLists.txt.
+                          Also rename USE_WEBKIT_SVG_SUPPORT to WEBKIT_USE_SVG_SUPPORT.
+
 2006-08-30  Timothy Hatcher  <timothy@apple.com>
 
         Rubber-stamped by Brady.

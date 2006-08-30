@@ -69,6 +69,12 @@
 /* PLATFORM(WIN) */
 #if defined(BUILDING_QT__)
 #define KXMLCORE_PLATFORM_QT 1
+
+/* PLATFORM(KDE) */
+#if defined(BUILDING_KDE__)
+#define KXMLCORE_PLATFORM_KDE 1
+#endif
+
 #elif PLATFORM(DARWIN)
 #define KXMLCORE_PLATFORM_MAC 1
 #elif PLATFORM(WIN_OS)
@@ -160,7 +166,8 @@
 
 /* for Unicode, KDE uses Qt, everything else uses ICU */
 #if PLATFORM(KDE)
-#define KXMLCORE_USE_QT4_UNICODE 1
+// FIXME: Not using Qt4 unicode for now!
+#define KXMLCORE_USE_ICU_UNICODE 1
 #else
 #define KXMLCORE_USE_ICU_UNICODE 1
 #endif

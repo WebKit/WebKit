@@ -1,3 +1,13 @@
+2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Tim H.
+
+        Commit KDE related tweaks, to be able to
+        differentiate between a Qt-only or a KDE build.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/CMakeLists.txt: Add ksvg2/ includes.
+        * QtLauncher/CMakeLists.txt: Add ksvg2/ includes.
+
 2006-08-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
