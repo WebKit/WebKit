@@ -75,11 +75,17 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
 
 bool FontData::containsCharacters(const UChar* characters, int length) const
 {
+    for (int i = 0; i < length; i++) {
+        if (!QFontMetrics(m_font.font()).inFont(QChar(ushort(characters[i]))))
+            return false;
+    }
+
     return true;
 }
 
 void FontData::determinePitch()
 {
+    m_treatAsFixedPitch = m_font.isFixedPitch();
 }
 
 float FontData::platformWidthForGlyph(Glyph glyph) const

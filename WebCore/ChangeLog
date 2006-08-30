@@ -1,3 +1,13 @@
+2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed/landed by Adam.
+
+        Implement containsCharacters() / determinePitch() functions.
+
+        * platform/qt/FontDataQt.cpp:
+        (WebCore::FontData::containsCharacters):
+        (WebCore::FontData::determinePitch):
+
 2006-08-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin's rubberstamp
