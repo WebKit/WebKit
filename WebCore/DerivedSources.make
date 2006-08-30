@@ -62,10 +62,19 @@ all : \
     DOMNotation.h \
     DOMProcessingInstruction.h \
     DOMText.h \
+    DOMHTMLBaseElement.h \
+    DOMHTMLBodyElement.h \
     DOMHTMLCollection.h \
     DOMHTMLElement.h \
     DOMHTMLFormElement.h \
+    DOMHTMLHeadElement.h \
+    DOMHTMLHtmlElement.h \
+    DOMHTMLIsIndexElement.h \
+    DOMHTMLLinkElement.h \
+    DOMHTMLMetaElement.h \
     DOMHTMLOptionsCollection.h \
+    DOMHTMLStyleElement.h \
+    DOMHTMLTitleElement.h \
     HTMLEntityNames.c \
     JSAttr.h \
     JSCSSPrimitiveValue.h \

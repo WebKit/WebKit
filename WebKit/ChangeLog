@@ -1,3 +1,12 @@
+2006-08-30  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10640
+          Auto-generate 10 more Objective-C DOM HTML bindings
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-08-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

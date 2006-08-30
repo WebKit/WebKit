@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,120 +26,23 @@
 
 #import <WebCore/DOMCore.h>
 
+#import <WebCore/DOMHTMLBaseElement.h>
+#import <WebCore/DOMHTMLBodyElement.h>
 #import <WebCore/DOMHTMLCollection.h>
+#import <WebCore/DOMHTMLDocument.h>
 #import <WebCore/DOMHTMLElement.h>
 #import <WebCore/DOMHTMLFormElement.h>
+#import <WebCore/DOMHTMLHeadElement.h>
+#import <WebCore/DOMHTMLHtmlElement.h>
+#import <WebCore/DOMHTMLIsIndexElement.h>
+#import <WebCore/DOMHTMLLinkElement.h>
+#import <WebCore/DOMHTMLMetaElement.h>
 #import <WebCore/DOMHTMLOptionsCollection.h>
+#import <WebCore/DOMHTMLStyleElement.h>
+#import <WebCore/DOMHTMLTitleElement.h>
 
 @class DOMHTMLTableCaptionElement;
 @class DOMHTMLTableSectionElement;
-
-@interface DOMHTMLDocument : DOMDocument
-- (NSString *)title;
-- (void)setTitle:(NSString *)title;
-- (NSString *)referrer;
-- (NSString *)domain;
-- (NSString *)URL;
-- (DOMHTMLElement *)body;
-- (void)setBody:(DOMHTMLElement *)body;
-- (DOMHTMLCollection *)images;
-- (DOMHTMLCollection *)applets;
-- (DOMHTMLCollection *)links;
-- (DOMHTMLCollection *)forms;
-- (DOMHTMLCollection *)anchors;
-- (NSString *)cookie;
-- (void)setCookie:(NSString *)cookie;
-- (void)open;
-- (void)close;
-- (void)write:(NSString *)text;
-- (void)writeln:(NSString *)text;
-- (DOMElement *)getElementById:(NSString *)elementId;
-- (DOMNodeList *)getElementsByName:(NSString *)elementName;
-@end
-
-@interface DOMHTMLHtmlElement : DOMHTMLElement
-- (NSString *)version;
-- (void)setVersion:(NSString *)version;
-@end
-
-@interface DOMHTMLHeadElement : DOMHTMLElement
-- (NSString *)profile;
-- (void)setProfile:(NSString *)profile;
-@end
-
-@interface DOMHTMLLinkElement : DOMHTMLElement
-- (BOOL)disabled;
-- (void)setDisabled:(BOOL)disabled;
-- (NSString *)charset;
-- (void)setCharset:(NSString *)charset;
-- (NSString *)href;
-- (void)setHref:(NSString *)href;
-- (NSString *)hreflang;
-- (void)setHreflang:(NSString *)hreflang;
-- (NSString *)media;
-- (void)setMedia:(NSString *)media;
-- (NSString *)rel;
-- (void)setRel:(NSString *)rel;
-- (NSString *)rev;
-- (void)setRev:(NSString *)rev;
-- (NSString *)target;
-- (void)setTarget:(NSString *)target;
-- (NSString *)type;
-- (void)setType:(NSString *)type;
-@end
-
-@interface DOMHTMLTitleElement : DOMHTMLElement
-- (NSString *)text;
-- (void)setText:(NSString *)text;
-@end
-
-@interface DOMHTMLMetaElement : DOMHTMLElement
-- (NSString *)content;
-- (void)setContent:(NSString *)content;
-- (NSString *)httpEquiv;
-- (void)setHttpEquiv:(NSString *)httpEquiv;
-- (NSString *)name;
-- (void)setName:(NSString *)name;
-- (NSString *)scheme;
-- (void)setScheme:(NSString *)scheme;
-@end
-
-@interface DOMHTMLBaseElement : DOMHTMLElement
-- (NSString *)href;
-- (void)setHref:(NSString *)href;
-- (NSString *)target;
-- (void)setTarget:(NSString *)target;
-@end
-
-@interface DOMHTMLIsIndexElement : DOMHTMLElement
-- (DOMHTMLFormElement *)form;
-- (NSString *)prompt;
-- (void)setPrompt:(NSString *)prompt;
-@end
-
-@interface DOMHTMLStyleElement : DOMHTMLElement
-- (BOOL)disabled;
-- (void)setDisabled:(BOOL)disabled;
-- (NSString *)media;
-- (void)setMedia:(NSString *)media;
-- (NSString *)type;
-- (void)setType:(NSString *)type;
-@end
-
-@interface DOMHTMLBodyElement : DOMHTMLElement
-- (NSString *)aLink;
-- (void)setALink:(NSString *)aLink;
-- (NSString *)background;
-- (void)setBackground:(NSString *)background;
-- (NSString *)bgColor;
-- (void)setBgColor:(NSString *)bgColor;
-- (NSString *)link;
-- (void)setLink:(NSString *)link;
-- (NSString *)text;
-- (void)setText:(NSString *)text;
-- (NSString *)vLink;
-- (void)setVLink:(NSString *)vLink;
-@end
 
 @interface DOMHTMLSelectElement : DOMHTMLElement
 - (NSString *)type;

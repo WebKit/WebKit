@@ -1,3 +1,51 @@
+2006-08-30  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10640
+          Auto-generate 10 more Objective-C DOM HTML bindings
+
+          Auto-generates DOMHTMLBaseElement, DOMHTMLBodyElement, DOMHTMLHeadElement,
+          DOMHTMLHtmlElement, DOMHTMLIsIndexElement, DOMHTMLLinkElement,
+          DOMHTMLMetaElement, DOMHTMLStyleElement and DOMHTMLTitleElement.
+
+          Splits DOMHTMLDocument into it's own files.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTML.h:
+        * bindings/objc/DOMHTML.mm:
+        * bindings/objc/DOMHTMLDocument.h: Added.
+        * bindings/objc/DOMHTMLDocument.mm: Added.
+        (-[DOMHTMLDocument WebCore::]):
+        (-[DOMHTMLDocument title]):
+        (-[DOMHTMLDocument setTitle:]):
+        (-[DOMHTMLDocument referrer]):
+        (-[DOMHTMLDocument domain]):
+        (-[DOMHTMLDocument URL]):
+        (-[DOMHTMLDocument body]):
+        (-[DOMHTMLDocument setBody:]):
+        (-[DOMHTMLDocument images]):
+        (-[DOMHTMLDocument applets]):
+        (-[DOMHTMLDocument links]):
+        (-[DOMHTMLDocument forms]):
+        (-[DOMHTMLDocument anchors]):
+        (-[DOMHTMLDocument cookie]):
+        (-[DOMHTMLDocument setCookie:]):
+        (-[DOMHTMLDocument open]):
+        (-[DOMHTMLDocument close]):
+        (-[DOMHTMLDocument write:]):
+        (-[DOMHTMLDocument writeln:]):
+        (-[DOMHTMLDocument getElementById:]):
+        (-[DOMHTMLDocument getElementsByName:]):
+        (-[DOMHTMLDocument createDocumentFragmentWithMarkupString:baseURL:]):
+        (-[DOMHTMLDocument createDocumentFragmentWithText:]):
+        * bindings/objc/DOMHTMLInternal.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * html/HTMLDocument.idl:
+
 2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.

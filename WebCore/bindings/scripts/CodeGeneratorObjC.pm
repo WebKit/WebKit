@@ -623,48 +623,40 @@ sub GenerateImplementation
 
     # START implementation
     push(@implContent, "\n\@implementation $className\n\n");
-    
-    # ADD INTERNAL CASTING METHOD
-    my $internalCastingName = "_" . lcfirst($interfaceName);
-    my $implementation = "[self $internalCastingName]";
-    
+
+    # ADD INTERNAL CASTING MACRO
+    my $implementation = "IMPL_" . uc($interfaceName);
+
     if ($hasFunctionsOrAttributes) {
         if ($parentImplClassName eq "Object") {
             # Only generate 'dealloc' and 'finalize' methods for direct subclasses of DOMObject.
+
+            push(@implContent, "#define $implementation DOM_cast<$implClassName *>(_internal)\n\n");
+
             push(@implContent, "- (void)dealloc\n");
             push(@implContent, "{\n");
             push(@implContent, "    if (_internal)\n");
-            push(@implContent, "        DOM_cast<$implClassName *>(_internal)->deref();\n");
+            push(@implContent, "        $implementation->deref();\n");
             push(@implContent, "    [super dealloc];\n");
             push(@implContent, "}\n\n");
 
             push(@implContent, "- (void)finalize\n");
             push(@implContent, "{\n");
             push(@implContent, "    if (_internal)\n");
-            push(@implContent, "        DOM_cast<$implClassName *>(_internal)->deref();\n");
+            push(@implContent, "        $implementation->deref();\n");
             push(@implContent, "    [super finalize];\n");
-            push(@implContent, "}\n\n");
-            
-            push(@implContent, "- ($implClassName *)$internalCastingName\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    return DOM_cast<$implClassName *>(_internal);\n");
             push(@implContent, "}\n\n");
         } else {
             my $internalBaseType;
-            if ($interfaceName eq "CSSPrimitiveValue") {
-                # FIXME: this should be a regex matching CSS...Value.
+            if ($interfaceName =~ /^CSS.+Value$/) {
                 $internalBaseType = "WebCore::CSSValue"
-            } elsif ($interfaceName eq "CSSImportRule" or $interfaceName eq "CSSFontFaceRule") {
-                # FIXME: this should be a regex matching CSS...Rule.
+            } elsif ($interfaceName =~ /^CSS.+Rule$/) {
                 $internalBaseType = "WebCore::CSSRule"
             } else {
                 $internalBaseType = "WebCore::Node"
             }
 
-            push(@implContent, "- ($implClassName *)$internalCastingName\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    return static_cast<$implClassName *>(DOM_cast<$internalBaseType *>(_internal));\n");
-            push(@implContent, "}\n\n");
+            push(@implContent, "#define $implementation static_cast<$implClassName *>(DOM_cast<$internalBaseType *>(_internal))\n\n");
         }
     }
 
@@ -732,37 +724,50 @@ sub GenerateImplementation
             
             push(@implContent, $getterSig);
             push(@implContent, "{\n");
-            push(@implContent, "    $exceptionInit\n") if $hasGetterException;
-            push(@implContent, "    return $getterContent;\n");
-            push(@implContent, "    $exceptionRaiseOnError\n") if $hasGetterException;
+            if ($hasGetterException) {
+                # Differentiated between when the return type is a pointer and
+                # not for white space issue (ie. Foo *result vs. int result).
+                if ($attributeType =~ /\*$/) {
+                    $getterContent = $attributeType . "result = " . $getterContent;
+                } else {
+                    $getterContent = $attributeType . " result = " . $getterContent;
+                }
+
+                push(@implContent, "    $exceptionInit\n");
+                push(@implContent, "    $getterContent;\n");
+                push(@implContent, "    $exceptionRaiseOnError\n");
+                push(@implContent, "    return result;\n");
+            } else {
+                push(@implContent, "    return $getterContent;\n");
+            }
             push(@implContent, "}\n\n");
 
             # - SETTER
             if (!$attributeIsReadonly) {
                 # Exception handling
                 my $hasSetterException = @{$attribute->setterExceptions};
-                
+
                 $attributeName = "set" . ucfirst($attributeName);
                 my $setterName = "set" . ucfirst($interfaceName);
                 my $argName = "new" . ucfirst($interfaceName);
 
                 my $setterSig = "- (void)$setterName:($attributeType)$argName\n";
-                
+
                 push(@implContent, $setterSig);
                 push(@implContent, "{\n");
-                
+
                 if ($hasSetterException) {
                     # FIXME: asserts exsist in the exsisting bindings, but I am unsure why they are 
                     # there in the first place;
                     push(@implContent, "    ASSERT($argName);\n\n");
-                
+
                     push(@implContent, "    $exceptionInit\n");
                     push(@implContent, "    $implementation->$attributeName($argName, ec);\n");
                     push(@implContent, "    $exceptionRaiseOnError\n");
                 } else {
                     push(@implContent, "    $implementation->$attributeName($argName);\n");
                 }
-                
+
                 push(@implContent, "}\n\n");
             }
         }

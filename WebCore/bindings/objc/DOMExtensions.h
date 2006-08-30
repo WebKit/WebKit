@@ -34,6 +34,8 @@
 #import <WebCore/DOMRange.h>
 
 #import <WebCore/DOMHTMLElement.h>
+#import <WebCore/DOMHTMLDocument.h>
+#import <WebCore/DOMHTMLLinkElement.h>
 
 @class NSColor;
 @class NSImage;
@@ -46,11 +48,6 @@
 
 @interface DOMElement (DOMElementAppKitExtensions)
 - (NSImage *)image;
-@end
-
-@interface DOMHTMLDocument (DOMHTMLDocumentExtensions)
-- (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL;
-- (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text;
 @end
 
 @interface DOMHTMLInputElement (DOMHTMLInputElementExtensions)

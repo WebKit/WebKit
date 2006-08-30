@@ -48,7 +48,7 @@ module html {
         [Exclude=JS] void               close();
         [Exclude=JS] void               write(in DOMString text);
         [Exclude=JS] void               writeln(in DOMString text);
-        [Exclude=JS] NodeList           getElementsByName(in DOMString elementName);
+        [UsesPassRefPtr, Exclude=JS] NodeList           getElementsByName(in DOMString elementName);
 
         // non-standard
 

@@ -84,11 +84,23 @@
 #import "DOMProcessingInstruction.h"
 #import "DOMText.h"
 
+// From old DOMHTML.h
+#import "DOMHTMLDocument.h"
+
 // Generated Objective-C Bindings
+#import "DOMHTMLBaseElement.h"
+#import "DOMHTMLBodyElement.h"
 #import "DOMHTMLCollection.h"
 #import "DOMHTMLElement.h"
 #import "DOMHTMLFormElement.h"
+#import "DOMHTMLHeadElement.h"
+#import "DOMHTMLHtmlElement.h"
+#import "DOMHTMLIsIndexElement.h"
+#import "DOMHTMLLinkElement.h"
+#import "DOMHTMLMetaElement.h"
 #import "DOMHTMLOptionsCollection.h"
+#import "DOMHTMLStyleElement.h"
+#import "DOMHTMLTitleElement.h"
 
 #import <objc/objc-class.h>
 
