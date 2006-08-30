@@ -1,5 +1,17 @@
 2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by eseidel.
+
+        The old solution was slow & does not work correctly.
+        Move the QString -> DeprecatedString conversion into
+        DeprectedString.cpp, to be able to access allocateHandle().
+
+        * platform/DeprecatedString.cpp:
+        (WebCore::DeprecatedString::DeprecatedString):
+        * platform/qt/StringQt.cpp:
+
+2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed/landed by Adam.
 
         Implement containsCharacters() / determinePitch() functions.

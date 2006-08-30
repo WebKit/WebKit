@@ -53,16 +53,6 @@ String::operator QString() const
 }
 
 // DeprecatedString conversions
-DeprecatedString::DeprecatedString(const QString& qstr)
-{
-    if (qstr.isNull()) {
-        (*this) = DeprecatedString::null;
-    } else {
-        QByteArray utf8Data = qstr.toUtf8();
-        (*this) = DeprecatedString::fromUtf8(utf8Data.data(), utf8Data.length());
-    }
-}
-
 DeprecatedString::operator QString() const
 {
     return QString(reinterpret_cast<const QChar*>(unicode()), length());
