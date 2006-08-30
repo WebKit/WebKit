@@ -105,13 +105,11 @@ bool IconDatabase::open(const String& databasePath)
         dbFilename = databasePath + "/" + defaultDatabaseFilename();
 
     // <rdar://problem/4707718> - If user's Icon directory is unwritable, Safari will crash at startup
-    // Now, we'll see if we can open the on-disk database.  If we can't, we'll log the error and open it as
-    // an in-memory database so the user will have icons during their current browsing session
-    
+    // Now, we'll see if we can open the on-disk database.  And, if we can't, we'll return false.  
+    // WebKit will then ignore us and act as if the database is disabled
     if (!m_mainDB.open(dbFilename)) {
         LOG_ERROR("Unable to open icon database at path %s - %s", dbFilename.ascii().data(), m_mainDB.lastErrorMsg());
-        if (!m_mainDB.open(":memory:"))
-            LOG_ERROR("Unable to open in-memory database for browsing - %s", m_mainDB.lastErrorMsg());
+        return false;
     }
     
     if (!isValidDatabase(m_mainDB)) {
@@ -829,6 +827,10 @@ bool IconDatabase::hasEntryForIconURL(const String& iconURL)
 IconDatabase::~IconDatabase()
 {
     close();
+    m_startupTimer.stop();
+    m_updateTimer.stop();
+    if (m_sharedInstance == this)
+        m_sharedInstance = 0;
 }
 
 // readySQLStatement() handles two things

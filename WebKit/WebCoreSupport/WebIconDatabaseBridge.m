@@ -41,12 +41,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [cachedLoaders release];
-    [super dealloc];
-}
-
 - (void)loadIconFromURL:(NSString *)iconURL
 {
     if ([cachedLoaders valueForKey:iconURL])
@@ -87,12 +81,20 @@
     }
 }
 
+static WebCoreIconDatabaseBridge* g_sharedBridgeInstance = nil;
 + (WebCoreIconDatabaseBridge *)sharedBridgeInstance
 {
-    static WebCoreIconDatabaseBridge* sharedBridgeInstance = nil;
-    if (!sharedBridgeInstance)
-        sharedBridgeInstance = [[WebIconDatabaseBridge alloc] init];
-    return sharedBridgeInstance;
+    if (!g_sharedBridgeInstance)
+        g_sharedBridgeInstance = [[WebIconDatabaseBridge alloc] init];
+    return g_sharedBridgeInstance;
+}
+
+- (void)dealloc
+{
+    ASSERT(self == g_sharedBridgeInstance);
+    g_sharedBridgeInstance = nil;
+    [cachedLoaders release];
+    [super dealloc];
 }
 
 @end

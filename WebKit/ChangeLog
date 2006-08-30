@@ -1,3 +1,16 @@
+2006-08-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        <rdar://problem/4707718> Change behavior so if the WebCore::IconDatabase can't open, WebKit releases the bridge and 
+        continues on as if the IconDatabase is disabled.
+ 
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase init]): Release the bridge on failure to open
+        * WebCoreSupport/WebIconDatabaseBridge.m:
+        (+[WebIconDatabaseBridge sharedBridgeInstance]): Moved static shared instance out as a global
+        (-[WebIconDatabaseBridge dealloc]): Clear pointer to the shared instance
+
 2006-08-30  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

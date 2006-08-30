@@ -107,7 +107,12 @@ NSSize WebIconLargeSize = {128, 128};
     databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
     
     // Open the WebCore icon database
-    [_private->databaseBridge openSharedDatabaseWithPath:databaseDirectory];
+    if (![_private->databaseBridge openSharedDatabaseWithPath:databaseDirectory]) {
+        LOG_ERROR("Unable to open IconDatabaseBridge");
+        [_private->databaseBridge release];
+        _private->databaseBridge = nil;
+        return self;
+    }
     [_private->databaseBridge setPrivateBrowsingEnabled:[[WebPreferences standardPreferences] privateBrowsingEnabled]];
     
     // <rdar://problem/4674552> New IconDB: New Safari icon database needs to convert from the old icons on first load 

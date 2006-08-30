@@ -50,17 +50,20 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
     _iconDB = IconDatabase::sharedIconDatabase();
     if (_iconDB) {
         _iconDB->open((String([path stringByStandardizingPath])));
-        return _iconDB->isOpen() ? YES : NO;
+        if (!_iconDB->isOpen()) {
+            [self closeSharedDatabase];
+            NSLog(@"Unable to open icon database at %@ - Check your write permissions at that path.  Icon database will be disabled for this browsing session", path);
+            return NO;
+        }
+        return YES;
     }
     return NO;
 }
 
 - (void)closeSharedDatabase
 {
-    if (_iconDB) {
-        _iconDB->close();
-        _iconDB = 0;
-    }
+    delete _iconDB;
+    _iconDB = 0;
 }
 
 - (BOOL)isOpen
@@ -99,7 +102,9 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
 
 - (NSImage *)iconForPageURL:(NSString *)url withSize:(NSSize)size
 {
-    ASSERT(_iconDB);
+    if (!_iconDB)
+        return nil;
+        
     ASSERT(url);
     ASSERT(size.width);
     ASSERT(size.height);
@@ -127,7 +132,8 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
 
 - (NSString *)iconURLForPageURL:(NSString *)url
 {
-    ASSERT(_iconDB);
+    if (!_iconDB)
+        return nil;
     ASSERT(url);
     
     String iconURL = _iconDB->iconURLForPageURL(String(url));
@@ -136,7 +142,8 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
 
 - (NSImage *)defaultIconWithSize:(NSSize)size
 {
-    ASSERT(_iconDB);
+    if (!_iconDB)
+        return nil;
     ASSERT(size.width);
     ASSERT(size.height);
     
@@ -148,21 +155,24 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
 
 - (void)retainIconForURL:(NSString *)url
 {
-    ASSERT(_iconDB);
+    if (!_iconDB)
+        return;
     ASSERT(url);
     _iconDB->retainIconForPageURL(String(url));
 }
 
 - (void)releaseIconForURL:(NSString *)url
 {
-    ASSERT(_iconDB);
+    if (!_iconDB)
+        return;
     ASSERT(url);
     _iconDB->releaseIconForPageURL(String(url));
 }
 
 - (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL
 {
-    ASSERT(_iconDB);
+    if (!_iconDB)
+        return;
     ASSERT(data);
     ASSERT(iconURL);
     
@@ -171,7 +181,8 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
 
 - (void)_setHaveNoIconForIconURL:(NSString *)iconURL
 {
-    ASSERT(_iconDB);
+    if (!_iconDB)
+        return;
     ASSERT(iconURL);
     
     _iconDB->setHaveNoIconForIconURL(String(iconURL));
@@ -179,7 +190,8 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
 
 - (BOOL)_setIconURL:(NSString *)iconURL forPageURL:(NSString *)pageURL
 {
-    ASSERT(_iconDB);
+    if (!_iconDB)
+        return NO;
     ASSERT(iconURL);
     ASSERT(pageURL);
     
@@ -188,7 +200,8 @@ void WebCore::IconDatabase::loadIconFromURL(const String& url)
 
 - (BOOL)_hasEntryForIconURL:(NSString *)iconURL
 {
-    ASSERT(_iconDB);
+    if (!_iconDB)
+        return NO;
     ASSERT(iconURL);
     
     return _iconDB->hasEntryForIconURL(iconURL);

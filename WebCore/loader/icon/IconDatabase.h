@@ -60,7 +60,8 @@ class IconDatabase
 friend class SiteIcon;
 public:
     static IconDatabase* sharedIconDatabase();
-    
+    ~IconDatabase();
+
     bool open(const String& path);
     bool isOpen() { return m_mainDB.isOpen() && m_privateBrowsingDB.isOpen(); }
     void close();
@@ -98,7 +99,6 @@ public:
     static const int updateTimerDelay;
 private:
     IconDatabase();
-    ~IconDatabase();
     
     // This tries to get the iconID for the IconURL and, if it doesn't exist and createIfNecessary is true,
     // it will create the entry and return the new iconID
