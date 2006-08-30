@@ -1,3 +1,17 @@
+2006-08-29  waylonis  <waylonis@google.com>
+
+        Reviewed, tweaked by ggaren.
+
+        - Added storage and accessor functions for ExecState as a fix for
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=10114
+        
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState):
+        * kjs/ExecState.h:
+        * kjs/context.h:
+        (KJS::Context::setExecState):
+        (KJS::Context::execState):
+
 2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Tim H.

@@ -47,6 +47,21 @@ function doTest()
         echoTest(42);
         echoTest(null);
         echoTest(new Array("one", "two"));
+        
+        // Test exceptions
+        function exceptionTest(arg) {
+        	try {
+        		objCPlugin.throwIfArgumentIsNotHello(arg);
+        	} catch (e) {
+        		alert("String " + arg + " != Hello");
+        		return;
+        	}
+        	
+        	alert("String " + arg + " == Hello");
+        }
+        
+        exceptionTest("Hello");
+        exceptionTest("Not Hello");
     }
     
     // Test the C plugin

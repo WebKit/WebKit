@@ -29,6 +29,8 @@
 
 namespace KJS  {
 
+  class ExecState;
+  
   /** 
    * @short Execution context.
    *
@@ -117,6 +119,9 @@ namespace KJS  {
         
     void mark();
 
+    void setExecState(ExecState* exec) { m_execState = exec; }
+    ExecState* execState() { return m_execState; }
+
   private:
     // Contexts are always stack-allocated, and the garbage collector
     // marks the stack, so we don't need to protect the objects below from GC.
@@ -124,6 +129,7 @@ namespace KJS  {
     Interpreter* m_interpreter;
     Context* m_callingContext;
     FunctionBodyNode* m_currentBody;
+    ExecState* m_execState;
 
     FunctionImp* m_function;
     const List* m_arguments;

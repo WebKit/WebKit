@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebScriptObjectPrivate.h"
 
+#import <JavaScriptCore/context.h>
 #import <JavaScriptCore/objc_instance.h>
 #import <JavaScriptCore/runtime_object.h>
 
@@ -137,11 +138,14 @@ static void _didExecute(WebScriptObject *obj)
     // in which case this will have to change.
     first = interp;
     do {
-        ExecState *exec = interp->globalExec();
         // If the interpreter has a context, we set the exception.
         if (interp->context()) {
-            throwError(exec, GeneralError, exceptionMessage);
-            return YES;
+            ExecState *exec = interp->context()->execState();
+            
+            if (exec) {
+                throwError(exec, GeneralError, exceptionMessage);
+                return YES;
+            }
         }
         interp = interp->nextInterpreter();
     } while (interp != first);
@@ -388,8 +392,15 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 - (void)setException:(NSString *)description
 {
-    if (const RootObject *root = [self _executionContext])
-        throwError(root->interpreter()->globalExec(), GeneralError, description);
+    if (const RootObject *root = [self _executionContext]) {
+        if (root->interpreter()->context()) {
+            ExecState *exec = root->interpreter()->context()->execState();
+
+            ASSERT(exec);
+            throwError(exec, GeneralError, description);
+        } else
+            throwError(root->interpreter()->globalExec(), GeneralError, description);
+    }
 }
 
 + (id)_convertValueToObjcValue:(JSValue *)value originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext

@@ -10,6 +10,8 @@ ALERT: null = null (same)
 ALERT: object = object (same)
 ALERT: one,two = one,two (same)
 ALERT: object = object (same)
+ALERT: String Hello == Hello
+ALERT: String Not Hello != Hello
 ALERT: typeof(cPlugin)=function
 ALERT: cPlugin()=1
 ALERT: typeof(cPlugin)=object

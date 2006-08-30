@@ -1,3 +1,12 @@
+2006-08-29  waylonis  <waylonis@google.com>
+
+        Reviewed by ggaren.
+
+        - Updated test to check for exceptions thrown in a plug-in.  This is
+          a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10114.
+        * plugins/bindings-test-expected.txt:
+        * plugins/bindings-test.html:
+
 2006-08-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
