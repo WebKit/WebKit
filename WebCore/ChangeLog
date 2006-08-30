@@ -1,3 +1,30 @@
+2006-08-30  David Hyatt  <hyatt@apple.com>
+
+        Fix for bugs 9000 and 10606.  Add code to suppress painting when
+        a FOUC situation would otherwise occur.  There will still typically be
+        a flash to white, but at least the wrong content won't show.
+
+        Reviewed by darin
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        (WebCore::Document::preferredStylesheetSet):
+        (WebCore::Document::selectedStylesheetSet):
+        (WebCore::Document::setSelectedStylesheetSet):
+        (WebCore::Document::stylesheetLoaded):
+        (WebCore::Document::updateStyleSelector):
+        * dom/Document.h:
+        (WebCore::Document::haveStylesheetsLoaded):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::isSubframe):
+        (WebCore::RenderLayer::hitTest):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+
 2006-08-31  Nikolas Zimmermann  <zimmermann@kde.org>
  
          Reviewed by Eric. Landed by rwlbuis.

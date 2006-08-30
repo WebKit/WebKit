@@ -265,6 +265,7 @@ Document::Document(DOMImplementation* impl, FrameView *v)
     m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), !inCompatMode());
     m_pendingStylesheets = 0;
     m_ignorePendingStylesheets = false;
+    m_didLayoutWithPendingStylesheets = false;
 
     m_cssTarget = 0;
 
@@ -929,6 +930,7 @@ void Document::updateLayoutIgnorePendingStylesheets()
     
     if (!haveStylesheetsLoaded()) {
         m_ignorePendingStylesheets = true;
+        m_didLayoutWithPendingStylesheets = true;
         updateStyleSelector();    
     }
 
@@ -1735,36 +1737,36 @@ StyleSheetList* Document::styleSheets()
 
 String Document::preferredStylesheetSet() const
 {
-  return m_preferredStylesheetSet;
+    return m_preferredStylesheetSet;
 }
 
 String Document::selectedStylesheetSet() const
 {
-  return m_selectedStylesheetSet;
+    return m_selectedStylesheetSet;
 }
 
 void Document::setSelectedStylesheetSet(const String& aString)
 {
-  m_selectedStylesheetSet = aString;
-  updateStyleSelector();
-  if (renderer())
-    renderer()->repaint();
+    m_selectedStylesheetSet = aString;
+    updateStyleSelector();
+    if (renderer())
+        renderer()->repaint();
 }
 
 // This method is called whenever a top-level stylesheet has finished loading.
 void Document::stylesheetLoaded()
 {
-  // Make sure we knew this sheet was pending, and that our count isn't out of sync.
-  assert(m_pendingStylesheets > 0);
+    // Make sure we knew this sheet was pending, and that our count isn't out of sync.
+    assert(m_pendingStylesheets > 0);
 
-  m_pendingStylesheets--;
-  
+    m_pendingStylesheets--;
+    
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-  if (!ownerElement())
-      printf("Stylesheet loaded at time %d. %d stylesheets still remain.\n", elapsedTime(), m_pendingStylesheets);
+    if (!ownerElement())
+        printf("Stylesheet loaded at time %d. %d stylesheets still remain.\n", elapsedTime(), m_pendingStylesheets);
 #endif
 
-  updateStyleSelector();    
+    updateStyleSelector();    
 }
 
 void Document::updateStyleSelector()
@@ -1772,6 +1774,12 @@ void Document::updateStyleSelector()
     // Don't bother updating, since we haven't loaded all our style info yet.
     if (!haveStylesheetsLoaded())
         return;
+
+    if (m_didLayoutWithPendingStylesheets) {
+        m_didLayoutWithPendingStylesheets = false;
+        if (renderer())
+            renderer()->repaint();
+    }
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())

@@ -240,7 +240,7 @@ public:
      * This method returns true if all top-level stylesheets have loaded (including
      * any @imports that they may be loading).
      */
-    bool haveStylesheetsLoaded() const { return m_pendingStylesheets <= 0 || m_ignorePendingStylesheets; }
+    bool haveStylesheetsLoaded(bool checkIgnoreFlag = true) const { return m_pendingStylesheets <= 0 || (checkIgnoreFlag && m_ignorePendingStylesheets); }
 
     /**
      * Increments the number of pending sheets.  The <link> elements
@@ -624,6 +624,11 @@ protected:
     // But sometimes you need to ignore pending stylesheet count to
     // force an immediate layout when requested by JS.
     bool m_ignorePendingStylesheets;
+
+    // If we do ignore the pending stylesheet count, then we need to add a boolean
+    // to track that this happened so that we can do a full repaint when the stylesheets
+    // do eventually load.
+    bool m_didLayoutWithPendingStylesheets;
 
     RefPtr<CSSStyleSheet> m_elemSheet;
 

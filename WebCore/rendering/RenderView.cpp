@@ -213,7 +213,8 @@ void RenderView::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
 
 void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
 {
-    if (m_printingMode || ur.width() == 0 || ur.height() == 0) return;
+    if (m_printingMode || ur.width() == 0 || ur.height() == 0)
+        return;
     
     IntRect vr = viewRect();
     if (m_frameView && ur.intersects(vr)) {

@@ -1255,6 +1255,12 @@ void RenderBlock::paint(PaintInfo& i, int _tx, int _ty)
 
 void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
 {
+    // Avoid painting descendants of the root element when stylesheets haven't loaded.  This eliminates FOUC.
+    // It's ok not to draw, because later on, when all the stylesheets do load, updateStyleSelector on the Document
+    // will do a full repaint().
+    if (!document()->haveStylesheetsLoaded(false))
+        return;
+    
     PaintPhase newPhase = (i.phase == PaintPhaseChildOutlines) ? PaintPhaseOutline : i.phase;
     newPhase = (newPhase == PaintPhaseChildBlockBackgrounds) ? PaintPhaseChildBlockBackground : newPhase;
     
