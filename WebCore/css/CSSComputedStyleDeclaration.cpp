@@ -159,8 +159,6 @@ static CSSValue* valueForLength(const Length& length)
         case Auto:
             return new CSSPrimitiveValue(CSS_VAL_AUTO);
         case WebCore::Fixed:
-            if (length.value() == undefinedLength)
-                return new CSSPrimitiveValue(CSS_VAL_NONE);
             return new CSSPrimitiveValue(length.value(), CSSPrimitiveValue::CSS_PX);
         case Intrinsic:
             return new CSSPrimitiveValue(CSS_VAL_INTRINSIC);
@@ -175,6 +173,14 @@ static CSSValue* valueForLength(const Length& length)
     }
     // Should never be reached, but if we do, just return "auto".
     return new CSSPrimitiveValue(CSS_VAL_AUTO);
+}
+
+// Handles special value for "none".
+static CSSValue* valueForMaxLength(const Length& length)
+{
+    if (length.isFixed() && length.value() == undefinedLength)
+        return new CSSPrimitiveValue(CSS_VAL_NONE);
+    return valueForLength(length);
 }
 
 static CSSValue *valueForBorderStyle(EBorderStyle style)
@@ -929,9 +935,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         ASSERT_NOT_REACHED();
         return 0;
     case CSS_PROP_MAX_HEIGHT:
-        return valueForLength(style->maxHeight());
+        return valueForMaxLength(style->maxHeight());
     case CSS_PROP_MAX_WIDTH:
-        return valueForLength(style->maxWidth());
+        return valueForMaxLength(style->maxWidth());
     case CSS_PROP_MIN_HEIGHT:
         return valueForLength(style->minHeight());
     case CSS_PROP_MIN_WIDTH:

@@ -1,0 +1,10 @@
+<div id="test" style="position:relative; top:-1px"></div>
+<script>
+var style = document.defaultView.getComputedStyle(document.getElementById("test"));
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+if (style.top == "-1px")
+    document.write("Test succeeded! Top is " + style.top + ".");
+else
+    document.write("Test failed! Top is " + style.top + ".");
+</script>

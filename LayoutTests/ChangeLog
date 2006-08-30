@@ -1,3 +1,12 @@
+2006-08-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - test for <rdar://problem/4701494> REGRESSION: Scrollbar on EPSN widget doesn't scroll (also affects Widgets widget, web inspector)
+
+        * fast/css/computed-style-negative-top-expected.txt: Added.
+        * fast/css/computed-style-negative-top.html: Added.
+
 2006-08-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

@@ -1,3 +1,20 @@
+2006-08-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix <rdar://problem/4701494> REGRESSION: Scrollbar on EPSN widget doesn't scroll (also affects Widgets widget, web inspector)
+
+        The bug was that we would return "none" for computed style properties when they were
+        exactly "-1px".
+
+        Test: fast/css/computed-style-negative-top.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForLength): Moved special case for "undefined length" out of here.
+        (WebCore::valueForMaxLength): Moved it into here.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Use valueForMaxLength
+        only for max-height and max-width.
+
 2006-08-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.
