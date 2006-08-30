@@ -1,3 +1,14 @@
+2006-08-30  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Simplify the header copies from WebCore and JavaScriptCore.
+        Headers that need to be migrated from the other projects need
+        to be added to MigrateHeaders.make.
+
+        * MigrateHeaders.make: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-08-30  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
