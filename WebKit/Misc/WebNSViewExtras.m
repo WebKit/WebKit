@@ -154,10 +154,11 @@
         ![[self window] attachedSheet] &&
         [sender draggingSource] != self &&
         [[sender draggingPasteboard] _web_bestURL]) {
+
         return NSDragOperationCopy;
-    } else {
-        return NSDragOperationNone;
     }
+    
+    return NSDragOperationNone;
 }
 
 - (void)_web_DragImageForElement:(DOMElement *)element

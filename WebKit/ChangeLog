@@ -1,3 +1,19 @@
+2006-08-30  Karl Adam  <karladam@yahoo-inc.com>
+
+        Reviewed by Eric and Tim H.
+
+        Bug 10634: -webView:dragDestinationActionMaskForDraggingInfo: is ignored
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10634
+        
+        Remove the check for canShowFile: from _web_bestURL: since
+        it shouldn't be concerned with whether or not the view
+        can show the URL, merely return the most appropriate URL.
+
+        * Misc/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_bestURL]):
+        * Misc/WebNSViewExtras.m:
+        (-[NSView _web_dragOperationForDraggingInfo:]):
+
 2006-08-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Kevin Decker (Sarge)

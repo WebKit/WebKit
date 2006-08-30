@@ -162,9 +162,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
             NSString *file = [files objectAtIndex:0];
             BOOL isDirectory;
             if([[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory] && !isDirectory){
-                if ([WebView canShowFile:file]) {
-                    return [[NSURL fileURLWithPath:file] _webkit_canonicalize];
-                }
+                return [[NSURL fileURLWithPath:file] _webkit_canonicalize];
             }
         }
     }
