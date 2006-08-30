@@ -32,8 +32,9 @@
 
 #include "config.h"
 
-#include "GraphicsContext.h"
 #include "Path.h"
+#include "Color.h"
+#include "GraphicsContext.h"
 
 #include <QStack>
 #include <QPainter>
@@ -443,7 +444,7 @@ void GraphicsContext::fillRect(const IntRect& rect, const Color& c)
     if (paintingDisabled())
         return;
 
-    m_data->p().fillRect(rect, QColor(c.red(), c.green(), c.blue(), c.alpha()));
+    m_data->p().fillRect(rect, QColor(c));
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& c)
@@ -451,7 +452,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& c)
     if (paintingDisabled())
         return;
 
-    m_data->p().fillRect(rect, QColor(c.red(), c.green(), c.blue(), c.alpha()));
+    m_data->p().fillRect(rect, QColor(c));
 }
 
 void GraphicsContext::addClip(const IntRect& rect)

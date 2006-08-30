@@ -35,7 +35,6 @@
 #include "GraphicsContext.h"
 
 #include <QPainter>
-#include <QDebug>
 
 namespace WebCore {
 
@@ -50,7 +49,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
     QPainter& p = *graphicsContext->platformContext();
 
     Color color = graphicsContext->pen().color();
-    p.setPen(QColor(color.red(), color.green(), color.blue()));
+    p.setPen(QColor(color));
     p.setFont(font->platformData().font());
 
     QChar* buffer = reinterpret_cast<QChar*>(glyphBuffer.glyphs(from));

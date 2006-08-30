@@ -1,3 +1,14 @@
+2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.
+
+        Use QColor <-> Color conversion operator, instead of faking it.
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillRect):
+
 2006-08-30  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
