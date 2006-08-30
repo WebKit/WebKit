@@ -33,7 +33,7 @@ class RenderPathQt : public RenderPath
 public:
     RenderPathQt(RenderStyle*, SVGStyledElement*);
 
-    virtual bool strokeContains(const FloatPoint& point) const;
+    virtual bool strokeContains(const FloatPoint&, bool requiresStroke) const;
     virtual FloatRect strokeBBox() const;
 
 protected:

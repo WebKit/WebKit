@@ -1,5 +1,15 @@
-2006-08-30  Sam Weinig  <sam.weinig@gmail.com>
+2006-08-31  Nikolas Zimmermann  <zimmermann@kde.org>
+ 
+         Reviewed by Eric. Landed by rwlbuis.
+ 
+         Apply Rob's fixes in RenderPathQt too -> unbreak build.
+ 
+         * kcanvas/RenderPath.h: Some style cleanups.
+         * kcanvas/device/qt/RenderPathQt.cpp:
+         (WebCore::RenderPathQt::strokeContains):
+         * kcanvas/device/qt/RenderPathQt.h:
 
+2006-08-30  Sam Weinig  <sam.weinig@gmail.com>
         Reviewed by Tim H.
 
         - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10640
