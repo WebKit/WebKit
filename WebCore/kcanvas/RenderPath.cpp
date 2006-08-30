@@ -78,12 +78,12 @@ FloatPoint RenderPath::mapAbsolutePointToLocal(const FloatPoint& point) const
     return FloatPoint(localX, localY);
 }
 
-bool RenderPath::fillContains(const FloatPoint& point) const
+bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill) const
 {
     if (d->path.isEmpty())
         return false;
 
-    if (!KSVGPainterFactory::fillPaintServer(style(), this))
+    if (requiresFill && !KSVGPainterFactory::fillPaintServer(style(), this))
         return false;
 
     return path().contains(mapAbsolutePointToLocal(point),
@@ -303,8 +303,8 @@ bool RenderPath::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, H
         bool hasFill = (style()->svgStyle()->fillPaint() && style()->svgStyle()->fillPaint()->paintType() != SVG_PAINTTYPE_NONE);
         bool hasStroke = (style()->svgStyle()->strokePaint() && style()->svgStyle()->strokePaint()->paintType() != SVG_PAINTTYPE_NONE);
         FloatPoint hitPoint(_x,_y);
-        if ((hitRules.canHitStroke && (hasStroke || !hitRules.requireStroke) && strokeContains(hitPoint))
-            || (hitRules.canHitFill && (hasFill || !hitRules.requireFill) && fillContains(hitPoint))) {
+        if ((hitRules.canHitStroke && (hasStroke || !hitRules.requireStroke) && strokeContains(hitPoint, hitRules.requireStroke))
+            || (hitRules.canHitFill && (hasFill || !hitRules.requireFill) && fillContains(hitPoint, hitRules.requireFill))) {
             setInnerNode(info);
             return true;
         }

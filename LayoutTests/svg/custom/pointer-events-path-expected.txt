@@ -23,11 +23,64 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > sv
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -50,49 +103,6 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > sv
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
@@ -116,12 +126,11 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -129,12 +138,11 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -142,38 +150,9 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -183,12 +162,59 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > text > svg > #document to 0 of text > svg > #document toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -303,18 +329,18 @@ layer at (0,0) size 800x600
             text run at (0,0) width 62: "visibleFill"
         KCanvasItem {rect} at (100,157) size 50x50 [data="M100.00,157.00L150.00,157.00L150.00,207.00L100.00,207.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (154,154) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,157.00L207.00,157.00L207.00,207.00L157.00,207.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (214,157) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,157.00L264.00,157.00L264.00,207.00L214.00,207.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18
@@ -362,11 +388,11 @@ layer at (0,0) size 800x600
             text run at (0,0) width 82: "visibleStroke"
         KCanvasItem {rect} at (100,214) size 50x50 [data="M100.00,214.00L150.00,214.00L150.00,264.00L100.00,264.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (154,211) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,214.00L207.00,214.00L207.00,264.00L157.00,264.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18
@@ -376,11 +402,11 @@ layer at (0,0) size 800x600
             text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (214,214) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,214.00L264.00,214.00L264.00,264.00L214.00,264.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (268,211) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,214.00L321.00,214.00L321.00,264.00L271.00,264.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18
@@ -421,11 +447,11 @@ layer at (0,0) size 800x600
             text run at (0,0) width 41: "visible"
         KCanvasItem {rect} at (100,271) size 50x50 [data="M100.00,271.00L150.00,271.00L150.00,321.00L100.00,321.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (154,268) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,271.00L207.00,271.00L207.00,321.00L157.00,321.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18
@@ -539,18 +565,18 @@ layer at (0,0) size 800x600
             text run at (0,0) width 17: "fill"
         KCanvasItem {rect} at (100,385) size 50x50 [data="M100.00,385.00L150.00,385.00L150.00,435.00L100.00,435.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (154,382) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,385.00L207.00,385.00L207.00,435.00L157.00,435.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (214,385) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,385.00L264.00,385.00L264.00,435.00L214.00,435.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18
@@ -567,18 +593,18 @@ layer at (0,0) size 800x600
             text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (328,385) size 50x50 [data="M328.00,385.00L378.00,385.00L378.00,435.00L328.00,435.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (382,382) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,385.00L435.00,385.00L435.00,435.00L385.00,435.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (442,385) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,385.00L492.00,385.00L492.00,435.00L442.00,435.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18
@@ -598,11 +624,11 @@ layer at (0,0) size 800x600
             text run at (0,0) width 38: "stroke"
         KCanvasItem {rect} at (100,442) size 50x50 [data="M100.00,442.00L150.00,442.00L150.00,492.00L100.00,492.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (154,439) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,442.00L207.00,442.00L207.00,492.00L157.00,492.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18
@@ -612,11 +638,11 @@ layer at (0,0) size 800x600
             text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (214,442) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,442.00L264.00,442.00L264.00,492.00L214.00,492.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (268,439) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,442.00L321.00,442.00L321.00,492.00L271.00,492.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18
@@ -626,11 +652,11 @@ layer at (0,0) size 800x600
             text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (328,442) size 50x50 [data="M328.00,442.00L378.00,442.00L378.00,492.00L328.00,492.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (382,439) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,442.00L435.00,442.00L435.00,492.00L385.00,492.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18
@@ -640,11 +666,11 @@ layer at (0,0) size 800x600
             text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (442,442) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,442.00L492.00,442.00L492.00,492.00L442.00,492.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (496,439) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,442.00L549.00,442.00L549.00,492.00L499.00,492.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18
@@ -657,11 +683,11 @@ layer at (0,0) size 800x600
             text run at (0,0) width 15: "all"
         KCanvasItem {rect} at (100,499) size 50x50 [data="M100.00,499.00L150.00,499.00L150.00,549.00L100.00,549.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (154,496) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,499.00L207.00,499.00L207.00,549.00L157.00,549.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18
@@ -685,11 +711,11 @@ layer at (0,0) size 800x600
             text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (328,499) size 50x50 [data="M328.00,499.00L378.00,499.00L378.00,549.00L328.00,549.00"]
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {#text} at (0,0) size 28x18
-            text run at (0,0) width 28: "miss"
+          RenderText {#text} at (0,0) size 27x18
+            text run at (0,0) width 27: "HIT"
         KCanvasItem {rect} at (382,496) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,499.00L435.00,499.00L435.00,549.00L385.00,549.00"]
         RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 27x18

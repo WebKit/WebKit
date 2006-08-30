@@ -1,3 +1,21 @@
+2006-08-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10586
+        pointer-events has issues when things are not stroked/filled
+
+        Add a param to fillContains/strokeContains to indicate
+        whether we still want hit testing when there is no fill/stroke.
+
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::fillContains):
+        (WebCore::RenderPath::nodeAtPoint):
+        * kcanvas/RenderPath.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (WebCore::KCanvasItemQuartz::strokeContains):
+
 2006-08-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
