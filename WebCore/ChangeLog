@@ -1,3 +1,24 @@
+2006-08-30  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4708007> REGRESSION: text field inside a webpage no longer has settable AXValueAttribute
+        <rdar://problem/4707479> REGRESSION: controls inside a webpage no longer have settable AXFocusedAttribute
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject canSetFocusAttribute]):
+        (-[WebCoreAXObject canSetValueAttribute]):
+        New utility methods.  Text fields and buttons are focusable.
+        Text fields can have their value set. We need not make
+        popupbutton value settable because AppKit does not.
+        
+        (-[WebCoreAXObject accessibilityIsAttributeSettable:]):
+        Call new utility methods.
+        
+        (-[WebCoreAXObject accessibilitySetValue:forAttribute:]):
+        Set focus for text field or button.
+        Set value for text field.
+        
 2006-08-30  David Hyatt  <hyatt@apple.com>
 
         Fix for bugs 9000 and 10606.  Add code to suppress painting when

@@ -2051,21 +2051,6 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     return obj;
 }
 
-- (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
-{
-    if ([attributeName isEqualToString: @"AXSelectedTextMarkerRangeAttribute"])
-        return YES;
-    if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
-        if ([[self role] isEqualToString:@"AXLink"] ||
-            (([[self role] isEqualToString:NSAccessibilityCheckBoxRole] ||
-             ([[self role] isEqualToString:NSAccessibilityRadioButtonRole])) &&
-              m_renderer->element()->isEnabled()))
-            return YES;
-    }
-
-    return NO;
-}
-
 - (void)doSetAXSelectedTextMarkerRange: (WebCoreTextMarkerRange*)textMarkerRange
 {
     // extract the start and end VisiblePosition
@@ -2083,10 +2068,54 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     [self topDocument]->frame()->setSelection(sel);
 }
 
-- (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName;
+- (BOOL)canSetFocusAttribute
+{
+    // NOTE: It would be more accurate to ask the document whether setFocusNode() would 
+    // do anything.  For example, it setFocusNode() will do nothing if the current focused
+    // node will not relinquish the focus.
+    if (!m_renderer->element() || !m_renderer->element()->isEnabled())
+        return NO;
+        
+    NSString* role = [self role];
+    if ([role isEqualToString:@"AXLink"] ||
+        [role isEqualToString:NSAccessibilityTextFieldRole] ||
+        [role isEqualToString:NSAccessibilityButtonRole] ||
+        [role isEqualToString:NSAccessibilityPopUpButtonRole] ||
+        [role isEqualToString:NSAccessibilityCheckBoxRole] ||
+        [role isEqualToString:NSAccessibilityRadioButtonRole])
+        return YES;
+
+    return NO;
+}
+- (BOOL)canSetValueAttribute
+{
+    if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
+        return input->isTextField();
+    }
+    
+    return NO;
+}
+
+- (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
+{
+    if ([attributeName isEqualToString: @"AXSelectedTextMarkerRangeAttribute"])
+        return YES;
+        
+    if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute])
+        return [self canSetFocusAttribute];
+
+    if ([attributeName isEqualToString: NSAccessibilityValueAttribute])
+        return [self canSetValueAttribute];
+
+    return NO;
+}
+
+- (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
 {
     WebCoreTextMarkerRange* textMarkerRange = nil;
     NSNumber*               number = nil;
+    NSString*               string = nil;
 
     // decode the parameter
     if ([[WebCoreViewFactory sharedFactory] objectIsTextMarkerRange:value])
@@ -2094,6 +2123,9 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 
     else if ([value isKindOfClass:[NSNumber self]])
         number = value;
+
+    else if ([value isKindOfClass:[NSString self]])
+        string = value;
     
     // handle the command
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"]) {
@@ -2102,14 +2134,17 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
         
     } else if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
         ASSERT(number);
-        if ([[self role] isEqualToString:@"AXLink"] ||
-            (([[self role] isEqualToString:NSAccessibilityCheckBoxRole] ||
-             ([[self role] isEqualToString:NSAccessibilityRadioButtonRole])) &&
-             m_renderer->element()->isEnabled())) {
+        if ([self canSetFocusAttribute] && number) {
             if ([number intValue] != 0)
                 m_renderer->document()->setFocusNode(m_renderer->element());
             else
                 m_renderer->document()->setFocusNode(0);
+        }
+    } else if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
+        if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
+            HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
+            if (input->isTextField() && string)
+                input->setValue(string);
         }
     }
 }
