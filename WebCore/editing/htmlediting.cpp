@@ -347,10 +347,8 @@ int maxDeepOffset(const Node *node)
 
 void rebalanceWhitespaceInTextNode(Node *node, unsigned int start, unsigned int length)
 {
-    static RegularExpression nonRegularWhitespace("[\xa0\n]");
-    static DeprecatedString twoSpaces("  ");
+    static RegularExpression whitespace("[ \t\n]");
     static DeprecatedString nbsp("\xa0");
-    static DeprecatedString space(" ");
      
     ASSERT(node->isTextNode());
     Text *textNode = static_cast<Text *>(node);
@@ -359,25 +357,10 @@ void rebalanceWhitespaceInTextNode(Node *node, unsigned int start, unsigned int 
     
     DeprecatedString substring = text.substring(start, length).deprecatedString();
 
-    substring.replace(nonRegularWhitespace, space);
-    
-    // The sequence should alternate between spaces and nbsps, always ending in a regular space.
-    // Note: This pattern doesn't mimic TextEdit editing behavior on other clients that don't
-    // support our -webkit-nbsp-mode: space, but it comes close.
-    static DeprecatedString pattern("\xa0 ");
-    int end = length - 1; 
-    int i = substring.findRev(twoSpaces, end);
-    while (i >= 0) {
-        substring.replace(i , 2, pattern);
-        i = substring.findRev(twoSpaces, i);
-    }
-    
-    // Rendering will collapse any regular whitespace at the start or end of a line.  To prevent this, we use
-    // a nbsp at the start and end of a text node.  This is sometimes unnecessary,  E.G. <a>link</a> text
-    if (start == 0 && substring[0] == ' ')
-        substring.replace(0, 1, nbsp);
-    if (start + length == text.length() && substring[end] == ' ')
-        substring.replace(end, 1, nbsp);
+    // FIXME: We rebalance with all nbsps, for simplicity (we don't need crazy sequences while editing
+    // because all editable regions will have -webkit-nbsp-mode: space.  We should produce sequences of 
+    // regular spaces and nbsps that are better for interchange when we serialize (10636).
+    substring.replace(whitespace, nbsp);
     
     ExceptionCode ec = 0;
     textNode->deleteData(start, length, ec);

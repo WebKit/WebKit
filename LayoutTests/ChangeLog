@@ -1,3 +1,31 @@
+2006-08-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4700297>
+        REGRESSION: After replacing a misspelled word in a sentence, the selection extends to end of current line
+        
+        Fixed:
+        * editing/pasteboard/smart-paste-002-expected.checksum:
+        * editing/pasteboard/smart-paste-002-expected.png:
+        * editing/pasteboard/smart-paste-002-expected.txt:
+        Added to demonstrate fix:
+        * editing/pasteboard/4700297-expected.checksum: Added.
+        * editing/pasteboard/4700297-expected.png: Added.
+        * editing/pasteboard/4700297-expected.txt: Added.
+        * editing/pasteboard/4700297.html: Added.
+        Removed a superfluous style span:
+        * editing/deleting/pruning-after-merge-1-expected.txt:
+        * editing/pasteboard/interchange-newline-1-expected.txt:
+        * editing/pasteboard/paste-text-019-expected.checksum:
+        * editing/pasteboard/paste-text-019-expected.png:
+        * editing/pasteboard/paste-text-019-expected.txt:
+        * editing/selection/drag-to-contenteditable-iframe-expected.txt:
+        Accidently checked in bad results yesterday:
+        * editing/pasteboard/copy-paste-bidi-expected.txt:
+        Equivalent render tree:
+        * editing/pasteboard/smart-paste-001-expected.txt:
+
 2006-08-29  waylonis  <waylonis@google.com>
 
         Reviewed by ggaren.

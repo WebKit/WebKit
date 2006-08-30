@@ -1,3 +1,19 @@
+2006-08-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4700297>
+        REGRESSION: After replacing a misspelled word in a sentence, the selection extends to end of current line
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Rebalance whitespace
+        around insertionPos before insertion because the content might 
+        cause a collapse, e.g. inserting <div>foo</div> at hello^ world.
+        * editing/htmlediting.cpp:
+        (WebCore::rebalanceWhitespaceInTextNode): Rebalance with all nbsps
+        for simplicity, we can produce sequences of regular spaces and
+        nbsps on serialization (10636).
+
 2006-08-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.

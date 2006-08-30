@@ -482,6 +482,13 @@ void ReplaceSelectionCommand::doApply()
         insertionPos = endingSelection().start();
     }
     
+    // Inserting content could cause whitespace to collapse, e.g. inserting <div>foo</div> into hello^ world.
+    // We remove unrendered spaces and rebalance the rendered ones (turn them into nbsps) around insertionPos to prevent that.
+    Position upstreamInsertionPos = insertionPos.upstream();
+    deleteInsignificantText(insertionPos.upstream(), insertionPos.downstream());
+    insertionPos = upstreamInsertionPos.downstream();
+    rebalanceWhitespaceAt(insertionPos);
+    
     // NOTE: This would be an incorrect usage of downstream() if downstream() were changed to mean the last position after 
     // p that maps to the same visible position as p (since in the case where a br is at the end of a block and collapsed 
     // away, there are positions after the br which map to the same visible position as [br, 0]).  
@@ -574,7 +581,7 @@ void ReplaceSelectionCommand::doApply()
         moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
         m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().downstream().node();
         if (!m_lastNodeInserted->inDocument())
-            m_lastNodeInserted = endingSelection().visibleEnd().deepEquivalent().downstream().node();
+            m_lastNodeInserted = endingSelection().visibleEnd().deepEquivalent().upstream().node();
     }
             
     endOfInsertedContent = VisiblePosition(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
