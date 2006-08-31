@@ -1,3 +1,11 @@
+2006-08-31 Dave Hyatt <hyatt@apple.com>
+
+        Make ScrollBar.cpp suitable for compiling on Windows by removing the #import.
+
+        Reviewed by adam
+
+        * platform/ScrollBar.cpp:
+
 2006-08-31  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John
