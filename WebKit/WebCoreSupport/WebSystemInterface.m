@@ -62,9 +62,11 @@ void InitWebCoreSystemInterface(void)
     INIT(PathFromFont);
     INIT(PopupMenu);
     INIT(ReleaseStyleGroup);
+    INIT(SecureEventInput);
     INIT(SetCGFontRenderingMode);
     INIT(SetDragImage);
     INIT(SetPatternPhaseInUserSpace);
+    INIT(SetSecureEventInput);
     INIT(SetUpFontCache);
     INIT(SignalCFReadStreamEnd);
     INIT(SignalCFReadStreamHasBytes);

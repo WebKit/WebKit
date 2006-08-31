@@ -47,6 +47,7 @@
 #import "HTMLFormElement.h"
 #import "HTMLFrameElement.h"
 #import "HTMLGenericFormElement.h"
+#import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "HTMLTableCellElement.h"
 #import "WebCoreEditCommand.h"
@@ -74,6 +75,7 @@
 #import "htmlediting.h"
 #import "kjs_window.h"
 #import "visible_units.h"
+#import "WebCoreSystemInterface.h"
 #import <JavaScriptCore/NP_jsobject.h>
 #import <JavaScriptCore/npruntime_impl.h>
 
@@ -3335,6 +3337,16 @@ bool FrameMac::inputManagerHasMarkedText() const
     return [[NSInputManager currentInputManager] hasMarkedText];
     END_BLOCK_OBJC_EXCEPTIONS
     return false;
+}
+
+void FrameMac::setSecureKeyboardEntry(bool enable)
+{
+    wkSetSecureEventInput(enable);
+}
+
+bool FrameMac::secureKeyboardEntry()
+{
+    return wkSecureEventInput();
 }
 
 static DeprecatedValueList<MarkedTextUnderline> convertAttributesToUnderlines(const Range *markedTextRange, NSArray *attributes, NSArray *ranges)

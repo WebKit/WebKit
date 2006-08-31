@@ -212,15 +212,21 @@ void HTMLInputElement::aboutToUnload()
 
 void HTMLInputElement::dispatchFocusEvent()
 {
-    if (isNonWidgetTextField())
+    if (isNonWidgetTextField()) {
         setAutofilled(false);
+        if (inputType() == PASSWORD && document()->frame())
+            document()->frame()->setSecureKeyboardEntry(true);
+    }
     HTMLGenericFormElement::dispatchFocusEvent();
 }
 
 void HTMLInputElement::dispatchBlurEvent()
 {
-    if (isNonWidgetTextField() && document()->frame())
+    if (isNonWidgetTextField() && document()->frame()) {
+        if (inputType() == PASSWORD)
+            document()->frame()->setSecureKeyboardEntry(false);
         document()->frame()->textFieldDidEndEditing(static_cast<Element*>(this));
+    }
     HTMLGenericFormElement::dispatchBlurEvent();
 }
 

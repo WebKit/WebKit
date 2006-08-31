@@ -49,9 +49,11 @@ OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
 NSString* (*wkPathFromFont)(NSFont*);
 void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
 void (*wkReleaseStyleGroup)(void* group);
+BOOL (*wkSecureEventInput)(void);
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);
 void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
+void (*wkSetSecureEventInput)(BOOL);
 void (*wkSetUpFontCache)(size_t);
 void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
 void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
@@ -67,3 +69,4 @@ CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRe
     void *context);
 void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 id (*wkCreateNSURLConnectionDelegateProxy)(void);
+

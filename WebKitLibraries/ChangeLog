@@ -1,3 +1,13 @@
+2006-08-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Updated for http://bugzilla.opendarwin.org/show_bug.cgi?id=10575
+        Enable secure input mode for new password fields
+
+        * WebKitSystemInterface.h: Added WKSetSecureEventInput and WKSecureEventInput;
+        * libWebKitSystemInterface.a:
+
 2006-07-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

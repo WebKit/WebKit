@@ -1,3 +1,26 @@
+2006-08-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        WebCore part of fix for  http://bugzilla.opendarwin.org/show_bug.cgi?id=10575
+        Enable secure input mode for new password fields
+
+        * WebCore.exp: Added wkSetSecureEventInput and wkSecureEventInput.
+        * platform/mac/WebCoreSystemInterface.h: ditto.
+        * platform/mac/WebCoreSystemInterface.mm: ditto.
+
+        * page/Frame.cpp: (WebCore::Frame::setIsActive): Enables and disables secure keyboard entry based on whether the frame becomes active.
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::setSecureKeyboardEntry): Added. Calls wkSetSecureEventInput.
+        (WebCore::FrameMac::secureKeyboardEntry): Added. Calls wkSecureEventInput.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::dispatchFocusEvent): For password fields, enable secure keyboard entry.
+        (WebCore::HTMLInputElement::dispatchBlurEvent): For password fields, disable secure keyboard entry.
+        * page/Frame.h:
+        (WebCore::Frame::setSecureKeyboardEntry):
+        (WebCore::Frame::secureKeyboardEntry):
+
 2006-08-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

@@ -154,10 +154,12 @@ _wkInitializeGlyphVector
 _wkPathFromFont
 _wkPopupMenu
 _wkReleaseStyleGroup
+_wkSecureEventInput
 _wkSetCGFontRenderingMode
 _wkSetDragImage
 _wkSetNSURLConnectionDefersCallbacks
 _wkSetPatternPhaseInUserSpace
+_wkSetSecureEventInput
 _wkSetUpFontCache
 _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError

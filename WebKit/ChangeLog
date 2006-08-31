@@ -1,3 +1,12 @@
+2006-08-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        WebKit part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10575
+        Enable secure input mode for new password fields
+
+        * WebCoreSupport/WebSystemInterface.m: (InitWebCoreSystemInterface):
+
 2006-08-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John
