@@ -397,37 +397,38 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 - (BOOL)_loadHistoryGutsFromURL:(NSURL *)URL savedItemsCount:(int *)numberOfItemsLoaded collectDiscardedItemsInto:(NSMutableArray *)discardedItems error:(NSError **)error
 {
     *numberOfItemsLoaded = 0;
-
-    NSData *data = [NSURLConnection sendSynchronousRequest:[NSURLRequest requestWithURL:URL] returningResponse:nil error:error];
-    id propertyList = nil;
-    if (data && [data length] > 0) {
-        propertyList = [NSPropertyListSerialization propertyListFromData:data
-                                                        mutabilityOption:NSPropertyListImmutable
-                                                                  format:nil
-                                                        errorDescription:nil];
-    }
-
-    // propertyList might be an old-style NSArray or a more modern NSDictionary.
-    // If it's an NSArray, convert it to new format before further processing.
-    NSDictionary *fileAsDictionary = nil;
-    if ([propertyList isKindOfClass:[NSDictionary class]]) {
-        fileAsDictionary = propertyList;
-    } else if ([propertyList isKindOfClass:[NSArray class]]) {
-        // Convert old-style array into new-style dictionary
-        fileAsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-            propertyList, DatesArrayKey,
-            [NSNumber numberWithInt:1], FileVersionKey,
-            nil];
-    } else {
-        if ([URL isFileURL] && [[NSFileManager defaultManager] fileExistsAtPath: [URL path]]) {
-            LOG_ERROR("unable to read history from file %@; perhaps contents are corrupted", [URL path]);
+    NSDictionary *dictionary = nil;
+    
+    // Optimize loading from local file, which is faster than using the general URL loading mechanism
+    if ([URL isFileURL]) {
+        dictionary = [NSDictionary dictionaryWithContentsOfFile:[URL path]];
+        if (!dictionary) {
+#if !LOG_DISABLED
+            if ([[NSFileManager defaultManager] fileExistsAtPath:[URL path]])
+                LOG_ERROR("unable to read history from file %@; perhaps contents are corrupted", [URL path]);
+#endif
+            // else file doesn't exist, which is normal the first time
+            return NO;
         }
-        return NO;
+    } else {
+        NSData *data = [NSURLConnection sendSynchronousRequest:[NSURLRequest requestWithURL:URL] returningResponse:nil error:error];
+        if (data && [data length] > 0) {
+            dictionary = [NSPropertyListSerialization propertyListFromData:data
+                mutabilityOption:NSPropertyListImmutable
+                format:nil
+                errorDescription:nil];
+        }
     }
+    
 
-    NSNumber *fileVersionObject = [fileAsDictionary objectForKey:FileVersionKey];
+    // We used to support NSArrays here, but that was before Safari 1.0 shipped. We will no longer support
+    // that ancient format, so anything that isn't an NSDictionary is bogus.
+    if (![dictionary isKindOfClass:[NSDictionary class]])
+        return NO;
+
+    NSNumber *fileVersionObject = [dictionary objectForKey:FileVersionKey];
     int fileVersion;
-    // we don't trust data read from disk, so double-check
+    // we don't trust data obtained from elsewhere, so double-check
     if (fileVersionObject != nil && [fileVersionObject isKindOfClass:[NSNumber class]]) {
         fileVersion = [fileVersionObject intValue];
     } else {
@@ -439,7 +440,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
         return NO;
     }    
 
-    NSArray *array = [fileAsDictionary objectForKey:DatesArrayKey];
+    NSArray *array = [dictionary objectForKey:DatesArrayKey];
         
     int itemCountLimit = [self historyItemLimit];
     NSCalendarDate *ageLimitDate = [self _ageLimitDate];
