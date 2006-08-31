@@ -24,7 +24,7 @@ module html {
 
         readonly attribute long            rowIndex;
         readonly attribute long            sectionRowIndex;
-        readonly attribute [UsesPassRefPtr] HTMLCollection  cells;
+        readonly attribute HTMLCollection  cells;
                  attribute DOMString       align;
                  attribute DOMString       bgColor;
                  attribute DOMString       ch;

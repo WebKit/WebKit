@@ -31,8 +31,8 @@ module html {
                  attribute HTMLTableSectionElement tFoot
                      /*setter raises (DOMException)*/;
 
-        readonly attribute [UsesPassRefPtr] HTMLCollection rows;
-        readonly attribute [UsesPassRefPtr] HTMLCollection tBodies;
+        readonly attribute HTMLCollection rows;
+        readonly attribute HTMLCollection tBodies;
                  attribute DOMString align;
                  attribute DOMString bgColor;
                  attribute DOMString border;

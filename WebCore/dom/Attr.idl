@@ -35,7 +35,7 @@ module core {
         
         // extensions
 
-        readonly attribute [ObjCCatagory=DOMAttrExtensions] CSSStyleDeclaration style;
+        readonly attribute CSSStyleDeclaration style;
     };
 
 }

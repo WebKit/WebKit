@@ -35,15 +35,15 @@ module core {
         void removeAttribute(in DOMString name)
             raises(DOMException);
 
-        [UsesPassRefPtr] Attr getAttributeNode(in DOMString name);
+        Attr getAttributeNode(in DOMString name);
 
-        [UsesPassRefPtr] Attr setAttributeNode(in Attr newAttr)
+        Attr setAttributeNode(in Attr newAttr)
             raises(DOMException);
 
-        [UsesPassRefPtr] Attr removeAttributeNode(in Attr oldAttr)
+        Attr removeAttributeNode(in Attr oldAttr)
             raises(DOMException);
 
-        [UsesPassRefPtr] NodeList getElementsByTagName(in DOMString name);
+        NodeList getElementsByTagName(in DOMString name);
 
         // DOM Level 2 Core
 
@@ -59,13 +59,13 @@ module core {
                                in DOMString localName)
             raises(DOMException);
 
-        [UsesPassRefPtr] NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
+        NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                          in DOMString localName);
 
-        [UsesPassRefPtr] Attr getAttributeNodeNS(in [ConvertNullToNullString] DOMString namespaceURI,
+        Attr getAttributeNodeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                  in DOMString localName);
 
-        [UsesPassRefPtr] Attr setAttributeNodeNS(in Attr newAttr)
+        Attr setAttributeNodeNS(in Attr newAttr)
             raises(DOMException);
 
         boolean hasAttribute(in DOMString name);
@@ -73,37 +73,37 @@ module core {
         boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                in DOMString localName);
 
-        readonly attribute [ObjCCatagory=DOMElementCSSInlineStyle] CSSStyleDeclaration style;
+        readonly attribute CSSStyleDeclaration style;
 
         // Common extensions
 
-        readonly attribute [ObjCCatagory=DOMElementExtensions] long offsetLeft;
+        readonly attribute long offsetLeft;
 
-        readonly attribute [ObjCCatagory=DOMElementExtensions] long offsetTop;
+        readonly attribute long offsetTop;
 
-        readonly attribute [ObjCCatagory=DOMElementExtensions] long offsetWidth;
+        readonly attribute long offsetWidth;
 
-        readonly attribute [ObjCCatagory=DOMElementExtensions] long offsetHeight;
+        readonly attribute long offsetHeight;
 
-        readonly attribute [ObjCCatagory=DOMElementExtensions] Element offsetParent;
+        readonly attribute Element offsetParent;
 
-        readonly attribute [ObjCCatagory=DOMElementExtensions] long clientWidth;
+        readonly attribute long clientWidth;
 
-        readonly attribute [ObjCCatagory=DOMElementExtensions] long clientHeight;
+        readonly attribute long clientHeight;
 
-        attribute [ObjCCatagory=DOMElementExtensions] long scrollLeft;
+        attribute long scrollLeft;
 
-        attribute [ObjCCatagory=DOMElementExtensions] long scrollTop;
+        attribute long scrollTop;
 
-        readonly attribute [ObjCCatagory=DOMElementExtensions] long scrollWidth;
+        readonly attribute long scrollWidth;
 
-        readonly attribute [ObjCCatagory=DOMElementExtensions] long scrollHeight;
+        readonly attribute long scrollHeight;
 
         void focus();
 
         void blur();
 
-        [ObjCCatagory=DOMElementExtensions] void scrollIntoView(in [Optional] boolean alignWithTop);
+        void scrollIntoView(in [Optional] boolean alignWithTop);
 
         // IE extensions
 
@@ -115,7 +115,7 @@ module core {
 
         // WebKit extensions
 
-        [ObjCCatagory=DOMElementExtensions] void scrollIntoViewIfNeeded(in [Optional] boolean centerIfNeeded);
+        void scrollIntoViewIfNeeded(in [Optional] boolean centerIfNeeded);
 
         [Exclude=ObjC] void scrollByLines(in long lines);
 

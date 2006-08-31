@@ -30,21 +30,21 @@ module html {
 
         // extensions
 
-        attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString innerHTML
+        attribute [Exclude=JS] DOMString innerHTML
             setter raises (DOMException);
-        attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString innerText
+        attribute [Exclude=JS] DOMString innerText
             setter raises (DOMException);
-        attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString outerHTML
+        attribute [Exclude=JS] DOMString outerHTML
             setter raises (DOMException);
-        attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString outerText
+        attribute [Exclude=JS] DOMString outerText
             setter raises (DOMException);
 
-        readonly attribute [UsesPassRefPtr, ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] HTMLCollection children;
+        readonly attribute [Exclude=JS] HTMLCollection children;
 
-        attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString contentEditable;
-        readonly attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] boolean isContentEditable;
+        attribute [Exclude=JS] DOMString contentEditable;
+        readonly attribute [Exclude=JS] boolean isContentEditable;
 
-        readonly attribute [ObjCCatagory=DOMHTMLElementExtensions, Exclude=JS] DOMString titleDisplayString;
+        readonly attribute [Exclude=JS] DOMString titleDisplayString;
 
     };
 

@@ -21,30 +21,30 @@ module core {
 
     interface NamedNodeMap {
 
-        [UsesPassRefPtr] Node getNamedItem(in DOMString name);
+        Node getNamedItem(in DOMString name);
 
-        [UsesPassRefPtr] Node setNamedItem(in Node arg)
+        Node setNamedItem(in Node arg)
             raises(DOMException);
 
-        [UsesPassRefPtr] Node removeNamedItem(in DOMString name)
+        Node removeNamedItem(in DOMString name)
             raises(DOMException);
 
-        [UsesPassRefPtr] Node item(in unsigned long index);
+        Node item(in unsigned long index);
         
         readonly attribute unsigned long length;
 
 
         // Introduced in DOM Level 2:
 
-        [UsesPassRefPtr] Node getNamedItemNS(in DOMString namespaceURI, 
+        Node getNamedItemNS(in DOMString namespaceURI, 
                                              in DOMString localName)
             // FIXME: the implementation does take an exceptioncode parameter.
             /*raises(DOMException)*/;
 
-        [UsesPassRefPtr] Node setNamedItemNS(in Node arg)
+        Node setNamedItemNS(in Node arg)
             raises(DOMException);
 
-        [UsesPassRefPtr] Node removeNamedItemNS(in DOMString namespaceURI, 
+        Node removeNamedItemNS(in DOMString namespaceURI, 
                                                 in DOMString localName)
             raises(DOMException);
 

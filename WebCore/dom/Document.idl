@@ -30,57 +30,57 @@ module core {
         
         readonly attribute Element documentElement;
         
-        [UsesPassRefPtr] Element createElement(in DOMString tagName)
+        Element createElement(in DOMString tagName)
             raises (DOMException);
         
-        [UsesPassRefPtr] DocumentFragment createDocumentFragment();
+        DocumentFragment createDocumentFragment();
         
-        [UsesPassRefPtr] Text createTextNode(in DOMString data);
+        Text createTextNode(in DOMString data);
         
-        [UsesPassRefPtr] Comment createComment(in DOMString data);
+        Comment createComment(in DOMString data);
         
-        [UsesPassRefPtr] CDATASection createCDATASection(in DOMString data)
+        CDATASection createCDATASection(in DOMString data)
             raises(DOMException);
         
-        [UsesPassRefPtr] ProcessingInstruction createProcessingInstruction(in DOMString target, 
+        ProcessingInstruction createProcessingInstruction(in DOMString target, 
                                                                            in DOMString data)
             raises (DOMException);
         
-        [UsesPassRefPtr] Attr createAttribute(in DOMString name)
+        Attr createAttribute(in DOMString name)
             raises (DOMException);
         
-        [UsesPassRefPtr] EntityReference createEntityReference(in DOMString name)
+        EntityReference createEntityReference(in DOMString name)
             raises(DOMException);
         
-        [UsesPassRefPtr] NodeList getElementsByTagName(in DOMString tagname);
+        NodeList getElementsByTagName(in DOMString tagname);
         
         // DOM Level 2 Core
         
-        [UsesPassRefPtr] Node importNode(in Node importedNode,
+        Node importNode(in Node importedNode,
                                          in boolean deep)
             raises (DOMException);
         
-        [UsesPassRefPtr] Element createElementNS(in DOMString namespaceURI,
+        Element createElementNS(in DOMString namespaceURI,
                                                  in DOMString qualifiedName)
             raises (DOMException);
         
-        [UsesPassRefPtr] Attr createAttributeNS(in DOMString namespaceURI,
+        Attr createAttributeNS(in DOMString namespaceURI,
                                                 in DOMString qualifiedName)
             raises (DOMException);
         
-        [UsesPassRefPtr] NodeList getElementsByTagNameNS(in DOMString namespaceURI,
+        NodeList getElementsByTagNameNS(in DOMString namespaceURI,
                                                          in DOMString localName);
         
         Element getElementById(in DOMString elementId);
 
         // DOM Level 2 Events (DocumentEvents interface)
 
-        [ObjCCatagory=DOMDocumentEvent, UsesPassRefPtr] Event createEvent(in DOMString eventType)
+        Event createEvent(in DOMString eventType)
             raises(DOMException);
 
         // DOM Level 2 Tranversal and Range (DocumentRange interface)
 
-        [ObjCCatagory=DOMDocumentRange, UsesPassRefPtr] Range createRange();
+        Range createRange();
 
         // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
 
@@ -98,37 +98,37 @@ module core {
 
         // DOM Level 2 Abstract Views (DocumentView interface)
 
-        readonly attribute [ObjCCatagory=DOMDocumentView] DOMWindow defaultView;
+        readonly attribute DOMWindow defaultView;
 
         // DOM Level 2 Style (DocumentStyle interface)
 
-        readonly attribute [ObjCCatagory=DOMDocumentStyle] StyleSheetList styleSheets;
+        readonly attribute StyleSheetList styleSheets;
 
         // DOM Level 2 Style (DocumentCSS interface)
 
-        [ObjCCatagory=DOMDocumentCSS] CSSStyleDeclaration getOverrideStyle(in Element elt, 
-                                                                           in DOMString pseudoElt);
+        CSSStyleDeclaration getOverrideStyle(in Element elt, 
+                                             in DOMString pseudoElt);
 
         // DOM Level 3 Core
 
         readonly attribute [ConvertNullStringTo=Null, Exclude=ObjC] DOMString inputEncoding;
         
-        [UsesPassRefPtr] Node adoptNode(in Node source)
+        Node adoptNode(in Node source)
             raises (DOMException);
 
 #ifdef XPATH_SUPPORT
         // DOM Level 3 XPath (XPathEvaluator interface)
-        [ObjCCatagory=DOMDocumentXPath, UsesPassRefPtr] XPathExpression createExpression(in DOMString expression,
-                                                                                         in XPathNSResolver resolver)
+        XPathExpression createExpression(in DOMString expression,
+                                         in XPathNSResolver resolver)
             raises(DOMException);
 
-        [ObjCCatagory=DOMDocumentXPath, UsesPassRefPtr] XPathNSResolver createNSResolver(in Node nodeResolver);
+        XPathNSResolver createNSResolver(in Node nodeResolver);
         
-        [ObjCCatagory=DOMDocumentXPath, UsesPassRefPtr] XPathResult evaluate(in DOMString expression,
-                                                                             in Node contextNode, 
-                                                                             in XPathNSResolver resolver,
-                                                                             in unsigned short type,
-                                                                             in XPathResult inResult)
+        XPathResult evaluate(in DOMString expression,
+                             in Node contextNode, 
+                             in XPathNSResolver resolver,
+                             in unsigned short type,
+                             in XPathResult inResult)
             raises(DOMException);
 #endif
 

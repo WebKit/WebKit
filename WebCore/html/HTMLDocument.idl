@@ -33,11 +33,11 @@ module html {
                  attribute [Exclude=JS] HTMLElement body
                      setter raises (DOMException);
                      
-        readonly attribute [UsesPassRefPtr, Exclude=JS] HTMLCollection images;
-        readonly attribute [UsesPassRefPtr, Exclude=JS] HTMLCollection applets;
-        readonly attribute [UsesPassRefPtr, Exclude=JS] HTMLCollection links;
-        readonly attribute [UsesPassRefPtr, Exclude=JS] HTMLCollection forms;
-        readonly attribute [UsesPassRefPtr, Exclude=JS] HTMLCollection anchors;
+        readonly attribute [Exclude=JS] HTMLCollection images;
+        readonly attribute [Exclude=JS] HTMLCollection applets;
+        readonly attribute [Exclude=JS] HTMLCollection links;
+        readonly attribute [Exclude=JS] HTMLCollection forms;
+        readonly attribute [Exclude=JS] HTMLCollection anchors;
         
         // FIXME: the DOM spec states that this attribute can 
         // raise an exception on setting.
@@ -48,7 +48,7 @@ module html {
         [Exclude=JS] void               close();
         [Exclude=JS] void               write(in DOMString text);
         [Exclude=JS] void               writeln(in DOMString text);
-        [UsesPassRefPtr, Exclude=JS] NodeList           getElementsByName(in DOMString elementName);
+        [Exclude=JS] NodeList           getElementsByName(in DOMString elementName);
 
         // non-standard
 

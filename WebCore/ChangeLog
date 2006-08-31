@@ -1,3 +1,35 @@
+2006-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - eliminated the need for UsesPassRefPtr in IDL files
+        - got rid of the category mechanism for ObjC generated DOM headers
+          (after discussions with Tim H where we decided it's not needed)
+        - simplified use of macro inside ObjC generated code
+
+        * ForwardingHeaders/wtf/GetPtr.h: Added.
+
+        * bindings/scripts/CodeGeneratorObjC.pm: Removed code to handle
+        categories. Eliminated use of DOM_cast since that's for the protection
+        of human programmers -- the script won't make mistakes that it needs
+        to catch. Changed macro to always be named IMPL instead of incorporating
+        the class name. Use WTF::getPtr to extract the pointer, and removed the
+        code that uses .get() to extract the pointer in the PassRefPtr case.
+
+        * dom/Attr.idl: Removed all uses of UsesPassRefPtr and ObjCCatagory.
+        * dom/DOMImplementation.idl: Ditto.
+        * dom/Document.idl: Ditto.
+        * dom/Element.idl: Ditto.
+        * dom/NamedNodeMap.idl: Ditto.
+        * html/HTMLDocument.idl: Ditto.
+        * html/HTMLElement.idl: Ditto.
+        * html/HTMLFormElement.idl: Ditto.
+        * html/HTMLMapElement.idl: Ditto.
+        * html/HTMLSelectElement.idl: Ditto.
+        * html/HTMLTableElement.idl: Ditto.
+        * html/HTMLTableRowElement.idl: Ditto.
+        * html/HTMLTableSectionElement.idl: Ditto.
+
 2006-08-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John

@@ -36,7 +36,7 @@ module html {
         readonly attribute HTMLFormElement form;
 
         // Modified in DOM Level 2:
-        readonly attribute [UsesPassRefPtr] HTMLOptionsCollection options;
+        readonly attribute HTMLOptionsCollection options;
 
                  attribute boolean         disabled;
                  attribute boolean         multiple;

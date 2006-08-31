@@ -29,24 +29,24 @@ module core {
 
         // DOM Level 2
 
-        [UsesPassRefPtr] DocumentType createDocumentType(in DOMString qualifiedName,
+        DocumentType createDocumentType(in DOMString qualifiedName,
                                                          in DOMString publicId,
                                                          in DOMString systemId)
             raises(DOMException);
-        [UsesPassRefPtr] Document createDocument(in [ConvertNullToNullString] DOMString namespaceURI, 
+        Document createDocument(in [ConvertNullToNullString] DOMString namespaceURI, 
                                                  in [ConvertNullToNullString] DOMString qualifiedName, 
                                                  in [ConvertNullToNullString] DocumentType doctype)
             raises(DOMException);
 
         // DOMImplementationCSS interface from DOM Level 2 CSS
 
-        [ObjCCatagory=DOMImplementationCSS, UsesPassRefPtr] CSSStyleSheet createCSSStyleSheet(in DOMString title,
+        CSSStyleSheet createCSSStyleSheet(in DOMString title,
                                                                                               in DOMString media)
             raises(DOMException);
 
         // HTMLDOMImplementation interface from DOM Level 2 HTML
 
-        [ObjCCatagory=DOMImplementationExtensions, UsesPassRefPtr] HTMLDocument createHTMLDocument(in DOMString title);
+        HTMLDocument createHTMLDocument(in DOMString title);
     };
 
 }

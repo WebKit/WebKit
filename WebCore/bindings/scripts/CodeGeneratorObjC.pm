@@ -1,13 +1,9 @@
 # 
-# KDOM IDL parser
-#
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com> 
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2006 Apple Computer, Inc.
 #
-# This file is part of the KDE project
-# 
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
 # License as published by the Free Software Foundation; either
@@ -191,7 +187,7 @@ sub GetClassName
         return $name;
     }
 
-    # Default, assume objective-c type has the same type name as
+    # Default, assume Objective-C type has the same type name as
     # idl type prefixed with "DOM".
     return "DOM" . $name;
 }
@@ -447,8 +443,6 @@ sub GenerateHeader
         push(@headerContent, "\n};\n");        
     }
     
-    my %hashOfCatagories = ();
-    
     # - Begin @interface 
     push(@headerContent, "\n\@interface $className : $parentClassName\n");
 
@@ -472,35 +466,22 @@ sub GenerateHeader
 
             my $attributeType = GetObjCType($attribute->signature->type);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
-            my $catagory = $attribute->signature->extendedAttributes->{"ObjCCatagory"};
 
             if ($ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5) {
                 my $property = "\@property" . ($attributeIsReadonly ? "(readonly)" : "") . " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . ";\n";
 
-                if ($catagory) {
-                    push(@{ $hashOfCatagories{$catagory} }, $property);
-                } else {
-                    push(@headerAttributes, $property);
-                }
+                push(@headerAttributes, $property);
             } else {
                 # - GETTER
                 my $getter = "- (" . $attributeType . ")" . $attributeName . ";\n";
 
-                if ($catagory) {
-                    push(@{ $hashOfCatagories{$catagory} }, $getter);
-                } else {
-                    push(@headerAttributes, $getter);
-                }
+                push(@headerAttributes, $getter);
 
                 # - SETTER
                 if (!$attributeIsReadonly) {
                     my $setter = "- (void)set" . ucfirst($attributeName) . ":(" . $attributeType . ")new" . ucfirst($attributeName) . ";\n";
                     
-                    if ($catagory) {
-                        push(@{ $hashOfCatagories{$catagory} }, $setter);
-                    } else {
-                        push(@headerAttributes, $setter);
-                    }
+                    push(@headerAttributes, $setter);
                 }
             }
         }
@@ -522,7 +503,6 @@ sub GenerateHeader
             my $functionName = $function->signature->name;
             my $returnType = GetObjCType($function->signature->type);
             my $numberOfParameters = @{$function->parameters};
-            my $catagory = $function->signature->extendedAttributes->{"ObjCCatagory"};
 
             my $output = "- ($returnType)$functionName";
             foreach my $param (@{$function->parameters}) {
@@ -536,11 +516,7 @@ sub GenerateHeader
             $output =~ s/\s+$//;
             $output .= ";\n";
     
-            if ($catagory) {
-                push(@{ $hashOfCatagories{$catagory} }, $output);
-            } else {
-                push(@headerFunctions, $output);
-            }
+            push(@headerFunctions, $output);
         }
 
         if (@headerFunctions > 0) {
@@ -551,24 +527,6 @@ sub GenerateHeader
 
     # - End @interface 
     push(@headerContent, "\@end\n");
-    
-    # Add additional Catagories (if any)
-    if (scalar(keys(%hashOfCatagories))) {
-        foreach(sort(keys(%hashOfCatagories))) {
-            my $catagory = $_;
-
-            # - Begin @interface 
-            push(@headerContent, "\n\@interface $className ($catagory)\n");
-            
-            foreach (@{ $hashOfCatagories{$catagory} }) {
-                my $declaration = $_;
-                push(@headerContent, $declaration);
-            }
-            
-            # - End @interface
-            push(@headerContent, "\@end\n");
-        }
-    }
 }
 
 sub GenerateImplementation
@@ -593,10 +551,10 @@ sub GenerateImplementation
     push(@implContentHeader, "#import \"$className.h\"\n\n");
 
     if ($hasFunctionsOrAttributes) {
-        # NEEDED for DOM_CAST
-        push(@implContentHeader, "#import \"DOMInternal.h\" // needed for DOM_cast<>\n");
+        push(@implContentHeader, "#import \"DOMInternal.h\"\n");
+        push(@implContentHeader, "#import <wtf/GetPtr.h>\n");
         
-        # include module dependant internal interfaces.
+        # include module-dependent internal interfaces.
         if ($module eq "html") {
             # HTML module internal interfaces
             push(@implContentHeader, "#import \"DOMHTMLInternal.h\"\n");
@@ -624,26 +582,23 @@ sub GenerateImplementation
     # START implementation
     push(@implContent, "\n\@implementation $className\n\n");
 
-    # ADD INTERNAL CASTING MACRO
-    my $implementation = "IMPL_" . uc($interfaceName);
-
     if ($hasFunctionsOrAttributes) {
         if ($parentImplClassName eq "Object") {
             # Only generate 'dealloc' and 'finalize' methods for direct subclasses of DOMObject.
 
-            push(@implContent, "#define $implementation DOM_cast<$implClassName *>(_internal)\n\n");
+            push(@implContent, "#define IMPL reinterpret_cast<$implClassName*>(_internal)\n\n");
 
             push(@implContent, "- (void)dealloc\n");
             push(@implContent, "{\n");
             push(@implContent, "    if (_internal)\n");
-            push(@implContent, "        $implementation->deref();\n");
+            push(@implContent, "        IMPL->deref();\n");
             push(@implContent, "    [super dealloc];\n");
             push(@implContent, "}\n\n");
 
             push(@implContent, "- (void)finalize\n");
             push(@implContent, "{\n");
             push(@implContent, "    if (_internal)\n");
-            push(@implContent, "        $implementation->deref();\n");
+            push(@implContent, "        IMPL->deref();\n");
             push(@implContent, "    [super finalize];\n");
             push(@implContent, "}\n\n");
         } else {
@@ -656,7 +611,7 @@ sub GenerateImplementation
                 $internalBaseType = "WebCore::Node"
             }
 
-            push(@implContent, "#define $implementation static_cast<$implClassName *>(DOM_cast<$internalBaseType *>(_internal))\n\n");
+            push(@implContent, "#define IMPL static_cast<$implClassName*>(reinterpret_cast<$internalBaseType*>(_internal))\n\n");
         }
     }
 
@@ -689,7 +644,7 @@ sub GenerateImplementation
                 die "We should not have any getter exceptions yet!";
             }
             
-            my $getterContentHead = "$implementation->$attributeName(";
+            my $getterContentHead = "IMPL->$attributeName(";
             my $getterContentTail = ")";
 
             my $attributeTypeSansPtr = $attributeType;
@@ -699,20 +654,16 @@ sub GenerateImplementation
             # Special cases
             if ($attributeTypeSansPtr eq "DOMImplementation") {
                 # FIXME: We have to special case DOMImplementation until DOMImplementationFront is removed
-                $getterContentHead = "[$attributeTypeSansPtr $typeMaker:implementationFront($implementation";
+                $getterContentHead = "[$attributeTypeSansPtr $typeMaker:implementationFront(IMPL";
                 $getterContentTail .= "]";
             } elsif ($attributeName =~ /(\w+)DisplayString$/) {
                 my $attributeToDisplay = $1;
-                $getterContentHead = "$implementation->$attributeToDisplay().replace(\'\\\\\', [self _element]->document()->backslashAsCurrencySymbol()";
+                $getterContentHead = "IMPL->$attributeToDisplay().replace(\'\\\\\', [self _element]->document()->backslashAsCurrencySymbol()";
                 $implIncludes{"Document.h"} = 1;
             } elsif ($typeMaker ne "") {
                 # Surround getter with TypeMaker
-                $getterContentHead = "[$attributeTypeSansPtr $typeMaker:" . $getterContentHead;
-                $getterContentTail .= "]";
-            }
-            
-            if ($attribute->signature->extendedAttributes->{"UsesPassRefPtr"}) {
-                $getterContentTail = ").get(" . $getterContentTail;
+                $getterContentHead = "[$attributeTypeSansPtr $typeMaker:WTF::getPtr(" . $getterContentHead;
+                $getterContentTail .= ")]";
             }
             
             my $getterContent;
@@ -762,10 +713,10 @@ sub GenerateImplementation
                     push(@implContent, "    ASSERT($argName);\n\n");
 
                     push(@implContent, "    $exceptionInit\n");
-                    push(@implContent, "    $implementation->$attributeName($argName, ec);\n");
+                    push(@implContent, "    IMPL->$attributeName($argName, ec);\n");
                     push(@implContent, "    $exceptionRaiseOnError\n");
                 } else {
-                    push(@implContent, "    $implementation->$attributeName($argName);\n");
+                    push(@implContent, "    IMPL->$attributeName($argName);\n");
                 }
 
                 push(@implContent, "}\n\n");
@@ -827,7 +778,7 @@ sub GenerateImplementation
 
             if ($returnType eq "void") {
                 # Special case 'void' return type.
-                my $functionContentHead = "$implementation->$functionName(";
+                my $functionContentHead = "IMPL->$functionName(";
                 my $functionContentTail = ");";
                 my $content = "";
 
@@ -854,7 +805,7 @@ sub GenerateImplementation
                     push(@functionContent, "    $content\n");
                 }
             } else {
-                my $functionContentHead = $implementation . "->" . $functionName . "(";
+                my $functionContentHead = "IMPL->" . $functionName . "(";
                 my $functionContentTail = ")";
 
                 my $typeMaker = GetObjCTypeMaker($function->signature->type);
@@ -870,12 +821,8 @@ sub GenerateImplementation
                     }
 
                     # Surround getter with TypeMaker
-                    $functionContentHead = "[$returnTypeClass $typeMaker:" . $functionContentHead;
-                    $functionContentTail .= "]";
-                }
-
-                if ($function->signature->extendedAttributes->{"UsesPassRefPtr"}) {
-                    $functionContentTail = ").get(" . $functionContentTail;
+                    $functionContentHead = "[$returnTypeClass $typeMaker:WTF::getPtr(" . $functionContentHead;
+                    $functionContentTail .= ")]";
                 }
 
                 my $content = "";
