@@ -570,6 +570,10 @@
 				RelativePath="..\..\wtf\RefPtr.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\wtf\StringExtras.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="PCRE"

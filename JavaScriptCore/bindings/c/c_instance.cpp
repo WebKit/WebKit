@@ -32,10 +32,7 @@
 #include "list.h"
 #include "npruntime_impl.h"
 #include <wtf/Vector.h>
-
-#if PLATFORM(WIN_OS)
-#define snprintf _snprintf
-#endif
+#include <wtf/StringExtras.h>
 
 namespace KJS {
 namespace Bindings {

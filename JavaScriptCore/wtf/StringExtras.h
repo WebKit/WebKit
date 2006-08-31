@@ -23,37 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <math.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 #if PLATFORM(WIN)
 
-#include <xmath.h>
+inline int snprintf(char *str, size_t size, const char* format, ...) 
+{
+    va_list args;
+    va_start(args, format);
+    return _vsnprintf(str, size, format, args);
+}
 
-#if HAVE(FLOAT_H)
-#include <float.h>
-#endif
-
-inline bool isinf(double num) { return !_finite(num) && !_isnan(num); }
-inline bool isnan(double num) { return _isnan(num); }
-inline long lround(double num) { return num > 0 ? num + 0.5 : ceil(num - 0.5); }
-inline long lroundf(float num) { return num > 0 ? num + 0.5f : ceilf(num - 0.5f); }
-inline double round(double num) { return num > 0 ? floor(num + 0.5) : ceil(num - 0.5); }
-inline float roundf(float num) { return num > 0 ? floorf(num + 0.5f) : ceilf(num - 0.5f); }
-inline bool signbit(double num) { return _copysign(1.0, num) < 0; }
-
-inline double nextafter(double x, double y) { return _nextafter(x, y); }
-inline float nextafterf(float x, float y) { return x > y ? x - FLT_EPSILON : x + FLT_EPSILON; }
-
-inline double copysign(double x, double y) { return _copysign(x, y); }
-inline int isfinite(double x) { return _finite(x); }
-
-#if COMPILER(MSVC)
-
-// Work around a bug in the Microsoft CRT, where fmod(x, +-infinity) yields NaN instead of x.
-inline double wtf_fmod(double x, double y) { return (!isinf(x) && isinf(y)) ? x : fmod(x, y); }
-
-#define fmod(x, y) wtf_fmod(x, y)
-
-#endif
+inline int strncasecmp(const char* s1, const char* s2, int len) { return strnicmp(s1, s2, len); }
 
 #endif

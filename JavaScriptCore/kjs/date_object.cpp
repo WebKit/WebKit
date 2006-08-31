@@ -52,15 +52,11 @@
 #include "error_object.h"
 #include "operations.h"
 
+#include <wtf/MathExtras.h>
+#include <wtf/StringExtras.h>
+
 #if PLATFORM(MAC)
 #include <CoreFoundation/CoreFoundation.h>
-#endif
-
-#if PLATFORM(WIN_OS)
-#define copysign(x, y) _copysign(x, y)
-#define isfinite(x) _finite(x)
-#define strncasecmp(x, y, z) strnicmp(x, y, z)
-#define snprintf _snprintf
 #endif
 
 inline int gmtoffset(const tm& t)
