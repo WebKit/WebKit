@@ -846,8 +846,8 @@ static char* createStringWithContentsOfFile(const char* fileName)
 {
     char* buffer;
     
-    int buffer_size = 0;
-    int buffer_capacity = 1024;
+    size_t buffer_size = 0;
+    size_t buffer_capacity = 1024;
     buffer = (char*)malloc(buffer_capacity);
     
     FILE* f = fopen(fileName, "r");
