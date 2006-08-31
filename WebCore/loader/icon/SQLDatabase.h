@@ -54,6 +54,7 @@ public:
     void runVacuumCommand();
     
     int64_t lastInsertRowID();
+    int lastChanges();
 
     void setBusyTimeout(int ms);
     void setBusyHandler(int(*)(void*, int));

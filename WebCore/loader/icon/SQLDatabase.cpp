@@ -149,6 +149,13 @@ int64_t SQLDatabase::lastInsertRowID()
     return sqlite3_last_insert_rowid(m_db);
 }
 
+int SQLDatabase::lastChanges()
+{
+    if (!m_db)
+        return 0;
+    return sqlite3_changes(m_db);
+}
+
 } // namespace WebCore
 
 

@@ -1,3 +1,24 @@
+2006-08-31  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Hyatt
+
+        Fixed an error where an Icon's IconID could change without the change being reflected in the PageURL table,
+        causing icons to be pruned before their time and pages to lose their icons.  This is because I misunderstood
+        how SQLite handles the "ON CONFLICT REPLACE" condition, which is to delete the row and re-insert instead of 
+        perform an update.  Also added an assertion to make sure this doesn't happen again.
+
+        * loader/icon/IconDataCache.cpp:
+        (WebCore::IconDataCache::writeToDatabase): Instead of one INSERT relying on SQLites conflict handling, broke
+          this into an UPDATE attempt followed by the initial INSERT
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::createDatabaseTables): Slight tweak to the database schema to prevent this from happening
+          in the future.  Note this change will not cause incompatibility with the current schema, therefore I didn't update
+          the official database version number
+        (WebCore::IconDatabase::syncDatabase): Added an ASSERT to look for this condition in the future
+        * loader/icon/SQLDatabase.cpp:
+        (WebCore::SQLDatabase::lastChanges): Added this SQLite accessor to see if an UPDATE command actually changed a row
+        * loader/icon/SQLDatabase.h: Ditto
+
 2006-08-31  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

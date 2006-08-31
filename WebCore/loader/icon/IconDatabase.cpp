@@ -253,7 +253,7 @@ void IconDatabase::createDatabaseTables(SQLDatabase& db)
         db.close();
         return;
     }
-    if (!db.executeCommand("CREATE TABLE Icon (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, stamp INTEGER, data BLOB);")) {
+    if (!db.executeCommand("CREATE TABLE Icon (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, stamp INTEGER, data BLOB);")) {
         LOG_ERROR("Could not create Icon table in database (%i) - %s", db.lastError(), db.lastErrorMsg());
         db.close();
         return;
@@ -799,6 +799,10 @@ void IconDatabase::syncDatabase()
         LOG(IconDatabase, "Updating the database took %.4f seconds", timestamp);
     else 
         LOG(IconDatabase, "Updating the database took %.4f seconds - this is much too long!", timestamp);
+        
+    // Check to make sure there are no dangling PageURLs
+    SQLStatement consistencyCheck(*m_currentDB, "SELECT url FROM PageURL WHERE PageURL.iconID NOT IN (SELECT iconID FROM Icon);");
+    ASSERT(!consistencyCheck.returnsAtLeastOneResult());
 #endif
 }
 

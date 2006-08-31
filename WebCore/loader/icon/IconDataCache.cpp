@@ -100,23 +100,45 @@ void IconDataCache::writeToDatabase(SQLDatabase& db)
     if (m_iconURL.isEmpty())
         return;
     
-    // First we create and prepare the SQLStatement    
-    String escapedIconURL = escapeSQLString(m_iconURL);
-    // The following statement works no matter what in version 5 of the DB schema because we have the table
-    // replace any url entry with the new data if it already exists
-    SQLStatement sql(db, "INSERT INTO Icon (url,stamp,data) VALUES ('" + escapedIconURL + "', ?, ?);");
-    sql.prepare();
+    // First we'll try an update in case we're already in the DB
+    SQLStatement updateAttempt(db, "UPDATE Icon SET stamp = ?, data = ? WHERE url = ?;");
+    updateAttempt.prepare();
+    
+    // Bind the url and timestamp
+    updateAttempt.bindInt64(1, m_stamp);
+    updateAttempt.bindText16(3, m_iconURL);
+    
+    // If we *have* image data, bind it to this statement - Otherwise the DB will get "null" for the blob data, 
+    // signifying that this icon doesn't have any data    
+    if (m_image && !m_image->dataBuffer().isEmpty())
+        updateAttempt.bindBlob(2, m_image->dataBuffer().data(), m_image->dataBuffer().size());
+    
+    if (updateAttempt.step() != SQLITE_DONE) {
+        LOG_ERROR("Failed to update icon data for IconURL %s", m_iconURL.ascii().data());
+        return;
+    }
+    
+    // If the UPDATE command actually altered a row, we're done
+    if (db.lastChanges())
+        return;
         
-    // Then we bind the timestamp
-    sql.bindInt64(1, m_stamp);
+        
+    // Otherwise, we've never inserted this Icon URL before, so we'll do so now
+    updateAttempt.finalize();
+    SQLStatement insertStatement(db, "INSERT INTO Icon (url,stamp,data) VALUES (?, ?, ?);");
+    insertStatement.prepare();
+        
+    // Bind the url and timestamp
+    insertStatement.bindText16(1, m_iconURL);
+    insertStatement.bindInt64(2, m_stamp);
         
     // Then, if we *have* data, we bind it.  Otherwise the DB will get "null" for the blob data, 
     // signifying that this icon doesn't have any data
     if (m_image && !m_image->dataBuffer().isEmpty())
-        sql.bindBlob(2, m_image->dataBuffer().data(), m_image->dataBuffer().size());
+        insertStatement.bindBlob(3, m_image->dataBuffer().data(), m_image->dataBuffer().size());
     
     // Finally we step and make sure the step was successful
-    if (sql.step() != SQLITE_DONE)
+    if (insertStatement.step() != SQLITE_DONE)
         LOG_ERROR("Unable to set icon data for IconURL %s", m_iconURL.ascii().data());
 }
 
