@@ -30,7 +30,7 @@
 #include "StringImpl.h"
 
 #if PLATFORM(CF)
-#include <CoreFoundation/CoreFoundation.h>
+typedef const struct __CFString * CFStringRef;
 #endif
 
 #if PLATFORM(QT)
@@ -138,7 +138,7 @@ public:
 
 #if PLATFORM(CF)
     String(CFStringRef);
-    CFStringRef createCFString() const { return m_impl ? m_impl->createCFString() : CFSTR(""); }
+    CFStringRef createCFString() const;
 #endif
 
 #ifdef __OBJC__

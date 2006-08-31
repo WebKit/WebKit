@@ -21,6 +21,8 @@
 #include "config.h"
 #include "PlatformString.h"
 
+#include <CoreFoundation/CoreFoundation.h>
+
 namespace WebCore {
 
 String::String(CFStringRef str)
@@ -33,9 +35,17 @@ String::String(CFStringRef str)
         m_impl = StringImpl::empty();
     else {
         Vector<UChar, 1024> buffer(size);
-        CFStringGetCharacters(str, CFRangeMake(0, size), buffer.data());
+        CFStringGetCharacters(str, CFRangeMake(0, size), (UniChar*)buffer.data());
         m_impl = new StringImpl(buffer.data(), size);
     }
+}
+
+CFStringRef String::createCFString() const
+{
+    if (!m_impl)
+        return CFSTR("");
+
+    return m_impl->createCFString();
 }
 
 }

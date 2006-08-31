@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <wtf/platform.h>
+#include "config.h"
+
 #if USE(CFNETWORK)
 
-#include "config.h"
 #include "ResourceLoader.h"
 #include "ResourceLoaderInternal.h"
 #include "DocLoader.h"

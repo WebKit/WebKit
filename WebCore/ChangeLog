@@ -1,3 +1,35 @@
+2006-08-31  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim H, Hyatt.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add KURLCFNet.cpp
+        
+        * platform/KURL.h:
+        Get rid of include, add KURL constructor that takes a CFURLRef.
+        
+        * platform/PlatformString.h:
+        * platform/StringImpl.h:
+        Get rid of include.
+        
+        * platform/cf/KURLCFNet.cpp:
+        (WebCore::KURL::KURL):
+        Add constructor.
+        
+        * platform/cf/ResourceLoaderCFNet.cpp:
+        Fix includes.
+        
+        * platform/cf/StringCF.cpp:
+        (WebCore::String::createCFString):
+        Move this here from PlatformString.h
+        
+        * platform/cf/StringImplCF.cpp:
+        (WebCore::StringImpl::createCFString):
+        Fix cast.
+        
+        * platform/mac/KURLMac.mm:
+        Move createCFURL() to KURLCFNet.cpp
+
 2006-08-31 Dave Hyatt <hyatt@apple.com>
 
         Make ScrollBar.cpp suitable for compiling on Windows by removing the #import.

@@ -23,12 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #include "KURL.h"
+
+#include <wtf/Vector.h>
+#include <CoreFoundation/CFURL.h>
+
 using namespace std;
 
 namespace WebCore {
 
-#if PLATFORM(CF)
+KURL::KURL(CFURLRef url)
+{
+    if (url) {
+        CFIndex bytesLength = CFURLGetBytes(url, 0, 0);
+        Vector<char, 2048> buffer(bytesLength + 6); // 6 for "file:", 1 for NUL terminator
+        char* bytes = &buffer[5];
+        CFURLGetBytes(url, (UInt8*)bytes, bytesLength);
+        bytes[bytesLength] = '\0';
+        if (bytes[0] == '/') {
+            buffer[0] = 'f';
+            buffer[1] = 'i';
+            buffer[2] = 'l';
+            buffer[3] = 'e';
+            buffer[4] = ':';
+            parse(buffer, 0);
+        } else
+            parse(bytes, 0);
+    } else
+        parse("", 0);
+}
+
 CFURLRef KURL::createCFURL() const
 {
     const UInt8 *bytes = (const UInt8 *)urlString.latin1();
@@ -41,6 +66,5 @@ CFURLRef KURL::createCFURL() const
         result = CFURLCreateAbsoluteURLWithBytes(0, bytes, urlString.length(), kCFStringEncodingISOLatin1, 0, true);
     return result;
 }
-#endif
 
 }

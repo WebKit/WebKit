@@ -33,7 +33,7 @@
 #include <limits.h>
 
 #if PLATFORM(CF)
-#include <CoreFoundation/CoreFoundation.h>
+typedef const struct __CFString * CFStringRef;
 #endif
 
 #ifdef __OBJC__
