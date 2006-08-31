@@ -1,3 +1,12 @@
+2006-08-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Removed wkSecureEventInput and wkSetSecureEventInput, since this can be done with API.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterface.a:
+
 2006-08-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

@@ -51,9 +51,6 @@ WKNSURLConnectionDelegateProxyPtr WKCreateNSURLConnectionDelegateProxy(void);
 
 void WKDisableCGDeferredUpdates(void);
 
-void WKSetSecureEventInput(BOOL enable);
-BOOL WKSecureEventInput(void);
-
 Class WKNSURLProtocolClassForReqest(NSURLRequest *request);
 
 unsigned WKGetNSAutoreleasePoolCount(void);

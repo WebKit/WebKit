@@ -1,3 +1,11 @@
+2006-08-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Removed wkSecureEventInput and wkSetSecureEventInput, since this can be done with API.
+
+        * WebCoreSupport/WebSystemInterface.m: (InitWebCoreSystemInterface):
+
 2006-08-31  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick

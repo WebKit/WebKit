@@ -1,3 +1,17 @@
+2006-08-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Removing use of SPI in favor of Carbon API to enable and disable secure event input.
+
+        * WebCore.exp: Removed wkSecureEventInput and wkSetSecureEventInput.
+        * platform/mac/WebCoreSystemInterface.h: ditto.
+        * platform/mac/WebCoreSystemInterface.mm: ditto.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::setSecureKeyboardEntry): Uses EnableSecureEventInput and DisableSecureEventInput.
+        (WebCore::FrameMac::secureKeyboardEntry): Uses IsSecureEventInputEnabled.
+
 2006-08-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by "common sense" (and Maciej)

@@ -76,6 +76,7 @@
 #import "kjs_window.h"
 #import "visible_units.h"
 #import "WebCoreSystemInterface.h"
+#import <Carbon/Carbon.h>
 #import <JavaScriptCore/NP_jsobject.h>
 #import <JavaScriptCore/npruntime_impl.h>
 
@@ -3341,12 +3342,15 @@ bool FrameMac::inputManagerHasMarkedText() const
 
 void FrameMac::setSecureKeyboardEntry(bool enable)
 {
-    wkSetSecureEventInput(enable);
+    if (enable)
+        EnableSecureEventInput();
+    else
+        DisableSecureEventInput();
 }
 
 bool FrameMac::secureKeyboardEntry()
 {
-    return wkSecureEventInput();
+    return IsSecureEventInputEnabled();
 }
 
 static DeprecatedValueList<MarkedTextUnderline> convertAttributesToUnderlines(const Range *markedTextRange, NSArray *attributes, NSArray *ranges)
