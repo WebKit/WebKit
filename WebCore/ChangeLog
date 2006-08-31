@@ -2,6 +2,19 @@
 
         Reviewed by Hyatt
 
+        Previously mentioned ASSERT was hit right away by folks, as we first need to bring their old icon.db into consistency
+        Changed the ASSERT to a LOG_ERROR and added a method for debug builds to bring a DB back together.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::pruneUnretainedIconsOnStartup): Check for the danglers and prune them out
+        (WebCore::IconDatabase::syncDatabase): Check for the danglers and log the error
+        (WebCore::IconDatabase::pruneDanglingPageURLs): Prune the danglers
+        * loader/icon/IconDatabase.h:
+
+2006-08-31  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Hyatt
+
         Fixed an error where an Icon's IconID could change without the change being reflected in the PageURL table,
         causing icons to be pruned before their time and pages to lose their icons.  This is because I misunderstood
         how SQLite handles the "ON CONFLICT REPLACE" condition, which is to delete the row and re-insert instead of 

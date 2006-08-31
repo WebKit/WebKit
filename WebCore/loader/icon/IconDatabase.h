@@ -125,6 +125,9 @@ private:
     
     // This is called by updateDatabase and when private browsing shifts, and when the DB is closed down
     void syncDatabase();
+
+    // Called to eliminate database inconsistency where pages point to non-existent iconIDs
+    void pruneDanglingPageURLs();
     
     // Determine if an IconURL is still retained by anyone
     bool isIconURLRetained(const String&);
