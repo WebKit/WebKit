@@ -39,6 +39,8 @@ class QString;
 
 namespace WebCore {
 
+class CString;
+    
 /**
  * Currently, strings are explicitly shared (they behave like pointers), meaning
  * that modifications to one instance will also modify all others. If you
@@ -154,6 +156,9 @@ public:
     Vector<char> ascii() const;
 #endif
 
+    CString latin1() const;
+    CString utf8() const;
+    
     String(const DeprecatedString&);
     DeprecatedString deprecatedString() const;
     

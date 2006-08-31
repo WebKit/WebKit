@@ -92,6 +92,8 @@
 		1A85B2110A1B258700D8C87C /* JSHTMLUListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A85B20F0A1B258700D8C87C /* JSHTMLUListElement.h */; };
 		1A85B2B60A1B2AC700D8C87C /* JSHTMLDivElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */; };
 		1A85B2B70A1B2AC700D8C87C /* JSHTMLDivElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */; };
+		1A98955C0AA78149005EF5EF /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A98955A0AA78149005EF5EF /* CString.cpp */; };
+		1A98955D0AA78149005EF5EF /* CString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A98955B0AA78149005EF5EF /* CString.h */; };
 		1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */; };
 		1AB7FC680A8B92EC00D9D37B /* XPathEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */; };
 		1AB7FC690A8B92EC00D9D37B /* XPathEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */; };
@@ -1982,6 +1984,8 @@
 		1A85B2AD0A1B2A6D00D8C87C /* HTMLDivElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDivElement.idl; sourceTree = "<group>"; };
 		1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDivElement.cpp; sourceTree = "<group>"; };
 		1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLDivElement.h; sourceTree = "<group>"; };
+		1A98955A0AA78149005EF5EF /* CString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CString.cpp; sourceTree = "<group>"; };
+		1A98955B0AA78149005EF5EF /* CString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CString.h; sourceTree = "<group>"; };
 		1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
 		1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathEvaluator.cpp; sourceTree = "<group>"; };
 		1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathEvaluator.h; sourceTree = "<group>"; };
@@ -5723,6 +5727,8 @@
 				BCC8CFC90986CD2400140BF2 /* Color.h */,
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
 				9352088109BD45E900F2038D /* CookieJar.h */,
+				1A98955A0AA78149005EF5EF /* CString.cpp */,
+				1A98955B0AA78149005EF5EF /* CString.h */,
 				F587868402DE3B8601EA4122 /* Cursor.h */,
 				BCB16B880979B01400467741 /* DeprecatedArray.h */,
 				F58784D502DE375901EA4122 /* DeprecatedCString.cpp */,
@@ -7139,6 +7145,7 @@
 				85183B460AA6926100F19FA3 /* DOMHTMLParagraphElement.h in Headers */,
 				85183B480AA6926100F19FA3 /* DOMHTMLPreElement.h in Headers */,
 				85183B4A0AA6926100F19FA3 /* DOMHTMLQuoteElement.h in Headers */,
+				1A98955D0AA78149005EF5EF /* CString.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8101,6 +8108,7 @@
 				85183B470AA6926100F19FA3 /* DOMHTMLParagraphElement.mm in Sources */,
 				85183B490AA6926100F19FA3 /* DOMHTMLPreElement.mm in Sources */,
 				85183B4B0AA6926100F19FA3 /* DOMHTMLQuoteElement.mm in Sources */,
+				1A98955C0AA78149005EF5EF /* CString.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,30 @@
+2006-08-31  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Add CString. CString is a simple, null-terminated byte buffer that supports data
+        sharing. Its main use is to be a better const char*.
+        
+        Also add latin1 and utf8 methods to String which returns CStrings.
+        
+        * platform/CString.cpp: Added.
+        (WebCore::CString::CString):
+        (WebCore::CString::init):
+        (WebCore::CString::data):
+        (WebCore::CString::length):
+        (WebCore::CString::deprecatedCString):
+        * platform/CString.h: Added.
+        (WebCore::CStringBuffer::CStringBuffer):
+        (WebCore::CStringBuffer::data):
+        (WebCore::CStringBuffer::length):
+        (WebCore::CString::CString):
+        (WebCore::CString::operator const char*):
+        (WebCore::CString::isNull):
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::latin1):
+        (WebCore::String::utf8):
+
 2006-08-31  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Hyatt

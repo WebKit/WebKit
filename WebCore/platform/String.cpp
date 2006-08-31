@@ -23,7 +23,9 @@
 #include "config.h"
 #include "PlatformString.h"
 
+#include "CString.h"
 #include "DeprecatedString.h"
+#include "TextEncoding.h"
 #include <kjs/identifier.h>
 #include <wtf/Vector.h>
 #include <stdarg.h>
@@ -383,6 +385,16 @@ Vector<char> String::ascii() const
     return buffer;
 }
 #endif
+
+CString String::latin1() const
+{
+    return TextEncoding(Latin1Encoding).fromUnicode(deprecatedString());
+}
+    
+CString String::utf8() const
+{
+    return TextEncoding(UTF8Encoding).fromUnicode(deprecatedString());
+}
 
 bool operator==(const String& a, const DeprecatedString& b)
 {
