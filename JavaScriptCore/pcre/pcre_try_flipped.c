@@ -98,32 +98,32 @@ EXPORT real_pcre *
 _pcre_try_flipped(const real_pcre *re, real_pcre *internal_re,
   const pcre_study_data *study, pcre_study_data *internal_study)
 {
-if (byteflip(re->magic_number, sizeof(re->magic_number)) != MAGIC_NUMBER)
+if (byteflip(re->magic_number, (int)sizeof(re->magic_number)) != MAGIC_NUMBER)
   return NULL;
 
 *internal_re = *re;           /* To copy other fields */
-internal_re->size = byteflip(re->size, sizeof(re->size));
-internal_re->options = byteflip(re->options, sizeof(re->options));
+internal_re->size = (pcre_uint32)byteflip(re->size, (int)sizeof(re->size));
+internal_re->options = (pcre_uint32)byteflip(re->options, (int)sizeof(re->options));
 internal_re->top_bracket =
-  (pcre_uint16)byteflip(re->top_bracket, sizeof(re->top_bracket));
+  (pcre_uint16)byteflip(re->top_bracket, (int)sizeof(re->top_bracket));
 internal_re->top_backref =
-  (pcre_uint16)byteflip(re->top_backref, sizeof(re->top_backref));
+  (pcre_uint16)byteflip(re->top_backref, (int)sizeof(re->top_backref));
 internal_re->first_byte =
-  (pcre_uint16)byteflip(re->first_byte, sizeof(re->first_byte));
+  (pcre_uint16)byteflip(re->first_byte, (int)sizeof(re->first_byte));
 internal_re->req_byte =
-  (pcre_uint16)byteflip(re->req_byte, sizeof(re->req_byte));
+  (pcre_uint16)byteflip(re->req_byte, (int)sizeof(re->req_byte));
 internal_re->name_table_offset =
-  (pcre_uint16)byteflip(re->name_table_offset, sizeof(re->name_table_offset));
+  (pcre_uint16)byteflip(re->name_table_offset, (int)sizeof(re->name_table_offset));
 internal_re->name_entry_size =
-  (pcre_uint16)byteflip(re->name_entry_size, sizeof(re->name_entry_size));
+  (pcre_uint16)byteflip(re->name_entry_size, (int)sizeof(re->name_entry_size));
 internal_re->name_count =
-  (pcre_uint16)byteflip(re->name_count, sizeof(re->name_count));
+  (pcre_uint16)byteflip(re->name_count, (int)sizeof(re->name_count));
 
 if (study != NULL)
   {
   *internal_study = *study;   /* To copy other fields */
-  internal_study->size = byteflip(study->size, sizeof(study->size));
-  internal_study->options = byteflip(study->options, sizeof(study->options));
+  internal_study->size = (pcre_uint32)byteflip(study->size, (int)sizeof(study->size));
+  internal_study->options = (pcre_uint32)byteflip(study->options, (int)sizeof(study->options));
   }
 
 return internal_re;

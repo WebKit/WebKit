@@ -208,13 +208,14 @@ pcre_get_substring_list(const pcre_char *subject, int *ovector, int stringcount,
   const pcre_char ***listptr)
 {
 int i;
-int size = sizeof(char *);
+int size = (int)sizeof(char *);
 int double_count = stringcount * 2;
 pcre_char **stringlist;
 pcre_char *p;
 
-for (i = 0; i < double_count; i += 2)
-  size += sizeof(pcre_char *) + (ovector[i+1] - ovector[i] + 1) * sizeof(pcre_char);
+for (i = 0; i < double_count; i += 2) {
+  size += INT_CAST(sizeof(pcre_char *) + (ovector[i+1] - ovector[i] + 1) * sizeof(pcre_char));
+}
 
 stringlist = (pcre_char **)(pcre_malloc)(size);
 if (stringlist == NULL) return PCRE_ERROR_NOMEMORY;

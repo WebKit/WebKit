@@ -1488,7 +1488,7 @@ Returns:             nothing
 static void
 complete_callout(uschar *previous_callout, const pcre_uchar *ptr, compile_data *cd)
 {
-int length = ptr - cd->start_pattern - GET(previous_callout, 2);
+int length = INT_CAST(ptr - cd->start_pattern - GET(previous_callout, 2));
 PUT(previous_callout, 2 + LINK_SIZE, length);
 }
 
@@ -1845,7 +1845,7 @@ for (;; ptr++)
           check_posix_syntax(ptr, &tempptr, cd))
         {
         BOOL local_negate = FALSE;
-        int posix_class, i;
+        int posix_class, i, namelen;
         register const uschar *cbits = cd->cbits;
 
         if (ptr[1] != ':')
@@ -1861,7 +1861,8 @@ for (;; ptr++)
           ptr++;
           }
 
-        posix_class = check_posix_name(ptr, tempptr - ptr);
+        namelen = INT_CAST(tempptr - ptr);
+        posix_class = check_posix_name(ptr, namelen);
         if (posix_class < 0)
           {
           *errorcodeptr = ERR30;
@@ -2275,7 +2276,7 @@ for (;; ptr++)
 
       else
         {
-        int len = class_utf8data - (code + 33);
+        int len = INT_CAST(class_utf8data - (code + 33));
         memmove(code + 1, code + 33, len);
         code += len + 1;
         }
@@ -2404,7 +2405,7 @@ for (;; ptr++)
         {
         uschar *lastchar = code - 1;
         while((*lastchar & 0xc0) == 0x80) lastchar--;
-        c = code - lastchar;            /* Length of UTF-8 character */
+        c = INT_CAST(code - lastchar);            /* Length of UTF-8 character */
         memcpy(utf8_char, lastchar, c); /* Save the char */
         c |= 0x80;                      /* Flag c as a length */
         }
@@ -2617,7 +2618,7 @@ for (;; ptr++)
       {
       register int i;
       int ketoffset = 0;
-      int len = code - previous;
+      int len = INT_CAST(code - previous);
       uschar *bralink = NULL;
 
       /* If the maximum repeat count is unlimited, find the end of the bracket
@@ -2630,7 +2631,7 @@ for (;; ptr++)
         {
         register uschar *ket = previous;
         do ket += GET(ket, 1); while (*ket != OP_KET);
-        ketoffset = code - ket;
+        ketoffset = INT_CAST(code - ket);
         }
 
       /* The case of a zero minimum is special because of the need to stick
@@ -2676,7 +2677,7 @@ for (;; ptr++)
 
         else
           {
-          int offset;
+          int offset, tmpoffset;
           *code = OP_END;
           adjust_recurse(previous, 2 + LINK_SIZE, utf8, cd);
           memmove(previous + 2 + LINK_SIZE, previous, len);
@@ -2687,7 +2688,8 @@ for (;; ptr++)
           /* We chain together the bracket offset fields that have to be
           filled in later when the ends of the brackets are reached. */
 
-          offset = (bralink == NULL)? 0 : previous - bralink;
+          tmpoffset = INT_CAST(previous - bralink);
+          offset = (bralink == NULL)? 0 : tmpoffset;
           bralink = previous;
           PUTINC(previous, 0, offset);
           }
@@ -2731,9 +2733,10 @@ for (;; ptr++)
 
           if (i != 0)
             {
-            int offset;
+            int offset, tmpoffset;
             *code++ = OP_BRA;
-            offset = (bralink == NULL)? 0 : code - bralink;
+            tmpoffset = INT_CAST(code - bralink);
+            offset = (bralink == NULL)? 0 : tmpoffset;
             bralink = code;
             PUTINC(code, 0, offset);
             }
@@ -2748,7 +2751,7 @@ for (;; ptr++)
         while (bralink != NULL)
           {
           int oldlinkoffset;
-          int offset = code - bralink + 1;
+          int offset = INT_CAST(code - bralink + 1);
           uschar *bra = code - offset;
           oldlinkoffset = GET(bra, 1);
           bralink = (oldlinkoffset == 0)? NULL : bralink - oldlinkoffset;
@@ -2782,7 +2785,7 @@ for (;; ptr++)
 
     if (possessive_quantifier)
       {
-      int len = code - tempcode;
+      int len = INT_CAST(code - tempcode);
       memmove(tempcode + 1+LINK_SIZE, tempcode, len);
       code += 1 + LINK_SIZE;
       len += 1 + LINK_SIZE;
@@ -2930,7 +2933,7 @@ for (;; ptr++)
           name = ++ptr;           /* grumble at autoincrement in declaration */
 
           while (*ptr++ != '>');
-          namelen = ptr - name - 1;
+          namelen = INT_CAST(ptr - name - 1);
 
           /* FIXME: This won't work for UTF-16. */
           for (i = 0; i < cd->names_found; i++)
@@ -2969,7 +2972,7 @@ for (;; ptr++)
           uschar *slot = cd->name_table;
 
           while (*ptr != ')') ptr++;
-          namelen = ptr - name;
+          namelen = INT_CAST(ptr - name);
 
           for (i = 0; i < cd->names_found; i++)
             {
@@ -3586,7 +3589,7 @@ for (;;)
 
   if (*ptr != '|')
     {
-    int length = code - last_branch;
+    int length = INT_CAST(code - last_branch);
     do
       {
       int prev_length = GET(last_branch, 1);
@@ -4579,7 +4582,7 @@ while ((c = *(++ptr)) != 0)
             goto PCRE_ERROR_RETURN;
             }
           name_count++;
-          if (ptr - p > max_name_size) max_name_size = (ptr - p);
+          if (ptr - p > max_name_size) max_name_size = INT_CAST(ptr - p);
           break;
           }
 
@@ -4954,8 +4957,8 @@ pointer. NULL is used for the default character tables. The nullpad field is at
 the end; it's there to help in the case when a regex compiled on a system with
 4-byte pointers is run on another with 8-byte pointers. */
 
-re->magic_number = MAGIC_NUMBER;
-re->size = size;
+re->magic_number = (pcre_uint32)MAGIC_NUMBER;
+re->size = (pcre_uint32)size;
 re->options = options;
 re->dummy1 = 0;
 re->name_table_offset = sizeof(real_pcre);
@@ -5016,7 +5019,7 @@ if (errorcode != 0)
   {
   (pcre_free)(re);
   PCRE_ERROR_RETURN:
-  *erroroffset = ptr - (const pcre_uchar *)pattern;
+  *erroroffset = INT_CAST(ptr - (const pcre_uchar *)pattern);
   PCRE_EARLY_ERROR_RETURN:
   *errorptr = error_texts[errorcode];
   if (errorcodeptr != NULL) *errorcodeptr = errorcode;

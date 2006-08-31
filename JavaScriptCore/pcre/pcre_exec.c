@@ -590,7 +590,7 @@ for (;;)
       save_capture_last = md->capture_last;
 
       DPRINTF(("saving %d %d %d\n", save_offset1, save_offset2, save_offset3));
-      md->offset_vector[md->offset_end - number] = eptr - md->start_subject;
+      md->offset_vector[md->offset_end - number] = INT_CAST(eptr - md->start_subject);
 
       do
         {
@@ -809,9 +809,9 @@ for (;;)
       cb.callout_number   = ecode[1];
       cb.offset_vector    = md->offset_vector;
       cb.subject          = (const pcre_char *)md->start_subject;
-      cb.subject_length   = md->end_subject - md->start_subject;
-      cb.start_match      = md->start_match - md->start_subject;
-      cb.current_position = eptr - md->start_subject;
+      cb.subject_length   = INT_CAST(md->end_subject - md->start_subject);
+      cb.start_match      = INT_CAST(md->start_match - md->start_subject);
+      cb.current_position = INT_CAST(eptr - md->start_subject);
       cb.pattern_position = GET(ecode, 2);
       cb.next_item_length = GET(ecode, 2 + LINK_SIZE);
       cb.capture_top      = offset_top/2;
@@ -1076,7 +1076,7 @@ for (;;)
             {
             md->offset_vector[offset] =
               md->offset_vector[md->offset_end - number];
-            md->offset_vector[offset+1] = eptr - md->start_subject;
+            md->offset_vector[offset+1] = INT_CAST(eptr - md->start_subject);
             if (offset_top <= offset) offset_top = offset + 2;
             }
 
@@ -1418,6 +1418,7 @@ for (;;)
 
     case OP_REF:
       {
+      int tmplen;
       offset = GET2(ecode, 1) << 1;               /* Doubled ref number */
       ecode += 3;                                 /* Advance past item */
 
@@ -1426,8 +1427,9 @@ for (;;)
       can't just fail here, because of the possibility of quantifiers with zero
       minima. */
 
+      tmplen = INT_CAST(md->end_subject - eptr + 1);
       length = (offset >= offset_top || md->offset_vector[offset] < 0)?
-        md->end_subject - eptr + 1 :
+        tmplen :
         md->offset_vector[offset+1] - md->offset_vector[offset];
 
       /* Set up for repetition, or handle the non-repeated case */
@@ -3069,7 +3071,7 @@ for (;;)
             else
               {
               c = max - min;
-              if (c > md->end_subject - eptr) c = md->end_subject - eptr;
+              if (c > md->end_subject - eptr) c = INT_CAST(md->end_subject - eptr);
               eptr += c;
               }
             }
@@ -3079,7 +3081,7 @@ for (;;)
 
           case OP_ANYBYTE:
           c = max - min;
-          if (c > md->end_subject - eptr) c = md->end_subject - eptr;
+          if (c > md->end_subject - eptr) c = INT_CAST(md->end_subject - eptr);
           eptr += c;
           break;
 
@@ -3184,7 +3186,7 @@ for (;;)
 
           case OP_ANYBYTE:
           c = max - min;
-          if (c > md->end_subject - eptr) c = md->end_subject - eptr;
+          if (c > md->end_subject - eptr) c = INT_CAST(md->end_subject - eptr);
           eptr += c;
           break;
 
@@ -3413,7 +3415,7 @@ tables = external_re->tables;
 
 if (extra_data != NULL)
   {
-  register unsigned int flags = extra_data->flags;
+  register unsigned long flags = extra_data->flags;
   if ((flags & PCRE_EXTRA_STUDY_DATA) != 0)
     study = (const pcre_study_data *)extra_data->study_data;
   if ((flags & PCRE_EXTRA_MATCH_LIMIT) != 0)
@@ -3772,8 +3774,8 @@ do
 
   if (offsetcount < 2) rc = 0; else
     {
-    offsets[0] = start_match - match_block.start_subject;
-    offsets[1] = match_block.end_match_ptr - match_block.start_subject;
+    offsets[0] = INT_CAST(start_match - match_block.start_subject);
+    offsets[1] = INT_CAST(match_block.end_match_ptr - match_block.start_subject);
     }
 
   DPRINTF((">>>> returning %d\n", rc));

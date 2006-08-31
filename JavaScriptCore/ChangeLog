@@ -1,3 +1,29 @@
+2006-08-31  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Geoff.
+
+        Band-aid fix for PCRE to compile for ppc64 and x86_64 now that
+        we use -Wshorten-64-to-32. Adds an INT_CAST macro that ASSERTs
+        the value <= INT_MAX.
+
+        I filed <rdar://problem/4712064> to track the need to verify
+        PCRE's 64-bit compliance.
+
+        * pcre/pcre_compile.c:
+        (complete_callout):
+        (compile_branch):
+        (compile_regex):
+        (pcre_compile2):
+        * pcre/pcre_exec.c:
+        (match):
+        (pcre_exec):
+        * pcre/pcre_get.c:
+        (pcre_get_substring_list):
+        * pcre/pcre_internal.h:
+        * pcre/pcre_tables.c:
+        * pcre/pcre_try_flipped.c:
+        (_pcre_try_flipped):
+
 2006-08-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
