@@ -756,14 +756,14 @@ void IconDatabase::syncDatabase()
     // Starting with the IconDataCaches that need updating/insertion
     for (HashSet<IconDataCache*>::iterator i = m_iconDataCachesPendingUpdate.begin(), end = m_iconDataCachesPendingUpdate.end(); i != end; ++i) {
         (*i)->writeToDatabase(*m_currentDB);
-        LOG(IconDatabase, "Wrote IconDataCache for IconURL %s with timestamp of %lli to the DB", (*i)->getIconURL().ascii().data(), (*i)->getTimestamp());
+        LOG(IconDatabase, "Wrote IconDataCache for IconURL %s with timestamp of %li to the DB", (*i)->getIconURL().ascii().data(), (*i)->getTimestamp());
     }
     m_iconDataCachesPendingUpdate.clear();
     
     HashSet<String>::iterator i = m_pageURLsPendingAddition.begin(), end = m_pageURLsPendingAddition.end();
     for (; i != end; ++i) {
         setIconURLForPageURLInDatabase(m_pageURLToIconURLMap.get(*i), *i);
-        LOG(IconDatabase, "Commited IconURL for PageURL %s to database", (*i).ascii().data());
+        LOG(IconDatabase, "Committed IconURL for PageURL %s to database", (*i).ascii().data());
     }
     m_pageURLsPendingAddition.clear();
     
