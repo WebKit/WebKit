@@ -2343,23 +2343,23 @@ static NSView *viewForElement(DOMElement *element)
     static NSArray *nonTextInputTypes = nil;
 #endif
     
-    NSString *type = [self type];
+    NSString *fieldType = [self type];
     
     // No type at all is treated as text type
-    if ([type length] == 0)
+    if ([fieldType length] == 0)
         return YES;
     
     if (textInputTypes == nil)
         textInputTypes = [[NSSet alloc] initWithObjects:@"text", @"password", @"search", nil];
     
-    BOOL isText = [textInputTypes containsObject:[type lowercaseString]];
+    BOOL isText = [textInputTypes containsObject:[fieldType lowercaseString]];
     
 #ifndef NDEBUG
     if (nonTextInputTypes == nil)
         nonTextInputTypes = [[NSSet alloc] initWithObjects:@"isindex", @"checkbox", @"radio", @"submit", @"reset", @"file", @"hidden", @"image", @"button", @"range", nil];
     
     // Catch cases where a new input type has been added that's not in these lists.
-    ASSERT(isText || [nonTextInputTypes containsObject:[type lowercaseString]]);
+    ASSERT(isText || [nonTextInputTypes containsObject:[fieldType lowercaseString]]);
 #endif    
     
     return isText;
@@ -2377,20 +2377,20 @@ static NSView *viewForElement(DOMElement *element)
 
 - (void)_replaceCharactersInRange:(NSRange)targetRange withString:(NSString *)replacementString selectingFromIndex:(int)index
 {
-    HTMLInputElement* input = [self _HTMLInputElement];
-    if (input) {
-        String value = input->value().replace(targetRange.location, targetRange.length, replacementString);
-        input->setValue(value);
-        input->setSelectionRange(index, value.length());
+    HTMLInputElement* inputElement = [self _HTMLInputElement];
+    if (inputElement) {
+        String newValue = inputElement->value().replace(targetRange.location, targetRange.length, replacementString);
+        inputElement->setValue(newValue);
+        inputElement->setSelectionRange(index, newValue.length());
     }
 }
 
 - (NSRange)_selectedRange
 {
-    HTMLInputElement* input = [self _HTMLInputElement];
-    if (input) {
-        int start = input->selectionStart();
-        int end = input->selectionEnd();
+    HTMLInputElement* inputElement = [self _HTMLInputElement];
+    if (inputElement) {
+        int start = inputElement->selectionStart();
+        int end = inputElement->selectionEnd();
         return NSMakeRange(start, end - start); 
     }
     return NSMakeRange(NSNotFound, 0);
@@ -2401,9 +2401,9 @@ static NSView *viewForElement(DOMElement *element)
     // This notifies the input element that the content has been autofilled
     // This allows WebKit to obey the -webkit-autofill pseudo style, which
     // changes the background color.
-    HTMLInputElement* input = [self _HTMLInputElement];
-    if (input)
-        input->setAutofilled(filled);
+    HTMLInputElement* inputElement = [self _HTMLInputElement];
+    if (inputElement)
+        inputElement->setAutofilled(filled);
 }
 
 @end
