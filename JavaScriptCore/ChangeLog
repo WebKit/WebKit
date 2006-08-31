@@ -1,3 +1,12 @@
+2006-08-31  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim H.
+        
+        Fix Windows build.
+        
+        * JavaScriptCore.vcproj/dftables/dftables.vcproj:
+        * pcre/pcre_internal.h:
+
 2006-08-31  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff.
