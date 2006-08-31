@@ -60,6 +60,11 @@ namespace WTF {
     
     template <typename T> inline void swap(OwnArrayPtr<T>& a, OwnArrayPtr<T>& b) { a.swap(b); }
 
+    template <typename T> inline T* getPtr(const OwnArrayPtr<T>& p)
+    {
+        return p.get();
+    }
+
 } // namespace WTF
 
 using WTF::OwnArrayPtr;

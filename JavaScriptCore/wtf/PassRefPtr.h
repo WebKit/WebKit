@@ -178,6 +178,11 @@ namespace WTF {
         return adoptRef(const_cast<T *>(p.release())); 
     }
 
+    template <typename T> inline T* getPtr(const PassRefPtr<T>& p)
+    {
+        return p.get();
+    }
+
 } // namespace WTF
 
 using WTF::PassRefPtr;

@@ -175,6 +175,11 @@ namespace WTF {
         return RefPtr<T>(const_cast<T *>(p.get())); 
     }
 
+    template <typename T> inline T* getPtr(const RefPtr<T>& p)
+    {
+        return p.get();
+    }
+
 } // namespace WTF
 
 using WTF::RefPtr;

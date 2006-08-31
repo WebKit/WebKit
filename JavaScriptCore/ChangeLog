@@ -1,3 +1,18 @@
+2006-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - add WTF::getPtr, a function template that makes it possible to write
+          generic code that gets a raw pointer out of any of our pointer types
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/GetPtr.h: Added.
+        * wtf/ListRefPtr.h: (WTF::getPtr): Added.
+        * wtf/OwnArrayPtr.h: (WTF::getPtr): Added.
+        * wtf/OwnPtr.h: (WTF::getPtr): Added.
+        * wtf/PassRefPtr.h: (WTF::getPtr): Added.
+        * wtf/RefPtr.h: (WTF::getPtr): Added.
+
 2006-08-29  waylonis  <waylonis@google.com>
 
         Reviewed, tweaked by ggaren.

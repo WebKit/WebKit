@@ -1,7 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2005 Apple Computer, Inc.
+ *  Copyright (C) 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -29,11 +28,10 @@ namespace WTF {
 
     // Specialized version of RefPtr desgined for use in singly-linked lists. 
     // Derefs the list iteratively to avoid recursive derefing that can overflow the stack.
-    template <typename T> class ListRefPtr : public RefPtr<T>
-    {
+    template <typename T> class ListRefPtr : public RefPtr<T> {
     public:
         ListRefPtr() : RefPtr<T>() {}
-        ListRefPtr(T *ptr) : RefPtr<T>(ptr) {}
+        ListRefPtr(T* ptr) : RefPtr<T>(ptr) {}
         ListRefPtr(const RefPtr<T>& o) : RefPtr<T>(o) {}
         // see comment in PassRefPtr.h for why this takes const reference
         template <typename U> ListRefPtr(const PassRefPtr<U>& o) : RefPtr<T>(o) {}
@@ -44,12 +42,17 @@ namespace WTF {
                 reaper = reaper->releaseNext(); // implicitly protects reaper->next, then derefs reaper
         }
         
-        ListRefPtr& operator=(T *optr) { RefPtr<T>::operator=(optr); return *this; }
+        ListRefPtr& operator=(T* optr) { RefPtr<T>::operator=(optr); return *this; }
         ListRefPtr& operator=(const RefPtr<T>& o) { RefPtr<T>::operator=(o); return *this; }
         ListRefPtr& operator=(const PassRefPtr<T>& o) { RefPtr<T>::operator=(o); return *this; }
         template <typename U> ListRefPtr& operator=(const RefPtr<U>& o) { RefPtr<T>::operator=(o); return *this; }
         template <typename U> ListRefPtr& operator=(const PassRefPtr<U>& o) { RefPtr<T>::operator=(o); return *this; }
     };
+
+    template <typename T> inline T* getPtr(const ListRefPtr<T>& p)
+    {
+        return p.get();
+    }
 
 } // namespace WTF
 
