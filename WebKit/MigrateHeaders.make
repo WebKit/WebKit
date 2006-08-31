@@ -45,20 +45,40 @@ all : \
     DOMEvents.h \
     DOMExtensions.h \
     DOMHTML.h \
+    DOMHTMLBRElement.h \
     DOMHTMLBaseElement.h \
     DOMHTMLBodyElement.h \
+    DOMHTMLButtonElement.h \
     DOMHTMLCollection.h \
+    DOMHTMLDListElement.h \
+    DOMHTMLDirectoryElement.h \
+    DOMHTMLDivElement.h \
     DOMHTMLDocument.h \
     DOMHTMLElement.h \
+    DOMHTMLFieldSetElement.h \
     DOMHTMLFormElement.h \
     DOMHTMLHeadElement.h \
+    DOMHTMLHeadingElement.h \
     DOMHTMLHtmlElement.h \
+    DOMHTMLInputElement.h \
     DOMHTMLIsIndexElement.h \
+    DOMHTMLLIElement.h \
+    DOMHTMLLabelElement.h \
+    DOMHTMLLegendElement.h \
     DOMHTMLLinkElement.h \
+    DOMHTMLMenuElement.h \
     DOMHTMLMetaElement.h \
+    DOMHTMLOListElement.h \
+    DOMHTMLOptGroupElement.h \
     DOMHTMLOptionsCollection.h \
+    DOMHTMLParagraphElement.h \
+    DOMHTMLPreElement.h \
+    DOMHTMLQuoteElement.h \
+    DOMHTMLSelectElement.h \
     DOMHTMLStyleElement.h \
+    DOMHTMLTextAreaElement.h \
     DOMHTMLTitleElement.h \
+    DOMHTMLUListElement.h \
     DOMList.h \
     DOMNamedNodeMap.h \
     DOMNode.h \

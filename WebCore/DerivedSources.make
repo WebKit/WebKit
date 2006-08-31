@@ -62,19 +62,39 @@ all : \
     DOMNotation.h \
     DOMProcessingInstruction.h \
     DOMText.h \
+    DOMHTMLBRElement.h \
     DOMHTMLBaseElement.h \
     DOMHTMLBodyElement.h \
+    DOMHTMLButtonElement.h \
     DOMHTMLCollection.h \
+    DOMHTMLDListElement.h \
+    DOMHTMLDirectoryElement.h \
+    DOMHTMLDivElement.h \
     DOMHTMLElement.h \
+    DOMHTMLFieldSetElement.h \
     DOMHTMLFormElement.h \
     DOMHTMLHeadElement.h \
+    DOMHTMLHeadingElement.h \
     DOMHTMLHtmlElement.h \
+    DOMHTMLInputElement.h \
     DOMHTMLIsIndexElement.h \
+    DOMHTMLLIElement.h \
+    DOMHTMLLabelElement.h \
+    DOMHTMLLegendElement.h \
     DOMHTMLLinkElement.h \
+    DOMHTMLMenuElement.h \
     DOMHTMLMetaElement.h \
+    DOMHTMLOListElement.h \
+    DOMHTMLOptGroupElement.h \
     DOMHTMLOptionsCollection.h \
+    DOMHTMLParagraphElement.h \
+    DOMHTMLPreElement.h \
+    DOMHTMLQuoteElement.h \
+    DOMHTMLSelectElement.h \
     DOMHTMLStyleElement.h \
+    DOMHTMLTextAreaElement.h \
     DOMHTMLTitleElement.h \
+    DOMHTMLUListElement.h \
     HTMLEntityNames.c \
     JSAttr.h \
     JSCSSPrimitiveValue.h \

@@ -26,55 +26,43 @@
 
 #import <WebCore/DOMCore.h>
 
+#import <WebCore/DOMHTMLBRElement.h>
 #import <WebCore/DOMHTMLBaseElement.h>
 #import <WebCore/DOMHTMLBodyElement.h>
+#import <WebCore/DOMHTMLButtonElement.h>
 #import <WebCore/DOMHTMLCollection.h>
+#import <WebCore/DOMHTMLDListElement.h>
+#import <WebCore/DOMHTMLDirectoryElement.h>
+#import <WebCore/DOMHTMLDivElement.h>
 #import <WebCore/DOMHTMLDocument.h>
 #import <WebCore/DOMHTMLElement.h>
+#import <WebCore/DOMHTMLFieldSetElement.h>
 #import <WebCore/DOMHTMLFormElement.h>
 #import <WebCore/DOMHTMLHeadElement.h>
+#import <WebCore/DOMHTMLHeadingElement.h>
 #import <WebCore/DOMHTMLHtmlElement.h>
+#import <WebCore/DOMHTMLInputElement.h>
 #import <WebCore/DOMHTMLIsIndexElement.h>
+#import <WebCore/DOMHTMLLIElement.h>
+#import <WebCore/DOMHTMLLabelElement.h>
+#import <WebCore/DOMHTMLLegendElement.h>
 #import <WebCore/DOMHTMLLinkElement.h>
+#import <WebCore/DOMHTMLMenuElement.h>
 #import <WebCore/DOMHTMLMetaElement.h>
+#import <WebCore/DOMHTMLOListElement.h>
+#import <WebCore/DOMHTMLOptGroupElement.h>
 #import <WebCore/DOMHTMLOptionsCollection.h>
+#import <WebCore/DOMHTMLParagraphElement.h>
+#import <WebCore/DOMHTMLPreElement.h>
+#import <WebCore/DOMHTMLQuoteElement.h>
+#import <WebCore/DOMHTMLSelectElement.h>
 #import <WebCore/DOMHTMLStyleElement.h>
+#import <WebCore/DOMHTMLTextAreaElement.h>
 #import <WebCore/DOMHTMLTitleElement.h>
+#import <WebCore/DOMHTMLUListElement.h>
 
 @class DOMHTMLTableCaptionElement;
 @class DOMHTMLTableSectionElement;
-
-@interface DOMHTMLSelectElement : DOMHTMLElement
-- (NSString *)type;
-- (int)selectedIndex;
-- (void)setSelectedIndex:(int)selectedIndex;
-- (NSString *)value;
-- (void)setValue:(NSString *)value;
-- (int)length;
-- (DOMHTMLFormElement *)form;
-- (DOMHTMLOptionsCollection *)options;
-- (BOOL)disabled;
-- (void)setDisabled:(BOOL)disabled;
-- (BOOL)multiple;
-- (void)setMultiple:(BOOL)multiple;
-- (NSString *)name;
-- (void)setName:(NSString *)name;
-- (int)size;
-- (void)setSize:(int)size;
-- (int)tabIndex;
-- (void)setTabIndex:(int)tabIndex;
-- (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before;
-- (void)remove:(int)index;
-- (void)blur;
-- (void)focus;
-@end
-
-@interface DOMHTMLOptGroupElement : DOMHTMLElement
-- (BOOL)disabled;
-- (void)setDisabled:(BOOL)disabled;
-- (NSString *)label;
-- (void)setLabel:(NSString *)label;
-@end
 
 @interface DOMHTMLOptionElement : DOMHTMLElement
 - (DOMHTMLFormElement *)form;
@@ -90,177 +78,6 @@
 - (void)setSelected:(BOOL)selected;
 - (NSString *)value;
 - (void)setValue:(NSString *)value;
-@end
-
-@interface DOMHTMLInputElement : DOMHTMLElement
-- (NSString *)defaultValue;
-- (void)setDefaultValue:(NSString *)defaultValue;
-- (BOOL)defaultChecked;
-- (void)setDefaultChecked:(BOOL)defaultChecked;
-- (DOMHTMLFormElement *)form;
-- (NSString *)accept;
-- (void)setAccept:(NSString *)accept;
-- (NSString *)accessKey;
-- (void)setAccessKey:(NSString *)accessKey;
-- (NSString *)align;
-- (void)setAlign:(NSString *)align;
-- (NSString *)alt;
-- (void)setAlt:(NSString *)alt;
-- (BOOL)checked;
-- (void)setChecked:(BOOL)checked;
-- (BOOL)disabled;
-- (void)setDisabled:(BOOL)disabled;
-- (int)maxLength;
-- (void)setMaxLength:(int)maxLength;
-- (NSString *)name;
-- (void)setName:(NSString *)name;
-- (BOOL)readOnly;
-- (void)setReadOnly:(BOOL)readOnly;
-- (unsigned)size;
-- (void)setSize:(unsigned)size;
-- (NSString *)src;
-- (void)setSrc:(NSString *)src;
-- (int)tabIndex;
-- (void)setTabIndex:(int)tabIndex;
-- (NSString *)type;
-- (void)setType:(NSString *)type;
-- (NSString *)useMap;
-- (void)setUseMap:(NSString *)useMap;
-- (NSString *)value;
-- (void)setValue:(NSString *)value;
-- (void)blur;
-- (void)focus;
-- (void)select;
-- (void)click;
-@end
-
-@interface DOMHTMLTextAreaElement : DOMHTMLElement
-- (NSString *)defaultValue;
-- (void)setDefaultValue:(NSString *)defaultValue;
-- (DOMHTMLFormElement *)form;
-- (NSString *)accessKey;
-- (void)setAccessKey:(NSString *)accessKey;
-- (int)cols;
-- (void)setCols:(int)cols;
-- (BOOL)disabled;
-- (void)setDisabled:(BOOL)disabled;
-- (NSString *)name;
-- (void)setName:(NSString *)name;
-- (BOOL)readOnly;
-- (void)setReadOnly:(BOOL)readOnly;
-- (int)rows;
-- (void)setRows:(int)rows;
-- (int)tabIndex;
-- (void)setTabIndex:(int)tabIndex;
-- (NSString *)type;
-- (NSString *)value;
-- (void)setValue:(NSString *)value;
-- (void)blur;
-- (void)focus;
-- (void)select;
-@end
-
-@interface DOMHTMLButtonElement : DOMHTMLElement
-- (DOMHTMLFormElement *)form;
-- (NSString *)accessKey;
-- (void)setAccessKey:(NSString *)accessKey;
-- (BOOL)disabled;
-- (void)setDisabled:(BOOL)disabled;
-- (NSString *)name;
-- (void)setName:(NSString *)name;
-- (int)tabIndex;
-- (void)setTabIndex:(int)tabIndex;
-- (NSString *)type;
-- (NSString *)value;
-- (void)setValue:(NSString *)value;
-@end
-
-@interface DOMHTMLLabelElement : DOMHTMLElement
-- (DOMHTMLFormElement *)form;
-- (NSString *)accessKey;
-- (void)setAccessKey:(NSString *)accessKey;
-- (NSString *)htmlFor;
-- (void)setHtmlFor:(NSString *)htmlFor;
-@end
-
-@interface DOMHTMLFieldSetElement : DOMHTMLElement
-- (DOMHTMLFormElement *)form;
-@end
-
-@interface DOMHTMLLegendElement : DOMHTMLElement
-- (DOMHTMLFormElement *)form;
-- (NSString *)accessKey;
-- (void)setAccessKey:(NSString *)accessKey;
-- (NSString *)align;
-- (void)setAlign:(NSString *)align;
-@end
-
-@interface DOMHTMLUListElement : DOMHTMLElement
-- (BOOL)compact;
-- (void)setCompact:(BOOL)compact;
-- (NSString *)type;
-- (void)setType:(NSString *)type;
-@end
-
-@interface DOMHTMLOListElement : DOMHTMLElement
-- (BOOL)compact;
-- (void)setCompact:(BOOL)compact;
-- (int)start;
-- (void)setStart:(int)start;
-- (NSString *)type;
-- (void)setType:(NSString *)type;
-@end
-
-@interface DOMHTMLDListElement : DOMHTMLElement
-- (BOOL)compact;
-- (void)setCompact:(BOOL)compact;
-@end
-
-@interface DOMHTMLDirectoryElement : DOMHTMLElement
-- (BOOL)compact;
-- (void)setCompact:(BOOL)compact;
-@end
-
-@interface DOMHTMLMenuElement : DOMHTMLElement
-- (BOOL)compact;
-- (void)setCompact:(BOOL)compact;
-@end
-
-@interface DOMHTMLLIElement : DOMHTMLElement
-- (NSString *)type;
-- (void)setType:(NSString *)type;
-- (int)value;
-- (void)setValue:(int)value;
-@end
-
-@interface DOMHTMLDivElement : DOMHTMLElement
-- (NSString *)align;
-- (void)setAlign:(NSString *)align;
-@end
-
-@interface DOMHTMLParagraphElement : DOMHTMLElement
-- (NSString *)align;
-- (void)setAlign:(NSString *)align;
-@end
-
-@interface DOMHTMLHeadingElement : DOMHTMLElement
-- (NSString *)align;
-- (void)setAlign:(NSString *)align;
-@end
-
-@interface DOMHTMLQuoteElement : DOMHTMLElement
-- (NSString *)cite;
-- (void)setCite:(NSString *)cite;
-@end
-
-@interface DOMHTMLPreElement : DOMHTMLElement
-- (int)width;
-- (void)setWidth:(int)width;
-@end
-
-@interface DOMHTMLBRElement : DOMHTMLElement
-- (NSString *)clear;
-- (void)setClear:(NSString *)clear;
 @end
 
 @interface DOMHTMLBaseFontElement : DOMHTMLElement

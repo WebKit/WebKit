@@ -1,3 +1,34 @@
+2006-08-31  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10653
+          Auto-generate another 20 Objective-C DOM HTML bindings
+
+          Auto-generates DOMHTMLBRElement, DOMHTMLButtonElement, DOMHTMLDListElement, 
+          DOMHTMLDirectoryElement, DOMHTMLDivElement, DOMHTMLFieldSetElement, 
+          DOMHTMLHeadingElement, DOMHTMLInputElement, DOMHTMLLIElement, DOMHTMLLabelElement,
+          DOMHTMLLegendElement, DOMHTMLMenuElement, DOMHTMLOListElement, DOMHTMLOptGroupElement,
+          DOMHTMLParagraphElement, DOMHTMLPreElement, DOMHTMLQuoteElement, DOMHTMLSelectElement,
+          DOMHTMLTextAreaElement, and DOMHTMLUListElement.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTML.h:
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement altDisplayString]):
+        (-[DOMHTMLInputElement absoluteImageURL]):
+        (-[DOMHTMLInputElement WebCore::]):
+        (-[DOMHTMLInputElement _rectOnScreen]):
+        (-[DOMHTMLInputElement _replaceCharactersInRange:withString:selectingFromIndex:]):
+        (-[DOMHTMLInputElement _selectedRange]):
+        (-[DOMHTMLInputElement _setAutofilled:]):
+        * bindings/objc/DOMHTMLInternal.h:
+        * bindings/objc/DOMPrivate.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+
 2006-08-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by John Sullivan.

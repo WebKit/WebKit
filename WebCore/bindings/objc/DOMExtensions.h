@@ -36,6 +36,7 @@
 #import <WebCore/DOMHTMLElement.h>
 #import <WebCore/DOMHTMLDocument.h>
 #import <WebCore/DOMHTMLLinkElement.h>
+#import <WebCore/DOMHTMLInputElement.h>
 
 @class NSColor;
 @class NSImage;

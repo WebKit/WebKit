@@ -31,6 +31,10 @@
 #import <WebCore/DOMNode.h>
 #import <WebCore/DOMRange.h>
 
+#import <WebCore/DOMHTMLDocument.h>
+#import <WebCore/DOMHTMLSelectElement.h>
+#import <WebCore/DOMHTMLInputElement.h>
+
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText
 - (NSString *)_text;

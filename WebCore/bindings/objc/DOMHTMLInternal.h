@@ -31,6 +31,7 @@
 #import "DOMHTMLElement.h"
 #import "DOMHTMLFormElement.h"
 #import "DOMHTMLOptionsCollection.h"
+#import "DOMHTMLInputElement.h"
 
 namespace WebCore {
     class HTMLCollection;

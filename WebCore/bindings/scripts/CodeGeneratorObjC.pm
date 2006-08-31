@@ -258,6 +258,10 @@ sub GetObjCTypeMaker
         $typeMaker = "collection";
     } elsif ($type eq "HTMLFormElement") {
         $typeMaker = "formElement";
+    } elsif ($type eq "HTMLElement") {
+        $typeMaker = "element";
+    } elsif ($type eq "HTMLOptionsCollection") {
+        $typeMaker = "optionsCollection";
     } elsif ($type eq "HTMLDocument") {
         $typeMaker = "HTMLDocument";
     } elsif ($type eq "CSSStyleDeclaration") {
@@ -444,7 +448,7 @@ sub GenerateHeader
     }
     
     # - Begin @interface 
-    push(@headerContent, "\n\@interface $className : $parentClassName\n");
+    push(@headerContent, "\@interface $className : $parentClassName\n");
 
     # - Add attribute getters/setters.
     if ($numAttributes > 0) {
@@ -622,6 +626,8 @@ sub GenerateImplementation
 
             AddIncludesForType($attribute->signature->type);
 
+            my $idlType = $codeGenerator->StripModule($attribute->signature->type);
+
             my $attributeName = $attribute->signature->name;
             my $attributeType = GetObjCType($attribute->signature->type);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
@@ -707,11 +713,11 @@ sub GenerateImplementation
                 push(@implContent, $setterSig);
                 push(@implContent, "{\n");
 
-                if ($hasSetterException) {
-                    # FIXME: asserts exsist in the exsisting bindings, but I am unsure why they are 
-                    # there in the first place;
-                    push(@implContent, "    ASSERT($argName);\n\n");
+                unless ($codeGenerator->IsPrimitiveType($idlType) or $idlType eq "DOMString") {
+                    push(@implContent, "    ASSERT($argName)\n\n");
+                }
 
+                if ($hasSetterException) {
                     push(@implContent, "    $exceptionInit\n");
                     push(@implContent, "    IMPL->$attributeName($argName, ec);\n");
                     push(@implContent, "    $exceptionRaiseOnError\n");
@@ -760,12 +766,15 @@ sub GenerateImplementation
                 } elsif ($idlType eq "XPathResult") {
                     my $implGetter = "[" . $paramName . " _xpathResult]";
                     push(@parameterNames, $implGetter);
+                } elsif ($idlType eq "HTMLElement") {
+                    my $implGetter = "[" . $paramName . " _HTMLElement]";
+                    push(@parameterNames, $implGetter);
                 } else {
                     my $implGetter = "[" . $paramName . " _" . lcfirst($idlType) . "]";
                     push(@parameterNames, $implGetter);
                 }
 
-                if (!$param->extendedAttributes->{"IsIndex"}) {
+                unless ($codeGenerator->IsPrimitiveType($idlType) or $idlType eq "DOMString") {
                     push(@needsAssert, "    ASSERT($paramName);\n");
                 }
 
@@ -830,14 +839,12 @@ sub GenerateImplementation
                 if ($hasParameters) {
                     my $params = join(", " , @parameterNames);
                     if ($raisesExceptions) {
-                        # A temparary variable is needed.
                         $content = $functionContentHead . $params . ", ec" . $functionContentTail;
                     } else {
                         $content = $functionContentHead . $params . $functionContentTail;
                     }
                 } else {
                     if ($raisesExceptions) {
-                        # A temparary variable is needed.
                         $content = $functionContentHead . "ec" . $functionContentTail;
                     } else {
                         $content = $functionContentHead . $functionContentTail;
@@ -909,12 +916,19 @@ sub WriteData
         # Write content to file.
         print $HEADER @headerContentHeader;
         
+        my $forwardDeclarationCount = 0;
         foreach my $forwardClassDeclaration (sort keys(%headerForwardDeclarations)) {
             print $HEADER "\@class $forwardClassDeclaration;\n";
+            $forwardDeclarationCount++;
         }
         
         foreach my $forwardProtocolDeclaration (sort keys(%headerForwardDeclarationsForProtocols)) {
             print $HEADER "\@protocol $forwardProtocolDeclaration;\n";
+            $forwardDeclarationCount++;
+        }
+        
+        unless ($forwardDeclarationCount == 0) {
+            print $HEADER "\n";
         }
 
         print $HEADER @headerContent;
@@ -924,6 +938,7 @@ sub WriteData
         @headerContentHeader = "";
         @headerContent = "";
         %headerForwardDeclarations = ();
+        %headerForwardDeclarationsForProtocols = ();
     }
 }
 
