@@ -1,6 +1,6 @@
 2006-08-31  Anders Carlsson  <acarlsson@apple.com>
 
-        Reviewed by Tim H, Hyatt.
+        Reviewed by Tim O, Hyatt.
 
         * WebCore.xcodeproj/project.pbxproj:
         Add KURLCFNet.cpp
