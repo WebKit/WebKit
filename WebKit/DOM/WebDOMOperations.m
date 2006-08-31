@@ -153,8 +153,8 @@
 
 - (NSArray *)_subresourceURLs
 {
-    NSString *rel = [self rel];
-    if ([rel _webkit_isCaseInsensitiveEqualToString:@"stylesheet"] || [rel _webkit_isCaseInsensitiveEqualToString:@"icon"]) {
+    NSString *relName = [self rel];
+    if ([relName _webkit_isCaseInsensitiveEqualToString:@"stylesheet"] || [relName _webkit_isCaseInsensitiveEqualToString:@"icon"]) {
         return [self _URLsFromSelectors:@selector(href), nil];
     }
     return nil;
