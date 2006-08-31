@@ -1,5 +1,22 @@
 2006-08-31  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Darin.
+        
+        Add new portability functions to MathExtras.h and add StringExtras.h which is for
+        string portability functions.
+        
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * bindings/c/c_instance.cpp:
+        * kjs/date_object.cpp:
+        * wtf/MathExtras.h:
+        (copysign):
+        (isfinite):
+        * wtf/StringExtras.h: Added.
+        (snprintf):
+        (strncasecmp):
+
+2006-08-31  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Tim H.
         
         Fix Windows build.
