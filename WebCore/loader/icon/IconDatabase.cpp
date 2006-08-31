@@ -729,8 +729,10 @@ void IconDatabase::pruneUnretainedIconsOnStartup(Timer<IconDatabase>*)
     m_initialPruningTransaction->commit();
     delete m_initialPruningTransaction;
     m_initialPruningTransaction = 0;
-    
     m_initialPruningComplete = true;
+    
+    // Handle dangling PageURLs, if any
+    checkForDanglingPageURLs(true);
     
 #ifndef NDEBUG
     timestamp = currentTime() - timestamp;
@@ -738,11 +740,7 @@ void IconDatabase::pruneUnretainedIconsOnStartup(Timer<IconDatabase>*)
         LOG(IconDatabase, "Pruning unretained icons took %.4f seconds", timestamp);
     else
         LOG(IconDatabase, "Pruning unretained icons took %.4f seconds - this is much too long!", timestamp);
-    // Check to make sure there are no dangling PageURLs
-    if (SQLStatement(*m_currentDB, "SELECT url FROM PageURL WHERE PageURL.iconID NOT IN (SELECT iconID FROM Icon);").returnsAtLeastOneResult()) {
-        LOG_ERROR("Dangling PageURL entries found on startup.  Pruning the offenders");
-        pruneDanglingPageURLs();
-    }
+
 #endif
 }
 
@@ -806,18 +804,25 @@ void IconDatabase::syncDatabase()
         LOG(IconDatabase, "Updating the database took %.4f seconds - this is much too long!", timestamp);
     
     // Check to make sure there are no dangling PageURLs - If there are, we want to output one log message but not spam the console potentially every few seconds
-    static bool danglesFound = false;
-    if (!danglesFound && SQLStatement(*m_currentDB, "SELECT url FROM PageURL WHERE PageURL.iconID NOT IN (SELECT iconID FROM Icon);").returnsAtLeastOneResult()) {
-        danglesFound = true;
-        LOG_ERROR("Dangling PageURL entries found.  They will be pruned on next startup");
-    }
+    checkForDanglingPageURLs(false);
 #endif
 }
 
-void IconDatabase::pruneDanglingPageURLs()
+void IconDatabase::checkForDanglingPageURLs(bool pruneIfFound)
 {
-    if (!m_currentDB->executeCommand("DELETE FROM PageURL WHERE iconID NOT IN (SELECT iconID FROM Icon);"))
-        LOG_ERROR("Unabled to prune dangling PageURLs");
+    // We don't want to keep performing this check and reporting this error if it has already found danglers so we keep track
+    static bool danglersFound = false;
+    
+    // However, if the caller wants us to prune the danglers, we will reset this flag and prune every time
+    if (pruneIfFound)
+        danglersFound = false;
+        
+    if (!danglersFound && SQLStatement(*m_currentDB, "SELECT url FROM PageURL WHERE PageURL.iconID NOT IN (SELECT iconID FROM Icon) LIMIT 1;").returnsAtLeastOneResult()) {
+        danglersFound = true;
+        LOG_ERROR("Dangling PageURL entries found");
+        if (pruneIfFound && !m_currentDB->executeCommand("DELETE FROM PageURL WHERE iconID NOT IN (SELECT iconID FROM Icon);"))
+            LOG_ERROR("Unable to prune dangling PageURLs");
+    }
 }
 
 bool IconDatabase::hasEntryForIconURL(const String& iconURL)

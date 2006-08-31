@@ -1,3 +1,16 @@
+2006-08-31  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        Cleaned up my last patch after further considerations
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::pruneUnretainedIconsOnStartup): Uses the new checkForDanglingPageURLs to check
+          for and fix danglers.  Does so in all builds (changed from debug only in my last patch)
+        (WebCore::IconDatabase::syncDatabase): Uses the new checkForDanglingPageURLs to check for danglers
+        (WebCore::IconDatabase::checkForDanglingPageURLs): This checks and, if asked via an arg, prunes the dangling pageURLs
+        * loader/icon/IconDatabase.h:
+
 2006-08-31  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
