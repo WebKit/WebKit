@@ -3359,7 +3359,7 @@ void Frame::setIsActive(bool flag)
     }
    
     // 5. Enable or disable secure keyboard entry
-    if ((flag && !secureKeyboardEntry() && doc && doc->focusNode()->hasTagName(inputTag) && 
+    if ((flag && !secureKeyboardEntry() && doc && doc->focusNode() && doc->focusNode()->hasTagName(inputTag) && 
             static_cast<HTMLInputElement*>(doc->focusNode())->inputType() == HTMLInputElement::PASSWORD) ||
         (!flag && secureKeyboardEntry()))
             setSecureKeyboardEntry(flag);

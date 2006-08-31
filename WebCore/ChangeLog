@@ -1,5 +1,11 @@
 2006-08-30  Adele Peterson  <adele@apple.com>
 
+        Adding missing nil check for focus node.
+
+        * page/Frame.cpp: (WebCore::Frame::setIsActive):
+
+2006-08-30  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         WebCore part of fix for  http://bugzilla.opendarwin.org/show_bug.cgi?id=10575
