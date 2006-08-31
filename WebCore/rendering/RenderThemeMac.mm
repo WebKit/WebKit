@@ -716,7 +716,7 @@ const int styledPopupPaddingLeft = 8;
 const int styledPopupPaddingTop = 1;
 const int styledPopupPaddingBottom = 2;
 
-static void TopGradientInterpolate( void *info, float const *inData, float *outData )
+static void TopGradientInterpolate( void *info, const CGFloat *inData, CGFloat *outData )
 {
     static float dark[4] = { 1, 1, 1, 0.4 };
     static float light[4] = { 1, 1, 1, 0.15 };
@@ -726,7 +726,7 @@ static void TopGradientInterpolate( void *info, float const *inData, float *outD
         outData[i] = ( 1.0 - a ) * dark[i] + a * light[i];
 }
 
-static void BottomGradientInterpolate( void *info, float const *inData, float *outData )
+static void BottomGradientInterpolate( void *info, const CGFloat *inData, CGFloat *outData )
 {
     static float dark[4] = { 1, 1, 1, 0 };
     static float light[4] = { 1, 1, 1, 0.3 };
@@ -736,7 +736,7 @@ static void BottomGradientInterpolate( void *info, float const *inData, float *o
         outData[i] = ( 1.0 - a ) * dark[i] + a * light[i];
 }
 
-static void MainGradientInterpolate( void *info, float const *inData, float *outData )
+static void MainGradientInterpolate( void *info, const CGFloat *inData, CGFloat *outData )
 {
     static float dark[4] = { 0, 0, 0, 0.15 };
     static float light[4] = { 0, 0, 0, 0 };
