@@ -209,13 +209,13 @@ sub GenerateHeader
     my $className = "JS$interfaceName";
     my $implClassName = $interfaceName;
     
-    # FIXME: For SVG we need to support more than one parent
-    # But no more than one parent can be "concrete"
-    # Right now concrete vs. abstract parents are not respected
-    # we just use the first parent listed and ignore all others
-    # Until we fix that, we special case SVG not to die here.
-    if (@{$dataNode->parents} > 1 && !($interfaceName =~ /SVG/)) {
-        die "A class can't have more than one parent";
+    # We only support multiple parents with SVG (for now).
+    if (@{$dataNode->parents} > 1) {
+        die "A class can't have more than one parent" unless $interfaceName =~ /SVG/;
+    
+        if(0) { # FIXME: Currently disabled until SVGAnimated*List works
+            $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode);
+        }
     }
     
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};

@@ -59,10 +59,10 @@ sub new
 
 sub StripModule($)
 {
-	my $object = shift;
-	my $name = shift;
-	$name =~ s/[a-zA-Z0-9]*:://;
-	return $name;
+    my $object = shift;
+    my $name = shift;
+    $name =~ s/[a-zA-Z0-9]*:://;
+    return $name;
 }
 
 sub ProcessDocument
@@ -95,6 +95,86 @@ sub ProcessDocument
 #  print " | *** Finished generation!\n";
 }
 
+sub AddMethodsConstantsAndAttributesFromParentClasses
+{
+    # For the passed interface, recursively parse all parent
+    # IDLs in order to find out all inherited properties/methods.
+
+    my $object = shift;
+    my $dataNode = shift;
+    my $topBaseClass = "";
+
+    my @parents = @{$dataNode->parents};
+    my $parentsMax = @{$dataNode->parents};
+
+    my $constantsRef = $dataNode->constants;
+    my $functionsRef = $dataNode->functions;
+    my $attributesRef = $dataNode->attributes;
+
+    # Exception: For the DOM 'Node' is our topmost baseclass, not EventTargetNode.
+    if(($parentsMax eq 1) and ($parents[0] eq "EventTargetNode")) {
+        return;
+    }
+
+    my $ignoreParent = 1;
+    foreach(@{$dataNode->parents}) {
+        if($ignoreParent eq 1) {
+            # Ignore first parent class, already handled by the generation itself.
+            $ignoreParent = 0;
+            next;
+        }
+
+        my $interface = $object->StripModule($_);
+
+        # Step #1: Find the IDL file associated with 'interface'
+        $endCondition = 0;
+        $foundFilename = "";
+
+        foreach(@{$useDirectories}) {
+            if($foundFilename eq "") {
+                $object->ScanDirectory("$interface.idl", $_, $_, 0);
+            }
+        }
+
+        if($foundFilename ne "") {
+            print "  |  |>  Parsing parent IDL \"$foundFilename\" for interface \"$interface\"\n";
+
+            # Step #2: Parse the found IDL file (in quiet mode).
+            my $parser = IDLParser->new(1);
+            my $document = $parser->Parse($foundFilename, "");
+
+            foreach(@{$document->classes}) {
+                my $class = $_;
+
+                # Step #3: Collect constants & functions & attributes of this parent-class...
+                my $constantsMax = @{$class->constants};
+                my $functionsMax = @{$class->functions};
+                my $attributesMax = @{$class->attributes};
+
+                print "  |  |>  -> Inherting $constantsMax constants, $functionsMax functions, $attributesMax attributes...\n  |  |>\n";
+
+                # Step #4: Concatenate data...
+                foreach(@{$class->constants}) {
+                    push(@$constantsRef, $_);
+                }
+
+                foreach(@{$class->functions}) {
+                    push(@$functionsRef, $_);
+                }
+
+                foreach(@{$class->attributes}) {
+                    push(@$attributesRef, $_);
+                }
+
+                # Step #4: Enter recursive parent search...
+                AddMethodsConstantsAndAttributesFromParentClasses($object, $class);
+            }
+        } else {
+            die("Could NOT find specified parent interface \"$interface\"!\n");
+        }
+    }
+}
+ 
 # Helper for all CodeGenerator***.pm modules
 sub FindTopBaseClass
 {
@@ -390,7 +470,7 @@ sub ScanDirectory
     }
 
     if($condition) {
-      $foundFilename = "$useDirectory/$directory/$name";
+      $foundFilename = "$directory/$name";
 
       if($reportAllFiles eq 0) {
         $endCondition = 1;

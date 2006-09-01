@@ -1,3 +1,19 @@
+2006-09-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Implement support for multiple parents in the SVG idls.
+
+        For class "FooBar" go through all parents recursively,
+        collect their attributes & functions & constants and
+        add them directly into the class "FooBar".
+
+        (Note: It is NOT enabled by default for now - still some things related to SVGAnimated* need to be solved first)
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/generate-bindings.pl:
+
 2006-09-02  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by hyatt.  Landed by eseidel.
