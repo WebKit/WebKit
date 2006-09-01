@@ -418,7 +418,7 @@ public:
   virtual bool inputManagerHasMarkedText() const { return false; }
   
   virtual void setSecureKeyboardEntry(bool) {};
-  virtual bool secureKeyboardEntry() { return false; }
+  virtual bool isSecureKeyboardEntry() { return false; }
   
   bool isSelectionInPasswordField();
   

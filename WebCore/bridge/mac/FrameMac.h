@@ -281,7 +281,7 @@ public:
     virtual bool inputManagerHasMarkedText() const;
     
     virtual void setSecureKeyboardEntry(bool);
-    virtual bool secureKeyboardEntry();
+    virtual bool isSecureKeyboardEntry();
 
     KJS::Bindings::RootObject* executionContextForDOM();
     KJS::Bindings::RootObject* bindingRootObject();

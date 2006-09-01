@@ -2,11 +2,25 @@
 
         Reviewed by John.
 
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10580
+          Password: New secure text field allows non-Roman text entry
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::setSecureKeyboardEntry): Enable and disable Roman keyboards when switching in and out of this mode.
+        (WebCore::FrameMac::isSecureKeyboardEntry): Changed secureKeyboardEntry to isSecureKeyboardEntry.
+        * bridge/mac/FrameMac.h: ditto.
+        * page/Frame.cpp: (WebCore::Frame::setIsActive): ditto.
+        * page/Frame.h: (WebCore::Frame::isSecureKeyboardEntry): ditto.
+
+2006-09-01  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John.
+
         - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10665
           Password: Disable smartReplace for new password fields
 
         * editing/ReplaceSelectionCommand.cpp: (WebCore::ReplaceSelectionCommand::doApply):
-          Don't smart replace when the selection being replaces is in a password field.
+          Don't smart replace when the selection being replaced is in a password field.
 
 2006-08-31  Sam Weinig  <sam.weinig@gmail.com>
 

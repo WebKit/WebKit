@@ -3343,15 +3343,19 @@ bool FrameMac::inputManagerHasMarkedText() const
     return false;
 }
 
+const short enableRomanKeyboardsOnly = -23;
 void FrameMac::setSecureKeyboardEntry(bool enable)
 {
-    if (enable)
+    if (enable) {
         EnableSecureEventInput();
-    else
+        KeyScript(enableRomanKeyboardsOnly);
+    } else {
         DisableSecureEventInput();
+        KeyScript(smKeyEnableKybds);
+    }
 }
 
-bool FrameMac::secureKeyboardEntry()
+bool FrameMac::isSecureKeyboardEntry()
 {
     return IsSecureEventInputEnabled();
 }
