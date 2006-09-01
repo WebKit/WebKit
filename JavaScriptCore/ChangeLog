@@ -1,3 +1,10 @@
+2006-09-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/dftables/dftables.vcproj:
+
 2006-08-31  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

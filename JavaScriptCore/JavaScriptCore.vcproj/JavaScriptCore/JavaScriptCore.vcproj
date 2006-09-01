@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="JavaScriptCore"
 	ProjectGUID="{011D10F1-B656-4A1B-A0C3-3842F02122C5}"
 	RootNamespace="JavaScriptCore"
@@ -118,7 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni"
 				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C;NDEBUG"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
