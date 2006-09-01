@@ -1,3 +1,13 @@
+2006-09-01  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10665
+          Password: Disable smartReplace for new password fields
+
+        * editing/ReplaceSelectionCommand.cpp: (WebCore::ReplaceSelectionCommand::doApply):
+          Don't smart replace when the selection being replaces is in a password field.
+
 2006-08-31  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
