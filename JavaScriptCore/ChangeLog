@@ -1,3 +1,13 @@
+2006-09-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by ap.
+
+        Fix build on Linux (C89 without gcc extensions enabled).
+
+        * pcre/pcre_internal.h: Use C style comments.
+        * wtf/Assertions.h: Use C style comments.
+        * wtf/Platform.h: Use C style comments.
+
 2006-09-01  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build.

@@ -166,7 +166,7 @@
 
 /* for Unicode, KDE uses Qt, everything else uses ICU */
 #if PLATFORM(KDE)
-// FIXME: Not using Qt4 unicode for now!
+/* FIXME: Not using Qt4 unicode for now! */
 #define KXMLCORE_USE_ICU_UNICODE 1
 #else
 #define KXMLCORE_USE_ICU_UNICODE 1

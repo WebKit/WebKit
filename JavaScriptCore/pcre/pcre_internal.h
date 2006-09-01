@@ -41,8 +41,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "Assertions.h"
 
-// Added to prevent 64-to-32 shortening warnings when compiling for 64-bit
-// <rdar://problem/4712064> PCRE generates many warnings with -Wshorten-64-to-32
+/* Added to prevent 64-to-32 shortening warnings when compiling for 64-bit
+  <rdar://problem/4712064> PCRE generates many warnings with -Wshorten-64-to-32 */
 #if defined(__GNUC__) && defined(__LP64__)
 #define INT_CAST(i) (int)(i); ASSERT((i) <= INT_MAX)
 #else
