@@ -1,3 +1,87 @@
+2006-08-31  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10669
+          Auto-generate the remaining Objective-C HTML DOM bindings
+          
+          Auto-generates DOMHTMLAnchorElement, DOMHTMLAreaElement,
+          DOMHTMLBaseFontElement, DOMHTMLFontElement, DOMHTMLFrameElement,
+          DOMHTMLFrameSetElement, DOMHTMLHRElement, DOMHTMLIFrameElement,
+          DOMHTMLImageElement, DOMHTMLMapElement, DOMHTMLModElement,
+          DOMHTMLObjectElement, DOMHTMLParamElement, DOMHTMLScriptElement,
+          DOMHTMLTableCaptionElement, DOMHTMLTableCellElement,
+          DOMHTMLTableColElement, DOMHTMLTableElement, DOMHTMLTableRowElement,
+          and DOMHTMLTableSectionElement.  
+
+          Splits DOMHTMLAppletElement and DOMHTMLOptionElement into their own 
+          files.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTML.h:
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLAnchorElement absoluteLinkURL]):
+        (-[DOMHTMLImageElement altDisplayString]):
+        (-[DOMHTMLImageElement absoluteImageURL]):
+        (-[DOMHTMLImageElement WebCore::]):
+        (-[DOMHTMLObjectElement absoluteImageURL]):
+        (-[DOMHTMLObjectElement WebCore::]):
+        (+[DOMHTMLTableCaptionElement _tableCaptionElementWith:]):
+        (-[DOMHTMLTableCaptionElement _tableCaptionElement]):
+        (+[DOMHTMLTableSectionElement _tableSectionElementWith:]):
+        (-[DOMHTMLTableSectionElement _tableSectionElement]):
+        (+[DOMHTMLTableElement _tableElementWith:]):
+        (-[DOMHTMLTableElement _tableElement]):
+        (+[DOMHTMLTableCellElement _tableCellElementWith:]):
+        (-[DOMHTMLTableCellElement _tableCellElement]):
+        * bindings/objc/DOMHTMLAppletElement.h: Added.
+        * bindings/objc/DOMHTMLAppletElement.mm: Added.
+        (-[DOMHTMLAppletElement WebCore::]):
+        (-[DOMHTMLAppletElement align]):
+        (-[DOMHTMLAppletElement setAlign:]):
+        (-[DOMHTMLAppletElement alt]):
+        (-[DOMHTMLAppletElement setAlt:]):
+        (-[DOMHTMLAppletElement archive]):
+        (-[DOMHTMLAppletElement setArchive:]):
+        (-[DOMHTMLAppletElement code]):
+        (-[DOMHTMLAppletElement setCode:]):
+        (-[DOMHTMLAppletElement codeBase]):
+        (-[DOMHTMLAppletElement setCodeBase:]):
+        (-[DOMHTMLAppletElement height]):
+        (-[DOMHTMLAppletElement setHeight:]):
+        (-[DOMHTMLAppletElement hspace]):
+        (-[DOMHTMLAppletElement setHspace:]):
+        (-[DOMHTMLAppletElement name]):
+        (-[DOMHTMLAppletElement setName:]):
+        (-[DOMHTMLAppletElement object]):
+        (-[DOMHTMLAppletElement setObject:]):
+        (-[DOMHTMLAppletElement vspace]):
+        (-[DOMHTMLAppletElement setVspace:]):
+        (-[DOMHTMLAppletElement width]):
+        (-[DOMHTMLAppletElement setWidth:]):
+        * bindings/objc/DOMHTMLInternal.h:
+        * bindings/objc/DOMHTMLOptionElement.h: Added.
+        * bindings/objc/DOMHTMLOptionElement.mm: Added.
+        (-[DOMHTMLOptionElement WebCore::]):
+        (-[DOMHTMLOptionElement form]):
+        (-[DOMHTMLOptionElement defaultSelected]):
+        (-[DOMHTMLOptionElement setDefaultSelected:]):
+        (-[DOMHTMLOptionElement text]):
+        (-[DOMHTMLOptionElement index]):
+        (-[DOMHTMLOptionElement disabled]):
+        (-[DOMHTMLOptionElement setDisabled:]):
+        (-[DOMHTMLOptionElement label]):
+        (-[DOMHTMLOptionElement setLabel:]):
+        (-[DOMHTMLOptionElement selected]):
+        (-[DOMHTMLOptionElement setSelected:]):
+        (-[DOMHTMLOptionElement value]):
+        (-[DOMHTMLOptionElement setValue:]):
+        * bindings/objc/DOMPrivate.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+
 2006-08-31  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin.

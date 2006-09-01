@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,13 +30,16 @@
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMElement.h>
 #import <WebCore/DOMHTML.h>
+#import <WebCore/DOMHTMLAnchorElement.h>
+#import <WebCore/DOMHTMLAreaElement.h>
+#import <WebCore/DOMHTMLDocument.h>
+#import <WebCore/DOMHTMLElement.h>
+#import <WebCore/DOMHTMLImageElement.h>
+#import <WebCore/DOMHTMLInputElement.h>
+#import <WebCore/DOMHTMLLinkElement.h>
+#import <WebCore/DOMHTMLObjectElement.h>
 #import <WebCore/DOMNode.h>
 #import <WebCore/DOMRange.h>
-
-#import <WebCore/DOMHTMLElement.h>
-#import <WebCore/DOMHTMLDocument.h>
-#import <WebCore/DOMHTMLLinkElement.h>
-#import <WebCore/DOMHTMLInputElement.h>
 
 @class NSColor;
 @class NSImage;

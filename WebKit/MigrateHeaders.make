@@ -45,8 +45,12 @@ all : \
     DOMEvents.h \
     DOMExtensions.h \
     DOMHTML.h \
+    DOMHTMLAnchorElement.h \
+    DOMHTMLAppletElement.h \
+    DOMHTMLAreaElement.h \
     DOMHTMLBRElement.h \
     DOMHTMLBaseElement.h \
+    DOMHTMLBaseFontElement.h \
     DOMHTMLBodyElement.h \
     DOMHTMLButtonElement.h \
     DOMHTMLCollection.h \
@@ -56,26 +60,44 @@ all : \
     DOMHTMLDocument.h \
     DOMHTMLElement.h \
     DOMHTMLFieldSetElement.h \
+    DOMHTMLFontElement.h \
     DOMHTMLFormElement.h \
+    DOMHTMLFrameElement.h \
+    DOMHTMLFrameSetElement.h \
+    DOMHTMLHRElement.h \
     DOMHTMLHeadElement.h \
     DOMHTMLHeadingElement.h \
     DOMHTMLHtmlElement.h \
+    DOMHTMLIFrameElement.h \
+    DOMHTMLImageElement.h \
     DOMHTMLInputElement.h \
     DOMHTMLIsIndexElement.h \
     DOMHTMLLIElement.h \
     DOMHTMLLabelElement.h \
     DOMHTMLLegendElement.h \
     DOMHTMLLinkElement.h \
+    DOMHTMLMapElement.h \
     DOMHTMLMenuElement.h \
     DOMHTMLMetaElement.h \
+    DOMHTMLModElement.h \
     DOMHTMLOListElement.h \
+    DOMHTMLObjectElement.h \
     DOMHTMLOptGroupElement.h \
+    DOMHTMLOptionElement.h \
     DOMHTMLOptionsCollection.h \
     DOMHTMLParagraphElement.h \
+    DOMHTMLParamElement.h \
     DOMHTMLPreElement.h \
     DOMHTMLQuoteElement.h \
+    DOMHTMLScriptElement.h \
     DOMHTMLSelectElement.h \
     DOMHTMLStyleElement.h \
+    DOMHTMLTableCaptionElement.h \
+    DOMHTMLTableCellElement.h \
+    DOMHTMLTableColElement.h \
+    DOMHTMLTableElement.h \
+    DOMHTMLTableRowElement.h \
+    DOMHTMLTableSectionElement.h \
     DOMHTMLTextAreaElement.h \
     DOMHTMLTitleElement.h \
     DOMHTMLUListElement.h \

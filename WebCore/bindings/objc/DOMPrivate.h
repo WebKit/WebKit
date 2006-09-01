@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,12 +28,11 @@
 #import <WebCore/DOMElement.h>
 #import <WebCore/DOMEvents.h>
 #import <WebCore/DOMHTML.h>
+#import <WebCore/DOMHTMLDocument.h>
+#import <WebCore/DOMHTMLInputElement.h>
+#import <WebCore/DOMHTMLSelectElement.h>
 #import <WebCore/DOMNode.h>
 #import <WebCore/DOMRange.h>
-
-#import <WebCore/DOMHTMLDocument.h>
-#import <WebCore/DOMHTMLSelectElement.h>
-#import <WebCore/DOMHTMLInputElement.h>
 
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText

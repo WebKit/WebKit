@@ -30,8 +30,14 @@
 #import "DOMHTMLDocument.h"
 #import "DOMHTMLElement.h"
 #import "DOMHTMLFormElement.h"
-#import "DOMHTMLOptionsCollection.h"
+#import "DOMHTMLImageElement.h"
 #import "DOMHTMLInputElement.h"
+#import "DOMHTMLObjectElement.h"
+#import "DOMHTMLOptionsCollection.h"
+#import "DOMHTMLTableCaptionElement.h"
+#import "DOMHTMLTableCellElement.h"
+#import "DOMHTMLTableElement.h"
+#import "DOMHTMLTableSectionElement.h"
 
 namespace WebCore {
     class HTMLCollection;
@@ -94,7 +100,7 @@ namespace WebCore {
 @end
 
 @interface DOMHTMLObjectElement (WebCoreInternal)
-- (WebCore::HTMLObjectElement *)_objectElement;
+- (WebCore::HTMLObjectElement *)_HTMLObjectElement;
 @end
 
 @interface DOMHTMLInputElement (WebCoreInternal)
