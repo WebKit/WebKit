@@ -1,3 +1,15 @@
+2006-09-01  David Hyatt  <hyatt@apple.com>
+
+        Fix for 10680, contrained flexbox is not shrinking flexible children
+        properly.  (Fixing in case it's hit by the file upload control.)
+
+        Reviewed by aroben
+
+        Adding 026.html to fast/flexbox.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::allowedChildFlex):
+
 2006-09-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.

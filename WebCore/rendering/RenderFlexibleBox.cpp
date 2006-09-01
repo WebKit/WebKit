@@ -1105,7 +1105,7 @@ int RenderFlexibleBox::allowedChildFlex(RenderObject* child, bool expanding, uns
     // FIXME: For now just handle fixed values.
     if (isHorizontal()) {
         int minW = child->minWidth();
-        int w = child->contentWidth();
+        int w = child->overrideWidth() - (child->borderLeft() + child->borderRight() + child->paddingLeft() + child->paddingRight());
         if (child->style()->minWidth().isFixed())
             minW = child->style()->minWidth().value();
         else if (child->style()->minWidth().type() == Intrinsic)
@@ -1118,7 +1118,7 @@ int RenderFlexibleBox::allowedChildFlex(RenderObject* child, bool expanding, uns
     } else {
         if (child->style()->minHeight().isFixed()) {
             int minH = child->style()->minHeight().value();
-            int h = child->contentHeight();
+            int h = child->overrideHeight() - (child->borderLeft() + child->borderRight() + child->paddingLeft() + child->paddingRight());
             int allowedShrinkage = min(0, minH - h);
             return allowedShrinkage;
         }
