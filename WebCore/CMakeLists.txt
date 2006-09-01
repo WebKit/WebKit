@@ -207,7 +207,7 @@ set(WebCore-unity-IDLGeneratedSources )
 foreach (idl ${IDL_BINDINGS})
    get_filename_component(_basename ${idl} NAME_WE)
    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.cpp ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.h
-      COMMAND perl -I${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts ${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts/generate-bindings.pl  --defines \"SVG_SUPPORT=${WEBKIT_USE_SVG_SUPPORT}\" --generator JS --include dom --include html --include xml --include ksvg2/svg --outputdir ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${idl}
+      COMMAND perl -I${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts ${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts/generate-bindings.pl  --defines \"SVG_SUPPORT=${WEBKIT_USE_SVG_SUPPORT}\" --generator JS --include ${CMAKE_SOURCE_DIR}/WebCore/dom --include ${CMAKE_SOURCE_DIR}/WebCore/html --include ${CMAKE_SOURCE_DIR}/WebCore/xml --include ${CMAKE_SOURCE_DIR}/WebCore/ksvg2/svg --outputdir ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${idl}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${idl} )
    set(WebCore-unity-IDLGeneratedSources ${WebCore-unity-IDLGeneratedSources} ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.cpp ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.h )
 endforeach (idl)
@@ -834,6 +834,7 @@ set(WebCore_SRCS
     loader/Cache.cpp
     loader/Decoder.cpp
     loader/FormData.cpp
+    platform/CString.cpp
     platform/AtomicString.cpp
     platform/AffineTransform.cpp
     platform/TextStream.cpp

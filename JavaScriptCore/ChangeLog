@@ -1,5 +1,13 @@
 2006-09-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by hyatt.  Landed by eseidel.
+
+        Fix build on Linux.
+
+        * pcre/CMakeLists.txt: Add wtf/ include.
+
+2006-09-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed and landed by ap.
 
         Fix build on Linux (C89 without gcc extensions enabled).
