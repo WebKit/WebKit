@@ -445,11 +445,9 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     if (value->isUndefined())
         return [WebUndefined undefined];
 
-    if (value->isNull())
-        return [NSNull null];
-  
-    // Other types (e.g., UnspecifiedType) converted to nil.
-    // This should never happen.
+    // jsNull is not returned as NSNull because existing applications do not expect
+    // that return value. Return as nil for compatibility. <rdar://problem/4651318> <rdar://problem/4701626>
+    // Other types (e.g., UnspecifiedType) also return as nil.
     return nil;
 }
 

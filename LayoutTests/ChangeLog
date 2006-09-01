@@ -1,3 +1,14 @@
+2006-09-01  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        - updated results, null is not round-tripped through the bindings
+          because of regressions the original change caused in other applications.
+        - added an echo for "undefined".
+
+        * plugins/bindings-test-expected.txt:
+        * plugins/bindings-test.html:
+
 2006-09-01  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Eric.

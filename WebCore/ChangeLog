@@ -1,3 +1,16 @@
+2006-09-01  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4651318> REGRESSION: can't drag library items to widget in Dashcode
+        <rdar://problem/4701626> REGRESSION: Unit Converter widget doesn't work convert data in its fields
+
+        jsNull should not be returned as NSNull because existing applications do not
+        expect that return value. Return as nil for backwards compatibility.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:originExecutionContext:executionContext:]):
+
 2006-09-01  Alexey Proskuryakov  <ap@nypop.com>
 
         Release build fix.
