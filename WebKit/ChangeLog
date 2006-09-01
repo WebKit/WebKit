@@ -2,7 +2,7 @@
 
         Reviewed by Darin
 
-        A "never should be reach" method was reached - lets not release the shared database bridge, esp
+        A "never should be reached" method was reached - lets not release the shared database bridge, esp
         since we never retain it!
 
         * Misc/WebIconDatabase.m:
