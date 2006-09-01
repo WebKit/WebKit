@@ -2350,13 +2350,13 @@ static NSView *viewForElement(DOMElement *element)
         return YES;
     
     if (textInputTypes == nil)
-        textInputTypes = [[NSSet alloc] initWithObjects:@"text", @"password", @"search", nil];
+        textInputTypes = [[NSSet alloc] initWithObjects:@"text", @"password", @"search", @"isindex", nil];
     
     BOOL isText = [textInputTypes containsObject:[fieldType lowercaseString]];
     
 #ifndef NDEBUG
     if (nonTextInputTypes == nil)
-        nonTextInputTypes = [[NSSet alloc] initWithObjects:@"isindex", @"checkbox", @"radio", @"submit", @"reset", @"file", @"hidden", @"image", @"button", @"range", nil];
+        nonTextInputTypes = [[NSSet alloc] initWithObjects:@"checkbox", @"radio", @"submit", @"reset", @"file", @"hidden", @"image", @"button", @"range", nil];
     
     // Catch cases where a new input type has been added that's not in these lists.
     ASSERT(isText || [nonTextInputTypes containsObject:[fieldType lowercaseString]]);

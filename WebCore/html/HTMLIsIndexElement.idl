@@ -18,7 +18,7 @@
  */
 
 module html {
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLIsIndexElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement] HTMLIsIndexElement : HTMLInputElement {
         readonly attribute HTMLFormElement form;
         attribute DOMString prompt;
     };

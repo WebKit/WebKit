@@ -449,7 +449,6 @@ bool HTMLInputElement::canHaveSelection() const
         case FILE:
         case HIDDEN:
         case IMAGE:
-        case ISINDEX:
         case RADIO:
         case RANGE:
         case RESET:
@@ -457,6 +456,7 @@ bool HTMLInputElement::canHaveSelection() const
             return false;
         case PASSWORD:
         case SEARCH:
+        case ISINDEX:
         case TEXT:
             return true;
     }
@@ -474,7 +474,6 @@ int HTMLInputElement::selectionStart() const
         case FILE:
         case HIDDEN:
         case IMAGE:
-        case ISINDEX:
         case RADIO:
         case RANGE:
         case RESET:
@@ -482,6 +481,7 @@ int HTMLInputElement::selectionStart() const
             break;
         case SEARCH:
             return static_cast<RenderLineEdit*>(renderer())->selectionStart();
+        case ISINDEX:
         case TEXT:
             if (document()->focusNode() != this && cachedSelStart >= 0)
                 return cachedSelStart;
@@ -506,7 +506,6 @@ int HTMLInputElement::selectionEnd() const
         case FILE:
         case HIDDEN:
         case IMAGE:
-        case ISINDEX:
         case RADIO:
         case RANGE:
         case RESET:
@@ -514,6 +513,7 @@ int HTMLInputElement::selectionEnd() const
             break;
         case SEARCH:
             return static_cast<RenderLineEdit*>(renderer())->selectionEnd();
+        case ISINDEX:
         case TEXT:
             if (document()->focusNode() != this && cachedSelEnd >= 0)
                 return cachedSelEnd;
@@ -538,7 +538,6 @@ void HTMLInputElement::setSelectionStart(int start)
         case FILE:
         case HIDDEN:
         case IMAGE:
-        case ISINDEX:
         case RADIO:
         case RANGE:
         case RESET:
@@ -547,6 +546,7 @@ void HTMLInputElement::setSelectionStart(int start)
         case SEARCH:
             static_cast<RenderLineEdit*>(renderer())->setSelectionStart(start);
             break;
+        case ISINDEX:
         case TEXT:
             static_cast<RenderTextControl*>(renderer())->setSelectionStart(start);
             break;
@@ -570,7 +570,6 @@ void HTMLInputElement::setSelectionEnd(int end)
         case FILE:
         case HIDDEN:
         case IMAGE:
-        case ISINDEX:
         case RADIO:
         case RANGE:
         case RESET:
@@ -579,6 +578,7 @@ void HTMLInputElement::setSelectionEnd(int end)
         case SEARCH:
             static_cast<RenderLineEdit*>(renderer())->setSelectionEnd(end);
             break;
+        case ISINDEX:
         case TEXT:
             static_cast<RenderTextControl*>(renderer())->setSelectionEnd(end);
             break;
@@ -601,7 +601,6 @@ void HTMLInputElement::select()
         case CHECKBOX:
         case HIDDEN:
         case IMAGE:
-        case ISINDEX:
         case RADIO:
         case RANGE:
         case RESET:
@@ -613,6 +612,7 @@ void HTMLInputElement::select()
         case SEARCH:
             static_cast<RenderLineEdit*>(renderer())->select();
             break;
+        case ISINDEX:
         case TEXT:
             static_cast<RenderTextControl*>(renderer())->select();
             break;
@@ -636,7 +636,6 @@ void HTMLInputElement::setSelectionRange(int start, int end)
         case FILE:
         case HIDDEN:
         case IMAGE:
-        case ISINDEX:
         case RADIO:
         case RANGE:
         case RESET:
@@ -645,6 +644,7 @@ void HTMLInputElement::setSelectionRange(int start, int end)
         case SEARCH:
             static_cast<RenderLineEdit*>(renderer())->setSelectionRange(start, end);
             break;
+        case ISINDEX:
         case TEXT:
             static_cast<RenderTextControl*>(renderer())->setSelectionRange(start, end);
             break;
@@ -869,11 +869,11 @@ RenderObject *HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *
             break;
         case IMAGE:
             return new (arena) RenderImage(this);
-        case ISINDEX:
         case SEARCH:
             return new (arena) RenderLineEdit(this);
         case RANGE:
             return new (arena) DeprecatedSlider(this);
+        case ISINDEX:
         case TEXT:
             return new (arena) RenderTextControl(this, false);
         case PASSWORD:

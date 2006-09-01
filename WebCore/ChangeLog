@@ -1,3 +1,34 @@
+2006-08-31  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed <rdar://problem/4463870> Switch to use new text field implementation for <isindex>
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _isTextField]):
+        moved isindex from the list of nonTextInputTypes to the list of textInputTypes
+        * css/html4.css:
+        added isindex to certain rules that applied to input fields
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::canHaveSelection):
+        (WebCore::HTMLInputElement::selectionStart):
+        (WebCore::HTMLInputElement::selectionEnd):
+        (WebCore::HTMLInputElement::setSelectionStart):
+        (WebCore::HTMLInputElement::setSelectionEnd):
+        (WebCore::HTMLInputElement::select):
+        (WebCore::HTMLInputElement::setSelectionRange):
+        (WebCore::HTMLInputElement::createRenderer):
+        for the 8 methods above, moved the case for isindex to the same case as text
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isNonWidgetTextField):
+        added isindex to this test
+        * html/HTMLIsIndexElement.idl:
+        HTMLIsIndexElement inherits from HTMLInputElement
+        * rendering/RenderLineEdit.cpp:
+        (WebCore::RenderLineEdit::RenderLineEdit):
+        removed the case for isindex since we changed the renderer type from a RenderLineEdit
+        to a RenderTextControl in WebCore::HTMLInputElement::createRenderer()
+
 2006-08-31  David Harrison  <harrison@apple.com>
 
         Reviewed by Adele.

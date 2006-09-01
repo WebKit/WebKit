@@ -1,3 +1,15 @@
+2006-08-31  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        Revised expected results for an isindex element because of 
+        <rdar://problem/4463870> Switch to use new text field implementation for <isindex>
+        Now the field is rendered as a textfield
+
+        * fast/dom/isindex-002-expected.checksum:
+        * fast/dom/isindex-002-expected.png:
+        * fast/dom/isindex-002-expected.txt:
+
 2006-08-30  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
