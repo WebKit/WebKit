@@ -25,6 +25,7 @@
 #include "config.h"
 #include "Decoder.h"
 
+#include "CString.h"
 #include "DOMImplementation.h"
 #include "HTMLNames.h"
 #include "StreamingTextDecoder.h"
@@ -251,8 +252,8 @@ breakBreak:
 }
 
 Decoder::Decoder(const String& mimeType, const String& defaultEncodingName)
-  : m_encoding(defaultEncodingName.isNull() ? "iso8859-1" : defaultEncodingName.ascii().data())
-  , m_encodingName(defaultEncodingName.isNull() ? "iso8859-1" : defaultEncodingName.ascii().data())
+  : m_encoding(defaultEncodingName.isNull() ? "iso8859-1" : defaultEncodingName.latin1())
+  , m_encodingName(defaultEncodingName.isNull() ? "iso8859-1" : defaultEncodingName.latin1())
   , m_type(DefaultEncoding)
   , m_reachedBody(false)
   , m_checkedForCSSCharset(false)

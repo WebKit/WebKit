@@ -1,5 +1,12 @@
 2006-09-01  Alexey Proskuryakov  <ap@nypop.com>
 
+        Release build fix.
+
+        * loader/Decoder.cpp:
+        (Decoder::Decoder): Use String::latin1().
+
+2006-09-01  Alexey Proskuryakov  <ap@nypop.com>
+
         Reviewed by Eric.
 
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=5620
