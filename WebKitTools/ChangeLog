@@ -1,4 +1,8 @@
-2006-08-29  waylonis  <waylonis@google.com>
+2006-08-31  Darin Adler  <darin@apple.com>
+
+        * Scripts/do-webcore-rename: Prepare for another round of renaming.
+
+2006-08-29  Dan Waylonis  <waylonis@google.com>
 
         Reviewed by ggaren.
 
