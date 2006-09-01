@@ -1,3 +1,12 @@
+2006-09-01  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adele.
+
+        Bug 10677: Omit "-webkit-text-security: none;" from the computed style list
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10677
+
+        * WebInspector/webInspector/inspector.js:
+
 2006-08-31  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

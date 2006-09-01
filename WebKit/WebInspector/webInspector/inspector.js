@@ -56,6 +56,7 @@ var typicalStylePropertyValue = {
     "-webkit-marquee-style": "scroll",
     "-webkit-nbsp-mode": "normal",
     "-webkit-text-decorations-in-effect": "none",
+    "-webkit-text-security": "none",
     "-webkit-user-modify": "read-only",
     "background-attachment": "scroll",
     "background-color": "rgba(0, 0, 0, 0)",
