@@ -24,6 +24,7 @@
 
 #include <wtf/OwnPtr.h>
 #include "TextEncoding.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
@@ -40,11 +41,12 @@ public:
         AutoDetectedEncoding,
         EncodingFromXMLHeader,
         EncodingFromMetaTag,
+        EncodingFromCSSCharset,
         EncodingFromHTTPHeader,
         UserChosenEncoding
     };
     
-    Decoder();
+    Decoder(const String& mimeType, const String& defaultEncodingName = String());
     ~Decoder();
 
     void setEncodingName(const char* encoding, EncodingSource type);
@@ -56,19 +58,28 @@ public:
     DeprecatedString decode(const char* data, int len);
     DeprecatedString flush() const;
 
-protected:
+private:
+    enum ContentType {
+        HTML,
+        XML,
+        CSS,
+        PlainText // Do not look inside the document (equivalent to directly using StreamingTextDecoder)
+    };
+
     // encoding used for decoding. default is Latin1.
     TextEncoding m_encoding;
+    ContentType m_contentType;
     OwnPtr<StreamingTextDecoder> m_decoder;
-    DeprecatedCString enc;
+    DeprecatedCString m_encodingName;
     EncodingSource m_type;
 
     // Our version of DeprecatedString works well for all-8-bit characters, and allows null characters.
     // This works better than DeprecatedCString when there are null characters involved.
-    DeprecatedString buffer;
+    DeprecatedString m_buffer;
 
-    bool body;
-    bool beginning;
+    bool m_reachedBody;
+    bool m_checkedForCSSCharset;
+    bool m_checkedForBOM;
 };
 
 }

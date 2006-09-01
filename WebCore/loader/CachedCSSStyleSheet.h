@@ -35,6 +35,7 @@
 namespace WebCore
 {
     class DocLoader;
+    class Decoder;
 
     class CachedCSSStyleSheet : public CachedResource
     {
@@ -58,7 +59,7 @@ namespace WebCore
 
     protected:
         String m_sheet;
-        TextEncoding m_encoding;
+        RefPtr<Decoder> m_decoder;
     };
 
 }

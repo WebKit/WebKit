@@ -643,12 +643,10 @@ void Frame::write(const char* str, int len)
     }
     
     if (!d->m_decoder) {
-        d->m_decoder = new Decoder;
+        d->m_decoder = new Decoder(d->m_request.m_responseMIMEType, settings()->encoding().latin1());
         if (!d->m_encoding.isNull())
             d->m_decoder->setEncodingName(d->m_encoding.latin1(),
                 d->m_haveEncoding ? Decoder::UserChosenEncoding : Decoder::EncodingFromHTTPHeader);
-        else
-            d->m_decoder->setEncodingName(settings()->encoding().latin1(), Decoder::DefaultEncoding);
 
         if (d->m_doc)
             d->m_doc->setDecoder(d->m_decoder.get());

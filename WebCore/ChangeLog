@@ -1,3 +1,52 @@
+2006-09-01  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=5620
+        Should only honor encoding from <meta> in HTML
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9783
+        An XML declaration without an explicit encoding incorrectly triggers
+        UTF-8 encoding in an HTML document
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10155
+        CSS2: @charset is not supported
+        
+        * loader/Decoder.cpp:
+        (Decoder::Decoder): Decoder now knows what kind of content it is decoding.
+        Also, the browser default encoding can now be passed directly to the constructor,
+        to streamline the logic.
+        (Decoder::decode): Add support for @charset, differentiate between HTML and XML.
+        (Decoder::setEncodingName): Style cleanup.
+        (Decoder::encodingName): Ditto.
+        (Decoder::flush): Ditto.
+        * loader/Decoder.h:
+        (WebCore::Decoder::):
+
+        * bridge/mac/WebCoreEncodings.mm: Pass a content type of text/html to Decoder.
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        (WebCore::CachedCSSStyleSheet::setCharset):
+        (WebCore::CachedCSSStyleSheet::data):
+        * loader/CachedCSSStyleSheet.h:
+        Use Decoder instead of TextEncoding::toUnicode() to enable @charset support.
+
+        * loader/CachedXBLDocument.cpp:
+        (WebCore::CachedXBLDocument::CachedXBLDocument): Pass a content type.
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet): Ditto.
+        (WebCore::CachedXSLStyleSheet::data): Flush the decoder to be safe.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::write): Pass a content type and a default encoding to 
+        the Decoder.
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource): Pass the output document
+        MIME type.
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::receivedData): Ditto.
+
 2006-09-01  Adele Peterson  <adele@apple.com>
 
         Reviewed by John.

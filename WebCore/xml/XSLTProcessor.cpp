@@ -212,7 +212,7 @@ RefPtr<Document> XSLTProcessor::createDocumentFromSource(const DeprecatedString 
     }
     result->determineParseMode(documentSource); // Make sure we parse in the correct mode.
     
-    RefPtr<Decoder> decoder = new Decoder;
+    RefPtr<Decoder> decoder = new Decoder(sourceMIMEType);
     decoder->setEncodingName(sourceEncoding.isEmpty() ? "UTF-8" : sourceEncoding.latin1(), Decoder::EncodingFromXMLHeader);
     result->setDecoder(decoder.get());
     

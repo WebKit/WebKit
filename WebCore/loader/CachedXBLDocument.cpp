@@ -49,7 +49,7 @@ CachedXBLDocument::CachedXBLDocument(DocLoader* dl, const String &url, CachePoli
     // Load the file
     Cache::loader()->load(dl, this, false);
     m_loading = true;
-    m_decoder = new Decoder;
+    m_decoder = new Decoder("application/xml");
 }
 
 CachedXBLDocument::~CachedXBLDocument()

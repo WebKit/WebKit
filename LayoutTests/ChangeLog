@@ -1,3 +1,37 @@
+2006-09-01  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric.
+
+        Tests for:
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=5620
+        Should only honor encoding from <meta> in HTML
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9783
+        An XML declaration without an explicit encoding incorrectly triggers
+        UTF-8 encoding in an HTML document
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10155
+        CSS2: @charset is not supported
+
+        * fast/encoding/css-charset-expected.txt: Added.
+        * fast/encoding/css-charset.css: Added.
+        * fast/encoding/css-charset.html: Added.
+        * fast/encoding/css-charset-evil-expected.txt: Added.
+        * fast/encoding/css-charset-evil.css: Added.
+        * fast/encoding/css-charset-evil.html: Added.
+        * fast/encoding/default-xhtml-encoding-expected.txt: Added.
+        * fast/encoding/default-xhtml-encoding.xhtml: Added.
+        * fast/encoding/meta-in-xhtml-expected.txt: Added.
+        * fast/encoding/meta-in-xhtml.xhtml: Added.
+        * fast/encoding/pseudo-xml-2-expected.txt: Added.
+        * fast/encoding/pseudo-xml-2.html: Added.
+        * fast/encoding/pseudo-xml-3-expected.txt: Added.
+        * fast/encoding/pseudo-xml-3.html: Added.
+        * fast/encoding/pseudo-xml-4-expected.txt: Added.
+        * fast/encoding/pseudo-xml-4.html: Added.
+        * fast/encoding/pseudo-xml-expected.txt: Added.
+        * fast/encoding/pseudo-xml.html: Added.
+
 2006-08-31  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin.

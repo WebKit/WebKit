@@ -539,12 +539,13 @@ void XMLHttpRequest::receivedData(ResourceLoader*, const char *data, int len)
         if (m_encoding.isEmpty() && m_job)
             m_encoding = m_job->queryMetaData("charset");
     
-        m_decoder = new Decoder;
         if (!m_encoding.isEmpty())
-            m_decoder->setEncodingName(m_encoding.deprecatedString().latin1(), Decoder::EncodingFromHTTPHeader);
+            m_decoder = new Decoder("text/plain", m_encoding);
+        else if (responseIsXML())
+            // allow Decoder to look inside the m_response if it's XML
+            m_decoder = new Decoder("application/xml");
         else
-            // only allow Decoder to look inside the m_response if it's XML
-            m_decoder->setEncodingName("UTF-8", responseIsXML() ? Decoder::DefaultEncoding : Decoder::EncodingFromHTTPHeader);
+            m_decoder = new Decoder("text/plain", "UTF-8");
     }
     if (len == 0)
         return;
