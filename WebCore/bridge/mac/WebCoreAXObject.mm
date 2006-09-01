@@ -33,6 +33,7 @@
 #import "FrameMac.h"
 #import "HTMLAreaElement.h"
 #import "HTMLCollection.h"
+#import "HTMLTextAreaElement.h"
 #import "htmlediting.h"
 #import "HTMLFrameElement.h"
 #import "HTMLInputElement.h"
@@ -43,6 +44,7 @@
 #import "RenderImage.h"
 #import "RenderListMarker.h"
 #import "RenderMenuList.h"
+#import "RenderTextControl.h"
 #import "RenderTheme.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
@@ -74,17 +76,6 @@ using namespace HTMLNames;
 -(BOOL)detached
 {
     return !m_renderer;
-}
-
-// accessibilityShouldUseUniqueId is an AppKit method we override so that the canvas
-// objects will be given a unique ID, and therefore allow AppKit to know when they
-// become obsolete (e.g. when the user navigates to a new web page, making this one
-// unrendered but not deallocated because it is in the back/forward cache).
-// It is important to call NSAccessibilityUnregisterUniqueIdForUIElement in the
-// appropriate place (e.g. dealloc) to remove these non-retained references from
-// AppKit's id mapping tables.
-- (BOOL)accessibilityShouldUseUniqueId {
-    return m_renderer && m_renderer->isRenderView();
 }
 
 -(void)detach
@@ -281,6 +272,20 @@ using namespace HTMLNames;
     }
 }
 
+-(BOOL)isWebArea
+{
+    return m_renderer->isRenderView();
+}
+
+-(BOOL)isAnchor
+{
+    return m_areaElement || (!m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isLink());
+} 
+-(BOOL)isTextControl
+{
+    return m_renderer->isTextField() || m_renderer->isTextArea();
+}
+
 -(BOOL)isAttachment
 {
     // widgets are the replaced elements that we represent to AX as attachments
@@ -366,8 +371,14 @@ static int headingLevel(RenderObject* renderer)
             return NSAccessibilityButtonRole;
         return NSAccessibilityImageRole;
     }
-    if (m_renderer->isRenderView())
+    if ([self isWebArea])
         return @"AXWebArea";
+    
+    if (m_renderer->isTextField())
+        return NSAccessibilityTextFieldRole;
+    
+    if (m_renderer->isTextArea())
+        return NSAccessibilityTextAreaRole;
     
     if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
@@ -377,8 +388,6 @@ static int headingLevel(RenderObject* renderer)
             return NSAccessibilityRadioButtonRole;
         if (input->isTextButton())
             return NSAccessibilityButtonRole;
-        if (input->inputType() == HTMLInputElement::TEXT)
-            return NSAccessibilityTextFieldRole;
     }
     
     if (m_renderer->isMenuList())
@@ -440,6 +449,9 @@ static int headingLevel(RenderObject* renderer)
         
     if ([role isEqualToString:NSAccessibilityTextFieldRole])
         return NSAccessibilityRoleDescription(NSAccessibilityTextFieldRole, nil);
+
+    if ([role isEqualToString:NSAccessibilityTextAreaRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityTextAreaRole, nil);
 
     if ([role isEqualToString:@"AXWebArea"])
         return UI_STRING("web area", "accessibility role description for web area");
@@ -523,7 +535,7 @@ static int headingLevel(RenderObject* renderer)
     if (m_renderer->isListMarker())
         return static_cast<RenderListMarker*>(m_renderer)->text().getNSString();
 
-    if (m_renderer->isRenderView()) {
+    if ([self isWebArea]) {
         if (m_renderer->document()->frame())
             return nil;
         
@@ -544,6 +556,9 @@ static int headingLevel(RenderObject* renderer)
 
     if ([self isHeading])
         return [NSNumber numberWithInt:[self headingLevel]];
+        
+    if ([self isTextControl])
+        return (NSString*)(static_cast<RenderTextControl*>(m_renderer)->text());
 
     if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
@@ -552,11 +567,8 @@ static int headingLevel(RenderObject* renderer)
         if (input->inputType() == HTMLInputElement::CHECKBOX ||
             input->inputType() == HTMLInputElement::RADIO)
             return [NSNumber numberWithInt:input->checked()];
-        
-        if (input->isTextField())
-            return (NSString*)input->value();
     }
-    
+
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
     // this would require subclassing or making accessibilityAttributeNames do something other than return a
@@ -617,7 +629,7 @@ static HTMLLabelElement* labelForElement(Element* element)
     } else if ([self isAttachment])
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
 
-    if (m_renderer->isRenderView()) {
+    if ([self isWebArea]) {
         Node* owner = m_renderer->document()->ownerElement();
         if (owner && (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag))) {
             HTMLFrameElement* frameElement = static_cast<HTMLFrameElement*>(owner);
@@ -673,6 +685,28 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return [NSValue valueWithSize: NSMakeSize(rect.width(), rect.height())];
 }
 
+// accessibilityShouldUseUniqueId is an AppKit method we override so that
+// objects will be given a unique ID, and therefore allow AppKit to know when they
+// become obsolete (e.g. when the user navigates to a new web page, making this one
+// unrendered but not deallocated because it is in the back/forward cache).
+// It is important to call NSAccessibilityUnregisterUniqueIdForUIElement in the
+// appropriate place (e.g. dealloc) to remove these non-retained references from
+// AppKit's id mapping tables. We do this in detach by calling unregisterUniqueIdForUIElement.
+//
+// Registering an object is also required for observing notifications. Only registered objects can be observed.
+- (BOOL)accessibilityShouldUseUniqueId {
+    if (!m_renderer)
+        return NO;
+    
+    if ([self isWebArea])
+        return YES;
+
+    if ([self isTextControl])
+        return YES;
+
+    return NO;
+}
+
 -(BOOL)accessibilityIsIgnored
 {
     // ignore invisible element
@@ -719,14 +753,15 @@ static IntRect boundingBoxRect(RenderObject* obj)
         return NO;
     }
     
-    return (!m_renderer->isListMarker() && !m_renderer->isRenderView());
+    return (!m_renderer->isListMarker() && ![self isWebArea]);
 }
 
 - (NSArray*)accessibilityAttributeNames
 {
     static NSArray* attributes = nil;
-    static NSArray* anchorAttrs = nil;
-    static NSArray* webAreaAttrs = nil;
+    static NSMutableArray* anchorAttrs = nil;
+    static NSMutableArray* webAreaAttrs = nil;
+    static NSMutableArray* textAttrs = nil;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
             NSAccessibilitySubroleAttribute,
@@ -749,53 +784,34 @@ static IntRect boundingBoxRect(RenderObject* obj)
             nil];
     }
     if (anchorAttrs == nil) {
-        anchorAttrs = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
-            NSAccessibilityRoleDescriptionAttribute,
-            NSAccessibilityChildrenAttribute,
-            NSAccessibilityHelpAttribute,
-            NSAccessibilityParentAttribute,
-            NSAccessibilityPositionAttribute,
-            NSAccessibilitySizeAttribute,
-            NSAccessibilityTitleAttribute,
-            NSAccessibilityValueAttribute,
-            NSAccessibilityFocusedAttribute,
-            NSAccessibilityEnabledAttribute,
-            NSAccessibilityWindowAttribute,
-            @"AXURL",
-            @"AXSelectedTextMarkerRange",
-            @"AXStartTextMarker",
-            @"AXEndTextMarker",
-            @"AXVisited",
-            nil];
+        anchorAttrs = [[NSMutableArray alloc] initWithArray:attributes];
+        [anchorAttrs addObject: NSAccessibilityURLAttribute];
     }
     if (webAreaAttrs == nil) {
-        webAreaAttrs = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
-            NSAccessibilityRoleDescriptionAttribute,
-            NSAccessibilityChildrenAttribute,
-            NSAccessibilityHelpAttribute,
-            NSAccessibilityParentAttribute,
-            NSAccessibilityPositionAttribute,
-            NSAccessibilitySizeAttribute,
-            NSAccessibilityTitleAttribute,
-            NSAccessibilityDescriptionAttribute,
-            NSAccessibilityValueAttribute,
-            NSAccessibilityFocusedAttribute,
-            NSAccessibilityEnabledAttribute,
-            NSAccessibilityWindowAttribute,
-            @"AXLinkUIElements",
-            @"AXLoaded",
-            @"AXLayoutCount",
-            @"AXSelectedTextMarkerRange",
-            @"AXStartTextMarker",
-            @"AXEndTextMarker",
-            @"AXVisited",
-            nil];
+        webAreaAttrs = [[NSMutableArray alloc] initWithArray:attributes];
+        [webAreaAttrs addObject: @"AXLinkUIElements"];
+        [webAreaAttrs addObject: @"AXLoaded"];
+        [webAreaAttrs addObject: @"AXLayoutCount"];
+    }
+    if (textAttrs == nil) {
+        textAttrs = [[NSMutableArray alloc] initWithArray:attributes];
+        [textAttrs addObject: NSAccessibilityNumberOfCharactersAttribute];
+        [textAttrs addObject: NSAccessibilitySelectedTextAttribute];
+        [textAttrs addObject: NSAccessibilitySelectedTextRangeAttribute];
+        [textAttrs addObject: NSAccessibilityVisibleCharacterRangeAttribute];
+        [textAttrs addObject: NSAccessibilityInsertionPointLineNumberAttribute];
     }
     
-    if (m_renderer && m_renderer->isRenderView())
+    if (!m_renderer)
+        return attributes;
+
+    if ([self isWebArea])
         return webAreaAttrs;
 
-    if (m_areaElement || (m_renderer && !m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isLink()))
+    if ([self isTextControl])
+        return textAttrs;
+
+    if ([self isAnchor])
         return anchorAttrs;
 
     return attributes;
@@ -935,7 +951,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         return m_children;
     }
 
-    if (m_renderer->isRenderView()) {
+    if ([self isWebArea]) {
         if ([attributeName isEqualToString: @"AXLinkUIElements"]) {
             NSMutableArray* links = [NSMutableArray arrayWithCapacity: 32];
             RefPtr<HTMLCollection> coll = m_renderer->document()->links();
@@ -958,8 +974,28 @@ static IntRect boundingBoxRect(RenderObject* obj)
             return [NSNumber numberWithInt: (static_cast<RenderView*>(m_renderer)->frameView()->layoutCount())];
     }
     
-    if ([attributeName isEqualToString: @"AXURL"] && 
-        (m_areaElement || (!m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isLink()))) {
+    if ([self isTextControl]) {
+        RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
+        if ([attributeName isEqualToString: NSAccessibilityNumberOfCharactersAttribute])
+            return [NSNumber numberWithUnsignedInt: textControl->text().length()];
+        if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
+            NSString* text = textControl->text();
+            return [text substringWithRange: NSMakeRange(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart())];
+        }
+        if ([attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute])
+            return [NSValue valueWithRange: NSMakeRange(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart())];
+        // TODO: Get actual visible range. <rdar://problem/4712101>
+        if ([attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute])
+            return [NSValue valueWithRange: NSMakeRange(0, textControl->text().length())];
+        // TODO: Get actual AXInsertionPointLineNumber for a text area. <rdar://problem/4712111>
+        if ([attributeName isEqualToString: NSAccessibilityInsertionPointLineNumberAttribute]) {
+            if (textControl->selectionStart() != textControl->selectionEnd())
+                return nil;
+            return [NSNumber numberWithUnsignedInt: 0];
+        }
+    }
+    
+    if ([self isAnchor] && [attributeName isEqualToString: NSAccessibilityURLAttribute]) {
         HTMLAnchorElement* anchor = [self anchorElement];
         if (anchor) {
             DeprecatedString s = anchor->getAttribute(hrefAttr).deprecatedString();
@@ -2079,6 +2115,7 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     NSString* role = [self role];
     if ([role isEqualToString:@"AXLink"] ||
         [role isEqualToString:NSAccessibilityTextFieldRole] ||
+        [role isEqualToString:NSAccessibilityTextAreaRole] ||
         [role isEqualToString:NSAccessibilityButtonRole] ||
         [role isEqualToString:NSAccessibilityPopUpButtonRole] ||
         [role isEqualToString:NSAccessibilityCheckBoxRole] ||
@@ -2087,14 +2124,15 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 
     return NO;
 }
+
 - (BOOL)canSetValueAttribute
 {
-    if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
-        return input->isTextField();
-    }
-    
-    return NO;
+    return [self isTextControl];
+}
+
+- (BOOL)canSetTextRangeAttributes
+{
+    return [self isTextControl];
 }
 
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
@@ -2108,6 +2146,11 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     if ([attributeName isEqualToString: NSAccessibilityValueAttribute])
         return [self canSetValueAttribute];
 
+    if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute] ||
+        [attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute] ||
+        [attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute])
+        return [self canSetTextRangeAttributes];
+    
     return NO;
 }
 
@@ -2116,6 +2159,7 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     WebCoreTextMarkerRange* textMarkerRange = nil;
     NSNumber*               number = nil;
     NSString*               string = nil;
+    NSRange                 range = {0, 0};
 
     // decode the parameter
     if ([[WebCoreViewFactory sharedFactory] objectIsTextMarkerRange:value])
@@ -2126,6 +2170,9 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 
     else if ([value isKindOfClass:[NSString self]])
         string = value;
+    
+    else if ([value isKindOfClass:[NSValue self]])
+        range = [value rangeValue];
     
     // handle the command
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"]) {
@@ -2141,12 +2188,35 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
                 m_renderer->document()->setFocusNode(0);
         }
     } else if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
-        if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
+        if (!string)
+            return;
+        if (m_renderer->isTextField()) {
             HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
-            if (input->isTextField() && string)
-                input->setValue(string);
+            input->setValue(string);
+        } else if (m_renderer->isTextArea()) {
+            HTMLTextAreaElement* textArea = static_cast<HTMLTextAreaElement*>(m_renderer->element());
+            textArea->setValue(string);
+      }
+    } else if ([self isTextControl]) {
+        RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
+        if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
+            // TODO: set selected text (ReplaceSelectionCommand). <rdar://problem/4712125>
+        } else if ([attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute]) {
+            textControl->setSelectionRange(range.location, range.location + range.length);
+        } else if ([attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute]) {
+            // TODO: make range visible (scrollRectToVisible).  <rdar://problem/4712101>
         }
     }
+}
+
+- (WebCoreAXObject*)observableObject
+{
+    for (RenderObject* renderer = m_renderer; renderer && renderer->element(); renderer = renderer->parent()) {
+        if (renderer->isTextField() || renderer->isTextArea())
+            return renderer->document()->axObjectCache()->get(renderer);
+    }
+    
+    return nil;
 }
 
 - (void)childrenChanged

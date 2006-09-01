@@ -166,14 +166,23 @@ void AXObjectCache::childrenChanged(RenderObject* renderer)
         [obj childrenChanged];
 }
 
-void AXObjectCache::postNotificationToTopWebArea(RenderObject* renderer, const String& message)
+void AXObjectCache::postNotification(RenderObject* renderer, const String& message)
 {
-    if (renderer)
+    if (!renderer)
+        return;
+    
+    // notifications for text input objects are sent to that object
+    // all others are sent to the top WebArea
+    WebCoreAXObject* obj = [get(renderer) observableObject];
+    if (obj)
+        NSAccessibilityPostNotification(obj, message);
+    else
         NSAccessibilityPostNotification(get(renderer->document()->topDocument()->renderer()), message);
 }
 
-void AXObjectCache::postNotification(RenderObject* renderer, const String& message)
+void AXObjectCache::postNotificationToElement(RenderObject* renderer, const String& message)
 {
+    // send the notification to the specified element itself, not one of its ancestors
     if (renderer)
         NSAccessibilityPostNotification(get(renderer), message);
 }

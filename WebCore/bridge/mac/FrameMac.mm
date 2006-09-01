@@ -3249,10 +3249,13 @@ bool FrameMac::shouldDeleteSelection(const SelectionController &selection) const
     return [_bridge shouldDeleteSelectedDOMRange:[DOMRange _rangeWith:selection.toRange().get()]];
 }
 
-void FrameMac::respondToChangedContents()
+void FrameMac::respondToChangedContents(const SelectionController &selection)
 {
-    if (AXObjectCache::accessibilityEnabled())
-        renderer()->document()->axObjectCache()->postNotificationToTopWebArea(renderer(), "AXValueChanged");
+    if (AXObjectCache::accessibilityEnabled()) {
+        Node* node = selection.start().node();
+        if (node)
+            renderer()->document()->axObjectCache()->postNotification(node->renderer(), "AXValueChanged");
+    }
     [_bridge respondToChangedContents];
 }
 

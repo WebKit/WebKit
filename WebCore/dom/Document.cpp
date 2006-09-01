@@ -1098,7 +1098,7 @@ void Document::updateSelection()
     // FIXME: We no longer blow away the selection before starting an editing operation, so the isNotNull checks below are no 
     // longer a correct way to check for user-level selection changes.
     if (AXObjectCache::accessibilityEnabled() && s.start().isNotNull() && s.end().isNotNull()) {
-        axObjectCache()->postNotificationToTopWebArea(renderer(), "AXSelectedTextChanged");
+        axObjectCache()->postNotification(s.start().node()->renderer(), "AXSelectedTextChanged");
     }
 #endif
 }
@@ -1249,7 +1249,7 @@ void Document::implicitClose()
     }
 #if __APPLE__
     if (renderer() && AXObjectCache::accessibilityEnabled())
-        axObjectCache()->postNotification(renderer(), "AXLoadComplete");
+        axObjectCache()->postNotificationToElement(renderer(), "AXLoadComplete");
 #endif
 
 #ifdef SVG_SUPPORT

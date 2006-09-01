@@ -569,7 +569,7 @@ public:
   virtual void issuePasteAndMatchStyleCommand() = 0;
   virtual void issueTransposeCommand() = 0;
   virtual void respondToChangedSelection(const SelectionController& oldSelection, bool closeTyping) = 0;
-  virtual void respondToChangedContents() = 0;
+  virtual void respondToChangedContents(const SelectionController &endingSelection) = 0;
   virtual bool shouldChangeSelection(const SelectionController& oldSelection, const SelectionController& newSelection, EAffinity affinity, bool stillSelecting) const = 0;
   virtual void partClearedInBegin() = 0; 
   virtual void saveDocumentState() = 0;

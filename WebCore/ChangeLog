@@ -1,3 +1,90 @@
+2006-08-31  David Harrison  <harrison@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4708119> REGRESSION: Cannot observe an AXTextField element directly
+
+        ... and most of
+        <rdar://problem/4708022> REGRESSION: TextRange-based attributes are missing from text fields
+        <rdar://problem/4709515> REGRESSION: Expose text areas
+
+        Remaining work for those two bugs in new bugs:
+
+        <rdar://problem/4712101> Support NSAccessibilityVisibleCharacterRangeAttribute for AXTextField and AXTextArea elements
+        <rdar://problem/4712111> Support NSAccessibilityInsertionPointLineNumberAttribute for AXTextArea elements
+        <rdar://problem/4712125> Support setting NSAccessibilitySelectedTextAttribute for AXTextField and AXTextArea elements
+
+        * bridge/AXObjectCache.h:
+        (WebCore::AXObjectCache::postNotificationToElement):
+        * bridge/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::postNotificationToElement):
+        Removed postNotificationToTopWebArea.
+        postNotification now posts to input element or top web area, as appropriate.
+        postNotificationToElement posts to the specified element itself.
+        
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::respondToChangedContents):
+        Take a selection.  Pass the starting position's renderer to postNotification so that postNotification can post to the appropriate input element, if any.
+        
+        * bridge/mac/WebCoreAXObject.h:
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject isWebArea]):
+        (-[WebCoreAXObject isAnchor]):
+        (-[WebCoreAXObject isTextRange]):
+        New convenience methods.
+        
+        (-[WebCoreAXObject role]):
+        (-[WebCoreAXObject roleDescription])        
+        (-[WebCoreAXObject value]):
+        (-[WebCoreAXObject accessibilityDescription]):
+        Support AXTextField and AXTextArea.
+
+        (-[WebCoreAXObject accessibilityShouldUseUniqueId]):
+        Register AXTextField and AXTextArea elements so notifications to them can be observed.
+        
+        (-[WebCoreAXObject accessibilityIsIgnored]):
+        Use new convenience method isWebArea.
+
+        (-[WebCoreAXObject accessibilityAttributeNames]):
+        Simplify the array creation.
+        Add text range support.
+       
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        Add text range support.
+       
+        (-[WebCoreAXObject canSetFocusAttribute]):
+        (-[WebCoreAXObject canSetValueAttribute]):
+        (-[WebCoreAXObject canSetTextRangeAttributes]):
+        New convenience methods.
+        
+        (-[WebCoreAXObject accessibilityIsAttributeSettable:]):
+        (-[WebCoreAXObject accessibilitySetValue:forAttribute:]):
+        Add text range support.
+
+        (-[WebCoreAXObject observableObject]):
+        New to locate text field or text area to notify.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::updateSelection):
+        Post AXSelectedTextChanged notification with new selection's start node.
+        postNotification will send it to the input element, if there is one, or the top WebArea.
+        
+        (WebCore::Document::implicitClose):
+        Use postNotificationToElement now that it acts like the old postNotification.
+        
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::appliedEditing):
+        (WebCore::Frame::unappliedEditing):
+        (WebCore::Frame::reappliedEditing):
+        Pass the selection of interest to respondToChangedContents.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        Use postNotificationToElement now that it acts like the old postNotification.
+
 2006-08-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
