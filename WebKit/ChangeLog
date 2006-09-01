@@ -1,3 +1,25 @@
+2006-09-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - a few small tweaks to the icon database bridge
+
+        * Misc/WebIconDatabase.m: (-[WebIconDatabase init]): Updated for name change.
+
+        * WebCoreSupport/WebIconDatabaseBridge.h: Removed unneeded declarations.
+        * WebCoreSupport/WebIconDatabaseBridge.m:
+        (-[WebIconDatabaseBridge init]): Added. Always returns nil since you're not supposed
+        to allocate one of these.
+        (-[WebIconDatabaseBridge _init]): Renamed from init. Used internally to make the
+        shared instance. Added the "self = [super init]" idiom even though it's not important
+        in this case just to be consistent.
+        (-[WebIconDatabaseBridge releaseCachedLoaderForIconURL:]): Moved this up in the file
+        so it can be called without declaring it in the header.
+        (+[WebIconDatabaseBridge sharedInstance]): Renamed. Calls the new _init. Also use
+        CFRetain for compatibility.
+        (-[WebIconDatabaseBridge dealloc]): Emptied this out and made it just assert (false).
+        (-[WebIconDatabaseBridge finalize]): Added and made it assert (false) too.
+
 2006-09-01  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adele.

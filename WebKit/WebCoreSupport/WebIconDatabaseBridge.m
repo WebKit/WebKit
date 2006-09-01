@@ -26,18 +26,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <JavaScriptCore/Assertions.h>
 #import "WebIconDatabaseBridge.h"
-#import "WebIconDatabase.h"
+
 #import "WebIconDatabasePrivate.h"
 #import "WebIconLoader.h"
-
+#import <JavaScriptCore/Assertions.h>
 
 @implementation WebIconDatabaseBridge
 
+// Only sharedInstance is allowed to create the bridge.
+// Return nil if someone tries to init.
 - (id)init
 {
-    [super init];
+    [self release];
+    return nil;
+}
+
+- (id)_init
+{
+    self = [super init];
+    if (!self)
+        return nil;
     cachedLoaders = [[NSMutableDictionary alloc] init];
     return self;
 }
@@ -59,6 +68,15 @@
     [request release];
 }
 
+- (void)releaseCachedLoaderForIconURL:(NSString*)iconURL
+{
+    WebIconLoader *iconLoader = [cachedLoaders valueForKey:iconURL];
+    if (iconLoader) {
+        [iconLoader stopLoading];
+        [cachedLoaders removeObjectForKey:iconURL];
+    }
+}
+
 // FIXME rdar://4668102 - This is a likely place to add an NSNotification here to notify the app of the updated icon
 - (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL
 {
@@ -73,30 +91,31 @@
     [super _setHaveNoIconForIconURL:iconURL];
 }
 
-- (void)releaseCachedLoaderForIconURL:(NSString*)iconURL
++ (WebCoreIconDatabaseBridge *)sharedInstance
 {
-    WebIconLoader *iconLoader = [cachedLoaders valueForKey:iconURL];
-    if (iconLoader) {
-        [iconLoader stopLoading];
-        [cachedLoaders removeObjectForKey:iconURL];
+    static WebCoreIconDatabaseBridge* bridge = nil;
+    if (!bridge) {
+        // Need to CFRetain something that's in a global variable, since we want it to
+        // hang around forever, even when running under GC.
+        bridge = [[WebIconDatabaseBridge alloc] _init];
+        CFRetain(bridge);
+        [bridge release];
     }
-}
-
-static WebCoreIconDatabaseBridge* g_sharedBridgeInstance = nil;
-+ (WebCoreIconDatabaseBridge *)sharedBridgeInstance
-{
-    if (!g_sharedBridgeInstance)
-        g_sharedBridgeInstance = [[WebIconDatabaseBridge alloc] init];
-    return g_sharedBridgeInstance;
+    return bridge;
 }
 
 - (void)dealloc
 {
-    ASSERT(self == g_sharedBridgeInstance);
-    g_sharedBridgeInstance = nil;
-    [cachedLoaders release];
+    // The single instance should be kept around forever, so this code should never be reached.
+    ASSERT(false);
     [super dealloc];
 }
 
-@end
+- (void)finalize
+{
+    // The single instance should be kept around forever, so this code should never be reached.
+    ASSERT(false);
+    [super finalize];
+}
 
+@end

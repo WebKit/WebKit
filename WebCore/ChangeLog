@@ -1,3 +1,14 @@
+2006-09-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - a few small tweaks to the icon database bridge
+
+        * bridge/mac/WebCoreIconDatabaseBridge.h: Removed unnecessary declarations.
+        Renamed sharedBridgeInstance to sharedInstance.
+        * bridge/mac/WebCoreIconDatabaseBridge.mm: Put functions inside WebCore namespace.
+        (WebCore::IconDatabase::loadIconFromURL): Updated for sharedInstance namespace.
+
 2006-09-01  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

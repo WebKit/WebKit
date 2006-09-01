@@ -92,7 +92,7 @@ NSSize WebIconLargeSize = {128, 128};
     }
         
     // Get/create the shared database bridge - bail if we fail
-    _private->databaseBridge = [WebIconDatabaseBridge sharedBridgeInstance];
+    _private->databaseBridge = [WebIconDatabaseBridge sharedInstance];
     if (!_private->databaseBridge) {
         LOG_ERROR("Unable to create IconDatabaseBridge");
         return self;

@@ -28,14 +28,8 @@
 
 #import <WebCore/WebCoreIconDatabaseBridge.h>
 
-@class WebDataSource;
-
 @interface WebIconDatabaseBridge : WebCoreIconDatabaseBridge <WebCoreIconDatabaseBridge>
 {
     NSMutableDictionary* cachedLoaders;
 }
-+ (WebCoreIconDatabaseBridge *)sharedBridgeInstance;
-- (void)releaseCachedLoaderForIconURL:(NSString*)iconURL;
-- (void)loadIconFromURL:(NSString *)iconURL;
-
 @end
