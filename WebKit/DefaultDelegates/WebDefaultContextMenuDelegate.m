@@ -270,9 +270,10 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     NSMenuItem *item;
     WebHTMLView *HTMLView = (WebHTMLView *)[[[element objectForKey:WebElementFrameKey] frameView] documentView];
     ASSERT([HTMLView isKindOfClass:[WebHTMLView class]]);
-    
+    BOOL inPasswordField = [HTMLView _isSelectionInPasswordField];
+
     // Add spelling-related context menu items.
-    if ([HTMLView _isSelectionMisspelled]) {
+    if ([HTMLView _isSelectionMisspelled] && !inPasswordField) {
         NSArray *guesses = [HTMLView _guessesForMisspelledSelection];
         unsigned count = [guesses count];
         if (count > 0) {
@@ -292,7 +293,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         [menuItems addObject:[NSMenuItem separatorItem]];
     }
 
-    if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
+    if ([[element objectForKey:WebElementIsSelectedKey] boolValue] && !inPasswordField) {
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight target:nil representedObject:element]];
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil representedObject:element]];
         [menuItems addObject:[NSMenuItem separatorItem]];
@@ -321,6 +322,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         item = [item copy];
         SEL action = [item action];
         int tag;
+        bool validForPassword = true;
         if (action == @selector(cut:)) {
             tag = WebMenuItemTagCut;
         } else if (action == @selector(copy:)) {
@@ -330,10 +332,15 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         } else {
             // FIXME 4158153: we should supply tags for each known item so clients can make
             // sensible decisions, like we do with PDF context menu items (see WebPDFView.m)
+
+            // Once we have other tag names, we should reconsider if any of them are valid for password fields.
             tag = WebMenuItemTagOther;
+            validForPassword = false;
         }
-        [item setTag:tag];
-        [menuItems addObject:item];
+        if (!inPasswordField || validForPassword) {
+            [item setTag:tag];
+            [menuItems addObject:item];
+        }
         [item release];
     }
     

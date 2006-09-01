@@ -1,3 +1,15 @@
+2006-08-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebCore part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10666
+        Password: Disallow Spelling, Font, Speech, and Writing Direction context menu
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm: (-[WebCoreFrameBridge isSelectionInPasswordField]): Added.
+        * page/Frame.cpp: (WebCore::Frame::isSelectionInPasswordField): Added.
+        * page/Frame.h:
+
 2006-08-31  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Tim O, Hyatt.

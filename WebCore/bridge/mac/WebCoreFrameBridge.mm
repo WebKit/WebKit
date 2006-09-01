@@ -741,6 +741,11 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         frameView->setMarginHeight(mh);
 }
 
+- (BOOL)isSelectionInPasswordField
+{
+    return m_frame->isSelectionInPasswordField();
+}
+
 - (BOOL)isSelectionEditable
 {
     return m_frame->selection().isContentEditable();

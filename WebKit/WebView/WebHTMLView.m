@@ -1650,6 +1650,11 @@ static WebHTMLView *lastHitView = nil;
     return [[self _webView] isEditable] || [[self _bridge] isSelectionEditable];
 }
 
+- (BOOL)_isSelectionInPasswordField
+{
+    return [[self _bridge] isSelectionInPasswordField];
+}
+
 - (BOOL)_isSelectionMisspelled
 {
     NSString *selectedString = [self selectedString];

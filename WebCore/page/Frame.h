@@ -420,6 +420,8 @@ public:
   virtual void setSecureKeyboardEntry(bool) {};
   virtual bool secureKeyboardEntry() { return false; }
   
+  bool isSelectionInPasswordField();
+  
   /**
    * Returns the most recent edit command applied.
    */

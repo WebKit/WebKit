@@ -330,6 +330,7 @@ typedef enum {
 - (DOMDocument *)DOMDocument;
 - (DOMHTMLElement *)frameElement;
 
+- (BOOL)isSelectionInPasswordField;
 - (BOOL)isSelectionEditable;
 - (BOOL)isSelectionRichlyEditable;
 - (WebSelectionState)selectionState;

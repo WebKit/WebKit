@@ -1,3 +1,16 @@
+2006-08-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebKit part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10666
+        Password: Disallow Spelling, Font, Speech, and Writing Direction context menu
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m: (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
+          Check that the selection isn't in a password field before adding these items to the default editing context menu.
+              Search In Google, Search In Spotlight, Look up in Dictionary, Spelling, Font, Speech, Writing Direction
+        * WebView/WebHTMLView.m: (-[WebHTMLView _isSelectionInPasswordField]): Added.
+        * WebView/WebHTMLViewPrivate.h:
+
 2006-08-31  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
