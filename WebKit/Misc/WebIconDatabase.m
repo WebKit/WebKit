@@ -281,8 +281,6 @@ NSSize WebIconLargeSize = {128, 128};
 - (void)_applicationWillTerminate:(NSNotification *)notification
 {
     [_private->databaseBridge closeSharedDatabase];
-    [_private->databaseBridge release];
-    _private->databaseBridge = nil;
 }
 
 
