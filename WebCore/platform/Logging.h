@@ -43,7 +43,7 @@ namespace WebCore {
     extern WTFLogChannel LogEditing;
     extern WTFLogChannel LogTextConversion;
     extern WTFLogChannel LogIconDatabase;
-
+    extern WTFLogChannel LogSQLDatabase;
 }
 
 #endif

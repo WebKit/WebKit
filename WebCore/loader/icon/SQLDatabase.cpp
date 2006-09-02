@@ -92,7 +92,7 @@ void SQLDatabase::setBusyTimeout(int ms)
     if (m_db)
         sqlite3_busy_timeout(m_db, ms);
     else
-        LOG(IconDatabase, "BusyTimeout set on non-open database");
+        LOG(SQLDatabase, "BusyTimeout set on non-open database");
 }
 
 void SQLDatabase::setBusyHandler(int(*handler)(void*, int))
@@ -100,7 +100,7 @@ void SQLDatabase::setBusyHandler(int(*handler)(void*, int))
     if (m_db)
         sqlite3_busy_handler(m_db, handler, NULL);
     else
-        LOG(IconDatabase, "Busy handler set on non-open database");
+        LOG(SQLDatabase, "Busy handler set on non-open database");
 }
 
 bool SQLDatabase::executeCommand(const String& sql)
@@ -130,7 +130,7 @@ void SQLDatabase::clearAllTables()
     String query = "SELECT name FROM sqlite_master WHERE type='table';";
     Vector<String> tables;
     if (!SQLStatement(*this, query).returnTextResults16(0, tables)) {
-        LOG(IconDatabase, "Unable to retrieve list of tables from database");
+        LOG(SQLDatabase, "Unable to retrieve list of tables from database");
         return;
     }
     
@@ -138,14 +138,14 @@ void SQLDatabase::clearAllTables()
         if (*table == "sqlite_sequence")
             continue;
         if (!executeCommand("DROP TABLE " + *table))
-            LOG(IconDatabase, "Unable to drop table %s", (*table).ascii().data());
+            LOG(SQLDatabase, "Unable to drop table %s", (*table).ascii().data());
     }
 }
 
 void SQLDatabase::runVacuumCommand()
 {
     if (!executeCommand("VACUUM;"))
-        LOG(IconDatabase, "Unable to vacuum database - %s", lastErrorMsg());
+        LOG(SQLDatabase, "Unable to vacuum database - %s", lastErrorMsg());
 }
 
 int64_t SQLDatabase::lastInsertRowID()

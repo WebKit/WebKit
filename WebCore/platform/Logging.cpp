@@ -40,5 +40,6 @@ WTFLogChannel LogEditing =           { 0x00000100, "WebCoreLogLevel", WTFLogChan
 WTFLogChannel LogTextConversion =    { 0x00000200, "WebCoreLogLevel", WTFLogChannelOff };
 
 WTFLogChannel LogIconDatabase =      { 0x00000400, "WebCoreLogLevel", WTFLogChannelOn };
+WTFLogChannel LogSQLDatabase =       { 0x00000800, "WebCoreLogLevel", WTFLogChannelOff };
 
 }

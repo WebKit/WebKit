@@ -63,6 +63,7 @@ static void initializeLoggingChannelsIfNecessary()
     initializeLogChannel(LogEditing);
     initializeLogChannel(LogTextConversion);
     initializeLogChannel(LogIconDatabase);
+    initializeLogChannel(LogSQLDatabase);
 }
 
 - (id)init

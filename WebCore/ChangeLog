@@ -1,3 +1,33 @@
+2006-09-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Omernick
+
+        Added an SQLDatabase logging channel.  Changed all SQLDatabase and SQLStatement errors to use this new channel.
+        Also, as a popular request from other contributers, added a log for all prepare(), step(), finalize(), and reset()s
+        Also, fixed a grammar error in my previous ChangeLog entry.
+
+        * bridge/mac/WebCorePageBridge.mm:
+        (initializeLoggingChannelsIfNecessary): Initialize the new channel
+        * loader/icon/SQLDatabase.cpp:
+        (WebCore::SQLDatabase::setBusyTimeout): Use SQLDatabase logging channel
+        (WebCore::SQLDatabase::setBusyHandler): ditto
+        (WebCore::SQLDatabase::clearAllTables): ditto
+        (WebCore::SQLDatabase::runVacuumCommand): ditto
+        * loader/icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::prepare): Added a log
+        (WebCore::SQLStatement::step): ditto
+        (WebCore::SQLStatement::finalize): ditto
+        (WebCore::SQLStatement::reset): ditto
+        (WebCore::SQLStatement::getColumnBlob): Use SQLDatabase logging channel
+        (WebCore::SQLStatement::returnTextResults): ditto
+        (WebCore::SQLStatement::returnTextResults16): ditto
+        (WebCore::SQLStatement::returnIntResults): ditto
+        (WebCore::SQLStatement::returnInt64Results): ditto
+        (WebCore::SQLStatement::returnDoubleResults): ditto
+        * platform/Logging.cpp:
+        (WebCore::): Added new logging channel
+        * platform/Logging.h: ditto
+
 2006-09-01  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim Omernick.
@@ -18,7 +48,7 @@
 
 2006-09-01  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by John (though Sarge review a previous patch of mine in an attempt to review this one)
+        Reviewed by John (though Sarge reviewed a previous patch of mine in an attempt to review this one)
 
         Added some constants for SQL Result Codes to SQLDatabase.h
         This way, users of SQLDatabase can access all necessary SQLite functionality
