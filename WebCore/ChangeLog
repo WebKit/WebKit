@@ -1,3 +1,21 @@
+2006-09-01  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6990
+        Switch to use new text field implementation for <input type="password">
+
+        * css/html4.css: Give input[password] the same style properties as normal text fields.
+        * html/HTMLInputElement.cpp: Removed checks for TextFieldAppearance.
+        (WebCore::HTMLInputElement::selectionStart):
+        (WebCore::HTMLInputElement::selectionEnd):
+        (WebCore::HTMLInputElement::setSelectionStart):
+        (WebCore::HTMLInputElement::setSelectionEnd):
+        (WebCore::HTMLInputElement::select):
+        (WebCore::HTMLInputElement::setSelectionRange):
+        (WebCore::HTMLInputElement::createRenderer):
+        * html/HTMLInputElement.h: (WebCore::HTMLInputElement::isNonWidgetTextField):
+
 2006-09-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John (though Sarge review a previous patch of mine in an attempt to review this one)

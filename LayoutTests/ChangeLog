@@ -1,3 +1,28 @@
+2006-09-01  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        Updated results for http://bugzilla.opendarwin.org/show_bug.cgi?id=6990
+        Switch to use new text field implementation for <input type="password">
+
+        * dom/html/level2/html/HTMLInputElement22-expected.txt:
+        * dom/xhtml/level2/html/HTMLInputElement22-expected.txt:
+        * fast/events/event-sender-mouse-click.html:
+        * fast/forms/input-appearance-height-expected.checksum:
+        * fast/forms/input-appearance-height-expected.txt:
+        * fast/forms/input-type-change-in-onfocus-mouse-expected.txt:
+        * fast/forms/input-value-expected.checksum:
+        * fast/forms/input-value-expected.png:
+        * fast/forms/input-value-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug92647-1-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug92647-1-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt:
+
+        Updated from switch to style-able selects
+        * fast/forms/option-strip-whitespace-expected.checksum:
+        * fast/forms/option-strip-whitespace-expected.png:
+        * fast/forms/option-strip-whitespace-expected.txt:
+
 2006-09-01  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

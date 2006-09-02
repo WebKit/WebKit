@@ -311,7 +311,7 @@ input[type="hidden"] {
     display: none
 }
 
-input, isindex {
+input, input[type="password"], isindex {
     -webkit-appearance: textfield;
     padding: 1px;
     background-color: white;
@@ -331,12 +331,6 @@ textarea {
 }
 
 input[type="password"] {
-    // FIXME: Remove these when switching over to the new implementation for password fields.    
-    -webkit-appearance:none;
-    background-color: initial;
-    border:initial;
-    padding:initial;
-
     -webkit-text-security: disc !important;
 }
 
