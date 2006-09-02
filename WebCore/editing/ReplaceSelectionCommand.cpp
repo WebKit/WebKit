@@ -637,13 +637,13 @@ void ReplaceSelectionCommand::doApply()
     endOfInsertedContent = VisiblePosition(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
     startOfInsertedContent = VisiblePosition(Position(m_firstNodeInserted.get(), 0));    
     
-    if (currentRoot) {
+    // Add spaces for smart replace.
+    if (m_smartReplace && currentRoot) {
         // Disable smart replace for password fields.
         Node* start = currentRoot->shadowAncestorNode();
         if (start->hasTagName(inputTag) && static_cast<HTMLInputElement*>(start)->inputType() == HTMLInputElement::PASSWORD)
             m_smartReplace = false;
     }
-    // Add spaces for smart replace.
     if (m_smartReplace) {
         bool needsTrailingSpace = !isEndOfParagraph(endOfInsertedContent) &&
                                   !frame->isCharacterSmartReplaceExempt(endOfInsertedContent.characterAfter(), false);

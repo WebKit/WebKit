@@ -678,7 +678,7 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
     m_lastTextNode = m_node;
 
     RenderText *renderer = static_cast<RenderText *>(m_node->renderer());
-    String str = m_node->nodeValue();
+    String str = renderer->string();
 
     if (!renderer->firstTextBox() && str.length() > 0)
         return true;

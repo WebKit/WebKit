@@ -2189,13 +2189,7 @@ void Frame::pasteAndMatchStyle()
 
 bool Frame::mayCopy()
 {
-    Node* startNode = selection().start().node();
-    if (startNode) {
-        startNode = startNode->shadowAncestorNode();
-        if (startNode->hasTagName(inputTag) && static_cast<HTMLInputElement*>(startNode)->inputType() == HTMLInputElement::PASSWORD)
-            return false;
-    }
-    return true;
+    return !isSelectionInPasswordField();
 }
 
 void Frame::transpose()

@@ -70,9 +70,14 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
     SimplifiedBackwardsTextIterator it(searchRange.get());
     DeprecatedString string;
     unsigned next = 0;
+    bool inTextSecurityMode = start.node() && start.node()->renderer() && start.node()->renderer()->style()->textSecurity() != TSNONE;
     while (!it.atEnd() && it.length() > 0) {
         // iterate to get chunks until the searchFunction returns a non-zero value.
-        string.prepend(reinterpret_cast<const DeprecatedChar*>(it.characters()), it.length());
+        String iteratorString(it.characters(), it.length());
+        // Treat bullets used in the text security mode as regular characters when looking for boundaries
+        if (inTextSecurityMode)
+            iteratorString = iteratorString.impl()->secure('x');
+        string.prepend(iteratorString.deprecatedString());
         next = searchFunction(reinterpret_cast<const UChar*>(string.unicode()), string.length());
         if (next != 0)
             break;
@@ -140,10 +145,15 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
     TextIterator it(searchRange.get(), RUNFINDER);
     DeprecatedString string;
     unsigned next = 0;
+    bool inTextSecurityMode = start.node() && start.node()->renderer() && start.node()->renderer()->style()->textSecurity() != TSNONE;
     while (!it.atEnd() && it.length() > 0) {
         // Keep asking the iterator for chunks until the search function
         // returns an end value not equal to the length of the string passed to it.
-        string.append(reinterpret_cast<const DeprecatedChar*>(it.characters()), it.length());
+        String iteratorString(it.characters(), it.length());
+        // Treat bullets used in the text security mode as regular characters when looking for boundaries
+        if (inTextSecurityMode)
+            iteratorString = iteratorString.impl()->secure('x');
+        string.append(iteratorString.deprecatedString());
         next = searchFunction(reinterpret_cast<const UChar*>(string.unicode()), string.length());
         if (next != string.length())
             break;

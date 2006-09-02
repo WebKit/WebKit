@@ -913,16 +913,15 @@ void RenderText::setText(StringImpl *text, bool force)
                 default:;
             }
             
-            switch(style()->textSecurity())
-            {
+            switch(style()->textSecurity()) {
                 case TSDISC:
-                    str= str->secure(BULLET_CHAR);
+                    str = str->secure(BULLET_CHAR);
                     break;
                 case TSCIRCLE:
-                    str= str->secure(CIRCLE_CHAR);
+                    str = str->secure(CIRCLE_CHAR);
                     break;
                 case TSSQUARE: 
-                    str= str->secure(SQUARE_CHAR);
+                    str = str->secure(SQUARE_CHAR);
                     break;
                 case TSNONE:
                     break;
