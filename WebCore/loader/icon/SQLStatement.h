@@ -28,8 +28,9 @@
 
 #include "PlatformString.h"
 #include "SQLDatabase.h"
-#include <sqlite3.h>
 #include <wtf/Noncopyable.h>
+
+typedef struct sqlite3_stmt sqlite3_stmt;
 
 namespace WebCore {
 

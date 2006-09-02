@@ -27,13 +27,20 @@
 #define SQLDatabase_H
 
 #include "PlatformString.h"
-#include <sqlite3.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+
+
+typedef struct sqlite3 sqlite3;
 
 namespace WebCore {
 
 class SQLStatement;
+
+extern const int SQLResultError;
+extern const int SQLResultDone;
+extern const int SQLResultOk;
+extern const int SQLResultRow;
 
 class SQLDatabase : public Noncopyable
 {
@@ -71,8 +78,9 @@ public:
     };
     void setSynchronous(SynchronousPragma);
     
-    int lastError() { return m_db ? sqlite3_errcode(m_db) : SQLITE_ERROR; }
-    const char* lastErrorMsg() { return sqlite3_errmsg(m_db); }
+    int lastError();
+    const char* lastErrorMsg();
+    
 private:
     String   m_path;
     sqlite3* m_db;

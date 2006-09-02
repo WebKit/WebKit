@@ -26,9 +26,9 @@
 #include "config.h"
 #include "IconDataCache.h"
 
-#include "Logging.h"
 #include "Image.h"
 #include <limits.h>
+#include "Logging.h"
 #include "SQLStatement.h"
 
 
@@ -113,7 +113,7 @@ void IconDataCache::writeToDatabase(SQLDatabase& db)
     if (m_image && !m_image->dataBuffer().isEmpty())
         updateAttempt.bindBlob(2, m_image->dataBuffer().data(), m_image->dataBuffer().size());
     
-    if (updateAttempt.step() != SQLITE_DONE) {
+    if (updateAttempt.step() != SQLResultDone) {
         LOG_ERROR("Failed to update icon data for IconURL %s", m_iconURL.ascii().data());
         return;
     }
@@ -138,7 +138,7 @@ void IconDataCache::writeToDatabase(SQLDatabase& db)
         insertStatement.bindBlob(3, m_image->dataBuffer().data(), m_image->dataBuffer().size());
     
     // Finally we step and make sure the step was successful
-    if (insertStatement.step() != SQLITE_DONE)
+    if (insertStatement.step() != SQLResultDone)
         LOG_ERROR("Unable to set icon data for IconURL %s", m_iconURL.ascii().data());
 }
 

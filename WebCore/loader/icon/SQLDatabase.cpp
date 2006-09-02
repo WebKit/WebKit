@@ -26,11 +26,17 @@
 #include "config.h"
 #include "SQLDatabase.h"
 
+#include "Logging.h"
+#include <sqlite3.h>
 #include "SQLStatement.h"
 
-#include "Logging.h"
 
 namespace WebCore {
+
+const int SQLResultError = SQLITE_ERROR;
+const int SQLResultDone = SQLITE_DONE;
+const int SQLResultOk = SQLITE_OK;
+const int SQLResultRow = SQLITE_ROW;
 
 SQLDatabase::SQLDatabase()
     : m_db(0)
@@ -154,6 +160,16 @@ int SQLDatabase::lastChanges()
     if (!m_db)
         return 0;
     return sqlite3_changes(m_db);
+}
+
+int SQLDatabase::lastError()
+{
+    return m_db ? sqlite3_errcode(m_db) : SQLITE_ERROR;
+}
+
+const char* SQLDatabase::lastErrorMsg()
+{ 
+    return sqlite3_errmsg(m_db);
 }
 
 } // namespace WebCore

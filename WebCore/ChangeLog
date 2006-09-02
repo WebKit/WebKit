@@ -1,3 +1,28 @@
+2006-09-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John (though Sarge review a previous patch of mine in an attempt to review this one)
+
+        Added some constants for SQL Result Codes to SQLDatabase.h
+        This way, users of SQLDatabase can access all necessary SQLite functionality
+        without having access to sqlite3.h.
+        Also reordered some files in the xcodeproj and some #includes
+
+        * WebCore.xcodeproj/project.pbxproj:  Reordered some files 
+        * loader/icon/IconDataCache.cpp:
+        (WebCore::IconDataCache::writeToDatabase): Use our new result codes
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::sharedIconDatabase): Use our new result codes
+        (WebCore::IconDatabase::retainIconForPageURL): Use our new result codes
+        (WebCore::IconDatabase::pruneUnretainedIconsOnStartup): Use our new result codes
+        (WebCore::IconDatabase::addIconForIconURLQuery): Use our new result codes
+        (WebCore::IconDatabase::hasIconForIconURLQuery): Use our new result codes
+        * loader/icon/SQLDatabase.cpp:
+        (WebCore::SQLDatabase::lastError): Moved from header to eliminate dependency on sqlite3.h in header
+        (WebCore::SQLDatabase::lastErrorMsg): Ditto
+        * loader/icon/SQLDatabase.h: Removed #include <sqlite3.h>
+        * loader/icon/SQLStatement.cpp: Added #include <sqlite3.h>
+        * loader/icon/SQLStatement.h: Removed #include <sqlite3.h>
+
 2006-09-01  David Hyatt  <hyatt@apple.com>
 
         Fix for 10680, contrained flexbox is not shrinking flexible children

@@ -4396,8 +4396,8 @@
 				5186C0550A9C21470034FE94 /* IconDataCache.cpp */,
 				5126E6BA0A2E3B12005C29FA /* IconDatabase.h */,
 				5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */,
-				51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */,
 				51D3EA140A3D24D300BADA35 /* SQLDatabase.h */,
+				51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */,
 				657429150A9C2D0B00C52C97 /* SQLStatement.h */,
 				51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */,
 				657429160A9C2D0B00C52C97 /* SQLTransaction.h */,
@@ -7377,7 +7377,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -7391,7 +7390,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
