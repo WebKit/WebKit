@@ -1,3 +1,12 @@
+2006-09-02  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Tim H.
+
+        Bug 10454: Unix bakefile fixes
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10454
+
+        * JavaScriptCoreSources.bkl:
+
 2006-09-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by hyatt.  Landed by eseidel.

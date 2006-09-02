@@ -1,3 +1,21 @@
+2006-09-02  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Tim H.
+
+        Bug 10454: Unix bakefile fixes
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10454
+
+        * WebCoreSources.bkl:
+        * platform/gdk/RenderPopupMenuGdk.cpp:
+        (WebCore::RenderPopupMenuGdk::RenderPopupMenuGdk):
+        * platform/gdk/RenderPopupMenuGdk.h:
+        * platform/gdk/RenderThemeGdk.cpp:
+        (WebCore::RenderThemeGdk::createPopupMenu):
+        (WebCore::RenderThemeGdk::systemFont):
+        * platform/gdk/RenderThemeGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * webcore-base.bkl:
+
 2006-09-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Anders.

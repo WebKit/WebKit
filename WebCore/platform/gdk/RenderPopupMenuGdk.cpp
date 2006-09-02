@@ -26,8 +26,8 @@
 
 namespace WebCore {
 
-RenderPopupMenuGdk::RenderPopupMenuGdk(Node* element)
-    : RenderPopupMenu(element)
+RenderPopupMenuGdk::RenderPopupMenuGdk(Node* element,  RenderMenuList* list)
+    : RenderPopupMenu(element,list)
 {
 }
 

@@ -35,7 +35,6 @@
 #include "TextField.h"
 #include "Font.h"
 #include "FileButton.h"
-#include "TextBox.h"
 #include "PopUpButton.h"
 #include "IntPoint.h"
 #include "Widget.h"
@@ -72,31 +71,6 @@ static void notImplemented() { puts("Not yet implemented"); }
 
 void FrameView::updateBorder() { notImplemented(); }
 
-TextBox::TextBox(Widget*) { notImplemented(); }
-TextBox::~TextBox() { notImplemented(); }
-String TextBox::textWithHardLineBreaks() const { notImplemented(); return String(); }
-IntSize TextBox::sizeWithColumnsAndRows(int, int) const { notImplemented(); return IntSize(); }
-void TextBox::setText(String const&) { notImplemented(); }
-void TextBox::setColors(Color const&, Color const&) { notImplemented(); }
-void TextBox::setFont(WebCore::Font const&) { notImplemented(); }
-void TextBox::setWritingDirection(enum WebCore::TextDirection) { notImplemented(); }
-bool TextBox::checksDescendantsForFocus() const { notImplemented(); return false; }
-int TextBox::selectionStart() { notImplemented(); return 0; }
-bool TextBox::hasSelectedText() const { notImplemented(); return 0; }
-int TextBox::selectionEnd() { notImplemented(); return 0; }
-void TextBox::setScrollBarModes(ScrollBarMode, ScrollBarMode) { notImplemented(); }
-void TextBox::setReadOnly(bool) { notImplemented(); }
-void TextBox::selectAll() { notImplemented(); }
-void TextBox::setDisabled(bool) { notImplemented(); }
-void TextBox::setLineHeight(int) { notImplemented(); }
-void TextBox::setSelectionStart(int) { notImplemented(); }
-void TextBox::setCursorPosition(int, int) { notImplemented(); }
-String TextBox::text() const { notImplemented(); return String(); }
-void TextBox::setWordWrap(TextBox::WrapStyle) { notImplemented(); }
-void TextBox::setAlignment(HorizontalAlignment) { notImplemented(); }
-void TextBox::setSelectionEnd(int) { notImplemented(); }
-void TextBox::getCursorPosition(int*, int*) const { notImplemented(); }
-void TextBox::setSelectionRange(int, int) { notImplemented(); }
 
 Widget::FocusPolicy PopUpButton::focusPolicy() const { notImplemented(); return NoFocus; }
 void PopUpButton::populate() { notImplemented(); }
@@ -150,7 +124,6 @@ int FileButton::baselinePosition(int) const { notImplemented(); return 0; }
 void FileButton::setFrameGeometry(WebCore::IntRect const&) { notImplemented(); }
 void FileButton::setDisabled(bool) { notImplemented(); }
 
-Widget::FocusPolicy TextBox::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy Slider::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy ListBox::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy TextField::focusPolicy() const { notImplemented(); return NoFocus; }
@@ -349,8 +322,6 @@ IntSize PopUpButton::sizeHint() const { return IntSize(); }
 IntRect PopUpButton::frameGeometry() const { return IntRect(); }
 void PopUpButton::setFrameGeometry(IntRect const&) { }
 
-ScrollBar::ScrollBar(ScrollBarOrientation) { }
-ScrollBar::~ScrollBar() { }
 void ScrollBar::setSteps(int, int) { }
 bool ScrollBar::scroll(ScrollDirection, ScrollGranularity, float) { return 0; }
 bool ScrollBar::setValue(int) { return 0; }

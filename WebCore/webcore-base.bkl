@@ -62,8 +62,6 @@ Base settings shared by all Bakefile-based ports.
 		$(WEBCORE_SOURCES_HTML)
 		$(WEBCORE_SOURCES_BINDINGS)
 		$(WEBCORE_SOURCES_JS)
-		$(WEBCORE_SOURCES_XPATH)
-		$(WEBCORE_SOURCES_IMPL)
 	</set>
 
     <set var="BUILDDIR">obj-$(FORMAT)</set>
@@ -100,8 +98,6 @@ Base settings shared by all Bakefile-based ports.
         <include>$(SRCDIR)/platform/image-decoders/zlib</include>
         <include>$(SRCDIR)/rendering</include>
         <include>$(SRCDIR)/xml</include>
-        <include>$(SRCDIR)/xpath</include>
-        <include>$(SRCDIR)/xpath/impl</include>
         <include>$(SRCDIR)/kcanvas</include>
         <include>$(SRCDIR)/kcanvas/device</include>
         

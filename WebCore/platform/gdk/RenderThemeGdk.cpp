@@ -157,9 +157,14 @@ void RenderThemeGdk::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
     addIntrinsicMargins(style);
 }
 
-RenderPopupMenu* RenderThemeGdk::createPopupMenu(RenderArena* arena, Document* doc)
+RenderPopupMenu* RenderThemeGdk::createPopupMenu(RenderArena* arena, Document* doc, RenderMenuList* list)
 {
-    return new (arena) RenderPopupMenuGdk(doc);
+    return new (arena) RenderPopupMenuGdk(doc,list);
+}
+
+void RenderThemeGdk::systemFont(int propId, FontDescription&) const
+{
+
 }
 
 }

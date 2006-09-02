@@ -20,6 +20,7 @@
 		kjs/interpreter.cpp
 		kjs/JSImmediate.cpp
 		kjs/JSLock.cpp
+		kjs/JSWrapperObject.cpp
 		kjs/lexer.cpp
 		kjs/list.cpp
 		kjs/lookup.cpp

@@ -33,7 +33,7 @@ class HTMLOptGroupElement;
 
 class RenderPopupMenuGdk : public RenderPopupMenu {
 public:
-    RenderPopupMenuGdk(Node*);
+    RenderPopupMenuGdk(Node*,  RenderMenuList*);
     ~RenderPopupMenuGdk();
 
     virtual void clear();

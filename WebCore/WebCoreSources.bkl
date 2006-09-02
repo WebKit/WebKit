@@ -26,6 +26,7 @@
 		DerivedSources/WebCore/JSDocumentFragment.cpp
 		DerivedSources/WebCore/JSDocumentType.cpp
 		DerivedSources/WebCore/JSDOMImplementation.cpp
+		DerivedSources/WebCore/JSDOMParser.cpp
 		DerivedSources/WebCore/JSDOMWindow.cpp
 		DerivedSources/WebCore/JSElement.cpp
 		DerivedSources/WebCore/JSEntity.cpp
@@ -81,13 +82,16 @@
 		DerivedSources/WebCore/JSMutationEvent.cpp
 		DerivedSources/WebCore/JSNode.cpp
 		DerivedSources/WebCore/JSNodeFilter.cpp
+		DerivedSources/WebCore/JSNodeIterator.cpp
 		DerivedSources/WebCore/JSNotation.cpp
 		DerivedSources/WebCore/JSProcessingInstruction.cpp
 		DerivedSources/WebCore/JSRange.cpp
 		DerivedSources/WebCore/JSText.cpp
+		DerivedSources/WebCore/JSTreeWalker.cpp
 		DerivedSources/WebCore/JSOverflowEvent.cpp
 		DerivedSources/WebCore/JSUIEvent.cpp
 		DerivedSources/WebCore/JSWheelEvent.cpp
+		DerivedSources/WebCore/JSXMLSerializer.cpp
 		DerivedSources/WebCore/JSXPathEvaluator.cpp
 		DerivedSources/WebCore/JSXPathExpression.cpp
 		DerivedSources/WebCore/JSXPathNSResolver.cpp
@@ -466,35 +470,28 @@
 		rendering/RootInlineBox.cpp
 
 	</set>
-	<set append="1" var="WEBCORE_SOURCES_XPATH">
-		
-		xpath/XPathEvaluator.cpp
-		xpath/XPathExpression.cpp
-		xpath/XPathNamespace.cpp
-		xpath/XPathNSResolver.cpp
-		xpath/XPathResult.cpp
 
-	</set>
-	<set append="1" var="WEBCORE_SOURCES_IMPL">
-		
-		xpath/impl/XPathExpressionNode.cpp
-		xpath/impl/XPathFunctions.cpp
-		xpath/impl/XPathParser.cpp
-		xpath/impl/XPathPath.cpp
-		xpath/impl/XPathPredicate.cpp
-		xpath/impl/XPathStep.cpp
-		xpath/impl/XPathUtil.cpp
-		xpath/impl/XPathValue.cpp
-		xpath/impl/XPathVariableReference.cpp
-
-	</set>
 	<set append="1" var="WEBCORE_SOURCES_XML">
-		
+		xml/DOMParser.cpp
 		xml/xmlhttprequest.cpp
-        xml/XSLImportRule.cpp
+		xml/XMLSerializer.cpp
+		xml/XPathEvaluator.cpp
+		xml/XPathExpression.cpp
+		xml/XPathExpressionNode.cpp
+		xml/XPathFunctions.cpp
+		xml/XPathNamespace.cpp
+		xml/XPathNSResolver.cpp
+		xml/XPathParser.cpp
+		xml/XPathPath.cpp
+		xml/XPathPredicate.cpp
+		xml/XPathResult.cpp
+		xml/XPathStep.cpp
+		xml/XPathUtil.cpp
+		xml/XPathValue.cpp
+		xml/XPathVariableReference.cpp
+		xml/XSLImportRule.cpp
 		xml/XSLStyleSheet.cpp
 		xml/XSLTProcessor.cpp
-
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_DOM">
 		
@@ -701,14 +698,14 @@
 	<set append="1" var="WEBCORE_SOURCES_JS">
 		
 		bindings/js/JSCanvasRenderingContext2DCustom.cpp
-		bindings/js/JSDOMParser.cpp
 		bindings/js/JSHTMLElementWrapperFactory.cpp
-          bindings/js/JSHTMLFormElementCustom.cpp
+		bindings/js/JSHTMLFormElementCustom.cpp
 		bindings/js/JSHTMLInputElementBase.cpp
-          bindings/js/JSHTMLOptionsCollectionCustom.cpp
 		bindings/js/JSHTMLOptionElementConstructor.cpp
+		bindings/js/JSHTMLOptionsCollectionCustom.cpp
+		bindings/js/JSNodeIteratorCustom.cpp
+		bindings/js/JSTreeWalkerCustom.cpp
 		bindings/js/JSXMLHttpRequest.cpp
-		bindings/js/JSXMLSerializer.cpp
 		bindings/js/JSXSLTProcessor.cpp
 		bindings/js/kjs_binding.cpp
 		bindings/js/kjs_css.cpp
@@ -721,4 +718,5 @@
 		bindings/js/kjs_window.cpp
 
 	</set>
+
 </makefile>
