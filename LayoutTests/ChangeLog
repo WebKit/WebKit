@@ -1,3 +1,16 @@
+2006-09-02  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Justin.
+
+        Testcase for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10579
+        AppleStyleCommand::applyBlockStyle crash
+
+        * editing/style/table-selection-expected.checksum: Added.
+        * editing/style/table-selection-expected.png: Added.
+        * editing/style/table-selection-expected.txt: Added.
+        * editing/style/table-selection.html: Added.
+
 2006-09-01  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim Omernick.

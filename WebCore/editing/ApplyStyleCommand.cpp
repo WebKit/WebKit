@@ -371,7 +371,15 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
     // Also, gather up all the nodes we want to process in a DeprecatedPtrList before
     // doing anything. This averts any bugs iterating over these nodes
     // once you start removing and applying style.
-    Node *beyondEnd = end.node()->traverseNextNode();
+    
+    // If the end node is before the start node (can only happen if the end node is
+    // an ancestor of the start node), we gather nodes up to the next sibling of the end node
+    Node *beyondEnd;
+    if (start.node()->isAncestor(end.node()))
+        beyondEnd = end.node()->traverseNextSibling();
+    else
+        beyondEnd = end.node()->traverseNextNode();
+
     DeprecatedPtrList<Node> nodes;
     for (Node *node = start.node(); node != beyondEnd; node = node->traverseNextNode())
         nodes.append(node);
