@@ -1127,10 +1127,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\Brush.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\CharsetNames.cpp"
 				>
 			</File>
@@ -1423,6 +1419,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\ResourceLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\ResourceLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\ResourceLoaderClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\ResourceLoaderInternal.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\Screen.h"
 				>
 			</File>
@@ -1503,10 +1515,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\TextBox.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\TextEncoding.cpp"
 				>
 			</File>
@@ -1532,22 +1540,6 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\Timer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\ResourceLoader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\ResourceLoader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\ResourceLoaderClient.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\ResourceLoaderInternal.h"
 				>
 			</File>
 			<File
@@ -1597,11 +1589,10 @@
 					RelativePath="..\..\platform\win\GlyphMapWin.cpp"
 					>
 				</File>
-                                <File
-                                        RelativePath="..\..\platform\win\ImageWin.cpp"
-                                        >
-                                </File>
-
+				<File
+					RelativePath="..\..\platform\win\ImageWin.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\..\platform\win\IntPointWin.cpp"
 					>
@@ -1623,6 +1614,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\platform\win\ResourceLoaderWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\win\ResourceLoaderWin.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\platform\win\ScreenWin.cpp"
 					>
 				</File>
@@ -1640,14 +1639,6 @@
 				</File>
 				<File
 					RelativePath="..\..\platform\win\TemporaryLinkStubs.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\platform\win\ResourceLoaderWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\platform\win\ResourceLoaderWin.h"
 					>
 				</File>
 				<File
@@ -3284,19 +3275,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\xml\XPathExpressionNode.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\xml\XPathExpressionNode.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\xml\XPathExpression.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\xml\XPathExpression.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\xml\XPathExpressionNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\xml\XPathExpressionNode.h"
 				>
 			</File>
 			<File
@@ -4867,14 +4858,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\bindings\js\JSDOMParser.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bindings\js\JSDOMParser.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\bindings\js\JSHTMLElementWrapperFactory.cpp"
 					>
 				</File>
@@ -4912,14 +4895,6 @@
 				</File>
 				<File
 					RelativePath="..\..\bindings\js\JSXMLHttpRequest.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bindings\js\JSXMLSerializer.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bindings\js\JSXMLSerializer.h"
 					>
 				</File>
 				<File
@@ -5008,6 +4983,62 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath="..\..\xml\DOMParser.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\xml\DOMParser.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\DerivedSources\WebCore\JSDOMParser.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\DerivedSources\WebCore\JSDOMParser.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\DerivedSources\WebCore\JSNodeIterator.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\DerivedSources\WebCore\JSNodeIterator.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\bindings\js\JSNodeIteratorCustom.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\DerivedSources\WebCore\JSTreeWalker.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\DerivedSources\WebCore\JSTreeWalker.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\bindings\js\JSTreeWalkerCustom.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\DerivedSources\WebCore\JSXMLSerializer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\DerivedSources\WebCore\JSXMLSerializer.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\xml\XMLSerializer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\xml\XMLSerializer.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

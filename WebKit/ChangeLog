@@ -1,3 +1,13 @@
+2006-09-01  MorganL  <morlmor@yahoo.com>
+
+        Reviewed by Darin. Updated/landed by Adam.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10553
+        Windows build fixes
+
+        * COM/WebFrame.cpp:
+        (WebFrame::initWithName):
+
 2006-09-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

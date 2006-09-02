@@ -133,7 +133,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::initWithName(
     if (FAILED(hr))
         return hr;
 
-    Page* page = new Page();
+    Page* page = new Page(windowHandle);
     Frame* frame = new FrameWin(page, 0, this);
 
     // FIXME: This is one-time initialization, but it gets the value of the setting from the

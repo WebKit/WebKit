@@ -21,7 +21,7 @@ cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore"
 
 export WebCore="${SRCROOT}"
 export ENCODINGS_FILE="${WebCore}/platform/win/win-encodings.txt";
-export ENCODINGS_PREFIX=""
+export ENCODINGS_PREFIX="\" \""
 # FIXME: Should make XPath Support configurable someday on Win32.
 export FEATURE_DEFINES="XPATH_SUPPORT"
 make -f "$WebCore/DerivedSources.make" || exit 1

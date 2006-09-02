@@ -1,3 +1,38 @@
+2006-09-01  MorganL  <morlmor@yahoo.com>
+
+        Reviewed by Darin. Updated/landed by Adam.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10553
+        Windows build fixes
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+        * bridge/win/FrameWin.h:
+        * bridge/win/PageWin.cpp:
+        (WebCore::Page::Page):
+        * platform/win/FontWin.cpp:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::registerCommandForUndo):
+        (FrameWin::canPaste):
+        (FrameWin::issuePasteAndMatchStyleCommand):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (FrameWin::overrideMediaType):
+        (FrameWin::saveDocumentState):
+        (FrameWin::respondToChangedContents):
+        (FrameWin::handledOnloadEvents):
+        (FrameWin::createPlugin):
+        (FrameWin::objectContentType):
+        (Path::contains):
+        (TextField::TextField):
+        (RenderPopupMenuWin::hidePopup):
+        (RenderThemeWin::paintMenuList):
+        (RenderThemeWin::adjustMenuListStyle):
+        (CString::CString):
+        (CString::data):
+        * platform/win/WidgetWin.cpp:
+        * rendering/RenderPopupMenuWin.h:
+
 2006-09-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Omernick

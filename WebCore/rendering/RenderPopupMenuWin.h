@@ -38,7 +38,8 @@ public:
     virtual void clear();
     virtual void populate();
     virtual void showPopup(const IntRect&, FrameView*, int index);
-    
+    virtual void hidePopup();
+
 protected:
     virtual void addSeparator();
     virtual void addGroupLabel(HTMLOptGroupElement*);

@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include <windows.h>
 #include "Widget.h"
 
 #include "Cursor.h"
@@ -149,11 +150,6 @@ IntPoint Widget::mapFromGlobal(const IntPoint &p) const
     POINT point = p;
     ScreenToClient(data->windowHandle, &point);
     return point;
-}
-
-float Widget::scaleFactor() const
-{
-    return 1.0f;
 }
 
 }
