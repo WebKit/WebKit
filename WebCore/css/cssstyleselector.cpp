@@ -767,7 +767,9 @@ void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
 
 RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault)
 {
-    if (allowSharing && !e->document()->haveStylesheetsLoaded()) {
+    // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
+    // will vanish if a style recalc happens during loading.
+    if (allowSharing && !e->document()->haveStylesheetsLoaded() && !e->renderer()) {
         if (!styleNotYetAvailable) {
             styleNotYetAvailable = ::new RenderStyle();
             styleNotYetAvailable->setDisplay(NONE);

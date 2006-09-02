@@ -1,3 +1,25 @@
+2006-09-01  David Hyatt  <hyatt@apple.com>
+
+        Fix for 10682, refine the FOUC paint suppression logic so that it
+        is only triggered when FOUC would really have occurred.
+
+        Reviewed by aroben
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        (WebCore::Document::updateStyleSelector):
+        * dom/Document.h:
+        (WebCore::Document::haveStylesheetsLoaded):
+        (WebCore::Document::):
+        (WebCore::Document::didLayoutWithPendingStylesheets):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+
 2006-09-01  MorganL  <morlmor@yahoo.com>
 
         Reviewed by Darin. Updated/landed by Adam.

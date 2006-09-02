@@ -240,7 +240,7 @@ public:
      * This method returns true if all top-level stylesheets have loaded (including
      * any @imports that they may be loading).
      */
-    bool haveStylesheetsLoaded(bool checkIgnoreFlag = true) const { return m_pendingStylesheets <= 0 || (checkIgnoreFlag && m_ignorePendingStylesheets); }
+    bool haveStylesheetsLoaded() const { return m_pendingStylesheets <= 0 || m_ignorePendingStylesheets; }
 
     /**
      * Increments the number of pending sheets.  The <link> elements
@@ -597,6 +597,10 @@ public:
                                      ExceptionCode& ec);
 #endif // XPATH_SUPPORT
     
+    enum PendingSheetLayout { NoLayoutWithPendingSheets, DidLayoutWithPendingSheets, IgnoreLayoutWithPendingSheets };
+
+    bool didLayoutWithPendingStylesheets() const { return m_pendingSheetLayout == DidLayoutWithPendingSheets; }
+
 protected:
     CSSStyleSelector* m_styleSelector;
     FrameView* m_view;
@@ -628,7 +632,7 @@ protected:
     // If we do ignore the pending stylesheet count, then we need to add a boolean
     // to track that this happened so that we can do a full repaint when the stylesheets
     // do eventually load.
-    bool m_didLayoutWithPendingStylesheets;
+    PendingSheetLayout m_pendingSheetLayout;
 
     RefPtr<CSSStyleSheet> m_elemSheet;
 
