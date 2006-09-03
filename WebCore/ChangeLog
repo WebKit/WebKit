@@ -12,7 +12,7 @@
           exists on a parameter we will use that for the prefix.
 
         - A backwards compatible version of the method is placed in a
-          category with a deprecation marco for 10.5 and later. This step only
+          category with a deprecation macro for 10.5 and later. This step only
           happens if the IDL extended attribute "OldStyleObjC" is defined.
           All new functions in IDL should not get this attribute.
 
