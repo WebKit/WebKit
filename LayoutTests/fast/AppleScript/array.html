@@ -3,7 +3,6 @@
 <title>do JavaScript - converting JavaScript arrays to AppleScript</title>
 </head>
 <body>
-At the moment, toString() is just used. Perhaps, some arrays should be converted to AppleScript lists.
 <script type="text/javascript">
 
     var console_messages = document.createElement("ol");
@@ -22,6 +21,10 @@ At the moment, toString() is just used. Perhaps, some arrays should be converted
             
             log(appleScriptController.doJavaScript("new Array(1, 2, 'three');"));
             log(appleScriptController.doJavaScript("arr = new Array; arr['a'] = 'a'; arr[2] = 2; arr;"));
+            log(appleScriptController.doJavaScript("arr = new Array; arr[0] = 0; arr[1] = arr; arr;"));
+
+// This takes ~10 seconds on my G4/1.25
+//            log(appleScriptController.doJavaScript("arr = new Array; arr[1] = 1; arr[10001] = 10001; arr;"));
             
         } catch (ex) {
             log("Exception: " + ex.description);

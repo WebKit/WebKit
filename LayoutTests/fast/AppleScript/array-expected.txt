@@ -1,5 +1,5 @@
-At the moment, toString() is just used. Perhaps, some arrays should be converted to AppleScript lists.
-1,2,three ('utxt')
-,,2 ('utxt')
+(1, 2, three) ('list')
+(<>, <>, 2) ('list')
+(0, "0,") ('list')
 
 

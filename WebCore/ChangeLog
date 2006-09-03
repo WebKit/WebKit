@@ -1,5 +1,17 @@
 2006-09-03  Alexey Proskuryakov  <ap@nypop.com>
 
+        Reviewed by Tim H.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10693
+        Convert JavaScript arrays to AppleScript lists
+
+        Test: fast/AppleScript/array.html
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (aeDescFromJSValue): Added a case for ArrayInstance.
+
+2006-09-03  Alexey Proskuryakov  <ap@nypop.com>
+
         Reviewed by Eric.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=10697

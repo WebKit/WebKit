@@ -1,5 +1,16 @@
 2006-09-03  Alexey Proskuryakov  <ap@nypop.com>
 
+        Reviewed by Tim H.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10693
+        Convert JavaScript arrays to AppleScript lists
+
+        * fast/AppleScript/array-expected.txt:
+        * fast/AppleScript/array.html: Updated results, added a test for
+        circular dependencies.
+
+2006-09-03  Alexey Proskuryakov  <ap@nypop.com>
+
         Reviewed by Eric.
 
         Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=10697

@@ -75,6 +75,7 @@
 #import "markup.h"
 #import "visible_units.h"
 #import "XMLTokenizer.h"
+#import <JavaScriptCore/array_instance.h>
 #import <JavaScriptCore/date_object.h>
 #import <JavaScriptCore/runtime_root.h>
 #import <kjs/SavedBuiltins.h>
@@ -85,6 +86,7 @@ using namespace std;
 using namespace WebCore;
 using namespace HTMLNames;
 
+using KJS::ArrayInstance;
 using KJS::BooleanType;
 using KJS::DateInstance;
 using KJS::ExecState;
@@ -183,6 +185,20 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
                     LongDateTime ldt;
                     if (noErr == UCConvertCFAbsoluteTimeToLongDateTime(utcSeconds, &ldt))
                         aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeLongDateTime bytes:&ldt length:sizeof(ldt)];
+                }
+            }
+            else if (object->inherits(&ArrayInstance::info)) {
+                static HashSet<JSObject*> visitedElems;
+                if (!visitedElems.contains(object)) {
+                    visitedElems.add(object);
+                    
+                    ArrayInstance* array = static_cast<ArrayInstance*>(object);
+                    aeDesc = [NSAppleEventDescriptor listDescriptor];
+                    unsigned numItems = array->getLength();
+                    for (unsigned i = 0; i < numItems; ++i)
+                        [aeDesc insertDescriptor:aeDescFromJSValue(exec, array->getItem(i)) atIndex:0];
+                    
+                    visitedElems.remove(object);
                 }
             }
             if (!aeDesc) {

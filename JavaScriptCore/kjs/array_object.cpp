@@ -4,6 +4,7 @@
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2003 Apple Computer, Inc.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -67,6 +68,18 @@ ArrayInstance::ArrayInstance(JSObject *proto, const List &list)
 ArrayInstance::~ArrayInstance()
 {
   fastFree(storage);
+}
+
+JSValue* ArrayInstance::getItem(unsigned i) const
+{
+    if (i >= length)
+        return jsUndefined();
+    
+    JSValue* val = (i < storageLength) ? 
+                            storage[i] :
+                            getDirect(Identifier::from(i));
+
+    return val ? val : jsUndefined();
 }
 
 JSValue *ArrayInstance::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)

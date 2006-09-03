@@ -56,12 +56,8 @@
     return self;
 }
 
-- (NSString *)doJavaScript:(NSString *)aString
+static id convertAEDescToObject(NSAppleEventDescriptor *aeDesc)
 {
-    NSAppleEventDescriptor *aeDesc = [webView aeDescByEvaluatingJavaScriptFromString:aString];
-    if (!aeDesc)
-        return @"(null)";
-    
     id value = nil;
 
     DescType descType = [aeDesc descriptorType];
@@ -73,6 +69,12 @@
                 value = [NSString stringWithFormat:@"%016llX", (unsigned long long)d];
             }
             break;
+        case typeAEList:
+            value = [NSMutableArray array];
+            int numItems = [aeDesc numberOfItems];
+            for (int i = 0; i < numItems; ++i)
+                [(NSMutableArray*)value addObject:convertAEDescToObject([aeDesc descriptorAtIndex:(i + 1)])];
+            break;
     }
  
     if (!value)
@@ -80,14 +82,24 @@
     if (!value)
         value = [aeDesc data];
 
+    return value;
+}
+
+- (NSString *)doJavaScript:(NSString *)aString
+{
+    NSAppleEventDescriptor *aeDesc = [webView aeDescByEvaluatingJavaScriptFromString:aString];
+    if (!aeDesc)
+        return @"(null)";
+    
+    DescType descType = [aeDesc descriptorType];
     char descTypeStr[5];
     descTypeStr[0] = descType >> 24;
     descTypeStr[1] = descType >> 16;
     descTypeStr[2] = descType >> 8;
     descTypeStr[3] = descType;
     descTypeStr[4] = 0;
-    
-    return [NSString stringWithFormat:@"%@ ('%s')", value, descTypeStr];
+
+    return [NSString stringWithFormat:@"%@ ('%s')", convertAEDescToObject(aeDesc), descTypeStr];
 }
 
 @end
