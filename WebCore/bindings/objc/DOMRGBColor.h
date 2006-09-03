@@ -26,6 +26,7 @@
 
 #import <WebCore/DOMObject.h>
 
+@class NSColor;
 @class DOMCSSPrimitiveValue;
 
 @interface DOMRGBColor : DOMObject
