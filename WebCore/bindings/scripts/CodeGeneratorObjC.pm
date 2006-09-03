@@ -29,6 +29,8 @@ my $outputDir = "";
 my %implIncludes = ();
 my %headerForwardDeclarations = ();
 my %headerForwardDeclarationsForProtocols = ();
+my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} <= 10.4;
+my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5;
 
 my $exceptionInit = "WebCore::ExceptionCode ec = 0;";
 my $exceptionRaiseOnError = "raiseOnDOMError(ec);";
@@ -452,7 +454,7 @@ sub GenerateHeader
             my $attributeType = GetObjCType($attribute->signature->type);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
 
-            if ($ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5) {
+            if ($buildingForLeopardOrLater) {
                 my $property = "\@property" . ($attributeIsReadonly ? "(readonly)" : "") . " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . ";\n";
                 push(@headerAttributes, $property);
             } else {
@@ -513,7 +515,7 @@ sub GenerateHeader
             if (@{$function->parameters} > 1 and $function->signature->extendedAttributes->{"OldStyleObjC"}) {
                 my $deprecatedFunctionSig = $functionSig;
                 $deprecatedFunctionSig =~ s/\s\w+:/ :/g; # remove parameter names
-                $deprecatedFunctionSig =~ s/;\n$/ DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;\n/;
+                $deprecatedFunctionSig =~ s/;\n$/ DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;\n/ if $buildingForLeopardOrLater;
                 push(@deprecatedHeaderFunctions, $deprecatedFunctionSig);
             }
         }
