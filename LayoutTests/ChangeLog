@@ -1,5 +1,17 @@
 2006-09-03  Alexey Proskuryakov  <ap@nypop.com>
 
+        Reviewed by Eric.
+
+        Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=10697
+        REGRESSION (r16175): Errors in incremental decoding of UTF-8
+
+        * fast/encoding/charset-invalid-expected.txt: Added.
+        * fast/encoding/charset-invalid.html: Added.
+        * http/tests/incremental/slow-utf8-html-expected.txt: Added.
+        * http/tests/incremental/slow-utf8-html.pl: Added.
+
+2006-09-03  Alexey Proskuryakov  <ap@nypop.com>
+
         Reviewed by Tim H.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=4508

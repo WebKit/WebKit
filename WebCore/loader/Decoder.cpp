@@ -253,7 +253,7 @@ breakBreak:
 
 Decoder::Decoder(const String& mimeType, const String& defaultEncodingName)
   : m_encoding(defaultEncodingName.isNull() ? "iso8859-1" : defaultEncodingName.latin1())
-  , m_encodingName(defaultEncodingName.isNull() ? "iso8859-1" : defaultEncodingName.latin1())
+  , m_encodingName(m_encoding.name())
   , m_type(DefaultEncoding)
   , m_reachedBody(false)
   , m_checkedForCSSCharset(false)
@@ -272,7 +272,10 @@ Decoder::Decoder(const String& mimeType, const String& defaultEncodingName)
     } else
         m_contentType = PlainText;
 
-    m_decoder.set(StreamingTextDecoder::create(m_encoding));
+    if (m_encoding.isValid())
+        m_decoder.set(StreamingTextDecoder::create(m_encoding));
+    else
+        setEncodingName("iso-8859-1", DefaultEncoding);
 }
 
 Decoder::~Decoder()
@@ -281,18 +284,15 @@ Decoder::~Decoder()
 
 void Decoder::setEncodingName(const char* encodingName, EncodingSource type)
 {
-    m_encodingName = encodingName;
-    m_encodingName = m_encodingName.lower();
-
-    if (m_encodingName.isEmpty())
+    if (encodingName[0] == '\0')
         return;
 
     bool eightBitOnly = type == EncodingFromMetaTag || type == EncodingFromXMLHeader || type == EncodingFromCSSCharset;
-    TextEncoding encoding = TextEncoding(m_encodingName, eightBitOnly);
+    TextEncoding encoding = TextEncoding(encodingName, eightBitOnly);
 
     // in case the encoding didn't exist, we keep the old one (fixes some sites specifying invalid encodings)
     if (encoding.isValid()) {
-        m_encodingName = encoding.name();
+        m_encodingName = encoding.name(); // use a standard name for the encoding
         m_encoding = encoding;
         m_type = type;
         m_decoder.set(StreamingTextDecoder::create(m_encoding));
@@ -408,13 +408,8 @@ DeprecatedString Decoder::decode(const char *data, int len)
             }
 
             // If we found a BOM, use the encoding it implies.
-            if (autoDetectedEncoding != 0) {
-                m_type = AutoDetectedEncoding;
-                m_encoding = TextEncoding(autoDetectedEncoding);
-                ASSERT(m_encoding.isValid());
-                m_encodingName = m_encoding.name();
-                m_decoder.set(StreamingTextDecoder::create(m_encoding));
-            }
+            if (autoDetectedEncoding != 0)
+                setEncodingName(autoDetectedEncoding, AutoDetectedEncoding);
         }
         m_checkedForBOM = true;
     }
@@ -621,13 +616,7 @@ DeprecatedString Decoder::decode(const char *data, int len)
             setEncodingName(autoDetectedEncoding, AutoDetectedEncoding);
     }
 
-    // If we still haven't found an encoding, assume latin1
-    // (this can happen if an empty name is passed from outside).
-    if (m_encodingName.isEmpty() || !m_encoding.isValid()) {
-        m_encodingName = "iso8859-1";
-        m_encoding = TextEncoding(Latin1Encoding);
-    }
-    m_decoder.set(StreamingTextDecoder::create(m_encoding));
+    ASSERT(m_encoding.isValid());
 
     DeprecatedString out;
 

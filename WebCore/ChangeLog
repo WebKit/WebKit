@@ -1,3 +1,22 @@
+2006-09-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10697
+        REGRESSION (r16175): Errors in incremental decoding of UTF-8
+
+        Tests:
+        - http/tests/incremental/slow-utf8-html.pl
+        - fast/encoding/charset-invalid.html
+
+        * loader/Decoder.cpp:
+        (Decoder::Decoder): Ensure that we have a valid encoding. Get its name via TextEncoding, to match
+        the logic in setEncodingName().
+        (Decoder::setEncodingName): Only set m_encodingName if the encoding is valid. Rely on TextEncoding
+        constructor to lowercase it if necessary.
+        (Decoder::decode): Use setEncodingName() to apply encoding from BOM. Don't try to ensure the
+        validity of encoding - it is enforced by class constructor and setEncodingName().
+
 2006-09-02  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
