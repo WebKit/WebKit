@@ -243,8 +243,8 @@ using namespace HTMLNames;
 
 - (NSString *)altDisplayString
 {
-    String alt = [self _HTMLImageElement]->getAttribute(altAttr);
-    return alt.replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
+    String altStr = [self _HTMLImageElement]->getAttribute(altAttr);
+    return altStr.replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
 }
 
 - (NSURL *)absoluteImageURL
