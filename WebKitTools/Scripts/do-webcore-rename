@@ -123,6 +123,12 @@ my %renames = (
     "cachedObject" => "cachedResource",
     "m_docObjects" => "m_resources",
     "removeCachedObject" => "remove",
+    "StreamingTextDecoder" => "TextCodec",
+    "StreamingTextDecoderMac" => "TextCodecMac",
+    "StreamingTextDecoderICU" => "TextCodecICU",
+    "StreamingTextDecoder_h" => "TextCodec_h",
+    "StreamingTextDecoderMac_H" => "TextCodecMac_h",
+    "StreamingTextDecoderICU_H" => "TextCodecICU_h",
 );
 
 # rename files
