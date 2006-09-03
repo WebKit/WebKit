@@ -22,7 +22,7 @@
 */
 
 #include "config.h"
-#include "RenderPathQt.h"
+#include "RenderPath.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingStrokePainter.h"
 
@@ -31,17 +31,7 @@
 
 namespace WebCore {
     
-RenderPathQt::RenderPathQt(RenderStyle* style, SVGStyledElement* node)
-    : RenderPath(style, node)
-{
-}
-
-void RenderPathQt::drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const Path&) const
-{
-    qDebug("RenderPathQt::drawMarkersIfNeeded() TODO!");
-}
-
-bool RenderPathQt::strokeContains(const FloatPoint& point, bool requiresStroke) const
+bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) const
 {
     if (path().isEmpty())
         return false;
@@ -83,7 +73,7 @@ static QPainterPath getPathStroke(const QPainterPath &path, const KRenderingStro
     return s.createStroke(path);
 }
 
-FloatRect RenderPathQt::strokeBBox() const
+FloatRect RenderPath::strokeBBox() const
 {
     KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(style(), this);
     QPainterPath outline = getPathStroke(*(path().platformPath()), strokePainter);

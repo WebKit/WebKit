@@ -28,7 +28,6 @@
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "RenderSVGContainer.h"
-#include "KCanvasCreator.h"
 #include "KCanvasImage.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"

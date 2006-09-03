@@ -31,8 +31,6 @@
 #include "SVGLineElement.h"
 #include "SVGAnimatedLength.h"
 
-#include <kcanvas/KCanvasCreator.h>
-
 using namespace WebCore;
 
 SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document *doc)
@@ -89,7 +87,7 @@ Path SVGLineElement::toPathData() const
     float _x1 = x1()->baseVal()->value(), _y1 = y1()->baseVal()->value();
     float _x2 = x2()->baseVal()->value(), _y2 = y2()->baseVal()->value();
 
-    return KCanvasCreator::self()->createLine(FloatPoint(_x1, _y1), FloatPoint(_x2, _y2));
+    return Path::createLine(FloatPoint(_x1, _y1), FloatPoint(_x2, _y2));
 }
 
 const SVGStyledElement *SVGLineElement::pushAttributeContext(const SVGStyledElement *context)

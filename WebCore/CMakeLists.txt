@@ -866,6 +866,7 @@ set(WebCore_SRCS
     platform/StringImpl.cpp
     platform/FloatRect.cpp
     platform/ResourceLoader.cpp
+    platform/Path.cpp
     platform/qt/AffineTransformQt.cpp
     platform/qt/StringQt.cpp
     platform/qt/ColorQt.cpp

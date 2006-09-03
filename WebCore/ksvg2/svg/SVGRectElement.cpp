@@ -33,7 +33,6 @@
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 #include <kcanvas/device/KRenderingPaintServerSolid.h>
-#include <kcanvas/KCanvasCreator.h>
 
 namespace WebCore {
 
@@ -111,10 +110,10 @@ Path SVGRectElement::toPathData() const
     {
         float _rx = hasRx ? rx()->baseVal()->value() : ry()->baseVal()->value();
         float _ry = hasRy ? ry()->baseVal()->value() : rx()->baseVal()->value();
-        return KCanvasCreator::self()->createRoundedRectangle(FloatRect(_x, _y, _width, _height), FloatSize(_rx, _ry));
+        return Path::createRoundedRectangle(FloatRect(_x, _y, _width, _height), FloatSize(_rx, _ry));
     }
 
-    return KCanvasCreator::self()->createRectangle(FloatRect(_x, _y, _width, _height));
+    return Path::createRectangle(FloatRect(_x, _y, _width, _height));
 }
 
 const SVGStyledElement *SVGRectElement::pushAttributeContext(const SVGStyledElement *context)

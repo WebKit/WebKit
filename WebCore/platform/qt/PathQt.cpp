@@ -219,6 +219,48 @@ String Path::debugString() const
     return ret;
 }
 
+void Path::apply(void* info, PathApplierFunction function) const
+{
+    PathElement pelement;
+    FloatPoint points[2];
+    pelement.points = points;
+    for (int i = 0; i < m_path->elementCount(); ++i) {
+        const QPainterPath::Element& cur = m_path->elementAt(i);
+
+        switch (cur.type) {
+            case QPainterPath::MoveToElement:
+                pelement.type = PathElementMoveToPoint;
+                pelement.points[0] = cur;
+                function(info, &pelement);
+                break;
+            case QPainterPath::LineToElement:
+                pelement.type = PathElementAddLineToPoint;
+                pelement.points[0] = cur;
+                function(info, &pelement);
+                break;
+            case QPainterPath::CurveToElement:
+            {
+                const QPainterPath::Element& c1 = m_path->elementAt(i + 1);
+                const QPainterPath::Element& c2 = m_path->elementAt(i + 2);
+
+                Q_ASSERT(c1.type == QPainterPath::CurveToDataElement);
+                Q_ASSERT(c2.type == QPainterPath::CurveToDataElement);
+
+                pelement.type = PathElementAddCurveToPoint;
+                pelement.points[0] = cur;
+                pelement.points[1] = c1;
+                pelement.points[2] = c2;
+                function(info, &pelement);
+
+                i += 2;
+                break;
+            }
+            case QPainterPath::CurveToDataElement:
+                Q_ASSERT(false);
+        }
+    }
+}
+
 }
 
 // vim: ts=4 sw=4 et

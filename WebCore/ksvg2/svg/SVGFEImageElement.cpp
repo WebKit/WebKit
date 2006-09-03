@@ -35,7 +35,6 @@
 #include "SVGAnimatedString.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
-#include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasImage.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>

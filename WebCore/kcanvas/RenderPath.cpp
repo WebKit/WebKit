@@ -25,6 +25,8 @@
 #ifdef SVG_SUPPORT
 #include "RenderPath.h"
 
+#include <math.h>
+
 #include "GraphicsContext.h"
 #include "RenderSVGContainer.h"
 #include "KRenderingDevice.h"
@@ -312,8 +314,142 @@ bool RenderPath::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, H
     return false;
 }
 
+enum MarkerType {
+    Start,
+    Mid,
+    End
+};
+
+struct MarkerData {
+    FloatPoint origin;
+    double strokeWidth;
+    FloatPoint inslopePoints[2];
+    FloatPoint outslopePoints[2];
+    MarkerType type;
+    KCanvasMarker *marker;
+};
+
+struct DrawMarkersData {
+    DrawMarkersData(GraphicsContext*, KCanvasMarker* startMarker, KCanvasMarker* midMarker, double strokeWidth);
+    GraphicsContext* context;
+    int elementIndex;
+    MarkerData previousMarkerData;
+    KCanvasMarker* midMarker;
+};
+
+DrawMarkersData::DrawMarkersData(GraphicsContext* c, KCanvasMarker *start, KCanvasMarker *mid, double strokeWidth)
+    : context(c)
+    , elementIndex(0)
+    , midMarker(mid)
+{
+    previousMarkerData.origin = FloatPoint();
+    previousMarkerData.strokeWidth = strokeWidth;
+    previousMarkerData.marker = start;
+    previousMarkerData.type = Start;
 }
 
-// vim:ts=4:noet
-#endif // SVG_SUPPORT
+static void drawMarkerWithData(GraphicsContext* context, MarkerData &data)
+{
+    if (!data.marker)
+        return;
+    
+    FloatPoint inslopeChange = data.inslopePoints[1] - FloatSize(data.inslopePoints[0].x(), data.inslopePoints[0].y());
+    FloatPoint outslopeChange = data.outslopePoints[1] - FloatSize(data.outslopePoints[0].x(), data.outslopePoints[0].y());
+    
+    static const double deg2rad = M_PI/180.0;
+    double inslope = atan2(inslopeChange.y(), inslopeChange.x()) / deg2rad;
+    double outslope = atan2(outslopeChange.y(), outslopeChange.x()) / deg2rad;
+    
+    double angle = 0.0;
+    switch (data.type) {
+        case Start:
+            angle = outslope;
+            break;
+        case Mid:
+            angle = (inslope + outslope) / 2;
+            break;
+        case End:
+            angle = inslope;
+    }
+    
+    data.marker->draw(context, FloatRect(), data.origin.x(), data.origin.y(), data.strokeWidth, angle);
+}
 
+static inline void updateMarkerDataForElement(MarkerData &previousMarkerData, const PathElement *element)
+{
+    FloatPoint *points = element->points;
+    
+    switch (element->type) {
+    case PathElementAddQuadCurveToPoint:
+        // TODO
+        previousMarkerData.origin = points[1];
+        break;
+    case PathElementAddCurveToPoint:
+        previousMarkerData.inslopePoints[0] = points[1];
+        previousMarkerData.inslopePoints[1] = points[2];
+        previousMarkerData.origin = points[2];
+        break;
+    case PathElementMoveToPoint:
+    case PathElementAddLineToPoint:
+    case PathElementCloseSubpath:
+        previousMarkerData.inslopePoints[0] = previousMarkerData.origin;
+        previousMarkerData.inslopePoints[1] = points[0];
+        previousMarkerData.origin = points[0];
+    }
+}
+
+static void drawStartAndMidMarkers(void *info, const PathElement *element)
+{
+    DrawMarkersData &data = *(DrawMarkersData *)info;
+
+    int elementIndex = data.elementIndex;
+    MarkerData &previousMarkerData = data.previousMarkerData;
+
+    FloatPoint *points = element->points;
+
+    // First update the outslope for the previous element
+    previousMarkerData.outslopePoints[0] = previousMarkerData.origin;
+    previousMarkerData.outslopePoints[1] = points[0];
+
+    // Draw the marker for the previous element
+    if (elementIndex != 0)
+        drawMarkerWithData(data.context, previousMarkerData);
+
+    // Update our marker data for this element
+    updateMarkerDataForElement(previousMarkerData, element);
+
+    if (elementIndex == 1) {
+        // After drawing the start marker, switch to drawing mid markers
+        previousMarkerData.marker = data.midMarker;
+        previousMarkerData.type = Mid;
+    }
+
+    data.elementIndex++;
+}
+
+void RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& rect, const Path& path) const
+{
+    Document *doc = document();
+    const SVGRenderStyle *svgStyle = style()->svgStyle();
+
+    KCanvasMarker *startMarker = getMarkerById(doc, svgStyle->startMarker().mid(1));
+    KCanvasMarker *midMarker = getMarkerById(doc, svgStyle->midMarker().mid(1));
+    KCanvasMarker *endMarker = getMarkerById(doc, svgStyle->endMarker().mid(1));
+    
+    if (!startMarker && !midMarker && !endMarker)
+        return;
+
+    double strokeWidth = KSVGPainterFactory::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0);
+
+    DrawMarkersData data(context, startMarker, midMarker, strokeWidth);
+
+    path.apply(&data, drawStartAndMidMarkers);
+
+    data.previousMarkerData.marker = endMarker;
+    data.previousMarkerData.type = End;
+    drawMarkerWithData(context, data.previousMarkerData);
+}
+
+}
+
+#endif // SVG_SUPPORT

@@ -183,14 +183,6 @@ KCanvasFilterEffect* KRenderingDeviceQt::createFilterEffect(const KCFilterEffect
     return 0;
 }
 
-// item creation
-RenderPath* KRenderingDeviceQt::createItem(RenderArena* arena, RenderStyle* style, SVGStyledElement* node, const Path& path) const
-{
-    RenderPath* item = new (arena) RenderPathQt(style, node);
-    item->setPath(path);
-    return item;
-}
-
 KRenderingDevice* renderingDevice()
 {
     static KRenderingDevice *sharedRenderingDevice = new KRenderingDeviceQt();

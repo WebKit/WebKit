@@ -36,7 +36,6 @@
 #include "SVGNames.h"
 #include "csshelper.h"
 #include <kcanvas/RenderSVGContainer.h>
-#include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
 namespace WebCore {

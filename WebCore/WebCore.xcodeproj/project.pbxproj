@@ -1286,8 +1286,6 @@
 		A88AD3B60952486E001DD196 /* QuartzSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB77089701F800BA5114 /* QuartzSupport.mm */; };
 		A88AD3B90952486E001DD196 /* RenderSVGContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB7A089701F800BA5114 /* RenderSVGContainer.cpp */; };
 		A88AD3BA0952486E001DD196 /* RenderSVGContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB7B089701F800BA5114 /* RenderSVGContainer.h */; };
-		A88AD3BB0952486E001DD196 /* KCanvasCreator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB7C089701F800BA5114 /* KCanvasCreator.cpp */; };
-		A88AD3BC0952486E001DD196 /* KCanvasCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB7D089701F800BA5114 /* KCanvasCreator.h */; };
 		A88AD3BD0952486E001DD196 /* KCanvasFilters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB7E089701F800BA5114 /* KCanvasFilters.cpp */; };
 		A88AD3BE0952486E001DD196 /* KCanvasFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */; };
 		A88AD3C00952486E001DD196 /* KCanvasImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB81089701F800BA5114 /* KCanvasImage.h */; };
@@ -1707,6 +1705,7 @@
 		A8FEFB320979F4F6005839FD /* SVGForeignObjectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB300979F4F6005839FD /* SVGForeignObjectElement.h */; };
 		AA84FC850AA0FE08007699AF /* JSSVGMetadataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA84FC830AA0FE08007699AF /* JSSVGMetadataElement.cpp */; };
 		AA84FC860AA0FE08007699AF /* JSSVGMetadataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AA84FC840AA0FE08007699AF /* JSSVGMetadataElement.h */; };
+		AA98B87D0AAA02F8001A44C2 /* Path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA98B87C0AAA02F8001A44C2 /* Path.cpp */; };
 		AAC8DAB10AA1002000DC0907 /* SVGMetadataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */; };
 		AAC8DAB20AA1002000DC0907 /* SVGMetadataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */; };
 		AB23A31209BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */; };
@@ -3637,8 +3636,6 @@
 		A8C0FB77089701F800BA5114 /* QuartzSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuartzSupport.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB7A089701F800BA5114 /* RenderSVGContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGContainer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB7B089701F800BA5114 /* RenderSVGContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGContainer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB7C089701F800BA5114 /* KCanvasCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasCreator.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB7D089701F800BA5114 /* KCanvasCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasCreator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB7E089701F800BA5114 /* KCanvasFilters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasFilters.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasFilters.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB81089701F800BA5114 /* KCanvasImage.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasImage.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3833,6 +3830,7 @@
 		A8FEFB300979F4F6005839FD /* SVGForeignObjectElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGForeignObjectElement.h; sourceTree = "<group>"; };
 		AA84FC830AA0FE08007699AF /* JSSVGMetadataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGMetadataElement.cpp; sourceTree = "<group>"; };
 		AA84FC840AA0FE08007699AF /* JSSVGMetadataElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGMetadataElement.h; sourceTree = "<group>"; };
+		AA98B87C0AAA02F8001A44C2 /* Path.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Path.cpp; sourceTree = "<group>"; };
 		AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMetadataElement.cpp; sourceTree = "<group>"; };
 		AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGMetadataElement.h; sourceTree = "<group>"; };
 		AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTextFieldInnerElement.cpp; sourceTree = "<group>"; };
@@ -5790,8 +5788,6 @@
 				A8C0FB53089701F700BA5114 /* device */,
 				A8C0FB7A089701F800BA5114 /* RenderSVGContainer.cpp */,
 				A8C0FB7B089701F800BA5114 /* RenderSVGContainer.h */,
-				A8C0FB7C089701F800BA5114 /* KCanvasCreator.cpp */,
-				A8C0FB7D089701F800BA5114 /* KCanvasCreator.h */,
 				A8C0FB7E089701F800BA5114 /* KCanvasFilters.cpp */,
 				A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */,
 				A8C0FB81089701F800BA5114 /* KCanvasImage.h */,
@@ -6051,6 +6047,7 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				AA98B87C0AAA02F8001A44C2 /* Path.cpp */,
 				1AE42F670AA4B8CB00C8612D /* cf */,
 				93032CCC09AEC36200F82A18 /* cg */,
 				6582A14809999D6C00BEEB6D /* mac */,
@@ -6709,7 +6706,6 @@
 				A88AD3B30952486E001DD196 /* KRenderingPaintServerQuartz.h in Headers */,
 				A88AD3B50952486E001DD196 /* QuartzSupport.h in Headers */,
 				A88AD3BA0952486E001DD196 /* RenderSVGContainer.h in Headers */,
-				A88AD3BC0952486E001DD196 /* KCanvasCreator.h in Headers */,
 				A88AD3BE0952486E001DD196 /* KCanvasFilters.h in Headers */,
 				A88AD3C00952486E001DD196 /* KCanvasImage.h in Headers */,
 				A88AD3C20952486E001DD196 /* RenderPath.h in Headers */,
@@ -7746,7 +7742,6 @@
 				A88AD3B40952486E001DD196 /* KRenderingPaintServerQuartz.mm in Sources */,
 				A88AD3B60952486E001DD196 /* QuartzSupport.mm in Sources */,
 				A88AD3B90952486E001DD196 /* RenderSVGContainer.cpp in Sources */,
-				A88AD3BB0952486E001DD196 /* KCanvasCreator.cpp in Sources */,
 				A88AD3BD0952486E001DD196 /* KCanvasFilters.cpp in Sources */,
 				A88AD3C10952486E001DD196 /* RenderPath.cpp in Sources */,
 				A88AD3C80952486E001DD196 /* KCanvasResources.cpp in Sources */,
@@ -8520,6 +8515,7 @@
 				852B9E8A0AA79C47002ADA6E /* DOMHTMLOptionElement.mm in Sources */,
 				1A98955C0AA78149005EF5EF /* CString.cpp in Sources */,
 				1A98956B0AA78F80005EF5EF /* KURLCFNet.cpp in Sources */,
+				AA98B87D0AAA02F8001A44C2 /* Path.cpp in Sources */,
 				85032DD80AA8C9BE007D3B7D /* DOMCSSCharsetRule.mm in Sources */,
 				85032DDA0AA8C9BE007D3B7D /* DOMCSSFontFaceRule.mm in Sources */,
 				85032DDC0AA8C9BE007D3B7D /* DOMCSSImportRule.mm in Sources */,

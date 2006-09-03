@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGGElement.h"
 
-#include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/RenderSVGContainer.h>
 #include <kcanvas/device/KRenderingDevice.h>
 

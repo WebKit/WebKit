@@ -31,8 +31,6 @@
 #include "SVGEllipseElement.h"
 #include "SVGAnimatedLength.h"
 
-#include <kcanvas/KCanvasCreator.h>
-
 namespace WebCore {
 
 SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document *doc)
@@ -89,7 +87,7 @@ Path SVGEllipseElement::toPathData() const
     float _cx = cx()->baseVal()->value(), _cy = cy()->baseVal()->value();
     float _rx = rx()->baseVal()->value(), _ry = ry()->baseVal()->value();
 
-    return KCanvasCreator::self()->createEllipse(FloatPoint(_cx, _cy), _rx, _ry);
+    return Path::createEllipse(FloatPoint(_cx, _cy), _rx, _ry);
 }
 
 const SVGStyledElement *SVGEllipseElement::pushAttributeContext(const SVGStyledElement *context)

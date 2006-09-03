@@ -26,7 +26,6 @@
 
 #include "Attr.h"
 #include "Document.h"
-#include "KCanvasCreator.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "PlatformString.h"
@@ -71,7 +70,10 @@ RenderObject* SVGStyledElement::createRenderer(RenderArena* arena, RenderStyle* 
     Path pathData = toPathData();
     if (pathData.isEmpty())
         return 0;
-    return renderingDevice()->createItem(arena, style, this, pathData);
+
+    RenderPath *item = new (arena) RenderPath(style, this);
+    item->setPath(pathData);
+    return item;
 }
 
 void SVGStyledElement::parseMappedAttribute(MappedAttribute* attr)

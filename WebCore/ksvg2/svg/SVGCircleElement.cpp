@@ -31,8 +31,6 @@
 #include "SVGCircleElement.h"
 #include "SVGAnimatedLength.h"
 
-#include <kcanvas/KCanvasCreator.h>
-
 using namespace WebCore;
 
 SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document *doc)
@@ -82,7 +80,7 @@ Path SVGCircleElement::toPathData() const
     float _cx = cx()->baseVal()->value(), _cy = cy()->baseVal()->value();
     float _r = r()->baseVal()->value();
 
-    return KCanvasCreator::self()->createCircle(FloatPoint(_cx, _cy), _r);
+    return Path::createCircle(FloatPoint(_cx, _cy), _r);
 }
 
 const SVGStyledElement *SVGCircleElement::pushAttributeContext(const SVGStyledElement *context)

@@ -1,3 +1,71 @@
+2006-09-03  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10696
+        RenderPathQuartz and RenderPathQt should not be needed
+
+        Cleanup of code related to RenderPath.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasCreator.cpp:
+        * kcanvas/KCanvasCreator.h:
+        * kcanvas/RenderPath.cpp:
+        (WebCore::):
+        (WebCore::DrawMarkersData::DrawMarkersData):
+        (WebCore::drawMarkerWithData):
+        (WebCore::updateMarkerDataForElement):
+        (WebCore::drawStartAndMidMarkers):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * kcanvas/RenderPath.h:
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/qt/KRenderingDeviceQt.cpp:
+        * kcanvas/device/qt/KRenderingDeviceQt.h:
+        * kcanvas/device/qt/RenderPathQt.cpp:
+        (WebCore::RenderPath::strokeContains):
+        (WebCore::RenderPath::strokeBBox):
+        * kcanvas/device/qt/RenderPathQt.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (WebCore::RenderPath::strokeBBox):
+        (WebCore::RenderPath::strokeContains):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * ksvg2/svg/SVGAElement.cpp:
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (SVGCircleElement::toPathData):
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::toPathData):
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        * ksvg2/svg/SVGGElement.cpp:
+        * ksvg2/svg/SVGImageElement.cpp:
+        * ksvg2/svg/SVGLineElement.cpp:
+        (SVGLineElement::toPathData):
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        * ksvg2/svg/SVGPathElement.cpp:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        * ksvg2/svg/SVGPolygonElement.cpp:
+        * ksvg2/svg/SVGPolylineElement.cpp:
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::toPathData):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::createRenderer):
+        * ksvg2/svg/SVGSwitchElement.cpp:
+        * ksvg2/svg/SVGTextElement.cpp:
+        * ksvg2/svg/SVGUseElement.cpp:
+        * platform/Path.h:
+        (WebCore::):
+        * platform/cg/PathCG.cpp:
+        (WebCore::CGPathToCFStringApplierFunction):
+        (WebCore::CGPathApplierToPathApplier):
+        (WebCore::Path::apply):
+        (WebCore::Path::transform):
+        * platform/qt/PathQt.cpp:
+        (WebCore::Path::apply):
+
 2006-09-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

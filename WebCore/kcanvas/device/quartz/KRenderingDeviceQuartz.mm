@@ -31,7 +31,6 @@
 #import "FoundationExtras.h"
 #import "GraphicsContext.h"
 #import "KCanvasFilterQuartz.h"
-#import "KCanvasItemQuartz.h"
 #import "KCanvasMaskerQuartz.h"
 #import "KCanvasResourcesQuartz.h"
 #import "KRenderingFillPainter.h"
@@ -182,13 +181,6 @@ KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintSe
         break;
     }
     return newServer;
-}
-
-RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, RenderStyle *style, SVGStyledElement *node, const Path& path) const
-{
-    RenderPath *item = new (arena) KCanvasItemQuartz(style, node);
-    item->setPath(path);
-    return item;
 }
 
 KCanvasResource *KRenderingDeviceQuartz::createResource(const KCResourceType &type) const

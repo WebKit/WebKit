@@ -22,8 +22,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KCanvasItem_H
-#define KCanvasItem_H
+#ifndef RenderPath_H
+#define RenderPath_H
 #ifdef SVG_SUPPORT
 
 #include "DeprecatedValueList.h"
@@ -47,7 +47,7 @@ public:
 
     // Hit-detection seperated for the fill and the stroke
     virtual bool fillContains(const FloatPoint&, bool requiresFill = true) const;
-    virtual bool strokeContains(const FloatPoint&, bool requiresStroke = true) const = 0;
+    virtual bool strokeContains(const FloatPoint&, bool requiresStroke = true) const;
 
     // Returns an unscaled bounding box (not even including localTransform()) for this vector path
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
@@ -89,9 +89,8 @@ public:
         bool canHitFill;  
     };
 
-protected:
-    virtual void drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const Path&) const = 0;
-    virtual FloatRect strokeBBox() const = 0;
+    virtual void drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const Path&) const;
+    virtual FloatRect strokeBBox() const;
 
 private:
     FloatPoint mapAbsolutePointToLocal(const FloatPoint&) const;

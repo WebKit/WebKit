@@ -83,9 +83,6 @@ public:
     virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const;
     virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const;
     
-    // item creation
-    virtual RenderPath *createItem(RenderArena *arena, RenderStyle *style, SVGStyledElement *node, const Path& path) const;
-
     // filters (mostly debugging)
     static bool filtersEnabled();
     static void setFiltersEnabled(bool enabled);

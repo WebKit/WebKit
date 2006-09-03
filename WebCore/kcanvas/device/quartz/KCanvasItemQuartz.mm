@@ -27,7 +27,6 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#import "KCanvasItemQuartz.h"
 
 #import <wtf/Assertions.h>
 
@@ -49,144 +48,7 @@
 
 namespace WebCore {
 
-KCanvasItemQuartz::KCanvasItemQuartz(RenderStyle *style, SVGStyledElement *node) : RenderPath(style, node)
-{
-}
-
-typedef enum {
-    Start,
-    Mid,
-    End
-} MarkerType;
-
-struct MarkerData {
-    CGPoint origin;
-    double strokeWidth;
-    CGPoint inslopePoints[2];
-    CGPoint outslopePoints[2];
-    MarkerType type;
-    KCanvasMarker *marker;
-};
-
-struct DrawMarkersData {
-    DrawMarkersData(GraphicsContext*, KCanvasMarker* startMarker, KCanvasMarker* midMarker, double strokeWidth);
-    GraphicsContext* context;
-    int elementIndex;
-    MarkerData previousMarkerData;
-    KCanvasMarker* midMarker;
-};
-
-DrawMarkersData::DrawMarkersData(GraphicsContext* c, KCanvasMarker *start, KCanvasMarker *mid, double strokeWidth)
-    : context(c)
-{
-    elementIndex = 0;
-    midMarker = mid;
-    
-    previousMarkerData.origin = CGPointZero;
-    previousMarkerData.strokeWidth = strokeWidth;
-    previousMarkerData.marker = start;
-    previousMarkerData.type = Start;
-}
-
-static void drawMarkerWithData(GraphicsContext* context, MarkerData &data)
-{
-    if (!data.marker)
-        return;
-    
-    CGPoint inslopeChange = CGPointSubtractPoints(data.inslopePoints[1], data.inslopePoints[0]);
-    CGPoint outslopeChange = CGPointSubtractPoints(data.outslopePoints[1], data.outslopePoints[0]);
-    
-    static const double deg2rad = M_PI/180.0;
-    double inslope = atan2(inslopeChange.y, inslopeChange.x) / deg2rad;
-    double outslope = atan2(outslopeChange.y, outslopeChange.x) / deg2rad;
-    
-    double angle;
-    if (data.type == Start)
-        angle = outslope;
-    else if (data.type == Mid)
-        angle = (inslope + outslope) / 2;
-    else // (data.type == End)
-        angle = inslope;
-    
-    data.marker->draw(context, FloatRect(), data.origin.x, data.origin.y, data.strokeWidth, angle);
-}
-
-static inline void updateMarkerDataForElement(MarkerData &previousMarkerData, const CGPathElement *element)
-{
-    CGPoint *points = element->points;
-    
-    switch (element->type) {
-    case kCGPathElementAddQuadCurveToPoint:
-        // TODO
-        previousMarkerData.origin = points[1];
-        break;
-    case kCGPathElementAddCurveToPoint:
-        previousMarkerData.inslopePoints[0] = points[1];
-        previousMarkerData.inslopePoints[1] = points[2];
-        previousMarkerData.origin = points[2];
-        break;
-    default:
-        previousMarkerData.inslopePoints[0] = previousMarkerData.origin;
-        previousMarkerData.inslopePoints[1] = points[0];
-        previousMarkerData.origin = points[0];
-        break;
-    }
-}
-
-static void drawStartAndMidMarkers(void *info, const CGPathElement *element)
-{
-    DrawMarkersData &data = *(DrawMarkersData *)info;
-
-    int elementIndex = data.elementIndex;
-    MarkerData &previousMarkerData = data.previousMarkerData;
-
-    CGPoint *points = element->points;
-
-    // First update the outslope for the previous element
-    previousMarkerData.outslopePoints[0] = previousMarkerData.origin;
-    previousMarkerData.outslopePoints[1] = points[0];
-
-    // Draw the marker for the previous element
-    if (elementIndex != 0)
-        drawMarkerWithData(data.context, previousMarkerData);
-
-    // Update our marker data for this element
-    updateMarkerDataForElement(previousMarkerData, element);
-
-    if (elementIndex == 1) {
-        // After drawing the start marker, switch to drawing mid markers
-        previousMarkerData.marker = data.midMarker;
-        previousMarkerData.type = Mid;
-    }
-
-    data.elementIndex++;
-}
-
-void KCanvasItemQuartz::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& rect, const Path& path) const
-{
-    Document *doc = document();
-    const SVGRenderStyle *svgStyle = style()->svgStyle();
-
-    KCanvasMarker *startMarker = getMarkerById(doc, svgStyle->startMarker().mid(1));
-    KCanvasMarker *midMarker = getMarkerById(doc, svgStyle->midMarker().mid(1));
-    KCanvasMarker *endMarker = getMarkerById(doc, svgStyle->endMarker().mid(1));
-    
-    if (!startMarker && !midMarker && !endMarker)
-        return;
-
-    double strokeWidth = KSVGPainterFactory::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0);
-
-    DrawMarkersData data(context, startMarker, midMarker, strokeWidth);
-
-    CGPathRef cgPath = path.platformPath();
-    CGPathApply(cgPath, &data, drawStartAndMidMarkers);
-
-    data.previousMarkerData.marker = endMarker;
-    data.previousMarkerData.type = End;
-    drawMarkerWithData(context, data.previousMarkerData);
-}
-
-FloatRect KCanvasItemQuartz::strokeBBox() const
+FloatRect RenderPath::strokeBBox() const
 {
     if (KSVGPainterFactory::isStroked(style())) {
         KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(style(), this);
@@ -197,7 +59,7 @@ FloatRect KCanvasItemQuartz::strokeBBox() const
 }
 
 
-bool KCanvasItemQuartz::strokeContains(const FloatPoint& point, bool requiresStroke) const
+bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) const
 {
     if (path().isEmpty())
         return false;

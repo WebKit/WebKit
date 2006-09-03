@@ -38,15 +38,31 @@ typedef void PlatformPath;
 
 namespace WebCore {
 
+    class AffineTransform;
+    class FloatPoint;
+    class FloatSize;
+    class FloatRect;
+    class String;
+
     enum WindRule {
         RULE_NONZERO = 0,
         RULE_EVENODD = 1
     };
 
-    class FloatPoint;
-    class FloatSize;
-    class FloatRect;
-    class String;
+    enum PathElementType {
+        PathElementMoveToPoint,
+        PathElementAddLineToPoint,
+        PathElementAddQuadCurveToPoint,
+        PathElementAddCurveToPoint,
+        PathElementCloseSubpath
+    };
+
+    struct PathElement {
+        PathElementType type;
+        FloatPoint* points;
+    };
+
+    typedef void (*PathApplierFunction) (void* info, const PathElement*);
 
     class Path {
     public:
@@ -81,6 +97,15 @@ namespace WebCore {
         String debugString() const;
 
         PlatformPath* platformPath() const { return m_path; }
+
+        static Path createRoundedRectangle(const FloatRect&, const FloatSize& roundingRadii);
+        static Path createRectangle(const FloatRect&);
+        static Path createEllipse(const FloatPoint& center, float rx, float ry);
+        static Path createCircle(const FloatPoint& center, float r);
+        static Path createLine(const FloatPoint&, const FloatPoint&);
+
+        void apply(void* info, PathApplierFunction) const;
+        void transform(const AffineTransform&);
 
     private:
         PlatformPath* m_path;

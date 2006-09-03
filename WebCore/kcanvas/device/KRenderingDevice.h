@@ -70,8 +70,6 @@ public:
     virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const = 0;
     virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const = 0;
 
-    virtual RenderPath *createItem(RenderArena *arena, RenderStyle *style, SVGStyledElement *node, const Path& path) const = 0;
-
 private:
     Vector<KRenderingDeviceContext*> m_contextStack;
 };

@@ -43,7 +43,6 @@
 #include "SVGPathSegCurvetoCubicSmooth.h"
 #include "SVGPathSegCurvetoQuadraticSmooth.h"
 
-#include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
 namespace WebCore {

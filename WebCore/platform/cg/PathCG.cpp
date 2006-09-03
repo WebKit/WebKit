@@ -31,6 +31,7 @@
 
 #include "FloatRect.h"
 #include "PlatformString.h"
+#include "AffineTransform.h"
 #include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
@@ -133,12 +134,12 @@ bool Path::isEmpty() const
     return CGPathIsEmpty(m_path);
  }
 
-void CGPathToCFStringApplierFunction(void *info, const CGPathElement *element)
+void CGPathToCFStringApplierFunction(void* info, const CGPathElement *element)
 {
     CFMutableStringRef string = (CFMutableStringRef)info;
     CFStringRef typeString = CFSTR("");
-    CGPoint *points = element->points;
-    switch(element->type) {
+    CGPoint* points = element->points;
+    switch (element->type) {
     case kCGPathElementMoveToPoint:
         CFStringAppendFormat(string, 0, CFSTR("M%.2f,%.2f"), points[0].x, points[0].y);
         break;
@@ -183,6 +184,56 @@ String Path::debugString() const
         CFRelease(pathString);
     }
     return result;
+}
+
+struct PathApplierInfo {
+    void* info;
+    PathApplierFunction function;
+};
+
+void CGPathApplierToPathApplier(void *info, const CGPathElement *element)
+{
+    PathApplierInfo* pinfo = (PathApplierInfo*)info;
+    FloatPoint points[2];
+    PathElement pelement;
+    pelement.type = (PathElementType)element->type;
+    pelement.points = points;
+    CGPoint* cgPoints = element->points;
+    switch (element->type) {
+    case kCGPathElementMoveToPoint:
+    case kCGPathElementAddLineToPoint:
+        points[0] = cgPoints[0];
+        break;
+    case kCGPathElementAddQuadCurveToPoint:
+        points[0] = cgPoints[0];
+        points[1] = cgPoints[1];
+        break;
+    case kCGPathElementAddCurveToPoint:
+        points[0] = cgPoints[0];
+        points[1] = cgPoints[1];
+        points[2] = cgPoints[2];
+        break;
+    case kCGPathElementCloseSubpath:
+        break;
+    }
+    pinfo->function(pinfo->info, &pelement);
+}
+
+void Path::apply(void* info, PathApplierFunction function) const
+{
+    PathApplierInfo pinfo;
+    pinfo.info = info;
+    pinfo.function = function;
+    CGPathApply(m_path, &pinfo, CGPathApplierToPathApplier);
+}
+
+void Path::transform(const AffineTransform& transform)
+{
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGAffineTransform transformCG = transform;
+    CGPathAddPath(path, &transformCG, m_path);
+    CGPathRelease(m_path);
+    m_path = path;
 }
 
 }

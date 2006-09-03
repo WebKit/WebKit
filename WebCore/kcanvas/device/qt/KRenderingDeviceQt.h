@@ -80,9 +80,6 @@ public:
     virtual KCanvasResource* createResource(const KCResourceType&) const;
     virtual KRenderingPaintServer* createPaintServer(const KCPaintServerType&) const;
     virtual KCanvasFilterEffect* createFilterEffect(const KCFilterEffectType&) const;
-
-    // item creation
-    virtual RenderPath* createItem(RenderArena*, RenderStyle*, SVGStyledElement*, const Path&) const;
 };
 
 }
