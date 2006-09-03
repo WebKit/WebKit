@@ -76,23 +76,26 @@ sub ProcessDocument
   # Dynamically load external code generation perl module...
   require $ifaceName . ".pm";
   $codeGenerator = $ifaceName->new($object, $useOutputDir, $useLayerOnTop);
-
-#  print " | *** Starting to generate code using \"$ifaceName\"...\n |\n";
+  unless (defined($codeGenerator)) {
+    my $classes = $useDocument->classes;
+    foreach(@$classes) {
+      my $class = $_;
+      print "Skipping $useGenerator code generation for IDL interface \"" . $class->name . "\".\n";
+    }
+    return;
+  }
 
   # Start the actual code generation!
   $codeGenerator->GenerateModule($useDocument);
 
-  my $arrayRef = $useDocument->classes;
-  foreach(@$arrayRef) {
+  my $classes = $useDocument->classes;
+  foreach(@$classes) {
     my $class = $_;
-
-    print "Generating code for IDL interface \"" . $class->name . "\"...\n";
+    print "Generating $useGenerator bindings code for IDL interface \"" . $class->name . "\"...\n";
     $codeGenerator->GenerateInterface($class);
   }
 
   $codeGenerator->finish();
-
-#  print " | *** Finished generation!\n";
 }
 
 sub AddMethodsConstantsAndAttributesFromParentClasses
@@ -409,6 +412,34 @@ sub RecursiveInheritanceHelper
   }
 
   return $endCondition;
+}
+
+# Helper for all CodeGenerator***.pm modules
+sub RemoveExcludedAttributesAndFunctions
+{
+    my $object = shift;
+    my $dataNode = shift;
+    my $excludeLang = shift;
+
+    my $i = 0;
+    while ($i < @{$dataNode->attributes}) {
+        my $lang = ${$dataNode->attributes}[$i]->signature->extendedAttributes->{"Exclude"};
+        if ($lang and $lang eq $excludeLang) {
+            splice(@{$dataNode->attributes}, $i, 1);
+        } else {
+            $i++;
+        }
+    }
+
+    $i = 0;
+    while ($i < @{$dataNode->functions}) {
+        my $lang = ${$dataNode->functions}[$i]->signature->extendedAttributes->{"Exclude"};
+        if ($lang and $lang eq $excludeLang) {
+            splice(@{$dataNode->functions}, $i, 1);
+        } else {
+            $i++;
+        }
+    }
 }
 
 # Helper for all CodeGenerator***.pm modules

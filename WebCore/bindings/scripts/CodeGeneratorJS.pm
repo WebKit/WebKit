@@ -87,7 +87,7 @@ sub GenerateInterface
     my $object = shift;
     my $dataNode = shift;
 
-    $object->RemoveExcludedAttributesAndFunctions($dataNode);
+    $codeGenerator->RemoveExcludedAttributesAndFunctions($dataNode, "JS");
 
     # Start actual generation..
     $object->GenerateHeader($dataNode);
@@ -110,32 +110,6 @@ sub GenerateModule
     my $dataNode = shift;  
     
     $module = $dataNode->module;    
-}
-
-sub RemoveExcludedAttributesAndFunctions
-{
-    my $object = shift;
-    my $dataNode = shift;
-
-    my $i = 0;
-    while ($i < scalar(@{$dataNode->attributes})) {
-        my $lang = ${$dataNode->attributes}[$i]->signature->extendedAttributes->{"Exclude"};
-        if ($lang and $lang eq "JS") {
-            splice(@{$dataNode->attributes}, $i, 1);
-        } else {
-            $i++;
-        }
-    }
-
-    $i = 0;
-    while ($i < scalar(@{$dataNode->functions})) {
-        my $lang = ${$dataNode->functions}[$i]->signature->extendedAttributes->{"Exclude"};
-        if ($lang and $lang eq "JS") {
-            splice(@{$dataNode->functions}, $i, 1);
-        } else {
-            $i++;
-        }
-    }
 }
 
 sub GetParentClassName

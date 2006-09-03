@@ -36,7 +36,7 @@ module core {
 
         // Introduced in DOM Level 2:
 
-        Node getNamedItemNS(in DOMString namespaceURI, 
+        [OldStyleObjC] Node getNamedItemNS(in DOMString namespaceURI, 
                                              in DOMString localName)
             // FIXME: the implementation does take an exceptioncode parameter.
             /*raises(DOMException)*/;
@@ -44,7 +44,7 @@ module core {
         Node setNamedItemNS(in Node arg)
             raises(DOMException);
 
-        Node removeNamedItemNS(in DOMString namespaceURI, 
+        [OldStyleObjC] Node removeNamedItemNS(in DOMString namespaceURI, 
                                                 in DOMString localName)
             raises(DOMException);
 

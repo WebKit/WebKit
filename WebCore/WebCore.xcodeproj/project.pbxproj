@@ -62,7 +62,6 @@
 		1A6938020A11100A00C127FE /* TextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6938000A11100A00C127FE /* TextDocument.h */; };
 		1A750D5C0A90DEE1000FF215 /* JSTreeWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A750D5A0A90DEE1000FF215 /* JSTreeWalker.cpp */; };
 		1A750D5D0A90DEE1000FF215 /* JSTreeWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A750D5B0A90DEE1000FF215 /* JSTreeWalker.h */; };
-		1A750D880A90E394000FF215 /* NodeIterator.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A750D870A90E394000FF215 /* NodeIterator.idl */; };
 		1A750D8D0A90E521000FF215 /* JSNodeIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A750D8B0A90E521000FF215 /* JSNodeIterator.cpp */; };
 		1A750D8E0A90E521000FF215 /* JSNodeIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A750D8C0A90E521000FF215 /* JSNodeIterator.h */; };
 		1A750DD40A90E729000FF215 /* JSNodeIteratorCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */; };
@@ -397,9 +396,6 @@
 		85032DE80AA8C9BE007D3B7D /* DOMCSSStyleRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85032DD40AA8C9BE007D3B7D /* DOMCSSStyleRule.mm */; };
 		85032DE90AA8C9BE007D3B7D /* DOMCSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 85032DD50AA8C9BE007D3B7D /* DOMCSSUnknownRule.h */; };
 		85032DEA0AA8C9BE007D3B7D /* DOMCSSUnknownRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85032DD60AA8C9BE007D3B7D /* DOMCSSUnknownRule.mm */; };
-		85089CC80A98C22600A275AA /* Comment.idl in Resources */ = {isa = PBXBuildFile; fileRef = 85089CC70A98C22600A275AA /* Comment.idl */; };
-		85089CCA0A98C2AB00A275AA /* CDATASection.idl in Resources */ = {isa = PBXBuildFile; fileRef = 85089CC90A98C2AB00A275AA /* CDATASection.idl */; };
-		85089CCC0A98C33A00A275AA /* EntityReference.idl in Resources */ = {isa = PBXBuildFile; fileRef = 85089CCB0A98C33A00A275AA /* EntityReference.idl */; };
 		85089CD70A98C42800A275AA /* DOMCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CCF0A98C42700A275AA /* DOMCDATASection.h */; settings = {ATTRIBUTES = (); }; };
 		85089CD80A98C42800A275AA /* DOMCDATASection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85089CD00A98C42700A275AA /* DOMCDATASection.mm */; };
 		85089CD90A98C42800A275AA /* DOMComment.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CD10A98C42700A275AA /* DOMComment.h */; settings = {ATTRIBUTES = (); }; };
@@ -502,8 +498,6 @@
 		85ACA99D0A9B575900671E90 /* DOMText.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85ACA99B0A9B575900671E90 /* DOMText.mm */; };
 		85ACA9C00A9B5FA500671E90 /* DOMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACA9BE0A9B5FA500671E90 /* DOMElement.h */; settings = {ATTRIBUTES = (); }; };
 		85ACA9C10A9B5FA500671E90 /* DOMElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85ACA9BF0A9B5FA500671E90 /* DOMElement.mm */; };
-		85ACA9FB0A9B631000671E90 /* NamedNodeMap.idl in Resources */ = {isa = PBXBuildFile; fileRef = 85ACA9F90A9B631000671E90 /* NamedNodeMap.idl */; };
-		85ACA9FC0A9B631000671E90 /* NodeList.idl in Resources */ = {isa = PBXBuildFile; fileRef = 85ACA9FA0A9B631000671E90 /* NodeList.idl */; };
 		85ACAA8D0A9B759C00671E90 /* DOMNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACAA890A9B759C00671E90 /* DOMNodeList.h */; settings = {ATTRIBUTES = (); }; };
 		85ACAA8E0A9B759C00671E90 /* DOMNodeList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85ACAA8A0A9B759C00671E90 /* DOMNodeList.mm */; };
 		85ACABB00A9CAF8000671E90 /* DOMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACABAE0A9CAF8000671E90 /* DOMDocument.h */; settings = {ATTRIBUTES = (); }; };
@@ -1753,7 +1747,6 @@
 		BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AA097C715F0019F3D8 /* DOMViews.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1A37C1097C715F0019F3D8 /* DOMViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37AB097C715F0019F3D8 /* DOMViews.mm */; };
 		BC1A37C2097C715F0019F3D8 /* DOMViewsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */; };
-		BC5EC1770A507E3E006007F5 /* view-source.css in Resources */ = {isa = PBXBuildFile; fileRef = BC5EC1760A507E3E006007F5 /* view-source.css */; };
 		BC6B7BAF0993603C0052867B /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6B7BAE0993603C0052867B /* Image.cpp */; };
 		BC6B7ECF0998AC7F0052867B /* ImageSource.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6B7ECE0998AC7F0052867B /* ImageSource.h */; };
 		BC6D6DD209AF906600F59759 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6D6DD009AF906600F59759 /* Font.cpp */; };
@@ -7580,6 +7573,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -7593,6 +7587,8 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -7632,17 +7628,10 @@
 				A7B97B850979C3A1000E8EB1 /* WKTableTransferFilter.cikernel in Resources */,
 				A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */,
 				AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */,
-				BC5EC1770A507E3E006007F5 /* view-source.css in Resources */,
 				1CD4418D0A4CE76F00A007AB /* eastWestResizeCursor.tiff in Resources */,
 				1CD4418E0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff in Resources */,
 				1CD4418F0A4CE76F00A007AB /* northSouthResizeCursor.tiff in Resources */,
 				1CD441900A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff in Resources */,
-				1A750D880A90E394000FF215 /* NodeIterator.idl in Resources */,
-				85089CC80A98C22600A275AA /* Comment.idl in Resources */,
-				85089CCA0A98C2AB00A275AA /* CDATASection.idl in Resources */,
-				85089CCC0A98C33A00A275AA /* EntityReference.idl in Resources */,
-				85ACA9FB0A9B631000671E90 /* NamedNodeMap.idl in Resources */,
-				85ACA9FC0A9B631000671E90 /* NodeList.idl in Resources */,
 				5115095C0A9CE04700901013 /* urlIcon.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -32,12 +32,12 @@ module window {
         readonly attribute Document document;
         
         // DOM Level 2 Style Interface
-        CSSStyleDeclaration getComputedStyle(in Element elt,
-                                             in DOMString pseudoElt);
+        CSSStyleDeclaration getComputedStyle(in Element element,
+                                             in DOMString pseudoElement);
 
         // WebKit extensions
-        CSSRuleList getMatchedCSSRules(in Element elt,
-                                       in DOMString pseudoElt,
+        CSSRuleList getMatchedCSSRules(in Element element,
+                                       in DOMString pseudoElement,
                                        in [Optional] boolean authorOnly);
         readonly attribute double devicePixelRatio;
         

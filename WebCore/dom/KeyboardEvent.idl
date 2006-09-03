@@ -29,17 +29,17 @@ module events {
         readonly attribute boolean          shiftKey;
         readonly attribute boolean          altGraphKey;
 
-        void initKeyboardEvent(in AtomicString typeArg, 
-                               in boolean canBubbleArg, 
-                               in boolean cancelableArg, 
-                               in DOMWindow viewArg, 
+        [OldStyleObjC] void initKeyboardEvent(in AtomicString type, 
+                               in boolean canBubble, 
+                               in boolean cancelable, 
+                               in DOMWindow view, 
                                in DOMString keyIdentifier,
-                               in unsigned long keyLocationArg,
-                               in boolean ctrlKeyArg,
-                               in boolean altKeyArg,
-                               in boolean shiftKeyArg,
-                               in boolean metaKeyArg,
-                               in boolean altGraphKeyArg);
+                               in unsigned long keyLocation,
+                               in boolean ctrlKey,
+                               in boolean altKey,
+                               in boolean shiftKey,
+                               in boolean metaKey,
+                               in boolean altGraphKey);
     };
 
 }

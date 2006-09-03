@@ -44,7 +44,7 @@ module html {
                  attribute long            size;
                  attribute long            tabIndex;
         
-        void               add(in HTMLElement element, 
+        [OldStyleObjC] void add(in HTMLElement element, 
                                in HTMLElement before)
             raises(DOMException);
         void               remove(in long index);

@@ -34,11 +34,11 @@ module events {
         readonly attribute long                 pageY;
         readonly attribute long                 which;
         
-        void               initUIEvent(in AtomicString typeArg, 
-                                       in boolean canBubbleArg, 
-                                       in boolean cancelableArg, 
-                                       in DOMWindow viewArg, 
-                                       in long detailArg);
+        [OldStyleObjC] void initUIEvent(in AtomicString type, 
+                                       in boolean canBubble, 
+                                       in boolean cancelable, 
+                                       in DOMWindow view, 
+                                       in long detail);
     };
 
 }

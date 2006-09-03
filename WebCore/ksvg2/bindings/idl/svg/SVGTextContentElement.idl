@@ -39,18 +39,18 @@ module svg
     readonly attribute SVGAnimatedEnumeration lengthAdjust;
     long     getNumberOfChars (  );
     float    getComputedTextLength (  );
-    float    getSubStringLength ( in unsigned long charnum, in unsigned long nchars )
+    float    getSubStringLength ( in unsigned long offset, in unsigned long length )
                     raises( DOMException );
-    SVGPoint getStartPositionOfChar ( in unsigned long charnum )
+    SVGPoint getStartPositionOfChar ( in unsigned long offset )
                     raises( DOMException );
-    SVGPoint getEndPositionOfChar ( in unsigned long charnum )
+    SVGPoint getEndPositionOfChar ( in unsigned long offset )
                     raises( DOMException );
-    SVGRect  getExtentOfChar ( in unsigned long charnum )
+    SVGRect  getExtentOfChar ( in unsigned long offset )
                     raises( DOMException );
-    float    getRotationOfChar ( in unsigned long charnum )
+    float    getRotationOfChar ( in unsigned long offset )
                     raises( DOMException );
     long     getCharNumAtPosition ( in SVGPoint point );
-    void     selectSubString ( in unsigned long charnum, in unsigned long nchars )
+    void     selectSubString ( in unsigned long offset, in unsigned long length )
                     raises( DOMException );
   };
 };

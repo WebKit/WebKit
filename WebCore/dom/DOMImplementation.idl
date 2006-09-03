@@ -24,24 +24,24 @@ module core {
 
         // DOM Level 1
 
-        boolean hasFeature(in DOMString feature, 
+        [OldStyleObjC] boolean hasFeature(in DOMString feature, 
                            in [ConvertNullToNullString] DOMString version);
 
         // DOM Level 2
 
-        DocumentType createDocumentType(in DOMString qualifiedName,
+        [OldStyleObjC] DocumentType createDocumentType(in DOMString qualifiedName,
                                                          in DOMString publicId,
                                                          in DOMString systemId)
             raises(DOMException);
-        Document createDocument(in [ConvertNullToNullString] DOMString namespaceURI, 
+        [OldStyleObjC] Document createDocument(in [ConvertNullToNullString] DOMString namespaceURI, 
                                                  in [ConvertNullToNullString] DOMString qualifiedName, 
                                                  in [ConvertNullToNullString] DocumentType doctype)
             raises(DOMException);
 
         // DOMImplementationCSS interface from DOM Level 2 CSS
 
-        CSSStyleSheet createCSSStyleSheet(in DOMString title,
-                                                                                              in DOMString media)
+        [OldStyleObjC] CSSStyleSheet createCSSStyleSheet(in DOMString title,
+                                          in DOMString media)
             raises(DOMException);
 
         // HTMLDOMImplementation interface from DOM Level 2 HTML

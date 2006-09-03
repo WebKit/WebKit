@@ -31,7 +31,7 @@ module css {
         [Exclude=JS] DOMString          removeProperty(in DOMString propertyName)
             raises(DOMException);
         [Exclude=JS] DOMString          getPropertyPriority(in DOMString propertyName);
-        [Exclude=JS] void               setProperty(in DOMString propertyName, 
+        [Exclude=JS, OldStyleObjC] void setProperty(in DOMString propertyName, 
                                                     in DOMString value, 
                                                     in DOMString priority)
             raises(DOMException);

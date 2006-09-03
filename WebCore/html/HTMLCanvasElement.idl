@@ -30,7 +30,7 @@ module html {
         attribute long width;
         attribute long height;
 
-        DOMObject getContext(in DOMString contextID);
+        DOMObject getContext(in DOMString contextId);
 
     };
 

@@ -27,7 +27,7 @@ module css {
         readonly attribute CSSRuleList      cssRules;
         
         // FIXME: the DOM spec says that this can raise an exeception.
-        unsigned long      insertRule(in DOMString rule, 
+        [OldStyleObjC] unsigned long      insertRule(in DOMString rule, 
                                       in unsigned long index)
             /*raises(DOMException)*/;
             

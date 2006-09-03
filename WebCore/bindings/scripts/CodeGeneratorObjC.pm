@@ -117,7 +117,7 @@ sub GenerateInterface
     my $object = shift;
     my $dataNode = shift;
 
-    $object->RemoveExcludedAttributesAndFunctions($dataNode);
+    $codeGenerator->RemoveExcludedAttributesAndFunctions($dataNode, "ObjC");
 
     # Start actual generation..
     $object->GenerateHeader($dataNode);
@@ -142,37 +142,10 @@ sub GenerateModule
     $module = $dataNode->module;    
 }
 
-sub RemoveExcludedAttributesAndFunctions
-{
-    my $object = shift;
-    my $dataNode = shift;
-
-    my $i = 0;
-
-    while ($i < @{$dataNode->attributes}) {
-        my $lang = ${$dataNode->attributes}[$i]->signature->extendedAttributes->{"Exclude"};
-        if ($lang and $lang eq "ObjC") {
-            splice(@{$dataNode->attributes}, $i, 1);
-        } else {
-            $i++;
-        }
-    }
-
-    $i = 0;
-    while ($i < @{$dataNode->functions}) {
-        my $lang = ${$dataNode->functions}[$i]->signature->extendedAttributes->{"Exclude"};
-        if ($lang and $lang eq "ObjC") {
-            splice(@{$dataNode->functions}, $i, 1);
-        } else {
-            $i++;
-        }
-    }
-}
-
 sub GetClassName
 {
     my $name = $codeGenerator->StripModule(shift);
-    
+
     # special cases
     if ($name eq "boolean") {
         return "BOOL";
@@ -218,12 +191,10 @@ sub GetParentImplClassName
 {
     my $dataNode = shift;
 
-    if (@{$dataNode->parents} eq 0) {
-        return "Object";
-    }
+    return "Object" if @{$dataNode->parents} eq 0;
 
     my $parent = $codeGenerator->StripModule($dataNode->parents(0));
-    
+
     # special cases
     if ($parent eq "EventTargetNode") {
         $parent = "Node";
@@ -318,7 +289,7 @@ sub AddForwardDeclarationsForType
     if ($codeGenerator->IsPrimitiveType($type) or $type eq "DOMString") {
         return;
     }
-    
+
     if ($type eq "DOMImplementation") {
         $headerForwardDeclarations{"$type"} = 1;
         return;
@@ -330,7 +301,6 @@ sub AddForwardDeclarationsForType
     }
 
     if ($type eq "XPathNSResolver") {
-        # Only one protocol so far.
         $headerForwardDeclarationsForProtocols{"DOMXPathNSResolver"} = 1;
         return;
     }
@@ -341,10 +311,8 @@ sub AddForwardDeclarationsForType
 sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
-    
-    if ($codeGenerator->IsPrimitiveType($type)) {
-        return;
-    }
+
+    return if $codeGenerator->IsPrimitiveType($type);
 
     if ($type eq "DOMString") {
         $implIncludes{"PlatformString.h"} = 1;
@@ -372,14 +340,12 @@ sub AddIncludesForType
     }
 
     # Temp DOMStylesheets.h
-    if ($type eq "StyleSheet"
-            or $type eq "StyleSheetList"
-            or $type eq "MediaList") {
+    if ($type eq "StyleSheet" or $type eq "StyleSheetList" or $type eq "MediaList") {
         $implIncludes{"DOMStylesheets.h"} = 1;
         $implIncludes{"$type.h"} = 1;
         return;
     }
-    
+
     # Temp DOMViews.h
     if ($type eq "DOMWindow") {
         $implIncludes{"DOMViews.h"} = 1;
@@ -387,11 +353,9 @@ sub AddIncludesForType
         $implIncludes{"$type.h"} = 1;
         return;
     }
-    
+
     # Temp DOMXPath.h
-    if ($type eq "XPathExpression"
-            or $type eq "XPathNSResolver"
-            or $type eq "XPathResult") {
+    if ($type eq "XPathExpression" or $type eq "XPathNSResolver" or $type eq "XPathResult") {
         $implIncludes{"DOMXPath.h"} = 1;
         $implIncludes{"DOMXPathInternal.h"} = 1;
         $implIncludes{"$type.h"} = 1;
@@ -411,7 +375,7 @@ sub AddIncludesForType
 
 
     # Add type specific internal types.
-    $implIncludes{"DOMHTMLInternal.h"} = 1 if ($type =~ /^HTML/);
+    $implIncludes{"DOMHTMLInternal.h"} = 1 if $type =~ /^HTML/;
 
     # Default, include the same named file (the implementation) and the same name prefixed with "DOM". 
     $implIncludes{"$type.h"} = 1;
@@ -424,9 +388,7 @@ sub GenerateHeader
     my $dataNode = shift;
 
     # Make sure that we don't have more than one parent.
-    if (@{$dataNode->parents} > 1) {
-        die "A class can't have more than one parent.";
-    }
+    die "A class can't have more than one parent in ObjC." if @{$dataNode->parents} > 1;
 
     my $interfaceName = $dataNode->name;
     my $className = GetClassName($interfaceName);
@@ -465,7 +427,7 @@ sub GenerateHeader
         push(@headerContent, $combinedConstants);
         push(@headerContent, "\n};\n\n");        
     }
-    
+
     # - Begin @interface 
     push(@headerContent, "\@interface $className : $parentClassName\n");
 
@@ -475,7 +437,7 @@ sub GenerateHeader
 
         foreach (@{$dataNode->attributes}) {
             my $attribute = $_;
-            
+
             AddForwardDeclarationsForType($attribute->signature->type);
 
             my $attributeName = $attribute->signature->name;
@@ -490,29 +452,26 @@ sub GenerateHeader
             my $attributeType = GetObjCType($attribute->signature->type);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
 
-            if ($ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5) {
+            if ($ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5) {
                 my $property = "\@property" . ($attributeIsReadonly ? "(readonly)" : "") . " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . ";\n";
-
                 push(@headerAttributes, $property);
             } else {
                 # - GETTER
                 my $getter = "- (" . $attributeType . ")" . $attributeName . ";\n";
-
                 push(@headerAttributes, $getter);
 
                 # - SETTER
                 if (!$attributeIsReadonly) {
                     my $setter = "- (void)set" . ucfirst($attributeName) . ":(" . $attributeType . ")new" . ucfirst($attributeName) . ";\n";
-                    
                     push(@headerAttributes, $setter);
                 }
             }
         }
 
-        if (@headerAttributes > 0) {
-            push(@headerContent, @headerAttributes);
-        }
+        push(@headerContent, @headerAttributes) if @headerAttributes > 0;
     }
+
+    my @deprecatedHeaderFunctions = ();
 
     # - Add functions.
     if ($numFunctions > 0) {
@@ -527,19 +486,36 @@ sub GenerateHeader
             my $returnType = GetObjCType($function->signature->type);
             my $numberOfParameters = @{$function->parameters};
 
-            my $output = "- ($returnType)$functionName";
+            my $parameterIndex = 0;
+            my $functionSig = "- ($returnType)$functionName";
             foreach my $param (@{$function->parameters}) {
                 my $paramName = $param->name;
                 my $paramType = GetObjCType($param->type);
+
                 AddForwardDeclarationsForType($param->type);
 
-                $output .= ":($paramType)$paramName ";
+                if ($parameterIndex >= 1) {
+                    my $paramPrefix = $param->extendedAttributes->{"ObjCPrefix"};
+                    $paramPrefix = $paramName unless defined($paramPrefix);
+                    $functionSig .= " $paramPrefix";
+                }
+
+                $functionSig .= ":($paramType)$paramName";
+
+                $parameterIndex++;
             }
-            # remove any trailing spaces.
-            $output =~ s/\s+$//;
-            $output .= ";\n";
-    
-            push(@headerFunctions, $output);
+
+            $functionSig .= ";\n";
+
+            push(@headerFunctions, $functionSig);
+
+            # generate the old style method names with un-named parameters, these methods are deprecated
+            if (@{$function->parameters} > 1 and $function->signature->extendedAttributes->{"OldStyleObjC"}) {
+                my $deprecatedFunctionSig = $functionSig;
+                $deprecatedFunctionSig =~ s/\s\w+:/ :/g; # remove parameter names
+                $deprecatedFunctionSig =~ s/;\n$/ DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;\n/;
+                push(@deprecatedHeaderFunctions, $deprecatedFunctionSig);
+            }
         }
 
         if (@headerFunctions > 0) {
@@ -550,6 +526,13 @@ sub GenerateHeader
 
     # - End @interface 
     push(@headerContent, "\@end\n");
+
+    if (@deprecatedHeaderFunctions > 0) {
+        # - Deprecated category @interface 
+        push(@headerContent, "\n\@interface $className (" . $className . "Deprecated)\n");
+        push(@headerContent, @deprecatedHeaderFunctions);
+        push(@headerContent, "\@end\n");
+    }
 }
 
 sub GenerateImplementation
@@ -576,7 +559,7 @@ sub GenerateImplementation
     if ($hasFunctionsOrAttributes) {
         push(@implContentHeader, "#import \"DOMInternal.h\"\n");
         push(@implContentHeader, "#import <wtf/GetPtr.h>\n");
-        
+
         # include module-dependent internal interfaces.
         if ($module eq "html") {
             # HTML module internal interfaces
@@ -665,20 +648,14 @@ sub GenerateImplementation
 
             # - GETTER
             my $getterSig = "- ($attributeType)$interfaceName\n";
-            
-            # Exception handling
             my $hasGetterException = @{$attribute->getterExceptions};
-            if ($hasGetterException) {
-                die "We should not have any getter exceptions yet!";
-            }
-            
             my $getterContentHead = "IMPL->$attributeName(";
             my $getterContentTail = ")";
 
             my $attributeTypeSansPtr = $attributeType;
             $attributeTypeSansPtr =~ s/ \*$//; # Remove trailing " *" from pointer types.
             my $typeMaker = GetObjCTypeMaker($attribute->signature->type);
-            
+
             # Special cases
             if ($attributeTypeSansPtr eq "DOMImplementation") {
                 # FIXME: We have to special case DOMImplementation until DOMImplementationFront is removed
@@ -693,14 +670,14 @@ sub GenerateImplementation
                 $getterContentHead = "[$attributeTypeSansPtr $typeMaker:WTF::getPtr(" . $getterContentHead;
                 $getterContentTail .= ")]";
             }
-            
+
             my $getterContent;
             if ($hasGetterException) {
                 $getterContent = $getterContentHead . "ec" . $getterContentTail;
             } else {
                 $getterContent = $getterContentHead . $getterContentTail;
             }
-            
+
             push(@implContent, $getterSig);
             push(@implContent, "{\n");
             if ($hasGetterException) {
@@ -743,7 +720,6 @@ sub GenerateImplementation
                     $arg = "[" . $argName . " _" . lcfirst($idlType) . "]";
                 }
 
-
                 my $setterSig = "- (void)$setterName:($attributeType)$argName\n";
 
                 push(@implContent, $setterSig);
@@ -766,6 +742,8 @@ sub GenerateImplementation
         }
     }
 
+    my @deprecatedFunctions = ();
+
     # - Functions
     if ($numFunctions > 0) {
         foreach (@{$dataNode->functions}) {
@@ -782,14 +760,14 @@ sub GenerateImplementation
             my @needsAssert = ();
             my %custom = ();
 
+            my $parameterIndex = 0;
             my $functionSig = "- ($returnType)$functionName";
             foreach (@{$function->parameters}) {
                 my $param = $_;
-
-                my $paramType = GetObjCType($param->type);
-                AddIncludesForType($param->type);
-
                 my $paramName = $param->name;
+                my $paramType = GetObjCType($param->type);
+
+                AddIncludesForType($param->type);
 
                 # FIXME: should move this out into it's own fuction to share with
                 # the similar setter parameter code above.
@@ -815,12 +793,26 @@ sub GenerateImplementation
                     push(@needsAssert, "    ASSERT($paramName);\n");
                 }
 
-                $functionSig .= ":($paramType)$paramName ";
+                if ($parameterIndex >= 1) {
+                    my $paramPrefix = $param->extendedAttributes->{"ObjCPrefix"};
+                    $paramPrefix = $paramName unless defined($paramPrefix);
+                    $functionSig .= " $paramPrefix";
+                }
+
+                $functionSig .= ":($paramType)$paramName";
+
+                $parameterIndex++;
             }
-            # remove any trailing spaces.
-            $functionSig =~ s/\s+$//;
 
             my @functionContent = ();
+
+            # special case the XPathNSResolver
+            if (defined $needsCustom{"XPathNSResolver"}) {
+                my $paramName = $needsCustom{"XPathNSResolver"};
+                push(@functionContent, "    if ($paramName && ![$paramName isMemberOfClass:[DOMNativeXPathNSResolver class]])\n");
+                push(@functionContent, "        [NSException raise:NSGenericException format:\@\"createExpression currently does not work with custom NS resolvers\"];\n");
+                push(@functionContent, "    DOMNativeXPathNSResolver *nativeResolver = (DOMNativeXPathNSResolver *)$paramName;\n\n");
+            }
 
             if ($returnType eq "void") {
                 # Special case 'void' return type.
@@ -842,7 +834,7 @@ sub GenerateImplementation
                         $content = $functionContentHead . $functionContentTail;
                     }
                 }
-                
+
                 if ($raisesExceptions) {
                     push(@functionContent, "    $exceptionInit\n");
                     push(@functionContent, "    $content\n");
@@ -892,7 +884,7 @@ sub GenerateImplementation
                         $content = $functionContentHead . $functionContentTail;
                     }
                 }
-                
+
                 if ($raisesExceptions) {
                     # Differentiated between when the return type is a pointer and
                     # not for white space issue (ie. Foo *result vs. int result).
@@ -901,7 +893,7 @@ sub GenerateImplementation
                     } else {
                         $content = $returnType . " result = " . $content;
                     }
-                    
+
                     push(@functionContent, "    $exceptionInit\n");
                     push(@functionContent, "    $content;\n");
                     push(@functionContent, "    $exceptionRaiseOnError\n");
@@ -913,18 +905,20 @@ sub GenerateImplementation
 
             push(@implContent, "$functionSig\n");
             push(@implContent, "{\n");
-            
-            # special case the XPathNSResolver
-            if (defined $needsCustom{"XPathNSResolver"}) {
-                my $paramName = $needsCustom{"XPathNSResolver"};
-                push(@implContent, "    if ($paramName && ![$paramName isMemberOfClass:[DOMNativeXPathNSResolver class]])\n");
-                push(@implContent, "        [NSException raise:NSGenericException format:\@\"createExpression currently does not work with custom NS resolvers\"];\n");
-                push(@implContent, "    DOMNativeXPathNSResolver *nativeResolver = (DOMNativeXPathNSResolver *)$paramName;\n\n");
-            }
-
             push(@implContent, @functionContent);
             push(@implContent, "}\n\n");
-            
+
+            # generate the old style method names with un-named parameters, these methods are deprecated
+            if (@{$function->parameters} > 1 and $function->signature->extendedAttributes->{"OldStyleObjC"}) {
+                my $deprecatedFunctionSig = $functionSig;
+                $deprecatedFunctionSig =~ s/\s\w+:/ :/g; # remove parameter names
+
+                push(@deprecatedFunctions, "\n$deprecatedFunctionSig\n");
+                push(@deprecatedFunctions, "{\n");
+                push(@deprecatedFunctions, @functionContent);
+                push(@deprecatedFunctions, "}\n\n");
+            }
+
             # Clear the hash
             %needsCustom = ();
         }
@@ -932,6 +926,13 @@ sub GenerateImplementation
 
     # END implementation
     push(@implContent, "\@end\n");
+
+    if (@deprecatedFunctions > 0) {
+        # - Deprecated category @implementation
+        push(@implContent, "\n\@implementation $className (" . $className . "Deprecated)\n");
+        push(@implContent, @deprecatedFunctions);
+        push(@implContent, "\@end\n");
+    }
 }
 
 # Internal helper
@@ -940,21 +941,19 @@ sub WriteData
     if (defined($IMPL)) {
         # Write content to file.
         print $IMPL @implContentHeader;
-        
+
         my $includeCount = 0;
         foreach my $implInclude (sort keys(%implIncludes)) {
             print $IMPL "#import \"$implInclude\"\n";
             $includeCount++;
         }
-        
-        unless ($includeCount == 0) {
-            print $IMPL "\n";
-        }
+
+        print $IMPL "\n" if $includeCount;
 
         print $IMPL @implContent;
         close($IMPL);
         undef($IMPL);
-        
+
         @implHeaderContent = "";
         @implContent = "";    
         %implIncludes = ();
@@ -963,26 +962,24 @@ sub WriteData
     if (defined($HEADER)) {
         # Write content to file.
         print $HEADER @headerContentHeader;
-        
+
         my $forwardDeclarationCount = 0;
         foreach my $forwardClassDeclaration (sort keys(%headerForwardDeclarations)) {
             print $HEADER "\@class $forwardClassDeclaration;\n";
             $forwardDeclarationCount++;
         }
-        
+
         foreach my $forwardProtocolDeclaration (sort keys(%headerForwardDeclarationsForProtocols)) {
             print $HEADER "\@protocol $forwardProtocolDeclaration;\n";
             $forwardDeclarationCount++;
         }
-        
-        unless ($forwardDeclarationCount == 0) {
-            print $HEADER "\n";
-        }
+
+        print $HEADER "\n" if $forwardDeclarationCount;
 
         print $HEADER @headerContent;
         close($HEADER);
         undef($HEADER);
-        
+
         @headerContentHeader = "";
         @headerContent = "";
         %headerForwardDeclarations = ();

@@ -1,3 +1,75 @@
+2006-09-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 10685: ObjC DOM should have no unnamed parameters
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10685
+
+        - The ObjC code generation script now outputs parameter prefixes
+          for methods that have more than 1 parameter. This prefix is simply
+          the parameter name. Some parameter names have been changed in the IDL
+          files to produce better prefixes. If an extended attribute of "ObjCPrefix"
+          exists on a parameter we will use that for the prefix.
+
+        - A backwards compatible version of the method is placed in a
+          category with a deprecation marco for 10.5 and later. This step only
+          happens if the IDL extended attribute "OldStyleObjC" is defined.
+          All new functions in IDL should not get this attribute.
+
+        - Made the $interfaceMethodSelector regex in IDLStructure.pm allow "=" so 
+          parameter extended attributes can have values.
+
+        - Moved RemoveExcludedAttributesAndFunctions to CodeGenerator.pm
+          so it can be shared between the two generators.
+          
+        - Removed the die when we encounter a getter that uses exceptions.
+          Sam Weinig added support for this in an earlier change.
+
+        - Check if $ENV{"MACOSX_DEPLOYMENT_TARGET"} is defined before we compare.
+          This caused a perl warning when generating on other platforms.
+
+        - The ObjC generation will not happen on platforms other than Mac OS.
+          This is determined by the "OS" env variable Xcode sets. This check
+          is in the DerivedSources.make.
+
+        - Added a way to skip generation if the constructor of the specific
+          generator returns undef. Not used yet.
+
+        - Many cleanup tweaks in CodeGeneratorObjC.pm.
+
+        - Removed IDL and CSS files from the project's resource copy phase,
+          these do no need to be in WebCore's resources. 
+
+        * DerivedSources.make
+        * WebCore.xcodeproj/project.pbxproj
+        * bindings/scripts/CodeGenerator.pm
+        * bindings/scripts/CodeGeneratorJS.pm
+        * bindings/scripts/CodeGeneratorObjC.pm
+        * bindings/scripts/IDLStructure.pm
+        * css/CSSMediaRule.idl
+        * css/CSSPrimitiveValue.idl
+        * css/CSSStyleDeclaration.idl
+        * css/CSSStyleSheet.idl
+        * dom/CharacterData.idl
+        * dom/DOMImplementation.idl
+        * dom/Document.idl
+        * dom/Element.idl
+        * dom/KeyboardEvent.idl
+        * dom/MouseEvent.idl
+        * dom/MutationEvent.idl
+        * dom/NamedNodeMap.idl
+        * dom/UIEvent.idl
+        * html/HTMLCanvasElement.idl
+        * html/HTMLSelectElement.idl
+        * ksvg2/bindings/idl/svg/SVGLengthList.idl
+        * ksvg2/bindings/idl/svg/SVGNumberList.idl
+        * ksvg2/bindings/idl/svg/SVGPointList.idl
+        * ksvg2/bindings/idl/svg/SVGStringList.idl
+        * ksvg2/bindings/idl/svg/SVGTextContentElement.idl
+        * ksvg2/bindings/idl/svg/SVGTransformList.idl
+        * ksvg2/svg/SVGSVGElement.idl
+        * page/DOMWindow.idl
+
 2006-09-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Tim H.

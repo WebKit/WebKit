@@ -28,7 +28,7 @@ module core {
 
         [ConvertNullStringTo=Null] DOMString getAttribute(in DOMString name);
 
-        void setAttribute(in DOMString name,
+        [OldStyleObjC] void setAttribute(in DOMString name,
                           in DOMString value)
             raises(DOMException);
 
@@ -47,22 +47,22 @@ module core {
 
         // DOM Level 2 Core
 
-        DOMString getAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
+        [OldStyleObjC] DOMString getAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                  in DOMString localName);
 
-        void setAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
+        [OldStyleObjC] void setAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                             in DOMString qualifiedName, 
                             in DOMString value)
             raises(DOMException);
 
-        void removeAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
+        [OldStyleObjC] void removeAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                in DOMString localName)
             raises(DOMException);
 
-        NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
+        [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                          in DOMString localName);
 
-        Attr getAttributeNodeNS(in [ConvertNullToNullString] DOMString namespaceURI,
+        [OldStyleObjC] Attr getAttributeNodeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                  in DOMString localName);
 
         Attr setAttributeNodeNS(in Attr newAttr)
@@ -70,7 +70,7 @@ module core {
 
         boolean hasAttribute(in DOMString name);
 
-        boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
+        [OldStyleObjC] boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                in DOMString localName);
 
         readonly attribute CSSStyleDeclaration style;
@@ -108,7 +108,7 @@ module core {
         // IE extensions
 
         [Exclude=ObjC] Node insertAdjacentElement(in DOMString position, 
-                                                  in Node newElement)
+                                                  in Node element)
             raises(DOMException);
 
         [Exclude=ObjC] boolean contains(in Element element);

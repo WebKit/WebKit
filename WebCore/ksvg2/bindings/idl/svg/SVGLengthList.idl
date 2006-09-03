@@ -29,17 +29,17 @@ module svg
     readonly attribute unsigned long numberOfItems;
     void   clear (  )
                     raises( DOMException );
-    SVGLength initialize ( in SVGLength newItem )
+    SVGLength initialize ( in SVGLength item )
                     raises( DOMException, SVGException );
     SVGLength getItem ( in unsigned long index )
                     raises( DOMException );
-    SVGLength insertItemBefore ( in SVGLength newItem, in unsigned long index )
+    SVGLength insertItemBefore ( in SVGLength item, in unsigned long index )
                     raises( DOMException, SVGException );
-    SVGLength replaceItem ( in SVGLength newItem, in unsigned long index )
+    SVGLength replaceItem ( in SVGLength item, in unsigned long index )
                     raises( DOMException, SVGException );
     SVGLength removeItem ( in unsigned long index )
                     raises( DOMException );
-    SVGLength appendItem ( in SVGLength newItem )
+    SVGLength appendItem ( in SVGLength item )
                     raises( DOMException, SVGException );
   };
 };

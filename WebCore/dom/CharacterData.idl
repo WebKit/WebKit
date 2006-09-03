@@ -26,24 +26,24 @@ module core {
 
         readonly attribute unsigned long length;
         
-        [ConvertNullStringTo=Null] DOMString substringData(in [IsIndex] unsigned long offset, 
-                                                           in [IsIndex] unsigned long count)
+        [ConvertNullStringTo=Null, OldStyleObjC] DOMString substringData(in [IsIndex] unsigned long offset, 
+                                                           in [IsIndex] unsigned long length)
             raises(DOMException);
 
-        void appendData(in DOMString arg)
+        void appendData(in DOMString data)
             raises(DOMException);
 
-        void insertData(in [IsIndex] unsigned long offset, 
-                        in DOMString arg)
+        [OldStyleObjC] void insertData(in [IsIndex] unsigned long offset, 
+                        in DOMString data)
             raises(DOMException);
 
-        void deleteData(in [IsIndex] unsigned long offset, 
-                        in [IsIndex] unsigned long count)
+        [OldStyleObjC] void deleteData(in [IsIndex] unsigned long offset, 
+                        in [IsIndex] unsigned long length)
             raises(DOMException);
 
-        void replaceData(in [IsIndex] unsigned long offset, 
-                         in [IsIndex] unsigned long count,
-                         in DOMString arg)
+        [OldStyleObjC] void replaceData(in [IsIndex] unsigned long offset, 
+                         in [IsIndex] unsigned long length,
+                         in DOMString data)
             raises(DOMException);
     
     };

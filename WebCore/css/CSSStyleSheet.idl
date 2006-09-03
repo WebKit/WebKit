@@ -25,7 +25,7 @@ module css {
 
         readonly attribute CSSRule          ownerRule;
         readonly attribute CSSRuleList      cssRules;
-        unsigned long      insertRule(in DOMString rule, 
+        [OldStyleObjC] unsigned long insertRule(in DOMString rule, 
                                       in unsigned long index)
             raises(DOMException);
         void               deleteRule(in unsigned long index)

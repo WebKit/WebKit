@@ -29,17 +29,17 @@ module svg
     readonly attribute unsigned long numberOfItems;
     void   clear (  )
                     raises( DOMException );
-    SVGTransform initialize ( in SVGTransform newItem )
+    SVGTransform initialize ( in SVGTransform item )
                     raises( DOMException, SVGException );
     SVGTransform getItem ( in unsigned long index )
                     raises( DOMException );
-    SVGTransform insertItemBefore ( in SVGTransform newItem, in unsigned long index )
+    SVGTransform insertItemBefore ( in SVGTransform item, in unsigned long index )
                     raises( DOMException, SVGException );
-    SVGTransform replaceItem ( in SVGTransform newItem, in unsigned long index )
+    SVGTransform replaceItem ( in SVGTransform item, in unsigned long index )
                     raises( DOMException, SVGException );
     SVGTransform removeItem ( in unsigned long index )
                     raises( DOMException );
-    SVGTransform appendItem ( in SVGTransform newItem )
+    SVGTransform appendItem ( in SVGTransform item )
                     raises( DOMException, SVGException );
     SVGTransform createSVGTransformFromMatrix ( in SVGMatrix matrix );
     SVGTransform consolidate (  );
