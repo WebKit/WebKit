@@ -1,3 +1,57 @@
+2006-09-02  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10684
+          Auto-generate the Objective-C DOM CSS bindings
+
+          Auto-generates DOMCSSCharsetRule, DOMCSSFontFaceRule, DOMCSSImportRule,
+          DOMCSSMediaRule, DOMCSSPageRule, DOMCSSPrimitiveValue, DOMCSSRule,
+          DOMCSSRuleList, DOMCSSStyleDeclaration, DOMCSSStyleRule, DOMCSSStyleSheet,
+          DOMCSSUnknownRule, DOMCSSValue, DOMCSSValueList, DOMCounter, and DOMRect.
+
+          Splits DOMRGBColor into its own files.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMCSS.h:
+        * bindings/objc/DOMCSS.mm:
+        (+[DOMCSSStyleSheet _CSSStyleSheetWith:]):
+        (+[DOMCSSPrimitiveValue _valueWith:]):
+        * bindings/objc/DOMCSSInternal.h:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMRGBColor.h: Added.
+        * bindings/objc/DOMRGBColor.mm: Added.
+        (getWrapperForRGB):
+        (setWrapperForRGB):
+        (removeWrapperForRGB):
+        (-[DOMRGBColor dealloc]):
+        (-[DOMRGBColor finalize]):
+        (-[DOMRGBColor red]):
+        (-[DOMRGBColor green]):
+        (-[DOMRGBColor blue]):
+        (-[DOMRGBColor alpha]):
+        (-[DOMRGBColor color]):
+        (-[DOMRGBColor _initWithRGB:WebCore::]):
+        (+[DOMRGBColor _RGBColorWithRGB:WebCore::]):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * css/CSSCharsetRule.idl: Added.
+        * css/CSSFontFaceRule.idl: Added.
+        * css/CSSImportRule.idl: Added.
+        * css/CSSMediaRule.idl: Added.
+        * css/CSSPageRule.idl: Added.
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleRule.idl: Added.
+        * css/CSSStyleSheet.idl: Added.
+        * css/CSSUnknownRule.idl: Added.
+        * css/CSSValue.idl:
+        * css/MediaList.idl:
+        * css/RGBColor.idl: Added.
+        * css/Rect.idl:
+        * css/RectImpl.h:
+
 2006-09-02  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Justin.

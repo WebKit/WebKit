@@ -1,3 +1,12 @@
+2006-09-02  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10684
+          Auto-generate the Objective-C DOM CSS bindings
+
+        * MigrateHeaders.make:
+
 2006-09-01  MorganL  <morlmor@yahoo.com>
 
         Reviewed by Darin. Updated/landed by Adam.

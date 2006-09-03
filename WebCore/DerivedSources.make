@@ -46,6 +46,22 @@ all : \
     CharsetData.cpp \
     ColorData.c \
     DocTypeStrings.cpp \
+    DOMCSSCharsetRule.h \
+    DOMCSSFontFaceRule.h \
+    DOMCSSImportRule.h \
+    DOMCSSMediaRule.h \
+    DOMCSSPageRule.h \
+    DOMCSSRule.h \
+    DOMCSSRuleList.h \
+    DOMCSSStyleDeclaration.h \
+    DOMCSSStyleRule.h \
+    DOMCSSUnknownRule.h \
+    DOMCSSValue.h \
+    DOMCSSPrimitiveValue.h \
+    DOMCSSValueList.h \
+    DOMCSSStyleSheet.h \
+    DOMCounter.h \
+    DOMRect.h \
     DOMAttr.h \
     DOMCDATASection.h \
     DOMCharacterData.h \

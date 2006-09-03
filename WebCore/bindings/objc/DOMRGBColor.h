@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module stylesheets {
+#import <WebCore/DOMObject.h>
 
-    // Introduced in DOM Level 2:
-    interface MediaList {
+@class DOMCSSPrimitiveValue;
 
-                 attribute DOMString mediaText
-                     setter raises(DOMException);
-        readonly attribute unsigned long length;
+@interface DOMRGBColor : DOMObject
+- (DOMCSSPrimitiveValue *)red;
+- (DOMCSSPrimitiveValue *)green;
+- (DOMCSSPrimitiveValue *)blue;
+@end
 
-        DOMString item(in unsigned long index);
-        void deleteMedium(in DOMString oldMedium)
-            raises(DOMException);
-        void appendMedium(in DOMString newMedium)
-            raises(DOMException);
-
-    };
-}
+@interface DOMRGBColor (DOMRGBColorExtensions)
+- (DOMCSSPrimitiveValue *)alpha;
+- (NSColor *)color;
+@end

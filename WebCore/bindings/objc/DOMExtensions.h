@@ -26,6 +26,7 @@
 
 #import <WebCore/DOMAttr.h>
 #import <WebCore/DOMCSS.h>
+#import <WebCore/DOMCSSStyleDeclaration.h>
 #import <WebCore/DOMDOMImplementation.h>
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMElement.h>
@@ -39,11 +40,10 @@
 #import <WebCore/DOMHTMLLinkElement.h>
 #import <WebCore/DOMHTMLObjectElement.h>
 #import <WebCore/DOMNode.h>
+#import <WebCore/DOMRGBColor.h>
 #import <WebCore/DOMRange.h>
 
-@class NSColor;
 @class NSImage;
-@class DOMHTMLCollection;
 
 @interface DOMDocument (DOMDocumentCSSExtensions)
 - (DOMCSSStyleDeclaration *)createCSSStyleDeclaration;
@@ -93,11 +93,6 @@
 - (void)setType:(NSString *)type;
 - (int)width;
 - (void)setWidth:(int)width;
-@end
-
-@interface DOMRGBColor (DOMRGBColorExtensions)
-- (DOMCSSPrimitiveValue *)alpha;
-- (NSColor *)color;
 @end
 
 @interface DOMCSSStyleDeclaration (DOMCSSStyleDeclarationExtensions)

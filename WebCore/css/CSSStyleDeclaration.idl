@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +22,24 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [LegacyParent=KJS::DOMCSSStyleDeclaration, GenerateConstructor] CSSStyleDeclaration {
+
+                 attribute [Exclude=JS] DOMString        cssText
+                     setter raises(DOMException);
+
+        [Exclude=JS] DOMString          getPropertyValue(in DOMString propertyName);
+        [Exclude=JS] CSSValue           getPropertyCSSValue(in DOMString propertyName);
+        [Exclude=JS] DOMString          removeProperty(in DOMString propertyName)
+            raises(DOMException);
+        [Exclude=JS] DOMString          getPropertyPriority(in DOMString propertyName);
+        [Exclude=JS] void               setProperty(in DOMString propertyName, 
+                                                    in DOMString value, 
+                                                    in DOMString priority)
+            raises(DOMException);
+
+        readonly attribute [Exclude=JS] unsigned long    length;
+        [Exclude=JS] DOMString          item(in unsigned long index);
+        readonly attribute [Exclude=JS] CSSRule          parentRule;
+
     };
-  
+
 }

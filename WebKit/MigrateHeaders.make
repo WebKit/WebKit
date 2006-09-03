@@ -32,9 +32,24 @@ all : \
     DOMAttr.h \
     DOMCDATASection.h \
     DOMCSS.h \
+    DOMCSSCharsetRule.h \
+    DOMCSSFontFaceRule.h \
+    DOMCSSImportRule.h \
+    DOMCSSMediaRule.h \
+    DOMCSSPageRule.h \
+    DOMCSSPrimitiveValue.h \
+    DOMCSSRule.h \
+    DOMCSSRuleList.h \
+    DOMCSSStyleDeclaration.h \
+    DOMCSSStyleRule.h \
+    DOMCSSStyleSheet.h \
+    DOMCSSUnknownRule.h \
+    DOMCSSValue.h \
+    DOMCSSValueList.h \
     DOMCharacterData.h \
     DOMComment.h \
     DOMCore.h \
+    DOMCounter.h \
     DOMDOMImplementation.h \
     DOMDocument.h \
     DOMDocumentFragment.h \
@@ -109,7 +124,9 @@ all : \
     DOMObject.h \
     DOMPrivate.h \
     DOMProcessingInstruction.h \
+    DOMRGBColor.h \
     DOMRange.h \
+    DOMRect.h \
     DOMStylesheets.h \
     DOMText.h \
     DOMTraversal.h \

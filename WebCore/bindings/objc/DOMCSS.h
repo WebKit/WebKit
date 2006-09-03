@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,168 +31,26 @@
 #import <WebCore/DOMObject.h>
 #import <WebCore/DOMStylesheets.h>
 
-@class DOMCounter;
-@class DOMCSSRule;
-@class DOMCSSStyleDeclaration;
-@class DOMCSSStyleSheet;
-@class DOMCSSValue;
-@class DOMRect;
-@class DOMRGBColor;
+#import <WebCore/DOMCSSCharsetRule.h>
+#import <WebCore/DOMCSSFontFaceRule.h>
+#import <WebCore/DOMCSSImportRule.h>
+#import <WebCore/DOMCSSMediaRule.h>
+#import <WebCore/DOMCSSPageRule.h>
+#import <WebCore/DOMCSSPrimitiveValue.h>
+#import <WebCore/DOMCSSRule.h>
+#import <WebCore/DOMCSSRuleList.h>
+#import <WebCore/DOMCSSStyleDeclaration.h>
+#import <WebCore/DOMCSSStyleRule.h>
+#import <WebCore/DOMCSSStyleSheet.h>
+#import <WebCore/DOMCSSUnknownRule.h>
+#import <WebCore/DOMCSSValue.h>
+#import <WebCore/DOMCSSValueList.h>
+#import <WebCore/DOMCounter.h>
+#import <WebCore/DOMRGBColor.h>
+#import <WebCore/DOMRect.h>
 
 @interface DOMDocument (DOMViewCSS)
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt;
-@end
-
-@interface DOMCSSRuleList : DOMObject
-- (unsigned)length;
-- (DOMCSSRule *)item:(unsigned)index;
-@end
-
-enum {
-    // DOMCSSRule RuleType
-    DOM_UNKNOWN_RULE               = 0,
-    DOM_STYLE_RULE                 = 1,
-    DOM_CHARSET_RULE               = 2,
-    DOM_IMPORT_RULE                = 3,
-    DOM_MEDIA_RULE                 = 4,
-    DOM_FONT_FACE_RULE             = 5,
-    DOM_PAGE_RULE                  = 6
-};
-
-@interface DOMCSSRule : DOMObject
-- (unsigned short)type;
-- (NSString *)cssText;
-- (void)setCssText:(NSString *)cssText;
-- (DOMCSSStyleSheet *)parentStyleSheet;
-- (DOMCSSRule *)parentRule;
-@end
-
-@interface DOMCSSStyleRule : DOMCSSRule
-- (NSString *)selectorText;
-- (void)setSelectorText:(NSString *)selectorText;
-- (DOMCSSStyleDeclaration *)style;
-@end
-
-@interface DOMCSSMediaRule : DOMCSSRule
-- (DOMMediaList *)media;
-- (DOMCSSRuleList *)cssRules;
-- (unsigned)insertRule:(NSString *)rule :(unsigned)index;
-- (void)deleteRule:(unsigned)index;
-@end
-
-@interface DOMCSSFontFaceRule : DOMCSSRule
-- (DOMCSSStyleDeclaration *)style;
-@end
-
-@interface DOMCSSPageRule : DOMCSSRule
-- (NSString *)selectorText;
-- (void)setSelectorText:(NSString *)selectorText;
-- (DOMCSSStyleDeclaration *)style;
-@end
-
-@interface DOMCSSImportRule : DOMCSSRule
-- (DOMMediaList *)media;
-- (NSString *)href;
-- (DOMCSSStyleSheet *)styleSheet;
-@end
-
-@interface DOMCSSCharsetRule : DOMCSSRule
-- (NSString *)encoding;
-@end
-
-@interface DOMCSSUnknownRule : DOMCSSRule
-@end
-
-@interface DOMCSSStyleDeclaration : DOMObject
-- (NSString *)cssText;
-- (void)setCssText:(NSString *)cssText;
-- (NSString *)getPropertyValue:(NSString *)propertyName;
-- (DOMCSSValue *)getPropertyCSSValue:(NSString *)propertyName;
-- (NSString *)removeProperty:(NSString *)propertyName;
-- (NSString *)getPropertyPriority:(NSString *)propertyName;
-- (void)setProperty:(NSString *)propertyName :(NSString *)value :(NSString *)priority;
-- (unsigned)length;
-- (NSString *)item:(unsigned)index;
-- (DOMCSSRule *)parentRule;
-@end
-
-enum {
-    // DOMCSSValue UnitTypes
-    DOM_CSS_INHERIT = 0,
-    DOM_CSS_PRIMITIVE_VALUE = 1,
-    DOM_CSS_VALUE_LIST = 2,
-    DOM_CSS_CUSTOM = 3
-};
-
-@interface DOMCSSValue : DOMObject
-- (NSString *)cssText;
-- (void)setCssText:(NSString *)cssText;
-- (unsigned short)cssValueType;
-@end
-
-enum {
-    // DOMCSSPrimitiveValue UnitTypes
-    DOM_CSS_UNKNOWN                    = 0,
-    DOM_CSS_NUMBER                     = 1,
-    DOM_CSS_PERCENTAGE                 = 2,
-    DOM_CSS_EMS                        = 3,
-    DOM_CSS_EXS                        = 4,
-    DOM_CSS_PX                         = 5,
-    DOM_CSS_CM                         = 6,
-    DOM_CSS_MM                         = 7,
-    DOM_CSS_IN                         = 8,
-    DOM_CSS_PT                         = 9,
-    DOM_CSS_PC                         = 10,
-    DOM_CSS_DEG                        = 11,
-    DOM_CSS_RAD                        = 12,
-    DOM_CSS_GRAD                       = 13,
-    DOM_CSS_MS                         = 14,
-    DOM_CSS_S                          = 15,
-    DOM_CSS_HZ                         = 16,
-    DOM_CSS_KHZ                        = 17,
-    DOM_CSS_DIMENSION                  = 18,
-    DOM_CSS_STRING                     = 19,
-    DOM_CSS_URI                        = 20,
-    DOM_CSS_IDENT                      = 21,
-    DOM_CSS_ATTR                       = 22,
-    DOM_CSS_COUNTER                    = 23,
-    DOM_CSS_RECT                       = 24,
-    DOM_CSS_RGBCOLOR                   = 25
-};
-
-@interface DOMCSSPrimitiveValue : DOMCSSValue
-- (unsigned short)primitiveType;
-- (void)setFloatValue:(unsigned short)unitType :(float)floatValue;
-- (float)getFloatValue:(unsigned short)unitType;
-- (void)setStringValue:(unsigned short)stringType :(NSString *)stringValue;
-- (NSString *)getStringValue;
-- (DOMCounter *)getCounterValue;
-- (DOMRect *)getRectValue;
-- (DOMRGBColor *)getRGBColorValue;
-@end
-
-@interface DOMCSSValueList : DOMCSSValue
-- (unsigned)length;
-- (DOMCSSValue *)item:(unsigned)index;
-@end
-
-@interface DOMRGBColor : DOMObject
-- (DOMCSSPrimitiveValue *)red;
-- (DOMCSSPrimitiveValue *)green;
-- (DOMCSSPrimitiveValue *)blue;
-@end
-
-@interface DOMRect : DOMObject
-- (DOMCSSPrimitiveValue *)top;
-- (DOMCSSPrimitiveValue *)right;
-- (DOMCSSPrimitiveValue *)bottom;
-- (DOMCSSPrimitiveValue *)left;
-@end
-
-@interface DOMCounter : DOMObject
-- (NSString *)identifier;
-- (NSString *)listStyle;
-- (NSString *)separator;
 @end
 
 @interface DOMCSSStyleDeclaration (DOMCSS2Properties)
@@ -439,11 +298,4 @@ enum {
 - (void)setWordSpacing:(NSString *)wordSpacing;
 - (NSString *)zIndex;
 - (void)setZIndex:(NSString *)zIndex;
-@end
-
-@interface DOMCSSStyleSheet : DOMStyleSheet
-- (DOMCSSRule *)ownerRule;
-- (DOMCSSRuleList *)cssRules;
-- (unsigned)insertRule:(NSString *)rule :(unsigned)index;
-- (void)deleteRule:(unsigned)index;
 @end

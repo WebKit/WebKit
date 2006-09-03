@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,11 +20,21 @@
 
 module css {
 
-    interface Rect {
-        readonly attribute CSSPrimitiveValue  top;
-        readonly attribute CSSPrimitiveValue  right;
-        readonly attribute CSSPrimitiveValue  bottom;
-        readonly attribute CSSPrimitiveValue  left;
+    // Introduced in DOM Level 2:
+    interface CSSMediaRule : CSSRule {
+
+        readonly attribute stylesheets::MediaList  media;
+        readonly attribute CSSRuleList      cssRules;
+        
+        // FIXME: the DOM spec says that this can raise an exeception.
+        unsigned long      insertRule(in DOMString rule, 
+                                      in unsigned long index)
+            /*raises(DOMException)*/;
+            
+        // FIXME: the DOM spec says that this can raise an exeception.
+        void               deleteRule(in unsigned long index)
+            /*raises(DOMException)*/;
+
     };
 
 }

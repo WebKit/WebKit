@@ -201,13 +201,17 @@ sub GetClassName
 sub GetImplClassName
 {
     my $name = $codeGenerator->StripModule(shift);
-    
+
     # special cases
     if ($name eq "DOMImplementation") {
-        return "WebCore::DOMImplementationFront";
+        return "DOMImplementationFront";
     }
 
-    return "WebCore::" . $name;
+    if ($name eq "Rect") {
+        return "RectImpl";
+    }
+
+    return $name;
 }
 
 sub GetParentImplClassName
@@ -254,7 +258,7 @@ sub GetObjCTypeMaker
         return "";
     }
 
-    if ($type eq "DOMRGBColor") {
+    if ($type eq "RGBColor") {
         return "_RGBColorWithRGB";
     }
 
@@ -278,6 +282,14 @@ sub GetObjCTypeMaker
         $typeMaker = "styleDeclaration";
     } elsif ($type eq "CSSStyleSheet") {
         $typeMaker = "CSSStyleSheet";
+    } elsif ($type eq "CSSRule") {
+        $typeMaker = "rule";
+    } elsif ($type eq "CSSRuleList") {
+        $typeMaker = "ruleList";
+    } elsif ($type eq "CSSValue") {
+        $typeMaker = "value";
+    } elsif ($type eq "CSSPrimitiveValue") {
+        $typeMaker = "value";
     } elsif ($type eq "DOMImplementation") {
         $typeMaker = "DOMImplementation";
     } elsif ($type eq "CDATASection") {
@@ -340,29 +352,14 @@ sub AddIncludesForType
     }
 
     # Temp DOMCSS.h
-    if ($type eq "Counter"
-            or $type eq "MediaList"
-            or $type eq "CSSStyleSheet") {
-        $implIncludes{"DOMCSS.h"} = 1;
-        $implIncludes{"$type.h"} = 1;
+    if ($type eq "Rect") {
+        $implIncludes{"DOMRect.h"} = 1;
+        $implIncludes{"RectImpl.h"} = 1;
         return;
     }
-    if ($type eq "CSSStyleDeclaration") {
-        $implIncludes{"DOMCSS.h"} = 1;
-        $implIncludes{"$type.h"} = 1;
-        $implIncludes{"CSSMutableStyleDeclaration.h"} = 1;
-        return;
-    }
-    if ($type eq "RGBColor" or $type eq "Rect") {
-        $implIncludes{"DOMCSS.h"} = 1;
-        return;
-    }
-
-    # Temp DOMHTML.h
-    if ($type eq "HTMLDocument") {
-        $implIncludes{"DOMHTML.h"} = 1;
-        $implIncludes{"DOMHTMLInternal.h"} = 1;
-        $implIncludes{"$type.h"} = 1;
+    if ($type eq "RGBColor") {
+        $implIncludes{"DOMRGBColor.h"} = 1;
+        $implIncludes{"Color.h"} = 1;
         return;
     }
 
@@ -374,9 +371,11 @@ sub AddIncludesForType
         return;
     }
 
-    # Temp DOMStyleSheets.h
-    if ($type eq "StyleSheetList") {
-        $implIncludes{"DOMStyleSheets.h"} = 1;
+    # Temp DOMStylesheets.h
+    if ($type eq "StyleSheet"
+            or $type eq "StyleSheetList"
+            or $type eq "MediaList") {
+        $implIncludes{"DOMStylesheets.h"} = 1;
         $implIncludes{"$type.h"} = 1;
         return;
     }
@@ -403,6 +402,13 @@ sub AddIncludesForType
     if ($type eq "DOMImplementation") {
         $implIncludes{"DOMImplementationFront.h"} = 1;
     }
+
+    # FIXME: for some reason it won't compile without both CSSStyleDeclaration.h
+    # and CSSMutableStyleDeclaration.h
+    if ($type eq "CSSStyleDeclaration") {
+        $implIncludes{"CSSMutableStyleDeclaration.h"} = 1;
+    }
+
 
     # Add type specific internal types.
     $implIncludes{"DOMHTMLInternal.h"} = 1 if ($type =~ /^HTML/);
@@ -434,7 +440,11 @@ sub GenerateHeader
     @headerContentHeader = split("\r", $headerLicenceTemplate);
 
     # - INCLUDES -
-    push(@headerContentHeader, "\n#import <WebCore/$parentClassName.h> // parent class\n\n");
+    if ($parentClassName eq "DOMStyleSheet") {
+        push(@headerContentHeader, "\n#import <WebCore/DOMStylesheets.h> // parent class\n\n");
+    } else {
+        push(@headerContentHeader, "\n#import <WebCore/$parentClassName.h> // parent class\n\n");
+    }
 
     # - Add constants.
     if ($numConstants > 0) {
@@ -451,9 +461,9 @@ sub GenerateHeader
         my $combinedConstants = join(",\n", @headerConstants);
 
         # FIXME: the formatting of the enums should line up the equal signs.
-        push(@headerContent, "\nenum {\n");
+        push(@headerContent, "enum {\n");
         push(@headerContent, $combinedConstants);
-        push(@headerContent, "\n};\n");        
+        push(@headerContent, "\n};\n\n");        
     }
     
     # - Begin @interface 
@@ -583,11 +593,7 @@ sub GenerateImplementation
         }
 
         # include Implementation class
-        push(@implContentHeader, "#import \"$interfaceName.h\" // implementation class\n");
-        if ($interfaceName eq "DOMImplementation") {
-            # FIXME: needed until we can remove DOMImplementationFront
-            push(@implContentHeader, "#import \"DOMImplementationFront.h\"\n");
-        }
+        push(@implContentHeader, "#import \"$implClassName.h\" // implementation class\n");
     }
 
     @implContent = ();
@@ -596,6 +602,9 @@ sub GenerateImplementation
     push(@implContent, "\@implementation $className\n\n");
 
     if ($hasFunctionsOrAttributes) {
+        # Add namespace to implementation class name 
+        $implClassName = "WebCore::" . $implClassName;
+
         if ($parentImplClassName eq "Object") {
             # Only generate 'dealloc' and 'finalize' methods for direct subclasses of DOMObject.
 
@@ -614,11 +623,15 @@ sub GenerateImplementation
             push(@implContent, "        IMPL->deref();\n");
             push(@implContent, "    [super finalize];\n");
             push(@implContent, "}\n\n");
+            
+        } elsif ($interfaceName eq "CSSStyleSheet") {
+            # Special case for CSSStyleSheet
+            push(@implContent, "#define IMPL reinterpret_cast<WebCore::CSSStyleSheet*>(_internal)\n\n");
         } else {
             my $internalBaseType;
-            if ($interfaceName =~ /^CSS.+Value$/) {
+            if ($parentImplClassName eq "CSSValue") {
                 $internalBaseType = "WebCore::CSSValue"
-            } elsif ($interfaceName =~ /^CSS.+Rule$/) {
+            } elsif ($parentImplClassName eq "CSSRule") {
                 $internalBaseType = "WebCore::CSSRule"
             } else {
                 $internalBaseType = "WebCore::Node"
@@ -854,8 +867,13 @@ sub GenerateImplementation
                     }
 
                     # Surround getter with TypeMaker
-                    $functionContentHead = "[$returnTypeClass $typeMaker:WTF::getPtr(" . $functionContentHead;
-                    $functionContentTail .= ")]";
+                    if ($returnTypeClass eq "DOMRGBColor") {
+                        $functionContentHead = "[$returnTypeClass $typeMaker:" . $functionContentHead;
+                        $functionContentTail .= "]";
+                    } else {
+                        $functionContentHead = "[$returnTypeClass $typeMaker:WTF::getPtr(" . $functionContentHead;
+                        $functionContentTail .= ")]";
+                    }
                 }
 
                 my $content = "";

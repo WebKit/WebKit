@@ -26,6 +26,7 @@
  */
 
 #import "DOM.h"
+#import "DOMCSSInternal.h"
 
 #import "DOMAttr.h"
 #import "DOMCDATASection.h"
@@ -46,8 +47,6 @@
 namespace WebCore {
     class Attr;
     class CDATASection;
-    class CSSStyleDeclaration;
-    class CSSStyleSheet;
     class Comment;
     class DOMImplementationFront;
     class Document;
@@ -150,17 +149,8 @@ namespace WebCore {
 + (DOMTreeWalker *)_treeWalkerWith:(WebCore::TreeWalker *)impl filter:(id <DOMNodeFilter>)filter;
 @end
 
-@interface DOMCSSStyleDeclaration (WebCoreInternal)
-+ (DOMCSSStyleDeclaration *)_styleDeclarationWith:(WebCore::CSSStyleDeclaration *)impl;
-- (WebCore::CSSStyleDeclaration *)_styleDeclaration;
-@end
-
 @interface DOMStyleSheetList (WebCoreInternal)
 + (DOMStyleSheetList *)_styleSheetListWith:(WebCore::StyleSheetList *)impl;
-@end
-
-@interface DOMCSSStyleSheet (WebCoreInternal)
-+ (DOMCSSStyleSheet *)_CSSStyleSheetWith:(WebCore::CSSStyleSheet *)impl;
 @end
 
 @interface DOMNodeFilter : DOMObject <DOMNodeFilter>

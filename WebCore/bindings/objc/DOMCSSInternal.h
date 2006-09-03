@@ -27,14 +27,26 @@
 #import "DOMCSS.h"
 #import "Color.h"
 
+#import "DOMCSSPrimitiveValue.h"
+#import "DOMCSSRule.h"
+#import "DOMCSSRuleList.h"
+#import "DOMCSSStyleDeclaration.h"
+#import "DOMCSSStyleSheet.h"
+#import "DOMCSSValue.h"
+#import "DOMCounter.h"
+#import "DOMRGBColor.h"
+#import "DOMRect.h"
+
 namespace WebCore {
-    class StyleSheet;
-    class MediaList;
-    class CSSRuleList;
     class CSSRule;
+    class CSSRuleList;
+    class CSSStyleDeclaration;
+    class CSSStyleSheet;
     class CSSValue;
-    class RectImpl;
     class Counter;
+    class MediaList;
+    class RectImpl;
+    class StyleSheet;
 }
 
 @interface DOMStyleSheet (WebCoreInternal)
@@ -71,4 +83,13 @@ namespace WebCore {
 
 @interface DOMCounter (WebCoreInternal)
 + (DOMCounter *)_counterWith:(WebCore::Counter *)impl;
+@end
+
+@interface DOMCSSStyleDeclaration (WebCoreInternal)
++ (DOMCSSStyleDeclaration *)_styleDeclarationWith:(WebCore::CSSStyleDeclaration *)impl;
+- (WebCore::CSSStyleDeclaration *)_styleDeclaration;
+@end
+
+@interface DOMCSSStyleSheet (WebCoreInternal)
++ (DOMCSSStyleSheet *)_CSSStyleSheetWith:(WebCore::CSSStyleSheet *)impl;
 @end

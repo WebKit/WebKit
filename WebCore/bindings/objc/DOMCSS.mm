@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -223,45 +224,11 @@ typedef DOMWindow AbstractView;
 //------------------------------------------------------------------------------------------
 // DOMCSSStyleSheet
 
-@implementation DOMCSSStyleSheet
-
-- (CSSStyleSheet *)_CSSStyleSheet
-{
-    return DOM_cast<CSSStyleSheet*>(_internal);
-}
-
-- (DOMCSSRule *)ownerRule
-{
-    return [DOMCSSRule _ruleWith:[self _CSSStyleSheet]->ownerRule()];
-}
-
-- (DOMCSSRuleList *)cssRules
-{
-    return [DOMCSSRuleList _ruleListWith:[self _CSSStyleSheet]->cssRules()];
-}
-
-- (unsigned)insertRule:(NSString *)rule :(unsigned)index
-{
-    ExceptionCode ec;
-    unsigned result = [self _CSSStyleSheet]->insertRule(rule, index, ec);
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (void)deleteRule:(unsigned)index
-{
-    ExceptionCode ec;
-    [self _CSSStyleSheet]->deleteRule(index, ec);
-    raiseOnDOMError(ec);
-}
-
-@end
-
 @implementation DOMCSSStyleSheet (WebCoreInternal)
 
 + (DOMCSSStyleSheet *)_CSSStyleSheetWith:(CSSStyleSheet *)impl
 {
-    return (DOMCSSStyleSheet *)[DOMStyleSheet _DOMStyleSheetWith:impl];
+    return static_cast<DOMCSSStyleSheet*>([DOMStyleSheet _DOMStyleSheetWith:impl]);
 }
 
 @end
@@ -359,41 +326,6 @@ typedef DOMWindow AbstractView;
 //------------------------------------------------------------------------------------------
 // DOMCSSRuleList
 
-@implementation DOMCSSRuleList
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<CSSRuleList*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<CSSRuleList*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (CSSRuleList *)_ruleList
-{
-    return DOM_cast<CSSRuleList*>(_internal);
-}
-
-- (unsigned)length
-{
-    return [self _ruleList]->length();
-}
-
-- (DOMCSSRule *)item:(unsigned)index
-{
-    return [DOMCSSRule _ruleWith:[self _ruleList]->item(index)];
-}
-
-@end
-
 @implementation DOMCSSRuleList (WebCoreInternal)
 
 - (id)_initWithRuleList:(CSSRuleList *)impl
@@ -420,58 +352,9 @@ typedef DOMWindow AbstractView;
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // DOMCSSRule
-
-@implementation DOMCSSRule
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<CSSRule*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<CSSRule*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (CSSRule *)_rule
-{
-    return DOM_cast<CSSRule*>(_internal);
-}
-
-- (unsigned short)type
-{
-    return [self _rule]->type();
-}
-
-- (NSString *)cssText
-{
-    return [self _rule]->cssText();
-}
-
-- (void)setCssText:(NSString *)cssText
-{
-    [self _rule]->setCssText(cssText);
-}
-
-- (DOMCSSStyleSheet *)parentStyleSheet
-{
-    return [DOMCSSStyleSheet _CSSStyleSheetWith:[self _rule]->parentStyleSheet()];
-}
-
-- (DOMCSSRule *)parentRule
-{
-    return [DOMCSSRule _ruleWith:[self _rule]->parentRule()];
-}
-
-@end
 
 @implementation DOMCSSRule (WebCoreInternal)
 
@@ -523,220 +406,11 @@ typedef DOMWindow AbstractView;
 
 @end
 
-//------------------------------------------------------------------------------------------
-// DOMCSSStyleRule
-
-@implementation DOMCSSStyleRule
-
-- (CSSStyleRule *)_styleRule
-{
-    return static_cast<CSSStyleRule*>(DOM_cast<CSSRule*>(_internal));
-}
-
-- (NSString *)selectorText
-{
-    return [self _styleRule]->selectorText();
-}
-
-- (void)setSelectorText:(NSString *)selectorText
-{
-    [self _styleRule]->setSelectorText(selectorText);
-}
-
-- (DOMCSSStyleDeclaration *)style
-{
-    return [DOMCSSStyleDeclaration _styleDeclarationWith:[self _styleRule]->style()];
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMCSSMediaRule
-
-@implementation DOMCSSMediaRule
-
-- (CSSMediaRule *)_mediaRule
-{
-    return static_cast<CSSMediaRule*>(DOM_cast<CSSRule*>(_internal));
-}
-
-- (DOMMediaList *)media
-{
-    return [DOMMediaList _mediaListWith:[self _mediaRule]->media()];
-}
-
-- (DOMCSSRuleList *)cssRules
-{
-    return [DOMCSSRuleList _ruleListWith:[self _mediaRule]->cssRules()];
-}
-
-- (unsigned)insertRule:(NSString *)rule :(unsigned)index
-{
-    return [self _mediaRule]->insertRule(rule, index);
-}
-
-- (void)deleteRule:(unsigned)index
-{
-    [self _mediaRule]->deleteRule(index);
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMCSSFontFaceRule
-
-@implementation DOMCSSFontFaceRule
-
-- (CSSFontFaceRule *)_fontFaceRule
-{
-    return static_cast<CSSFontFaceRule*>(DOM_cast<CSSRule*>(_internal));
-}
-
-- (DOMCSSStyleDeclaration *)style
-{
-    return [DOMCSSStyleDeclaration _styleDeclarationWith:[self _fontFaceRule]->style()];
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMCSSPageRule
-
-@implementation DOMCSSPageRule
-
-- (CSSPageRule *)_pageRule
-{
-    return static_cast<CSSPageRule*>(DOM_cast<CSSRule*>(_internal));
-}
-
-- (NSString *)selectorText
-{
-    return [self _pageRule]->selectorText();
-}
-
-- (void)setSelectorText:(NSString *)selectorText
-{
-    [self _pageRule]->setSelectorText(selectorText);
-}
-
-- (DOMCSSStyleDeclaration *)style
-{
-    return [DOMCSSStyleDeclaration _styleDeclarationWith:[self _pageRule]->style()];
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMCSSImportRule
-
-@implementation DOMCSSImportRule
-
-- (CSSImportRule *)_importRule
-{
-    return static_cast<CSSImportRule*>(DOM_cast<CSSRule*>(_internal));
-}
-
-- (DOMMediaList *)media
-{
-    return [DOMMediaList _mediaListWith:[self _importRule]->media()];
-}
-
-- (NSString *)href
-{
-    return [self _importRule]->href();
-}
-
-- (DOMCSSStyleSheet *)styleSheet
-{
-    return [DOMCSSStyleSheet _CSSStyleSheetWith:[self _importRule]->styleSheet()];
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMCSSCharsetRule
-
-@implementation DOMCSSCharsetRule
-
-- (CSSCharsetRule *)_importRule
-{
-    return static_cast<CSSCharsetRule*>(DOM_cast<CSSRule*>(_internal));
-}
-
-- (NSString *)encoding
-{
-    return [self _importRule]->encoding();
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMCSSUnknownRule
-
-@implementation DOMCSSUnknownRule
-
-@end
 
 //------------------------------------------------------------------------------------------
 // DOMCSSStyleDeclaration
 
-@implementation DOMCSSStyleDeclaration
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<CSSStyleDeclaration*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<CSSStyleDeclaration*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"DOMCSSStyleDeclaration: %@", [self cssText]];
-}
-
-- (NSString *)cssText
-{
-    return [self _styleDeclaration]->cssText();
-}
-
-- (void)setCssText:(NSString *)cssText
-{
-    ExceptionCode ec;
-    [self _styleDeclaration]->setCssText(cssText, ec);
-    raiseOnDOMError(ec);
-}
-
-- (NSString *)getPropertyValue:(NSString *)propertyName
-{
-    return [self _styleDeclaration]->getPropertyValue(propertyName);
-}
-
-- (DOMCSSValue *)getPropertyCSSValue:(NSString *)propertyName
-{
-    return [DOMCSSValue _valueWith:[self _styleDeclaration]->getPropertyCSSValue(propertyName).get()];
-}
-
-- (NSString *)removeProperty:(NSString *)propertyName
-{
-    ExceptionCode ec = 0;
-    String result = [self _styleDeclaration]->removeProperty(propertyName, ec);
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (NSString *)getPropertyPriority:(NSString *)propertyName
-{
-    return [self _styleDeclaration]->getPropertyPriority(propertyName);
-}
+@implementation DOMCSSStyleDeclaration (DOMCSSStyleDeclarationExtensions)
 
 - (NSString *)getPropertyShorthand:(NSString *)propertyName
 {
@@ -746,28 +420,6 @@ typedef DOMWindow AbstractView;
 - (BOOL)isPropertyImplicit:(NSString *)propertyName
 {
     return [self _styleDeclaration]->isPropertyImplicit(propertyName);
-}
-
-- (void)setProperty:(NSString *)propertyName :(NSString *)value :(NSString *)priority
-{
-    ExceptionCode ec;
-    [self _styleDeclaration]->setProperty(propertyName, value, priority, ec);
-    raiseOnDOMError(ec);
-}
-
-- (unsigned)length
-{
-    return [self _styleDeclaration]->length();
-}
-
-- (NSString *)item:(unsigned)index
-{
-    return [self _styleDeclaration]->item(index);
-}
-
-- (DOMCSSRule *)parentRule
-{
-    return [DOMCSSRule _ruleWith:[self _styleDeclaration]->parentRule()];
 }
 
 @end
@@ -805,46 +457,6 @@ typedef DOMWindow AbstractView;
 
 //------------------------------------------------------------------------------------------
 // DOMCSSValue
-
-@implementation DOMCSSValue
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<CSSValue*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<CSSValue*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (CSSValue *)_value
-{
-    return DOM_cast<CSSValue*>(_internal);
-}
-
-- (NSString *)cssText
-{
-    return [self _value]->cssText();
-}
-
-- (void)setCssText:(NSString *)cssText
-{
-    [self _value]->setCssText(cssText);
-}
-
-- (unsigned short)cssValueType
-{
-    return [self _value]->cssValueType();
-}
-
-@end
 
 @implementation DOMCSSValue (WebCoreInternal)
 
@@ -887,200 +499,22 @@ typedef DOMWindow AbstractView;
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // DOMCSSPrimitiveValue
 
-@implementation DOMCSSPrimitiveValue
+@implementation DOMCSSPrimitiveValue (WebCoreInternal)
 
 + (DOMCSSPrimitiveValue *)_valueWith:(CSSValue *)impl
 {
-    return (DOMCSSPrimitiveValue *)([DOMCSSValue _valueWith: impl]);
-}
-
-- (CSSPrimitiveValue *)_primitiveValue
-{
-    return static_cast<CSSPrimitiveValue*>(DOM_cast<CSSValue*>(_internal));
-}
-
-- (unsigned short)primitiveType
-{
-    return [self _primitiveValue]->primitiveType();
-}
-
-- (void)setFloatValue:(unsigned short)unitType :(float)floatValue
-{
-    ExceptionCode ec;
-    [self _primitiveValue]->setFloatValue(unitType, floatValue, ec);
-    raiseOnDOMError(ec);
-}
-
-- (float)getFloatValue:(unsigned short)unitType
-{
-    return [self _primitiveValue]->getFloatValue(unitType);
-}
-
-- (void)setStringValue:(unsigned short)stringType :(NSString *)stringValue
-{
-    ExceptionCode ec;
-    String string(stringValue);
-    [self _primitiveValue]->setStringValue(stringType, string, ec);
-    raiseOnDOMError(ec);
-}
-
-- (NSString *)getStringValue
-{
-    return String([self _primitiveValue]->getStringValue());
-}
-
-- (DOMCounter *)getCounterValue
-{
-    return [DOMCounter _counterWith:[self _primitiveValue]->getCounterValue()];
-}
-
-- (DOMRect *)getRectValue
-{
-    return [DOMRect _rectWith:[self _primitiveValue]->getRectValue()];
-}
-
-- (DOMRGBColor *)getRGBColorValue
-{
-    return [DOMRGBColor _RGBColorWithRGB:[self _primitiveValue]->getRGBColorValue()];
+    return static_cast<DOMCSSPrimitiveValue*>([DOMCSSValue _valueWith:impl]);
 }
 
 @end
 
-//------------------------------------------------------------------------------------------
-// DOMCSSValueList
-
-@implementation DOMCSSValueList
-
-- (CSSValueList *)_valueList
-{
-    return static_cast<CSSValueList*>(DOM_cast<CSSValue*>(_internal));
-}
-
-- (unsigned)length
-{
-    return [self _valueList]->length();
-}
-
-- (DOMCSSValue *)item:(unsigned)index
-{
-    return [DOMCSSValue _valueWith:[self _valueList]->item(index)];
-}
-
-@end
 
 //------------------------------------------------------------------------------------------
 // DOMRGBColor
-
-static CFMutableDictionaryRef wrapperCache = NULL;
-
-id getWrapperForRGB(RGBA32 value)
-{
-    if (!wrapperCache)
-        return nil;
-    return (id)CFDictionaryGetValue(wrapperCache, reinterpret_cast<const void*>(value));
-}
-
-void setWrapperForRGB(id wrapper, RGBA32 value)
-{
-    if (!wrapperCache) {
-        // No need to retain/free either impl key, or id value.  Items will be removed
-        // from the cache in dealloc methods.
-        wrapperCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
-    }
-    CFDictionarySetValue(wrapperCache, reinterpret_cast<const void*>(value), wrapper);
-}
-
-void removeWrapperForRGB(RGBA32 value)
-{
-    if (!wrapperCache)
-        return;
-    CFDictionaryRemoveValue(wrapperCache, reinterpret_cast<const void*>(value));
-}
-
-@implementation DOMRGBColor
-
-- (void)dealloc
-{
-    removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
-    [super finalize];
-}
-
-- (DOMCSSPrimitiveValue *)red
-{
-    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    int value = (rgb >> 16) & 0xFF;
-    return [DOMCSSPrimitiveValue _valueWith:new CSSPrimitiveValue(value, CSSPrimitiveValue::CSS_NUMBER)];
-}
-
-- (DOMCSSPrimitiveValue *)green
-{
-    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    int value = (rgb >> 8) & 0xFF;
-    return [DOMCSSPrimitiveValue _valueWith:new CSSPrimitiveValue(value, CSSPrimitiveValue::CSS_NUMBER)];
-}
-
-- (DOMCSSPrimitiveValue *)blue
-{
-    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    int value = rgb & 0xFF;
-    return [DOMCSSPrimitiveValue _valueWith:new CSSPrimitiveValue(value, CSSPrimitiveValue::CSS_NUMBER)];
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-@end
-
-@implementation DOMRGBColor (WebCoreInternal)
-
-- (id)_initWithRGB:(RGBA32)value
-{
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal*>(value);
-    setWrapperForRGB(self, value);
-    return self;
-}
-
-+ (DOMRGBColor *)_RGBColorWithRGB:(RGBA32)value
-{
-    id cachedInstance;
-    cachedInstance = getWrapperForRGB(value);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithRGB:value] autorelease];
-}
-
-@end
-
-@implementation DOMRGBColor (DOMRGBColorExtensions)
-
-- (DOMCSSPrimitiveValue *)alpha
-{
-    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    float value = (float)Color(rgb).alpha() / 0xFF;
-    return [DOMCSSPrimitiveValue _valueWith:new CSSPrimitiveValue(value, CSSPrimitiveValue::CSS_NUMBER)];
-    
-}
-
-- (NSColor *)color
-{
-    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    return nsColor(Color(rgb));
-}
-
-@end
 
 @implementation DOMRGBColor (WebPrivate)
 
@@ -1094,56 +528,6 @@ void removeWrapperForRGB(RGBA32 value)
 
 //------------------------------------------------------------------------------------------
 // DOMRect
-
-@implementation DOMRect
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<RectImpl*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<RectImpl*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (RectImpl *)_rect
-{
-    return DOM_cast<RectImpl*>(_internal);
-}
-
-- (DOMCSSPrimitiveValue *)top
-{
-    return [DOMCSSPrimitiveValue _valueWith:[self _rect]->top()];
-}
-
-- (DOMCSSPrimitiveValue *)right
-{
-    return [DOMCSSPrimitiveValue _valueWith:[self _rect]->right()];
-}
-
-- (DOMCSSPrimitiveValue *)bottom
-{
-    return [DOMCSSPrimitiveValue _valueWith:[self _rect]->bottom()];
-}
-
-- (DOMCSSPrimitiveValue *)left
-{
-    return [DOMCSSPrimitiveValue _valueWith:[self _rect]->left()];
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-@end
 
 @implementation DOMRect (WebCoreInternal)
 
@@ -1173,51 +557,6 @@ void removeWrapperForRGB(RGBA32 value)
 
 //------------------------------------------------------------------------------------------
 // DOMCounter
-
-@implementation DOMCounter
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<Counter*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<Counter*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (Counter *)_counter
-{
-    return DOM_cast<Counter*>(_internal);
-}
-
-- (NSString *)identifier
-{
-    return [self _counter]->identifier();
-}
-
-- (NSString *)listStyle
-{
-    return [self _counter]->listStyle();
-}
-
-- (NSString *)separator
-{
-    return [self _counter]->separator();
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-@end
 
 @implementation DOMCounter (WebCoreInternal)
 
