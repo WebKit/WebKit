@@ -1,3 +1,25 @@
+2006-09-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Tim H.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4508
+        Layout tests access an external server
+
+        * fast/backgrounds/repeat/noRepeatCorrectClip.html: Use a local resource (it was already present,
+        but the test still pointed to a remote one).
+        * fast/dom/HTMLImageElement/image-src-absolute-url-expected.txt:
+        * fast/dom/HTMLImageElement/image-src-absolute-url.html: Use a non-existent file URL instead of 
+        a non-existent http one.
+        * fast/loader/docLoaderFrame-expected.checksum: Removed.
+        * fast/loader/docLoaderFrame-expected.png: Removed.
+        * fast/loader/docLoaderFrame-expected.txt: Removed.
+        * fast/loader/docLoaderFrame.html: Removed.
+        * http/tests/xmlhttprequest/docLoaderFrame-expected.txt: Added.
+        * http/tests/xmlhttprequest/docLoaderFrame.html: Added.
+        * http/tests/xmlhttprequest/resources/docLoaderFrame-data.html: Added.
+        Use a local resource. Also, turned the test into a text one, and used waitUntilDone to make it 
+        actually work.
+
 2006-09-02  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Justin.

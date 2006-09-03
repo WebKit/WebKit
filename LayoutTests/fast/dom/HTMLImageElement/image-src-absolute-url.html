@@ -3,7 +3,7 @@
 <html>
 <head>
 	<title>Image Tester</title>
-	<base id="foo" href="http://www.apple.com/">
+	<base id="foo" href="file:///does/not/exist/">
 
 <script type="text/javascript" language="javascript">
 	var IconImages = null;
@@ -28,13 +28,13 @@
 		document.images["grey"].src = IconImages["grey"].src;
 			
 		var beforeDiv = document.getElementById("before");
-		beforeDiv.innerHTML = stringResult("document.images[0].src", "http://www.apple.com/test.jpg");
-		beforeDiv.innerHTML += "<br>" + stringResult("IconImages['grey'].src", "http://www.apple.com/test.jpg");
+		beforeDiv.innerHTML = stringResult("document.images[0].src", "file:///does/not/exist/test.jpg");
+		beforeDiv.innerHTML += "<br>" + stringResult("IconImages['grey'].src", "file:///does/not/exist/test.jpg");
 		
-		document.getElementById("foo").setAttribute("href", "http://www.example.com/");
+		document.getElementById("foo").setAttribute("href", "file:///also/does/not/exist/");
 		var afterDiv = document.getElementById("after");
-		afterDiv.innerHTML = stringResult("document.images[0].src", "http://www.apple.com/test.jpg");
-		afterDiv.innerHTML += "<br>" + stringResult("IconImages['grey'].src", "http://www.example.com/test.jpg");
+		afterDiv.innerHTML = stringResult("document.images[0].src", "file:///does/not/exist/test.jpg");
+		afterDiv.innerHTML += "<br>" + stringResult("IconImages['grey'].src", "file:///also/does/not/exist/test.jpg");
 	}
 </script>
 </head>
