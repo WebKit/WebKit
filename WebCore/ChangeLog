@@ -2,6 +2,15 @@
 
         Reviewed by Tim H.
 
+        Continue fixing the build, I forgot this in my previous patch!
+
+        * platform/qt/PathQt.cpp:
+        (WebCore::Path::apply):
+
+2006-09-04  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Tim H.
+
         Fix build on Qt/Linux.
 
         * CMakeLists.txt:

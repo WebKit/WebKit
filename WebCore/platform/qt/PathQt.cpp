@@ -31,6 +31,7 @@
 
 #include "FloatRect.h"
 #include "PlatformString.h"
+#include "AffineTransform.h"
 #include <QPainterPath>
 #include <QMatrix>
 #include <QString>
@@ -230,12 +231,12 @@ void Path::apply(void* info, PathApplierFunction function) const
         switch (cur.type) {
             case QPainterPath::MoveToElement:
                 pelement.type = PathElementMoveToPoint;
-                pelement.points[0] = cur;
+                pelement.points[0] = QPointF(cur);
                 function(info, &pelement);
                 break;
             case QPainterPath::LineToElement:
                 pelement.type = PathElementAddLineToPoint;
-                pelement.points[0] = cur;
+                pelement.points[0] = QPointF(cur);
                 function(info, &pelement);
                 break;
             case QPainterPath::CurveToElement:
@@ -247,9 +248,9 @@ void Path::apply(void* info, PathApplierFunction function) const
                 Q_ASSERT(c2.type == QPainterPath::CurveToDataElement);
 
                 pelement.type = PathElementAddCurveToPoint;
-                pelement.points[0] = cur;
-                pelement.points[1] = c1;
-                pelement.points[2] = c2;
+                pelement.points[0] = QPointF(cur);
+                pelement.points[1] = QPointF(c1);
+                pelement.points[2] = QPointF(c2);
                 function(info, &pelement);
 
                 i += 2;
