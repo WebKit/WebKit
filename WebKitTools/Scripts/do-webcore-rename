@@ -129,6 +129,8 @@ my %renames = (
     "StreamingTextDecoder_h" => "TextCodec_h",
     "StreamingTextDecoderMac_H" => "TextCodecMac_h",
     "StreamingTextDecoderICU_H" => "TextCodecICU_h",
+    "Decoder" => "TextResourceDecoder",
+    "Decoder_h" => "TextResourceDecoder_h",
 );
 
 # rename files
