@@ -261,6 +261,11 @@ void Path::apply(void* info, PathApplierFunction function) const
     }
 }
 
+void Path::transform(const AffineTransform& transform)
+{
+    // FIXME: Implement me!
+}
+
 }
 
 // vim: ts=4 sw=4 et

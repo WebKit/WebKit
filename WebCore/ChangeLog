@@ -1,3 +1,13 @@
+2006-09-04  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Tim H.
+
+        Fix build on Qt/Linux.
+
+        * CMakeLists.txt:
+        * platform/qt/PathQt.cpp:
+        (WebCore::Path::transform):
+
 2006-09-04  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

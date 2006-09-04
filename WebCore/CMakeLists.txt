@@ -585,6 +585,7 @@ set(WebCore_SRCS
     css/CSSSelector.cpp
     css/MediaFeatureNames.cpp
     css/CSSRuleList.cpp
+    css/CSSCharsetRule.cpp
     css/MediaQueryExp.cpp
     css/CSSImportRule.cpp
     css/CSSValueList.cpp
