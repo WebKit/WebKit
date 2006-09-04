@@ -33,7 +33,7 @@
 #include <QTextStream>
 #include <QSocketNotifier>
 
-#include "FrameQt.h"
+#include "DumpRenderTreeClient.h"
 
 namespace WebCore {
 
@@ -55,7 +55,13 @@ public Q_SLOTS:
     void checkLoaded();
 
 private:
+    friend class DumpRenderTreeClient;
+
+    FrameQt* frame() const;
+
+private:
     FrameQt* m_frame;
+    DumpRenderTreeClient* m_client;
 
     QTextStream* m_stdin;
     QSocketNotifier* m_notifier;

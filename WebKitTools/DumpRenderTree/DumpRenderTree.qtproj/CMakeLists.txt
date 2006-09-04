@@ -20,7 +20,7 @@ include_directories(
 
 add_definitions(-Wno-undef -Wno-unused-parameter)
 
-set(DumpRenderTree_SRCS main.cpp DumpRenderTree.cpp)
+set(DumpRenderTree_SRCS main.cpp DumpRenderTree.cpp DumpRenderTreeClient.cpp)
 kde4_automoc(${DumpRenderTree_SRCS})
 kde4_add_executable(DumpRenderTree RUN_UNINSTALLED ${DumpRenderTree_SRCS})
 target_link_libraries(DumpRenderTree ${KDE4_KDECORE_LIBS} WebCore-unity)

@@ -28,9 +28,11 @@
  */
 
 #include "config.h"
+#include "DumpRenderTree.h"
+
+#include "Page.h"
 #include "markup.h"
 #include "Document.h"
-#include "DumpRenderTree.h"
 #include "RenderTreeAsText.h"
 
 #include <QTimer>
@@ -49,11 +51,21 @@ const unsigned int maxViewHeight = 600;
 
 DumpRenderTree::DumpRenderTree()
     : m_frame(0)
+    , m_client(new DumpRenderTreeClient())
     , m_stdin(0)
     , m_notifier()
 {
-    m_frame = new FrameQt(0 /* no toplevel widget */);
-    m_frame->view()->setScrollBarsMode(ScrollBarAlwaysOff);
+    // Initialize WebCore in Qt platform mode...
+    Page* page = new Page();
+    m_frame = new FrameQt(page, 0, m_client);
+
+    page->setMainFrame(m_frame);
+
+    FrameView* view = new FrameView(m_frame);
+    view->setScrollBarsMode(ScrollBarAlwaysOff);
+
+    m_frame->setView(view);
+    view->setParentWidget(0 /* no toplevel widget */);
 
     // Reverse calculations in QAbstractScrollArea::maximumViewportSize()
     QScrollArea* area = qobject_cast<QScrollArea*>(m_frame->view()->qwidget());
@@ -67,6 +79,7 @@ DumpRenderTree::DumpRenderTree()
 DumpRenderTree::~DumpRenderTree()
 {
     delete m_frame;
+    delete m_client;
 
     delete m_stdin;
     delete m_notifier;
@@ -119,6 +132,11 @@ void DumpRenderTree::checkLoaded()
         }
     } else
         QTimer::singleShot(10, this, SLOT(checkLoaded()));
+}
+
+FrameQt* DumpRenderTree::frame() const
+{
+    return m_frame;
 }
 
 }

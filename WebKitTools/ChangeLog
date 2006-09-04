@@ -1,3 +1,21 @@
+2006-09-04  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin.
+
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10644
+        Adjust DumpRenderTree to the FrameQtClient changes.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/CMakeLists.txt:
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::~DumpRenderTree):
+        (WebCore::DumpRenderTree::frame):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTreeClient.cpp: Added.
+        (WebCore::DumpRenderTreeClient::DumpRenderTreeClient):
+        (WebCore::DumpRenderTreeClient::~DumpRenderTreeClient):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTreeClient.h: Added.
+
 2006-09-03  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: More renaming plans.
