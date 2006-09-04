@@ -54,7 +54,10 @@ add_definitions (-DUSE_SYSTEM_MALLOC=1)
 
 add_subdirectory (JavaScriptCore)
 add_subdirectory (WebCore)
-add_subdirectory (WebKitTools/QtLauncher)
 add_subdirectory (WebKitTools/DumpRenderTree/DumpRenderTree.qtproj)
+
+IF (WEBKIT_USE_KDE_SUPPORT)
+    add_subdirectory (WebKitQt/WebKitPart)
+ENDIF (WEBKIT_USE_KDE_SUPPORT)
 
 include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})

@@ -1,0 +1,46 @@
+<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
+<kpartgui name="WebKitPart" version="1">
+<MenuBar>
+ <Menu name="file"><text>&amp;File</text>
+  <Action name="saveBackground" />
+  <Action name="saveDocument" />
+  <Action name="saveFrame" />
+  <Separator />
+  <Action name="printFrame" group="print" />
+ </Menu>
+ <Menu name="edit"><text>&amp;Edit</text>
+  <Action name="selectAll" />
+  <Separator />
+  <Action name="find" />
+  <Action name="findNext" />
+  <Action name="findPrevious" />
+  <Action name="findAheadText" />
+  <Action name="findAheadLink" />
+ </Menu>
+ <Menu name="view"><text>&amp;View</text>
+  <Action name="incFontSizes" />
+  <Action name="decFontSizes" />
+  <Action name="viewDocumentSource" />
+  <Action name="viewPageInfo" />
+  <Action name="setEncoding" />
+  <Action name="useStylesheet" />
+  <ActionList name="debugScriptList" />
+<!--
+<!--
+  <Separator />
+  <Action name="debugRenderTree" />
+  <Action name="debugDOMTree" />
+-->
+ </Menu>
+</MenuBar>
+<ToolBar name="mainToolBar"><text>Main Toolbar</text>
+ <Action name="find" /> 
+ <Separator />
+ <Action name="incFontSizes" />
+ <Action name="decFontSizes" />
+ <ActionList name="loadImages" />
+</ToolBar>
+<ActionProperties>
+ <Action shortcut="F7" name="caretMode" />
+</ActionProperties>
+</kpartgui>

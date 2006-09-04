@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Comment=Embeddable HTML/SVG viewing component
+Comment[x-test]=xxEmbeddable HTML/SVg viewing componentxx
+MimeType=text/html;text/xml;application/xhtml+xml;image/svg+xml;image/svg-xml
+Icon=konqueror
+Name=WebKit
+Name[x-test]=xxWebKitLxx
+ServiceTypes=KParts/ReadOnlyPart,Browser/View
+X-KDE-Library=libWebKitPart
+InitialPreference=10

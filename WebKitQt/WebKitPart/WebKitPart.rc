@@ -1,0 +1,16 @@
+<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
+<kpartgui name="WebKitPart" version="1">
+<MenuBar>
+ <Menu name="edit"><text>&amp;Edit</text>
+  <Action name="selectAll" />
+  <Separator />
+  <Action name="find" />
+  <Action name="findNext" />
+  <Action name="findPrevious" />
+  <Action name="findAheadText" />
+  <Action name="findAheadLink" />
+ </Menu>
+</MenuBar>
+<ActionProperties>
+</ActionProperties>
+</kpartgui>

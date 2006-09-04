@@ -1,0 +1,10 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.WebKitPart">
+    <property name="url" type="s" access="read"/>
+    <method name="closeURL">
+      <arg type="b" direction="out"/>
+    </method>
+  </interface>
+</node>

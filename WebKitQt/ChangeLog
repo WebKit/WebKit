@@ -1,0 +1,43 @@
+2006-09-04  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin. Final polish by Sam.
+
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10644
+        Add WebKitPart, an embeddable KPart for the KDE platform.
+
+        * WebKitPart/CMakeLists.txt: Added.
+        * WebKitPart/WebKitFactory.cpp: Added.
+        (WebKitFactory::WebKitFactory):
+        (WebKitFactory::~WebKitFactory):
+        (WebKitFactory::createPartObject):
+        (WebKitFactory::instance):
+        (WebKitFactory::ref):
+        (WebKitFactory::deref):
+        (init_libWebKitPart):
+        * WebKitPart/WebKitFactory.h: Added.
+        * WebKitPart/WebKitPart.cpp: Added.
+        (WebKitPart::WebKitPart):
+        (WebKitPart::~WebKitPart):
+        (WebKitPart::openFile):
+        (WebKitPart::openUrl):
+        (WebKitPart::closeUrl):
+        (WebKitPart::parentPart):
+        (WebKitPart::frame):
+        (WebKitPart::initView):
+        * WebKitPart/WebKitPart.desktop: Added.
+        * WebKitPart/WebKitPart.h: Added.
+        (WebKitPart::):
+        * WebKitPart/WebKitPart.rc: Added.
+        * WebKitPart/WebKitPartBrowser.rc: Added.
+        * WebKitPart/WebKitPartClient.cpp: Added.
+        (WebKitPartClient::WebKitPartClient):
+        (WebKitPartClient::~WebKitPartClient):
+        * WebKitPart/WebKitPartClient.h: Added.
+        * WebKitPart/WebKitPartInterface.cpp: Added.
+        (WebKitPartInterface::WebKitPartInterface):
+        (WebKitPartInterface::~WebKitPartInterface):
+        (WebKitPartInterface::url):
+        (WebKitPartInterface::closeURL):
+        * WebKitPart/WebKitPartInterface.h: Added.
+        * WebKitPart/org.kde.WebKitPart.xml: Added.
+
