@@ -1,3 +1,16 @@
+2006-09-04  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase needed for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6546
+        clipPath data does not respect transforms
+
+        * svg/custom/clip-path-with-transform-expected.checksum: Added.
+        * svg/custom/clip-path-with-transform-expected.png: Added.
+        * svg/custom/clip-path-with-transform-expected.txt: Added.
+        * svg/custom/clip-path-with-transform.svg: Added.
+
 2006-09-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Tim H.

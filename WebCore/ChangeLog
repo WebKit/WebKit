@@ -2,6 +2,19 @@
 
         Reviewed by Eric.
 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6546
+        clipPath data does not respect transforms
+
+        Get the transform from the dom element and adjust
+        the clip path with it.
+
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (SVGClipPathElement::canvasResource):
+
+2006-09-04  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
         This code should have gone in as part of:
         http://bugzilla.opendarwin.org/show_bug.cgi?id=10696
         It addresses the comments there, also we use double instead
