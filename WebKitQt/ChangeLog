@@ -1,5 +1,16 @@
 2006-09-04  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Tim H.
+
+        Fixes last part of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10644
+        Move QtLauncher down to WebKitQt.
+
+        * QtLauncher/CMakeLists.txt: Added.
+        * QtLauncher/main.cpp: Added.
+        (main):
+
+2006-09-04  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Darin. Final polish by Sam.
 
         Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10644

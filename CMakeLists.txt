@@ -56,6 +56,8 @@ add_subdirectory (JavaScriptCore)
 add_subdirectory (WebCore)
 add_subdirectory (WebKitTools/DumpRenderTree/DumpRenderTree.qtproj)
 
+add_subdirectory (WebKitQt/QtLauncher)
+
 IF (WEBKIT_USE_KDE_SUPPORT)
     add_subdirectory (WebKitQt/WebKitPart)
 ENDIF (WEBKIT_USE_KDE_SUPPORT)

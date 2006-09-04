@@ -60,12 +60,14 @@ int main(int argc, char **argv)
      
     QWidget topLevel;
     QBoxLayout *l = new QVBoxLayout(&topLevel);
-        
-    FrameQt *f = new FrameQt(&topLevel);
+ 
+    // Initialize WebCore in Qt platform mode...
+    Page* page = new Page();
+    Frame* frame = new FrameQt(page, 0, new FrameQtClientDefault());
 
-    l->addWidget(f->view()->qwidget());
+    l->addWidget(frame->view()->qwidget());
     l->activate();
-    f->view()->qwidget()->show();
+    frame->view()->qwidget()->show();
 
     topLevel.show();
 
@@ -76,9 +78,9 @@ int main(int argc, char **argv)
     else
         url = args->arg(0);
 
-    f->openURL(KURL(url.toLatin1()));
+    frame->openURL(KURL(url.toLatin1()));
     
     app.exec();
-    delete f;
+    delete frame;
     return 0;
 }
