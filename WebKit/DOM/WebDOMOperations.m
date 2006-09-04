@@ -204,10 +204,10 @@
 
 - (NSArray *)_subresourceURLs
 {
-    NSString *name = [self name];
-    if ([name _webkit_isCaseInsensitiveEqualToString:@"data"] ||
-        [name _webkit_isCaseInsensitiveEqualToString:@"movie"] ||
-        [name _webkit_isCaseInsensitiveEqualToString:@"src"]) {
+    NSString *paramName = [self name];
+    if ([paramName _webkit_isCaseInsensitiveEqualToString:@"data"] ||
+        [paramName _webkit_isCaseInsensitiveEqualToString:@"movie"] ||
+        [paramName _webkit_isCaseInsensitiveEqualToString:@"src"]) {
         return [self _URLsFromSelectors:@selector(value), nil];
     }
     return nil;

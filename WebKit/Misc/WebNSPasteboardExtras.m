@@ -35,7 +35,7 @@
 #import "WebURLsWithTitles.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/Assertions.h>
-#import <WebCore/DOMPrivate.h>
+#import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 
 NSString *WebURLPboardType = nil;

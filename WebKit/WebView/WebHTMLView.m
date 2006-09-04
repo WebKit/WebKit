@@ -2219,7 +2219,7 @@ static WebHTMLView *lastHitView = nil;
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             DOMCSSStyleDeclaration *style = [self _emptyStyle];
-            [style setProperty:@"-khtml-text-decorations-in-effect" :@"underline" :@""];
+            [style setProperty:@"-khtml-text-decorations-in-effect" value:@"underline" priority:@""];
             [menuItem setState:[[self _bridge] selectionHasStyle:style]];
         }
         return [self _canEditRichly];
@@ -3830,11 +3830,11 @@ done:
     int underlineInt = [[dictionary objectForKey:NSUnderlineStyleAttributeName] intValue];
     // FIXME: Underline wins here if we have both (see bug 3790443).
     if (strikethroughInt == NSUnderlineStyleNone && underlineInt == NSUnderlineStyleNone)
-        [style setProperty:@"-khtml-text-decorations-in-effect" :@"none" :@""];
+        [style setProperty:@"-khtml-text-decorations-in-effect" value:@"none" priority:@""];
     else if (underlineInt == NSUnderlineStyleNone)
-        [style setProperty:@"-khtml-text-decorations-in-effect" :@"line-through" :@""];
+        [style setProperty:@"-khtml-text-decorations-in-effect" value:@"line-through" priority:@""];
     else
-        [style setProperty:@"-khtml-text-decorations-in-effect" :@"underline" :@""];
+        [style setProperty:@"-khtml-text-decorations-in-effect" value:@"underline" priority:@""];
 
     return style;
 }
@@ -4123,10 +4123,10 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     int sb = [[b objectForKey:NSStrikethroughStyleAttributeName] intValue];
     if (sa == sb) {
         if (sa == NSUnderlineStyleNone)
-            [style setProperty:@"-khtml-text-decorations-in-effect" :@"none" :@""]; 
+            [style setProperty:@"-khtml-text-decorations-in-effect" value:@"none" priority:@""]; 
             // we really mean "no line-through" rather than "none"
         else
-            [style setProperty:@"-khtml-text-decorations-in-effect" :@"line-through" :@""];
+            [style setProperty:@"-khtml-text-decorations-in-effect" value:@"line-through" priority:@""];
             // we really mean "add line-through" rather than "line-through"
     }
 
@@ -4145,10 +4145,10 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     int ub = [[b objectForKey:NSUnderlineStyleAttributeName] intValue];
     if (ua == ub) {
         if (ua == NSUnderlineStyleNone)
-            [style setProperty:@"-khtml-text-decorations-in-effect" :@"none" :@""];
+            [style setProperty:@"-khtml-text-decorations-in-effect" value:@"none" priority:@""];
             // we really mean "no underline" rather than "none"
         else
-            [style setProperty:@"-khtml-text-decorations-in-effect" :@"underline" :@""];
+            [style setProperty:@"-khtml-text-decorations-in-effect" value:@"underline" priority:@""];
             // we really mean "add underline" rather than "underline"
     }
 
@@ -4545,9 +4545,9 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     // Despite the name, this method is actually supposed to toggle underline.
     // FIXME: This currently clears overline, line-through, and blink as an unwanted side effect.
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setProperty:@"-khtml-text-decorations-in-effect" :@"underline" :@""];
+    [style setProperty:@"-khtml-text-decorations-in-effect" value:@"underline" priority:@""];
     if ([[self _bridge] selectionStartHasStyle:style])
-        [style setProperty:@"-khtml-text-decorations-in-effect" :@"none" :@""];
+        [style setProperty:@"-khtml-text-decorations-in-effect" value:@"none" priority:@""];
     [self _applyStyleToSelection:style withUndoAction:WebUndoActionUnderline];
 }
 
@@ -5763,7 +5763,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         if (!color)
             return NO;
         DOMCSSStyleDeclaration *style = [self _emptyStyle];
-        [style setProperty:@"color" :[self _colorAsString:color] :@""];
+        [style setProperty:@"color" value:[self _colorAsString:color] priority:@""];
         if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[innerBridge selectedDOMRange]]) {
             [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
             [innerBridge applyStyle:style withUndoAction:WebUndoActionSetColor];

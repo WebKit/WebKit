@@ -29,6 +29,7 @@
 #import "DOMCSS.h"
 
 #import "DOMCSSInternal.h"
+#import "DOMPrivate.h"
 #import "CSSCharsetRule.h"
 #import "CSSFontFaceRule.h"
 #import "CSSImportRule.h"
@@ -438,7 +439,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setAzimuth:(NSString *)azimuth
 {
-    [self setProperty:@"azimuth" :azimuth :@""];
+    [self setProperty:@"azimuth" value:azimuth priority:@""];
 }
 
 - (NSString *)background
@@ -448,7 +449,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBackground:(NSString *)background
 {
-    [self setProperty:@"background" :background :@""];
+    [self setProperty:@"background" value:background priority:@""];
 }
 
 - (NSString *)backgroundAttachment
@@ -458,7 +459,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBackgroundAttachment:(NSString *)backgroundAttachment
 {
-    [self setProperty:@"background-attachment" :backgroundAttachment :@""];
+    [self setProperty:@"background-attachment" value:backgroundAttachment priority:@""];
 }
 
 - (NSString *)backgroundColor
@@ -468,7 +469,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBackgroundColor:(NSString *)backgroundColor
 {
-    [self setProperty:@"background-color" :backgroundColor :@""];
+    [self setProperty:@"background-color" value:backgroundColor priority:@""];
 }
 
 - (NSString *)backgroundImage
@@ -478,7 +479,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBackgroundImage:(NSString *)backgroundImage
 {
-    [self setProperty:@"background-image" :backgroundImage :@""];
+    [self setProperty:@"background-image" value:backgroundImage priority:@""];
 }
 
 - (NSString *)backgroundPosition
@@ -488,7 +489,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBackgroundPosition:(NSString *)backgroundPosition
 {
-    [self setProperty:@"background-position" :backgroundPosition :@""];
+    [self setProperty:@"background-position" value:backgroundPosition priority:@""];
 }
 
 - (NSString *)backgroundRepeat
@@ -498,7 +499,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBackgroundRepeat:(NSString *)backgroundRepeat
 {
-    [self setProperty:@"background-repeat" :backgroundRepeat :@""];
+    [self setProperty:@"background-repeat" value:backgroundRepeat priority:@""];
 }
 
 - (NSString *)border
@@ -508,7 +509,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorder:(NSString *)border
 {
-    [self setProperty:@"border" :border :@""];
+    [self setProperty:@"border" value:border priority:@""];
 }
 
 - (NSString *)borderCollapse
@@ -518,7 +519,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderCollapse:(NSString *)borderCollapse
 {
-    [self setProperty:@"border-collapse" :borderCollapse :@""];
+    [self setProperty:@"border-collapse" value:borderCollapse priority:@""];
 }
 
 - (NSString *)borderColor
@@ -528,7 +529,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderColor:(NSString *)borderColor
 {
-    [self setProperty:@"border-color" :borderColor :@""];
+    [self setProperty:@"border-color" value:borderColor priority:@""];
 }
 
 - (NSString *)borderSpacing
@@ -538,7 +539,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderSpacing:(NSString *)borderSpacing
 {
-    [self setProperty:@"border-spacing" :borderSpacing :@""];
+    [self setProperty:@"border-spacing" value:borderSpacing priority:@""];
 }
 
 - (NSString *)borderStyle
@@ -548,7 +549,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderStyle:(NSString *)borderStyle
 {
-    [self setProperty:@"border-style" :borderStyle :@""];
+    [self setProperty:@"border-style" value:borderStyle priority:@""];
 }
 
 - (NSString *)borderTop
@@ -558,7 +559,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderTop:(NSString *)borderTop
 {
-    [self setProperty:@"border-top" :borderTop :@""];
+    [self setProperty:@"border-top" value:borderTop priority:@""];
 }
 
 - (NSString *)borderRight
@@ -568,7 +569,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderRight:(NSString *)borderRight
 {
-    [self setProperty:@"border-right" :borderRight :@""];
+    [self setProperty:@"border-right" value:borderRight priority:@""];
 }
 
 - (NSString *)borderBottom
@@ -578,7 +579,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderBottom:(NSString *)borderBottom
 {
-    [self setProperty:@"border-bottom" :borderBottom :@""];
+    [self setProperty:@"border-bottom" value:borderBottom priority:@""];
 }
 
 - (NSString *)borderLeft
@@ -588,7 +589,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderLeft:(NSString *)borderLeft
 {
-    [self setProperty:@"border-left" :borderLeft :@""];
+    [self setProperty:@"border-left" value:borderLeft priority:@""];
 }
 
 - (NSString *)borderTopColor
@@ -598,7 +599,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderTopColor:(NSString *)borderTopColor
 {
-    [self setProperty:@"border-top-color" :borderTopColor :@""];
+    [self setProperty:@"border-top-color" value:borderTopColor priority:@""];
 }
 
 - (NSString *)borderRightColor
@@ -608,7 +609,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderRightColor:(NSString *)borderRightColor
 {
-    [self setProperty:@"border-right-color" :borderRightColor :@""];
+    [self setProperty:@"border-right-color" value:borderRightColor priority:@""];
 }
 
 - (NSString *)borderBottomColor
@@ -618,7 +619,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderBottomColor:(NSString *)borderBottomColor
 {
-    [self setProperty:@"border-bottom-color" :borderBottomColor :@""];
+    [self setProperty:@"border-bottom-color" value:borderBottomColor priority:@""];
 }
 
 - (NSString *)borderLeftColor
@@ -628,7 +629,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderLeftColor:(NSString *)borderLeftColor
 {
-    [self setProperty:@"border-left-color" :borderLeftColor :@""];
+    [self setProperty:@"border-left-color" value:borderLeftColor priority:@""];
 }
 
 - (NSString *)borderTopStyle
@@ -638,7 +639,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderTopStyle:(NSString *)borderTopStyle
 {
-    [self setProperty:@"border-top-style" :borderTopStyle :@""];
+    [self setProperty:@"border-top-style" value:borderTopStyle priority:@""];
 }
 
 - (NSString *)borderRightStyle
@@ -648,7 +649,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderRightStyle:(NSString *)borderRightStyle
 {
-    [self setProperty:@"border-right-style" :borderRightStyle :@""];
+    [self setProperty:@"border-right-style" value:borderRightStyle priority:@""];
 }
 
 - (NSString *)borderBottomStyle
@@ -658,7 +659,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderBottomStyle:(NSString *)borderBottomStyle
 {
-    [self setProperty:@"border-bottom-style" :borderBottomStyle :@""];
+    [self setProperty:@"border-bottom-style" value:borderBottomStyle priority:@""];
 }
 
 - (NSString *)borderLeftStyle
@@ -668,7 +669,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderLeftStyle:(NSString *)borderLeftStyle
 {
-    [self setProperty:@"border-left-style" :borderLeftStyle :@""];
+    [self setProperty:@"border-left-style" value:borderLeftStyle priority:@""];
 }
 
 - (NSString *)borderTopWidth
@@ -678,7 +679,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderTopWidth:(NSString *)borderTopWidth
 {
-    [self setProperty:@"border-top-width" :borderTopWidth :@""];
+    [self setProperty:@"border-top-width" value:borderTopWidth priority:@""];
 }
 
 - (NSString *)borderRightWidth
@@ -688,7 +689,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderRightWidth:(NSString *)borderRightWidth
 {
-    [self setProperty:@"border-right-width" :borderRightWidth :@""];
+    [self setProperty:@"border-right-width" value:borderRightWidth priority:@""];
 }
 
 - (NSString *)borderBottomWidth
@@ -698,7 +699,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderBottomWidth:(NSString *)borderBottomWidth
 {
-    [self setProperty:@"border-bottom-width" :borderBottomWidth :@""];
+    [self setProperty:@"border-bottom-width" value:borderBottomWidth priority:@""];
 }
 
 - (NSString *)borderLeftWidth
@@ -708,7 +709,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderLeftWidth:(NSString *)borderLeftWidth
 {
-    [self setProperty:@"border-left-width" :borderLeftWidth :@""];
+    [self setProperty:@"border-left-width" value:borderLeftWidth priority:@""];
 }
 
 - (NSString *)borderWidth
@@ -718,7 +719,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBorderWidth:(NSString *)borderWidth
 {
-    [self setProperty:@"border-width" :borderWidth :@""];
+    [self setProperty:@"border-width" value:borderWidth priority:@""];
 }
 
 - (NSString *)bottom
@@ -728,7 +729,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setBottom:(NSString *)bottom
 {
-    [self setProperty:@"bottom" :bottom :@""];
+    [self setProperty:@"bottom" value:bottom priority:@""];
 }
 
 - (NSString *)captionSide
@@ -738,7 +739,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setCaptionSide:(NSString *)captionSide
 {
-    [self setProperty:@"caption-side" :captionSide :@""];
+    [self setProperty:@"caption-side" value:captionSide priority:@""];
 }
 
 - (NSString *)clear
@@ -748,7 +749,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setClear:(NSString *)clear
 {
-    [self setProperty:@"clear" :clear :@""];
+    [self setProperty:@"clear" value:clear priority:@""];
 }
 
 - (NSString *)clip
@@ -758,7 +759,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setClip:(NSString *)clip
 {
-    [self setProperty:@"clip" :clip :@""];
+    [self setProperty:@"clip" value:clip priority:@""];
 }
 
 - (NSString *)color
@@ -768,7 +769,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setColor:(NSString *)color
 {
-    [self setProperty:@"color" :color :@""];
+    [self setProperty:@"color" value:color priority:@""];
 }
 
 - (NSString *)content
@@ -778,7 +779,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setContent:(NSString *)content
 {
-    [self setProperty:@"content" :content :@""];
+    [self setProperty:@"content" value:content priority:@""];
 }
 
 - (NSString *)counterIncrement
@@ -788,7 +789,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setCounterIncrement:(NSString *)counterIncrement
 {
-    [self setProperty:@"counter-increment" :counterIncrement :@""];
+    [self setProperty:@"counter-increment" value:counterIncrement priority:@""];
 }
 
 - (NSString *)counterReset
@@ -798,7 +799,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setCounterReset:(NSString *)counterReset
 {
-    [self setProperty:@"counter-reset" :counterReset :@""];
+    [self setProperty:@"counter-reset" value:counterReset priority:@""];
 }
 
 - (NSString *)cue
@@ -808,7 +809,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setCue:(NSString *)cue
 {
-    [self setProperty:@"cue" :cue :@""];
+    [self setProperty:@"cue" value:cue priority:@""];
 }
 
 - (NSString *)cueAfter
@@ -818,7 +819,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setCueAfter:(NSString *)cueAfter
 {
-    [self setProperty:@"cue-after" :cueAfter :@""];
+    [self setProperty:@"cue-after" value:cueAfter priority:@""];
 }
 
 - (NSString *)cueBefore
@@ -828,7 +829,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setCueBefore:(NSString *)cueBefore
 {
-    [self setProperty:@"cue-before" :cueBefore :@""];
+    [self setProperty:@"cue-before" value:cueBefore priority:@""];
 }
 
 - (NSString *)cursor
@@ -838,7 +839,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setCursor:(NSString *)cursor
 {
-    [self setProperty:@"cursor" :cursor :@""];
+    [self setProperty:@"cursor" value:cursor priority:@""];
 }
 
 - (NSString *)direction
@@ -848,7 +849,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setDirection:(NSString *)direction
 {
-    [self setProperty:@"direction" :direction :@""];
+    [self setProperty:@"direction" value:direction priority:@""];
 }
 
 - (NSString *)display
@@ -858,7 +859,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setDisplay:(NSString *)display
 {
-    [self setProperty:@"display" :display :@""];
+    [self setProperty:@"display" value:display priority:@""];
 }
 
 - (NSString *)elevation
@@ -868,7 +869,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setElevation:(NSString *)elevation
 {
-    [self setProperty:@"elevation" :elevation :@""];
+    [self setProperty:@"elevation" value:elevation priority:@""];
 }
 
 - (NSString *)emptyCells
@@ -878,7 +879,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setEmptyCells:(NSString *)emptyCells
 {
-    [self setProperty:@"empty-cells" :emptyCells :@""];
+    [self setProperty:@"empty-cells" value:emptyCells priority:@""];
 }
 
 - (NSString *)cssFloat
@@ -888,7 +889,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setCssFloat:(NSString *)cssFloat
 {
-    [self setProperty:@"css-float" :cssFloat :@""];
+    [self setProperty:@"css-float" value:cssFloat priority:@""];
 }
 
 - (NSString *)font
@@ -898,7 +899,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setFont:(NSString *)font
 {
-    [self setProperty:@"font" :font :@""];
+    [self setProperty:@"font" value:font priority:@""];
 }
 
 - (NSString *)fontFamily
@@ -908,7 +909,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setFontFamily:(NSString *)fontFamily
 {
-    [self setProperty:@"font-family" :fontFamily :@""];
+    [self setProperty:@"font-family" value:fontFamily priority:@""];
 }
 
 - (NSString *)fontSize
@@ -918,7 +919,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setFontSize:(NSString *)fontSize
 {
-    [self setProperty:@"font-size" :fontSize :@""];
+    [self setProperty:@"font-size" value:fontSize priority:@""];
 }
 
 - (NSString *)fontSizeAdjust
@@ -928,7 +929,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setFontSizeAdjust:(NSString *)fontSizeAdjust
 {
-    [self setProperty:@"font-size-adjust" :fontSizeAdjust :@""];
+    [self setProperty:@"font-size-adjust" value:fontSizeAdjust priority:@""];
 }
 
 - (NSString *)_fontSizeDelta
@@ -938,7 +939,7 @@ typedef DOMWindow AbstractView;
 
 - (void)_setFontSizeDelta:(NSString *)fontSizeDelta
 {
-    [self setProperty:@"-webkit-font-size-delta" :fontSizeDelta :@""];
+    [self setProperty:@"-webkit-font-size-delta" value:fontSizeDelta priority:@""];
 }
 
 - (NSString *)fontStretch
@@ -948,7 +949,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setFontStretch:(NSString *)fontStretch
 {
-    [self setProperty:@"font-stretch" :fontStretch :@""];
+    [self setProperty:@"font-stretch" value:fontStretch priority:@""];
 }
 
 - (NSString *)fontStyle
@@ -958,7 +959,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setFontStyle:(NSString *)fontStyle
 {
-    [self setProperty:@"font-style" :fontStyle :@""];
+    [self setProperty:@"font-style" value:fontStyle priority:@""];
 }
 
 - (NSString *)fontVariant
@@ -968,7 +969,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setFontVariant:(NSString *)fontVariant
 {
-    [self setProperty:@"font-variant" :fontVariant :@""];
+    [self setProperty:@"font-variant" value:fontVariant priority:@""];
 }
 
 - (NSString *)fontWeight
@@ -978,7 +979,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setFontWeight:(NSString *)fontWeight
 {
-    [self setProperty:@"font-weight" :fontWeight :@""];
+    [self setProperty:@"font-weight" value:fontWeight priority:@""];
 }
 
 - (NSString *)height
@@ -988,7 +989,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setHeight:(NSString *)height
 {
-    [self setProperty:@"height" :height :@""];
+    [self setProperty:@"height" value:height priority:@""];
 }
 
 - (NSString *)left
@@ -998,7 +999,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setLeft:(NSString *)left
 {
-    [self setProperty:@"left" :left :@""];
+    [self setProperty:@"left" value:left priority:@""];
 }
 
 - (NSString *)letterSpacing
@@ -1008,7 +1009,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setLetterSpacing:(NSString *)letterSpacing
 {
-    [self setProperty:@"letter-spacing" :letterSpacing :@""];
+    [self setProperty:@"letter-spacing" value:letterSpacing priority:@""];
 }
 
 - (NSString *)lineHeight
@@ -1018,7 +1019,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setLineHeight:(NSString *)lineHeight
 {
-    [self setProperty:@"line-height" :lineHeight :@""];
+    [self setProperty:@"line-height" value:lineHeight priority:@""];
 }
 
 - (NSString *)listStyle
@@ -1028,7 +1029,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setListStyle:(NSString *)listStyle
 {
-    [self setProperty:@"list-style" :listStyle :@""];
+    [self setProperty:@"list-style" value:listStyle priority:@""];
 }
 
 - (NSString *)listStyleImage
@@ -1038,7 +1039,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setListStyleImage:(NSString *)listStyleImage
 {
-    [self setProperty:@"list-style-image" :listStyleImage :@""];
+    [self setProperty:@"list-style-image" value:listStyleImage priority:@""];
 }
 
 - (NSString *)listStylePosition
@@ -1048,7 +1049,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setListStylePosition:(NSString *)listStylePosition
 {
-    [self setProperty:@"list-style-position" :listStylePosition :@""];
+    [self setProperty:@"list-style-position" value:listStylePosition priority:@""];
 }
 
 - (NSString *)listStyleType
@@ -1058,7 +1059,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setListStyleType:(NSString *)listStyleType
 {
-    [self setProperty:@"list-style-type" :listStyleType :@""];
+    [self setProperty:@"list-style-type" value:listStyleType priority:@""];
 }
 
 - (NSString *)margin
@@ -1068,7 +1069,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setMargin:(NSString *)margin
 {
-    [self setProperty:@"margin" :margin :@""];
+    [self setProperty:@"margin" value:margin priority:@""];
 }
 
 - (NSString *)marginTop
@@ -1078,7 +1079,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setMarginTop:(NSString *)marginTop
 {
-    [self setProperty:@"margin-top" :marginTop :@""];
+    [self setProperty:@"margin-top" value:marginTop priority:@""];
 }
 
 - (NSString *)marginRight
@@ -1088,7 +1089,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setMarginRight:(NSString *)marginRight
 {
-    [self setProperty:@"margin-right" :marginRight :@""];
+    [self setProperty:@"margin-right" value:marginRight priority:@""];
 }
 
 - (NSString *)marginBottom
@@ -1098,7 +1099,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setMarginBottom:(NSString *)marginBottom
 {
-    [self setProperty:@"margin-bottom" :marginBottom :@""];
+    [self setProperty:@"margin-bottom" value:marginBottom priority:@""];
 }
 
 - (NSString *)marginLeft
@@ -1108,7 +1109,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setMarginLeft:(NSString *)marginLeft
 {
-    [self setProperty:@"margin-left" :marginLeft :@""];
+    [self setProperty:@"margin-left" value:marginLeft priority:@""];
 }
 
 - (NSString *)markerOffset
@@ -1118,7 +1119,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setMarkerOffset:(NSString *)markerOffset
 {
-    [self setProperty:@"marker-offset" :markerOffset :@""];
+    [self setProperty:@"marker-offset" value:markerOffset priority:@""];
 }
 
 - (NSString *)marks
@@ -1128,7 +1129,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setMarks:(NSString *)marks
 {
-    [self setProperty:@"marks" :marks :@""];
+    [self setProperty:@"marks" value:marks priority:@""];
 }
 
 - (NSString *)maxHeight
@@ -1138,7 +1139,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setMaxHeight:(NSString *)maxHeight
 {
-    [self setProperty:@"max-height" :maxHeight :@""];
+    [self setProperty:@"max-height" value:maxHeight priority:@""];
 }
 
 - (NSString *)maxWidth
@@ -1148,7 +1149,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setMaxWidth:(NSString *)maxWidth
 {
-    [self setProperty:@"max-width" :maxWidth :@""];
+    [self setProperty:@"max-width" value:maxWidth priority:@""];
 }
 
 - (NSString *)minHeight
@@ -1158,7 +1159,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setMinHeight:(NSString *)minHeight
 {
-    [self setProperty:@"min-height" :minHeight :@""];
+    [self setProperty:@"min-height" value:minHeight priority:@""];
 }
 
 - (NSString *)minWidth
@@ -1168,7 +1169,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setMinWidth:(NSString *)minWidth
 {
-    [self setProperty:@"min-width" :minWidth :@""];
+    [self setProperty:@"min-width" value:minWidth priority:@""];
 }
 
 - (NSString *)orphans
@@ -1178,7 +1179,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setOrphans:(NSString *)orphans
 {
-    [self setProperty:@"orphans" :orphans :@""];
+    [self setProperty:@"orphans" value:orphans priority:@""];
 }
 
 - (NSString *)outline
@@ -1188,7 +1189,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setOutline:(NSString *)outline
 {
-    [self setProperty:@"outline" :outline :@""];
+    [self setProperty:@"outline" value:outline priority:@""];
 }
 
 - (NSString *)outlineColor
@@ -1198,7 +1199,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setOutlineColor:(NSString *)outlineColor
 {
-    [self setProperty:@"outline-color" :outlineColor :@""];
+    [self setProperty:@"outline-color" value:outlineColor priority:@""];
 }
 
 - (NSString *)outlineStyle
@@ -1208,7 +1209,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setOutlineStyle:(NSString *)outlineStyle
 {
-    [self setProperty:@"outline-style" :outlineStyle :@""];
+    [self setProperty:@"outline-style" value:outlineStyle priority:@""];
 }
 
 - (NSString *)outlineWidth
@@ -1218,7 +1219,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setOutlineWidth:(NSString *)outlineWidth
 {
-    [self setProperty:@"outline-width" :outlineWidth :@""];
+    [self setProperty:@"outline-width" value:outlineWidth priority:@""];
 }
 
 - (NSString *)overflow
@@ -1228,7 +1229,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setOverflow:(NSString *)overflow
 {
-    [self setProperty:@"overflow" :overflow :@""];
+    [self setProperty:@"overflow" value:overflow priority:@""];
 }
 
 - (NSString *)padding
@@ -1238,7 +1239,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPadding:(NSString *)padding
 {
-    [self setProperty:@"padding" :padding :@""];
+    [self setProperty:@"padding" value:padding priority:@""];
 }
 
 - (NSString *)paddingTop
@@ -1248,7 +1249,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPaddingTop:(NSString *)paddingTop
 {
-    [self setProperty:@"padding-top" :paddingTop :@""];
+    [self setProperty:@"padding-top" value:paddingTop priority:@""];
 }
 
 - (NSString *)paddingRight
@@ -1258,7 +1259,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPaddingRight:(NSString *)paddingRight
 {
-    [self setProperty:@"padding-right" :paddingRight :@""];
+    [self setProperty:@"padding-right" value:paddingRight priority:@""];
 }
 
 - (NSString *)paddingBottom
@@ -1268,7 +1269,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPaddingBottom:(NSString *)paddingBottom
 {
-    [self setProperty:@"padding-bottom" :paddingBottom :@""];
+    [self setProperty:@"padding-bottom" value:paddingBottom priority:@""];
 }
 
 - (NSString *)paddingLeft
@@ -1278,7 +1279,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPaddingLeft:(NSString *)paddingLeft
 {
-    [self setProperty:@"padding-left" :paddingLeft :@""];
+    [self setProperty:@"padding-left" value:paddingLeft priority:@""];
 }
 
 - (NSString *)page
@@ -1288,7 +1289,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPage:(NSString *)page
 {
-    [self setProperty:@"page" :page :@""];
+    [self setProperty:@"page" value:page priority:@""];
 }
 
 - (NSString *)pageBreakAfter
@@ -1298,7 +1299,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPageBreakAfter:(NSString *)pageBreakAfter
 {
-    [self setProperty:@"page-break-after" :pageBreakAfter :@""];
+    [self setProperty:@"page-break-after" value:pageBreakAfter priority:@""];
 }
 
 - (NSString *)pageBreakBefore
@@ -1308,7 +1309,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPageBreakBefore:(NSString *)pageBreakBefore
 {
-    [self setProperty:@"page-break-before" :pageBreakBefore :@""];
+    [self setProperty:@"page-break-before" value:pageBreakBefore priority:@""];
 }
 
 - (NSString *)pageBreakInside
@@ -1318,7 +1319,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPageBreakInside:(NSString *)pageBreakInside
 {
-    [self setProperty:@"page-break-inside" :pageBreakInside :@""];
+    [self setProperty:@"page-break-inside" value:pageBreakInside priority:@""];
 }
 
 - (NSString *)pause
@@ -1328,7 +1329,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPause:(NSString *)pause
 {
-    [self setProperty:@"pause" :pause :@""];
+    [self setProperty:@"pause" value:pause priority:@""];
 }
 
 - (NSString *)pauseAfter
@@ -1338,7 +1339,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPauseAfter:(NSString *)pauseAfter
 {
-    [self setProperty:@"pause-after" :pauseAfter :@""];
+    [self setProperty:@"pause-after" value:pauseAfter priority:@""];
 }
 
 - (NSString *)pauseBefore
@@ -1348,7 +1349,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPauseBefore:(NSString *)pauseBefore
 {
-    [self setProperty:@"pause-before" :pauseBefore :@""];
+    [self setProperty:@"pause-before" value:pauseBefore priority:@""];
 }
 
 - (NSString *)pitch
@@ -1358,7 +1359,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPitch:(NSString *)pitch
 {
-    [self setProperty:@"pitch" :pitch :@""];
+    [self setProperty:@"pitch" value:pitch priority:@""];
 }
 
 - (NSString *)pitchRange
@@ -1368,7 +1369,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPitchRange:(NSString *)pitchRange
 {
-    [self setProperty:@"pitch-range" :pitchRange :@""];
+    [self setProperty:@"pitch-range" value:pitchRange priority:@""];
 }
 
 - (NSString *)playDuring
@@ -1378,7 +1379,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPlayDuring:(NSString *)playDuring
 {
-    [self setProperty:@"play-during" :playDuring :@""];
+    [self setProperty:@"play-during" value:playDuring priority:@""];
 }
 
 - (NSString *)position
@@ -1388,7 +1389,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setPosition:(NSString *)position
 {
-    [self setProperty:@"position" :position :@""];
+    [self setProperty:@"position" value:position priority:@""];
 }
 
 - (NSString *)quotes
@@ -1398,7 +1399,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setQuotes:(NSString *)quotes
 {
-    [self setProperty:@"quotes" :quotes :@""];
+    [self setProperty:@"quotes" value:quotes priority:@""];
 }
 
 - (NSString *)richness
@@ -1408,7 +1409,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setRichness:(NSString *)richness
 {
-    [self setProperty:@"richness" :richness :@""];
+    [self setProperty:@"richness" value:richness priority:@""];
 }
 
 - (NSString *)right
@@ -1418,7 +1419,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setRight:(NSString *)right
 {
-    [self setProperty:@"right" :right :@""];
+    [self setProperty:@"right" value:right priority:@""];
 }
 
 - (NSString *)size
@@ -1428,7 +1429,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setSize:(NSString *)size
 {
-    [self setProperty:@"size" :size :@""];
+    [self setProperty:@"size" value:size priority:@""];
 }
 
 - (NSString *)speak
@@ -1438,7 +1439,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setSpeak:(NSString *)speak
 {
-    [self setProperty:@"speak" :speak :@""];
+    [self setProperty:@"speak" value:speak priority:@""];
 }
 
 - (NSString *)speakHeader
@@ -1448,7 +1449,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setSpeakHeader:(NSString *)speakHeader
 {
-    [self setProperty:@"speak-header" :speakHeader :@""];
+    [self setProperty:@"speak-header" value:speakHeader priority:@""];
 }
 
 - (NSString *)speakNumeral
@@ -1458,7 +1459,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setSpeakNumeral:(NSString *)speakNumeral
 {
-    [self setProperty:@"speak-numeral" :speakNumeral :@""];
+    [self setProperty:@"speak-numeral" value:speakNumeral priority:@""];
 }
 
 - (NSString *)speakPunctuation
@@ -1468,7 +1469,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setSpeakPunctuation:(NSString *)speakPunctuation
 {
-    [self setProperty:@"speak-punctuation" :speakPunctuation :@""];
+    [self setProperty:@"speak-punctuation" value:speakPunctuation priority:@""];
 }
 
 - (NSString *)speechRate
@@ -1478,7 +1479,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setSpeechRate:(NSString *)speechRate
 {
-    [self setProperty:@"speech-rate" :speechRate :@""];
+    [self setProperty:@"speech-rate" value:speechRate priority:@""];
 }
 
 - (NSString *)stress
@@ -1488,7 +1489,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setStress:(NSString *)stress
 {
-    [self setProperty:@"stress" :stress :@""];
+    [self setProperty:@"stress" value:stress priority:@""];
 }
 
 - (NSString *)tableLayout
@@ -1498,7 +1499,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setTableLayout:(NSString *)tableLayout
 {
-    [self setProperty:@"table-layout" :tableLayout :@""];
+    [self setProperty:@"table-layout" value:tableLayout priority:@""];
 }
 
 - (NSString *)textAlign
@@ -1508,7 +1509,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setTextAlign:(NSString *)textAlign
 {
-    [self setProperty:@"text-align" :textAlign :@""];
+    [self setProperty:@"text-align" value:textAlign priority:@""];
 }
 
 - (NSString *)textDecoration
@@ -1518,7 +1519,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setTextDecoration:(NSString *)textDecoration
 {
-    [self setProperty:@"text-decoration" :textDecoration :@""];
+    [self setProperty:@"text-decoration" value:textDecoration priority:@""];
 }
 
 - (NSString *)textIndent
@@ -1528,7 +1529,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setTextIndent:(NSString *)textIndent
 {
-    [self setProperty:@"text-indent" :textIndent :@""];
+    [self setProperty:@"text-indent" value:textIndent priority:@""];
 }
 
 - (NSString *)textShadow
@@ -1538,7 +1539,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setTextShadow:(NSString *)textShadow
 {
-    [self setProperty:@"text-shadow" :textShadow :@""];
+    [self setProperty:@"text-shadow" value:textShadow priority:@""];
 }
 
 - (NSString *)textTransform
@@ -1548,7 +1549,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setTextTransform:(NSString *)textTransform
 {
-    [self setProperty:@"text-transform" :textTransform :@""];
+    [self setProperty:@"text-transform" value:textTransform priority:@""];
 }
 
 - (NSString *)top
@@ -1558,7 +1559,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setTop:(NSString *)top
 {
-    [self setProperty:@"top" :top :@""];
+    [self setProperty:@"top" value:top priority:@""];
 }
 
 - (NSString *)unicodeBidi
@@ -1568,7 +1569,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setUnicodeBidi:(NSString *)unicodeBidi
 {
-    [self setProperty:@"unicode-bidi" :unicodeBidi :@""];
+    [self setProperty:@"unicode-bidi" value:unicodeBidi priority:@""];
 }
 
 - (NSString *)verticalAlign
@@ -1578,7 +1579,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setVerticalAlign:(NSString *)verticalAlign
 {
-    [self setProperty:@"vertical-align" :verticalAlign :@""];
+    [self setProperty:@"vertical-align" value:verticalAlign priority:@""];
 }
 
 - (NSString *)visibility
@@ -1588,7 +1589,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setVisibility:(NSString *)visibility
 {
-    [self setProperty:@"visibility" :visibility :@""];
+    [self setProperty:@"visibility" value:visibility priority:@""];
 }
 
 - (NSString *)voiceFamily
@@ -1598,7 +1599,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setVoiceFamily:(NSString *)voiceFamily
 {
-    [self setProperty:@"voice-family" :voiceFamily :@""];
+    [self setProperty:@"voice-family" value:voiceFamily priority:@""];
 }
 
 - (NSString *)volume
@@ -1608,7 +1609,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setVolume:(NSString *)volume
 {
-    [self setProperty:@"volume" :volume :@""];
+    [self setProperty:@"volume" value:volume priority:@""];
 }
 
 - (NSString *)whiteSpace
@@ -1618,7 +1619,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setWhiteSpace:(NSString *)whiteSpace
 {
-    [self setProperty:@"white-space" :whiteSpace :@""];
+    [self setProperty:@"white-space" value:whiteSpace priority:@""];
 }
 
 - (NSString *)widows
@@ -1628,7 +1629,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setWidows:(NSString *)widows
 {
-    [self setProperty:@"widows" :widows :@""];
+    [self setProperty:@"widows" value:widows priority:@""];
 }
 
 - (NSString *)width
@@ -1638,7 +1639,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setWidth:(NSString *)width
 {
-    [self setProperty:@"width" :width :@""];
+    [self setProperty:@"width" value:width priority:@""];
 }
 
 - (NSString *)wordSpacing
@@ -1648,7 +1649,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setWordSpacing:(NSString *)wordSpacing
 {
-    [self setProperty:@"word-spacing" :wordSpacing :@""];
+    [self setProperty:@"word-spacing" value:wordSpacing priority:@""];
 }
 
 - (NSString *)zIndex
@@ -1658,7 +1659,7 @@ typedef DOMWindow AbstractView;
 
 - (void)setZIndex:(NSString *)zIndex
 {
-    [self setProperty:@"z-index" :zIndex :@""];
+    [self setProperty:@"z-index" value:zIndex priority:@""];
 }
 
 @end

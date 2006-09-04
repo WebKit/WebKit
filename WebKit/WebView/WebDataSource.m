@@ -64,6 +64,7 @@
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMHTML.h>
+#import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 #import "WebDocumentLoadState.h"
 
@@ -701,7 +702,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     
     // FIXME: calling _web_originalDataAsString on a file URL returns an absolute path. Workaround this.
     NSURL *URL = [resource URL];
-    [imageElement setAttribute:@"src" :[URL isFileURL] ? [URL absoluteString] : [URL _web_originalDataAsString]];
+    [imageElement setAttribute:@"src" value:[URL isFileURL] ? [URL absoluteString] : [URL _web_originalDataAsString]];
     
     return imageElement;
 }
