@@ -902,6 +902,7 @@ set(WebCore_SRCS
     platform/qt/ScreenQt.cpp
 #   platform/qt/FileButtonQt.cpp
     platform/qt/FrameQt.cpp
+    platform/qt/FrameQtClient.cpp
 #   platform/qt/TextEditQt.cpp
     platform/qt/ScrollViewCanvasQt.cpp
     platform/qt/PlatformMouseEventQt.cpp

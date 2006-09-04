@@ -1,3 +1,30 @@
+2006-09-04  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin.
+
+        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10644
+        Let FrameQt operate on a FrameQtClient, just like Win/Mac handle it.
+
+        * CMakeLists.txt:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::FrameQt):
+        (WebCore::FrameQt::~FrameQt):
+        (WebCore::FrameQt::openURL):
+        (WebCore::FrameQt::submitForm):
+        (WebCore::FrameQt::urlSelected):
+        * platform/qt/FrameQt.h:
+        * platform/qt/FrameQtClient.cpp: Added.
+        (WebCore::FrameQtClientDefault::FrameQtClientDefault):
+        (WebCore::FrameQtClientDefault::~FrameQtClientDefault):
+        (WebCore::FrameQtClientDefault::setFrame):
+        (WebCore::FrameQtClientDefault::openURL):
+        (WebCore::FrameQtClientDefault::submitForm):
+        (WebCore::FrameQtClientDefault::receivedResponse):
+        (WebCore::FrameQtClientDefault::receivedData):
+        (WebCore::FrameQtClientDefault::receivedAllData):
+        * platform/qt/FrameQtClient.h: Added.
+        (WebCore::FrameQtClient::~FrameQtClient):
+
 2006-09-04  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by andersca.

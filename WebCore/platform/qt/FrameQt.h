@@ -30,31 +30,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameQt_H_
-#define FrameQt_H_
+#ifndef FrameQt_H
+#define FrameQt_H
 
 #include "Frame.h"
-#include "ResourceLoaderClient.h"
+#include "FrameQtClient.h"
 
 class QWidget;
 class QPaintEvent;
 
 namespace WebCore {
 
-class FrameQtClient {
+class FrameQt : public Frame {
 public:
-    virtual ~FrameQtClient();
-
-    virtual void openURL(const DeprecatedString&) = 0;
-    virtual void submitForm(const String& method, const KURL&, const FormData*) = 0;
-};
-
-class FrameQt : public Frame,
-                public ResourceLoaderClient {
-public:
-    FrameQt(QWidget* parent);
-    FrameQt();
-    ~FrameQt();
+    FrameQt(Page*, Element*, FrameQtClient*);
+    virtual ~FrameQt();
 
     virtual bool openURL(const KURL&);
     virtual void openURLRequest(const ResourceRequest&);
@@ -134,10 +124,6 @@ public:
     virtual bool shouldInterruptJavaScript();
 
     bool keyEvent(const PlatformKeyboardEvent& keyEvent);
-
-    virtual void receivedResponse(ResourceLoader*, PlatformResponse);
-    virtual void receivedData(ResourceLoader*, const char*, int);
-    virtual void receivedAllData(ResourceLoader*, PlatformData);
 
     void setFrameGeometry(const IntRect&);
 

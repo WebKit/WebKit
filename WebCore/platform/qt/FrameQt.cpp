@@ -92,30 +92,8 @@ bool FrameView::isFrameView() const
     return true;
 }
 
-FrameQt::FrameQt()
-    : Frame(new Page, 0)
-{
-    init();
-
-    page()->setMainFrame(this);
-    FrameView* view = new FrameView(this);
-    setView(view);
-
-    view->setParentWidget(0);
-}
-
-FrameQt::FrameQt(QWidget* parent)
-     : Frame(new Page, 0)
-{
-    init();
-    page()->setMainFrame(this);
-    FrameView* view = new FrameView(this);
-    setView(view);
-
-    view->setParentWidget(parent);
-}
-
-void FrameQt::init()
+FrameQt::FrameQt(Page* page, Element* ownerElement, FrameQtClient* client)
+    : Frame(page, ownerElement)
 {
     d->m_extension = new BrowserExtensionQt(this);
     Settings* settings = new Settings;
@@ -131,21 +109,27 @@ void FrameQt::init()
     settings->setSansSerifFontName("Arial");
     settings->setFixedFontName("Courier");
     settings->setStdFontName("Arial");
+
     setSettings(settings);
+
+    m_client = client;
+    m_client->setFrame(this);
 }
 
 FrameQt::~FrameQt()
 {
-    closeURL(); // hack to avoid crash.  must fix in webkit (Frame).  FIXME
+    closeURL();
+
+    setView(0);
+    clearRecordedFormValues();
 }
 
 bool FrameQt::openURL(const KURL& url)
 {
-    didOpenURL(url);
-    m_beginCalled = false;
+    if (!m_client)
+        return false;
 
-    ResourceLoader* job = new ResourceLoader(this, "GET", url);
-    job->start(0);
+    m_client->openURL(url);
     return true;
 }
 
@@ -157,29 +141,18 @@ void FrameQt::submitForm(const ResourceRequest& request)
 
     d->m_submittedFormURL = request.url();
 
-    /* FIXME: Once we have a KPart - named "FramePartQt" - we can let that inherit from FrameQtClient and implement the functions...)
     if (m_client)
         m_client->submitForm(request.doPost() ? "POST" : "GET", request.url(), &request.postData);
-    */
 
-    m_beginCalled = false;
-
-    ResourceLoader* job = new ResourceLoader(this, request.doPost() ? "POST" : "GET", request.url(), request.postData);
-    job->start(0);
-    
     clearRecordedFormValues();
 }
 
 void FrameQt::urlSelected(const ResourceRequest& request)
 {
-    //need to potentially updateLocationBar(str.ascii()); or notify sys of new url mybe event or callback
-    const KURL url = request.url();
+    if (!m_client)
+        return;
 
-    didOpenURL(url); 
-    m_beginCalled = false;
-
-    ResourceLoader* job = new ResourceLoader(this, "GET", url);
-    job->start(0);
+    m_client->openURL(request.url());
 }
 
 String FrameQt::userAgent() const
@@ -520,36 +493,6 @@ bool FrameQt::keyEvent(const PlatformKeyboardEvent& keyEvent)
 
     // FIXME: FrameMac has a keyDown/keyPress hack here which we are not copying.
     return result;
-}
-
-void FrameQt::receivedResponse(ResourceLoader*, PlatformResponse)
-{
-    // no-op
-}
-
-void FrameQt::receivedData(ResourceLoader* job, const char* data, int length)
-{
-    if (!m_beginCalled) {
-        m_beginCalled = true;
-
-        // Assign correct mimetype _before_ calling begin()!
-        ResourceLoaderInternal* d = job->getInternal();
-        if (d) {
-            ResourceRequest request(resourceRequest());
-            request.m_responseMIMEType = d->m_mimetype;
-            setResourceRequest(request);
-        }
-
-        begin(job->url());
-    }
-
-    write(data, length);
-}
-
-void FrameQt::receivedAllData(ResourceLoader* job, PlatformData data)
-{
-    end();
-    m_beginCalled = false;
 }
 
 void FrameQt::setFrameGeometry(const IntRect& r)
