@@ -1,3 +1,18 @@
+2006-09-04  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        This code should have gone in as part of:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10696
+        It addresses the comments there, also we use double instead
+        of float now in calculations.
+
+        * platform/Path.cpp:
+        (WebCore::Path::createRoundedRectangle):
+        (WebCore::Path::createRectangle):
+        (WebCore::Path::createEllipse):
+        (WebCore::Path::createCircle):
+
 2006-09-03  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin and Tim H.

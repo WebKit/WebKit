@@ -26,58 +26,57 @@
 
 
 #include "config.h"
-
-#include <math.h>
-
-#include "FloatRect.h"
-#include "FloatPoint.h"
 #include "Path.h"
 
-#define QUARTER 0.552 // approximation of control point positions on a bezier
+#include "FloatPoint.h"
+#include "FloatRect.h"
+#include <math.h>
+
+const double QUARTER = 0.552; // approximation of control point positions on a bezier
                       // to simulate a quarter of a circle.
 namespace WebCore {
 
 Path Path::createRoundedRectangle(const FloatRect& rectangle, const FloatSize& roundingRadii)
 {
     Path path;
-    float x = rectangle.x();
-    float y = rectangle.y();
-    float width = rectangle.width();
-    float height = rectangle.height();
-    float rx = roundingRadii.width();
-    float ry = roundingRadii.height();
-    if (width <= 0.0f || height <= 0.0f)
+    double x = rectangle.x();
+    double y = rectangle.y();
+    double width = rectangle.width();
+    double height = rectangle.height();
+    double rx = roundingRadii.width();
+    double ry = roundingRadii.height();
+    if (width <= 0.0 || height <= 0.0)
         return path;
 
     double dx = rx, dy = ry;
     // If rx is greater than half of the width of the rectangle
     // then set rx to half of the width (required in SVG spec)
-    if (dx > width / 2)
-        dx = width / 2;
+    if (dx > width * 0.5)
+        dx = width * 0.5;
 
     // If ry is greater than half of the height of the rectangle
     // then set ry to half of the height (required in SVG spec)
-    if (dy > height / 2)
-        dy = height / 2;
+    if (dy > height * 0.5)
+        dy = height * 0.5;
 
     path.moveTo(FloatPoint(x + dx, y));
 
-    if (dx < width / 2)
+    if (dx < width * 0.5)
         path.addLineTo(FloatPoint(x + width - rx, y));
 
     path.addBezierCurveTo(FloatPoint(x + width - dx * (1 - QUARTER), y), FloatPoint(x + width, y + dy * (1 - QUARTER)), FloatPoint(x + width, y + dy));
 
-    if (dy < height / 2)
+    if (dy < height * 0.5)
         path.addLineTo(FloatPoint(x + width, y + height - dy));
 
     path.addBezierCurveTo(FloatPoint(x + width, y + height - dy * (1 - QUARTER)), FloatPoint(x + width - dx * (1 - QUARTER), y + height), FloatPoint(x + width - dx, y + height));
 
-    if (dx < width / 2)
+    if (dx < width * 0.5)
         path.addLineTo(FloatPoint(x + dx, y + height));
 
     path.addBezierCurveTo(FloatPoint(x + dx * (1 - QUARTER), y + height), FloatPoint(x, y + height - dy * (1 - QUARTER)), FloatPoint(x, y + height - dy));
 
-    if (dy < height / 2)
+    if (dy < height * 0.5)
         path.addLineTo(FloatPoint(x, y + dy));
 
     path.addBezierCurveTo(FloatPoint(x, y + dy * (1 - QUARTER)), FloatPoint(x + dx * (1 - QUARTER), y), FloatPoint(x + dx, y));
@@ -90,11 +89,11 @@ Path Path::createRoundedRectangle(const FloatRect& rectangle, const FloatSize& r
 Path Path::createRectangle(const FloatRect& rectangle)
 {
     Path path;
-    float x = rectangle.x();
-    float y = rectangle.y();
-    float width = rectangle.width();
-    float height = rectangle.height();
-    if (width < 0.0f || height < 0.0f)
+    double x = rectangle.x();
+    double y = rectangle.y();
+    double width = rectangle.width();
+    double height = rectangle.height();
+    if (width < 0.0 || height < 0.0)
         return path;
     
     path.moveTo(FloatPoint(x, y));
@@ -106,12 +105,12 @@ Path Path::createRectangle(const FloatRect& rectangle)
     return path;
 }
 
-Path Path::createEllipse(const FloatPoint&c, float rx, float ry)
+Path Path::createEllipse(const FloatPoint& center, float rx, float ry)
 {
-    float cx = c.x();
-    float cy = c.y();
+    double cx = center.x();
+    double cy = center.y();
     Path path;
-    if (rx <= 0.0f || ry <= 0.0f)
+    if (rx <= 0.0 || ry <= 0.0)
         return path;
 
     double x = cx, y = cy;
@@ -142,9 +141,9 @@ Path Path::createEllipse(const FloatPoint&c, float rx, float ry)
     return path;
 }
 
-Path Path::createCircle(const FloatPoint& c, float r)
+Path Path::createCircle(const FloatPoint& center, float r)
 {
-    return createEllipse(c, r, r);
+    return createEllipse(center, r, r);
 }
 
 Path Path::createLine(const FloatPoint& start, const FloatPoint& end)
