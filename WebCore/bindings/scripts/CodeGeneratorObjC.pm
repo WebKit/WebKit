@@ -341,13 +341,6 @@ sub AddIncludesForType
         return;
     }
 
-    # Temp DOMStylesheets.h
-    if ($type eq "StyleSheet" or $type eq "StyleSheetList" or $type eq "MediaList") {
-        $implIncludes{"DOMStylesheets.h"} = 1;
-        $implIncludes{"$type.h"} = 1;
-        return;
-    }
-
     # Temp DOMViews.h
     if ($type eq "DOMWindow") {
         $implIncludes{"DOMViews.h"} = 1;
@@ -404,11 +397,7 @@ sub GenerateHeader
     @headerContentHeader = split("\r", $headerLicenceTemplate);
 
     # - INCLUDES -
-    if ($parentClassName eq "DOMStyleSheet") {
-        push(@headerContentHeader, "\n#import <WebCore/DOMStylesheets.h> // parent class\n\n");
-    } else {
-        push(@headerContentHeader, "\n#import <WebCore/$parentClassName.h> // parent class\n\n");
-    }
+    push(@headerContentHeader, "\n#import <WebCore/$parentClassName.h>\n\n");
 
     # - Add constants.
     if ($numConstants > 0) {
@@ -521,7 +510,7 @@ sub GenerateHeader
         }
 
         if (@headerFunctions > 0) {
-            push(@headerContent, "\n");
+            push(@headerContent, "\n") if $buildingForLeopardOrLater and $numAttributes > 0;
             push(@headerContent, @headerFunctions);
         }
     }

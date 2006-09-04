@@ -29,11 +29,10 @@
 #import "DOMObject.h"
 
 #import "DOMInternal.h"
-
-#import "DOMCSS.h" // for DOMStyleSheet
-#import "DOMCSSInternal.h"
-#import "DOMHTML.h" // for DOMHTMLLinkElement and DOMHTMLStyleElement
+#import "DOMHTMLLinkElement.h"
+#import "DOMHTMLStyleElement.h"
 #import "DOMProcessingInstruction.h"
+#import "DOMStyleSheet.h"
 #import "HTMLLinkElement.h"
 #import "HTMLStyleElement.h"
 #import "ProcessingInstruction.h"
@@ -85,7 +84,7 @@
     else
         return nil;
 
-    return [DOMStyleSheet _DOMStyleSheetWith:sheet];
+    return [DOMStyleSheet _styleSheetWith:sheet];
 }
 
 @end

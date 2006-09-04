@@ -46,26 +46,25 @@ all : \
     CharsetData.cpp \
     ColorData.c \
     DocTypeStrings.cpp \
+    DOMAttr.h \
+    DOMCDATASection.h \
     DOMCSSCharsetRule.h \
     DOMCSSFontFaceRule.h \
     DOMCSSImportRule.h \
     DOMCSSMediaRule.h \
     DOMCSSPageRule.h \
+    DOMCSSPrimitiveValue.h \
     DOMCSSRule.h \
     DOMCSSRuleList.h \
     DOMCSSStyleDeclaration.h \
     DOMCSSStyleRule.h \
+    DOMCSSStyleSheet.h \
     DOMCSSUnknownRule.h \
     DOMCSSValue.h \
-    DOMCSSPrimitiveValue.h \
     DOMCSSValueList.h \
-    DOMCSSStyleSheet.h \
-    DOMCounter.h \
-    DOMRect.h \
-    DOMAttr.h \
-    DOMCDATASection.h \
     DOMCharacterData.h \
     DOMComment.h \
+    DOMCounter.h \
     DOMDOMImplementation.h \
     DOMDocument.h \
     DOMDocumentFragment.h \
@@ -73,11 +72,6 @@ all : \
     DOMElement.h \
     DOMEntity.h \
     DOMEntityReference.h \
-    DOMNamedNodeMap.h \
-    DOMNodeList.h \
-    DOMNotation.h \
-    DOMProcessingInstruction.h \
-    DOMText.h \
     DOMHTMLAnchorElement.h \
     DOMHTMLAreaElement.h \
     DOMHTMLBRElement.h \
@@ -131,6 +125,15 @@ all : \
     DOMHTMLTextAreaElement.h \
     DOMHTMLTitleElement.h \
     DOMHTMLUListElement.h \
+    DOMMediaList.h \
+    DOMNamedNodeMap.h \
+    DOMNodeList.h \
+    DOMNotation.h \
+    DOMProcessingInstruction.h \
+    DOMRect.h \
+    DOMStyleSheet.h \
+    DOMStyleSheetList.h \
+    DOMText.h \
     HTMLEntityNames.c \
     JSAttr.h \
     JSCSSPrimitiveValue.h \

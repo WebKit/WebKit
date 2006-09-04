@@ -54,7 +54,7 @@ void *ScriptInterpreter::createObjcInstanceForValue(ExecState *exec, JSObject *v
     else if (value->inherits(&DOMStyleSheetList::info))
         newObj = [objc_getClass("DOMStyleSheetList") _styleSheetListWith:static_cast<DOMStyleSheetList *>(value)->impl()];
     else if (value->inherits(&DOMStyleSheet::info))
-        newObj = [objc_getClass("DOMStyleSheet") _DOMStyleSheetWith:static_cast<DOMStyleSheet *>(value)->impl()];
+        newObj = [objc_getClass("DOMStyleSheet") _styleSheetWith:static_cast<DOMStyleSheet *>(value)->impl()];
     else if (value->inherits(&DOMMediaList::info))
         newObj = [objc_getClass("DOMMediaList") _mediaListWith:static_cast<DOMMediaList *>(value)->impl()];
     else if (value->inherits(&WebCore::JSCSSRuleList::info))

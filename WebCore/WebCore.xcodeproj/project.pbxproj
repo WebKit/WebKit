@@ -396,6 +396,15 @@
 		85032DE80AA8C9BE007D3B7D /* DOMCSSStyleRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85032DD40AA8C9BE007D3B7D /* DOMCSSStyleRule.mm */; };
 		85032DE90AA8C9BE007D3B7D /* DOMCSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 85032DD50AA8C9BE007D3B7D /* DOMCSSUnknownRule.h */; };
 		85032DEA0AA8C9BE007D3B7D /* DOMCSSUnknownRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85032DD60AA8C9BE007D3B7D /* DOMCSSUnknownRule.mm */; };
+		850656FE0AAB4763002D15C0 /* DOMMediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = 850656F80AAB4763002D15C0 /* DOMMediaList.h */; };
+		850656FF0AAB4763002D15C0 /* DOMMediaList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 850656F90AAB4763002D15C0 /* DOMMediaList.mm */; };
+		850657000AAB4763002D15C0 /* DOMStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 850656FA0AAB4763002D15C0 /* DOMStyleSheet.h */; };
+		850657010AAB4763002D15C0 /* DOMStyleSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 850656FB0AAB4763002D15C0 /* DOMStyleSheet.mm */; };
+		850657020AAB4763002D15C0 /* DOMStyleSheetList.h in Headers */ = {isa = PBXBuildFile; fileRef = 850656FC0AAB4763002D15C0 /* DOMStyleSheetList.h */; };
+		850657030AAB4763002D15C0 /* DOMStyleSheetList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 850656FD0AAB4763002D15C0 /* DOMStyleSheetList.mm */; };
+		8506579F0AAB4A8E002D15C0 /* DOMMediaList.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 850656F80AAB4763002D15C0 /* DOMMediaList.h */; };
+		850657A00AAB4A8E002D15C0 /* DOMStyleSheet.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 850656FA0AAB4763002D15C0 /* DOMStyleSheet.h */; };
+		850657A10AAB4A8E002D15C0 /* DOMStyleSheetList.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 850656FC0AAB4763002D15C0 /* DOMStyleSheetList.h */; };
 		85089CD70A98C42800A275AA /* DOMCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CCF0A98C42700A275AA /* DOMCDATASection.h */; settings = {ATTRIBUTES = (); }; };
 		85089CD80A98C42800A275AA /* DOMCDATASection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85089CD00A98C42700A275AA /* DOMCDATASection.mm */; };
 		85089CD90A98C42800A275AA /* DOMComment.h in Headers */ = {isa = PBXBuildFile; fileRef = 85089CD10A98C42700A275AA /* DOMComment.h */; settings = {ATTRIBUTES = (); }; };
@@ -1941,6 +1950,9 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				8506579F0AAB4A8E002D15C0 /* DOMMediaList.h in CopyFiles */,
+				850657A00AAB4A8E002D15C0 /* DOMStyleSheet.h in CopyFiles */,
+				850657A10AAB4A8E002D15C0 /* DOMStyleSheetList.h in CopyFiles */,
 				1C11CCB50AA6093700DADB20 /* DOMNotation.h in CopyFiles */,
 				1C11CCB60AA6093700DADB20 /* DOMComment.h in CopyFiles */,
 				1C11CCB70AA6093700DADB20 /* DOMNamedNodeMap.h in CopyFiles */,
@@ -2492,6 +2504,14 @@
 		85032DD40AA8C9BE007D3B7D /* DOMCSSStyleRule.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCSSStyleRule.mm; sourceTree = "<group>"; };
 		85032DD50AA8C9BE007D3B7D /* DOMCSSUnknownRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMCSSUnknownRule.h; sourceTree = "<group>"; };
 		85032DD60AA8C9BE007D3B7D /* DOMCSSUnknownRule.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCSSUnknownRule.mm; sourceTree = "<group>"; };
+		850656DC0AAB44D9002D15C0 /* StyleSheet.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = StyleSheet.idl; sourceTree = "<group>"; };
+		850656DF0AAB454F002D15C0 /* StyleSheetList.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = StyleSheetList.idl; sourceTree = "<group>"; };
+		850656F80AAB4763002D15C0 /* DOMMediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMediaList.h; sourceTree = "<group>"; };
+		850656F90AAB4763002D15C0 /* DOMMediaList.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMediaList.mm; sourceTree = "<group>"; };
+		850656FA0AAB4763002D15C0 /* DOMStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMStyleSheet.h; sourceTree = "<group>"; };
+		850656FB0AAB4763002D15C0 /* DOMStyleSheet.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMStyleSheet.mm; sourceTree = "<group>"; };
+		850656FC0AAB4763002D15C0 /* DOMStyleSheetList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMStyleSheetList.h; sourceTree = "<group>"; };
+		850656FD0AAB4763002D15C0 /* DOMStyleSheetList.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMStyleSheetList.mm; sourceTree = "<group>"; };
 		85089CC70A98C22600A275AA /* Comment.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Comment.idl; sourceTree = "<group>"; };
 		85089CC90A98C2AB00A275AA /* CDATASection.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CDATASection.idl; sourceTree = "<group>"; };
 		85089CCB0A98C33A00A275AA /* EntityReference.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = EntityReference.idl; sourceTree = "<group>"; };
@@ -4719,6 +4739,19 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		850657040AAB476C002D15C0 /* StyleSheets */ = {
+			isa = PBXGroup;
+			children = (
+				850656F80AAB4763002D15C0 /* DOMMediaList.h */,
+				850656F90AAB4763002D15C0 /* DOMMediaList.mm */,
+				850656FA0AAB4763002D15C0 /* DOMStyleSheet.h */,
+				850656FB0AAB4763002D15C0 /* DOMStyleSheet.mm */,
+				850656FC0AAB4763002D15C0 /* DOMStyleSheetList.h */,
+				850656FD0AAB4763002D15C0 /* DOMStyleSheetList.mm */,
+			);
+			name = StyleSheets;
+			sourceTree = "<group>";
+		};
 		854F12AC0A8EBC18000940B5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -4833,6 +4866,7 @@
 		85B232260A8BF3A100FDF47B /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				850657040AAB476C002D15C0 /* StyleSheets */,
 				85967D9F0AA8BB59005FEDEE /* Core */,
 				85967DCA0AA8BF0F005FEDEE /* CSS */,
 				85C56D030AA8BAA700D95755 /* HTML */,
@@ -6342,8 +6376,10 @@
 				A80E734A0A199C77007FB8C5 /* StyleList.h */,
 				A8EA80050A19516E00A8EF5F /* StyleSheet.cpp */,
 				A8EA80040A19516E00A8EF5F /* StyleSheet.h */,
+				850656DC0AAB44D9002D15C0 /* StyleSheet.idl */,
 				A8EA80030A19516E00A8EF5F /* StyleSheetList.cpp */,
 				A8EA80020A19516E00A8EF5F /* StyleSheetList.h */,
+				850656DF0AAB454F002D15C0 /* StyleSheetList.idl */,
 				93CA4CA209DF93FA00DF8677 /* svg.css */,
 				93CA4CA309DF93FA00DF8677 /* tokenizer.flex */,
 				BC5EC1760A507E3E006007F5 /* view-source.css */,
@@ -7535,6 +7571,9 @@
 				858C38A70AA8F20400B187A4 /* DOMRect.h in Headers */,
 				858C39280AA8FF9D00B187A4 /* DOMCSSStyleSheet.h in Headers */,
 				858C395F0AA902A900B187A4 /* DOMRGBColor.h in Headers */,
+				850656FE0AAB4763002D15C0 /* DOMMediaList.h in Headers */,
+				850657000AAB4763002D15C0 /* DOMStyleSheet.h in Headers */,
+				850657020AAB4763002D15C0 /* DOMStyleSheetList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7569,7 +7608,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -7584,7 +7622,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -8533,6 +8570,9 @@
 				858C38A80AA8F20400B187A4 /* DOMRect.mm in Sources */,
 				858C39290AA8FF9D00B187A4 /* DOMCSSStyleSheet.mm in Sources */,
 				858C39600AA902A900B187A4 /* DOMRGBColor.mm in Sources */,
+				850656FF0AAB4763002D15C0 /* DOMMediaList.mm in Sources */,
+				850657010AAB4763002D15C0 /* DOMStyleSheet.mm in Sources */,
+				850657030AAB4763002D15C0 /* DOMStyleSheetList.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

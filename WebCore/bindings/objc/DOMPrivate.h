@@ -25,6 +25,7 @@
  */
 
 #import <WebCore/DOMCSS.h>
+#import <WebCore/DOMCSSStyleDeclaration.h>
 #import <WebCore/DOMElement.h>
 #import <WebCore/DOMEvents.h>
 #import <WebCore/DOMHTML.h>
@@ -32,6 +33,7 @@
 #import <WebCore/DOMHTMLInputElement.h>
 #import <WebCore/DOMHTMLSelectElement.h>
 #import <WebCore/DOMNode.h>
+#import <WebCore/DOMRGBColor.h>
 #import <WebCore/DOMRange.h>
 
 @interface DOMRange (WebPrivate)

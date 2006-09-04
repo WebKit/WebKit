@@ -28,32 +28,6 @@
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMObject.h>
 
-@class DOMMediaList;
-@class DOMStyleSheet;
-
-extern NSString * const DOMEventException;
-
-@interface DOMStyleSheet : DOMObject
-- (NSString *)type;
-- (BOOL)disabled;
-- (void)setDisabled:(BOOL)disabled;
-- (DOMNode *)ownerNode;
-- (DOMStyleSheet *)parentStyleSheet;
-- (NSString *)href;
-- (NSString *)title;
-- (DOMMediaList *)media;
-@end
-
-@interface DOMStyleSheetList : DOMObject
-- (unsigned)length;
-- (DOMStyleSheet *)item:(unsigned)index;
-@end
-
-@interface DOMMediaList : DOMObject
-- (NSString *)mediaText;
-- (void)setMediaText:(NSString *)mediaText;
-- (unsigned)length;
-- (NSString *)item:(unsigned)index;
-- (void)deleteMedium:(NSString *)oldMedium;
-- (void)appendMedium:(NSString *)newMedium;
-@end
+#import <WebCore/DOMStyleSheet.h>
+#import <WebCore/DOMStyleSheetList.h>
+#import <WebCore/DOMMediaList.h>

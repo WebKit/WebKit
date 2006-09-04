@@ -61,71 +61,6 @@ typedef DOMWindow AbstractView;
 //------------------------------------------------------------------------------------------
 // DOMStyleSheet
 
-@implementation DOMStyleSheet
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<StyleSheet*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<StyleSheet*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (StyleSheet *)_DOMStyleSheet
-{
-    return DOM_cast<StyleSheet*>(_internal);
-}
-
-- (NSString *)type
-{
-    return [self _DOMStyleSheet]->type();
-}
-
-- (BOOL)disabled
-{
-    return [self _DOMStyleSheet]->disabled();
-}
-
-- (void)setDisabled:(BOOL)disabled
-{
-    [self _DOMStyleSheet]->setDisabled(disabled);
-}
-
-- (DOMNode *)ownerNode
-{
-    return [DOMNode _nodeWith:[self _DOMStyleSheet]->ownerNode()];
-}
-
-- (DOMStyleSheet *)parentStyleSheet
-{
-    return [DOMStyleSheet _DOMStyleSheetWith:[self _DOMStyleSheet]->parentStyleSheet()];
-}
-
-- (NSString *)href
-{
-    return [self _DOMStyleSheet]->href();
-}
-
-- (NSString *)title
-{
-    return [self _DOMStyleSheet]->title();
-}
-
-- (DOMMediaList *)media
-{
-    return nil;
-}
-
-@end
-
 @implementation DOMStyleSheet (WebCoreInternal)
 
 - (id)_initWithStyleSheet:(StyleSheet *)impl
@@ -137,7 +72,7 @@ typedef DOMWindow AbstractView;
     return self;
 }
 
-+ (DOMStyleSheet *)_DOMStyleSheetWith:(StyleSheet *)impl
++ (DOMStyleSheet *)_styleSheetWith:(StyleSheet *)impl
 {
     if (!impl)
         return nil;
@@ -157,43 +92,9 @@ typedef DOMWindow AbstractView;
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // DOMStyleSheetList
-
-@implementation DOMStyleSheetList
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<StyleSheetList*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<StyleSheetList*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (StyleSheetList *)_styleSheetList
-{
-    return DOM_cast<StyleSheetList*>(_internal);
-}
-
-- (unsigned)length
-{
-    return [self _styleSheetList]->length();
-}
-
-- (DOMStyleSheet *)item:(unsigned)index
-{
-    return [DOMStyleSheet _DOMStyleSheetWith:[self _styleSheetList]->item(index)];
-}
-
-@end
 
 @implementation DOMStyleSheetList (WebCoreInternal)
 
@@ -221,6 +122,7 @@ typedef DOMWindow AbstractView;
 
 @end
 
+
 //------------------------------------------------------------------------------------------
 // DOMCSSStyleSheet
 
@@ -228,74 +130,14 @@ typedef DOMWindow AbstractView;
 
 + (DOMCSSStyleSheet *)_CSSStyleSheetWith:(CSSStyleSheet *)impl
 {
-    return static_cast<DOMCSSStyleSheet*>([DOMStyleSheet _DOMStyleSheetWith:impl]);
+    return static_cast<DOMCSSStyleSheet*>([DOMStyleSheet _styleSheetWith:impl]);
 }
 
 @end
+
 
 //------------------------------------------------------------------------------------------
 // DOMMediaList
-
-@implementation DOMMediaList
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<MediaList*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<MediaList*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (MediaList *)_mediaList
-{
-    return DOM_cast<MediaList*>(_internal);
-}
-
-- (NSString *)mediaText
-{
-    return [self _mediaList]->mediaText();
-}
-
-- (void)setMediaText:(NSString *)mediaText
-{
-    ExceptionCode ec = 0;
-    [self _mediaList]->setMediaText(mediaText, ec);
-    raiseOnDOMError(ec);
-}
-
-- (unsigned)length
-{
-    return [self _mediaList]->length();
-}
-
-- (NSString *)item:(unsigned)index
-{
-    return [self _mediaList]->item(index);
-}
-
-- (void)deleteMedium:(NSString *)oldMedium
-{
-    ExceptionCode ec = 0;
-    [self _mediaList]->deleteMedium(oldMedium, ec);
-    raiseOnDOMError(ec);
-}
-
-- (void)appendMedium:(NSString *)newMedium
-{
-    ExceptionCode ec = 0;
-    [self _mediaList]->appendMedium(newMedium, ec);
-    raiseOnDOMError(ec);
-}
-
-@end
 
 @implementation DOMMediaList (WebCoreInternal)
 
@@ -322,6 +164,7 @@ typedef DOMWindow AbstractView;
 }
 
 @end
+
 
 //------------------------------------------------------------------------------------------
 // DOMCSSRuleList

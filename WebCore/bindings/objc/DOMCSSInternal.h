@@ -44,18 +44,8 @@ namespace WebCore {
     class CSSStyleSheet;
     class CSSValue;
     class Counter;
-    class MediaList;
     class RectImpl;
-    class StyleSheet;
 }
-
-@interface DOMStyleSheet (WebCoreInternal)
-+ (DOMStyleSheet *)_DOMStyleSheetWith:(WebCore::StyleSheet *)impl;
-@end
-
-@interface DOMMediaList (WebCoreInternal)
-+ (DOMMediaList *)_mediaListWith:(WebCore::MediaList *)impl;
-@end
 
 @interface DOMCSSRuleList (WebCoreInternal)
 + (DOMCSSRuleList *)_ruleListWith:(WebCore::CSSRuleList *)impl;

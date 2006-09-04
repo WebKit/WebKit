@@ -1,3 +1,29 @@
+2006-09-03  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin and Tim H.
+
+        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10711
+          Auto-generate the Objective-C DOM Stylesheet bindings
+
+          Auto-generates DOMMediaList, DOMStyleSheet, and DOMStyleSheetList.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMCSS.mm:
+        (+[DOMStyleSheet _styleSheetWith:]):
+        (+[DOMCSSStyleSheet _CSSStyleSheetWith:]):
+        * bindings/objc/DOMCSSInternal.h:
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMObject.mm:
+        (-[DOMObject sheet]):
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/DOMStylesheets.h:
+        * bindings/objc/DOMUtility.mm:
+        (KJS::ScriptInterpreter::createObjcInstanceForValue):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * css/StyleSheet.idl: Added.
+        * css/StyleSheetList.idl: Added.
+
 2006-09-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

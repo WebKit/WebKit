@@ -117,6 +117,7 @@ all : \
     DOMHTMLTitleElement.h \
     DOMHTMLUListElement.h \
     DOMList.h \
+    DOMMediaList.h \
     DOMNamedNodeMap.h \
     DOMNode.h \
     DOMNodeList.h \
@@ -127,6 +128,8 @@ all : \
     DOMRGBColor.h \
     DOMRange.h \
     DOMRect.h \
+    DOMStyleSheet.h \
+    DOMStyleSheetList.h \
     DOMStylesheets.h \
     DOMText.h \
     DOMTraversal.h \
