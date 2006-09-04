@@ -1,3 +1,23 @@
+2006-09-04  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by andersca.
+
+        Clean-up style and spacing.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10724
+        No tests needed, no functional changes.
+
+        * ksvg2/svg/svgpathparser.cpp:
+        (WebCore::parseCoord):
+        (WebCore::SVGPolyParser::parsePoints):
+        (WebCore::SVGPathParser::parseSVG):
+        (WebCore::SVGPathParser::calculateArc):
+        (WebCore::SVGPathParser::svgLineToHorizontal):
+        (WebCore::SVGPathParser::svgLineToVertical):
+        (WebCore::SVGPathParser::svgCurveToCubicSmooth):
+        (WebCore::SVGPathParser::svgCurveToQuadratic):
+        (WebCore::SVGPathParser::svgCurveToQuadraticSmooth):
+        (WebCore::SVGPathParser::svgArcTo):
+
 2006-09-04  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
