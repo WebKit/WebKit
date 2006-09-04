@@ -179,6 +179,7 @@ namespace WebCore {
         Value& sinkFloatingValue(Value&);
 
         MediaList* createMediaList();
+        CSSRule* createCharsetRule(const ParseString&);
         CSSRule* createImportRule(const ParseString&, MediaList*);
         CSSRule* createMediaRule(MediaList*, CSSRuleList*);
         CSSRuleList* createRuleList();

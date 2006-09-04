@@ -26,6 +26,7 @@
 
 #include "CSSBorderImageValue.h"
 #include "CSSImageValue.h"
+#include "CSSCharsetRule.h"
 #include "CSSImportRule.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
@@ -3004,6 +3005,17 @@ MediaList* CSSParser::createMediaList()
     MediaList* list = new MediaList;
     m_parsedStyleObjects.append(list);
     return list;
+}
+
+CSSRule* CSSParser::createCharsetRule(const ParseString& charset)
+{
+    if (!styleElement)
+        return 0;
+    if (!styleElement->isCSSStyleSheet())
+        return 0;
+    CSSCharsetRule* rule = new CSSCharsetRule(styleElement, domString(charset));
+    m_parsedStyleObjects.append(rule);
+    return rule;
 }
 
 CSSRule* CSSParser::createImportRule(const ParseString& URL, MediaList* media)

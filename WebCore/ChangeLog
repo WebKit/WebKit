@@ -1,3 +1,38 @@
+2006-09-04  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10676
+        @charset rules not accessible via DOM
+
+        Test: fast/encoding/css-charset-dom.html
+
+        * WebCore.xcodeproj/project.pbxproj: Added CSSCharsetRule.cpp
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMCSSStyleSheet::getValueProperty):
+        Separated Rules and CssRules, since now they behave differently.
+
+        * css/CSSCharsetRule.h: Make the constructor take an encoding.
+        * css/CSSCharsetRule.cpp: Added.
+
+        * css/CSSGrammar.y: Create CSSStylesheetRules as necessary.
+
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::CSSRuleList):
+        * css/CSSRuleList.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::cssRules):
+        * css/CSSStyleSheet.h:
+        Skip charset rules in IE compatibility mode.
+
+        * css/StyleBase.h:
+        (WebCore::StyleBase::isCharsetRule): Fixed a typo.
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::createCharsetRule):
+        * css/cssparser.h:
+        Added createCharsetRule().
+
 2006-09-04  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Darin.

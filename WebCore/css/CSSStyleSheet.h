@@ -50,7 +50,7 @@ public:
     virtual String type() const { return "text/css"; }
 
     CSSRule* ownerRule() const;
-    CSSRuleList* cssRules();
+    CSSRuleList* cssRules(bool omitCharsetRules = false);
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
     void deleteRule(unsigned index, ExceptionCode&);
     unsigned addRule(const String& selector, const String& style, int index, ExceptionCode&);

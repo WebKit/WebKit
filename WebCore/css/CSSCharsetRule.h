@@ -32,13 +32,14 @@ namespace WebCore {
 class CSSCharsetRule : public CSSRule
 {
 public:
-    CSSCharsetRule(StyleBase* parent) : CSSRule(parent) { m_type = CHARSET_RULE; }
+    CSSCharsetRule(StyleBase* parent, const String& encoding);
+    virtual ~CSSCharsetRule();
 
     virtual bool isCharsetRule() { return true; }
     virtual String cssText() const;
 
     String encoding() const { return m_encoding; }
-    void setEncoding(String _encoding) { m_encoding = _encoding; }
+    void setEncoding(const String& encoding) { m_encoding = encoding; }
 
 protected:
     String m_encoding;

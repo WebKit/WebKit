@@ -1,9 +1,8 @@
-/*
+/**
  * This file is part of the DOM implementation for KDE.
  *
- * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Alexey Proskuryakov (ap@macrules.ru)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,37 +19,25 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-
-#ifndef CSSRuleList_H
-#define CSSRuleList_H
-
-#include "Shared.h"
-#include "DeprecatedPtrList.h"
+#include "config.h"
+#include "CSSCharsetRule.h"
 
 namespace WebCore {
 
-class CSSRule;
-class StyleList;
-
-class CSSRuleList : public Shared<CSSRuleList>
+CSSCharsetRule::CSSCharsetRule(StyleBase* parent, const String& encoding) 
+    : CSSRule(parent)
+    , m_encoding(encoding)
 {
-public:
-    CSSRuleList();
-    CSSRuleList(StyleList*, bool omitCharsetRules = false);
-    ~CSSRuleList();
+    m_type = CHARSET_RULE;
+}
 
-    unsigned length() const { return m_lstCSSRules.count(); }
-    CSSRule* item (unsigned index) { return m_lstCSSRules.at(index); }
+CSSCharsetRule::~CSSCharsetRule()
+{
+}
 
-    /* not part of the DOM */
-    unsigned insertRule (CSSRule* rule, unsigned index);
-    void deleteRule (unsigned index);
-    void append(CSSRule* rule);
+String CSSCharsetRule::cssText() const
+{
+    return "@charset \"" + m_encoding + "\";";
+}
 
-protected:
-    DeprecatedPtrList<CSSRule> m_lstCSSRules;
-};
-
-} // namespace
-
-#endif
+}

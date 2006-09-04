@@ -227,6 +227,7 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 
 %type <relation> combinator
 
+%type <rule> charset
 %type <rule> ruleset
 %type <rule> media
 %type <rule> import
@@ -343,10 +344,22 @@ maybe_sgml:
 
 maybe_charset:
    /* empty */
-  | CHARSET_SYM maybe_space STRING maybe_space ';'
-  | CHARSET_SYM error invalid_block
-  | CHARSET_SYM error ';'
- ;
+  | charset {
+  }
+;
+
+charset:
+  CHARSET_SYM maybe_space STRING maybe_space ';' {
+     CSSParser* p = static_cast<CSSParser*>(parser);
+     $$ = static_cast<CSSParser *>(parser)->createCharsetRule($3);
+     if ($$ && p->styleElement && p->styleElement->isCSSStyleSheet())
+         p->styleElement->append($$);
+  }
+  | CHARSET_SYM error invalid_block {
+  }
+  | CHARSET_SYM error ';' {
+  }
+;
 
 import_list:
  /* empty */

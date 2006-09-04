@@ -32,13 +32,13 @@ CSSRuleList::CSSRuleList()
 {
 }
 
-CSSRuleList::CSSRuleList(StyleList* lst)
+CSSRuleList::CSSRuleList(StyleList* lst, bool omitCharsetRules)
 {
     if (lst) {
         unsigned len = lst->length();
         for (unsigned i = 0; i < len; ++i) {
             StyleBase* style = lst->item(i);
-            if (style->isRule())
+            if (style->isRule() && !(omitCharsetRules && style->isCharsetRule()))
                 append(static_cast<CSSRule*>(style));
         }
     }

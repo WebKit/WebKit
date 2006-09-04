@@ -98,9 +98,9 @@ unsigned CSSStyleSheet::addRule(const String &selector, const String &style, int
     return insertRule(selector + " { " + style + " }", index, ec);
 }
 
-CSSRuleList *CSSStyleSheet::cssRules()
+CSSRuleList *CSSStyleSheet::cssRules(bool omitCharsetRules)
 {
-    return new CSSRuleList(this);
+    return new CSSRuleList(this, omitCharsetRules);
 }
 
 void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)

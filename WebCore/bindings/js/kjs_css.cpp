@@ -611,8 +611,9 @@ JSValue* DOMCSSStyleSheet::getValueProperty(ExecState* exec, int token) const
   case OwnerRule:
     return toJS(exec, static_cast<CSSStyleSheet*>(impl())->ownerRule());
   case CssRules:
-  case Rules:
     return toJS(exec, static_cast<CSSStyleSheet*>(impl())->cssRules());
+  case Rules:
+    return toJS(exec, static_cast<CSSStyleSheet*>(impl())->cssRules(true));
   default:
     assert(0);
     return jsUndefined();

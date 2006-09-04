@@ -1,3 +1,13 @@
+2006-09-04  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10676
+        @charset rules not accessible via DOM
+
+        * fast/encoding/css-charset-dom-expected.txt: Added.
+        * fast/encoding/css-charset-dom.html: Added.
+
 2006-09-04  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
