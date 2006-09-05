@@ -77,19 +77,6 @@ namespace WebCore {
 
 @end
 
-@interface WebCoreSecureTextField : NSSecureTextField <WebCoreWidgetHolder>
-{
-@private
-    WebCoreTextFieldController* controller;
-    BOOL inNextValidKeyView;
-    BOOL inSetFrameSize;
-}
-
-- (id)initWithWidget:(WebCore::TextField *)widget;
-- (WebCoreTextFieldController *)controller;
-
-@end
-
 @interface WebCoreSearchField : NSSearchField <WebCoreWidgetHolder>
 {
 @private

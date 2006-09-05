@@ -1,3 +1,13 @@
+2006-09-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Removed dead code for password field.
+
+        * platform/mac/TextFieldMac.mm: (-[NSSearchFieldCell _addStringToRecentSearches:]):
+        * platform/mac/WebCoreTextField.h:
+        * platform/mac/WebCoreTextField.mm:
+
 2006-09-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher

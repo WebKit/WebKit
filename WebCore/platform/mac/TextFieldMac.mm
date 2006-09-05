@@ -59,19 +59,8 @@ TextField::TextField(Type type)
     : m_type(type)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    id view = nil;
-    switch (type) {
-        case Normal:
-            view = [WebCoreTextField alloc];
-            break;
-        case Password:
-            view = [WebCoreSecureTextField alloc];
-            break;
-        case Search:
-            view = [WebCoreSearchField alloc];
-            break;
-    }
-    ASSERT(view);
+    ASSERT(type == Search);
+    id view = [WebCoreSearchField alloc];
     [view initWithWidget:this];
     m_controller = [view controller];
     setView((NSView *)view);
