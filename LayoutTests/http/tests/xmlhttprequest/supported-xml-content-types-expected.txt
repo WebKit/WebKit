@@ -40,42 +40,42 @@ PASS -- testing: foo&bar/baz+xml -- responseXML: [object Document]
 
 PASS -- testing: foo*bar/baz+xml -- responseXML: [object Document]
 
-PASS -- testing: text/html -- responseXML: undefined
+PASS -- testing: text/html -- responseXML: null
 
-PASS -- testing: image/png -- responseXML: undefined
+PASS -- testing: image/png -- responseXML: null
 
-PASS -- testing: invalid -- responseXML: undefined
+PASS -- testing: invalid -- responseXML: null
 
 FAIL (got document -- response type: foo bar/baz+xml) -- testing: foo bar/baz+xml -- responseXML: [object Document]
 
-PASS -- testing: foo[bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo[bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo]bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo]bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo(bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo(bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo)bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo)bar/baz+xml -- responseXML: null
 
 PASS -- testing: foo
 
-PASS -- testing: foo>bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo>bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo@bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo@bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo,bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo,bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo;bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo;bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo:bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo:bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo\bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo\bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo"bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo"bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo/bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo/bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo?bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo?bar/baz+xml -- responseXML: null
 
-PASS -- testing: foo=bar/baz+xml -- responseXML: undefined
+PASS -- testing: foo=bar/baz+xml -- responseXML: null
 
 

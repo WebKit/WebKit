@@ -189,6 +189,7 @@ XMLHttpRequest::XMLHttpRequest(Document *d)
     , m_async(true)
     , m_job(0)
     , m_state(Uninitialized)
+    , m_response("", 0)
     , m_createdDocument(false)
     , m_aborted(false)
 {
@@ -244,7 +245,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, con
     // clear stuff from possible previous load
     m_requestHeaders = DeprecatedString();
     m_responseHeaders = String();
-    m_response = DeprecatedString();
+    m_response = "";
     m_createdDocument = false;
     m_responseXML = 0;
 

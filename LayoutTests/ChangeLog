@@ -2,6 +2,27 @@
 
         Reviewed by Darin.
 
+        Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=10716
+        XMLHttpRequest.responseText is null if HTTP response is empty
+
+        The results are not fully correct yet:
+        - accessing properties that are now undefined should cause an exception;
+        - on error, responseXML should be null, rather than contain an HTML document describing 
+        the error.
+
+        * http/tests/xmlhttprequest/supported-xml-content-types-expected.txt: Updated for responseXML
+        now returning null for nil documents.
+
+        * http/tests/xmlhttprequest/zero-length-response-expected.txt:
+        * http/tests/xmlhttprequest/zero-length-response-sync-expected.txt:
+        * http/tests/xmlhttprequest/zero-length-response-sync.html:
+        * http/tests/xmlhttprequest/zero-length-response.html:
+        Extended to cover more properties.
+
+2006-09-04  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
         Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10676
         @charset rules not accessible via DOM
 

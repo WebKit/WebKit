@@ -1,6 +1,7 @@
 <html>
 <head>
 <title>Test XmlHttpRequest zero-length response handling (sync)</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
 <body>
 <p>Test for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=5924">bug 5924</a>
 - zero-length responses to XMLHTTPRequest mishandled.</p>
@@ -9,7 +10,7 @@
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-    var console_messages = document.createElement("ol");
+    var console_messages = document.createElement("ul");
     document.body.appendChild(console_messages);
     
     function log(message)
@@ -33,6 +34,8 @@
         
         log("after creation: " + stateName(req.readyState));
         
+        log("ResponseText: " + prettyPrintText(req.responseText));
+
         if (async)
             req.onreadystatechange = processStateChange;
         
@@ -40,6 +43,8 @@
 
         req.open('GET', url, async);
         log("after open(): " + stateName(req.readyState));
+        req.overrideMimeType('text/xml');
+        log("after overrideMimeType(): " + stateName(req.readyState));
         req.send(null);
         log("after send(): " + stateName(req.readyState));
 
@@ -64,16 +69,28 @@
         return "???";
     }
     
-    function processStateChange(){
-      if (req.readyState < 2)
-        log("onreadystatechange: " + stateName(req.readyState));
-      else
-        log("onreadystatechange: " + stateName(req.readyState) + ". Status: " + req.status);
+    function prettyPrintText(text) {
+        if (text == null)
+            return text;
+        else
+            return '"' + text + '"';
+    }
+
+    function dumpResponse() {
+       try { log ("  Status: " + req.status); } catch (ex) { log("  Exception getting status: " + ex.message); }
+       try { log ("  StatusText: " + prettyPrintText(req.statusText)); } catch (ex) { log("  Exception getting StatusText: " + ex.message); }
+       try { log ("  ResponseText: " + prettyPrintText(req.responseText)); } catch (ex) { log("  Exception getting ResponseText: " + ex.message); }
+       try { log ("  ResponseXML: " + req.responseXML); } catch (ex) { log("  Exception getting ResponseXML: " + ex.message); }
+       try { log ("  ResponseXML serialized: " + (req.responseXML ? prettyPrintText(window.XMLSerializer ? (new XMLSerializer()).serializeToString(req.responseXML) : req.responseXML.xml) : "n/a")); } catch (ex) { log("  Exception serializing ResponseXML: " + ex.message); }
+    }
+
+    function processStateChange() {
+      log("onreadystatechange: " + stateName(req.readyState));
+      dumpResponse();
     }
     
-    // start async steps
     get('resources/zero-length.txt', false);
-    log("Status: " + req.status);
+    dumpResponse();
 </script>
 </body>
 </html>

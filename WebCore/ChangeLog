@@ -1,3 +1,21 @@
+2006-09-04  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10716
+        XMLHttpRequest.responseText is null if HTTP response is empty
+
+        Extended existing tests:
+        - http/tests/xmlhttrequest/zero-length-response.html
+        - http/tests/xmlhttrequest/zero-length-response-sync.html
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest): Initialize responseText to an empty string.
+        (WebCore::XMLHttpRequest::open): Reset responseText to an empty string.
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequest::getValueProperty): Return null rather than undefined
+        for nil responseXML.
+
 2006-09-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
