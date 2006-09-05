@@ -39,13 +39,9 @@ VPATH = \
 #
 
 .PHONY : all
+
+ifeq ($(OS),MACOS)
 all : \
-    CSSGrammar.cpp \
-    CSSPropertyNames.h \
-    CSSValueKeywords.h \
-    CharsetData.cpp \
-    ColorData.c \
-    DocTypeStrings.cpp \
     DOMAttr.h \
     DOMCDATASection.h \
     DOMCSSCharsetRule.h \
@@ -133,7 +129,16 @@ all : \
     DOMRect.h \
     DOMStyleSheet.h \
     DOMStyleSheetList.h \
-    DOMText.h \
+    DOMText.h
+endif
+
+all : \
+    CSSGrammar.cpp \
+    CSSPropertyNames.h \
+    CSSValueKeywords.h \
+    CharsetData.cpp \
+    ColorData.c \
+    DocTypeStrings.cpp \
     HTMLEntityNames.c \
     JSAttr.h \
     JSCSSPrimitiveValue.h \

@@ -1,3 +1,9 @@
+2006-09-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Conditionalize new DOM headers for ObjC only
+
+        * DerivedSources.make:
+
 2006-09-04  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
