@@ -103,7 +103,7 @@ void RenderPopupMenuMac::showPopup(const IntRect& r, FrameView* v, int index)
 
     wkPopupMenu(menu, location, roundf(NSWidth(r)), view, index, font);
     int newIndex = [popup indexOfSelectedItem];
-    [popup dismissPopUp];
+    menuList()->hidePopup();
 
     if (index != newIndex && newIndex >= 0)
         menuList()->valueChanged(newIndex);
@@ -113,6 +113,11 @@ void RenderPopupMenuMac::showPopup(const IntRect& r, FrameView* v, int index)
     frame->sendFakeEventsAfterWidgetTracking(event);
 
     [event release];
+}
+
+void RenderPopupMenuMac::hidePopup()
+{
+    [popup dismissPopUp];
 }
 
 void RenderPopupMenuMac::addSeparator()
