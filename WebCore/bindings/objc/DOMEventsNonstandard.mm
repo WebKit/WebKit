@@ -27,8 +27,6 @@
 #import "config.h"
 #import "DOMPrivate.h"
 
-#import "DOMEventsInternal.h"
-#import "DOMViewsInternal.h"
 #import "DOMInternal.h"
 #import "KeyboardEvent.h"
 #import "WheelEvent.h"

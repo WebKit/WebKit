@@ -31,7 +31,6 @@
 #import "CDATASection.h"
 #import "CSSStyleSheet.h"
 #import "Comment.h"
-#import "DOMEventsInternal.h"
 #import "DOMHTML.h"
 #import "DOMImplementationFront.h"
 #import "DOMInternal.h"
@@ -577,7 +576,7 @@ static Class elementClass(const AtomicString& tagName)
 
 - (DOMCSSStyleDeclaration *)createCSSStyleDeclaration
 {
-    return [DOMCSSStyleDeclaration _styleDeclarationWith:[self _document]->createCSSStyleDeclaration().get()];
+    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:[self _document]->createCSSStyleDeclaration().get()];
 }
 
 @end

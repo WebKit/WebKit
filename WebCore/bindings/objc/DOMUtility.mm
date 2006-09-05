@@ -31,7 +31,6 @@
 #import "JSCSSRuleList.h"
 
 #import "DOMInternal.h"
-#import "DOMCSSInternal.h"
 #import "WebScriptObjectPrivate.h"
 
 #import <objc/objc-runtime.h>
@@ -58,13 +57,13 @@ void *ScriptInterpreter::createObjcInstanceForValue(ExecState *exec, JSObject *v
     else if (value->inherits(&DOMMediaList::info))
         newObj = [objc_getClass("DOMMediaList") _mediaListWith:static_cast<DOMMediaList *>(value)->impl()];
     else if (value->inherits(&WebCore::JSCSSRuleList::info))
-        newObj = [objc_getClass("DOMCSSRuleList") _ruleListWith:static_cast<WebCore::JSCSSRuleList *>(value)->impl()];
+        newObj = [objc_getClass("DOMCSSRuleList") _CSSRuleListWith:static_cast<WebCore::JSCSSRuleList *>(value)->impl()];
     else if (value->inherits(&DOMCSSRule::info))
-        newObj = [objc_getClass("DOMCSSRule") _ruleWith:static_cast<DOMCSSRule *>(value)->impl()];
+        newObj = [objc_getClass("DOMCSSRule") _CSSRuleWith:static_cast<DOMCSSRule *>(value)->impl()];
     else if (value->inherits(&DOMCSSStyleDeclaration::info))
-        newObj = [objc_getClass("DOMCSSStyleDeclaration") _styleDeclarationWith:static_cast<DOMCSSStyleDeclaration *>(value)->impl()];
+        newObj = [objc_getClass("DOMCSSStyleDeclaration") _CSSStyleDeclarationWith:static_cast<DOMCSSStyleDeclaration *>(value)->impl()];
     else if (value->inherits(&DOMCSSValue::info))
-        newObj = [objc_getClass("DOMCSSValue") _valueWith:static_cast<DOMCSSValue *>(value)->impl()];
+        newObj = [objc_getClass("DOMCSSValue") _CSSValueWith:static_cast<DOMCSSValue *>(value)->impl()];
     
     if (newObj)
         [newObj _initializeWithObjectImp:value originExecutionContext:origin executionContext:current];

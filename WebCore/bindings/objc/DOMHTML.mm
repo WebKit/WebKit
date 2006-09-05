@@ -28,7 +28,6 @@
 #import "DOMHTML.h"
 
 #import "DOMExtensions.h"
-#import "DOMHTMLInternal.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
 #import "DocumentFragment.h"
@@ -74,7 +73,7 @@ using namespace HTMLNames;
     return self;
 }
 
-+ (DOMHTMLCollection *)_collectionWith:(HTMLCollection *)impl
++ (DOMHTMLCollection *)_HTMLCollectionWith:(HTMLCollection *)impl
 {
     if (!impl)
         return nil;
@@ -106,7 +105,7 @@ using namespace HTMLNames;
     return self;
 }
 
-+ (DOMHTMLOptionsCollection *)_optionsCollectionWith:(HTMLOptionsCollection *)impl
++ (DOMHTMLOptionsCollection *)_HTMLOptionsCollectionWith:(HTMLOptionsCollection *)impl
 {
     if (!impl)
         return nil;
@@ -127,7 +126,7 @@ using namespace HTMLNames;
 
 @implementation DOMHTMLElement (WebCoreInternal)
 
-+ (DOMHTMLElement *)_elementWith:(HTMLElement *)impl
++ (DOMHTMLElement *)_HTMLElementWith:(HTMLElement *)impl
 {
     return static_cast<DOMHTMLElement*>([DOMNode _nodeWith:impl]);
 }
@@ -169,24 +168,11 @@ using namespace HTMLNames;
 
 
 //------------------------------------------------------------------------------------------
-// DOMHTMLLinkElement
-
-@implementation DOMHTMLLinkElement (DOMHTMLLinkElementExtensions)
-
-- (NSURL *)absoluteLinkURL
-{
-    return [self _getURLAttribute:@"href"];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
 // DOMHTMLFormElement
 
 @implementation DOMHTMLFormElement (WebCoreInternal)
 
-+ (DOMHTMLFormElement *)_formElementWith:(HTMLFormElement *)impl
++ (DOMHTMLFormElement *)_HTMLFormElementWith:(HTMLFormElement *)impl
 {
     return static_cast<DOMHTMLFormElement*>([DOMNode _nodeWith:impl]);
 }
@@ -198,11 +184,6 @@ using namespace HTMLNames;
 // DOMHTMLInputElement
 
 @implementation DOMHTMLInputElement (DOMHTMLInputElementExtensions)
-
-- (NSString *)altDisplayString
-{
-    return [self _HTMLInputElement]->alt().replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
-}
 
 - (NSURL *)absoluteImageURL
 {
@@ -224,35 +205,7 @@ using namespace HTMLNames;
 
 
 //------------------------------------------------------------------------------------------
-// DOMHTMLAnchorElement
-
-@implementation DOMHTMLAnchorElement (DOMHTMLAnchorElementExtensions)
-
-- (NSURL *)absoluteLinkURL
-{
-    return [self _getURLAttribute:@"href"];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
 // DOMHTMLImageElement
-
-@implementation DOMHTMLImageElement (DOMHTMLImageElementExtensions)
-
-- (NSString *)altDisplayString
-{
-    String altStr = [self _HTMLImageElement]->getAttribute(altAttr);
-    return altStr.replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
-}
-
-- (NSURL *)absoluteImageURL
-{
-    return [self _getURLAttribute:@"src"];
-}
-
-@end
 
 @implementation DOMHTMLImageElement (WebCoreInternal)
 
@@ -289,24 +242,11 @@ using namespace HTMLNames;
 
 
 //------------------------------------------------------------------------------------------
-// DOMHTMLAreaElement
-
-@implementation DOMHTMLAreaElement (DOMHTMLAreaElementExtensions)
-
-- (NSURL *)absoluteLinkURL
-{
-    return [self _getURLAttribute:@"href"];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
 // DOMHTMLTableCaptionElement
 
 @implementation DOMHTMLTableCaptionElement (WebCoreInternal)
 
-+ (DOMHTMLTableCaptionElement *)_tableCaptionElementWith:(HTMLTableCaptionElement *)impl
++ (DOMHTMLTableCaptionElement *)_HTMLTableCaptionElementWith:(HTMLTableCaptionElement *)impl
 {
     return static_cast<DOMHTMLTableCaptionElement*>([DOMNode _nodeWith:impl]);
 }
@@ -324,7 +264,7 @@ using namespace HTMLNames;
 
 @implementation DOMHTMLTableSectionElement (WebCoreInternal)
 
-+ (DOMHTMLTableSectionElement *)_tableSectionElementWith:(HTMLTableSectionElement *)impl
++ (DOMHTMLTableSectionElement *)_HTMLTableSectionElementWith:(HTMLTableSectionElement *)impl
 {
     return static_cast<DOMHTMLTableSectionElement*>([DOMNode _nodeWith:impl]);
 }
@@ -342,7 +282,7 @@ using namespace HTMLNames;
 
 @implementation DOMHTMLTableElement (WebCoreInternal)
 
-+ (DOMHTMLTableElement *)_tableElementWith:(HTMLTableElement *)impl
++ (DOMHTMLTableElement *)_HTMLTableElementWith:(HTMLTableElement *)impl
 {
     return static_cast<DOMHTMLTableElement*>([DOMNode _nodeWith:impl]);
 }
@@ -360,7 +300,7 @@ using namespace HTMLNames;
 
 @implementation DOMHTMLTableCellElement (WebCoreInternal)
 
-+ (DOMHTMLTableCellElement *)_tableCellElementWith:(HTMLTableCellElement *)impl
++ (DOMHTMLTableCellElement *)_HTMLTableCellElementWith:(HTMLTableCellElement *)impl
 {
     return static_cast<DOMHTMLTableCellElement*>([DOMNode _nodeWith:impl]);
 }

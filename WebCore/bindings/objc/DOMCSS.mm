@@ -28,7 +28,6 @@
 #import "config.h"
 #import "DOMCSS.h"
 
-#import "DOMCSSInternal.h"
 #import "DOMPrivate.h"
 #import "CSSCharsetRule.h"
 #import "CSSFontFaceRule.h"
@@ -55,9 +54,11 @@
 
 #import <objc/objc-class.h>
 
-using namespace WebCore;
+namespace WebCore {
+    typedef DOMWindow AbstractView;
+}
 
-typedef DOMWindow AbstractView;
+using namespace WebCore;
 
 //------------------------------------------------------------------------------------------
 // DOMStyleSheet
@@ -181,7 +182,7 @@ typedef DOMWindow AbstractView;
     return self;
 }
 
-+ (DOMCSSRuleList *)_ruleListWith:(CSSRuleList *)impl
++ (DOMCSSRuleList *)_CSSRuleListWith:(CSSRuleList *)impl
 {
     if (!impl)
         return nil;
@@ -211,7 +212,7 @@ typedef DOMWindow AbstractView;
     return self;
 }
 
-+ (DOMCSSRule *)_ruleWith:(CSSRule *)impl
++ (DOMCSSRule *)_CSSRuleWith:(CSSRule *)impl
 {
     if (!impl)
         return nil;
@@ -279,7 +280,7 @@ typedef DOMWindow AbstractView;
     return self;
 }
 
-+ (DOMCSSStyleDeclaration *)_styleDeclarationWith:(CSSStyleDeclaration *)impl
++ (DOMCSSStyleDeclaration *)_CSSStyleDeclarationWith:(CSSStyleDeclaration *)impl
 {
     if (!impl)
         return nil;
@@ -313,7 +314,7 @@ typedef DOMWindow AbstractView;
     return self;
 }
 
-+ (DOMCSSValue *)_valueWith:(CSSValue *)impl
++ (DOMCSSValue *)_CSSValueWith:(CSSValue *)impl
 {
     if (!impl)
         return nil;
@@ -349,9 +350,9 @@ typedef DOMWindow AbstractView;
 
 @implementation DOMCSSPrimitiveValue (WebCoreInternal)
 
-+ (DOMCSSPrimitiveValue *)_valueWith:(CSSValue *)impl
++ (DOMCSSPrimitiveValue *)_CSSPrimitiveValueWith:(CSSValue *)impl
 {
-    return static_cast<DOMCSSPrimitiveValue*>([DOMCSSValue _valueWith:impl]);
+    return static_cast<DOMCSSPrimitiveValue*>([DOMCSSValue _CSSValueWith:impl]);
 }
 
 @end
@@ -1677,7 +1678,7 @@ typedef DOMWindow AbstractView;
     if (!dv)
         return nil;
     
-    return [DOMCSSStyleDeclaration _styleDeclarationWith:dv->getComputedStyle(element, pseudoEltString.impl()).get()];
+    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:dv->getComputedStyle(element, pseudoEltString.impl()).get()];
 }
 
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt
@@ -1688,7 +1689,7 @@ typedef DOMWindow AbstractView;
         return nil;
     
     // The parameter of "false" is handy for the DOM inspector and lets us see user agent and user rules.
-    return [DOMCSSRuleList _ruleListWith:dv->getMatchedCSSRules([elt _element], String(pseudoElt).impl(), false).get()];
+    return [DOMCSSRuleList _CSSRuleListWith:dv->getMatchedCSSRules([elt _element], String(pseudoElt).impl(), false).get()];
 }
 
 @end

@@ -29,7 +29,6 @@
 
 #import "DOMInternal.h"
 #import "HTMLDocument.h" // implementation class
-#import "DOMHTMLInternal.h"
 
 #import "DOMDocumentFragment.h"
 #import "DOMHTMLCollection.h"
@@ -75,7 +74,7 @@
 
 - (DOMHTMLElement *)body
 {
-    return [DOMHTMLElement _elementWith:[self _HTMLDocument]->body()];
+    return [DOMHTMLElement _HTMLElementWith:[self _HTMLDocument]->body()];
 }
 
 - (void)setBody:(DOMHTMLElement *)body
@@ -87,27 +86,27 @@
 
 - (DOMHTMLCollection *)images
 {
-    return [DOMHTMLCollection _collectionWith:[self _HTMLDocument]->images().get()];
+    return [DOMHTMLCollection _HTMLCollectionWith:[self _HTMLDocument]->images().get()];
 }
 
 - (DOMHTMLCollection *)applets
 {
-    return [DOMHTMLCollection _collectionWith:[self _HTMLDocument]->applets().get()];
+    return [DOMHTMLCollection _HTMLCollectionWith:[self _HTMLDocument]->applets().get()];
 }
 
 - (DOMHTMLCollection *)links
 {
-    return [DOMHTMLCollection _collectionWith:[self _HTMLDocument]->links().get()];
+    return [DOMHTMLCollection _HTMLCollectionWith:[self _HTMLDocument]->links().get()];
 }
 
 - (DOMHTMLCollection *)forms
 {
-    return [DOMHTMLCollection _collectionWith:[self _HTMLDocument]->forms().get()];
+    return [DOMHTMLCollection _HTMLCollectionWith:[self _HTMLDocument]->forms().get()];
 }
 
 - (DOMHTMLCollection *)anchors
 {
-    return [DOMHTMLCollection _collectionWith:[self _HTMLDocument]->anchors().get()];
+    return [DOMHTMLCollection _HTMLCollectionWith:[self _HTMLDocument]->anchors().get()];
 }
 
 - (NSString *)cookie

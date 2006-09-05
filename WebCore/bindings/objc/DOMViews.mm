@@ -27,14 +27,12 @@
 #import "DOMViews.h"
 
 #import "DOMInternal.h"
-#import "DOMViewsInternal.h"
 #import "Document.h"
+#import "DOMWindow.h"
 
 namespace WebCore {
     typedef DOMWindow AbstractView;
 }
-using WebCore::AbstractView;
-using WebCore::DOMWindow;
 
 ALLOW_DOM_CAST(DOMWindow)
 
@@ -49,12 +47,12 @@ ALLOW_DOM_CAST(DOMWindow)
 
 @implementation DOMAbstractView (WebCoreInternal)
 
-- (AbstractView *)_abstractView
+- (WebCore::AbstractView *)_abstractView
 {
-    return DOM_cast<AbstractView *>(_internal);
+    return DOM_cast<WebCore::AbstractView *>(_internal);
 }
 
-- (id)_initWithAbstractView:(AbstractView *)impl
+- (id)_initWithAbstractView:(WebCore::AbstractView *)impl
 {
     ASSERT(impl);
 
@@ -65,7 +63,7 @@ ALLOW_DOM_CAST(DOMWindow)
     return self;
 }
 
-+ (DOMAbstractView *)_abstractViewWith:(AbstractView *)impl
++ (DOMAbstractView *)_abstractViewWith:(WebCore::AbstractView *)impl
 {
     if (!impl)
         return nil;

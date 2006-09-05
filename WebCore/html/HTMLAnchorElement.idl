@@ -46,6 +46,9 @@ module html {
         readonly attribute DOMString protocol;
         readonly attribute DOMString search;
         readonly attribute DOMString text;
+        
+        // Objective-C extension:
+        readonly attribute [Exclude=JS] URL absoluteLinkURL;
     };
 
 }

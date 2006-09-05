@@ -1,3 +1,83 @@
+2006-09-05  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10738
+        Consolidate the Objective-C DOM Bindings Internal files into DOMInternal.h
+
+        - Consolidate DOMHTMLInternal.h, DOMCSSInternal.h, DOMEventsInternal.h,
+          DOMViewsInternal.h and DOMXPathInternal.h into DOMInternal.h.
+
+        - Rename the "type-makers" (used to make a binding from an implementation 
+          type) so that all the HTML ones begin with the prefix HTML.  Did the same
+          for the CSS.
+
+        - Auto-generate a couple more methods from DOMExtensions.h.
+
+        - Various cleanups of the Objective-C auto-generation code.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (-[DOMDocument createCSSStyleDeclaration]):
+        * bindings/objc/DOMCSS.mm:
+        (+[DOMCSSRuleList _CSSRuleListWith:]):
+        (+[DOMCSSRule _CSSRuleWith:]):
+        (+[DOMCSSStyleDeclaration _CSSStyleDeclarationWith:]):
+        (+[DOMCSSValue _CSSValueWith:]):
+        (+[DOMCSSPrimitiveValue _CSSPrimitiveValueWith:]):
+        (-[DOMDocument getComputedStyle::]):
+        (-[DOMDocument getMatchedCSSRules::]):
+        * bindings/objc/DOMCSSInternal.h: Removed.
+        * bindings/objc/DOMEvents.mm:
+        * bindings/objc/DOMEventsInternal.h: Removed.
+        * bindings/objc/DOMEventsNonstandard.mm:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTML.mm:
+        (+[DOMHTMLCollection _HTMLCollectionWith:]):
+        (+[DOMHTMLOptionsCollection _HTMLOptionsCollectionWith:]):
+        (+[DOMHTMLElement _HTMLElementWith:]):
+        (+[DOMHTMLFormElement _HTMLFormElementWith:]):
+        (+[DOMHTMLTableCaptionElement _HTMLTableCaptionElementWith:]):
+        (+[DOMHTMLTableSectionElement _HTMLTableSectionElementWith:]):
+        (+[DOMHTMLTableElement _HTMLTableElementWith:]):
+        (+[DOMHTMLTableCellElement _HTMLTableCellElementWith:]):
+        * bindings/objc/DOMHTMLAppletElement.mm:
+        * bindings/objc/DOMHTMLDocument.mm:
+        (-[DOMHTMLDocument body]):
+        (-[DOMHTMLDocument images]):
+        (-[DOMHTMLDocument applets]):
+        (-[DOMHTMLDocument links]):
+        (-[DOMHTMLDocument forms]):
+        (-[DOMHTMLDocument anchors]):
+        * bindings/objc/DOMHTMLInternal.h: Removed.
+        * bindings/objc/DOMHTMLOptionElement.mm:
+        (-[DOMHTMLOptionElement form]):
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMRGBColor.mm:
+        (setWrapperForRGB):
+        (-[DOMRGBColor red]):
+        (-[DOMRGBColor green]):
+        (-[DOMRGBColor blue]):
+        (-[DOMRGBColor alpha]):
+        * bindings/objc/DOMUtility.mm:
+        (KJS::ScriptInterpreter::createObjcInstanceForValue):
+        * bindings/objc/DOMViews.mm:
+        (-[DOMAbstractView WebCore::]):
+        (-[DOMAbstractView _initWithAbstractView:WebCore::]):
+        (+[DOMAbstractView _abstractViewWith:WebCore::]):
+        * bindings/objc/DOMViewsInternal.h: Removed.
+        * bindings/objc/DOMXPath.mm:
+        * bindings/objc/DOMXPathInternal.h: Removed.
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge typingStyle]):
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLLinkElement.idl:
+
 2006-09-05  Steve Falkenburg  <sfalken@apple.com>
 
         Conditionalize new DOM headers for ObjC only

@@ -28,7 +28,6 @@
 #import "DOMRGBColor.h"
 
 #import "DOMInternal.h"
-#import "DOMCSSInternal.h"
 #import <wtf/GetPtr.h>
 #import "Color.h"
 #import "DOMCSSPrimitiveValue.h"
@@ -45,11 +44,10 @@ id getWrapperForRGB(WebCore::RGBA32 value)
 
 void setWrapperForRGB(id wrapper, WebCore::RGBA32 value)
 {
-    if (!wrapperCache) {
+    if (!wrapperCache)
         // No need to retain/free either impl key, or id value.  Items will be removed
         // from the cache in dealloc methods.
         wrapperCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
-    }
     CFDictionarySetValue(wrapperCache, reinterpret_cast<const void*>(value), wrapper);
 }
 
@@ -79,21 +77,21 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 {
     WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     int value = (rgb >> 16) & 0xFF;
-    return [DOMCSSPrimitiveValue _valueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _CSSPrimitiveValueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (DOMCSSPrimitiveValue *)green
 {
     WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     int value = (rgb >> 8) & 0xFF;
-    return [DOMCSSPrimitiveValue _valueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _CSSPrimitiveValueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (DOMCSSPrimitiveValue *)blue
 {
     WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     int value = rgb & 0xFF;
-    return [DOMCSSPrimitiveValue _valueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _CSSPrimitiveValueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 @end
@@ -104,7 +102,7 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 {
     WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     float value = static_cast<float>(WebCore::Color(rgb).alpha()) / 0xFF;
-    return [DOMCSSPrimitiveValue _valueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _CSSPrimitiveValueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
     
 }
 

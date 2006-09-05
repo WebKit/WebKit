@@ -26,37 +26,86 @@
  */
 
 #import "DOM.h"
-#import "DOMCSSInternal.h"
 
+#import "Color.h"
 #import "DOMAttr.h"
 #import "DOMCDATASection.h"
+#import "DOMCSSPrimitiveValue.h"
+#import "DOMCSSRule.h"
+#import "DOMCSSRuleList.h"
+#import "DOMCSSStyleDeclaration.h"
+#import "DOMCSSStyleSheet.h"
+#import "DOMCSSValue.h"
 #import "DOMComment.h"
+#import "DOMCounter.h"
 #import "DOMDOMImplementation.h"
 #import "DOMDocument.h"
 #import "DOMDocumentFragment.h"
 #import "DOMDocumentType.h"
 #import "DOMElement.h"
 #import "DOMEntityReference.h"
+#import "DOMEvents.h"
+#import "DOMHTMLCollection.h"
+#import "DOMHTMLDocument.h"
+#import "DOMHTMLElement.h"
+#import "DOMHTMLFormElement.h"
+#import "DOMHTMLImageElement.h"
+#import "DOMHTMLInputElement.h"
+#import "DOMHTMLObjectElement.h"
+#import "DOMHTMLOptionElement.h"
+#import "DOMHTMLOptionsCollection.h"
+#import "DOMHTMLTableCaptionElement.h"
+#import "DOMHTMLTableCellElement.h"
+#import "DOMHTMLTableElement.h"
+#import "DOMHTMLTableSectionElement.h"
 #import "DOMMediaList.h"
 #import "DOMNamedNodeMap.h"
 #import "DOMNode.h"
 #import "DOMNodeList.h"
 #import "DOMObject.h"
 #import "DOMProcessingInstruction.h"
+#import "DOMRGBColor.h"
+#import "DOMRect.h"
 #import "DOMStyleSheet.h"
 #import "DOMStyleSheetList.h"
 #import "DOMText.h"
+#import "DOMViews.h"
+
+#ifdef XPATH_SUPPORT
+#import "DOMXPath.h"
+#endif // XPATH_SUPPORT
 
 namespace WebCore {
     class Attr;
     class CDATASection;
+    class CSSRule;
+    class CSSRuleList;
+    class CSSStyleDeclaration;
+    class CSSStyleSheet;
+    class CSSValue;
     class Comment;
+    class Counter;
     class DOMImplementationFront;
+    class DOMWindow;
     class Document;
     class DocumentFragment;
     class DocumentType;
     class Element;
     class EntityReference;
+    class Event;
+    class HTMLCollection;
+    class HTMLDocument;
+    class HTMLElement;
+    class HTMLFormElement;
+    class HTMLImageElement;
+    class HTMLInputElement;
+    class HTMLObjectElement;
+    class HTMLOptionElement;
+    class HTMLOptionsCollection;
+    class HTMLTableCaptionElement;
+    class HTMLTableCellElement;
+    class HTMLTableElement;
+    class HTMLTableSectionElement;
     class MediaList;
     class NamedNodeMap;
     class Node;
@@ -65,13 +114,23 @@ namespace WebCore {
     class NodeList;
     class ProcessingInstruction;
     class Range;
+    class RectImpl;
     class StyleSheet;
     class StyleSheetList;
     class Text;
     class TreeWalker;
 
+#ifdef XPATH_SUPPORT
+    class XPathExpression;
+    class XPathNSResolver;
+    class XPathResult;
+#endif // XPATH_SUPPORT
+
     typedef int ExceptionCode;
+    typedef DOMWindow AbstractView;
 }
+
+// Core Internal Interfaces
 
 @interface DOMObject (WebCoreInternal)
 - (id)_init;
@@ -141,18 +200,105 @@ namespace WebCore {
 - (WebCore::DocumentFragment *)_fragment;
 @end
 
-@interface DOMRange (WebCoreInternal)
-+ (DOMRange *)_rangeWith:(WebCore::Range *)impl;
-- (WebCore::Range *)_range;
+// HTML Internal Interfaces
+
+@interface DOMHTMLOptionsCollection (WebCoreInternal)
++ (DOMHTMLOptionsCollection *)_HTMLOptionsCollectionWith:(WebCore::HTMLOptionsCollection *)impl;
 @end
 
-@interface DOMNodeIterator (WebCoreInternal)
-+ (DOMNodeIterator *)_nodeIteratorWith:(WebCore::NodeIterator *)impl filter:(id <DOMNodeFilter>)filter;
+@interface DOMHTMLDocument (WebCoreInternal)
++ (DOMHTMLDocument *)_HTMLDocumentWith:(WebCore::HTMLDocument *)impl;
 @end
 
-@interface DOMTreeWalker (WebCoreInternal)
-+ (DOMTreeWalker *)_treeWalkerWith:(WebCore::TreeWalker *)impl filter:(id <DOMNodeFilter>)filter;
+@interface DOMHTMLCollection (WebCoreInternal)
++ (DOMHTMLCollection *)_HTMLCollectionWith:(WebCore::HTMLCollection *)impl;
 @end
+
+@interface DOMHTMLElement (WebCoreInternal)
++ (DOMHTMLElement *)_HTMLElementWith:(WebCore::HTMLElement *)impl;
+- (WebCore::HTMLElement *)_HTMLElement;
+@end
+
+@interface DOMHTMLFormElement (WebCoreInternal)
++ (DOMHTMLFormElement *)_HTMLFormElementWith:(WebCore::HTMLFormElement *)impl;
+@end
+
+@interface DOMHTMLTableCaptionElement (WebCoreInternal)
++ (DOMHTMLTableCaptionElement *)_HTMLTableCaptionElementWith:(WebCore::HTMLTableCaptionElement *)impl;
+- (WebCore::HTMLTableCaptionElement *)_tableCaptionElement;
+@end
+
+@interface DOMHTMLTableSectionElement (WebCoreInternal)
++ (DOMHTMLTableSectionElement *)_HTMLTableSectionElementWith:(WebCore::HTMLTableSectionElement *)impl;
+- (WebCore::HTMLTableSectionElement *)_tableSectionElement;
+@end
+
+@interface DOMHTMLTableElement (WebCoreInternal)
++ (DOMHTMLTableElement *)_HTMLTableElementWith:(WebCore::HTMLTableElement *)impl;
+- (WebCore::HTMLTableElement *)_tableElement;
+@end
+
+@interface DOMHTMLTableCellElement (WebCoreInternal)
++ (DOMHTMLTableCellElement *)_HTMLTableCellElementWith:(WebCore::HTMLTableCellElement *)impl;
+- (WebCore::HTMLTableCellElement *)_tableCellElement;
+@end
+
+@interface DOMHTMLImageElement (WebCoreInternal)
+- (WebCore::HTMLImageElement *)_HTMLImageElement;
+@end
+
+@interface DOMHTMLObjectElement (WebCoreInternal)
+- (WebCore::HTMLObjectElement *)_HTMLObjectElement;
+@end
+
+@interface DOMHTMLOptionElement (WebCoreInternal)
+- (WebCore::HTMLOptionElement *)_optionElement;
+@end
+
+@interface DOMHTMLInputElement (WebCoreInternal)
+- (WebCore::HTMLInputElement *)_HTMLInputElement;
+@end
+
+// CSS Internal Interfaces
+
+@interface DOMCSSRuleList (WebCoreInternal)
++ (DOMCSSRuleList *)_CSSRuleListWith:(WebCore::CSSRuleList *)impl;
+@end
+
+@interface DOMCSSRule (WebCoreInternal)
++ (DOMCSSRule *)_CSSRuleWith:(WebCore::CSSRule *)impl;
+@end
+
+@interface DOMCSSValue (WebCoreInternal)
++ (DOMCSSValue *)_CSSValueWith:(WebCore::CSSValue *)impl;
+@end
+
+@interface DOMCSSPrimitiveValue (WebCoreInternal)
++ (DOMCSSPrimitiveValue *)_CSSPrimitiveValueWith:(WebCore::CSSValue *)impl;
+@end
+
+@interface DOMRGBColor (WebCoreInternal)
++ (DOMRGBColor *)_RGBColorWithRGB:(WebCore::RGBA32)value;
+@end
+
+@interface DOMRect (WebCoreInternal)
++ (DOMRect *)_rectWith:(WebCore::RectImpl *)impl;
+@end
+
+@interface DOMCounter (WebCoreInternal)
++ (DOMCounter *)_counterWith:(WebCore::Counter *)impl;
+@end
+
+@interface DOMCSSStyleDeclaration (WebCoreInternal)
++ (DOMCSSStyleDeclaration *)_CSSStyleDeclarationWith:(WebCore::CSSStyleDeclaration *)impl;
+- (WebCore::CSSStyleDeclaration *)_styleDeclaration;
+@end
+
+@interface DOMCSSStyleSheet (WebCoreInternal)
++ (DOMCSSStyleSheet *)_CSSStyleSheetWith:(WebCore::CSSStyleSheet *)impl;
+@end
+
+// StyleSheets Internal Interfaces
 
 @interface DOMStyleSheet (WebCoreInternal)
 + (DOMStyleSheet *)_styleSheetWith:(WebCore::StyleSheet *)impl;
@@ -166,9 +312,61 @@ namespace WebCore {
 + (DOMMediaList *)_mediaListWith:(WebCore::MediaList *)impl;
 @end
 
+// Events Internal Interfaces
+
+@interface DOMEvent (WebCoreInternal)
++ (DOMEvent *)_eventWith:(WebCore::Event *)impl;
+- (WebCore::Event *)_event;
+@end
+
+// Range Internal Interfaces
+
+@interface DOMRange (WebCoreInternal)
++ (DOMRange *)_rangeWith:(WebCore::Range *)impl;
+- (WebCore::Range *)_range;
+@end
+
+// Traversal Internal Interfaces
+
+@interface DOMNodeIterator (WebCoreInternal)
++ (DOMNodeIterator *)_nodeIteratorWith:(WebCore::NodeIterator *)impl filter:(id <DOMNodeFilter>)filter;
+@end
+
+@interface DOMTreeWalker (WebCoreInternal)
++ (DOMTreeWalker *)_treeWalkerWith:(WebCore::TreeWalker *)impl filter:(id <DOMNodeFilter>)filter;
+@end
+
 @interface DOMNodeFilter : DOMObject <DOMNodeFilter>
 + (DOMNodeFilter *)_nodeFilterWith:(WebCore::NodeFilter *)impl;
 @end
+
+// Views Internal Interfaces
+
+@interface DOMAbstractView (WebCoreInternal)
++ (DOMAbstractView *)_abstractViewWith:(WebCore::AbstractView *)impl;
+- (WebCore::AbstractView *)_abstractView;
+@end
+
+#ifdef XPATH_SUPPORT
+// XPath Internal Interfaces
+
+@interface DOMXPathResult (WebCoreInternal)
++ (DOMXPathResult *)_xpathResultWith:(WebCore::XPathResult *)impl;
+- (WebCore::XPathResult *)_xpathResult;
+@end
+
+@interface DOMXPathExpression (WebCoreInternal)
++ (DOMXPathExpression *)_xpathExpressionWith:(WebCore::XPathExpression *)impl;
+- (WebCore::XPathExpression *)_xpathExpression;
+@end
+
+@interface DOMNativeXPathNSResolver : DOMObject <DOMXPathNSResolver>
++ (DOMNativeXPathNSResolver *)_xpathNSResolverWith:(WebCore::XPathNSResolver *)impl;
+- (WebCore::XPathNSResolver *)_xpathNSResolver;
+@end
+
+#endif // XPATH_SUPPORT
+
 
 // Helper functions for DOM wrappers and gluing to Objective-C
 

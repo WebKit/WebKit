@@ -27,10 +27,8 @@
 #import "config.h"
 #import "DOMEvents.h"
 
-#import "DOMEventsInternal.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
-#import "DOMViewsInternal.h"
 #import "Document.h"
 #import "Event.h"
 #import "MouseEvent.h"

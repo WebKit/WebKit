@@ -30,9 +30,12 @@ module html {
         attribute  DOMString            rev;
         attribute  DOMString            target;
         attribute  DOMString            type;
-        
+
         // DOM Level 2 Style
         readonly attribute StyleSheet   sheet;
+
+        // Objective-C extension:
+        readonly attribute [Exclude=JS] URL absoluteLinkURL;
     };
 
 }

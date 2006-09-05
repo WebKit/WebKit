@@ -199,6 +199,8 @@ sub GetClassName
         return "int";
     } elsif ($name eq "DOMString") {
         return "NSString";
+    } elsif ($name eq "URL") {
+        return "NSURL";
     } elsif ($name eq "DOMWindow") {
         return "DOMAbstractView";
     } elsif ($name eq "XPathNSResolver") {
@@ -227,13 +229,8 @@ sub GetImplClassName
     my $name = $codeGenerator->StripModule(shift);
 
     # special cases
-    if ($name eq "DOMImplementation") {
-        return "DOMImplementationFront";
-    }
-
-    if ($name eq "Rect") {
-        return "RectImpl";
-    }
+    return "DOMImplementationFront" if $name eq "DOMImplementation";
+    return "RectImpl" if $name eq "Rect";
 
     return $name;
 }
@@ -247,11 +244,8 @@ sub GetParentImplClassName
     my $parent = $codeGenerator->StripModule($dataNode->parents(0));
 
     # special cases
-    if ($parent eq "EventTargetNode") {
-        $parent = "Node";
-    } elsif ($parent eq "HTMLCollection") {
-        $parent = "Object";
-    }
+    return "Node" if $parent eq "EventTargetNode";
+    return "Object" if $parent eq "HTMLCollection";
 
     return $parent;
 }
@@ -276,42 +270,12 @@ sub GetObjCTypeMaker
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    if ($codeGenerator->IsPrimitiveType($type) or $type eq "DOMString") {
-        return "";
-    }
-
-    if ($type eq "RGBColor") {
-        return "_RGBColorWithRGB";
-    }
+    return "" if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMString" or $type eq "URL";
+    return "_RGBColorWithRGB" if $type eq "RGBColor";
 
     my $typeMaker = "";
-
-    if ($type eq "HTMLCollection") {
-        $typeMaker = "collection";
-    } elsif ($type eq "HTMLFormElement") {
-        $typeMaker = "formElement";
-    } elsif ($type eq "HTMLElement") {
-        $typeMaker = "element";
-    } elsif ($type eq "HTMLOptionsCollection") {
-        $typeMaker = "optionsCollection";
-    } elsif ($type eq "HTMLDocument") {
-        $typeMaker = "HTMLDocument";
-    } elsif ($type eq "HTMLTableCaptionElement") {
-        $typeMaker = "tableCaptionElement";
-    } elsif ($type eq "HTMLTableSectionElement") {
-        $typeMaker = "tableSectionElement";
-    } elsif ($type eq "CSSStyleDeclaration") {
-        $typeMaker = "styleDeclaration";
-    } elsif ($type eq "CSSStyleSheet") {
-        $typeMaker = "CSSStyleSheet";
-    } elsif ($type eq "CSSRule") {
-        $typeMaker = "rule";
-    } elsif ($type eq "CSSRuleList") {
-        $typeMaker = "ruleList";
-    } elsif ($type eq "CSSValue") {
-        $typeMaker = "value";
-    } elsif ($type eq "CSSPrimitiveValue") {
-        $typeMaker = "value";
+    if ($type =~ /^(HTML|CSS)/) {
+        $typeMaker = $type; 
     } elsif ($type eq "DOMImplementation") {
         $typeMaker = "DOMImplementation";
     } elsif ($type eq "CDATASection") {
@@ -365,7 +329,7 @@ sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return if $codeGenerator->IsPrimitiveType($type);
+    return if $codeGenerator->IsPrimitiveType($type) or $type eq "URL";
 
     if ($type eq "DOMString") {
         $implIncludes{"PlatformString.h"} = 1;
@@ -388,7 +352,6 @@ sub AddIncludesForType
     # Temp DOMEvents.h
     if ($type eq "Event") {
         $implIncludes{"DOMEvents.h"} = 1;
-        $implIncludes{"DOMEventsInternal.h"} = 1;
         $implIncludes{"$type.h"} = 1;
         return;
     }
@@ -396,7 +359,6 @@ sub AddIncludesForType
     # Temp DOMViews.h
     if ($type eq "DOMWindow") {
         $implIncludes{"DOMViews.h"} = 1;
-        $implIncludes{"DOMViewsInternal.h"} = 1;
         $implIncludes{"$type.h"} = 1;
         return;
     }
@@ -404,7 +366,6 @@ sub AddIncludesForType
     # Temp DOMXPath.h
     if ($type eq "XPathExpression" or $type eq "XPathNSResolver" or $type eq "XPathResult") {
         $implIncludes{"DOMXPath.h"} = 1;
-        $implIncludes{"DOMXPathInternal.h"} = 1;
         $implIncludes{"$type.h"} = 1;
         return;
     }
@@ -421,9 +382,6 @@ sub AddIncludesForType
     if ($type eq "CSSStyleDeclaration") {
         $implIncludes{"CSSMutableStyleDeclaration.h"} = 1;
     }
-
-    # Add type specific internal types.
-    $implIncludes{"DOMHTMLInternal.h"} = 1 if $type =~ /^HTML/;
 
     # Default, include the same named file (the implementation) and the same name prefixed with "DOM". 
     $implIncludes{"$type.h"} = 1;
@@ -645,21 +603,6 @@ sub GenerateImplementation
 
         $implIncludes{"$implClassName.h"} = 1;
         $implIncludes{"DOMInternal.h"} = 1;
-
-        # include module-dependent internal interfaces.
-        if ($module eq "html") {
-            # HTML module internal interfaces
-            $implIncludes{"DOMHTMLInternal.h"} = 1;
-        } elsif ($module eq "css") {
-            # CSS module internal interfaces
-            $implIncludes{"DOMCSSInternal.h"} = 1;
-        } elsif ($module eq "events") {
-            # Events module internal interfaces
-            $implIncludes{"DOMEventsInternal.h"} = 1;
-        } elsif ($module eq "xpath") {
-            # XPath module internal interfaces
-            $implIncludes{"DOMXPathInternal.h"} = 1;
-        }
     }
 
     @implContent = ();
@@ -669,12 +612,12 @@ sub GenerateImplementation
 
     if ($hasFunctionsOrAttributes) {
         # Add namespace to implementation class name 
-        $implClassName = "WebCore::" . $implClassName;
+        my $implClassNameWithNamespace = "WebCore::" . $implClassName;
 
         if ($parentImplClassName eq "Object") {
             # Only generate 'dealloc' and 'finalize' methods for direct subclasses of DOMObject.
 
-            push(@implContent, "#define IMPL reinterpret_cast<$implClassName*>(_internal)\n\n");
+            push(@implContent, "#define IMPL reinterpret_cast<$implClassNameWithNamespace*>(_internal)\n\n");
 
             push(@implContent, "- (void)dealloc\n");
             push(@implContent, "{\n");
@@ -691,7 +634,7 @@ sub GenerateImplementation
             push(@implContent, "}\n\n");
         } elsif ($interfaceName eq "CSSStyleSheet") {
             # Special case for CSSStyleSheet
-            push(@implContent, "#define IMPL reinterpret_cast<WebCore::CSSStyleSheet*>(_internal)\n\n");
+            push(@implContent, "#define IMPL reinterpret_cast<$implClassNameWithNamespace*>(_internal)\n\n");
         } else {
             my $internalBaseType;
             if ($parentImplClassName eq "CSSValue") {
@@ -702,7 +645,7 @@ sub GenerateImplementation
                 $internalBaseType = "WebCore::Node"
             }
 
-            push(@implContent, "#define IMPL static_cast<$implClassName*>(reinterpret_cast<$internalBaseType*>(_internal))\n\n");
+            push(@implContent, "#define IMPL static_cast<$implClassNameWithNamespace*>(reinterpret_cast<$internalBaseType*>(_internal))\n\n");
         }
     }
 
@@ -719,19 +662,19 @@ sub GenerateImplementation
             my $attributeType = GetObjCType($attribute->signature->type);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
 
-            my $interfaceName = $attributeName;
+            my $attributeInterfaceName = $attributeName;
             if ($attributeName eq "id") {
                 # Special case attribute id to be idName to avoid Obj-C nameing conflict.
-                $interfaceName .= "Name";
+                $attributeInterfaceName .= "Name";
             } elsif ($attributeName eq "frame") {
                 # Special case attribute frame to be frameBorders.
-                $interfaceName .= "Borders";
+                $attributeInterfaceName .= "Borders";
             }
 
-            $attributeNames{$interfaceName} = 1;
+            $attributeNames{$attributeInterfaceName} = 1;
 
             # - GETTER
-            my $getterSig = "- ($attributeType)$interfaceName\n";
+            my $getterSig = "- ($attributeType)$attributeInterfaceName\n";
             my $hasGetterException = @{$attribute->getterExceptions};
             my $getterContentHead = "IMPL->$attributeName(";
             my $getterContentTail = ")";
@@ -749,6 +692,15 @@ sub GenerateImplementation
                 my $attributeToDisplay = $1;
                 $getterContentHead = "IMPL->$attributeToDisplay().replace(\'\\\\\', [self _element]->document()->backslashAsCurrencySymbol()";
                 $implIncludes{"Document.h"} = 1;
+            } elsif ($attributeName =~ /^absolute(\w+)URL$/) {
+                my $typeOfURL = $1;
+                $getterContentHead = "[self _getURLAttribute:";
+                if ($typeOfURL eq "Link") {
+                    $getterContentTail = "\@\"href\"]";
+                } elsif ($typeOfURL eq "Image" and $interfaceName eq "HTMLImageElement") {
+                    $getterContentTail = "\@\"src\"]";
+                }
+                $implIncludes{"DOMPrivate.h"} = 1;
             } elsif ($typeMaker ne "") {
                 # Surround getter with TypeMaker
                 $getterContentHead = "[$attributeTypeSansPtr $typeMaker:WTF::getPtr(" . $getterContentHead;
@@ -788,8 +740,8 @@ sub GenerateImplementation
                 my $hasSetterException = @{$attribute->setterExceptions};
 
                 $attributeName = "set" . ucfirst($attributeName);
-                my $setterName = "set" . ucfirst($interfaceName);
-                my $argName = "new" . ucfirst($interfaceName);
+                my $setterName = "set" . ucfirst($attributeInterfaceName);
+                my $argName = "new" . ucfirst($attributeInterfaceName);
 
                 # FIXME: should move this out into it's own fuction to share with
                 # the similar function parameter code below.
@@ -840,7 +792,7 @@ sub GenerateImplementation
 
             my @parameterNames = ();
             my @needsAssert = ();
-            my %custom = ();
+            my %needsCustom = ();
 
             my $parameterIndex = 0;
             my $functionSig = "- ($returnType)$functionName";

@@ -28,9 +28,12 @@
 #ifdef XPATH_SUPPORT
 
 #import "DOMXPath.h"
+
 #import "DOMInternal.h"
-#import "DOMXPathInternal.h"
 #import "Document.h"
+#import "XPathExpression.h"
+#import "XPathNSResolver.h"
+#import "XPathResult.h"
 
 using WebCore::ExceptionCode;
 using WebCore::XPathExpression;

@@ -29,7 +29,7 @@ module html {
         attribute DOMString shape;
         attribute long tabIndex;
         attribute DOMString target;
-        
+
         // IE Extensions
         readonly attribute DOMString hash;
         readonly attribute DOMString host;
@@ -38,6 +38,9 @@ module html {
         readonly attribute DOMString port;
         readonly attribute DOMString protocol;
         readonly attribute DOMString search;
+
+        // Objective-C extension:
+        readonly attribute [Exclude=JS] URL absoluteLinkURL;
     };
 
 }

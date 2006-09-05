@@ -28,7 +28,6 @@
 #import "DOMHTMLOptionElement.h"
 
 #import "DOMInternal.h"
-#import "DOMHTMLInternal.h"
 #import "HTMLOptionElement.h"
 #import "DOMHTMLFormElement.h"
 #import "PlatformString.h"
@@ -45,7 +44,7 @@
 
 - (DOMHTMLFormElement *)form
 {
-    return [DOMHTMLFormElement _formElementWith:[self _optionElement]->form()];
+    return [DOMHTMLFormElement _HTMLFormElementWith:[self _optionElement]->form()];
 }
 
 - (BOOL)defaultSelected

@@ -45,14 +45,18 @@ module html {
         void    select();
         void    click();
         
-                 attribute boolean indeterminate; // WinIE extension
+        // WinIE extension:
+                 attribute boolean indeterminate;
         
         // WinIE & FireFox extension:
         
         // Handled by JSHTMLInputElementBase to allow hiding based on input type
-        attribute [Exclude=JS] long selectionStart;
-        attribute [Exclude=JS] long selectionEnd;
+                 attribute [Exclude=JS] long selectionStart;
+                 attribute [Exclude=JS] long selectionEnd;
         [Exclude=JS] void setSelectionRange(in long start, in long end);
+
+        // Objective-C extension:
+        readonly attribute [Exclude=JS] DOMString altDisplayString;
     };
 
 }

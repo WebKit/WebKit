@@ -54,29 +54,11 @@
 @end
 
 @interface DOMHTMLInputElement (DOMHTMLInputElementExtensions)
-- (NSString *)altDisplayString;
-- (NSURL *)absoluteImageURL;
-@end
-
-@interface DOMHTMLImageElement (DOMHTMLImageElementExtensions)
-- (NSString *)altDisplayString;
 - (NSURL *)absoluteImageURL;
 @end
 
 @interface DOMHTMLObjectElement (DOMHTMLObjectElementExtensions)
 - (NSURL *)absoluteImageURL;
-@end
-
-@interface DOMHTMLAnchorElement (DOMHTMLAnchorElementExtensions)
-- (NSURL *)absoluteLinkURL;
-@end
-
-@interface DOMHTMLAreaElement (DOMHTMLAreaElementExtensions)
-- (NSURL *)absoluteLinkURL;
-@end
-
-@interface DOMHTMLLinkElement (DOMHTMLLinkElementExtensions)
-- (NSURL *)absoluteLinkURL;
 @end
 
 @interface DOMHTMLEmbedElement : DOMHTMLElement

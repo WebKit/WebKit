@@ -28,7 +28,6 @@
 #import "DOMHTMLAppletElement.h"
 
 #import "DOMInternal.h"
-#import "DOMHTMLInternal.h"
 #import "HTMLAppletElement.h"
 #import "PlatformString.h"
 

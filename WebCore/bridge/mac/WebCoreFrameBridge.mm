@@ -2221,7 +2221,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
     if (!m_frame || !m_frame->typingStyle())
         return nil;
-    return [DOMCSSStyleDeclaration _styleDeclarationWith:m_frame->typingStyle()->copy().get()];
+    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:m_frame->typingStyle()->copy().get()];
 }
 
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction

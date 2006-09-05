@@ -37,5 +37,9 @@ module html {
         readonly attribute boolean complete;
         readonly attribute long x;
         readonly attribute long y;
+        
+        // Objective-C extension:
+        readonly attribute [Exclude=JS] DOMString altDisplayString;
+        readonly attribute [Exclude=JS] URL absoluteImageURL;
     };
 }
