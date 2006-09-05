@@ -35,7 +35,7 @@ typedef void (*NPN_ReleaseVariantValueProcPtr) (NPVariant *variant);
 typedef NPIdentifier (*NPN_GetStringIdentifierProcPtr) (const NPUTF8 *name);
 typedef void (*NPN_GetStringIdentifiersProcPtr) (const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers);
 typedef NPIdentifier (*NPN_GetIntIdentifierProcPtr) (int32_t intid);
-typedef NPIdentifier (*NPN_IntFromIdentifierProcPtr) (NPIdentifier identifier);
+typedef int32_t (*NPN_IntFromIdentifierProcPtr) (NPIdentifier identifier);
 typedef bool (*NPN_IdentifierIsStringProcPtr) (NPIdentifier identifier);
 typedef NPUTF8 *(*NPN_UTF8FromIdentifierProcPtr) (NPIdentifier identifier);
 

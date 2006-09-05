@@ -1,3 +1,11 @@
+2006-09-05  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Tim O.
+
+        <rdar://problem/4682225> conflicting typedefs in Netscape plug-in headers
+
+        * Plugins/npfunctions.h: fix the return type for NPN_IntFromIdentifierProcPtr to be int32_t
+
 2006-09-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
