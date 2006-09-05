@@ -62,4 +62,4 @@ my $document = $parser->Parse($idlFile, $defines);
 
 # Generate desired output for given IDL file.
 my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory);
-$codeGen->ProcessDocument($document);
+$codeGen->ProcessDocument($document, $defines);

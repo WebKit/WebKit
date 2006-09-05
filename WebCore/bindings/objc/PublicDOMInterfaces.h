@@ -25,7 +25,9 @@
 // All public DOM class interfaces, properties and methods need to be in this file.
 // Anything not in the file will be generated into the appropriate private header file.
 
+#ifndef OBJC_CODE_GENERATION
 #error Do not include this header, instead include the appropriate DOM header.
+#endif
 
 @interface DOMAttr : DOMNode
 @property(readonly) NSString *name;
@@ -97,11 +99,13 @@
 - (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)element :(NSString *)pseudoElement;
 //- (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)element pseudoElement:(NSString *)pseudoElement;
 - (DOMNode *)adoptNode:(DOMNode *)source;
+#ifdef XPATH_SUPPORT
 - (DOMXPathExpression *)createExpression:(NSString *)expression :(id <DOMXPathNSResolver>)resolver;
 //- (DOMXPathExpression *)createExpression:(NSString *)expression resolver:(id <DOMXPathNSResolver>)resolver;
 - (id <DOMXPathNSResolver>)createNSResolver:(DOMNode *)nodeResolver;
 - (DOMXPathResult *)evaluate:(NSString *)expression :(DOMNode *)contextNode :(id <DOMXPathNSResolver>)resolver :(unsigned short)type :(DOMXPathResult *)inResult;
 //- (DOMXPathResult *)evaluate:(NSString *)expression contextNode:(DOMNode *)contextNode resolver:(id <DOMXPathNSResolver>)resolver type:(unsigned short)type inResult:(DOMXPathResult *)inResult;
+#endif
 @end
 
 @interface DOMDocumentFragment : DOMNode

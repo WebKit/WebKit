@@ -69,6 +69,7 @@ sub ProcessDocument
 {
   my $object = shift;
   $useDocument = shift;
+  my $defines = shift;
   
   my $ifaceName = $useGenerator;
   $ifaceName = "CodeGenerator$ifaceName";
@@ -86,13 +87,13 @@ sub ProcessDocument
   }
 
   # Start the actual code generation!
-  $codeGenerator->GenerateModule($useDocument);
+  $codeGenerator->GenerateModule($useDocument, $defines);
 
   my $classes = $useDocument->classes;
   foreach(@$classes) {
     my $class = $_;
     print "Generating $useGenerator bindings code for IDL interface \"" . $class->name . "\"...\n";
-    $codeGenerator->GenerateInterface($class);
+    $codeGenerator->GenerateInterface($class, $defines);
   }
 
   $codeGenerator->finish();

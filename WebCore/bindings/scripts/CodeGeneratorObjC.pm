@@ -118,21 +118,25 @@ sub ReadPublicInterfaces
 {
     my $class = shift;
     my $superClass = shift;
+    my $defines = shift;
 
     my $found = 0;
     my $actualSuperClass;
     %publicInterfaces = ();
 
-    open (PublicDOMInterfaces, "WebCore/bindings/objc/PublicDOMInterfaces.h") or die "Can't open bindings/objc/PublicDOMInterfaces.h";
+    my $fileName = "WebCore/bindings/objc/PublicDOMInterfaces.h";
+    open FILE, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "objective-c", 
+        (map { "-D$_" } split(/ /, $defines)), "-DOBJC_CODE_GENERATION", $fileName or die "Could not open $fileName";
+    my @documentContent = <FILE>;
+    close FILE;
 
-    while ($line = <PublicDOMInterfaces>) {
+    foreach $line (@documentContent) {
         if ($line =~ /^\s?\@interface $class\s?:\s?(\w+)\s?$/) {
             die "error: Public API change. Superclass for \"$class\" differs ($1 != $superClass)" if $superClass ne $1;
             $found = 1;
             next;
         }
 
-        next if $line =~ /^\s?$|^\/\/|^#/; # skip whitespace, comments or preprocessor lines
         last if $found and $line =~ /^\s?\@end\s?$/;
 
         if ($found) {
@@ -143,8 +147,6 @@ sub ReadPublicInterfaces
         }
     }
 
-    close(PublicDOMInterfaces);
-
     # If this class was not found in PublicDOMInterfaces.h then it should be considered as an entirly new public class.
     $newPublicClass = ! $found;
 }
@@ -154,6 +156,7 @@ sub GenerateInterface
 {
     my $object = shift;
     my $dataNode = shift;
+    my $defines = shift;
 
     $codeGenerator->RemoveExcludedAttributesAndFunctions($dataNode, "ObjC");
 
@@ -161,7 +164,7 @@ sub GenerateInterface
     my $className = GetClassName($name);
     my $parentClassName = "DOM" . GetParentImplClassName($dataNode);
 
-    ReadPublicInterfaces($className, $parentClassName);
+    ReadPublicInterfaces($className, $parentClassName, $defines);
 
     # Start actual generation..
     $object->GenerateImplementation($dataNode);

@@ -86,6 +86,7 @@ sub GenerateInterface
 {
     my $object = shift;
     my $dataNode = shift;
+    my $defines = shift;
 
     $codeGenerator->RemoveExcludedAttributesAndFunctions($dataNode, "JS");
 
