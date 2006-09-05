@@ -2,6 +2,14 @@
 
         Reviewed by Adam.
 
+        Let the engine draw the focus ring for styled menu lists.
+
+        * rendering/RenderTheme.cpp: (WebCore::RenderTheme::supportsFocusRing): Added case for MenulistButtonAppearance.
+
+2006-09-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
         - Fix for <rdar://problem/4706463> REGRESSION: Must click twice on <select> elements for menu to show
 
         * rendering/RenderPopupMenuMac.h:
