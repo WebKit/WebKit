@@ -414,10 +414,8 @@ OBJC_BINDINGS_SCRIPTS = \
     bindings/scripts/generate-bindings.pl \
 #
 
-DOM%.h : %.idl $(OBJC_BINDINGS_SCRIPTS)
-ifeq ($(OS),MACOS)
+DOM%.h : %.idl $(OBJC_BINDINGS_SCRIPTS) bindings/objc/PublicDOMInterfaces.h
 	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES)" --generator ObjC --include dom --include html --include xpath --include ksvg2/svg --outputdir . $<
-endif
 
 # new-style JavaScript bindings
 
