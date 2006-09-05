@@ -1,3 +1,169 @@
+2006-09-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by thatcher
+        
+        Setup for <rdar://problem/4344550> Misspellings aren't marked after undo delete
+        
+        Fixes:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6498>
+        SelectionController's setters should notify delegates of selection changes
+        
+        Moved setSelection from Frame to SelectionController.
+        I haven't moved any of the work that's done as a result of a 
+        Selection change to SelectionController yet.
+        Make fewer uses of SelectionControllers.  They're now only used for 
+        the Frame's selection, the Page's drag caret, and functions that
+        need to do Selection expansion.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Selection::getValueProperty):
+        (KJS::Selection::toString):
+        (KJS::SelectionFunc::callAsFunction):
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        (WebCore::FrameMac::dispatchCPPEvent):
+        (WebCore::FrameMac::fontForSelection):
+        (WebCore::FrameMac::baseWritingDirectionForSelectionStart):
+        (WebCore::FrameMac::markMisspellingsInAdjacentWords):
+        (WebCore::FrameMac::markMisspellings):
+        (WebCore::FrameMac::respondToChangedSelection):
+        (WebCore::FrameMac::shouldChangeSelection):
+        (WebCore::FrameMac::shouldDeleteSelection):
+        (WebCore::FrameMac::respondToChangedContents):
+        * bridge/mac/PageMac.mm:
+        (WebCore::Page::Page):
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        (-[WebCoreAXObject doAXTextMarkerRangeForLine:]):
+        (-[WebCoreAXObject doAXBoundsForTextMarkerRange:]):
+        (-[WebCoreAXObject doAXTextMarkerRangeForUnorderedTextMarkers:]):
+        (-[WebCoreAXObject doSetAXSelectedTextMarkerRange:]):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge isSelectionEditable]):
+        (-[WebCoreFrameBridge isSelectionRichlyEditable]):
+        (-[WebCoreFrameBridge selectionState]):
+        (-[WebCoreFrameBridge deselectText]):
+        (-[WebCoreFrameBridge selectedAttributedString]):
+        (-[WebCoreFrameBridge rangeByExpandingSelectionWithGranularity:]):
+        (-[WebCoreFrameBridge rangeByAlteringCurrentSelection:direction:granularity:]):
+        (-[WebCoreFrameBridge alterCurrentSelection:direction:granularity:]):
+        (-[WebCoreFrameBridge rangeByAlteringCurrentSelection:verticalDistance:]):
+        (-[WebCoreFrameBridge alterCurrentSelection:verticalDistance:]):
+        (-[WebCoreFrameBridge setSelectedDOMRange:affinity:closeTyping:]):
+        (-[WebCoreFrameBridge selectedDOMRange]):
+        (-[WebCoreFrameBridge selectNSRange:]):
+        (-[WebCoreFrameBridge selectedNSRange]):
+        (-[WebCoreFrameBridge selectionAffinity]):
+        (-[WebCoreFrameBridge replaceSelectionWithText:selectReplacement:smartReplace:]):
+        (-[WebCoreFrameBridge setSelectionToDragCaret]):
+        (-[WebCoreFrameBridge moveSelectionToDragCaret:smartMove:]):
+        (-[WebCoreFrameBridge moveDragCaretToPoint:]):
+        (-[WebCoreFrameBridge removeDragCaret]):
+        (-[WebCoreFrameBridge dragCaretDOMRange]):
+        (-[WebCoreFrameBridge isDragCaretRichlyEditable]):
+        (-[WebCoreFrameBridge editableDOMRangeForPoint:]):
+        (-[WebCoreFrameBridge ensureSelectionVisible]):
+        (-[WebCoreFrameBridge rangeOfCharactersAroundCaret]):
+        * bridge/win/PageWin.cpp:
+        (WebCore::Page::Page):
+        * dom/Document.cpp:
+        (WebCore::Document::updateSelection):
+        (WebCore::Document::clearSelectionIfNeeded):
+        (WebCore::Document::notifyBeforeNodeRemoval):
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand):
+        * editing/JSEditor.cpp:
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::IncreaseSelectionListLevelCommand::canIncreaseSelectionListLevel):
+        (WebCore::DecreaseSelectionListLevelCommand::canDecreaseSelectionListLevel):
+        * editing/Selection.cpp:
+        (WebCore::Selection::setBase):
+        (WebCore::Selection::setExtent):
+        * editing/Selection.h:
+        (WebCore::Selection::extent):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+        (WebCore::SelectionController::moveTo):
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::nodeWillBeRemoved):
+        (WebCore::SelectionController::modify):
+        (WebCore::SelectionController::clear):
+        (WebCore::SelectionController::setBase):
+        (WebCore::SelectionController::setExtent):
+        * editing/SelectionController.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::caretRect):
+        * editing/VisiblePosition.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectedText):
+        (WebCore::Frame::hasSelection):
+        (WebCore::Frame::selectionController):
+        (WebCore::Frame::dragCaretController):
+        (WebCore::Frame::notifyRendererOfSelectionChange):
+        (WebCore::Frame::invalidateSelection):
+        (WebCore::Frame::clearCaretRectIfNeeded):
+        (WebCore::Frame::setFocusNodeIfNeeded):
+        (WebCore::Frame::selectionLayoutChanged):
+        (WebCore::Frame::caretBlinkTimerFired):
+        (WebCore::Frame::paintCaret):
+        (WebCore::Frame::paintDragCaret):
+        (WebCore::Frame::isPointInsideSelection):
+        (WebCore::Frame::selectClosestWordFromMouseEvent):
+        (WebCore::Frame::handleMousePressEventDoubleClick):
+        (WebCore::Frame::handleMousePressEventTripleClick):
+        (WebCore::Frame::handleMousePressEventSingleClick):
+        (WebCore::Frame::handleMouseMoveEvent):
+        (WebCore::Frame::handleMouseReleaseEvent):
+        (WebCore::Frame::selectAll):
+        (WebCore::Frame::selectContentsOfNode):
+        (WebCore::Frame::shouldChangeSelection):
+        (WebCore::Frame::shouldDeleteSelection):
+        (WebCore::Frame::isSelectionInPasswordField):
+        (WebCore::Frame::appliedEditing):
+        (WebCore::Frame::unappliedEditing):
+        (WebCore::Frame::reappliedEditing):
+        (WebCore::Frame::computeAndSetTypingStyle):
+        (WebCore::Frame::applyStyle):
+        (WebCore::Frame::applyParagraphStyle):
+        (WebCore::Frame::selectionListState):
+        (WebCore::Frame::selectionHasStyle):
+        (WebCore::Frame::selectionComputedStyle):
+        (WebCore::Frame::selectFrameElementInParentIfFullySelected):
+        (WebCore::Frame::currentForm):
+        (WebCore::Frame::revealSelection):
+        (WebCore::Frame::centerSelectionInVisibleArea):
+        (WebCore::Frame::styleForSelectionStart):
+        (WebCore::Frame::setSelectionFromNone):
+        (WebCore::Frame::findString):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::clear):
+        * page/Page.cpp:
+        (WebCore::Page::dragCaretController):
+        * page/Page.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::selectionStart):
+        (WebCore::RenderTextControl::selectionEnd):
+        (WebCore::RenderTextControl::setSelectionRange):
+        (WebCore::RenderTextControl::selectionChanged):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeSelection):
+
 2006-09-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

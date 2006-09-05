@@ -43,7 +43,7 @@ using namespace EventNames;
 
 EditCommand::EditCommand(Document* document) 
     : m_document(document)
-    , m_startingSelection(document->frame()->selection().selection())
+    , m_startingSelection(document->frame()->selectionController()->selection())
     , m_endingSelection(m_startingSelection)
     , m_startingRootEditableElement(m_startingSelection.rootEditableElement())
     , m_endingRootEditableElement(m_startingRootEditableElement)
@@ -51,7 +51,7 @@ EditCommand::EditCommand(Document* document)
 {
     ASSERT(m_document);
     ASSERT(m_document->frame());
-    setStartingSelection(m_document->frame()->selection().selection());
+    setStartingSelection(m_document->frame()->selectionController()->selection());
     setEndingSelection(m_startingSelection);
 }
 

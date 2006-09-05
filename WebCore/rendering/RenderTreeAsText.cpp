@@ -395,7 +395,7 @@ static void writeSelection(TextStream &ts, const RenderObject *o)
     if (!frame)
         return;
 
-    SelectionController selection = frame->selection();
+    Selection selection = frame->selectionController()->selection();
     if (selection.isCaret()) {
         ts << "caret: position " << selection.start().offset() << " of " << nodePosition(selection.start().node());
         if (selection.affinity() == UPSTREAM)

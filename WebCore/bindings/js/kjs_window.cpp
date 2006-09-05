@@ -2279,32 +2279,32 @@ Selection::Selection(Frame *p) : m_frame(p)
 
 JSValue *Selection::getValueProperty(ExecState *exec, int token) const
 {
-    SelectionController s = m_frame->selection();
+    SelectionController* s = m_frame->selectionController();
     const Window* window = Window::retrieveWindow(m_frame);
     if (!window)
         return jsUndefined();
         
     switch (token) {
     case AnchorNode:
-        return toJS(exec, s.anchorNode());
+        return toJS(exec, s->anchorNode());
     case BaseNode:
-        return toJS(exec, s.baseNode());
+        return toJS(exec, s->baseNode());
     case AnchorOffset:
-        return jsNumber(s.anchorOffset());
+        return jsNumber(s->anchorOffset());
     case BaseOffset:
-        return jsNumber(s.baseOffset());
+        return jsNumber(s->baseOffset());
     case FocusNode:
-        return toJS(exec, s.focusNode());
+        return toJS(exec, s->focusNode());
     case ExtentNode:
-        return toJS(exec, s.extentNode());
+        return toJS(exec, s->extentNode());
     case FocusOffset:
-        return jsNumber(s.focusOffset());
+        return jsNumber(s->focusOffset());
     case ExtentOffset:
-        return jsNumber(s.extentOffset());
+        return jsNumber(s->extentOffset());
     case IsCollapsed:
-        return jsBoolean(s.isCollapsed());
+        return jsBoolean(s->isCollapsed());
     case _Type:
-        return jsString(s.type());
+        return jsString(s->type());
     default:
         ASSERT(0);
         return jsUndefined();
@@ -2326,7 +2326,7 @@ JSValue *Selection::toPrimitive(ExecState *exec, JSType) const
 
 UString Selection::toString(ExecState *) const
 {
-    return UString((m_frame->selection()).toString());
+    return UString(m_frame->selectionController()->toString());
 }
 
 JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
@@ -2336,37 +2336,35 @@ JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     Selection *selection = static_cast<Selection *>(thisObj);
     Frame *frame = selection->frame();
     if (frame) {
-        SelectionController s = frame->selection();
+        SelectionController* s = frame->selectionController();
         
         switch (id) {
             case Selection::Collapse:
-                s.collapse(toNode(args[0]), args[1]->toInt32(exec));
+                s->collapse(toNode(args[0]), args[1]->toInt32(exec));
                 break;
             case Selection::CollapseToEnd:
-                s.collapseToEnd();
+                s->collapseToEnd();
                 break;
             case Selection::CollapseToStart:
-                s.collapseToStart();
+                s->collapseToStart();
                 break;
             case Selection::Empty:
-                s.empty();
+                s->empty();
                 break;
             case Selection::SetBaseAndExtent:
-                s.setBaseAndExtent(toNode(args[0]), args[1]->toInt32(exec), toNode(args[2]), args[3]->toInt32(exec));
+                s->setBaseAndExtent(toNode(args[0]), args[1]->toInt32(exec), toNode(args[2]), args[3]->toInt32(exec));
                 break;
             case Selection::SetPosition:
-                s.setPosition(toNode(args[0]), args[1]->toInt32(exec));
+                s->setPosition(toNode(args[0]), args[1]->toInt32(exec));
                 break;
             case Selection::Modify:
-                s.modify(args[0]->toString(exec), args[1]->toString(exec), args[2]->toString(exec));
+                s->modify(args[0]->toString(exec), args[1]->toString(exec), args[2]->toString(exec));
                 break;
             case Selection::GetRangeAt:
-                return toJS(exec, s.getRangeAt(args[0]->toInt32(exec)).get());
+                return toJS(exec, s->getRangeAt(args[0]->toInt32(exec)).get());
             case Selection::ToString:
-                return jsString(s.toString());
+                return jsString(s->toString());
         }
-        
-        frame->setSelection(s);
     }
 
     return jsUndefined();

@@ -204,7 +204,7 @@ bool IncreaseSelectionListLevelCommand::canIncreaseSelectionListLevel(Document* 
 {
     Node* startListChild;
     Node* endListChild;
-    return canIncreaseListLevel(document->frame()->selection().selection(), startListChild, endListChild);
+    return canIncreaseListLevel(document->frame()->selectionController()->selection(), startListChild, endListChild);
 }
 
 Node* IncreaseSelectionListLevelCommand::increaseSelectionListLevelWithType(Document* document, Type listType)
@@ -280,7 +280,7 @@ bool DecreaseSelectionListLevelCommand::canDecreaseSelectionListLevel(Document* 
 {
     Node* startListChild;
     Node* endListChild;
-    return canDecreaseListLevel(document->frame()->selection().selection(), startListChild, endListChild);
+    return canDecreaseListLevel(document->frame()->selectionController()->selection(), startListChild, endListChild);
 }
 
 void DecreaseSelectionListLevelCommand::decreaseSelectionListLevel(Document* document)

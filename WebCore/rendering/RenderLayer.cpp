@@ -774,8 +774,8 @@ void RenderLayer::autoscroll()
     int yOffset = scrollYOffset();
 
     // Get the rectangle for the extent of the selection
-    SelectionController sel = renderer()->document()->frame()->selection();
-    IntRect extentRect = SelectionController(sel.extent(), sel.affinity()).caretRect();
+    Selection selection(renderer()->document()->frame()->selectionController()->selection());
+    IntRect extentRect = VisiblePosition(selection.extent()).caretRect();
     extentRect.move(xOffset, yOffset);
 
     IntRect bounds = IntRect(xPos() + xOffset, yPos() + yOffset, width() - verticalScrollbarWidth(), height() - horizontalScrollbarHeight());

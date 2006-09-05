@@ -127,18 +127,9 @@ void Page::setNeedsReapplyStylesForSettingsChange(Settings* settings)
                 frame->setNeedsReapplyStyles();
 }
 
-SelectionController& Page::dragCaret() const
+SelectionController* Page::dragCaretController() const
 {
-    return m_dragCaret;
-}
-
-void Page::setDragCaret(const SelectionController& dragCaret)
-{
-    if (m_dragCaret != dragCaret) {
-        m_dragCaret.needsCaretRepaint();
-        m_dragCaret = dragCaret;
-        m_dragCaret.needsCaretRepaint();
-    }
+    return &m_dragCaretController;
 }
 
 }

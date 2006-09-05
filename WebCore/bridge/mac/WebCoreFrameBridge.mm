@@ -764,17 +764,17 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (BOOL)isSelectionEditable
 {
-    return m_frame->selection().isContentEditable();
+    return m_frame->selectionController()->isContentEditable();
 }
 
 - (BOOL)isSelectionRichlyEditable
 {
-    return m_frame->selection().isContentRichlyEditable();
+    return m_frame->selectionController()->isContentRichlyEditable();
 }
 
 - (WebSelectionState)selectionState
 {
-    switch (m_frame->selection().state()) {
+    switch (m_frame->selectionController()->state()) {
         case WebCore::Selection::NONE:
             return WebSelectionStateNone;
         case WebCore::Selection::CARET:
@@ -858,8 +858,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)deselectText
 {
-    // FIXME: 6498 Should just be able to call m_frame->selection().clear()
-    m_frame->setSelection(SelectionController());
+    m_frame->selectionController()->clear();
 }
 
 - (BOOL)isFrameSet
@@ -1382,7 +1381,8 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (NSAttributedString *)selectedAttributedString
 {
     // FIXME: should be a no-arg version of attributedString() that does this
-    return m_frame->attributedString(m_frame->selection().start().node(), m_frame->selection().start().offset(), m_frame->selection().end().node(), m_frame->selection().end().offset());
+    Selection selection = m_frame->selectionController()->selection();
+    return m_frame->attributedString(selection.start().node(), selection.start().offset(), selection.end().node(), selection.end().offset());
 }
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int)endOffset
@@ -1630,7 +1630,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return nil;
         
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
-    SelectionController selection(m_frame->selection());
+    Selection selection(m_frame->selectionController()->selection());
     selection.expandUsingGranularity(static_cast<TextGranularity>(granularity));
     return [DOMRange _rangeWith:selection.toRange().get()];
 }
@@ -1641,24 +1641,20 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return nil;
         
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
-    SelectionController selection(m_frame->selection());
-    selection.modify(static_cast<SelectionController::EAlter>(alteration), 
-                     static_cast<SelectionController::EDirection>(direction), 
-                     static_cast<TextGranularity>(granularity));
-    return [DOMRange _rangeWith:selection.toRange().get()];
+    SelectionController selectionController;
+    selectionController.setSelection(m_frame->selectionController()->selection());
+    selectionController.modify(static_cast<SelectionController::EAlter>(alteration), 
+                               static_cast<SelectionController::EDirection>(direction), 
+                               static_cast<TextGranularity>(granularity));
+    return [DOMRange _rangeWith:selectionController.toRange().get()];
 }
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
 {
     if (!m_frame->hasSelection())
         return;
-        
-    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
-    SelectionController selection(m_frame->selection());
-    selection.modify(static_cast<SelectionController::EAlter>(alteration), 
-                     static_cast<SelectionController::EDirection>(direction), 
-                     static_cast<TextGranularity>(granularity));
-
+    
+    
     // save vertical navigation x position if necessary; many types of motion blow it away
     int xPos = Frame::NoXPosForVerticalArrowNavigation;
     switch (granularity) {
@@ -1675,10 +1671,12 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         case WebBridgeSelectToDocumentBoundary:
             break;
     }
-
-    
-    // setting the selection always clears saved vertical navigation x position
-    m_frame->setSelection(selection);
+        
+    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
+    SelectionController* selectionController = m_frame->selectionController();
+    selectionController->modify(static_cast<SelectionController::EAlter>(alteration), 
+                                static_cast<SelectionController::EDirection>(direction), 
+                                static_cast<TextGranularity>(granularity));
     
     // altering the selection also sets the granularity back to character
     // NOTE: The one exception is that we need to keep word granularity
@@ -1704,9 +1702,10 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!m_frame->hasSelection())
         return nil;
         
-    SelectionController selection(m_frame->selection());
-    selection.modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance));
-    return [DOMRange _rangeWith:selection.toRange().get()];
+    SelectionController selectionController;
+    selectionController.setSelection(m_frame->selectionController()->selection());
+    selectionController.modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance));
+    return [DOMRange _rangeWith:selectionController.toRange().get()];
 }
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
@@ -1714,17 +1713,13 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!m_frame->hasSelection())
         return;
         
-    SelectionController selection(m_frame->selection());
-    selection.modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance));
-
     // setting the selection always clears saved vertical navigation x position, so preserve it
-    int xPos = m_frame->xPosForVerticalArrowNavigation();
-    m_frame->setSelection(selection);
+    int xPos = m_frame->xPosForVerticalArrowNavigation();    
+    
+    m_frame->selectionController()->modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance));
     m_frame->setSelectionGranularity(static_cast<TextGranularity>(WebBridgeSelectByCharacter));
     m_frame->setXPosForVerticalArrowNavigation(xPos);
-
     m_frame->selectFrameElementInParentIfFullySelected();
-
     m_frame->notifyRendererOfSelectionChange(true);
 
     [self ensureSelectionVisible];
@@ -1756,13 +1751,13 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     // FIXME: Can we provide extentAffinity?
     VisiblePosition visibleStart(startContainer, [range startOffset], affinity);
     VisiblePosition visibleEnd(endContainer, [range endOffset], SEL_DEFAULT_AFFINITY);
-    SelectionController selection(visibleStart, visibleEnd);
-    m_frame->setSelection(selection, closeTyping);
+    Selection selection(visibleStart, visibleEnd);
+    m_frame->selectionController()->setSelection(selection, closeTyping);
 }
 
 - (DOMRange *)selectedDOMRange
 {
-    return [DOMRange _rangeWith:m_frame->selection().toRange().get()];
+    return [DOMRange _rangeWith:m_frame->selectionController()->toRange().get()];
 }
 
 - (NSRange)convertToNSRange:(Range *)range
@@ -1805,17 +1800,17 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)selectNSRange:(NSRange)range
 {
-    m_frame->setSelection(SelectionController([self convertToDOMRange:range].get(), SEL_DEFAULT_AFFINITY));
+    m_frame->selectionController()->setSelection(Selection([self convertToDOMRange:range].get(), SEL_DEFAULT_AFFINITY));
 }
 
 - (NSRange)selectedNSRange
 {
-    return [self convertToNSRange:m_frame->selection().toRange().get()];
+    return [self convertToNSRange:m_frame->selectionController()->toRange().get()];
 }
 
 - (NSSelectionAffinity)selectionAffinity
 {
-    return static_cast<NSSelectionAffinity>(m_frame->selection().affinity());
+    return static_cast<NSSelectionAffinity>(m_frame->selectionController()->affinity());
 }
 
 - (void)setMarkDOMRange:(DOMRange *)range
@@ -2025,7 +2020,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
     [self replaceSelectionWithFragment:[self documentFragmentWithText:text
-        inContext:[DOMRange _rangeWith:m_frame->selection().toRange().get()]]
+        inContext:[DOMRange _rangeWith:m_frame->selectionController()->toRange().get()]]
         selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
 }
 
@@ -2116,12 +2111,12 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)setSelectionToDragCaret
 {
-    m_frame->setSelection(m_frame->dragCaret());
+    m_frame->selectionController()->setSelection(m_frame->dragCaretController()->selection());
 }
 
 - (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove
 {
-    applyCommand(new MoveSelectionCommand([selectionFragment _fragment], m_frame->dragCaret().base(), smartMove));
+    applyCommand(new MoveSelectionCommand([selectionFragment _fragment], m_frame->dragCaretController()->base(), smartMove));
 }
 
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
@@ -2141,29 +2136,29 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)moveDragCaretToPoint:(NSPoint)point
 {   
-    SelectionController dragCaret([self _visiblePositionForPoint:point]);
-    m_frame->setDragCaret(dragCaret);
+    Selection dragCaret([self _visiblePositionForPoint:point]);
+    m_frame->dragCaretController()->setSelection(dragCaret);
 }
 
 - (void)removeDragCaret
 {
-    m_frame->setDragCaret(SelectionController());
+    m_frame->dragCaretController()->clear();
 }
 
 - (DOMRange *)dragCaretDOMRange
 {
-    return [DOMRange _rangeWith:m_frame->dragCaret().toRange().get()];
+    return [DOMRange _rangeWith:m_frame->dragCaretController()->toRange().get()];
 }
 
 - (BOOL)isDragCaretRichlyEditable
 {
-    return m_frame->dragCaret().isContentRichlyEditable();
+    return m_frame->dragCaretController()->isContentRichlyEditable();
 }
 
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
     VisiblePosition position = [self _visiblePositionForPoint:point];
-    return position.isNull() ? nil : [DOMRange _rangeWith:SelectionController(position).toRange().get()];
+    return position.isNull() ? nil : [DOMRange _rangeWith:Selection(position).toRange().get()];
 }
 
 - (DOMRange *)characterRangeAtPoint:(NSPoint)point
@@ -2326,7 +2321,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!v)
         return;
 
-    Position extent = m_frame->selection().extent();
+    Position extent = m_frame->selectionController()->extent();
     if (extent.isNull())
         return;
     
@@ -2338,7 +2333,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!documentView)
         return;
     
-    IntRect extentRect = renderer->caretRect(extent.offset(), m_frame->selection().affinity());
+    IntRect extentRect = VisiblePosition(extent).caretRect();
     RenderLayer *layer = renderer->enclosingLayer();
     if (layer)
         layer->scrollRectToVisible(extentRect, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignToEdgeIfNeeded);
@@ -2488,11 +2483,11 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
     if (!m_frame)
         return nil;
         
-    SelectionController selection(m_frame->selection());
+    Selection selection(m_frame->selectionController()->selection());
     if (!selection.isCaret())
         return nil;
 
-    VisiblePosition caret(selection.start(), selection.affinity());
+    VisiblePosition caret(selection.visibleStart());
     VisiblePosition next = caret.next();
     VisiblePosition previous = caret.previous();
     if (previous.isNull() || next.isNull() || caret == next || caret == previous)

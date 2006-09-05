@@ -1128,17 +1128,17 @@ void Frame::setFixedFont(const String& name)
 
 String Frame::selectedText() const
 {
-    return plainText(selection().toRange().get());
+    return plainText(selectionController()->toRange().get());
 }
 
 bool Frame::hasSelection() const
 {
-    return d->m_selection.isCaretOrRange();
+    return selectionController()->isCaretOrRange();
 }
 
-SelectionController& Frame::selection() const
+SelectionController* Frame::selectionController() const
 {
-    return d->m_selection;
+    return &(d->m_selectionController);
 }
 
 TextGranularity Frame::selectionGranularity() const
@@ -1151,9 +1151,9 @@ void Frame::setSelectionGranularity(TextGranularity granularity) const
     d->m_selectionGranularity = granularity;
 }
 
-SelectionController& Frame::dragCaret() const
+SelectionController* Frame::dragCaretController() const
 {
-    return d->m_page->dragCaret();
+    return d->m_page->dragCaretController();
 }
 
 const Selection& Frame::mark() const
@@ -1171,60 +1171,21 @@ void Frame::setMark(const Selection& s)
     d->m_mark = s;
 }
 
-void Frame::setSelection(const SelectionController& s, bool closeTyping)
-{
-    if (closeTyping)
-        TypingCommand::closeTyping(lastEditCommand());
-
-    clearTypingStyle();
-        
-    if (d->m_selection == s)
-        return;
-    
-    ASSERT(!s.base().node() || s.base().node()->document() == document());
-    ASSERT(!s.extent().node() || s.extent().node()->document() == document());
-    ASSERT(!s.start().node() || s.start().node()->document() == document());
-    ASSERT(!s.end().node() || s.end().node()->document() == document());
-    
-    clearCaretRectIfNeeded();
-
-    SelectionController oldSelection = d->m_selection;
-
-    d->m_selection = s;
-    if (!s.isNone())
-        setFocusNodeIfNeeded();
-    
-    selectionLayoutChanged();
-
-    // Always clear the x position used for vertical arrow navigation.
-    // It will be restored by the vertical arrow navigation code if necessary.
-    d->m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
-    
-    notifyRendererOfSelectionChange(false);
-
-    respondToChangedSelection(oldSelection, closeTyping);
-}
-
 void Frame::notifyRendererOfSelectionChange(bool userTriggered)
 {
     RenderObject* renderer = 0;
-    if (d->m_selection.rootEditableElement())
-        renderer = d->m_selection.rootEditableElement()->shadowAncestorNode()->renderer();
+    if (selectionController()->rootEditableElement())
+        renderer = selectionController()->rootEditableElement()->shadowAncestorNode()->renderer();
 
     // If the current selection is in a textfield or textarea, notify the renderer that the selection has changed
     if (renderer && (renderer->isTextArea() || renderer->isTextField()))
         static_cast<RenderTextControl*>(renderer)->selectionChanged(userTriggered);
 }
 
-void Frame::setDragCaret(const SelectionController& dragCaret)
-{
-    d->m_page->setDragCaret(dragCaret);
-}
-
 void Frame::invalidateSelection()
 {
     clearCaretRectIfNeeded();
-    d->m_selection.setNeedsLayout();
+    selectionController()->setNeedsLayout();
     selectionLayoutChanged();
 }
 
@@ -1244,7 +1205,7 @@ void Frame::clearCaretRectIfNeeded()
 {
     if (d->m_caretPaint) {
         d->m_caretPaint = false;
-        d->m_selection.needsCaretRepaint();
+        selectionController()->needsCaretRepaint();
     }        
 }
 
@@ -1263,10 +1224,10 @@ static bool isFrameElement(const Node *n)
 
 void Frame::setFocusNodeIfNeeded()
 {
-    if (!document() || d->m_selection.isNone() || !d->m_isActive)
+    if (!document() || selectionController()->isNone() || !d->m_isActive)
         return;
 
-    Node* target = d->m_selection.rootEditableElement();
+    Node* target = selectionController()->rootEditableElement();
     if (target) {
         RenderObject* renderer = target->renderer();
 
@@ -1295,10 +1256,10 @@ void Frame::selectionLayoutChanged()
 
     // see if a new caret blink timer needs to be started
     if (d->m_caretVisible && d->m_caretBlinks && 
-        d->m_selection.isCaret() && d->m_selection.start().node()->isContentEditable()) {
+        selectionController()->isCaret() && selectionController()->start().node()->isContentEditable()) {
         d->m_caretBlinkTimer.startRepeating(caretBlinkFrequency);
         d->m_caretPaint = true;
-        d->m_selection.needsCaretRepaint();
+        selectionController()->needsCaretRepaint();
     }
 
     if (d->m_doc)
@@ -1325,27 +1286,27 @@ void Frame::caretBlinkTimerFired(Timer<Frame>*)
         return;
     if (!d->m_caretBlinks)
         return;
-    if (!d->m_selection.isCaret())
+    if (!selectionController()->isCaret())
         return;
     bool caretPaint = d->m_caretPaint;
     if (d->m_bMousePressed && caretPaint)
         return;
     d->m_caretPaint = !caretPaint;
-    d->m_selection.needsCaretRepaint();
+    selectionController()->needsCaretRepaint();
 }
 
 void Frame::paintCaret(GraphicsContext* p, const IntRect& rect) const
 {
     if (d->m_caretPaint)
-        d->m_selection.paintCaret(p, rect);
+        selectionController()->paintCaret(p, rect);
 }
 
 void Frame::paintDragCaret(GraphicsContext* p, const IntRect& rect) const
 {
-    SelectionController& dragCaret = d->m_page->dragCaret();
-    assert(dragCaret.selection().isCaret());
-    if (dragCaret.selection().start().node()->document()->frame() == this)
-        dragCaret.paintCaret(p, rect);
+    SelectionController* dragCaretController = d->m_page->dragCaretController();
+    assert(dragCaretController->selection().isCaret());
+    if (dragCaretController->selection().start().node()->document()->frame() == this)
+        dragCaretController->paintCaret(p, rect);
 }
 
 void Frame::urlSelected(const DeprecatedString& url, const String& target)
@@ -1719,7 +1680,7 @@ bool Frame::shouldDragAutoNode(Node *node, const IntPoint& point) const
 bool Frame::isPointInsideSelection(const IntPoint& point)
 {
     // Treat a collapsed selection like no selection.
-    if (!d->m_selection.isRange())
+    if (!selectionController()->isRange())
         return false;
     if (!document()->renderer()) 
         return false;
@@ -1734,16 +1695,16 @@ bool Frame::isPointInsideSelection(const IntPoint& point)
     if (pos.isNull())
         return false;
 
-    Node *n = d->m_selection.start().node();
+    Node *n = selectionController()->start().node();
     while (n) {
         if (n == pos.node()) {
-            if ((n == d->m_selection.start().node() && pos.offset() < d->m_selection.start().offset()) ||
-                (n == d->m_selection.end().node() && pos.offset() > d->m_selection.end().offset())) {
+            if ((n == selectionController()->start().node() && pos.offset() < selectionController()->start().offset()) ||
+                (n == selectionController()->end().node() && pos.offset() > selectionController()->end().offset())) {
                 return false;
             }
             return true;
         }
-        if (n == d->m_selection.end().node())
+        if (n == selectionController()->end().node())
             break;
         n = n->traverseNextNode();
     }
@@ -1753,30 +1714,30 @@ bool Frame::isPointInsideSelection(const IntPoint& point)
 
 void Frame::selectClosestWordFromMouseEvent(const PlatformMouseEvent& mouse, Node *innerNode)
 {
-    SelectionController selection;
+    Selection newSelection;
 
     if (innerNode && innerNode->renderer() && mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
         IntPoint vPoint = view()->viewportToContents(mouse.pos());
         VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
         if (pos.isNotNull()) {
-            selection.moveTo(pos);
-            selection.expandUsingGranularity(WordGranularity);
+            newSelection = Selection(pos);
+            newSelection.expandUsingGranularity(WordGranularity);
         }
     }
     
-    if (selection.isRange()) {
+    if (newSelection.isRange()) {
         d->m_selectionGranularity = WordGranularity;
         d->m_beganSelectingText = true;
     }
     
-    if (shouldChangeSelection(selection))
-        setSelection(selection);
+    if (shouldChangeSelection(newSelection))
+        selectionController()->setSelection(newSelection);
 }
 
 void Frame::handleMousePressEventDoubleClick(const MouseEventWithHitTestResults& event)
 {
     if (event.event().button() == LeftButton) {
-        if (selection().isRange())
+        if (selectionController()->isRange())
             // A double-click when range is already selected
             // should not change the selection.  So, do not call
             // selectClosestWordFromMouseEvent, but do set
@@ -1794,20 +1755,20 @@ void Frame::handleMousePressEventTripleClick(const MouseEventWithHitTestResults&
     
     if (event.event().button() == LeftButton && innerNode && innerNode->renderer() &&
         mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
-        SelectionController selection;
+        Selection newSelection;
         IntPoint vPoint = view()->viewportToContents(event.event().pos());
         VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
         if (pos.isNotNull()) {
-            selection.moveTo(pos);
-            selection.expandUsingGranularity(ParagraphGranularity);
+            newSelection = Selection(pos);
+            newSelection.expandUsingGranularity(ParagraphGranularity);
         }
-        if (selection.isRange()) {
+        if (newSelection.isRange()) {
             d->m_selectionGranularity = ParagraphGranularity;
             d->m_beganSelectingText = true;
         }
         
-        if (shouldChangeSelection(selection))
-            setSelection(selection);
+        if (shouldChangeSelection(newSelection))
+            selectionController()->setSelection(newSelection);
     }
 }
 
@@ -1818,7 +1779,6 @@ void Frame::handleMousePressEventSingleClick(const MouseEventWithHitTestResults&
     if (event.event().button() == LeftButton) {
         if (innerNode && innerNode->renderer() &&
             mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
-            SelectionController sel;
             
             // Extend the selection if the Shift key is down, unless the click is in a link.
             bool extendSelection = event.event().shiftKey() && !event.isOverLink();
@@ -1834,29 +1794,30 @@ void Frame::handleMousePressEventSingleClick(const MouseEventWithHitTestResults&
                 visiblePos = VisiblePosition(innerNode, innerNode->caretMinOffset(), DOWNSTREAM);
             Position pos = visiblePos.deepEquivalent();
             
-            sel = selection();
-            if (extendSelection && sel.isCaretOrRange()) {
-                sel.clearModifyBias();
+            Selection newSelection = selectionController()->selection();
+            if (extendSelection && newSelection.isCaretOrRange()) {
+                selectionController()->clearModifyBias();
                 
                 // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection 
                 // was created right-to-left
-                Position start = sel.start();
+                Position start = newSelection.start();
+                Position end = newSelection.end();
                 short before = Range::compareBoundaryPoints(pos.node(), pos.offset(), start.node(), start.offset());
                 if (before <= 0)
-                    sel.setBaseAndExtent(pos.node(), pos.offset(), sel.end().node(), sel.end().offset());
+                    newSelection = Selection(pos, end);
                 else
-                    sel.setBaseAndExtent(start.node(), start.offset(), pos.node(), pos.offset());
+                    newSelection = Selection(start, pos);
 
                 if (d->m_selectionGranularity != CharacterGranularity)
-                    sel.expandUsingGranularity(d->m_selectionGranularity);
+                    newSelection.expandUsingGranularity(d->m_selectionGranularity);
                 d->m_beganSelectingText = true;
             } else {
-                sel = SelectionController(visiblePos);
+                newSelection = Selection(visiblePos);
                 d->m_selectionGranularity = CharacterGranularity;
             }
             
-            if (shouldChangeSelection(sel))
-                setSelection(sel);
+            if (shouldChangeSelection(newSelection))
+                selectionController()->setSelection(newSelection);
         }
     }
 }
@@ -1905,20 +1866,20 @@ void Frame::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
 
     // Restart the selection if this is the first mouse move. This work is usually
     // done in handleMousePressEvent, but not if the mouse press was on an existing selection.
-    SelectionController sel = selection();
-    sel.clearModifyBias();
+    Selection newSelection = selectionController()->selection();
+    selectionController()->clearModifyBias();
     
     if (!d->m_beganSelectingText) {
         d->m_beganSelectingText = true;
-        sel.moveTo(pos);
+        newSelection = Selection(pos);
     }
 
-    sel.setExtent(pos);
+    newSelection.setExtent(pos);
     if (d->m_selectionGranularity != CharacterGranularity)
-        sel.expandUsingGranularity(d->m_selectionGranularity);
+        newSelection.expandUsingGranularity(d->m_selectionGranularity);
 
-    if (shouldChangeSelection(sel))
-        setSelection(sel);
+    if (shouldChangeSelection(newSelection))
+        selectionController()->setSelection(newSelection);
 }
 
 void Frame::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event)
@@ -1934,16 +1895,16 @@ void Frame::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event)
     // However, if we are editing, place the caret.
     if (mouseDownMayStartSelect() && !d->m_beganSelectingText
             && d->m_dragStartPos == event.event().pos()
-            && d->m_selection.isRange()) {
-        SelectionController selection;
+            && selectionController()->isRange()) {
+        Selection newSelection;
         Node *node = event.targetNode();
         if (node && node->isContentEditable() && node->renderer()) {
             IntPoint vPoint = view()->viewportToContents(event.event().pos());
             VisiblePosition pos = node->renderer()->positionForPoint(vPoint);
-            selection.moveTo(pos);
+            newSelection = Selection(pos);
         }
-        if (shouldChangeSelection(selection))
-            setSelection(selection);
+        if (shouldChangeSelection(newSelection))
+            selectionController()->setSelection(newSelection);
     }
 
     notifyRendererOfSelectionChange(true);
@@ -1956,7 +1917,7 @@ void Frame::selectAll()
     if (!d->m_doc)
         return;
     
-    Node* root = d->m_selection.isContentEditable() ? d->m_selection.rootEditableElement() : d->m_doc->documentElement();
+    Node* root = selectionController()->isContentEditable() ? selectionController()->rootEditableElement() : d->m_doc->documentElement();
     selectContentsOfNode(root);
     selectFrameElementInParentIfFullySelected();
     notifyRendererOfSelectionChange(true);
@@ -1964,20 +1925,20 @@ void Frame::selectAll()
 
 bool Frame::selectContentsOfNode(Node* node)
 {
-    SelectionController sel = SelectionController(Selection::selectionFromContentsOfNode(node));    
-    if (shouldChangeSelection(sel)) {
-        setSelection(sel);
+    Selection newSelection(Selection::selectionFromContentsOfNode(node));
+    if (shouldChangeSelection(newSelection)) {
+        selectionController()->setSelection(newSelection);
         return true;
     }
     return false;
 }
 
-bool Frame::shouldChangeSelection(const SelectionController& newselection) const
+bool Frame::shouldChangeSelection(const Selection& newSelection) const
 {
-    return shouldChangeSelection(d->m_selection, newselection, newselection.affinity(), false);
+    return shouldChangeSelection(selectionController()->selection(), newSelection, newSelection.affinity(), false);
 }
 
-bool Frame::shouldDeleteSelection(const SelectionController& newselection) const
+bool Frame::shouldDeleteSelection(const Selection& newSelection) const
 {
     return true;
 }
@@ -2026,7 +1987,7 @@ void Frame::textDidChangeInTextArea(Element* input)
 
 bool Frame::isSelectionInPasswordField()
 {
-    Node* startNode = selection().start().node();
+    Node* startNode = selectionController()->start().node();
     if (startNode)
         startNode = startNode->shadowAncestorNode();
     return startNode && startNode->hasTagName(inputTag) && static_cast<HTMLInputElement*>(startNode)->inputType() == HTMLInputElement::PASSWORD;
@@ -2052,9 +2013,9 @@ void Frame::appliedEditing(PassRefPtr<EditCommand> cmd)
 {
     dispatchEditableContentChangedEvents(*cmd);
  
-    SelectionController sel(cmd->endingSelection());
-    if (shouldChangeSelection(sel))
-        setSelection(sel, false);
+    Selection newSelection(cmd->endingSelection());
+    if (shouldChangeSelection(newSelection))
+        selectionController()->setSelection(newSelection, false);
     
     // Now set the typing style from the command. Clear it when done.
     // This helps make the case work where you completely delete a piece
@@ -2076,33 +2037,33 @@ void Frame::appliedEditing(PassRefPtr<EditCommand> cmd)
         d->m_lastEditCommand = cmd.get();
         registerCommandForUndo(cmd);
     }
-    respondToChangedContents(sel);
+    respondToChangedContents(newSelection);
 }
 
 void Frame::unappliedEditing(PassRefPtr<EditCommand> cmd)
 {
     dispatchEditableContentChangedEvents(*cmd);
 
-    SelectionController sel(cmd->startingSelection());
-    if (shouldChangeSelection(sel))
-        setSelection(sel, true);
+    Selection newSelection(cmd->startingSelection());
+    if (shouldChangeSelection(newSelection))
+        selectionController()->setSelection(newSelection, true);
         
     d->m_lastEditCommand = 0;
     registerCommandForRedo(cmd);
-    respondToChangedContents(sel);
+    respondToChangedContents(newSelection);
 }
 
 void Frame::reappliedEditing(PassRefPtr<EditCommand> cmd)
 {
     dispatchEditableContentChangedEvents(*cmd);
 
-    SelectionController sel(cmd->endingSelection());
-    if (shouldChangeSelection(sel))
-        setSelection(sel, true);
+    Selection newSelection(cmd->endingSelection());
+    if (shouldChangeSelection(newSelection))
+        selectionController()->setSelection(newSelection, true);
         
     d->m_lastEditCommand = 0;
     registerCommandForUndo(cmd);
-    respondToChangedContents(sel);
+    respondToChangedContents(newSelection);
 }
 
 CSSMutableStyleDeclaration *Frame::typingStyle() const
@@ -2222,7 +2183,7 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction edit
         mutableStyle = typingStyle();
     }
 
-    Node *node = VisiblePosition(selection().start(), selection().affinity()).deepEquivalent().node();
+    Node *node = selectionController()->selection().visibleStart().deepEquivalent().node();
     CSSComputedStyleDeclaration computedStyle(node);
     computedStyle.diff(mutableStyle.get());
     
@@ -2238,7 +2199,7 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction edit
 
 void Frame::applyStyle(CSSStyleDeclaration *style, EditAction editingAction)
 {
-    switch (selection().state()) {
+    switch (selectionController()->state()) {
         case Selection::NONE:
             // do nothing
             break;
@@ -2255,7 +2216,7 @@ void Frame::applyStyle(CSSStyleDeclaration *style, EditAction editingAction)
 
 void Frame::applyParagraphStyle(CSSStyleDeclaration *style, EditAction editingAction)
 {
-    switch (selection().state()) {
+    switch (selectionController()->state()) {
         case Selection::NONE:
             // do nothing
             break;
@@ -2290,8 +2251,8 @@ Frame::TriState Frame::selectionListState() const
 {
     TriState state = falseTriState;
 
-    if (!d->m_selection.isRange()) {
-        Node* selectionNode = d->m_selection.selection().start().node();
+    if (!selectionController()->isRange()) {
+        Node* selectionNode = selectionController()->selection().start().node();
         if (enclosingList(selectionNode))
             return trueTriState;
     } else {
@@ -2308,7 +2269,7 @@ Frame::TriState Frame::selectionHasStyle(CSSStyleDeclaration *style) const
 
     RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
 
-    if (!d->m_selection.isRange()) {
+    if (!selectionController()->isRange()) {
         Node* nodeToRemove;
         RefPtr<CSSComputedStyleDeclaration> selectionStyle = selectionComputedStyle(nodeToRemove);
         if (!selectionStyle)
@@ -2320,13 +2281,13 @@ Frame::TriState Frame::selectionHasStyle(CSSStyleDeclaration *style) const
             assert(ec == 0);
         }
     } else {
-        for (Node* node = d->m_selection.start().node(); node; node = node->traverseNextNode()) {
+        for (Node* node = selectionController()->start().node(); node; node = node->traverseNextNode()) {
             RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(node);
             if (computedStyle)
                 updateState(mutableStyle.get(), computedStyle.get(), atStart, state);
             if (state == mixedTriState)
                 break;
-            if (node == d->m_selection.end().node())
+            if (node == selectionController()->end().node())
                 break;
         }
     }
@@ -2387,10 +2348,10 @@ CSSComputedStyleDeclaration *Frame::selectionComputedStyle(Node *&nodeToRemove) 
     if (!document())
         return 0;
 
-    if (d->m_selection.isNone())
+    if (selectionController()->isNone())
         return 0;
 
-    RefPtr<Range> range(d->m_selection.toRange());
+    RefPtr<Range> range(selectionController()->toRange());
     Position pos = range->editingStartPosition();
 
     Element *elem = pos.element();
@@ -2541,11 +2502,11 @@ void Frame::selectFrameElementInParentIfFullySelected()
         return;
 
     // Check if the selection contains the entire frame contents; if not, then there is nothing to do.
-    if (!d->m_selection.isRange())
+    if (!selectionController()->isRange())
         return;
-    if (!isStartOfDocument(VisiblePosition(d->m_selection.start(), d->m_selection.affinity())))
+    if (!isStartOfDocument(selectionController()->selection().visibleStart()))
         return;
-    if (!isEndOfDocument(VisiblePosition(d->m_selection.end(), d->m_selection.affinity())))
+    if (!isEndOfDocument(selectionController()->selection().visibleEnd()))
         return;
 
     // Get to the <iframe> or <frame> (or even <object>) element in the parent frame.
@@ -2569,9 +2530,10 @@ void Frame::selectFrameElementInParentIfFullySelected()
     VisiblePosition afterOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex + 1, VP_UPSTREAM_IF_POSSIBLE));
 
     // Focus on the parent frame, and then select from before this element to after.
-    if (parent->shouldChangeSelection(SelectionController(beforeOwnerElement, afterOwnerElement))) {
+    Selection newSelection(beforeOwnerElement, afterOwnerElement);
+    if (parent->shouldChangeSelection(newSelection)) {
         parentView->setFocus();
-        parent->setSelection(SelectionController(beforeOwnerElement, afterOwnerElement));
+        parent->selectionController()->setSelection(newSelection);
     }
 }
 
@@ -2690,7 +2652,7 @@ HTMLFormElement *Frame::currentForm() const
     // start looking either at the active (first responder) node, or where the selection is
     Node *start = d->m_doc ? d->m_doc->focusNode() : 0;
     if (!start)
-        start = selection().start().node();
+        start = selectionController()->start().node();
     
     // try walking up the node tree to find a form element
     Node *n;
@@ -2727,12 +2689,12 @@ void Frame::revealSelection()
 {
     IntRect rect;
     
-    switch (selection().state()) {
+    switch (selectionController()->state()) {
         case Selection::NONE:
             return;
             
         case Selection::CARET:
-            rect = selection().caretRect();
+            rect = selectionController()->caretRect();
             break;
             
         case Selection::RANGE:
@@ -2740,8 +2702,8 @@ void Frame::revealSelection()
             break;
     }
     
-    Position start = selection().start();
-    Position end = selection().end();
+    Position start = selectionController()->start();
+    Position end = selectionController()->end();
     ASSERT(start.node());
     if (start.node() && start.node()->renderer()) {
         RenderLayer *layer = start.node()->renderer()->enclosingLayer();
@@ -2839,7 +2801,7 @@ RenderObject::NodeInfo Frame::nodeInfoAtPoint(const IntPoint& point, bool allowS
 
 bool Frame::hasSelection()
 {
-    if (selection().isNone())
+    if (selectionController()->isNone())
         return false;
 
     // If a part has a selection, it should also have a document.        
@@ -3229,12 +3191,12 @@ void Frame::centerSelectionInVisibleArea() const
 {
     IntRect rect;
     
-    switch (selection().state()) {
+    switch (selectionController()->state()) {
         case Selection::NONE:
             return;
             
         case Selection::CARET:
-            rect = selection().caretRect();
+            rect = selectionController()->caretRect();
             break;
             
         case Selection::RANGE:
@@ -3242,8 +3204,8 @@ void Frame::centerSelectionInVisibleArea() const
             break;
     }
     
-    Position start = selection().start();
-    Position end = selection().end();
+    Position start = selectionController()->start();
+    Position end = selectionController()->end();
     ASSERT(start.node());
     if (start.node() && start.node()->renderer()) {
         RenderLayer *layer = start.node()->renderer()->enclosingLayer();
@@ -3261,10 +3223,10 @@ RenderStyle *Frame::styleForSelectionStart(Node *&nodeToRemove) const
     
     if (!document())
         return 0;
-    if (d->m_selection.isNone())
+    if (selectionController()->isNone())
         return 0;
     
-    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.affinity()).deepEquivalent();
+    Position pos = selectionController()->selection().visibleStart().deepEquivalent();
     if (!pos.inRenderedContent())
         return 0;
     Node *node = pos.node();
@@ -3302,14 +3264,14 @@ void Frame::setSelectionFromNone()
     // Put a caret inside the body if the entire frame is editable (either the 
     // entire WebView is editable or designMode is on for this document).
     Document *doc = document();
-    if (!doc || !selection().isNone() || !isContentEditable())
+    if (!doc || !selectionController()->isNone() || !isContentEditable())
         return;
         
     Node* node = doc->documentElement();
     while (node && !node->hasTagName(bodyTag))
         node = node->traverseNextNode();
     if (node)
-        setSelection(SelectionController(Position(node, 0), DOWNSTREAM));
+        selectionController()->setSelection(Selection(Position(node, 0), DOWNSTREAM));
 }
 
 bool Frame::isActive() const
@@ -3415,23 +3377,23 @@ bool Frame::findString(const String& target, bool forward, bool caseFlag, bool w
     
     // Initially search from the start (if forward) or end (if backward) of the selection, and search to edge of document.
     RefPtr<Range> searchRange(rangeOfContents(document()));
-    if (selection().start().node()) {
+    Selection selection(selectionController()->selection());
+    if (!selection.isNone()) {
         if (forward)
-            setStart(searchRange.get(), VisiblePosition(selection().start(), selection().affinity()));
+            setStart(searchRange.get(), selection.visibleStart());
         else
-            setEnd(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
+            setEnd(searchRange.get(), selection.visibleEnd());
     }
     RefPtr<Range> resultRange(findPlainText(searchRange.get(), target, forward, caseFlag));
-    Selection sel = selection().selection();
     // If the found range is already selected, find again.
     // Build a selection with the found range to remove collapsed whitespace.
     // Compare ranges instead of selection objects to ignore the way that the current selection was made.
-    if (!sel.isNone() && *Selection(resultRange.get()).toRange() == *sel.toRange()) {
+    if (!selection.isNone() && *Selection(resultRange.get()).toRange() == *selection.toRange()) {
         searchRange = rangeOfContents(document());
         if (forward)
-            setStart(searchRange.get(), VisiblePosition(sel.end(), sel.affinity()));
+            setStart(searchRange.get(), selection.visibleEnd());
         else
-            setEnd(searchRange.get(), VisiblePosition(sel.start(), sel.affinity()));
+            setEnd(searchRange.get(), selection.visibleStart());
         resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
     }
     
@@ -3450,7 +3412,7 @@ bool Frame::findString(const String& target, bool forward, bool caseFlag, bool w
     if (resultRange->collapsed(exception))
         return false;
 
-    setSelection(SelectionController(resultRange.get(), DOWNSTREAM));
+    selectionController()->setSelection(Selection(resultRange.get(), DOWNSTREAM));
     revealSelection();
     return true;
 }

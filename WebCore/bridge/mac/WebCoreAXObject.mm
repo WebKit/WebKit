@@ -1044,17 +1044,14 @@ static IntRect boundingBoxRect(RenderObject* obj)
         // NOTE: BUG support nested WebAreas, like in <http://webcourses.niu.edu/>
         // (there is a web archive of this page attached to <rdar://problem/3888973>)
         // Trouble is we need to know which document view to ask.
-        SelectionController   sel = [self topView]->frame()->selection();
-        if (sel.isNone()) {
-            sel = m_renderer->document()->renderer()->view()->frameView()->frame()->selection();
-            if (sel.isNone())
+        Selection selection = [self topView]->frame()->selectionController()->selection();
+        if (selection.isNone()) {
+            selection = m_renderer->document()->renderer()->view()->frameView()->frame()->selectionController()->selection();
+            if (selection.isNone())
                 return nil;
         }
-            
-        // return a marker range for the selection start to end
-        VisiblePosition startPosition = VisiblePosition(sel.start(), sel.affinity());
-        VisiblePosition endPosition = VisiblePosition(sel.end(), sel.affinity());
-        return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
+        
+        return (id) [self textMarkerRangeFromVisiblePositions:selection.visibleStart() andEndPos:selection.visibleEnd()];
     }
     
     if ([attributeName isEqualToString: @"AXStartTextMarker"])
@@ -1166,13 +1163,14 @@ static IntRect boundingBoxRect(RenderObject* obj)
     // make a caret selection for the marker position, then extend it to the line
     // NOTE: ignores results of sel.modify because it returns false when
     // starting at an empty line.  The resulting selection in that case
-    // will be a caret at visiblePos. 
-    SelectionController sel = SelectionController(visiblePos, visiblePos);
-    (void)sel.modify(SelectionController::EXTEND, SelectionController::RIGHT, LineBoundary);
+    // will be a caret at visiblePos.
+    SelectionController selectionController;
+    selectionController.setSelection(Selection(visiblePos));
+    selectionController.modify(SelectionController::EXTEND, SelectionController::RIGHT, LineBoundary);
 
     // return a marker range for the selection start to end
-    VisiblePosition startPosition = VisiblePosition(sel.start(), sel.affinity());
-    VisiblePosition endPosition = VisiblePosition(sel.end(), sel.affinity());
+    VisiblePosition startPosition = selectionController.selection().visibleStart();
+    VisiblePosition endPosition = selectionController.selection().visibleEnd();
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
@@ -1252,9 +1250,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (endVisiblePosition.isNull())
         return nil;
     
-    // use the SelectionController class to help calculate the corresponding rectangle
-    IntRect rect1 = SelectionController(startVisiblePosition, startVisiblePosition).caretRect();
-    IntRect rect2 = SelectionController(endVisiblePosition, endVisiblePosition).caretRect();
+    IntRect rect1 = startVisiblePosition.caretRect();
+    IntRect rect2 = endVisiblePosition.caretRect();
     IntRect ourrect = rect1;
     ourrect.unite(rect2);
 
@@ -1589,8 +1586,8 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString* attrStr
     // NOTE: Perhaps we could add a SelectionController method to indicate direction, based on m_baseIsStart
     WebCoreTextMarker* startTextMarker;
     WebCoreTextMarker* endTextMarker;
-    SelectionController   sel(visiblePos1, visiblePos2);
-    if (sel.base() == sel.start()) {
+    Selection selection(visiblePos1, visiblePos2);
+    if (selection.base() == selection.start()) {
         startTextMarker = textMarker1;
         endTextMarker = textMarker2;
     } else {
@@ -2100,8 +2097,8 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     
     // make selection and tell the document to use it
     // NOTE: BUG support nested WebAreas
-    SelectionController sel = SelectionController(startVisiblePosition, endVisiblePosition);
-    [self topDocument]->frame()->setSelection(sel);
+    Selection newSelection = Selection(startVisiblePosition, endVisiblePosition);
+    [self topDocument]->frame()->selectionController()->setSelection(newSelection);
 }
 
 - (BOOL)canSetFocusAttribute

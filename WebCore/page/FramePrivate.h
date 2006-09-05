@@ -81,6 +81,7 @@ namespace WebCore {
             , m_zoomFactor(parent ? parent->d->m_zoomFactor : 100)
             , m_submitForm(0)
             , m_bMousePressed(false)
+            , m_selectionController(thisFrame)
             , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)
             , m_caretVisible(false)
             , m_caretBlinks(true)
@@ -184,7 +185,7 @@ namespace WebCore {
         TextGranularity m_selectionGranularity;
         bool m_beganSelectingText;
 
-        SelectionController m_selection;
+        SelectionController m_selectionController;
         Selection m_mark;
         Timer<Frame> m_caretBlinkTimer;
 

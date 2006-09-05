@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "RenderView.h"
 #include "TextIterator.h"
+#include "TypingCommand.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 
@@ -42,129 +43,88 @@ namespace WebCore {
 
 using namespace EventNames;
 
-SelectionController::SelectionController()
+SelectionController::SelectionController(Frame* frame, bool isDragCaretController)
     : m_needsLayout(true)
+    , m_frame(frame)
+    , m_isDragCaretController(isDragCaretController)
 {
-    setSelection(Selection());
-}
-
-SelectionController::SelectionController(const Selection &sel)
-    : m_needsLayout(true)
-    , m_modifyBiasSet(false)
-{
-    setSelection(sel);
-}
-
-SelectionController::SelectionController(const Position &pos, EAffinity affinity)
-    : m_needsLayout(true)
-    , m_modifyBiasSet(false)
-{
-    setSelection(Selection(pos, pos, affinity));
-}
-
-SelectionController::SelectionController(const Range *r, EAffinity affinity)
-    : m_needsLayout(true)
-    , m_modifyBiasSet(false)
-{
-    setSelection(Selection(startPosition(r), endPosition(r), affinity));
-}
-
-SelectionController::SelectionController(const Position &base, const Position &extent, EAffinity affinity)
-    : m_needsLayout(true)
-    , m_modifyBiasSet(false)
-{
-    setSelection(Selection(base, extent, affinity));
-}
-
-SelectionController::SelectionController(const VisiblePosition &visiblePos)
-    : m_needsLayout(true)
-    , m_modifyBiasSet(false)
-{
-    setSelection(Selection(visiblePos.deepEquivalent(), visiblePos.deepEquivalent(), visiblePos.affinity()));
-}
-
-SelectionController::SelectionController(const VisiblePosition &base, const VisiblePosition &extent)
-    : m_needsLayout(true)
-    , m_modifyBiasSet(false)
-{
-    setSelection(Selection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity()));
-}
-
-SelectionController::SelectionController(const SelectionController &o)
-    : m_needsLayout(o.m_needsLayout)
-    , m_modifyBiasSet(o.m_modifyBiasSet)
-{
-    setSelection(o.m_sel); 
-    // Only copy the coordinates over if the other object
-    // has had a layout, otherwise keep the current
-    // coordinates. This prevents drawing artifacts from
-    // remaining when the caret is painted and then moves,
-    // and the old rectangle needs to be repainted.
-    if (!m_needsLayout) {
-        m_caretRect = o.m_caretRect;
-        m_caretPositionOnLayout = o.m_caretPositionOnLayout;
-    }
-}
-
-SelectionController &SelectionController::operator=(const SelectionController &o)
-{
-    setSelection(o.m_sel);
-
-    m_needsLayout = o.m_needsLayout;
-    m_modifyBiasSet = o.m_modifyBiasSet;
-    
-    // Only copy the coordinates over if the other object
-    // has had a layout, otherwise keep the current
-    // coordinates. This prevents drawing artifacts from
-    // remaining when the caret is painted and then moves,
-    // and the old rectangle needs to be repainted.
-    if (!m_needsLayout) {
-        m_caretRect = o.m_caretRect;
-        m_caretPositionOnLayout = o.m_caretPositionOnLayout;
-    }
-    
-    return *this;
 }
 
 void SelectionController::moveTo(const VisiblePosition &pos)
 {
     setSelection(Selection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity()));
-    m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const VisiblePosition &base, const VisiblePosition &extent)
 {
     setSelection(Selection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity()));
-    m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const SelectionController &o)
 {
     setSelection(o.m_sel);
-    m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const Position &pos, EAffinity affinity)
 {
     setSelection(Selection(pos, affinity));
-    m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const Range *r, EAffinity affinity)
 {
     setSelection(Selection(startPosition(r), endPosition(r), affinity));
-    m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const Position &base, const Position &extent, EAffinity affinity)
 {
     setSelection(Selection(base, extent, affinity));
-    m_needsLayout = true;
 }
 
-void SelectionController::setSelection(const Selection& newSelection)
+void SelectionController::setSelection(const Selection& s, bool closeTyping, bool clearTypingStyle)
 {
-    m_sel = newSelection;
+    if (m_isDragCaretController) {
+        needsCaretRepaint();
+        m_sel = s;
+        m_needsLayout = true;
+        needsCaretRepaint();
+        return;
+    }
+    if (!m_frame) {
+        m_sel = s;
+        return;
+    }
+    
+    ASSERT(!s.base().node() || s.base().node()->document() == m_frame->document());
+    ASSERT(!s.extent().node() || s.extent().node()->document() == m_frame->document());
+    ASSERT(!s.start().node() || s.start().node()->document() == m_frame->document());
+    ASSERT(!s.end().node() || s.end().node()->document() == m_frame->document());
+    
+    if (closeTyping)
+        TypingCommand::closeTyping(m_frame->lastEditCommand());
+
+    if (clearTypingStyle)
+        m_frame->clearTypingStyle();
+        
+    if (m_sel == s)
+        return;
+    
+    m_frame->clearCaretRectIfNeeded();
+
+    Selection oldSelection = m_sel;
+
+    m_sel = s;
+    
+    m_needsLayout = true;
+    
+    if (!s.isNone())
+        m_frame->setFocusNodeIfNeeded();
+    
+    m_frame->selectionLayoutChanged();
+    // Always clear the x position used for vertical arrow navigation.
+    // It will be restored by the vertical arrow navigation code if necessary.
+    m_frame->setXPosForVerticalArrowNavigation(Frame::NoXPosForVerticalArrowNavigation);
+    m_frame->notifyRendererOfSelectionChange(false);
+    m_frame->respondToChangedSelection(oldSelection, closeTyping);
 }
 
 void SelectionController::nodeWillBeRemoved(Node *node)
@@ -216,7 +176,7 @@ void SelectionController::nodeWillBeRemoved(Node *node)
 
     if (clearDOMTreeSelection)
         // FIXME (6498): This doesn't notify the editing delegate of a selection change.
-        setSelection(Selection());
+        setSelection(Selection(), false, false);
 }
 
 void SelectionController::setModifyBias(EAlter alter, EDirection direction)
@@ -478,8 +438,8 @@ bool SelectionController::modify(const String &alterString, const String &direct
 
 bool SelectionController::modify(EAlter alter, EDirection dir, TextGranularity granularity)
 {
-    if (frame())
-        frame()->setSelectionGranularity(granularity);
+    if (m_frame)
+        m_frame->setSelectionGranularity(granularity);
     
     setModifyBias(alter, dir);
 
@@ -654,31 +614,26 @@ int SelectionController::xPosForVerticalArrowNavigation(EPositionType type, bool
 void SelectionController::clear()
 {
     setSelection(Selection());
-    m_needsLayout = true;
 }
 
 void SelectionController::setBase(const VisiblePosition &pos)
 {
     setSelection(Selection(pos.deepEquivalent(), m_sel.extent(), pos.affinity()));
-    m_needsLayout = true;
 }
 
 void SelectionController::setExtent(const VisiblePosition &pos)
 {
     setSelection(Selection(m_sel.base(), pos.deepEquivalent(), pos.affinity()));
-    m_needsLayout = true;
 }
 
 void SelectionController::setBase(const Position &pos, EAffinity affinity)
 {
     setSelection(Selection(pos, m_sel.extent(), affinity));
-    m_needsLayout = true;
 }
 
 void SelectionController::setExtent(const Position &pos, EAffinity affinity)
 {
     setSelection(Selection(m_sel.base(), pos, affinity));
-    m_needsLayout = true;
 }
 
 void SelectionController::setNeedsLayout(bool flag)
@@ -704,11 +659,6 @@ String SelectionController::toString() const
 PassRefPtr<Range> SelectionController::getRangeAt(int index) const
 {
     return index == 0 ? m_sel.toRange() : 0;
-}
-
-Frame *SelectionController::frame() const
-{
-    return !isNone() ? m_sel.start().node()->document()->frame() : 0;
 }
 
 void SelectionController::setBaseAndExtent(Node *baseNode, int baseOffset, Node *extentNode, int extentOffset)

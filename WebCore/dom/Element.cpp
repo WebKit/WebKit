@@ -871,11 +871,10 @@ void Element::updateFocusAppearance()
             return;
         
         // FIXME: We should restore the previous selection if there is one.
-        Selection s = hasTagName(htmlTag) || hasTagName(bodyTag) ? Selection(Position(this, 0), DOWNSTREAM) : Selection::selectionFromContentsOfNode(this);
-        SelectionController sc(s);
+        Selection newSelection = hasTagName(htmlTag) || hasTagName(bodyTag) ? Selection(Position(this, 0), DOWNSTREAM) : Selection::selectionFromContentsOfNode(this);
         
-        if (frame->shouldChangeSelection(sc)) {
-            frame->setSelection(sc);
+        if (frame->shouldChangeSelection(newSelection)) {
+            frame->selectionController()->setSelection(newSelection);
             frame->revealSelection();
         }
     } else if (renderer() && !renderer()->isWidget())

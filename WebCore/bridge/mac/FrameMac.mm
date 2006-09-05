@@ -685,17 +685,18 @@ String FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
     
     // Start at the end of the selection, search to edge of document.  Starting at the selection end makes
     // repeated "check spelling" commands work.
+    Selection selection(selectionController()->selection());
     RefPtr<Range> searchRange(rangeOfContents(document()));
     bool startedWithSelection = false;
-    if (selection().start().node()) {
+    if (selection.start().node()) {
         startedWithSelection = true;
         if (startBeforeSelection) {
-            VisiblePosition start(selection().start(), selection().affinity());
+            VisiblePosition start(selection.visibleStart());
             // We match AppKit's rule: Start 1 character before the selection.
             VisiblePosition oneBeforeStart = start.previous();
             setStart(searchRange.get(), oneBeforeStart.isNotNull() ? oneBeforeStart : start);
         } else
-            setStart(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
+            setStart(searchRange.get(), selection.visibleEnd());
     }
 
     // If we're not in an editable node, try to find one, make that our range to work in
@@ -757,7 +758,7 @@ String FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
                     DeprecatedString result = chars.string(misspelling.length);
                     misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
 
-                    setSelection(SelectionController(misspellingRange.get(), DOWNSTREAM));
+                    selectionController()->setSelection(Selection(misspellingRange.get(), DOWNSTREAM));
                     revealSelection();
                     // Mark misspelling in document.
                     document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
@@ -1810,7 +1811,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
 // the event handler NOT setting the return value to false
 bool FrameMac::dispatchCPPEvent(const AtomicString &eventType, ClipboardMac::AccessPolicy policy)
 {
-    Node* target = d->m_selection.start().element();
+    Node* target = selectionController()->start().element();
     if (!target && document())
         target = document()->body();
     if (!target)
@@ -2774,7 +2775,7 @@ NSFont *FrameMac::fontForSelection(bool *hasMultipleFonts) const
     if (hasMultipleFonts)
         *hasMultipleFonts = false;
 
-    if (!d->m_selection.isRange()) {
+    if (!selectionController()->isRange()) {
         Node *nodeToRemove;
         RenderStyle *style = styleForSelectionStart(nodeToRemove); // sets nodeToRemove
 
@@ -2793,7 +2794,7 @@ NSFont *FrameMac::fontForSelection(bool *hasMultipleFonts) const
 
     NSFont *font = nil;
 
-    RefPtr<Range> range = d->m_selection.toRange();
+    RefPtr<Range> range = selectionController()->toRange();
     Node *startNode = range->editingStartPosition().node();
     if (startNode != nil) {
         Node *pastEnd = range->pastEndNode();
@@ -2887,7 +2888,7 @@ NSWritingDirection FrameMac::baseWritingDirectionForSelectionStart() const
 {
     NSWritingDirection result = NSWritingDirectionLeftToRight;
 
-    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.affinity()).deepEquivalent();
+    Position pos = selectionController()->selection().visibleStart().deepEquivalent();
     Node *node = pos.node();
     if (!node || !node->renderer() || !node->renderer()->containingBlock())
         return result;
@@ -3145,10 +3146,10 @@ void FrameMac::markMisspellingsInAdjacentWords(const VisiblePosition &p)
 {
     if (![_bridge isContinuousSpellCheckingEnabled])
         return;
-    markMisspellings(SelectionController(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
+    markMisspellings(Selection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
 }
 
-void FrameMac::markMisspellings(const SelectionController &selection)
+void FrameMac::markMisspellings(const Selection& selection)
 {
     // This function is called with a selection already expanded to word boundaries.
     // Might be nice to assert that here.
@@ -3205,21 +3206,21 @@ void FrameMac::markMisspellings(const SelectionController &selection)
     }
 }
 
-void FrameMac::respondToChangedSelection(const SelectionController &oldSelection, bool closeTyping)
+void FrameMac::respondToChangedSelection(const Selection &oldSelection, bool closeTyping)
 {
     if (document()) {
         if ([_bridge isContinuousSpellCheckingEnabled]) {
-            SelectionController oldAdjacentWords = SelectionController();
+            Selection oldAdjacentWords;
             
             // If this is a change in selection resulting from a delete operation, oldSelection may no longer
             // be in the document.
             if (oldSelection.start().node() && oldSelection.start().node()->inDocument()) {
-                VisiblePosition oldStart(oldSelection.start(), oldSelection.affinity());
-                oldAdjacentWords = SelectionController(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));   
+                VisiblePosition oldStart(oldSelection.visibleStart());
+                oldAdjacentWords = Selection(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));   
             }
 
-            VisiblePosition newStart(selection().start(), selection().affinity());
-            SelectionController newAdjacentWords(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
+            VisiblePosition newStart(selectionController()->selection().visibleStart());
+            Selection newAdjacentWords(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
 
             // When typing we check spelling elsewhere, so don't redo it here.
             if (closeTyping && oldAdjacentWords != newAdjacentWords)
@@ -3236,7 +3237,7 @@ void FrameMac::respondToChangedSelection(const SelectionController &oldSelection
     [_bridge respondToChangedSelection];
 }
 
-bool FrameMac::shouldChangeSelection(const SelectionController &oldSelection, const SelectionController &newSelection, EAffinity affinity, bool stillSelecting) const
+bool FrameMac::shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity affinity, bool stillSelecting) const
 {
     return [_bridge shouldChangeSelectedDOMRange:[DOMRange _rangeWith:oldSelection.toRange().get()]
                                       toDOMRange:[DOMRange _rangeWith:newSelection.toRange().get()]
@@ -3244,12 +3245,12 @@ bool FrameMac::shouldChangeSelection(const SelectionController &oldSelection, co
                                   stillSelecting:stillSelecting];
 }
 
-bool FrameMac::shouldDeleteSelection(const SelectionController &selection) const
+bool FrameMac::shouldDeleteSelection(const Selection& selection) const
 {
     return [_bridge shouldDeleteSelectedDOMRange:[DOMRange _rangeWith:selection.toRange().get()]];
 }
 
-void FrameMac::respondToChangedContents(const SelectionController &selection)
+void FrameMac::respondToChangedContents(const Selection& selection)
 {
     if (AXObjectCache::accessibilityEnabled()) {
         Node* node = selection.start().node();

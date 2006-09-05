@@ -94,6 +94,30 @@ Selection Selection::selectionFromContentsOfNode(Node* node)
     return Selection(Position(node, 0), Position(node, maxDeepOffset(node)), DOWNSTREAM);
 }
 
+void Selection::setBase(const Position& position)
+{
+    m_base = position;
+    validate();
+}
+
+void Selection::setBase(const VisiblePosition& visiblePosition)
+{
+    m_base = visiblePosition.deepEquivalent();
+    validate();
+}
+
+void Selection::setExtent(const Position& position)
+{
+    m_extent = position;
+    validate();
+}
+
+void Selection::setExtent(const VisiblePosition& visiblePosition)
+{
+    m_extent = visiblePosition.deepEquivalent();
+    validate();
+}
+
 PassRefPtr<Range> Selection::toRange() const
 {
     if (isNone())

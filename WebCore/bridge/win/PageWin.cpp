@@ -36,6 +36,7 @@ Page::Page(HWND hwnd)
 : m_windowHandle(hwnd)
 , m_frameCount(0)
 , m_widget(0)
+, m_dragCaretController(0, true)
 {
     init();
 }

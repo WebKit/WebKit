@@ -1074,25 +1074,25 @@ void Document::updateSelection()
         return;
     
     RenderView *canvas = static_cast<RenderView*>(renderer());
-    SelectionController s = frame()->selection();
+    Selection selection = frame()->selectionController()->selection();
         
-    if (!s.isRange())
+    if (!selection.isRange())
         canvas->clearSelection();
     else {
         // Use the rightmost candidate for the start of the selection, and the leftmost candidate for the end of the selection.
         // Example: foo <a>bar</a>.  Imagine that a line wrap occurs after 'foo', and that 'bar' is selected.   If we pass [foo, 3]
         // as the start of the selection, the selection painting code will think that content on the line containing 'foo' is selected
         // and will fill the gap before 'bar'.
-        Position startPos = s.selection().visibleStart().deepEquivalent();
+        Position startPos = selection.visibleStart().deepEquivalent();
         if (startPos.downstream().inRenderedContent())
             startPos = startPos.downstream();
-        Position endPos = s.selection().visibleEnd().deepEquivalent();
+        Position endPos = selection.visibleEnd().deepEquivalent();
         if (endPos.upstream().inRenderedContent())
             endPos = endPos.upstream();
         
         // We can get into a state where the selection endpoints map to the same VisiblePosition when a selection is deleted
         // because we don't yet notify the SelectionController of text removal.
-        if (startPos.isNotNull() && endPos.isNotNull() && s.selection().visibleStart() != s.selection().visibleEnd()) {
+        if (startPos.isNotNull() && endPos.isNotNull() && selection.visibleStart() != selection.visibleEnd()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();
             static_cast<RenderView*>(renderer())->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());
@@ -1104,8 +1104,8 @@ void Document::updateSelection()
     // or loses focus, and once for every low level change to the selection during an editing operation.
     // FIXME: We no longer blow away the selection before starting an editing operation, so the isNotNull checks below are no 
     // longer a correct way to check for user-level selection changes.
-    if (AXObjectCache::accessibilityEnabled() && s.start().isNotNull() && s.end().isNotNull()) {
-        axObjectCache()->postNotification(s.start().node()->renderer(), "AXSelectedTextChanged");
+    if (AXObjectCache::accessibilityEnabled() && selection.start().isNotNull() && selection.end().isNotNull()) {
+        axObjectCache()->postNotification(selection.start().node()->renderer(), "AXSelectedTextChanged");
     }
 #endif
 }
@@ -2173,10 +2173,9 @@ void Document::clearSelectionIfNeeded(Node *newFocusNode)
 
     // Clear the selection when changing the focus node to null or to a node that is not 
     // contained by the current selection.
-    Node *startContainer = frame()->selection().start().node();
+    Node *startContainer = frame()->selectionController()->start().node();
     if (!newFocusNode || (startContainer && startContainer != newFocusNode && !(startContainer->isAncestor(newFocusNode)) && startContainer->shadowAncestorNode() != newFocusNode))
-        // FIXME: 6498 Should just be able to call m_frame->selection().clear()
-        frame()->setSelection(SelectionController());
+        frame()->selectionController()->clear();
 }
 
 void Document::setCSSTarget(Node* n)
@@ -2206,8 +2205,8 @@ void Document::detachNodeIterator(NodeIterator *ni)
 void Document::notifyBeforeNodeRemoval(Node *n)
 {
     if (Frame* f = frame()) {
-        f->selection().nodeWillBeRemoved(n);
-        f->dragCaret().nodeWillBeRemoved(n);
+        f->selectionController()->nodeWillBeRemoved(n);
+        f->dragCaretController()->nodeWillBeRemoved(n);
     }
     DeprecatedPtrListIterator<NodeIterator> it(m_nodeIterators);
     for (; it.current(); ++it)

@@ -72,6 +72,8 @@ public:
     void debugPosition(const char* msg = "") const;
     
     Element* rootEditableElement() const { return m_deepPosition.isNotNull() ? m_deepPosition.node()->rootEditableElement() : 0; }
+    
+    IntRect caretRect() const;
 
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;

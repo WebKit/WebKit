@@ -189,6 +189,14 @@ UChar VisiblePosition::characterAfter() const
     return textNode->data()[offset];
 }
 
+IntRect VisiblePosition::caretRect() const
+{
+    if (!m_deepPosition.node() || !m_deepPosition.node()->renderer())
+        return IntRect();
+
+    return m_deepPosition.node()->renderer()->caretRect(m_deepPosition.offset(), m_affinity);
+}
+
 void VisiblePosition::debugPosition(const char *msg) const
 {
     if (isNull())

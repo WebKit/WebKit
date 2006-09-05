@@ -57,10 +57,13 @@ public:
     void setAffinity(EAffinity affinity) { m_affinity = affinity; }
     EAffinity affinity() const { return m_affinity; }
 
-    void setBase(const Position& base) { m_base = base; }
-    void setExtent(const Position& extent) { m_extent = extent; }
+    void setBase(const Position&);
+    void setBase(const VisiblePosition&);
+    void setExtent(const Position&);
+    void setExtent(const VisiblePosition&);
+    
     Position base() const { return m_base; }
-    Position extent() const { return m_extent; }
+    Position extent() const { return m_extent; }    
     Position start() const { return m_start; }
     Position end() const { return m_end; }
     

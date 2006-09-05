@@ -323,10 +323,11 @@ public:
   void setSelectionGranularity(TextGranularity granularity) const;
 
   // FIXME: Replace these with functions on the selection controller.
-  void setSelection(const SelectionController&, bool closeTyping = true);
-  bool shouldChangeSelection(const SelectionController&) const;
-  virtual bool shouldDeleteSelection(const SelectionController&) const;
-  
+  bool shouldChangeSelection(const Selection&) const;
+  virtual bool shouldDeleteSelection(const Selection&) const;
+  void clearCaretRectIfNeeded();
+  void setFocusNodeIfNeeded();
+  void selectionLayoutChanged();
   void notifyRendererOfSelectionChange(bool userTriggered);
 
   /**
@@ -334,9 +335,6 @@ public:
    */
   const Selection& mark() const;
   void setMark(const Selection&);
-
-  // FIXME: Replace this with a function on the selection controller or change it to Selection instead?
-  void setDragCaret(const SelectionController&);
   
   /**
    * Transposes characters either side of caret selection.
@@ -542,7 +540,7 @@ public:
   virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*) = 0;
   virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*) = 0;
   virtual void markMisspellingsInAdjacentWords(const VisiblePosition&) = 0;
-  virtual void markMisspellings(const SelectionController&) = 0;
+  virtual void markMisspellings(const Selection&) = 0;
   virtual void addMessageToConsole(const String& message,  unsigned int lineNumber, const String& sourceID) = 0;
   virtual void runJavaScriptAlert(const String& message) = 0;
   virtual bool runJavaScriptConfirm(const String& message) = 0;
@@ -568,9 +566,9 @@ public:
   virtual void issuePasteCommand() = 0;
   virtual void issuePasteAndMatchStyleCommand() = 0;
   virtual void issueTransposeCommand() = 0;
-  virtual void respondToChangedSelection(const SelectionController& oldSelection, bool closeTyping) = 0;
-  virtual void respondToChangedContents(const SelectionController &endingSelection) = 0;
-  virtual bool shouldChangeSelection(const SelectionController& oldSelection, const SelectionController& newSelection, EAffinity affinity, bool stillSelecting) const = 0;
+  virtual void respondToChangedSelection(const Selection& oldSelection, bool closeTyping) = 0;
+  virtual void respondToChangedContents(const Selection& endingSelection) = 0;
+  virtual bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity affinity, bool stillSelecting) const = 0;
   virtual void partClearedInBegin() = 0; 
   virtual void saveDocumentState() = 0;
   virtual void restoreDocumentState() = 0;
@@ -616,9 +614,6 @@ private:
 
   virtual void clear(bool clearWindowProperties = true);
 
-  void clearCaretRectIfNeeded();
-  void setFocusNodeIfNeeded();
-  void selectionLayoutChanged();
     void caretBlinkTimerFired(Timer<Frame>*);
 
   bool shouldUsePlugin(Node* element, const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback);
@@ -817,8 +812,8 @@ public:
   
   // split out controller objects
   FrameTree* tree() const;
-  SelectionController& selection() const; // FIXME: Change to pointer?
-  SelectionController& dragCaret() const; // FIXME: Change to pointer?
+  SelectionController* selectionController() const;
+  SelectionController* dragCaretController() const;
   DOMWindow* domWindow() const;
 
  private:

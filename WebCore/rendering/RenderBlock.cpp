@@ -1293,8 +1293,8 @@ void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
 
 void RenderBlock::paintCaret(PaintInfo& i, CaretType type)
 {
-    const SelectionController &s = type == CursorCaret ? document()->frame()->selection() : document()->frame()->dragCaret();
-    Node *caretNode = s.start().node();
+    SelectionController* selectionController = type == CursorCaret ? document()->frame()->selectionController() : document()->frame()->dragCaretController();
+    Node *caretNode = selectionController->start().node();
     RenderObject *renderer = caretNode ? caretNode->renderer() : 0;
     if (renderer && (renderer == this || renderer->containingBlock() == this) && caretNode && caretNode->isContentEditable()) {
         if (type == CursorCaret) {

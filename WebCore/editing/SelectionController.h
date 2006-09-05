@@ -44,17 +44,7 @@ public:
     enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
 #define SEL_DEFAULT_AFFINITY DOWNSTREAM
 
-    SelectionController();
-    SelectionController(const Selection&);
-    SelectionController(const Range*, EAffinity);
-    SelectionController(const VisiblePosition&);
-    SelectionController(const VisiblePosition&, const VisiblePosition&);
-    SelectionController(const Position&, EAffinity);
-    SelectionController(const Position&, const Position&, EAffinity);
-    SelectionController(const SelectionController&);
-    
-    SelectionController& operator=(const SelectionController&);
-    SelectionController& operator=(const VisiblePosition& r) { moveTo(r); return *this; }
+    SelectionController(Frame* frame = 0, bool isDragCaretController = false);
 
     Element* rootEditableElement() const { return selection().rootEditableElement(); }
     bool isContentEditable() const { return selection().isContentEditable(); }
@@ -68,7 +58,7 @@ public:
     void moveTo(const SelectionController&);
 
     const Selection& selection() const { return m_sel; }
-    void setSelection(const Selection&);
+    void setSelection(const Selection&, bool closeTyping = true, bool clearTypingStyle = true);
 
     Selection::EState state() const { return m_sel.state(); }
 
@@ -104,8 +94,6 @@ public:
     PassRefPtr<Range> toRange() const { return m_sel.toRange(); }
 
     void debugRenderer(RenderObject*, bool selected) const;
-    
-    Frame* frame() const;
     
     void nodeWillBeRemoved(Node*);
 
@@ -157,6 +145,9 @@ public:
 #endif
 
 private:
+    SelectionController(const SelectionController&);
+    SelectionController& operator=(const SelectionController&);
+
     enum EPositionType { START, END, BASE, EXTENT };
 
     VisiblePosition modifyExtendingRightForward(TextGranularity);
@@ -181,6 +172,8 @@ private:
     bool m_needsLayout : 1;       // true if the caret and expectedVisible rectangles need to be calculated
     bool m_modifyBiasSet : 1;     // true if the selection has been horizontally 
                                   // modified with EAlter::EXTEND
+    Frame* m_frame;
+    bool m_isDragCaretController;
 };
 
 inline bool operator==(const SelectionController& a, const SelectionController& b)

@@ -413,7 +413,7 @@ bool execRedo(Frame* frame, bool, const String&)
 bool execRemoveFormat(Frame* frame, bool userInterface, const String& value)
 {
     applyCommand(new ReplaceSelectionCommand(frame->document(),
-        createFragmentFromText(frame->selection().toRange().get(), frame->selection().toString()),
+        createFragmentFromText(frame->selectionController()->toRange().get(), frame->selectionController()->toString()),
         false, false, false, true, EditActionUnspecified));
     return true;
 }
@@ -466,8 +466,7 @@ bool execUnlink(Frame* frame, bool, const String&)
 
 bool execUnselect(Frame* frame, bool, const String&)
 {
-    // FIXME: 6498 Should just be able to call m_frame->selection().clear()
-    frame->setSelection(SelectionController());
+    frame->selectionController()->clear();
     return true;
 }
 
@@ -488,22 +487,22 @@ bool enabled(Frame*)
 
 bool enabledAnyCaret(Frame* frame)
 {
-    return frame->selection().isCaret() && frame->selection().isContentEditable();
+    return frame->selectionController()->isCaret() && frame->selectionController()->isContentEditable();
 }
 
 bool enabledAnySelection(Frame* frame)
 {
-    return frame->selection().isCaretOrRange();
+    return frame->selectionController()->isCaretOrRange();
 }
 
 bool enabledAnyEditableSelection(Frame* frame)
 {
-    return frame->selection().isCaretOrRange() && frame->selection().isContentEditable();
+    return frame->selectionController()->isCaretOrRange() && frame->selectionController()->isContentEditable();
 }
 
 bool enabledAnyRichlyEditableSelection(Frame* frame)
 {
-    return frame->selection().isCaretOrRange() && frame->selection().isContentRichlyEditable();
+    return frame->selectionController()->isCaretOrRange() && frame->selectionController()->isContentRichlyEditable();
 }
 
 bool enabledPaste(Frame* frame)
@@ -518,17 +517,17 @@ bool enabledPasteAndMatchStyle(Frame* frame)
 
 bool enabledAnyRangeSelection(Frame* frame)
 {
-    return frame->selection().isRange();
+    return frame->selectionController()->isRange();
 }
 
 bool enabledAnyEditableRangeSelection(Frame* frame)
 {
-    return frame->selection().isRange() && frame->selection().isContentEditable();
+    return frame->selectionController()->isRange() && frame->selectionController()->isContentEditable();
 }
 
 bool enabledAnyRichlyEditableRangeSelection(Frame* frame)
 {
-    return frame->selection().isRange() && frame->selection().isContentRichlyEditable();
+    return frame->selectionController()->isRange() && frame->selectionController()->isContentRichlyEditable();
 }
 
 bool enabledRedo(Frame* frame)

@@ -68,9 +68,7 @@ namespace WebCore {
         static void setNeedsReapplyStyles();
         static void setNeedsReapplyStylesForSettingsChange(Settings*);
 
-        // FIXME: Replace this with a function on the selection controller or change it to Selection instead?
-        void setDragCaret(const SelectionController&);
-        SelectionController& dragCaret() const; // FIXME: Change to pointer?
+        SelectionController* dragCaretController() const;
 
 #if PLATFORM(MAC)
         Page(WebCorePageBridge*);
@@ -89,7 +87,7 @@ namespace WebCore {
         int m_frameCount;
         mutable Widget* m_widget;
         String m_groupName;
-        mutable SelectionController m_dragCaret;
+        mutable SelectionController m_dragCaretController;
 
 #if PLATFORM(MAC)
         WebCorePageBridge* m_bridge;

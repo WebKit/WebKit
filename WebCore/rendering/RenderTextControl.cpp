@@ -169,12 +169,12 @@ void RenderTextControl::updateFromElement()
 
 int RenderTextControl::selectionStart()
 {
-    return indexForVisiblePosition(document()->frame()->selection().start());        
+    return indexForVisiblePosition(document()->frame()->selectionController()->start());        
 }
 
 int RenderTextControl::selectionEnd()
 {
-    return indexForVisiblePosition(document()->frame()->selection().end());        
+    return indexForVisiblePosition(document()->frame()->selectionController()->end());
 }
 
 void RenderTextControl::setSelectionStart(int start)
@@ -216,8 +216,8 @@ void RenderTextControl::setSelectionRange(int start, int end)
     ASSERT(startPosition.isNotNull() && endPosition.isNotNull());
     ASSERT(startPosition.deepEquivalent().node()->shadowAncestorNode() == node() && endPosition.deepEquivalent().node()->shadowAncestorNode() == node());
 
-    SelectionController sel = SelectionController(startPosition, endPosition);
-    document()->frame()->setSelection(sel);
+    Selection newSelection = Selection(startPosition, endPosition);
+    document()->frame()->selectionController()->setSelection(newSelection);
     // FIXME: Granularity is stored separately on the frame, but also in the selection controller.
     // The granularity in the selection controller should be used, and then this line of code would not be needed.
     document()->frame()->setSelectionGranularity(CharacterGranularity);
@@ -423,7 +423,7 @@ void RenderTextControl::selectionChanged(bool userTriggered)
         static_cast<HTMLTextAreaElement*>(element)->cacheSelection(selectionStart(), selectionEnd());
     else
         static_cast<HTMLInputElement*>(element)->cacheSelection(selectionStart(), selectionEnd());
-    if (document()->frame()->selection().isRange() && userTriggered)
+    if (document()->frame()->selectionController()->isRange() && userTriggered)
         element->onSelect();
 }
 
