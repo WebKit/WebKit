@@ -1,3 +1,14 @@
+2006-09-05  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Tim O.
+
+        <rdar://problem/4715840> SEL is not char*
+
+        * bindings/objc/objc_class.mm:
+        (KJS::Bindings::ObjcClass::methodsNamed): use sel_getName instead of a char* cast.
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::callAsFunction): ditto
+
 2006-09-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Tim H.

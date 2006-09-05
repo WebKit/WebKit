@@ -119,12 +119,11 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
 #if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
                 MethodStructPtr objcMethod = objcMethodList[i];
                 SEL objcMethodSelector = method_getName(objcMethod);
-                const char* objcMethodSelectorName = sel_getName(objcMethodSelector);
 #else
                 struct objc_method* objcMethod = &objcMethodList->method_list[i];
                 SEL objcMethodSelector = objcMethod->method_name;
-                const char* objcMethodSelectorName = (const char*)objcMethodSelector;
 #endif
+                const char* objcMethodSelectorName = sel_getName(objcMethodSelector);
                 NSString* mappedName = nil;
 
                 // See if the class wants to exclude the selector from visibility in JavaScript.

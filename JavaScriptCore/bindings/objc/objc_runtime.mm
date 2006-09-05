@@ -285,7 +285,7 @@ JSValue* ObjcFallbackObjectImp::callAsFunction(ExecState* exec, JSObject* thisOb
         if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
             MethodList methodList;
             ObjcClass* objcClass = static_cast<ObjcClass*>(instance->getClass());
-            ObjcMethod* fallbackMethod = new ObjcMethod (objcClass->isa(), (const char*)@selector(invokeUndefinedMethodFromWebScript:withArguments:));
+            ObjcMethod* fallbackMethod = new ObjcMethod (objcClass->isa(), sel_getName(@selector(invokeUndefinedMethodFromWebScript:withArguments:)));
             fallbackMethod->setJavaScriptName((CFStringRef)[NSString stringWithCString:_item.ascii() encoding:NSASCIIStringEncoding]);
             methodList.addMethod ((Method*)fallbackMethod);
             result = instance->invokeMethod(exec, methodList, args);
