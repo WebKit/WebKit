@@ -1,3 +1,18 @@
+2006-09-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 10714: ObjC autogeneration needs safe-guards against easily modifying the public API
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10714
+
+        - Added the new private DOM headers.
+        - Factored out the common commands into variables.
+        - Made WebDashboardRegion.h private again.
+        - Rename DOMDOMImplementation.h to DOMImplementation.h when files
+          are migrated. Also fixes up #imports.
+
+        * MigrateHeaders.make:
+
 2006-09-03  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin and Tim H.

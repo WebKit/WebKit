@@ -26,7 +26,7 @@ module html {
         attribute  DOMString            type;
         
         // DOM Level 2 Style
-        readonly attribute [Exclude=ObjC] StyleSheet sheet;
+        readonly attribute StyleSheet sheet;
     };
 
 }

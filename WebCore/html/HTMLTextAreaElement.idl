@@ -38,9 +38,9 @@ module html {
         void     select();
 
        // WinIE & FireFox extension:
-                 attribute [Exclude=ObjC] long selectionStart;
-                 attribute [Exclude=ObjC] long selectionEnd;
-        [Exclude=ObjC] void setSelectionRange(in long start, in long end);
+                 attribute long selectionStart;
+                 attribute long selectionEnd;
+        void setSelectionRange(in long start, in long end);
     };
 
 }

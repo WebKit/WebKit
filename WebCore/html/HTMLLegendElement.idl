@@ -24,6 +24,6 @@ module html {
         attribute DOMString accessKey;
         attribute DOMString align;
 
-        [Exclude=ObjC] void focus();
+        void focus();
     };
 }

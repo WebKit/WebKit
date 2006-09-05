@@ -36,38 +36,50 @@ all : \
     DOMCSSFontFaceRule.h \
     DOMCSSImportRule.h \
     DOMCSSMediaRule.h \
+    DOMCSSMediaRulePrivate.h \
     DOMCSSPageRule.h \
     DOMCSSPrimitiveValue.h \
+    DOMCSSPrimitiveValuePrivate.h \
     DOMCSSRule.h \
     DOMCSSRuleList.h \
     DOMCSSStyleDeclaration.h \
+    DOMCSSStyleDeclarationPrivate.h \
     DOMCSSStyleRule.h \
     DOMCSSStyleSheet.h \
+    DOMCSSStyleSheetPrivate.h \
     DOMCSSUnknownRule.h \
     DOMCSSValue.h \
     DOMCSSValueList.h \
     DOMCharacterData.h \
+    DOMCharacterDataPrivate.h \
     DOMComment.h \
     DOMCore.h \
     DOMCounter.h \
     DOMDOMImplementation.h \
+    DOMDOMImplementationPrivate.h \
     DOMDocument.h \
     DOMDocumentFragment.h \
+    DOMDocumentPrivate.h \
     DOMDocumentType.h \
     DOMElement.h \
+    DOMElementPrivate.h \
     DOMEntity.h \
     DOMEntityReference.h \
     DOMEvents.h \
     DOMExtensions.h \
     DOMHTML.h \
     DOMHTMLAnchorElement.h \
+    DOMHTMLAnchorElementPrivate.h \
     DOMHTMLAppletElement.h \
     DOMHTMLAreaElement.h \
+    DOMHTMLAreaElementPrivate.h \
     DOMHTMLBRElement.h \
     DOMHTMLBaseElement.h \
     DOMHTMLBaseFontElement.h \
     DOMHTMLBodyElement.h \
+    DOMHTMLBodyElementPrivate.h \
     DOMHTMLButtonElement.h \
+    DOMHTMLButtonElementPrivate.h \
     DOMHTMLCollection.h \
     DOMHTMLDListElement.h \
     DOMHTMLDirectoryElement.h \
@@ -85,12 +97,17 @@ all : \
     DOMHTMLHtmlElement.h \
     DOMHTMLIFrameElement.h \
     DOMHTMLImageElement.h \
+    DOMHTMLImageElementPrivate.h \
     DOMHTMLInputElement.h \
+    DOMHTMLInputElementPrivate.h \
     DOMHTMLIsIndexElement.h \
     DOMHTMLLIElement.h \
     DOMHTMLLabelElement.h \
+    DOMHTMLLabelElementPrivate.h \
     DOMHTMLLegendElement.h \
+    DOMHTMLLegendElementPrivate.h \
     DOMHTMLLinkElement.h \
+    DOMHTMLLinkElementPrivate.h \
     DOMHTMLMapElement.h \
     DOMHTMLMenuElement.h \
     DOMHTMLMetaElement.h \
@@ -100,13 +117,17 @@ all : \
     DOMHTMLOptGroupElement.h \
     DOMHTMLOptionElement.h \
     DOMHTMLOptionsCollection.h \
+    DOMHTMLOptionsCollectionPrivate.h \
     DOMHTMLParagraphElement.h \
     DOMHTMLParamElement.h \
     DOMHTMLPreElement.h \
+    DOMHTMLPreElementPrivate.h \
     DOMHTMLQuoteElement.h \
     DOMHTMLScriptElement.h \
     DOMHTMLSelectElement.h \
+    DOMHTMLSelectElementPrivate.h \
     DOMHTMLStyleElement.h \
+    DOMHTMLStyleElementPrivate.h \
     DOMHTMLTableCaptionElement.h \
     DOMHTMLTableCellElement.h \
     DOMHTMLTableColElement.h \
@@ -114,17 +135,20 @@ all : \
     DOMHTMLTableRowElement.h \
     DOMHTMLTableSectionElement.h \
     DOMHTMLTextAreaElement.h \
+    DOMHTMLTextAreaElementPrivate.h \
     DOMHTMLTitleElement.h \
     DOMHTMLUListElement.h \
     DOMList.h \
     DOMMediaList.h \
     DOMNamedNodeMap.h \
+    DOMNamedNodeMapPrivate.h \
     DOMNode.h \
     DOMNodeList.h \
     DOMNotation.h \
     DOMObject.h \
     DOMPrivate.h \
     DOMProcessingInstruction.h \
+    DOMProcessingInstructionPrivate.h \
     DOMRGBColor.h \
     DOMRange.h \
     DOMRect.h \
@@ -141,17 +165,33 @@ all : \
     npruntime.h \
 #
 
-DOM.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOM.h
-	sed -e s/WebCore/WebKit/ "$<" > "$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/$@"
+REPLACE_COMMANDS = -e s/WebCore/WebKit/ -e s/JavaScriptCore/WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
+PRIVATE_HEADER_MIGRATE = sed $(REPLACE_COMMANDS) "$<" > "$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/$@"
+PUBLIC_HEADER_MIGRATE = sed $(REPLACE_COMMANDS) "$<" > "$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/$@"
+
+WebDashboardRegion.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/WebDashboardRegion.h
+	$(PRIVATE_HEADER_MIGRATE)
 
 DOMPrivate.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOMPrivate.h
-	sed -e s/WebCore/WebKit/ "$<" > "$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/$@"
+	$(PRIVATE_HEADER_MIGRATE)
+
+DOMDOMImplementationPrivate.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOMDOMImplementationPrivate.h
+	sed $(REPLACE_COMMANDS) "$<" > "$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/DOMImplementationPrivate.h"
+
+DOM%Private.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOM%Private.h
+	$(PRIVATE_HEADER_MIGRATE)
+
+DOM.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOM.h
+	$(PUBLIC_HEADER_MIGRATE)
+
+DOMDOMImplementation.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOMDOMImplementation.h
+	sed $(REPLACE_COMMANDS) "$<" > "$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/DOMImplementation.h"
 
 DOM%.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOM%.h
-	sed -e s/WebCore/WebKit/ "$<" > "$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/$@"
+	$(PUBLIC_HEADER_MIGRATE)
 
 Web%.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/Web%.h
-	sed -e s/WebCore/WebKit/ "$<" > "$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/$@"
+	$(PUBLIC_HEADER_MIGRATE)
 
 np%.h : $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/np%.h
-	sed -e s/JavaScriptCore/WebKit/ "$<" > "$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/$@"
+	$(PUBLIC_HEADER_MIGRATE)

@@ -111,7 +111,7 @@ module core {
 
         // DOM Level 3 Core
 
-        readonly attribute [ConvertNullStringTo=Null, Exclude=ObjC] DOMString inputEncoding;
+        readonly attribute [ConvertNullStringTo=Null] DOMString inputEncoding;
         
         Node adoptNode(in Node source)
             raises (DOMException);
@@ -134,31 +134,31 @@ module core {
 
         // Common extensions
 
-        [Exclude=ObjC] boolean execCommand(in DOMString command, 
-                                           in boolean userInterface, 
-                                           in DOMString value);
+        boolean execCommand(in DOMString command, 
+                            in boolean userInterface, 
+                            in DOMString value);
 
-        [Exclude=ObjC] boolean queryCommandEnabled(in DOMString command);
+        boolean queryCommandEnabled(in DOMString command);
 
-        [Exclude=ObjC] boolean queryCommandIndeterm(in DOMString command);
+        boolean queryCommandIndeterm(in DOMString command);
 
-        [Exclude=ObjC] boolean queryCommandState(in DOMString command);
+        boolean queryCommandState(in DOMString command);
 
-        [Exclude=ObjC] boolean queryCommandSupported(in DOMString command);
+        boolean queryCommandSupported(in DOMString command);
 
-        [ConvertNullStringTo=False, Exclude=ObjC] DOMString queryCommandValue(in DOMString command);
+        [ConvertNullStringTo=False] DOMString queryCommandValue(in DOMString command);
 
         // IE extensions
 
         readonly attribute [Exclude=ObjC] DOMString URL;
 
-        attribute [ConvertNullStringTo=Undefined, Exclude=ObjC] DOMString charset;
+        attribute [ConvertNullStringTo=Undefined] DOMString charset;
 
-        readonly attribute [ConvertNullStringTo=Undefined, Exclude=ObjC] DOMString defaultCharset;
+        readonly attribute [ConvertNullStringTo=Undefined] DOMString defaultCharset;
 
-        readonly attribute [ConvertNullStringTo=Undefined, Exclude=ObjC] DOMString readyState;
+        readonly attribute [ConvertNullStringTo=Undefined] DOMString readyState;
 
-        [Exclude=ObjC] Element elementFromPoint(in long x, in long y);
+        Element elementFromPoint(in long x, in long y);
 
         // Mozilla extensions
 
@@ -166,9 +166,9 @@ module core {
 
         // WebKit extensions
 
-        readonly attribute [ConvertNullStringTo=Null, Exclude=ObjC] DOMString preferredStylesheetSet;
+        readonly attribute [ConvertNullStringTo=Null] DOMString preferredStylesheetSet;
 
-        attribute [ConvertNullStringTo=Null, Exclude=ObjC] DOMString selectedStylesheetSet;
+        attribute [ConvertNullStringTo=Null] DOMString selectedStylesheetSet;
 
     };
 

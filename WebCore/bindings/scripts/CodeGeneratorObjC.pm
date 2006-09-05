@@ -28,7 +28,11 @@ my $module = "";
 my $outputDir = "";
 my %implIncludes = ();
 my %headerForwardDeclarations = ();
+my %privateHeaderForwardDeclarations = ();
 my %headerForwardDeclarationsForProtocols = ();
+my %privateHeaderForwardDeclarationsForProtocols = ();
+my %publicInterfaces = ();
+my $newPublicClass = 0;
 my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} <= 10.4;
 my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5;
 
@@ -108,9 +112,41 @@ sub new
 sub finish
 {
     my $object = shift;
+}
 
-    # Commit changes!
-    $object->WriteData();
+sub ReadPublicInterfaces
+{
+    my $class = shift;
+    my $superClass = shift;
+
+    my $found = 0;
+    my $actualSuperClass;
+    %publicInterfaces = ();
+
+    open (PublicDOMInterfaces, "WebCore/bindings/objc/PublicDOMInterfaces.h") or die "Can't open bindings/objc/PublicDOMInterfaces.h";
+
+    while ($line = <PublicDOMInterfaces>) {
+        if ($line =~ /^\s?\@interface $class\s?:\s?(\w+)\s?$/) {
+            die "error: Public API change. Superclass for \"$class\" differs ($1 != $superClass)" if $superClass ne $1;
+            $found = 1;
+            next;
+        }
+
+        next if $line =~ /^\s?$|^\/\/|^#/; # skip whitespace, comments or preprocessor lines
+        last if $found and $line =~ /^\s?\@end\s?$/;
+
+        if ($found) {
+            # trim whitspace
+            $line =~ s/^\s+//;
+            $line =~ s/\s+$//;
+            $publicInterfaces{$line} = 1;
+        }
+    }
+
+    close(PublicDOMInterfaces);
+
+    # If this class was not found in PublicDOMInterfaces.h then it should be considered as an entirly new public class.
+    $newPublicClass = ! $found;
 }
 
 # Params: 'domClass' struct
@@ -121,18 +157,24 @@ sub GenerateInterface
 
     $codeGenerator->RemoveExcludedAttributesAndFunctions($dataNode, "ObjC");
 
-    # Start actual generation..
-    $object->GenerateHeader($dataNode);
-    $object->GenerateImplementation($dataNode);
-
     my $name = $dataNode->name;
+    my $className = GetClassName($name);
+    my $parentClassName = "DOM" . GetParentImplClassName($dataNode);
 
-    # Open files for writing...
-    my $headerFileName = "$outputDir/DOM$name.h";
-    my $implFileName = "$outputDir/DOM$name.mm";
+    ReadPublicInterfaces($className, $parentClassName);
 
-    open($IMPL, ">$implFileName") or die "Couldn't open file $implFileName";
-    open($HEADER, ">$headerFileName") or die "Couldn't open file $headerFileName";
+    # Start actual generation..
+    $object->GenerateImplementation($dataNode);
+    $object->GenerateHeader($dataNode);
+
+    # Write changes.
+    $object->WriteData("DOM" . $name);
+
+    # Check for missing public API
+    if (keys %publicInterfaces > 0) {
+        my $missing = join( "\n", keys %publicInterfaces );
+        die "error: Public API change. There are missing public properties and/or methods from the \"$className\" class.\n$missing\n";
+    }
 }
 
 # Params: 'idlDocument' struct
@@ -171,6 +213,13 @@ sub GetClassName
     # Default, assume Objective-C type has the same type name as
     # idl type prefixed with "DOM".
     return "DOM" . $name;
+}
+
+sub GetClassHeaderName
+{
+    my $name = shift;
+    $name = "DOM" . $name if $name eq "DOMImplementation";
+    return $name;
 }
 
 sub GetImplClassName
@@ -287,27 +336,29 @@ sub GetObjCTypeMaker
 sub AddForwardDeclarationsForType
 {
     my $type = $codeGenerator->StripModule(shift);
-    
-    if ($codeGenerator->IsPrimitiveType($type) or $type eq "DOMString") {
+    my $public = shift;
+
+    return if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMString";
+
+    if ($type eq "XPathNSResolver") {
+        $headerForwardDeclarationsForProtocols{"DOMXPathNSResolver"} = 1 if $public;
+        $privateHeaderForwardDeclarationsForProtocols{"DOMXPathNSResolver"} = 1 if !$public and !$headerForwardDeclarationsForProtocols{"DOMXPathNSResolver"};
         return;
     }
 
     if ($type eq "DOMImplementation") {
-        $headerForwardDeclarations{"$type"} = 1;
-        return;
+        $type = "DOMImplementation";
+    } elsif ($type eq "DOMWindow") {
+        $type = "DOMAbstractView";
+    } else {
+        $type = "DOM" . $type;
     }
 
-    if ($type eq "DOMWindow") {
-        $headerForwardDeclarations{"DOMAbstractView"} = 1;
-        return;
-    }
+    $headerForwardDeclarations{$type} = 1 if $public;
 
-    if ($type eq "XPathNSResolver") {
-        $headerForwardDeclarationsForProtocols{"DOMXPathNSResolver"} = 1;
-        return;
-    }
-
-    $headerForwardDeclarations{"DOM$type"} = 1;
+    # Private headers include the public header, so only add a forward declaration to the private header
+    # if the public header does not already have the same forward declaration.
+    $privateHeaderForwardDeclarations{$type} = 1 if !$public and !$headerForwardDeclarations{$type};
 }
 
 sub AddIncludesForType
@@ -327,6 +378,7 @@ sub AddIncludesForType
         $implIncludes{"RectImpl.h"} = 1;
         return;
     }
+
     if ($type eq "RGBColor") {
         $implIncludes{"DOMRGBColor.h"} = 1;
         $implIncludes{"Color.h"} = 1;
@@ -360,6 +412,8 @@ sub AddIncludesForType
     # Temp DOMImplementationFront.h
     if ($type eq "DOMImplementation") {
         $implIncludes{"DOMImplementationFront.h"} = 1;
+        $implIncludes{"DOM$type.h"} = 1;
+        return;
     }
 
     # FIXME: for some reason it won't compile without both CSSStyleDeclaration.h
@@ -367,7 +421,6 @@ sub AddIncludesForType
     if ($type eq "CSSStyleDeclaration") {
         $implIncludes{"CSSMutableStyleDeclaration.h"} = 1;
     }
-
 
     # Add type specific internal types.
     $implIncludes{"DOMHTMLInternal.h"} = 1 if $type =~ /^HTML/;
@@ -397,23 +450,23 @@ sub GenerateHeader
     @headerContentHeader = split("\r", $headerLicenceTemplate);
 
     # - INCLUDES -
-    push(@headerContentHeader, "\n#import <WebCore/$parentClassName.h>\n\n");
+    my $parentHeaderName = GetClassHeaderName($parentClassName);
+    push(@headerContentHeader, "\n#import <WebCore/$parentHeaderName.h>\n\n");
 
     # - Add constants.
     if ($numConstants > 0) {
         my @headerConstants = ();
         foreach my $constant (@{$dataNode->constants}) {
-
             my $constantName = $constant->name;
             my $constantValue = $constant->value;
             my $output = "    DOM_" . $constantName . " = " . $constantValue;
-            
             push(@headerConstants, $output);
         }
 
         my $combinedConstants = join(",\n", @headerConstants);
 
         # FIXME: the formatting of the enums should line up the equal signs.
+        # FIXME: enums are unconditionally placed in the public header.
         push(@headerContent, "enum {\n");
         push(@headerContent, $combinedConstants);
         push(@headerContent, "\n};\n\n");        
@@ -422,16 +475,14 @@ sub GenerateHeader
     # - Begin @interface 
     push(@headerContent, "\@interface $className : $parentClassName\n");
 
+    my @headerAttributes = ();
+    my @privateHeaderAttributes = ();
+
     # - Add attribute getters/setters.
     if ($numAttributes > 0) {
-        my @headerAttributes = ();
-
-        foreach (@{$dataNode->attributes}) {
-            my $attribute = $_;
-
-            AddForwardDeclarationsForType($attribute->signature->type);
-
+        foreach my $attribute (@{$dataNode->attributes}) {
             my $attributeName = $attribute->signature->name;
+
             if ($attributeName eq "id") {
                 # Special case attribute id to be idName to avoid Obj-C nameing conflict.
                 $attributeName .= "Name";
@@ -443,18 +494,28 @@ sub GenerateHeader
             my $attributeType = GetObjCType($attribute->signature->type);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
 
+            my $property = "\@property" . ($attributeIsReadonly ? "(readonly)" : "") . " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . ";";
+
+            my $public = ($publicInterfaces{$property} or $newPublicClass);
+            delete $publicInterfaces{$property};
+
+            AddForwardDeclarationsForType($attribute->signature->type, $public);
+
             if ($buildingForLeopardOrLater) {
-                my $property = "\@property" . ($attributeIsReadonly ? "(readonly)" : "") . " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . ";\n";
-                push(@headerAttributes, $property);
+                $property .= "\n";
+                push(@headerAttributes, $property) if $public;
+                push(@privateHeaderAttributes, $property) unless $public;
             } else {
                 # - GETTER
                 my $getter = "- (" . $attributeType . ")" . $attributeName . ";\n";
-                push(@headerAttributes, $getter);
+                push(@headerAttributes, $getter) if $public;
+                push(@privateHeaderAttributes, $getter) unless $public;
 
                 # - SETTER
                 if (!$attributeIsReadonly) {
                     my $setter = "- (void)set" . ucfirst($attributeName) . ":(" . $attributeType . ")new" . ucfirst($attributeName) . ";\n";
-                    push(@headerAttributes, $setter);
+                    push(@headerAttributes, $setter) if $public;
+                    push(@privateHeaderAttributes, $setter) unless $public;
                 }
             }
         }
@@ -462,20 +523,18 @@ sub GenerateHeader
         push(@headerContent, @headerAttributes) if @headerAttributes > 0;
     }
 
+    my @headerFunctions = ();
+    my @privateHeaderFunctions = ();
     my @deprecatedHeaderFunctions = ();
 
     # - Add functions.
     if ($numFunctions > 0) {
-        my @headerFunctions = ();
-
-        foreach (@{$dataNode->functions}) {
-            my $function = $_;
-
-            AddForwardDeclarationsForType($function->signature->type);
-
+        foreach my $function (@{$dataNode->functions}) {
             my $functionName = $function->signature->name;
             my $returnType = GetObjCType($function->signature->type);
+            my $needsDeprecatedVersion = (@{$function->parameters} > 1 and $function->signature->extendedAttributes->{"OldStyleObjC"});
             my $numberOfParameters = @{$function->parameters};
+            my %typesToForwardDeclare = ($function->signature->type => 1);
 
             my $parameterIndex = 0;
             my $functionSig = "- ($returnType)$functionName";
@@ -483,7 +542,7 @@ sub GenerateHeader
                 my $paramName = $param->name;
                 my $paramType = GetObjCType($param->type);
 
-                AddForwardDeclarationsForType($param->type);
+                $typesToForwardDeclare{$param->type} = 1;
 
                 if ($parameterIndex >= 1) {
                     my $paramPrefix = $param->extendedAttributes->{"ObjCPrefix"};
@@ -496,21 +555,38 @@ sub GenerateHeader
                 $parameterIndex++;
             }
 
-            $functionSig .= ";\n";
+            $functionSig .= ";";
 
-            push(@headerFunctions, $functionSig);
+            my $public = ($publicInterfaces{$functionSig} or $newPublicClass);
+            delete $publicInterfaces{$functionSig};
+
+            $functionSig .= "\n";
+
+            foreach my $type (keys %typesToForwardDeclare) {
+                # add any forward declarations to the public header if a deprecated version will be generated
+                AddForwardDeclarationsForType($type, 1) if $needsDeprecatedVersion;
+                AddForwardDeclarationsForType($type, $public) unless $public and $needsDeprecatedVersion;
+            }
+
+            push(@headerFunctions, $functionSig) if $public;
+            push(@privateHeaderFunctions, $functionSig) unless $public;
 
             # generate the old style method names with un-named parameters, these methods are deprecated
-            if (@{$function->parameters} > 1 and $function->signature->extendedAttributes->{"OldStyleObjC"}) {
+            if ($needsDeprecatedVersion) {
                 my $deprecatedFunctionSig = $functionSig;
                 $deprecatedFunctionSig =~ s/\s\w+:/ :/g; # remove parameter names
+                my $deprecatedFunctionKey = $deprecatedFunctionSig;
+
                 $deprecatedFunctionSig =~ s/;\n$/ DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;\n/ if $buildingForLeopardOrLater;
                 push(@deprecatedHeaderFunctions, $deprecatedFunctionSig);
+
+                $deprecatedFunctionKey =~ s/\n$//; # remove the newline
+                delete $publicInterfaces{$deprecatedFunctionKey};
             }
         }
 
         if (@headerFunctions > 0) {
-            push(@headerContent, "\n") if $buildingForLeopardOrLater and $numAttributes > 0;
+            push(@headerContent, "\n") if $buildingForLeopardOrLater and @headerAttributes > 0;
             push(@headerContent, @headerFunctions);
         }
     }
@@ -523,6 +599,21 @@ sub GenerateHeader
         push(@headerContent, "\n\@interface $className (" . $className . "Deprecated)\n");
         push(@headerContent, @deprecatedHeaderFunctions);
         push(@headerContent, "\@end\n");
+    }
+
+    if (@privateHeaderAttributes > 0 or @privateHeaderFunctions > 0) {
+        # - Private category @interface
+        @privateHeaderContentHeader = split("\r", $headerLicenceTemplate);
+
+        my $classHeaderName = GetClassHeaderName($className);
+        push(@privateHeaderContentHeader, "\n#import <WebCore/$classHeaderName.h>\n\n");
+
+        @privateHeaderContent = ();
+        push(@privateHeaderContent, "\@interface $className (" . $className . "Private)\n");
+        push(@privateHeaderContent, @privateHeaderAttributes) if @privateHeaderAttributes > 0;
+        push(@privateHeaderContent, "\n") if $buildingForLeopardOrLater and @privateHeaderAttributes > 0 and @privateHeaderFunctions > 0;
+        push(@privateHeaderContent, @privateHeaderFunctions) if @privateHeaderFunctions > 0;
+        push(@privateHeaderContent, "\@end\n");
     }
 }
 
@@ -545,29 +636,30 @@ sub GenerateImplementation
 
     # - INCLUDES -
     push(@implContentHeader, "\n#import \"config.h\"\n");
-    push(@implContentHeader, "#import \"$className.h\"\n\n");
+
+    my $classHeaderName = GetClassHeaderName($className);
+    push(@implContentHeader, "#import \"$classHeaderName.h\"\n\n");
 
     if ($hasFunctionsOrAttributes) {
-        push(@implContentHeader, "#import \"DOMInternal.h\"\n");
-        push(@implContentHeader, "#import <wtf/GetPtr.h>\n");
+        push(@implContentHeader, "#import <wtf/GetPtr.h>\n\n");
+
+        $implIncludes{"$implClassName.h"} = 1;
+        $implIncludes{"DOMInternal.h"} = 1;
 
         # include module-dependent internal interfaces.
         if ($module eq "html") {
             # HTML module internal interfaces
-            push(@implContentHeader, "#import \"DOMHTMLInternal.h\"\n");
+            $implIncludes{"DOMHTMLInternal.h"} = 1;
         } elsif ($module eq "css") {
             # CSS module internal interfaces
-            push(@implContentHeader, "#import \"DOMCSSInternal.h\"\n");
+            $implIncludes{"DOMCSSInternal.h"} = 1;
         } elsif ($module eq "events") {
-            # CSS module internal interfaces
-            push(@implContentHeader, "#import \"DOMEventsInternal.h\"\n");
+            # Events module internal interfaces
+            $implIncludes{"DOMEventsInternal.h"} = 1;
         } elsif ($module eq "xpath") {
-            # CSS module internal interfaces
-            push(@implContentHeader, "#import \"DOMXPathInternal.h\"\n");
+            # XPath module internal interfaces
+            $implIncludes{"DOMXPathInternal.h"} = 1;
         }
-
-        # include Implementation class
-        push(@implContentHeader, "#import \"$implClassName.h\" // implementation class\n");
     }
 
     @implContent = ();
@@ -597,7 +689,6 @@ sub GenerateImplementation
             push(@implContent, "        IMPL->deref();\n");
             push(@implContent, "    [super finalize];\n");
             push(@implContent, "}\n\n");
-            
         } elsif ($interfaceName eq "CSSStyleSheet") {
             # Special case for CSSStyleSheet
             push(@implContent, "#define IMPL reinterpret_cast<WebCore::CSSStyleSheet*>(_internal)\n\n");
@@ -615,11 +706,11 @@ sub GenerateImplementation
         }
     }
 
+    %attributeNames = ();
+
     # - Attributes
     if ($numAttributes > 0) {
-        foreach (@{$dataNode->attributes}) {
-            my $attribute = $_;
-
+        foreach my $attribute (@{$dataNode->attributes}) {
             AddIncludesForType($attribute->signature->type);
 
             my $idlType = $codeGenerator->StripModule($attribute->signature->type);
@@ -636,6 +727,8 @@ sub GenerateImplementation
                 # Special case attribute frame to be frameBorders.
                 $interfaceName .= "Borders";
             }
+
+            $attributeNames{$interfaceName} = 1;
 
             # - GETTER
             my $getterSig = "- ($attributeType)$interfaceName\n";
@@ -737,9 +830,7 @@ sub GenerateImplementation
 
     # - Functions
     if ($numFunctions > 0) {
-        foreach (@{$dataNode->functions}) {
-            my $function = $_;
-
+        foreach my $function (@{$dataNode->functions}) {
             AddIncludesForType($function->signature->type);
 
             my $functionName = $function->signature->name;
@@ -753,10 +844,12 @@ sub GenerateImplementation
 
             my $parameterIndex = 0;
             my $functionSig = "- ($returnType)$functionName";
-            foreach (@{$function->parameters}) {
-                my $param = $_;
+            foreach my $param (@{$function->parameters}) {
                 my $paramName = $param->name;
                 my $paramType = GetObjCType($param->type);
+
+                # make a new parameter name if the original conflicts with a property name
+                $paramName = "in" . ucfirst($paramName) if $attributeNames{$paramName};
 
                 AddIncludesForType($param->type);
 
@@ -775,6 +868,9 @@ sub GenerateImplementation
                 } elsif ($idlType eq "HTMLElement") {
                     my $implGetter = "[" . $paramName . " _HTMLElement]";
                     push(@parameterNames, $implGetter);
+                } elsif ($idlType eq "HTMLOptionElement") {
+                    my $implGetter = "[" . $paramName . " _optionElement]";
+                    push(@parameterNames, $implGetter);
                 } else {
                     my $implGetter = "[" . $paramName . " _" . lcfirst($idlType) . "]";
                     push(@parameterNames, $implGetter);
@@ -786,7 +882,7 @@ sub GenerateImplementation
 
                 if ($parameterIndex >= 1) {
                     my $paramPrefix = $param->extendedAttributes->{"ObjCPrefix"};
-                    $paramPrefix = $paramName unless defined($paramPrefix);
+                    $paramPrefix = $param->name unless defined($paramPrefix);
                     $functionSig .= " $paramPrefix";
                 }
 
@@ -805,38 +901,20 @@ sub GenerateImplementation
                 push(@functionContent, "    DOMNativeXPathNSResolver *nativeResolver = (DOMNativeXPathNSResolver *)$paramName;\n\n");
             }
 
+            push(@parameterNames, "ec") if $raisesExceptions;
+
+            my $content = "IMPL->" . $functionName . "(" . join(", ", @parameterNames) . ")";
+
             if ($returnType eq "void") {
                 # Special case 'void' return type.
-                my $functionContentHead = "IMPL->$functionName(";
-                my $functionContentTail = ");";
-                my $content = "";
-
-                if ($hasParameters) {
-                    my $params = join(", ", @parameterNames);
-                    if ($raisesExceptions) {
-                        $content = $functionContentHead . $params . ", ec" . $functionContentTail;
-                    } else {
-                        $content = $functionContentHead . $params . $functionContentTail;
-                    }
-                } else {
-                    if ($raisesExceptions) {
-                        $content = $functionContentHead . "ec" . $functionContentTail;
-                    } else {
-                        $content = $functionContentHead . $functionContentTail;
-                    }
-                }
-
                 if ($raisesExceptions) {
                     push(@functionContent, "    $exceptionInit\n");
-                    push(@functionContent, "    $content\n");
+                    push(@functionContent, "    $content;\n");
                     push(@functionContent, "    $exceptionRaiseOnError\n");
                 } else {
-                    push(@functionContent, "    $content\n");
+                    push(@functionContent, "    $content;\n");
                 }
             } else {
-                my $functionContentHead = "IMPL->" . $functionName . "(";
-                my $functionContentTail = ")";
-
                 my $typeMaker = GetObjCTypeMaker($function->signature->type);
                 unless ($typeMaker eq "") {
                     my $returnTypeClass = "";
@@ -851,28 +929,9 @@ sub GenerateImplementation
 
                     # Surround getter with TypeMaker
                     if ($returnTypeClass eq "DOMRGBColor") {
-                        $functionContentHead = "[$returnTypeClass $typeMaker:" . $functionContentHead;
-                        $functionContentTail .= "]";
+                        $content = "[$returnTypeClass $typeMaker:" . $content . "]";
                     } else {
-                        $functionContentHead = "[$returnTypeClass $typeMaker:WTF::getPtr(" . $functionContentHead;
-                        $functionContentTail .= ")]";
-                    }
-                }
-
-                my $content = "";
-
-                if ($hasParameters) {
-                    my $params = join(", " , @parameterNames);
-                    if ($raisesExceptions) {
-                        $content = $functionContentHead . $params . ", ec" . $functionContentTail;
-                    } else {
-                        $content = $functionContentHead . $params . $functionContentTail;
-                    }
-                } else {
-                    if ($raisesExceptions) {
-                        $content = $functionContentHead . "ec" . $functionContentTail;
-                    } else {
-                        $content = $functionContentHead . $functionContentTail;
+                        $content = "[$returnTypeClass $typeMaker:WTF::getPtr(" . $content . ")]";
                     }
                 }
 
@@ -904,7 +963,7 @@ sub GenerateImplementation
                 my $deprecatedFunctionSig = $functionSig;
                 $deprecatedFunctionSig =~ s/\s\w+:/ :/g; # remove parameter names
 
-                push(@deprecatedFunctions, "\n$deprecatedFunctionSig\n");
+                push(@deprecatedFunctions, "$deprecatedFunctionSig\n");
                 push(@deprecatedFunctions, "{\n");
                 push(@deprecatedFunctions, @functionContent);
                 push(@deprecatedFunctions, "}\n\n");
@@ -920,7 +979,7 @@ sub GenerateImplementation
 
     if (@deprecatedFunctions > 0) {
         # - Deprecated category @implementation
-        push(@implContent, "\n\@implementation $className (" . $className . "Deprecated)\n");
+        push(@implContent, "\n\@implementation $className (" . $className . "Deprecated)\n\n");
         push(@implContent, @deprecatedFunctions);
         push(@implContent, "\@end\n");
     }
@@ -929,52 +988,88 @@ sub GenerateImplementation
 # Internal helper
 sub WriteData
 {
-    if (defined($IMPL)) {
-        # Write content to file.
-        print $IMPL @implContentHeader;
+    my $object = shift;
+    my $name = shift;
 
-        my $includeCount = 0;
-        foreach my $implInclude (sort keys(%implIncludes)) {
-            print $IMPL "#import \"$implInclude\"\n";
-            $includeCount++;
-        }
+    # Open files for writing...
+    my $headerFileName = "$outputDir/" . $name . ".h";
+    my $privateHeaderFileName = "$outputDir/" . $name . "Private.h";
+    my $implFileName = "$outputDir/" . $name . ".mm";
 
-        print $IMPL "\n" if $includeCount;
+    # Remove old files.
+    unlink($headerFileName);
+    unlink($privateHeaderFileName);
+    unlink($implFileName);
 
-        print $IMPL @implContent;
-        close($IMPL);
-        undef($IMPL);
+    # Write implementation file.
+    open($IMPL, ">$implFileName") or die "Couldn't open file $implFileName";
 
-        @implHeaderContent = "";
-        @implContent = "";    
-        %implIncludes = ();
+    print $IMPL @implContentHeader;
+
+    foreach my $implInclude (sort keys(%implIncludes)) {
+        print $IMPL "#import \"$implInclude\"\n";
     }
 
-    if (defined($HEADER)) {
-        # Write content to file.
-        print $HEADER @headerContentHeader;
+    print $IMPL "\n" if keys %implIncludes > 0;
+    print $IMPL @implContent;
 
-        my $forwardDeclarationCount = 0;
-        foreach my $forwardClassDeclaration (sort keys(%headerForwardDeclarations)) {
-            print $HEADER "\@class $forwardClassDeclaration;\n";
+    close($IMPL);
+    undef($IMPL);
+
+    @implHeaderContent = "";
+    @implContent = "";    
+    %implIncludes = ();
+
+    # Write public header.
+    open($HEADER, ">$headerFileName") or die "Couldn't open file $headerFileName";
+    print $HEADER @headerContentHeader;
+
+    my $forwardDeclarationCount = 0;
+    foreach my $forwardClassDeclaration (sort keys(%headerForwardDeclarations)) {
+        print $HEADER "\@class $forwardClassDeclaration;\n";
+        $forwardDeclarationCount++;
+    }
+
+    foreach my $forwardProtocolDeclaration (sort keys(%headerForwardDeclarationsForProtocols)) {
+        print $HEADER "\@protocol $forwardProtocolDeclaration;\n";
+        $forwardDeclarationCount++;
+    }
+
+    print $HEADER "\n" if $forwardDeclarationCount;
+    print $HEADER @headerContent;
+
+    close($HEADER);
+    undef($HEADER);
+
+    @headerContentHeader = "";
+    @headerContent = "";
+    %headerForwardDeclarations = ();
+    %headerForwardDeclarationsForProtocols = ();
+
+    if (@privateHeaderContent > 0) {
+        open($PRIVATE_HEADER, ">$privateHeaderFileName") or die "Couldn't open file $privateHeaderFileName";
+        print $PRIVATE_HEADER @privateHeaderContentHeader;
+
+        $forwardDeclarationCount = 0;
+        foreach my $forwardClassDeclaration (sort keys(%privateHeaderForwardDeclarations)) {
+            print $PRIVATE_HEADER "\@class $forwardClassDeclaration;\n";
             $forwardDeclarationCount++;
         }
 
-        foreach my $forwardProtocolDeclaration (sort keys(%headerForwardDeclarationsForProtocols)) {
-            print $HEADER "\@protocol $forwardProtocolDeclaration;\n";
+        foreach my $forwardProtocolDeclaration (sort keys(%privateHeaderForwardDeclarationsForProtocols)) {
+            print $PRIVATE_HEADER "\@protocol $forwardProtocolDeclaration;\n";
             $forwardDeclarationCount++;
         }
 
-        print $HEADER "\n" if $forwardDeclarationCount;
+        print $PRIVATE_HEADER "\n" if $forwardDeclarationCount;
+        print $PRIVATE_HEADER @privateHeaderContent;
 
-        print $HEADER @headerContent;
-        close($HEADER);
-        undef($HEADER);
+        close($PRIVATE_HEADER);
+        undef($PRIVATE_HEADER);
 
-        @headerContentHeader = "";
-        @headerContent = "";
-        %headerForwardDeclarations = ();
-        %headerForwardDeclarationsForProtocols = ();
+        @privateHeaderContent = "";
+        %privateHeaderForwardDeclarations = ();
+        %privateHeaderForwardDeclarationsForProtocols = ();
     }
 }
 

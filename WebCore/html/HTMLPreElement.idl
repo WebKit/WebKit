@@ -26,7 +26,7 @@ module html {
         attribute long width;
         
         // Extensions
-        attribute [Exclude=ObjC] boolean wrap;
+        attribute boolean wrap;
     };
 
 }

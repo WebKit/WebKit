@@ -25,7 +25,6 @@
  */
 
 #import <WebCore/DOMCore.h>
-#import <WebCore/DOMDOMImplementation.h>
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMElement.h>
 #import <WebCore/DOMObject.h>

@@ -30,7 +30,7 @@ module core {
 
         // interface LinkStyle from DOM Level 2 Style Sheets
 
-        readonly attribute [Exclude=ObjC] StyleSheet sheet;
+        readonly attribute StyleSheet sheet;
 
     };
 

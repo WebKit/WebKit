@@ -34,8 +34,8 @@ module html {
         attribute long width;
         
         // Extensions
-        readonly attribute [Exclude=ObjC] boolean complete;
-        readonly attribute [Exclude=ObjC] long x;
-        readonly attribute [Exclude=ObjC] long y;
+        readonly attribute boolean complete;
+        readonly attribute long x;
+        readonly attribute long y;
     };
 }

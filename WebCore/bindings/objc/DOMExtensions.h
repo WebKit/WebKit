@@ -27,7 +27,6 @@
 #import <WebCore/DOMAttr.h>
 #import <WebCore/DOMCSS.h>
 #import <WebCore/DOMCSSStyleDeclaration.h>
-#import <WebCore/DOMDOMImplementation.h>
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMElement.h>
 #import <WebCore/DOMHTML.h>

@@ -28,13 +28,13 @@
 #import <WebCore/DOMCDATASection.h>
 #import <WebCore/DOMCharacterData.h>
 #import <WebCore/DOMComment.h>
-#import <WebCore/DOMDOMImplementation.h>
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMDocumentFragment.h>
 #import <WebCore/DOMDocumentType.h>
 #import <WebCore/DOMElement.h>
 #import <WebCore/DOMEntity.h>
 #import <WebCore/DOMEntityReference.h>
+#import <WebCore/DOMDOMImplementation.h>
 #import <WebCore/DOMNamedNodeMap.h>
 #import <WebCore/DOMNode.h>
 #import <WebCore/DOMNodeList.h>

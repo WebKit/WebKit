@@ -1,3 +1,58 @@
+2006-09-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 10714: ObjC autogeneration needs safe-guards against easily modifying the public API
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10714
+        
+        - New PublicDOMInterfaces.h file is consulted when generating
+          the ObjC DOM files. All public DOM class interfaces, properties
+          and methods need to be in this file. Anything not in the file will
+          be generated into the appropriate private header file. During
+          generation if something changed or is missing in the public API
+          a build error will occur. New interfaces added to the IDLs files
+          will now not automatically be reflected in the public ObjC API.
+          Methods commented out in PublicDOMInterfaces.h are pending public
+          and will be uncommented once approved.
+
+        - Removed most of the Exclude=ObjC uses from the IDL files. This
+          attribute was mostly used to prevent changes to the public headers.
+
+        - Make a new parameter name if the original conflicts with a property name.
+
+        - Simplified the generation code for dealing with exceptions.
+
+        - Moved file opens to WriteData. Files are unlinked before
+          being opened to work around a Leopard file truncation bug.
+
+        - Fixed #imports for DOMImplementation to be DOMDOMImplementation.h
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMCSS.h:
+        * bindings/objc/DOMCore.h:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTMLInternal.h:
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/PublicDOMInterfaces.h: Added.
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/ProcessingInstruction.idl:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLBodyElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLLabelElement.idl:
+        * html/HTMLLegendElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLPreElement.idl:
+        * html/HTMLStyleElement.idl:
+        * html/HTMLTextAreaElement.idl:
+
 2006-09-04  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Tim H.

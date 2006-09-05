@@ -107,19 +107,19 @@ module core {
 
         // IE extensions
 
-        [Exclude=ObjC] Node insertAdjacentElement(in DOMString position, 
-                                                  in Node element)
+        Node insertAdjacentElement(in DOMString position, 
+                                   in Node element)
             raises(DOMException);
 
-        [Exclude=ObjC] boolean contains(in Element element);
+        boolean contains(in Element element);
 
         // WebKit extensions
 
         void scrollIntoViewIfNeeded(in [Optional] boolean centerIfNeeded);
 
-        [Exclude=ObjC] void scrollByLines(in long lines);
+        void scrollByLines(in long lines);
 
-        [Exclude=ObjC] void scrollByPages(in long pages);
+        void scrollByPages(in long pages);
 
     };
 

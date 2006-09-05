@@ -28,9 +28,9 @@ module html {
         attribute DOMString vLink; 
         
         // IE Extensions
-        attribute [Exclude=ObjC] long scrollLeft;
-        attribute [Exclude=ObjC] long scrollTop;
-        readonly attribute [Exclude=ObjC] long scrollWidth;
-        readonly attribute [Exclude=ObjC] long scrollHeight;
+        attribute long scrollLeft;
+        attribute long scrollTop;
+        readonly attribute long scrollWidth;
+        readonly attribute long scrollHeight;
     };
 }

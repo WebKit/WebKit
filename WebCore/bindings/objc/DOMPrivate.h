@@ -36,6 +36,31 @@
 #import <WebCore/DOMRGBColor.h>
 #import <WebCore/DOMRange.h>
 
+#import <WebCore/DOMCSSMediaRulePrivate.h>
+#import <WebCore/DOMCSSPrimitiveValuePrivate.h>
+#import <WebCore/DOMCSSStyleDeclarationPrivate.h>
+#import <WebCore/DOMCSSStyleSheetPrivate.h>
+#import <WebCore/DOMCharacterDataPrivate.h>
+#import <WebCore/DOMDocumentPrivate.h>
+#import <WebCore/DOMElementPrivate.h>
+#import <WebCore/DOMHTMLAnchorElementPrivate.h>
+#import <WebCore/DOMHTMLAreaElementPrivate.h>
+#import <WebCore/DOMHTMLBodyElementPrivate.h>
+#import <WebCore/DOMHTMLButtonElementPrivate.h>
+#import <WebCore/DOMHTMLImageElementPrivate.h>
+#import <WebCore/DOMHTMLInputElementPrivate.h>
+#import <WebCore/DOMHTMLLabelElementPrivate.h>
+#import <WebCore/DOMHTMLLegendElementPrivate.h>
+#import <WebCore/DOMHTMLLinkElementPrivate.h>
+#import <WebCore/DOMHTMLOptionsCollectionPrivate.h>
+#import <WebCore/DOMHTMLPreElementPrivate.h>
+#import <WebCore/DOMHTMLSelectElementPrivate.h>
+#import <WebCore/DOMHTMLStyleElementPrivate.h>
+#import <WebCore/DOMHTMLTextAreaElementPrivate.h>
+#import <WebCore/DOMDOMImplementationPrivate.h>
+#import <WebCore/DOMNamedNodeMapPrivate.h>
+#import <WebCore/DOMProcessingInstructionPrivate.h>
+
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText
 - (NSString *)_text;
