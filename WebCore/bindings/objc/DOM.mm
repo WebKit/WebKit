@@ -32,7 +32,7 @@
 #import "CSSStyleSheet.h"
 #import "Comment.h"
 #import "DOMHTML.h"
-#import "DOMImplementationFront.h"
+#import "DOMImplementation.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
 #import "DeprecatedValueList.h"
@@ -150,7 +150,6 @@ using WebCore::AtomicStringImpl;
 using WebCore::Attr;
 using WebCore::Document;
 using WebCore::DocumentFragment;
-using WebCore::DOMImplementationFront;
 using WebCore::Element;
 using WebCore::Event;
 using WebCore::EventListener;
@@ -518,7 +517,7 @@ static Class elementClass(const AtomicString& tagName)
  
 @implementation DOMImplementation (WebCoreInternal)
 
-- (id)_initWithDOMImplementation:(DOMImplementationFront *)impl
+- (id)_initWithDOMImplementation:(WebCore::DOMImplementation *)impl
 {
     ASSERT(impl);
 
@@ -529,7 +528,7 @@ static Class elementClass(const AtomicString& tagName)
     return self;
 }
 
-+ (DOMImplementation *)_DOMImplementationWith:(DOMImplementationFront *)impl
++ (DOMImplementation *)_DOMImplementationWith:(WebCore::DOMImplementation *)impl
 {
     if (!impl)
         return nil;
@@ -542,9 +541,9 @@ static Class elementClass(const AtomicString& tagName)
     return [[[self alloc] _initWithDOMImplementation:impl] autorelease];
 }
 
-- (DOMImplementationFront *)_DOMImplementation
+- (WebCore::DOMImplementation *)_DOMImplementation
 {
-    return DOM_cast<DOMImplementationFront *>(_internal);
+    return DOM_cast<WebCore::DOMImplementation *>(_internal);
 }
 
 @end

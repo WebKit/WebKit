@@ -829,8 +829,6 @@
 		93B70D7509EB0C7C009D8468 /* kjs_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5909EB0C7C009D8468 /* kjs_window.cpp */; };
 		93B70D7609EB0C7C009D8468 /* kjs_window.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5A09EB0C7C009D8468 /* kjs_window.h */; };
 		93B780CA09B3B7FE00690162 /* WidgetClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B780C909B3B7FE00690162 /* WidgetClient.h */; };
-		93C841F809CE855C00DFF5E5 /* DOMImplementationFront.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */; };
-		93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */; };
 		93CD4FDE0995F9EA007ECC97 /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CD4FD70995F9EA007ECC97 /* AtomicString.cpp */; };
 		93CD4FDF0995F9EA007ECC97 /* AtomicString.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CD4FD80995F9EA007ECC97 /* AtomicString.h */; };
 		93CD4FE00995F9EA007ECC97 /* AtomicStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CD4FD90995F9EA007ECC97 /* AtomicStringImpl.h */; };
@@ -2960,8 +2958,6 @@
 		93B70D5909EB0C7C009D8468 /* kjs_window.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_window.cpp; sourceTree = "<group>"; };
 		93B70D5A09EB0C7C009D8468 /* kjs_window.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_window.h; sourceTree = "<group>"; };
 		93B780C909B3B7FE00690162 /* WidgetClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WidgetClient.h; sourceTree = "<group>"; };
-		93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMImplementationFront.h; sourceTree = "<group>"; };
-		93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMImplementationFront.cpp; sourceTree = "<group>"; };
 		93CA4C9909DF93FA00DF8677 /* html4.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html4.css; sourceTree = "<group>"; };
 		93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "make-css-file-arrays.pl"; sourceTree = "<group>"; };
 		93CA4C9B09DF93FA00DF8677 /* makeprop */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makeprop; sourceTree = "<group>"; };
@@ -6099,8 +6095,6 @@
 				BC1A379F097C715F0019F3D8 /* DOMExtensions.h */,
 				BC1A37A0097C715F0019F3D8 /* DOMHTML.h */,
 				BC1A37A1097C715F0019F3D8 /* DOMHTML.mm */,
-				93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */,
-				93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */,
 				BC1A37A3097C715F0019F3D8 /* DOMInternal.h */,
 				BC1A37A4097C715F0019F3D8 /* DOMInternal.mm */,
 				BC1A37A5097C715F0019F3D8 /* DOMPrivate.h */,
@@ -7199,7 +7193,6 @@
 				93EEC20409C2877700C515D1 /* CanvasPattern.h in Headers */,
 				D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */,
 				6522BCDF09C9DAA800C9BA7A /* ResourceRequest.h in Headers */,
-				93C841F809CE855C00DFF5E5 /* DOMImplementationFront.h in Headers */,
 				656580F409D12B20000E61D7 /* CSSPropertyNames.h in Headers */,
 				6565815109D13043000E61D7 /* CSSValueKeywords.h in Headers */,
 				656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */,
@@ -7689,6 +7682,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -7703,6 +7697,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -8204,7 +8199,6 @@
 				93EEC26F09C3218000C515D1 /* CanvasPattern.cpp in Sources */,
 				93EEC27109C3218800C515D1 /* CanvasStyle.cpp in Sources */,
 				D0B0556909C6700100307E43 /* CreateLinkCommand.cpp in Sources */,
-				93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */,
 				650F53DD09D15DDF00C9B0C8 /* CSSGrammar.cpp in Sources */,
 				65DF31DA09D1C123000BE325 /* JSAttr.cpp in Sources */,
 				65DF31F309D1CC60000BE325 /* JSCharacterData.cpp in Sources */,

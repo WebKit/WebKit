@@ -232,7 +232,6 @@ sub GetImplClassName
     my $name = $codeGenerator->StripModule(shift);
 
     # special cases
-    return "DOMImplementationFront" if $name eq "DOMImplementation";
     return "RectImpl" if $name eq "Rect";
 
     return $name;
@@ -370,13 +369,6 @@ sub AddIncludesForType
     if ($type eq "XPathExpression" or $type eq "XPathNSResolver" or $type eq "XPathResult") {
         $implIncludes{"DOMXPath.h"} = 1;
         $implIncludes{"$type.h"} = 1;
-        return;
-    }
-
-    # Temp DOMImplementationFront.h
-    if ($type eq "DOMImplementation") {
-        $implIncludes{"DOMImplementationFront.h"} = 1;
-        $implIncludes{"DOM$type.h"} = 1;
         return;
     }
 
@@ -687,11 +679,7 @@ sub GenerateImplementation
             my $typeMaker = GetObjCTypeMaker($attribute->signature->type);
 
             # Special cases
-            if ($attributeTypeSansPtr eq "DOMImplementation") {
-                # FIXME: We have to special case DOMImplementation until DOMImplementationFront is removed
-                $getterContentHead = "[$attributeTypeSansPtr $typeMaker:implementationFront(IMPL";
-                $getterContentTail .= "]";
-            } elsif ($attributeName =~ /(\w+)DisplayString$/) {
+            if ($attributeName =~ /(\w+)DisplayString$/) {
                 my $attributeToDisplay = $1;
                 $getterContentHead = "IMPL->$attributeToDisplay().replace(\'\\\\\', [self _element]->document()->backslashAsCurrencySymbol()";
                 $implIncludes{"Document.h"} = 1;
@@ -971,8 +959,8 @@ sub WriteData
     close($IMPL);
     undef($IMPL);
 
-    @implHeaderContent = "";
-    @implContent = "";    
+    undef(@implContentHeader);
+    undef(@implContent);
     %implIncludes = ();
 
     # Write public header.
@@ -996,8 +984,8 @@ sub WriteData
     close($HEADER);
     undef($HEADER);
 
-    @headerContentHeader = "";
-    @headerContent = "";
+    undef(@headerContentHeader);
+    undef(@headerContent);
     %headerForwardDeclarations = ();
     %headerForwardDeclarationsForProtocols = ();
 
@@ -1022,7 +1010,8 @@ sub WriteData
         close($PRIVATE_HEADER);
         undef($PRIVATE_HEADER);
 
-        @privateHeaderContent = "";
+        undef(@privateHeaderContentHeader);
+        undef(@privateHeaderContent);
         %privateHeaderForwardDeclarations = ();
         %privateHeaderForwardDeclarationsForProtocols = ();
     }
