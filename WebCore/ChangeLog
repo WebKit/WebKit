@@ -1,3 +1,14 @@
+2006-09-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix crashes affecting editing layout tests (regressions from my vector change)
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): Added check for empty vector.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Ditto.
+
 2006-09-06  David Harrison  <harrison@apple.com>
 
         Reviewed and tweaked by Tim H.

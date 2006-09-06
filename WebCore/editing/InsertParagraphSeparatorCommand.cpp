@@ -77,8 +77,6 @@ void InsertParagraphSeparatorCommand::applyStyleAfterInsertion()
         applyStyle(m_style.get());
 }
 
-
-
 void InsertParagraphSeparatorCommand::doApply()
 {
     bool splitText = false;
@@ -199,10 +197,9 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // Build up list of ancestors in between the start node and the start block.
     Vector<Node*> ancestors;
-    if (startNode != startBlock) {
+    if (startNode != startBlock)
         for (Node* n = startNode->parentNode(); n && n != startBlock; n = n->parentNode())
             ancestors.append(n);
-    }
 
     // Make sure we do not cause a rendered space to become unrendered.
     // FIXME: We need the affinity for pos, but pos.downstream() does not give it
@@ -263,17 +260,19 @@ void InsertParagraphSeparatorCommand::doApply()
     }            
 
     // Move everything after the start node.
-    Node* leftParent = ancestors[0];
-    while (leftParent && leftParent != startBlock) {
-        parent = parent->parentNode();
-        Node *n = leftParent->nextSibling();
-        while (n && n != blockToInsert) {
-            Node *next = n->nextSibling();
-            removeNode(n);
-            appendNode(n, parent.get());
-            n = next;
+    if (!ancestors.isEmpty()) {
+        Node* leftParent = ancestors.first();
+        while (leftParent && leftParent != startBlock) {
+            parent = parent->parentNode();
+            Node* n = leftParent->nextSibling();
+            while (n && n != blockToInsert) {
+                Node* next = n->nextSibling();
+                removeNode(n);
+                appendNode(n, parent.get());
+                n = next;
+            }
+            leftParent = leftParent->parentNode();
         }
-        leftParent = leftParent->parentNode();
     }
 
     // Handle whitespace that occurs after the split

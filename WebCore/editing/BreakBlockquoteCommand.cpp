@@ -131,23 +131,25 @@ void BreakBlockquoteCommand::doApply()
         }
 
         // Hold open startNode's original parent if we emptied it
-        addBlockPlaceholderIfNeeded(ancestors[0]);
+        if (!ancestors.isEmpty()) {
+            addBlockPlaceholderIfNeeded(ancestors.first());
 
-        // Split the tree up the ancestor chain until the topBlockquote
-        // Throughout this loop, clonedParent is the clone of ancestor's parent.
-        // This is so we can clone ancestor's siblings and place the clones
-        // into the clone corresponding to the ancestor's parent.
-        Node* ancestor;
-        Node* clonedParent;
-        for (ancestor = ancestors[0], clonedParent = clonedAncestor->parentNode();
-             ancestor && ancestor != topBlockquote;
-             ancestor = ancestor->parentNode(), clonedParent = clonedParent->parentNode()) {
-            moveNode = ancestor->nextSibling();
-            while (moveNode) {
-                Node *next = moveNode->nextSibling();
-                removeNode(moveNode);
-                appendNode(moveNode, clonedParent);
-                moveNode = next;
+            // Split the tree up the ancestor chain until the topBlockquote
+            // Throughout this loop, clonedParent is the clone of ancestor's parent.
+            // This is so we can clone ancestor's siblings and place the clones
+            // into the clone corresponding to the ancestor's parent.
+            Node* ancestor;
+            Node* clonedParent;
+            for (ancestor = ancestors.first(), clonedParent = clonedAncestor->parentNode();
+                 ancestor && ancestor != topBlockquote;
+                 ancestor = ancestor->parentNode(), clonedParent = clonedParent->parentNode()) {
+                moveNode = ancestor->nextSibling();
+                while (moveNode) {
+                    Node *next = moveNode->nextSibling();
+                    removeNode(moveNode);
+                    appendNode(moveNode, clonedParent);
+                    moveNode = next;
+                }
             }
         }
         
