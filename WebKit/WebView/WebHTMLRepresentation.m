@@ -208,9 +208,7 @@
 
 - (NSString *)documentSource
 {
-    NSData *data = [_private->dataSource data];
-    CFStringEncoding encoding = [_private->bridge textEncoding];
-    return [WebFrameBridge stringWithData:data textEncoding:encoding];
+    return [_private->bridge stringWithData:[_private->dataSource data]];
 }
 
 - (NSString *)title

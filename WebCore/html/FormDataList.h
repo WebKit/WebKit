@@ -27,6 +27,7 @@
 #ifndef HTML_FormDataList_h
 #define HTML_FormDataList_h
 
+#include "CString.h"
 #include "DeprecatedValueList.h"
 #include "PlatformString.h"
 #include "TextEncoding.h"
@@ -34,11 +35,11 @@
 namespace WebCore {
 
 struct FormDataListItem {
-    FormDataListItem(const DeprecatedCString& data) : m_data(data) { }
-    FormDataListItem(const DeprecatedString& path) : m_path(path) { }
+    FormDataListItem(const CString& data) : m_data(data) { }
+    FormDataListItem(const String& path) : m_path(path) { }
 
-    DeprecatedString m_path;
-    DeprecatedCString m_data;
+    String m_path;
+    CString m_data;
 };
 
 class FormDataList {
@@ -46,13 +47,11 @@ public:
     FormDataList(const TextEncoding&);
 
     void appendData(const String& key, const String& value)
-        { appendString(key.deprecatedString()); appendString(value.deprecatedString()); }
-    void appendData(const String& key, const DeprecatedString& value)
-        { appendString(key.deprecatedString()); appendString(value); }
-    void appendData(const String& key, const DeprecatedCString& value)
-        { appendString(key.deprecatedString()); appendString(value); }
+        { appendString(key); appendString(value); }
+    void appendData(const String& key, const CString& value)
+        { appendString(key); appendString(value); }
     void appendData(const String& key, int value)
-        { appendString(key.deprecatedString()); appendString(DeprecatedString::number(value)); }
+        { appendString(key); appendString(String::number(value)); }
     void appendFile(const String& key, const String& filename);
 
     DeprecatedValueListConstIterator<FormDataListItem> begin() const
@@ -61,8 +60,8 @@ public:
         { return m_list.end(); }
 
 private:
-    void appendString(const DeprecatedCString&);
-    void appendString(const DeprecatedString&);
+    void appendString(const CString&);
+    void appendString(const String&);
 
     TextEncoding m_encoding;
     DeprecatedValueList<FormDataListItem> m_list;

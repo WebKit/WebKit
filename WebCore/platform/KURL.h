@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 #ifndef KURL_h
 #define KURL_h
 
+#include "DeprecatedString.h"
 #include <wtf/Platform.h>
-#include "TextEncoding.h"
 
 #if PLATFORM(CF)
 typedef const struct __CFURL * CFURLRef;
@@ -47,6 +47,7 @@ namespace WebCore {
 
     class KURL;
     class String;
+    class TextEncoding;
 
     bool operator==(const KURL&, const KURL&);
     bool equalIgnoringRef(const KURL&, const KURL&);
@@ -55,7 +56,8 @@ class KURL {
 public:
     KURL();
     KURL(const char*);
-    KURL(const KURL&, const DeprecatedString&, const TextEncoding& encoding = TextEncoding(UTF8Encoding));
+    KURL(const KURL&, const DeprecatedString&);
+    KURL(const KURL&, const DeprecatedString&, const TextEncoding&);
     KURL(const DeprecatedString&);
 #if PLATFORM(MAC)
     KURL(NSURL*);
@@ -102,13 +104,15 @@ public:
 
     bool isLocalFile() const;
 
-    static DeprecatedString decode_string(const DeprecatedString &, const TextEncoding& encoding = TextEncoding(UTF8Encoding));
-    static DeprecatedString encode_string(const DeprecatedString &);
+    static DeprecatedString decode_string(const DeprecatedString&);
+    static DeprecatedString decode_string(const DeprecatedString&, const TextEncoding&);
+    static DeprecatedString encode_string(const DeprecatedString&);
     
     friend bool operator==(const KURL &, const KURL &);
 
 private:
     bool isHierarchical() const;
+    void init(const KURL&, const DeprecatedString&, const TextEncoding&);
     void parse(const char *url, const DeprecatedString *originalString);
 
     DeprecatedString urlString;

@@ -21,7 +21,6 @@
 #include "XMLSerializer.h"
 
 #include "Document.h"
-#include "DeprecatedString.h"
 #include "markup.h"
 
 namespace WebCore {

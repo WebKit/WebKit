@@ -178,7 +178,7 @@ CachedImage* Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, ti
     return static_cast<CachedImage *>(o);
 }
 
-CachedCSSStyleSheet* Cache::requestStyleSheet(DocLoader* dl, const String& url, bool reload, time_t expireDate, const DeprecatedString& charset)
+CachedCSSStyleSheet* Cache::requestStyleSheet(DocLoader* dl, const String& url, bool reload, time_t expireDate, const String& charset)
 {
     // this brings the _url to a standard form...
     KURL kurl;
@@ -228,7 +228,7 @@ CachedCSSStyleSheet* Cache::requestStyleSheet(DocLoader* dl, const String& url, 
     return static_cast<CachedCSSStyleSheet *>(o);
 }
 
-CachedScript* Cache::requestScript(DocLoader* dl, const String& url, bool reload, time_t expireDate, const DeprecatedString& charset)
+CachedScript* Cache::requestScript(DocLoader* dl, const String& url, bool reload, time_t expireDate, const String& charset)
 {
     // this brings the _url to a standard form...
     KURL kurl;

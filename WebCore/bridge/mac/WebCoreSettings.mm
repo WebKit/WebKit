@@ -326,7 +326,7 @@ using namespace WebCore;
         return;
     [defaultTextEncoding release];
     defaultTextEncoding = [s copy];
-    settings->setEncoding(DeprecatedString::fromNSString(s));
+    settings->setEncoding(s);
 }
 
 - (NSString *)defaultTextEncoding

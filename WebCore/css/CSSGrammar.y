@@ -33,13 +33,13 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
+#include "MediaQuery.h"
+#include "MediaQueryExp.h"
 #include "PlatformString.h"
 #include "cssparser.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include "MediaQuery.h"
-#include "MediaQueryExp.h"
 
 #ifdef SVG_SUPPORT
 #include "ksvgcssproperties.h"
@@ -49,7 +49,8 @@
 using namespace WebCore;
 using namespace HTMLNames;
 
-//
+using WebCore::UChar;
+
 // The following file defines the function
 //     const struct props *findProp(const char *word, int len)
 //

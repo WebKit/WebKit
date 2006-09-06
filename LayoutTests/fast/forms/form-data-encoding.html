@@ -23,7 +23,7 @@ if (document.URL.substring(0, 4) == "file") {
         if (unescape(document.URL.substring(document.URL.indexOf('?')+1, document.URL.length)) == unescape("q=%26%231105%3B%26%2366560%3B%26%23119083%3B%E7%E7"))
             document.write("<p>Success</p>");
         else
-            document.write("<p>Failure</p>");
+            document.write("<p>Failure, query is " + document.URL.substring(document.URL.indexOf('?')+1, document.URL.length) + "</p>");
         
         if (window.layoutTestController)
             layoutTestController.notifyDone();

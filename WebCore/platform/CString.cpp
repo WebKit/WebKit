@@ -70,4 +70,14 @@ DeprecatedCString CString::deprecatedCString() const
     return DeprecatedCString(data(), length() + 1);
 }
     
+CString CString::newUninitialized(size_t length, char*& characterBuffer)
+{
+    CString result;
+    result.m_buffer = new CStringBuffer(length + 1);
+    char* bytes = result.m_buffer->data();
+    bytes[length] = '\0';
+    characterBuffer = bytes;
+    return result;
+}
+
 }

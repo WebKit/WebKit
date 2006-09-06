@@ -46,7 +46,6 @@
 #import <float.h>
 
 #import <unicode/uchar.h>
-#import <unicode/unorm.h>
 
 // FIXME: Just temporary for the #defines of constants that we will eventually stop using.
 #import "GlyphBuffer.h"

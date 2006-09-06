@@ -62,8 +62,8 @@ namespace WebCore  {
          */
         static CachedImage* requestImage(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0);
         static CachedImage* requestImage(DocLoader*, const KURL& URL, bool reload, time_t expireDate);
-        static CachedCSSStyleSheet* requestStyleSheet(DocLoader*, const String& URL, bool reload, time_t expireDate, const DeprecatedString& charset);
-        static CachedScript* requestScript(DocLoader*, const String& URL, bool reload, time_t expireDate, const DeprecatedString& charset);
+        static CachedCSSStyleSheet* requestStyleSheet(DocLoader*, const String& URL, bool reload, time_t expireDate, const String& charset);
+        static CachedScript* requestScript(DocLoader*, const String& URL, bool reload, time_t expireDate, const String& charset);
 
 #ifdef KHTML_XSLT
         static CachedXSLStyleSheet* requestXSLStyleSheet(DocLoader*, const String& URL, bool reload, time_t expireDate);

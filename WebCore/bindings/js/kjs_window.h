@@ -21,7 +21,7 @@
 #ifndef KJS_WINDOW_H_
 #define KJS_WINDOW_H_
 
-#include "DeprecatedString.h"
+#include "PlatformString.h"
 #include "kjs_binding.h"
 #include <wtf/HashMap.h>
 
@@ -212,14 +212,14 @@ namespace KJS {
     public:
         ScheduledAction(JSValue *func, const List& args)
             : m_func(func), m_args(args) { }
-        ScheduledAction(const WebCore::DeprecatedString& code)
+        ScheduledAction(const WebCore::String& code)
             : m_code(code) { }
         void execute(Window *);
 
     private:
         ProtectedPtr<JSValue> m_func;
         List m_args;
-        WebCore::DeprecatedString m_code;
+        WebCore::String m_code;
     };
 
   class Location : public DOMObject {

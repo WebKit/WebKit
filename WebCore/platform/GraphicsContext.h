@@ -32,7 +32,7 @@
 #include "IntRect.h"
 #include "Pen.h"
 #include "TextDirection.h"
-#include <unicode/umachine.h>
+#include "UChar.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Platform.h>
 
@@ -58,7 +58,6 @@ namespace WebCore {
     const int cMisspellingLinePatternGapWidth = 1;
 
     class AffineTransform;
-    class DeprecatedString;
     class Font;
     class GraphicsContextPrivate;
     class GraphicsContextPlatformPrivate;

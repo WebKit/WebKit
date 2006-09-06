@@ -25,11 +25,11 @@
 #define StringImpl_h
 
 #include "Shared.h"
+#include "UChar.h"
 #include <kjs/identifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
-#include <unicode/umachine.h>
 #include <limits.h>
 
 #if PLATFORM(CF)
@@ -65,10 +65,12 @@ public:
     StringImpl(const KJS::UString&);
     ~StringImpl();
 
+    static StringImpl* newUninitialized(size_t length, UChar*& characterBuffer);
+
     const UChar* characters() const { return m_data; }
     unsigned length() const { return m_length; }
     
-    UChar* charactersWithNullTermination();
+    const UChar* charactersWithNullTermination();
     
     unsigned hash() const { if (m_hash == 0) m_hash = computeHash(m_data, m_length); return m_hash; }
     static unsigned computeHash(const UChar*, unsigned len);

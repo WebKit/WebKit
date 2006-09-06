@@ -20,7 +20,7 @@
  *
  */
 
-#include <unicode/umachine.h>
+#include "UChar.h"
 
 namespace WebCore {
 

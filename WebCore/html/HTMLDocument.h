@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef HTML_DOCUMENTIMPL_H
-#define HTML_DOCUMENTIMPL_H
+#ifndef HTMLDocument_h
+#define HTMLDocument_h
 
 #include "CachedResourceClient.h"
 #include "Document.h"
@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-class DeprecatedString;
 class FrameView;
 class HTMLElement;
 
@@ -55,7 +54,7 @@ public:
 
     virtual PassRefPtr<Element> createElement(const String& tagName, ExceptionCode&);
 
-    virtual void determineParseMode(const DeprecatedString&);
+    virtual void determineParseMode(const String&);
 
     void addNamedItem(const String& name);
     void removeNamedItem(const String& name);

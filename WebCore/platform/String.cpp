@@ -388,12 +388,12 @@ Vector<char> String::ascii() const
 
 CString String::latin1() const
 {
-    return TextEncoding(Latin1Encoding).fromUnicode(deprecatedString());
+    return Latin1Encoding().encode(characters(), length());
 }
     
 CString String::utf8() const
 {
-    return TextEncoding(UTF8Encoding).fromUnicode(deprecatedString());
+    return UTF8Encoding().encode(characters(), length());
 }
 
 bool operator==(const String& a, const DeprecatedString& b)
@@ -440,6 +440,11 @@ String::operator UString() const
     if (!m_impl)
         return UString();
     return UString(reinterpret_cast<const KJS::UChar*>(m_impl->characters()), m_impl->length());
+}
+
+String String::newUninitialized(size_t length, UChar*& characterBuffer)
+{
+    return StringImpl::newUninitialized(length, characterBuffer);
 }
 
 } // namespace WebCore

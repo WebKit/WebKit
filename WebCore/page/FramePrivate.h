@@ -125,8 +125,8 @@ namespace WebCore {
         BrowserExtension* m_extension;
         RefPtr<Document> m_doc;
         RefPtr<Decoder> m_decoder;
-        DeprecatedString m_encoding;
-        DeprecatedString scheduledScript;
+        String m_encoding;
+        String scheduledScript;
         RefPtr<Node> scheduledScriptNode;
 
         KJSProxy* m_jscript;
@@ -162,12 +162,12 @@ namespace WebCore {
         RedirectionScheduled m_scheduledRedirection;
         double m_delayRedirect;
         DeprecatedString m_redirectURL;
-        DeprecatedString m_redirectReferrer;
+        String m_redirectReferrer;
         int m_scheduledHistoryNavigationSteps;
 
         int m_zoomFactor;
 
-        DeprecatedString m_referrer;
+        String m_referrer;
 
         struct SubmitForm {
             const char* submitAction;

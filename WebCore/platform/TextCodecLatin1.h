@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CharsetNames_H
-#define CharsetNames_H
+#ifndef TextCodecLatin1_h
+#define TextCodecLatin1_h
 
-#include "TextEncoding.h"
+#include "StreamingTextDecoder.h"
 
 namespace WebCore {
 
-TextEncodingID textEncodingIDFromCharsetName(const char*, TextEncodingFlags* flags = 0);
-const char* charsetNameFromTextEncodingID(TextEncodingID);
+    class TextCodecLatin1 : public TextCodec {
+    public:
+        static void registerEncodingNames(EncodingNameRegistrar);
+        static void registerCodecs(TextCodecRegistrar);
+
+        virtual String decode(const char*, size_t length, bool flush = false);
+        virtual CString encode(const UChar*, size_t length, bool allowEntities = false);
+    };
 
 } // namespace WebCore
 
-#endif // ChaserNames_H
+#endif // TextCodecLatin1_h

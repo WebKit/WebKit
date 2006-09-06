@@ -27,6 +27,7 @@
 #include "config.h"
 #include "HTMLFormElement.h"
 
+#include "CString.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "Frame.h"
@@ -43,7 +44,7 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-HTMLFormElement::HTMLFormElement(Document *doc)
+HTMLFormElement::HTMLFormElement(Document* doc)
     : HTMLElement(formTag, doc)
 {
     collectionInfo = 0;
@@ -139,37 +140,32 @@ void HTMLFormElement::submitClick()
         prepareSubmit();
 }
 
-static DeprecatedCString encodeCString(const DeprecatedCString& e)
+static DeprecatedCString encodeCString(const CString& cstr)
 {
+    DeprecatedCString e = cstr.deprecatedCString();
+
     // http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.1
-    // safe characters like NS handles them for compatibility
+    // same safe characters as Netscape for compatibility
     static const char *safe = "-._*";
     int elen = e.length();
-    DeprecatedCString encoded(( elen+e.contains( '\n' ) )*3+1);
+    DeprecatedCString encoded((elen + e.contains('\n')) * 3 + 1);
     int enclen = 0;
 
-    for(int pos = 0; pos < elen; pos++) {
+    for (int pos = 0; pos < elen; pos++) {
         unsigned char c = e[pos];
 
-        if ( (( c >= 'A') && ( c <= 'Z')) ||
-             (( c >= 'a') && ( c <= 'z')) ||
-             (( c >= '0') && ( c <= '9')) ||
-             (strchr(safe, c))
-            )
+        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || strchr(safe, c))
             encoded[enclen++] = c;
-        else if ( c == ' ' )
+        else if (c == ' ')
             encoded[enclen++] = '+';
-        else if ( c == '\n' || ( c == '\r' && e[pos+1] != '\n' ) )
-        {
+        else if (c == '\n' || (c == '\r' && e[pos + 1] != '\n')) {
             encoded[enclen++] = '%';
             encoded[enclen++] = '0';
             encoded[enclen++] = 'D';
             encoded[enclen++] = '%';
             encoded[enclen++] = '0';
             encoded[enclen++] = 'A';
-        }
-        else if ( c != '\r' )
-        {
+        } else if (c != '\r') {
             encoded[enclen++] = '%';
             unsigned int h = c / 16;
             h += (h > 9) ? ('A' - 10) : '0';
@@ -186,25 +182,23 @@ static DeprecatedCString encodeCString(const DeprecatedCString& e)
     return encoded;
 }
 
-bool HTMLFormElement::formData(FormData &form_data) const
+bool HTMLFormElement::formData(FormData& result) const
 {
     DeprecatedCString enc_string = ""; // used for non-multipart data
 
     DeprecatedString str = m_acceptcharset.deprecatedString();
     str.replace(',', ' ');
     DeprecatedStringList charsets = DeprecatedStringList::split(' ', str);
-    TextEncoding encoding(InvalidEncoding);
-    Frame *frame = document()->frame();
-    for (DeprecatedStringList::Iterator it = charsets.begin(); it != charsets.end(); ++it) {
-        if ((encoding = TextEncoding((*it).latin1())).isValid())
+    TextEncoding encoding;
+    Frame* frame = document()->frame();
+    for (DeprecatedStringList::Iterator it = charsets.begin(); it != charsets.end(); ++it)
+        if ((encoding = TextEncoding(*it)).isValid())
             break;
-    }
-
     if (!encoding.isValid()) {
         if (frame)
-            encoding = TextEncoding(frame->encoding().latin1());
+            encoding = frame->encoding();
         else
-            encoding = TextEncoding(Latin1Encoding);
+            encoding = Latin1Encoding();
     }
 
     for (unsigned i = 0; i < formElements.size(); ++i) {
@@ -218,7 +212,7 @@ bool HTMLFormElement::formData(FormData &form_data) const
                     // but only if its the first entry
                     if ( enc_string.isEmpty() && (*it).m_data == "isindex" ) {
                         ++it;
-                        enc_string += encodeCString( (*it).m_data );
+                        enc_string += encodeCString((*it).m_data);
                     }
                     else {
                         if(!enc_string.isEmpty())
@@ -250,7 +244,9 @@ bool HTMLFormElement::formData(FormData &form_data) const
                         // things if the filename includes characters you can't encode
                         // in the website's character set.
                         hstr += "; filename=\"";
-                        hstr += encoding.fromUnicode(path.mid(path.findRev('/') + 1), true);
+                        int start = path.findRev('/') + 1;
+                        int length = path.length() - start;
+                        hstr += encoding.encode(reinterpret_cast<const UChar*>(path.unicode() + start), length, true);
                         hstr += "\"";
 
                         if (!static_cast<HTMLInputElement*>(current)->value().isEmpty()) {
@@ -266,14 +262,13 @@ bool HTMLFormElement::formData(FormData &form_data) const
                     ++it;
 
                     // append body
-                    form_data.appendData(hstr.data(), hstr.length());
-                    const FormDataListItem &item = *it;
-                    size_t dataSize = item.m_data.size();
-                    if (dataSize != 0)
-                        form_data.appendData(item.m_data, dataSize - 1);
+                    result.appendData(hstr.data(), hstr.length());
+                    const FormDataListItem& item = *it;
+                    if (size_t dataSize = item.m_data.length())
+                        result.appendData(item.m_data, dataSize);
                     else if (!item.m_path.isEmpty())
-                        form_data.appendFile(item.m_path);
-                    form_data.appendData("\r\n", 2);
+                        result.appendFile(item.m_path);
+                    result.appendData("\r\n", 2);
                 }
             }
         }
@@ -283,7 +278,7 @@ bool HTMLFormElement::formData(FormData &form_data) const
     if (m_multipart)
         enc_string = ("--" + m_boundary.deprecatedString() + "--\r\n").ascii();
 
-    form_data.appendData(enc_string.data(), enc_string.length());
+    result.appendData(enc_string.data(), enc_string.length());
     return true;
 }
 
@@ -371,12 +366,12 @@ void HTMLFormElement::submit( bool activateSubmitButton )
     if (!m_post)
         m_multipart = false;
     
-    FormData form_data;
-    if (formData(form_data)) {
-        if(m_post)
-            frame->submitForm("post", m_url, form_data, m_target, enctype(), boundary());
+    FormData postData;
+    if (formData(postData)) {
+        if (m_post)
+            frame->submitForm("post", m_url, postData, m_target, enctype(), boundary());
         else
-            frame->submitForm("get", m_url, form_data, m_target);
+            frame->submitForm("get", m_url, postData, m_target);
     }
 
     if (needButtonActivation && firstSuccessfulSubmitButton)

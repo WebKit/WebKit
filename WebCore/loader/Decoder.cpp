@@ -27,42 +27,36 @@
 
 #include "CString.h"
 #include "DOMImplementation.h"
+#include "DeprecatedCString.h"
+#include "DeprecatedString.h"
 #include "HTMLNames.h"
 #include "StreamingTextDecoder.h"
-#include "RegularExpression.h"
 
-using namespace WebCore;
+namespace WebCore {
+
 using namespace HTMLNames;
 
-class KanjiCode
-{
+class KanjiCode {
 public:
     enum Type { ASCII, JIS, EUC, SJIS, UTF16, UTF8 };
-    static enum Type judge(const char *str, int length);
-    static const int ESC;
-    static const int _SS2_;
-    static const unsigned char kanji_map_sjis[];
+    static enum Type judge(const char* str, int length);
+    static const int ESC = 0x1b;
+    static const unsigned char sjisMap[256];
     static int ISkanji(int code)
     {
         if (code >= 0x100)
-                    return 0;
-        return (kanji_map_sjis[code & 0xff] & 1);
+            return 0;
+        return sjisMap[code & 0xff] & 1;
     }
-
     static int ISkana(int code)
     {
         if (code >= 0x100)
-                    return 0;
-        return (kanji_map_sjis[code & 0xff] & 2);
+            return 0;
+        return sjisMap[code & 0xff] & 2;
     }
-
 };
 
-const int KanjiCode::ESC = 0x1b;
-const int KanjiCode::_SS2_ = 0x8e;
-
-const unsigned char KanjiCode::kanji_map_sjis[] =
-{
+const unsigned char KanjiCode::sjisMap[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -101,7 +95,7 @@ const unsigned char KanjiCode::kanji_map_sjis[] =
  * Special Thanks to Kenichi Tsuchida
  */
 
-enum KanjiCode::Type KanjiCode::judge(const char *str, int size)
+enum KanjiCode::Type KanjiCode::judge(const char* str, int size)
 {
     enum Type code;
     int i;
@@ -110,7 +104,7 @@ enum KanjiCode::Type KanjiCode::judge(const char *str, int size)
     int sjis = 0;
     int euc = 0;
 
-    const unsigned char *ptr = (const unsigned char *) str;
+    const unsigned char* ptr = reinterpret_cast<const unsigned char*>(str);
 
     code = ASCII;
 
@@ -251,85 +245,54 @@ breakBreak:
     return (code);
 }
 
-Decoder::Decoder(const String& mimeType, const String& defaultEncodingName)
-  : m_encoding(defaultEncodingName.isNull() ? "iso8859-1" : defaultEncodingName.latin1())
-  , m_encodingName(m_encoding.name())
-  , m_type(DefaultEncoding)
-  , m_reachedBody(false)
-  , m_checkedForCSSCharset(false)
-  , m_checkedForBOM(false)
+Decoder::ContentType Decoder::determineContentType(const String& mimeType)
 {
-    if (mimeType == "text/css")
-        m_contentType = CSS;
-    else if (mimeType == "text/html")
-        m_contentType = HTML;
-    else if (DOMImplementation::isXMLMIMEType(mimeType)) {
-        m_contentType = XML;
-        // Despite 8.5 "Text/xml with Omitted Charset" of RFC 3023, we do not assume us-ascii 
-        // for text/xml, to match Firefox.
-        m_encoding = TextEncoding(UTF8Encoding);
-        m_encodingName = "UTF-8";
-    } else
-        m_contentType = PlainText;
+    if (equalIgnoringCase(mimeType, "text/css"))
+        return CSS;
+    if (equalIgnoringCase(mimeType, "text/html"))
+        return HTML;
+    if (DOMImplementation::isXMLMIMEType(mimeType))
+        return XML;
+    return PlainText;
+}
 
-    if (m_encoding.isValid())
-        m_decoder.set(StreamingTextDecoder::create(m_encoding));
-    else
-        setEncodingName("iso-8859-1", DefaultEncoding);
+const TextEncoding& Decoder::defaultEncoding(ContentType contentType, const TextEncoding& specifiedDefaultEncoding)
+{
+    // Despite 8.5 "Text/xml with Omitted Charset" of RFC 3023, we assume UTF-8 instead of US-ASCII 
+    // for text/xml. This matches Firefox.
+    if (contentType == XML)
+        return UTF8Encoding();
+    if (!specifiedDefaultEncoding.isValid())
+        return Latin1Encoding();
+    return specifiedDefaultEncoding;
+}
+
+Decoder::Decoder(const String& mimeType, const TextEncoding& specifiedDefaultEncoding)
+    : m_contentType(determineContentType(mimeType))
+    , m_decoder(defaultEncoding(m_contentType, specifiedDefaultEncoding))
+    , m_source(DefaultEncoding)
+    , m_checkedForBOM(false)
+    , m_checkedForCSSCharset(false)
+    , m_checkedForHeadCharset(false)
+{
 }
 
 Decoder::~Decoder()
 {
 }
 
-void Decoder::setEncodingName(const char* encodingName, EncodingSource type)
+void Decoder::setEncoding(const TextEncoding& encoding, EncodingSource source)
 {
-    if (encodingName[0] == '\0')
+    // In case the encoding didn't exist, we keep the old one (helps some sites specifying invalid encodings).
+    if (!encoding.isValid())
         return;
 
-    bool eightBitOnly = type == EncodingFromMetaTag || type == EncodingFromXMLHeader || type == EncodingFromCSSCharset;
-    TextEncoding encoding = TextEncoding(encodingName, eightBitOnly);
+    if (source == EncodingFromMetaTag || source == EncodingFromXMLHeader || source == EncodingFromCSSCharset)        
+        m_decoder.reset(encoding.closest8BitEquivalent());
+    else
+        m_decoder.reset(encoding);
 
-    // in case the encoding didn't exist, we keep the old one (fixes some sites specifying invalid encodings)
-    if (encoding.isValid()) {
-        m_encodingName = encoding.name(); // use a standard name for the encoding
-        m_encoding = encoding;
-        m_type = type;
-        m_decoder.set(StreamingTextDecoder::create(m_encoding));
-    }
-}
-
-const char* Decoder::encodingName() const
-{
-    return m_encodingName;
-}
-
-// Other browsers allow comments in the head section, so we need to also.
-// It's important not to look for tags inside the comments.
-static void skipComment(const char *&ptr, const char *pEnd)
-{
-    const char *p = ptr;
-    // Allow <!-->; other browsers do.
-    if (*p == '>') {
-        p++;
-    } else {
-        while (p != pEnd) {
-            if (*p == '-') {
-                // This is the real end of comment, "-->".
-                if (p[1] == '-' && p[2] == '>') {
-                    p += 3;
-                    break;
-                }
-                // This is the incorrect end of comment that other browsers allow, "--!>".
-                if (p[1] == '-' && p[2] == '!' && p[3] == '>') {
-                    p += 4;
-                    break;
-                }
-            }
-            p++;
-        }
-    }
-    ptr = p;
+    m_source = source;
 }
 
 // Returns the position of the encoding string.
@@ -381,259 +344,325 @@ static inline bool skipWhitespace(const char*& pos, const char* dataEnd)
     return pos != dataEnd;
 }
 
-DeprecatedString Decoder::decode(const char *data, int len)
+void Decoder::checkForBOM(const char* data, size_t len)
 {
     // Check for UTF-16 or UTF-8 BOM mark at the beginning, which is a sure sign of a Unicode encoding.
-    int bufferLength = m_buffer.length();
-    const int maximumBOMLength = 3;
-    if (!m_checkedForBOM && bufferLength + len >= maximumBOMLength) {
-        if (m_type != UserChosenEncoding) {
-            // Extract the first three bytes.
-            // Handle the case where some of bytes are already in the buffer.
-            // The last byte is always guaranteed to not be in the buffer.
-            const unsigned char *udata = (const unsigned char *)data;
-            unsigned char c1 = bufferLength >= 1 ? m_buffer[0].unicode() : *udata++;
-            unsigned char c2 = bufferLength >= 2 ? m_buffer[1].unicode() : *udata++;
-            ASSERT(bufferLength < 3);
-            unsigned char c3 = *udata;
 
-            // Check for the BOM.
-            const char *autoDetectedEncoding;
-            if ((c1 == 0xFE && c2 == 0xFF) || (c1 == 0xFF && c2 == 0xFE)) {
-                autoDetectedEncoding = "ISO-10646-UCS-2";
-            } else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF) {
-                autoDetectedEncoding = "UTF-8";
-            } else {
-                autoDetectedEncoding = 0;
-            }
-
-            // If we found a BOM, use the encoding it implies.
-            if (autoDetectedEncoding != 0)
-                setEncodingName(autoDetectedEncoding, AutoDetectedEncoding);
-        }
+    if (m_source == UserChosenEncoding) {
+        // FIXME: Maybe a BOM should override even a user-chosen encoding.
         m_checkedForBOM = true;
-    }
-    
-    bool currentChunkInBuffer = false;
-    
-    if (m_type == DefaultEncoding && m_contentType == CSS && !m_checkedForCSSCharset) {
-        m_buffer.append(data, len);
-        currentChunkInBuffer = true;
-
-        if (len > 8) { // strlen("@charset") == 8
-            const char* dataStart = m_buffer.latin1();
-            const char* dataEnd = dataStart + m_buffer.length();
-
-            if (dataStart[0] == '@' && dataStart[1] == 'c' && dataStart[2] == 'h' && dataStart[3] == 'a' && dataStart[4] == 'r' && 
-                dataStart[5] == 's' && dataStart[6] == 'e' && dataStart[7] == 't') {
-        
-                dataStart += 8;
-                const char* pos = dataStart;
-                if (!skipWhitespace(pos, dataEnd))
-                    return DeprecatedString::null;
-
-                if (*pos == '"' || *pos == '\'') {
-                    char quotationMark = *pos;
-                    ++pos;
-                    dataStart = pos;
-                
-                    while (pos < dataEnd && *pos != quotationMark)
-                        ++pos;
-                    if (pos == dataEnd)
-                        return DeprecatedString::null;
-
-                    DeprecatedCString encodingName(dataStart, pos - dataStart + 1);
-                    
-                    ++pos;
-                    if (!skipWhitespace(pos, dataEnd))
-                        return DeprecatedString::null;
-
-                    if (*pos == ';')
-                        setEncodingName(encodingName, EncodingFromCSSCharset);
-                }
-            }
-            m_checkedForCSSCharset = true;
-        }
-        return DeprecatedString::null;
-
-    } else if (m_type == DefaultEncoding && m_contentType != PlainText && !m_reachedBody) { // HTML and XML
-        // this is not completely efficient, since the function might go
-        // through the html head several times...
-    
-        m_buffer.append(data, len);
-        currentChunkInBuffer = true;
-        
-        // we still don't have an encoding, and are in the head
-        // the following tags are allowed in <head>:
-        // SCRIPT|STYLE|META|LINK|OBJECT|TITLE|BASE
-        
-        // We stop scanning when a tag that is not permitted in <head>
-        // is seen, rather when </head> is seen, because that more closely
-        // matches behavior in other browsers; more details in
-        // <http://bugzilla.opendarwin.org/show_bug.cgi?id=3590>.
-        
-        // Additionally, we ignore things that looks like tags in <title>; see
-        // <http://bugzilla.opendarwin.org/show_bug.cgi?id=4560>.
-        
-        bool withinTitle = false;
-
-        const char *ptr = m_buffer.latin1();
-        const char *pEnd = ptr + m_buffer.length();
-        while (ptr != pEnd) {
-            if (*ptr == '<') {
-                bool end = false;
-                ptr++;
-
-                // Handle comments.
-                if (ptr[0] == '!' && ptr[1] == '-' && ptr[2] == '-') {
-                    ptr += 3;
-                    skipComment(ptr, pEnd);
-                    continue;
-                }
-                
-                // Handle XML declaration, which can have encoding in it.
-                // This encoding is honored even for HTML documents.
-                if (ptr[0] == '?' && ptr[1] == 'x' && ptr[2] == 'm' && ptr[3] == 'l') {
-                    const char *end = ptr;
-                    while (*end != '>' && *end != '\0')
-                        end++;
-                    if (*end == '\0')
-                        break;
-                    DeprecatedCString str(ptr, end - ptr);
-                    int len;
-                    int pos = findXMLEncoding(str, len);
-                    if (pos != -1)
-                        setEncodingName(str.mid(pos, len), EncodingFromXMLHeader);
-                    // continue looking for a charset - it may be specified in an HTTP-Equiv meta
-                } else if (ptr[0] == 0 && ptr[1] == '?' && ptr[2] == 0 && ptr[3] == 'x' && ptr[4] == 0 && ptr[5] == 'm' && ptr[6] == 0 && ptr[7] == 'l') {
-                    // UTF-16 without BOM
-                    setEncodingName(((ptr - m_buffer.latin1()) % 2) ? "UTF-16LE" : "UTF-16BE", AutoDetectedEncoding);
-                    goto found;
-                }
-                
-                // the HTTP-EQUIV meta has no effect on XHTML
-                if (m_contentType == XML)
-                    goto found;
-
-                if (*ptr == '/') {
-                    ++ptr;
-                    end=true;
-                }
-
-                char tmp[20];
-                int len = 0;
-                while (
-                    ((*ptr >= 'a') && (*ptr <= 'z') ||
-                     (*ptr >= 'A') && (*ptr <= 'Z') ||
-                     (*ptr >= '0') && (*ptr <= '9'))
-                    && len < 19 )
-                {
-                    tmp[len] = tolower(*ptr);
-                    ptr++;
-                    len++;
-                }
-                tmp[len] = 0;
-                AtomicString tag(tmp);
-                
-                if (tag == titleTag)
-                    withinTitle = !end;
-                
-                if (!end && tag == metaTag) {
-                    const char* end = ptr;
-                    while (*end != '>' && *end != '\0')
-                        end++;
-                    if (*end == '\0')
-                        break;
-                    DeprecatedCString str(ptr, (end-ptr)+1);
-                    str = str.lower();
-                    int pos = 0;
-                    while (pos < (int)str.length()) {
-                        if ((pos = str.find("charset", pos, false)) == -1)
-                            break;
-                        pos += 7;
-                        // skip whitespace..
-                        while (pos < (int)str.length() && str[pos] <= ' ')
-                            pos++;
-                        if (pos == (int)str.length())
-                            break;
-                        if (str[pos++] != '=')
-                            continue;
-                        while (pos < (int)str.length() &&
-                                (str[pos] <= ' ') || str[pos] == '=' || str[pos] == '"' || str[pos] == '\'')
-                            pos++;
-
-                        // end ?
-                        if (pos == (int)str.length())
-                            break;
-                        unsigned endpos = pos;
-                        while (endpos < str.length() &&
-                               str[endpos] != ' ' && str[endpos] != '"' && str[endpos] != '\'' &&
-                               str[endpos] != ';' && str[endpos] != '>')
-                            endpos++;
-                        setEncodingName(str.mid(pos, endpos-pos), EncodingFromMetaTag);
-                        if (m_type == EncodingFromMetaTag)
-                            goto found;
-
-                        if (endpos >= str.length() || str[endpos] == '/' || str[endpos] == '>')
-                            break;
-
-                        pos = endpos + 1;
-                    }
-                } else if (tag != scriptTag && tag != noscriptTag && tag != styleTag &&
-                           tag != linkTag && tag != metaTag && tag != objectTag &&
-                           tag != titleTag && tag != baseTag && 
-                           (end || tag != htmlTag) && !withinTitle &&
-                           (tag != headTag) && isalpha(tmp[0])) {
-                    m_reachedBody = true;
-                    goto found;
-                }
-            }
-            else
-                ptr++;
-        }
-        return DeprecatedString::null;
+        return;
     }
 
- found:
-    // Do the auto-detect if our default encoding is one of the Japanese ones.
-    if (m_type != UserChosenEncoding && m_type != AutoDetectedEncoding && m_encoding.isJapanese()) {
-        const char *autoDetectedEncoding;
-        switch (KanjiCode::judge(data, len)) {
-            case KanjiCode::JIS:
-                autoDetectedEncoding = "jis7";
-                break;
-            case KanjiCode::EUC:
-                autoDetectedEncoding = "eucjp";
-                break;
-            case KanjiCode::SJIS:
-                autoDetectedEncoding = "sjis";
-                break;
-            default:
-                autoDetectedEncoding = NULL;
-                break;
-        }
-        if (autoDetectedEncoding)
-            setEncodingName(autoDetectedEncoding, AutoDetectedEncoding);
-    }
+    // Check if we have enough data.
+    size_t bufferLength = m_buffer.size();
+    if (bufferLength + len < 3)
+        return;
 
-    ASSERT(m_encoding.isValid());
+    m_checkedForBOM = true;
 
-    DeprecatedString out;
+    // Extract the first three bytes.
+    // Handle the case where some of bytes are already in the buffer.
+    // The last byte is always guaranteed to not be in the buffer.
+    const unsigned char* udata = reinterpret_cast<const unsigned char*>(data);
+    unsigned char c1 = bufferLength >= 1 ? m_buffer[0] : *udata++;
+    unsigned char c2 = bufferLength >= 2 ? m_buffer[1] : *udata++;
+    ASSERT(bufferLength < 3);
+    unsigned char c3 = *udata;
 
-    if (!m_buffer.isEmpty()) {
-        if (!currentChunkInBuffer)
-            m_buffer.append(data, len);
-        out = m_decoder->toUnicode(m_buffer.latin1(), m_buffer.length());
-        m_buffer.truncate(0);
-    } else
-        out = m_decoder->toUnicode(data, len);
-
-    return out;
+    // Check for the BOM.
+    if (c1 == 0xFE && c2 == 0xFF)
+        setEncoding(UTF16BigEndianEncoding(), AutoDetectedEncoding);
+    else if (c1 == 0xFF && c2 == 0xFE)
+        setEncoding(UTF16LittleEndianEncoding(), AutoDetectedEncoding);
+    else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF)
+        setEncoding(UTF8Encoding(), AutoDetectedEncoding);
 }
 
-DeprecatedString Decoder::flush() const
+void Decoder::checkForCSSCharset(const char* data, size_t len)
 {
-    return m_decoder->toUnicode(m_buffer.latin1(), m_buffer.length(), true);
+    if (m_source != DefaultEncoding) {
+        m_checkedForCSSCharset = true;
+        return;
+    }
+
+    size_t oldSize = m_buffer.size();
+    m_buffer.resize(oldSize + len);
+    memcpy(m_buffer.data() + oldSize, data, len);
+
+    if (m_buffer.size() > 8) { // strlen("@charset") == 8
+        const char* dataStart = m_buffer.data();
+        const char* dataEnd = dataStart + m_buffer.size();
+
+        if (dataStart[0] == '@' && dataStart[1] == 'c' && dataStart[2] == 'h' && dataStart[3] == 'a' && dataStart[4] == 'r' && 
+            dataStart[5] == 's' && dataStart[6] == 'e' && dataStart[7] == 't') {
+    
+            dataStart += 8;
+            const char* pos = dataStart;
+            if (!skipWhitespace(pos, dataEnd))
+                return;
+
+            if (*pos == '"' || *pos == '\'') {
+                char quotationMark = *pos;
+                ++pos;
+                dataStart = pos;
+            
+                while (pos < dataEnd && *pos != quotationMark)
+                    ++pos;
+                if (pos == dataEnd)
+                    return;
+
+                DeprecatedCString encodingName(dataStart, pos - dataStart + 1);
+                
+                ++pos;
+                if (!skipWhitespace(pos, dataEnd))
+                    return;
+
+                if (*pos == ';')
+                    setEncoding(TextEncoding(encodingName), EncodingFromCSSCharset);
+            }
+        }
+        m_checkedForCSSCharset = true;
+    }
 }
 
-// -----------------------------------------------------------------------------
+// Other browsers allow comments in the head section, so we need to also.
+// It's important not to look for tags inside the comments.
+static inline void skipComment(const char*& ptr, const char* pEnd)
+{
+    const char* p = ptr;
+    // Allow <!-->; other browsers do.
+    if (*p == '>') {
+        p++;
+    } else {
+        while (p != pEnd) {
+            if (*p == '-') {
+                // This is the real end of comment, "-->".
+                if (p[1] == '-' && p[2] == '>') {
+                    p += 3;
+                    break;
+                }
+                // This is the incorrect end of comment that other browsers allow, "--!>".
+                if (p[1] == '-' && p[2] == '!' && p[3] == '>') {
+                    p += 4;
+                    break;
+                }
+            }
+            p++;
+        }
+    }
+    ptr = p;
+}
+
+bool Decoder::checkForHeadCharset(const char* data, size_t len, bool& movedDataToBuffer)
+{
+    if (m_source != DefaultEncoding) {
+        m_checkedForHeadCharset = true;
+        return true;
+    }
+
+    // This is not completely efficient, since the function might go
+    // through the HTML head several times.
+
+    size_t oldSize = m_buffer.size();
+    m_buffer.resize(oldSize + len);
+    memcpy(m_buffer.data() + oldSize, data, len);
+
+    movedDataToBuffer = true;
+    
+    // we still don't have an encoding, and are in the head
+    // the following tags are allowed in <head>:
+    // SCRIPT|STYLE|META|LINK|OBJECT|TITLE|BASE
+    
+    // We stop scanning when a tag that is not permitted in <head>
+    // is seen, rather when </head> is seen, because that more closely
+    // matches behavior in other browsers; more details in
+    // <http://bugzilla.opendarwin.org/show_bug.cgi?id=3590>.
+    
+    // Additionally, we ignore things that looks like tags in <title>; see
+    // <http://bugzilla.opendarwin.org/show_bug.cgi?id=4560>.
+    
+    bool withinTitle = false;
+
+    const char* ptr = m_buffer.data();
+    const char* pEnd = ptr + m_buffer.size();
+    while (ptr != pEnd) {
+        if (*ptr == '<') {
+            bool end = false;
+            ptr++;
+
+            // Handle comments.
+            if (ptr[0] == '!' && ptr[1] == '-' && ptr[2] == '-') {
+                ptr += 3;
+                skipComment(ptr, pEnd);
+                continue;
+            }
+
+            // Handle XML declaration, which can have encoding in it.
+            // This encoding is honored even for HTML documents.
+            if (ptr[0] == '?' && ptr[1] == 'x' && ptr[2] == 'm' && ptr[3] == 'l') {
+                const char* end = ptr;
+                while (*end != '>' && *end != '\0')
+                    end++;
+                if (*end == '\0')
+                    break;
+                DeprecatedCString str(ptr, end - ptr);
+                int len;
+                int pos = findXMLEncoding(str, len);
+                if (pos != -1)
+                    setEncoding(TextEncoding(str.mid(pos, len)), EncodingFromXMLHeader);
+                // continue looking for a charset - it may be specified in an HTTP-Equiv meta
+            } else if (ptr[0] == 0 && ptr[1] == '?' && ptr[2] == 0 && ptr[3] == 'x' && ptr[4] == 0 && ptr[5] == 'm' && ptr[6] == 0 && ptr[7] == 'l') {
+                // UTF-16 without BOM
+                setEncoding(((ptr - m_buffer.data()) % 2) ? "UTF-16LE" : "UTF-16BE", AutoDetectedEncoding);
+                return true;
+            }
+
+            // the HTTP-EQUIV meta has no effect on XHTML
+            if (m_contentType == XML)
+                return true;
+
+            if (*ptr == '/') {
+                ++ptr;
+                end = true;
+            }
+
+            char tmp[20];
+            int len = 0;
+            while (
+                ((*ptr >= 'a') && (*ptr <= 'z') ||
+                 (*ptr >= 'A') && (*ptr <= 'Z') ||
+                 (*ptr >= '0') && (*ptr <= '9'))
+                && len < 19 )
+            {
+                tmp[len] = tolower(*ptr);
+                ptr++;
+                len++;
+            }
+            tmp[len] = 0;
+            AtomicString tag(tmp);
+            
+            if (tag == titleTag)
+                withinTitle = !end;
+            
+            if (!end && tag == metaTag) {
+                const char* end = ptr;
+                while (*end != '>' && *end != '\0')
+                    end++;
+                if (*end == '\0')
+                    break;
+                DeprecatedCString str(ptr, (end-ptr)+1);
+                str = str.lower();
+                int pos = 0;
+                while (pos < (int)str.length()) {
+                    if ((pos = str.find("charset", pos, false)) == -1)
+                        break;
+                    pos += 7;
+                    // skip whitespace..
+                    while (pos < (int)str.length() && str[pos] <= ' ')
+                        pos++;
+                    if (pos == (int)str.length())
+                        break;
+                    if (str[pos++] != '=')
+                        continue;
+                    while (pos < (int)str.length() &&
+                            (str[pos] <= ' ') || str[pos] == '=' || str[pos] == '"' || str[pos] == '\'')
+                        pos++;
+
+                    // end ?
+                    if (pos == (int)str.length())
+                        break;
+                    unsigned endpos = pos;
+                    while (endpos < str.length() &&
+                           str[endpos] != ' ' && str[endpos] != '"' && str[endpos] != '\'' &&
+                           str[endpos] != ';' && str[endpos] != '>')
+                        endpos++;
+                    setEncoding(TextEncoding(str.mid(pos, endpos - pos)), EncodingFromMetaTag);
+                    if (m_source == EncodingFromMetaTag)
+                        return true;
+
+                    if (endpos >= str.length() || str[endpos] == '/' || str[endpos] == '>')
+                        break;
+
+                    pos = endpos + 1;
+                }
+            } else if (tag != scriptTag && tag != noscriptTag && tag != styleTag &&
+                       tag != linkTag && tag != metaTag && tag != objectTag &&
+                       tag != titleTag && tag != baseTag && 
+                       (end || tag != htmlTag) && !withinTitle &&
+                       (tag != headTag) && isalpha(tmp[0])) {
+                m_checkedForHeadCharset = true;
+                return true;
+            }
+        }
+        else
+            ptr++;
+    }
+    return false;
+}
+
+void Decoder::detectJapaneseEncoding(const char* data, size_t len)
+{
+    switch (KanjiCode::judge(data, len)) {
+        case KanjiCode::JIS:
+            setEncoding("ISO-2022-JP", AutoDetectedEncoding);
+            break;
+        case KanjiCode::EUC:
+            setEncoding("EUC-JP", AutoDetectedEncoding);
+            break;
+        case KanjiCode::SJIS:
+            setEncoding("Shift_JIS", AutoDetectedEncoding);
+            break;
+        case KanjiCode::ASCII:
+        case KanjiCode::UTF16:
+        case KanjiCode::UTF8:
+            break;
+    }
+}
+
+String Decoder::decode(const char* data, size_t len)
+{
+    if (!m_checkedForBOM)
+        checkForBOM(data, len);
+
+    if (m_contentType == CSS && !m_checkedForCSSCharset) {
+        checkForCSSCharset(data, len);
+        return "";
+    }
+
+    bool movedDataToBuffer = false;
+
+    if ((m_contentType == HTML || m_contentType == XML) && !m_checkedForHeadCharset) { // HTML and XML
+        if (!checkForHeadCharset(data, len, movedDataToBuffer))
+            return "";
+    }
+
+    // Do the auto-detect if our default encoding is one of the Japanese ones.
+    // FIXME: It seems wrong to change our encoding downstream after we have already done some decoding.
+    if (m_source != UserChosenEncoding && m_source != AutoDetectedEncoding && encoding().isJapanese())
+        detectJapaneseEncoding(data, len);
+
+    ASSERT(encoding().isValid());
+
+    if (m_buffer.isEmpty())
+        return m_decoder.decode(data, len);
+
+    if (!movedDataToBuffer) {
+        size_t oldSize = m_buffer.size();
+        m_buffer.resize(oldSize + len);
+        memcpy(m_buffer.data() + oldSize, data, len);
+    }
+
+    String result = m_decoder.decode(m_buffer.data(), m_buffer.size());
+    m_buffer.resize(0);
+    return result;
+}
+
+String Decoder::flush()
+{
+    String result = m_decoder.decode(m_buffer.data(), m_buffer.size(), true);
+    m_buffer.resize(0);
+    return result;
+}
+
+}

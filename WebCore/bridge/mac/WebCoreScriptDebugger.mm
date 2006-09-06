@@ -26,15 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 #import "WebCoreScriptDebugger.h"
-#import "WebScriptObjectPrivate.h"
-
-#import <JavaScriptCore/debugger.h>
-#import <JavaScriptCore/context.h>
 
 #import "DeprecatedString.h"
 #import "KURL.h"
+#import "PlatformString.h"
+#import "WebScriptObjectPrivate.h"
+#import <JavaScriptCore/context.h>
+#import <JavaScriptCore/debugger.h>
 
 using namespace KJS;
 using namespace WebCore;
@@ -324,7 +324,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 - (id)evaluateWebScript:(NSString *)script
 {
-    UString code(DeprecatedString::fromNSString(script));
+    UString code = String(script);
 
     ExecState   *state   = _state;
     Interpreter *interp  = state->dynamicInterpreter();

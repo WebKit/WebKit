@@ -40,7 +40,7 @@ NSArray *arrayFromFormData(const FormData &d)
             [a addObject:[NSData dataWithBytes:e.m_data.data() length:e.m_data.size()]];
         } else {
             ASSERT(e.m_type == FormDataElement::encodedFile);
-            [a addObject:e.m_filename.getNSString()];
+            [a addObject:e.m_filename];
         }
     }
     return a;

@@ -1,3 +1,26 @@
+2006-09-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey.
+
+        - test for bug where the charset in a link element for a CSS stylesheet is ignored.
+          I noticed this while working on new text encoding machinery.
+
+        * fast/encoding/css-link-charset-expected.txt: Added.
+        * fast/encoding/css-link-charset.css: Added.
+        * fast/encoding/css-link-charset.html: Added.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10681
+          REGRESSION: Reproducible crash at Wikipedia
+          (Alexey wrote this one, I reviewed.)
+
+        * fast/forms/form-data-encoding-normalization-overrun-expected.txt: Added.
+        * fast/forms/form-data-encoding-normalization-overrun.html: Added.
+
+        - and a tweak to an existing test
+
+        * fast/forms/form-data-encoding.html: Changed to dump encoded URL so it's easier to
+        diagnose this when it fails.
+
 2006-09-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher

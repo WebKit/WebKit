@@ -61,6 +61,8 @@ using namespace WebCore;
 using namespace EventNames;
 using namespace HTMLNames;
 
+using WebCore::UChar;
+
 // FIXME: This will eventually need to really localize.
 #define UI_STRING(string, comment) ((NSString*)[NSString stringWithUTF8String:(string)])
 
@@ -477,22 +479,22 @@ static int headingLevel(RenderObject* renderer)
         return nil;
 
     if (m_areaElement) {
-        DeprecatedString summary = static_cast<Element*>(m_areaElement)->getAttribute(summaryAttr).deprecatedString();
+        const AtomicString& summary = static_cast<Element*>(m_areaElement)->getAttribute(summaryAttr);
         if (!summary.isEmpty())
-            return summary.getNSString();
-        DeprecatedString title = static_cast<Element*>(m_areaElement)->getAttribute(titleAttr).deprecatedString();
+            return summary;
+        const AtomicString& title = static_cast<Element*>(m_areaElement)->getAttribute(titleAttr);
         if (!title.isEmpty())
-            return title.getNSString();
+            return title;
     }
 
     for (RenderObject* curr = m_renderer; curr; curr = curr->parent()) {
         if (curr->element() && curr->element()->isHTMLElement()) {
-            DeprecatedString summary = static_cast<Element*>(curr->element())->getAttribute(summaryAttr).deprecatedString();
+            const AtomicString& summary = static_cast<Element*>(curr->element())->getAttribute(summaryAttr);
             if (!summary.isEmpty())
-                return summary.getNSString();
-            DeprecatedString title = static_cast<Element*>(curr->element())->getAttribute(titleAttr).deprecatedString();
+                return summary;
+            const AtomicString& title = static_cast<Element*>(curr->element())->getAttribute(titleAttr);
             if (!title.isEmpty())
-                return title.getNSString();
+                return title;
         }
     }
 
@@ -545,10 +547,7 @@ static int headingLevel(RenderObject* renderer)
         if (startVisiblePosition.isNull() || endVisiblePosition.isNull())
             return nil;
             
-        DeprecatedString qString = plainText(makeRange(startVisiblePosition, endVisiblePosition).get());
-        
-        // transform it to a CFString and return that
-        return (id)qString.getCFString();
+        return plainText(makeRange(startVisiblePosition, endVisiblePosition).get()).getNSString();
     }
     
     if ([self isAttachment])
@@ -623,8 +622,10 @@ static HTMLLabelElement* labelForElement(Element* element)
     
     if (m_renderer->isImage()) {
         if (m_renderer->element() && m_renderer->element()->isHTMLElement()) {
-            DeprecatedString alt = static_cast<Element*>(m_renderer->element())->getAttribute(altAttr).deprecatedString();
-            return !alt.isEmpty() ? alt.getNSString() : nil;
+            const AtomicString& alt = static_cast<Element*>(m_renderer->element())->getAttribute(altAttr);
+            if (alt.isEmpty())
+                return nil;
+            return alt;
         }
     } else if ([self isAttachment])
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
@@ -1186,10 +1187,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         return nil;
     
     // get the visible text in the range
-    DeprecatedString qString = plainText(makeRange(startVisiblePosition, endVisiblePosition).get());
-    
-    // transform it to a CFString and return that
-    return (id)qString.getCFString();
+    return plainText(makeRange(startVisiblePosition, endVisiblePosition).get()).getNSString();
 }
 
 - (id)doAXTextMarkerForPosition: (NSPoint) point

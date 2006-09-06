@@ -369,7 +369,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
 #endif
                 // The parser might have been stopped by for example a window.close call in an earlier script.
                 // If so, we don't want to load scripts.
-                if (!m_parserStopped && (cs = m_doc->docLoader()->requestScript(scriptSrc, scriptSrcCharset) ))
+                if (!m_parserStopped && (cs = m_doc->docLoader()->requestScript(scriptSrc, scriptSrcCharset)))
                     pendingScripts.enqueue(cs);
                 else
                     scriptNode = 0;
@@ -1133,7 +1133,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 Attribute* a = 0;
                 bool foundTypeAttribute = false;
                 scriptSrc = DeprecatedString::null;
-                scriptSrcCharset = DeprecatedString::null;
+                scriptSrcCharset = String();
                 if ( currToken.attrs && /* potentially have a ATTR_SRC ? */
                      m_doc->frame() &&
                      m_doc->frame()->jScriptEnabled() && /* jscript allowed at all? */
@@ -1143,7 +1143,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         scriptSrc = m_doc->completeURL(parseURL(a->value()).deprecatedString());
                     if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
                         scriptSrcCharset = a->value().deprecatedString().stripWhiteSpace();
-                    if ( scriptSrcCharset.isEmpty() )
+                    if (scriptSrcCharset.isEmpty())
                         scriptSrcCharset = m_doc->frame()->encoding();
                     /* Check type before language, since language is deprecated */
                     if ((a = currToken.attrs->getAttributeItem(typeAttr)) != 0 && !a->value().isEmpty())
@@ -1303,7 +1303,7 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startT
     return true;
 }
 
-bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
+bool HTMLTokenizer::write(const SegmentedString& str, bool appendData)
 {
 #ifdef TOKEN_DEBUG
     kdDebug( 6036 ) << this << " Tokenizer::write(\"" << str.toString() << "\"," << appendData << ")" << endl;
@@ -1548,15 +1548,15 @@ void HTMLTokenizer::finish()
         scriptCode[scriptCodeSize] = 0;
         scriptCode[scriptCodeSize + 1] = 0;
         int pos;
-        DeprecatedString food;
+        String food;
         if (m_state.inScript() || m_state.inStyle())
-            food.setUnicode(reinterpret_cast<DeprecatedChar*>(scriptCode), scriptCodeSize);
+            food = String(scriptCode, scriptCodeSize);
         else if (m_state.inServer()) {
             food = "<";
-            food += DeprecatedString(reinterpret_cast<DeprecatedChar*>(scriptCode), scriptCodeSize);
+            food.append(String(scriptCode, scriptCodeSize));
         } else {
             pos = DeprecatedConstString(reinterpret_cast<DeprecatedChar*>(scriptCode), scriptCodeSize).string().find('>');
-            food.setUnicode(reinterpret_cast<DeprecatedChar*>(scriptCode) + pos + 1, scriptCodeSize - pos - 1); // deep copy
+            food = String(scriptCode + pos + 1, scriptCodeSize - pos - 1);
         }
         fastFree(scriptCode);
         scriptCode = 0;
@@ -1739,11 +1739,11 @@ void HTMLTokenizer::setSrc(const SegmentedString &source)
     src.resetLineCount();
 }
 
-void parseHTMLDocumentFragment(const String &source, DocumentFragment *fragment)
+void parseHTMLDocumentFragment(const String& source, DocumentFragment* fragment)
 {
     HTMLTokenizer tok(fragment);
     tok.setForceSynchronous(true);
-    tok.write(source.deprecatedString(), true);
+    tok.write(source, true);
     tok.finish();
     ASSERT(!tok.processingData());      // make sure we're done (see 3963151)
 }

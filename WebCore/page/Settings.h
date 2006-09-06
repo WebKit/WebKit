@@ -70,7 +70,7 @@ public:
     bool isPluginsEnabled() const { return m_pluginsEnabled; }
     bool privateBrowsingEnabled() const { return m_privateBrowsingEnabled; }
     
-    const DeprecatedString& encoding() const { return m_encoding; }
+    const String& encoding() const { return m_encoding; }
 
     KURL userStyleSheetLocation() const { return m_userStyleSheetLocation; }
     bool shouldPrintBackgrounds() const { return m_shouldPrintBackgrounds; }
@@ -95,7 +95,7 @@ public:
     void setPrivateBrowsingEnabled(bool f) { m_privateBrowsingEnabled = f; }
     void setJavaScriptCanOpenWindowsAutomatically(bool f) { m_javaScriptCanOpenWindowsAutomatically = f; }
 
-    void setEncoding(const DeprecatedString& s) { m_encoding = s; }
+    void setEncoding(const String& s) { m_encoding = s; }
 
     void setUserStyleSheetLocation(const KURL& s) { m_userStyleSheetLocation = s; }
     void setShouldPrintBackgrounds(bool f) { m_shouldPrintBackgrounds = f; }
@@ -108,7 +108,7 @@ private:
     AtomicString m_sansSerifFontName;
     AtomicString m_cursiveFontName;
     AtomicString m_fantasyFontName;
-    DeprecatedString m_encoding; // FIXME: TextEncoding takes a latin1 string, which String & AtomicString don't easily produce
+    String m_encoding;
     KURL m_userStyleSheetLocation;
     
     int m_minimumFontSize;

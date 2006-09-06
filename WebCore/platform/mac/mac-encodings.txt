@@ -1,162 +1,49 @@
-# The items on the left are names of CFStringEncoding values (without the leading kCFStringEncoding).
+# We'd like to eliminate this file.
+# It would be nice to get rid of dependence on the TextEncodingConvert entirely.
+# Perhaps we can prove these are not used on the web and remove them.
+# Or perhaps we can get them added to ICU.
+
+# The items on the left are names of TEC TextEncoding values (without the leading kTextEncoding).
 # The items on the right are IANA character set names. Names listed in character-sets.txt are not
 # repeated here; mentioning any one character set from a group in there pulls in all the aliases in
 # that group.
 
-MacRoman: macintosh, xmacroman
-WindowsLatin1: windows-1252, winlatin1, xansi
-ISOLatin1: ISO-8859-1, 88591
-NextStepLatin: x-nextstep
-ASCII: US-ASCII, isoir6us
-Unicode: ISO-10646-UCS-2, ucs2, unicode, utf16
-Unicode, BigEndian: UTF-16BE, unicodefffe
-Unicode, LittleEndian: UTF-16LE, unicodefeff
-UTF8: UTF-8, unicode11utf8, unicode20utf8, xunicode20utf8
-NonLossyASCII
-
-MacJapanese, IsJapanese: x-mac-japanese
-MacChineseTrad: x-mac-chinesetrad, xmactradchinese
-MacKorean: x-mac-korean
+DOSChineseTrad: cp950
+DOSGreek: cp737, ibm737
+EUC_TW: EUC-TW
+ISOLatin10: ISO-8859-16
+ISOLatin6: ISO-8859-10
+ISOLatin8: ISO-8859-14
+ISOLatinThai: ISO-8859-11
+ISO_2022_JP_3: ISO-2022-JP-3
+JIS_C6226_78: JIS_C6226-1978
+JIS_X0208_83: JIS_X0208-1983
+JIS_X0208_90: JIS_X0208-1990
+JIS_X0212_90: JIS_X0212-1990
+KOI8_U: KOI8-U
 MacArabic: x-mac-arabic
-MacHebrew: x-mac-hebrew
-MacGreek: x-mac-greek
+MacCentralEurRoman: x-mac-centraleurroman, xmacce
+MacChineseSimp: x-mac-chinesesimp, xmacsimpchinese
+MacChineseTrad: x-mac-chinesetrad, xmactradchinese
+MacCroatian: x-mac-croatian
 MacCyrillic: x-mac-cyrillic, maccyrillic, xmacukrainian
 MacDevanagari: x-mac-devanagari
-MacGurmukhi: x-mac-gurmukhi
-MacGujarati: x-mac-gujarati
-MacOriya
-MacBengali
-MacTamil
-MacTelugu
-MacKannada
-MacMalayalam
-MacSinhalese
-MacBurmese
-MacKhmer
-MacThai: x-mac-thai
-MacLaotian
-MacGeorgian
-MacArmenian
-MacChineseSimp: x-mac-chinesesimp, xmacsimpchinese
-MacTibetan: x-mac-tibetan
-MacMongolian
-MacEthiopic
-MacCentralEurRoman: x-mac-centraleurroman, xmacce
-MacVietnamese
-MacExtArabic
-
-MacSymbol: x-mac-symbol
 MacDingbats: x-mac-dingbats
-MacTurkish: x-mac-turkish
-MacCroatian: x-mac-croatian
-MacIcelandic: x-mac-icelandic
-MacRomanian: x-mac-romanian
-MacCeltic
-MacGaelic
-
 MacFarsi: x-mac-farsi
-
-MacUkrainian
-
-MacInuit
-MacVT100: x-mac-vt100
-
-ISOLatin2: ISO-8859-2
-ISOLatin3: ISO-8859-3
-ISOLatin4: ISO-8859-4
-ISOLatinCyrillic: ISO-8859-5
-ISOLatinArabic: ISO-8859-6
-ISOLatinGreek: ISO-8859-7
-ISOLatinHebrew: ISO-8859-8-I, logical
-ISOLatinHebrew, VisualOrdering: ISO-8859-8, dos862, visual
-ISOLatin5: ISO-8859-9
-ISOLatin6: ISO-8859-10
-ISOLatinThai: ISO-8859-11
-ISOLatin7: ISO-8859-13
-ISOLatin8: ISO-8859-14
-ISOLatin9: ISO-8859-15, csisolatin9, l9
-ISOLatin10: ISO-8859-16
-
-DOSLatinUS: cp437
-DOSGreek: cp737, ibm737
-DOSBalticRim: cp500, cp775
-DOSLatin1: cp850
-DOSGreek1
-DOSLatin2: cp852
-DOSCyrillic
-DOSTurkish: cp857
-DOSPortuguese
-DOSIcelandic: cp861
-DOSHebrew
-DOSCanadianFrench
-DOSArabic: cp864, dos720
-DOSNordic
-DOSRussian: cp866
-DOSGreek2: cp869
-DOSThai: cp874, dos874, tis620, windows874
-DOSJapanese, IsJapanese: cp932, cswindows31j, xmscp932
-DOSChineseSimplif
-DOSKorean
-DOSChineseTrad: cp950
-WindowsLatin2: windows-1250, winlatin2, xcp1250
-WindowsCyrillic: windows-1251, wincyrillic, xcp1251
-WindowsGreek: windows-1253, wingreek
-WindowsLatin5: windows-1254, winturkish
-WindowsHebrew: windows-1255, winhebrew
-WindowsArabic: windows-1256, cp1256, winarabic
-WindowsBalticRim: windows-1257, winbaltic
-WindowsKoreanJohab: johab
-WindowsVietnamese: windows-1258, winvietnamese
-
-JIS_X0201_76, IsJapanese: JIS_X0201
-JIS_X0208_83, IsJapanese: JIS_X0208-1983
-JIS_X0208_90, IsJapanese: JIS_X0208-1990
-JIS_X0212_90, IsJapanese: JIS_X0212-1990
-JIS_C6226_78, IsJapanese: JIS_C6226-1978
-ShiftJIS_X0213_00, IsJapanese|BackslashIsYen: Shift_JIS_X0213-2000
-GB_2312_80
-GBK_95
-GB_18030_2000: GB18030
-KSC_5601_87
-KSC_5601_92_Johab
-CNS_11643_92_P1
-CNS_11643_92_P2
-CNS_11643_92_P3
-
-ISO_2022_JP, IsJapanese: ISO-2022-JP, jis7
-ISO_2022_JP_2, IsJapanese: ISO-2022-JP-2
-ISO_2022_JP_1, IsJapanese: ISO-2022-JP-1
-ISO_2022_JP_3, IsJapanese: ISO-2022-JP-3
-ISO_2022_CN: ISO-2022-CN
-ISO_2022_CN_EXT: ISO-2022-CN-EXT
-ISO_2022_KR: ISO-2022-KR
-
-EUC_JP, IsJapanese|BackslashIsYen: EUC-JP, xeuc, xeucjp
-EUC_CN_DOSVariant: EUC-CN, cngb, csgb231280, gb2312, gb231280, gbk, xeuccn, xgbk
-EUC_TW: EUC-TW
-EUC_KR_DOSVariant: EUC-KR, cp949, ksc5601
-
-ShiftJIS_DOSVariant, IsJapanese: Shift_JIS, sjis, xsjis
-KOI8_R: KOI8-R, koi, koi8
-Big5_DOSVariant: Big5, cnbig5, xxbig5
+MacGreek: x-mac-greek
+MacGujarati: x-mac-gujarati
+MacGurmukhi: x-mac-gurmukhi
+MacHebrew: x-mac-hebrew
+MacIcelandic: x-mac-icelandic
+MacJapanese: x-mac-japanese
+MacKorean: x-mac-korean
 MacRomanLatin1: x-mac-roman-latin1
-HZ_GB_2312: HZ-GB-2312
-Big5_HKSCS_1999: Big5-HKSCS
-KOI8_U: KOI8-U
-
-EBCDIC_US
-EBCDIC_CP037: cp037
-
-# I found these additional character set names from the Perl module I18N-Charset-1.17,
-# but could not figure out whether I should do anything with them. -Darin
-#
-# Adobe-Standard-Encoding === adobe-standard
-# Adobe-Symbol-Encoding === adobe-symbol
-# EBCDIC-ES === ebcdic-cp-es
-# EBCDIC-FR === ebcdic-cp-fr
-# EBCDIC-IT === ebcdic-cp-it
-# EBCDIC-UK === ebcdic-cp-gb
-# EBCDIC-US === ebcdic-cp-us
-# EBCDIC-FI-SE === ebcdic-cp-fi
-# UTF-7 === Unicode-2-0-utf-7
-# ISO-10646-UCS-4 === ucs4
+MacRomanian: x-mac-romanian
+MacSymbol: x-mac-symbol
+MacThai: x-mac-thai
+MacTibetan: x-mac-tibetan
+MacTurkish: x-mac-turkish
+MacVT100: x-mac-vt100
+NextStepLatin: x-nextstep
+ShiftJIS_X0213_00: Shift_JIS_X0213-2000
+WindowsKoreanJohab: johab

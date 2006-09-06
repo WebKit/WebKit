@@ -158,7 +158,7 @@ bool ProcessingInstruction::checkStyleSheet()
                         m_cachedSheet = document()->docLoader()->requestXSLStyleSheet(document()->completeURL(href));
                     else
 #endif
-                    m_cachedSheet = document()->docLoader()->requestStyleSheet(document()->completeURL(href), DeprecatedString::null);
+                    m_cachedSheet = document()->docLoader()->requestStyleSheet(document()->completeURL(href), String());
                     if (m_cachedSheet)
                         m_cachedSheet->ref( this );
 #if KHTML_XSLT

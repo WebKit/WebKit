@@ -56,6 +56,7 @@
 #include "HTMLDocument.h"
 
 #include "CSSPropertyNames.h"
+#include "CString.h"
 #include "CookieJar.h"
 #include "DocumentType.h"
 #include "ExceptionCode.h"
@@ -202,10 +203,10 @@ const int PARSEMODE_HAVE_PUBLIC_ID      =       (1<<1);
 const int PARSEMODE_HAVE_SYSTEM_ID      =       (1<<2);
 const int PARSEMODE_HAVE_INTERNAL       =       (1<<3);
 
-static int parseDocTypePart(const DeprecatedString& buffer, int index)
+static int parseDocTypePart(const String& buffer, int index)
 {
     while (true) {
-        DeprecatedChar ch = buffer[index];
+        UChar ch = buffer[index];
         if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')
             ++index;
         else if (ch == '-') {
@@ -221,23 +222,23 @@ static int parseDocTypePart(const DeprecatedString& buffer, int index)
     }
 }
 
-static bool containsString(const char* str, const DeprecatedString& buffer, int offset)
+static bool containsString(const char* str, const String& buffer, int offset)
 {
-    DeprecatedString startString(str);
+    String startString(str);
     if (offset + startString.length() > buffer.length())
         return false;
     
-    DeprecatedString bufferString = buffer.mid(offset, startString.length()).lower();
-    DeprecatedString lowerStart = startString.lower();
+    String bufferString = buffer.substring(offset, startString.length()).lower();
+    String lowerStart = startString.lower();
 
     return bufferString.startsWith(lowerStart);
 }
 
-static bool parseDocTypeDeclaration(const DeprecatedString& buffer,
+static bool parseDocTypeDeclaration(const String& buffer,
                                     int* resultFlags,
-                                    DeprecatedString& name,
-                                    DeprecatedString& publicID,
-                                    DeprecatedString& systemID)
+                                    String& name,
+                                    String& publicID,
+                                    String& systemID)
 {
     bool haveDocType = false;
     *resultFlags = 0;
@@ -247,7 +248,7 @@ static bool parseDocTypeDeclaration(const DeprecatedString& buffer,
     do {
         index = buffer.find('<', index);
         if (index == -1) break;
-        DeprecatedChar nextChar = buffer[index+1];
+        UChar nextChar = buffer[index+1];
         if (nextChar == '!') {
             if (containsString("doctype", buffer, index+2)) {
                 haveDocType = true;
@@ -271,7 +272,7 @@ static bool parseDocTypeDeclaration(const DeprecatedString& buffer,
     if (!containsString("html", buffer, index))
         return false;
     
-    name = buffer.mid(index, 4);
+    name = buffer.substring(index, 4);
     index = parseDocTypePart(buffer, index+4);
     bool hasPublic = containsString("public", buffer, index);
     if (hasPublic) {
@@ -280,7 +281,7 @@ static bool parseDocTypeDeclaration(const DeprecatedString& buffer,
         // We've read <!DOCTYPE HTML PUBLIC (not case sensitive).
         // Now we find the beginning and end of the public identifers
         // and system identifiers (assuming they're even present).
-        DeprecatedChar theChar = buffer[index];
+        UChar theChar = buffer[index];
         if (theChar != '\"' && theChar != '\'')
             return false;
         
@@ -291,7 +292,7 @@ static bool parseDocTypeDeclaration(const DeprecatedString& buffer,
         if (publicIDEnd == -1)
             return false;
         index = parseDocTypePart(buffer, publicIDEnd+1);
-        DeprecatedChar next = buffer[index];
+        UChar next = buffer[index];
         if (next == '>') {
             // Public identifier present, but no system identifier.
             // Do nothing.  Note that this is the most common
@@ -304,7 +305,7 @@ static bool parseDocTypeDeclaration(const DeprecatedString& buffer,
             int systemIDEnd = buffer.find(next, systemIDStart);
             if (systemIDEnd == -1)
                 return false;
-            systemID = buffer.mid(systemIDStart, systemIDEnd - systemIDStart);
+            systemID = buffer.substring(systemIDStart, systemIDEnd - systemIDStart);
         }
         else if (next == '[') {
             // We found an internal subset.
@@ -314,26 +315,26 @@ static bool parseDocTypeDeclaration(const DeprecatedString& buffer,
             return false; // Something's wrong.
 
         // We need to trim whitespace off the public identifier.
-        publicID = buffer.mid(publicIDStart, publicIDEnd - publicIDStart);
-        publicID = publicID.stripWhiteSpace();
+        publicID = buffer.substring(publicIDStart, publicIDEnd - publicIDStart);
+        publicID = publicID.deprecatedString().stripWhiteSpace();
         *resultFlags |= PARSEMODE_HAVE_PUBLIC_ID;
     } else {
         if (containsString("system", buffer, index)) {
             // Doctype has a system ID but no public ID
             *resultFlags |= PARSEMODE_HAVE_SYSTEM_ID;
             index = parseDocTypePart(buffer, index+6);
-            DeprecatedChar next = buffer[index];
+            UChar next = buffer[index];
             if (next != '\"' && next != '\'')
                 return false;
             int systemIDStart = index+1;
             int systemIDEnd = buffer.find(next, systemIDStart);
             if (systemIDEnd == -1)
                 return false;
-            systemID = buffer.mid(systemIDStart, systemIDEnd - systemIDStart);
+            systemID = buffer.substring(systemIDStart, systemIDEnd - systemIDStart);
             index = parseDocTypePart(buffer, systemIDEnd+1);
         }
 
-        DeprecatedChar nextChar = buffer[index];
+        UChar nextChar = buffer[index];
         if (nextChar == '[')
             *resultFlags |= PARSEMODE_HAVE_INTERNAL;
         else if (nextChar != '>')
@@ -343,7 +344,7 @@ static bool parseDocTypeDeclaration(const DeprecatedString& buffer,
     return true;
 }
 
-void HTMLDocument::determineParseMode( const DeprecatedString &str )
+void HTMLDocument::determineParseMode(const String& str)
 {
     // This code more or less mimics Mozilla's implementation (specifically the
     // doctype parsing implemented by David Baron in Mozilla's nsParser.cpp).
@@ -359,7 +360,7 @@ void HTMLDocument::determineParseMode( const DeprecatedString &str )
     // STRICT - no quirks apply.  Web pages will obey the specifications to
     // the letter.
 
-    DeprecatedString name, systemID, publicID;
+    String name, systemID, publicID;
     int resultFlags = 0;
     if (parseDocTypeDeclaration(str, &resultFlags, name, publicID, systemID)) {
         if (resultFlags & PARSEMODE_HAVE_DOCTYPE)
@@ -379,11 +380,11 @@ void HTMLDocument::determineParseMode( const DeprecatedString &str )
         else {
             // We have to check a list of public IDs to see what we
             // should do.
-            DeprecatedString lowerPubID = publicID.lower();
-            const char* pubIDStr = lowerPubID.latin1();
+            String lowerPubID = publicID.lower();
+            CString pubIDStr = lowerPubID.latin1();
            
             // Look up the entry in our gperf-generated table.
-            const PubIDInfo* doctypeEntry = findDoctypeEntry(pubIDStr, publicID.length());
+            const PubIDInfo* doctypeEntry = findDoctypeEntry(pubIDStr, pubIDStr.length());
             if (!doctypeEntry) {
                 // The DOCTYPE is not in the list.  Assume strict mode.
                 pMode = Strict;

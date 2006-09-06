@@ -80,8 +80,7 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute *attr)
     
         const AtomicString& url = attr->value();
         if (!url.isEmpty()) {
-            DeprecatedString charset = getAttribute(charsetAttr).deprecatedString();
-            m_cachedScript = document()->docLoader()->requestScript(url, charset);
+            m_cachedScript = document()->docLoader()->requestScript(url, getAttribute(charsetAttr));
             m_cachedScript->ref(this);
         }
     } else if (attrName == onloadAttr)

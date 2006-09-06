@@ -125,7 +125,7 @@ StringImpl::~StringImpl()
     deleteUCharVector(m_data);
 }
 
-UChar* StringImpl::charactersWithNullTermination()
+const UChar* StringImpl::charactersWithNullTermination()
 {
     if (m_hasTerminatingNullCharacter)
         return m_data;
@@ -984,6 +984,16 @@ StringImpl::StringImpl(const Identifier& str)
 StringImpl::StringImpl(const UString& str)
 {
     init(reinterpret_cast<const UChar*>(str.data()), str.size());
+}
+
+StringImpl* StringImpl::newUninitialized(size_t length, UChar*& characterBuffer)
+{
+    StringImpl* result = new StringImpl;
+    result->m_length = length;
+    if (length)
+        result->m_data = newUCharVector(length);
+    characterBuffer = result->m_data;
+    return result;
 }
 
 } // namespace WebCore

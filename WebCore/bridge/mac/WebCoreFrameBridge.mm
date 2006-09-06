@@ -32,6 +32,7 @@
 #import "CharsetNames.h"
 #import "DOMImplementation.h"
 #import "DOMInternal.h"
+#import "Decoder.h"
 #import "DeleteSelectionCommand.h"
 #import "DocLoader.h"
 #import "DocumentFragment.h"
@@ -46,35 +47,36 @@
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "Image.h"
-#import "WebCoreEditCommand.h"
 #import "LoaderFunctions.h"
-#import "WebCorePageState.h"
 #import "ModifySelectionListLevel.h"
 #import "MoveSelectionCommand.h"
 #import "Page.h"
 #import "PlugInInfoStore.h"
-#import "RenderView.h"
 #import "RenderImage.h"
 #import "RenderPart.h"
 #import "RenderTreeAsText.h"
+#import "RenderView.h"
 #import "RenderWidget.h"
 #import "ReplaceSelectionCommand.h"
 #import "Screen.h"
 #import "SelectionController.h"
+#import "TextEncoding.h"
 #import "TextIterator.h"
 #import "TypingCommand.h"
+#import "WebCoreEditCommand.h"
 #import "WebCorePageBridge.h"
+#import "WebCorePageState.h"
 #import "WebCoreSettings.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
 #import "WebCoreWidgetHolder.h"
+#import "XMLTokenizer.h"
 #import "csshelper.h"
 #import "htmlediting.h"
 #import "kjs_proxy.h"
 #import "kjs_window.h"
 #import "markup.h"
 #import "visible_units.h"
-#import "XMLTokenizer.h"
 #import <JavaScriptCore/array_instance.h>
 #import <JavaScriptCore/date_object.h>
 #import <JavaScriptCore/runtime_root.h>
@@ -110,6 +112,8 @@ using KJS::UnspecifiedType;
 using KJS::Window;
 
 using KJS::Bindings::RootObject;
+
+using WebCore::UChar;
 
 NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 
@@ -561,7 +565,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)setEncoding:(NSString *)encoding userChosen:(BOOL)userChosen
 {
-    m_frame->setEncoding(DeprecatedString::fromNSString(encoding), userChosen);
+    m_frame->setEncoding(encoding, userChosen);
 }
 
 - (void)addData:(NSData *)data
@@ -1291,11 +1295,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->setZoomFactor(newZoomFactor);
 }
 
-- (CFStringEncoding)textEncoding
-{
-    return WebCore::TextEncoding(m_frame->encoding().latin1()).encodingID();
-}
-
 - (NSView *)nextKeyView
 {
     Document *doc = m_frame->document();
@@ -1336,7 +1335,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture
 {
     m_frame->createEmptyDocument();
-    JSValue* result = m_frame->executeScript(0, DeprecatedString::fromNSString(string), forceUserGesture);
+    JSValue* result = m_frame->executeScript(0, string, forceUserGesture);
     if (!result || !result->isString())
         return 0;
     JSLock lock;
@@ -1346,7 +1345,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string
 {
     m_frame->createEmptyDocument();
-    JSValue* result = m_frame->executeScript(0, DeprecatedString::fromNSString(string), true);
+    JSValue* result = m_frame->executeScript(0, string, true);
     if (!result) // FIXME: pass errors
         return 0;
     JSLock lock;
@@ -1457,7 +1456,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSString *)referrer
 {
-    return m_frame->referrer().getNSString();
+    return m_frame->referrer();
 }
 
 - (WebCoreFrameBridge *)opener
@@ -1472,24 +1471,24 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)setOpener:(WebCoreFrameBridge *)bridge;
 {
-    Frame *p = [bridge impl];
-    
-    if (p)
-        p->setOpener(m_frame);
+    if (Frame* f = [bridge impl])
+        f->setOpener(m_frame);
 }
 
-+ (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding
+- (NSString *)stringWithData:(NSData *)data
 {
-    if (textEncoding == kCFStringEncodingInvalidId)
-        textEncoding = kCFStringEncodingWindowsLatin1;
-
-    return WebCore::TextEncoding(textEncoding).toUnicode((const char*)[data bytes], [data length]).getNSString();
+    Document* doc = m_frame->document();
+    if (!doc)
+        return nil;
+    Decoder* decoder = doc->decoder();
+    if (!decoder)
+        return nil;
+    return decoder->encoding().decode(reinterpret_cast<const char*>([data bytes]), [data length]);
 }
 
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
-    CFStringEncoding textEncoding = WebCore::TextEncoding([textEncodingName lossyCString]).encodingID();
-    return [WebCoreFrameBridge stringWithData:data textEncoding:textEncoding];
+    return WebCore::TextEncoding(textEncodingName).decode(reinterpret_cast<const char*>([data bytes]), [data length]);
 }
 
 - (BOOL)needsLayout
@@ -1932,18 +1931,14 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return;
 
     bool addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(startVisiblePos);
-    if (addLeadingSpace) {
-        DeprecatedChar previousChar = startVisiblePos.previous().characterAfter();
-        if (previousChar.unicode())
+    if (addLeadingSpace)
+        if (UChar previousChar = startVisiblePos.previous().characterAfter())
             addLeadingSpace = !m_frame->isCharacterSmartReplaceExempt(previousChar, true);
-    }
     
     bool addTrailingSpace = endPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(endVisiblePos);
-    if (addTrailingSpace) {
-        DeprecatedChar thisChar = endVisiblePos.characterAfter();
-        if (thisChar.unicode())
+    if (addTrailingSpace)
+        if (UChar thisChar = endVisiblePos.characterAfter())
             addTrailingSpace = !m_frame->isCharacterSmartReplaceExempt(thisChar, false);
-    }
     
     // inspect source
     bool hasWhitespaceAtStart = false;
@@ -1972,13 +1967,12 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!m_frame || !m_frame->document())
         return 0;
 
-    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromMarkup(m_frame->document(),
-        DeprecatedString::fromNSString(markupString), DeprecatedString::fromNSString(baseURLString)).get()];
+    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromMarkup(m_frame->document(), markupString, baseURLString).get()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text inContext:(DOMRange *)context
 {
-    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText([context _range], DeprecatedString::fromNSString(text)).get()];
+    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText([context _range], text).get()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithNodesAsParagraphs:(NSArray *)nodes

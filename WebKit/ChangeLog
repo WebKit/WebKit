@@ -1,3 +1,23 @@
+2006-09-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey.
+
+        - WebKit side of changes to encoding
+
+        * WebView/WebHTMLRepresentation.m: (-[WebHTMLRepresentation documentSource]):
+        Changed to call new -[WebCoreFrameBridge stringWithData:] instead of the calling
+        the old methods that used a CFStringEncoding: -[WebCoreFrameBridge textEncoding]
+        and +[WebCoreFrameBridge stringWithData:textEncoding:].
+
+        * WebView/WebResource.m: (-[WebResource _stringValue]): Removed special case for
+        nil encoding name. The bridge itself now has the rule that "nil encoding name
+        means Latin-1", so we don't need to check for nil.
+
+        * WebView/WebFrame.m: (-[WebFrame _checkLoadComplete]): Retain the frame until
+        we get the parent frame while walking up parent frames, because it's possible
+        for _checkLoadCompleteForThisFrame to release the last reference to the frame.
+        (Not reviewed; needed to run performance tests successfully.)
+
 2006-09-05  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Tim O.

@@ -26,7 +26,9 @@
 #include "config.h"
 #include "DeprecatedString.h"
 
+#include "CString.h"
 #include "Logging.h"
+#include "PlatformString.h"
 #include "RegularExpression.h"
 #include "TextEncoding.h"
 #include <kjs/dtoa.h>
@@ -2552,17 +2554,17 @@ void freeHandle(DeprecatedStringData **_free)
 
 DeprecatedString DeprecatedString::fromUtf8(const char *chs)
 {
-    return TextEncoding(UTF8Encoding).toUnicode(chs, strlen(chs));
+    return UTF8Encoding().decode(chs, strlen(chs)).deprecatedString();
 }
 
 DeprecatedString DeprecatedString::fromUtf8(const char *chs, int len)
 {
-    return TextEncoding(UTF8Encoding).toUnicode(chs, len);
+    return UTF8Encoding().decode(chs, len).deprecatedString();
 }
 
 DeprecatedCString DeprecatedString::utf8(int& length) const
 {
-    DeprecatedCString result = TextEncoding(UTF8Encoding).fromUnicode(*this);
+    DeprecatedCString result = UTF8Encoding().encode((::UChar*)unicode(), this->length()).deprecatedCString();
     length = result.length();
     return result;
 }

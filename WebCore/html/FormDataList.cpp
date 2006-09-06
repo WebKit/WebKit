@@ -27,6 +27,8 @@
 #include "config.h"
 #include "FormDataList.h"
 
+#include "DeprecatedCString.h"
+
 namespace WebCore {
 
 FormDataList::FormDataList(const TextEncoding& c)
@@ -34,7 +36,7 @@ FormDataList::FormDataList(const TextEncoding& c)
 {
 }
 
-void FormDataList::appendString(const DeprecatedCString &s)
+void FormDataList::appendString(const CString &s)
 {
     m_list.append(s);
 }
@@ -88,17 +90,17 @@ static DeprecatedCString fixLineBreaks(const DeprecatedCString &s)
     return result;
 }
 
-void FormDataList::appendString(const DeprecatedString &s)
+void FormDataList::appendString(const String& s)
 {
-    DeprecatedCString cstr = fixLineBreaks(m_encoding.fromUnicode(s, true));
+    DeprecatedCString cstr = fixLineBreaks(m_encoding.encode(s.characters(), s.length(), true).deprecatedCString());
     cstr.truncate(cstr.length());
-    m_list.append(cstr);
+    m_list.append(CString(cstr));
 }
 
 void FormDataList::appendFile(const String &key, const String &filename)
 {
-    appendString(key.deprecatedString());
-    m_list.append(filename.deprecatedString());
+    appendString(key);
+    m_list.append(filename);
 }
 
 } // namespace

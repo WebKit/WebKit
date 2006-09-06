@@ -73,10 +73,9 @@ void CachedXBLDocument::deref(CachedResourceClient *c)
         delete this;
 }
 
-void CachedXBLDocument::setCharset( const DeprecatedString &chs )
+void CachedXBLDocument::setCharset(const String& chs)
 {
-    if (!chs.isEmpty())
-        m_decoder->setEncoding(chs.latin1(), Decoder::EncodingFromHTTPHeader);
+    m_decoder->setEncoding(chs, Decoder::EncodingFromHTTPHeader);
 }
 
 void CachedXBLDocument::data(Vector<char>& data, bool )

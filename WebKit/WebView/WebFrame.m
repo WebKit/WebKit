@@ -1010,8 +1010,13 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 {
     ASSERT([self webView] != nil);
 
-    for (WebFrame *frame = self; frame; frame = [frame parentFrame])
+    WebFrame *parent;
+    for (WebFrame *frame = self; frame; frame = parent) {
+        [frame retain];
         [frame _checkLoadCompleteForThisFrame];
+        parent = [frame parentFrame];
+        [frame release];
+    }
 }
 
 - (WebFrameBridge *)_bridge

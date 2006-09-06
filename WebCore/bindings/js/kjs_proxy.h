@@ -30,7 +30,6 @@ namespace KJS {
 
 namespace WebCore {
 
-class DeprecatedString;
 class Event;
 class EventListener;
 class Frame;
@@ -57,7 +56,7 @@ public:
 
 private:
     RefPtr<KJS::ScriptInterpreter> m_script;
-    Frame *m_frame;
+    Frame* m_frame;
     int m_handlerLineno;
 };
 

@@ -3474,9 +3474,9 @@ void FrameMac::dashboardRegionsChanged()
     [_bridge dashboardRegionsChanged:webRegions];
 }
 
-bool FrameMac::isCharacterSmartReplaceExempt(const DeprecatedChar &c, bool isPreviousChar)
+bool FrameMac::isCharacterSmartReplaceExempt(UChar c, bool isPreviousChar)
 {
-    return [_bridge isCharacterSmartReplaceExempt:c.unicode() isPreviousCharacter:isPreviousChar];
+    return [_bridge isCharacterSmartReplaceExempt:c isPreviousCharacter:isPreviousChar];
 }
 
 void FrameMac::handledOnloadEvents()

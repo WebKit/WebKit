@@ -978,7 +978,7 @@ bool HTMLInputElement::appendFormData(FormDataList& encoding, bool multipart)
             // If no filename at all is entered, return successful but empty.
             // Null would be more logical, but Netscape posts an empty file. Argh.
             if (value().isEmpty()) {
-                encoding.appendData(name(), DeprecatedString(""));
+                encoding.appendData(name(), String(""));
                 return true;
             }
 

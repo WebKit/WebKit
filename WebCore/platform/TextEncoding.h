@@ -23,89 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextEncoding_H
-#define TextEncoding_H
+#ifndef TextEncoding_h
+#define TextEncoding_h
 
-#include "DeprecatedString.h"
+#include "UChar.h"
 
 namespace WebCore {
 
-#if PLATFORM(MAC)
-    typedef CFStringEncoding TextEncodingID;
-    
-    const TextEncodingID InvalidEncoding = kCFStringEncodingInvalidId;
-    const TextEncodingID InvalidEncoding2 = 0xfffffffeU;
-    const TextEncodingID UTF8Encoding = kCFStringEncodingUTF8;
-    const TextEncodingID UTF16Encoding = kCFStringEncodingUnicode;
-    const TextEncodingID Latin1Encoding = kCFStringEncodingISOLatin1;
-    const TextEncodingID ASCIIEncoding = kCFStringEncodingASCII;
-    const TextEncodingID WinLatin1Encoding = kCFStringEncodingWindowsLatin1;
-#else
-    enum TextEncodingID {
-        InvalidEncoding2 = -2,
-        InvalidEncoding = -1,
-        UTF8Encoding,
-        UTF16Encoding,
-        Latin1Encoding,
-        ASCIIEncoding,
-        WinLatin1Encoding
-    };
-#endif
-
-    enum TextEncodingFlags {
-        NoEncodingFlags = 0,
-        VisualOrdering = 1,
-        BigEndian = 2,
-        LittleEndian = 4,
-        IsJapanese = 8,
-        BackslashIsYen = 16
-    };
+    class CString;
+    class String;
 
     class TextEncoding {
     public:
-        enum { 
-            EightBitOnly = true 
-        };
+        TextEncoding() : m_name(0) { }
+        TextEncoding(const char* name);
+        TextEncoding(const String& name);
 
-        explicit TextEncoding(TextEncodingID encodingID, TextEncodingFlags flags = NoEncodingFlags) 
-            : m_encodingID(encodingID)
-            , m_flags(flags) 
-        { 
-        }
-
-        explicit TextEncoding(const char*, bool eightBitOnly = false);
-
-        TextEncoding effectiveEncoding() const;
-
-        bool isValid() const { return m_encodingID != InvalidEncoding; }
-        const char* name() const;
-        bool usesVisualOrdering() const { return m_flags & VisualOrdering; }
-        bool isJapanese() const { return m_flags & IsJapanese; }
-        
+        bool isValid() const { return m_name; }
+        const char* name() const { return m_name; }
+        bool usesVisualOrdering() const;
+        bool isJapanese() const;
         UChar backslashAsCurrencySymbol() const;
-        
-        DeprecatedCString fromUnicode(const DeprecatedString&, bool allowEntities = false) const;
+        const TextEncoding& closest8BitEquivalent() const;
 
-        DeprecatedString toUnicode(const char*, int length) const;
+        String decode(const char*, size_t length) const;
+        CString encode(const UChar*, size_t length, bool allowEntities = false) const;
 
-        TextEncodingID encodingID() const { return m_encodingID; }
-        TextEncodingFlags flags() const { return m_flags; }
-        
     private:
-        TextEncodingID m_encodingID;
-        TextEncodingFlags m_flags;
+        const char* m_name;
     };
 
-    inline bool operator==(const TextEncoding& a, const TextEncoding& b)
-    {
-        return a.encodingID() == b.encodingID() && a.flags() == b.flags();
-    }
-    
-    inline bool operator!=(const TextEncoding& a, const TextEncoding& b)
-    {
-        return a.encodingID() != b.encodingID() || a.flags() != b.flags();
-    }
-    
+    inline bool operator==(const TextEncoding& a, const TextEncoding& b) { return a.name() == b.name(); }
+    inline bool operator!=(const TextEncoding& a, const TextEncoding& b) { return a.name() != b.name(); }
+
+    const TextEncoding& ASCIIEncoding();
+    const TextEncoding& Latin1Encoding();
+    const TextEncoding& UTF16BigEndianEncoding();
+    const TextEncoding& UTF16LittleEndianEncoding();
+    const TextEncoding& UTF8Encoding();
+    const TextEncoding& WindowsLatin1Encoding();
+
 } // namespace WebCore
 
-#endif // TextEncoding_H
+#endif // TextEncoding_h

@@ -24,23 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StreamingTextDecoder_H
-#define StreamingTextDecoder_H
+#ifndef StreamingTextDecoder_h
+#define StreamingTextDecoder_h
 
-#include "TextEncoding.h"
+#include "UChar.h"
+#include <memory>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-    class StreamingTextDecoder : Noncopyable {
-    public:
-        static StreamingTextDecoder* create(const TextEncoding&);
-        virtual ~StreamingTextDecoder();
+    class CString;
+    class String;
+    class TextEncoding;
 
-        virtual DeprecatedString toUnicode(const char* chs, int len, bool flush = false) = 0;
-        virtual DeprecatedCString fromUnicode(const DeprecatedString&, bool allowEntities = false) = 0;
+    class TextCodec : Noncopyable {
+    public:
+        virtual ~TextCodec();
+
+        virtual String decode(const char*, size_t length, bool flush = false) = 0;
+        virtual CString encode(const UChar*, size_t length, bool allowEntities = false) = 0;
+
+    protected:
+        static void appendOmittingBOM(String&, const UChar*, size_t length);
     };
-    
+
+    typedef void (*EncodingNameRegistrar)(const char* alias, const char* name);
+
+    typedef std::auto_ptr<TextCodec> (*NewTextCodecFunction)(const TextEncoding&, const void* additionalData);
+    typedef void (*TextCodecRegistrar)(const char* name, NewTextCodecFunction, const void* additionalData);
+
 } // namespace WebCore
 
-#endif // StreamingTextDecoder_H
+#endif // StreamingTextDecoder_h

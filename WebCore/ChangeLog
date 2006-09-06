@@ -1,3 +1,376 @@
+2006-09-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10728
+          text encodings should work without a numeric ID
+
+        - includes a fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10681
+          REGRESSION: Reproducible crash at Wikipedia
+
+        - fixed a bug where link elements would not set the charset properly for
+          CSS stylesheets they loaded
+
+        - converted DeprecatedString code paths that are related to decoding web
+          pages to use String instead, to ensure that conversion back and forth won't
+          hurt performance
+
+        Test: fast/encoding/css-link-charset.html
+        Test: fast/forms/form-data-encoding-normalization-overrun.html
+
+        Coverage for encoding issues is pretty good, so we probably don't need more
+        tests to land this. Our existing tests did find issues with this patch while
+        it was under development. And I suppose it would be nice to have even more tests.
+
+        * platform/TextEncoding.h:
+        * platform/TextEncoding.cpp:
+        (WebCore::addEncodingName): Added. Used to build up the set used by isJapanese.
+        (WebCore::TextEncoding::TextEncoding): Removed boolean "eight bit only" parameter and
+        added an overload for String as well as const char*. Simplified because now the only
+        data member is m_name -- calls the registry's atomicCanonicalTextEncodingName function
+        to make the name canonical (resolve aliases) and atomic (use a single pointer for each
+        encoding name so we can compare and hash efficiently).
+        (WebCore::TextEncoding::decode): Renamed from toUnicode. Just a simple wrapper on top
+        of TextDecoder that can be used when the data to decode is all present at once.
+        (WebCore::TextEncoding::encode): Renamed from fromUnicode. Handles the normalization and
+        then uses the registry to get a codec to handle the rest.
+        (WebCore::TextEncoding::usesVisualOrdering): New implementation that compares with the
+        name of the only encoding that uses visual ordering. We blur the concepts a bit so that
+        we treat the visual ordering and logical ordering variations as two separate encodings.
+        (WebCore::TextEncoding::isJapanese): New implementation that uses a set to efficiently
+        determine if an encoding is Japanese.
+        (WebCore::TextEncoding::backslashAsCurrencySymbol): New implementation that compares
+        with the names of the two encodings that have the strange backslash.
+        (WebCore::TextEncoding::closest8BitEquivalent): Added. Replaces the old "eight bit only"
+        boolean parameter to the constructor.
+        (WebCore::ASCIIEncoding): Added.
+        (WebCore::Latin1Encoding): Added.
+        (WebCore::UTF16BigEndianEncoding): Added.
+        (WebCore::UTF16LittleEndianEncoding): Added.
+        (WebCore::UTF8Encoding): Added.
+        (WebCore::WindowsLatin1Encoding): Added.
+
+        * platform/TextEncodingRegistry.h: Added.
+        * platform/TextEncodingRegistry.cpp: Added. Keeps a table of all the character set
+        aliases and names and another of all the codecs and parameters for each name.
+
+        * platform/TextDecoder.h: Added.
+        * platform/TextDecoder.cpp: Added. Contains logic to look for a BOM and hand the data
+        to the proper codec, based on code that used to be in both the ICU and Mac codecs.
+
+        * platform/StreamingTextDecoder.h: Renamed class to TextCodec. We'll rename
+        the files in a later check-in. Moved creation functions into TextEncodingRegistry.h.
+        Added typedefs of the registrar function types so classes derived from this one
+        can use them without including the TextEncodingRegistry header. Renamed toUnicode
+        and fromUnicode to decode and encode. Changed the parameter and return types so that
+        the parameters are pointers to the data and the return types are String and CString.
+        * platform/StreamingTextDecoder.cpp:
+        (WebCore::TextCodec::appendOmittingBOM): Added. Helper function used by multiple
+        classes derived from this one.
+
+        * platform/TextCodecLatin1.h: Added.
+        * platform/TextCodecLatin1.cpp: Added. Contains logic to handle encoding and decoding
+        Windows Latin-1, based on code that used to be in both the ICU and Mac codecs.
+
+        * platform/TextCodecUTF16.h: Added.
+        * platform/TextCodecUTF16.cpp: Added. Contains logic to handle encoding and decoding
+        UTF-16, based on code that used to be in both the ICU and Mac codecs.
+
+        * platform/StreamingTextDecoderICU.h: Renamed class to TextCodecICU. We'll rename
+        the files in a later check-in. Removed all the functions having to do with handling
+        BOM, UTF-16, and Latin-1; those are now handled elsewhere. Removed textEncodingSupported
+        because that's superseded by the registry. Added registry hook functions.
+        * platform/StreamingTextDecoderICU.cpp:
+        (WebCore::TextCodecICU::registerEncodingNames): Added. Registers all encodings that
+        ICU can handle with the "IANA" standard. Also includes a special case for a particular
+        type of encoding for Hebrew that uses logical ordering. Also includes aliases that are
+        not in ICU but that were historically known to WebKit for encodings that ICU handles. 
+        (WebCore::newTextCodecICU): Added. Used by registerCodecs.
+        (WebCore::TextCodecICU::registerCodecs): Added. Registers codecs for the same encodings
+        as above.
+        (WebCore::TextCodecICU::TextCodecICU): Much simplified since this now only handles the
+        actual ICU encoding and decoding.
+        (WebCore::TextCodecICU::~TextCodecICU): Renamed.
+        (WebCore::TextCodecICU::releaseICUConverter): Changed to be a const member function.
+        (WebCore::TextCodecICU::createICUConverter): Changed to be a const member function and
+        to check if the cached converter can be reused in a simpler way.
+        (WebCore::TextCodecICU::decode): Updated for changes to types.
+        (WebCore::TextCodecICU::encode): Updated for changes to types, and removed normalization
+        since this is now handled by the caller.
+
+        * platform/mac/StreamingTextDecoderMac.h: Renamed class to TextCodecMac. We'll rename
+        the files in a later check-in. Removed all the functions having to do with handling
+        BOM, UTF-16, and Latin-1; those are now handled elsewhere. Removed textEncodingSupported
+        because that's superseded by the registry. Added registry hook functions.
+        * platform/mac/StreamingTextDecoderMac.cpp:
+        (WebCore::TextCodecMac::registerEncodingNames): Added. Registers encodings based on
+        the charset table generated by the make-charset-table.pl perl script.
+        (WebCore::newTextCodecMac): Added. Used by registerCodecs.
+        (WebCore::TextCodecMac::registerCodecs): Added. Registers codecs for the same encodings
+        as above.
+        (WebCore::TextCodecMac::TextCodecMac): Much simplified since this now only handles the
+        actual TEC/CF encoding and decoding.
+        (WebCore::TextCodecMac::~TextCodecMac): Renamed.
+        (WebCore::TextCodecMac::releaseTECConverter): Changed to be a const member function.
+        (WebCore::TextCodecMac::createTECConverter): Changed to be a const member function.
+        (WebCore::TextCodecMac::decode): Updated for changes to types.
+        (WebCore::TextCodecMac::encode): Updated for changes to types, and removed normalization
+        since this is now handled by the caller.
+
+        * platform/mac/mac-encodings.txt: Removed most of the names in this file. This now
+        only includes encodings where we want to use Mac OS X Carbon Text Encoding Converter,
+        which is only encodings that are not supported by ICU.
+        * platform/make-charset-table.pl: Removed flags from output. We don't use them any more.
+        * platform/CharsetData.h: Changed from a platform-independent header into a
+        Macintosh-specific one. A later patch should move this and rename it. Also
+        subsumes ExtraCFEncodings.h.
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files. Changed the prefix on the
+        "make character sets" rule to be kTextEncoding instead of kCFStringEncoding.
+
+        * loader/Decoder.h: Change the default encoding parameter to the constructor to be
+        a TextEncoding object. Renamed setEncodingName to setEncoding, and made it take a
+        TextEncoding for the encoding. Removed the encodingName and visuallyOrdered functions,
+        since TextEncoding supports both directly in a straightforward way. Changed both
+        decode and flush functions to return String instead of DeprecatedString. Added a
+        number of private functions to factor this class a bit more so it's easier to read.
+        Got rid of a number of redundant data members. Changed the buffer to a Vector<char>.
+        * loader/Decoder.cpp:
+        (WebCore::Decoder::determineContentType): Added. Used by constructor to determine
+        the content type based on the passed-in MIME type.
+        (WebCore::Decoder::defaultEncoding): Added. Used by constructor to determine the
+        default encoding based on the passed in default and the content type.
+        (WebCore::Decoder::Decoder): Changed to use the functions above. Also renamed
+        m_reachedBody to m_checkedForHeadCharset.
+        (WebCore::Decoder::setEncoding): Renamed and changed to take an encoding rather
+        than an encoding name.
+        (WebCore::Decoder::checkForBOM): Factored out of decode.
+        (WebCore::Decoder::checkForCSSCharset): Factored out of decode.
+        (WebCore::Decoder::checkForHeadCharset): Factored out of decode.
+        (WebCore::Decoder::detectJapaneseEncoding): Factored out of decode.
+        (WebCore::Decoder::decode): Refactored so it's no longer one huge function.
+        Changed to use the new Vector<char> and the new API for TextDecoder.
+        (WebCore::Decoder::flush): Added code to empty out the buffer. Not an issue in
+        practice since we don't re-use the decoder after flushing it.
+
+        * platform/UChar.h: Added. Has the type named WebCore::UChar that we'll be switching
+        to. We'll switch away from the ICU ::UChar type, because we don't want to be so
+        closely tied to ICU -- include this instead of <unicode/umachine.h>.
+
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::latin1): Updated for changes to TextEncoding.
+        (WebCore::String::utf8): Ditto.
+        (WebCore::String::newUninitialized): Added. Gives a way to create a String and
+        then write directly into its buffer.
+
+        * platform/StringImpl.h: Changed return value for charactersWithNullTermination to
+        be a const UChar*. While it's true that this function changes the underlying
+        StringImpl, the characters still shouldn't be modified with the returned pointer.
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::charactersWithNullTermination): Updated for change above.
+        (WebCore::StringImpl::newUninitialized): Added. Gives a way to create a StringImpl
+        and then write directly into its buffer.
+
+        * platform/CString.h:
+        * platform/CString.cpp: (WebCore::CString::newUninitialized): Added. Gives a way
+        to create a CString and then write directly into its buffer.
+
+        * bridge/mac/WebCoreFrameBridge.h: Removed textEncoding method, and replaced
+        +[WebCoreFrameBridge stringWithData:textEncoding:] with
+        -[WebCoreFrameBridge stringWithData:] to avoid having to pass text encoding
+        IDs around.
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge setEncoding:userChosen:]): Removed now-unneeded conversion
+        to DeprecatedString.
+        (-[WebCoreFrameBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        Ditto.
+        (-[WebCoreFrameBridge aeDescByEvaluatingJavaScriptFromString:]): Ditto.
+        (-[WebCoreFrameBridge referrer]): Removed now-unneeded call to getNSString.
+        (-[WebCoreFrameBridge stringWithData:]): Added. Asks the document's decoder
+        what its encoding is, and decodes using that.
+        (+[WebCoreFrameBridge stringWithData:textEncodingName:]): Simplified so it
+        no longer involved a text encoding ID number.
+        (-[WebCoreFrameBridge smartInsertForString:replacingRange:beforeString:afterString:]):
+        Changed to use UChar instead of DeprecatedChar.
+        (-[WebCoreFrameBridge documentFragmentWithMarkupString:baseURLString:]): Removed
+        now-unneeded conversion to DeprecatedString.
+        (-[WebCoreFrameBridge documentFragmentWithText:inContext:]): Ditto.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::encodeCString): Changed parameter to CString.
+        (WebCore::HTMLFormElement::formData): Updated code for improvements to TextEncoding.
+
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet): Fixed mistake where the
+        decoder was created without passing in the character set. Also changed from
+        DeprecatedString to String.
+        (WebCore::CachedCSSStyleSheet::setCharset): More of the same.
+
+        * bindings/js/kjs_window.h: (KJS::ScheduledAction::ScheduledAction): Changed
+        to use String instead of DeprecatedString, UChar instead of DeprecatedChar,
+        CString instead of DeprecatedCString, etc.
+        * bridge/mac/FormDataMac.mm: (WebCore::arrayFromFormData): Ditto.
+        * bridge/mac/FrameMac.h: Ditto.
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::isCharacterSmartReplaceExempt):
+        Ditto.
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject helpText]): Ditto.
+        (-[WebCoreAXObject value]): Ditto.
+        (-[WebCoreAXObject accessibilityDescription]): Ditto.
+        (-[WebCoreAXObject doAXStringForTextMarkerRange:]): Ditto.
+        * bridge/mac/WebCoreEncodings.mm: (+[WebCoreEncodings decodeData:]): Ditto.
+        Also fixed code that does a deref without a ref to use RefPtr instead.
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (-[WebCoreScriptCallFrame evaluateWebScript:]): Ditto.
+        * bridge/mac/WebCoreSettings.mm:
+        (-[WebCoreSettings setDefaultTextEncoding:]): Ditto.
+        * css/CSSImportRule.cpp: (WebCore::CSSImportRule::insertedIntoParent): Ditto.
+        * css/cssparser.cpp: (WebCore::CSSParser::lex): Ditto.
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setCharset): Ditto.
+        (WebCore::Document::write): Ditto.
+        (WebCore::Document::determineParseMode): Ditto.
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet): Ditto.
+        * dom/XMLTokenizer.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::shouldAllowExternalLoad): Ditto.
+        (WebCore::createStringParser): Ditto.
+        (WebCore::XMLTokenizer::write): Ditto.
+        (WebCore::toString): Ditto.
+        (WebCore::handleElementAttributes): Ditto.
+        (WebCore::XMLTokenizer::startElementNs): Ditto.
+        (WebCore::XMLTokenizer::endElementNs): Ditto.
+        (WebCore::XMLTokenizer::characters): Ditto.
+        (WebCore::XMLTokenizer::processingInstruction): Ditto.
+        (WebCore::XMLTokenizer::cdataBlock): Ditto.
+        (WebCore::XMLTokenizer::comment): Ditto.
+        (WebCore::XMLTokenizer::internalSubset): Ditto.
+        (WebCore::getXHTMLEntity): Ditto.
+        (WebCore::externalSubsetHandler): Ditto.
+        (WebCore::XMLTokenizer::initializeParserContext): Ditto.
+        (WebCore::XMLTokenizer::notifyFinished): Ditto.
+        (WebCore::xmlDocPtrForString): Ditto.
+        (WebCore::parseXMLDocumentFragment): Ditto.
+        (WebCore::attributesStartElementNsHandler): Ditto.
+        (WebCore::parseAttributes): Ditto.
+        * html/FormDataList.h:
+        * html/FormDataList.cpp:
+        (WebCore::FormDataList::appendString): Ditto. Also changed to call the
+        encoding function by its new name and with new parameters.
+        (WebCore::FormDataList::appendFile): Ditto.
+        * html/HTMLDocument.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::parseDocTypePart): Ditto.
+        (WebCore::containsString): Ditto.
+        (WebCore::parseDocTypeDeclaration): Ditto.
+        (WebCore::HTMLDocument::determineParseMode): Ditto.
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::appendFormData): Ditto.
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute): Ditto.
+        * html/HTMLTokenizer.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler): Ditto.
+        (WebCore::HTMLTokenizer::parseTag): Ditto.
+        (WebCore::HTMLTokenizer::write): Ditto.
+        (WebCore::HTMLTokenizer::finish): Ditto.
+        (WebCore::parseHTMLDocumentFragment): Ditto.
+        * loader/Cache.h:
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestStyleSheet): Ditto.
+        (WebCore::Cache::requestScript): Ditto.
+        * loader/CachedResource.h: Ditto.
+        * loader/CachedScript.h:
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript): Ditto.
+        (WebCore::CachedScript::ref): Ditto.
+        (WebCore::CachedScript::deref): Ditto.
+        (WebCore::CachedScript::setCharset): Ditto.
+        (WebCore::CachedScript::data): Ditto.
+        (WebCore::CachedScript::checkNotify): Ditto.
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXBLDocument.cpp:
+        (WebCore::CachedXBLDocument::setCharset): Ditto.
+        * loader/CachedXSLStyleSheet.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::setCharset): Ditto.
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestStyleSheet): Ditto.
+        (WebCore::DocLoader::requestScript): Ditto.
+        * loader/DocLoader.h: Ditto.
+        * loader/FormData.h:
+        * loader/FormData.cpp:
+        (WebCore::FormData::FormData): Ditto.
+        (WebCore::FormData::appendFile): Ditto.
+        (WebCore::FormData::flattenToString): Ditto.
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/Frame.cpp:
+        (WebCore::UserStyleSheetLoader::setStyleSheet): Ditto.
+        (WebCore::getString): Ditto.
+        (WebCore::Frame::replaceContentsWithScriptResult): Ditto.
+        (WebCore::Frame::executeScript): Ditto.
+        (WebCore::Frame::clear): Ditto.
+        (WebCore::Frame::write): Ditto.
+        (WebCore::Frame::endIfNotLoading): Ditto.
+        (WebCore::Frame::baseTarget): Ditto.
+        (WebCore::Frame::scheduleRedirection): Ditto.
+        (WebCore::Frame::scheduleLocationChange): Ditto.
+        (WebCore::Frame::scheduleHistoryNavigation): Ditto.
+        (WebCore::Frame::changeLocation): Ditto.
+        (WebCore::Frame::redirectionTimerFired): Ditto.
+        (WebCore::Frame::encoding): Ditto.
+        (WebCore::Frame::submitForm): Ditto.
+        (WebCore::Frame::referrer): Ditto.
+        (WebCore::Frame::isCharacterSmartReplaceExempt): Ditto.
+        (WebCore::Frame::setEncoding): Ditto.
+        * page/Settings.h: Ditto.
+        * platform/SegmentedString.h: Ditto.
+        * platform/SegmentedString.cpp: Ditto.
+        * xml/XSLStyleSheet.cpp: (WebCore::XSLStyleSheet::parseString): Ditto.
+        * xml/XSLTProcessor.cpp:
+        (WebCore::transformTextStringToXHTMLDocumentString): Ditto.
+        (WebCore::XSLTProcessor::createDocumentFromSource): Ditto.
+        * xml/xmlhttprequest.h:
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::open): Ditto.
+        (WebCore::XMLHttpRequest::send): Ditto.
+        (WebCore::XMLHttpRequest::receivedData): Ditto.
+
+        * platform/DeprecatedString.cpp:
+        (WebCore::DeprecatedString::fromUtf8): Updated for changes to TextEncoding.
+        (WebCore::DeprecatedString::utf8): Ditto.
+
+        * platform/KURL.h:
+        * platform/KURL.cpp:
+        (WebCore::KURL::KURL): Updated to overload based on presence or absence of
+        TextEncoding rather than having a default.
+        (WebCore::KURL::init): Moved body of constructor in here. Updated to use
+        the new TextEncoding interface.
+        (WebCore::KURL::decode_string): Updated to overload based on presence or
+        absence of TextEncoding rather than having a default. Updated to use
+        the new TextEncoding interface.
+        (WebCore::encodeRelativeString): Updated to use the new TextEncoding interface.
+
+        * platform/Font.cpp: (WebCore::WidthIterator::normalizeVoicingMarks): Fixed
+        code to use U_ZERO_ERROR instead of a typecast.
+
+        * bindings/js/kjs_proxy.h: Removed unneeded declaration of DeprecatedString.
+        * platform/GraphicsContext.h: Ditto.
+
+        * platform/GraphicsContext.cpp: Removed unneeded include of "DeprecatedString.h".
+        * rendering/break_lines.cpp: Ditto.
+        * xml/XMLSerializer.cpp: Ditto.
+
+        * platform/mac/FontDataMac.mm: Removed unneeded include of <unicode/unorm.h>.
+
+        * platform/CharsetNames.h: Emptied out this file. A later patch could remove it.
+        * platform/CharsetNames.cpp: Ditto.
+        * platform/mac/ExtraCFEncodings.h: Ditto.
+
 2006-09-05  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.

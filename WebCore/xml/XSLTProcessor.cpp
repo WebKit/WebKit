@@ -135,7 +135,7 @@ static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, Dep
     return (retval >= 0);
 }
 
-static inline void transformTextStringToXHTMLDocumentString(DeprecatedString &text)
+static inline void transformTextStringToXHTMLDocumentString(String &text)
 {
     // Modify the output so that it is a well-formed XHTML document with a <pre> tag enclosing the text.
     text.replace('&', "&amp;");
@@ -182,11 +182,12 @@ static void freeXsltParamArray(const char **params)
 }
 
 
-RefPtr<Document> XSLTProcessor::createDocumentFromSource(const DeprecatedString &sourceString, const DeprecatedString &sourceEncoding, const DeprecatedString &sourceMIMEType, Node *sourceNode, FrameView *view)
+RefPtr<Document> XSLTProcessor::createDocumentFromSource(const DeprecatedString& sourceString,
+    const DeprecatedString& sourceEncoding, const DeprecatedString& sourceMIMEType, Node* sourceNode, FrameView* view)
 {
     RefPtr<Document> ownerDocument = sourceNode->document();
     bool sourceIsDocument = (sourceNode == ownerDocument.get());
-    DeprecatedString documentSource = sourceString;
+    String documentSource = sourceString;
 
     RefPtr<Document> result;
     if (sourceMIMEType == "text/html")
@@ -213,7 +214,7 @@ RefPtr<Document> XSLTProcessor::createDocumentFromSource(const DeprecatedString 
     result->determineParseMode(documentSource); // Make sure we parse in the correct mode.
     
     RefPtr<Decoder> decoder = new Decoder(sourceMIMEType);
-    decoder->setEncodingName(sourceEncoding.isEmpty() ? "UTF-8" : sourceEncoding.latin1(), Decoder::EncodingFromXMLHeader);
+    decoder->setEncoding(sourceEncoding.isEmpty() ? UTF8Encoding() : TextEncoding(sourceEncoding), Decoder::EncodingFromXMLHeader);
     result->setDecoder(decoder.get());
     
     result->write(documentSource);

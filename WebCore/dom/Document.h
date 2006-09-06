@@ -349,7 +349,7 @@ public:
 
     enum ParseMode { Compat, AlmostStrict, Strict };
     
-    virtual void determineParseMode( const DeprecatedString &str );
+    virtual void determineParseMode(const String&);
     void setParseMode(ParseMode m) { pMode = m; }
     ParseMode parseMode() const { return pMode; }
 

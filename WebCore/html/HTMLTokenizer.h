@@ -295,7 +295,7 @@ private:
     bool noMoreData;
     // URL to get source code of script from
     DeprecatedString scriptSrc;
-    DeprecatedString scriptSrcCharset;
+    String scriptSrcCharset;
     bool javascript;
     // the HTML code we will parse after the external script we are waiting for has loaded
     SegmentedString pendingSrc;

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,51 +27,154 @@
 #include "config.h"
 #include "TextEncoding.h"
 
-#include "CharsetNames.h"
+#include "CString.h"
+#include "PlatformString.h"
 #include "StreamingTextDecoder.h"
-
+#include "TextDecoder.h"
+#include "TextEncodingRegistry.h"
+#include <unicode/unorm.h>
+#include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-TextEncoding::TextEncoding(const char* name, bool eightBitOnly)
+static void addEncodingName(HashSet<const char*>& set, const char* name)
 {
-    m_encodingID = textEncodingIDFromCharsetName(name, &m_flags);
-    if (eightBitOnly && m_encodingID == UTF16Encoding)
-        m_encodingID = UTF8Encoding;
+    const char* atomicName = atomicCanonicalTextEncodingName(name);
+    if (atomicName)
+        set.add(atomicName);
 }
 
-TextEncoding TextEncoding::effectiveEncoding() const
+TextEncoding::TextEncoding(const char* name)
+    : m_name(atomicCanonicalTextEncodingName(name))
 {
-    TextEncodingID id = m_encodingID;
-    if (id == Latin1Encoding || id == ASCIIEncoding)
-        id = WinLatin1Encoding;
-    return TextEncoding(id, m_flags);
 }
 
-const char* TextEncoding::name() const
+TextEncoding::TextEncoding(const String& name)
+    : m_name(atomicCanonicalTextEncodingName(name.characters(), name.length()))
 {
-    return charsetNameFromTextEncodingID(m_encodingID);
+}
+
+String TextEncoding::decode(const char* data, size_t length) const
+{
+    if (!m_name)
+        return String();
+
+    return TextDecoder(*this).decode(data, length, true);
+}
+
+CString TextEncoding::encode(const UChar* characters, size_t length, bool allowEntities) const
+{
+    if (!m_name)
+        return CString();
+
+    if (!length)
+        return "";
+
+    // FIXME: What's the right place to do normalization?
+    // It's a little strange to do it inside the encode function.
+    // Perhaps normalization should be an explicit step done before calling encode.
+
+    const UChar* source = characters;
+    size_t sourceLength = length;
+
+    Vector<UChar> normalizedCharacters;
+
+    UErrorCode err = U_ZERO_ERROR;
+    if (unorm_quickCheck(source, sourceLength, UNORM_NFC, &err) != UNORM_YES) {
+        // First try using the length of the original string, since normalization to NFC rarely increases length.
+        normalizedCharacters.resize(sourceLength);
+        int32_t normalizedLength = unorm_normalize(source, length, UNORM_NFC, 0, normalizedCharacters.data(), length, &err);
+        if (err == U_BUFFER_OVERFLOW_ERROR) {
+            err = U_ZERO_ERROR;
+            normalizedCharacters.resize(normalizedLength);
+            normalizedLength = unorm_normalize(source, length, UNORM_NFC, 0, normalizedCharacters.data(), normalizedLength, &err);
+        }
+        ASSERT(U_SUCCESS(err));
+
+        source = normalizedCharacters.data();
+        sourceLength = normalizedLength;
+    }
+
+    return newTextCodec(*this)->encode(source, sourceLength, allowEntities);
+}
+
+bool TextEncoding::usesVisualOrdering() const
+{
+    static const char* const a = atomicCanonicalTextEncodingName("ISO-8859-8");
+    return m_name == a;
+}
+
+bool TextEncoding::isJapanese() const
+{
+    static HashSet<const char*> set;
+    if (set.isEmpty()) {
+        addEncodingName(set, "x-mac-japanese");
+        addEncodingName(set, "cp932");
+        addEncodingName(set, "JIS_X0201");
+        addEncodingName(set, "JIS_X0208-1983");
+        addEncodingName(set, "JIS_X0208-1990");
+        addEncodingName(set, "JIS_X0212-1990");
+        addEncodingName(set, "JIS_C6226-1978");
+        addEncodingName(set, "Shift_JIS_X0213-2000");
+        addEncodingName(set, "ISO-2022-JP");
+        addEncodingName(set, "ISO-2022-JP-2");
+        addEncodingName(set, "ISO-2022-JP-1");
+        addEncodingName(set, "ISO-2022-JP-3");
+        addEncodingName(set, "EUC-JP");
+        addEncodingName(set, "Shift_JIS");
+    }
+    return m_name && set.contains(m_name);
 }
 
 UChar TextEncoding::backslashAsCurrencySymbol() const
 {
-    if (m_flags & BackslashIsYen)
-        return 0x00A5; // yen sign
- 
-    return '\\';
+    static const char* const a = atomicCanonicalTextEncodingName("Shift_JIS_X0213-2000");
+    static const char* const b = atomicCanonicalTextEncodingName("EUC-JP");
+    return (m_name == a || m_name == b) ? 0x00A5 : '\\';
 }
 
-DeprecatedString TextEncoding::toUnicode(const char* chs, int len) const
+const TextEncoding& TextEncoding::closest8BitEquivalent() const
 {
-    OwnPtr<StreamingTextDecoder> decoder(StreamingTextDecoder::create(*this));
-    return decoder->toUnicode(chs, len, true);
+    if (*this == UTF16BigEndianEncoding() || *this == UTF16LittleEndianEncoding())
+        return UTF8Encoding();
+    return *this;
 }
 
-DeprecatedCString TextEncoding::fromUnicode(const DeprecatedString &qcs, bool allowEntities) const
+const TextEncoding& ASCIIEncoding()
 {
-    OwnPtr<StreamingTextDecoder> decoder(StreamingTextDecoder::create(*this));
-    return decoder->fromUnicode(qcs, allowEntities);
+    static TextEncoding globalASCIIEncoding("ASCII");
+    return globalASCIIEncoding;
+}
+
+const TextEncoding& Latin1Encoding()
+{
+    static TextEncoding globalLatin1Encoding("Latin-1");
+    return globalLatin1Encoding;
+}
+
+const TextEncoding& UTF16BigEndianEncoding()
+{
+    static TextEncoding globalUTF16BigEndianEncoding("UTF-16BE");
+    return globalUTF16BigEndianEncoding;
+}
+
+const TextEncoding& UTF16LittleEndianEncoding()
+{
+    static TextEncoding globalUTF16LittleEndianEncoding("UTF-16LE");
+    return globalUTF16LittleEndianEncoding;
+}
+
+const TextEncoding& UTF8Encoding()
+{
+    static TextEncoding globalUTF8Encoding("UTF-8");
+    return globalUTF8Encoding;
+}
+
+const TextEncoding& WindowsLatin1Encoding()
+{
+    static TextEncoding globalWindowsLatin1Encoding("WinLatin-1");
+    return globalWindowsLatin1Encoding;
 }
 
 } // namespace WebCore

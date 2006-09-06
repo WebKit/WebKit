@@ -321,8 +321,6 @@ typedef enum {
 
 - (void)setTextSizeMultiplier:(float)multiplier;
 
-- (CFStringEncoding)textEncoding;
-
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string;
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture;
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string;
@@ -380,8 +378,8 @@ typedef enum {
 - (NSDictionary *)fontAttributesForSelectionStart;
 - (NSWritingDirection)baseWritingDirectionForSelectionStart;
 
-+ (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding;
-+ (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
+- (NSString *)stringWithData:(NSData *)data; // using the encoding of the frame's main resource
++ (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName; // nil for textEncodingName means Latin-1
 
 - (BOOL)interceptKeyEvent:(NSEvent *)event toView:(NSView *)view;
 

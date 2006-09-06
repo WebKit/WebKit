@@ -1,6 +1,6 @@
 /* This file is part of the KDE project
  *
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,7 +21,8 @@
 #include "config.h"
 #include "FormData.h"
 
-#include <wtf/Vector.h>
+#include "CString.h"
+#include "TextEncoding.h"
 
 namespace WebCore {
 
@@ -29,51 +30,47 @@ FormData::FormData()
 {
 }
 
-FormData::FormData(const DeprecatedCString &s)
+FormData::FormData(const CString& s)
 {
     appendData(s.data(), s.length());
 }
 
-void FormData::appendData(const void *data, size_t size)
+void FormData::appendData(const void* data, size_t size)
 {
-    if (m_elements.isEmpty() || m_elements.last().m_type != FormDataElement::data) {
+    if (m_elements.isEmpty() || m_elements.last().m_type != FormDataElement::data)
         m_elements.append(FormDataElement());
-    }
-    FormDataElement &e = m_elements.last();
+    FormDataElement& e = m_elements.last();
     size_t oldSize = e.m_data.size();
     e.m_data.resize(oldSize + size);
     memcpy(e.m_data.data() + oldSize, data, size);
 }
 
-void FormData::appendFile(const DeprecatedString &filename)
+void FormData::appendFile(const String& filename)
 {
     m_elements.append(filename);
 }
 
-Vector<char> FormData::flatten() const
+void FormData::flatten(Vector<char>& a) const
 {
     // Concatenate all the byte arrays, but omit any files.
-    Vector<char> a;
+    a.clear();
+    size_t size = a.size();
     for (DeprecatedValueListConstIterator<FormDataElement> it = m_elements.begin(); it != m_elements.end(); ++it) {
         const FormDataElement& e = *it;
         if (e.m_type == FormDataElement::data) {
-            if (a.isEmpty())
-                a = e.m_data;
-            else {
-                size_t oldSize = a.size();
-                size_t delta = e.m_data.size();
-                a.resize(oldSize + delta);
-                memcpy(a.data() + oldSize, e.m_data.data(), delta);
-            }
+            size_t delta = e.m_data.size();
+            a.resize(size + delta);
+            memcpy(a.data() + size, e.m_data.data(), delta);
+            size += delta;
         }
     }
-    return a;
 }
 
-DeprecatedString FormData::flattenToString() const
+String FormData::flattenToString() const
 {
-    Vector<char> bytes = flatten();
-    return DeprecatedString::fromLatin1(bytes.data(), bytes.size());
+    Vector<char> bytes;
+    flatten(bytes);
+    return Latin1Encoding().decode(bytes.data(), bytes.size());
 }
 
 } // namespace WebCore

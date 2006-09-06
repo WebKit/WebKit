@@ -26,8 +26,10 @@
 #include "config.h"
 #include "KURL.h"
 
+#include "CString.h"
 #include "PlatformString.h"
 #include "RegularExpression.h"
+#include "TextEncoding.h"
 #include <wtf/Vector.h>
 #include <unicode/uidna.h>
 #include <assert.h>
@@ -257,7 +259,17 @@ KURL::KURL(const DeprecatedString &url)
         parse(url.ascii(), &url);
 }
 
-KURL::KURL(const KURL &base, const DeprecatedString &relative, const TextEncoding& encoding)
+KURL::KURL(const KURL& base, const DeprecatedString& relative)
+{
+    init(base, relative, UTF8Encoding());
+}
+
+KURL::KURL(const KURL& base, const DeprecatedString& relative, const TextEncoding& encoding)
+{
+    init(base, relative, encoding);
+}
+
+void KURL::init(const KURL &base, const DeprecatedString &relative, const TextEncoding& encoding)
 {
     // Allow at lest absolute URLs to resolve against an empty URL.
     if (!base.m_isValid && !base.isEmpty()) {
@@ -709,10 +721,13 @@ DeprecatedString KURL::prettyURL() const
     return result;
 }
 
+DeprecatedString KURL::decode_string(const DeprecatedString& urlString)
+{
+    return decode_string(urlString, UTF8Encoding());
+}
+
 DeprecatedString KURL::decode_string(const DeprecatedString& urlString, const TextEncoding& encoding)
 {
-    static const TextEncoding utf8Encoding(UTF8Encoding);
-
     DeprecatedString result("");
 
     Vector<char, 2048> buffer(0);
@@ -750,14 +765,13 @@ DeprecatedString KURL::decode_string(const DeprecatedString& urlString, const Te
         }
 
         // Decode the bytes into Unicode characters.
-        DeprecatedString decoded = (encoding.isValid() ? encoding : utf8Encoding).toUnicode(buffer, p - buffer);
-        if (decoded.isEmpty()) {
+        String decoded = (encoding.isValid() ? encoding : UTF8Encoding()).decode(buffer, p - buffer);
+        if (decoded.isEmpty())
             continue;
-        }
 
         // Build up the string with what we just skipped and what we just decoded.
         result.append(urlString.mid(decodedPosition, encodedRunPosition - decodedPosition));
-        result.append(decoded);
+        result.append(reinterpret_cast<const DeprecatedChar*>(decoded.characters()), decoded.length());
         decodedPosition = encodedRunEnd;
     }
 
@@ -1396,22 +1410,23 @@ static char *encodeRelativeString(const KURL &base, const DeprecatedString &rel,
 
     char *strBuffer;
 
-    TextEncoding pathEncoding(UTF8Encoding);
-    TextEncoding otherEncoding = encoding.isValid() ? encoding : TextEncoding(UTF8Encoding);
+    TextEncoding pathEncoding(UTF8Encoding());
+    TextEncoding otherEncoding = encoding.isValid() ? encoding : UTF8Encoding();
     
     int pathEnd = -1;
     if (pathEncoding != otherEncoding) {
         pathEnd = s.find(RegularExpression("[?#]"));
     }
     if (pathEnd == -1) {
-        DeprecatedCString decoded = pathEncoding.fromUnicode(s);
+        CString decoded = pathEncoding.encode(reinterpret_cast<const UChar*>(s.unicode()), s.length());
         int decodedLength = decoded.length();
         strBuffer = static_cast<char *>(fastMalloc(decodedLength + 1));
         memcpy(strBuffer, decoded, decodedLength);
         strBuffer[decodedLength] = 0;
     } else {
-        DeprecatedCString pathDecoded = pathEncoding.fromUnicode(s.left(pathEnd));
-        DeprecatedCString otherDecoded = otherEncoding.fromUnicode(s.mid(pathEnd));
+        int length = s.length();
+        CString pathDecoded = pathEncoding.encode(reinterpret_cast<const UChar*>(s.unicode()), pathEnd);
+        CString otherDecoded = otherEncoding.encode(reinterpret_cast<const UChar*>(s.unicode()) + pathEnd, length - pathEnd);
         int pathDecodedLength = pathDecoded.length();
         int otherDecodedLength = otherDecoded.length();
         strBuffer = static_cast<char *>(fastMalloc(pathDecodedLength + otherDecodedLength + 1));

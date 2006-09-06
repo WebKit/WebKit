@@ -28,45 +28,33 @@
 #define StreamingTextDecoderICU_H
 
 #include "StreamingTextDecoder.h"
-#include <unicode/ucnv.h>
-#include <unicode/utypes.h>
+#include "TextEncoding.h"
+
+typedef struct UConverter UConverter;
 
 namespace WebCore {
 
-    class StreamingTextDecoderICU : public StreamingTextDecoder {
+    class TextCodecICU : public TextCodec {
     public:
-        StreamingTextDecoderICU(const TextEncoding&);
-        virtual ~StreamingTextDecoderICU();
+        static void registerEncodingNames(EncodingNameRegistrar);
+        static void registerCodecs(TextCodecRegistrar);
 
-        bool textEncodingSupported();
+        TextCodecICU(const TextEncoding&);
+        virtual ~TextCodecICU();
 
-        virtual DeprecatedString toUnicode(const char* chs, int len, bool flush = false);
-        virtual DeprecatedCString fromUnicode(const DeprecatedString&, bool allowEntities = false);
+        virtual String decode(const char*, size_t length, bool flush = false);
+        virtual CString encode(const UChar*, size_t length, bool allowEntities = false);
 
     private:
-        DeprecatedString convert(const char* chs, int len, bool flush)
-            { return convert(reinterpret_cast<const unsigned char*>(chs), len, flush); }
-        DeprecatedString convert(const unsigned char* chs, int len, bool flush);
-
-        bool convertIfASCII(const unsigned char*, int len, DeprecatedString&);
-        DeprecatedString convertUTF16(const unsigned char*, int len);
-        DeprecatedString convertUsingICU(const unsigned char*, int len, bool flush);
-
-        void createICUConverter();
-        void releaseICUConverter();
-
-        static void appendOmittingBOM(DeprecatedString&, const UChar* characters, int byteCount);
+        void createICUConverter() const;
+        void releaseICUConverter() const;
 
         TextEncoding m_encoding;
-        bool m_littleEndian;
-        bool m_atStart;
-        
         unsigned m_numBufferedBytes;
-        unsigned char m_bufferedBytes[16]; // bigger than any single multi-byte character
-        
-        UConverter* m_converterICU;
+        unsigned char m_bufferedBytes[16]; // bigger than any single multi-byte character        
+        mutable UConverter* m_converterICU;
     };
-    
+
 } // namespace WebCore
 
 #endif // StreamingTextDecoderICU_H

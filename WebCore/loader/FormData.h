@@ -21,8 +21,8 @@
 #ifndef FormData_h
 #define FormData_h
 
-#include "DeprecatedString.h"
 #include "DeprecatedValueList.h"
+#include "PlatformString.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -31,23 +31,23 @@ class FormDataElement {
 public:
     FormDataElement() : m_type(data) { }
     FormDataElement(const Vector<char>& array) : m_type(data), m_data(array) { }
-    FormDataElement(const DeprecatedString& filename) : m_type(encodedFile), m_filename(filename) { }
+    FormDataElement(const String& filename) : m_type(encodedFile), m_filename(filename) { }
 
     enum { data, encodedFile } m_type;
     Vector<char> m_data;
-    DeprecatedString m_filename;
+    String m_filename;
 };
 
 class FormData {
 public:
     FormData();
-    FormData(const DeprecatedCString&);
+    FormData(const CString&);
 
-    void appendData(const void *data, size_t size);
-    void appendFile(const DeprecatedString& filename);
+    void appendData(const void* data, size_t);
+    void appendFile(const String& filename);
 
-    Vector<char> flatten() const; // omits files
-    DeprecatedString flattenToString() const; // omits files
+    void flatten(Vector<char>&) const; // omits files
+    String flattenToString() const; // omits files
 
     size_t count() const { return m_elements.count(); }
     DeprecatedValueListConstIterator<FormDataElement> begin() const { return m_elements.begin(); }

@@ -2701,9 +2701,6 @@ int CSSParser::lex(void* yylvalWithoutType)
     int length;
     UChar* t = text(&length);
 
-#ifdef TOKEN_DEBUG
-    qDebug("CSSTokenizer: got token %d: '%s'", token, token == END_TOKEN ? "" : DeprecatedString((DeprecatedChar *)t, length).latin1());
-#endif
     switch(token) {
     case WHITESPACE:
     case SGML_CD:

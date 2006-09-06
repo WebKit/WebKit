@@ -69,10 +69,9 @@ void CachedXSLStyleSheet::deref(CachedResourceClient *c)
         delete this;
 }
 
-void CachedXSLStyleSheet::setCharset( const DeprecatedString &chs )
+void CachedXSLStyleSheet::setCharset(const String& chs)
 {
-    if (!chs.isEmpty())
-        m_decoder->setEncodingName(chs.latin1(), Decoder::EncodingFromHTTPHeader);
+    m_decoder->setEncoding(chs, Decoder::EncodingFromHTTPHeader);
 }
 
 void CachedXSLStyleSheet::data(Vector<char>& data, bool allDataReceived)

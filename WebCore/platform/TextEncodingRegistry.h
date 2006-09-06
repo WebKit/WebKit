@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ExtraCFEncodings_H
-#define ExtraCFEncodings_H
+#ifndef TextEncodingRegistry_h
+#define TextEncodingRegistry_h
 
-// Until there's a CFString constant for these encodings, this works.
-// Since they are macros, they won't cause a compile failure even if the CFString constant is added.
-#define kCFStringEncodingBig5_DOSVariant (kTextEncodingBig5 | (kBig5_DOSVariant << 16))
-#define kCFStringEncodingEUC_CN_DOSVariant (kTextEncodingEUC_CN | (kEUC_CN_DOSVariant << 16))
-#define kCFStringEncodingEUC_KR_DOSVariant (kTextEncodingEUC_KR | (kEUC_KR_DOSVariant << 16))
-#define kCFStringEncodingISOLatin10 kTextEncodingISOLatin10
-#define kCFStringEncodingKOI8_U kTextEncodingKOI8_U
-#define kCFStringEncodingShiftJIS_DOSVariant (kTextEncodingShiftJIS | (kShiftJIS_DOSVariant << 16))
+#include "UChar.h"
+#include <memory>
 
-#endif // ExtraCFEncodings_H
+namespace WebCore {
+
+    class TextCodec;
+    class TextEncoding;
+
+    // Only TextEncoding and TextDecoder should use this function directly.
+    // - Use TextDecoder::decode to decode, since it handles BOMs.
+    // - Use TextEncoding::decode to decode if you have all the data at once.
+    //   It's implemented by calling TextDecoder::decode so works just as well.
+    // - Use TextEncoding::encode to encode, since it takes care of normalization.
+    std::auto_ptr<TextCodec> newTextCodec(const TextEncoding&);
+
+    // Only TextEncoding should use this function directly.
+    const char* atomicCanonicalTextEncodingName(const char* alias);
+    const char* atomicCanonicalTextEncodingName(const UChar* aliasCharacters, size_t aliasLength);
+
+}
+
+#endif // TextEncodingRegistry_h

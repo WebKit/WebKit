@@ -2,6 +2,8 @@
     This file is part of the KDE libraries
 
     Copyright (C) 1999 Lars Knoll (knoll@mpi-hd.mpg.de)
+    Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+    Copyright (C) 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -19,22 +21,18 @@
     Boston, MA 02111-1307, USA.
 
 */
+
 #ifndef Decoder_h
 #define Decoder_h
 
-#include <wtf/OwnPtr.h>
-#include "TextEncoding.h"
 #include "PlatformString.h"
+#include "Shared.h"
+#include "TextDecoder.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-    class StreamingTextDecoder;    
-    
-/**
- * @internal
- */
-class Decoder : public Shared<Decoder>
-{
+class Decoder : public Shared<Decoder> {
 public:
     enum EncodingSource {
         DefaultEncoding,
@@ -45,41 +43,33 @@ public:
         EncodingFromHTTPHeader,
         UserChosenEncoding
     };
-    
-    Decoder(const String& mimeType, const String& defaultEncodingName = String());
+
+    Decoder(const String& mimeType, const TextEncoding& defaultEncoding = TextEncoding());
     ~Decoder();
 
-    void setEncodingName(const char* encoding, EncodingSource type);
-    const char* encodingName() const;
+    void setEncoding(const TextEncoding&, EncodingSource);
+    const TextEncoding& encoding() const { return m_decoder.encoding(); }
 
-    bool visuallyOrdered() const { return m_encoding.usesVisualOrdering(); }
-    const TextEncoding& encoding() const { return m_encoding; }
-
-    DeprecatedString decode(const char* data, int len);
-    DeprecatedString flush() const;
+    String decode(const char* data, size_t length);
+    String flush();
 
 private:
-    enum ContentType {
-        HTML,
-        XML,
-        CSS,
-        PlainText // Do not look inside the document (equivalent to directly using StreamingTextDecoder)
-    };
+    enum ContentType { PlainText, HTML, XML, CSS }; // PlainText is equivalent to directly using TextDecoder.
+    static ContentType determineContentType(const String& mimeType);
+    static const TextEncoding& defaultEncoding(ContentType, const TextEncoding& defaultEncoding);
 
-    // encoding used for decoding. default is Latin1.
-    TextEncoding m_encoding;
+    void checkForBOM(const char*, size_t);
+    void checkForCSSCharset(const char*, size_t);
+    bool checkForHeadCharset(const char*, size_t, bool& movedDataToBuffer);
+    void detectJapaneseEncoding(const char*, size_t);
+
     ContentType m_contentType;
-    OwnPtr<StreamingTextDecoder> m_decoder;
-    DeprecatedCString m_encodingName;
-    EncodingSource m_type;
-
-    // Our version of DeprecatedString works well for all-8-bit characters, and allows null characters.
-    // This works better than DeprecatedCString when there are null characters involved.
-    DeprecatedString m_buffer;
-
-    bool m_reachedBody;
-    bool m_checkedForCSSCharset;
+    TextDecoder m_decoder;
+    EncodingSource m_source;
+    Vector<char> m_buffer;
     bool m_checkedForBOM;
+    bool m_checkedForCSSCharset;
+    bool m_checkedForHeadCharset;
 };
 
 }

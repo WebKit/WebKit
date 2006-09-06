@@ -26,16 +26,14 @@
 #ifndef TextBoundaries_h
 #define TextBoundaries_h
 
-#include <unicode/umachine.h>
-
-// FIXME: Change clients to use ICU and remove these functions.
+#include "UChar.h"
 
 namespace WebCore {
 
-    void findWordBoundary(const UChar*, int len, int position, int *start, int *end);
+    void findWordBoundary(const UChar*, int len, int position, int* start, int* end);
     int findNextWordFromIndex(const UChar*, int len, int position, bool forward);
 
-    void findSentenceBoundary(const UChar*, int len, int position, int *start, int *end);
+    void findSentenceBoundary(const UChar*, int len, int position, int* start, int* end);
     int findNextSentenceFromIndex(const UChar*, int len, int position, bool forward);
 
 }

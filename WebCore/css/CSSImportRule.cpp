@@ -99,7 +99,7 @@ void CSSImportRule::insertedIntoParent()
             return;
     
     // ### pass correct charset here!!
-    m_cachedSheet = docLoader->requestStyleSheet(absHref, DeprecatedString::null);
+    m_cachedSheet = docLoader->requestStyleSheet(absHref, String());
     if (m_cachedSheet) {
         m_loading = true;
         m_cachedSheet->ref(this);

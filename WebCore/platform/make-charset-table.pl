@@ -48,7 +48,7 @@ sub emit_line
     error "$name shows up twice in output" if $namesWritten{$name};
     $namesWritten{$name} = 1;
     
-    $output .= "        { \"$name\", $prefix$encoding, $flags },\n";
+    $output .= "        { \"$name\", $prefix$encoding },\n";
 }
 
 sub process_platform_encodings
@@ -75,7 +75,7 @@ sub process_platform_encodings
             } else {
                 $flags = "NoEncodingFlags";
             }
-            error "CFString encoding name $PlatformName is mentioned twice in $baseFilename" if $seenPlatformNames{$PlatformNameWithFlags};
+            error "Platform encoding name $PlatformName is mentioned twice in $baseFilename" if $seenPlatformNames{$PlatformNameWithFlags};
             $seenPlatformNames{$PlatformNameWithFlags} = 1;
 
             # Build the aliases list.
@@ -218,7 +218,7 @@ namespace WebCore {
 
     const CharsetEntry CharsetTable[] = {
 $output
-        { 0, WebCore::InvalidEncoding, NoEncodingFlags }
+        { 0, 0 }
     };
 
 }

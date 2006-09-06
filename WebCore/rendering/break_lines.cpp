@@ -22,9 +22,8 @@
 
 #include "config.h"
 #include "break_lines.h"
-#include "RenderText.h"
 
-#include "DeprecatedString.h"
+#include "RenderText.h"
 
 #if __APPLE__
 #include <CoreServices/CoreServices.h>

@@ -59,6 +59,8 @@ public:
     String(const char*, unsigned length);
     String(StringImpl* i) : m_impl(i) { }
 
+    static String newUninitialized(size_t length, UChar*& characterBuffer);
+
     operator KJS::Identifier() const;
     operator KJS::UString() const;
 

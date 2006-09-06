@@ -27,44 +27,30 @@
 #include "config.h"
 #include "StreamingTextDecoder.h"
 
-#if USE(ICU_UNICODE)
-    #include "StreamingTextDecoderICU.h"
-#endif
-
-#if PLATFORM(MAC)
-    #include "StreamingTextDecoderMac.h"
-#endif
-
-#include <wtf/Assertions.h>
-#include <wtf/OwnPtr.h>
+#include "PlatformString.h"
 
 namespace WebCore {
 
-StreamingTextDecoder* StreamingTextDecoder::create(const TextEncoding& encoding)
+const UChar BOM = 0xFEFF;
+
+TextCodec::~TextCodec()
 {
-#if USE(ICU_UNICODE)
-    OwnPtr<StreamingTextDecoderICU> decoderICU(new StreamingTextDecoderICU(encoding));
-    if (decoderICU->textEncodingSupported())
-        return decoderICU.release();
-#endif
-
-#if PLATFORM(MAC)
-    OwnPtr<StreamingTextDecoderMac> decoderMac(new StreamingTextDecoderMac(encoding));
-    if (decoderMac->textEncodingSupported())
-        return decoderMac.release();
-#endif
-
-    LOG_ERROR("no converter can convert from text encoding 0x%X", encoding.encodingID());
-
-#if USE(ICU_UNICODE)
-    return decoderICU.release();
-#elif PLATFORM(MAC)
-    return decoderMac.release();
-#endif
 }
 
-StreamingTextDecoder::~StreamingTextDecoder()
+// We strip BOM characters because they can show up both at the start of content
+// and inside content, and we never want them to end up in the decoded text.
+void TextCodec::appendOmittingBOM(String& s, const UChar* characters, size_t length)
 {
+    size_t start = 0;
+    for (size_t i = 0; i != length; ++i) {
+        if (BOM == characters[i]) {
+            if (start != i)
+                s.append(String(&characters[start], i - start));
+            start = i + 1;
+        }
+    }
+    if (start != length)
+        s.append(String(&characters[start], length - start));
 }
 
 } // namespace WebCore

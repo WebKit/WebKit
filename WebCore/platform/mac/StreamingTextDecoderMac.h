@@ -28,45 +28,39 @@
 #define StreamingTextDecoderMac_H
 
 #include "StreamingTextDecoder.h"
+#include <CoreServices/CoreServices.h>
 
 namespace WebCore {
 
-    class StreamingTextDecoderMac : public StreamingTextDecoder {
+    typedef ::TextEncoding TECTextEncodingID;
+    const TECTextEncodingID invalidEncoding = kCFStringEncodingInvalidId;
+
+    class TextCodecMac : public TextCodec {
     public:
-        StreamingTextDecoderMac(const TextEncoding&);
-        virtual ~StreamingTextDecoderMac();
+        static void registerEncodingNames(EncodingNameRegistrar);
+        static void registerCodecs(TextCodecRegistrar);
 
-        bool textEncodingSupported();
+        explicit TextCodecMac(TECTextEncodingID);
+        virtual ~TextCodecMac();
 
-        virtual DeprecatedString toUnicode(const char* chs, int len, bool flush = false);
-        virtual DeprecatedCString fromUnicode(const DeprecatedString&, bool allowEntities = false);
+        virtual String decode(const char*, size_t length, bool flush = false);
+        virtual CString encode(const UChar*, size_t length, bool allowEntities = false);
 
     private:
-        DeprecatedString convert(const char* chs, int len, bool flush)
-            { return convert(reinterpret_cast<const unsigned char*>(chs), len, flush); }
-        DeprecatedString convert(const unsigned char *chs, int len, bool flush);
+        OSStatus decode(const unsigned char* inputBuffer, int inputBufferLength, int& inputLength,
+            void* outputBuffer, int outputBufferLength, int& outputLength);
 
-        bool convertIfASCII(const unsigned char*, int len, DeprecatedString&);
-        DeprecatedString convertUTF16(const unsigned char*, int len);
-        DeprecatedString convertUsingTEC(const unsigned char*, int len, bool flush);
-        OSStatus convertOneChunkUsingTEC(const unsigned char *inputBuffer, int inputBufferLength, int &inputLength, void *outputBuffer, int outputBufferLength, int &outputLength);
+        OSStatus createTECConverter() const;
+        void releaseTECConverter() const;
 
-        OSStatus createTECConverter();
-        void releaseTECConverter();
-
-        static void appendOmittingBOM(DeprecatedString&, const UChar* characters, int byteCount);
-
-        TextEncoding m_encoding;
-        bool m_littleEndian;
-        bool m_atStart;
+        TECTextEncodingID m_encoding;
+        UChar m_backslashAsCurrencySymbol;
         bool m_error;
-
         unsigned m_numBufferedBytes;
         unsigned char m_bufferedBytes[16]; // bigger than any single multi-byte character
-
-        TECObjectRef m_converterTEC;
+        mutable TECObjectRef m_converterTEC;
     };
-    
+
 } // namespace WebCore
 
 #endif // StreamingTextDecoderMac_H

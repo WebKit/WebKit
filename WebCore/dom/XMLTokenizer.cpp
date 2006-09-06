@@ -25,6 +25,7 @@
 #include "XMLTokenizer.h"
 
 #include "CDATASection.h"
+#include "CString.h"
 #include "Cache.h"
 #include "CachedScript.h"
 #include "Comment.h"
@@ -120,7 +121,7 @@ private:
     Document *m_doc;
     FrameView *m_view;
     
-    DeprecatedString m_originalSourceForTransform;
+    String m_originalSourceForTransform;
 
     xmlParserCtxtPtr m_context;
     Node *m_currentNode;
@@ -443,11 +444,9 @@ private:
 
 static bool shouldAllowExternalLoad(const char* inURI)
 {
-    DeprecatedString url(inURI);
-
-    if (url.contains("/etc/xml/catalog")
-        || url.startsWith("http://www.w3.org/Graphics/SVG")
-        || url.startsWith("http://www.w3.org/TR/xhtml"))
+    if (strstr(inURI, "/etc/xml/catalog")
+            || strstr(inURI, "http://www.w3.org/Graphics/SVG") == inURI
+            || strstr(inURI, "http://www.w3.org/TR/xhtml") == inURI)
         return false;
     return true;
 }
@@ -500,7 +499,7 @@ void setLoaderForLibXMLCallbacks(DocLoader *docLoader)
     globalDocLoader = docLoader;
 }
 
-static xmlParserCtxtPtr createQStringParser(xmlSAXHandlerPtr handlers, void *userData)
+static xmlParserCtxtPtr createStringParser(xmlSAXHandlerPtr handlers, void* userData)
 {
     static bool didInit = false;
     if (!didInit) {
@@ -513,8 +512,8 @@ static xmlParserCtxtPtr createQStringParser(xmlSAXHandlerPtr handlers, void *use
     xmlParserCtxtPtr parser = xmlCreatePushParserCtxt(handlers, 0, 0, 0, 0);
     parser->_private = userData;
     parser->replaceEntities = true;
-    const DeprecatedChar BOM(0xFEFF);
-    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
+    const UChar BOM = 0xFEFF;
+    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
     xmlSwitchEncoding(parser, BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
     return parser;
 }
@@ -616,9 +615,9 @@ void XMLTokenizer::setCurrentNode(Node* n)
     m_currentNodeIsReferenced = nodeNeedsReference;
 }
 
-bool XMLTokenizer::write(const SegmentedString &s, bool /*appendData*/ )
+bool XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
 {
-    DeprecatedString parseString = s.toString();
+    String parseString = s.toString();
     
     if (m_sawXSLTransform || !m_sawFirstElement)
         m_originalSourceForTransform += parseString;
@@ -640,34 +639,25 @@ bool XMLTokenizer::write(const SegmentedString &s, bool /*appendData*/ )
         // resetting the encoding to UTF-16 before every chunk.  Otherwise libxml
         // will detect <?xml version="1.0" encoding="<encoding name>"?> blocks 
         // and switch encodings, causing the parse to fail.
-        const DeprecatedChar BOM(0xFEFF);
-        const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
+        const UChar BOM = 0xFEFF;
+        const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
         xmlSwitchEncoding(m_context, BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
-        
-        xmlParseChunk(m_context, reinterpret_cast<const char *>(parseString.unicode()), sizeof(DeprecatedChar) * parseString.length(), 0);
+
+        xmlParseChunk(m_context, reinterpret_cast<const char*>(parseString.characters()), sizeof(UChar) * parseString.length(), 0);
     }
     
     return false;
 }
 
-inline DeprecatedString toQString(const xmlChar *str, unsigned int len)
+inline String toString(const xmlChar* str, unsigned len)
 {
-    return DeprecatedString::fromUtf8(reinterpret_cast<const char *>(str), len);
-}
-
-inline DeprecatedString toQString(const xmlChar *str)
-{
-    return DeprecatedString::fromUtf8(str ? reinterpret_cast<const char *>(str) : "");
-}
-
-inline String toString(const xmlChar* str, unsigned int len)
-{
-    return DeprecatedString::fromUtf8(reinterpret_cast<const char *>(str), len);
+    return UTF8Encoding().decode(reinterpret_cast<const char*>(str), len);
 }
 
 inline String toString(const xmlChar* str)
 {
-    return DeprecatedString::fromUtf8(str ? reinterpret_cast<const char *>(str) : "");
+    const char* cstr = str ? reinterpret_cast<const char*>(str) : "";
+    return UTF8Encoding().decode(cstr, strlen(cstr));
 }
 
 struct _xmlSAX2Namespace {
@@ -703,11 +693,11 @@ static inline void handleElementAttributes(Element *newElement, const xmlChar **
 {
     xmlSAX2Attributes *attributes = reinterpret_cast<xmlSAX2Attributes *>(libxmlAttributes);
     for(int i = 0; i < nb_attributes; i++) {
-        String attrLocalName = toQString(attributes[i].localname);
+        String attrLocalName = toString(attributes[i].localname);
         int valueLength = (int) (attributes[i].end - attributes[i].value);
-        String attrValue = toQString(attributes[i].value, valueLength);
-        String attrPrefix = toQString(attributes[i].prefix);
-        String attrURI = attrPrefix.isEmpty() ? String() : toQString(attributes[i].uri);
+        String attrValue = toString(attributes[i].value, valueLength);
+        String attrPrefix = toString(attributes[i].prefix);
+        String attrURI = attrPrefix.isEmpty() ? String() : toString(attributes[i].uri);
         String attrQName = attrPrefix.isEmpty() ? attrLocalName : attrPrefix + ":" + attrLocalName;
         
         newElement->setAttributeNS(attrURI, attrQName, attrValue, ec);
@@ -730,9 +720,9 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
 
     exitText();
 
-    String localName = toQString(xmlLocalName);
-    String uri = toQString(xmlURI);
-    String prefix = toQString(xmlPrefix);
+    String localName = toString(xmlLocalName);
+    String uri = toString(xmlURI);
+    String prefix = toString(xmlPrefix);
     String qName = prefix.isEmpty() ? localName : prefix + ":" + localName;
     
     if (m_parsingFragment && uri.isEmpty()) {
@@ -827,8 +817,7 @@ void XMLTokenizer::endElementNs()
         
         if (!scriptHref.isEmpty()) {
             // we have a src attribute 
-            DeprecatedString charset = scriptElement->getAttribute(charsetAttr).deprecatedString();
-            
+            const AtomicString& charset = scriptElement->getAttribute(charsetAttr);
             if ((m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, charset))) {
                 m_scriptElement = scriptElement;
                 m_pendingScript->ref(this);
@@ -840,12 +829,11 @@ void XMLTokenizer::endElementNs()
                 m_scriptElement = 0;
 
         } else {
-            DeprecatedString scriptCode = "";
+            String scriptCode = "";
             for (Node *child = scriptElement->firstChild(); child; child = child->nextSibling()) {
                 if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
-                    scriptCode += static_cast<CharacterData*>(child)->data().deprecatedString();
+                    scriptCode += static_cast<CharacterData*>(child)->data();
             }
-                
             m_view->frame()->executeScript(0, scriptCode);
         }
         
@@ -867,7 +855,7 @@ void XMLTokenizer::characters(const xmlChar *s, int len)
     
     if (m_currentNode->isTextNode() || enterText()) {
         ExceptionCode ec = 0;
-        static_cast<Text*>(m_currentNode)->appendData(toQString(s, len), ec);
+        static_cast<Text*>(m_currentNode)->appendData(toString(s, len), ec);
     }
 }
 
@@ -959,7 +947,7 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
     // ### handle exceptions
     int exception = 0;
     RefPtr<ProcessingInstruction> pi = m_doc->createProcessingInstruction(
-        toQString(target), toQString(data), exception);
+        toString(target), toString(data), exception);
     if (exception)
         return;
 
@@ -994,7 +982,7 @@ void XMLTokenizer::cdataBlock(const xmlChar *s, int len)
     
     exitText();
 
-    RefPtr<Node> newNode = new CDATASection(m_doc, toQString(s, len));
+    RefPtr<Node> newNode = new CDATASection(m_doc, toString(s, len));
     if (!m_currentNode->addChild(newNode.get()))
         return;
     if (m_view && !newNode->attached())
@@ -1013,7 +1001,7 @@ void XMLTokenizer::comment(const xmlChar *s)
     
     exitText();
 
-    RefPtr<Node> newNode = new Comment(m_doc, toQString(s));
+    RefPtr<Node> newNode = new Comment(m_doc, toString(s));
     m_currentNode->addChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
@@ -1033,7 +1021,7 @@ void XMLTokenizer::internalSubset(const xmlChar *name, const xmlChar *externalID
     if (!doc)
         return;
 
-    doc->setDocType(new DocumentType(doc, toQString(name), toQString(externalID), toQString(systemID)));
+    doc->setDocType(new DocumentType(doc, toString(name), toString(externalID), toString(systemID)));
 }
 
 inline XMLTokenizer *getTokenizer(void *closure)
@@ -1133,11 +1121,11 @@ static xmlEntity sharedXHTMLEntity = {
 
 static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
 {
-    unsigned short c = decodeNamedEntity(reinterpret_cast<const char*>(name));
+    UChar c = decodeNamedEntity(reinterpret_cast<const char*>(name));
     if (!c)
         return 0;
 
-    DeprecatedCString value = DeprecatedString(DeprecatedChar(c)).utf8();
+    CString value = String(&c, 1).utf8();
     assert(value.length() < 5);
     sharedXHTMLEntity.length = value.length();
     sharedXHTMLEntity.name = name;
@@ -1168,7 +1156,7 @@ static void internalSubsetHandler(void *closure, const xmlChar *name, const xmlC
 
 static void externalSubsetHandler(void *closure, const xmlChar *name, const xmlChar *externalId, const xmlChar *systemId)
 {
-    DeprecatedString extId = toQString(externalId);
+    String extId = toString(externalId);
     if ((extId == "-//W3C//DTD XHTML 1.0 Transitional//EN")
         || (extId == "-//W3C//DTD XHTML 1.1//EN")
         || (extId == "-//W3C//DTD XHTML 1.0 Strict//EN")
@@ -1212,7 +1200,7 @@ void XMLTokenizer::initializeParserContext()
     m_sawError = false;
     m_sawXSLTransform = false;
     m_sawFirstElement = false;
-    m_context = createQStringParser(&sax, this);
+    m_context = createStringParser(&sax, this);
 }
 
 void XMLTokenizer::end()
@@ -1338,7 +1326,7 @@ void XMLTokenizer::notifyFinished(CachedResource *finishedObj)
     if (errorOccurred) 
         EventTargetNodeCast(e.get())->dispatchHTMLEvent(errorEvent, true, false);
     else {
-        m_view->frame()->executeScript(cachedScriptUrl, 0, 0, scriptSource.deprecatedString());
+        m_view->frame()->executeScript(cachedScriptUrl, 0, 0, scriptSource);
         EventTargetNodeCast(e.get())->dispatchHTMLEvent(loadEvent, false, false);
     }
     
@@ -1354,15 +1342,16 @@ bool XMLTokenizer::isWaitingForScripts() const
 }
 
 #ifdef KHTML_XSLT
-void *xmlDocPtrForString(DocLoader* docLoader, const DeprecatedString &source, const DeprecatedString &url)
+void* xmlDocPtrForString(DocLoader* docLoader, const String& source, const DeprecatedString &url)
 {
     if (source.isEmpty())
-            return 0;
+        return 0;
+
     // Parse in a single chunk into an xmlDocPtr
     // FIXME: Hook up error handlers so that a failure to parse the main document results in
     // good error messages.
-    const DeprecatedChar BOM(0xFEFF);
-    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
+    const UChar BOM = 0xFEFF;
+    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
 
     xmlGenericErrorFunc oldErrorFunc = xmlGenericError;
     void* oldErrorContext = xmlGenericErrorContext;
@@ -1370,8 +1359,8 @@ void *xmlDocPtrForString(DocLoader* docLoader, const DeprecatedString &source, c
     setLoaderForLibXMLCallbacks(docLoader);        
     xmlSetGenericErrorFunc(0, errorFunc);
     
-    xmlDocPtr sourceDoc = xmlReadMemory(reinterpret_cast<const char *>(source.unicode()),
-                                        source.length() * sizeof(DeprecatedChar),
+    xmlDocPtr sourceDoc = xmlReadMemory(reinterpret_cast<const char*>(source.characters()),
+                                        source.length() * sizeof(UChar),
                                         url.ascii(),
                                         BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
                                         XSLT_PARSE_OPTIONS);
@@ -1493,8 +1482,7 @@ bool parseXMLDocumentFragment(const String &string, DocumentFragment *fragment, 
     sax.warning = balancedWarningHandler;
     sax.initialized = XML_SAX2_MAGIC;
     
-    int result = xmlParseBalancedChunkMemory(0, &sax, &tokenizer, 0, 
-                                            (const xmlChar*)(const char*)(string.deprecatedString().utf8()), 0);
+    int result = xmlParseBalancedChunkMemory(0, &sax, &tokenizer, 0, (const xmlChar*)(const char*)(string.utf8()), 0);
     return result == 0;
 }
 
@@ -1518,7 +1506,7 @@ static void attributesStartElementNsHandler(void *closure, const xmlChar *xmlLoc
     
     xmlSAX2Attributes *attributes = reinterpret_cast<xmlSAX2Attributes *>(libxmlAttributes);
     for(int i = 0; i < nb_attributes; i++) {
-        DeprecatedString attrLocalName = toQString(attributes[i].localname);
+        String attrLocalName = toString(attributes[i].localname);
         int valueLength = (int) (attributes[i].end - attributes[i].value);
         String attrValue = toString(attributes[i].value, valueLength);
         String attrPrefix = toString(attributes[i].prefix);
@@ -1537,9 +1525,9 @@ HashMap<String, String> parseAttributes(const String& string, bool& attrsOK)
     memset(&sax, 0, sizeof(sax));
     sax.startElementNs = attributesStartElementNsHandler;
     sax.initialized = XML_SAX2_MAGIC;
-    xmlParserCtxtPtr parser = createQStringParser(&sax, &state);
-    DeprecatedString parseString = "<?xml version=\"1.0\"?><attrs " + string.deprecatedString() + " />";
-    xmlParseChunk(parser, reinterpret_cast<const char *>(parseString.unicode()), parseString.length() * sizeof(DeprecatedChar), 1);
+    xmlParserCtxtPtr parser = createStringParser(&sax, &state);
+    String parseString = "<?xml version=\"1.0\"?><attrs " + string + " />";
+    xmlParseChunk(parser, reinterpret_cast<const char*>(parseString.characters()), parseString.length() * sizeof(UChar), 1);
     if (parser->myDoc)
         xmlFreeDoc(parser->myDoc);
     xmlFreeParserCtxt(parser);

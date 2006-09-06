@@ -27,161 +27,89 @@
 #include "config.h"
 #include "StreamingTextDecoderMac.h"
 
+#include "CharsetData.h"
+#include "CString.h"
+#include "PlatformString.h"
 #include <wtf/Assertions.h>
 
+using std::auto_ptr;
 using std::min;
 
 namespace WebCore {
 
-// We need to keep this version because ICU doesn't support some of the encodings that we need:
+// We need to keep this because ICU doesn't support some of the encodings that we need:
 // <http://bugzilla.opendarwin.org/show_bug.cgi?id=4195>.
 
-StreamingTextDecoderMac::StreamingTextDecoderMac(const TextEncoding& encoding)
+const size_t ConversionBufferSize = 16384;
+
+static TECObjectRef cachedConverterTEC;
+static TECTextEncodingID cachedConverterEncoding = invalidEncoding;
+
+void TextCodecMac::registerEncodingNames(EncodingNameRegistrar registrar)
+{
+    TECTextEncodingID lastEncoding = invalidEncoding;
+    const char* lastName = 0;
+
+    for (size_t i = 0; CharsetTable[i].name; ++i) {
+        if (CharsetTable[i].encoding != lastEncoding) {
+            lastEncoding = CharsetTable[i].encoding;
+            lastName = CharsetTable[i].name;
+        }
+        registrar(CharsetTable[i].name, lastName);
+    }
+}
+
+static auto_ptr<TextCodec> newTextCodecMac(const TextEncoding&, const void* additionalData)
+{
+    return auto_ptr<TextCodec>(new TextCodecMac(*static_cast<const TECTextEncodingID*>(additionalData)));
+}
+
+void TextCodecMac::registerCodecs(TextCodecRegistrar registrar)
+{
+    TECTextEncodingID lastEncoding = invalidEncoding;
+
+    for (size_t i = 0; CharsetTable[i].name; ++i)
+        if (CharsetTable[i].encoding != lastEncoding) {
+            registrar(CharsetTable[i].name, newTextCodecMac, &CharsetTable[i].encoding);
+            lastEncoding = CharsetTable[i].encoding;
+        }
+}
+
+TextCodecMac::TextCodecMac(TECTextEncodingID encoding)
     : m_encoding(encoding)
-    , m_littleEndian(encoding.flags() & LittleEndian)
-    , m_atStart(true)
     , m_error(false)
     , m_numBufferedBytes(0)
     , m_converterTEC(0)
 {
 }
 
-static const UChar BOM = 0xFEFF;
-static const size_t ConversionBufferSize = 16384;
-
-static TECObjectRef cachedConverterTEC;
-static TextEncodingID cachedConverterEncoding = InvalidEncoding;
-
-StreamingTextDecoderMac::~StreamingTextDecoderMac()
+TextCodecMac::~TextCodecMac()
 {
     releaseTECConverter();
 }
 
-void StreamingTextDecoderMac::releaseTECConverter()
+void TextCodecMac::releaseTECConverter() const
 {
     if (m_converterTEC) {
         if (cachedConverterTEC != 0)
             TECDisposeConverter(cachedConverterTEC);
         cachedConverterTEC = m_converterTEC;
-        cachedConverterEncoding = m_encoding.encodingID();
+        cachedConverterEncoding = m_encoding;
         m_converterTEC = 0;
     }
 }
 
-bool StreamingTextDecoderMac::textEncodingSupported()
+OSStatus TextCodecMac::createTECConverter() const
 {
-    if (m_encoding.encodingID() == kCFStringEncodingUTF16 || 
-        m_encoding.encodingID() == kCFStringEncodingUTF16BE ||
-        m_encoding.encodingID() == kCFStringEncodingUTF16LE)
-          return true;
-
-    if (!m_converterTEC)
-        createTECConverter();
-    
-    return m_converterTEC;
-}
-
-DeprecatedString StreamingTextDecoderMac::convertUTF16(const unsigned char* s, int length)
-{
-    ASSERT(m_numBufferedBytes == 0 || m_numBufferedBytes == 1);
-
-    const unsigned char* p = s;
-    size_t len = length;
-    
-    DeprecatedString result("");
-    
-    result.reserve(length / 2);
-
-    if (m_numBufferedBytes != 0 && len != 0) {
-        ASSERT(m_numBufferedBytes == 1);
-        UChar c;
-        if (m_littleEndian)
-            c = m_bufferedBytes[0] | (p[0] << 8);
-        else
-            c = (m_bufferedBytes[0] << 8) | p[0];
-
-        if (c)
-            result.append(reinterpret_cast<DeprecatedChar*>(&c), 1);
-
-        m_numBufferedBytes = 0;
-        p += 1;
-        len -= 1;
-    }
-    
-    while (len > 1) {
-        UChar buffer[ConversionBufferSize];
-        int runLength = min(len / 2, ConversionBufferSize);
-        int bufferLength = 0;
-        if (m_littleEndian) {
-            for (int i = 0; i < runLength; ++i) {
-                UChar c = p[0] | (p[1] << 8);
-                p += 2;
-                if (c != BOM)
-                    buffer[bufferLength++] = c;
-            }
-        } else {
-            for (int i = 0; i < runLength; ++i) {
-                UChar c = (p[0] << 8) | p[1];
-                p += 2;
-                if (c != BOM)
-                    buffer[bufferLength++] = c;
-            }
-        }
-        result.append(reinterpret_cast<DeprecatedChar*>(buffer), bufferLength);
-        len -= runLength * 2;
-    }
-    
-    if (len) {
-        ASSERT(m_numBufferedBytes == 0);
-        m_numBufferedBytes = 1;
-        m_bufferedBytes[0] = p[0];
-    }
-    
-    return result;
-}
-
-bool StreamingTextDecoderMac::convertIfASCII(const unsigned char* s, int length, DeprecatedString& str)
-{
-    ASSERT(m_numBufferedBytes == 0 || m_numBufferedBytes == 1);
-
-    DeprecatedString result("");
-    result.reserve(length);
-
-    const unsigned char* p = s;
-    size_t len = length;
-    unsigned char ored = 0;
-    while (len) {
-        UChar buffer[ConversionBufferSize];
-        int runLength = min(len, ConversionBufferSize);
-        int bufferLength = 0;
-        for (int i = 0; i < runLength; ++i) {
-            unsigned char c = *p++;
-            ored |= c;
-            buffer[bufferLength++] = c;
-        }
-        if (ored & 0x80)
-            return false;
-        result.append(reinterpret_cast<DeprecatedChar*>(buffer), bufferLength);
-        len -= runLength;
-    }
-
-    str = result;
-    return true;
-}
-
-OSStatus StreamingTextDecoderMac::createTECConverter()
-{
-    const TextEncodingID encoding = m_encoding.effectiveEncoding().encodingID();
-
-    bool cachedEncodingEqual = cachedConverterEncoding == encoding;
-    cachedConverterEncoding = InvalidEncoding;
+    bool cachedEncodingEqual = cachedConverterEncoding == m_encoding;
+    cachedConverterEncoding = invalidEncoding;
 
     if (cachedEncodingEqual && cachedConverterTEC) {
         m_converterTEC = cachedConverterTEC;
         cachedConverterTEC = 0;
         TECClearConverterContextInfo(m_converterTEC);
     } else {
-        OSStatus status = TECCreateConverter(&m_converterTEC, encoding,
+        OSStatus status = TECCreateConverter(&m_converterTEC, m_encoding,
             CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat));
         if (status)
             return status;
@@ -192,26 +120,8 @@ OSStatus StreamingTextDecoderMac::createTECConverter()
     return noErr;
 }
 
-// We strip BOM characters because they can show up both at the start of content
-// and inside content, and we never want them to end up in the decoded text.
-void StreamingTextDecoderMac::appendOmittingBOM(DeprecatedString& s, const UChar* characters, int byteCount)
-{
-    ASSERT(byteCount % sizeof(UChar) == 0);
-    int start = 0;
-    int characterCount = byteCount / sizeof(UChar);
-    for (int i = 0; i != characterCount; ++i) {
-        if (BOM == characters[i]) {
-            if (start != i)
-                s.append(reinterpret_cast<const DeprecatedChar*>(&characters[start]), i - start);
-            start = i + 1;
-        }
-    }
-    if (start != characterCount)
-        s.append(reinterpret_cast<const DeprecatedChar*>(&characters[start]), characterCount - start);
-}
-
-OSStatus StreamingTextDecoderMac::convertOneChunkUsingTEC(const unsigned char *inputBuffer, int inputBufferLength, int &inputLength,
-    void *outputBuffer, int outputBufferLength, int &outputLength)
+OSStatus TextCodecMac::decode(const unsigned char* inputBuffer, int inputBufferLength, int& inputLength,
+    void *outputBuffer, int outputBufferLength, int& outputLength)
 {
     OSStatus status;
     unsigned long bytesRead = 0;
@@ -229,7 +139,7 @@ OSStatus StreamingTextDecoderMac::convertOneChunkUsingTEC(const unsigned char *i
 
         // Now, do a conversion on the buffer.
         status = TECConvertText(m_converterTEC, m_bufferedBytes, m_numBufferedBytes + bytesToPutInBuffer, &bytesRead,
-            reinterpret_cast<unsigned char *>(outputBuffer), outputBufferLength, &bytesWritten);
+            reinterpret_cast<unsigned char*>(outputBuffer), outputBufferLength, &bytesWritten);
         ASSERT(bytesRead <= m_numBufferedBytes + bytesToPutInBuffer);
 
         if (status == kTECPartialCharErr && bytesRead == 0) {
@@ -263,7 +173,7 @@ OSStatus StreamingTextDecoderMac::convertOneChunkUsingTEC(const unsigned char *i
         }
     } else {
         status = TECConvertText(m_converterTEC, inputBuffer, inputBufferLength, &bytesRead,
-            static_cast<unsigned char *>(outputBuffer), outputBufferLength, &bytesWritten);
+            static_cast<unsigned char*>(outputBuffer), outputBufferLength, &bytesWritten);
         ASSERT(static_cast<int>(bytesRead) <= inputBufferLength);
     }
 
@@ -277,25 +187,23 @@ OSStatus StreamingTextDecoderMac::convertOneChunkUsingTEC(const unsigned char *i
     return status;
 }
 
-DeprecatedString StreamingTextDecoderMac::convertUsingTEC(const unsigned char *chs, int len, bool flush)
+String TextCodecMac::decode(const char* bytes, size_t length, bool flush)
 {
     // Get a converter for the passed-in encoding.
     if (!m_converterTEC && createTECConverter() != noErr)
-        return DeprecatedString();
+        return String();
     
-    DeprecatedString result("");
+    String result("");
 
-    result.reserve(len);
-
-    const unsigned char *sourcePointer = chs;
-    int sourceLength = len;
+    const unsigned char* sourcePointer = reinterpret_cast<const unsigned char*>(bytes);
+    int sourceLength = length;
     bool bufferWasFull = false;
     UniChar buffer[ConversionBufferSize];
 
     while (sourceLength || bufferWasFull) {
         int bytesRead = 0;
         int bytesWritten = 0;
-        OSStatus status = convertOneChunkUsingTEC(sourcePointer, sourceLength, bytesRead, buffer, sizeof(buffer), bytesWritten);
+        OSStatus status = decode(sourcePointer, sourceLength, bytesRead, buffer, sizeof(buffer), bytesWritten);
         ASSERT(bytesRead <= sourceLength);
         sourcePointer += bytesRead;
         sourceLength -= bytesRead;
@@ -329,190 +237,82 @@ DeprecatedString StreamingTextDecoderMac::convertUsingTEC(const unsigned char *c
             default:
                 LOG_ERROR("text decoding failed with error %d", status);
                 m_error = true;
-                return DeprecatedString();
+                return String();
         }
 
-        appendOmittingBOM(result, buffer, bytesWritten);
+        ASSERT(!(bytesWritten % sizeof(UChar)));
+        appendOmittingBOM(result, buffer, bytesWritten / sizeof(UChar));
 
         bufferWasFull = status == kTECOutputBufferFullStatus;
     }
     
     if (flush) {
         unsigned long bytesWritten = 0;
-        TECFlushText(m_converterTEC, reinterpret_cast<unsigned char *>(buffer), sizeof(buffer), &bytesWritten);
-        appendOmittingBOM(result, buffer, bytesWritten);
+        TECFlushText(m_converterTEC, reinterpret_cast<unsigned char*>(buffer), sizeof(buffer), &bytesWritten);
+        ASSERT(!(bytesWritten % sizeof(UChar)));
+        appendOmittingBOM(result, buffer, bytesWritten / sizeof(UChar));
     }
 
     // Workaround for a bug in the Text Encoding Converter (see bug 3225472).
     // Simplified Chinese pages use the code U+A3A0 to mean "full-width space".
     // But GB18030 decodes it to U+E5E5, which is correct in theory but not in practice.
     // To work around, just change all occurences of U+E5E5 to U+3000 (ideographic space).
-    if (m_encoding.encodingID() == kCFStringEncodingGB_18030_2000)
+    if (m_encoding == kCFStringEncodingGB_18030_2000)
         result.replace(0xE5E5, 0x3000);
     
     return result;
 }
 
-DeprecatedString StreamingTextDecoderMac::convert(const unsigned char *chs, int len, bool flush)
+CString TextCodecMac::encode(const UChar* characters, size_t length, bool allowEntities)
 {
-    switch (m_encoding.encodingID()) {
-        case UTF16Encoding:
-            return convertUTF16(chs, len);
-
-        case ASCIIEncoding:
-        case Latin1Encoding:
-        case WinLatin1Encoding: {
-            DeprecatedString result;
-            if (convertIfASCII(chs, len, result))
-                return result;
-            break;
-        }
-
-        case UTF8Encoding:
-            // If a previous run used TEC, we might have a partly converted character.
-            // If so, don't use the optimized ASCII code path.
-            if (!m_converterTEC) {
-                DeprecatedString result;
-                if (convertIfASCII(chs, len, result))
-                    return result;
-            }
-            break;
-
-        default:
-            break;
-    }
-
-    return convertUsingTEC(chs, len, flush);
-}
-
-DeprecatedString StreamingTextDecoderMac::toUnicode(const char* chs, int len, bool flush)
-{
-    ASSERT_ARG(len, len >= 0);
-    
-    if (m_error || !chs)
-        return DeprecatedString();
-
-    if (len <= 0 && !flush)
-        return "";
-
-    // Handle normal case.
-    if (!m_atStart)
-        return convert(chs, len, flush);
-
-    // Check to see if we found a BOM.
-    int numBufferedBytes = m_numBufferedBytes;
-    int buf1Len = numBufferedBytes;
-    int buf2Len = len;
-    const unsigned char* buf1 = m_bufferedBytes;
-    const unsigned char* buf2 = reinterpret_cast<const unsigned char*>(chs);
-    unsigned char c1 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
-    unsigned char c2 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
-    unsigned char c3 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
-    int BOMLength = 0;
-    if (c1 == 0xFF && c2 == 0xFE) {
-        if (m_encoding != TextEncoding(UTF16Encoding, LittleEndian)) {
-            releaseTECConverter();
-            m_encoding = TextEncoding(UTF16Encoding, LittleEndian);
-            m_littleEndian = true;
-        }
-        BOMLength = 2;
-    } else if (c1 == 0xFE && c2 == 0xFF) {
-        if (m_encoding != TextEncoding(UTF16Encoding, BigEndian)) {
-            releaseTECConverter();
-            m_encoding = TextEncoding(UTF16Encoding, BigEndian);
-            m_littleEndian = false;
-        }
-        BOMLength = 2;
-    } else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF) {
-        if (m_encoding != TextEncoding(UTF8Encoding)) {
-            releaseTECConverter();
-            m_encoding = TextEncoding(UTF8Encoding);
-        }
-        BOMLength = 3;
-    }
-
-    // Handle case where we found a BOM.
-    if (BOMLength != 0) {
-        ASSERT(numBufferedBytes + len >= BOMLength);
-        int skip = BOMLength - numBufferedBytes;
-        m_numBufferedBytes = 0;
-        m_atStart = false;
-        return len == skip ? DeprecatedString("") : convert(chs + skip, len - skip, flush);
-    }
-
-    // Handle case where we know there is no BOM coming.
-    const int bufferSize = sizeof(m_bufferedBytes);
-    if (numBufferedBytes + len > bufferSize || flush) {
-        m_atStart = false;
-        if (numBufferedBytes == 0) {
-            return convert(chs, len, flush);
-        }
-        unsigned char bufferedBytes[sizeof(m_bufferedBytes)];
-        memcpy(bufferedBytes, m_bufferedBytes, numBufferedBytes);
-        m_numBufferedBytes = 0;
-        return convert(bufferedBytes, numBufferedBytes, false) + convert(chs, len, flush);
-    }
-
-    // Continue to look for the BOM.
-    memcpy(&m_bufferedBytes[numBufferedBytes], chs, len);
-    m_numBufferedBytes += len;
-    return "";
-}
-
-DeprecatedCString StreamingTextDecoderMac::fromUnicode(const DeprecatedString &qcs, bool allowEntities)
-{
-    // FIXME: We should really use the same API in both directions.
-    // Currently we use TEC to decode and CFString to encode; it would be better to encode with TEC too.
-    
-    TextEncoding encoding = m_encoding.effectiveEncoding();
+    // FIXME: We should really use TEC here instead of CFString for consistency with the other direction.
 
     // FIXME: Since there's no "force ASCII range" mode in CFString, we change the backslash into a yen sign.
     // Encoding will change the yen sign back into a backslash.
-    DeprecatedString copy = qcs;
-    copy.replace('\\', encoding.backslashAsCurrencySymbol());
-    CFStringRef cfs = copy.getCFString();
-    CFMutableStringRef cfms = CFStringCreateMutableCopy(0, 0, cfs); // in rare cases, normalization can make the string longer, thus no limit on its length
-    CFStringNormalize(cfms, kCFStringNormalizationFormC);
-    
-    CFIndex startPos = 0;
-    CFIndex charactersLeft = CFStringGetLength(cfms);
-    DeprecatedCString result(1); // for trailing zero
+    String copy(characters, length);
+    copy.replace('\\', m_backslashAsCurrencySymbol);
+    CFStringRef cfs = copy.createCFString();
 
+    CFIndex startPos = 0;
+    CFIndex charactersLeft = CFStringGetLength(cfs);
+    Vector<char> result;
+    size_t size = 0;
+    UInt8 lossByte = allowEntities ? 0 : '?';
     while (charactersLeft > 0) {
         CFRange range = CFRangeMake(startPos, charactersLeft);
         CFIndex bufferLength;
-        CFStringGetBytes(cfms, range, encoding.encodingID(), allowEntities ? 0 : '?', false, NULL, 0x7FFFFFFF, &bufferLength);
-        
-        DeprecatedCString chunk(bufferLength + 1);
-        unsigned char *buffer = reinterpret_cast<unsigned char *>(chunk.data());
-        CFIndex charactersConverted = CFStringGetBytes(cfms, range, encoding.encodingID(), allowEntities ? 0 : '?', false, buffer, bufferLength, &bufferLength);
-        buffer[bufferLength] = 0;
-        result.append(chunk);
-        
-        if (charactersConverted != charactersLeft) {
-            unsigned int badChar = CFStringGetCharacterAtIndex(cfms, startPos + charactersConverted);
-            ++charactersConverted;
+        CFStringGetBytes(cfs, range, m_encoding, lossByte, false, NULL, 0x7FFFFFFF, &bufferLength);
 
-            if ((badChar & 0xfc00) == 0xd800 &&     // is high surrogate
-                  charactersConverted != charactersLeft) {
-                UniChar low = CFStringGetCharacterAtIndex(cfms, startPos + charactersConverted);
-                if ((low & 0xfc00) == 0xdc00) {     // is low surrogate
+        result.resize(size + bufferLength);
+        unsigned char* buffer = reinterpret_cast<unsigned char*>(result.data() + size);
+        CFIndex charactersConverted = CFStringGetBytes(cfs, range, m_encoding, lossByte, false, buffer, bufferLength, &bufferLength);
+        size += bufferLength;
+
+        if (charactersConverted != charactersLeft) {
+            unsigned badChar = CFStringGetCharacterAtIndex(cfs, startPos + charactersConverted);
+            ++charactersConverted;
+            if ((badChar & 0xFC00) == 0xD800 && charactersConverted != charactersLeft) { // is high surrogate
+                UniChar low = CFStringGetCharacterAtIndex(cfs, startPos + charactersConverted);
+                if ((low & 0xFC00) == 0xDC00) { // is low surrogate
                     badChar <<= 10;
                     badChar += low;
-                    badChar += 0x10000 - (0xd800 << 10) - 0xdc00;
+                    badChar += 0x10000 - (0xD800 << 10) - 0xDC00;
                     ++charactersConverted;
                 }
             }
-            char buf[16];
-            sprintf(buf, "&#%u;", badChar);
-            result.append(buf);
+            char entityBuffer[16];
+            sprintf(entityBuffer, "&#%u;", badChar);
+            size_t entityLength = strlen(entityBuffer);
+            result.resize(size + entityLength);
+            memcpy(result.data() + size, entityBuffer, entityLength);
+            size += entityLength;
         }
-        
+
         startPos += charactersConverted;
         charactersLeft -= charactersConverted;
     }
-    CFRelease(cfms);
-    return result;
+    CFRelease(cfs);
+    return CString(result.data(), size);
 }
 
 } // namespace WebCore

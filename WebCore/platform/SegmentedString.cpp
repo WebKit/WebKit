@@ -147,9 +147,9 @@ void SegmentedString::advanceSubstring()
     }
 }
 
-DeprecatedString SegmentedString::toString() const
+String SegmentedString::toString() const
 {
-    DeprecatedString result;
+    String result;
     if (m_pushedChar1) {
         result.append(m_pushedChar1);
         if (m_pushedChar2)

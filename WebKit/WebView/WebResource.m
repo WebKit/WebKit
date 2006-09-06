@@ -307,12 +307,7 @@ NSString *WebResourceResponseKey =          @"WebResourceResponse";
 - (NSString *)_stringValue
 {
     NSString *textEncodingName = [self textEncodingName];
-    
-    if(textEncodingName){
-        return [WebFrameBridge stringWithData:_private->data textEncodingName:textEncodingName];
-    }else{
-        return [WebFrameBridge stringWithData:_private->data textEncoding:kCFStringEncodingISOLatin1];
-    }
+    return [WebFrameBridge stringWithData:_private->data textEncodingName:textEncodingName];
 }
 
 @end

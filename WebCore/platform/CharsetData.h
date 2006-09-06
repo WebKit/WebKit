@@ -23,18 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "TextEncoding.h"
-
-#if __APPLE__
-#include "ExtraCFEncodings.h"
-#endif
-
 namespace WebCore {
+
+    #define kTextEncodingISOLatinThai kCFStringEncodingISOLatinThai
 
     struct CharsetEntry {
         const char* name;
-        TextEncodingID encoding;
-        int flags; // actually TextEncodingFlags
+        ::TextEncoding encoding;
     };
 
     extern const CharsetEntry CharsetTable[];
