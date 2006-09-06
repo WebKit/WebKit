@@ -29,7 +29,6 @@
 
 #import "AXObjectCache.h"
 #import "Cache.h"
-#import "CharsetNames.h"
 #import "DOMImplementation.h"
 #import "DOMInternal.h"
 #import "Decoder.h"
@@ -112,8 +111,6 @@ using KJS::UnspecifiedType;
 using KJS::Window;
 
 using KJS::Bindings::RootObject;
-
-using WebCore::UChar;
 
 NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 

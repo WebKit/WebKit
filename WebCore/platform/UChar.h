@@ -28,10 +28,4 @@
 
 #include <unicode/umachine.h>
 
-namespace WebCore {
-
-    typedef ::UChar UChar;
-
-}
-
 #endif // UChar_h

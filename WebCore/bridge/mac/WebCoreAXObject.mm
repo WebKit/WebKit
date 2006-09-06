@@ -61,8 +61,6 @@ using namespace WebCore;
 using namespace EventNames;
 using namespace HTMLNames;
 
-using WebCore::UChar;
-
 // FIXME: This will eventually need to really localize.
 #define UI_STRING(string, comment) ((NSString*)[NSString stringWithUTF8String:(string)])
 

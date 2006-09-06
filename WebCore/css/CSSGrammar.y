@@ -49,8 +49,6 @@
 using namespace WebCore;
 using namespace HTMLNames;
 
-using WebCore::UChar;
-
 // The following file defines the function
 //     const struct props *findProp(const char *word, int len)
 //

@@ -1,5 +1,15 @@
 2006-09-05  Darin Adler  <darin@apple.com>
 
+        - some quick build fixes
+
+        * bridge/mac/WebCoreAXObject.mm: Remove use of WebCore::UChar.
+        * bridge/mac/WebCoreFrameBridge.mm: Ditto. Also remove include
+        of CharsetNames.h.
+        * css/CSSGrammar.y: Remove use of WebCore::UChar.
+        * platform/UChar.h: Back out WebCore::UChar for now.
+
+2006-09-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Alexey.
 
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=10728
