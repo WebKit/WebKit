@@ -1,3 +1,28 @@
+2006-09-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by ap.
+
+        Fix Qt/Linux build.
+
+        * CMakeLists.txt: Take out CharacterData.cpp from build / add new Text* files to build.
+        * platform/qt/BrowserExtensionQt.cpp: Add wtf/Platform.h include.
+        * platform/qt/FontCacheQt.cpp: Add FontData.h include.
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::drawGlyphs): Fix constness in reinterpret_cast.
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::markMisspellings): Change "SelectionController" param type to "Selection".
+        (WebCore::FrameQt::respondToChangedSelection): Ditto.
+        (WebCore::FrameQt::respondToChangedContents): Ditto.
+        (WebCore::FrameQt::shouldChangeSelection): Ditto.
+        * platform/qt/FrameQt.h: Ditto.
+        * platform/qt/ImageQt.cpp:
+        (WebCore::Image::supportsType): Fix String->QString conversion.
+        * platform/qt/ResourceLoaderManager.cpp:
+        (WebCore::ResourceLoaderManager::add): Fix String->DeprecatedString conversion.
+        * platform/qt/ScrollViewCanvasQt.cpp:
+        (WebCore::ScrollViewCanvasQt::handleKeyEvent): Adapt to SelectionController signature changes.
+        * platform/qt/qt-encodings.txt: Removed.
+
 2006-09-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

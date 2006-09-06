@@ -353,11 +353,6 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/UserAgentStyleSheets.h ${C
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/css/html4.css ${CMAKE_CURRENT_SOURCE_DIR}/css/quirks.css ${CMAKE_CURRENT_SOURCE_DIR}/css/svg.css
 )
 
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/CharacterData.cpp
-  COMMAND perl ${CMAKE_CURRENT_SOURCE_DIR}/platform/make-charset-table.pl ${CMAKE_CURRENT_SOURCE_DIR}/platform/character-sets.txt ${CMAKE_CURRENT_SOURCE_DIR}/platform/qt/qt-encodings.txt \" \" > ${CMAKE_CURRENT_BINARY_DIR}/CharacterData.cpp
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/platform/make-charset-table.pl ${CMAKE_CURRENT_SOURCE_DIR}/platform/character-sets.txt
-)
-
 # source stuff
 IF (WEBKIT_USE_SVG_SUPPORT)
 set (SVG_STUFF
@@ -547,7 +542,6 @@ set(WebCore_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/CSSValueKeywords.h
     ${CMAKE_CURRENT_BINARY_DIR}/CSSGrammar.h
     ${CMAKE_CURRENT_BINARY_DIR}/CSSGrammar.cpp
-    ${CMAKE_CURRENT_BINARY_DIR}/CharacterData.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/UserAgentStyleSheets.h
     ${CMAKE_CURRENT_BINARY_DIR}/UserAgentStyleSheetsData.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/html/HTMLNames.cpp
@@ -850,7 +844,6 @@ set(WebCore_SRCS
     platform/GraphicsTypes.cpp
     platform/IntRect.cpp
     platform/Arena.cpp
-    platform/CharsetNames.cpp
     platform/ArrayImpl.cpp
     platform/FloatPoint.cpp
     platform/SegmentedString.cpp
@@ -858,7 +851,11 @@ set(WebCore_SRCS
     platform/StreamingTextDecoderICU.cpp
     platform/DeprecatedString.cpp
     platform/DeprecatedCString.cpp
+    platform/TextCodecLatin1.cpp
+    platform/TextCodecUTF16.cpp
+    platform/TextDecoder.cpp
     platform/TextEncoding.cpp
+    platform/TextEncodingRegistry.cpp
     platform/GraphicsContext.cpp
     platform/Logging.cpp
     platform/Color.cpp

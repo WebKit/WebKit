@@ -52,7 +52,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
     p.setPen(QColor(color));
     p.setFont(font->platformData().font());
 
-    QChar* buffer = reinterpret_cast<QChar*>(glyphBuffer.glyphs(from));
+    const QChar* buffer = reinterpret_cast<const QChar*>(glyphBuffer.glyphs(from));
     QString str = QString::fromRawData(buffer, numGlyphs);
 
     p.drawText(QPointF(point.x(),point.y()), str);

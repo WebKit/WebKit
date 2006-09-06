@@ -157,7 +157,7 @@ void ResourceLoaderManager::add(ResourceLoader* job)
     if (job->method() == "GET")
         kioJob = KIO::get(KUrl(url), false, false);
     else if (job->method() == "POST") {
-        DeprecatedString postData = job->postData().flattenToString();
+        DeprecatedString postData = job->postData().flattenToString().deprecatedString();
         QByteArray postDataArray(postData.ascii(), postData.length());
 
         kioJob = KIO::http_post(KUrl(url), postDataArray, false);

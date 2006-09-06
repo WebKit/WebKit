@@ -31,6 +31,7 @@
 #include "Image.h"
 
 #include "FloatRect.h"
+#include "PlatformString.h"
 #include "GraphicsContext.h"
 
 #include <QPixmap>
@@ -80,7 +81,7 @@ bool Image::supportsType(const String& type)
 {
     QList<QByteArray> formats = QImageReader::supportedImageFormats();
     foreach(QByteArray format, formats) {
-        if (format == (QString) type)
+        if (format == QString(type))
             return true;
     }
 

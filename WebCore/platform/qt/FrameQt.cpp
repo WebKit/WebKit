@@ -277,7 +277,7 @@ void FrameQt::markMisspellingsInAdjacentWords(const VisiblePosition&)
     notImplemented();
 }
 
-void FrameQt::markMisspellings(const SelectionController&)
+void FrameQt::markMisspellings(const Selection&)
 {
     notImplemented();
 }
@@ -402,17 +402,17 @@ void FrameQt::issueTransposeCommand()
     notImplemented();
 }
 
-void FrameQt::respondToChangedSelection(const SelectionController& oldSelection, bool closeTyping)
+void FrameQt::respondToChangedSelection(const Selection& oldSelection, bool closeTyping)
 {
     notImplemented();
 }
 
-void FrameQt::respondToChangedContents(const SelectionController& endingSelection)
+void FrameQt::respondToChangedContents(const Selection& endingSelection)
 {
     notImplemented();
 }
 
-bool FrameQt::shouldChangeSelection(const SelectionController& oldSelection, const SelectionController& newSelection, EAffinity affinity, bool stillSelecting) const
+bool FrameQt::shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity affinity, bool stillSelecting) const
 {
     notImplemented();
     return true;
