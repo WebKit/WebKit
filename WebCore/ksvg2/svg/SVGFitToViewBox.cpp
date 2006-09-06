@@ -74,39 +74,22 @@ void SVGFitToViewBox::parseViewBox(StringImpl* str)
     p = parseCoord(c, x);
     if (p == c)
         goto bail_out;
-    if (*p == ',')
-        p++;
-    while (*p == ' ')
-        p++;
 
     c = p;
     p = parseCoord(c, y);
     if (p == c)
         goto bail_out;
 
-    if (*p == ',')
-        p++;
-    while (*p == ' ')
-        p++;
-
     c = p;
     p = parseCoord(c, w);
     if(w < 0.0 || p == c) // check that width is positive
         goto bail_out;
-    if (*p == ',')
-        p++;
-    while (*p == ' ')
-        p++;
 
     c = p;
     p = parseCoord(c, h);
     if (h < 0.0 || p == c) // check that height is positive
         goto bail_out;
-    if (*p == ',')
-        p++;
-    while (*p == ' ')
-        p++;
-
+    
     if (p < end) // nothing should come after the last, fourth number
         goto bail_out;
 

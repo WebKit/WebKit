@@ -1,3 +1,21 @@
+2006-09-05  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by aroben.
+
+        Speed up path parsing by removing string copies.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10722
+        
+        Tests already cover path parsing.
+
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        * ksvg2/svg/svgpathparser.cpp:
+        (WebCore::skipOptionalSpaces): Added.
+        (WebCore::skipOptionalSpacesOrComma): Added.
+        (WebCore::parseCoord):
+        (WebCore::SVGPolyParser::parsePoints):
+        (WebCore::SVGPathParser::parseSVG):
+
 2006-09-05  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

@@ -38,7 +38,7 @@ namespace WebCore {
         virtual ~SVGPaint();
 
         // 'SVGPaint' functions
-        SVGPaintType paintType() const;
+        SVGPaintType paintType() const { return m_paintType; }
         StringImpl* uri() const;
 
         void setUri(StringImpl*);

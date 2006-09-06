@@ -57,11 +57,6 @@ SVGPaint::~SVGPaint()
 {
 }
 
-SVGPaintType SVGPaint::paintType() const
-{
-    return m_paintType;
-}
-
 StringImpl* SVGPaint::uri() const
 {
     return m_uri.impl();

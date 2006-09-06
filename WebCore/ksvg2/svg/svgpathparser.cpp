@@ -26,6 +26,30 @@
 
 namespace WebCore {
 
+
+// All strings are assumed to be null terminated
+static inline bool skipOptionalSpaces(const char*& ptr) // true means "found space"
+{
+    if (*ptr != ' ')
+        return false;
+    while (*ptr == ' ')
+        ptr++;
+    return true;
+}
+
+static inline bool skipOptionalSpacesOrComma(const char*& ptr)
+{
+    if (*ptr != ' ' && *ptr != ',')
+        return false;
+    skipOptionalSpaces(ptr);
+    if (*ptr == ',') {
+        ptr++;
+        skipOptionalSpaces(ptr);
+    }
+    return true;
+}
+
+
 const char* parseCoord(const char* ptr, double &number)
 {
     int integer, exponent;
@@ -78,334 +102,324 @@ const char* parseCoord(const char* ptr, double &number)
     number = integer + decimal;
     number *= sign * pow(10.0, expsign * exponent);
 
-    // skip the following space
-    if (*ptr == ' ')
-        ptr++;
+    skipOptionalSpacesOrComma(ptr);
 
     return ptr;
 }
 
 void SVGPolyParser::parsePoints(const DeprecatedString& s) const
 {
-    if (!s.isEmpty()) {
-        DeprecatedString pointData = s;
-        pointData = pointData.replace(',', ' ');
-        pointData = pointData.simplifyWhiteSpace();
-        const char* currSegment = pointData.latin1();
-        const char* eoString = pointData.latin1() + pointData.length();
-        
-        int segmentNum = 0;
-        while (currSegment < eoString) {
-            const char* prevSegment = currSegment;
-            double xPos = 0;
-            currSegment = parseCoord(currSegment, xPos); 
-            if (currSegment == prevSegment)
-                break;
-                
-            if (*currSegment == ',' || *currSegment == ' ')
-                currSegment++;
+    if (s.isEmpty())
+        return;
+    DeprecatedString pointData = s;
+    const char* currSegment = pointData.latin1();
+    const char* eoString = pointData.latin1() + pointData.length();
+    
+    int segmentNum = 0;
+    while (currSegment < eoString) {
+        const char* prevSegment = currSegment;
+        double xPos = 0;
+        currSegment = parseCoord(currSegment, xPos); 
+        if (currSegment == prevSegment)
+            break;
 
-            prevSegment = currSegment;
-            double yPos = 0;
-            currSegment = parseCoord(currSegment, yPos);
-            if (currSegment == prevSegment)
-                break;
-                
-            svgPolyTo(xPos, yPos, segmentNum++);
-            if (*currSegment == ' ')
-                currSegment++;
-        }
+        prevSegment = currSegment;
+        double yPos = 0;
+        currSegment = parseCoord(currSegment, yPos);
+        if (currSegment == prevSegment)
+            break;
+            
+        svgPolyTo(xPos, yPos, segmentNum++);
     }
 }
 
 void SVGPathParser::parseSVG(const DeprecatedString& s, bool process)
 {
-    if (!s.isEmpty()) {
-        DeprecatedString d = s;
-        d = d.replace(',', ' ');
-        d = d.simplifyWhiteSpace();
-        const char* ptr = d.latin1();
-        const char* end = d.latin1() + d.length() + 1;
+    if (s.isEmpty())
+        return;
 
-        double contrlx, contrly, curx, cury, subpathx, subpathy, tox, toy, x1, y1, x2, y2, xc, yc;
-        double px1, py1, px2, py2, px3, py3;
-        bool relative, closed = true;
-        char command = *(ptr++), lastCommand = ' ';
+    DeprecatedString d = s;
+    const char* ptr = d.latin1();
+    const char* end = d.latin1() + d.length() + 1;
 
-        subpathx = subpathy = curx = cury = contrlx = contrly = 0.0;
-        while(ptr < end) {
-            if (*ptr == ' ')
-                ptr++;
+    double contrlx, contrly, curx, cury, subpathx, subpathy, tox, toy, x1, y1, x2, y2, xc, yc;
+    double px1, py1, px2, py2, px3, py3;
+    bool closed = true;
+    skipOptionalSpaces(ptr); // skip any leading spaces
+    char command = *(ptr++), lastCommand = ' ';
 
-            relative = false;
+    subpathx = subpathy = curx = cury = contrlx = contrly = 0.0;
+    while(ptr < end) {
+        skipOptionalSpaces(ptr); // skip spaces between command and first coord
 
-            switch(command)
+        bool relative = false;
+
+        switch(command)
+        {
+            case 'm':
+                relative = true;
+            case 'M':
             {
-                case 'm':
-                    relative = true;
-                case 'M':
-                {
-                    ptr = parseCoord(ptr, tox);
-                    ptr = parseCoord(ptr, toy);
+                ptr = parseCoord(ptr, tox);
+                ptr = parseCoord(ptr, toy);
 
-                    if (process) {
-                        subpathx = curx = relative ? curx + tox : tox;
-                        subpathy = cury = relative ? cury + toy : toy;
+                if (process) {
+                    subpathx = curx = relative ? curx + tox : tox;
+                    subpathy = cury = relative ? cury + toy : toy;
 
-                        svgMoveTo(curx, cury, closed);
-                    } else
-                        svgMoveTo(tox, toy, closed, !relative);
-                    closed = false;
-                    break;
-                }
-                case 'l':
-                    relative = true;
-                case 'L':
-                {
-                    ptr = parseCoord(ptr, tox);
-                    ptr = parseCoord(ptr, toy);
-
-                    if (process) {
-                        curx = relative ? curx + tox : tox;
-                        cury = relative ? cury + toy : toy;
-
-                        svgLineTo(curx, cury);
-                    }
-                    else
-                        svgLineTo(tox, toy, !relative);
-                    break;
-                }
-                case 'h':
-                {
-                    ptr = parseCoord(ptr, tox);
-                    if (process) {
-                        curx = curx + tox;
-                        svgLineTo(curx, cury);
-                    }
-                    else
-                        svgLineToHorizontal(tox, false);
-                    break;
-                }
-                case 'H':
-                {
-                    ptr = parseCoord(ptr, tox);
-                    if (process) {
-                        curx = tox;
-                        svgLineTo(curx, cury);
-                    }
-                    else
-                        svgLineToHorizontal(tox);
-                    break;
-                }
-                case 'v':
-                {
-                    ptr = parseCoord(ptr, toy);
-                    if (process) {
-                        cury = cury + toy;
-                        svgLineTo(curx, cury);
-                    }
-                    else
-                        svgLineToVertical(toy, false);
-                    break;
-                }
-                case 'V':
-                {
-                    ptr = parseCoord(ptr, toy);
-                    if (process) {
-                        cury = toy;
-                        svgLineTo(curx, cury);
-                    }
-                    else
-                        svgLineToVertical(toy);
-                    break;
-                }
-                case 'z':
-                case 'Z':
-                {
-                    // reset curx, cury for next path
-                    if (process) {
-                        curx = subpathx;
-                        cury = subpathy;
-                    }
-                    closed = true;
-                    svgClosePath();
-                    break;
-                }
-                case 'c':
-                    relative = true;
-                case 'C':
-                {
-                    ptr = parseCoord(ptr, x1);
-                    ptr = parseCoord(ptr, y1);
-                    ptr = parseCoord(ptr, x2);
-                    ptr = parseCoord(ptr, y2);
-                    ptr = parseCoord(ptr, tox);
-                    ptr = parseCoord(ptr, toy);
-
-                    if (process) {
-                        px1 = relative ? curx + x1 : x1;
-                        py1 = relative ? cury + y1 : y1;
-                        px2 = relative ? curx + x2 : x2;
-                        py2 = relative ? cury + y2 : y2;
-                        px3 = relative ? curx + tox : tox;
-                        py3 = relative ? cury + toy : toy;
-
-                        svgCurveToCubic(px1, py1, px2, py2, px3, py3);
-
-                        contrlx = relative ? curx + x2 : x2;
-                        contrly = relative ? cury + y2 : y2;
-                        curx = relative ? curx + tox : tox;
-                        cury = relative ? cury + toy : toy;
-                    }
-                    else
-                        svgCurveToCubic(x1, y1, x2, y2, tox, toy, !relative);
-
-                    break;
-                }
-                case 's':
-                    relative = true;
-                case 'S':
-                {
-                    ptr = parseCoord(ptr, x2);
-                    ptr = parseCoord(ptr, y2);
-                    ptr = parseCoord(ptr, tox);
-                    ptr = parseCoord(ptr, toy);
-                    if (!(lastCommand == 'c' || lastCommand == 'C' ||
-                         lastCommand == 's' || lastCommand == 'S')) {
-                        contrlx = curx;
-                        contrly = cury;
-                    }
-
-                    if (process) {
-                        px1 = 2 * curx - contrlx;
-                        py1 = 2 * cury - contrly;
-                        px2 = relative ? curx + x2 : x2;
-                        py2 = relative ? cury + y2 : y2;
-                        px3 = relative ? curx + tox : tox;
-                        py3 = relative ? cury + toy : toy;
-
-                        svgCurveToCubic(px1, py1, px2, py2, px3, py3);
-
-                        contrlx = relative ? curx + x2 : x2;
-                        contrly = relative ? cury + y2 : y2;
-                        curx = relative ? curx + tox : tox;
-                        cury = relative ? cury + toy : toy;
-                    }
-                    else
-                        svgCurveToCubicSmooth(x2, y2, tox, toy, !relative);
-                    break;
-                }
-                case 'q':
-                    relative = true;
-                case 'Q':
-                {
-                    ptr = parseCoord(ptr, x1);
-                    ptr = parseCoord(ptr, y1);
-                    ptr = parseCoord(ptr, tox);
-                    ptr = parseCoord(ptr, toy);
-
-                    if (process) {
-                        px1 = relative ? (curx + 2 * (x1 + curx)) * (1.0 / 3.0) : (curx + 2 * x1) * (1.0 / 3.0);
-                        py1 = relative ? (cury + 2 * (y1 + cury)) * (1.0 / 3.0) : (cury + 2 * y1) * (1.0 / 3.0);
-                        px2 = relative ? ((curx + tox) + 2 * (x1 + curx)) * (1.0 / 3.0) : (tox + 2 * x1) * (1.0 / 3.0);
-                        py2 = relative ? ((cury + toy) + 2 * (y1 + cury)) * (1.0 / 3.0) : (toy + 2 * y1) * (1.0 / 3.0);
-                        px3 = relative ? curx + tox : tox;
-                        py3 = relative ? cury + toy : toy;
-
-                        svgCurveToCubic(px1, py1, px2, py2, px3, py3);
-
-                        contrlx = relative ? curx + x1 : x1;
-                        contrly = relative ? cury + y1 : y1;
-                        curx = relative ? curx + tox : tox;
-                        cury = relative ? cury + toy : toy;
-                    }
-                    else
-                        svgCurveToQuadratic(x1, y1, tox, toy, !relative);
-                    break;
-                }
-                case 't':
-                    relative = true;
-                case 'T':
-                {
-                    ptr = parseCoord(ptr, tox);
-                    ptr = parseCoord(ptr, toy);
-                    if (!(lastCommand == 'q' || lastCommand == 'Q' ||
-                         lastCommand == 't' || lastCommand == 'T')) {
-                        contrlx = curx;
-                        contrly = cury;
-                    }
-
-                    if (process) {
-                        xc = 2 * curx - contrlx;
-                        yc = 2 * cury - contrly;
-
-                        px1 = relative ? (curx + 2 * xc) * (1.0 / 3.0) : (curx + 2 * xc) * (1.0 / 3.0);
-                        py1 = relative ? (cury + 2 * yc) * (1.0 / 3.0) : (cury + 2 * yc) * (1.0 / 3.0);
-                        px2 = relative ? ((curx + tox) + 2 * xc) * (1.0 / 3.0) : (tox + 2 * xc) * (1.0 / 3.0);
-                        py2 = relative ? ((cury + toy) + 2 * yc) * (1.0 / 3.0) : (toy + 2 * yc) * (1.0 / 3.0);
-                        px3 = relative ? curx + tox : tox;
-                        py3 = relative ? cury + toy : toy;
-
-                        svgCurveToCubic(px1, py1, px2, py2, px3, py3);
-
-                        contrlx = xc;
-                        contrly = yc;
-                        curx = relative ? curx + tox : tox;
-                        cury = relative ? cury + toy : toy;
-                    }
-                    else
-                        svgCurveToQuadraticSmooth(tox, toy, !relative);
-                    break;
-                }
-                case 'a':
-                    relative = true;
-                case 'A':
-                {
-                    bool largeArc, sweep;
-                    double angle, rx, ry;
-                    ptr = parseCoord(ptr, rx);
-                    ptr = parseCoord(ptr, ry);
-                    ptr = parseCoord(ptr, angle);
-                    ptr = parseCoord(ptr, tox);
-                    largeArc = tox == 1;
-                    ptr = parseCoord(ptr, tox);
-                    sweep = tox == 1;
-                    ptr = parseCoord(ptr, tox);
-                    ptr = parseCoord(ptr, toy);
-
-                    // Spec: radii are nonnegative numbers
-                    rx = fabs(rx);
-                    ry = fabs(ry);
-
-                    if (process)
-                        calculateArc(relative, curx, cury, angle, tox, toy, rx, ry, largeArc, sweep);
-                    else
-                        svgArcTo(tox, toy, rx, ry, angle, largeArc, sweep, !relative);
-                    break;
-                }
-                default:
-                    // FIXME: An error should go to the JavaScript console, or the like.
-                    return;
+                    svgMoveTo(curx, cury, closed);
+                } else
+                    svgMoveTo(tox, toy, closed, !relative);
+                closed = false;
+                break;
             }
-            lastCommand = command;
+            case 'l':
+                relative = true;
+            case 'L':
+            {
+                ptr = parseCoord(ptr, tox);
+                ptr = parseCoord(ptr, toy);
 
-            if (*ptr == '+' || *ptr == '-' || (*ptr >= '0' && *ptr <= '9')) {
-                // there are still coords in this command
-                if (command == 'M')
-                    command = 'L';
-                else if (command == 'm')
-                    command = 'l';
-            }
-            else
-                command = *(ptr++);
+                if (process) {
+                    curx = relative ? curx + tox : tox;
+                    cury = relative ? cury + toy : toy;
 
-            if (lastCommand != 'C' && lastCommand != 'c' &&
-                lastCommand != 'S' && lastCommand != 's' &&
-                lastCommand != 'Q' && lastCommand != 'q' &&
-                lastCommand != 'T' && lastCommand != 't') {
-                contrlx = curx;
-                contrly = cury;
+                    svgLineTo(curx, cury);
+                }
+                else
+                    svgLineTo(tox, toy, !relative);
+                break;
             }
+            case 'h':
+            {
+                ptr = parseCoord(ptr, tox);
+                if (process) {
+                    curx = curx + tox;
+                    svgLineTo(curx, cury);
+                }
+                else
+                    svgLineToHorizontal(tox, false);
+                break;
+            }
+            case 'H':
+            {
+                ptr = parseCoord(ptr, tox);
+                if (process) {
+                    curx = tox;
+                    svgLineTo(curx, cury);
+                }
+                else
+                    svgLineToHorizontal(tox);
+                break;
+            }
+            case 'v':
+            {
+                ptr = parseCoord(ptr, toy);
+                if (process) {
+                    cury = cury + toy;
+                    svgLineTo(curx, cury);
+                }
+                else
+                    svgLineToVertical(toy, false);
+                break;
+            }
+            case 'V':
+            {
+                ptr = parseCoord(ptr, toy);
+                if (process) {
+                    cury = toy;
+                    svgLineTo(curx, cury);
+                }
+                else
+                    svgLineToVertical(toy);
+                break;
+            }
+            case 'z':
+            case 'Z':
+            {
+                // reset curx, cury for next path
+                if (process) {
+                    curx = subpathx;
+                    cury = subpathy;
+                }
+                closed = true;
+                svgClosePath();
+                break;
+            }
+            case 'c':
+                relative = true;
+            case 'C':
+            {
+                ptr = parseCoord(ptr, x1);
+                ptr = parseCoord(ptr, y1);
+                ptr = parseCoord(ptr, x2);
+                ptr = parseCoord(ptr, y2);
+                ptr = parseCoord(ptr, tox);
+                ptr = parseCoord(ptr, toy);
+
+                if (process) {
+                    px1 = relative ? curx + x1 : x1;
+                    py1 = relative ? cury + y1 : y1;
+                    px2 = relative ? curx + x2 : x2;
+                    py2 = relative ? cury + y2 : y2;
+                    px3 = relative ? curx + tox : tox;
+                    py3 = relative ? cury + toy : toy;
+
+                    svgCurveToCubic(px1, py1, px2, py2, px3, py3);
+
+                    contrlx = relative ? curx + x2 : x2;
+                    contrly = relative ? cury + y2 : y2;
+                    curx = relative ? curx + tox : tox;
+                    cury = relative ? cury + toy : toy;
+                }
+                else
+                    svgCurveToCubic(x1, y1, x2, y2, tox, toy, !relative);
+
+                break;
+            }
+            case 's':
+                relative = true;
+            case 'S':
+            {
+                ptr = parseCoord(ptr, x2);
+                ptr = parseCoord(ptr, y2);
+                ptr = parseCoord(ptr, tox);
+                ptr = parseCoord(ptr, toy);
+                if (!(lastCommand == 'c' || lastCommand == 'C' ||
+                     lastCommand == 's' || lastCommand == 'S')) {
+                    contrlx = curx;
+                    contrly = cury;
+                }
+
+                if (process) {
+                    px1 = 2 * curx - contrlx;
+                    py1 = 2 * cury - contrly;
+                    px2 = relative ? curx + x2 : x2;
+                    py2 = relative ? cury + y2 : y2;
+                    px3 = relative ? curx + tox : tox;
+                    py3 = relative ? cury + toy : toy;
+
+                    svgCurveToCubic(px1, py1, px2, py2, px3, py3);
+
+                    contrlx = relative ? curx + x2 : x2;
+                    contrly = relative ? cury + y2 : y2;
+                    curx = relative ? curx + tox : tox;
+                    cury = relative ? cury + toy : toy;
+                }
+                else
+                    svgCurveToCubicSmooth(x2, y2, tox, toy, !relative);
+                break;
+            }
+            case 'q':
+                relative = true;
+            case 'Q':
+            {
+                ptr = parseCoord(ptr, x1);
+                ptr = parseCoord(ptr, y1);
+                ptr = parseCoord(ptr, tox);
+                ptr = parseCoord(ptr, toy);
+
+                if (process) {
+                    px1 = relative ? (curx + 2 * (x1 + curx)) * (1.0 / 3.0) : (curx + 2 * x1) * (1.0 / 3.0);
+                    py1 = relative ? (cury + 2 * (y1 + cury)) * (1.0 / 3.0) : (cury + 2 * y1) * (1.0 / 3.0);
+                    px2 = relative ? ((curx + tox) + 2 * (x1 + curx)) * (1.0 / 3.0) : (tox + 2 * x1) * (1.0 / 3.0);
+                    py2 = relative ? ((cury + toy) + 2 * (y1 + cury)) * (1.0 / 3.0) : (toy + 2 * y1) * (1.0 / 3.0);
+                    px3 = relative ? curx + tox : tox;
+                    py3 = relative ? cury + toy : toy;
+
+                    svgCurveToCubic(px1, py1, px2, py2, px3, py3);
+
+                    contrlx = relative ? curx + x1 : x1;
+                    contrly = relative ? cury + y1 : y1;
+                    curx = relative ? curx + tox : tox;
+                    cury = relative ? cury + toy : toy;
+                }
+                else
+                    svgCurveToQuadratic(x1, y1, tox, toy, !relative);
+                break;
+            }
+            case 't':
+                relative = true;
+            case 'T':
+            {
+                ptr = parseCoord(ptr, tox);
+                ptr = parseCoord(ptr, toy);
+                if (!(lastCommand == 'q' || lastCommand == 'Q' ||
+                     lastCommand == 't' || lastCommand == 'T')) {
+                    contrlx = curx;
+                    contrly = cury;
+                }
+
+                if (process) {
+                    xc = 2 * curx - contrlx;
+                    yc = 2 * cury - contrly;
+
+                    px1 = relative ? (curx + 2 * xc) * (1.0 / 3.0) : (curx + 2 * xc) * (1.0 / 3.0);
+                    py1 = relative ? (cury + 2 * yc) * (1.0 / 3.0) : (cury + 2 * yc) * (1.0 / 3.0);
+                    px2 = relative ? ((curx + tox) + 2 * xc) * (1.0 / 3.0) : (tox + 2 * xc) * (1.0 / 3.0);
+                    py2 = relative ? ((cury + toy) + 2 * yc) * (1.0 / 3.0) : (toy + 2 * yc) * (1.0 / 3.0);
+                    px3 = relative ? curx + tox : tox;
+                    py3 = relative ? cury + toy : toy;
+
+                    svgCurveToCubic(px1, py1, px2, py2, px3, py3);
+
+                    contrlx = xc;
+                    contrly = yc;
+                    curx = relative ? curx + tox : tox;
+                    cury = relative ? cury + toy : toy;
+                }
+                else
+                    svgCurveToQuadraticSmooth(tox, toy, !relative);
+                break;
+            }
+            case 'a':
+                relative = true;
+            case 'A':
+            {
+                bool largeArc, sweep;
+                double angle, rx, ry;
+                ptr = parseCoord(ptr, rx);
+                ptr = parseCoord(ptr, ry);
+                ptr = parseCoord(ptr, angle);
+                ptr = parseCoord(ptr, tox);
+                largeArc = tox == 1;
+                ptr = parseCoord(ptr, tox);
+                sweep = tox == 1;
+                ptr = parseCoord(ptr, tox);
+                ptr = parseCoord(ptr, toy);
+
+                // Spec: radii are nonnegative numbers
+                rx = fabs(rx);
+                ry = fabs(ry);
+
+                if (process)
+                    calculateArc(relative, curx, cury, angle, tox, toy, rx, ry, largeArc, sweep);
+                else
+                    svgArcTo(tox, toy, rx, ry, angle, largeArc, sweep, !relative);
+                break;
+            }
+            default:
+                // FIXME: An error should go to the JavaScript console, or the like.
+                return;
+        }
+        lastCommand = command;
+
+        if (*ptr == '+' || *ptr == '-' || (*ptr >= '0' && *ptr <= '9')) {
+            // there are still coords in this command
+            if (command == 'M')
+                command = 'L';
+            else if (command == 'm')
+                command = 'l';
+        }
+        else
+            command = *(ptr++);
+
+        if (lastCommand != 'C' && lastCommand != 'c' &&
+            lastCommand != 'S' && lastCommand != 's' &&
+            lastCommand != 'Q' && lastCommand != 'q' &&
+            lastCommand != 'T' && lastCommand != 't') {
+            contrlx = curx;
+            contrly = cury;
         }
     }
 }
