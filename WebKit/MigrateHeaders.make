@@ -54,7 +54,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMCSSValue.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSValueList.h \
     $(PUBLIC_HEADERS_DIR)/DOMCharacterData.h \
-    $(PRIVATE_HEADERS_DIR)//DOMCharacterDataPrivate.h \
+    $(PRIVATE_HEADERS_DIR)/DOMCharacterDataPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMComment.h \
     $(PUBLIC_HEADERS_DIR)/DOMCore.h \
     $(PUBLIC_HEADERS_DIR)/DOMCounter.h \
