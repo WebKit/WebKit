@@ -113,41 +113,42 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
 + (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size
 {
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    NSFont *font= nil;
-    
-    // Look for an exact match first.
     NSEnumerator *availableFonts = [[fontManager availableFonts] objectEnumerator];
+    NSFont *font = nil;
     NSString *availableFont;
+
     while ((availableFont = [availableFonts nextObject])) {
         if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
-            NSFont *nameMatchedFont = [NSFont fontWithName:availableFont size:size];
-    
-            // Special case Osaka-Mono.  According to <rdar://problem/3999467>, we need to 
-            // treat Osaka-Mono as fixed pitch.
-            if ([desiredFamily caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame && desiredTraits == 0)
-               return nameMatchedFont;
-
-            NSFontTraitMask traits = [fontManager traitsOfFont:nameMatchedFont];
-            
-            if ((traits & desiredTraits) == desiredTraits){
-                font = [fontManager convertFont:nameMatchedFont toHaveTrait:desiredTraits];
-                return font;
-            }
+            font = [NSFont fontWithName:availableFont size:size];
             break;
         }
     }
-    
+
+    // font was not immediately available, try auto activated fonts <rdar://problem/4564955>
+    if (!font)
+        font = [NSFont fontWithName:desiredFamily size:size];
+
+    if (font) {
+        // Special case Osaka-Mono.  According to <rdar://problem/3999467>, we need to 
+        // treat Osaka-Mono as fixed pitch.
+        if ([desiredFamily caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame && desiredTraits == 0)
+           return font;
+
+        NSFontTraitMask traits = [fontManager traitsOfFont:font];
+        if ((traits & desiredTraits) == desiredTraits)
+            return [fontManager convertFont:font toHaveTrait:desiredTraits];
+    }
+
     // Do a simple case insensitive search for a matching font family.
     // NSFontManager requires exact name matches.
     // This addresses the problem of matching arial to Arial, etc., but perhaps not all the issues.
     NSEnumerator *e = [[fontManager availableFontFamilies] objectEnumerator];
     NSString *availableFamily;
     while ((availableFamily = [e nextObject])) {
-        if ([desiredFamily caseInsensitiveCompare:availableFamily] == NSOrderedSame) {
+        if ([desiredFamily caseInsensitiveCompare:availableFamily] == NSOrderedSame)
             break;
-        }
     }
-    
+
     // Found a family, now figure out what weight and traits to use.
     BOOL choseFont = false;
     int chosenWeight = 0;
@@ -158,11 +159,11 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     unsigned i;
     for (i = 0; i < n; i++) {
         NSArray *fontInfo = [fonts objectAtIndex:i];
-        
+
         // Array indices must be hard coded because of lame AppKit API.
         int fontWeight = [[fontInfo objectAtIndex:2] intValue];
         NSFontTraitMask fontTraits = [[fontInfo objectAtIndex:3] unsignedIntValue];
-        
+
         BOOL newWinner;
         if (!choseFont)
             newWinner = acceptableChoice(desiredTraits, DESIRED_WEIGHT, fontTraits, fontWeight);
@@ -173,42 +174,40 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
             choseFont = YES;
             chosenWeight = fontWeight;
             chosenTraits = fontTraits;
-            
-            if (chosenWeight == DESIRED_WEIGHT
-                    && (chosenTraits & IMPORTANT_FONT_TRAITS) == (desiredTraits & IMPORTANT_FONT_TRAITS)) {
+
+            if (chosenWeight == DESIRED_WEIGHT && (chosenTraits & IMPORTANT_FONT_TRAITS) == (desiredTraits & IMPORTANT_FONT_TRAITS))
                 break;
-            }
         }
     }
-    
+
     if (!choseFont)
         return nil;
 
     font = [fontManager fontWithFamily:availableFamily traits:chosenTraits weight:chosenWeight size:size];
-    
+
     if (!font)
         return nil;
 
     NSFontTraitMask actualTraits = 0;
     if (desiredTraits & (NSItalicFontMask | NSBoldFontMask))
         actualTraits = [[NSFontManager sharedFontManager] traitsOfFont:font];
-    
+
     bool syntheticBold = (desiredTraits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
     bool syntheticOblique = (desiredTraits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);
-   
+
     // There are some malformed fonts that will be correctly returned by -fontWithFamily:traits:weight:size: as a match for a particular trait,
     // though -[NSFontManager traitsOfFont:] incorrectly claims the font does not have the specified trait. This could result in applying 
     // synthetic bold on top of an already-bold font, as reported in <http://bugzilla.opendarwin.org/show_bug.cgi?id=6146>. To work around this
     // problem, if we got an apparent exact match, but the requested traits aren't present in the matched font, we'll try to get a font from 
     // the same family without those traits (to apply the synthetic traits to later).
     NSFontTraitMask nonSyntheticTraits = desiredTraits;
-        
+
     if (syntheticBold)
         nonSyntheticTraits &= ~NSBoldFontMask;
-        
+
     if (syntheticOblique)
         nonSyntheticTraits &= ~NSItalicFontMask;
-        
+
     if (nonSyntheticTraits != desiredTraits) {
         NSFont *fontWithoutSyntheticTraits = [fontManager fontWithFamily:availableFamily traits:nonSyntheticTraits weight:chosenWeight size:size];
         if (fontWithoutSyntheticTraits)
