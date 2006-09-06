@@ -1,3 +1,12 @@
+2006-09-05  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Drastically simplified the makefile for migrating headers from
+        WebCore and JavaScriptCore. The old version was always copying the files.
+
+        * MigrateHeaders.make:
+
 2006-09-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey.

@@ -24,174 +24,161 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-VPATH = $(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)
+VPATH = $(WEBCORE_PRIVATE_HEADERS_DIR) $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)
+
+PUBLIC_HEADERS_DIR = $(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)
+PRIVATE_HEADERS_DIR = $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)
 
 .PHONY : all
 all : \
-    DOM.h \
-    DOMAttr.h \
-    DOMCDATASection.h \
-    DOMCSS.h \
-    DOMCSSCharsetRule.h \
-    DOMCSSFontFaceRule.h \
-    DOMCSSImportRule.h \
-    DOMCSSMediaRule.h \
-    DOMCSSMediaRulePrivate.h \
-    DOMCSSPageRule.h \
-    DOMCSSPrimitiveValue.h \
-    DOMCSSPrimitiveValuePrivate.h \
-    DOMCSSRule.h \
-    DOMCSSRuleList.h \
-    DOMCSSStyleDeclaration.h \
-    DOMCSSStyleDeclarationPrivate.h \
-    DOMCSSStyleRule.h \
-    DOMCSSStyleSheet.h \
-    DOMCSSStyleSheetPrivate.h \
-    DOMCSSUnknownRule.h \
-    DOMCSSValue.h \
-    DOMCSSValueList.h \
-    DOMCharacterData.h \
-    DOMCharacterDataPrivate.h \
-    DOMComment.h \
-    DOMCore.h \
-    DOMCounter.h \
-    DOMDOMImplementation.h \
-    DOMDOMImplementationPrivate.h \
-    DOMDocument.h \
-    DOMDocumentFragment.h \
-    DOMDocumentPrivate.h \
-    DOMDocumentType.h \
-    DOMElement.h \
-    DOMElementPrivate.h \
-    DOMEntity.h \
-    DOMEntityReference.h \
-    DOMEvents.h \
-    DOMExtensions.h \
-    DOMHTML.h \
-    DOMHTMLAnchorElement.h \
-    DOMHTMLAnchorElementPrivate.h \
-    DOMHTMLAppletElement.h \
-    DOMHTMLAreaElement.h \
-    DOMHTMLAreaElementPrivate.h \
-    DOMHTMLBRElement.h \
-    DOMHTMLBaseElement.h \
-    DOMHTMLBaseFontElement.h \
-    DOMHTMLBodyElement.h \
-    DOMHTMLBodyElementPrivate.h \
-    DOMHTMLButtonElement.h \
-    DOMHTMLButtonElementPrivate.h \
-    DOMHTMLCollection.h \
-    DOMHTMLDListElement.h \
-    DOMHTMLDirectoryElement.h \
-    DOMHTMLDivElement.h \
-    DOMHTMLDocument.h \
-    DOMHTMLElement.h \
-    DOMHTMLFieldSetElement.h \
-    DOMHTMLFontElement.h \
-    DOMHTMLFormElement.h \
-    DOMHTMLFrameElement.h \
-    DOMHTMLFrameSetElement.h \
-    DOMHTMLHRElement.h \
-    DOMHTMLHeadElement.h \
-    DOMHTMLHeadingElement.h \
-    DOMHTMLHtmlElement.h \
-    DOMHTMLIFrameElement.h \
-    DOMHTMLImageElement.h \
-    DOMHTMLImageElementPrivate.h \
-    DOMHTMLInputElement.h \
-    DOMHTMLInputElementPrivate.h \
-    DOMHTMLIsIndexElement.h \
-    DOMHTMLLIElement.h \
-    DOMHTMLLabelElement.h \
-    DOMHTMLLabelElementPrivate.h \
-    DOMHTMLLegendElement.h \
-    DOMHTMLLegendElementPrivate.h \
-    DOMHTMLLinkElement.h \
-    DOMHTMLLinkElementPrivate.h \
-    DOMHTMLMapElement.h \
-    DOMHTMLMenuElement.h \
-    DOMHTMLMetaElement.h \
-    DOMHTMLModElement.h \
-    DOMHTMLOListElement.h \
-    DOMHTMLObjectElement.h \
-    DOMHTMLOptGroupElement.h \
-    DOMHTMLOptionElement.h \
-    DOMHTMLOptionsCollection.h \
-    DOMHTMLOptionsCollectionPrivate.h \
-    DOMHTMLParagraphElement.h \
-    DOMHTMLParamElement.h \
-    DOMHTMLPreElement.h \
-    DOMHTMLPreElementPrivate.h \
-    DOMHTMLQuoteElement.h \
-    DOMHTMLScriptElement.h \
-    DOMHTMLSelectElement.h \
-    DOMHTMLSelectElementPrivate.h \
-    DOMHTMLStyleElement.h \
-    DOMHTMLStyleElementPrivate.h \
-    DOMHTMLTableCaptionElement.h \
-    DOMHTMLTableCellElement.h \
-    DOMHTMLTableColElement.h \
-    DOMHTMLTableElement.h \
-    DOMHTMLTableRowElement.h \
-    DOMHTMLTableSectionElement.h \
-    DOMHTMLTextAreaElement.h \
-    DOMHTMLTextAreaElementPrivate.h \
-    DOMHTMLTitleElement.h \
-    DOMHTMLUListElement.h \
-    DOMList.h \
-    DOMMediaList.h \
-    DOMNamedNodeMap.h \
-    DOMNamedNodeMapPrivate.h \
-    DOMNode.h \
-    DOMNodeList.h \
-    DOMNotation.h \
-    DOMObject.h \
-    DOMPrivate.h \
-    DOMProcessingInstruction.h \
-    DOMProcessingInstructionPrivate.h \
-    DOMRGBColor.h \
-    DOMRange.h \
-    DOMRect.h \
-    DOMStyleSheet.h \
-    DOMStyleSheetList.h \
-    DOMStylesheets.h \
-    DOMText.h \
-    DOMTraversal.h \
-    DOMViews.h \
-    DOMXPath.h \
-    WebDashboardRegion.h \
-    WebScriptObject.h \
-    npapi.h \
-    npruntime.h \
+    $(PUBLIC_HEADERS_DIR)/DOM.h \
+    $(PUBLIC_HEADERS_DIR)/DOMAttr.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCDATASection.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSS.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSCharsetRule.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSFontFaceRule.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSImportRule.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSMediaRule.h \
+    $(PRIVATE_HEADERS_DIR)/DOMCSSMediaRulePrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSPageRule.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSPrimitiveValue.h \
+    $(PRIVATE_HEADERS_DIR)/DOMCSSPrimitiveValuePrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSRule.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSRuleList.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSStyleDeclaration.h \
+    $(PRIVATE_HEADERS_DIR)/DOMCSSStyleDeclarationPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSStyleRule.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSStyleSheet.h \
+    $(PRIVATE_HEADERS_DIR)/DOMCSSStyleSheetPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSUnknownRule.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSValue.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCSSValueList.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCharacterData.h \
+    $(PRIVATE_HEADERS_DIR)//DOMCharacterDataPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMComment.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCore.h \
+    $(PUBLIC_HEADERS_DIR)/DOMCounter.h \
+    $(PUBLIC_HEADERS_DIR)/DOMImplementation.h \
+    $(PRIVATE_HEADERS_DIR)/DOMImplementationPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMDocument.h \
+    $(PUBLIC_HEADERS_DIR)/DOMDocumentFragment.h \
+    $(PRIVATE_HEADERS_DIR)/DOMDocumentPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMDocumentType.h \
+    $(PUBLIC_HEADERS_DIR)/DOMElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMEntity.h \
+    $(PUBLIC_HEADERS_DIR)/DOMEntityReference.h \
+    $(PUBLIC_HEADERS_DIR)/DOMEvents.h \
+    $(PUBLIC_HEADERS_DIR)/DOMExtensions.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTML.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLAnchorElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLAnchorElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLAppletElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLAreaElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLAreaElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLBRElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLBaseElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLBaseFontElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLBodyElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLBodyElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLButtonElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLButtonElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLCollection.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLDListElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLDirectoryElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLDivElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLDocument.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLFieldSetElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLFontElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLFormElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLFrameElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLFrameSetElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLHRElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLHeadElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLHeadingElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLHtmlElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLIFrameElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLImageElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLImageElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLInputElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLInputElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLIsIndexElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLLIElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLLabelElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLLabelElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLLegendElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLLegendElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLLinkElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLLinkElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLMapElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLMenuElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLMetaElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLModElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLOListElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLObjectElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLOptGroupElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLOptionElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLOptionsCollection.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLOptionsCollectionPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLParagraphElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLParamElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLPreElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLPreElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLQuoteElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLScriptElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLSelectElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLSelectElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLStyleElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLStyleElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLTableCaptionElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLTableCellElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLTableColElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLTableElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLTableRowElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLTableSectionElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLTextAreaElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLTextAreaElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLTitleElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLUListElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMList.h \
+    $(PUBLIC_HEADERS_DIR)/DOMMediaList.h \
+    $(PUBLIC_HEADERS_DIR)/DOMNamedNodeMap.h \
+    $(PRIVATE_HEADERS_DIR)/DOMNamedNodeMapPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMNode.h \
+    $(PUBLIC_HEADERS_DIR)/DOMNodeList.h \
+    $(PUBLIC_HEADERS_DIR)/DOMNotation.h \
+    $(PUBLIC_HEADERS_DIR)/DOMObject.h \
+    $(PRIVATE_HEADERS_DIR)/DOMPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMProcessingInstruction.h \
+    $(PRIVATE_HEADERS_DIR)/DOMProcessingInstructionPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMRGBColor.h \
+    $(PUBLIC_HEADERS_DIR)/DOMRange.h \
+    $(PUBLIC_HEADERS_DIR)/DOMRect.h \
+    $(PUBLIC_HEADERS_DIR)/DOMStyleSheet.h \
+    $(PUBLIC_HEADERS_DIR)/DOMStyleSheetList.h \
+    $(PUBLIC_HEADERS_DIR)/DOMStylesheets.h \
+    $(PUBLIC_HEADERS_DIR)/DOMText.h \
+    $(PUBLIC_HEADERS_DIR)/DOMTraversal.h \
+    $(PUBLIC_HEADERS_DIR)/DOMViews.h \
+    $(PUBLIC_HEADERS_DIR)/DOMXPath.h \
+    $(PRIVATE_HEADERS_DIR)/WebDashboardRegion.h \
+    $(PUBLIC_HEADERS_DIR)/WebScriptObject.h \
+    $(PUBLIC_HEADERS_DIR)/npapi.h \
+    $(PUBLIC_HEADERS_DIR)/npruntime.h \
 #
 
-REPLACE_COMMANDS = -e s/WebCore/WebKit/ -e s/JavaScriptCore/WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
-PRIVATE_HEADER_MIGRATE = sed $(REPLACE_COMMANDS) "$<" > "$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/$@"
-PUBLIC_HEADER_MIGRATE = sed $(REPLACE_COMMANDS) "$<" > "$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/$@"
+REPLACE_RULES = -e s/WebCore/WebKit/ -e s/JavaScriptCore/WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
+HEADER_MIGRATE_CMD = sed $(REPLACE_RULES) $< > $@
 
-WebDashboardRegion.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/WebDashboardRegion.h
-	$(PRIVATE_HEADER_MIGRATE)
+$(PUBLIC_HEADERS_DIR)/DOM% : DOMDOM%
+	$(HEADER_MIGRATE_CMD)
 
-DOMPrivate.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOMPrivate.h
-	$(PRIVATE_HEADER_MIGRATE)
+$(PRIVATE_HEADERS_DIR)/DOM% : DOMDOM%
+	$(HEADER_MIGRATE_CMD)
 
-DOMDOMImplementationPrivate.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOMDOMImplementationPrivate.h
-	sed $(REPLACE_COMMANDS) "$<" > "$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/DOMImplementationPrivate.h"
+$(PUBLIC_HEADERS_DIR)/% : %
+	$(HEADER_MIGRATE_CMD)
 
-DOM%Private.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOM%Private.h
-	$(PRIVATE_HEADER_MIGRATE)
-
-DOM.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOM.h
-	$(PUBLIC_HEADER_MIGRATE)
-
-DOMDOMImplementation.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOMDOMImplementation.h
-	sed $(REPLACE_COMMANDS) "$<" > "$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/DOMImplementation.h"
-
-DOM%.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/DOM%.h
-	$(PUBLIC_HEADER_MIGRATE)
-
-Web%.h : $(WEBCORE_PRIVATE_HEADERS_DIR)/Web%.h
-	$(PUBLIC_HEADER_MIGRATE)
-
-np%.h : $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/np%.h
-	$(PUBLIC_HEADER_MIGRATE)
+$(PRIVATE_HEADERS_DIR)/% : %
+	$(HEADER_MIGRATE_CMD)
