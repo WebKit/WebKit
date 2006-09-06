@@ -26,11 +26,7 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include "Color.h"
 #include "FontDescription.h"
-#include "FontData.h"
-#include "TextDirection.h"
-#include "GlyphBuffer.h"
 
 #if PLATFORM(QT)
 class QFont;
@@ -38,15 +34,17 @@ class QFont;
 
 namespace WebCore {
 
+class FloatPoint;
+class FloatRect;
+class FontData;
 class FontFallbackList;
+class FontPlatformData;
+class GlyphBuffer;
 class GraphicsContext;
 class IntPoint;
-class IntRect;
-class FloatRect;
-class FloatPoint;
+class TextStyle;
 
-class TextRun
-{
+class TextRun {
 public:
     TextRun(const UChar* c, int len)
     :m_characters(c), m_len(len), m_from(0), m_to(len)
@@ -79,45 +77,12 @@ private:
     int m_to;
 };
 
-class TextStyle
-{
-public:
-    TextStyle(int tabWidth = 0, int xpos = 0, int padding = 0, bool rtl = false, bool directionalOverride = false,
-              bool applyRunRounding = true, bool applyWordRounding = true, bool attemptFontSubstitution = true)
-    :m_tabWidth(tabWidth), m_xpos(xpos), m_padding(padding), m_rtl(rtl), m_directionalOverride(directionalOverride),
-     m_applyRunRounding(applyRunRounding), m_applyWordRounding(applyWordRounding), m_attemptFontSubstitution(attemptFontSubstitution)
-    {}
-    
-    int tabWidth() const { return m_tabWidth; }
-    int xPos() const { return m_xpos; }
-    int padding() const { return m_padding; }
-    bool rtl() const { return m_rtl; }
-    bool ltr() const { return !m_rtl; }
-    bool directionalOverride() const { return m_directionalOverride; }
-    bool applyRunRounding() const { return m_applyRunRounding; }
-    bool applyWordRounding() const { return m_applyWordRounding; }
-    bool attemptFontSubstitution() const { return m_attemptFontSubstitution; }
-
-    void disableRoundingHacks() { m_applyRunRounding = m_applyWordRounding = false; }
-    void setRTL(bool b) { m_rtl = b; }
-    
-private:
-    int m_tabWidth;
-    int m_xpos;
-    int m_padding;
-    bool m_rtl;
-    bool m_directionalOverride;
-    bool m_applyRunRounding;
-    bool m_applyWordRounding;
-    bool m_attemptFontSubstitution;
-};
-
 class Font {
 public:
     Font();
     Font(const FontDescription&, short letterSpacing, short wordSpacing);
 #if PLATFORM(MAC)
-    Font(const FontPlatformData& fontPlatformData); // This constructor is only used by Mac-specific code that already has a native font.
+    Font(const FontPlatformData&); // This constructor is only used by Mac-specific code that already has a native font.
 #endif
     ~Font();
     
@@ -145,8 +110,10 @@ public:
 
     void drawText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
 
-    int width(const TextRun&, const TextStyle& = TextStyle()) const;
-    float floatWidth(const TextRun&, const TextStyle& = TextStyle()) const;
+    int width(const TextRun&, const TextStyle&) const;
+    int width(const TextRun&) const;
+    float floatWidth(const TextRun&, const TextStyle&) const;
+    float floatWidth(const TextRun&) const;
     
     int offsetForPosition(const TextRun&, const TextStyle&, int position, bool includePartialGlyphs) const;
     FloatRect selectionRectForText(const TextRun&, const TextStyle&, const IntPoint&, int h) const;
@@ -167,10 +134,6 @@ public:
     bool italic() const { return m_fontDescription.italic(); }
     unsigned weight() const { return m_fontDescription.weight(); }
     bool bold() const { return m_fontDescription.bold(); }
-
-#if PLATFORM(MAC)
-    NSFont* getNSFont() const { return primaryFont()->getNSFont(); }
-#endif
 
 #if PLATFORM(QT)
     operator QFont() const;

@@ -26,18 +26,16 @@
 #import "config.h"
 #import "Font.h"
 
-#import "Logging.h"
 #import "BlockExceptions.h"
-#import "FoundationExtras.h"
-
-#import "FontFallbackList.h"
-#import "GraphicsContext.h"
-#import "Settings.h"
-
 #import "FontData.h"
-
+#import "FontFallbackList.h"
+#import "FoundationExtras.h"
+#import "GlyphBuffer.h"
+#import "GraphicsContext.h"
 #import "IntRect.h"
-
+#import "Logging.h"
+#import "Settings.h"
+#import "TextStyle.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreTextRenderer.h"
 

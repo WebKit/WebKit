@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,51 +27,33 @@
 #define FONT_FAMILY_H
 
 #include "AtomicString.h"
-
-#if __APPLE__
-#ifdef __OBJC__
-@class NSString;
-#else
-class NSString;
-#endif
-#endif
+#include "Shared.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class FontFamily {
+class FontFamily : public Shared<FontFamily> {
 public:
-    FontFamily();
-    ~FontFamily();
+    FontFamily() { }
     
-    FontFamily(const FontFamily &);    
-    FontFamily &operator=(const FontFamily &);
-        
-    void setFamily(const AtomicString &);
+    FontFamily(const FontFamily&);    
+    FontFamily& operator=(const FontFamily&);
+
+    void setFamily(const AtomicString& family) { m_family = family; }
     const AtomicString& family() const { return m_family; }
     bool familyIsEmpty() const { return m_family.isEmpty(); }
 
-    FontFamily *next() { return m_next; }
-    const FontFamily *next() const { return m_next; }
+    FontFamily* next() { return m_next.get(); }
+    const FontFamily* next() const { return m_next.get(); }
 
-    void appendFamily(FontFamily *family) 
-    {
-        if (family)
-            family->ref();
-        if (m_next) 
-            m_next->deref(); 
-        m_next = family; 
-    }
-    
-    bool operator==(const FontFamily &) const;
-    bool operator!=(const FontFamily &x) const { return !(*this == x); }
-    
-    void ref() { m_refCnt++; }
-    void deref() { m_refCnt--; if (m_refCnt == 0) delete this; }
+    void appendFamily(PassRefPtr<FontFamily> family) { m_next = family; }
+
+    bool operator==(const FontFamily&) const;
+    bool operator!=(const FontFamily& x) const { return !(*this == x); }
     
 private:
     AtomicString m_family;
-    FontFamily* m_next;
-    int m_refCnt;
+    RefPtr<FontFamily> m_next;
 };
 
 }

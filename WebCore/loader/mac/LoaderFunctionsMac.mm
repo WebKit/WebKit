@@ -141,7 +141,7 @@ Vector<char> ServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Resou
         headerDict = [[NSDictionary _webcore_dictionaryWithHeaderString:headerString] retain];
 
     NSArray *postData = nil;
-    if (job->postData().count() > 0)
+    if (!job->postData().elements().isEmpty())
         postData = arrayFromFormData(job->postData());
 
     NSURL *finalNSURL = nil;

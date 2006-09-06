@@ -28,9 +28,10 @@
 
 #import "Font.h"
 #import "FontData.h"
-#import "WebFontCache.h"
-#import "IntPoint.h"
 #import "GraphicsContext.h"
+#import "IntPoint.h"
+#import "TextStyle.h"
+#import "WebFontCache.h"
 
 using namespace WebCore;
 

@@ -50,18 +50,18 @@ void FormData::appendFile(const String& filename)
     m_elements.append(filename);
 }
 
-void FormData::flatten(Vector<char>& a) const
+void FormData::flatten(Vector<char>& data) const
 {
     // Concatenate all the byte arrays, but omit any files.
-    a.clear();
-    size_t size = a.size();
-    for (DeprecatedValueListConstIterator<FormDataElement> it = m_elements.begin(); it != m_elements.end(); ++it) {
-        const FormDataElement& e = *it;
+    data.clear();
+    size_t n = m_elements.size();
+    for (size_t i = 0; i < n; ++i) {
+        const FormDataElement& e = m_elements[i];
         if (e.m_type == FormDataElement::data) {
+            size_t oldSize = data.size();
             size_t delta = e.m_data.size();
-            a.resize(size + delta);
-            memcpy(a.data() + size, e.m_data.data(), delta);
-            size += delta;
+            data.resize(oldSize + delta);
+            memcpy(data.data() + oldSize, e.m_data.data(), delta);
         }
     }
 }

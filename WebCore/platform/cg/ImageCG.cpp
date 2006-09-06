@@ -28,11 +28,12 @@
 
 #if PLATFORM(CG)
 
-#include <ApplicationServices/ApplicationServices.h>
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "PDFDocumentImage.h"
 #include "PlatformString.h"
+#include <ApplicationServices/ApplicationServices.h>
+
 #if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"
 #endif

@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 
 #include "Font.h"
+#include "TextStyle.h"
 
 using namespace std;
 
@@ -177,6 +178,11 @@ void GraphicsContext::drawImage(Image* image, const IntPoint& dest, const IntRec
 void GraphicsContext::drawImage(Image* image, const IntRect& dest, const IntRect& srcRect, CompositeOperator op)
 {
     drawImage(image, FloatRect(dest), srcRect, op);
+}
+
+void GraphicsContext::drawText(const TextRun& run, const IntPoint& point)
+{
+    drawText(run, point, TextStyle());
 }
 
 void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, const TextStyle& style)

@@ -30,55 +30,53 @@
 #define GLYPH_MAP_H
 
 #include <unicode/umachine.h>
-#include "GlyphBuffer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
-// Covers Latin-1.
-const unsigned cGlyphPageSize = 256;
-
 class FontData;
 
-struct GlyphData
-{    
+typedef unsigned short Glyph;
+
+struct GlyphData {    
     Glyph glyph;
     const FontData* fontData;
 };
 
-class GlyphMap : Noncopyable
-{
+class GlyphMap : Noncopyable {
 public:
     GlyphMap() : m_filledPrimaryPage(false), m_pages(0) {}
     ~GlyphMap() { if (m_pages) { deleteAllValues(*m_pages); delete m_pages; } }
 
     GlyphData glyphDataForCharacter(UChar32, const FontData*);
     void setGlyphDataForCharacter(UChar32, Glyph, const FontData*);
-    
+
 private:
     struct GlyphPage {
-        GlyphData m_glyphs[cGlyphPageSize];
+        static const size_t size = 256; // Covers Latin-1 in a single page.
+        GlyphData m_glyphs[size];
 
-        const GlyphData& glyphDataForCharacter(UChar32 c) const { return m_glyphs[c % cGlyphPageSize]; }
+        const GlyphData& glyphDataForCharacter(UChar32 c) const { return m_glyphs[c % size]; }
         void setGlyphDataForCharacter(UChar32 c, Glyph g, const FontData* f)
         {
-            setGlyphDataForIndex(c % cGlyphPageSize, g, f);
+            setGlyphDataForIndex(c % size, g, f);
         }
-        
-        void setGlyphDataForIndex(unsigned index, Glyph g, const FontData* f) {
+        void setGlyphDataForIndex(unsigned index, Glyph g, const FontData* f)
+        {
             m_glyphs[index].glyph = g;
             m_glyphs[index].fontData = f;
         }
     };
-    
+
     GlyphPage* locatePage(unsigned page, const FontData* fontData);
     bool fillPage(GlyphPage*, UChar* characterBuffer, unsigned bufferLength, const FontData* fontData);
-    
+
     bool m_filledPrimaryPage;
-    GlyphPage m_primaryPage; // We optimize for the page that contains Latin1.
+    GlyphPage m_primaryPage; // We optimize for the page that contains Latin-1.
     HashMap<int, GlyphPage*>* m_pages;
 };
 
 }
+
 #endif

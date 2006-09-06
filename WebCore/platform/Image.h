@@ -58,7 +58,6 @@ class FloatPoint;
 class FloatRect;
 class GraphicsContext;
 class IntRect;
-class IntSize;
 class PDFDocumentImage;
 class String;
 

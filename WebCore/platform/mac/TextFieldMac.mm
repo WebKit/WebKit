@@ -26,16 +26,17 @@
 #import "config.h"
 #import "TextField.h"
 
-#import "Color.h"
-#import "IntSize.h"
 #import "BlockExceptions.h"
+#import "Color.h"
 #import "Font.h"
-#import "Logging.h"
-#import "WebCoreTextField.h"
-#import "WebCoreFrameBridge.h"
 #import "FontData.h"
+#import "IntSize.h"
+#import "Logging.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
+#import "TextStyle.h"
+#import "WebCoreFrameBridge.h"
+#import "WebCoreTextField.h"
 #import "WebCoreViewFactory.h"
 #import "WidgetClient.h"
 
@@ -104,7 +105,7 @@ void TextField::setFont(const Font &font)
     else {
         NSTextField *textField = (NSTextField *)getView();
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [textField setFont:font.getNSFont()];
+        [textField setFont:font.primaryFont()->getNSFont()];
         END_BLOCK_OBJC_EXCEPTIONS;
     }
 }

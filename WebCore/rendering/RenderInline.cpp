@@ -253,19 +253,19 @@ void RenderInline::paint(PaintInfo& i, int _tx, int _ty)
     paintLines(i, _tx, _ty);
 }
 
-void RenderInline::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty)
+void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-        rects.append(IntRect(_tx + curr->xPos(), _ty + curr->yPos(), curr->width(), curr->height()));
+        rects.append(IntRect(tx + curr->xPos(), ty + curr->yPos(), curr->width(), curr->height()));
     
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
         if (!curr->isText())
-            curr->absoluteRects(rects, _tx + curr->xPos(), _ty + curr->yPos());
+            curr->absoluteRects(rects, tx + curr->xPos(), ty + curr->yPos());
     
     if (continuation())
         continuation()->absoluteRects(rects, 
-                                      _tx - containingBlock()->xPos() + continuation()->xPos(),
-                                      _ty - containingBlock()->yPos() + continuation()->yPos());
+                                      tx - containingBlock()->xPos() + continuation()->xPos(),
+                                      ty - containingBlock()->yPos() + continuation()->yPos());
 }
 
 void RenderInline::calcMinMaxWidth()

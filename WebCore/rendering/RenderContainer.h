@@ -63,11 +63,11 @@ public:
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
     
-    virtual DeprecatedValueList<IntRect> lineBoxRects();
+    virtual void lineBoxRects(Vector<IntRect>&);
 
 protected:
-    void setFirstChild(RenderObject *first) { m_first = first; }
-    void setLastChild(RenderObject *last) { m_last = last; }
+    void setFirstChild(RenderObject* first) { m_first = first; }
+    void setLastChild(RenderObject* last) { m_last = last; }
 
 protected:
     RenderObject *m_first;

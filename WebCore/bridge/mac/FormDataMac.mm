@@ -33,12 +33,13 @@ namespace WebCore {
 
 NSArray *arrayFromFormData(const FormData &d)
 {
-    NSMutableArray *a = [NSMutableArray arrayWithCapacity:d.count()];
-    for (DeprecatedValueListConstIterator<FormDataElement> it = d.begin(); it != d.end(); ++it) {
-        const FormDataElement &e = *it;
-        if (e.m_type == FormDataElement::data) {
+    size_t n = d.elements().size();
+    NSMutableArray *a = [NSMutableArray arrayWithCapacity:n];
+    for (size_t i = 0; i < n; ++i) {
+        const FormDataElement& e = d.elements()[i];
+        if (e.m_type == FormDataElement::data)
             [a addObject:[NSData dataWithBytes:e.m_data.data() length:e.m_data.size()]];
-        } else {
+        else {
             ASSERT(e.m_type == FormDataElement::encodedFile);
             [a addObject:e.m_filename];
         }

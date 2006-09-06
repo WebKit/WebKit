@@ -1,6 +1,5 @@
-/* This file is part of the KDE project
- *
- * Copyright (C) 2004 Apple Computer, Inc.
+/*
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,12 +48,10 @@ public:
     void flatten(Vector<char>&) const; // omits files
     String flattenToString() const; // omits files
 
-    size_t count() const { return m_elements.count(); }
-    DeprecatedValueListConstIterator<FormDataElement> begin() const { return m_elements.begin(); }
-    DeprecatedValueListConstIterator<FormDataElement> end() const { return m_elements.end(); }
+    const Vector<FormDataElement>& elements() const { return m_elements; }
 
 private:
-    DeprecatedValueList<FormDataElement> m_elements;
+     Vector<FormDataElement> m_elements;
 };
 
 } // namespace WebCore

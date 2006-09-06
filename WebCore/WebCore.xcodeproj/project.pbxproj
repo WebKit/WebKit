@@ -808,6 +808,7 @@
 		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; };
 		93A1EAA00A5634C9006960A0 /* ImageDocumentMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */; };
 		93A1EAA80A563508006960A0 /* ImageDocumentMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A1EAA70A563508006960A0 /* ImageDocumentMac.h */; };
+		93AC8DE10A955FAC00239794 /* TextStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AC8DE00A955FAC00239794 /* TextStyle.h */; };
 		93AE23180AAB51E500CD8A35 /* TextEncodingRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AE23170AAB51E500CD8A35 /* TextEncodingRegistry.h */; };
 		93AE23210AAB521B00CD8A35 /* TextEncodingRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AE23200AAB521B00CD8A35 /* TextEncodingRegistry.cpp */; };
 		93B0FD8A0A759BED0080AD44 /* StringImplMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B0FD880A759BED0080AD44 /* StringImplMac.mm */; };
@@ -2943,6 +2944,7 @@
 		93A1EAA70A563508006960A0 /* ImageDocumentMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDocumentMac.h; sourceTree = "<group>"; };
 		93ABCE5D06E1A42E0085925B /* FormData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormData.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93ABCE5E06E1A42E0085925B /* FormData.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FormData.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		93AC8DE00A955FAC00239794 /* TextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextStyle.h; path = platform/TextStyle.h; sourceTree = "<group>"; };
 		93AE23170AAB51E500CD8A35 /* TextEncodingRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingRegistry.h; sourceTree = "<group>"; };
 		93AE23200AAB521B00CD8A35 /* TextEncodingRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingRegistry.cpp; sourceTree = "<group>"; };
 		93B0FD880A759BED0080AD44 /* StringImplMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = StringImplMac.mm; sourceTree = "<group>"; };
@@ -4284,6 +4286,7 @@
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
+				93AC8DE00A955FAC00239794 /* TextStyle.h */,
 			);
 			name = WebKit;
 			sourceTree = "<group>";
@@ -7553,6 +7556,7 @@
 				1ACE53F70A8D19470022947D /* JSXMLSerializer.h in Headers */,
 				1A750D5D0A90DEE1000FF215 /* JSTreeWalker.h in Headers */,
 				1A750D8E0A90E521000FF215 /* JSNodeIterator.h in Headers */,
+				93AC8DE10A955FAC00239794 /* TextStyle.h in Headers */,
 				85089CD70A98C42800A275AA /* DOMCDATASection.h in Headers */,
 				85089CD90A98C42800A275AA /* DOMComment.h in Headers */,
 				85089CDB0A98C42800A275AA /* DOMDocumentFragment.h in Headers */,
@@ -7723,7 +7727,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,

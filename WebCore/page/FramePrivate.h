@@ -224,7 +224,7 @@ namespace WebCore {
         KURL m_submittedFormURL;
         
         bool m_markedTextUsesUnderlines;
-        DeprecatedValueList<MarkedTextUnderline> m_markedTextUnderlines;
+        Vector<MarkedTextUnderline> m_markedTextUnderlines;
         bool m_highlightTextMatches;
         bool m_windowHasFocus;
         

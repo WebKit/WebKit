@@ -40,6 +40,7 @@
 #import "Event.h"
 #import "EventNames.h"
 #import "FloatRect.h"
+#import "FontData.h"
 #import "FoundationExtras.h"
 #import "FramePrivate.h"
 #import "GraphicsContext.h"
@@ -2300,8 +2301,8 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
     bool hasParagraphBreak = true;
     const Element *linkStartNode = 0;
     unsigned linkStartLocation = 0;
-    DeprecatedPtrList<Element> listItems;
-    DeprecatedValueList<ListItemInfo> listItemLocations;
+    Vector<Element*> listItems;
+    Vector<ListItemInfo> listItemLocations;
     float maxMarkerWidth = 0;
     
     Node *n = _startNode;
@@ -2320,7 +2321,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
         RenderObject *renderer = n->renderer();
         if (renderer) {
             RenderStyle *style = renderer->style();
-            NSFont *font = style->font().getNSFont();
+            NSFont *font = style->font().primaryFont()->getNSFont();
             bool needSpace = pendingStyledSpace != nil;
             if (n->isTextNode()) {
                 if (hasNewLine) {
@@ -2575,9 +2576,9 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                 hasNewLine = true;
             } else if (n->hasTagName(liTag)) {
                 
-                int i, count = listItems.count();
+                int i, count = listItems.size();
                 for (i = 0; i < count; i++){
-                    if (listItems.at(i) == n){
+                    if (listItems[i] == n){
                         listItemLocations[i].end = [result length];
                         break;
                     }
@@ -2626,7 +2627,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
     // Apply paragraph styles from outside in.  This ensures that nested lists correctly
     // override their parent's paragraph style.
     {
-        unsigned i, count = listItems.count();
+        unsigned i, count = listItems.size();
         Element *e;
 
 #ifdef POSITION_LIST
@@ -2647,7 +2648,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
 #endif
         
         for (i = 0; i < count; i++){
-            e = listItems.at(i);
+            e = listItems[i];
             info = listItemLocations[i];
             
             if (info.end < info.start)
@@ -2657,7 +2658,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
             RenderStyle *style = r->style();
 
             int rx;
-            NSFont *font = style->font().getNSFont();
+            NSFont *font = style->font().primaryFont()->getNSFont();
             float pointSize = [font pointSize];
 
 #ifdef POSITION_LIST
@@ -2781,7 +2782,7 @@ NSFont *FrameMac::fontForSelection(bool *hasMultipleFonts) const
 
         NSFont *result = 0;
         if (style)
-            result = style->font().getNSFont();
+            result = style->font().primaryFont()->getNSFont();
         
         if (nodeToRemove) {
             ExceptionCode ec;
@@ -2805,7 +2806,7 @@ NSFont *FrameMac::fontForSelection(bool *hasMultipleFonts) const
             if (!renderer)
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            NSFont *f = renderer->style()->font().getNSFont();
+            NSFont *f = renderer->style()->font().primaryFont()->getNSFont();
             if (!font) {
                 font = f;
                 if (!hasMultipleFonts)
@@ -2832,8 +2833,8 @@ NSDictionary *FrameMac::fontAttributesForSelectionStart() const
     if (style->backgroundColor().isValid() && style->backgroundColor().alpha() != 0)
         [result setObject:nsColor(style->backgroundColor()) forKey:NSBackgroundColorAttributeName];
 
-    if (style->font().getNSFont())
-        [result setObject:style->font().getNSFont() forKey:NSFontAttributeName];
+    if (style->font().primaryFont()->getNSFont())
+        [result setObject:style->font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
 
     if (style->color().isValid() && style->color() != Color::black)
         [result setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];
@@ -3361,10 +3362,8 @@ bool FrameMac::isSecureKeyboardEntry()
     return IsSecureEventInputEnabled();
 }
 
-static DeprecatedValueList<MarkedTextUnderline> convertAttributesToUnderlines(const Range *markedTextRange, NSArray *attributes, NSArray *ranges)
+static void convertAttributesToUnderlines(Vector<MarkedTextUnderline>& result, const Range *markedTextRange, NSArray *attributes, NSArray *ranges)
 {
-    DeprecatedValueList<MarkedTextUnderline> result;
-
     int exception = 0;
     int baseOffset = markedTextRange->startOffset(exception);
 
@@ -3391,8 +3390,6 @@ static DeprecatedValueList<MarkedTextUnderline> convertAttributesToUnderlines(co
                                           qColor,
                                           [style intValue] > 1));
     }
-
-    return result;
 }
 
 void FrameMac::setMarkedTextRange(const Range *range, NSArray *attributes, NSArray *ranges)
@@ -3402,12 +3399,12 @@ void FrameMac::setMarkedTextRange(const Range *range, NSArray *attributes, NSArr
     ASSERT(!range || range->startContainer(exception) == range->endContainer(exception));
     ASSERT(!range || range->collapsed(exception) || range->startContainer(exception)->isTextNode());
 
-    if (attributes == nil) {
+    d->m_markedTextUnderlines.clear();
+    if (attributes == nil)
         d->m_markedTextUsesUnderlines = false;
-        d->m_markedTextUnderlines.clear();
-    } else {
+    else {
         d->m_markedTextUsesUnderlines = true;
-        d->m_markedTextUnderlines = convertAttributesToUnderlines(range, attributes, ranges);
+        convertAttributesToUnderlines(d->m_markedTextUnderlines, range, attributes, ranges);
     }
 
     if (m_markedTextRange.get() && document() && m_markedTextRange->startContainer(exception)->renderer())
@@ -3438,13 +3435,13 @@ NSMutableDictionary *FrameMac::dashboardRegionsDictionary()
     if (!doc)
         return nil;
 
-    const DeprecatedValueList<DashboardRegionValue> regions = doc->dashboardRegions();
-    unsigned i, count = regions.count();
+    const Vector<DashboardRegionValue>& regions = doc->dashboardRegions();
+    size_t n = regions.size();
 
     // Convert the DeprecatedValueList<DashboardRegionValue> into a NSDictionary of WebDashboardRegions
-    NSMutableDictionary *webRegions = [[[NSMutableDictionary alloc] initWithCapacity:count] autorelease];
-    for (i = 0; i < count; i++) {
-        DashboardRegionValue region = regions[i];
+    NSMutableDictionary *webRegions = [NSMutableDictionary dictionaryWithCapacity:n];
+    for (size_t i = 0; i < n; i++) {
+        const DashboardRegionValue& region = regions[i];
 
         if (region.type == StyleDashboardRegion::None)
             continue;
@@ -3457,12 +3454,14 @@ NSMutableDictionary *FrameMac::dashboardRegionsDictionary()
             type = WebDashboardRegionTypeRectangle;
         NSMutableArray *regionValues = [webRegions objectForKey:label];
         if (!regionValues) {
-            regionValues = [NSMutableArray array];
+            regionValues = [[NSMutableArray alloc] initWithCapacity:1];
             [webRegions setObject:regionValues forKey:label];
+            [regionValues release];
         }
         
-        WebDashboardRegion *webRegion = [[[WebDashboardRegion alloc] initWithRect:region.bounds clip:region.clip type:type] autorelease];
+        WebDashboardRegion *webRegion = [[WebDashboardRegion alloc] initWithRect:region.bounds clip:region.clip type:type];
         [regionValues addObject:webRegion];
+        [webRegion release];
     }
     
     return webRegions;

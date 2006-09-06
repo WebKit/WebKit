@@ -22,6 +22,7 @@
 #import "config.h"
 #import "RenderPopupMenuMac.h"
 
+#import "FontData.h"
 #import "FrameMac.h"
 #import "FrameView.h"
 #import "HTMLNames.h"
@@ -81,7 +82,7 @@ void RenderPopupMenuMac::showPopup(const IntRect& r, FrameView* v, int index)
     [popup attachPopUpWithFrame:r inView:view];
     [popup selectItemAtIndex:index];
     
-    NSFont* font = style()->font().getNSFont();
+    NSFont* font = style()->font().primaryFont()->getNSFont();
 
     NSRect titleFrame = [popup titleRectForBounds:r];
     if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
@@ -135,7 +136,7 @@ void RenderPopupMenuMac::addGroupLabel(HTMLOptGroupElement* element)
 
     NSMutableDictionary* attributes = [[NSMutableDictionary alloc] init];
     if (s->font() != Font())
-        [attributes setObject:s->font().getNSFont() forKey:NSFontAttributeName];
+        [attributes setObject:s->font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
     // FIXME: Add support for styling the foreground and background colors.
     NSAttributedString* string = [[NSAttributedString alloc] initWithString:text attributes:attributes];
     [attributes release];
@@ -162,7 +163,7 @@ void RenderPopupMenuMac::addOption(HTMLOptionElement* element)
         
     NSMutableDictionary* attributes = [[NSMutableDictionary alloc] init];
     if (s->font() != Font())
-        [attributes setObject:s->font().getNSFont() forKey:NSFontAttributeName];
+        [attributes setObject:s->font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
     // FIXME: Add support for styling the foreground and background colors.
     // FIXME: Find a way to customize text color when an item is highlighted.
     NSAttributedString* string = [[NSAttributedString alloc] initWithString:text attributes:attributes];

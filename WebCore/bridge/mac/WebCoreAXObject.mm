@@ -29,6 +29,7 @@
 #import "DOMInternal.h"
 #import "Document.h"
 #import "EventNames.h"
+#import "FontData.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
 #import "HTMLAreaElement.h"
@@ -645,19 +646,17 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (obj) {
         if (obj->isInlineContinuation())
             obj = obj->element()->renderer();
-        DeprecatedValueList<IntRect> rects;
-        int x = 0, y = 0;
+        Vector<IntRect> rects;
+        int x, y;
         obj->absolutePosition(x, y);
         obj->absoluteRects(rects, x, y);
-        for (DeprecatedValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it) {
-            IntRect r = *it;
+        const size_t n = rects.size();
+        for (size_t i = 0; i < n; ++i) {
+            IntRect r = rects[i];
             if (!r.isEmpty()) {
                 if (obj->style()->hasAppearance())
                     theme()->adjustRepaintRect(obj, r);
-                if (rect.isEmpty())
-                    rect = r;
-                else
-                    rect.unite(r);
+                rect.unite(r);
             }
         }
     }
@@ -1347,7 +1346,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     RenderStyle* style = renderer->style();
 
     // set basic font info
-    AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style->font().getNSFont(), range);
+    AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style->font().primaryFont()->getNSFont(), range);
 
     // set basic colors
     AXAttributeStringSetColor(attrString, NSAccessibilityForegroundColorTextAttribute, nsColor(style->color()), range);

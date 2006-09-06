@@ -28,41 +28,18 @@
 
 namespace WebCore {
 
-FontFamily::FontFamily()
-    : m_next(0)
-    , m_refCnt(0)
-{
-}
-
 FontFamily::FontFamily(const FontFamily& other)
-    : m_family(other.m_family)
+    : Shared<FontFamily>()
+    , m_family(other.m_family)
     , m_next(other.m_next)
-    , m_refCnt(0)
 {
-    if (m_next)
-        m_next->ref();
 }
 
-FontFamily::~FontFamily()
-{ 
-    if (m_next)
-        m_next->deref();
-}
-   
 FontFamily& FontFamily::operator=(const FontFamily& other)
 {
-    if (other.m_next)
-        other.m_next->ref();
-    if (m_next)
-        m_next->deref();
     m_family = other.m_family;
     m_next = other.m_next;
     return *this;
-}
-
-void FontFamily::setFamily(const AtomicString &family)
-{
-    m_family = family;
 }
 
 bool FontFamily::operator==(const FontFamily &compareFontFamily) const

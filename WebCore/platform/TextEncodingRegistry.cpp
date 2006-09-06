@@ -29,6 +29,7 @@
 #include "PlatformString.h"
 #include "TextCodecLatin1.h"
 #include "TextCodecUTF16.h"
+#include <ctype.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 
@@ -37,9 +38,6 @@
 #endif
 #if PLATFORM(MAC)
 #include "StreamingTextDecoderMac.h"
-#endif
-#if PLATFORM(WIN)
-#include <ctype.h>
 #endif
 
 namespace WebCore {

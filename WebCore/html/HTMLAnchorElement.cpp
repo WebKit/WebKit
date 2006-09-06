@@ -81,12 +81,13 @@ bool HTMLAnchorElement::isFocusable() const
         if (r->width() > 0 && r->height() > 0)
             return true;
 
-    DeprecatedValueList<IntRect> rects;
-    int x = 0, y = 0;
+    Vector<IntRect> rects;
+    int x, y;
     renderer()->absolutePosition(x, y);
     renderer()->absoluteRects(rects, x, y);
-    for (DeprecatedValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it)
-        if (!(*it).isEmpty())
+    size_t n = rects.size();
+    for (size_t i = 0; i < n; ++i)
+        if (!rects[i].isEmpty())
             return true;
 
     return false;

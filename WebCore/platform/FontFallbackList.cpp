@@ -27,19 +27,15 @@
  */
 
 #include "config.h"
-#include "Font.h"
 #include "FontFallbackList.h"
+
+#include "Font.h"
 #include "FontCache.h"
 
-namespace WebCore
-{
+namespace WebCore {
 
 FontFallbackList::FontFallbackList()
-:m_familyIndex(0), m_pitch(UnknownPitch)
-{
-}
-
-FontFallbackList::~FontFallbackList()
+    : m_familyIndex(0), m_pitch(UnknownPitch)
 {
 }
 

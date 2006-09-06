@@ -198,10 +198,10 @@ void InsertParagraphSeparatorCommand::doApply()
     startNode = pos.node();
 
     // Build up list of ancestors in between the start node and the start block.
-    DeprecatedPtrList<Node> ancestors;
+    Vector<Node*> ancestors;
     if (startNode != startBlock) {
-        for (Node *n = startNode->parentNode(); n && n != startBlock; n = n->parentNode())
-            ancestors.prepend(n);
+        for (Node* n = startNode->parentNode(); n && n != startBlock; n = n->parentNode())
+            ancestors.append(n);
     }
 
     // Make sure we do not cause a rendered space to become unrendered.
@@ -235,8 +235,8 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // Make clones of ancestors in between the start node and the start block.
     RefPtr<Node> parent = blockToInsert;
-    for (DeprecatedPtrListIterator<Node> it(ancestors); it.current(); ++it) {
-        RefPtr<Node> child = it.current()->cloneNode(false); // shallow clone
+    for (size_t i = ancestors.size(); i != 0; --i) {
+        RefPtr<Node> child = ancestors[i - 1]->cloneNode(false); // shallow clone
         appendNode(child.get(), parent.get());
         parent = child.release();
     }
@@ -263,7 +263,7 @@ void InsertParagraphSeparatorCommand::doApply()
     }            
 
     // Move everything after the start node.
-    Node *leftParent = ancestors.last();
+    Node* leftParent = ancestors[0];
     while (leftParent && leftParent != startBlock) {
         parent = parent->parentNode();
         Node *n = leftParent->nextSibling();

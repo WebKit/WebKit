@@ -28,19 +28,18 @@
 
 #include "config.h"
 #include "GlyphMap.h"
-#include "FontData.h"
 
+#include "FontData.h"
 #include <unicode/uchar.h>
 
-#define NO_BREAK_SPACE 0x00A0
-#define ZERO_WIDTH_SPACE 0x200B
+namespace WebCore {
 
-namespace WebCore
-{
+const UChar nonBreakingSpace = 0x00A0;
+const UChar zeroWidthSpace = 0x200B;
 
 GlyphData GlyphMap::glyphDataForCharacter(UChar32 c, const FontData* fontData)
 {
-    unsigned pageNumber = (c / cGlyphPageSize);
+    unsigned pageNumber = (c / GlyphPage::size);
     GlyphPage* page = locatePage(pageNumber, fontData);
     if (page)
         return page->glyphDataForCharacter(c);
@@ -50,7 +49,7 @@ GlyphData GlyphMap::glyphDataForCharacter(UChar32 c, const FontData* fontData)
 
 void GlyphMap::setGlyphDataForCharacter(UChar32 c, Glyph glyph, const FontData* fontData)
 {
-    unsigned pageNumber = (c / cGlyphPageSize);
+    unsigned pageNumber = (c / GlyphPage::size);
     GlyphPage* page = locatePage(pageNumber, fontData);
     if (page)
         page->setGlyphDataForCharacter(c, glyph, fontData);
@@ -72,32 +71,32 @@ inline GlyphMap::GlyphPage* GlyphMap::locatePage(unsigned pageNumber, const Font
         page = new GlyphPage;
     }
       
-    unsigned start = pageNumber * cGlyphPageSize;
-    UChar buffer[cGlyphPageSize * 2 + 2];
+    unsigned start = pageNumber * GlyphPage::size;
+    UChar buffer[GlyphPage::size * 2 + 2];
     unsigned bufferLength;
     unsigned i;
 
     // Fill in a buffer with the entire "page" of characters that we want to look up glyphs for.
     if (start < 0x10000) {
-        bufferLength = cGlyphPageSize;
-        for (i = 0; i < cGlyphPageSize; i++)
+        bufferLength = GlyphPage::size;
+        for (i = 0; i < GlyphPage::size; i++)
             buffer[i] = start + i;
 
         if (start == 0) {
             // Control characters must not render at all.
             for (i = 0; i < 0x20; ++i)
-                buffer[i] = ZERO_WIDTH_SPACE;
+                buffer[i] = zeroWidthSpace;
             for (i = 0x7F; i < 0xA0; i++)
-                buffer[i] = ZERO_WIDTH_SPACE;
+                buffer[i] = zeroWidthSpace;
 
             // \n, \t, and nonbreaking space must render as a space.
             buffer[(int)'\n'] = ' ';
             buffer[(int)'\t'] = ' ';
-            buffer[NO_BREAK_SPACE] = ' ';
+            buffer[nonBreakingSpace] = ' ';
         }
     } else {
-        bufferLength = cGlyphPageSize * 2;
-        for (i = 0; i < cGlyphPageSize; i++) {
+        bufferLength = GlyphPage::size * 2;
+        for (i = 0; i < GlyphPage::size; i++) {
             int c = i + start;
             buffer[i * 2] = U16_LEAD(c);
             buffer[i * 2 + 1] = U16_TRAIL(c);

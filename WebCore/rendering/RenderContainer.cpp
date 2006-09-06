@@ -581,29 +581,25 @@ VisiblePosition RenderContainer::positionForCoordinates(int x, int y)
     return VisiblePosition(element(), 0, DOWNSTREAM);
 }
 
-DeprecatedValueList<IntRect> RenderContainer::lineBoxRects()
+void RenderContainer::lineBoxRects(Vector<IntRect>& rects)
 {
     if (!firstChild() && (isInline() || isAnonymousBlock())) {
-        DeprecatedValueList<IntRect> rects;
-        int x = 0, y = 0;
+        int x, y;
         absolutePositionForContent(x, y);
         absoluteRects(rects, x, y);
-        return rects;
+        return;
     }
 
     if (!firstChild())
-        return DeprecatedValueList<IntRect>();
+        return;
 
-    DeprecatedValueList<IntRect> rects;
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isText() || child->isInline() || child->isAnonymousBlock()) {
-            int x = 0, y = 0;
+            int x, y;
             child->absolutePositionForContent(x, y);
             child->absoluteRects(rects, x, y);
         }
     }
-
-    return rects;
 }
 
 #undef DEBUG_LAYOUT

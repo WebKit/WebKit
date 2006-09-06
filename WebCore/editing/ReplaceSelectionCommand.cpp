@@ -243,17 +243,17 @@ void ReplacementFragment::restoreTestRenderingNodesToFragment(Node *holder)
     }
 }
 
-void ReplacementFragment::removeUnrenderedNodes(Node *holder)
+void ReplacementFragment::removeUnrenderedNodes(Node* holder)
 {
-    DeprecatedPtrList<Node> unrendered;
+    Vector<Node*> unrendered;
 
-    for (Node *node = holder->firstChild(); node; node = node->traverseNextNode(holder)) {
+    for (Node* node = holder->firstChild(); node; node = node->traverseNextNode(holder))
         if (!isNodeRendered(node) && !isTableStructureNode(node))
             unrendered.append(node);
-    }
 
-    for (DeprecatedPtrListIterator<Node> it(unrendered); it.current(); ++it)
-        removeNode(it.current());
+    size_t n = unrendered.size();
+    for (size_t i = 0; i < n; ++i)
+        removeNode(unrendered[i]);
 }
 
 ReplaceSelectionCommand::ReplaceSelectionCommand(Document* document, PassRefPtr<DocumentFragment> fragment,

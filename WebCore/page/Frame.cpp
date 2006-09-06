@@ -3360,7 +3360,7 @@ bool Frame::markedTextUsesUnderlines() const
     return d->m_markedTextUsesUnderlines;
 }
 
-DeprecatedValueList<MarkedTextUnderline> Frame::markedTextUnderlines() const
+const Vector<MarkedTextUnderline>& Frame::markedTextUnderlines() const
 {
     return d->m_markedTextUnderlines;
 }

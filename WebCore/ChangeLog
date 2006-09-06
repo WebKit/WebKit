@@ -1,3 +1,161 @@
+2006-09-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10675
+          tweak font-related headers and convert lists to vectors
+
+        One major change was to greatly reduce the number of files that include Font.h.
+        Another was to convert many uses of DeprecatedPtrList/DeprecatedValueList to Vector.
+
+        * WebCore.xcodeproj/project.pbxproj: Added TextStyle.h.
+
+        * bindings/objc/DOM.mm: (-[DOMElement _font]): Changed to not depend on
+        Font::getNSFont since a WebCore::Font represents more than one NSFont.
+
+        * bindings/objc/DOMNode.mm: (-[DOMNode lineBoxRects]): Updated to use Vector.
+        * bridge/mac/FormDataMac.mm: (WebCore::arrayFromFormData): Ditto.
+        * bridge/mac/FrameViewMac.mm: (WebCore::FrameView::updateDashboardRegions): Ditto.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::dashboardRegions): Ditto.
+        (WebCore::Document::setDashboardRegions): Ditto.
+        * dom/Document.h: Ditto.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::removeUnrenderedNodes): Ditto.
+        * html/FormDataList.h: Ditto.
+        * html/HTMLAnchorElement.cpp: (WebCore::HTMLAnchorElement::isFocusable): Ditto.
+        * html/HTMLFormElement.cpp: (WebCore::HTMLFormElement::formData): Ditto.
+        * kcanvas/RenderPath.cpp: (WebCore::RenderPath::absoluteRects): Ditto.
+        * kcanvas/RenderPath.h: Ditto.
+        * kcanvas/RenderSVGImage.cpp: (WebCore::RenderSVGImage::absoluteRects): Ditto.
+        * kcanvas/RenderSVGImage.h: Ditto.
+        * kcanvas/RenderSVGText.cpp: (WebCore::RenderSVGText::absoluteRects): Ditto.
+        * kcanvas/RenderSVGText.h: Ditto.
+        * loader/FormData.cpp:
+        (WebCore::FormData::flatten): Ditto.
+        (WebCore::FormData::flattenToString): Ditto.
+        * loader/FormData.h: (WebCore::FormData::elements): Ditto.
+        * loader/mac/LoaderFunctionsMac.mm: (WebCore::ServeSynchronousRequest): Ditto.
+        * page/Frame.cpp: (WebCore::Frame::markedTextUnderlines): Ditto.
+        * page/Frame.h: Ditto.
+        * page/FramePrivate.h: Ditto.
+        * platform/mac/ResourceLoaderMac.mm: (WebCore::ResourceLoader::start): Ditto.
+        * rendering/InlineTextBox.h: Ditto.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Ditto.
+        (WebCore::InlineTextBox::paintMarkedTextUnderline): Ditto.
+        * rendering/RenderContainer.h: Ditto.
+        * rendering/RenderContainer.cpp: (WebCore::RenderContainer::lineBoxRects): Ditto.
+        * rendering/RenderInline.h: Ditto.
+        * rendering/RenderInline.cpp: (WebCore::RenderInline::absoluteRects): Ditto.
+        * rendering/RenderObject.h: Ditto.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::lineBoxRects): Ditto.
+        (WebCore::RenderObject::absoluteRects): Ditto.
+        (WebCore::RenderObject::absoluteBoundingBoxRect): Ditto.
+        (WebCore::RenderObject::addDashboardRegions): Ditto.
+        (WebCore::RenderObject::collectDashboardRegions): Ditto.
+        * rendering/RenderStyle.h: Ditto.
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::initialDashboardRegions): Ditto.
+        (WebCore::RenderStyle::noneDashboardRegions): Ditto.
+        * rendering/RenderText.h: Ditto.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects): Ditto.
+        (WebCore::RenderText::lineBoxRects): Ditto.
+        * rendering/RenderView.h: Ditto.
+        * rendering/RenderView.cpp: (WebCore::RenderView::absoluteRects): Ditto.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::attributedString): Updated to use Vector and changed to not
+        depend on getNSFont on a Font.
+        (WebCore::FrameMac::fontForSelection): Changed to not depend on Font::getNSFont.
+        (WebCore::FrameMac::fontAttributesForSelectionStart): Ditto.
+        (WebCore::convertAttributesToUnderlines): Updated to use Vector.
+        (WebCore::FrameMac::setMarkedTextRange): Ditto.
+        (WebCore::FrameMac::dashboardRegionsDictionary): Ditto.
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (boundingBoxRect): Updated to use Vector.
+        (AXAttributeStringSetStyle): Changed to not depend on Font::getNSFont.
+
+        * bridge/mac/WebCoreStringTruncator.mm: Updated includes.
+        * page/Settings.h: Ditto.
+        * platform/mac/WebCoreTextRenderer.mm: Ditto.
+        * rendering/EllipsisBox.cpp: Ditto.
+
+        * editing/BreakBlockquoteCommand.cpp: (WebCore::BreakBlockquoteCommand::doApply):
+        Updated to use a Vector that we iterate in reverse order instead of a linked list
+        that we reverse by prepending elements instead of adding to the end.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Ditto.
+
+        * loader/DocLoader.h: Removed unneeded include of DeprecatedPtrList.h.
+
+        * platform/Font.h: Moved TextStyle to a separate header. Removed Font::getNSFont.
+        * platform/Font.cpp: Changed to use const instead of #define.
+        (WebCore::Font::width): Overloaded this so we don't have a default parameter, which
+        eliminates the need to have TextStyle defined to compiler the Font.h header.
+
+        * platform/TextStyle.h: Added.
+
+        * platform/FontData.h: Added a forward declaration of ATSUStyle so this header
+        can stand alone.
+
+        * platform/FontFallbackList.h: Tweaks.
+        * platform/FontFallbackList.cpp: Tweaks.
+
+        * platform/FontFamily.h: Removed unneeded NSString declaration. Simplified class by
+        using Shared and RefPtr, which resulted in removing many explicit functions.
+        * platform/FontFamily.cpp: More of the same.
+
+        * platform/GlyphBuffer.h: Removed unneeded MAX_GLYPH_EXPANSION and GLYPH_BUFFER_SIZE
+        macros.
+
+        * platform/GlyphMap.h: Removed unneeded include of GlyphBuffer.h, which was included
+        only for the typedef of Glyph; there's no reason to not just repeat that typedef here
+        since C++ allows multiple typedefs if they match. Renamed the cGlyphPageSize constant
+        to GlyphPage::size.
+        * platform/GlyphMap.cpp: Changed NO_BREAK_SPACE and ZERO_WIDTH_SPACE macros into
+        constants. Updated for cGlyphPageSize change.
+        * platform/mac/GlyphMapMac.cpp: Updated for cGlyphPageSize change.
+
+        * platform/GlyphWidthMap.h: Removed unneeded include of GlyphBuffer.h, which was included
+        only for the typedef of Glyph; there's no reason to not just repeat that typedef here
+        since C++ allows multiple typedefs if they match. Renamed the cGlyphWidthPageSize constant
+        to GlyphWidthPage::size.
+        * platform/GlyphWidthMap.cpp: Updated for cGlyphWidthPageSize change.
+
+        * platform/GraphicsContext.h: Removed unneeded include of Font.h. Changed drawText
+        function to use overloading instead of default parameters to allow TextStyle to be optional.
+        This cuts the dependency on TextStyle.
+        * platform/GraphicsContext.cpp: (WebCore::GraphicsContext::drawText): Added overload.
+
+        * platform/Image.h: Removed unneeded forward declaration of IntSize.
+
+        * platform/mac/FontCacheMac.mm: (WebCore::FontCache::getFontDataForCharacters):
+        Changed to not depend on Font::getNSFont.
+        * platform/mac/ListBoxMac.mm: (-[WebCoreTableView fontChanged]): Ditto.
+        * platform/mac/TextFieldMac.mm: (-[NSSearchFieldCell _addStringToRecentSearches:]):
+        Ditto.
+        * rendering/RenderPopupMenuMac.mm:
+        (WebCore::RenderPopupMenuMac::showPopup): Ditto.
+        (WebCore::RenderPopupMenuMac::addGroupLabel): Ditto.
+        (WebCore::RenderPopupMenuMac::addOption): Ditto.
+
+        * platform/mac/FontDataMac.mm: Fixed includes. Converted a bunch of macros to be
+        constants and inline functions instead.
+
+        * platform/mac/FontMac.mm: Fixed includes.
+        * platform/mac/PopUpButtonMac.mm: Ditto.
+        * rendering/RenderMenuList.cpp: Ditto.
+        * rendering/RenderTextControl.cpp: Ditto.
+
+        * platform/mac/WebCoreSystemInterface.h: Fixes so this header stands alone and is
+        compatible with all 4 of C, ObjC, C++, ObjC++.
+
 2006-09-05  MorganL  <morlmor@yahoocom>
 
         Reviewed/landed by aroben.

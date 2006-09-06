@@ -24,17 +24,16 @@
 // This file has no guards on purpose in order to detect redundant includes. This is a private header
 // and so this should catch anyone trying to include this file in public cpp files.
 
+#include "FontData.h"
+#include "Shared.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
-#include <Shared.h>
-#include "FontData.h"
 
 namespace WebCore {
 
 class Font;
 class GraphicsContext;
 class IntRect;
-class FontData;
 class FontDescription;
 class FontPlatformData;
 
@@ -43,7 +42,6 @@ const int cAllFamiliesScanned = -1;
 class FontFallbackList : public Shared<FontFallbackList>, Noncopyable {
 public:
     FontFallbackList();
-    ~FontFallbackList();
 
     void invalidate();
     

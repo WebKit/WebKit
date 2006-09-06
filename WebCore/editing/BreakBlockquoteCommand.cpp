@@ -44,8 +44,6 @@ BreakBlockquoteCommand::BreakBlockquoteCommand(Document *document)
 
 void BreakBlockquoteCommand::doApply()
 {
-    DeprecatedPtrList<Node> ancestors;
-    
     Selection selection = endingSelection();
     if (selection.isNone())
         return;
@@ -104,8 +102,9 @@ void BreakBlockquoteCommand::doApply()
         }
         
         // Build up list of ancestors in between the start node and the top blockquote.
-        for (Node *node = startNode->parentNode(); node != topBlockquote; node = node->parentNode())
-            ancestors.prepend(node);
+        Vector<Node*> ancestors;    
+        for (Node* node = startNode->parentNode(); node != topBlockquote; node = node->parentNode())
+            ancestors.append(node);
         
         // Insert a clone of the top blockquote after the break.
         RefPtr<Node> clonedBlockquote = topBlockquote->cloneNode(false);
@@ -116,8 +115,8 @@ void BreakBlockquoteCommand::doApply()
         // that was cloned (i.e. the clone of either ancestors.last()
         // or clonedBlockquote if ancestors is empty).
         RefPtr<Node> clonedAncestor = clonedBlockquote;
-        for (DeprecatedPtrListIterator<Node> it(ancestors); it.current(); ++it) {
-            RefPtr<Node> clonedChild = it.current()->cloneNode(false); // shallow clone
+        for (size_t i = ancestors.size(); i != 0; --i) {
+            RefPtr<Node> clonedChild = ancestors[i - 1]->cloneNode(false); // shallow clone
             appendNode(clonedChild.get(), clonedAncestor.get());
             clonedAncestor = clonedChild;
         }
@@ -132,14 +131,15 @@ void BreakBlockquoteCommand::doApply()
         }
 
         // Hold open startNode's original parent if we emptied it
-        addBlockPlaceholderIfNeeded(ancestors.last());
+        addBlockPlaceholderIfNeeded(ancestors[0]);
 
         // Split the tree up the ancestor chain until the topBlockquote
         // Throughout this loop, clonedParent is the clone of ancestor's parent.
         // This is so we can clone ancestor's siblings and place the clones
         // into the clone corresponding to the ancestor's parent.
-        Node *ancestor, *clonedParent;
-        for (ancestor = ancestors.last(), clonedParent = clonedAncestor->parentNode();
+        Node* ancestor;
+        Node* clonedParent;
+        for (ancestor = ancestors[0], clonedParent = clonedAncestor->parentNode();
              ancestor && ancestor != topBlockquote;
              ancestor = ancestor->parentNode(), clonedParent = clonedParent->parentNode()) {
             moveNode = ancestor->nextSibling();

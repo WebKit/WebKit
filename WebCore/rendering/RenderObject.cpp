@@ -1546,41 +1546,40 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
         p->restore(); // Undo the clip.
 }
 
-DeprecatedValueList<IntRect> RenderObject::lineBoxRects()
+void RenderObject::lineBoxRects(Vector<IntRect>&)
 {
-    return DeprecatedValueList<IntRect>();
 }
 
-void RenderObject::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty)
+void RenderObject::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
     if (continuation()) {
-        rects.append(IntRect(_tx, _ty - collapsedMarginTop(), 
+        rects.append(IntRect(tx, ty - collapsedMarginTop(), 
                            width(), height()+collapsedMarginTop()+collapsedMarginBottom()));
         continuation()->absoluteRects(rects, 
-                                      _tx - xPos() + continuation()->containingBlock()->xPos(),
-                                      _ty - yPos() + continuation()->containingBlock()->yPos());
+                                      tx - xPos() + continuation()->containingBlock()->xPos(),
+                                      ty - yPos() + continuation()->containingBlock()->yPos());
     }
     else
-        rects.append(IntRect(_tx, _ty, width(), height() + borderTopExtra() + borderBottomExtra()));
+        rects.append(IntRect(tx, ty, width(), height() + borderTopExtra() + borderBottomExtra()));
 }
 
 IntRect RenderObject::absoluteBoundingBoxRect()
 {
-    int x = 0, y = 0;
+    int x, y;
     absolutePosition(x, y);
-    DeprecatedValueList<IntRect> rects;
+    Vector<IntRect> rects;
     absoluteRects(rects, x, y);
 
-    if (rects.isEmpty())
+    size_t n = rects.size();
+    if (!n)
         return IntRect();
 
-    DeprecatedValueList<IntRect>::ConstIterator it = rects.begin();
-    IntRect result = *it;
-    while (++it != rects.end())
-        result.unite(*it);
+    IntRect result = rects[0];
+    for (size_t i = 1; i < n; ++i)
+        result.unite(rects[i]);
     return result;
 }
 
@@ -2743,71 +2742,63 @@ void RenderObject::updateWidgetPosition()
 {
 }
 
-DeprecatedValueList<DashboardRegionValue> RenderObject::computeDashboardRegions()
-{
-    DeprecatedValueList<DashboardRegionValue> regions;
-    collectDashboardRegions(regions);
-    return regions;
-}
-
-void RenderObject::addDashboardRegions (DeprecatedValueList<DashboardRegionValue>& regions)
+void RenderObject::addDashboardRegions(Vector<DashboardRegionValue>& regions)
 {
     // Convert the style regions to absolute coordinates.
     if (style()->visibility() != VISIBLE) 
         return;
 
-    DeprecatedValueList<StyleDashboardRegion> styleRegions = style()->dashboardRegions();
-    if (styleRegions.count() > 0) {
-        unsigned i, count = styleRegions.count();
-        for (i = 0; i < count; i++){
-            StyleDashboardRegion styleRegion = styleRegions[i];
-            
-            int w = width();
-            int h = height();
-            
-            DashboardRegionValue region;
-            region.label = styleRegion.label;
-            region.bounds = IntRect (
-                styleRegion.offset.left.value(),
-                styleRegion.offset.top.value(),
-                w - styleRegion.offset.left.value() - styleRegion.offset.right.value(),
-                h - styleRegion.offset.top.value() - styleRegion.offset.bottom.value());
-            region.type = styleRegion.type;
+    const Vector<StyleDashboardRegion>& styleRegions = style()->dashboardRegions();
+    unsigned i, count = styleRegions.size();
+    for (i = 0; i < count; i++){
+        StyleDashboardRegion styleRegion = styleRegions[i];
+        
+        int w = width();
+        int h = height();
+        
+        DashboardRegionValue region;
+        region.label = styleRegion.label;
+        region.bounds = IntRect (
+            styleRegion.offset.left.value(),
+            styleRegion.offset.top.value(),
+            w - styleRegion.offset.left.value() - styleRegion.offset.right.value(),
+            h - styleRegion.offset.top.value() - styleRegion.offset.bottom.value());
+        region.type = styleRegion.type;
 
-            region.clip = region.bounds;
-            computeAbsoluteRepaintRect(region.clip);
-            if (region.clip.height() < 0) {
-                region.clip.setHeight(0);
-                region.clip.setWidth(0);
-            }
+        region.clip = region.bounds;
+        computeAbsoluteRepaintRect(region.clip);
+        if (region.clip.height() < 0) {
+            region.clip.setHeight(0);
+            region.clip.setWidth(0);
+        }
 
-            int x, y;
-            absolutePosition(x, y);
-            region.bounds.setX(x + styleRegion.offset.left.value());
-            region.bounds.setY(y + styleRegion.offset.top.value());
-            
-            float pageScaleFactor = document()->frame() ? scaleFactor(document()->frame()->page()) : 1.0f;
+        int x, y;
+        absolutePosition(x, y);
+        region.bounds.setX(x + styleRegion.offset.left.value());
+        region.bounds.setY(y + styleRegion.offset.top.value());
+        
+        if (document()->frame()) {
+            float pageScaleFactor = scaleFactor(document()->frame()->page());
             if (pageScaleFactor != 1.0f) {
                 region.bounds.scale(pageScaleFactor);
                 region.clip.scale(pageScaleFactor);
             }
-            
-            regions.append(region);
         }
+        
+        regions.append(region);
     }
 }
 
-void RenderObject::collectDashboardRegions (DeprecatedValueList<DashboardRegionValue>& regions)
+void RenderObject::collectDashboardRegions(Vector<DashboardRegionValue>& regions)
 {
     // RenderTexts don't have their own style, they just use their parent's style,
     // so we don't want to include them.
     if (isText())
         return;
         
-    addDashboardRegions (regions);
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+    addDashboardRegions(regions);
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
         curr->collectDashboardRegions(regions);
-    }
 }
 
 

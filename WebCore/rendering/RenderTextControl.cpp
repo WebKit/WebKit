@@ -33,6 +33,7 @@
 #include "RenderTheme.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
+#include "TextStyle.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <math.h>

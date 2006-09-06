@@ -24,6 +24,7 @@
 #include "EllipsisBox.h"
 
 #include "GraphicsContext.h"
+#include "TextStyle.h"
 
 namespace WebCore {
 

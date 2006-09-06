@@ -34,7 +34,7 @@ namespace WebCore
 
 float GlyphWidthMap::widthForGlyph(Glyph g)
 {
-    unsigned pageNumber = (g / cGlyphWidthPageSize);
+    unsigned pageNumber = (g / GlyphWidthPage::size);
     GlyphWidthPage* page = locatePage(pageNumber);
     if (page)
         return page->widthForGlyph(g);
@@ -43,7 +43,7 @@ float GlyphWidthMap::widthForGlyph(Glyph g)
 
 void GlyphWidthMap::setWidthForGlyph(Glyph glyph, float width)
 {
-    unsigned pageNumber = (glyph / cGlyphWidthPageSize);
+    unsigned pageNumber = (glyph / GlyphWidthPage::size);
     GlyphWidthPage* page = locatePage(pageNumber);
     if (page)
         page->setWidthForGlyph(glyph, width);
@@ -70,7 +70,7 @@ inline GlyphWidthMap::GlyphWidthPage* GlyphWidthMap::locatePage(unsigned pageNum
     }
 
     // Fill in the whole page with the unknown glyph width value.
-    for (unsigned i = 0; i < cGlyphWidthPageSize; i++)
+    for (unsigned i = 0; i < GlyphWidthPage::size; i++)
         page->setWidthForIndex(i, cGlyphWidthUnknown);
 
     return page;

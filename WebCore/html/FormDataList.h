@@ -28,13 +28,14 @@
 #define HTML_FormDataList_h
 
 #include "CString.h"
-#include "DeprecatedValueList.h"
 #include "PlatformString.h"
 #include "TextEncoding.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct FormDataListItem {
+    FormDataListItem() { }
     FormDataListItem(const CString& data) : m_data(data) { }
     FormDataListItem(const String& path) : m_path(path) { }
 
@@ -54,17 +55,14 @@ public:
         { appendString(key); appendString(String::number(value)); }
     void appendFile(const String& key, const String& filename);
 
-    DeprecatedValueListConstIterator<FormDataListItem> begin() const
-        { return m_list.begin(); }
-    DeprecatedValueListConstIterator<FormDataListItem> end() const
-        { return m_list.end(); }
+    const Vector<FormDataListItem>& list() const { return m_list; }
 
 private:
     void appendString(const CString&);
     void appendString(const String&);
 
     TextEncoding m_encoding;
-    DeprecatedValueList<FormDataListItem> m_list;
+    Vector<FormDataListItem> m_list;
 };
 
 } // namespace WebCore

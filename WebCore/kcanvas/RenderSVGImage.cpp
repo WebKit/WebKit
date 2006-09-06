@@ -267,7 +267,7 @@ IntRect RenderSVGImage::getAbsoluteRepaintRect()
     return enclosingIntRect(repaintRect);
 }
 
-void RenderSVGImage::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty)
+void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     rects.append(getAbsoluteRepaintRect());
 }

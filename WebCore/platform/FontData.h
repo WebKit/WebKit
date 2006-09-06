@@ -1,6 +1,5 @@
 /*
- * This file is part of the internal font implementation.  It should not be included by anyone other than
- * FontMac.cpp, FontWin.cpp and Font.cpp.
+ * This file is part of the internal font implementation.
  *
  * Copyright (C) 2006 Apple Computer, Inc.
  *
@@ -31,6 +30,10 @@
 
 // FIXME: Temporary. Only needed to support API that's going to move.
 #include <unicode/umachine.h>
+
+#if PLATFORM(MAC)
+typedef struct OpaqueATSUStyle* ATSUStyle;
+#endif
 
 namespace WebCore {
 

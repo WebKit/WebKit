@@ -28,7 +28,6 @@
 #define DocLoader_h
 
 #include "CachePolicy.h"
-#include "DeprecatedPtrList.h"
 #include "DeprecatedStringList.h"
 #include "Settings.h"
 #include "StringHash.h"

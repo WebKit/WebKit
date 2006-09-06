@@ -29,8 +29,10 @@
 #import "config.h"
 #import "WebCoreStringTruncator.h"
 
-#import <wtf/Assertions.h>
 #import "Font.h"
+#import "FontPlatformData.h"
+#import "TextStyle.h"
+#import <wtf/Assertions.h>
 
 #define STRING_BUFFER_SIZE 2048
 #define ELLIPSIS_CHARACTER 0x2026

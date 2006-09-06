@@ -27,16 +27,17 @@
 #import "PopUpButton.h"
 
 #import "BlockExceptions.h"
+#import "Font.h"
+#import "FontData.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
-#import "TextField.h"
-#import "WebCoreFrameBridge.h"
-#import "FontData.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
+#import "TextField.h"
+#import "TextStyle.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
-#import "Font.h"
 
 using namespace WebCore;
 

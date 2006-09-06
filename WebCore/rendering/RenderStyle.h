@@ -42,7 +42,8 @@
 #include "IntRect.h"
 #include "Length.h"
 #include "Shared.h"
-#include "DeprecatedValueList.h"
+#include "TextDirection.h"
+#include <wtf/Vector.h>
 
 #ifdef SVG_SUPPORT
 #include "SVGRenderStyle.h"
@@ -733,7 +734,7 @@ public:
     }
     
     int lineClamp;         // An Apple extension.  Not really CSS3 but not worth making a new struct over.
-    DeprecatedValueList<StyleDashboardRegion> m_dashboardRegions;
+    Vector<StyleDashboardRegion> m_dashboardRegions;
     float opacity;         // Whether or not we're transparent.
     DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
     DataRef<StyleMarqueeData> marquee; // Marquee properties
@@ -1386,8 +1387,8 @@ public:
     void setMinHeight(Length v) { SET_VAR(box,min_height,v) }
     void setMaxHeight(Length v) { SET_VAR(box,max_height,v) }
 
-    DeprecatedValueList<StyleDashboardRegion> dashboardRegions() const { return css3NonInheritedData->m_dashboardRegions; }
-    void setDashboardRegions(DeprecatedValueList<StyleDashboardRegion> regions) { SET_VAR(css3NonInheritedData,m_dashboardRegions,regions); }
+    Vector<StyleDashboardRegion> dashboardRegions() const { return css3NonInheritedData->m_dashboardRegions; }
+    void setDashboardRegions(Vector<StyleDashboardRegion> regions) { SET_VAR(css3NonInheritedData,m_dashboardRegions,regions); }
     void setDashboardRegion(int type, const String& label, Length t, Length r, Length b, Length l, bool append) {
         StyleDashboardRegion region;
         region.label = label;
@@ -1715,8 +1716,8 @@ public:
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
     static ETextSecurity initialTextSecurity() { return TSNONE; }
-    static const DeprecatedValueList<StyleDashboardRegion>& initialDashboardRegions();
-    static const DeprecatedValueList<StyleDashboardRegion>& noneDashboardRegions();
+    static const Vector<StyleDashboardRegion>& initialDashboardRegions();
+    static const Vector<StyleDashboardRegion>& noneDashboardRegions();
 };
 
 } // namespace WebCore

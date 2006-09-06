@@ -278,13 +278,13 @@
 {
     WebCore::RenderObject *renderer = [self _node]->renderer();
     if (renderer) {
-        NSMutableArray *results = [[NSMutableArray alloc] init];
-        WebCore::DeprecatedValueList<WebCore::IntRect> rects = renderer->lineBoxRects();
-        if (!rects.isEmpty()) {
-            for (WebCore::DeprecatedValueList<WebCore::IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it)
-                [results addObject:[NSValue valueWithRect:*it]];
-        }
-        return [results autorelease];
+        Vector<WebCore::IntRect> rects;
+        renderer->lineBoxRects(rects);
+        size_t size = rects.size();
+        NSMutableArray *results = [NSMutableArray arrayWithCapacity:size];
+        for (size_t i = 0; i < size; ++i)
+            [results addObject:[NSValue valueWithRect:rects[i]]];
+        return results;
     }
     return nil;
 }

@@ -30,6 +30,7 @@
 #import "FontCache.h"
 
 #import "Font.h"
+#import "FontData.h"
 #import "FontPlatformData.h"
 #import "ListBox.h"
 #import "WebCoreStringTruncator.h"
@@ -120,7 +121,7 @@ void FontCache::platformInit()
 
 const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    NSFont* nsFont = font.getNSFont();
+    NSFont* nsFont = font.primaryFont()->getNSFont();
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:(UniChar*)characters length:length freeWhenDone:NO];
     NSFont* substituteFont = wkGetFontInLanguageForRange(nsFont, string, NSMakeRange(0, [string length]));
     if (!substituteFont && [string length] == 1)

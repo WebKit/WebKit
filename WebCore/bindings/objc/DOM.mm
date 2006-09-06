@@ -42,6 +42,7 @@
 #import "EntityReference.h"
 #import "Event.h"
 #import "EventListener.h"
+#import "FontData.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
 #import "HTMLDocument.h"
@@ -673,9 +674,8 @@ static Class elementClass(const AtomicString& tagName)
 - (NSFont *)_font
 {
     RenderObject *renderer = [self _element]->renderer();
-    if (renderer) {
-        return renderer->style()->font().getNSFont();
-    }
+    if (renderer)
+        return renderer->style()->font().primaryFont()->getNSFont();
     return nil;
 }
 

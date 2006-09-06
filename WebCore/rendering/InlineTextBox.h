@@ -112,7 +112,7 @@ public:
     void paintAllMarkersOfType(GraphicsContext*, int tx, int ty, DocumentMarker::MarkerType, RenderStyle*, const Font*);
     void paintSpellingMarker(GraphicsContext*, int tx, int ty, DocumentMarker);
     void paintTextMatchMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*);
-    void paintMarkedTextUnderline(GraphicsContext*, int tx, int ty, MarkedTextUnderline&);
+    void paintMarkedTextUnderline(GraphicsContext*, int tx, int ty, const MarkedTextUnderline&);
 #if PLATFORM(MAC)
     void paintCustomHighlight(int tx, int ty, const AtomicString& type);
 #endif

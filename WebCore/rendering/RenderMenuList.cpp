@@ -32,6 +32,7 @@
 #include "RenderPopupMenu.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
+#include "TextStyle.h"
 #include <math.h>
 
 using namespace std;

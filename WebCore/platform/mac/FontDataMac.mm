@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,39 +28,28 @@
  */
 
 #import "config.h"
-#import "Font.h"
 #import "FontData.h"
+
 #import "Color.h"
-
-#import <wtf/Assertions.h>
-
-#import <ApplicationServices/ApplicationServices.h>
-
-#import "FontCache.h"
-
-#import "WebCoreSystemInterface.h"
-
 #import "FloatRect.h"
+#import "Font.h"
+#import "FontCache.h"
 #import "FontDescription.h"
-
+#import "WebCoreSystemInterface.h"
+#import <ApplicationServices/ApplicationServices.h>
 #import <float.h>
-
 #import <unicode/uchar.h>
-
-// FIXME: Just temporary for the #defines of constants that we will eventually stop using.
-#import "GlyphBuffer.h"
+#import <wtf/Assertions.h>
 
 @interface NSFont (WebAppKitSecretAPI)
 - (BOOL)_isFakeFixedPitch;
 @end
 
-namespace WebCore
-{
-
-#define SMALLCAPS_FONTSIZE_MULTIPLIER 0.7f
-#define SPACE 0x0020
-#define CONTEXT_DPI (72.0)
-#define SCALE_EM_TO_UNITS(X, U_PER_EM) (X * ((1.0 * CONTEXT_DPI) / (CONTEXT_DPI * U_PER_EM)))
+namespace WebCore {
+  
+const float smallCapsFontSizeMultiplier = 0.7f;
+const float contextDPI = 72.0f;
+static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return x * (contextDPI / (contextDPI * unitsPerEm)); }
 
 bool initFontData(FontData* fontData)
 {
@@ -171,9 +160,9 @@ void FontData::platformInit()
     unsigned unitsPerEm;
     wkGetFontMetrics(m_font.font, &iAscent, &iDescent, &iLineGap, &unitsPerEm); 
     float pointSize = [m_font.font pointSize];
-    float fAscent = SCALE_EM_TO_UNITS(iAscent, unitsPerEm) * pointSize;
-    float fDescent = -SCALE_EM_TO_UNITS(iDescent, unitsPerEm) * pointSize;
-    float fLineGap = SCALE_EM_TO_UNITS(iLineGap, unitsPerEm) * pointSize;
+    float fAscent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
+    float fDescent = -scaleEmToUnits(iDescent, unitsPerEm) * pointSize;
+    float fLineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
 
     // We need to adjust Times, Helvetica, and Courier to closely match the
     // vertical metrics of their Microsoft counterparts that are the de facto
@@ -220,7 +209,7 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
 {
     if (!m_smallCapsFontData) {
         NS_DURING
-            float size = [m_font.font pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER;
+            float size = [m_font.font pointSize] * smallCapsFontSizeMultiplier;
             FontPlatformData smallCapsFont([[NSFontManager sharedFontManager] convertFont:m_font.font toSize:size]);
             
             // AppKit resets the type information (screen/printer) when you convert a font to a different size.

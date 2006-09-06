@@ -70,11 +70,10 @@ public:
     virtual void paint(PaintInfo& i, int tx, int ty) { assert(false); }
     virtual void layout() { assert(false); }
 
-    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
-                             HitTestAction hitTestAction) { assert(false); return false; }
+    virtual bool nodeAtPoint(NodeInfo&, int, int, int, int, HitTestAction) { assert(false); return false; }
 
-    virtual void absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty);
-    virtual DeprecatedValueList<IntRect> lineBoxRects();
+    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
+    virtual void lineBoxRects(Vector<IntRect>&);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 

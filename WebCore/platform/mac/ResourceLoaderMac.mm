@@ -80,7 +80,7 @@ bool ResourceLoader::start(DocLoader* docLoader)
     if (!headerString.isEmpty())
         headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString];
 
-    if (postData().count() > 0)
+    if (!postData().elements().isEmpty())
         handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict postData:arrayFromFormData(postData())];
     else
         handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict];

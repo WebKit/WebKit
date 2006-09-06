@@ -27,16 +27,16 @@
 #import "ListBox.h"
 
 #import "BlockExceptions.h"
-#import "FrameMac.h"
-#import "WebCoreFrameBridge.h"
 #import "FontData.h"
+#import "FrameMac.h"
+#import "GraphicsContext.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
+#import "TextStyle.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
 #import <wtf/Assertions.h>
-
-#import "GraphicsContext.h"
 
 using namespace WebCore;
 
@@ -740,7 +740,7 @@ static Boolean ListBoxTypeSelectCallback(UInt32 index, void *listDataPtr, void *
 
 - (void)fontChanged
 {
-    NSFont *font = _box->font().getNSFont();
+    NSFont *font = _box->font().primaryFont()->getNSFont();
     isSystemFont = [[font fontName] isEqualToString:[itemFont() fontName]] && [font pointSize] == [itemFont() pointSize];
     [self setRowHeight:ceilf([font ascender] - [font descender] + bottomMargin)];
     [self setNeedsDisplay:YES];

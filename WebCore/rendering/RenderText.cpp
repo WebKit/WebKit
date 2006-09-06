@@ -32,6 +32,7 @@
 #include "Range.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "TextStyle.h"
 #include "break_lines.h"
 #include <unicode/ubrk.h>
 #include <wtf/AlwaysInline.h>
@@ -209,22 +210,17 @@ PassRefPtr<StringImpl> RenderText::originalString() const
     return element() ? element()->string() : 0;
 }
 
-void RenderText::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty)
+void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        rects.append(IntRect(_tx + box->xPos(), 
-                           _ty + box->yPos(), 
-                           box->width(), 
-                           box->height()));
+        rects.append(IntRect(tx + box->xPos(), ty + box->yPos(), box->width(), box->height()));
 }
 
-DeprecatedValueList<IntRect> RenderText::lineBoxRects()
+void RenderText::lineBoxRects(Vector<IntRect>& rects)
 {
-    DeprecatedValueList<IntRect> rects;
-    int x = 0, y = 0;
+    int x, y;
     absolutePositionForContent(x, y);
     absoluteRects(rects, x, y);
-    return rects;
 }
 
 InlineTextBox* RenderText::findNextInlineTextBox(int offset, int &pos) const

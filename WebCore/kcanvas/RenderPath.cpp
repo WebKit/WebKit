@@ -239,7 +239,7 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
     }
 }
 
-void RenderPath::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty)
+void RenderPath::absoluteRects(Vector<IntRect>& rects, int _tx, int _ty)
 {
     rects.append(getAbsoluteRepaintRect());
 }
