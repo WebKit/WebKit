@@ -1,3 +1,45 @@
+2006-09-05  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10742
+        More Objective-C DOM auto-generation cleanup
+        
+        - Factor out implementation type-getters into their own function 
+          and standardize naming as was done for type-makers (ie. HTML 
+          and CSS prefixing for method names).
+
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMCSSStyleDeclaration getPropertyShorthand:]):
+        (-[DOMCSSStyleDeclaration isPropertyImplicit:]):
+        (-[DOMCSSStyleDeclaration _CSSStyleDeclaration]):
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLTableCaptionElement _HTMLTableCaptionElement]):
+        (-[DOMHTMLTableSectionElement _HTMLTableSectionElement]):
+        (-[DOMHTMLTableElement _HTMLTableElement]):
+        (-[DOMHTMLTableCellElement _HTMLTableCellElement]):
+        (-[DOMHTMLEmbedElement _HTMLEmbedElement]):
+        (-[DOMHTMLEmbedElement align]):
+        (-[DOMHTMLEmbedElement setAlign:]):
+        (-[DOMHTMLEmbedElement height]):
+        (-[DOMHTMLEmbedElement setHeight:]):
+        (-[DOMHTMLEmbedElement name]):
+        (-[DOMHTMLEmbedElement setName:]):
+        (-[DOMHTMLEmbedElement src]):
+        (-[DOMHTMLEmbedElement setSrc:]):
+        (-[DOMHTMLEmbedElement type]):
+        (-[DOMHTMLEmbedElement setType:]):
+        (-[DOMHTMLEmbedElement width]):
+        (-[DOMHTMLEmbedElement setWidth:]):
+        * bindings/objc/DOMInternal.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge setTypingStyle:withUndoAction:]):
+        (-[WebCoreFrameBridge applyStyle:withUndoAction:]):
+        (-[WebCoreFrameBridge applyParagraphStyle:withUndoAction:]):
+        (-[WebCoreFrameBridge selectionStartHasStyle:]):
+        (-[WebCoreFrameBridge selectionHasStyle:]):
+
 2006-09-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

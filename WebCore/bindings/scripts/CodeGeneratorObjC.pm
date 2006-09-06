@@ -300,6 +300,18 @@ sub GetObjCTypeMaker
     return $typeMaker;
 }
 
+sub GetObjCTypeGetter
+{
+    my $argName = shift;
+    my $type = $codeGenerator->StripModule(shift);
+
+    return $argName if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMString" or $type eq "URL";
+    return "[nativeResolver _xpathNSResolver]" if $type eq "XPathNSResolver";
+    return "[" . $argName . " _xpathResult]" if $type eq "XPathResult";
+    return "[" . $argName . " _" . $type . "]" if $type =~ /^(HTML|CSS)/;
+    return "[" . $argName . " _" . lcfirst($type) . "]";
+}
+
 sub AddForwardDeclarationsForType
 {
     my $type = $codeGenerator->StripModule(shift);
@@ -745,19 +757,7 @@ sub GenerateImplementation
                 $attributeName = "set" . ucfirst($attributeName);
                 my $setterName = "set" . ucfirst($attributeInterfaceName);
                 my $argName = "new" . ucfirst($attributeInterfaceName);
-
-                # FIXME: should move this out into it's own fuction to share with
-                # the similar function parameter code below.
-                my $arg = "";
-                if ($codeGenerator->IsPrimitiveType($idlType) or $idlType eq "DOMString") {
-                    $arg = $argName;
-                } elsif ($idlType eq "HTMLTableCaptionElement") {
-                    $arg = "[" . $argName . " _tableCaptionElement]";
-                } elsif ($idlType eq "HTMLTableSectionElement") {
-                    $arg = "[" . $argName . " _tableSectionElement]";
-                } else {
-                    $arg = "[" . $argName . " _" . lcfirst($idlType) . "]";
-                }
+                my $arg = GetObjCTypeGetter($argName, $idlType);
 
                 my $setterSig = "- (void)$setterName:($attributeType)$argName\n";
 
@@ -808,28 +808,11 @@ sub GenerateImplementation
 
                 AddIncludesForType($param->type);
 
-                # FIXME: should move this out into it's own fuction to share with
-                # the similar setter parameter code above.
                 my $idlType = $codeGenerator->StripModule($param->type);
-                if ($codeGenerator->IsPrimitiveType($idlType) or $idlType eq "DOMString") {
-                    push(@parameterNames, $paramName);
-                } elsif ($idlType eq "XPathNSResolver") {
-                    my $implGetter = "[nativeResolver _xpathNSResolver]";
-                    push(@parameterNames, $implGetter);
-                    $needsCustom{"XPathNSResolver"} = $paramName;
-                } elsif ($idlType eq "XPathResult") {
-                    my $implGetter = "[" . $paramName . " _xpathResult]";
-                    push(@parameterNames, $implGetter);
-                } elsif ($idlType eq "HTMLElement") {
-                    my $implGetter = "[" . $paramName . " _HTMLElement]";
-                    push(@parameterNames, $implGetter);
-                } elsif ($idlType eq "HTMLOptionElement") {
-                    my $implGetter = "[" . $paramName . " _optionElement]";
-                    push(@parameterNames, $implGetter);
-                } else {
-                    my $implGetter = "[" . $paramName . " _" . lcfirst($idlType) . "]";
-                    push(@parameterNames, $implGetter);
-                }
+                my $implGetter = GetObjCTypeGetter($paramName, $idlType);
+
+                push(@parameterNames, $implGetter);
+                $needsCustom{"XPathNSResolver"} = $paramName if $idlType eq "XPathNSResolver";
 
                 unless ($codeGenerator->IsPrimitiveType($idlType) or $idlType eq "DOMString") {
                     push(@needsAssert, "    ASSERT($paramName);\n");

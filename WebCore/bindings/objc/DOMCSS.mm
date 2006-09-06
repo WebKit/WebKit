@@ -259,12 +259,12 @@ using namespace WebCore;
 
 - (NSString *)getPropertyShorthand:(NSString *)propertyName
 {
-    return [self _styleDeclaration]->getPropertyShorthand(propertyName);
+    return [self _CSSStyleDeclaration]->getPropertyShorthand(propertyName);
 }
 
 - (BOOL)isPropertyImplicit:(NSString *)propertyName
 {
-    return [self _styleDeclaration]->isPropertyImplicit(propertyName);
+    return [self _CSSStyleDeclaration]->isPropertyImplicit(propertyName);
 }
 
 @end
@@ -293,7 +293,7 @@ using namespace WebCore;
     return [[[self alloc] _initWithStyleDeclaration:impl] autorelease];
 }
 
-- (CSSStyleDeclaration *)_styleDeclaration
+- (CSSStyleDeclaration *)_CSSStyleDeclaration
 {
     return DOM_cast<CSSStyleDeclaration*>(_internal);
 }

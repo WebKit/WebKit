@@ -2223,35 +2223,35 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
     if (!m_frame)
         return;
-    m_frame->computeAndSetTypingStyle([style _styleDeclaration], static_cast<EditAction>(undoAction));
+    m_frame->computeAndSetTypingStyle([style _CSSStyleDeclaration], static_cast<EditAction>(undoAction));
 }
 
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
 {
     if (!m_frame)
         return;
-    m_frame->applyStyle([style _styleDeclaration], static_cast<EditAction>(undoAction));
+    m_frame->applyStyle([style _CSSStyleDeclaration], static_cast<EditAction>(undoAction));
 }
 
 - (void)applyParagraphStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
 {
     if (!m_frame)
         return;
-    m_frame->applyParagraphStyle([style _styleDeclaration], static_cast<EditAction>(undoAction));
+    m_frame->applyParagraphStyle([style _CSSStyleDeclaration], static_cast<EditAction>(undoAction));
 }
 
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style
 {
     if (!m_frame)
         return NO;
-    return m_frame->selectionStartHasStyle([style _styleDeclaration]);
+    return m_frame->selectionStartHasStyle([style _CSSStyleDeclaration]);
 }
 
 - (NSCellStateValue)selectionHasStyle:(DOMCSSStyleDeclaration *)style
 {
     if (!m_frame)
         return NSOffState;
-    switch (m_frame->selectionHasStyle([style _styleDeclaration])) {
+    switch (m_frame->selectionHasStyle([style _CSSStyleDeclaration])) {
         case Frame::falseTriState:
             return NSOffState;
         case Frame::trueTriState:

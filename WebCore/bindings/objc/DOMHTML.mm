@@ -251,7 +251,7 @@ using namespace HTMLNames;
     return static_cast<DOMHTMLTableCaptionElement*>([DOMNode _nodeWith:impl]);
 }
 
-- (HTMLTableCaptionElement *)_tableCaptionElement
+- (HTMLTableCaptionElement *)_HTMLTableCaptionElement
 {
     return static_cast<HTMLTableCaptionElement*>(DOM_cast<Node*>(_internal));
 }
@@ -269,7 +269,7 @@ using namespace HTMLNames;
     return static_cast<DOMHTMLTableSectionElement*>([DOMNode _nodeWith:impl]);
 }
 
-- (HTMLTableSectionElement *)_tableSectionElement
+- (HTMLTableSectionElement *)_HTMLTableSectionElement
 {
     return static_cast<HTMLTableSectionElement*>(DOM_cast<Node*>(_internal));
 }
@@ -287,7 +287,7 @@ using namespace HTMLNames;
     return static_cast<DOMHTMLTableElement*>([DOMNode _nodeWith:impl]);
 }
 
-- (HTMLTableElement *)_tableElement
+- (HTMLTableElement *)_HTMLTableElement
 {
     return static_cast<HTMLTableElement*>(DOM_cast<Node*>(_internal));
 }
@@ -305,7 +305,7 @@ using namespace HTMLNames;
     return static_cast<DOMHTMLTableCellElement*>([DOMNode _nodeWith:impl]);
 }
 
-- (HTMLTableCellElement *)_tableCellElement
+- (HTMLTableCellElement *)_HTMLTableCellElement
 {
     return static_cast<HTMLTableCellElement*>(DOM_cast<Node*>(_internal));
 }
@@ -321,69 +321,69 @@ using namespace HTMLNames;
 
 @implementation DOMHTMLEmbedElement
 
-- (HTMLEmbedElement *)_embedElement
+- (HTMLEmbedElement *)_HTMLEmbedElement
 {
     return static_cast<HTMLEmbedElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)align
 {
-    return [self _embedElement]->getAttribute(alignAttr);
+    return [self _HTMLEmbedElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _embedElement]->setAttribute(alignAttr, align);
+    [self _HTMLEmbedElement]->setAttribute(alignAttr, align);
 }
 
 - (int)height
 {
-    return [self _embedElement]->getAttribute(heightAttr).toInt();
+    return [self _HTMLEmbedElement]->getAttribute(heightAttr).toInt();
 }
 
 - (void)setHeight:(int)height
 {
-    [self _embedElement]->setAttribute(heightAttr, String::number(height));
+    [self _HTMLEmbedElement]->setAttribute(heightAttr, String::number(height));
 }
 
 - (NSString *)name
 {
-    return [self _embedElement]->getAttribute(nameAttr);
+    return [self _HTMLEmbedElement]->getAttribute(nameAttr);
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _embedElement]->setAttribute(nameAttr, name);
+    [self _HTMLEmbedElement]->setAttribute(nameAttr, name);
 }
 
 - (NSString *)src
 {
-    return [self _embedElement]->getAttribute(srcAttr);
+    return [self _HTMLEmbedElement]->getAttribute(srcAttr);
 }
 
 - (void)setSrc:(NSString *)src
 {
-    [self _embedElement]->setAttribute(srcAttr, src);
+    [self _HTMLEmbedElement]->setAttribute(srcAttr, src);
 }
 
 - (NSString *)type
 {
-    return [self _embedElement]->getAttribute(typeAttr);
+    return [self _HTMLEmbedElement]->getAttribute(typeAttr);
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _embedElement]->setAttribute(typeAttr, type);
+    [self _HTMLEmbedElement]->setAttribute(typeAttr, type);
 }
 
 - (int)width
 {
-    return [self _embedElement]->getAttribute(widthAttr).toInt();
+    return [self _HTMLEmbedElement]->getAttribute(widthAttr).toInt();
 }
 
 - (void)setWidth:(int)width
 {
-    [self _embedElement]->setAttribute(widthAttr, String::number(width));
+    [self _HTMLEmbedElement]->setAttribute(widthAttr, String::number(width));
 }
 
 @end
