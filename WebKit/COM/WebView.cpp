@@ -127,7 +127,7 @@ bool WebView::keyPress(WPARAM wParam, LPARAM lParam)
     FrameWin* frame = static_cast<FrameWin*>(m_mainFrame->impl());
     bool handled = frame->keyPress(keyEvent);
     if (!handled && !keyEvent.isKeyUp()) {
-        Node* start = frame->selection().start().node();
+        Node* start = frame->selectionController()->start().node();
         if (start && start->isContentEditable()) {
             switch(keyEvent.WindowsKeyCode()) {
             case VK_BACK:
@@ -137,16 +137,16 @@ bool WebView::keyPress(WPARAM wParam, LPARAM lParam)
                 TypingCommand::forwardDeleteKeyPressed(frame->document());
                 break;
             case VK_LEFT:
-                frame->selection().modify(SelectionController::MOVE, SelectionController::LEFT, CharacterGranularity);
+                frame->selectionController()->modify(SelectionController::MOVE, SelectionController::LEFT, CharacterGranularity);
                 break;
             case VK_RIGHT:
-                frame->selection().modify(SelectionController::MOVE, SelectionController::RIGHT, CharacterGranularity);
+                frame->selectionController()->modify(SelectionController::MOVE, SelectionController::RIGHT, CharacterGranularity);
                 break;
             case VK_UP:
-                frame->selection().modify(SelectionController::MOVE, SelectionController::BACKWARD, ParagraphGranularity);
+                frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, ParagraphGranularity);
                 break;
             case VK_DOWN:
-                frame->selection().modify(SelectionController::MOVE, SelectionController::FORWARD, ParagraphGranularity);
+                frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, ParagraphGranularity);
                 break;
             case VK_RETURN:
                 if (start->isContentRichlyEditable())

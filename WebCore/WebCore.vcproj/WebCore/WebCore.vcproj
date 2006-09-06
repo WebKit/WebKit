@@ -1135,6 +1135,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\CString.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\CString.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\Cursor.h"
 				>
 			</File>
@@ -2472,6 +2480,10 @@
 			</File>
 			<File
 				RelativePath="..\..\css\CSSBorderImageValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\CSSCharsetRule.cpp"
 				>
 			</File>
 			<File

@@ -38,6 +38,9 @@
 #if PLATFORM(MAC)
 #include "StreamingTextDecoderMac.h"
 #endif
+#if PLATFORM(WIN)
+#include <ctype.h>
+#endif
 
 namespace WebCore {
 

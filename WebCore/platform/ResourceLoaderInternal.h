@@ -151,7 +151,7 @@ namespace WebCore {
         char* m_formDataString;
         int m_formDataLength;
         int m_bytesRemainingToWrite;
-        DeprecatedString m_postReferrer;
+        String m_postReferrer;
 #endif
 #if PLATFORM(GDK)
         CURL *m_handle;

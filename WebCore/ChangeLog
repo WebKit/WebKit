@@ -1,3 +1,23 @@
+2006-09-05  MorganL  <morlmor@yahoocom>
+
+        Reviewed/landed by aroben.
+
+        Fixes bug 10743: Windows build is busted.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/FrameWin.h:
+        * platform/ResourceLoaderInternal.h:
+        * platform/TextEncodingRegistry.cpp:
+        * platform/win/ResourceLoaderWin.cpp:
+        (WebCore::ResourceLoaderWndProc):
+        (WebCore::ResourceLoader::start):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::markMisspellings):
+        (FrameWin::shouldChangeSelection):
+        (FrameWin::respondToChangedSelection):
+        (FrameWin::respondToChangedContents):
+        (RenderThemeWin::adjustMenuListStyle):
+
 2006-09-05  Darin Adler  <darin@apple.com>
 
         - some quick build fixes

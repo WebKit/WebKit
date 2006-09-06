@@ -121,11 +121,11 @@ LRESULT CALLBACK ResourceLoaderWndProc(HWND hWnd, UINT message, WPARAM wParam, L
                 job->d->m_secondaryHandle = HINTERNET(dwResult);
                 
                 // Need to actually send the request now.
-                DeprecatedString headers = "Content-Type: application/x-www-form-urlencoded\n";
+                String headers = "Content-Type: application/x-www-form-urlencoded\n";
                 headers += "Referer: ";
                 headers += job->d->m_postReferrer;
                 headers += "\n";
-                DeprecatedString formData = job->postData().flattenToString();
+                String formData = job->postData().flattenToString();
                 INTERNET_BUFFERSA buffers;
                 memset(&buffers, 0, sizeof(buffers));
                 buffers.dwStructSize = sizeof(INTERNET_BUFFERSA);
@@ -290,7 +290,7 @@ bool ResourceLoader::start(DocLoader* docLoader)
         // For form posting, we can't use InternetOpenURL.  We have to use InternetConnect followed by
         // HttpSendRequest.
         HINTERNET urlHandle;
-        DeprecatedString referrer = docLoader->frame()->referrer();
+        String referrer = docLoader->frame()->referrer();
         if (method() == "POST") {
             d->m_postReferrer = referrer;
             DeprecatedString host = d->URL.host();
@@ -302,9 +302,9 @@ bool ResourceLoader::start(DocLoader* docLoader)
             int fragmentIndex = urlStr.find('#');
             if (fragmentIndex != -1)
                 urlStr = urlStr.left(fragmentIndex);
-            DeprecatedString headers;
+            String headers;
             if (!referrer.isEmpty())
-                headers += DeprecatedString("Referer: ") + referrer + "\r\n";
+                headers += String("Referer: ") + referrer + "\r\n";
 
             urlHandle = InternetOpenUrlA(internetHandle, urlStr.ascii(), headers.ascii(), headers.length(),
                                          INTERNET_FLAG_KEEP_CONNECTION, (DWORD_PTR)d->m_jobId);

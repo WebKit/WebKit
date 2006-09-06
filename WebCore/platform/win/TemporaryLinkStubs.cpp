@@ -171,7 +171,7 @@ void FrameWin::issueUndoCommand() { notImplemented(); }
 String FrameWin::mimeTypeForFileName(String const&) const { notImplemented(); return String(); }
 void FrameWin::issuePasteCommand() { notImplemented(); }
 void FrameWin::scheduleClose() { notImplemented(); }
-void FrameWin::markMisspellings(WebCore::SelectionController const&) { notImplemented(); }
+void FrameWin::markMisspellings(const WebCore::Selection&) { notImplemented(); }
 bool FrameWin::menubarVisible() { notImplemented(); return 0; }
 bool FrameWin::personalbarVisible() { notImplemented(); return 0; }
 bool FrameWin::statusbarVisible() { notImplemented(); return 0; }
@@ -228,15 +228,15 @@ Range* FrameWin::markedTextRange() const { return 0; }
 bool FrameWin::passSubframeEventToSubframe(WebCore::MouseEventWithHitTestResults&, Frame*) { return false; }
 bool FrameWin::lastEventIsMouseUp() const { return false; }
 void FrameWin::addMessageToConsole(String const&,unsigned int,String const&) { }
-bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionController const&,WebCore::EAffinity,bool) const { return true; }
-void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,bool) { }
+bool FrameWin::shouldChangeSelection(const WebCore::Selection&,const WebCore::Selection&,WebCore::EAffinity,bool) const { return true; }
+void FrameWin::respondToChangedSelection(const WebCore::Selection&,bool) { }
 static int frameNumber = 0;
 Frame* FrameWin::createFrame(KURL const&,String const&,Element*,String const&) { return 0; }
 void FrameWin::saveDocumentState() { }
 void FrameWin::clearUndoRedoOperations(void) { }
 String FrameWin::incomingReferrer() const { return String(); }
 void FrameWin::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { }
-void FrameWin::respondToChangedContents(const SelectionController &endingSelection) { }
+void FrameWin::respondToChangedContents(const Selection&) { }
 void FrameWin::handledOnloadEvents() { }
 Plugin* FrameWin::createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&) { return 0; }
 ObjectContentType FrameWin::objectContentType(const KURL&, const String&) { return ObjectContentNone; }
@@ -372,6 +372,3 @@ void RenderPopupMenuWin::addOption(HTMLOptionElement*) { notImplemented(); }
 void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) const {}
 bool RenderThemeWin::paintMenuList(RenderObject *, const RenderObject::PaintInfo&, const IntRect&) { return false; }
 void RenderThemeWin::adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const { }
-
-CString::CString(const DeprecatedCString&) { }
-const char* CString::data() const { return 0; }
