@@ -26,7 +26,6 @@
 
 #include "SVGHelper.h"
 #include "SVGFEMergeNodeElement.h"
-#include "SVGAnimatedString.h"
 
 using namespace WebCore;
 
@@ -38,17 +37,13 @@ SVGFEMergeNodeElement::~SVGFEMergeNodeElement()
 {
 }
 
-SVGAnimatedString *SVGFEMergeNodeElement::in1() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedString>(m_in1, dummy);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEMergeNodeElement, String, String, string, In, in, SVGNames::inAttr.localName(), m_in)
 
 void SVGFEMergeNodeElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
-        in1()->setBaseVal(value.impl());
+        setInBaseValue(value.impl());
     else
         SVGElement::parseMappedAttribute(attr);
 }

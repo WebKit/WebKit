@@ -32,10 +32,8 @@
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "KRenderingPaintServerPattern.h"
-#include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedString.h"
-#include "SVGAnimatedTransformList.h"
+#include "SVGLength.h"
+#include "SVGTransformList.h"
 #include "SVGHelper.h"
 #include "SVGMatrix.h"
 #include "SVGNames.h"
@@ -48,7 +46,21 @@
 
 namespace WebCore {
 
-SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document *doc) : SVGStyledLocatableElement(tagName, doc), SVGURIReference(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGFitToViewBox(), KCanvasResourceListener()
+SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document *doc)
+    : SVGStyledLocatableElement(tagName, doc)
+    , SVGURIReference()
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , SVGFitToViewBox()
+    , KCanvasResourceListener()
+    , m_x(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_width(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_patternUnits(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    , m_patternContentUnits(SVG_UNIT_TYPE_USERSPACEONUSE)
+    , m_patternTransform(new SVGTransformList(this))
 {
     m_tile = 0;
     m_paintServer = 0;
@@ -60,75 +72,38 @@ SVGPatternElement::~SVGPatternElement()
     delete m_paintServer;
 }
 
-SVGAnimatedEnumeration *SVGPatternElement::patternUnits() const
-{
-    if (!m_patternUnits) {
-        lazy_create<SVGAnimatedEnumeration>(m_patternUnits, this);
-        m_patternUnits->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-    }
-
-    return m_patternUnits.get();
-}
-
-SVGAnimatedEnumeration *SVGPatternElement::patternContentUnits() const
-{
-    if (!m_patternContentUnits) {
-        lazy_create<SVGAnimatedEnumeration>(m_patternContentUnits, this);
-        m_patternContentUnits->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
-    }
-
-    return m_patternContentUnits.get();
-}
-
-SVGAnimatedLength* SVGPatternElement::x() const
-{
-    return lazy_create<SVGAnimatedLength>(m_x, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength* SVGPatternElement::y() const
-{
-    return lazy_create<SVGAnimatedLength>(m_y, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedLength* SVGPatternElement::width() const
-{
-    return lazy_create<SVGAnimatedLength>(m_width, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength* SVGPatternElement::height() const
-{
-    return lazy_create<SVGAnimatedLength>(m_height, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedTransformList *SVGPatternElement::patternTransform() const
-{
-    return lazy_create<SVGAnimatedTransformList>(m_patternTransform, this);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, Enumeration, enumeration, PatternUnits, patternUnits, SVGNames::patternUnitsAttr.localName(), m_patternUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, Enumeration, enumeration, PatternContentUnits, patternContentUnits, SVGNames::patternContentUnitsAttr.localName(), m_patternContentUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength*, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGTransformList*, TransformList, transformList, PatternTransform, patternTransform, SVGNames::patternTransformAttr.localName(), m_patternTransform.get())
 
 void SVGPatternElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString &value = attr->value();
     if (attr->name() == SVGNames::patternUnitsAttr) {
         if (value == "userSpaceOnUse")
-            patternUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+            setPatternUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
         else if (value == "objectBoundingBox")
-            patternUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            setPatternUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::patternContentUnitsAttr) {
         if (value == "userSpaceOnUse")
-            patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+            setPatternContentUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
         else if (value == "objectBoundingBox")
-            patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            setPatternContentUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::patternTransformAttr) {
-        SVGTransformList *patternTransforms = patternTransform()->baseVal();
+        SVGTransformList *patternTransforms = patternTransformBaseValue();
         SVGTransformable::parseTransformAttribute(patternTransforms, value);
     } else if (attr->name() == SVGNames::xAttr)
-        x()->baseVal()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)
-        y()->baseVal()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::widthAttr)
-        width()->baseVal()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::heightAttr)
-        height()->baseVal()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value.impl());
     else {
         if (SVGURIReference::parseMappedAttribute(attr))
             return;
@@ -148,12 +123,12 @@ void SVGPatternElement::parseMappedAttribute(MappedAttribute *attr)
 const SVGStyledElement* SVGPatternElement::pushAttributeContext(const SVGStyledElement* context)
 {
     // All attribute's contexts are equal (so just take the one from 'x').
-    const SVGStyledElement* restore = x()->baseVal()->context();
+    const SVGStyledElement* restore = xBaseValue()->context();
 
-    x()->baseVal()->setContext(context);
-    y()->baseVal()->setContext(context);
-    width()->baseVal()->setContext(context);
-    height()->baseVal()->setContext(context);
+    xBaseValue()->setContext(context);
+    yBaseValue()->setContext(context);
+    widthBaseValue()->setContext(context);
+    heightBaseValue()->setContext(context);
 
     return restore;
 }
@@ -164,9 +139,9 @@ void SVGPatternElement::resourceNotification() const
     notifyAttributeChange();
 }
 
-void SVGPatternElement::fillAttributesFromReferencePattern(const SVGPatternElement* target, AffineTransform& patternTransformMatrix) const
+void SVGPatternElement::fillAttributesFromReferencePattern(const SVGPatternElement* target, AffineTransform& patternTransformMatrix)
 {
-    DeprecatedString ref = String(href()->baseVal()).deprecatedString();
+    DeprecatedString ref = String(hrefBaseValue()).deprecatedString();
     KRenderingPaintServer *refServer = getPaintServerById(document(), ref.mid(1));
 
     if (!refServer || refServer->type() != PS_PATTERN)
@@ -177,37 +152,37 @@ void SVGPatternElement::fillAttributesFromReferencePattern(const SVGPatternEleme
     if (!hasAttribute(SVGNames::patternUnitsAttr)) {
         const AtomicString& value = target->getAttribute(SVGNames::patternUnitsAttr);
         if (value == "userSpaceOnUse")
-            patternUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+            setPatternUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
         else if (value == "objectBoundingBox")
-            patternUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            setPatternUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     }
     
     if (!hasAttribute(SVGNames::patternContentUnitsAttr)) {
         const AtomicString& value = target->getAttribute(SVGNames::patternContentUnitsAttr);
         if (value == "userSpaceOnUse")
-            patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+            setPatternContentUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
         else if (value == "objectBoundingBox")
-            patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            setPatternContentUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     }
 
     if (!hasAttribute(SVGNames::patternTransformAttr))
         patternTransformMatrix = refPattern->patternTransform();
 }
 
-void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* target, const IntSize& newSize, AffineTransform patternTransformMatrix) const
+void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* target, const IntSize& newSize, AffineTransform patternTransformMatrix)
 {
     KRenderingDevice* device = renderingDevice();
     
     SVGStyledElement* activeElement = static_cast<SVGStyledElement*>(m_paintServer->activeClient()->element());
 
-    bool bbox = (patternUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+    bool bbox = (patternUnitsBaseValue() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 
     const SVGStyledElement* savedContext = 0;
     if (bbox) {
-        if (width()->baseVal()->unitType() != SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
-            width()->baseVal()->newValueSpecifiedUnits(SVGLength::SVG_LENGTHTYPE_PERCENTAGE, width()->baseVal()->value() * 100.);
-        if (height()->baseVal()->unitType() != SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
-            height()->baseVal()->newValueSpecifiedUnits(SVGLength::SVG_LENGTHTYPE_PERCENTAGE, height()->baseVal()->value() * 100.);
+        if (widthBaseValue()->unitType() != SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
+            widthBaseValue()->newValueSpecifiedUnits(SVGLength::SVG_LENGTHTYPE_PERCENTAGE, widthBaseValue()->value() * 100.);
+        if (heightBaseValue()->unitType() != SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
+            heightBaseValue()->newValueSpecifiedUnits(SVGLength::SVG_LENGTHTYPE_PERCENTAGE, heightBaseValue()->value() * 100.);
         if (activeElement)
             savedContext = const_cast<SVGPatternElement* >(this)->pushAttributeContext(activeElement);
     }
@@ -218,7 +193,7 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
 
     KRenderingDeviceContext* patternContext = device->contextForImage(m_tile);
     device->pushContext(patternContext);
-    FloatRect rect(x()->baseVal()->value(), y()->baseVal()->value(), width()->baseVal()->value(), height()->baseVal()->value());
+    FloatRect rect(xBaseValue()->value(), yBaseValue()->value(), widthBaseValue()->value(), heightBaseValue()->value());
     m_paintServer->setBbox(rect);
     m_paintServer->setPatternTransform(patternTransformMatrix);
     m_paintServer->setTile(m_tile);
@@ -244,7 +219,7 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
         KCanvasMatrix savedMatrix = item->localTransform();
 
         const SVGStyledElement* savedContext = 0;
-        if (patternContentUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        if (patternContentUnitsBaseValue() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
         {
             if (activeElement)
                 savedContext = e->pushAttributeContext(activeElement);
@@ -311,7 +286,7 @@ void SVGPatternElement::notifyAttributeChange() const
     if (!m_paintServer || !m_paintServer->activeClient() || m_ignoreAttributeChanges)
         return;
 
-    IntSize newSize = IntSize(lroundf(width()->baseVal()->value()), lroundf(height()->baseVal()->value()));
+    IntSize newSize = IntSize(lroundf(widthBaseValue()->value()), lroundf(heightBaseValue()->value()));
     if (m_tile && (m_tile->size() == newSize) || newSize.width() < 1 || newSize.height() < 1)
         return;
 
@@ -327,25 +302,26 @@ void SVGPatternElement::notifyAttributeChange() const
     const Node *test = this;
     while(test && !test->hasChildNodes())
     {
-        DeprecatedString ref = String(target->href()->baseVal()).deprecatedString();
+        DeprecatedString ref = String(target->hrefBaseValue()).deprecatedString();
         test = ownerDocument()->getElementById(String(ref.mid(1)).impl());
         if (test && test->hasTagName(SVGNames::patternTag))
             target = static_cast<const SVGPatternElement* >(test);
     }
 
-    unsigned short savedPatternUnits = patternUnits()->baseVal();
-    unsigned short savedPatternContentUnits = patternContentUnits()->baseVal();
+    unsigned short savedPatternUnits = patternUnitsBaseValue();
+    unsigned short savedPatternContentUnits = patternContentUnitsBaseValue();
 
     AffineTransform patternTransformMatrix;
-    if (patternTransform()->baseVal()->numberOfItems() > 0)
-        patternTransformMatrix = patternTransform()->baseVal()->consolidate()->matrix()->matrix();
+    if (patternTransformBaseValue()->numberOfItems() > 0)
+        patternTransformMatrix = patternTransformBaseValue()->consolidate()->matrix()->matrix();
 
-    fillAttributesFromReferencePattern(target, patternTransformMatrix);
-    
-    drawPatternContentIntoTile(target, newSize, patternTransformMatrix);
-    
-    patternUnits()->setBaseVal(savedPatternUnits);
-    patternContentUnits()->setBaseVal(savedPatternContentUnits);
+
+    SVGPatternElement *nonConstThis = const_cast<SVGPatternElement*>(this);
+
+    nonConstThis->fillAttributesFromReferencePattern(target, patternTransformMatrix);   
+    nonConstThis->drawPatternContentIntoTile(target, newSize, patternTransformMatrix);
+    nonConstThis->setPatternUnitsBaseValue(savedPatternUnits);
+    nonConstThis->setPatternContentUnitsBaseValue(savedPatternContentUnits);
 
     notifyClientsToRepaint();
     
@@ -374,8 +350,8 @@ SVGMatrix *SVGPatternElement::getCTM() const
     SVGMatrix *mat = SVGSVGElement::createSVGMatrix();
     if (mat)
     {
-        RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(width()->baseVal()->value(),
-                                                        height()->baseVal()->value());
+        RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(widthBaseValue()->value(),
+                                                        heightBaseValue()->value());
 
         mat->multiply(viewBox.get());
     }

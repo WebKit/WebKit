@@ -24,11 +24,13 @@
 #define KSVG_SVGFitToViewBoxImpl_H
 #ifdef SVG_SUPPORT
 
+#include "SVGElement.h"
+
 namespace WebCore {
     class Attribute;
     class StringImpl;
-    class SVGAnimatedPreserveAspectRatio;
-    class SVGAnimatedRect;
+    class SVGPreserveAspectRatio;
+    class SVGRect;
     class SVGMatrix;
 
     class SVGFitToViewBox {
@@ -37,17 +39,17 @@ namespace WebCore {
         virtual ~SVGFitToViewBox();
 
         // 'SVGFitToViewBox' functions
-        SVGAnimatedRect *viewBox() const;
-        SVGAnimatedPreserveAspectRatio *preserveAspectRatio() const;
-
         void parseViewBox(StringImpl *str);
         SVGMatrix *viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
         bool parseMappedAttribute(MappedAttribute *attr);
 
+    protected:
+        virtual const SVGElement* contextElement() const = 0;
+
     private:
-        mutable RefPtr<SVGAnimatedRect> m_viewBox;
-        mutable RefPtr<SVGAnimatedPreserveAspectRatio> m_preserveAspectRatio;
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRect*, RefPtr<SVGRect>, ViewBox, viewBox)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPreserveAspectRatio*, RefPtr<SVGPreserveAspectRatio>, PreserveAspectRatio, preserveAspectRatio)
     };
 
 } // namespace WebCore

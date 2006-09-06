@@ -32,8 +32,8 @@
 #include "SVGLength.h"
 #include "SVGElement.h"
 #include "SVGSVGElement.h"
-#include "SVGAnimatedRect.h"
-#include "SVGAnimatedLength.h"
+#include "SVGRect.h"
+#include "SVGLength.h"
 
 #include <math.h>
 

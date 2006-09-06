@@ -47,8 +47,6 @@ namespace WebCore {
         virtual bool isStyled() const { return true; }
 
         // 'SVGStylable' functions
-        virtual SVGAnimatedString* className() const;
-
         // These need to be implemented.
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
         virtual Path toPathData() const { return Path(); }
@@ -72,8 +70,7 @@ namespace WebCore {
 
     private:
         mutable RefPtr<CSSStyleDeclaration> m_pa;
-        mutable RefPtr<SVGAnimatedString> m_className;
-
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, ClassName, className)
         // Optimized updating logic
         bool m_updateVectorial : 1;
     };

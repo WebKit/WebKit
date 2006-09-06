@@ -30,7 +30,6 @@
 #include "SVGHelper.h"
 #include "SVGURIReference.h"
 #include "SVGStyledElement.h"
-#include "SVGAnimatedString.h"
 
 using namespace WebCore;
 
@@ -42,16 +41,12 @@ SVGURIReference::~SVGURIReference()
 {
 }
 
-SVGAnimatedString *SVGURIReference::href() const
-{
-    //const SVGStyledElement *context = dynamic_cast<const SVGStyledElement *>(this);
-    return lazy_create<SVGAnimatedString>(m_href, (const SVGStyledElement *)0); // FIXME: 0 is a hack
-}
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGURIReference, String, String, string, Href, href, XLinkNames::hrefAttr.localName(), m_href)
 
 bool SVGURIReference::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name().matches(XLinkNames::hrefAttr)) {
-        href()->setBaseVal(attr->value().impl());
+        setHrefBaseValue(attr->value().impl());
         return true;
     }
 

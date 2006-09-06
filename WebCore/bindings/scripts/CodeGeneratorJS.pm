@@ -1104,7 +1104,23 @@ sub NativeToJSValue
     my $value = shift;
     
     my $type = $codeGenerator->StripModule($signature->type);
-    
+
+    # FIXME: Temporary hack until we implement the JSSVGAnimated* stuff.
+
+    if($type eq "SVGAnimatedString") {
+        $type = "DOMString";
+    } elsif($type eq "SVGAnimatedBoolean") {
+        $type = "boolean";
+    } elsif($type eq "SVGAnimatedEnumeration") {
+        $type = "long";
+    } elsif($type eq "SVGAnimatedInteger") {
+        $type = "long";
+    } elsif($type eq "SVGAnimatedNumber") {
+        $type = "double";
+    } elsif($type eq "SVGAnimatedLength") {
+        $type = "SVGLength";
+    }
+
     if ($type eq "boolean") {
         return "jsBoolean($value)";
     } elsif ($type eq "long" or

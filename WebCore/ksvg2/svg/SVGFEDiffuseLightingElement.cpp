@@ -30,16 +30,19 @@
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
-#include "SVGAnimatedColor.h"
-#include "SVGAnimatedNumber.h"
-#include "SVGAnimatedString.h"
+#include "SVGColor.h"
 #include "SVGFELightElement.h"
 #include "SVGFEDiffuseLightingElement.h"
 
 namespace WebCore {
 
-SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedName& tagName, Document *doc) : 
-SVGFilterPrimitiveStandardAttributes(tagName, doc)
+SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedName& tagName, Document *doc)
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , m_diffuseConstant(0.0)
+    , m_surfaceScale(0.0)
+    , m_lightingColor(new SVGColor())
+    , m_kernelUnitLengthX(0.0)
+    , m_kernelUnitLengthY(0.0)
 {
     m_filterEffect = 0;
 }
@@ -49,60 +52,31 @@ SVGFEDiffuseLightingElement::~SVGFEDiffuseLightingElement()
     delete m_filterEffect;
 }
 
-SVGAnimatedString *SVGFEDiffuseLightingElement::in1() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedString>(m_in1, dummy);
-}
-
-SVGAnimatedNumber *SVGFEDiffuseLightingElement::diffuseConstant() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_diffuseConstant, dummy);
-}
-
-SVGAnimatedNumber *SVGFEDiffuseLightingElement::surfaceScale() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_surfaceScale, dummy);
-}
-
-SVGAnimatedNumber *SVGFEDiffuseLightingElement::kernelUnitLengthX() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_kernelUnitLengthX, dummy);
-}
-
-SVGAnimatedNumber *SVGFEDiffuseLightingElement::kernelUnitLengthY() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_kernelUnitLengthY, dummy);
-}
-
-SVGAnimatedColor *SVGFEDiffuseLightingElement::lightingColor() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedColor>(m_lightingColor, dummy);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, String, String, string, In, in, SVGNames::inAttr.localName(), m_in)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, double, Number, number, DiffuseConstant, diffuseConstant, SVGNames::diffuseConstantAttr.localName(), m_diffuseConstant)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, double, Number, number, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr.localName(), m_surfaceScale)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, double, Number, number, KernelUnitLengthX, kernelUnitLengthX, "kernelUnitLengthX", m_kernelUnitLengthX)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, double, Number, number, KernelUnitLengthY, kernelUnitLengthY, "kernelUnitLengthY", m_kernelUnitLengthY)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, SVGColor*, Color, color, LightingColor, lightingColor, SVGNames::lighting_colorAttr.localName(), m_lightingColor.get())
 
 void SVGFEDiffuseLightingElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
-        in1()->setBaseVal(value.impl());
+        setInBaseValue(value.impl());
     else if (attr->name() == SVGNames::surfaceScaleAttr)
-        surfaceScale()->setBaseVal(value.deprecatedString().toDouble());
+        setSurfaceScaleBaseValue(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::diffuseConstantAttr)
-        diffuseConstant()->setBaseVal(value.toInt());
+        setDiffuseConstantBaseValue(value.toInt());
     else if (attr->name() == SVGNames::kernelUnitLengthAttr) {
         DeprecatedStringList numbers = DeprecatedStringList::split(' ', value.deprecatedString());
-        kernelUnitLengthX()->setBaseVal(numbers[0].toDouble());
+        setKernelUnitLengthXBaseValue(numbers[0].toDouble());
         if (numbers.count() == 1)
-            kernelUnitLengthY()->setBaseVal(numbers[0].toDouble());
+            setKernelUnitLengthYBaseValue(numbers[0].toDouble());
         else
-            kernelUnitLengthY()->setBaseVal(numbers[1].toDouble());
+            setKernelUnitLengthYBaseValue(numbers[1].toDouble());
     } else if (attr->name() == SVGNames::lighting_colorAttr)
-        lightingColor()->setBaseVal(new SVGColor(value.impl()));
+        setLightingColorBaseValue(new SVGColor(value.impl()));
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -111,13 +85,13 @@ KCanvasFEDiffuseLighting *SVGFEDiffuseLightingElement::filterEffect() const
 {
     if (!m_filterEffect) 
         m_filterEffect = static_cast<KCanvasFEDiffuseLighting *>(renderingDevice()->createFilterEffect(FE_DIFFUSE_LIGHTING));
-    m_filterEffect->setIn(String(in1()->baseVal()).deprecatedString());
+    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
     setStandardAttributes(m_filterEffect);
-    m_filterEffect->setDiffuseConstant((diffuseConstant()->baseVal()));
-    m_filterEffect->setSurfaceScale((surfaceScale()->baseVal()));
-    m_filterEffect->setKernelUnitLengthX((kernelUnitLengthX()->baseVal()));
-    m_filterEffect->setKernelUnitLengthY((kernelUnitLengthY()->baseVal()));
-    m_filterEffect->setLightingColor(lightingColor()->baseVal()->color());
+    m_filterEffect->setDiffuseConstant((diffuseConstantBaseValue()));
+    m_filterEffect->setSurfaceScale((surfaceScaleBaseValue()));
+    m_filterEffect->setKernelUnitLengthX((kernelUnitLengthXBaseValue()));
+    m_filterEffect->setKernelUnitLengthY((kernelUnitLengthYBaseValue()));
+    m_filterEffect->setLightingColor(lightingColorBaseValue()->color());
     updateLights();
     return m_filterEffect;
 }

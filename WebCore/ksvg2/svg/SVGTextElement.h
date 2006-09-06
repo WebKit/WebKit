@@ -51,15 +51,16 @@ namespace WebCore
         virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
         virtual bool childShouldCreateRenderer(Node *) const;
         virtual void attach();
-
-        virtual SVGAnimatedTransformList *transform() const;
         virtual SVGMatrix *localMatrix() const;
         
         virtual void updateLocalTransform(SVGTransformList *localTransforms);
         
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
         mutable RefPtr<SVGMatrix> m_localMatrix;
-        mutable RefPtr<SVGAnimatedTransformList> m_transform;
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTransformList*, RefPtr<SVGTransformList>, Transform, transform)
     };
 
 } // namespace WebCore

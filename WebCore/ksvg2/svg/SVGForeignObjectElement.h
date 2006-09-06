@@ -31,7 +31,7 @@
 
 namespace WebCore
 {
-    class SVGAnimatedLength;
+    class SVGLength;
     class SVGDocument;
 
     class SVGForeignObjectElement : public SVGStyledTransformableElement,
@@ -45,24 +45,20 @@ namespace WebCore
         virtual ~SVGForeignObjectElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }
-
-        SVGAnimatedLength *x() const;
-        SVGAnimatedLength *y() const;
-
-        SVGAnimatedLength *width() const;
-        SVGAnimatedLength *height() const;
-
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
         virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
         bool childShouldCreateRenderer(Node *child) const;
         virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedLength> m_x;
-        mutable RefPtr<SVGAnimatedLength> m_y;
-        mutable RefPtr<SVGAnimatedLength> m_width;
-        mutable RefPtr<SVGAnimatedLength> m_height;
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Height, height)
     };
 
 } // namespace WebCore

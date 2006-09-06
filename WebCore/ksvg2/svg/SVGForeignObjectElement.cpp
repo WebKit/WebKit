@@ -26,7 +26,7 @@
 
 #include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGAnimatedLength.h"
+#include "SVGLength.h"
 #include "RenderForeignObject.h"
 
 #include <wtf/Assertions.h>
@@ -36,7 +36,14 @@
 namespace WebCore {
 
 SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , m_x(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_width(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
 {
 }
 
@@ -44,38 +51,23 @@ SVGForeignObjectElement::~SVGForeignObjectElement()
 {
 }
 
-SVGAnimatedLength *SVGForeignObjectElement::x() const
-{
-    return lazy_create<SVGAnimatedLength>(m_x, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGForeignObjectElement::y() const
-{
-    return lazy_create<SVGAnimatedLength>(m_y, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedLength *SVGForeignObjectElement::width() const
-{
-    return lazy_create<SVGAnimatedLength>(m_width, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGForeignObjectElement::height() const
-{
-    return lazy_create<SVGAnimatedLength>(m_height, this, LM_HEIGHT, viewportElement());
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength*, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
 
 void SVGForeignObjectElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        x()->baseVal()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)
-        y()->baseVal()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::widthAttr) {
-        width()->baseVal()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value.impl());
         addCSSProperty(attr, CSS_PROP_WIDTH, value);
     } else if (attr->name() == SVGNames::heightAttr) {
-        height()->baseVal()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value.impl());
         addCSSProperty(attr, CSS_PROP_HEIGHT, value);
     } else {
         if (SVGTests::parseMappedAttribute(attr))

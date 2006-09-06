@@ -42,6 +42,9 @@ namespace WebCore
 
         virtual void parseMappedAttribute(MappedAttribute *attr);
         virtual bool shouldAttachChild(Element *) const { return false; }
+    
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
     };
 
 } // namespace WebCore

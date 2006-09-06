@@ -32,9 +32,7 @@
 #include "KCanvasFilters.h"
 
 namespace WebCore {
-    class SVGAnimatedEnumeration;
-    class SVGAnimatedInteger;
-    class SVGAnimatedLength;
+    class SVGLength;
 
     class SVGFilterElement : public SVGStyledElement,
                                  public SVGURIReference,
@@ -48,31 +46,22 @@ namespace WebCore {
         virtual KCanvasFilter *canvasResource();
 
         // 'SVGFilterElement' functions
-        SVGAnimatedEnumeration *filterUnits() const;
-        SVGAnimatedEnumeration *primitiveUnits() const;
-
-        SVGAnimatedLength *x() const;
-        SVGAnimatedLength *y() const;
-
-        SVGAnimatedLength *width() const;
-        SVGAnimatedLength *height() const;
-
-        SVGAnimatedInteger *filterResX() const;
-        SVGAnimatedInteger *filterResY() const;
-
         void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
 
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedEnumeration> m_filterUnits;
-        mutable RefPtr<SVGAnimatedEnumeration> m_primitiveUnits;
-        mutable RefPtr<SVGAnimatedLength> m_x;
-        mutable RefPtr<SVGAnimatedLength> m_y;
-        mutable RefPtr<SVGAnimatedLength> m_width;
-        mutable RefPtr<SVGAnimatedLength> m_height;
-        mutable RefPtr<SVGAnimatedInteger> m_filterResX;
-        mutable RefPtr<SVGAnimatedInteger> m_filterResY;
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, FilterUnits, filterUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, PrimitiveUnits, primitiveUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, FilterResX, filterResX)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, FilterResY, filterResY)
         KCanvasFilter *m_filter;
     };
 

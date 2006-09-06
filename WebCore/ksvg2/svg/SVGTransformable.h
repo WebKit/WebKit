@@ -32,7 +32,7 @@ namespace WebCore {
     class AtomicString;
     class Attribute;
     class Node;
-    class SVGAnimatedTransformList;
+    class SVGTransformList;
     class SVGMatrix;
     class SVGTransformList;
 
@@ -42,7 +42,6 @@ namespace WebCore {
         virtual ~SVGTransformable();
 
         // 'SVGTransformable' functions
-        virtual SVGAnimatedTransformList* transform() const = 0;
         virtual SVGMatrix* localMatrix() const = 0;
         
         virtual void updateLocalTransform(SVGTransformList*) = 0;

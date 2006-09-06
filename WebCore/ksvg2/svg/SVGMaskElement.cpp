@@ -29,7 +29,7 @@
 #include "RenderSVGContainer.h"
 #include "KCanvasImage.h"
 #include "KRenderingDevice.h"
-#include "SVGAnimatedLength.h"
+#include "SVGLength.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
@@ -41,7 +41,18 @@
 
 namespace WebCore {
 
-SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document *doc) : SVGStyledLocatableElement(tagName, doc), SVGURIReference(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), m_masker(0), m_dirty(true)
+SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document *doc)
+    : SVGStyledLocatableElement(tagName, doc)
+    , SVGURIReference()
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , m_x(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_width(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_masker(0)
+    , m_dirty(true)
 {
 }
 
@@ -50,29 +61,14 @@ SVGMaskElement::~SVGMaskElement()
     delete m_masker;
 }
 
-SVGAnimatedLength *SVGMaskElement::x() const
-{
-    return lazy_create<SVGAnimatedLength>(m_x, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGMaskElement::y() const
-{
-    return lazy_create<SVGAnimatedLength>(m_y, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedLength *SVGMaskElement::width() const
-{
-    return lazy_create<SVGAnimatedLength>(m_width, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGMaskElement::height() const
-{
-    return lazy_create<SVGAnimatedLength>(m_height, this, LM_HEIGHT, viewportElement());
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength*, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
 
 void SVGMaskElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {
-    IntSize newSize = IntSize(lroundf(width()->baseVal()->value()), lroundf(height()->baseVal()->value()));
+    IntSize newSize = IntSize(lroundf(widthBaseValue()->value()), lroundf(heightBaseValue()->value()));
     if (!m_masker || !m_masker->mask() || (m_masker->mask()->size() != newSize))
         m_dirty = true;
     SVGStyledLocatableElement::attributeChanged(attr, preserveDecls);
@@ -88,13 +84,13 @@ void SVGMaskElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        x()->baseVal()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)
-        y()->baseVal()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::widthAttr)
-        width()->baseVal()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::heightAttr)
-        height()->baseVal()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value.impl());
     else {
         if (SVGURIReference::parseMappedAttribute(attr))
             return;
@@ -117,7 +113,7 @@ KCanvasImage *SVGMaskElement::drawMaskerContent()
         return 0;
     KCanvasImage *maskImage = static_cast<KCanvasImage *>(device->createResource(RS_IMAGE));
 
-    IntSize size = IntSize(lroundf(width()->baseVal()->value()), lroundf(height()->baseVal()->value()));
+    IntSize size = IntSize(lroundf(widthBaseValue()->value()), lroundf(heightBaseValue()->value()));
     maskImage->init(size);
 
     KRenderingDeviceContext *patternContext = device->contextForImage(maskImage);

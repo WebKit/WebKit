@@ -37,10 +37,9 @@ class KCanvasImage;
 
 namespace WebCore
 {
-    class SVGAnimatedLength;
+    class SVGLength;
     class SVGPatternElement;
-    class SVGAnimatedEnumeration;
-    class SVGAnimatedTransformList;
+    class SVGTransformList;
     class SVGPatternElement : public SVGStyledLocatableElement,
                                   public SVGURIReference,
                                   public SVGTests,
@@ -56,16 +55,6 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // 'SVGPatternElement' functions
-        SVGAnimatedEnumeration *patternUnits() const;
-        SVGAnimatedEnumeration *patternContentUnits() const;
-        SVGAnimatedTransformList *patternTransform() const;
-
-        SVGAnimatedLength *x() const;
-        SVGAnimatedLength *y() const;
-
-        SVGAnimatedLength *width() const;
-        SVGAnimatedLength *height() const;
-
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
         const SVGStyledElement *pushAttributeContext(const SVGStyledElement *context);
@@ -81,24 +70,23 @@ namespace WebCore
         virtual SVGMatrix *getCTM() const;
 
     protected:
-        mutable RefPtr<SVGAnimatedLength> m_x;
-        mutable RefPtr<SVGAnimatedLength> m_y;
-        mutable RefPtr<SVGAnimatedLength> m_width;
-        mutable RefPtr<SVGAnimatedLength> m_height;
-        
-        mutable RefPtr<SVGAnimatedEnumeration> m_patternUnits;
-        mutable RefPtr<SVGAnimatedEnumeration> m_patternContentUnits;
-
-        mutable RefPtr<SVGAnimatedTransformList> m_patternTransform;
-
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, PatternUnits, patternUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, PatternContentUnits, patternContentUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTransformList*, RefPtr<SVGTransformList>, PatternTransform, patternTransform)
         mutable KCanvasImage *m_tile;
         mutable bool m_ignoreAttributeChanges;
         mutable KRenderingPaintServerPattern *m_paintServer;
         
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
         // notifyAttributeChange helpers:
-        void fillAttributesFromReferencePattern(const SVGPatternElement *target, AffineTransform& patternTransformMatrix) const;
-        void drawPatternContentIntoTile(const SVGPatternElement *target, const IntSize &newSize, AffineTransform patternTransformMatrix) const;
+        void fillAttributesFromReferencePattern(const SVGPatternElement *target, AffineTransform& patternTransformMatrix);
+        void drawPatternContentIntoTile(const SVGPatternElement *target, const IntSize &newSize, AffineTransform patternTransformMatrix);
         void notifyClientsToRepaint() const;
     };
 

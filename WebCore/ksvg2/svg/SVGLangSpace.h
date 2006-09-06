@@ -30,8 +30,7 @@ namespace WebCore {
 
     class MappedAttribute;
     class StringImpl;
-    class SVGAnimatedLength;
-    class SVGAnimatedString;
+    class SVGLength;
 
     class SVGLangSpace {
     public:

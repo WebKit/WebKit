@@ -32,8 +32,7 @@
 
 namespace WebCore {
     class SVGGradientElement;
-    class SVGAnimatedEnumeration;
-    class SVGAnimatedTransformList;
+    class SVGTransformList;
     class SVGGradientElement : public SVGStyledElement,
                                    public SVGURIReference,
                                    public SVGExternalResourcesRequired,
@@ -44,10 +43,6 @@ namespace WebCore {
         virtual ~SVGGradientElement();
 
         // 'SVGGradientElement' functions
-        SVGAnimatedEnumeration *gradientUnits() const;
-        SVGAnimatedTransformList *gradientTransform() const;
-        SVGAnimatedEnumeration *spreadMethod() const;
-
         virtual void parseMappedAttribute(MappedAttribute *attr);
         virtual void notifyAttributeChange() const;
         
@@ -60,9 +55,9 @@ namespace WebCore {
         void rebuildStops() const;
 
     protected:
-        mutable RefPtr<SVGAnimatedEnumeration> m_spreadMethod;
-        mutable RefPtr<SVGAnimatedEnumeration> m_gradientUnits;
-        mutable RefPtr<SVGAnimatedTransformList> m_gradientTransform;
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, SpreadMethod, spreadMethod)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, GradientUnits, gradientUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTransformList*, RefPtr<SVGTransformList>, GradientTransform, gradientTransform)
         mutable KRenderingPaintServerGradient *m_resource;
     };
 

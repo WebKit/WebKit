@@ -30,9 +30,8 @@
 #include "Document.h"
 #include "KCanvasRenderingStyle.h"
 #include "KCanvasRenderingStyle.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
-#include "SVGAnimatedString.h"
+#include "SVGLength.h"
+#include "SVGPreserveAspectRatio.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include <kcanvas/KCanvasImage.h>
@@ -42,7 +41,11 @@
 using namespace WebCore;
 
 SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document *doc)
-: SVGFilterPrimitiveStandardAttributes(tagName, doc), SVGURIReference(), SVGLangSpace(), SVGExternalResourcesRequired()
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , SVGURIReference()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , m_preserveAspectRatio(new SVGPreserveAspectRatio(this))
 {
     m_filterEffect = 0;
     m_cachedImage = 0;
@@ -55,22 +58,19 @@ SVGFEImageElement::~SVGFEImageElement()
         m_cachedImage->deref(this);
 }
 
-SVGAnimatedPreserveAspectRatio *SVGFEImageElement::preserveAspectRatio() const
-{
-    return lazy_create<SVGAnimatedPreserveAspectRatio>(m_preserveAspectRatio, this);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEImageElement, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr.localName(), m_preserveAspectRatio.get())
 
 void SVGFEImageElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::preserveAspectRatioAttr)
-        preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.impl());
+        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(value.impl());
     else
     {
         if (SVGURIReference::parseMappedAttribute(attr)) {
             if (m_cachedImage)
                 m_cachedImage->deref(this);
-            m_cachedImage = ownerDocument()->docLoader()->requestImage(href()->baseVal());
+            m_cachedImage = ownerDocument()->docLoader()->requestImage(hrefBaseValue());
             if (m_cachedImage)
                 m_cachedImage->ref(this);
             return;

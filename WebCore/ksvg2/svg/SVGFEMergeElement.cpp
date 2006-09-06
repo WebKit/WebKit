@@ -34,13 +34,11 @@
 #include "SVGRenderStyle.h"
 #include "SVGFEMergeElement.h"
 #include "SVGFEMergeNodeElement.h"
-#include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedString.h"
 
 using namespace WebCore;
 
-SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Document *doc) : 
-SVGFilterPrimitiveStandardAttributes(tagName, doc)
+SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Document *doc)
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
 {
     m_filterEffect = 0;
 }
@@ -63,7 +61,7 @@ KCanvasFEMerge *SVGFEMergeElement::filterEffect() const
     {
         if(n->hasTagName(SVGNames::feMergeNodeTag))
         {
-            String mergeInput = static_cast<SVGFEMergeNodeElement *>(n)->in1()->baseVal();
+            String mergeInput = static_cast<SVGFEMergeNodeElement *>(n)->inBaseValue();
             mergeInputs.append(mergeInput.deprecatedString());
         }
     }

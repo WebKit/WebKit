@@ -28,7 +28,7 @@
 
 namespace WebCore
 {
-    class SVGAnimatedLength;
+    class SVGLength;
     class SVGLinearGradientElement : public SVGGradientElement
     {
     public:
@@ -36,22 +36,20 @@ namespace WebCore
         virtual ~SVGLinearGradientElement();
 
         // 'SVGLinearGradientElement' functions
-        SVGAnimatedLength *x1() const;
-        SVGAnimatedLength *y1() const;
-        SVGAnimatedLength *x2() const;
-        SVGAnimatedLength *y2() const;
-
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
     protected:
         virtual void buildGradient(KRenderingPaintServerGradient *grad) const;
         virtual KCPaintServerType gradientType() const { return PS_LINEAR_GRADIENT; }
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedLength> m_x1;
-        mutable RefPtr<SVGAnimatedLength> m_y1;
-        mutable RefPtr<SVGAnimatedLength> m_x2;
-        mutable RefPtr<SVGAnimatedLength> m_y2;
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X1, x1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y1, y1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X2, x2)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y2, y2)
     };
 
 } // namespace WebCore

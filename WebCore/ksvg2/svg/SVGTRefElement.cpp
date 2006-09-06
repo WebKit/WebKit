@@ -26,7 +26,6 @@
 #include "SVGTRefElement.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
-#include "SVGAnimatedString.h"
 #include "SVGDocument.h"
 #include "RenderInline.h"
 
@@ -43,7 +42,7 @@ SVGTRefElement::~SVGTRefElement()
 
 void SVGTRefElement::updateReferencedText()
 {
-    String targetId = SVGURIReference::getTarget(String(href()->baseVal()).deprecatedString());
+    String targetId = SVGURIReference::getTarget(String(hrefBaseValue()).deprecatedString());
     Element *targetElement = ownerDocument()->getElementById(targetId.impl());
     SVGElement *target = svg_dynamic_cast(targetElement);
     if (target) {

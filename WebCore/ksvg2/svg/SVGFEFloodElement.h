@@ -29,7 +29,6 @@
 
 namespace WebCore
 {
-    class SVGAnimatedString;
 
     class SVGFEFloodElement : public SVGFilterPrimitiveStandardAttributes
     {
@@ -38,15 +37,16 @@ namespace WebCore
         virtual ~SVGFEFloodElement();
 
         // 'SVGFEFloodElement' functions
-        SVGAnimatedString *in1() const;
-
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
         virtual KCanvasFEFlood *filterEffect() const;
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedString> m_in1;
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
         mutable KCanvasFEFlood *m_filterEffect;
     };
 

@@ -28,11 +28,11 @@
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGElement.h"
-#include "SVGAnimatedBoolean.h"
 
 namespace WebCore {
 
 SVGExternalResourcesRequired::SVGExternalResourcesRequired()
+    : m_externalResourcesRequired(false)
 {
 }
 
@@ -40,16 +40,13 @@ SVGExternalResourcesRequired::~SVGExternalResourcesRequired()
 {
 }
 
-SVGAnimatedBoolean *SVGExternalResourcesRequired::externalResourcesRequired() const
-{
-    return lazy_create<SVGAnimatedBoolean>(m_external, static_cast<const SVGStyledElement *>(0));
-}
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGExternalResourcesRequired, bool, Boolean, boolean, ExternalResourcesRequired, externalResourcesRequired, SVGNames::externalResourcesRequiredAttr.localName(), m_externalResourcesRequired)
 
 bool SVGExternalResourcesRequired::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::externalResourcesRequiredAttr) {
-        externalResourcesRequired()->setBaseVal(value == "true");
+        setExternalResourcesRequiredBaseValue(value == "true");
         return true;
     }
 

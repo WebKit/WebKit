@@ -36,6 +36,9 @@ namespace WebCore
 
         virtual void handleTimerEvent(double timePercentage);
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
         DeprecatedString m_savedTo;
     };

@@ -34,9 +34,8 @@ namespace WebCore
 {
     class Document;
     class SVGAngle;
-    class SVGAnimatedAngle;
-    class SVGAnimatedLength;
-    class SVGAnimatedEnumeration;
+    class SVGAngle;
+    class SVGLength;
     class SVGMarkerElement : public SVGStyledElement,
                                  public SVGLangSpace,
                                  public SVGExternalResourcesRequired,
@@ -47,14 +46,6 @@ namespace WebCore
         virtual ~SVGMarkerElement();
 
         // 'SVGMarkerElement' functions
-        SVGAnimatedLength *refX() const;
-        SVGAnimatedLength *refY() const;
-        SVGAnimatedEnumeration *markerUnits() const;
-        SVGAnimatedLength *markerWidth() const;
-        SVGAnimatedLength *markerHeight() const;
-        SVGAnimatedEnumeration *orientType() const;
-        SVGAnimatedAngle *orientAngle() const;
-
         void setOrientToAuto();
         void setOrientToAngle(SVGAngle *angle);
 
@@ -64,14 +55,17 @@ namespace WebCore
         virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
         virtual KCanvasMarker *canvasResource();
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedLength> m_refX;
-        mutable RefPtr<SVGAnimatedLength> m_refY;
-        mutable RefPtr<SVGAnimatedLength> m_markerWidth;
-        mutable RefPtr<SVGAnimatedLength> m_markerHeight;
-        mutable RefPtr<SVGAnimatedEnumeration> m_markerUnits;
-        mutable RefPtr<SVGAnimatedEnumeration> m_orientType;
-        mutable RefPtr<SVGAnimatedAngle> m_orientAngle;
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, RefX, refX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, RefY, refY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, MarkerWidth, markerWidth)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, MarkerHeight, markerHeight)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, MarkerUnits, markerUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, OrientType, orientType)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGAngle*, RefPtr<SVGAngle>, OrientAngle, orientAngle)
         KCanvasMarker *m_marker;
     };
 

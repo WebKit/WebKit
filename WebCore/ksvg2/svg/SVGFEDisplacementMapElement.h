@@ -25,9 +25,6 @@
 #include "KCanvasFilters.h"
 
 namespace WebCore {
-    class SVGAnimatedNumber;
-    class SVGAnimatedString;
-    class SVGAnimatedEnumeration;
     
     class SVGFEDisplacementMapElement : public SVGFilterPrimitiveStandardAttributes {
     public:
@@ -35,12 +32,6 @@ namespace WebCore {
         virtual ~SVGFEDisplacementMapElement();
         
         // 'SVGFEDisplacementMapElement' functions
-        SVGAnimatedString* in1() const;
-        SVGAnimatedString* in2() const;
-        SVGAnimatedEnumeration* xChannelSelector() const;
-        SVGAnimatedEnumeration* yChannelSelector() const;
-        SVGAnimatedNumber* scale() const;
-        
         static KCChannelSelectorType stringToChannel(const String&);
         
         // Derived from: 'Element'
@@ -48,12 +39,15 @@ namespace WebCore {
         
         virtual KCanvasFEDisplacementMap* filterEffect() const;
         
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedString> m_in1;
-        mutable RefPtr<SVGAnimatedString> m_in2;
-        mutable RefPtr<SVGAnimatedEnumeration> m_xChannelSelector;
-        mutable RefPtr<SVGAnimatedEnumeration> m_yChannelSelector;
-        mutable RefPtr<SVGAnimatedNumber> m_scale;
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, In2, in2)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, XChannelSelector, xChannelSelector)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, YChannelSelector, yChannelSelector)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, Scale, scale)
         mutable KCanvasFEDisplacementMap* m_filterEffect;
     };
 

@@ -27,7 +27,7 @@
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGRectElement.h"
-#include "SVGAnimatedLength.h"
+#include "SVGLength.h"
 
 #include "KCanvasRenderingStyle.h"
 #include <kcanvas/device/KRenderingDevice.h>
@@ -37,7 +37,16 @@
 namespace WebCore {
 
 SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , m_x(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_width(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_rx(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_ry(new SVGLength(this, LM_HEIGHT, viewportElement()))
 {
 }
 
@@ -45,51 +54,28 @@ SVGRectElement::~SVGRectElement()
 {
 }
 
-SVGAnimatedLength *SVGRectElement::x() const
-{
-    return lazy_create<SVGAnimatedLength>(m_x, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGRectElement::y() const
-{
-    return lazy_create<SVGAnimatedLength>(m_y, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedLength *SVGRectElement::width() const
-{
-    return lazy_create<SVGAnimatedLength>(m_width, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGRectElement::height() const
-{
-    return lazy_create<SVGAnimatedLength>(m_height, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedLength *SVGRectElement::rx() const
-{
-    return lazy_create<SVGAnimatedLength>(m_rx, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGRectElement::ry() const
-{
-    return lazy_create<SVGAnimatedLength>(m_ry, this, LM_HEIGHT, viewportElement());
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Rx, rx, SVGNames::rxAttr.localName(), m_rx.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength*, Length, length, Ry, ry, SVGNames::ryAttr.localName(), m_ry.get())
 
 void SVGRectElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        x()->baseVal()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)
-        y()->baseVal()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::rxAttr)
-        rx()->baseVal()->setValueAsString(value.impl());
+        rxBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::ryAttr)
-        ry()->baseVal()->setValueAsString(value.impl());
+        ryBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::widthAttr)
-        width()->baseVal()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::heightAttr)
-        height()->baseVal()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value.impl());
     else
     {
         if(SVGTests::parseMappedAttribute(attr)) return;
@@ -101,15 +87,15 @@ void SVGRectElement::parseMappedAttribute(MappedAttribute *attr)
 
 Path SVGRectElement::toPathData() const
 {
-    float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
-    float _width = width()->baseVal()->value(), _height = height()->baseVal()->value();
+    float _x = xBaseValue()->value(), _y = yBaseValue()->value();
+    float _width = widthBaseValue()->value(), _height = heightBaseValue()->value();
 
     bool hasRx = hasAttribute(String("rx").impl());
     bool hasRy = hasAttribute(String("ry").impl());
     if(hasRx || hasRy)
     {
-        float _rx = hasRx ? rx()->baseVal()->value() : ry()->baseVal()->value();
-        float _ry = hasRy ? ry()->baseVal()->value() : rx()->baseVal()->value();
+        float _rx = hasRx ? rxBaseValue()->value() : ryBaseValue()->value();
+        float _ry = hasRy ? ryBaseValue()->value() : rxBaseValue()->value();
         return Path::createRoundedRectangle(FloatRect(_x, _y, _width, _height), FloatSize(_rx, _ry));
     }
 
@@ -119,12 +105,12 @@ Path SVGRectElement::toPathData() const
 const SVGStyledElement *SVGRectElement::pushAttributeContext(const SVGStyledElement *context)
 {
     // All attribute's contexts are equal (so just take the one from 'x').
-    const SVGStyledElement *restore = x()->baseVal()->context();
+    const SVGStyledElement *restore = xBaseValue()->context();
 
-    x()->baseVal()->setContext(context);
-    y()->baseVal()->setContext(context);
-    width()->baseVal()->setContext(context);
-    height()->baseVal()->setContext(context);
+    xBaseValue()->setContext(context);
+    yBaseValue()->setContext(context);
+    widthBaseValue()->setContext(context);
+    heightBaseValue()->setContext(context);
     
     SVGStyledElement::pushAttributeContext(context);
     return restore;

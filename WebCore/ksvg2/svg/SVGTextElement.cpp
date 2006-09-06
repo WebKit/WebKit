@@ -25,8 +25,8 @@
 #include "SVGTextElement.h"
 
 #include "KCanvasRenderingStyle.h"
-#include "SVGAnimatedLengthList.h"
-#include "SVGAnimatedTransformList.h"
+#include "SVGLengthList.h"
+#include "SVGTransformList.h"
 #include "SVGMatrix.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"
@@ -37,7 +37,9 @@
 namespace WebCore {
 
 SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document *doc)
-: SVGTextPositioningElement(tagName, doc), SVGTransformable()
+    : SVGTextPositioningElement(tagName, doc)
+    , SVGTransformable()
+    , m_transform(new SVGTransformList(this))
 {
 }
 
@@ -45,10 +47,7 @@ SVGTextElement::~SVGTextElement()
 {
 }
 
-SVGAnimatedTransformList *SVGTextElement::transform() const
-{
-    return lazy_create<SVGAnimatedTransformList>(m_transform, this);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextElement, SVGTransformList*, TransformList, transformList, Transform, transform, SVGNames::transformAttr.localName(), m_transform.get())
 
 SVGMatrix *SVGTextElement::localMatrix() const
 {
@@ -58,7 +57,7 @@ SVGMatrix *SVGTextElement::localMatrix() const
 void SVGTextElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == SVGNames::transformAttr) {
-        SVGTransformList *localTransforms = transform()->baseVal();
+        SVGTransformList *localTransforms = transformBaseValue();
         localTransforms->clear();
         
         SVGTransformable::parseTransformAttribute(localTransforms, attr->value());

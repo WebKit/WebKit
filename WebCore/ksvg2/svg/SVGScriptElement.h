@@ -47,6 +47,9 @@ namespace WebCore
 
         static void executeScript(Document *document, StringImpl *jsCode);
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
         String m_type;
     };

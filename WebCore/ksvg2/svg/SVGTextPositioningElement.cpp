@@ -26,15 +26,19 @@
 
 #include "SVGNames.h"
 #include "SVGHelper.h"
-//#include "SVGDocument.h"
 #include "SVGTextPositioningElement.h"
-#include "SVGAnimatedLengthList.h"
-#include "SVGAnimatedNumberList.h"
+#include "SVGLengthList.h"
+#include "SVGNumberList.h"
 
 using namespace WebCore;
 
 SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document *doc)
-: SVGTextContentElement(tagName, doc)
+    : SVGTextContentElement(tagName, doc)
+    , m_x(new SVGLengthList(this))
+    , m_y(new SVGLengthList(this))
+    , m_dx(new SVGLengthList(this))
+    , m_dy(new SVGLengthList(this))
+    , m_rotate(new SVGNumberList(this))
 {
 }
 
@@ -42,45 +46,26 @@ SVGTextPositioningElement::~SVGTextPositioningElement()
 {
 }
 
-SVGAnimatedLengthList *SVGTextPositioningElement::x() const
-{
-    return lazy_create<SVGAnimatedLengthList>(m_x, this);
-}
-
-SVGAnimatedLengthList *SVGTextPositioningElement::y() const
-{
-    return lazy_create<SVGAnimatedLengthList>(m_y, this);
-}
-
-SVGAnimatedLengthList *SVGTextPositioningElement::dx() const
-{
-    return lazy_create<SVGAnimatedLengthList>(m_dx, this);
-}
-
-SVGAnimatedLengthList *SVGTextPositioningElement::dy() const
-{
-    return lazy_create<SVGAnimatedLengthList>(m_dy, this);
-}
-
-SVGAnimatedNumberList *SVGTextPositioningElement::rotate() const
-{
-    return lazy_create<SVGAnimatedNumberList>(m_rotate, this);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGLengthList*, LengthList, lengthList, X, x, SVGNames::xAttr.localName(), m_x.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGLengthList*, LengthList, lengthList, Y, y, SVGNames::yAttr.localName(), m_y.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGLengthList*, LengthList, lengthList, Dx, dx, SVGNames::dxAttr.localName(), m_dx.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGLengthList*, LengthList, lengthList, Dy, dy, SVGNames::dyAttr.localName(), m_dy.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGNumberList*, NumberList, numberList, Rotate, rotate, SVGNames::rotateAttr.localName(), m_rotate.get())
 
 void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     
     if (attr->name() == SVGNames::xAttr)
-        x()->baseVal()->parse(value.deprecatedString(), this, LM_WIDTH);
+        xBaseValue()->parse(value.deprecatedString(), this, LM_WIDTH);
     else if (attr->name() == SVGNames::yAttr)
-        y()->baseVal()->parse(value.deprecatedString(), this, LM_HEIGHT);
+        yBaseValue()->parse(value.deprecatedString(), this, LM_HEIGHT);
     else if (attr->name() == SVGNames::dxAttr)
-        dx()->baseVal()->parse(value.deprecatedString(), this, LM_WIDTH);
+        dxBaseValue()->parse(value.deprecatedString(), this, LM_WIDTH);
     else if (attr->name() == SVGNames::dyAttr)
-        dy()->baseVal()->parse(value.deprecatedString(), this, LM_HEIGHT);
+        dyBaseValue()->parse(value.deprecatedString(), this, LM_HEIGHT);
     else if (attr->name() == SVGNames::rotateAttr)
-        rotate()->baseVal()->parse(value.deprecatedString(), this);
+        rotateBaseValue()->parse(value.deprecatedString(), this);
     else
         SVGTextContentElement::parseMappedAttribute(attr);
 }

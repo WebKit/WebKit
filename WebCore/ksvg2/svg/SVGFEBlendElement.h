@@ -29,8 +29,6 @@
 
 namespace WebCore
 {
-    class SVGAnimatedString;
-    class SVGAnimatedEnumeration;
 
     class SVGFEBlendElement : public SVGFilterPrimitiveStandardAttributes
     {
@@ -39,19 +37,18 @@ namespace WebCore
         virtual ~SVGFEBlendElement();
 
         // 'SVGFEBlendElement' functions
-        SVGAnimatedString *in1() const;
-        SVGAnimatedString *in2() const;
-        SVGAnimatedEnumeration *mode() const;
-
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
         virtual KCanvasFEBlend *filterEffect() const;
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedString> m_in1;
-        mutable RefPtr<SVGAnimatedString> m_in2;
-        mutable RefPtr<SVGAnimatedEnumeration> m_mode;
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, In2, in2)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, Mode, mode)
         mutable KCanvasFEBlend *m_filterEffect;
     };
 

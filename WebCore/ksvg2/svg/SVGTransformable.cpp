@@ -35,7 +35,7 @@
 #include "SVGMatrix.h"
 #include "SVGTransformable.h"
 #include "SVGStyledElement.h"
-#include "SVGAnimatedTransformList.h"
+#include "SVGTransformList.h"
 #include "ksvg.h"
 
 using namespace WebCore;

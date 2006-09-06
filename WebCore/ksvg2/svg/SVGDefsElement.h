@@ -44,6 +44,9 @@ namespace WebCore
         
         virtual bool rendererIsNeeded(RenderStyle*);
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
     };
 
 } // namespace WebCore

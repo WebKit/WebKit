@@ -28,9 +28,7 @@
 
 namespace WebCore
 {
-    class SVGAnimatedNumber;
-    class SVGAnimatedString;
-    class SVGAnimatedColor;
+    class SVGColor;
     
     class SVGFESpecularLightingElement : public SVGFilterPrimitiveStandardAttributes
     {
@@ -39,26 +37,22 @@ namespace WebCore
         virtual ~SVGFESpecularLightingElement();
         
         // 'SVGFEDiffuseLightingElement' functions
-        SVGAnimatedString *in1() const;
-        SVGAnimatedNumber *specularConstant() const;
-        SVGAnimatedNumber *specularExponent() const;
-        SVGAnimatedNumber *surfaceScale() const;
-        SVGAnimatedNumber *kernelUnitLengthX() const;
-        SVGAnimatedNumber *kernelUnitLengthY() const;
-        SVGAnimatedColor  *lightingColor() const;
-        
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute *attr);
         
         virtual KCanvasFESpecularLighting *filterEffect() const;
+
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedString> m_in1;
-        mutable RefPtr<SVGAnimatedNumber> m_specularConstant;
-        mutable RefPtr<SVGAnimatedNumber> m_specularExponent;
-        mutable RefPtr<SVGAnimatedNumber> m_surfaceScale;
-        mutable RefPtr<SVGAnimatedColor>  m_lightingColor;
-        mutable RefPtr<SVGAnimatedNumber> m_kernelUnitLengthX;
-        mutable RefPtr<SVGAnimatedNumber> m_kernelUnitLengthY;
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, SpecularConstant, specularConstant)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, SpecularExponent, specularExponent)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, SurfaceScale, surfaceScale)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGColor*, RefPtr<SVGColor>, LightingColor, lightingColor)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, KernelUnitLengthX, kernelUnitLengthX)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, KernelUnitLengthY, kernelUnitLengthY)
         //need other properties here...
         mutable KCanvasFESpecularLighting *m_filterEffect;
         

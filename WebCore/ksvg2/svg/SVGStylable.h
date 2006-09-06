@@ -31,7 +31,6 @@ namespace WebCore {
     class String;
     class CSSValue;
     class CSSStyleDeclaration;
-    class SVGAnimatedString;
 
     class SVGStylable {
     public:
@@ -39,8 +38,6 @@ namespace WebCore {
         virtual ~SVGStylable();
 
         // 'SVGStylable' functions
-        virtual SVGAnimatedString* className() const = 0;
-
         virtual CSSStyleDeclaration* style() = 0;
         virtual CSSValue* getPresentationAttribute(StringImpl* name) = 0;
     };

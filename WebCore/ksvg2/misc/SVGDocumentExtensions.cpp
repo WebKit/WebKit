@@ -27,6 +27,7 @@
 #include "EventListener.h"
 #include "Frame.h"
 #include "KSVGTimeScheduler.h"
+#include "AtomicString.h"
 #include "kjs_proxy.h"
 #include "SVGSVGElement.h"
 

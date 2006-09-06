@@ -24,12 +24,12 @@
 #define KSVG_SVGURIReferenceImpl_H
 #ifdef SVG_SUPPORT
 
+#include "SVGElement.h"
 #include "DeprecatedString.h"
 
 namespace WebCore {
 
     class MappedAttribute;
-    class SVGAnimatedString;
 
     class SVGURIReference {
     public:
@@ -37,15 +37,16 @@ namespace WebCore {
         virtual ~SVGURIReference();
 
         // 'SVGURIReference' functions
-        virtual SVGAnimatedString *href() const;
-
         bool parseMappedAttribute(MappedAttribute *attr);
 
         // Helpers
         static DeprecatedString getTarget(const DeprecatedString &url);
 
+    protected:
+        virtual const SVGElement* contextElement() const = 0;
+
     private:
-        mutable RefPtr<SVGAnimatedString> m_href;
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, Href, href)
     };
 
 } // namespace WebCore

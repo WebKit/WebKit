@@ -32,9 +32,9 @@
 #include "KCanvasRenderingStyle.h"
 #include "KSVGTimeScheduler.h"
 #include "SVGAngle.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
-#include "SVGAnimatedRect.h"
+#include "SVGLength.h"
+#include "SVGPreserveAspectRatio.h"
+#include "SVGRect.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGMatrix.h"
 #include "SVGNumber.h"
@@ -60,6 +60,16 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document *doc)
     , m_useCurrentView(false)
     , m_timeScheduler(new TimeScheduler(doc))
 {
+    const SVGElement* viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
+    const SVGStyledElement* context = reinterpret_cast<const SVGStyledElement*>(ownerDocument()->documentElement() == this ? 0 : this);
+
+    m_x = new SVGLength(context, LM_WIDTH, viewport);
+    m_y = new SVGLength(context, LM_HEIGHT, viewport);
+    m_width = new SVGLength(context, LM_WIDTH, viewport);
+    m_height = new SVGLength(context, LM_HEIGHT, viewport);
+
+    m_width->setValueAsString("100%");
+    m_height->setValueAsString("100%");
 }
 
 SVGSVGElement::~SVGSVGElement()
@@ -67,41 +77,10 @@ SVGSVGElement::~SVGSVGElement()
     delete m_timeScheduler;
 }
 
-SVGAnimatedLength *SVGSVGElement::x() const
-{
-    const SVGElement *viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
-    return lazy_create<SVGAnimatedLength>(m_x, (SVGStyledElement *)0, LM_WIDTH, viewport);
-}
-
-SVGAnimatedLength *SVGSVGElement::y() const
-{
-    const SVGElement *viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
-    return lazy_create<SVGAnimatedLength>(m_y, (SVGStyledElement *)0, LM_HEIGHT, viewport);
-}
-
-SVGAnimatedLength *SVGSVGElement::width() const
-{
-    if (!m_width) {
-        String temp("100%");
-        const SVGElement *viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
-        lazy_create<SVGAnimatedLength>(m_width, (SVGStyledElement *)ownerDocument()->documentElement() == this ? 0 : this, LM_WIDTH, viewport);
-        m_width->baseVal()->setValueAsString(temp.impl());
-    }
-
-    return m_width.get();
-}
-
-SVGAnimatedLength *SVGSVGElement::height() const
-{
-    if (!m_height) {
-        String temp("100%");
-        const SVGElement *viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
-        lazy_create<SVGAnimatedLength>(m_height, (SVGStyledElement *)ownerDocument()->documentElement() == this ? 0 : this, LM_HEIGHT, viewport);
-        m_height->baseVal()->setValueAsString(temp.impl());
-    }
-
-    return m_height.get();
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGSVGElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGSVGElement, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGSVGElement, SVGLength*, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGSVGElement, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
 
 AtomicString SVGSVGElement::contentScriptType() const
 {
@@ -125,10 +104,10 @@ void SVGSVGElement::setContentStyleType(const AtomicString& type)
 
 FloatRect SVGSVGElement::viewport() const
 {
-    double _x = x()->baseVal()->value();
-    double _y = y()->baseVal()->value();
-    double w = width()->baseVal()->value();
-    double h = height()->baseVal()->value();
+    double _x = xBaseValue()->value();
+    double _y = yBaseValue()->value();
+    double w = widthBaseValue()->value();
+    double h = heightBaseValue()->value();
     RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(w, h);
     viewBox->matrix().map(_x, _y, &_x, &_y);
     viewBox->matrix().map(w, h, &w, &h);
@@ -235,14 +214,14 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute *attr)
             addSVGWindowEventListner(zoomEvent, attr);
     }
     if (attr->name() == SVGNames::xAttr) {
-        x()->baseVal()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value.impl());
     } else if (attr->name() == SVGNames::yAttr) {
-        y()->baseVal()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value.impl());
     } else if (attr->name() == SVGNames::widthAttr) {
-        width()->baseVal()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value.impl());
         addCSSProperty(attr, CSS_PROP_WIDTH, value);
     } else if (attr->name() == SVGNames::heightAttr) {
-        height()->baseVal()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value.impl());
         addCSSProperty(attr, CSS_PROP_HEIGHT, value);
     } else {
         if (SVGTests::parseMappedAttribute(attr))
@@ -253,7 +232,7 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute *attr)
             return;
         if (SVGFitToViewBox::parseMappedAttribute(attr)) {
             if (renderer())
-                static_cast<RenderSVGContainer*>(renderer())->setViewBox(FloatRect(viewBox()->baseVal()->x(), viewBox()->baseVal()->y(), viewBox()->baseVal()->width(), viewBox()->baseVal()->height()));
+                static_cast<RenderSVGContainer*>(renderer())->setViewBox(FloatRect(viewBoxBaseValue()->x(), viewBoxBaseValue()->y(), viewBoxBaseValue()->width(), viewBoxBaseValue()->height()));
         }
         if (SVGZoomAndPan::parseMappedAttribute(attr))
             return;
@@ -363,11 +342,11 @@ SVGMatrix *SVGSVGElement::getCTM() const
     SVGMatrix *mat = createSVGMatrix();
     if(mat)
     {
-        mat->translate(x()->baseVal()->value(), y()->baseVal()->value());
+        mat->translate(xBaseValue()->value(), yBaseValue()->value());
 
         if(attributes()->getNamedItem(SVGNames::viewBoxAttr))
         {
-            RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(width()->baseVal()->value(), height()->baseVal()->value());
+            RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(widthBaseValue()->value(), heightBaseValue()->value());
             mat->multiply(viewBox.get());
         }
     }
@@ -380,11 +359,11 @@ SVGMatrix *SVGSVGElement::getScreenCTM() const
     SVGMatrix *mat = SVGStyledLocatableElement::getScreenCTM();
     if(mat)
     {
-        mat->translate(x()->baseVal()->value(), y()->baseVal()->value());
+        mat->translate(xBaseValue()->value(), yBaseValue()->value());
 
         if(attributes()->getNamedItem(SVGNames::viewBoxAttr))
         {
-            RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(width()->baseVal()->value(), height()->baseVal()->value());
+            RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(widthBaseValue()->value(), heightBaseValue()->value());
             mat->multiply(viewBox.get());
         }
     }
@@ -397,15 +376,15 @@ RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
     RenderSVGContainer *rootContainer = new (arena) RenderSVGContainer(this);
 
     // FIXME: all this setup should be done after attributesChanged, not here.
-    float _x = x()->baseVal()->value();
-    float _y = y()->baseVal()->value();
-    float _width = width()->baseVal()->value();
-    float _height = height()->baseVal()->value();
+    float _x = xBaseValue()->value();
+    float _y = yBaseValue()->value();
+    float _width = widthBaseValue()->value();
+    float _height = heightBaseValue()->value();
 
     rootContainer->setViewport(FloatRect(_x, _y, _width, _height));
-    rootContainer->setViewBox(FloatRect(viewBox()->baseVal()->x(), viewBox()->baseVal()->y(), viewBox()->baseVal()->width(), viewBox()->baseVal()->height()));
-    rootContainer->setAlign(KCAlign(preserveAspectRatio()->baseVal()->align() - 1));
-    rootContainer->setSlice(preserveAspectRatio()->baseVal()->meetOrSlice() == SVG_MEETORSLICE_SLICE);
+    rootContainer->setViewBox(FloatRect(viewBoxBaseValue()->x(), viewBoxBaseValue()->y(), viewBoxBaseValue()->width(), viewBoxBaseValue()->height()));
+    rootContainer->setAlign(KCAlign(preserveAspectRatioBaseValue()->align() - 1));
+    rootContainer->setSlice(preserveAspectRatioBaseValue()->meetOrSlice() == SVG_MEETORSLICE_SLICE);
     
     return rootContainer;
 }

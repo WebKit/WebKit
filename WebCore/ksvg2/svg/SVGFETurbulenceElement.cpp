@@ -35,14 +35,17 @@
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFETurbulenceElement.h"
-#include "SVGAnimatedNumber.h"
-#include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedInteger.h"
 
 using namespace WebCore;
 
-SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document *doc) : 
-SVGFilterPrimitiveStandardAttributes(tagName, doc)
+SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document *doc)
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , m_baseFrequencyX(0.0)
+    , m_baseFrequencyY(0.0)
+    , m_numOctaves(0)
+    , m_seed(0.0)
+    , m_stitchTiles(0)
+    , m_type(0)
 {
     m_filterEffect = 0;
 }
@@ -52,41 +55,12 @@ SVGFETurbulenceElement::~SVGFETurbulenceElement()
     delete m_filterEffect;
 }
 
-SVGAnimatedNumber *SVGFETurbulenceElement::baseFrequencyX() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_baseFrequencyX, dummy);
-}
-
-SVGAnimatedNumber *SVGFETurbulenceElement::baseFrequencyY() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_baseFrequencyY, dummy);
-}
-
-SVGAnimatedNumber *SVGFETurbulenceElement::seed() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_seed, dummy);
-}
-
-SVGAnimatedInteger *SVGFETurbulenceElement::numOctaves() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedInteger>(m_numOctaves, dummy);
-}
-
-SVGAnimatedEnumeration *SVGFETurbulenceElement::stitchTiles() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedEnumeration>(m_stitchTiles, dummy);
-}
-
-SVGAnimatedEnumeration *SVGFETurbulenceElement::type() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedEnumeration>(m_type, dummy);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, double, Number, number, BaseFrequencyX, baseFrequencyX, "baseFrequencyX", m_baseFrequencyX)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, double, Number, number, BaseFrequencyY, baseFrequencyY, "baseFrequencyY", m_baseFrequencyY)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, double, Number, number, Seed, seed, SVGNames::seedAttr.localName(), m_seed)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Integer, integer, NumOctaves, numOctaves, SVGNames::numOctavesAttr.localName(), m_numOctaves)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Enumeration, enumeration, StitchTiles, stitchTiles, SVGNames::stitchTilesAttr.localName(), m_stitchTiles)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Enumeration, enumeration, Type, type, SVGNames::typeAttr.localName(), m_type)
 
 void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute *attr)
 {
@@ -94,30 +68,30 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == SVGNames::typeAttr)
     {
         if(value == "fractalNoise")
-            type()->setBaseVal(SVG_TURBULENCE_TYPE_FRACTALNOISE);
+            setTypeBaseValue(SVG_TURBULENCE_TYPE_FRACTALNOISE);
         else if(value == "turbulence")
-            type()->setBaseVal(SVG_TURBULENCE_TYPE_TURBULENCE);
+            setTypeBaseValue(SVG_TURBULENCE_TYPE_TURBULENCE);
     }
     else if (attr->name() == SVGNames::stitchTilesAttr)
     {
         if(value == "stitch")
-            stitchTiles()->setBaseVal(SVG_STITCHTYPE_STITCH);
+            setStitchTilesBaseValue(SVG_STITCHTYPE_STITCH);
         else if(value == "nostitch")
-            stitchTiles()->setBaseVal(SVG_STITCHTYPE_NOSTITCH);
+            setStitchTilesBaseValue(SVG_STITCHTYPE_NOSTITCH);
     }
     else if (attr->name() == SVGNames::baseFrequencyAttr)
     {
         DeprecatedStringList numbers = DeprecatedStringList::split(' ', value.deprecatedString());
-        baseFrequencyX()->setBaseVal(numbers[0].toDouble());
+        setBaseFrequencyXBaseValue(numbers[0].toDouble());
         if(numbers.count() == 1)
-            baseFrequencyY()->setBaseVal(numbers[0].toDouble());
+            setBaseFrequencyYBaseValue(numbers[0].toDouble());
         else
-            baseFrequencyY()->setBaseVal(numbers[1].toDouble());
+            setBaseFrequencyYBaseValue(numbers[1].toDouble());
     }
     else if (attr->name() == SVGNames::seedAttr)
-        seed()->setBaseVal(value.deprecatedString().toDouble());
+        setSeedBaseValue(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::numOctavesAttr)
-        numOctaves()->setBaseVal(value.deprecatedString().toUInt());
+        setNumOctavesBaseValue(value.deprecatedString().toUInt());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -129,13 +103,13 @@ KCanvasFETurbulence *SVGFETurbulenceElement::filterEffect() const
     if (!m_filterEffect)
         return 0;
     
-    m_filterEffect->setType((KCTurbulanceType)(type()->baseVal() - 1));
+    m_filterEffect->setType((KCTurbulanceType)(typeBaseValue() - 1));
     setStandardAttributes(m_filterEffect);
-    m_filterEffect->setBaseFrequencyX(baseFrequencyX()->baseVal());
-    m_filterEffect->setBaseFrequencyY(baseFrequencyY()->baseVal());
-    m_filterEffect->setNumOctaves(numOctaves()->baseVal());
-    m_filterEffect->setSeed(seed()->baseVal());
-    m_filterEffect->setStitchTiles(stitchTiles()->baseVal() == SVG_STITCHTYPE_STITCH);
+    m_filterEffect->setBaseFrequencyX(baseFrequencyXBaseValue());
+    m_filterEffect->setBaseFrequencyY(baseFrequencyYBaseValue());
+    m_filterEffect->setNumOctaves(numOctavesBaseValue());
+    m_filterEffect->setSeed(seedBaseValue());
+    m_filterEffect->setStitchTiles(stitchTilesBaseValue() == SVG_STITCHTYPE_STITCH);
     return m_filterEffect;
 }
 

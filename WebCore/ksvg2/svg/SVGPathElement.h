@@ -36,7 +36,6 @@ namespace WebCore
     class SVGPathSeg;
     class SVGPathSegArcAbs;
     class SVGPathSegArcRel;
-    class SVGAnimatedNumber;
     class SVGPathSegClosePath;
     class SVGPathSegLinetoAbs;
     class SVGPathSegLinetoRel;
@@ -66,8 +65,6 @@ namespace WebCore
         virtual ~SVGPathElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }
-
-        SVGAnimatedNumber *pathLength() const;
         double getTotalLength();
         FloatPoint getPointAtLength(double distance);
         unsigned long getPathSegAtLength(double distance);
@@ -103,10 +100,12 @@ namespace WebCore
         virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
         virtual Path toPathData() const;
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
         mutable RefPtr<SVGPathSegList> m_pathSegList;
-        mutable RefPtr<SVGAnimatedNumber> m_pathLength;
-
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, PathLength, pathLength)
         virtual void svgMoveTo(double x1, double y1, bool closed, bool abs = true);
         virtual void svgLineTo(double x1, double y1, bool abs = true);
         virtual void svgLineToHorizontal(double x, bool abs = true);

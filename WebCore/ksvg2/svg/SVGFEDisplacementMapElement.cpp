@@ -31,14 +31,14 @@
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEDisplacementMapElement.h"
-#include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedString.h"
-#include "SVGAnimatedNumber.h"
 
 using namespace WebCore;
 
-SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& tagName, Document* doc) : 
-SVGFilterPrimitiveStandardAttributes(tagName, doc)
+SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& tagName, Document* doc)
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , m_xChannelSelector(0)
+    , m_yChannelSelector(0)
+    , m_scale(0.0)
 {
     m_filterEffect = 0;
 }
@@ -48,35 +48,11 @@ SVGFEDisplacementMapElement::~SVGFEDisplacementMapElement()
     delete m_filterEffect;
 }
 
-SVGAnimatedString* SVGFEDisplacementMapElement::in1() const
-{
-    SVGStyledElement* dummy = 0;
-    return lazy_create<SVGAnimatedString>(m_in1, dummy);
-}
-
-SVGAnimatedString* SVGFEDisplacementMapElement::in2() const
-{
-    SVGStyledElement* dummy = 0;
-    return lazy_create<SVGAnimatedString>(m_in2, dummy);
-}
-
-SVGAnimatedEnumeration* SVGFEDisplacementMapElement::xChannelSelector() const
-{
-    SVGStyledElement* dummy = 0;
-    return lazy_create<SVGAnimatedEnumeration>(m_xChannelSelector, dummy);
-}
-
-SVGAnimatedEnumeration* SVGFEDisplacementMapElement::yChannelSelector() const
-{
-    SVGStyledElement* dummy = 0;
-    return lazy_create<SVGAnimatedEnumeration>(m_yChannelSelector, dummy);
-}
-
-SVGAnimatedNumber* SVGFEDisplacementMapElement::scale() const
-{
-    SVGStyledElement* dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_scale, dummy);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, String, string, In, in, SVGNames::inAttr.localName(), m_in)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, String, string, In2, in2, SVGNames::in2Attr.localName(), m_in2)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enumeration, XChannelSelector, xChannelSelector, SVGNames::xChannelSelectorAttr.localName(), m_xChannelSelector)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enumeration, YChannelSelector, yChannelSelector, SVGNames::yChannelSelectorAttr.localName(), m_yChannelSelector)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, double, Number, number, Scale, scale, SVGNames::scaleAttr.localName(), m_scale)
 
 KCChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)
 {
@@ -96,15 +72,15 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::xChannelSelectorAttr)
-        xChannelSelector()->setBaseVal(stringToChannel(value));
+        setXChannelSelectorBaseValue(stringToChannel(value));
     else if (attr->name() == SVGNames::yChannelSelectorAttr)
-        yChannelSelector()->setBaseVal(stringToChannel(value));
+        setYChannelSelectorBaseValue(stringToChannel(value));
     else if (attr->name() == SVGNames::inAttr)
-        in1()->setBaseVal(value.impl());
+        setInBaseValue(value.impl());
     else if (attr->name() == SVGNames::in2Attr)
-        in2()->setBaseVal(value.impl());
+        setIn2BaseValue(value.impl());
     else if (attr->name() == SVGNames::scaleAttr)
-        scale()->setBaseVal(value.deprecatedString().toDouble());
+        setScaleBaseValue(value.deprecatedString().toDouble());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -115,11 +91,11 @@ KCanvasFEDisplacementMap* SVGFEDisplacementMapElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEDisplacementMap *>(renderingDevice()->createFilterEffect(FE_DISPLACEMENT_MAP));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setXChannelSelector((KCChannelSelectorType)(xChannelSelector()->baseVal()));
-    m_filterEffect->setYChannelSelector((KCChannelSelectorType)(yChannelSelector()->baseVal()));
-    m_filterEffect->setIn(String(in1()->baseVal()).deprecatedString());
-    m_filterEffect->setIn2(String(in2()->baseVal()).deprecatedString());
-    m_filterEffect->setScale(scale()->baseVal());
+    m_filterEffect->setXChannelSelector((KCChannelSelectorType)(xChannelSelectorBaseValue()));
+    m_filterEffect->setYChannelSelector((KCChannelSelectorType)(yChannelSelectorBaseValue()));
+    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
+    m_filterEffect->setIn2(String(in2BaseValue()).deprecatedString());
+    m_filterEffect->setScale(scaleBaseValue());
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
 }

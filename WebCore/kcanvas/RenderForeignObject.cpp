@@ -26,7 +26,7 @@
 
 #include "GraphicsContext.h"
 #include "KRenderingDevice.h"
-#include "SVGAnimatedLength.h"
+#include "SVGLength.h"
 #include "SVGForeignObjectElement.h"
 
 namespace WebCore {
@@ -39,7 +39,7 @@ RenderForeignObject::RenderForeignObject(SVGForeignObjectElement *node)
 AffineTransform RenderForeignObject::translationForAttributes()
 {
     SVGForeignObjectElement *foreign = static_cast<SVGForeignObjectElement *>(element());
-    return AffineTransform().translate(foreign->x()->baseVal()->value(), foreign->y()->baseVal()->value());
+    return AffineTransform().translate(foreign->xBaseValue()->value(), foreign->yBaseValue()->value());
 }
 
 void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)

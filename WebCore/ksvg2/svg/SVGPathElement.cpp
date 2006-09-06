@@ -34,7 +34,6 @@
 #include "SVGPathElement.h"
 #include "SVGPathSegLineto.h"
 #include "SVGPathSegMoveto.h"
-#include "SVGAnimatedNumber.h"
 #include "SVGPathSegClosePath.h"
 #include "SVGPathSegCurvetoCubic.h"
 #include "SVGPathSegLinetoVertical.h"
@@ -48,7 +47,12 @@
 namespace WebCore {
 
 SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGPathParser()
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , SVGPathParser()
+    , m_pathLength(0.0)
 {
 }
 
@@ -56,16 +60,7 @@ SVGPathElement::~SVGPathElement()
 {
 }
 
-SVGAnimatedNumber *SVGPathElement::pathLength() const
-{
-    if(!m_pathLength)
-    {
-        lazy_create<SVGAnimatedNumber>(m_pathLength, this);
-        m_pathLength->setBaseVal(0);
-    }
-    
-    return m_pathLength.get();
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGPathElement, double, Number, number, PathLength, pathLength, SVGNames::pathLengthAttr.localName(), m_pathLength)
 
 double SVGPathElement::getTotalLength()
 {

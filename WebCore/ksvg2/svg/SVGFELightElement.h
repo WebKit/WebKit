@@ -28,9 +28,7 @@
 
 namespace WebCore
 {
-    class SVGAnimatedNumber;
-    class SVGAnimatedNumberList;
-    class SVGAnimatedEnumeration;
+    class SVGNumberList;
     
     class SVGFELightElement : public SVGElement
     {
@@ -39,33 +37,21 @@ namespace WebCore
         virtual ~SVGFELightElement();
         
         // 'SVGComponentTransferFunctionElement' functions
-        SVGAnimatedNumber *azimuth() const;
-        SVGAnimatedNumber *elevation() const;
-        SVGAnimatedNumber *x() const;
-        SVGAnimatedNumber *y() const;
-        SVGAnimatedNumber *z() const;
-        SVGAnimatedNumber *pointsAtX() const;
-        SVGAnimatedNumber *pointsAtY() const;
-        SVGAnimatedNumber *pointsAtZ() const;
-        SVGAnimatedNumber *specularExponent() const;
-        SVGAnimatedNumber *limitingConeAngle() const;
-        
         virtual KCLightSource *lightSource() const = 0;
         
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute *attr);        
     private:
-        mutable RefPtr<SVGAnimatedNumber> m_azimuth;
-        mutable RefPtr<SVGAnimatedNumber> m_elevation;
-        mutable RefPtr<SVGAnimatedNumber> m_x;
-        mutable RefPtr<SVGAnimatedNumber> m_y;
-        mutable RefPtr<SVGAnimatedNumber> m_z;
-        mutable RefPtr<SVGAnimatedNumber> m_pointsAtX;
-        mutable RefPtr<SVGAnimatedNumber> m_pointsAtY;
-        mutable RefPtr<SVGAnimatedNumber> m_pointsAtZ;
-        mutable RefPtr<SVGAnimatedNumber> m_specularExponent;
-        mutable RefPtr<SVGAnimatedNumber> m_limitingConeAngle;
-        
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, Azimuth, azimuth)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, Elevation, elevation)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, Z, z)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, PointsAtX, pointsAtX)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, PointsAtY, pointsAtY)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, PointsAtZ, pointsAtZ)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, SpecularExponent, specularExponent)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, LimitingConeAngle, limitingConeAngle)
     };
 
 } // namespace WebCore

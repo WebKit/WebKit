@@ -29,9 +29,7 @@
 
 namespace WebCore
 {
-    class SVGAnimatedNumber;
-    class SVGAnimatedNumberList;
-    class SVGAnimatedEnumeration;
+    class SVGNumberList;
 
     class SVGComponentTransferFunctionElement : public SVGElement
     {
@@ -40,27 +38,19 @@ namespace WebCore
         virtual ~SVGComponentTransferFunctionElement();
 
         // 'SVGComponentTransferFunctionElement' functions
-        SVGAnimatedEnumeration *type() const;
-        SVGAnimatedNumberList *tableValues() const;
-        SVGAnimatedNumber *slope() const;
-        SVGAnimatedNumber *intercept() const;
-        SVGAnimatedNumber *amplitude() const;
-        SVGAnimatedNumber *exponent() const;
-        SVGAnimatedNumber *offset() const;
-
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute *attr);
         
         KCComponentTransferFunction transferFunction() const;
 
     private:
-        mutable RefPtr<SVGAnimatedEnumeration> m_type;
-        mutable RefPtr<SVGAnimatedNumberList> m_tableValues;
-        mutable RefPtr<SVGAnimatedNumber> m_slope;
-        mutable RefPtr<SVGAnimatedNumber> m_intercept;
-        mutable RefPtr<SVGAnimatedNumber> m_amplitude;
-        mutable RefPtr<SVGAnimatedNumber> m_exponent;
-        mutable RefPtr<SVGAnimatedNumber> m_offset;
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, Type, type)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGNumberList*, RefPtr<SVGNumberList>, TableValues, tableValues)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, Slope, slope)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, Intercept, intercept)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, Amplitude, amplitude)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, Exponent, exponent)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, Offset, offset)
     };
 
 } // namespace WebCore

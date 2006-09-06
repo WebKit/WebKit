@@ -38,7 +38,7 @@ namespace WebCore
     class SVGLength;
     class SVGMatrix;
     class SVGTransform;
-    class SVGAnimatedLength;
+    class SVGLength;
     class TimeScheduler;
     class SVGSVGElement : public SVGStyledLocatableElement,
                               public SVGTests,
@@ -56,11 +56,6 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // 'SVGSVGElement' functions
-        SVGAnimatedLength* x() const;
-        SVGAnimatedLength* y() const;
-        SVGAnimatedLength* width() const;
-        SVGAnimatedLength* height() const;
-
         AtomicString contentScriptType() const;
         void setContentScriptType(const AtomicString& type);
 
@@ -125,14 +120,16 @@ namespace WebCore
         // 'virtual SVGZoomAndPan functions
         virtual void setZoomAndPan(unsigned short zoomAndPan);
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
         void addSVGWindowEventListner(const AtomicString& eventType, const Attribute* attr);   
 
-        mutable RefPtr<SVGAnimatedLength> m_x;
-        mutable RefPtr<SVGAnimatedLength> m_y;
-        mutable RefPtr<SVGAnimatedLength> m_width;
-        mutable RefPtr<SVGAnimatedLength> m_height;
-
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Height, height)
         bool m_useCurrentView;
         TimeScheduler* m_timeScheduler;
     };

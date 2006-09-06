@@ -36,14 +36,14 @@
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEColorMatrixElement.h"
-#include "SVGAnimatedString.h"
-#include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedNumberList.h"
+#include "SVGNumberList.h"
 
 using namespace WebCore;
 
-SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document *doc) : 
-SVGFilterPrimitiveStandardAttributes(tagName, doc)
+SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document *doc)
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , m_type(0)
+    , m_values(new SVGNumberList(0))
 {
     m_filterEffect = 0;
 }
@@ -53,23 +53,9 @@ SVGFEColorMatrixElement::~SVGFEColorMatrixElement()
     delete m_filterEffect;
 }
 
-SVGAnimatedString *SVGFEColorMatrixElement::in1() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedString>(m_in1, dummy);
-}
-
-SVGAnimatedEnumeration *SVGFEColorMatrixElement::type() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedEnumeration>(m_type, dummy);
-}
-
-SVGAnimatedNumberList *SVGFEColorMatrixElement::values() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumberList>(m_values, dummy);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, String, String, string, In, in, SVGNames::inAttr.localName(), m_in)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, int, Enumeration, enumeration, Type, type, SVGNames::typeAttr.localName(), m_type)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, SVGNumberList*, NumberList, numberList, Values, values, SVGNames::valuesAttr.localName(), m_values.get())
 
 void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute *attr)
 {
@@ -77,18 +63,18 @@ void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == SVGNames::typeAttr)
     {
         if(value == "matrix")
-            type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_MATRIX);
+            setTypeBaseValue(SVG_FECOLORMATRIX_TYPE_MATRIX);
         else if(value == "saturate")
-            type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_SATURATE);
+            setTypeBaseValue(SVG_FECOLORMATRIX_TYPE_SATURATE);
         else if(value == "hueRotate")
-            type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_HUEROTATE);
+            setTypeBaseValue(SVG_FECOLORMATRIX_TYPE_HUEROTATE);
         else if(value == "luminanceToAlpha")
-            type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA);
+            setTypeBaseValue(SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA);
     }
     else if (attr->name() == SVGNames::inAttr)
-        in1()->setBaseVal(value.impl());
+        setInBaseValue(value.impl());
     else if (attr->name() == SVGNames::valuesAttr)
-        values()->baseVal()->parse(value.deprecatedString(), this);
+        valuesBaseValue()->parse(value.deprecatedString(), this);
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -100,15 +86,15 @@ KCanvasFEColorMatrix *SVGFEColorMatrixElement::filterEffect() const
     if (!m_filterEffect)
         return 0;
         
-    m_filterEffect->setIn(String(in1()->baseVal()).deprecatedString());
+    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
     setStandardAttributes(m_filterEffect);
     DeprecatedValueList<float> _values;
-    SVGNumberList *numbers = values()->baseVal();
+    SVGNumberList *numbers = valuesBaseValue();
     unsigned int nr = numbers->numberOfItems();
     for(unsigned int i = 0;i < nr;i++)
         _values.append(numbers->getItem(i)->value());
     m_filterEffect->setValues(_values);
-    m_filterEffect->setType((KCColorMatrixType)(type()->baseVal() - 1));
+    m_filterEffect->setType((KCColorMatrixType)(typeBaseValue() - 1));
     
     return m_filterEffect;
 }

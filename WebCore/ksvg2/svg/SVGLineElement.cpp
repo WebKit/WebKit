@@ -29,12 +29,19 @@
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGLineElement.h"
-#include "SVGAnimatedLength.h"
+#include "SVGLength.h"
 
 using namespace WebCore;
 
 SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , m_x1(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_y1(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_x2(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_y2(new SVGLength(this, LM_HEIGHT, viewportElement()))
 {
 }
 
@@ -42,37 +49,22 @@ SVGLineElement::~SVGLineElement()
 {
 }
 
-SVGAnimatedLength *SVGLineElement::x1() const
-{
-    return lazy_create<SVGAnimatedLength>(m_x1, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGLineElement::y1() const
-{
-    return lazy_create<SVGAnimatedLength>(m_y1, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedLength *SVGLineElement::x2() const
-{
-    return lazy_create<SVGAnimatedLength>(m_x2, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGLineElement::y2() const
-{
-    return lazy_create<SVGAnimatedLength>(m_y2, this, LM_HEIGHT, viewportElement());
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength*, Length, length, X1, x1, SVGNames::x1Attr.localName(), m_x1.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength*, Length, length, Y1, y1, SVGNames::y1Attr.localName(), m_y1.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength*, Length, length, X2, x2, SVGNames::x2Attr.localName(), m_x2.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength*, Length, length, Y2, y2, SVGNames::y2Attr.localName(), m_y2.get())
 
 void SVGLineElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::x1Attr)
-        x1()->baseVal()->setValueAsString(value.impl());
+        x1BaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::y1Attr)
-        y1()->baseVal()->setValueAsString(value.impl());
+        y1BaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::x2Attr)
-        x2()->baseVal()->setValueAsString(value.impl());
+        x2BaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::y2Attr)
-        y2()->baseVal()->setValueAsString(value.impl());
+        y2BaseValue()->setValueAsString(value.impl());
     else
     {
         if(SVGTests::parseMappedAttribute(attr)) return;
@@ -84,8 +76,8 @@ void SVGLineElement::parseMappedAttribute(MappedAttribute *attr)
 
 Path SVGLineElement::toPathData() const
 {
-    float _x1 = x1()->baseVal()->value(), _y1 = y1()->baseVal()->value();
-    float _x2 = x2()->baseVal()->value(), _y2 = y2()->baseVal()->value();
+    float _x1 = x1BaseValue()->value(), _y1 = y1BaseValue()->value();
+    float _x2 = x2BaseValue()->value(), _y2 = y2BaseValue()->value();
 
     return Path::createLine(FloatPoint(_x1, _y1), FloatPoint(_x2, _y2));
 }
@@ -93,12 +85,12 @@ Path SVGLineElement::toPathData() const
 const SVGStyledElement *SVGLineElement::pushAttributeContext(const SVGStyledElement *context)
 {
     // All attribute's contexts are equal (so just take the one from 'x1').
-    const SVGStyledElement *restore = x1()->baseVal()->context();
+    const SVGStyledElement *restore = x1BaseValue()->context();
 
-    x1()->baseVal()->setContext(context);
-    y1()->baseVal()->setContext(context);
-    x2()->baseVal()->setContext(context);
-    y2()->baseVal()->setContext(context);
+    x1BaseValue()->setContext(context);
+    y1BaseValue()->setContext(context);
+    x2BaseValue()->setContext(context);
+    y2BaseValue()->setContext(context);
     
     SVGStyledElement::pushAttributeContext(context);
     return restore;

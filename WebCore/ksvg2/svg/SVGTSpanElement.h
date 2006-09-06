@@ -37,6 +37,9 @@ namespace WebCore
         virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
         bool childShouldCreateRenderer(Node *child) const;
+    
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
     };
 
 } // namespace WebCore

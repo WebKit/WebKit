@@ -28,9 +28,8 @@
 #include "Document.h"
 #include "KCanvasRenderingStyle.h"
 #include "KCanvasRenderingStyle.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
-#include "SVGAnimatedString.h"
+#include "SVGLength.h"
+#include "SVGPreserveAspectRatio.h"
 #include "SVGGElement.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
@@ -43,7 +42,15 @@
 using namespace WebCore;
 
 SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGURIReference()
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , SVGURIReference()
+    , m_x(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_width(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
 {
 }
 
@@ -51,38 +58,23 @@ SVGUseElement::~SVGUseElement()
 {
 }
 
-SVGAnimatedLength *SVGUseElement::x() const
-{
-    return lazy_create<SVGAnimatedLength>(m_x, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGUseElement::y() const
-{
-    return lazy_create<SVGAnimatedLength>(m_y, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedLength *SVGUseElement::width() const
-{
-    return lazy_create<SVGAnimatedLength>(m_width, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGUseElement::height() const
-{
-    return lazy_create<SVGAnimatedLength>(m_height, this, LM_HEIGHT, viewportElement());
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGUseElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGUseElement, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGUseElement, SVGLength*, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGUseElement, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
 
 void SVGUseElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     
     if (attr->name() == SVGNames::xAttr)
-        x()->baseVal()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)
-        y()->baseVal()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::widthAttr)
-        width()->baseVal()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::heightAttr)
-        height()->baseVal()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value.impl());
     else {
         if(SVGTests::parseMappedAttribute(attr)) return;
         if(SVGLangSpace::parseMappedAttribute(attr)) return;
@@ -94,7 +86,7 @@ void SVGUseElement::parseMappedAttribute(MappedAttribute *attr)
 
 void SVGUseElement::closeRenderer()
 {
-    DeprecatedString ref = String(href()->baseVal()).deprecatedString();
+    DeprecatedString ref = String(hrefBaseValue()).deprecatedString();
     String targetId = SVGURIReference::getTarget(ref);
     Element *targetElement = ownerDocument()->getElementById(targetId.impl());
     SVGElement *target = svg_dynamic_cast(targetElement);
@@ -104,8 +96,8 @@ void SVGUseElement::closeRenderer()
         return;
     }
 
-    float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
-    float _w = width()->baseVal()->value(), _h = height()->baseVal()->value();
+    float _x = xBaseValue()->value(), _y = yBaseValue()->value();
+    float _w = widthBaseValue()->value(), _h = heightBaseValue()->value();
     
     String wString = String::number(_w);
     String hString = String::number(_h);

@@ -36,14 +36,16 @@
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFECompositeElement.h"
-#include "SVGAnimatedNumber.h"
-#include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedString.h"
 
 using namespace WebCore;
 
-SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document *doc) : 
-SVGFilterPrimitiveStandardAttributes(tagName, doc)
+SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document *doc)
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , m__operator(0)
+    , m_k1(0.0)
+    , m_k2(0.0)
+    , m_k3(0.0)
+    , m_k4(0.0)
 {
     m_filterEffect = 0;
 }
@@ -53,47 +55,13 @@ SVGFECompositeElement::~SVGFECompositeElement()
     delete m_filterEffect;
 }
 
-SVGAnimatedString *SVGFECompositeElement::in1() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedString>(m_in1, dummy);
-}
-
-SVGAnimatedString *SVGFECompositeElement::in2() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedString>(m_in2, dummy);
-}
-
-SVGAnimatedEnumeration *SVGFECompositeElement::_operator() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedEnumeration>(m_operator, dummy);
-}
-
-SVGAnimatedNumber *SVGFECompositeElement::k1() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_k1, dummy);
-}
-
-SVGAnimatedNumber *SVGFECompositeElement::k2() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_k2, dummy);
-}
-
-SVGAnimatedNumber *SVGFECompositeElement::k3() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_k3, dummy);
-}
-
-SVGAnimatedNumber *SVGFECompositeElement::k4() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_k4, dummy);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, String, String, string, In, in, SVGNames::inAttr.localName(), m_in)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, String, String, string, In2, in2, SVGNames::in2Attr.localName(), m_in2)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, int, Enumeration, enumeration, _operator, _operator, SVGNames::operatorAttr.localName(), m__operator)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, double, Number, number, K1, k1, SVGNames::k1Attr.localName(), m_k1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, double, Number, number, K2, k2, SVGNames::k2Attr.localName(), m_k2)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, double, Number, number, K3, k3, SVGNames::k3Attr.localName(), m_k3)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, double, Number, number, K4, k4, SVGNames::k4Attr.localName(), m_k4)
 
 void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
 {
@@ -101,30 +69,30 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == SVGNames::operatorAttr)
     {
         if(value == "over")
-            _operator()->setBaseVal(SVG_FECOMPOSITE_OPERATOR_OVER);
+            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_OVER);
         else if(value == "in")
-            _operator()->setBaseVal(SVG_FECOMPOSITE_OPERATOR_IN);
+            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_IN);
         else if(value == "out")
-            _operator()->setBaseVal(SVG_FECOMPOSITE_OPERATOR_OUT);
+            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_OUT);
         else if(value == "atop")
-            _operator()->setBaseVal(SVG_FECOMPOSITE_OPERATOR_ATOP);
+            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_ATOP);
         else if(value == "xor")
-            _operator()->setBaseVal(SVG_FECOMPOSITE_OPERATOR_XOR);
+            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_XOR);
         else if(value == "arithmetic")
-            _operator()->setBaseVal(SVG_FECOMPOSITE_OPERATOR_ARITHMETIC);
+            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_ARITHMETIC);
     }
     else if (attr->name() == SVGNames::inAttr)
-        in1()->setBaseVal(value.impl());
+        setInBaseValue(value.impl());
     else if (attr->name() == SVGNames::in2Attr)
-        in2()->setBaseVal(value.impl());
+        setIn2BaseValue(value.impl());
     else if (attr->name() == SVGNames::k1Attr)
-        k1()->setBaseVal(value.deprecatedString().toDouble());
+        setK1BaseValue(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::k2Attr)
-        k2()->setBaseVal(value.deprecatedString().toDouble());
+        setK2BaseValue(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::k3Attr)
-        k3()->setBaseVal(value.deprecatedString().toDouble());
+        setK3BaseValue(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::k4Attr)
-        k4()->setBaseVal(value.deprecatedString().toDouble());
+        setK4BaseValue(value.deprecatedString().toDouble());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -135,14 +103,14 @@ KCanvasFEComposite *SVGFECompositeElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEComposite *>(renderingDevice()->createFilterEffect(FE_COMPOSITE));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setOperation((KCCompositeOperationType)(_operator()->baseVal() - 1));
-    m_filterEffect->setIn(String(in1()->baseVal()).deprecatedString());
-    m_filterEffect->setIn2(String(in2()->baseVal()).deprecatedString());
+    m_filterEffect->setOperation((KCCompositeOperationType)(_operatorBaseValue() - 1));
+    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
+    m_filterEffect->setIn2(String(in2BaseValue()).deprecatedString());
     setStandardAttributes(m_filterEffect);
-    m_filterEffect->setK1(k1()->baseVal());
-    m_filterEffect->setK2(k2()->baseVal());
-    m_filterEffect->setK3(k3()->baseVal());
-    m_filterEffect->setK4(k4()->baseVal());
+    m_filterEffect->setK1(k1BaseValue());
+    m_filterEffect->setK2(k2BaseValue());
+    m_filterEffect->setK3(k3BaseValue());
+    m_filterEffect->setK4(k4BaseValue());
     return m_filterEffect;
 }
 

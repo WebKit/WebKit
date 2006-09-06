@@ -26,6 +26,52 @@
 
 #include "StyledElement.h"
 #include "SVGNames.h"
+#include "SVGDocumentExtensions.h"
+#include "Document.h"
+
+// FIXME: Templatify as much as possible here!
+#define ANIMATED_PROPERTY_DECLARATIONS(BareType, StorageType, UpperProperty, LowerProperty) \
+public: \
+    BareType LowerProperty() const; \
+    void set##UpperProperty(BareType newValue); \
+    BareType LowerProperty##BaseValue() const; \
+    void set##UpperProperty##BaseValue(BareType newValue); \
+private: \
+    StorageType m_##LowerProperty;
+
+#define ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter, ContextElement) \
+BareType ClassName::LowerProperty() const \
+{ \
+    return StorageGetter; \
+} \
+void ClassName::set##UpperProperty(BareType newValue) \
+{ \
+    m_##LowerProperty = newValue; \
+} \
+BareType ClassName::LowerProperty##BaseValue() const \
+{ \
+    const SVGElement* context = ContextElement; \
+    ASSERT(context != 0); \
+    SVGDocumentExtensions* extensions = (context->document() ? context->document()->accessSVGExtensions() : 0); \
+    if (extensions && extensions->hasBaseValue<BareType>(context, AttrName)) \
+         return extensions->baseValue<BareType>(context, AttrName); \
+    return LowerProperty(); \
+} \
+void ClassName::set##UpperProperty##BaseValue(BareType newValue) \
+{ \
+    const SVGElement* context = ContextElement; \
+    ASSERT(context != 0); \
+    SVGDocumentExtensions* extensions = (context->document() ? context->document()->accessSVGExtensions() : 0); \
+    if (extensions && extensions->hasBaseValue<BareType>(context, AttrName)) \
+        extensions->setBaseValue<BareType>(context, AttrName, newValue); \
+    set##UpperProperty(newValue); \
+}
+
+#define ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter) \
+ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter, contextElement())
+
+#define ANIMATED_PROPERTY_DEFINITIONS(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter) \
+ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter, this)
 
 namespace WebCore {
     class DocumentPtr;

@@ -35,13 +35,13 @@
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEGaussianBlurElement.h"
-#include "SVGAnimatedNumber.h"
-#include "SVGAnimatedString.h"
 
 using namespace WebCore;
 
-SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document *doc) : 
-SVGFilterPrimitiveStandardAttributes(tagName, doc)
+SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document *doc)
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , m_stdDeviationX(0.0)
+    , m_stdDeviationY(0.0)
 {
     m_filterEffect = 0;
 }
@@ -51,23 +51,9 @@ SVGFEGaussianBlurElement::~SVGFEGaussianBlurElement()
     delete m_filterEffect;
 }
 
-SVGAnimatedString *SVGFEGaussianBlurElement::in1() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedString>(m_in1, dummy);
-}
-
-SVGAnimatedNumber *SVGFEGaussianBlurElement::stdDeviationX() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_stdDeviationX, dummy);
-}
-
-SVGAnimatedNumber *SVGFEGaussianBlurElement::stdDeviationY() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_stdDeviationY, dummy);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEGaussianBlurElement, String, String, string, In, in, SVGNames::inAttr.localName(), m_in)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEGaussianBlurElement, double, Number, number, StdDeviationX, stdDeviationX, "stdDeviationX", m_stdDeviationX)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEGaussianBlurElement, double, Number, number, StdDeviationY, stdDeviationY, "stdDeviationY", m_stdDeviationY)
 
 void SVGFEGaussianBlurElement::setStdDeviation(float stdDeviationX, float stdDeviationY)
 {
@@ -78,14 +64,14 @@ void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute *attr)
     const String& value = attr->value();
     if (attr->name() == SVGNames::stdDeviationAttr) {
         DeprecatedStringList numbers = DeprecatedStringList::split(' ', value.deprecatedString());
-        stdDeviationX()->setBaseVal(numbers[0].toDouble());
+        setStdDeviationXBaseValue(numbers[0].toDouble());
         if(numbers.count() == 1)
-            stdDeviationY()->setBaseVal(numbers[0].toDouble());
+            setStdDeviationYBaseValue(numbers[0].toDouble());
         else
-            stdDeviationY()->setBaseVal(numbers[1].toDouble());
+            setStdDeviationYBaseValue(numbers[1].toDouble());
     }
     else if (attr->name() == SVGNames::inAttr)
-        in1()->setBaseVal(value.impl());
+        setInBaseValue(value.impl());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -96,10 +82,10 @@ KCanvasFEGaussianBlur *SVGFEGaussianBlurElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEGaussianBlur *>(renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(String(in1()->baseVal()).deprecatedString());
+    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
     setStandardAttributes(m_filterEffect);
-    m_filterEffect->setStdDeviationX(stdDeviationX()->baseVal());
-    m_filterEffect->setStdDeviationY(stdDeviationY()->baseVal());
+    m_filterEffect->setStdDeviationX(stdDeviationXBaseValue());
+    m_filterEffect->setStdDeviationY(stdDeviationYBaseValue());
     return m_filterEffect;
 }
 

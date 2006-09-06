@@ -28,7 +28,7 @@
 
 namespace WebCore
 {
-    class SVGAnimatedLength;
+    class SVGLength;
     class SVGRadialGradientElement : public SVGGradientElement
     {
     public:
@@ -36,24 +36,21 @@ namespace WebCore
         virtual ~SVGRadialGradientElement();
 
         // 'SVGRadialGradientElement' functions
-        SVGAnimatedLength *cx() const;
-        SVGAnimatedLength *cy() const;
-        SVGAnimatedLength *fx() const;
-        SVGAnimatedLength *fy() const;
-        SVGAnimatedLength *r() const;
-
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
     protected:
         virtual void buildGradient(KRenderingPaintServerGradient *grad) const;
         virtual KCPaintServerType gradientType() const { return PS_RADIAL_GRADIENT; }
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedLength> m_cx;
-        mutable RefPtr<SVGAnimatedLength> m_cy;
-        mutable RefPtr<SVGAnimatedLength> m_r;
-        mutable RefPtr<SVGAnimatedLength> m_fx;
-        mutable RefPtr<SVGAnimatedLength> m_fy;
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Cx, cx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Cy, cy)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, R, r)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Fx, fx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Fy, fy)
     };
 
 } // namespace WebCore

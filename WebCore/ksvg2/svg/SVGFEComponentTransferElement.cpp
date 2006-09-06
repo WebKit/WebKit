@@ -38,14 +38,11 @@
 #include "SVGFEFuncGElement.h"
 #include "SVGFEFuncBElement.h"
 #include "SVGFEFuncAElement.h"
-#include "SVGAnimatedString.h"
-#include "SVGAnimatedNumber.h"
-#include "SVGAnimatedEnumeration.h"
 
 using namespace WebCore;
 
-SVGFEComponentTransferElement::SVGFEComponentTransferElement(const QualifiedName& tagName, Document *doc) : 
-SVGFilterPrimitiveStandardAttributes(tagName, doc)
+SVGFEComponentTransferElement::SVGFEComponentTransferElement(const QualifiedName& tagName, Document *doc)
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
 {
     m_filterEffect = 0;
 }
@@ -55,17 +52,13 @@ SVGFEComponentTransferElement::~SVGFEComponentTransferElement()
     delete m_filterEffect;
 }
 
-SVGAnimatedString *SVGFEComponentTransferElement::in1() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedString>(m_in1, dummy);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEComponentTransferElement, String, String, string, In, in, SVGNames::inAttr.localName(), m_in)
 
 void SVGFEComponentTransferElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
-        in1()->setBaseVal(value.impl());
+        setInBaseValue(value.impl());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -77,7 +70,7 @@ KCanvasFEComponentTransfer *SVGFEComponentTransferElement::filterEffect() const
     if (!m_filterEffect)
         return 0;
     
-    m_filterEffect->setIn(String(in1()->baseVal()).deprecatedString());
+    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
     setStandardAttributes(m_filterEffect);
     
     for (Node *n = firstChild(); n != 0; n = n->nextSibling()) {

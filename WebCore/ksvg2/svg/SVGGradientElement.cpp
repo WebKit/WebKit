@@ -27,9 +27,7 @@
 #include "Attr.h"
 #include "Document.h"
 #include "RenderView.h"
-#include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedNumber.h"
-#include "SVGAnimatedTransformList.h"
+#include "SVGTransformList.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
@@ -43,7 +41,13 @@
 
 using namespace WebCore;
 
-SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document *doc) : SVGStyledElement(tagName, doc), SVGURIReference(), SVGExternalResourcesRequired()
+SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document *doc)
+    : SVGStyledElement(tagName, doc)
+    , SVGURIReference()
+    , SVGExternalResourcesRequired()
+    , m_spreadMethod(0)
+    , m_gradientUnits(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    , m_gradientTransform(new SVGTransformList(this))
 {
     m_resource = 0;
 }
@@ -53,44 +57,28 @@ SVGGradientElement::~SVGGradientElement()
     delete m_resource;
 }
 
-SVGAnimatedEnumeration *SVGGradientElement::gradientUnits() const
-{
-    if (!m_gradientUnits) {
-        lazy_create<SVGAnimatedEnumeration>(m_gradientUnits, this);
-        m_gradientUnits->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-    }
-    
-    return m_gradientUnits.get();
-}
-
-SVGAnimatedTransformList *SVGGradientElement::gradientTransform() const
-{
-    return lazy_create<SVGAnimatedTransformList>(m_gradientTransform, this);
-}
-
-SVGAnimatedEnumeration *SVGGradientElement::spreadMethod() const
-{
-    return lazy_create<SVGAnimatedEnumeration>(m_spreadMethod, this);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGGradientElement, int, Enumeration, enumeration, GradientUnits, gradientUnits, SVGNames::gradientUnitsAttr.localName(), m_gradientUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGGradientElement, SVGTransformList*, TransformList, transformList, GradientTransform, gradientTransform, SVGNames::gradientTransformAttr.localName(), m_gradientTransform.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGGradientElement, int, Enumeration, enumeration, SpreadMethod, spreadMethod, SVGNames::spreadMethodAttr.localName(), m_spreadMethod)
 
 void SVGGradientElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::gradientUnitsAttr) {
         if(value == "userSpaceOnUse")
-            gradientUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+            setGradientUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
         else if(value == "objectBoundingBox")
-            gradientUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            setGradientUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::gradientTransformAttr) {
-        SVGTransformList *gradientTransforms = gradientTransform()->baseVal();
+        SVGTransformList *gradientTransforms = gradientTransformBaseValue();
         SVGTransformable::parseTransformAttribute(gradientTransforms, attr->value());
     } else if (attr->name() == SVGNames::spreadMethodAttr) {
         if(value == "reflect")
-            spreadMethod()->setBaseVal(SVG_SPREADMETHOD_REFLECT);
+            setSpreadMethodBaseValue(SVG_SPREADMETHOD_REFLECT);
         else if(value == "repeat")
-            spreadMethod()->setBaseVal(SVG_SPREADMETHOD_REPEAT);
+            setSpreadMethodBaseValue(SVG_SPREADMETHOD_REPEAT);
         else if(value == "pad")
-            spreadMethod()->setBaseVal(SVG_SPREADMETHOD_PAD);
+            setSpreadMethodBaseValue(SVG_SPREADMETHOD_PAD);
     } else {
         if (SVGURIReference::parseMappedAttribute(attr))
             return;
@@ -148,7 +136,7 @@ void SVGGradientElement::rebuildStops() const
             SVGElement *element = svg_dynamic_cast(n);
             if (element && element->isGradientStop()) {
                 SVGStopElement *stop = static_cast<SVGStopElement *>(element);
-                float stopOffset = stop->offset()->baseVal();
+                float stopOffset = stop->offsetBaseValue();
                 
                 RenderStyle *stopStyle = document()->styleSelector()->styleForElement(stop, gradientStyle);
                 Color c = stopStyle->svgStyle()->stopColor();

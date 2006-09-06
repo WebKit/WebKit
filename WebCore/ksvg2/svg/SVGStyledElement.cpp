@@ -25,13 +25,13 @@
 #include "SVGStyledElement.h"
 
 #include "Attr.h"
+#include "HTMLNames.h"
 #include "Document.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "PlatformString.h"
 #include "RenderView.h"
 #include "RenderPath.h"
-#include "SVGAnimatedString.h"
 #include "SVGElement.h"
 #include "SVGHelper.h"
 #include "SVGMatrix.h"
@@ -60,10 +60,7 @@ SVGStyledElement::~SVGStyledElement()
 {
 }
 
-SVGAnimatedString* SVGStyledElement::className() const
-{
-    return lazy_create(m_className, (SVGStyledElement*)0); // TODO: use notification context?
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGStyledElement, String, String, string, ClassName, className, HTMLNames::classAttr.localName(), m_className)
 
 RenderObject* SVGStyledElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {

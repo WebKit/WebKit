@@ -36,7 +36,7 @@ class KCanvasImage;
 namespace WebCore
 {
     class Attribute;
-    class SVGAnimatedLength;
+    class SVGLength;
     class SVGMaskElement : public SVGStyledLocatableElement,
                                   public SVGURIReference,
                                   public SVGTests,
@@ -49,12 +49,6 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // 'SVGMaskElement' functions
-        SVGAnimatedLength *x() const;
-        SVGAnimatedLength *y() const;
-
-        SVGAnimatedLength *width() const;
-        SVGAnimatedLength *height() const;
-
         virtual void childrenChanged();
         virtual void attributeChanged(Attribute* attr, bool preserveDecls);
         virtual void parseMappedAttribute(MappedAttribute *attr);
@@ -66,10 +60,12 @@ namespace WebCore
     protected:
         KCanvasImage *drawMaskerContent();
 
-        mutable RefPtr<SVGAnimatedLength> m_x;
-        mutable RefPtr<SVGAnimatedLength> m_y;
-        mutable RefPtr<SVGAnimatedLength> m_width;
-        mutable RefPtr<SVGAnimatedLength> m_height;
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Height, height)
+
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
         KCanvasMasker *m_masker;

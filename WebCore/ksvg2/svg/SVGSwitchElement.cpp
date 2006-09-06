@@ -31,7 +31,7 @@
 #include "SVGHelper.h"
 #include "SVGTests.h"
 #include "SVGSwitchElement.h"
-#include "SVGAnimatedLength.h"
+#include "SVGLength.h"
 
 namespace WebCore {
 

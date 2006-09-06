@@ -29,10 +29,8 @@
 #include "CSSPropertyNames.h"
 #include "KCanvasRenderingStyle.h"
 #include "RenderSVGImage.h"
-#include "SVGAnimatedBoolean.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
-#include "SVGAnimatedString.h"
+#include "SVGLength.h"
+#include "SVGPreserveAspectRatio.h"
 #include "SVGDocument.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
@@ -50,6 +48,11 @@ SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document *doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGURIReference()
+    , m_x(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_width(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_preserveAspectRatio(new SVGPreserveAspectRatio(this))
     , m_imageLoader(this)
 {
 }
@@ -58,45 +61,26 @@ SVGImageElement::~SVGImageElement()
 {
 }
 
-SVGAnimatedLength *SVGImageElement::x() const
-{
-    return lazy_create<SVGAnimatedLength>(m_x, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGImageElement::y() const
-{
-    return lazy_create<SVGAnimatedLength>(m_y, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedLength *SVGImageElement::width() const
-{
-    return lazy_create<SVGAnimatedLength>(m_width, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGImageElement::height() const
-{
-    return lazy_create<SVGAnimatedLength>(m_height, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedPreserveAspectRatio *SVGImageElement::preserveAspectRatio() const
-{
-    return lazy_create<SVGAnimatedPreserveAspectRatio>(m_preserveAspectRatio, this);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength*, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr.localName(), m_preserveAspectRatio.get())
 
 void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        x()->baseVal()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)
-        y()->baseVal()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::preserveAspectRatioAttr)
-        preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.impl());
+        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(value.impl());
     else if (attr->name() == SVGNames::widthAttr) {
-        width()->baseVal()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value.impl());
         addCSSProperty(attr, CSS_PROP_WIDTH, value);
     } else if (attr->name() == SVGNames::heightAttr) {
-        height()->baseVal()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value.impl());
         addCSSProperty(attr, CSS_PROP_HEIGHT, value);
     } else {
         if (SVGTests::parseMappedAttribute(attr))
@@ -121,7 +105,7 @@ RenderObject *SVGImageElement::createRenderer(RenderArena *arena, RenderStyle *s
 
 bool SVGImageElement::haveLoadedRequiredResources()
 {
-    return (!externalResourcesRequired()->baseVal() || m_imageLoader.imageComplete());
+    return (!externalResourcesRequiredBaseValue() || m_imageLoader.imageComplete());
 }
 
 void SVGImageElement::attach()

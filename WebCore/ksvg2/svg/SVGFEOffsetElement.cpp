@@ -34,13 +34,13 @@
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEOffsetElement.h"
-#include "SVGAnimatedNumber.h"
-#include "SVGAnimatedString.h"
 
 using namespace WebCore;
 
-SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document *doc) : 
-SVGFilterPrimitiveStandardAttributes(tagName, doc)
+SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document *doc)
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , m_dx(0.0)
+    , m_dy(0.0)
 {
     m_filterEffect = 0;
 }
@@ -50,33 +50,19 @@ SVGFEOffsetElement::~SVGFEOffsetElement()
     delete m_filterEffect;
 }
 
-SVGAnimatedString *SVGFEOffsetElement::in1() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedString>(m_in1, dummy);
-}
-
-SVGAnimatedNumber *SVGFEOffsetElement::dx() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_dx, dummy);
-}
-
-SVGAnimatedNumber *SVGFEOffsetElement::dy() const
-{
-    SVGStyledElement *dummy = 0;
-    return lazy_create<SVGAnimatedNumber>(m_dy, dummy);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, String, String, string, In, in, SVGNames::inAttr.localName(), m_in)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, double, Number, number, Dx, dx, SVGNames::dxAttr.localName(), m_dx)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, double, Number, number, Dy, dy, SVGNames::dyAttr.localName(), m_dy)
 
 void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::dxAttr)
-        dx()->setBaseVal(value.deprecatedString().toDouble());
+        setDxBaseValue(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::dyAttr)
-        dy()->setBaseVal(value.deprecatedString().toDouble());
+        setDyBaseValue(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::inAttr)
-        in1()->setBaseVal(value.impl());
+        setInBaseValue(value.impl());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -87,10 +73,10 @@ KCanvasFEOffset *SVGFEOffsetElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEOffset *>(renderingDevice()->createFilterEffect(FE_OFFSET));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(String(in1()->baseVal()).deprecatedString());
+    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
     setStandardAttributes(m_filterEffect);
-    m_filterEffect->setDx(dx()->baseVal());
-    m_filterEffect->setDy(dy()->baseVal());
+    m_filterEffect->setDx(dxBaseValue());
+    m_filterEffect->setDy(dyBaseValue());
     return m_filterEffect;
 }
 

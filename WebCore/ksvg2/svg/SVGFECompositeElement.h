@@ -29,9 +29,6 @@
 
 namespace WebCore
 {
-    class SVGAnimatedString;
-    class SVGAnimatedNumber;
-    class SVGAnimatedEnumeration;
 
     class SVGFECompositeElement : public SVGFilterPrimitiveStandardAttributes
     {
@@ -40,27 +37,22 @@ namespace WebCore
         virtual ~SVGFECompositeElement();
 
         // 'SVGFECompositeElement' functions
-        SVGAnimatedString *in1() const;
-        SVGAnimatedString *in2() const;
-        SVGAnimatedEnumeration *_operator() const;
-        SVGAnimatedNumber *k1() const;
-        SVGAnimatedNumber *k2() const;
-        SVGAnimatedNumber *k3() const;
-        SVGAnimatedNumber *k4() const;
-
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
         virtual KCanvasFEComposite *filterEffect() const;
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedString> m_in1;
-        mutable RefPtr<SVGAnimatedString> m_in2;
-        mutable RefPtr<SVGAnimatedEnumeration> m_operator;
-        mutable RefPtr<SVGAnimatedNumber> m_k1;
-        mutable RefPtr<SVGAnimatedNumber> m_k2;
-        mutable RefPtr<SVGAnimatedNumber> m_k3;
-        mutable RefPtr<SVGAnimatedNumber> m_k4;
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, In2, in2)
+        ANIMATED_PROPERTY_DECLARATIONS(int, int, _operator, _operator)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, K1, k1)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, K2, k2)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, K3, k3)
+        ANIMATED_PROPERTY_DECLARATIONS(double, double, K4, k4)
         mutable KCanvasFEComposite *m_filterEffect;
     };
 

@@ -47,6 +47,9 @@ namespace WebCore
 
         virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
         mutable bool m_insideRenderSection;
     };

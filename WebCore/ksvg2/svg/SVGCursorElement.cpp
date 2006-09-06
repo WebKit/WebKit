@@ -30,13 +30,18 @@
 #include "DocLoader.h"
 #include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedString.h"
+#include "SVGLength.h"
 
 using namespace WebCore;
 
 SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document *doc)
-: SVGElement(tagName, doc), SVGTests(), SVGExternalResourcesRequired(), SVGURIReference(), CachedResourceClient()
+    : SVGElement(tagName, doc)
+    , SVGTests()
+    , SVGExternalResourcesRequired()
+    , SVGURIReference()
+    , CachedResourceClient()
+    , m_x(new SVGLength(0, LM_WIDTH, viewportElement()))
+    , m_y(new SVGLength(0, LM_HEIGHT, viewportElement()))
 {
     m_cachedImage = 0;
 }
@@ -47,23 +52,16 @@ SVGCursorElement::~SVGCursorElement()
         m_cachedImage->deref(this);
 }
 
-SVGAnimatedLength *SVGCursorElement::x() const
-{
-    return lazy_create<SVGAnimatedLength>(m_x, static_cast<const SVGStyledElement *>(0) /* correct? */, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGCursorElement::y() const
-{
-    return lazy_create<SVGAnimatedLength>(m_y, static_cast<const SVGStyledElement *>(0) /* correct? */, LM_HEIGHT, viewportElement());
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
 
 void SVGCursorElement::parseMappedAttribute(MappedAttribute *attr)
 {
      const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        x()->baseVal()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)
-        y()->baseVal()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value.impl());
     else
     {
         if(SVGTests::parseMappedAttribute(attr)) return;
@@ -71,7 +69,7 @@ void SVGCursorElement::parseMappedAttribute(MappedAttribute *attr)
         if (SVGURIReference::parseMappedAttribute(attr)) {
             if (m_cachedImage)
                 m_cachedImage->deref(this);
-            m_cachedImage = ownerDocument()->docLoader()->requestImage(href()->baseVal());
+            m_cachedImage = ownerDocument()->docLoader()->requestImage(hrefBaseValue());
             if (m_cachedImage)
                 m_cachedImage->ref(this);
             return;

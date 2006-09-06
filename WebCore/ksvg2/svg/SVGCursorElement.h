@@ -34,7 +34,7 @@
 
 namespace WebCore
 {
-    class SVGAnimatedLength;
+    class SVGLength;
 
     class SVGCursorElement : public SVGElement,
                                  public SVGTests,
@@ -49,16 +49,16 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // 'SVGCursorElement' functions
-        SVGAnimatedLength *x() const;
-        SVGAnimatedLength *y() const;
-
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
         CachedImage* cachedImage() const { return m_cachedImage; }
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedLength> m_x;
-        mutable RefPtr<SVGAnimatedLength> m_y;
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y, y)
         CachedImage *m_cachedImage;
     };
 

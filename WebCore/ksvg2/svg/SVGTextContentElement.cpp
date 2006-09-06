@@ -26,17 +26,20 @@
 
 #include "SVGNames.h"
 #include "SVGHelper.h"
-//#include "SVGDocument.h"
 #include "SVGTextContentElement.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedEnumeration.h"
+#include "SVGLength.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 
 using namespace WebCore;
 
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
+    : SVGStyledElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , m_textLength(new SVGLength(this, LM_WIDTH))
+    , m_lengthAdjust(0)
 {
 }
 
@@ -44,15 +47,8 @@ SVGTextContentElement::~SVGTextContentElement()
 {
 }
 
-SVGAnimatedLength *SVGTextContentElement::textLength() const
-{
-    return lazy_create<SVGAnimatedLength>(m_textLength, this, LM_WIDTH);
-}
-
-SVGAnimatedEnumeration *SVGTextContentElement::lengthAdjust() const
-{
-    return lazy_create<SVGAnimatedEnumeration>(m_lengthAdjust, this);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextContentElement, SVGLength*, Length, length, TextLength, textLength, SVGNames::textLengthAttr.localName(), m_textLength.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextContentElement, int, Enumeration, enumeration, LengthAdjust, lengthAdjust, SVGNames::lengthAdjustAttr.localName(), m_lengthAdjust)
 
 long SVGTextContentElement::getNumberOfChars() const
 {
@@ -101,7 +97,7 @@ void SVGTextContentElement::selectSubString(unsigned long charnum, unsigned long
 void SVGTextContentElement::parseMappedAttribute(MappedAttribute *attr)
 {
     //if (attr->name() == SVGNames::lengthAdjustAttr)
-    //    x()->baseVal()->setValueAsString(value.impl());
+    //    xBaseValue()->setValueAsString(value.impl());
     //else
     {
         if (SVGTests::parseMappedAttribute(attr))

@@ -28,9 +28,7 @@
 #include "ksvg.h"
 #include "SVGNames.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedString.h"
-#include "SVGAnimatedLength.h"
+#include "SVGLength.h"
 #include "SVGStyledElement.h"
 #include "SVGFilterElement.h"
 
@@ -39,66 +37,40 @@
 using namespace WebCore;
 
 SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document *doc)
-: SVGStyledElement(tagName, doc)
+    : SVGStyledElement(tagName, doc)
+    , m_x(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_width(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
 {
+    // Spec : If the attribute is not specified, the effect is as if a value of "100%" were specified.
+    m_width->setValueAsString("100%");
+    m_height->setValueAsString("100%");
 }
 
 SVGFilterPrimitiveStandardAttributes::~SVGFilterPrimitiveStandardAttributes()
 {
 }
 
-SVGAnimatedLength *SVGFilterPrimitiveStandardAttributes::x() const
-{
-    // Spec : If the attribute is not specified, the effect is as if a value of "0%" were specified.
-    return lazy_create<SVGAnimatedLength>(m_x, this, LM_WIDTH);
-}
-
-SVGAnimatedLength *SVGFilterPrimitiveStandardAttributes::y() const
-{
-    // Spec : If the attribute is not specified, the effect is as if a value of "0%" were specified.
-    return lazy_create<SVGAnimatedLength>(m_y, this, LM_HEIGHT);
-}
-
-SVGAnimatedLength *SVGFilterPrimitiveStandardAttributes::width() const
-{
-    // Spec : If the attribute is not specified, the effect is as if a value of "100%" were specified.
-    if (!m_width) {
-        lazy_create<SVGAnimatedLength>(m_width, this, LM_WIDTH);
-        m_width->baseVal()->setValueAsString(String("100%").impl());
-    }
-
-    return m_width.get();
-}
-
-SVGAnimatedLength *SVGFilterPrimitiveStandardAttributes::height() const
-{
-    // Spec : If the attribute is not specified, the effect is as if a value of "100%" were specified.
-    if (!m_height) {
-        lazy_create<SVGAnimatedLength>(m_height, this, LM_HEIGHT);
-        m_height->baseVal()->setValueAsString(String("100%").impl());
-    }
-
-    return m_height.get();
-}
-
-SVGAnimatedString *SVGFilterPrimitiveStandardAttributes::result() const
-{
-    return lazy_create<SVGAnimatedString>(m_result, this);
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength*, Length, length, X, x, SVGNames::xAttr.localName(), m_x.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength*, Length, length, Y, y, SVGNames::yAttr.localName(), m_y.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength*, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength*, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, String, String, string, Result, result, SVGNames::resultAttr.localName(), m_result)
 
 void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        x()->baseVal()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)
-        y()->baseVal()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::widthAttr)
-        width()->baseVal()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::heightAttr)
-        height()->baseVal()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::resultAttr)
-        result()->setBaseVal(value.impl());
+        setResultBaseValue(value.impl());
     else
         return SVGStyledElement::parseMappedAttribute(attr);
 }
@@ -110,20 +82,20 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(KCanvasFilterEf
         return;
     bool bbox = false;
     if(parentNode() && parentNode()->hasTagName(SVGNames::filterTag))
-        bbox = static_cast<SVGFilterElement *>(parentNode())->primitiveUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+        bbox = static_cast<SVGFilterElement *>(parentNode())->primitiveUnitsBaseValue() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
-    x()->baseVal()->setBboxRelative(bbox);
-    y()->baseVal()->setBboxRelative(bbox);
-    width()->baseVal()->setBboxRelative(bbox);
-    height()->baseVal()->setBboxRelative(bbox);
-    float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
-    float _width = width()->baseVal()->value(), _height = height()->baseVal()->value();
+    xBaseValue()->setBboxRelative(bbox);
+    yBaseValue()->setBboxRelative(bbox);
+    widthBaseValue()->setBboxRelative(bbox);
+    heightBaseValue()->setBboxRelative(bbox);
+    float _x = xBaseValue()->value(), _y = yBaseValue()->value();
+    float _width = widthBaseValue()->value(), _height = heightBaseValue()->value();
     if(bbox)
         filterEffect->setSubRegion(FloatRect(_x * 100.f, _y * 100.f, _width * 100.f, _height * 100.f));
     else
         filterEffect->setSubRegion(FloatRect(_x, _y, _width, _height));
 
-    filterEffect->setResult(String(result()->baseVal()).deprecatedString());
+    filterEffect->setResult(String(resultBaseValue()).deprecatedString());
 }
 
 // vim:ts=4:noet

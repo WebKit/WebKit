@@ -21,7 +21,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGFESpotLightElement.h"
 
-#include "SVGAnimatedNumber.h"
 
 namespace WebCore {
 
@@ -36,13 +35,13 @@ SVGFESpotLightElement::~SVGFESpotLightElement()
 
 KCLightSource *SVGFESpotLightElement::lightSource() const
 {
-    KCanvasPoint3F pos(x()->baseVal(), y()->baseVal(), z()->baseVal());
+    KCanvasPoint3F pos(xBaseValue(), yBaseValue(), zBaseValue());
     //convert lookAt to a direction
-    KCanvasPoint3F direction(pointsAtX()->baseVal() - pos.x(), 
-                             pointsAtY()->baseVal() - pos.y(), 
-                             pointsAtZ()->baseVal() - pos.z());
+    KCanvasPoint3F direction(pointsAtXBaseValue() - pos.x(), 
+                             pointsAtYBaseValue() - pos.y(), 
+                             pointsAtZBaseValue() - pos.z());
     direction.normalize();
-    return new KCSpotLightSource(pos, direction, specularExponent()->baseVal(), limitingConeAngle()->baseVal());
+    return new KCSpotLightSource(pos, direction, specularExponentBaseValue(), limitingConeAngleBaseValue());
 }
 
 }

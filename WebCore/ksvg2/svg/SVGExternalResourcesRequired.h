@@ -25,10 +25,10 @@
 #ifdef SVG_SUPPORT
 
 #include <wtf/RefPtr.h>
+#include "SVGElement.h"
 
 namespace WebCore {
     class MappedAttribute;
-    class SVGAnimatedBoolean;
 
     // FIXME: This is wrong for several reasons:
     // 1. externalResourcesRequired is not animateable according to SVG 1.1 section 5.9
@@ -46,12 +46,13 @@ namespace WebCore {
         virtual ~SVGExternalResourcesRequired();
 
         // 'SVGExternalResourcesRequired' functions
-        SVGAnimatedBoolean *externalResourcesRequired() const;
-
         bool parseMappedAttribute(MappedAttribute*);
 
+    protected:
+        virtual const SVGElement* contextElement() const = 0;
+
     private:
-        mutable RefPtr<SVGAnimatedBoolean> m_external;
+        ANIMATED_PROPERTY_DECLARATIONS(bool, bool, ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

@@ -29,12 +29,18 @@
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGCircleElement.h"
-#include "SVGAnimatedLength.h"
+#include "SVGLength.h"
 
 using namespace WebCore;
 
 SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , m_cx(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_cy(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_r(new SVGLength(this, LM_OTHER, viewportElement()))
 {
 }
 
@@ -42,30 +48,19 @@ SVGCircleElement::~SVGCircleElement()
 {
 }
 
-SVGAnimatedLength *SVGCircleElement::cx() const
-{
-    return lazy_create<SVGAnimatedLength>(m_cx, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGCircleElement::cy() const
-{
-    return lazy_create<SVGAnimatedLength>(m_cy, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedLength *SVGCircleElement::r() const
-{
-    return lazy_create<SVGAnimatedLength>(m_r, this, LM_OTHER, viewportElement());
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength*, Length, length, Cx, cx, SVGNames::cxAttr.localName(), m_cx.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength*, Length, length, Cy, cy, SVGNames::cyAttr.localName(), m_cy.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength*, Length, length, R, r, SVGNames::rAttr.localName(), m_r.get())
 
 void SVGCircleElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
-        cx()->baseVal()->setValueAsString(value.impl());
+        cxBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::cyAttr)
-        cy()->baseVal()->setValueAsString(value.impl());
+        cyBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::rAttr)
-        r()->baseVal()->setValueAsString(value.impl());
+        rBaseValue()->setValueAsString(value.impl());
     else
     {
         if(SVGTests::parseMappedAttribute(attr)) return;
@@ -77,8 +72,8 @@ void SVGCircleElement::parseMappedAttribute(MappedAttribute *attr)
 
 Path SVGCircleElement::toPathData() const
 {
-    float _cx = cx()->baseVal()->value(), _cy = cy()->baseVal()->value();
-    float _r = r()->baseVal()->value();
+    float _cx = cxBaseValue()->value(), _cy = cyBaseValue()->value();
+    float _r = rBaseValue()->value();
 
     return Path::createCircle(FloatPoint(_cx, _cy), _r);
 }
@@ -86,11 +81,11 @@ Path SVGCircleElement::toPathData() const
 const SVGStyledElement *SVGCircleElement::pushAttributeContext(const SVGStyledElement *context)
 {
     // All attribute's contexts are equal (so just take the one from 'cx').
-    const SVGStyledElement *restore = cx()->baseVal()->context();
+    const SVGStyledElement *restore = cxBaseValue()->context();
 
-    cx()->baseVal()->setContext(context);
-    cy()->baseVal()->setContext(context);
-    r()->baseVal()->setContext(context);
+    cxBaseValue()->setContext(context);
+    cyBaseValue()->setContext(context);
+    rBaseValue()->setContext(context);
     
     SVGStyledElement::pushAttributeContext(context);
     return restore;

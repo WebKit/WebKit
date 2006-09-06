@@ -31,82 +31,52 @@
 #include "SVGTransform.h"
 #include "SVGStopElement.h"
 #include "SVGTransformList.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedNumber.h"
-#include "SVGAnimatedString.h"
-#include "SVGAnimatedEnumeration.h"
+#include "SVGLength.h"
 #include "SVGRadialGradientElement.h"
-#include "SVGAnimatedTransformList.h"
+#include "SVGTransformList.h"
 
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 
 namespace WebCore {
 
-SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document *doc) : SVGGradientElement(tagName, doc)
+SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document *doc)
+    : SVGGradientElement(tagName, doc)
+    , m_cx(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_cy(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_r(new SVGLength(this, LM_OTHER, viewportElement()))
+    , m_fx(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_fy(new SVGLength(this, LM_HEIGHT, viewportElement()))
 {
+    // Spec: If the attribute is not specified, the effect is as if a value of "50%" were specified.
+    m_cx->setValueAsString("50%");
+    m_cy->setValueAsString("50%");
+    m_r->setValueAsString("50%");
 }
 
 SVGRadialGradientElement::~SVGRadialGradientElement()
 {
 }
 
-SVGAnimatedLength *SVGRadialGradientElement::cx() const
-{
-    // Spec: If the attribute is not specified, the effect is as if a value of "50%" were specified.
-    if (!m_cx) {
-        lazy_create<SVGAnimatedLength>(m_cx, this, LM_WIDTH, viewportElement());
-        m_cx->baseVal()->setValue(0.5);
-    }
-
-    return m_cx.get();
-}
-
-SVGAnimatedLength *SVGRadialGradientElement::cy() const
-{
-    // Spec: If the attribute is not specified, the effect is as if a value of "50%" were specified.
-    if (!m_cy) {
-        lazy_create<SVGAnimatedLength>(m_cy, this, LM_HEIGHT, viewportElement());
-        m_cy->baseVal()->setValue(0.5);
-    }
-
-    return m_cy.get();
-}
-
-SVGAnimatedLength *SVGRadialGradientElement::fx() const
-{
-    return lazy_create<SVGAnimatedLength>(m_fx, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGRadialGradientElement::fy() const
-{
-    return lazy_create<SVGAnimatedLength>(m_fy, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedLength *SVGRadialGradientElement::r() const
-{
-    // Spec: If the attribute is not specified, the effect is as if a value of "50%" were specified.
-    if (!m_r) {
-        lazy_create<SVGAnimatedLength>(m_r, this, LM_OTHER, viewportElement());
-        m_r->baseVal()->setValue(0.5);
-    }
-
-    return m_r.get();
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, Cx, cx, SVGNames::cxAttr.localName(), m_cx.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, Cy, cy, SVGNames::cyAttr.localName(), m_cy.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, Fx, fx, SVGNames::fxAttr.localName(), m_fx.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, Fy, fy, SVGNames::fyAttr.localName(), m_fy.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength*, Length, length, R, r, SVGNames::rAttr.localName(), m_r.get())
 
 void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
-        cx()->baseVal()->setValueAsString(value.impl());
+        cxBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::cyAttr)
-        cy()->baseVal()->setValueAsString(value.impl());
+        cyBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::rAttr)
-        r()->baseVal()->setValueAsString(value.impl());
+        rBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::fxAttr)
-        fx()->baseVal()->setValueAsString(value.impl());
+        fxBaseValue()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::fyAttr)
-        fy()->baseVal()->setValueAsString(value.impl());
+        fyBaseValue()->setValueAsString(value.impl());
     else
         SVGGradientElement::parseMappedAttribute(attr);
 }
@@ -115,25 +85,25 @@ void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
 {
     rebuildStops(); // rebuild stops before possibly importing them from any referenced gradient.
 
-    bool bbox = (gradientUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+    bool bbox = (gradientUnitsBaseValue() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     bool fxSet = hasAttribute(SVGNames::fxAttr);
     bool fySet = hasAttribute(SVGNames::fyAttr);
-    cx()->baseVal()->setBboxRelative(bbox);
-    cy()->baseVal()->setBboxRelative(bbox);
-    r()->baseVal()->setBboxRelative(bbox);
-    fx()->baseVal()->setBboxRelative(bbox);
-    fy()->baseVal()->setBboxRelative(bbox);
-    float _cx = cx()->baseVal()->value(), _cy = cy()->baseVal()->value();
-    float _r = r()->baseVal()->value();
-    float _fx = fxSet ? fx()->baseVal()->value() : _cx;
-    float _fy = fySet ? fy()->baseVal()->value() : _cy;
+    cxBaseValue()->setBboxRelative(bbox);
+    cyBaseValue()->setBboxRelative(bbox);
+    rBaseValue()->setBboxRelative(bbox);
+    fxBaseValue()->setBboxRelative(bbox);
+    fyBaseValue()->setBboxRelative(bbox);
+    float _cx = cxBaseValue()->value(), _cy = cyBaseValue()->value();
+    float _r = rBaseValue()->value();
+    float _fx = fxSet ? fxBaseValue()->value() : _cx;
+    float _fy = fySet ? fyBaseValue()->value() : _cy;
 
     KRenderingPaintServerRadialGradient *grad = static_cast<KRenderingPaintServerRadialGradient *>(_grad);
     AffineTransform mat;
-    if(gradientTransform()->baseVal()->numberOfItems() > 0)
-        mat = gradientTransform()->baseVal()->consolidate()->matrix()->matrix();
+    if(gradientTransformBaseValue()->numberOfItems() > 0)
+        mat = gradientTransformBaseValue()->consolidate()->matrix()->matrix();
 
-    DeprecatedString ref = String(href()->baseVal()).deprecatedString();
+    DeprecatedString ref = String(hrefBaseValue()).deprecatedString();
     KRenderingPaintServer *pserver = getPaintServerById(document(), ref.mid(1));
 
     if(pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT))
@@ -191,9 +161,9 @@ void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
     }
     else
     {
-        if(spreadMethod()->baseVal() == SVG_SPREADMETHOD_REFLECT)
+        if(spreadMethodBaseValue() == SVG_SPREADMETHOD_REFLECT)
             grad->setGradientSpreadMethod(SPREADMETHOD_REFLECT);
-        else if(spreadMethod()->baseVal() == SVG_SPREADMETHOD_REPEAT)
+        else if(spreadMethodBaseValue() == SVG_SPREADMETHOD_REPEAT)
             grad->setGradientSpreadMethod(SPREADMETHOD_REPEAT);
         else
             grad->setGradientSpreadMethod(SPREADMETHOD_PAD);

@@ -28,7 +28,7 @@
 #include "Document.h"
 #include "SVGAnimateColorElement.h"
 #include "SVGAnimateTransformElement.h"
-#include "SVGAnimatedTransformList.h"
+#include "SVGTransformList.h"
 #include "SVGDOMImplementation.h"
 #include "SVGMatrix.h"
 #include "SVGNames.h"
@@ -256,8 +256,8 @@ void SVGTimer::notifyAll()
             SVGElement* key = targetIterator->first;
             if (key && key->isStyled() && key->isStyledTransformable()) {
                 SVGStyledTransformableElement *transform = static_cast<SVGStyledTransformableElement *>(key);
-                transform->transform()->setAnimVal(targetTransforms.get());
-                transform->updateLocalTransform(transform->transform()->animVal());
+                transform->setTransform(targetTransforms.get());
+                transform->updateLocalTransform(transform->transform());
             }
         }
 

@@ -28,8 +28,7 @@
 
 namespace WebCore {
     class KCanvasFilterEffect;
-    class SVGAnimatedLength;
-    class SVGAnimatedString;
+    class SVGLength;
 
     class SVGFilterPrimitiveStandardAttributes : public SVGStyledElement
     {
@@ -40,12 +39,6 @@ namespace WebCore {
         virtual bool isFilterEffect() const { return true; }
 
         // 'SVGFilterPrimitiveStandardAttributes' functions
-        SVGAnimatedLength *x() const;
-        SVGAnimatedLength *y() const;
-        SVGAnimatedLength *width() const;
-        SVGAnimatedLength *height() const;
-        SVGAnimatedString *result() const;
-
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
         virtual KCanvasFilterEffect *filterEffect() const = 0;
@@ -53,12 +46,15 @@ namespace WebCore {
     protected:
         void setStandardAttributes(KCanvasFilterEffect *filterEffect) const;
 
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
     private:
-        mutable RefPtr<SVGAnimatedLength> m_x;
-        mutable RefPtr<SVGAnimatedLength> m_y;
-        mutable RefPtr<SVGAnimatedLength> m_width;
-        mutable RefPtr<SVGAnimatedLength> m_height;
-        mutable RefPtr<SVGAnimatedString> m_result;
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, Result, result)
     };
 
 } // namespace WebCore

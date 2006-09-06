@@ -28,7 +28,6 @@
 
 namespace WebCore
 {
-    class SVGAnimatedString;
     class SVGFEMergeNodeElement : public SVGElement
     {
     public:
@@ -39,10 +38,12 @@ namespace WebCore
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
         // 'SVGFEMergeNodeElement' functions
-        SVGAnimatedString *in1() const;
+    
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        mutable RefPtr<SVGAnimatedString> m_in1;
+        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
     };
 
 } // namespace WebCore

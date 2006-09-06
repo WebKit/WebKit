@@ -1,3 +1,363 @@
+2006-09-05  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10490
+
+        -> Remove all SVGAnimated* usage from ksvg2.
+        This is all done using a set of macros which live in svg/SVGElement.h
+        (ANIMATED_PROPERTY_DECLARATIONS / ANIMATED_PROPERTY_DEFINITIONS).
+        Transform all properties to this new concept using Eric ruby script.
+
+        -> Replace all usages of "property()->baseVal()" with "propertyBaseValue()".
+        -> Replace all usages of "property()->setBaseVal()" with "setPropertyBaseValue()".
+
+        -> Add "virtual const SVGElement* contextElement() const".
+        This concept allows to access the document (needed to access the SVGDocumentExtensions)
+        from lowest-base-classes like SVGURIReference / SVGExternalResourcesRequired etc.
+
+        These classes contain this contextElement() function as pure virtual functions.
+        The topmost classes (like SVGCircleElement) implement this function with "return this".
+
+        -> Move default value initialization to constructors.
+        As the lazy_create usage, which was involved in default property initialization,
+        has been removed, we need to do the initialization in the constructor.
+        
+        This forces us to fix the SVGLength class, as calling viewportElement() from the
+        constructor does not work. This SVGLength cleanup is one of the next things to fix.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * kcanvas/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::translationForAttributes):
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::relativeBBox):
+        (WebCore::RenderSVGImage::getAbsoluteRepaintRect):
+        (WebCore::RenderSVGImage::translationForAttributes):
+        * kcanvas/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::translationForAttributes):
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (WebCore::SVGTimer::notifyAll):
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::baseValueMap):
+        (WebCore::SVGDocumentExtensions::baseValue):
+        (WebCore::SVGDocumentExtensions::setBaseValue):
+        (WebCore::SVGDocumentExtensions::hasBaseValue):
+        (WebCore::String):
+        (WebCore::bool):
+        (WebCore::double):
+        * ksvg2/misc/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::updateFromElement):
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::parseMappedAttribute):
+        (WebCore::SVGAElement::defaultEventHandler):
+        * ksvg2/svg/SVGAElement.h:
+        (WebCore::SVGAElement::contextElement):
+        * ksvg2/svg/SVGAnimateColorElement.h:
+        (WebCore::SVGAnimateColorElement::contextElement):
+        * ksvg2/svg/SVGAnimateElement.h:
+        (WebCore::SVGAnimateElement::contextElement):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::handleTimerEvent):
+        (WebCore::SVGAnimateTransformElement::initialMatrix):
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        (WebCore::SVGAnimateTransformElement::contextElement):
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (SVGCircleElement::SVGCircleElement):
+        (SVGCircleElement::parseMappedAttribute):
+        (SVGCircleElement::toPathData):
+        (SVGCircleElement::pushAttributeContext):
+        * ksvg2/svg/SVGCircleElement.h:
+        (WebCore::SVGCircleElement::contextElement):
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (SVGClipPathElement::SVGClipPathElement):
+        (SVGClipPathElement::parseMappedAttribute):
+        (SVGClipPathElement::canvasResource):
+        * ksvg2/svg/SVGClipPathElement.h:
+        (WebCore::SVGClipPathElement::contextElement):
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        (SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        (SVGComponentTransferFunctionElement::parseMappedAttribute):
+        (SVGComponentTransferFunctionElement::transferFunction):
+        * ksvg2/svg/SVGComponentTransferFunctionElement.h:
+        * ksvg2/svg/SVGCursorElement.cpp:
+        (SVGCursorElement::SVGCursorElement):
+        (SVGCursorElement::parseMappedAttribute):
+        * ksvg2/svg/SVGCursorElement.h:
+        (WebCore::SVGCursorElement::contextElement):
+        * ksvg2/svg/SVGDefsElement.h:
+        (WebCore::SVGDefsElement::contextElement):
+        * ksvg2/svg/SVGElement.h:
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::SVGEllipseElement):
+        (WebCore::SVGEllipseElement::parseMappedAttribute):
+        (WebCore::SVGEllipseElement::toPathData):
+        (WebCore::SVGEllipseElement::pushAttributeContext):
+        * ksvg2/svg/SVGEllipseElement.h:
+        (WebCore::SVGEllipseElement::contextElement):
+        * ksvg2/svg/SVGExternalResourcesRequired.cpp:
+        (WebCore::SVGExternalResourcesRequired::SVGExternalResourcesRequired):
+        (WebCore::SVGExternalResourcesRequired::parseMappedAttribute):
+        * ksvg2/svg/SVGExternalResourcesRequired.h:
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        (SVGFEBlendElement::SVGFEBlendElement):
+        (SVGFEBlendElement::parseMappedAttribute):
+        (SVGFEBlendElement::filterEffect):
+        * ksvg2/svg/SVGFEBlendElement.h:
+        (WebCore::SVGFEBlendElement::contextElement):
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        (SVGFEColorMatrixElement::parseMappedAttribute):
+        (SVGFEColorMatrixElement::filterEffect):
+        * ksvg2/svg/SVGFEColorMatrixElement.h:
+        (WebCore::SVGFEColorMatrixElement::contextElement):
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        (SVGFEComponentTransferElement::SVGFEComponentTransferElement):
+        (SVGFEComponentTransferElement::parseMappedAttribute):
+        (SVGFEComponentTransferElement::filterEffect):
+        * ksvg2/svg/SVGFEComponentTransferElement.h:
+        (WebCore::SVGFEComponentTransferElement::contextElement):
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        (SVGFECompositeElement::SVGFECompositeElement):
+        (SVGFECompositeElement::parseMappedAttribute):
+        (SVGFECompositeElement::filterEffect):
+        * ksvg2/svg/SVGFECompositeElement.h:
+        (WebCore::SVGFECompositeElement::contextElement):
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        (WebCore::SVGFEDiffuseLightingElement::parseMappedAttribute):
+        (WebCore::SVGFEDiffuseLightingElement::filterEffect):
+        * ksvg2/svg/SVGFEDiffuseLightingElement.h:
+        (WebCore::SVGFEDiffuseLightingElement::contextElement):
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        (SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        (SVGFEDisplacementMapElement::parseMappedAttribute):
+        (SVGFEDisplacementMapElement::filterEffect):
+        * ksvg2/svg/SVGFEDisplacementMapElement.h:
+        (WebCore::SVGFEDisplacementMapElement::contextElement):
+        * ksvg2/svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::lightSource):
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (SVGFEFloodElement::parseMappedAttribute):
+        (SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGFEFloodElement.h:
+        (WebCore::SVGFEFloodElement::contextElement):
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        (SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        (SVGFEGaussianBlurElement::parseMappedAttribute):
+        (SVGFEGaussianBlurElement::filterEffect):
+        * ksvg2/svg/SVGFEGaussianBlurElement.h:
+        (WebCore::SVGFEGaussianBlurElement::contextElement):
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        (SVGFEImageElement::SVGFEImageElement):
+        (SVGFEImageElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEImageElement.h:
+        (WebCore::SVGFEImageElement::contextElement):
+        * ksvg2/svg/SVGFELightElement.cpp:
+        (SVGFELightElement::SVGFELightElement):
+        (SVGFELightElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFELightElement.h:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        (SVGFEMergeElement::SVGFEMergeElement):
+        (SVGFEMergeElement::filterEffect):
+        * ksvg2/svg/SVGFEMergeElement.h:
+        (WebCore::SVGFEMergeElement::contextElement):
+        * ksvg2/svg/SVGFEMergeNodeElement.cpp:
+        (SVGFEMergeNodeElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEMergeNodeElement.h:
+        (WebCore::SVGFEMergeNodeElement::contextElement):
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        (SVGFEOffsetElement::SVGFEOffsetElement):
+        (SVGFEOffsetElement::parseMappedAttribute):
+        (SVGFEOffsetElement::filterEffect):
+        * ksvg2/svg/SVGFEOffsetElement.h:
+        (WebCore::SVGFEOffsetElement::contextElement):
+        * ksvg2/svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::lightSource):
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        (SVGFESpecularLightingElement::parseMappedAttribute):
+        (SVGFESpecularLightingElement::filterEffect):
+        * ksvg2/svg/SVGFESpecularLightingElement.h:
+        (WebCore::SVGFESpecularLightingElement::contextElement):
+        * ksvg2/svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::lightSource):
+        * ksvg2/svg/SVGFETileElement.cpp:
+        (SVGFETileElement::parseMappedAttribute):
+        (SVGFETileElement::filterEffect):
+        * ksvg2/svg/SVGFETileElement.h:
+        (WebCore::SVGFETileElement::contextElement):
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        (SVGFETurbulenceElement::SVGFETurbulenceElement):
+        (SVGFETurbulenceElement::parseMappedAttribute):
+        (SVGFETurbulenceElement::filterEffect):
+        * ksvg2/svg/SVGFETurbulenceElement.h:
+        (WebCore::SVGFETurbulenceElement::contextElement):
+        * ksvg2/svg/SVGFilterElement.cpp:
+        (SVGFilterElement::SVGFilterElement):
+        (SVGFilterElement::parseMappedAttribute):
+        (SVGFilterElement::canvasResource):
+        * ksvg2/svg/SVGFilterElement.h:
+        (WebCore::SVGFilterElement::contextElement):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes):
+        (SVGFilterPrimitiveStandardAttributes::~SVGFilterPrimitiveStandardAttributes):
+        (SVGFilterPrimitiveStandardAttributes::parseMappedAttribute):
+        (SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::contextElement):
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::SVGFitToViewBox):
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        (WebCore::SVGFitToViewBox::viewBoxToViewTransform):
+        (WebCore::SVGFitToViewBox::parseMappedAttribute):
+        * ksvg2/svg/SVGFitToViewBox.h:
+        * ksvg2/svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::SVGForeignObjectElement):
+        (WebCore::SVGForeignObjectElement::parseMappedAttribute):
+        * ksvg2/svg/SVGForeignObjectElement.h:
+        (WebCore::SVGForeignObjectElement::isValid):
+        (WebCore::SVGForeignObjectElement::contextElement):
+        * ksvg2/svg/SVGGElement.h:
+        (WebCore::SVGGElement::contextElement):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (SVGGradientElement::SVGGradientElement):
+        (SVGGradientElement::parseMappedAttribute):
+        (SVGGradientElement::rebuildStops):
+        * ksvg2/svg/SVGGradientElement.h:
+        * ksvg2/svg/SVGHelper.cpp:
+        (WebCore::SVGHelper::PercentageOfViewport):
+        * ksvg2/svg/SVGImageElement.cpp:
+        (SVGImageElement::SVGImageElement):
+        (SVGImageElement::parseMappedAttribute):
+        (SVGImageElement::haveLoadedRequiredResources):
+        * ksvg2/svg/SVGImageElement.h:
+        (WebCore::SVGImageElement::contextElement):
+        * ksvg2/svg/SVGLangSpace.h:
+        * ksvg2/svg/SVGLength.cpp:
+        * ksvg2/svg/SVGLineElement.cpp:
+        (SVGLineElement::SVGLineElement):
+        (SVGLineElement::parseMappedAttribute):
+        (SVGLineElement::toPathData):
+        (SVGLineElement::pushAttributeContext):
+        * ksvg2/svg/SVGLineElement.h:
+        (WebCore::SVGLineElement::contextElement):
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (SVGLinearGradientElement::SVGLinearGradientElement):
+        (SVGLinearGradientElement::parseMappedAttribute):
+        (SVGLinearGradientElement::buildGradient):
+        * ksvg2/svg/SVGLinearGradientElement.h:
+        (WebCore::SVGLinearGradientElement::contextElement):
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        (WebCore::SVGMarkerElement::setOrientToAuto):
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+        (WebCore::SVGMarkerElement::canvasResource):
+        * ksvg2/svg/SVGMarkerElement.h:
+        (WebCore::SVGMarkerElement::contextElement):
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        (WebCore::SVGMaskElement::attributeChanged):
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * ksvg2/svg/SVGMaskElement.h:
+        (WebCore::SVGMaskElement::contextElement):
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        * ksvg2/svg/SVGPathElement.h:
+        (WebCore::SVGPathElement::isValid):
+        (WebCore::SVGPathElement::contextElement):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::parseMappedAttribute):
+        (WebCore::SVGPatternElement::pushAttributeContext):
+        (WebCore::SVGPatternElement::fillAttributesFromReferencePattern):
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        (WebCore::SVGPatternElement::getCTM):
+        * ksvg2/svg/SVGPatternElement.h:
+        (WebCore::SVGPatternElement::contextElement):
+        * ksvg2/svg/SVGPolyElement.h:
+        (WebCore::SVGPolyElement::contextElement):
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::SVGRadialGradientElement):
+        (WebCore::SVGRadialGradientElement::~SVGRadialGradientElement):
+        (WebCore::SVGRadialGradientElement::parseMappedAttribute):
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        * ksvg2/svg/SVGRadialGradientElement.h:
+        (WebCore::SVGRadialGradientElement::contextElement):
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::SVGRectElement):
+        (WebCore::SVGRectElement::parseMappedAttribute):
+        (WebCore::SVGRectElement::toPathData):
+        (WebCore::SVGRectElement::pushAttributeContext):
+        * ksvg2/svg/SVGRectElement.h:
+        (WebCore::SVGRectElement::contextElement):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::~SVGSVGElement):
+        (WebCore::SVGSVGElement::viewport):
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        (WebCore::SVGSVGElement::getCTM):
+        (WebCore::SVGSVGElement::getScreenCTM):
+        (WebCore::SVGSVGElement::createRenderer):
+        * ksvg2/svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::contextElement):
+        * ksvg2/svg/SVGScriptElement.h:
+        (WebCore::SVGScriptElement::contextElement):
+        * ksvg2/svg/SVGSetElement.h:
+        (WebCore::SVGSetElement::contextElement):
+        * ksvg2/svg/SVGStopElement.cpp:
+        (SVGStopElement::SVGStopElement):
+        (SVGStopElement::parseMappedAttribute):
+        * ksvg2/svg/SVGStopElement.h:
+        * ksvg2/svg/SVGStylable.h:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGStyledElement.h:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        (SVGStyledTransformableElement::SVGStyledTransformableElement):
+        (SVGStyledTransformableElement::parseMappedAttribute):
+        * ksvg2/svg/SVGStyledTransformableElement.h:
+        * ksvg2/svg/SVGSwitchElement.cpp:
+        * ksvg2/svg/SVGSwitchElement.h:
+        (WebCore::SVGSwitchElement::contextElement):
+        * ksvg2/svg/SVGSymbolElement.h:
+        (WebCore::SVGSymbolElement::contextElement):
+        * ksvg2/svg/SVGTRefElement.cpp:
+        (SVGTRefElement::updateReferencedText):
+        * ksvg2/svg/SVGTRefElement.h:
+        (WebCore::SVGTRefElement::contextElement):
+        * ksvg2/svg/SVGTSpanElement.h:
+        (WebCore::SVGTSpanElement::contextElement):
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        (SVGTextContentElement::SVGTextContentElement):
+        (SVGTextContentElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTextContentElement.h:
+        * ksvg2/svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::SVGTextElement):
+        (WebCore::SVGTextElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTextElement.h:
+        (WebCore::SVGTextElement::contextElement):
+        * ksvg2/svg/SVGTextPositioningElement.cpp:
+        (SVGTextPositioningElement::SVGTextPositioningElement):
+        (SVGTextPositioningElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTextPositioningElement.h:
+        * ksvg2/svg/SVGTransformable.cpp:
+        * ksvg2/svg/SVGTransformable.h:
+        * ksvg2/svg/SVGURIReference.cpp:
+        (SVGURIReference::parseMappedAttribute):
+        * ksvg2/svg/SVGURIReference.h:
+        * ksvg2/svg/SVGUseElement.cpp:
+        (SVGUseElement::SVGUseElement):
+        (SVGUseElement::parseMappedAttribute):
+        (SVGUseElement::closeRenderer):
+        * ksvg2/svg/SVGUseElement.h:
+        (WebCore::SVGUseElement::contextElement):
+        * ksvg2/svg/SVGViewElement.h:
+        (WebCore::SVGViewElement::contextElement):
+
 2006-09-05  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by aroben.

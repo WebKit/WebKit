@@ -29,50 +29,42 @@
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGEllipseElement.h"
-#include "SVGAnimatedLength.h"
+#include "SVGLength.h"
 
 namespace WebCore {
 
 SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , m_cx(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_cy(new SVGLength(this, LM_HEIGHT, viewportElement()))
+    , m_rx(new SVGLength(this, LM_WIDTH, viewportElement()))
+    , m_ry(new SVGLength(this, LM_HEIGHT, viewportElement()))
 {
-}
+}    
 
 SVGEllipseElement::~SVGEllipseElement()
 {
 }
 
-SVGAnimatedLength *SVGEllipseElement::cx() const
-{
-    return lazy_create<SVGAnimatedLength>(m_cx, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGEllipseElement::cy() const
-{
-    return lazy_create<SVGAnimatedLength>(m_cy, this, LM_HEIGHT, viewportElement());
-}
-
-SVGAnimatedLength *SVGEllipseElement::rx() const
-{
-    return lazy_create<SVGAnimatedLength>(m_rx, this, LM_WIDTH, viewportElement());
-}
-
-SVGAnimatedLength *SVGEllipseElement::ry() const
-{
-    return lazy_create<SVGAnimatedLength>(m_ry, this, LM_HEIGHT, viewportElement());
-}
+ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength*, Length, length, Cx, cx, SVGNames::cxAttr.localName(), m_cx.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength*, Length, length, Cy, cy, SVGNames::cyAttr.localName(), m_cy.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength*, Length, length, Rx, rx, SVGNames::rxAttr.localName(), m_rx.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength*, Length, length, Ry, ry, SVGNames::ryAttr.localName(), m_ry.get())
 
 void SVGEllipseElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
-        cx()->baseVal()->setValueAsString(value.impl());
+        cxBaseValue()->setValueAsString(value.impl());
     if (attr->name() == SVGNames::cyAttr)
-        cy()->baseVal()->setValueAsString(value.impl());
+        cyBaseValue()->setValueAsString(value.impl());
     if (attr->name() == SVGNames::rxAttr)
-        rx()->baseVal()->setValueAsString(value.impl());
+        rxBaseValue()->setValueAsString(value.impl());
     if (attr->name() == SVGNames::ryAttr)
-        ry()->baseVal()->setValueAsString(value.impl());
+        ryBaseValue()->setValueAsString(value.impl());
     else
     {
         if(SVGTests::parseMappedAttribute(attr)) return;
@@ -84,8 +76,8 @@ void SVGEllipseElement::parseMappedAttribute(MappedAttribute *attr)
 
 Path SVGEllipseElement::toPathData() const
 {
-    float _cx = cx()->baseVal()->value(), _cy = cy()->baseVal()->value();
-    float _rx = rx()->baseVal()->value(), _ry = ry()->baseVal()->value();
+    float _cx = cxBaseValue()->value(), _cy = cyBaseValue()->value();
+    float _rx = rxBaseValue()->value(), _ry = ryBaseValue()->value();
 
     return Path::createEllipse(FloatPoint(_cx, _cy), _rx, _ry);
 }
@@ -93,12 +85,12 @@ Path SVGEllipseElement::toPathData() const
 const SVGStyledElement *SVGEllipseElement::pushAttributeContext(const SVGStyledElement *context)
 {
     // All attribute's contexts are equal (so just take the one from 'cx').
-    const SVGStyledElement *restore = cx()->baseVal()->context();
+    const SVGStyledElement *restore = cxBaseValue()->context();
 
-    cx()->baseVal()->setContext(context);
-    cy()->baseVal()->setContext(context);
-    rx()->baseVal()->setContext(context);
-    ry()->baseVal()->setContext(context);
+    cxBaseValue()->setContext(context);
+    cyBaseValue()->setContext(context);
+    rxBaseValue()->setContext(context);
+    ryBaseValue()->setContext(context);
 
     SVGStyledElement::pushAttributeContext(context);
     return restore;
