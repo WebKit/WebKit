@@ -1,21 +1,3 @@
-2006-09-05  Timothy Hatcher  <timothy@apple.com>
-
-        Reviewed by John.
-
-        Removing the DOMImplementationFront workaround for an older GCC bug.
-        This changes requires Xcode 2.3 or later.
-
-        * WebCore.xcodeproj/project.pbxproj:
-        * bindings/objc/DOM.mm:
-        (-[DOMImplementation _initWithDOMImplementation:WebCore::]):
-        (+[DOMImplementation _DOMImplementationWith:WebCore::]):
-        (-[DOMImplementation WebCore::]):
-        * bindings/objc/DOMImplementationFront.cpp: Removed.
-        * bindings/objc/DOMImplementationFront.h: Removed.
-        * bindings/objc/DOMInternal.h:
-        * bindings/scripts/CodeGeneratorObjC.pm: remove DOMImplementationFront
-          and some cleanup to under variables in WriteData
-
 2006-09-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.
