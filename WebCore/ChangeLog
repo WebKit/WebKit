@@ -1,3 +1,18 @@
+2006-09-07  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10753
+        REGRESSION: The beginning of a CSS file is missing
+
+        Test: http/tests/incremental/slow-utf8-css.pl
+
+        * loader/Decoder.cpp:
+        (WebCore::Decoder::checkForCSSCharset): Use the same buffering logic as used for HTML.
+        (WebCore::Decoder::decode):
+        * loader/Decoder.h: Added a return value and a movedDataToBuffer parameter to
+        checkForCSSCharset().
+
 2006-09-07  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.

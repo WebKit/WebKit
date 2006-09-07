@@ -1,3 +1,15 @@
+2006-09-07  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10753
+        REGRESSION: The beginning of a CSS file is missing
+
+        * http/tests/incremental/slow-utf8-css-expected.checksum: Added.
+        * http/tests/incremental/slow-utf8-css-expected.png: Added.
+        * http/tests/incremental/slow-utf8-css-expected.txt: Added.
+        * http/tests/incremental/slow-utf8-css.pl: Added.
+
 2006-09-07  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

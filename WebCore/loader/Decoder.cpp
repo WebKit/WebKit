@@ -379,16 +379,18 @@ void Decoder::checkForBOM(const char* data, size_t len)
         setEncoding(UTF8Encoding(), AutoDetectedEncoding);
 }
 
-void Decoder::checkForCSSCharset(const char* data, size_t len)
+bool Decoder::checkForCSSCharset(const char* data, size_t len, bool& movedDataToBuffer)
 {
     if (m_source != DefaultEncoding) {
         m_checkedForCSSCharset = true;
-        return;
+        return true;
     }
 
     size_t oldSize = m_buffer.size();
     m_buffer.resize(oldSize + len);
     memcpy(m_buffer.data() + oldSize, data, len);
+
+    movedDataToBuffer = true;
 
     if (m_buffer.size() > 8) { // strlen("@charset") == 8
         const char* dataStart = m_buffer.data();
@@ -400,7 +402,7 @@ void Decoder::checkForCSSCharset(const char* data, size_t len)
             dataStart += 8;
             const char* pos = dataStart;
             if (!skipWhitespace(pos, dataEnd))
-                return;
+                return false;
 
             if (*pos == '"' || *pos == '\'') {
                 char quotationMark = *pos;
@@ -410,20 +412,22 @@ void Decoder::checkForCSSCharset(const char* data, size_t len)
                 while (pos < dataEnd && *pos != quotationMark)
                     ++pos;
                 if (pos == dataEnd)
-                    return;
+                    return false;
 
                 DeprecatedCString encodingName(dataStart, pos - dataStart + 1);
                 
                 ++pos;
                 if (!skipWhitespace(pos, dataEnd))
-                    return;
+                    return false;
 
                 if (*pos == ';')
                     setEncoding(TextEncoding(encodingName), EncodingFromCSSCharset);
             }
         }
         m_checkedForCSSCharset = true;
+        return true;
     }
+    return false;
 }
 
 // Other browsers allow comments in the head section, so we need to also.
@@ -625,17 +629,15 @@ String Decoder::decode(const char* data, size_t len)
     if (!m_checkedForBOM)
         checkForBOM(data, len);
 
-    if (m_contentType == CSS && !m_checkedForCSSCharset) {
-        checkForCSSCharset(data, len);
-        return "";
-    }
-
     bool movedDataToBuffer = false;
 
-    if ((m_contentType == HTML || m_contentType == XML) && !m_checkedForHeadCharset) { // HTML and XML
+    if (m_contentType == CSS && !m_checkedForCSSCharset)
+        if (!checkForCSSCharset(data, len, movedDataToBuffer))
+            return "";
+
+    if ((m_contentType == HTML || m_contentType == XML) && !m_checkedForHeadCharset) // HTML and XML
         if (!checkForHeadCharset(data, len, movedDataToBuffer))
             return "";
-    }
 
     // Do the auto-detect if our default encoding is one of the Japanese ones.
     // FIXME: It seems wrong to change our encoding downstream after we have already done some decoding.

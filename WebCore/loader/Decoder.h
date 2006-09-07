@@ -59,7 +59,7 @@ private:
     static const TextEncoding& defaultEncoding(ContentType, const TextEncoding& defaultEncoding);
 
     void checkForBOM(const char*, size_t);
-    void checkForCSSCharset(const char*, size_t);
+    bool checkForCSSCharset(const char*, size_t, bool& movedDataToBuffer);
     bool checkForHeadCharset(const char*, size_t, bool& movedDataToBuffer);
     void detectJapaneseEncoding(const char*, size_t);
 

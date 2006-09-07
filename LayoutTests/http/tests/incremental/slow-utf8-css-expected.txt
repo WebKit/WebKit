@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x579
+      RenderBlock {PRE} at (0,0) size 784x45
+        RenderText {#text} at (0,0) size 472x30
+          text run at (0,0) width 472: "Test for bug 10753: The beginning of a CSS file is missing."
+          text run at (472,0) width 0: " "
+          text run at (0,15) width 0: " "
+        RenderText {#text} at (0,30) size 736x15
+          text run at (0,30) width 736: "You should see a bug description one line above (i.e., this line shouldn't be the only one)."
