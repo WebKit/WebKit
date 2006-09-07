@@ -25,6 +25,7 @@
  */
 
 #import <WebCore/DOMObject.h>
+#import <WebCore/DOMEventTarget.h>
 
 @class DOMDocument; 
 @class DOMNamedNodeMap;
@@ -81,4 +82,7 @@ enum {
 @interface DOMNode (DOMNodeExtensions)
 - (NSRect)boundingBox;
 - (NSArray *)lineBoxRects;
+@end
+
+@interface DOMNode (DOMEventTarget) <DOMEventTarget>
 @end

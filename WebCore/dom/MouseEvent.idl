@@ -39,20 +39,20 @@ module events {
         readonly attribute Node             toElement;
         
         [OldStyleObjC] void initMouseEvent(in AtomicString type, 
-                                          in boolean canBubble, 
-                                          in boolean cancelable, 
-                                          in DOMWindow view, 
-                                          in long detail, 
-                                          in long screenX, 
-                                          in long screenY, 
-                                          in long clientX, 
-                                          in long clientY, 
-                                          in boolean ctrlKey, 
-                                          in boolean altKey, 
-                                          in boolean shiftKey, 
-                                          in boolean metaKey, 
-                                          in unsigned short button, 
-                                          in EventTarget relatedTarget);
+                                           in boolean canBubble, 
+                                           in boolean cancelable, 
+                                           in DOMWindow view, 
+                                           in long detail, 
+                                           in long screenX, 
+                                           in long screenY, 
+                                           in long clientX, 
+                                           in long clientY, 
+                                           in boolean ctrlKey, 
+                                           in boolean altKey, 
+                                           in boolean shiftKey, 
+                                           in boolean metaKey, 
+                                           in unsigned short button, 
+                                           in EventTarget relatedTarget);
     };
 
 }

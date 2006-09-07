@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,7 +30,7 @@ module events {
         readonly attribute boolean          shiftKey;
         readonly attribute boolean          altGraphKey;
 
-        [OldStyleObjC] void initKeyboardEvent(in AtomicString type, 
+        void initKeyboardEvent(in AtomicString type, 
                                in boolean canBubble, 
                                in boolean cancelable, 
                                in DOMWindow view, 
@@ -40,6 +41,11 @@ module events {
                                in boolean shiftKey,
                                in boolean metaKey,
                                in boolean altGraphKey);
+
+        // WebKit Extensions
+        readonly attribute [Exclude=JS] long keyCode;
+        readonly attribute [Exclude=JS] long charCode;
+
     };
 
 }

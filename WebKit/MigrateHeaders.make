@@ -68,6 +68,10 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMEntity.h \
     $(PUBLIC_HEADERS_DIR)/DOMEntityReference.h \
+    $(PUBLIC_HEADERS_DIR)/DOMEvent.h \
+    $(PRIVATE_HEADERS_DIR)/DOMEventPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMEventListener.h \
+    $(PUBLIC_HEADERS_DIR)/DOMEventTarget.h \
     $(PUBLIC_HEADERS_DIR)/DOMEvents.h \
     $(PUBLIC_HEADERS_DIR)/DOMExtensions.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTML.h \
@@ -141,14 +145,21 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLTextAreaElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLTitleElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLUListElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMKeyboardEvent.h \
+    $(PRIVATE_HEADERS_DIR)/DOMKeyboardEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMList.h \
     $(PUBLIC_HEADERS_DIR)/DOMMediaList.h \
+    $(PUBLIC_HEADERS_DIR)/DOMMouseEvent.h \
+    $(PRIVATE_HEADERS_DIR)/DOMMouseEventPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMMutationEvent.h \
+    $(PRIVATE_HEADERS_DIR)/DOMMutationEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMNamedNodeMap.h \
     $(PRIVATE_HEADERS_DIR)/DOMNamedNodeMapPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMNode.h \
     $(PUBLIC_HEADERS_DIR)/DOMNodeList.h \
     $(PUBLIC_HEADERS_DIR)/DOMNotation.h \
     $(PUBLIC_HEADERS_DIR)/DOMObject.h \
+    $(PUBLIC_HEADERS_DIR)/DOMOverflowEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMProcessingInstruction.h \
     $(PRIVATE_HEADERS_DIR)/DOMProcessingInstructionPrivate.h \
@@ -160,7 +171,11 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMStylesheets.h \
     $(PUBLIC_HEADERS_DIR)/DOMText.h \
     $(PUBLIC_HEADERS_DIR)/DOMTraversal.h \
+    $(PUBLIC_HEADERS_DIR)/DOMUIEvent.h \
+    $(PRIVATE_HEADERS_DIR)/DOMUIEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMViews.h \
+    $(PUBLIC_HEADERS_DIR)/DOMWheelEvent.h \
+    $(PRIVATE_HEADERS_DIR)/DOMWheelEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPath.h \
     $(PRIVATE_HEADERS_DIR)/WebDashboardRegion.h \
     $(PUBLIC_HEADERS_DIR)/WebScriptObject.h \

@@ -1,3 +1,37 @@
+2006-09-07  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10766
+        Auto-generate the Objective-C DOM Events bindings
+
+        - Auto-generates DOMEvent, DOMKeyboardEvent, DOMMouseEvent, DOMMutationEvent, 
+          DOMOverflowEvent, DOMUIEvent, and DOMWheelEvent.
+          
+        - Splits out DOMEventListener and DOMEventTarget into their own files.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMEventListener.h: Added.
+        * bindings/objc/DOMEventTarget.h: Added.
+        * bindings/objc/DOMEvents.h:
+        * bindings/objc/DOMEvents.mm:
+        (-[DOMEvent WebCore::]):
+        (-[DOMEvent _initWithEvent:WebCore::]):
+        (+[DOMEvent _eventWith:WebCore::]):
+        * bindings/objc/DOMEventsNonstandard.mm: Removed.
+        * bindings/objc/DOMNode.h:
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * dom/Event.idl:
+        * dom/EventListener.idl: Added.
+        * dom/EventTarget.idl: Added.
+        * dom/KeyboardEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/UIEvent.idl:
+        * dom/WheelEvent.idl:
+
 2006-09-07  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

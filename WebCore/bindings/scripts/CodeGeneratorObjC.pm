@@ -33,6 +33,7 @@ my %headerForwardDeclarationsForProtocols = ();
 my %privateHeaderForwardDeclarationsForProtocols = ();
 my %publicInterfaces = ();
 my $newPublicClass = 0;
+my $isProtocol = 0;
 my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} <= 10.4;
 my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5;
 
@@ -163,11 +164,12 @@ sub GenerateInterface
     my $name = $dataNode->name;
     my $className = GetClassName($name);
     my $parentClassName = "DOM" . GetParentImplClassName($dataNode);
+    $isProtocol = $dataNode->extendedAttributes->{ObjCProtocol};
 
     ReadPublicInterfaces($className, $parentClassName, $defines);
 
     # Start actual generation..
-    $object->GenerateImplementation($dataNode);
+    $object->GenerateImplementation($dataNode) unless $isProtocol;
     $object->GenerateHeader($dataNode);
 
     # Write changes.
@@ -194,26 +196,13 @@ sub GetClassName
     my $name = $codeGenerator->StripModule(shift);
 
     # special cases
-    if ($name eq "boolean") {
-        return "BOOL";
-    } elsif ($name eq "unsigned long") {
-        return "unsigned";
-    } elsif ($name eq "long") {
-        return "int";
-    } elsif ($name eq "DOMString") {
-        return "NSString";
-    } elsif ($name eq "URL") {
-        return "NSURL";
-    } elsif ($name eq "DOMWindow") {
-        return "DOMAbstractView";
-    } elsif ($name eq "XPathNSResolver") {
-        return "id <DOMXPathNSResolver>";
-    } elsif ($name eq "unsigned short" 
-             or $name eq "float"
-             or $name eq "void"
-             or $name eq "DOMImplementation") {
-        return $name;
-    }
+    return "NSString" if IsStringType($name);
+    return "BOOL" if $name eq "boolean";
+    return "unsigned" if $name eq "unsigned long";
+    return "int" if $name eq "long";
+    return "NSURL" if $name eq "URL";
+    return "DOMAbstractView" if $name eq "DOMWindow";
+    return $name if $codeGenerator->IsPrimitiveType($name) or $name eq "DOMImplementation" or $name eq "DOMTimeStamp";
 
     # Default, assume Objective-C type has the same type name as
     # idl type prefixed with "DOM".
@@ -253,44 +242,48 @@ sub GetParentImplClassName
     return $parent;
 }
 
+sub IsProtocolType
+{
+    $type = shift;
+
+    return 1 if $type eq "XPathNSResolver" or $type eq "EventListener" or $type eq "EventTarget";
+    return 0;
+}
+
+sub IsStringType
+{
+    $type = shift;
+
+    return 1 if $type eq "DOMString" or $type eq "AtomicString";
+    return 0;
+}
+
 sub GetObjCType
 {
-    my $name = GetClassName(shift);
+    my $type = shift;
+    my $name = GetClassName($type);
 
-    if ($codeGenerator->IsPrimitiveType($name)
-            or $name eq "BOOL"
-            or $name eq "unsigned"
-            or $name eq "int"
-            or $name eq "id <DOMXPathNSResolver>") {
-        return $name;
-    }
-
-    # Default, return type as a pointer.
-    return "$name *";
+    return "id <" . $name . ">" if IsProtocolType($type);
+    return $name if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMTimeStamp";
+    return $name . " *";
 }
 
 sub GetObjCTypeMaker
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return "" if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMString" or $type eq "URL";
+    return "" if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp";
     return "_RGBColorWithRGB" if $type eq "RGBColor";
 
     my $typeMaker = "";
-    if ($type =~ /^(HTML|CSS)/) {
-        $typeMaker = $type; 
-    } elsif ($type eq "DOMImplementation") {
-        $typeMaker = "DOMImplementation";
-    } elsif ($type eq "CDATASection") {
-        $typeMaker = "CDATASection";
+    if ($type =~ /^(HTML|CSS)/ or $type eq "DOMImplementation" or $type eq "CDATASection") {
+        $typeMaker = $type;
+    } elsif ($type =~ /^XPath(.+)/) {
+        $typeMaker = "xpath" . $1;
     } elsif ($type eq "DOMWindow") {
         $typeMaker = "abstractView";
-    } elsif ($type eq "XPathResult") {
-        $typeMaker = "xpathResult";
-    } elsif ($type eq "XPathNSResolver") {
-        $typeMaker = "xpathNSResolver";
-    } elsif ($type eq "XPathExpression") {
-        $typeMaker = "xpathExpression";
+    } elsif ($type eq "EventTarget") {
+        $typeMaker = "node";
     } else {
         $typeMaker = lcfirst($type);
     }
@@ -305,9 +298,11 @@ sub GetObjCTypeGetter
     my $argName = shift;
     my $type = $codeGenerator->StripModule(shift);
 
-    return $argName if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMString" or $type eq "URL";
+    return $argName if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL";
+    return $argName . "EventTarget" if $type eq "EventTarget";
     return "[nativeResolver _xpathNSResolver]" if $type eq "XPathNSResolver";
     return "[" . $argName . " _xpathResult]" if $type eq "XPathResult";
+    return "[" . $argName . " _abstractView]" if $type eq "DOMWindow";
     return "[" . $argName . " _" . $type . "]" if $type =~ /^(HTML|CSS)/;
     return "[" . $argName . " _" . lcfirst($type) . "]";
 }
@@ -317,11 +312,12 @@ sub AddForwardDeclarationsForType
     my $type = $codeGenerator->StripModule(shift);
     my $public = shift;
 
-    return if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMString";
+    return if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp";
 
-    if ($type eq "XPathNSResolver") {
-        $headerForwardDeclarationsForProtocols{"DOMXPathNSResolver"} = 1 if $public;
-        $privateHeaderForwardDeclarationsForProtocols{"DOMXPathNSResolver"} = 1 if !$public and !$headerForwardDeclarationsForProtocols{"DOMXPathNSResolver"};
+    if (IsProtocolType($type)) {
+        $type = "DOM" . $type;
+        $headerForwardDeclarationsForProtocols{$type} = 1 if $public;
+        $privateHeaderForwardDeclarationsForProtocols{$type} = 1 if !$public and !$headerForwardDeclarationsForProtocols{$type};
         return;
     }
 
@@ -344,9 +340,9 @@ sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return if $codeGenerator->IsPrimitiveType($type) or $type eq "URL";
+    return if $codeGenerator->IsPrimitiveType($type) or $type eq "URL" or $type eq "DOMTimeStamp";
 
-    if ($type eq "DOMString") {
+    if (IsStringType($type)) {
         $implIncludes{"PlatformString.h"} = 1;
         return;
     }
@@ -361,13 +357,6 @@ sub AddIncludesForType
     if ($type eq "RGBColor") {
         $implIncludes{"DOMRGBColor.h"} = 1;
         $implIncludes{"Color.h"} = 1;
-        return;
-    }
-
-    # Temp DOMEvents.h
-    if ($type eq "Event") {
-        $implIncludes{"DOMEvents.h"} = 1;
-        $implIncludes{"$type.h"} = 1;
         return;
     }
 
@@ -388,6 +377,11 @@ sub AddIncludesForType
     # Temp DOMImplementationFront.h
     if ($type eq "DOMImplementation") {
         $implIncludes{"DOMImplementationFront.h"} = 1;
+        $implIncludes{"DOM$type.h"} = 1;
+        return;
+    }
+
+    if ($type eq "EventTarget") {
         $implIncludes{"DOM$type.h"} = 1;
         return;
     }
@@ -421,17 +415,27 @@ sub GenerateHeader
 
     # - Add default header template
     @headerContentHeader = split("\r", $headerLicenceTemplate);
+    push(@headerContentHeader, "\n");
 
     # - INCLUDES -
-    my $parentHeaderName = GetClassHeaderName($parentClassName);
-    push(@headerContentHeader, "\n#import <WebCore/$parentHeaderName.h>\n\n");
+    unless ($isProtocol) {
+        my $parentHeaderName = GetClassHeaderName($parentClassName);
+        push(@headerContentHeader, "#import <WebCore/$parentHeaderName.h>\n\n");
+    }
 
     # - Add constants.
     if ($numConstants > 0) {
         my @headerConstants = ();
+
+        # FIXME: we need a way to include multiple enums, for now, only include the first.
+        my $greatestConstantValue = $dataNode->constants->[0]->value;
         foreach my $constant (@{$dataNode->constants}) {
             my $constantName = $constant->name;
             my $constantValue = $constant->value;
+
+            last if $constantValue < $greatestConstantValue;
+            $greatestConstantValue = $constantValue;
+
             my $output = "    DOM_" . $constantName . " = " . $constantValue;
             push(@headerConstants, $output);
         }
@@ -445,8 +449,13 @@ sub GenerateHeader
         push(@headerContent, "\n};\n\n");        
     }
 
-    # - Begin @interface 
-    push(@headerContent, "\@interface $className : $parentClassName\n");
+    # - Begin @interface or @protocol
+    if ($isProtocol) {
+        my $parentProtocols = "NSObject" . ($interfaceName eq "EventTarget" ? ", NSCopying" : "");
+        push(@headerContent, "\@protocol $className <$parentProtocols>\n");
+    } else {
+        push(@headerContent, "\@interface $className : $parentClassName\n");
+    }
 
     my @headerAttributes = ();
     my @privateHeaderAttributes = ();
@@ -564,7 +573,7 @@ sub GenerateHeader
         }
     }
 
-    # - End @interface 
+    # - End @interface or @protocol
     push(@headerContent, "\@end\n");
 
     if (@deprecatedHeaderFunctions > 0) {
@@ -656,6 +665,8 @@ sub GenerateImplementation
                 $internalBaseType = "WebCore::CSSValue"
             } elsif ($parentImplClassName eq "CSSRule") {
                 $internalBaseType = "WebCore::CSSRule"
+            } elsif ($parentImplClassName eq "Event" or $parentImplClassName eq "UIEvent") {
+                $internalBaseType = "WebCore::Event"
             } else {
                 $internalBaseType = "WebCore::Node"
             }
@@ -696,6 +707,10 @@ sub GenerateImplementation
 
             my $attributeTypeSansPtr = $attributeType;
             $attributeTypeSansPtr =~ s/ \*$//; # Remove trailing " *" from pointer types.
+
+            # special case for EventTarget protocol
+            $attributeTypeSansPtr = "DOMNode" if $idlType eq "EventTarget";
+
             my $typeMaker = GetObjCTypeMaker($attribute->signature->type);
 
             # Special cases
@@ -764,7 +779,7 @@ sub GenerateImplementation
                 push(@implContent, $setterSig);
                 push(@implContent, "{\n");
 
-                unless ($codeGenerator->IsPrimitiveType($idlType) or $idlType eq "DOMString") {
+                unless ($codeGenerator->IsPrimitiveType($idlType) or IsStringType($idlType)) {
                     push(@implContent, "    ASSERT($argName);\n\n");
                 }
 
@@ -813,8 +828,9 @@ sub GenerateImplementation
 
                 push(@parameterNames, $implGetter);
                 $needsCustom{"XPathNSResolver"} = $paramName if $idlType eq "XPathNSResolver";
+                $needsCustom{"EventTarget"} = $paramName if $idlType eq "EventTarget";
 
-                unless ($codeGenerator->IsPrimitiveType($idlType) or $idlType eq "DOMString") {
+                unless ($codeGenerator->IsPrimitiveType($idlType) or IsStringType($idlType)) {
                     push(@needsAssert, "    ASSERT($paramName);\n");
                 }
 
@@ -837,6 +853,17 @@ sub GenerateImplementation
                 push(@functionContent, "    if ($paramName && ![$paramName isMemberOfClass:[DOMNativeXPathNSResolver class]])\n");
                 push(@functionContent, "        [NSException raise:NSGenericException format:\@\"createExpression currently does not work with custom NS resolvers\"];\n");
                 push(@functionContent, "    DOMNativeXPathNSResolver *nativeResolver = (DOMNativeXPathNSResolver *)$paramName;\n\n");
+            }
+
+            # special case the EventTarget
+            if (defined $needsCustom{"EventTarget"}) {
+                my $paramName = $needsCustom{"EventTarget"};
+                push(@functionContent, "    DOMNode* ${paramName}ObjC = $paramName;\n");
+                push(@functionContent, "    WebCore::Node* ${paramName}Node = [${paramName}ObjC _node];\n");
+                push(@functionContent, "    WebCore::EventTargetNode* ${paramName}EventTarget = (${paramName}Node && ${paramName}Node->isEventTargetNode()) ? static_cast<WebCore::EventTargetNode*>(${paramName}Node) : 0;\n\n");
+                $implIncludes{"DOMNode.h"} = 1;
+                $implIncludes{"Node.h"} = 1;
+                $implIncludes{"EventTargetNode.h"} = 1;
             }
 
             push(@parameterNames, "ec") if $raisesExceptions;
@@ -940,23 +967,25 @@ sub WriteData
     unlink($implFileName);
 
     # Write implementation file.
-    open($IMPL, ">$implFileName") or die "Couldn't open file $implFileName";
+    unless ($isProtocol) {
+        open($IMPL, ">$implFileName") or die "Couldn't open file $implFileName";
 
-    print $IMPL @implContentHeader;
+        print $IMPL @implContentHeader;
 
-    foreach my $implInclude (sort keys(%implIncludes)) {
-        print $IMPL "#import \"$implInclude\"\n";
+        foreach my $implInclude (sort keys(%implIncludes)) {
+            print $IMPL "#import \"$implInclude\"\n";
+        }
+
+        print $IMPL "\n" if keys(%implIncludes) > 0;
+        print $IMPL @implContent;
+
+        close($IMPL);
+        undef($IMPL);
+
+        @implHeaderContent = "";
+        @implContent = "";    
+        %implIncludes = ();
     }
-
-    print $IMPL "\n" if keys %implIncludes > 0;
-    print $IMPL @implContent;
-
-    close($IMPL);
-    undef($IMPL);
-
-    @implHeaderContent = "";
-    @implContent = "";    
-    %implIncludes = ();
 
     # Write public header.
     open($HEADER, ">$headerFileName") or die "Couldn't open file $headerFileName";

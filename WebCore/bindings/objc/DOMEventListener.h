@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,34 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DOMDocument.h>
-#import <WebCore/DOMNode.h>
-#import <WebCore/DOMObject.h>
-#import <WebCore/DOMViews.h>
+@class DOMEvent;
 
-#import <WebCore/DOMEvent.h>
-#import <WebCore/DOMEventListener.h>
-#import <WebCore/DOMEventTarget.h>
-#import <WebCore/DOMKeyboardEvent.h>
-#import <WebCore/DOMMouseEvent.h>
-#import <WebCore/DOMMutationEvent.h>
-#import <WebCore/DOMOverflowEvent.h>
-#import <WebCore/DOMUIEvent.h>
-#import <WebCore/DOMWheelEvent.h>
-
-extern NSString * const DOMEventException;
-
-enum DOMEventExceptionCode {
-    DOM_UNSPECIFIED_EVENT_TYPE_ERR = 0
-};
-
-enum {
-    DOM_KEY_LOCATION_STANDARD      = 0x00,
-    DOM_KEY_LOCATION_LEFT          = 0x01,
-    DOM_KEY_LOCATION_RIGHT         = 0x02,
-    DOM_KEY_LOCATION_NUMPAD        = 0x03
-};
-
-@interface DOMKeyboardEvent (NonStandardAdditions)
-- (BOOL)getModifierState:(NSString *)keyIdentifierArg;
+@protocol DOMEventListener <NSObject>
+- (void)handleEvent:(DOMEvent *)event;
 @end

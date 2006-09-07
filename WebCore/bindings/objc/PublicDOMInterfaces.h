@@ -774,3 +774,79 @@
 @property(readonly) DOMCSSPrimitiveValue *bottom;
 @property(readonly) DOMCSSPrimitiveValue *left;
 @end
+
+@interface DOMEvent : DOMObject
+@property(readonly) NSString *type;
+@property(readonly) id <DOMEventTarget> target;
+@property(readonly) id <DOMEventTarget> currentTarget;
+@property(readonly) unsigned short eventPhase;
+@property(readonly) BOOL bubbles;
+@property(readonly) BOOL cancelable;
+@property(readonly) DOMTimeStamp timeStamp;
+- (void)stopPropagation;
+- (void)preventDefault;
+//- (void)initEvent:(NSString *)eventTypeArg canBubbleArg:(BOOL)canBubbleArg cancelableArg:(BOOL)cancelableArg;
+- (void)initEvent:(NSString *)eventTypeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg;
+@end
+
+@interface DOMUIEvent : DOMEvent
+@property(readonly) DOMAbstractView *view;
+@property(readonly) int detail;
+//- (void)initUIEvent:(DOMAtomicString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view detail:(int)detail;
+- (void)initUIEvent:(NSString *)type :(BOOL)canBubble :(BOOL)cancelable :(DOMAbstractView *)view :(int)detail;
+@end
+
+@interface DOMMutationEvent : DOMEvent
+@property(readonly) DOMNode *relatedNode;
+@property(readonly) NSString *prevValue;
+@property(readonly) NSString *newValue;
+@property(readonly) NSString *attrName;
+@property(readonly) unsigned short attrChange;
+//- (void)initMutationEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable relatedNode:(DOMNode *)relatedNode prevValue:(NSString *)prevValue newValue:(NSString *)newValue attrName:(NSString *)attrName attrChange:(unsigned short)attrChange;
+- (void)initMutationEvent:(NSString *)type :(BOOL)canBubble :(BOOL)cancelable :(DOMNode *)relatedNode :(NSString *)prevValue :(NSString *)newValue :(NSString *)attrName :(unsigned short)attrChange;
+@end
+
+@interface DOMOverflowEvent : DOMEvent
+@property(readonly) unsigned short orient;
+@property(readonly) BOOL horizontalOverflow;
+@property(readonly) BOOL verticalOverflow;
+@end
+
+@interface DOMWheelEvent : DOMUIEvent
+@property(readonly) int screenX;
+@property(readonly) int screenY;
+@property(readonly) int clientX;
+@property(readonly) int clientY;
+@property(readonly) BOOL ctrlKey;
+@property(readonly) BOOL shiftKey;
+@property(readonly) BOOL altKey;
+@property(readonly) BOOL metaKey;
+@property(readonly) BOOL isHorizontal;
+@property(readonly) int wheelDelta;
+@end
+
+@interface DOMKeyboardEvent : DOMUIEvent
+@property(readonly) NSString *keyIdentifier;
+@property(readonly) unsigned keyLocation;
+@property(readonly) BOOL ctrlKey;
+@property(readonly) BOOL shiftKey;
+@property(readonly) BOOL altKey;
+@property(readonly) BOOL metaKey;
+@property(readonly) int keyCode;
+@property(readonly) int charCode;
+@end
+
+@interface DOMMouseEvent : DOMUIEvent
+@property(readonly) int screenX;
+@property(readonly) int screenY;
+@property(readonly) int clientX;
+@property(readonly) int clientY;
+@property(readonly) BOOL ctrlKey;
+@property(readonly) BOOL shiftKey;
+@property(readonly) BOOL altKey;
+@property(readonly) BOOL metaKey;
+@property(readonly) unsigned short button;
+@property(readonly) id <DOMEventTarget> relatedTarget;
+//- (void)initMouseEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view detail:(int)detail screenX:(int)screenX screenY:(int)screenY clientX:(int)clientX clientY:(int)clientY ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey button:(unsigned short)button relatedTarget:(id <DOMEventTarget>)relatedTarget;
+- (void)initMouseEvent:(NSString *)type :(BOOL)canBubble :(BOOL)cancelable :(DOMAbstractView *)view :(int)detail :(int)screenX :(int)screenY :(int)clientX :(int)clientY :(BOOL)ctrlKey :(BOOL)altKey :(BOOL)shiftKey :(BOOL)metaKey :(unsigned short)button :(id <DOMEventTarget>)relatedTarget;
+@end

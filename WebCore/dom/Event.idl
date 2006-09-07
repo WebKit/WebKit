@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,9 +24,9 @@ module events {
     interface [LegacyParent=KJS::DOMEvent, GenerateConstructor] Event {
 
         // DOM PhaseType
-        const unsigned short      CAPTURING_PHASE                = 1;
-        const unsigned short      AT_TARGET                      = 2;
-        const unsigned short      BUBBLING_PHASE                 = 3;
+        const unsigned short CAPTURING_PHASE     = 1;
+        const unsigned short AT_TARGET           = 2;
+        const unsigned short BUBBLING_PHASE      = 3;
 
         // Reverse-engineered from Netscape
         const unsigned short MOUSEDOWN           = 1;
@@ -44,5 +45,20 @@ module events {
         const unsigned short BLUR                = 8192;
         const unsigned short SELECT              = 16384;
         const unsigned short CHANGE              = 32768;
+
+        readonly attribute [Exclude=JS] DOMString        type;
+        readonly attribute [Exclude=JS] EventTarget      target;
+        readonly attribute [Exclude=JS] EventTarget      currentTarget;
+        readonly attribute [Exclude=JS] unsigned short   eventPhase;
+        readonly attribute [Exclude=JS] boolean          bubbles;
+        readonly attribute [Exclude=JS] boolean          cancelable;
+        readonly attribute [Exclude=JS] DOMTimeStamp     timeStamp;
+        [Exclude=JS] void               stopPropagation();
+        [Exclude=JS] void               preventDefault();
+        [Exclude=JS, OldStyleObjC] void initEvent(in DOMString eventTypeArg, 
+                                                  in boolean canBubbleArg, 
+                                                  in boolean cancelableArg);
+
     };
+
 }

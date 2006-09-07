@@ -68,6 +68,7 @@ all : \
     DOMElement.h \
     DOMEntity.h \
     DOMEntityReference.h \
+    DOMEvent.h \
     DOMHTMLAnchorElement.h \
     DOMHTMLAreaElement.h \
     DOMHTMLBRElement.h \
@@ -121,15 +122,21 @@ all : \
     DOMHTMLTextAreaElement.h \
     DOMHTMLTitleElement.h \
     DOMHTMLUListElement.h \
+    DOMKeyboardEvent.h \
     DOMMediaList.h \
+    DOMMouseEvent.h \
+    DOMMutationEvent.h \
     DOMNamedNodeMap.h \
     DOMNodeList.h \
     DOMNotation.h \
+    DOMOverflowEvent.h \
     DOMProcessingInstruction.h \
     DOMRect.h \
     DOMStyleSheet.h \
     DOMStyleSheetList.h \
-    DOMText.h
+    DOMText.h \
+    DOMUIEvent.h \
+    DOMWheelEvent.h
 endif
 
 all : \

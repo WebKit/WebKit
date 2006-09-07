@@ -1,3 +1,13 @@
+2006-09-07  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10766
+        Auto-generate the Objective-C DOM Events bindings
+
+        * MigrateHeaders.make:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-09-06  Alexey Proskuryakov  <ap@nypop.com>
 
         * MigrateHeaders.make: Fixed a double slash in 

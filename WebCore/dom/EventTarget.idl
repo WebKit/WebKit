@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,23 +21,15 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface UIEvent : Event {
-        readonly attribute DOMWindow            view;
-        readonly attribute long                 detail;
-
-        readonly attribute long                 keyCode;
-        readonly attribute long                 charCode;
-        readonly attribute long                 layerX;
-        readonly attribute long                 layerY;
-        readonly attribute long                 pageX;
-        readonly attribute long                 pageY;
-        readonly attribute long                 which;
-        
-        [OldStyleObjC] void initUIEvent(in AtomicString type, 
-                                        in boolean canBubble, 
-                                        in boolean cancelable, 
-                                        in DOMWindow view, 
-                                        in long detail);
+    interface [ObjCProtocol] EventTarget {
+        [OldStyleObjC] void               addEventListener(in DOMString type, 
+                                                           in EventListener listener, 
+                                                           in boolean useCapture);
+        [OldStyleObjC] void               removeEventListener(in DOMString type, 
+                                                              in EventListener listener, 
+                                                              in boolean useCapture);
+        boolean            dispatchEvent(in Event evt)
+            raises(EventException);
     };
 
 }
