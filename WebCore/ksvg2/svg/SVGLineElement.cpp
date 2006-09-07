@@ -96,6 +96,17 @@ const SVGStyledElement *SVGLineElement::pushAttributeContext(const SVGStyledElem
     return restore;
 }
 
+bool SVGLineElement::hasPercentageValues() const
+{
+    if (x1BaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        y1BaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        x2BaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        y2BaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
+        return true;
+
+    return false;
+}
+
 // vim:ts=4:noet
 #endif // SVG_SUPPORT
 

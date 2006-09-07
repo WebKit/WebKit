@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 503x410
       KCanvasContainer {defs} at (0,0) size 0x0
       RenderImage {image} at (0,0) size 503x410
-      RenderSVGText {text} at (0,0) size 785x18
+      RenderSVGText {text} at (0,0) size 800x18
         RenderText {#text} at (0,0) size 542x18
           text run at (0,0) width 542: "You should see a solid green block above (a blurred and clipped green checkerboard)."

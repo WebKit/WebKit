@@ -2,14 +2,14 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (29.50,109.50) size 61.00x162.50
-        RenderSVGText {text} at (0,0) size 465x28
+        RenderSVGText {text} at (0,0) size 480x28
           RenderText {#text} at (0,0) size 258x28
             text run at (0,0) width 258: "Mouse event handlers test."
         KCanvasContainer {g} at (29.50,109.50) size 61.00x61.00 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,140.00)}]
-          RenderSVGText {text} at (0,0) size 465x37
+          RenderSVGText {text} at (0,0) size 480x37
             RenderText {#text} at (0,0) size 84x37
               text run at (0,0) width 84: "Target"
-          RenderSVGText {text} at (0,0) size 465x28
+          RenderSVGText {text} at (0,0) size 480x28
             RenderText {#text} at (0,0) size 299x28
               text run at (0,0) width 299: "Use the target to trigger events"
           KCanvasContainer {g} at (29.50,109.50) size 61.00x61.00
@@ -19,13 +19,13 @@ layer at (0,0) size 480x360
         KCanvasContainer {g} at (50,192) size 20x80
           KCanvasContainer {g} at (50,192) size 20x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(65.00,190.00)}]
             KCanvasContainer {g} at (65,190) size 0x0
-              RenderSVGText {text} at (0,0) size 465x37
+              RenderSVGText {text} at (0,0) size 480x37
                 RenderText {#text} at (0,0) size 186x37
                   text run at (0,0) width 186: "onmousedown"
-              RenderSVGText {text} at (0,0) size 465x37
+              RenderSVGText {text} at (0,0) size 480x37
                 RenderText {#text} at (0,0) size 147x37
                   text run at (0,0) width 147: "onmouseup"
-              RenderSVGText {text} at (0,0) size 465x37
+              RenderSVGText {text} at (0,0) size 480x37
                 RenderText {#text} at (0,0) size 94x37
                   text run at (0,0) width 94: "onclick"
             KCanvasContainer {g} at (50,192) size 20x80
@@ -35,7 +35,7 @@ layer at (0,0) size 480x360
               KCanvasItem {rect} at (50,222) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [data="M-15.00,32.00L5.00,32.00L5.00,52.00L-15.00,52.00"]
               KCanvasItem {rect} at (50,252) size 20x20 [fill={[type=SOLID] [color=#008000]}] [data="M-15.00,62.00L5.00,62.00L5.00,82.00L-15.00,82.00"]
               KCanvasItem {rect} at (50,252) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [data="M-15.00,62.00L5.00,62.00L5.00,82.00L-15.00,82.00"]
-      RenderSVGText {text} at (0,0) size 465x46
+      RenderSVGText {text} at (0,0) size 480x46
         RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

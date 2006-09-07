@@ -54,6 +54,8 @@ namespace WebCore
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
+        virtual bool hasPercentageValues() const;
+
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Cx, cx)
         ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Cy, cy)

@@ -2,12 +2,11 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (0,0) size 0x0
-        RenderSVGText {text} at (0,0) size 465x78
-          RenderText {#text} at (0,0) size 288x77
-            text run at (0,0) width 288: "Test 'baseline-shift'"
-            text run at (0,39) width 170: "(horizontal)"
+        RenderSVGText {text} at (0,0) size 480x39
+          RenderText {#text} at (0,0) size 467x38
+            text run at (0,0) width 467: "Test 'baseline-shift' (horizontal)"
         KCanvasContainer {g} at (15,120) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,120.00)}]
-          RenderSVGText {text} at (0,0) size 465x34
+          RenderSVGText {text} at (0,0) size 480x34
             RenderText {#text} at (0,0) size 98x33
               text run at (0,0) width 98: "Normal"
             RenderInline {tspan} at (0,0) size 204x33
@@ -15,7 +14,7 @@ layer at (0,0) size 480x360
                 text run at (98,0) width 204: "baseline-shift:7"
             RenderText {#text} at (302,0) size 48x33
               text run at (302,0) width 48: "text"
-          RenderSVGText {text} at (0,0) size 465x34
+          RenderSVGText {text} at (0,0) size 480x34
             RenderText {#text} at (0,0) size 98x33
               text run at (0,0) width 98: "Normal"
             RenderInline {tspan} at (0,0) size 258x33
@@ -23,7 +22,7 @@ layer at (0,0) size 480x360
                 text run at (98,0) width 258: "baseline-shift:-70%"
             RenderText {#text} at (356,0) size 48x33
               text run at (356,0) width 48: "text"
-          RenderSVGText {text} at (0,0) size 465x34
+          RenderSVGText {text} at (0,0) size 480x34
             RenderText {#text} at (0,0) size 98x33
               text run at (0,0) width 98: "Normal"
             RenderInline {tspan} at (0,0) size 49x33
@@ -37,7 +36,7 @@ layer at (0,0) size 480x360
                 text run at (223,0) width 25: "te"
             RenderText {#text} at (248,0) size 23x33
               text run at (248,0) width 23: "xt"
-      RenderSVGText {text} at (0,0) size 465x46
+      RenderSVGText {text} at (0,0) size 480x46
         RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

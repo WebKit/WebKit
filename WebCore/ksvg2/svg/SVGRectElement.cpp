@@ -116,6 +116,19 @@ const SVGStyledElement *SVGRectElement::pushAttributeContext(const SVGStyledElem
     return restore;
 }
 
+bool SVGRectElement::hasPercentageValues() const
+{
+    if (xBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        yBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        widthBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        heightBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        rxBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        ryBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
+        return true;
+
+    return false;
+}
+
 }
 
 // vim:ts=4:noet

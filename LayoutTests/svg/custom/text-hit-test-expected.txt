@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 0x0
       KCanvasContainer {g} at (0,0) size 0x0 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
-        RenderSVGText {text} at (0,0) size 785x18
+        RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 57x18
             text run at (0,0) width 57: "Click me"
-        RenderSVGText {text} at (0,0) size 785x18
+        RenderSVGText {text} at (0,0) size 800x18
           RenderText {#text} at (0,0) size 42x18
             text run at (0,0) width 42: "Status:"
         RenderSVGText {text} at (0,0) size 800x18

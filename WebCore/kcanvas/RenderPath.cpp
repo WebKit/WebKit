@@ -45,7 +45,7 @@ public:
     FloatRect strokeBbox;
     AffineTransform matrix;
     IntRect absoluteBounds;
-};        
+};
 
 // RenderPath
 RenderPath::RenderPath(RenderStyle* style, SVGStyledElement* node)
@@ -448,6 +448,11 @@ void RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& 
     data.previousMarkerData.marker = endMarker;
     data.previousMarkerData.type = End;
     drawMarkerWithData(context, data.previousMarkerData);
+}
+
+bool RenderPath::hasPercentageValues() const
+{
+    return static_cast<SVGStyledElement*>(element())->hasPercentageValues();
 }
 
 }

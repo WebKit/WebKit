@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (0,55) size 100x100
-      RenderSVGText {text} at (0,0) size 785x18
+      RenderSVGText {text} at (0,0) size 800x18
         RenderText {#text} at (0,0) size 29x18
           text run at (0,0) width 29: "Fail!"
-      RenderSVGText {text} at (0,0) size 785x18
+      RenderSVGText {text} at (0,0) size 800x18
         RenderText {#text} at (0,0) size 379x18
           text run at (0,0) width 379: "Success! (should be half opacity as should the image below)"
       RenderImage {image} at (0,0) size 100x100
