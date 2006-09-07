@@ -1,3 +1,20 @@
+2006-09-07  MorganL  <morlmor@yahoo.com>
+
+        Reviewed by Darin, landed by Adam.
+
+        Fixes part of bug 10743: Windows build busted.
+
+        * platform/win/FontCacheWin.cpp: Add missing #include, set svn:eol-style to native
+        (WebCore::FontCache::getFontLinkInterface):
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/win/FontDataWin.cpp: Ditto.
+        (WebCore::FontData::platformWidthForGlyph):
+        * platform/win/FontWin.cpp: Add missing #include, band-aid over const problem with GlyphBufferGlyph
+        (WebCore::Font::drawGlyphs):
+        * platform/win/ResourceLoaderWin.cpp: Add missing #include, change .ascii() to .latin1()
+        (WebCore::ResourceLoaderWndProc):
+        (WebCore::ResourceLoader::start):
+
 2006-09-07  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

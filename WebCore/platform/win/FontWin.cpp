@@ -29,6 +29,7 @@
 #include <cairo-win32.h>
 #include "FontData.h"
 #include "FontFallbackList.h"
+#include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 
@@ -71,7 +72,8 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
     // Restore the original transform.
     SetWorldTransform(dc, &savedxform);
 
-    GlyphBufferGlyph* glyphs = glyphBuffer.glyphs(from);
+    // FIXME: This const_cast seems really wrong
+    GlyphBufferGlyph* glyphs = const_cast<GlyphBufferGlyph*>(glyphBuffer.glyphs(from));
 
     float offset = point.x();
 

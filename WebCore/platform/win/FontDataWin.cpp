@@ -30,6 +30,7 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FloatRect.h"
+#include "FontData.h"
 #include "FontDescription.h"
 #include <wtf/MathExtras.h>
 #include <unicode/uchar.h>

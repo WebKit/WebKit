@@ -28,7 +28,7 @@
 
 #include "config.h"
 #include "FontCache.h"
-#include "FontPlatformData.h"
+#include "FontData.h"
 #include "Font.h"
 #include <windows.h>
 #include <mlang.h>
