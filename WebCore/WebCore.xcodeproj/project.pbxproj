@@ -468,6 +468,14 @@
 		854FE7370A2297BE0058D7AD /* Traversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE72D0A2297BE0058D7AD /* Traversal.h */; };
 		854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */; };
 		854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE72F0A2297BE0058D7AD /* TreeWalker.h */; };
+		85526C370AB0A17E000302EA /* DOMNodeIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 85526C350AB0A17E000302EA /* DOMNodeIterator.h */; };
+		85526C380AB0A17E000302EA /* DOMNodeIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85526C360AB0A17E000302EA /* DOMNodeIterator.mm */; };
+		85526C3E0AB0A76F000302EA /* DOMNodeIteratorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 85526C3D0AB0A76F000302EA /* DOMNodeIteratorPrivate.h */; };
+		85526C720AB0AE2F000302EA /* DOMNodeIterator.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85526C350AB0A17E000302EA /* DOMNodeIterator.h */; };
+		85526C730AB0AE2F000302EA /* DOMNodeIteratorPrivate.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85526C3D0AB0A76F000302EA /* DOMNodeIteratorPrivate.h */; };
+		85526CD20AB0B7D9000302EA /* DOMTreeWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = 85526CD00AB0B7D9000302EA /* DOMTreeWalker.h */; };
+		85526CD30AB0B7DA000302EA /* DOMTreeWalker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85526CD10AB0B7D9000302EA /* DOMTreeWalker.mm */; };
+		85526D050AB0B979000302EA /* DOMTreeWalker.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85526CD00AB0B7D9000302EA /* DOMTreeWalker.h */; };
 		856C89FC0A90F068005C687B /* DOMNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 856C89FA0A90F068005C687B /* DOMNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		856C89FD0A90F068005C687B /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 856C89FB0A90F068005C687B /* DOMNode.mm */; };
 		856C8AE40A912649005C687B /* DOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 856C8AE20A912649005C687B /* DOMObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -526,6 +534,7 @@
 		859A9C4E0AA5E3BD00B694B2 /* DOMHTMLMetaElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 859A9C440AA5E3BD00B694B2 /* DOMHTMLMetaElement.mm */; };
 		859A9C4F0AA5E3BD00B694B2 /* DOMHTMLStyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 859A9C450AA5E3BD00B694B2 /* DOMHTMLStyleElement.h */; };
 		859A9C500AA5E3BD00B694B2 /* DOMHTMLStyleElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 859A9C460AA5E3BD00B694B2 /* DOMHTMLStyleElement.mm */; };
+		859FA5FB0AB0BF20004FAEE9 /* DOMNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 859FA5FA0AB0BF20004FAEE9 /* DOMNodeFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85ACA9860A9B520300671E90 /* DOMCharacterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACA9840A9B520300671E90 /* DOMCharacterData.h */; settings = {ATTRIBUTES = (); }; };
 		85ACA9870A9B520300671E90 /* DOMCharacterData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85ACA9850A9B520300671E90 /* DOMCharacterData.mm */; };
 		85ACA99C0A9B575900671E90 /* DOMText.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACA99A0A9B575900671E90 /* DOMText.h */; settings = {ATTRIBUTES = (); }; };
@@ -2010,6 +2019,9 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				85526D050AB0B979000302EA /* DOMTreeWalker.h in CopyFiles */,
+				85526C720AB0AE2F000302EA /* DOMNodeIterator.h in CopyFiles */,
+				85526C730AB0AE2F000302EA /* DOMNodeIteratorPrivate.h in CopyFiles */,
 				857E0B310AB044780036E447 /* DOMMouseEvent.h in CopyFiles */,
 				857E0B320AB044780036E447 /* DOMMouseEventPrivate.h in CopyFiles */,
 				85DF345D0AAFC2D400E59AE3 /* DOMMutationEvent.h in CopyFiles */,
@@ -2671,6 +2683,11 @@
 		854FE72D0A2297BE0058D7AD /* Traversal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Traversal.h; sourceTree = "<group>"; };
 		854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TreeWalker.cpp; sourceTree = "<group>"; };
 		854FE72F0A2297BE0058D7AD /* TreeWalker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TreeWalker.h; sourceTree = "<group>"; };
+		85526C350AB0A17E000302EA /* DOMNodeIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMNodeIterator.h; sourceTree = "<group>"; };
+		85526C360AB0A17E000302EA /* DOMNodeIterator.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMNodeIterator.mm; sourceTree = "<group>"; };
+		85526C3D0AB0A76F000302EA /* DOMNodeIteratorPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMNodeIteratorPrivate.h; sourceTree = "<group>"; };
+		85526CD00AB0B7D9000302EA /* DOMTreeWalker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMTreeWalker.h; sourceTree = "<group>"; };
+		85526CD10AB0B7D9000302EA /* DOMTreeWalker.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMTreeWalker.mm; sourceTree = "<group>"; };
 		855542570AA48B1E00BA89F2 /* HTMLTableCaptionElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLTableCaptionElement.idl; sourceTree = "<group>"; };
 		855542580AA48B1E00BA89F2 /* HTMLTableCellElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLTableCellElement.idl; sourceTree = "<group>"; };
 		855542590AA48B1E00BA89F2 /* HTMLTableColElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLTableColElement.idl; sourceTree = "<group>"; };
@@ -2726,6 +2743,7 @@
 		859A9C450AA5E3BD00B694B2 /* DOMHTMLStyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLStyleElement.h; sourceTree = "<group>"; };
 		859A9C460AA5E3BD00B694B2 /* DOMHTMLStyleElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLStyleElement.mm; sourceTree = "<group>"; };
 		859B7FB90A8D288800A5F1EA /* CodeGeneratorObjC.pm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; name = CodeGeneratorObjC.pm; path = bindings/scripts/CodeGeneratorObjC.pm; sourceTree = SOURCE_ROOT; tabWidth = 8; usesTabs = 0; };
+		859FA5FA0AB0BF20004FAEE9 /* DOMNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMNodeFilter.h; sourceTree = "<group>"; };
 		85ACA9840A9B520300671E90 /* DOMCharacterData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMCharacterData.h; sourceTree = "<group>"; };
 		85ACA9850A9B520300671E90 /* DOMCharacterData.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCharacterData.mm; sourceTree = "<group>"; };
 		85ACA99A0A9B575900671E90 /* DOMText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMText.h; sourceTree = "<group>"; };
@@ -4912,6 +4930,18 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
+		85526C150AB0A12A000302EA /* Traversal */ = {
+			isa = PBXGroup;
+			children = (
+				85526C3D0AB0A76F000302EA /* DOMNodeIteratorPrivate.h */,
+				85526C350AB0A17E000302EA /* DOMNodeIterator.h */,
+				85526C360AB0A17E000302EA /* DOMNodeIterator.mm */,
+				85526CD00AB0B7D9000302EA /* DOMTreeWalker.h */,
+				85526CD10AB0B7D9000302EA /* DOMTreeWalker.mm */,
+			);
+			name = Traversal;
+			sourceTree = "<group>";
+		};
 		858C39510AA9024C00B187A4 /* CSS */ = {
 			isa = PBXGroup;
 			children = (
@@ -5022,6 +5052,14 @@
 			name = HTML;
 			sourceTree = "<group>";
 		};
+		859FA5F20AB0BEE2004FAEE9 /* Traversal */ = {
+			isa = PBXGroup;
+			children = (
+				859FA5FA0AB0BF20004FAEE9 /* DOMNodeFilter.h */,
+			);
+			name = Traversal;
+			sourceTree = "<group>";
+		};
 		85AFA7AB0AAF3BB000E84305 /* Events */ = {
 			isa = PBXGroup;
 			children = (
@@ -5057,6 +5095,7 @@
 				85AFA7AB0AAF3BB000E84305 /* Events */,
 				85C56D030AA8BAA700D95755 /* HTML */,
 				850657040AAB476C002D15C0 /* StyleSheets */,
+				85526C150AB0A12A000302EA /* Traversal */,
 			);
 			name = "Derived Sources";
 			path = DerivedSources/WebCore;
@@ -6208,6 +6247,7 @@
 				858C39510AA9024C00B187A4 /* CSS */,
 				85C7F4430AAF7686004014DD /* Events */,
 				85992FC20AA5DD4600AC0785 /* HTML */,
+				859FA5F20AB0BEE2004FAEE9 /* Traversal */,
 				859B7FB90A8D288800A5F1EA /* CodeGeneratorObjC.pm */,
 				1CD0B6200AABDB5000D0A3FF /* PublicDOMInterfaces.h */,
 				BC1A3797097C715F0019F3D8 /* DOM.h */,
@@ -7802,6 +7842,10 @@
 				85DF34400AAFC0ED00E59AE3 /* DOMKeyboardEventPrivate.h in Headers */,
 				857E0B250AB043460036E447 /* DOMMouseEvent.h in Headers */,
 				857E0B2C0AB043FC0036E447 /* DOMMouseEventPrivate.h in Headers */,
+				85526C370AB0A17E000302EA /* DOMNodeIterator.h in Headers */,
+				85526C3E0AB0A76F000302EA /* DOMNodeIteratorPrivate.h in Headers */,
+				85526CD20AB0B7D9000302EA /* DOMTreeWalker.h in Headers */,
+				859FA5FB0AB0BF20004FAEE9 /* DOMNodeFilter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8810,6 +8854,8 @@
 				85C7F5E80AAFBAFB004014DD /* DOMWheelEvent.mm in Sources */,
 				85FF315B0AAFBFCB00374F38 /* DOMKeyboardEvent.mm in Sources */,
 				857E0B260AB043460036E447 /* DOMMouseEvent.mm in Sources */,
+				85526C380AB0A17E000302EA /* DOMNodeIterator.mm in Sources */,
+				85526CD30AB0B7DA000302EA /* DOMTreeWalker.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

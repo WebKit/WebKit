@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,7 +21,7 @@
 module traversal {
 
     // Introduced in DOM Level 2:
-    interface [LegacyParent=KJS::DOMNodeFilter, GenerateConstructor] NodeFilter {
+    interface [LegacyParent=KJS::DOMNodeFilter, GenerateConstructor, ObjCProtocol] NodeFilter {
 
         // Constants returned by acceptNode
         const short               FILTER_ACCEPT                  = 1;
@@ -41,6 +42,9 @@ module traversal {
         const unsigned long       SHOW_DOCUMENT_TYPE             = 0x00000200;
         const unsigned long       SHOW_DOCUMENT_FRAGMENT         = 0x00000400;
         const unsigned long       SHOW_NOTATION                  = 0x00000800;
+
+        [Exclude=JS] short acceptNode(in Node n);
+
     };
-  
+
 }

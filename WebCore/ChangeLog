@@ -1,3 +1,26 @@
+2006-09-07  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin and Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10774
+        Auto-generate the Objective-C DOM Traversal bindings
+
+        - Auto-generates DOMNodeIterator and DOMTreeWalker.
+
+        - Splits out DOMNodeFilter into its own file.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMNodeFilter.h: Added.
+        * bindings/objc/DOMTraversal.h:
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * dom/NodeFilter.idl:
+        * dom/NodeIterator.idl:
+        * dom/Range.idl:
+        * dom/TreeWalker.idl:
+
 2006-09-07  MorganL  <morlmor@yahoo.com>
 
         Reviewed by Darin, landed by Adam.

@@ -127,6 +127,7 @@ all : \
     DOMMouseEvent.h \
     DOMMutationEvent.h \
     DOMNamedNodeMap.h \
+    DOMNodeIterator.h \
     DOMNodeList.h \
     DOMNotation.h \
     DOMOverflowEvent.h \
@@ -135,6 +136,7 @@ all : \
     DOMStyleSheet.h \
     DOMStyleSheetList.h \
     DOMText.h \
+    DOMTreeWalker.h \
     DOMUIEvent.h \
     DOMWheelEvent.h
 endif

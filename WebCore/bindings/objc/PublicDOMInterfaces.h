@@ -850,3 +850,28 @@
 //- (void)initMouseEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view detail:(int)detail screenX:(int)screenX screenY:(int)screenY clientX:(int)clientX clientY:(int)clientY ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey button:(unsigned short)button relatedTarget:(id <DOMEventTarget>)relatedTarget;
 - (void)initMouseEvent:(NSString *)type :(BOOL)canBubble :(BOOL)cancelable :(DOMAbstractView *)view :(int)detail :(int)screenX :(int)screenY :(int)clientX :(int)clientY :(BOOL)ctrlKey :(BOOL)altKey :(BOOL)shiftKey :(BOOL)metaKey :(unsigned short)button :(id <DOMEventTarget>)relatedTarget;
 @end
+
+@interface DOMNodeIterator : DOMObject
+@property(readonly) DOMNode *root;
+@property(readonly) unsigned whatToShow;
+@property(readonly) id <DOMNodeFilter> filter;
+@property(readonly) BOOL expandEntityReferences;
+- (DOMNode *)nextNode;
+- (DOMNode *)previousNode;
+- (void)detach;
+@end
+
+@interface DOMTreeWalker : DOMObject
+@property(readonly) DOMNode *root;
+@property(readonly) unsigned whatToShow;
+@property(readonly) id <DOMNodeFilter> filter;
+@property(readonly) BOOL expandEntityReferences;
+@property DOMNode *currentNode;
+- (DOMNode *)parentNode;
+- (DOMNode *)firstChild;
+- (DOMNode *)lastChild;
+- (DOMNode *)previousSibling;
+- (DOMNode *)nextSibling;
+- (DOMNode *)previousNode;
+- (DOMNode *)nextNode;
+@end

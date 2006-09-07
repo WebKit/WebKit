@@ -34,6 +34,7 @@ my %privateHeaderForwardDeclarationsForProtocols = ();
 my %publicInterfaces = ();
 my $newPublicClass = 0;
 my $isProtocol = 0;
+my @ivars = ();
 my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} <= 10.4;
 my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5;
 
@@ -169,8 +170,8 @@ sub GenerateInterface
     ReadPublicInterfaces($className, $parentClassName, $defines);
 
     # Start actual generation..
-    $object->GenerateImplementation($dataNode) unless $isProtocol;
     $object->GenerateHeader($dataNode);
+    $object->GenerateImplementation($dataNode) unless $isProtocol;
 
     # Write changes.
     $object->WriteData("DOM" . $name);
@@ -246,7 +247,7 @@ sub IsProtocolType
 {
     $type = shift;
 
-    return 1 if $type eq "XPathNSResolver" or $type eq "EventListener" or $type eq "EventTarget";
+    return 1 if $type eq "XPathNSResolver" or $type eq "EventListener" or $type eq "EventTarget" or $type eq "NodeFilter";
     return 0;
 }
 
@@ -462,6 +463,22 @@ sub GenerateHeader
 
     # - Add attribute getters/setters.
     if ($numAttributes > 0) {
+        # Add ivars, if any, first
+        @ivars = ();
+        foreach my $attribute (@{$dataNode->attributes}) {
+            push(@ivars, $attribute) if $attribute->signature->extendedAttributes->{"ObjCIvar"};
+        }
+        if (@ivars > 0) {
+            push(@headerAttributes, "{\n");
+            foreach my $attribute (@ivars) {
+                my $type = GetObjCType($attribute->signature->type);;
+                my $name = "m_" . $attribute->signature->name;
+                my $ivarDeclaration = "$type $name";
+                push(@headerAttributes, "    $ivarDeclaration;\n");
+            }
+            push(@headerAttributes, "}\n");
+        }
+
         foreach my $attribute (@{$dataNode->attributes}) {
             my $attributeName = $attribute->signature->name;
 
@@ -643,17 +660,40 @@ sub GenerateImplementation
 
             push(@implContent, "#define IMPL reinterpret_cast<$implClassNameWithNamespace*>(_internal)\n\n");
 
+            my @ivarsToRelease = ();
+            if (@ivars > 0) {
+                foreach $attribute (@ivars) {
+                    my $name = "m_" . $attribute->signature->name;
+                    push(@ivarsToRelease, "    [$name release];\n");
+                }
+            }
+
             push(@implContent, "- (void)dealloc\n");
             push(@implContent, "{\n");
-            push(@implContent, "    if (_internal)\n");
-            push(@implContent, "        IMPL->deref();\n");
+            push(@implContent, @ivarsToRelease);
+            if ($interfaceName eq "NodeIterator") {
+                push(@implContent, "    if (_internal) {\n");
+                push(@implContent, "        [self detach];\n");
+                push(@implContent, "        IMPL->deref();\n");
+                push(@implContent, "    };\n");
+            } else {
+                push(@implContent, "    if (_internal)\n");
+                push(@implContent, "        IMPL->deref();\n");
+            }
             push(@implContent, "    [super dealloc];\n");
             push(@implContent, "}\n\n");
 
             push(@implContent, "- (void)finalize\n");
             push(@implContent, "{\n");
-            push(@implContent, "    if (_internal)\n");
-            push(@implContent, "        IMPL->deref();\n");
+            if ($interfaceName eq "NodeIterator") {
+                push(@implContent, "    if (_internal) {\n");
+                push(@implContent, "        [self detach];\n");
+                push(@implContent, "        IMPL->deref();\n");
+                push(@implContent, "    };\n");
+            } else {
+                push(@implContent, "    if (_internal)\n");
+                push(@implContent, "        IMPL->deref();\n");
+            }
             push(@implContent, "    [super finalize];\n");
             push(@implContent, "}\n\n");
         } elsif ($interfaceName eq "CSSStyleSheet") {
@@ -687,6 +727,7 @@ sub GenerateImplementation
             my $attributeName = $attribute->signature->name;
             my $attributeType = GetObjCType($attribute->signature->type);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
+            my $attributeClassName = GetClassName($attribute->signature->type);
 
             my $attributeInterfaceName = $attributeName;
             if ($attributeName eq "id") {
@@ -714,6 +755,7 @@ sub GenerateImplementation
             my $typeMaker = GetObjCTypeMaker($attribute->signature->type);
 
             # Special cases
+            my @customGetterContent = (); 
             if ($attributeTypeSansPtr eq "DOMImplementation") {
                 # FIXME: We have to special case DOMImplementation until DOMImplementationFront is removed
                 $getterContentHead = "[$attributeTypeSansPtr $typeMaker:implementationFront(IMPL";
@@ -731,6 +773,13 @@ sub GenerateImplementation
                     $getterContentTail = "\@\"src\"]";
                 }
                 $implIncludes{"DOMPrivate.h"} = 1;
+            } elsif ($idlType eq "NodeFilter") {
+                push(@customGetterContent, "    if (m_filter)\n");
+                push(@customGetterContent, "        // This node iterator was created from the Objective-C side.\n");
+                push(@customGetterContent, "        return [[m_filter retain] autorelease];\n\n");
+                push(@customGetterContent, "    // This node iterator was created from the C++ side.\n");
+                $getterContentHead = "[$attributeClassName $typeMaker:WTF::getPtr(" . $getterContentHead;
+                $getterContentTail .= ")]";
             } elsif ($typeMaker ne "") {
                 # Surround getter with TypeMaker
                 $getterContentHead = "[$attributeTypeSansPtr $typeMaker:WTF::getPtr(" . $getterContentHead;
@@ -755,11 +804,13 @@ sub GenerateImplementation
                     $getterContent = $attributeType . " result = " . $getterContent;
                 }
 
+                push(@implContent, @customGetterContent);
                 push(@implContent, "    $exceptionInit\n");
                 push(@implContent, "    $getterContent;\n");
                 push(@implContent, "    $exceptionRaiseOnError\n");
                 push(@implContent, "    return result;\n");
             } else {
+                push(@implContent, @customGetterContent);
                 push(@implContent, "    return $getterContent;\n");
             }
             push(@implContent, "}\n\n");

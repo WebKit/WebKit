@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,10 +20,11 @@
 
 module traversal {
 
+    // Introduced in DOM Level 2:
     interface [CustomMarkFunction] TreeWalker {
         readonly attribute Node root;
         readonly attribute unsigned long whatToShow;
-        readonly attribute NodeFilter filter;
+        readonly attribute [ObjCIvar] NodeFilter filter;
         readonly attribute boolean expandEntityReferences;        
         attribute Node currentNode
             setter raises (DOMException);
@@ -35,6 +37,7 @@ module traversal {
         Node previousNode();
         Node nextNode();
     };
+
 }
 
  

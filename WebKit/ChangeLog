@@ -1,5 +1,14 @@
 2006-09-07  Sam Weinig  <sam.weinig@gmail.com>
 
+        Reviewed by Darin and Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10774
+        Auto-generate the Objective-C DOM Traversal bindings
+
+        * MigrateHeaders.make:
+
+2006-09-07  Sam Weinig  <sam.weinig@gmail.com>
+
         Reviewed by Darin.
 
         Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10766

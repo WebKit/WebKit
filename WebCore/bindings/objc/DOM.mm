@@ -1101,7 +1101,7 @@ static Class elementClass(const AtomicString& tagName)
 //------------------------------------------------------------------------------------------
 // DOMNodeIterator
 
-@implementation DOMNodeIterator
+@implementation DOMNodeIterator(WebCoreInternal)
 
 - (id)_initWithNodeIterator:(NodeIterator *)impl filter:(id <DOMNodeFilter>)filter
 {
@@ -1119,75 +1119,6 @@ static Class elementClass(const AtomicString& tagName)
 {
     return DOM_cast<NodeIterator *>(_internal);
 }
-
-- (void)dealloc
-{
-    [m_filter release];
-    if (_internal) {
-        [self detach];
-        DOM_cast<NodeIterator *>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        [self detach];
-        DOM_cast<NodeIterator *>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (DOMNode *)root
-{
-    return [DOMNode _nodeWith:[self _nodeIterator]->root()];
-}
-
-- (unsigned)whatToShow
-{
-    return [self _nodeIterator]->whatToShow();
-}
-
-- (id <DOMNodeFilter>)filter
-{
-    if (m_filter)
-        // This node iterator was created from the objc side
-        return [[m_filter retain] autorelease];
-
-    // This node iterator was created from the c++ side
-    return [DOMNodeFilter _nodeFilterWith:[self _nodeIterator]->filter()];
-}
-
-- (BOOL)expandEntityReferences
-{
-    return [self _nodeIterator]->expandEntityReferences();
-}
-
-- (DOMNode *)nextNode
-{
-    ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _nodeIterator]->nextNode(ec)];
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (DOMNode *)previousNode
-{
-    ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _nodeIterator]->previousNode(ec)];
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (void)detach
-{
-    [self _nodeIterator]->detach();
-}
-
-@end
-
-@implementation DOMNodeIterator(WebCoreInternal)
 
 + (DOMNodeIterator *)_nodeIteratorWith:(NodeIterator *)impl filter:(id <DOMNodeFilter>)filter
 {
@@ -1208,7 +1139,7 @@ static Class elementClass(const AtomicString& tagName)
 //------------------------------------------------------------------------------------------
 // DOMTreeWalker
 
-@implementation DOMTreeWalker
+@implementation DOMTreeWalker (WebCoreInternal)
 
 - (id)_initWithTreeWalker:(TreeWalker *)impl filter:(id <DOMNodeFilter>)filter
 {
@@ -1226,100 +1157,6 @@ static Class elementClass(const AtomicString& tagName)
 {
     return DOM_cast<TreeWalker *>(_internal);
 }
-
-- (void)dealloc
-{
-    if (m_filter)
-        [m_filter release];
-    if (_internal) {
-        DOM_cast<TreeWalker *>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<TreeWalker *>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (DOMNode *)root
-{
-    return [DOMNode _nodeWith:[self _treeWalker]->root()];
-}
-
-- (unsigned)whatToShow
-{
-    return [self _treeWalker]->whatToShow();
-}
-
-- (id <DOMNodeFilter>)filter
-{
-    if (m_filter)
-        // This tree walker was created from the objc side
-        return [[m_filter retain] autorelease];
-
-    // This tree walker was created from the c++ side
-    return [DOMNodeFilter _nodeFilterWith:[self _treeWalker]->filter()];
-}
-
-- (BOOL)expandEntityReferences
-{
-    return [self _treeWalker]->expandEntityReferences();
-}
-
-- (DOMNode *)currentNode
-{
-    return [DOMNode _nodeWith:[self _treeWalker]->currentNode()];
-}
-
-- (void)setCurrentNode:(DOMNode *)currentNode
-{
-    ExceptionCode ec = 0;
-    [self _treeWalker]->setCurrentNode([currentNode _node], ec);
-    raiseOnDOMError(ec);
-}
-
-- (DOMNode *)parentNode
-{
-    return [DOMNode _nodeWith:[self _treeWalker]->parentNode()];
-}
-
-- (DOMNode *)firstChild
-{
-    return [DOMNode _nodeWith:[self _treeWalker]->firstChild()];
-}
-
-- (DOMNode *)lastChild
-{
-    return [DOMNode _nodeWith:[self _treeWalker]->lastChild()];
-}
-
-- (DOMNode *)previousSibling
-{
-    return [DOMNode _nodeWith:[self _treeWalker]->previousSibling()];
-}
-
-- (DOMNode *)nextSibling
-{
-    return [DOMNode _nodeWith:[self _treeWalker]->nextSibling()];
-}
-
-- (DOMNode *)previousNode
-{
-    return [DOMNode _nodeWith:[self _treeWalker]->previousNode()];
-}
-
-- (DOMNode *)nextNode
-{
-    return [DOMNode _nodeWith:[self _treeWalker]->nextNode()];
-}
-
-@end
-
-@implementation DOMTreeWalker (WebCoreInternal)
 
 + (DOMTreeWalker *)_treeWalkerWith:(TreeWalker *)impl filter:(id <DOMNodeFilter>)filter
 {

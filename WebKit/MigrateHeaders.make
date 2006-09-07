@@ -156,6 +156,9 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMNamedNodeMap.h \
     $(PRIVATE_HEADERS_DIR)/DOMNamedNodeMapPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMNode.h \
+    $(PUBLIC_HEADERS_DIR)/DOMNodeFilter.h \
+    $(PUBLIC_HEADERS_DIR)/DOMNodeIterator.h \
+    $(PRIVATE_HEADERS_DIR)/DOMNodeIteratorPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMNodeList.h \
     $(PUBLIC_HEADERS_DIR)/DOMNotation.h \
     $(PUBLIC_HEADERS_DIR)/DOMObject.h \
@@ -171,6 +174,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMStylesheets.h \
     $(PUBLIC_HEADERS_DIR)/DOMText.h \
     $(PUBLIC_HEADERS_DIR)/DOMTraversal.h \
+    $(PUBLIC_HEADERS_DIR)/DOMTreeWalker.h \
     $(PUBLIC_HEADERS_DIR)/DOMUIEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMUIEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMViews.h \

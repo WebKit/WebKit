@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,9 +20,8 @@
 
 module ranges {
 
+    // Introduced in DOM Level 2:
     interface [GenerateConstructor] Range {
-
-        // DOM Level 2
 
         readonly attribute Node startContainer
             getter raises (DOMException);
@@ -36,11 +36,11 @@ module ranges {
         readonly attribute Node commonAncestorContainer
             getter raises (DOMException);
 
-        void setStart(in Node refNode, 
-                      in long offset)
+        [OldStyleObjC] void setStart(in Node refNode, 
+                                     in long offset)
             raises(RangeException, dom::DOMException);
-        void setEnd(in Node refNode, 
-                    in long offset)
+        [OldStyleObjC] void setEnd(in Node refNode, 
+                                   in long offset)
             raises(RangeException, dom::DOMException);
         void setStartBefore(in Node refNode)
             raises(RangeException, dom::DOMException);
@@ -63,8 +63,8 @@ module ranges {
         const unsigned short END_TO_END     = 2;
         const unsigned short END_TO_START   = 3;
 
-        short compareBoundaryPoints(in CompareHow how,
-                                    in Range sourceRange)
+        [OldStyleObjC] short compareBoundaryPoints(in CompareHow how,
+                                                   in Range sourceRange)
             raises(dom::DOMException);
         short comparePoint(in Node refNode, 
                            in long offset)
