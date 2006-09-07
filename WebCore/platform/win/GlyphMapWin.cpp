@@ -42,9 +42,9 @@ bool GlyphMap::fillPage(GlyphPage* page, UChar* buffer, unsigned bufferLength, c
 
     TEXTMETRIC tm;
     GetTextMetrics(dc, &tm);
-    WORD localGlyphBuffer[cGlyphPageSize];
+    WORD localGlyphBuffer[GlyphPage::size];
     GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
-    for (unsigned i = 0; i < cGlyphPageSize; i++)
+    for (unsigned i = 0; i < GlyphPage::size; i++)
         page->setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
     RestoreDC(dc, -1);
     ReleaseDC(0, dc);

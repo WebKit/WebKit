@@ -1,3 +1,10 @@
+2006-09-06  Brady Eidson <beidson@apple.com>
+
+        Constant renamed in 16250 wasn't changed in each use
+
+        * platform/win/GlyphMapWin.cpp:
+        (WebCore::GlyphMap::fillPage):
+
 2006-09-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
