@@ -56,10 +56,10 @@ KCanvasFEMerge *SVGFEMergeElement::filterEffect() const
         return 0;
     setStandardAttributes(m_filterEffect);
 
-    DeprecatedStringList mergeInputs;
-    for (Node *n = firstChild(); n != 0; n = n->nextSibling()) {
+    Vector<String> mergeInputs;
+    for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feMergeNodeTag))
-            mergeInputs.append(static_cast<SVGFEMergeNodeElement *>(n)->in().deprecatedString());
+            mergeInputs.append(static_cast<SVGFEMergeNodeElement *>(n)->in());
     }
 
     m_filterEffect->setMergeInputs(mergeInputs);

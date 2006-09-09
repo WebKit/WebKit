@@ -22,14 +22,12 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "DeprecatedStringList.h"
-
 #include "Attr.h"
 
-#include <kcanvas/KCanvasResources.h>
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/device/KRenderingPaintServerGradient.h>
+#include "KCanvasResources.h"
+#include "KCanvasFilters.h"
+#include "KRenderingDevice.h"
+#include "KRenderingPaintServerGradient.h"
 
 #include "ksvg.h"
 #include "SVGNames.h"
@@ -46,8 +44,8 @@ SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Docum
     , m_k2(0.0)
     , m_k3(0.0)
     , m_k4(0.0)
+    , m_filterEffect(0)
 {
-    m_filterEffect = 0;
 }
 
 SVGFECompositeElement::~SVGFECompositeElement()
@@ -104,8 +102,8 @@ KCanvasFEComposite *SVGFECompositeElement::filterEffect() const
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setOperation((KCCompositeOperationType)(_operator() - 1));
-    m_filterEffect->setIn(in().deprecatedString());
-    m_filterEffect->setIn2(String(in2()).deprecatedString());
+    m_filterEffect->setIn(in());
+    m_filterEffect->setIn2(in2());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setK1(k1());
     m_filterEffect->setK2(k2());

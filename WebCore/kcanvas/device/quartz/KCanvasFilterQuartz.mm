@@ -188,14 +188,14 @@ NSArray *KCanvasFilterQuartz::getCIFilterStack(CIImage *inputImage)
     return filterEffects;
 }
 
-CIImage *KCanvasFilterQuartz::imageForName(const DeprecatedString& name) const
+CIImage *KCanvasFilterQuartz::imageForName(const String& name) const
 {
-    return [m_imagesByName objectForKey:name.getNSString()];
+    return [m_imagesByName objectForKey:name];
 }
 
-void KCanvasFilterQuartz::setImageForName(CIImage *image, const DeprecatedString &name)
+void KCanvasFilterQuartz::setImageForName(CIImage *image, const String &name)
 {
-    [m_imagesByName setValue:image forKey:name.getNSString()];
+    [m_imagesByName setValue:image forKey:name];
 }
 
 void KCanvasFilterQuartz::setOutputImage(const KCanvasFilterEffect *filterEffect, CIImage *output)
@@ -770,15 +770,13 @@ CIFilter *KCanvasFEMergeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
 {
     CIFilter *filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    DeprecatedStringList inputs = mergeInputs();
-    DeprecatedValueListIterator<DeprecatedString> it = inputs.begin();
-    DeprecatedValueListIterator<DeprecatedString> end = inputs.end();
+    const Vector<String>& inputs = mergeInputs();
 
     CIImage *previousOutput = quartzFilter->inputImage(this);
-    for (;it != end; it++) {
-        CIImage *inputImage = quartzFilter->imageForName(*it);
-    FE_QUARTZ_CHECK_INPUT(inputImage);
-    FE_QUARTZ_CHECK_INPUT(previousOutput);
+    for (unsigned x = 0; x < inputs.size(); x++) {
+        CIImage *inputImage = quartzFilter->imageForName(inputs[x]);
+        FE_QUARTZ_CHECK_INPUT(inputImage);
+        FE_QUARTZ_CHECK_INPUT(previousOutput);
         filter = [CIFilter filterWithName:@"CISourceOverCompositing"];
         [filter setDefaults];
         [filter setValue:inputImage forKey:@"inputImage"];

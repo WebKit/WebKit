@@ -150,7 +150,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.phase != PaintPhaseForeground || !drawsContents() || style()->visibility() == HIDDEN)
         return;
     
-    KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
+    KCanvasFilter* filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
     if (!firstChild() && !filter)
         return; // Spec: groups w/o children still may render filter content.
     
@@ -180,10 +180,10 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (!localTransform().isIdentity())
         deviceContext->concatCTM(localTransform());
     
-    if (KCanvasClipper *clipper = getClipperById(document(), style()->svgStyle()->clipPath().mid(1)))
+    if (KCanvasClipper *clipper = getClipperById(document(), style()->svgStyle()->clipPath().substring(1)))
         clipper->applyClip(relativeBBox(true));
 
-    if (KCanvasMasker *masker = getMaskerById(document(), style()->svgStyle()->maskElement().mid(1)))
+    if (KCanvasMasker *masker = getMaskerById(document(), style()->svgStyle()->maskElement().substring(1)))
         masker->applyMask(relativeBBox(true));
 
     float opacity = style()->opacity();
@@ -261,7 +261,7 @@ IntRect RenderSVGContainer::getAbsoluteRepaintRect()
         repaintRect.unite(current->getAbsoluteRepaintRect());
     
     // Filters can expand the bounding box
-    KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
+    KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
     if (filter)
         repaintRect.unite(enclosingIntRect(filter->filterBBoxForItemBBox(repaintRect)));
 

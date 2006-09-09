@@ -41,8 +41,8 @@ SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document *d
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_dx(0.0)
     , m_dy(0.0)
+    , m_filterEffect(0)
 {
-    m_filterEffect = 0;
 }
 
 SVGFEOffsetElement::~SVGFEOffsetElement()
@@ -73,7 +73,7 @@ KCanvasFEOffset *SVGFEOffsetElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEOffset *>(renderingDevice()->createFilterEffect(FE_OFFSET));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(in().deprecatedString());
+    m_filterEffect->setIn(in());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setDx(dx());
     m_filterEffect->setDy(dy());

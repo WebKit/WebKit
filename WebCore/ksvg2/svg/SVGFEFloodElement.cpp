@@ -25,20 +25,19 @@
 #include "SVGFEFloodElement.h"
 
 #include "Attr.h"
-#include "DeprecatedStringList.h"
 #include "RenderView.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
+#include "KCanvasFilters.h"
+#include "KRenderingDevice.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document *doc) : 
-SVGFilterPrimitiveStandardAttributes(tagName, doc)
+SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document *doc)
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , m_filterEffect(0)
 {
-    m_filterEffect = 0;
 }
 
 SVGFEFloodElement::~SVGFEFloodElement()
@@ -63,7 +62,7 @@ KCanvasFEFlood *SVGFEFloodElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEFlood *>(renderingDevice()->createFilterEffect(FE_FLOOD));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(in().deprecatedString());
+    m_filterEffect->setIn(in());
     setStandardAttributes(m_filterEffect);
     RenderStyle *filterStyle = const_cast<SVGFEFloodElement *>(this)->styleForRenderer(parentNode()->renderer());
     const SVGRenderStyle *svgStyle = filterStyle->svgStyle();
@@ -72,6 +71,8 @@ KCanvasFEFlood *SVGFEFloodElement::filterEffect() const
     filterStyle->deref(view()->renderArena());
 
     return m_filterEffect;
+}
+
 }
 
 // vim:ts=4:noet

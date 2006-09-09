@@ -26,11 +26,10 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGRenderStyleDefs_H
-#define KSVG_SVGRenderStyleDefs_H
+#ifndef SVGRenderStyleDefs_H
+#define SVGRenderStyleDefs_H
 #ifdef SVG_SUPPORT
 
-#include "DeprecatedString.h"
 #include "Path.h"
 
 // Helper macros for 'SVGRenderStyle'
@@ -175,7 +174,7 @@ namespace WebCore {
             return !(*this == other);
         }
 
-        DeprecatedString clipPath;
+        String clipPath;
 
     private:
         StyleClipData &operator=(const StyleClipData &);
@@ -189,7 +188,7 @@ namespace WebCore {
         bool operator==(const StyleMaskData &other) const;
         bool operator!=(const StyleMaskData &other) const { return !(*this == other); }
 
-        DeprecatedString maskElement;
+        String maskElement;
 
     private:
         StyleMaskData &operator=(const StyleMaskData &);
@@ -206,9 +205,9 @@ namespace WebCore {
             return !(*this == other);
         }
 
-        DeprecatedString startMarker;
-        DeprecatedString midMarker;
-        DeprecatedString endMarker;
+        String startMarker;
+        String midMarker;
+        String endMarker;
 
     private:
         StyleMarkerData &operator=(const StyleMarkerData &);
@@ -226,7 +225,7 @@ namespace WebCore {
             return !(*this == other);
         }
 
-        DeprecatedString filter;
+        String filter;
         Color floodColor;
         float floodOpacity;
 

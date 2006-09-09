@@ -95,7 +95,7 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(KCanvasFilterEf
     else
         filterEffect->setSubRegion(FloatRect(_x, _y, _width, _height));
 
-    filterEffect->setResult(result().deprecatedString());
+    filterEffect->setResult(result());
 }
 
 // vim:ts=4:noet

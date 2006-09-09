@@ -30,7 +30,7 @@
 #ifdef SVG_SUPPORT
 #include "SVGRenderStyle.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGRenderStyle *SVGRenderStyle::s_defaultStyle = 0;
 
@@ -108,6 +108,8 @@ void SVGRenderStyle::inheritFrom(const SVGRenderStyle *svgInheritParent)
     markers = svgInheritParent->markers;
 
     svg_inherited_flags = svgInheritParent->svg_inherited_flags;
+}
+
 }
 
 // vim:ts=4:noet

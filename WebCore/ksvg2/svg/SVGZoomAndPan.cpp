@@ -30,11 +30,11 @@
 #include "SVGHelper.h"
 #include "SVGZoomAndPan.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGZoomAndPan::SVGZoomAndPan()
+    : m_zoomAndPan(SVG_ZOOMANDPAN_MAGNIFY)
 {
-    m_zoomAndPan = SVG_ZOOMANDPAN_MAGNIFY;
 }
 
 SVGZoomAndPan::~SVGZoomAndPan()
@@ -63,6 +63,8 @@ bool SVGZoomAndPan::parseMappedAttribute(MappedAttribute *attr)
     }
 
     return false;
+}
+
 }
 
 // vim:ts=4:noet

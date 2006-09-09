@@ -22,23 +22,21 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "DeprecatedString.h"
 #include "DeprecatedStringList.h"
-
-#include "StringImpl.h"
 
 #include "ksvg.h"
 #include "SVGMatrix.h"
 #include "SVGSVGElement.h"
 #include "SVGPreserveAspectRatio.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGPreserveAspectRatio::SVGPreserveAspectRatio(const SVGStyledElement *context) : Shared<SVGPreserveAspectRatio>()
+SVGPreserveAspectRatio::SVGPreserveAspectRatio(const SVGStyledElement *context)
+    : Shared<SVGPreserveAspectRatio>()
+    , m_align(SVG_PRESERVEASPECTRATIO_XMIDYMID)
+    , m_meetOrSlice(SVG_MEETORSLICE_MEET)
+    , m_context(context)
 {
-    m_context = context;
-    m_meetOrSlice = SVG_MEETORSLICE_MEET;
-    m_align = SVG_PRESERVEASPECTRATIO_XMIDYMID;
 }
 
 SVGPreserveAspectRatio::~SVGPreserveAspectRatio()
@@ -65,15 +63,13 @@ unsigned short SVGPreserveAspectRatio::meetOrSlice() const
     return m_meetOrSlice;
 }
 
-void SVGPreserveAspectRatio::parsePreserveAspectRatio(StringImpl *strImpl)
+void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
 {
     // Spec: set the defaults
     setAlign(SVG_PRESERVEASPECTRATIO_NONE);
     setMeetOrSlice(SVG_MEETORSLICE_MEET);
     
-    String s(strImpl);
-    DeprecatedString str = s.deprecatedString();
-    DeprecatedStringList params = DeprecatedStringList::split(' ', str.simplifyWhiteSpace());
+    DeprecatedStringList params = DeprecatedStringList::split(' ', string.deprecatedString().simplifyWhiteSpace());
 
     if (params[0] == "none")
         m_align = SVG_PRESERVEASPECTRATIO_NONE;
@@ -118,13 +114,10 @@ SVGMatrix *SVGPreserveAspectRatio::getCTM(float logicX, float logicY, float logi
     float vpar = logicWidth / logicHeight;
     float svgar = physWidth / physHeight;
 
-    if (align() == SVG_PRESERVEASPECTRATIO_NONE)
-    {
+    if (align() == SVG_PRESERVEASPECTRATIO_NONE) {
         temp->scaleNonUniform(physWidth / logicWidth, physHeight / logicHeight);
         temp->translate(-logicX, -logicY);
-    }
-    else if (vpar < svgar && (meetOrSlice() == SVG_MEETORSLICE_MEET) || vpar >= svgar && (meetOrSlice() == SVG_MEETORSLICE_SLICE))
-    {
+    } else if (vpar < svgar && (meetOrSlice() == SVG_MEETORSLICE_MEET) || vpar >= svgar && (meetOrSlice() == SVG_MEETORSLICE_SLICE)) {
         temp->scale(physHeight / logicHeight);
 
         if (align() == SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVG_PRESERVEASPECTRATIO_XMINYMAX)
@@ -133,9 +126,7 @@ SVGMatrix *SVGPreserveAspectRatio::getCTM(float logicX, float logicY, float logi
             temp->translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight) / 2, -logicY);
         else
             temp->translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight), -logicY);
-    }
-    else
-    {
+    } else {
         temp->scale(physWidth / logicWidth);
 
         if (align() == SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVG_PRESERVEASPECTRATIO_XMIDYMIN || align() == SVG_PRESERVEASPECTRATIO_XMAXYMIN)
@@ -147,6 +138,8 @@ SVGMatrix *SVGPreserveAspectRatio::getCTM(float logicX, float logicY, float logi
     }
 
     return temp;
+}
+
 }
 
 // vim:ts=4:noet

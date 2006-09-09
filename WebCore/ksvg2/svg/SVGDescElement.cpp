@@ -24,9 +24,11 @@
 #ifdef SVG_SUPPORT
 #include "SVGDescElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document *doc) : SVGStyledElement(tagName, doc), SVGLangSpace()
+SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document *doc)
+    : SVGStyledElement(tagName, doc)
+    , SVGLangSpace()
 {
 }
 
@@ -34,9 +36,11 @@ SVGDescElement::~SVGDescElement()
 {
 }
 
-StringImpl *SVGDescElement::description() const
+String SVGDescElement::description() const
 {
-    return new StringImpl(String(textContent()).deprecatedString().simplifyWhiteSpace());
+    return textContent().deprecatedString().simplifyWhiteSpace();
+}
+
 }
 
 // vim:ts=4:noet

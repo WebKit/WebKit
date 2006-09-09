@@ -141,7 +141,7 @@ void SVGPatternElement::resourceNotification() const
 
 void SVGPatternElement::fillAttributesFromReferencePattern(const SVGPatternElement* target, AffineTransform& patternTransformMatrix)
 {
-    DeprecatedString ref = String(href()).deprecatedString();
+    DeprecatedString ref = href().deprecatedString();
     KRenderingPaintServer *refServer = getPaintServerById(document(), ref.mid(1));
 
     if (!refServer || refServer->type() != PS_PATTERN)
@@ -302,7 +302,7 @@ void SVGPatternElement::notifyAttributeChange() const
     const Node *test = this;
     while(test && !test->hasChildNodes())
     {
-        DeprecatedString ref = String(target->href()).deprecatedString();
+        DeprecatedString ref = target->href().deprecatedString();
         test = ownerDocument()->getElementById(String(ref.mid(1)).impl());
         if (test && test->hasTagName(SVGNames::patternTag))
             target = static_cast<const SVGPatternElement* >(test);

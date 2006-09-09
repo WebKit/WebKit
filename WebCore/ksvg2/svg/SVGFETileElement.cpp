@@ -22,8 +22,6 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "DeprecatedStringList.h"
-
 #include "Attr.h"
 
 #include <kcanvas/KCanvasFilters.h>
@@ -33,12 +31,12 @@
 #include "SVGRenderStyle.h"
 #include "SVGFETileElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document *doc) : 
-SVGFilterPrimitiveStandardAttributes(tagName, doc)
+SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document *doc)
+    : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , m_filterEffect(0)
 {
-    m_filterEffect = 0;
 }
 
 SVGFETileElement::~SVGFETileElement()
@@ -63,9 +61,11 @@ KCanvasFETile *SVGFETileElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFETile *>(renderingDevice()->createFilterEffect(FE_TILE));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(in().deprecatedString());
+    m_filterEffect->setIn(in());
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
+}
+
 }
 
 // vim:ts=4:noet

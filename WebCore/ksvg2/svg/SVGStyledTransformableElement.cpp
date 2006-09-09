@@ -23,8 +23,6 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #include "RegularExpression.h"
-#include "DeprecatedStringList.h"
-
 #include "Attr.h"
 
 #include <kcanvas/RenderPath.h>

@@ -103,7 +103,7 @@ void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
     if(gradientTransform()->numberOfItems() > 0)
         mat = gradientTransform()->consolidate()->matrix()->matrix();
 
-    DeprecatedString ref = String(href()).deprecatedString();
+    DeprecatedString ref = href().deprecatedString();
     KRenderingPaintServer *pserver = getPaintServerById(document(), ref.mid(1));
 
     if(pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT))

@@ -145,13 +145,13 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     FloatRect boundingBox = FloatRect(0, 0, width(), height());
     const SVGRenderStyle *svgStyle = style()->svgStyle();
             
-    if (KCanvasClipper *clipper = getClipperById(document(), svgStyle->clipPath().mid(1)))
+    if (KCanvasClipper* clipper = getClipperById(document(), svgStyle->clipPath().substring(1)))
         clipper->applyClip(boundingBox);
 
-    if (KCanvasMasker *masker = getMaskerById(document(), svgStyle->maskElement().mid(1)))
+    if (KCanvasMasker* masker = getMaskerById(document(), svgStyle->maskElement().substring(1)))
         masker->applyMask(boundingBox);
 
-    KCanvasFilter *filter = getFilterById(document(), svgStyle->filter().mid(1));
+    KCanvasFilter* filter = getFilterById(document(), svgStyle->filter().substring(1));
     if (filter)
         filter->prepareFilter(boundingBox);
     
@@ -260,7 +260,7 @@ IntRect RenderSVGImage::getAbsoluteRepaintRect()
     FloatRect repaintRect = absoluteTransform().mapRect(FloatRect(image->x()->value(), image->y()->value(), width(), height()));
 
     // Filters can expand the bounding box
-    KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
+    KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
     if (filter)
         repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
 

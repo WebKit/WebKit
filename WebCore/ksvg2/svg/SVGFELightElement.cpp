@@ -21,13 +21,11 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "DeprecatedStringList.h"
-
 #include "Attr.h"
 
-#include <kcanvas/KCanvasResources.h>
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
+#include "KCanvasResources.h"
+#include "KCanvasFilters.h"
+#include "KRenderingDevice.h"
 
 #include "SVGNames.h"
 #include "SVGHelper.h"

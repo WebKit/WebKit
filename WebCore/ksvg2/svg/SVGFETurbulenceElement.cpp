@@ -46,8 +46,8 @@ SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Doc
     , m_seed(0.0)
     , m_stitchTiles(0)
     , m_type(0)
+    , m_filterEffect(0)
 {
-    m_filterEffect = 0;
 }
 
 SVGFETurbulenceElement::~SVGFETurbulenceElement()

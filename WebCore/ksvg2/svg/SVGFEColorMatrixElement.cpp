@@ -44,8 +44,8 @@ SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, D
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_type(0)
     , m_values(new SVGNumberList(0))
+    , m_filterEffect(0)
 {
-    m_filterEffect = 0;
 }
 
 SVGFEColorMatrixElement::~SVGFEColorMatrixElement()
@@ -60,8 +60,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, SVGNumberList*, NumberLis
 void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
-    if (attr->name() == SVGNames::typeAttr)
-    {
+    if (attr->name() == SVGNames::typeAttr) {
         if(value == "matrix")
             setTypeBaseValue(SVG_FECOLORMATRIX_TYPE_MATRIX);
         else if(value == "saturate")
@@ -86,7 +85,7 @@ KCanvasFEColorMatrix *SVGFEColorMatrixElement::filterEffect() const
     if (!m_filterEffect)
         return 0;
         
-    m_filterEffect->setIn(in().deprecatedString());
+    m_filterEffect->setIn(in());
     setStandardAttributes(m_filterEffect);
     DeprecatedValueList<float> _values;
     SVGNumberList *numbers = values();

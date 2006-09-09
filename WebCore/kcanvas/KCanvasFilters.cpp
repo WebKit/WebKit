@@ -103,21 +103,22 @@ void KCanvasFilterEffect::setSubRegion(const FloatRect &subregion)
     m_subregion = subregion;
 }
 
-DeprecatedString KCanvasFilterEffect::in() const
+String KCanvasFilterEffect::in() const
 {
     return m_in;
 }
-void KCanvasFilterEffect::setIn(const DeprecatedString &in)
+
+void KCanvasFilterEffect::setIn(const String &in)
 {
     m_in = in;
 }
 
-DeprecatedString KCanvasFilterEffect::result() const
+String KCanvasFilterEffect::result() const
 {
     return m_result;
 }
 
-void KCanvasFilterEffect::setResult(const DeprecatedString &result)
+void KCanvasFilterEffect::setResult(const String &result)
 {
     m_result = result;
 }
@@ -421,7 +422,16 @@ TextStream &KCanvasFEMerge::externalRepresentation(TextStream &ts) const
 {
     ts << "[type=MERGE] ";
     KCanvasFilterEffect::externalRepresentation(ts);
-    ts << "[merge inputs=" << m_mergeInputs << "]";    
+    ts << "[merge inputs=[";
+    unsigned x = 0;
+    unsigned size = m_mergeInputs.size();
+    while (x < size) {
+        ts << m_mergeInputs[x];
+        x++;
+        if (x < m_mergeInputs.size())
+            ts << ", ";
+    }
+    ts << "]]";
     return ts;
 }
 

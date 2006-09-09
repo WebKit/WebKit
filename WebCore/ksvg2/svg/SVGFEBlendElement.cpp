@@ -22,8 +22,6 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "DeprecatedStringList.h"
-
 #include "Attr.h"
 
 #include <kcanvas/KCanvasFilters.h>
@@ -34,13 +32,13 @@
 #include "SVGRenderStyle.h"
 #include "SVGFEBlendElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document *doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_mode(0)
+    , m_filterEffect(0)
 {
-    m_filterEffect = 0;
 }
 
 SVGFEBlendElement::~SVGFEBlendElement()
@@ -83,10 +81,12 @@ KCanvasFEBlend *SVGFEBlendElement::filterEffect() const
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setBlendMode((KCBlendModeType)(mode()-1));
-    m_filterEffect->setIn(in().deprecatedString());
-    m_filterEffect->setIn2(String(in2()).deprecatedString());
+    m_filterEffect->setIn(in());
+    m_filterEffect->setIn2(in2());
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
+}
+
 }
 
 // vim:ts=4:noet

@@ -49,10 +49,10 @@ SVGFitToViewBox::~SVGFitToViewBox()
 ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGFitToViewBox, SVGRect*, Rect, rect, ViewBox, viewBox, SVGNames::viewBoxAttr.localName(), m_viewBox.get())
 ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr.localName(), m_preserveAspectRatio.get())
 
-void SVGFitToViewBox::parseViewBox(StringImpl* str)
+void SVGFitToViewBox::parseViewBox(const String& str)
 {
     double x = 0, y = 0, w = 0, h = 0;
-    DeprecatedString viewbox = String(str).deprecatedString();
+    DeprecatedString viewbox = str.deprecatedString();
     const char *p = viewbox.latin1();
     const char *end = p + viewbox.length();
     const char *c = p;
@@ -102,7 +102,7 @@ SVGMatrix* SVGFitToViewBox::viewBoxToViewTransform(float viewWidth, float viewHe
 bool SVGFitToViewBox::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::viewBoxAttr) {
-        parseViewBox(attr->value().impl());
+        parseViewBox(attr->value());
         return true;
     } else if (attr->name() == SVGNames::preserveAspectRatioAttr) {
         preserveAspectRatioBaseValue()->parsePreserveAspectRatio(attr->value().impl());

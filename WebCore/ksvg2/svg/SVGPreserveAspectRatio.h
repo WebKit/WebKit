@@ -49,7 +49,7 @@ namespace WebCore {
                               float physHeight);
 
         // Helper
-        void parsePreserveAspectRatio(StringImpl *string);
+        void parsePreserveAspectRatio(const String&);
 
     protected:
         unsigned short m_align;

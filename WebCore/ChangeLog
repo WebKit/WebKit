@@ -1,3 +1,130 @@
+
+2006-09-09  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by Tim H.
+        
+        Remove DeprecatedString usage and fix style.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10787
+
+        No tests were harmed in the making of this patch.
+
+        * kcanvas/KCanvasFilters.cpp:
+        (WebCore::KCanvasFilterEffect::in):
+        (WebCore::KCanvasFilterEffect::setIn):
+        (WebCore::KCanvasFilterEffect::result):
+        (WebCore::KCanvasFilterEffect::setResult):
+        (WebCore::KCanvasFEMerge::externalRepresentation):
+        * kcanvas/KCanvasFilters.h:
+        (WebCore::KCanvasFEBlend::in2):
+        (WebCore::KCanvasFEBlend::setIn2):
+        (WebCore::KCanvasFEComposite::in2):
+        (WebCore::KCanvasFEComposite::setIn2):
+        (WebCore::KCanvasFEDisplacementMap::in2):
+        (WebCore::KCanvasFEDisplacementMap::setIn2):
+        (WebCore::KCanvasFEMerge::mergeInputs):
+        (WebCore::KCanvasFEMerge::setMergeInputs):
+        * kcanvas/KCanvasResources.cpp:
+        (WebCore::KCanvasResource::idInRegistry):
+        (WebCore::KCanvasResource::setIdInRegistry):
+        (WebCore::getResourceById):
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::getAbsoluteRepaintRect):
+        (WebCore::RenderPath::paint):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * kcanvas/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::getAbsoluteRepaintRect):
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::getAbsoluteRepaintRect):
+        * kcanvas/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint):
+        * kcanvas/device/KRenderingPaintServer.h:
+        (WebCore::KRenderingPaintServer::idInRegistry):
+        (WebCore::KRenderingPaintServer::setIdInRegistry):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::KCanvasFilterQuartz::imageForName):
+        (WebCore::KCanvasFilterQuartz::setImageForName):
+        (WebCore::KCanvasFEMergeQuartz::getCIFilter):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyle.cpp:
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/ecma/GlobalObject.cpp:
+        (GlobalObject::get):
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (WebCore::SVGTimer::notifyAll):
+        * ksvg2/svg/SVGDescElement.cpp:
+        (WebCore::SVGDescElement::SVGDescElement):
+        (WebCore::SVGDescElement::description):
+        * ksvg2/svg/SVGDescElement.h:
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement):
+        (WebCore::SVGFEBlendElement::filterEffect):
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        (SVGFEColorMatrixElement::filterEffect):
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::SVGFEComponentTransferElement):
+        (WebCore::SVGFEComponentTransferElement::filterEffect):
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        (SVGFECompositeElement::SVGFECompositeElement):
+        (SVGFECompositeElement::filterEffect):
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        (WebCore::SVGFEDiffuseLightingElement::filterEffect):
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        (SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        (SVGFEDisplacementMapElement::filterEffect):
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::SVGFEFloodElement):
+        (WebCore::SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        (SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        (SVGFEGaussianBlurElement::filterEffect):
+        * ksvg2/svg/SVGFELightElement.cpp:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        (SVGFEMergeElement::filterEffect):
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        (SVGFEOffsetElement::SVGFEOffsetElement):
+        (SVGFEOffsetElement::filterEffect):
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        (SVGFESpecularLightingElement::filterEffect):
+        * ksvg2/svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::SVGFETileElement):
+        (WebCore::SVGFETileElement::filterEffect):
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        (SVGFETurbulenceElement::SVGFETurbulenceElement):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        (WebCore::SVGFitToViewBox::parseMappedAttribute):
+        * ksvg2/svg/SVGFitToViewBox.h:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (SVGLinearGradientElement::buildGradient):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::fillAttributesFromReferencePattern):
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::SVGPreserveAspectRatio):
+        (WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio):
+        (WebCore::SVGPreserveAspectRatio::getCTM):
+        * ksvg2/svg/SVGPreserveAspectRatio.h:
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        * ksvg2/svg/SVGStyleElement.cpp:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        * ksvg2/svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+        (WebCore::SVGViewElement::parseMappedAttribute):
+        * ksvg2/svg/SVGZoomAndPan.cpp:
+        (WebCore::SVGZoomAndPan::SVGZoomAndPan):
+
 2006-09-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim H.

@@ -26,7 +26,6 @@
 #include "SVGStyleElement.h"
 
 #include "CSSStyleSheet.h"
-#include "DeprecatedString.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "MediaList.h"

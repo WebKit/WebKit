@@ -218,7 +218,7 @@ void SVGTimer::notifyAll()
                 if(!animColor)
                     continue;
 
-                DeprecatedString name = animColor->attributeName();
+                String name = animColor->attributeName();
                 Color color = animColor->color();
 
                 if(!targetColor.contains(name))

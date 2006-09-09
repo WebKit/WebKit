@@ -36,7 +36,7 @@ namespace WebCore
         SVGDescElement(const QualifiedName&, Document*);
         virtual ~SVGDescElement();
 
-        StringImpl *description() const;
+        String description() const;
     };
 
 } // namespace WebCore
