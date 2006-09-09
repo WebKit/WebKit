@@ -1,6 +1,6 @@
 <?php 
-	$title="WebKit Coding Style Guidelines";
-	include("../header.inc"); 
+    $title="WebKit Coding Style Guidelines";
+    include("../header.inc"); 
 ?>
 
 
@@ -75,16 +75,16 @@ if (timeToGetCoffee)
 {
     outtaHere = true;
 }
-	
+    
 if (timeToGetCoffee) {
 }
 else
-	
+    
 // comment on else case
-	
+    
 if (timeToGoHome)
     outtaHere = true;
-	</pre>
+    </pre>
 </li>
 </pre>
 </li>
@@ -123,36 +123,36 @@ void noArgFunction ();
 <ol>
 <li>In C++, the null pointer value should be written as <code>0</code>. In C it should be written as <code>NULL</code>. In Objective-C, it should be written as <code>nil</code> if it is being used as a null pointer of type <code>id</code> or another ObjC object type, otherwise <code>NULL</code>.</li>
 <li>True and false values of type <code>bool</code> (common in C and C++), or just generic true/false values, should be written as <code>true</code> and <code>false</code>. Values of the Objective-C <code>BOOL</code> type should be written as <code>YES</code> and <code>NO</code>.</li>
-<li>Tests for null pointers, false values and 0 values should all be done diretly, not through an inqueality or equality comparison.<br />
+<li>Tests for null pointers, false values and 0 values should all be done directly, not through an inqueality or equality comparison.<br />
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
-	
+    
 // test for true
 if (foo->isSomething()) {
     // code
 }
-	
+    
 // test for false
 if (!foo->isSomething()) {
     // code
 }
-	
+    
 // test for non-null
 if (ptr) {
    // code
 }
-	
+    
 // test for null
 if (!ptr) {
    // code
 }
-	
+    
 // test for nonzero
 if (count) {
     // code
 }
-	
+    
 // test for zero
 if (!count) {
     // code
@@ -164,19 +164,19 @@ if (!count) {
 if (foo->isSomething() == true) {
     // code
 }
-	
+    
 if (foo->isSomething() != false) {
     // code
 }
-	
+    
 if (p == NULL) {
     // code
 }
-	
+    
 if (nil != p) {
     // code
 }
-	
+    
 if (count == 0) {
     // code
 }
@@ -197,7 +197,7 @@ class MyImportantClass;
 <h4 style="color: #ff0000 !important">Wrong:</h4>
 <pre style="background-color: #F2F2F2">
 class My_important_class;
-	
+    
 class myImportantClass;
 </pre>
 </li>
@@ -212,7 +212,7 @@ int myInt;
 <h4 style="color: #ff0000 !important">Wrong:</h4>
 <pre style="background-color: #F2F2F2">
 int MyInt;
-	
+    
 int my_int;
 </pre>
 </li>
@@ -291,5 +291,5 @@ Don't bother to organize them in a logical order.
 </ol>
 
 <?php
-	include("../footer.inc");
+    include("../footer.inc");
 ?>
