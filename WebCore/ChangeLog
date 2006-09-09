@@ -1,3 +1,16 @@
+2006-09-08  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by beth.
+
+        Remove the last vestiges of KDOM (KDOMCSSValue and KDOMCSSValueList)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10778
+
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        (WebCore::CSSParser::parseSVGStrokeDasharray):
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+
 2006-09-07  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin and Tim H.
