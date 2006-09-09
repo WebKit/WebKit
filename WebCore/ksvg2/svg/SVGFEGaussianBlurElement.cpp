@@ -71,7 +71,7 @@ void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute *attr)
             setStdDeviationYBaseValue(numbers[1].toDouble());
     }
     else if (attr->name() == SVGNames::inAttr)
-        setInBaseValue(value.impl());
+        setInBaseValue(value);
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -82,10 +82,10 @@ KCanvasFEGaussianBlur *SVGFEGaussianBlurElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEGaussianBlur *>(renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
+    m_filterEffect->setIn(in().deprecatedString());
     setStandardAttributes(m_filterEffect);
-    m_filterEffect->setStdDeviationX(stdDeviationXBaseValue());
-    m_filterEffect->setStdDeviationY(stdDeviationYBaseValue());
+    m_filterEffect->setStdDeviationX(stdDeviationX());
+    m_filterEffect->setStdDeviationY(stdDeviationY());
     return m_filterEffect;
 }
 

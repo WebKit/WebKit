@@ -76,9 +76,9 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
     else if (attr->name() == SVGNames::yChannelSelectorAttr)
         setYChannelSelectorBaseValue(stringToChannel(value));
     else if (attr->name() == SVGNames::inAttr)
-        setInBaseValue(value.impl());
+        setInBaseValue(value);
     else if (attr->name() == SVGNames::in2Attr)
-        setIn2BaseValue(value.impl());
+        setIn2BaseValue(value);
     else if (attr->name() == SVGNames::scaleAttr)
         setScaleBaseValue(value.deprecatedString().toDouble());
     else
@@ -91,11 +91,11 @@ KCanvasFEDisplacementMap* SVGFEDisplacementMapElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEDisplacementMap *>(renderingDevice()->createFilterEffect(FE_DISPLACEMENT_MAP));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setXChannelSelector((KCChannelSelectorType)(xChannelSelectorBaseValue()));
-    m_filterEffect->setYChannelSelector((KCChannelSelectorType)(yChannelSelectorBaseValue()));
-    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
-    m_filterEffect->setIn2(String(in2BaseValue()).deprecatedString());
-    m_filterEffect->setScale(scaleBaseValue());
+    m_filterEffect->setXChannelSelector((KCChannelSelectorType)(xChannelSelector()));
+    m_filterEffect->setYChannelSelector((KCChannelSelectorType)(yChannelSelector()));
+    m_filterEffect->setIn(in().deprecatedString());
+    m_filterEffect->setIn2(String(in2()).deprecatedString());
+    m_filterEffect->setScale(scale());
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
 }

@@ -24,8 +24,8 @@
 
 namespace WebCore {
 
-SVGFEPointLightElement::SVGFEPointLightElement(const QualifiedName& tagName, Document *doc) : 
-SVGFELightElement(tagName, doc)
+SVGFEPointLightElement::SVGFEPointLightElement(const QualifiedName& tagName, Document* doc)
+    : SVGFELightElement(tagName, doc)
 {
 }
 
@@ -35,7 +35,7 @@ SVGFEPointLightElement::~SVGFEPointLightElement()
 
 KCLightSource *SVGFEPointLightElement::lightSource() const
 {
-    KCanvasPoint3F pos(xBaseValue(), yBaseValue(), zBaseValue());
+    KCanvasPoint3F pos(x(), y(), z());
     return new KCPointLightSource(pos);
 }
 

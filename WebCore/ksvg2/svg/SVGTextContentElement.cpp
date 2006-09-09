@@ -97,7 +97,7 @@ void SVGTextContentElement::selectSubString(unsigned long charnum, unsigned long
 void SVGTextContentElement::parseMappedAttribute(MappedAttribute *attr)
 {
     //if (attr->name() == SVGNames::lengthAdjustAttr)
-    //    xBaseValue()->setValueAsString(value.impl());
+    //    xBaseValue()->setValueAsString(value);
     //else
     {
         if (SVGTests::parseMappedAttribute(attr))

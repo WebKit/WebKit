@@ -56,24 +56,26 @@ void SVGCircleElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
-        cxBaseValue()->setValueAsString(value.impl());
+        cxBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::cyAttr)
-        cyBaseValue()->setValueAsString(value.impl());
+        cyBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::rAttr)
-        rBaseValue()->setValueAsString(value.impl());
-    else
-    {
-        if(SVGTests::parseMappedAttribute(attr)) return;
-        if(SVGLangSpace::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+        rBaseValue()->setValueAsString(value);
+    else {
+        if (SVGTests::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
 }
 
 Path SVGCircleElement::toPathData() const
 {
-    float _cx = cxBaseValue()->value(), _cy = cyBaseValue()->value();
-    float _r = rBaseValue()->value();
+    float _cx = cx()->value(), _cy = cy()->value();
+    float _r = r()->value();
 
     return Path::createCircle(FloatPoint(_cx, _cy), _r);
 }
@@ -81,11 +83,11 @@ Path SVGCircleElement::toPathData() const
 const SVGStyledElement *SVGCircleElement::pushAttributeContext(const SVGStyledElement *context)
 {
     // All attribute's contexts are equal (so just take the one from 'cx').
-    const SVGStyledElement *restore = cxBaseValue()->context();
+    const SVGStyledElement *restore = cx()->context();
 
-    cxBaseValue()->setContext(context);
-    cyBaseValue()->setContext(context);
-    rBaseValue()->setContext(context);
+    cx()->setContext(context);
+    cy()->setContext(context);
+    r()->setContext(context);
     
     SVGStyledElement::pushAttributeContext(context);
     return restore;
@@ -93,9 +95,9 @@ const SVGStyledElement *SVGCircleElement::pushAttributeContext(const SVGStyledEl
 
 bool SVGCircleElement::hasPercentageValues() const
 {
-    if (cxBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        cyBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        rBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
+    if (cx()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        cy()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        r()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
         return true;
 
     return false;

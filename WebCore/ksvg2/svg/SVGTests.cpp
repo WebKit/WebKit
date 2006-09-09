@@ -65,8 +65,7 @@ bool SVGTests::hasExtension(StringImpl *) const
 bool SVGTests::isValid() const
 {
     SVGStringList *list = requiredFeatures();
-    for(unsigned long i = 0;i < list->numberOfItems();i++)
-    {
+    for (unsigned long i = 0;i < list->numberOfItems();i++) {
         String value = String(list->getItem(i));
         if(value.isEmpty() || !DOMImplementation::instance()->hasFeature(value, String()))
             return false;

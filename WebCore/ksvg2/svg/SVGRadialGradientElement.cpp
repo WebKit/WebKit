@@ -68,15 +68,15 @@ void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
-        cxBaseValue()->setValueAsString(value.impl());
+        cxBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::cyAttr)
-        cyBaseValue()->setValueAsString(value.impl());
+        cyBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::rAttr)
-        rBaseValue()->setValueAsString(value.impl());
+        rBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::fxAttr)
-        fxBaseValue()->setValueAsString(value.impl());
+        fxBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::fyAttr)
-        fyBaseValue()->setValueAsString(value.impl());
+        fyBaseValue()->setValueAsString(value);
     else
         SVGGradientElement::parseMappedAttribute(attr);
 }
@@ -85,25 +85,25 @@ void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
 {
     rebuildStops(); // rebuild stops before possibly importing them from any referenced gradient.
 
-    bool bbox = (gradientUnitsBaseValue() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+    bool bbox = (gradientUnits() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     bool fxSet = hasAttribute(SVGNames::fxAttr);
     bool fySet = hasAttribute(SVGNames::fyAttr);
-    cxBaseValue()->setBboxRelative(bbox);
-    cyBaseValue()->setBboxRelative(bbox);
-    rBaseValue()->setBboxRelative(bbox);
-    fxBaseValue()->setBboxRelative(bbox);
-    fyBaseValue()->setBboxRelative(bbox);
-    float _cx = cxBaseValue()->value(), _cy = cyBaseValue()->value();
-    float _r = rBaseValue()->value();
-    float _fx = fxSet ? fxBaseValue()->value() : _cx;
-    float _fy = fySet ? fyBaseValue()->value() : _cy;
+    cx()->setBboxRelative(bbox);
+    cy()->setBboxRelative(bbox);
+    r()->setBboxRelative(bbox);
+    fx()->setBboxRelative(bbox);
+    fy()->setBboxRelative(bbox);
+    float _cx = cx()->value(), _cy = cy()->value();
+    float _r = r()->value();
+    float _fx = fxSet ? fx()->value() : _cx;
+    float _fy = fySet ? fy()->value() : _cy;
 
     KRenderingPaintServerRadialGradient *grad = static_cast<KRenderingPaintServerRadialGradient *>(_grad);
     AffineTransform mat;
-    if(gradientTransformBaseValue()->numberOfItems() > 0)
-        mat = gradientTransformBaseValue()->consolidate()->matrix()->matrix();
+    if(gradientTransform()->numberOfItems() > 0)
+        mat = gradientTransform()->consolidate()->matrix()->matrix();
 
-    DeprecatedString ref = String(hrefBaseValue()).deprecatedString();
+    DeprecatedString ref = String(href()).deprecatedString();
     KRenderingPaintServer *pserver = getPaintServerById(document(), ref.mid(1));
 
     if(pserver && (pserver->type() == PS_RADIAL_GRADIENT || pserver->type() == PS_LINEAR_GRADIENT))
@@ -161,9 +161,9 @@ void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
     }
     else
     {
-        if(spreadMethodBaseValue() == SVG_SPREADMETHOD_REFLECT)
+        if(spreadMethod() == SVG_SPREADMETHOD_REFLECT)
             grad->setGradientSpreadMethod(SPREADMETHOD_REFLECT);
-        else if(spreadMethodBaseValue() == SVG_SPREADMETHOD_REPEAT)
+        else if(spreadMethod() == SVG_SPREADMETHOD_REPEAT)
             grad->setGradientSpreadMethod(SPREADMETHOD_REPEAT);
         else
             grad->setGradientSpreadMethod(SPREADMETHOD_PAD);

@@ -57,18 +57,18 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGClipPathElement, int, Enumeration, enumeration,
 void SVGClipPathElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
-    if (attr->name() == SVGNames::clipPathUnitsAttr)
-    {
-        if(value == "userSpaceOnUse")
+    if (attr->name() == SVGNames::clipPathUnitsAttr) {
+        if (value == "userSpaceOnUse")
             setClipPathUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if(value == "objectBoundingBox")
+        else if (value == "objectBoundingBox")
             setClipPathUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-    }
-   else
-    {
-        if(SVGTests::parseMappedAttribute(attr)) return;
-        if(SVGLangSpace::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+    } else {
+        if (SVGTests::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
 }
@@ -82,7 +82,7 @@ KCanvasClipper *SVGClipPathElement::canvasResource()
     else
         m_clipper->resetClipData();
 
-    bool bbox = clipPathUnitsBaseValue() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+    bool bbox = clipPathUnits() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
     RenderStyle *clipPathStyle = styleForRenderer(parent()->renderer()); // FIXME: Manual style resolution is a hack
     for (Node *n = firstChild(); n != 0; n = n->nextSibling()) {

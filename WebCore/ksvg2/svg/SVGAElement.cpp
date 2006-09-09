@@ -40,7 +40,11 @@
 namespace WebCore {
 
 SVGAElement::SVGAElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledTransformableElement(tagName, doc), SVGURIReference(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
+    : SVGStyledTransformableElement(tagName, doc)
+    , SVGURIReference()
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
 {
 }
 
@@ -54,7 +58,7 @@ void SVGAElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value(attr->value());
     if (attr->name() == SVGNames::targetAttr) {
-        setTargetBaseValue(value.impl());
+        setTargetBaseValue(value);
     } else {
         if (SVGURIReference::parseMappedAttribute(attr)) {
             m_isLink = attr->value() != 0;
@@ -78,26 +82,23 @@ RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style
 void SVGAElement::defaultEventHandler(Event *evt)
 {
     // TODO : should use CLICK instead
-    if((evt->type() == EventNames::mouseupEvent && m_isLink))
-    {
+    if ((evt->type() == EventNames::mouseupEvent && m_isLink)) {
         MouseEvent *e = static_cast<MouseEvent*>(evt);
 
         DeprecatedString url;
         DeprecatedString utarget;
-        if(e && e->button() == 2)
-        {
+        if (e && e->button() == 2) {
             SVGStyledTransformableElement::defaultEventHandler(evt);
             return;
         }
-        url = parseURL(hrefBaseValue()).deprecatedString();
+        url = parseURL(href()).deprecatedString();
         utarget = getAttribute(SVGNames::targetAttr).deprecatedString();
 
-        if(e && e->button() == 1)
+        if (e && e->button() == 1)
             utarget = "_blank";
 
         if (!evt->defaultPrevented()) {
-            if(ownerDocument() && ownerDocument()->view() && ownerDocument()->frame())
-            {
+            if (ownerDocument() && ownerDocument()->view() && ownerDocument()->frame()) {
                 //document()->view()->resetCursor();
                 document()->frame()->urlSelected(url, utarget);
             }

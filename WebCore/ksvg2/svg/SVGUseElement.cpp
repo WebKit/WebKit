@@ -68,43 +68,45 @@ void SVGUseElement::parseMappedAttribute(MappedAttribute *attr)
     const AtomicString& value = attr->value();
     
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::widthAttr)
-        widthBaseValue()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::heightAttr)
-        heightBaseValue()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value);
     else {
-        if(SVGTests::parseMappedAttribute(attr)) return;
-        if(SVGLangSpace::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
-        if(SVGURIReference::parseMappedAttribute(attr)) return;
+        if (SVGTests::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
+        if (SVGURIReference::parseMappedAttribute(attr))
+            return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
 }
 
 void SVGUseElement::closeRenderer()
 {
-    DeprecatedString ref = String(hrefBaseValue()).deprecatedString();
-    String targetId = SVGURIReference::getTarget(ref);
-    Element *targetElement = ownerDocument()->getElementById(targetId.impl());
+    String targetId = SVGURIReference::getTarget(href().deprecatedString());
+    Element *targetElement = ownerDocument()->getElementById(targetId);
     SVGElement *target = svg_dynamic_cast(targetElement);
-    if (!target)
-    {
+    if (!target) {
         //document()->addForwardReference(this);
         return;
     }
 
-    float _x = xBaseValue()->value(), _y = yBaseValue()->value();
-    float _w = widthBaseValue()->value(), _h = heightBaseValue()->value();
+    float _x = x()->value(), _y = y()->value();
+    float _w = width()->value(), _h = height()->value();
     
     String wString = String::number(_w);
     String hString = String::number(_h);
     
     ExceptionCode ec;
     String trans = String::sprintf("translate(%f, %f)", _x, _y);
-    if(target->hasTagName(SVGNames::symbolTag)) {
+    if (target->hasTagName(SVGNames::symbolTag)) {
         RefPtr<SVGElement> dummy = new SVGSVGElement(SVGNames::svgTag, document());
         if (_w > 0)
             dummy->setAttribute(SVGNames::widthAttr, wString);
@@ -123,15 +125,15 @@ void SVGUseElement::closeRenderer()
         
         appendChild(dummy2, ec);
         dummy2->appendChild(dummy, ec);
-    } else if(target->hasTagName(SVGNames::svgTag)) {
+    } else if (target->hasTagName(SVGNames::svgTag)) {
         RefPtr<SVGDummyElement> dummy = new SVGDummyElement(SVGNames::gTag, document());
         dummy->setAttribute(SVGNames::transformAttr, trans);
         
         RefPtr<SVGElement> root = static_pointer_cast<SVGElement>(target->cloneNode(true));
-        if(hasAttribute(SVGNames::widthAttr))
+        if (hasAttribute(SVGNames::widthAttr))
             root->setAttribute(SVGNames::widthAttr, wString);
             
-        if(hasAttribute(SVGNames::heightAttr))
+        if (hasAttribute(SVGNames::heightAttr))
             root->setAttribute(SVGNames::heightAttr, hString);
             
         appendChild(dummy, ec);

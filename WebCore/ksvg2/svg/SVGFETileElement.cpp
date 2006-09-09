@@ -52,7 +52,7 @@ void SVGFETileElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
-        setInBaseValue(value.impl());
+        setInBaseValue(value);
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -63,7 +63,7 @@ KCanvasFETile *SVGFETileElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFETile *>(renderingDevice()->createFilterEffect(FE_TILE));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
+    m_filterEffect->setIn(in().deprecatedString());
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
 }

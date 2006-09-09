@@ -38,7 +38,7 @@
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document *doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
@@ -46,9 +46,9 @@ SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document *doc
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , m_preserveAspectRatio(new SVGPreserveAspectRatio(this))
+    , m_cachedImage(0)
+    , m_filterEffect(0)
 {
-    m_filterEffect = 0;
-    m_cachedImage = 0;
 }
 
 SVGFEImageElement::~SVGFEImageElement()
@@ -65,18 +65,19 @@ void SVGFEImageElement::parseMappedAttribute(MappedAttribute *attr)
     const String& value = attr->value();
     if (attr->name() == SVGNames::preserveAspectRatioAttr)
         preserveAspectRatioBaseValue()->parsePreserveAspectRatio(value.impl());
-    else
-    {
+    else {
         if (SVGURIReference::parseMappedAttribute(attr)) {
             if (m_cachedImage)
                 m_cachedImage->deref(this);
-            m_cachedImage = ownerDocument()->docLoader()->requestImage(hrefBaseValue());
+            m_cachedImage = ownerDocument()->docLoader()->requestImage(href());
             if (m_cachedImage)
                 m_cachedImage->ref(this);
             return;
         }
-        if(SVGLangSpace::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
 
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
     }
@@ -96,6 +97,8 @@ KCanvasFEImage *SVGFEImageElement::filterEffect() const
         return 0;
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
+}
+
 }
 
 // vim:ts=4:noet

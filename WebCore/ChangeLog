@@ -1,5 +1,129 @@
 2006-09-08  Eric Seidel  <eric@eseidel.com>
 
+        Reviewed by darin.
+
+        Replace incorrect fooBaseValue() calls with foo() calls instead.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10746
+        
+        With the previously broken animation system, we had both base and anim values
+        but they were not automatically connected/disconnected when animation started and stopped.
+        So the animVals were basically never used (since they were always wrong).
+        Now, animVal and baseVal are handled correctly.
+        
+        There are only 3 places in the code where we will ever need to use the BaseValue accessor variants.
+        1. SVGAnimated* DOM bindings
+        2. Animation Code
+        3. parseMappedAttribute implementations
+
+        * kcanvas/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::translationForAttributes):
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::relativeBBox):
+        (WebCore::RenderSVGImage::getAbsoluteRepaintRect):
+        (WebCore::RenderSVGImage::translationForAttributes):
+        * kcanvas/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::translationForAttributes):
+        * ksvg2/misc/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::updateFromElement):
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (SVGCircleElement::parseMappedAttribute):
+        (SVGCircleElement::toPathData):
+        (SVGCircleElement::pushAttributeContext):
+        (SVGCircleElement::hasPercentageValues):
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (SVGClipPathElement::canvasResource):
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        (SVGComponentTransferFunctionElement::transferFunction):
+        * ksvg2/svg/SVGCursorElement.cpp:
+        (SVGCursorElement::parseMappedAttribute):
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::parseMappedAttribute):
+        (WebCore::SVGEllipseElement::toPathData):
+        (WebCore::SVGEllipseElement::pushAttributeContext):
+        (WebCore::SVGEllipseElement::hasPercentageValues):
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        (SVGFEBlendElement::filterEffect):
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (SVGFEColorMatrixElement::filterEffect):
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        (SVGFEComponentTransferElement::filterEffect):
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        (SVGFECompositeElement::filterEffect):
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::filterEffect):
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        (SVGFEDisplacementMapElement::filterEffect):
+        * ksvg2/svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::lightSource):
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        (SVGFEGaussianBlurElement::filterEffect):
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        (SVGFEImageElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        (SVGFEMergeElement::SVGFEMergeElement):
+        (SVGFEMergeElement::filterEffect):
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        (SVGFEOffsetElement::filterEffect):
+        * ksvg2/svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::SVGFEPointLightElement):
+        (WebCore::SVGFEPointLightElement::lightSource):
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (SVGFESpecularLightingElement::filterEffect):
+        * ksvg2/svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::lightSource):
+        * ksvg2/svg/SVGFETileElement.cpp:
+        (SVGFETileElement::filterEffect):
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        (SVGFETurbulenceElement::filterEffect):
+        * ksvg2/svg/SVGFilterElement.cpp:
+        (SVGFilterElement::canvasResource):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (SVGGradientElement::rebuildStops):
+        * ksvg2/svg/SVGHelper.cpp:
+        (WebCore::SVGHelper::PercentageOfViewport):
+        * ksvg2/svg/SVGLineElement.cpp:
+        (SVGLineElement::toPathData):
+        (SVGLineElement::pushAttributeContext):
+        (SVGLineElement::hasPercentageValues):
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (SVGLinearGradientElement::buildGradient):
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::canvasResource):
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::attributeChanged):
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::pushAttributeContext):
+        (WebCore::SVGPatternElement::fillAttributesFromReferencePattern):
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        (WebCore::SVGPatternElement::getCTM):
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::toPathData):
+        (WebCore::SVGRectElement::pushAttributeContext):
+        (WebCore::SVGRectElement::hasPercentageValues):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::viewport):
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        (WebCore::SVGSVGElement::getCTM):
+        (WebCore::SVGSVGElement::getScreenCTM):
+        (WebCore::SVGSVGElement::createRenderer):
+        * ksvg2/svg/SVGTRefElement.cpp:
+        (SVGTRefElement::updateReferencedText):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (SVGUseElement::closeRenderer):
+
+2006-09-08  Eric Seidel  <eric@eseidel.com>
+
         Reviewed by beth.
 
         Remove the last vestiges of KDOM (KDOMCSSValue and KDOMCSSValueList)

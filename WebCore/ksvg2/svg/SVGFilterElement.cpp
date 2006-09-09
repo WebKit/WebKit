@@ -99,13 +99,13 @@ void SVGFilterElement::parseMappedAttribute(MappedAttribute *attr)
             setPrimitiveUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     }
     else if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::widthAttr)
-        widthBaseValue()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::heightAttr)
-        heightBaseValue()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value);
     else
     {
         if(SVGURIReference::parseMappedAttribute(attr)) return;
@@ -124,18 +124,16 @@ KCanvasFilter *SVGFilterElement::canvasResource()
     if (!m_filter)
         m_filter = static_cast<KCanvasFilter *>(renderingDevice()->createResource(RS_FILTER));
 
-    bool filterBBoxMode = filterUnitsBaseValue() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+    bool filterBBoxMode = filterUnits() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setFilterBoundingBoxMode(filterBBoxMode);
     
-    xBaseValue()->setBboxRelative(filterBBoxMode);
-    yBaseValue()->setBboxRelative(filterBBoxMode);
-    widthBaseValue()->setBboxRelative(filterBBoxMode);
-    heightBaseValue()->setBboxRelative(filterBBoxMode);
-    float _x = xBaseValue()->value(), _y = yBaseValue()->value();
-    float _width = widthBaseValue()->value(), _height = heightBaseValue()->value();
-    m_filter->setFilterRect(FloatRect(_x, _y, _width, _height));
+    x()->setBboxRelative(filterBBoxMode);
+    y()->setBboxRelative(filterBBoxMode);
+    width()->setBboxRelative(filterBBoxMode);
+    height()->setBboxRelative(filterBBoxMode);
+    m_filter->setFilterRect(FloatRect(x()->value(), y()->value(), width()->value(), height()->value()));
     
-    bool primitiveBBoxMode = primitiveUnitsBaseValue() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+    bool primitiveBBoxMode = primitiveUnits() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setEffectBoundingBoxMode(primitiveBBoxMode);
     // FIXME: When does this info get passed to the filters elements?
 

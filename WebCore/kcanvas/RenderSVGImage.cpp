@@ -171,12 +171,12 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
         
     SVGImageElement *imageElt = static_cast<SVGImageElement *>(node());
         
-    if (imageElt->preserveAspectRatioBaseValue()->align() == SVG_PRESERVEASPECTRATIO_NONE)
+    if (imageElt->preserveAspectRatio()->align() == SVG_PRESERVEASPECTRATIO_NONE)
         RenderImage::paint(pi, 0, 0);
     else {
         FloatRect destRect(m_x, m_y, contentWidth(), contentHeight());
         FloatRect srcRect(0, 0, image()->width(), image()->height());
-        adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatioBaseValue());
+        adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
         c->drawImage(image(), destRect, srcRect);
     }
 
@@ -244,7 +244,7 @@ void RenderSVGImage::layout()
 FloatRect RenderSVGImage::relativeBBox(bool includeStroke) const
 {
     SVGImageElement *image = static_cast<SVGImageElement *>(node());
-    return FloatRect(image->xBaseValue()->value(), image->yBaseValue()->value(), width(), height());
+    return FloatRect(image->x()->value(), image->y()->value(), width(), height());
 }
 
 void RenderSVGImage::imageChanged(CachedImage* image)
@@ -257,7 +257,7 @@ void RenderSVGImage::imageChanged(CachedImage* image)
 IntRect RenderSVGImage::getAbsoluteRepaintRect()
 {
     SVGImageElement *image = static_cast<SVGImageElement *>(node());
-    FloatRect repaintRect = absoluteTransform().mapRect(FloatRect(image->xBaseValue()->value(), image->yBaseValue()->value(), width(), height()));
+    FloatRect repaintRect = absoluteTransform().mapRect(FloatRect(image->x()->value(), image->y()->value(), width(), height()));
 
     // Filters can expand the bounding box
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
@@ -276,7 +276,7 @@ void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 AffineTransform RenderSVGImage::translationForAttributes()
 {
     SVGImageElement *image = static_cast<SVGImageElement *>(node());
-    return AffineTransform().translate(image->xBaseValue()->value(), image->yBaseValue()->value());
+    return AffineTransform().translate(image->x()->value(), image->y()->value());
 }
 
 void RenderSVGImage::translateForAttributes()

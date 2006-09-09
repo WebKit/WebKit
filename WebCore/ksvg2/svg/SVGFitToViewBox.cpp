@@ -90,11 +90,11 @@ bail_out:;
 
 SVGMatrix* SVGFitToViewBox::viewBoxToViewTransform(float viewWidth, float viewHeight) const
 {
-    SVGRect* viewBoxRect = viewBoxBaseValue();
+    SVGRect* viewBoxRect = viewBox();
     if(viewBoxRect->width() == 0 || viewBoxRect->height() == 0)
         return SVGSVGElement::createSVGMatrix();
 
-    return preserveAspectRatioBaseValue()->getCTM(viewBoxRect->x(),
+    return preserveAspectRatio()->getCTM(viewBoxRect->x(),
             viewBoxRect->y(), viewBoxRect->width(), viewBoxRect->height(),
             0, 0, viewWidth, viewHeight);
 }

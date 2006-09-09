@@ -52,8 +52,8 @@ void SVGImageLoader::updateFromElement()
     WebCore::Document* doc = imageElement->ownerDocument();
     
     CachedImage *newImage = 0;
-    if (!imageElement->hrefBaseValue().isEmpty())
-        newImage = doc->docLoader()->requestImage(imageElement->hrefBaseValue());
+    if (!imageElement->href().isEmpty())
+        newImage = doc->docLoader()->requestImage(imageElement->href());
 
     CachedImage *oldImage = image();
     if (newImage != oldImage) {

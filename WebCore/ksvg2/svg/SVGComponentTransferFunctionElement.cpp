@@ -94,13 +94,13 @@ void SVGComponentTransferFunctionElement::parseMappedAttribute(MappedAttribute *
 KCComponentTransferFunction SVGComponentTransferFunctionElement::transferFunction() const
 {
     KCComponentTransferFunction func;
-    func.type = (KCComponentTransferType)(typeBaseValue() - 1);
-    func.slope = slopeBaseValue();
-    func.intercept = interceptBaseValue();
-    func.amplitude = amplitudeBaseValue();
-    func.exponent = exponentBaseValue();
-    func.offset = offsetBaseValue();
-    SVGNumberList *numbers = tableValuesBaseValue();
+    func.type = (KCComponentTransferType)(type() - 1);
+    func.slope = slope();
+    func.intercept = intercept();
+    func.amplitude = amplitude();
+    func.exponent = exponent();
+    func.offset = offset();
+    SVGNumberList *numbers = tableValues();
     unsigned int nr = numbers->numberOfItems();
     for (unsigned int i = 0; i < nr; i++)
         func.tableValues.append(numbers->getItem(i)->value());

@@ -136,7 +136,7 @@ void SVGGradientElement::rebuildStops() const
             SVGElement *element = svg_dynamic_cast(n);
             if (element && element->isGradientStop()) {
                 SVGStopElement *stop = static_cast<SVGStopElement *>(element);
-                float stopOffset = stop->offsetBaseValue();
+                float stopOffset = stop->offset();
                 
                 RenderStyle *stopStyle = document()->styleSelector()->styleForElement(stop, gradientStyle);
                 Color c = stopStyle->svgStyle()->stopColor();

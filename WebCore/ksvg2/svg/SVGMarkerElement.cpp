@@ -69,20 +69,20 @@ void SVGMarkerElement::parseMappedAttribute(MappedAttribute *attr)
             setMarkerUnitsBaseValue(SVG_MARKERUNITS_USERSPACEONUSE);
     }
     else if (attr->name() == SVGNames::refXAttr)
-        refXBaseValue()->setValueAsString(value.impl());
+        refXBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::refYAttr)
-        refYBaseValue()->setValueAsString(value.impl());
+        refYBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::markerWidthAttr)
-        markerWidthBaseValue()->setValueAsString(value.impl());
+        markerWidthBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::markerHeightAttr)
-        markerHeightBaseValue()->setValueAsString(value.impl());
+        markerHeightBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::orientAttr)
     {
         if (value == "auto")
             setOrientToAuto();
         else {
             SVGAngle *angle = SVGSVGElement::createSVGAngle();
-            angle->setValueAsString(value.impl());
+            angle->setValueAsString(value);
             setOrientToAngle(angle);
         }
     }
@@ -127,16 +127,16 @@ KCanvasMarker *SVGMarkerElement::canvasResource()
     if(!m_orientType)
         setOrientToAngle(SVGSVGElement::createSVGAngle());
     
-    if(orientTypeBaseValue() == SVG_MARKER_ORIENT_ANGLE)
-        m_marker->setAngle(orientAngleBaseValue()->value());
+    if(orientType() == SVG_MARKER_ORIENT_ANGLE)
+        m_marker->setAngle(orientAngle()->value());
     else
         m_marker->setAutoAngle();
 
-    m_marker->setRef(refXBaseValue()->value(), refYBaseValue()->value());
+    m_marker->setRef(refX()->value(), refY()->value());
     
-    m_marker->setUseStrokeWidth(markerUnitsBaseValue() == SVG_MARKERUNITS_STROKEWIDTH);
-    double w = markerWidthBaseValue()->value();
-    double h = markerHeightBaseValue()->value();
+    m_marker->setUseStrokeWidth(markerUnits() == SVG_MARKERUNITS_STROKEWIDTH);
+    double w = markerWidth()->value();
+    double h = markerHeight()->value();
     RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(w, h);
     m_marker->setScale(viewBox->matrix().m11(), viewBox->matrix().m22());
     

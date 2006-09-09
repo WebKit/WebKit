@@ -58,13 +58,13 @@ void SVGLineElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::x1Attr)
-        x1BaseValue()->setValueAsString(value.impl());
+        x1BaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::y1Attr)
-        y1BaseValue()->setValueAsString(value.impl());
+        y1BaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::x2Attr)
-        x2BaseValue()->setValueAsString(value.impl());
+        x2BaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::y2Attr)
-        y2BaseValue()->setValueAsString(value.impl());
+        y2BaseValue()->setValueAsString(value);
     else
     {
         if(SVGTests::parseMappedAttribute(attr)) return;
@@ -76,8 +76,8 @@ void SVGLineElement::parseMappedAttribute(MappedAttribute *attr)
 
 Path SVGLineElement::toPathData() const
 {
-    float _x1 = x1BaseValue()->value(), _y1 = y1BaseValue()->value();
-    float _x2 = x2BaseValue()->value(), _y2 = y2BaseValue()->value();
+    float _x1 = x1()->value(), _y1 = y1()->value();
+    float _x2 = x2()->value(), _y2 = y2()->value();
 
     return Path::createLine(FloatPoint(_x1, _y1), FloatPoint(_x2, _y2));
 }
@@ -85,12 +85,12 @@ Path SVGLineElement::toPathData() const
 const SVGStyledElement *SVGLineElement::pushAttributeContext(const SVGStyledElement *context)
 {
     // All attribute's contexts are equal (so just take the one from 'x1').
-    const SVGStyledElement *restore = x1BaseValue()->context();
+    const SVGStyledElement *restore = x1()->context();
 
-    x1BaseValue()->setContext(context);
-    y1BaseValue()->setContext(context);
-    x2BaseValue()->setContext(context);
-    y2BaseValue()->setContext(context);
+    x1()->setContext(context);
+    y1()->setContext(context);
+    x2()->setContext(context);
+    y2()->setContext(context);
     
     SVGStyledElement::pushAttributeContext(context);
     return restore;
@@ -98,10 +98,10 @@ const SVGStyledElement *SVGLineElement::pushAttributeContext(const SVGStyledElem
 
 bool SVGLineElement::hasPercentageValues() const
 {
-    if (x1BaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        y1BaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        x2BaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        y2BaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
+    if (x1()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        y1()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        x2()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        y2()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
         return true;
 
     return false;

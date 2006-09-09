@@ -104,10 +104,10 @@ void SVGSVGElement::setContentStyleType(const AtomicString& type)
 
 FloatRect SVGSVGElement::viewport() const
 {
-    double _x = xBaseValue()->value();
-    double _y = yBaseValue()->value();
-    double w = widthBaseValue()->value();
-    double h = heightBaseValue()->value();
+    double _x = x()->value();
+    double _y = y()->value();
+    double w = width()->value();
+    double h = height()->value();
     RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(w, h);
     viewBox->matrix().map(_x, _y, &_x, &_y);
     viewBox->matrix().map(w, h, &w, &h);
@@ -214,14 +214,14 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute *attr)
             addSVGWindowEventListner(zoomEvent, attr);
     }
     if (attr->name() == SVGNames::xAttr) {
-        xBaseValue()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value);
     } else if (attr->name() == SVGNames::yAttr) {
-        yBaseValue()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value);
     } else if (attr->name() == SVGNames::widthAttr) {
-        widthBaseValue()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value);
         addCSSProperty(attr, CSS_PROP_WIDTH, value);
     } else if (attr->name() == SVGNames::heightAttr) {
-        heightBaseValue()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value);
         addCSSProperty(attr, CSS_PROP_HEIGHT, value);
     } else {
         if (SVGTests::parseMappedAttribute(attr))
@@ -230,10 +230,8 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute *attr)
             return;
         if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
             return;
-        if (SVGFitToViewBox::parseMappedAttribute(attr)) {
-            if (renderer())
-                static_cast<RenderSVGContainer*>(renderer())->setViewBox(FloatRect(viewBoxBaseValue()->x(), viewBoxBaseValue()->y(), viewBoxBaseValue()->width(), viewBoxBaseValue()->height()));
-        }
+        if (SVGFitToViewBox::parseMappedAttribute(attr) && renderer())
+            static_cast<RenderSVGContainer*>(renderer())->setViewBox(FloatRect(viewBox()->x(), viewBox()->y(), viewBox()->width(), viewBox()->height()));
         if (SVGZoomAndPan::parseMappedAttribute(attr))
             return;
 
@@ -342,11 +340,11 @@ SVGMatrix *SVGSVGElement::getCTM() const
     SVGMatrix *mat = createSVGMatrix();
     if(mat)
     {
-        mat->translate(xBaseValue()->value(), yBaseValue()->value());
+        mat->translate(x()->value(), y()->value());
 
         if(attributes()->getNamedItem(SVGNames::viewBoxAttr))
         {
-            RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(widthBaseValue()->value(), heightBaseValue()->value());
+            RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(width()->value(), height()->value());
             mat->multiply(viewBox.get());
         }
     }
@@ -359,11 +357,11 @@ SVGMatrix *SVGSVGElement::getScreenCTM() const
     SVGMatrix *mat = SVGStyledLocatableElement::getScreenCTM();
     if(mat)
     {
-        mat->translate(xBaseValue()->value(), yBaseValue()->value());
+        mat->translate(x()->value(), y()->value());
 
         if(attributes()->getNamedItem(SVGNames::viewBoxAttr))
         {
-            RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(widthBaseValue()->value(), heightBaseValue()->value());
+            RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(width()->value(), height()->value());
             mat->multiply(viewBox.get());
         }
     }
@@ -376,15 +374,15 @@ RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
     RenderSVGContainer *rootContainer = new (arena) RenderSVGContainer(this);
 
     // FIXME: all this setup should be done after attributesChanged, not here.
-    float _x = xBaseValue()->value();
-    float _y = yBaseValue()->value();
-    float _width = widthBaseValue()->value();
-    float _height = heightBaseValue()->value();
+    float _x = x()->value();
+    float _y = y()->value();
+    float _width = width()->value();
+    float _height = height()->value();
 
     rootContainer->setViewport(FloatRect(_x, _y, _width, _height));
-    rootContainer->setViewBox(FloatRect(viewBoxBaseValue()->x(), viewBoxBaseValue()->y(), viewBoxBaseValue()->width(), viewBoxBaseValue()->height()));
-    rootContainer->setAlign(KCAlign(preserveAspectRatioBaseValue()->align() - 1));
-    rootContainer->setSlice(preserveAspectRatioBaseValue()->meetOrSlice() == SVG_MEETORSLICE_SLICE);
+    rootContainer->setViewBox(FloatRect(viewBox()->x(), viewBox()->y(), viewBox()->width(), viewBox()->height()));
+    rootContainer->setAlign(KCAlign(preserveAspectRatio()->align() - 1));
+    rootContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVG_MEETORSLICE_SLICE);
     
     return rootContainer;
 }

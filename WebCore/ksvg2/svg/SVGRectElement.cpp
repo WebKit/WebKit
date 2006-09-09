@@ -65,52 +65,52 @@ void SVGRectElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::rxAttr)
-        rxBaseValue()->setValueAsString(value.impl());
+        rxBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::ryAttr)
-        ryBaseValue()->setValueAsString(value.impl());
+        ryBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::widthAttr)
-        widthBaseValue()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::heightAttr)
-        heightBaseValue()->setValueAsString(value.impl());
-    else
-    {
-        if(SVGTests::parseMappedAttribute(attr)) return;
-        if(SVGLangSpace::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+        heightBaseValue()->setValueAsString(value);
+    else {
+        if (SVGTests::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
 }
 
 Path SVGRectElement::toPathData() const
 {
-    float _x = xBaseValue()->value(), _y = yBaseValue()->value();
-    float _width = widthBaseValue()->value(), _height = heightBaseValue()->value();
+    FloatRect rect(x()->value(), y()->value(), width()->value(), height()->value());
 
-    bool hasRx = hasAttribute(String("rx").impl());
-    bool hasRy = hasAttribute(String("ry").impl());
-    if(hasRx || hasRy)
-    {
-        float _rx = hasRx ? rxBaseValue()->value() : ryBaseValue()->value();
-        float _ry = hasRy ? ryBaseValue()->value() : rxBaseValue()->value();
-        return Path::createRoundedRectangle(FloatRect(_x, _y, _width, _height), FloatSize(_rx, _ry));
+    bool hasRx = hasAttribute("rx");
+    bool hasRy = hasAttribute("ry");
+    if (hasRx || hasRy) {
+        float _rx = hasRx ? rx()->value() : ry()->value();
+        float _ry = hasRy ? ry()->value() : rx()->value();
+        return Path::createRoundedRectangle(rect, FloatSize(_rx, _ry));
     }
 
-    return Path::createRectangle(FloatRect(_x, _y, _width, _height));
+    return Path::createRectangle(rect);
 }
 
 const SVGStyledElement *SVGRectElement::pushAttributeContext(const SVGStyledElement *context)
 {
     // All attribute's contexts are equal (so just take the one from 'x').
-    const SVGStyledElement *restore = xBaseValue()->context();
+    const SVGStyledElement *restore = x()->context();
 
-    xBaseValue()->setContext(context);
-    yBaseValue()->setContext(context);
-    widthBaseValue()->setContext(context);
-    heightBaseValue()->setContext(context);
+    x()->setContext(context);
+    y()->setContext(context);
+    width()->setContext(context);
+    height()->setContext(context);
     
     SVGStyledElement::pushAttributeContext(context);
     return restore;
@@ -118,12 +118,12 @@ const SVGStyledElement *SVGRectElement::pushAttributeContext(const SVGStyledElem
 
 bool SVGRectElement::hasPercentageValues() const
 {
-    if (xBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        yBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        widthBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        heightBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        rxBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
-        ryBaseValue()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
+    if (x()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        y()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        width()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        height()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        rx()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+        ry()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE)
         return true;
 
     return false;

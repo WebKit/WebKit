@@ -63,7 +63,7 @@ void SVGFEDiffuseLightingElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
-        setInBaseValue(value.impl());
+        setInBaseValue(value);
     else if (attr->name() == SVGNames::surfaceScaleAttr)
         setSurfaceScaleBaseValue(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::diffuseConstantAttr)
@@ -76,7 +76,7 @@ void SVGFEDiffuseLightingElement::parseMappedAttribute(MappedAttribute *attr)
         else
             setKernelUnitLengthYBaseValue(numbers[1].toDouble());
     } else if (attr->name() == SVGNames::lighting_colorAttr)
-        setLightingColorBaseValue(new SVGColor(value.impl()));
+        setLightingColorBaseValue(new SVGColor(value));
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -85,13 +85,13 @@ KCanvasFEDiffuseLighting *SVGFEDiffuseLightingElement::filterEffect() const
 {
     if (!m_filterEffect) 
         m_filterEffect = static_cast<KCanvasFEDiffuseLighting *>(renderingDevice()->createFilterEffect(FE_DIFFUSE_LIGHTING));
-    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
+    m_filterEffect->setIn(in().deprecatedString());
     setStandardAttributes(m_filterEffect);
-    m_filterEffect->setDiffuseConstant((diffuseConstantBaseValue()));
-    m_filterEffect->setSurfaceScale((surfaceScaleBaseValue()));
-    m_filterEffect->setKernelUnitLengthX((kernelUnitLengthXBaseValue()));
-    m_filterEffect->setKernelUnitLengthY((kernelUnitLengthYBaseValue()));
-    m_filterEffect->setLightingColor(lightingColorBaseValue()->color());
+    m_filterEffect->setDiffuseConstant((diffuseConstant()));
+    m_filterEffect->setSurfaceScale((surfaceScale()));
+    m_filterEffect->setKernelUnitLengthX((kernelUnitLengthX()));
+    m_filterEffect->setKernelUnitLengthY((kernelUnitLengthY()));
+    m_filterEffect->setLightingColor(lightingColor()->color());
     updateLights();
     return m_filterEffect;
 }

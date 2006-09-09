@@ -103,13 +103,13 @@ KCanvasFETurbulence *SVGFETurbulenceElement::filterEffect() const
     if (!m_filterEffect)
         return 0;
     
-    m_filterEffect->setType((KCTurbulanceType)(typeBaseValue() - 1));
+    m_filterEffect->setType((KCTurbulanceType)(type() - 1));
     setStandardAttributes(m_filterEffect);
-    m_filterEffect->setBaseFrequencyX(baseFrequencyXBaseValue());
-    m_filterEffect->setBaseFrequencyY(baseFrequencyYBaseValue());
-    m_filterEffect->setNumOctaves(numOctavesBaseValue());
-    m_filterEffect->setSeed(seedBaseValue());
-    m_filterEffect->setStitchTiles(stitchTilesBaseValue() == SVG_STITCHTYPE_STITCH);
+    m_filterEffect->setBaseFrequencyX(baseFrequencyX());
+    m_filterEffect->setBaseFrequencyY(baseFrequencyY());
+    m_filterEffect->setNumOctaves(numOctaves());
+    m_filterEffect->setSeed(seed());
+    m_filterEffect->setStitchTiles(stitchTiles() == SVG_STITCHTYPE_STITCH);
     return m_filterEffect;
 }
 

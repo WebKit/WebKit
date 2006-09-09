@@ -69,9 +69,9 @@ void SVGFEBlendElement::parseMappedAttribute(MappedAttribute *attr)
             setModeBaseValue(SVG_FEBLEND_MODE_LIGHTEN);
     }
     else if (attr->name() == SVGNames::inAttr)
-        setInBaseValue(value.impl());
+        setInBaseValue(value);
     else if (attr->name() == SVGNames::in2Attr)
-        setIn2BaseValue(value.impl());
+        setIn2BaseValue(value);
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -82,9 +82,9 @@ KCanvasFEBlend *SVGFEBlendElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEBlend *>(renderingDevice()->createFilterEffect(FE_BLEND));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setBlendMode((KCBlendModeType)(modeBaseValue()-1));
-    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
-    m_filterEffect->setIn2(String(in2BaseValue()).deprecatedString());
+    m_filterEffect->setBlendMode((KCBlendModeType)(mode()-1));
+    m_filterEffect->setIn(in().deprecatedString());
+    m_filterEffect->setIn2(String(in2()).deprecatedString());
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
 }

@@ -60,14 +60,14 @@ void SVGForeignObjectElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::widthAttr) {
-        widthBaseValue()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value);
         addCSSProperty(attr, CSS_PROP_WIDTH, value);
     } else if (attr->name() == SVGNames::heightAttr) {
-        heightBaseValue()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value);
         addCSSProperty(attr, CSS_PROP_HEIGHT, value);
     } else {
         if (SVGTests::parseMappedAttribute(attr))

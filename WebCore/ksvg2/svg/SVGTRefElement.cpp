@@ -42,12 +42,12 @@ SVGTRefElement::~SVGTRefElement()
 
 void SVGTRefElement::updateReferencedText()
 {
-    String targetId = SVGURIReference::getTarget(String(hrefBaseValue()).deprecatedString());
+    String targetId = SVGURIReference::getTarget(href().deprecatedString());
     Element *targetElement = ownerDocument()->getElementById(targetId.impl());
     SVGElement *target = svg_dynamic_cast(targetElement);
     if (target) {
         ExceptionCode ignore = 0;
-        setTextContent(target->textContent().impl(), ignore);
+        setTextContent(target->textContent(), ignore);
     }
 }
 

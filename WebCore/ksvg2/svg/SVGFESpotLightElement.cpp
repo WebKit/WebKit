@@ -35,13 +35,13 @@ SVGFESpotLightElement::~SVGFESpotLightElement()
 
 KCLightSource *SVGFESpotLightElement::lightSource() const
 {
-    KCanvasPoint3F pos(xBaseValue(), yBaseValue(), zBaseValue());
+    KCanvasPoint3F pos(x(), y(), z());
     //convert lookAt to a direction
-    KCanvasPoint3F direction(pointsAtXBaseValue() - pos.x(), 
-                             pointsAtYBaseValue() - pos.y(), 
-                             pointsAtZBaseValue() - pos.z());
+    KCanvasPoint3F direction(pointsAtX() - pos.x(), 
+                             pointsAtY() - pos.y(), 
+                             pointsAtZ() - pos.z());
     direction.normalize();
-    return new KCSpotLightSource(pos, direction, specularExponentBaseValue(), limitingConeAngleBaseValue());
+    return new KCSpotLightSource(pos, direction, specularExponent(), limitingConeAngle());
 }
 
 }

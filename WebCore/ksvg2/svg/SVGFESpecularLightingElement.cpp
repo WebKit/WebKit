@@ -67,7 +67,7 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute *attr)
 {    
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
-        setInBaseValue(value.impl());
+        setInBaseValue(value);
     else if (attr->name() == SVGNames::surfaceScaleAttr)
         setSurfaceScaleBaseValue(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::specularConstantAttr)
@@ -82,7 +82,7 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute *attr)
         else
             setKernelUnitLengthYBaseValue(numbers[1].toDouble());
     } else if (attr->name() == SVGNames::lighting_colorAttr)
-        setLightingColorBaseValue(new SVGColor(value.impl()));
+        setLightingColorBaseValue(new SVGColor(value));
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -91,14 +91,14 @@ KCanvasFESpecularLighting *SVGFESpecularLightingElement::filterEffect() const
 {
     if (!m_filterEffect) 
         m_filterEffect = static_cast<KCanvasFESpecularLighting *>(renderingDevice()->createFilterEffect(FE_SPECULAR_LIGHTING));
-    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
+    m_filterEffect->setIn(in().deprecatedString());
     setStandardAttributes(m_filterEffect);
-    m_filterEffect->setSpecularConstant((specularConstantBaseValue()));
-    m_filterEffect->setSpecularExponent((specularExponentBaseValue()));
-    m_filterEffect->setSurfaceScale((surfaceScaleBaseValue()));
-    m_filterEffect->setKernelUnitLengthX((kernelUnitLengthXBaseValue()));
-    m_filterEffect->setKernelUnitLengthY((kernelUnitLengthYBaseValue()));
-    m_filterEffect->setLightingColor(lightingColorBaseValue()->color());
+    m_filterEffect->setSpecularConstant((specularConstant()));
+    m_filterEffect->setSpecularExponent((specularExponent()));
+    m_filterEffect->setSurfaceScale((surfaceScale()));
+    m_filterEffect->setKernelUnitLengthX((kernelUnitLengthX()));
+    m_filterEffect->setKernelUnitLengthY((kernelUnitLengthY()));
+    m_filterEffect->setLightingColor(lightingColor()->color());
     updateLights();
     return m_filterEffect;
 }

@@ -31,7 +31,7 @@
 #include "SVGURIReference.h"
 #include "SVGStyledElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGURIReference::SVGURIReference()
 {
@@ -46,7 +46,7 @@ ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGURIReference, String, String, stri
 bool SVGURIReference::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name().matches(XLinkNames::hrefAttr)) {
-        setHrefBaseValue(attr->value().impl());
+        setHrefBaseValue(attr->value());
         return true;
     }
 
@@ -55,20 +55,18 @@ bool SVGURIReference::parseMappedAttribute(MappedAttribute *attr)
 
 DeprecatedString SVGURIReference::getTarget(const DeprecatedString &url)
 {
-    if(url.startsWith("url(")) // URI References, ie. fill:url(#target)
-    {
+    if (url.startsWith("url(")) { // URI References, ie. fill:url(#target)
         unsigned int start = url.find('#') + 1;
         unsigned int end = url.findRev(')');
 
         return url.mid(start, end - start);
-    }
-    else if(url.find('#') > -1) // format is #target
-    {
+    } else if (url.find('#') > -1) { // format is #target
         unsigned int start = url.find('#') + 1;
         return url.mid(start, url.length() - start);
-    }
-    else // Normal Reference, ie. style="color-profile:changeColor"
+    } else // Normal Reference, ie. style="color-profile:changeColor"
         return url;
+}
+
 }
 
 // vim:ts=4:noet

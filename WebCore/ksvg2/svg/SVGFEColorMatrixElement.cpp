@@ -72,7 +72,7 @@ void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute *attr)
             setTypeBaseValue(SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA);
     }
     else if (attr->name() == SVGNames::inAttr)
-        setInBaseValue(value.impl());
+        setInBaseValue(value);
     else if (attr->name() == SVGNames::valuesAttr)
         valuesBaseValue()->parse(value.deprecatedString(), this);
     else
@@ -86,15 +86,15 @@ KCanvasFEColorMatrix *SVGFEColorMatrixElement::filterEffect() const
     if (!m_filterEffect)
         return 0;
         
-    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
+    m_filterEffect->setIn(in().deprecatedString());
     setStandardAttributes(m_filterEffect);
     DeprecatedValueList<float> _values;
-    SVGNumberList *numbers = valuesBaseValue();
+    SVGNumberList *numbers = values();
     unsigned int nr = numbers->numberOfItems();
     for(unsigned int i = 0;i < nr;i++)
         _values.append(numbers->getItem(i)->value());
     m_filterEffect->setValues(_values);
-    m_filterEffect->setType((KCColorMatrixType)(typeBaseValue() - 1));
+    m_filterEffect->setType((KCColorMatrixType)(type() - 1));
     
     return m_filterEffect;
 }

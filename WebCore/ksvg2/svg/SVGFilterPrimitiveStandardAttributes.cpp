@@ -62,15 +62,15 @@ void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(MappedAttribute 
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::widthAttr)
-        widthBaseValue()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::heightAttr)
-        heightBaseValue()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::resultAttr)
-        setResultBaseValue(value.impl());
+        setResultBaseValue(value);
     else
         return SVGStyledElement::parseMappedAttribute(attr);
 }
@@ -81,21 +81,21 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(KCanvasFilterEf
     if (!filterEffect)
         return;
     bool bbox = false;
-    if(parentNode() && parentNode()->hasTagName(SVGNames::filterTag))
-        bbox = static_cast<SVGFilterElement *>(parentNode())->primitiveUnitsBaseValue() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+    if (parentNode() && parentNode()->hasTagName(SVGNames::filterTag))
+        bbox = static_cast<SVGFilterElement *>(parentNode())->primitiveUnits() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
-    xBaseValue()->setBboxRelative(bbox);
-    yBaseValue()->setBboxRelative(bbox);
-    widthBaseValue()->setBboxRelative(bbox);
-    heightBaseValue()->setBboxRelative(bbox);
-    float _x = xBaseValue()->value(), _y = yBaseValue()->value();
-    float _width = widthBaseValue()->value(), _height = heightBaseValue()->value();
-    if(bbox)
+    x()->setBboxRelative(bbox);
+    y()->setBboxRelative(bbox);
+    width()->setBboxRelative(bbox);
+    height()->setBboxRelative(bbox);
+    float _x = x()->value(), _y = y()->value();
+    float _width = width()->value(), _height = height()->value();
+    if (bbox)
         filterEffect->setSubRegion(FloatRect(_x * 100.f, _y * 100.f, _width * 100.f, _height * 100.f));
     else
         filterEffect->setSubRegion(FloatRect(_x, _y, _width, _height));
 
-    filterEffect->setResult(String(resultBaseValue()).deprecatedString());
+    filterEffect->setResult(result().deprecatedString());
 }
 
 // vim:ts=4:noet

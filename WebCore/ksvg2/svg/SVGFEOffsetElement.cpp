@@ -62,7 +62,7 @@ void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == SVGNames::dyAttr)
         setDyBaseValue(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::inAttr)
-        setInBaseValue(value.impl());
+        setInBaseValue(value);
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -73,10 +73,10 @@ KCanvasFEOffset *SVGFEOffsetElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEOffset *>(renderingDevice()->createFilterEffect(FE_OFFSET));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(String(inBaseValue()).deprecatedString());
+    m_filterEffect->setIn(in().deprecatedString());
     setStandardAttributes(m_filterEffect);
-    m_filterEffect->setDx(dxBaseValue());
-    m_filterEffect->setDy(dyBaseValue());
+    m_filterEffect->setDx(dx());
+    m_filterEffect->setDy(dy());
     return m_filterEffect;
 }
 

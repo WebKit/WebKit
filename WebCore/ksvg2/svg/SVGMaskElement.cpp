@@ -68,7 +68,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength*, Length, length, Height
 
 void SVGMaskElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {
-    IntSize newSize = IntSize(lroundf(widthBaseValue()->value()), lroundf(heightBaseValue()->value()));
+    IntSize newSize = IntSize(lroundf(width()->value()), lroundf(height()->value()));
     if (!m_masker || !m_masker->mask() || (m_masker->mask()->size() != newSize))
         m_dirty = true;
     SVGStyledLocatableElement::attributeChanged(attr, preserveDecls);
@@ -84,13 +84,13 @@ void SVGMaskElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->setValueAsString(value.impl());
+        yBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::widthAttr)
-        widthBaseValue()->setValueAsString(value.impl());
+        widthBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::heightAttr)
-        heightBaseValue()->setValueAsString(value.impl());
+        heightBaseValue()->setValueAsString(value);
     else {
         if (SVGURIReference::parseMappedAttribute(attr))
             return;
@@ -113,7 +113,7 @@ KCanvasImage *SVGMaskElement::drawMaskerContent()
         return 0;
     KCanvasImage *maskImage = static_cast<KCanvasImage *>(device->createResource(RS_IMAGE));
 
-    IntSize size = IntSize(lroundf(widthBaseValue()->value()), lroundf(heightBaseValue()->value()));
+    IntSize size = IntSize(lroundf(width()->value()), lroundf(height()->value()));
     maskImage->init(size);
 
     KRenderingDeviceContext *patternContext = device->contextForImage(maskImage);

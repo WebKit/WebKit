@@ -59,17 +59,18 @@ void SVGCursorElement::parseMappedAttribute(MappedAttribute *attr)
 {
      const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->setValueAsString(value.impl());
+        xBaseValue()->setValueAsString(value);
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->setValueAsString(value.impl());
-    else
-    {
-        if(SVGTests::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+        yBaseValue()->setValueAsString(value);
+    else {
+        if (SVGTests::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
         if (SVGURIReference::parseMappedAttribute(attr)) {
             if (m_cachedImage)
                 m_cachedImage->deref(this);
-            m_cachedImage = ownerDocument()->docLoader()->requestImage(hrefBaseValue());
+            m_cachedImage = ownerDocument()->docLoader()->requestImage(href());
             if (m_cachedImage)
                 m_cachedImage->ref(this);
             return;
