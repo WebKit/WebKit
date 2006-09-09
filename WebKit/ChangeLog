@@ -1,3 +1,12 @@
+2006-09-09  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Eric.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10791
+        Even More Objective-C DOM auto-generation cleanup
+
+        * MigrateHeaders.make:
+
 2006-09-08  Tim Omernick  <timo@apple.com>
 
         Reviewed by Brady Eidson.

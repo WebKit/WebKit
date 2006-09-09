@@ -170,6 +170,8 @@ module core {
 
         attribute [ConvertNullStringTo=Null] DOMString selectedStylesheetSet;
 
+        [Exclude=JS] CSSStyleDeclaration createCSSStyleDeclaration();
+
     };
 
 }

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Jonas Witt <jonas.witt@gmail.com>
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -397,19 +398,46 @@ NSArray *webkitDomEventNames;
     // Keyboard Event 1
     
     DOMEvent *domEvent = [document createEvent:@"KeyboardEvent"];
-    [(DOMKeyboardEvent*)domEvent initKeyboardEvent:@"keydown" :YES :YES :[document defaultView] :@"U+000041" :0 :YES :NO :NO :NO];
+    [(DOMKeyboardEvent*)domEvent initKeyboardEvent:@"keydown" 
+                                         canBubble:YES
+                                        cancelable:YES
+                                              view:[document defaultView]
+                                     keyIdentifier:@"U+000041" 
+                                       keyLocation:0
+                                           ctrlKey:YES
+                                            altKey:NO
+                                          shiftKey:NO
+                                           metaKey:NO];
     [target dispatchEvent:domEvent];  
         
     // Keyboard Event 2
     
     domEvent = [document createEvent:@"KeyboardEvent"];
-    [(DOMKeyboardEvent*)domEvent initKeyboardEvent:@"keypress" :YES :YES :[document defaultView] :@"U+000045" :1 :NO :YES :NO :NO];
+    [(DOMKeyboardEvent*)domEvent initKeyboardEvent:@"keypress" 
+                                         canBubble:YES
+                                        cancelable:YES
+                                              view:[document defaultView]
+                                     keyIdentifier:@"U+000045" 
+                                       keyLocation:1
+                                           ctrlKey:NO
+                                            altKey:YES
+                                          shiftKey:NO
+                                           metaKey:NO];
     [target dispatchEvent:domEvent];    
     
     // Keyboard Event 3
     
     domEvent = [document createEvent:@"KeyboardEvent"];
-    [(DOMKeyboardEvent*)domEvent initKeyboardEvent:@"keyup" :YES :YES :[document defaultView] :@"U+000056" :0 :NO :NO :NO :NO];
+    [(DOMKeyboardEvent*)domEvent initKeyboardEvent:@"keyup" 
+                                         canBubble:YES
+                                        cancelable:YES
+                                              view:[document defaultView]
+                                     keyIdentifier:@"U+000056" 
+                                       keyLocation:0
+                                           ctrlKey:NO
+                                            altKey:NO
+                                          shiftKey:NO
+                                           metaKey:NO];
     [target dispatchEvent:domEvent];   
     
 }

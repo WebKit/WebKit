@@ -255,20 +255,6 @@ using namespace WebCore;
 //------------------------------------------------------------------------------------------
 // DOMCSSStyleDeclaration
 
-@implementation DOMCSSStyleDeclaration (DOMCSSStyleDeclarationExtensions)
-
-- (NSString *)getPropertyShorthand:(NSString *)propertyName
-{
-    return [self _CSSStyleDeclaration]->getPropertyShorthand(propertyName);
-}
-
-- (BOOL)isPropertyImplicit:(NSString *)propertyName
-{
-    return [self _CSSStyleDeclaration]->isPropertyImplicit(propertyName);
-}
-
-@end
-
 @implementation DOMCSSStyleDeclaration (WebCoreInternal)
 
 - (id)_initWithStyleDeclaration:(CSSStyleDeclaration *)impl

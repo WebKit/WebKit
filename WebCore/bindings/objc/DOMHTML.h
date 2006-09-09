@@ -82,3 +82,6 @@
 #import <WebCore/DOMHTMLTextAreaElement.h>
 #import <WebCore/DOMHTMLTitleElement.h>
 #import <WebCore/DOMHTMLUListElement.h>
+
+// was an HTML extension
+#import <WebCore/DOMHTMLEmbedElement.h>

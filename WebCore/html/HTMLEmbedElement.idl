@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -16,16 +17,16 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-module events {
 
-    interface OverflowEvent : Event {
-        const unsigned short HORIZONTAL = 0;
-        const unsigned short VERTICAL   = 1;
-        const unsigned short BOTH       = 2;
-        
-        readonly attribute unsigned short orient;
-        readonly attribute boolean horizontalOverflow;
-        readonly attribute boolean verticalOverflow;        
+module html {
+
+    interface HTMLEmbedElement : HTMLElement {
+                 attribute DOMString       align;
+                 attribute long            height;
+                 attribute DOMString       name;
+                 attribute DOMString       src;
+                 attribute DOMString       type;
+                 attribute long            width;
     };
 
 }

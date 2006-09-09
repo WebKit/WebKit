@@ -34,7 +34,6 @@
 #import "FoundationExtras.h"
 #import "FrameView.h"
 #import "HTMLDocument.h"
-#import "HTMLEmbedElement.h"
 #import "HTMLFormElement.h"
 #import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
@@ -314,79 +313,6 @@ using namespace HTMLNames;
 
 
 #pragma mark DOM EXTENSIONS
-
-
-//------------------------------------------------------------------------------------------
-// DOMHTMLEmbedElement
-
-@implementation DOMHTMLEmbedElement
-
-- (HTMLEmbedElement *)_HTMLEmbedElement
-{
-    return static_cast<HTMLEmbedElement*>(DOM_cast<Node*>(_internal));
-}
-
-- (NSString *)align
-{
-    return [self _HTMLEmbedElement]->getAttribute(alignAttr);
-}
-
-- (void)setAlign:(NSString *)align
-{
-    [self _HTMLEmbedElement]->setAttribute(alignAttr, align);
-}
-
-- (int)height
-{
-    return [self _HTMLEmbedElement]->getAttribute(heightAttr).toInt();
-}
-
-- (void)setHeight:(int)height
-{
-    [self _HTMLEmbedElement]->setAttribute(heightAttr, String::number(height));
-}
-
-- (NSString *)name
-{
-    return [self _HTMLEmbedElement]->getAttribute(nameAttr);
-}
-
-- (void)setName:(NSString *)name
-{
-    [self _HTMLEmbedElement]->setAttribute(nameAttr, name);
-}
-
-- (NSString *)src
-{
-    return [self _HTMLEmbedElement]->getAttribute(srcAttr);
-}
-
-- (void)setSrc:(NSString *)src
-{
-    [self _HTMLEmbedElement]->setAttribute(srcAttr, src);
-}
-
-- (NSString *)type
-{
-    return [self _HTMLEmbedElement]->getAttribute(typeAttr);
-}
-
-- (void)setType:(NSString *)type
-{
-    [self _HTMLEmbedElement]->setAttribute(typeAttr, type);
-}
-
-- (int)width
-{
-    return [self _HTMLEmbedElement]->getAttribute(widthAttr).toInt();
-}
-
-- (void)setWidth:(int)width
-{
-    [self _HTMLEmbedElement]->setAttribute(widthAttr, String::number(width));
-}
-
-@end
 
 // These #imports and "usings" are used only by viewForElement and should be deleted 
 // when that function goes away.

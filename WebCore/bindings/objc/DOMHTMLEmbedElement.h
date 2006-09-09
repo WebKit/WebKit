@@ -24,43 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DOMAttr.h>
-#import <WebCore/DOMCSS.h>
-#import <WebCore/DOMCSSStyleDeclaration.h>
-#import <WebCore/DOMDocument.h>
-#import <WebCore/DOMElement.h>
-#import <WebCore/DOMHTML.h>
-#import <WebCore/DOMHTMLAnchorElement.h>
-#import <WebCore/DOMHTMLAreaElement.h>
-#import <WebCore/DOMHTMLDocument.h>
 #import <WebCore/DOMHTMLElement.h>
-#import <WebCore/DOMHTMLEmbedElement.h>
-#import <WebCore/DOMHTMLImageElement.h>
-#import <WebCore/DOMHTMLInputElement.h>
-#import <WebCore/DOMHTMLLinkElement.h>
-#import <WebCore/DOMHTMLObjectElement.h>
-#import <WebCore/DOMNode.h>
-#import <WebCore/DOMRGBColor.h>
-#import <WebCore/DOMRange.h>
 
-@class NSImage;
-
-@interface DOMDocument (DOMDocumentCSSExtensions)
-- (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt;
-@end
-
-@interface DOMElement (DOMElementAppKitExtensions)
-- (NSImage *)image;
-@end
-
-@interface DOMHTMLInputElement (DOMHTMLInputElementExtensions)
-- (NSURL *)absoluteImageURL;
-@end
-
-@interface DOMHTMLObjectElement (DOMHTMLObjectElementExtensions)
-- (NSURL *)absoluteImageURL;
-@end
-
-@interface DOMRange (DOMRangeExtensions)
-- (NSString *)text;
+@interface DOMHTMLEmbedElement : DOMHTMLElement
+- (NSString *)align;
+- (void)setAlign:(NSString *)newAlign;
+- (int)height;
+- (void)setHeight:(int)newHeight;
+- (NSString *)name;
+- (void)setName:(NSString *)newName;
+- (NSString *)src;
+- (void)setSrc:(NSString *)newSrc;
+- (NSString *)type;
+- (void)setType:(NSString *)newType;
+- (int)width;
+- (void)setWidth:(int)newWidth;
 @end

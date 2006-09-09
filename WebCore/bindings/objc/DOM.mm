@@ -572,16 +572,6 @@ static Class elementClass(const AtomicString& tagName)
 //------------------------------------------------------------------------------------------
 // DOMDocument
 
-// FIXME: this should be auto-genenerate in DOMDocument.mm
-@implementation DOMDocument (DOMDocumentExtensions)
-
-- (DOMCSSStyleDeclaration *)createCSSStyleDeclaration
-{
-    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:[self _document]->createCSSStyleDeclaration().get()];
-}
-
-@end
-
 @implementation DOMDocument (WebCoreInternal)
 
 + (DOMDocument *)_documentWith:(Document *)impl

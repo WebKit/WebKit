@@ -98,6 +98,7 @@
 - (DOMRange *)createRange;
 - (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)element :(NSString *)pseudoElement;
 //- (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)element pseudoElement:(NSString *)pseudoElement;
+- (DOMCSSStyleDeclaration *)createCSSStyleDeclaration;
 - (DOMNode *)adoptNode:(DOMNode *)source;
 #ifdef XPATH_SUPPORT
 - (DOMXPathExpression *)createExpression:(NSString *)expression :(id <DOMXPathNSResolver>)resolver;
@@ -734,6 +735,8 @@
 - (void)setProperty:(NSString *)propertyName :(NSString *)value :(NSString *)priority;
 //- (void)setProperty:(NSString *)propertyName value:(NSString *)value priority:(NSString *)priority;
 - (NSString *)item:(unsigned)index;
+- (NSString *)getPropertyShorthand:(NSString *)propertyName;
+- (BOOL)isPropertyImplicit:(NSString *)propertyName;
 @end
 
 @interface DOMCSSStyleRule : DOMCSSRule
@@ -874,4 +877,10 @@
 - (DOMNode *)nextSibling;
 - (DOMNode *)previousNode;
 - (DOMNode *)nextNode;
+@end
+
+// Protocols
+
+@protocol DOMEventListener <NSObject>
+- (void)handleEvent:(DOMEvent *)evt;
 @end

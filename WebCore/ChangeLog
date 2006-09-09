@@ -1,3 +1,57 @@
+2006-09-09  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Eric.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10791
+        Even More Objective-C DOM auto-generation cleanup
+
+        - Auto-generate some remaining extension methods for DOMDocument
+          and DOMCSSStyleDeclaration.
+
+        - Split DOMHTMLEmbedElement into it's own files.  It can't be
+          auto-generated yet because the Objective-C interface is significantly
+          different from the implementation interface.  Since HTMLEmbedElement
+          is not in the W3C spec, this is somewhat of a gray area.
+
+        - Auto-generate DOMEventListener protocol.
+
+        - Clean up the IDL files by separating the extensions from the
+          specified methods and attributes.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMCSS.mm:
+        * bindings/objc/DOMEventListener.h: Removed.
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTML.h:
+        * bindings/objc/DOMHTML.mm:
+        * bindings/objc/DOMHTMLEmbedElement.h: Added.
+        * bindings/objc/DOMHTMLEmbedElement.mm: Added.
+        (-[DOMHTMLEmbedElement align]):
+        (-[DOMHTMLEmbedElement setAlign:]):
+        (-[DOMHTMLEmbedElement height]):
+        (-[DOMHTMLEmbedElement setHeight:]):
+        (-[DOMHTMLEmbedElement name]):
+        (-[DOMHTMLEmbedElement setName:]):
+        (-[DOMHTMLEmbedElement src]):
+        (-[DOMHTMLEmbedElement setSrc:]):
+        (-[DOMHTMLEmbedElement type]):
+        (-[DOMHTMLEmbedElement setType:]):
+        (-[DOMHTMLEmbedElement width]):
+        (-[DOMHTMLEmbedElement setWidth:]):
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/PublicDOMInterfaces.h:
+        * css/CSSStyleDeclaration.idl:
+        * dom/Document.idl:
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/OverflowEvent.idl:
+        * dom/UIEvent.idl:
+        * dom/WheelEvent.idl:
+        * html/HTMLEmbedElement.idl: Added.
 
 2006-09-09  Eric Seidel  <eric@eseidel.com>
 

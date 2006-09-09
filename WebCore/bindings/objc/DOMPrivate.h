@@ -41,8 +41,10 @@
 #import <WebCore/DOMCSSStyleDeclarationPrivate.h>
 #import <WebCore/DOMCSSStyleSheetPrivate.h>
 #import <WebCore/DOMCharacterDataPrivate.h>
+#import <WebCore/DOMDOMImplementationPrivate.h>
 #import <WebCore/DOMDocumentPrivate.h>
 #import <WebCore/DOMElementPrivate.h>
+#import <WebCore/DOMEventPrivate.h>
 #import <WebCore/DOMHTMLAnchorElementPrivate.h>
 #import <WebCore/DOMHTMLAreaElementPrivate.h>
 #import <WebCore/DOMHTMLBodyElementPrivate.h>
@@ -57,9 +59,13 @@
 #import <WebCore/DOMHTMLSelectElementPrivate.h>
 #import <WebCore/DOMHTMLStyleElementPrivate.h>
 #import <WebCore/DOMHTMLTextAreaElementPrivate.h>
-#import <WebCore/DOMDOMImplementationPrivate.h>
+#import <WebCore/DOMKeyboardEventPrivate.h>
+#import <WebCore/DOMMutationEventPrivate.h>
 #import <WebCore/DOMNamedNodeMapPrivate.h>
+#import <WebCore/DOMNodeIteratorPrivate.h>
 #import <WebCore/DOMProcessingInstructionPrivate.h>
+#import <WebCore/DOMUIEventPrivate.h>
+#import <WebCore/DOMWheelEventPrivate.h>
 
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText
@@ -111,12 +117,4 @@
 // and these will be deleted.
 @interface DOMHTMLSelectElement(FormsAutoFillTransition)
 - (void)_activateItemAtIndex:(int)index;
-@end
-
-@interface DOMKeyboardEvent(PublicPending)
-- (void)initKeyboardEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(NSString *)keyIdentifierArg :(unsigned)keyLocationArg :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg;
-@end
-
-@interface DOMWheelEvent(PublicPending)
-- (void)initWheelEvent:(BOOL)horizontal :(int)wheelDelta :(DOMAbstractView *)viewArg :(int)screenXArg :(int)screenYArg :(int)clientX :(int)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg;
 @end

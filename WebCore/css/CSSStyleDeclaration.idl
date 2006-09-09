@@ -39,6 +39,10 @@ module css {
         readonly attribute [Exclude=JS] unsigned long    length;
         [Exclude=JS] DOMString          item(in unsigned long index);
         readonly attribute [Exclude=JS] CSSRule          parentRule;
+        
+        // extensions
+        [Exclude=JS] DOMString          getPropertyShorthand(in DOMString propertyName);
+        [Exclude=JS] boolean            isPropertyImplicit(in DOMString propertyName);
 
     };
 

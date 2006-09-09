@@ -1,4 +1,5 @@
 # Copyright (C) 2006 Apple Computer, Inc. All rights reserved.
+# Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -93,6 +94,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLDivElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLDocument.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLEmbedElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFieldSetElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFontElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFormElement.h \

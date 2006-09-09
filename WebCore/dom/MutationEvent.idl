@@ -19,10 +19,10 @@
 
 module events {
 
+    // Introduced in DOM Level 2:
     interface [GenerateConstructor] MutationEvent : Event {
 
-        // DOM Level 2
-
+        // attrChangeType
         const unsigned short MODIFICATION = 1;
         const unsigned short ADDITION     = 2;
         const unsigned short REMOVAL      = 3;
@@ -34,13 +34,13 @@ module events {
         readonly attribute unsigned short attrChange;
 
         [OldStyleObjC] void initMutationEvent(in AtomicString type, 
-                               in boolean canBubble, 
-                               in boolean cancelable, 
-                               in Node relatedNode, 
-                               in DOMString prevValue, 
-                               in DOMString newValue, 
-                               in DOMString attrName, 
-                               in unsigned short attrChange);
+                                              in boolean canBubble, 
+                                              in boolean cancelable, 
+                                              in Node relatedNode, 
+                                              in DOMString prevValue, 
+                                              in DOMString newValue, 
+                                              in DOMString attrName, 
+                                              in unsigned short attrChange);
 
     };
 

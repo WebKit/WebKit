@@ -51,7 +51,7 @@ namespace WebCore {
     
         void initKeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view,
                                const String& keyIdentifier, unsigned keyLocation,
-                               bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey);
+                               bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey = false);
     
         String keyIdentifier() const { return m_keyIdentifier.get(); }
         unsigned keyLocation() const { return m_keyLocation; }

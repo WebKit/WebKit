@@ -69,6 +69,7 @@ all : \
     DOMEntity.h \
     DOMEntityReference.h \
     DOMEvent.h \
+    DOMEventListener.h \
     DOMHTMLAnchorElement.h \
     DOMHTMLAreaElement.h \
     DOMHTMLBRElement.h \

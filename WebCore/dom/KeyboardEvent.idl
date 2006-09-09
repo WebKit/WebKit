@@ -20,16 +20,26 @@
 
 module events {
 
+    // Introduced in DOM Level 3:
     interface KeyboardEvent : UIEvent {
+
+        // KeyLocationCode
+        //const unsigned long       KEY_LOCATION_STANDARD      = 0x00;
+        //const unsigned long       KEY_LOCATION_LEFT          = 0x01;
+        //const unsigned long       KEY_LOCATION_RIGHT         = 0x02;
+        //const unsigned long       KEY_LOCATION_NUMPAD        = 0x03;
 
         readonly attribute DOMString        keyIdentifier;
         readonly attribute unsigned long    keyLocation;
-        readonly attribute boolean          altKey;
         readonly attribute boolean          ctrlKey;
-        readonly attribute boolean          metaKey;
         readonly attribute boolean          shiftKey;
+        readonly attribute boolean          altKey;
+        readonly attribute boolean          metaKey;
         readonly attribute boolean          altGraphKey;
 
+        //boolean [Exclude=JS] getModifierState(in DOMString keyIdentifierArg);
+        
+        // FIXME: this does not match the version in the DOM spec.
         void initKeyboardEvent(in AtomicString type, 
                                in boolean canBubble, 
                                in boolean cancelable, 
@@ -45,6 +55,17 @@ module events {
         // WebKit Extensions
         readonly attribute [Exclude=JS] long keyCode;
         readonly attribute [Exclude=JS] long charCode;
+        
+        [Exclude=JS] void initKeyboardEvent(in AtomicString type, 
+                                            in boolean canBubble, 
+                                            in boolean cancelable, 
+                                            in DOMWindow view, 
+                                            in DOMString keyIdentifier,
+                                            in unsigned long keyLocation,
+                                            in boolean ctrlKey,
+                                            in boolean altKey,
+                                            in boolean shiftKey,
+                                            in boolean metaKey);
 
     };
 
