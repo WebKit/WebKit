@@ -63,21 +63,24 @@ static bool isCSSTokenizerURL(const String& string)
     const UChar* p = string.characters();
     const UChar* end = p + string.length();
 
-    for (; p != end; ++p)
-        switch (p[0]) {
+    for (; p != end; ++p) {
+        UChar c = p[0];
+        switch (c) {
             case '!':
             case '#':
             case '$':
             case '%':
             case '&':
-            case '*':
-            case '-':
-            case '~':
                 break;
             default:
-                if (p[0] < 128)
+                if (c < '*')
+                    return false;
+                if (c <= '~')
+                    break;
+                if (c < 128)
                     return false;
         }
+    }
 
     return true;
 }

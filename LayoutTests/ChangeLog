@@ -1,3 +1,10 @@
+2006-09-08  Timothy Hatcher  <timothy@apple.com>
+
+        Adds a test for the CSS URL quoting logic.
+
+        * fast/inspector/cssURLQuotes-expected.txt: Added.
+        * fast/inspector/cssURLQuotes.html: Added.
+
 2006-09-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
