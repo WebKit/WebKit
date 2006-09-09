@@ -1,3 +1,13 @@
+2006-09-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10759
+          fast/AppleScript/array.html test failing
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (aeDescFromJSValue): Convert integer values to typeSInt32 AE descriptors.
+
 2006-09-08  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by darin.

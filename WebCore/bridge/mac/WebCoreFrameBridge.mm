@@ -171,8 +171,12 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
             aeDesc = [NSAppleEventDescriptor descriptorWithString:String(jsValue->getString())];
             break;
         case NumberType: {
-            Float64 value = jsValue->getNumber();
-            aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeIEEE64BitFloatingPoint bytes:&value length:sizeof(value)];
+            double value = jsValue->getNumber();
+            int intValue = (int)value;
+            if (value == intValue)
+                aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeSInt32 bytes:&intValue length:sizeof(intValue)];
+            else
+                aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeIEEE64BitFloatingPoint bytes:&value length:sizeof(value)];
             break;
         }
         case ObjectType: {

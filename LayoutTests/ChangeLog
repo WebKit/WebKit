@@ -1,3 +1,12 @@
+2006-09-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10759
+        fast/AppleScript/array.html test failing
+
+        * fast/AppleScript/001-expected.txt: Updated results.
+
 2006-09-07  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
