@@ -113,7 +113,6 @@
 - (void)_setupForReplaceByMIMEType:(NSString *)mimeType;
 - (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete;
 - (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener;
-
-
-
+- (void)_setLoading:(BOOL)loading;
+- (void)_updateLoading;
 @end

@@ -110,6 +110,8 @@
     // Error associated with main document.
     NSError *mainDocumentError;
     
+    BOOL loading; // self and webView are retained while loading
+    
     BOOL gotFirstByte; // got first byte
     BOOL committed; // This data source has been committed
     BOOL representationFinishedLoading;
@@ -150,6 +152,8 @@
 
 - (void)dealloc
 {
+    ASSERT(!loading);
+
     [loadState release];
     
     [representation release];
@@ -254,6 +258,7 @@
     // Mark the start loading time.
     _private->loadingStartedTime = CFAbsoluteTimeGetCurrent();
     
+    [self _setLoading:YES];
     [[self _webView] _progressStarted:[self webFrame]];
     [[self _webView] _didStartProvisionalLoadForFrame:[self webFrame]];
     [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
@@ -624,6 +629,19 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return [_private->unarchivingState archivedResourceForURL:URL];
 }
 
+- (void)_setLoading:(BOOL)loading
+{
+    _private->loading = loading;
+}
+
+- (void)_updateLoading
+{
+    WebFrameLoader *frameLoader = [_private->webFrame _frameLoader];
+    ASSERT(self == [frameLoader activeDataSource]);
+
+    [self _setLoading:[frameLoader isLoading]];
+}
+
 - (void)_startLoading
 {
     [self _prepareForLoadStart];
@@ -640,7 +658,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     else
         identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
     
-    [[_private->webFrame _frameLoader] startLoadingMainResourceWithRequest:_private->request identifier:identifier];
+    if (![[_private->webFrame _frameLoader] startLoadingMainResourceWithRequest:_private->request identifier:identifier])
+        [self _updateLoading];
 }
 
 - (void)_stopRecordingResponses
@@ -807,7 +826,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if (_private->committed)
         [[self _bridge] stopLoading];
     
-    if (![[_private->webFrame _frameLoader] isLoading])
+    if (!_private->loading)
         return;
     
     [self retain];
@@ -892,6 +911,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
             [[_private->webFrame _frameLoader] releaseMainResourceLoader];
         }
         
+        [self _updateLoading];
+
         if ([WebScriptDebugServer listenerCount])
             [[WebScriptDebugServer sharedScriptDebugServer] webView:[[self webFrame] webView] didLoadMainResourceForDataSource:self];
     }
@@ -1122,7 +1143,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     // Once a frame has loaded, we no longer need to consider subresources,
     // but we still need to consider subframes.
     if ([[[self webFrame] _frameLoader] state] != WebFrameStateComplete) {
-        if (!_private->primaryLoadComplete && [[_private->webFrame _frameLoader] isLoading])
+        if (!_private->primaryLoadComplete && _private->loading)
             return YES;
         if ([[_private->webFrame _frameLoader] isLoadingSubresources])
             return YES;

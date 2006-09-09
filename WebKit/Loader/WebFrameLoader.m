@@ -95,11 +95,13 @@
     if (!plugInStreamLoaders)
         plugInStreamLoaders = [[NSMutableArray alloc] init];
     [plugInStreamLoaders addObject:loader];
+    [[self activeDataSource] _setLoading:YES];
 }
 
 - (void)removePlugInStreamLoader:(WebLoader *)loader
 {
     [plugInStreamLoaders removeObject:loader];
+    [[self activeDataSource] _updateLoading];
 }    
 
 - (void)setDefersCallbacks:(BOOL)defers
@@ -158,11 +160,13 @@
     if (subresourceLoaders == nil)
         subresourceLoaders = [[NSMutableArray alloc] init];
     [subresourceLoaders addObject:loader];
+    [[self activeDataSource] _setLoading:YES];
 }
 
 - (void)removeSubresourceLoader:(WebLoader *)loader
 {
     [subresourceLoaders removeObject:loader];
+    [[self activeDataSource] _updateLoading];
 }
 
 - (NSData *)mainResourceData

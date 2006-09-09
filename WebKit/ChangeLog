@@ -1,3 +1,29 @@
+2006-09-08  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Rolled out Maciej's code cleanup from 8/22.  It turns out that keeping the "loading" flag
+        is a useful optimization, as it avoids many Objective-C method calls while polling resources
+        for their load state.
+
+        This fixes a 3-4% PLT performance regression (as measured on my MacBook Pro).
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader addPlugInStreamLoader:]):
+        (-[WebFrameLoader removePlugInStreamLoader:]):
+        (-[WebFrameLoader addSubresourceLoader:]):
+        (-[WebFrameLoader removeSubresourceLoader:]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _prepareForLoadStart]):
+        (-[WebDataSource _setLoading:]):
+        (-[WebDataSource _updateLoading]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _stopLoading]):
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (-[WebDataSource isLoading]):
+        * WebView/WebDataSourceInternal.h:
+
 2006-09-07  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin and Tim H.
