@@ -37,6 +37,33 @@
 
 namespace WebCore {
 
+// This class automatically saves and restores the current NSGraphicsContext for
+// functions which call out into AppKit and rely on the currentContext being set
+class LocalCurrentGraphicsContext : Noncopyable {
+public:
+    LocalCurrentGraphicsContext(GraphicsContext* graphicsContext)
+    {
+        if (graphicsContext->platformContext() == [[NSGraphicsContext currentContext] graphicsPort]) {
+            m_savedNSGraphicsContext = 0;
+            return;
+        }
+        
+        m_savedNSGraphicsContext = [[NSGraphicsContext currentContext] retain];
+        NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithGraphicsPort:graphicsContext->platformContext() flipped:YES];
+        [NSGraphicsContext setCurrentContext:newContext];
+    }
+    ~LocalCurrentGraphicsContext()
+    {
+        if (m_savedNSGraphicsContext) {
+            [NSGraphicsContext setCurrentContext:m_savedNSGraphicsContext];
+            [m_savedNSGraphicsContext release];
+        }
+    }
+
+private:
+    NSGraphicsContext* m_savedNSGraphicsContext;
+};
+
 enum {
     topMargin,
     rightMargin,
@@ -592,10 +619,9 @@ void RenderThemeMac::setButtonCellState(const RenderObject* o, const IntRect& r)
     updateFocusedState(button, o);
 }
 
-bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
-{    
-    // FIXME: Ignores the GraphicsContext in the PaintInfo and always draws into the current
-    // NSGraphicsContext instead.
+bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.p);
 
     // Determine the width and height needed for the control and prepare the cell for painting.
     setButtonCellState(o, r);
@@ -622,10 +648,9 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
     return false;
 }
 
-bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
+bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    // FIXME: Ignores the GraphicsContext in the PaintInfo and always draws into the current
-    // NSGraphicsContext instead.
+    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.p);
     wkDrawBezeledTextFieldCell(r, isEnabled(o) && !isReadOnlyControl(o));
     return false;
 }
@@ -637,10 +662,9 @@ void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyl
         addIntrinsicMargins(style, NSRegularControlSize);
 }
 
-bool RenderThemeMac::paintTextArea(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
+bool RenderThemeMac::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    // FIXME: Ignores the GraphicsContext in the PaintInfo and always draws into the current
-    // NSGraphicsContext instead.
+    LocalCurrentGraphicsContext LocalCurrentGraphicsContext(paintInfo.p);
     wkDrawBezeledTextArea(r, isEnabled(o) && !isReadOnlyControl(o));
     return false;
 }

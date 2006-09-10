@@ -62,11 +62,17 @@ namespace WebCore {
 struct ATSULayoutParameters
 {
     ATSULayoutParameters(const TextRun& run, const TextStyle& style)
-    :m_run(run), m_style(style),
-     m_font(0), m_fonts(0), m_charBuffer(0), m_hasSyntheticBold(false), m_syntheticBoldPass(false), m_padPerSpace(0)
+        : m_run(run)
+        , m_style(style)
+        , m_font(0)
+        , m_fonts(0)
+        , m_charBuffer(0)
+        , m_hasSyntheticBold(false)
+        , m_syntheticBoldPass(false)
+        , m_padPerSpace(0)
     {}
 
-    void initialize(const Font* font);
+    void initialize(const Font*, const GraphicsContext* = 0);
 
     const TextRun& m_run;
     const TextStyle& m_style;
@@ -261,18 +267,16 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
     return noErr;
 }
 
-void ATSULayoutParameters::initialize(const Font* font)
+void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* graphicsContext)
 {
     m_font = font;
-
+    
     // FIXME: It is probably best to always allocate a buffer for RTL, since even if for this
     // fontData ATSUMirrors is true, for a substitute fontData it might be false.
     const FontData* fontData = font->primaryFont();
     m_fonts = new const FontData*[m_run.length()];
     m_charBuffer = (UChar*)((font->isSmallCaps() || (m_style.rtl() && !fontData->m_ATSUMirrors)) ? new UChar[m_run.length()] : 0);
     
-    // The only Cocoa calls here are to NSGraphicsContext, which does not raise exceptions.
-
     ATSUTextLayout layout;
     OSStatus status;
     ATSULayoutOperationOverrideSpecifier overrideSpecifier;
@@ -306,7 +310,13 @@ void ATSULayoutParameters::initialize(const Font* font)
     m_layout = layout;
     ATSUSetTextLayoutRefCon(m_layout, (URefCon)this);
 
-    CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    // FIXME: There are certain times when this method is called, when we don't have access to a GraphicsContext
+    // measuring text runs with floatWidthForComplexText is one example.
+    // ATSUI requires that we pass a valid CGContextRef to it when specifying kATSUCGContextTag (crashes when passed 0)
+    // ATSUI disables sub-pixel rendering if kATSUCGContextTag is not specified!  So we're in a bind.
+    // Sometimes [[NSGraphicsContext currentContext] graphicsPort] may return the wrong (or no!) context.  Nothing we can do about it (yet).
+    CGContextRef cgContext = graphicsContext ? graphicsContext->platformContext() : (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    
     ATSLineLayoutOptions lineLayoutOptions = kATSLineKeepSpacesOutOfMargin | kATSLineHasNoHangers;
     Boolean rtl = m_style.rtl();
     overrideSpecifier.operationSelector = kATSULayoutOperationPostLayoutAdjustment;
@@ -467,18 +477,12 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
 
     TextRun adjustedRun = style.directionalOverride() ? addDirectionalOverride(run, style.rtl()) : run;
     ATSULayoutParameters params(adjustedRun, style);
-    params.initialize(this);
-
-    [nsColor(graphicsContext->pen().color()) set];
-
+    params.initialize(this, graphicsContext);
+    
     // ATSUI can't draw beyond -32768 to +32767 so we translate the CTM and tell ATSUI to draw at (0, 0).
-    // FIXME: Cut the dependency on currentContext here.
-    NSGraphicsContext *gContext = [NSGraphicsContext currentContext];
-    CGContextRef context = (CGContextRef)[gContext graphicsPort];
+    CGContextRef context = graphicsContext->platformContext();
+    CGContextSetFillColorWithColor(context, cgColor(graphicsContext->pen().color()));
     CGContextTranslateCTM(context, point.x(), point.y());
-    bool flipped = [gContext isFlipped];
-    if (!flipped)
-        CGContextScaleCTM(context, 1.0, -1.0);
     status = ATSUDrawText(params.m_layout, adjustedRun.from(), runLength, 0, 0);
     if (status == noErr && params.m_hasSyntheticBold) {
         // Force relayout for the bold pass
@@ -486,14 +490,11 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
         params.m_syntheticBoldPass = true;
         status = ATSUDrawText(params.m_layout, adjustedRun.from(), runLength, 0, 0);
     }
-    if (!flipped)
-        CGContextScaleCTM(context, 1.0, -1.0);
     CGContextTranslateCTM(context, -point.x(), -point.y());
 
-    if (status != noErr) {
+    if (status != noErr)
         // Nothing to do but report the error (dev build only).
         LOG_ERROR("ATSUDrawText() failed(%d)", status);
-    }
 
     disposeATSULayoutParameters(&params);
     
@@ -554,19 +555,16 @@ int Font::offsetForPositionForComplexText(const TextRun& run, const TextStyle& s
     return offset - adjustedRun.from();
 }
 
-void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
+void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point, bool usePrinterFont) const
 {
-    // FIXME: Grab the CGContext from the GraphicsContext eventually, when we have made sure to shield against flipping caused by calls into us
-    // from Safari.
-    NSGraphicsContext *gContext = [NSGraphicsContext currentContext];
-    CGContextRef cgContext = (CGContextRef)[gContext graphicsPort];
+    CGContextRef cgContext = context->platformContext();
 
     bool originalShouldUseFontSmoothing = wkCGContextGetShouldSmoothFonts(cgContext);
     CGContextSetShouldSmoothFonts(cgContext, WebCoreShouldUseFontSmoothing());
     
     const FontPlatformData& platformData = font->platformData();
     NSFont* drawFont;
-    if ([gContext isDrawingToScreen]) {
+    if (!usePrinterFont) {
         drawFont = [platformData.font screenFont];
         if (drawFont != platformData.font)
             // We are getting this in too many places (3406411); use ERROR so it only prints on debug versions for now. (We should debug this also, eventually).
@@ -583,10 +581,8 @@ void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const Glyp
 
     CGAffineTransform matrix;
     memcpy(&matrix, [drawFont matrix], sizeof(matrix));
-    if ([gContext isFlipped]) {
-        matrix.b = -matrix.b;
-        matrix.d = -matrix.d;
-    }
+    matrix.b = -matrix.b;
+    matrix.d = -matrix.d;
     if (platformData.syntheticOblique)
         matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
     CGContextSetTextMatrix(cgContext, matrix);
@@ -594,7 +590,7 @@ void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const Glyp
     wkSetCGFontRenderingMode(cgContext, drawFont);
     CGContextSetFontSize(cgContext, 1.0f);
 
-    [nsColor(context->pen().color()) set];
+    CGContextSetFillColorWithColor(cgContext, cgColor(context->pen().color())); // WebCore expects text to respect the pen color, CG expects text to use fill
 
     CGContextSetTextPosition(cgContext, point.x(), point.y());
     CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);

@@ -44,7 +44,6 @@ namespace WebCore {
 
 KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz(CGContextRef context)
     : m_cgContext(CGContextRetain(context))
-    , m_nsGraphicsContext(0)
 {
     ASSERT(m_cgContext);
 }
@@ -52,7 +51,6 @@ KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz(CGContextRef contex
 KRenderingDeviceContextQuartz::~KRenderingDeviceContextQuartz()
 {
     CGContextRelease(m_cgContext);
-    HardRelease(m_nsGraphicsContext);
 }
 
 AffineTransform KRenderingDeviceContextQuartz::concatCTM(const AffineTransform& worldMatrix)
@@ -76,13 +74,6 @@ void KRenderingDeviceContextQuartz::clearPath()
 void KRenderingDeviceContextQuartz::addPath(const Path& path)
 {
     CGContextAddPath(m_cgContext, path.platformPath());
-}
-
-NSGraphicsContext *KRenderingDeviceContextQuartz::nsGraphicsContext()
-{
-    if (!m_nsGraphicsContext && m_cgContext)
-        m_nsGraphicsContext = HardRetain([NSGraphicsContext graphicsContextWithGraphicsPort:m_cgContext flipped:YES]);
-    return m_nsGraphicsContext;
 }
 
 GraphicsContext* KRenderingDeviceContextQuartz::createGraphicsContext()
@@ -126,23 +117,6 @@ CGContextRef KRenderingDeviceQuartz::currentCGContext() const
 {
     ASSERT(quartzContext());
     return quartzContext()->cgContext();
-}
-
-void KRenderingDeviceQuartz::pushContext(KRenderingDeviceContext *context)
-{
-    ASSERT(context);
-    KRenderingDevice::pushContext(context);
-    [NSGraphicsContext saveGraphicsState];
-    [NSGraphicsContext setCurrentContext:quartzContext()->nsGraphicsContext()];
-    ASSERT(quartzContext()->nsGraphicsContext() == [NSGraphicsContext currentContext]);
-}
-
-KRenderingDeviceContext *KRenderingDeviceQuartz::popContext()
-{
-    [NSGraphicsContext restoreGraphicsState];
-    KRenderingDeviceContext *poppedContext = KRenderingDevice::popContext();
-    ASSERT(!currentContext() || currentCGContext() == [[NSGraphicsContext currentContext] graphicsPort]);
-    return poppedContext;
 }
 
 KRenderingDeviceContext *KRenderingDeviceQuartz::contextForImage(KCanvasImage *image) const

@@ -134,6 +134,9 @@ void GraphicsContext::drawLineForMisspelling(const IntPoint& point, int width)
             width -= widthMod;
     }
     
+    // FIXME: This code should not use NSGraphicsContext currentContext
+    // In order to remove this requirement we will need to use CGPattern instead of NSColor
+    
     // Draw underline
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     CGContextRef context = (CGContextRef)[currentContext graphicsPort];

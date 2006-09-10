@@ -659,9 +659,12 @@ static Boolean ListBoxTypeSelectCallback(UInt32 index, void *listDataPtr, void *
 
 - (void)drawRow:(int)row clipRect:(NSRect)clipRect
 {
-    if (!_box) {
+    if (!_box)
         return;
-    }
+    
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    ASSERT([[NSGraphicsContext currentContext] isFlipped]);
+    GraphicsContext graphicsContext(context);
 
     const ListBoxItem &item = _box->itemAtIndex(row);
 
@@ -680,11 +683,11 @@ static Boolean ListBoxTypeSelectCallback(UInt32 index, void *listDataPtr, void *
 
     bool deleteRenderer = false;
     const Font* renderer;
-    if (isSystemFont) {
-        RenderWidget *client = static_cast<RenderWidget *>([self widget]->client());
-        bool isPrinting = client->view()->printingMode();
+    RenderWidget *client = static_cast<RenderWidget *>([self widget]->client());
+    bool isPrinting = client->view()->printingMode();
+    if (isSystemFont)
         renderer = (item.type == ListBoxGroupLabel) ? groupLabelTextRenderer(isPrinting) : itemTextRenderer(isPrinting);
-    } else {
+    else {
         if (item.type == ListBoxGroupLabel) {
             deleteRenderer = true;
             FontDescription boldDesc = _box->font().fontDescription();
@@ -699,6 +702,7 @@ static Boolean ListBoxTypeSelectCallback(UInt32 index, void *listDataPtr, void *
     WebCore::TextStyle style;
     style.setRTL(rtl);
     style.disableRoundingHacks();
+    style.setUsePrinterFonts(isPrinting);
 
     TextRun run(reinterpret_cast<const UniChar *>(item.string.unicode()), item.string.length());
     
@@ -710,8 +714,6 @@ static Boolean ListBoxTypeSelectCallback(UInt32 index, void *listDataPtr, void *
         point.setX(NSMaxX(cellRect) - rightMargin - renderer->floatWidth(run, style));
     point.setY(NSMaxY(cellRect) - renderer->descent() - bottomMargin);
 
-    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    GraphicsContext graphicsContext(context);
     CGFloat red, green, blue, alpha;
     [[color colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
     graphicsContext.setPen(makeRGBA((int)(red * 255), (int)(green * 255), (int)(blue * 255), (int)(alpha * 255)));

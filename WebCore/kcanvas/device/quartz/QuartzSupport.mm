@@ -42,46 +42,6 @@
 
 namespace WebCore {
 
-#ifndef NDEBUG
-void debugDumpCGImageToFile(NSString *filename, CGImageRef image, int width, int height)
-{
-    NSImage *fileImage = [[NSImage alloc] initWithSize:NSMakeSize(width, height)];
-    [fileImage lockFocus];
-    CGContextRef fileImageContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CGContextDrawImage(fileImageContext, GraphicsContext(fileImageContext).roundToDevicePixels(
-        FloatRect(0, 0, width, height)), image); 
-    [fileImage unlockFocus];
-    NSData *tiff = [fileImage TIFFRepresentation];
-    [tiff writeToFile:filename atomically:YES];
-    [fileImage release];
-}
-
-void debugDumpCGLayerToFile(NSString *filename, CGLayerRef layer, int width, int height)
-{
-    NSImage *fileImage = [[NSImage alloc] initWithSize:NSMakeSize(width, height)];
-    [fileImage lockFocus];
-    CGContextRef fileImageContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CGContextDrawLayerAtPoint(fileImageContext, CGPointMake(0, 0), layer); 
-    [fileImage unlockFocus];
-    NSData *tiff = [fileImage TIFFRepresentation];
-    [tiff writeToFile:filename atomically:YES];
-    [fileImage release];
-}
-
-void debugDumpCIImageToFile(NSString *filename, CIImage *ciImage, int width, int height)
-{
-    NSImage *fileImage = [[NSImage alloc] initWithSize:NSMakeSize(width, height)];
-    [fileImage lockFocus];
-    CGContextRef fileImageContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CIContext *ciContext = [CIContext contextWithCGContext:fileImageContext options:nil];
-    [ciContext drawImage:ciImage atPoint:CGPointZero fromRect:CGRectMake(0, 0, width, height)];
-    [fileImage unlockFocus];
-    NSData *tiff = [fileImage TIFFRepresentation];
-    [tiff writeToFile:filename atomically:YES];
-    [fileImage release];
-}
-#endif
-
 CFStringRef CFStringFromCGAffineTransform(CGAffineTransform t)
 {
     return CFStringCreateWithFormat(0, 0, CFSTR("a: %f b: %f c: %f d: %f tx: %f ty: %f"), t.a, t.b, t.c, t.d, t.tx, t.ty);

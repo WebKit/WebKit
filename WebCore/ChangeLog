@@ -1,3 +1,57 @@
+2006-09-10  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by darin.
+        
+        Remove a bunch more NSGraphicsContext related code.
+        Add a LocalCurrentGraphicsContext to simplify methods which need to call up into AppKit controls (and thus depend on the [NSGraphicsContext currentContext] being set correctly)
+        Add an "isPrinting" flag to many of the text drawing functions in order to avoid the need for a GraphicsContext::isPrinting() function.
+
+        No tests were harmed in the making of this patch.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge drawRect:]):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        (WebCore::KRenderingDeviceContextQuartz::cgContext):
+        (WebCore::KRenderingDeviceQuartz::isBuffered):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz):
+        (WebCore::KRenderingDeviceContextQuartz::~KRenderingDeviceContextQuartz):
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        * platform/Font.cpp:
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawText):
+        * platform/Font.h:
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawText):
+        * platform/GraphicsContext.h:
+        * platform/mac/FileButtonMac.mm:
+        (-[WebFileChooserButton drawRect:]):
+        * platform/mac/FontMac.mm:
+        (WebCore::ATSULayoutParameters::ATSULayoutParameters):
+        (WebCore::ATSULayoutParameters::initialize):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawGlyphs):
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForMisspelling):
+        * platform/mac/ListBoxMac.mm:
+        (-[WebCoreTableView drawRow:clipRect:]):
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreDrawTextAtPoint):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::WebCoreNSGraphicsContextBridge::WebCoreNSGraphicsContextBridge):
+        (WebCore::WebCoreNSGraphicsContextBridge::~WebCoreNSGraphicsContextBridge):
+        (WebCore::RenderThemeMac::paintButton):
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::paintTextArea):
+
 2006-09-09  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by aroben.

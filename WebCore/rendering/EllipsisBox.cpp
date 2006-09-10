@@ -23,6 +23,7 @@
 #include "config.h"
 #include "EllipsisBox.h"
 
+#include "Document.h"
 #include "GraphicsContext.h"
 #include "TextStyle.h"
 
@@ -46,7 +47,9 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
     }
 
     const String& str = m_str;
-    p->drawText(TextRun(str.impl()), IntPoint(m_x + _tx, m_y + _ty + m_baseline), TextStyle(0, 0, 0, false, _style->visuallyOrdered()));
+    TextStyle textStyle(0, 0, 0, false, _style->visuallyOrdered());
+    textStyle.setUsePrinterFonts(object()->document()->printing());
+    p->drawText(TextRun(str.impl()), IntPoint(m_x + _tx, m_y + _ty + m_baseline), textStyle);
 
     if (setShadow)
         p->clearShadow();
