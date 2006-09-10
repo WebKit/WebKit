@@ -1,3 +1,12 @@
+2006-09-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by ap.
+
+        Fix QtLauncher - it is supposed to create a FrameView on its own nowadays.
+
+        * QtLauncher/main.cpp:
+        (main):
+
 2006-09-04  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Tim H.

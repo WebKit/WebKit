@@ -65,6 +65,10 @@ int main(int argc, char **argv)
     Page* page = new Page();
     Frame* frame = new FrameQt(page, 0, new FrameQtClientDefault());
 
+    FrameView* frameView = new FrameView(frame);
+    frame->setView(frameView);
+    frameView->setParentWidget(&topLevel);
+
     l->addWidget(frame->view()->qwidget());
     l->activate();
     frame->view()->qwidget()->show();
