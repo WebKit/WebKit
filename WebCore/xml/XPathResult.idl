@@ -53,4 +53,5 @@ module xpath {
         Node snapshotItem(in unsigned long index)
             raises (DOMException);
     };
+
 }

@@ -2,6 +2,25 @@
 
         Reviewed by Eric.
 
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10795
+        Auto-generate the Objective-C DOM XPath bindings
+
+        - Auto-generates DOMXPathExpression, DOMXPathNSResolver and DOMXPathResult.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/DOMXPath.h:
+        * bindings/objc/DOMXPath.mm:
+        * bindings/objc/PublicDOMInterfaces.h:
+        * xml/XPathExpression.idl:
+        * xml/XPathNSResolver.idl:
+        * xml/XPathResult.idl:
+
+2006-09-09  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Eric.
+
         Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10791
         Even More Objective-C DOM auto-generation cleanup
 

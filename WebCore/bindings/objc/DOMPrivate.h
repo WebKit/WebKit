@@ -66,6 +66,7 @@
 #import <WebCore/DOMProcessingInstructionPrivate.h>
 #import <WebCore/DOMUIEventPrivate.h>
 #import <WebCore/DOMWheelEventPrivate.h>
+#import <WebCore/DOMXPathExpressionPrivate.h>
 
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +40,9 @@ using WebCore::ExceptionCode;
 using WebCore::XPathExpression;
 using WebCore::XPathNSResolver;
 using WebCore::XPathResult;
+
+//------------------------------------------------------------------------------------------
+// DOMNativeXPathNSResolver
 
 @implementation DOMNativeXPathNSResolver
 
@@ -94,91 +98,9 @@ using WebCore::XPathResult;
 
 @end
 
-@implementation DOMXPathResult
 
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<XPathResult*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<XPathResult*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (unsigned short)resultType
-{
-    return [self _xpathResult]->resultType();
-}
-
-- (double)numberValue
-{
-    ExceptionCode ec = 0;
-    double result = [self _xpathResult]->numberValue(ec);
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (NSString *)stringValue
-{
-    ExceptionCode ec = 0;
-    NSString *result = [self _xpathResult]->stringValue(ec);
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (BOOL)booleanValue
-{
-    ExceptionCode ec = 0;
-    BOOL result = [self _xpathResult]->booleanValue(ec);
-    raiseOnDOMError(ec);
-    return result;
-}
-
-- (DOMNode *)singleNodeValue
-{
-    ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _xpathResult]->singleNodeValue(ec)];
-    raiseOnDOMError(ec);
-    return result;    
-}
-
-- (BOOL)invalidIteratorState
-{
-    return [self _xpathResult]->invalidIteratorState();
-}
-
-- (unsigned)snapshotLength
-{
-    ExceptionCode ec = 0;
-    unsigned result = [self _xpathResult]->snapshotLength(ec);
-    raiseOnDOMError(ec);
-    return result;        
-}
-
-- (DOMNode *)iterateNext
-{
-    ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _xpathResult]->iterateNext(ec)];
-    raiseOnDOMError(ec);
-    return result;    
-}
-
-- (DOMNode *)snapshotItem:(unsigned)index
-{
-    ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWith:[self _xpathResult]->snapshotItem(index, ec)];
-    raiseOnDOMError(ec);
-    return result;    
-}
-
-@end
+//------------------------------------------------------------------------------------------
+// DOMXPathResult
 
 @implementation DOMXPathResult (WebCoreInternal)
 
@@ -214,33 +136,8 @@ using WebCore::XPathResult;
 @end
 
 
-@implementation DOMXPathExpression
-
-- (void)dealloc
-{
-    if (_internal) {
-        DOM_cast<XPathNSResolver*>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal) {
-        DOM_cast<XPathNSResolver*>(_internal)->deref();
-    }
-    [super finalize];
-}
-
-- (DOMXPathResult *)evaluate:(DOMNode *)contextNode :(unsigned short)type :(DOMXPathResult *)result
-{
-    ExceptionCode ec = 0;
-    DOMXPathResult *_result = [DOMXPathResult _xpathResultWith:[self _xpathExpression]->evaluate([contextNode _node], type, [result _xpathResult], ec).get()];
-    raiseOnDOMError(ec);
-    return _result;
-}
-
-@end
+//------------------------------------------------------------------------------------------
+// DOMXPathResult
 
 @implementation DOMXPathExpression (WebCoreInternal)
 

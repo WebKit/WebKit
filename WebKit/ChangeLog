@@ -2,6 +2,15 @@
 
         Reviewed by Eric.
 
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10795
+        Auto-generate the Objective-C DOM XPath bindings
+
+        * MigrateHeaders.make:
+
+2006-09-09  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Eric.
+
         Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10791
         Even More Objective-C DOM auto-generation cleanup
 

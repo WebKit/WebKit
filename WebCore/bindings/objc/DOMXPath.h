@@ -28,43 +28,13 @@
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMObject.h>
 
+#import <WebCore/DOMXPathExpression.h>
+#import <WebCore/DOMXPathNSResolver.h>
+#import <WebCore/DOMXPathResult.h>
+
 extern NSString * const DOMXPathException;
 
 enum DOMXPathExceptionCode {
     DOM_INVALID_EXPRESSION_ERR = 51,
     DOM_TYPE_ERR = 52
 };
-
-@protocol DOMXPathNSResolver <NSObject>
-- (NSString *)lookupNamespaceURI:(NSString *)prefix;
-@end
-
-enum {
-    // XPath result types
-    DOM_ANY_TYPE                       = 0,
-    DOM_NUMBER_TYPE                    = 1,
-    DOM_STRING_TYPE                    = 2,
-    DOM_BOOLEAN_TYPE                   = 3,
-    DOM_UNORDERED_NODE_ITERATOR_TYPE   = 4,
-    DOM_ORDERED_NODE_ITERATOR_TYPE     = 5,
-    DOM_UNORDERED_NODE_SNAPSHOT_TYPE   = 6,
-    DOM_ORDERED_NODE_SNAPSHOT_TYPE     = 7,
-    DOM_ANY_UNORDERED_NODE_TYPE        = 8,
-    DOM_FIRST_ORDERED_NODE_TYPE        = 9
-};
-
-@interface DOMXPathResult : DOMObject
-- (unsigned short)resultType;
-- (double)numberValue;
-- (NSString *)stringValue;
-- (BOOL)booleanValue;
-- (DOMNode *)singleNodeValue;
-- (BOOL)invalidIteratorState;
-- (unsigned)snapshotLength;
-- (DOMNode *)iterateNext;
-- (DOMNode *)snapshotItem:(unsigned)index;
-@end
-
-@interface DOMXPathExpression : DOMObject
-- (DOMXPathResult *)evaluate:(DOMNode *)contextNode :(unsigned short)type :(DOMXPathResult *)result;
-@end

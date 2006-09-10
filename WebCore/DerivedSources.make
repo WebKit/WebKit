@@ -139,7 +139,10 @@ all : \
     DOMText.h \
     DOMTreeWalker.h \
     DOMUIEvent.h \
-    DOMWheelEvent.h
+    DOMWheelEvent.h \
+    DOMXPathExpression.h \
+    DOMXPathNSResolver.h \
+    DOMXPathResult.h
 endif
 
 all : \

@@ -1,4 +1,5 @@
 // Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+// Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -879,8 +880,32 @@
 - (DOMNode *)nextNode;
 @end
 
+@interface DOMXPathResult : DOMObject
+@property(readonly) unsigned short resultType;
+@property(readonly) double numberValue;
+@property(readonly) NSString *stringValue;
+@property(readonly) BOOL booleanValue;
+@property(readonly) DOMNode *singleNodeValue;
+@property(readonly) BOOL invalidIteratorState;
+@property(readonly) unsigned snapshotLength;
+- (DOMNode *)iterateNext;
+- (DOMNode *)snapshotItem:(unsigned)index;
+@end
+
+@interface DOMXPathExpression : DOMObject
+// We should be able to remove the old style version of this method
+// once we can verify that all the internal Apple usages have switched
+// to the new style, because this has never been in a public release.
+//- (DOMXPathResult *)evaluate:(DOMNode *)contextNode type:(unsigned short)type inResult:(DOMXPathResult *)inResult;
+- (DOMXPathResult *)evaluate:(DOMNode *)contextNode :(unsigned short)type :(DOMXPathResult *)inResult;
+@end
+
 // Protocols
 
 @protocol DOMEventListener <NSObject>
 - (void)handleEvent:(DOMEvent *)evt;
+@end
+
+@protocol DOMXPathNSResolver <NSObject>
+- (NSString *)lookupNamespaceURI:(NSString *)prefix;
 @end

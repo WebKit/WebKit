@@ -183,6 +183,10 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMWheelEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMWheelEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPath.h \
+    $(PUBLIC_HEADERS_DIR)/DOMXPathExpression.h \
+    $(PRIVATE_HEADERS_DIR)/DOMXPathExpressionPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMXPathNSResolver.h \
+    $(PUBLIC_HEADERS_DIR)/DOMXPathResult.h \
     $(PRIVATE_HEADERS_DIR)/WebDashboardRegion.h \
     $(PUBLIC_HEADERS_DIR)/WebScriptObject.h \
     $(PUBLIC_HEADERS_DIR)/npapi.h \
