@@ -211,18 +211,17 @@ ResourceLoader::~ResourceLoader()
 
 CFArrayRef arrayFromFormData(const FormData& d)
 {
-    CFMutableArrayRef a = CFArrayCreateMutable(0, d.count(), &kCFTypeArrayCallBacks);
-    for (DeprecatedValueListConstIterator<FormDataElement> it = d.begin(); it != d.end(); ++it) {
-        const FormDataElement& e = *it;
+    size_t size = d.elements().size();
+    CFMutableArrayRef a = CFArrayCreateMutable(0, d.elements().size(), &kCFTypeArrayCallBacks);
+    for (size_t i = 0; i < size; ++i) {
+        const FormDataElement& e = d.elements()[i];
         if (e.m_type == FormDataElement::data) {
             CFDataRef data = CFDataCreate(0, (const UInt8*)e.m_data.data(), e.m_data.size());
             CFArrayAppendValue(a, data);
             CFRelease(data);
         } else {
             ASSERT(e.m_type == FormDataElement::encodedFile);
-            int len;
-            const char* bytes = e.m_filename.ascii(); // !!! Not a good assumption.  We need to yank the DeprecatedString to CFString conversions from the Mac-only code
-            CFStringRef filename = CFStringCreateWithBytes(0, (const UInt8*)bytes, e.m_filename.length(), kCFStringEncodingUTF8, false);
+            CFStringRef filename = e.m_filename.createCFString();
             CFArrayAppendValue(a, filename);
             CFRelease(filename);
         }
@@ -265,17 +264,15 @@ bool ResourceLoader::start(DocLoader* docLoader)
         CFRelease(headerString);
     }
 
-    DeprecatedString referrer = docLoader->frame()->referrer();
-    if (!referrer.isEmpty() && referrer.isAllASCII()) {
-        int len;
-        const char* bytes = referrer.ascii();
-        CFStringRef str = CFStringCreateWithBytes(0, (const UInt8*)bytes, referrer.length(), kCFStringEncodingUTF8, false);
+    String referrer = docLoader->frame()->referrer();
+    if (!referrer.isEmpty()) {
+        CFStringRef str = referrer.createCFString();
         CFHTTPMessageSetHeaderFieldValue(httpRequest, CFSTR("Referer"),str);
         CFRelease(str);
     }
     
     CFReadStreamRef bodyStream = 0;
-    if (postData().count() > 0) {
+    if (postData().elements().size() > 0) {
         CFArrayRef formArray = arrayFromFormData(postData());
         bool done = false;
         CFIndex count = CFArrayGetCount(formArray);

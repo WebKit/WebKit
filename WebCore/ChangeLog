@@ -1,3 +1,15 @@
+2006-09-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by aroben.
+
+        Fixes to work with string API changes.
+
+        * platform/cf/ResourceLoaderCFNet.cpp:
+        (WebCore::arrayFromFormData):
+        (WebCore::ResourceLoader::start):
+        * platform/cf/StringCF.cpp:
+        * platform/cf/StringImplCF.cpp:
+
 2006-09-09  David Hyatt  <hyatt@apple.com>
 
         Fix for Bugzilla bug 5500, scrollLeft/Top/Width/Height properties not supported
@@ -57,6 +69,7 @@
         (WebCore::RenderObject::clientLeft):
         (WebCore::RenderObject::clientTop):
 
+>>>>>>> .r16283
 2006-09-09  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Eric.

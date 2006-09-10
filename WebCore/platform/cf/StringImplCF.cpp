@@ -21,6 +21,8 @@
 #include "config.h"
 #include "StringImpl.h"
 
+#if PLATFORM(CF)
+
 #include <CoreFoundation/CoreFoundation.h>
 
 namespace WebCore {
@@ -31,3 +33,5 @@ CFStringRef StringImpl::createCFString() const
 }
 
 }
+
+#endif // PLATFORM(CF)

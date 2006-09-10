@@ -21,6 +21,8 @@
 #include "config.h"
 #include "PlatformString.h"
 
+#if PLATFORM(CF)
+
 #include <CoreFoundation/CoreFoundation.h>
 
 namespace WebCore {
@@ -49,3 +51,5 @@ CFStringRef String::createCFString() const
 }
 
 }
+
+#endif // PLATFORM(CF)
