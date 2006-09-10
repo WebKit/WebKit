@@ -1491,8 +1491,6 @@ int RenderBox::containingBlockWidthForPositioned(const RenderObject* containingB
         return max(0, (fromRight - fromLeft));
     }
 
-    if (usesLineWidth() && isRenderBlock())
-        return static_cast<const RenderBlock*>(containingBlock)->lineWidth(m_y) + containingBlock->paddingLeft() + containingBlock->paddingRight();
     return containingBlock->width() - containingBlock->borderLeft() - containingBlock->borderRight();
 }
 

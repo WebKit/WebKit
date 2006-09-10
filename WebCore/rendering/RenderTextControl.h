@@ -62,6 +62,14 @@ public:
     void forwardEvent(Event*);
     void selectionChanged(bool userTriggered);
 
+    // Subclassed to forward to our inner div.
+    virtual int scrollLeft() const;
+    virtual int scrollTop() const;
+    virtual int scrollWidth() const;
+    virtual int scrollHeight() const;
+    virtual void setScrollLeft(int);
+    virtual void setScrollTop(int);
+
 private:
     VisiblePosition visiblePositionForIndex(int index);
     int indexForVisiblePosition(const VisiblePosition&);

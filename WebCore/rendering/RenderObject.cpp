@@ -612,15 +612,13 @@ RenderObject* RenderObject::offsetParent() const
 
 // More IE extensions.  clientWidth and clientHeight represent the interior of an object
 // excluding border and scrollbar.
-int
-RenderObject::clientWidth() const
+int RenderObject::clientWidth() const
 {
     return width() - borderLeft() - borderRight() -
         (includeVerticalScrollbarSize() ? layer()->verticalScrollbarWidth() : 0);
 }
 
-int
-RenderObject::clientHeight() const
+int RenderObject::clientHeight() const
 {
     return height() - borderTop() - borderBottom() -
       (includeHorizontalScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0);
@@ -628,16 +626,36 @@ RenderObject::clientHeight() const
 
 // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
 // object has overflow:hidden/scroll/auto specified and also has overflow.
-int
-RenderObject::scrollWidth() const
+int RenderObject::scrollWidth() const
 {
     return hasOverflowClip() ? layer()->scrollWidth() : overflowWidth();
 }
 
-int
-RenderObject::scrollHeight() const
+int RenderObject::scrollHeight() const
 {
     return hasOverflowClip() ? layer()->scrollHeight() : overflowHeight();
+}
+
+int RenderObject::scrollLeft() const
+{
+    return hasOverflowClip() ? layer()->scrollXOffset() : 0;
+}
+
+int RenderObject::scrollTop() const
+{
+    return hasOverflowClip() ? layer()->scrollYOffset() : 0;
+}
+
+void RenderObject::setScrollLeft(int newLeft)
+{
+    if (hasOverflowClip())
+        layer()->scrollToXOffset(newLeft);
+}
+
+void RenderObject::setScrollTop(int newTop)
+{
+    if (hasOverflowClip())
+        layer()->scrollToYOffset(newTop);
 }
 
 bool RenderObject::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
@@ -653,16 +671,14 @@ bool RenderObject::scroll(ScrollDirection direction, ScrollGranularity granulari
     return false;
 }
 
-bool
-RenderObject::hasStaticX() const
+bool RenderObject::hasStaticX() const
 {
     return (style()->left().isAuto() && style()->right().isAuto()) ||
             style()->left().isStatic() ||
             style()->right().isStatic();
 }
 
-bool
-RenderObject::hasStaticY() const
+bool RenderObject::hasStaticY() const
 {
     return (style()->top().isAuto() && style()->bottom().isAuto()) || style()->top().isStatic();
 }

@@ -428,4 +428,44 @@ void RenderTextControl::selectionChanged(bool userTriggered)
         element->onSelect();
 }
 
+int RenderTextControl::scrollWidth() const
+{
+    if (m_div)
+        return m_div->scrollWidth();
+    return RenderFlexibleBox::scrollWidth();
+}
+
+int RenderTextControl::scrollHeight() const
+{
+    if (m_div)
+        return m_div->scrollHeight();
+    return RenderFlexibleBox::scrollHeight();
+}
+
+int RenderTextControl::scrollLeft() const
+{
+    if (m_div)
+        return m_div->scrollLeft();
+    return RenderFlexibleBox::scrollLeft();
+}
+
+int RenderTextControl::scrollTop() const
+{
+    if (m_div)
+        return m_div->scrollTop();
+    return RenderFlexibleBox::scrollTop();
+}
+
+void RenderTextControl::setScrollLeft(int newLeft)
+{
+    if (m_div)
+        m_div->setScrollLeft(newLeft);
+}
+
+void RenderTextControl::setScrollTop(int newTop)
+{
+    if (m_div)
+        m_div->setScrollTop(newTop);
+}
+
 }

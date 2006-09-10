@@ -272,35 +272,31 @@ int Element::clientHeight()
 int Element::scrollLeft()
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    RenderObject* rend = renderer();
-    if (rend && rend->layer())
-        return rend->layer()->scrollXOffset();
+    if (RenderObject* rend = renderer())
+        return rend->scrollLeft();
     return 0;
 }
 
 int Element::scrollTop()
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    RenderObject* rend = renderer();
-    if (rend && rend->layer())
-        return rend->layer()->scrollYOffset();
+    if (RenderObject* rend = renderer())
+        return rend->scrollTop();
     return 0;
 }
 
 void Element::setScrollLeft(int newLeft)
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    RenderObject *rend = renderer();
-    if (rend && rend->hasOverflowClip())
-        rend->layer()->scrollToXOffset(newLeft);
+    if (RenderObject *rend = renderer())
+        rend->setScrollLeft(newLeft);
 }
 
 void Element::setScrollTop(int newTop)
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    RenderObject *rend = renderer();
-    if (rend && rend->hasOverflowClip())
-        rend->layer()->scrollToYOffset(newTop);
+    if (RenderObject *rend = renderer())
+        rend->setScrollTop(newTop);
 }
 
 int Element::scrollWidth()

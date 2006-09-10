@@ -1,5 +1,49 @@
 2006-09-09  David Hyatt  <hyatt@apple.com>
 
+        Fix for Bugzilla bug 5500, scrollLeft/Top/Width/Height properties not supported
+        on textarea.  Refactored the DOM getters and setters to go through the renderer
+        instead of right to the layer.  The renderer functions are virtual so that the
+        text control can subclass and forward to its anonymous div.
+
+        Fix for Bugzilla bug 10719, When positioned objects are sizing using their
+        containing block width as a guide, they should not ever use the line width like
+        non-positioned objects do.
+
+        Reviewed by aroben
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::Element::scrollLeft):
+        (WebCore::Element::scrollTop):
+        (WebCore::Element::setScrollLeft):
+        (WebCore::Element::setScrollTop):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::clientWidth):
+        (WebCore::RenderObject::clientHeight):
+        (WebCore::RenderObject::scrollWidth):
+        (WebCore::RenderObject::scrollHeight):
+        (WebCore::RenderObject::scrollLeft):
+        (WebCore::RenderObject::scrollTop):
+        (WebCore::RenderObject::setScrollLeft):
+        (WebCore::RenderObject::setScrollTop):
+        (WebCore::RenderObject::hasStaticX):
+        (WebCore::RenderObject::hasStaticY):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::clientLeft):
+        (WebCore::RenderObject::clientTop):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::scrollWidth):
+        (WebCore::RenderTextControl::scrollHeight):
+        (WebCore::RenderTextControl::scrollLeft):
+        (WebCore::RenderTextControl::scrollTop):
+        (WebCore::RenderTextControl::setScrollLeft):
+        (WebCore::RenderTextControl::setScrollTop):
+        * rendering/RenderTextControl.h:
+
+2006-09-09  David Hyatt  <hyatt@apple.com>
+
         Implement support for the WinIE clientLeft and clientTop extensions.
 
         Reviewed by aroben
