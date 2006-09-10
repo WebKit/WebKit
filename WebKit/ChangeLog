@@ -1,3 +1,20 @@
+2006-09-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10547
+          REGRESSION: Links that should open in a new window open in the same window,
+          while opening another blank window
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        Changed a mistaken "self" to "frame", which was the cause of the bug. Also
+        fixed the method so that it won't crash if createWebViewWithRequest does
+        something that has a side effect of releasing this WebView or this frame
+        by retaining "self" and "frame" as needed. Also fixed a problem where the
+        code to set "opener" was backwards, and would set the opener of the old
+        frame to point to the new frame instead of vice versa.
+
 2006-09-09  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Eric.

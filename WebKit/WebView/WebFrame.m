@@ -1578,10 +1578,11 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
 - (void)_continueLoadRequestAfterNewWindowPolicy:(NSURLRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState
 {
-    if (!request) {
+    if (!request)
         return;
-    }
-    
+
+    [self retain];
+
     WebView *webView = nil;
     WebView *currentWebView = [self webView];
     id wd = [currentWebView UIDelegate];
@@ -1589,17 +1590,27 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         webView = [wd webView:currentWebView createWebViewWithRequest:nil];
     else
         webView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
-        
+    if (!webView)
+        goto exit;
 
     WebFrame *frame = [webView mainFrame];
+    if (!frame)
+        goto exit;
+
+    [frame retain];
+
     [[frame _bridge] setName:frameName];
 
     [[webView _UIDelegateForwarder] webViewShow:webView];
 
-    [[self _bridge] setOpener:[frame _bridge]];
-    [_private->frameLoader _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
-}
+    [[frame _bridge] setOpener:[self _bridge]];
+    [frame->_private->frameLoader _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
 
+    [frame release];
+
+exit:
+    [self release];
+}
 
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
