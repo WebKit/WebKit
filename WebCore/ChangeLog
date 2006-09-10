@@ -1,3 +1,18 @@
+2006-09-09  David Hyatt  <hyatt@apple.com>
+
+        Implement support for the WinIE clientLeft and clientTop extensions.
+
+        Reviewed by aroben
+
+        * dom/Element.cpp:
+        (WebCore::Element::clientLeft):
+        (WebCore::Element::clientTop):
+        * dom/Element.h:
+        * dom/Element.idl:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::clientLeft):
+        (WebCore::RenderObject::clientTop):
+
 2006-09-09  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Eric.

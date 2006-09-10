@@ -223,6 +223,24 @@ Element* Element::offsetParent()
     return 0;
 }
 
+int Element::clientLeft()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+
+    if (RenderObject* rend = renderer())
+        return rend->clientLeft();
+    return 0;
+}
+
+int Element::clientTop()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+
+    if (RenderObject* rend = renderer())
+        return rend->clientTop();
+    return 0;
+}
+
 int Element::clientWidth()
 {
     document()->updateLayoutIgnorePendingStylesheets();
