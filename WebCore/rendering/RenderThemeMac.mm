@@ -360,31 +360,6 @@ void RenderThemeMac::setFontFromControlSize(CSSStyleSelector* selector, RenderSt
         style->font().update();
 }
 
-void RenderThemeMac::addIntrinsicMargins(RenderStyle* style, NSControlSize size) const
-{
-    // Cut out the intrinsic margins completely if we end up using mini controls.
-    if (size == NSMiniControlSize)
-        return;
-    
-    // Intrinsic margin value.
-    const int m = 2;
-    
-    // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
-    if (style->width().isIntrinsicOrAuto()) {
-        if (style->marginLeft().quirk())
-            style->setMarginLeft(Length(m, Fixed));
-        if (style->marginRight().quirk())
-            style->setMarginRight(Length(m, Fixed));
-    }
-
-    if (style->height().isAuto()) {
-        if (style->marginTop().quirk())
-            style->setMarginTop(Length(m, Fixed));
-        if (style->marginBottom().quirk())
-            style->setMarginBottom(Length(m, Fixed));
-    }
-}
-
 bool RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     // Determine the width and height needed for the control and prepare the cell for painting.
@@ -533,9 +508,6 @@ void RenderThemeMac::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
     // Determine our control size based off our font.
     NSControlSize controlSize = controlSizeForFont(style);
 
-    // Add in intrinsic margins
-    addIntrinsicMargins(style, controlSize);
-
     if (style->appearance() == PushButtonAppearance) {
         // Ditch the border.
         style->resetBorder();
@@ -657,9 +629,6 @@ bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintIn
 
 void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    // Add in intrinsic margins if the font size isn't too small
-    if (style->fontSize() >= 11)
-        addIntrinsicMargins(style, NSRegularControlSize);
 }
 
 bool RenderThemeMac::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
@@ -671,9 +640,6 @@ bool RenderThemeMac::paintTextArea(RenderObject* o, const RenderObject::PaintInf
 
 void RenderThemeMac::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    // Add in intrinsic margins if the font size isn't too small
-    if (style->fontSize() >= 11)
-        addIntrinsicMargins(style, NSRegularControlSize);
 }
 
 const int* RenderThemeMac::popupButtonMargins() const
@@ -895,9 +861,6 @@ void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
 {
     NSControlSize controlSize = controlSizeForFont(style);
 
-    // Add in intrinsic margins
-    addIntrinsicMargins(style, controlSize);
-
     style->resetBorder();
     
     // Height is locked to auto.
@@ -922,11 +885,7 @@ void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
 }
 
 void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
-{
-    // Add in intrinsic margins if the font size isn't too small
-    if (style->fontSize() >= 11)
-        addIntrinsicMargins(style, NSRegularControlSize);
-        
+{        
     float fontScale = style->fontSize() / baseFontSize;
     float arrowWidth = baseArrowWidth * fontScale;
     

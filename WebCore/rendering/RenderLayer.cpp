@@ -56,7 +56,6 @@
 #include "OverflowEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderArena.h"
-#include "RenderFormElement.h"
 #include "RenderInline.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -834,7 +833,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& offsetFro
     RenderObject* renderer = m_object->node()->shadowAncestorNode()->renderer();
     if (diffWidth && (m_object->style()->resize() == RESIZE_HORIZONTAL || m_object->style()->resize() == RESIZE_BOTH)) {
         CSSStyleDeclaration* style = static_cast<Element*>(m_object->node()->shadowAncestorNode())->style();
-        if (renderer->style()->hasAppearance() || renderer->isFormElement() && static_cast<RenderFormElement*>(renderer)->canHaveIntrinsicMargins()) {
+        if (renderer->element() && renderer->element()->isControl()) {
             style->setProperty(CSS_PROP_MARGIN_LEFT, String::number(renderer->marginLeft()) + "px", false, ec);
             style->setProperty(CSS_PROP_MARGIN_RIGHT, String::number(renderer->marginRight()) + "px", false, ec);
         }
@@ -844,7 +843,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& offsetFro
 
     if (diffHeight && (m_object->style()->resize() == RESIZE_VERTICAL || m_object->style()->resize() == RESIZE_BOTH)) {
         CSSStyleDeclaration* style = static_cast<Element*>(m_object->node()->shadowAncestorNode())->style();
-        if (renderer->style()->hasAppearance() || renderer->isFormElement() && static_cast<RenderFormElement*>(renderer)->canHaveIntrinsicMargins()) {
+        if (renderer->element() && renderer->element()->isControl()) {
             style->setProperty(CSS_PROP_MARGIN_TOP, String::number(renderer->marginTop()) + "px", false, ec);
             style->setProperty(CSS_PROP_MARGIN_BOTTOM, String::number(renderer->marginBottom()) + "px", false, ec);
         }

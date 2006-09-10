@@ -38,7 +38,6 @@ namespace WebCore {
         
         virtual const char* renderName() const { return "DeprecatedSlider"; }
 
-        virtual bool canHaveIntrinsicMargins() const { return true; }
         virtual void calcMinMaxWidth();
         virtual void updateFromElement();
 

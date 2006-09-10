@@ -52,9 +52,6 @@ short RenderFormElement::baselinePosition(bool f, bool isRootLineBox) const
 
 void RenderFormElement::setStyle(RenderStyle* s)
 {
-    if (canHaveIntrinsicMargins())
-        addIntrinsicMarginsIfAllowed(s);
-
     RenderWidget::setStyle(s);
 
     // Do not paint a background or border for Aqua form elements
@@ -110,30 +107,6 @@ HorizontalAlignment RenderFormElement::textAlignment() const
     }
     ASSERT(false); // Should never be reached.
     return AlignLeft;
-}
-
-
-void RenderFormElement::addIntrinsicMarginsIfAllowed(RenderStyle* _style)
-{
-    // Cut out the intrinsic margins completely if we end up using mini controls.
-    if (_style->fontSize() < 11)
-        return;
-    
-    // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
-    int m = intrinsicMargin();
-    if (_style->width().isIntrinsicOrAuto()) {
-        if (_style->marginLeft().quirk())
-            _style->setMarginLeft(Length(m, Fixed));
-        if (_style->marginRight().quirk())
-            _style->setMarginRight(Length(m, Fixed));
-    }
-
-    if (_style->height().isAuto()) {
-        if (_style->marginTop().quirk())
-            _style->setMarginTop(Length(m, Fixed));
-        if (_style->marginBottom().quirk())
-            _style->setMarginBottom(Length(m, Fixed));
-    }
 }
 
 } // namespace WebCore

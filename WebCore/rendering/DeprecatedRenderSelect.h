@@ -41,7 +41,6 @@ namespace WebCore {
 
         short baselinePosition(bool f, bool b) const;
         int calcReplacedHeight() const { if (!m_useListBox) return intrinsicHeight(); return RenderFormElement::calcReplacedHeight(); }
-        virtual bool canHaveIntrinsicMargins() const { return true; }
 
         virtual void calcMinMaxWidth();
         virtual void layout();

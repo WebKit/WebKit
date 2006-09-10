@@ -52,16 +52,6 @@ namespace WebCore {
         int paddingLeft() const { return 0; }
         int paddingRight() const { return 0; }
 
-        // Aqua controls use intrinsic margin values in order to leave space for focus rings
-        // and to keep controls from butting up against one another.  This intrinsic margin
-        // is only applied if the Web page allows the control to size intrinsically.  If the
-        // Web page specifies an explicit width for a control, then we go ahead and honor that
-        // precise width.  Similarly, if a Web page uses a specific margin value, we will go ahead
-        // and honor that value.  
-        void addIntrinsicMarginsIfAllowed(RenderStyle*);
-        virtual bool canHaveIntrinsicMargins() const { return false; }
-        int intrinsicMargin() const { return 2; }
-
         virtual void setStyle(RenderStyle*);
         virtual void updateFromElement();
 

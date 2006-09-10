@@ -416,7 +416,7 @@ select {
 select[size],
 select[multiple],
 select[size][multiple] {
-    // FIXME: When converting the list box implementation, remove these.
+    /* FIXME: When converting the list box implementation, remove these. */
     -webkit-appearance: none;
     -webkit-box-align: initial;
     box-sizing: initial;

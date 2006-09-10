@@ -147,31 +147,6 @@ Color RenderThemeWin::platformInactiveSelectionForegroundColor() const
     return Color::white;
 }
 
-void RenderThemeWin::addIntrinsicMargins(RenderStyle* style) const
-{
-    // Cut out the intrinsic margins completely if we end up using a small font size
-    if (style->fontSize() < 11)
-        return;
-    
-    // Intrinsic margin value.
-    const int m = 2;
-    
-    // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
-    if (style->width().isIntrinsicOrAuto()) {
-        if (style->marginLeft().quirk())
-            style->setMarginLeft(Length(m, Fixed));
-        if (style->marginRight().quirk())
-            style->setMarginRight(Length(m, Fixed));
-    }
-
-    if (style->height().isAuto()) {
-        if (style->marginTop().quirk())
-            style->setMarginTop(Length(m, Fixed));
-        if (style->marginBottom().quirk())
-            style->setMarginBottom(Length(m, Fixed));
-    }
-}
-
 bool RenderThemeWin::supportsFocus(EAppearance appearance)
 {
     switch (appearance) {
@@ -234,7 +209,6 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o)
 
 void RenderThemeWin::adjustButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    addIntrinsicMargins(style);
 }
 
 static HDC prepareForDrawing(GraphicsContext* g)
@@ -321,7 +295,6 @@ void RenderThemeWin::setRadioSize(RenderStyle* style) const
 
 void RenderThemeWin::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    addIntrinsicMargins(style);
 }
 
 bool RenderThemeWin::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
@@ -351,7 +324,6 @@ bool RenderThemeWin::paintTextField(RenderObject* o, const RenderObject::PaintIn
 
 void RenderThemeWin::adjustTextAreaStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    addIntrinsicMargins(style);
 }
 
 bool RenderThemeWin::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)

@@ -1,3 +1,36 @@
+2006-09-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 10801, form controls that get styled suddenly lose their
+        intrinsic margins.  Move the intrinsic margin addition code into
+        adjustRenderStyle and get it out of the theme code and the old form control
+        code.
+
+        Reviewed by aroben
+
+        * css/cssstyleselector.cpp:
+        (WebCore::addIntrinsicMargins):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * css/html4.css:
+        * rendering/DeprecatedRenderSelect.h:
+        (WebCore::DeprecatedRenderSelect::calcReplacedHeight):
+        * rendering/DeprecatedSlider.h:
+        * rendering/RenderFormElement.cpp:
+        (WebCore::RenderFormElement::setStyle):
+        * rendering/RenderFormElement.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustButtonStyle):
+        (WebCore::RenderThemeMac::adjustTextFieldStyle):
+        (WebCore::RenderThemeMac::adjustTextAreaStyle):
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        (WebCore::RenderThemeMac::adjustMenuListButtonStyle):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::adjustButtonStyle):
+        (WebCore::RenderThemeWin::adjustTextFieldStyle):
+        (WebCore::RenderThemeWin::adjustTextAreaStyle):
+
 2006-09-10  Darin Adler  <darin@apple.com>
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10547
