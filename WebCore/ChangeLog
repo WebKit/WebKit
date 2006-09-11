@@ -705,7 +705,6 @@
         (WebCore::CSSParser::parseSVGPaint):
         (WebCore::CSSParser::parseSVGColor):
 
->>>>>>> .r16300
 2006-09-07  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin and Tim H.
