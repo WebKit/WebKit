@@ -41,6 +41,10 @@ class NSImage;
 #endif
 #endif
 
+#if PLATFORM(WIN)
+typedef struct HBITMAP__ *HBITMAP;
+#endif
+
 namespace WebCore {
     struct FrameData;
 }
@@ -139,6 +143,10 @@ public:
 
 #if PLATFORM(CG)
     CGImageRef getCGImageRef();
+#endif
+
+#if PLATFORM(WIN)
+    bool getHBITMAP(HBITMAP bmp);
 #endif
 
 private:

@@ -2,6 +2,16 @@
 
         Reviewed by Maciej
 
+        Small cleanups + future plans
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open): path seperator cleanup
+        * platform/Image.h: 
+     
+2006-09-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
         Added specialized HashTraits
 
         * platform/IntSizeHash.h:

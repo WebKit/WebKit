@@ -99,10 +99,17 @@ bool IconDatabase::open(const String& databasePath)
     
     // First we'll formulate the full path for the database file
     String dbFilename;
+#if PLATFORM(WIN)
+    if (databasePath[databasePath.length()] == '\\')
+        dbFilename = databasePath + defaultDatabaseFilename();
+    else
+        dbFilename = databasePath + "\\" + defaultDatabaseFilename();
+#else
     if (databasePath[databasePath.length()] == '/')
         dbFilename = databasePath + defaultDatabaseFilename();
     else
         dbFilename = databasePath + "/" + defaultDatabaseFilename();
+#endif
 
     // <rdar://problem/4707718> - If user's Icon directory is unwritable, Safari will crash at startup
     // Now, we'll see if we can open the on-disk database.  And, if we can't, we'll return false.  
