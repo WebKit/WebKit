@@ -1,3 +1,26 @@
+2006-09-08  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Darin. 
+
+        - Implements comparePoint on the Range class
+
+        - Exposes RangeExceptions in JavaScript
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_binding.cpp:
+        * bindings/objc/DOMInternal.mm:
+        * dom/Range.cpp:
+        (WebCore::Range::comparePoint):
+        (WebCore::Range::compareNode):
+        * dom/Range.h:
+        (WebCore::Range::):
+        * dom/Range.idl:
+        * dom/RangeException.h: Added.
+        (WebCore::):
+        * dom/RangeException.idl: Added.
+        * page/DOMWindow.idl:
+
 2006-09-11  Adam Roben  <aroben@apple.com>
 
         Reviewed by timo.
@@ -676,6 +699,7 @@
         (WebCore::CSSParser::parseSVGPaint):
         (WebCore::CSSParser::parseSVGColor):
 
+>>>>>>> .r16300
 2006-09-07  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin and Tim H.

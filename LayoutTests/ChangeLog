@@ -1,3 +1,12 @@
+2006-09-11  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Darin.
+
+        * ChangeLog:
+        * fast/dom/Range/range-compareNode-expected.txt: Added.
+        * fast/dom/Range/range-compareNode.html: Added.
+        * fast/dom/Range/range-comparePoint.html:
+
 2006-09-11  Vladimir Olexa  <vladimir.olexa@gmail.com>
 
         Reviewed by Darin.

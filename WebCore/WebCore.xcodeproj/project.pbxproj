@@ -1999,6 +1999,9 @@
 		D086FE9909D53AAB005BC74D /* UnlinkCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D086FE9709D53AAB005BC74D /* UnlinkCommand.cpp */; };
 		D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B0556609C6700100307E43 /* CreateLinkCommand.h */; };
 		D0B0556909C6700100307E43 /* CreateLinkCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */; };
+		D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */; };
+		D23CA55F0AB0EAB6005108A5 /* JSRangeException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */; };
+		D23CA56C0AB0EB8D005108A5 /* RangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA56B0AB0EB8D005108A5 /* RangeException.h */; };
 		DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */; };
 		DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */; };
 		DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD763BB10992C2C900740B8E /* libxml2.dylib */; };
@@ -4271,6 +4274,10 @@
 		D086FE9709D53AAB005BC74D /* UnlinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkCommand.cpp; sourceTree = "<group>"; };
 		D0B0556609C6700100307E43 /* CreateLinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateLinkCommand.h; sourceTree = "<group>"; };
 		D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateLinkCommand.cpp; sourceTree = "<group>"; };
+		D23CA5480AB0E983005108A5 /* RangeException.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = RangeException.idl; sourceTree = "<group>"; };
+		D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSRangeException.h; path = /Build/symroots/Debug/DerivedSources/WebCore/JSRangeException.h; sourceTree = "<absolute>"; };
+		D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSRangeException.cpp; path = /Build/symroots/Debug/DerivedSources/WebCore/JSRangeException.cpp; sourceTree = "<absolute>"; };
+		D23CA56B0AB0EB8D005108A5 /* RangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RangeException.h; sourceTree = "<group>"; };
 		DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IndentOutdentCommand.cpp; sourceTree = "<group>"; };
 		DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IndentOutdentCommand.h; sourceTree = "<group>"; };
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
@@ -4610,6 +4617,8 @@
 				65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */,
 				65DF31ED09D1CC60000BE325 /* JSRange.cpp */,
 				65DF31EE09D1CC60000BE325 /* JSRange.h */,
+				D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */,
+				D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */,
 				A833C0F20A2C513300D57664 /* JSSVGAngle.cpp */,
 				A833C0F00A2C513300D57664 /* JSSVGAngle.h */,
 				A833C0F10A2C513300D57664 /* JSSVGAnimatedLength.cpp */,
@@ -6936,6 +6945,8 @@
 				F523D30302DE4476018635CA /* Range.cpp */,
 				F523D30402DE4476018635CA /* Range.h */,
 				936DD03A09CEAC270056AE8C /* Range.idl */,
+				D23CA56B0AB0EB8D005108A5 /* RangeException.h */,
+				D23CA5480AB0E983005108A5 /* RangeException.idl */,
 				85031B350A44EFC700F992E0 /* RegisteredEventListener.cpp */,
 				85031B360A44EFC700F992E0 /* RegisteredEventListener.h */,
 				A8C4A7EC09D563270003AC8D /* StyledElement.cpp */,
@@ -7857,6 +7868,8 @@
 				852B9E870AA79C47002ADA6E /* DOMHTMLAppletElement.h in Headers */,
 				852B9E890AA79C47002ADA6E /* DOMHTMLOptionElement.h in Headers */,
 				1A98955D0AA78149005EF5EF /* CString.h in Headers */,
+				D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */,
+				D23CA56C0AB0EB8D005108A5 /* RangeException.h in Headers */,
 				932CA7C10AAA20C100AD1FAD /* TextCodecLatin1.h in Headers */,
 				932CA83B0AAA667F00AD1FAD /* TextCodecUTF16.h in Headers */,
 				85032DD70AA8C9BE007D3B7D /* DOMCSSCharsetRule.h in Headers */,
@@ -8881,6 +8894,7 @@
 				852B9E8A0AA79C47002ADA6E /* DOMHTMLOptionElement.mm in Sources */,
 				1A98955C0AA78149005EF5EF /* CString.cpp in Sources */,
 				1A98956B0AA78F80005EF5EF /* KURLCFNet.cpp in Sources */,
+				D23CA55F0AB0EAB6005108A5 /* JSRangeException.cpp in Sources */,
 				932CA7650AAA1DF500AD1FAD /* TextDecoder.cpp in Sources */,
 				932CA7C50AAA20D200AD1FAD /* TextCodecLatin1.cpp in Sources */,
 				932CA8480AAA66CB00AD1FAD /* TextCodecUTF16.cpp in Sources */,

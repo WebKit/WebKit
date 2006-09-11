@@ -231,6 +231,7 @@ all : \
     JSOverflowEvent.h \
     JSProcessingInstruction.h \
     JSRange.h \
+    JSRangeException.h \
     JSSVGAngle.h \
     JSSVGAnimatedLength.h \
     JSSVGAnimatedNumber.h \

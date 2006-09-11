@@ -32,6 +32,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "ProcessingInstruction.h"
+#include "RangeException.h"
 #include "RenderBlock.h"
 #include "TextIterator.h"
 #include "markup.h"
@@ -302,7 +303,7 @@ short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec)
     }
 
     if (!m_detached && !refNode->attached()) {
-        // firefox doesn't throw an exception for this case; it returns 1
+        // firefox doesn't throw an exception for this case; it returns -1
         return -1;
     }
 
@@ -326,6 +327,53 @@ short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec)
     // point is in the middle of this range, or on the boundary points
     else
         return 0;
+}
+
+Range::CompareResults Range::compareNode(Node* refNode, ExceptionCode& ec)
+{
+    // http://developer.mozilla.org/en/docs/DOM:range.compareNode
+    // This method returns 0, 1, 2, or 3 based on if the node is before, after,
+    // before and after(surrounds), or inside the range, respectively
+
+    if (!refNode) {
+        ec = NOT_FOUND_ERR;
+        return NODE_BEFORE;
+    }
+    
+    if (m_detached && refNode->attached()) {
+        ec = INVALID_STATE_ERR;
+        return NODE_BEFORE;
+    }
+
+    if (!m_detached && !refNode->attached()) {
+        // firefox doesn't throw an exception for this case; it returns 0
+        return NODE_BEFORE;
+    }
+
+    if (refNode->document() != m_ownerDocument) {
+        // firefox doesn't throw an exception for this case; it returns 0
+        return NODE_BEFORE;
+    }
+
+    Node* parentNode = refNode->parentNode();
+    unsigned nodeIndex = refNode->nodeIndex();
+    
+    if (!parentNode) {
+        // if the node is the top document we should return NODE_BEFORE_AND_AFTER
+        // but we throw to match firefox behavior
+        ec = NOT_FOUND_ERR;
+        return NODE_BEFORE;
+    }
+
+    if (comparePoint(parentNode, nodeIndex, ec) == -1) { // starts before
+        if (comparePoint(parentNode, nodeIndex + 1, ec) == 1) // ends after the range
+            return NODE_BEFORE_AND_AFTER;
+        return NODE_BEFORE; // ends before or in the range
+    } else { // starts at or after the range start
+        if (comparePoint(parentNode, nodeIndex + 1, ec) == 1) // ends after the range
+            return NODE_AFTER;
+        return NODE_INSIDE; // ends inside the range
+    }
 }
 
 

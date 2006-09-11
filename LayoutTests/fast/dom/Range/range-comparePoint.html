@@ -72,7 +72,6 @@ function test()
         
     // test 10 - attached range, detached node
     // firefox does not throw an exception and returns -1 for this test
-    // webkit will throw an exception. 
     expectedResult = -1;
     range.selectNode(document.getElementById("a1"));
     var node = document.getElementById("b1");

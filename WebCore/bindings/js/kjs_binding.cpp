@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "PlatformString.h"
 #include "Range.h"
+#include "RangeException.h"
 #include "XPathEvaluator.h"
 #include "kjs_dom.h"
 #include "kjs_window.h"

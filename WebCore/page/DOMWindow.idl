@@ -57,6 +57,7 @@ module window {
         attribute NodeConstructor Node;
         attribute NodeFilterConstructor NodeFilter;
         attribute RangeConstructor Range;
+        attribute RangeExceptionConstructor RangeException;
         
         // Mozilla has a separate XMLDocument object for XML documents. 
         // We just use Document for this.

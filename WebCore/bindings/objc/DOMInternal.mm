@@ -30,10 +30,11 @@
 #import "Event.h"
 #import "FrameMac.h"
 #import "Range.h"
-#import "kjs_dom.h"
-#import "kjs_proxy.h"
+#import "RangeException.h"
 #import "WebScriptObjectPrivate.h"
 #import "XPathEvaluator.h"
+#import "kjs_dom.h"
+#import "kjs_proxy.h"
 
 using namespace WebCore;
 
