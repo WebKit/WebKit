@@ -29,23 +29,13 @@
 #include "config.h"
 
 #include "IntSize.h"
+#include "IntSizeHash.h"
 #include "PlatformString.h"
 #include "SQLDatabase.h"
 #include "StringHash.h"
 #include "Timer.h"
 
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 
-namespace WTF {
-
-    template<> struct IntHash<WebCore::IntSize> {
-        static unsigned hash(const WebCore::IntSize& key) { return intHash((static_cast<uint64_t>(key.width()) << 32 | key.height())); }
-        static bool equal(const WebCore::IntSize& a, const WebCore::IntSize& b) { return a == b; }
-    };
-    template<> struct DefaultHash<WebCore::IntSize> { typedef IntHash<WebCore::IntSize> Hash; };
-
-} // namespace WTF
 
 namespace WebCore { 
 

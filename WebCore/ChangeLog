@@ -1,3 +1,13 @@
+2006-09-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Moved the custom IntSize hash out of IconDatabase into a more generally useful file
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/icon/IconDatabase.h:
+        * platform/IntSizeHash.h: Added.
+
 2006-09-10  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 10801, form controls that get styled suddenly lose their

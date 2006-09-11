@@ -245,6 +245,7 @@
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5126E6BF0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BD0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5126E6C00A2E3B29005C29FA /* WebCoreIconDatabaseBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6BE0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.mm */; };
+		51386EE70AB4F0D5004AF79E /* IntSizeHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 51386EE60AB4F0D5004AF79E /* IntSizeHash.h */; };
 		5186C0560A9C21470034FE94 /* IconDataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5186C0550A9C21470034FE94 /* IconDataCache.cpp */; };
 		51D3EA160A3D24D300BADA35 /* SQLDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */; };
 		51D3EA170A3D24D300BADA35 /* SQLDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D3EA140A3D24D300BADA35 /* SQLDatabase.h */; };
@@ -2432,6 +2433,7 @@
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
 		5126E6BD0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreIconDatabaseBridge.h; sourceTree = "<group>"; };
 		5126E6BE0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreIconDatabaseBridge.mm; sourceTree = "<group>"; };
+		51386EE60AB4F0D5004AF79E /* IntSizeHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntSizeHash.h; sourceTree = "<group>"; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5186C0550A9C21470034FE94 /* IconDataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDataCache.cpp; sourceTree = "<group>"; };
@@ -6508,6 +6510,7 @@
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				93B780C909B3B7FE00690162 /* WidgetClient.h */,
+				51386EE60AB4F0D5004AF79E /* IntSizeHash.h */,
 			);
 			path = platform;
 			sourceTree = "<group>";
@@ -7895,6 +7898,7 @@
 				85E9E0A30AB3A0C700069CD0 /* DOMXPathExpressionPrivate.h in Headers */,
 				85E9E0A40AB3A0C700069CD0 /* DOMXPathNSResolver.h in Headers */,
 				85E9E0A50AB3A0C700069CD0 /* DOMXPathResult.h in Headers */,
+				51386EE70AB4F0D5004AF79E /* IntSizeHash.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
