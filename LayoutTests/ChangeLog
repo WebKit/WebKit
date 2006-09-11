@@ -1,3 +1,12 @@
+2006-09-10  Darin Adler  <darin@apple.com>
+
+        - converted a text to plain text (makes it platform independent; fixes a failure)
+
+        * fast/text/plain-text-line-breaks-expected.checksum: Removed.
+        * fast/text/plain-text-line-breaks-expected.png: Removed.
+        * fast/text/plain-text-line-breaks-expected.txt: Regenerated.
+        * fast/text/plain-text-line-breaks.html: Added a call to dumpAsText().
+
 2006-09-08  Timothy Hatcher  <timothy@apple.com>
 
         Adds a test for the CSS URL quoting logic.

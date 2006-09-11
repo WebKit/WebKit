@@ -8,6 +8,9 @@
         }
         
         function runTests() {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
             var cr = getText('cr');
             var lf = getText('lf');
             var crlf = getText('crlf');
