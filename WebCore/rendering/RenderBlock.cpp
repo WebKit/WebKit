@@ -2749,7 +2749,7 @@ void RenderBlock::calcMinMaxWidth()
     if (childrenInline())
         calcInlineMinMaxWidth();
     else
-        calcBlocminMaxWidth();
+        calcBlockMinMaxWidth();
 
     if(m_maxWidth < m_minWidth) m_maxWidth = m_minWidth;
 
@@ -3146,7 +3146,7 @@ void RenderBlock::calcInlineMinMaxWidth()
 // Use a very large value (in effect infinite).
 #define BLOCK_MAX_WIDTH 15000
 
-void RenderBlock::calcBlocminMaxWidth()
+void RenderBlock::calcBlockMinMaxWidth()
 {
     bool nowrap = style()->whiteSpace() == NOWRAP;
 

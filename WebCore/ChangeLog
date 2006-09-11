@@ -1,3 +1,13 @@
+2006-09-11  David Hyatt  <hyatt@apple.com>
+
+        Fix an unwitting victim of the kMin->min change.  calcBlockMinMaxWidth
+        was accidentally renamed to calcBlominMaxWidth.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcMinMaxWidth):
+        (WebCore::RenderBlock::calcBlockMinMaxWidth):
+        * rendering/RenderBlock.h:
+
 2006-09-10  David Hyatt  <hyatt@apple.com>
 
         Rework the printer font stuff a little bit so that the Font API doesn't
