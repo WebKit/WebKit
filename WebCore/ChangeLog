@@ -1,3 +1,15 @@
+2006-09-11  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10323
+          REGRESSION: javascript: URL containing '\\' gets passed as '//'
+
+        Test: fast/dom/javascript-backslash.html
+
+        * platform/KURL.cpp: (WebCore::KURL::init): Don't do backslash
+        substitution in JavaScript URLs.
+
 2006-09-11  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin and Tim H.
@@ -97,7 +109,7 @@
         Small cleanups + future plans
 
         * loader/icon/IconDatabase.cpp:
-        (WebCore::IconDatabase::open): path seperator cleanup
+        (WebCore::IconDatabase::open): path separator cleanup
         * platform/Image.h: 
      
 2006-09-10  Brady Eidson  <beidson@apple.com>
@@ -111,7 +123,7 @@
 2006-09-10  Brady Eidson  <beidson@apple.com>
 
         Forgetting header #define protection is BAAAAAD
-        (and re-alphabatized the project file)
+        (and re-alphabetized the project file)
 
         * WebCore.xcodeproj/project.pbxproj:
         * platform/IntSizeHash.h:

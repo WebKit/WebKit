@@ -1,3 +1,13 @@
+2006-09-11  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10323
+          REGRESSION: javascript: URL containing '\\' gets passed as '//'
+
+        * fast/dom/javascript-backslash-expected.txt: Added.
+        * fast/dom/javascript-backslash.html: Added.
+
 2006-09-11  Darin Adler  <darin@apple.com>
 
         - converted a test to plain text (makes it platform independent; fixes a failure)
