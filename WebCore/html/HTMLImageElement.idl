@@ -20,26 +20,28 @@
 
 module html {
     interface [LegacyParent=KJS::JSHTMLElement] HTMLImageElement : HTMLElement {
-        attribute DOMString name;
-        attribute DOMString align;
-        attribute DOMString alt;
-        attribute DOMString border;        
-        attribute long height;
-        attribute long hspace;
-        attribute boolean isMap;
-        attribute DOMString longDesc;
-        attribute DOMString src;
-        attribute DOMString useMap;
-        attribute long vspace;
-        attribute long width;
+                 attribute DOMString name;
+                 attribute DOMString align;
+                 attribute DOMString alt;
+                 attribute DOMString border;        
+                 attribute long height;
+                 attribute long hspace;
+                 attribute boolean isMap;
+                 attribute DOMString longDesc;
+                 attribute DOMString src;
+                 attribute DOMString useMap;
+                 attribute long vspace;
+                 attribute long width;
         
         // Extensions
         readonly attribute boolean complete;
         readonly attribute long x;
         readonly attribute long y;
-        
+
+#if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extension:
-        readonly attribute [Exclude=JS] DOMString altDisplayString;
-        readonly attribute [Exclude=JS] URL absoluteImageURL;
+        readonly attribute DOMString altDisplayString;
+        readonly attribute URL absoluteImageURL;
+#endif
     };
 }

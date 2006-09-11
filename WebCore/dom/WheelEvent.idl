@@ -22,7 +22,6 @@ module events {
 
     // Based off of proposed IDL interface for WheelEvent:
     interface WheelEvent : UIEvent {
-
         readonly attribute long    screenX;
         readonly attribute long    screenY;
         readonly attribute long    clientX;
@@ -38,20 +37,22 @@ module events {
         readonly attribute long    offsetY;
         readonly attribute long    x;
         readonly attribute long    y;
-        readonly attribute [Exclude=JS] boolean isHorizontal;
-        
-        [Exclude=JS] void initWheelEvent(in boolean horizontal, 
-                                         in long wheelDelta, 
-                                         in DOMWindow view, 
-                                         in long screenX,
-                                         in long screenY,
-                                         in long clientX,
-                                         in long clientY,
-                                         in boolean ctrlKey,
-                                         in boolean altKey,
-                                         in boolean shiftKey,
-                                         in boolean metaKey);
 
+#if !defined(LANGUAGE_JAVASCRIPT)
+        readonly attribute boolean isHorizontal;
+
+        void initWheelEvent(in boolean horizontal, 
+                            in long wheelDelta, 
+                            in DOMWindow view, 
+                            in long screenX,
+                            in long screenY,
+                            in long clientX,
+                            in long clientY,
+                            in boolean ctrlKey,
+                            in boolean altKey,
+                            in boolean shiftKey,
+                            in boolean metaKey);
+#endif
     };
 
 }

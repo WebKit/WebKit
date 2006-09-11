@@ -22,38 +22,38 @@
 module html {
 
     interface [LegacyParent=KJS::JSHTMLDocument, GenerateConstructor] HTMLDocument : Document {
-
-                 attribute [Exclude=JS] DOMString title;
-        readonly attribute [Exclude=JS] DOMString referrer;
-        readonly attribute [Exclude=JS] DOMString domain;
-        readonly attribute [Exclude=JS] DOMString URL;
+#if !defined(LANGUAGE_JAVASCRIPT)
+                 attribute DOMString title;
+        readonly attribute DOMString referrer;
+        readonly attribute DOMString domain;
+        readonly attribute DOMString URL;
                 
         // FIXME: the DOM spec does NOT have this attribute
         // raising an exception.
-                 attribute [Exclude=JS] HTMLElement body
+                 attribute HTMLElement body
                      setter raises (DOMException);
                      
-        readonly attribute [Exclude=JS] HTMLCollection images;
-        readonly attribute [Exclude=JS] HTMLCollection applets;
-        readonly attribute [Exclude=JS] HTMLCollection links;
-        readonly attribute [Exclude=JS] HTMLCollection forms;
-        readonly attribute [Exclude=JS] HTMLCollection anchors;
+        readonly attribute HTMLCollection images;
+        readonly attribute HTMLCollection applets;
+        readonly attribute HTMLCollection links;
+        readonly attribute HTMLCollection forms;
+        readonly attribute HTMLCollection anchors;
         
         // FIXME: the DOM spec states that this attribute can 
         // raise an exception on setting.
-                 attribute [Exclude=JS] DOMString cookie
+                 attribute DOMString cookie
                      /*setter raises (DOMException)*/;
 
-        [Exclude=JS] void               open();
-        [Exclude=JS] void               close();
-        [Exclude=JS] void               write(in DOMString text);
-        [Exclude=JS] void               writeln(in DOMString text);
-        [Exclude=JS] NodeList           getElementsByName(in DOMString elementName);
+        void               open();
+        void               close();
+        void               write(in DOMString text);
+        void               writeln(in DOMString text);
+        NodeList           getElementsByName(in DOMString elementName);
 
         // non-standard
 
-        [Exclude=JS] Element            getElementById(in DOMString elementId);
-
+        Element            getElementById(in DOMString elementId);
+#endif
     };
 
 }

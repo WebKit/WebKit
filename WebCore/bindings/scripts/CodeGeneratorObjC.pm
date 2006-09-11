@@ -160,8 +160,6 @@ sub GenerateInterface
     my $dataNode = shift;
     my $defines = shift;
 
-    $codeGenerator->RemoveExcludedAttributesAndFunctions($dataNode, "ObjC");
-
     my $name = $dataNode->name;
     my $className = GetClassName($name);
     my $parentClassName = "DOM" . GetParentImplClassName($dataNode);
@@ -428,14 +426,10 @@ sub GenerateHeader
     if ($numConstants > 0) {
         my @headerConstants = ();
 
-        # FIXME: we need a way to include multiple enums, for now, only include the first.
-        my $greatestConstantValue = $dataNode->constants->[0]->value;
+        # FIXME: we need a way to include multiple enums.
         foreach my $constant (@{$dataNode->constants}) {
             my $constantName = $constant->name;
             my $constantValue = $constant->value;
-
-            last if $constantValue < $greatestConstantValue;
-            $greatestConstantValue = $constantValue;
 
             my $output = "    DOM_" . $constantName . " = " . $constantValue;
             push(@headerConstants, $output);

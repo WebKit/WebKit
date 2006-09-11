@@ -393,34 +393,6 @@ sub RecursiveInheritanceHelper
 }
 
 # Helper for all CodeGenerator***.pm modules
-sub RemoveExcludedAttributesAndFunctions
-{
-    my $object = shift;
-    my $dataNode = shift;
-    my $excludeLang = shift;
-
-    my $i = 0;
-    while ($i < @{$dataNode->attributes}) {
-        my $lang = ${$dataNode->attributes}[$i]->signature->extendedAttributes->{"Exclude"};
-        if ($lang and $lang eq $excludeLang) {
-            splice(@{$dataNode->attributes}, $i, 1);
-        } else {
-            $i++;
-        }
-    }
-
-    $i = 0;
-    while ($i < @{$dataNode->functions}) {
-        my $lang = ${$dataNode->functions}[$i]->signature->extendedAttributes->{"Exclude"};
-        if ($lang and $lang eq $excludeLang) {
-            splice(@{$dataNode->functions}, $i, 1);
-        } else {
-            $i++;
-        }
-    }
-}
-
-# Helper for all CodeGenerator***.pm modules
 sub IsPrimitiveType
 {
     my $object = shift;

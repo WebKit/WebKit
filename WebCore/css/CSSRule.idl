@@ -32,15 +32,17 @@ module css {
         const unsigned short FONT_FACE_RULE = 5;
         const unsigned short PAGE_RULE = 6;
 
-        readonly attribute [Exclude=JS] unsigned short   type;
-        
+#if !defined(LANGUAGE_JAVASCRIPT)
+        readonly attribute unsigned short   type;
+
                  // FIXME: DOM spec says that this can raise an
                  // exception on setting.
-                 attribute [Exclude=JS] DOMString        cssText
+                 attribute DOMString        cssText
                      /*setter raises (DOMException)*/;
 
-        readonly attribute [Exclude=JS] CSSStyleSheet    parentStyleSheet;
-        readonly attribute [Exclude=JS] CSSRule          parentRule;
+        readonly attribute CSSStyleSheet    parentStyleSheet;
+        readonly attribute CSSRule          parentRule;
+#endif
 
     };
 }

@@ -38,7 +38,6 @@ module events {
         readonly attribute long                 pageX;
         readonly attribute long                 pageY;
         readonly attribute long                 which;
-
     };
 
 }

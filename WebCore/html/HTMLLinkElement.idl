@@ -34,8 +34,10 @@ module html {
         // DOM Level 2 Style
         readonly attribute StyleSheet   sheet;
 
+#if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extension:
-        readonly attribute [Exclude=JS] URL absoluteLinkURL;
+        readonly attribute URL absoluteLinkURL;
+#endif
     };
 
 }

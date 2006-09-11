@@ -22,28 +22,28 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [LegacyParent=KJS::DOMCSSStyleDeclaration, GenerateConstructor] CSSStyleDeclaration {
-
-                 attribute [Exclude=JS] DOMString        cssText
+#if !defined(LANGUAGE_JAVASCRIPT)
+                 attribute DOMString        cssText
                      setter raises(DOMException);
 
-        [Exclude=JS] DOMString          getPropertyValue(in DOMString propertyName);
-        [Exclude=JS] CSSValue           getPropertyCSSValue(in DOMString propertyName);
-        [Exclude=JS] DOMString          removeProperty(in DOMString propertyName)
+        DOMString          getPropertyValue(in DOMString propertyName);
+        CSSValue           getPropertyCSSValue(in DOMString propertyName);
+        DOMString          removeProperty(in DOMString propertyName)
             raises(DOMException);
-        [Exclude=JS] DOMString          getPropertyPriority(in DOMString propertyName);
-        [Exclude=JS, OldStyleObjC] void setProperty(in DOMString propertyName, 
-                                                    in DOMString value, 
-                                                    in DOMString priority)
+        DOMString          getPropertyPriority(in DOMString propertyName);
+        [OldStyleObjC] void setProperty(in DOMString propertyName, 
+                                        in DOMString value, 
+                                        in DOMString priority)
             raises(DOMException);
 
-        readonly attribute [Exclude=JS] unsigned long    length;
-        [Exclude=JS] DOMString          item(in unsigned long index);
-        readonly attribute [Exclude=JS] CSSRule          parentRule;
+        readonly attribute unsigned long    length;
+        DOMString          item(in unsigned long index);
+        readonly attribute CSSRule          parentRule;
         
         // extensions
-        [Exclude=JS] DOMString          getPropertyShorthand(in DOMString propertyName);
-        [Exclude=JS] boolean            isPropertyImplicit(in DOMString propertyName);
-
+        DOMString          getPropertyShorthand(in DOMString propertyName);
+        boolean            isPropertyImplicit(in DOMString propertyName);
+#endif
     };
 
 }

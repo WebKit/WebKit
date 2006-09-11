@@ -29,9 +29,10 @@ module html {
 
         void add(in HTMLOptionElement option, in [Optional] unsigned long index)
              raises (DOMException);
-             
-        [Exclude=JS] Node item(in unsigned long index);
-        [Exclude=JS] Node namedItem(in DOMString name);
 
+#if !defined(LANGUAGE_JAVASCRIPT)
+        Node item(in unsigned long index);
+        Node namedItem(in DOMString name);
+#endif
     };
 }

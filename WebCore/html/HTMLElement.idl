@@ -21,31 +21,32 @@
 module html {
 
     interface [GenerateConstructor] HTMLElement : Element {
+                 attribute DOMString title;
 
-        attribute DOMString title;
-        attribute [Exclude=JS] DOMString id;
-        attribute [Exclude=JS] DOMString lang;
-        attribute [Exclude=JS] DOMString dir;
-        attribute [Exclude=JS] DOMString className;
+#if !defined(LANGUAGE_JAVASCRIPT)
+                 attribute DOMString id;
+                 attribute DOMString lang;
+                 attribute DOMString dir;
+                 attribute DOMString className;
 
         // extensions
 
-        attribute [Exclude=JS] DOMString innerHTML
-            setter raises (DOMException);
-        attribute [Exclude=JS] DOMString innerText
-            setter raises (DOMException);
-        attribute [Exclude=JS] DOMString outerHTML
-            setter raises (DOMException);
-        attribute [Exclude=JS] DOMString outerText
-            setter raises (DOMException);
+                 attribute DOMString innerHTML
+                     setter raises (DOMException);
+                 attribute DOMString innerText
+                     setter raises (DOMException);
+                 attribute DOMString outerHTML
+                     setter raises (DOMException);
+                 attribute DOMString outerText
+                     setter raises (DOMException);
 
-        readonly attribute [Exclude=JS] HTMLCollection children;
+        readonly attribute HTMLCollection children;
 
-        attribute [Exclude=JS] DOMString contentEditable;
-        readonly attribute [Exclude=JS] boolean isContentEditable;
+                 attribute DOMString contentEditable;
+        readonly attribute boolean isContentEditable;
 
-        readonly attribute [Exclude=JS] DOMString titleDisplayString;
-
+        readonly attribute DOMString titleDisplayString;
+#endif
     };
 
 }

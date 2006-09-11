@@ -1,3 +1,44 @@
+2006-09-11  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin and Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10792
+        Remove the [Exclude=LANGUAGE] idiom from IDL's and code generators 
+        for something better
+
+        - Replaces [Exclude=LANGUAGE] idiom with preprocessor #if defined(LANGUAGE)
+          idiom.
+
+        - Assorted whitespace changes to IDL files.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMEvents.h:
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSValue.idl:
+        * dom/DOMImplementation.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Event.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/NodeFilter.idl:
+        * dom/UIEvent.idl:
+        * dom/WheelEvent.idl:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLDocument.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLOptionsCollection.idl:
+
 2006-09-11  David Hyatt  <hyatt@apple.com>
 
         Fix an unwitting victim of the kMin->min change.  calcBlockMinMaxWidth

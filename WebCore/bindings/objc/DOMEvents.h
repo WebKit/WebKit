@@ -45,13 +45,6 @@ enum DOMEventExceptionCode {
     DOM_UNSPECIFIED_EVENT_TYPE_ERR = 0
 };
 
-enum {
-    DOM_KEY_LOCATION_STANDARD      = 0x00,
-    DOM_KEY_LOCATION_LEFT          = 0x01,
-    DOM_KEY_LOCATION_RIGHT         = 0x02,
-    DOM_KEY_LOCATION_NUMPAD        = 0x03
-};
-
 @interface DOMKeyboardEvent (NonStandardAdditions)
 - (BOOL)getModifierState:(NSString *)keyIdentifierArg;
 @end

@@ -21,7 +21,6 @@ module events {
 
     // Introduced in DOM Level 2:
     interface MouseEvent : UIEvent {
-
         readonly attribute long             screenX;
         readonly attribute long             screenY;
         readonly attribute long             clientX;
@@ -56,7 +55,6 @@ module events {
         readonly attribute long             y;
         readonly attribute Node             fromElement;
         readonly attribute Node             toElement;
-
     };
 
 }

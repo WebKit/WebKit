@@ -27,86 +27,59 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString tagName;
 
         [ConvertNullStringTo=Null] DOMString getAttribute(in DOMString name);
-
         [OldStyleObjC] void setAttribute(in DOMString name,
-                          in DOMString value)
+                                         in DOMString value)
             raises(DOMException);
-
         void removeAttribute(in DOMString name)
             raises(DOMException);
-
         Attr getAttributeNode(in DOMString name);
-
         Attr setAttributeNode(in Attr newAttr)
             raises(DOMException);
-
         Attr removeAttributeNode(in Attr oldAttr)
             raises(DOMException);
-
         NodeList getElementsByTagName(in DOMString name);
 
         // DOM Level 2 Core
 
         [OldStyleObjC] DOMString getAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                 in DOMString localName);
-
+                                                in DOMString localName);
         [OldStyleObjC] void setAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                            in DOMString qualifiedName, 
-                            in DOMString value)
+                                           in DOMString qualifiedName, 
+                                           in DOMString value)
             raises(DOMException);
-
         [OldStyleObjC] void removeAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                               in DOMString localName)
+                                              in DOMString localName)
             raises(DOMException);
-
         [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                                         in DOMString localName);
-
+                                                       in DOMString localName);
         [OldStyleObjC] Attr getAttributeNodeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                                 in DOMString localName);
-
+                                               in DOMString localName);
         Attr setAttributeNodeNS(in Attr newAttr)
             raises(DOMException);
-
         boolean hasAttribute(in DOMString name);
-
         [OldStyleObjC] boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                               in DOMString localName);
+                                              in DOMString localName);
 
         readonly attribute CSSStyleDeclaration style;
 
         // Common extensions
 
         readonly attribute long offsetLeft;
-
         readonly attribute long offsetTop;
-
         readonly attribute long offsetWidth;
-
         readonly attribute long offsetHeight;
-
         readonly attribute Element offsetParent;
-
         readonly attribute long clientLeft;
-        
         readonly attribute long clientTop;
-
         readonly attribute long clientWidth;
-
         readonly attribute long clientHeight;
-
-        attribute long scrollLeft;
-
-        attribute long scrollTop;
-
+                 attribute long scrollLeft;
+                 attribute long scrollTop;
         readonly attribute long scrollWidth;
-
         readonly attribute long scrollHeight;
 
         void focus();
-
         void blur();
-
         void scrollIntoView(in [Optional] boolean alignWithTop);
 
         // IE extensions
@@ -114,15 +87,12 @@ module core {
         Node insertAdjacentElement(in DOMString position, 
                                    in Node element)
             raises(DOMException);
-
         boolean contains(in Element element);
 
         // WebKit extensions
 
         void scrollIntoViewIfNeeded(in [Optional] boolean centerIfNeeded);
-
         void scrollByLines(in long lines);
-
         void scrollByPages(in long pages);
 
     };

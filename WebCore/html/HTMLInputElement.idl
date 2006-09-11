@@ -21,42 +21,46 @@
 module html {
 
     interface [LegacyParent=JSHTMLInputElementBase] HTMLInputElement : HTMLElement {
-                 attribute  DOMString            defaultValue;
-                 attribute  boolean              defaultChecked;
-        readonly attribute  HTMLFormElement      form;
-                 attribute  DOMString            accept;
-                 attribute  DOMString            accessKey;
-                 attribute  DOMString            align;
-                 attribute  DOMString            alt;
-                 attribute  boolean              checked;
-                 attribute  boolean              disabled;
-                 attribute  long                 maxLength;
-                 attribute  DOMString            name;
-                 attribute  boolean              readOnly;
-                 attribute  unsigned long        size; // Changed string -> long as part of DOM level 2
-                 attribute  DOMString            src;
-                 attribute  long                 tabIndex;
-                 attribute  DOMString            type; // readonly dropped as part of DOM level 2
-                 attribute  DOMString            useMap;
-                 attribute  DOMString            value;
+                 attribute DOMString       defaultValue;
+                 attribute boolean         defaultChecked;
+        readonly attribute HTMLFormElement form;
+                 attribute DOMString       accept;
+                 attribute DOMString       accessKey;
+                 attribute DOMString       align;
+                 attribute DOMString       alt;
+                 attribute boolean         checked;
+                 attribute boolean         disabled;
+                 attribute long            maxLength;
+                 attribute DOMString       name;
+                 attribute boolean         readOnly;
+                 attribute unsigned long   size; // Changed string -> long as part of DOM level 2
+                 attribute DOMString       src;
+                 attribute long            tabIndex;
+                 attribute DOMString       type; // readonly dropped as part of DOM level 2
+                 attribute DOMString       useMap;
+                 attribute DOMString       value;
         
-        void    blur();
-        void    focus();
-        void    select();
-        void    click();
+        void               blur();
+        void               focus();
+        void               select();
+        void               click();
         
         // WinIE extension:
-                 attribute boolean indeterminate;
+                 attribute boolean         indeterminate;
         
         // WinIE & FireFox extension:
         
         // Handled by JSHTMLInputElementBase to allow hiding based on input type
-                 attribute [Exclude=JS] long selectionStart;
-                 attribute [Exclude=JS] long selectionEnd;
-        [Exclude=JS] void setSelectionRange(in long start, in long end);
+#if !defined(LANGUAGE_JAVASCRIPT)
+                 attribute long            selectionStart;
+                 attribute long            selectionEnd;
+        void               setSelectionRange(in long start, in long end);
+#endif
 
+#if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extension:
-        readonly attribute [Exclude=JS] DOMString altDisplayString;
+        readonly attribute DOMString       altDisplayString;
+#endif
     };
 
 }

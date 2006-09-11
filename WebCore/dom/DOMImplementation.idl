@@ -25,23 +25,23 @@ module core {
         // DOM Level 1
 
         [OldStyleObjC] boolean hasFeature(in DOMString feature, 
-                           in [ConvertNullToNullString] DOMString version);
+                                          in [ConvertNullToNullString] DOMString version);
 
         // DOM Level 2
 
         [OldStyleObjC] DocumentType createDocumentType(in DOMString qualifiedName,
-                                                         in DOMString publicId,
-                                                         in DOMString systemId)
+                                                       in DOMString publicId,
+                                                       in DOMString systemId)
             raises(DOMException);
         [OldStyleObjC] Document createDocument(in [ConvertNullToNullString] DOMString namespaceURI, 
-                                                 in [ConvertNullToNullString] DOMString qualifiedName, 
-                                                 in [ConvertNullToNullString] DocumentType doctype)
+                                               in [ConvertNullToNullString] DOMString qualifiedName, 
+                                               in [ConvertNullToNullString] DocumentType doctype)
             raises(DOMException);
 
         // DOMImplementationCSS interface from DOM Level 2 CSS
 
         [OldStyleObjC] CSSStyleSheet createCSSStyleSheet(in DOMString title,
-                                          in DOMString media)
+                                                         in DOMString media)
             raises(DOMException);
 
         // HTMLDOMImplementation interface from DOM Level 2 HTML

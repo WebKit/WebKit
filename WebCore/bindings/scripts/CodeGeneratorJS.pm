@@ -88,8 +88,6 @@ sub GenerateInterface
     my $dataNode = shift;
     my $defines = shift;
 
-    $codeGenerator->RemoveExcludedAttributesAndFunctions($dataNode, "JS");
-
     # Start actual generation..
     $object->GenerateHeader($dataNode);
     $object->GenerateImplementation($dataNode);
