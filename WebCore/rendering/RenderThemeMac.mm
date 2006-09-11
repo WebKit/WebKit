@@ -22,47 +22,21 @@
 #import "config.h"
 #import "RenderThemeMac.h"
 
+#import "cssstyleselector.h"
 #import "CSSValueKeywords.h"
 #import "Document.h"
 #import "FoundationExtras.h"
 #import "FrameView.h"
 #import "GraphicsContext.h"
 #import "Image.h"
+#import "LocalGraphicsContext.h"
+#import "RenderPopupMenuMac.h"
 #import "RenderView.h"
 #import "WebCoreSystemInterface.h"
-#import "cssstyleselector.h"
-#import "RenderPopupMenuMac.h"
 
 // The methods in this file are specific to the Mac OS X platform.
 
 namespace WebCore {
-
-// This class automatically saves and restores the current NSGraphicsContext for
-// functions which call out into AppKit and rely on the currentContext being set
-class LocalCurrentGraphicsContext : Noncopyable {
-public:
-    LocalCurrentGraphicsContext(GraphicsContext* graphicsContext)
-    {
-        if (graphicsContext->platformContext() == [[NSGraphicsContext currentContext] graphicsPort]) {
-            m_savedNSGraphicsContext = 0;
-            return;
-        }
-        
-        m_savedNSGraphicsContext = [[NSGraphicsContext currentContext] retain];
-        NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithGraphicsPort:graphicsContext->platformContext() flipped:YES];
-        [NSGraphicsContext setCurrentContext:newContext];
-    }
-    ~LocalCurrentGraphicsContext()
-    {
-        if (m_savedNSGraphicsContext) {
-            [NSGraphicsContext setCurrentContext:m_savedNSGraphicsContext];
-            [m_savedNSGraphicsContext release];
-        }
-    }
-
-private:
-    NSGraphicsContext* m_savedNSGraphicsContext;
-};
 
 enum {
     topMargin,

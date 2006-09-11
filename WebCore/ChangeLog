@@ -1,3 +1,17 @@
+2006-09-11  Adam Roben  <aroben@apple.com>
+
+        Reviewed by timo.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10812
+        Move LocalGraphicsContext out of RenderThemeMac
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/LocalGraphicsContext.h: Added.
+        * platform/mac/LocalGraphicsContext.mm: Added.
+        (WebCore::LocalCurrentGraphicsContext::LocalCurrentGraphicsContext):
+        (WebCore::LocalCurrentGraphicsContext::~LocalCurrentGraphicsContext):
+        * rendering/RenderThemeMac.mm:
+
 2006-09-11  Vladimir Olexa  <vladimir.olexa@gmail.com>
 
         Reviewed by Darin.

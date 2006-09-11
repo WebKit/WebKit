@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		06E81ED70AB5D5E900C87837 /* LocalGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 06E81ED60AB5D5E900C87837 /* LocalGraphicsContext.h */; };
+		06E81EEC0AB5DA9700C87837 /* LocalGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06E81EEB0AB5DA9700C87837 /* LocalGraphicsContext.mm */; };
 		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; };
 		1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1403B99609EB13AF00797C7F /* DOMWindow.cpp */; };
 		1403BA0C09EB18C700797C7F /* JSDOMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1403BA0B09EB18C700797C7F /* JSDOMWindow.cpp */; };
@@ -2172,6 +2174,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		06E81ED60AB5D5E900C87837 /* LocalGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalGraphicsContext.h; sourceTree = "<group>"; };
+		06E81EEB0AB5DA9700C87837 /* LocalGraphicsContext.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalGraphicsContext.mm; sourceTree = "<group>"; };
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
 		1403B99509EB13AF00797C7F /* DOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindow.h; sourceTree = "<group>"; };
 		1403B99609EB13AF00797C7F /* DOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindow.cpp; sourceTree = "<group>"; };
@@ -4806,6 +4810,8 @@
 				6593923909AE435C002C531F /* KURLMac.mm */,
 				9352084409BD43B900F2038D /* Language.mm */,
 				F587851402DE375901EA4122 /* ListBoxMac.mm */,
+				06E81EEB0AB5DA9700C87837 /* LocalGraphicsContext.mm */,
+				06E81ED60AB5D5E900C87837 /* LocalGraphicsContext.h */,
 				935207BF09BD412000F2038D /* LocalizedStringsMac.mm */,
 				65F5382409B2B57500F3DC4A /* mac-encodings.txt */,
 				935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */,
@@ -7899,6 +7905,7 @@
 				85E9E0A40AB3A0C700069CD0 /* DOMXPathNSResolver.h in Headers */,
 				85E9E0A50AB3A0C700069CD0 /* DOMXPathResult.h in Headers */,
 				51386EE70AB4F0D5004AF79E /* IntSizeHash.h in Headers */,
+				06E81ED70AB5D5E900C87837 /* LocalGraphicsContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8912,6 +8919,7 @@
 				859128F40AB2431A00202265 /* DOMHTMLEmbedElement.mm in Sources */,
 				85E9E0A20AB3A0C700069CD0 /* DOMXPathExpression.mm in Sources */,
 				85E9E0A60AB3A0C700069CD0 /* DOMXPathResult.mm in Sources */,
+				06E81EEC0AB5DA9700C87837 /* LocalGraphicsContext.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
