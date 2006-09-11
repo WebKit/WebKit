@@ -1,3 +1,20 @@
+2006-09-11  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Tim O. and Darin.
+
+        Add support for more method signatures affecting ObjC methods called from JavaScript:
+        - Added unsigned types and long long.
+        - Allow methods that use const, oneway, bycopy and byref type modifiers.
+
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        * bindings/objc/objc_utility.h:
+        (KJS::Bindings::):
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertObjcValueToValue):
+        (KJS::Bindings::objcValueTypeForType):
+
 2006-09-05  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Tim O.

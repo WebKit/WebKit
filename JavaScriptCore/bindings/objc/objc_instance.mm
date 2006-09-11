@@ -167,16 +167,24 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
                     [invocation setArgument:&value.objectValue atIndex:i];
                     break;
                 case ObjcCharType:
+                case ObjcUnsignedCharType:
                     [invocation setArgument:&value.charValue atIndex:i];
                     break;
                 case ObjcShortType:
+                case ObjcUnsignedShortType:
                     [invocation setArgument:&value.shortValue atIndex:i];
                     break;
                 case ObjcIntType:
+                case ObjcUnsignedIntType:
                     [invocation setArgument:&value.intValue atIndex:i];
                     break;
                 case ObjcLongType:
+                case ObjcUnsignedLongType:
                     [invocation setArgument:&value.longValue atIndex:i];
+                    break;
+                case ObjcLongLongType:
+                case ObjcUnsignedLongLongType:
+                    [invocation setArgument:&value.longLongValue atIndex:i];
                     break;
                 case ObjcFloatType:
                     [invocation setArgument:&value.floatValue atIndex:i];
