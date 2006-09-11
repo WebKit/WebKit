@@ -27,6 +27,8 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/HashMap.h>
+
+#include "FloatRect.h"
 #include "StringHash.h"
 #include "StringImpl.h"
 #include "AtomicString.h"
@@ -113,6 +115,17 @@ inline String SVGDocumentExtensions::baseValue<String>(const SVGElement* element
         return propertyMap->get(propertyName.impl());
 
     return String();
+}
+
+// Special handling for WebCore::FloatRect
+template<>
+inline FloatRect SVGDocumentExtensions::baseValue<FloatRect>(const SVGElement* element, const AtomicString& propertyName) const
+{
+    HashMap<StringImpl*, FloatRect>* propertyMap = baseValueMap<FloatRect>().get(element);
+    if (propertyMap)
+        return propertyMap->get(propertyName.impl());
+
+    return FloatRect();
 }
 
 // Special handling for booleans

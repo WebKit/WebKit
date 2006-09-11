@@ -44,13 +44,13 @@ namespace WebCore
         KCComponentTransferFunction transferFunction() const;
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, Type, type)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGNumberList*, RefPtr<SVGNumberList>, TableValues, tableValues)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Slope, slope)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Intercept, intercept)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Amplitude, amplitude)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Exponent, exponent)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Offset, offset)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, int, int, Type, type)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGNumberList*, RefPtr<SVGNumberList>, TableValues, tableValues)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, double, double, Slope, slope)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, double, double, Intercept, intercept)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, double, double, Amplitude, amplitude)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, double, double, Exponent, exponent)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, double, double, Offset, offset)
     };
 
 } // namespace WebCore

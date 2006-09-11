@@ -43,7 +43,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEMergeNodeElement, String, String, In, in)
     };
 
 } // namespace WebCore

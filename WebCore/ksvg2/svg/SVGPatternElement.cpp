@@ -60,7 +60,7 @@ SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document *doc
     , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
     , m_patternUnits(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_patternContentUnits(SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_patternTransform(new SVGTransformList(this))
+    , m_patternTransform(new SVGTransformList)
 {
     m_tile = 0;
     m_paintServer = 0;

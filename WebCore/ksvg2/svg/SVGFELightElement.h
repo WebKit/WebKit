@@ -42,16 +42,16 @@ namespace WebCore
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute *attr);        
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Azimuth, azimuth)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Elevation, elevation)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Z, z)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, PointsAtX, pointsAtX)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, PointsAtY, pointsAtY)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, PointsAtZ, pointsAtZ)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, SpecularExponent, specularExponent)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, LimitingConeAngle, limitingConeAngle)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, Azimuth, azimuth)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, Elevation, elevation)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, Z, z)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, PointsAtX, pointsAtX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, PointsAtY, pointsAtY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, PointsAtZ, pointsAtZ)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, SpecularExponent, specularExponent)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, LimitingConeAngle, limitingConeAngle)
     };
 
 } // namespace WebCore

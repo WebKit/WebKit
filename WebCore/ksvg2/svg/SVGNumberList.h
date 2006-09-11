@@ -20,22 +20,22 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGNumberListImpl_H
-#define KSVG_SVGNumberListImpl_H
+#ifndef KSVG_SVGNumberList_H
+#define KSVG_SVGNumberList_H
+
 #ifdef SVG_SUPPORT
 
 #include "SVGList.h"
-#include "SVGNumber.h"
 
 namespace WebCore
 {
-    class SVGNumberList : public SVGList<SVGNumber>
+    class SVGNumberList : public SVGList<float>
     {
     public:
-        SVGNumberList(const SVGStyledElement *context = 0);
+        SVGNumberList();
         virtual ~SVGNumberList();
 
-        void parse(const DeprecatedString &value, const SVGStyledElement *context = 0);
+        void parse(const DeprecatedString& value);
     };
 
 } // namespace WebCore

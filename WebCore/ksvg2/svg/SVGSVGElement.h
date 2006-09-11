@@ -106,7 +106,7 @@ namespace WebCore
         static SVGMatrix* createSVGMatrix();
         static FloatRect createSVGRect();
         static SVGTransform* createSVGTransform();
-        static SVGTransform* createSVGTransformFromMatrix(SVGMatrix *matrix);
+        static SVGTransform* createSVGTransformFromMatrix(SVGMatrix*);
 
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
@@ -126,10 +126,15 @@ namespace WebCore
     private:
         void addSVGWindowEventListner(const AtomicString& eventType, const Attribute* attr);   
 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Height, height)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, FloatRect, ViewBox, viewBox)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio)
+
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength*, RefPtr<SVGLength>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength*, RefPtr<SVGLength>, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength*, RefPtr<SVGLength>, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength*, RefPtr<SVGLength>, Height, height)
+
         bool m_useCurrentView;
         TimeScheduler* m_timeScheduler;
     };

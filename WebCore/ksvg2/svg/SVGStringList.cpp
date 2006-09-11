@@ -21,15 +21,16 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
-#include "DeprecatedStringList.h"
 
+#ifdef SVG_SUPPORT
+
+#include "DeprecatedStringList.h"
 #include "SVGStringList.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGStringList::SVGStringList(const SVGStyledElement *context)
-: SVGList<StringImpl>(context)
+SVGStringList::SVGStringList()
+    : SVGList<String>()
 {
 }
 
@@ -37,20 +38,19 @@ SVGStringList::~SVGStringList()
 {
 }
 
-void SVGStringList::reset(const DeprecatedString &str)
+void SVGStringList::reset(const DeprecatedString& str)
 {
     DeprecatedStringList list = DeprecatedStringList::split(' ', str);
     if (list.count() == 0) {
-        StringImpl *item = new StringImpl(str);
-        item->ref();
-        appendItem(item);
-    } else for(DeprecatedStringList::Iterator it = list.begin(); it != list.end(); ++it) {
-        StringImpl *item = new StringImpl((*it));
-        item->ref();
-        appendItem(item);
+        appendItem(String("")); // Create empty string...
+    } else {
+        for(DeprecatedStringList::Iterator it = list.begin(); it != list.end(); ++it)
+            appendItem(String(*it));
     }
 }
 
-// vim:ts=4:noet
+}
+
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

@@ -73,7 +73,7 @@ bool SVGTests::isValid() const
 
     list = systemLanguage();
     for (unsigned long i = 0; i < list->numberOfItems(); i++)
-        if (!equal(list->getItem(i), defaultLanguage().substring(0, 2).impl()))
+        if (list->getItem(i) != defaultLanguage().substring(0, 2))
             return false;
 
     list = requiredExtensions();

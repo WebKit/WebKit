@@ -20,86 +20,46 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGAnimatedTemplate_H
-#define KSVG_SVGAnimatedTemplate_H
+#ifndef SVGAnimatedTemplate_H
+#define SVGAnimatedTemplate_H
+
 #ifdef SVG_SUPPORT
 
-#include "SVGStyledElement.h"
+#include "Shared.h"
 
 namespace WebCore {
+    class SVGAngle;
+    class SVGLength;
+    class SVGPreserveAspectRatio;
+    class String;
+    class FloatRect;
 
-    // SVGAnimatedTemplate
-    // - lazy creation of baseVal/animVal
-    //   (no more waste of mostly unused animVal variable!)
-    // - not directly creatable (only by child classes)
-    // - no copy ctor/no assignment operator available
-    //   (-> a class for only for pointer usage)
-    template<class T>
-    class SVGAnimatedTemplate : public Shared<SVGAnimatedTemplate<T> > {
+    template<typename BareType>
+    class SVGAnimatedTemplate : public Shared<SVGAnimatedTemplate<BareType> >
+    {
     public:
-        virtual ~SVGAnimatedTemplate()
-        {
-        }
+        virtual ~SVGAnimatedTemplate() { }
 
-        T *baseVal() const
-        {
-            if(!m_baseVal)
-                m_baseVal = create();
+        virtual BareType baseVal() const = 0;
+        virtual void setBaseVal(BareType newBaseVal) = 0;
 
-            return m_baseVal.get();
-        }
-
-        void setBaseVal(T *baseVal) const
-        {
-            m_baseVal = baseVal;
-
-            if(m_context)
-                m_context->notifyAttributeChange();
-
-            setAnimVal(baseVal);
-        }
-
-        T *animVal() const
-        {
-            if(!m_animVal)
-                m_animVal = create();
-
-            return m_animVal.get();
-        }
-
-        void setAnimVal(T *animVal) const
-        {
-            m_animVal = animVal;
-            
-            // I think this is superfluous... -- ECS 4/25/05
-            if(m_context)
-                m_context->notifyAttributeChange();
-        }
-        
-    protected:
-        SVGAnimatedTemplate(const SVGStyledElement *context) : Shared<SVGAnimatedTemplate>()
-        {
-            m_context = context;
-        }
-
-        // This methods need to be reimplemented.        
-        virtual T *create() const = 0;
-        //virtual void assign(T *src, T *dst) const = 0;
-
-        // Attribute notification context
-        const SVGStyledElement *m_context;
-
-    private:
-        SVGAnimatedTemplate(const SVGAnimatedTemplate &) { }
-        SVGAnimatedTemplate<T> &operator=(const SVGAnimatedTemplate<T> &) { }
-        
-        mutable RefPtr<T> m_baseVal;
-        mutable RefPtr<T> m_animVal;
+        virtual BareType animVal() const = 0;
+        virtual void setAnimVal(BareType newAnimVal) = 0;
     };
 
-} // namespace WebCore
+    // Common type definitions, to ease IDL generation...
+    typedef SVGAnimatedTemplate<SVGAngle*> SVGAnimatedAngle;
+    typedef SVGAnimatedTemplate<bool> SVGAnimatedBoolean;
+    typedef SVGAnimatedTemplate<int> SVGAnimatedEnumeration;
+    typedef SVGAnimatedTemplate<long> SVGAnimatedInteger;
+    typedef SVGAnimatedTemplate<SVGLength*> SVGAnimatedLength;
+    typedef SVGAnimatedTemplate<double> SVGAnimatedNumber;
+    typedef SVGAnimatedTemplate<SVGPreserveAspectRatio*> SVGAnimatedPreserveAspectRatio;
+    typedef SVGAnimatedTemplate<FloatRect> SVGAnimatedRect;
+    typedef SVGAnimatedTemplate<String> SVGAnimatedString;
+}
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGAnimatedTemplate_H
+#endif // SVGAnimatedTemplate_H
 
 // vim:ts=4:noet

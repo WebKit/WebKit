@@ -20,8 +20,9 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGPathSegListImpl_H
-#define KSVG_SVGPathSegListImpl_H
+#ifndef KSVG_SVGPathSegList_H
+#define KSVG_SVGPathSegList_H
+
 #ifdef SVG_SUPPORT
 
 #include "SVGList.h"
@@ -29,10 +30,10 @@
 
 namespace WebCore
 {
-    class SVGPathSegList : public SVGList<SVGPathSeg>
+    class SVGPathSegList : public SVGList<SVGPathSeg*>
     {
     public:
-        SVGPathSegList(const SVGStyledElement *context = 0);
+        SVGPathSegList();
         virtual ~SVGPathSegList();
     };
 

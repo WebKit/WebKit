@@ -233,8 +233,16 @@ all : \
     JSRange.h \
     JSRangeException.h \
     JSSVGAngle.h \
+    JSSVGAnimatedAngle.h \
+    JSSVGAnimatedBoolean.h \
+    JSSVGAnimatedEnumeration.h \
+    JSSVGAnimatedInteger.h \
     JSSVGAnimatedLength.h \
     JSSVGAnimatedNumber.h \
+    JSSVGAnimatedPoints.h \
+    JSSVGAnimatedPreserveAspectRatio.h \
+    JSSVGAnimatedRect.h \
+    JSSVGAnimatedString.h \
     JSSVGColor.h \
     JSSVGDocument.h \
     JSSVGElement.h \
@@ -263,6 +271,7 @@ all : \
     JSSVGPathSegMovetoAbs.h \
     JSSVGPathSegMovetoRel.h \
     JSSVGPointTable.cpp \
+    JSSVGPreserveAspectRatio.h \
     JSSVGRectTable.cpp \
     JSSVGSVGElement.h \
     JSSVGTransform.h \

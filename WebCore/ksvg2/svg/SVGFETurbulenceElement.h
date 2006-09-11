@@ -46,12 +46,12 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, BaseFrequencyX, baseFrequencyX)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, BaseFrequencyY, baseFrequencyY)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, NumOctaves, numOctaves)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Seed, seed)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, StitchTiles, stitchTiles)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, Type, type)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, double, double, BaseFrequencyX, baseFrequencyX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, double, double, BaseFrequencyY, baseFrequencyY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, int, NumOctaves, numOctaves)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, double, double, Seed, seed)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, int, StitchTiles, stitchTiles)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, int, Type, type)
         mutable KCanvasFETurbulence *m_filterEffect;
     };
 

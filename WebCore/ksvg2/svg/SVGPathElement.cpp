@@ -27,7 +27,6 @@
 #include "ksvg.h"
 #include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGRect.h"
 #include "SVGSVGElement.h"
 #include "SVGPathSegArc.h"
 #include "SVGPathSegList.h"
@@ -351,7 +350,7 @@ void SVGPathElement::parseMappedAttribute(MappedAttribute *attr)
 
 SVGPathSegList *SVGPathElement::pathSegList() const
 {
-    return lazy_create<SVGPathSegList>(m_pathSegList, this);
+    return lazy_create<SVGPathSegList>(m_pathSegList);
 }
 
 SVGPathSegList *SVGPathElement::normalizedPathSegList() const

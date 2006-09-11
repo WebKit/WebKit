@@ -57,10 +57,12 @@ namespace WebCore
         virtual bool hasPercentageValues() const;
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Cx, cx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Cy, cy)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Rx, rx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Ry, ry)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+ 
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength*, RefPtr<SVGLength>, Cx, cx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength*, RefPtr<SVGLength>, Cy, cy)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength*, RefPtr<SVGLength>, Rx, rx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength*, RefPtr<SVGLength>, Ry, ry)
     };
 
 } // namespace WebCore

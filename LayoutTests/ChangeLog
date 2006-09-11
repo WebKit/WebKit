@@ -1,3 +1,9 @@
+2006-09-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        * svg/custom/baseval-animval-equality.svg: Added.
+
 2006-09-11  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Darin.

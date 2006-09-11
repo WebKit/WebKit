@@ -54,14 +54,18 @@ namespace WebCore {
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, FilterUnits, filterUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, PrimitiveUnits, primitiveUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Height, height)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, FilterResX, filterResX)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, FilterResY, filterResY)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+ 
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, int, FilterUnits, filterUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, int, PrimitiveUnits, primitiveUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength*, RefPtr<SVGLength>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength*, RefPtr<SVGLength>, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength*, RefPtr<SVGLength>, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength*, RefPtr<SVGLength>, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, int, FilterResX, filterResX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, int, FilterResY, filterResY)
+
         KCanvasFilter *m_filter;
     };
 

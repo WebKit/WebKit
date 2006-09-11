@@ -59,13 +59,18 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, RefX, refX)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, RefY, refY)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, MarkerWidth, markerWidth)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, MarkerHeight, markerHeight)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, MarkerUnits, markerUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, OrientType, orientType)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGAngle*, RefPtr<SVGAngle>, OrientAngle, orientAngle)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired) 
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, FloatRect, ViewBox, viewBox)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio)
+
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength*, RefPtr<SVGLength>, RefX, refX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength*, RefPtr<SVGLength>, RefY, refY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength*, RefPtr<SVGLength>, MarkerWidth, markerWidth)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength*, RefPtr<SVGLength>, MarkerHeight, markerHeight)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, int, int, MarkerUnits, markerUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, int, int, OrientType, orientType)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGAngle*, RefPtr<SVGAngle>, OrientAngle, orientAngle)
+
         KCanvasMarker *m_marker;
     };
 

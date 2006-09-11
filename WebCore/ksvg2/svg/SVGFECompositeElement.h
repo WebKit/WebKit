@@ -46,13 +46,13 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
-        ANIMATED_PROPERTY_DECLARATIONS(String, String, In2, in2)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, _operator, _operator)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, K1, k1)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, K2, k2)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, K3, k3)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, K4, k4)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, String, String, In2, in2)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, int, int, _operator, _operator)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K1, k1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K2, k2)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K3, k3)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K4, k4)
         mutable KCanvasFEComposite *m_filterEffect;
     };
 

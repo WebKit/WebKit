@@ -20,8 +20,9 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGTransformListImpl_H
-#define KSVG_SVGTransformListImpl_H
+#ifndef KSVG_SVGTransformList_H
+#define KSVG_SVGTransformList_H
+
 #ifdef SVG_SUPPORT
 
 #include "SVGList.h"
@@ -29,21 +30,22 @@
 
 namespace WebCore {
 
-    class SVGTransformList : public SVGList<SVGTransform> {
+    class SVGTransformList : public SVGList<SVGTransform*>
+    {
     public:
-        SVGTransformList(const SVGStyledElement *context = 0);
+        SVGTransformList();
         virtual ~SVGTransformList();
 
-        SVGTransform *createSVGTransformFromMatrix(SVGMatrix *matrix) const;
-        SVGTransform *consolidate();
+        SVGTransform* createSVGTransformFromMatrix(SVGMatrix*) const;
+        SVGTransform* consolidate();
 
         // Internal use only
-        SVGTransform *concatenate() const;
+        SVGTransform* concatenate() const;
     };
 
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGTransformListImpl_H
+#endif // KSVG_SVGTransformList_H
 
 // vim:ts=4:noet

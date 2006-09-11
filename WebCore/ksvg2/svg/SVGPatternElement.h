@@ -70,13 +70,19 @@ namespace WebCore
         virtual SVGMatrix *getCTM() const;
 
     protected:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Height, height)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, PatternUnits, patternUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, PatternContentUnits, patternContentUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTransformList*, RefPtr<SVGTransformList>, PatternTransform, patternTransform)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, FloatRect, ViewBox, viewBox)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio)
+
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength*, RefPtr<SVGLength>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength*, RefPtr<SVGLength>, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength*, RefPtr<SVGLength>, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength*, RefPtr<SVGLength>, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, int, int, PatternUnits, patternUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, int, int, PatternContentUnits, patternContentUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGTransformList*, RefPtr<SVGTransformList>, PatternTransform, patternTransform)
+
         mutable KCanvasImage *m_tile;
         mutable bool m_ignoreAttributeChanges;
         mutable KRenderingPaintServerPattern *m_paintServer;

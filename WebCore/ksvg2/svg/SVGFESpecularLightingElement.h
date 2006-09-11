@@ -46,13 +46,13 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, SpecularConstant, specularConstant)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, SpecularExponent, specularExponent)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, SurfaceScale, surfaceScale)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGColor*, RefPtr<SVGColor>, LightingColor, lightingColor)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, KernelUnitLengthX, kernelUnitLengthX)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, KernelUnitLengthY, kernelUnitLengthY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, SpecularConstant, specularConstant)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, SpecularExponent, specularExponent)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, SurfaceScale, surfaceScale)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, SVGColor*, RefPtr<SVGColor>, LightingColor, lightingColor)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, KernelUnitLengthX, kernelUnitLengthX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, KernelUnitLengthY, kernelUnitLengthY)
         //need other properties here...
         mutable KCanvasFESpecularLighting *m_filterEffect;
         

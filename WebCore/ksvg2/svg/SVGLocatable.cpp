@@ -26,7 +26,6 @@
 
 #include "SVGElement.h"
 #include "SVGMatrix.h"
-#include "SVGRect.h"
 #include "SVGSVGElement.h"
 #include <kcanvas/RenderPath.h>
 

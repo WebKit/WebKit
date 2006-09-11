@@ -43,7 +43,7 @@ SVGPolyElement::~SVGPolyElement()
 
 SVGPointList *SVGPolyElement::points() const
 {
-    return lazy_create<SVGPointList>(m_points, this);
+    return lazy_create<SVGPointList>(m_points);
 }
 
 SVGPointList *SVGPolyElement::animatedPoints() const
@@ -66,7 +66,7 @@ void SVGPolyElement::parseMappedAttribute(MappedAttribute *attr)
 
 void SVGPolyElement::svgPolyTo(double x1, double y1, int) const
 {
-    points()->appendItem(new SVGPoint(x1, y1, this));
+    points()->appendItem(FloatPoint(x1, y1));
 }
 
 void SVGPolyElement::notifyAttributeChange() const
@@ -83,8 +83,8 @@ void SVGPolyElement::notifyAttributeChange() const
     String _points;
     int len = points()->numberOfItems();
     for (int i = 0; i < len; ++i) {
-        SVGPoint *p = points()->getItem(i);
-        _points += String::sprintf("%.6lg %.6lg ", p->x(), p->y());
+        FloatPoint p = points()->getItem(i);
+        _points += String::sprintf("%.6lg %.6lg ", p.x(), p.y());
     }
 
     String p("points");

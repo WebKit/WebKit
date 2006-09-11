@@ -57,12 +57,14 @@ namespace WebCore
         virtual bool hasPercentageValues() const;
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Height, height)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Rx, rx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLength*, RefPtr<SVGLength>, Ry, ry)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength*, RefPtr<SVGLength>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength*, RefPtr<SVGLength>, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength*, RefPtr<SVGLength>, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength*, RefPtr<SVGLength>, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength*, RefPtr<SVGLength>, Rx, rx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength*, RefPtr<SVGLength>, Ry, ry)
     };
 
 } // namespace WebCore

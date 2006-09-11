@@ -88,13 +88,13 @@ sub GenerateInterface
     my $dataNode = shift;
     my $defines = shift;
 
-    # Start actual generation..
+    # Start actual generation
     $object->GenerateHeader($dataNode);
     $object->GenerateImplementation($dataNode);
-    
+
     my $name = $dataNode->name;
-    
-    # Open files for writing...
+
+    # Open files for writing
     my $headerFileName = "$outputDir/JS$name.h";
     my $implFileName = "$outputDir/JS$name.cpp";
     
@@ -143,6 +143,20 @@ sub GetLegacyHeaderIncludes
     }
 }
 
+sub AvoidInclusionOfType
+{
+    my $type = shift;
+
+    # Special case: SVGRect.h / SVGPoint.h / SVGNumber.h do not exist.
+    if ($type eq "SVGRect" or
+        $type eq "SVGPoint" or
+        $type eq "SVGNumber") {
+        return 1;
+    }
+
+    return 0;
+}
+ 
 sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
@@ -157,7 +171,7 @@ sub AddIncludesForType
         $implIncludes{"${joinedName}.h"} = 1;
     } else {
         # default, include the same named file
-        $implIncludes{"${type}.h"} = 1;
+        $implIncludes{"${type}.h"} = 1 unless(AvoidInclusionOfType($type));
     }
 
     # additional includes (things needed to compile the bindings but not the header)
@@ -173,15 +187,37 @@ sub AddIncludesForType
     }
 }
 
+sub AddIncludesForSVGAnimatedType
+{
+    my $type = shift;
+    $type =~ s/SVGAnimated//; 
+
+    if ($type eq "SVGRect" or
+        $type eq "SVGPoint" or
+        $type eq "SVGNumber") {
+      $implIncludes{"JSSVG$type.h"} = 1;
+    } else {
+      push(@implContentHeader, "#include \"PlatformString.h\"\n") if($type eq "String");
+    }
+}
+
+sub AddClassForwardIfNeeded
+{
+    my $implClassName = shift;
+
+    # SVGAnimatedLength/Number/etc.. are typedefs to SVGAnimtatedTemplate, so don't use class forwards for them!
+    push(@headerContent, "class $implClassName;\n\n") unless($codeGenerator->IsSVGAnimatedType($implClassName));
+}
+
 sub GenerateHeader
 {
     my $object = shift;
     my $dataNode = shift;
-    
+
     my $interfaceName = $dataNode->name;
     my $className = "JS$interfaceName";
     my $implClassName = $interfaceName;
-    
+
     # We only support multiple parents with SVG (for now).
     if (@{$dataNode->parents} > 1) {
         die "A class can't have more than one parent" unless $interfaceName =~ /SVG/;
@@ -223,8 +259,8 @@ sub GenerateHeader
     push(@headerContent, "\nnamespace WebCore {\n\n");
     
     # Implementation class forward declaration
-    push(@headerContent, "class $implClassName;\n\n");
-    
+    AddClassForwardIfNeeded($implClassName);
+
     # Class declaration
     push(@headerContent, "class $className : public $parentClassName {\n");
     push(@headerContent, "public:\n");
@@ -437,7 +473,7 @@ sub GenerateImplementation
 {
   my $object = shift;
   my $dataNode = shift;
-  
+
   my $interfaceName = $dataNode->name;
   my $className = "JS$interfaceName";
   my $implClassName = $interfaceName;
@@ -454,9 +490,14 @@ sub GenerateImplementation
   push(@implContentHeader,, "#include \"config.h\"\n\n");
   
   push(@implContentHeader, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
-  
-  push(@implContentHeader, "#include \"$className.h\"\n\n");
 
+  if ($className =~ /^JSSVGAnimated/) {
+    AddIncludesForSVGAnimatedType($interfaceName);
+  }
+  
+  push(@implContentHeader, "#include \"SVGAnimatedTemplate.h\"\n") if($className =~ /SVG/);
+  push(@implContentHeader, "#include \"$className.h\"\n\n");
+ 
   AddIncludesForType($interfaceName);
 
   @implContent = ();
@@ -1103,22 +1144,6 @@ sub NativeToJSValue
     
     my $type = $codeGenerator->StripModule($signature->type);
 
-    # FIXME: Temporary hack until we implement the JSSVGAnimated* stuff.
-
-    if($type eq "SVGAnimatedString") {
-        $type = "DOMString";
-    } elsif($type eq "SVGAnimatedBoolean") {
-        $type = "boolean";
-    } elsif($type eq "SVGAnimatedEnumeration") {
-        $type = "long";
-    } elsif($type eq "SVGAnimatedInteger") {
-        $type = "long";
-    } elsif($type eq "SVGAnimatedNumber") {
-        $type = "double";
-    } elsif($type eq "SVGAnimatedLength") {
-        $type = "SVGLength";
-    }
-
     if ($type eq "boolean") {
         return "jsBoolean($value)";
     } elsif ($type eq "long" or
@@ -1223,6 +1248,13 @@ sub NativeToJSValue
         $joinedName =~ s/Abs|Rel//;
         $implIncludes{"$joinedName.h"} = 1;
         return "toJS(exec, $value)";
+    } elsif ($codeGenerator->IsSVGAnimatedType($type)) {
+        $implIncludes{"JS$type.h"} = 1;
+        $implIncludes{"$type.h"} = 1;
+        $tempValue = $value;
+        $tempValue =~ s/\(\)//;
+        $tempValue .= "Animated()";
+        return "toJS(exec, $tempValue)";
     }
 
     # Default, include header with same name.
@@ -1251,7 +1283,7 @@ sub GenerateHashTable
     my $collisions = 0;
     my $numEntries = $size;
     
-    # Collect hashtable information...
+    # Collect hashtable information
     my $i = 0;
     foreach(@{$keys}) {
         my $depth = 0;
@@ -1280,7 +1312,7 @@ sub GenerateHashTable
         $#table = $size - 1;
     }
     
-    # Start outputing the hashtables...
+    # Start outputing the hashtables
     my $nameEntries = "${name}Entries";
     $nameEntries =~ s/:/_/g;
     
@@ -1303,7 +1335,7 @@ sub GenerateHashTable
         push(@implContent, "/* Hash table */\n");
     }
     
-    # Dump the hash table...
+    # Dump the hash table
     push(@implContent, "\nstatic const HashEntry $nameEntries\[\] =\n\{\n");
     
     $i = 0;
@@ -1404,7 +1436,10 @@ sub WriteData
         print $IMPL @implContentHeader;
         
         foreach my $implInclude (sort keys(%implIncludes)) {
-            print $IMPL "#include \"$implInclude\"\n";
+            my $checkType = $implInclude;
+            $checkType =~ s/\.h//;
+    
+            print $IMPL "#include \"$implInclude\"\n" unless($codeGenerator->IsSVGAnimatedType($checkType));
         }
         
         print $IMPL @implContent;

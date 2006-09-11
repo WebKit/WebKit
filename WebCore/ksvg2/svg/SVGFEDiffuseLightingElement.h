@@ -45,12 +45,12 @@ namespace WebCore {
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, DiffuseConstant, diffuseConstant)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, SurfaceScale, surfaceScale)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGColor*, RefPtr<SVGColor>, LightingColor, lightingColor)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, KernelUnitLengthX, kernelUnitLengthX)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, KernelUnitLengthY, kernelUnitLengthY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, double, double, DiffuseConstant, diffuseConstant)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, double, double, SurfaceScale, surfaceScale)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, SVGColor*, RefPtr<SVGColor>, LightingColor, lightingColor)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, double, double, KernelUnitLengthX, kernelUnitLengthX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, double, double, KernelUnitLengthY, kernelUnitLengthY)
         //need other properties here...
         mutable KCanvasFEDiffuseLighting *m_filterEffect;
         

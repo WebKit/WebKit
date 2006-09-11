@@ -38,7 +38,7 @@ using namespace WebCore;
 SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document *doc)
     : SVGElement(tagName, doc)
     , m_type(0)
-    , m_tableValues(new SVGNumberList(0))
+    , m_tableValues(new SVGNumberList)
     , m_slope(0.0)
     , m_intercept(0.0)
     , m_amplitude(0.0)
@@ -103,7 +103,7 @@ KCComponentTransferFunction SVGComponentTransferFunctionElement::transferFunctio
     SVGNumberList *numbers = tableValues();
     unsigned int nr = numbers->numberOfItems();
     for (unsigned int i = 0; i < nr; i++)
-        func.tableValues.append(numbers->getItem(i)->value());
+        func.tableValues.append(numbers->getItem(i));
     return func;
 }
 

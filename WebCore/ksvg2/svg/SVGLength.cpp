@@ -32,7 +32,6 @@
 #include "SVGLength.h"
 #include "SVGElement.h"
 #include "SVGSVGElement.h"
-#include "SVGRect.h"
 #include "SVGLength.h"
 
 #include <math.h>

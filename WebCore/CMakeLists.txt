@@ -66,17 +66,33 @@ kde4_automoc(platform/qt/ResourceLoaderManager.cpp)
 # rules for generated files
 IF (WEBKIT_USE_SVG_SUPPORT)
 set(IDL_BINDINGS_SVG
+
+# These three don't need generation!
+#
 # ksvg2/svg/SVGNumber.idl
 # ksvg2/svg/SVGPoint.idl
 # ksvg2/svg/SVGRect.idl
+
+# TODO: Fix generation
 # ksvg2/svg/SVGEvent.idl
 
   ksvg2/svg/SVGAngle.idl
+  ksvg2/svg/SVGAnimatedAngle.idl
+  ksvg2/svg/SVGAnimatedBoolean.idl
+  ksvg2/svg/SVGAnimatedEnumeration.idl
+  ksvg2/svg/SVGAnimatedInteger.idl
+  ksvg2/svg/SVGAnimatedLength.idl 
+  ksvg2/svg/SVGAnimatedNumber.idl
+# ksvg2/svg/SVGAnimatedPathData.idl
+# ksvg2/svg/SVGAnimatedPoints.idl
+  ksvg2/svg/SVGAnimatedPreserveAspectRatio.idl
+  ksvg2/svg/SVGAnimatedRect.idl
+  ksvg2/svg/SVGAnimatedString.idl
+
+  
   ksvg2/svg/SVGMatrix.idl
   ksvg2/svg/SVGTransform.idl
   ksvg2/svg/SVGLength.idl
-  ksvg2/svg/SVGAnimatedLength.idl
-  ksvg2/svg/SVGAnimatedNumber.idl
   ksvg2/svg/SVGElement.idl
   ksvg2/svg/SVGColor.idl
   ksvg2/svg/SVGDocument.idl
@@ -103,6 +119,7 @@ set(IDL_BINDINGS_SVG
   ksvg2/svg/SVGPathSegLinetoVerticalRel.idl
   ksvg2/svg/SVGPathSegMovetoAbs.idl
   ksvg2/svg/SVGPathSegMovetoRel.idl
+  ksvg2/svg/SVGPreserveAspectRatio.idl
 )
 ENDIF (WEBKIT_USE_SVG_SUPPORT)
 
@@ -240,8 +257,9 @@ create_lut(WebCore-unity_LIB_SRCS bindings/js/JSXSLTProcessor.cpp JSXSLTProcesso
 create_cpp_lut(bindings/js/JSHTMLInputElementBase.cpp JSHTMLInputElementBaseTable.cpp bindings/js/JSHTMLInputElementBase.cpp)
 
 IF (WEBKIT_USE_SVG_SUPPORT)
-  create_cpp_lut(ksvg2/bindings/js/JSSVGPoint.cpp JSSVGPointTable.cpp ksvg2/bindings/js/JSSVGPoint.cpp)
-  create_cpp_lut(ksvg2/bindings/js/JSSVGRect.cpp JSSVGRectTable.cpp ksvg2/bindings/js/JSSVGRect.cpp)
+    create_cpp_lut(ksvg2/bindings/js/JSSVGNumber.cpp JSSVGNumberTable.cpp ksvg2/bindings/js/JSSVGNumber.cpp)
+    create_cpp_lut(ksvg2/bindings/js/JSSVGPoint.cpp JSSVGPointTable.cpp ksvg2/bindings/js/JSSVGPoint.cpp)
+    create_cpp_lut(ksvg2/bindings/js/JSSVGRect.cpp JSSVGRectTable.cpp ksvg2/bindings/js/JSSVGRect.cpp)
 ENDIF (WEBKIT_USE_SVG_SUPPORT)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp
@@ -379,7 +397,6 @@ set (SVG_STUFF
     ksvg2/svg/SVGDOMImplementation.cpp
     ksvg2/svg/SVGMarkerElement.cpp
     ksvg2/svg/SVGFECompositeElement.cpp
-    ksvg2/svg/SVGPoint.cpp
     ksvg2/svg/SVGImageElement.cpp
     ksvg2/svg/SVGAnimateElement.cpp
     ksvg2/svg/SVGURIReference.cpp
@@ -393,29 +410,25 @@ set (SVG_STUFF
     ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp
     ksvg2/svg/SVGStyledLocatableElement.cpp
     ksvg2/svg/SVGLineElement.cpp
-    ksvg2/svg/SVGAnimatedAngle.cpp
     ksvg2/svg/SVGTransform.cpp
     ksvg2/svg/SVGPathSegLinetoVertical.cpp
     ksvg2/svg/SVGFitToViewBox.cpp
     ksvg2/svg/SVGRadialGradientElement.cpp
     ksvg2/svg/SVGMatrix.cpp
-    ksvg2/svg/SVGAnimatedPreserveAspectRatio.cpp
     ksvg2/svg/SVGMaskElement.cpp
     ksvg2/svg/SVGTitleElement.cpp
     ksvg2/svg/SVGTRefElement.cpp
     ksvg2/svg/SVGLangSpace.cpp
     ksvg2/svg/SVGTransformList.cpp
-    ksvg2/svg/SVGNumber.cpp
     ksvg2/svg/SVGStylable.cpp
     ksvg2/svg/SVGPolyElement.cpp
     ksvg2/svg/SVGPolygonElement.cpp
 #   ksvg2/svg/SVGElementInstanceList.cpp
     ksvg2/svg/SVGTSpanElement.cpp
     ksvg2/svg/SVGFEFuncRElement.cpp
-    ksvg2/svg/SVGAnimatedPoints.cpp
     ksvg2/svg/SVGFEFloodElement.cpp
     ksvg2/svg/SVGPointList.cpp
-    ksvg2/svg/SVGAnimatedEnumeration.cpp
+    ksvg2/svg/SVGAnimatedPoints.cpp
     ksvg2/svg/SVGAnimatedPathData.cpp
     ksvg2/svg/SVGUseElement.cpp
     ksvg2/svg/SVGNumberList.cpp
@@ -429,7 +442,6 @@ set (SVG_STUFF
     ksvg2/svg/SVGPathElement.cpp
     ksvg2/svg/SVGStyledElement.cpp
     ksvg2/svg/SVGFEMergeNodeElement.cpp
-    ksvg2/svg/SVGAnimatedLengthList.cpp
     ksvg2/svg/svgpathparser.cpp
     ksvg2/svg/SVGFEGaussianBlurElement.cpp
     ksvg2/svg/SVGLinearGradientElement.cpp
@@ -437,7 +449,6 @@ set (SVG_STUFF
     ksvg2/svg/SVGFEImageElement.cpp
     ksvg2/svg/SVGFEDiffuseLightingElement.cpp
     ksvg2/svg/SVGSymbolElement.cpp
-    ksvg2/svg/SVGAnimatedLength.cpp
     ksvg2/svg/SVGForeignObjectElement.cpp
     ksvg2/svg/SVGAngle.cpp
     ksvg2/svg/SVGPathSegCurvetoQuadratic.cpp
@@ -450,36 +461,28 @@ set (SVG_STUFF
     ksvg2/svg/SVGSetElement.cpp
     ksvg2/svg/SVGFEBlendElement.cpp
     ksvg2/svg/SVGFEMergeElement.cpp
-    ksvg2/svg/SVGAnimatedString.cpp
     ksvg2/svg/SVGCursorElement.cpp
-    ksvg2/svg/SVGAnimatedNumber.cpp
     ksvg2/svg/SVGStringList.cpp
 #   ksvg2/svg/SVGElementInstance.cpp
-    ksvg2/svg/SVGRect.cpp
     ksvg2/svg/SVGFilterElement.cpp
     ksvg2/svg/SVGPathSegCurvetoCubicSmooth.cpp
     ksvg2/svg/SVGPatternElement.cpp
     ksvg2/svg/SVGPathSegList.cpp
     ksvg2/svg/SVGStyleElement.cpp
-    ksvg2/svg/SVGAnimatedColor.cpp
     ksvg2/svg/SVGPaint.cpp
     ksvg2/svg/SVGFEDistantLightElement.cpp
     ksvg2/svg/SVGTextPositioningElement.cpp
-    ksvg2/svg/SVGAnimatedRect.cpp
     ksvg2/svg/SVGPreserveAspectRatio.cpp
     ksvg2/svg/SVGScriptElement.cpp
     ksvg2/svg/SVGComponentTransferFunctionElement.cpp
     ksvg2/svg/SVGTextElement.cpp
     ksvg2/svg/SVGViewElement.cpp
-    ksvg2/svg/SVGAnimatedTransformList.cpp
     ksvg2/svg/SVGLengthList.cpp
     ksvg2/svg/SVGStyledTransformableElement.cpp
     ksvg2/svg/SVGPathSegArc.cpp
-    ksvg2/svg/SVGAnimatedBoolean.cpp
     ksvg2/svg/SVGDescElement.cpp
     ksvg2/svg/SVGTransformable.cpp
     ksvg2/svg/SVGDocument.cpp
-    ksvg2/svg/SVGAnimatedInteger.cpp
     ksvg2/svg/SVGClipPathElement.cpp
     ksvg2/svg/SVGPathSegMoveto.cpp
     ksvg2/svg/SVGAElement.cpp
@@ -489,7 +492,6 @@ set (SVG_STUFF
     ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.cpp
     ksvg2/svg/SVGElement.cpp
     ksvg2/svg/SVGAnimateTransformElement.cpp
-    ksvg2/svg/SVGAnimatedNumberList.cpp
     ksvg2/svg/SVGFEColorMatrixElement.cpp
     ksvg2/svg/SVGGradientElement.cpp
     ksvg2/svg/SVGAnimationElement.cpp

@@ -49,7 +49,10 @@ namespace WebCore
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
-    };
+ 
+    private:
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired) 
+     };
 
     class SVGDummyElement : public SVGGElement {
     public:

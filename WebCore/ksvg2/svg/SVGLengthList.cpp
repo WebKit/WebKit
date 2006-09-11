@@ -21,7 +21,9 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
+
 #include "DeprecatedStringList.h"
 
 #include "SVGMatrix.h"
@@ -30,8 +32,8 @@
 
 namespace WebCore {
 
-SVGLengthList::SVGLengthList(const SVGStyledElement *context)
-    : SVGList<SVGLength>(context)
+SVGLengthList::SVGLengthList()
+    : SVGList<SVGLength*>()
 {
 }
 
@@ -39,11 +41,11 @@ SVGLengthList::~SVGLengthList()
 {
 }
 
-void SVGLengthList::parse(const DeprecatedString &value, const SVGStyledElement *context, LengthMode mode)
+void SVGLengthList::parse(const DeprecatedString& value, const SVGStyledElement* context, LengthMode mode)
 {
     DeprecatedStringList lengths = DeprecatedStringList::split(' ', value);
     for (unsigned int i = 0; i < lengths.count(); i++) {
-        SVGLength *length = new SVGLength(context, mode);
+        SVGLength* length = new SVGLength(context, mode);
         String str(lengths[i]);
         length->setValueAsString(str);
         appendItem(length);
@@ -52,6 +54,6 @@ void SVGLengthList::parse(const DeprecatedString &value, const SVGStyledElement 
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

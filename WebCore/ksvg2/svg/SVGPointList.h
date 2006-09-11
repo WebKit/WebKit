@@ -22,17 +22,18 @@
 
 #ifndef KSVG_SVGPointListImpl_H
 #define KSVG_SVGPointListImpl_H
+
 #ifdef SVG_SUPPORT
 
 #include "SVGList.h"
-#include "SVGPoint.h"
+#include "FloatPoint.h"
 
 namespace WebCore
 {
-    class SVGPointList : public SVGList<SVGPoint>
+    class SVGPointList : public SVGList<FloatPoint>
     {
     public:
-        SVGPointList(const SVGStyledElement *context = 0);
+        SVGPointList();
         virtual ~SVGPointList();
     };
 

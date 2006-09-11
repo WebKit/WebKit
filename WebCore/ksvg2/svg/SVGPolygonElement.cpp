@@ -45,14 +45,11 @@ Path SVGPolygonElement::toPathData() const
     if(len < 1)
         return polyData;
     
-    polyData.moveTo(FloatPoint(points()->getItem(0)->x(), points()->getItem(0)->y()));
-    for (int i = 1; i < len; ++i) {
-        SVGPoint *p = points()->getItem(i);
-        polyData.addLineTo(FloatPoint(p->x(), p->y()));
-    }
+    polyData.moveTo(points()->getItem(0));
+    for (int i = 1; i < len; ++i)
+        polyData.addLineTo(points()->getItem(i));
 
     polyData.closeSubpath();
-
     return polyData;
 }
 

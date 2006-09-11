@@ -41,11 +41,11 @@ namespace WebCore
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLengthList*, RefPtr<SVGLengthList>, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLengthList*, RefPtr<SVGLengthList>, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLengthList*, RefPtr<SVGLengthList>, Dx, dx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLengthList*, RefPtr<SVGLengthList>, Dy, dy)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGNumberList*, RefPtr<SVGNumberList>, Rotate, rotate)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGLengthList*, RefPtr<SVGLengthList>, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGLengthList*, RefPtr<SVGLengthList>, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGLengthList*, RefPtr<SVGLengthList>, Dx, dx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGLengthList*, RefPtr<SVGLengthList>, Dy, dy)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGNumberList*, RefPtr<SVGNumberList>, Rotate, rotate)
     };
 
 } // namespace WebCore

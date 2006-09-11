@@ -43,11 +43,11 @@ namespace WebCore {
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
-        ANIMATED_PROPERTY_DECLARATIONS(String, String, In2, in2)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, XChannelSelector, xChannelSelector)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, YChannelSelector, yChannelSelector)
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Scale, scale)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, String, String, In2, in2)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, int, int, XChannelSelector, xChannelSelector)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, int, int, YChannelSelector, yChannelSelector)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, double, double, Scale, scale)
         mutable KCanvasFEDisplacementMap* m_filterEffect;
     };
 

@@ -24,12 +24,11 @@
 #ifdef SVG_SUPPORT
 
 #include "Attr.h"
+#include "FloatRect.h"
 #include "SVGPreserveAspectRatio.h"
-#include "SVGRect.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
-#include "SVGRect.h"
 #include "SVGSVGElement.h"
 #include "StringImpl.h"
 #include "svgpathparser.h"
@@ -37,7 +36,7 @@
 namespace WebCore {
 
 SVGFitToViewBox::SVGFitToViewBox()
-    : m_viewBox(new SVGRect(0))
+    : m_viewBox()
     , m_preserveAspectRatio(new SVGPreserveAspectRatio(0))
 {
 }
@@ -46,7 +45,7 @@ SVGFitToViewBox::~SVGFitToViewBox()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGFitToViewBox, SVGRect*, Rect, rect, ViewBox, viewBox, SVGNames::viewBoxAttr.localName(), m_viewBox.get())
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGFitToViewBox, FloatRect, Rect, rect, ViewBox, viewBox, SVGNames::viewBoxAttr.localName(), m_viewBox)
 ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr.localName(), m_preserveAspectRatio.get())
 
 void SVGFitToViewBox::parseViewBox(const String& str)
@@ -78,10 +77,7 @@ void SVGFitToViewBox::parseViewBox(const String& str)
     if (p < end) // nothing should come after the last, fourth number
         goto bail_out;
 
-    viewBoxBaseValue()->setX(x);
-    viewBoxBaseValue()->setY(y);
-    viewBoxBaseValue()->setWidth(w);
-    viewBoxBaseValue()->setHeight(h);
+    setViewBoxBaseValue(FloatRect(x, y, w, h));
     return;
 
 bail_out:;
@@ -90,12 +86,12 @@ bail_out:;
 
 SVGMatrix* SVGFitToViewBox::viewBoxToViewTransform(float viewWidth, float viewHeight) const
 {
-    SVGRect* viewBoxRect = viewBox();
-    if(viewBoxRect->width() == 0 || viewBoxRect->height() == 0)
+    FloatRect viewBoxRect = viewBox();
+    if (!viewBoxRect.width() || !viewBoxRect.height())
         return SVGSVGElement::createSVGMatrix();
 
-    return preserveAspectRatio()->getCTM(viewBoxRect->x(),
-            viewBoxRect->y(), viewBoxRect->width(), viewBoxRect->height(),
+    return preserveAspectRatio()->getCTM(viewBoxRect.x(),
+            viewBoxRect.y(), viewBoxRect.width(), viewBoxRect.height(),
             0, 0, viewWidth, viewHeight);
 }
 

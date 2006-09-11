@@ -22,69 +22,130 @@
 
 #ifndef KSVG_SVGList_H
 #define KSVG_SVGList_H
+
 #ifdef SVG_SUPPORT
 
-#include "DOMList.h"
-#include <ksvg2/svg/SVGStyledElement.h>
+#include <wtf/Vector.h>
+
+#include "Shared.h"
+#include "FloatPoint.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
-    template<class T>
-    class SVGList : public DOMList<T> {
+    // TODO: We will probably need to pass ExceptionCodes around here...
+
+    template<class Item>
+    class SVGListBase : public Shared<SVGListBase<Item> >
+    {
     public:
-        SVGList(const SVGStyledElement *context = 0)
-        : DOMList<T>(), m_context(context) {}
+        SVGListBase() { }
+        virtual ~SVGListBase() { }
 
-        void clear()
+        virtual Item nullItem() const = 0;
+
+        unsigned int numberOfItems() const { return m_vector.size(); }
+        void clear() { m_vector.clear(); }
+
+        Item initialize(Item newItem)
         {
-            DOMList<T>::clear();
-
-            if(m_context)
-                m_context->notifyAttributeChange();
+            clear();
+            return appendItem(newItem);
         }
 
-        T *insertItemBefore(T *newItem, unsigned int index)
+        Item getFirst() const
         {
-            T *ret = DOMList<T>::insertItemBefore(newItem, index);
+            if (m_vector.isEmpty())
+                return nullItem();
 
-            if(m_context)
-                m_context->notifyAttributeChange();
-
-            return ret;
+            return m_vector.first();
         }
 
-        T *replaceItem(T *newItem, unsigned int index)
+        Item getLast() const
         {
-            T *ret = DOMList<T>::replaceItem(newItem, index);
+            if (m_vector.isEmpty())
+                return nullItem();
 
-            if(m_context)
-                m_context->notifyAttributeChange();
-
-            return ret;
+            return m_vector.last();
         }
 
-        T *removeItem(unsigned int index)
+        Item getItem(unsigned int index)
         {
-            T *ret = DOMList<T>::removeItem(index);
+            if (m_vector.size() < index)
+                return nullItem();
 
-            if(m_context)
-                m_context->notifyAttributeChange();
-
-            return ret;
+            return m_vector.at(index);
         }
 
-        T *appendItem(T *newItem)
+        const Item getItem(unsigned int index) const
         {
-            T *ret = DOMList<T>::appendItem(newItem);
+            if (m_vector.size() < index)
+                return nullItem();
 
-            if(m_context)
-                m_context->notifyAttributeChange();
-
-            return ret;
+            return m_vector.at(index);
         }
 
-    protected:
-        const SVGStyledElement *m_context;
+        Item insertItemBefore(Item newItem, unsigned int index)
+        {
+            m_vector.insert(index, newItem);
+            return newItem;
+        }
+
+        Item replaceItem(Item newItem, unsigned int index)
+        {
+            if (m_vector.size() < index)
+                return nullItem();
+
+            m_vector.at(index) = newItem;
+            return newItem;
+        }
+
+        Item removeItem(unsigned int index)
+        {
+            if (m_vector.size() < index)
+                return nullItem();
+
+            Item item = m_vector.at(index);
+            remove(index);
+            return item;
+        }
+
+        void removeItem(const Item item)
+        {
+            m_vector.remove(item);
+        }
+
+        Item appendItem(Item newItem)
+        {
+            m_vector.append(newItem);
+            return newItem;
+        }
+
+    private:
+        Vector<Item> m_vector;
+    };
+
+    template<class Item>
+    class SVGList : public SVGListBase<Item>
+    {
+    public:
+        virtual Item nullItem() const { return 0; }
+    };
+
+    // Specialization for String...
+    template<>
+    class SVGList<String> : public SVGListBase<String>
+    {
+    public:
+        virtual String nullItem() const { return String(); }
+    };
+
+    // Specialization for FloatPoint...
+    template<>
+    class SVGList<FloatPoint> : public SVGListBase<FloatPoint>
+    {
+    public:
+        virtual FloatPoint nullItem() const { return FloatPoint(); }
     };
 
 } // namespace WebCore

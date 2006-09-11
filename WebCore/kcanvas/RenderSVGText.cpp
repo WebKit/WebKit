@@ -49,10 +49,11 @@ AffineTransform RenderSVGText::translationForAttributes()
 {
     SVGTextElement *text = static_cast<SVGTextElement *>(element());
 
-    float xOffset = text->x()->getFirst() ? text->x()->getFirst()->value() : 0;
-    float yOffset = text->y()->getFirst() ? text->y()->getFirst()->value() : 0;
+    SVGLength* xOffset = text->x()->getFirst();
+    SVGLength* yOffset = text->y()->getFirst();
 
-    return AffineTransform().translate(xOffset, yOffset);
+    return AffineTransform().translate(xOffset ? xOffset->value() : 0,
+                                       yOffset ? yOffset->value() : 0);
 }
 
 void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)

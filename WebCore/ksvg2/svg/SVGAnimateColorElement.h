@@ -26,6 +26,8 @@
 
 #include "SVGAnimationElement.h"
 
+class SVGColor;
+
 namespace WebCore {
 
     class SVGAnimateColorElement : public SVGAnimationElement {

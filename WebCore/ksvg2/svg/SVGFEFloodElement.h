@@ -46,7 +46,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEFloodElement, String, String, In, in)
         mutable KCanvasFEFlood *m_filterEffect;
     };
 

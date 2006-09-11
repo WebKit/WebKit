@@ -34,10 +34,8 @@
 #include "SVGAngle.h"
 #include "SVGLength.h"
 #include "SVGPreserveAspectRatio.h"
-#include "SVGRect.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGMatrix.h"
-#include "SVGNumber.h"
 #include "SVGTransform.h"
 #include "SVGZoomEvent.h"
 #include "ksvg.h"
@@ -61,7 +59,7 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document *doc)
     , m_timeScheduler(new TimeScheduler(doc))
 {
     const SVGElement* viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
-    const SVGStyledElement* context = reinterpret_cast<const SVGStyledElement*>(ownerDocument()->documentElement() == this ? 0 : this);
+    const SVGStyledElement* context = ownerDocument()->documentElement() == this ? 0 : this;
 
     m_x = new SVGLength(context, LM_WIDTH, viewport);
     m_y = new SVGLength(context, LM_HEIGHT, viewport);
@@ -231,7 +229,7 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute *attr)
         if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
             return;
         if (SVGFitToViewBox::parseMappedAttribute(attr) && renderer())
-            static_cast<RenderSVGContainer*>(renderer())->setViewBox(FloatRect(viewBox()->x(), viewBox()->y(), viewBox()->width(), viewBox()->height()));
+            static_cast<RenderSVGContainer*>(renderer())->setViewBox(viewBox());
         if (SVGZoomAndPan::parseMappedAttribute(attr))
             return;
 
@@ -380,9 +378,9 @@ RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
     float _height = height()->value();
 
     rootContainer->setViewport(FloatRect(_x, _y, _width, _height));
-    rootContainer->setViewBox(FloatRect(viewBox()->x(), viewBox()->y(), viewBox()->width(), viewBox()->height()));
+    rootContainer->setViewBox(viewBox());
     rootContainer->setAlign(KCAlign(preserveAspectRatio()->align() - 1));
-    rootContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVG_MEETORSLICE_SLICE);
+    rootContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE);
     
     return rootContainer;
 }

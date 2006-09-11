@@ -43,7 +43,7 @@ using namespace WebCore;
 SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document *doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_type(0)
-    , m_values(new SVGNumberList(0))
+    , m_values(new SVGNumberList)
     , m_filterEffect(0)
 {
 }
@@ -73,7 +73,7 @@ void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == SVGNames::inAttr)
         setInBaseValue(value);
     else if (attr->name() == SVGNames::valuesAttr)
-        valuesBaseValue()->parse(value.deprecatedString(), this);
+        valuesBaseValue()->parse(value.deprecatedString());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -91,7 +91,7 @@ KCanvasFEColorMatrix *SVGFEColorMatrixElement::filterEffect() const
     SVGNumberList *numbers = values();
     unsigned int nr = numbers->numberOfItems();
     for(unsigned int i = 0;i < nr;i++)
-        _values.append(numbers->getItem(i)->value());
+        _values.append(numbers->getItem(i));
     m_filterEffect->setValues(_values);
     m_filterEffect->setType((KCColorMatrixType)(type() - 1));
     

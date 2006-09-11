@@ -21,13 +21,15 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
+
 #include "SVGPointList.h"
 
 using namespace WebCore;
 
-SVGPointList::SVGPointList(const SVGStyledElement *context)
-: SVGList<SVGPoint>(context)
+SVGPointList::SVGPointList()
+    : SVGList<FloatPoint>()
 {
 }
 
@@ -35,6 +37,6 @@ SVGPointList::~SVGPointList()
 {
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

@@ -64,7 +64,7 @@ namespace WebCore {
 
     protected:
         mutable RefPtr<SVGMatrix> m_localMatrix;
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTransformList*, RefPtr<SVGTransformList>, Transform, transform)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGStyledTransformableElement, SVGTransformList*, RefPtr<SVGTransformList>, Transform, transform)
     };
 
 } // namespace WebCore

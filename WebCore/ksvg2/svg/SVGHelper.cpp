@@ -28,7 +28,6 @@
 #include "FrameView.h"
 #include "RenderView.h"
 #include "SVGLength.h"
-#include "SVGRect.h"
 #include "SVGSVGElement.h"
 #include "SVGStringList.h"
 #include "ksvg.h"
@@ -47,8 +46,8 @@ float SVGHelper::PercentageOfViewport(float value, const SVGElement* viewportEle
     if (viewportElement->isSVG()) {
         const SVGSVGElement* svg = static_cast<const SVGSVGElement*>(viewportElement);
         if (svg->hasAttribute(SVGNames::viewBoxAttr)) {
-            width = svg->viewBox()->width();
-            height = svg->viewBox()->height();
+            width = svg->viewBox().width();
+            height = svg->viewBox().height();
         } else if (svg->width()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
                 svg->height()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE) {
             // TODO: Shouldn't w/h be multiplied with the percentage values?!

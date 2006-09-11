@@ -20,20 +20,40 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGPreserveAspectRatioImpl_H
-#define KSVG_SVGPreserveAspectRatioImpl_H
+#ifndef KSVG_SVGPreserveAspectRatio_H
+#define KSVG_SVGPreserveAspectRatio_H
+
 #ifdef SVG_SUPPORT
 
 #include "Shared.h"
 
 namespace WebCore {
 
-    class StringImpl;
     class SVGMatrix;
     class SVGStyledElement;
 
     class SVGPreserveAspectRatio : public Shared<SVGPreserveAspectRatio> { 
     public:
+        enum SVGPreserveAspectRatioType {
+            SVG_PRESERVEASPECTRATIO_UNKNOWN     = 0,
+            SVG_PRESERVEASPECTRATIO_NONE        = 1,
+            SVG_PRESERVEASPECTRATIO_XMINYMIN    = 2,
+            SVG_PRESERVEASPECTRATIO_XMIDYMIN    = 3,
+            SVG_PRESERVEASPECTRATIO_XMAXYMIN    = 4,
+            SVG_PRESERVEASPECTRATIO_XMINYMID    = 5,
+            SVG_PRESERVEASPECTRATIO_XMIDYMID    = 6,
+            SVG_PRESERVEASPECTRATIO_XMAXYMID    = 7,
+            SVG_PRESERVEASPECTRATIO_XMINYMAX    = 8,
+            SVG_PRESERVEASPECTRATIO_XMIDYMAX    = 9,
+            SVG_PRESERVEASPECTRATIO_XMAXYMAX    = 10
+        };
+
+        enum SVGMeetOrSliceType {
+            SVG_MEETORSLICE_UNKNOWN    = 0,
+            SVG_MEETORSLICE_MEET       = 1,
+            SVG_MEETORSLICE_SLICE      = 2
+        };
+
         SVGPreserveAspectRatio(const SVGStyledElement *context);
         virtual ~SVGPreserveAspectRatio();
 
@@ -61,6 +81,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGPreserveAspectRatioImpl_H
+#endif // KSVG_SVGPreserveAspectRatio_H
 
 // vim:ts=4:noet

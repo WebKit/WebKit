@@ -21,18 +21,18 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "DeprecatedStringList.h"
 
 #include "SVGMatrix.h"
-#include "SVGNumber.h"
 #include "SVGSVGElement.h"
 #include "SVGNumberList.h"
 
 using namespace WebCore;
 
-SVGNumberList::SVGNumberList(const SVGStyledElement *context)
-: SVGList<SVGNumber>(context)
+SVGNumberList::SVGNumberList()
+    : SVGList<float>()
 {
 }
 
@@ -40,15 +40,11 @@ SVGNumberList::~SVGNumberList()
 {
 }
 
-void SVGNumberList::parse(const DeprecatedString &value, const SVGStyledElement *context)
+void SVGNumberList::parse(const DeprecatedString& value)
 {
     DeprecatedStringList numbers = DeprecatedStringList::split(' ', value);
-    for(unsigned int i = 0;i < numbers.count();i++)
-    {
-        SVGNumber *number = new SVGNumber(context);
-        number->setValue(numbers[i].toDouble());
-        appendItem(number);
-    }
+    for (unsigned int i = 0; i < numbers.count(); i++)
+        appendItem(numbers[i].toDouble());
 }
 
 // vim:ts=4:noet

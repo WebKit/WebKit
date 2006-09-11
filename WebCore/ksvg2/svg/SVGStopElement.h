@@ -39,7 +39,7 @@ namespace WebCore
         // 'SVGStoplement' functions
         virtual void parseMappedAttribute(MappedAttribute *attr);
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(double, double, Offset, offset)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGStopElement, double, double, Offset, offset)
     };
 
 } // namespace WebCore

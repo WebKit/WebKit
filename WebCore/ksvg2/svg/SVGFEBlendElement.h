@@ -46,9 +46,9 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(String, String, In, in)
-        ANIMATED_PROPERTY_DECLARATIONS(String, String, In2, in2)
-        ANIMATED_PROPERTY_DECLARATIONS(int, int, Mode, mode)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, String, String, In2, in2)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, int, int, Mode, mode)
         mutable KCanvasFEBlend *m_filterEffect;
     };
 

@@ -34,11 +34,11 @@ using namespace WebCore;
 
 SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document *doc)
     : SVGTextContentElement(tagName, doc)
-    , m_x(new SVGLengthList(this))
-    , m_y(new SVGLengthList(this))
-    , m_dx(new SVGLengthList(this))
-    , m_dy(new SVGLengthList(this))
-    , m_rotate(new SVGNumberList(this))
+    , m_x(new SVGLengthList)
+    , m_y(new SVGLengthList)
+    , m_dx(new SVGLengthList)
+    , m_dy(new SVGLengthList)
+    , m_rotate(new SVGNumberList)
 {
 }
 
@@ -65,7 +65,7 @@ void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == SVGNames::dyAttr)
         dyBaseValue()->parse(value.deprecatedString(), this, LM_HEIGHT);
     else if (attr->name() == SVGNames::rotateAttr)
-        rotateBaseValue()->parse(value.deprecatedString(), this);
+        rotateBaseValue()->parse(value.deprecatedString());
     else
         SVGTextContentElement::parseMappedAttribute(attr);
 }
