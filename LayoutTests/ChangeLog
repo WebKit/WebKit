@@ -1,6 +1,15 @@
+2006-09-11  Darin Adler  <darin@apple.com>
+
+        - converted a test to plain text (makes it platform independent; fixes a failure)
+
+        * fast/events/ondragenter-expected.checksum: Removed.
+        * fast/events/ondragenter-expected.png: Removed.
+        * fast/events/ondragenter-expected.txt:
+        * fast/events/ondragenter.html:
+
 2006-09-10  Darin Adler  <darin@apple.com>
 
-        - converted a text to plain text (makes it platform independent; fixes a failure)
+        - converted a test to plain text (makes it platform independent; fixes a failure)
 
         * fast/text/plain-text-line-breaks-expected.checksum: Removed.
         * fast/text/plain-text-line-breaks-expected.png: Removed.

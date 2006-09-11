@@ -17,7 +17,8 @@ function runTest()
     if (!window.layoutTestController)
         return;
         
-    window.layoutTestController.waitUntilDone();
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
     
     // Find the element to drag
     var elementToDrag = document.getElementById("elementToDrag");
@@ -43,7 +44,7 @@ function runTest()
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
 
-    window.layoutTestController.notifyDone();
+    layoutTestController.notifyDone();
 }
 
 runTest();
