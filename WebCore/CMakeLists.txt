@@ -63,8 +63,12 @@ kde4_automoc(platform/qt/SharedTimerQt.cpp)
 kde4_automoc(platform/qt/ScrollViewCanvasQt.cpp)
 kde4_automoc(platform/qt/ResourceLoaderManager.cpp)
 
+SET(FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT XPATH_SUPPORT)
+
 # rules for generated files
 IF (WEBKIT_USE_SVG_SUPPORT)
+SET(FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT SVG_SUPPORT)
+
 set(IDL_BINDINGS_SVG
 
 # These three don't need generation!
@@ -89,7 +93,7 @@ set(IDL_BINDINGS_SVG
   ksvg2/svg/SVGAnimatedRect.idl
   ksvg2/svg/SVGAnimatedString.idl
 
-  
+
   ksvg2/svg/SVGMatrix.idl
   ksvg2/svg/SVGTransform.idl
   ksvg2/svg/SVGLength.idl
@@ -155,6 +159,7 @@ set(IDL_BINDINGS
   dom/OverflowEvent.idl
   dom/NodeIterator.idl
   dom/TreeWalker.idl
+  dom/RangeException.idl
   html/CanvasGradient.idl
   html/CanvasPattern.idl
   html/CanvasRenderingContext2D.idl
@@ -224,7 +229,7 @@ set(WebCore-unity-IDLGeneratedSources )
 foreach (idl ${IDL_BINDINGS})
    get_filename_component(_basename ${idl} NAME_WE)
    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.cpp ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.h
-      COMMAND perl -I${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts ${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts/generate-bindings.pl  --defines \"SVG_SUPPORT=${WEBKIT_USE_SVG_SUPPORT}\" --generator JS --include ${CMAKE_SOURCE_DIR}/WebCore/dom --include ${CMAKE_SOURCE_DIR}/WebCore/html --include ${CMAKE_SOURCE_DIR}/WebCore/xml --include ${CMAKE_SOURCE_DIR}/WebCore/ksvg2/svg --outputdir ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${idl}
+      COMMAND perl -I${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts ${CMAKE_CURRENT_SOURCE_DIR}/bindings/scripts/generate-bindings.pl  --defines \"${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include ${CMAKE_SOURCE_DIR}/WebCore/dom --include ${CMAKE_SOURCE_DIR}/WebCore/html --include ${CMAKE_SOURCE_DIR}/WebCore/xml --include ${CMAKE_SOURCE_DIR}/WebCore/ksvg2/svg --outputdir ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${idl}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${idl} )
    set(WebCore-unity-IDLGeneratedSources ${WebCore-unity-IDLGeneratedSources} ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.cpp ${CMAKE_CURRENT_BINARY_DIR}/JS${_basename}.h )
 endforeach (idl)

@@ -1,5 +1,13 @@
 2006-09-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Adele.
+
+        Fix Qt/Linux build.
+
+        * CMakeLists.txt: Add dom/RangeException.idl to build & fix feature defines.
+
+2006-09-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by eseidel.  Landed by eseidel.
 
         Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10750
