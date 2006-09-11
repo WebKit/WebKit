@@ -1,3 +1,17 @@
+2006-09-11  Adam Roben  <aroben@apple.com>
+
+        Rubberstamped by Adele.
+
+        Rename LocalGraphicsContext.{h,mm} to
+        LocalCurrentGraphicsContext.{h,mm} to match the class name.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/LocalCurrentGraphicsContext.mm: Added.
+        * platform/mac/LocalCurrentGraphicsContext.h: Added.
+        * platform/mac/LocalGraphicsContext.h: Removed.
+        * platform/mac/LocalGraphicsContext.mm: Removed.
+        * rendering/RenderThemeMac.mm: Fix #include to match renamed file
+
 2006-09-11  Brady Eidson  <beidson@apple.com>
 
         Build fix

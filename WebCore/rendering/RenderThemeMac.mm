@@ -29,7 +29,7 @@
 #import "FrameView.h"
 #import "GraphicsContext.h"
 #import "Image.h"
-#import "LocalGraphicsContext.h"
+#import "LocalCurrentGraphicsContext.h"
 #import "RenderPopupMenuMac.h"
 #import "RenderView.h"
 #import "WebCoreSystemInterface.h"

@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "LocalGraphicsContext.h"
+#include "LocalCurrentGraphicsContext.h"
 
 #include "GraphicsContext.h"
 #include <AppKit/NSGraphicsContext.h>
