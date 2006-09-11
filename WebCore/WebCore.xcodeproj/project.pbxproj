@@ -6442,6 +6442,7 @@
 				BCB16AF70979A08500467741 /* IntRect.cpp */,
 				BCB16AF80979A08500467741 /* IntRect.h */,
 				BCF1A5EF097839600061A123 /* IntSize.h */,
+				51386EE60AB4F0D5004AF79E /* IntSizeHash.h */,
 				6593923509AE4346002C531F /* KURL.cpp */,
 				6593923609AE4346002C531F /* KURL.h */,
 				85EC9AF90A71A2C600EEEAED /* Language.h */,
@@ -6510,7 +6511,6 @@
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				93B780C909B3B7FE00690162 /* WidgetClient.h */,
-				51386EE60AB4F0D5004AF79E /* IntSizeHash.h */,
 			);
 			path = platform;
 			sourceTree = "<group>";
