@@ -84,13 +84,13 @@ static Font* itemTextRenderer(bool isPrinting)
     if (!isPrinting) {
         if (itemScreenRenderer == nil) {
             FontPlatformData font(itemFont());
-            itemScreenRenderer = new Font(font);
+            itemScreenRenderer = new Font(font, isPrinting);
         }
         return itemScreenRenderer;
     } else {
         if (itemPrinterRenderer == nil) {
             FontPlatformData font(itemFont(), true);
-            itemPrinterRenderer = new Font(font);
+            itemPrinterRenderer = new Font(font, isPrinting);
         }
         return itemPrinterRenderer;
     }
@@ -101,13 +101,13 @@ static Font* groupLabelTextRenderer(bool isPrinting)
     if (!isPrinting) {
         if (groupLabelScreenRenderer == nil) {
             FontPlatformData font([NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]]);
-            groupLabelScreenRenderer = new Font(font);
+            groupLabelScreenRenderer = new Font(font, isPrinting);
         }
         return groupLabelScreenRenderer;
     } else {
         if (groupLabelPrinterRenderer == nil) {
             FontPlatformData font([NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]], true);
-            groupLabelPrinterRenderer = new Font(font);
+            groupLabelPrinterRenderer = new Font(font, isPrinting);
         }
         return groupLabelPrinterRenderer;
     }
@@ -702,7 +702,6 @@ static Boolean ListBoxTypeSelectCallback(UInt32 index, void *listDataPtr, void *
     WebCore::TextStyle style;
     style.setRTL(rtl);
     style.disableRoundingHacks();
-    style.setUsePrinterFonts(isPrinting);
 
     TextRun run(reinterpret_cast<const UniChar *>(item.string.unicode()), item.string.length());
     

@@ -254,14 +254,12 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 // Only draw the alt text if it'll fit within the content box,
                 // and only if it fits above the error image.
                 TextRun textRun(reinterpret_cast<const UChar*>(text.unicode()), text.length());
-                TextStyle textStyle;
-                textStyle.setUsePrinterFonts(view()->printingMode());
                 int textWidth = font.width(textRun);
                 if (errorPictureDrawn) {
                     if (usableWidth >= textWidth && font.height() <= imageY)
-                        p->drawText(textRun, IntPoint(ax, ay + ascent), textStyle);
+                        p->drawText(textRun, IntPoint(ax, ay + ascent));
                 } else if (usableWidth >= textWidth && cHeight >= font.height())
-                    p->drawText(textRun, IntPoint(ax, ay + ascent), textStyle);
+                    p->drawText(textRun, IntPoint(ax, ay + ascent));
             }
         }
     } else if (m_cachedImage) {

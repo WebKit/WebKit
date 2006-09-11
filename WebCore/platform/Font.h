@@ -82,7 +82,7 @@ public:
     Font();
     Font(const FontDescription&, short letterSpacing, short wordSpacing);
 #if PLATFORM(MAC)
-    Font(const FontPlatformData&); // This constructor is only used by Mac-specific code that already has a native font.
+    Font(const FontPlatformData&, bool isPrinting); // This constructor is only used by Mac-specific code that already has a native font.
 #endif
     ~Font();
     
@@ -154,7 +154,7 @@ private:
     // FIXME: This will eventually be cross-platform, but we want to keep Windows compiling for now.
     bool canUseGlyphCache(const TextRun&) const;
     void drawSimpleText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
-    void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&, bool usePrinterFont) const;
+    void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
     void drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
     float floatWidthForSimpleText(const TextRun&, const TextStyle&, const FontData* substituteFontData,
                                   float* startX, GlyphBuffer*) const;

@@ -424,9 +424,10 @@ static void disposeATSULayoutParameters(ATSULayoutParameters *params)
     delete []params->m_fonts;
 }
 
-Font::Font(const FontPlatformData& fontData)
+Font::Font(const FontPlatformData& fontData, bool isPrinterFont)
 :m_letterSpacing(0), m_wordSpacing(0)
 {
+    m_fontDescription.setUsePrinterFont(isPrinterFont);
     m_fontList = new FontFallbackList();
     m_fontList->setPlatformFont(fontData);
 }
@@ -555,7 +556,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, const TextStyle& s
     return offset - adjustedRun.from();
 }
 
-void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point, bool usePrinterFont) const
+void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
     CGContextRef cgContext = context->platformContext();
 
@@ -564,7 +565,7 @@ void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const Glyp
     
     const FontPlatformData& platformData = font->platformData();
     NSFont* drawFont;
-    if (!usePrinterFont) {
+    if (!isPrinterFont()) {
         drawFont = [platformData.font screenFont];
         if (drawFont != platformData.font)
             // We are getting this in too many places (3406411); use ERROR so it only prints on debug versions for now. (We should debug this also, eventually).

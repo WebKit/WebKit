@@ -46,11 +46,10 @@ void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint poin
         CGContextScaleCTM(cgContext, 1.0, -1.0);
     
     FontPlatformData f(font);
-    Font renderer(f);
+    Font renderer(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
     TextRun run(buffer, length);
     TextStyle style;
     style.disableRoundingHacks();
-    style.setUsePrinterFonts(![[NSGraphicsContext currentContext] isDrawingToScreen]);
     CGFloat red, green, blue, alpha;
     [[textColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
     graphicsContext.setPen(makeRGBA((int)(red * 255), (int)(green * 255), (int)(blue * 255), (int)(alpha * 255)));
@@ -62,7 +61,7 @@ void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint poin
 float WebCoreTextFloatWidth(const UniChar* buffer, unsigned length , NSFont* font)
 {
     FontPlatformData f(font);
-    Font renderer(f);
+    Font renderer(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
     TextRun run(buffer, length);
     TextStyle style;
     style.disableRoundingHacks();

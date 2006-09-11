@@ -253,8 +253,8 @@ IntSize TextField::sizeForCharacterWidth(int numCharacters) const
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     RenderWidget *client = static_cast<RenderWidget *>(Widget::client());
-    FontPlatformData font([textField font], client->view()->printingMode());
-    Font renderer(font);
+    FontPlatformData font([textField font]);
+    Font renderer(font, client->view()->printingMode());
 
     NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
     size.height += [layoutManager defaultLineHeightForFont:font.font];

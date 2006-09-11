@@ -232,19 +232,17 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
         if (!m_item.isEmpty()) {
             const Font& font = style()->font();
             TextRun textRun(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length());
-            TextStyle textStyle;
-            textStyle.setUsePrinterFonts(view()->printingMode());
             if (style()->direction() == LTR) {
                 int width = font.width(textRun);
-                p->drawText(textRun, marker.location(), textStyle);
+                p->drawText(textRun, marker.location());
                 UChar periodSpace[2] = { '.', ' ' };
-                p->drawText(TextRun(periodSpace, 2), marker.location() + IntSize(width, 0), textStyle);
+                p->drawText(TextRun(periodSpace, 2), marker.location() + IntSize(width, 0));
             } else {
                 UChar spacePeriod[2] = { ' ', '.' };
                 TextRun spacePeriodRun(spacePeriod, 2);
                 int width = font.width(spacePeriodRun);
-                p->drawText(spacePeriodRun, marker.location(), textStyle);
-                p->drawText(textRun, marker.location() + IntSize(width, 0), textStyle);
+                p->drawText(spacePeriodRun, marker.location());
+                p->drawText(textRun, marker.location() + IntSize(width, 0));
             }
         }
     }

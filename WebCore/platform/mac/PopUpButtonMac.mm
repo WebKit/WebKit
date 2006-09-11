@@ -170,10 +170,10 @@ IntSize PopUpButton::sizeHint() const
         if (i != e) {
             RenderWidget *client = static_cast<RenderWidget *>(Widget::client());
             bool isPrinting = client->view()->printingMode();
-            FontPlatformData itemFont([button font], isPrinting);
-            FontPlatformData labelFont(this->labelFont(), isPrinting);
-            Font itemRenderer(itemFont);
-            Font labelRenderer(labelFont);
+            FontPlatformData itemFont([button font]);
+            FontPlatformData labelFont(this->labelFont());
+            Font itemRenderer(itemFont, isPrinting);
+            Font labelRenderer(labelFont, isPrinting);
             do {
                 const DeprecatedString &s = (*i).string;
                 bool isGroupLabel = ((*i).type == ListBoxGroupLabel);

@@ -1,3 +1,44 @@
+2006-09-10  David Hyatt  <hyatt@apple.com>
+
+        Rework the printer font stuff a little bit so that the Font API doesn't
+        have to be changed.
+
+        Reviewed by eseidel
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreStringTruncator.mm:
+        (truncateString):
+        (+[WebCoreStringTruncator widthOfString:font:]):
+        * platform/Font.cpp:
+        (WebCore::Font::drawSimpleText):
+        * platform/Font.h:
+        * platform/TextStyle.h:
+        (WebCore::TextStyle::TextStyle):
+        (WebCore::TextStyle::attemptFontSubstitution):
+        (WebCore::TextStyle::setRTL):
+        * platform/mac/FontMac.mm:
+        (WebCore::m_wordSpacing):
+        (WebCore::Font::drawGlyphs):
+        * platform/mac/ListBoxMac.mm:
+        (itemTextRenderer):
+        (groupLabelTextRenderer):
+        (-[WebCoreTableView drawRow:clipRect:]):
+        * platform/mac/PopUpButtonMac.mm:
+        (PopUpButton::sizeHint):
+        * platform/mac/TextFieldMac.mm:
+        (-[NSSearchFieldCell _addStringToRecentSearches:]):
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreDrawTextAtPoint):
+        (WebCoreTextFloatWidth):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+
 2006-09-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

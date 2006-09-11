@@ -501,7 +501,7 @@ void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const Te
     while (nextGlyph < glyphBuffer.size()) {
         const FontData* nextFontData = glyphBuffer.fontDataAt(nextGlyph);
         if (nextFontData != fontData) {
-            drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint, style.usePrinterFonts());
+            drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
             lastFrom = nextGlyph;
             fontData = nextFontData;
             startPoint.setX(nextX);
@@ -509,7 +509,7 @@ void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const Te
         nextX += glyphBuffer.advanceAt(nextGlyph);
         nextGlyph++;
     }
-    drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint, style.usePrinterFonts());
+    drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 }
 
 void Font::drawText(GraphicsContext* context, const TextRun& run, const TextStyle& style, const FloatPoint& point) const
