@@ -1,5 +1,13 @@
 2006-09-10  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Maciej
+
+        Added specialized HashTraits
+
+        * platform/IntSizeHash.h:
+
+2006-09-10  Brady Eidson  <beidson@apple.com>
+
         Forgetting header #define protection is BAAAAAD
         (and re-alphabatized the project file)
 
