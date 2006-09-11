@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <WTF/Noncopyable.h>
+#include <wtf/Noncopyable.h>
 
 class NSGraphicsContext;
 
