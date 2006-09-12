@@ -775,6 +775,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSRangeException.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSRangeException.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSText.cpp"
 				>
 			</File>

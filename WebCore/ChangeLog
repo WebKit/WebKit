@@ -1,3 +1,13 @@
+2006-09-12  MorganL  <morlmor@yahoo.com>
+
+        Reviewed/landed by aroben.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10822
+        windows build is busted
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Add missing
+        JSRangeException.{cpp,h} to project
+
 2006-09-12  David Hyatt  <hyatt@apple.com>
 
         Fix fieldsets so that they properly expand to enclose overhanging floats
