@@ -750,6 +750,7 @@ private:
 protected:
     virtual void startRedirectionTimer();
     virtual void stopRedirectionTimer();
+    virtual void cleanupPluginObjects() { }
     
     void handleAutoscroll(RenderLayer*);
     void startAutoscrollTimer();

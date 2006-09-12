@@ -249,7 +249,6 @@ public:
     virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*);
     virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*);
     void addPluginRootObject(KJS::Bindings::RootObject* root);
-    void cleanupPluginRootObjects();
     
     virtual void registerCommandForUndo(PassRefPtr<EditCommand>);
     virtual void registerCommandForRedo(PassRefPtr<EditCommand>);
@@ -323,7 +322,8 @@ public:
 protected:
     virtual void startRedirectionTimer();
     virtual void stopRedirectionTimer();
-
+    virtual void cleanupPluginObjects();
+    
 private:
     virtual void handleMousePressEvent(const MouseEventWithHitTestResults&);
     virtual void handleMouseMoveEvent(const MouseEventWithHitTestResults&);

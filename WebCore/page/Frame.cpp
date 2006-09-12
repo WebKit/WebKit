@@ -453,7 +453,8 @@ void Frame::clear(bool clearWindowProperties)
   d->m_decoder = 0;
 
   d->m_plugins.clear();
-
+  cleanupPluginObjects();
+  
   d->m_scheduledRedirection = noRedirectionScheduled;
   d->m_delayRedirect = 0;
   d->m_redirectURL = DeprecatedString::null;

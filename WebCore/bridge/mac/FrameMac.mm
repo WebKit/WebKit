@@ -580,20 +580,6 @@ void FrameMac::setView(FrameView *view)
     
     d->m_view = view;
     
-    // Delete old PlugIn data structures
-    cleanupPluginRootObjects();
-    _bindingRoot = 0;
-    HardRelease(_windowScriptObject);
-    _windowScriptObject = 0;
-
-    if (_windowScriptNPObject) {
-        // Call _NPN_DeallocateObject() instead of _NPN_ReleaseObject() so that we don't leak if a plugin fails to release the window
-        // script object properly.
-        // This shouldn't cause any problems for plugins since they should have already been stopped and destroyed at this point.
-        _NPN_DeallocateObject(_windowScriptNPObject);
-        _windowScriptNPObject = 0;
-    }
-
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.
@@ -3038,14 +3024,27 @@ void FrameMac::addPluginRootObject(KJS::Bindings::RootObject *root)
     m_rootObjects.append(root);
 }
 
-void FrameMac::cleanupPluginRootObjects()
+void FrameMac::cleanupPluginObjects()
 {
+    // Delete old plug-in data structures
     JSLock lock;
-
+    
     unsigned count = m_rootObjects.size();
     for (unsigned i = 0; i < count; i++)
         m_rootObjects[i]->removeAllNativeReferences();
     m_rootObjects.clear();
+    
+    _bindingRoot = 0;
+    HardRelease(_windowScriptObject);
+    _windowScriptObject = 0;
+    
+    if (_windowScriptNPObject) {
+        // Call _NPN_DeallocateObject() instead of _NPN_ReleaseObject() so that we don't leak if a plugin fails to release the window
+        // script object properly.
+        // This shouldn't cause any problems for plugins since they should have already been stopped and destroyed at this point.
+        _NPN_DeallocateObject(_windowScriptNPObject);
+        _windowScriptNPObject = 0;
+    }
 }
 
 void FrameMac::registerCommandForUndoOrRedo(PassRefPtr<EditCommand> cmd, bool isRedo)

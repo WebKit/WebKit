@@ -1,3 +1,17 @@
+2006-09-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Do the plugin object cleanup in Frame::clear instead of setView.
+        
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::setView):
+        (WebCore::FrameMac::cleanupPluginObjects):
+        * page/Frame.cpp:
+        (WebCore::Frame::clear):
+        * page/Frame.h:
+
 2006-09-12  MorganL  <morlmor@yahoo.com>
 
         Reviewed/landed by aroben.
