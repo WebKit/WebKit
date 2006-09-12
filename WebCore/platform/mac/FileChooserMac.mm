@@ -126,6 +126,9 @@ void FileChooser::uploadControlDetaching()
 
 void FileChooser::chooseFile(const String& filename)
 {
+    if (m_filename == filename)
+        return;
+    
     m_filename = filename;
     
     // Need unsigned 0 here to disambiguate String::operator[] from operator(NSString*, int)[]
@@ -134,7 +137,7 @@ void FileChooser::chooseFile(const String& filename)
     else
         m_icon.set(Icon::newIconForFile(m_filename).release());
     
-    uploadControl()->updateIconAndFilename();
+    uploadControl()->valueChanged();
 }
 
 }

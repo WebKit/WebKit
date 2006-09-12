@@ -1,5 +1,25 @@
 2006-09-12  Adam Roben  <aroben@apple.com>
 
+        Reviewed by adele.
+
+        Make uploading work with the new file upload control.
+
+        * css/html4.css: Remove unnecessary style (this is already done in
+        RenderFileUpload.cpp)
+        * html/HTMLInputElement.cpp: Don't get the button text from the value
+        attribute for file controls.
+        (WebCore::HTMLInputElement::valueWithDefault):
+        * platform/mac/FileChooserMac.mm: Call
+        RenderFileUploadControl::valueChanged when the user selects a file.
+        (WebCore::FileChooser::chooseFile):
+        * rendering/RenderFileUploadControl.cpp: Add valueChanged() method to
+        update the form and fire the onChange event.
+        (WebCore::RenderFileUploadControl::valueChanged):
+        (WebCore::RenderFileUploadControl::updateFromElement):
+        * rendering/RenderFileUploadControl.h: Add valueChanged() declaration.
+
+2006-09-12  Adam Roben  <aroben@apple.com>
+
         Adding rules to html4.css to style the button in file upload controls.
 
         * css/html4.css:

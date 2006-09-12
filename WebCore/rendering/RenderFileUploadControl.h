@@ -46,6 +46,7 @@ public:
 
     virtual void click(bool sendMouseEvents);
 
+    void valueChanged();
     void updateIconAndFilename();
 
     virtual const char* renderName() const { return "RenderFileUploadControl"; }
