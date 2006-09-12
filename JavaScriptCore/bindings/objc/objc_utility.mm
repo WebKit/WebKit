@@ -287,7 +287,7 @@ ObjcValueType objcValueTypeForType(const char *type)
     for (int i = 0; i < typeLength; ++i) {
         char typeChar = type[i];
         switch (typeChar) {
-            case _C_CONST:
+            //case _C_CONST:
             case _C_BYCOPY:
             case _C_BYREF:
             case _C_ONEWAY:
@@ -321,12 +321,12 @@ ObjcValueType objcValueTypeForType(const char *type)
             case _C_ULNG:
                 objcValueType = ObjcUnsignedLongType;
                 break;
-            case _C_LNG_LNG:
+            /*case _C_LNG_LNG:
                 objcValueType = ObjcLongLongType;
                 break;
             case _C_ULNG_LNG:
                 objcValueType = ObjcUnsignedLongLongType;
-                break;
+                break;*/
             case _C_FLT:
                 objcValueType = ObjcFloatType;
                 break;

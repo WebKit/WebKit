@@ -1,3 +1,11 @@
+2006-09-11  Brady Eidson  <beidson@apple.com>
+
+        Build fix - I think Tim's last checkin wasn't tested on Tiger, possibly.  I simply
+        commented out the undefined constants until he can have a chance to make the right call
+
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::objcValueTypeForType): Commented out undefined symbols
+
 2006-09-11  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Tim O. and Darin.
