@@ -3322,10 +3322,13 @@ bool FrameMac::doTextFieldCommandFromEvent(Element* input, const PlatformKeyboar
     if (!event)
         return false;
 
+    BOOL result = false;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [_bridge textField:(DOMHTMLInputElement *)[DOMElement _elementWith:input] doCommandBySelector:selectorForKeyEvent(event)];
+    SEL selector = selectorForKeyEvent(event);
+    if (selector)
+        result = [_bridge textField:(DOMHTMLInputElement *)[DOMElement _elementWith:input] doCommandBySelector:selector];
     END_BLOCK_OBJC_EXCEPTIONS;
-    return false;
+    return result;
 }
 
 void FrameMac::textWillBeDeletedInTextField(Element* input)
