@@ -909,7 +909,7 @@ class RenderStyle
 
 public:
     // static pseudo styles. Dynamic ones are produced on the fly.
-    enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER, SELECTION, FIRST_LINE_INHERITED };
+    enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER, SELECTION, FIRST_LINE_INHERITED, FILE_UPLOAD_BUTTON };
 
     void ref() { m_ref++;  }
     void deref(RenderArena* arena) { 
@@ -1025,7 +1025,7 @@ protected:
         bool _affectedByHover : 1;
         bool _affectedByActive : 1;
         bool _affectedByDrag : 1;
-        unsigned _pseudoBits : 6;
+        unsigned _pseudoBits : 7;
         unsigned _unicodeBidi : 2; // EUnicodeBidi
     } noninherited_flags;
 

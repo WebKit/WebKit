@@ -79,19 +79,24 @@ void RenderButton::updateFromElement()
     if (element()->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(element());
         String value = input->valueWithDefault();
-        if (value.isEmpty()) {
-            if (m_buttonText) {
-                m_buttonText->destroy();
-                m_buttonText = 0;
-            }
-        } else {
-            if (m_buttonText)
-                m_buttonText->setText(value.impl());
-            else {
-                m_buttonText = new (renderArena()) RenderText(document(), value.impl());
-                m_buttonText->setStyle(style());
-                addChild(m_buttonText);
-            }
+        setText(value);
+    }
+}
+
+void RenderButton::setText(const String& str)
+{
+    if (str.isEmpty()) {
+        if (m_buttonText) {
+            m_buttonText->destroy();
+            m_buttonText = 0;
+        }
+    } else {
+        if (m_buttonText)
+            m_buttonText->setText(str.impl());
+        else {
+            m_buttonText = new (renderArena()) RenderText(document(), str.impl());
+            m_buttonText->setStyle(style());
+            addChild(m_buttonText);
         }
     }
 }

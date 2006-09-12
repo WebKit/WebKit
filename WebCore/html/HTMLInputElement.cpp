@@ -42,7 +42,7 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "RenderButton.h"
-#include "RenderFileButton.h"
+#include "RenderFileUploadControl.h"
 #include "RenderImage.h"
 #include "RenderLineEdit.h"
 #include "RenderText.h"
@@ -587,9 +587,7 @@ void HTMLInputElement::select()
         case RANGE:
         case RESET:
         case SUBMIT:
-            break;
         case FILE:
-            static_cast<RenderFileButton*>(renderer())->select();
             break;
         case SEARCH:
             static_cast<RenderLineEdit*>(renderer())->select();
@@ -646,7 +644,7 @@ void HTMLInputElement::click(bool sendMouseEvents, bool showPressedLook)
             break;
         case FILE:
             if (renderer()) {
-                static_cast<RenderFileButton *>(renderer())->click(sendMouseEvents);
+                static_cast<RenderFileUploadControl*>(renderer())->click(sendMouseEvents);
                 return;
             }
             break;
@@ -836,7 +834,7 @@ RenderObject *HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *
         case RADIO:
             return RenderObject::createObject(this, style);
         case FILE:
-            return new (arena) RenderFileButton(this);
+            return new (arena) RenderFileUploadControl(this);
         case HIDDEN:
             break;
         case IMAGE:
@@ -1067,7 +1065,6 @@ String HTMLInputElement::valueWithDefault() const
         switch (inputType()) {
             case BUTTON:
             case CHECKBOX:
-            case FILE:
             case HIDDEN:
             case IMAGE:
             case ISINDEX:
@@ -1076,6 +1073,9 @@ String HTMLInputElement::valueWithDefault() const
             case RANGE:
             case SEARCH:
             case TEXT:
+                break;
+            case FILE:
+                v = fileButtonChooseFileLabel();
                 break;
             case RESET:
                 v = resetButtonDefaultLabel();
@@ -1257,7 +1257,8 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
                 }
                 m_activeSubmit = false;
             }
-        } 
+        } else if (inputType() == FILE && renderer())
+            static_cast<RenderFileUploadControl*>(renderer())->click(false);
     }
 
     // Use key press event here since sending simulated mouse events

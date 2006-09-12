@@ -64,4 +64,20 @@ String submitButtonDefaultLabel()
     return String();
 }
 
+String fileButtonChooseFileLabel()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] fileButtonChooseFileLabel];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String fileButtonNoFileSelectedLabel()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] fileButtonNoFileSelectedLabel];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 }

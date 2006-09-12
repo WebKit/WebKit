@@ -1,3 +1,99 @@
+2006-09-12  Adam Roben  <aroben@apple.com>
+
+        Reviewed many times by darin, hyatt.
+
+        Switch to new engine-based implementation of <input type="file">
+
+        * WebCore.exp: Remove obsolete symbol WebCoreFileButton
+        * WebCore.xcodeproj/project.pbxproj: Remove files for old widget-based
+        control, add files for new engine-based control
+        * css/CSSSelector.cpp: Add support for new
+        '-webkit-file-upload-button' pseudo element
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h: Ditto.
+        (WebCore::CSSSelector::):
+        * css/cssstyleselector.cpp: Ditto.
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * html/HTMLInputElement.cpp: Send click events to new control
+        (WebCore::HTMLInputElement::select):
+        (WebCore::HTMLInputElement::click):
+        (WebCore::HTMLInputElement::createRenderer):
+        (WebCore::HTMLInputElement::valueWithDefault):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLTextFieldInnerElement.h: Add 'virtual' keyword
+        (WebCore::HTMLTextFieldInnerElement::shadowParentNode):
+        * platform/FileButton.h: Removed.
+        * platform/FileChooser.h: Added. This is the replacement for
+        FileButton.h
+        (WebCore::FileChooser::filename):
+        (WebCore::FileChooser::icon):
+        (WebCore::FileChooser::uploadControl):
+        (WebCore::FileChooser::document):
+        * platform/Icon.h: Added new platform-specific class representing a
+        file icon.
+        * platform/LocalizedStrings.h:
+        * platform/mac/FileButtonMac.mm: Removed.
+        * platform/mac/FileChooserMac.mm: Added. This is the replacement for
+        FileButtonMac.mm
+        (-[OpenPanelController initWithFileChooser:]):
+        (-[OpenPanelController fileChooserDetachingSoon]):
+        (-[OpenPanelController beginSheet]):
+        (-[OpenPanelController chooseFilename:]):
+        (-[OpenPanelController cancel]):
+        (WebCore::FileChooser::FileChooser):
+        (WebCore::FileChooser::~FileChooser):
+        (WebCore::FileChooser::openFileChooser):
+        (WebCore::FileChooser::basenameForWidth):
+        (WebCore::FileChooser::uploadControlDetaching):
+        (WebCore::FileChooser::chooseFile):
+        * platform/mac/IconMac.mm: Added.
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::newIconForFile):
+        (WebCore::Icon::paint):
+        * platform/mac/LocalizedStringsMac.mm: Call across bridge to get
+        localized strings.
+        (WebCore::fileButtonChooseFileLabel):
+        (WebCore::fileButtonNoFileSelectedLabel):
+        * rendering/RenderButton.cpp: Extract method setText() from
+        updateFromElement.
+        (WebCore::RenderButton::updateFromElement):
+        (WebCore::RenderButton::setText):
+        * rendering/RenderButton.h: Add declaration for new setText method.
+        * rendering/RenderFileButton.cpp: Removed.
+        * rendering/RenderFileButton.h: Removed.
+        * rendering/RenderFileUploadControl.cpp: Added. This is the
+        replacement for RenderFileButton.cpp.
+        (WebCore::RenderFileUploadInnerFileBox::renderName):
+        (WebCore::HTMLFileUploadInnerButtonElement::isShadowNode):
+        (WebCore::HTMLFileUploadInnerButtonElement::shadowParentNode):
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl):
+        (WebCore::RenderFileUploadControl::~RenderFileUploadControl):
+        (WebCore::RenderFileUploadControl::setStyle):
+        (WebCore::RenderFileUploadControl::updateIconAndFilename):
+        (WebCore::RenderFileUploadControl::click):
+        (WebCore::RenderFileUploadControl::updateFromElement):
+        (WebCore::RenderFileUploadControl::maxFilenameWidth):
+        (WebCore::RenderFileUploadControl::createButtonStyle):
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadInnerFileBox::RenderFileUploadInnerFileBox):
+        (WebCore::RenderFileUploadInnerFileBox::setStyle):
+        (WebCore::RenderFileUploadInnerFileBox::layout):
+        (WebCore::RenderFileUploadInnerFileBox::setHasIcon):
+        (WebCore::RenderFileUploadInnerFileBox::setFilename):
+        (WebCore::RenderFileUploadInnerFileBox::calcMinMaxWidth):
+        (WebCore::HTMLFileUploadInnerButtonElement::HTMLFileUploadInnerButtonElement):
+        (WebCore::HTMLFileUploadInnerButtonElement::createRenderer):
+        * rendering/RenderFileUploadControl.h: Added. This is the replacement
+        for RenderFileButton.h.
+        (WebCore::RenderFileUploadControl::renderName):
+        * rendering/RenderStyle.cpp: Add support for
+        -webkit-file-upload-button pseudo element.
+        (WebCore::):
+        (WebCore::pseudoBit):
+        * rendering/RenderStyle.h: Ditto.
+        (WebCore::RenderStyle::):
+
 2006-09-12  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John Sullivan.

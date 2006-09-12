@@ -40,7 +40,7 @@ public:
     virtual void defaultEventHandler(Event*);
     virtual bool isShadowNode() const { return true; }
 
-    Node* shadowParentNode() { return m_shadowParent; }
+    virtual Node* shadowParentNode() { return m_shadowParent; }
     void setShadowParentNode(Node* node) { m_shadowParent = node; }
     
 private:

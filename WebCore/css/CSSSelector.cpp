@@ -74,6 +74,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString autofill("-webkit-autofill");
     static AtomicString before("before");
     static AtomicString checked("checked");
+    static AtomicString fileUploadButton("-webkit-file-upload-button");
     static AtomicString disabled("disabled");
     static AtomicString drag("-webkit-drag");
     static AtomicString empty("empty");
@@ -114,7 +115,10 @@ void CSSSelector::extractPseudoType() const
         element = compat = true;
     } else if (value == checked)
         _pseudoType = PseudoChecked;
-    else if (value == disabled)
+    else if (value == fileUploadButton) {
+        _pseudoType = PseudoFileUploadButton;
+        element = true;
+    } else if (value == disabled)
         _pseudoType = PseudoDisabled;
     else if (value == drag)
         _pseudoType = PseudoDrag;

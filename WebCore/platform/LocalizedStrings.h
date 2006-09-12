@@ -34,6 +34,8 @@ namespace WebCore {
     String resetButtonDefaultLabel();
     String searchableIndexIntroduction();
     String submitButtonDefaultLabel();
+    String fileButtonChooseFileLabel();
+    String fileButtonNoFileSelectedLabel();
 
 }
 
