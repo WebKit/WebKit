@@ -1,3 +1,13 @@
+2006-09-11  MorganL  <morlmor@yahoo.com>
+
+        Reviewed/landed by aroben.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10765
+        Windows build busted due to std::copy usage in Vector.h
+
+        * WebKit.vcproj/WebKit.vcproj: Define _SCL_SECURE_NO_DEPRECATE to get
+        rid of deprecation warnings on std::copy
+
 2006-09-11  Brady Eidson  <beidson@apple.com>
 
         Despite the fact that some people built okay without this change, it sure was biting me, 
