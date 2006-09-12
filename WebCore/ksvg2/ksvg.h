@@ -36,40 +36,9 @@ namespace WebCore {
         SVG_INVALID_VALUE_ERR        = 2,
         SVG_MATRIX_NOT_INVERTABLE    = 3
     };
-    
-    enum SVGUnitTypes {
-        SVG_UNIT_TYPE_UNKNOWN               = 0,
-        SVG_UNIT_TYPE_USERSPACEONUSE        = 1,
-        SVG_UNIT_TYPE_OBJECTBOUNDINGBOX     = 2
-    };
-
-    enum SVGRenderingIntentType {
-        RENDERING_INTENT_UNKNOWN                  = 0,
-        RENDERING_INTENT_AUTO                     = 1,
-        RENDERING_INTENT_PERCEPTUAL               = 2,
-        RENDERING_INTENT_RELATIVE_COLORIMETRIC    = 3,
-        RENDERING_INTENT_SATURATION               = 4,
-        RENDERING_INTENT_ABSOLUTE_COLORIMETRIC    = 5
-    };
-    
-    enum SVGTransformType {
-        SVG_TRANSFORM_UNKNOWN           = 0,
-        SVG_TRANSFORM_MATRIX            = 1,
-        SVG_TRANSFORM_TRANSLATE         = 2,
-        SVG_TRANSFORM_SCALE             = 3,
-        SVG_TRANSFORM_ROTATE            = 4,
-        SVG_TRANSFORM_SKEWX             = 5,
-        SVG_TRANSFORM_SKEWY             = 6
-    };
-
+       
     enum SVGCSSRuleType {
         COLOR_PROFILE_RULE = 7
-    };
-
-    enum SVGLengthAdjustType {
-        LENGTHADJUST_UNKNOWN            = 0,
-        LENGTHADJUST_SPACING            = 1,
-        LENGTHADJUST_SPACINGANDGLYPHS   = 2
     };
 
     enum SVGTextPathMethodType {
@@ -84,80 +53,6 @@ namespace WebCore {
         TEXTPATH_SPACINGTYPE_EXACT      = 2
     };
 
-    enum SVGPaintType {
-        SVG_PAINTTYPE_UNKNOWN               = 0,
-        SVG_PAINTTYPE_RGBCOLOR              = 1,
-        SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR     = 2,
-        SVG_PAINTTYPE_NONE                  = 101,
-        SVG_PAINTTYPE_CURRENTCOLOR          = 102,
-        SVG_PAINTTYPE_URI_NONE              = 103,
-        SVG_PAINTTYPE_URI_CURRENTCOLOR      = 104,
-        SVG_PAINTTYPE_URI_RGBCOLOR          = 105,
-        SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR = 106,
-        SVG_PAINTTYPE_URI                   = 107
-    };
-
-    enum SVGMarkerUnitsType {
-        SVG_MARKERUNITS_UNKNOWN           = 0,
-        SVG_MARKERUNITS_USERSPACEONUSE    = 1,
-        SVG_MARKERUNITS_STROKEWIDTH       = 2
-    };
-
-    enum SVGMarkerOrientType {
-        SVG_MARKER_ORIENT_UNKNOWN    = 0,
-        SVG_MARKER_ORIENT_AUTO       = 1,
-        SVG_MARKER_ORIENT_ANGLE      = 2
-    };
-
-    enum SVGGradientType {
-        SVG_SPREADMETHOD_UNKNOWN = 0,
-        SVG_SPREADMETHOD_PAD     = 1,
-        SVG_SPREADMETHOD_REFLECT = 2,
-        SVG_SPREADMETHOD_REPEAT  = 3
-    };
-
-    enum SVGZoomAndPanType {
-        SVG_ZOOMANDPAN_UNKNOWN = 0,
-        SVG_ZOOMANDPAN_DISABLE = 1,
-        SVG_ZOOMANDPAN_MAGNIFY = 2
-    };
-
-    enum SVGBlendModeType {
-        SVG_FEBLEND_MODE_UNKNOWN  = 0,
-        SVG_FEBLEND_MODE_NORMAL   = 1,
-        SVG_FEBLEND_MODE_MULTIPLY = 2,
-        SVG_FEBLEND_MODE_SCREEN   = 3,
-        SVG_FEBLEND_MODE_DARKEN   = 4,
-        SVG_FEBLEND_MODE_LIGHTEN  = 5
-    };
-
-    enum SVGColorMatrixType {
-        SVG_FECOLORMATRIX_TYPE_UNKNOWN          = 0,
-        SVG_FECOLORMATRIX_TYPE_MATRIX           = 1,
-        SVG_FECOLORMATRIX_TYPE_SATURATE         = 2,
-        SVG_FECOLORMATRIX_TYPE_HUEROTATE        = 3,
-        SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA = 4
-    };
-
-    enum SVGComponentTransferType {
-        SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN  = 0,
-        SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY = 1,
-        SVG_FECOMPONENTTRANSFER_TYPE_TABLE    = 2,
-        SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE = 3,
-        SVG_FECOMPONENTTRANSFER_TYPE_LINEAR   = 4,
-        SVG_FECOMPONENTTRANSFER_TYPE_GAMMA    = 5
-    };
-
-    enum SVGCompositeOperators {
-        SVG_FECOMPOSITE_OPERATOR_UNKNOWN    = 0,
-        SVG_FECOMPOSITE_OPERATOR_OVER       = 1,
-        SVG_FECOMPOSITE_OPERATOR_IN         = 2,
-        SVG_FECOMPOSITE_OPERATOR_OUT        = 3,
-        SVG_FECOMPOSITE_OPERATOR_ATOP       = 4,
-        SVG_FECOMPOSITE_OPERATOR_XOR        = 5,
-        SVG_FECOMPOSITE_OPERATOR_ARITHMETIC = 6
-    };
-
     enum SVGEdgeModes {
         SVG_EDGEMODE_UNKNOWN   = 0,
         SVG_EDGEMODE_DUPLICATE = 1,
@@ -165,30 +60,10 @@ namespace WebCore {
         SVG_EDGEMODE_NONE      = 3
     };
 
-    enum SVGChannelSelectors {
-        SVG_CHANNEL_UNKNOWN = 0,
-        SVG_CHANNEL_R       = 1,
-        SVG_CHANNEL_G       = 2,
-        SVG_CHANNEL_B       = 3,
-        SVG_CHANNEL_A       = 4
-    };
-
     enum SVGMorphologyOperators {
         SVG_MORPHOLOGY_OPERATOR_UNKNOWN = 0,
         SVG_MORPHOLOGY_OPERATOR_ERODE   = 1,
         SVG_MORPHOLOGY_OPERATOR_DILATE  = 2
-    };
-
-    enum SVGTurbulenceType {
-        SVG_TURBULENCE_TYPE_UNKNOWN      = 0,
-        SVG_TURBULENCE_TYPE_FRACTALNOISE = 1,
-        SVG_TURBULENCE_TYPE_TURBULENCE   = 2
-    };
-
-    enum SVGStitchOptions {
-        SVG_STITCHTYPE_UNKNOWN  = 0,
-        SVG_STITCHTYPE_STITCH   = 1,
-        SVG_STITCHTYPE_NOSTITCH = 2
     };
 
 } // namespace WebCore

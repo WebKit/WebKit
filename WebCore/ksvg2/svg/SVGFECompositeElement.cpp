@@ -53,7 +53,7 @@ SVGFECompositeElement::~SVGFECompositeElement()
     delete m_filterEffect;
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, String, String, string, In, in, SVGNames::inAttr.localName(), m_in)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, String, String, string, In2, in2, SVGNames::in2Attr.localName(), m_in2)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, int, Enumeration, enumeration, _operator, _operator, SVGNames::operatorAttr.localName(), m__operator)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, double, Number, number, K1, k1, SVGNames::k1Attr.localName(), m_k1)
@@ -80,7 +80,7 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
             set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_ARITHMETIC);
     }
     else if (attr->name() == SVGNames::inAttr)
-        setInBaseValue(value);
+        setIn1BaseValue(value);
     else if (attr->name() == SVGNames::in2Attr)
         setIn2BaseValue(value);
     else if (attr->name() == SVGNames::k1Attr)
@@ -102,7 +102,7 @@ KCanvasFEComposite *SVGFECompositeElement::filterEffect() const
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setOperation((KCCompositeOperationType)(_operator() - 1));
-    m_filterEffect->setIn(in());
+    m_filterEffect->setIn(in1());
     m_filterEffect->setIn2(in2());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setK1(k1());

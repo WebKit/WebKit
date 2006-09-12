@@ -150,9 +150,11 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
 
         if (m_currentItem != itemByPercentage) // Item changed...
         {
+            ExceptionCode ec = 0;
+
             // Extract current 'from' / 'to' values
-            String value1 = String(m_values->getItem(itemByPercentage));
-            String value2 = String(m_values->getItem(itemByPercentage + 1));
+            String value1 = String(m_values->getItem(itemByPercentage, ec));
+            String value2 = String(m_values->getItem(itemByPercentage + 1, ec));
 
             // Calculate r/g/b shifting values...
             if (!value1.isEmpty() && !value2.isEmpty()) {

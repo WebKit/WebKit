@@ -35,7 +35,7 @@
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
 #include "cssstyleselector.h"
-#include "ksvg.h"
+#include "SVGUnitTypes.h"
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 
@@ -46,7 +46,7 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document *d
     , SVGURIReference()
     , SVGExternalResourcesRequired()
     , m_spreadMethod(0)
-    , m_gradientUnits(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    , m_gradientUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_gradientTransform(new SVGTransformList)
 {
     m_resource = 0;
@@ -66,9 +66,9 @@ void SVGGradientElement::parseMappedAttribute(MappedAttribute *attr)
     const String& value = attr->value();
     if (attr->name() == SVGNames::gradientUnitsAttr) {
         if(value == "userSpaceOnUse")
-            setGradientUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
+            setGradientUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
         else if(value == "objectBoundingBox")
-            setGradientUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            setGradientUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::gradientTransformAttr) {
         SVGTransformList *gradientTransforms = gradientTransformBaseValue();
         SVGTransformable::parseTransformAttribute(gradientTransforms, attr->value());

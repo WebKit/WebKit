@@ -54,7 +54,7 @@ namespace WebCore {
         virtual SVGElement *farthestViewportElement() const;
 
         virtual FloatRect getBBox() const;
-        virtual SVGMatrix *getTransformToElement(SVGElement *element) const;
+        virtual SVGMatrix *getTransformToElement(SVGElement*, ExceptionCode&) const;
 
         virtual void parseMappedAttribute(MappedAttribute *attr);
 

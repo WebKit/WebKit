@@ -111,7 +111,7 @@ double SVGAnimationElement::getCurrentTime() const
     return m_currentTime;
 }
 
-double SVGAnimationElement::getSimpleDuration() const
+double SVGAnimationElement::getSimpleDuration(ExceptionCode&) const
 {
     return m_simpleDuration;
 }
@@ -140,9 +140,11 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
         // Feed data into list
         SVGHelper::ParseSeperatedList(temp.get(), value.deprecatedString(), ';');
 
+        ExceptionCode ec = 0;
+
         // Parse data
         for (unsigned int i = 0; i < temp->numberOfItems(); i++) {
-            DeprecatedString current = String(temp->getItem(i)).deprecatedString();
+            DeprecatedString current = String(temp->getItem(i, ec)).deprecatedString();
 
             if (current.startsWith("accessKey")) {
                 // Register keyDownEventListener for the character
@@ -461,7 +463,7 @@ void SVGAnimationElement::setTargetAttribute(SVGElement *target, StringImpl *nam
                 attributeType = ATTRIBUTETYPE_CSS;
         }
     }
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     if (attributeType == ATTRIBUTETYPE_CSS && styled && styled->style())
         styled->style()->setProperty(name, value, "", ec);
     else if (attributeType == ATTRIBUTETYPE_XML)

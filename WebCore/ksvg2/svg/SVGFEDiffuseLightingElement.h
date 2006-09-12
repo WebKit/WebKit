@@ -39,13 +39,13 @@ namespace WebCore {
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
-        virtual KCanvasFEDiffuseLighting *filterEffect() const;
+        virtual KCanvasFilterEffect *filterEffect() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, String, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, double, double, DiffuseConstant, diffuseConstant)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, double, double, SurfaceScale, surfaceScale)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, SVGColor*, RefPtr<SVGColor>, LightingColor, lightingColor)

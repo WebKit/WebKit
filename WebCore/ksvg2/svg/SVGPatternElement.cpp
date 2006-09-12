@@ -40,7 +40,7 @@
 #include "SVGSVGElement.h"
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
-#include "ksvg.h"
+#include "SVGUnitTypes.h"
 #include <wtf/OwnPtr.h>
 #include <math.h>
 
@@ -58,8 +58,8 @@ SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document *doc
     , m_y(new SVGLength(this, LM_HEIGHT, viewportElement()))
     , m_width(new SVGLength(this, LM_WIDTH, viewportElement()))
     , m_height(new SVGLength(this, LM_HEIGHT, viewportElement()))
-    , m_patternUnits(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_patternContentUnits(SVG_UNIT_TYPE_USERSPACEONUSE)
+    , m_patternUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
     , m_patternTransform(new SVGTransformList)
 {
     m_tile = 0;
@@ -85,14 +85,14 @@ void SVGPatternElement::parseMappedAttribute(MappedAttribute *attr)
     const AtomicString &value = attr->value();
     if (attr->name() == SVGNames::patternUnitsAttr) {
         if (value == "userSpaceOnUse")
-            setPatternUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
+            setPatternUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
         else if (value == "objectBoundingBox")
-            setPatternUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            setPatternUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::patternContentUnitsAttr) {
         if (value == "userSpaceOnUse")
-            setPatternContentUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
+            setPatternContentUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
         else if (value == "objectBoundingBox")
-            setPatternContentUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            setPatternContentUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::patternTransformAttr) {
         SVGTransformList *patternTransforms = patternTransformBaseValue();
         SVGTransformable::parseTransformAttribute(patternTransforms, value);
@@ -152,17 +152,17 @@ void SVGPatternElement::fillAttributesFromReferencePattern(const SVGPatternEleme
     if (!hasAttribute(SVGNames::patternUnitsAttr)) {
         const AtomicString& value = target->getAttribute(SVGNames::patternUnitsAttr);
         if (value == "userSpaceOnUse")
-            setPatternUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
+            setPatternUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
         else if (value == "objectBoundingBox")
-            setPatternUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            setPatternUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     }
     
     if (!hasAttribute(SVGNames::patternContentUnitsAttr)) {
         const AtomicString& value = target->getAttribute(SVGNames::patternContentUnitsAttr);
         if (value == "userSpaceOnUse")
-            setPatternContentUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
+            setPatternContentUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
         else if (value == "objectBoundingBox")
-            setPatternContentUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            setPatternContentUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     }
 
     if (!hasAttribute(SVGNames::patternTransformAttr))
@@ -175,7 +175,7 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
     
     SVGStyledElement* activeElement = static_cast<SVGStyledElement*>(m_paintServer->activeClient()->element());
 
-    bool bbox = (patternUnits() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+    bool bbox = (patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 
     const SVGStyledElement* savedContext = 0;
     if (bbox) {
@@ -219,7 +219,7 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement* targ
         KCanvasMatrix savedMatrix = item->localTransform();
 
         const SVGStyledElement* savedContext = 0;
-        if (patternContentUnits() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        if (patternContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
         {
             if (activeElement)
                 savedContext = e->pushAttributeContext(activeElement);

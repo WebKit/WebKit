@@ -90,7 +90,7 @@ namespace WebCore {
         double getEndTime() const;
         double getStartTime() const;
         double getCurrentTime() const;
-        double getSimpleDuration() const;
+        double getSimpleDuration(ExceptionCode&) const;
     
         virtual void parseMappedAttribute(MappedAttribute *attr);
         virtual bool rendererIsNeeded(RenderStyle *) { return false; }

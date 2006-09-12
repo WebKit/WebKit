@@ -45,9 +45,10 @@ Path SVGPolylineElement::toPathData() const
     if(len < 1)
         return polyData;
 
-    polyData.moveTo(points()->getItem(0));
+    ExceptionCode ec = 0;
+    polyData.moveTo(points()->getItem(0, ec));
     for (int i = 1; i < len; ++i)
-        polyData.addLineTo(points()->getItem(i));
+        polyData.addLineTo(points()->getItem(i, ec));
     
     return polyData;
 }

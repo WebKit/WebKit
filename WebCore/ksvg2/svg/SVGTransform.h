@@ -32,9 +32,6 @@ namespace WebCore {
     class SVGMatrix;
     class SVGTransform : public Shared<SVGTransform> {
     public:
-        SVGTransform();
-        virtual ~SVGTransform();
-        
         enum SVGTransformType {
             SVG_TRANSFORM_UNKNOWN           = 0,
             SVG_TRANSFORM_MATRIX            = 1,
@@ -44,7 +41,10 @@ namespace WebCore {
             SVG_TRANSFORM_SKEWX             = 5,
             SVG_TRANSFORM_SKEWY             = 6
         };
-        
+ 
+        SVGTransform();
+        virtual ~SVGTransform();
+               
         unsigned short type() const;
 
         SVGMatrix* matrix() const;

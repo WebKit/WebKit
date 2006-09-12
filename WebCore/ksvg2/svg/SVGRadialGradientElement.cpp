@@ -24,7 +24,7 @@
 #ifdef SVG_SUPPORT
 #include "Attr.h"
 
-#include "ksvg.h"
+#include "SVGUnitTypes.h"
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGMatrix.h"
@@ -85,7 +85,7 @@ void SVGRadialGradientElement::buildGradient(KRenderingPaintServerGradient *_gra
 {
     rebuildStops(); // rebuild stops before possibly importing them from any referenced gradient.
 
-    bool bbox = (gradientUnits() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+    bool bbox = (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     bool fxSet = hasAttribute(SVGNames::fxAttr);
     bool fySet = hasAttribute(SVGNames::fyAttr);
     cx()->setBboxRelative(bbox);

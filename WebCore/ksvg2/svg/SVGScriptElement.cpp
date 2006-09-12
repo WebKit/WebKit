@@ -43,12 +43,12 @@ SVGScriptElement::~SVGScriptElement()
 {
 }
 
-StringImpl *SVGScriptElement::type() const
+String SVGScriptElement::type() const
 {
-    return m_type.impl();
+    return m_type;
 }
 
-void SVGScriptElement::setType(StringImpl *type)
+void SVGScriptElement::setType(const String& type)
 {
     m_type = type;
 }
@@ -56,7 +56,7 @@ void SVGScriptElement::setType(StringImpl *type)
 void SVGScriptElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == SVGNames::typeAttr)
-            setType(attr->value().impl());
+            setType(attr->value());
     else {
         if(SVGURIReference::parseMappedAttribute(attr))
             return;

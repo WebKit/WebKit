@@ -302,8 +302,8 @@ bool RenderPath::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, H
     
     bool isVisible = (style()->visibility() == VISIBLE);
     if (isVisible || !hitRules.requireVisible) {
-        bool hasFill = (style()->svgStyle()->fillPaint() && style()->svgStyle()->fillPaint()->paintType() != SVG_PAINTTYPE_NONE);
-        bool hasStroke = (style()->svgStyle()->strokePaint() && style()->svgStyle()->strokePaint()->paintType() != SVG_PAINTTYPE_NONE);
+        bool hasFill = (style()->svgStyle()->fillPaint() && style()->svgStyle()->fillPaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE);
+        bool hasStroke = (style()->svgStyle()->strokePaint() && style()->svgStyle()->strokePaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE);
         FloatPoint hitPoint(_x,_y);
         if ((hitRules.canHitStroke && (hasStroke || !hitRules.requireStroke) && strokeContains(hitPoint, hitRules.requireStroke))
             || (hitRules.canHitFill && (hasFill || !hitRules.requireFill) && fillContains(hitPoint, hitRules.requireFill))) {

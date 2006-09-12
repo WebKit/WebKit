@@ -52,7 +52,7 @@ SVGSVGElement *SVGDocument::rootElement() const
 void SVGDocument::dispatchZoomEvent(float prevScale, float newScale)
 {
     // dispatch zoom event
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     RefPtr<SVGZoomEvent> event = static_pointer_cast<SVGZoomEvent>(createEvent("SVGZoomEvents", ec));
     event->initEvent(EventNames::zoomEvent, true, false);
     event->setPreviousScale(prevScale);
@@ -63,7 +63,7 @@ void SVGDocument::dispatchZoomEvent(float prevScale, float newScale)
 void SVGDocument::dispatchScrollEvent()
 {
     // dispatch zoom event
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     RefPtr<Event> event = createEvent("SVGEvents", ec);
     event->initEvent(EventNames::scrollEvent, true, false);
     rootElement()->dispatchEvent(event.get(), ec);

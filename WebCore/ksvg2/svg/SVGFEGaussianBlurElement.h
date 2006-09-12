@@ -48,7 +48,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, String, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, double, double, StdDeviationX, stdDeviationX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, double, double, StdDeviationY, stdDeviationY)
         mutable KCanvasFEGaussianBlur *m_filterEffect;

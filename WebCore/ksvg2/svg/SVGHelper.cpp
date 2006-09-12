@@ -80,18 +80,15 @@ float SVGHelper::PercentageOfViewport(float value, const SVGElement* viewportEle
 void SVGHelper::ParseSeperatedList(SVGStringList *list, const DeprecatedString &data, const DeprecatedChar &delimiter)
 {
     // TODO : more error checking/reporting
-    list->clear();
+    ExceptionCode ec = 0;
+    list->clear(ec);
 
     DeprecatedStringList substrings = DeprecatedStringList::split(delimiter, data);
     
     DeprecatedStringList::ConstIterator it = substrings.begin();
     DeprecatedStringList::ConstIterator end = substrings.end();
-    for (; it != end; ++it) {
-        StringImpl* string = new StringImpl(*it);
-        string->ref();
-
-        list->appendItem(string);
-    }
+    for (; it != end; ++it)
+        list->appendItem(String(*it), ec);
 }
 
 }

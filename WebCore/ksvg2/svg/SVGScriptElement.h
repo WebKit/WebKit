@@ -39,8 +39,8 @@ namespace WebCore
         virtual ~SVGScriptElement();
 
         // 'SVGScriptElement' functions
-        StringImpl *type() const;
-        void setType(StringImpl *type);
+        String type() const;
+        void setType(const String&);
 
         // Internal
         virtual void parseMappedAttribute(MappedAttribute *attr);

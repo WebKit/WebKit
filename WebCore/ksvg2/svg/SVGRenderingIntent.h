@@ -1,6 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -20,42 +19,34 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "config.h"
+#ifndef SVGRenderingIntent_H
+#define SVGRenderingIntent_H
 
 #ifdef SVG_SUPPORT
 
-#include "DeprecatedStringList.h"
-
-#include "SVGMatrix.h"
-#include "SVGSVGElement.h"
-#include "SVGLengthList.h"
+#include "Shared.h"
 
 namespace WebCore {
 
-SVGLengthList::SVGLengthList()
-    : SVGList<SVGLength*>()
+class SVGRenderingIntent : public Shared<SVGRenderingIntent>
 {
-}
+public:
+    enum SVGRenderingIntentType {
+        RENDERING_INTENT_UNKNOWN                  = 0,
+        RENDERING_INTENT_AUTO                     = 1,
+        RENDERING_INTENT_PERCEPTUAL               = 2,
+        RENDERING_INTENT_RELATIVE_COLORIMETRIC    = 3,
+        RENDERING_INTENT_SATURATION               = 4,
+        RENDERING_INTENT_ABSOLUTE_COLORIMETRIC    = 5
+    };
 
-SVGLengthList::~SVGLengthList()
-{
-}
+    SVGRenderingIntent() { } 
+    ~SVGRenderingIntent() { }
+};
 
-void SVGLengthList::parse(const DeprecatedString& value, const SVGStyledElement* context, LengthMode mode)
-{
-    ExceptionCode ec = 0;
-
-    DeprecatedStringList lengths = DeprecatedStringList::split(' ', value);
-    for (unsigned int i = 0; i < lengths.count(); i++) {
-        SVGLength* length = new SVGLength(context, mode);
-        String str(lengths[i]);
-        length->setValueAsString(str);
-        appendItem(length, ec);
-    }
-}
-
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
+#endif // SVGRenderingIntent_H
 
 // vim:ts=4:noet

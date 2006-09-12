@@ -47,7 +47,7 @@ namespace WebCore {
 SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagName, Document *doc)
     : SVGAnimationElement(tagName, doc)
     , m_currentItem(-1)
-    , m_type(SVG_TRANSFORM_UNKNOWN)
+    , m_type(SVGTransform::SVG_TRANSFORM_UNKNOWN)
     , m_rotateSpecialCase(false)
     , m_toRotateSpecialCase(false)
     , m_fromRotateSpecialCase(false)
@@ -63,15 +63,15 @@ void SVGAnimateTransformElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == SVGNames::typeAttr) {
         const String& value = attr->value();
         if (value == "translate")
-            m_type = SVG_TRANSFORM_TRANSLATE;
+            m_type = SVGTransform::SVG_TRANSFORM_TRANSLATE;
         else if (value == "scale")
-            m_type = SVG_TRANSFORM_SCALE;
+            m_type = SVGTransform::SVG_TRANSFORM_SCALE;
         else if (value == "rotate")
-            m_type = SVG_TRANSFORM_ROTATE;
+            m_type = SVGTransform::SVG_TRANSFORM_ROTATE;
         else if (value == "skewX")
-            m_type = SVG_TRANSFORM_SKEWX;
+            m_type = SVGTransform::SVG_TRANSFORM_SKEWX;
         else if (value == "skewY")
-            m_type = SVG_TRANSFORM_SKEWY;
+            m_type = SVGTransform::SVG_TRANSFORM_SKEWY;
     } else
         SVGAnimationElement::parseMappedAttribute(attr);
 }
@@ -87,8 +87,9 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             SVGStyledTransformableElement *transform = static_cast<SVGStyledTransformableElement *>(targetElement());
             RefPtr<SVGTransformList> transformList = transform->transformBaseValue();
             if (transformList) {
+                ExceptionCode ec = 0;
                 for (unsigned long i = 0; i < transformList->numberOfItems(); i++) {
-                    SVGTransform *value = transformList->getItem(i);
+                    SVGTransform *value = transformList->getItem(i, ec);
                     if (!value)
                         continue;
                         
@@ -182,9 +183,11 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
         
         if (m_currentItem != itemByPercentage) // Item changed...
         {
+            ExceptionCode ec = 0;
+
             // Extract current 'from' / 'to' values
-            String value1 = String(m_values->getItem(itemByPercentage));
-            String value2 = String(m_values->getItem(itemByPercentage + 1));
+            String value1 = String(m_values->getItem(itemByPercentage, ec));
+            String value2 = String(m_values->getItem(itemByPercentage + 1, ec));
 
             // Calculate new from/to transform values...
             if (!value1.isEmpty() && !value2.isEmpty()) {
@@ -230,7 +233,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
     
     switch(m_type)
     {
-        case SVG_TRANSFORM_TRANSLATE:
+        case SVGTransform::SVG_TRANSFORM_TRANSLATE:
         {
             double dx = ((qToMatrix.dx() - qFromMatrix.dx()) * useTimePercentage) + qFromMatrix.dx();
             double dy = ((qToMatrix.dy() - qFromMatrix.dy()) * useTimePercentage) + qFromMatrix.dy();
@@ -238,7 +241,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             m_transformMatrix->translate(dx, dy);
             break;
         }
-        case SVG_TRANSFORM_SCALE:
+        case SVGTransform::SVG_TRANSFORM_SCALE:
         {
             double sx = ((qToMatrix.m11() - qFromMatrix.m11()) * useTimePercentage) + qFromMatrix.m11();
             double sy = ((qToMatrix.m22() - qFromMatrix.m22()) * useTimePercentage) + qFromMatrix.m22();
@@ -246,7 +249,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             m_transformMatrix->scaleNonUniform(sx, sy);
             break;
         }
-        case SVG_TRANSFORM_ROTATE:
+        case SVGTransform::SVG_TRANSFORM_ROTATE:
         {
             double toAngle, toCx, toCy, fromAngle, fromCx, fromCy;
             calculateRotationFromMatrix(qToMatrix, toAngle, toCx, toCy);
@@ -275,7 +278,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             m_transformMatrix->translate(-cx, -cy);
             break;
         }
-        case SVG_TRANSFORM_SKEWX:
+        case SVGTransform::SVG_TRANSFORM_SKEWX:
         {
             double sx = (SVGAngle::todeg(atan(qToMatrix.m21()) - atan(qFromMatrix.m21())) *
                          useTimePercentage) + SVGAngle::todeg(atan(qFromMatrix.m21()));
@@ -283,7 +286,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             m_transformMatrix->skewX(sx);
             break;
         }
-        case SVG_TRANSFORM_SKEWY:
+        case SVGTransform::SVG_TRANSFORM_SKEWY:
         {
             double sy = (SVGAngle::todeg(atan(qToMatrix.m12()) - atan(qFromMatrix.m12())) *
                          useTimePercentage) + SVGAngle::todeg(atan(qFromMatrix.m12()));
@@ -340,7 +343,7 @@ RefPtr<SVGTransform> SVGAnimateTransformElement::parseTransformValue(const Depre
     
     switch(m_type)
     {
-        case SVG_TRANSFORM_TRANSLATE:
+        case SVGTransform::SVG_TRANSFORM_TRANSLATE:
         {
             double tx = 0.0, ty = 0.0;
             if (commaPos != - 1) {
@@ -352,7 +355,7 @@ RefPtr<SVGTransform> SVGAnimateTransformElement::parseTransformValue(const Depre
             parsedTransform->setTranslate(tx, ty);
             break;    
         }
-        case SVG_TRANSFORM_SCALE:
+        case SVGTransform::SVG_TRANSFORM_SCALE:
         {
             double sx = 1.0, sy = 1.0;
             if (commaPos != - 1) {
@@ -366,7 +369,7 @@ RefPtr<SVGTransform> SVGAnimateTransformElement::parseTransformValue(const Depre
             parsedTransform->setScale(sx, sy);
             break;
         }
-        case SVG_TRANSFORM_ROTATE:
+        case SVGTransform::SVG_TRANSFORM_ROTATE:
         {
             double angle = 0, cx = 0, cy = 0;
             if (commaPos != - 1) {
@@ -399,12 +402,12 @@ RefPtr<SVGTransform> SVGAnimateTransformElement::parseTransformValue(const Depre
             parsedTransform->setRotate(angle, cx, cy);
             break;    
         }
-        case SVG_TRANSFORM_SKEWX:
-        case SVG_TRANSFORM_SKEWY:
+        case SVGTransform::SVG_TRANSFORM_SKEWX:
+        case SVGTransform::SVG_TRANSFORM_SKEWY:
         {
             double angle = parse.toDouble(); // TODO: probably needs it's own 'angle' parser
             
-            if (m_type == SVG_TRANSFORM_SKEWX)
+            if (m_type == SVGTransform::SVG_TRANSFORM_SKEWX)
                 parsedTransform->setSkewX(angle);
             else
                 parsedTransform->setSkewY(angle);

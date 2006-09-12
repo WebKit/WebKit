@@ -34,6 +34,15 @@ namespace WebCore
     class SVGComponentTransferFunctionElement : public SVGElement
     {
     public:
+        enum SVGComponentTransferType {
+            SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN  = 0,
+            SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY = 1,
+            SVG_FECOMPONENTTRANSFER_TYPE_TABLE    = 2,
+            SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE = 3,
+            SVG_FECOMPONENTTRANSFER_TYPE_LINEAR   = 4,
+            SVG_FECOMPONENTTRANSFER_TYPE_GAMMA    = 5
+        };
+
         SVGComponentTransferFunctionElement(const QualifiedName&, Document*);
         virtual ~SVGComponentTransferFunctionElement();
 

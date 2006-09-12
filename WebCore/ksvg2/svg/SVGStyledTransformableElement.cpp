@@ -91,7 +91,9 @@ void SVGStyledTransformableElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == SVGNames::transformAttr) {
         SVGTransformList *localTransforms = transformBaseValue();
-        localTransforms->clear();
+
+        ExceptionCode ec = 0;
+        localTransforms->clear(ec);
         
         SVGTransformable::parseTransformAttribute(localTransforms, attr->value());
         updateLocalTransform(localTransforms);
@@ -114,7 +116,7 @@ FloatRect SVGStyledTransformableElement::getBBox() const
     return SVGTransformable::getBBox(this);
 }
 
-SVGMatrix *SVGStyledTransformableElement::getTransformToElement(SVGElement *) const
+SVGMatrix *SVGStyledTransformableElement::getTransformToElement(SVGElement*, ExceptionCode&) const
 {
     return 0;
 }

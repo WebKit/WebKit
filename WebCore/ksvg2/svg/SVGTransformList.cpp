@@ -51,7 +51,8 @@ SVGTransform* SVGTransformList::consolidate()
     if (!obj)
         return 0;
 
-    return initialize(obj);
+    ExceptionCode ec = 0;
+    return initialize(obj, ec);
 }
 
 SVGTransform* SVGTransformList::concatenate() const
@@ -63,8 +64,9 @@ SVGTransform* SVGTransformList::concatenate() const
     SVGTransform* obj = SVGSVGElement::createSVGTransform();
     SVGMatrix* matrix = SVGSVGElement::createSVGMatrix();
 
+    ExceptionCode ec = 0;
     for(unsigned int i = 0; i < length; i++)
-        matrix->multiply(getItem(i)->matrix());
+        matrix->multiply(getItem(i, ec)->matrix());
 
     obj->setMatrix(matrix);
     return obj;

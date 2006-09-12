@@ -33,6 +33,16 @@ namespace WebCore
     class SVGFECompositeElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
+        enum SVGCompositeOperators {
+            SVG_FECOMPOSITE_OPERATOR_UNKNOWN    = 0,
+            SVG_FECOMPOSITE_OPERATOR_OVER       = 1,
+            SVG_FECOMPOSITE_OPERATOR_IN         = 2,
+            SVG_FECOMPOSITE_OPERATOR_OUT        = 3,
+            SVG_FECOMPOSITE_OPERATOR_ATOP       = 4,
+            SVG_FECOMPOSITE_OPERATOR_XOR        = 5,
+            SVG_FECOMPOSITE_OPERATOR_ARITHMETIC = 6
+        };
+
         SVGFECompositeElement(const QualifiedName&, Document*);
         virtual ~SVGFECompositeElement();
 
@@ -46,7 +56,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, String, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, String, String, In2, in2)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, int, int, _operator, _operator)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K1, k1)

@@ -260,85 +260,105 @@ SVGPathSegCurvetoQuadraticSmoothRel *SVGPathElement::createSVGPathSegCurvetoQuad
 
 void SVGPathElement::svgMoveTo(double x1, double y1, bool, bool abs)
 {
+    ExceptionCode ec = 0;
+
     if(abs)
-        pathSegList()->appendItem(createSVGPathSegMovetoAbs(x1, y1, this));
+        pathSegList()->appendItem(createSVGPathSegMovetoAbs(x1, y1, this), ec);
     else
-        pathSegList()->appendItem(createSVGPathSegMovetoRel(x1, y1, this));
+        pathSegList()->appendItem(createSVGPathSegMovetoRel(x1, y1, this), ec);
 }
 
 void SVGPathElement::svgLineTo(double x1, double y1, bool abs)
 {
+    ExceptionCode ec = 0;
+
     if(abs)
-        pathSegList()->appendItem(createSVGPathSegLinetoAbs(x1, y1, this));
+        pathSegList()->appendItem(createSVGPathSegLinetoAbs(x1, y1, this), ec);
     else
-        pathSegList()->appendItem(createSVGPathSegLinetoRel(x1, y1, this));
+        pathSegList()->appendItem(createSVGPathSegLinetoRel(x1, y1, this), ec);
 }
 
 void SVGPathElement::svgLineToHorizontal(double x, bool abs)
 {
+    ExceptionCode ec = 0;
+
     if(abs)
-        pathSegList()->appendItem(createSVGPathSegLinetoHorizontalAbs(x, this));
+        pathSegList()->appendItem(createSVGPathSegLinetoHorizontalAbs(x, this), ec);
     else
-        pathSegList()->appendItem(createSVGPathSegLinetoHorizontalRel(x, this));
+        pathSegList()->appendItem(createSVGPathSegLinetoHorizontalRel(x, this), ec);
 }
 
 void SVGPathElement::svgLineToVertical(double y, bool abs)
 {
+    ExceptionCode ec = 0;
+
     if(abs)
-        pathSegList()->appendItem(createSVGPathSegLinetoVerticalAbs(y, this));
+        pathSegList()->appendItem(createSVGPathSegLinetoVerticalAbs(y, this), ec);
     else
-        pathSegList()->appendItem(createSVGPathSegLinetoVerticalRel(y, this));
+        pathSegList()->appendItem(createSVGPathSegLinetoVerticalRel(y, this), ec);
 }
 
 void SVGPathElement::svgCurveToCubic(double x1, double y1, double x2, double y2, double x, double y, bool abs)
 {
+    ExceptionCode ec = 0;
+
     if(abs)
-        pathSegList()->appendItem(createSVGPathSegCurvetoCubicAbs(x, y, x1, y1, x2, y2, this));
+        pathSegList()->appendItem(createSVGPathSegCurvetoCubicAbs(x, y, x1, y1, x2, y2, this), ec);
     else
-        pathSegList()->appendItem(createSVGPathSegCurvetoCubicRel(x, y, x1, y1, x2, y2, this));
+        pathSegList()->appendItem(createSVGPathSegCurvetoCubicRel(x, y, x1, y1, x2, y2, this), ec);
 }
 
 void SVGPathElement::svgCurveToCubicSmooth(double x, double y, double x2, double y2, bool abs)
 {
+    ExceptionCode ec = 0;
+
     if(abs)
-        pathSegList()->appendItem(createSVGPathSegCurvetoCubicSmoothAbs(x2, y2, x, y, this));
+        pathSegList()->appendItem(createSVGPathSegCurvetoCubicSmoothAbs(x2, y2, x, y, this), ec);
     else
-        pathSegList()->appendItem(createSVGPathSegCurvetoCubicSmoothRel(x2, y2, x, y, this));
+        pathSegList()->appendItem(createSVGPathSegCurvetoCubicSmoothRel(x2, y2, x, y, this), ec);
 }
 
 void SVGPathElement::svgCurveToQuadratic(double x, double y, double x1, double y1, bool abs)
 {
+    ExceptionCode ec = 0;
+
     if(abs)
-        pathSegList()->appendItem(createSVGPathSegCurvetoQuadraticAbs(x1, y1, x, y, this));
+        pathSegList()->appendItem(createSVGPathSegCurvetoQuadraticAbs(x1, y1, x, y, this), ec);
     else
-        pathSegList()->appendItem(createSVGPathSegCurvetoQuadraticRel(x1, y1, x, y, this));
+        pathSegList()->appendItem(createSVGPathSegCurvetoQuadraticRel(x1, y1, x, y, this), ec);
 }
 
 void SVGPathElement::svgCurveToQuadraticSmooth(double x, double y, bool abs)
 {
+    ExceptionCode ec = 0;
+
     if(abs)
-        pathSegList()->appendItem(createSVGPathSegCurvetoQuadraticSmoothAbs(x, y, this));
+        pathSegList()->appendItem(createSVGPathSegCurvetoQuadraticSmoothAbs(x, y, this), ec);
     else
-        pathSegList()->appendItem(createSVGPathSegCurvetoQuadraticSmoothRel(x, y, this));
+        pathSegList()->appendItem(createSVGPathSegCurvetoQuadraticSmoothRel(x, y, this), ec);
 }
 
 void SVGPathElement::svgArcTo(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag, bool abs)
 {
+    ExceptionCode ec = 0;
+
     if(abs)
-        pathSegList()->appendItem(createSVGPathSegArcAbs(x, y, r1, r2, angle, largeArcFlag, sweepFlag, this));
+        pathSegList()->appendItem(createSVGPathSegArcAbs(x, y, r1, r2, angle, largeArcFlag, sweepFlag, this), ec);
     else
-        pathSegList()->appendItem(createSVGPathSegArcRel(x, y, r1, r2, angle, largeArcFlag, sweepFlag, this));
+        pathSegList()->appendItem(createSVGPathSegArcRel(x, y, r1, r2, angle, largeArcFlag, sweepFlag, this), ec);
 }
 
 void SVGPathElement::svgClosePath()
 {
-    pathSegList()->appendItem(createSVGPathSegClosePath());
+    ExceptionCode ec = 0;
+    pathSegList()->appendItem(createSVGPathSegClosePath(), ec);
 }
 
 void SVGPathElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == SVGNames::dAttr) {
-        pathSegList()->clear();
+        ExceptionCode ec;
+        pathSegList()->clear(ec);
         parseSVG(attr->value().deprecatedString(), true);
     } else {
         if(SVGTests::parseMappedAttribute(attr)) return;
@@ -380,9 +400,10 @@ Path SVGPathElement::toPathData() const
     if(len < 1)
         return pathData;
 
+    ExceptionCode ec = 0;
     for(int i = 0; i < len; ++i)
     {
-        SVGPathSeg *p = pathSegList()->getItem(i);
+        SVGPathSeg *p = pathSegList()->getItem(i, ec);
         switch(p->pathSegType())
         {
             case SVGPathSeg::PATHSEG_MOVETO_ABS:

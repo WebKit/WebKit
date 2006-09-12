@@ -60,27 +60,27 @@ float SVGTextContentElement::getComputedTextLength() const
     return 0.;
 }
 
-float SVGTextContentElement::getSubStringLength(unsigned long charnum, unsigned long nchars) const
+float SVGTextContentElement::getSubStringLength(unsigned long charnum, unsigned long nchars, ExceptionCode&) const
 {
     return 0.;
 }
 
-FloatPoint SVGTextContentElement::getStartPositionOfChar(unsigned long charnum) const
+FloatPoint SVGTextContentElement::getStartPositionOfChar(unsigned long charnum, ExceptionCode&) const
 {
     return FloatPoint();
 }
 
-FloatPoint SVGTextContentElement::getEndPositionOfChar(unsigned long charnum) const
+FloatPoint SVGTextContentElement::getEndPositionOfChar(unsigned long charnum, ExceptionCode&) const
 {
     return FloatPoint();
 }
 
-FloatRect SVGTextContentElement::getExtentOfChar(unsigned long charnum) const
+FloatRect SVGTextContentElement::getExtentOfChar(unsigned long charnum, ExceptionCode&) const
 {
     return FloatRect();
 }
 
-float SVGTextContentElement::getRotationOfChar(unsigned long charnum) const
+float SVGTextContentElement::getRotationOfChar(unsigned long charnum, ExceptionCode&) const
 {
     return 0.;
 }
@@ -90,7 +90,7 @@ long SVGTextContentElement::getCharNumAtPosition(const FloatPoint& point) const
     return 0;
 }
 
-void SVGTextContentElement::selectSubString(unsigned long charnum, unsigned long nchars) const
+void SVGTextContentElement::selectSubString(unsigned long charnum, unsigned long nchars, ExceptionCode&) const
 {
 }
 

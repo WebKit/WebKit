@@ -31,18 +31,31 @@ namespace WebCore {
 
     class SVGPaint : public SVGColor {
     public:
+        enum SVGPaintType {
+            SVG_PAINTTYPE_UNKNOWN               = 0,
+            SVG_PAINTTYPE_RGBCOLOR              = 1,
+            SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR     = 2,
+            SVG_PAINTTYPE_NONE                  = 101,
+            SVG_PAINTTYPE_CURRENTCOLOR          = 102,
+            SVG_PAINTTYPE_URI_NONE              = 103,
+            SVG_PAINTTYPE_URI_CURRENTCOLOR      = 104,
+            SVG_PAINTTYPE_URI_RGBCOLOR          = 105,
+            SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR = 106,
+            SVG_PAINTTYPE_URI                   = 107
+        };
+
         SVGPaint();
-        SVGPaint(StringImpl* uri);
+        SVGPaint(const String& uri);
         SVGPaint(SVGPaintType);
-        SVGPaint(SVGPaintType, StringImpl* uri, StringImpl* rgbPaint = 0, StringImpl* iccPaint = 0);
+        SVGPaint(SVGPaintType, const String& uri, const String& rgbPaint = String(), const String& iccPaint = String());
         virtual ~SVGPaint();
 
         // 'SVGPaint' functions
         SVGPaintType paintType() const { return m_paintType; }
-        StringImpl* uri() const;
+        String uri() const;
 
-        void setUri(StringImpl*);
-        void setPaint(SVGPaintType, StringImpl* uri, StringImpl* rgbPaint, StringImpl* iccPaint);
+        void setUri(const String&);
+        void setPaint(SVGPaintType, const String& uri, const String& rgbPaint, const String& iccPaint, ExceptionCode&);
 
         virtual String cssText() const;
 

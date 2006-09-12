@@ -42,6 +42,18 @@ namespace WebCore
                                  public SVGFitToViewBox
     {
     public:
+        enum SVGMarkerUnitsType {
+            SVG_MARKERUNITS_UNKNOWN           = 0,
+            SVG_MARKERUNITS_USERSPACEONUSE    = 1,
+            SVG_MARKERUNITS_STROKEWIDTH       = 2
+        };
+
+        enum SVGMarkerOrientType {
+            SVG_MARKER_ORIENT_UNKNOWN    = 0,
+            SVG_MARKER_ORIENT_AUTO       = 1,
+            SVG_MARKER_ORIENT_ANGLE      = 2
+        };
+
         SVGMarkerElement(const QualifiedName&, Document*);
         virtual ~SVGMarkerElement();
 

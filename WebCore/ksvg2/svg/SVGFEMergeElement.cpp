@@ -59,7 +59,7 @@ KCanvasFEMerge *SVGFEMergeElement::filterEffect() const
     Vector<String> mergeInputs;
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feMergeNodeTag))
-            mergeInputs.append(static_cast<SVGFEMergeNodeElement *>(n)->in());
+            mergeInputs.append(static_cast<SVGFEMergeNodeElement *>(n)->in1());
     }
 
     m_filterEffect->setMergeInputs(mergeInputs);

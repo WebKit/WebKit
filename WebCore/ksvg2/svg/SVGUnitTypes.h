@@ -1,6 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -20,42 +19,31 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "config.h"
+#ifndef SVGUnitTypes_H
+#define SVGUnitTypes_H
 
 #ifdef SVG_SUPPORT
 
-#include "DeprecatedStringList.h"
-
-#include "SVGMatrix.h"
-#include "SVGSVGElement.h"
-#include "SVGLengthList.h"
+#include "Shared.h"
 
 namespace WebCore {
 
-SVGLengthList::SVGLengthList()
-    : SVGList<SVGLength*>()
+class SVGUnitTypes : public Shared<SVGUnitTypes>
 {
-}
+public:
+    enum SVGUnitType {
+        SVG_UNIT_TYPE_UNKNOWN               = 0,
+        SVG_UNIT_TYPE_USERSPACEONUSE        = 1,
+        SVG_UNIT_TYPE_OBJECTBOUNDINGBOX     = 2
+    };
 
-SVGLengthList::~SVGLengthList()
-{
-}
+    SVGUnitTypes() { } 
+    ~SVGUnitTypes() { }
+};
 
-void SVGLengthList::parse(const DeprecatedString& value, const SVGStyledElement* context, LengthMode mode)
-{
-    ExceptionCode ec = 0;
-
-    DeprecatedStringList lengths = DeprecatedStringList::split(' ', value);
-    for (unsigned int i = 0; i < lengths.count(); i++) {
-        SVGLength* length = new SVGLength(context, mode);
-        String str(lengths[i]);
-        length->setValueAsString(str);
-        appendItem(length, ec);
-    }
-}
-
-}
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
+#endif // SVGUnitTypes_H
 
 // vim:ts=4:noet

@@ -46,7 +46,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, String, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, SpecularConstant, specularConstant)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, SpecularExponent, specularExponent)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, SurfaceScale, surfaceScale)

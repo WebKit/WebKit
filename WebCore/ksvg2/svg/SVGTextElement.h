@@ -45,7 +45,7 @@ namespace WebCore
         virtual FloatRect getBBox() const;
         virtual SVGMatrix *getCTM() const;
         virtual SVGMatrix *getScreenCTM() const;
-        virtual SVGMatrix *getTransformToElement(SVGElement *element) const { return 0; }
+        virtual SVGMatrix *getTransformToElement(SVGElement*, ExceptionCode&) const { return 0; }
 
         virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);

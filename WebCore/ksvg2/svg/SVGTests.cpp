@@ -57,23 +57,25 @@ SVGStringList *SVGTests::systemLanguage() const
     return lazy_create<SVGStringList>(m_systemLanguage);
 }
 
-bool SVGTests::hasExtension(StringImpl *) const
+bool SVGTests::hasExtension(const String&) const
 {
     return false;
 }
 
 bool SVGTests::isValid() const
 {
+    ExceptionCode ec = 0;
+
     SVGStringList *list = requiredFeatures();
     for (unsigned long i = 0;i < list->numberOfItems();i++) {
-        String value = String(list->getItem(i));
+        String value = String(list->getItem(i, ec));
         if(value.isEmpty() || !DOMImplementation::instance()->hasFeature(value, String()))
             return false;
     }
 
     list = systemLanguage();
     for (unsigned long i = 0; i < list->numberOfItems(); i++)
-        if (list->getItem(i) != defaultLanguage().substring(0, 2))
+        if (list->getItem(i, ec) != defaultLanguage().substring(0, 2))
             return false;
 
     list = requiredExtensions();

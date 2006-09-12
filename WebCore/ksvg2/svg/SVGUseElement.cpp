@@ -104,7 +104,7 @@ void SVGUseElement::closeRenderer()
     String wString = String::number(_w);
     String hString = String::number(_h);
     
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     String trans = String::sprintf("translate(%f, %f)", _x, _y);
     if (target->hasTagName(SVGNames::symbolTag)) {
         RefPtr<SVGElement> dummy = new SVGSVGElement(SVGNames::svgTag, document());

@@ -26,10 +26,10 @@
 
 #include "Attr.h"
 
-#include "ksvg.h"
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
+#include "SVGFEComponentTransferElement.h"
 #include "SVGComponentTransferFunctionElement.h"
 #include "SVGNumberList.h"
 
@@ -101,9 +101,11 @@ KCComponentTransferFunction SVGComponentTransferFunctionElement::transferFunctio
     func.exponent = exponent();
     func.offset = offset();
     SVGNumberList *numbers = tableValues();
+
+    ExceptionCode ec = 0;
     unsigned int nr = numbers->numberOfItems();
     for (unsigned int i = 0; i < nr; i++)
-        func.tableValues.append(numbers->getItem(i));
+        func.tableValues.append(numbers->getItem(i, ec));
     return func;
 }
 

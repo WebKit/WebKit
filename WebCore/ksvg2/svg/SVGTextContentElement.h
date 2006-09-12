@@ -38,6 +38,12 @@ namespace WebCore {
                                       public SVGExternalResourcesRequired
     {
     public:
+        enum SVGLengthAdjustType {
+            LENGTHADJUST_UNKNOWN            = 0,
+            LENGTHADJUST_SPACING            = 1,
+            LENGTHADJUST_SPACINGANDGLYPHS   = 2
+        };
+
         SVGTextContentElement(const QualifiedName&, Document*);
         virtual ~SVGTextContentElement();
         
@@ -46,13 +52,13 @@ namespace WebCore {
         // 'SVGTextContentElement' functions
         long getNumberOfChars() const;
         float getComputedTextLength() const;
-        float getSubStringLength(unsigned long charnum, unsigned long nchars) const;
-        FloatPoint getStartPositionOfChar(unsigned long charnum) const;
-        FloatPoint getEndPositionOfChar(unsigned long charnum) const;
-        FloatRect getExtentOfChar(unsigned long charnum) const;
-        float getRotationOfChar(unsigned long charnum) const;
+        float getSubStringLength(unsigned long charnum, unsigned long nchars, ExceptionCode&) const;
+        FloatPoint getStartPositionOfChar(unsigned long charnum, ExceptionCode&) const;
+        FloatPoint getEndPositionOfChar(unsigned long charnum, ExceptionCode&) const;
+        FloatRect getExtentOfChar(unsigned long charnum, ExceptionCode&) const;
+        float getRotationOfChar(unsigned long charnum, ExceptionCode&) const;
         long getCharNumAtPosition(const FloatPoint&) const;
-        void selectSubString(unsigned long charnum, unsigned long nchars) const;
+        void selectSubString(unsigned long charnum, unsigned long nchars, ExceptionCode&) const;
 
         virtual void parseMappedAttribute(MappedAttribute*);
 

@@ -58,10 +58,10 @@ bool StyleFillData::operator==(const StyleFillData &other) const
     if(paint->paintType() != other.paint->paintType())
         return false;
 
-    if(paint->paintType() == SVG_PAINTTYPE_URI)
+    if(paint->paintType() == SVGPaint::SVG_PAINTTYPE_URI)
         return paint->uri() == other.paint->uri();
 
-    if(paint->paintType() == SVG_PAINTTYPE_RGBCOLOR)
+    if(paint->paintType() == SVGPaint::SVG_PAINTTYPE_RGBCOLOR)
         return paint->color() == other.paint->color();
 
     return (paint == other.paint) && (opacity == other.opacity);

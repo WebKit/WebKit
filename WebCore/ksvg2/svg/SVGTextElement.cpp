@@ -58,7 +58,9 @@ void SVGTextElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == SVGNames::transformAttr) {
         SVGTransformList *localTransforms = transformBaseValue();
-        localTransforms->clear();
+
+        ExceptionCode ec = 0;
+        localTransforms->clear(ec);
         
         SVGTransformable::parseTransformAttribute(localTransforms, attr->value());
         updateLocalTransform(localTransforms);

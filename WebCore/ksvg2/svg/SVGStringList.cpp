@@ -40,12 +40,14 @@ SVGStringList::~SVGStringList()
 
 void SVGStringList::reset(const DeprecatedString& str)
 {
+    ExceptionCode ec = 0;
+
     DeprecatedStringList list = DeprecatedStringList::split(' ', str);
     if (list.count() == 0) {
-        appendItem(String("")); // Create empty string...
+        appendItem(String(""), ec); // Create empty string...
     } else {
         for(DeprecatedStringList::Iterator it = list.begin(); it != list.end(); ++it)
-            appendItem(String(*it));
+            appendItem(String(*it), ec);
     }
 }
 

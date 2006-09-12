@@ -33,6 +33,15 @@ namespace WebCore
     class SVGFEBlendElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
+        enum SVGBlendModeType {
+            SVG_FEBLEND_MODE_UNKNOWN  = 0,
+            SVG_FEBLEND_MODE_NORMAL   = 1,
+            SVG_FEBLEND_MODE_MULTIPLY = 2,
+            SVG_FEBLEND_MODE_SCREEN   = 3,
+            SVG_FEBLEND_MODE_DARKEN   = 4,
+            SVG_FEBLEND_MODE_LIGHTEN  = 5
+        };
+
         SVGFEBlendElement(const QualifiedName&, Document*);
         virtual ~SVGFEBlendElement();
 
@@ -46,7 +55,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, String, String, In, in)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, String, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, String, String, In2, in2)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, int, int, Mode, mode)
         mutable KCanvasFEBlend *m_filterEffect;

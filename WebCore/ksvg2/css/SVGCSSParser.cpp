@@ -214,11 +214,11 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     case SVGCSS_PROP_STROKE:               // <paint> | inherit
         {
             if (id == CSS_VAL_NONE)
-                parsedValue = new SVGPaint(SVG_PAINTTYPE_NONE);
+                parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_NONE);
             else if (id == SVGCSS_VAL_CURRENTCOLOR)
-                parsedValue = new SVGPaint(SVG_PAINTTYPE_CURRENTCOLOR);
+                parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR);
             else if (value->unit == CSSPrimitiveValue::CSS_URI)
-                parsedValue = new SVGPaint(SVG_PAINTTYPE_URI, domString(value->string).impl());
+                parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_URI, domString(value->string).impl());
             else
                 parsedValue = parseSVGPaint();
 
@@ -354,13 +354,13 @@ CSSValue* CSSParser::parseSVGPaint()
     if (!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
        value->fValue >= 0. && value->fValue < 1000000.) {
         String str = String::sprintf("%06d", (int)(value->fValue+.5));
-        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, str.impl());
+        return new SVGPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, String(), str);
     } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR) {
         String str = "#" + domString(value->string);
-        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, str.impl());
+        return new SVGPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, String(), str);
     } else if (value->unit == CSSPrimitiveValue::CSS_IDENT ||
            (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION))
-        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, domString(value->string).impl());
+        return new SVGPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, String(), domString(value->string));
     else if (value->unit == Value::Function && value->function->args != 0 &&
             domString(value->function->name).lower() == "rgb(") {
         ValueList* args = value->function->args;
@@ -386,7 +386,7 @@ CSSValue* CSSParser::parseSVGPaint()
         g = max(0, min(255, g));
         b = max(0, min(255, b));
         
-        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, String::sprintf("rgb(%d, %d, %d)", r, g, b).impl());
+        return new SVGPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, String(), String::sprintf("rgb(%d, %d, %d)", r, g, b).impl());
     }
     else
         return 0;

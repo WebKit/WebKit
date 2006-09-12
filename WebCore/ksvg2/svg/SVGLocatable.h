@@ -22,7 +22,10 @@
 
 #ifndef SVGLocatable_H
 #define SVGLocatable_H
+
 #ifdef SVG_SUPPORT
+
+#include "ExceptionCode.h"
 
 namespace WebCore {
 
@@ -43,7 +46,7 @@ namespace WebCore {
         virtual FloatRect getBBox() const = 0;
         virtual SVGMatrix* getCTM() const = 0;
         virtual SVGMatrix* getScreenCTM() const = 0;
-        virtual SVGMatrix* getTransformToElement(SVGElement*) const = 0;
+        virtual SVGMatrix* getTransformToElement(SVGElement*, ExceptionCode&) const = 0;
 
     protected:
         static SVGElement* nearestViewportElement(const SVGStyledElement*);

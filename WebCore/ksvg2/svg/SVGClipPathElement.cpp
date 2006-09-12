@@ -32,7 +32,7 @@
 #include "SVGMatrix.h"
 #include "SVGRenderStyle.h"
 #include "cssstyleselector.h"
-#include "ksvg.h"
+#include "SVGUnitTypes.h"
 #include <kcanvas/device/KRenderingDevice.h>
 
 using namespace WebCore;
@@ -42,7 +42,7 @@ SVGClipPathElement::SVGClipPathElement(const QualifiedName& tagName, Document *d
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_clipPathUnits(SVG_UNIT_TYPE_USERSPACEONUSE)
+    , m_clipPathUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
 {
     m_clipper = 0;
 }
@@ -59,9 +59,9 @@ void SVGClipPathElement::parseMappedAttribute(MappedAttribute *attr)
     const String& value = attr->value();
     if (attr->name() == SVGNames::clipPathUnitsAttr) {
         if (value == "userSpaceOnUse")
-            setClipPathUnitsBaseValue(SVG_UNIT_TYPE_USERSPACEONUSE);
+            setClipPathUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
         else if (value == "objectBoundingBox")
-            setClipPathUnitsBaseValue(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            setClipPathUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
@@ -82,7 +82,7 @@ KCanvasClipper *SVGClipPathElement::canvasResource()
     else
         m_clipper->resetClipData();
 
-    bool bbox = clipPathUnits() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+    bool bbox = clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
     RenderStyle *clipPathStyle = styleForRenderer(parent()->renderer()); // FIXME: Manual style resolution is a hack
     for (Node *n = firstChild(); n != 0; n = n->nextSibling()) {

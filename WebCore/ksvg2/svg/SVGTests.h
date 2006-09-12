@@ -29,7 +29,7 @@
 namespace WebCore {
 
     class MappedAttribute;
-    class StringImpl;
+    class String;
     class SVGStringList;
 
     class SVGTests {
@@ -42,7 +42,7 @@ namespace WebCore {
         SVGStringList *requiredExtensions() const;
         SVGStringList *systemLanguage() const;
 
-        bool hasExtension(StringImpl *extension) const;
+        bool hasExtension(const String&) const;
 
         bool isValid() const;
         

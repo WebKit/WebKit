@@ -55,7 +55,7 @@ SVGFESpecularLightingElement::~SVGFESpecularLightingElement()
     delete m_filterEffect;
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, String, String, string, In, in, SVGNames::inAttr.localName(), m_in)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, SpecularConstant, specularConstant, SVGNames::specularConstantAttr.localName(), m_specularConstant)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, SpecularExponent, specularExponent, SVGNames::specularExponentAttr.localName(), m_specularExponent)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr.localName(), m_surfaceScale)
@@ -67,7 +67,7 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute *attr)
 {    
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
-        setInBaseValue(value);
+        setIn1BaseValue(value);
     else if (attr->name() == SVGNames::surfaceScaleAttr)
         setSurfaceScaleBaseValue(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::specularConstantAttr)
@@ -91,7 +91,7 @@ KCanvasFESpecularLighting *SVGFESpecularLightingElement::filterEffect() const
 {
     if (!m_filterEffect) 
         m_filterEffect = static_cast<KCanvasFESpecularLighting *>(renderingDevice()->createFilterEffect(FE_SPECULAR_LIGHTING));
-    m_filterEffect->setIn(in());
+    m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setSpecularConstant((specularConstant()));
     m_filterEffect->setSpecularExponent((specularExponent()));

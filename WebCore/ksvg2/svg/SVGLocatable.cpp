@@ -126,13 +126,7 @@ SVGMatrix *SVGLocatable::getScreenCTM(const SVGElement *element)
 
     return ctm;
 }
-/*
-SVGMatrix *SVGLocatable::getTransformToElement(SVGElement *) const
-{
-    // TODO!
-    return 0;
-}
-*/
-// vim:ts=4:noet
+
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

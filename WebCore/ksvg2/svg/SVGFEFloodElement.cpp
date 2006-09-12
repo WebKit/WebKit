@@ -45,13 +45,13 @@ SVGFEFloodElement::~SVGFEFloodElement()
     delete m_filterEffect;
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEFloodElement, String, String, string, In, in, SVGNames::inAttr.localName(), m_in)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEFloodElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
 
 void SVGFEFloodElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
-        setInBaseValue(value);
+        setIn1BaseValue(value);
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
@@ -62,7 +62,7 @@ KCanvasFEFlood *SVGFEFloodElement::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEFlood *>(renderingDevice()->createFilterEffect(FE_FLOOD));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(in());
+    m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
     RenderStyle *filterStyle = const_cast<SVGFEFloodElement *>(this)->styleForRenderer(parentNode()->renderer());
     const SVGRenderStyle *svgStyle = filterStyle->svgStyle();

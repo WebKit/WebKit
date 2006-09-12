@@ -53,7 +53,7 @@ JSValue* JSSVGNumber::getValue(ExecState* exec, JSObject* originalObject, const 
     return 0;
 }
 
-JSValue* getJSSVGNumber(ExecState* exec, float v)
+JSValue* getJSSVGNumber(ExecState* exec, double v)
 {
     return new JSSVGNumber(exec, v);
 }
