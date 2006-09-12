@@ -341,6 +341,14 @@ input[type="search"], input[type="hidden"], input[type="image"], input[type="fil
     border: initial;
 }
 
+input[type="file"] {
+    -webkit-box-align: baseline;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    display: -webkit-box;
+}
+
 input:-webkit-autofill {
     background-color: #FAFFBD !important;
     background-image:none !important;
@@ -354,13 +362,12 @@ input[type="radio"], input[type="checkbox"] {
     border: initial;
 }
 
-input[type="button"], input[type="submit"], input[type="reset"]
-{
+input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button {
     -webkit-appearance: push-button;
     white-space: pre
 }
 
-input[type="button"], input[type="submit"], input[type="reset"], button {
+input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button {
     -webkit-box-align: center;
     text-align: center;
     cursor: default;
@@ -371,19 +378,19 @@ input[type="button"], input[type="submit"], input[type="reset"], button {
     box-sizing: border-box
 }
 
-input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, button:disabled, select:disabled {
+input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, input[type="file"]::-webkit-file-upload-button:disabled, button:disabled, select:disabled {
     color: GrayText
 }
 
-input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, button:active {
+input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, input[type="file"]::-webkit-file-upload-button:active, button:active {
     border-style: inset
 }
 
-input[type="button"]:active:disabled, input[type="submit"]:active:disabled, input[type="reset"]:active:disabled, button:active:disabled {
+input[type="button"]:active:disabled, input[type="submit"]:active:disabled, input[type="reset"]:active:disabled, input[type="file"]::-webkit-file-upload-button:active:disabled, button:active:disabled {
     border-style: outset
 }
 
-select, button, input[type="button"], input[type="image"], input[type="submit"], input[type="reset"], input[type="checkbox"], input[type="radio"], img {
+select, button, input[type="button"], input[type="image"], input[type="submit"], input[type="reset"], input[type="checkbox"], input[type="radio"], input[type="file"]::-webkit-file-upload-button, img {
     -webkit-user-select: ignore
 }
 
@@ -525,7 +532,8 @@ input[type="image"]:focus,
 input[type="radio"]:focus,
 input[type="reset"]:focus,
 input[type="search"]:focus,
-input[type="submit"]:focus {
+input[type="submit"]:focus,
+input[type="file"]::-webkit-file-upload-button:focus {
     outline-offset: 0
 }
 

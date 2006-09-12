@@ -1,5 +1,11 @@
 2006-09-12  Adam Roben  <aroben@apple.com>
 
+        Adding rules to html4.css to style the button in file upload controls.
+
+        * css/html4.css:
+
+2006-09-12  Adam Roben  <aroben@apple.com>
+
         Reviewed many times by darin, hyatt.
 
         Switch to new engine-based implementation of <input type="file">
