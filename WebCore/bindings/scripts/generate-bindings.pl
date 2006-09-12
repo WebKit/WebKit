@@ -45,7 +45,7 @@ my $defines;
 GetOptions('include=s@' => \@idlDirectories,
            'outputdir=s' => \$outputDirectory,
            'generator=s' => \$generator,
-		   'defines=s' => \$defines);
+           'defines=s' => \$defines);
 
 my $idlFile = $ARGV[0];
 
@@ -55,6 +55,8 @@ die('Must specify generator') unless defined($generator);
 die('Must specify input file.') unless defined($idlFile);
 die('Must specify output directory.') unless defined($outputDirectory);
 die('Must specify defines') unless defined($defines);
+
+$defines =~ s/^\s+|\s+$//g; # trim whitespace
 
 # Parse the given IDL file.
 my $parser = IDLParser->new(1);
