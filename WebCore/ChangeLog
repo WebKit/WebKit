@@ -1,3 +1,14 @@
+2006-09-12  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4717841> Setting AXFocused to true does not activate the insertion point in text field
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilitySetValue:forAttribute:]):
+        For AXFocus, use focus() if the node is an element, so that selection is set.
+        Matches tabbing behavior in text fields and text areas.
+
 2006-09-12  Adam Roben  <aroben@apple.com>
 
         Reviewed by adele.

@@ -2174,10 +2174,14 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     } else if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
         ASSERT(number);
         if ([self canSetFocusAttribute] && number) {
-            if ([number intValue] != 0)
-                m_renderer->document()->setFocusNode(m_renderer->element());
-            else
+            if ([number intValue] == 0)
                 m_renderer->document()->setFocusNode(0);
+            else {
+                if (m_renderer->element()->isElementNode())
+                    static_cast<Element*>(m_renderer->element())->focus();
+                else
+                    m_renderer->document()->setFocusNode(m_renderer->element());
+            }
         }
     } else if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
         if (!string)
