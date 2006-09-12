@@ -3350,10 +3350,15 @@ void FrameMac::setSecureKeyboardEntry(bool enable)
 {
     if (enable) {
         EnableSecureEventInput();
+// FIXME: KeyScript is deprecated in Leopard, we need a new solution for this <rdar://problem/4727607>
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
         KeyScript(enableRomanKeyboardsOnly);
+#endif
     } else {
         DisableSecureEventInput();
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
         KeyScript(smKeyEnableKybds);
+#endif
     }
 }
 
