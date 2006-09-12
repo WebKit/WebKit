@@ -149,7 +149,6 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLUListElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMKeyboardEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMKeyboardEventPrivate.h \
-    $(PUBLIC_HEADERS_DIR)/DOMList.h \
     $(PUBLIC_HEADERS_DIR)/DOMMediaList.h \
     $(PUBLIC_HEADERS_DIR)/DOMMouseEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMMouseEventPrivate.h \

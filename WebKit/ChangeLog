@@ -1,3 +1,11 @@
+2006-09-11  Brady Eidson  <beidson@apple.com>
+
+        Despite the fact that some people built okay without this change, it sure was biting me, 
+        probably because I just wiped my build directory for a fresh build - 
+        Today's earlier removal of DOMList.h needed to occur in MigrateHeaders.make, as well
+
+        * MigrateHeaders.make: removed DOMList.h
+
 2006-09-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.
