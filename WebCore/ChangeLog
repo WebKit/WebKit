@@ -1,3 +1,12 @@
+2006-09-11  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 8126, column widths apply to the border boxes of cells.
+
+        Reviewed by aroben
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleOrColWidth):
+
 2006-09-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Adele.
