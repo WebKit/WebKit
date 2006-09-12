@@ -30,23 +30,25 @@
 
 namespace WebCore {
 
-    class HTMLGenericFormElement;
+class HTMLGenericFormElement;
 
-    class RenderFieldset : public RenderBlock {
-    public:
-        RenderFieldset(HTMLGenericFormElement*);
+class RenderFieldset : public RenderBlock {
+public:
+    RenderFieldset(HTMLGenericFormElement*);
 
-        virtual const char* renderName() const { return "RenderFieldSet"; }
+    virtual const char* renderName() const { return "RenderFieldSet"; }
 
-        virtual RenderObject* layoutLegend(bool relayoutChildren);
+    virtual RenderObject* layoutLegend(bool relayoutChildren);
 
-        virtual void setStyle(RenderStyle*);
-        
-    private:
-        virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-        void paintBorderMinusLegend(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, int lx, int lw);
-        RenderObject* findLegend();
-    };
+    virtual void setStyle(RenderStyle*);
+    
+    virtual bool expandsToEncloseOverhangingFloats() const { return style()->height().isAuto(); }
+
+private:
+    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
+    void paintBorderMinusLegend(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, int lx, int lw);
+    RenderObject* findLegend();
+};
 
 } // namespace WebCore
 

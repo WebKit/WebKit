@@ -751,6 +751,7 @@ public:
     virtual bool containsFloats() { return false; }
     virtual bool containsFloat(RenderObject* o) { return false; }
     virtual bool hasOverhangingFloats() { return false; }
+    virtual bool expandsToEncloseOverhangingFloats() const { return isFloating() && style()->height().isAuto(); }
     virtual IntRect floatRect() const { return borderBox(); }
 
     virtual void removePositionedObjects(RenderBlock*) { }

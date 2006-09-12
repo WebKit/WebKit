@@ -1,3 +1,23 @@
+2006-09-12  David Hyatt  <hyatt@apple.com>
+
+        Fix fieldsets so that they properly expand to enclose overhanging floats
+        when the fieldset has auto height.  This is a nifty undocumented behavior
+        of the fieldset element.  The bug is 3898.
+
+        Reviewed by mjs
+
+        Added fast/forms/fieldset-with-float.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderFieldset.h:
+        (WebCore::RenderFieldset::renderName):
+        (WebCore::RenderFieldset::expandsToEncloseOverhangingFloats):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::expandsToEncloseOverhangingFloats):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::expandsToEncloseOverhangingFloats):
+
 2006-09-11  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by hyatt.

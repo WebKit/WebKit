@@ -527,7 +527,9 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
             m_height = m_overflowHeight + borderBottom() + paddingBottom();
     }
 
-    if (hasOverhangingFloats() && ((isFloating() && style()->height().isAuto()) || isTableCell())) {
+    // Some classes of objects (floats and fieldsets with no specified heights and table cells) expand to encompass
+    // overhanging floats.
+    if (hasOverhangingFloats() && expandsToEncloseOverhangingFloats()) {
         m_height = floatBottom();
         m_height += borderBottom() + paddingBottom();
     }
