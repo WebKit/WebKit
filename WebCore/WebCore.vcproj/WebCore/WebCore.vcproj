@@ -2991,11 +2991,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderFileButton.cpp"
+				RelativePath="..\..\rendering\RenderFileUploadControl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderFileButton.h"
+				RelativePath="..\..\rendering\RenderFileUploadControl.h"
 				>
 			</File>
 			<File

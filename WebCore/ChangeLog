@@ -2,6 +2,29 @@
 
         Reviewed/landed by aroben.
 
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10833
+        Windows build needs fixed after move to engine-rendered file upload widget
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Add RenderFileUpload files,
+        remove RenderFileButton files
+        * platform/win/TemporaryLinkStubs.cpp: Add stubs for FileChooser, Icon
+        (FileChooser::FileChooser):
+        (FileChooser::~FileChooser):
+        (FileChooser::openFileChooser):
+        (FileChooser::basenameForWidth):
+        (FileChooser::uploadControlDetaching):
+        (FileChooser::chooseFile):
+        (WebCore::fileButtonChooseFileLabel):
+        (WebCore::fileButtonNoFileSelectedLabel):
+        (Icon::Icon):
+        (Icon::~Icon):
+        (Icon::newIconForFile):
+        (Icon::paint):
+
+2006-09-13  MorganL  <morlmor@yahoo.com>
+
+        Reviewed/landed by aroben.
+
         Fixes http://bugzilla.opendarwin.org/attachment.cgi?id=10537
         Webkit WebCore build fails on Windows
 
