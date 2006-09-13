@@ -1,3 +1,19 @@
+2006-09-12  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 3244, implement html4 label support.
+
+        Reviewed by mjs, aroben
+
+        Added fast/events/label-focus.html
+
+        * css/html4.css:
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::formElement):
+        (WebCore::HTMLLabelElement::setActive):
+        (WebCore::HTMLLabelElement::setHovered):
+        (WebCore::HTMLLabelElement::defaultEventHandler):
+        * html/HTMLLabelElement.h:
+
 2006-09-12  Julien Palmas  <julien.palmas@gmail.com>
 
         Reviewed by darin.  Landed by eseidel.

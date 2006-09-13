@@ -42,14 +42,19 @@ public:
 
     virtual bool isFocusable() const;
 
-    virtual void parseMappedAttribute(MappedAttribute *attr);
-
     virtual void accessKeyAction(bool sendToAnyElement);
+
+    // Overridden to update the hover/active state of the corresponding control.
+    virtual void setActive(bool b = true, bool pause = false);
+    virtual void setHovered(bool b = true);
+
+    // Overridden to either click() or focus() the corresponding control.
+    virtual void defaultEventHandler(Event*);
 
     /**
      * the form element this label is associated to.
      */
-    Element *formElement();
+    HTMLElement *formElement();
 
     HTMLFormElement *form();
 

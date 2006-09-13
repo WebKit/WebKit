@@ -275,6 +275,11 @@ form {
     margin: 0__qem 0 1em 0
 }
 
+label {
+    cursor: default;
+    -webkit-user-select: none;
+}
+
 legend {
     display: block;
     padding-left: 2px;
