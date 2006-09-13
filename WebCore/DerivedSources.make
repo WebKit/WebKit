@@ -515,7 +515,7 @@ OBJC_BINDINGS_SCRIPTS = \
 #
 
 DOM%.h : %.idl $(OBJC_BINDINGS_SCRIPTS) bindings/objc/PublicDOMInterfaces.h
-	perl -I`pwd`/$(WebCore)/bindings/scripts `pwd`/$(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --include `pwd`/$(WebCore)/dom --include `pwd`/$(WebCore)/html --include `pwd`/$(WebCore)/xpath --include `pwd`/$(WebCore)/ksvg2/svg --outputdir `pwd` $<
+	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --include $(WebCore)/dom --include $(WebCore)/html --include $(WebCore)/xpath --include $(WebCore)/ksvg2/svg --outputdir . $<
 
 # new-style JavaScript bindings
 
@@ -528,4 +528,4 @@ JS_BINDINGS_SCRIPTS = \
 #
 
 JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
-	perl -I`pwd`/$(WebCore)/bindings/scripts `pwd`/$(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include `pwd`/$(WebCore)/dom --include `pwd`/$(WebCore)/html --include `pwd`/$(WebCore)/xml --include `pwd`/$(WebCore)/ksvg2/svg --outputdir `pwd` $<
+	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include dom --include html --include xml --include ksvg2/svg --outputdir . $<

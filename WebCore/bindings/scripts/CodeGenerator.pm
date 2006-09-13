@@ -44,7 +44,7 @@ my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedPreserveAspectRatio" => 1,
                            "SVGAnimatedRect" => 1, "SVGAnimatedString" => 1,
                            "SVGAnimatedTransformList" => 1);
-    
+
 # Helpers for 'ScanDirectory'
 my $endCondition = 0;
 my $foundFilename = "";
@@ -208,10 +208,10 @@ sub ScanDirectory
 
     return if ($endCondition eq 1) and ($reportAllFiles eq 0);
 
-    chdir($directory) or die "[ERROR] Can't enter directory $directory: \"$!\"\n";
-    opendir(DIR, ".") or die "[ERROR] Can't open directory $directory: \"$!\"\n";
+    $thisDir = "$ENV{SOURCE_ROOT}/$directory";
+    opendir(DIR, $thisDir) or die "[ERROR] Can't open directory $thisDir: \"$!\"\n";
 
-    my @names = readdir(DIR) or die "[ERROR] Cant't read directory $directory: \"$!\"\n";
+    my @names = readdir(DIR) or die "[ERROR] Cant't read directory $thisDir \"$!\"\n";
     closedir(DIR);
 
     foreach my $name (@names) {
@@ -220,8 +220,8 @@ sub ScanDirectory
         next if ($endCondition eq 1) or ($name =~ /^\./);
 
         # Recurisvely enter directory
-        if (-d $name) {
-            $object->ScanDirectory($interface, $name, $useDirectory, $reportAllFiles);
+        if (-d "$thisDir/$name") {
+            $object->ScanDirectory($interface, "$thisDir/$name", $useDirectory, $reportAllFiles);
             next;
         }
 
@@ -230,7 +230,7 @@ sub ScanDirectory
         $condition = 1 if ($interface eq "allidls") and ($name =~ /\.idl$/);
 
         if ($condition) {
-            $foundFilename = "$directory/$name";
+            $foundFilename = "$thisDir/$name";
 
             if ($reportAllFiles eq 0) {
                 $endCondition = 1;
@@ -238,8 +238,6 @@ sub ScanDirectory
                 push(@foundFilenames, $foundFilename);
             }
         }
-
-        chdir($useDirectory) or die "[ERROR] Can't change directory to $useDirectory: \"$!\"\n";
     }
 }
 
