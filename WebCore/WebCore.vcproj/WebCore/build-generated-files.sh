@@ -12,6 +12,9 @@ SRCROOT=`cygpath -m -s "$SRCROOT"`
 SRCROOT=`cygpath -u "$SRCROOT"`
 export SRCROOT
 
+# Xcode also defines this variable.
+export SOURCE_ROOT="$SRCROOT"
+
 # FIXME: Eventually win32 might wish to generate to the Debug/Release output directories.
 export BUILT_PRODUCTS_DIR="$SRCROOT"
 export CREATE_HASH_TABLE="$SRCROOT/../JavaScriptCore/kjs/create_hash_table"

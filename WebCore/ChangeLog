@@ -1,3 +1,13 @@
+2006-09-13  MorganL  <morlmor@yahoo.com>
+
+        Reviewed/landed by aroben.
+
+        Fixes http://bugzilla.opendarwin.org/attachment.cgi?id=10537
+        Webkit WebCore build fails on Windows
+
+        * WebCore.vcproj/WebCore/build-generated-files.sh: export SOURCE_ROOT
+        variable
+
 2006-09-13  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Tim H.
