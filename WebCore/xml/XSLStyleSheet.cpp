@@ -22,7 +22,7 @@
 #include "config.h"
 #include "XSLStyleSheet.h"
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
 
 #include "DocLoader.h"
 #include "Document.h"
@@ -260,4 +260,4 @@ void XSLStyleSheet::markAsProcessed()
 
 } // namespace WebCore
 
-#endif // KHTML_XSLT
+#endif // XSLT_SUPPORT

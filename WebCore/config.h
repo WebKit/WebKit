@@ -20,9 +20,7 @@
 
 #include <wtf/Platform.h>
 
-#define KHTML_NO_XBL 1
-#define KHTML_XSLT 1
-
+#define XSLT_SUPPORT 1
 
 #if __APPLE__
 #define HAVE_FUNC_USLEEP 1

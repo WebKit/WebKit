@@ -129,7 +129,7 @@ CachedScript* DocLoader::requestScript(const String& url, const String& charset)
     return cachedObject;
 }
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
 CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const String& url)
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
@@ -145,7 +145,7 @@ CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const String& url)
 }
 #endif
 
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
 CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());

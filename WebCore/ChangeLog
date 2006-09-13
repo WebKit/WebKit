@@ -1,3 +1,62 @@
+2006-09-13  David Hyatt  <hyatt@apple.com>
+
+        Clean up the XBL and XSLT ifdefs to be consistent with the SVG
+        and XPath ifdefs.  KHTML_NO_XBL is flipped and is now XBL_SUPPORT.
+        KHTML_XSLT is now XSLT_SUPPORT.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSXSLTProcessor.cpp:
+        * bindings/js/JSXSLTProcessor.h:
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * config.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+        (WebCore::Document::bindingManager):
+        * dom/Node.cpp:
+        (WebCore::Node::createRendererIfNeeded):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::ProcessingInstruction):
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::setStyleSheet):
+        * dom/ProcessingInstruction.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::processingInstruction):
+        (WebCore::XMLTokenizer::insertErrorMessageBlock):
+        * dom/XMLTokenizer.h:
+        * loader/Cache.cpp:
+        (WebCore::Cache::getStatistics):
+        * loader/Cache.h:
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::):
+        * loader/CachedResourceClient.h:
+        * loader/CachedXBLDocument.cpp:
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp:
+        * loader/DocLoader.h:
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleCSS3NonInheritedData::StyleCSS3NonInheritedData):
+        (WebCore::StyleCSS3NonInheritedData::~StyleCSS3NonInheritedData):
+        (WebCore::StyleCSS3NonInheritedData::operator==):
+        * rendering/RenderStyle.h:
+        * xml/XSLImportRule.cpp:
+        * xml/XSLImportRule.h:
+        * xml/XSLStyleSheet.cpp:
+        * xml/XSLStyleSheet.h:
+        * xml/XSLTProcessor.cpp:
+        * xml/XSLTProcessor.h:
+
 2006-09-13  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.

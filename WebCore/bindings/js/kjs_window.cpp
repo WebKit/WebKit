@@ -56,7 +56,7 @@
 #include "kjs_traversal.h"
 #include <wtf/MathExtras.h>
 
-#if KHTML_XSLT
+#if XSLT_SUPPORT
 #include "JSXSLTProcessor.h"
 #endif
 
@@ -788,7 +788,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return new JSHTMLOptionElementConstructor(exec, m_frame->document());
     case XMLHttpRequest:
       return new JSXMLHttpRequestConstructorImp(exec, m_frame->document());
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
     case XSLTProcessor_:
       return new XSLTProcessorConstructorImp(exec);
 #else

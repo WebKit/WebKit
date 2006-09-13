@@ -3492,7 +3492,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         style->setAppearance(appearance);
     }
     case CSS_PROP__WEBKIT_BINDING: {
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
         if (isInitial || (primitiveValue && primitiveValue->getIdent() == CSS_VAL_NONE)) {
             style->deleteBindingURIs();
             return;

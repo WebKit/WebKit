@@ -36,12 +36,6 @@
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
 
-#ifndef KHTML_NO_XBL
-namespace XBL {
-    class XBLBindingManager;
-}
-#endif
-
 namespace WebCore {
 
     class AXObjectCache;
@@ -89,6 +83,9 @@ namespace WebCore {
     class Text;
     class Tokenizer;
     class TreeWalker;
+#ifdef XBL_SUPPORT
+    class XBLBindingManager;
+#endif
 #ifdef XPATH_SUPPORT
     class XPathEvaluator;
     class XPathExpression;
@@ -563,7 +560,7 @@ public:
 
     int docID() const { return m_docID; }
 
-#if KHTML_XSLT
+#if XSLT_SUPPORT
     void applyXSLTransform(ProcessingInstruction* pi);
     void setTransformSource(void* doc) { m_transformSource = doc; }
     const void* transformSource() { return m_transformSource; }
@@ -571,9 +568,9 @@ public:
     void setTransformSourceDocument(Document *doc) { m_transformSourceDocument = doc; }
 #endif
 
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
     // XBL methods
-    XBL::XBLBindingManager* bindingManager() const { return m_bindingManager; }
+    XBLBindingManager* bindingManager() const { return m_bindingManager; }
 #endif
 
     void incDOMTreeVersion() { ++m_domtree_version; }
@@ -702,13 +699,13 @@ protected:
     double m_startTime;
     bool m_overMinimumLayoutThreshold;
     
-#if KHTML_XSLT
+#if XSLT_SUPPORT
     void* m_transformSource;
     RefPtr<Document> m_transformSourceDocument;
 #endif
 
-#ifndef KHTML_NO_XBL
-    XBL::XBLBindingManager* m_bindingManager; // The access point through which documents and elements communicate with XBL.
+#ifdef XBL_SUPPORT
+    XBLBindingManager* m_bindingManager; // The access point through which documents and elements communicate with XBL.
 #endif
     
     typedef HashMap<AtomicStringImpl*, HTMLMapElement*> ImageMapsByName;

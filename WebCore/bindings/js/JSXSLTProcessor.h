@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
 
 #ifndef XSLTProcessor_H
 #define XSLTProcessor_H
@@ -67,4 +67,4 @@ public:
 
 #endif // XSLTProcessor_H
 
-#endif // KHTML_XSLT
+#endif // XSLT_SUPPORT

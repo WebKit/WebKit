@@ -27,7 +27,7 @@
 #ifndef CachedResourceClient_h
 #define CachedResourceClient_h
 
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
 namespace XBL {
     class XBLDocument;
 }
@@ -65,7 +65,7 @@ namespace WebCore {
 
         virtual void setStyleSheet(const String& /*URL*/, const String& /*sheet*/) { }
 
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
         virtual void setXBLDocument(const String& /*URL*/, XBL::XBLDocument*) { }
 #endif
 

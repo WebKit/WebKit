@@ -57,10 +57,10 @@ namespace WebCore {
         CachedCSSStyleSheet* requestStyleSheet(const String& url, const String& charset);
         CachedScript* requestScript(const String& url, const String& charset);
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
         CachedXSLStyleSheet* requestXSLStyleSheet(const String& url);
 #endif
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
         CachedXBLDocument* requestXBLDocument(const String &url);
 #endif
 

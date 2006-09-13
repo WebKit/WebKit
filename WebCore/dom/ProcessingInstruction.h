@@ -61,7 +61,7 @@ public:
     void sheetLoaded();
     virtual String toString() const;
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
     bool isXSL() const { return m_isXSL; }
 #endif
 
@@ -72,7 +72,7 @@ private:
     CachedResource* m_cachedSheet;
     RefPtr<StyleSheet> m_sheet;
     bool m_loading;
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
     bool m_isXSL;
 #endif
 };

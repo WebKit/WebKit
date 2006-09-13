@@ -22,7 +22,7 @@
 #include "config.h"
 #include "XSLImportRule.h"
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
 
 #include "CachedXSLStyleSheet.h"
 #include "DocLoader.h"
@@ -113,4 +113,4 @@ void XSLImportRule::loadSheet()
 
 } // namespace WebCore
 
-#endif // KHTML_XSLT
+#endif // XSLT_SUPPORT

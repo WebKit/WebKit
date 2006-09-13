@@ -23,7 +23,7 @@
 #ifndef xslt_processorimpl_h_
 #define xslt_processorimpl_h_
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
 
 #include "StringHash.h"
 #include "XSLStyleSheet.h"

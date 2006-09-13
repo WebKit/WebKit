@@ -47,7 +47,7 @@
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
 #include <libxslt/xslt.h>
 #endif
 
@@ -959,7 +959,7 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
     // don't load stylesheets for standalone documents
     if (m_doc->frame()) {
         m_sawXSLTransform = !m_sawFirstElement && !pi->checkStyleSheet();
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
         // Pretend we didn't see this PI if we're the result of a transform.
         if (m_sawXSLTransform && !m_doc->transformSourceDocument())
 #else
@@ -1298,7 +1298,7 @@ void XMLTokenizer::insertErrorMessageBlock()
 
     RefPtr<Element> reportElement = createXHTMLParserErrorHeader(doc, m_errorMessages);
     documentElement->insertBefore(reportElement, documentElement->firstChild(), ec);
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
     if (doc->transformSourceDocument()) {
         RefPtr<Element> par = doc->createElementNS(xhtmlNamespaceURI, "p", ec);
         reportElement->appendChild(par, ec);
@@ -1341,7 +1341,7 @@ bool XMLTokenizer::isWaitingForScripts() const
     return m_pendingScript != 0;
 }
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
 void* xmlDocPtrForString(DocLoader* docLoader, const String& source, const DeprecatedString &url)
 {
     if (source.isEmpty())

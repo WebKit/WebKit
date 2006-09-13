@@ -919,7 +919,7 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSS_PROP__WEBKIT_BINDING:
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
         if (id == CSS_VAL_NONE)
             valid_primitive = true;
         else {

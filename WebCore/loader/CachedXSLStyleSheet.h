@@ -36,7 +36,7 @@ namespace WebCore {
     class DocLoader;
     class Decoder;
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
     class CachedXSLStyleSheet : public CachedResource {
     public:
         CachedXSLStyleSheet(DocLoader*, const String& url, CachePolicy, time_t expireDate);

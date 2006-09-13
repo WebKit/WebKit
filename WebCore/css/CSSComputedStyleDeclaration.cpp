@@ -456,7 +456,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         return valueForLength(style->backgroundXPosition());
     case CSS_PROP_BACKGROUND_POSITION_Y:
         return valueForLength(style->backgroundYPosition());
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
     case CSS_PROP__WEBKIT_BINDING:
         // FIXME: unimplemented
         break;

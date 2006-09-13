@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
 
 CachedXSLStyleSheet::CachedXSLStyleSheet(DocLoader* dl, const String &url, CachePolicy cachePolicy, time_t _expireDate)
     : CachedResource(url, XSLStyleSheet, cachePolicy, _expireDate)

@@ -896,27 +896,13 @@ void Node::createRendererIfNeeded()
 #endif
         ) {
         RenderStyle* style = styleForRenderer(parentRenderer);
-#ifndef KHTML_NO_XBL
-        bool resolveStyle = false;
-        if (document()->bindingManager()->loadBindings(this, style->bindingURIs(), true, &resolveStyle) && 
-            rendererIsNeeded(style)) {
-            if (resolveStyle) {
-                style->deref(document()->renderArena());
-                style = styleForRenderer(parentRenderer);
-            }
-#else
         if (rendererIsNeeded(style)) {
-#endif
             setRenderer(createRenderer(document()->renderArena(), style));
             if (renderer()) {
                 renderer()->setStyle(style);
                 parentRenderer->addChild(renderer(), nextRenderer());
             }
-#ifndef KHTML_NO_XBL
-        } // avoid confusing the change log code parser by having two close braces to match the two open braces above
-#else
         }
-#endif
         style->deref(document()->renderArena());
     }
 }

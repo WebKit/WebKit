@@ -37,7 +37,7 @@ ProcessingInstruction::ProcessingInstruction(Document* doc)
     : ContainerNode(doc)
     , m_cachedSheet(0)
     , m_loading(false)
-#if KHTML_XSLT
+#if XSLT_SUPPORT
     , m_isXSL(false)
 #endif
 {
@@ -49,7 +49,7 @@ ProcessingInstruction::ProcessingInstruction(Document* doc, const String& target
     , m_data(data.impl())
     , m_cachedSheet(0)
     , m_loading(false)
-#if KHTML_XSLT
+#if XSLT_SUPPORT
     , m_isXSL(false)
 #endif
 {
@@ -120,7 +120,7 @@ bool ProcessingInstruction::checkStyleSheet()
             type = i->second;
         
         bool isCSS = type.isEmpty() || type == "text/css";
-#if KHTML_XSLT
+#if XSLT_SUPPORT
         m_isXSL = (type == "text/xml" || type == "text/xsl" || type == "application/xml" ||
                    type == "application/xhtml+xml" || type == "application/rss+xml" || type == "application/atom=xml");
         if (!isCSS && !m_isXSL)
@@ -134,7 +134,7 @@ bool ProcessingInstruction::checkStyleSheet()
         if (href.length() > 1) {
             if (href[0] == '#') {
                 m_localHref = href.substring(1).impl();
-#if KHTML_XSLT
+#if XSLT_SUPPORT
                 // We need to make a synthetic XSLStyleSheet that is embedded.  It needs to be able
                 // to kick off import/include loads that can hang off some parent sheet.
                 if (m_isXSL) {
@@ -153,7 +153,7 @@ bool ProcessingInstruction::checkStyleSheet()
                     document()->addPendingSheet();
                     if (m_cachedSheet)
                         m_cachedSheet->deref(this);
-#if KHTML_XSLT
+#if XSLT_SUPPORT
                     if (m_isXSL)
                         m_cachedSheet = document()->docLoader()->requestXSLStyleSheet(document()->completeURL(href));
                     else
@@ -161,7 +161,7 @@ bool ProcessingInstruction::checkStyleSheet()
                     m_cachedSheet = document()->docLoader()->requestStyleSheet(document()->completeURL(href), String());
                     if (m_cachedSheet)
                         m_cachedSheet->ref( this );
-#if KHTML_XSLT
+#if XSLT_SUPPORT
                     return !m_isXSL;
 #endif
                 }
@@ -190,7 +190,7 @@ void ProcessingInstruction::sheetLoaded()
 
 void ProcessingInstruction::setStyleSheet(const String &url, const String &sheet)
 {
-#if KHTML_XSLT
+#if XSLT_SUPPORT
     if (m_isXSL)
         m_sheet = new XSLStyleSheet(this, url);
     else

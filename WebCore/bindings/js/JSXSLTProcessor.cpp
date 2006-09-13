@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
 
 #include "JSXSLTProcessor.h"
 #include "XSLTProcessor.h"
@@ -158,4 +158,4 @@ XSLTProcessorConstructorImp::XSLTProcessorConstructorImp(ExecState *exec)
 
 }
 
-#endif // KHTML_XSLT
+#endif // XSLT_SUPPORT

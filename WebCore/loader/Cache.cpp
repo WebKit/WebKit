@@ -279,7 +279,7 @@ CachedScript* Cache::requestScript(DocLoader* dl, const String& url, bool reload
     return static_cast<CachedScript *>(o);
 }
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
 CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String& url, bool reload, time_t expireDate)
 {
     // this brings the _url to a standard form...
@@ -331,7 +331,7 @@ CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String& ur
 }
 #endif
 
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
 CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String& url, bool reload, 
                                              time_t expireDate)
 {
@@ -573,13 +573,13 @@ Cache::Statistics Cache::getStatistics()
                 stats.scripts.count++;
                 stats.scripts.size += o->size();
                 break;
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
             case CachedResource::XSLStyleSheet:
                 stats.xslStyleSheets.count++;
                 stats.xslStyleSheets.size += o->size();
                 break;
 #endif
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
             case CachedResource::XBL:
                 stats.xblDocs.count++;
                 stats.xblDocs.size += o->size();

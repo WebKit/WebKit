@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#ifdef KHTML_XSLT
+#ifdef XSLT_SUPPORT
 
 #include "XSLTProcessor.h"
 
@@ -385,4 +385,4 @@ void XSLTProcessor::removeParameter(StringImpl *namespaceURI, StringImpl *localN
 
 } // namespace WebCore
 
-#endif // KHTML_XSLT
+#endif // XSLT_SUPPORT

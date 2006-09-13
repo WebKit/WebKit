@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
 
 #include "CachedXBLDocument.h"
 

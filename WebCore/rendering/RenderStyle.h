@@ -632,7 +632,7 @@ struct ShadowData {
     ShadowData* next;
 };
 
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
 struct BindingURI {
     BindingURI(StringImpl*);
     ~BindingURI();
@@ -724,7 +724,7 @@ public:
     ~StyleCSS3NonInheritedData();
     StyleCSS3NonInheritedData(const StyleCSS3NonInheritedData& o);
 
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
     bool bindingsEquivalent(const StyleCSS3NonInheritedData& o) const;
 #endif
 
@@ -747,7 +747,7 @@ public:
 
     unsigned m_appearance : 6; // EAppearance
 
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
     BindingURI* bindingURI; // The XBL binding URI list.
 #endif
 };
@@ -1323,7 +1323,7 @@ public:
     EPageBreak pageBreakAfter() const { return static_cast<EPageBreak>(noninherited_flags._page_break_after); }
     
     // CSS3 Getter Methods
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
     BindingURI* bindingURIs() const { return css3NonInheritedData->bindingURI; }
 #endif
     int outlineOffset() const { 
@@ -1541,7 +1541,7 @@ public:
     void setPageBreakAfter(EPageBreak b) { noninherited_flags._page_break_after = b; }
     
     // CSS3 Setters
-#ifndef KHTML_NO_XBL
+#ifdef XBL_SUPPORT
     void deleteBindingURIs() { 
         delete css3NonInheritedData->bindingURI; 
         SET_VAR(css3NonInheritedData, bindingURI, (BindingURI*) 0);
