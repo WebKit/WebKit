@@ -1,3 +1,20 @@
+2006-09-13  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Fix newly introduced memory leaks in SVG.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10835
+
+        * ksvg2/svg/SVGList.h:
+        (WebCore::SVGListBase::~SVGListBase):
+        (WebCore::SVGListBase::clearVector):
+        (WebCore::SVGListBase::clear):
+        (WebCore::SVGList::clearVector):
+        (WebCore::):
+        * ksvg2/svg/SVGNumberList.cpp: s/float/double/ - forgot that!
+        (SVGNumberList::SVGNumberList):
+        * ksvg2/svg/SVGNumberList.h: Ditto.
+
 2006-09-13  MorganL  <morlmor@yahoo.com>
 
         Reviewed/landed by aroben.

@@ -32,7 +32,7 @@
 using namespace WebCore;
 
 SVGNumberList::SVGNumberList()
-    : SVGList<float>()
+    : SVGList<double>()
 {
 }
 

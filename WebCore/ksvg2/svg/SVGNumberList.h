@@ -29,7 +29,7 @@
 
 namespace WebCore
 {
-    class SVGNumberList : public SVGList<float>
+    class SVGNumberList : public SVGList<double>
     {
     public:
         SVGNumberList();

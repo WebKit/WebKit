@@ -39,12 +39,14 @@ namespace WebCore {
     {
     public:
         SVGListBase() { }
-        virtual ~SVGListBase() { }
+        virtual ~SVGListBase() { clearVector(m_vector); }
 
+        // To be implemented by the SVGList specializations!
         virtual Item nullItem() const = 0;
+        virtual void clearVector(Vector<Item>& vector) const { vector.clear(); }
 
         unsigned int numberOfItems() const { return m_vector.size(); }
-        void clear(ExceptionCode &) { m_vector.clear(); }
+        void clear(ExceptionCode &) { clearVector(m_vector); }
 
         Item initialize(Item newItem, ExceptionCode& ec)
         {
@@ -137,9 +139,28 @@ namespace WebCore {
     {
     public:
         virtual Item nullItem() const { return 0; }
+
+        virtual void clearVector(Vector<Item>& vector) const
+        {
+            typedef typename Vector<Item>::const_iterator iterator;
+            
+            iterator end = vector.end();
+            for (iterator it = vector.begin(); it != end; ++it)
+                (*it)->deref();
+
+            vector.clear();    
+        }
     };
 
-    // Specialization for String...
+    // Specialization for double
+    template<>
+    class SVGList<double> : public SVGListBase<double>
+    {
+    public:
+        virtual double nullItem() const { return 0.0; }
+    };
+
+    // Specialization for String
     template<>
     class SVGList<String> : public SVGListBase<String>
     {
@@ -147,7 +168,7 @@ namespace WebCore {
         virtual String nullItem() const { return String(); }
     };
 
-    // Specialization for FloatPoint...
+    // Specialization for FloatPoint
     template<>
     class SVGList<FloatPoint> : public SVGListBase<FloatPoint>
     {
