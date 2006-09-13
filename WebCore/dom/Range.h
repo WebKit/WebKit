@@ -69,6 +69,7 @@ public:
     static short compareBoundaryPoints(Node* containerA, int offsetA, Node* containerB, int offsetB);
     static short compareBoundaryPoints(const Position&, const Position&);
     bool boundaryPointsValid() const;
+    bool intersectsNode(Node* refNode, ExceptionCode&);
     void deleteContents(ExceptionCode&);
     PassRefPtr<DocumentFragment> extractContents(ExceptionCode&);
     PassRefPtr<DocumentFragment> cloneContents(ExceptionCode&);

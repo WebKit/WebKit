@@ -1,3 +1,15 @@
+2006-09-11  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Andersca, Maciej, Brady.
+
+        - Implemented intersectsNode in the Range Class
+          to be compliant with Mozilla standard
+
+        * dom/Range.cpp:
+        (WebCore::Range::intersectsNode):
+        * dom/Range.h:
+        * dom/Range.idl:
+
 2006-09-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.

@@ -67,21 +67,6 @@ module ranges {
                                                    in Range sourceRange)
             raises(dom::DOMException);
 
-        short compareNode(in Node refNode)
-            raises(RangeException, dom::DOMException);
-
-        // CompareResults
-        const unsigned short NODE_BEFORE = 0;
-        const unsigned short NODE_AFTER = 1;
-        const unsigned short NODE_BEFORE_AND_AFTER = 2;
-        const unsigned short NODE_INSIDE = 3;
-
-        short comparePoint(in Node refNode, 
-                           in long offset)
-            raises(RangeException, dom::DOMException);
-        boolean isPointInRange(in Node refNode, 
-                               in long offset)
-            raises(RangeException, dom::DOMException);
         void deleteContents()
             raises(dom::DOMException);
         DocumentFragment extractContents()
@@ -104,7 +89,28 @@ module ranges {
 
         DocumentFragment createContextualFragment(in DOMString html)
             raises(dom::DOMException);
+            
+        // WebKit extensions
 
+        boolean intersectsNode(in Node refNode)
+            raises(RangeException, dom::DOMException);
+
+        short compareNode(in Node refNode)
+            raises(RangeException, dom::DOMException);
+
+        // CompareResults
+        const unsigned short NODE_BEFORE = 0;
+        const unsigned short NODE_AFTER = 1;
+        const unsigned short NODE_BEFORE_AND_AFTER = 2;
+        const unsigned short NODE_INSIDE = 3;
+
+        short comparePoint(in Node refNode, 
+                           in long offset)
+            raises(RangeException, dom::DOMException);
+
+        boolean isPointInRange(in Node refNode, 
+                               in long offset)
+            raises(RangeException, dom::DOMException);
     };
 
 }

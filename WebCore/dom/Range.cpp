@@ -543,6 +543,43 @@ void Range::deleteContents(ExceptionCode& ec) {
     processContents(DELETE_CONTENTS,ec);
 }
 
+bool Range::intersectsNode(Node* refNode, ExceptionCode& ec)
+{
+    // http://developer.mozilla.org/en/docs/DOM:range.intersectsNode
+    // Returns a bool if the node intersects the range.
+
+    if (!refNode) {
+        ec = NOT_FOUND_ERR;
+        return false;
+    }
+    
+    if (m_detached && refNode->attached() ||
+        !m_detached && !refNode->attached() ||
+        refNode->document() != m_ownerDocument)
+        // firefox doesn't throw an exception for these case; it returns false
+        return false;
+
+    Node* parentNode = refNode->parentNode();
+    unsigned nodeIndex = refNode->nodeIndex();
+    
+    if (!parentNode) {
+        // if the node is the top document we should return NODE_BEFORE_AND_AFTER
+        // but we throw to match firefox behavior
+        ec = NOT_FOUND_ERR;
+        return false;
+    }
+
+    if (comparePoint(parentNode, nodeIndex, ec) == -1 && // starts before start
+        comparePoint(parentNode, nodeIndex + 1, ec) == -1) { // ends before start
+        return false;
+    } else if(comparePoint(parentNode, nodeIndex, ec) == 1 && // starts after end
+              comparePoint(parentNode, nodeIndex + 1, ec) == 1) { // ends after end
+        return false;
+    }
+    
+    return true;    //all other cases
+}
+
 PassRefPtr<DocumentFragment> Range::processContents ( ActionType action, ExceptionCode& ec)
 {
     // ### when mutation events are implemented, we will have to take into account

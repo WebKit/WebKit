@@ -1,3 +1,11 @@
+2006-09-12  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Andersca, Maciej, Brady.
+
+        * fast/dom/Range/range-intersectsNode-expected.txt: Added.
+        * fast/dom/Range/range-intersectsNode.html: Added.
+        * fast/dom/Range/resources/intersectsNode.js: Added.
+
 2006-09-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.
