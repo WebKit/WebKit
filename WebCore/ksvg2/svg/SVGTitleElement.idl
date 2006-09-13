@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
- *               2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
-  interface [Conditional=SVG] SVGEvent : events::Event {};
+module svg
+{
+  interface [Conditional=SVG] SVGTitleElement : 
+                SVGElement,
+                SVGLangSpace,
+                SVGStylable {};
 };

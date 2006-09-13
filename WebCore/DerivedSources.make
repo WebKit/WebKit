@@ -232,20 +232,34 @@ all : \
     JSProcessingInstruction.h \
     JSRange.h \
     JSRangeException.h \
+    JSSVGZoomEvent.h \
+    JSSVGAElement.h \
     JSSVGAngle.h \
     JSSVGAnimatedAngle.h \
+    JSSVGAnimateColorElement.h \
+    JSSVGAnimateElement.h \
+    JSSVGAnimateTransformElement.h \
     JSSVGAnimatedBoolean.h \
     JSSVGAnimatedEnumeration.h \
     JSSVGAnimatedInteger.h \
     JSSVGAnimatedLength.h \
+    JSSVGAnimatedLengthList.h \
     JSSVGAnimatedNumber.h \
+    JSSVGAnimatedNumberList.h \
     JSSVGAnimatedPoints.h \
     JSSVGAnimatedPreserveAspectRatio.h \
     JSSVGAnimatedRect.h \
     JSSVGAnimatedString.h \
+    JSSVGAnimatedTransformList.h \
+    JSSVGAnimationElement.h \
     JSSVGColor.h \
+    JSSVGCircleElement.h \
+    JSSVGClipPathElement.h \
+    JSSVGComponentTransferFunctionElement.h \
+    JSSVGCursorElement.h \
+    JSSVGDefsElement.h \
+    JSSVGDescElement.h \
     JSSVGDocument.h \
-    JSSVGElement.h \
     JSSVGLength.h \
     JSSVGMatrix.h \
     JSSVGMetadataElement.h \
@@ -270,10 +284,73 @@ all : \
     JSSVGPathSegLinetoVerticalRel.h \
     JSSVGPathSegMovetoAbs.h \
     JSSVGPathSegMovetoRel.h \
+    JSSVGNumberList.h \
+    JSSVGPaint.h \
+    JSSVGPathSegList.h \
+    JSSVGPatternElement.h \
+    JSSVGPointList.h \
+    JSSVGPolygonElement.h \
+    JSSVGPolylineElement.h \
+    JSSVGRadialGradientElement.h \
+    JSSVGRectElement.h \
+    JSSVGRenderingIntent.h \
+    JSSVGSetElement.h \
+    JSSVGScriptElement.h \
+    JSSVGStyleElement.h \
+    JSSVGSwitchElement.h \
+    JSSVGStopElement.h \
+    JSSVGStringList.h \
+    JSSVGSymbolElement.h \
+    JSSVGTRefElement.h \
+    JSSVGTSpanElement.h \
+    JSSVGTextElement.h \
+    JSSVGTextContentElement.h \
+    JSSVGTextPositioningElement.h \
+    JSSVGTitleElement.h \
+    JSSVGTransform.h \
+    JSSVGTransformList.h \
+    JSSVGUnitTypes.h \
+    JSSVGUseElement.h \
+    JSSVGViewElement.h \
     JSSVGPointTable.cpp \
     JSSVGPreserveAspectRatio.h \
     JSSVGRectTable.cpp \
+    JSSVGElement.h \
     JSSVGSVGElement.h \
+    JSSVGEllipseElement.h \
+    JSSVGFEBlendElement.h \
+    JSSVGFEColorMatrixElement.h \
+    JSSVGFEComponentTransferElement.h \
+    JSSVGFECompositeElement.h \
+    JSSVGFEDiffuseLightingElement.h \
+    JSSVGFEDisplacementMapElement.h \
+    JSSVGFEDistantLightElement.h \
+    JSSVGFEFloodElement.h \
+    JSSVGFEFuncAElement.h \
+    JSSVGFEFuncBElement.h \
+    JSSVGFEFuncGElement.h \
+    JSSVGFEFuncRElement.h \
+    JSSVGFEGaussianBlurElement.h \
+    JSSVGFEImageElement.h \
+    JSSVGFEMergeElement.h \
+    JSSVGFEMergeNodeElement.h \
+    JSSVGFEOffsetElement.h \
+    JSSVGFEPointLightElement.h \
+    JSSVGFESpecularLightingElement.h \
+    JSSVGFESpotLightElement.h \
+    JSSVGFETileElement.h \
+    JSSVGFETurbulenceElement.h \
+    JSSVGFilterElement.h \
+    JSSVGForeignObjectElement.h \
+    JSSVGGElement.h \
+    JSSVGGradientElement.h \
+    JSSVGImageElement.h \
+    JSSVGLength.h \
+    JSSVGLengthList.h \
+    JSSVGLineElement.h \
+    JSSVGLinearGradientElement.h \
+    JSSVGMaskElement.h \
+    JSSVGMarkerElement.h \
     JSSVGTransform.h \
     JSText.h \
     JSTreeWalker.h \
@@ -438,7 +515,7 @@ OBJC_BINDINGS_SCRIPTS = \
 #
 
 DOM%.h : %.idl $(OBJC_BINDINGS_SCRIPTS) bindings/objc/PublicDOMInterfaces.h
-	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --include dom --include html --include xpath --include ksvg2/svg --outputdir . $<
+	perl -I`pwd`/$(WebCore)/bindings/scripts `pwd`/$(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --include `pwd`/$(WebCore)/dom --include `pwd`/$(WebCore)/html --include `pwd`/$(WebCore)/xpath --include `pwd`/$(WebCore)/ksvg2/svg --outputdir `pwd` $<
 
 # new-style JavaScript bindings
 
@@ -451,4 +528,4 @@ JS_BINDINGS_SCRIPTS = \
 #
 
 JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
-	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include dom --include html --include xml --include ksvg2/svg --outputdir . $<
+	perl -I`pwd`/$(WebCore)/bindings/scripts `pwd`/$(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include `pwd`/$(WebCore)/dom --include `pwd`/$(WebCore)/html --include `pwd`/$(WebCore)/xml --include `pwd`/$(WebCore)/ksvg2/svg --outputdir `pwd` $<

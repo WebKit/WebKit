@@ -23,8 +23,9 @@
 
 module svg
 {
-    // TODO: no css::ViewCSS available in kdom!
-    // TODO: Fix SVGSVGElement inheritance(css::DocumentCSS)! 
+    // TODO: no css::ViewCSS available!
+    // TODO: Fix SVGSVGElement inheritance (css::DocumentCSS)! 
+    // TODO: no events::DocumentEvent available!
     interface [Conditional=SVG] SVGSVGElement : 
                 SVGElement,
                 SVGTests,
@@ -33,8 +34,7 @@ module svg
                 SVGStylable,
                 SVGLocatable,
                 SVGFitToViewBox,
-                SVGZoomAndPan,
-                events::DocumentEvent {
+                SVGZoomAndPan {
 
         readonly attribute SVGAnimatedLength x;
         readonly attribute SVGAnimatedLength y;

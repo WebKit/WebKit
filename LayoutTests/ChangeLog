@@ -1,3 +1,13 @@
+2006-09-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Fixed: http://bugzilla.opendarwin.org/show_bug.cgi?id=10826
+
+        * svg/W3C-SVG-1.1/struct-dom-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-dom-01-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-dom-01-b-expected.txt:
+
 2006-09-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.

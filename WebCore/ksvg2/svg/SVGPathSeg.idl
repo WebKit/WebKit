@@ -25,7 +25,7 @@
 
 module svg
 {
-  interface [Conditional=SVG] SVGPathSeg { 
+  interface [Conditional=SVG, GenerateConstructor] SVGPathSeg { 
     // Path Segment Types
     const unsigned short PATHSEG_UNKNOWN                      = 0;
     const unsigned short PATHSEG_CLOSEPATH                    = 1;

@@ -39,9 +39,11 @@ my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1,
 
 my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
-                           "SVGAnimatedLength" => 1, "SVGAnimatedNumber" => 1,
+                           "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1,
+                           "SVGAnimatedNumber" => 1, "SVGAnimatedNumberList" => 1,
                            "SVGAnimatedPreserveAspectRatio" => 1,
-                           "SVGAnimatedRect" => 1, "SVGAnimatedString" => 1);
+                           "SVGAnimatedRect" => 1, "SVGAnimatedString" => 1,
+                           "SVGAnimatedTransformList" => 1);
     
 # Helpers for 'ScanDirectory'
 my $endCondition = 0;

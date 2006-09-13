@@ -23,7 +23,7 @@
 
 module svg
 {
-  interface [Conditional=SVG] SVGLength { 
+  interface [Conditional=SVG, GenerateConstructor] SVGLength { 
     // Length Unit Types
     const unsigned short SVG_LENGTHTYPE_UNKNOWN    = 0;
     const unsigned short SVG_LENGTHTYPE_NUMBER     = 1;

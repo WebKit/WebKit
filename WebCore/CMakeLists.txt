@@ -71,37 +71,76 @@ SET(FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT SVG_SUPPORT)
 
 set(IDL_BINDINGS_SVG
 
-# These three don't need generation!
-#
-# ksvg2/svg/SVGNumber.idl
-# ksvg2/svg/SVGPoint.idl
-# ksvg2/svg/SVGRect.idl
-
 # TODO: Fix generation
-# ksvg2/svg/SVGEvent.idl
+# ksvg2/svg/SVGFilterPrimitiveStandardAttributes.idl
 
+  ksvg2/events/SVGZoomEvent.idl
+
+  ksvg2/svg/SVGAElement.idl
   ksvg2/svg/SVGAngle.idl
+  ksvg2/svg/SVGAnimateColorElement.idl
+  ksvg2/svg/SVGAnimateElement.idl
+  ksvg2/svg/SVGAnimateTransformElement.idl
   ksvg2/svg/SVGAnimatedAngle.idl
   ksvg2/svg/SVGAnimatedBoolean.idl
   ksvg2/svg/SVGAnimatedEnumeration.idl
   ksvg2/svg/SVGAnimatedInteger.idl
-  ksvg2/svg/SVGAnimatedLength.idl 
+  ksvg2/svg/SVGAnimatedLength.idl
+  ksvg2/svg/SVGAnimatedLengthList.idl
   ksvg2/svg/SVGAnimatedNumber.idl
-# ksvg2/svg/SVGAnimatedPathData.idl
-# ksvg2/svg/SVGAnimatedPoints.idl
+  ksvg2/svg/SVGAnimatedNumberList.idl
   ksvg2/svg/SVGAnimatedPreserveAspectRatio.idl
   ksvg2/svg/SVGAnimatedRect.idl
   ksvg2/svg/SVGAnimatedString.idl
-
-
-  ksvg2/svg/SVGMatrix.idl
-  ksvg2/svg/SVGTransform.idl
-  ksvg2/svg/SVGLength.idl
-  ksvg2/svg/SVGElement.idl
+  ksvg2/svg/SVGAnimatedTransformList.idl
+  ksvg2/svg/SVGAnimationElement.idl
+  ksvg2/svg/SVGCircleElement.idl
+  ksvg2/svg/SVGClipPathElement.idl
   ksvg2/svg/SVGColor.idl
+  ksvg2/svg/SVGComponentTransferFunctionElement.idl
+  ksvg2/svg/SVGCursorElement.idl
+  ksvg2/svg/SVGDefsElement.idl
+  ksvg2/svg/SVGDescElement.idl
   ksvg2/svg/SVGDocument.idl
-  ksvg2/svg/SVGSVGElement.idl
+  ksvg2/svg/SVGElement.idl
+  ksvg2/svg/SVGEllipseElement.idl
+  ksvg2/svg/SVGFEBlendElement.idl
+  ksvg2/svg/SVGFEColorMatrixElement.idl
+  ksvg2/svg/SVGFEComponentTransferElement.idl
+  ksvg2/svg/SVGFECompositeElement.idl
+  ksvg2/svg/SVGFEDiffuseLightingElement.idl
+  ksvg2/svg/SVGFEDisplacementMapElement.idl
+  ksvg2/svg/SVGFEDistantLightElement.idl
+  ksvg2/svg/SVGFEFloodElement.idl
+  ksvg2/svg/SVGFEFuncAElement.idl
+  ksvg2/svg/SVGFEFuncBElement.idl
+  ksvg2/svg/SVGFEFuncGElement.idl
+  ksvg2/svg/SVGFEFuncRElement.idl
+  ksvg2/svg/SVGFEGaussianBlurElement.idl
+  ksvg2/svg/SVGFEImageElement.idl
+  ksvg2/svg/SVGFEMergeElement.idl
+  ksvg2/svg/SVGFEMergeNodeElement.idl
+  ksvg2/svg/SVGFEOffsetElement.idl
+  ksvg2/svg/SVGFEPointLightElement.idl
+  ksvg2/svg/SVGFESpecularLightingElement.idl
+  ksvg2/svg/SVGFESpotLightElement.idl
+  ksvg2/svg/SVGFETileElement.idl
+  ksvg2/svg/SVGFETurbulenceElement.idl
+  ksvg2/svg/SVGFilterElement.idl
+  ksvg2/svg/SVGForeignObjectElement.idl
+  ksvg2/svg/SVGGElement.idl
+  ksvg2/svg/SVGGradientElement.idl 
+  ksvg2/svg/SVGImageElement.idl
+  ksvg2/svg/SVGLength.idl
+  ksvg2/svg/SVGLengthList.idl
+  ksvg2/svg/SVGLineElement.idl
+  ksvg2/svg/SVGLinearGradientElement.idl
+  ksvg2/svg/SVGMaskElement.idl
+  ksvg2/svg/SVGMarkerElement.idl
+  ksvg2/svg/SVGMatrix.idl
   ksvg2/svg/SVGMetadataElement.idl
+  ksvg2/svg/SVGNumberList.idl
+  ksvg2/svg/SVGPaint.idl
   ksvg2/svg/SVGPathElement.idl
   ksvg2/svg/SVGPathSeg.idl
   ksvg2/svg/SVGPathSegArcAbs.idl
@@ -121,9 +160,36 @@ set(IDL_BINDINGS_SVG
   ksvg2/svg/SVGPathSegLinetoRel.idl
   ksvg2/svg/SVGPathSegLinetoVerticalAbs.idl
   ksvg2/svg/SVGPathSegLinetoVerticalRel.idl
+  ksvg2/svg/SVGPathSegList.idl
   ksvg2/svg/SVGPathSegMovetoAbs.idl
   ksvg2/svg/SVGPathSegMovetoRel.idl
+  ksvg2/svg/SVGPatternElement.idl
+  ksvg2/svg/SVGPointList.idl
+  ksvg2/svg/SVGPolygonElement.idl
+  ksvg2/svg/SVGPolylineElement.idl
   ksvg2/svg/SVGPreserveAspectRatio.idl
+  ksvg2/svg/SVGRadialGradientElement.idl
+  ksvg2/svg/SVGRectElement.idl
+  ksvg2/svg/SVGRenderingIntent.idl
+  ksvg2/svg/SVGSetElement.idl
+  ksvg2/svg/SVGScriptElement.idl
+  ksvg2/svg/SVGStyleElement.idl
+  ksvg2/svg/SVGSwitchElement.idl
+  ksvg2/svg/SVGStopElement.idl
+  ksvg2/svg/SVGStringList.idl
+  ksvg2/svg/SVGSymbolElement.idl
+  ksvg2/svg/SVGSVGElement.idl
+  ksvg2/svg/SVGTRefElement.idl
+  ksvg2/svg/SVGTSpanElement.idl
+  ksvg2/svg/SVGTextElement.idl
+  ksvg2/svg/SVGTextContentElement.idl
+  ksvg2/svg/SVGTextPositioningElement.idl
+  ksvg2/svg/SVGTitleElement.idl
+  ksvg2/svg/SVGTransform.idl
+  ksvg2/svg/SVGTransformList.idl
+  ksvg2/svg/SVGUnitTypes.idl
+  ksvg2/svg/SVGUseElement.idl
+  ksvg2/svg/SVGViewElement.idl
 )
 ENDIF (WEBKIT_USE_SVG_SUPPORT)
 

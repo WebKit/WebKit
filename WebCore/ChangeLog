@@ -1,3 +1,117 @@
+2006-09-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Test: svg/W3C-SVG-1.1/struct-dom-01-b.svg (fixed)
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10826
+        
+        Also finally fixes some long outstanding bugs:
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=9190
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=9229
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10413
+
+        Enable all JavaScript SVG bindings. Builds on Qt/Linux & OSX.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * ksvg2/bindings/js/JSSVGElementWrapperFactory.cpp:
+        * ksvg2/svg/SVGAElement.idl: Added.
+        * ksvg2/svg/SVGAngle.idl:
+        * ksvg2/svg/SVGAnimateColorElement.idl: Added.
+        * ksvg2/svg/SVGAnimateElement.idl: Added.
+        * ksvg2/svg/SVGAnimateTransformElement.idl: Added.
+        * ksvg2/svg/SVGAnimatedLengthList.idl: Added.
+        * ksvg2/svg/SVGAnimatedNumberList.idl: Added.
+        * ksvg2/svg/SVGAnimatedTransformList.idl: Added.
+        * ksvg2/svg/SVGAnimationElement.idl: Added.
+        * ksvg2/svg/SVGCircleElement.idl: Added.
+        * ksvg2/svg/SVGClipPathElement.idl: Added.
+        * ksvg2/svg/SVGColor.idl:
+        * ksvg2/svg/SVGComponentTransferFunctionElement.idl: Added.
+        * ksvg2/svg/SVGCursorElement.idl: Added.
+        * ksvg2/svg/SVGDefsElement.idl: Added.
+        * ksvg2/svg/SVGDescElement.idl: Added.
+        * ksvg2/svg/SVGEllipseElement.idl: Added.
+        * ksvg2/svg/SVGEvent.idl:
+        * ksvg2/svg/SVGExternalResourcesRequired.idl: Added.
+        * ksvg2/svg/SVGFEBlendElement.idl: Added.
+        * ksvg2/svg/SVGFEColorMatrixElement.idl: Added.
+        * ksvg2/svg/SVGFEComponentTransferElement.idl: Added.
+        * ksvg2/svg/SVGFECompositeElement.idl: Added.
+        * ksvg2/svg/SVGFEDiffuseLightingElement.idl: Added.
+        * ksvg2/svg/SVGFEDisplacementMapElement.idl: Added.
+        * ksvg2/svg/SVGFEDistantLightElement.idl: Added.
+        * ksvg2/svg/SVGFEFloodElement.idl: Added.
+        * ksvg2/svg/SVGFEFuncAElement.idl: Added.
+        * ksvg2/svg/SVGFEFuncBElement.idl: Added.
+        * ksvg2/svg/SVGFEFuncGElement.idl: Added.
+        * ksvg2/svg/SVGFEFuncRElement.idl: Added.
+        * ksvg2/svg/SVGFEGaussianBlurElement.idl: Added.
+        * ksvg2/svg/SVGFEImageElement.idl: Added.
+        * ksvg2/svg/SVGFEMergeElement.idl: Added.
+        * ksvg2/svg/SVGFEMergeNodeElement.idl: Added.
+        * ksvg2/svg/SVGFEOffsetElement.idl: Added.
+        * ksvg2/svg/SVGFEPointLightElement.idl: Added.
+        * ksvg2/svg/SVGFESpecularLightingElement.idl: Added.
+        * ksvg2/svg/SVGFESpotLightElement.idl: Added.
+        * ksvg2/svg/SVGFETileElement.idl: Added.
+        * ksvg2/svg/SVGFETurbulenceElement.idl: Added.
+        * ksvg2/svg/SVGFilterElement.idl: Added.
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.idl: Added.
+        * ksvg2/svg/SVGFitToViewBox.idl: Added.
+        * ksvg2/svg/SVGForeignObjectElement.idl: Added.
+        * ksvg2/svg/SVGGElement.idl: Added.
+        * ksvg2/svg/SVGGradientElement.idl: Added.
+        * ksvg2/svg/SVGImageElement.idl: Added.
+        * ksvg2/svg/SVGLangSpace.idl: Added.
+        * ksvg2/svg/SVGLength.idl:
+        * ksvg2/svg/SVGLengthList.idl: Added.
+        * ksvg2/svg/SVGLineElement.idl: Added.
+        * ksvg2/svg/SVGLinearGradientElement.idl: Added.
+        * ksvg2/svg/SVGLocatable.idl: Added.
+        * ksvg2/svg/SVGMarkerElement.idl: Added.
+        * ksvg2/svg/SVGMaskElement.idl: Added.
+        * ksvg2/svg/SVGNumberList.idl: Added.
+        * ksvg2/svg/SVGPaint.idl: Added.
+        * ksvg2/svg/SVGPathElement.idl:
+        * ksvg2/svg/SVGPathSeg.idl:
+        * ksvg2/svg/SVGPatternElement.idl: Added.
+        * ksvg2/svg/SVGPointList.idl: Added.
+        * ksvg2/svg/SVGPolygonElement.idl: Added.
+        * ksvg2/svg/SVGPolylineElement.idl: Added.
+        * ksvg2/svg/SVGPreserveAspectRatio.idl:
+        * ksvg2/svg/SVGRadialGradientElement.idl: Added.
+        * ksvg2/svg/SVGRectElement.idl: Added.
+        * ksvg2/svg/SVGRenderingIntent.idl: Added.
+        * ksvg2/svg/SVGSVGElement.idl:
+        * ksvg2/svg/SVGScriptElement.idl: Added.
+        * ksvg2/svg/SVGSetElement.idl: Added.
+        * ksvg2/svg/SVGStopElement.idl: Added.
+        * ksvg2/svg/SVGStringList.idl: Added.
+        * ksvg2/svg/SVGStylable.idl: Added.
+        * ksvg2/svg/SVGStyleElement.idl: Added.
+        * ksvg2/svg/SVGSwitchElement.idl: Added.
+        * ksvg2/svg/SVGSymbolElement.idl: Added.
+        * ksvg2/svg/SVGTRefElement.idl: Added.
+        * ksvg2/svg/SVGTSpanElement.idl: Added.
+        * ksvg2/svg/SVGTests.idl: Added.
+        * ksvg2/svg/SVGTextContentElement.idl: Added.
+        * ksvg2/svg/SVGTextElement.idl: Added.
+        * ksvg2/svg/SVGTextPositioningElement.idl: Added.
+        * ksvg2/svg/SVGTitleElement.idl: Added.
+        * ksvg2/svg/SVGTransform.idl:
+        * ksvg2/svg/SVGTransformList.idl: Added.
+        * ksvg2/svg/SVGTransformable.idl: Added.
+        * ksvg2/svg/SVGURIReference.idl: Added.
+        * ksvg2/svg/SVGUnitTypes.idl: Added.
+        * ksvg2/svg/SVGUseElement.idl: Added.
+        * ksvg2/svg/SVGViewElement.idl: Added.
+        * ksvg2/svg/SVGZoomAndPan.idl: Added.
+        * ksvg2/svg/SVGZoomEvent.idl: Added.
+
 2006-09-12  Adam Roben  <aroben@apple.com>
 
         Reviewed by timo, ggaren.

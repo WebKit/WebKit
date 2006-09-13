@@ -1,7 +1,8 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (40,150) size 50x50
+      KCanvasContainer {g} at (40,150) size 60x60
+        KCanvasItem {rect} at (50,160) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M50.00,160.00L100.00,160.00L100.00,210.00L50.00,210.00"]
         KCanvasItem {rect} at (40,150) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M40.00,150.00L90.00,150.00L90.00,200.00L40.00,200.00"]
         RenderSVGText {text} at (0,0) size 480x18
           RenderText {#text} at (0,0) size 266x18
