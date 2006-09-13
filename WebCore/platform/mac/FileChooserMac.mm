@@ -133,9 +133,9 @@ void FileChooser::chooseFile(const String& filename)
     
     // Need unsigned 0 here to disambiguate String::operator[] from operator(NSString*, int)[]
     if (!m_filename.length() || m_filename[0U] != '/')
-        m_icon.set(0);
+        m_icon = 0;
     else
-        m_icon.set(Icon::newIconForFile(m_filename).release());
+        m_icon = Icon::newIconForFile(m_filename);
     
     uploadControl()->valueChanged();
 }

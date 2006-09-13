@@ -23,7 +23,7 @@
 
 #include "Icon.h"
 #include "PlatformString.h"
-#include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
@@ -62,7 +62,7 @@ public:
 private:
     Document* m_document;
     String m_filename;
-    OwnPtr<Icon> m_icon;
+    RefPtr<Icon> m_icon;
     RenderFileUploadControl* m_uploadControl;
     
 #if PLATFORM(MAC)

@@ -21,7 +21,10 @@
 #ifndef ICON_H_
 #define ICON_H_
 
+#include "Shared.h"
+
 #include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
@@ -33,20 +36,18 @@ class NSImage;
 typedef struct HICON__* HICON;
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 class GraphicsContext;
 class IntRect;
 class String;
     
-class Icon : Noncopyable {
+class Icon : public Shared<Icon>, Noncopyable {
 public:
     Icon();
     ~Icon();
     
-    static auto_ptr<Icon> newIconForFile(const String& filename);
+    static PassRefPtr<Icon> newIconForFile(const String& filename);
 
     void paint(GraphicsContext*, const IntRect&);
     

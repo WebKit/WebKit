@@ -38,13 +38,13 @@ Icon::~Icon()
     [m_nsImage release];
 }
 
-auto_ptr<Icon> Icon::newIconForFile(const String& filename)
+PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
 {
     NSImage* fileIcon = [[[NSWorkspace sharedWorkspace] iconForFile:filename] retain];
     if (!fileIcon)
-        return auto_ptr<Icon>(0);
+        return PassRefPtr<Icon>(0);
     
-    auto_ptr<Icon> icon(new Icon());
+    PassRefPtr<Icon> icon(new Icon());
 
     icon->m_nsImage = fileIcon;
     

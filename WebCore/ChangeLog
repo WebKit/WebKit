@@ -1,3 +1,18 @@
+2006-09-12  Adam Roben  <aroben@apple.com>
+
+        Reviewed by timo, ggaren.
+
+        Make Icon ref-counted.
+
+        * platform/FileChooser.h: Store m_icon as a RefPtr instead of
+        auto_ptr.
+        * platform/Icon.h: Inherit from Shared<Icon>
+        * platform/mac/FileChooserMac.mm:
+        (WebCore::FileChooser::chooseFile): Update m_icon usage
+        * platform/mac/IconMac.mm:
+        (WebCore::Icon::newIconForFile): Return a RefPtr instead of an
+        auto_ptr
+
 === Safari-521.26 ===
 
 2006-09-12  Nikolas Zimmermann  <zimmermann@kde.org>
