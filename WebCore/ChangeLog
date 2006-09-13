@@ -1,3 +1,10 @@
+2006-09-12  Julien Palmas  <julien.palmas@gmail.com>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        * ksvg2/svg/svgpathparser.cpp:
+        (WebCore::SVGPolyParser::parsePoints):
+
 2006-09-11  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Andersca, Maciej, Brady.

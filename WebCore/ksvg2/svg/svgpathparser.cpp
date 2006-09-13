@@ -115,6 +115,8 @@ void SVGPolyParser::parsePoints(const DeprecatedString& s) const
     const char* currSegment = pointData.latin1();
     const char* eoString = pointData.latin1() + pointData.length();
     
+    skipOptionalSpaces(currSegment);
+    
     int segmentNum = 0;
     while (currSegment < eoString) {
         const char* prevSegment = currSegment;

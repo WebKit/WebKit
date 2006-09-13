@@ -1,3 +1,12 @@
+2006-09-12  Julien Palmas  <julien.palmas@gmail.com>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        * svg/custom/svgpolyparser-extra-space-expected.checksum: Added.
+        * svg/custom/svgpolyparser-extra-space-expected.png: Added.
+        * svg/custom/svgpolyparser-extra-space-expected.txt: Added.
+        * svg/custom/svgpolyparser-extra-space.svg: Added.
+
 2006-09-12  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Andersca, Maciej, Brady.
