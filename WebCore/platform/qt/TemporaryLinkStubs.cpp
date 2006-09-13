@@ -36,7 +36,6 @@
 #include "Node.h"
 #include "Frame.h"
 #include "Font.h"
-#include "FileButton.h"
 #include "IntPoint.h"
 #include "Widget.h"
 #include "GraphicsContext.h"
@@ -148,7 +147,9 @@ String WebCore::submitButtonDefaultLabel() { return "Submit"; }
 String WebCore::inputElementAltText() { return DeprecatedString(); }
 String WebCore::resetButtonDefaultLabel() { return "Reset"; }
 String WebCore::defaultLanguage() { return "en"; }
-
+String WebCore::searchableIndexIntroduction() { return "Searchable Index"; }
+String WebCore::fileButtonChooseFileLabel() { return "Choose File"; }
+String WebCore::fileButtonNoFileSelectedLabel() { return "No file selected"; }
 
 int WebCore::findNextSentenceFromIndex(UChar const*, int, int, bool) { notImplemented(); return 0; }
 void WebCore::findSentenceBoundary(UChar const*, int, int, int*, int*) { notImplemented(); }
@@ -159,8 +160,6 @@ void Frame::setNeedsReapplyStyles() { notImplemented(); }
 
 int WebCore::screenDepthPerComponent(const Page*) { notImplemented(); return 0; }
 bool WebCore::screenIsMonochrome(const Page*) { notImplemented(); return false; }
-
-String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
 
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { notImplemented(); }
 
@@ -173,16 +172,6 @@ Vector<char> loadResourceIntoArray(const char*) { return Vector<char>(); }
 PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0; }
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
 bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { return false; }
-
-FileButton::FileButton(Frame*) { notImplemented(); }
-void FileButton::click(bool) { notImplemented(); }
-IntSize FileButton::sizeForCharacterWidth(int) const { notImplemented(); return IntSize(); }
-Widget::FocusPolicy FileButton::focusPolicy() const { notImplemented(); return NoFocus; }
-WebCore::IntRect FileButton::frameGeometry() const { notImplemented(); return IntRect(); }
-void FileButton::setFilename(DeprecatedString const&) { notImplemented(); }
-int FileButton::baselinePosition(int) const { notImplemented(); return 0; }
-void FileButton::setFrameGeometry(WebCore::IntRect const&) { notImplemented(); }
-void FileButton::setDisabled(bool) { notImplemented(); }
 
 namespace WebCore {
     

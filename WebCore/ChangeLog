@@ -1,3 +1,28 @@
+2006-09-13  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Tim H.
+
+        Fix Qt/Linux build.
+
+        * CMakeLists.txt: Change SVGZoomEvent.idl location & add RenderFileUploadControl
+        * platform/Icon.h: Add wtf/Platform.h include
+        * platform/qt/FileChooserQt.cpp: Added as stub. Easy to implement though.
+        (WebCore::FileChooser::FileChooser):
+        (WebCore::FileChooser::~FileChooser):
+        (WebCore::FileChooser::openFileChooser):
+        (WebCore::FileChooser::basenameForWidth):
+        (WebCore::FileChooser::uploadControlDetaching):
+        (WebCore::FileChooser::chooseFile):
+        * platform/qt/IconQt.cpp: Added as stub.
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::newIconForFile):
+        (WebCore::Icon::paint):
+        * platform/qt/TemporaryLinkStubs.cpp: Remove old RenderFileButton code & some new *Labels needed
+        (searchableIndexIntroduction):
+        (fileButtonChooseFileLabel):
+        (fileButtonNoFileSelectedLabel):
+
 2006-09-12  Adam Roben  <aroben@apple.com>
 
         Reviewed by eseidel.

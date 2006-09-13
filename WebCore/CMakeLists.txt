@@ -74,8 +74,6 @@ set(IDL_BINDINGS_SVG
 # TODO: Fix generation
 # ksvg2/svg/SVGFilterPrimitiveStandardAttributes.idl
 
-  ksvg2/events/SVGZoomEvent.idl
-
   ksvg2/svg/SVGAElement.idl
   ksvg2/svg/SVGAngle.idl
   ksvg2/svg/SVGAnimateColorElement.idl
@@ -190,6 +188,7 @@ set(IDL_BINDINGS_SVG
   ksvg2/svg/SVGUnitTypes.idl
   ksvg2/svg/SVGUseElement.idl
   ksvg2/svg/SVGViewElement.idl
+  ksvg2/svg/SVGZoomEvent.idl
 )
 ENDIF (WEBKIT_USE_SVG_SUPPORT)
 
@@ -938,6 +937,8 @@ set(WebCore_SRCS
     platform/FloatRect.cpp
     platform/ResourceLoader.cpp
     platform/Path.cpp
+    platform/qt/FileChooserQt.cpp
+    platform/qt/IconQt.cpp
     platform/qt/AffineTransformQt.cpp
     platform/qt/StringQt.cpp
     platform/qt/ColorQt.cpp
@@ -1037,7 +1038,7 @@ set(WebCore_SRCS
     rendering/RenderLabel.cpp
     rendering/RenderTableRow.cpp
     rendering/RenderInline.cpp
-    rendering/RenderFileButton.cpp
+    rendering/RenderFileUploadControl.cpp
     rendering/RenderHTMLCanvas.cpp
     rendering/bidi.cpp
     rendering/RenderFlexibleBox.cpp
