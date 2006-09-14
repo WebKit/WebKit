@@ -1,5 +1,16 @@
 2006-09-14  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Maciej's rubber stamp
+
+        Exact same fix I just made, but in the other method I horked up
+        Also added a reference to the bugzilla in comments
+
+        * page/Frame.cpp:
+        (WebCore::Frame::endIfNotLoading):
+        (WebCore::Frame::stop):
+
+2006-09-14  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Maciej
 
         Fixed a bad iFrame crash, resolving some of the layout test badness

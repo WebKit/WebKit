@@ -728,6 +728,7 @@ void Frame::end()
 
 void Frame::endIfNotLoading()
 {
+    // http://bugzilla.opendarwin.org/show_bug.cgi?id=10854
     // The frame's last ref may be remove and it be deleted by checkCompleted(), 
     // so we'll add a protective refcount
     RefPtr<Frame> protector(this);
@@ -779,6 +780,11 @@ void Frame::endIfNotLoading()
 
 void Frame::stop()
 {
+    // http://bugzilla.opendarwin.org/show_bug.cgi?id=10854
+    // The frame's last ref may be remove and it be deleted by checkCompleted(), 
+    // so we'll add a protective refcount
+    RefPtr<Frame> protector(this);
+    
     if (d->m_doc) {
         if (d->m_doc->tokenizer())
             d->m_doc->tokenizer()->stopParsing();
