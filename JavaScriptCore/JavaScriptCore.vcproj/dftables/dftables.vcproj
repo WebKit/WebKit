@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
-			IntermediateDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
+			OutputDirectory="$(WebKitOutputDir)\bin"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\JavaScriptCore\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
@@ -41,10 +41,11 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../wtf"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
+				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
@@ -61,7 +62,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkIncremental="1"
+				OutputFile="$(OutDir)\$(ProjectName)_debug.exe"
+				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -93,8 +95,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
-			IntermediateDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\"
+			OutputDirectory="$(WebKitOutputDir)\bin"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\JavaScriptCore\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -117,7 +119,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../../wtf"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
+				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"

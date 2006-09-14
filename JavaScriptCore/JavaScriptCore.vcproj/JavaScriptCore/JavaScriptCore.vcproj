@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
-			IntermediateDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
+			OutputDirectory="$(WebKitOutputDir)\lib"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="1"
 			DeleteExtensionsOnClean="*.obj;*.ilk;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;$(TargetPath)"
@@ -26,7 +26,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Constructing generated files..."
-				CommandLine="bash build-generated-files.sh &quot;$(ConfigurationName)&quot; &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(WebkitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\dftables.exe&quot; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\chartables.c&quot;&#x0D;&#x0A;"
+				CommandLine="bash build-generated-files.sh &quot;$(ConfigurationName)&quot; &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(WebkitOutputDir)\bin\dftables_debug.exe&quot; &quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\chartables.c&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitSDKDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitSDKDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni"
 				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -70,6 +70,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)\$(ProjectName)_debug.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -85,13 +86,13 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\os-win32&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Vector.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Assertions.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\VectorTraits.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\RefPtr.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Platform.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\FastMalloc.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\MathExtras.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashMap.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashTable.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashTraits.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashFunctions.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32\stdint.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\os-win32&quot;&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\WTF.lib&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npapi.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_impl.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\NP_jsobject.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_root.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;&#x0D;&#x0A;dir &gt; &quot;$(TargetDir)WTF_debug.lib&quot;&#x0D;&#x0A;xcopy /y /i &quot;$(TargetPath)&quot; &quot;$(TargetDir)WTF_debug.lib&quot;&#x0D;&#x0A;&#x0D;&#x0A;dstroot-to-sdk.cmd JavaScriptCore&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
-			IntermediateDirectory="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate"
+			OutputDirectory="$(WebKitOutputDir)\lib"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="1"
 			DeleteExtensionsOnClean="*.obj;*.ilk;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;$(TargetPath)"
@@ -100,7 +101,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Constructing generated files..."
-				CommandLine="bash build-generated-files.sh &quot;$(ConfigurationName)&quot; &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(WebkitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\dftables.intermediate\dftables.exe&quot; &quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\chartables.c&quot;&#x0D;&#x0A;"
+				CommandLine="bash build-generated-files.sh &quot;$(ConfigurationName)&quot; &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(WebkitOutputDir)\bin\dftables.exe&quot; &quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\chartables.c&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -118,7 +119,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitSDKDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitSDKDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni"
 				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C;NDEBUG"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -156,7 +157,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\os-win32&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Vector.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Assertions.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\VectorTraits.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\RefPtr.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\Platform.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\FastMalloc.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\MathExtras.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashMap.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashTable.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashTraits.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\wtf\HashFunctions.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;&#x0D;&#x0A;xcopy /y &quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32\stdint.h&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\os-win32&quot;&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; &quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF\WTF.lib&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\wtf\os-win32&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\pcre&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npapi.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_impl.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\NP_jsobject.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_root.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\bindings&quot;&#x0D;&#x0A;&#x0D;&#x0A;dir &gt; &quot;$(TargetDir)WTF.lib&quot;&#x0D;&#x0A;xcopy /y /i &quot;$(TargetPath)&quot; &quot;$(TargetDir)WTF.lib&quot;&#x0D;&#x0A;&#x0D;&#x0A;dstroot-to-sdk.cmd JavaScriptCore&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

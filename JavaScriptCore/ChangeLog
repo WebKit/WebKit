@@ -1,4 +1,15 @@
-=== Safari-521.26 ===
+2006-09-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Ada.
+        
+        Build tweaks (doing JavaScriptCore now since it doesn't have
+        dependencies).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh:
+        * JavaScriptCore.vcproj/JavaScriptCore/dstroot-to-sdk.cmd: Added.
+        * JavaScriptCore.vcproj/dftables/dftables.vcproj:
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
 
 2006-09-11  Brady Eidson  <beidson@apple.com>
 

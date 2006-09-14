@@ -4,7 +4,7 @@
 WebKitUnixDir=`cygpath -a -u "$2"`
 
 # Set up the directory that will hold all our generated files.
-DerivedSourcesDir="$WebKitUnixDir/JavaScriptCore.intermediate/$1/JavaScriptCore.intermediate/DerivedSources"
+DerivedSourcesDir="$WebKitUnixDir/obj/JavaScriptCore/$1/DerivedSources"
 mkdir -p "$DerivedSourcesDir"
 
 # Invoke the create_hash_table perl script to create all of our lookup tables
@@ -61,8 +61,10 @@ if [ ../../kjs/grammar.y -nt "$DerivedSourcesDir/grammar.cpp" ]; then
 fi
 
 echo "Copying ICU DLLS..."
-WebKitOutputConfigDir="$WebKitUnixDir/$1"
+WebKitOutputConfigDir="$WebKitUnixDir/bin/JavaScriptCore/$1"
 mkdir -p "$WebKitOutputConfigDir"
 
-cp ../../../icu/bin/icudt34.dll "$WebKitOutputConfigDir" || exit 1
-cp ../../../icu/bin/icuuc34.dll "$WebKitOutputConfigDir" || exit 1
+if [ -e "../../../icu/bin/icudt34.dll" ]; then
+    cp ../../../icu/bin/icudt34.dll "$WebKitOutputConfigDir" || exit 1
+    cp ../../../icu/bin/icuuc34.dll "$WebKitOutputConfigDir" || exit 1
+fi
