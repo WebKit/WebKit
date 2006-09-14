@@ -248,6 +248,7 @@ public:
     virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*);
     virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*);
     virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*);
+    virtual KJS::Bindings::RootObject* bindingRootObject();
     void addPluginRootObject(KJS::Bindings::RootObject* root);
     
     virtual void registerCommandForUndo(PassRefPtr<EditCommand>);
@@ -283,7 +284,6 @@ public:
     virtual bool isSecureKeyboardEntry();
 
     KJS::Bindings::RootObject* executionContextForDOM();
-    KJS::Bindings::RootObject* bindingRootObject();
     
     WebScriptObject* windowScriptObject();
     NPObject* windowScriptNPObject();

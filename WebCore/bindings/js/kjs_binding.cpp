@@ -236,11 +236,12 @@ void *ScriptInterpreter::createLanguageInstanceForValue (ExecState *exec, int la
 {
     void *result = 0;
     
-#if __APPLE__
+#if PLATFORM(MAC)
     // FIXME: Need to implement bindings support.
     if (language == Bindings::Instance::ObjectiveCLanguage)
         result = createObjcInstanceForValue (exec, value, origin, current);
-    
+#endif
+#if USE(JAVASCRIPTCORE_BINDINGS)
     if (!result)
         result = Interpreter::createLanguageInstanceForValue (exec, language, value, origin, current);
 #endif

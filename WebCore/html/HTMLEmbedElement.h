@@ -27,7 +27,7 @@
 
 #include "HTMLPlugInElement.h"
 
-#if PLATFORM(MAC)
+#if USE(JAVASCRIPTCORE_BINDINGS)
 #include <JavaScriptCore/runtime.h>
 #else
 namespace KJS { namespace Bindings { class Instance; } }
@@ -57,7 +57,7 @@ public:
     
     virtual bool isURLAttribute(Attribute*) const;
 
-#if PLATFORM(MAC)
+#if USE(JAVASCRIPTCORE_BINDINGS)
     virtual KJS::Bindings::Instance* getInstance() const;
 #endif
 

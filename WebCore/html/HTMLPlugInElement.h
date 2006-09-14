@@ -26,8 +26,10 @@
 #define HTMLPlugInElement_H
 
 #include "HTMLElement.h"
-#if PLATFORM(MAC)
+#if USE(JAVASCRIPTCORE_BINDINGS)
 #include <JavaScriptCore/runtime.h>
+#endif
+#if USE(NPOBJECT)
 #include <JavaScriptCore/npruntime.h>
 #endif
 
@@ -57,22 +59,26 @@ public:
     
     String width() const;
     void setWidth(const String&);
-    
-#if PLATFORM(MAC)
+
+#if USE(JAVASCRIPTCORE_BINDINGS)
     virtual KJS::Bindings::Instance* getInstance() const = 0;
+#endif
+#if USE(NPOBJECT)
     virtual NPObject* getNPObject();
 #endif
 
     void setFrameName(const AtomicString& frameName) { m_frameName = frameName; }
 private:
-#if PLATFORM(MAC)
+#if USE(NPOBJECT)
     NPObject* createNPObject();
 #endif
 
 protected:
     String oldNameAttr;
-#if PLATFORM(MAC)
+#if USE(JAVASCRIPTCORE_BINDINGS)
     mutable RefPtr<KJS::Bindings::Instance> m_instance;
+#endif
+#if USE(NPOBJECT)
     NPObject* m_NPObject;
 #endif
 private:

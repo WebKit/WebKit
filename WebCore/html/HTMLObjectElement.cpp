@@ -59,7 +59,7 @@ HTMLObjectElement::HTMLObjectElement(Document *doc)
 
 HTMLObjectElement::~HTMLObjectElement()
 {
-#if PLATFORM(MAC)
+#if USE(JAVASCRIPTCORE_BINDINGS)
     // m_instance should have been cleaned up in detach().
     assert(!m_instance);
 #endif
@@ -67,7 +67,7 @@ HTMLObjectElement::~HTMLObjectElement()
     delete m_imageLoader;
 }
 
-#if PLATFORM(MAC)
+#if USE(JAVASCRIPTCORE_BINDINGS)
 KJS::Bindings::Instance *HTMLObjectElement::getInstance() const
 {
     Frame* frame = document()->frame();
@@ -254,7 +254,7 @@ void HTMLObjectElement::detach()
         needWidgetUpdate = true;
     }
 
-#if PLATFORM(MAC)
+#if USE(JAVASCRIPTCORE_BINDINGS)
     m_instance = 0;
 #endif
     HTMLPlugInElement::detach();

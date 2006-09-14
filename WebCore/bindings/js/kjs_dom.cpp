@@ -69,7 +69,7 @@
 #include "SVGElement.h"
 #endif
 
-#if __APPLE__
+#if USE(JAVASCRIPTCORE_BINDINGS)
 #include <JavaScriptCore/runtime_object.h>
 #endif
 
@@ -1036,7 +1036,7 @@ JSValue* getRuntimeObject(ExecState* exec, Node* n)
     if (!n)
         return 0;
 
-#if __APPLE__
+#if USE(JAVASCRIPTCORE_BINDINGS)
     if (n->hasTagName(objectTag) || n->hasTagName(embedTag) || n->hasTagName(appletTag)) {
         HTMLPlugInElement* plugInElement = static_cast<HTMLPlugInElement*>(n);
         if (plugInElement->getInstance())
