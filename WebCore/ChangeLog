@@ -1,5 +1,13 @@
 2006-09-14  Anders Carlsson  <acarlsson@apple.com>
 
+        Try fixing the Win32 build.
+        
+        * bridge/win/FrameWin.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::bindingRootObject):
+
+2006-09-14  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Tim O.
 
         Add USE defines for the generic JavaScriptCore bindings as well as NPAPI bindings.

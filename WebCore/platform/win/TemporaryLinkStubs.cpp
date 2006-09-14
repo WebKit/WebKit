@@ -151,6 +151,7 @@ bool FrameWin::locationbarVisible() { notImplemented(); return 0; }
 void FrameWin::issueRedoCommand(void) { notImplemented(); }
 KJS::Bindings::Instance* FrameWin::getObjectInstanceForWidget(Widget *) { notImplemented(); return 0; }
 KJS::Bindings::Instance* FrameWin::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
+KJS::Bindings::RootObject* FrameWin::bindingRootObject() { notImplemented(); return 0; }
 bool FrameWin::canRedo() const { notImplemented(); return 0; }
 bool FrameWin::canUndo() const { notImplemented(); return 0; }
 void FrameWin::registerCommandForUndo(PassRefPtr<WebCore::EditCommand>) { notImplemented(); }
