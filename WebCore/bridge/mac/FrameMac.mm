@@ -3563,4 +3563,9 @@ void FrameMac::paintCustomHighlight(const AtomicString& type, const FloatRect& b
     [bridge() paintCustomHighlight:type forBox:boxRect onLine:lineRect behindText:text entireLine:line];
 }
 
+KURL FrameMac::originalRequestURL() const
+{
+    return [_bridge originalRequestURL];
+}
+
 }

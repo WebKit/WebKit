@@ -529,9 +529,6 @@ typedef enum {
 - (void)setTitle:(NSString *)title;
 - (void)setStatusText:(NSString *)status;
 
-- (void)setIconURL:(NSURL *)URL;
-- (void)setIconURL:(NSURL *)URL withType:(NSString *)string;
-
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
     referrer:(NSString *)referrer
     ownerElement:(WebCoreElement *)ownerElement
@@ -692,6 +689,8 @@ typedef enum {
 - (NSURLResponse*)mainResourceURLResponse;
 - (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size;
 
+- (void)notifyIconChanged:(NSURL*)iconURL;
+- (NSURL*)originalRequestURL;
 @end
 
 // This interface definition allows those who hold a WebCoreFrameBridge * to call all the methods

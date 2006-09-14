@@ -189,38 +189,6 @@
 
 - (void)_loadIcon
 {
-    // Don't load an icon if 1) this is not the main frame 2) we ended in error
-    // 3) they aren't saved by the DB
-    if ([self webFrame] != [[self _webView] mainFrame] || _private->mainDocumentError || ![[WebIconDatabase sharedIconDatabase] _isEnabled])
-        return;
-
-    if (!_private->iconURL) {
-        // No icon URL from the LINK tag so try the server's root.
-        // This is only really a feature of http or https, so don't try this with other protocols.
-        NSString *scheme = [[self _URL] scheme];
-        if([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]){
-            _private->iconURL = [[[NSURL _web_URLWithDataAsString:@"/favicon.ico"
-                                                    relativeToURL:[self _URL]] absoluteURL] retain];
-        }
-    }
-
-    if (_private->iconURL != nil) {
-        // If we have the icon already, we'll still see if we're manually reloading or if the icon is expired
-        // If so, kick off a reload of the icon
-        // If we don't have the icon already, kick off the initial load
-        if ([[WebIconDatabase sharedIconDatabase] _hasEntryForIconURL:[_private->iconURL _web_originalDataAsString]]) {
-            [[_private->webFrame _frameLoader] _updateIconDatabaseWithURL:_private->iconURL];
-            if ([[self webFrame] _loadType] == WebFrameLoadTypeReload || [[WebIconDatabase sharedIconDatabase] isIconExpiredForIconURL:[_private->iconURL _web_originalDataAsString]])
-                [[WebIconDatabase sharedIconDatabase] loadIconFromURL:[_private->iconURL _web_originalDataAsString]];
-            else
-                [[_private->webFrame _frameLoader] _notifyIconChanged:_private->iconURL];
-        } else {
-            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->iconURL];
-            [[self webFrame] _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
-            [[_private->webFrame _frameLoader] loadIconWithRequest:request];
-            [request release];
-        }
-    }
 }
 
 - (NSError *)_cancelledError

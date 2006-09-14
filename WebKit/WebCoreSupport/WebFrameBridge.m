@@ -39,10 +39,13 @@
 #import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
+#import "WebFrameLoader.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryItemPrivate.h"
+#import "WebIconDatabase.h"
+#import <WebKit/WebIconDatabasePrivate.h>
 #import "WebJavaPlugIn.h"
 #import "WebJavaScriptTextInputPanel.h"
 #import "WebKitErrorsPrivate.h"
@@ -682,16 +685,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // When a form element resigns first responder, its enclosing WebHTMLView might need to
     // change its focus-displaying state, but isn't otherwise notified.
     [(WebHTMLView *)[[_frame frameView] documentView] _formControlIsResigningFirstResponder:formControl];
-}
-
-- (void)setIconURL:(NSURL *)URL
-{
-    [[self dataSource] _setIconURL:URL];
-}
-
-- (void)setIconURL:(NSURL *)URL withType:(NSString *)type
-{
-    [[self dataSource] _setIconURL:URL withType:type];
 }
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
@@ -1708,6 +1701,27 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 - (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size
 {
     return [NSString stringWithFormat:UI_STRING("%@ %.0f×%.0f pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename, size.width, size.height];
+}
+
+- (void)notifyIconChanged:(NSURL*)iconURL
+{
+    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
+    ASSERT(_frame == [[_frame webView] mainFrame]);
+        
+    [[_frame webView] _willChangeValueForKey:_WebMainFrameIconKey];
+    
+    NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[_frame _frameLoader] activeDataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
+    
+    [[[_frame webView] _frameLoadDelegateForwarder] webView:[_frame webView]
+                                               didReceiveIcon:icon
+                                                     forFrame:_frame];
+    
+    [[_frame webView] _didChangeValueForKey:_WebMainFrameIconKey];
+}
+
+- (NSURL*)originalRequestURL
+{
+    return [[[[_frame _frameLoader] activeDataSource] initialRequest] URL];
 }
 
 @end

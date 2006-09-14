@@ -139,20 +139,6 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void BrowserExtensionMac::setIconURL(const KURL &url)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_frame->bridge() setIconURL:url.getNSURL()];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-void BrowserExtensionMac::setTypedIconURL(const KURL &url, const String &type)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_frame->bridge() setIconURL:url.getNSURL() withType:type];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 int BrowserExtensionMac::getHistoryLength()
 {
     return [m_frame->bridge() historyLength];

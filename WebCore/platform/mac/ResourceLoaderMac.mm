@@ -58,6 +58,8 @@ ResourceLoader::~ResourceLoader()
 
 bool ResourceLoader::start(DocLoader* docLoader)
 {
+    ASSERT(docLoader);
+    
     FrameMac* frame = Mac(docLoader->frame());
     if (!frame) {
         delete this;

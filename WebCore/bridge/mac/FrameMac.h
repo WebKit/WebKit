@@ -318,7 +318,8 @@ public:
     void paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line);
     
     NSEvent* currentEvent() { return _currentEvent; }
-
+    KURL originalRequestURL() const;
+    
 protected:
     virtual void startRedirectionTimer();
     virtual void stopRedirectionTimer();

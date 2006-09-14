@@ -34,6 +34,7 @@
 #include "EditCommand.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "IconLoader.h"
 #include "SelectionController.h"
 #include "StringHash.h"
 #include "Timer.h"
@@ -44,6 +45,7 @@ namespace WebCore {
 
     class Decoder;
     class UserStyleSheetLoader;
+    class IconLoader;
 
     enum RedirectionScheduled {
         noRedirectionScheduled,
@@ -96,6 +98,7 @@ namespace WebCore {
             , m_cancelWithLoadInProgress(false)
             , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
             , m_userStyleSheetLoader(0)
+            , m_iconLoader(0)
             , m_autoscrollTimer(thisFrame, &Frame::autoscrollTimerFired)
             , m_autoscrollLayer(0)
             , m_paintRestriction(PaintRestrictionNone)
@@ -112,6 +115,7 @@ namespace WebCore {
         {
             delete m_extension;
             delete m_jscript;
+            delete m_iconLoader;
         }
 
         Page* m_page;
@@ -169,6 +173,8 @@ namespace WebCore {
 
         String m_referrer;
 
+        String m_iconURL;
+
         struct SubmitForm {
             const char* submitAction;
             String submitUrl;
@@ -212,6 +218,7 @@ namespace WebCore {
         Timer<Frame> m_lifeSupportTimer;
 
         UserStyleSheetLoader* m_userStyleSheetLoader;
+        IconLoader* m_iconLoader;
         
         Timer<Frame> m_autoscrollTimer;
         RenderLayer* m_autoscrollLayer;

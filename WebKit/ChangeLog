@@ -1,3 +1,22 @@
+2006-09-13  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Add infrastructure to support icon loads taking place in WebCore
+        Will remove WebKit icon loaders in a later patch
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge notifyIconChanged:]):
+        (-[WebFrameBridge originalRequestURL]):
+        - Nuked two old, obsolete methods
+        - Added bridge for notifying of an icon change
+        - Added bridge for getting the "original request URL" which is still needed
+          until that info is available in the WebCore loaders
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _loadIcon]):
+        - Empty body just for now, as it still gets called - next patch will prune all the old impl out
+
 2006-09-13  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Tim O.

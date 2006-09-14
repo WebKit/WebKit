@@ -156,12 +156,8 @@ void HTMLLinkElement::process()
     Frame* frame = document()->frame();
 
     // IE extension: location of small icon for locationbar / bookmarks
-    if (frame && m_isIcon && !m_url.isEmpty() && !frame->tree()->parent()) {
-        if (!type.isEmpty()) // Mozilla extension to IE extension: icon specified with type
-            frame->browserExtension()->setTypedIconURL(KURL(m_url.deprecatedString()), type);
-        else 
-            frame->browserExtension()->setIconURL(KURL(m_url.deprecatedString()));
-    }
+    if (frame && m_isIcon && !m_url.isEmpty() && !frame->tree()->parent())
+        frame->setIconURL(m_url, type);
 
     // Stylesheet
     // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh

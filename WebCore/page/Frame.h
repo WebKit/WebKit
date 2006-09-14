@@ -105,6 +105,9 @@ public:
 
   void didExplicitOpen();
 
+  KURL iconURL();
+  void setIconURL(const String& url, const String& type);
+  
   Page* page() const;
   void pageDestroyed();
   
@@ -526,7 +529,6 @@ public:
   virtual void urlSelected(const DeprecatedString& url, const String& target);
   virtual void urlSelected(const ResourceRequest&, const String& target);
 
-
   // Methods with platform-specific overrides (and no base class implementation).
   virtual void setTitle(const String&) = 0;
   virtual void handledOnloadEvents() = 0;
@@ -802,6 +804,7 @@ public:
   void updateBaseURLForEmptyDocument();
 
   KURL url() const;
+  
   void setResourceRequest(const ResourceRequest& request);
   const ResourceRequest& resourceRequest() const;
 

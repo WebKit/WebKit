@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,56 +22,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+ 
+#include "config.h"
+#include "IconLoader.h"
 
-#ifndef BROWSEREXTENSION_H_
-#define BROWSEREXTENSION_H_
+#include "FrameMac.h"
+#include "WebCoreFrameBridge.h"
 
-#include "ResourceRequest.h"
+using namespace WebCore;
 
-namespace WebCore {
-
-class Frame;
-
-struct WindowArgs {
-    float x;
-    bool xSet;
-    float y;
-    bool ySet;
-    float width;
-    bool widthSet;
-    float height;
-    bool heightSet;
-
-    bool menuBarVisible;
-    bool statusBarVisible;
-    bool toolBarVisible;
-    bool locationBarVisible;
-    bool scrollBarsVisible;
-    bool resizable;
-
-    bool fullscreen;
-    bool dialog;
-};
-
-class BrowserExtension {
-public:
-    virtual ~BrowserExtension() { }
-
-    virtual void createNewWindow(const ResourceRequest&) = 0;
-    virtual void createNewWindow(const ResourceRequest&, const WindowArgs&, Frame*&) = 0;
-
-    virtual int getHistoryLength() = 0;
-    virtual void goBackOrForward(int distance) = 0;
-    virtual KURL historyURL(int distance) = 0;
+void IconLoader::receivedResponse(ResourceLoader* resourceLoader, NSURLResponse* responsePtr)
+{
+    ASSERT(resourceLoader);
+    ASSERT(responsePtr);
     
-    virtual bool canRunModal() = 0;
-    virtual bool canRunModalNow() = 0;
-    virtual void runModal() = 0;
-
-protected:
-    BrowserExtension() {}
-};
-
+    id response = responsePtr;
+    if ([response isKindOfClass:[NSHTTPURLResponse class]])
+        m_httpStatusCode = [response statusCode];
+    else
+        m_httpStatusCode = 0;
 }
 
-#endif
+void IconLoader::notifyIconChanged(const KURL& iconURL)
+{
+    FrameMac* frame = Mac(m_frame);
+    [frame->bridge() notifyIconChanged:iconURL.getNSURL()];
+}
+

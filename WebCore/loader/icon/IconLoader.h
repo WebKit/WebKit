@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,56 +22,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#ifndef ICONLOADER_H_
+#define ICONLOADER_H_
 
-#ifndef BROWSEREXTENSION_H_
-#define BROWSEREXTENSION_H_
-
-#include "ResourceRequest.h"
+#include <ResourceLoader.h>
 
 namespace WebCore {
 
 class Frame;
 
-struct WindowArgs {
-    float x;
-    bool xSet;
-    float y;
-    bool ySet;
-    float width;
-    bool widthSet;
-    float height;
-    bool heightSet;
-
-    bool menuBarVisible;
-    bool statusBarVisible;
-    bool toolBarVisible;
-    bool locationBarVisible;
-    bool scrollBarsVisible;
-    bool resizable;
-
-    bool fullscreen;
-    bool dialog;
-};
-
-class BrowserExtension {
+class IconLoader : public ResourceLoaderClient
+{
 public:
-    virtual ~BrowserExtension() { }
-
-    virtual void createNewWindow(const ResourceRequest&) = 0;
-    virtual void createNewWindow(const ResourceRequest&, const WindowArgs&, Frame*&) = 0;
-
-    virtual int getHistoryLength() = 0;
-    virtual void goBackOrForward(int distance) = 0;
-    virtual KURL historyURL(int distance) = 0;
+    static IconLoader* createForFrame(Frame* frame);
+    ~IconLoader();
     
-    virtual bool canRunModal() = 0;
-    virtual bool canRunModalNow() = 0;
-    virtual void runModal() = 0;
+    void startLoading();
+    void stopLoading();
+    
+// ResourceLoaderClient delegate methods
+    virtual void receivedResponse(ResourceLoader*, PlatformResponse);
+    virtual void receivedData(ResourceLoader*, const char*, int);
+    virtual void receivedAllData(ResourceLoader*);
+private:
+    IconLoader(Frame* frame);
+    
+    void notifyIconChanged(const KURL& iconURL);
+    
+    ResourceLoader* m_resourceLoader;
+    Frame* m_frame;
+    
+    static const int IconLoaderDefaultBuffer = 4096;
+    Vector<char, IconLoaderDefaultBuffer> m_data;
+    int m_httpStatusCode;
+}; // class Iconloader
 
-protected:
-    BrowserExtension() {}
-};
-
-}
+}; // namespace WebCore
 
 #endif

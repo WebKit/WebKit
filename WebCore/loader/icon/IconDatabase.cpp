@@ -621,7 +621,8 @@ void IconDatabase::setHaveNoIconForIconURL(const String& iconURL)
 bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL)
 {
     ASSERT(!iconURL.isEmpty());
-    ASSERT(!pageURL.isEmpty());
+    if (pageURL.isEmpty())
+        return false;
     
     // If the urls already map to each other, bail.
     // This happens surprisingly often, and seems to cream iBench performance

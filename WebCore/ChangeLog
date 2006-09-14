@@ -1,3 +1,72 @@
+2006-09-13  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Icon loads now take place in WebCore
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/BrowserExtension.h:
+        * bridge/mac/BrowserExtensionMac.h:
+        * bridge/mac/BrowserExtensionMac.mm:
+        - Moved enforcement of a Mozilla Favicon extension elsewhere
+        
+        * bridge/mac/FrameMac.h: 
+        * bridge/mac/FrameMac.mm: 
+        (WebCore::FrameMac::originalRequestURL):
+        - Added accessor to "original request URL"
+        
+        * bridge/mac/WebCoreFrameBridge.h: 
+        - Removed methods to set the iconURL as all loading is now done in WebCore
+        - Added call throughs to notify WebKit an Icon is done loading, and a to get the original request URL
+        
+        * html/HTMLLinkElement.cpp: 
+        (WebCore::HTMLLinkElement::process):
+        - Moved enforcement of a Mozilla Favicon extension elsewhere
+        
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        - Changed an ASSERT to correctly handle a sketchy (invalid) situation
+
+        * loader/icon/IconLoader.h: Added.
+        * loader/icon/IconLoader.cpp: Added.
+        (IconLoader::IconLoader):
+        (IconLoader::createForFrame):
+        - Static factory method with a private constructor to enforce 
+          "you MUST have a Frame to create an IconLoader" semantics
+        (IconLoader::~IconLoader):
+        (IconLoader::startLoading):
+        (IconLoader::stopLoading):
+        (IconLoader::receivedData):
+        - ResourceLoaderClient delegate
+        (IconLoader::receivedAllData):
+        - Ditto
+
+        * loader/mac/IconLoaderMac.mm: Added.
+        (IconLoader::receivedResponse):
+        (IconLoader::notifyIconChanged):
+        - For now, these are platform specific methods
+        - One to get the HTTP response code of an icon load
+        - The other to call through to the app when the icon has changed (loaded)
+
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::iconURL):
+        (WebCore::Frame::setIconURL):
+        - Frame objects now have an inherent icon URL and a way to calculate/access it
+        (WebCore::Frame::endIfNotLoading):
+        - This is where we actually kick off the IconLoader
+        (WebCore::Frame::stop):
+        - Added call to stop loading the icon
+
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        (WebCore::FramePrivate::~FramePrivate):
+        - Added the icon URL as a private member
+        - Added the IconLoader as a private member, and clean it up on deletion
+
+        * platform/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::start):  Added a valuable ASSERT
+
 2006-09-13  David Hyatt  <hyatt@apple.com>
 
         Fix for 10841, unable to check checkboxes inside labels.

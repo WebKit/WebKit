@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include "Frame.h"
+#include "FrameMac.h"
 #include "FramePrivate.h"
 
 #include "ApplyStyleCommand.h"
@@ -53,6 +54,8 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLViewSourceDocument.h"
+#include "IconDatabase.h"
+#include "IconLoader.h"
 #include "ImageDocument.h"
 #include "MediaFeatureNames.h"
 #include "MouseEventWithHitTestResults.h"
@@ -221,6 +224,34 @@ Frame::~Frame()
     delete d->m_userStyleSheetLoader;
     delete d;
     d = 0;
+}
+
+KURL Frame::iconURL()
+{
+    // If this isn't a top level frame, return nothing
+    if (tree() && tree()->parent())
+        return "";
+        
+    // If we have an iconURL from a Link element, return that
+    if (!d->m_iconURL.isEmpty())
+        return KURL(d->m_iconURL.deprecatedString());
+        
+    // Don't return a favicon iconURL unless we're http or https
+    if (d->m_url.protocol() != "http" && d->m_url.protocol() != "https")
+        return "";
+        
+    KURL url = d->m_url;
+    url.setPath("/favicon.ico");
+    return url;
+}
+
+void Frame::setIconURL(const String& url, const String& type)
+{
+    // FIXME - <rdar://problem/4727645> - At some point in the future, we might actually honor the "type" 
+    if (d->m_iconURL.isEmpty())
+        d->m_iconURL = url;
+    else if (!type.isEmpty())
+        d->m_iconURL = url;
 }
 
 bool Frame::didOpenURL(const KURL& url)
@@ -714,6 +745,29 @@ void Frame::endIfNotLoading()
         // become true.  An example is when a subframe is a pure text doc, and that subframe is the
         // last one to complete.
         checkCompleted();
+    
+    // Don't load an icon if -
+    // 1) This is not the main frame 
+    // 2) The database is disabled
+    // 3) We have no valid icon URL
+    // 4) We already have an unexpired icon
+    
+    if (tree()->parent())
+        return;
+        
+    // FIXME - <rdar://problem/4729797> - To honor #2, we need to add the isEnabled() flag to WebCore::IconDatabase
+    
+    String url(iconURL().url());
+    if (url.isEmpty())
+        return;
+        
+    IconDatabase* sharedIconDatabase = IconDatabase::sharedIconDatabase();
+    if (sharedIconDatabase->hasEntryForIconURL(url) && !sharedIconDatabase->isIconExpiredForIconURL(url))
+        return;
+    
+    if (!d->m_iconLoader)
+        d->m_iconLoader = IconLoader::createForFrame(this);
+    d->m_iconLoader->startLoading();
 }
 
 void Frame::stop()
@@ -728,6 +782,8 @@ void Frame::stop()
         // become true.  An example is when a subframe is a pure text doc, and that subframe is the
         // last one to complete.
         checkCompleted();
+    if (d->m_iconLoader)
+        d->m_iconLoader->stopLoading();
 }
 
 void Frame::gotoAnchor()
