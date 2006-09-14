@@ -1,3 +1,22 @@
+2006-09-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4655880> Up/Down arrows skip over To Do
+
+        * editing/selection/mixed-editability-3-expected.checksum: Added.
+        * editing/selection/mixed-editability-3-expected.png: Added.
+        * editing/selection/mixed-editability-3-expected.txt: Added.
+        * editing/selection/mixed-editability-3.html: Added.
+        * editing/selection/mixed-editability-4-expected.checksum: Added.
+        * editing/selection/mixed-editability-4-expected.png: Added.
+        * editing/selection/mixed-editability-4-expected.txt: Added.
+        * editing/selection/mixed-editability-4.html: Added.
+        * editing/selection/mixed-editability-5-expected.checksum: Added.
+        * editing/selection/mixed-editability-5-expected.png: Added.
+        * editing/selection/mixed-editability-5-expected.txt: Added.
+        * editing/selection/mixed-editability-5.html: Added.
+
 2006-09-14  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Justin Garcia.

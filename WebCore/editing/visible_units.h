@@ -82,11 +82,8 @@ bool isStartOfDocument(const VisiblePosition &);
 bool isEndOfDocument(const VisiblePosition &);
 
 // editable content
-VisiblePosition startOfEditableContent(const VisiblePosition &);
-VisiblePosition endOfEditableContent(const VisiblePosition &);
-bool inSameEditableContent(const VisiblePosition &, const VisiblePosition &);
-bool isStartOfEditableContent(const VisiblePosition &);
-bool isEndOfEditableContent(const VisiblePosition &);
+VisiblePosition startOfEditableContent(const VisiblePosition&);
+VisiblePosition endOfEditableContent(const VisiblePosition&);
 
 } // namespace WebCore
 

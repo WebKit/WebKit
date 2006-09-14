@@ -1,3 +1,24 @@
+2006-09-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4655880> Up/Down arrows skip over To Do
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge canDeleteRange:]): Added a FIXME.
+        * dom/Node.cpp: Removed the unused inSameRootEditableElement.
+        * dom/Node.h:
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modify): Added documentboundary to granularities in order test a fix.
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition): Use highestEditableRoot so that this function can move from
+        editable content into editable content that's embedded in non-editable content.
+        (WebCore::nextLinePosition): Ditto.
+        (WebCore::startOfEditableContent): Renamed from startOfEditableRoot and use highestEditableRoot.
+        This is the behavior that callers desire.  This fixes Command + Up/Down.
+        (WebCore::endOfEditableContent): Ditto.
+        * editing/visible_units.h:
+
 2006-09-14  Karthik Kumar  <karthikkumar@gmail.com>
 
         Reviewed by timothy. Landed by aroben.

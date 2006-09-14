@@ -1867,7 +1867,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     
     if ([range collapsed]) {
         VisiblePosition start(startContainer, [range startOffset], DOWNSTREAM);
-        if (isStartOfEditableContent(start))
+        VisiblePosition previous = start.previous();
+        // FIXME: We sometimes allow deletions at the start of editable roots, like when the caret is in an empty list item.
+        if (previous.isNull() || previous.deepEquivalent().node()->rootEditableElement() != startContainer->rootEditableElement())
             return NO;
     }
     

@@ -1058,11 +1058,6 @@ Element* Node::rootEditableElement() const
     return result;
 }
 
-bool Node::inSameRootEditableElement(Node *n)
-{
-    return n ? rootEditableElement() == n->rootEditableElement() : false;
-}
-
 bool Node::inSameContainingBlockFlowElement(Node *n)
 {
     return n ? enclosingBlockFlowElement() == n->enclosingBlockFlowElement() : false;
