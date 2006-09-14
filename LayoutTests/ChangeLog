@@ -1,3 +1,41 @@
+2006-09-13  Adam Roben  <aroben@apple.com>
+
+        Rubberstamped by hyatt.
+
+        Updating tables results after hyatt landed a fix for
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8126
+        Padding must not apply to columns
+
+        * tables/mozilla/bugs/bug139524-2-expected.txt:
+        * tables/mozilla/bugs/bug139524-4-expected.txt:
+        * tables/mozilla/bugs/bug32841-expected.txt:
+        * tables/mozilla/dom/appendCol2-expected.txt:
+        * tables/mozilla/dom/deleteCol1-expected.txt:
+        * tables/mozilla/dom/deleteCol2-expected.txt:
+        * tables/mozilla/dom/deleteCol3-expected.txt:
+        * tables/mozilla/dom/deleteColGroup1-expected.txt:
+        * tables/mozilla/dom/deleteColGroup2-expected.txt:
+        * tables/mozilla/dom/insertColGroups1-expected.txt:
+        * tables/mozilla/dom/insertColGroups2-expected.txt:
+        * tables/mozilla/dom/insertCols1-expected.txt:
+        * tables/mozilla/dom/insertCols2-expected.txt:
+        * tables/mozilla/dom/insertCols3-expected.txt:
+        * tables/mozilla/dom/insertCols4-expected.txt:
+        * tables/mozilla/dom/insertCols5-expected.txt:
+        * tables/mozilla/marvin/body_col-expected.txt:
+        * tables/mozilla/marvin/x_col_span-expected.txt:
+        * tables/mozilla/marvin/x_col_width_px-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_span-expected.txt:
+        * tables/mozilla/other/body_col-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug1128-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug29058-2-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug45621-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug7243-expected.txt:
+        * tables/mozilla_expected_failures/core/cols1-expected.txt:
+        * tables/mozilla_expected_failures/dom/appendCol1-expected.txt:
+        * tables/mozilla_expected_failures/dom/appendColGroup1-expected.txt:
+        * tables/mozilla_expected_failures/other/test4-expected.txt:
+
 2006-09-12  Julien Palmas  <julien.palmas@gmail.com>
 
         Reviewed by darin.  Landed by eseidel.
