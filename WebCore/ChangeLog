@@ -1,3 +1,21 @@
+2006-09-14  Karthik Kumar  <karthikkumar@gmail.com>
+
+        Reviewed by timothy. Landed by aroben.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10856
+        Windows build fixes after r16360
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Add loader\icon to
+        AdditionalIncludeDirectories
+        * platform/win/TemporaryLinkStubs.cpp: Add link stubs for IconLoader,
+        IconDatabase
+        (IconLoader::stopLoading):
+        (IconLoader::startLoading):
+        (IconLoader::createForFrame):
+        (IconDatabase::isIconExpiredForIconURL):
+        (IconDatabase::hasEntryForIconURL):
+        (IconDatabase::sharedIconDatabase):
+
 2006-09-14  Brady Eidson  <beidson@apple.com>
 
         Part of a build fix for Windows - rest will be working out a mess of temporary link stubs
