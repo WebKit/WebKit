@@ -1,3 +1,14 @@
+2006-09-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10836
+        Bug 10836: REGRESSION: Mac implementation of Font::drawGlyphs leaks a CGColorRef
+
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::drawComplexText): Release CGColorRef after use.
+        (WebCore::Font::drawGlyphs): Ditto.
+
 2006-09-14  Anders Carlsson  <acarlsson@apple.com>
 
         Try fixing the Win32 build.
