@@ -1,3 +1,13 @@
+2006-09-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Fixed a bad iFrame crash, resolving some of the layout test badness
+
+        * page/Frame.cpp:
+        (WebCore::Frame::endIfNotLoading):
+        - Added a RefPtr to protect the frame itself to prevent its destruction during this method
+
 2006-09-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
