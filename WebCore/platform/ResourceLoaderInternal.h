@@ -37,7 +37,7 @@
 #endif
 
 #if USE(WININET)
-typedef void* HANDLE;
+#include <windows.h>
 #endif
 
 #if PLATFORM(GDK)
@@ -71,7 +71,7 @@ namespace WebCore {
             , response(nil)
 #endif
 #if USE(WININET)
-            , m_fileHandle(0)
+            , m_fileHandle(INVALID_HANDLE_VALUE)
             , m_fileLoadTimer(job, &ResourceLoader::fileLoadTimer)
             , m_resourceHandle(0)
             , m_secondaryHandle(0)
@@ -103,7 +103,7 @@ namespace WebCore {
             , response(nil)
 #endif
 #if USE(WININET)
-            , m_fileHandle(0)
+            , m_fileHandle(INVALID_HANDLE_VALUE)
             , m_fileLoadTimer(job, &ResourceLoader::fileLoadTimer)
             , m_resourceHandle(0)
             , m_secondaryHandle(0)

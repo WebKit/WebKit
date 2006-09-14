@@ -233,7 +233,7 @@ static void initializeOffScreenResourceLoaderWindow()
 
 ResourceLoaderInternal::~ResourceLoaderInternal()
 {
-    if (m_fileHandle)
+    if (m_fileHandle != INVALID_HANDLE_VALUE)
         CloseHandle(m_fileHandle);
 }
 
@@ -264,6 +264,8 @@ bool ResourceLoader::start(DocLoader* docLoader)
             path = path.mid(1);
         d->m_fileHandle = CreateFileA(path.ascii(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
+        // FIXME: perhaps this error should be reported asynchronously for
+        // consistency.
         if (d->m_fileHandle == INVALID_HANDLE_VALUE) {
             delete this;
             return false;
@@ -330,12 +332,15 @@ void ResourceLoader::fileLoadTimer(Timer<ResourceLoader>* timer)
         const int bufferSize = 8192;
         char buffer[bufferSize];
         result = ReadFile(d->m_fileHandle, &buffer, bufferSize, &bytesRead, NULL); 
-        d->client->receivedData(this, buffer, bytesRead);
+        if (result && bytesRead)
+            d->client->receivedData(this, buffer, bytesRead);
         // Check for end of file. 
     } while (result && bytesRead);
 
+    // FIXME: handle errors better
+
     CloseHandle(d->m_fileHandle);
-    d->m_fileHandle = 0;
+    d->m_fileHandle = INVALID_HANDLE_VALUE;
 
     PlatformDataStruct platformData;
     platformData.errorString = 0;

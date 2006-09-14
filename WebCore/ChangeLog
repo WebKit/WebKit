@@ -1,3 +1,16 @@
+2006-09-14  MorganL  <morlmor@yahoo.com>
+
+        Reviewed by Brady.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10845
+        Various bugs/crashes in ResourceLoaderWin with local files.
+
+        * platform/ResourceLoaderInternal.h:
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/win/ResourceLoaderWin.cpp:
+        (WebCore::ResourceLoaderInternal::~ResourceLoaderInternal):
+        (WebCore::ResourceLoader::fileLoadTimer):
+
 2006-09-13  Brady Eidson <beidson@apple.com>
 
         Reviewed by Maciej
