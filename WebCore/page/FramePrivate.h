@@ -34,7 +34,7 @@
 #include "EditCommand.h"
 #include "Frame.h"
 #include "FrameTree.h"
-#include "IconLoader.h"
+#include "loader/icon/IconLoader.h"
 #include "SelectionController.h"
 #include "StringHash.h"
 #include "Timer.h"

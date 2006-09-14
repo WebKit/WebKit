@@ -27,7 +27,6 @@
 
 #include "config.h"
 #include "Frame.h"
-#include "FrameMac.h"
 #include "FramePrivate.h"
 
 #include "ApplyStyleCommand.h"
@@ -54,9 +53,9 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLViewSourceDocument.h"
-#include "IconDatabase.h"
-#include "IconLoader.h"
 #include "ImageDocument.h"
+#include "loader/icon/IconDatabase.h"
+#include "loader/icon/IconLoader.h"
 #include "MediaFeatureNames.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NodeList.h"
@@ -83,6 +82,10 @@
 #include <math.h>
 #include <sys/types.h>
 #include <wtf/Platform.h>
+
+#if PLATFORM(MAC)
+#include "FrameMac.h"
+#endif
 
 #if !PLATFORM(WIN_OS)
 #include <unistd.h>
