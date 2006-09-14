@@ -1,5 +1,15 @@
 2006-09-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
+        Reviewed by Adam.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10834
+        Bug 10834: FileChooser constructor in FileChooserMac appears to overretain m_controller
+
+        * platform/mac/FileChooserMac.mm:
+        (WebCore::FileChooser::FileChooser): Don't over-retain the OpenPanelController.
+
+2006-09-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
         Reviewed by Eric.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=10836

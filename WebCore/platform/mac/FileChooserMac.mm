@@ -89,7 +89,7 @@ FileChooser::FileChooser(Document* document, RenderFileUploadControl* uploadCont
     : m_document(document)
     , m_icon(0)
     , m_uploadControl(uploadControl)
-    , m_controller([[[OpenPanelController alloc] initWithFileChooser:this] retain])
+    , m_controller([[OpenPanelController alloc] initWithFileChooser:this])
 {
 }
 
