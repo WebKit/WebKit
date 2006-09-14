@@ -109,7 +109,10 @@ void HTMLLabelElement::defaultEventHandler(Event* evt)
 
     if (evt->type() == clickEvent && !processingClick) {
         HTMLElement* element = formElement();
-        if (!element)
+        
+        // If we can't find a control or if the control received the click
+        // event, then there's no need for us to do anything.
+        if (!element || element->contains(evt->target()))
             return;
         
         processingClick = true;

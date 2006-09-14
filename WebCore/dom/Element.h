@@ -167,7 +167,7 @@ public:
 #endif
 
     Node* insertAdjacentElement(const String& where, Node* newChild, int& exception);
-    bool contains(const Element*) const;
+    bool contains(const Node*) const;
  
 protected:
     virtual void createAttributeMap() const;

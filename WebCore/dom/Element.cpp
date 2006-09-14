@@ -488,11 +488,11 @@ Node* Element::insertAdjacentElement(const String& where, Node* newChild, int& e
     return 0;
 }
 
-bool Element::contains(const Element* element) const
+bool Element::contains(const Node* node) const
 {
-    if (!element)
+    if (!node)
         return false;
-    return this == element || element->isAncestor(this);
+    return this == node || node->isAncestor(this);
 }
 
 void Element::createAttributeMap() const

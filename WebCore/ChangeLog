@@ -1,3 +1,16 @@
+2006-09-13  David Hyatt  <hyatt@apple.com>
+
+        Fix for 10841, unable to check checkboxes inside labels.
+
+        Reviewed by xenon, bradee-oh
+
+        * css/html4.css:
+        * dom/Element.cpp:
+        (WebCore::Element::contains):
+        * dom/Element.h:
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::defaultEventHandler):
+
 2006-09-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Adam.
