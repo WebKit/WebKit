@@ -1,3 +1,18 @@
+2006-09-14  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Justin Garcia.
+
+        Modified testcase for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10726
+        Crash in ApplyStyleCommand::applyRelativeFontStyleChange
+
+        * editing/style/table-selection-expected.checksum:
+        * editing/style/table-selection-expected.png:
+        * editing/style/table-selection-expected.txt:
+        * editing/style/table-selection.html:
+        This testcase was for 10579, which is very similar to this bug (10726)
+        Now the testcase tests both bugs.
+
 2006-09-13  Adam Roben  <aroben@apple.com>
 
         Rubberstamped by hyatt.

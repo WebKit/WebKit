@@ -471,7 +471,15 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
         end = endPosition();
     }
 
-    Node *beyondEnd = end.node()->traverseNextNode(); // Calculate loop end point.
+    // Calculate loop end point.
+    // If the end node is before the start node (can only happen if the end node is
+    // an ancestor of the start node), we gather nodes up to the next sibling of the end node
+    Node *beyondEnd;
+    if (start.node()->isAncestor(end.node()))
+        beyondEnd = end.node()->traverseNextSibling();
+    else
+        beyondEnd = end.node()->traverseNextNode();
+    
     start = start.upstream(); // Move upstream to ensure we do not add redundant spans.
     Node *startNode = start.node();
     if (startNode->isTextNode() && start.offset() >= startNode->caretMaxOffset()) // Move out of text node if range does not include its characters.

@@ -1,3 +1,14 @@
+2006-09-14  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Justin Garcia.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10726
+          Crash in ApplyStyleCommand::applyRelativeFontStyleChange
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Prevent a crash by
+        makeing sure that the 'beyondEnd' node is after the start node.
+
 2006-09-14  MorganL  <morlmor@yahoo.com>
 
         Reviewed by Brady.
