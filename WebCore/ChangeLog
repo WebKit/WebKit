@@ -1,3 +1,18 @@
+2006-09-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Fix build on Qt/Linux and implement Frame::addMessageToConsole to
+        be able to see javascript errors for instance.
+
+        * CMakeLists.txt:
+        * platform/qt/FrameQt.h:
+        * platform/qt/FrameQt.cpp: Implement addMessageToConsole.
+        (WebCore::FrameQt::bindingRootObject):
+        * platform/qt/TemporaryLinkStubs.cp
+        (WebCore::IconDatabase::hasEntryForIconURL):
+        (WebCore::IconDatabase::sharedIconDatabase):
+
 2006-09-15  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

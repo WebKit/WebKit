@@ -8,6 +8,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/ForwardingHeaders
    ${CMAKE_CURRENT_SOURCE_DIR}/platform
    ${CMAKE_CURRENT_SOURCE_DIR}/loader
+   ${CMAKE_CURRENT_SOURCE_DIR}/loader/icon
    ${CMAKE_CURRENT_BINARY_DIR}/css
    ${CMAKE_CURRENT_SOURCE_DIR}/css
    ${CMAKE_CURRENT_SOURCE_DIR}/dom

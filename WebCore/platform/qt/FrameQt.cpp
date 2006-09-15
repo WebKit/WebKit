@@ -325,7 +325,8 @@ String FrameQt::overrideMediaType() const
 
 void FrameQt::addMessageToConsole(const String& message, unsigned lineNumber, const String& sourceID)
 {
-    notImplemented();
+    qDebug("[FrameQt::addMessageToConsole] message=%s lineNumber=%d sourceID=%s",
+           qPrintable(QString(message)), lineNumber, qPrintable(QString(sourceID)));
 }
 
 bool FrameQt::runJavaScriptPrompt(const String& message, const String& defaultValue, String& result)
@@ -347,6 +348,12 @@ KJS::Bindings::Instance* FrameQt::getObjectInstanceForWidget(Widget*)
 }
 
 KJS::Bindings::Instance* FrameQt::getAppletInstanceForWidget(Widget*)
+{
+    notImplemented();
+    return 0;
+}
+
+KJS::Bindings::RootObject* FrameQt::bindingRootObject()
 {
     notImplemented();
     return 0;
