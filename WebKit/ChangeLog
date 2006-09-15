@@ -1,3 +1,18 @@
+2006-09-15  Adam Roben  <aroben@apple.com>
+
+        Reviewed by eseidel.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10876
+        containsItemForURLUnicode uses matchLetter instead of
+        matchUnicodeLetter
+
+        Small fixes for _WebCoreHistoryProvider.
+
+        * History/WebHistory.m: Consistently use BUFFER_SIZE #define
+        (-[_WebCoreHistoryProvider containsItemForURLLatin1:length:]):
+        (-[_WebCoreHistoryProvider containsItemForURLUnicode:length:]):
+        Replace incorrect call to matchLetter to matchUnicodeLetter
+
 2006-09-13  Brady Eidson <beidson@apple.com>
 
         Reviewed by Maciej

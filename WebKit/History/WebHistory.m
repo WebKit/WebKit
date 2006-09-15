@@ -590,7 +590,7 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
     }
 
     if (needToAddSlash) {
-        if (length + 1 <= 2048) {
+        if (length + 1 <= BUFFER_SIZE) {
             strBuffer = staticStrBuffer;
         } else {
             strBuffer = malloc(length + 2);
@@ -614,10 +614,12 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
     return result;
 }
 
+#define UNICODE_BUFFER_SIZE 1024
+
 - (BOOL)containsItemForURLUnicode:(const UniChar *)unicode length:(unsigned)length
 {
     const UniChar *unicodeStr = unicode;
-    UniChar staticStrBuffer[1024];
+    UniChar staticStrBuffer[UNICODE_BUFFER_SIZE];
     UniChar *strBuffer = NULL;
     BOOL needToAddSlash = FALSE;
 
@@ -627,7 +629,7 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
         matchUnicodeLetter(unicode[2], 't') &&
         matchUnicodeLetter(unicode[3], 'p') &&
         (unicode[4] == ':' 
-         || (matchLetter(unicode[4], 's') && unicode[5] == ':'))) {
+         || (matchUnicodeLetter(unicode[4], 's') && unicode[5] == ':'))) {
 
         unsigned pos = unicode[4] == ':' ? 5 : 6;
 
@@ -646,7 +648,7 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
     }
 
     if (needToAddSlash) {
-        if (length + 1 <= 1024) {
+        if (length + 1 <= UNICODE_BUFFER_SIZE) {
             strBuffer = staticStrBuffer;
         } else {
             strBuffer = malloc(sizeof(UniChar) * (length + 1));
