@@ -1,5 +1,62 @@
 2006-09-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Eric.
+
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10835
+        Fix svg memory leaks.
+
+        Reworked SVGList to deal with RefPtr's for ptr types
+        which makes manual refcounting unnecessary, and is much safer.
+
+        Removing all virtual functions (nullItem) from SVGList, and
+        also remove SVGListBase. Switch to a similar concept like
+        Vector/VectorTraits (see new file SVGListTraits.h).
+
+        Credits go to Eric/Maciej for the inspiration.
+
+        * CMakeLists.txt: Add SVGListTraits.cpp to build
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/scripts/CodeGeneratorJS.pm: Generator changes for SVGTransform/PathSeg/LengthList (now RefPtr based)
+        * kcanvas/RenderSVGText.cpp: Add some get() methods, as SVGLengthList is RefPtr based now.
+        (WebCore::RenderSVGText::translationForAttributes):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp: Add some get() methods, as SVGTransformList is RefPtr based now.
+        (WebCore::SVGAnimateTransformElement::handleTimerEvent):
+        * ksvg2/svg/SVGElementInstanceList.cpp: Be RefPtr based.
+        (WebCore::SVGElementInstanceList::SVGElementInstanceList):
+        * ksvg2/svg/SVGElementInstanceList.h:
+        * ksvg2/svg/SVGLengthList.cpp: Ditto.
+        (WebCore::SVGLengthList::SVGLengthList):
+        * ksvg2/svg/SVGLengthList.h: Ditto.
+        * ksvg2/svg/SVGList.h: Rewrote, as described above.
+        (WebCore::SVGListTypeOperations::nullItem):
+        (WebCore::SVGList::SVGList):
+        (WebCore::SVGList::~SVGList):
+        (WebCore::SVGList::clear):
+        (WebCore::SVGList::getFirst):
+        (WebCore::SVGList::getLast):
+        (WebCore::SVGList::getItem):
+        (WebCore::SVGList::replaceItem):
+        (WebCore::SVGList::removeItem):
+        * ksvg2/svg/SVGListTraits.cpp: Added.
+        * ksvg2/svg/SVGListTraits.h: Added.
+        (WebCore::):
+        * ksvg2/svg/SVGPathElement.cpp: Add some get() methods, as SVGPathSegList is RefPtr based now.
+        (WebCore::SVGPathElement::toPathData):
+        * ksvg2/svg/SVGPathSegList.cpp: Be RefPtr based.
+        (WebCore::SVGPathSegList::SVGPathSegList):
+        * ksvg2/svg/SVGPathSegList.h: Ditto.
+        * ksvg2/svg/SVGTransform.cpp: Style cleanup.
+        (SVGTransform::SVGTransform):
+        * ksvg2/svg/SVGTransformList.cpp: Be RefPtr based.
+        (SVGTransformList::SVGTransformList):
+        (SVGTransformList::createSVGTransformFromMatrix):
+        (SVGTransformList::consolidate):
+        * ksvg2/svg/SVGTransformList.h: Ditto.
+        * ksvg2/svg/SVGTransformable.cpp: Fix RefPtr usage of SVGTransform.
+        (SVGTransformable::parseTransformAttribute):
+
+2006-09-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by eseidel.  Landed by eseidel.
 
         Fix build on Qt/Linux and implement Frame::addMessageToConsole to

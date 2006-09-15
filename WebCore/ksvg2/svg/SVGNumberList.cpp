@@ -23,6 +23,8 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
+
+#include "DeprecatedString.h"
 #include "DeprecatedStringList.h"
 
 #include "SVGMatrix.h"

@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-    class SVGTransformList : public SVGList<SVGTransform*>
+    class SVGTransformList : public SVGList<RefPtr<SVGTransform> >
     {
     public:
         SVGTransformList();
         virtual ~SVGTransformList();
 
-        SVGTransform* createSVGTransformFromMatrix(SVGMatrix*) const;
-        SVGTransform* consolidate();
+        RefPtr<SVGTransform> createSVGTransformFromMatrix(SVGMatrix*) const;
+        RefPtr<SVGTransform> consolidate();
 
         // Internal use only
         SVGTransform* concatenate() const;

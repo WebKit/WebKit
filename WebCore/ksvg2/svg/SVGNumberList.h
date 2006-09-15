@@ -29,6 +29,8 @@
 
 namespace WebCore
 {
+    class DeprecatedString;
+
     class SVGNumberList : public SVGList<double>
     {
     public:

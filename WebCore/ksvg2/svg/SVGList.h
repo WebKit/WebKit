@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -20,33 +20,40 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGList_H
-#define KSVG_SVGList_H
+#ifndef SVGList_H
+#define SVGList_H
 
 #ifdef SVG_SUPPORT
 
 #include <wtf/Vector.h>
 
 #include "Shared.h"
-#include "FloatPoint.h"
+#include "SVGListTraits.h"
 #include "ExceptionCode.h"
-#include "PlatformString.h"
 
 namespace WebCore {
 
-    template<class Item>
-    class SVGListBase : public Shared<SVGListBase<Item> >
+    template<typename Item>
+    struct SVGListTypeOperations
     {
-    public:
-        SVGListBase() { }
-        virtual ~SVGListBase() { clearVector(m_vector); }
+        static Item nullItem()
+        {
+            return SVGListTraits<UsesDefaultInitializer<Item>::value, Item>::nullItem();
+        }
+    };
 
-        // To be implemented by the SVGList specializations!
-        virtual Item nullItem() const = 0;
-        virtual void clearVector(Vector<Item>& vector) const { vector.clear(); }
+    template<typename Item>
+    class SVGList : public Shared<SVGList<Item> >
+    {
+    private:
+        typedef SVGListTypeOperations<Item> TypeOperations;
+
+    public:
+        SVGList() { }
+        virtual ~SVGList() { m_vector.clear(); }
 
         unsigned int numberOfItems() const { return m_vector.size(); }
-        void clear(ExceptionCode &) { clearVector(m_vector); }
+        void clear(ExceptionCode &) { m_vector.clear(); }
 
         Item initialize(Item newItem, ExceptionCode& ec)
         {
@@ -57,7 +64,7 @@ namespace WebCore {
         Item getFirst() const
         {
             if (m_vector.isEmpty())
-                return nullItem();
+                return TypeOperations::nullItem();
 
             return m_vector.first();
         }
@@ -65,7 +72,7 @@ namespace WebCore {
         Item getLast() const
         {
             if (m_vector.isEmpty())
-                return nullItem();
+                return TypeOperations::nullItem();
 
             return m_vector.last();
         }
@@ -74,7 +81,7 @@ namespace WebCore {
         {
             if (m_vector.size() < index) {
                 ec = INDEX_SIZE_ERR;
-                return nullItem();
+                return TypeOperations::nullItem();
             }
 
             return m_vector.at(index);
@@ -84,10 +91,10 @@ namespace WebCore {
         {
             if (m_vector.size() < index) {
                 ec = INDEX_SIZE_ERR;
-                return nullItem();
+                return TypeOperations::nullItem();
             }
 
-            return m_vector.at(index);
+            return m_vector[index];
         }
 
         Item insertItemBefore(Item newItem, unsigned int index, ExceptionCode&)
@@ -100,10 +107,10 @@ namespace WebCore {
         {
             if (m_vector.size() < index) {
                 ec = INDEX_SIZE_ERR;
-                return nullItem();
+                return TypeOperations::nullItem();
             }
 
-            m_vector.at(index) = newItem;
+            m_vector[index] = newItem;
             return newItem;
         }
 
@@ -111,10 +118,10 @@ namespace WebCore {
         {
             if (m_vector.size() < index) {
                 ec = INDEX_SIZE_ERR;
-                return nullItem();
+                return TypeOperations::nullItem();
             }
 
-            Item item = m_vector.at(index);
+            Item item = m_vector[index];
             removeItem(index, ec);
             return item;
         }
@@ -134,51 +141,9 @@ namespace WebCore {
         Vector<Item> m_vector;
     };
 
-    template<class Item>
-    class SVGList : public SVGListBase<Item>
-    {
-    public:
-        virtual Item nullItem() const { return 0; }
-
-        virtual void clearVector(Vector<Item>& vector) const
-        {
-            typedef typename Vector<Item>::const_iterator iterator;
-            
-            iterator end = vector.end();
-            for (iterator it = vector.begin(); it != end; ++it)
-                (*it)->deref();
-
-            vector.clear();    
-        }
-    };
-
-    // Specialization for double
-    template<>
-    class SVGList<double> : public SVGListBase<double>
-    {
-    public:
-        virtual double nullItem() const { return 0.0; }
-    };
-
-    // Specialization for String
-    template<>
-    class SVGList<String> : public SVGListBase<String>
-    {
-    public:
-        virtual String nullItem() const { return String(); }
-    };
-
-    // Specialization for FloatPoint
-    template<>
-    class SVGList<FloatPoint> : public SVGListBase<FloatPoint>
-    {
-    public:
-        virtual FloatPoint nullItem() const { return FloatPoint(); }
-    };
-
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGList_H
+#endif // SVGList_H
 
 // vim:ts=4:noet

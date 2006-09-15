@@ -1,6 +1,6 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Nikolas Zimmermann <wildfox@kde.org>
+                  2006 Apple Computer Inc.
 
     This file is part of the KDE project
 
@@ -20,26 +20,34 @@
     Boston, MA 02111-1307, USA.
 */
 
-
-#include "config.h"
+#ifndef SVGListTraits_H
+#define SVGListTraits_H
 
 #ifdef SVG_SUPPORT
 
-#include "SVGPathSegList.h"
-
 namespace WebCore {
 
-SVGPathSegList::SVGPathSegList()
-    : SVGList<RefPtr<SVGPathSeg> >()
-{
-}
+    template<typename Item> struct UsesDefaultInitializer { static const bool value = true; };
+    template<> struct UsesDefaultInitializer<double>      { static const bool value = false; };
 
-SVGPathSegList::~SVGPathSegList()
-{
-}
+    template<bool usesDefaultInitializer, typename Item>
+    struct SVGListTraits { };
 
-}
+    template<typename Item>
+    struct SVGListTraits<true, Item>
+    {
+        static Item nullItem() { return Item(); } 
+    };
+
+    template<>
+    struct SVGListTraits<false, double>
+    {
+        static double nullItem() { return 0.0; }
+    };
+
+} // namespace WebCore
 
 #endif // SVG_SUPPORT
+#endif // SVGListTraits_H
 
 // vim:ts=4:noet

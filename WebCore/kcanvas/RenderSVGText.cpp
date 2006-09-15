@@ -49,8 +49,8 @@ AffineTransform RenderSVGText::translationForAttributes()
 {
     SVGTextElement *text = static_cast<SVGTextElement *>(element());
 
-    SVGLength* xOffset = text->x()->getFirst();
-    SVGLength* yOffset = text->y()->getFirst();
+    SVGLength* xOffset = text->x()->getFirst().get();
+    SVGLength* yOffset = text->y()->getFirst().get();
 
     return AffineTransform().translate(xOffset ? xOffset->value() : 0,
                                        yOffset ? yOffset->value() : 0);

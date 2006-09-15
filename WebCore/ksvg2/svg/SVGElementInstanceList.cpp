@@ -29,7 +29,7 @@
 namespace WebCore {
 
 SVGElementInstanceList::SVGElementInstanceList()
-    : SVGList<SVGElementInstance*>()
+    : SVGList<RefPtr<SVGElementInstance> >()
 {
 }
 

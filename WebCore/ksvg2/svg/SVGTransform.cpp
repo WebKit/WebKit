@@ -30,10 +30,10 @@
 
 using namespace WebCore;
 
-SVGTransform::SVGTransform() : Shared<SVGTransform>()
+SVGTransform::SVGTransform()
+    : Shared<SVGTransform>()
+    , m_matrix(SVGSVGElement::createSVGMatrix())
 {
-    m_matrix = SVGSVGElement::createSVGMatrix();
-
     m_type = SVG_TRANSFORM_UNKNOWN;
     m_angle = 0;
 }

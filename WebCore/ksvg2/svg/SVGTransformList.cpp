@@ -32,7 +32,7 @@
 using namespace WebCore;
 
 SVGTransformList::SVGTransformList()
-    : SVGList<SVGTransform*>()
+    : SVGList<RefPtr<SVGTransform> >()
 {
 }
 
@@ -40,12 +40,12 @@ SVGTransformList::~SVGTransformList()
 {
 }
 
-SVGTransform* SVGTransformList::createSVGTransformFromMatrix(SVGMatrix* matrix) const
+RefPtr<SVGTransform> SVGTransformList::createSVGTransformFromMatrix(SVGMatrix* matrix) const
 {
     return SVGSVGElement::createSVGTransformFromMatrix(matrix);
 }
 
-SVGTransform* SVGTransformList::consolidate()
+RefPtr<SVGTransform> SVGTransformList::consolidate()
 {
     SVGTransform* obj = concatenate();
     if (!obj)

@@ -89,7 +89,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             if (transformList) {
                 ExceptionCode ec = 0;
                 for (unsigned long i = 0; i < transformList->numberOfItems(); i++) {
-                    SVGTransform *value = transformList->getItem(i, ec);
+                    SVGTransform *value = transformList->getItem(i, ec).get();;
                     if (!value)
                         continue;
                         

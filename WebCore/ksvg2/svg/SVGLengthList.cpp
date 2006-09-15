@@ -33,7 +33,7 @@
 namespace WebCore {
 
 SVGLengthList::SVGLengthList()
-    : SVGList<SVGLength*>()
+    : SVGList<RefPtr<SVGLength> >()
 {
 }
 
