@@ -1,3 +1,23 @@
+2006-09-14  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Adam.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10838
+        Bug 10838: REGRESSION: Leaking of WebScriptObjectPrivate
+
+        FrameMac relies on its cleanupPluginObjects being called to perform cleanup.  The virtual
+        Frame::cleanupPluginObjects method is called from Frame's destructor, which results
+        in Frame::cleanupPluginObjects being called rather than FrameMac::cleanupPluginObjects.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::~FrameMac): Call cancelAndClear to ensure that FrameMac::cleanupPluginObjects
+        will be called from Frame::clear
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame): Use cancelAndClear.
+        (WebCore::Frame::cancelAndClear): Move cancellation and clearing into a separate method that
+        FrameMac can use.
+        * page/Frame.h:
+
 2006-09-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej's rubber stamp

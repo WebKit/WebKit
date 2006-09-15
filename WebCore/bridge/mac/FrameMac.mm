@@ -176,6 +176,8 @@ FrameMac::~FrameMac()
     [_bridge clearFrame];
     HardRelease(_bridge);
     _bridge = nil;
+
+    cancelAndClear();
 }
 
 void FrameMac::freeClipboard()
