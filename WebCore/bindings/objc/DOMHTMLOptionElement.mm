@@ -37,74 +37,85 @@
 // differeneces between the old bindings and the idl.
 @implementation DOMHTMLOptionElement
 
-- (WebCore::HTMLOptionElement *)_optionElement
-{
-    return static_cast<WebCore::HTMLOptionElement *>(DOM_cast<WebCore::Node *>(_internal));
-}
+#define IMPL static_cast<WebCore::HTMLOptionElement*>(reinterpret_cast<WebCore::Node*>(_internal))
 
 - (DOMHTMLFormElement *)form
 {
-    return [DOMHTMLFormElement _HTMLFormElementWith:[self _optionElement]->form()];
+    return [DOMHTMLFormElement _HTMLFormElementWith:IMPL->form()];
 }
 
 - (BOOL)defaultSelected
 {
-    return [self _optionElement]->defaultSelected();
+    return IMPL->defaultSelected();
 }
 
 - (void)setDefaultSelected:(BOOL)defaultSelected
 {
-    [self _optionElement]->setDefaultSelected(defaultSelected);
+    IMPL->setDefaultSelected(defaultSelected);
 }
 
 - (NSString *)text
 {
-    return [self _optionElement]->text();
+    return IMPL->text();
 }
 
 - (int)index
 {
-    return [self _optionElement]->index();
+    return IMPL->index();
 }
 
 - (BOOL)disabled
 {
-    return [self _optionElement]->disabled();
+    return IMPL->disabled();
 }
 
 - (void)setDisabled:(BOOL)disabled
 {
-    [self _optionElement]->setDisabled(disabled);
+    IMPL->setDisabled(disabled);
 }
 
 - (NSString *)label
 {
-    return [self _optionElement]->label();
+    return IMPL->label();
 }
 
 - (void)setLabel:(NSString *)label
 {
-    [self _optionElement]->setLabel(label);
+    IMPL->setLabel(label);
 }
 
 - (BOOL)selected
 {
-    return [self _optionElement]->selected();
+    return IMPL->selected();
 }
 
 - (void)setSelected:(BOOL)selected
 {
-    [self _optionElement]->setSelected(selected);
+    IMPL->setSelected(selected);
 }
 
 - (NSString *)value
 {
-    return [self _optionElement]->value();
+    return IMPL->value();
 }
 
 - (void)setValue:(NSString *)value
 {
-    [self _optionElement]->setValue(value);
+    IMPL->setValue(value);
+}
+
+@end
+
+@implementation DOMHTMLOptionElement (WebCoreInternal)
+
+- (WebCore::HTMLOptionElement *)_HTMLOptionElement
+{
+    return IMPL;
+}
+
++ (DOMHTMLOptionElement *)_HTMLOptionElementWith:(WebCore::HTMLOptionElement *)impl
+{
+    return static_cast<DOMHTMLOptionElement*>([DOMNode _nodeWith:impl]);
 }
 
 @end

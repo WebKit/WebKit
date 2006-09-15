@@ -143,30 +143,37 @@ namespace WebCore {
 
 @interface DOMNamedNodeMap (WebCoreInternal)
 + (DOMNamedNodeMap *)_namedNodeMapWith:(WebCore::NamedNodeMap *)impl;
+- (WebCore::NamedNodeMap *)_namedNodeMap;
 @end
 
 @interface DOMNodeList (WebCoreInternal)
 + (DOMNodeList *)_nodeListWith:(WebCore::NodeList *)impl;
+- (WebCore::NodeList *)_nodeList;
 @end
 
 @interface DOMText (WebCoreInternal)
 + (DOMText *)_textWith:(WebCore::Text *)impl;
+- (WebCore::Text *)_text;
 @end
 
 @interface DOMComment (WebCoreInternal)
 + (DOMComment *)_commentWith:(WebCore::Comment *)impl;
+- (WebCore::Comment *)_comment;
 @end
 
 @interface DOMCDATASection (WebCoreInternal)
 + (DOMCDATASection *)_CDATASectionWith:(WebCore::CDATASection *)impl;
+- (WebCore::CDATASection *)_CDATASection;
 @end
 
 @interface DOMProcessingInstruction (WebCoreInternal)
 + (DOMProcessingInstruction *)_processingInstructionWith:(WebCore::ProcessingInstruction *)impl;
+- (WebCore::ProcessingInstruction *)_processingInstruction;
 @end
 
 @interface DOMEntityReference (WebCoreInternal)
 + (DOMEntityReference *)_entityReferenceWith:(WebCore::EntityReference *)impl;
+- (WebCore::EntityReference *)_entityReference;
 @end
 
 @interface DOMElement (WebCoreInternal)
@@ -192,26 +199,37 @@ namespace WebCore {
 @interface DOMDocument (WebCoreInternal)
 + (DOMDocument *)_documentWith:(WebCore::Document *)impl;
 - (WebCore::Document *)_document;
+@end
+
+@interface DOMDocument (WebCoreInternalExtension)
 - (DOMElement *)_ownerElement;
 @end
 
 @interface DOMDocumentFragment (WebCoreInternal)
 + (DOMDocumentFragment *)_documentFragmentWith:(WebCore::DocumentFragment *)impl;
-- (WebCore::DocumentFragment *)_fragment;
+- (WebCore::DocumentFragment *)_documentFragment;
 @end
 
 // HTML Internal Interfaces
 
-@interface DOMHTMLOptionsCollection (WebCoreInternal)
-+ (DOMHTMLOptionsCollection *)_HTMLOptionsCollectionWith:(WebCore::HTMLOptionsCollection *)impl;
+@interface DOMHTMLOptionElement (WebCoreInternal)
++ (DOMHTMLOptionElement *)_HTMLOptionElementWith:(WebCore::HTMLOptionElement *)impl;
+- (WebCore::HTMLOptionElement *)_HTMLOptionElement;
 @end
 
-@interface DOMHTMLDocument (WebCoreInternal)
-+ (DOMHTMLDocument *)_HTMLDocumentWith:(WebCore::HTMLDocument *)impl;
+@interface DOMHTMLOptionsCollection (WebCoreInternal)
++ (DOMHTMLOptionsCollection *)_HTMLOptionsCollectionWith:(WebCore::HTMLOptionsCollection *)impl;
+- (WebCore::HTMLOptionsCollection *)_HTMLOptionsCollection;
 @end
 
 @interface DOMHTMLCollection (WebCoreInternal)
 + (DOMHTMLCollection *)_HTMLCollectionWith:(WebCore::HTMLCollection *)impl;
+- (WebCore::HTMLCollection *)_HTMLCollection;
+@end
+
+@interface DOMHTMLDocument (WebCoreInternal)
++ (DOMHTMLDocument *)_HTMLDocumentWith:(WebCore::HTMLDocument *)impl;
+- (WebCore::HTMLDocument *)_HTMLDocument;
 @end
 
 @interface DOMHTMLElement (WebCoreInternal)
@@ -221,6 +239,7 @@ namespace WebCore {
 
 @interface DOMHTMLFormElement (WebCoreInternal)
 + (DOMHTMLFormElement *)_HTMLFormElementWith:(WebCore::HTMLFormElement *)impl;
+- (WebCore::HTMLFormElement *)_HTMLFormElement;
 @end
 
 @interface DOMHTMLTableCaptionElement (WebCoreInternal)
@@ -244,18 +263,17 @@ namespace WebCore {
 @end
 
 @interface DOMHTMLImageElement (WebCoreInternal)
++ (DOMHTMLImageElement *)_HTMLImageElementWith:(WebCore::HTMLImageElement *)impl;
 - (WebCore::HTMLImageElement *)_HTMLImageElement;
 @end
 
 @interface DOMHTMLObjectElement (WebCoreInternal)
++ (DOMHTMLObjectElement *)_HTMLObjectElementWith:(WebCore::HTMLObjectElement *)impl;
 - (WebCore::HTMLObjectElement *)_HTMLObjectElement;
 @end
 
-@interface DOMHTMLOptionElement (WebCoreInternal)
-- (WebCore::HTMLOptionElement *)_HTMLOptionElement;
-@end
-
 @interface DOMHTMLInputElement (WebCoreInternal)
++ (DOMHTMLInputElement *)_HTMLInputElementWith:(WebCore::HTMLInputElement *)impl;
 - (WebCore::HTMLInputElement *)_HTMLInputElement;
 @end
 
@@ -263,6 +281,7 @@ namespace WebCore {
 
 @interface DOMCSSRuleList (WebCoreInternal)
 + (DOMCSSRuleList *)_CSSRuleListWith:(WebCore::CSSRuleList *)impl;
+- (WebCore::CSSRuleList *)_CSSRuleList;
 @end
 
 @interface DOMCSSRule (WebCoreInternal)
@@ -283,10 +302,12 @@ namespace WebCore {
 
 @interface DOMRect (WebCoreInternal)
 + (DOMRect *)_rectWith:(WebCore::RectImpl *)impl;
+- (WebCore::RectImpl *)_rect;
 @end
 
 @interface DOMCounter (WebCoreInternal)
 + (DOMCounter *)_counterWith:(WebCore::Counter *)impl;
+- (WebCore::Counter *)_counter;
 @end
 
 @interface DOMCSSStyleDeclaration (WebCoreInternal)
@@ -306,10 +327,12 @@ namespace WebCore {
 
 @interface DOMStyleSheetList (WebCoreInternal)
 + (DOMStyleSheetList *)_styleSheetListWith:(WebCore::StyleSheetList *)impl;
+- (WebCore::StyleSheetList *)_styleSheetList;
 @end
 
 @interface DOMMediaList (WebCoreInternal)
 + (DOMMediaList *)_mediaListWith:(WebCore::MediaList *)impl;
+- (WebCore::MediaList *)_mediaList;
 @end
 
 // Events Internal Interfaces

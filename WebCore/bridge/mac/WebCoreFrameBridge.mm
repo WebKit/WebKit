@@ -1996,7 +1996,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!m_frame->hasSelection() || !fragment)
         return;
     
-    applyCommand(new ReplaceSelectionCommand(m_frame->document(), [fragment _fragment], selectReplacement, smartReplace, matchStyle));
+    applyCommand(new ReplaceSelectionCommand(m_frame->document(), [fragment _documentFragment], selectReplacement, smartReplace, matchStyle));
     [self ensureSelectionVisible];
 }
 
@@ -2112,7 +2112,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove
 {
-    applyCommand(new MoveSelectionCommand([selectionFragment _fragment], m_frame->dragCaretController()->base(), smartMove));
+    applyCommand(new MoveSelectionCommand([selectionFragment _documentFragment], m_frame->dragCaretController()->base(), smartMove));
 }
 
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point

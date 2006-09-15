@@ -19,7 +19,7 @@
 
 module css {
 
-    interface [GenerateConstructor] CSSPrimitiveValue : CSSValue {
+    interface [GenerateConstructor, ObjCNoInternal] CSSPrimitiveValue : CSSValue {
 
         // UnitTypes
         const unsigned short CSS_UNKNOWN    = 0;

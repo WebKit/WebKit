@@ -1,3 +1,139 @@
+2006-09-15  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10869
+        Auto-generate the internal methods for the Objective-C bindings
+
+        - Auto-generates the internal method (ie. the _fooBar and _fooBarWith methods)
+          implementations where standard.  For cases where a custom implementation was
+          needed, added a [ObjCNoInternal] extended attribute to the corresponding IDL.
+
+        - Some general cleanup of some of the non-generated bindings, to bring them in-
+          line with what the generated bindings look like.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode description]):
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMCSSPrimitiveValue WebCore::]):
+        (-[DOMDocument getComputedStyle::]):
+        (-[DOMDocument getMatchedCSSRules::]):
+        * bindings/objc/DOMEvents.mm:
+        (-[DOMEvent WebCore::]):
+        * bindings/objc/DOMHTML.mm:
+        * bindings/objc/DOMHTMLDocument.mm:
+        (-[DOMHTMLDocument title]):
+        (-[DOMHTMLDocument setTitle:]):
+        (-[DOMHTMLDocument referrer]):
+        (-[DOMHTMLDocument domain]):
+        (-[DOMHTMLDocument URL]):
+        (-[DOMHTMLDocument body]):
+        (-[DOMHTMLDocument setBody:]):
+        (-[DOMHTMLDocument images]):
+        (-[DOMHTMLDocument applets]):
+        (-[DOMHTMLDocument links]):
+        (-[DOMHTMLDocument forms]):
+        (-[DOMHTMLDocument anchors]):
+        (-[DOMHTMLDocument cookie]):
+        (-[DOMHTMLDocument setCookie:]):
+        (-[DOMHTMLDocument open]):
+        (-[DOMHTMLDocument close]):
+        (-[DOMHTMLDocument write:]):
+        (-[DOMHTMLDocument writeln:]):
+        (-[DOMHTMLDocument getElementById:]):
+        (-[DOMHTMLDocument getElementsByName:]):
+        (-[DOMHTMLDocument WebCore::]):
+        (+[DOMHTMLDocument _HTMLDocumentWith:WebCore::]):
+        * bindings/objc/DOMHTMLOptionElement.mm:
+        (-[DOMHTMLOptionElement form]):
+        (-[DOMHTMLOptionElement defaultSelected]):
+        (-[DOMHTMLOptionElement setDefaultSelected:]):
+        (-[DOMHTMLOptionElement text]):
+        (-[DOMHTMLOptionElement index]):
+        (-[DOMHTMLOptionElement disabled]):
+        (-[DOMHTMLOptionElement setDisabled:]):
+        (-[DOMHTMLOptionElement label]):
+        (-[DOMHTMLOptionElement setLabel:]):
+        (-[DOMHTMLOptionElement selected]):
+        (-[DOMHTMLOptionElement setSelected:]):
+        (-[DOMHTMLOptionElement value]):
+        (-[DOMHTMLOptionElement setValue:]):
+        (-[DOMHTMLOptionElement WebCore::]):
+        (+[DOMHTMLOptionElement _HTMLOptionElementWith:WebCore::]):
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMNode.mm:
+        (-[DOMNode dealloc]):
+        (-[DOMNode finalize]):
+        (-[DOMNode nodeName]):
+        (-[DOMNode nodeValue]):
+        (-[DOMNode setNodeValue:]):
+        (-[DOMNode nodeType]):
+        (-[DOMNode parentNode]):
+        (-[DOMNode childNodes]):
+        (-[DOMNode firstChild]):
+        (-[DOMNode lastChild]):
+        (-[DOMNode previousSibling]):
+        (-[DOMNode nextSibling]):
+        (-[DOMNode attributes]):
+        (-[DOMNode ownerDocument]):
+        (-[DOMNode insertBefore::]):
+        (-[DOMNode replaceChild::]):
+        (-[DOMNode removeChild:]):
+        (-[DOMNode appendChild:]):
+        (-[DOMNode hasChildNodes]):
+        (-[DOMNode cloneNode:]):
+        (-[DOMNode normalize]):
+        (-[DOMNode isSupported::]):
+        (-[DOMNode namespaceURI]):
+        (-[DOMNode prefix]):
+        (-[DOMNode setPrefix:]):
+        (-[DOMNode localName]):
+        (-[DOMNode hasAttributes]):
+        (-[DOMNode isSameNode:]):
+        (-[DOMNode isEqualNode:]):
+        (-[DOMNode isDefaultNamespace:]):
+        (-[DOMNode lookupPrefix:]):
+        (-[DOMNode lookupNamespaceURI:]):
+        (-[DOMNode textContent]):
+        (-[DOMNode setTextContent:]):
+        (-[DOMNode boundingBox]):
+        (-[DOMNode lineBoxRects]):
+        * bindings/objc/DOMObject.mm:
+        (-[DOMObject _init]):
+        * bindings/objc/DOMXPath.mm:
+        (-[DOMNativeXPathNSResolver dealloc]):
+        (-[DOMNativeXPathNSResolver finalize]):
+        (-[DOMNativeXPathNSResolver WebCore::]):
+        (-[DOMNativeXPathNSResolver _initWithXPathNSResolver:WebCore::]):
+        (+[DOMNativeXPathNSResolver _xpathNSResolverWith:WebCore::]):
+        (-[DOMNativeXPathNSResolver lookupNamespaceURI:]):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+        (-[WebCoreFrameBridge moveSelectionToDragCaret:smartMove:]):
+        * css/CSSCharsetRule.idl:
+        * css/CSSFontFaceRule.idl:
+        * css/CSSImportRule.idl:
+        * css/CSSMediaRule.idl:
+        * css/CSSPageRule.idl:
+        * css/CSSPrimitiveValue.idl:
+        * css/CSSRule.idl:
+        * css/CSSStyleRule.idl:
+        * css/CSSStyleSheet.idl:
+        * css/CSSUnknownRule.idl:
+        * css/CSSValue.idl:
+        * css/CSSValueList.idl:
+        * css/StyleSheet.idl:
+        * dom/Event.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/NodeIterator.idl:
+        * dom/OverflowEvent.idl:
+        * dom/TreeWalker.idl:
+        * dom/UIEvent.idl:
+        * dom/WheelEvent.idl:
+
 2006-09-15  Adam Roben  <aroben@apple.com>
 
         Reviewed by timothy.

@@ -18,7 +18,7 @@
  */
 module events {
 
-    interface OverflowEvent : Event {
+    interface [ObjCNoInternal] OverflowEvent : Event {
         const unsigned short HORIZONTAL = 0;
         const unsigned short VERTICAL   = 1;
         const unsigned short BOTH       = 2;

@@ -26,7 +26,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [HasIndexGetter] CSSValueList : CSSValue {
+    interface [HasIndexGetter, ObjCNoInternal] CSSValueList : CSSValue {
         readonly attribute unsigned long    length;
         CSSValue           item(in unsigned long index);
     };

@@ -57,88 +57,6 @@ using namespace HTMLNames;
 
 
 //------------------------------------------------------------------------------------------
-// DOMHTMLCollection
-
-@implementation DOMHTMLCollection (WebCoreInternal)
-
-- (id)_initWithCollection:(HTMLCollection *)impl
-{
-    ASSERT(impl);
-    
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMHTMLCollection *)_HTMLCollectionWith:(HTMLCollection *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithCollection:impl] autorelease];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMHTMLOptionsCollection
-
-@implementation DOMHTMLOptionsCollection (WebCoreInternal)
-
-- (id)_initWithOptionsCollection:(HTMLOptionsCollection *)impl
-{
-    ASSERT(impl);
-    
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMHTMLOptionsCollection *)_HTMLOptionsCollectionWith:(HTMLOptionsCollection *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithOptionsCollection:impl] autorelease];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMHTMLElement
-
-@implementation DOMHTMLElement (WebCoreInternal)
-
-+ (DOMHTMLElement *)_HTMLElementWith:(HTMLElement *)impl
-{
-    return static_cast<DOMHTMLElement*>([DOMNode _nodeWith:impl]);
-}
-
-- (HTMLElement *)_HTMLElement
-{
-    return static_cast<HTMLElement*>(DOM_cast<Node*>(_internal));
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
 // DOMHTMLDocument
 
 @implementation DOMHTMLDocument (WebPrivate)
@@ -152,28 +70,6 @@ using namespace HTMLNames;
 - (DOMDocumentFragment *)_createDocumentFragmentWithText:(NSString *)text
 {
     return [self createDocumentFragmentWithText:text];
-}
-
-@end
-
-@implementation DOMHTMLDocument (WebCoreInternal)
-
-+ (DOMHTMLDocument *)_HTMLDocumentWith:(WebCore::HTMLDocument *)impl;
-{
-    return static_cast<DOMHTMLDocument *>([DOMNode _nodeWith:impl]);
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMHTMLFormElement
-
-@implementation DOMHTMLFormElement (WebCoreInternal)
-
-+ (DOMHTMLFormElement *)_HTMLFormElementWith:(HTMLFormElement *)impl
-{
-    return static_cast<DOMHTMLFormElement*>([DOMNode _nodeWith:impl]);
 }
 
 @end
@@ -193,28 +89,6 @@ using namespace HTMLNames;
 
 @end
 
-@implementation DOMHTMLInputElement (WebCoreInternal)
-
-- (WebCore::HTMLInputElement *)_HTMLInputElement
-{
-    return static_cast<WebCore::HTMLInputElement *>(DOM_cast<WebCore::Node *>(_internal));
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMHTMLImageElement
-
-@implementation DOMHTMLImageElement (WebCoreInternal)
-
-- (WebCore::HTMLImageElement *)_HTMLImageElement
-{
-    return static_cast<WebCore::HTMLImageElement*>(DOM_cast<WebCore::Node*>(_internal));
-}
-
-@end
-
 
 //------------------------------------------------------------------------------------------
 // DOMHTMLObjectElement
@@ -226,87 +100,6 @@ using namespace HTMLNames;
     if (![self _HTMLObjectElement]->renderer() || ![self _HTMLObjectElement]->renderer()->isImage())
         return nil;
     return [self _getURLAttribute:@"data"];
-}
-
-@end
-
-@implementation DOMHTMLObjectElement (WebCoreInternal)
-
-- (WebCore::HTMLObjectElement *)_HTMLObjectElement
-{
-    return static_cast<WebCore::HTMLObjectElement*>(DOM_cast<WebCore::Node*>(_internal));
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMHTMLTableCaptionElement
-
-@implementation DOMHTMLTableCaptionElement (WebCoreInternal)
-
-+ (DOMHTMLTableCaptionElement *)_HTMLTableCaptionElementWith:(HTMLTableCaptionElement *)impl
-{
-    return static_cast<DOMHTMLTableCaptionElement*>([DOMNode _nodeWith:impl]);
-}
-
-- (HTMLTableCaptionElement *)_HTMLTableCaptionElement
-{
-    return static_cast<HTMLTableCaptionElement*>(DOM_cast<Node*>(_internal));
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMHTMLTableSectionElement
-
-@implementation DOMHTMLTableSectionElement (WebCoreInternal)
-
-+ (DOMHTMLTableSectionElement *)_HTMLTableSectionElementWith:(HTMLTableSectionElement *)impl
-{
-    return static_cast<DOMHTMLTableSectionElement*>([DOMNode _nodeWith:impl]);
-}
-
-- (HTMLTableSectionElement *)_HTMLTableSectionElement
-{
-    return static_cast<HTMLTableSectionElement*>(DOM_cast<Node*>(_internal));
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMHTMLTableElement
-
-@implementation DOMHTMLTableElement (WebCoreInternal)
-
-+ (DOMHTMLTableElement *)_HTMLTableElementWith:(HTMLTableElement *)impl
-{
-    return static_cast<DOMHTMLTableElement*>([DOMNode _nodeWith:impl]);
-}
-
-- (HTMLTableElement *)_HTMLTableElement
-{
-    return static_cast<HTMLTableElement*>(DOM_cast<Node*>(_internal));
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMHTMLTableCellElement
-
-@implementation DOMHTMLTableCellElement (WebCoreInternal)
-
-+ (DOMHTMLTableCellElement *)_HTMLTableCellElementWith:(HTMLTableCellElement *)impl
-{
-    return static_cast<DOMHTMLTableCellElement*>([DOMNode _nodeWith:impl]);
-}
-
-- (HTMLTableCellElement *)_HTMLTableCellElement
-{
-    return static_cast<HTMLTableCellElement*>(DOM_cast<Node*>(_internal));
 }
 
 @end

@@ -24,6 +24,7 @@ package CodeGeneratorObjC;
 
 use File::stat;
 
+# Global Variables
 my $module = "";
 my $outputDir = "";
 my %implIncludes = ();
@@ -38,6 +39,11 @@ my @ivars = ();
 my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} <= 10.4;
 my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5;
 
+# Hashes
+my %protocolTypeHash = ("XPathNSResolver" => 1, "EventListener" => 1, "EventTarget" => 1, "NodeFilter" => 1);
+my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
+
+# Constants
 my $exceptionInit = "WebCore::ExceptionCode ec = 0;";
 my $exceptionRaiseOnError = "raiseOnDOMError(ec);";
 
@@ -245,7 +251,7 @@ sub IsProtocolType
 {
     $type = shift;
 
-    return 1 if $type eq "XPathNSResolver" or $type eq "EventListener" or $type eq "EventTarget" or $type eq "NodeFilter";
+    return 1 if $protocolTypeHash{$type};
     return 0;
 }
 
@@ -253,7 +259,7 @@ sub IsStringType
 {
     $type = shift;
 
-    return 1 if $type eq "DOMString" or $type eq "AtomicString";
+    return 1 if $stringTypeHash{$type};
     return 0;
 }
 
@@ -292,18 +298,38 @@ sub GetObjCTypeMaker
     return $typeMaker;
 }
 
+sub GetObjCTypeGetterName
+{
+    my $type = $codeGenerator->StripModule(shift);
+
+    return "" if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp";
+
+    my $typeGetter = "";
+    if ($type =~ /^(HTML|CSS)/ or $type eq "DOMImplementation" or $type eq "CDATASection") {
+        $typeGetter = $type;
+    } elsif ($type =~ /^XPath(.+)/) {
+        $typeGetter = "xpath" . $1;
+    } elsif ($type eq "DOMWindow") {
+        $typeGetter = "abstractView";
+    } else {
+        $typeGetter = lcfirst($type);
+    }
+
+    # put into the form "_fooBar" for type FooBar.
+    return "_" . $typeGetter;
+}
+
 sub GetObjCTypeGetter
 {
     my $argName = shift;
     my $type = $codeGenerator->StripModule(shift);
+    my $typeGetterMethodName = GetObjCTypeGetterName($type);
 
     return $argName if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL";
     return $argName . "EventTarget" if $type eq "EventTarget";
-    return "[nativeResolver _xpathNSResolver]" if $type eq "XPathNSResolver";
-    return "[" . $argName . " _xpathResult]" if $type eq "XPathResult";
-    return "[" . $argName . " _abstractView]" if $type eq "DOMWindow";
-    return "[" . $argName . " _" . $type . "]" if $type =~ /^(HTML|CSS)/;
-    return "[" . $argName . " _" . lcfirst($type) . "]";
+    return "[nativeResolver $typeGetterMethodName]" if $type eq "XPathNSResolver";
+
+    return "[$argName $typeGetterMethodName]";
 }
 
 sub AddForwardDeclarationsForType
@@ -619,10 +645,10 @@ sub GenerateImplementation
     my $className = GetClassName($interfaceName);
     my $implClassName = GetImplClassName($interfaceName);
     my $parentImplClassName = GetParentImplClassName($dataNode);
+    my $implClassNameWithNamespace = "WebCore::" . $implClassName;
 
     my $numAttributes = @{$dataNode->attributes};
     my $numFunctions = @{$dataNode->functions};
-    my $hasFunctionsOrAttributes = $numAttributes + $numFunctions;
 
     # - Add default header template.
     @implContentHeader = split("\r", $implementationLicenceTemplate);
@@ -633,80 +659,72 @@ sub GenerateImplementation
     my $classHeaderName = GetClassHeaderName($className);
     push(@implContentHeader, "#import \"$classHeaderName.h\"\n\n");
 
-    if ($hasFunctionsOrAttributes) {
-        push(@implContentHeader, "#import <wtf/GetPtr.h>\n\n");
+    push(@implContentHeader, "#import <wtf/GetPtr.h>\n\n");
 
-        $implIncludes{"$implClassName.h"} = 1;
-        $implIncludes{"DOMInternal.h"} = 1;
-    }
+    $implIncludes{"$implClassName.h"} = 1;
+    $implIncludes{"DOMInternal.h"} = 1;
 
     @implContent = ();
 
     # START implementation
     push(@implContent, "\@implementation $className\n\n");
 
-    if ($hasFunctionsOrAttributes) {
-        # Add namespace to implementation class name 
-        my $implClassNameWithNamespace = "WebCore::" . $implClassName;
-
-        if ($parentImplClassName eq "Object") {
-            # Only generate 'dealloc' and 'finalize' methods for direct subclasses of DOMObject.
-
-            push(@implContent, "#define IMPL reinterpret_cast<$implClassNameWithNamespace*>(_internal)\n\n");
-
-            my @ivarsToRelease = ();
-            if (@ivars > 0) {
-                foreach $attribute (@ivars) {
-                    my $name = "m_" . $attribute->signature->name;
-                    push(@ivarsToRelease, "    [$name release];\n");
-                }
-            }
-
-            push(@implContent, "- (void)dealloc\n");
-            push(@implContent, "{\n");
-            push(@implContent, @ivarsToRelease);
-            if ($interfaceName eq "NodeIterator") {
-                push(@implContent, "    if (_internal) {\n");
-                push(@implContent, "        [self detach];\n");
-                push(@implContent, "        IMPL->deref();\n");
-                push(@implContent, "    };\n");
-            } else {
-                push(@implContent, "    if (_internal)\n");
-                push(@implContent, "        IMPL->deref();\n");
-            }
-            push(@implContent, "    [super dealloc];\n");
-            push(@implContent, "}\n\n");
-
-            push(@implContent, "- (void)finalize\n");
-            push(@implContent, "{\n");
-            if ($interfaceName eq "NodeIterator") {
-                push(@implContent, "    if (_internal) {\n");
-                push(@implContent, "        [self detach];\n");
-                push(@implContent, "        IMPL->deref();\n");
-                push(@implContent, "    };\n");
-            } else {
-                push(@implContent, "    if (_internal)\n");
-                push(@implContent, "        IMPL->deref();\n");
-            }
-            push(@implContent, "    [super finalize];\n");
-            push(@implContent, "}\n\n");
-        } elsif ($interfaceName eq "CSSStyleSheet") {
-            # Special case for CSSStyleSheet
-            push(@implContent, "#define IMPL reinterpret_cast<$implClassNameWithNamespace*>(_internal)\n\n");
+    # add implementation accessor
+    # FIXME: CSSStyleSheet should not need special casing like this.
+    if ($parentImplClassName eq "Object" or $interfaceName eq "CSSStyleSheet") {
+        push(@implContent, "#define IMPL reinterpret_cast<$implClassNameWithNamespace*>(_internal)\n\n");
+    } else {
+        my $internalBaseType = "WebCore::";
+        if ($parentImplClassName eq "CSSValue" or $parentImplClassName eq "CSSRule") {
+            $internalBaseType .= $parentImplClassName;
+        } elsif ($parentImplClassName eq "Event" or $parentImplClassName eq "UIEvent") {
+            $internalBaseType .= "Event";
         } else {
-            my $internalBaseType;
-            if ($parentImplClassName eq "CSSValue") {
-                $internalBaseType = "WebCore::CSSValue"
-            } elsif ($parentImplClassName eq "CSSRule") {
-                $internalBaseType = "WebCore::CSSRule"
-            } elsif ($parentImplClassName eq "Event" or $parentImplClassName eq "UIEvent") {
-                $internalBaseType = "WebCore::Event"
-            } else {
-                $internalBaseType = "WebCore::Node"
-            }
-
-            push(@implContent, "#define IMPL static_cast<$implClassNameWithNamespace*>(reinterpret_cast<$internalBaseType*>(_internal))\n\n");
+            $internalBaseType .= "Node";
         }
+
+        push(@implContent, "#define IMPL static_cast<$implClassNameWithNamespace*>(reinterpret_cast<$internalBaseType*>(_internal))\n\n");
+    }
+
+    # Only generate 'dealloc' and 'finalize' methods for direct subclasses of DOMObject.
+    if ($parentImplClassName eq "Object") {
+        my @ivarsToRelease = ();
+        if (@ivars > 0) {
+            foreach $attribute (@ivars) {
+                my $name = "m_" . $attribute->signature->name;
+                push(@ivarsToRelease, "    [$name release];\n");
+            }
+        }
+
+        push(@implContent, "- (void)dealloc\n");
+        push(@implContent, "{\n");
+        push(@implContent, @ivarsToRelease);
+        if ($interfaceName eq "NodeIterator") {
+            push(@implContent, "    if (_internal) {\n");
+            push(@implContent, "        [self detach];\n");
+            push(@implContent, "        IMPL->deref();\n");
+            push(@implContent, "    };\n");
+        } else {
+            push(@implContent, "    if (_internal)\n");
+            push(@implContent, "        IMPL->deref();\n");
+        }
+        push(@implContent, "    [super dealloc];\n");
+        push(@implContent, "}\n\n");
+
+        push(@implContent, "- (void)finalize\n");
+        push(@implContent, "{\n");
+        if ($interfaceName eq "NodeIterator") {
+            push(@implContent, "    if (_internal) {\n");
+            push(@implContent, "        [self detach];\n");
+            push(@implContent, "        IMPL->deref();\n");
+            push(@implContent, "    };\n");
+        } else {
+            push(@implContent, "    if (_internal)\n");
+            push(@implContent, "        IMPL->deref();\n");
+        }
+        push(@implContent, "    [super finalize];\n");
+        push(@implContent, "}\n\n");
+        
     }
 
     %attributeNames = ();
@@ -991,6 +1009,56 @@ sub GenerateImplementation
         # - Deprecated category @implementation
         push(@implContent, "\n\@implementation $className (" . $className . "Deprecated)\n\n");
         push(@implContent, @deprecatedFunctions);
+        push(@implContent, "\@end\n");
+    }
+
+    unless ($dataNode->extendedAttributes->{ObjCNoInternal}) {
+        # - BEGIN WebCoreInternal category @implementation
+        push(@implContent, "\n\@implementation $className (WebCoreInternal)\n\n");
+
+        # - Type-Getter
+        # - (WebCore::FooBar *)_fooBar for implementation class FooBar
+        my $typeGetterName = GetObjCTypeGetterName($interfaceName);
+        push(@implContent, "- ($implClassNameWithNamespace *)$typeGetterName\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    return IMPL;\n");
+        push(@implContent, "}\n\n");            
+
+        # - Type-Maker
+        if ($parentImplClassName eq "Object") {        
+            # - (id)_initWithFooBar:(WebCore::FooBar *)impl for implementation class FooBar
+            my $initWithImplName = "_initWith" . $implClassName;
+            push(@implContent, "- (id)$initWithImplName:($implClassNameWithNamespace *)impl\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    [super _init];\n");
+            push(@implContent, "    _internal = DOM_cast<DOMObjectInternal*>(impl);\n");
+            push(@implContent, "    impl->ref();\n");
+            push(@implContent, "    addDOMWrapper(self, impl);\n");
+            push(@implContent, "    return self;\n");
+            push(@implContent, "}\n\n");
+    
+            # - (DOMFooBar)_FooBarWith:(WebCore::FooBar *)impl for implementation class FooBar
+            my $typeMakerName = GetObjCTypeMaker($interfaceName);
+            push(@implContent, "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    if (!impl)\n");
+            push(@implContent, "        return nil;\n");
+            push(@implContent, "    id cachedInstance;\n");
+            push(@implContent, "    cachedInstance = getDOMWrapper(impl);\n");
+            push(@implContent, "    if (cachedInstance)\n");
+            push(@implContent, "        return [[cachedInstance retain] autorelease];\n");
+            push(@implContent, "    return [[[self alloc] $initWithImplName:impl] autorelease];\n");
+            push(@implContent, "}\n\n");
+        } else {
+            # - (DOMFooBar)_FooBarWith:(WebCore::FooBar *)impl for implementation class FooBar
+            my $typeMakerName = GetObjCTypeMaker($interfaceName);
+            push(@implContent, "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    return static_cast<$className*>([DOMNode _nodeWith:impl]);\n");
+            push(@implContent, "}\n\n");
+        }
+
+        # END WebCoreInternal category
         push(@implContent, "\@end\n");
     }
 }

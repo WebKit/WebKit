@@ -197,19 +197,6 @@ static ListenerMap* listenerMap;
 
 
 //------------------------------------------------------------------------------------------
-// DOMObject
-
-@implementation DOMObject (WebCoreInternal)
-
-- (id)_init
-{
-    return [super _init];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
 // DOMNode
 
 static void addElementClass(const QualifiedName& tag, Class objCClass)
@@ -303,17 +290,15 @@ static Class elementClass(const AtomicString& tagName)
 // FIXME: should this go in the main implementation?
 - (NSString *)description
 {
-    if (!_internal) {
-        return [NSString stringWithFormat:@"<%@: null>",
-            [[self class] description], self];
-    }
+    if (!_internal)
+        return [NSString stringWithFormat:@"<%@: null>", [[self class] description], self];
+    
     NSString *value = [self nodeValue];
-    if (value) {
+    if (value)
         return [NSString stringWithFormat:@"<%@ [%@]: %p '%@'>",
             [[self class] description], [self nodeName], _internal, value];
-    }
-    return [NSString stringWithFormat:@"<%@ [%@]: %p>",
-        [[self class] description], [self nodeName], _internal];
+
+    return [NSString stringWithFormat:@"<%@ [%@]: %p>", [[self class] description], [self nodeName], _internal];
 }
 
 - (id)_initWithNode:(Node *)impl
@@ -451,138 +436,9 @@ static Class elementClass(const AtomicString& tagName)
 
 
 //------------------------------------------------------------------------------------------
-// DOMNamedNodeMap
-
-@implementation DOMNamedNodeMap (WebCoreInternal)
-
-- (id)_initWithNamedNodeMap:(NamedNodeMap *)impl
-{
-    ASSERT(impl);
-
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMNamedNodeMap *)_namedNodeMapWith:(NamedNodeMap *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithNamedNodeMap:impl] autorelease];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMNodeList
-
-@implementation DOMNodeList (WebCoreInternal)
-
-- (id)_initWithNodeList:(NodeList *)impl
-{
-    ASSERT(impl);
-
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMNodeList *)_nodeListWith:(NodeList *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithNodeList:impl] autorelease];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMImplementation
- 
-@implementation DOMImplementation (WebCoreInternal)
-
-- (id)_initWithDOMImplementation:(DOMImplementationFront *)impl
-{
-    ASSERT(impl);
-
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMImplementation *)_DOMImplementationWith:(DOMImplementationFront *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithDOMImplementation:impl] autorelease];
-}
-
-- (DOMImplementationFront *)_DOMImplementation
-{
-    return DOM_cast<DOMImplementationFront *>(_internal);
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMDocumentFragment
-
-@implementation DOMDocumentFragment (WebCoreInternal)
-
-+ (DOMDocumentFragment *)_documentFragmentWith:(DocumentFragment *)impl
-{
-    return static_cast<DOMDocumentFragment *>([DOMNode _nodeWith:impl]);
-}
-
-- (DocumentFragment *)_fragment
-{
-    return static_cast<DocumentFragment *>(DOM_cast<Node *>(_internal));
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
 // DOMDocument
 
-@implementation DOMDocument (WebCoreInternal)
-
-+ (DOMDocument *)_documentWith:(Document *)impl
-{
-    return static_cast<DOMDocument *>([DOMNode _nodeWith:impl]);
-}
-
-- (Document *)_document
-{
-    return static_cast<Document *>(DOM_cast<Node *>(_internal));
-}
+@implementation DOMDocument (WebCoreInternalExtension)
 
 - (DOMElement *)_ownerElement
 {
@@ -591,40 +447,6 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
-
-//------------------------------------------------------------------------------------------
-// DOMAttr
-
-@implementation DOMAttr (WebCoreInternal)
-
-+ (DOMAttr *)_attrWith:(Attr *)impl
-{
-    return static_cast<DOMAttr *>([DOMNode _nodeWith:impl]);
-}
-
-- (Attr *)_attr
-{
-    return static_cast<Attr *>(DOM_cast<Node *>(_internal));
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMDocumentType
-
-@implementation DOMDocumentType (WebCoreInternal)
-
-+ (DOMDocumentType *)_documentTypeWith:(WebCore::DocumentType *)impl;
-{
-    return static_cast<DOMDocumentType *>([DOMNode _nodeWith:impl]);
-}
-
-- (WebCore::DocumentType *)_documentType;
-{
-    return static_cast<WebCore::DocumentType *>(DOM_cast<WebCore::Node *>(_internal));
-}
-
-@end
 
 //------------------------------------------------------------------------------------------
 // DOMElement
@@ -641,20 +463,6 @@ static Class elementClass(const AtomicString& tagName)
             return img->cachedImage()->image()->getNSImage();
     }
     return nil;
-}
-
-@end
-
-@implementation DOMElement (WebCoreInternal)
-
-+ (DOMElement *)_elementWith:(Element *)impl
-{
-    return static_cast<DOMElement *>([DOMNode _nodeWith:impl]);
-}
-
-- (Element *)_element
-{
-    return static_cast<Element *>(DOM_cast<Node *>(_internal));
 }
 
 @end
@@ -703,71 +511,6 @@ static Class elementClass(const AtomicString& tagName)
     if (impl->document()->focusNode() == impl)
         return YES;
     return NO;
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMText
-
-@implementation DOMText (WebCoreInternal)
-
-+ (DOMText *)_textWith:(WebCore::Text *)impl
-{
-    return static_cast<DOMText *>([DOMNode _nodeWith:impl]);
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMComment
-
-@implementation DOMComment (WebCoreInternal)
-
-+ (DOMComment *)_commentWith:(WebCore::Comment *)impl
-{
-    return static_cast<DOMComment *>([DOMNode _nodeWith:impl]);
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMCDATASection
-
-@implementation DOMCDATASection (WebCoreInternal)
-
-+ (DOMCDATASection *)_CDATASectionWith:(WebCore::CDATASection *)impl;
-{
-    return static_cast<DOMCDATASection *>([DOMNode _nodeWith:impl]);
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMProcessingInstruction
-
-@implementation DOMProcessingInstruction (WebCoreInternal)
-
-+ (DOMProcessingInstruction *)_processingInstructionWith:(WebCore::ProcessingInstruction *)impl;
-{
-    return static_cast<DOMProcessingInstruction *>([DOMNode _nodeWith:impl]);
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMProcessingInstruction
-
-@implementation DOMEntityReference (WebCoreInternal)
-
-+ (DOMEntityReference *)_entityReferenceWith:(WebCore::EntityReference *)impl;
-{
-    return static_cast<DOMEntityReference *>([DOMNode _nodeWith:impl]);
 }
 
 @end

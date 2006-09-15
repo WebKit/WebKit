@@ -20,7 +20,7 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface UIEvent : Event {
+    interface [ObjCNoInternal] UIEvent : Event {
         readonly attribute DOMWindow            view;
         readonly attribute long                 detail;
         

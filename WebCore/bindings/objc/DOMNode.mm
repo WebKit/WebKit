@@ -28,48 +28,49 @@
 #import "config.h"
 #import "DOMNode.h"
 
-#import "DOMInternal.h" // needed for DOM_cast<>
-#import "Node.h" // implementation class
-
 #import "AtomicString.h"
 #import "DOMDocument.h"
+#import "DOMInternal.h"
 #import "DOMNamedNodeMap.h"
 #import "DOMNodeList.h"
-#import "DeprecatedValueList.h"
 #import "IntRect.h"
 #import "NamedAttrMap.h"
 #import "NamedNodeMap.h"
+#import "Node.h"
 #import "NodeList.h"
 #import "PlatformString.h"
 #import "RenderObject.h"
 #import <wtf/Assertions.h>
+#import <wtf/Vector.h>
 
 @implementation DOMNode
+
+#define IMPL reinterpret_cast<WebCore::Node*>(_internal)
 
 - (void)dealloc
 {
     if (_internal)
-        DOM_cast<WebCore::Node *>(_internal)->deref();
+        IMPL->deref();
     [super dealloc];
 }
 
 - (void)finalize
 {
     if (_internal)
-        DOM_cast<WebCore::Node *>(_internal)->deref();
+        IMPL->deref();
     [super finalize];
 }
 
 - (NSString *)nodeName
 {
-    return [self _node]->nodeName();
+    return IMPL->nodeName();
 }
 
 - (NSString *)nodeValue
 {
     // Documentation says we can raise a DOMSTRING_SIZE_ERR.
     // However, the lower layer does not report that error up to us.
-    return [self _node]->nodeValue();
+    return IMPL->nodeValue();
 }
 
 - (void)setNodeValue:(NSString *)string
@@ -77,53 +78,53 @@
     ASSERT(string);
     
     WebCore::ExceptionCode ec = 0;
-    [self _node]->setNodeValue(string, ec);
+    IMPL->setNodeValue(string, ec);
     raiseOnDOMError(ec);
 }
 
 - (unsigned short)nodeType
 {
-    return [self _node]->nodeType();
+    return IMPL->nodeType();
 }
 
 - (DOMNode *)parentNode
 {
-    return [DOMNode _nodeWith:[self _node]->parentNode()];
+    return [DOMNode _nodeWith:IMPL->parentNode()];
 }
 
 - (DOMNodeList *)childNodes
 {
-    return [DOMNodeList _nodeListWith:[self _node]->childNodes().get()];
+    return [DOMNodeList _nodeListWith:IMPL->childNodes().get()];
 }
 
 - (DOMNode *)firstChild
 {
-    return [DOMNode _nodeWith:[self _node]->firstChild()];
+    return [DOMNode _nodeWith:IMPL->firstChild()];
 }
 
 - (DOMNode *)lastChild
 {
-    return [DOMNode _nodeWith:[self _node]->lastChild()];
+    return [DOMNode _nodeWith:IMPL->lastChild()];
 }
 
 - (DOMNode *)previousSibling
 {
-    return [DOMNode _nodeWith:[self _node]->previousSibling()];
+    return [DOMNode _nodeWith:IMPL->previousSibling()];
 }
 
 - (DOMNode *)nextSibling
 {
-    return [DOMNode _nodeWith:[self _node]->nextSibling()];
+    return [DOMNode _nodeWith:IMPL->nextSibling()];
 }
 
 - (DOMNamedNodeMap *)attributes
 {
-    return [DOMNamedNodeMap _namedNodeMapWith:[self _node]->attributes()];
+    return [DOMNamedNodeMap _namedNodeMapWith:IMPL->attributes()];
 }
 
 - (DOMDocument *)ownerDocument
 {
-    return [DOMDocument _documentWith:[self _node]->document()];
+    return [DOMDocument _documentWith:IMPL->document()];
 }
 
 - (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild
@@ -132,7 +133,7 @@
     ASSERT(refChild);
 
     WebCore::ExceptionCode ec = 0;
-    if ([self _node]->insertBefore([newChild _node], [refChild _node], ec))
+    if (IMPL->insertBefore([newChild _node], [refChild _node], ec))
         return newChild;
     raiseOnDOMError(ec);
     return nil;
@@ -144,7 +145,7 @@
     ASSERT(oldChild);
 
     WebCore::ExceptionCode ec = 0;
-    if ([self _node]->replaceChild([newChild _node], [oldChild _node], ec))
+    if (IMPL->replaceChild([newChild _node], [oldChild _node], ec))
         return oldChild;
     raiseOnDOMError(ec);
     return nil;
@@ -155,7 +156,7 @@
     ASSERT(oldChild);
 
     WebCore::ExceptionCode ec = 0;
-    if ([self _node]->removeChild([oldChild _node], ec))
+    if (IMPL->removeChild([oldChild _node], ec))
         return oldChild;
     raiseOnDOMError(ec);
     return nil;
@@ -166,7 +167,7 @@
     ASSERT(newChild);
 
     WebCore::ExceptionCode ec = 0;
-    if ([self _node]->appendChild([newChild _node], ec))
+    if (IMPL->appendChild([newChild _node], ec))
         return newChild;
     raiseOnDOMError(ec);
     return nil;
@@ -174,17 +175,17 @@
 
 - (BOOL)hasChildNodes
 {
-    return [self _node]->hasChildNodes();
+    return IMPL->hasChildNodes();
 }
 
 - (DOMNode *)cloneNode:(BOOL)deep
 {
-    return [DOMNode _nodeWith:[self _node]->cloneNode(deep).get()];
+    return [DOMNode _nodeWith:IMPL->cloneNode(deep).get()];
 }
 
 - (void)normalize
 {
-    [self _node]->normalize();
+    IMPL->normalize();
 }
 
 - (BOOL)isSupported:(NSString *)feature :(NSString *)version
@@ -192,17 +193,17 @@
     ASSERT(feature);
     ASSERT(version);
 
-    return [self _node]->isSupported(feature, version);
+    return IMPL->isSupported(feature, version);
 }
 
 - (NSString *)namespaceURI
 {
-    return [self _node]->namespaceURI();
+    return IMPL->namespaceURI();
 }
 
 - (NSString *)prefix
 {
-    return [self _node]->prefix();
+    return IMPL->prefix();
 }
 
 - (void)setPrefix:(NSString *)prefix
@@ -210,55 +211,54 @@
     ASSERT(prefix);
 
     WebCore::ExceptionCode ec = 0;
-    WebCore::String prefixStr(prefix);
-    [self _node]->setPrefix(prefixStr.impl(), ec);
+    IMPL->setPrefix(prefix, ec);
     raiseOnDOMError(ec);
 }
 
 - (NSString *)localName
 {
-    return [self _node]->localName();
+    return IMPL->localName();
 }
 
 - (BOOL)hasAttributes
 {
-    return [self _node]->hasAttributes();
+    return IMPL->hasAttributes();
 }
 
 - (BOOL)isSameNode:(DOMNode *)other
 {
-    return [self _node]->isSameNode([other _node]);
+    return IMPL->isSameNode([other _node]);
 }
 
 - (BOOL)isEqualNode:(DOMNode *)other
 {
-    return [self _node]->isEqualNode([other _node]);
+    return IMPL->isEqualNode([other _node]);
 }
 
 - (BOOL)isDefaultNamespace:(NSString *)namespaceURI
 {
-    return [self _node]->isDefaultNamespace(namespaceURI);
+    return IMPL->isDefaultNamespace(namespaceURI);
 }
 
 - (NSString *)lookupPrefix:(NSString *)namespaceURI
 {
-    return [self _node]->lookupPrefix(namespaceURI);
+    return IMPL->lookupPrefix(namespaceURI);
 }
 
 - (NSString *)lookupNamespaceURI:(NSString *)prefix
 {
-    return [self _node]->lookupNamespaceURI(prefix);
+    return IMPL->lookupNamespaceURI(prefix);
 }
 
 - (NSString *)textContent
 {
-    return [self _node]->textContent();
+    return IMPL->textContent();
 }
 
 - (void)setTextContent:(NSString *)text
 {
     WebCore::ExceptionCode ec = 0;
-    [self _node]->setTextContent(text, ec);
+    IMPL->setTextContent(text, ec);
     raiseOnDOMError(ec);
 }
 
@@ -268,7 +268,7 @@
 
 - (NSRect)boundingBox
 {
-    WebCore::RenderObject *renderer = [self _node]->renderer();
+    WebCore::RenderObject *renderer = IMPL->renderer();
     if (renderer)
         return renderer->absoluteBoundingBoxRect();
     return NSZeroRect;
@@ -276,7 +276,7 @@
 
 - (NSArray *)lineBoxRects
 {
-    WebCore::RenderObject *renderer = [self _node]->renderer();
+    WebCore::RenderObject *renderer = IMPL->renderer();
     if (renderer) {
         Vector<WebCore::IntRect> rects;
         renderer->lineBoxRects(rects);

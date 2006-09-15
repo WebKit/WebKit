@@ -31,43 +31,36 @@
 #import "DOMXPath.h"
 
 #import "DOMInternal.h"
-#import "Document.h"
-#import "XPathExpression.h"
+#import "PlatformString.h"
 #import "XPathNSResolver.h"
-#import "XPathResult.h"
-
-using WebCore::ExceptionCode;
-using WebCore::XPathExpression;
-using WebCore::XPathNSResolver;
-using WebCore::XPathResult;
 
 //------------------------------------------------------------------------------------------
 // DOMNativeXPathNSResolver
 
 @implementation DOMNativeXPathNSResolver
 
+#define IMPL reinterpret_cast<WebCore::XPathNSResolver*>(_internal)
+
 - (void)dealloc
 {
-    if (_internal) {
-        DOM_cast<XPathNSResolver*>(_internal)->deref();
-    }
+    if (_internal)
+        IMPL->deref();
     [super dealloc];
 }
 
 - (void)finalize
 {
-    if (_internal) {
-        DOM_cast<XPathNSResolver*>(_internal)->deref();
-    }
+    if (_internal)
+        IMPL->deref();
     [super finalize];
 }
 
-- (XPathNSResolver *)_xpathNSResolver
+- (WebCore::XPathNSResolver *)_xpathNSResolver
 {
-    return DOM_cast<XPathNSResolver *>(_internal);
+    return IMPL;
 }
 
-- (id)_initWithXPathNSResolver:(XPathNSResolver *)impl
+- (id)_initWithXPathNSResolver:(WebCore::XPathNSResolver *)impl
 {
     ASSERT(impl);
     
@@ -78,7 +71,7 @@ using WebCore::XPathResult;
     return self;    
 }
 
-+ (DOMNativeXPathNSResolver *)_xpathNSResolverWith:(XPathNSResolver *)impl
++ (DOMNativeXPathNSResolver *)_xpathNSResolverWith:(WebCore::XPathNSResolver *)impl
 {
     if (!impl)
         return nil;
@@ -93,81 +86,7 @@ using WebCore::XPathResult;
 
 - (NSString *)lookupNamespaceURI:(NSString *)prefix
 {
-    return [self _xpathNSResolver]->lookupNamespaceURI(prefix);
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMXPathResult
-
-@implementation DOMXPathResult (WebCoreInternal)
-
-- (XPathResult *)_xpathResult
-{
-    return DOM_cast<XPathResult *>(_internal);
-}
-
-- (id)_initWithXPathResult:(XPathResult *)impl
-{
-    ASSERT(impl);
-    
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMXPathResult *)_xpathResultWith:(XPathResult *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[DOMXPathResult alloc] _initWithXPathResult:impl] autorelease];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMXPathResult
-
-@implementation DOMXPathExpression (WebCoreInternal)
-
-- (XPathExpression *)_xpathExpression
-{
-    return DOM_cast<XPathExpression *>(_internal);
-}
-
-- (id)_initWithXPathExpression:(XPathExpression *)impl
-{
-    ASSERT(impl);
-    
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMXPathExpression *)_xpathExpressionWith:(XPathExpression *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[DOMXPathExpression alloc] _initWithXPathExpression:impl] autorelease];
+    return IMPL->lookupNamespaceURI(prefix);
 }
 
 @end

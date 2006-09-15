@@ -21,7 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface CSSStyleSheet : stylesheets::StyleSheet {
+    interface [ObjCNoInternal] CSSStyleSheet : stylesheets::StyleSheet {
 
         readonly attribute CSSRule          ownerRule;
         readonly attribute CSSRuleList      cssRules;

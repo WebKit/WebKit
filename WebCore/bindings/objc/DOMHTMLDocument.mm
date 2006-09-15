@@ -42,111 +42,108 @@
 
 @implementation DOMHTMLDocument
 
-- (WebCore::HTMLDocument *)_HTMLDocument
-{
-    return static_cast<WebCore::HTMLDocument *>(DOM_cast<WebCore::Node *>(_internal));
-}
+#define IMPL static_cast<WebCore::HTMLDocument*>(reinterpret_cast<WebCore::Node*>(_internal))
 
 - (NSString *)title
 {
-    return [self _HTMLDocument]->title();
+    return IMPL->title();
 }
 
 - (void)setTitle:(NSString *)title
 {
-    [self _HTMLDocument]->setTitle(title);
+    IMPL->setTitle(title);
 }
 
 - (NSString *)referrer
 {
-     return [self _HTMLDocument]->referrer();
+     return IMPL->referrer();
 }
 
 - (NSString *)domain
 {
-     return [self _HTMLDocument]->domain();
+     return IMPL->domain();
 }
 
 - (NSString *)URL
 {
-    return [self _HTMLDocument]->URL().getNSString();
+    return IMPL->URL().getNSString();
 }
 
 - (DOMHTMLElement *)body
 {
-    return [DOMHTMLElement _HTMLElementWith:[self _HTMLDocument]->body()];
+    return [DOMHTMLElement _HTMLElementWith:IMPL->body()];
 }
 
 - (void)setBody:(DOMHTMLElement *)body
 {
     WebCore::ExceptionCode ec = 0;
-    [self _HTMLDocument]->setBody([body _HTMLElement], ec);
+    IMPL->setBody([body _HTMLElement], ec);
     raiseOnDOMError(ec);
 }
 
 - (DOMHTMLCollection *)images
 {
-    return [DOMHTMLCollection _HTMLCollectionWith:[self _HTMLDocument]->images().get()];
+    return [DOMHTMLCollection _HTMLCollectionWith:IMPL->images().get()];
 }
 
 - (DOMHTMLCollection *)applets
 {
-    return [DOMHTMLCollection _HTMLCollectionWith:[self _HTMLDocument]->applets().get()];
+    return [DOMHTMLCollection _HTMLCollectionWith:IMPL->applets().get()];
 }
 
 - (DOMHTMLCollection *)links
 {
-    return [DOMHTMLCollection _HTMLCollectionWith:[self _HTMLDocument]->links().get()];
+    return [DOMHTMLCollection _HTMLCollectionWith:IMPL->links().get()];
 }
 
 - (DOMHTMLCollection *)forms
 {
-    return [DOMHTMLCollection _HTMLCollectionWith:[self _HTMLDocument]->forms().get()];
+    return [DOMHTMLCollection _HTMLCollectionWith:IMPL->forms().get()];
 }
 
 - (DOMHTMLCollection *)anchors
 {
-    return [DOMHTMLCollection _HTMLCollectionWith:[self _HTMLDocument]->anchors().get()];
+    return [DOMHTMLCollection _HTMLCollectionWith:IMPL->anchors().get()];
 }
 
 - (NSString *)cookie
 {
-    return [self _HTMLDocument]->cookie();
+    return IMPL->cookie();
 }
 
 - (void)setCookie:(NSString *)cookie
 {
-    [self _HTMLDocument]->setCookie(cookie);
+    IMPL->setCookie(cookie);
 }
 
 - (void)open
 {
-    [self _HTMLDocument]->open();
+    IMPL->open();
 }
 
 - (void)close
 {
-    [self _HTMLDocument]->close();
+    IMPL->close();
 }
 
 - (void)write:(NSString *)text
 {
-    [self _HTMLDocument]->write(text);
+    IMPL->write(text);
 }
 
 - (void)writeln:(NSString *)text
 {
-    [self _HTMLDocument]->writeln(text);
+    IMPL->writeln(text);
 }
 
 - (DOMElement *)getElementById:(NSString *)elementId
 {
-    return [DOMElement _elementWith:[self _HTMLDocument]->getElementById(elementId)];
+    return [DOMElement _elementWith:IMPL->getElementById(elementId)];
 }
 
 - (DOMNodeList *)getElementsByName:(NSString *)elementName
 {
-    return [DOMNodeList _nodeListWith:[self _HTMLDocument]->getElementsByName(elementName).get()];
+    return [DOMNodeList _nodeListWith:IMPL->getElementsByName(elementName).get()];
 }
 
 @end
@@ -162,6 +159,21 @@
 {
     // FIXME: Since this is not a contextual fragment, it won't handle whitespace properly.
     return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText([self _document]->createRange().get(), text).get()];
+}
+
+@end
+
+
+@implementation DOMHTMLDocument (WebCoreInternal)
+
+- (WebCore::HTMLDocument *)_HTMLDocument
+{
+    return IMPL;
+}
+
++ (DOMHTMLDocument *)_HTMLDocumentWith:(WebCore::HTMLDocument *)impl;
+{
+    return static_cast<DOMHTMLDocument *>([DOMNode _nodeWith:impl]);
 }
 
 @end

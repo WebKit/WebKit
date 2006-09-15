@@ -47,7 +47,7 @@ ALLOW_DOM_CAST(Event)
 
 - (WebCore::Event *)_event
 {
-    return DOM_cast<WebCore::Event *>(_internal);
+    return reinterpret_cast<WebCore::Event*>(_internal);
 }
 
 - (id)_initWithEvent:(WebCore::Event *)impl

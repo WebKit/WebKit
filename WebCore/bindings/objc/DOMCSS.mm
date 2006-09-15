@@ -52,6 +52,7 @@
 #import "StyleSheet.h"
 #import "StyleSheetList.h"
 
+#import <wtf/GetPtr.h>
 #import <objc/objc-class.h>
 
 namespace WebCore {
@@ -96,36 +97,6 @@ using namespace WebCore;
 
 
 //------------------------------------------------------------------------------------------
-// DOMStyleSheetList
-
-@implementation DOMStyleSheetList (WebCoreInternal)
-
-- (id)_initWithStyleSheetList:(StyleSheetList *)impl
-{
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMStyleSheetList *)_styleSheetListWith:(StyleSheetList *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithStyleSheetList:impl] autorelease];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
 // DOMCSSStyleSheet
 
 @implementation DOMCSSStyleSheet (WebCoreInternal)
@@ -133,66 +104,6 @@ using namespace WebCore;
 + (DOMCSSStyleSheet *)_CSSStyleSheetWith:(CSSStyleSheet *)impl
 {
     return static_cast<DOMCSSStyleSheet*>([DOMStyleSheet _styleSheetWith:impl]);
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMMediaList
-
-@implementation DOMMediaList (WebCoreInternal)
-
-- (id)_initWithMediaList:(MediaList *)impl
-{
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMMediaList *)_mediaListWith:(MediaList *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithMediaList:impl] autorelease];
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMCSSRuleList
-
-@implementation DOMCSSRuleList (WebCoreInternal)
-
-- (id)_initWithRuleList:(CSSRuleList *)impl
-{
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMCSSRuleList *)_CSSRuleListWith:(CSSRuleList *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithRuleList:impl] autorelease];
 }
 
 @end
@@ -253,40 +164,6 @@ using namespace WebCore;
 
 
 //------------------------------------------------------------------------------------------
-// DOMCSSStyleDeclaration
-
-@implementation DOMCSSStyleDeclaration (WebCoreInternal)
-
-- (id)_initWithStyleDeclaration:(CSSStyleDeclaration *)impl
-{
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMCSSStyleDeclaration *)_CSSStyleDeclarationWith:(CSSStyleDeclaration *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithStyleDeclaration:impl] autorelease];
-}
-
-- (CSSStyleDeclaration *)_CSSStyleDeclaration
-{
-    return DOM_cast<CSSStyleDeclaration*>(_internal);
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
 // DOMCSSValue
 
 @implementation DOMCSSValue (WebCoreInternal)
@@ -336,6 +213,11 @@ using namespace WebCore;
 
 @implementation DOMCSSPrimitiveValue (WebCoreInternal)
 
+- (WebCore::CSSPrimitiveValue *)_CSSPrimitiveValue
+{
+    return static_cast<WebCore::CSSPrimitiveValue*>(reinterpret_cast<WebCore::CSSValue*>(_internal));
+}
+
 + (DOMCSSPrimitiveValue *)_CSSPrimitiveValueWith:(CSSValue *)impl
 {
     return static_cast<DOMCSSPrimitiveValue*>([DOMCSSValue _CSSValueWith:impl]);
@@ -356,64 +238,6 @@ using namespace WebCore;
 
 @end
 
-
-//------------------------------------------------------------------------------------------
-// DOMRect
-
-@implementation DOMRect (WebCoreInternal)
-
-- (id)_initWithRect:(RectImpl *)impl
-{
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMRect *)_rectWith:(RectImpl *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithRect:impl] autorelease];
-}
-
-@end
-
-//------------------------------------------------------------------------------------------
-// DOMCounter
-
-@implementation DOMCounter (WebCoreInternal)
-
-- (id)_initWithCounter:(Counter *)impl
-{
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMCounter *)_counterWith:(Counter *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithCounter:impl] autorelease];
-}
-
-@end
 
 //------------------------------------------------------------------------------------------
 
@@ -1651,21 +1475,25 @@ using namespace WebCore;
 
 @end
 
+
 //------------------------------------------------------------------------------------------
+// DOMDocument CSS Extensions
 
 @implementation DOMDocument (DOMViewCSS)
 
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
-    Element* element = [elt _element];
     AbstractView* dv = [self _document]->defaultView();
-    String pseudoEltString(pseudoElt);
-    
+
     if (!dv)
         return nil;
     
-    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:dv->getComputedStyle(element, pseudoEltString.impl()).get()];
+    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:WTF::getPtr(dv->getComputedStyle([elt _element], pseudoElt))];
 }
+
+@end
+
+@implementation DOMDocument (DOMDocumentCSSExtensions)
 
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt
 {
@@ -1675,7 +1503,7 @@ using namespace WebCore;
         return nil;
     
     // The parameter of "false" is handy for the DOM inspector and lets us see user agent and user rules.
-    return [DOMCSSRuleList _CSSRuleListWith:dv->getMatchedCSSRules([elt _element], String(pseudoElt).impl(), false).get()];
+    return [DOMCSSRuleList _CSSRuleListWith:WTF::getPtr(dv->getMatchedCSSRules([elt _element], pseudoElt, false))];
 }
 
 @end

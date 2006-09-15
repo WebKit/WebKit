@@ -28,15 +28,16 @@
 #import "config.h"
 #import "DOMObject.h"
 
-#import "DOMInternal.h"
 #import "DOMHTMLLinkElement.h"
 #import "DOMHTMLStyleElement.h"
+#import "DOMInternal.h"
 #import "DOMProcessingInstruction.h"
 #import "DOMStyleSheet.h"
 #import "HTMLLinkElement.h"
 #import "HTMLStyleElement.h"
 #import "ProcessingInstruction.h"
 #import "StyleSheet.h"
+#import "WebScriptObjectPrivate.h"
 
 @implementation DOMObject
 
@@ -85,6 +86,15 @@
         return nil;
 
     return [DOMStyleSheet _styleSheetWith:sheet];
+}
+
+@end
+
+@implementation DOMObject (WebCoreInternal)
+
+- (id)_init
+{
+    return [super _init];
 }
 
 @end

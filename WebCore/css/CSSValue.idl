@@ -20,7 +20,7 @@
 
 module css {
 
-    interface [LegacyParent=KJS::DOMCSSValue, GenerateConstructor] CSSValue {
+    interface [LegacyParent=KJS::DOMCSSValue, GenerateConstructor, ObjCNoInternal] CSSValue {
 
         // UnitTypes
         const unsigned short CSS_INHERIT         = 0;
