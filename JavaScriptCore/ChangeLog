@@ -1,3 +1,20 @@
+2006-09-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Steve.
+
+        Add JavaScriptCore API to the build.
+        * API/JSBase.cpp:
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackObject.cpp:
+        * API/JSClassRef.cpp:
+        * API/JSContextRef.cpp:
+        * API/JSObjectRef.cpp:
+        * API/JSStringRef.cpp:
+        * API/JSValueRef.cpp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * os-win32/stdbool.h: Added.
+
 2006-09-12  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Ada.
