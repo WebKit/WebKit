@@ -1,5 +1,10 @@
 2006-09-15  Anders Carlsson  <acarlsson@apple.com>
 
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        Fix the release build.
+
+2006-09-15  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Steve.
 
         Add JavaScriptCore API to the build.
