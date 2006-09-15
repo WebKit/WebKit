@@ -13,7 +13,15 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (0,19) size 0x18
           RenderText {#text} at (0,38) size 86x18
             text run at (0,38) width 86: "  Select File:  "
-          RenderFileButton {INPUT} at (88,39) size 234x18
-          RenderBR {BR} at (324,52) size 0x0
+          RenderFileUploadControl {INPUT} at (88,39) size 236x18
+            RenderButton {INPUT} at (0,0) size 78x18 [bgcolor=#C0C0C0]
+              RenderBlock (anonymous) at (8,2) size 62x13
+                RenderText at (0,0) size 62x13
+                  text run at (0,0) width 62: "Choose File"
+            RenderFileUploadInnerFileBox at (78,2) size 158x13
+              RenderBlock (anonymous) at (4,0) size 0x13
+                RenderText at (0,0) size 0x13
+                  text run at (0,0) width 0: "no file selected"
+          RenderBR {BR} at (326,52) size 0x0
         RenderTable {TABLE} at (0,59) size 4x2
           RenderTableSection {TBODY} at (0,0) size 4x2

@@ -1,3 +1,17 @@
+2006-09-15  Adam Roben  <aroben@apple.com>
+
+        Reviewed by timothy.
+
+        Part of http://bugzilla.opendarwin.org/show_bug.cgi?id=10865
+        New file upload control should match the width of the old one
+
+        Update tests to match new file upload control.
+
+        * fast/forms/file-input-disabled-expected.txt:
+        * fast/forms/form-element-geometry-expected.txt:
+        * fast/forms/input-appearance-height-expected.txt:
+        * fast/forms/input-value-expected.txt:
+
 2006-09-15  Kevin McCullough  <KMcCullough@apple.com>
 
         - just layout test result changes 

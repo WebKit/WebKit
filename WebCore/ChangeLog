@@ -1,3 +1,15 @@
+2006-09-15  Adam Roben  <aroben@apple.com>
+
+        Reviewed by timothy.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10865
+        New file upload control should match the width of the old one
+
+        Make width of new file upload control match the old one as closely as
+        possible.
+
+        * rendering/RenderFileUploadControl.cpp:
+
 2006-09-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Eric.

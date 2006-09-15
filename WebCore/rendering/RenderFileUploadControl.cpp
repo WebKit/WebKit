@@ -43,7 +43,7 @@ const int afterButtonSpacing = 4;
 const int iconHeight = 16;
 const int iconWidth = 16;
 const int iconFilenameSpacing = 2;
-const int defaultFilenameNumChars = 23;
+const int defaultFilenameNumChars = 22;
 
 using namespace HTMLNames;
 
