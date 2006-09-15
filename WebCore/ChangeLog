@@ -1,3 +1,11 @@
+2006-09-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Eric.
+
+        Remove the SVG IDL files from the Copy Resources phase.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-09-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Eric Siedel

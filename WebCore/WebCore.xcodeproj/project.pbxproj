@@ -1734,127 +1734,8 @@
 		B222F6990AB771950022EFAD /* JSSVGAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = B222F6970AB771950022EFAD /* JSSVGAngle.h */; };
 		B222F69C0AB771B80022EFAD /* JSSVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222F69A0AB771B80022EFAD /* JSSVGElement.cpp */; };
 		B222F69D0AB771B80022EFAD /* JSSVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222F69B0AB771B80022EFAD /* JSSVGElement.h */; };
-		B2CB410F0AB758E6004D9C45 /* SVGAElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41010AB758E6004D9C45 /* SVGAElement.idl */; };
-		B2CB41100AB758E6004D9C45 /* SVGAnimateColorElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41020AB758E6004D9C45 /* SVGAnimateColorElement.idl */; };
-		B2CB41110AB758E6004D9C45 /* SVGAnimatedLengthList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41030AB758E6004D9C45 /* SVGAnimatedLengthList.idl */; };
-		B2CB41120AB758E6004D9C45 /* SVGAnimatedNumberList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41040AB758E6004D9C45 /* SVGAnimatedNumberList.idl */; };
-		B2CB41130AB758E6004D9C45 /* SVGAnimatedTransformList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41050AB758E6004D9C45 /* SVGAnimatedTransformList.idl */; };
-		B2CB41140AB758E6004D9C45 /* SVGAnimateElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41060AB758E6004D9C45 /* SVGAnimateElement.idl */; };
-		B2CB41150AB758E6004D9C45 /* SVGAnimateTransformElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41070AB758E6004D9C45 /* SVGAnimateTransformElement.idl */; };
-		B2CB41160AB758E6004D9C45 /* SVGAnimationElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41080AB758E6004D9C45 /* SVGAnimationElement.idl */; };
-		B2CB41170AB758E6004D9C45 /* SVGCircleElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41090AB758E6004D9C45 /* SVGCircleElement.idl */; };
-		B2CB41180AB758E6004D9C45 /* SVGClipPathElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB410A0AB758E6004D9C45 /* SVGClipPathElement.idl */; };
-		B2CB41190AB758E6004D9C45 /* SVGComponentTransferFunctionElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB410B0AB758E6004D9C45 /* SVGComponentTransferFunctionElement.idl */; };
-		B2CB411A0AB758E6004D9C45 /* SVGCursorElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB410C0AB758E6004D9C45 /* SVGCursorElement.idl */; };
-		B2CB411B0AB758E6004D9C45 /* SVGDefsElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB410D0AB758E6004D9C45 /* SVGDefsElement.idl */; };
-		B2CB411C0AB758E6004D9C45 /* SVGDescElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB410E0AB758E6004D9C45 /* SVGDescElement.idl */; };
-		B2CB411E0AB758F4004D9C45 /* SVGEllipseElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB411D0AB758F4004D9C45 /* SVGEllipseElement.idl */; };
-		B2CB41660AB75904004D9C45 /* SVGExternalResourcesRequired.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB411F0AB75904004D9C45 /* SVGExternalResourcesRequired.idl */; };
-		B2CB41670AB75904004D9C45 /* SVGFEBlendElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41200AB75904004D9C45 /* SVGFEBlendElement.idl */; };
-		B2CB41680AB75904004D9C45 /* SVGFEColorMatrixElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41210AB75904004D9C45 /* SVGFEColorMatrixElement.idl */; };
-		B2CB41690AB75904004D9C45 /* SVGFEComponentTransferElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41220AB75904004D9C45 /* SVGFEComponentTransferElement.idl */; };
-		B2CB416A0AB75904004D9C45 /* SVGFECompositeElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41230AB75904004D9C45 /* SVGFECompositeElement.idl */; };
-		B2CB416B0AB75904004D9C45 /* SVGFEDiffuseLightingElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41240AB75904004D9C45 /* SVGFEDiffuseLightingElement.idl */; };
-		B2CB416C0AB75904004D9C45 /* SVGFEDisplacementMapElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41250AB75904004D9C45 /* SVGFEDisplacementMapElement.idl */; };
-		B2CB416D0AB75904004D9C45 /* SVGFEDistantLightElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41260AB75904004D9C45 /* SVGFEDistantLightElement.idl */; };
-		B2CB416E0AB75904004D9C45 /* SVGFEFloodElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41270AB75904004D9C45 /* SVGFEFloodElement.idl */; };
-		B2CB416F0AB75904004D9C45 /* SVGFEFuncAElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41280AB75904004D9C45 /* SVGFEFuncAElement.idl */; };
-		B2CB41700AB75904004D9C45 /* SVGFEFuncBElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41290AB75904004D9C45 /* SVGFEFuncBElement.idl */; };
-		B2CB41710AB75904004D9C45 /* SVGFEFuncGElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB412A0AB75904004D9C45 /* SVGFEFuncGElement.idl */; };
-		B2CB41720AB75904004D9C45 /* SVGFEFuncRElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB412B0AB75904004D9C45 /* SVGFEFuncRElement.idl */; };
-		B2CB41730AB75904004D9C45 /* SVGFEGaussianBlurElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB412C0AB75904004D9C45 /* SVGFEGaussianBlurElement.idl */; };
-		B2CB41740AB75904004D9C45 /* SVGFEImageElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB412D0AB75904004D9C45 /* SVGFEImageElement.idl */; };
-		B2CB41750AB75904004D9C45 /* SVGFEMergeElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB412E0AB75904004D9C45 /* SVGFEMergeElement.idl */; };
-		B2CB41760AB75904004D9C45 /* SVGFEMergeNodeElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB412F0AB75904004D9C45 /* SVGFEMergeNodeElement.idl */; };
-		B2CB41770AB75904004D9C45 /* SVGFEOffsetElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41300AB75904004D9C45 /* SVGFEOffsetElement.idl */; };
-		B2CB41780AB75904004D9C45 /* SVGFEPointLightElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41310AB75904004D9C45 /* SVGFEPointLightElement.idl */; };
-		B2CB41790AB75904004D9C45 /* SVGFESpecularLightingElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41320AB75904004D9C45 /* SVGFESpecularLightingElement.idl */; };
-		B2CB417A0AB75904004D9C45 /* SVGFESpotLightElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41330AB75904004D9C45 /* SVGFESpotLightElement.idl */; };
-		B2CB417B0AB75904004D9C45 /* SVGFETileElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41340AB75904004D9C45 /* SVGFETileElement.idl */; };
-		B2CB417C0AB75904004D9C45 /* SVGFETurbulenceElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41350AB75904004D9C45 /* SVGFETurbulenceElement.idl */; };
-		B2CB417D0AB75904004D9C45 /* SVGFilterElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41360AB75904004D9C45 /* SVGFilterElement.idl */; };
-		B2CB417E0AB75904004D9C45 /* SVGFilterPrimitiveStandardAttributes.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41370AB75904004D9C45 /* SVGFilterPrimitiveStandardAttributes.idl */; };
-		B2CB417F0AB75904004D9C45 /* SVGFitToViewBox.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41380AB75904004D9C45 /* SVGFitToViewBox.idl */; };
-		B2CB41800AB75904004D9C45 /* SVGForeignObjectElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41390AB75904004D9C45 /* SVGForeignObjectElement.idl */; };
-		B2CB41810AB75904004D9C45 /* SVGGElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB413A0AB75904004D9C45 /* SVGGElement.idl */; };
-		B2CB41820AB75904004D9C45 /* SVGGradientElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB413B0AB75904004D9C45 /* SVGGradientElement.idl */; };
-		B2CB41830AB75904004D9C45 /* SVGImageElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB413C0AB75904004D9C45 /* SVGImageElement.idl */; };
-		B2CB41840AB75904004D9C45 /* SVGLangSpace.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB413D0AB75904004D9C45 /* SVGLangSpace.idl */; };
-		B2CB41850AB75904004D9C45 /* SVGLengthList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB413E0AB75904004D9C45 /* SVGLengthList.idl */; };
-		B2CB41860AB75904004D9C45 /* SVGLinearGradientElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB413F0AB75904004D9C45 /* SVGLinearGradientElement.idl */; };
-		B2CB41870AB75904004D9C45 /* SVGLineElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41400AB75904004D9C45 /* SVGLineElement.idl */; };
-		B2CB41880AB75904004D9C45 /* SVGLocatable.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41410AB75904004D9C45 /* SVGLocatable.idl */; };
-		B2CB41890AB75904004D9C45 /* SVGMarkerElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41420AB75904004D9C45 /* SVGMarkerElement.idl */; };
-		B2CB418A0AB75904004D9C45 /* SVGMaskElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41430AB75904004D9C45 /* SVGMaskElement.idl */; };
-		B2CB418B0AB75904004D9C45 /* SVGNumberList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41440AB75904004D9C45 /* SVGNumberList.idl */; };
-		B2CB418C0AB75904004D9C45 /* SVGPaint.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41450AB75904004D9C45 /* SVGPaint.idl */; };
-		B2CB418D0AB75904004D9C45 /* SVGPatternElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41460AB75904004D9C45 /* SVGPatternElement.idl */; };
-		B2CB418E0AB75904004D9C45 /* SVGPointList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41470AB75904004D9C45 /* SVGPointList.idl */; };
-		B2CB418F0AB75904004D9C45 /* SVGPolygonElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41480AB75904004D9C45 /* SVGPolygonElement.idl */; };
-		B2CB41900AB75904004D9C45 /* SVGPolylineElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41490AB75904004D9C45 /* SVGPolylineElement.idl */; };
-		B2CB41910AB75904004D9C45 /* SVGRadialGradientElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB414A0AB75904004D9C45 /* SVGRadialGradientElement.idl */; };
-		B2CB41920AB75904004D9C45 /* SVGRectElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB414B0AB75904004D9C45 /* SVGRectElement.idl */; };
 		B2CB41930AB75904004D9C45 /* SVGRenderingIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB414C0AB75904004D9C45 /* SVGRenderingIntent.h */; };
-		B2CB41940AB75904004D9C45 /* SVGRenderingIntent.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB414D0AB75904004D9C45 /* SVGRenderingIntent.idl */; };
-		B2CB41950AB75904004D9C45 /* SVGScriptElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB414E0AB75904004D9C45 /* SVGScriptElement.idl */; };
-		B2CB41960AB75904004D9C45 /* SVGSetElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB414F0AB75904004D9C45 /* SVGSetElement.idl */; };
-		B2CB41970AB75904004D9C45 /* SVGStopElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41500AB75904004D9C45 /* SVGStopElement.idl */; };
-		B2CB41980AB75904004D9C45 /* SVGStringList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41510AB75904004D9C45 /* SVGStringList.idl */; };
-		B2CB41990AB75904004D9C45 /* SVGStylable.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41520AB75904004D9C45 /* SVGStylable.idl */; };
-		B2CB419A0AB75904004D9C45 /* SVGStyleElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41530AB75904004D9C45 /* SVGStyleElement.idl */; };
-		B2CB419B0AB75904004D9C45 /* SVGSwitchElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41540AB75904004D9C45 /* SVGSwitchElement.idl */; };
-		B2CB419C0AB75904004D9C45 /* SVGSymbolElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41550AB75904004D9C45 /* SVGSymbolElement.idl */; };
-		B2CB419D0AB75904004D9C45 /* SVGTests.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41560AB75904004D9C45 /* SVGTests.idl */; };
-		B2CB419E0AB75904004D9C45 /* SVGTextContentElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41570AB75904004D9C45 /* SVGTextContentElement.idl */; };
-		B2CB419F0AB75904004D9C45 /* SVGTextElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41580AB75904004D9C45 /* SVGTextElement.idl */; };
-		B2CB41A00AB75904004D9C45 /* SVGTextPositioningElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41590AB75904004D9C45 /* SVGTextPositioningElement.idl */; };
-		B2CB41A10AB75904004D9C45 /* SVGTitleElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB415A0AB75904004D9C45 /* SVGTitleElement.idl */; };
-		B2CB41A20AB75904004D9C45 /* SVGTransformable.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB415B0AB75904004D9C45 /* SVGTransformable.idl */; };
-		B2CB41A30AB75904004D9C45 /* SVGTransformList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB415C0AB75904004D9C45 /* SVGTransformList.idl */; };
-		B2CB41A40AB75904004D9C45 /* SVGTRefElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB415D0AB75904004D9C45 /* SVGTRefElement.idl */; };
-		B2CB41A50AB75904004D9C45 /* SVGTSpanElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB415E0AB75904004D9C45 /* SVGTSpanElement.idl */; };
 		B2CB41A60AB75904004D9C45 /* SVGUnitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB415F0AB75904004D9C45 /* SVGUnitTypes.h */; };
-		B2CB41A70AB75904004D9C45 /* SVGUnitTypes.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41600AB75904004D9C45 /* SVGUnitTypes.idl */; };
-		B2CB41A80AB75904004D9C45 /* SVGURIReference.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41610AB75904004D9C45 /* SVGURIReference.idl */; };
-		B2CB41A90AB75904004D9C45 /* SVGUseElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41620AB75904004D9C45 /* SVGUseElement.idl */; };
-		B2CB41AA0AB75904004D9C45 /* SVGViewElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41630AB75904004D9C45 /* SVGViewElement.idl */; };
-		B2CB41AB0AB75904004D9C45 /* SVGZoomAndPan.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41640AB75904004D9C45 /* SVGZoomAndPan.idl */; };
-		B2CB41AC0AB75904004D9C45 /* SVGZoomEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2CB41650AB75904004D9C45 /* SVGZoomEvent.idl */; };
-		B2E9546C0AB5FB7F0076DE37 /* SVGAnimatedAngle.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954610AB5FB7F0076DE37 /* SVGAnimatedAngle.idl */; };
-		B2E9546D0AB5FB7F0076DE37 /* SVGAnimatedBoolean.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954620AB5FB7F0076DE37 /* SVGAnimatedBoolean.idl */; };
-		B2E9546E0AB5FB7F0076DE37 /* SVGAnimatedEnumeration.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954630AB5FB7F0076DE37 /* SVGAnimatedEnumeration.idl */; };
-		B2E9546F0AB5FB7F0076DE37 /* SVGAnimatedInteger.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954640AB5FB7F0076DE37 /* SVGAnimatedInteger.idl */; };
-		B2E954700AB5FB7F0076DE37 /* SVGAnimatedLength.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954650AB5FB7F0076DE37 /* SVGAnimatedLength.idl */; };
-		B2E954710AB5FB7F0076DE37 /* SVGAnimatedNumber.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954660AB5FB7F0076DE37 /* SVGAnimatedNumber.idl */; };
-		B2E954720AB5FB7F0076DE37 /* SVGAnimatedPathData.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954670AB5FB7F0076DE37 /* SVGAnimatedPathData.idl */; };
-		B2E954730AB5FB7F0076DE37 /* SVGAnimatedPoints.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954680AB5FB7F0076DE37 /* SVGAnimatedPoints.idl */; };
-		B2E954740AB5FB7F0076DE37 /* SVGAnimatedPreserveAspectRatio.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954690AB5FB7F0076DE37 /* SVGAnimatedPreserveAspectRatio.idl */; };
-		B2E954750AB5FB7F0076DE37 /* SVGAnimatedRect.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9546A0AB5FB7F0076DE37 /* SVGAnimatedRect.idl */; };
-		B2E954760AB5FB7F0076DE37 /* SVGAnimatedString.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9546B0AB5FB7F0076DE37 /* SVGAnimatedString.idl */; };
-		B2E9548F0AB5FBA30076DE37 /* SVGMetadataElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954770AB5FBA30076DE37 /* SVGMetadataElement.idl */; };
-		B2E954900AB5FBA30076DE37 /* SVGPathElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954780AB5FBA30076DE37 /* SVGPathElement.idl */; };
-		B2E954910AB5FBA30076DE37 /* SVGPathSeg.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954790AB5FBA30076DE37 /* SVGPathSeg.idl */; };
-		B2E954920AB5FBA30076DE37 /* SVGPathSegArcAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9547A0AB5FBA30076DE37 /* SVGPathSegArcAbs.idl */; };
-		B2E954930AB5FBA30076DE37 /* SVGPathSegArcRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9547B0AB5FBA30076DE37 /* SVGPathSegArcRel.idl */; };
-		B2E954940AB5FBA30076DE37 /* SVGPathSegClosePath.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9547C0AB5FBA30076DE37 /* SVGPathSegClosePath.idl */; };
-		B2E954950AB5FBA30076DE37 /* SVGPathSegCurvetoCubicAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9547D0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicAbs.idl */; };
-		B2E954960AB5FBA30076DE37 /* SVGPathSegCurvetoCubicRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9547E0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicRel.idl */; };
-		B2E954970AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9547F0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothAbs.idl */; };
-		B2E954980AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954800AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothRel.idl */; };
-		B2E954990AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954810AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticAbs.idl */; };
-		B2E9549A0AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954820AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticRel.idl */; };
-		B2E9549B0AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954830AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothAbs.idl */; };
-		B2E9549C0AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954840AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothRel.idl */; };
-		B2E9549D0AB5FBA30076DE37 /* SVGPathSegLinetoAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954850AB5FBA30076DE37 /* SVGPathSegLinetoAbs.idl */; };
-		B2E9549E0AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954860AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalAbs.idl */; };
-		B2E9549F0AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954870AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalRel.idl */; };
-		B2E954A00AB5FBA30076DE37 /* SVGPathSegLinetoRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954880AB5FBA30076DE37 /* SVGPathSegLinetoRel.idl */; };
-		B2E954A10AB5FBA30076DE37 /* SVGPathSegLinetoVerticalAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E954890AB5FBA30076DE37 /* SVGPathSegLinetoVerticalAbs.idl */; };
-		B2E954A20AB5FBA30076DE37 /* SVGPathSegLinetoVerticalRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9548A0AB5FBA30076DE37 /* SVGPathSegLinetoVerticalRel.idl */; };
-		B2E954A30AB5FBA30076DE37 /* SVGPathSegList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9548B0AB5FBA30076DE37 /* SVGPathSegList.idl */; };
-		B2E954A40AB5FBA30076DE37 /* SVGPathSegMovetoAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9548C0AB5FBA30076DE37 /* SVGPathSegMovetoAbs.idl */; };
-		B2E954A50AB5FBA30076DE37 /* SVGPathSegMovetoRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9548D0AB5FBA30076DE37 /* SVGPathSegMovetoRel.idl */; };
-		B2E954A60AB5FBA30076DE37 /* SVGPreserveAspectRatio.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E9548E0AB5FBA30076DE37 /* SVGPreserveAspectRatio.idl */; };
 		B2FA3D360AB75A6F000E5AC4 /* JSSVGAnimateColorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3C4E0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.cpp */; };
 		B2FA3D370AB75A6F000E5AC4 /* JSSVGAnimateColorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3C4F0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.h */; };
 		B2FA3D380AB75A6F000E5AC4 /* JSSVGAnimatedAngle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3C500AB75A6E000E5AC4 /* JSSVGAnimatedAngle.cpp */; };
@@ -4226,41 +4107,41 @@
 		B2CB41630AB75904004D9C45 /* SVGViewElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGViewElement.idl; sourceTree = "<group>"; };
 		B2CB41640AB75904004D9C45 /* SVGZoomAndPan.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGZoomAndPan.idl; sourceTree = "<group>"; };
 		B2CB41650AB75904004D9C45 /* SVGZoomEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGZoomEvent.idl; sourceTree = "<group>"; };
-		B2E954610AB5FB7F0076DE37 /* SVGAnimatedAngle.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGAnimatedAngle.idl; path = ksvg2/svg/SVGAnimatedAngle.idl; sourceTree = SOURCE_ROOT; };
-		B2E954620AB5FB7F0076DE37 /* SVGAnimatedBoolean.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGAnimatedBoolean.idl; path = ksvg2/svg/SVGAnimatedBoolean.idl; sourceTree = SOURCE_ROOT; };
-		B2E954630AB5FB7F0076DE37 /* SVGAnimatedEnumeration.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGAnimatedEnumeration.idl; path = ksvg2/svg/SVGAnimatedEnumeration.idl; sourceTree = SOURCE_ROOT; };
-		B2E954640AB5FB7F0076DE37 /* SVGAnimatedInteger.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGAnimatedInteger.idl; path = ksvg2/svg/SVGAnimatedInteger.idl; sourceTree = SOURCE_ROOT; };
-		B2E954650AB5FB7F0076DE37 /* SVGAnimatedLength.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGAnimatedLength.idl; path = ksvg2/svg/SVGAnimatedLength.idl; sourceTree = SOURCE_ROOT; };
-		B2E954660AB5FB7F0076DE37 /* SVGAnimatedNumber.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGAnimatedNumber.idl; path = ksvg2/svg/SVGAnimatedNumber.idl; sourceTree = SOURCE_ROOT; };
-		B2E954670AB5FB7F0076DE37 /* SVGAnimatedPathData.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGAnimatedPathData.idl; path = ksvg2/svg/SVGAnimatedPathData.idl; sourceTree = SOURCE_ROOT; };
-		B2E954680AB5FB7F0076DE37 /* SVGAnimatedPoints.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGAnimatedPoints.idl; path = ksvg2/svg/SVGAnimatedPoints.idl; sourceTree = SOURCE_ROOT; };
-		B2E954690AB5FB7F0076DE37 /* SVGAnimatedPreserveAspectRatio.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGAnimatedPreserveAspectRatio.idl; path = ksvg2/svg/SVGAnimatedPreserveAspectRatio.idl; sourceTree = SOURCE_ROOT; };
-		B2E9546A0AB5FB7F0076DE37 /* SVGAnimatedRect.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGAnimatedRect.idl; path = ksvg2/svg/SVGAnimatedRect.idl; sourceTree = SOURCE_ROOT; };
-		B2E9546B0AB5FB7F0076DE37 /* SVGAnimatedString.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGAnimatedString.idl; path = ksvg2/svg/SVGAnimatedString.idl; sourceTree = SOURCE_ROOT; };
-		B2E954770AB5FBA30076DE37 /* SVGMetadataElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGMetadataElement.idl; path = ksvg2/svg/SVGMetadataElement.idl; sourceTree = SOURCE_ROOT; };
-		B2E954780AB5FBA30076DE37 /* SVGPathElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathElement.idl; path = ksvg2/svg/SVGPathElement.idl; sourceTree = SOURCE_ROOT; };
-		B2E954790AB5FBA30076DE37 /* SVGPathSeg.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSeg.idl; path = ksvg2/svg/SVGPathSeg.idl; sourceTree = SOURCE_ROOT; };
-		B2E9547A0AB5FBA30076DE37 /* SVGPathSegArcAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegArcAbs.idl; path = ksvg2/svg/SVGPathSegArcAbs.idl; sourceTree = SOURCE_ROOT; };
-		B2E9547B0AB5FBA30076DE37 /* SVGPathSegArcRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegArcRel.idl; path = ksvg2/svg/SVGPathSegArcRel.idl; sourceTree = SOURCE_ROOT; };
-		B2E9547C0AB5FBA30076DE37 /* SVGPathSegClosePath.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegClosePath.idl; path = ksvg2/svg/SVGPathSegClosePath.idl; sourceTree = SOURCE_ROOT; };
-		B2E9547D0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegCurvetoCubicAbs.idl; path = ksvg2/svg/SVGPathSegCurvetoCubicAbs.idl; sourceTree = SOURCE_ROOT; };
-		B2E9547E0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegCurvetoCubicRel.idl; path = ksvg2/svg/SVGPathSegCurvetoCubicRel.idl; sourceTree = SOURCE_ROOT; };
-		B2E9547F0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegCurvetoCubicSmoothAbs.idl; path = ksvg2/svg/SVGPathSegCurvetoCubicSmoothAbs.idl; sourceTree = SOURCE_ROOT; };
-		B2E954800AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegCurvetoCubicSmoothRel.idl; path = ksvg2/svg/SVGPathSegCurvetoCubicSmoothRel.idl; sourceTree = SOURCE_ROOT; };
-		B2E954810AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegCurvetoQuadraticAbs.idl; path = ksvg2/svg/SVGPathSegCurvetoQuadraticAbs.idl; sourceTree = SOURCE_ROOT; };
-		B2E954820AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegCurvetoQuadraticRel.idl; path = ksvg2/svg/SVGPathSegCurvetoQuadraticRel.idl; sourceTree = SOURCE_ROOT; };
-		B2E954830AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegCurvetoQuadraticSmoothAbs.idl; path = ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl; sourceTree = SOURCE_ROOT; };
-		B2E954840AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegCurvetoQuadraticSmoothRel.idl; path = ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothRel.idl; sourceTree = SOURCE_ROOT; };
-		B2E954850AB5FBA30076DE37 /* SVGPathSegLinetoAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegLinetoAbs.idl; path = ksvg2/svg/SVGPathSegLinetoAbs.idl; sourceTree = SOURCE_ROOT; };
-		B2E954860AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegLinetoHorizontalAbs.idl; path = ksvg2/svg/SVGPathSegLinetoHorizontalAbs.idl; sourceTree = SOURCE_ROOT; };
-		B2E954870AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegLinetoHorizontalRel.idl; path = ksvg2/svg/SVGPathSegLinetoHorizontalRel.idl; sourceTree = SOURCE_ROOT; };
-		B2E954880AB5FBA30076DE37 /* SVGPathSegLinetoRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegLinetoRel.idl; path = ksvg2/svg/SVGPathSegLinetoRel.idl; sourceTree = SOURCE_ROOT; };
-		B2E954890AB5FBA30076DE37 /* SVGPathSegLinetoVerticalAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegLinetoVerticalAbs.idl; path = ksvg2/svg/SVGPathSegLinetoVerticalAbs.idl; sourceTree = SOURCE_ROOT; };
-		B2E9548A0AB5FBA30076DE37 /* SVGPathSegLinetoVerticalRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegLinetoVerticalRel.idl; path = ksvg2/svg/SVGPathSegLinetoVerticalRel.idl; sourceTree = SOURCE_ROOT; };
-		B2E9548B0AB5FBA30076DE37 /* SVGPathSegList.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegList.idl; path = ksvg2/svg/SVGPathSegList.idl; sourceTree = SOURCE_ROOT; };
-		B2E9548C0AB5FBA30076DE37 /* SVGPathSegMovetoAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegMovetoAbs.idl; path = ksvg2/svg/SVGPathSegMovetoAbs.idl; sourceTree = SOURCE_ROOT; };
-		B2E9548D0AB5FBA30076DE37 /* SVGPathSegMovetoRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPathSegMovetoRel.idl; path = ksvg2/svg/SVGPathSegMovetoRel.idl; sourceTree = SOURCE_ROOT; };
-		B2E9548E0AB5FBA30076DE37 /* SVGPreserveAspectRatio.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SVGPreserveAspectRatio.idl; path = ksvg2/svg/SVGPreserveAspectRatio.idl; sourceTree = SOURCE_ROOT; };
+		B2E954610AB5FB7F0076DE37 /* SVGAnimatedAngle.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedAngle.idl; sourceTree = "<group>"; };
+		B2E954620AB5FB7F0076DE37 /* SVGAnimatedBoolean.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedBoolean.idl; sourceTree = "<group>"; };
+		B2E954630AB5FB7F0076DE37 /* SVGAnimatedEnumeration.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedEnumeration.idl; sourceTree = "<group>"; };
+		B2E954640AB5FB7F0076DE37 /* SVGAnimatedInteger.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedInteger.idl; sourceTree = "<group>"; };
+		B2E954650AB5FB7F0076DE37 /* SVGAnimatedLength.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedLength.idl; sourceTree = "<group>"; };
+		B2E954660AB5FB7F0076DE37 /* SVGAnimatedNumber.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedNumber.idl; sourceTree = "<group>"; };
+		B2E954670AB5FB7F0076DE37 /* SVGAnimatedPathData.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedPathData.idl; sourceTree = "<group>"; };
+		B2E954680AB5FB7F0076DE37 /* SVGAnimatedPoints.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedPoints.idl; sourceTree = "<group>"; };
+		B2E954690AB5FB7F0076DE37 /* SVGAnimatedPreserveAspectRatio.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedPreserveAspectRatio.idl; sourceTree = "<group>"; };
+		B2E9546A0AB5FB7F0076DE37 /* SVGAnimatedRect.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedRect.idl; sourceTree = "<group>"; };
+		B2E9546B0AB5FB7F0076DE37 /* SVGAnimatedString.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimatedString.idl; sourceTree = "<group>"; };
+		B2E954770AB5FBA30076DE37 /* SVGMetadataElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGMetadataElement.idl; sourceTree = "<group>"; };
+		B2E954780AB5FBA30076DE37 /* SVGPathElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathElement.idl; sourceTree = "<group>"; };
+		B2E954790AB5FBA30076DE37 /* SVGPathSeg.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSeg.idl; sourceTree = "<group>"; };
+		B2E9547A0AB5FBA30076DE37 /* SVGPathSegArcAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegArcAbs.idl; sourceTree = "<group>"; };
+		B2E9547B0AB5FBA30076DE37 /* SVGPathSegArcRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegArcRel.idl; sourceTree = "<group>"; };
+		B2E9547C0AB5FBA30076DE37 /* SVGPathSegClosePath.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegClosePath.idl; sourceTree = "<group>"; };
+		B2E9547D0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegCurvetoCubicAbs.idl; sourceTree = "<group>"; };
+		B2E9547E0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegCurvetoCubicRel.idl; sourceTree = "<group>"; };
+		B2E9547F0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegCurvetoCubicSmoothAbs.idl; sourceTree = "<group>"; };
+		B2E954800AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegCurvetoCubicSmoothRel.idl; sourceTree = "<group>"; };
+		B2E954810AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegCurvetoQuadraticAbs.idl; sourceTree = "<group>"; };
+		B2E954820AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegCurvetoQuadraticRel.idl; sourceTree = "<group>"; };
+		B2E954830AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegCurvetoQuadraticSmoothAbs.idl; sourceTree = "<group>"; };
+		B2E954840AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegCurvetoQuadraticSmoothRel.idl; sourceTree = "<group>"; };
+		B2E954850AB5FBA30076DE37 /* SVGPathSegLinetoAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegLinetoAbs.idl; sourceTree = "<group>"; };
+		B2E954860AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegLinetoHorizontalAbs.idl; sourceTree = "<group>"; };
+		B2E954870AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegLinetoHorizontalRel.idl; sourceTree = "<group>"; };
+		B2E954880AB5FBA30076DE37 /* SVGPathSegLinetoRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegLinetoRel.idl; sourceTree = "<group>"; };
+		B2E954890AB5FBA30076DE37 /* SVGPathSegLinetoVerticalAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegLinetoVerticalAbs.idl; sourceTree = "<group>"; };
+		B2E9548A0AB5FBA30076DE37 /* SVGPathSegLinetoVerticalRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegLinetoVerticalRel.idl; sourceTree = "<group>"; };
+		B2E9548B0AB5FBA30076DE37 /* SVGPathSegList.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegList.idl; sourceTree = "<group>"; };
+		B2E9548C0AB5FBA30076DE37 /* SVGPathSegMovetoAbs.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegMovetoAbs.idl; sourceTree = "<group>"; };
+		B2E9548D0AB5FBA30076DE37 /* SVGPathSegMovetoRel.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPathSegMovetoRel.idl; sourceTree = "<group>"; };
+		B2E9548E0AB5FBA30076DE37 /* SVGPreserveAspectRatio.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPreserveAspectRatio.idl; sourceTree = "<group>"; };
 		B2FA3C4E0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimateColorElement.cpp; sourceTree = "<group>"; };
 		B2FA3C4F0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAnimateColorElement.h; sourceTree = "<group>"; };
 		B2FA3C500AB75A6E000E5AC4 /* JSSVGAnimatedAngle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimatedAngle.cpp; sourceTree = "<group>"; };
@@ -5444,41 +5325,6 @@
 		65BF02180974806300C43196 /* page */ = {
 			isa = PBXGroup;
 			children = (
-				B2E954770AB5FBA30076DE37 /* SVGMetadataElement.idl */,
-				B2E954780AB5FBA30076DE37 /* SVGPathElement.idl */,
-				B2E954790AB5FBA30076DE37 /* SVGPathSeg.idl */,
-				B2E9547A0AB5FBA30076DE37 /* SVGPathSegArcAbs.idl */,
-				B2E9547B0AB5FBA30076DE37 /* SVGPathSegArcRel.idl */,
-				B2E9547C0AB5FBA30076DE37 /* SVGPathSegClosePath.idl */,
-				B2E9547D0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicAbs.idl */,
-				B2E9547E0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicRel.idl */,
-				B2E9547F0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothAbs.idl */,
-				B2E954800AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothRel.idl */,
-				B2E954810AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticAbs.idl */,
-				B2E954820AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticRel.idl */,
-				B2E954830AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothAbs.idl */,
-				B2E954840AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothRel.idl */,
-				B2E954850AB5FBA30076DE37 /* SVGPathSegLinetoAbs.idl */,
-				B2E954860AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalAbs.idl */,
-				B2E954870AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalRel.idl */,
-				B2E954880AB5FBA30076DE37 /* SVGPathSegLinetoRel.idl */,
-				B2E954890AB5FBA30076DE37 /* SVGPathSegLinetoVerticalAbs.idl */,
-				B2E9548A0AB5FBA30076DE37 /* SVGPathSegLinetoVerticalRel.idl */,
-				B2E9548B0AB5FBA30076DE37 /* SVGPathSegList.idl */,
-				B2E9548C0AB5FBA30076DE37 /* SVGPathSegMovetoAbs.idl */,
-				B2E9548D0AB5FBA30076DE37 /* SVGPathSegMovetoRel.idl */,
-				B2E9548E0AB5FBA30076DE37 /* SVGPreserveAspectRatio.idl */,
-				B2E954610AB5FB7F0076DE37 /* SVGAnimatedAngle.idl */,
-				B2E954620AB5FB7F0076DE37 /* SVGAnimatedBoolean.idl */,
-				B2E954630AB5FB7F0076DE37 /* SVGAnimatedEnumeration.idl */,
-				B2E954640AB5FB7F0076DE37 /* SVGAnimatedInteger.idl */,
-				B2E954650AB5FB7F0076DE37 /* SVGAnimatedLength.idl */,
-				B2E954660AB5FB7F0076DE37 /* SVGAnimatedNumber.idl */,
-				B2E954670AB5FB7F0076DE37 /* SVGAnimatedPathData.idl */,
-				B2E954680AB5FB7F0076DE37 /* SVGAnimatedPoints.idl */,
-				B2E954690AB5FB7F0076DE37 /* SVGAnimatedPreserveAspectRatio.idl */,
-				B2E9546A0AB5FB7F0076DE37 /* SVGAnimatedRect.idl */,
-				B2E9546B0AB5FB7F0076DE37 /* SVGAnimatedString.idl */,
 				1403B99609EB13AF00797C7F /* DOMWindow.cpp */,
 				1403B99509EB13AF00797C7F /* DOMWindow.h */,
 				1403B90C09EB124500797C7F /* DOMWindow.idl */,
@@ -6445,6 +6291,17 @@
 				A8C0F7FF089701F300BA5114 /* SVGAElement.cpp */,
 				A8C0F800089701F300BA5114 /* SVGAElement.h */,
 				A833C0A80A2C4FEC00D57664 /* SVGAngle.idl */,
+				B2E954610AB5FB7F0076DE37 /* SVGAnimatedAngle.idl */,
+				B2E954620AB5FB7F0076DE37 /* SVGAnimatedBoolean.idl */,
+				B2E954630AB5FB7F0076DE37 /* SVGAnimatedEnumeration.idl */,
+				B2E954640AB5FB7F0076DE37 /* SVGAnimatedInteger.idl */,
+				B2E954650AB5FB7F0076DE37 /* SVGAnimatedLength.idl */,
+				B2E954660AB5FB7F0076DE37 /* SVGAnimatedNumber.idl */,
+				B2E954670AB5FB7F0076DE37 /* SVGAnimatedPathData.idl */,
+				B2E954680AB5FB7F0076DE37 /* SVGAnimatedPoints.idl */,
+				B2E954690AB5FB7F0076DE37 /* SVGAnimatedPreserveAspectRatio.idl */,
+				B2E9546A0AB5FB7F0076DE37 /* SVGAnimatedRect.idl */,
+				B2E9546B0AB5FB7F0076DE37 /* SVGAnimatedString.idl */,
 				A8C0F803089701F300BA5114 /* SVGAnimateColorElement.cpp */,
 				A8C0F804089701F300BA5114 /* SVGAnimateColorElement.h */,
 				A8C0F815089701F300BA5114 /* SVGAnimatedPathData.cpp */,
@@ -6576,6 +6433,30 @@
 				A8C0F889089701F300BA5114 /* SVGNumberList.h */,
 				A8C0F88A089701F300BA5114 /* SVGPaint.cpp */,
 				A8C0F88B089701F300BA5114 /* SVGPaint.h */,
+				B2E954770AB5FBA30076DE37 /* SVGMetadataElement.idl */,
+				B2E954780AB5FBA30076DE37 /* SVGPathElement.idl */,
+				B2E954790AB5FBA30076DE37 /* SVGPathSeg.idl */,
+				B2E9547A0AB5FBA30076DE37 /* SVGPathSegArcAbs.idl */,
+				B2E9547B0AB5FBA30076DE37 /* SVGPathSegArcRel.idl */,
+				B2E9547C0AB5FBA30076DE37 /* SVGPathSegClosePath.idl */,
+				B2E9547D0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicAbs.idl */,
+				B2E9547E0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicRel.idl */,
+				B2E9547F0AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothAbs.idl */,
+				B2E954800AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothRel.idl */,
+				B2E954810AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticAbs.idl */,
+				B2E954820AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticRel.idl */,
+				B2E954830AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothAbs.idl */,
+				B2E954840AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothRel.idl */,
+				B2E954850AB5FBA30076DE37 /* SVGPathSegLinetoAbs.idl */,
+				B2E954860AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalAbs.idl */,
+				B2E954870AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalRel.idl */,
+				B2E954880AB5FBA30076DE37 /* SVGPathSegLinetoRel.idl */,
+				B2E954890AB5FBA30076DE37 /* SVGPathSegLinetoVerticalAbs.idl */,
+				B2E9548A0AB5FBA30076DE37 /* SVGPathSegLinetoVerticalRel.idl */,
+				B2E9548B0AB5FBA30076DE37 /* SVGPathSegList.idl */,
+				B2E9548C0AB5FBA30076DE37 /* SVGPathSegMovetoAbs.idl */,
+				B2E9548D0AB5FBA30076DE37 /* SVGPathSegMovetoRel.idl */,
+				B2E9548E0AB5FBA30076DE37 /* SVGPreserveAspectRatio.idl */,
 				A8C0F88C089701F300BA5114 /* SVGPathElement.cpp */,
 				A8C0F88D089701F300BA5114 /* SVGPathElement.h */,
 				A8C0F88E089701F300BA5114 /* svgpathparser.cpp */,
@@ -8580,6 +8461,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -8593,6 +8475,8 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -8637,125 +8521,6 @@
 				1CD4418F0A4CE76F00A007AB /* northSouthResizeCursor.tiff in Resources */,
 				1CD441900A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff in Resources */,
 				5115095C0A9CE04700901013 /* urlIcon.tiff in Resources */,
-				B2E9546C0AB5FB7F0076DE37 /* SVGAnimatedAngle.idl in Resources */,
-				B2E9546D0AB5FB7F0076DE37 /* SVGAnimatedBoolean.idl in Resources */,
-				B2E9546E0AB5FB7F0076DE37 /* SVGAnimatedEnumeration.idl in Resources */,
-				B2E9546F0AB5FB7F0076DE37 /* SVGAnimatedInteger.idl in Resources */,
-				B2E954700AB5FB7F0076DE37 /* SVGAnimatedLength.idl in Resources */,
-				B2E954710AB5FB7F0076DE37 /* SVGAnimatedNumber.idl in Resources */,
-				B2E954720AB5FB7F0076DE37 /* SVGAnimatedPathData.idl in Resources */,
-				B2E954730AB5FB7F0076DE37 /* SVGAnimatedPoints.idl in Resources */,
-				B2E954740AB5FB7F0076DE37 /* SVGAnimatedPreserveAspectRatio.idl in Resources */,
-				B2E954750AB5FB7F0076DE37 /* SVGAnimatedRect.idl in Resources */,
-				B2E954760AB5FB7F0076DE37 /* SVGAnimatedString.idl in Resources */,
-				B2E9548F0AB5FBA30076DE37 /* SVGMetadataElement.idl in Resources */,
-				B2E954900AB5FBA30076DE37 /* SVGPathElement.idl in Resources */,
-				B2E954910AB5FBA30076DE37 /* SVGPathSeg.idl in Resources */,
-				B2E954920AB5FBA30076DE37 /* SVGPathSegArcAbs.idl in Resources */,
-				B2E954930AB5FBA30076DE37 /* SVGPathSegArcRel.idl in Resources */,
-				B2E954940AB5FBA30076DE37 /* SVGPathSegClosePath.idl in Resources */,
-				B2E954950AB5FBA30076DE37 /* SVGPathSegCurvetoCubicAbs.idl in Resources */,
-				B2E954960AB5FBA30076DE37 /* SVGPathSegCurvetoCubicRel.idl in Resources */,
-				B2E954970AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothAbs.idl in Resources */,
-				B2E954980AB5FBA30076DE37 /* SVGPathSegCurvetoCubicSmoothRel.idl in Resources */,
-				B2E954990AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticAbs.idl in Resources */,
-				B2E9549A0AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticRel.idl in Resources */,
-				B2E9549B0AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothAbs.idl in Resources */,
-				B2E9549C0AB5FBA30076DE37 /* SVGPathSegCurvetoQuadraticSmoothRel.idl in Resources */,
-				B2E9549D0AB5FBA30076DE37 /* SVGPathSegLinetoAbs.idl in Resources */,
-				B2E9549E0AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalAbs.idl in Resources */,
-				B2E9549F0AB5FBA30076DE37 /* SVGPathSegLinetoHorizontalRel.idl in Resources */,
-				B2E954A00AB5FBA30076DE37 /* SVGPathSegLinetoRel.idl in Resources */,
-				B2E954A10AB5FBA30076DE37 /* SVGPathSegLinetoVerticalAbs.idl in Resources */,
-				B2E954A20AB5FBA30076DE37 /* SVGPathSegLinetoVerticalRel.idl in Resources */,
-				B2E954A30AB5FBA30076DE37 /* SVGPathSegList.idl in Resources */,
-				B2E954A40AB5FBA30076DE37 /* SVGPathSegMovetoAbs.idl in Resources */,
-				B2E954A50AB5FBA30076DE37 /* SVGPathSegMovetoRel.idl in Resources */,
-				B2E954A60AB5FBA30076DE37 /* SVGPreserveAspectRatio.idl in Resources */,
-				B2CB410F0AB758E6004D9C45 /* SVGAElement.idl in Resources */,
-				B2CB41100AB758E6004D9C45 /* SVGAnimateColorElement.idl in Resources */,
-				B2CB41110AB758E6004D9C45 /* SVGAnimatedLengthList.idl in Resources */,
-				B2CB41120AB758E6004D9C45 /* SVGAnimatedNumberList.idl in Resources */,
-				B2CB41130AB758E6004D9C45 /* SVGAnimatedTransformList.idl in Resources */,
-				B2CB41140AB758E6004D9C45 /* SVGAnimateElement.idl in Resources */,
-				B2CB41150AB758E6004D9C45 /* SVGAnimateTransformElement.idl in Resources */,
-				B2CB41160AB758E6004D9C45 /* SVGAnimationElement.idl in Resources */,
-				B2CB41170AB758E6004D9C45 /* SVGCircleElement.idl in Resources */,
-				B2CB41180AB758E6004D9C45 /* SVGClipPathElement.idl in Resources */,
-				B2CB41190AB758E6004D9C45 /* SVGComponentTransferFunctionElement.idl in Resources */,
-				B2CB411A0AB758E6004D9C45 /* SVGCursorElement.idl in Resources */,
-				B2CB411B0AB758E6004D9C45 /* SVGDefsElement.idl in Resources */,
-				B2CB411C0AB758E6004D9C45 /* SVGDescElement.idl in Resources */,
-				B2CB411E0AB758F4004D9C45 /* SVGEllipseElement.idl in Resources */,
-				B2CB41660AB75904004D9C45 /* SVGExternalResourcesRequired.idl in Resources */,
-				B2CB41670AB75904004D9C45 /* SVGFEBlendElement.idl in Resources */,
-				B2CB41680AB75904004D9C45 /* SVGFEColorMatrixElement.idl in Resources */,
-				B2CB41690AB75904004D9C45 /* SVGFEComponentTransferElement.idl in Resources */,
-				B2CB416A0AB75904004D9C45 /* SVGFECompositeElement.idl in Resources */,
-				B2CB416B0AB75904004D9C45 /* SVGFEDiffuseLightingElement.idl in Resources */,
-				B2CB416C0AB75904004D9C45 /* SVGFEDisplacementMapElement.idl in Resources */,
-				B2CB416D0AB75904004D9C45 /* SVGFEDistantLightElement.idl in Resources */,
-				B2CB416E0AB75904004D9C45 /* SVGFEFloodElement.idl in Resources */,
-				B2CB416F0AB75904004D9C45 /* SVGFEFuncAElement.idl in Resources */,
-				B2CB41700AB75904004D9C45 /* SVGFEFuncBElement.idl in Resources */,
-				B2CB41710AB75904004D9C45 /* SVGFEFuncGElement.idl in Resources */,
-				B2CB41720AB75904004D9C45 /* SVGFEFuncRElement.idl in Resources */,
-				B2CB41730AB75904004D9C45 /* SVGFEGaussianBlurElement.idl in Resources */,
-				B2CB41740AB75904004D9C45 /* SVGFEImageElement.idl in Resources */,
-				B2CB41750AB75904004D9C45 /* SVGFEMergeElement.idl in Resources */,
-				B2CB41760AB75904004D9C45 /* SVGFEMergeNodeElement.idl in Resources */,
-				B2CB41770AB75904004D9C45 /* SVGFEOffsetElement.idl in Resources */,
-				B2CB41780AB75904004D9C45 /* SVGFEPointLightElement.idl in Resources */,
-				B2CB41790AB75904004D9C45 /* SVGFESpecularLightingElement.idl in Resources */,
-				B2CB417A0AB75904004D9C45 /* SVGFESpotLightElement.idl in Resources */,
-				B2CB417B0AB75904004D9C45 /* SVGFETileElement.idl in Resources */,
-				B2CB417C0AB75904004D9C45 /* SVGFETurbulenceElement.idl in Resources */,
-				B2CB417D0AB75904004D9C45 /* SVGFilterElement.idl in Resources */,
-				B2CB417E0AB75904004D9C45 /* SVGFilterPrimitiveStandardAttributes.idl in Resources */,
-				B2CB417F0AB75904004D9C45 /* SVGFitToViewBox.idl in Resources */,
-				B2CB41800AB75904004D9C45 /* SVGForeignObjectElement.idl in Resources */,
-				B2CB41810AB75904004D9C45 /* SVGGElement.idl in Resources */,
-				B2CB41820AB75904004D9C45 /* SVGGradientElement.idl in Resources */,
-				B2CB41830AB75904004D9C45 /* SVGImageElement.idl in Resources */,
-				B2CB41840AB75904004D9C45 /* SVGLangSpace.idl in Resources */,
-				B2CB41850AB75904004D9C45 /* SVGLengthList.idl in Resources */,
-				B2CB41860AB75904004D9C45 /* SVGLinearGradientElement.idl in Resources */,
-				B2CB41870AB75904004D9C45 /* SVGLineElement.idl in Resources */,
-				B2CB41880AB75904004D9C45 /* SVGLocatable.idl in Resources */,
-				B2CB41890AB75904004D9C45 /* SVGMarkerElement.idl in Resources */,
-				B2CB418A0AB75904004D9C45 /* SVGMaskElement.idl in Resources */,
-				B2CB418B0AB75904004D9C45 /* SVGNumberList.idl in Resources */,
-				B2CB418C0AB75904004D9C45 /* SVGPaint.idl in Resources */,
-				B2CB418D0AB75904004D9C45 /* SVGPatternElement.idl in Resources */,
-				B2CB418E0AB75904004D9C45 /* SVGPointList.idl in Resources */,
-				B2CB418F0AB75904004D9C45 /* SVGPolygonElement.idl in Resources */,
-				B2CB41900AB75904004D9C45 /* SVGPolylineElement.idl in Resources */,
-				B2CB41910AB75904004D9C45 /* SVGRadialGradientElement.idl in Resources */,
-				B2CB41920AB75904004D9C45 /* SVGRectElement.idl in Resources */,
-				B2CB41940AB75904004D9C45 /* SVGRenderingIntent.idl in Resources */,
-				B2CB41950AB75904004D9C45 /* SVGScriptElement.idl in Resources */,
-				B2CB41960AB75904004D9C45 /* SVGSetElement.idl in Resources */,
-				B2CB41970AB75904004D9C45 /* SVGStopElement.idl in Resources */,
-				B2CB41980AB75904004D9C45 /* SVGStringList.idl in Resources */,
-				B2CB41990AB75904004D9C45 /* SVGStylable.idl in Resources */,
-				B2CB419A0AB75904004D9C45 /* SVGStyleElement.idl in Resources */,
-				B2CB419B0AB75904004D9C45 /* SVGSwitchElement.idl in Resources */,
-				B2CB419C0AB75904004D9C45 /* SVGSymbolElement.idl in Resources */,
-				B2CB419D0AB75904004D9C45 /* SVGTests.idl in Resources */,
-				B2CB419E0AB75904004D9C45 /* SVGTextContentElement.idl in Resources */,
-				B2CB419F0AB75904004D9C45 /* SVGTextElement.idl in Resources */,
-				B2CB41A00AB75904004D9C45 /* SVGTextPositioningElement.idl in Resources */,
-				B2CB41A10AB75904004D9C45 /* SVGTitleElement.idl in Resources */,
-				B2CB41A20AB75904004D9C45 /* SVGTransformable.idl in Resources */,
-				B2CB41A30AB75904004D9C45 /* SVGTransformList.idl in Resources */,
-				B2CB41A40AB75904004D9C45 /* SVGTRefElement.idl in Resources */,
-				B2CB41A50AB75904004D9C45 /* SVGTSpanElement.idl in Resources */,
-				B2CB41A70AB75904004D9C45 /* SVGUnitTypes.idl in Resources */,
-				B2CB41A80AB75904004D9C45 /* SVGURIReference.idl in Resources */,
-				B2CB41A90AB75904004D9C45 /* SVGUseElement.idl in Resources */,
-				B2CB41AA0AB75904004D9C45 /* SVGViewElement.idl in Resources */,
-				B2CB41AB0AB75904004D9C45 /* SVGZoomAndPan.idl in Resources */,
-				B2CB41AC0AB75904004D9C45 /* SVGZoomEvent.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
