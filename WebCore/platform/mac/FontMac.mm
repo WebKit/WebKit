@@ -482,9 +482,14 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
     
     // ATSUI can't draw beyond -32768 to +32767 so we translate the CTM and tell ATSUI to draw at (0, 0).
     CGContextRef context = graphicsContext->platformContext();
-    CGColorRef penColor = cgColor(graphicsContext->pen().color());
-    CGContextSetFillColorWithColor(context, penColor); // WebCore expects text to respect the pen color, CG expects text to use fill
-    CGColorRelease(penColor);
+
+    float colors[4];
+    graphicsContext->pen().color().getRGBA(colors[0], colors[1], colors[2], colors[3]);
+    static CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    CGContextSetFillColorSpace(context, rgbColorSpace);
+    CGContextSetFillColor(context, colors); // WebCore expects text to respect the pen color, CG expects text to use fill
+    
     CGContextTranslateCTM(context, point.x(), point.y());
     status = ATSUDrawText(params.m_layout, adjustedRun.from(), runLength, 0, 0);
     if (status == noErr && params.m_hasSyntheticBold) {
@@ -593,9 +598,12 @@ void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const Glyp
     wkSetCGFontRenderingMode(cgContext, drawFont);
     CGContextSetFontSize(cgContext, 1.0f);
 
-    CGColorRef penColor = cgColor(context->pen().color());
-    CGContextSetFillColorWithColor(cgContext, penColor); // WebCore expects text to respect the pen color, CG expects text to use fill
-    CGColorRelease(penColor);
+    float colors[4];
+    context->pen().color().getRGBA(colors[0], colors[1], colors[2], colors[3]);
+    static CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    CGContextSetFillColorSpace(cgContext, rgbColorSpace);
+    CGContextSetFillColor(cgContext, colors); // WebCore expects text to respect the pen color, CG expects text to use fill
 
     CGContextSetTextPosition(cgContext, point.x(), point.y());
     CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);

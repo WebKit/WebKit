@@ -1,3 +1,16 @@
+2006-09-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Eric Siedel
+
+        Dumped the use of CGColorRef and directly use the floating point data from
+        WebCore::Color
+
+        This fixes the performance regression found between 16285 and 16286
+
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawGlyphs):
+
 2006-09-14  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Adam.
