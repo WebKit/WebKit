@@ -81,6 +81,7 @@ all : \
     DOMHTMLDListElement.h \
     DOMHTMLDirectoryElement.h \
     DOMHTMLDivElement.h \
+    DOMHTMLDocument.h \
     DOMHTMLElement.h \
     DOMHTMLFieldSetElement.h \
     DOMHTMLFontElement.h \

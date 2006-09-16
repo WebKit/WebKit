@@ -391,6 +391,11 @@ public:
     CFStringRef getCFString() const;
     NSString *getNSString() const;
     void setBufferFromCFString(CFStringRef);
+
+#ifdef __OBJC__
+    operator NSString*() const { return getNSString(); }
+#endif
+
 #endif
 
 private:

@@ -59,6 +59,21 @@ using namespace HTMLNames;
 //------------------------------------------------------------------------------------------
 // DOMHTMLDocument
 
+@implementation DOMHTMLDocument (DOMHTMLDocumentExtensions)
+
+- (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
+{
+    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromMarkup([self _document], markupString, [baseURL absoluteString]).get()];
+}
+
+- (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text
+{
+    // FIXME: Since this is not a contextual fragment, it won't handle whitespace properly.
+    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText([self _document]->createRange().get(), text).get()];
+}
+
+@end
+
 @implementation DOMHTMLDocument (WebPrivate)
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString

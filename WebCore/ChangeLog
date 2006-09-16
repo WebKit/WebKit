@@ -1,3 +1,23 @@
+2006-09-16  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10885
+        Auto-generate DOMHTMLDocument for the Objective-C bindings
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLDocument createDocumentFragmentWithText:]):
+        * bindings/objc/DOMHTMLDocument.h: Removed.
+        * bindings/objc/DOMHTMLDocument.mm: Removed.
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * html/HTMLDocument.idl:
+        * platform/DeprecatedString.h:
+        (WebCore::DeprecatedString::operator NSString*):
+
 2006-09-16  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

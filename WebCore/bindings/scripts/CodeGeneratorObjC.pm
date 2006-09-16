@@ -413,6 +413,10 @@ sub AddIncludesForType
     # and NamedAttrMap.h
     $implIncludes{"NamedAttrMap.h"} = 1 if $type eq "NamedNodeMap";
 
+    # FIXME: for some reason it won't compile without both NodeList.h
+    # and NameNodeList.h
+    $implIncludes{"NameNodeList.h"} = 1 if $type eq "NodeList";
+
     # Default, include the same named file (the implementation) and the same name prefixed with "DOM". 
     $implIncludes{"$type.h"} = 1;
     $implIncludes{"DOM$type.h"} = 1;

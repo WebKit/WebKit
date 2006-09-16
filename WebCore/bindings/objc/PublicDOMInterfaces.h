@@ -319,6 +319,26 @@
 @property NSString *align;
 @end
 
+@interface DOMHTMLDocument : DOMDocument
+@property NSString *title;
+@property(readonly) NSString *referrer;
+@property(readonly) NSString *domain;
+@property(readonly) NSString *URL;
+@property DOMHTMLElement *body;
+@property(readonly) DOMHTMLCollection *images;
+@property(readonly) DOMHTMLCollection *applets;
+@property(readonly) DOMHTMLCollection *links;
+@property(readonly) DOMHTMLCollection *forms;
+@property(readonly) DOMHTMLCollection *anchors;
+@property NSString *cookie;
+- (void)open;
+- (void)close;
+- (void)write:(NSString *)text;
+- (void)writeln:(NSString *)text;
+- (DOMElement *)getElementById:(NSString *)elementId;
+- (DOMNodeList *)getElementsByName:(NSString *)elementName;
+@end
+
 @interface DOMHTMLElement : DOMElement
 @property NSString *title;
 @property NSString *idName;

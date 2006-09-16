@@ -58,6 +58,11 @@
 - (NSImage *)image;
 @end
 
+@interface DOMHTMLDocument (DOMHTMLDocumentExtensions)
+- (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL;
+- (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text;
+@end
+
 @interface DOMHTMLInputElement (DOMHTMLInputElementExtensions)
 - (NSURL *)absoluteImageURL;
 @end
