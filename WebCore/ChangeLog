@@ -1,3 +1,16 @@
+2006-09-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Added the ability to get a mutable char* from a CString, which will copy the internal
+        buffer if the ref count is greater than 1 so your mutable char* won't affect any other
+        referrer of that buffer.
+
+        * platform/CString.cpp:
+        (WebCore::CString::mutableData):
+        (WebCore::CString::copyBufferIfNeeded):
+        * platform/CString.h:
+
 2006-09-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

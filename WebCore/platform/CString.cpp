@@ -59,6 +59,14 @@ const char* CString::data() const
 {
     return m_buffer ? m_buffer->data() : 0;
 }
+
+char* CString::mutableData()
+{
+    copyBufferIfNeeded();
+    if (!m_buffer)
+        return 0;
+    return m_buffer->data();
+}
     
 unsigned CString::length() const
 {
@@ -78,6 +86,17 @@ CString CString::newUninitialized(size_t length, char*& characterBuffer)
     bytes[length] = '\0';
     characterBuffer = bytes;
     return result;
+}
+
+void CString::copyBufferIfNeeded()
+{
+    if (!m_buffer || m_buffer->hasOneRef())
+        return;
+        
+    int len = m_buffer->length();
+    RefPtr<CStringBuffer> m_temp = m_buffer;
+    m_buffer = new CStringBuffer(len);
+    memcpy(m_buffer->data(), m_temp->data(), len);
 }
 
 }
