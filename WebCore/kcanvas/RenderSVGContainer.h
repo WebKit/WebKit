@@ -98,8 +98,14 @@ private:
     AffineTransform getAspectRatio(const FloatRect& logical, const FloatRect& physical) const;
     AffineTransform viewportTransform() const;
 
-    class Private;
-    Private* d;
+    bool m_drawsContents : 1;
+    bool m_slice : 1;
+    AffineTransform m_matrix;
+    
+    FloatRect m_viewport;
+    FloatRect m_viewBox;
+    KCAlign m_align;
+    IntRect m_absoluteBounds;
 };
 
 }

@@ -42,8 +42,7 @@ public:
 
     TextStream &externalRepresentation(TextStream &) const;
 private:
-    class Private;
-    Private *d;
+    Color m_color;
 };
 
 }

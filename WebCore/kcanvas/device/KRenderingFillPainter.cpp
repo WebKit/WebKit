@@ -28,46 +28,34 @@
 
 namespace WebCore {
 
-class KRenderingFillPainter::Private
-{
-public:
-    Private()
-    {
-        opacity = 1.0;
-        fillRule = RULE_NONZERO;
-    }
-
-    float opacity;
-    WindRule fillRule;
-};
-
-KRenderingFillPainter::KRenderingFillPainter() : d(new Private())
+KRenderingFillPainter::KRenderingFillPainter()
+     : m_opacity(1.0)
+     , m_fillRule(RULE_NONZERO)
 {
 }
 
 KRenderingFillPainter::~KRenderingFillPainter()
 {
-    delete d;
 }
 
 WindRule KRenderingFillPainter::fillRule() const
 {
-    return d->fillRule;
+    return m_fillRule;
 }
 
 void KRenderingFillPainter::setFillRule(WindRule rule)
 {
-    d->fillRule = rule;
+    m_fillRule = rule;
 }
 
 float KRenderingFillPainter::opacity() const
 {
-    return d->opacity;
+    return m_opacity;
 }
 
 void KRenderingFillPainter::setOpacity(float opacity)
 {
-    d->opacity = opacity;
+    m_opacity = opacity;
 }
 
 }

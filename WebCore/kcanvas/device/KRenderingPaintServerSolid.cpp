@@ -28,32 +28,23 @@
 
 namespace WebCore {
 
-class KRenderingPaintServerSolid::Private
-{
-public:
-    Private() { }
-    ~Private() { }
-
-    Color color;
-};
-
-KRenderingPaintServerSolid::KRenderingPaintServerSolid() : KRenderingPaintServer(), d(new Private())
+KRenderingPaintServerSolid::KRenderingPaintServerSolid()
+    : KRenderingPaintServer()
 {
 }
 
 KRenderingPaintServerSolid::~KRenderingPaintServerSolid()
 {
-    delete d;
 }
 
 Color KRenderingPaintServerSolid::color() const
 {
-    return d->color;
+    return m_color;
 }
 
 void KRenderingPaintServerSolid::setColor(const Color &color)
 {
-    d->color = color;
+    m_color = color;
 }
 
 KCPaintServerType KRenderingPaintServerSolid::type() const

@@ -31,71 +31,57 @@
 
 namespace WebCore {
 
-class KRenderingPaintServerPattern::Private
-{
-public:
-    Private()
-    {
-        tile = 0;
-        useBoundingBoxMode = true;
-        listener = 0;
-    }
-    ~Private() { delete tile; }
-
-    KCanvasImage *tile;
-    AffineTransform patternTransform;
-    FloatRect bbox;
-    bool useBoundingBoxMode;
-    KCanvasResourceListener *listener;
-};
-
-KRenderingPaintServerPattern::KRenderingPaintServerPattern() : KRenderingPaintServer(), d(new Private())
+KRenderingPaintServerPattern::KRenderingPaintServerPattern()
+    : KRenderingPaintServer()
+    , m_tile(0)
+    , m_useBoundingBoxMode(true)
+    , m_listener(0)
 {
 }
 
 KRenderingPaintServerPattern::~KRenderingPaintServerPattern()
 {
-    delete d;
+    delete m_tile;
 }
 
 void KRenderingPaintServerPattern::setBbox(const FloatRect& rect)
 {
-    d->bbox = rect;
+    m_bbox = rect;
 }
 
 FloatRect KRenderingPaintServerPattern::bbox() const
 {
-    return d->bbox;
+    return m_bbox;
 }
 
 bool KRenderingPaintServerPattern::boundingBoxMode() const
 {
-    return d->useBoundingBoxMode;
+    return m_useBoundingBoxMode;
 }
 
 void KRenderingPaintServerPattern::setBoundingBoxMode(bool mode)
 {
-    d->useBoundingBoxMode = mode;
+    m_useBoundingBoxMode = mode;
 }
 
 KCanvasImage *KRenderingPaintServerPattern::tile() const
 {
-    return d->tile;
+    return m_tile;
 }
 
 void KRenderingPaintServerPattern::setTile(KCanvasImage *tile)
 {
-    d->tile = tile;
+    m_tile = tile;
 }
 
 AffineTransform KRenderingPaintServerPattern::patternTransform() const
 {
-    return d->patternTransform;
+    return m_patternTransform;
 }
 
 void KRenderingPaintServerPattern::setPatternTransform(const AffineTransform& mat)
 {
-    d->patternTransform = mat;
+    m_patternTransform = mat;
 }
 
 KCPaintServerType KRenderingPaintServerPattern::type() const
@@ -105,12 +91,12 @@ KCPaintServerType KRenderingPaintServerPattern::type() const
 
 KCanvasResourceListener *KRenderingPaintServerPattern::listener() const
 {
-    return d->listener;
+    return m_listener;
 }
 
 void KRenderingPaintServerPattern::setListener(KCanvasResourceListener *listener)
 {
-    d->listener = listener;
+    m_listener = listener;
 }
 
 TextStream &KRenderingPaintServerPattern::externalRepresentation(TextStream &ts) const

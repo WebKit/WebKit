@@ -68,8 +68,11 @@ public:
 
     TextStream &externalRepresentation(TextStream &) const;
 private:
-    class Private;
-    Private *d;
+    Vector<KCGradientStop> m_stops;
+    KCGradientSpreadMethod m_spreadMethod;
+    bool m_boundingBoxMode;
+    AffineTransform m_gradientTransform;
+    KCanvasResourceListener* m_listener;
 };
 
 class KRenderingPaintServerLinearGradient : public KRenderingPaintServerGradient
@@ -89,8 +92,8 @@ public:
 
     TextStream &externalRepresentation(TextStream &) const;
 private:
-    class Private;
-    Private *d;
+    FloatPoint m_start;
+    FloatPoint m_end;
 };
 
 class KRenderingPaintServerRadialGradient : public KRenderingPaintServerGradient
@@ -113,8 +116,9 @@ public:
 
     TextStream &externalRepresentation(TextStream &) const;
 private:
-    class Private;
-    Private *d;
+    float m_radius;
+    FloatPoint m_center;
+    FloatPoint m_focal;
 };
 
 }

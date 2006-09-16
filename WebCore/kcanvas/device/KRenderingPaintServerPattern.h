@@ -39,7 +39,7 @@ public:
     virtual KCPaintServerType type() const;
 
     // Pattern bbox
-    void setBbox(const FloatRect &rect);
+    void setBbox(const FloatRect& rect);
     FloatRect bbox() const;
     
     // Pattern x,y phase points are relative when in boundingBoxMode
@@ -48,19 +48,23 @@ public:
     void setBoundingBoxMode(bool mode = true);
     
     // 'Pattern' interface
-    KCanvasImage *tile() const;
-    void setTile(KCanvasImage *tile);
+    KCanvasImage* tile() const;
+    void setTile(KCanvasImage* tile);
 
     AffineTransform patternTransform() const;
     void setPatternTransform(const AffineTransform&);
 
-    KCanvasResourceListener *listener() const;
-    void setListener(KCanvasResourceListener *listener);
-    TextStream &externalRepresentation(TextStream &) const;
+    KCanvasResourceListener* listener() const;
+    void setListener(KCanvasResourceListener* listener);
+    TextStream &externalRepresentation(TextStream&) const;
 
 private:
-    class Private;
-    Private *d;
+    KCanvasImage* m_tile;
+    AffineTransform m_patternTransform;
+    FloatRect m_bbox;
+    bool m_useBoundingBoxMode;
+    KCanvasResourceListener* m_listener;
+
 };
 
 }

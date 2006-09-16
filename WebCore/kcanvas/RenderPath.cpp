@@ -37,36 +37,25 @@
 
 namespace WebCore {
 
-class RenderPath::Private {
-public:
-    Path path;
-
-    FloatRect fillBBox;
-    FloatRect strokeBbox;
-    AffineTransform matrix;
-    IntRect absoluteBounds;
-};
-
 // RenderPath
 RenderPath::RenderPath(RenderStyle* style, SVGStyledElement* node)
-    : RenderObject(node), d(new Private)
+    : RenderObject(node)
 {
     ASSERT(style != 0);
 }
 
 RenderPath::~RenderPath()
 {
-    delete d;
 }
 
 AffineTransform RenderPath::localTransform() const
 {
-    return d->matrix;
+    return m_matrix;
 }
 
 void RenderPath::setLocalTransform(const AffineTransform &matrix)
 {
-    d->matrix = matrix;
+    m_matrix = matrix;
 }
 
 
@@ -82,7 +71,7 @@ FloatPoint RenderPath::mapAbsolutePointToLocal(const FloatPoint& point) const
 
 bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill) const
 {
-    if (d->path.isEmpty())
+    if (m_path.isEmpty())
         return false;
 
     if (requiresFill && !KSVGPainterFactory::fillPaintServer(style(), this))
@@ -94,30 +83,30 @@ bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill) const
 
 FloatRect RenderPath::relativeBBox(bool includeStroke) const
 {
-    if (d->path.isEmpty())
+    if (m_path.isEmpty())
         return FloatRect();
 
     if (includeStroke) {
-        if (d->strokeBbox.isEmpty())
-            d->strokeBbox = strokeBBox();
-        return d->strokeBbox;
+        if (m_strokeBbox.isEmpty())
+            m_strokeBbox = strokeBBox();
+        return m_strokeBbox;
     }
 
-    if (d->fillBBox.isEmpty())
-        d->fillBBox = path().boundingRect();
-    return d->fillBBox;
+    if (m_fillBBox.isEmpty())
+        m_fillBBox = path().boundingRect();
+    return m_fillBBox;
 }
 
 void RenderPath::setPath(const Path& newPath)
 {
-    d->path = newPath;
-    d->strokeBbox = FloatRect();
-    d->fillBBox = FloatRect();
+    m_path = newPath;
+    m_strokeBbox = FloatRect();
+    m_fillBBox = FloatRect();
 }
 
 const Path& RenderPath::path() const
 {
-    return d->path;
+    return m_path;
 }
 
 void RenderPath::layout()
@@ -129,14 +118,14 @@ void RenderPath::layout()
     IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (selfNeedsLayout() && checkForRepaint)
-        oldBounds = d->absoluteBounds;
+        oldBounds = m_absoluteBounds;
 
     static_cast<SVGStyledElement*>(element())->notifyAttributeChange();
 
-    d->absoluteBounds = getAbsoluteRepaintRect();
+    m_absoluteBounds = getAbsoluteRepaintRect();
 
-    setWidth(d->absoluteBounds.width());
-    setHeight(d->absoluteBounds.height());
+    setWidth(m_absoluteBounds.width());
+    setHeight(m_absoluteBounds.height());
 
     if (selfNeedsLayout() && checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldBounds);

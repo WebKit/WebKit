@@ -1,3 +1,122 @@
+2006-09-16  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10866
+        Code in kcanvas/ should not use Private
+
+        Remove Private classes and tweak coding style.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::RenderPath):
+        (WebCore::RenderPath::~RenderPath):
+        (WebCore::RenderPath::localTransform):
+        (WebCore::RenderPath::setLocalTransform):
+        (WebCore::RenderPath::fillContains):
+        (WebCore::RenderPath::relativeBBox):
+        (WebCore::RenderPath::setPath):
+        (WebCore::RenderPath::path):
+        (WebCore::RenderPath::layout):
+        * kcanvas/RenderPath.h:
+        * kcanvas/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer):
+        (WebCore::RenderSVGContainer::~RenderSVGContainer):
+        (WebCore::RenderSVGContainer::drawsContents):
+        (WebCore::RenderSVGContainer::setDrawsContents):
+        (WebCore::RenderSVGContainer::localTransform):
+        (WebCore::RenderSVGContainer::setLocalTransform):
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::setViewport):
+        (WebCore::RenderSVGContainer::viewport):
+        (WebCore::RenderSVGContainer::setViewBox):
+        (WebCore::RenderSVGContainer::viewBox):
+        (WebCore::RenderSVGContainer::setAlign):
+        (WebCore::RenderSVGContainer::align):
+        (WebCore::RenderSVGContainer::fillContains):
+        (WebCore::RenderSVGContainer::strokeContains):
+        (WebCore::RenderSVGContainer::setSlice):
+        (WebCore::RenderSVGContainer::slice):
+        * kcanvas/RenderSVGContainer.h:
+        * kcanvas/device/KRenderingFillPainter.cpp:
+        (WebCore::KRenderingFillPainter::KRenderingFillPainter):
+        (WebCore::KRenderingFillPainter::~KRenderingFillPainter):
+        (WebCore::KRenderingFillPainter::fillRule):
+        (WebCore::KRenderingFillPainter::setFillRule):
+        (WebCore::KRenderingFillPainter::opacity):
+        (WebCore::KRenderingFillPainter::setOpacity):
+        * kcanvas/device/KRenderingFillPainter.h:
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (WebCore::KRenderingPaintServerGradient::KRenderingPaintServerGradient):
+        (WebCore::KRenderingPaintServerGradient::~KRenderingPaintServerGradient):
+        (WebCore::KRenderingPaintServerGradient::gradientStops):
+        (WebCore::KRenderingPaintServerGradient::setGradientStops):
+        (WebCore::KRenderingPaintServerGradient::spreadMethod):
+        (WebCore::KRenderingPaintServerGradient::setGradientSpreadMethod):
+        (WebCore::KRenderingPaintServerGradient::boundingBoxMode):
+        (WebCore::KRenderingPaintServerGradient::setBoundingBoxMode):
+        (WebCore::KRenderingPaintServerGradient::gradientTransform):
+        (WebCore::KRenderingPaintServerGradient::setGradientTransform):
+        (WebCore::KRenderingPaintServerLinearGradient::KRenderingPaintServerLinearGradient):
+        (WebCore::KRenderingPaintServerLinearGradient::~KRenderingPaintServerLinearGradient):
+        (WebCore::KRenderingPaintServerLinearGradient::gradientStart):
+        (WebCore::KRenderingPaintServerLinearGradient::setGradientStart):
+        (WebCore::KRenderingPaintServerLinearGradient::gradientEnd):
+        (WebCore::KRenderingPaintServerLinearGradient::setGradientEnd):
+        (WebCore::KRenderingPaintServerRadialGradient::KRenderingPaintServerRadialGradient):
+        (WebCore::KRenderingPaintServerRadialGradient::~KRenderingPaintServerRadialGradient):
+        (WebCore::KRenderingPaintServerRadialGradient::gradientCenter):
+        (WebCore::KRenderingPaintServerRadialGradient::setGradientCenter):
+        (WebCore::KRenderingPaintServerRadialGradient::gradientFocal):
+        (WebCore::KRenderingPaintServerRadialGradient::setGradientFocal):
+        (WebCore::KRenderingPaintServerRadialGradient::gradientRadius):
+        (WebCore::KRenderingPaintServerRadialGradient::setGradientRadius):
+        (WebCore::KRenderingPaintServerGradient::listener):
+        (WebCore::KRenderingPaintServerGradient::setListener):
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        * kcanvas/device/KRenderingPaintServerPattern.cpp:
+        (WebCore::KRenderingPaintServerPattern::KRenderingPaintServerPattern):
+        (WebCore::KRenderingPaintServerPattern::~KRenderingPaintServerPattern):
+        (WebCore::KRenderingPaintServerPattern::setBbox):
+        (WebCore::KRenderingPaintServerPattern::bbox):
+        (WebCore::KRenderingPaintServerPattern::boundingBoxMode):
+        (WebCore::KRenderingPaintServerPattern::setBoundingBoxMode):
+        (WebCore::KRenderingPaintServerPattern::tile):
+        (WebCore::KRenderingPaintServerPattern::setTile):
+        (WebCore::KRenderingPaintServerPattern::patternTransform):
+        (WebCore::KRenderingPaintServerPattern::setPatternTransform):
+        (WebCore::KRenderingPaintServerPattern::listener):
+        (WebCore::KRenderingPaintServerPattern::setListener):
+        * kcanvas/device/KRenderingPaintServerPattern.h:
+        * kcanvas/device/KRenderingPaintServerSolid.cpp:
+        (WebCore::KRenderingPaintServerSolid::KRenderingPaintServerSolid):
+        (WebCore::KRenderingPaintServerSolid::~KRenderingPaintServerSolid):
+        (WebCore::KRenderingPaintServerSolid::color):
+        (WebCore::KRenderingPaintServerSolid::setColor):
+        * kcanvas/device/KRenderingPaintServerSolid.h:
+        * kcanvas/device/KRenderingStrokePainter.cpp:
+        (WebCore::KRenderingStrokePainter::KRenderingStrokePainter):
+        (WebCore::KRenderingStrokePainter::~KRenderingStrokePainter):
+        (WebCore::KRenderingStrokePainter::strokeWidth):
+        (WebCore::KRenderingStrokePainter::setStrokeWidth):
+        (WebCore::KRenderingStrokePainter::strokeMiterLimit):
+        (WebCore::KRenderingStrokePainter::setStrokeMiterLimit):
+        (WebCore::KRenderingStrokePainter::strokeCapStyle):
+        (WebCore::KRenderingStrokePainter::setStrokeCapStyle):
+        (WebCore::KRenderingStrokePainter::strokeJoinStyle):
+        (WebCore::KRenderingStrokePainter::setStrokeJoinStyle):
+        (WebCore::KRenderingStrokePainter::dashOffset):
+        (WebCore::KRenderingStrokePainter::setDashOffset):
+        (WebCore::KRenderingStrokePainter::dashArray):
+        (WebCore::KRenderingStrokePainter::setDashArray):
+        (WebCore::KRenderingStrokePainter::opacity):
+        (WebCore::KRenderingStrokePainter::setOpacity):
+        (WebCore::KRenderingStrokePainter::dirty):
+        (WebCore::KRenderingStrokePainter::setDirty):
+        * kcanvas/device/KRenderingStrokePainter.h:
+
 2006-09-16  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Anders.

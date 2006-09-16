@@ -27,127 +27,106 @@
 
 namespace WebCore {
 
-class KRenderingStrokePainter::Private
-{
-public:
-    Private()
-    {
-        dirty = true;
-        opacity = 1.0;
-        miterLimit = 4;
-        dashOffset = 0.0;
-        strokeWidth = 1.0;
-        capStyle = CAP_BUTT;
-        joinStyle = JOIN_MITER;
-    }
-
-    bool dirty;
-    float opacity;
-
-    float strokeWidth;
-    unsigned int miterLimit;
-
-    KCCapStyle capStyle;
-    KCJoinStyle joinStyle;
-
-    float dashOffset;
-    KCDashArray dashArray;
-};
-
-KRenderingStrokePainter::KRenderingStrokePainter() : d(new Private())
+KRenderingStrokePainter::KRenderingStrokePainter()
+    : m_dirty(true)
+    , m_opacity(1.0)
+    , m_strokeWidth(1.0)
+    , m_miterLimit(4)
+    , m_capStyle(CAP_BUTT)
+    , m_joinStyle(JOIN_MITER)
+    , m_dashOffset(0.0)
 {
 }
 
 KRenderingStrokePainter::~KRenderingStrokePainter()
 {
-    delete d;
 }
 
 float KRenderingStrokePainter::strokeWidth() const
 {
-    return d->strokeWidth;
+    return m_strokeWidth;
 }
 
 void KRenderingStrokePainter::setStrokeWidth(float width)
 {
     setDirty();
-    d->strokeWidth = width;
+    m_strokeWidth = width;
 }
 
 unsigned int KRenderingStrokePainter::strokeMiterLimit() const
 {
-    return d->miterLimit;
+    return m_miterLimit;
 }
 
 void KRenderingStrokePainter::setStrokeMiterLimit(unsigned int limit)
 {
     setDirty();
-    d->miterLimit = limit;
+    m_miterLimit = limit;
 }
 
 KCCapStyle KRenderingStrokePainter::strokeCapStyle() const
 {
-    return d->capStyle;
+    return m_capStyle;
 }
 
 void KRenderingStrokePainter::setStrokeCapStyle(KCCapStyle style)
 {
     setDirty();
-    d->capStyle = style;
+    m_capStyle = style;
 }
 
 KCJoinStyle KRenderingStrokePainter::strokeJoinStyle() const
 {
-    return d->joinStyle;
+    return m_joinStyle;
 }
 
 void KRenderingStrokePainter::setStrokeJoinStyle(KCJoinStyle style)
 {
     setDirty();
-    d->joinStyle = style;
+    m_joinStyle = style;
 }
 
 float KRenderingStrokePainter::dashOffset() const
 {
-    return d->dashOffset;
+    return m_dashOffset;
 }
 
 void KRenderingStrokePainter::setDashOffset(float offset)
 {
     setDirty();
-    d->dashOffset = offset;
+    m_dashOffset = offset;
 }
 
-KCDashArray &KRenderingStrokePainter::dashArray() const
+KCDashArray& KRenderingStrokePainter::dashArray() const
 {
-    return d->dashArray;
+    return m_dashArray;
 }
 
-void KRenderingStrokePainter::setDashArray(const KCDashArray &dashArray)
+void KRenderingStrokePainter::setDashArray(const KCDashArray& dashArray)
 {
     setDirty();
-    d->dashArray = dashArray;
+    m_dashArray = dashArray;
 }
 
 float KRenderingStrokePainter::opacity() const
 {
-    return d->opacity;
+    return m_opacity;
 }
 
 void KRenderingStrokePainter::setOpacity(float opacity)
 {
     setDirty();
-    d->opacity = opacity;
+    m_opacity = opacity;
 }
 
 bool KRenderingStrokePainter::dirty() const
 {
-    return d->dirty;
+    return m_dirty;
 }
 
 void KRenderingStrokePainter::setDirty(bool dirty)
 {
-    d->dirty = dirty;
+    m_dirty = dirty;
 }
 
 }

@@ -60,31 +60,21 @@ TextStream &operator<<(TextStream &ts, const Vector<KCGradientStop>& l)
 }
 
 // KRenderingPaintServerGradient
-class KRenderingPaintServerGradient::Private
-{
-public:
-    Private() { boundingBoxMode = true; spreadMethod = SPREADMETHOD_PAD; listener = 0; }
-    ~Private() { }
-
-    Vector<KCGradientStop> stops;
-    KCGradientSpreadMethod spreadMethod;
-    bool boundingBoxMode;
-    AffineTransform gradientTransform;
-    KCanvasResourceListener *listener;
-};
-
-KRenderingPaintServerGradient::KRenderingPaintServerGradient() : KRenderingPaintServer(), d(new Private())
+KRenderingPaintServerGradient::KRenderingPaintServerGradient()
+    : KRenderingPaintServer()
+    , m_spreadMethod(SPREADMETHOD_PAD)
+    , m_boundingBoxMode(true)
+    , m_listener(0)
 {
 }
 
 KRenderingPaintServerGradient::~KRenderingPaintServerGradient()
 {
-    delete d;
 }
 
 const Vector<KCGradientStop>& KRenderingPaintServerGradient::gradientStops() const
 {
-    return d->stops;
+    return m_stops;
 }
 
 static inline bool compareStopOffset(const KCGradientStop& first, const KCGradientStop& second)
@@ -94,43 +84,43 @@ static inline bool compareStopOffset(const KCGradientStop& first, const KCGradie
 
 void KRenderingPaintServerGradient::setGradientStops(const Vector<KCGradientStop>& stops)
 {
-    d->stops = stops;
-    std::sort(d->stops.begin(), d->stops.end(), compareStopOffset);
+    m_stops = stops;
+    std::sort(m_stops.begin(), m_stops.end(), compareStopOffset);
 } 
 
 void KRenderingPaintServerGradient::setGradientStops(KRenderingPaintServerGradient* server)
 {
-    d->stops = server->gradientStops();
+    m_stops = server->gradientStops();
 }
 
 KCGradientSpreadMethod KRenderingPaintServerGradient::spreadMethod() const
 {
-    return d->spreadMethod;
+    return m_spreadMethod;
 }
 
 void KRenderingPaintServerGradient::setGradientSpreadMethod(const KCGradientSpreadMethod &method)
 {
-    d->spreadMethod = method;
+    m_spreadMethod = method;
 }
 
 bool KRenderingPaintServerGradient::boundingBoxMode() const
 {
-    return d->boundingBoxMode;
+    return m_boundingBoxMode;
 }
 
 void KRenderingPaintServerGradient::setBoundingBoxMode(bool mode)
 {
-    d->boundingBoxMode = mode;
+    m_boundingBoxMode = mode;
 }
 
 AffineTransform KRenderingPaintServerGradient::gradientTransform() const
 {
-    return d->gradientTransform;
+    return m_gradientTransform;
 }
 
 void KRenderingPaintServerGradient::setGradientTransform(const AffineTransform& mat)
 {
-    d->gradientTransform = mat;
+    m_gradientTransform = mat;
 }
 
 TextStream &KRenderingPaintServerGradient::externalRepresentation(TextStream &ts) const
@@ -148,42 +138,33 @@ TextStream &KRenderingPaintServerGradient::externalRepresentation(TextStream &ts
 }
 
 // KRenderingPaintServerLinearGradient
-class KRenderingPaintServerLinearGradient::Private
-{
-public:
-    Private() { }
-    ~Private() { }
-
-    FloatPoint start, end;
-};
-
-KRenderingPaintServerLinearGradient::KRenderingPaintServerLinearGradient() : KRenderingPaintServerGradient(), d(new Private())
+KRenderingPaintServerLinearGradient::KRenderingPaintServerLinearGradient()
+    : KRenderingPaintServerGradient()
 {
 }
 
 KRenderingPaintServerLinearGradient::~KRenderingPaintServerLinearGradient()
 {
-    delete d;
 }
 
 FloatPoint KRenderingPaintServerLinearGradient::gradientStart() const
 {
-    return d->start;
+    return m_start;
 }
 
 void KRenderingPaintServerLinearGradient::setGradientStart(const FloatPoint &start)
 {
-    d->start = start;
+    m_start = start;
 }
 
 FloatPoint KRenderingPaintServerLinearGradient::gradientEnd() const
 {
-    return d->end;
+    return m_end;
 }
 
 void KRenderingPaintServerLinearGradient::setGradientEnd(const FloatPoint &end)
 {
-    d->end = end;
+    m_end = end;
 }
 
 KCPaintServerType KRenderingPaintServerLinearGradient::type() const
@@ -201,53 +182,43 @@ TextStream &KRenderingPaintServerLinearGradient::externalRepresentation(TextStre
 }
 
 // KRenderingPaintServerRadialGradient
-class KRenderingPaintServerRadialGradient::Private
-{
-public:
-    Private() { }
-    ~Private() { }
-
-    float radius;
-    FloatPoint center, focal;
-};
-
-KRenderingPaintServerRadialGradient::KRenderingPaintServerRadialGradient() : KRenderingPaintServerGradient(), d(new Private())
+KRenderingPaintServerRadialGradient::KRenderingPaintServerRadialGradient()
+    : KRenderingPaintServerGradient()
 {
 }
 
 KRenderingPaintServerRadialGradient::~KRenderingPaintServerRadialGradient()
 {
-    delete d;
 }
 
 FloatPoint KRenderingPaintServerRadialGradient::gradientCenter() const
 {
-    return d->center;
+    return m_center;
 }
 
 void KRenderingPaintServerRadialGradient::setGradientCenter(const FloatPoint &center)
 {
-    d->center = center;
+    m_center = center;
 }
 
 FloatPoint KRenderingPaintServerRadialGradient::gradientFocal() const
 {
-    return d->focal;
+    return m_focal;
 }
 
 void KRenderingPaintServerRadialGradient::setGradientFocal(const FloatPoint &focal)
 {
-    d->focal = focal;
+    m_focal = focal;
 }
 
 float KRenderingPaintServerRadialGradient::gradientRadius() const
 {
-    return d->radius;
+    return m_radius;
 }
 
 void KRenderingPaintServerRadialGradient::setGradientRadius(float radius)
 {
-    d->radius = radius;
+    m_radius = radius;
 }
 
 KCPaintServerType KRenderingPaintServerRadialGradient::type() const
@@ -257,12 +228,12 @@ KCPaintServerType KRenderingPaintServerRadialGradient::type() const
 
 KCanvasResourceListener *KRenderingPaintServerGradient::listener() const
 {
-    return d->listener;
+    return m_listener;
 }
 
 void KRenderingPaintServerGradient::setListener(KCanvasResourceListener *listener)
 {
-    d->listener = listener;
+    m_listener = listener;
 }
 
 TextStream &KRenderingPaintServerRadialGradient::externalRepresentation(TextStream &ts) const

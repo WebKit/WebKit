@@ -43,8 +43,9 @@ public:
     void setOpacity(float opacity);
 
 private:
-    class Private;
-    Private *d;
+    float m_opacity;
+    WindRule m_fillRule;
+
 };
 
 }
