@@ -1,3 +1,14 @@
+2006-09-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        <rdar://problem/4730811> - New IconDatabase needs to attempt to create its path.
+        Otherwise new installs and new user accounts won't have any icons because the icon.db cannot be created
+
+        * loader/icon/IconDatabase.cpp: Removed a now obsolete FIXME
+        (WebCore::makeAllDirectories): Added - candidate to be in a header for "platform neutral file utilities"
+        (WebCore::IconDatabase::open): Make sure the directory exists
+
 2006-09-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Brady.
@@ -65,17 +76,6 @@
         (WebCore::Frame::revealSelection):
         (WebCore::Frame::revealCaret):
         * page/Frame.h:
-
-2006-09-15  Brady Eidson  <beidson@apple.com>
-
-        Reviewed by Tim Hatcher
-
-        <rdar://problem/4730811> - New IconDatabase needs to attempt to create its path.
-        Otherwise new installs and new user accounts won't have any icons because the icon.db cannot be created
-
-        * loader/icon/IconDatabase.cpp: Removed a now obsolete FIXME
-        (WebCore::makeAllDirectories): Added - candidate to be in a header for "platform neutral file utilities"
-        (WebCore::IconDatabase::open): Make sure the directory exists
 
 2006-09-15  Brady Eidson  <beidson@apple.com>
 
