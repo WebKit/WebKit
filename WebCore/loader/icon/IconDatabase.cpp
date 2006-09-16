@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IconDatabase.h"
 
+#include "CString.h"
 #include "IconDataCache.h"
 #include "Image.h"
 #include "Logging.h"
@@ -34,8 +35,9 @@
 #include "SQLTransaction.h"
 #include "SystemTime.h"
 
-// FIXME - One optimization to be made when this is no longer in flux is to make query construction smarter - that is queries that are created from
-// multiple strings and numbers should be handled differently than with String + String + String + etc.
+#if PLATFORM(WIN)
+#include <winbase.h>
+#endif
 
 namespace WebCore {
 
@@ -90,12 +92,45 @@ IconDatabase::IconDatabase()
     
 }
 
+bool makeAllDirectories(const String& path)
+{
+#if PLATFORM(WIN)
+    String fullPath = path;
+    if (!CreateDirectory(fullPath.charactersWithNullTermination(), 0)) {
+        LOG_ERROR("Failed to create path %s", path.ascii().data());
+        return false;
+    }
+#else
+    CString fullPath = path.utf8();
+    char* p = fullPath.mutableData() + 1;
+    int length = fullPath.length();
+    
+    if(p[length - 1] == '/')
+        p[length - 1] = '\0';
+    for (; *p; ++p)
+        if (*p == '/') {
+            *p = '\0';
+            if (access(fullPath.data(), F_OK))
+                if (mkdir(fullPath.data(), S_IRWXU))
+                    return false;
+            *p = '/';
+        }
+    if (access(fullPath.data(), F_OK))        
+        if (mkdir(fullPath.data(), S_IRWXU))
+            return false;
+#endif   
+    return true;
+}
+
 bool IconDatabase::open(const String& databasePath)
 {
     if (isOpen()) {
         LOG_ERROR("Attempt to reopen the IconDatabase which is already open.  Must close it first.");
         return false;
     }
+    
+    // <rdar://problem/4730811> - Need to create the database path if it doesn't already exist
+    makeAllDirectories(databasePath);
     
     // First we'll formulate the full path for the database file
     String dbFilename;
