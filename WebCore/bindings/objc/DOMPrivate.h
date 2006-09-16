@@ -36,12 +36,6 @@
 #import <WebCore/DOMRGBColor.h>
 #import <WebCore/DOMRange.h>
 
-#import <WebCore/DOMCSSMediaRulePrivate.h>
-#import <WebCore/DOMCSSPrimitiveValuePrivate.h>
-#import <WebCore/DOMCSSStyleDeclarationPrivate.h>
-#import <WebCore/DOMCSSStyleSheetPrivate.h>
-#import <WebCore/DOMCharacterDataPrivate.h>
-#import <WebCore/DOMDOMImplementationPrivate.h>
 #import <WebCore/DOMDocumentPrivate.h>
 #import <WebCore/DOMElementPrivate.h>
 #import <WebCore/DOMEventPrivate.h>
@@ -56,17 +50,13 @@
 #import <WebCore/DOMHTMLLinkElementPrivate.h>
 #import <WebCore/DOMHTMLOptionsCollectionPrivate.h>
 #import <WebCore/DOMHTMLPreElementPrivate.h>
-#import <WebCore/DOMHTMLSelectElementPrivate.h>
 #import <WebCore/DOMHTMLStyleElementPrivate.h>
 #import <WebCore/DOMHTMLTextAreaElementPrivate.h>
 #import <WebCore/DOMKeyboardEventPrivate.h>
-#import <WebCore/DOMMutationEventPrivate.h>
-#import <WebCore/DOMNamedNodeMapPrivate.h>
 #import <WebCore/DOMNodeIteratorPrivate.h>
 #import <WebCore/DOMProcessingInstructionPrivate.h>
 #import <WebCore/DOMUIEventPrivate.h>
 #import <WebCore/DOMWheelEventPrivate.h>
-#import <WebCore/DOMXPathExpressionPrivate.h>
 
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText

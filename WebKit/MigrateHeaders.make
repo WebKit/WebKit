@@ -40,27 +40,21 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMCSSFontFaceRule.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSImportRule.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSMediaRule.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSMediaRulePrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSPageRule.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSPrimitiveValue.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSPrimitiveValuePrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSRule.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSRuleList.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSStyleDeclaration.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSStyleDeclarationPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSStyleRule.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSStyleSheet.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSStyleSheetPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSUnknownRule.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSValue.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSValueList.h \
     $(PUBLIC_HEADERS_DIR)/DOMCharacterData.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCharacterDataPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMComment.h \
     $(PUBLIC_HEADERS_DIR)/DOMCore.h \
     $(PUBLIC_HEADERS_DIR)/DOMCounter.h \
     $(PUBLIC_HEADERS_DIR)/DOMImplementation.h \
-    $(PRIVATE_HEADERS_DIR)/DOMImplementationPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMDocument.h \
     $(PUBLIC_HEADERS_DIR)/DOMDocumentFragment.h \
     $(PRIVATE_HEADERS_DIR)/DOMDocumentPrivate.h \
@@ -134,7 +128,6 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLQuoteElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLScriptElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLSelectElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLSelectElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLStyleElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLStyleElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLTableCaptionElement.h \
@@ -153,9 +146,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMMouseEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMMouseEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMMutationEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMMutationEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMNamedNodeMap.h \
-    $(PRIVATE_HEADERS_DIR)/DOMNamedNodeMapPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMNode.h \
     $(PRIVATE_HEADERS_DIR)/DOMNodePrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMNodeFilter.h \
@@ -184,7 +175,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMWheelEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPath.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPathExpression.h \
-    $(PRIVATE_HEADERS_DIR)/DOMXPathExpressionPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPathNSResolver.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPathResult.h \
     $(PRIVATE_HEADERS_DIR)/WebDashboardRegion.h \

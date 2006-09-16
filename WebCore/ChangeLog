@@ -1,3 +1,13 @@
+2006-09-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady.
+
+        Make new style ObjC methods public API.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/PublicDOMInterfaces.h:
+
 2006-09-15  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
