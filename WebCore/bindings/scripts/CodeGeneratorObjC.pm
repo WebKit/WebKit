@@ -744,6 +744,10 @@ sub GenerateImplementation
             } elsif ($attributeName eq "frame") {
                 # Special case attribute frame to be frameBorders.
                 $attributeInterfaceName .= "Borders";
+            } elsif ($attributeName eq "ownerDocument") {
+                # FIXME: for now special case attribute ownerDocument to call document, this is incorrect
+                # legacy behavior. (see http://bugzilla.opendarwin.org/show_bug.cgi?id=10889)
+                $attributeName = "document";
             }
 
             $attributeNames{$attributeInterfaceName} = 1;

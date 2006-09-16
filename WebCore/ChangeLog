@@ -1,3 +1,16 @@
+2006-09-16  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Anders.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10886
+        REGRESSION (r16387): Reproducible crash when mousing over HTML document
+
+        - Special case method [DOMNode ownerDocument] to call document() instead
+          or ownerDocument() to return to the old behavior. 
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+
 2006-09-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher
