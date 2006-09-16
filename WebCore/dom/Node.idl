@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,10 +20,7 @@
 
 module core {
 
-    interface [LegacyParent=KJS::DOMNode, GenerateConstructor] Node {
-
-        // DOM Level 2 Core
-        
+    interface [LegacyParent=KJS::DOMNode, GenerateConstructor, ObjCNoInternal] Node {        
         // NodeType
         const unsigned short      ELEMENT_NODE                   = 1;
         const unsigned short      ATTRIBUTE_NODE                 = 2;
@@ -36,5 +34,82 @@ module core {
         const unsigned short      DOCUMENT_TYPE_NODE             = 10;
         const unsigned short      DOCUMENT_FRAGMENT_NODE         = 11;
         const unsigned short      NOTATION_NODE                  = 12;
+
+#if !defined(LANGUAGE_JAVASCRIPT)
+        readonly attribute DOMString        nodeName;
+
+                 // FIXME: the spec says this can also raise on retrieval.
+                 attribute DOMString        nodeValue
+                     setter raises(DOMException);
+
+        readonly attribute unsigned short   nodeType;
+        readonly attribute Node             parentNode;
+        readonly attribute NodeList         childNodes;
+        readonly attribute Node             firstChild;
+        readonly attribute Node             lastChild;
+        readonly attribute Node             previousSibling;
+        readonly attribute Node             nextSibling;
+        readonly attribute NamedNodeMap     attributes;
+        readonly attribute Document         ownerDocument;
+
+        [OldStyleObjC] Node insertBefore(in [Return] Node newChild, 
+                                         in Node refChild)
+            raises(DOMException);
+        [OldStyleObjC] Node replaceChild(in Node newChild, 
+                                         in [Return] Node oldChild)
+            raises(DOMException);
+        Node               removeChild(in [Return] Node oldChild)
+            raises(DOMException);
+        Node               appendChild(in [Return] Node newChild)
+            raises(DOMException);
+        boolean            hasChildNodes();
+        Node               cloneNode(in boolean deep);
+        void               normalize();
+
+        // Introduced in DOM Level 2:
+
+        [OldStyleObjC] boolean isSupported(in DOMString feature, 
+                                           in DOMString version);
+        readonly attribute DOMString        namespaceURI;
+                 attribute DOMString        prefix
+                     setter raises(DOMException);
+        readonly attribute DOMString        localName;
+        boolean            hasAttributes();
+
+        // Introduced in DOM Level 3:
+
+                 // FIXME: the spec says this can also raise on retrieval.
+                 attribute DOMString       textContent
+                     setter raises(DOMException);
+
+        boolean            isSameNode(in Node other);
+        boolean            isEqualNode(in Node other);
+        DOMString          lookupPrefix(in DOMString namespaceURI);
+        boolean            isDefaultNamespace(in DOMString namespaceURI);
+        DOMString          lookupNamespaceURI(in DOMString prefix);
+
+#if !defined(LANGUAGE_OBJECTIVE_C)
+        readonly attribute DOMString       baseURI;
+
+        // DocumentPosition
+        const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
+        const unsigned short      DOCUMENT_POSITION_PRECEDING    = 0x02;
+        const unsigned short      DOCUMENT_POSITION_FOLLOWING    = 0x04;
+        const unsigned short      DOCUMENT_POSITION_CONTAINS     = 0x08;
+        const unsigned short      DOCUMENT_POSITION_CONTAINED_BY = 0x10;
+        const unsigned short      DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
+
+        unsigned short     compareDocumentPosition(in Node other)
+            raises(DOMException);
+
+        DOMObject          getFeature(in DOMString feature, 
+                                      in DOMString version);
+        DOMUserData        setUserData(in DOMString key, 
+                                       in DOMUserData data, 
+                                       in UserDataHandler handler);
+        DOMUserData        getUserData(in DOMString key);
+#endif /* !defined(LANGUAGE_OBJECTIVE_C) */
+#endif /* !defined(LANGUAGE_JAVASCRIPT) */
     };
+
 }

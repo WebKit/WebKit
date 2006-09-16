@@ -128,6 +128,7 @@ all : \
     DOMMouseEvent.h \
     DOMMutationEvent.h \
     DOMNamedNodeMap.h \
+    DOMNode.h \
     DOMNodeIterator.h \
     DOMNodeList.h \
     DOMNotation.h \

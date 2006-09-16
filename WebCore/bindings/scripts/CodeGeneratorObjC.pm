@@ -392,13 +392,6 @@ sub AddIncludesForType
         return;
     }
 
-    # Temp DOMXPath.h
-    if ($type eq "XPathExpression" or $type eq "XPathNSResolver" or $type eq "XPathResult") {
-        $implIncludes{"DOMXPath.h"} = 1;
-        $implIncludes{"$type.h"} = 1;
-        return;
-    }
-
     # Temp DOMImplementationFront.h
     if ($type eq "DOMImplementation") {
         $implIncludes{"DOMImplementationFront.h"} = 1;
@@ -408,14 +401,17 @@ sub AddIncludesForType
 
     if ($type eq "EventTarget") {
         $implIncludes{"DOM$type.h"} = 1;
+        $implIncludes{"EventTargetNode.h"} = 1;
         return;
     }
 
     # FIXME: for some reason it won't compile without both CSSStyleDeclaration.h
     # and CSSMutableStyleDeclaration.h
-    if ($type eq "CSSStyleDeclaration") {
-        $implIncludes{"CSSMutableStyleDeclaration.h"} = 1;
-    }
+    $implIncludes{"CSSMutableStyleDeclaration.h"} = 1 if $type eq "CSSStyleDeclaration";
+
+    # FIXME: for some reason it won't compile without both NamedNodeMap.h
+    # and NamedAttrMap.h
+    $implIncludes{"NamedAttrMap.h"} = 1 if $type eq "NamedNodeMap";
 
     # Default, include the same named file (the implementation) and the same name prefixed with "DOM". 
     $implIncludes{"$type.h"} = 1;
@@ -892,6 +888,7 @@ sub GenerateImplementation
                 push(@parameterNames, $implGetter);
                 $needsCustom{"XPathNSResolver"} = $paramName if $idlType eq "XPathNSResolver";
                 $needsCustom{"EventTarget"} = $paramName if $idlType eq "EventTarget";
+                $needsCustom{"NodeToReturn"} = $paramName if $param->extendedAttributes->{"Return"};
 
                 unless ($codeGenerator->IsPrimitiveType($idlType) or IsStringType($idlType)) {
                     push(@needsAssert, "    ASSERT($paramName);\n");
@@ -926,7 +923,6 @@ sub GenerateImplementation
                 push(@functionContent, "    WebCore::EventTargetNode* ${paramName}EventTarget = (${paramName}Node && ${paramName}Node->isEventTargetNode()) ? static_cast<WebCore::EventTargetNode*>(${paramName}Node) : 0;\n\n");
                 $implIncludes{"DOMNode.h"} = 1;
                 $implIncludes{"Node.h"} = 1;
-                $implIncludes{"EventTargetNode.h"} = 1;
             }
 
             push(@parameterNames, "ec") if $raisesExceptions;
@@ -941,6 +937,21 @@ sub GenerateImplementation
                     push(@functionContent, "    $exceptionRaiseOnError\n");
                 } else {
                     push(@functionContent, "    $content;\n");
+                }
+            } elsif (defined $needsCustom{"NodeToReturn"}) {
+                # Special case the insertBefore, replaceChild, removeChild 
+                # and appendChild functions from DOMNode 
+                my $toReturn = $needsCustom{"NodeToReturn"};
+                if ($raisesExceptions) {
+                    push(@functionContent, "    $exceptionInit\n");
+                    push(@functionContent, "    if ($content)\n");
+                    push(@functionContent, "        return $toReturn;\n");
+                    push(@functionContent, "    $exceptionRaiseOnError\n");
+                    push(@functionContent, "    return nil;\n");
+                } else {
+                    push(@functionContent, "    if ($content)\n");
+                    push(@functionContent, "        return $toReturn;\n");
+                    push(@functionContent, "    return nil;\n");
                 }
             } else {
                 my $typeMaker = GetObjCTypeMaker($function->signature->type);
@@ -1031,7 +1042,7 @@ sub GenerateImplementation
             push(@implContent, "- (id)$initWithImplName:($implClassNameWithNamespace *)impl\n");
             push(@implContent, "{\n");
             push(@implContent, "    [super _init];\n");
-            push(@implContent, "    _internal = DOM_cast<DOMObjectInternal*>(impl);\n");
+            push(@implContent, "    _internal = reinterpret_cast<DOMObjectInternal*>(impl);\n");
             push(@implContent, "    impl->ref();\n");
             push(@implContent, "    addDOMWrapper(self, impl);\n");
             push(@implContent, "    return self;\n");

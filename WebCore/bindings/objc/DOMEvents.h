@@ -48,3 +48,6 @@ enum DOMEventExceptionCode {
 @interface DOMKeyboardEvent (NonStandardAdditions)
 - (BOOL)getModifierState:(NSString *)keyIdentifierArg;
 @end
+
+@interface DOMNode (DOMEventTarget) <DOMEventTarget>
+@end

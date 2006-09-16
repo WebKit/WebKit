@@ -186,6 +186,38 @@
 //- (DOMNode *)removeNamedItemNS:(NSString *)namespaceURI localName:(NSString *)localName;
 @end
 
+@interface DOMNode : DOMObject
+@property(readonly) NSString *nodeName;
+@property NSString *nodeValue;
+@property(readonly) unsigned short nodeType;
+@property(readonly) DOMNode *parentNode;
+@property(readonly) DOMNodeList *childNodes;
+@property(readonly) DOMNode *firstChild;
+@property(readonly) DOMNode *lastChild;
+@property(readonly) DOMNode *previousSibling;
+@property(readonly) DOMNode *nextSibling;
+@property(readonly) DOMNamedNodeMap *attributes;
+@property(readonly) DOMDocument *ownerDocument;
+@property(readonly) NSString *namespaceURI;
+@property NSString *prefix;
+@property(readonly) NSString *localName;
+@property NSString *textContent;
+- (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild;
+//- (DOMNode *)insertBefore:(DOMNode *)newChild refChild:(DOMNode *)refChild;
+- (DOMNode *)replaceChild:(DOMNode *)newChild :(DOMNode *)oldChild;
+//- (DOMNode *)replaceChild:(DOMNode *)newChild oldChild:(DOMNode *)oldChild;
+- (DOMNode *)removeChild:(DOMNode *)oldChild;
+- (DOMNode *)appendChild:(DOMNode *)newChild;
+- (BOOL)hasChildNodes;
+- (DOMNode *)cloneNode:(BOOL)deep;
+- (void)normalize;
+- (BOOL)isSupported:(NSString *)feature :(NSString *)version;
+//- (BOOL)isSupported:(NSString *)feature version:(NSString *)version;
+- (BOOL)hasAttributes;
+- (BOOL)isSameNode:(DOMNode *)other;
+- (BOOL)isEqualNode:(DOMNode *)other;
+@end
+
 @interface DOMNodeList : DOMObject
 @property(readonly) unsigned length;
 - (DOMNode *)item:(unsigned)index;

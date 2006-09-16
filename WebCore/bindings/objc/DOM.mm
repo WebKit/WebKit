@@ -399,6 +399,33 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
+@implementation DOMNode (DOMNodeExtensions)
+
+- (NSRect)boundingBox
+{
+    WebCore::RenderObject *renderer = [self _node]->renderer();
+    if (renderer)
+        return renderer->absoluteBoundingBoxRect();
+    return NSZeroRect;
+}
+
+- (NSArray *)lineBoxRects
+{
+    WebCore::RenderObject *renderer = [self _node]->renderer();
+    if (renderer) {
+        Vector<WebCore::IntRect> rects;
+        renderer->lineBoxRects(rects);
+        size_t size = rects.size();
+        NSMutableArray *results = [NSMutableArray arrayWithCapacity:size];
+        for (size_t i = 0; i < size; ++i)
+            [results addObject:[NSValue valueWithRect:rects[i]]];
+        return results;
+    }
+    return nil;
+}
+
+@end
+
 // FIXME: this should be auto-genenerate in DOMNode.mm
 @implementation DOMNode (DOMEventTarget)
 

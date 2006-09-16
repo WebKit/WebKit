@@ -45,6 +45,11 @@
 
 @class NSImage;
 
+@interface DOMNode (DOMNodeExtensions)
+- (NSRect)boundingBox;
+- (NSArray *)lineBoxRects;
+@end
+
 @interface DOMDocument (DOMDocumentCSSExtensions)
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt;
 @end
