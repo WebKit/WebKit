@@ -64,7 +64,6 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMEntity.h \
     $(PUBLIC_HEADERS_DIR)/DOMEntityReference.h \
     $(PUBLIC_HEADERS_DIR)/DOMEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMEventListener.h \
     $(PUBLIC_HEADERS_DIR)/DOMEventTarget.h \
     $(PUBLIC_HEADERS_DIR)/DOMEvents.h \

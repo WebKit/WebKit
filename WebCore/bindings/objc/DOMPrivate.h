@@ -38,7 +38,6 @@
 
 #import <WebCore/DOMDocumentPrivate.h>
 #import <WebCore/DOMElementPrivate.h>
-#import <WebCore/DOMEventPrivate.h>
 #import <WebCore/DOMHTMLAnchorElementPrivate.h>
 #import <WebCore/DOMHTMLAreaElementPrivate.h>
 #import <WebCore/DOMHTMLBodyElementPrivate.h>
