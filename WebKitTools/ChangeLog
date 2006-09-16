@@ -1,3 +1,14 @@
+2006-09-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Brady.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10635
+        Bug 10635: Buildbot configuration in SVN is out of sync with build.webkit.org
+
+        * BuildSlaveSupport/build.webkit.org-config/webkit/builders.py: Reorder build slaves within build factories in an attempt to spread the load evenly.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/status.py: Return to sending status emails to <svnuser>@opensource.apple.com addresses.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/steps.py: Update configuration to match changes in Buildbot.  Always do clean SVG builds.
+
 2006-09-09  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Eric.

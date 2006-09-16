@@ -28,7 +28,7 @@ class LayoutTest(Test):
     def commandComplete(self, cmd):
         Test.commandComplete(self, cmd)
         
-        logText = cmd.log.getText()
+        logText = cmd.logs['stdio'].getText()
         incorrectLayoutLines = [line for line in logText.splitlines() if line.find('had incorrect layout') >= 0]
         if incorrectLayoutLines:
             self.incorrectLayoutLine = incorrectLayoutLines[0]
@@ -68,7 +68,7 @@ class LeakTest(Test):
     def commandComplete(self, cmd):
         Test.commandComplete(self, cmd)
 
-        logText = cmd.log.getText()
+        logText = cmd.logs['stdio'].getText()
         self.totalLeakLines = [line for line in logText.splitlines() if line.find('total leaks found!') >= 0]
         self.totalLeakLines += [line for line in logText.splitlines() if line.find('LEAK: ') >= 0]
         self.totalLeakLines = [' '.join(x.split()[1:]) for x in self.totalLeakLines]
@@ -132,8 +132,7 @@ class CompileWebKit(Compile):
 
 
 class CompileWebKitNoSVG(CompileWebKit):
-    command = CompileWebKit.command + ['--no-svg']
-
+    command = 'rm -rf WebKitBuild && ./WebKitTools/Scripts/build-webkit --no-svg'
 
 class InstallWin32Dependencies(ShellCommand):
     description = ["installing Windows dependencies"]

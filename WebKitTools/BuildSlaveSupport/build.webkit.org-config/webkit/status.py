@@ -21,7 +21,7 @@ allBuildsEmail = mail.MailNotifier(fromaddr="buildbot@webkit.org",
                                     sendToInterestedUsers=False)
 breakageEmail = mail.MailNotifier(fromaddr="buildbot@webkit.org",
                                   extraRecipients=["mark+webkit-builds@bdash.net.nz"],
-                                  sendToInterestedUsers=False,
+                                  lookup=mail.Domain("opensource.apple.com"),
                                   mode="breakage")
 
 IRC = words.IRC(host="irc.freenode.net",
