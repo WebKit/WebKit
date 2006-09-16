@@ -61,7 +61,7 @@ if [ ../../kjs/grammar.y -nt "$DerivedSourcesDir/grammar.cpp" ]; then
 fi
 
 echo "Copying ICU DLLS..."
-WebKitOutputConfigDir="$WebKitUnixDir/bin/JavaScriptCore/$1"
+WebKitOutputConfigDir="$WebKitUnixDir/$1"
 mkdir -p "$WebKitOutputConfigDir"
 
 if [ -e "../../../icu/bin/icudt34.dll" ]; then

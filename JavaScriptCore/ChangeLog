@@ -1,3 +1,9 @@
+2006-09-15  Adam Roben  <aroben@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh:
+
 2006-09-15  Anders Carlsson  <acarlsson@apple.com>
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
