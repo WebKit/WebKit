@@ -352,7 +352,9 @@ VisiblePosition endOfLine(const VisiblePosition &c)
         endOffset = 0;
     } else if (endBox->isInlineTextBox()) {
         InlineTextBox *endTextBox = static_cast<InlineTextBox *>(endBox);
-        endOffset = endTextBox->m_start + endTextBox->m_len;
+        endOffset = endTextBox->m_start;
+        if (!endTextBox->isLineBreak())
+            endOffset += endTextBox->m_len;
     }
     
     return VisiblePosition(endNode, endOffset, VP_UPSTREAM_IF_POSSIBLE);

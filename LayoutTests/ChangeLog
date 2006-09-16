@@ -1,3 +1,15 @@
+2006-09-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4674869>
+        REGRESSION: selecting text to write over results in cursor jumping to middle of next line
+
+        * editing/deleting/whitespace-pre-1-expected.checksum: Added.
+        * editing/deleting/whitespace-pre-1-expected.png: Added.
+        * editing/deleting/whitespace-pre-1-expected.txt: Added.
+        * editing/deleting/whitespace-pre-1.html: Added.
+
 2006-09-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Justin.

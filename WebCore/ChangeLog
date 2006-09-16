@@ -1,3 +1,16 @@
+2006-09-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4674869>
+        REGRESSION: selecting text to write over results in cursor jumping to middle of next line
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modify): Added lineBoundary to test fix.
+        * editing/visible_units.cpp:
+        (WebCore::endOfLine): If the last box on the line is a lineBreak, return the
+        position before it, not after it.
+
 2006-09-15  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Adam.
