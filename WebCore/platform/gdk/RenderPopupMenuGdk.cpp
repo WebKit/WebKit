@@ -47,6 +47,10 @@ void RenderPopupMenuGdk::showPopup(const IntRect&, FrameView*, int)
 {
 }
 
+void RenderPopupMenuGdk::hidePopup()
+{
+}
+
 void RenderPopupMenuGdk::addSeparator()
 {
 }

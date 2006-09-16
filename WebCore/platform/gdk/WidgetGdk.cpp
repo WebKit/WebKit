@@ -169,10 +169,4 @@ IntPoint Widget::mapFromGlobal(const IntPoint& p) const
     return IntPoint(p.x() - x, p.y() - y);
 }
 
-float Widget::scaleFactor() const
-{
-    return 1.0f;
-
-}
-
 }

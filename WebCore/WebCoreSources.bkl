@@ -85,6 +85,7 @@
 		DerivedSources/WebCore/JSNotation.cpp
 		DerivedSources/WebCore/JSProcessingInstruction.cpp
 		DerivedSources/WebCore/JSRange.cpp
+		DerivedSources/WebCore/JSRangeException.cpp
 		DerivedSources/WebCore/JSText.cpp
 		DerivedSources/WebCore/JSTreeWalker.cpp
 		DerivedSources/WebCore/JSOverflowEvent.cpp
@@ -144,6 +145,7 @@
 		platform/ArrayImpl.cpp
 		platform/AtomicString.cpp
 		platform/Color.cpp
+		platform/CString.cpp
 		platform/DeprecatedCString.cpp
 		platform/DeprecatedPtrListImpl.cpp
 		platform/DeprecatedString.cpp
@@ -377,6 +379,7 @@
 	<set append="1" var="WEBCORE_SOURCES_CSS">
 		
 		css/CSSBorderImageValue.cpp
+		css/CSSCharsetRule.cpp
 		css/CSSComputedStyleDeclaration.cpp
 		css/CSSFontFaceRule.cpp
 		css/csshelper.cpp
@@ -432,7 +435,7 @@
 		rendering/RenderButton.cpp
 		rendering/RenderContainer.cpp
 		rendering/RenderFieldset.cpp
-		rendering/RenderFileButton.cpp
+		rendering/RenderFileUploadControl.cpp
 		rendering/RenderFlexibleBox.cpp
 		rendering/RenderFlow.cpp
 		rendering/RenderFormElement.cpp
@@ -533,7 +536,7 @@
 		dom/NodeFilterCondition.cpp
 		dom/NodeList.cpp
 		dom/Notation.cpp
-          dom/OverflowEvent.cpp
+	        dom/OverflowEvent.cpp
 		dom/Position.cpp
 		dom/ProcessingInstruction.cpp
 		dom/QualifiedName.cpp
@@ -551,6 +554,7 @@
 
 	<set append="1" var="WEBCORE_SOURCES_ICON">
 		icon/IconDatabase.cpp
+		icon/IconLoader.cpp
 		icon/SQLDatabase.cpp
 		icon/SQLStatement.cpp
 		icon/SiteIcon.cpp

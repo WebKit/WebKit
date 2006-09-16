@@ -48,6 +48,7 @@ JavaScriptCore Bakefile project file.
         
         <include>$(SRCDIR)</include>
         <include>$(SRCDIR)/ForwardingHeaders</include>
+        <include>$(SRCDIR)/wtf</include>
         <include>$(SRCDIR)/kjs</include>
         <include>$(SRCDIR)/pcre</include>
         <include>$(SRCDIR)/bindings</include>
@@ -67,7 +68,7 @@ JavaScriptCore Bakefile project file.
             <define>USE_CONSERVATIVE_GC=1</define>
         </if> 
 
-        <define>KHTML_XSLT=1</define>
+        <define>XSLT_SUPPORT=1</define>
 
         <if cond="FORMAT=='gnu'">
             <!-- FIXME: we need proper configure checks -->
@@ -87,6 +88,7 @@ JavaScriptCore Bakefile project file.
 
     <exe id="dftables">
         <dirname>$(SRCDIR)</dirname>
+        <include>$(SRCDIR)/wtf</include>
         <sources>$(SRCDIR)/pcre/dftables.c</sources>
     </exe>
 
@@ -99,14 +101,15 @@ JavaScriptCore Bakefile project file.
         <objects-depend>dftables</objects-depend>
         <pre-build-target>DerivedSources</pre-build-target>
         <sources>
-			$(JSCORE_SOURCES_WTF)
+            $(JSCORE_SOURCES_WTF)
             $(JSCORE_SOURCES_PCRE)
             $(JSCORE_SOURCES_KJS)
+            $(JSCORE_SOURCES_BINDINGS)
         </sources>
         <if cond="PLATFORM_WIN32=='1'">
             $(JSCORE_SOURCES_WIN)
-		</if>
-		<install-to>$(BUILDDIR)</install-to>
+	</if>
+	<install-to>$(BUILDDIR)</install-to>
     </lib>
 
 </makefile>

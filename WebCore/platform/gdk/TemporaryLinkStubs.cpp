@@ -31,10 +31,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "CString.h"
 #include "Node.h"
 #include "TextField.h"
+#include "FileChooser.h"
 #include "Font.h"
-#include "FileButton.h"
 #include "PopUpButton.h"
 #include "IntPoint.h"
 #include "Widget.h"
@@ -44,6 +45,7 @@
 #include "loader.h"
 #include "FrameView.h"
 #include "KURL.h"
+#include "PlatformScrollBar.h"
 #include "ScrollBar.h"
 #include "JavaAppletWidget.h"
 #include "Path.h"
@@ -61,9 +63,11 @@
 #include "RenderThemeGdk.h"
 #include "TextBoundaries.h"
 #include "AXObjectCache.h"
-#include "DeprecatedString.h"
-#include "DeprecatedStringList.h"
-#include "SSLKeyGenerator.h"
+#include "RenderPopupMenuGdk.h"
+#include "EditCommand.h"
+#include "Icon.h"
+#include "IconLoader.h"
+#include "IconDatabase.h"
 
 using namespace WebCore;
 
@@ -114,16 +118,6 @@ void ListBox::setEnabled(bool) { notImplemented(); }
 void ListBox::clear() { notImplemented(); }
 bool ListBox::checksDescendantsForFocus() const { notImplemented(); return 0; }
 
-FileButton::FileButton(Frame*) { notImplemented(); }
-void FileButton::click(bool) { notImplemented(); }
-IntSize FileButton::sizeForCharacterWidth(int) const { notImplemented(); return IntSize(); }
-Widget::FocusPolicy FileButton::focusPolicy() const { notImplemented(); return NoFocus; }
-WebCore::IntRect FileButton::frameGeometry() const { notImplemented(); return IntRect(); }
-void FileButton::setFilename(DeprecatedString const&) { notImplemented(); }
-int FileButton::baselinePosition(int) const { notImplemented(); return 0; }
-void FileButton::setFrameGeometry(WebCore::IntRect const&) { notImplemented(); }
-void FileButton::setDisabled(bool) { notImplemented(); }
-
 Widget::FocusPolicy Slider::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy ListBox::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy TextField::focusPolicy() const { notImplemented(); return NoFocus; }
@@ -149,6 +143,7 @@ bool FrameGdk::locationbarVisible() { notImplemented(); return 0; }
 void FrameGdk::issueRedoCommand(void) { notImplemented(); }
 KJS::Bindings::Instance* FrameGdk::getObjectInstanceForWidget(Widget *) { notImplemented(); return 0; }
 KJS::Bindings::Instance* FrameGdk::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
+KJS::Bindings::RootObject* FrameGdk::bindingRootObject() { notImplemented(); return 0; }
 bool FrameGdk::canRedo() const { notImplemented(); return 0; }
 bool FrameGdk::canUndo() const { notImplemented(); return 0; }
 void FrameGdk::registerCommandForRedo(PassRefPtr<WebCore::EditCommand>) { notImplemented(); }
@@ -164,7 +159,7 @@ void FrameGdk::issueUndoCommand() { notImplemented(); }
 String FrameGdk::mimeTypeForFileName(String const&) const { notImplemented(); return String(); }
 void FrameGdk::issuePasteCommand() { notImplemented(); }
 void FrameGdk::scheduleClose() { notImplemented(); }
-void FrameGdk::markMisspellings(WebCore::SelectionController const&) { notImplemented(); }
+void FrameGdk::markMisspellings(WebCore::Selection const&) { notImplemented(); }
 bool FrameGdk::menubarVisible() { notImplemented(); return 0; }
 bool FrameGdk::personalbarVisible() { notImplemented(); return 0; }
 bool FrameGdk::statusbarVisible() { notImplemented(); return 0; }
@@ -184,8 +179,8 @@ void BrowserExtensionGdk::goBackOrForward(int) { notImplemented(); }
 KURL BrowserExtensionGdk::historyURL(int distance) { notImplemented(); return KURL(); }
 void BrowserExtensionGdk::createNewWindow(struct WebCore::ResourceRequest const&) { notImplemented(); }
 
-int WebCore::screenDepthPerComponent(Widget*) { notImplemented(); return 0; }
-bool WebCore::screenIsMonochrome(Widget*) { notImplemented(); return false; }
+int WebCore::screenDepthPerComponent(const Page*) { notImplemented(); return 0; }
+bool WebCore::screenIsMonochrome(const Page*) { notImplemented(); return false; }
 
 /********************************************************/
 /* Completely empty stubs (mostly to allow DRT to run): */
@@ -199,6 +194,9 @@ bool WebCore::historyContains(DeprecatedString const&) { return false; }
 String WebCore::submitButtonDefaultLabel() { return "Submit"; }
 String WebCore::inputElementAltText() { return DeprecatedString(); }
 String WebCore::resetButtonDefaultLabel() { return "Reset"; }
+String WebCore::fileButtonChooseFileLabel() { return "Browse..."; }
+String WebCore::fileButtonNoFileSelectedLabel() { return String(); }
+
 String WebCore::defaultLanguage() { return "en"; }
 
 void WebCore::findWordBoundary(UChar const* str, int len, int position, int* start, int* end) {*start = position; *end = position; }
@@ -219,8 +217,9 @@ void FrameGdk::handledOnloadEvents() { }
 Range* FrameGdk::markedTextRange() const { return 0; }
 bool FrameGdk::lastEventIsMouseUp() const { return false; }
 void FrameGdk::addMessageToConsole(String const&, unsigned int, String const&) { }
-bool FrameGdk::shouldChangeSelection(SelectionController const&, SelectionController const&, WebCore::EAffinity, bool) const { return true; }
-void FrameGdk::respondToChangedSelection(WebCore::SelectionController const&, bool) { }
+bool FrameGdk::shouldChangeSelection(const Selection&, const Selection&, WebCore::EAffinity, bool) const { return true; }
+bool FrameGdk::shouldChangeSelection(const Selection&) const { return true; }
+void FrameGdk::respondToChangedSelection(WebCore::Selection const&, bool) { }
 Frame* FrameGdk::createFrame(const KURL& url, const String& name, Element* ownerElement, const String& referrer) { return 0; }
 
 void FrameGdk::saveDocumentState() { }
@@ -228,7 +227,7 @@ void FrameGdk::registerCommandForUndo(PassRefPtr<WebCore::EditCommand>) { }
 void FrameGdk::clearUndoRedoOperations(void) { }
 String FrameGdk::incomingReferrer() const { return String(); }
 void FrameGdk::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { }
-void FrameGdk::respondToChangedContents() { }
+void FrameGdk::respondToChangedContents(const Selection&) { }
 
 BrowserExtensionGdk::BrowserExtensionGdk(WebCore::Frame*) { }
 void BrowserExtensionGdk::setTypedIconURL(KURL const&, const String&) { }
@@ -276,7 +275,7 @@ void GraphicsContext::scale(const FloatSize&) { }
 Path::Path(){ }
 Path::~Path(){ }
 Path::Path(const Path&){ }
-bool Path::contains(const FloatPoint&) const{ return false; }
+bool Path::contains(const FloatPoint&, WindRule rule) const{ return false; }
 void Path::translate(const FloatSize&){ }
 FloatRect Path::boundingRect() const { return FloatRect(); }
 Path& Path::operator=(const Path&){ return * this; }
@@ -322,6 +321,17 @@ IntSize PopUpButton::sizeHint() const { return IntSize(); }
 IntRect PopUpButton::frameGeometry() const { return IntRect(); }
 void PopUpButton::setFrameGeometry(IntRect const&) { }
 
+PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation) : ScrollBar(client, orientation) { }
+PlatformScrollBar::~PlatformScrollBar() { }
+int PlatformScrollBar::width() const { return 0; }
+int PlatformScrollBar::height() const { return 0; }
+void PlatformScrollBar::setEnabled(bool) { }
+void PlatformScrollBar::paint(GraphicsContext*, const IntRect& damageRect) { }
+void PlatformScrollBar::setScrollBarValue(int v) { }
+void PlatformScrollBar::setKnobProportion(int visibleSize, int totalSize) { }
+void PlatformScrollBar::setRect(const IntRect&) { }
+
+ScrollBar::ScrollBar(ScrollBarClient*, ScrollBarOrientation) { }
 void ScrollBar::setSteps(int, int) { }
 bool ScrollBar::scroll(ScrollDirection, ScrollGranularity, float) { return 0; }
 bool ScrollBar::setValue(int) { return 0; }
@@ -331,6 +341,13 @@ ListBox::ListBox() { }
 ListBox::~ListBox() { }
 void ListBox::setSelectionMode(ListBox::SelectionMode) { }
 void ListBox::setFont(WebCore::Font const&) { }
+
+FileChooser::FileChooser(Document*, RenderFileUploadControl*) { notImplemented(); }
+FileChooser::~FileChooser() { notImplemented(); }
+void FileChooser::openFileChooser() { notImplemented(); }
+String FileChooser::basenameForWidth(int width) const { notImplemented(); return String(); }
+void FileChooser::uploadControlDetaching() { notImplemented(); }
+void FileChooser::chooseFile(const String& filename) { notImplemented(); }
 
 Color WebCore::focusRingColor() { return 0xFF0000FF; }
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
@@ -344,6 +361,19 @@ bool RenderThemeGdk::paintButton(RenderObject*, const RenderObject::PaintInfo&, 
 void RenderThemeGdk::setRadioSize(RenderStyle*) const { }
 void RenderThemeGdk::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element* e) const {}
 bool RenderThemeGdk::paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return false; }
+
+Icon::Icon() { notImplemented(); }
+Icon::~Icon() { notImplemented(); }
+PassRefPtr<Icon> Icon::newIconForFile(const String& filename) { notImplemented(); return PassRefPtr<Icon>(new Icon()); }
+void Icon::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
+
+void IconLoader::stopLoading() { notImplemented(); } 
+void IconLoader::startLoading() { notImplemented(); } 
+IconLoader* IconLoader::createForFrame(Frame *frame) { return 0; } 
+
+bool IconDatabase::isIconExpiredForIconURL(const String& url) { return false; }
+bool IconDatabase::hasEntryForIconURL(const String& url) { return false; }
+IconDatabase* IconDatabase::sharedIconDatabase() { return 0; }
 
 FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int) const { return FloatRect(); }
 void Font::drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const { notImplemented(); }

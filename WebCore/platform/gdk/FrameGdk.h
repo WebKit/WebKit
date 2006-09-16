@@ -87,7 +87,7 @@ public:
     virtual String mimeTypeForFileName(const String&) const;
 
     virtual void markMisspellingsInAdjacentWords(const VisiblePosition&);
-    virtual void markMisspellings(const SelectionController&);
+    virtual void markMisspellings(const Selection&);
 
     virtual bool lastEventIsMouseUp() const;
 
@@ -99,6 +99,7 @@ public:
     virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*);
     virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*);
     virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*);
+    virtual KJS::Bindings::RootObject* bindingRootObject();
 
     virtual void registerCommandForUndo(PassRefPtr<EditCommand>);
     virtual void registerCommandForRedo(PassRefPtr<EditCommand>);
@@ -110,9 +111,10 @@ public:
     virtual void issuePasteCommand();
     virtual void issuePasteAndMatchStyleCommand();
     virtual void issueTransposeCommand();
-    virtual void respondToChangedSelection(const SelectionController& oldSelection, bool closeTyping);
-    virtual void respondToChangedContents();
-    virtual bool shouldChangeSelection(const SelectionController& oldSelection, const SelectionController& newSelection, EAffinity affinity, bool stillSelecting) const;
+    virtual void respondToChangedSelection(const Selection& oldSelection, bool closeTyping);
+    virtual void respondToChangedContents(const Selection& endingSelection);
+    virtual bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity affinity, bool stillSelecting) const;
+    bool shouldChangeSelection(const Selection&) const;
     virtual void partClearedInBegin();
 
     virtual bool canGoBackOrForward(int distance) const;

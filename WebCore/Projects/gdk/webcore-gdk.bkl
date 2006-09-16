@@ -72,6 +72,7 @@
           platform/gdk/FontPlatformDataGdk.cpp
           platform/gdk/FrameGdk.cpp
           platform/gdk/GlyphMapGdk.cpp
+           platform/gdk/ImageGdk.cpp
           platform/gdk/KeyEventGdk.cpp
           platform/gdk/MouseEventGdk.cpp
           platform/gdk/PageGdk.cpp

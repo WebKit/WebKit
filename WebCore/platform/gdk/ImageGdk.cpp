@@ -1,7 +1,5 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
- * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,38 +24,39 @@
  */
 
 #include "config.h"
-#include "Font.h"
+#include "Image.h"
 
-#include "FontData.h"
-#include "GraphicsContext.h"
+#if PLATFORM(CAIRO)
 #include <cairo.h>
+#else
+#error "GDK port requires PLATFORM(CAIRO)"
+#endif
+
+// This function loads resources from WebKit
+Vector<char> loadResourceIntoArray(const char*);
 
 namespace WebCore {
 
-void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, const GlyphBuffer& glyphBuffer,
-                      int from, int numGlyphs, const FloatPoint& point) const
-{
-    cairo_t* context = graphicsContext->platformContext();
-
-    // Set the text color to use for drawing.
-    float red, green, blue, alpha;
-    Color penColor = graphicsContext->pen().color();
-    penColor.getRGBA(red, green, blue, alpha);
-    cairo_set_source_rgba(context, red, green, blue, alpha);
-
-    // Select the scaled font.
-    font->setFont(context);
-
-    GlyphBufferGlyph* glyphs = (GlyphBufferGlyph*) glyphBuffer.glyphs(from);
-
-    float offset = point.x();
-
-    for (unsigned i = 0; i < numGlyphs; i++) {
-        glyphs[i].x = offset;
-        glyphs[i].y = point.y();
-        offset += glyphBuffer.advanceAt(from + i);
+    void Image::initPlatformData()
+    {
     }
-    cairo_show_glyphs(context, glyphs, numGlyphs);
-}
+
+    void Image::invalidatePlatformData()
+    {
+    }
+
+    Image* Image::loadPlatformResource(const char *name)
+    {
+        Vector<char> arr = loadResourceIntoArray(name);
+        Image* img = new Image;
+        img->setNativeData(&arr, true);
+        return img;
+    }
+
+    bool Image::supportsType(const String& type)
+    {
+        // FIXME: Implement.
+        return false;
+    }
 
 }

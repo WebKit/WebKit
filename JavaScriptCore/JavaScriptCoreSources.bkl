@@ -73,4 +73,20 @@
 		pcre/ucp_findchar.c
 
 	</set>
+	<set append="1" var="JSCORE_SOURCES_BINDINGS">
+		
+		bindings/c/c_class.cpp
+		bindings/c/c_instance.cpp
+		bindings/c/c_runtime.cpp
+		bindings/c/c_utility.cpp
+		bindings/NP_jsobject.cpp
+		bindings/npruntime.cpp
+		bindings/runtime.cpp
+		bindings/runtime_array.cpp
+		bindings/runtime_method.cpp
+		bindings/runtime_object.cpp
+		bindings/runtime_root.cpp
+
+	</set>
+
 </makefile>

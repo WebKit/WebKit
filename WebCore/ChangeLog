@@ -1,3 +1,76 @@
+2006-09-15  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10864
+        Bug 10864: Linux\GDK build fixes
+
+        * Projects/gdk/webcore-gdk.bkl:
+        * WebCoreSources.bkl:
+        * platform/gdk/FontCacheGdk.cpp:
+        * platform/gdk/FontDataGdk.cpp:
+        (WebCore::FontData::platformInit):
+        * platform/gdk/FontGdk.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::handleGdkEvent):
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/ImageGdk.cpp: Added.
+        (WebCore::Image::initPlatformData):
+        (WebCore::Image::invalidatePlatformData):
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::Image::supportsType):
+        * platform/gdk/RenderPopupMenuGdk.cpp:
+        (WebCore::RenderPopupMenuGdk::hidePopup):
+        * platform/gdk/RenderPopupMenuGdk.h:
+        * platform/gdk/ScreenGdk.cpp:
+        (WebCore::drawableForPage):
+        (WebCore::screenRect):
+        (WebCore::screenDepth):
+        (WebCore::usableScreenRect):
+        (WebCore::scaleFactor):
+        * platform/gdk/SystemTimeLinux.cpp:
+        (WebCore::currentTime):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (FrameGdk::bindingRootObject):
+        (FrameGdk::markMisspellings):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::fileButtonChooseFileLabel):
+        (WebCore::fileButtonNoFileSelectedLabel):
+        (FrameGdk::shouldChangeSelection):
+        (FrameGdk::respondToChangedSelection):
+        (FrameGdk::respondToChangedContents):
+        (Path::contains):
+        (PlatformScrollBar::PlatformScrollBar):
+        (PlatformScrollBar::~PlatformScrollBar):
+        (PlatformScrollBar::width):
+        (PlatformScrollBar::height):
+        (PlatformScrollBar::setEnabled):
+        (PlatformScrollBar::paint):
+        (PlatformScrollBar::setScrollBarValue):
+        (PlatformScrollBar::setKnobProportion):
+        (PlatformScrollBar::setRect):
+        (ScrollBar::ScrollBar):
+        (FileChooser::FileChooser):
+        (FileChooser::~FileChooser):
+        (FileChooser::openFileChooser):
+        (FileChooser::basenameForWidth):
+        (FileChooser::uploadControlDetaching):
+        (FileChooser::chooseFile):
+        (Icon::Icon):
+        (Icon::~Icon):
+        (Icon::newIconForFile):
+        (Icon::paint):
+        (IconLoader::stopLoading):
+        (IconLoader::startLoading):
+        (IconLoader::createForFrame):
+        (IconDatabase::isIconExpiredForIconURL):
+        (IconDatabase::hasEntryForIconURL):
+        (IconDatabase::sharedIconDatabase):
+        * platform/gdk/WidgetGdk.cpp:
+        * webcore-base.bkl:
+
 2006-09-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

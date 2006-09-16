@@ -32,7 +32,7 @@
 #include "FontCache.h"
 
 #include "Font.h"
-#include "FontPlatformData.h"
+#include "FontData.h"
 
 namespace WebCore {
 

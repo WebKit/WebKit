@@ -233,7 +233,7 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
             PlatformKeyboardEvent kevent(event);
             bool handled = false;
             if (!kevent.isKeyUp()) {
-                Node* start = selection().start().node();
+                Node* start = selectionController()->start().node();
                 if (start && start->isContentEditable()) {
                     switch(kevent.WindowsKeyCode()) {
                         case VK_BACK:
@@ -243,16 +243,16 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
                             TypingCommand::forwardDeleteKeyPressed(document());
                             break;
                         case VK_LEFT:
-                            selection().modify(SelectionController::MOVE, SelectionController::LEFT, CharacterGranularity);
+                            selectionController()->modify(SelectionController::MOVE, SelectionController::LEFT, CharacterGranularity);
                             break;
                         case VK_RIGHT:
-                            selection().modify(SelectionController::MOVE, SelectionController::RIGHT, CharacterGranularity);
+                            selectionController()->modify(SelectionController::MOVE, SelectionController::RIGHT, CharacterGranularity);
                             break;
                         case VK_UP:
-                            selection().modify(SelectionController::MOVE, SelectionController::BACKWARD, ParagraphGranularity);
+                            selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, ParagraphGranularity);
                             break;
                         case VK_DOWN:
-                            selection().modify(SelectionController::MOVE, SelectionController::FORWARD, ParagraphGranularity);
+                            selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, ParagraphGranularity);
                             break;
                         default:
                             TypingCommand::insertText(document(), kevent.text(), false);

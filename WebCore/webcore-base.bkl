@@ -86,6 +86,7 @@ Base settings shared by all Bakefile-based ports.
         <include>$(SRCDIR)/css</include>
         <include>$(SRCDIR)/dom</include>
         <include>$(SRCDIR)/loader</include>
+        <include>$(SRCDIR)/loader/icon</include>
         <include>$(SRCDIR)/page</include>
         <include>$(SRCDIR)/platform</include>
         <include>$(SRCDIR)/platform/image-decoders</include>
@@ -111,7 +112,7 @@ Base settings shared by all Bakefile-based ports.
 <!-- END HACKS -->
 
         <define>APPLE_CHANGES=1</define>
-        <define>KHTML_XSLT=1</define>
+        <define>XSLT_SUPPORT=1</define>
 
         <!-- TODO: is there a Linux-specific platform define? -->
         <if cond="PLATFORM_UNIX=='1'">
