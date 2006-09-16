@@ -50,37 +50,37 @@ SelectionController::SelectionController(Frame* frame, bool isDragCaretControlle
 {
 }
 
-void SelectionController::moveTo(const VisiblePosition &pos)
+void SelectionController::moveTo(const VisiblePosition &pos, bool userTriggered)
 {
-    setSelection(Selection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity()));
+    setSelection(Selection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity()), true, true, userTriggered);
 }
 
-void SelectionController::moveTo(const VisiblePosition &base, const VisiblePosition &extent)
+void SelectionController::moveTo(const VisiblePosition &base, const VisiblePosition &extent, bool userTriggered)
 {
-    setSelection(Selection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity()));
+    setSelection(Selection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity()), true, true, userTriggered);
 }
 
-void SelectionController::moveTo(const SelectionController &o)
+void SelectionController::moveTo(const SelectionController &o, bool userTriggered)
 {
-    setSelection(o.m_sel);
+    setSelection(o.m_sel, true, true, userTriggered);
 }
 
-void SelectionController::moveTo(const Position &pos, EAffinity affinity)
+void SelectionController::moveTo(const Position &pos, EAffinity affinity, bool userTriggered)
 {
-    setSelection(Selection(pos, affinity));
+    setSelection(Selection(pos, affinity), true, true, userTriggered);
 }
 
-void SelectionController::moveTo(const Range *r, EAffinity affinity)
+void SelectionController::moveTo(const Range *r, EAffinity affinity, bool userTriggered)
 {
-    setSelection(Selection(startPosition(r), endPosition(r), affinity));
+    setSelection(Selection(startPosition(r), endPosition(r), affinity), true, true, userTriggered);
 }
 
-void SelectionController::moveTo(const Position &base, const Position &extent, EAffinity affinity)
+void SelectionController::moveTo(const Position &base, const Position &extent, EAffinity affinity, bool userTriggered)
 {
-    setSelection(Selection(base, extent, affinity));
+    setSelection(Selection(base, extent, affinity), true, true, userTriggered);
 }
 
-void SelectionController::setSelection(const Selection& s, bool closeTyping, bool clearTypingStyle)
+void SelectionController::setSelection(const Selection& s, bool closeTyping, bool clearTypingStyle, bool userTriggered)
 {
     if (m_isDragCaretController) {
         needsCaretRepaint();
@@ -123,8 +123,11 @@ void SelectionController::setSelection(const Selection& s, bool closeTyping, boo
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
     m_frame->setXPosForVerticalArrowNavigation(Frame::NoXPosForVerticalArrowNavigation);
-    m_frame->notifyRendererOfSelectionChange(false);
+    m_frame->selectFrameElementInParentIfFullySelected();
+    m_frame->notifyRendererOfSelectionChange(userTriggered);
     m_frame->respondToChangedSelection(oldSelection, closeTyping);
+    if (userTriggered)
+        m_frame->revealCaret(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
 void SelectionController::nodeWillBeRemoved(Node *node)
@@ -394,7 +397,7 @@ VisiblePosition SelectionController::modifyMovingLeftBackward(TextGranularity gr
     return pos;
 }
 
-bool SelectionController::modify(const String &alterString, const String &directionString, const String &granularityString)
+bool SelectionController::modify(const String &alterString, const String &directionString, const String &granularityString, bool userTriggered)
 {
     String alterStringLower = alterString.lower();
     EAlter alter;
@@ -437,11 +440,21 @@ bool SelectionController::modify(const String &alterString, const String &direct
     else
         return false;
                 
-    return modify(alter, direction, granularity);
+    return modify(alter, direction, granularity, userTriggered);
 }
 
-bool SelectionController::modify(EAlter alter, EDirection dir, TextGranularity granularity)
+bool SelectionController::modify(EAlter alter, EDirection dir, TextGranularity granularity, bool userTriggered)
 {
+    if (userTriggered) {
+        SelectionController trialSelectionController;
+        trialSelectionController.setSelection(m_sel);
+        trialSelectionController.modify(alter, dir, granularity, false);
+
+        bool change = m_frame->shouldChangeSelection(trialSelectionController.selection());
+        if (!change)
+            return false;
+    }
+
     if (m_frame)
         m_frame->setSelectionGranularity(granularity);
     
@@ -471,11 +484,20 @@ bool SelectionController::modify(EAlter alter, EDirection dir, TextGranularity g
 
     switch (alter) {
         case MOVE:
-            moveTo(pos);
+            moveTo(pos, userTriggered);
             break;
         case EXTEND:
-            setExtent(pos);
+            setExtent(pos, userTriggered);
             break;
+    }
+
+    if (userTriggered) {
+        // User modified selection change also sets the granularity back to character.
+        // NOTE: The one exception is that we need to keep word granularity to
+        // preserve smart delete behavior when extending by word (e.g. double-click),
+        // then shift-option-right arrow, then delete needs to smart delete, per TextEdit.
+        if (!(alter == EXTEND && granularity == WordGranularity && m_frame->selectionGranularity() == WordGranularity))
+            m_frame->setSelectionGranularity(CharacterGranularity);
     }
 
     setNeedsLayout();
@@ -500,10 +522,20 @@ static bool caretY(const VisiblePosition &c, int &y)
     return true;
 }
 
-bool SelectionController::modify(EAlter alter, int verticalDistance)
+bool SelectionController::modify(EAlter alter, int verticalDistance, bool userTriggered)
 {
     if (verticalDistance == 0)
         return false;
+
+    if (userTriggered) {
+        SelectionController trialSelectionController;
+        trialSelectionController.setSelection(m_sel);
+        trialSelectionController.modify(alter, verticalDistance, false);
+
+        bool change = m_frame->shouldChangeSelection(trialSelectionController.selection());
+        if (!change)
+            return false;
+    }
 
     bool up = verticalDistance < 0;
     if (up)
@@ -557,12 +589,15 @@ bool SelectionController::modify(EAlter alter, int verticalDistance)
 
     switch (alter) {
         case MOVE:
-            moveTo(result);
+            moveTo(result, userTriggered);
             break;
         case EXTEND:
-            setExtent(result);
+            setExtent(result, userTriggered);
             break;
     }
+
+    if (userTriggered)
+        m_frame->setSelectionGranularity(CharacterGranularity);
 
     return true;
 }
@@ -620,24 +655,24 @@ void SelectionController::clear()
     setSelection(Selection());
 }
 
-void SelectionController::setBase(const VisiblePosition &pos)
+void SelectionController::setBase(const VisiblePosition &pos, bool userTriggered)
 {
-    setSelection(Selection(pos.deepEquivalent(), m_sel.extent(), pos.affinity()));
+    setSelection(Selection(pos.deepEquivalent(), m_sel.extent(), pos.affinity()), true, true, userTriggered);
 }
 
-void SelectionController::setExtent(const VisiblePosition &pos)
+void SelectionController::setExtent(const VisiblePosition &pos, bool userTriggered)
 {
-    setSelection(Selection(m_sel.base(), pos.deepEquivalent(), pos.affinity()));
+    setSelection(Selection(m_sel.base(), pos.deepEquivalent(), pos.affinity()), true, true, userTriggered);
 }
 
-void SelectionController::setBase(const Position &pos, EAffinity affinity)
+void SelectionController::setBase(const Position &pos, EAffinity affinity, bool userTriggered)
 {
-    setSelection(Selection(pos, m_sel.extent(), affinity));
+    setSelection(Selection(pos, m_sel.extent(), affinity), true, true, userTriggered);
 }
 
-void SelectionController::setExtent(const Position &pos, EAffinity affinity)
+void SelectionController::setExtent(const Position &pos, EAffinity affinity, bool userTriggered)
 {
-    setSelection(Selection(m_sel.base(), pos, affinity));
+    setSelection(Selection(m_sel.base(), pos, affinity), true, true, userTriggered);
 }
 
 void SelectionController::setNeedsLayout(bool flag)

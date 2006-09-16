@@ -50,30 +50,30 @@ public:
     bool isContentEditable() const { return selection().isContentEditable(); }
     bool isContentRichlyEditable() const { return selection().isContentRichlyEditable(); }
 
-    void moveTo(const Range*, EAffinity);
-    void moveTo(const VisiblePosition&);
-    void moveTo(const VisiblePosition&, const VisiblePosition&);
-    void moveTo(const Position&, EAffinity);
-    void moveTo(const Position&, const Position&, EAffinity);
-    void moveTo(const SelectionController&);
+    void moveTo(const Range*, EAffinity, bool userTriggered = false);
+    void moveTo(const VisiblePosition&, bool userTriggered = false);
+    void moveTo(const VisiblePosition&, const VisiblePosition&, bool userTriggered = false);
+    void moveTo(const Position&, EAffinity, bool userTriggered = false);
+    void moveTo(const Position&, const Position&, EAffinity, bool userTriggered = false);
+    void moveTo(const SelectionController&, bool userTriggered = false);
 
     const Selection& selection() const { return m_sel; }
-    void setSelection(const Selection&, bool closeTyping = true, bool clearTypingStyle = true);
+    void setSelection(const Selection&, bool closeTyping = true, bool clearTypingStyle = true, bool userTriggered = false);
 
     Selection::EState state() const { return m_sel.state(); }
 
     EAffinity affinity() const { return m_sel.affinity(); }
 
-    bool modify(EAlter, EDirection, TextGranularity);
-    bool modify(EAlter, int verticalDistance);
+    bool modify(EAlter, EDirection, TextGranularity, bool userTriggered = false);
+    bool modify(EAlter, int verticalDistance, bool userTriggered = false);
     bool expandUsingGranularity(TextGranularity);
 
     void clear();
 
-    void setBase(const VisiblePosition& );
-    void setBase(const Position&, EAffinity);
-    void setExtent(const VisiblePosition&);
-    void setExtent(const Position&, EAffinity);
+    void setBase(const VisiblePosition&, bool userTriggered = false);
+    void setBase(const Position&, EAffinity, bool userTriggered = false);
+    void setExtent(const VisiblePosition&, bool userTriggered = false);
+    void setExtent(const Position&, EAffinity, bool userTriggered = false);
 
     Position base() const { return m_sel.base(); }
     Position extent() const { return m_sel.extent(); }
@@ -105,7 +105,7 @@ public:
     String type() const;
     void setBaseAndExtent(Node* baseNode, int baseOffset, Node* extentNode, int extentOffset);
     void setPosition(Node*, int offset);
-    bool modify(const String& alterString, const String& directionString, const String& granularityString);
+    bool modify(const String& alterString, const String& directionString, const String& granularityString, bool userTriggered = false);
     
     // Mozilla Selection Object API
     // In FireFox, anchor/focus are the equal to the start/end of the selection,

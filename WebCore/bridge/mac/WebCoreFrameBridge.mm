@@ -1401,7 +1401,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)centerSelectionInVisibleArea
 {
-    m_frame->centerSelectionInVisibleArea(); 
+    m_frame->revealSelection(RenderLayer::gAlignCenterAlways);
 }
 
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
@@ -1627,7 +1627,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
     if (!m_frame->hasSelection())
         return nil;
-        
+
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
     Selection selection(m_frame->selectionController()->selection());
     selection.expandUsingGranularity(static_cast<TextGranularity>(granularity));
@@ -1638,7 +1638,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
     if (!m_frame->hasSelection())
         return nil;
-        
+
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
     SelectionController selectionController;
     selectionController.setSelection(m_frame->selectionController()->selection());
@@ -1652,76 +1652,20 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
     if (!m_frame->hasSelection())
         return;
-    
-    
-    // save vertical navigation x position if necessary; many types of motion blow it away
-    int xPos = Frame::NoXPosForVerticalArrowNavigation;
-    switch (granularity) {
-        case WebBridgeSelectByLine:
-        case WebBridgeSelectByParagraph:
-            xPos = m_frame->xPosForVerticalArrowNavigation();
-            break;
-        case WebBridgeSelectByCharacter:
-        case WebBridgeSelectByWord:
-        case WebBridgeSelectBySentence:
-        case WebBridgeSelectToLineBoundary:
-        case WebBridgeSelectToParagraphBoundary:
-        case WebBridgeSelectToSentenceBoundary:
-        case WebBridgeSelectToDocumentBoundary:
-            break;
-    }
-        
+
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
     SelectionController* selectionController = m_frame->selectionController();
     selectionController->modify(static_cast<SelectionController::EAlter>(alteration), 
                                 static_cast<SelectionController::EDirection>(direction), 
-                                static_cast<TextGranularity>(granularity));
-    
-    // altering the selection also sets the granularity back to character
-    // NOTE: The one exception is that we need to keep word granularity
-    // to preserve smart delete behavior when extending by word.  e.g. double-click,
-    // then shift-option-rightarrow, then delete needs to smart delete, per TextEdit.
-    if (!((alteration == WebSelectByExtending) &&
-          (granularity == WebBridgeSelectByWord) && (m_frame->selectionGranularity() == WordGranularity)))
-        m_frame->setSelectionGranularity(static_cast<TextGranularity>(WebBridgeSelectByCharacter));
-    
-    // restore vertical navigation x position if necessary
-    if (xPos != Frame::NoXPosForVerticalArrowNavigation)
-        m_frame->setXPosForVerticalArrowNavigation(xPos);
-
-    m_frame->selectFrameElementInParentIfFullySelected();
-    
-    m_frame->notifyRendererOfSelectionChange(true);
-
-    [self ensureSelectionVisible];
-}
-
-- (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
-{
-    if (!m_frame->hasSelection())
-        return nil;
-        
-    SelectionController selectionController;
-    selectionController.setSelection(m_frame->selectionController()->selection());
-    selectionController.modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance));
-    return [DOMRange _rangeWith:selectionController.toRange().get()];
+                                static_cast<TextGranularity>(granularity), true);
 }
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
 {
     if (!m_frame->hasSelection())
         return;
-        
-    // setting the selection always clears saved vertical navigation x position, so preserve it
-    int xPos = m_frame->xPosForVerticalArrowNavigation();    
-    
-    m_frame->selectionController()->modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance));
-    m_frame->setSelectionGranularity(static_cast<TextGranularity>(WebBridgeSelectByCharacter));
-    m_frame->setXPosForVerticalArrowNavigation(xPos);
-    m_frame->selectFrameElementInParentIfFullySelected();
-    m_frame->notifyRendererOfSelectionChange(true);
-
-    [self ensureSelectionVisible];
+    SelectionController* selectionController = m_frame->selectionController();
+    selectionController->modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance), true);
 }
 
 - (WebBridgeSelectionGranularity)selectionGranularity
@@ -1852,7 +1796,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if ([text length] > 0)
         TypingCommand::insertText(m_frame->document(), text, YES);
     
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
 - (BOOL)canDeleteRange:(DOMRange *)range
@@ -1997,7 +1941,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return;
     
     applyCommand(new ReplaceSelectionCommand(m_frame->document(), [fragment _documentFragment], selectReplacement, smartReplace, matchStyle));
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
 - (void)replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
@@ -2036,7 +1980,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return nil;
     
     Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevel(m_frame->document());
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
     return [DOMNode _nodeWith:newList];
 }
 
@@ -2046,7 +1990,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return nil;
     
     Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelOrdered(m_frame->document());
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
     return [DOMNode _nodeWith:newList];
 }
 
@@ -2056,7 +2000,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return nil;
     
     Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnordered(m_frame->document());
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
     return [DOMNode _nodeWith:newList];
 }
 
@@ -2066,7 +2010,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return;
     
     DecreaseSelectionListLevelCommand::decreaseSelectionListLevel(m_frame->document());
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
 - (void)insertLineBreak
@@ -2075,7 +2019,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::insertLineBreak(m_frame->document());
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
 - (void)insertParagraphSeparator
@@ -2084,7 +2028,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::insertParagraphSeparator(m_frame->document());
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
 - (void)insertParagraphSeparatorInQuotedContent
@@ -2093,7 +2037,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::insertParagraphSeparatorInQuotedContent(m_frame->document());
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
 - (void)insertText:(NSString *)text selectInsertedText:(BOOL)selectInsertedText
@@ -2102,7 +2046,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::insertText(m_frame->document(), text, selectInsertedText);
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
 - (void)setSelectionToDragCaret
@@ -2196,7 +2140,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::deleteKeyPressed(m_frame->document(), smartDelete, static_cast<TextGranularity>(granularity));
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
 - (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(WebBridgeSelectionGranularity)granularity
@@ -2205,7 +2149,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::forwardDeleteKeyPressed(m_frame->document(), smartDelete, static_cast<TextGranularity>(granularity));
-    [self ensureSelectionVisible];
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
 - (DOMCSSStyleDeclaration *)typingStyle
@@ -2308,35 +2252,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame ? m_frame->baseWritingDirectionForSelectionStart() : (NSWritingDirection)NSWritingDirectionLeftToRight;
 }
 
-- (void)ensureSelectionVisible
-{
-    if (!m_frame->hasSelection())
-        return;
-    
-    FrameView *v = m_frame->view();
-    if (!v)
-        return;
-
-    Position extent = m_frame->selectionController()->extent();
-    if (extent.isNull())
-        return;
-    
-    RenderObject *renderer = extent.node()->renderer();
-    if (!renderer)
-        return;
-    
-    NSView *documentView = v->getDocumentView();
-    if (!documentView)
-        return;
-    
-    IntRect extentRect = VisiblePosition(extent).caretRect();
-    RenderLayer *layer = renderer->enclosingLayer();
-    if (layer)
-        layer->scrollRectToVisible(extentRect, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignToEdgeIfNeeded);
-}
-
-// [info draggingLocation] is in window coords
-
 - (BOOL)eventMayStartDrag:(NSEvent *)event
 {
     return m_frame ? m_frame->eventMayStartDrag(event) : NO;
@@ -2350,6 +2265,7 @@ static IntPoint globalPoint(NSWindow* window, NSPoint windowPoint)
 static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDraggingInfo> info)
 {
     // FIXME: Fake modifier keys here.
+    // [info draggingLocation] is in window coords
     return PlatformMouseEvent(IntPoint([info draggingLocation]), globalPoint(window, [info draggingLocation]),
         LeftButton, 0, false, false, false, false);
 }

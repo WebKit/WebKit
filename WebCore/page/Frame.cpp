@@ -2756,7 +2756,7 @@ void Frame::addData(const char *bytes, int length)
 }
 
 // FIXME: should this go in SelectionController?
-void Frame::revealSelection()
+void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
 {
     IntRect rect;
     
@@ -2772,17 +2772,32 @@ void Frame::revealSelection()
             rect = selectionRect();
             break;
     }
-    
+
     Position start = selectionController()->start();
     Position end = selectionController()->end();
+
     ASSERT(start.node());
     if (start.node() && start.node()->renderer()) {
         RenderLayer *layer = start.node()->renderer()->enclosingLayer();
         if (layer) {
             ASSERT(!end.node() || !end.node()->renderer() 
                    || (end.node()->renderer()->enclosingLayer() == layer));
-            layer->scrollRectToVisible(rect);
+            layer->scrollRectToVisible(rect, alignment, alignment);
         }
+    }
+}
+
+void Frame::revealCaret(const RenderLayer::ScrollAlignment& alignment) const
+{
+    if (!hasSelection())
+        return;
+
+    Position extent = selectionController()->extent();
+    if (extent.node() && extent.node()->renderer()) {
+        IntRect extentRect = VisiblePosition(extent).caretRect();
+        RenderLayer* layer = extent.node()->renderer()->enclosingLayer();
+        if (layer)
+            layer->scrollRectToVisible(extentRect, alignment, alignment);
     }
 }
 
@@ -3255,37 +3270,6 @@ void Frame::clearTimers(FrameView *view)
 void Frame::clearTimers()
 {
     clearTimers(d->m_view.get());
-}
-
-// FIXME: selection controller?
-void Frame::centerSelectionInVisibleArea() const
-{
-    IntRect rect;
-    
-    switch (selectionController()->state()) {
-        case Selection::NONE:
-            return;
-            
-        case Selection::CARET:
-            rect = selectionController()->caretRect();
-            break;
-            
-        case Selection::RANGE:
-            rect = selectionRect();
-            break;
-    }
-    
-    Position start = selectionController()->start();
-    Position end = selectionController()->end();
-    ASSERT(start.node());
-    if (start.node() && start.node()->renderer()) {
-        RenderLayer *layer = start.node()->renderer()->enclosingLayer();
-        if (layer) {
-            ASSERT(!end.node() || !end.node()->renderer() 
-                   || (end.node()->renderer()->enclosingLayer() == layer));
-            layer->scrollRectToVisible(rect, RenderLayer::gAlignCenterAlways, RenderLayer::gAlignCenterAlways);
-        }
-    }
 }
 
 RenderStyle *Frame::styleForSelectionStart(Node *&nodeToRemove) const

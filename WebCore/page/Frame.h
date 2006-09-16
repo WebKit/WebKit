@@ -35,6 +35,7 @@
 #include "FrameView.h"
 #include "Node.h"
 #include "RenderObject.h"
+#include "RenderLayer.h"
 #include "ScrollBar.h"
 #include "TextAffinity.h"
 #include "TextGranularity.h"
@@ -677,10 +678,8 @@ private:
 
   RenderStyle* styleForSelectionStart(Node* &nodeToRemove) const;
 
-  // Scrolls as necessary to reveal the selection
-  void revealSelection();
-  // Centers the selection regardless of whether it was already visible
-  void centerSelectionInVisibleArea() const;
+  void revealSelection(const RenderLayer::ScrollAlignment& alignment = RenderLayer::gAlignCenterIfNeeded) const;
+  void revealCaret(const RenderLayer::ScrollAlignment& alignment = RenderLayer::gAlignCenterIfNeeded) const;
   void setSelectionFromNone();
 
   bool scrollOverflow(ScrollDirection direction, ScrollGranularity granularity);

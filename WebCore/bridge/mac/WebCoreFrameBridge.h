@@ -407,7 +407,6 @@ typedef enum {
 - (DOMRange *)rangeOfCharactersAroundCaret;
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity;
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity;
-- (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)distance;
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)distance;
 - (WebBridgeSelectionGranularity)selectionGranularity;
 - (DOMRange *)smartDeleteRangeForProposedRange:(DOMRange *)proposedCharRange;
@@ -463,8 +462,6 @@ typedef enum {
 - (void)removeEditingStyleFromBodyElement;
 - (void)applyEditingStyleToElement:(DOMElement *)element;
 - (void)removeEditingStyleFromElement:(DOMElement *)element;
-
-- (void)ensureSelectionVisible;
 
 - (WebScriptObject *)windowScriptObject;
 - (NPObject *)windowScriptNPObject;

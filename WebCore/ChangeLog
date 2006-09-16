@@ -1,3 +1,41 @@
+2006-09-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Justin.
+
+        Removed alter selection logic from WebCoreFrameBridge and moved to SelectionController.
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge centerSelectionInVisibleArea]):
+        (-[WebCoreFrameBridge rangeByExpandingSelectionWithGranularity:]):
+        (-[WebCoreFrameBridge rangeByAlteringCurrentSelection:direction:granularity:]):
+        (-[WebCoreFrameBridge alterCurrentSelection:direction:granularity:]):
+        (-[WebCoreFrameBridge alterCurrentSelection:verticalDistance:]):
+        (-[WebCoreFrameBridge replaceMarkedTextWithText:]):
+        (-[WebCoreFrameBridge replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+        (-[WebCoreFrameBridge increaseSelectionListLevel]):
+        (-[WebCoreFrameBridge increaseSelectionListLevelOrdered]):
+        (-[WebCoreFrameBridge increaseSelectionListLevelUnordered]):
+        (-[WebCoreFrameBridge decreaseSelectionListLevel]):
+        (-[WebCoreFrameBridge insertLineBreak]):
+        (-[WebCoreFrameBridge insertParagraphSeparator]):
+        (-[WebCoreFrameBridge insertParagraphSeparatorInQuotedContent]):
+        (-[WebCoreFrameBridge insertText:selectInsertedText:]):
+        (-[WebCoreFrameBridge deleteKeyPressedWithSmartDelete:granularity:]):
+        (-[WebCoreFrameBridge forwardDeleteKeyPressedWithSmartDelete:granularity:]):
+        (createMouseEventFromDraggingInfo):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::moveTo):
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::modify):
+        (WebCore::SelectionController::setBase):
+        (WebCore::SelectionController::setExtent):
+        * editing/SelectionController.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::revealSelection):
+        (WebCore::Frame::revealCaret):
+        * page/Frame.h:
+
 2006-09-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

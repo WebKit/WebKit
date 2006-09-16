@@ -1,3 +1,54 @@
+2006-09-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Justin.
+
+        Call the bridge directly for alter selection calls. All of this logic is now
+        in WebCore's SelectionController.
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray moveBackward:]):
+        (-[NSArray moveBackwardAndModifySelection:]):
+        (-[NSArray moveDown:]):
+        (-[NSArray moveDownAndModifySelection:]):
+        (-[NSArray moveForward:]):
+        (-[NSArray moveForwardAndModifySelection:]):
+        (-[NSArray moveLeft:]):
+        (-[NSArray moveLeftAndModifySelection:]):
+        (-[NSArray moveRight:]):
+        (-[NSArray moveRightAndModifySelection:]):
+        (-[NSArray moveToBeginningOfDocument:]):
+        (-[NSArray moveToBeginningOfDocumentAndModifySelection:]):
+        (-[NSArray moveToBeginningOfSentence:]):
+        (-[NSArray moveToBeginningOfSentenceAndModifySelection:]):
+        (-[NSArray moveToBeginningOfLine:]):
+        (-[NSArray moveToBeginningOfLineAndModifySelection:]):
+        (-[NSArray moveToBeginningOfParagraph:]):
+        (-[NSArray moveToBeginningOfParagraphAndModifySelection:]):
+        (-[NSArray moveToEndOfDocument:]):
+        (-[NSArray moveToEndOfDocumentAndModifySelection:]):
+        (-[NSArray moveToEndOfSentence:]):
+        (-[NSArray moveToEndOfSentenceAndModifySelection:]):
+        (-[NSArray moveToEndOfLine:]):
+        (-[NSArray moveToEndOfLineAndModifySelection:]):
+        (-[NSArray moveToEndOfParagraph:]):
+        (-[NSArray moveToEndOfParagraphAndModifySelection:]):
+        (-[NSArray moveParagraphBackwardAndModifySelection:]):
+        (-[NSArray moveParagraphForwardAndModifySelection:]):
+        (-[NSArray moveUp:]):
+        (-[NSArray moveUpAndModifySelection:]):
+        (-[NSArray moveWordBackward:]):
+        (-[NSArray moveWordBackwardAndModifySelection:]):
+        (-[NSArray moveWordForward:]):
+        (-[NSArray moveWordForwardAndModifySelection:]):
+        (-[NSArray moveWordLeft:]):
+        (-[NSArray moveWordLeftAndModifySelection:]):
+        (-[NSArray moveWordRight:]):
+        (-[NSArray moveWordRightAndModifySelection:]):
+        (-[NSArray pageUp:]):
+        (-[NSArray pageDown:]):
+        (-[NSArray pageUpAndModifySelection:]):
+        (-[NSArray pageDownAndModifySelection:]):
+
 2006-09-15  Adam Roben  <aroben@apple.com>
 
         Reviewed by eseidel.

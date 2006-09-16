@@ -3383,244 +3383,259 @@ done:
     [[self _bridge] centerSelectionInVisibleArea];
 }
 
-- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
-{
-    if (![self _canAlterCurrentSelection])
-        return;
-        
-    WebFrameBridge *bridge = [self _bridge];
-    DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
-    WebView *webView = [self _webView];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:proposedRange affinity:[bridge selectionAffinity] stillSelecting:NO]) {
-        [bridge alterCurrentSelection:alteration direction:direction granularity:granularity];
-    }
-}
-
-- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
-{
-    if (![self _canAlterCurrentSelection])
-        return;
-        
-    WebFrameBridge *bridge = [self _bridge];
-    DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration verticalDistance:verticalDistance];
-    WebView *webView = [self _webView];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:proposedRange affinity:[bridge selectionAffinity] stillSelecting:NO]) {
-        [bridge alterCurrentSelection:alteration verticalDistance:verticalDistance];
-    }
-}
-
 - (void)moveBackward:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByCharacter];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveBackwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByCharacter];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveDown:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByLine];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByLine];
 }
 
 - (void)moveDownAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByLine];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByLine];
 }
 
 - (void)moveForward:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveForwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveLeft:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectLeft granularity:WebBridgeSelectByCharacter];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectLeft granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveLeftAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectLeft granularity:WebBridgeSelectByCharacter];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectLeft granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveRight:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectRight granularity:WebBridgeSelectByCharacter];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectRight granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveRightAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectRight granularity:WebBridgeSelectByCharacter];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectRight granularity:WebBridgeSelectByCharacter];
 }
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToDocumentBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToDocumentBoundary];
 }
 
 - (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToDocumentBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToDocumentBoundary];
 }
 
 - (void)moveToBeginningOfSentence:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToSentenceBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToSentenceBoundary];
 }
 
 - (void)moveToBeginningOfSentenceAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToSentenceBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToSentenceBoundary];
 }
 
 - (void)moveToBeginningOfLine:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToLineBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToLineBoundary];
 }
 
 - (void)moveToBeginningOfLineAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToLineBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToLineBoundary];
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToParagraphBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToParagraphBoundary];
 }
 
 - (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToParagraphBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToParagraphBoundary];
 }
 
 - (void)moveToEndOfDocument:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToDocumentBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToDocumentBoundary];
 }
 
 - (void)moveToEndOfDocumentAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToDocumentBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToDocumentBoundary];
 }
 
 - (void)moveToEndOfSentence:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToSentenceBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToSentenceBoundary];
 }
 
 - (void)moveToEndOfSentenceAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToSentenceBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToSentenceBoundary];
 }
 
 - (void)moveToEndOfLine:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToLineBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToLineBoundary];
 }
 
 - (void)moveToEndOfLineAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToLineBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToLineBoundary];
 }
 
 - (void)moveToEndOfParagraph:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToParagraphBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToParagraphBoundary];
 }
 
 - (void)moveToEndOfParagraphAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToParagraphBoundary];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToParagraphBoundary];
 }
 
 - (void)moveParagraphBackwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByParagraph];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByParagraph];
 }
 
 - (void)moveParagraphForwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByParagraph];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByParagraph];
 }
 
 - (void)moveUp:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByLine];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByLine];
 }
 
 - (void)moveUpAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByLine];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByLine];
 }
 
 - (void)moveWordBackward:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordBackwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordForward:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByWord];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordForwardAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByWord];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordLeft:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectLeft granularity:WebBridgeSelectByWord];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectLeft granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordLeftAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectLeft granularity:WebBridgeSelectByWord];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectLeft granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordRight:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectRight granularity:WebBridgeSelectByWord];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectRight granularity:WebBridgeSelectByWord];
 }
 
 - (void)moveWordRightAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectRight granularity:WebBridgeSelectByWord];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectRight granularity:WebBridgeSelectByWord];
 }
 
 - (void)pageUp:(id)sender
 {
     WebFrameView *frameView = [self _frameView];
-    if (frameView == nil)
+    if (!frameView)
         return;
-    [self _alterCurrentSelection:WebSelectByMoving verticalDistance:-[frameView _verticalPageScrollDistance]];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving verticalDistance:-[frameView _verticalPageScrollDistance]];
 }
 
 - (void)pageDown:(id)sender
 {
     WebFrameView *frameView = [self _frameView];
-    if (frameView == nil)
+    if (!frameView)
         return;
-    [self _alterCurrentSelection:WebSelectByMoving verticalDistance:[frameView _verticalPageScrollDistance]];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByMoving verticalDistance:[frameView _verticalPageScrollDistance]];
 }
 
 - (void)pageUpAndModifySelection:(id)sender
 {
     WebFrameView *frameView = [self _frameView];
-    if (frameView == nil)
+    if (!frameView)
         return;
-    [self _alterCurrentSelection:WebSelectByExtending verticalDistance:-[frameView _verticalPageScrollDistance]];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending verticalDistance:-[frameView _verticalPageScrollDistance]];
 }
 
 - (void)pageDownAndModifySelection:(id)sender
@@ -3628,7 +3643,8 @@ done:
     WebFrameView *frameView = [self _frameView];
     if (frameView == nil)
         return;
-    [self _alterCurrentSelection:WebSelectByExtending verticalDistance:[frameView _verticalPageScrollDistance]];
+    if ([self _canAlterCurrentSelection])
+        [[self _bridge] alterCurrentSelection:WebSelectByExtending verticalDistance:[frameView _verticalPageScrollDistance]];
 }
 
 - (void)_expandSelectionToGranularity:(WebBridgeSelectionGranularity)granularity
