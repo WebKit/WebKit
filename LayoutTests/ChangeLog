@@ -4,6 +4,15 @@
 
         Updating results to new expected values.
 
+        * fast/lists/drag-into-marker-expected.txt:
+        * fast/repaint/selection-after-delete-expected.txt:
+
+2006-09-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Justin.
+
+        Updating results to new expected values.
+
         * editing/inserting/4278698-expected.txt:
         * fast/dom/window-xy-properties-expected.txt:
 
