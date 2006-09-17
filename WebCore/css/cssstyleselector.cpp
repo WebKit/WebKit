@@ -2939,6 +2939,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSS_PROP_FONT_SIZE:
     {
         FontDescription fontDescription = style->fontDescription();
+        fontDescription.setKeywordSize(0);
+        bool familyIsFixed = fontDescription.genericFamily() == FontDescription::MonospaceFamily;
         float oldSize = 0;
         float size = 0;
         
@@ -2948,31 +2950,35 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             parentIsAbsoluteSize = parentStyle->fontDescription().isAbsoluteSize();
         }
 
-        if (isInherit)
+        if (isInherit) {
             size = oldSize;
-        else if (isInitial)
-            size = fontSizeForKeyword(CSS_VAL_MEDIUM, style->htmlHacks());
-        else if (primitiveValue->getIdent()) {
+            if (parentNode)
+                fontDescription.setKeywordSize(parentStyle->fontDescription().keywordSize());
+        } else if (isInitial) {
+            size = fontSizeForKeyword(CSS_VAL_MEDIUM, style->htmlHacks(), familyIsFixed);
+            fontDescription.setKeywordSize(CSS_VAL_MEDIUM - CSS_VAL_XX_SMALL + 1);
+        } else if (primitiveValue->getIdent()) {
             // Keywords are being used.
             switch (primitiveValue->getIdent()) {
-            case CSS_VAL_XX_SMALL:
-            case CSS_VAL_X_SMALL:
-            case CSS_VAL_SMALL:
-            case CSS_VAL_MEDIUM:
-            case CSS_VAL_LARGE:
-            case CSS_VAL_X_LARGE:
-            case CSS_VAL_XX_LARGE:
-            case CSS_VAL__WEBKIT_XXX_LARGE:
-                size = fontSizeForKeyword(primitiveValue->getIdent(), style->htmlHacks());
-                break;
-            case CSS_VAL_LARGER:
-                size = largerFontSize(oldSize, style->htmlHacks());
-                break;
-            case CSS_VAL_SMALLER:
-                size = smallerFontSize(oldSize, style->htmlHacks());
-                break;
-            default:
-                return;
+                case CSS_VAL_XX_SMALL:
+                case CSS_VAL_X_SMALL:
+                case CSS_VAL_SMALL:
+                case CSS_VAL_MEDIUM:
+                case CSS_VAL_LARGE:
+                case CSS_VAL_X_LARGE:
+                case CSS_VAL_XX_LARGE:
+                case CSS_VAL__WEBKIT_XXX_LARGE:
+                    size = fontSizeForKeyword(primitiveValue->getIdent(), style->htmlHacks(), familyIsFixed);
+                    fontDescription.setKeywordSize(primitiveValue->getIdent() - CSS_VAL_XX_SMALL + 1);
+                    break;
+                case CSS_VAL_LARGER:
+                    size = largerFontSize(oldSize, style->htmlHacks());
+                    break;
+                case CSS_VAL_SMALLER:
+                    size = smallerFontSize(oldSize, style->htmlHacks());
+                    break;
+                default:
+                    return;
             }
 
             fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize && 
@@ -3184,6 +3190,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInitial) {
             FontDescription initialDesc = FontDescription();
             FontDescription fontDescription = style->fontDescription();
+            // We need to adjust the size to account for the generic family change from monospace
+            // to non-monospace.
+            if (fontDescription.keywordSize() && fontDescription.genericFamily() == FontDescription::MonospaceFamily)
+                setFontSize(fontDescription, fontSizeForKeyword(CSS_VAL_XX_SMALL + fontDescription.keywordSize() - 1, style->htmlHacks(), false));
             fontDescription.setGenericFamily(initialDesc.genericFamily());
             fontDescription.setFamily(initialDesc.firstFamily());
             if (style->setFontDescription(fontDescription))
@@ -3199,6 +3209,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         FontFamily *currFamily = 0;
         
         // Before mapping in a new font-family property, we should reset the generic family.
+        bool oldFamilyIsMonospace = fontDescription.genericFamily() == FontDescription::MonospaceFamily;
         fontDescription.setGenericFamily(FontDescription::NoFamily);
 
         for(int i = 0; i < len; i++) {
@@ -3248,7 +3259,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     currFamily->appendFamily(newFamily);
                     currFamily = newFamily;
                 }
-                
+    
+                if (fontDescription.keywordSize() && (fontDescription.genericFamily() == FontDescription::MonospaceFamily) != oldFamilyIsMonospace)
+                    setFontSize(fontDescription, fontSizeForKeyword(CSS_VAL_XX_SMALL + fontDescription.keywordSize() - 1, style->htmlHacks(), !oldFamilyIsMonospace));
+            
                 if (style->setFontDescription(fontDescription))
                     fontDirty = true;
             }
@@ -4371,14 +4385,14 @@ void CSSStyleSelector::checkForTextSizeAdjust()
     style->setFontDescription(newFontDescription);
 }
 
-void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle)
+void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* style, RenderStyle* parentStyle)
 {
-    const FontDescription& childFont = aStyle->fontDescription();
+    const FontDescription& childFont = style->fontDescription();
   
-    if (childFont.isAbsoluteSize() || !aParentStyle)
+    if (childFont.isAbsoluteSize() || !parentStyle)
         return;
 
-    const FontDescription& parentFont = aParentStyle->fontDescription();
+    const FontDescription& parentFont = parentStyle->fontDescription();
 
     if (childFont.genericFamily() == parentFont.genericFamily())
         return;
@@ -4390,14 +4404,22 @@ void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* aStyle, RenderSt
 
     // We know the parent is monospace or the child is monospace, and that font
     // size was unspecified.  We want to scale our font size as appropriate.
-    float fixedScaleFactor = ((float)settings->mediumFixedFontSize())/settings->mediumFontSize();
-    float size = (parentFont.genericFamily() == FontDescription::MonospaceFamily) ? 
-        childFont.specifiedSize()/fixedScaleFactor :
-        childFont.specifiedSize()*fixedScaleFactor;
-  
+    // If the font uses a keyword size, then we refetch from the table rather than
+    // multiplying by our scale factor.
+    float size;
+    if (childFont.keywordSize()) {
+        size = fontSizeForKeyword(CSS_VAL_XX_SMALL + childFont.keywordSize() - 1, style->htmlHacks(),
+                                  childFont.genericFamily() == FontDescription::MonospaceFamily);
+    } else {
+        float fixedScaleFactor = ((float)settings->mediumFixedFontSize())/settings->mediumFontSize();
+        size = (parentFont.genericFamily() == FontDescription::MonospaceFamily) ? 
+                childFont.specifiedSize()/fixedScaleFactor :
+                childFont.specifiedSize()*fixedScaleFactor;
+    }
+
     FontDescription newFontDescription(childFont);
     setFontSize(newFontDescription, size);
-    aStyle->setFontDescription(newFontDescription);
+    style->setFontDescription(newFontDescription);
 }
 
 void CSSStyleSelector::setFontSize(FontDescription& fontDescription, float size)
@@ -4479,13 +4501,9 @@ static const int strictFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][to
 // factors for each keyword value.
 static const float fontSizeFactors[totalKeywords] = { 0.60, 0.75, 0.89, 1.0, 1.2, 1.5, 2.0, 3.0 };
 
-float CSSStyleSelector::fontSizeForKeyword(int keyword, bool quirksMode) const
+float CSSStyleSelector::fontSizeForKeyword(int keyword, bool quirksMode, bool fixed) const
 {
-    // FIXME: One issue here is that we set up the fixed font size as a scale factor applied
-    // to the proportional pref.  This means that we won't get pixel-perfect size matching for
-    // the 13px default, since we actually use the 16px row in the table and apply the fixed size
-    // scale later.
-    int mediumSize = settings->mediumFontSize();
+    int mediumSize = fixed ? settings->mediumFixedFontSize() : settings->mediumFontSize();
     if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
         // Look up the entry in the table.
         int row = mediumSize - fontSizeTableMin;
