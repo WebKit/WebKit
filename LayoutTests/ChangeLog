@@ -1,3 +1,16 @@
+2006-09-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Brady.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10852
+        REGRESSION: Reproducible crash in XMLHttpRequest::abort()
+
+        Currently, this test prints an error message to the console, because requests from
+        an unload handler still don't work.
+
+        * http/tests/xmlhttprequest/xhr-onunload-expected.txt: Added.
+        * http/tests/xmlhttprequest/xhr-onunload.html: Added.
+
 2006-09-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

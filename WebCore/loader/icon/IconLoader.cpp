@@ -67,9 +67,7 @@ void IconLoader::startLoading()
     ASSERT(m_frame->document());
     if (!m_resourceLoader->start(m_frame->document()->docLoader())) {
         LOG_ERROR("Failed to start load for icon at url %s", m_frame->iconURL().url().ascii());
-        delete m_resourceLoader;
         m_resourceLoader = 0;
-        return;
     }
 }
 

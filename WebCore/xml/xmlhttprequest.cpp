@@ -347,7 +347,10 @@ void XMLHttpRequest::send(const String& body)
         gcProtectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
     }
   
-    m_job->start(m_doc->docLoader());
+    if (!m_job->start(m_doc->docLoader())) {
+        LOG_ERROR("Failed to send an XMLHttpRequest for %s", m_url.url().ascii());
+        m_job = 0;
+    }
 }
 
 void XMLHttpRequest::abort()

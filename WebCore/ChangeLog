@@ -1,3 +1,18 @@
+2006-09-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Brady.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10852
+        REGRESSION: Reproducible crash in XMLHttpRequest::abort()
+
+        Test: http/tests/xmlhttprequest/xhr-onunload.html
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send): Check the return value of ResourceLoader::start().
+
+        * loader/icon/IconLoader.cpp:
+        (IconLoader::startLoading): Fix a similar latent bug here.
+
 2006-09-17  Adam Roben  <aroben@apple.com>
 
         Build fix.
