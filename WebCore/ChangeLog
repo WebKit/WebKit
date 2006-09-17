@@ -1,3 +1,9 @@
+2006-09-17  Adam Roben  <aroben@apple.com>
+
+        Build fix.
+
+        * loader/icon/IconDatabase.cpp:
+
 2006-09-17  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.

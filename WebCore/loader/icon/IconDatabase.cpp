@@ -36,6 +36,7 @@
 #include "SystemTime.h"
 
 #if PLATFORM(WIN)
+#include <windows.h>
 #include <winbase.h>
 #endif
 
