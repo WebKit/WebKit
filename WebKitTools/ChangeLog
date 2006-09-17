@@ -1,3 +1,15 @@
+2006-09-17  Adam Roben  <aroben@apple.com>
+
+        Reviewed by hyatt, sfalken.
+
+        Get DumpRenderTree compiling and limping along on Windows.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
+        (loadResourceIntoArray): Added this function that WebCore::ImageWin needs from WebKit
+        (main): Add NULL argument to Page constructor.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.vcproj: Remove incorrect "wininet.dll" argument to CC, fix JavaScriptCore.lib path, add *_SECURE_NO_DEPRECATE #defines
+        * Scripts/webkitdirs.pm: Fix JavaScriptCore.lib path
+
 2006-09-15  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Brady.

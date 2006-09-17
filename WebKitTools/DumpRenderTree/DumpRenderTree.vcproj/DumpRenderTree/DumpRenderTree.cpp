@@ -40,6 +40,8 @@
 
 using namespace WebCore;
 
+Vector<char> loadResourceIntoArray(char const *) { Vector<char> v; return v; }
+
 static void localFileTest(FrameWin* frame, char* path)
 {
     frame->begin();
@@ -92,7 +94,7 @@ static void serializeToStdOut(FrameWin* frame)
 
 int main(int argc, char* argv[])
 {
-    Page* page = new Page();
+    Page* page = new Page(0);
     FrameWin* frame = new FrameWin(page, 0, 0);
     FrameView* frameView = new FrameView(frame);
     frame->setView(frameView);

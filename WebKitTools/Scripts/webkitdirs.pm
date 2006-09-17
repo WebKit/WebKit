@@ -260,7 +260,11 @@ sub builtDylibPathForName
         return "$configurationProductDir/$framework.framework/Versions/A/$framework";
     }
     if (isCygwin()) {
-        return "$baseProductDir/$framework.intermediate/$configuration/$framework.intermediate/$framework.lib";
+        if ($framework eq "JavaScriptCore") {
+                return "$baseProductDir/lib/$framework.lib";
+        } else {
+            return "$baseProductDir/$framework.intermediate/$configuration/$framework.intermediate/$framework.lib";
+        }
     }
     if (isQt()) {
         return "$baseProductDir/../../../$framework";
