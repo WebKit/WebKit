@@ -2826,7 +2826,7 @@ void RenderObject::collectBorders(DeprecatedValueList<CollapsedBorderValue>& bor
 
 bool RenderObject::avoidsFloats() const
 {
-    return isReplaced() || isTable() || hasOverflowClip() || isHR() || isFlexibleBox(); 
+    return isReplaced() || hasOverflowClip() || isHR(); 
 }
 
 bool RenderObject::usesLineWidth() const

@@ -68,6 +68,8 @@ public:
 
     virtual bool isTable() const { return true; }
 
+    virtual bool avoidsFloats() const { return true; }
+
     int getColumnPos(int col) const { return columnPos[col]; }
 
     int hBorderSpacing() const { return hspacing; }

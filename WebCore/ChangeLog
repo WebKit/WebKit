@@ -1,5 +1,29 @@
 2006-09-17  David Hyatt  <hyatt@apple.com>
 
+        Fix for bugzilla bugs 10895 and 6336, fieldsets misbehaving when floats
+        are declared right before the fieldsets.  It turns out fieldsets in other
+        browsers avoid floats (like overflow:auto/hidden/scroll sections do), so
+        adding that behavior to fieldset fixes the bug.
+
+        Made avoidsFloats virtual and did some refactoring to make tables, flexboxes
+        and fieldsets all subclass.
+
+        Reviewed by anders
+
+        Added fast/forms/float-before-fieldset.html
+
+        * rendering/RenderFieldset.h:
+        (WebCore::RenderFieldset::avoidsFloats):
+        * rendering/RenderFlexibleBox.h:
+        (WebCore::RenderFlexibleBox::avoidsFloats):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::avoidsFloats):
+        * rendering/RenderObject.h:
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::avoidsFloats):
+
+2006-09-17  David Hyatt  <hyatt@apple.com>
+
         Fix for bugzilla bug 3240, implement support for the HTML4 "frame" and
         "rules" attributes on tables.
 
