@@ -3198,6 +3198,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         FontFamily& firstFamily = fontDescription.firstFamily();
         FontFamily *currFamily = 0;
         
+        // Before mapping in a new font-family property, we should reset the generic family.
+        fontDescription.setGenericFamily(FontDescription::NoFamily);
+
         for(int i = 0; i < len; i++) {
             CSSValue *item = list->item(i);
             if(!item->isPrimitiveValue()) continue;
