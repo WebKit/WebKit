@@ -210,11 +210,11 @@ void MediaList::setMediaText(const String& value, ExceptionCode& ec)
     }
     // ",,,," falls straight through, but is not valid unless fallback
     if (!m_fallback && list.begin() == list.end()) {
-        String s = value.deprecatedString().stripWhiteSpace();
+        String s = value.stripWhiteSpace();
         if (!s.isEmpty()) {
             ec = SYNTAX_ERR;
             return;
-            }
+        }
     }
     
     ec = 0;

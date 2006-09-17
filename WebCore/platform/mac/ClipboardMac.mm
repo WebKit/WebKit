@@ -64,7 +64,7 @@ ClipboardMac::AccessPolicy ClipboardMac::accessPolicy() const
 
 static NSString *cocoaTypeFromMIMEType(const String &type)
 {
-    DeprecatedString qType = type.deprecatedString().stripWhiteSpace();
+    String qType = type.stripWhiteSpace();
 
     // two special cases for IE compatibility
     if (qType == "Text")
@@ -80,7 +80,7 @@ static NSString *cocoaTypeFromMIMEType(const String &type)
         return NSURLPboardType; // note special case in getData to read NSFilenamesType
     
     // Try UTI now
-    NSString *mimeType = qType.getNSString();
+    NSString *mimeType = qType;
     CFStringRef UTIType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (CFStringRef)mimeType, NULL);
     if (UTIType) {
         CFStringRef pbType = UTTypeCopyPreferredTagWithClass(UTIType, kUTTagClassNSPboardType);
@@ -90,7 +90,7 @@ static NSString *cocoaTypeFromMIMEType(const String &type)
     }
 
    // No mapping, just pass the whole string though
-    return qType.getNSString();
+    return (NSString*)qType;
 }
 
 static DeprecatedString MIMETypeFromCocoaType(NSString *type)

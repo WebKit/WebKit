@@ -117,7 +117,7 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
             String namespaceURI = args[0]->toString(exec);
             String localName = args[1]->toString(exec);
             String value = args[2]->toString(exec);
-            processor.setParameter(namespaceURI.impl(), localName.impl(), value.impl());
+            processor.setParameter(namespaceURI, localName, value);
             return jsUndefined();
         }
         case JSXSLTProcessor::GetParameter:
@@ -126,9 +126,9 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
                 return jsUndefined();
             String namespaceURI = args[0]->toString(exec);
             String localName = args[1]->toString(exec);
-            StringImpl *value = processor.getParameter(namespaceURI.impl(), localName.impl()).get();
-            if (value)
-                return jsString(UString(String(value)));
+            String value = processor.getParameter(namespaceURI, localName);
+            if (!value.isNull())
+                return jsString(value);
             return jsUndefined();
         }
         case JSXSLTProcessor::RemoveParameter:
@@ -137,7 +137,7 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
                 return jsUndefined();
             String namespaceURI = args[0]->toString(exec);
             String localName = args[1]->toString(exec);
-            processor.removeParameter(namespaceURI.impl(), localName.impl());
+            processor.removeParameter(namespaceURI, localName);
             return jsUndefined();
         }
         case JSXSLTProcessor::ClearParameters:

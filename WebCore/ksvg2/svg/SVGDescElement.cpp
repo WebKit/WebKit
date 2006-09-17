@@ -38,7 +38,7 @@ SVGDescElement::~SVGDescElement()
 
 String SVGDescElement::description() const
 {
-    return textContent().deprecatedString().simplifyWhiteSpace();
+    return textContent().simplifyWhiteSpace();
 }
 
 }

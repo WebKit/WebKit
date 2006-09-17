@@ -124,10 +124,10 @@ public:
     SVGDocument* getSVGDocument(ExceptionCode&) const;
 #endif
 
-    DeprecatedString serviceType;
-    DeprecatedString url;
-    String classId;
-    bool needWidgetUpdate : 1;
+    String m_serviceType;
+    String m_url;
+    String m_classId;
+    bool m_needWidgetUpdate : 1;
     bool m_useFallbackContent : 1;
     HTMLImageLoader* m_imageLoader;
 

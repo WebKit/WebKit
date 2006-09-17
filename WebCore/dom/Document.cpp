@@ -1637,7 +1637,7 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
         updateStyleSelector();
     } else if (equalIgnoringCase(equiv, "refresh")) {
         // get delay and url
-        DeprecatedString str = content.deprecatedString().stripWhiteSpace();
+        DeprecatedString str = content.stripWhiteSpace().deprecatedString();
         int pos = str.find(RegularExpression("[;,]"));
         if (pos == -1)
             pos = str.find(RegularExpression("[ \t]"));
@@ -1669,7 +1669,7 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
                 frame->scheduleRedirection(delay, completeURL(str), delay <= 1);
         }
     } else if (equalIgnoringCase(equiv, "expires")) {
-        DeprecatedString str = content.deprecatedString().stripWhiteSpace();
+        String str = content.stripWhiteSpace();
         time_t expire_date = str.toInt();
         if (m_docLoader)
             m_docLoader->setExpireDate(expire_date);

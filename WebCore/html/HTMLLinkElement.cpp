@@ -113,7 +113,7 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
         m_type = attr->value();
         process();
     } else if (attr->name() == mediaAttr) {
-        m_media = attr->value().deprecatedString().lower();
+        m_media = attr->value().domString().lower();
         process();
     } else if (attr->name() == disabledAttr) {
         setDisabledState(!attr->isNull());

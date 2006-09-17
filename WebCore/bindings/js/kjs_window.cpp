@@ -23,6 +23,7 @@
 #include "config.h"
 #include "kjs_window.h"
 
+#include "CString.h"
 #include "DOMWindow.h"
 #include "Element.h"
 #include "EventListener.h"
@@ -1824,7 +1825,7 @@ void ScheduledAction::execute(Window *window)
                 String message = exception->get(exec, messagePropertyName)->toString(exec);
                 int lineNumber = exception->get(exec, "line")->toInt32(exec);
                 if (Interpreter::shouldPrintExceptions())
-                    printf("(timer):%s\n", message.deprecatedString().utf8().data());
+                    printf("(timer):%s\n", message.utf8().data());
                 window->m_frame->addMessageToConsole(message, lineNumber, String());
             }
         }

@@ -46,6 +46,13 @@ namespace WebCore {
 
 const UChar nonBreakingSpace = 0xA0;
 
+static inline bool isSpace(UChar c)
+{
+    // Use isspace() for basic Latin-1.
+    // This will include newlines, which aren't included in unicode DirWS.
+    return c <= 0x7F ? isspace(c) : (u_charDirection(c) == U_WHITE_SPACE_NEUTRAL);
+}    
+    
 static inline UChar* newUCharVector(unsigned n)
 {
     return static_cast<UChar*>(fastMalloc(sizeof(UChar) * n));
@@ -271,7 +278,7 @@ static Length parseLength(const UChar* m_data, unsigned int m_length)
         return Length(1, Relative);
 
     unsigned i = 0;
-    while (i < m_length && DeprecatedChar(m_data[i]).isSpace())
+    while (i < m_length && isSpace(m_data[i]))
         ++i;
     if (i < m_length && (m_data[i] == '+' || m_data[i] == '-'))
         ++i;
@@ -490,6 +497,67 @@ StringImpl* StringImpl::foldCase() const
     return c;
 }
 
+StringImpl* StringImpl::stripWhiteSpace() const
+{
+    StringImpl* c = new StringImpl;
+    if (!m_length)
+        return c;
+
+    unsigned start = 0;
+    unsigned end = m_length - 1;
+    
+    // skip white space from start
+    while (start <= end && isSpace(m_data[start])) 
+        start++;
+    
+    // only white space
+    if (start > end) 
+        return c;
+
+    // skip white space from end
+    while (end && isSpace(m_data[end]))         
+        end--;
+    
+    int length = end - start + 1;
+    c->m_data = newUCharVector(length);
+    c->m_length = length;
+    memcpy(c->m_data, m_data + start, length * sizeof(UChar));
+    
+    return c;
+}
+
+StringImpl* StringImpl::simplifyWhiteSpace() const
+{
+    StringImpl* c = new StringImpl;
+    if (!m_length)
+        return c;
+    
+    c->m_data = newUCharVector(m_length);
+    const UChar *from = m_data;
+    const UChar *fromend = from + m_length;
+    int outc = 0;
+    
+    UChar *to = c->m_data;
+    
+    while (true) {
+        while (from != fromend && isSpace(*from))
+            from++;
+        while (from != fromend && !isSpace(*from))
+            to[outc++] = *from++;
+        if (from != fromend)
+            to[outc++] = ' ';
+        else
+            break;
+    }
+    
+    if (outc > 0 && to[outc - 1] == ' ')
+        outc--;
+    
+    c->m_length = outc;
+    
+    return c;
+}
+
 static UBreakIterator* getWordBreakIterator(const UChar* string, int length)
 {
     // The locale is currently ignored when determining character cluster breaks.
@@ -557,7 +625,7 @@ int StringImpl::toInt(bool* ok) const
 
     // Allow leading spaces.
     for (; i != m_length; ++i)
-        if (!DeprecatedChar(m_data[i]).isSpace())
+        if (!isSpace(m_data[i]))
             break;
     
     // Allow sign.

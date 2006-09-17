@@ -124,7 +124,7 @@ void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position &po
     }
 
     // Save the result for later
-    m_cssStyle = styleText.deprecatedString().stripWhiteSpace();
+    m_cssStyle = styleText.stripWhiteSpace();
 }
 
 StyleChange::ELegacyHTMLStyles StyleChange::styleModeForParseMode(bool isQuirksMode)

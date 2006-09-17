@@ -316,7 +316,7 @@ static bool parseDocTypeDeclaration(const String& buffer,
 
         // We need to trim whitespace off the public identifier.
         publicID = buffer.substring(publicIDStart, publicIDEnd - publicIDStart);
-        publicID = publicID.deprecatedString().stripWhiteSpace();
+        publicID = publicID.stripWhiteSpace();
         *resultFlags |= PARSEMODE_HAVE_PUBLIC_ID;
     } else {
         if (containsString("system", buffer, index)) {

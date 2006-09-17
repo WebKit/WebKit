@@ -24,6 +24,7 @@
 
 #ifdef XSLT_SUPPORT
 
+#include "CString.h"
 #include "DocLoader.h"
 #include "Document.h"
 #include "Node.h"
@@ -149,7 +150,7 @@ void XSLStyleSheet::loadChildSheets()
     if (m_embedded) {
         // We have to locate (by ID) the appropriate embedded stylesheet element, so that we can walk the 
         // import/include list.
-        xmlAttrPtr idNode = xmlGetID(document(), (const xmlChar*)(href().deprecatedString().utf8().data()));
+        xmlAttrPtr idNode = xmlGetID(document(), (const xmlChar*)(href().utf8().data()));
         if (!idNode)
             return;
         stylesheetRoot = idNode->parent;
@@ -229,7 +230,7 @@ xmlDocPtr XSLStyleSheet::locateStylesheetSubResource(xmlDocPtr parentDoc, const 
                 // In order to ensure that libxml canonicalized both URLs, we get the original href
                 // string from the import rule and canonicalize it using libxml before comparing it
                 // with the URI argument.
-                DeprecatedCString importHref = import->href().deprecatedString().utf8();
+                CString importHref = import->href().utf8();
                 xmlChar* base = xmlNodeGetBase(parentDoc, (xmlNodePtr)parentDoc);
                 xmlChar* childURI = xmlBuildURI((const xmlChar*)(const char*)importHref, base);
                 bool equalURIs = xmlStrEqual(uri, childURI);

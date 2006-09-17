@@ -211,6 +211,20 @@ String String::upper() const
     return m_impl->upper();
 }
 
+String String::stripWhiteSpace() const
+{
+    if (!m_impl)
+        return String();
+    return m_impl->stripWhiteSpace();
+}
+
+String String::simplifyWhiteSpace() const
+{
+    if (!m_impl)
+        return String();
+    return m_impl->simplifyWhiteSpace();
+}
+
 String String::foldCase() const
 {
     if (!m_impl)

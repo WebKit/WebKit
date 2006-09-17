@@ -225,9 +225,9 @@ void SVGColor::setRGBColor(const String& rgbColor, ExceptionCode& ec)
         return;
     }
 
-    DeprecatedString parse = m_rgbColor.deprecatedString().stripWhiteSpace();
+    String parse = m_rgbColor.stripWhiteSpace();
     if (parse.startsWith("rgb(")) {
-        DeprecatedStringList colors = DeprecatedStringList::split(',', parse);
+        DeprecatedStringList colors = DeprecatedStringList::split(',', parse.deprecatedString());
         DeprecatedString r = colors[0].right((colors[0].length() - 4));
         DeprecatedString g = colors[1];
         DeprecatedString b = colors[2].left((colors[2].length() - 1));

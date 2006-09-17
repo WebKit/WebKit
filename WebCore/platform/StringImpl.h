@@ -107,6 +107,9 @@ public:
     StringImpl* capitalize(UChar previousCharacter) const;
     StringImpl* foldCase() const;
 
+    StringImpl* stripWhiteSpace() const;
+    StringImpl* simplifyWhiteSpace() const;
+
     int find(const char*, int index = 0, bool caseSensitive = true) const;
     int find(UChar, int index = 0) const;
     int find(const StringImpl*, int index, bool caseSensitive = true) const;

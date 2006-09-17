@@ -23,6 +23,7 @@
 
 #include "Clipboard.h"
 #include "ClipboardEvent.h"
+#include "CString.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -126,7 +127,7 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
             int lineNumber = exception->get(exec, "line")->toInt32(exec);
             String sourceURL = exception->get(exec, "sourceURL")->toString(exec);
             if (Interpreter::shouldPrintExceptions())
-                printf("(event handler):%s\n", message.deprecatedString().utf8().data());
+                printf("(event handler):%s\n", message.utf8().data());
             frame->addMessageToConsole(message, lineNumber, sourceURL);
             exec->clearException();
         } else {

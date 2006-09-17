@@ -335,7 +335,7 @@ bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
         (items[0]->hasLocalName(optionTag))) {
         HTMLOptionElement *option = static_cast<HTMLOptionElement*>(items[0]);
         if (option->value().isNull())
-            list.appendData(name(), option->text().deprecatedString().stripWhiteSpace());
+            list.appendData(name(), option->text().stripWhiteSpace());
         else
             list.appendData(name(), option->value());
         successful = true;

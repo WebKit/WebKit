@@ -469,7 +469,7 @@ String XMLHttpRequest::getStatusText() const
     if (codeStart == -1 || codeEnd == -1)
         return String();
   
-    return firstLine.substring(codeEnd + 1, endOfLine - (codeEnd + 1)).deprecatedString().stripWhiteSpace();
+    return firstLine.substring(codeEnd + 1, endOfLine - (codeEnd + 1)).stripWhiteSpace();
 }
 
 void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const KURL& finalURL, const DeprecatedString& headers)

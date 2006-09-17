@@ -140,9 +140,9 @@ void RenderPartObject::updateWidget()
       
       // If there was no URL or type defined in EMBED, try the OBJECT tag.
       if (url.isEmpty())
-          url = o->url;
+          url = o->m_url;
       if (serviceType.isEmpty())
-          serviceType = o->serviceType;
+          serviceType = o->m_serviceType;
       
       HashSet<StringImpl*, CaseInsensitiveHash> uniqueParamNames;
       
@@ -196,8 +196,8 @@ void RenderPartObject::updateWidget()
       }
       
       // If we still don't have a type, try to map from a specific CLASSID to a type.
-      if (serviceType.isEmpty() && !o->classId.isEmpty())
-          mapClassIdToServiceType(o->classId, serviceType);
+      if (serviceType.isEmpty() && !o->m_classId.isEmpty())
+          mapClassIdToServiceType(o->m_classId, serviceType);
       
       // If no URL and type, abort.
       if (url.isEmpty() && serviceType.isEmpty())

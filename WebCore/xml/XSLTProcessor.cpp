@@ -26,6 +26,7 @@
 #include "XSLTProcessor.h"
 
 #include "Cache.h"
+#include "CString.h"
 #include "DOMImplementation.h"
 #include "Decoder.h"
 #include "DocLoader.h"
@@ -160,8 +161,8 @@ static const char **xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& 
     XSLTProcessor::ParameterMap::iterator end = parameters.end();
     unsigned index = 0;
     for (XSLTProcessor::ParameterMap::iterator it = parameters.begin(); it != end; ++it) {
-        parameterArray[index++] = strdup(String(it->first.get()).deprecatedString().utf8().data());
-        parameterArray[index++] = strdup(String(it->second.get()).deprecatedString().utf8().data());
+        parameterArray[index++] = strdup(it->first.utf8());
+        parameterArray[index++] = strdup(it->second.utf8());
     }
     parameterArray[index] = 0;
 
@@ -363,21 +364,21 @@ RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node *sourceNode, Do
     return createFragmentFromSource(resultString, resultMIMEType, sourceNode, outputDoc);
 }
 
-void XSLTProcessor::setParameter(StringImpl *namespaceURI, StringImpl *localName, StringImpl *value)
+void XSLTProcessor::setParameter(const String& namespaceURI, const String& localName, const String& value)
 {
     // FIXME: namespace support?
     // should make a QualifiedName here but we'd have to expose the impl
     m_parameters.set(localName, value);
 }
 
-RefPtr<StringImpl> XSLTProcessor::getParameter(StringImpl *namespaceURI, StringImpl *localName) const
+String XSLTProcessor::getParameter(const String& namespaceURI, const String& localName) const
 {
     // FIXME: namespace support?
     // should make a QualifiedName here but we'd have to expose the impl
     return m_parameters.get(localName);
 }
 
-void XSLTProcessor::removeParameter(StringImpl *namespaceURI, StringImpl *localName)
+void XSLTProcessor::removeParameter(const String& namespaceURI, const String& localName)
 {
     // FIXME: namespace support?
     m_parameters.remove(localName);

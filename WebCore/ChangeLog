@@ -1,3 +1,79 @@
+2006-09-17  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        Add simplifyWhiteSpace and stripWhiteSpace to the String class. 
+        Change the XSLT Parameter Map to use Strings instead of StringImpls.
+        General cleanup.
+
+        * bindings/js/JSXSLTProcessor.cpp:
+        (KJS::XSLTProcessorProtoFunc::callAsFunction):
+        * bindings/js/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        * bindings/js/kjs_window.cpp:
+        (KJS::ScheduledAction::execute):
+        * css/MediaList.cpp:
+        (WebCore::MediaList::setMediaText):
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::init):
+        * html/HTMLDocument.cpp:
+        (WebCore::parseDocTypeDeclaration):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement):
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        (WebCore::HTMLObjectElement::attach):
+        (WebCore::HTMLObjectElement::setComplete):
+        (WebCore::HTMLObjectElement::detach):
+        (WebCore::HTMLObjectElement::recalcStyle):
+        (WebCore::HTMLObjectElement::childrenChanged):
+        (WebCore::HTMLObjectElement::isImageType):
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::value):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::appendFormData):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+        * ksvg2/svg/SVGColor.cpp:
+        (WebCore::SVGColor::setRGBColor):
+        * ksvg2/svg/SVGDescElement.cpp:
+        (WebCore::SVGDescElement::description):
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::stripWhiteSpace):
+        (WebCore::String::simplifyWhiteSpace):
+        * platform/StringImpl.cpp:
+        (WebCore::isSpace):
+        (WebCore::parseLength):
+        (WebCore::StringImpl::stripWhiteSpace):
+        (WebCore::StringImpl::simplifyWhiteSpace):
+        (WebCore::StringImpl::toInt):
+        * platform/StringImpl.h:
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::cocoaTypeFromMIMEType):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunNormalizeSpace::doEvaluate):
+        * xml/XPathGrammar.y:
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodeTestMatches):
+        * xml/XSLStyleSheet.cpp:
+        (WebCore::XSLStyleSheet::loadChildSheets):
+        (WebCore::XSLStyleSheet::locateStylesheetSubResource):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::xsltParamArrayFromParameterMap):
+        (WebCore::XSLTProcessor::setParameter):
+        (WebCore::XSLTProcessor::getParameter):
+        (WebCore::XSLTProcessor::removeParameter):
+        * xml/XSLTProcessor.h:
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::getStatusText):
+
 2006-09-17  David Hyatt  <hyatt@apple.com>
 
         Fix for bugzilla bugs 10895 and 6336, fieldsets misbehaving when floats

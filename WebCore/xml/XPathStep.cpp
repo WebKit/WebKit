@@ -219,7 +219,7 @@ NodeVector Step::nodeTestMatches(const NodeVector& nodes) const
 
         const int space = m_nodeTest.find(' ');
         if (space > -1)
-            param = m_nodeTest.deprecatedString().mid(space + 1);
+            param = m_nodeTest.substring(space + 1);
 
         for (unsigned i = 0; i < nodes.size(); i++) {
             Node* node = nodes[i].get();

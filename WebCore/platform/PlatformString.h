@@ -109,6 +109,9 @@ public:
     String lower() const;
     String upper() const;
 
+    String stripWhiteSpace() const;
+    String simplifyWhiteSpace() const;
+    
     // Return the string with case folded for case insensitive comparison.
     String foldCase() const;
 

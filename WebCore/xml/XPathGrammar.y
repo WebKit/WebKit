@@ -249,7 +249,7 @@ NodeTest:
     PI '(' LITERAL ')'
     {
         String s = *$1 + " " + *$3;
-        $$ = new String(s.deprecatedString().stripWhiteSpace());
+        $$ = new String(s.stripWhiteSpace());
         PARSER->deleteString($1);        
         PARSER->deleteString($3);
         PARSER->registerString($$);
