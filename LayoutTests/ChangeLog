@@ -1,3 +1,12 @@
+2006-09-17  David Hyatt  <hyatt@apple.com>
+
+        Adding layout test for bug 10899.
+
+        * fast/text/basic/generic-family-changes-expected.checksum: Added.
+        * fast/text/basic/generic-family-changes-expected.png: Added.
+        * fast/text/basic/generic-family-changes-expected.txt: Added.
+        * fast/text/basic/generic-family-changes.html: Added.
+
 2006-09-17  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Brady.
