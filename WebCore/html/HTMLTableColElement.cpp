@@ -29,6 +29,7 @@
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
 #include "RenderTableCol.h"
+#include "HTMLTableElement.h"
 
 namespace WebCore {
 
@@ -76,6 +77,15 @@ void HTMLTableColElement::parseMappedAttribute(MappedAttribute *attr)
             addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
     } else
         HTMLTablePartElement::parseMappedAttribute(attr);
+}
+
+// used by table columns and column groups to share style decls created by the enclosing table.
+CSSMutableStyleDeclaration* HTMLTableColElement::additionalAttributeStyleDecl()
+{
+    Node* p = parentNode();
+    while (p && !p->hasTagName(tableTag))
+        p = p->parentNode();
+    return hasLocalName(colgroupTag) && p ? static_cast<HTMLTableElement*>(p)->getSharedGroupDecl(false) : 0;
 }
 
 String HTMLTableColElement::align() const

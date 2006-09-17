@@ -66,13 +66,13 @@ public:
     virtual int tagPriority() const { return 9; }
     virtual bool checkDTD(const Node*);
 
-    HTMLTableCaptionElement* caption() const { return tCaption; }
+    HTMLTableCaptionElement* caption() const { return m_caption; }
     Node* setCaption(HTMLTableCaptionElement*);
 
-    HTMLTableSectionElement* tHead() const { return head; }
+    HTMLTableSectionElement* tHead() const { return m_head; }
     Node* setTHead(HTMLTableSectionElement*);
 
-    HTMLTableSectionElement* tFoot() const { return foot; }
+    HTMLTableSectionElement* tFoot() const { return m_foot; }
     Node* setTFoot(HTMLTableSectionElement*);
 
     Node* setTBody(HTMLTableSectionElement*);
@@ -123,24 +123,31 @@ public:
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(MappedAttribute*);
 
-    // Used to obtain either a solid or outset border decl.
+    // Used to obtain either a solid or outset border decl and to deal with the frame
+    // and rules attributes.
     virtual CSSMutableStyleDeclaration* additionalAttributeStyleDecl();
     CSSMutableStyleDeclaration* getSharedCellDecl();
+    CSSMutableStyleDeclaration* getSharedGroupDecl(bool rows);
 
     virtual void attach();
     
     virtual bool isURLAttribute(Attribute*) const;
 
-protected:
-    HTMLTableSectionElement* head;
-    HTMLTableSectionElement* foot;
-    HTMLTableSectionElement* firstBody;
-    HTMLTableCaptionElement* tCaption;
+    enum TableRules { UnsetRules, NoneRules, GroupsRules, RowsRules, ColsRules, AllRules };
 
-    bool m_noBorder     : 1;
-    bool m_solid        : 1;
-    // 14 bits unused
-    unsigned short padding;
+protected:
+    HTMLTableSectionElement* m_head;
+    HTMLTableSectionElement* m_foot;
+    HTMLTableSectionElement* m_firstBody;
+    HTMLTableCaptionElement* m_caption;
+
+    bool m_borderAttr;          // Sets a precise border width and creates an outset border for the table and for its cells.
+    bool m_borderColorAttr;     // Overrides the outset border and makes it solid for the table and cells instead.
+    bool m_frameAttr;           // Implies a thin border width if no border is set and then a certain set of solid/hidden borders based off the value.
+    TableRules m_rulesAttr;     // Implies a thin border width, a collapsing border model, and all borders on the table becoming set to hidden (if frame/border
+                                // are present, to none otherwise).
+   
+    unsigned short m_padding;
     friend class HTMLTableCellElement;
 };
 

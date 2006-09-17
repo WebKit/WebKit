@@ -41,7 +41,8 @@ public:
     virtual int tagPriority() const { return 8; }
     virtual bool checkDTD(const Node*);
     virtual ContainerNode* addChild(PassRefPtr<Node>);
-    
+    virtual CSSMutableStyleDeclaration* additionalAttributeStyleDecl();
+
     HTMLElement* insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 

@@ -41,7 +41,7 @@ public:
     virtual int tagPriority() const { return 7; }
     virtual bool checkDTD(const Node*);
     virtual ContainerNode* addChild(PassRefPtr<Node>);
-    
+
     int rowIndex() const;
     int sectionRowIndex() const;
 

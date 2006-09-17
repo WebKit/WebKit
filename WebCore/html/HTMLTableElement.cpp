@@ -44,20 +44,22 @@ using namespace HTMLNames;
 
 HTMLTableElement::HTMLTableElement(Document *doc)
     : HTMLElement(tableTag, doc)
-    , head(0)
-    , foot(0)
-    , firstBody(0)
-    , tCaption(0)
-    , m_noBorder(true)
-    , m_solid(false)
-    , padding(1)
+    , m_head(0)
+    , m_foot(0)
+    , m_firstBody(0)
+    , m_caption(0)
+    , m_borderAttr(false)
+    , m_borderColorAttr(false)
+    , m_frameAttr(false)
+    , m_rulesAttr(UnsetRules)
+    , m_padding(1)
 {
 }
 
 HTMLTableElement::~HTMLTableElement()
 {
-    if (firstBody)
-        firstBody->deref();
+    if (m_firstBody)
+        m_firstBody->deref();
 }
 
 bool HTMLTableElement::checkDTD(const Node* newChild)
@@ -72,40 +74,40 @@ bool HTMLTableElement::checkDTD(const Node* newChild)
 Node* HTMLTableElement::setCaption(HTMLTableCaptionElement* c)
 {
     ExceptionCode ec = 0;
-    if (Node* oc = tCaption)
+    if (Node* oc = m_caption)
         replaceChild(c, oc, ec);
     else
         insertBefore(c, firstChild(), ec);
-    tCaption = c;
-    return tCaption;
+    m_caption = c;
+    return m_caption;
 }
 
 Node* HTMLTableElement::setTHead(HTMLTableSectionElement* s)
 {
     ExceptionCode ec = 0;
-    if (Node* h = head)
+    if (Node* h = m_head)
         replaceChild(s, h, ec);
-    else if (foot)
-        insertBefore(s, foot, ec);
-    else if (firstBody)
-        insertBefore(s, firstBody, ec);
+    else if (m_foot)
+        insertBefore(s, m_foot, ec);
+    else if (m_firstBody)
+        insertBefore(s, m_firstBody, ec);
     else
         appendChild(s, ec);
-    head = s;
-    return head;
+    m_head = s;
+    return m_head;
 }
 
 Node* HTMLTableElement::setTFoot(HTMLTableSectionElement *s)
 {
     ExceptionCode ec = 0;
-    if (Node *f = foot)
+    if (Node *f = m_foot)
         replaceChild(s, f, ec);
-    else if (firstBody)
-        insertBefore(s, firstBody, ec);
+    else if (m_firstBody)
+        insertBefore(s, m_firstBody, ec);
     else
         appendChild(s, ec);
-    foot = s;
-    return foot;
+    m_foot = s;
+    return m_foot;
 }
 
 Node* HTMLTableElement::setTBody(HTMLTableSectionElement *s)
@@ -113,85 +115,85 @@ Node* HTMLTableElement::setTBody(HTMLTableSectionElement *s)
     ExceptionCode ec = 0;
     Node* r;
     s->ref();
-    if (Node *fb = firstBody) {
+    if (Node *fb = m_firstBody) {
         replaceChild(s, fb, ec);
         fb->deref();
         r = s;
     } else
         appendChild(s, ec);
-    firstBody = s;
-    return firstBody;
+    m_firstBody = s;
+    return m_firstBody;
 }
 
 HTMLElement *HTMLTableElement::createTHead()
 {
-    if (!head) {
+    if (!m_head) {
         ExceptionCode ec = 0;
-        head = new HTMLTableSectionElement(theadTag, document(), true /* implicit */);
-        if (foot)
-            insertBefore(head, foot, ec);
-        else if (firstBody)
-            insertBefore(head, firstBody, ec);
+        m_head = new HTMLTableSectionElement(theadTag, document(), true /* implicit */);
+        if (m_foot)
+            insertBefore(m_head, m_foot, ec);
+        else if (m_firstBody)
+            insertBefore(m_head, m_firstBody, ec);
         else
-            appendChild(head, ec);
+            appendChild(m_head, ec);
     }
-    return head;
+    return m_head;
 }
 
 void HTMLTableElement::deleteTHead()
 {
-    if (head) {
+    if (m_head) {
         ExceptionCode ec = 0;
-        head->ref();
-        HTMLElement::removeChild(head, ec);
-        head->deref();
+        m_head->ref();
+        HTMLElement::removeChild(m_head, ec);
+        m_head->deref();
     }
-    head = 0;
+    m_head = 0;
 }
 
 HTMLElement *HTMLTableElement::createTFoot()
 {
-    if (!foot) {
+    if (!m_foot) {
         ExceptionCode ec = 0;
-        foot = new HTMLTableSectionElement(tfootTag, document(), true /*implicit */);
-        if (firstBody)
-            insertBefore(foot, firstBody, ec);
+        m_foot = new HTMLTableSectionElement(tfootTag, document(), true /*implicit */);
+        if (m_firstBody)
+            insertBefore(m_foot, m_firstBody, ec);
         else
-            appendChild(foot, ec);
+            appendChild(m_foot, ec);
     }
-    return foot;
+    return m_foot;
 }
 
 void HTMLTableElement::deleteTFoot()
 {
-    if (foot) {
+    if (m_foot) {
         ExceptionCode ec = 0;
-        foot->ref();
-        HTMLElement::removeChild(foot, ec);
-        foot->deref();
+        m_foot->ref();
+        HTMLElement::removeChild(m_foot, ec);
+        m_foot->deref();
     }
-    foot = 0;
+    m_foot = 0;
 }
 
 HTMLElement *HTMLTableElement::createCaption()
 {
-    if (!tCaption) {
+    if (!m_caption) {
         ExceptionCode ec = 0;
-        tCaption = new HTMLTableCaptionElement(document());
-        insertBefore(tCaption, firstChild(), ec);
+        m_caption = new HTMLTableCaptionElement(document());
+        insertBefore(m_caption, firstChild(), ec);
     }
-    return tCaption;
+    return m_caption;
 }
 
 void HTMLTableElement::deleteCaption()
 {
-    if (tCaption) {
+    if (m_caption) {
         ExceptionCode ec = 0;
-        tCaption->ref();
-        HTMLElement::removeChild(tCaption, ec);
-        tCaption->deref();
+        m_caption->ref();
+        HTMLElement::removeChild(m_caption, ec);
+        m_caption->deref();
     }
-    tCaption = 0;
+    m_caption = 0;
 }
 
 HTMLElement *HTMLTableElement::insertRow(int index, ExceptionCode& ec)
@@ -200,7 +202,7 @@ HTMLElement *HTMLTableElement::insertRow(int index, ExceptionCode& ec)
     // (cf DOM2TS HTMLTableElement31 test)
     // (note: this is different from "if the table has no sections", since we can have
     // <TABLE><TR>)
-    if (!firstBody && !head && !foot)
+    if (!m_firstBody && !m_head && !m_foot)
         setTBody(new HTMLTableSectionElement(tbodyTag, document(), true /* implicit */));
 
     // IE treats index=-1 as default value meaning 'append after last'
@@ -214,8 +216,7 @@ HTMLElement *HTMLTableElement::insertRow(int index, ExceptionCode& ec)
     {
         // there could be 2 tfoot elements in the table. Only the first one is the "foot", that's why we have the more
         // complicated if statement below.
-        if (node != foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || node->hasTagName(tbodyTag)))
-        {
+        if (node != m_foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || node->hasTagName(tbodyTag))) {
             section = static_cast<HTMLTableSectionElement*>(node);
             lastSection = section;
             if (!append) {
@@ -228,8 +229,8 @@ HTMLElement *HTMLTableElement::insertRow(int index, ExceptionCode& ec)
             }
         }
     }
-    if (!found && foot)
-        section = static_cast<HTMLTableSectionElement*>(foot);
+    if (!found && m_foot)
+        section = static_cast<HTMLTableSectionElement*>(m_foot);
 
     // Index == 0 means "insert before first row in current section"
     // or "append after last row" (if there's no current section anymore)
@@ -255,13 +256,12 @@ void HTMLTableElement::deleteRow(int index, ExceptionCode& ec)
     bool found = false;
     for (; node ; node = node->nextSibling())
     {
-        if (node != foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || 
+        if (node != m_foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || 
             node->hasTagName(tbodyTag))) {
             section = static_cast<HTMLTableSectionElement*>(node);
             lastSection = section;
             int rows = section->numRows();
-            if (!lastRow)
-            {
+            if (!lastRow) {
                 if (rows > index) {
                     found = true;
                     break;
@@ -271,8 +271,8 @@ void HTMLTableElement::deleteRow(int index, ExceptionCode& ec)
         }
         section = 0L;
     }
-    if (!found && foot)
-        section = static_cast<HTMLTableSectionElement*>(foot);
+    if (!found && m_foot)
+        section = static_cast<HTMLTableSectionElement*>(m_foot);
 
     if (lastRow)
         lastSection->deleteRow(-1, ec);
@@ -301,15 +301,15 @@ ContainerNode* HTMLTableElement::addChild(PassRefPtr<Node> child)
 
     ContainerNode* container = HTMLElement::addChild(child.get());
     if (container) {
-        if (!tCaption && child->hasTagName(captionTag))
-            tCaption = static_cast<HTMLTableCaptionElement*>(child.get());
-        else if (!head && child->hasTagName(theadTag))
-            head = static_cast<HTMLTableSectionElement*>(child.get());
-        else if (!foot && child->hasTagName(tfootTag))
-            foot = static_cast<HTMLTableSectionElement*>(child.get());
-        else if (!firstBody && child->hasTagName(tbodyTag)) {
-            firstBody = static_cast<HTMLTableSectionElement*>(child.get());
-            firstBody->ref();
+        if (!m_caption && child->hasTagName(captionTag))
+            m_caption = static_cast<HTMLTableCaptionElement*>(child.get());
+        else if (!m_head && child->hasTagName(theadTag))
+            m_head = static_cast<HTMLTableSectionElement*>(child.get());
+        else if (!m_foot && child->hasTagName(tfootTag))
+            m_foot = static_cast<HTMLTableSectionElement*>(child.get());
+        else if (!m_firstBody && child->hasTagName(tbodyTag)) {
+            m_firstBody = static_cast<HTMLTableSectionElement*>(child.get());
+            m_firstBody->ref();
         }
     }
     return container;
@@ -319,9 +319,9 @@ void HTMLTableElement::childrenChanged()
 {
     HTMLElement::childrenChanged();
     
-    if (firstBody && firstBody->parentNode() != this) {
-        firstBody->deref();
-        firstBody = 0;
+    if (m_firstBody && m_firstBody->parentNode() != this) {
+        m_firstBody->deref();
+        m_firstBody = 0;
     }
 } 
 
@@ -343,7 +343,7 @@ bool HTMLTableElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
         return false;
     }
     
-    if (attrName == bordercolorAttr) {
+    if (attrName == bordercolorAttr || attrName == frameAttr || attrName == rulesAttr) {
         result = eUniversal;
         return true;
     }
@@ -356,8 +356,8 @@ bool HTMLTableElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
     if (attrName == alignAttr) {
         result = eTable;
         return false;
-    } 
-    
+    }
+
     return HTMLElement::mapToEntry(attrName, result);
 }
 
@@ -368,55 +368,110 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == heightAttr)
         addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
     else if (attr->name() == borderAttr)  {
-        m_noBorder = true;
+        m_borderAttr = true;
         if (attr->decl()) {
             RefPtr<CSSValue> val = attr->decl()->getPropertyCSSValue(CSS_PROP_BORDER_LEFT_WIDTH);
             if (val && val->isPrimitiveValue()) {
                 CSSPrimitiveValue* primVal = static_cast<CSSPrimitiveValue*>(val.get());
-                m_noBorder = !primVal->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
+                m_borderAttr = primVal->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
             }
         } else if (!attr->isNull()) {
-            // ### this needs more work, as the border value is not only
-            //     the border of the box, but also between the cells
             int border = 0;
             if (attr->isEmpty())
                 border = 1;
             else
                 border = attr->value().toInt();
-#ifdef DEBUG_DRAW_BORDER
-            border=1;
-#endif
-            m_noBorder = !border;
+            m_borderAttr = border;
             addCSSLength(attr, CSS_PROP_BORDER_WIDTH, String::number(border));
         }
     } else if (attr->name() == bgcolorAttr)
         addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
     else if (attr->name() == bordercolorAttr) {
-        m_solid = attr->decl();
+        m_borderColorAttr = attr->decl();
         if (!attr->decl() && !attr->isEmpty()) {
             addCSSColor(attr, CSS_PROP_BORDER_COLOR, attr->value());
-            addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
-            m_solid = true;
+            m_borderColorAttr = true;
         }
     } else if (attr->name() == backgroundAttr) {
         String url = parseURL(attr->value());
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, document()->completeURL(url));
     } else if (attr->name() == frameAttr) {
+        // Cache the value of "frame" so that the table can examine it later.
+        m_frameAttr = false;
+        
+        // Whether or not to hide the top/right/bottom/left borders.
+        const int cTop = 0;
+        const int cRight = 1;
+        const int cBottom = 2;
+        const int cLeft = 3;
+        bool borders[4] = { false, false, false, false };
+        
+        // void, above, below, hsides, vsides, lhs, rhs, box, border
+        if (equalIgnoringCase(attr->value(), "void"))
+            m_frameAttr = true;
+        else if (equalIgnoringCase(attr->value(), "above")) {
+            m_frameAttr = true;
+            borders[cTop] = true;
+        } else if (equalIgnoringCase(attr->value(), "below")) {
+            m_frameAttr = true;
+            borders[cBottom] = true;
+        } else if (equalIgnoringCase(attr->value(), "hsides")) {
+            m_frameAttr = true;
+            borders[cTop] = borders[cBottom] = true;
+        } else if (equalIgnoringCase(attr->value(), "vsides")) {
+            m_frameAttr = true;
+            borders[cLeft] = borders[cRight] = true;
+        } else if (equalIgnoringCase(attr->value(), "lhs")) {
+            m_frameAttr = true;
+            borders[cLeft] = true;
+        } else if (equalIgnoringCase(attr->value(), "rhs")) {
+            m_frameAttr = true;
+            borders[cRight] = true;
+        } else if (equalIgnoringCase(attr->value(), "box") ||
+                   equalIgnoringCase(attr->value(), "border")) {
+            m_frameAttr = true;
+            borders[cTop] = borders[cBottom] = borders[cLeft] = borders[cRight] = true;
+        }
+        
+        // Now map in the border styles of solid and hidden respectively.
+        if (m_frameAttr) {
+            addCSSProperty(attr, CSS_PROP_BORDER_TOP_WIDTH, CSS_VAL_THIN);
+            addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_WIDTH, CSS_VAL_THIN);
+            addCSSProperty(attr, CSS_PROP_BORDER_LEFT_WIDTH, CSS_VAL_THIN);
+            addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_WIDTH, CSS_VAL_THIN);
+            addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, borders[cTop] ? CSS_VAL_SOLID : CSS_VAL_HIDDEN);
+            addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, borders[cBottom] ? CSS_VAL_SOLID : CSS_VAL_HIDDEN);
+            addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, borders[cLeft] ? CSS_VAL_SOLID : CSS_VAL_HIDDEN);
+            addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, borders[cRight] ? CSS_VAL_SOLID : CSS_VAL_HIDDEN);
+        }
     } else if (attr->name() == rulesAttr) {
+        // Cache the value of "rules" so that the pieces of the table can examine it later.
+        m_rulesAttr = UnsetRules;
+        if (equalIgnoringCase(attr->value(), "none"))
+            m_rulesAttr = NoneRules;
+        else if (equalIgnoringCase(attr->value(), "groups"))
+            m_rulesAttr = GroupsRules;
+        else if (equalIgnoringCase(attr->value(), "rows"))
+            m_rulesAttr = RowsRules;
+        if (equalIgnoringCase(attr->value(), "cols"))
+            m_rulesAttr = ColsRules;
+        if (equalIgnoringCase(attr->value(), "all"))
+            m_rulesAttr = AllRules;
+        
+        // The presence of a valid rules attribute causes border collapsing to be enabled.
+        if (m_rulesAttr != UnsetRules)
+            addCSSProperty(attr, CSS_PROP_BORDER_COLLAPSE, CSS_VAL_COLLAPSE);
     } else if (attr->name() == cellspacingAttr) {
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP_BORDER_SPACING, attr->value());
     } else if (attr->name() == cellpaddingAttr) {
         if (!attr->value().isEmpty())
-            padding = max(0, attr->value().toInt());
+            m_padding = max(0, attr->value().toInt());
         else
-            padding = 1;
+            m_padding = 1;
         if (renderer() && renderer()->isTable()) {
-            static_cast<RenderTable*>(renderer())->setCellPadding(padding);
+            static_cast<RenderTable*>(renderer())->setCellPadding(m_padding);
             if (!renderer()->needsLayout())
                 renderer()->setNeedsLayout(true);
         }
@@ -440,9 +495,10 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute *attr)
 
 CSSMutableStyleDeclaration* HTMLTableElement::additionalAttributeStyleDecl()
 {
-    if (m_noBorder)
+    if ((!m_borderAttr && !m_borderColorAttr) || m_frameAttr)
         return 0;
-    MappedAttribute attr(tableborderAttr, m_solid ? "solid" : "outset");
+        
+    MappedAttribute attr(tableborderAttr, m_borderColorAttr ? "solid" : "outset");
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, &attr);
     if (!decl) {
         decl = new CSSMappedAttributeDeclaration(0);
@@ -452,7 +508,7 @@ CSSMutableStyleDeclaration* HTMLTableElement::additionalAttributeStyleDecl()
         
         decl->ref(); // This single ref pins us in the table until the document dies.
 
-        int v = m_solid ? CSS_VAL_SOLID : CSS_VAL_OUTSET;
+        int v = m_borderColorAttr ? CSS_VAL_SOLID : CSS_VAL_OUTSET;
         decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, v, false);
         decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, v, false);
         decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, v, false);
@@ -468,7 +524,10 @@ CSSMutableStyleDeclaration* HTMLTableElement::additionalAttributeStyleDecl()
 
 CSSMutableStyleDeclaration* HTMLTableElement::getSharedCellDecl()
 {
-    MappedAttribute attr(cellborderAttr, m_noBorder ? "none" : (m_solid ? "solid" : "inset"));
+    MappedAttribute attr(cellborderAttr, m_rulesAttr == AllRules ? "solid-all" : 
+                                         (m_rulesAttr == ColsRules ? "solid-cols" : 
+                                         (m_rulesAttr == RowsRules ? "solid-rows" : (!m_borderAttr ? "none" : (m_borderColorAttr ? "solid" : "inset")))));
+
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, &attr);
     if (!decl) {
         decl = new CSSMappedAttributeDeclaration(0);
@@ -476,19 +535,31 @@ CSSMutableStyleDeclaration* HTMLTableElement::getSharedCellDecl()
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
         
-        decl->ref(); // This single ref pins us in the table until the table dies.
+        decl->ref(); // This single ref pins us in the table until the document dies.
         
-        if (m_noBorder)
-            decl->setProperty(CSS_PROP_BORDER_WIDTH, "0", false);
-        else {
+        if (m_rulesAttr == ColsRules) {
+            decl->setProperty(CSS_PROP_BORDER_LEFT_WIDTH, CSS_VAL_THIN, false);
+            decl->setProperty(CSS_PROP_BORDER_RIGHT_WIDTH, CSS_VAL_THIN, false);
+            decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID, false);
+            decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID, false);
+            decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
+        } else if (m_rulesAttr == RowsRules) {
+            decl->setProperty(CSS_PROP_BORDER_TOP_WIDTH, CSS_VAL_THIN, false);
+            decl->setProperty(CSS_PROP_BORDER_BOTTOM_WIDTH, CSS_VAL_THIN, false);
+            decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID, false);
+            decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID, false);
+            decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
+        } else if (m_borderAttr || m_rulesAttr == AllRules) {
             decl->setProperty(CSS_PROP_BORDER_WIDTH, "1px", false);
-            int v = m_solid ? CSS_VAL_SOLID : CSS_VAL_INSET;
+             int v = (m_borderColorAttr || m_rulesAttr == AllRules) ? CSS_VAL_SOLID : CSS_VAL_INSET;
             decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, v, false);
             decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, v, false);
             decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, v, false);
             decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, v, false);
             decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
         }
+        else
+            decl->setProperty(CSS_PROP_BORDER_WIDTH, "0", false);
 
         setMappedAttributeDecl(ePersistent, &attr, decl);
         decl->setParent(0);
@@ -498,12 +569,48 @@ CSSMutableStyleDeclaration* HTMLTableElement::getSharedCellDecl()
     return decl;
 }
 
+CSSMutableStyleDeclaration* HTMLTableElement::getSharedGroupDecl(bool rows)
+{
+    if (m_rulesAttr != GroupsRules)
+        return 0;
+
+    MappedAttribute attr(rulesAttr, rows ? "rowgroups" : "colgroups");
+    CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, &attr);
+    if (!decl) {
+        decl = new CSSMappedAttributeDeclaration(0);
+        decl->setParent(document()->elementSheet());
+        decl->setNode(this);
+        decl->setStrictParsing(false); // Mapped attributes are just always quirky.
+        
+        decl->ref(); // This single ref pins us in the table until the document dies.
+        
+        if (rows) {
+            decl->setProperty(CSS_PROP_BORDER_TOP_WIDTH, CSS_VAL_THIN, false);
+            decl->setProperty(CSS_PROP_BORDER_BOTTOM_WIDTH, CSS_VAL_THIN, false);
+            decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID, false);
+            decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID, false);
+        } else {
+            decl->setProperty(CSS_PROP_BORDER_LEFT_WIDTH, CSS_VAL_THIN, false);
+            decl->setProperty(CSS_PROP_BORDER_RIGHT_WIDTH, CSS_VAL_THIN, false);
+            decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID, false);
+            decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID, false);
+        }
+
+        setMappedAttributeDecl(ePersistent, &attr, decl);
+        decl->setParent(0);
+        decl->setNode(0);
+        decl->setMappedState(ePersistent, attr.name(), attr.value());
+    }
+
+    return decl;
+}
+
 void HTMLTableElement::attach()
 {
     assert(!m_attached);
     HTMLElement::attach();
     if (renderer() && renderer()->isTable())
-        static_cast<RenderTable*>(renderer())->setCellPadding(padding);
+        static_cast<RenderTable*>(renderer())->setCellPadding(m_padding);
 }
 
 bool HTMLTableElement::isURLAttribute(Attribute *attr) const

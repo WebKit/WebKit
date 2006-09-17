@@ -30,6 +30,7 @@
 #include "HTMLCollection.h"
 #include "HTMLNames.h"
 #include "HTMLTableRowElement.h"
+#include "HTMLTableElement.h"
 #include "NodeList.h"
 
 namespace WebCore {
@@ -60,6 +61,16 @@ ContainerNode* HTMLTableSectionElement::addChild(PassRefPtr<Node> child)
     }
 
     return HTMLTablePartElement::addChild(child);
+}
+
+// used by table row groups to share style decls created by the enclosing table.
+CSSMutableStyleDeclaration* HTMLTableSectionElement::additionalAttributeStyleDecl()
+{
+    Node* p = parentNode();
+    while (p && !p->hasTagName(tableTag))
+        p = p->parentNode();
+
+    return p ?  static_cast<HTMLTableElement*>(p)->getSharedGroupDecl(true) : 0;
 }
 
 // these functions are rather slow, since we need to get the row at
