@@ -1,6 +1,6 @@
 2006-09-17  David Hyatt  <hyatt@apple.com>
 
-        Fix for bugzilla bug 4129, font size wrong for <tt> elements that
+        Fix for bugzilla bug 4192, font size wrong for <tt> elements that
         specify their own new font-family list.  Make sure to always
         reset the generic family along with the family list when mapping in
         new font-family values.
