@@ -29,7 +29,6 @@
 #import "WebIconDatabaseBridge.h"
 
 #import "WebIconDatabasePrivate.h"
-#import "WebIconLoader.h"
 #import <JavaScriptCore/Assertions.h>
 
 @implementation WebIconDatabaseBridge
@@ -45,49 +44,18 @@
 - (id)_init
 {
     self = [super init];
-    if (!self)
-        return nil;
-    cachedLoaders = [[NSMutableDictionary alloc] init];
     return self;
-}
-
-- (void)loadIconFromURL:(NSString *)iconURL
-{
-    if ([cachedLoaders valueForKey:iconURL])
-        return;
-    
-    NSURL *url = [[NSURL alloc] initWithString:iconURL];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60];
-    [url release];
-    
-    WebIconLoader *iconLoader = [[WebIconLoader alloc] initWithRequest:request];
-
-    [iconLoader loadWithRequest:request];
-    [cachedLoaders setValue:iconLoader forKey:iconURL];
-    [iconLoader release];
-    [request release];
-}
-
-- (void)releaseCachedLoaderForIconURL:(NSString*)iconURL
-{
-    WebIconLoader *iconLoader = [cachedLoaders valueForKey:iconURL];
-    if (iconLoader) {
-        [iconLoader stopLoading];
-        [cachedLoaders removeObjectForKey:iconURL];
-    }
 }
 
 // FIXME rdar://4668102 - This is a likely place to add an NSNotification here to notify the app of the updated icon
 - (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL
 {
-    [self releaseCachedLoaderForIconURL:iconURL];
     [super _setIconData:data forIconURL:iconURL];
 }
 
 // FIXME rdar://4668102 - This is a likely place to add an NSNotification here to notify the app of the updated icon
 - (void)_setHaveNoIconForIconURL:(NSString *)iconURL
 {
-    [self releaseCachedLoaderForIconURL:iconURL];
     [super _setHaveNoIconForIconURL:iconURL];
 }
 

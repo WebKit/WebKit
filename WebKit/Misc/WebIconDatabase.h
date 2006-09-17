@@ -52,7 +52,6 @@ extern NSSize WebIconLargeSize;  // 128 x 128
         - icon update notification
         
         Uses:
-        - WebIconLoader to cache icon images
         - UI elements to retrieve icons that represent site URLs.
         - Save icons to disk for later use.
  

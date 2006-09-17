@@ -33,17 +33,6 @@
 
 using namespace WebCore;
 
-namespace WebCore {
-
-void IconDatabase::loadIconFromURL(const String& url)
-{
-    if (url.isEmpty())
-        return;
-    [[WebCoreIconDatabaseBridge sharedInstance] loadIconFromURL:(NSString *)url];
-}
-
-}
-
 @implementation WebCoreIconDatabaseBridge
 
 - (BOOL)openSharedDatabaseWithPath:(NSString *)path

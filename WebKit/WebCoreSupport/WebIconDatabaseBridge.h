@@ -30,6 +30,5 @@
 
 @interface WebIconDatabaseBridge : WebCoreIconDatabaseBridge <WebCoreIconDatabaseBridge>
 {
-    NSMutableDictionary* cachedLoaders;
 }
 @end

@@ -31,7 +31,6 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebIconLoader.h>
 #import <WebKit/WebMainResourceLoader.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebViewInternal.h>
@@ -65,29 +64,10 @@
     [mainResourceLoader release];
     [subresourceLoaders release];
     [plugInStreamLoaders release];
-    [iconLoader release];
     [dataSource release];
     [provisionalDataSource release];
     
     [super dealloc];
-}
-
-- (BOOL)hasIconLoader
-{
-    return iconLoader != nil;
-}
-
-- (void)loadIconWithRequest:(NSURLRequest *)request
-{
-    ASSERT(!iconLoader);
-    iconLoader = [[WebIconLoader alloc] initWithRequest:request];
-    [iconLoader setFrameLoader:self];
-    [iconLoader loadWithRequest:request];
-}
-
-- (void)stopLoadingIcon
-{
-    [iconLoader stopLoading];
 }
 
 - (void)addPlugInStreamLoader:(WebLoader *)loader
@@ -307,17 +287,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _setState:WebFrameStateComplete];
 }
 
-- (void)clearIconLoader
-{
-    [iconLoader release];
-    iconLoader = nil;
-}
-
 - (void)commitProvisionalLoad
 {
     [self stopLoadingSubresources];
     [self stopLoadingPlugIns];
-    [self clearIconLoader];
 
     [self _setDataSource:provisionalDataSource];
     [self _setProvisionalDataSource:nil];
@@ -509,17 +482,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self release];
 }
 
-- (void)_updateIconDatabaseWithURL:(NSURL *)iconURL
-{
-    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
-    
-    WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
-    
-    // Bind the URL of the original request and the final URL to the icon URL.
-    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[[self activeDataSource] _URL] _web_originalDataAsString]];
-    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[[[self activeDataSource] _originalRequest] URL] _web_originalDataAsString]];    
-}
-
 - (void)_notifyIconChanged:(NSURL *)iconURL
 {
     ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
@@ -534,12 +496,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                                      forFrame:webFrame];
     
     [[webFrame webView] _didChangeValueForKey:_WebMainFrameIconKey];
-}
-
-- (void)_iconLoaderReceivedPageIcon:(NSURL *)iconURL
-{
-    [self _updateIconDatabaseWithURL:iconURL];
-    [self _notifyIconChanged:iconURL];
 }
 
 - (NSURL *)_URL

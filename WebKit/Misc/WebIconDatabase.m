@@ -269,11 +269,6 @@ NSSize WebIconLargeSize = {128, 128};
                                                       userInfo:userInfo];
 }
 
-- (void)loadIconFromURL:(NSString *)iconURL
-{
-    [_private->databaseBridge loadIconFromURL:iconURL];
-}
-
 @end
 
 @implementation WebIconDatabase (WebInternal)

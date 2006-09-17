@@ -759,6 +759,10 @@ void Frame::endIfNotLoading()
         // last one to complete.
         checkCompleted();
     
+    // FIXME - Right now, we kick off the icon loader when the frame is done receiving all its main resource.
+    // We could kick off the icon loader after we're done parsing the HEAD element, if that becomes convinient to find
+    // at a future date
+    
     // Don't load an icon if -
     // 1) This is not the main frame 
     // 2) The database is disabled

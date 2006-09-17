@@ -51,8 +51,6 @@
 @interface WebDataSource (WebInternal)
 - (void)_setTitle:(NSString *)title;
 - (NSString *)_overrideEncoding;
-- (void)_setIconURL:(NSURL *)URL;
-- (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType;
 - (void)_setOverrideEncoding:(NSString *)overrideEncoding;
 - (void)_addToUnarchiveState:(WebArchive *)archive;
 - (NSURL *)_URLForHistory;

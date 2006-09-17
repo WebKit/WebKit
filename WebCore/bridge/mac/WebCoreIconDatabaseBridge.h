@@ -66,7 +66,6 @@ typedef WebCore::IconDatabase WebCoreIconDatabase;
 
 @protocol WebCoreIconDatabaseBridge
 + (WebCoreIconDatabaseBridge *)sharedInstance;
-- (void)loadIconFromURL:(NSString *)iconURL;
 @end
 
 // This interface definition allows those who hold a WebCoreIconDatabaseBridge * to call all the methods

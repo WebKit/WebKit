@@ -1705,18 +1705,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (void)notifyIconChanged:(NSURL*)iconURL
 {
-    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
-    ASSERT(_frame == [[_frame webView] mainFrame]);
-        
-    [[_frame webView] _willChangeValueForKey:_WebMainFrameIconKey];
-    
-    NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[_frame _frameLoader] activeDataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
-    
-    [[[_frame webView] _frameLoadDelegateForwarder] webView:[_frame webView]
-                                               didReceiveIcon:icon
-                                                     forFrame:_frame];
-    
-    [[_frame webView] _didChangeValueForKey:_WebMainFrameIconKey];
+    [[_frame _frameLoader] _notifyIconChanged:iconURL];
 }
 
 - (NSURL*)originalRequestURL

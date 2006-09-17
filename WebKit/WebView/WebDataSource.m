@@ -117,9 +117,7 @@
     BOOL representationFinishedLoading;
     
     BOOL defersCallbacks;
-    
-    NSURL *iconURL;
-    
+        
     // The action that triggered loading of this data source -
     // we keep this around for the benefit of the various policy
     // handlers.
@@ -163,7 +161,6 @@
     [pageTitle release];
     [response release];
     [mainDocumentError release];
-    [iconURL release];
     [triggeringAction release];
     [lastCheckedRequest release];
     [responses release];
@@ -185,10 +182,6 @@
     [_private->representation release];
     _private->representation = [representation retain];
     _private->representationFinishedLoading = NO;
-}
-
-- (void)_loadIcon
-{
 }
 
 - (NSError *)_cancelledError
@@ -786,11 +779,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 // but not loads initiated by child frames' data sources -- that's the WebFrame's job.
 - (void)_stopLoading
 {
-    // Always attempt to stop the icon loader because it may still be loading after the data source
+    // Always attempt to stop the bridge/part because it may still be loading/parsing after the data source
     // is done loading and not stopping it can cause a world leak.
-    [[_private->webFrame _frameLoader] stopLoadingIcon];
-    
-    // The same goes for the bridge/part, which may still be parsing.
     if (_private->committed)
         [[self _bridge] stopLoading];
     
@@ -869,11 +859,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     _private->primaryLoadComplete = flag;
     
     if (flag) {
-        // FIXME: We could actually load it as soon as we've parsed
-        // the HEAD section, or determined there isn't one - but
-        // there's no callback for that.
-        [self _loadIcon];
-        
         if ([[_private->webFrame _frameLoader] isLoadingMainResource]) {
             [_private->loadState setMainResourceData:[[_private->webFrame _frameLoader] mainResourceData]];
             [[_private->webFrame _frameLoader] releaseMainResourceLoader];
@@ -946,22 +931,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     NSString *copy = [overrideEncoding copy];
     [_private->overrideEncoding release];
     _private->overrideEncoding = copy;
-}
-
-- (void)_setIconURL:(NSURL *)URL
-{
-    // Lower priority than typed icon, so ignore this if we already have an iconURL.
-    if (_private->iconURL == nil) {
-        [_private->iconURL release];
-        _private->iconURL = [URL retain];
-    }
-}
-
-- (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType
-{
-    // FIXME: Should check to make sure the type is one we know how to handle.
-    [_private->iconURL release];
-    _private->iconURL = [URL retain];
 }
 
 - (NSString *)_overrideEncoding
