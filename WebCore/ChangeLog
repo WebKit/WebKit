@@ -1,3 +1,13 @@
+2006-09-17  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Sarge
+
+        IconLoader now gracefully handles the condition where there's no document in the frame
+        (ie. PDFs)
+
+        * loader/icon/IconLoader.cpp:
+        (IconLoader::startLoading):
+
 2006-09-17  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 10899, rework how CSS keywords work to be smarter about

@@ -64,8 +64,12 @@ void IconLoader::startLoading()
     m_httpStatusCode = 0;
     m_resourceLoader = new ResourceLoader(this, "GET", m_frame->iconURL());
     
-    ASSERT(m_frame->document());
-    if (!m_resourceLoader->start(m_frame->document()->docLoader())) {
+    // A frame may be documentless - one example is viewing a PDF directly
+    if (!m_frame->document()) {
+        // FIXME - http://bugzilla.opendarwin.org/show_bug.cgi?id=10902
+        // Once the loader infrastructure will cleanly let us load an icon without a DocLoader, we can implement this
+        LOG(IconDatabase, "Documentless-frame - icon won't be loaded");
+    } else if (!m_resourceLoader->start(m_frame->document()->docLoader())) {
         LOG_ERROR("Failed to start load for icon at url %s", m_frame->iconURL().url().ascii());
         m_resourceLoader = 0;
     }
