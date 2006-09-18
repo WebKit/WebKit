@@ -1,3 +1,12 @@
+2006-09-18  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10903
+        Yet Another Objective-C Bindings Patch
+
+        * MigrateHeaders.make:
+
 2006-09-17  David Harrison  <harrison@apple.com>
 
         Reviewed by John Sullivan.

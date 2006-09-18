@@ -34,27 +34,13 @@
 #import "FoundationExtras.h"
 #import "FrameView.h"
 #import "HTMLDocument.h"
-#import "HTMLFormElement.h"
-#import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
-#import "HTMLNames.h"
 #import "HTMLObjectElement.h"
-#import "HTMLOptionsCollection.h"
-#import "HTMLSelectElement.h"
-#import "HTMLTableCaptionElement.h"
-#import "HTMLTableCellElement.h"
-#import "HTMLTableElement.h"
-#import "HTMLTableSectionElement.h"
 #import "KURL.h"
-#import "NameNodeList.h"
 #import "Range.h"
 #import "RenderTextControl.h"
 #import "csshelper.h"
 #import "markup.h"
-
-using namespace WebCore;
-using namespace HTMLNames;
-
 
 //------------------------------------------------------------------------------------------
 // DOMHTMLDocument
@@ -78,7 +64,7 @@ using namespace HTMLNames;
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
-    NSURL *baseURL = KURL([self _document]->completeURL(parseURL(baseURLString)).deprecatedString()).getNSURL();
+    NSURL *baseURL = WebCore::KURL([self _document]->completeURL(WebCore::parseURL(baseURLString)).deprecatedString()).getNSURL();
     return [self createDocumentFragmentWithMarkupString:markupString baseURL:baseURL];
 }
 
@@ -122,19 +108,17 @@ using namespace HTMLNames;
 
 #pragma mark DOM EXTENSIONS
 
-// These #imports and "usings" are used only by viewForElement and should be deleted 
+// This #import is used only by viewForElement and should be deleted 
 // when that function goes away.
 #import "RenderWidget.h"
-using WebCore::RenderObject;
-using WebCore::RenderWidget;
 
 // This function is used only by the two FormAutoFillTransition categories, and will go away
 // as soon as possible.
 static NSView *viewForElement(DOMElement *element)
 {
-    RenderObject *renderer = [element _element]->renderer();
+    WebCore::RenderObject *renderer = [element _element]->renderer();
     if (renderer && renderer->isWidget()) {
-        Widget *widget = static_cast<const RenderWidget*>(renderer)->widget();
+        WebCore::Widget *widget = static_cast<const WebCore::RenderWidget*>(renderer)->widget();
         if (widget) {
             widget->populate();
             return widget->getView();
@@ -188,9 +172,9 @@ static NSView *viewForElement(DOMElement *element)
 
 - (void)_replaceCharactersInRange:(NSRange)targetRange withString:(NSString *)replacementString selectingFromIndex:(int)index
 {
-    HTMLInputElement* inputElement = [self _HTMLInputElement];
+    WebCore::HTMLInputElement* inputElement = [self _HTMLInputElement];
     if (inputElement) {
-        String newValue = inputElement->value().replace(targetRange.location, targetRange.length, replacementString);
+        WebCore::String newValue = inputElement->value().replace(targetRange.location, targetRange.length, replacementString);
         inputElement->setValue(newValue);
         inputElement->setSelectionRange(index, newValue.length());
     }
@@ -198,7 +182,7 @@ static NSView *viewForElement(DOMElement *element)
 
 - (NSRange)_selectedRange
 {
-    HTMLInputElement* inputElement = [self _HTMLInputElement];
+    WebCore::HTMLInputElement* inputElement = [self _HTMLInputElement];
     if (inputElement) {
         int start = inputElement->selectionStart();
         int end = inputElement->selectionEnd();
@@ -212,7 +196,7 @@ static NSView *viewForElement(DOMElement *element)
     // This notifies the input element that the content has been autofilled
     // This allows WebKit to obey the -webkit-autofill pseudo style, which
     // changes the background color.
-    HTMLInputElement* inputElement = [self _HTMLInputElement];
+    WebCore::HTMLInputElement* inputElement = [self _HTMLInputElement];
     if (inputElement)
         inputElement->setAutofilled(filled);
 }

@@ -1,3 +1,130 @@
+2006-09-18  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10903
+        Yet Another Objective-C Bindings Patch
+
+        - Whitespace cleanup for IDLParser.pm
+
+        - Split DOMException, DOMRangeException, DOMXPathException, DOMEventsException
+          and DOMAbstractView into their own files.
+
+        - Remove private method [DOMRGBColor _color] from DOMPrivate.h as
+          it is not used and a public method is available now.
+
+        - Remove internal method [DOMDocument _ownerElement] from DOMInternal.h
+          as it not used.
+
+        - Auto-generate method isContentEditable for DOMNode.
+
+        - General cleanup of bindings code including removing unneeded #imports
+          and whitespace cleanup
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (addElementClass):
+        (elementClass):
+        (-[DOMNode _initWithNode:WebCore::]):
+        (+[DOMNode _nodeWith:WebCore::]):
+        (-[DOMNode WebCore::]):
+        (-[DOMNode KJS::Bindings::]):
+        (-[DOMNode addEventListener:::]):
+        (-[DOMNode removeEventListener:::]):
+        (-[DOMNode dispatchEvent:]):
+        (-[DOMElement image]):
+        (-[DOMElement _font]):
+        (-[DOMElement _imageTIFFRepresentation]):
+        (-[DOMElement _getURLAttribute:]):
+        (-[DOMElement _NPObject]):
+        (-[DOMElement isFocused]):
+        (-[DOMRange dealloc]):
+        (-[DOMRange finalize]):
+        (-[DOMRange description]):
+        (-[DOMRange startContainer]):
+        (-[DOMRange startOffset]):
+        (-[DOMRange endContainer]):
+        (-[DOMRange endOffset]):
+        (-[DOMRange collapsed]):
+        (-[DOMRange commonAncestorContainer]):
+        (-[DOMRange setStart::]):
+        (-[DOMRange setEnd::]):
+        (-[DOMRange setStartBefore:]):
+        (-[DOMRange setStartAfter:]):
+        (-[DOMRange setEndBefore:]):
+        (-[DOMRange setEndAfter:]):
+        (-[DOMRange collapse:]):
+        (-[DOMRange selectNode:]):
+        (-[DOMRange selectNodeContents:]):
+        (-[DOMRange compareBoundaryPoints::]):
+        (-[DOMRange deleteContents]):
+        (-[DOMRange extractContents]):
+        (-[DOMRange cloneContents]):
+        (-[DOMRange insertNode:]):
+        (-[DOMRange surroundContents:]):
+        (-[DOMRange cloneRange]):
+        (-[DOMRange toString]):
+        (-[DOMRange detach]):
+        (-[DOMRange _initWithRange:WebCore::]):
+        (+[DOMRange _rangeWith:WebCore::]):
+        (-[DOMRange WebCore::]):
+        (-[DOMNodeFilter _initWithNodeFilter:WebCore::]):
+        (+[DOMNodeFilter _nodeFilterWith:WebCore::]):
+        (-[DOMNodeFilter WebCore::]):
+        (-[DOMNodeFilter dealloc]):
+        (-[DOMNodeFilter finalize]):
+        (-[DOMNodeIterator _initWithNodeIterator:WebCore::filter:]):
+        (-[DOMNodeIterator WebCore::]):
+        (+[DOMNodeIterator _nodeIteratorWith:WebCore::filter:]):
+        (-[DOMTreeWalker _initWithTreeWalker:WebCore::filter:]):
+        (-[DOMTreeWalker WebCore::]):
+        (+[DOMTreeWalker _treeWalkerWith:WebCore::filter:]):
+        (ObjCNodeFilterCondition::acceptNode):
+        (-[DOMDocument createNodeIterator::::]):
+        (-[DOMDocument createTreeWalker::::]):
+        (ObjCEventListener::find):
+        (ObjCEventListener::create):
+        (ObjCEventListener::handleEvent):
+        * bindings/objc/DOMAbstractView.h: Added.
+        * bindings/objc/DOMAbstractView.mm: Added.
+        (-[DOMAbstractView document]):
+        (-[DOMAbstractView WebCore::]):
+        (-[DOMAbstractView _initWithAbstractView:WebCore::]):
+        (+[DOMAbstractView _abstractViewWith:WebCore::]):
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMStyleSheet _initWithStyleSheet:WebCore::]):
+        (+[DOMStyleSheet _styleSheetWith:WebCore::]):
+        (+[DOMCSSStyleSheet _CSSStyleSheetWith:WebCore::]):
+        (-[DOMCSSRule _initWithRule:WebCore::]):
+        (+[DOMCSSRule _CSSRuleWith:WebCore::]):
+        (-[DOMCSSValue _initWithValue:WebCore::]):
+        (+[DOMCSSValue _CSSValueWith:WebCore::]):
+        (+[DOMCSSPrimitiveValue _CSSPrimitiveValueWith:WebCore::]):
+        (-[DOMDocument getComputedStyle::]):
+        (-[DOMDocument getMatchedCSSRules::]):
+        * bindings/objc/DOMCore.h:
+        * bindings/objc/DOMEventException.h: Added.
+        * bindings/objc/DOMEvents.h:
+        * bindings/objc/DOMEvents.mm:
+        * bindings/objc/DOMException.h: Added.
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLDocument _createDocumentFragmentWithMarkupString:baseURLString:]):
+        (viewForElement):
+        (-[DOMHTMLInputElement _replaceCharactersInRange:withString:selectingFromIndex:]):
+        (-[DOMHTMLInputElement _selectedRange]):
+        (-[DOMHTMLInputElement _setAutofilled:]):
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMObject.h:
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/DOMRange.h:
+        * bindings/objc/DOMRangeException.h: Added.
+        * bindings/objc/DOMViews.h:
+        * bindings/objc/DOMViews.mm: Removed.
+        * bindings/objc/DOMXPath.h:
+        * bindings/objc/DOMXPathException.h: Added.
+        * bindings/scripts/IDLParser.pm:
+        * dom/Node.idl:
+
 2006-09-18  Brady Eidson  <beidson@apple.com>
 
         Windows build fix

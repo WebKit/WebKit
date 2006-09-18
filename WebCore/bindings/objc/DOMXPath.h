@@ -28,13 +28,7 @@
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMObject.h>
 
+#import <WebCore/DOMXPathException.h>
 #import <WebCore/DOMXPathExpression.h>
 #import <WebCore/DOMXPathNSResolver.h>
 #import <WebCore/DOMXPathResult.h>
-
-extern NSString * const DOMXPathException;
-
-enum DOMXPathExceptionCode {
-    DOM_INVALID_EXPRESSION_ERR = 51,
-    DOM_TYPE_ERR = 52
-};

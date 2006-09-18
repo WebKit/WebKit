@@ -78,6 +78,7 @@
 namespace WebCore {
     class Attr;
     class CDATASection;
+    class CSSPrimitiveValue;
     class CSSRule;
     class CSSRuleList;
     class CSSStyleDeclaration;
@@ -201,10 +202,6 @@ namespace WebCore {
 - (WebCore::Document *)_document;
 @end
 
-@interface DOMDocument (WebCoreInternalExtension)
-- (DOMElement *)_ownerElement;
-@end
-
 @interface DOMDocumentFragment (WebCoreInternal)
 + (DOMDocumentFragment *)_documentFragmentWith:(WebCore::DocumentFragment *)impl;
 - (WebCore::DocumentFragment *)_documentFragment;
@@ -293,6 +290,7 @@ namespace WebCore {
 @end
 
 @interface DOMCSSPrimitiveValue (WebCoreInternal)
+- (WebCore::CSSPrimitiveValue *)_CSSPrimitiveValue;
 + (DOMCSSPrimitiveValue *)_CSSPrimitiveValueWith:(WebCore::CSSValue *)impl;
 @end
 
@@ -423,19 +421,20 @@ inline void raiseOnDOMError(WebCore::ExceptionCode ec)
         { return reinterpret_cast<class WebCore::type*>(p); }
 
 // No class should appear in this list if its base class is already here.
-ALLOW_DOM_CAST(Counter)
 ALLOW_DOM_CAST(CSSRule)
 ALLOW_DOM_CAST(CSSRuleList)
 ALLOW_DOM_CAST(CSSStyleDeclaration)
 ALLOW_DOM_CAST(CSSStyleSheet)
 ALLOW_DOM_CAST(CSSValue)
+ALLOW_DOM_CAST(Counter)
 ALLOW_DOM_CAST(DOMImplementationFront)
+ALLOW_DOM_CAST(Event)
 ALLOW_DOM_CAST(HTMLCollection)
 ALLOW_DOM_CAST(HTMLOptionsCollection)
 ALLOW_DOM_CAST(MediaList)
 ALLOW_DOM_CAST(NamedNodeMap)
-ALLOW_DOM_CAST(NodeFilter)
 ALLOW_DOM_CAST(Node)
+ALLOW_DOM_CAST(NodeFilter)
 ALLOW_DOM_CAST(NodeIterator)
 ALLOW_DOM_CAST(NodeList)
 ALLOW_DOM_CAST(Range)

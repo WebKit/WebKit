@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,43 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DOMCore.h>
-#import <WebCore/DOMDocument.h>
-#import <WebCore/DOMObject.h>
+extern NSString * const DOMRangeException;
 
-#import <WebCore/DOMRangeException.h>
-
-// DOM Range comparison codes
-enum {
-    DOM_START_TO_START                = 0,
-    DOM_START_TO_END                  = 1,
-    DOM_END_TO_END                    = 2,
-    DOM_END_TO_START                  = 3
+enum DOMRangeExceptionCode {
+    DOM_BAD_BOUNDARYPOINTS_ERR        = 1,
+    DOM_INVALID_NODE_TYPE_ERR         = 2
 };
-
-@interface DOMRange : DOMObject
-- (DOMNode *)startContainer;
-- (int)startOffset;
-- (DOMNode *)endContainer;
-- (int)endOffset;
-- (BOOL)collapsed;
-- (DOMNode *)commonAncestorContainer;
-- (void)setStart:(DOMNode *)refNode :(int)offset;
-- (void)setEnd:(DOMNode *)refNode :(int)offset;
-- (void)setStartBefore:(DOMNode *)refNode;
-- (void)setStartAfter:(DOMNode *)refNode;
-- (void)setEndBefore:(DOMNode *)refNode;
-- (void)setEndAfter:(DOMNode *)refNode;
-- (void)collapse:(BOOL)toStart;
-- (void)selectNode:(DOMNode *)refNode;
-- (void)selectNodeContents:(DOMNode *)refNode;
-- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange;
-- (void)deleteContents;
-- (DOMDocumentFragment *)extractContents;
-- (DOMDocumentFragment *)cloneContents;
-- (void)insertNode:(DOMNode *)newNode;
-- (void)surroundContents:(DOMNode *)newParent;
-- (DOMRange *)cloneRange;
-- (NSString *)toString;
-- (void)detach;
-@end

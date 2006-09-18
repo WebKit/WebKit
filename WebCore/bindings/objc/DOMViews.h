@@ -28,6 +28,4 @@
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMObject.h>
 
-@interface DOMAbstractView : DOMObject
-- (DOMDocument *)document;
-@end
+#import <WebCore/DOMAbstractView.h>

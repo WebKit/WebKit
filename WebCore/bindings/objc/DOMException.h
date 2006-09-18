@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,43 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DOMCore.h>
-#import <WebCore/DOMDocument.h>
-#import <WebCore/DOMObject.h>
+extern NSString * const DOMException;
 
-#import <WebCore/DOMRangeException.h>
-
-// DOM Range comparison codes
+// DOM exception codes
 enum {
-    DOM_START_TO_START                = 0,
-    DOM_START_TO_END                  = 1,
-    DOM_END_TO_END                    = 2,
-    DOM_END_TO_START                  = 3
+    DOM_INDEX_SIZE_ERR                = 1,
+    DOM_DOMSTRING_SIZE_ERR            = 2,
+    DOM_HIERARCHY_REQUEST_ERR         = 3,
+    DOM_WRONG_DOCUMENT_ERR            = 4,
+    DOM_INVALID_CHARACTER_ERR         = 5,
+    DOM_NO_DATA_ALLOWED_ERR           = 6,
+    DOM_NO_MODIFICATION_ALLOWED_ERR   = 7,
+    DOM_NOT_FOUND_ERR                 = 8,
+    DOM_NOT_SUPPORTED_ERR             = 9,
+    DOM_INUSE_ATTRIBUTE_ERR           = 10,
+    DOM_INVALID_STATE_ERR             = 11,
+    DOM_SYNTAX_ERR                    = 12,
+    DOM_INVALID_MODIFICATION_ERR      = 13,
+    DOM_NAMESPACE_ERR                 = 14,
+    DOM_INVALID_ACCESS_ERR            = 15
 };
-
-@interface DOMRange : DOMObject
-- (DOMNode *)startContainer;
-- (int)startOffset;
-- (DOMNode *)endContainer;
-- (int)endOffset;
-- (BOOL)collapsed;
-- (DOMNode *)commonAncestorContainer;
-- (void)setStart:(DOMNode *)refNode :(int)offset;
-- (void)setEnd:(DOMNode *)refNode :(int)offset;
-- (void)setStartBefore:(DOMNode *)refNode;
-- (void)setStartAfter:(DOMNode *)refNode;
-- (void)setEndBefore:(DOMNode *)refNode;
-- (void)setEndAfter:(DOMNode *)refNode;
-- (void)collapse:(BOOL)toStart;
-- (void)selectNode:(DOMNode *)refNode;
-- (void)selectNodeContents:(DOMNode *)refNode;
-- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange;
-- (void)deleteContents;
-- (DOMDocumentFragment *)extractContents;
-- (DOMDocumentFragment *)cloneContents;
-- (void)insertNode:(DOMNode *)newNode;
-- (void)surroundContents:(DOMNode *)newParent;
-- (DOMRange *)cloneRange;
-- (NSString *)toString;
-- (void)detach;
-@end

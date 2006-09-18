@@ -63,8 +63,8 @@
 #import "csshelper.h"
 
 // From old DOMCore.h
-#import "DOMNode.h"
 #import "DOMObject.h"
+#import "DOMException.h"
 
 // Generated Objective-C Bindings
 #import "DOMAttr.h"
@@ -79,6 +79,7 @@
 #import "DOMEntity.h"
 #import "DOMEntityReference.h"
 #import "DOMNamedNodeMap.h"
+#import "DOMNode.h"
 #import "DOMNodeList.h"
 #import "DOMNotation.h"
 #import "DOMProcessingInstruction.h"
@@ -86,7 +87,6 @@
 
 // From old DOMHTML.h
 #import "DOMHTMLAppletElement.h"
-#import "DOMHTMLDocument.h"
 #import "DOMHTMLOptionElement.h"
 
 // Generated Objective-C Bindings
@@ -101,6 +101,7 @@
 #import "DOMHTMLDListElement.h"
 #import "DOMHTMLDirectoryElement.h"
 #import "DOMHTMLDivElement.h"
+#import "DOMHTMLDocument.h"
 #import "DOMHTMLElement.h"
 #import "DOMHTMLFieldSetElement.h"
 #import "DOMHTMLFontElement.h"
@@ -146,51 +147,24 @@
 
 #import <objc/objc-class.h>
 
-using WebCore::AtomicString;
-using WebCore::AtomicStringImpl;
-using WebCore::Attr;
-using WebCore::Document;
-using WebCore::DocumentFragment;
-using WebCore::DOMImplementationFront;
-using WebCore::Element;
-using WebCore::Event;
-using WebCore::EventListener;
-using WebCore::ExceptionCode;
-using WebCore::HTMLDocument;
-using WebCore::HTMLElement;
-using WebCore::FrameMac;
-using WebCore::KURL;
-using WebCore::NamedNodeMap;
-using WebCore::Node;
-using WebCore::NodeFilter;
-using WebCore::NodeFilterCondition;
-using WebCore::NodeIterator;
-using WebCore::NodeList;
-using WebCore::QualifiedName;
-using WebCore::Range;
-using WebCore::RenderImage;
-using WebCore::RenderObject;
-using WebCore::String;
-using WebCore::TreeWalker;
-
 using namespace WebCore::HTMLNames;
 
-class ObjCEventListener : public EventListener {
+class ObjCEventListener : public WebCore::EventListener {
 public:
-    static ObjCEventListener *find(id <DOMEventListener>);
-    static ObjCEventListener *create(id <DOMEventListener>);
+    static ObjCEventListener* find(id <DOMEventListener>);
+    static ObjCEventListener* create(id <DOMEventListener>);
 
 private:
     ObjCEventListener(id <DOMEventListener>);
     virtual ~ObjCEventListener();
 
-    virtual void handleEvent(Event *, bool isWindowEvent);
+    virtual void handleEvent(WebCore::Event*, bool isWindowEvent);
 
     id <DOMEventListener> m_listener;
 };
 
 typedef HashMap<id, ObjCEventListener*> ListenerMap;
-typedef HashMap<AtomicStringImpl*, Class> ObjCClassMap;
+typedef HashMap<WebCore::AtomicStringImpl*, Class> ObjCClassMap;
 
 static ObjCClassMap* elementClassMap;
 static ListenerMap* listenerMap;
@@ -199,7 +173,7 @@ static ListenerMap* listenerMap;
 //------------------------------------------------------------------------------------------
 // DOMNode
 
-static void addElementClass(const QualifiedName& tag, Class objCClass)
+static void addElementClass(const WebCore::QualifiedName& tag, Class objCClass)
 {
     elementClassMap->set(tag.localName().impl(), objCClass);
 }
@@ -275,7 +249,7 @@ static void createHTMLElementClassMap()
     // FIXME: Reflect marquee once the API has been determined.
 }
 
-static Class elementClass(const AtomicString& tagName)
+static Class elementClass(const WebCore::AtomicString& tagName)
 {
     if (!elementClassMap)
         createHTMLElementClassMap();
@@ -301,18 +275,18 @@ static Class elementClass(const AtomicString& tagName)
     return [NSString stringWithFormat:@"<%@ [%@]: %p>", [[self class] description], [self nodeName], _internal];
 }
 
-- (id)_initWithNode:(Node *)impl
+- (id)_initWithNode:(WebCore::Node *)impl
 {
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
 }
 
-+ (DOMNode *)_nodeWith:(Node *)impl
++ (DOMNode *)_nodeWith:(WebCore::Node *)impl
 {
     if (!impl)
         return nil;
@@ -324,49 +298,49 @@ static Class elementClass(const AtomicString& tagName)
     
     Class wrapperClass = nil;
     switch (impl->nodeType()) {
-        case Node::ELEMENT_NODE:
+        case WebCore::Node::ELEMENT_NODE:
             if (impl->isHTMLElement())
-                wrapperClass = elementClass(static_cast<HTMLElement*>(impl)->localName());
+                wrapperClass = elementClass(static_cast<WebCore::HTMLElement*>(impl)->localName());
             else
                 wrapperClass = [DOMElement class];
             break;
-        case Node::ATTRIBUTE_NODE:
+        case WebCore::Node::ATTRIBUTE_NODE:
             wrapperClass = [DOMAttr class];
             break;
-        case Node::TEXT_NODE:
+        case WebCore::Node::TEXT_NODE:
             wrapperClass = [DOMText class];
             break;
-        case Node::CDATA_SECTION_NODE:
+        case WebCore::Node::CDATA_SECTION_NODE:
             wrapperClass = [DOMCDATASection class];
             break;
-        case Node::ENTITY_REFERENCE_NODE:
+        case WebCore::Node::ENTITY_REFERENCE_NODE:
             wrapperClass = [DOMEntityReference class];
             break;
-        case Node::ENTITY_NODE:
+        case WebCore::Node::ENTITY_NODE:
             wrapperClass = [DOMEntity class];
             break;
-        case Node::PROCESSING_INSTRUCTION_NODE:
+        case WebCore::Node::PROCESSING_INSTRUCTION_NODE:
             wrapperClass = [DOMProcessingInstruction class];
             break;
-        case Node::COMMENT_NODE:
+        case WebCore::Node::COMMENT_NODE:
             wrapperClass = [DOMComment class];
             break;
-        case Node::DOCUMENT_NODE:
-            if (static_cast<Document*>(impl)->isHTMLDocument())
+        case WebCore::Node::DOCUMENT_NODE:
+            if (static_cast<WebCore::Document*>(impl)->isHTMLDocument())
                 wrapperClass = [DOMHTMLDocument class];
             else
                 wrapperClass = [DOMDocument class];
             break;
-        case Node::DOCUMENT_TYPE_NODE:
+        case WebCore::Node::DOCUMENT_TYPE_NODE:
             wrapperClass = [DOMDocumentType class];
             break;
-        case Node::DOCUMENT_FRAGMENT_NODE:
+        case WebCore::Node::DOCUMENT_FRAGMENT_NODE:
             wrapperClass = [DOMDocumentFragment class];
             break;
-        case Node::NOTATION_NODE:
+        case WebCore::Node::NOTATION_NODE:
             wrapperClass = [DOMNotation class];
             break;
-        case Node::XPATH_NAMESPACE_NODE:
+        case WebCore::Node::XPATH_NAMESPACE_NODE:
             // FIXME: Create an XPath objective C wrapper
             // See http://bugzilla.opendarwin.org/show_bug.cgi?id=8755
             return nil;
@@ -374,15 +348,15 @@ static Class elementClass(const AtomicString& tagName)
     return [[[wrapperClass alloc] _initWithNode:impl] autorelease];
 }
 
-- (Node *)_node
+- (WebCore::Node *)_node
 {
-    return DOM_cast<Node *>(_internal);
+    return DOM_cast<WebCore::Node*>(_internal);
 }
 
 - (const KJS::Bindings::RootObject *)_executionContext
 {
-    if (Node *n = [self _node]) {
-        if (FrameMac *f = Mac(n->document()->frame()))
+    if (WebCore::Node *n = [self _node]) {
+        if (WebCore::FrameMac *f = Mac(n->document()->frame()))
             return f->executionContextForDOM();
     }
     return 0;
@@ -390,17 +364,9 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
-@implementation DOMNode (WebPrivate)
-
-- (BOOL)isContentEditable
-{
-    return [self _node]->isContentEditable();
-}
-
-@end
-
 @implementation DOMNode (DOMNodeExtensions)
 
+// FIXME: this should be implemented in the implementation
 - (NSRect)boundingBox
 {
     WebCore::RenderObject *renderer = [self _node]->renderer();
@@ -409,6 +375,7 @@ static Class elementClass(const AtomicString& tagName)
     return NSZeroRect;
 }
 
+// FIXME: this should be implemented in the implementation
 - (NSArray *)lineBoxRects
 {
     WebCore::RenderObject *renderer = [self _node]->renderer();
@@ -434,7 +401,7 @@ static Class elementClass(const AtomicString& tagName)
     if (![self _node]->isEventTargetNode())
         raiseDOMException(DOM_NOT_SUPPORTED_ERR);
     
-    EventListener *wrapper = ObjCEventListener::create(listener);
+    WebCore::EventListener *wrapper = ObjCEventListener::create(listener);
     EventTargetNodeCast([self _node])->addEventListener(type, wrapper, useCapture);
     wrapper->deref();
 }
@@ -444,7 +411,7 @@ static Class elementClass(const AtomicString& tagName)
     if (![self _node]->isEventTargetNode())
         raiseDOMException(DOM_NOT_SUPPORTED_ERR);
 
-    if (EventListener *wrapper = ObjCEventListener::find(listener))
+    if (WebCore::EventListener *wrapper = ObjCEventListener::find(listener))
         EventTargetNodeCast([self _node])->removeEventListener(type, wrapper, useCapture);
 }
 
@@ -453,7 +420,7 @@ static Class elementClass(const AtomicString& tagName)
     if (![self _node]->isEventTargetNode())
         raiseDOMException(DOM_NOT_SUPPORTED_ERR);
 
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     BOOL result = EventTargetNodeCast([self _node])->dispatchEvent([event _event], ec);
     raiseOnDOMError(ec);
     return result;
@@ -461,31 +428,18 @@ static Class elementClass(const AtomicString& tagName)
 
 @end
 
-
-//------------------------------------------------------------------------------------------
-// DOMDocument
-
-@implementation DOMDocument (WebCoreInternalExtension)
-
-- (DOMElement *)_ownerElement
-{
-    return [DOMElement _elementWith:[self _document]->ownerElement()];
-}
-
-@end
-
-
 //------------------------------------------------------------------------------------------
 // DOMElement
 
 // FIXME: this should be auto-genenerate in DOMElement.mm
 @implementation DOMElement (DOMElementAppKitExtensions)
 
+// FIXME: this should be implemented in the implementation
 - (NSImage*)image
 {
-    RenderObject* renderer = [self _element]->renderer();
+    WebCore::RenderObject* renderer = [self _element]->renderer();
     if (renderer && renderer->isImage()) {
-        RenderImage* img = static_cast<RenderImage*>(renderer);
+        WebCore::RenderImage* img = static_cast<WebCore::RenderImage*>(renderer);
         if (img->cachedImage() && !img->cachedImage()->isErrorImage())
             return img->cachedImage()->image()->getNSImage();
     }
@@ -496,45 +450,49 @@ static Class elementClass(const AtomicString& tagName)
 
 @implementation DOMElement (WebPrivate)
 
+// FIXME: this should be implemented in the implementation
 - (NSFont *)_font
 {
-    RenderObject *renderer = [self _element]->renderer();
+    WebCore::RenderObject* renderer = [self _element]->renderer();
     if (renderer)
         return renderer->style()->font().primaryFont()->getNSFont();
     return nil;
 }
 
+// FIXME: this should be implemented in the implementation
 - (NSData*)_imageTIFFRepresentation
 {
-    RenderObject *renderer = [self _element]->renderer();
+    WebCore::RenderObject* renderer = [self _element]->renderer();
     if (renderer && renderer->isImage()) {
-        RenderImage* img = static_cast<RenderImage*>(renderer);
+        WebCore::RenderImage* img = static_cast<WebCore::RenderImage*>(renderer);
         if (img->cachedImage() && !img->cachedImage()->isErrorImage())
             return (NSData*)(img->cachedImage()->image()->getTIFFRepresentation());
     }
     return nil;
 }
 
+// FIXME: this should be implemented in the implementation
 - (NSURL *)_getURLAttribute:(NSString *)name
 {
     ASSERT(name);
-    Element *e = [self _element];
-    ASSERT(e);
-    return KURL(e->document()->completeURL(parseURL(e->getAttribute(name)).deprecatedString())).getNSURL();
+    WebCore::Element* element = [self _element];
+    ASSERT(element);
+    return WebCore::KURL(element->document()->completeURL(parseURL(element->getAttribute(name)).deprecatedString())).getNSURL();
 }
 
+// FIXME: this should be implemented in the implementation
 - (void *)_NPObject
 {
-    Element* element = [self _element];
+    WebCore::Element* element = [self _element];
     if (element->hasTagName(appletTag) || element->hasTagName(embedTag) || element->hasTagName(objectTag))
         return static_cast<WebCore::HTMLPlugInElement*>(element)->getNPObject();
-    else
-        return 0;
+    return 0;
 }
 
+// FIXME: this should be implemented in the implementation
 - (BOOL)isFocused
 {
-    Element* impl = [self _element];
+    WebCore::Element* impl = [self _element];
     if (impl->document()->focusNode() == impl)
         return YES;
     return NO;
@@ -550,17 +508,15 @@ static Class elementClass(const AtomicString& tagName)
 
 - (void)dealloc
 {
-    if (_internal) {
-        DOM_cast<Range *>(_internal)->deref();
-    }
+    if (_internal)
+        DOM_cast<WebCore::Range*>(_internal)->deref();
     [super dealloc];
 }
 
 - (void)finalize
 {
-    if (_internal) {
-        DOM_cast<Range *>(_internal)->deref();
-    }
+    if (_internal)
+        DOM_cast<WebCore::Range*>(_internal)->deref();
     [super finalize];
 }
 
@@ -569,13 +525,12 @@ static Class elementClass(const AtomicString& tagName)
     if (!_internal)
         return @"<DOMRange: null>";
     return [NSString stringWithFormat:@"<DOMRange: %@ %d %@ %d>",
-        [self startContainer], [self startOffset],
-        [self endContainer], [self endOffset]];
+               [self startContainer], [self startOffset], [self endContainer], [self endOffset]];
 }
 
 - (DOMNode *)startContainer
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     DOMNode *result = [DOMNode _nodeWith:[self _range]->startContainer(ec)];
     raiseOnDOMError(ec);
     return result;
@@ -583,7 +538,7 @@ static Class elementClass(const AtomicString& tagName)
 
 - (int)startOffset
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     int result = [self _range]->startOffset(ec);
     raiseOnDOMError(ec);
     return result;
@@ -591,7 +546,7 @@ static Class elementClass(const AtomicString& tagName)
 
 - (DOMNode *)endContainer
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     DOMNode *result = [DOMNode _nodeWith:[self _range]->endContainer(ec)];
     raiseOnDOMError(ec);
     return result;
@@ -599,7 +554,7 @@ static Class elementClass(const AtomicString& tagName)
 
 - (int)endOffset
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     int result = [self _range]->endOffset(ec);
     raiseOnDOMError(ec);
     return result;
@@ -607,7 +562,7 @@ static Class elementClass(const AtomicString& tagName)
 
 - (BOOL)collapsed
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     BOOL result = [self _range]->collapsed(ec);
     raiseOnDOMError(ec);
     return result;
@@ -615,7 +570,7 @@ static Class elementClass(const AtomicString& tagName)
 
 - (DOMNode *)commonAncestorContainer
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     DOMNode *result = [DOMNode _nodeWith:[self _range]->commonAncestorContainer(ec)];
     raiseOnDOMError(ec);
     return result;
@@ -623,85 +578,85 @@ static Class elementClass(const AtomicString& tagName)
 
 - (void)setStart:(DOMNode *)refNode :(int)offset
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->setStart([refNode _node], offset, ec);
     raiseOnDOMError(ec);
 }
 
 - (void)setEnd:(DOMNode *)refNode :(int)offset
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->setEnd([refNode _node], offset, ec);
     raiseOnDOMError(ec);
 }
 
 - (void)setStartBefore:(DOMNode *)refNode
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->setStartBefore([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)setStartAfter:(DOMNode *)refNode
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->setStartAfter([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)setEndBefore:(DOMNode *)refNode
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->setEndBefore([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)setEndAfter:(DOMNode *)refNode
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->setEndAfter([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)collapse:(BOOL)toStart
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->collapse(toStart, ec);
     raiseOnDOMError(ec);
 }
 
 - (void)selectNode:(DOMNode *)refNode
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->selectNode([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)selectNodeContents:(DOMNode *)refNode
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->selectNodeContents([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange
 {
-    ExceptionCode ec = 0;
-    short result = [self _range]->compareBoundaryPoints(static_cast<Range::CompareHow>(how), [sourceRange _range], ec);
+    WebCore::ExceptionCode ec = 0;
+    short result = [self _range]->compareBoundaryPoints(static_cast<WebCore::Range::CompareHow>(how), [sourceRange _range], ec);
     raiseOnDOMError(ec);
     return result;
 }
 
 - (void)deleteContents
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->deleteContents(ec);
     raiseOnDOMError(ec);
 }
 
 - (DOMDocumentFragment *)extractContents
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWith:[self _range]->extractContents(ec).get()];
     raiseOnDOMError(ec);
     return result;
@@ -709,7 +664,7 @@ static Class elementClass(const AtomicString& tagName)
 
 - (DOMDocumentFragment *)cloneContents
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWith:[self _range]->cloneContents(ec).get()];
     raiseOnDOMError(ec);
     return result;
@@ -717,21 +672,21 @@ static Class elementClass(const AtomicString& tagName)
 
 - (void)insertNode:(DOMNode *)newNode
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->insertNode([newNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)surroundContents:(DOMNode *)newParent
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->surroundContents([newParent _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (DOMRange *)cloneRange
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     DOMRange *result = [DOMRange _rangeWith:[self _range]->cloneRange(ec).get()];
     raiseOnDOMError(ec);
     return result;
@@ -739,7 +694,7 @@ static Class elementClass(const AtomicString& tagName)
 
 - (NSString *)toString
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     NSString *result = [self _range]->toString(ec);
     raiseOnDOMError(ec);
     return result;
@@ -752,7 +707,7 @@ static Class elementClass(const AtomicString& tagName)
 
 - (void)detach
 {
-    ExceptionCode ec = 0;
+    WebCore::ExceptionCode ec = 0;
     [self _range]->detach(ec);
     raiseOnDOMError(ec);
 }
@@ -761,18 +716,18 @@ static Class elementClass(const AtomicString& tagName)
 
 @implementation DOMRange (WebCoreInternal)
 
-- (id)_initWithRange:(Range *)impl
+- (id)_initWithRange:(WebCore::Range *)impl
 {
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
 }
 
-+ (DOMRange *)_rangeWith:(Range *)impl
++ (DOMRange *)_rangeWith:(WebCore::Range *)impl
 {
     if (!impl)
         return nil;
@@ -785,9 +740,9 @@ static Class elementClass(const AtomicString& tagName)
     return [[[self alloc] _initWithRange:impl] autorelease];
 }
 
-- (Range *)_range
+- (WebCore::Range *)_range
 {
-    return DOM_cast<Range *>(_internal);
+    return DOM_cast<WebCore::Range*>(_internal);
 }
 
 @end
@@ -807,18 +762,18 @@ static Class elementClass(const AtomicString& tagName)
 
 @implementation DOMNodeFilter
 
-- (id)_initWithNodeFilter:(NodeFilter *)impl
+- (id)_initWithNodeFilter:(WebCore::NodeFilter *)impl
 {
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
 }
 
-+ (DOMNodeFilter *)_nodeFilterWith:(NodeFilter *)impl
++ (DOMNodeFilter *)_nodeFilterWith:(WebCore::NodeFilter *)impl
 {
     if (!impl)
         return nil;
@@ -831,22 +786,22 @@ static Class elementClass(const AtomicString& tagName)
     return [[[self alloc] _initWithNodeFilter:impl] autorelease];
 }
 
-- (NodeFilter *)_nodeFilter
+- (WebCore::NodeFilter *)_nodeFilter
 {
-    return DOM_cast<NodeFilter *>(_internal);
+    return DOM_cast<WebCore::NodeFilter*>(_internal);
 }
 
 - (void)dealloc
 {
     if (_internal)
-        DOM_cast<NodeFilter *>(_internal)->deref();
+        DOM_cast<WebCore::NodeFilter*>(_internal)->deref();
     [super dealloc];
 }
 
 - (void)finalize
 {
     if (_internal)
-        DOM_cast<NodeFilter *>(_internal)->deref();
+        DOM_cast<WebCore::NodeFilter*>(_internal)->deref();
     [super finalize];
 }
 
@@ -863,24 +818,24 @@ static Class elementClass(const AtomicString& tagName)
 
 @implementation DOMNodeIterator(WebCoreInternal)
 
-- (id)_initWithNodeIterator:(NodeIterator *)impl filter:(id <DOMNodeFilter>)filter
+- (id)_initWithNodeIterator:(WebCore::NodeIterator *)impl filter:(id <DOMNodeFilter>)filter
 {
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     m_filter = [filter retain];
     return self;
 }
 
-- (NodeIterator *)_nodeIterator
+- (WebCore::NodeIterator *)_nodeIterator
 {
-    return DOM_cast<NodeIterator *>(_internal);
+    return DOM_cast<WebCore::NodeIterator*>(_internal);
 }
 
-+ (DOMNodeIterator *)_nodeIteratorWith:(NodeIterator *)impl filter:(id <DOMNodeFilter>)filter
++ (DOMNodeIterator *)_nodeIteratorWith:(WebCore::NodeIterator *)impl filter:(id <DOMNodeFilter>)filter
 {
     if (!impl)
         return nil;
@@ -901,24 +856,24 @@ static Class elementClass(const AtomicString& tagName)
 
 @implementation DOMTreeWalker (WebCoreInternal)
 
-- (id)_initWithTreeWalker:(TreeWalker *)impl filter:(id <DOMNodeFilter>)filter
+- (id)_initWithTreeWalker:(WebCore::TreeWalker *)impl filter:(id <DOMNodeFilter>)filter
 {
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     m_filter = [filter retain];
     return self;
 }
 
-- (TreeWalker *)_treeWalker
+- (WebCore::TreeWalker *)_treeWalker
 {
-    return DOM_cast<TreeWalker *>(_internal);
+    return DOM_cast<WebCore::TreeWalker *>(_internal);
 }
 
-+ (DOMTreeWalker *)_treeWalkerWith:(TreeWalker *)impl filter:(id <DOMNodeFilter>)filter
++ (DOMTreeWalker *)_treeWalkerWith:(WebCore::TreeWalker *)impl filter:(id <DOMNodeFilter>)filter
 {
     if (!impl)
         return nil;
@@ -937,16 +892,15 @@ static Class elementClass(const AtomicString& tagName)
 //------------------------------------------------------------------------------------------
 // ObjCNodeFilterCondition
 
-class ObjCNodeFilterCondition : public NodeFilterCondition
-{
+class ObjCNodeFilterCondition : public WebCore::NodeFilterCondition {
 public:
     ObjCNodeFilterCondition(id <DOMNodeFilter>);
     virtual ~ObjCNodeFilterCondition();
-    virtual short acceptNode(Node*) const;
+    virtual short acceptNode(WebCore::Node*) const;
 
 private:
-    ObjCNodeFilterCondition(const ObjCNodeFilterCondition &);
-    ObjCNodeFilterCondition &operator=(const ObjCNodeFilterCondition &);
+    ObjCNodeFilterCondition(const ObjCNodeFilterCondition&);
+    ObjCNodeFilterCondition &operator=(const ObjCNodeFilterCondition&);
 
     id <DOMNodeFilter> m_filter;
 };
@@ -963,10 +917,10 @@ ObjCNodeFilterCondition::~ObjCNodeFilterCondition()
     CFRelease(m_filter);
 }
 
-short ObjCNodeFilterCondition::acceptNode(Node* node) const
+short ObjCNodeFilterCondition::acceptNode(WebCore::Node* node) const
 {
     if (!node)
-        return NodeFilter::FILTER_REJECT;
+        return WebCore::NodeFilter::FILTER_REJECT;
     return [m_filter acceptNode:[DOMNode _nodeWith:node]];
 }
 
@@ -979,22 +933,22 @@ short ObjCNodeFilterCondition::acceptNode(Node* node) const
 
 - (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
 {
-    RefPtr<NodeFilter> cppFilter;
+    RefPtr<WebCore::NodeFilter> cppFilter;
     if (filter)
-        cppFilter = new NodeFilter(new ObjCNodeFilterCondition(filter));
-    ExceptionCode ec = 0;
-    RefPtr<NodeIterator> impl = [self _document]->createNodeIterator([root _node], whatToShow, cppFilter, expandEntityReferences, ec);
+        cppFilter = new WebCore::NodeFilter(new ObjCNodeFilterCondition(filter));
+    WebCore::ExceptionCode ec = 0;
+    RefPtr<WebCore::NodeIterator> impl = [self _document]->createNodeIterator([root _node], whatToShow, cppFilter, expandEntityReferences, ec);
     raiseOnDOMError(ec);
     return [DOMNodeIterator _nodeIteratorWith:impl.get() filter:filter];
 }
 
 - (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
 {
-    RefPtr<NodeFilter> cppFilter;
+    RefPtr<WebCore::NodeFilter> cppFilter;
     if (filter)
-        cppFilter = new NodeFilter(new ObjCNodeFilterCondition(filter));
-    ExceptionCode ec = 0;
-    RefPtr<TreeWalker> impl = [self _document]->createTreeWalker([root _node], whatToShow, cppFilter, expandEntityReferences, ec);
+        cppFilter = new WebCore::NodeFilter(new ObjCNodeFilterCondition(filter));
+    WebCore::ExceptionCode ec = 0;
+    RefPtr<WebCore::TreeWalker> impl = [self _document]->createTreeWalker([root _node], whatToShow, cppFilter, expandEntityReferences, ec);
     raiseOnDOMError(ec);
     return [DOMTreeWalker _treeWalkerWith:impl.get() filter:filter];
 }
@@ -1009,12 +963,12 @@ ObjCEventListener* ObjCEventListener::find(id <DOMEventListener> listener)
 {
     if (ListenerMap* map = listenerMap)
         return map->get(listener);
-    return NULL;
+    return 0;
 }
 
 ObjCEventListener *ObjCEventListener::create(id <DOMEventListener> listener)
 {
-    ObjCEventListener *wrapper = find(listener);
+    ObjCEventListener* wrapper = find(listener);
     if (!wrapper)
         wrapper = new ObjCEventListener(listener);
     wrapper->ref();
@@ -1038,7 +992,7 @@ ObjCEventListener::~ObjCEventListener()
     [m_listener release];
 }
 
-void ObjCEventListener::handleEvent(Event *event, bool)
+void ObjCEventListener::handleEvent(WebCore::Event* event, bool)
 {
     [m_listener handleEvent:[DOMEvent _eventWith:event]];
 }

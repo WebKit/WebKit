@@ -34,6 +34,7 @@
 #import <WebCore/DOMElement.h>
 #import <WebCore/DOMEntity.h>
 #import <WebCore/DOMEntityReference.h>
+#import <WebCore/DOMException.h>
 #import <WebCore/DOMDOMImplementation.h>
 #import <WebCore/DOMNamedNodeMap.h>
 #import <WebCore/DOMNode.h>

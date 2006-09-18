@@ -52,7 +52,9 @@
 #import <WebCore/DOMHTMLStyleElementPrivate.h>
 #import <WebCore/DOMHTMLTextAreaElementPrivate.h>
 #import <WebCore/DOMKeyboardEventPrivate.h>
+#import <WebCore/DOMMouseEventPrivate.h>
 #import <WebCore/DOMNodeIteratorPrivate.h>
+#import <WebCore/DOMNodePrivate.h>
 #import <WebCore/DOMProcessingInstructionPrivate.h>
 #import <WebCore/DOMUIEventPrivate.h>
 #import <WebCore/DOMWheelEventPrivate.h>
@@ -60,15 +62,6 @@
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText
 - (NSString *)_text;
-@end
-
-@interface DOMRGBColor (WebPrivate)
-// fast and easy way of getting an NSColor for a DOMRGBColor
-- (NSColor *)_color;
-@end
-
-@interface DOMNode (WebPrivate)
-- (BOOL)isContentEditable;
 @end
 
 @interface DOMElement (WebPrivate)

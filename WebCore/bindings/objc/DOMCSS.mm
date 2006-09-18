@@ -28,45 +28,37 @@
 #import "config.h"
 #import "DOMCSS.h"
 
-#import "DOMPrivate.h"
 #import "CSSCharsetRule.h"
 #import "CSSFontFaceRule.h"
 #import "CSSImportRule.h"
 #import "CSSMediaRule.h"
 #import "CSSPageRule.h"
+#import "CSSPrimitiveValue.h"
 #import "CSSRule.h"
 #import "CSSRuleList.h"
+#import "CSSStyleDeclaration.h"
 #import "CSSStyleRule.h"
 #import "CSSStyleSheet.h"
 #import "CSSValueList.h"
-#import "Counter.h"
 #import "DOMInternal.h"
+#import "DOMPrivate.h"
 #import "DOMWindow.h"
 #import "Document.h"
-#import "FoundationExtras.h"
-#import "HTMLLinkElement.h"
-#import "HTMLStyleElement.h"
-#import "MediaList.h"
-#import "ProcessingInstruction.h"
-#import "RectImpl.h"
 #import "StyleSheet.h"
-#import "StyleSheetList.h"
 
-#import <wtf/GetPtr.h>
 #import <objc/objc-class.h>
+#import <wtf/GetPtr.h>
 
 namespace WebCore {
     typedef DOMWindow AbstractView;
 }
-
-using namespace WebCore;
 
 //------------------------------------------------------------------------------------------
 // DOMStyleSheet
 
 @implementation DOMStyleSheet (WebCoreInternal)
 
-- (id)_initWithStyleSheet:(StyleSheet *)impl
+- (id)_initWithStyleSheet:(WebCore::StyleSheet *)impl
 {
     [super _init];
     _internal = DOM_cast<DOMObjectInternal*>(impl);
@@ -75,7 +67,7 @@ using namespace WebCore;
     return self;
 }
 
-+ (DOMStyleSheet *)_styleSheetWith:(StyleSheet *)impl
++ (DOMStyleSheet *)_styleSheetWith:(WebCore::StyleSheet *)impl
 {
     if (!impl)
         return nil;
@@ -101,7 +93,7 @@ using namespace WebCore;
 
 @implementation DOMCSSStyleSheet (WebCoreInternal)
 
-+ (DOMCSSStyleSheet *)_CSSStyleSheetWith:(CSSStyleSheet *)impl
++ (DOMCSSStyleSheet *)_CSSStyleSheetWith:(WebCore::CSSStyleSheet *)impl
 {
     return static_cast<DOMCSSStyleSheet*>([DOMStyleSheet _styleSheetWith:impl]);
 }
@@ -114,7 +106,7 @@ using namespace WebCore;
 
 @implementation DOMCSSRule (WebCoreInternal)
 
-- (id)_initWithRule:(CSSRule *)impl
+- (id)_initWithRule:(WebCore::CSSRule *)impl
 {
     [super _init];
     _internal = DOM_cast<DOMObjectInternal*>(impl);
@@ -123,7 +115,7 @@ using namespace WebCore;
     return self;
 }
 
-+ (DOMCSSRule *)_CSSRuleWith:(CSSRule *)impl
++ (DOMCSSRule *)_CSSRuleWith:(WebCore::CSSRule *)impl
 {
     if (!impl)
         return nil;
@@ -168,7 +160,7 @@ using namespace WebCore;
 
 @implementation DOMCSSValue (WebCoreInternal)
 
-- (id)_initWithValue:(CSSValue *)impl
+- (id)_initWithValue:(WebCore::CSSValue *)impl
 {
     [super _init];
     _internal = DOM_cast<DOMObjectInternal*>(impl);
@@ -177,7 +169,7 @@ using namespace WebCore;
     return self;
 }
 
-+ (DOMCSSValue *)_CSSValueWith:(CSSValue *)impl
++ (DOMCSSValue *)_CSSValueWith:(WebCore::CSSValue *)impl
 {
     if (!impl)
         return nil;
@@ -218,22 +210,9 @@ using namespace WebCore;
     return static_cast<WebCore::CSSPrimitiveValue*>(reinterpret_cast<WebCore::CSSValue*>(_internal));
 }
 
-+ (DOMCSSPrimitiveValue *)_CSSPrimitiveValueWith:(CSSValue *)impl
++ (DOMCSSPrimitiveValue *)_CSSPrimitiveValueWith:(WebCore::CSSValue *)impl
 {
     return static_cast<DOMCSSPrimitiveValue*>([DOMCSSValue _CSSValueWith:impl]);
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
-// DOMRGBColor
-
-@implementation DOMRGBColor (WebPrivate)
-
-- (NSColor *)_color
-{
-    return [self color];
 }
 
 @end
@@ -1483,7 +1462,7 @@ using namespace WebCore;
 
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
-    AbstractView* dv = [self _document]->defaultView();
+    WebCore::AbstractView* dv = [self _document]->defaultView();
 
     if (!dv)
         return nil;
@@ -1497,7 +1476,7 @@ using namespace WebCore;
 
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt
 {
-    AbstractView* dv = [self _document]->defaultView();
+    WebCore::AbstractView* dv = [self _document]->defaultView();
 
     if (!dv)
         return nil;

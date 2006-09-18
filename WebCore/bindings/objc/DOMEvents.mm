@@ -38,8 +38,6 @@
 #import "OverflowEvent.h"
 #import "UIEvent.h"
 
-ALLOW_DOM_CAST(Event)
-
 //------------------------------------------------------------------------------------------
 // DOMEvent
 
@@ -98,6 +96,7 @@ ALLOW_DOM_CAST(Event)
 
 @implementation DOMKeyboardEvent (NonStandardAdditions)
 
+// FIXME: this should be implemented in the implementation
 - (BOOL)getModifierState:(NSString *)keyIdentifierArg
 {
     if ([keyIdentifierArg isEqualToString:@"Control"] && [self ctrlKey])

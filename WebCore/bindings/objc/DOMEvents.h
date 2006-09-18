@@ -30,6 +30,7 @@
 #import <WebCore/DOMViews.h>
 
 #import <WebCore/DOMEvent.h>
+#import <WebCore/DOMEventException.h>
 #import <WebCore/DOMEventListener.h>
 #import <WebCore/DOMEventTarget.h>
 #import <WebCore/DOMKeyboardEvent.h>
@@ -38,12 +39,6 @@
 #import <WebCore/DOMOverflowEvent.h>
 #import <WebCore/DOMUIEvent.h>
 #import <WebCore/DOMWheelEvent.h>
-
-extern NSString * const DOMEventException;
-
-enum DOMEventExceptionCode {
-    DOM_UNSPECIFIED_EVENT_TYPE_ERR = 0
-};
 
 @interface DOMKeyboardEvent (NonStandardAdditions)
 - (BOOL)getModifierState:(NSString *)keyIdentifierArg;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,43 +24,62 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DOMCore.h>
-#import <WebCore/DOMDocument.h>
-#import <WebCore/DOMObject.h>
+#import "config.h"
+#import "DOMAbstractView.h"
 
-#import <WebCore/DOMRangeException.h>
+#import <wtf/GetPtr.h>
 
-// DOM Range comparison codes
-enum {
-    DOM_START_TO_START                = 0,
-    DOM_START_TO_END                  = 1,
-    DOM_END_TO_END                    = 2,
-    DOM_END_TO_START                  = 3
-};
+#import "DOMDocument.h"
+#import "DOMInternal.h"
+#import "DOMWindow.h"
+#import "Document.h"
 
-@interface DOMRange : DOMObject
-- (DOMNode *)startContainer;
-- (int)startOffset;
-- (DOMNode *)endContainer;
-- (int)endOffset;
-- (BOOL)collapsed;
-- (DOMNode *)commonAncestorContainer;
-- (void)setStart:(DOMNode *)refNode :(int)offset;
-- (void)setEnd:(DOMNode *)refNode :(int)offset;
-- (void)setStartBefore:(DOMNode *)refNode;
-- (void)setStartAfter:(DOMNode *)refNode;
-- (void)setEndBefore:(DOMNode *)refNode;
-- (void)setEndAfter:(DOMNode *)refNode;
-- (void)collapse:(BOOL)toStart;
-- (void)selectNode:(DOMNode *)refNode;
-- (void)selectNodeContents:(DOMNode *)refNode;
-- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange;
-- (void)deleteContents;
-- (DOMDocumentFragment *)extractContents;
-- (DOMDocumentFragment *)cloneContents;
-- (void)insertNode:(DOMNode *)newNode;
-- (void)surroundContents:(DOMNode *)newParent;
-- (DOMRange *)cloneRange;
-- (NSString *)toString;
-- (void)detach;
+namespace WebCore {
+    typedef DOMWindow AbstractView;
+}
+
+ALLOW_DOM_CAST(DOMWindow)
+
+@implementation DOMAbstractView
+
+#define IMPL reinterpret_cast<WebCore::DOMWindow*>(_internal)
+
+- (DOMDocument *)document
+{
+    return [DOMDocument _documentWith:WTF::getPtr(IMPL->document())];
+}
+
+@end
+
+@implementation DOMAbstractView (WebCoreInternal)
+
+- (WebCore::AbstractView *)_abstractView
+{
+    return IMPL;
+}
+
+- (id)_initWithAbstractView:(WebCore::AbstractView *)impl
+{
+    ASSERT(impl);
+
+    [super _init];
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    impl->ref();
+    addDOMWrapper(self, impl);
+    return self;
+}
+
++ (DOMAbstractView *)_abstractViewWith:(WebCore::AbstractView *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = getDOMWrapper(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[DOMAbstractView alloc] _initWithAbstractView:impl] autorelease];
+}
+
 @end

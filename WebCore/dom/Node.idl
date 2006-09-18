@@ -110,6 +110,11 @@ module core {
         DOMUserData        getUserData(in DOMString key);
 #endif /* !defined(LANGUAGE_OBJECTIVE_C) */
 #endif /* !defined(LANGUAGE_JAVASCRIPT) */
+
+#if defined(LANGUAGE_OBJECTIVE_C)
+        // Objective-C extensions
+        readonly attribute boolean         isContentEditable;
+#endif /* defined(LANGUAGE_OBJECTIVE_C) */
     };
 
 }

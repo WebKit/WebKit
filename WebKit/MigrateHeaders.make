@@ -33,6 +33,7 @@ PRIVATE_HEADERS_DIR = $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)
 .PHONY : all
 all : \
     $(PUBLIC_HEADERS_DIR)/DOM.h \
+    $(PUBLIC_HEADERS_DIR)/DOMAbstractView.h \
     $(PUBLIC_HEADERS_DIR)/DOMAttr.h \
     $(PUBLIC_HEADERS_DIR)/DOMCDATASection.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSS.h \
@@ -64,9 +65,11 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMEntity.h \
     $(PUBLIC_HEADERS_DIR)/DOMEntityReference.h \
     $(PUBLIC_HEADERS_DIR)/DOMEvent.h \
+    $(PUBLIC_HEADERS_DIR)/DOMEventException.h \
     $(PUBLIC_HEADERS_DIR)/DOMEventListener.h \
     $(PUBLIC_HEADERS_DIR)/DOMEventTarget.h \
     $(PUBLIC_HEADERS_DIR)/DOMEvents.h \
+    $(PUBLIC_HEADERS_DIR)/DOMException.h \
     $(PUBLIC_HEADERS_DIR)/DOMExtensions.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTML.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLAnchorElement.h \
@@ -160,6 +163,7 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMProcessingInstructionPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMRGBColor.h \
     $(PUBLIC_HEADERS_DIR)/DOMRange.h \
+    $(PUBLIC_HEADERS_DIR)/DOMRangeException.h \
     $(PUBLIC_HEADERS_DIR)/DOMRect.h \
     $(PUBLIC_HEADERS_DIR)/DOMStyleSheet.h \
     $(PUBLIC_HEADERS_DIR)/DOMStyleSheetList.h \
@@ -173,6 +177,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMWheelEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMWheelEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPath.h \
+    $(PUBLIC_HEADERS_DIR)/DOMXPathException.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPathExpression.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPathNSResolver.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPathResult.h \

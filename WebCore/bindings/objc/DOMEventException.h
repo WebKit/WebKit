@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "DOMViews.h"
+extern NSString * const DOMEventException;
 
-#import "DOMInternal.h"
-#import "Document.h"
-#import "DOMWindow.h"
-
-namespace WebCore {
-    typedef DOMWindow AbstractView;
-}
-
-ALLOW_DOM_CAST(DOMWindow)
-
-@implementation DOMAbstractView
-
-- (DOMDocument *)document
-{
-    return [DOMDocument _documentWith:[self _abstractView]->document()];
-}
-
-@end
-
-@implementation DOMAbstractView (WebCoreInternal)
-
-- (WebCore::AbstractView *)_abstractView
-{
-    return DOM_cast<WebCore::AbstractView *>(_internal);
-}
-
-- (id)_initWithAbstractView:(WebCore::AbstractView *)impl
-{
-    ASSERT(impl);
-
-    [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    addDOMWrapper(self, impl);
-    return self;
-}
-
-+ (DOMAbstractView *)_abstractViewWith:(WebCore::AbstractView *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapper(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[DOMAbstractView alloc] _initWithAbstractView:impl] autorelease];
-}
-
-@end
+enum DOMEventExceptionCode {
+    DOM_UNSPECIFIED_EVENT_TYPE_ERR = 0
+};
