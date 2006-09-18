@@ -1,3 +1,18 @@
+2006-09-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Hyatt.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10779
+        REGRESSION: Animated GIF ignores frame intervals and loops infinitely
+
+        No test possible.
+
+        * platform/Image.cpp:
+        (WebCore::Image::shouldAnimate): Don't check that there is more than one frame,
+        maybe the rest just hasn't been loaded yet.
+        (WebCore::Image::startAnimation): Move the frame count check here - there is no need
+        to start animating before we get at least two frames.
+
 2006-09-17  Brady Eidson <beidson@apple.com>
 
         Reviewed by Sarge

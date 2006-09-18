@@ -238,12 +238,12 @@ bool Image::frameHasAlphaAtIndex(size_t index)
 
 bool Image::shouldAnimate()
 {
-    return (m_animatingImageType && frameCount() > 1 && !m_animationFinished && m_animationObserver);
+    return (m_animatingImageType && !m_animationFinished && m_animationObserver);
 }
 
 void Image::startAnimation()
 {
-    if (m_frameTimer || !shouldAnimate())
+    if (m_frameTimer || !shouldAnimate() || frameCount() <= 1)
         return;
 
     m_frameTimer = new Timer<Image>(this, &Image::advanceAnimation);
