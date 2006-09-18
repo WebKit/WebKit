@@ -166,22 +166,21 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     pi.r = absoluteTransform().invert().mapRect(paintInfo.r);
 
     int x = 0, y = 0;
-    if (!shouldPaint(pi, x, y))
-        return;
+    if (shouldPaint(pi, x, y)) {
+        SVGImageElement *imageElt = static_cast<SVGImageElement *>(node());
         
-    SVGImageElement *imageElt = static_cast<SVGImageElement *>(node());
-        
-    if (imageElt->preserveAspectRatio()->align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
-        RenderImage::paint(pi, 0, 0);
-    else {
-        FloatRect destRect(m_x, m_y, contentWidth(), contentHeight());
-        FloatRect srcRect(0, 0, image()->width(), image()->height());
-        adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
-        c->drawImage(image(), destRect, srcRect);
-    }
+        if (imageElt->preserveAspectRatio()->align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
+            RenderImage::paint(pi, 0, 0);
+        else {
+            FloatRect destRect(m_x, m_y, contentWidth(), contentHeight());
+            FloatRect srcRect(0, 0, image()->width(), image()->height());
+            adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
+            c->drawImage(image(), destRect, srcRect);
+        }
 
-    if (filter)
-        filter->applyFilter(boundingBox);
+        if (filter)
+            filter->applyFilter(boundingBox);
+    }
     
     if (opacity < 1.0f)
         c->endTransparencyLayer();
