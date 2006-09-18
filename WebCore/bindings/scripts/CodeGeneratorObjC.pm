@@ -433,6 +433,7 @@ sub GenerateHeader
     my $interfaceName = $dataNode->name;
     my $className = GetClassName($interfaceName);
     my $parentClassName = "DOM" . GetParentImplClassName($dataNode);
+    my $conditional = $dataNode->extendedAttributes->{"Conditional"};
 
     my $numConstants = @{$dataNode->constants};
     my $numAttributes = @{$dataNode->attributes};
@@ -441,6 +442,9 @@ sub GenerateHeader
     # - Add default header template
     @headerContentHeader = split("\r", $headerLicenceTemplate);
     push(@headerContentHeader, "\n");
+    
+    # - Add a check for the appropriate conditional variable
+    push(@headerContent, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
 
     # - INCLUDES -
     unless ($isProtocol) {
@@ -623,9 +627,13 @@ sub GenerateHeader
     if (@privateHeaderAttributes > 0 or @privateHeaderFunctions > 0) {
         # - Private category @interface
         @privateHeaderContentHeader = split("\r", $headerLicenceTemplate);
+        push(@headerContentHeader, "\n");
 
+        # - Add a check for the appropriate conditional variable
+        push(@privateHeaderContentHeader, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
+        
         my $classHeaderName = GetClassHeaderName($className);
-        push(@privateHeaderContentHeader, "\n#import <WebCore/$classHeaderName.h>\n\n");
+        push(@privateHeaderContentHeader, "#import <WebCore/$classHeaderName.h>\n\n");
 
         @privateHeaderContent = ();
         push(@privateHeaderContent, "\@interface $className (" . $className . "Private)\n");
@@ -633,7 +641,13 @@ sub GenerateHeader
         push(@privateHeaderContent, "\n") if $buildingForLeopardOrLater and @privateHeaderAttributes > 0 and @privateHeaderFunctions > 0;
         push(@privateHeaderContent, @privateHeaderFunctions) if @privateHeaderFunctions > 0;
         push(@privateHeaderContent, "\@end\n");
+        
+        # - End the ifdef conditional if necessary (for the private header)
+        push(@privateHeaderContent, "\n#endif // ${conditional}_SUPPORT\n\n") if $conditional;
     }
+    
+    # - End the ifdef conditional if necessary
+    push(@headerContent, "\n#endif // ${conditional}_SUPPORT\n\n") if $conditional;
 }
 
 sub GenerateImplementation
@@ -646,6 +660,7 @@ sub GenerateImplementation
     my $implClassName = GetImplClassName($interfaceName);
     my $parentImplClassName = GetParentImplClassName($dataNode);
     my $implClassNameWithNamespace = "WebCore::" . $implClassName;
+    my $conditional = $dataNode->extendedAttributes->{"Conditional"};
 
     my $numAttributes = @{$dataNode->attributes};
     my $numFunctions = @{$dataNode->functions};
@@ -654,7 +669,8 @@ sub GenerateImplementation
     @implContentHeader = split("\r", $implementationLicenceTemplate);
 
     # - INCLUDES -
-    push(@implContentHeader, "\n#import \"config.h\"\n");
+    push(@implContentHeader, "\n#import \"config.h\"\n\n");
+    push(@implContentHeader, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
 
     my $classHeaderName = GetClassHeaderName($className);
     push(@implContentHeader, "#import \"$classHeaderName.h\"\n\n");
@@ -1080,6 +1096,8 @@ sub GenerateImplementation
         # END WebCoreInternal category
         push(@implContent, "\@end\n");
     }
+    # - End the ifdef conditional if necessary
+    push(@implContent, "\n#endif // ${conditional}_SUPPORT\n\n") if $conditional;
 }
 
 # Internal helper

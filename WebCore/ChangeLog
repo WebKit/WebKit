@@ -1,3 +1,14 @@
+2006-09-18  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Eric.
+        
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10896
+        REGRESSION: WebKit can't be built with SVG disabled
+        
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        For each file generated add a #ifdef <something>_SUPPORT / #endif
+        pair if the idl file has a Conditional extended attribute
+
 2006-09-17  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by ap.
