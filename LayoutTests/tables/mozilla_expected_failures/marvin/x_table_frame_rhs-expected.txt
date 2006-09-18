@@ -7,7 +7,7 @@ layer at (0,0) size 800x152
         RenderText {#text} at (0,0) size 491x18
           text run at (0,0) width 381: "Only the right side of the frame surrounding the table below "
           text run at (381,0) width 110: "should be visible."
-      RenderTable {table} at (0,34) size 188x94
+      RenderTable {table} at (0,34) size 189x94 [border: none (1px solid #808080) none]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0
