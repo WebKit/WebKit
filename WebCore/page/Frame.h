@@ -108,6 +108,7 @@ public:
 
   KURL iconURL();
   void setIconURL(const String& url, const String& type);
+  void commitIconURLToIconDatabase();
   
   Page* page() const;
   void pageDestroyed();
@@ -600,7 +601,7 @@ public:
   void reparseConfiguration();
 
 private:
-
+  virtual KURL originalRequestURL() const = 0;
   void childBegin();
 
   void submitFormAgain();

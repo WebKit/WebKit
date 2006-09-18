@@ -1,3 +1,22 @@
+2006-09-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10907
+        REGRESSION: New Icon Loaders don't handle certain non-server-root URLs correctly
+
+        * bridge/mac/FrameMac.h: Changed originalRequestURL() to virtual
+        * bridge/win/FrameWin.h: Added originalRequestURL()
+        * loader/icon/IconLoader.cpp:
+        (IconLoader::receivedAllData): Moved the "pageURL to iconURL mapping logic" to Frame::commitIconURLToIconDatabase()
+        * page/Frame.cpp:
+        (WebCore::Frame::iconURL): Construct the icon URL from *only* the protocol and host of the frame's url.
+        (WebCore::Frame::endIfNotLoading): Call commitIconURLToIconDatabase() if we're not kicking off an icon load
+        (WebCore::Frame::commitIconURLToIconDatabase): Map the completed doc's pageURL to the iconURL
+        * page/Frame.h: Added pure virtual originalRequestURL()
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::originalRequestURL): Added
+
 2006-09-18  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

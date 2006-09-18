@@ -318,7 +318,7 @@ public:
     void paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line);
     
     NSEvent* currentEvent() { return _currentEvent; }
-    KURL originalRequestURL() const;
+    virtual KURL originalRequestURL() const;
     
 protected:
     virtual void startRedirectionTimer();
@@ -329,7 +329,7 @@ private:
     virtual void handleMousePressEvent(const MouseEventWithHitTestResults&);
     virtual void handleMouseMoveEvent(const MouseEventWithHitTestResults&);
     virtual void handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
-    
+      
     NSView* mouseDownViewIfStillGood();
 
     NSView* nextKeyViewInFrame(Node* startingPoint, SelectionDirection, bool* focusCallResultedInViewBeingCreated = 0);

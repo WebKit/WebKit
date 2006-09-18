@@ -108,7 +108,7 @@ void IconLoader::receivedAllData(ResourceLoader* resourceLoader)
         size = m_data.size();
     }
         
-    IconDatabase * iconDatabase = IconDatabase::sharedIconDatabase();
+    IconDatabase* iconDatabase = IconDatabase::sharedIconDatabase();
     ASSERT(iconDatabase);
     
     KURL iconURL(resourceLoader->url());
@@ -118,16 +118,10 @@ void IconLoader::receivedAllData(ResourceLoader* resourceLoader)
     else
         iconDatabase->setHaveNoIconForIconURL(iconURL.url());
         
-    // We set both the original request URL and the final URL as the PageURLs as different parts
-    // of the app tend to want to retain both
-    iconDatabase->setIconURLForPageURL(iconURL.url(), m_frame->url().url());
-
-    // FIXME - Need to be able to do the following platform independently
-#if PLATFORM(MAC)
-    FrameMac* frameMac = Mac(m_frame);
-    iconDatabase->setIconURLForPageURL(iconURL.url(), frameMac->originalRequestURL().url());
-#endif
-
+    // Tell the Frame to map its url(s) to its iconURL in the database
+    m_frame->commitIconURLToIconDatabase();
+    
+    // Send the notification to the app that this icon is finished loading
     notifyIconChanged(iconURL);
 
     // ResourceLoaders delete themselves after they deliver their last data, so we can just forget about it
