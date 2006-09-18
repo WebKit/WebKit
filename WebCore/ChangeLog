@@ -1,3 +1,13 @@
+2006-09-17  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by ap.
+        
+        REGRESSION (r16245): double-clicking on javascript exceptions fails to show source
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10813
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (+[WebCoreFrameBridge stringWithData:textEncodingName:]):
+
 2006-09-17  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Hyatt.
