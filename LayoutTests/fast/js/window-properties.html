@@ -1,0 +1,59 @@
+<div id="log"></div>
+<script type="text/javascript">
+
+if (window.layoutTestController)
+  layoutTestController.dumpAsText();
+
+var logDiv = document.getElementById("log");
+var lastLogLine = 0;
+
+function log(string) {
+  var newDiv = document.createElement('DIV');
+  newDiv.appendChild(document.createTextNode(string));
+  logDiv.appendChild(newDiv);
+  lastLogLine++;
+}
+
+function shouldSkipProperty(fullPropertyName, propertyValue) {
+  if (fullPropertyName.match(/_childrenPrintedUnderName$/))
+    return true;
+}
+
+function shouldSkipChildren(fullPropertyName, propertyValue) {
+  if (propertyValue == logDiv
+    || fullPropertyName == 'window.document.body.lastChild')
+    return true;
+}
+
+function havePrintedChildren(fullPropertyName, propertyValue) {
+  var childrenPrintedUnderName = propertyValue._childrenPrintedUnderName;
+  if (!childrenPrintedUnderName)
+    propertyValue._childrenPrintedUnderName = fullPropertyName;
+  return childrenPrintedUnderName;
+}
+
+function printProperties(object, parentString) {
+  for (propertyName in object) {
+    var fullPropertyName = parentString + '.' + propertyName;
+    var propertyValue = object[propertyName];
+    if (shouldSkipProperty(fullPropertyName, propertyValue))
+      continue;
+    var type = typeof(propertyValue);
+    log(fullPropertyName + " : " + type);
+    var previousPropertyName = '';
+    if (propertyValue && type == 'object') {
+      if (shouldSkipChildren(fullPropertyName, propertyValue))
+        log(fullPropertyName + ' *** children skipped (explicitly)');
+      else if (previousPropertyName = havePrintedChildren(fullPropertyName, propertyValue))
+        log(fullPropertyName + " *** children skipped, already printed above under '" + previousPropertyName + "'");
+      else
+        printProperties(propertyValue, fullPropertyName);
+    }
+  }
+}
+
+log('window : ' + typeof(window));
+havePrintedChildren(window, 'window');
+printProperties(window, 'window');
+
+</script>
