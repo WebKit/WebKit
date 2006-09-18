@@ -803,6 +803,9 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     [PDFSubviewProxy setScaleFactor:1.0f];
 }
 
+// never sent because we do not track the common size factor
+- (void)_textSizeMultiplierChanged      { ASSERT_NOT_REACHED(); }
+
 - (BOOL)_tracksCommonSizeFactor
 {
     // We keep our own scale factor instead of tracking the common one in the WebView for a couple reasons.

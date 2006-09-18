@@ -1,3 +1,33 @@
+2006-09-17  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4494340> REGRESSION: Making the font size bigger/smaller in an HTML message doesn't affect the body until you reopen it
+
+        Problem was the public API -[WebView setTextSizeMultiplier] did not notify anyone that the value changed.
+        
+        * WebView/WebDocumentInternal.h:
+        Add _textSizeMultiplierChanged to the _WebDocumentTextSizing protocol.
+        
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _textSizeMultiplierChanged]):
+        Send [self _updateTextSizeMultiplier].
+        
+        * WebView/WebPDFView.m:
+        (-[WebPDFView _textSizeMultiplierChanged]):
+        ASSERT_NOT_REACHED() because WebPDFView does not track the common multiplier.
+        
+        * WebView/WebView.m:
+        (-[WebView setTextSizeMultiplier:]):
+        Send [self _notifyTextSizeMultiplierChanged];
+        
+        (-[WebView _performTextSizingSelector:withObject:onTrackingDocs:selForNonTrackingDocs:newScaleFactor:]):
+        Alter the _textSizeMultiplier directly so that notification is not sent.
+        Minor formatting.
+        
+        (-[WebView _notifyTextSizeMultiplierChanged]):
+        New. Send _textSizeMultiplierChanged to all document views that track the common multiplier.
+
 2006-09-16  Brady Eidson <beidson@apple.com>
 
         Reviewed by Hyatt

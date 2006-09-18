@@ -45,6 +45,9 @@
 // with the smaller/larger commands, which in the user model operate across all frames of the WebView.
 - (BOOL)_tracksCommonSizeFactor;
 
+// Views that track the common size factor need to be told when the WebView itself changed the value.
+- (void)_textSizeMultiplierChanged;
+
 // Views that do not track the common size factor must answer for themselves if they are able to zoom in
 // or out.  Views that do track it are not sent these messages.
 - (BOOL)_canMakeTextSmaller;

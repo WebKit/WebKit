@@ -316,6 +316,7 @@ macro(yankAndSelect) \
 - (BOOL)_continuousCheckingAllowed;
 - (NSResponder *)_responderForResponderOperations;
 - (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel newScaleFactor:(float)newScaleFactor;
+- (void)_notifyTextSizeMultiplierChanged;
 @end
 
 NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
@@ -2105,10 +2106,12 @@ NS_ENDHANDLER
 
 - (void)setTextSizeMultiplier:(float)m
 {
-    if (_private->textSizeMultiplier == m) {
+    // NOTE: This has no visible effect when viewing a PDF (see <rdar://problem/4737380>)
+    if (_private->textSizeMultiplier == m)
         return;
-    }
+
     _private->textSizeMultiplier = m;
+    [self _notifyTextSizeMultiplierChanged];
 }
 
 - (float)textSizeMultiplier
@@ -3484,23 +3487,20 @@ static WebFrameView *containingFrameView(NSView *view)
 // to that new factor before we send sel to any of them. 
 - (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel newScaleFactor:(float)newScaleFactor
 {
-    if ([[self mainFrame] dataSource] == nil) {
+    if ([[self mainFrame] dataSource] == nil)
         return NO;
-    }
     
     BOOL foundSome = NO;
     NSArray *docViews = [[self mainFrame] _documentViews];
-    int i;
-    for (i = [docViews count]-1; i >= 0; i--) {
+    for (int i = [docViews count]-1; i >= 0; i--) {
         id docView = [docViews objectAtIndex:i];
         if ([docView conformsToProtocol:@protocol(_WebDocumentTextSizing)]) {
             id <_WebDocumentTextSizing> sizingDocView = (id <_WebDocumentTextSizing>)docView;
             BOOL isSuitable;
             if ([sizingDocView _tracksCommonSizeFactor]) {
                 isSuitable = doTrackingViews;
-                if (isSuitable && newScaleFactor != 0) {
-                    [self setTextSizeMultiplier:newScaleFactor];
-                }
+                if (isSuitable && newScaleFactor != 0)
+                    _private->textSizeMultiplier = newScaleFactor;
             } else {
                 // Incantation to perform a selector returning a BOOL.
                 isSuitable = ((BOOL(*)(id, SEL))objc_msgSend)(sizingDocView, testSel);
@@ -3519,6 +3519,24 @@ static WebFrameView *containingFrameView(NSView *view)
     }
     
     return foundSome;
+}
+
+- (void)_notifyTextSizeMultiplierChanged
+{
+    if ([[self mainFrame] dataSource] == nil)
+        return;
+
+    NSArray *docViews = [[self mainFrame] _documentViews];
+    for (int i = [docViews count]-1; i >= 0; i--) {
+        id docView = [docViews objectAtIndex:i];
+        if ([docView conformsToProtocol:@protocol(_WebDocumentTextSizing)] == NO)
+            continue;
+
+        id <_WebDocumentTextSizing> sizingDocView = (id <_WebDocumentTextSizing>)docView;
+        if ([sizingDocView _tracksCommonSizeFactor])
+            [sizingDocView _textSizeMultiplierChanged];
+    }
+
 }
 
 @end

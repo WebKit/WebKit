@@ -4844,6 +4844,11 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return YES;
 }
 
+- (void)_textSizeMultiplierChanged
+{
+    [self _updateTextSizeMultiplier];
+}
+
 // never sent because we track the common size factor
 - (BOOL)_canMakeTextSmaller          {   ASSERT_NOT_REACHED(); return NO;    }
 - (BOOL)_canMakeTextLarger           {   ASSERT_NOT_REACHED(); return NO;    }
