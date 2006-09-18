@@ -1,5 +1,11 @@
 2006-09-17  Eric Seidel  <eric@eseidel.com>
 
+        Reviewed by hyatt.
+
+        * fast/js/window-properties.html: make work in Firefox (hangs IE)
+
+2006-09-17  Eric Seidel  <eric@eseidel.com>
+
         Add a textual dump of the window object property tree.
 
         Reviewed by Sarge.

@@ -1,3 +1,5 @@
+<html>
+<body>
 <div id="log"></div>
 <script type="text/javascript">
 
@@ -26,16 +28,27 @@ function shouldSkipChildren(fullPropertyName, propertyValue) {
 }
 
 function havePrintedChildren(fullPropertyName, propertyValue) {
-  var childrenPrintedUnderName = propertyValue._childrenPrintedUnderName;
-  if (!childrenPrintedUnderName)
-    propertyValue._childrenPrintedUnderName = fullPropertyName;
-  return childrenPrintedUnderName;
+  try {
+    var childrenPrintedUnderName = propertyValue._childrenPrintedUnderName;
+    if (!childrenPrintedUnderName)
+      propertyValue._childrenPrintedUnderName = fullPropertyName;
+    return childrenPrintedUnderName;
+  } catch (e) {
+    log(fullPropertyName + " : ERROR determining if we have already printed children, assuming true");
+    return true;
+  }
 }
 
 function printProperties(object, parentString) {
   for (propertyName in object) {
     var fullPropertyName = parentString + '.' + propertyName;
-    var propertyValue = object[propertyName];
+    var propertyValue;
+    try {
+      propertyValue = object[propertyName]; // Firefox throws here for certain unimplemented DOM3 properties
+    } catch (e) {
+      log(fullPropertyName + " : ERROR accessing property, exception thrown: " + e);
+      continue;
+    }
     if (shouldSkipProperty(fullPropertyName, propertyValue))
       continue;
     var type = typeof(propertyValue);
@@ -57,3 +70,5 @@ havePrintedChildren(window, 'window');
 printProperties(window, 'window');
 
 </script>
+</body>
+</html>
