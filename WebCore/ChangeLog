@@ -1,3 +1,10 @@
+2006-09-18  Brady Eidson  <beidson@apple.com>
+
+        Windows build fix
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (IconDatabase::setIconURLForPageURL):
+
 2006-09-18  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 3969, hr width doesn't update when it clears a float.  This
