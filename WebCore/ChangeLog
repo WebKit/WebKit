@@ -2,6 +2,17 @@
 
         Reviewed by Tim H.
 
+        - Re-add private method [DOMRGBColor _color] to DOMPrivate.h as
+          it is it turns out that AppKit uses it.
+
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/DOMRGBColor.mm:
+        (-[DOMRGBColor _color]):
+
+2006-09-18  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
         Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10903
         Yet Another Objective-C Bindings Patch
 

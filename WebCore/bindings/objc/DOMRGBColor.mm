@@ -114,6 +114,15 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 
 @end
 
+@implementation DOMRGBColor (WebPrivate)
+
+- (NSColor *)_color
+{
+    return [self color];
+}
+
+@end
+
 @implementation DOMRGBColor (WebCoreInternal)
 
 - (id)_initWithRGB:(WebCore::RGBA32)value

@@ -59,6 +59,10 @@
 #import <WebCore/DOMUIEventPrivate.h>
 #import <WebCore/DOMWheelEventPrivate.h>
 
+@interface DOMRGBColor (WebPrivate)
+- (NSColor *)_color;
+@end
+
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText
 - (NSString *)_text;
