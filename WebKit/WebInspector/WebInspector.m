@@ -1126,8 +1126,10 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (unsigned long)_lengthOfChildNodesIgnoringWhitespace
 {
-    if (!lengthIgnoringWhitespaceCache)
-        lengthIgnoringWhitespaceCache = NSCreateMapTable(NSObjectMapKeyCallBacks, NSIntMapValueCallBacks, 300);
+    if (!lengthIgnoringWhitespaceCache) {
+        NSMapTableValueCallBacks integerMapValueCallBacks = {NULL, NULL, NULL};
+        lengthIgnoringWhitespaceCache = NSCreateMapTable(NSObjectMapKeyCallBacks, integerMapValueCallBacks, 300);
+    }
 
     void *lookup = NSMapGet(lengthIgnoringWhitespaceCache, self);
     if (lookup)
@@ -1149,10 +1151,12 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     unsigned long count = 0;
     DOMNode *node = nil;
 
-    if (!lastChildIndexIgnoringWhitespaceCache)
-        lastChildIndexIgnoringWhitespaceCache = NSCreateMapTable(NSObjectMapKeyCallBacks, NSIntMapValueCallBacks, 300);
     if (!lastChildIgnoringWhitespaceCache)
         lastChildIgnoringWhitespaceCache = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 300);
+    if (!lastChildIndexIgnoringWhitespaceCache) {
+        NSMapTableValueCallBacks integerMapValueCallBacks = {NULL, NULL, NULL};
+        lastChildIndexIgnoringWhitespaceCache = NSCreateMapTable(NSObjectMapKeyCallBacks, integerMapValueCallBacks, 300);
+    }
 
     void *cachedLastIndex = NSMapGet(lastChildIndexIgnoringWhitespaceCache, self);
     if (cachedLastIndex) {
