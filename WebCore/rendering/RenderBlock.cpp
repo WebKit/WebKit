@@ -836,7 +836,7 @@ void RenderBlock::collapseMargins(RenderObject* child, MarginInfo& marginInfo, i
 
     child->setPos(child->xPos(), ypos);
     if (ypos != yPosEstimate) {
-        if (child->style()->width().isPercent() && child->usesLineWidth())
+        if ((child->style()->width().isPercent() || child->style()->width().isAuto()) && child->usesLineWidth())
             // The child's width is a percentage of the line width.
             // When the child shifts to clear an item, its width can
             // change (because it has more available line width).
@@ -884,7 +884,7 @@ void RenderBlock::clearFloatsIfNeeded(RenderObject* child, MarginInfo& marginInf
         // If our value of clear caused us to be repositioned vertically to be
         // underneath a float, we might have to do another layout to take into account
         // the extra space we now have available.
-        if (child->style()->width().isPercent() && child->usesLineWidth())
+        if ((child->style()->width().isPercent() || child->style()->width().isAuto()) && child->usesLineWidth())
             // The child's width is a percentage of the line width.
             // When the child shifts to clear an item, its width can
             // change (because it has more available line width).
