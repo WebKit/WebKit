@@ -1,3 +1,13 @@
+2006-09-19  Krzysztof Kowalczyk <kkowalczyk@gmail.com>
+
+        Reviewed by eseidel.  Landed by eseidel.
+        
+        Detect that close button was pressed and exit cleanly.
+
+        * GdkLauncher/main.cpp:
+        (handle_event):
+        (main):
+
 2006-09-17  Adam Roben  <aroben@apple.com>
 
         Reviewed by hyatt, sfalken.
