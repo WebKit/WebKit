@@ -1,3 +1,17 @@
+2006-09-19  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by hyatt.
+
+        Exceptions thrown from <script> tags in XHTML/SVG docs show the wrong line numbers
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10846
+        
+        No automated test case possible until http://bugzilla.opendarwin.org/show_bug.cgi?id=10905 is resolved.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::XMLTokenizer::startElementNs):
+        (WebCore::XMLTokenizer::endElementNs):
+
 2006-09-19  Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 
         Reviewed by eseidel.  Landed by eseidel.
