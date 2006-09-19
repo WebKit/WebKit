@@ -21,7 +21,7 @@
 #ifndef RenderFileUploadControl_H
 #define RenderFileUploadControl_H
 
-#include "RenderFlexibleBox.h"
+#include "RenderBlock.h"
 
 #include "FileChooser.h"
 #include "HTMLInputElement.h"
@@ -29,25 +29,25 @@
 namespace WebCore {
 
 class HTMLFileUploadInnerButtonElement;
-class RenderFileUploadInnerFileBox;
+//class RenderFileUploadInnerFileBlock;
     
 // RenderFileUploadControls contain a RenderButton (for opening the file chooser), and
-// a RenderFileUploadInnerFileBox (which contains a RenderText for the filename and sufficient padding to draw a file icon).
-// The RenderButton has an HTMLFileUploadInnerButtonElement shadow node associated with it to receive click/hover events.
+// sufficient space to draw a file icon and filename. The RenderButton has an
+// HTMLFileUploadInnerButtonElement shadow node associated with it to receive click/hover events.
 
-class RenderFileUploadControl : public RenderFlexibleBox {
+class RenderFileUploadControl : public RenderBlock {
 public:
     RenderFileUploadControl(Node*);
     ~RenderFileUploadControl();
 
     virtual void setStyle(RenderStyle*);
     virtual void updateFromElement();
+    virtual void calcMinMaxWidth();
     virtual void paintObject(PaintInfo&, int tx, int ty);
 
     virtual void click(bool sendMouseEvents);
 
     void valueChanged();
-    void updateIconAndFilename();
 
     virtual const char* renderName() const { return "RenderFileUploadControl"; }
 
@@ -56,7 +56,6 @@ protected:
     RenderStyle* createButtonStyle(RenderStyle* parentStyle = 0);
     
     RefPtr<HTMLFileUploadInnerButtonElement> m_button;
-    RenderFileUploadInnerFileBox* m_fileBox;
     FileChooser* m_fileChooser;
 };
 

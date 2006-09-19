@@ -1,3 +1,35 @@
+2006-09-19  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10824
+        "no file selected" placeholder text missing from file upload control
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderFileUploadControl.cpp: Remove class
+        RenderFileUploadInnerFileBox, rename defaultFilenameNumChars to
+        defaultWidthNumChars
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl): Call
+        RenderBlock constructor instead of RenderFlexibleBox, 
+        (WebCore::RenderFileUploadControl::setStyle): Remove references to
+        m_fileBox.
+        (WebCore::RenderFileUploadControl::valueChanged): Call repaint()
+        instead of updateIconAndFileName() (which has been removed)
+        (WebCore::RenderFileUploadControl::updateFromElement): Remove
+        references to m_fileBox, don't call updateIconAndFilename()
+        (WebCore::RenderFileUploadControl::maxFilenameWidth): Calculate width
+        without using m_fileBox
+        (WebCore::RenderFileUploadControl::createButtonStyle): Remove
+        now-unnecessary display:box rule.
+        (WebCore::RenderFileUploadControl::paintObject): Remove redundant call
+        to paintingDisabled() now that Icon::paint() does it, and add code to
+        paint the filename directly.
+        (WebCore::RenderFileUploadControl::calcMinMaxWidth): Move this method
+        out of RenderFileUploadInnerFileBox and into RenderFileUploadControl
+        * rendering/RenderFileUploadControl.h: Make RenderFileUploadControl a
+        subclass of RenderBlock instead of RenderFlexibleBox, remove
+        updateIconAndFilename() method, remove m_fileBox instance variable.
+
 2006-09-19  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by hyatt.
