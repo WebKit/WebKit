@@ -1,3 +1,14 @@
+2006-09-18  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        Update tests for the new file upload control.
+
+        * fast/forms/file-input-disabled-expected.txt:
+        * fast/forms/form-element-geometry-expected.txt:
+        * fast/forms/input-appearance-height-expected.txt:
+        * fast/forms/input-value-expected.txt:
+
 2006-09-17  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by hyatt.
