@@ -768,7 +768,11 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
     if (newElement->hasTagName(scriptTag))
         static_cast<HTMLScriptElement *>(newElement.get())->setCreatedByParser(true);
     
-    if (newElement->hasTagName(HTMLNames::scriptTag) || newElement->hasTagName(SVGNames::scriptTag))
+    if (newElement->hasTagName(HTMLNames::scriptTag)
+#ifdef SVG_SUPPORT
+        || newElement->hasTagName(SVGNames::scriptTag)
+#endif
+        )
         m_scriptStartLine = lineNumber();
     
     if (!m_currentNode->addChild(newElement.get())) {
