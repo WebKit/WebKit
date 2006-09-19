@@ -859,14 +859,13 @@ void RenderBlock::clearFloatsIfNeeded(RenderObject* child, MarginInfo& marginInf
         child->setPos(child->xPos(), child->yPos() + heightIncrease);
 
         // Increase our height by the amount we had to clear.
-        if (!child->isSelfCollapsingBlock())
-            m_height += heightIncrease;
-        else {
-            // For self-collapsing blocks that clear, they may end up collapsing
-            // into the bottom of the parent block.  We simulate this behavior by
-            // setting our positive margin value to compensate for the clear.
-            marginInfo.setPosMargin(max(0, child->yPos() - m_height));
-            marginInfo.setNegMargin(0);
+        m_height += heightIncrease;
+        if (child->isSelfCollapsingBlock()) {
+            // For self-collapsing blocks that clear, they can still collapse their
+            // margins with following siblings.  Reset the current margins to represent
+            // the self-collapsing block's margins only.
+            marginInfo.setPosMargin(max(child->maxTopMargin(true), child->maxBottomMargin(true)));
+            marginInfo.setNegMargin(max(child->maxTopMargin(false), child->maxBottomMargin(false)));
             marginInfo.setSelfCollapsingBlockClearedFloat(true);
         }
         
@@ -980,7 +979,7 @@ void RenderBlock::setCollapsedBottomMargin(const MarginInfo& marginInfo)
 
 void RenderBlock::handleBottomOfBlock(int top, int bottom, MarginInfo& marginInfo)
 {
-     // If our last flow was a self-collapsing block that cleared a float, then we don't
+    // If our last flow was a self-collapsing block that cleared a float, then we don't
     // collapse it with the bottom of the block.
     if (!marginInfo.selfCollapsingBlockClearedFloat())
         marginInfo.setAtBottomOfBlock(true);

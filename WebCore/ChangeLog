@@ -1,3 +1,17 @@
+2006-09-18  David Hyatt  <hyatt@apple.com>
+
+        Fix for 9805, <hr> not positioned properly following a previous empty sibling
+        that had clear:both set on it.  Update self-collapsing block clearance
+        behavior to match what is specified in the latest draft of CSS2.1.
+
+        Reviewed by Eric
+
+        Added fast/block/margin-collapse/empty-clear-blocks.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::handleBottomOfBlock):
+
 2006-09-18  MorganL  <morlmor@yahoo.com>
 
         Reviewed by Brady, landed by Brady
