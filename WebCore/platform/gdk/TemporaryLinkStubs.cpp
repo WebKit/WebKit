@@ -169,6 +169,8 @@ bool FrameGdk::canPaste() const { notImplemented(); return 0; }
 enum WebCore::ObjectContentType FrameGdk::objectContentType(KURL const&, String const&) { notImplemented(); return (ObjectContentType)0; }
 bool FrameGdk::canGoBackOrForward(int) const { notImplemented(); return 0; }
 void FrameGdk::issuePasteAndMatchStyleCommand() { notImplemented(); }
+bool FrameGdk::isLoadTypeReload() { notImplemented(); return false; }
+KURL FrameGdk::originalRequestURL() const { return KURL(); }
 Plugin* FrameGdk::createPlugin(Element*, KURL const&, const Vector<String>&, const Vector<String>&, String const&) { notImplemented(); return 0; }
 
 bool BrowserExtensionGdk::canRunModal() { notImplemented(); return 0; }
@@ -374,6 +376,7 @@ IconLoader* IconLoader::createForFrame(Frame *frame) { return 0; }
 bool IconDatabase::isIconExpiredForIconURL(const String& url) { return false; }
 bool IconDatabase::hasEntryForIconURL(const String& url) { return false; }
 IconDatabase* IconDatabase::sharedIconDatabase() { return 0; }
+bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL) { return false; }
 
 FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int) const { return FloatRect(); }
 void Font::drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const { notImplemented(); }

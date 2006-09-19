@@ -1,3 +1,18 @@
+2006-09-19  Krzysztof Kowalczyk <kkowalczyk@gmail.com>
+
+        Reviewed by eseidel.  Landed by eseidel.
+        
+        Build fix only, no tests affected.
+
+        * platform/gdk/FontPlatformDataGdk.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (FrameGdk::isLoadTypeReload):
+        (FrameGdk::originalRequestURL):
+        (IconDatabase::setIconURLForPageURL):
+
 2006-09-19  David Hyatt  <hyatt@apple.com>
 
         Refine the fix for 9805 to really get all the complex cases right.

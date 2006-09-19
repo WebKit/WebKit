@@ -127,6 +127,7 @@ public:
     virtual bool shouldInterruptJavaScript();
 
     bool keyPress(const PlatformKeyboardEvent&);
+    virtual KURL originalRequestURL() const;
 
     virtual void receivedData(ResourceLoader*, const char*, int);
     virtual void receivedAllData(ResourceLoader*,PlatformData);
@@ -136,7 +137,9 @@ public:
     virtual Frame* createFrame(const KURL&, const String& name, Element* ownerElement, const String& referrer);
 
 private:
+    virtual bool isLoadTypeReload();
     virtual bool passMouseDownEventToWidget(Widget*);
+
     FrameGdkClient* m_client;
     GdkDrawable* m_drawable;
 };
