@@ -1,3 +1,12 @@
+2006-09-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Implement a bridge method so WebCore can find the reload type of a frame load
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge isLoadTypeReload]):
+
 2006-09-18  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

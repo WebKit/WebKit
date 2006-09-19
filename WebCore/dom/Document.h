@@ -598,6 +598,8 @@ public:
 
     bool didLayoutWithPendingStylesheets() const { return m_pendingSheetLayout == DidLayoutWithPendingSheets; }
 
+    String iconURL();
+    void setIconURL(const String& iconURL, const String& type);
 protected:
     CSSStyleSelector* m_styleSelector;
     FrameView* m_view;
@@ -607,7 +609,7 @@ protected:
     DeprecatedString m_url;
     DeprecatedString m_baseURL;
     String m_baseTarget;
-
+    
     RefPtr<DocumentType> m_docType;
     RefPtr<DOMImplementation> m_implementation;
 
@@ -812,6 +814,7 @@ private:
     mutable bool m_accessKeyMapValid;
     bool m_createRenderers;
     bool m_inPageCache;
+    String m_iconURL;
 };
 
 } //namespace

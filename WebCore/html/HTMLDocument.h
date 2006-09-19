@@ -65,7 +65,7 @@ public:
     bool hasDocExtraNamedItem(const String& name);
 
     typedef HashMap<StringImpl*, int> NameCountMap;
-
+    
 protected:
     HTMLElement* bodyElement;
     HTMLElement* htmlElement;

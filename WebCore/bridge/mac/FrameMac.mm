@@ -3570,4 +3570,9 @@ KURL FrameMac::originalRequestURL() const
     return [_bridge originalRequestURL];
 }
 
+bool FrameMac::isLoadTypeReload()
+{
+    return [_bridge isLoadTypeReload];
+}
+
 }

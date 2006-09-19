@@ -1713,4 +1713,11 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     return [[[[_frame _frameLoader] activeDataSource] initialRequest] URL];
 }
 
+- (BOOL)isLoadTypeReload
+{
+    return [_frame _loadType] == WebFrameLoadTypeReload;
+}
+
+
+
 @end

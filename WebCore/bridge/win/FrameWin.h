@@ -126,6 +126,9 @@ public:
 
     bool keyPress(const PlatformKeyboardEvent&);
     virtual KURL originalRequestURL() const;
+    
+protected:
+    virtual bool isLoadTypeReload();
 
 private:
     virtual bool passMouseDownEventToWidget(Widget*);

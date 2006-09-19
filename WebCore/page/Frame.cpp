@@ -231,8 +231,8 @@ KURL Frame::iconURL()
         return "";
         
     // If we have an iconURL from a Link element, return that
-    if (!d->m_iconURL.isEmpty())
-        return KURL(d->m_iconURL.deprecatedString());
+    if (!document()->iconURL().isEmpty())
+        return KURL(document()->iconURL().deprecatedString());
         
     // Don't return a favicon iconURL unless we're http or https
     if (d->m_url.protocol() != "http" && d->m_url.protocol() != "https")
@@ -243,15 +243,6 @@ KURL Frame::iconURL()
     url.setHost(d->m_url.host());
     url.setPath("/favicon.ico");
     return url;
-}
-
-void Frame::setIconURL(const String& url, const String& type)
-{
-    // FIXME - <rdar://problem/4727645> - At some point in the future, we might actually honor the "type" 
-    if (d->m_iconURL.isEmpty())
-        d->m_iconURL = url;
-    else if (!type.isEmpty())
-        d->m_iconURL = url;
 }
 
 bool Frame::didOpenURL(const KURL& url)
@@ -782,7 +773,7 @@ void Frame::endIfNotLoading()
     
     IconDatabase* sharedIconDatabase = IconDatabase::sharedIconDatabase();
     // If we already have an unexpired icon, we won't kick off a load but we *will* map the appropriate URLs to it
-    if (sharedIconDatabase->hasEntryForIconURL(url) && !sharedIconDatabase->isIconExpiredForIconURL(url)) {
+    if (sharedIconDatabase->hasEntryForIconURL(url) && !isLoadTypeReload() && !sharedIconDatabase->isIconExpiredForIconURL(url)) {
         commitIconURLToIconDatabase();
         return;
     }

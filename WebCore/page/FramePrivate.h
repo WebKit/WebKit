@@ -173,8 +173,6 @@ namespace WebCore {
 
         String m_referrer;
 
-        String m_iconURL;
-
         struct SubmitForm {
             const char* submitAction;
             String submitUrl;

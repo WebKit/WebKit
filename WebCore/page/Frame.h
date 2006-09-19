@@ -107,7 +107,6 @@ public:
   void didExplicitOpen();
 
   KURL iconURL();
-  void setIconURL(const String& url, const String& type);
   void commitIconURLToIconDatabase();
   
   Page* page() const;
@@ -590,6 +589,8 @@ protected:
   virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType) = 0;
 
   virtual void redirectionTimerFired(Timer<Frame>*);
+  
+  virtual bool isLoadTypeReload() = 0;
 
 public:
   void loadDone();

@@ -422,5 +422,5 @@ void HTMLDocument::determineParseMode(const String& str)
     m_styleSelector->strictParsing = !inCompatMode();
  
 }
-
+    
 }

@@ -1,3 +1,31 @@
+2006-09-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/3028061> - WebKit never updates favicon
+        The WebKit enforced expiration date for icons has worked for some time, but the
+        move to the new Icon Loader broke the "always get the icon if the user refreshes the page" 
+        functionality.  This patch fixes that up, along with some other architectural improvements,
+        the main one being that WebCore::Document now contains an iconURL for the Frame to query if needed.
+
+        * bridge/mac/FrameMac.h: Added isLoadTypeReload()
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::isLoadTypeReload): Implementation, calls into the bridge
+        * bridge/mac/WebCoreFrameBridge.h: Added isLoadTypeReload:
+        * bridge/win/FrameWin.h: Added isLoadTypeReload() for temporary link stub
+        * dom/Document.h: Added m_iconURL
+        (WebCore::Document::iconURL): Added
+        (WebCore::Document::setIconURL): Ditto
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process): Sets the iconURL in the Document instead of the Frame
+        * page/Frame.cpp:
+        (WebCore::Frame::iconURL): Calculates the iconURL based on the document, then the default favicon.ico url
+        (WebCore::Frame::endIfNotLoading): Checks for the load type - always loads icon on Reload
+        * page/Frame.h: Nuked setIconURL(), added isLoadTypeReload()
+        * page/FramePrivate.h: Nuked IconURL
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::isLoadTypeReload):
+
 2006-09-18  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
