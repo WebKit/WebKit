@@ -1,3 +1,14 @@
+2006-09-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4735272>
+        Can not click into link in programmatically editable content
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): We stopped using
+        userModify to implement document wide editability.
+
 2006-09-19  MorganL  <morlmor@yahoo.com>
 
         Reviewed by Darin and landed by Brady

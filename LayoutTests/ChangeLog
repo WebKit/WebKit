@@ -2,6 +2,15 @@
 
         Reviewed by harrison
 
+        * editing/selection/editable-links-expected.checksum: Added.
+        * editing/selection/editable-links-expected.png: Added.
+        * editing/selection/editable-links-expected.txt: Added.
+        * editing/selection/editable-links.html: Added.
+
+2006-09-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
         * editing/pasteboard/pasting-tabs-expected.checksum: Added.
         * editing/pasteboard/pasting-tabs-expected.png: Added.
         * editing/pasteboard/pasting-tabs-expected.txt: Added.
