@@ -52,12 +52,24 @@ bool HTMLMapElement::checkDTD(const Node* newChild)
 
 bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, RenderObject::NodeInfo& info)
 {
+    HTMLAreaElement* defaultArea = 0;
     Node *node = this;
-    while ((node = node->traverseNextNode(this)))
-        if (node->hasTagName(areaTag))
-            if (static_cast<HTMLAreaElement*>(node)->mapMouseEvent(x, y, size, info))
+    while ((node = node->traverseNextNode(this))) {
+        if (node->hasTagName(areaTag)) {
+            HTMLAreaElement* areaElt = static_cast<HTMLAreaElement*>(node);
+            if (areaElt->isDefault()) {
+                if (!defaultArea)
+                    defaultArea = areaElt;
+            } else if (areaElt->mapMouseEvent(x, y, size, info))
                 return true;
-    return false;
+        }
+    }
+    
+    if (defaultArea) {
+        info.setInnerNode(defaultArea);
+        info.setURLElement(defaultArea);
+    }
+    return defaultArea;
 }
 
 void HTMLMapElement::parseMappedAttribute(MappedAttribute* attr)

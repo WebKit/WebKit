@@ -1,3 +1,15 @@
+2006-09-19  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 5298, shape=default not supported for image maps.  Implement
+        support for it.
+
+        Reviewed by timo
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::getRegion):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::mapMouseEvent):
+
 2006-09-19  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.

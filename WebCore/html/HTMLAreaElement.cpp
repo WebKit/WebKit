@@ -94,9 +94,9 @@ IntRect HTMLAreaElement::getRect(RenderObject* obj) const
 
 Path HTMLAreaElement::getRegion(const IntSize& size) const
 {
-    if (!m_coords)
+    if (!m_coords && m_shape != Default)
         return Path();
-        
+
     int width = size.width();
     int height = size.height();
 
