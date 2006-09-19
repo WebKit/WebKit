@@ -102,10 +102,13 @@
         
     path = [[self pathByResolvingSymlinksAndAliasesInPath:pluginPath] retain];
     bundle = [[NSBundle alloc] initWithPath:path];
+#ifndef __ppc__
+    // 32-bit PowerPC is the only platform where non-bundled CFM plugins are supported
     if (!bundle) {
         [self release];
         return nil;
     }
+#endif
     cfBundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:path]);
     extensionToMIME = [[NSMutableDictionary alloc] init];
     

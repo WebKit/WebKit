@@ -1,3 +1,14 @@
+2006-09-19  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Tim O.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10661
+        REGRESSION: CFM plug-ins (Shockwave, SVG) are not loaded
+
+        * Plugins/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage initWithPath:]): On 32-bit PowerPC, don't bail out if 
+        the bundle is nil - it can be a CFM plugin.
+
 2006-09-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders
