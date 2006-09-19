@@ -1,3 +1,13 @@
+2006-09-19  David Hyatt  <hyatt@apple.com>
+
+        Refine the fix for 9805 to really get all the complex cases right.
+
+        Reviewed by Eric
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::handleBottomOfBlock):
+
 2006-09-18  David Hyatt  <hyatt@apple.com>
 
         Fix for 9805, <hr> not positioned properly following a previous empty sibling

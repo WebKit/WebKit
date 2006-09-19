@@ -858,16 +858,23 @@ void RenderBlock::clearFloatsIfNeeded(RenderObject* child, MarginInfo& marginInf
         // The child needs to be lowered.  Move the child so that it just clears the float.
         child->setPos(child->xPos(), child->yPos() + heightIncrease);
 
-        // Increase our height by the amount we had to clear.
-        m_height += heightIncrease;
         if (child->isSelfCollapsingBlock()) {
             // For self-collapsing blocks that clear, they can still collapse their
             // margins with following siblings.  Reset the current margins to represent
             // the self-collapsing block's margins only.
             marginInfo.setPosMargin(max(child->maxTopMargin(true), child->maxBottomMargin(true)));
             marginInfo.setNegMargin(max(child->maxTopMargin(false), child->maxBottomMargin(false)));
+            
+            // Adjust our height such that we are ready to be collapsed with subsequent siblings.
+            m_height = child->yPos() - max(0, marginInfo.margin());
+            
+            // Set a flag that we cleared a float so that we know both to increase the height of the block
+            // to compensate for the clear and to avoid collapsing our margins with the parent block's
+            // bottom margin.
             marginInfo.setSelfCollapsingBlockClearedFloat(true);
-        }
+        } else
+            // Increase our height by the amount we had to clear.
+            m_height += heightIncrease;
         
         if (marginInfo.canCollapseWithTop()) {
             // We can no longer collapse with the top of the block since a clear
@@ -983,6 +990,13 @@ void RenderBlock::handleBottomOfBlock(int top, int bottom, MarginInfo& marginInf
     // collapse it with the bottom of the block.
     if (!marginInfo.selfCollapsingBlockClearedFloat())
         marginInfo.setAtBottomOfBlock(true);
+    else {
+        // We have to special case the negative margin situation (where the collapsed
+        // margin of the self-collapsing block is negative), since there's no need
+        // to make an adjustment in that case.
+        if (marginInfo.margin() < 0)
+            marginInfo.clearMargin();
+    }
 
     // If we can't collapse with children then go ahead and add in the bottom margin.
     if (!marginInfo.canCollapseWithBottom() && !marginInfo.canCollapseWithTop()
