@@ -325,6 +325,8 @@ bool ResourceLoader::start(DocLoader* docLoader)
 
 void ResourceLoader::fileLoadTimer(Timer<ResourceLoader>* timer)
 {
+    d->client->receivedResponse(this, 0);
+
     bool result = false;
     DWORD bytesRead = 0;
 

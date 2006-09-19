@@ -1,3 +1,15 @@
+2006-09-18  MorganL  <morlmor@yahoo.com>
+
+        Reviewed by Brady, landed by Brady
+
+        Send receivedResponse callback to ResourceLoaderClient when loading
+        file URLs.
+
+        See http://bugzilla.opendarwin.org/show_bug.cgi?id=10845
+
+        * platform/win/ResourceLoaderWin.cpp:
+        (WebCore::ResourceLoader::fileLoadTimer):
+
 2006-09-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders
