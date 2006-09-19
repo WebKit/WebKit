@@ -109,6 +109,10 @@ void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position &po
         if (position.isNotNull() && currentlyHasStyle(position, property))
             continue;
         
+        // Changing the whitespace style in a tab span would collapse the tab into a space.
+        if (property->id() == CSS_PROP_WHITE_SPACE && (isTabSpanTextNode(position.node()) || isTabSpanNode((position.node()))))
+            continue;
+        
         // If needed, figure out if this change is a legacy HTML style change.
         if (m_usesLegacyStyles && checkForLegacyHTMLStyleChange(property))
             continue;

@@ -1,3 +1,18 @@
+2006-09-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4727383> REGRESSION: Pasting plain text with tabs into Blot converts the tabs to single spaces
+
+        Pasting plain text results in a match style paste, and the insertion
+        position is whitespace normal, which clobbers the whitespace:pre on 
+        tab spans.  Skip changes to the whitespace mode when computing a style
+        change for tab spans or the text nodes inside tab spans.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::init): Don't change the whitespace mode inside
+        tab spans.
+
 2006-09-19  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 5298, shape=default not supported for image maps.  Implement

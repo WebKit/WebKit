@@ -1,3 +1,12 @@
+2006-09-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        * editing/pasteboard/pasting-tabs-expected.checksum: Added.
+        * editing/pasteboard/pasting-tabs-expected.png: Added.
+        * editing/pasteboard/pasting-tabs-expected.txt: Added.
+        * editing/pasteboard/pasting-tabs.html: Added.
+
 2006-09-18  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.
