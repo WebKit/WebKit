@@ -1,3 +1,13 @@
+2006-09-19  Brady Eidson  <beidson@apple.com>
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8220
+        Add the favicon.ico to the site.
+        Notice, users of shipping Safari won't see the updated favicon 
+        unless they clear their icon cache - ToT users can manually reload
+        the site and force the refresh  ;)
+
+        * favicon.ico: Added.
+
 2006-09-08  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Adel.
