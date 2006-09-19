@@ -1,6 +1,6 @@
 2006-09-19  MorganL  <morlmor@yahoo.com>
 
-        Reviewed and landed by Brady
+        Reviewed by Darin and landed by Brady
 
         Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10939
         Build broken when SVG is not enabled.
