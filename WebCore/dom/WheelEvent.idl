@@ -40,6 +40,10 @@ module events {
         readonly attribute long    x;
         readonly attribute long    y;
 
+#if defined(LANGUAGE_OBJECTIVE_C)
+        readonly attribute boolean isHorizontal;
+#endif /* defined(LANGUAGE_OBJECTIVE_C) */
+
 #if !defined(LANGUAGE_JAVASCRIPT)
         void initWheelEvent(in long wheelDeltaX,
                             in long wheelDeltaY, 
@@ -52,7 +56,7 @@ module events {
                             in boolean altKey,
                             in boolean shiftKey,
                             in boolean metaKey);
-#endif
+#endif /* !defined(LANGUAGE_JAVASCRIPT) */
     };
 
 }

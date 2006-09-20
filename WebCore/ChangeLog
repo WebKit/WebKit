@@ -1,3 +1,14 @@
+2006-09-20  Sam Weinig  <sam.weinig@gmail.com>
+
+        Build Fix.  Adds isHorizontal attribute back to WheelEvent
+        for the Objective-C bindings.  If it is found that isHorizontal
+        is not used, we should remove it again but also remove it's
+        declaration from PublicDOMInterfaces.h
+
+        * dom/WheelEvent.h:
+        (WebCore::WheelEvent::isHorizontal):
+        * dom/WheelEvent.idl:
+
 2006-09-20  David Hyatt  <hyatt@apple.com>
 
         Fix for 10945, WheelEvent should support two dimensions at once, since
