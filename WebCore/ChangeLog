@@ -1,3 +1,24 @@
+2006-09-19  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by adele.
+        
+        Markers should clip to their viewport.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5967
+
+        Test: svg/custom/marker-overflow-clip.svg
+
+        * kcanvas/KCanvasResources.cpp:
+        (WebCore::KCanvasMarker::KCanvasMarker):
+        (WebCore::KCanvasMarker::setMarker):
+        (WebCore::KCanvasMarker::draw):
+        * kcanvas/KCanvasResources.h:
+        (WebCore::KCanvasMasker::mask):
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        (WebCore::SVGMarkerElement::canvasResource):
+        (WebCore::SVGMarkerElement::createRenderer):
+
 2006-09-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by eseidel

@@ -94,9 +94,10 @@ public:
     void setSlice(bool);
     bool slice() const;
     
+    AffineTransform viewportTransform() const;
+    
 private:
     AffineTransform getAspectRatio(const FloatRect& logical, const FloatRect& physical) const;
-    AffineTransform viewportTransform() const;
 
     bool m_drawsContents : 1;
     bool m_slice : 1;

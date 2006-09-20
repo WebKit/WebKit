@@ -167,20 +167,21 @@ TextStream& KCanvasMasker::externalRepresentation(TextStream &ts) const
 }
 
 // KCanvasMarker
-KCanvasMarker::KCanvasMarker(RenderObject *marker) : KCanvasResource()
+KCanvasMarker::KCanvasMarker(RenderSVGContainer* marker)
+    : KCanvasResource()
+    , m_refX(0)
+    , m_refY(0)
+    , m_marker(marker)
+    , m_useStrokeWidth(true)
 {
-    m_refX = 0;
-    m_refY = 0;
-    m_marker = marker;
     setAutoAngle();
-    m_useStrokeWidth = true;
 }
 
 KCanvasMarker::~KCanvasMarker()
 {
 }
 
-void KCanvasMarker::setMarker(RenderObject *marker)
+void KCanvasMarker::setMarker(RenderSVGContainer* marker)
 {
     m_marker = marker;
 }
@@ -226,46 +227,39 @@ bool KCanvasMarker::useStrokeWidth() const
     return m_useStrokeWidth;
 }
 
-void KCanvasMarker::setScale(float scaleX, float scaleY)
-{
-    m_scaleX = scaleX;
-    m_scaleY = scaleY;
-}
-
-float KCanvasMarker::scaleX() const
-{
-    return m_scaleX;
-}
-
-float KCanvasMarker::scaleY() const
-{
-    return m_scaleY;
-}
-
 void KCanvasMarker::draw(GraphicsContext* context, const FloatRect& rect, double x, double y, double strokeWidth, double angle)
 {
-    if(m_marker)
-    {
-        AffineTransform translation;
-        translation.translate(x, y);
-
-        AffineTransform rotation;
-        // stroke width
-        if(m_useStrokeWidth)
-            rotation.scale(strokeWidth, strokeWidth);
-        rotation.rotate(m_angle > -1 ? m_angle : angle);
-        rotation.scale(m_scaleX, m_scaleY);
-        rotation.translate(-m_refX, -m_refY);
-
-        // FIXME: PaintInfo should be passed into this method instead.
-        // FIXME: bounding box fractions lost
-        RenderObject::PaintInfo info(context, enclosingIntRect(rect), PaintPhaseForeground, 0, 0, 0);
-        rotation = rotation * translation;
-        m_marker->setLocalTransform(rotation);
-        static_cast<RenderSVGContainer *>(m_marker)->setDrawsContents(true);
-        m_marker->paint(info, 0, 0);
-        static_cast<RenderSVGContainer *>(m_marker)->setDrawsContents(false);
-    }
+    if (!m_marker)
+        return;
+    
+    AffineTransform transform;
+    transform.translate(x, y);
+    transform.rotate(m_angle > -1 ? m_angle : angle);
+    
+    // refX and refY are given in coordinates relative to the viewport established by the marker, yet they affect
+    // the translation performed on the viewport itself.
+    AffineTransform viewportTransform;
+    if (m_useStrokeWidth)
+        viewportTransform.scale(strokeWidth, strokeWidth);
+    if (!m_marker->viewBox().isEmpty())
+        viewportTransform *= m_marker->viewportTransform();
+    double refX, refY;
+    viewportTransform.map(m_refX, m_refY, &refX, &refY);
+    transform.translate(-refX, -refY);
+    
+    if (m_useStrokeWidth)
+        transform.scale(strokeWidth, strokeWidth);
+    
+    // FIXME: PaintInfo should be passed into this method instead of being created here
+    // FIXME: bounding box fractions are lost
+    RenderObject::PaintInfo info(context, enclosingIntRect(rect), PaintPhaseForeground, 0, 0, 0);
+    
+    context->save();
+    context->concatCTM(transform);
+    m_marker->setDrawsContents(true);
+    m_marker->paint(info, 0, 0);
+    m_marker->setDrawsContents(false);
+    context->restore();
 }
 
 TextStream& KCanvasMarker::externalRepresentation(TextStream &ts) const
