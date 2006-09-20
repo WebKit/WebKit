@@ -1,3 +1,10 @@
+2006-09-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        * wtf/MathExtras.h:
+        Get rid of lrint.
+
 2006-09-20  Sean Gies  <seangies@apple.com>
 
         Reviewed by Steve Falkenburg.

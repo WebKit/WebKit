@@ -1,3 +1,11 @@
+2006-09-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        Use lroundf instead of lround since deltas are floats.
+
 2006-09-20  Julien Palmas  <julien.palmas@gmail.com>
 
         Reviewed by eseidel.  Landed by eseidel.
