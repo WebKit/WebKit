@@ -1,3 +1,23 @@
+ope2006-09-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Cleaned up my last patch alot, and made the WebCore icon database disabled by default
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase): Disabled by default
+        (WebCore::IconDatabase::removeAllIcons): Respect just isOpen() (disabled database will always be closed)
+        (WebCore::IconDatabase::setPrivateBrowsingEnabled): Ditto
+        (WebCore::IconDatabase::iconForPageURL): Ditto
+        (WebCore::IconDatabase::isIconExpiredForIconURL): Ditto
+        (WebCore::IconDatabase::iconURLForPageURL): Ditto
+        (WebCore::IconDatabase::retainIconForPageURL): Ditto
+        (WebCore::IconDatabase::releaseIconForPageURL): Ditto
+        (WebCore::IconDatabase::setIconDataForIconURL): Ditto
+        (WebCore::IconDatabase::setIconURLForPageURL): Ditto
+        (WebCore::IconDatabase::hasEntryForIconURL): Ditto
+        (WebCore::IconDatabase::setEnabled): Fixed a big bug here!
+
 2006-09-20  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.

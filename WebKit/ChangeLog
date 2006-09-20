@@ -1,3 +1,12 @@
+2006-09-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Preparing to make the WebIconDatabase disabled by default - this patch tells the bridge whether its enabled or not
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase init]):
+
 2006-09-19  Brady Eidson <beidson@apple.com>
 
         Reviewed by Sarge Decker

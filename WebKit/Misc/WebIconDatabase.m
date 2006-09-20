@@ -89,15 +89,16 @@ NSSize WebIconLargeSize = {128, 128};
     }
     
     // Check the user defaults and see if the icon database should even be enabled.
-    // If not, inform the bridge and bail from init right here
+    // Inform the bridge and, if we're disabled, bail from init right here
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    // <rdar://problem/4741419> - IconDatabase should be disabled by default
     NSDictionary *initialDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], WebIconDatabaseEnabledDefaultsKey, nil];
     [defaults registerDefaults:initialDefaults];
     [initialDefaults release];
-    if (![defaults boolForKey:WebIconDatabaseEnabledDefaultsKey]) {
-        [_private->databaseBridge _setEnabled:NO];
+    BOOL enabled = [defaults boolForKey:WebIconDatabaseEnabledDefaultsKey];
+    [_private->dataabaseBridge _setEnabled:enabled];
+    if (!enabled)
         return self;
-    }
     
     // Figure out the directory we should be using for the icon.db
     NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
