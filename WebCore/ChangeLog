@@ -11,7 +11,7 @@
 
         Reviewed by Kevin McCullough
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10940 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10940
         Opening a PDF in a new tab/window creates a documentless-frame
         and we deref the document without checking its validity
 
