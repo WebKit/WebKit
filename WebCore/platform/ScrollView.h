@@ -36,6 +36,7 @@ class QScrollArea;
 
 namespace WebCore {
     class FloatRect;
+    class PlatformWheelEvent;
 
     class ScrollView : public Widget {
     public:
@@ -76,6 +77,11 @@ namespace WebCore {
         void setStaticBackground(bool);
 
         bool inWindow() const;
+
+        // This method exists for scrollviews that need to handle wheel events manually.
+        // On Mac the underlying NSScrollView just does the scrolling, but on other platforms
+        // (like Windows), we need this method in order to do the scroll ourselves.
+        void wheelEvent(PlatformWheelEvent&) {};
 
 #if __APPLE__
         NSView* getDocumentView() const;

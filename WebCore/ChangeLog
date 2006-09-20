@@ -1,3 +1,14 @@
+2006-09-20  David Hyatt  <hyatt@apple.com>
+
+        Add a new wheelEvent method to ScrollView.  Platforms that wish
+        to handle the wheel event for the scroll view themselves can then
+        do so there.  (Mac lets the underlying NSScrollView do it for now.)
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleWheelEvent):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::wheelEvent):
+
 2006-09-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Omernick

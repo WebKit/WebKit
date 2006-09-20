@@ -1199,6 +1199,9 @@ void FrameView::handleWheelEvent(PlatformWheelEvent& e)
                     if (e.deltaY() && node->renderer()->scroll(e.deltaY() < 0 ? ScrollDown : ScrollUp, ScrollByWheel,
                                                                e.deltaY() < 0 ? -e.deltaY() : e.deltaY()))
                         e.accept();
+                        
+                    if (!e.isAccepted())
+                        wheelEvent(e);
                 }
             }
         }
