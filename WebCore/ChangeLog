@@ -1,3 +1,17 @@
+2006-09-20  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10935
+        REGRESSION: file upload control with direction:rtl or text-align:right
+        draws button on top of filename/icon
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::setStyle): Force text-align to
+        match direction
+        (WebCore::RenderFileUploadControl::paintObject): Fix positioning of
+        the filename and icon in RTL
+
 2006-09-20  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam Roben.

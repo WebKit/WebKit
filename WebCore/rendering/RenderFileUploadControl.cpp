@@ -80,6 +80,12 @@ RenderFileUploadControl::~RenderFileUploadControl()
 
 void RenderFileUploadControl::setStyle(RenderStyle* s)
 {
+    // Force text-align to match the direction
+    if (s->direction() == LTR)
+        s->setTextAlign(LEFT);
+    else
+        s->setTextAlign(RIGHT);
+    
     RenderBlock::setStyle(s);
     if (m_button)
         m_button->renderer()->setStyle(createButtonStyle(s));
@@ -158,7 +164,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& i, int tx, int ty)
         if (style()->direction() == LTR)
             textX = contentLeft + buttonAndIconWidth;
         else
-            textX = contentLeft + contentWidth() - buttonAndIconWidth;
+            textX = contentLeft + contentWidth() - buttonAndIconWidth - style()->font().width(textRun);
         // We want to match the button's baseline
         RenderButton* buttonRenderer = static_cast<RenderButton*>(m_button->renderer());
         int textY = buttonRenderer->absoluteBoundingBoxRect().y() + buttonRenderer->marginTop() + buttonRenderer->borderTop() + buttonRenderer->paddingTop() + buttonRenderer->baselinePosition(true, false);
@@ -176,7 +182,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& i, int tx, int ty)
             if (style()->direction() == LTR)
                 iconX = contentLeft + m_button->renderer()->width() + afterButtonSpacing;
             else
-                iconX = contentLeft + contentWidth() - m_button->renderer()->width() - afterButtonSpacing;
+                iconX = contentLeft + contentWidth() - m_button->renderer()->width() - afterButtonSpacing - iconWidth;
             
             // Draw the file icon
             m_fileChooser->icon()->paint(i.p, IntRect(iconX, iconY, iconWidth, iconHeight));

@@ -1,3 +1,16 @@
+2006-09-20  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        Adding test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10935
+        REGRESSION: file upload control with direction:rtl or text-align:right
+        draws button on top of filename/icon
+
+        * fast/forms/file-input-direction-expected.checksum: Added.
+        * fast/forms/file-input-direction-expected.png: Added.
+        * fast/forms/file-input-direction-expected.txt: Added.
+        * fast/forms/file-input-direction.html: Added.
+
 2006-09-20  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by hyatt.
