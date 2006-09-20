@@ -96,7 +96,7 @@ NSSize WebIconLargeSize = {128, 128};
     [defaults registerDefaults:initialDefaults];
     [initialDefaults release];
     BOOL enabled = [defaults boolForKey:WebIconDatabaseEnabledDefaultsKey];
-    [_private->dataabaseBridge _setEnabled:enabled];
+    [_private->databaseBridge _setEnabled:enabled];
     if (!enabled)
         return self;
     
