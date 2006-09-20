@@ -10,6 +10,8 @@
 		1C0706630A431E01001078F6 /* WebScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0706620A431E01001078F6 /* WebScriptDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C07073D0A433BD8001078F6 /* WebScriptDebugServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C07073C0A433BD8001078F6 /* WebScriptDebugServer.m */; };
 		1C07079A0A433E22001078F6 /* WebScriptDebugServerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0707990A433E22001078F6 /* WebScriptDebugServerPrivate.h */; };
+		1C0D40870AC1C8F40009C113 /* WebKitVersionChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0D40850AC1C8F40009C113 /* WebKitVersionChecks.h */; };
+		1C0D40880AC1C8F40009C113 /* WebKitVersionChecks.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C0D40860AC1C8F40009C113 /* WebKitVersionChecks.m */; };
 		1C68F667095B5FC100C2984E /* webInspector in Resources */ = {isa = PBXBuildFile; fileRef = 1C68F640095B5FC100C2984E /* webInspector */; };
 		1C68F668095B5FC100C2984E /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C68F65C095B5FC100C2984E /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C68F669095B5FC100C2984E /* WebInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C68F65D095B5FC100C2984E /* WebInspector.m */; };
@@ -286,6 +288,8 @@
 		1C0706620A431E01001078F6 /* WebScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugServer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C07073C0A433BD8001078F6 /* WebScriptDebugServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebScriptDebugServer.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C0707990A433E22001078F6 /* WebScriptDebugServerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugServerPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		1C0D40850AC1C8F40009C113 /* WebKitVersionChecks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitVersionChecks.h; sourceTree = "<group>"; };
+		1C0D40860AC1C8F40009C113 /* WebKitVersionChecks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebKitVersionChecks.m; sourceTree = "<group>"; };
 		1C68F640095B5FC100C2984E /* webInspector */ = {isa = PBXFileReference; lastKnownFileType = folder; name = webInspector; path = WebInspector/webInspector; sourceTree = SOURCE_ROOT; };
 		1C68F65C095B5FC100C2984E /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C68F65D095B5FC100C2984E /* WebInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebInspector.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -685,6 +689,8 @@
 				F5C283730284676D018635CA /* WebKitPrefix.h */,
 				BEE52D4A0473032500CA289C /* WebKitSystemBits.h */,
 				BEE52D4B0473032500CA289C /* WebKitSystemBits.m */,
+				1C0D40850AC1C8F40009C113 /* WebKitVersionChecks.h */,
+				1C0D40860AC1C8F40009C113 /* WebKitVersionChecks.m */,
 				BEE18F990472B73200CA289C /* WebLocalizableStrings.h */,
 				BEE18F9A0472B73200CA289C /* WebLocalizableStrings.m */,
 				ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */,
@@ -1207,6 +1213,7 @@
 				6538B1C80A90596D00A07522 /* WebFormDataStream.h in Headers */,
 				65A734610A923948001B57E8 /* WebPlugInStreamLoaderDelegate.h in Headers */,
 				659044280A9D3B4200E89459 /* WebDocumentLoadState.h in Headers */,
+				1C0D40870AC1C8F40009C113 /* WebKitVersionChecks.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1241,6 +1248,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1255,6 +1263,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				9398100A0824BF01008DF038 /* WebKit */,
 			);
@@ -1434,6 +1443,7 @@
 				51E4D39A0A886B5E00ECEE2C /* WebIconDatabaseBridge.m in Sources */,
 				6538B1C90A90596E00A07522 /* WebFormDataStream.m in Sources */,
 				659044290A9D3B4200E89459 /* WebDocumentLoadState.m in Sources */,
+				1C0D40880AC1C8F40009C113 /* WebKitVersionChecks.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

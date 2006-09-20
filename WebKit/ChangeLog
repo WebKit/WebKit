@@ -1,3 +1,16 @@
+2006-09-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Tim O.
+
+        <rdar://problem/4741392> Develop a system to find what version of WebKit an app was linked with
+
+        * Misc/WebKitVersionChecks.h: Added.
+        * Misc/WebKitVersionChecks.m: Added.
+        (WebKitLinkedOnOrAfter): Added.
+        (WebKitLinkTimeVersion): Added.
+        (WebKitRunTimeVersion): Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-09-20  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.
