@@ -1,3 +1,12 @@
+2006-09-20  David Hyatt  <hyatt@apple.com>
+
+        Add an implementation of lrint for Win32.
+
+        Reviewed by anders
+
+        * wtf/MathExtras.h:
+        (lrint):
+
 2006-09-15  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Adam.
