@@ -1,3 +1,14 @@
+2006-09-20  Julien Palmas  <julien.palmas@gmail.com>
+
+        Reviewed by eseidel.  Landed by eseidel.
+        
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6003
+
+        * svg/custom/pattern-y-offset-expected.checksum: Added.
+        * svg/custom/pattern-y-offset-expected.png: Added.
+        * svg/custom/pattern-y-offset-expected.txt: Added.
+        * svg/custom/pattern-y-offset.svg: Added.
+
 2006-09-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

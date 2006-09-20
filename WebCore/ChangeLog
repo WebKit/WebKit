@@ -1,3 +1,12 @@
+2006-09-20  Julien Palmas  <julien.palmas@gmail.com>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Test: svg/custom/pattern-y-offset.svg
+
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (WebCore::KRenderingPaintServerPatternQuartz::setup):
+
 2006-09-20  David Hyatt  <hyatt@apple.com>
 
         Add a new wheelEvent method to ScrollView.  Platforms that wish

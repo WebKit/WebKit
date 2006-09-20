@@ -169,7 +169,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
     CGAffineTransform transform = patternTransform();
     transform = CGAffineTransformConcat(transform, ctm);
 
-    CGSize phase = CGSizeMake(bbox().x(), bbox().y());
+    CGSize phase = CGSizeMake(bbox().x(), -bbox().y()); // Pattern space seems to start in the lower-left, so we flip the Y here.
     CGContextSetPatternPhase(context, phase);
 
     CGPatternCallbacks callbacks = {0, patternCallback, NULL};
