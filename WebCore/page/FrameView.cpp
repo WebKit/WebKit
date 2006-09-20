@@ -1179,15 +1179,40 @@ void FrameView::handleWheelEvent(PlatformWheelEvent& e)
             doc->renderer()->layer()->hitTest(hitTestResult, vPoint); 
             Node *node = hitTestResult.innerNode();
 
-           if (m_frame->passWheelEventToChildWidget(node)) {
+            if (m_frame->passWheelEventToChildWidget(node)) {
                 e.accept();
                 return;
             }
+            
             if (node) {
                 node = node->shadowAncestorNode();
                 EventTargetNodeCast(node)->dispatchWheelEvent(e);
                 if (e.isAccepted())
                     return;
+                    
+                if (node->renderer()) {
+                    ScrollDirection direction;
+                    float multiplier;
+                    float deltaX = e.isHorizontal() ? e.platformDelta() : 0;
+                    float deltaY = e.isHorizontal() ? 0 : e.platformDelta();
+                    if (deltaX < 0) {
+                        direction = ScrollRight;
+                        multiplier = -deltaX;
+                    } else if (deltaX > 0) {
+                        direction = ScrollLeft;
+                        multiplier = deltaX;
+                    } else if (deltaY < 0) {
+                        direction = ScrollDown;
+                        multiplier = -deltaY;
+                    }  else if (deltaY > 0) {
+                        direction = ScrollUp;
+                        multiplier = deltaY;
+                    } else
+                        return;
+
+                    if (node->renderer()->scroll(direction, ScrollByWheel, multiplier))
+                        e.accept();
+                }
             }
         }
     }

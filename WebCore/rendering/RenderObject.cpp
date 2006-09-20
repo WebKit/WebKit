@@ -661,13 +661,11 @@ void RenderObject::setScrollTop(int newTop)
 bool RenderObject::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
     RenderLayer *l = layer();
-    if (l != 0 && l->scroll(direction, granularity, multiplier)) {
+    if (l && l->scroll(direction, granularity, multiplier))
         return true;
-    }
     RenderBlock *b = containingBlock();
-    if (b != 0 && !b->isRenderView()) {
+    if (b && !b->isRenderView())
         return b->scroll(direction, granularity, multiplier);
-    }
     return false;
 }
 

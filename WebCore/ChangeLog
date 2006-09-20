@@ -1,3 +1,25 @@
+2006-09-20  David Hyatt  <hyatt@apple.com>
+
+        Massage mouse wheel handling so that it is more cross-platform.  Make
+        all the work happen in handleWheelEvent on the FrameView.
+
+        Reviewed by bradee-oh
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::wheelEvent):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleWheelEvent):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::platformDelta):
+        (WebCore::PlatformWheelEvent::delta):
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::platformDeltaForEvent):
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scroll):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::scroll):
+
 2006-09-19  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by adele.

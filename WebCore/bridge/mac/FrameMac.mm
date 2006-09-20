@@ -792,46 +792,8 @@ bool FrameMac::wheelEvent(NSEvent *event)
         if (qEvent.isAccepted())
             return true;
     }
-
-    // FIXME: The scrolling done here should be done in the default handlers
-    // of the elements rather than here in the part.
-
-    ScrollDirection direction;
-    float multiplier;
-    float deltaX = [event deltaX];
-    float deltaY = [event deltaY];
-    if (deltaX < 0) {
-        direction = ScrollRight;
-        multiplier = -deltaX;
-    } else if (deltaX > 0) {
-        direction = ScrollLeft;
-        multiplier = deltaX;
-    } else if (deltaY < 0) {
-        direction = ScrollDown;
-        multiplier = -deltaY;
-    }  else if (deltaY > 0) {
-        direction = ScrollUp;
-        multiplier = deltaY;
-    } else
-        return false;
-
-    RenderObject *r = renderer();
-    if (!r)
-        return false;
     
-    NSPoint point = [d->m_view->getDocumentView() convertPoint:[event locationInWindow] fromView:nil];
-    RenderObject::NodeInfo nodeInfo(true, true);
-    r->layer()->hitTest(nodeInfo, IntPoint(point));    
-    
-    Node *node = nodeInfo.innerNode();
-    if (!node)
-        return false;
-    
-    r = node->renderer();
-    if (!r)
-        return false;
-    
-    return r->scroll(direction, ScrollByWheel, multiplier);
+    return false;
 }
 
 void FrameMac::startRedirectionTimer()
