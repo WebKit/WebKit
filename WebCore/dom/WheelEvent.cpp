@@ -45,8 +45,8 @@ WheelEvent::WheelEvent(float wheelDeltaX, float wheelDeltaY, AbstractView* view,
     : MouseRelatedEvent(mousewheelEvent,
                         true, true, view, 0, screenX, screenY, pageX, pageY, 
                         ctrlKey, altKey, shiftKey, metaKey)
-    , m_wheelDeltaX(lrint(wheelDeltaX) * 120)
-    , m_wheelDeltaY(lrint(wheelDeltaY) * 120) // Normalize to the Windows 120 multiple
+    , m_wheelDeltaX(lround(wheelDeltaX) * 120)
+    , m_wheelDeltaY(lround(wheelDeltaY) * 120) // Normalize to the Windows 120 multiple
 {
 }
 

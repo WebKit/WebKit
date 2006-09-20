@@ -1,3 +1,13 @@
+2006-09-20  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam Roben.
+
+        fixed windows build
+
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        changed lrint to lround
+
 2006-09-20  Sam Weinig  <sam.weinig@gmail.com>
 
         Build Fix.  Adds isHorizontal attribute back to WheelEvent
