@@ -1,3 +1,32 @@
+2006-09-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Omernick
+
+        Part of fixing a crash Tim O showed me that I missed in a release build.
+        WebKit should be able to call through the bridge to WebCore no matter what -
+        Replace the _iconDB member with calls to IconDatabase::sharedIconDatabase()
+
+        * bridge/mac/WebCoreIconDatabaseBridge.h:
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (-[WebCoreIconDatabaseBridge closeSharedDatabase]):
+        (-[WebCoreIconDatabaseBridge isOpen]):
+        (-[WebCoreIconDatabaseBridge removeAllIcons]):
+        (-[WebCoreIconDatabaseBridge _isEmpty]):
+        (-[WebCoreIconDatabaseBridge isIconExpiredForIconURL:]):
+        (-[WebCoreIconDatabaseBridge setPrivateBrowsingEnabled:]):
+        (-[WebCoreIconDatabaseBridge privateBrowsingEnabled]):
+        (-[WebCoreIconDatabaseBridge iconForPageURL:withSize:]):
+        (-[WebCoreIconDatabaseBridge iconURLForPageURL:]):
+        (-[WebCoreIconDatabaseBridge defaultIconWithSize:]):
+        (-[WebCoreIconDatabaseBridge retainIconForURL:]):
+        (-[WebCoreIconDatabaseBridge releaseIconForURL:]):
+        (-[WebCoreIconDatabaseBridge _setIconData:forIconURL:]):
+        (-[WebCoreIconDatabaseBridge _setHaveNoIconForIconURL:]):
+        (-[WebCoreIconDatabaseBridge _setIconURL:forPageURL:]):
+        (-[WebCoreIconDatabaseBridge _hasEntryForIconURL:]):
+        (-[WebCoreIconDatabaseBridge _setEnabled:]):
+        (-[WebCoreIconDatabaseBridge _isEnabled]):
+
 2006-09-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

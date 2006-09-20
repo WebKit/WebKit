@@ -37,66 +37,56 @@ using namespace WebCore;
 
 - (BOOL)openSharedDatabaseWithPath:(NSString *)path
 {
-    assert(path);
+    ASSERT(path);
     
-    _iconDB = IconDatabase::sharedIconDatabase();
-    if (_iconDB) {
-        _iconDB->open((String([path stringByStandardizingPath])));
-        if (!_iconDB->isOpen()) {
-            [self closeSharedDatabase];
-            NSLog(@"Unable to open icon database at %@ - Check your write permissions at that path.  Icon database will be disabled for this browsing session", path);
-            return NO;
-        }
-        return YES;
+    IconDatabase* iconDB = IconDatabase::sharedIconDatabase();
+    
+    iconDB->open((String([path stringByStandardizingPath])));
+    if (!iconDB->isOpen()) {
+        [self closeSharedDatabase];
+        NSLog(@"Unable to open icon database at %@ - Check your write permissions at that path.  Icon database will be disabled for this browsing session", path);
+        return NO;
     }
-    return NO;
+    return YES;
 }
 
 - (void)closeSharedDatabase
 {
-    delete _iconDB;
-    _iconDB = 0;
+    IconDatabase::sharedIconDatabase()->close();
 }
 
 - (BOOL)isOpen
 {
-    return _iconDB != 0;
+    return IconDatabase::sharedIconDatabase()->isOpen();
 }
 
 - (void)removeAllIcons
 {
-    if (_iconDB)
-        _iconDB->removeAllIcons();
+    IconDatabase::sharedIconDatabase()->removeAllIcons();
 }
 
 - (BOOL)_isEmpty
 {
-    return _iconDB ? _iconDB->isEmpty() : NO;
+    return IconDatabase::sharedIconDatabase()->isEmpty();
 }
 
 - (BOOL)isIconExpiredForIconURL:(NSString *)iconURL
 {
-    return _iconDB ? _iconDB->isIconExpiredForIconURL(iconURL) : NO;
+    return IconDatabase::sharedIconDatabase()->isIconExpiredForIconURL(iconURL);
 }
 
 - (void)setPrivateBrowsingEnabled:(BOOL)flag
 {
-    if (_iconDB)
-        _iconDB->setPrivateBrowsingEnabled(flag);
+    IconDatabase::sharedIconDatabase()->setPrivateBrowsingEnabled(flag);
 }
 
 - (BOOL)privateBrowsingEnabled
 {
-    if (_iconDB)
-        return _iconDB->getPrivateBrowsingEnabled();
-    return false;
+    return IconDatabase::sharedIconDatabase()->getPrivateBrowsingEnabled();
 }
 
 - (NSImage *)iconForPageURL:(NSString *)url withSize:(NSSize)size
 {
-    if (!_iconDB)
-        return nil;
-        
     ASSERT(url);
     ASSERT(size.width);
     ASSERT(size.height);
@@ -104,7 +94,7 @@ using namespace WebCore;
     // FIXME - We're doing the resize here for now because WebCore::Image doesn't yet support resizing/multiple representations
     // This makes it so there's effectively only one size of a particular icon in the system at a time.  We really need to move this
     // to WebCore::Image and WebCore::IconDatabase asap
-    Image* image = _iconDB->iconForPageURL(String(url), IntSize(size));
+    Image* image = IconDatabase::sharedIconDatabase()->iconForPageURL(String(url), IntSize(size));
     if (image) {
         NSImage* nsImage = image->getNSImage();
         if (!nsImage) {
@@ -124,22 +114,18 @@ using namespace WebCore;
 
 - (NSString *)iconURLForPageURL:(NSString *)url
 {
-    if (!_iconDB)
-        return nil;
     ASSERT(url);
     
-    String iconURL = _iconDB->iconURLForPageURL(String(url));
+    String iconURL = IconDatabase::sharedIconDatabase()->iconURLForPageURL(String(url));
     return (NSString*)iconURL;
 }
 
 - (NSImage *)defaultIconWithSize:(NSSize)size
 {
-    if (!_iconDB)
-        return nil;
     ASSERT(size.width);
     ASSERT(size.height);
     
-    Image* image = _iconDB->defaultIcon(IntSize(size));
+    Image* image = IconDatabase::sharedIconDatabase()->defaultIcon(IntSize(size));
     if (image)
         return image->getNSImage();
     return nil;
@@ -147,56 +133,44 @@ using namespace WebCore;
 
 - (void)retainIconForURL:(NSString *)url
 {
-    if (!_iconDB)
-        return;
     ASSERT(url);
-    _iconDB->retainIconForPageURL(String(url));
+    
+    IconDatabase::sharedIconDatabase()->retainIconForPageURL(String(url));
 }
 
 - (void)releaseIconForURL:(NSString *)url
 {
-    if (!_iconDB)
-        return;
     ASSERT(url);
-    _iconDB->releaseIconForPageURL(String(url));
+    
+    IconDatabase::sharedIconDatabase()->releaseIconForPageURL(String(url));
 }
 
 - (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL
 {
-    if (!_iconDB)
-        return;
     ASSERT(data);
     ASSERT(iconURL);
     
-    _iconDB->setIconDataForIconURL([data bytes], [data length], String(iconURL));
+    IconDatabase::sharedIconDatabase()->setIconDataForIconURL([data bytes], [data length], String(iconURL));
 }
 
 - (void)_setHaveNoIconForIconURL:(NSString *)iconURL
 {
-    if (!_iconDB)
-        return;
     ASSERT(iconURL);
     
-    _iconDB->setHaveNoIconForIconURL(String(iconURL));
+    IconDatabase::sharedIconDatabase()->setHaveNoIconForIconURL(String(iconURL));
 }
 
 - (BOOL)_setIconURL:(NSString *)iconURL forPageURL:(NSString *)pageURL
 {
-    if (!_iconDB)
-        return NO;
     ASSERT(iconURL);
     ASSERT(pageURL);
     
-    return _iconDB->setIconURLForPageURL(String(iconURL), String(pageURL));
+    return IconDatabase::sharedIconDatabase()->setIconURLForPageURL(String(iconURL), String(pageURL));
 }
 
 - (BOOL)_hasEntryForIconURL:(NSString *)iconURL
-{
-    if (!_iconDB)
-        return NO;
-    ASSERT(iconURL);
-    
-    return _iconDB->hasEntryForIconURL(iconURL);
+{    
+    return IconDatabase::sharedIconDatabase()->hasEntryForIconURL(iconURL);
 }
 
 - (NSString *)defaultDatabaseFilename
@@ -206,14 +180,12 @@ using namespace WebCore;
 
 - (void)_setEnabled:(BOOL)enabled
 {
-    if (!_iconDB)
-        return;
-    _iconDB->setEnabled(enabled);
+    IconDatabase::sharedIconDatabase()->setEnabled(enabled);
 }
 
 - (BOOL)_isEnabled
 {
-    return _iconDB ? _iconDB->enabled() : NO;
+    return IconDatabase::sharedIconDatabase()->enabled();
 }
 
 

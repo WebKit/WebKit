@@ -1,3 +1,13 @@
+2006-09-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Omernick
+
+        Fixing part of a crash Tim O showed me.  [WebIconDatabase init] should finish
+        gracefully even if we can't open the database
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase init]):
+
 2006-09-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Tim O.
