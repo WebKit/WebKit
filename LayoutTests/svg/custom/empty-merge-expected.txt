@@ -1,4 +1,4 @@
-KCanvasResource {id="MyFilter" [type=FILTER]  [bounding box=at (0,0) size 100x100] [bounding box mode=0] [effect bounding box mode=0] [effects=[[type=MERGE]  [subregion="at (0,0) size 100x100"][merge inputs=[]]]]}
+KCanvasResource {id="MyFilter" [type=FILTER]  [bounding box=at (0,0) size 100x100] [bounding box mode=0] [effects=[[type=MERGE]  [subregion="at (0,0) size 100x100"][merge inputs=[]]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (46.56,-0.94) size 191.76x191.76

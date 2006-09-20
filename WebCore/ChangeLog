@@ -1,6 +1,18 @@
 2006-09-19  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by adele.
+
+        Improve test output for filters with bounding-box relative sizes.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8585
+
+        Many test results updated.
+
+        * kcanvas/KCanvasFilters.cpp:
+        (WebCore::KCanvasFilter::externalRepresentation):
+
+2006-09-19  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by adele.
         
         Markers should clip to their viewport.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5967

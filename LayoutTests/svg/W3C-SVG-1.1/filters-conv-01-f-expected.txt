@@ -1,9 +1,9 @@
-KCanvasResource {id="convolve1" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
-KCanvasResource {id="convolve2" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
-KCanvasResource {id="convolve3" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
-KCanvasResource {id="convolve4" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
-KCanvasResource {id="convolve5" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
-KCanvasResource {id="convolve6" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="convolve1" [type=FILTER] }
+KCanvasResource {id="convolve2" [type=FILTER] }
+KCanvasResource {id="convolve3" [type=FILTER] }
+KCanvasResource {id="convolve4" [type=FILTER] }
+KCanvasResource {id="convolve5" [type=FILTER] }
+KCanvasResource {id="convolve6" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359

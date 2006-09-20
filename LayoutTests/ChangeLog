@@ -1,6 +1,38 @@
 2006-09-19  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by adele.
+        
+        Updated results for http://bugzilla.opendarwin.org/show_bug.cgi?id=8585
+
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt:
+        * svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * svg/custom/feComponentTransfer-Linear-expected.txt:
+        * svg/custom/feComponentTransfer-Table-expected.txt:
+        * svg/custom/feDisplacementMap-01-expected.txt:
+        * svg/custom/filter-source-alpha-expected.txt:
+        * svg/custom/image-with-transform-clip-filter-expected.txt:
+        * svg/custom/non-opaque-filters-expected.txt:
+        * svg/custom/text-filter-expected.txt:
+
+2006-09-19  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by adele.
 
         Markers should clip to their viewport.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5967

@@ -69,11 +69,21 @@ FloatRect KCanvasFilter::filterBBoxForItemBBox(FloatRect itemBBox) const
 
 TextStream &KCanvasFilter::externalRepresentation(TextStream &ts) const
 {
-    ts << "[type=FILTER] "
-        << " [bounding box=" << filterRect() << "]";
-    if (!filterBoundingBoxMode())        
+    ts << "[type=FILTER] ";
+    FloatRect bbox = filterRect();
+    static FloatRect defaultFilterRect(0, 0, 1, 1);
+    if (!filterBoundingBoxMode() || bbox != defaultFilterRect) {
+        ts << " [bounding box=";
+        if (filterBoundingBoxMode()) {
+            bbox.scale(100.f);
+            ts << "at (" << bbox.x() << "%," <<  bbox.y() << "%) size " << bbox.width() << "%x" << bbox.height() << "%";
+        } else
+            ts << filterRect();
+        ts << "]";
+    }
+    if (!filterBoundingBoxMode()) // default is true
         ts << " [bounding box mode=" << filterBoundingBoxMode() << "]";
-    if (!effectBoundingBoxMode())
+    if (effectBoundingBoxMode()) // default is false
         ts << " [effect bounding box mode=" << effectBoundingBoxMode() << "]";
     if (m_effects.count() > 0)
         ts << " [effects=" << m_effects << "]";
