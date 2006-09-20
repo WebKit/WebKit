@@ -1,3 +1,18 @@
+2006-09-20  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by hyatt.
+        
+        Commit two test updates I forgot to commit with:
+        Markers should clip to their viewport.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5967
+
+        * svg/W3C-SVG-1.1/painting-marker-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-marker-01-f-expected.png:
+        * svg/W3C-SVG-1.1/painting-marker-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/painting-marker-02-f-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-marker-02-f-expected.png:
+        * svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt:
+
 2006-09-19  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by adele.
