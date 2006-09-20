@@ -31,6 +31,8 @@ module events {
         readonly attribute boolean altKey;
         readonly attribute boolean metaKey;
         readonly attribute long    wheelDelta;
+        readonly attribute long    wheelDeltaX;
+        readonly attribute long    wheelDeltaY;
 
         // WebKit Extensions
         readonly attribute long    offsetX;
@@ -39,10 +41,8 @@ module events {
         readonly attribute long    y;
 
 #if !defined(LANGUAGE_JAVASCRIPT)
-        readonly attribute boolean isHorizontal;
-
-        void initWheelEvent(in boolean horizontal, 
-                            in long wheelDelta, 
+        void initWheelEvent(in long wheelDeltaX,
+                            in long wheelDeltaY, 
                             in DOMWindow view, 
                             in long screenX,
                             in long screenY,

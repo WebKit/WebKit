@@ -52,32 +52,11 @@ static IntPoint globalPositionForEvent(NSEvent *event)
     }
 }
 
-static bool eventIsHorizontal(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSScrollWheel:
-            return [event deltaX] != 0;
-        default:
-            return false;
-    }
-}
-
-static float platformDeltaForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSScrollWheel:
-            return eventIsHorizontal(event) ? [event deltaX] : [event deltaY];
-        default:
-            return 0;
-    }
-}
-
 PlatformWheelEvent::PlatformWheelEvent(NSEvent* event)
     : m_position(positionForEvent(event))
     , m_globalPosition(globalPositionForEvent(event))
-    , m_platformDelta(platformDeltaForEvent(event))
-    , m_delta(lrint(m_platformDelta) * 120)
-    , m_isHorizontal(eventIsHorizontal(event))
+    , m_deltaX([event deltaX])
+    , m_deltaY([event deltaY])
     , m_isAccepted(false)
     , m_shiftKey([event modifierFlags] & NSShiftKeyMask)
     , m_ctrlKey([event modifierFlags] & NSControlKeyMask)

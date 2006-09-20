@@ -34,22 +34,23 @@ namespace WebCore {
     class WheelEvent : public MouseRelatedEvent {
     public:
         WheelEvent();
-        WheelEvent(bool horizontal, int wheelDelta, AbstractView*,
+        WheelEvent(float wheelDeltaX, float wheelDeltaY, AbstractView*,
                    int screenX, int screenY, int pageX, int pageY,
                    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
-        void initWheelEvent(bool horizontal, int wheelDelta, AbstractView*,
+        void initWheelEvent(int wheelDeltaX, int wheelDeltaY, AbstractView*,
                             int screenX, int screenY, int pageX, int pageY,
                             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
-        
-        bool isHorizontal() const { return m_horizontal; }
-        int wheelDelta() const { return m_wheelDelta; }
+
+        int wheelDelta() const { if (m_wheelDeltaY == 0) return m_wheelDeltaX; return m_wheelDeltaY; }
+        int wheelDeltaX() const { return m_wheelDeltaX; }
+        int wheelDeltaY() const { return m_wheelDeltaY; }
 
     private:
         virtual bool isWheelEvent() const;
 
-        bool m_horizontal;
-        int m_wheelDelta;
+        int m_wheelDeltaX;
+        int m_wheelDeltaY;
     };
 
 } // namespace WebCore

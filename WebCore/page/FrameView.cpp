@@ -1191,26 +1191,13 @@ void FrameView::handleWheelEvent(PlatformWheelEvent& e)
                     return;
                     
                 if (node->renderer()) {
-                    ScrollDirection direction;
-                    float multiplier;
-                    float deltaX = e.isHorizontal() ? e.platformDelta() : 0;
-                    float deltaY = e.isHorizontal() ? 0 : e.platformDelta();
-                    if (deltaX < 0) {
-                        direction = ScrollRight;
-                        multiplier = -deltaX;
-                    } else if (deltaX > 0) {
-                        direction = ScrollLeft;
-                        multiplier = deltaX;
-                    } else if (deltaY < 0) {
-                        direction = ScrollDown;
-                        multiplier = -deltaY;
-                    }  else if (deltaY > 0) {
-                        direction = ScrollUp;
-                        multiplier = deltaY;
-                    } else
-                        return;
-
-                    if (node->renderer()->scroll(direction, ScrollByWheel, multiplier))
+                    // Just break up into two scrolls if we need to.  Diagonal movement on 
+                    // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
+                    if (e.deltaX() && node->renderer()->scroll(e.deltaX() < 0 ? ScrollRight : ScrollLeft, ScrollByWheel,
+                                                               e.deltaX() < 0 ? -e.deltaX() : e.deltaX()))
+                        e.accept();
+                    if (e.deltaY() && node->renderer()->scroll(e.deltaY() < 0 ? ScrollDown : ScrollUp, ScrollByWheel,
+                                                               e.deltaY() < 0 ? -e.deltaY() : e.deltaY()))
                         e.accept();
                 }
             }
