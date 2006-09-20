@@ -1,3 +1,15 @@
+2006-09-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Sarge Decker
+
+        <rdar://problem/4739892> and <rdar://problem/4729797>
+        - WebCore::IconDatabase needs to have and respect an enabled() flag
+        - Mail on ToT WebKit crashes in IconDatabase code when mailing a page from Safari
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase init]): If preference says icons are disabled, tell the bridge
+        (-[WebIconDatabase _isEnabled]): Ask the bridge if the database is enabled
+
 2006-09-19  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Tim O.

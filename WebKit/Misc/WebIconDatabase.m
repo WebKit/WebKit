@@ -81,20 +81,21 @@ NSSize WebIconLargeSize = {128, 128};
     
     _private = [[WebIconDatabasePrivate alloc] init];
 
-    // Check the user defaults and see if the icon database should even be enabled if not, we can bail from init right here
+    // Get/create the shared database bridge - bail if we fail
+    _private->databaseBridge = [WebIconDatabaseBridge sharedInstance];
+    if (!_private->databaseBridge) {
+        LOG_ERROR("Unable to create IconDatabaseBridge");
+        return self;
+    }
+    
+    // Check the user defaults and see if the icon database should even be enabled.
+    // If not, inform the bridge and bail from init right here
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *initialDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], WebIconDatabaseEnabledDefaultsKey, nil];
     [defaults registerDefaults:initialDefaults];
     [initialDefaults release];
     if (![defaults boolForKey:WebIconDatabaseEnabledDefaultsKey]) {
-        _private->databaseBridge = nil;
-        return self;
-    }
-        
-    // Get/create the shared database bridge - bail if we fail
-    _private->databaseBridge = [WebIconDatabaseBridge sharedInstance];
-    if (!_private->databaseBridge) {
-        LOG_ERROR("Unable to create IconDatabaseBridge");
+        [_private->databaseBridge _setEnabled:NO];
         return self;
     }
     
@@ -218,7 +219,7 @@ NSSize WebIconLargeSize = {128, 128};
 - (BOOL)_isEnabled
 {
     // If we weren't enabled on startup, we marked the databaseBridge as nil
-    return _private->databaseBridge != nil;
+    return [_private->databaseBridge _isEnabled];
 }
 
 - (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL

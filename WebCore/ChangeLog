@@ -1,3 +1,36 @@
+2006-09-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Sarge Decker
+
+        <rdar://problem/4739892> and <rdar://problem/4729797>
+        - WebCore::IconDatabase needs to have and respect an enabled() flag
+        - Mail on ToT WebKit crashes in IconDatabase code when mailing a page from Safari
+
+        * bridge/mac/WebCoreIconDatabaseBridge.h:
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (-[WebCoreIconDatabaseBridge _setEnabled:]): Added
+        (-[WebCoreIconDatabaseBridge _isEnabled]): Added
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::open): Don't open if disabled
+        (WebCore::IconDatabase::removeAllIcons): Ignore if disabled/closed
+        (WebCore::IconDatabase::setPrivateBrowsingEnabled): Ignore if disabled/closed
+        (WebCore::IconDatabase::iconForPageURL): Default Icon if disabled/closed
+        (WebCore::IconDatabase::isIconExpiredForIconURL): Default return if disabled/closed
+        (WebCore::IconDatabase::iconURLForPageURL): Default return if disabled/closed
+        (WebCore::IconDatabase::retainIconForPageURL): Ignore if disabled/closed
+        (WebCore::IconDatabase::releaseIconForPageURL): Ignore if disabled/closed
+        (WebCore::IconDatabase::releaseIconURL):
+        (WebCore::IconDatabase::setIconDataForIconURL): Ignore if disabled/closed
+        (WebCore::IconDatabase::setIconURLForPageURL): Ignore if disabled/closed
+        (WebCore::IconDatabase::hasEntryForIconURL): Default return if disabled/closed
+        (WebCore::IconDatabase::setEnabled): Added
+        * loader/icon/IconDatabase.h:
+        (WebCore::IconDatabase::enabled): Added
+        * page/Frame.cpp:
+        (WebCore::Frame::endIfNotLoading): do an IconDatabase::enabled() check before bothering to load the icon
+        * platform/mac/ResourceLoaderMac.mm: Removed extraneous #include
+
 2006-09-20  David Hyatt  <hyatt@apple.com>
 
         Massage mouse wheel handling so that it is more cross-platform.  Make

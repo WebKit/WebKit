@@ -204,4 +204,17 @@ using namespace WebCore;
     return IconDatabase::defaultDatabaseFilename();
 }
 
+- (void)_setEnabled:(BOOL)enabled
+{
+    if (!_iconDB)
+        return;
+    _iconDB->setEnabled(enabled);
+}
+
+- (BOOL)_isEnabled
+{
+    return _iconDB ? _iconDB->enabled() : NO;
+}
+
+
 @end

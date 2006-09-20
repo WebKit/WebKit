@@ -46,8 +46,6 @@ class SQLStatement;
 
 class IconDatabase
 {
-//TODO - SiteIcon is never to be used outside of IconDatabase, so make it an internal and remove the friendness
-friend class SiteIcon;
 public:
     static IconDatabase* sharedIconDatabase();
     ~IconDatabase();
@@ -80,6 +78,9 @@ public:
     
     // Returns true if the set actually took place, false if the mapping already existed
     bool setIconURLForPageURL(const String& iconURL, const String& pageURL);
+    
+    void setEnabled(bool enabled);
+    bool enabled() { return m_isEnabled; }
 
     static const String& defaultDatabaseFilename();
     
@@ -187,6 +188,7 @@ private:
     
     IconDataCache* m_defaultIconDataCache;
     
+    bool m_isEnabled;
     bool m_privateBrowsingEnabled;
     
     Timer<IconDatabase> m_startupTimer;

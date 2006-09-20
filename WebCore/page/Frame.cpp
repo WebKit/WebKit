@@ -765,13 +765,14 @@ void Frame::endIfNotLoading()
     if (tree()->parent())
         return;
         
-    // FIXME - <rdar://problem/4729797> - To honor #2, we need to add the isEnabled() flag to WebCore::IconDatabase
+    IconDatabase* sharedIconDatabase = IconDatabase::sharedIconDatabase();
+    if (!sharedIconDatabase->enabled())
+        return;
     
     String url(iconURL().url());
     if (url.isEmpty())
         return;
     
-    IconDatabase* sharedIconDatabase = IconDatabase::sharedIconDatabase();
     // If we already have an unexpired icon, we won't kick off a load but we *will* map the appropriate URLs to it
     if (sharedIconDatabase->hasEntryForIconURL(url) && !isLoadTypeReload() && !sharedIconDatabase->isIconExpiredForIconURL(url)) {
         commitIconURLToIconDatabase();
