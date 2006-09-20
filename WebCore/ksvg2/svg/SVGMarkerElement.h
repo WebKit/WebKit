@@ -20,11 +20,11 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGMarkerElementImpl_H
-#define KSVG_SVGMarkerElementImpl_H
+#ifndef SVGMarkerElement_H
+#define SVGMarkerElement_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasResources.h"
+#include "KCanvasMarker.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"

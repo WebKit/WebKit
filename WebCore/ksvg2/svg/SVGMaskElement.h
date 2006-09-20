@@ -19,8 +19,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGMaskElementImpl_H
-#define KSVG_SVGMaskElementImpl_H
+#ifndef SVGMaskElement_H
+#define SVGMaskElement_H
 #ifdef SVG_SUPPORT
 
 #include "SVGTests.h"
@@ -29,9 +29,7 @@
 #include "SVGStyledLocatableElement.h"
 #include "SVGExternalResourcesRequired.h"
 
-#include "KCanvasResources.h"
-
-class KCanvasImage;
+#include "KCanvasMasker.h"
 
 namespace WebCore
 {

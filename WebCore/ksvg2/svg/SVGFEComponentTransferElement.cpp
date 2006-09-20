@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "Attr.h"
 
-#include "KCanvasResources.h"
 #include "KCanvasFilters.h"
 #include "KRenderingDevice.h"
 

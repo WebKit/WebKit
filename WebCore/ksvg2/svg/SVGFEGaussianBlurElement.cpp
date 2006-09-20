@@ -26,17 +26,16 @@
 
 #include "Attr.h"
 
-#include <kcanvas/KCanvasResources.h>
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/device/KRenderingPaintServerGradient.h>
+#include "KCanvasFilters.h"
+#include "KRenderingDevice.h"
+#include "KRenderingPaintServerGradient.h"
 
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEGaussianBlurElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document *doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
@@ -87,6 +86,8 @@ KCanvasFEGaussianBlur *SVGFEGaussianBlurElement::filterEffect() const
     m_filterEffect->setStdDeviationX(stdDeviationX());
     m_filterEffect->setStdDeviationY(stdDeviationY());
     return m_filterEffect;
+}
+
 }
 
 // vim:ts=4:noet

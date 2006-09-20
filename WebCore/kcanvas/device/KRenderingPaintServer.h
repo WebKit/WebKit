@@ -25,7 +25,7 @@
 #define KRenderingPaintServer_H
 #ifdef SVG_SUPPORT
 
-#include <kcanvas/KCanvasResources.h>
+#include "KCanvasResource.h"
 
 namespace WebCore {
 
@@ -84,6 +84,8 @@ private:
 };
 
 TextStream &operator<<(TextStream &, const KRenderingPaintServer &);
+
+KRenderingPaintServer* getPaintServerById(Document*, const AtomicString&);
 
 }
 

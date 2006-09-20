@@ -25,7 +25,7 @@
 #define KCanvasFilters_H
 #ifdef SVG_SUPPORT
 
-#include "KCanvasResources.h"
+#include "KCanvasResource.h"
 
 #ifdef __OBJC__
 @class CIFilter;

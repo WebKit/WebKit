@@ -30,6 +30,7 @@
 
 #import "FoundationExtras.h"
 #import "GraphicsContext.h"
+#include "KCanvasMarker.h"
 #import "KCanvasFilterQuartz.h"
 #import "KCanvasMaskerQuartz.h"
 #import "KCanvasResourcesQuartz.h"

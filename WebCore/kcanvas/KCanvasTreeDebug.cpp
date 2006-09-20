@@ -31,14 +31,15 @@
 
 #include "HTMLNames.h"
 #include "RenderTreeAsText.h"
-#include <kcanvas/RenderSVGContainer.h>
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/device/KRenderingFillPainter.h>
-#include <kcanvas/device/KRenderingPaintServerGradient.h>
-#include <kcanvas/device/KRenderingPaintServerPattern.h>
-#include <kcanvas/device/KRenderingPaintServerSolid.h>
-#include <kcanvas/device/KRenderingStrokePainter.h>
-#include <ksvg2/svg/SVGStyledElement.h>
+#include "RenderSVGContainer.h"
+#include "KCanvasClipper.h"
+#include "KRenderingDevice.h"
+#include "KRenderingFillPainter.h"
+#include "KRenderingPaintServerGradient.h"
+#include "KRenderingPaintServerPattern.h"
+#include "KRenderingPaintServerSolid.h"
+#include "KRenderingStrokePainter.h"
+#include "SVGStyledElement.h"
 #include <math.h>
 
 namespace WebCore {

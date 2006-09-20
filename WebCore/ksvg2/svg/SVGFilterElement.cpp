@@ -24,9 +24,8 @@
 #ifdef SVG_SUPPORT
 #include "Attr.h"
 
-#include <kcanvas/KCanvasResources.h>
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/KCanvasFilters.h>
+#include "KRenderingDevice.h"
+#include "KCanvasFilters.h"
 #include "SVGUnitTypes.h"
 #include "SVGNames.h"
 #include "SVGHelper.h"
@@ -35,7 +34,7 @@
 #include "SVGLength.h"
 #include "KCanvasRenderingStyle.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document *doc)
     : SVGStyledElement(tagName, doc)
@@ -148,6 +147,8 @@ KCanvasFilter *SVGFilterElement::canvasResource()
         }
     }
     return m_filter;
+}
+
 }
 
 // vim:ts=4:noet

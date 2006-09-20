@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KCanvasImage.h"
+#include "KCanvasMasker.h"
+#include "KCanvasImage.h"
 
 namespace WebCore {
 

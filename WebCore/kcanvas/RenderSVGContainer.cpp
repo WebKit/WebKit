@@ -22,9 +22,12 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
+#include "RenderSVGContainer.h"
+
+#include "KCanvasClipper.h"
+#include "KCanvasMasker.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
-#include "RenderSVGContainer.h"
 #include "SVGStyledElement.h"
 #include "GraphicsContext.h"
 #include "SVGStyledTransformableElement.h"

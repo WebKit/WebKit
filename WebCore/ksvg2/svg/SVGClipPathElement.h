@@ -29,7 +29,7 @@
 #include "SVGStyledTransformableElement.h"
 #include "SVGExternalResourcesRequired.h"
 
-#include "KCanvasResources.h"
+#include "KCanvasClipper.h"
 
 namespace WebCore
 {

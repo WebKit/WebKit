@@ -29,6 +29,9 @@
 
 #include "GraphicsContext.h"
 #include "RenderSVGContainer.h"
+#include "KCanvasClipper.h"
+#include "KCanvasMasker.h"
+#include "KCanvasMarker.h"
 #include "KRenderingDevice.h"
 #include "KRenderingFillPainter.h"
 #include "KRenderingStrokePainter.h"

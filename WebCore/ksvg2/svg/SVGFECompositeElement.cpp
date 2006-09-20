@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "Attr.h"
 
-#include "KCanvasResources.h"
 #include "KCanvasFilters.h"
 #include "KRenderingDevice.h"
 #include "KRenderingPaintServerGradient.h"
@@ -35,7 +34,7 @@
 #include "SVGRenderStyle.h"
 #include "SVGFECompositeElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document *doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
@@ -110,6 +109,8 @@ KCanvasFEComposite *SVGFECompositeElement::filterEffect() const
     m_filterEffect->setK3(k3());
     m_filterEffect->setK4(k4());
     return m_filterEffect;
+}
+
 }
 
 // vim:ts=4:noet

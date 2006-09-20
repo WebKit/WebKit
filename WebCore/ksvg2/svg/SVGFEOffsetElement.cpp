@@ -26,16 +26,15 @@
 
 #include "Attr.h"
 
-#include <kcanvas/KCanvasResources.h>
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/device/KRenderingPaintServerGradient.h>
+#include "KCanvasFilters.h"
+#include "KRenderingDevice.h"
+#include "KRenderingPaintServerGradient.h"
 
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFEOffsetElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document *doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
@@ -78,6 +77,8 @@ KCanvasFEOffset *SVGFEOffsetElement::filterEffect() const
     m_filterEffect->setDx(dx());
     m_filterEffect->setDy(dy());
     return m_filterEffect;
+}
+
 }
 
 // vim:ts=4:noet

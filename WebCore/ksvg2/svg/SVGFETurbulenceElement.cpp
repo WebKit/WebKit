@@ -26,17 +26,16 @@
 
 #include "Attr.h"
 
-#include <kcanvas/KCanvasResources.h>
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/device/KRenderingPaintServerGradient.h>
+#include "KCanvasFilters.h"
+#include "KRenderingDevice.h"
+#include "KRenderingPaintServerGradient.h"
 
 #include "ksvg.h"
 #include "SVGHelper.h"
 #include "SVGRenderStyle.h"
 #include "SVGFETurbulenceElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document *doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
@@ -111,6 +110,8 @@ KCanvasFETurbulence *SVGFETurbulenceElement::filterEffect() const
     m_filterEffect->setSeed(seed());
     m_filterEffect->setStitchTiles(stitchTiles() == SVG_STITCHTYPE_STITCH);
     return m_filterEffect;
+}
+
 }
 
 // vim:ts=4:noet

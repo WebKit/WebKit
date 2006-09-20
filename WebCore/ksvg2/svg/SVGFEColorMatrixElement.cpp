@@ -26,10 +26,9 @@
 
 #include "Attr.h"
 
-#include <kcanvas/KCanvasResources.h>
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/device/KRenderingPaintServerGradient.h>
+#include "KCanvasFilters.h"
+#include "KRenderingDevice.h"
+#include "KRenderingPaintServerGradient.h"
 
 #include "ksvg.h"
 #include "SVGNames.h"
@@ -38,7 +37,7 @@
 #include "SVGFEColorMatrixElement.h"
 #include "SVGNumberList.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document *doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
@@ -98,6 +97,8 @@ KCanvasFEColorMatrix *SVGFEColorMatrixElement::filterEffect() const
     m_filterEffect->setType((KCColorMatrixType)(type() - 1));
     
     return m_filterEffect;
+}
+
 }
 
 // vim:ts=4:noet

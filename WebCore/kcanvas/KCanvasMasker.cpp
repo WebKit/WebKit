@@ -1,7 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric.seidel@kdemail.net>
 
     This file is part of the KDE project
 
@@ -21,29 +20,50 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KCanvasImage_H
-#define KCanvasImage_H
+#include "config.h"
 #ifdef SVG_SUPPORT
+#include "KCanvasMasker.h"
 
-#include "KCanvasResource.h"
+#include "KCanvasImage.h"
+#include "TextStream.h"
 
 namespace WebCore {
-class Image;
 
-class KCanvasImage : public KCanvasResource
+KCanvasMasker::KCanvasMasker()
+    : KCanvasResource()
+    , m_mask(0)
 {
-public:
-    KCanvasImage() { };
-    virtual ~KCanvasImage() { };
+}
 
-    virtual void init(const Image &) = 0;
-    virtual void init(IntSize) = 0;
+KCanvasMasker::~KCanvasMasker()
+{
+    delete m_mask;
+}
 
-    virtual IntSize size() = 0;
-};
+void KCanvasMasker::setMask(KCanvasImage* mask)
+{
+    if (m_mask != mask) {
+        delete m_mask;
+        m_mask = mask;
+    }
+}
+
+TextStream& KCanvasMasker::externalRepresentation(TextStream& ts) const
+{
+    ts << "[type=MASKER]";
+    return ts;
+}
+
+KCanvasMasker* getMaskerById(Document* document, const AtomicString& id)
+{
+    KCanvasResource* resource = getResourceById(document, id);
+    if (resource && resource->isMasker())
+        return static_cast<KCanvasMasker*>(resource);
+    return 0;
+}
 
 }
 
+// vim:ts=4:noet
 #endif // SVG_SUPPORT
-#endif
 

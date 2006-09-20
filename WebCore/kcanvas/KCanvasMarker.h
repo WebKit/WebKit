@@ -1,7 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric.seidel@kdemail.net>
 
     This file is part of the KDE project
 
@@ -21,29 +20,51 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KCanvasImage_H
-#define KCanvasImage_H
+#ifndef KCanvasMarker_H
+#define KCanvasMarker_H
 #ifdef SVG_SUPPORT
 
 #include "KCanvasResource.h"
 
 namespace WebCore {
-class Image;
 
-class KCanvasImage : public KCanvasResource
+class KCanvasMarker : public KCanvasResource
 {
 public:
-    KCanvasImage() { };
-    virtual ~KCanvasImage() { };
+    KCanvasMarker(RenderSVGContainer* = 0);
+    virtual ~KCanvasMarker();
+    
+    virtual bool isMarker() const { return true; }
 
-    virtual void init(const Image &) = 0;
-    virtual void init(IntSize) = 0;
+    void setMarker(RenderSVGContainer*);
+    
+    void setRef(double refX, double refY);
+    double refX() const;    
+    double refY() const;
+    
+    void setAngle(float angle);
+    void setAutoAngle();
+    float angle() const;
 
-    virtual IntSize size() = 0;
+    void setUseStrokeWidth(bool useStrokeWidth = true);
+    bool useStrokeWidth() const;
+
+    void draw(GraphicsContext*, const FloatRect&, double x, double y, double strokeWidth = 1, double angle = 0);
+
+    TextStream& externalRepresentation(TextStream &) const; 
+
+private:
+    double m_refX, m_refY;
+    float m_angle;
+    RenderSVGContainer* m_marker;
+    bool m_useStrokeWidth;
 };
+
+KCanvasMarker* getMarkerById(Document*, const AtomicString&);
 
 }
 
 #endif // SVG_SUPPORT
 #endif
 
+// vim:ts=4:noet

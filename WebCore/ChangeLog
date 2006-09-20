@@ -1,3 +1,54 @@
+2006-09-19  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by hyatt.
+
+        Split KCanvasResources.* into multiple files (and some other minor spacing changes).
+        
+        No tests were harmed in the making of this patch.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasClipper.cpp: Added.
+        (WebCore::operator<<):
+        * kcanvas/KCanvasClipper.h: Added.
+        * kcanvas/KCanvasFilters.h:
+        * kcanvas/KCanvasImage.h:
+        * kcanvas/KCanvasMarker.cpp: Added.
+        * kcanvas/KCanvasMarker.h: Added.
+        * kcanvas/KCanvasMasker.cpp: Added.
+        (WebCore::KCanvasMasker::KCanvasMasker):
+        (WebCore::KCanvasMasker::setMask):
+        (WebCore::KCanvasMasker::externalRepresentation):
+        (WebCore::getMaskerById):
+        * kcanvas/KCanvasMasker.h: Added.
+        * kcanvas/KCanvasResource.cpp: Added.
+        (WebCore::KCanvasResource::invalidate):
+        (WebCore::KCanvasResource::externalRepresentation):
+        (WebCore::getResourceById):
+        (WebCore::getPaintServerById):
+        * kcanvas/KCanvasResource.h: Added.
+        * kcanvas/KCanvasResources.cpp: Removed.
+        * kcanvas/KCanvasResources.h: Removed.
+        * kcanvas/RenderPath.cpp:
+        * kcanvas/RenderSVGContainer.cpp:
+        * kcanvas/RenderSVGImage.cpp:
+        * kcanvas/RenderSVGText.cpp:
+        * kcanvas/device/KRenderingPaintServer.h:
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.h:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        * ksvg2/svg/SVGClipPathElement.h:
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        * ksvg2/svg/SVGFELightElement.cpp:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        * ksvg2/svg/SVGFilterElement.cpp:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        * ksvg2/svg/SVGMarkerElement.h:
+        * ksvg2/svg/SVGMaskElement.h:
+
 2006-09-19  Brady Eidson <beidson@apple.com>
 
         Reviewed by Sarge Decker

@@ -26,6 +26,8 @@
 
 #include "Attr.h"
 #include "GraphicsContext.h"
+#include "KCanvasClipper.h"
+#include "KCanvasMasker.h"
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "SVGLength.h"
