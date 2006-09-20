@@ -545,14 +545,14 @@ JSValue *Clipboard::getValueProperty(ExecState *exec, int token) const
             return jsStringOrUndefined(clipboard->effectAllowed());
         case Types:
         {
-            DeprecatedStringList qTypes = clipboard->types();
-            if (qTypes.isEmpty())
+            HashSet<String> types = clipboard->types();
+            if (types.isEmpty())
                 return jsNull(); 
             else {
                 List list;
-                for (DeprecatedStringList::Iterator it = qTypes.begin(); it != qTypes.end(); ++it) {
+                HashSet<String>::const_iterator end = types.end();
+                for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it) 
                     list.append(jsString(UString(*it)));
-                }
                 return exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
             }
         }

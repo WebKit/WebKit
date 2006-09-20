@@ -231,20 +231,6 @@ void StringImpl::remove(unsigned pos, int len)
     m_hasTerminatingNullCharacter = false;
 }
 
-StringImpl* StringImpl::split(unsigned pos)
-{
-    assert(!m_inTable);
-    if( pos >=m_length ) return new StringImpl();
-
-    unsigned newLen = m_length-pos;
-    UChar* c = newUCharVector(newLen);
-    memcpy(c, m_data + pos, newLen * sizeof(UChar));
-
-    StringImpl* str = new StringImpl(m_data + pos, newLen);
-    truncate(pos);
-    return str;
-}
-
 bool StringImpl::containsOnlyWhitespace() const
 {
     return containsOnlyWhitespace(0, m_length);

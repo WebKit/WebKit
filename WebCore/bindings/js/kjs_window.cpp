@@ -483,10 +483,10 @@ static HashMap<String, String> parseModalDialogFeatures(ExecState *exec, JSValue
 {
     HashMap<String, String> map;
 
-    DeprecatedStringList features = DeprecatedStringList::split(';', featuresArg->toString(exec));
-    DeprecatedStringList::ConstIterator end = features.end();
-    for (DeprecatedStringList::ConstIterator it = features.begin(); it != end; ++it) {
-        DeprecatedString s = *it;
+    Vector<String> features = String(featuresArg->toString(exec)).split(';');
+    Vector<String>::const_iterator end = features.end();
+    for (Vector<String>::const_iterator it = features.begin(); it != end; ++it) {
+        String s = *it;
         int pos = s.find('=');
         int colonPos = s.find(':');
         if (pos >= 0 && colonPos >= 0)
@@ -497,8 +497,8 @@ static HashMap<String, String> parseModalDialogFeatures(ExecState *exec, JSValue
             // null string for value means key without value
             map.set(s.stripWhiteSpace().lower(), String());
         } else {
-            DeprecatedString key = s.left(pos).stripWhiteSpace().lower();
-            DeprecatedString val = s.mid(pos + 1).stripWhiteSpace().lower();
+            String key = s.left(pos).stripWhiteSpace().lower();
+            String val = s.substring(pos + 1).stripWhiteSpace().lower();
             int spacePos = val.find(' ');
             if (spacePos != -1)
                 val = val.left(spacePos);

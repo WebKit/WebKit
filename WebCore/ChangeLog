@@ -1,3 +1,30 @@
+2006-09-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Add String::split which returns a Vector of Strings and use it instead of 
+        DeprecatedStringList.
+        
+        * bindings/js/kjs_events.cpp:
+        (KJS::Clipboard::getValueProperty):
+        * bindings/js/kjs_window.cpp:
+        (KJS::parseModalDialogFeatures):
+        * css/MediaList.cpp:
+        (WebCore::MediaList::setMediaText):
+        * dom/Clipboard.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute):
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::split):
+        * platform/StringImpl.cpp:
+        * platform/StringImpl.h:
+        * platform/mac/ClipboardMac.h:
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::types):
+
 2006-09-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

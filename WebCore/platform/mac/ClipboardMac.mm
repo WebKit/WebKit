@@ -238,19 +238,19 @@ bool ClipboardMac::setData(const String &type, const String &data)
     return false;
 }
 
-DeprecatedStringList ClipboardMac::types() const
+HashSet<String> ClipboardMac::types() const
 {
     if (m_policy != Readable && m_policy != TypesReadable)
-        return DeprecatedStringList();
+        return HashSet<String>();
 
     NSArray *types = [m_pasteboard types];
 
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
     if (m_changeCount != [m_pasteboard changeCount])
-        return DeprecatedStringList();
+        return HashSet<String>();
 
-    DeprecatedStringList result;
+    HashSet<String> result;
     if (types) {
         unsigned count = [types count];
         unsigned i;
@@ -259,9 +259,9 @@ DeprecatedStringList ClipboardMac::types() const
             if ([pbType isEqualToString:@"NeXT plain ascii pasteboard type"])
                 continue;   // skip this ancient type that gets auto-supplied by some system conversion
 
-            DeprecatedString qstr = MIMETypeFromCocoaType(pbType);
-            if (!result.contains(qstr))
-                result.append(qstr);
+            String str = MIMETypeFromCocoaType(pbType);
+            if (!result.contains(str))
+                result.add(str);
         }
     }
     return result;

@@ -186,12 +186,13 @@ bool HTMLFormElement::formData(FormData& result) const
 {
     DeprecatedCString enc_string = ""; // used for non-multipart data
 
-    DeprecatedString str = m_acceptcharset.deprecatedString();
+    String str = m_acceptcharset;
     str.replace(',', ' ');
-    DeprecatedStringList charsets = DeprecatedStringList::split(' ', str);
+    Vector<String> charsets = str.split(' ');
     TextEncoding encoding;
     Frame* frame = document()->frame();
-    for (DeprecatedStringList::Iterator it = charsets.begin(); it != charsets.end(); ++it)
+    Vector<String>::const_iterator end = charsets.end();
+    for (Vector<String>::const_iterator it = charsets.begin(); it != end; ++it)
         if ((encoding = TextEncoding(*it)).isValid())
             break;
     if (!encoding.isValid()) {

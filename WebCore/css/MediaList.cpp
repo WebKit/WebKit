@@ -189,8 +189,9 @@ void MediaList::setMediaText(const String& value, ExceptionCode& ec)
     MediaList tempMediaList;
     CSSParser p(true);
 
-    DeprecatedStringList list = DeprecatedStringList::split(',', value.deprecatedString());
-    for (DeprecatedStringList::Iterator it = list.begin(); it != list.end(); ++it) {
+    Vector<String> list = value.split(',');
+    Vector<String>::const_iterator end = list.end();
+    for (Vector<String>::const_iterator it = list.begin(); it != end; ++it) {
         String medium = (*it).stripWhiteSpace();
         if (!medium.isEmpty()) {
             if (!p.parseMediaQuery(&tempMediaList, medium)) {

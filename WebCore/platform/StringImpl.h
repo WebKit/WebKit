@@ -83,7 +83,6 @@ public:
     void truncate(int len);
     void remove(unsigned pos, int len = 1);
 
-    StringImpl* split(unsigned pos);
     StringImpl* copy() const { return new StringImpl(m_data, m_length); }
 
     StringImpl* substring(unsigned pos, unsigned len = UINT_MAX);

@@ -124,7 +124,7 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
 void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& relStr)
 {
     m_isStyleSheet = m_isIcon = m_alternate = false;
-    DeprecatedString rel = relStr.deprecatedString().lower();
+    String rel = relStr.domString().lower();
     if (rel == "stylesheet")
         m_isStyleSheet = true;
     else if (rel == "icon" || rel == "shortcut icon")
@@ -134,13 +134,14 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& relStr)
     else {
         // Tokenize the rel attribute and set bits based on specific keywords that we find.
         rel.replace('\n', ' ');
-        DeprecatedStringList list = DeprecatedStringList::split(' ', rel);        
-        for (DeprecatedStringList::Iterator i = list.begin(); i != list.end(); ++i) {
-            if (*i == "stylesheet")
+        Vector<String> list = rel.split(' ');
+        Vector<String>::const_iterator end = list.end();
+        for (Vector<String>::const_iterator it = list.begin(); it != end; ++it) {
+            if (*it == "stylesheet")
                 m_isStyleSheet = true;
-            else if (*i == "alternate")
+            else if (*it == "alternate")
                 m_alternate = true;
-            else if (*i == "icon")
+            else if (*it == "icon")
                 m_isIcon = true;
         }
     }

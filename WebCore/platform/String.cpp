@@ -190,13 +190,6 @@ String String::substring(unsigned pos, unsigned len) const
     return m_impl->substring(pos, len);
 }
 
-String String::split(unsigned pos)
-{
-    if (!m_impl)
-        return String();
-    return m_impl->split(pos);
-}
-
 String String::lower() const
 {
     if (!m_impl)
@@ -382,6 +375,30 @@ Length* String::toCoordsArray(int& len) const
 Length* String::toLengthArray(int& len) const 
 {
     return m_impl ? m_impl->toLengthArray(len) : 0;
+}
+
+Vector<String> String::split(const String& separator, bool allowEmptyEntries) const
+{
+    Vector<String> result;
+    
+    int startPos = 0;
+    int endPos;
+    while ((endPos = find(separator, startPos)) != -1) {
+        if (allowEmptyEntries || startPos != endPos)
+            result.append(substring(startPos, endPos - startPos));
+        startPos = endPos + separator.length();
+    }
+    if (allowEmptyEntries || startPos != (int)length())
+        result.append(substring(startPos));
+    
+    return result;
+}
+
+Vector<String> String::split(UChar separator, bool allowEmptyEntries) const
+{
+    Vector<String> result;
+  
+    return split(String(&separator, 1), allowEmptyEntries);
 }
 
 #ifndef NDEBUG

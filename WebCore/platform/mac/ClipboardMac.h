@@ -44,7 +44,6 @@ typedef unsigned int NSDragOperation;
 
 namespace WebCore {
 
-class DeprecatedStringList;
 class FrameMac;
 
 class ClipboardMac : public Clipboard, public CachedResourceClient {
@@ -70,7 +69,7 @@ public:
     bool setData(const String &type, const String &data);
         
     // extensions beyond IE's API
-    virtual DeprecatedStringList types() const;
+    virtual HashSet<String> types() const;
 
     IntPoint dragLocation() const;    // same point as client passed us
     CachedImage* dragImage() const;
