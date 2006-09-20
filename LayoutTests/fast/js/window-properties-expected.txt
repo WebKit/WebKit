@@ -66,11 +66,11 @@ window.document.body.clientLeft : number
 window.document.body.offsetLeft : number
 window.document.body.clientHeight : number
 window.document.body.offsetTop : number
-window.document.body.offsetParent : object
+window.document.body.offsetParent : null
 window.document.body.style : object
 window.document.body.style.cssText : string
 window.document.body.style.length : number
-window.document.body.style.parentRule : object
+window.document.body.style.parentRule : null
 window.document.body.style.item : function
 window.document.body.style.getPropertyPriority : function
 window.document.body.style.getPropertyValue : function
@@ -104,11 +104,11 @@ window.document.body.parentNode.clientLeft : number
 window.document.body.parentNode.offsetLeft : number
 window.document.body.parentNode.clientHeight : number
 window.document.body.parentNode.offsetTop : number
-window.document.body.parentNode.offsetParent : object
+window.document.body.parentNode.offsetParent : null
 window.document.body.parentNode.style : object
 window.document.body.parentNode.style.cssText : string
 window.document.body.parentNode.style.length : number
-window.document.body.parentNode.style.parentRule : object
+window.document.body.parentNode.style.parentRule : null
 window.document.body.parentNode.style.item : function
 window.document.body.parentNode.style.getPropertyPriority : function
 window.document.body.parentNode.style.getPropertyValue : function
@@ -135,9 +135,9 @@ window.document.body.parentNode.attributes.setNamedItemNS : function
 window.document.body.parentNode.attributes.setNamedItem : function
 window.document.body.parentNode.attributes.getNamedItemNS : function
 window.document.body.parentNode.attributes.removeNamedItemNS : function
-window.document.body.parentNode.prefix : object
-window.document.body.parentNode.nodeValue : object
-window.document.body.parentNode.previousSibling : object
+window.document.body.parentNode.prefix : null
+window.document.body.parentNode.nodeValue : null
+window.document.body.parentNode.previousSibling : null
 window.document.body.parentNode.nodeType : number
 window.document.body.parentNode.lastChild : object
 window.document.body.parentNode.lastChild *** children skipped, already printed above under 'window.document.body'
@@ -145,7 +145,7 @@ window.document.body.parentNode.namespaceURI : string
 window.document.body.parentNode.nodeName : string
 window.document.body.parentNode.firstChild : object
 window.document.body.parentNode.firstChild *** children skipped, already printed above under 'window.document.body'
-window.document.body.parentNode.nextSibling : object
+window.document.body.parentNode.nextSibling : null
 window.document.body.parentNode.localName : string
 window.document.body.parentNode.ownerDocument : object
 window.document.body.parentNode.ownerDocument *** children skipped, already printed above under 'window.document'
@@ -214,17 +214,74 @@ window.document.body.attributes.setNamedItemNS : function
 window.document.body.attributes.setNamedItem : function
 window.document.body.attributes.getNamedItemNS : function
 window.document.body.attributes.removeNamedItemNS : function
-window.document.body.prefix : object
-window.document.body.nodeValue : object
-window.document.body.previousSibling : object
+window.document.body.prefix : null
+window.document.body.nodeValue : null
+window.document.body.previousSibling : null
 window.document.body.nodeType : number
 window.document.body.lastChild : object
 window.document.body.lastChild *** children skipped (explicitly)
 window.document.body.namespaceURI : string
 window.document.body.nodeName : string
 window.document.body.firstChild : object
-window.document.body.firstChild *** children skipped (explicitly)
-window.document.body.nextSibling : object
+window.document.body.firstChild.data : string
+window.document.body.firstChild.length : number
+window.document.body.firstChild.parentNode : object
+window.document.body.firstChild.parentNode *** children skipped, already printed above under 'window.document.body'
+window.document.body.firstChild.childNodes : function
+window.document.body.firstChild.parentElement : object
+window.document.body.firstChild.parentElement *** children skipped, already printed above under 'window.document.body'
+window.document.body.firstChild.attributes : null
+window.document.body.firstChild.prefix : null
+window.document.body.firstChild.nodeValue : string
+window.document.body.firstChild.previousSibling : null
+window.document.body.firstChild.nodeType : number
+window.document.body.firstChild.lastChild : null
+window.document.body.firstChild.namespaceURI : null
+window.document.body.firstChild.nodeName : string
+window.document.body.firstChild.firstChild : null
+window.document.body.firstChild.nextSibling : object
+window.document.body.firstChild.nextSibling *** children skipped (explicitly)
+window.document.body.firstChild.localName : string
+window.document.body.firstChild.ownerDocument : object
+window.document.body.firstChild.ownerDocument *** children skipped, already printed above under 'window.document'
+window.document.body.firstChild.textContent : string
+window.document.body.firstChild.splitText : function
+window.document.body.firstChild.appendData : function
+window.document.body.firstChild.insertData : function
+window.document.body.firstChild.substringData : function
+window.document.body.firstChild.deleteData : function
+window.document.body.firstChild.replaceData : function
+window.document.body.firstChild.addEventListener : function
+window.document.body.firstChild.removeEventListener : function
+window.document.body.firstChild.dispatchEvent : function
+window.document.body.firstChild.DOCUMENT_FRAGMENT_NODE : number
+window.document.body.firstChild.ENTITY_REFERENCE_NODE : number
+window.document.body.firstChild.CDATA_SECTION_NODE : number
+window.document.body.firstChild.TEXT_NODE : number
+window.document.body.firstChild.COMMENT_NODE : number
+window.document.body.firstChild.ELEMENT_NODE : number
+window.document.body.firstChild.ATTRIBUTE_NODE : number
+window.document.body.firstChild.ENTITY_NODE : number
+window.document.body.firstChild.PROCESSING_INSTRUCTION_NODE : number
+window.document.body.firstChild.DOCUMENT_NODE : number
+window.document.body.firstChild.DOCUMENT_TYPE_NODE : number
+window.document.body.firstChild.NOTATION_NODE : number
+window.document.body.firstChild.appendChild : function
+window.document.body.firstChild.removeChild : function
+window.document.body.firstChild.lookupPrefix : function
+window.document.body.firstChild.insertBefore : function
+window.document.body.firstChild.cloneNode : function
+window.document.body.firstChild.item : function
+window.document.body.firstChild.isDefaultNamespace : function
+window.document.body.firstChild.hasAttributes : function
+window.document.body.firstChild.replaceChild : function
+window.document.body.firstChild.isSameNode : function
+window.document.body.firstChild.normalize : function
+window.document.body.firstChild.hasChildNodes : function
+window.document.body.firstChild.isSupported : function
+window.document.body.firstChild.isEqualNode : function
+window.document.body.firstChild.lookupNamespaceURI : function
+window.document.body.nextSibling : null
 window.document.body.localName : string
 window.document.body.ownerDocument : object
 window.document.body.ownerDocument *** children skipped, already printed above under 'window.document'
@@ -304,7 +361,7 @@ window.document.implementation.hasFeature : function
 window.document.implementation.createDocument : function
 window.document.implementation.createCSSStyleSheet : function
 window.document.implementation.createHTMLDocument : function
-window.document.doctype : object
+window.document.doctype : null
 window.document.inputEncoding : string
 window.document.defaultView : object
 window.document.defaultView.EvalError : function
@@ -852,7 +909,7 @@ window.document.defaultView.scrollX : number
 window.document.defaultView.Image : object
 window.document.defaultView.window : object
 window.document.defaultView.window *** children skipped, already printed above under 'window.document.defaultView'
-window.document.defaultView.onunload : object
+window.document.defaultView.onunload : null
 window.document.defaultView.clearTimeout : function
 window.document.defaultView.screenY : number
 window.document.defaultView.screenTop : number
@@ -873,7 +930,7 @@ window.document.defaultView.parent : object
 window.document.defaultView.parent *** children skipped, already printed above under 'window.document.defaultView'
 window.document.defaultView.menubar : object
 window.document.defaultView.Option : object
-window.document.defaultView.onchange : object
+window.document.defaultView.onchange : null
 window.document.defaultView.innerWidth : number
 window.document.defaultView.focus : function
 window.document.defaultView.getSelection : function
@@ -884,15 +941,15 @@ window.document.defaultView.frames.length : number
 window.document.defaultView.locationbar : object
 window.document.defaultView.toolbar : object
 window.document.defaultView.length : number
-window.document.defaultView.onbeforeunload : object
+window.document.defaultView.onbeforeunload : null
 window.document.defaultView.outerHeight : number
-window.document.defaultView.onmousewheel : object
+window.document.defaultView.onmousewheel : null
 window.document.defaultView.history : object
 window.document.defaultView.prompt : function
 window.document.defaultView.top : object
 window.document.defaultView.top *** children skipped, already printed above under 'window.document.defaultView'
-window.document.defaultView.onfocus : object
-window.document.defaultView.onmousedown : object
+window.document.defaultView.onfocus : null
+window.document.defaultView.onmousedown : null
 window.document.defaultView.statusbar : object
 window.document.defaultView.screenLeft : number
 window.document.defaultView.location : object
@@ -900,22 +957,22 @@ window.document.defaultView.location *** children skipped, already printed above
 window.document.defaultView.resizeTo : function
 window.document.defaultView.clearInterval : function
 window.document.defaultView.status : string
-window.document.defaultView.onkeydown : object
+window.document.defaultView.onkeydown : null
 window.document.defaultView.closed : boolean
 window.document.defaultView.defaultStatus : string
 window.document.defaultView.scroll : function
-window.document.defaultView.onload : object
+window.document.defaultView.onload : null
 window.document.defaultView.scrollTo : function
-window.document.defaultView.onmouseover : object
-window.document.defaultView.opener : object
-window.document.defaultView.onkeyup : object
+window.document.defaultView.onmouseover : null
+window.document.defaultView.opener : null
+window.document.defaultView.onkeyup : null
 window.document.defaultView.outerWidth : number
-window.document.defaultView.ondblclick : object
-window.document.defaultView.onmouseout : object
-window.document.defaultView.onerror : object
-window.document.defaultView.onmousemove : object
+window.document.defaultView.ondblclick : null
+window.document.defaultView.onmouseout : null
+window.document.defaultView.onerror : null
+window.document.defaultView.onmousemove : null
 window.document.defaultView.scrollbars : object
-window.document.defaultView.onclick : object
+window.document.defaultView.onclick : null
 window.document.defaultView.event : undefined
 window.document.defaultView.confirm : function
 window.document.defaultView.clientInformation : object
@@ -964,18 +1021,18 @@ window.document.defaultView.setInterval : function
 window.document.defaultView.captureEvents : function
 window.document.defaultView.addEventListener : function
 window.document.defaultView.removeEventListener : function
-window.document.defaultView.onabort : object
-window.document.defaultView.onblur : object
-window.document.defaultView.ondragdrop : object
-window.document.defaultView.onkeypress : object
-window.document.defaultView.onmouseup : object
-window.document.defaultView.onmove : object
-window.document.defaultView.onreset : object
-window.document.defaultView.onresize : object
-window.document.defaultView.onscroll : object
-window.document.defaultView.onsearch : object
-window.document.defaultView.onselect : object
-window.document.defaultView.onsubmit : object
+window.document.defaultView.onabort : null
+window.document.defaultView.onblur : null
+window.document.defaultView.ondragdrop : null
+window.document.defaultView.onkeypress : null
+window.document.defaultView.onmouseup : null
+window.document.defaultView.onmove : null
+window.document.defaultView.onreset : null
+window.document.defaultView.onresize : null
+window.document.defaultView.onscroll : null
+window.document.defaultView.onsearch : null
+window.document.defaultView.onselect : null
+window.document.defaultView.onsubmit : null
 window.document.defaultView.frameElement : undefined
 window.document.defaultView.getMatchedCSSRules : function
 window.document.defaultView.getComputedStyle : function
@@ -985,26 +1042,26 @@ window.document.documentElement *** children skipped, already printed above unde
 window.document.charset : string
 window.document.readyState : string
 window.document.characterSet : string
-window.document.preferredStylesheetSet : object
-window.document.selectedStylesheetSet : object
-window.document.parentNode : object
+window.document.preferredStylesheetSet : null
+window.document.selectedStylesheetSet : null
+window.document.parentNode : null
 window.document.childNodes : function
-window.document.parentElement : object
-window.document.attributes : object
-window.document.prefix : object
-window.document.nodeValue : object
-window.document.previousSibling : object
+window.document.parentElement : null
+window.document.attributes : null
+window.document.prefix : null
+window.document.nodeValue : null
+window.document.previousSibling : null
 window.document.nodeType : number
 window.document.lastChild : object
 window.document.lastChild *** children skipped, already printed above under 'window.document.body.parentNode'
-window.document.namespaceURI : object
+window.document.namespaceURI : null
 window.document.nodeName : string
 window.document.firstChild : object
 window.document.firstChild *** children skipped, already printed above under 'window.document.body.parentNode'
-window.document.nextSibling : object
+window.document.nextSibling : null
 window.document.localName : string
-window.document.ownerDocument : object
-window.document.textContent : object
+window.document.ownerDocument : null
+window.document.textContent : null
 window.document.close : function
 window.document.clear : function
 window.document.releaseEvents : function
@@ -1129,7 +1186,7 @@ window.scrollX : number
 window.Image : object
 window.window : object
 window.window *** children skipped, already printed above under 'window.document.defaultView'
-window.onunload : object
+window.onunload : null
 window.clearTimeout : function
 window.screenY : number
 window.screenTop : number
@@ -1145,7 +1202,7 @@ window.parent *** children skipped, already printed above under 'window.document
 window.menubar : object
 window.menubar *** children skipped, already printed above under 'window.document.defaultView.menubar'
 window.Option : object
-window.onchange : object
+window.onchange : null
 window.innerWidth : number
 window.focus : function
 window.getSelection : function
@@ -1156,16 +1213,16 @@ window.locationbar *** children skipped, already printed above under 'window.doc
 window.toolbar : object
 window.toolbar *** children skipped, already printed above under 'window.document.defaultView.toolbar'
 window.length : number
-window.onbeforeunload : object
+window.onbeforeunload : null
 window.outerHeight : number
-window.onmousewheel : object
+window.onmousewheel : null
 window.history : object
 window.history *** children skipped, already printed above under 'window.document.defaultView.history'
 window.prompt : function
 window.top : object
 window.top *** children skipped, already printed above under 'window.document.defaultView'
-window.onfocus : object
-window.onmousedown : object
+window.onfocus : null
+window.onmousedown : null
 window.statusbar : object
 window.statusbar *** children skipped, already printed above under 'window.document.defaultView.statusbar'
 window.screenLeft : number
@@ -1174,23 +1231,23 @@ window.location *** children skipped, already printed above under 'window.docume
 window.resizeTo : function
 window.clearInterval : function
 window.status : string
-window.onkeydown : object
+window.onkeydown : null
 window.closed : boolean
 window.defaultStatus : string
 window.scroll : function
-window.onload : object
+window.onload : null
 window.scrollTo : function
-window.onmouseover : object
-window.opener : object
-window.onkeyup : object
+window.onmouseover : null
+window.opener : null
+window.onkeyup : null
 window.outerWidth : number
-window.ondblclick : object
-window.onmouseout : object
-window.onerror : object
-window.onmousemove : object
+window.ondblclick : null
+window.onmouseout : null
+window.onerror : null
+window.onmousemove : null
 window.scrollbars : object
 window.scrollbars *** children skipped, already printed above under 'window.document.defaultView.scrollbars'
-window.onclick : object
+window.onclick : null
 window.event : undefined
 window.confirm : function
 window.clientInformation : object
@@ -1217,18 +1274,18 @@ window.setInterval : function
 window.captureEvents : function
 window.addEventListener : function
 window.removeEventListener : function
-window.onabort : object
-window.onblur : object
-window.ondragdrop : object
-window.onkeypress : object
-window.onmouseup : object
-window.onmove : object
-window.onreset : object
-window.onresize : object
-window.onscroll : object
-window.onsearch : object
-window.onselect : object
-window.onsubmit : object
+window.onabort : null
+window.onblur : null
+window.ondragdrop : null
+window.onkeypress : null
+window.onmouseup : null
+window.onmove : null
+window.onreset : null
+window.onresize : null
+window.onscroll : null
+window.onsearch : null
+window.onselect : null
+window.onsubmit : null
 window.frameElement : undefined
 window.getMatchedCSSRules : function
 window.getComputedStyle : function

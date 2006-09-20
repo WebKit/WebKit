@@ -51,7 +51,7 @@ function printProperties(object, parentString) {
     }
     if (shouldSkipProperty(fullPropertyName, propertyValue))
       continue;
-    var type = typeof(propertyValue);
+    var type = (propertyValue === null ? 'null' : typeof(propertyValue));
     log(fullPropertyName + " : " + type);
     var previousPropertyName = '';
     if (propertyValue && type == 'object') {
