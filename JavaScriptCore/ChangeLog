@@ -1,3 +1,9 @@
+2006-09-20  Sean Gies  <seangies@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        * wtf/Assertions.cpp: Debug messages should go into debugger console.
+
 2006-09-20  David Hyatt  <hyatt@apple.com>
 
         Add an implementation of lrint for Win32.
