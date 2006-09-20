@@ -43,7 +43,7 @@ class RenderSVGContainer;
 class RenderPath : public RenderObject
 {
 public:
-    RenderPath(RenderStyle *style, SVGStyledElement *node);
+    RenderPath(RenderStyle* style, SVGStyledElement *node);
     virtual ~RenderPath();
 
     // Hit-detection seperated for the fill and the stroke

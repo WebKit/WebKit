@@ -51,7 +51,7 @@ public:
 
     void draw(GraphicsContext*, const FloatRect&, double x, double y, double strokeWidth = 1, double angle = 0);
 
-    TextStream& externalRepresentation(TextStream &) const; 
+    TextStream& externalRepresentation(TextStream&) const; 
 
 private:
     double m_refX, m_refY;

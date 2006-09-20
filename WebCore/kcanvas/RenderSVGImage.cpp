@@ -145,7 +145,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     translateForAttributes();
     
     FloatRect boundingBox = FloatRect(0, 0, width(), height());
-    const SVGRenderStyle *svgStyle = style()->svgStyle();
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
             
     if (KCanvasClipper* clipper = getClipperById(document(), svgStyle->clipPath().substring(1)))
         clipper->applyClip(boundingBox);
@@ -169,7 +169,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     int x = 0, y = 0;
     if (shouldPaint(pi, x, y)) {
-        SVGImageElement *imageElt = static_cast<SVGImageElement *>(node());
+        SVGImageElement *imageElt = static_cast<SVGImageElement*>(node());
         
         if (imageElt->preserveAspectRatio()->align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
             RenderImage::paint(pi, 0, 0);
@@ -244,7 +244,7 @@ void RenderSVGImage::layout()
 
 FloatRect RenderSVGImage::relativeBBox(bool includeStroke) const
 {
-    SVGImageElement *image = static_cast<SVGImageElement *>(node());
+    SVGImageElement *image = static_cast<SVGImageElement*>(node());
     return FloatRect(image->x()->value(), image->y()->value(), width(), height());
 }
 
@@ -257,7 +257,7 @@ void RenderSVGImage::imageChanged(CachedImage* image)
 
 IntRect RenderSVGImage::getAbsoluteRepaintRect()
 {
-    SVGImageElement *image = static_cast<SVGImageElement *>(node());
+    SVGImageElement *image = static_cast<SVGImageElement*>(node());
     FloatRect repaintRect = absoluteTransform().mapRect(FloatRect(image->x()->value(), image->y()->value(), width(), height()));
 
     // Filters can expand the bounding box
@@ -276,13 +276,13 @@ void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 
 AffineTransform RenderSVGImage::translationForAttributes()
 {
-    SVGImageElement *image = static_cast<SVGImageElement *>(node());
+    SVGImageElement *image = static_cast<SVGImageElement*>(node());
     return AffineTransform().translate(image->x()->value(), image->y()->value());
 }
 
 void RenderSVGImage::translateForAttributes()
 {
-    KRenderingDeviceContext *context = renderingDevice()->currentContext();
+    KRenderingDeviceContext* context = renderingDevice()->currentContext();
     context->concatCTM(translationForAttributes());
 }
 

@@ -1,3 +1,136 @@
+2006-09-20  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by beth.
+
+        Cleanup style in KCanvas.
+        Remove extra white-space, unneeded arguments, etc.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasClipper.cpp:
+        (WebCore::operator<<):
+        (WebCore::KCanvasClipper::externalRepresentation):
+        * kcanvas/KCanvasClipper.h:
+        * kcanvas/KCanvasFilters.cpp:
+        (WebCore::KCanvasFilter::externalRepresentation):
+        (WebCore::operator<<):
+        (WebCore::KCanvasFilterEffect::externalRepresentation):
+        (WebCore::KCPointLightSource::externalRepresentation):
+        (WebCore::KCSpotLightSource::externalRepresentation):
+        (WebCore::KCDistantLightSource::externalRepresentation):
+        (WebCore::KCanvasFEBlend::externalRepresentation):
+        (WebCore::KCanvasFEColorMatrix::externalRepresentation):
+        (WebCore::KCanvasFEComponentTransfer::externalRepresentation):
+        (WebCore::KCanvasFEComposite::externalRepresentation):
+        (WebCore::KCanvasFEConvolveMatrix::externalRepresentation):
+        (WebCore::KCanvasFEDiffuseLighting::externalRepresentation):
+        (WebCore::KCanvasFEDisplacementMap::externalRepresentation):
+        (WebCore::KCanvasFEFlood::externalRepresentation):
+        (WebCore::KCanvasFEGaussianBlur::externalRepresentation):
+        (WebCore::KCanvasFEImage::externalRepresentation):
+        (WebCore::KCanvasFEMerge::externalRepresentation):
+        (WebCore::KCanvasFEMorphology::externalRepresentation):
+        (WebCore::KCanvasFEOffset::externalRepresentation):
+        (WebCore::KCanvasFESpecularLighting::externalRepresentation):
+        (WebCore::KCanvasFETile::externalRepresentation):
+        (WebCore::KCanvasFETurbulence::externalRepresentation):
+        * kcanvas/KCanvasFilters.h:
+        (WebCore::KCanvasFEDiffuseLighting::lightSource):
+        (WebCore::KCanvasFESpecularLighting::lightSource):
+        * kcanvas/KCanvasImage.h:
+        * kcanvas/KCanvasMarker.cpp:
+        (WebCore::KCanvasMarker::externalRepresentation):
+        * kcanvas/KCanvasMarker.h:
+        * kcanvas/KCanvasResource.cpp:
+        (WebCore::operator<<):
+        * kcanvas/KCanvasResource.h:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (WebCore::operator<<):
+        (WebCore::writeIndent):
+        (WebCore::writeStyle):
+        (WebCore::write):
+        (WebCore::writeRenderResources):
+        * kcanvas/KCanvasTreeDebug.h:
+        (WebCore::operator<<):
+        * kcanvas/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::paint):
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        (WebCore::drawStartAndMidMarkers):
+        * kcanvas/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::translateForAttributes):
+        * kcanvas/RenderSVGImage.h:
+        * kcanvas/device/KRenderingDevice.cpp:
+        (WebCore::KRenderingDevice::currentContext):
+        (WebCore::KRenderingDevice::popContext):
+        (WebCore::KRenderingDevice::pushContext):
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/KRenderingFillPainter.h:
+        * kcanvas/device/KRenderingPaintServer.h:
+        (WebCore::KRenderingPaintServer::KRenderingPaintServer):
+        (WebCore::KRenderingPaintServer::activeClient):
+        (WebCore::KRenderingPaintServer::setActiveClient):
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (WebCore::operator<<):
+        (WebCore::KRenderingPaintServerGradient::externalRepresentation):
+        (WebCore::KRenderingPaintServerLinearGradient::externalRepresentation):
+        (WebCore::KRenderingPaintServerGradient::listener):
+        (WebCore::KRenderingPaintServerGradient::setListener):
+        (WebCore::KRenderingPaintServerRadialGradient::externalRepresentation):
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        * kcanvas/device/KRenderingPaintServerPattern.cpp:
+        (WebCore::KRenderingPaintServerPattern::tile):
+        (WebCore::KRenderingPaintServerPattern::setTile):
+        (WebCore::KRenderingPaintServerPattern::listener):
+        (WebCore::KRenderingPaintServerPattern::setListener):
+        (WebCore::KRenderingPaintServerPattern::externalRepresentation):
+        * kcanvas/device/KRenderingPaintServerPattern.h:
+        * kcanvas/device/KRenderingPaintServerSolid.cpp:
+        (WebCore::KRenderingPaintServerSolid::externalRepresentation):
+        * kcanvas/device/KRenderingPaintServerSolid.h:
+        * kcanvas/device/KRenderingStrokePainter.cpp:
+        (WebCore::KRenderingStrokePainter::strokeMiterLimit):
+        (WebCore::KRenderingStrokePainter::setStrokeMiterLimit):
+        * kcanvas/device/KRenderingStrokePainter.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::KCanvasFilterQuartz::prepareFilter):
+        * kcanvas/device/quartz/KCanvasItemQuartz.h: Removed.
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.mm:
+        (WebCore::KCanvasMaskerQuartz::applyMask):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        (WebCore::KCanvasImageQuartz::init):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (WebCore::KCanvasClipperQuartz::applyClip):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceQuartz::quartzContext):
+        (WebCore::KRenderingDeviceQuartz::contextForImage):
+        (WebCore::KRenderingDeviceQuartz::createPaintServer):
+        (WebCore::KRenderingDeviceQuartz::createResource):
+        (WebCore::KRenderingDeviceQuartz::createFilterEffect):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (WebCore::CGShadingRefForLinearGradient):
+        (WebCore::CGShadingRefForRadialGradient):
+        (WebCore::KRenderingPaintServerGradientQuartz::updateQuartzGradientCache):
+        (WebCore::KRenderingPaintServerGradientQuartz::teardown):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.h:
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (WebCore::KRenderingPaintServerQuartzHelper::strokePath):
+        (WebCore::KRenderingPaintServerQuartzHelper::clipToStrokePath):
+        (WebCore::KRenderingPaintServerQuartzHelper::fillPath):
+        (WebCore::KRenderingPaintServerQuartzHelper::clipToFillPath):
+        (WebCore::KRenderingPaintServerSolidQuartz::draw):
+        (WebCore::KRenderingPaintServerSolidQuartz::setup):
+        (WebCore::KRenderingPaintServerSolidQuartz::renderPath):
+        (WebCore::KRenderingPaintServerPatternQuartz::setup):
+        (WebCore::KRenderingPaintServerPatternQuartz::renderPath):
+        (WebCore::KRenderingPaintServerPatternQuartz::teardown):
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (WebCore::applyStrokeStyleToContext):
+
 2006-09-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Dave Hyatt.

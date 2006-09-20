@@ -35,21 +35,21 @@ KRenderingDevice::~KRenderingDevice()
 {
 }
 
-KRenderingDeviceContext *KRenderingDevice::currentContext() const
+KRenderingDeviceContext* KRenderingDevice::currentContext() const
 {
     if (m_contextStack.isEmpty())
         return 0;
     return m_contextStack.last();
 }
 
-KRenderingDeviceContext *KRenderingDevice::popContext()
+KRenderingDeviceContext* KRenderingDevice::popContext()
 {
-    KRenderingDeviceContext *result = m_contextStack.last();
+    KRenderingDeviceContext* result = m_contextStack.last();
     m_contextStack.removeLast();
     return result;
 }
 
-void KRenderingDevice::pushContext(KRenderingDeviceContext *context)
+void KRenderingDevice::pushContext(KRenderingDeviceContext* context)
 {
     m_contextStack.append(context);
 }

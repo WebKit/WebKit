@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-typedef DeprecatedValueList<const RenderPath *> RenderPathList;
+typedef DeprecatedValueList<const RenderPath*> RenderPathList;
 
 class TextStream;
 
@@ -70,7 +70,7 @@ public:
 
     KCClipDataList clipData() const;
 
-    TextStream& externalRepresentation(TextStream &) const; 
+    TextStream& externalRepresentation(TextStream&) const; 
 protected:
     KCClipDataList m_clipData;
 };

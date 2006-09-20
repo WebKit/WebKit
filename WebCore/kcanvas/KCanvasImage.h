@@ -36,7 +36,7 @@ public:
     KCanvasImage() { };
     virtual ~KCanvasImage() { };
 
-    virtual void init(const Image &) = 0;
+    virtual void init(const Image&) = 0;
     virtual void init(IntSize) = 0;
 
     virtual IntSize size() = 0;

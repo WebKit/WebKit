@@ -126,7 +126,7 @@ void KCanvasMarker::draw(GraphicsContext* context, const FloatRect& rect, double
     context->restore();
 }
 
-TextStream& KCanvasMarker::externalRepresentation(TextStream &ts) const
+TextStream& KCanvasMarker::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=MARKER]"
        << " [angle=";
@@ -142,7 +142,7 @@ KCanvasMarker *getMarkerById(Document *document, const AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isMarker())
-        return static_cast<KCanvasMarker *>(resource);
+        return static_cast<KCanvasMarker*>(resource);
     return 0;
 }
 

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-TextStream &operator<<(TextStream& ts, const KCanvasResource& r) 
+TextStream& operator<<(TextStream& ts, const KCanvasResource& r) 
 { 
     return r.externalRepresentation(ts); 
 }

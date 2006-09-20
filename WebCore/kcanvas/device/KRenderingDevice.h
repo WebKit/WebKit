@@ -24,8 +24,8 @@
 #define KRenderingDevice_H
 #ifdef SVG_SUPPORT
 
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingPaintServer.h>
+#include "KCanvasFilters.h"
+#include "KRenderingPaintServer.h"
 
 namespace WebCore {
 
@@ -58,17 +58,17 @@ public:
     virtual bool isBuffered() const = 0;
 
     // Global rendering device context
-    KRenderingDeviceContext *currentContext() const;
+    KRenderingDeviceContext* currentContext() const;
 
-    virtual KRenderingDeviceContext *popContext();
-    virtual void pushContext(KRenderingDeviceContext *context);
+    virtual KRenderingDeviceContext* popContext();
+    virtual void pushContext(KRenderingDeviceContext*);
     
-    virtual KRenderingDeviceContext *contextForImage(KCanvasImage *image) const = 0;
+    virtual KRenderingDeviceContext* contextForImage(KCanvasImage*) const = 0;
 
     // Creation tools
-    virtual KCanvasResource *createResource(const KCResourceType &type) const = 0;
-    virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const = 0;
-    virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const = 0;
+    virtual KCanvasResource* createResource(const KCResourceType&) const = 0;
+    virtual KCanvasFilterEffect* createFilterEffect(const KCFilterEffectType&) const = 0;
+    virtual KRenderingPaintServer* createPaintServer(const KCPaintServerType&) const = 0;
 
 private:
     Vector<KRenderingDeviceContext*> m_contextStack;

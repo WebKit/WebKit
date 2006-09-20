@@ -52,7 +52,7 @@ KCPaintServerType KRenderingPaintServerSolid::type() const
     return PS_SOLID;
 }
 
-TextStream &KRenderingPaintServerSolid::externalRepresentation(TextStream &ts) const
+TextStream& KRenderingPaintServerSolid::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=SOLID]"
         << " [color="<< color() << "]";

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-typedef DeprecatedValueList<const RenderPath *> RenderPathList;
+typedef DeprecatedValueList<const RenderPath*> RenderPathList;
 
 class TextStream;
 
@@ -67,7 +67,7 @@ public:
     virtual bool isMarker() const { return false; }
     virtual bool isMasker() const { return false; }
     
-    virtual TextStream& externalRepresentation(TextStream &) const; 
+    virtual TextStream& externalRepresentation(TextStream&) const; 
 private:
     RenderPathList m_clients;
     String m_registryId;
@@ -76,7 +76,7 @@ private:
 KCanvasResource* getResourceById(Document*, const AtomicString&);
 KRenderingPaintServer* getPaintServerById(Document*, const AtomicString&);
 
-TextStream &operator<<(TextStream&, const KCanvasResource&);
+TextStream& operator<<(TextStream&, const KCanvasResource&);
 
 }
 

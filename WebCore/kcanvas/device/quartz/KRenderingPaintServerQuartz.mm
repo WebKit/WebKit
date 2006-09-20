@@ -43,18 +43,18 @@
 
 namespace WebCore {
 
-void KRenderingPaintServerQuartzHelper::strokePath(CGContextRef context, const RenderPath *renderPath)
+void KRenderingPaintServerQuartzHelper::strokePath(CGContextRef context, const RenderPath* renderPath)
 {
     CGContextStrokePath(context);
 }
 
-void KRenderingPaintServerQuartzHelper::clipToStrokePath(CGContextRef context, const RenderPath *renderPath)
+void KRenderingPaintServerQuartzHelper::clipToStrokePath(CGContextRef context, const RenderPath* renderPath)
 {
     CGContextReplacePathWithStrokedPath(context);
     CGContextClip(context);
 }    
 
-void KRenderingPaintServerQuartzHelper::fillPath(CGContextRef context, const RenderPath *renderPath)
+void KRenderingPaintServerQuartzHelper::fillPath(CGContextRef context, const RenderPath* renderPath)
 {
     if (KSVGPainterFactory::fillPainter(renderPath->style(), renderPath).fillRule() == RULE_EVENODD)
         CGContextEOFillPath(context);
@@ -62,7 +62,7 @@ void KRenderingPaintServerQuartzHelper::fillPath(CGContextRef context, const Ren
         CGContextFillPath(context);
 }
 
-void KRenderingPaintServerQuartzHelper::clipToFillPath(CGContextRef context, const RenderPath *renderPath)
+void KRenderingPaintServerQuartzHelper::clipToFillPath(CGContextRef context, const RenderPath* renderPath)
 {
     if (KSVGPainterFactory::fillPainter(renderPath->style(), renderPath).fillRule() == RULE_EVENODD)
         CGContextEOClip(context);
@@ -70,7 +70,7 @@ void KRenderingPaintServerQuartzHelper::clipToFillPath(CGContextRef context, con
         CGContextClip(context);
 }    
 
-void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingContext, const RenderPath* path, KCPaintTargetType type) const
+void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext* renderingContext, const RenderPath* path, KCPaintTargetType type) const
 {
     if (!setup(renderingContext, path, type))
         return;
@@ -78,11 +78,11 @@ void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingCo
     teardown(renderingContext, path, type);
 }
 
-bool KRenderingPaintServerSolidQuartz::setup(KRenderingDeviceContext *renderingContext, const RenderObject* renderObject, KCPaintTargetType type) const
+bool KRenderingPaintServerSolidQuartz::setup(KRenderingDeviceContext* renderingContext, const RenderObject* renderObject, KCPaintTargetType type) const
 {
-    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
+    KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
-    RenderStyle *renderStyle = renderObject->style();
+    RenderStyle* renderStyle = renderObject->style();
 
     CGContextSetAlpha(context, renderStyle->opacity());
         
@@ -93,7 +93,7 @@ bool KRenderingPaintServerSolidQuartz::setup(KRenderingDeviceContext *renderingC
         CGColorRelease(colorCG);
         CGColorRelease(withAlpha);
         if (isPaintingText()) {
-            const_cast<RenderObject *>(renderObject)->style()->setColor(color());
+            const_cast<RenderObject*>(renderObject)->style()->setColor(color());
             CGContextSetTextDrawingMode(context, kCGTextFill);
         }
     }
@@ -106,7 +106,7 @@ bool KRenderingPaintServerSolidQuartz::setup(KRenderingDeviceContext *renderingC
         CGColorRelease(withAlpha);
         applyStrokeStyleToContext(context, renderStyle, renderObject);
         if (isPaintingText()) {
-            const_cast<RenderObject *>(renderObject)->style()->setColor(color());
+            const_cast<RenderObject*>(renderObject)->style()->setColor(color());
             CGContextSetTextDrawingMode(context, kCGTextStroke);
         }
     }
@@ -116,8 +116,8 @@ bool KRenderingPaintServerSolidQuartz::setup(KRenderingDeviceContext *renderingC
 
 void KRenderingPaintServerSolidQuartz::renderPath(KRenderingDeviceContext* renderingContext, const RenderPath* renderPath, KCPaintTargetType type) const
 {
-    RenderStyle *renderStyle = renderPath->style();
-    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
+    RenderStyle* renderStyle = renderPath->style();
+    KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(renderingContext);
     CGContextRef context = quartzContext->cgContext();    
     if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle))
         KRenderingPaintServerQuartzHelper::fillPath(context, renderPath);
@@ -131,8 +131,7 @@ void KRenderingPaintServerSolidQuartz::teardown(KRenderingDeviceContext* renderi
 
 void patternCallback(void *info, CGContextRef context)
 {
-    KCanvasImageQuartz *image = (KCanvasImageQuartz *)info;
-    CGLayerRef layer = image->cgLayer();
+    CGLayerRef layer = reinterpret_cast<KCanvasImageQuartz*>(info)->cgLayer();
     CGContextDrawLayerAtPoint(context, CGPointZero, layer);
 }
 
@@ -149,12 +148,12 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
     if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
         listener()->resourceNotification();
 
-    RenderStyle *renderStyle = renderObject->style();
+    RenderStyle* renderStyle = renderObject->style();
 
-    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
+    KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
 
-    KCanvasImage *cell = tile();
+    KCanvasImage* cell = tile();
     if (!cell)
         return false;
 
@@ -175,7 +174,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
     CGPatternCallbacks callbacks = {0, patternCallback, NULL};
     m_pattern = CGPatternCreate(
         tile(),
-        CGRectMake(0,0,cellSize.width,cellSize.height),
+        CGRectMake(0, 0, cellSize.width, cellSize.height),
         transform,
         bbox().width(), //cellSize.width,
         bbox().height(), //cellSize.height,
@@ -191,7 +190,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
         CGContextSetFillColorSpace(context, m_patternSpace);
         CGContextSetFillPattern(context, m_pattern, &alpha);
         if (isPaintingText()) {
-            const_cast<RenderObject *>(renderObject)->style()->setColor(Color());
+            const_cast<RenderObject*>(renderObject)->style()->setColor(Color());
             CGContextSetTextDrawingMode(context, kCGTextFill);
         }
     }
@@ -201,7 +200,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
         CGContextSetStrokePattern(context, m_pattern, &alpha);
         applyStrokeStyleToContext(context, renderStyle, renderObject);
         if (isPaintingText()) {
-            const_cast<RenderObject *>(renderObject)->style()->setColor(Color());
+            const_cast<RenderObject*>(renderObject)->style()->setColor(Color());
             CGContextSetTextDrawingMode(context, kCGTextStroke);
         }
     }
@@ -211,9 +210,9 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
 
 void KRenderingPaintServerPatternQuartz::renderPath(KRenderingDeviceContext* renderingContext, const RenderPath* renderPath, KCPaintTargetType type) const
 {
-    RenderStyle *renderStyle = renderPath->style();
+    RenderStyle* renderStyle = renderPath->style();
 
-    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
+    KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
 
     if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle))
@@ -225,7 +224,7 @@ void KRenderingPaintServerPatternQuartz::renderPath(KRenderingDeviceContext* ren
 
 void KRenderingPaintServerPatternQuartz::teardown(KRenderingDeviceContext* renderingContext, const RenderObject* renderObject, KCPaintTargetType type) const
 {
-    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
+    KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
     CGPatternRelease(m_pattern);
     CGColorSpaceRelease(m_patternSpace);

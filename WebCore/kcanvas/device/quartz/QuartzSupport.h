@@ -39,21 +39,15 @@ class RenderStyle;
 class RenderObject;
 class KRenderingStrokePainter;
 
-#ifndef NDEBUG
-void debugDumpCGImageToFile(NSString *filename, CGImageRef image, int width, int height);
-void debugDumpCGLayerToFile(NSString *filename, CGLayerRef layer, int width, int height);
-void debugDumpCIImageToFile(NSString *filename, CIImage *ciImage, int width, int height);
-#endif
-
-CFStringRef CFStringFromCGPath(CGPathRef path);
-CFStringRef CFStringFromCGAffineTransform(CGAffineTransform t);
+CFStringRef CFStringFromCGPath(CGPathRef);
+CFStringRef CFStringFromCGAffineTransform(CGAffineTransform);
 CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest);
 
 void applyStrokeStyleToContext(CGContextRef, const KRenderingStrokePainter&);
 void applyStrokeStyleToContext(CGContextRef, RenderStyle*, const RenderObject*);
 
-FloatRect strokeBoundingBox(const Path& path, const KRenderingStrokePainter& strokePainter);
-bool pathContainsPoint(CGMutablePathRef cgPath, const FloatPoint& point, CGPathDrawingMode drawMode);
+FloatRect strokeBoundingBox(const Path&, const KRenderingStrokePainter&);
+bool pathContainsPoint(CGMutablePathRef, const FloatPoint&, CGPathDrawingMode);
 
 static inline CGLineCap CGLineCapFromKC(KCCapStyle cap)
 {

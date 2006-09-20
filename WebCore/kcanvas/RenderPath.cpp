@@ -175,7 +175,7 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
         return;
     
     KRenderingDevice* device = renderingDevice();
-    KRenderingDeviceContext *context = device->currentContext();
+    KRenderingDeviceContext* context = device->currentContext();
     bool shouldPopContext = false;
     if (context)
         paintInfo.p->save();
@@ -392,7 +392,7 @@ static inline void updateMarkerDataForElement(MarkerData &previousMarkerData, co
 
 static void drawStartAndMidMarkers(void *info, const PathElement *element)
 {
-    DrawMarkersData &data = *(DrawMarkersData *)info;
+    DrawMarkersData& data = *reinterpret_cast<DrawMarkersData*>(info);
 
     int elementIndex = data.elementIndex;
     MarkerData &previousMarkerData = data.previousMarkerData;
@@ -422,7 +422,7 @@ static void drawStartAndMidMarkers(void *info, const PathElement *element)
 void RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& rect, const Path& path) const
 {
     Document *doc = document();
-    const SVGRenderStyle *svgStyle = style()->svgStyle();
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
 
     KCanvasMarker* startMarker = getMarkerById(doc, svgStyle->startMarker().substring(1));
     KCanvasMarker* midMarker = getMarkerById(doc, svgStyle->midMarker().substring(1));

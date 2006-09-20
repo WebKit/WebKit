@@ -44,32 +44,31 @@ namespace WebCore {
     class RenderSVGContainer;
 
 // functions used by the main RenderTreeAsText code
-void write(TextStream &ts, const RenderSVGContainer &container, int indent = 0);
-void write(TextStream &ts, const RenderPath &path, int indent = 0);
-void writeRenderResources(TextStream &ts, Node *parent);
+void write(TextStream&, const RenderSVGContainer&, int indent = 0);
+void write(TextStream&, const RenderPath&, int indent = 0);
+void writeRenderResources(TextStream&, Node* parent);
 
 // helper operators defined used in various classes to dump the render tree. 
-TextStream &operator<<(TextStream &ts, const AffineTransform &);
-TextStream &operator<<(TextStream &ts, const IntRect &);
-TextStream &operator<<(TextStream &ts, const Color &);
-TextStream &operator<<(TextStream &ts, const IntPoint &);
-TextStream &operator<<(TextStream &ts, const FloatSize &);
-TextStream &operator<<(TextStream &ts, const FloatRect &);
-TextStream &operator<<(TextStream &ts, const FloatPoint &);
+TextStream& operator<<(TextStream&, const AffineTransform&);
+TextStream& operator<<(TextStream&, const IntRect&);
+TextStream& operator<<(TextStream&, const Color&);
+TextStream& operator<<(TextStream&, const IntPoint&);
+TextStream& operator<<(TextStream&, const FloatSize&);
+TextStream& operator<<(TextStream&, const FloatRect&);
+TextStream& operator<<(TextStream&, const FloatPoint&);
 
 // helper operators specific to dumping the render tree. these are used in various classes to dump the render tree
 // these could be defined in separate namespace to avoid matching these generic signatures unintentionally.
     
-TextStream &operator<<(TextStream &ts, const DeprecatedStringList &l);
+TextStream& operator<<(TextStream&, const DeprecatedStringList&);
     
 template<typename Item>
-TextStream &operator<<(TextStream &ts, const DeprecatedValueList<Item*> &l)
+TextStream& operator<<(TextStream& ts, const DeprecatedValueList<Item*>& l)
 {
     ts << "[";
     typename DeprecatedValueList<Item*>::ConstIterator it = l.begin();
     typename DeprecatedValueList<Item*>::ConstIterator it_e = l.end();
-    while (it != it_e)
-    {
+    while (it != it_e) {
         ts << *(*it);
         ++it;
         if (it != it_e) ts << ", ";
@@ -80,13 +79,12 @@ TextStream &operator<<(TextStream &ts, const DeprecatedValueList<Item*> &l)
 }
 
 template<typename Item>
-TextStream &operator<<(TextStream &ts, const DeprecatedValueList<Item> &l)
+TextStream& operator<<(TextStream& ts, const DeprecatedValueList<Item>& l)
 {
     ts << "[";
     typename DeprecatedValueList<Item>::ConstIterator it = l.begin();
     typename DeprecatedValueList<Item>::ConstIterator it_e = l.end();
-    while (it != it_e)
-    {
+    while (it != it_e) {
         ts << *it;
         ++it;
         if (it != it_e) ts << ", ";

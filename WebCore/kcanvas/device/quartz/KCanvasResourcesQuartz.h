@@ -48,7 +48,7 @@ class KCanvasImageQuartz : public KCanvasImage {
 public:
     KCanvasImageQuartz() : m_cgLayer(0) { }
     ~KCanvasImageQuartz();
-    void init(const Image &) { }
+    void init(const Image&) { }
     void init(IntSize size) { m_size = size; }
     
     CGLayerRef cgLayer();

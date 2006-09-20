@@ -39,7 +39,7 @@ namespace WebCore {
 
 void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const
 {
-    KRenderingDeviceContext *context = renderingDevice()->currentContext();
+    KRenderingDeviceContext* context = renderingDevice()->currentContext();
     CGContextRef cgContext = static_cast<KRenderingDeviceContextQuartz*>(context)->cgContext();
     if (m_clipData.count() < 1)
         return;
@@ -51,7 +51,7 @@ void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const
 
     CGAffineTransform bboxTransform = CGAffineTransformMakeMapBetweenRects(CGRectMake(0,0,1,1), CGRect(boundingBox));
 
-    for (unsigned int x = 0; x < m_clipData.count(); x++) {
+    for (unsigned x = 0; x < m_clipData.count(); x++) {
         KCClipData data = m_clipData[x];
         if (data.windRule() != clipRule)
             heterogenousClipRules = YES;

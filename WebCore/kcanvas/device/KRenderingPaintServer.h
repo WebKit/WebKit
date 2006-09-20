@@ -52,13 +52,17 @@ enum KCPaintTargetType {
 class KRenderingPaintServer : public KCanvasResource
 {
 public:
-    KRenderingPaintServer() : KCanvasResource(), m_activeClient(0), m_paintingText(false) { }
+    KRenderingPaintServer()
+        : KCanvasResource()
+        , m_activeClient(0)
+        , m_paintingText(false)
+    { }
     virtual ~KRenderingPaintServer() { }
     
     virtual bool isPaintServer() const { return true; }
 
-    const RenderPath *activeClient() const { return m_activeClient;}
-    void setActiveClient(const RenderPath *client) { m_activeClient = client; }
+    const RenderPath* activeClient() const { return m_activeClient;}
+    void setActiveClient(const RenderPath* client) { m_activeClient = client; }
 
     String idInRegistry() const {  return m_registryId; }
     void setIdInRegistry(const String& newId) { m_registryId = newId; } 
@@ -66,7 +70,7 @@ public:
     virtual KCPaintServerType type() const = 0;
     
     // Actual rendering function
-    virtual void draw(KRenderingDeviceContext*, const RenderPath* renderPath, KCPaintTargetType) const = 0;
+    virtual void draw(KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const = 0;
 
     virtual bool setup(KRenderingDeviceContext*, const RenderObject*, KCPaintTargetType) const = 0;
     virtual void teardown(KRenderingDeviceContext*, const RenderObject*, KCPaintTargetType) const = 0;
@@ -74,16 +78,16 @@ public:
     bool isPaintingText() const { return m_paintingText; }
     void setPaintingText(bool paintingText) { m_paintingText = paintingText; }
 
-    virtual TextStream &externalRepresentation(TextStream &) const = 0;
+    virtual TextStream& externalRepresentation(TextStream&) const = 0;
 
     virtual void renderPath(KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const = 0;
 private:
-    const RenderPath *m_activeClient;
+    const RenderPath* m_activeClient;
     String m_registryId;
     bool m_paintingText;
 };
 
-TextStream &operator<<(TextStream &, const KRenderingPaintServer &);
+TextStream& operator<<(TextStream&, const KRenderingPaintServer&);
 
 KRenderingPaintServer* getPaintServerById(Document*, const AtomicString&);
 

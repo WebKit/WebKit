@@ -72,7 +72,7 @@ void applyStrokeStyleToContext(CGContextRef context, const KRenderingStrokePaint
     if (dashes.count()) {
         size_t dashCount = dashes.count();
         CGFloat *lengths = (CGFloat *)malloc(dashCount * sizeof(CGFloat));
-        for (unsigned int x = 0; x < dashCount; x++)
+        for (unsigned x = 0; x < dashCount; x++)
             lengths[x] = dashes[x];
         CGContextSetLineDash(context, strokePainter.dashOffset(), lengths, dashes.count());
         free(lengths);

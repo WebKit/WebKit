@@ -38,7 +38,7 @@ RenderForeignObject::RenderForeignObject(SVGForeignObjectElement *node)
 
 AffineTransform RenderForeignObject::translationForAttributes()
 {
-    SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement *>(element());
+    SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement*>(element());
     return AffineTransform().translate(foreign->x()->value(), foreign->y()->value());
 }
 
@@ -48,7 +48,7 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
         return;
 
     KRenderingDevice *device = renderingDevice();
-    KRenderingDeviceContext *context = device->currentContext();
+    KRenderingDeviceContext* context = device->currentContext();
     bool shouldPopContext = false;
     if (!context) {
         // Only need to setup for KCanvas rendering if it hasn't already been done.

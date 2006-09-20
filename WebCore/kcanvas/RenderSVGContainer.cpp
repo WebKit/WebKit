@@ -143,7 +143,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
         return; // Spec: groups w/o children still may render filter content.
     
     KRenderingDevice* device = renderingDevice();
-    KRenderingDeviceContext *deviceContext = device->currentContext();
+    KRenderingDeviceContext* deviceContext = device->currentContext();
     bool shouldPopContext = false;
     if (!deviceContext) {
         // I only need to setup for KCanvas rendering if it hasn't already been done.
@@ -277,7 +277,7 @@ bool RenderSVGContainer::fillContains(const FloatPoint& p) const
 {
     RenderObject *current = firstChild();
     while (current != 0) {
-        if (current->isRenderPath() && static_cast<RenderPath *>(current)->fillContains(p))
+        if (current->isRenderPath() && static_cast<RenderPath*>(current)->fillContains(p))
             return true;
         current = current->nextSibling();
     }
@@ -289,7 +289,7 @@ bool RenderSVGContainer::strokeContains(const FloatPoint& p) const
 {
     RenderObject *current = firstChild();
     while (current != 0) {
-        if (current->isRenderPath() && static_cast<RenderPath *>(current)->strokeContains(p))
+        if (current->isRenderPath() && static_cast<RenderPath*>(current)->strokeContains(p))
             return true;
         current = current->nextSibling();
     }

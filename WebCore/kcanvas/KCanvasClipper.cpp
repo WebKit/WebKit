@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-TextStream &operator<<(TextStream &ts, WindRule rule)
+TextStream& operator<<(TextStream& ts, WindRule rule)
 {
     switch (rule) {
         case RULE_NONZERO:
@@ -40,7 +40,7 @@ TextStream &operator<<(TextStream &ts, WindRule rule)
     return ts;
 }
 
-TextStream &operator<<(TextStream &ts, const KCClipData &d)
+TextStream& operator<<(TextStream& ts, const KCClipData &d)
 {
     ts << "[winding=" << d.windRule() << "]";
     if (d.bboxUnits)
@@ -72,7 +72,7 @@ KCClipDataList KCanvasClipper::clipData() const
     return m_clipData;
 }
 
-TextStream& KCanvasClipper::externalRepresentation(TextStream &ts) const
+TextStream& KCanvasClipper::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=CLIPPER]";
     ts << " [clip data=" << clipData() << "]";
@@ -83,7 +83,7 @@ KCanvasClipper *getClipperById(Document *document, const AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isClipper())
-        return static_cast<KCanvasClipper *>(resource);
+        return static_cast<KCanvasClipper*>(resource);
     return 0;
 }
 

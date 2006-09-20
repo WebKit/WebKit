@@ -99,7 +99,7 @@ void KCanvasMaskerQuartz::applyMask(const FloatRect& boundingBox) const
     CGColorSpaceRelease(grayColorSpace);
     CIContext *ciGrayscaleContext = [CIContext contextWithCGContext:grayscaleContext options:nil];
 
-    KCanvasImageQuartz *maskImage = static_cast<KCanvasImageQuartz *>(m_mask);
+    KCanvasImageQuartz* maskImage = static_cast<KCanvasImageQuartz*>(m_mask);
     CIImage *grayscaleMask = transformImageIntoGrayscaleMask([CIImage imageWithCGLayer:maskImage->cgLayer()]);
     [ciGrayscaleContext drawImage:grayscaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, width, height)];
 

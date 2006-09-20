@@ -38,25 +38,25 @@ public:
 
     // Common interface for fill and stroke parameters
     float strokeWidth() const;
-    void setStrokeWidth(float width);
+    void setStrokeWidth(float);
 
-    unsigned int strokeMiterLimit() const;
-    void setStrokeMiterLimit(unsigned int limit);
+    unsigned strokeMiterLimit() const;
+    void setStrokeMiterLimit(unsigned);
 
     KCCapStyle strokeCapStyle() const;
-    void setStrokeCapStyle(KCCapStyle style);
+    void setStrokeCapStyle(KCCapStyle);
 
     KCJoinStyle strokeJoinStyle() const;
-    void setStrokeJoinStyle(KCJoinStyle style);
+    void setStrokeJoinStyle(KCJoinStyle);
 
     float dashOffset() const;
     void setDashOffset(float offset);
 
-    KCDashArray& dashArray() const;
-    void setDashArray(const KCDashArray& dashArray);
+    const KCDashArray& dashArray() const;
+    void setDashArray(const KCDashArray&);
 
     float opacity() const;
-    void setOpacity(float opacity);
+    void setOpacity(float);
 
     // Helpers
     bool dirty() const;
@@ -67,13 +67,13 @@ private:
     float m_opacity;
 
     float m_strokeWidth;
-    unsigned int m_miterLimit;
+    unsigned m_miterLimit;
 
     KCCapStyle m_capStyle;
     KCJoinStyle m_joinStyle;
 
     float m_dashOffset;
-    mutable KCDashArray m_dashArray;
+    KCDashArray m_dashArray;
 };
 
 }

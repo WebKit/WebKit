@@ -92,7 +92,9 @@ static inline CIVector *getVectorForChannel(KCChannelSelectorType channel)
     }
 }
 
-KCanvasFilterQuartz::KCanvasFilterQuartz() : m_filterCIContext(0), m_filterCGLayer(0)
+KCanvasFilterQuartz::KCanvasFilterQuartz()
+    : m_filterCIContext(0)
+    , m_filterCGLayer(0)
 {
     m_imagesByName = HardRetainWithNSRelease([[NSMutableDictionary alloc] init]);
 }
@@ -130,7 +132,7 @@ void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
     
     m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGRect(bbox).size info:NULL];
     
-    KRenderingDeviceContext *filterContext = new KRenderingDeviceContextQuartz(CGLayerGetContext(m_filterCGLayer));
+    KRenderingDeviceContext* filterContext = new KRenderingDeviceContextQuartz(CGLayerGetContext(m_filterCGLayer));
     renderingDevice()->pushContext(filterContext);
     
     filterContext->concatCTM(AffineTransform().translate(-1.0f * bbox.x(), -1.0f * bbox.y()));
@@ -174,8 +176,8 @@ NSArray *KCanvasFilterQuartz::getCIFilterStack(CIImage *inputImage)
 {
     NSMutableArray *filterEffects = [NSMutableArray array];
 
-    DeprecatedValueListIterator<KCanvasFilterEffect *> it = m_effects.begin();
-    DeprecatedValueListIterator<KCanvasFilterEffect *> end = m_effects.end();
+    DeprecatedValueListIterator<KCanvasFilterEffect*> it = m_effects.begin();
+    DeprecatedValueListIterator<KCanvasFilterEffect*> end = m_effects.end();
 
     setImageForName(inputImage, "SourceGraphic"); // input
     for (;it != end; it++) {
@@ -270,7 +272,7 @@ CIImage *KCanvasFilterQuartz::inputImage(const KCanvasFilterEffect *filterEffect
         filter = crop; \
     }
 
-CIFilter *KCanvasFEBlendQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFEBlendQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     CIFilter *filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -313,12 +315,12 @@ CIFilter *KCanvasFEBlendQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
 #define CMValuesCheck(expected, type) \
     if (values().count() != expected) { \
         NSLog(@"Error, incorrect number of values in ColorMatrix for type \"%s\", expected: %i actual: %i, ignoring filter.  Values:", type, expected, values().count()); \
-        for (unsigned int x=0; x < values().count(); x++) fprintf(stderr, " %f", values()[x]); \
+        for (unsigned x=0; x < values().count(); x++) fprintf(stderr, " %f", values()[x]); \
         fprintf(stderr, "\n"); \
         return nil; \
     }
 
-CIFilter *KCanvasFEColorMatrixQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFEColorMatrixQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     CIFilter *filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -479,7 +481,7 @@ CIFilter *KCanvasFEComponentTransferQuartz::getFunctionFilter(KCChannelSelectorT
     
 }
 
-CIFilter *KCanvasFEComponentTransferQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFEComponentTransferQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     [WKComponentMergeFilter class];
     [WKIdentityTransferFilter class];
@@ -506,7 +508,7 @@ CIFilter *KCanvasFEComponentTransferQuartz::getCIFilter(KCanvasFilterQuartz *qua
     return nil;
 }
 
-CIFilter *KCanvasFECompositeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFECompositeQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     CIFilter *filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -551,7 +553,7 @@ CIFilter *KCanvasFECompositeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilte
     FE_QUARTZ_OUTPUT_RETURN;
 }
 
-CIFilter *KCanvasFEDisplacementMapQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFEDisplacementMapQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     CIFilter *filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -598,7 +600,7 @@ static CIFilter *getLightVectors(CIFilter * normals, const KCLightSource * light
     switch (light->type()) {
     case LS_DISTANT:
     {
-        const KCDistantLightSource *dlight = static_cast<const KCDistantLightSource *>(light);
+        const KCDistantLightSource *dlight = static_cast<const KCDistantLightSource*>(light);
         
         filter = [CIFilter filterWithName:@"WKDistantLight"];
         if (!filter)
@@ -619,12 +621,12 @@ static CIFilter *getLightVectors(CIFilter * normals, const KCLightSource * light
     }
     case LS_POINT:
     {
-        const KCPointLightSource *plight = static_cast<const KCPointLightSource *>(light);
+        const KCPointLightSource *plight = static_cast<const KCPointLightSource*>(light);
         return getPointLightVectors(normals, [CIVector vectorWithX:plight->position().x() Y:plight->position().y() Z:plight->position().z()], surfaceScale);
     }
     case LS_SPOT:
     {
-        const KCSpotLightSource *slight = static_cast<const KCSpotLightSource *>(light);
+        const KCSpotLightSource *slight = static_cast<const KCSpotLightSource*>(light);
         filter = [CIFilter filterWithName:@"WKSpotLight"];
         if (!filter)
             return nil;
@@ -660,7 +662,7 @@ static CIFilter *getNormalMap(CIImage *bumpMap, float scale)
     return nil;
 }
 
-CIFilter *KCanvasFEDiffuseLightingQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFEDiffuseLightingQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     const KCLightSource *light = lightSource();
     if (!light)
@@ -696,7 +698,7 @@ CIFilter *KCanvasFEDiffuseLightingQuartz::getCIFilter(KCanvasFilterQuartz *quart
     FE_QUARTZ_OUTPUT_RETURN;
 }
 
-CIFilter *KCanvasFEFloodQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFEFloodQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     CIFilter *filter;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -717,7 +719,7 @@ CIFilter *KCanvasFEFloodQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
     FE_QUARTZ_OUTPUT_RETURN;
 }
 
-CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     if (!cachedImage())
         return nil;
@@ -751,7 +753,7 @@ CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
     FE_QUARTZ_OUTPUT_RETURN;
 }
 
-CIFilter *KCanvasFEGaussianBlurQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFEGaussianBlurQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     FE_QUARTZ_SETUP_INPUT(@"CIGaussianPyramid");
 
@@ -766,7 +768,7 @@ CIFilter *KCanvasFEGaussianBlurQuartz::getCIFilter(KCanvasFilterQuartz *quartzFi
     FE_QUARTZ_OUTPUT_RETURN;
 }
 
-CIFilter *KCanvasFEMergeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFEMergeQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     CIFilter *filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -786,7 +788,7 @@ CIFilter *KCanvasFEMergeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
     FE_QUARTZ_OUTPUT_RETURN;
 }
 
-CIFilter *KCanvasFEOffsetQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFEOffsetQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     FE_QUARTZ_SETUP_INPUT(@"CIAffineTransform");
     NSAffineTransform *offsetTransform = [NSAffineTransform transform];
@@ -795,7 +797,7 @@ CIFilter *KCanvasFEOffsetQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) 
     FE_QUARTZ_OUTPUT_RETURN;
 }
 
-CIFilter *KCanvasFESpecularLightingQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFESpecularLightingQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {  
     const KCLightSource *light = lightSource();
     if(!light)
@@ -827,7 +829,7 @@ CIFilter *KCanvasFESpecularLightingQuartz::getCIFilter(KCanvasFilterQuartz *quar
     FE_QUARTZ_OUTPUT_RETURN;
 }
 
-CIFilter *KCanvasFETileQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+CIFilter *KCanvasFETileQuartz::getCIFilter(KCanvasFilterQuartz* quartzFilter) const
 {
     FE_QUARTZ_SETUP_INPUT(@"CIAffineTile");
     FE_QUARTZ_OUTPUT_RETURN;

@@ -53,12 +53,12 @@ void KRenderingStrokePainter::setStrokeWidth(float width)
     m_strokeWidth = width;
 }
 
-unsigned int KRenderingStrokePainter::strokeMiterLimit() const
+unsigned KRenderingStrokePainter::strokeMiterLimit() const
 {
     return m_miterLimit;
 }
 
-void KRenderingStrokePainter::setStrokeMiterLimit(unsigned int limit)
+void KRenderingStrokePainter::setStrokeMiterLimit(unsigned limit)
 {
     setDirty();
     m_miterLimit = limit;
@@ -97,7 +97,7 @@ void KRenderingStrokePainter::setDashOffset(float offset)
     m_dashOffset = offset;
 }
 
-KCDashArray& KRenderingStrokePainter::dashArray() const
+const KCDashArray& KRenderingStrokePainter::dashArray() const
 {
     return m_dashArray;
 }

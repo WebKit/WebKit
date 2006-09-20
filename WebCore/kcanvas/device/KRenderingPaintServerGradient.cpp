@@ -33,7 +33,7 @@
 namespace WebCore {
 
 //KCGradientSpreadMethod
-TextStream &operator<<(TextStream &ts, KCGradientSpreadMethod m)
+TextStream& operator<<(TextStream& ts, KCGradientSpreadMethod m)
 {
     switch (m) 
     {
@@ -47,7 +47,7 @@ TextStream &operator<<(TextStream &ts, KCGradientSpreadMethod m)
     return ts;
 }
 
-TextStream &operator<<(TextStream &ts, const Vector<KCGradientStop>& l)
+TextStream& operator<<(TextStream& ts, const Vector<KCGradientStop>& l)
 {
     ts << "[";
     for (Vector<KCGradientStop>::const_iterator it = l.begin(); it != l.end(); ++it) { 
@@ -123,7 +123,7 @@ void KRenderingPaintServerGradient::setGradientTransform(const AffineTransform& 
     m_gradientTransform = mat;
 }
 
-TextStream &KRenderingPaintServerGradient::externalRepresentation(TextStream &ts) const
+TextStream& KRenderingPaintServerGradient::externalRepresentation(TextStream& ts) const
 {
     // abstract, don't stream type
     ts  << "[stops=" << gradientStops() << "]";
@@ -172,7 +172,7 @@ KCPaintServerType KRenderingPaintServerLinearGradient::type() const
     return PS_LINEAR_GRADIENT;
 }
 
-TextStream &KRenderingPaintServerLinearGradient::externalRepresentation(TextStream &ts) const
+TextStream& KRenderingPaintServerLinearGradient::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=LINEAR-GRADIENT] ";    
     KRenderingPaintServerGradient::externalRepresentation(ts);
@@ -226,17 +226,17 @@ KCPaintServerType KRenderingPaintServerRadialGradient::type() const
     return PS_RADIAL_GRADIENT;
 }
 
-KCanvasResourceListener *KRenderingPaintServerGradient::listener() const
+KCanvasResourceListener* KRenderingPaintServerGradient::listener() const
 {
     return m_listener;
 }
 
-void KRenderingPaintServerGradient::setListener(KCanvasResourceListener *listener)
+void KRenderingPaintServerGradient::setListener(KCanvasResourceListener* listener)
 {
     m_listener = listener;
 }
 
-TextStream &KRenderingPaintServerRadialGradient::externalRepresentation(TextStream &ts) const
+TextStream& KRenderingPaintServerRadialGradient::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=RADIAL-GRADIENT] "; 
     KRenderingPaintServerGradient::externalRepresentation(ts);

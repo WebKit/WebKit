@@ -1321,7 +1321,6 @@
 		A88AD3A90952486D001DD196 /* WKSpotLightFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C32934093BB732000B9CAC /* WKSpotLightFilter.m */; };
 		A88AD3AA0952486D001DD196 /* KCanvasFilterQuartz.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB69089701F800BA5114 /* KCanvasFilterQuartz.h */; };
 		A88AD3AB0952486D001DD196 /* KCanvasFilterQuartz.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB6A089701F800BA5114 /* KCanvasFilterQuartz.mm */; };
-		A88AD3AC0952486D001DD196 /* KCanvasItemQuartz.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB6B089701F800BA5114 /* KCanvasItemQuartz.h */; };
 		A88AD3AD0952486D001DD196 /* KCanvasItemQuartz.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.mm */; };
 		A88AD3AE0952486D001DD196 /* KCanvasResourcesQuartz.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB6D089701F800BA5114 /* KCanvasResourcesQuartz.h */; };
 		A88AD3AF0952486D001DD196 /* KCanvasResourcesQuartz.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB6E089701F800BA5114 /* KCanvasResourcesQuartz.mm */; };
@@ -3793,7 +3792,6 @@
 		A8C0FB65089701F700BA5114 /* KRenderingStrokePainter.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingStrokePainter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB69089701F800BA5114 /* KCanvasFilterQuartz.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasFilterQuartz.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB6A089701F800BA5114 /* KCanvasFilterQuartz.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KCanvasFilterQuartz.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB6B089701F800BA5114 /* KCanvasItemQuartz.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasItemQuartz.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KCanvasItemQuartz.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB6D089701F800BA5114 /* KCanvasResourcesQuartz.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasResourcesQuartz.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB6E089701F800BA5114 /* KCanvasResourcesQuartz.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KCanvasResourcesQuartz.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -6633,7 +6631,6 @@
 				A8C3291F093BB732000B9CAC /* filters */,
 				A8C0FB69089701F800BA5114 /* KCanvasFilterQuartz.h */,
 				A8C0FB6A089701F800BA5114 /* KCanvasFilterQuartz.mm */,
-				A8C0FB6B089701F800BA5114 /* KCanvasItemQuartz.h */,
 				A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.mm */,
 				A81655D2096BBEAC00601058 /* KCanvasMaskerQuartz.h */,
 				A81655D3096BBEAC00601058 /* KCanvasMaskerQuartz.mm */,
@@ -7512,7 +7509,6 @@
 				A88AD3A50952486D001DD196 /* WKSpecularLightingFilter.h in Headers */,
 				A88AD3A80952486D001DD196 /* WKSpotLightFilter.h in Headers */,
 				A88AD3AA0952486D001DD196 /* KCanvasFilterQuartz.h in Headers */,
-				A88AD3AC0952486D001DD196 /* KCanvasItemQuartz.h in Headers */,
 				A88AD3AE0952486D001DD196 /* KCanvasResourcesQuartz.h in Headers */,
 				A88AD3B00952486E001DD196 /* KRenderingDeviceQuartz.h in Headers */,
 				A88AD3B30952486E001DD196 /* KRenderingPaintServerQuartz.h in Headers */,

@@ -24,10 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kcanvas/device/KRenderingDevice.h>
-#import <kcanvas/device/KRenderingPaintServerSolid.h>
-#import <kcanvas/device/KRenderingPaintServerPattern.h>
-#import <kcanvas/device/KRenderingPaintServerGradient.h>
+#import "KRenderingDevice.h"
+#import "KRenderingPaintServerSolid.h"
+#import "KRenderingPaintServerPattern.h"
+#import "KRenderingPaintServerGradient.h"
 
 namespace WebCore {
 
@@ -35,10 +35,10 @@ class KCanvasImage;
 
 class KRenderingPaintServerQuartzHelper {
 public:
-    static void strokePath(CGContextRef, const RenderPath *renderPath);
-    static void clipToStrokePath(CGContextRef, const RenderPath *renderPath);
-    static void fillPath(CGContextRef, const RenderPath *renderPath);
-    static void clipToFillPath(CGContextRef, const RenderPath *renderPath);
+    static void strokePath(CGContextRef, const RenderPath*);
+    static void clipToStrokePath(CGContextRef, const RenderPath*);
+    static void fillPath(CGContextRef, const RenderPath*);
+    static void clipToFillPath(CGContextRef, const RenderPath*);
 };
 
 class KRenderingPaintServerSolidQuartz : public KRenderingPaintServerSolid {

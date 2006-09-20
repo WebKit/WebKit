@@ -29,7 +29,7 @@
 #define KRenderingDeviceQuartz_H
 #ifdef SVG_SUPPORT
 
-#import <kcanvas/device/KRenderingDevice.h>
+#import "KRenderingDevice.h"
 
 typedef struct CGRect CGRect;
 typedef struct CGContext *CGContextRef;
@@ -38,10 +38,10 @@ namespace WebCore {
 
 class KRenderingDeviceContextQuartz : public KRenderingDeviceContext {
 public:
-    KRenderingDeviceContextQuartz(CGContextRef context);
+    KRenderingDeviceContextQuartz(CGContextRef);
     virtual ~KRenderingDeviceContextQuartz();
     
-    virtual AffineTransform concatCTM(const AffineTransform &);
+    virtual AffineTransform concatCTM(const AffineTransform&);
     virtual AffineTransform ctm() const;
     
     virtual void clearPath();
@@ -63,20 +63,20 @@ public:
     virtual bool isBuffered() const { return false; }
 
     // context management.
-    KRenderingDeviceContextQuartz *quartzContext() const;
+    KRenderingDeviceContextQuartz* quartzContext() const;
     CGContextRef currentCGContext() const;
-    virtual KRenderingDeviceContext *contextForImage(KCanvasImage *) const;
+    virtual KRenderingDeviceContext* contextForImage(KCanvasImage*) const;
 
     // Resource creation
-    virtual KCanvasResource *createResource(const KCResourceType &type) const;
-    virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const;
-    virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const;
+    virtual KCanvasResource *createResource(const KCResourceType&) const;
+    virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType&) const;
+    virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType&) const;
     
     // filters (mostly debugging)
     static bool filtersEnabled();
-    static void setFiltersEnabled(bool enabled);
+    static void setFiltersEnabled(bool);
     static bool hardwareRenderingEnabled();
-    static void setHardwareRenderingEnabled(bool enabled);
+    static void setHardwareRenderingEnabled(bool);
 };
 
 } // namespace WebCore

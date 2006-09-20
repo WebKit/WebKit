@@ -115,21 +115,21 @@ public:
     FloatRect filterBBoxForItemBBox(FloatRect itemBBox) const;
 
     void clearEffects();
-    void addFilterEffect(KCanvasFilterEffect *effect);
+    void addFilterEffect(KCanvasFilterEffect*);
 
     virtual void prepareFilter(const FloatRect &bbox) = 0;
     virtual void applyFilter(const FloatRect &bbox) = 0;
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 
 protected:
     FloatRect m_filterRect;
-    DeprecatedValueList<KCanvasFilterEffect *> m_effects;
+    DeprecatedValueList<KCanvasFilterEffect* > m_effects;
     bool m_filterBBoxMode;
     bool m_effectBBoxMode;
 };
 
-KCanvasFilter *getFilterById(Document *document, const AtomicString &id);
+KCanvasFilter* getFilterById(Document*, const AtomicString&);
 
 class KCanvasFilterEffect {
 public:
@@ -140,19 +140,19 @@ public:
     virtual KCFilterEffectType effectType() const { return FE_TURBULENCE; }
 
     FloatRect subRegion() const;
-    void setSubRegion(const FloatRect &subregion);
+    void setSubRegion(const FloatRect&);
 
     String in() const;
-    void setIn(const String &in);
+    void setIn(const String&);
 
     String result() const;
-    void setResult(const String &result);
+    void setResult(const String&);
 
 #if __APPLE__
     virtual CIFilter* getCIFilter(KCanvasFilterQuartz*) const = 0;
 #endif
 
-    virtual TextStream &externalRepresentation(TextStream &) const;
+    virtual TextStream& externalRepresentation(TextStream&) const;
 
 private:
     FloatRect m_subregion;
@@ -160,7 +160,7 @@ private:
     String m_result;
 };
 
-TextStream &operator<<(TextStream &, const KCanvasFilterEffect &);
+TextStream& operator<<(TextStream&, const KCanvasFilterEffect&);
 
 typedef enum {
     BM_NORMAL = 0,
@@ -178,7 +178,7 @@ public:
     KCBlendModeType blendMode() const { return m_mode; }
     void setBlendMode(KCBlendModeType mode) { m_mode = mode; }
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 
 private:
     KCBlendModeType m_mode;
@@ -200,7 +200,7 @@ public:
     DeprecatedValueList<float> values() const { return m_values; }
     void setValues(const DeprecatedValueList<float> &values) { m_values = values; };
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 
 private:
     KCColorMatrixType m_type;
@@ -279,7 +279,7 @@ public:
     float k4() const { return m_k4; }
     void setK4(float k4) { m_k4 = k4; }
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 
 private:
     String m_in2;
@@ -324,7 +324,7 @@ public:
     bool preserveAlpha() const { return m_preserveAlpha; }
     void setPreserveAlpha(bool preserveAlpha) { m_preserveAlpha = preserveAlpha; }
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 
 private:
     FloatSize m_kernelSize;
@@ -355,7 +355,7 @@ public:
     
     KCLightType type() const { return m_type; }
     
-    virtual TextStream &externalRepresentation(TextStream &) const = 0;
+    virtual TextStream& externalRepresentation(TextStream&) const = 0;
     
 private:
     KCLightType m_type;
@@ -373,7 +373,7 @@ public:
     float azimuth() const{ return m_azimuth; }
     float elevation() const{ return m_elevation; }
     
-    virtual TextStream &externalRepresentation(TextStream &) const;
+    virtual TextStream& externalRepresentation(TextStream&) const;
     
 private:
     float m_azimuth;
@@ -444,10 +444,10 @@ public:
     float kernelUnitLengthY() const { return m_kernelUnitLengthY; }
     void setKernelUnitLengthY(float kernelUnitLengthY) { m_kernelUnitLengthY = kernelUnitLengthY; }
 
-    const KCLightSource *lightSource() const { return m_lightSource; }
-    void setLightSource(KCLightSource *lightSource);
+    const KCLightSource* lightSource() const { return m_lightSource; }
+    void setLightSource(KCLightSource*);
     
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 
 private:
     Color m_lightingColor;
@@ -455,7 +455,7 @@ private:
     float m_diffuseConstant;
     float m_kernelUnitLengthX;
     float m_kernelUnitLengthY;
-    KCLightSource *m_lightSource;
+    KCLightSource* m_lightSource;
 };
 
 typedef enum {
@@ -486,7 +486,7 @@ public:
     float scale() const { return m_scale; }
     void setScale(float scale) { m_scale = scale; }
     
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
     
 private:
     String m_in2;
@@ -503,7 +503,7 @@ public:
     float floodOpacity() const { return m_floodOpacity; }
     void setFloodOpacity(float floodOpacity) { m_floodOpacity = floodOpacity; }
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 
 private:
     Color m_floodColor;
@@ -513,12 +513,12 @@ private:
 class KCanvasFEGaussianBlur : public KCanvasFilterEffect {
 public:
     float stdDeviationX() const;
-    void setStdDeviationX(float x);
+    void setStdDeviationX(float);
 
     float stdDeviationY() const;
-    void setStdDeviationY(float y);
+    void setStdDeviationY(float);
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 
 private:
     float m_x;
@@ -534,12 +534,12 @@ public:
 
     virtual ~KCanvasFEImage();
     
-    // FIXME: Eventually we need to support <svg> (RenderObject *) as well as image data.
+    // FIXME: Eventually we need to support <svg> (RenderObject*) as well as image data.
     
     CachedImage* cachedImage() const { return m_cachedImage; }
-    void setCachedImage(CachedImage* image);
+    void setCachedImage(CachedImage*);
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
     
 private:
     CachedImage* m_cachedImage;
@@ -550,7 +550,7 @@ public:
     const Vector<String>& mergeInputs() const { return m_mergeInputs; }
     void setMergeInputs(const Vector<String>& mergeInputs) { m_mergeInputs = mergeInputs; }
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
     
 private:
     Vector<String> m_mergeInputs;
@@ -572,7 +572,7 @@ public:
     float radiusY() const { return m_radiusY; }
     void setRadiusY(float radiusY) { m_radiusY = radiusY; }
     
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
     
 private:
     KCMorphologyOperatorType m_operator;
@@ -588,7 +588,7 @@ public:
     float dy() const { return m_dy; }
     void setDy(float dy) { m_dy = dy; }
     
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
     
 private:
     float m_dx;
@@ -621,10 +621,10 @@ public:
     float kernelUnitLengthY() const { return m_kernelUnitLengthY; }
     void setKernelUnitLengthY(float kernelUnitLengthY) { m_kernelUnitLengthY = kernelUnitLengthY; }
     
-    const KCLightSource *lightSource() const { return m_lightSource; }
-    void setLightSource(KCLightSource *lightSource);
+    const KCLightSource* lightSource() const { return m_lightSource; }
+    void setLightSource(KCLightSource*);
     
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
     
 private:
     Color m_lightingColor;
@@ -633,7 +633,7 @@ private:
     float m_specularExponent;
     float m_kernelUnitLengthX;
     float m_kernelUnitLengthY;
-    KCLightSource *m_lightSource;
+    KCLightSource* m_lightSource;
 };
 
 class KCanvasFETile : public KCanvasFilterEffect { };
@@ -663,7 +663,7 @@ public:
     bool stitchTiles() const { return m_stitchTiles; }
     void setStitchTiles(bool stitch) { m_stitchTiles = stitch; }
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
     
 private:
     float m_baseFrequencyX;

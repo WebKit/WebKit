@@ -48,7 +48,7 @@ namespace WebCore {
     
 static void cgGradientCallback(void* info, const CGFloat* inValues, CGFloat* outColor)
 {
-    const KRenderingPaintServerGradientQuartz *server = (const KRenderingPaintServerGradientQuartz *)info;
+    const KRenderingPaintServerGradientQuartz* server = (const KRenderingPaintServerGradientQuartz*)info;
     QuartzGradientStop *stops = server->m_stopsCache;
     int stopsCount = server->m_stopsCount;
     
@@ -65,15 +65,14 @@ static void cgGradientCallback(void* info, const CGFloat* inValues, CGFloat* out
         return;
     }
     
-    if (!(inValue > stops[0].offset)) {
+    if (!(inValue > stops[0].offset))
         memcpy(outColor, stops[0].colorArray, 4 * sizeof(CGFloat));
-    } else if (!(inValue < stops[stopsCount-1].offset)) {
+    else if (!(inValue < stops[stopsCount-1].offset))
         memcpy(outColor, stops[stopsCount-1].colorArray, 4 * sizeof(CGFloat));
-    } else {
+    else {
         int nextStopIndex = 0;
-        while ( (nextStopIndex < stopsCount) && (stops[nextStopIndex].offset < inValue) ) {
+        while ((nextStopIndex < stopsCount) && (stops[nextStopIndex].offset < inValue))
             nextStopIndex++;
-        }
         
         //float nextOffset = stops[nextStopIndex].offset;
         CGFloat *nextColorArray = stops[nextStopIndex].colorArray;
@@ -91,7 +90,7 @@ static void cgGradientCallback(void* info, const CGFloat* inValues, CGFloat* out
     // FIXME: have to handle the spreadMethod()s here SPREADMETHOD_REPEAT, etc.
 }
 
-static CGShadingRef CGShadingRefForLinearGradient(const KRenderingPaintServerLinearGradientQuartz *server)
+static CGShadingRef CGShadingRefForLinearGradient(const KRenderingPaintServerLinearGradientQuartz* server)
 {
     CGPoint start = CGPoint(server->gradientStart());
     CGPoint end = CGPoint(server->gradientEnd());
@@ -99,7 +98,7 @@ static CGShadingRef CGShadingRefForLinearGradient(const KRenderingPaintServerLin
     CGFunctionCallbacks callbacks = {0, cgGradientCallback, NULL};
     CGFloat domainLimits[2] = {0, 1};
     CGFloat rangeLimits[8] = {0, 1, 0, 1, 0, 1, 0, 1};
-    const KRenderingPaintServerGradientQuartz *castServer = static_cast<const KRenderingPaintServerGradientQuartz *>(server);
+    const KRenderingPaintServerGradientQuartz* castServer = static_cast<const KRenderingPaintServerGradientQuartz*>(server);
     CGFunctionRef shadingFunction = CGFunctionCreate((void *)castServer, 1, domainLimits, 4, rangeLimits, &callbacks);
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -109,7 +108,7 @@ static CGShadingRef CGShadingRefForLinearGradient(const KRenderingPaintServerLin
     return shading;
 }
 
-static CGShadingRef CGShadingRefForRadialGradient(const KRenderingPaintServerRadialGradientQuartz *server)
+static CGShadingRef CGShadingRefForRadialGradient(const KRenderingPaintServerRadialGradientQuartz* server)
 {
     CGPoint center = CGPoint(server->gradientCenter());
     CGPoint focus = CGPoint(server->gradientFocal());
@@ -120,8 +119,7 @@ static CGShadingRef CGShadingRefForRadialGradient(const KRenderingPaintServerRad
     
     // Spec: If (fx, fy) lies outside the circle defined by (cx, cy) and r, set (fx, fy)
     // to the point of intersection of the line through (fx, fy) and the circle.
-    if(sqrt(fdx*fdx + fdy*fdy) > radius)
-    {
+    if (sqrt(fdx*fdx + fdy*fdy) > radius) {
         double angle = atan2(focus.y, focus.x);
         focus.x = int(cos(angle) * radius) - 1;
         focus.y = int(sin(angle) * radius) - 1;
@@ -130,7 +128,7 @@ static CGShadingRef CGShadingRefForRadialGradient(const KRenderingPaintServerRad
     CGFunctionCallbacks callbacks = {0, cgGradientCallback, NULL};
     CGFloat domainLimits[2] = {0, 1};
     CGFloat rangeLimits[8] = {0, 1, 0, 1, 0, 1, 0, 1};
-    const KRenderingPaintServerGradientQuartz *castServer = static_cast<const KRenderingPaintServerGradientQuartz *>(server);
+    const KRenderingPaintServerGradientQuartz* castServer = static_cast<const KRenderingPaintServerGradientQuartz*>(server);
     CGFunctionRef shadingFunction = CGFunctionCreate((void *)castServer, 1, domainLimits, 4, rangeLimits, &callbacks);
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -140,8 +138,11 @@ static CGShadingRef CGShadingRefForRadialGradient(const KRenderingPaintServerRad
     return shading;
 }
 
-KRenderingPaintServerGradientQuartz::KRenderingPaintServerGradientQuartz() :
-m_stopsCache(0), m_stopsCount(0), m_shadingCache(0), m_maskImage(0)
+KRenderingPaintServerGradientQuartz::KRenderingPaintServerGradientQuartz()
+    : m_stopsCache(0)
+    , m_stopsCount(0)
+    , m_shadingCache(0)
+    , m_maskImage(0)
 {
 }
 
@@ -165,10 +166,10 @@ void KRenderingPaintServerGradientQuartz::updateQuartzGradientCache(const KRende
     if (m_shadingCache)
         CGShadingRelease(m_shadingCache);
     if (server->type() == PS_RADIAL_GRADIENT) {
-        const KRenderingPaintServerRadialGradientQuartz *radial = static_cast<const KRenderingPaintServerRadialGradientQuartz *>(server);
+        const KRenderingPaintServerRadialGradientQuartz* radial = static_cast<const KRenderingPaintServerRadialGradientQuartz*>(server);
         m_shadingCache = CGShadingRefForRadialGradient(radial);
     } else if (server->type() == PS_LINEAR_GRADIENT) {
-        const KRenderingPaintServerLinearGradientQuartz *linear = static_cast<const KRenderingPaintServerLinearGradientQuartz *>(server);
+        const KRenderingPaintServerLinearGradientQuartz* linear = static_cast<const KRenderingPaintServerLinearGradientQuartz*>(server);
         m_shadingCache = CGShadingRefForLinearGradient(linear);
     }
 }
@@ -250,7 +251,7 @@ bool KRenderingPaintServerGradientQuartz::setup(const KRenderingPaintServerGradi
         CGContextSaveGState(context);
         applyStrokeStyleToContext(context, renderStyle, renderObject); // FIXME: this seems like the wrong place for this.
         if (server->isPaintingText()) {
-            m_maskImage = static_cast<KCanvasImage *>(quartzDevice->createResource(RS_IMAGE));
+            m_maskImage = static_cast<KCanvasImage*>(quartzDevice->createResource(RS_IMAGE));
             int width  = 2048;
             int height = 2048; // FIXME???
             IntSize size = IntSize(width, height);
@@ -319,7 +320,7 @@ void KRenderingPaintServerGradientQuartz::teardown(const KRenderingPaintServerGr
             CGColorSpaceRef grayColorSpace = CGColorSpaceCreateDeviceGray();
             CGContextRef grayscaleContext = CGBitmapContextCreate(imageBuffer, width, height, 8, width, grayColorSpace, kCGImageAlphaNone);
             CGColorSpaceRelease(grayColorSpace);
-            KCanvasImageQuartz* qMaskImage = static_cast<KCanvasImageQuartz *>(maskImage);
+            KCanvasImageQuartz* qMaskImage = static_cast<KCanvasImageQuartz*>(maskImage);
             CGContextDrawLayerAtPoint(grayscaleContext, CGPointMake(0, 0), qMaskImage->cgLayer());
             CGImageRef grayscaleImage = CGBitmapContextCreateImage(grayscaleContext);
             CGContextClipToMask(context, CGRectMake(0, 0, width, height), grayscaleImage);

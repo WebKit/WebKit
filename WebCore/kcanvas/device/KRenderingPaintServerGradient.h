@@ -24,7 +24,7 @@
 #define KRenderingPaintServerGradient_H
 #ifdef SVG_SUPPORT
 
-#include <kcanvas/device/KRenderingPaintServer.h>
+#include "KRenderingPaintServer.h"
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ public:
     void setGradientStops(KRenderingPaintServerGradient*);
 
     KCGradientSpreadMethod spreadMethod() const;
-    void setGradientSpreadMethod(const KCGradientSpreadMethod &method);
+    void setGradientSpreadMethod(const KCGradientSpreadMethod&);
 
     // Gradient start and end points are percentages when used in boundingBox mode.
     // For instance start point with value (0,0) is top-left and end point with value (100, 100) is 
@@ -63,10 +63,10 @@ public:
     AffineTransform gradientTransform() const;
     void setGradientTransform(const AffineTransform&);
     
-    KCanvasResourceListener *listener() const;
-    void setListener(KCanvasResourceListener *listener);
+    KCanvasResourceListener* listener() const;
+    void setListener(KCanvasResourceListener*);
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 private:
     Vector<KCGradientStop> m_stops;
     KCGradientSpreadMethod m_spreadMethod;
@@ -85,12 +85,12 @@ public:
 
     // 'Linear Gradient' interface
     FloatPoint gradientStart() const;
-    void setGradientStart(const FloatPoint &start);
+    void setGradientStart(const FloatPoint&);
 
     FloatPoint gradientEnd() const;
-    void setGradientEnd(const FloatPoint &end);
+    void setGradientEnd(const FloatPoint&);
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 private:
     FloatPoint m_start;
     FloatPoint m_end;
@@ -106,15 +106,15 @@ public:
 
     // 'Radial Gradient' interface
     FloatPoint gradientCenter() const;
-    void setGradientCenter(const FloatPoint &center);
+    void setGradientCenter(const FloatPoint&);
 
     FloatPoint gradientFocal() const;
-    void setGradientFocal(const FloatPoint &focal);
+    void setGradientFocal(const FloatPoint&);
 
     float gradientRadius() const;
-    void setGradientRadius(float radius);
+    void setGradientRadius(float);
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 private:
     float m_radius;
     FloatPoint m_center;

@@ -54,14 +54,14 @@ class TextStreamSeparator
 public:
     TextStreamSeparator(const DeprecatedString &s) : m_separator(s), m_needToSeparate(false) {}
 private:
-    friend TextStream& operator<<(TextStream &ts, TextStreamSeparator &sep);
+    friend TextStream& operator<<(TextStream& ts, TextStreamSeparator &sep);
     
 private:
     DeprecatedString m_separator;
     bool m_needToSeparate;
 };
 
-TextStream& operator<<(TextStream &ts, TextStreamSeparator &sep)
+TextStream& operator<<(TextStream& ts, TextStreamSeparator &sep)
 {
     if (sep.m_needToSeparate)
         ts << sep.m_separator;
@@ -70,12 +70,12 @@ TextStream& operator<<(TextStream &ts, TextStreamSeparator &sep)
     return ts;
 }
 
-TextStream &operator<<(TextStream &ts, const IntPoint &p)
+TextStream& operator<<(TextStream& ts, const IntPoint &p)
 {
     return ts << "(" << p.x() << "," << p.y() << ")";
 }
 
-TextStream &operator<<(TextStream &ts, const IntRect &r)
+TextStream& operator<<(TextStream& ts, const IntRect &r)
 {
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
@@ -88,7 +88,7 @@ bool hasFractions(double val)
     return (fabs(val-dval) > epsilon);
 }
 
-TextStream &operator<<(TextStream &ts, const FloatRect &r)
+TextStream& operator<<(TextStream& ts, const FloatRect &r)
 {
     ts << "at ("; 
     if (hasFractions(r.x())) 
@@ -113,7 +113,7 @@ TextStream &operator<<(TextStream &ts, const FloatRect &r)
     return ts;
 }
 
-TextStream &operator<<(TextStream &ts, const FloatPoint &p)
+TextStream& operator<<(TextStream& ts, const FloatPoint &p)
 {
     ts << "(";    
     if (hasFractions(p.x()))
@@ -128,7 +128,7 @@ TextStream &operator<<(TextStream &ts, const FloatPoint &p)
     return ts << ")";
 }
 
-TextStream &operator<<(TextStream &ts, const FloatSize &s)
+TextStream& operator<<(TextStream& ts, const FloatSize &s)
 {   
     ts << "width=";
     if (hasFractions(s.width()))
@@ -144,7 +144,7 @@ TextStream &operator<<(TextStream &ts, const FloatSize &s)
 }
 
 
-TextStream &operator<<(TextStream &ts, const AffineTransform &m)
+TextStream& operator<<(TextStream& ts, const AffineTransform &m)
 {
     if (m.isIdentity())
         ts << "identity";
@@ -156,12 +156,12 @@ TextStream &operator<<(TextStream &ts, const AffineTransform &m)
     return ts;
 }
 
-TextStream &operator<<(TextStream &ts, const Color &c)
+TextStream& operator<<(TextStream& ts, const Color &c)
 {
     return ts << c.name();
 }
 
-static void writeIndent(TextStream &ts, int indent)
+static void writeIndent(TextStream& ts, int indent)
 {
     for (int i = 0; i != indent; ++i) {
         ts << "  ";
@@ -169,7 +169,7 @@ static void writeIndent(TextStream &ts, int indent)
 }
 
 //FIXME: This should be in KRenderingStyle.cpp
-static TextStream &operator<<(TextStream &ts, const KCDashArray &a)
+static TextStream& operator<<(TextStream& ts, const KCDashArray &a)
 {
     ts << "{";
     for (KCDashArray::ConstIterator it = a.begin(); it != a.end(); ++it) {
@@ -182,7 +182,7 @@ static TextStream &operator<<(TextStream &ts, const KCDashArray &a)
 }
 
 //FIXME: This should be in KRenderingStyle.cpp
-static TextStream &operator<<(TextStream &ts, KCCapStyle style)
+static TextStream& operator<<(TextStream& ts, KCCapStyle style)
 {
     switch (style) {
     case CAP_BUTT:
@@ -196,7 +196,7 @@ static TextStream &operator<<(TextStream &ts, KCCapStyle style)
 }
 
 //FIXME: This should be in KRenderingStyle.cpp
-static TextStream &operator<<(TextStream &ts, KCJoinStyle style)
+static TextStream& operator<<(TextStream& ts, KCJoinStyle style)
 {
     switch (style) {
     case JOIN_MITER:
@@ -214,10 +214,10 @@ static TextStream &operator<<(TextStream &ts, KCJoinStyle style)
 // for the parent object
 #define DIFFERS_FROM_PARENT_AVOID_TEST_IF_FALSE(pred, path) (!parentStyle || ((!parentStyle->pred) || (parentStyle->path != childStyle->path)))
 
-static void writeStyle(TextStream &ts, const RenderObject &object)
+static void writeStyle(TextStream& ts, const RenderObject &object)
 {
-    const RenderStyle *style = object.style();
-    const SVGRenderStyle *svgStyle = style->svgStyle();
+    const RenderStyle* style = object.style();
+    const SVGRenderStyle* svgStyle = style->svgStyle();
     
     if (!object.localTransform().isIdentity())
         ts << " [transform=" << object.localTransform() << "]";
@@ -286,7 +286,7 @@ static void writeStyle(TextStream &ts, const RenderObject &object)
 #undef DIFFERS_FROM_PARENT
 #undef DIFFERS_FROM_PARENT_AVOID_TEST_IF_FALSE
 
-static TextStream &operator<<(TextStream &ts, const RenderPath &o)
+static TextStream& operator<<(TextStream& ts, const RenderPath &o)
 {
     ts << " " << o.absoluteTransform().mapRect(o.relativeBBox());
     
@@ -297,7 +297,7 @@ static TextStream &operator<<(TextStream &ts, const RenderPath &o)
     return ts;
 }
 
-static TextStream &operator<<(TextStream &ts, const RenderSVGContainer &o)
+static TextStream& operator<<(TextStream& ts, const RenderSVGContainer &o)
 {
     ts << " " << o.absoluteTransform().mapRect(o.relativeBBox());
     
@@ -308,13 +308,13 @@ static TextStream &operator<<(TextStream &ts, const RenderSVGContainer &o)
 
 static DeprecatedString getTagName(void *node)
 {
-    SVGStyledElement *elem = static_cast<SVGStyledElement *>(node);
+    SVGStyledElement *elem = static_cast<SVGStyledElement*>(node);
     if (elem)
         return String(elem->nodeName()).deprecatedString();
     return DeprecatedString();
 }
 
-void write(TextStream &ts, const RenderSVGContainer &container, int indent)
+void write(TextStream& ts, const RenderSVGContainer &container, int indent)
 {
     writeIndent(ts, indent);
     ts << container.renderName();
@@ -331,7 +331,7 @@ void write(TextStream &ts, const RenderSVGContainer &container, int indent)
         write(ts, *child, indent + 1);
 }
 
-void write(TextStream &ts, const RenderPath &path, int indent)
+void write(TextStream& ts, const RenderPath &path, int indent)
 {
     writeIndent(ts, indent);
     ts << path.renderName();
@@ -345,31 +345,31 @@ void write(TextStream &ts, const RenderPath &path, int indent)
     ts << path << endl;
 }
 
-void writeRenderResources(TextStream &ts, Node *parent)
+void writeRenderResources(TextStream& ts, Node *parent)
 {
     ASSERT(parent);
     Node *node = parent;
     do {
         if (!node->isSVGElement())
             continue;
-        SVGElement *svgElement = static_cast<SVGElement *>(node);
+        SVGElement *svgElement = static_cast<SVGElement*>(node);
         if (!svgElement->isStyled())
             continue;
 
-        SVGStyledElement *styled = static_cast<SVGStyledElement *>(svgElement);
+        SVGStyledElement *styled = static_cast<SVGStyledElement*>(svgElement);
         KCanvasResource *resource = styled->canvasResource();
         if (!resource)
             continue;
         
         DeprecatedString elementId = svgElement->getAttribute(HTMLNames::idAttr).deprecatedString();
         if (resource->isPaintServer())
-            ts << "KRenderingPaintServer {id=\"" << elementId << "\" " << *static_cast<KRenderingPaintServer *>(resource) << "}" << endl;
+            ts << "KRenderingPaintServer {id=\"" << elementId << "\" " << *static_cast<KRenderingPaintServer*>(resource) << "}" << endl;
         else
             ts << "KCanvasResource {id=\"" << elementId << "\" " << *resource << "}" << endl;
     } while ((node = node->traverseNextNode(parent)));
 }
 
-TextStream &operator<<(TextStream &ts, const DeprecatedStringList &l)
+TextStream& operator<<(TextStream& ts, const DeprecatedStringList &l)
 {
     ts << "[";
     DeprecatedStringList::ConstIterator it = l.begin();

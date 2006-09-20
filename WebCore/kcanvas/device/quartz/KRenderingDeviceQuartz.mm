@@ -109,9 +109,9 @@ void KRenderingDeviceQuartz::setHardwareRenderingEnabled(bool enabled)
 #pragma mark -
 #pragma mark Context Management
 
-KRenderingDeviceContextQuartz *KRenderingDeviceQuartz::quartzContext() const
+KRenderingDeviceContextQuartz* KRenderingDeviceQuartz::quartzContext() const
 {
-    return static_cast<KRenderingDeviceContextQuartz *>(currentContext());
+    return static_cast<KRenderingDeviceContextQuartz*>(currentContext());
 }
 
 CGContextRef KRenderingDeviceQuartz::currentCGContext() const
@@ -120,9 +120,9 @@ CGContextRef KRenderingDeviceQuartz::currentCGContext() const
     return quartzContext()->cgContext();
 }
 
-KRenderingDeviceContext *KRenderingDeviceQuartz::contextForImage(KCanvasImage *image) const
+KRenderingDeviceContext* KRenderingDeviceQuartz::contextForImage(KCanvasImage *image) const
 {
-    KCanvasImageQuartz *quartzImage = static_cast<KCanvasImageQuartz *>(image);
+    KCanvasImageQuartz* quartzImage = static_cast<KCanvasImageQuartz*>(image);
     CGLayerRef cgLayer = quartzImage->cgLayer();
     if (!cgLayer) {
         // FIXME: we might not get back a layer if this is a loaded image
@@ -138,7 +138,7 @@ KRenderingDeviceContext *KRenderingDeviceQuartz::contextForImage(KCanvasImage *i
 #pragma mark -
 #pragma mark Resource Creation
 
-KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintServerType &type) const
+KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintServerType& type) const
 {
     KRenderingPaintServer *newServer = NULL;
     switch(type) {
@@ -158,7 +158,7 @@ KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintSe
     return newServer;
 }
 
-KCanvasResource *KRenderingDeviceQuartz::createResource(const KCResourceType &type) const
+KCanvasResource *KRenderingDeviceQuartz::createResource(const KCResourceType& type) const
 {
     switch (type) {
     case RS_CLIPPER:
@@ -176,7 +176,7 @@ KCanvasResource *KRenderingDeviceQuartz::createResource(const KCResourceType &ty
     return 0;
 }
 
-KCanvasFilterEffect *KRenderingDeviceQuartz::createFilterEffect(const KCFilterEffectType &type) const
+KCanvasFilterEffect *KRenderingDeviceQuartz::createFilterEffect(const KCFilterEffectType& type) const
 {
     switch(type)
     {

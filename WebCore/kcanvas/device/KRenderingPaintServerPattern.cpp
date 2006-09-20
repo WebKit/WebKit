@@ -64,12 +64,12 @@ void KRenderingPaintServerPattern::setBoundingBoxMode(bool mode)
     m_useBoundingBoxMode = mode;
 }
 
-KCanvasImage *KRenderingPaintServerPattern::tile() const
+KCanvasImage* KRenderingPaintServerPattern::tile() const
 {
     return m_tile;
 }
 
-void KRenderingPaintServerPattern::setTile(KCanvasImage *tile)
+void KRenderingPaintServerPattern::setTile(KCanvasImage* tile)
 {
     m_tile = tile;
 }
@@ -89,17 +89,17 @@ KCPaintServerType KRenderingPaintServerPattern::type() const
     return PS_PATTERN;
 }
 
-KCanvasResourceListener *KRenderingPaintServerPattern::listener() const
+KCanvasResourceListener* KRenderingPaintServerPattern::listener() const
 {
     return m_listener;
 }
 
-void KRenderingPaintServerPattern::setListener(KCanvasResourceListener *listener)
+void KRenderingPaintServerPattern::setListener(KCanvasResourceListener* listener)
 {
     m_listener = listener;
 }
 
-TextStream &KRenderingPaintServerPattern::externalRepresentation(TextStream &ts) const
+TextStream& KRenderingPaintServerPattern::externalRepresentation(TextStream& ts) const
 {
      ts << "[type=PATTERN]"
         << " [bbox=" << bbox() << "]";

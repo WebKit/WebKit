@@ -49,7 +49,7 @@ AffineTransform RenderSVGText::translationTopToBaseline()
 
 AffineTransform RenderSVGText::translationForAttributes()
 {
-    SVGTextElement *text = static_cast<SVGTextElement *>(element());
+    SVGTextElement *text = static_cast<SVGTextElement*>(element());
 
     SVGLength* xOffset = text->x()->getFirst().get();
     SVGLength* yOffset = text->y()->getFirst().get();
@@ -81,7 +81,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     context->concatCTM(translationTopToBaseline());
     
     FloatRect boundingBox(0, 0, width(), height());
-    const SVGRenderStyle *svgStyle = style()->svgStyle();
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
             
     if (KCanvasClipper* clipper = getClipperById(document(), svgStyle->clipPath().substring(1)))
         clipper->applyClip(boundingBox);

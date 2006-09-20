@@ -24,7 +24,7 @@
 #define KRenderingPaintServerSolid_H
 #ifdef SVG_SUPPORT
 
-#include <kcanvas/device/KRenderingPaintServer.h>
+#include "KRenderingPaintServer.h"
 
 namespace WebCore {
 
@@ -38,9 +38,9 @@ public:
 
     // 'Solid' interface
     Color color() const;
-    void setColor(const Color &color);
+    void setColor(const Color&);
 
-    TextStream &externalRepresentation(TextStream &) const;
+    TextStream& externalRepresentation(TextStream&) const;
 private:
     Color m_color;
 };
