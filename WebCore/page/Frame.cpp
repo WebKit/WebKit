@@ -231,7 +231,7 @@ KURL Frame::iconURL()
         return "";
         
     // If we have an iconURL from a Link element, return that
-    if (!document()->iconURL().isEmpty())
+    if (document() && !document()->iconURL().isEmpty())
         return KURL(document()->iconURL().deprecatedString());
         
     // Don't return a favicon iconURL unless we're http or https

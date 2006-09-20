@@ -1,3 +1,14 @@
+2006-09-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Kevin McCullough
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10940
+        Opening a PDF in a new tab/window creates a documentless-frame
+        and we deref the document without checking its validity
+
+        * page/Frame.cpp:
+        (WebCore::Frame::iconURL):
+
 2006-09-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
