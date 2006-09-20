@@ -1,3 +1,10 @@
+2006-09-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        * editing/selection/editable-links.html: Added.
+        * editing/selection/editable-links.html-disabled: Removed.
+
 2006-09-20  Adam Roben  <aroben@apple.com>
 
         Reviewed by timothy.

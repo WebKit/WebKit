@@ -1,4 +1,13 @@
-ope2006-09-20  Brady Eidson  <beidson@apple.com>
+2006-09-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): Don't call 
+        HTMLElement::isContentEditable just to check the Frame's editability, since
+        it calls updateRenderering, which can get us into infinite recursion.
+
+2006-09-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
 
