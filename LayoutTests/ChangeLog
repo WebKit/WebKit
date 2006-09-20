@@ -1,5 +1,14 @@
 2006-09-19  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by eseidel
+        
+        Disabling this test temporarily.
+
+        * editing/selection/editable-links.html: Removed.
+        * editing/selection/editable-links.html-disabled: Added.
+
+2006-09-19  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by harrison
 
         * editing/selection/editable-links-expected.checksum: Added.

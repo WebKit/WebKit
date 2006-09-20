@@ -1,3 +1,12 @@
+2006-09-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by eseidel
+
+        Backing out my recent change.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): 
+
 2006-09-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Kevin McCullough
