@@ -1,6 +1,6 @@
 <?php
-	$title = "HTML Forms";
-	include("../../header.inc");
+    $title = "HTML Forms";
+    include("../../header.inc");
 ?>
 <h2>HTML Forms</h2>
 
@@ -14,7 +14,7 @@ locate each control's implementation.
 
 <h3>Get Involved!</h3>
 
-<a href="http://bugs.webkit.org/buglist.cgi?product=WebKit&component=HTML+Forms&resolution=---">
+<a href="http://bugs.webkit.org/buglist.cgi?product=WebKit&amp;component=HTML+Forms&amp;resolution=---">
 View bugs in the HTML Forms component on OpenDarwin.
 </a>
 
@@ -22,15 +22,12 @@ View bugs in the HTML Forms component on OpenDarwin.
 </p>
 
 <dl>
-
-<dt><a href="http://bugs.webkit.org/show_bug.cgi?id=3244">Support the <tt>label</tt> element</a>
-<dd>WebKit does not properly support the <tt>label</tt> element.
-
 <dt>Use WebKit to implement the controls</dt>
-<dd>The HTML form controls are currently implemented without using the WebKit engine.  Right now WebKit talks to Qt interfaces that represent the controls.
+<dd>
+<p>The HTML form controls are currently implemented without using the WebKit engine.  Right now WebKit talks to Qt interfaces that represent the controls.
 On OS X our implementation of these Qt interfaces uses App Kit.  The major architectural change that we are planning for form controls in the coming year
 is to re-implement the form controls using the WebKit engine itself to render.  This will allow us to support more CSS properties for form controls, make
-our code more portable to other platforms, and - most importantly - will improve our performance significantly on pages with a large number of controls.</p>
+our code more portable to other platforms, and - most importantly - will improve our performance significantly on pages with a large number of controls.
 
 <p>For input fields and text areas, we plan to use <a href="../editing/index.html">HTML editing</a> to implement these controls, and for the other controls custom
 renderers will be made.  A new theme abstraction will be used to encapsulate the rendering of a native look on the platform with <tt>NSCells</tt> being used to
@@ -40,7 +37,8 @@ determine the correct appearance of controls like checkboxes and buttons on OS X
 <dd>The <a href="http://whatwg.org">WhatWG</a> has outlined extensions to existing HTML forms.  We are interested in supporting these extensions (along with Opera
 and Mozilla).  The <a href="http://whatwg.org/specs/web-forms/current-work/">specification</a> details all of these enhancements.  We welcome bugs, contributions and
 testers to help us implement these improvements.
+</dl>
 
 <?php
-	include("../../footer.inc");
+    include("../../footer.inc");
 ?>

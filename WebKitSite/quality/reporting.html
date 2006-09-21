@@ -1,6 +1,6 @@
 <?php
-	$title = "Reporting Bugs";
-	include("../header.inc");
+    $title = "Reporting Bugs";
+    include("../header.inc");
 ?>
 <h2>Reporting Bugs</h2>
 
@@ -82,10 +82,10 @@
 
         if (webkit_version.major < 100) {
             // Mac OS X 10.2
-            display('10point2', 'block');
+            display('using_10point2', 'block');
         } else if (webkit_version.major >= 100 && webkit_version.major < 400) {
             // Mac OS X 10.3
-            display('10point3', 'block');
+            display('using_10point3', 'block');
 
             if (webkit_version.major < 312)
                 // Mac OS X 10.3.8 or lower
@@ -105,7 +105,7 @@
 
         } else {
             // Mac OS X 10.4
-            display('10point4', 'block');
+            display('using_10point4', 'block');
 
             if (webkit_version.major == 412 && webkit_version.is_nightly)
                 // Using an old nightly
@@ -115,17 +115,17 @@
                 // Using a recent nightly, not sure which
                 display('mightneednewnightly', 'block');
 
-            else if (webkit_version.major < 417)
-                // 10.4.3 or lower
-                display('updateto10_4_5', 'block');
+            else if (webkit_version.major < 418)
+                // 10.4.6 or lower
+                display('updateto10_4_7', 'block');
 
             else if (is_safari)
-                // 10.4.4 or 10.4.5
-                display('10_4_5_safari', 'block');
+                // 10.4.7
+                display('using_10_4_7_safari', 'block');
 
             else if (is_shiira)
-                // 10.4.4 or 10.4.5
-                display('10_4_5_shiira', 'block');
+                // 10.4.7
+                display('using_10_4_7_shiira', 'block');
 
         } 
     }
@@ -137,11 +137,11 @@
     Mac OS X 10.4, you could also <a href="http://nightly.webkit.org">download the latest nightly</a> build to be sure you
     have the latest version. If you've done this and you still experience the bug, go ahead to the next step.
 </div>
-<div id="10point2" style="display: none;">
+<div id="using_10point2" style="display: none;">
     We're sorry, we no longer accept bug reports about Safari under Mac OS X 10.2. To many bugs have been fixed since then. We advise
     you to upgrade to Mac OS X 10.4.
 </div>
-<div id="10point3" style="display: none;">
+<div id="using_10point3" style="display: none;">
     <div id="updateto10_3_9" style="display: none;">
         You are using Mac OS X 10.3.8 or lower, please before filing any bugs, upgrade to Mac OS X 10.3.9.
     </div>
@@ -152,11 +152,11 @@
     <div id="best10_3_9_safari">
         You are using Mac OS X 10.3.9, and the latest version of Safari, go ahead and file your bug!
     </div>
-    <div id="best10_3_9_safari">
+    <div id="best10_3_9_shiira">
         You are using Shiira on Mac OS X 10.3.9, go ahead and file your bug!
     </div>
 </div>
-<div id="10point4" style="display: none;">
+<div id="using_10point4" style="display: none;">
     <div id="neednewnightly" style="display: none;">
         You are already using a nightly build, which is very good! A large number of bugs has been fixed since you downloaded
         this nightly build though, so please <a href="http://nightly.webkit.org/">get the latest nightly</a>.
@@ -165,19 +165,19 @@
         You are already using a nightly build, which is very good! Unfortunately, we can't detect when you downloaded it, but
         if that was more then a few days ago, please <a href="http://nightly.webkit.org/">get the latest nightly</a>.
     </div>
-    <div id="updateto10_4_5" style="display: none;">
-        You are using Mac OS X 10.4.3 or lower, please before filing any bugs, do either of the following:
+    <div id="updateto10_4_7" style="display: none;">
+        You are using Mac OS X 10.4.6 or lower, please before filing any bugs, do either of the following:
         <ul>
-            <li>Upgrade to Mac OS X 10.4.5, or:</li>
+            <li>Upgrade to Mac OS X 10.4.7, or:</li>
             <li><a href="http://nightly.webkit.org">Download the latest nightly</a>.</li>
         </ul>
     </div>
-    <div id="10_4_5_safari" style="display: none;">
-        You are using Safari on Mac OS X 10.4.4 or 10.4.5, go ahead and file your bug, or if you want to <a href="http://nightly.webkit.org">
+    <div id="using_10_4_7_safari" style="display: none;">
+        You are using Safari on Mac OS X 10.4.7, go ahead and file your bug, or if you want to <a href="http://nightly.webkit.org">
         download the latest nightly</a> and see if your bug is already fixed.
     </div>
-    <div id="10_4_5_shiira" style="display: none;">
-        You are using Shiira on Mac OS X 10.4.4 or 10.4.5, go ahead and file your bug.
+    <div id="using_10_4_7_shiira" style="display: none;">
+        You are using Shiira on Mac OS X 10.4.7, go ahead and file your bug.
     </div>
 </div>
 </li>
@@ -219,7 +219,6 @@
     To report bugs in Shiira, please go to <a href="http://hmdt-web.net/forum/">http://hmdt-web.net/forum/</a>.
     For WebKit bugs that contain confidential information, please use 
     <a href="http://bugreporter.apple.com">http://bugreporter.apple.com/</a>.
-</div>
 </div>
 
 <script type="text/javascript">get_version();</script>

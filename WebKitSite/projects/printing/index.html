@@ -1,6 +1,6 @@
 <?php
-	$title = "Printing";
-	include("../../header.inc");
+    $title = "Printing";
+    include("../../header.inc");
 ?>
 
 <h2>Printing</h2>
@@ -15,11 +15,13 @@ all you can hope to do is try to find an optimal position for a break without al
 
 <h3>Get Involved</h3>
 
+<dl>
 <dt>Rework Printing</dt>
 <dd>Printing needs to be reworked so that render objects know how to split themselves across breaks.  This allows two separate formatting contexts (like two adjacent table
 cells) to still have their contents both break cleanly across a page.  This work is also important for future technology like CSS3 multi-column support.  The code
 that splits render objects across pages could obviously be leveraged to also split render objects across column breaks as well.
+</dl>
 
 <?php
-	include("../../footer.inc");
+    include("../../footer.inc");
 ?>

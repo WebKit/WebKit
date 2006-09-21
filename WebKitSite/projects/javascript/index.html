@@ -1,6 +1,6 @@
 <?php
-	$title = "JavaScript";
-	include("../../header.inc");
+    $title = "JavaScript";
+    include("../../header.inc");
 ?>
 <h2>JavaScript</h2>
 
@@ -15,12 +15,13 @@ on Mac OS X for applications other than web page JavaScript.</p>
 
 <h3>Get Involved!</h3>
 
-<a href="http://bugs.webkit.org/buglist.cgi?component=JavaScript&resolution=---">
+<a href="http://bugs.webkit.org/buglist.cgi?component=JavaScript&amp;resolution=---">
 View bugs in the JavaScript component on OpenDarwin.
 </a>
 
 <p>Here are some of the tasks that you can get involved with in JavaScript.</p>
 
+<dl>
 <dt>Bytecode Interpreter</dt>
 <dd>JavaScriptCore currently creates a syntax tree and then uses that syntax tree when executing JavaScript.
 We'd like to use a bytecode interpreter instead, and if it's done right it will make JavaScript run faster and use less memory.</dd>
@@ -57,7 +58,8 @@ demand in contexts like Dashboard widgets.</dd>
 <dd>JavaScriptCore currently has the original C++ method of binding native code to JavaScript, an Objective-C binding that's exported from WebKit
 as WebScriptObject, and a browser plug-in oriented C binding. We'd like to create a generic C language binding suitable for use by
 any project that wants to take advantage of the JavaScript engine, but which is easier to maintain compatibly than a C++ binding.</dd>
+</dl>
 
 <?php
-	include("../../footer.inc");
+    include("../../footer.inc");
 ?>

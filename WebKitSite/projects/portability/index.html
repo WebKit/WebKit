@@ -1,6 +1,6 @@
 <?php
-	$title = "Portability";
-	include("../../header.inc");
+    $title = "Portability";
+    include("../../header.inc");
 ?>
 
 <h2>Portability</h2>
@@ -17,6 +17,7 @@ portability, thus making life easier for those doing ports, as well as with the 
 
 <h3>Get Involved!</h3>
 
+<dl>
 <dt>Move WebKit code into WebCore</dt>
 <dd>Over time the WebKit framework has grown to contain a lot of code written in Objective-C that has no real business being in this framework.  Now that both
 frameworks are open source, we would like to move as much of this code as possible from WebKit into WebCore.  This means rewriting the code to be C++ instead of
@@ -38,9 +39,11 @@ to Qt (eliminating the XPCOM and converting the use of strings, etc. to QString)
 <dd>One port of WebCore already exists, the GTK+ port.  We are interested in integrating this into our source tree, and believe that doing so will help us to
 refactor our code to make future ports easier.
 
-<dt>Start Porting!</dt>
-<dd>Want to start porting to Windows or some other platform? <a href="../../contact.html">Contact us</a> and start submitting patches!  
+<dt>Help Porting!</dt>
+<dd>Want to help with porting to Windows or some other platform? <a href="../../contact.html">Contact us</a> and start submitting patches!
+
+</dl>
 
 <?php
-	include("../../footer.inc");
+    include("../../footer.inc");
 ?>

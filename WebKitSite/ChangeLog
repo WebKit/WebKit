@@ -1,3 +1,31 @@
+2006-09-21  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by TimH.
+
+        Updates to make static pages validate as HTML 4.01 Strict.
+
+        * building/build.html:
+        * coding/coding-style.html:
+        * header.inc:
+        * index.html: Move <style> tag into the document head.
+        * projects/cleanup/index.html:
+        * projects/compat/index.html:
+        * projects/css/index.html:
+        * projects/documentation/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html: Remove note about <label> not being implemented correctly.
+        * projects/html/index.html:
+        * projects/javascript/index.html:
+        * projects/performance/index.html:
+        * projects/portability/index.html: Change mention of Windows port to note that it is in progress rather than non-existant.
+        * projects/printing/index.html:
+        * projects/svg/index.html:
+        * projects/xslt/index.html:
+        * quality/bugwriting.html: Update WebKit version numbers to be accurate.  Move JS away from using innerHTML as W3C validator doesn't like it.
+        * quality/reduction.html:
+        * quality/reporting.html: Rename element IDs that start with numbers.  Update WebKit and Mac OS X version numbers to be accurate.
+        * quality/testing.html:
+
 2006-09-19  Brady Eidson  <beidson@apple.com>
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=8220
