@@ -2,6 +2,15 @@
 
         Reviewed by eseidel.
 
+        Don't crash if no IconDatabase is available (ie. on Qt/Gdk)
+
+        * page/Frame.cpp:
+        (WebCore::Frame::endIfNotLoading):
+
+2006-09-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.
+
         Fix Qt/Linux build.
 
         * CMakeLists.txt:
