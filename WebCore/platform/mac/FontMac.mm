@@ -483,7 +483,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
     // ATSUI can't draw beyond -32768 to +32767 so we translate the CTM and tell ATSUI to draw at (0, 0).
     CGContextRef context = graphicsContext->platformContext();
 
-    float colors[4];
+    CGFloat colors[4];
     graphicsContext->pen().color().getRGBA(colors[0], colors[1], colors[2], colors[3]);
     static CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
     
@@ -598,7 +598,7 @@ void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const Glyp
     wkSetCGFontRenderingMode(cgContext, drawFont);
     CGContextSetFontSize(cgContext, 1.0f);
 
-    float colors[4];
+    CGFloat colors[4];
     context->pen().color().getRGBA(colors[0], colors[1], colors[2], colors[3]);
     static CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
     
