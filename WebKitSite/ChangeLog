@@ -1,3 +1,16 @@
+2006-09-21  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10975
+        Update the blog template to valid HTML 4.01 Strict.
+
+        * blog/wp-content/themes/webkit/comments-popup.php:
+        * blog/wp-content/themes/webkit/comments.php:
+        * blog/wp-content/themes/webkit/footer.php:
+        * blog/wp-content/themes/webkit/header.php:
+        * blog/wp-content/themes/webkit/style.css: Add missing semi-colon that the validator complained about.
+
 2006-09-21  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Eric.

@@ -66,7 +66,7 @@ acronym, abbr, span.caps
 	}
 
 #wp-calendar caption {
-	font-weight: bold 
+	font-weight: bold; 
 	font-size: 1.3em;
 	font-family: Helvetica, Arial, san-serif;
 	text-align: center;
