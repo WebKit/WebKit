@@ -1,3 +1,23 @@
+2006-09-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.
+
+        Fix Qt/Linux build.
+
+        * CMakeLists.txt:
+        * kcanvas/device/qt/KCanvasClipperQt.h:
+        * kcanvas/device/qt/KRenderingDeviceQt.cpp:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::isLoadTypeReload):
+        (WebCore::FrameQt::originalRequestURL):
+        * platform/qt/FrameQt.h:
+        * platform/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::concatCTM):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::IconDatabase::setIconURLForPageURL):
+
 2006-09-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

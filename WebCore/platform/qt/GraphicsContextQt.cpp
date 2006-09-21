@@ -763,6 +763,14 @@ void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& top
     m_data->p().setClipPath(path, Qt::IntersectClip);
 }
 
+void GraphicsContext::concatCTM(const AffineTransform& transform)
+{
+    if (paintingDisabled())
+        return;
+
+    m_data->p().setMatrix(transform, true);
+}
+
 #if SVG_SUPPORT
 KRenderingDeviceContext* GraphicsContext::createRenderingDeviceContext()
 {

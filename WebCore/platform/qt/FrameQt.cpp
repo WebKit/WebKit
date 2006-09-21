@@ -221,6 +221,12 @@ bool FrameQt::passMouseDownEventToWidget(Widget*)
     return false;
 }
 
+bool FrameQt::isLoadTypeReload()
+{
+    notImplemented();
+    return false;
+}
+
 bool FrameQt::menubarVisible()
 {
     notImplemented();
@@ -470,6 +476,12 @@ bool FrameQt::shouldInterruptJavaScript()
 {
     notImplemented();
     return false;
+}
+
+KURL FrameQt::originalRequestURL() const
+{
+    notImplemented();
+    return KURL();
 }
 
 bool FrameQt::keyEvent(const PlatformKeyboardEvent& keyEvent)

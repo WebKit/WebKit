@@ -583,6 +583,10 @@ set (SVG_STUFF
     kcanvas/KCanvasCreator.cpp
     kcanvas/KCanvasTreeDebug.cpp
     kcanvas/KCanvasFilters.cpp
+    kcanvas/KCanvasClipper.cpp
+    kcanvas/KCanvasMarker.cpp
+    kcanvas/KCanvasMasker.cpp
+    kcanvas/KCanvasResource.cpp
     kcanvas/RenderSVGText.cpp
     kcanvas/device/KRenderingPaintServerGradient.cpp
     kcanvas/device/KRenderingPaintServerSolid.cpp
@@ -601,7 +605,6 @@ set (SVG_STUFF
 #   kcanvas/device/qt/KCanvasImageItemQt.cpp
     kcanvas/RenderSVGContainer.cpp
     kcanvas/RenderPath.cpp
-    kcanvas/KCanvasResources.cpp
     kcanvas/RenderSVGImage.cpp
     kcanvas/RenderForeignObject.cpp
  )

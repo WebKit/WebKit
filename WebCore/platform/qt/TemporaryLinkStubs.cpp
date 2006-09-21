@@ -146,6 +146,7 @@ IconLoader* IconLoader::createForFrame(Frame *frame) { return 0; }
 bool IconDatabase::isIconExpiredForIconURL(const String& url) { return false; }
 bool IconDatabase::hasEntryForIconURL(const String& url) { return false; }
 IconDatabase* IconDatabase::sharedIconDatabase() { return 0; }
+bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL) { return false; }
 
 void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
 bool CheckIfReloading(WebCore::DocLoader*) { return false; }
