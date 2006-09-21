@@ -1,5 +1,29 @@
 2006-09-21  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10966
+        Bug 10966: Updates to website
+
+        Resolves a few remaining validation issues, makes Bugzilla links consistent, and removes unneeded references to OpenDarwin.
+
+        * coding/coding-style.html:
+        * coding/lgpl-license.html:
+        * contact.html:
+        * index.html:
+        * projects/css/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html:
+        * projects/html/index.html:
+        * projects/index.html:
+        * projects/javascript/index.html:
+        * projects/svg/index.html:
+        * projects/xslt/index.html:
+        * webdevelopers/webkit_version.html:
+        * webdevelopers/webkit_version_xl.html:
+
+2006-09-21  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
         Reviewed by TimH.
 
         Updates to make static pages validate as HTML 4.01 Strict.

@@ -18,7 +18,7 @@
 
 <h3>Braces</h3>
 <ol>
-<li> Function definitions &mdash; open and close braces should be on lines by themselves. Do not put the open brace on the same line as the function signature. For example:<br />
+<li> Function definitions &mdash; open and close braces should be on lines by themselves. Do not put the open brace on the same line as the function signature. For example:<br>
 
 <h4 style="color: #008000 !important !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
@@ -35,7 +35,7 @@ void foo() {
 }
 </pre>
 </li>
-<li> Other braces, including for, while, do, switch statements and class definitions &mdash; the open brace should go on the same line as the as the control structure.<br />
+<li> Other braces, including for, while, do, switch statements and class definitions &mdash; the open brace should go on the same line as the as the control structure.<br>
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
@@ -52,7 +52,7 @@ for (int i = 0; i < 10; i++)
 }
 </pre>
 <li> If/else statements &mdash; as above, but if there is an else clause, the close brace should go on the same line as the else.
-     Also, one-line if or else clauses should not get braces.<br />
+     Also, one-line if or else clauses should not get braces.<br>
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
 if (timeToGetCoffee) {
@@ -90,7 +90,7 @@ if (timeToGoHome)
 <h3>Parentheses</h3>
 <ol>
 <li>Function declarations and calls &mdash; do not use any spaces between the name and the open paren, inside the parentheses, or before commas that separate arguments.
-    Do use a single space after commas that separate arguments.<br />
+    Do use a single space after commas that separate arguments.<br>
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
@@ -120,7 +120,7 @@ void noArgFunction ();
 <ol>
 <li>In C++, the null pointer value should be written as <code>0</code>. In C it should be written as <code>NULL</code>. In Objective-C, it should be written as <code>nil</code> if it is being used as a null pointer of type <code>id</code> or another ObjC object type, otherwise <code>NULL</code>.</li>
 <li>True and false values of type <code>bool</code> (common in C and C++), or just generic true/false values, should be written as <code>true</code> and <code>false</code>. Values of the Objective-C <code>BOOL</code> type should be written as <code>YES</code> and <code>NO</code>.</li>
-<li>Tests for null pointers, false values and 0 values should all be done directly, not through an inqueality or equality comparison.<br />
+<li>Tests for null pointers, false values and 0 values should all be done directly, not through an inqueality or equality comparison.<br>
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
@@ -184,7 +184,7 @@ if (count == 0) {
 <h3>Names</h3>
 <ol>
 <li>General Rule: With very few exceptions, prefer embedded capitals instead of underscores for class, function and variable names.</li>
-<li>C++ and Objective-C classes, interfaces and protocols, and other type names &mdash; these names should start with a capital letter and use InterCaps.<br />
+<li>C++ and Objective-C classes, interfaces and protocols, and other type names &mdash; these names should start with a capital letter and use InterCaps.<br>
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
@@ -199,7 +199,7 @@ class myImportantClass;
 </pre>
 </li>
 
-<li>Local variables should use interCaps, but the first word should start with a lowercase letter, like this:<br />
+<li>Local variables should use interCaps, but the first word should start with a lowercase letter, like this:<br>
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
@@ -223,7 +223,7 @@ they should read like a phrase or sentence and each piece of the selector should
 <li>Objective-C instance variables should be named like local variables but starting with an underscore.</li>
 <li>Enum members should user InterCaps with an initial capital letter.</li>
 <li>#defined constants should use all uppercase names with words separated by underscores.</li>
-<li> Macros that expand to function calls or other non-constant computation: these should be named like functions, and should have parentheses at the end, even if they take no arguments (with the exception of some special macros like ASSERT). Note that usually it is preferrable to use an inline function in such cases instead of a macro.<br />
+<li> Macros that expand to function calls or other non-constant computation: these should be named like functions, and should have parentheses at the end, even if they take no arguments (with the exception of some special macros like ASSERT). Note that usually it is preferrable to use an inline function in such cases instead of a macro.<br>
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
@@ -242,7 +242,7 @@ they should read like a phrase or sentence and each piece of the selector should
 </li>
 
 <li> Acronyms in names: If an identifier includes an acronym, make the acronym all-uppercase
-     or all-lowercase, depending on whether a word in that position would be capitalized or not.<br />
+     or all-lowercase, depending on whether a word in that position would be capitalized or not.<br>
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
