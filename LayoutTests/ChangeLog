@@ -1,3 +1,15 @@
+2006-09-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel.
+
+        Updated test results because of:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10946
+        new marker code draws end-marker in wrong place
+
+        * svg/W3C-SVG-1.1/painting-marker-02-f-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-marker-02-f-expected.png:
+        * svg/custom/invalid-css-expected.txt:
+
 2006-09-20  Julien Palmas  <julien.palmas@gmail.com>
 
         Reviewed by eseidel.  Landed by eseidel.

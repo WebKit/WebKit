@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 334.17x150.83
       KCanvasContainer {defs} at (0,0) size 0x0
-      KCanvasContainer {marker} at (0,0) size 16.67x16.67
-        KCanvasItem {rect} at (0,0) size 16.67x16.67 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,10.00L0.00,10.00"]
+      KCanvasContainer {marker} at (0,0) size 3.33x3.33
+        KCanvasItem {rect} at (0,0) size 3.33x3.33 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,10.00L0.00,10.00"]
       RenderSVGText {text} at (0,0) size 800x18
         RenderText {#text} at (0,0) size 294x18
           text run at (0,0) width 294: "The rect should be opaque green, black stroke,"

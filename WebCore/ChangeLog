@@ -1,3 +1,17 @@
+2006-09-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10946
+        new marker code draws end-marker in wrong place
+
+        Keep track of the start of the subpath so we can handle
+        closeTo/moveTo correctly.
+
+        * kcanvas/RenderPath.cpp:
+        (WebCore::DrawMarkersData::DrawMarkersData):
+        (WebCore::updateMarkerDataForElement):
+
 2006-09-21  David Hyatt <hyatt@apple.com>
 
         Wheel scrolling prep for Win32.
