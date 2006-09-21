@@ -32,6 +32,10 @@ class GraphicsContext;
 class IntRect;
 class ScrollBar;
 
+// These match the numbers we use over in WebKit (WebFrameView.m).
+#define LINE_STEP   40
+#define PAGE_KEEP   40
+
 enum ScrollDirection {
     ScrollUp,
     ScrollDown,

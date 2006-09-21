@@ -422,4 +422,9 @@ bool ScrollView::inWindow() const
     return [getView() window];
 }
 
+void ScrollView::wheelEvent(PlatformWheelEvent&)
+{
+    // Do nothing.  NSScrollView handles doing the scroll for us.
+}
+
 }

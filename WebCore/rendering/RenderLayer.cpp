@@ -66,10 +66,6 @@
 #include "SVGNames.h"
 #endif
 
-// These match the numbers we use over in WebKit (WebFrameView.m).
-#define LINE_STEP   40
-#define PAGE_KEEP   40
-
 #define MIN_INTERSECT_FOR_REVEAL 32
 
 using namespace std;

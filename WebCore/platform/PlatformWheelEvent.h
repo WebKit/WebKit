@@ -36,6 +36,12 @@ class NSEvent;
 #endif
 #endif
 
+#if PLATFORM(WIN)
+typedef struct HWND__* HWND;
+typedef unsigned WPARAM;
+typedef long LPARAM;
+#endif
+
 #if PLATFORM(GDK)
 typedef union _GdkEvent GdkEvent;
 #endif
@@ -46,6 +52,7 @@ namespace WebCore {
     public:
         const IntPoint& pos() const { return m_position; }
         const IntPoint& globalPos() const { return m_globalPosition; }
+
         float deltaX() const { return m_deltaX; }
         float deltaY() const { return m_deltaY; }
 
@@ -66,7 +73,9 @@ namespace WebCore {
 #ifdef __APPLE__
         PlatformWheelEvent(NSEvent*);
 #endif
-
+#if PLATFORM(WIN)
+        PlatformWheelEvent(HWND, WPARAM, LPARAM);
+#endif
 #if PLATFORM(GDK)
         PlatformWheelEvent(GdkEvent*);
 #endif
