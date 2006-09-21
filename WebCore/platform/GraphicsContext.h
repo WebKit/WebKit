@@ -169,6 +169,8 @@ namespace WebCore {
 
 #if PLATFORM(WIN)
         GraphicsContext(HDC); // FIXME: To be removed.
+        HDC getWindowsContext();
+        void releaseWindowsContext();
 #endif
 
     private:

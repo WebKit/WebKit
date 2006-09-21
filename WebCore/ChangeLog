@@ -1,3 +1,13 @@
+2006-09-21  Sean Gies  <seangies@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add utility functions to get and release HDC from GraphicsContext.
+
+        * platform/GraphicsContext.h: Add utilities to get and release HDC.
+        * platform/cairo/GraphicsContextCairo.cpp: Implement new utilities.
+        * rendering/RenderThemeWin.cpp: Switch to new utilities.
+
 2006-09-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by anders

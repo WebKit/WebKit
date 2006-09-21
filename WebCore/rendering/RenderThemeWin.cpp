@@ -213,9 +213,7 @@ void RenderThemeWin::adjustButtonStyle(CSSStyleSelector*, RenderStyle* style, El
 
 static HDC prepareForDrawing(GraphicsContext* g)
 {
-    cairo_surface_t* surface = cairo_get_target(g->platformContext());
-    HDC hdc = cairo_win32_surface_get_dc(surface);
-    SaveDC(hdc);
+    HDC hdc = g->getWindowsContext();
     
     // FIXME: We need to make sure a clip is really set on the HDC.  See what Mozilla does with
     // UpdateSurfaceClip on its GraphicsContext. (Cairo may not have put its clip into native form yet.)
@@ -238,12 +236,7 @@ static HDC prepareForDrawing(GraphicsContext* g)
 
 static void doneDrawing(GraphicsContext* g)
 {
-    cairo_surface_t* surface = cairo_get_target(g->platformContext());
-    HDC hdc = cairo_win32_surface_get_dc(surface);
-    RestoreDC(hdc, -1);
-
-    // We call this whenever we do drawing outside of cairo.    
-    cairo_surface_mark_dirty(surface);
+    g->releaseWindowsContext();
 }
 
 bool RenderThemeWin::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)

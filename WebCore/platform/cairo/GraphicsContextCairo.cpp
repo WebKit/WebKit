@@ -446,6 +446,22 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
     return result; 
 }
 
+HDC GraphicsContext::getWindowsContext()
+{
+    cairo_surface_t* surface = cairo_get_target(platformContext());
+    HDC hdc = cairo_win32_surface_get_dc(surface);    
+    SaveDC(hdc);
+    return hdc;
+}
+
+void GraphicsContext::releaseWindowsContext()
+{
+    cairo_surface_t* surface = cairo_get_target(platformContext());
+    HDC hdc = cairo_win32_surface_get_dc(surface);
+    RestoreDC(hdc, -1);
+    cairo_surface_mark_dirty(surface);
+}
+
 }
 
 #endif // PLATFORM(CAIRO)
