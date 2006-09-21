@@ -1,3 +1,31 @@
+2006-09-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7165>
+        TinyMCE: Dragging & dropping content always leaves a copy when editing inside a subframe
+        
+        The top level WebHTMLView is responsible for performing dragging operations, but
+        the inner view, the view that holds the drag caret, should be consulted to determine
+        if the drag is a move drag.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebHTMLView.m:
+        (-[NSArray dragImage:at:offset:event:pasteboard:source:slideBack:]): Don't set initatedDrag here, because
+        it's only the top level WebHTMLView that performs this operation.
+        (-[WebHTMLView _setInitiatedDrag:]): Added.
+        (-[WebHTMLView _initiatedDrag]): Ditto.
+        (-[WebHTMLView _canProcessDragWithDraggingInfo:]): Ask the innerView if it initiated the drag,
+        not the top level view.
+        (-[WebHTMLView _isMoveDrag]): The top level view asks the innerView if it should perform
+        a move drag, so don't ASSERT _isTopHTMLView.
+        (-[WebHTMLView draggingUpdatedWithDraggingInfo:actionMask:]): Ask the innerView if _isMoveDrag.
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): Ditto.
+        * WebView/WebHTMLViewInternal.h: Added two private SPI so that
+        the top level WebHTMLView can set and get the initiatedDrag BOOL.
+
 2006-09-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Omernick

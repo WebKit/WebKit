@@ -1,3 +1,15 @@
+2006-09-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7165>
+        TinyMCE: Dragging & dropping content always leaves a copy when editing inside a subframe
+
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::MoveSelectionCommand): Set the document
+        to the position-to-move-to's document, not the fragment's document.  The 
+        fragment's document is the document used to create the fragment and is irrelavant.
+
 2006-09-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

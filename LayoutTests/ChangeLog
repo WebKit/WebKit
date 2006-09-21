@@ -1,3 +1,12 @@
+2006-09-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        * editing/pasteboard/subframe-dragndrop-1-expected.checksum: Added.
+        * editing/pasteboard/subframe-dragndrop-1-expected.png: Added.
+        * editing/pasteboard/subframe-dragndrop-1-expected.txt: Added.
+        * editing/pasteboard/subframe-dragndrop-1.html: Added.
+
 2006-09-20  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.
@@ -9,7 +18,7 @@
         * svg/W3C-SVG-1.1/painting-marker-02-f-expected.checksum:
         * svg/W3C-SVG-1.1/painting-marker-02-f-expected.png:
         * svg/custom/invalid-css-expected.txt:
-
+        
 2006-09-20  Julien Palmas  <julien.palmas@gmail.com>
 
         Reviewed by eseidel.  Landed by eseidel.

@@ -108,5 +108,7 @@
 - (void)_willMakeFirstResponderForNodeFocus;
 - (id<WebHTMLHighlighter>)_highlighterForType:(NSString*)type;
 - (WebFrame *)_frame;
+- (void)_setInitiatedDrag:(BOOL)flag;
+- (BOOL)_initiatedDrag;
 @end
 

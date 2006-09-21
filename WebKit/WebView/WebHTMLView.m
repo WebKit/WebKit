@@ -2827,8 +2827,7 @@ done:
     }
 
     WebView *webView = [self _webView];
-
-    _private->initiatedDrag = YES;
+    
     [webView _setInitiatedDrag:YES];
 
     // Retain this view during the drag because it may be released before the drag ends.
@@ -5017,6 +5016,16 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return [_private->dataSource webFrame];
 }
 
+- (void)_setInitiatedDrag:(BOOL)flag
+{
+    _private->initiatedDrag = flag;
+}
+
+- (BOOL)_initiatedDrag
+{
+    return _private->initiatedDrag;
+}
+
 @end
 
 @implementation WebHTMLView (WebNSTextInputSupport)
@@ -5701,9 +5710,14 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
     NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
     NSDictionary *element = [self elementAtPoint:point allowShadowContent:YES];
-    if ([[self _webView] isEditable] || [[element objectForKey:WebElementDOMNodeKey] isContentEditable]) {
+    ASSERT(element);
+    WebFrame *innerFrame = (WebFrame *)[element objectForKey:WebElementFrameKey];
+    ASSERT(innerFrame);
+    ASSERT([innerFrame isKindOfClass:[WebFrame class]]);
+    WebHTMLView* innerView = (WebHTMLView *)[[innerFrame frameView] documentView];
+    if ([[element objectForKey:WebElementDOMNodeKey] isContentEditable]) {
         // Can't drag onto the selection being dragged.
-        if (_private->initiatedDrag && [[element objectForKey:WebElementIsSelectedKey] boolValue])
+        if ([innerView _initiatedDrag] && [[element objectForKey:WebElementIsSelectedKey] boolValue])
             return NO;
         return YES;
     }
@@ -5713,9 +5727,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (BOOL)_isMoveDrag
 {
-    ASSERT([self _isTopHTMLView]);
     return _private->initiatedDrag
-        && [self _isEditable] && [self _hasSelection]
+        && [[self _bridge] isSelectionEditable]
         && !([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask);
 }
 
@@ -5739,7 +5752,14 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         else {
             WebView *webView = [self _webView];
             [webView moveDragCaretToPoint:[webView convertPoint:[draggingInfo draggingLocation] fromView:nil]];
-            operation = [self _isMoveDrag] ? NSDragOperationMove : NSDragOperationCopy;
+            NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
+            NSDictionary *element = [self elementAtPoint:point allowShadowContent:YES];
+            ASSERT(element);
+            WebFrame *innerFrame = (WebFrame *)[element objectForKey:WebElementFrameKey];
+            ASSERT(innerFrame);
+            ASSERT([innerFrame isKindOfClass:[WebFrame class]]);
+            WebHTMLView* innerView = (WebHTMLView *)[[innerFrame frameView] documentView];
+            operation = [innerView _isMoveDrag] ? NSDragOperationMove : NSDragOperationCopy;
         }
     } else
         [[self _webView] removeDragCaret];
@@ -5777,6 +5797,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     WebFrame *innerFrame = (WebFrame *)[element objectForKey:WebElementFrameKey];
     ASSERT(innerFrame);
     ASSERT([innerFrame isKindOfClass:[WebFrame class]]);
+    WebHTMLView* innerView = (WebHTMLView *)[[innerFrame frameView] documentView];
     WebFrameBridge *innerBridge = [innerFrame _bridge];
 
     if ([self _isNSColorDrag:draggingInfo]) {
@@ -5796,14 +5817,14 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     BOOL didInsert = NO;
     if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
         NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
-        if ([self _isMoveDrag] || [innerBridge isDragCaretRichlyEditable]) { 
+        if ([innerView _isMoveDrag] || [innerBridge isDragCaretRichlyEditable]) { 
             DOMRange *range = [innerBridge dragCaretDOMRange];
             BOOL chosePlainText;
             DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard
                 inContext:range allowPlainText:YES chosePlainText:&chosePlainText];
             if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionDropped]) {
                 [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
-                if ([self _isMoveDrag]) {
+                if ([innerView _isMoveDrag]) {
                     BOOL smartMove = [innerBridge selectionGranularity] == WebBridgeSelectByWord && [self _canSmartReplaceWithPasteboard:pasteboard];
                     [innerBridge moveSelectionToDragCaret:fragment smartMove:smartMove];
                 } else {
