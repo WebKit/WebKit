@@ -968,6 +968,7 @@ static void runTest(const char *pathOrURL)
     topLoadingFrame = nil;
     waitToDump = NO;
     dumpAsText = NO;
+    dumpChildFrameScrollPositions = NO;
     dumpSelectionRect = NO;
     dumpTitleChanges = NO;
     dumpBackForwardList = NO;
