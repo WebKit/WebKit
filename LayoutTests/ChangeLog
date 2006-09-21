@@ -1,3 +1,15 @@
+2006-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Bug 10923: Frame scroll layout test failures on the buildbot
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10923
+
+        Made this test call layoutTestController.dumpChildFrameScrollPositions().
+
+        * fast/overflow/scrollRevealButton-expected.txt:
+        * fast/overflow/scrollRevealButton.html:
+
 2006-09-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

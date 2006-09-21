@@ -105,6 +105,7 @@ static BOOL dumpAsText;
 static BOOL dumpSelectionRect;
 static BOOL dumpTitleChanges;
 static BOOL dumpBackForwardList;
+static BOOL dumpChildFrameScrollPositions;
 static int dumpPixels = NO;
 static int dumpAllPixels = NO;
 static BOOL readFromWindow = NO;
@@ -426,10 +427,13 @@ static void dumpFrameScrollPosition(WebFrame *f)
             printf("frame '%s' ", [[f name] UTF8String]);
         printf("scrolled to %.f,%.f\n", scrollPosition.x, scrollPosition.y);
     }
-    NSArray *kids = [f childFrames];
-    if (kids)
-        for (unsigned i = 0; i < [kids count]; i++)
-            dumpFrameScrollPosition([kids objectAtIndex:i]);
+
+    if (dumpChildFrameScrollPositions) {
+        NSArray *kids = [f childFrames];
+        if (kids)
+            for (unsigned i = 0; i < [kids count]; i++)
+                dumpFrameScrollPosition([kids objectAtIndex:i]);
+    }
 }
 
 static void dump(void)
@@ -722,6 +726,7 @@ static void dump(void)
             || aSelector == @selector(dumpAsText)
             || aSelector == @selector(dumpTitleChanges)
             || aSelector == @selector(dumpBackForwardList)
+            || aSelector == @selector(dumpChildFrameScrollPositions)
             || aSelector == @selector(setWindowIsKey:)
             || aSelector == @selector(setMainFrameIsFirstResponder:)
             || aSelector == @selector(dumpSelectionRect)
@@ -813,6 +818,11 @@ static void dump(void)
 - (void)dumpBackForwardList
 {
     dumpBackForwardList = YES;
+}
+
+- (void)dumpChildFrameScrollPositions
+{
+    dumpChildFrameScrollPositions = YES;
 }
 
 - (void)setWindowIsKey:(BOOL)flag

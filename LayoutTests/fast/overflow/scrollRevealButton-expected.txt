@@ -7,6 +7,7 @@ layer at (0,0) size 785x1184
         RenderText {#text} at (0,0) size 339x18
           text run at (0,0) width 339: "This test should scroll recursively to reveal the button."
         RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,18) size 769x500
       RenderBlock (anonymous) at (0,518) size 769x150
         RenderPartObject {IFRAME} at (0,0) size 300x150

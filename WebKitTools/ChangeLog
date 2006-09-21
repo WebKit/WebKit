@@ -1,3 +1,18 @@
+2006-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Bug 10923: Frame scroll layout test failures on the buildbot
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10923
+        
+        Added a new method that will toggle on the recursive dump of
+        child frame scroll positions.
+ 
+        * DumpRenderTree/DumpRenderTree.m:
+        (dumpFrameScrollPosition):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (-[LayoutTestController dumpChildFrameScrollPositions]):
+
 2006-09-19  Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 
         Reviewed by eseidel.  Landed by eseidel.
