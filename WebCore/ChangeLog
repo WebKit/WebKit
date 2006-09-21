@@ -1,3 +1,11 @@
+2006-09-22  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim H.
+
+        * platform/TextEncoding.cpp:
+        (WebCore::TextEncoding::backslashAsCurrencySymbol):
+        Add comment clarifying why backslashAsCurrencySymbol is needed.
+
 2006-09-21  Sean Gies  <seangies@apple.com>
 
         Reviewed by Adam Roben.
