@@ -1,5 +1,14 @@
 2006-09-21  Timothy Hatcher  <timothy@apple.com>
 
+        Adding more calls to layoutTestController.dumpChildFrameScrollPositions()
+        for tests that need to report child frame scroll positions.
+
+        * http/tests/navigation/anchor-frames.html:
+        * http/tests/navigation/anchor-subframeload.html:
+        * http/tests/navigation/relativeanchor-frames.html:
+
+2006-09-21  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Adam.
 
         Bug 10923: Frame scroll layout test failures on the buildbot
