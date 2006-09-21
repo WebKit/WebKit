@@ -27,6 +27,7 @@
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
 #include "KCanvasClipperQt.h"
+#include "KCanvasMarker.h"
 #include "KRenderingDeviceQt.h"
 #include "KRenderingPaintServerSolidQt.h"
 #include "KRenderingPaintServerGradientQt.h"

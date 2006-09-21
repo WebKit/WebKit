@@ -24,7 +24,7 @@
 #ifndef KCanvasClipperQt_h
 #define KCanvasClipperQt_h
 
-#include "KCanvasResources.h"
+#include "KCanvasClipper.h"
 
 namespace WebCore {
 
