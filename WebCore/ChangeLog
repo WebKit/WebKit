@@ -1,3 +1,15 @@
+2006-09-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by anders
+        
+        <rdar://problem/4426622>
+        Plain text paste slow.  Time spent mostly in WebCore::rebalanceWhitespaceInTextNode(...)
+
+        * editing/htmlediting.cpp:
+        (WebCore::rebalanceWhitespaceInTextNode): We no longer need to use a RegExp replace because we
+        aren't producing complicated sequences here.  Use multiple UChar -> UChar replaces instead for speed.
+        Got rid of uses of DepricatedString.
+
 2006-09-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.

@@ -347,20 +347,19 @@ int maxDeepOffset(const Node *node)
 
 void rebalanceWhitespaceInTextNode(Node *node, unsigned int start, unsigned int length)
 {
-    static RegularExpression whitespace("[ \t\n]");
-    static DeprecatedString nbsp("\xa0");
-     
     ASSERT(node->isTextNode());
     Text *textNode = static_cast<Text *>(node);
     String text = textNode->data();
     ASSERT(length <= text.length() && start + length <= text.length());
     
-    DeprecatedString substring = text.substring(start, length).deprecatedString();
+    String substring = text.substring(start, length);
 
     // FIXME: We rebalance with all nbsps, for simplicity (we don't need crazy sequences while editing
     // because all editable regions will have -webkit-nbsp-mode: space.  We should produce sequences of 
     // regular spaces and nbsps that are better for interchange when we serialize (10636).
-    substring.replace(whitespace, nbsp);
+    substring.replace(' ', NON_BREAKING_SPACE);
+    substring.replace('\t', NON_BREAKING_SPACE);
+    substring.replace('\n', NON_BREAKING_SPACE);
     
     ExceptionCode ec = 0;
     textNode->deleteData(start, length, ec);
