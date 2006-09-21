@@ -33,8 +33,6 @@ class OpenPanelController;
 #endif
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 class Document;

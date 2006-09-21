@@ -1,3 +1,9 @@
+2006-09-20  Adam Roben  <aroben@apple.com>
+
+        Reviewed by andersca.
+
+        * platform/FileChooser.h: Remove no-longer-necessary namespace std
+
 2006-09-20  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by beth.
