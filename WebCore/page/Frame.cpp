@@ -765,23 +765,25 @@ void Frame::endIfNotLoading()
     if (tree()->parent())
         return;
         
-    IconDatabase* sharedIconDatabase = IconDatabase::sharedIconDatabase();
-    if (!sharedIconDatabase->enabled())
-        return;
     
-    String url(iconURL().url());
-    if (url.isEmpty())
-        return;
-    
-    // If we already have an unexpired icon, we won't kick off a load but we *will* map the appropriate URLs to it
-    if (sharedIconDatabase->hasEntryForIconURL(url) && !isLoadTypeReload() && !sharedIconDatabase->isIconExpiredForIconURL(url)) {
-        commitIconURLToIconDatabase();
-        return;
+    if (IconDatabase* sharedIconDatabase = IconDatabase::sharedIconDatabase()) {
+        if (!sharedIconDatabase->enabled())
+            return;
+        
+        String url(iconURL().url());
+        if (url.isEmpty())
+            return;
+        
+        // If we already have an unexpired icon, we won't kick off a load but we *will* map the appropriate URLs to it
+        if (sharedIconDatabase->hasEntryForIconURL(url) && !isLoadTypeReload() && !sharedIconDatabase->isIconExpiredForIconURL(url)) {
+            commitIconURLToIconDatabase();
+            return;
+        }
+        
+        if (!d->m_iconLoader)
+            d->m_iconLoader = IconLoader::createForFrame(this);
+        d->m_iconLoader->startLoading();
     }
-    
-    if (!d->m_iconLoader)
-        d->m_iconLoader = IconLoader::createForFrame(this);
-    d->m_iconLoader->startLoading();
 }
 
 void Frame::commitIconURLToIconDatabase()

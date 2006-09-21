@@ -1,5 +1,15 @@
 2006-09-21  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Anders
+
+        When your assumption is "IconDatabase::sharedIconDatabase()" will never fail but it does, you're in trouble
+        This fixes Spinneret so it won't crash on its first load!
+
+        * page/Frame.cpp:
+        (WebCore::Frame::endIfNotLoading):
+
+2006-09-21  Brady Eidson  <beidson@apple.com>
+
         Build fix
 
         * platform/win/TemporaryLinkStubs.cpp:
