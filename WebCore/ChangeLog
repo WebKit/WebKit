@@ -1,3 +1,15 @@
+2006-09-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Hyatt.
+
+        Bug 10917: REGRESSION (r16027): iFrame transparency broken
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10917
+
+        Don't paint the base background color if we transparent.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+
 2006-09-20  Adam Roben  <aroben@apple.com>
 
         Reviewed by andersca.

@@ -481,8 +481,8 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
 
     // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
+    bool isTransparent = false;
     if (!bgLayer->next() && isRoot() && !(bgColor.isValid() && bgColor.alpha() > 0) && view()->frameView()) {
-        bool isTransparent;
         Node* elt = document()->ownerElement();
         if (elt) {
             if (elt->hasTagName(frameTag))
@@ -506,7 +506,7 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
     if (!bgLayer->next()) {
         IntRect rect(_tx, clipy, w, cliph);
         // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
-        if (isRoot() && (!bgColor.isValid() || bgColor.alpha() < 0xFF) && !view()->frameView()->isTransparent()) {
+        if (isRoot() && (!bgColor.isValid() || bgColor.alpha() < 0xFF) && !isTransparent) {
             Color baseColor = view()->frameView()->baseBackgroundColor();
             if (baseColor.alpha() > 0) {
                 p->save();
