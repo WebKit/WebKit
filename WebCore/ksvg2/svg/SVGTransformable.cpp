@@ -114,9 +114,11 @@ void SVGTransformable::parseTransformAttribute(SVGTransformList *list, const Ato
             t->setMatrix(ret);
         }
         
-        if (t->type() == SVGTransform::SVG_TRANSFORM_UNKNOWN)
+        if (t->type() == SVGTransform::SVG_TRANSFORM_UNKNOWN) {
+            delete t;
             break; // failed to parse a valid transform, abort.
-        
+        }
+
         ExceptionCode ec = 0;
         list->appendItem(t, ec);
     }

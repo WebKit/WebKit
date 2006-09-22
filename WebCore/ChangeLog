@@ -1,3 +1,12 @@
+2006-09-22  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Anders.
+
+        Fix (last) svg memory leak.
+
+        * ksvg2/svg/SVGTransformable.cpp: delete 't' in error case.
+        (SVGTransformable::parseTransformAttribute):
+
 2006-09-22  Eric Seidel  <eric@eseidel.com>
 
         No review necessary, just removing a dead file.
