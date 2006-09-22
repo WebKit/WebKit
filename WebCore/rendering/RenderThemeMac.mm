@@ -129,9 +129,8 @@ void RenderThemeMac::systemFont(int propId, FontDescription& fontDescription) co
     
     if (font) {
         cachedDesc->setIsAbsoluteSize(true);
-        cachedDesc->setGenericFamily(FontDescription::SerifFamily);
+        cachedDesc->setGenericFamily(FontDescription::NoFamily);
         cachedDesc->firstFamily().setFamily([font familyName]);
-        cachedDesc->setComputedSize([font pointSize]);
         cachedDesc->setSpecifiedSize([font pointSize]);
         NSFontTraitMask traits = [[NSFontManager sharedFontManager] traitsOfFont:font];
         cachedDesc->setBold(traits & NSBoldFontMask);

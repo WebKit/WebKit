@@ -1,3 +1,13 @@
+2006-09-22  Dave Hyatt <hyatt@apple.com>
+
+        Super-minor tweaks to the systemFont function on Mac.
+        Set the generic family to None rather than to Serif, and
+        don't waste time setting the computed size, since that is
+        set from the specified size over in CSSStyleSelector anyway.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemFont):
+
 2006-09-22  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Brady.
