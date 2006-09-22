@@ -1,3 +1,11 @@
+2006-09-22  Eric Seidel  <eric@eseidel.com>
+
+        No review necessary, just removing a dead file.
+
+        Remove unused file (added previously by mistake) to make room for real implementation.
+
+        * platform/mac/BitmapImageMac.mm: Removed.
+
 2006-09-22  Dave Hyatt <hyatt@apple.com>
 
         Move PlatformScrollBar.h down into the platforms.
