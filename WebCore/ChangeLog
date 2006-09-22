@@ -1,3 +1,17 @@
+2006-09-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady.
+
+        Build fix for Xcode 2.3. Convert GraphicsContext::translate() to
+        take floats. There was already an implicit conversion to float/double
+        when calling CGContextTranslateCTM or cairo_translate.
+
+        * platform/GraphicsContext.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::translate):
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::translate):
+
 2006-09-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sfalken

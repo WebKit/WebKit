@@ -159,7 +159,7 @@ namespace WebCore {
 
         void scale(const FloatSize&);
         void rotate(float angleInRadians);
-        void translate(int x, int y);
+        void translate(float x, float y);
         IntPoint origin();
 
         void concatCTM(const AffineTransform&);

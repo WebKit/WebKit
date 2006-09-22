@@ -446,7 +446,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
     return result; 
 }
 
-void GraphicsContext::translate(int x, int y)
+void GraphicsContext::translate(float x, float y)
 {
     cairo_t* context = m_data->context;
     cairo_translate(context, x, y);
