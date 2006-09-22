@@ -1,3 +1,16 @@
+2006-09-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.
+
+        Testcase for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10977
+        SVGDocument does not expose 'rootElement' property
+
+        * svg/custom/rootelement-expected.checksum: Added.
+        * svg/custom/rootelement-expected.png: Added.
+        * svg/custom/rootelement-expected.txt: Added.
+        * svg/custom/rootelement.svg: Added.
+
 2006-09-21  Timothy Hatcher  <timothy@apple.com>
 
         Adding more calls to layoutTestController.dumpChildFrameScrollPositions()

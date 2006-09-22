@@ -1,3 +1,14 @@
+2006-09-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10977
+        SVGDocument does not expose 'rootElement' property
+
+        Enable 'rootElement' property.
+
+        * ksvg2/svg/SVGDocument.idl:
+
 2006-09-21  Steve Falkenburg  <sfalken@apple.com>
 
         Tweak includes.

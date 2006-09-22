@@ -27,7 +27,7 @@ module svg {
         readonly attribute core::DOMString      referrer;
         readonly attribute core::DOMString      domain;
         readonly attribute core::DOMString      URL;
-        //readonly attribute SVGSVGElement      rootElement; // FIXME: SVGSVGElement is not yet generated due to dependencies.
+        readonly attribute SVGSVGElement        rootElement;
 
         // Overwrite the one in events::DocumentEvent
         events::Event createEvent(in core::DOMString eventType)
