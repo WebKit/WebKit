@@ -271,17 +271,6 @@ void Widget::setFrameGeometry(const IntRect &rect)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-IntPoint Widget::mapFromGlobal(const IntPoint &p) const
-{
-    NSPoint bp = {0,0};
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    bp = [[FrameMac::bridgeForWidget(this) window] convertScreenToBase:[data->view convertPoint:p toView:nil]];
-    return IntPoint(bp);
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return IntPoint();
-}
-
 NSView* Widget::getView() const
 {
     return data->view;

@@ -1,5 +1,13 @@
 2006-09-21  Geoffrey Garen  <ggaren@apple.com>
 
+        build fixed. band happy.
+        
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::translate):
+        * platform/mac/WidgetMac.mm:
+
+2006-09-21  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej.
         
         Some Widget refactoring.

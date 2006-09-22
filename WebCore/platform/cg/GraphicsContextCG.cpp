@@ -665,11 +665,11 @@ void GraphicsContext::rotate(float angle)
     CGContextRotateCTM(platformContext(), angle);
 }
 
-void GraphicsContext::translate(const FloatSize& size)
+void GraphicsContext::translate(int x, int y)
 {
     if (paintingDisabled())
         return;
-    CGContextTranslateCTM(platformContext(), size.width(), size.height());
+    CGContextTranslateCTM(platformContext(), x, y);
 }
 
 void GraphicsContext::concatCTM(const AffineTransform& transform)
