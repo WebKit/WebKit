@@ -37,6 +37,7 @@
 #endif
 
 #if USE(WININET)
+#include <winsock2.h>
 #include <windows.h>
 #endif
 

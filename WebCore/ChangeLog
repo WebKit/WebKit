@@ -1,3 +1,9 @@
+2006-09-21  Steve Falkenburg  <sfalken@apple.com>
+
+        Tweak includes.
+
+        * platform/ResourceLoaderInternal.h:
+
 2006-09-21  Geoffrey Garen  <ggaren@apple.com>
 
         build fixed. band happy.
