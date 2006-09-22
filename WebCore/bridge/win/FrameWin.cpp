@@ -93,7 +93,7 @@ void FrameWin::runJavaScriptAlert(String const& message)
     text.replace('\\', backslashAsCurrencySymbol());
     UChar nullChar = 0;
     text += String(&nullChar, 1);
-    MessageBox(view()->windowHandle(), text.characters(), L"JavaScript Alert", MB_OK);
+    MessageBox(view()->containingWindow(), text.characters(), L"JavaScript Alert", MB_OK);
 }
 
 bool FrameWin::runJavaScriptConfirm(String const& message)
@@ -102,7 +102,7 @@ bool FrameWin::runJavaScriptConfirm(String const& message)
     text.replace('\\', backslashAsCurrencySymbol());
     UChar nullChar = 0;
     text += String(&nullChar, 1);
-    return MessageBox(view()->windowHandle(), text.characters(), L"JavaScript Alert", MB_OKCANCEL) == IDOK;
+    return MessageBox(view()->containingWindow(), text.characters(), L"JavaScript Alert", MB_OKCANCEL) == IDOK;
 }
 
 // FIXME: This needs to be unified with the keyPress method on FrameMac

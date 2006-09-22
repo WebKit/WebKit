@@ -591,6 +591,7 @@ protected:
   virtual void redirectionTimerFired(Timer<Frame>*);
   
   virtual bool isLoadTypeReload() = 0;
+  virtual KURL originalRequestURL() const = 0;
 
 public:
   void loadDone();
@@ -602,7 +603,6 @@ public:
   void reparseConfiguration();
 
 private:
-  virtual KURL originalRequestURL() const = 0;
   void childBegin();
 
   void submitFormAgain();

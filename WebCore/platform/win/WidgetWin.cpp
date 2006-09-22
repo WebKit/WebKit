@@ -35,12 +35,10 @@
 
 namespace WebCore {
 
-HINSTANCE Widget::instanceHandle = 0;
-
 class WidgetPrivate
 {
 public:
-    HWND windowHandle;
+    HWND containingWindow;
     Font font;
     WidgetClient* client;
 };
@@ -48,14 +46,8 @@ public:
 Widget::Widget()
     : data(new WidgetPrivate)
 {
-    data->windowHandle = 0;
+    data->containingWindow = 0;
     data->client = 0;
-}
-
-Widget::Widget(HWND hWnd)
-    : data(new WidgetPrivate)
-{
-    data->windowHandle = hWnd;
 }
 
 Widget::~Widget() 
@@ -63,14 +55,14 @@ Widget::~Widget()
     delete data;
 }
 
-HWND Widget::windowHandle() const
+HWND Widget::containingWindow() const
 {
-    return data->windowHandle;
+    return data->containingWindow;
 }
 
-void Widget::setWindowHandle(HWND hWnd)
+void Widget::setContainingWindow(HWND hWnd)
 {
-    data->windowHandle = hWnd;
+    data->containingWindow = hWnd;
 }
 
 void Widget::setClient(WidgetClient* c)
@@ -86,9 +78,9 @@ WidgetClient* Widget::client() const
 IntRect Widget::frameGeometry() const
 {
     RECT frame;
-    if (GetWindowRect(data->windowHandle, &frame)) {
-        if (HWND parent = GetParent(data->windowHandle))
-            MapWindowPoints(NULL, parent, (LPPOINT)&frame, 2);
+    if (GetWindowRect(data->containingWindow, &frame)) {
+        if (HWND containingWindow = GetParent(data->containingWindow))
+            MapWindowPoints(NULL, containingWindow, (LPPOINT)&frame, 2);
         return frame;
     }
     
@@ -97,12 +89,12 @@ IntRect Widget::frameGeometry() const
 
 bool Widget::hasFocus() const
 {
-    return (data->windowHandle == GetForegroundWindow());
+    return (data->containingWindow == GetForegroundWindow());
 }
 
 void Widget::setFocus()
 {
-    SetFocus(data->windowHandle);
+    SetFocus(data->containingWindow);
 }
 
 void Widget::clearFocus()
@@ -132,24 +124,17 @@ void Widget::setCursor(const Cursor& cursor)
 
 void Widget::show()
 {
-    ShowWindow(data->windowHandle, SW_SHOWNA);
+    ShowWindow(data->containingWindow, SW_SHOWNA);
 }
 
 void Widget::hide()
 {
-    ShowWindow(data->windowHandle, SW_HIDE);
+    ShowWindow(data->containingWindow, SW_HIDE);
 }
 
 void Widget::setFrameGeometry(const IntRect &rect)
 {
-    MoveWindow(data->windowHandle, rect.x(), rect.y(), rect.width(), rect.height(), false);
-}
-
-IntPoint Widget::mapFromGlobal(const IntPoint &p) const
-{
-    POINT point = p;
-    ScreenToClient(data->windowHandle, &point);
-    return point;
+    MoveWindow(data->containingWindow, rect.x(), rect.y(), rect.width(), rect.height(), false);
 }
 
 }

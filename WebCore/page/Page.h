@@ -35,6 +35,7 @@ class WebCorePageBridge;
 
 #if PLATFORM(WIN)
 typedef struct HWND__* HWND;
+typedef struct HINSTANCE__* HINSTANCE;
 #endif
 
 namespace WebCore {
@@ -75,9 +76,11 @@ namespace WebCore {
         WebCorePageBridge* bridge() const { return m_bridge; }
 #endif
 
-#if PLATFORM(WIN_OS)
-        Page(HWND);
-        HWND windowHandle() const { return m_windowHandle; }
+#if PLATFORM(WIN)
+        Page();
+        // The global DLL or application instance used for all windows.
+        static void setInstanceHandle(HINSTANCE instanceHandle) { s_instanceHandle = instanceHandle; }
+        static HINSTANCE instanceHandle() { return s_instanceHandle; }
 #endif
 
     private:
@@ -85,7 +88,6 @@ namespace WebCore {
 
         RefPtr<Frame> m_mainFrame;
         int m_frameCount;
-        mutable Widget* m_widget;
         String m_groupName;
         mutable SelectionController m_dragCaretController;
 
@@ -93,8 +95,8 @@ namespace WebCore {
         WebCorePageBridge* m_bridge;
 #endif
 
-#if PLATFORM(WIN_OS)
-        HWND m_windowHandle;
+#if PLATFORM(WIN)
+        static HINSTANCE s_instanceHandle;
 #endif
     };
 

@@ -1,3 +1,11 @@
+2006-09-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        Updated to include the right path.
+        * wtf/FastMalloc.h: #include Platform.h, since we use Platform macros.
+
 2006-09-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Dave Hyatt.

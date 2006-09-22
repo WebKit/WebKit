@@ -184,6 +184,7 @@ void Widget::clearFocus()
 {
     if (!hasFocus())
         return;
+    // FIXME: This probably shouldn't be the Widget's responsibility
     FrameMac::clearDocumentFocus(this);
 }
 

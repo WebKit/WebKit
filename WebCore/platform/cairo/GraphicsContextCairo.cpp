@@ -446,12 +446,26 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
     return result; 
 }
 
+void GraphicsContext::translate(int x, int y)
+{
+    cairo_t* context = m_data->context;
+    cairo_translate(context, x, y);
+}
+
 HDC GraphicsContext::getWindowsContext()
 {
     cairo_surface_t* surface = cairo_get_target(platformContext());
     HDC hdc = cairo_win32_surface_get_dc(surface);    
     SaveDC(hdc);
     return hdc;
+}
+
+IntPoint GraphicsContext::origin()
+{
+    cairo_matrix_t matrix;
+    cairo_t* context = m_data->context;
+    cairo_get_matrix(context, &matrix);
+    return IntPoint(matrix.x0, matrix.y0);
 }
 
 void GraphicsContext::releaseWindowsContext()
@@ -462,6 +476,6 @@ void GraphicsContext::releaseWindowsContext()
     cairo_surface_mark_dirty(surface);
 }
 
-}
+} // namespace WebCore
 
 #endif // PLATFORM(CAIRO)

@@ -202,6 +202,11 @@ FrameView::~FrameView()
     d = 0;
 }
 
+bool FrameView::isFrameView() const 
+{ 
+    return true; 
+}
+
 void FrameView::clearPart()
 {
     m_frame = 0;

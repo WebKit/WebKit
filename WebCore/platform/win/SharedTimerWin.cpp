@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SharedTimer.h"
 
+#include "Page.h"
 #include "SystemTime.h"
 #include "Widget.h"
 #include <wtf/Assertions.h>
@@ -58,12 +59,12 @@ static void initializeOffScreenTimerWindow()
     memset(&wcex, 0, sizeof(WNDCLASSEX));
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.lpfnWndProc    = TimerWindowWndProc;
-    wcex.hInstance      = Widget::instanceHandle;
+    wcex.hInstance      = Page::instanceHandle();
     wcex.lpszClassName  = kTimerWindowClassName;
     RegisterClassEx(&wcex);
 
     timerWindowHandle = CreateWindow(kTimerWindowClassName, 0, 0,
-       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, Widget::instanceHandle, 0);
+       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, Page::instanceHandle(), 0);
     timerFiredMessage = RegisterWindowMessage(L"com.apple.WebKit.TimerFired");
 }
 

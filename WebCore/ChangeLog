@@ -1,3 +1,63 @@
+2006-09-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        Some Widget refactoring.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/mac/FrameMac.mm:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::runJavaScriptAlert):
+        (WebCore::FrameWin::runJavaScriptConfirm):
+        * bridge/win/PageWin.cpp:
+        (WebCore::Page::Page):
+        (WebCore::rootWindowForFrame):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::translate):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isFrameView):
+        * page/Page.h:
+        (WebCore::Page::setInstanceHandle):
+        (WebCore::Page::instanceHandle):
+        * platform/GraphicsContext.h:
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::origin):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::clearFocus):
+        * platform/win/ResourceLoaderWin.cpp:
+        (WebCore::initializeOffScreenResourceLoaderWindow):
+        * platform/win/ScreenWin.cpp:
+        (WebCore::monitorInfo):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::viewportToContents):
+        (WebCore::ScrollView::contentsToViewport):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::updateScrollInfo):
+        (WebCore::ScrollView::updateScrollBars):
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::initializeOffScreenTimerWindow):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameView::updateBorder):
+        (ScrollView::paint):
+        (GraphicsContext::clip):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::parentWindow):
+        (WebCore::Widget::setParentWindow):
+        (WebCore::Widget::frameGeometry):
+        (WebCore::Widget::hasFocus):
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::setFrameGeometry):
+
 2006-09-22  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Tim H.

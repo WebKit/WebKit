@@ -83,13 +83,16 @@ namespace WebCore {
         // (like Windows), we need this method in order to do the scroll ourselves.
         void wheelEvent(PlatformWheelEvent&);
 
-#if __APPLE__
+#if PLATFORM(MAC)
         NSView* getDocumentView() const;
 #endif
 
 #if PLATFORM(WIN)
         ScrollView();
         ~ScrollView();
+
+        virtual void paint(GraphicsContext*, const IntRect&);
+
     private:
         void updateScrollBars();
         IntSize maximumScroll() const;

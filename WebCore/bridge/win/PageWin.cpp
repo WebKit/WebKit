@@ -32,10 +32,8 @@
 
 namespace WebCore {
 
-Page::Page(HWND hwnd)
-: m_windowHandle(hwnd)
-, m_frameCount(0)
-, m_widget(0)
+Page::Page()
+: m_frameCount(0)
 , m_dragCaretController(0, true)
 {
     init();
@@ -48,7 +46,7 @@ static HWND rootWindowForFrame(const Frame* frame)
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
-    HWND frameWnd = frameView->windowHandle();
+    HWND frameWnd = frameView->containingWindow();
     if (!frameWnd)
         return 0;
     return GetAncestor(frameWnd, GA_ROOT);

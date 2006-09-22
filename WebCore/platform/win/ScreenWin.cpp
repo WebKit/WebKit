@@ -28,6 +28,7 @@
 
 #include "IntRect.h"
 #include "FloatRect.h"
+#include "Frame.h"
 #include "Page.h"
 #include <windows.h>
 
@@ -45,7 +46,7 @@ FloatRect scalePageRectToScreenCoordinates(const FloatRect& rect, const Page*)
     
 static MONITORINFOEX monitorInfo(const Page* page)
 {
-    HMONITOR monitor = MonitorFromWindow(page->windowHandle(), MONITOR_DEFAULTTOPRIMARY);
+    HMONITOR monitor = MonitorFromWindow(page->mainFrame()->view()->containingWindow(), MONITOR_DEFAULTTOPRIMARY);
     MONITORINFOEX info;
     info.cbSize = sizeof(MONITORINFOEX);
     GetMonitorInfo(monitor, &info);

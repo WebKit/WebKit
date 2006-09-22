@@ -146,12 +146,6 @@ static SEL selectorForKeyEvent(const PlatformKeyboardEvent* event)
     return selector;
 }
 
-
-bool FrameView::isFrameView() const
-{
-    return true;
-}
-
 FrameMac::FrameMac(Page* page, Element* ownerElement)
     : Frame(page, ownerElement)
     , _bridge(nil)

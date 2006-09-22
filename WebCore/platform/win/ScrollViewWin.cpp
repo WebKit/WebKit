@@ -70,34 +70,34 @@ void ScrollView::updateContents(const IntRect& updateRect, bool now)
 
     RECT dirtyRect = RECT(adjustedDirtyRect);
 #if PAINT_FLASHING_DEBUG
-    HDC dc = GetDC(windowHandle());
+    HDC dc = GetDC(containingWindow());
     FillRect(dc, &dirtyRect, (HBRUSH)GetStockObject(BLACK_BRUSH));
-    ReleaseDC(windowHandle(), dc);
+    ReleaseDC(containingWindow(), dc);
 #endif
 
-    InvalidateRect(windowHandle(), &dirtyRect, true);
+    InvalidateRect(containingWindow(), &dirtyRect, true);
     if (now)
-        UpdateWindow(windowHandle());
+        UpdateWindow(containingWindow());
 }
 
 int ScrollView::visibleWidth() const
 {
     RECT bounds;
-    GetClientRect(windowHandle(), &bounds);
+    GetClientRect(containingWindow(), &bounds);
     return (bounds.right - bounds.left);
 }
 
 int ScrollView::visibleHeight() const
 {
     RECT bounds;
-    GetClientRect(windowHandle(), &bounds);
+    GetClientRect(containingWindow(), &bounds);
     return (bounds.bottom - bounds.top);
 }
 
 FloatRect ScrollView::visibleContentRect() const
 {
     RECT bounds;
-    GetClientRect(windowHandle(), &bounds);
+    GetClientRect(containingWindow(), &bounds);
     FloatRect contentRect = bounds;
     contentRect.move(m_data->scrollOffset);
     return contentRect;
@@ -142,14 +142,14 @@ int ScrollView::contentsHeight() const
 IntPoint ScrollView::viewportToContents(const IntPoint& contentsPoint)
 {
     POINT point = contentsPoint;
-    MapWindowPoints(GetAncestor(windowHandle(), GA_ROOT), windowHandle(), &point, 1);
+    MapWindowPoints(GetAncestor(containingWindow(), GA_ROOT), containingWindow(), &point, 1);
     return IntPoint(point) + scrollOffset();
 }
 
 IntPoint ScrollView::contentsToViewport(const IntPoint& viewportPoint)
 {
     POINT point = viewportPoint - scrollOffset();
-    MapWindowPoints(windowHandle(), GetAncestor(windowHandle(), GA_ROOT), &point, 1);
+    MapWindowPoints(containingWindow(), GetAncestor(containingWindow(), GA_ROOT), &point, 1);
     return point;
 }
 
@@ -181,9 +181,9 @@ void ScrollView::scrollBy(int dx, int dy)
             return;
         if (!m_data->hasStaticBackground)
             // FIXME: This could be made more efficient by passing a valid clip rect for only the document content.
-            ScrollWindowEx(windowHandle(), -scrollDelta.width(), -scrollDelta.height(), 0, 0, 0, 0, SW_INVALIDATE);
+            ScrollWindowEx(containingWindow(), -scrollDelta.width(), -scrollDelta.height(), 0, 0, 0, 0, SW_INVALIDATE);
         else
-            InvalidateRect(windowHandle(), 0, true);
+            InvalidateRect(containingWindow(), 0, true);
     }
 }
 
@@ -240,8 +240,8 @@ int ScrollView::updateScrollInfo(short type, int current, int max, int pageSize)
     si.nMax   = max;
     si.nPage  = pageSize;
     si.nPos   = current;
-    SetScrollInfo(windowHandle(), type, &si, TRUE);
-    GetScrollInfo(windowHandle(), type, &si);
+    SetScrollInfo(containingWindow(), type, &si, TRUE);
+    GetScrollInfo(containingWindow(), type, &si);
     return si.nPos;
 }
 
@@ -256,9 +256,9 @@ void ScrollView::updateScrollBars()
                 updateScrollInfo(SB_VERT, scroll.height(), contentsHeight() - 1, height()));
 
     if (m_data->hScrollBarMode != ScrollBarAuto || m_data->suppressScrollBars)
-        ShowScrollBar(windowHandle(), SB_HORZ, (m_data->hScrollBarMode != ScrollBarAlwaysOff) && !m_data->suppressScrollBars);
+        ShowScrollBar(containingWindow(), SB_HORZ, (m_data->hScrollBarMode != ScrollBarAlwaysOff) && !m_data->suppressScrollBars);
     if (m_data->vScrollBarMode != ScrollBarAuto || m_data->suppressScrollBars)
-        ShowScrollBar(windowHandle(), SB_VERT, (m_data->vScrollBarMode != ScrollBarAlwaysOff) && !m_data->suppressScrollBars);
+        ShowScrollBar(containingWindow(), SB_VERT, (m_data->vScrollBarMode != ScrollBarAlwaysOff) && !m_data->suppressScrollBars);
 }
 
 }

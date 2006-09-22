@@ -47,6 +47,7 @@
 #include "PlatformScrollBar.h"
 #include "ScrollBar.h"
 #include "JavaAppletWidget.h"
+#include "Page.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
 #include "CookieJar.h"
@@ -77,7 +78,6 @@ using namespace WebCore;
 } while (0)
 
 void FrameView::updateBorder() { notImplemented(); }
-bool FrameView::isFrameView() const { notImplemented(); return 0; }
 
 Widget::FocusPolicy PopUpButton::focusPolicy() const { notImplemented(); return NoFocus; }
 void PopUpButton::populate() { notImplemented(); }
@@ -259,6 +259,8 @@ void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
 
 }
 
+HINSTANCE Page::s_instanceHandle = 0;
+
 void Widget::setEnabled(bool) { }
 void Widget::paint(GraphicsContext*,IntRect const&) { }
 void Widget::setIsSelected(bool) { }
@@ -267,6 +269,7 @@ void ScrollView::addChild(Widget*,int,int) { }
 void ScrollView::removeChild(Widget*) { }
 void ScrollView::scrollPointRecursively(int x, int y) { }
 bool ScrollView::inWindow() const { return true; }
+void ScrollView::paint(GraphicsContext*, const IntRect&) { };
 void ScrollView::wheelEvent(PlatformWheelEvent&) { }
 
 void GraphicsContext::setShadow(IntSize const&,int,Color const&) { }
@@ -282,7 +285,6 @@ void GraphicsContext::setMiterLimit(float) { }
 void GraphicsContext::setAlpha(float) { }
 void GraphicsContext::setCompositeOperation(CompositeOperator) { }
 void GraphicsContext::clip(const Path&) { }
-void GraphicsContext::translate(const FloatSize&) { }
 void GraphicsContext::rotate(float) { }
 void GraphicsContext::scale(const FloatSize&) { }
 

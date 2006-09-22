@@ -23,6 +23,7 @@
 #ifndef KXMLCORE_FAST_MALLOC_H
 #define KXMLCORE_FAST_MALLOC_H
 
+#include "Platform.h"
 #include <stdlib.h>
 #include <new>
 

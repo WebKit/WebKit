@@ -291,7 +291,7 @@ void CanvasRenderingContext2D::translate(float tx, float ty)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    c->translate(FloatSize(tx, ty));
+    c->translate(tx, ty);
 }
 
 void CanvasRenderingContext2D::setStrokeColor(const String& color)
