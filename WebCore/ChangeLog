@@ -1,3 +1,13 @@
+2006-09-22  Dave Hyatt <hyatt@apple.com>
+
+        Move PlatformScrollBar.h down into the platforms.
+        
+        Reviewed by andersca
+
+        * platform/PlatformScrollBar.h: Removed.
+        * platform/win/PlatformScrollBar.h: Added.
+        * platform/mac/PlatformScrollBar.h: Added.
+
 2006-09-22   Dave Hyatt  <hyatt@apple.com>
 
         Add support for invalidation of widgets.  This will be needed for the Win32 widget subsystem (and for
