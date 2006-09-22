@@ -17,6 +17,8 @@
         Reviewed by Sfalken
 
         Add redirect and other cleanup to ResourceLoaderWin.cpp
+        Fixes bug http://bugzilla.opendarwin.org/show_bug.cgi?id=10927
+        Fixes bug http://bugzilla.opendarwin.org/show_bug.cgi?id=10744
 
         * WebCore.xcodeproj/project.pbxproj:
         * platform/ResourceLoader.h:

@@ -46,19 +46,17 @@ const LPCWSTR kResourceLoaderWindowClassName = L"ResourceLoaderWindowClass";
 
 // Message types for internal use (keep in sync with kMessageHandlers)
 enum {
-  kHandleCreatedMessage = WM_USER,
-  kRequestRedirectedMessage,
-  kRequestCompleteMessage
+  handleCreatedMessage = WM_USER,
+  requestRedirectedMessage,
+  requestCompleteMessage
 };
 
 typedef void (ResourceLoader:: *ResourceLoaderEventHandler)(LPARAM);
-static const ResourceLoaderEventHandler kMessageHandlers[] = {
+static const ResourceLoaderEventHandler messageHandlers[] = {
     &ResourceLoader::onHandleCreated,
     &ResourceLoader::onRequestRedirected,
     &ResourceLoader::onRequestComplete
 };
-static const int kNumMessageHandlers =
-    sizeof(kMessageHandlers) / sizeof(kMessageHandlers[0]);
 
 static int addToOutstandingJobs(ResourceLoader* job)
 {
@@ -86,15 +84,15 @@ static ResourceLoader* lookupResourceLoader(int jobId)
 static LRESULT CALLBACK ResourceLoaderWndProc(HWND hWnd, UINT message,
                                               WPARAM wParam, LPARAM lParam)
 {
-    if (message >= kHandleCreatedMessage) {
-        UINT index = message - kHandleCreatedMessage;
-        if (index < kNumMessageHandlers) {
+    if (message >= handleCreatedMessage) {
+        UINT index = message - handleCreatedMessage;
+        if (index < _countof(messageHandlers)) {
             unsigned jobId = (unsigned) wParam;
             ResourceLoader* job = lookupResourceLoader(jobId);
             if (job) {
                 ASSERT(job->d->m_jobId == jobId);
                 ASSERT(job->d->m_threadId == GetCurrentThreadId());
-                (job->*(kMessageHandlers[index]))(lParam);
+                (job->*(messageHandlers[index]))(lParam);
             }
             return 0;
         }
@@ -275,19 +273,19 @@ static void __stdcall transferJobStatusCallback(HINTERNET internetHandle,
     switch (internetStatus) {
     case INTERNET_STATUS_HANDLE_CREATED:
         // tell the main thread about the newly created handle
-        msg = kHandleCreatedMessage;
+        msg = handleCreatedMessage;
         lParam = (LPARAM) LPINTERNET_ASYNC_RESULT(statusInformation)->dwResult;
         break;
     case INTERNET_STATUS_REQUEST_COMPLETE:
         // tell the main thread that the request is done
-        msg = kRequestCompleteMessage;
+        msg = requestCompleteMessage;
         lParam = 0;
         break;
     case INTERNET_STATUS_REDIRECT:
         // tell the main thread to observe this redirect (FIXME: we probably
         // need to block the redirect at this point so the application can
         // decide whether or not to follow the redirect)
-        msg = kRequestRedirectedMessage;
+        msg = requestRedirectedMessage;
         lParam = (LPARAM) new StringImpl((const UChar*) statusInformation,
                                          statusInformationLength);
         break;
