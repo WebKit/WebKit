@@ -1,3 +1,12 @@
+2006-09-22  Rob Buis  <buis@kd.org>
+
+        Reviewed by eseidel.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10901
+        Merge build fixes from unity
+
+        * CMakeLists.txt:
+
 2006-09-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.
