@@ -384,9 +384,12 @@ namespace WTF {
 
         void clear() { resize(0); }
 
+        template<typename U> void append(const U*, size_t);
         template<typename U> void append(const U&);
-        template<typename U> void append(const Vector<U>&);
+        template<typename U, size_t c> void append(const Vector<U, c>&);
+
         template<typename U> void insert(size_t position, const U&);
+
         void remove(size_t position);
 
         void removeLast() 
@@ -538,9 +541,21 @@ namespace WTF {
         m_impl.deallocateBuffer(oldBuffer);
     }
 
-    // templatizing these is better than just letting the conversion happen implicitly,
+    // Templatizing these is better than just letting the conversion happen implicitly,
     // because for instance it allows a PassRefPtr to be appended to a RefPtr vector
     // without refcount thrash.
+
+    template<typename T, size_t inlineCapacity> template<typename U>
+    void Vector<T, inlineCapacity>::append(const U* data, size_t dataSize)
+    {
+        size_t newSize = m_size + dataSize;
+        if (newSize > capacity())
+            data = expandCapacity(newSize, data);
+        T* dest = end();
+        for (size_t i = 0; i < dataSize; ++i)
+            new (&dest[i]) T(data[i]);
+        m_size = newSize;
+    }
 
     template<typename T, size_t inlineCapacity> template<typename U>
     inline void Vector<T, inlineCapacity>::append(const U& val)
@@ -552,13 +567,10 @@ namespace WTF {
         ++m_size;
     }
 
-    template<typename T, size_t inlineCapacity> template<typename U>
-    inline void Vector<T, inlineCapacity>::append(const Vector<U>& val)
+    template<typename T, size_t inlineCapacity> template<typename U, size_t c>
+    inline void Vector<T, inlineCapacity>::append(const Vector<U, c>& val)
     {
-        if (size() + val.size() >= capacity())
-            expandCapacity(size() + val.size());
-        for (unsigned i = 0; i < val.size(); i++)
-            append(val[i]);
+        append(val.begin(), val.size());
     }
     
     template<typename T, size_t inlineCapacity> template<typename U>
