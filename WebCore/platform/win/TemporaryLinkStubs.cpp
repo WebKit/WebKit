@@ -264,7 +264,8 @@ HINSTANCE Page::s_instanceHandle = 0;
 void Widget::setEnabled(bool) { }
 void Widget::paint(GraphicsContext*,IntRect const&) { }
 void Widget::setIsSelected(bool) { }
-
+void Widget::invalidate() { }
+void Widget::invalidateRect(const IntRect& r) { }
 void ScrollView::addChild(Widget*,int,int) { }
 void ScrollView::removeChild(Widget*) { }
 void ScrollView::scrollPointRecursively(int x, int y) { }

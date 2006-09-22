@@ -90,6 +90,8 @@ namespace WebCore {
         void move(const IntPoint&);
 
         virtual void paint(GraphicsContext*, const IntRect&);
+        virtual void invalidate();
+        virtual void invalidateRect(const IntRect&);
 
         virtual void setFrameGeometry(const IntRect&);
         virtual IntRect frameGeometry() const;

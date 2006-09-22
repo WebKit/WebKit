@@ -1,3 +1,18 @@
+2006-09-22   Dave Hyatt  <hyatt@apple.com>
+
+        Add support for invalidation of widgets.  This will be needed for the Win32 widget subsystem (and for
+        any widget subsystems that don't have any underlying native objects backing the widgets.
+
+        Reviewed by anders
+
+        * platform/Widget.h:
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::invalidate):
+        (WebCore::Widget::invalidateRect):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (Widget::invalidate):
+        (Widget::invalidateRect):
+
 2006-09-22  Rob Buis  <buis@kd.org>
 
         Reviewed by eseidel.
