@@ -767,7 +767,7 @@ void Frame::endIfNotLoading()
         
     
     if (IconDatabase* sharedIconDatabase = IconDatabase::sharedIconDatabase()) {
-        if (!sharedIconDatabase || !sharedIconDatabase->enabled())
+        if (!sharedIconDatabase->enabled())
             return;
         
         String url(iconURL().url());
