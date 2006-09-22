@@ -86,6 +86,9 @@ public:
 
 #if USE(WININET)
     void fileLoadTimer(Timer<ResourceLoader>* timer);
+    void onHandleCreated(LPARAM);
+    void onRequestRedirected(LPARAM);
+    void onRequestComplete(LPARAM);
     friend void __stdcall transferJobStatusCallback(HINTERNET, DWORD_PTR, DWORD, LPVOID, DWORD);
     friend LRESULT __stdcall ResourceLoaderWndProc(HWND, unsigned message, WPARAM, LPARAM);
 #endif

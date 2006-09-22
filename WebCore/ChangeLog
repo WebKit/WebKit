@@ -1,3 +1,19 @@
+2006-09-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sfalken
+
+        Add redirect and other cleanup to ResourceLoaderWin.cpp
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ResourceLoader.h:
+        * platform/win/ResourceLoaderWin.cpp:
+        (WebCore::ResourceLoaderWndProc):
+        (WebCore::initializeOffScreenResourceLoaderWindow):
+        (WebCore::ResourceLoader::onHandleCreated):
+        (WebCore::ResourceLoader::onRequestRedirected):
+        (WebCore::ResourceLoader::onRequestComplete):
+        (WebCore::transferJobStatusCallback):
+
 2006-09-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Geoff.
