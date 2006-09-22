@@ -1,3 +1,19 @@
+2006-09-22  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fix Qt/Linux build and a really stupid mixup in GraphicsContextQt.
+
+        * platform/qt/FrameQt.cpp:
+        * platform/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::translate): Make it actually translate, not scale! :-)
+        (WebCore::GraphicsContext::origin):
+        * platform/qt/PlatformScrollBar.h: Added.
+        (WebCore::PlatformScrollBar::isWidget):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::invalidate):
+        (WebCore::Widget::invalidateRect):
+
 2006-09-22  Dave Hyatt <hyatt@apple.com>
 
         Super-minor tweaks to the systemFont function on Mac.

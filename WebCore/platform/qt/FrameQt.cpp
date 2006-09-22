@@ -87,11 +87,6 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
     r->layer()->scrollToOffset(x, y, true, true);
 }
 
-bool FrameView::isFrameView() const
-{
-    return true;
-}
-
 FrameQt::FrameQt(Page* page, Element* ownerElement, FrameQtClient* client)
     : Frame(page, ownerElement)
 {

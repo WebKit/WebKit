@@ -649,14 +649,20 @@ void GraphicsContext::clip(const Path& path)
     m_data->p().setClipPath(*path.platformPath());
 }
 
-void GraphicsContext::translate(const FloatSize& s)
+void GraphicsContext::translate(float x, float y)
 {
     if (paintingDisabled())
         return;
 
-    m_data->p().scale(s.width(), s.height());
+    m_data->p().translate(x, y);
 }
 
+IntPoint GraphicsContext::origin()
+{
+    return IntPoint(qRound(m_data->p().matrix().dx()),
+                    qRound(m_data->p().matrix().dy()));
+}
+ 
 void GraphicsContext::rotate(float radians)
 {
     if (paintingDisabled())
