@@ -1,3 +1,13 @@
+2006-09-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10803
+        REGRESSION (r15536-r15544): manual-tests/bugzilla-6821.html failing
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::hoverTimerFired): Use the current event.
+
 2006-09-22  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Anders.
