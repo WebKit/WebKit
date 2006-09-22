@@ -27,6 +27,19 @@
 #import <WebCore/DOMHTMLElement.h>
 
 @interface DOMHTMLAppletElement : DOMHTMLElement
+#ifndef BUILDING_ON_TIGER
+@property NSString *align;
+@property NSString *alt;
+@property NSString *archive;
+@property NSString *code;
+@property NSString *codeBase;
+@property NSString *height;
+@property int hspace;
+@property NSString *name;
+@property NSString *object;
+@property int vspace;
+@property NSString *width;
+#else
 - (NSString *)align;
 - (void)setAlign:(NSString *)align;
 - (NSString *)alt;
@@ -49,4 +62,5 @@
 - (void)setVspace:(int)vspace;
 - (NSString *)width;
 - (void)setWidth:(NSString *)width;
+#endif
 @end

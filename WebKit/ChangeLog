@@ -1,3 +1,12 @@
+2006-09-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Pass all headers through unifdef to filter out BUILDING_ON_TIGER blocks
+        if MACOSX_DEPLOYMENT_TARGET is 10.4.
+
+        * MigrateHeaders.make:
+
 2006-09-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

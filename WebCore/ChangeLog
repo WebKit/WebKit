@@ -1,3 +1,28 @@
+2006-09-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        - Added @property syntax to non-generated headers
+          inside #ifndef BUILDING_ON_TIGER.
+        - Changed the DOMEventTarget protocol to have have new versions
+          of addEventListener and removeEventListener with named parameters.
+          These old style methods can be removed once Mail changes to use
+          the new methods <rdar://problem/4746649>.
+
+        * WebCorePrefix.h: define BUILDING_ON_TIGER when Tiger is the target
+        * bindings/objc/DOM.mm:
+        (-[DOMNode addEventListener:listener:useCapture:]):
+        (-[DOMNode addEventListener:::]): call the new method
+        (-[DOMNode removeEventListener:listener:useCapture:]):
+        (-[DOMNode removeEventListener:::]): call the new method
+        * bindings/objc/DOMAbstractView.h:
+        * bindings/objc/DOMEventTarget.h:
+        * bindings/objc/DOMHTMLAppletElement.h:
+        * bindings/objc/DOMHTMLEmbedElement.h:
+        * bindings/objc/DOMHTMLOptionElement.h:
+        * bindings/objc/DOMObject.h:
+        * bindings/objc/DOMRGBColor.h:
+
 2006-09-22  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

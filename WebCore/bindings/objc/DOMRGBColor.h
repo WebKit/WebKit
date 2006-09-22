@@ -30,12 +30,23 @@
 @class DOMCSSPrimitiveValue;
 
 @interface DOMRGBColor : DOMObject
+#ifndef BUILDING_ON_TIGER
+@property(readonly) DOMCSSPrimitiveValue *red;
+@property(readonly) DOMCSSPrimitiveValue *green;
+@property(readonly) DOMCSSPrimitiveValue *blue;
+#else
 - (DOMCSSPrimitiveValue *)red;
 - (DOMCSSPrimitiveValue *)green;
 - (DOMCSSPrimitiveValue *)blue;
+#endif
 @end
 
 @interface DOMRGBColor (DOMRGBColorExtensions)
+#ifndef BUILDING_ON_TIGER
+@property(readonly) DOMCSSPrimitiveValue *alpha;
+@property(readonly) NSColor *color;
+#else
 - (DOMCSSPrimitiveValue *)alpha;
 - (NSColor *)color;
+#endif
 @end

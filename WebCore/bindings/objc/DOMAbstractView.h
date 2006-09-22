@@ -29,5 +29,9 @@
 @class DOMDocument;
 
 @interface DOMAbstractView : DOMObject
+#ifndef BUILDING_ON_TIGER
+@property(readonly) DOMDocument *document;
+#else
 - (DOMDocument *)document;
+#endif
 @end

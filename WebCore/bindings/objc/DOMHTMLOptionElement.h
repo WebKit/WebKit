@@ -29,6 +29,16 @@
 @class DOMHTMLFormElement;
 
 @interface DOMHTMLOptionElement : DOMHTMLElement
+#ifndef BUILDING_ON_TIGER
+@property(readonly) DOMHTMLFormElement *form;
+@property BOOL defaultSelected;
+@property(readonly) NSString *text;
+@property(readonly) int index;
+@property BOOL disabled;
+@property NSString *label;
+@property BOOL selected;
+@property NSString *value;
+#else
 - (DOMHTMLFormElement *)form;
 - (BOOL)defaultSelected;
 - (void)setDefaultSelected:(BOOL)defaultSelected;
@@ -42,4 +52,5 @@
 - (void)setSelected:(BOOL)selected;
 - (NSString *)value;
 - (void)setValue:(NSString *)value;
+#endif
 @end

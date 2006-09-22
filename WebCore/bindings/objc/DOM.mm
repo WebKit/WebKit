@@ -393,10 +393,10 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 
 @end
 
-// FIXME: this should be auto-genenerate in DOMNode.mm
+// FIXME: this should be auto-generated
 @implementation DOMNode (DOMEventTarget)
 
-- (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
+- (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     if (![self _node]->isEventTargetNode())
         raiseDOMException(DOM_NOT_SUPPORTED_ERR);
@@ -406,13 +406,25 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     wrapper->deref();
 }
 
-- (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
+- (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
+{
+    // FIXME: this method can be removed once Mail changes to use the new method <rdar://problem/4746649>
+    [self addEventListener:type listener:listener useCapture:useCapture];
+}
+
+- (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     if (![self _node]->isEventTargetNode())
         raiseDOMException(DOM_NOT_SUPPORTED_ERR);
 
     if (WebCore::EventListener *wrapper = ObjCEventListener::find(listener))
         EventTargetNodeCast([self _node])->removeEventListener(type, wrapper, useCapture);
+}
+
+- (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
+{
+    // FIXME: this method can be removed once Mail changes to use the new method <rdar://problem/4746649>
+    [self removeEventListener:type listener:listener useCapture:useCapture];
 }
 
 - (BOOL)dispatchEvent:(DOMEvent *)event

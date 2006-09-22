@@ -27,6 +27,14 @@
 #import <WebCore/DOMHTMLElement.h>
 
 @interface DOMHTMLEmbedElement : DOMHTMLElement
+#ifndef BUILDING_ON_TIGER
+@property NSString *align;
+@property int height;
+@property NSString *name;
+@property NSString *src;
+@property NSString *type;
+@property int width;
+#else
 - (NSString *)align;
 - (void)setAlign:(NSString *)newAlign;
 - (int)height;
@@ -39,4 +47,5 @@
 - (void)setType:(NSString *)newType;
 - (int)width;
 - (void)setWidth:(int)newWidth;
+#endif
 @end
