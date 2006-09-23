@@ -294,7 +294,7 @@ NSArray *webkitDomEventNames;
     NSEnumerator *eventEnumerator = [webkitDomEventNames objectEnumerator];
     id eventName;
     while ((eventName = [eventEnumerator nextObject])) {
-        [(id<DOMEventTarget>)node addEventListener:eventName :self :NO];
+        [(id<DOMEventTarget>)node addEventListener:eventName listener:self useCapture:NO];
     }
 }
 
