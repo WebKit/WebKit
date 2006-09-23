@@ -147,7 +147,7 @@ void didFail(CFURLConnectionRef conn, CFStreamError error, const void* clientInf
     job->client()->receivedAllData(job);
 }
 
-CFURLCachedResponseRef willCacheResponse(CFURLConnectionRef conn, CFURLCachedResponseRef cachedResponse, const void* clientInfo) 
+CFURLCachedResponseRef willCacheResponse(CFURLConnectionRef conn, CFCachedURLResponseRef cachedResponse, const void* clientInfo) 
 {
     ResourceLoader* job = (ResourceLoader*)clientInfo;
     return cachedResponse;

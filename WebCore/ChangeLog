@@ -1,3 +1,12 @@
+2006-09-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Jeff Jenkins.
+
+        Tweak CF types.
+
+        * platform/cf/ResourceLoaderCFNet.cpp:
+        (WebCore::willCacheResponse):
+
 2006-09-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
