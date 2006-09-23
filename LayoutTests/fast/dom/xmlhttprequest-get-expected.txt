@@ -17,9 +17,8 @@ responseXML serialized
 getAllResponseHeaders()
 undefined
 status
-undefined
+0
 statusText
-undefined
 readyState
 4
 Event information

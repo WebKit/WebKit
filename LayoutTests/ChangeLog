@@ -1,3 +1,29 @@
+2006-09-23  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4872
+        XMLHttpRequest fails to throw an exception when there is a security violation
+        (mismatching domains)
+
+        * http/tests/xmlhttprequest/exceptions-expected.txt: Added.
+        * http/tests/xmlhttprequest/exceptions.html: Added.
+
+        * http/tests/xmlhttprequest/extra-parameters-expected.txt: Added.
+        * http/tests/xmlhttprequest/extra-parameters.html: Added.
+        * http/tests/xmlhttprequest/resources/post-echo.cgi: Added.
+        Test that passing too many parameters is OK (Firefox behavior; WinIE raises an exception).
+
+        * fast/dom/xmlhttprequest-get-expected.txt: Updated results. 
+
+        * http/tests/xmlhttprequest/zero-length-response-expected.txt:
+        * http/tests/xmlhttprequest/zero-length-response-sync-expected.txt:
+        * http/tests/xmlhttprequest/zero-length-response-sync.html:
+        * http/tests/xmlhttprequest/zero-length-response.html:
+        Updated results and changed state names to match the current spec.
+
+        * http/tests/xmlhttprequest/resources/zero-length.xml: Added.
+
 2006-09-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.

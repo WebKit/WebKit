@@ -1,3 +1,35 @@
+2006-09-23  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4872
+        XMLHttpRequest fails to throw an exception when there is a security violation
+        (mismatching domains)
+
+        Raise an exception if there is a security violation, and also in cases required by
+        the current draft of XHR specification.
+
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequest::getValueProperty): Raise an exception if a DOM method reports one.
+        (KJS::JSXMLHttpRequestProtoFunc::callAsFunction): Raise an exception if a DOM method
+        reports one, and also if there were too few arguments passed. 
+
+        * bindings/js/kjs_binding.cpp:
+        (KJS::setDOMException): Added support for custom XHR exceptions.
+
+        * xml/xmlhttprequest.h: Changed state names to match the current spec. Defined an
+        exception code range for XHR exceptions.
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::open): Removed a check for m_aborted that could never succeed.
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::getStatus):
+        (WebCore::XMLHttpRequest::getStatusText):
+        (WebCore::XMLHttpRequest::processSyncLoadResults):
+        (WebCore::XMLHttpRequest::receivedAllData):
+        (WebCore::XMLHttpRequest::receivedData):
+
 2006-09-22  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Jeff Jenkins.

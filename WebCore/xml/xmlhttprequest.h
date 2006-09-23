@@ -34,13 +34,19 @@ namespace WebCore {
   class EventListener;
   class String;
 
+  typedef int ExceptionCode;
+
+  const int XMLHttpRequestExceptionOffset = 500;
+  const int XMLHttpRequestExceptionMax = 599;
+  enum XMLHttpRequestExceptionCode { PERMISSION_DENIED = XMLHttpRequestExceptionOffset };
+
   // these exact numeric values are important because JS expects them
   enum XMLHttpRequestState {
-    Uninitialized = 0,  // open() has not been called yet
-    Loading = 1,        // send() has not been called yet
-    Loaded = 2,         // send() has been called, headers and status are available
-    Interactive = 3,    // Downloading, responseText holds the partial data
-    Completed = 4       // Finished with all operations
+    Uninitialized = 0,  // The initial value.
+    Open = 1,           // The open() method has been successfully called.
+    Sent = 2,           // The user agent successfully completed the request, but no data has yet been received.
+    Receiving = 3,      // Immediately before receiving the message body (if any). All HTTP headers have been received.
+    Loaded = 4          // The data transfer has been completed.
   };
 
   class XMLHttpRequest : public Shared<XMLHttpRequest>, ResourceLoaderClient {
@@ -51,13 +57,13 @@ namespace WebCore {
     static void detachRequests(Document*);
     static void cancelRequests(Document*);
 
-    String getStatusText() const;
-    int getStatus() const;
+    String getStatusText(ExceptionCode&) const;
+    int getStatus(ExceptionCode&) const;
     XMLHttpRequestState getReadyState() const;
-    void open(const String& method, const KURL& url, bool async, const String& user, const String& password);
-    void send(const String& body);
+    void open(const String& method, const KURL& url, bool async, const String& user, const String& password, ExceptionCode& ec);
+    void send(const String& body, ExceptionCode&);
     void abort();
-    void setRequestHeader(const String& name, const String &value);
+    void setRequestHeader(const String& name, const String &value, ExceptionCode&);
     void overrideMIMEType(const String& override);
     String getAllResponseHeaders() const;
     String getResponseHeader(const String& name) const;

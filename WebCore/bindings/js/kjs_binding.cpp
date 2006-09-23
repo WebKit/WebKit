@@ -32,6 +32,7 @@
 #include "PlatformString.h"
 #include "Range.h"
 #include "RangeException.h"
+#include "xmlhttprequest.h"
 #include "XPathEvaluator.h"
 #include "kjs_dom.h"
 #include "kjs_window.h"
@@ -312,6 +313,10 @@ static const char * const eventExceptionNames[] = {
     "UNSPECIFIED_EVENT_TYPE_ERR"
 };
 
+static const char * const xmlHttpRequestExceptionNames[] = {
+    "Permission denied"
+};
+
 #ifdef XPATH_SUPPORT
 static const char * const xpathExceptionNames[] = {
     "INVALID_EXPRESSION_ERR",
@@ -343,6 +348,15 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     nameIndex = code;
     nameTable = eventExceptionNames;
     nameTableSize = sizeof(eventExceptionNames) / sizeof(eventExceptionNames[0]);
+  } else if (code >= XMLHttpRequestExceptionOffset && code <= XMLHttpRequestExceptionMax) {
+    // XMLHttpRequest case is special, because there is no exception code assigned (yet?).
+    code -= XMLHttpRequestExceptionOffset;
+    nameIndex = code;
+    nameTable = xmlHttpRequestExceptionNames;
+    nameTableSize = sizeof(xmlHttpRequestExceptionNames) / sizeof(xmlHttpRequestExceptionNames[0]);
+
+    throwError(exec, GeneralError, nameIndex < nameTableSize ? nameTable[nameIndex] : 0);
+    return;
 #ifdef XPATH_SUPPORT
   } else if (code >= XPathExceptionOffset && code <= XPathExceptionMax) {
     type = "DOM XPath";

@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Test XmlHttpRequest zero-length response handling (sync)</title>
+<title>Test XMLHttpRequest zero-length response handling (sync)</title>
 <meta http-equiv="content-type" content="text/html;charset=utf-8">
 <body>
 <p>Test for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=5924">bug 5924</a>
@@ -43,8 +43,13 @@
 
         req.open('GET', url, async);
         log("after open(): " + stateName(req.readyState));
-        req.overrideMimeType('text/xml');
-        log("after overrideMimeType(): " + stateName(req.readyState));
+        try {
+            req.overrideMimeType('text/xml');
+            log("after overrideMimeType(): " + stateName(req.readyState));
+        } catch (ex) {
+            log("overrideMimeType(): " + ex);
+        }
+
         req.send(null);
         log("after send(): " + stateName(req.readyState));
 
@@ -58,13 +63,13 @@
       if (req.readyState == 0)
           return "Uninitialized";
       else if (req.readyState == 1)
-          return "Loading";
+          return "Open";
       else if (req.readyState == 2)
-          return "Loaded";
+          return "Sent";
       else if (req.readyState == 3)
-          return "Interactive";
+          return "Receiving";
       else if (req.readyState == 4)
-          return "Completed";
+          return "Loaded";
       else
         return "???";
     }
@@ -89,7 +94,7 @@
       dumpResponse();
     }
     
-    get('resources/zero-length.txt', false);
+    get('resources/zero-length.xml', false);
     dumpResponse();
 </script>
 </body>

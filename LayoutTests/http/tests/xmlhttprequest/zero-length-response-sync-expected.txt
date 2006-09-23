@@ -3,9 +3,9 @@ Test for bug 5924 - zero-length responses to XMLHTTPRequest mishandled.
 after creation: Uninitialized
 ResponseText: ""
 after setting onreadystatechange: Uninitialized
-after open(): Loading
-after overrideMimeType(): Loading
-after send(): Completed
+after open(): Open
+after overrideMimeType(): Open
+after send(): Loaded
   Status: 200
   StatusText: "OK"
   ResponseText: ""
