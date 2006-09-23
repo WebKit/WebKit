@@ -298,6 +298,8 @@
         to the position-to-move-to's document, not the fragment's document.  The 
         fragment's document is the document used to create the fragment and is irrelavant.
 
+=== Safari-521.27 ===
+
 2006-09-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

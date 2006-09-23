@@ -35,6 +35,8 @@
         * WebView/WebHTMLViewInternal.h: Added two private SPI so that
         the top level WebHTMLView can set and get the initiatedDrag BOOL.
 
+=== Safari-521.27 ===
+
 2006-09-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Omernick

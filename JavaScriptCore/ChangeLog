@@ -21,6 +21,8 @@
         Updated to include the right path.
         * wtf/FastMalloc.h: #include Platform.h, since we use Platform macros.
 
+=== Safari-521.27 ===
+
 2006-09-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Dave Hyatt.
