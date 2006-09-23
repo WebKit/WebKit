@@ -1,3 +1,19 @@
+2006-09-23  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10183
+        REGRESSION: obfuscated JS decoding breaks because of soft hyphen removal
+        (Fanfiction.net author pages not listing stories)
+
+        Rolled out the fix for bug 4139.
+
+        * kjs/lexer.cpp:
+        (Lexer::setCode):
+        (Lexer::shift):
+        * tests/mozilla/ecma/Array/15.4.5.1-1.js:
+        * tests/mozilla/expected.html:
+
 2006-09-22  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

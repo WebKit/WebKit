@@ -114,22 +114,22 @@ void Lexer::setCode(const UString &sourceURL, int startingLineNumber, const KJS:
 #endif
 
   // read first characters
-  shift(4);
+  current = (length > 0) ? code[0].uc : -1;
+  next1 = (length > 1) ? code[1].uc : -1;
+  next2 = (length > 2) ? code[2].uc : -1;
+  next3 = (length > 3) ? code[3].uc : -1;
 }
 
 void Lexer::shift(unsigned int p)
 {
+  // Here would be a good place to strip Cf characters, but that has caused compatibility problems:
+  // <http://bugzilla.opendarwin.org/show_bug.cgi?id=10183>.
   while (p--) {
+    pos++;
     current = next1;
     next1 = next2;
     next2 = next3;
-    do {
-      if (pos >= length) {
-        next3 = -1;
-        break;
-      }
-      next3 = code[pos++].uc;
-    } while (WTF::Unicode::isFormatChar(next3));
+    next3 = (pos + 3 < length) ? code[pos+3].uc : -1;
   }
 }
 

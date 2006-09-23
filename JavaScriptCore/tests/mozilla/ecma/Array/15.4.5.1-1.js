@@ -104,9 +104,7 @@ function getTestCases() {
 
 
     for ( var i = 0X0020, TEST_STRING = "var A = new Array( " ; i < 0x00ff; i++ ) {
-        if (i == 0xAD) // Must skip over soft hyphen, because it's a Cf character and can't be parsed.
-            i++;
-        TEST_STRING += "'\\"+ String.fromCharCode( i ) +"'";
+        TEST_STRING += "\'\\"+ String.fromCharCode( i ) +"\'";
         if ( i < 0x00FF - 1   ) {
             TEST_STRING += ",";
         } else {
@@ -114,7 +112,7 @@ function getTestCases() {
         }
     }
 
-    var LENGTH = 0x00ff - 0x0020 - 1;
+    var LENGTH = 0x00ff - 0x0020;
 
     array[item++] = new TestCase(   SECTION,
                                     TEST_STRING +" A[150] = 'hello'; A[150]",
