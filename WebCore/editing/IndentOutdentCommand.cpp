@@ -50,7 +50,7 @@ static Node* enclosingListOrBlockquote(Node* node)
         return 0;
     Node* root = (node->inDocument()) ? node->rootEditableElement() : highestAncestor(node);
     ASSERT(root);
-    for (Node* n = node->parentNode(); n && (n == root || n->isAncestor(root)); n = n->parentNode())
+    for (Node* n = node->parentNode(); n && (n == root || n->isDescendantOf(root)); n = n->parentNode())
         if (n->hasTagName(ulTag) || n->hasTagName(olTag) || n->hasTagName(blockquoteTag))
             return n;
             

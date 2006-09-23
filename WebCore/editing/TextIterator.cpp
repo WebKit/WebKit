@@ -656,7 +656,7 @@ void SimplifiedBackwardsTextIterator::advance()
             Node *block = m_node->enclosingBlockFlowElement();
             if (block) {
                 Node *nextBlock = next->enclosingBlockFlowElement();
-                if (nextBlock && nextBlock->isAncestor(block))
+                if (nextBlock && nextBlock->isDescendantOf(block))
                     emitNewline();
             }
         }

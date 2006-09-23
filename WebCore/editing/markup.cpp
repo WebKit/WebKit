@@ -377,7 +377,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                     // Close up the ancestors.
                     do {
                         Node *ancestor = ancestorsToClose.last();
-                        if (next != pastEnd && next->isAncestor(ancestor))
+                        if (next != pastEnd && next->isDescendantOf(ancestor))
                             break;
                         // Not at the end of the range, close ancestors up to sibling of next node.
                         markups.append(endMarkup(ancestor));
@@ -389,13 +389,13 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                 // Surround the currently accumulated markup with markup for ancestors we never opened as we leave the subtree(s) rooted at those ancestors.
                 Node* nextParent = next ? next->parentNode() : 0;
                 if (next != pastEnd && n != nextParent) {
-                    Node* lastAncestorClosedOrSelf = n->isAncestor(lastClosed) ? lastClosed : n;
+                    Node* lastAncestorClosedOrSelf = n->isDescendantOf(lastClosed) ? lastClosed : n;
                     for (Node *parent = lastAncestorClosedOrSelf->parent(); parent != 0 && parent != nextParent; parent = parent->parentNode()) {
                         // All ancestors that aren't in the ancestorsToClose list should either be a) unrendered:
                         if (!parent->renderer())
                             continue;
                         // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
-                        ASSERT(startNode->isAncestor(parent));
+                        ASSERT(startNode->isDescendantOf(parent));
                         markups.prepend(startMarkup(parent, range, annotate, defaultStyle.get()));
                         markups.append(endMarkup(parent));
                         if (nodes)

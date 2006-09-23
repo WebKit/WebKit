@@ -97,12 +97,12 @@ void FormatBlockCommand::doApply()
     RefPtr<Node> placeholder = createBreakElement(document());
     
     Node* root = endingSelection().start().node()->rootEditableElement();
-    if (refNode == root || root->isAncestor(refNode))
+    if (refNode == root || root->isDescendantOf(refNode))
         refNode = paragraphStart.deepEquivalent().node();
     
     Position upstreamStart = paragraphStart.deepEquivalent().upstream();
     if ((validBlockTag(refNode->nodeName().lower()) && paragraphStart == blockStart && paragraphEnd == blockEnd) ||
-        !upstreamStart.node()->isAncestor(root))
+        !upstreamStart.node()->isDescendantOf(root))
         // Already in a valid block tag that only contains the current paragraph, so we can swap with the new tag
         insertNodeBefore(blockNode.get(), refNode);
     else {

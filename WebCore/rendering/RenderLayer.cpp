@@ -1297,7 +1297,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Else, our renderer tree may or may not contain the painting root, so we pass that root along
     // so it will be tested against as we decend through the renderers.
     RenderObject *paintingRootForRenderer = 0;
-    if (paintingRoot && !m_object->hasAncestor(paintingRoot))
+    if (paintingRoot && !m_object->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
     
     // We want to paint our layer, but only if we intersect the damage rect.

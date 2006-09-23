@@ -246,7 +246,7 @@ VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& positio
         return VisiblePosition(Position(highestRoot, 0));
 
     Position p = nextVisuallyDistinctCandidate(position);
-    while (p.isNotNull() && !isEditablePosition(p) && p.node()->isAncestor(highestRoot))
+    while (p.isNotNull() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot))
         p = isAtomicNode(p.node()) ? positionAfterNode(p.node()) : nextVisuallyDistinctCandidate(p);
 
     return VisiblePosition(p);
@@ -258,7 +258,7 @@ VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& positio
         return VisiblePosition(Position(highestRoot, maxDeepOffset(highestRoot)));
     
     Position p = previousVisuallyDistinctCandidate(position);
-    while (p.isNotNull() && !isEditablePosition(p) && p.node()->isAncestor(highestRoot))
+    while (p.isNotNull() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot))
         p = isAtomicNode(p.node()) ? positionBeforeNode(p.node()) : previousVisuallyDistinctCandidate(p);
 
     return VisiblePosition(p);
@@ -542,7 +542,7 @@ Node* enclosingNodeWithTag(Node* node, const QualifiedName& tagName)
         return 0;
     Node* root = (node->inDocument()) ? node->rootEditableElement() : highestAncestor(node);
     ASSERT(root);
-    for (Node* n = node->parentNode(); n && (n == root || n->isAncestor(root)); n = n->parentNode())
+    for (Node* n = node->parentNode(); n && (n == root || n->isDescendantOf(root)); n = n->parentNode())
         if (n->hasTagName(tagName))
             return n;
             
@@ -567,7 +567,7 @@ Node* enclosingList(Node* node)
         return 0;
     Node* root = (node->inDocument()) ? node->rootEditableElement() : highestAncestor(node);
     ASSERT(root);
-    for (Node* n = node->parentNode(); n && (n == root || n->isAncestor(root)); n = n->parentNode())
+    for (Node* n = node->parentNode(); n && (n == root || n->isDescendantOf(root)); n = n->parentNode())
         if (n->hasTagName(ulTag) || n->hasTagName(olTag))
             return n;
             
@@ -582,7 +582,7 @@ Node* enclosingListChild (Node *node)
     // will appear visually as a list item (but without a list marker)
     Node* root = (node->inDocument()) ? node->rootEditableElement() : highestAncestor(node);
     ASSERT(root);
-    for (Node *n = node; n && n->parentNode() && (n == root || n->isAncestor(root)); n = n->parentNode()) {
+    for (Node *n = node; n && n->parentNode() && (n == root || n->isDescendantOf(root)); n = n->parentNode()) {
         if (n->hasTagName(liTag) || isListElement(n->parentNode()))
             return n;
     }

@@ -1,3 +1,60 @@
+2006-09-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8029>
+        Rename Node::isAncestor and RenderObject::hasAncestor to isDescendantOf
+
+        * dom/Document.cpp:
+        (WebCore::Document::clearSelectionIfNeeded):
+        * dom/Element.cpp:
+        (WebCore::Element::contains):
+        * dom/Node.cpp:
+        (WebCore::Node::traverseNextNode):
+        (WebCore::Node::traverseNextSibling):
+        (WebCore::Node::traversePreviousNodePostOrder):
+        (WebCore::Node::checkAddChild):
+        (WebCore::Node::isDescendantOf):
+        * dom/Node.h:
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::notifyBeforeNodeRemoval):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        (WebCore::ApplyStyleCommand::pushDownTextDecorationStyleAroundNode):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::mergeIdenticalElements):
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::updatePositionForNodeRemoval):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::doApply):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::enclosingListOrBlockquote):
+        * editing/Selection.cpp:
+        (WebCore::Selection::validate):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::nodeWillBeRemoved):
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::advance):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::next):
+        (WebCore::VisiblePosition::previous):
+        (WebCore::VisiblePosition::canonicalPosition):
+        (WebCore::isFirstVisiblePositionInNode):
+        (WebCore::isLastVisiblePositionInNode):
+        * editing/htmlediting.cpp:
+        (WebCore::firstEditablePositionAfterPositionInRoot):
+        (WebCore::lastEditablePositionBeforePositionInRoot):
+        (WebCore::enclosingNodeWithTag):
+        (WebCore::enclosingList):
+        (WebCore::enclosingListChild):
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+
 2006-09-22  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

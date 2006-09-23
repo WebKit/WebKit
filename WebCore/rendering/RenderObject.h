@@ -129,7 +129,7 @@ public:
     virtual ~RenderObject();
 
     RenderObject *parent() const { return m_parent; }
-    bool hasAncestor(const RenderObject *obj) const;
+    bool isDescendantOf(const RenderObject *obj) const;
 
     RenderObject *previousSibling() const { return m_previous; }
     RenderObject *nextSibling() const { return m_next; }

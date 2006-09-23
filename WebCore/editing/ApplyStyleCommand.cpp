@@ -379,7 +379,7 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
     // If the end node is before the start node (can only happen if the end node is
     // an ancestor of the start node), we gather nodes up to the next sibling of the end node
     Node *beyondEnd;
-    if (start.node()->isAncestor(end.node()))
+    if (start.node()->isDescendantOf(end.node()))
         beyondEnd = end.node()->traverseNextSibling();
     else
         beyondEnd = end.node()->traverseNextNode();
@@ -479,7 +479,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
     // If the end node is before the start node (can only happen if the end node is
     // an ancestor of the start node), we gather nodes up to the next sibling of the end node
     Node *beyondEnd;
-    if (start.node()->isAncestor(end.node()))
+    if (start.node()->isDescendantOf(end.node()))
         beyondEnd = end.node()->traverseNextSibling();
     else
         beyondEnd = end.node()->traverseNextNode();
@@ -621,7 +621,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
         endNode = end.node()->lastDescendant();
     // If the end node is an ancestor of the start node then a pre-order
     // traversal will never reach it.  Adjust it so that this won't happen.
-    if (node->isAncestor(endNode))
+    if (node->isDescendantOf(endNode))
         endNode = endNode->lastDescendant();
     
     if (node == endNode) {
@@ -867,7 +867,7 @@ void ApplyStyleCommand::pushDownTextDecorationStyleAroundNode(Node *node, const 
 
                 if (node == child) {
                     nextCurrent = child;
-                } else if (node->isAncestor(child)) {
+                } else if (node->isDescendantOf(child)) {
                     applyTextDecorationStyle(child, decoration.get());
                     nextCurrent = child;
                 } else {

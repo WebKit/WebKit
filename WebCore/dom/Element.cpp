@@ -492,7 +492,7 @@ bool Element::contains(const Node* node) const
 {
     if (!node)
         return false;
-    return this == node || node->isAncestor(this);
+    return this == node || node->isDescendantOf(this);
 }
 
 void Element::createAttributeMap() const

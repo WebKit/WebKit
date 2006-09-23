@@ -133,7 +133,6 @@ my %renames = (
     "StreamingTextDecoderICU_H" => "TextCodecICU_h",
     "Decoder" => "TextResourceDecoder",
     "Decoder_h" => "TextResourceDecoder_h",
-    "isAncestor" => "hasAncestor",
 );
 
 # rename files

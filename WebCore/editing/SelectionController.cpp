@@ -140,10 +140,10 @@ void SelectionController::nodeWillBeRemoved(Node *node)
     Node* start = m_sel.start().node();
     Node* end = m_sel.end().node();
     
-    bool baseRemoved = node == base || (base && base->isAncestor(node));
-    bool extentRemoved = node == extent || (extent && extent->isAncestor(node));
-    bool startRemoved = node == start || (start && start->isAncestor(node));
-    bool endRemoved = node == end || (end && end->isAncestor(node));
+    bool baseRemoved = node == base || (base && base->isDescendantOf(node));
+    bool extentRemoved = node == extent || (extent && extent->isDescendantOf(node));
+    bool startRemoved = node == start || (start && start->isDescendantOf(node));
+    bool endRemoved = node == end || (end && end->isDescendantOf(node));
     
     bool clearRenderTreeSelection = false;
     bool clearDOMTreeSelection = false;

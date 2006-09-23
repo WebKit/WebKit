@@ -278,7 +278,7 @@ void Selection::validate()
             else {
                 m_end = startOfNextParagraph.deepEquivalent();
                 // Stay within enclosing node, e.g. do not span end of table.
-                if (visibleParagraphEnd.deepEquivalent().node()->isAncestor(m_end.node()))
+                if (visibleParagraphEnd.deepEquivalent().node()->isDescendantOf(m_end.node()))
                     m_end = visibleParagraphEnd.deepEquivalent();
             }
             break;

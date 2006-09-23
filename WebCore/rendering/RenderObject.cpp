@@ -191,7 +191,7 @@ RenderObject::~RenderObject()
 #endif
 }
 
-bool RenderObject::hasAncestor(const RenderObject *obj) const
+bool RenderObject::isDescendantOf(const RenderObject *obj) const
 {
     for (const RenderObject *r = this; r; r = r->m_parent)
         if (r == obj)

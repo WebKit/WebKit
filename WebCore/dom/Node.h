@@ -323,7 +323,7 @@ public:
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     
     void checkSetPrefix(const AtomicString& prefix, ExceptionCode&);
-    bool isAncestor(const Node*) const;
+    bool isDescendantOf(const Node*) const;
 
     // These two methods are mutually exclusive.  The former is used to do strict error-checking
     // when adding children via the public DOM API (e.g., appendChild()).  The latter is called only when parsing, 
