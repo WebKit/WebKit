@@ -705,7 +705,7 @@ bool CSSParser::parseValue(int propId, bool important)
             Vector<int> coords;
             value = valueList->next();
             while (value && value->unit == CSSPrimitiveValue::CSS_NUMBER) {
-                coords.append(value->fValue);
+                coords.append(int(value->fValue));
                 value = valueList->next();
             }
             IntPoint hotspot;

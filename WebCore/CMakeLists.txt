@@ -731,6 +731,7 @@ set(WebCore_SRCS
     css/CSSStyleDeclaration.cpp
     css/CSSPrimitiveValue.cpp
     css/CSSProperty.cpp
+    css/CSSCursorImageValue.cpp
     css/CSSBorderImageValue.cpp
     css/MediaQuery.cpp
     css/StyleSheet.cpp
