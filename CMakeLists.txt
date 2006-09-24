@@ -17,6 +17,27 @@ IF (WEBKIT_USE_SVG_SUPPORT)
     add_definitions (-DSVG_SUPPORT=1)
 ENDIF (WEBKIT_USE_SVG_SUPPORT)
 
+# Global switch for XPath support
+OPTION (WEBKIT_USE_XPATH_SUPPORT "Compile WebKit with XPath support." ON)
+
+IF (WEBKIT_USE_XPATH_SUPPORT)
+    add_definitions (-DXPATH_SUPPORT=1)
+ENDIF (WEBKIT_USE_XPATH_SUPPORT)
+
+# Global switch for XSLT support
+OPTION (WEBKIT_USE_XSLT_SUPPORT "Compile WebKit with XSLT support." ON)
+
+IF (WEBKIT_USE_XSLT_SUPPORT)
+    add_definitions (-DXSLT_SUPPORT=1)
+ENDIF (WEBKIT_USE_XSLT_SUPPORT)
+
+# Global switch for XBL support
+OPTION (WEBKIT_USE_XBL_SUPPORT "Compile WebKit with XBL support." OFF)
+
+IF (WEBKIT_USE_XBL_SUPPORT)
+    add_definitions (-DXBL_SUPPORT=1)
+ENDIF (WEBKIT_USE_XBL_SUPPORT)
+
 # search packages used by KDE
 find_package (KDE4 REQUIRED)
 include (KDE4Defaults)

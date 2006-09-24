@@ -1,3 +1,12 @@
+2006-09-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.
+
+        Qt/Linux build system changes: enable xpath/xslt by default.
+        Offer possibility to change all of these using 'ccmake'.
+
+        * CMakeLists.txt:
+
 2006-09-24  Dave Hyatt  <hyatt@apple.com>
 
         Cleanup of Scrollbar APIs.  Rename setKnobProportion to setProportion.  Rename setScrollbarValue to updateThumbPosition.

@@ -64,11 +64,31 @@ kde4_automoc(platform/qt/SharedTimerQt.cpp)
 kde4_automoc(platform/qt/ScrollViewCanvasQt.cpp)
 kde4_automoc(platform/qt/ResourceLoaderManager.cpp)
 
-SET(FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT XPATH_SUPPORT)
+SET(FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT)
+
+IF (WEBKIT_USE_XPATH_SUPPORT)
+SET(FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} XPATH_SUPPORT)
+
+set(IDL_BINDINGS_XPATH
+  xml/XPathExpression.idl
+  xml/XPathNSResolver.idl
+  xml/XPathEvaluator.idl
+  xml/XPathResult.idl
+)
+
+ENDIF (WEBKIT_USE_XPATH_SUPPORT)
+
+IF (WEBKIT_USE_XSLT_SUPPORT)
+SET(FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} XSLT_SUPPORT)
+ENDIF (WEBKIT_USE_XSLT_SUPPORT)
+
+IF (WEBKIT_USE_XBL_SUPPORT)
+SET(FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} XBL_SUPPORT)
+ENDIF (WEBKIT_USE_XBL_SUPPORT)
 
 # rules for generated files
 IF (WEBKIT_USE_SVG_SUPPORT)
-SET(FEATURE_DEFINES_JAVASCRIPT LANGUAGE_JAVASCRIPT SVG_SUPPORT)
+SET(FEATURE_DEFINES_JAVASCRIPT ${FEATURE_DEFINES_JAVASCRIPT} SVG_SUPPORT)
 
 set(IDL_BINDINGS_SVG
 
@@ -276,17 +296,13 @@ set(IDL_BINDINGS
   html/HTMLUListElement.idl
   html/HTMLOptionsCollection.idl
 
-  xml/XPathNSResolver.idl
-  xml/XPathExpression.idl
-  xml/XPathResult.idl
-  xml/XPathEvaluator.idl
- 
   xml/DOMParser.idl
   xml/XMLSerializer.idl
 
   page/DOMWindow.idl
 
   ${IDL_BINDINGS_SVG}
+  ${IDL_BINDINGS_XPATH}
 )
 
 set(WebCore-unity-IDLGeneratedSources )
@@ -403,6 +419,16 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/CSSGrammar.cpp ${CMAKE_CUR
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/css/CSSGrammar.y
 )
 
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/XPathGrammar.cpp ${CMAKE_CURRENT_BINARY_DIR}/XPathGrammar.h
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND ${BISON_EXECUTABLE} -d -p xpathyy ${CMAKE_CURRENT_SOURCE_DIR}/xml/XPathGrammar.y
+  COMMAND mv XPathGrammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/XPathGrammar.cpp
+  #COMMAND rm -f XPathGrammar.tab.h
+  #COMMAND touch XPathGrammar.h
+  COMMAND mv XPathGrammar.tab.h ${CMAKE_CURRENT_BINARY_DIR}/XPathGrammar.h
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/xml/XPathGrammar.y
+)
+
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/html/HTMLNames.cpp ${CMAKE_CURRENT_BINARY_DIR}/html/HTMLNames.h
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/html
@@ -479,8 +505,15 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/UserAgentStyleSheets.h ${C
 )
 
 # source stuff
+if (WEBKIT_USE_XPATH_SUPPORT)
+SET (XPATH_SOURCES
+    ${CMAKE_CURRENT_BINARY_DIR}/XPathGrammar.h
+    ${CMAKE_CURRENT_BINARY_DIR}/XPathGrammar.cpp
+)
+ENDIF (WEBKIT_USE_XPATH_SUPPORT)
+
 IF (WEBKIT_USE_SVG_SUPPORT)
-set (SVG_STUFF
+set (SVG_SOURCES
     ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/svg/SVGNames.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/svg/SVGElementFactory.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/ksvg2/misc/XLinkNames.cpp
@@ -771,7 +804,9 @@ set(WebCore_SRCS
 #   kwq/KWQWMatrix.cpp
 #   kwq/KWQCString.cpp
 
-    ${SVG_STUFF}
+    ${SVG_SOURCES}
+    ${XPATH_SOURCES}
+
     editing/InsertIntoTextNodeCommand.cpp
     editing/WrapContentsInDummySpanCommand.cpp
     editing/ReplaceSelectionCommand.cpp
