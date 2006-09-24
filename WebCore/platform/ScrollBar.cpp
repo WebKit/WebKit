@@ -49,12 +49,20 @@ bool ScrollBar::setValue(int v)
         return false; // Our value stayed the same.
     m_currentPos = v;
 
-    setScrollBarValue(v);
+    updateThumbPosition();
 
     if (client())
         client()->valueChanged(this);
     
     return true;
+}
+
+void ScrollBar::setProportion(int visibleSize, int totalSize)
+{
+    m_visibleSize = visibleSize;
+    m_totalSize = totalSize;
+
+    updateThumbProportion();
 }
 
 void ScrollBar::setSteps(int lineStep, int pageStep)

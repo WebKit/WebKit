@@ -69,14 +69,12 @@ public:
 
     ScrollBarOrientation orientation() const { return m_orientation; }
     int value() const { return m_currentPos; } 
-    
-    virtual void setScrollBarValue(int) = 0;
-    virtual void setKnobProportion(int visibleSize, int totalSize) = 0;
 
     void setSteps(int lineStep, int pageStep);
     
     bool setValue(int);
-    
+    void setProportion(int visibleSize, int totalSize);
+
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0);
     
     virtual int width() const = 0;
@@ -93,6 +91,9 @@ public:
     }
 
 protected:
+    virtual void updateThumbPosition() = 0;
+    virtual void updateThumbProportion() = 0;
+
     ScrollBarClient* client() const { return m_client; }
 
     ScrollBarClient* m_client;

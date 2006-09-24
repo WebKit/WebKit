@@ -1,3 +1,25 @@
+2006-09-24  Dave Hyatt  <hyatt@apple.com>
+
+        Cleanup of Scrollbar APIs.  Rename setKnobProportion to setProportion.  Rename setScrollbarValue to updateThumbPosition.
+        Give setProportion a base class implementation and implement it using the same pattern as setValue/updateThumbPosition (so that
+        the base calls a protected virtual function, updateThumbProportion, implemented by the derived class to update the actual scrollbar itself).
+
+        * platform/ScrollBar.cpp:
+        (WebCore::ScrollBar::setValue):
+        (WebCore::ScrollBar::setProportion):
+        * platform/ScrollBar.h:
+        (WebCore::ScrollBar::value):
+        * platform/mac/PlatformScrollBar.h:
+        * platform/mac/PlatformScrollBarMac.mm:
+        (WebCore::PlatformScrollBar::updateThumbPosition):
+        (WebCore::PlatformScrollBar::updateThumbProportion):
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (PlatformScrollBar::updateThumbPosition):
+        (PlatformScrollBar::updateThumbProportion):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+
 2006-09-23  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Eric.

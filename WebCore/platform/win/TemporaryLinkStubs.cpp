@@ -348,8 +348,8 @@ int PlatformScrollBar::width() const { return 0; }
 int PlatformScrollBar::height() const { return 0; }
 void PlatformScrollBar::setEnabled(bool) { }
 void PlatformScrollBar::paint(GraphicsContext*, const IntRect& damageRect) { }
-void PlatformScrollBar::setScrollBarValue(int v) { }
-void PlatformScrollBar::setKnobProportion(int visibleSize, int totalSize) { }
+void PlatformScrollBar::updateThumbPosition() { }
+void PlatformScrollBar::updateThumbProportion() { }
 void PlatformScrollBar::setRect(const IntRect&) { }
 
 ScrollBar::ScrollBar(ScrollBarClient*, ScrollBarOrientation) { }

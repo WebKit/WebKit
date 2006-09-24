@@ -121,7 +121,7 @@ PlatformScrollBar::~PlatformScrollBar()
     removeFromSuperview();
 }
 
-void PlatformScrollBar::setScrollBarValue(int v)
+void PlatformScrollBar::updateThumbPosition()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WebCoreScrollBar *bar = (WebCoreScrollBar *)getView();
@@ -130,10 +130,8 @@ void PlatformScrollBar::setScrollBarValue(int v)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void PlatformScrollBar::setKnobProportion(int visibleArea, int totalArea)
+void PlatformScrollBar::updateThumbProportion()
 {
-    m_visibleSize = visibleArea;
-    m_totalSize = totalArea;
     float val = (float)m_visibleSize/m_totalSize;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
