@@ -280,7 +280,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -350,7 +350,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 
 - (WebCore::Node *)_node
 {
-    return DOM_cast<WebCore::Node*>(_internal);
+    return reinterpret_cast<WebCore::Node*>(_internal);
 }
 
 - (const KJS::Bindings::RootObject *)_executionContext
@@ -521,14 +521,14 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 - (void)dealloc
 {
     if (_internal)
-        DOM_cast<WebCore::Range*>(_internal)->deref();
+        reinterpret_cast<WebCore::Range*>(_internal)->deref();
     [super dealloc];
 }
 
 - (void)finalize
 {
     if (_internal)
-        DOM_cast<WebCore::Range*>(_internal)->deref();
+        reinterpret_cast<WebCore::Range*>(_internal)->deref();
     [super finalize];
 }
 
@@ -733,7 +733,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -754,7 +754,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 
 - (WebCore::Range *)_range
 {
-    return DOM_cast<WebCore::Range*>(_internal);
+    return reinterpret_cast<WebCore::Range*>(_internal);
 }
 
 @end
@@ -779,7 +779,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -800,20 +800,20 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 
 - (WebCore::NodeFilter *)_nodeFilter
 {
-    return DOM_cast<WebCore::NodeFilter*>(_internal);
+    return reinterpret_cast<WebCore::NodeFilter*>(_internal);
 }
 
 - (void)dealloc
 {
     if (_internal)
-        DOM_cast<WebCore::NodeFilter*>(_internal)->deref();
+        reinterpret_cast<WebCore::NodeFilter*>(_internal)->deref();
     [super dealloc];
 }
 
 - (void)finalize
 {
     if (_internal)
-        DOM_cast<WebCore::NodeFilter*>(_internal)->deref();
+        reinterpret_cast<WebCore::NodeFilter*>(_internal)->deref();
     [super finalize];
 }
 
@@ -835,7 +835,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     m_filter = [filter retain];
@@ -844,7 +844,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 
 - (WebCore::NodeIterator *)_nodeIterator
 {
-    return DOM_cast<WebCore::NodeIterator*>(_internal);
+    return reinterpret_cast<WebCore::NodeIterator*>(_internal);
 }
 
 + (DOMNodeIterator *)_nodeIteratorWith:(WebCore::NodeIterator *)impl filter:(id <DOMNodeFilter>)filter
@@ -873,7 +873,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     m_filter = [filter retain];
@@ -882,7 +882,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
 
 - (WebCore::TreeWalker *)_treeWalker
 {
-    return DOM_cast<WebCore::TreeWalker *>(_internal);
+    return reinterpret_cast<WebCore::TreeWalker *>(_internal);
 }
 
 + (DOMTreeWalker *)_treeWalkerWith:(WebCore::TreeWalker *)impl filter:(id <DOMNodeFilter>)filter

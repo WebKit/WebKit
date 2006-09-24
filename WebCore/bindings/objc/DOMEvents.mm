@@ -53,7 +53,7 @@
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;

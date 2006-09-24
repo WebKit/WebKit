@@ -27,23 +27,34 @@ use File::stat;
 # Global Variables
 my $module = "";
 my $outputDir = "";
-my %implIncludes = ();
-my %headerForwardDeclarations = ();
-my %privateHeaderForwardDeclarations = ();
-my %headerForwardDeclarationsForProtocols = ();
-my %privateHeaderForwardDeclarationsForProtocols = ();
 my %publicInterfaces = ();
 my $newPublicClass = 0;
 my $isProtocol = 0;
 my @ivars = ();
-my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} <= 10.4;
-my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5;
+
+my @headerContentHeader = ();
+my @headerContent = ();
+my %headerForwardDeclarations = ();
+my %headerForwardDeclarationsForProtocols = ();
+
+my @privateHeaderContentHeader = ();
+my @privateHeaderContent = ();
+my %privateHeaderForwardDeclarations = ();
+my %privateHeaderForwardDeclarationsForProtocols = ();
+
+my @intenalHeaderContent = ();
+
+my @implContentHeader = ();
+my @implContent = ();
+my %implIncludes = ();
 
 # Hashes
 my %protocolTypeHash = ("XPathNSResolver" => 1, "EventListener" => 1, "EventTarget" => 1, "NodeFilter" => 1);
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 
 # Constants
+my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} <= 10.4;
+my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5;
 my $exceptionInit = "WebCore::ExceptionCode ec = 0;";
 my $exceptionRaiseOnError = "raiseOnDOMError(ec);";
 
@@ -191,9 +202,9 @@ sub GenerateInterface
 sub GenerateModule
 {
     my $object = shift;
-    my $dataNode = shift;  
+    my $dataNode = shift;
     
-    $module = $dataNode->module;    
+    $module = $dataNode->module;
 }
 
 sub GetClassName
@@ -211,13 +222,14 @@ sub GetClassName
 
     # Default, assume Objective-C type has the same type name as
     # idl type prefixed with "DOM".
-    return "DOM" . $name;
+    return "DOM$name";
 }
 
 sub GetClassHeaderName
 {
     my $name = shift;
-    $name = "DOM" . $name if $name eq "DOMImplementation";
+
+    return "DOMDOMImplementation" if $name eq "DOMImplementation";
     return $name;
 }
 
@@ -268,9 +280,9 @@ sub GetObjCType
     my $type = shift;
     my $name = GetClassName($type);
 
-    return "id <" . $name . ">" if IsProtocolType($type);
+    return "id <$name>" if IsProtocolType($type);
     return $name if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMTimeStamp";
-    return $name . " *";
+    return "$name *";
 }
 
 sub GetObjCTypeMaker
@@ -281,7 +293,7 @@ sub GetObjCTypeMaker
     return "_RGBColorWithRGB" if $type eq "RGBColor";
 
     my $typeMaker = "";
-    if ($type =~ /^(HTML|CSS)/ or $type eq "DOMImplementation" or $type eq "CDATASection") {
+    if ($type =~ /^(HTML|CSS|SVG)/ or $type eq "DOMImplementation" or $type eq "CDATASection") {
         $typeMaker = $type;
     } elsif ($type =~ /^XPath(.+)/) {
         $typeMaker = "xpath" . $1;
@@ -305,7 +317,7 @@ sub GetObjCTypeGetterName
     return "" if $codeGenerator->IsPrimitiveType($type) or IsStringType($type) or $type eq "URL" or $type eq "DOMTimeStamp";
 
     my $typeGetter = "";
-    if ($type =~ /^(HTML|CSS)/ or $type eq "DOMImplementation" or $type eq "CDATASection") {
+    if ($type =~ /^(HTML|CSS|SVG)/ or $type eq "DOMImplementation" or $type eq "CDATASection") {
         $typeGetter = $type;
     } elsif ($type =~ /^XPath(.+)/) {
         $typeGetter = "xpath" . $1;
@@ -387,7 +399,7 @@ sub AddIncludesForType
 
     # Temp DOMViews.h
     if ($type eq "DOMWindow") {
-        $implIncludes{"DOMViews.h"} = 1;
+        $implIncludes{"DOMAbstractView.h"} = 1;
         $implIncludes{"$type.h"} = 1;
         return;
     }
@@ -405,16 +417,9 @@ sub AddIncludesForType
         return;
     }
 
-    # FIXME: for some reason it won't compile without both CSSStyleDeclaration.h
-    # and CSSMutableStyleDeclaration.h
+    # FIXME: won't compile without these
     $implIncludes{"CSSMutableStyleDeclaration.h"} = 1 if $type eq "CSSStyleDeclaration";
-
-    # FIXME: for some reason it won't compile without both NamedNodeMap.h
-    # and NamedAttrMap.h
     $implIncludes{"NamedAttrMap.h"} = 1 if $type eq "NamedNodeMap";
-
-    # FIXME: for some reason it won't compile without both NodeList.h
-    # and NameNodeList.h
     $implIncludes{"NameNodeList.h"} = 1 if $type eq "NodeList";
 
     # Default, include the same named file (the implementation) and the same name prefixed with "DOM". 
@@ -427,8 +432,11 @@ sub GenerateHeader
     my $object = shift;
     my $dataNode = shift;
 
-    # Make sure that we don't have more than one parent.
-    die "A class can't have more than one parent in ObjC." if @{$dataNode->parents} > 1;
+    # We only support multiple parents with SVG (for now).
+    if (@{$dataNode->parents} > 1) {
+        die "A class can't have more than one parent" unless $module eq "SVG";
+        $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode);
+    }
 
     my $interfaceName = $dataNode->name;
     my $className = GetClassName($interfaceName);
@@ -442,9 +450,6 @@ sub GenerateHeader
     # - Add default header template
     @headerContentHeader = split("\r", $headerLicenceTemplate);
     push(@headerContentHeader, "\n");
-    
-    # - Add a check for the appropriate conditional variable
-    push(@headerContent, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
 
     # - INCLUDES -
     unless ($isProtocol) {
@@ -629,9 +634,6 @@ sub GenerateHeader
         @privateHeaderContentHeader = split("\r", $headerLicenceTemplate);
         push(@headerContentHeader, "\n");
 
-        # - Add a check for the appropriate conditional variable
-        push(@privateHeaderContentHeader, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
-        
         my $classHeaderName = GetClassHeaderName($className);
         push(@privateHeaderContentHeader, "#import <WebCore/$classHeaderName.h>\n\n");
 
@@ -641,13 +643,7 @@ sub GenerateHeader
         push(@privateHeaderContent, "\n") if $buildingForLeopardOrLater and @privateHeaderAttributes > 0 and @privateHeaderFunctions > 0;
         push(@privateHeaderContent, @privateHeaderFunctions) if @privateHeaderFunctions > 0;
         push(@privateHeaderContent, "\@end\n");
-        
-        # - End the ifdef conditional if necessary (for the private header)
-        push(@privateHeaderContent, "\n#endif // ${conditional}_SUPPORT\n\n") if $conditional;
     }
-    
-    # - End the ifdef conditional if necessary
-    push(@headerContent, "\n#endif // ${conditional}_SUPPORT\n\n") if $conditional;
 }
 
 sub GenerateImplementation
@@ -660,6 +656,7 @@ sub GenerateImplementation
     my $implClassName = GetImplClassName($interfaceName);
     my $parentImplClassName = GetParentImplClassName($dataNode);
     my $implClassNameWithNamespace = "WebCore::" . $implClassName;
+    my $classHeaderName = GetClassHeaderName($className);
     my $conditional = $dataNode->extendedAttributes->{"Conditional"};
 
     my $numAttributes = @{$dataNode->attributes};
@@ -669,21 +666,15 @@ sub GenerateImplementation
     @implContentHeader = split("\r", $implementationLicenceTemplate);
 
     # - INCLUDES -
-    push(@implContentHeader, "\n#import \"config.h\"\n\n");
-    push(@implContentHeader, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
-
-    my $classHeaderName = GetClassHeaderName($className);
+    push(@implContentHeader, "\n#import \"config.h\"\n");
+    push(@implContentHeader, "\n#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
     push(@implContentHeader, "#import \"$classHeaderName.h\"\n\n");
-
     push(@implContentHeader, "#import <wtf/GetPtr.h>\n\n");
 
     $implIncludes{"$implClassName.h"} = 1;
     $implIncludes{"DOMInternal.h"} = 1;
 
     @implContent = ();
-
-    # START implementation
-    push(@implContent, "\@implementation $className\n\n");
 
     # add implementation accessor
     # FIXME: CSSStyleSheet should not need special casing like this.
@@ -701,6 +692,9 @@ sub GenerateImplementation
 
         push(@implContent, "#define IMPL static_cast<$implClassNameWithNamespace*>(reinterpret_cast<$internalBaseType*>(_internal))\n\n");
     }
+
+    # START implementation
+    push(@implContent, "\@implementation $className\n\n");
 
     # Only generate 'dealloc' and 'finalize' methods for direct subclasses of DOMObject.
     if ($parentImplClassName eq "Object") {
@@ -1054,12 +1048,15 @@ sub GenerateImplementation
         # - Type-Getter
         # - (WebCore::FooBar *)_fooBar for implementation class FooBar
         my $typeGetterName = GetObjCTypeGetterName($interfaceName);
-        push(@implContent, "- ($implClassNameWithNamespace *)$typeGetterName\n");
+        my $typeGetterSig = "- ($implClassNameWithNamespace *)$typeGetterName";
+        push(@implContent, "$typeGetterSig\n");
         push(@implContent, "{\n");
         push(@implContent, "    return IMPL;\n");
         push(@implContent, "}\n\n");            
 
         # - Type-Maker
+        my $typeMakerName = GetObjCTypeMaker($interfaceName);
+        my $typeMakerSig = "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl";
         if ($parentImplClassName eq "Object") {        
             # - (id)_initWithFooBar:(WebCore::FooBar *)impl for implementation class FooBar
             my $initWithImplName = "_initWith" . $implClassName;
@@ -1073,8 +1070,7 @@ sub GenerateImplementation
             push(@implContent, "}\n\n");
     
             # - (DOMFooBar)_FooBarWith:(WebCore::FooBar *)impl for implementation class FooBar
-            my $typeMakerName = GetObjCTypeMaker($interfaceName);
-            push(@implContent, "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl\n");
+            push(@implContent, "$typeMakerSig\n");
             push(@implContent, "{\n");
             push(@implContent, "    if (!impl)\n");
             push(@implContent, "        return nil;\n");
@@ -1086,16 +1082,24 @@ sub GenerateImplementation
             push(@implContent, "}\n\n");
         } else {
             # - (DOMFooBar)_FooBarWith:(WebCore::FooBar *)impl for implementation class FooBar
-            my $typeMakerName = GetObjCTypeMaker($interfaceName);
-            push(@implContent, "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl\n");
+            push(@implContent, "$typeMakerSig\n");
             push(@implContent, "{\n");
             push(@implContent, "    return static_cast<$className*>([DOMNode _nodeWith:impl]);\n");
             push(@implContent, "}\n\n");
         }
-
         # END WebCoreInternal category
         push(@implContent, "\@end\n");
+        
+        # Generate interface definitions. 
+        @intenalHeaderContent = split("\r", $implementationLicenceTemplate);
+        push(@intenalHeaderContent, "\n#import \"$className.h\"\n\n");
+        push(@intenalHeaderContent, "namespace WebCore { class $implClassName; }\n\n");
+        push(@intenalHeaderContent, "\@interface $className (WebCoreInternal)\n");
+        push(@intenalHeaderContent, "- ($implClassNameWithNamespace *)$typeGetterName;\n");
+        push(@intenalHeaderContent, "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl;\n");
+        push(@intenalHeaderContent, "\@end\n");
     }
+
     # - End the ifdef conditional if necessary
     push(@implContent, "\n#endif // ${conditional}_SUPPORT\n\n") if $conditional;
 }
@@ -1110,83 +1114,76 @@ sub WriteData
     my $headerFileName = "$outputDir/" . $name . ".h";
     my $privateHeaderFileName = "$outputDir/" . $name . "Private.h";
     my $implFileName = "$outputDir/" . $name . ".mm";
+    my $internalHeaderFileName = "$outputDir/" . $name . "Internal.h";
 
     # Remove old files.
     unlink($headerFileName);
     unlink($privateHeaderFileName);
     unlink($implFileName);
-
-    # Write implementation file.
-    unless ($isProtocol) {
-        open($IMPL, ">$implFileName") or die "Couldn't open file $implFileName";
-
-        print $IMPL @implContentHeader;
-
-        foreach my $implInclude (sort keys(%implIncludes)) {
-            print $IMPL "#import \"$implInclude\"\n";
-        }
-
-        print $IMPL "\n" if keys(%implIncludes) > 0;
-        print $IMPL @implContent;
-
-        close($IMPL);
-        undef($IMPL);
-
-        @implHeaderContent = "";
-        @implContent = "";    
-        %implIncludes = ();
-    }
+    unlink($internalHeaderFileName);
 
     # Write public header.
-    open($HEADER, ">$headerFileName") or die "Couldn't open file $headerFileName";
-    print $HEADER @headerContentHeader;
+    open(HEADER, ">$headerFileName") or die "Couldn't open file $headerFileName";
+    
+    print HEADER @headerContentHeader;
+    print HEADER map { "\@class $_;\n" } sort keys(%headerForwardDeclarations);
+    print HEADER map { "\@protocol $_;\n" } sort keys(%headerForwardDeclarationsForProtocols);
 
-    my $forwardDeclarationCount = 0;
-    foreach my $forwardClassDeclaration (sort keys(%headerForwardDeclarations)) {
-        print $HEADER "\@class $forwardClassDeclaration;\n";
-        $forwardDeclarationCount++;
-    }
+    my $hasForwardDeclarations =  keys(%headerForwardDeclarations) + keys(%headerForwardDeclarationsForProtocols);
+    print HEADER "\n" if $hasForwardDeclarations;
+    print HEADER @headerContent;
 
-    foreach my $forwardProtocolDeclaration (sort keys(%headerForwardDeclarationsForProtocols)) {
-        print $HEADER "\@protocol $forwardProtocolDeclaration;\n";
-        $forwardDeclarationCount++;
-    }
+    close(HEADER);
 
-    print $HEADER "\n" if $forwardDeclarationCount;
-    print $HEADER @headerContent;
-
-    close($HEADER);
-    undef($HEADER);
-
-    @headerContentHeader = "";
-    @headerContent = "";
+    @headerContentHeader = ();
+    @headerContent = ();
     %headerForwardDeclarations = ();
     %headerForwardDeclarationsForProtocols = ();
 
     if (@privateHeaderContent > 0) {
-        open($PRIVATE_HEADER, ">$privateHeaderFileName") or die "Couldn't open file $privateHeaderFileName";
-        print $PRIVATE_HEADER @privateHeaderContentHeader;
+        open(PRIVATE_HEADER, ">$privateHeaderFileName") or die "Couldn't open file $privateHeaderFileName";
 
-        $forwardDeclarationCount = 0;
-        foreach my $forwardClassDeclaration (sort keys(%privateHeaderForwardDeclarations)) {
-            print $PRIVATE_HEADER "\@class $forwardClassDeclaration;\n";
-            $forwardDeclarationCount++;
-        }
+        print PRIVATE_HEADER @privateHeaderContentHeader;
+        print PRIVATE_HEADER map { "\@class $_;\n" } sort keys(%privateHeaderForwardDeclarations);
+        print PRIVATE_HEADER map { "\@protocol $_;\n" } sort keys(%privateHeaderForwardDeclarationsForProtocols);
 
-        foreach my $forwardProtocolDeclaration (sort keys(%privateHeaderForwardDeclarationsForProtocols)) {
-            print $PRIVATE_HEADER "\@protocol $forwardProtocolDeclaration;\n";
-            $forwardDeclarationCount++;
-        }
+        $hasForwardDeclarations =  keys(%privateHeaderForwardDeclarations) + keys(%privateHeaderForwardDeclarationsForProtocols);
+        print PRIVATE_HEADER "\n" if $hasForwardDeclarations;
+        print PRIVATE_HEADER @privateHeaderContent;
 
-        print $PRIVATE_HEADER "\n" if $forwardDeclarationCount;
-        print $PRIVATE_HEADER @privateHeaderContent;
+        close(PRIVATE_HEADER);
 
-        close($PRIVATE_HEADER);
-        undef($PRIVATE_HEADER);
-
-        @privateHeaderContent = "";
+        @privateHeaderContentHeader = ();
+        @privateHeaderContent = ();
         %privateHeaderForwardDeclarations = ();
         %privateHeaderForwardDeclarationsForProtocols = ();
+    }
+
+    # Write implementation file.
+    unless ($isProtocol) {
+        open(IMPL, ">$implFileName") or die "Couldn't open file $implFileName";
+
+        print IMPL @implContentHeader;
+        print IMPL map { "#import \"$_\"\n" } sort keys(%implIncludes);
+
+        print IMPL "\n" if keys(%implIncludes);
+        print IMPL @implContent;
+
+        close(IMPL);
+
+        @implContentHeader = ();
+        @implContent = ();
+        %implIncludes = ();
+    }
+    
+    if (@intenalHeaderContent > 0) {
+       open(INTERNAL_HEADER, ">$internalHeaderFileName") or die "Couldn't open file $internalHeaderFileName";
+
+       print INTERNAL_HEADER @intenalHeaderContent;
+
+       close(INTERNAL_HEADER);
+
+       @intenalHeaderContent = ();
     }
 }
 

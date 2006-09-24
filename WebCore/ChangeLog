@@ -1,3 +1,72 @@
+2006-09-24  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=11009
+        Auto-generate the internal methods interfaces for the Objective-C bindings
+
+        - Auto-generate the internal method declarations into their own files
+          named in the form DOMFooBarInternal.h for class DOMFooBar.
+
+        - Remove all use of DOM_cast from code.
+
+        - Assorted cleanups.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (-[DOMNode _initWithNode:WebCore::]):
+        (-[DOMNode WebCore::]):
+        (-[DOMRange dealloc]):
+        (-[DOMRange finalize]):
+        (-[DOMRange _initWithRange:WebCore::]):
+        (-[DOMRange WebCore::]):
+        (-[DOMNodeFilter _initWithNodeFilter:WebCore::]):
+        (-[DOMNodeFilter WebCore::]):
+        (-[DOMNodeFilter dealloc]):
+        (-[DOMNodeFilter finalize]):
+        (-[DOMNodeIterator _initWithNodeIterator:WebCore::filter:]):
+        (-[DOMNodeIterator WebCore::]):
+        (-[DOMTreeWalker _initWithTreeWalker:WebCore::filter:]):
+        (-[DOMTreeWalker WebCore::]):
+        * bindings/objc/DOMAbstractView.mm:
+        (-[DOMAbstractView _initWithAbstractView:WebCore::]):
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMStyleSheet _initWithStyleSheet:WebCore::]):
+        (-[DOMCSSRule _initWithRule:WebCore::]):
+        (-[DOMCSSValue _initWithValue:WebCore::]):
+        * bindings/objc/DOMEvents.mm:
+        (-[DOMEvent _initWithEvent:WebCore::]):
+        * bindings/objc/DOMHTMLAppletElement.mm:
+        (-[DOMHTMLAppletElement align]):
+        (-[DOMHTMLAppletElement setAlign:]):
+        (-[DOMHTMLAppletElement alt]):
+        (-[DOMHTMLAppletElement setAlt:]):
+        (-[DOMHTMLAppletElement archive]):
+        (-[DOMHTMLAppletElement setArchive:]):
+        (-[DOMHTMLAppletElement code]):
+        (-[DOMHTMLAppletElement setCode:]):
+        (-[DOMHTMLAppletElement codeBase]):
+        (-[DOMHTMLAppletElement setCodeBase:]):
+        (-[DOMHTMLAppletElement height]):
+        (-[DOMHTMLAppletElement setHeight:]):
+        (-[DOMHTMLAppletElement hspace]):
+        (-[DOMHTMLAppletElement setHspace:]):
+        (-[DOMHTMLAppletElement name]):
+        (-[DOMHTMLAppletElement setName:]):
+        (-[DOMHTMLAppletElement object]):
+        (-[DOMHTMLAppletElement setObject:]):
+        (-[DOMHTMLAppletElement vspace]):
+        (-[DOMHTMLAppletElement setVspace:]):
+        (-[DOMHTMLAppletElement width]):
+        (-[DOMHTMLAppletElement setWidth:]):
+        * bindings/objc/DOMInternal.h:
+        (getDOMWrapper):
+        (addDOMWrapper):
+        (raiseOnDOMError):
+        * bindings/objc/DOMXPath.mm:
+        (-[DOMNativeXPathNSResolver _initWithXPathNSResolver:WebCore::]):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+
 2006-09-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.

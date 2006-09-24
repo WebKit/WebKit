@@ -38,8 +38,6 @@ namespace WebCore {
     typedef DOMWindow AbstractView;
 }
 
-ALLOW_DOM_CAST(DOMWindow)
-
 @implementation DOMAbstractView
 
 #define IMPL reinterpret_cast<WebCore::DOMWindow*>(_internal)
@@ -63,7 +61,7 @@ ALLOW_DOM_CAST(DOMWindow)
     ASSERT(impl);
 
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;

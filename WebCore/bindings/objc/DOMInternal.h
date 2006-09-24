@@ -28,103 +28,122 @@
 #import "DOM.h"
 
 #import "Color.h"
-#import "DOMAttr.h"
-#import "DOMCDATASection.h"
+#import "DOMAbstractView.h"
 #import "DOMCSSPrimitiveValue.h"
 #import "DOMCSSRule.h"
-#import "DOMCSSRuleList.h"
-#import "DOMCSSStyleDeclaration.h"
 #import "DOMCSSStyleSheet.h"
 #import "DOMCSSValue.h"
-#import "DOMComment.h"
-#import "DOMCounter.h"
-#import "DOMDOMImplementation.h"
-#import "DOMDocument.h"
-#import "DOMDocumentFragment.h"
-#import "DOMDocumentType.h"
-#import "DOMElement.h"
-#import "DOMEntityReference.h"
 #import "DOMEvents.h"
-#import "DOMHTMLCollection.h"
-#import "DOMHTMLDocument.h"
-#import "DOMHTMLElement.h"
-#import "DOMHTMLFormElement.h"
-#import "DOMHTMLImageElement.h"
-#import "DOMHTMLInputElement.h"
-#import "DOMHTMLObjectElement.h"
 #import "DOMHTMLOptionElement.h"
-#import "DOMHTMLOptionsCollection.h"
-#import "DOMHTMLTableCaptionElement.h"
-#import "DOMHTMLTableCellElement.h"
-#import "DOMHTMLTableElement.h"
-#import "DOMHTMLTableSectionElement.h"
-#import "DOMMediaList.h"
-#import "DOMNamedNodeMap.h"
 #import "DOMNode.h"
-#import "DOMNodeList.h"
 #import "DOMObject.h"
-#import "DOMProcessingInstruction.h"
 #import "DOMRGBColor.h"
-#import "DOMRect.h"
 #import "DOMStyleSheet.h"
-#import "DOMStyleSheetList.h"
-#import "DOMText.h"
-#import "DOMViews.h"
 
 #ifdef XPATH_SUPPORT
-#import "DOMXPath.h"
+#import "DOMXPathNSResolver.h"
+#endif // XPATH_SUPPORT
+
+// Auto-generated internal interfaces
+#import "DOMAttrInternal.h"
+#import "DOMCDATASectionInternal.h"
+#import "DOMCSSRuleListInternal.h"
+#import "DOMCSSStyleDeclarationInternal.h"
+#import "DOMCharacterDataInternal.h"
+#import "DOMCommentInternal.h"
+#import "DOMCounterInternal.h"
+#import "DOMDOMImplementationInternal.h"
+#import "DOMDocumentFragmentInternal.h"
+#import "DOMDocumentInternal.h"
+#import "DOMDocumentTypeInternal.h"
+#import "DOMElementInternal.h"
+#import "DOMEntityInternal.h"
+#import "DOMEntityReferenceInternal.h"
+#import "DOMHTMLAnchorElementInternal.h"
+#import "DOMHTMLAreaElementInternal.h"
+#import "DOMHTMLBRElementInternal.h"
+#import "DOMHTMLBaseElementInternal.h"
+#import "DOMHTMLBaseFontElementInternal.h"
+#import "DOMHTMLBodyElementInternal.h"
+#import "DOMHTMLButtonElementInternal.h"
+#import "DOMHTMLCollectionInternal.h"
+#import "DOMHTMLDListElementInternal.h"
+#import "DOMHTMLDirectoryElementInternal.h"
+#import "DOMHTMLDivElementInternal.h"
+#import "DOMHTMLDocumentInternal.h"
+#import "DOMHTMLElementInternal.h"
+#import "DOMHTMLFieldSetElementInternal.h"
+#import "DOMHTMLFontElementInternal.h"
+#import "DOMHTMLFormElementInternal.h"
+#import "DOMHTMLFrameElementInternal.h"
+#import "DOMHTMLFrameSetElementInternal.h"
+#import "DOMHTMLHRElementInternal.h"
+#import "DOMHTMLHeadElementInternal.h"
+#import "DOMHTMLHeadingElementInternal.h"
+#import "DOMHTMLHtmlElementInternal.h"
+#import "DOMHTMLIFrameElementInternal.h"
+#import "DOMHTMLImageElementInternal.h"
+#import "DOMHTMLInputElementInternal.h"
+#import "DOMHTMLIsIndexElementInternal.h"
+#import "DOMHTMLLIElementInternal.h"
+#import "DOMHTMLLabelElementInternal.h"
+#import "DOMHTMLLegendElementInternal.h"
+#import "DOMHTMLLinkElementInternal.h"
+#import "DOMHTMLMapElementInternal.h"
+#import "DOMHTMLMenuElementInternal.h"
+#import "DOMHTMLMetaElementInternal.h"
+#import "DOMHTMLModElementInternal.h"
+#import "DOMHTMLOListElementInternal.h"
+#import "DOMHTMLObjectElementInternal.h"
+#import "DOMHTMLOptGroupElementInternal.h"
+#import "DOMHTMLOptionsCollectionInternal.h"
+#import "DOMHTMLParagraphElementInternal.h"
+#import "DOMHTMLParamElementInternal.h"
+#import "DOMHTMLPreElementInternal.h"
+#import "DOMHTMLQuoteElementInternal.h"
+#import "DOMHTMLScriptElementInternal.h"
+#import "DOMHTMLSelectElementInternal.h"
+#import "DOMHTMLStyleElementInternal.h"
+#import "DOMHTMLTableCaptionElementInternal.h"
+#import "DOMHTMLTableCellElementInternal.h"
+#import "DOMHTMLTableColElementInternal.h"
+#import "DOMHTMLTableElementInternal.h"
+#import "DOMHTMLTableRowElementInternal.h"
+#import "DOMHTMLTableSectionElementInternal.h"
+#import "DOMHTMLTextAreaElementInternal.h"
+#import "DOMHTMLTitleElementInternal.h"
+#import "DOMHTMLUListElementInternal.h"
+#import "DOMMediaListInternal.h"
+#import "DOMNamedNodeMapInternal.h"
+#import "DOMNodeListInternal.h"
+#import "DOMNotationInternal.h"
+#import "DOMProcessingInstructionInternal.h"
+#import "DOMRectInternal.h"
+#import "DOMStyleSheetListInternal.h"
+#import "DOMTextInternal.h"
+
+#ifdef XPATH_SUPPORT
+#import "DOMXPathExpressionInternal.h"
+#import "DOMXPathResultInternal.h"
 #endif // XPATH_SUPPORT
 
 namespace WebCore {
-    class Attr;
-    class CDATASection;
     class CSSPrimitiveValue;
     class CSSRule;
-    class CSSRuleList;
-    class CSSStyleDeclaration;
     class CSSStyleSheet;
     class CSSValue;
-    class Comment;
-    class Counter;
-    class DOMImplementationFront;
     class DOMWindow;
-    class Document;
-    class DocumentFragment;
-    class DocumentType;
-    class Element;
-    class EntityReference;
     class Event;
-    class HTMLCollection;
-    class HTMLDocument;
-    class HTMLElement;
-    class HTMLFormElement;
-    class HTMLImageElement;
-    class HTMLInputElement;
-    class HTMLObjectElement;
     class HTMLOptionElement;
-    class HTMLOptionsCollection;
-    class HTMLTableCaptionElement;
-    class HTMLTableCellElement;
-    class HTMLTableElement;
-    class HTMLTableSectionElement;
-    class MediaList;
-    class NamedNodeMap;
     class Node;
     class NodeFilter;
     class NodeIterator;
-    class NodeList;
-    class ProcessingInstruction;
     class Range;
-    class RectImpl;
     class StyleSheet;
-    class StyleSheetList;
-    class Text;
     class TreeWalker;
 
 #ifdef XPATH_SUPPORT
-    class XPathExpression;
     class XPathNSResolver;
-    class XPathResult;
 #endif // XPATH_SUPPORT
 
     typedef int ExceptionCode;
@@ -142,71 +161,6 @@ namespace WebCore {
 - (WebCore::Node *)_node;
 @end
 
-@interface DOMNamedNodeMap (WebCoreInternal)
-+ (DOMNamedNodeMap *)_namedNodeMapWith:(WebCore::NamedNodeMap *)impl;
-- (WebCore::NamedNodeMap *)_namedNodeMap;
-@end
-
-@interface DOMNodeList (WebCoreInternal)
-+ (DOMNodeList *)_nodeListWith:(WebCore::NodeList *)impl;
-- (WebCore::NodeList *)_nodeList;
-@end
-
-@interface DOMText (WebCoreInternal)
-+ (DOMText *)_textWith:(WebCore::Text *)impl;
-- (WebCore::Text *)_text;
-@end
-
-@interface DOMComment (WebCoreInternal)
-+ (DOMComment *)_commentWith:(WebCore::Comment *)impl;
-- (WebCore::Comment *)_comment;
-@end
-
-@interface DOMCDATASection (WebCoreInternal)
-+ (DOMCDATASection *)_CDATASectionWith:(WebCore::CDATASection *)impl;
-- (WebCore::CDATASection *)_CDATASection;
-@end
-
-@interface DOMProcessingInstruction (WebCoreInternal)
-+ (DOMProcessingInstruction *)_processingInstructionWith:(WebCore::ProcessingInstruction *)impl;
-- (WebCore::ProcessingInstruction *)_processingInstruction;
-@end
-
-@interface DOMEntityReference (WebCoreInternal)
-+ (DOMEntityReference *)_entityReferenceWith:(WebCore::EntityReference *)impl;
-- (WebCore::EntityReference *)_entityReference;
-@end
-
-@interface DOMElement (WebCoreInternal)
-+ (DOMElement *)_elementWith:(WebCore::Element *)impl;
-- (WebCore::Element *)_element;
-@end
-
-@interface DOMAttr (WebCoreInternal)
-+ (DOMAttr *)_attrWith:(WebCore::Attr *)impl;
-- (WebCore::Attr *)_attr;
-@end
-
-@interface DOMDocumentType (WebCoreInternal)
-+ (DOMDocumentType *)_documentTypeWith:(WebCore::DocumentType *)impl;
-- (WebCore::DocumentType *)_documentType;
-@end
-
-@interface DOMImplementation (WebCoreInternal)
-+ (DOMImplementation *)_DOMImplementationWith:(WebCore::DOMImplementationFront *)impl;
-- (WebCore::DOMImplementationFront *)_DOMImplementation;
-@end
-
-@interface DOMDocument (WebCoreInternal)
-+ (DOMDocument *)_documentWith:(WebCore::Document *)impl;
-- (WebCore::Document *)_document;
-@end
-
-@interface DOMDocumentFragment (WebCoreInternal)
-+ (DOMDocumentFragment *)_documentFragmentWith:(WebCore::DocumentFragment *)impl;
-- (WebCore::DocumentFragment *)_documentFragment;
-@end
-
 // HTML Internal Interfaces
 
 @interface DOMHTMLOptionElement (WebCoreInternal)
@@ -214,72 +168,7 @@ namespace WebCore {
 - (WebCore::HTMLOptionElement *)_HTMLOptionElement;
 @end
 
-@interface DOMHTMLOptionsCollection (WebCoreInternal)
-+ (DOMHTMLOptionsCollection *)_HTMLOptionsCollectionWith:(WebCore::HTMLOptionsCollection *)impl;
-- (WebCore::HTMLOptionsCollection *)_HTMLOptionsCollection;
-@end
-
-@interface DOMHTMLCollection (WebCoreInternal)
-+ (DOMHTMLCollection *)_HTMLCollectionWith:(WebCore::HTMLCollection *)impl;
-- (WebCore::HTMLCollection *)_HTMLCollection;
-@end
-
-@interface DOMHTMLDocument (WebCoreInternal)
-+ (DOMHTMLDocument *)_HTMLDocumentWith:(WebCore::HTMLDocument *)impl;
-- (WebCore::HTMLDocument *)_HTMLDocument;
-@end
-
-@interface DOMHTMLElement (WebCoreInternal)
-+ (DOMHTMLElement *)_HTMLElementWith:(WebCore::HTMLElement *)impl;
-- (WebCore::HTMLElement *)_HTMLElement;
-@end
-
-@interface DOMHTMLFormElement (WebCoreInternal)
-+ (DOMHTMLFormElement *)_HTMLFormElementWith:(WebCore::HTMLFormElement *)impl;
-- (WebCore::HTMLFormElement *)_HTMLFormElement;
-@end
-
-@interface DOMHTMLTableCaptionElement (WebCoreInternal)
-+ (DOMHTMLTableCaptionElement *)_HTMLTableCaptionElementWith:(WebCore::HTMLTableCaptionElement *)impl;
-- (WebCore::HTMLTableCaptionElement *)_HTMLTableCaptionElement;
-@end
-
-@interface DOMHTMLTableSectionElement (WebCoreInternal)
-+ (DOMHTMLTableSectionElement *)_HTMLTableSectionElementWith:(WebCore::HTMLTableSectionElement *)impl;
-- (WebCore::HTMLTableSectionElement *)_HTMLTableSectionElement;
-@end
-
-@interface DOMHTMLTableElement (WebCoreInternal)
-+ (DOMHTMLTableElement *)_HTMLTableElementWith:(WebCore::HTMLTableElement *)impl;
-- (WebCore::HTMLTableElement *)_HTMLTableElement;
-@end
-
-@interface DOMHTMLTableCellElement (WebCoreInternal)
-+ (DOMHTMLTableCellElement *)_HTMLTableCellElementWith:(WebCore::HTMLTableCellElement *)impl;
-- (WebCore::HTMLTableCellElement *)_HTMLTableCellElement;
-@end
-
-@interface DOMHTMLImageElement (WebCoreInternal)
-+ (DOMHTMLImageElement *)_HTMLImageElementWith:(WebCore::HTMLImageElement *)impl;
-- (WebCore::HTMLImageElement *)_HTMLImageElement;
-@end
-
-@interface DOMHTMLObjectElement (WebCoreInternal)
-+ (DOMHTMLObjectElement *)_HTMLObjectElementWith:(WebCore::HTMLObjectElement *)impl;
-- (WebCore::HTMLObjectElement *)_HTMLObjectElement;
-@end
-
-@interface DOMHTMLInputElement (WebCoreInternal)
-+ (DOMHTMLInputElement *)_HTMLInputElementWith:(WebCore::HTMLInputElement *)impl;
-- (WebCore::HTMLInputElement *)_HTMLInputElement;
-@end
-
 // CSS Internal Interfaces
-
-@interface DOMCSSRuleList (WebCoreInternal)
-+ (DOMCSSRuleList *)_CSSRuleListWith:(WebCore::CSSRuleList *)impl;
-- (WebCore::CSSRuleList *)_CSSRuleList;
-@end
 
 @interface DOMCSSRule (WebCoreInternal)
 + (DOMCSSRule *)_CSSRuleWith:(WebCore::CSSRule *)impl;
@@ -298,21 +187,6 @@ namespace WebCore {
 + (DOMRGBColor *)_RGBColorWithRGB:(WebCore::RGBA32)value;
 @end
 
-@interface DOMRect (WebCoreInternal)
-+ (DOMRect *)_rectWith:(WebCore::RectImpl *)impl;
-- (WebCore::RectImpl *)_rect;
-@end
-
-@interface DOMCounter (WebCoreInternal)
-+ (DOMCounter *)_counterWith:(WebCore::Counter *)impl;
-- (WebCore::Counter *)_counter;
-@end
-
-@interface DOMCSSStyleDeclaration (WebCoreInternal)
-+ (DOMCSSStyleDeclaration *)_CSSStyleDeclarationWith:(WebCore::CSSStyleDeclaration *)impl;
-- (WebCore::CSSStyleDeclaration *)_CSSStyleDeclaration;
-@end
-
 @interface DOMCSSStyleSheet (WebCoreInternal)
 + (DOMCSSStyleSheet *)_CSSStyleSheetWith:(WebCore::CSSStyleSheet *)impl;
 @end
@@ -321,16 +195,6 @@ namespace WebCore {
 
 @interface DOMStyleSheet (WebCoreInternal)
 + (DOMStyleSheet *)_styleSheetWith:(WebCore::StyleSheet *)impl;
-@end
-
-@interface DOMStyleSheetList (WebCoreInternal)
-+ (DOMStyleSheetList *)_styleSheetListWith:(WebCore::StyleSheetList *)impl;
-- (WebCore::StyleSheetList *)_styleSheetList;
-@end
-
-@interface DOMMediaList (WebCoreInternal)
-+ (DOMMediaList *)_mediaListWith:(WebCore::MediaList *)impl;
-- (WebCore::MediaList *)_mediaList;
 @end
 
 // Events Internal Interfaces
@@ -371,16 +235,6 @@ namespace WebCore {
 #ifdef XPATH_SUPPORT
 // XPath Internal Interfaces
 
-@interface DOMXPathResult (WebCoreInternal)
-+ (DOMXPathResult *)_xpathResultWith:(WebCore::XPathResult *)impl;
-- (WebCore::XPathResult *)_xpathResult;
-@end
-
-@interface DOMXPathExpression (WebCoreInternal)
-+ (DOMXPathExpression *)_xpathExpressionWith:(WebCore::XPathExpression *)impl;
-- (WebCore::XPathExpression *)_xpathExpression;
-@end
-
 @interface DOMNativeXPathNSResolver : DOMObject <DOMXPathNSResolver>
 + (DOMNativeXPathNSResolver *)_xpathNSResolverWith:(WebCore::XPathNSResolver *)impl;
 - (WebCore::XPathNSResolver *)_xpathNSResolver;
@@ -391,16 +245,11 @@ namespace WebCore {
 
 // Helper functions for DOM wrappers and gluing to Objective-C
 
-// Like reinterpret_cast, but a compiler error if you use it on the wrong type.
-template <class Target, class Source> Target DOM_cast(Source) { Source::failToCompile(); }
-
-// Type safe DOM wrapper access.
-
 NSObject* getDOMWrapper(DOMObjectInternal*);
 void addDOMWrapper(NSObject* wrapper, DOMObjectInternal*);
 
-template <class Source> inline id getDOMWrapper(Source impl) { return getDOMWrapper(DOM_cast<DOMObjectInternal*>(impl)); }
-template <class Source> inline void addDOMWrapper(NSObject* wrapper, Source impl) { addDOMWrapper(wrapper, DOM_cast<DOMObjectInternal*>(impl)); }
+template <class Source> inline id getDOMWrapper(Source impl) { return getDOMWrapper(reinterpret_cast<DOMObjectInternal*>(impl)); }
+template <class Source> inline void addDOMWrapper(NSObject* wrapper, Source impl) { addDOMWrapper(wrapper, reinterpret_cast<DOMObjectInternal*>(impl)); }
 void removeDOMWrapper(DOMObjectInternal*);
 
 void raiseDOMException(WebCore::ExceptionCode);
@@ -410,40 +259,3 @@ inline void raiseOnDOMError(WebCore::ExceptionCode ec)
     if (ec) 
         raiseDOMException(ec);
 }
-
-// Implementation details for the above.
-
-#define ALLOW_DOM_CAST(type) \
-    namespace WebCore { class type; } \
-    template <> inline DOMObjectInternal* DOM_cast<DOMObjectInternal*, class WebCore::type*>(class WebCore::type* p) \
-        { return reinterpret_cast<DOMObjectInternal *>(p); } \
-    template <> inline class WebCore::type* DOM_cast<class WebCore::type*, DOMObjectInternal*>(DOMObjectInternal* p) \
-        { return reinterpret_cast<class WebCore::type*>(p); }
-
-// No class should appear in this list if its base class is already here.
-ALLOW_DOM_CAST(CSSRule)
-ALLOW_DOM_CAST(CSSRuleList)
-ALLOW_DOM_CAST(CSSStyleDeclaration)
-ALLOW_DOM_CAST(CSSStyleSheet)
-ALLOW_DOM_CAST(CSSValue)
-ALLOW_DOM_CAST(Counter)
-ALLOW_DOM_CAST(DOMImplementationFront)
-ALLOW_DOM_CAST(Event)
-ALLOW_DOM_CAST(HTMLCollection)
-ALLOW_DOM_CAST(HTMLOptionsCollection)
-ALLOW_DOM_CAST(MediaList)
-ALLOW_DOM_CAST(NamedNodeMap)
-ALLOW_DOM_CAST(Node)
-ALLOW_DOM_CAST(NodeFilter)
-ALLOW_DOM_CAST(NodeIterator)
-ALLOW_DOM_CAST(NodeList)
-ALLOW_DOM_CAST(Range)
-ALLOW_DOM_CAST(RectImpl)
-ALLOW_DOM_CAST(StyleSheet)
-ALLOW_DOM_CAST(StyleSheetList)
-ALLOW_DOM_CAST(TreeWalker)
-#ifdef XPATH_SUPPORT
-ALLOW_DOM_CAST(XPathExpression)
-ALLOW_DOM_CAST(XPathNSResolver)
-ALLOW_DOM_CAST(XPathResult)
-#endif // XPATH_SUPPORT

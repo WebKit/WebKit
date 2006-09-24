@@ -61,7 +61,7 @@ namespace WebCore {
 - (id)_initWithStyleSheet:(WebCore::StyleSheet *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -109,7 +109,7 @@ namespace WebCore {
 - (id)_initWithRule:(WebCore::CSSRule *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -163,7 +163,7 @@ namespace WebCore {
 - (id)_initWithValue:(WebCore::CSSValue *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal*>(impl);
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
