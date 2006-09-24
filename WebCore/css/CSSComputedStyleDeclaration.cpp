@@ -607,57 +607,89 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     case CSS_PROP_COUNTER_RESET:
         // FIXME: unimplemented
         break;
-    case CSS_PROP_CURSOR:
-        if (style->cursorImage())
-            return new CSSPrimitiveValue(style->cursorImage()->url(), CSSPrimitiveValue::CSS_URI);
+    case CSS_PROP_CURSOR: {
+        CSSValueList* list = 0;
+        CSSValue* value = 0;
+        CursorList* cursors = style->cursors();
+        if (cursors && cursors->size() > 0) {
+            list = new CSSValueList;
+            for (unsigned i = 0; i < cursors->size(); ++i)
+                list->append(new CSSPrimitiveValue((*cursors)[i].cursorImage->url(), CSSPrimitiveValue::CSS_URI));
+        }
         switch (style->cursor()) {
             case CURSOR_AUTO:
-                return new CSSPrimitiveValue(CSS_VAL_AUTO);
+                value = new CSSPrimitiveValue(CSS_VAL_AUTO);
+                break;
             case CURSOR_CROSS:
-                return new CSSPrimitiveValue(CSS_VAL_CROSSHAIR);
+                value = new CSSPrimitiveValue(CSS_VAL_CROSSHAIR);
+                break;
             case CURSOR_DEFAULT:
-                return new CSSPrimitiveValue(CSS_VAL_DEFAULT);
+                value = new CSSPrimitiveValue(CSS_VAL_DEFAULT);
+                break;
             case CURSOR_POINTER:
-                return new CSSPrimitiveValue(CSS_VAL_POINTER);
+                value = new CSSPrimitiveValue(CSS_VAL_POINTER);
+                break;
             case CURSOR_MOVE:
-                return new CSSPrimitiveValue(CSS_VAL_MOVE);
+                value = new CSSPrimitiveValue(CSS_VAL_MOVE);
+                break;
             case CURSOR_E_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_E_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_E_RESIZE);
+                break;
             case CURSOR_NE_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_NE_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_NE_RESIZE);
+                break;
             case CURSOR_NW_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_NW_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_NW_RESIZE);
+                break;
             case CURSOR_N_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_N_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_N_RESIZE);
+                break;
             case CURSOR_SE_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_SE_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_SE_RESIZE);
+                break;
             case CURSOR_SW_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_SW_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_SW_RESIZE);
+                break;
             case CURSOR_S_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_S_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_S_RESIZE);
+                break;
             case CURSOR_W_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_W_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_W_RESIZE);
+                break;
             case CURSOR_EW_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_EW_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_EW_RESIZE);
+                break;
             case CURSOR_NS_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_NS_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_NS_RESIZE);
+                break;
             case CURSOR_NESW_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_NESW_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_NESW_RESIZE);
+                break;
             case CURSOR_NWSE_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_NWSE_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_NWSE_RESIZE);
+                break;
             case CURSOR_COL_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_COL_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_COL_RESIZE);
+                break;
             case CURSOR_ROW_RESIZE:
-                return new CSSPrimitiveValue(CSS_VAL_ROW_RESIZE);
+                value = new CSSPrimitiveValue(CSS_VAL_ROW_RESIZE);
+                break;
             case CURSOR_TEXT:
-                return new CSSPrimitiveValue(CSS_VAL_TEXT);
+                value = new CSSPrimitiveValue(CSS_VAL_TEXT);
+                break;
             case CURSOR_WAIT:
-                return new CSSPrimitiveValue(CSS_VAL_WAIT);
+                value = new CSSPrimitiveValue(CSS_VAL_WAIT);
+                break;
             case CURSOR_HELP:
-                return new CSSPrimitiveValue(CSS_VAL_HELP);
+                value = new CSSPrimitiveValue(CSS_VAL_HELP);
         }
-        ASSERT_NOT_REACHED();
-        return 0;
+        ASSERT(value);
+        if (list) {
+            list->append(value);
+            return list;
+        }
+        return value;
+    }
     case CSS_PROP_DIRECTION:
         switch (style->direction()) {
             case LTR:

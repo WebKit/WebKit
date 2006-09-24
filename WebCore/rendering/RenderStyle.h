@@ -36,6 +36,7 @@
  */
 
 #include "Color.h"
+#include "CSSCursorImageValue.h"
 #include "DataRef.h"
 #include "Font.h"
 #include "GraphicsTypes.h"
@@ -62,6 +63,8 @@ using std::max;
 class CSSStyleSelector;
 class CachedImage;
 class CachedResource;
+struct CursorData;
+class CursorList;
 class RenderArena;
 class ShadowValue;
 class StringImpl;
@@ -824,7 +827,7 @@ public:
     Length line_height;
 
     CachedImage *style_image;
-    CachedImage *cursor_image;
+    RefPtr<CursorList> cursorData;
 
     Font font;
     Color color;
@@ -866,6 +869,29 @@ enum ECursor {
     CURSOR_E_RESIZE, CURSOR_NE_RESIZE, CURSOR_NW_RESIZE, CURSOR_N_RESIZE, CURSOR_SE_RESIZE, CURSOR_SW_RESIZE,
     CURSOR_S_RESIZE, CURSOR_W_RESIZE, CURSOR_EW_RESIZE, CURSOR_NS_RESIZE, CURSOR_NESW_RESIZE, CURSOR_NWSE_RESIZE,
     CURSOR_COL_RESIZE, CURSOR_ROW_RESIZE, CURSOR_TEXT, CURSOR_WAIT, CURSOR_HELP
+};
+
+struct CursorData {
+    CursorData()
+        : cursorImage(0)
+    {}
+    
+    IntPoint hotSpot; // for CSS3 support
+    CachedImage* cursorImage; // weak pointer, the CSSValueImage takes care of deleting cursorImage
+    String cursorFragmentId; // only used for SVGCursorElement, a direct pointer would get stale
+};
+
+class CursorList : public Shared<CursorList> {
+public:
+    const CursorData& operator[](int i) const {
+        return m_vector[i];
+    }
+
+    size_t size() const { return m_vector.size(); }
+    void append(const CursorData& cursorData) { m_vector.append(cursorData); }
+
+private:
+    Vector<CursorData> m_vector;
 };
 
 enum ContentType {
@@ -1314,7 +1340,7 @@ public:
 
     ECursor cursor() const { return static_cast<ECursor>(inherited_flags._cursor_style); }
     
-    CachedImage *cursorImage() const { return inherited->cursor_image; }
+    CursorList* cursors() const { return inherited->cursorData.get(); }
 
     short widows() const { return inherited->widows; }
     short orphans() const { return inherited->orphans; }
@@ -1521,7 +1547,10 @@ public:
     void setPaddingRight(Length v)  {  SET_VAR(surround,padding.right,v) }
 
     void setCursor( ECursor c ) { inherited_flags._cursor_style = c; }
-    void setCursorImage( CachedImage *v ) { SET_VAR(inherited,cursor_image,v) }
+    void addCursor(CachedImage*, const IntPoint& = IntPoint());
+    void addSVGCursor(const String&);
+    void setCursorList(PassRefPtr<CursorList>);
+    void clearCursorList();
 
     bool forceBackgroundsToWhite() const { return inherited_flags._force_backgrounds_to_white; }
     void setForceBackgroundsToWhite(bool b=true) { inherited_flags._force_backgrounds_to_white = b; }

@@ -26,6 +26,7 @@
 #include "cssstyleselector.h"
 
 #include "CSSBorderImageValue.h"
+#include "CSSCursorImageValue.h"
 #include "CSSImageValue.h"
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
@@ -2410,24 +2411,41 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSS_PROP_CURSOR:
         if (isInherit) {
             style->setCursor(parentStyle->cursor());
-            style->setCursorImage(parentStyle->cursorImage());
+            style->setCursorList(parentStyle->cursors());
             return;
         }
+        style->clearCursorList();
         if (isInitial) {
             style->setCursor(RenderStyle::initialCursor());
-            style->setCursorImage(0);
             return;
         }
-        if (primitiveValue) {
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_IDENT) {
-                style->setCursor((ECursor)(primitiveValue->getIdent() - CSS_VAL_AUTO));
-                style->setCursorImage(0);
-            } else if (type == CSSPrimitiveValue::CSS_URI) {
-                CSSImageValue* image = static_cast<CSSImageValue*>(primitiveValue);
-                style->setCursor(CURSOR_AUTO);
-                style->setCursorImage(image->image(element->document()->docLoader()));
+        if (value->isValueList()) {
+            CSSValueList* list = static_cast<CSSValueList*>(value);
+            int len = list->length();
+            style->setCursor(CURSOR_AUTO);
+            for (int i = 0; i < len; i++) {
+                CSSValue* item = list->item(i);
+                if (!item->isPrimitiveValue())
+                    continue;
+                primitiveValue = static_cast<CSSPrimitiveValue*>(item);
+                int type = primitiveValue->primitiveType();
+                if (type == CSSPrimitiveValue::CSS_URI) {
+#if SVG_SUPPORT
+                    if (primitiveValue->getStringValue().find("#") == 0)
+                        style->addSVGCursor(primitiveValue->getStringValue().substring(1));
+                    else
+#endif
+                    {
+                        CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(primitiveValue);
+                        style->addCursor(image->image(element->document()->docLoader()), image->hotspot());
+                    }
+                } else if (type == CSSPrimitiveValue::CSS_IDENT)
+                    style->setCursor((ECursor)(primitiveValue->getIdent() - CSS_VAL_AUTO));
             }
+        } else if (primitiveValue) {
+            int type = primitiveValue->primitiveType();
+            if (type == CSSPrimitiveValue::CSS_IDENT)
+                style->setCursor((ECursor)(primitiveValue->getIdent() - CSS_VAL_AUTO));
         }
         break;
 // colors || inherit

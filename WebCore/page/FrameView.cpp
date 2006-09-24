@@ -48,10 +48,20 @@
 #include "SelectionController.h"
 #include "cssstyleselector.h"
 
+#if SVG_SUPPORT
+#include "XLinkNames.h"
+#include "SVGNames.h"
+#include "SVGCursorElement.h"
+#include "SVGLength.h"
+#endif
+
 namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
+#if SVG_SUPPORT
+using namespace SVGNames;
+#endif
 
 struct ScheduledEvent {
     RefPtr<Event> m_event;
@@ -646,11 +656,30 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
     RenderObject* renderer = node ? node->renderer() : 0;
     RenderStyle* style = renderer ? renderer->style() : 0;
 
-    if (style && style->cursorImage() && !style->cursorImage()->image()->isNull())
-        if (!style->cursorImage()->isErrorImage())
-            return style->cursorImage()->image();
-        else 
-            style = 0; // Fallback to CURSOR_AUTO
+    if (style && style->cursors()) {
+        const CursorList* cursors = style->cursors();
+        for (unsigned i = 0; i < cursors->size(); ++i) {
+            CachedImage* cimage = (*cursors)[i].cursorImage;
+            IntPoint hotSpot = (*cursors)[i].hotSpot;
+#if SVG_SUPPORT
+            if (!cimage) {
+                Element* e = node->document()->getElementById((*cursors)[i].cursorFragmentId);
+                if (e && e->hasTagName(cursorTag)) {
+                    hotSpot.setX(int(static_cast<SVGCursorElement*>(e)->x()->value()));
+                    hotSpot.setY(int(static_cast<SVGCursorElement*>(e)->y()->value()));
+                    cimage = static_cast<SVGCursorElement*>(e)->cachedImage();
+                }
+            }
+#endif
+            if (!cimage)
+                continue;
+            if (cimage->image()->isNull())
+                break;
+            if (!cimage->isErrorImage()) {
+                return Cursor(cimage->image(), hotSpot);
+}
+        }
+    }
 
     switch (style ? style->cursor() : CURSOR_AUTO) {
         case CURSOR_AUTO: {

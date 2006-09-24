@@ -1788,6 +1788,8 @@
 		A8FEFB0B0979F472005839FD /* RenderForeignObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB090979F472005839FD /* RenderForeignObject.cpp */; };
 		A8FEFB310979F4F6005839FD /* SVGForeignObjectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElement.cpp */; };
 		A8FEFB320979F4F6005839FD /* SVGForeignObjectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB300979F4F6005839FD /* SVGForeignObjectElement.h */; };
+		AA21ECCA0ABF0FBA002B834C /* CSSCursorImageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */; };
+		AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */; };
 		AA98B87D0AAA02F8001A44C2 /* Path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA98B87C0AAA02F8001A44C2 /* Path.cpp */; };
 		AAC8DAB10AA1002000DC0907 /* SVGMetadataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */; };
 		AAC8DAB20AA1002000DC0907 /* SVGMetadataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */; };
@@ -4145,6 +4147,8 @@
 		A8FEFB090979F472005839FD /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
 		A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGForeignObjectElement.cpp; sourceTree = "<group>"; };
 		A8FEFB300979F4F6005839FD /* SVGForeignObjectElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGForeignObjectElement.h; sourceTree = "<group>"; };
+		AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCursorImageValue.cpp; sourceTree = "<group>"; };
+		AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSCursorImageValue.h; sourceTree = "<group>"; };
 		AA98B87C0AAA02F8001A44C2 /* Path.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Path.cpp; sourceTree = "<group>"; };
 		AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMetadataElement.cpp; sourceTree = "<group>"; };
 		AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGMetadataElement.h; sourceTree = "<group>"; };
@@ -7285,6 +7289,8 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
+				AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */,
+				AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */,
 				A80E6CDA0A1989CA007FB8C5 /* Counter.h */,
 				930705C709E0C95F00B17FE4 /* Counter.idl */,
 				A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */,
@@ -8682,6 +8688,7 @@
 				853BF4DB0ABB6B55008647BB /* DOMNode.h in Headers */,
 				853BF4EB0ABB6E97008647BB /* DOMNodePrivate.h in Headers */,
 				85BCBC130ABBA87D00381160 /* DOMHTMLDocument.h in Headers */,
+				AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */,
 				851EE80C0ABCA28F00A6AA33 /* DOMAbstractView.h in Headers */,
 				851EE8110ABCA39600A6AA33 /* DOMEventException.h in Headers */,
 				851EE8210ABCA58100A6AA33 /* DOMRangeException.h in Headers */,
@@ -9852,6 +9859,7 @@
 				B20111070AB7740500DB0E68 /* JSSVGAElement.cpp in Sources */,
 				853BF4DC0ABB6B55008647BB /* DOMNode.mm in Sources */,
 				85BCBC140ABBA87D00381160 /* DOMHTMLDocument.mm in Sources */,
+				AA21ECCA0ABF0FBA002B834C /* CSSCursorImageValue.cpp in Sources */,
 				851EE80D0ABCA28F00A6AA33 /* DOMAbstractView.mm in Sources */,
 				A8415F9B0AC10C5D00F7D0DF /* KCanvasClipper.cpp in Sources */,
 				A8415F9D0AC10C5D00F7D0DF /* KCanvasResource.cpp in Sources */,

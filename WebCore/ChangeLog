@@ -1,3 +1,56 @@
+2006-09-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6001
+        WebKit does not handle fallback custom cursors
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6002
+        WebKit does not properly handle SVG <cursor> element
+
+        Add support for svg cursor images. Also make sure hotspot
+        settings are handled correctly. Add tests for handling of css3
+        cursor syntax with hotspots in strict and quirks mode. Finally
+        implement fallback.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSCursorImageValue.cpp: Added.
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::~CSSCursorImageValue):
+        * css/CSSCursorImageValue.h: Added.
+        (WebCore::CSSCursorImageValue::hotspot):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * ksvg2/svg/SVGCursorElement.cpp:
+        * manual-tests/css3-cursor-fallback-quirks.html: Added.
+        * manual-tests/css3-cursor-fallback-strict.html: Added.
+        * manual-tests/cursorfallback.xml: Added.
+        * page/FrameView.cpp:
+        (WebCore::selectCursor):
+        * platform/Cursor.h:
+        * platform/mac/CursorMac.mm:
+        (WebCore::createCustomCursor):
+        (WebCore::Cursor::Cursor):
+        * platform/qt/CursorQt.cpp:
+        (WebCore::Cursor::Cursor):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        (WebCore::StyleInheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::addCursor):
+        (WebCore::RenderStyle::addSVGCursor):
+        (WebCore::RenderStyle::setCursorList):
+        (WebCore::RenderStyle::clearCursorList):
+        * rendering/RenderStyle.h:
+        (WebCore::CursorData::CursorData):
+        (WebCore::CursorList::operator[]):
+        (WebCore::CursorList::size):
+        (WebCore::CursorList::append):
+        (WebCore::RenderStyle::cursors):
+
 2006-09-24  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

@@ -510,7 +510,7 @@ bool StyleCSS3InheritedData::shadowDataEquivalent(const StyleCSS3InheritedData& 
 StyleInheritedData::StyleInheritedData()
     : indent(RenderStyle::initialTextIndent()), line_height(RenderStyle::initialLineHeight()), 
       style_image(RenderStyle::initialListStyleImage()),
-      cursor_image(0), color(RenderStyle::initialColor()), 
+      color(RenderStyle::initialColor()), 
       horizontal_border_spacing(RenderStyle::initialHorizontalBorderSpacing()), 
       vertical_border_spacing(RenderStyle::initialVerticalBorderSpacing()),
       widows(RenderStyle::initialWidows()), orphans(RenderStyle::initialOrphans()),
@@ -525,8 +525,8 @@ StyleInheritedData::~StyleInheritedData()
 StyleInheritedData::StyleInheritedData(const StyleInheritedData& o )
     : Shared<StyleInheritedData>(),
       indent( o.indent ), line_height( o.line_height ), style_image( o.style_image ),
-      cursor_image( o.cursor_image ), font( o.font ),
-      color( o.color ),
+      cursorData(o.cursorData),
+      font( o.font ), color( o.color ),
       horizontal_border_spacing( o.horizontal_border_spacing ),
       vertical_border_spacing( o.vertical_border_spacing ),
       widows(o.widows), orphans(o.orphans), page_break_inside(o.page_break_inside)
@@ -539,7 +539,7 @@ bool StyleInheritedData::operator==(const StyleInheritedData& o) const
         indent == o.indent &&
         line_height == o.line_height &&
         style_image == o.style_image &&
-        cursor_image == o.cursor_image &&
+        cursorData  == o.cursorData &&
         font == o.font &&
         color == o.color &&
         horizontal_border_spacing == o.horizontal_border_spacing &&
@@ -827,7 +827,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         !(inherited->indent == other->inherited->indent) ||
         !(inherited->line_height == other->inherited->line_height) ||
         !(inherited->style_image == other->inherited->style_image) ||
-        !(inherited->cursor_image == other->inherited->cursor_image) ||
+        !(inherited->cursorData  == other->inherited->cursorData) ||
         !(inherited->font == other->inherited->font) ||
         !(inherited->horizontal_border_spacing == other->inherited->horizontal_border_spacing) ||
         !(inherited->vertical_border_spacing == other->inherited->vertical_border_spacing) ||
@@ -984,6 +984,35 @@ void RenderStyle::setClip( Length top, Length right, Length bottom, Length left 
     data->clip.right = right;
     data->clip.bottom = bottom;
     data->clip.left = left;
+}
+
+void RenderStyle::addCursor(CachedImage* image, const IntPoint& hotSpot)
+{
+    CursorData data;
+    data.cursorImage = image;
+    data.hotSpot = hotSpot;
+    if (!inherited.access()->cursorData)
+        inherited.access()->cursorData = new CursorList;
+    inherited.access()->cursorData->append(data);
+}
+
+void RenderStyle::addSVGCursor(const String& fragmentId)
+{
+    CursorData data;
+    data.cursorFragmentId = fragmentId;
+    if (!inherited.access()->cursorData)
+        inherited.access()->cursorData = new CursorList;
+    inherited.access()->cursorData->append(data);
+}
+
+void RenderStyle::setCursorList(PassRefPtr<CursorList> other)
+{
+    inherited.access()->cursorData = other;
+}
+
+void RenderStyle::clearCursorList()
+{
+    inherited.access()->cursorData = new CursorList;
 }
 
 bool RenderStyle::contentDataEquivalent(const RenderStyle* otherStyle) const

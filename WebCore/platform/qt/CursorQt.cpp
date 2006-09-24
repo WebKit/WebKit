@@ -53,7 +53,7 @@ Cursor::~Cursor()
 {
 }
 
-Cursor::Cursor(Image*)
+Cursor::Cursor(Image*, const IntPoint&)
 {
     notImplemented();
 }

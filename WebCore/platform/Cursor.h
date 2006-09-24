@@ -48,6 +48,7 @@ class NSCursor;
 namespace WebCore {
 
     class Image;
+    class IntPoint;
 
 #if PLATFORM(WIN)
     typedef HCURSOR PlatformCursor;
@@ -69,7 +70,7 @@ namespace WebCore {
 #endif
         { }
 
-        Cursor(Image*);
+        Cursor(Image*, const IntPoint& hotspot);
         Cursor(const Cursor&);
         ~Cursor();
         Cursor& operator=(const Cursor&);

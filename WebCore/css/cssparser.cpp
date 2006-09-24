@@ -25,6 +25,7 @@
 #include "cssparser.h"
 
 #include "CSSBorderImageValue.h"
+#include "CSSCursorImageValue.h"
 #include "CSSImageValue.h"
 #include "CSSCharsetRule.h"
 #include "CSSImportRule.h"
@@ -694,26 +695,68 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
 
-    case CSS_PROP_CURSOR:
+    case CSS_PROP_CURSOR: {
         // [<uri>,]*  [ auto | crosshair | default | pointer | progress | move | e-resize | ne-resize |
         // nw-resize | n-resize | se-resize | sw-resize | s-resize | w-resize | ew-resize | 
         // ns-resize | nesw-resize | nwse-resize | col-resize | row-resize | text | wait | help ] ] | inherit
-        if (!strict && id == CSS_VAL_HAND) { // MSIE 5 compatibility :/
+        CSSValueList* list = 0;
+        while (value && value->unit == CSSPrimitiveValue::CSS_URI) {
+            String uri = parseURL(domString(value->string));
+            Vector<int> coords;
+            value = valueList->next();
+            while (value && value->unit == CSSPrimitiveValue::CSS_NUMBER) {
+                coords.append(value->fValue);
+                value = valueList->next();
+            }
+            IntPoint hotspot;
+            int nrcoords = coords.size();
+            if (nrcoords > 0 && nrcoords != 2) {
+                if (strict) { // only support hotspot pairs in strict mode
+                    delete list;
+                    return false;
+                }
+            } else if(strict && nrcoords == 2)
+                hotspot = IntPoint(coords[0], coords[1]);
+            if (strict || coords.size() == 0) {
+#if SVG_SUPPORT
+            if (uri.startsWith("#")) {
+                if (!list)
+                    list = new CSSValueList; 
+                list->append(new CSSPrimitiveValue(uri, CSSPrimitiveValue::CSS_URI));
+            } else
+#endif
+            if (!uri.isEmpty()) {
+                if (!list)
+                    list = new CSSValueList; 
+                list->append(new CSSCursorImageValue(
+                             String(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).url()),
+                             hotspot, styleElement));
+            }
+            }
+            if ((strict && !value) || (value && !(value->unit == Value::Operator && value->iValue == ',')))
+                return false;
+            value = valueList->next(); // comma
+        }
+        if (list) {
+            if (!value) { // no value after url list (MSIE 5 compatibility)
+                if (list->length() > 1)
+                    return false;
+            } else if (!strict && value->id == CSS_VAL_HAND) // MSIE 5 compatibility :/
+                list->append(new CSSPrimitiveValue(CSS_VAL_POINTER));
+            else if (value && value->id >= CSS_VAL_AUTO && value->id <= CSS_VAL_HELP)
+                list->append(new CSSPrimitiveValue(value->id));
+            valueList->next();
+            parsedValue = list;
+            break;
+        }
+        id = value->id;
+        if (!strict && value->id == CSS_VAL_HAND) { // MSIE 5 compatibility :/
             id = CSS_VAL_POINTER;
             valid_primitive = true;
-        } else if (id >= CSS_VAL_AUTO && id <= CSS_VAL_HELP)
+        } else if (value->id >= CSS_VAL_AUTO && value->id <= CSS_VAL_HELP)
             valid_primitive = true;
-        else if (value->unit == CSSPrimitiveValue::CSS_URI) {
-            String uri = parseURL(domString(value->string));
-            if (!uri.isEmpty()) {
-                parsedValue = new CSSImageValue(String(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).url()), styleElement);
-                // FIXME: we don't support fallback cursors yet, but ignoring the remaining values
-                // will at least let compliant declarations parse.
-                addProperty(propId, parsedValue, important);
-                return true;
-            }
-        }
         break;
+    }
 
     case CSS_PROP_BACKGROUND_ATTACHMENT:
     case CSS_PROP__WEBKIT_BACKGROUND_CLIP:
@@ -1295,8 +1338,8 @@ bool CSSParser::parseValue(int propId, bool important)
     }
 
     if (valid_primitive) {
-        if (id != 0)
-            parsedValue = new CSSPrimitiveValue(id);
+        if (id != 0) {
+            parsedValue = new CSSPrimitiveValue(id); }
         else if (value->unit == CSSPrimitiveValue::CSS_STRING)
             parsedValue = new CSSPrimitiveValue(domString(value->string), (CSSPrimitiveValue::UnitTypes) value->unit);
         else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
