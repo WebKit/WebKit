@@ -125,7 +125,7 @@ ScrollBar::ScrollBar(ScrollBarClient *, ScrollBarOrientation) { notImplemented()
 void ScrollBar::setSteps(int, int) { notImplemented(); }
 bool ScrollBar::scroll(ScrollDirection, ScrollGranularity, float) { notImplemented(); return 0; }
 bool ScrollBar::setValue(int) { notImplemented(); return 0; }
-void ScrollBar::setKnobProportion(int, int) { notImplemented(); }
+void ScrollBar::setProportion(int, int) { notImplemented(); }
 
 PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation) : ScrollBar(client, orientation) { notImplemented(); }
 PlatformScrollBar::~PlatformScrollBar() { notImplemented(); }
@@ -133,8 +133,8 @@ int PlatformScrollBar::width() const { notImplemented(); return 0; }
 int PlatformScrollBar::height() const { notImplemented(); return 0; }
 void PlatformScrollBar::setEnabled(bool) { notImplemented(); }
 void PlatformScrollBar::paint(GraphicsContext*, const IntRect& damageRect) { notImplemented(); }
-void PlatformScrollBar::setScrollBarValue(int v) { notImplemented(); }
-void PlatformScrollBar::setKnobProportion(int visibleSize, int totalSize) { notImplemented(); }
+void PlatformScrollBar::updateThumbPosition() { notImplemented(); }
+void PlatformScrollBar::updateThumbProportion() { notImplemented(); }
 void PlatformScrollBar::setRect(const IntRect&) { notImplemented(); }
 
 PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }

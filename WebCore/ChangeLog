@@ -2,6 +2,18 @@
 
         Reviewed by eseidel.
 
+        Fix Qt/Linux build after Dave's Scrollbar changes.
+
+        * platform/qt/PlatformScrollBar.h: (Somehow this contained the file twice! Removed one instance!)
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::ScrollBar::setProportion):
+        (WebCore::PlatformScrollBar::updateThumbPosition):
+        (WebCore::PlatformScrollBar::updateThumbProportion):
+
+2006-09-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.
+
         Qt/Linux build system changes: enable xpath/xslt by default.
         Offer possibility to change all of these using 'ccmake'.
 
