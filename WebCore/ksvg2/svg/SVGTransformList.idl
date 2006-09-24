@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,25 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGTransformList { 
-    readonly attribute unsigned long numberOfItems;
-    void   clear (  )
-                    raises( DOMException );
-    SVGTransform initialize ( in SVGTransform item )
-                    raises( DOMException, SVGException );
-    SVGTransform getItem ( in unsigned long index )
-                    raises( DOMException );
-    SVGTransform insertItemBefore ( in SVGTransform item, in unsigned long index )
-                    raises( DOMException, SVGException );
-    SVGTransform replaceItem ( in SVGTransform item, in unsigned long index )
-                    raises( DOMException, SVGException );
-    SVGTransform removeItem ( in unsigned long index )
-                    raises( DOMException );
-    SVGTransform appendItem ( in SVGTransform item )
-                    raises( DOMException, SVGException );
-    SVGTransform createSVGTransformFromMatrix ( in SVGMatrix matrix );
-    SVGTransform consolidate (  );
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGTransformList {
+        readonly attribute unsigned long numberOfItems;
+
+        void clear()
+            raises(DOMException);
+        SVGTransform initialize(in SVGTransform item)
+            raises(DOMException, SVGException);
+        SVGTransform getItem(in unsigned long index)
+            raises(DOMException);
+        SVGTransform insertItemBefore(in SVGTransform item, in unsigned long index)
+            raises(DOMException, SVGException);
+        SVGTransform replaceItem(in SVGTransform item, in unsigned long index)
+            raises(DOMException, SVGException);
+        SVGTransform removeItem(in unsigned long index)
+            raises(DOMException);
+        SVGTransform appendItem(in SVGTransform item)
+            raises(DOMException, SVGException);
+        SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix);
+        SVGTransform consolidate();
+    };
+
+}

@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,23 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGPathSegList { 
-    readonly attribute unsigned long numberOfItems;
-    void   clear (  )
-                    raises( core::DOMException );
-    SVGPathSeg initialize ( in SVGPathSeg newItem )
-                    raises( core::DOMException, SVGException );
-    SVGPathSeg getItem ( in unsigned long index )
-                    raises( core::DOMException );
-    SVGPathSeg insertItemBefore ( in SVGPathSeg newItem, in unsigned long index )
-                    raises( core::DOMException, SVGException );
-    SVGPathSeg replaceItem ( in SVGPathSeg newItem, in unsigned long index )
-                    raises( core::DOMException, SVGException );
-    SVGPathSeg removeItem ( in unsigned long index )
-                    raises( core::DOMException );
-    SVGPathSeg appendItem ( in SVGPathSeg newItem )
-                    raises( core::DOMException, SVGException );
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGPathSegList {
+        readonly attribute unsigned long numberOfItems;
+
+        void clear()
+            raises(DOMException);
+        SVGPathSeg initialize(in SVGPathSeg newItem)
+            raises(DOMException, SVGException);
+        SVGPathSeg getItem(in unsigned long index)
+            raises(DOMException);
+        SVGPathSeg insertItemBefore(in SVGPathSeg newItem, in unsigned long index)
+            raises(DOMException, SVGException);
+        SVGPathSeg replaceItem(in SVGPathSeg newItem, in unsigned long index)
+            raises(DOMException, SVGException);
+        SVGPathSeg removeItem(in unsigned long index)
+            raises(DOMException);
+        SVGPathSeg appendItem(in SVGPathSeg newItem)
+            raises(DOMException, SVGException);
+    };
+
+}

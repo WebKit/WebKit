@@ -138,6 +138,14 @@ all : \
     DOMRect.h \
     DOMStyleSheet.h \
     DOMStyleSheetList.h \
+    DOMSVGAngle.h \
+    DOMSVGLength.h \
+    DOMSVGLengthList.h \
+    DOMSVGMatrix.h \
+    DOMSVGPathSeg.h \
+    DOMSVGPathSegList.h \
+    DOMSVGTransform.h \
+    DOMSVGTransformList.h \
     DOMText.h \
     DOMTreeWalker.h \
     DOMUIEvent.h \

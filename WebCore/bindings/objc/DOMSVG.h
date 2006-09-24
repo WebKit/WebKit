@@ -1,6 +1,6 @@
 /*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
-
-    interface [Conditional=SVG] SVGLengthList { 
-        readonly attribute unsigned long numberOfItems;
-
-        void clear()
-            raises(DOMException);
-        SVGLength initialize(in SVGLength item)
-            raises(DOMException, SVGException);
-        SVGLength getItem(in unsigned long index)
-            raises(DOMException);
-        SVGLength insertItemBefore(in SVGLength item, in unsigned long index)
-            raises(DOMException, SVGException);
-        SVGLength replaceItem(in SVGLength item, in unsigned long index)
-            raises(DOMException, SVGException);
-        SVGLength removeItem(in unsigned long index)
-            raises(DOMException);
-        SVGLength appendItem(in SVGLength item)
-            raises(DOMException, SVGException);
-    };
-
-}
+#import <WebCore/DOMSVGAngle.h>
+#import <WebCore/DOMSVGLength.h>
+#import <WebCore/DOMSVGLengthList.h>
+#import <WebCore/DOMSVGMatrix.h>
+#import <WebCore/DOMSVGPathSeg.h>
+#import <WebCore/DOMSVGPathSegList.h>
+#import <WebCore/DOMSVGTransform.h>
+#import <WebCore/DOMSVGTransformList.h>

@@ -1,3 +1,28 @@
+2006-09-24  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10882
+        SVG needs Obj-C DOM bindings
+
+        - Auto-generate the first 8 Objective-C SVG DOM bindings.  The 
+          auto-generated classes are DOMSVGAngle, DOMSVGLength, DOMSVGLengthList,
+          DOMSVGMatrix, DOMSVGPathSeg, DOMSVGPathSegList, DOMSVGTransform, and 
+          DOMSVGTransformList.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMSVG.h: Added.
+        * ksvg2/svg/SVGAngle.idl:
+        * ksvg2/svg/SVGLength.idl:
+        * ksvg2/svg/SVGLengthList.idl:
+        * ksvg2/svg/SVGMatrix.idl:
+        * ksvg2/svg/SVGPathSeg.idl:
+        * ksvg2/svg/SVGPathSegList.idl:
+        * ksvg2/svg/SVGTransform.idl:
+        * ksvg2/svg/SVGTransformList.idl:
+
 2006-09-24  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.

@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
     Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
 
     This file is part of the KDE project
@@ -21,29 +22,30 @@
     Boston, MA 02111-1307, USA.
 */
 
-module svg
-{
-  interface [Conditional=SVG, GenerateConstructor] SVGLength { 
-    // Length Unit Types
-    const unsigned short SVG_LENGTHTYPE_UNKNOWN    = 0;
-    const unsigned short SVG_LENGTHTYPE_NUMBER     = 1;
-    const unsigned short SVG_LENGTHTYPE_PERCENTAGE = 2;
-    const unsigned short SVG_LENGTHTYPE_EMS        = 3;
-    const unsigned short SVG_LENGTHTYPE_EXS        = 4;
-    const unsigned short SVG_LENGTHTYPE_PX         = 5;
-    const unsigned short SVG_LENGTHTYPE_CM         = 6;
-    const unsigned short SVG_LENGTHTYPE_MM         = 7;
-    const unsigned short SVG_LENGTHTYPE_IN         = 8;
-    const unsigned short SVG_LENGTHTYPE_PT         = 9;
-    const unsigned short SVG_LENGTHTYPE_PC         = 10;
-    readonly attribute unsigned short unitType;
-             attribute float          value;
-                         // raises DOMException on setting
-             attribute float          valueInSpecifiedUnits;
-                         // raises DOMException on setting
-             attribute core::DOMString      valueAsString;
-                         // raises DOMException on setting
-    void newValueSpecifiedUnits ( in unsigned short unitType, in float valueInSpecifiedUnits );
-    void convertToSpecifiedUnits ( in unsigned short unitType );
-  };
-};
+module svg {
+
+    interface [Conditional=SVG, GenerateConstructor] SVGLength { 
+        // Length Unit Types
+        const unsigned short SVG_LENGTHTYPE_UNKNOWN    = 0;
+        const unsigned short SVG_LENGTHTYPE_NUMBER     = 1;
+        const unsigned short SVG_LENGTHTYPE_PERCENTAGE = 2;
+        const unsigned short SVG_LENGTHTYPE_EMS        = 3;
+        const unsigned short SVG_LENGTHTYPE_EXS        = 4;
+        const unsigned short SVG_LENGTHTYPE_PX         = 5;
+        const unsigned short SVG_LENGTHTYPE_CM         = 6;
+        const unsigned short SVG_LENGTHTYPE_MM         = 7;
+        const unsigned short SVG_LENGTHTYPE_IN         = 8;
+        const unsigned short SVG_LENGTHTYPE_PT         = 9;
+        const unsigned short SVG_LENGTHTYPE_PC         = 10;
+
+        readonly attribute unsigned short unitType;
+                 attribute float          value;
+                 attribute float          valueInSpecifiedUnits;
+                 attribute DOMString      valueAsString;
+
+        void newValueSpecifiedUnits(in unsigned short unitType, 
+                                    in float valueInSpecifiedUnits);
+        void convertToSpecifiedUnits(in unsigned short unitType);
+    };
+
+}

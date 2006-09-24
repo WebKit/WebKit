@@ -122,6 +122,17 @@
 #import "DOMStyleSheetListInternal.h"
 #import "DOMTextInternal.h"
 
+#ifdef SVG_SUPPORT
+#import "DOMSVGAngleInternal.h"
+#import "DOMSVGLengthInternal.h"
+#import "DOMSVGLengthListInternal.h"
+#import "DOMSVGMatrixInternal.h"
+#import "DOMSVGPathSegInternal.h"
+#import "DOMSVGPathSegListInternal.h"
+#import "DOMSVGTransformInternal.h"
+#import "DOMSVGTransformListInternal.h"
+#endif // SVG_SUPPORT
+
 #ifdef XPATH_SUPPORT
 #import "DOMXPathExpressionInternal.h"
 #import "DOMXPathResultInternal.h"
