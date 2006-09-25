@@ -112,6 +112,18 @@ void IndentOutdentCommand::indentRegion()
     ASSERT(!startOfSelection.isNull());
     ASSERT(!endOfSelection.isNull());
     
+    // Special case empty root editable elements because there's nothing to split
+    // and there's nothing to move.
+    Node* startNode = startOfSelection.deepEquivalent().downstream().node();
+    if (startNode == startNode->rootEditableElement()) {
+        RefPtr<Node> blockquote = createElement(document(), "blockquote");
+        insertNodeAt(blockquote.get(), startNode, 0);
+        RefPtr<Node> placeholder = createBreakElement(document());
+        appendNode(placeholder.get(), blockquote.get());
+        setEndingSelection(Selection(Position(placeholder.get(), 0), DOWNSTREAM));
+        return;
+    }
+    
     Node* previousListNode = 0;
     Node* newListNode = 0;
     Node* newBlockquote = 0;

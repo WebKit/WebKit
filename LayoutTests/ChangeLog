@@ -1,3 +1,12 @@
+2006-09-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        * editing/execCommand/indent-empty-root-expected.checksum: Added.
+        * editing/execCommand/indent-empty-root-expected.png: Added.
+        * editing/execCommand/indent-empty-root-expected.txt: Added.
+        * editing/execCommand/indent-empty-root.html: Added.
+
 2006-09-24  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by mjs.

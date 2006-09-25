@@ -1,3 +1,14 @@
+2006-09-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=11002>
+        Gmail Editor: Crash at WebCore::SplitElementCommand::doApply() when attempting to indent in a new message
+        
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentRegion): Special case
+        an empty root editable element.
+
 2006-09-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Steve
