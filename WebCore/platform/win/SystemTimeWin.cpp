@@ -50,7 +50,7 @@ double currentTime()
     // of which 89 were leap years (1700, 1800, and 1900 were not leap years).
     // That is a total of 134774 days, which is 11644473600 seconds.
 
-    return t.QuadPart * 0.0000001 + 11644473600.0;
+    return t.QuadPart * 0.0000001 - 11644473600.0;
 }
 
 }
