@@ -25,24 +25,26 @@
 #include "kjs_binding.h"
 
 namespace WebCore {
-    class XMLHttpRequest;
-    class Document;
+
+class XMLHttpRequest;
+class Document;
+
 }
 
 namespace KJS {
 
-  class JSXMLHttpRequestConstructorImp : public DOMObject {
-  public:
-    JSXMLHttpRequestConstructorImp(ExecState *exec, WebCore::Document *d);
+class JSXMLHttpRequestConstructorImp : public DOMObject {
+public:
+    JSXMLHttpRequestConstructorImp(ExecState*, WebCore::Document*);
     virtual bool implementsConstruct() const;
-    virtual JSObject *construct(ExecState *exec, const List &args);
-  private:
+    virtual JSObject* construct(ExecState*, const List&);
+private:
     RefPtr<WebCore::Document> doc;
-  };
+};
 
-  class JSXMLHttpRequest : public DOMObject {
-  public:
-    JSXMLHttpRequest(ExecState *, WebCore::Document *d);
+class JSXMLHttpRequest : public DOMObject {
+public:
+    JSXMLHttpRequest(ExecState*, WebCore::Document*);
     ~JSXMLHttpRequest();
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
@@ -50,17 +52,17 @@ namespace KJS {
         StatusText, Abort, GetAllResponseHeaders, GetResponseHeader, Open, Send, SetRequestHeader,
         OverrideMIMEType };
 
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/);
-    virtual bool toBoolean(ExecState *) const { return true; }
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    JSValue* getValueProperty(ExecState*, int token) const;
+    virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
+    void putValueProperty(ExecState*, int token, JSValue* value, int /*attr*/);
+    virtual bool toBoolean(ExecState*) const { return true; }
     virtual void mark();
 
-  private:
+private:
     friend class JSXMLHttpRequestProtoFunc;
     RefPtr<WebCore::XMLHttpRequest> m_impl;
-  };
+};
 
 } // namespace
 

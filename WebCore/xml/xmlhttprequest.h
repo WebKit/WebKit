@@ -29,28 +29,28 @@
 
 namespace WebCore {
 
-  class Decoder;
-  class Document;
-  class EventListener;
-  class String;
+class Decoder;
+class Document;
+class EventListener;
+class String;
 
-  typedef int ExceptionCode;
+typedef int ExceptionCode;
 
-  const int XMLHttpRequestExceptionOffset = 500;
-  const int XMLHttpRequestExceptionMax = 599;
-  enum XMLHttpRequestExceptionCode { PERMISSION_DENIED = XMLHttpRequestExceptionOffset };
+const int XMLHttpRequestExceptionOffset = 500;
+const int XMLHttpRequestExceptionMax = 599;
+enum XMLHttpRequestExceptionCode { PERMISSION_DENIED = XMLHttpRequestExceptionOffset };
 
-  // these exact numeric values are important because JS expects them
-  enum XMLHttpRequestState {
+// these exact numeric values are important because JS expects them
+enum XMLHttpRequestState {
     Uninitialized = 0,  // The initial value.
     Open = 1,           // The open() method has been successfully called.
     Sent = 2,           // The user agent successfully completed the request, but no data has yet been received.
     Receiving = 3,      // Immediately before receiving the message body (if any). All HTTP headers have been received.
     Loaded = 4          // The data transfer has been completed.
-  };
+};
 
-  class XMLHttpRequest : public Shared<XMLHttpRequest>, ResourceLoaderClient {
-  public:
+class XMLHttpRequest : public Shared<XMLHttpRequest>, ResourceLoaderClient {
+public:
     XMLHttpRequest(Document*);
     ~XMLHttpRequest();
 
@@ -63,7 +63,7 @@ namespace WebCore {
     void open(const String& method, const KURL& url, bool async, const String& user, const String& password, ExceptionCode& ec);
     void send(const String& body, ExceptionCode&);
     void abort();
-    void setRequestHeader(const String& name, const String &value, ExceptionCode&);
+    void setRequestHeader(const String& name, const String& value, ExceptionCode&);
     void overrideMIMEType(const String& override);
     String getAllResponseHeaders() const;
     String getResponseHeader(const String& name) const;
@@ -75,17 +75,17 @@ namespace WebCore {
     void setOnLoadListener(EventListener*);
     EventListener* onLoadListener() const;
 
-  private:
+private:
     bool urlMatchesDocumentDomain(const KURL&) const;
 
     virtual void receivedRedirect(ResourceLoader*, const KURL&);
-    virtual void receivedData(ResourceLoader*, const char *data, int size);
+    virtual void receivedData(ResourceLoader*, const char* data, int size);
     virtual void receivedAllData(ResourceLoader*);
 
     void processSyncLoadResults(const Vector<char>& data, const KURL& finalURL, const DeprecatedString& headers);
 
     bool responseIsXML() const;
-    
+
     DeprecatedString getRequestHeader(const DeprecatedString& name) const;
     static DeprecatedString getSpecificHeader(const DeprecatedString& headers, const DeprecatedString& name);
 
@@ -101,7 +101,7 @@ namespace WebCore {
     bool m_async;
     DeprecatedString m_requestHeaders;
 
-    ResourceLoader* m_job;
+    ResourceLoader* m_loader;
 
     XMLHttpRequestState m_state;
 
@@ -115,7 +115,7 @@ namespace WebCore {
     mutable RefPtr<Document> m_responseXML;
 
     bool m_aborted;
-  };
+};
 
 } // namespace
 
