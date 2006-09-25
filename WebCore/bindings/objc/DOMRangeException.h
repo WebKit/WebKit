@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+@class NSString;
+
 extern NSString * const DOMRangeException;
 
 enum DOMRangeExceptionCode {
