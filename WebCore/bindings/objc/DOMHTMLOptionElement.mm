@@ -49,9 +49,9 @@
     return IMPL->defaultSelected();
 }
 
-- (void)setDefaultSelected:(BOOL)defaultSelected
+- (void)setDefaultSelected:(BOOL)newDefaultSelected
 {
-    IMPL->setDefaultSelected(defaultSelected);
+    IMPL->setDefaultSelected(newDefaultSelected);
 }
 
 - (NSString *)text
@@ -69,9 +69,9 @@
     return IMPL->disabled();
 }
 
-- (void)setDisabled:(BOOL)disabled
+- (void)setDisabled:(BOOL)newDisabled
 {
-    IMPL->setDisabled(disabled);
+    IMPL->setDisabled(newDisabled);
 }
 
 - (NSString *)label
@@ -79,9 +79,9 @@
     return IMPL->label();
 }
 
-- (void)setLabel:(NSString *)label
+- (void)setLabel:(NSString *)newLabel
 {
-    IMPL->setLabel(label);
+    IMPL->setLabel(newLabel);
 }
 
 - (BOOL)selected
@@ -89,9 +89,9 @@
     return IMPL->selected();
 }
 
-- (void)setSelected:(BOOL)selected
+- (void)setSelected:(BOOL)newSelected
 {
-    IMPL->setSelected(selected);
+    IMPL->setSelected(newSelected);
 }
 
 - (NSString *)value
@@ -99,9 +99,9 @@
     return IMPL->value();
 }
 
-- (void)setValue:(NSString *)value
+- (void)setValue:(NSString *)newValue
 {
-    IMPL->setValue(value);
+    IMPL->setValue(newValue);
 }
 
 @end

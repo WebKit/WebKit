@@ -74,18 +74,18 @@
 
 - (DOMStyleSheet *)sheet
 {
-    WebCore::StyleSheet *sheet;
+    WebCore::StyleSheet *styleSheet;
 
     if ([self isKindOfClass:[DOMProcessingInstruction class]])
-        sheet = static_cast<WebCore::ProcessingInstruction*>([(DOMProcessingInstruction *)self _node])->sheet();
+        styleSheet = static_cast<WebCore::ProcessingInstruction*>([(DOMProcessingInstruction *)self _node])->sheet();
     else if ([self isKindOfClass:[DOMHTMLLinkElement class]])
-        sheet = static_cast<WebCore::HTMLLinkElement*>([(DOMHTMLLinkElement *)self _node])->sheet();
+        styleSheet = static_cast<WebCore::HTMLLinkElement*>([(DOMHTMLLinkElement *)self _node])->sheet();
     else if ([self isKindOfClass:[DOMHTMLStyleElement class]])
-        sheet = static_cast<WebCore::HTMLStyleElement*>([(DOMHTMLStyleElement *)self _node])->sheet();
+        styleSheet = static_cast<WebCore::HTMLStyleElement*>([(DOMHTMLStyleElement *)self _node])->sheet();
     else
         return nil;
 
-    return [DOMStyleSheet _styleSheetWith:sheet];
+    return [DOMStyleSheet _styleSheetWith:styleSheet];
 }
 
 @end

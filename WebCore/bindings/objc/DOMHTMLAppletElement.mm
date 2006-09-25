@@ -40,9 +40,9 @@
     return IMPL->align();
 }
 
-- (void)setAlign:(NSString *)align
+- (void)setAlign:(NSString *)newAlign
 {
-    IMPL->setAlign(align);
+    IMPL->setAlign(newAlign);
 }
 
 - (NSString *)alt
@@ -50,9 +50,9 @@
     return IMPL->alt();
 }
 
-- (void)setAlt:(NSString *)alt
+- (void)setAlt:(NSString *)newAlt
 {
-    IMPL->setAlt(alt);
+    IMPL->setAlt(newAlt);
 }
 
 - (NSString *)archive
@@ -60,9 +60,9 @@
     return IMPL->archive();
 }
 
-- (void)setArchive:(NSString *)archive
+- (void)setArchive:(NSString *)newArchive
 {
-    IMPL->setArchive(archive);
+    IMPL->setArchive(newArchive);
 }
 
 - (NSString *)code
@@ -70,9 +70,9 @@
     return IMPL->code();
 }
 
-- (void)setCode:(NSString *)code
+- (void)setCode:(NSString *)newCode
 {
-    IMPL->setCode(code);
+    IMPL->setCode(newCode);
 }
 
 - (NSString *)codeBase
@@ -80,9 +80,9 @@
     return IMPL->codeBase();
 }
 
-- (void)setCodeBase:(NSString *)codeBase
+- (void)setCodeBase:(NSString *)newCodeBase
 {
-    IMPL->setCodeBase(codeBase);
+    IMPL->setCodeBase(newCodeBase);
 }
 
 - (NSString *)height
@@ -90,9 +90,9 @@
     return IMPL->height();
 }
 
-- (void)setHeight:(NSString *)height
+- (void)setHeight:(NSString *)newHeight
 {
-    IMPL->setHeight(height);
+    IMPL->setHeight(newHeight);
 }
 
 //FIXME: DOM spec says hspace should be a DOMString, not an int
@@ -101,9 +101,9 @@
     return IMPL->hspace().toInt();
 }
 
-- (void)setHspace:(int)hspace
+- (void)setHspace:(int)newHspace
 {
-    IMPL->setHspace(WebCore::String::number(hspace));
+    IMPL->setHspace(WebCore::String::number(newHspace));
 }
 
 - (NSString *)name
@@ -111,9 +111,9 @@
     return IMPL->name();
 }
 
-- (void)setName:(NSString *)name
+- (void)setName:(NSString *)newName
 {
-    IMPL->setName(name);
+    IMPL->setName(newName);
 }
 
 - (NSString *)object
@@ -121,9 +121,9 @@
     return IMPL->object();
 }
 
-- (void)setObject:(NSString *)object
+- (void)setObject:(NSString *)newObject
 {
-    IMPL->setObject(object);
+    IMPL->setObject(newObject);
 }
 
 //FIXME: DOM spec says vspace should be a DOMString, not an int
@@ -132,9 +132,9 @@
     return IMPL->vspace().toInt();
 }
 
-- (void)setVspace:(int)vspace
+- (void)setVspace:(int)newVspace
 {
-    IMPL->setVspace(WebCore::String::number(vspace));
+    IMPL->setVspace(WebCore::String::number(newVspace));
 }
 
 - (NSString *)width
@@ -142,9 +142,9 @@
     return IMPL->width();
 }
 
-- (void)setWidth:(NSString *)width
+- (void)setWidth:(NSString *)newWidth
 {
-    IMPL->setWidth(width);
+    IMPL->setWidth(newWidth);
 }
 
 @end
