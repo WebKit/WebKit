@@ -27,7 +27,6 @@
 #import <WebCore/DOMCore.h>
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMObject.h>
-
 #import <WebCore/DOMRangeException.h>
 
 // DOM Range comparison codes
@@ -39,14 +38,23 @@ enum {
 };
 
 @interface DOMRange : DOMObject
+#ifndef BUILDING_ON_TIGER
+@property(readonly) DOMNode *startContainer;
+@property(readonly) int startOffset;
+@property(readonly) DOMNode *endContainer;
+@property(readonly) int endOffset;
+@property(readonly) BOOL collapsed;
+@property(readonly) DOMNode *commonAncestorContainer;
+#else
 - (DOMNode *)startContainer;
 - (int)startOffset;
 - (DOMNode *)endContainer;
 - (int)endOffset;
 - (BOOL)collapsed;
 - (DOMNode *)commonAncestorContainer;
-- (void)setStart:(DOMNode *)refNode :(int)offset;
-- (void)setEnd:(DOMNode *)refNode :(int)offset;
+#endif
+- (void)setStart:(DOMNode *)refNode offset:(int)offset;
+- (void)setEnd:(DOMNode *)refNode offset:(int)offset;
 - (void)setStartBefore:(DOMNode *)refNode;
 - (void)setStartAfter:(DOMNode *)refNode;
 - (void)setEndBefore:(DOMNode *)refNode;
@@ -54,7 +62,7 @@ enum {
 - (void)collapse:(BOOL)toStart;
 - (void)selectNode:(DOMNode *)refNode;
 - (void)selectNodeContents:(DOMNode *)refNode;
-- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange;
+- (short)compareBoundaryPoints:(unsigned short)how sourceRange:(DOMRange *)sourceRange;
 - (void)deleteContents;
 - (DOMDocumentFragment *)extractContents;
 - (DOMDocumentFragment *)cloneContents;
@@ -63,4 +71,16 @@ enum {
 - (DOMRange *)cloneRange;
 - (NSString *)toString;
 - (void)detach;
+@end
+
+@interface DOMRange (DOMRangeDeprecated)
+#ifndef BUILDING_ON_TIGER
+- (void)setStart:(DOMNode *)refNode :(int)offset DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (void)setEnd:(DOMNode *)refNode :(int)offset DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;
+#else
+- (void)setStart:(DOMNode *)refNode :(int)offset;
+- (void)setEnd:(DOMNode *)refNode :(int)offset;
+- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange;
+#endif
 @end

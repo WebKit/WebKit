@@ -588,14 +588,14 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     return result;
 }
 
-- (void)setStart:(DOMNode *)refNode :(int)offset
+- (void)setStart:(DOMNode *)refNode offset:(int)offset
 {
     WebCore::ExceptionCode ec = 0;
     [self _range]->setStart([refNode _node], offset, ec);
     raiseOnDOMError(ec);
 }
 
-- (void)setEnd:(DOMNode *)refNode :(int)offset
+- (void)setEnd:(DOMNode *)refNode offset:(int)offset
 {
     WebCore::ExceptionCode ec = 0;
     [self _range]->setEnd([refNode _node], offset, ec);
@@ -651,7 +651,7 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     raiseOnDOMError(ec);
 }
 
-- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange
+- (short)compareBoundaryPoints:(unsigned short)how sourceRange:(DOMRange *)sourceRange
 {
     WebCore::ExceptionCode ec = 0;
     short result = [self _range]->compareBoundaryPoints(static_cast<WebCore::Range::CompareHow>(how), [sourceRange _range], ec);
@@ -722,6 +722,25 @@ static Class elementClass(const WebCore::AtomicString& tagName)
     WebCore::ExceptionCode ec = 0;
     [self _range]->detach(ec);
     raiseOnDOMError(ec);
+}
+
+@end
+
+@implementation DOMRange (DOMRangeDeprecated)
+
+- (void)setStart:(DOMNode *)refNode :(int)offset
+{
+    [self setStart:refNode offset:offset];
+}
+
+- (void)setEnd:(DOMNode *)refNode :(int)offset
+{
+    [self setEnd:refNode offset:offset];
+}
+
+- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange
+{
+    return [self compareBoundaryPoints:how sourceRange:sourceRange];
 }
 
 @end
@@ -943,7 +962,7 @@ short ObjCNodeFilterCondition::acceptNode(WebCore::Node* node) const
 // FIXME: this should be auto-genenerate in DOMDocument.mm
 @implementation DOMDocument (DOMDocumentTraversal)
 
-- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
+- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root whatToShow:(unsigned)whatToShow filter:(id <DOMNodeFilter>)filter expandEntityReferences:(BOOL)expandEntityReferences
 {
     RefPtr<WebCore::NodeFilter> cppFilter;
     if (filter)
@@ -954,7 +973,7 @@ short ObjCNodeFilterCondition::acceptNode(WebCore::Node* node) const
     return [DOMNodeIterator _nodeIteratorWith:impl.get() filter:filter];
 }
 
-- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
+- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root whatToShow:(unsigned)whatToShow filter:(id <DOMNodeFilter>)filter expandEntityReferences:(BOOL)expandEntityReferences
 {
     RefPtr<WebCore::NodeFilter> cppFilter;
     if (filter)
@@ -967,6 +986,19 @@ short ObjCNodeFilterCondition::acceptNode(WebCore::Node* node) const
 
 @end
 
+@implementation DOMDocument (DOMDocumentTraversalDeprecated)
+
+- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
+{
+    return [self createNodeIterator:root whatToShow:whatToShow filter:filter expandEntityReferences:expandEntityReferences];
+}
+
+- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
+{
+    return [self createTreeWalker:root whatToShow:whatToShow filter:filter expandEntityReferences:expandEntityReferences];
+}
+
+@end
 
 //------------------------------------------------------------------------------------------
 // ObjCEventListener

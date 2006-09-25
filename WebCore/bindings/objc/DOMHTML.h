@@ -40,6 +40,7 @@
 #import <WebCore/DOMHTMLDivElement.h>
 #import <WebCore/DOMHTMLDocument.h>
 #import <WebCore/DOMHTMLElement.h>
+#import <WebCore/DOMHTMLEmbedElement.h>
 #import <WebCore/DOMHTMLFieldSetElement.h>
 #import <WebCore/DOMHTMLFontElement.h>
 #import <WebCore/DOMHTMLFormElement.h>
@@ -82,6 +83,3 @@
 #import <WebCore/DOMHTMLTextAreaElement.h>
 #import <WebCore/DOMHTMLTitleElement.h>
 #import <WebCore/DOMHTMLUListElement.h>
-
-// was an HTML extension
-#import <WebCore/DOMHTMLEmbedElement.h>

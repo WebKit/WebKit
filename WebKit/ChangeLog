@@ -1,3 +1,18 @@
+2006-09-25  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady.
+
+        Use the non-deprecated method names for getComputedStyle, setEnd and setStart.
+
+        * WebInspector/WebInspector.m:
+        (-[WebInspector _highlightNode:]):
+        * WebView/WebHTMLView.m:
+        (unionDOMRanges):
+        (-[WebHTMLView _selectRangeInMarkedText:]):
+        (-[WebTextCompleteController doCompletion]):
+        * WebView/WebView.m:
+        (-[WebView computedStyleForElement:pseudoElement:]):
+
 2006-09-22  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

@@ -4593,11 +4593,11 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 {
     ASSERT(a);
     ASSERT(b);
-    DOMRange *s = [a compareBoundaryPoints:DOM_START_TO_START :b] <= 0 ? a : b;
-    DOMRange *e = [a compareBoundaryPoints:DOM_END_TO_END :b] <= 0 ? b : a;
+    DOMRange *s = [a compareBoundaryPoints:DOM_START_TO_START sourceRange:b] <= 0 ? a : b;
+    DOMRange *e = [a compareBoundaryPoints:DOM_END_TO_END sourceRange:b] <= 0 ? b : a;
     DOMRange *r = [[[a startContainer] ownerDocument] createRange];
-    [r setStart:[s startContainer] :[s startOffset]];
-    [r setEnd:[e endContainer] :[e endOffset]];
+    [r setStart:[s startContainer] offset:[s startOffset]];
+    [r setEnd:[e endContainer] offset:[e endOffset]];
     return r;
 }
 
@@ -5154,8 +5154,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     unsigned selectionStart = [markedTextRange startOffset] + range.location;
     unsigned selectionEnd = selectionStart + range.length;
 
-    [selectedRange setStart:[markedTextRange startContainer] :selectionStart];
-    [selectedRange setEnd:[markedTextRange startContainer] :selectionEnd];
+    [selectedRange setStart:[markedTextRange startContainer] offset:selectionStart];
+    [selectedRange setEnd:[markedTextRange startContainer] offset:selectionEnd];
 
     [bridge setSelectedDOMRange:selectedRange affinity:NSSelectionAffinityDownstream closeTyping:NO];
 }
@@ -5455,7 +5455,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         DOMRange *selection = [bridge selectedDOMRange];
         DOMRange *wholeWord = [bridge rangeByAlteringCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectByWord];
         DOMRange *prefix = [wholeWord cloneRange];
-        [prefix setEnd:[selection startContainer] :[selection startOffset]];
+        [prefix setEnd:[selection startContainer] offset:[selection startOffset]];
 
         // Reject some NOP cases
         if ([prefix collapsed]) {

@@ -1460,21 +1460,30 @@ namespace WebCore {
 
 @implementation DOMDocument (DOMViewCSS)
 
-- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
+- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
 {
     WebCore::AbstractView* dv = [self _document]->defaultView();
 
     if (!dv)
         return nil;
     
-    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:WTF::getPtr(dv->getComputedStyle([elt _element], pseudoElt))];
+    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:WTF::getPtr(dv->getComputedStyle([element _element], pseudoElement))];
+}
+
+@end
+
+@implementation DOMDocument (DOMViewCSSDeprecated)
+
+- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
+{
+    return [self getComputedStyle:elt pseudoElement:pseudoElt];
 }
 
 @end
 
 @implementation DOMDocument (DOMDocumentCSSExtensions)
 
-- (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt
+- (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
 {
     WebCore::AbstractView* dv = [self _document]->defaultView();
 
@@ -1482,7 +1491,7 @@ namespace WebCore {
         return nil;
     
     // The parameter of "false" is handy for the DOM inspector and lets us see user agent and user rules.
-    return [DOMCSSRuleList _CSSRuleListWith:WTF::getPtr(dv->getMatchedCSSRules([elt _element], pseudoElt, false))];
+    return [DOMCSSRuleList _CSSRuleListWith:WTF::getPtr(dv->getMatchedCSSRules([element _element], pseudoElement, false))];
 }
 
 @end

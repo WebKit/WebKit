@@ -543,7 +543,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     if (!NSIsEmptyRect(bounds)) {
         NSArray *rects = nil;
         if ([node isKindOfClass:[DOMElement class]]) {
-            DOMCSSStyleDeclaration *style = [_private->domDocument getComputedStyle:(DOMElement *)node :@""];
+            DOMCSSStyleDeclaration *style = [_private->domDocument getComputedStyle:(DOMElement *)node pseudoElement:@""];
             if ([[style getPropertyValue:@"display"] isEqualToString:@"inline"])
                 rects = [node lineBoxRects];
         } else if ([node isKindOfClass:[DOMText class]])

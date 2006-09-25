@@ -3049,7 +3049,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     if (pseudoElement == nil) {
         pseudoElement = @"";
     }
-    return [[element ownerDocument] getComputedStyle:element :pseudoElement];
+    return [[element ownerDocument] getComputedStyle:element pseudoElement:pseudoElement];
 }
 
 @end

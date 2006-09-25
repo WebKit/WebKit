@@ -1,3 +1,32 @@
+2006-09-25  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady.
+
+        - Deprecate the rest of the old-style methods that are not generated.
+        - Add @property syntax to DOMRange.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (-[DOMRange setStart:offset:]):
+        (-[DOMRange setEnd:offset:]):
+        (-[DOMRange compareBoundaryPoints:sourceRange:]):
+        (-[DOMRange setStart::]):
+        (-[DOMRange setEnd::]):
+        (-[DOMRange compareBoundaryPoints::]):
+        (-[DOMDocument createNodeIterator:whatToShow:filter:expandEntityReferences:]):
+        (-[DOMDocument createTreeWalker:whatToShow:filter:expandEntityReferences:]):
+        (-[DOMDocument createNodeIterator::::]):
+        (-[DOMDocument createTreeWalker::::]):
+        * bindings/objc/DOMCSS.h:
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMDocument getComputedStyle:pseudoElement:]):
+        (-[DOMDocument getComputedStyle::]):
+        (-[DOMDocument getMatchedCSSRules:pseudoElement:]):
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTML.h:
+        * bindings/objc/DOMRange.h:
+        * bindings/objc/DOMTraversal.h:
+
 2006-09-25  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by mjs.

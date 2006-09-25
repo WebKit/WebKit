@@ -51,7 +51,7 @@
 @end
 
 @interface DOMDocument (DOMDocumentCSSExtensions)
-- (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt;
+- (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement;
 @end
 
 @interface DOMElement (DOMElementAppKitExtensions)

@@ -49,7 +49,15 @@
 #import <WebCore/DOMRect.h>
 
 @interface DOMDocument (DOMViewCSS)
+- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)element pseudoElement:(NSString *)pseudoElement;
+@end
+
+@interface DOMDocument (DOMViewCSSDeprecated)
+#ifndef BUILDING_ON_TIGER
+- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;
+#else
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt;
+#endif
 @end
 
 @interface DOMCSSStyleDeclaration (DOMCSS2Properties)
