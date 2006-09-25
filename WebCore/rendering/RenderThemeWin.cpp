@@ -211,29 +211,12 @@ void RenderThemeWin::adjustButtonStyle(CSSStyleSelector*, RenderStyle* style, El
 {
 }
 
+// May need to add stuff to these later, so keep the graphics context retrieval/release in some helpers.
 static HDC prepareForDrawing(GraphicsContext* g)
 {
-    HDC hdc = g->getWindowsContext();
-    
-    // FIXME: We need to make sure a clip is really set on the HDC.  See what Mozilla does with
-    // UpdateSurfaceClip on its GraphicsContext. (Cairo may not have put its clip into native form yet.)
-
-    // Call SetWorldTransform to honor the current Cairo transform.
-    SetGraphicsMode(hdc, GM_ADVANCED); // We need this call for themes to honor world transforms.
-    cairo_matrix_t mat;
-    cairo_get_matrix(g->platformContext(), &mat);
-    XFORM xform;
-    xform.eM11 = mat.xx;
-    xform.eM12 = mat.xy;
-    xform.eM21 = mat.yx;
-    xform.eM22 = mat.yy;
-    xform.eDx = mat.x0;
-    xform.eDy = mat.y0;
-    SetWorldTransform(hdc, &xform);
-
-    return hdc;
+    return g->getWindowsContext();
 }
-
+ 
 static void doneDrawing(GraphicsContext* g)
 {
     g->releaseWindowsContext();

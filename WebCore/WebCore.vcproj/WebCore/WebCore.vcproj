@@ -1625,6 +1625,9 @@
 					RelativePath="..\..\platform\win\GlyphMapWin.cpp"
 					>
 				</File>
+                                <File
+                                        RelativePath="..\..\platform\win\GraphicsContextWin.cpp"
+                                </File>
 				<File
 					RelativePath="..\..\platform\win\ImageWin.cpp"
 					>

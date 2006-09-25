@@ -1,3 +1,18 @@
+2006-09-25  Dave Hyatt  <hyat@apple.com>
+
+        Shunt the RenderTheme world transform adoption between
+        Cairo and Windows into getWindowsContext and move the method
+        out of GraphicsContextCairo and into GraphicsContextWin.
+
+        * ChangeLog:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        * platform/win/GraphicsContextWin.cpp: Added.
+        (WebCore::GraphicsContext::getWindowsContext):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::prepareForDrawing):
+
 2006-09-24  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by hyatt.
