@@ -1,3 +1,4 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:(null) affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 KRenderingPaintServer {id="black2white" [type=LINEAR-GRADIENT] [stops=[(0.00,#000000), (1.00,#0000004C)]] [start=(0,0)] [end=(100,0)]}
 KRenderingPaintServer {id="red-grad" [type=LINEAR-GRADIENT] [stops=[(0.00,#D7433C), (1.00,#BD1F1844)]] [start=(0,0)] [end=(100,0)]}
 KRenderingPaintServer {id="red-radial-grad" [type=RADIAL-GRADIENT] [stops=[(0.00,#D7433C), (1.00,#BD1F1844)]] [center=(50,50)] [focal=(50,50)] [radius=50.00]}

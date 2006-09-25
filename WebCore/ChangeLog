@@ -1,3 +1,14 @@
+2006-09-25  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by mjs.
+        
+        Outermost <svg> element should clip to viewport
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11007
+
+        Test: svg/custom/viewport-clip.svg
+
+        * css/svg.css: change svg:root overflow: from 'visible' to 'hidden'
+
 2006-09-25  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

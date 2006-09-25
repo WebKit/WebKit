@@ -34,7 +34,7 @@
     to the bounds of the initial viewport.
 */
 svg:root {
-    overflow: visible !important
+    overflow: hidden !important
 }
 
 svg {

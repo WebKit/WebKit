@@ -1,8 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="8cm" height="3cm" viewBox="0 0 800 300" version="1.1"
-     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg viewBox="0 0 820 320" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <desc>Example mask01 - blue text masked with gradient against red background
   </desc>
   <defs>

@@ -1,5 +1,43 @@
 2006-09-24  Eric Seidel  <eric@eseidel.com>
 
+        Reviewed by mjs.
+        
+        Add test: svg/custom/viewport-clip.svg
+        and update results for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11007
+        (Also update some old results, due to CoreImage variance)
+
+        * svg/custom/baseval-animval-equality.svg:
+        * svg/custom/empty-merge-expected.checksum:
+        * svg/custom/empty-merge-expected.png:
+        * svg/custom/empty-merge-expected.txt:
+        * svg/custom/empty-merge.svg:
+        * svg/custom/feDisplacementMap-01-expected.checksum:
+        * svg/custom/feDisplacementMap-01-expected.png:
+        * svg/custom/foreign-object-skew-expected.checksum:
+        * svg/custom/foreign-object-skew-expected.png:
+        * svg/custom/gradient-stroke-width-expected.txt:
+        * svg/custom/grayscale-gradient-mask-expected.checksum:
+        * svg/custom/grayscale-gradient-mask-expected.png:
+        * svg/custom/grayscale-gradient-mask-expected.txt:
+        * svg/custom/grayscale-gradient-mask.svg:
+        * svg/custom/image-with-transform-clip-filter-expected.checksum:
+        * svg/custom/image-with-transform-clip-filter-expected.png:
+        * svg/custom/path-bad-data-expected.checksum:
+        * svg/custom/path-bad-data-expected.png:
+        * svg/custom/path-bad-data-expected.txt:
+        * svg/custom/text-filter-expected.checksum:
+        * svg/custom/text-filter-expected.png:
+        * svg/custom/text-image-opacity-expected.checksum:
+        * svg/custom/text-image-opacity-expected.png:
+        * svg/custom/transform-scale-parse.svg:
+        * svg/custom/viewport-clip-expected.checksum: Added.
+        * svg/custom/viewport-clip-expected.png: Added.
+        * svg/custom/viewport-clip-expected.txt: Added.
+        * svg/custom/viewport-clip.svg: Added.
+
+2006-09-24  Eric Seidel  <eric@eseidel.com>
+
         Reviewed by beth.
 
         Browsers disagree on behavior for an invalid fill
