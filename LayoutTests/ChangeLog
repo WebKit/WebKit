@@ -1,3 +1,14 @@
+2006-09-24  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by hyatt.
+        
+        Import one of Hixie's tests for:
+        <svg:a> cannot be styled with a:hover
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11005
+
+        * svg/hixie/cascade/002.css: Added.
+        * svg/hixie/cascade/002.xml: Added.
+
 2006-09-23  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Eric.

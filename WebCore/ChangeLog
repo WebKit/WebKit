@@ -1,3 +1,15 @@
+2006-09-24  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by hyatt.
+
+        <svg:a> cannot be styled with a:hover
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11005
+        
+        Test: svg/hixie/cascade/002.xml
+
+        * css/cssstyleselector.cpp:
+        (WebCore::checkPseudoState):
+
 2006-09-24  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.

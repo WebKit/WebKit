@@ -59,6 +59,10 @@
 #include "loader.h"
 #include "ShadowValue.h"
 
+#ifdef SVG_SUPPORT
+#include "XLinkNames.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -605,7 +609,13 @@ static void checkPseudoState(Element *e, bool checkVisited = true)
         return;
     }
     
-    const AtomicString& attr = e->getAttribute(hrefAttr);
+    AtomicString attr;
+    if (e->isHTMLElement())
+        attr = e->getAttribute(hrefAttr);
+#ifdef SVG_SUPPORT
+    else if (e->isSVGElement())
+        attr = e->getAttribute(XLinkNames::hrefAttr);
+#endif
     if (attr.isNull()) {
         pseudoState = PseudoNone;
         return;
