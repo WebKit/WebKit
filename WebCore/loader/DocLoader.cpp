@@ -71,7 +71,7 @@ bool DocLoader::needReload(const KURL& fullURL)
           CachedResource* existing = Cache::get(fullURL.url());
           if (existing && existing->isExpired()) {
              Cache::remove(existing);
-             m_reloadedURLs.append(fullURL.url());
+             m_reloadedURLs.add(fullURL.url());
              reload = true;
           }
        }
@@ -80,7 +80,7 @@ bool DocLoader::needReload(const KURL& fullURL)
           CachedResource* existing = Cache::get(fullURL.url());
           if (existing)
              Cache::remove(existing);
-          m_reloadedURLs.append(fullURL.url());
+          m_reloadedURLs.add(fullURL.url());
           reload = true;
        }
     }

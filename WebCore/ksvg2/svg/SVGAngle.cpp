@@ -26,6 +26,7 @@
 
 #include <ksvg2/ksvg.h>
 
+#include "DeprecatedString.h"
 #include "SVGAngle.h"
 #include "SVGHelper.h"
 

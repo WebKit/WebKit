@@ -57,7 +57,7 @@ struct LRUList {
 
 static bool cacheDisabled;
 
-typedef HashMap<RefPtr<StringImpl>, CachedResource*> CacheMap;
+typedef HashMap<String, CachedResource*> CacheMap;
 
 static CacheMap* cache = 0;
 
@@ -147,7 +147,7 @@ CachedImage* Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, ti
 
     CachedResource *o = 0;
     if (!reload)
-        o = cache->get(String(url.url()).impl());
+        o = cache->get(url.url());
     if (!o) {
 #ifdef CACHE_DEBUG
         kdDebug(6060) << "Cache: new: " << url.url() << endl;
@@ -157,7 +157,7 @@ CachedImage* Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, ti
         if (cacheDisabled)
             im->setFree(true);
         else {
-            cache->set(String(url.url()).impl(), im);
+            cache->set(url.url(), im);
             moveToHeadOfLRUList(im);
         }
         o = im;
@@ -193,7 +193,7 @@ CachedCSSStyleSheet* Cache::requestStyleSheet(DocLoader* dl, const String& url, 
 
     // Checking if the URL is malformed is lots of extra work for little benefit.
 
-    CachedResource *o = cache->get(String(kurl.url()).impl());
+    CachedResource *o = cache->get(kurl.url());
     if (!o) {
 #ifdef CACHE_DEBUG
         kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
@@ -202,7 +202,7 @@ CachedCSSStyleSheet* Cache::requestStyleSheet(DocLoader* dl, const String& url, 
         if (cacheDisabled)
             sheet->setFree(true);
         else {
-            cache->set(String(kurl.url()).impl(), sheet);
+            cache->set(kurl.url(), sheet);
             moveToHeadOfLRUList(sheet);
         }
         o = sheet;
@@ -243,7 +243,7 @@ CachedScript* Cache::requestScript(DocLoader* dl, const String& url, bool reload
 
     // Checking if the URL is malformed is lots of extra work for little benefit.
 
-    CachedResource *o = cache->get(String(kurl.url()).impl());
+    CachedResource *o = cache->get(kurl.url());
     if (!o)
     {
 #ifdef CACHE_DEBUG
@@ -253,7 +253,7 @@ CachedScript* Cache::requestScript(DocLoader* dl, const String& url, bool reload
         if (cacheDisabled)
             script->setFree(true);
         else {
-            cache->set(String(kurl.url()).impl(), script);
+            cache->set(kurl.url(), script);
             moveToHeadOfLRUList(script);
         }
         o = script;
@@ -296,7 +296,7 @@ CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String& ur
     
     // Checking if the URL is malformed is lots of extra work for little benefit.
     
-    CachedResource *o = cache->get(String(kurl.url()).impl());
+    CachedResource *o = cache->get(kurl.url());
     if (!o) {
 #ifdef CACHE_DEBUG
         kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
@@ -305,7 +305,7 @@ CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String& ur
         if (cacheDisabled)
             doc->setFree(true);
         else {
-            cache->set(String(kurl.url()).impl(), doc);
+            cache->set(kurl.url(), doc);
             moveToHeadOfLRUList(doc);
         }
         o = doc;
@@ -348,7 +348,7 @@ CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String& url, b
     
     // Checking if the URL is malformed is lots of extra work for little benefit.
     
-    CachedResource *o = cache->get(String(kurl.url()).impl());
+    CachedResource *o = cache->get(kurl.url());
     if (!o) {
 #ifdef CACHE_DEBUG
         kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
@@ -357,7 +357,7 @@ CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String& url, b
         if (cacheDisabled)
             doc->setFree(true);
         else {
-            cache->set(String(kurl.url()).impl(), doc);
+            cache->set(kurl.url(), doc);
             moveToHeadOfLRUList(doc);
         }
         o = doc;
@@ -424,7 +424,7 @@ void Cache::remove(CachedResource *object)
   // drops down to zero
   object->setFree(true);
 
-  cache->remove(object->url().impl());
+  cache->remove(object->url());
   removeFromLRUList(object);
 
   HashSet<DocLoader*>::iterator end = docloaders->end();
@@ -616,7 +616,7 @@ void Cache::setCacheDisabled(bool disabled)
 
 CachedResource* Cache::get(const String& s)
 {
-    return (cache && s.impl()) ? cache->get(s.impl()) : 0;
+    return (cache && s.impl()) ? cache->get(s) : 0;
 }
 
 }

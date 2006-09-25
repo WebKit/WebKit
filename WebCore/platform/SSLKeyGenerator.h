@@ -26,14 +26,15 @@
 #ifndef SSLKeyGenerator_h
 #define SSLKeyGenerator_h
 
-#include "DeprecatedStringList.h"
+#include <wtf/Vector.h>
+#include "PlatformString.h"
 
 namespace WebCore {
 
     class KURL;
 
-    DeprecatedStringList supportedKeySizes();
-    DeprecatedString signedPublicKeyAndChallengeString(unsigned keySizeIndex, const DeprecatedString& challengeString, const KURL&);
+    Vector<String> supportedKeySizes();
+    String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const KURL&);
 
 }
 

@@ -24,7 +24,6 @@
 
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
-#include "DeprecatedStringList.h"
 #include "ExceptionCode.h"
 #include "MediaQuery.h"
 #include "cssparser.h"

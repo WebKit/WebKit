@@ -1,4 +1,72 @@
-2006-09-25  Dave Hyatt  <hyat@apple.com>
+2006-09-25  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        * css/MediaList.cpp:
+        Remove unused header.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::clear):
+        Use clear instead of iterating through the list of event listeners, removing each one.
+        (Doing that causes a crash when running the layout tests with GuardMalloc turned on)
+        
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        (WebCore::HTMLKeygenElement::appendFormData):
+        Update due to changes in the SSL key generator.
+        
+        * ksvg2/svg/SVGAngle.cpp:
+        Remove unused header.
+        
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (SVGAnimationElement::parseMappedAttribute):
+        Rename methods and pass Strings instead of DeprecatedStrings to
+        parseSeparatedList.
+        
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        Remove unused headers.
+        
+        * ksvg2/svg/SVGHelper.cpp:
+        (WebCore::SVGHelper::parseSeparatedList):
+        * ksvg2/svg/SVGHelper.h:
+        Rename ParseSeperatedList to parseSeparatedList, make it take a String instead of a 
+        DeprecatedString and have it use Vector<String> instead of DeprecatedStringList.
+        
+        * ksvg2/svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::parse):
+        * ksvg2/svg/SVGLengthList.h:
+        Use Vector<String> instead of DeprecatedStringList.
+        
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestImage):
+        (WebCore::Cache::requestStyleSheet):
+        (WebCore::Cache::requestScript):
+        (WebCore::Cache::requestXSLStyleSheet):
+        (WebCore::Cache::requestXBLDocument):
+        (WebCore::Cache::remove):
+        (WebCore::Cache::get):
+        Use a String as the key in the cache set instead of a RefPtr<StringImpl>.
+        
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::needReload):
+        * loader/DocLoader.h:
+        Use a HashSet instead of DeprecatedStringList.
+        
+        * page/FrameView.h:
+        Remove declarations that have no functions.
+        
+        * platform/SSLKeyGenerator.h:
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        (WebCore::supportedKeySizes):
+        (WebCore::signedPublicKeyAndChallengeString):
+        Convert to use Vector<String> instead of DeprecatedStringList, and String instead of
+        DeprecatedString.
+
+2006-09-25  Dave Hyatt  <hyatt@apple.com>
 
         Shunt the RenderTheme world transform adoption between
         Cairo and Windows into getWindowsContext and move the method

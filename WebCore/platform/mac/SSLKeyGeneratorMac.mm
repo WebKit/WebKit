@@ -31,22 +31,22 @@
 
 namespace WebCore {
 
-DeprecatedStringList supportedKeySizes()
+Vector<String> supportedKeySizes()
 { 
     NSEnumerator *enumerator = [[[WebCoreKeyGenerator sharedGenerator] strengthMenuItemTitles] objectEnumerator];
-    DeprecatedStringList supportedKeySizes = DeprecatedStringList(); 
+    Vector<String> supportedKeySizes;
     NSString *string;
     while ((string = [enumerator nextObject]) != nil) {
-        supportedKeySizes.append(DeprecatedString::fromNSString(string));
+        supportedKeySizes.append(string);
     }
     return supportedKeySizes;
 }
 
-DeprecatedString signedPublicKeyAndChallengeString(unsigned keySizeIndex, const DeprecatedString &challengeString, const KURL &url)
+String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const KURL& url)
 {   
-    return DeprecatedString::fromNSString([[WebCoreKeyGenerator sharedGenerator] signedPublicKeyAndChallengeStringWithStrengthIndex:keySizeIndex 
-                                                                                                                 challenge:challengeString.getNSString()
-                                                                                                                   pageURL:url.getNSURL()]);
+    return [[WebCoreKeyGenerator sharedGenerator] signedPublicKeyAndChallengeStringWithStrengthIndex:keySizeIndex 
+                                                                                           challenge:challengeString
+                                                                                             pageURL:url.getNSURL()];
 }
 
 }

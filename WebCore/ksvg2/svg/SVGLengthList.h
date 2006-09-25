@@ -36,7 +36,7 @@ namespace WebCore
         SVGLengthList();
         virtual ~SVGLengthList();
 
-        void parse(const DeprecatedString& value, const SVGStyledElement* context, LengthMode mode);
+        void parse(const String& value, const SVGStyledElement* context, LengthMode mode);
     };
 
 } // namespace WebCore

@@ -224,9 +224,6 @@ private:
 
     void restoreScrollBar();
 
-    DeprecatedStringList formCompletionItems(const String& name) const;
-    void addFormCompletionItem(const String& name, const String& value);
-
     MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, const PlatformMouseEvent&);
 
     bool dispatchMouseEvent(const AtomicString& eventType, Node* target,

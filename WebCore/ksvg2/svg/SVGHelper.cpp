@@ -77,18 +77,17 @@ float SVGHelper::PercentageOfViewport(float value, const SVGElement* viewportEle
     return 0.0;
 }
 
-void SVGHelper::ParseSeperatedList(SVGStringList *list, const DeprecatedString &data, const DeprecatedChar &delimiter)
+void SVGHelper::parseSeparatedList(SVGStringList *list, const String& data, UChar delimiter)
 {
     // TODO : more error checking/reporting
     ExceptionCode ec = 0;
     list->clear(ec);
 
-    DeprecatedStringList substrings = DeprecatedStringList::split(delimiter, data);
+    Vector<String> substrings = String(data).split(delimiter);
     
-    DeprecatedStringList::ConstIterator it = substrings.begin();
-    DeprecatedStringList::ConstIterator end = substrings.end();
-    for (; it != end; ++it)
-        list->appendItem(String(*it), ec);
+    Vector<String>::const_iterator end = substrings.end();
+    for (Vector<String>::const_iterator it = substrings.begin(); it != end; ++it)
+        list->appendItem(*it, ec);
 }
 
 }

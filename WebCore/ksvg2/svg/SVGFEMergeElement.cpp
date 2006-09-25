@@ -22,8 +22,6 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "DeprecatedStringList.h"
-
 #include "Attr.h"
 
 #include <kcanvas/KCanvasFilters.h>

@@ -1364,9 +1364,7 @@ void Document::clear()
 
     removeChildren();
 
-    RegisteredEventListenerList::iterator end = m_windowEventListeners.end();
-    for (RegisteredEventListenerList::iterator it = m_windowEventListeners.begin(); it != end; ++it)
-        m_windowEventListeners.remove(it);
+    m_windowEventListeners.clear();
 }
 
 void Document::setURL(const DeprecatedString& url)
