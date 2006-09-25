@@ -132,7 +132,7 @@ Widget::FocusPolicy Slider::focusPolicy() const { notImplemented(); return NoFoc
 Widget::FocusPolicy ListBox::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy TextField::focusPolicy() const { notImplemented(); return NoFocus; }
 
-Cursor::Cursor(Image*) { notImplemented(); }
+Cursor::Cursor(Image*, const IntPoint&) { notImplemented(); }
 
 PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
 String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }

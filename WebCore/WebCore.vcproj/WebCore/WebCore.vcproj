@@ -2509,6 +2509,14 @@
 				RelativePath="..\..\css\CSSComputedStyleDeclaration.h"
 				>
 			</File>
+                        <File
+                                RelativePath="..\..\css\CSSCursorImageValue.cpp"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\..\css\CSSCursorImageValue.h"
+                                >
+                        </File>
 			<File
 				RelativePath="..\..\css\CSSFontFaceRule.cpp"
 				>
