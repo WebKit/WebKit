@@ -1,5 +1,17 @@
 2006-09-24  Eric Seidel  <eric@eseidel.com>
 
+        Reviewed by beth.
+
+        Browsers disagree on behavior for an invalid fill
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11017
+
+        * svg/custom/invalid-fill-expected.checksum: Added.
+        * svg/custom/invalid-fill-expected.png: Added.
+        * svg/custom/invalid-fill-expected.txt: Added.
+        * svg/custom/invalid-fill.svg: Added.
+
+2006-09-24  Eric Seidel  <eric@eseidel.com>
+
         Reviewed by hyatt.
         
         Import one of Hixie's tests for:

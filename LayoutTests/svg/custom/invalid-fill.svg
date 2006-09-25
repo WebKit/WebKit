@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+  <g fill="red">
+    <rect width="100" height="100" fill="green"/>
+    <rect width="100" height="100" fill="url(#notthere)"/>
+    <g fill="black">
+      <text x="10" y="130">SVG 1.1 FULL says there should be a "highly perceivable error" message when an invalid fill url is used.</text>
+      <text x="10" y="150">Browsers don't display such an error, instead use some sort of fill-fallback.</text>
+      <text x="10" y="170">Opera falls back to 'black' (default), Firefox to 'none', and Safari to 'none' (as of writing).  Bug 11017.</text>
+    </g>
+  </g>
+</svg>
