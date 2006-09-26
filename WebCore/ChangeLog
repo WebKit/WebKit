@@ -1,3 +1,18 @@
+2006-09-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/4747695> 
+        Gmail Editor: Crash at WebCore::Range::startPosition() when decreasing a indent
+        
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd): Stop expanding
+        to select special elements that are fully selected after expansion
+        moves to positions that are visually distinct from the originals.
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): If the content of the list 
+        item will be moved into another list, put it in a list item.
+
 2006-09-26  Geoffrey Garen <ggaren@apple.com>
 
         Reviewed by Darin.

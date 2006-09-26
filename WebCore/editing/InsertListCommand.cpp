@@ -131,13 +131,20 @@ void InsertListCommand::doApply()
         // When removing a list, we must always create a placeholder to act as a point of insertion
         // for the list content being removed.
         RefPtr<Element> placeholder = createBreakElement(document());
+        RefPtr<Node> nodeToInsert = placeholder;
+        // If the content of the list item will be moved into another list, put it in a list item
+        // so that we don't create an orphaned list child.
+        if (enclosingList(listNode)) {
+            nodeToInsert = createListItemElement(document());
+            appendNode(placeholder.get(), nodeToInsert.get());
+        }
         if (nextListChild && previousListChild) {
             splitElement(static_cast<Element *>(listNode), nextListChild);
-            insertNodeBefore(placeholder.get(), listNode);
+            insertNodeBefore(nodeToInsert.get(), listNode);
         } else if (nextListChild)
-            insertNodeBefore(placeholder.get(), listNode);
+            insertNodeBefore(nodeToInsert.get(), listNode);
         else
-            insertNodeAfter(placeholder.get(), listNode);
+            insertNodeAfter(nodeToInsert.get(), listNode);
         VisiblePosition insertionPoint = VisiblePosition(Position(placeholder.get(), 0));
         moveParagraphs(start, end, insertionPoint, true);
     }

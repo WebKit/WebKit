@@ -1,0 +1,13 @@
+<body>
+<p>This test deletes the contents of a sub-list.  Since it is fully selected, it should be removed.  But the list item below it should remain. <b>The fact that the caret ends up in an orphaned list child might be considered a bug.</b></p>
+<div id="div" contentEditable="true"><ul><ul><li>foo</li></ul><li><br></li></ul></div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+sel.modify("extend", "forward", "word");
+document.execCommand("Delete");
+</script>
+</body>

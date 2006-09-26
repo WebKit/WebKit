@@ -86,7 +86,7 @@ void DeleteSelectionCommand::initializeStartEnd()
     else if (end.node()->hasTagName(hrTag))
         end = Position(end.node(), 1);
     
-    while (1) {
+    while (VisiblePosition(start) == m_selectionToDelete.visibleStart() && VisiblePosition(end) == m_selectionToDelete.visibleEnd()) {
         startSpecialContainer = 0;
         endSpecialContainer = 0;
     
