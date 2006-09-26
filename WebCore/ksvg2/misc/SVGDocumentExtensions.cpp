@@ -66,21 +66,21 @@ void SVGDocumentExtensions::startAnimations()
     // FIXME: Eventually every "Time Container" will need a way to latch on to some global timer
     // starting animations for a document will do this "latching"
     
-    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.begin();
+    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.end();
     for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
         (*itr)->timeScheduler()->startAnimations();
 }
     
 void SVGDocumentExtensions::pauseAnimations()
 {
-    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.begin();
+    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.end();
     for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
         (*itr)->pauseAnimations();
 }
 
 void SVGDocumentExtensions::unpauseAnimations()
 {
-    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.begin();
+    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.end();
     for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
         (*itr)->unpauseAnimations();
 }

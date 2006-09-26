@@ -1,3 +1,45 @@
+2006-09-26  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by mitz.
+
+        Bring animation back to life
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11021
+        
+        Register/unregister SVGSVGElements as time containers on insertion/removal.
+        Replace uses of DeprecatedString with String in SVGAnimationElement
+        Various whitespace clean-up.
+
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (WebCore::SVGTimer::notifyAll):
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::startAnimations):
+        (WebCore::SVGDocumentExtensions::pauseAnimations):
+        (WebCore::SVGDocumentExtensions::unpauseAnimations):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::handleTimerEvent):
+        (WebCore::SVGAnimateTransformElement::parseTransformValue):
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::SVGAnimationElement):
+        (WebCore::SVGAnimationElement::parseMappedAttribute):
+        (WebCore::SVGAnimationElement::parseClockValue):
+        (WebCore::SVGAnimationElement::targetAttribute):
+        (WebCore::SVGAnimationElement::setTargetAttribute):
+        (WebCore::SVGAnimationElement::attributeName):
+        * ksvg2/svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::rendererIsNeeded):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getScreenCTM):
+        (WebCore::SVGSVGElement::createRenderer):
+        (WebCore::SVGSVGElement::insertedIntoDocument): added, calls addTimeContainer(this)
+        (WebCore::SVGSVGElement::removedFromDocument): added, calls removeTimeContainer(this)
+        * ksvg2/svg/SVGSVGElement.h:
+        * ksvg2/svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::handleTimerEvent):
+        * ksvg2/svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::getTarget):
+        * ksvg2/svg/SVGURIReference.h:
+
 2006-09-26  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by mitzpettel.

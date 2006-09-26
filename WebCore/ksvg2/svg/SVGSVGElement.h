@@ -122,6 +122,9 @@ namespace WebCore
 
         virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena *arena, RenderStyle *style);
+        
+        virtual void insertedIntoDocument();
+        virtual void removedFromDocument();
 
         // 'virtual SVGZoomAndPan functions
         virtual void setZoomAndPan(unsigned short zoomAndPan);

@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGAnimateTransformElementImpl_H
-#define KSVG_SVGAnimateTransformElementImpl_H
+#ifndef SVGAnimateTransformElement_H
+#define SVGAnimateTransformElement_H
 #ifdef SVG_SUPPORT
 
 #include "SVGTransform.h"
@@ -36,16 +36,16 @@ namespace WebCore {
         SVGAnimateTransformElement(const QualifiedName&, Document*);
         virtual ~SVGAnimateTransformElement();
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
         virtual void handleTimerEvent(double timePercentage);
 
         // Helpers
-        RefPtr<SVGTransform> parseTransformValue(const DeprecatedString &data) const;
-        void calculateRotationFromMatrix(const AffineTransform &matrix, double &angle, double &cx, double &cy) const;
+        RefPtr<SVGTransform> parseTransformValue(const String&) const;
+        void calculateRotationFromMatrix(const AffineTransform&, double &angle, double &cx, double &cy) const;
 
-        SVGMatrix *initialMatrix() const;
-        SVGMatrix *transformMatrix() const;
+        SVGMatrix* initialMatrix() const;
+        SVGMatrix* transformMatrix() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -69,6 +69,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGAnimateTransformElementImpl_H
+#endif // SVGAnimateTransformElement_H
 
 // vim:ts=4:noet

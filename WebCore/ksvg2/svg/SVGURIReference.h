@@ -25,7 +25,6 @@
 #ifdef SVG_SUPPORT
 
 #include "SVGElement.h"
-#include "DeprecatedString.h"
 
 namespace WebCore {
 
@@ -37,10 +36,10 @@ namespace WebCore {
         virtual ~SVGURIReference();
 
         // 'SVGURIReference' functions
-        bool parseMappedAttribute(MappedAttribute *attr);
+        bool parseMappedAttribute(MappedAttribute*);
 
         // Helpers
-        static DeprecatedString getTarget(const DeprecatedString &url);
+        static String getTarget(const String& url);
 
     protected:
         virtual const SVGElement* contextElement() const = 0;

@@ -41,34 +41,32 @@
 #include <math.h>
 #include <wtf/Vector.h>
 
-using namespace WebCore;
 using namespace std;
 
-SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document *doc)
-: SVGElement(tagName, doc), SVGTests(), SVGExternalResourcesRequired()
+namespace WebCore {
+
+SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document* doc)
+    : SVGElement(tagName, doc)
+    , SVGTests()
+    , SVGExternalResourcesRequired()
+    , m_targetElement(0)
+    , m_connected(false)
+    , m_currentTime(0.0)
+    , m_simpleDuration(0.0)
+    , m_fill(FILL_REMOVE)
+    , m_restart(RESTART_ALWAYS)
+    , m_calcMode(CALCMODE_LINEAR)
+    , m_additive(ADDITIVE_REPLACE)
+    , m_accumulate(ACCUMULATE_NONE)
+    , m_attributeType(ATTRIBUTETYPE_AUTO)
+    , m_max(0.0)
+    , m_min(0.0)
+    , m_end(0.0)
+    , m_begin(0.0)
+    , m_repeations(0)
+    , m_repeatCount(0)
 {
-    m_connected = false;
 
-    m_targetElement = 0;
-    
-    m_currentTime = 0.0;
-    m_simpleDuration = 0.0;
-
-    // Initialize shared properties...
-    m_end = 0.0;
-    m_min = 0.0;
-    m_max = 0.0;
-    m_begin = 0.0;
-
-    m_repeations = 0;
-    m_repeatCount = 0;
-
-    m_fill = FILL_REMOVE;
-    m_restart = RESTART_ALWAYS;
-    m_calcMode = CALCMODE_LINEAR;
-    m_additive = ADDITIVE_REPLACE;
-    m_accumulate = ACCUMULATE_NONE;
-    m_attributeType = ATTRIBUTETYPE_AUTO;
 }
 
 SVGAnimationElement::~SVGAnimationElement()
@@ -120,9 +118,9 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name().matches(XLinkNames::hrefAttr))
-        m_href = value.deprecatedString();
+        m_href = value;
     else if (attr->name() == SVGNames::attributeNameAttr)
-        m_attributeName = value.deprecatedString();
+        m_attributeName = value;
     else if (attr->name() == SVGNames::attributeTypeAttr)
     {
         if (value == "CSS")
@@ -144,29 +142,29 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
 
         // Parse data
         for (unsigned int i = 0; i < temp->numberOfItems(); i++) {
-            DeprecatedString current = String(temp->getItem(i, ec)).deprecatedString();
+            String current = temp->getItem(i, ec);
 
             if (current.startsWith("accessKey")) {
                 // Register keyDownEventListener for the character
-                DeprecatedString character = current.mid(current.length() - 2, 1);
+                String character = current.substring(current.length() - 2, 1);
                 // FIXME: Not implemented! Supposed to register accessKey character
             } else if (current.startsWith("wallclock")) {
                 int firstBrace = current.find('(');
                 int secondBrace = current.find(')');
 
-                DeprecatedString wallclockValue = current.mid(firstBrace + 1, secondBrace - firstBrace - 2);
+                String wallclockValue = current.substring(firstBrace + 1, secondBrace - firstBrace - 2);
                 // FIXME: Not implemented! Supposed to use wallClock value
             } else if (current.contains('.')) {
                 int dotPosition = current.find('.');
 
-                DeprecatedString element = current.mid(0, dotPosition);
-                DeprecatedString clockValue;
+                String element = current.substring(0, dotPosition);
+                String clockValue;
                 if (current.contains("begin"))
-                    clockValue = current.mid(dotPosition + 6);
+                    clockValue = current.substring(dotPosition + 6);
                 else if (current.contains("end"))
-                    clockValue = current.mid(dotPosition + 4);
+                    clockValue = current.substring(dotPosition + 4);
                 else if (current.contains("repeat"))
-                    clockValue = current.mid(dotPosition + 7);
+                    clockValue = current.substring(dotPosition + 7);
                 else // DOM2 Event Reference
                 {
                     int plusMinusPosition = -1;
@@ -176,8 +174,8 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
                     else if (current.contains('-'))
                         plusMinusPosition = current.find('-');
 
-                    DeprecatedString event = current.mid(dotPosition + 1, plusMinusPosition - dotPosition - 1);
-                    clockValue = current.mid(dotPosition + event.length() + 1);
+                    String event = current.substring(dotPosition + 1, plusMinusPosition - dotPosition - 1);
+                    clockValue = current.substring(dotPosition + event.length() + 1);
                     // FIXME: supposed to use DOM Event
                 }
             } else {
@@ -197,19 +195,19 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
     }
     else if (attr->name() == SVGNames::durAttr)
     {
-        m_simpleDuration = parseClockValue(value.deprecatedString());
+        m_simpleDuration = parseClockValue(value);
         if (!isIndefinite(m_simpleDuration))
             m_simpleDuration *= 1000.0;
     }
     else if (attr->name() == SVGNames::minAttr)
     {
-        m_min = parseClockValue(value.deprecatedString());
+        m_min = parseClockValue(value);
         if (!isIndefinite(m_min))
             m_min *= 1000.0;
     }
     else if (attr->name() == SVGNames::maxAttr)
     {
-        m_max = parseClockValue(value.deprecatedString());
+        m_max = parseClockValue(value);
         if (!isIndefinite(m_max))
             m_max *= 1000.0;
     }
@@ -230,7 +228,7 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
             m_repeatCount = value.toDouble();
     }
     else if (attr->name() == SVGNames::repeatDurAttr)
-        m_repeatDur = value.deprecatedString();
+        m_repeatDur = value;
     else if (attr->name() == SVGNames::fillAttr)
     {
         if (value == "freeze")
@@ -265,11 +263,11 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
         SVGHelper::parseSeparatedList(m_keySplines.get(), value, ';');
     }
     else if (attr->name() == SVGNames::fromAttr)
-        m_from = value.deprecatedString();
+        m_from = value;
     else if (attr->name() == SVGNames::toAttr)
-        m_to = value.deprecatedString();
+        m_to = value;
     else if (attr->name() == SVGNames::byAttr)
-        m_by = value.deprecatedString();
+        m_by = value;
     else if (attr->name() == SVGNames::additiveAttr)
     {
         if (value == "sum")
@@ -293,9 +291,9 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-double SVGAnimationElement::parseClockValue(const DeprecatedString &data) const
+double SVGAnimationElement::parseClockValue(const String& data) const
 {
-    DeprecatedString parse = data.stripWhiteSpace();
+    DeprecatedString parse = data.deprecatedString().stripWhiteSpace();
     
     if (parse == "indefinite") // Saves some time...
         return DBL_MAX;
@@ -429,48 +427,42 @@ String SVGAnimationElement::targetAttribute() const
     }
 
     if (attributeType == ATTRIBUTETYPE_XML || ret.isEmpty())
-        ret = targetElement()->getAttribute(String(m_attributeName).impl());
+        ret = targetElement()->getAttribute(m_attributeName);
 
     return ret;
 }
 
-void SVGAnimationElement::setTargetAttribute(StringImpl *value)
+void SVGAnimationElement::setTargetAttribute(const String& value)
 {
-    SVGAnimationElement::setTargetAttribute(targetElement(), String(m_attributeName).impl(), value, static_cast<EAttributeType>(m_attributeType));
+    SVGAnimationElement::setTargetAttribute(targetElement(), m_attributeName, value, static_cast<EAttributeType>(m_attributeType));
 }
 
-void SVGAnimationElement::setTargetAttribute(SVGElement *target, StringImpl *nameImpl, StringImpl *value, EAttributeType type)
+void SVGAnimationElement::setTargetAttribute(SVGElement* target, const String& name, const String& value, EAttributeType type)
 {
-    if (!target || !nameImpl || !value)
+    if (!target || name.isNull() || value.isNull())
         return;
-    String name(nameImpl);
     
-    SVGStyledElement *styled = NULL;
-    if (target && target->isStyled())
-        styled = static_cast<SVGStyledElement *>(target);
+    SVGStyledElement* styled = (target && target->isStyled()) ? static_cast<SVGStyledElement*>(target) : 0;
 
     EAttributeType attributeType = type;
-    if (type == ATTRIBUTETYPE_AUTO)
-    {
-        attributeType = ATTRIBUTETYPE_XML;
-
+    if (type == ATTRIBUTETYPE_AUTO) {
         // Spec: The implementation should match the attributeName to an attribute
         // for the target element. The implementation must first search through the
         // list of CSS properties for a matching property name, and if none is found,
         // search the default XML namespace for the element.
-        if (styled && styled->style()) {
-            if (styled->style()->getPropertyCSSValue(name))
-                attributeType = ATTRIBUTETYPE_CSS;
-        }
+        if (styled && styled->style() && styled->style()->getPropertyCSSValue(name))
+            attributeType = ATTRIBUTETYPE_CSS;
+        else
+            attributeType = ATTRIBUTETYPE_XML;
     }
     ExceptionCode ec = 0;
     if (attributeType == ATTRIBUTETYPE_CSS && styled && styled->style())
         styled->style()->setProperty(name, value, "", ec);
     else if (attributeType == ATTRIBUTETYPE_XML)
-        target->setAttribute(nameImpl, value, ec);
+        target->setAttribute(name, value, ec);
 }
 
-DeprecatedString SVGAnimationElement::attributeName() const
+String SVGAnimationElement::attributeName() const
 {
     return m_attributeName;
 }
@@ -575,6 +567,8 @@ double SVGAnimationElement::repeations() const
 bool SVGAnimationElement::isIndefinite(double value) const
 {
     return (value == DBL_MAX);
+}
+
 }
 
 // vim:ts=4:noet

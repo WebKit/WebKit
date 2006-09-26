@@ -214,34 +214,27 @@ void SVGTimer::notifyAll()
             }
             else
 #endif
-            if(animation->hasTagName(SVGNames::animateColorTag))
-            {
-                SVGAnimateColorElement *animColor = static_cast<SVGAnimateColorElement *>(animation);
-                if(!animColor)
+            if (animation->hasTagName(SVGNames::animateColorTag)) {
+                SVGAnimateColorElement* animColor = static_cast<SVGAnimateColorElement*>(animation);
+                if (!animColor)
                     continue;
 
                 String name = animColor->attributeName();
                 Color color = animColor->color();
 
-                if(!targetColor.contains(name))
-                {
-                    if(animation->isAdditive())
-                    {
+                if (!targetColor.contains(name)) {
+                    if (animation->isAdditive()) {
                         int r = animColor->initialColor().red() + color.red();
                         int g = animColor->initialColor().green() + color.green();
                         int b = animColor->initialColor().blue() + color.blue();
                     
                         targetColor.set(name, animColor->clampColor(r, g, b));
-                    }
-                    else
+                    } else
                         targetColor.set(name, color);
-                }
-                else
-                {
-                    if(!animation->isAdditive())
+                } else {
+                    if (!animation->isAdditive())
                         targetColor.set(name, color);
-                    else
-                    {
+                    else {
                         Color baseColor = targetColor.get(name);
                         int r = baseColor.red() + color.red();
                         int g = baseColor.green() + color.green();
@@ -257,7 +250,7 @@ void SVGTimer::notifyAll()
         if (targetTransforms) {
             SVGElement* key = targetIterator->first;
             if (key && key->isStyled() && key->isStyledTransformable()) {
-                SVGStyledTransformableElement *transform = static_cast<SVGStyledTransformableElement *>(key);
+                SVGStyledTransformableElement* transform = static_cast<SVGStyledTransformableElement*>(key);
                 transform->setTransform(targetTransforms.get());
                 transform->updateLocalTransform(transform->transform());
             }
@@ -265,22 +258,17 @@ void SVGTimer::notifyAll()
 
         // Handle <animateColor>.
         HashMap<String, Color>::iterator cend = targetColor.end();
-        for(HashMap<String, Color>::iterator cit = targetColor.begin(); cit != cend; ++cit)
-        {
-            if(cit->second.isValid())
-            {
-                SVGAnimationElement::setTargetAttribute(targetIterator->first,
-                                                            cit->first.impl(),
-                                                            String(cit->second.name()).impl());
-            }
+        for (HashMap<String, Color>::iterator cit = targetColor.begin(); cit != cend; ++cit) {
+            if (cit->second.isValid())
+                SVGAnimationElement::setTargetAttribute(targetIterator->first, cit->first, cit->second.name());
         }
     }
 
     // Make a second pass through the map to avoid multiple setChanged calls on the same element.
     for (targetIterator = targetMap.begin(); targetIterator != tend; ++targetIterator) {
-        SVGElement *key = targetIterator->first;
+        SVGElement* key = targetIterator->first;
         if (key && key->isStyled())
-            static_cast<SVGStyledElement *>(key)->setChanged(true);
+            static_cast<SVGStyledElement*>(key)->setChanged(true);
     }
 }
 

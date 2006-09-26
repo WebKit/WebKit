@@ -54,9 +54,8 @@ void SVGSetElement::handleTimerEvent(double timePercentage)
 
     // Commit change now...
     if (m_savedTo.isEmpty()) {
-        String attr(targetAttribute());
-        m_savedTo = attr.deprecatedString();
-        setTargetAttribute(String(m_to).impl());
+        m_savedTo = targetAttribute().deprecatedString();
+        setTargetAttribute(m_to);
     }
 
     // End condition.
@@ -65,7 +64,7 @@ void SVGSetElement::handleTimerEvent(double timePercentage)
         m_connected = false;
 
         if (!isFrozen())
-            setTargetAttribute(String(m_savedTo).impl());
+            setTargetAttribute(m_savedTo);
 
         m_savedTo = DeprecatedString();
     }

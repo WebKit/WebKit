@@ -53,16 +53,17 @@ bool SVGURIReference::parseMappedAttribute(MappedAttribute *attr)
     return false;
 }
 
-DeprecatedString SVGURIReference::getTarget(const DeprecatedString &url)
+String SVGURIReference::getTarget(const String& url)
 {
-    if (url.startsWith("url(")) { // URI References, ie. fill:url(#target)
-        unsigned int start = url.find('#') + 1;
-        unsigned int end = url.findRev(')');
+    DeprecatedString urlDeprecated = url.deprecatedString(); // FIXME: Needed until findRev exists for String
+    if (urlDeprecated.startsWith("url(")) { // URI References, ie. fill:url(#target)
+        unsigned int start = urlDeprecated.find('#') + 1;
+        unsigned int end = urlDeprecated.findRev(')');
 
-        return url.mid(start, end - start);
+        return urlDeprecated.mid(start, end - start);
     } else if (url.find('#') > -1) { // format is #target
         unsigned int start = url.find('#') + 1;
-        return url.mid(start, url.length() - start);
+        return url.substring(start, url.length() - start);
     } else // Normal Reference, ie. style="color-profile:changeColor"
         return url;
 }
