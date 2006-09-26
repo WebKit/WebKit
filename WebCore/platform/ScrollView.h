@@ -92,6 +92,7 @@ namespace WebCore {
         ~ScrollView();
 
         virtual void paint(GraphicsContext*, const IntRect&);
+        virtual void themeChanged();
 
     private:
         void updateScrollBars();

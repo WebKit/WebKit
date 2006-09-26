@@ -85,7 +85,7 @@ public:
 
     // This method is called whenever the theme changes on the system in order to flush cached resources from the
     // old theme.
-    void themeChanged();
+    virtual void themeChanged() {};
 
     // A method asking if the theme is able to draw the focus ring.
     virtual bool supportsFocusRing(const RenderStyle* style) const;
