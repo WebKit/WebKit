@@ -1,3 +1,9 @@
+2006-09-26  Sean Gies  <seangies@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        * platform/cg/ImageCG.cpp: Removed #if's -- Darin said we don't need these.
+
 2006-09-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
