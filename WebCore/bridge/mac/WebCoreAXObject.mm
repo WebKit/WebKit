@@ -65,6 +65,12 @@ using namespace HTMLNames;
 // FIXME: This will eventually need to really localize.
 #define UI_STRING(string, comment) ((NSString*)[NSString stringWithUTF8String:(string)])
 
+@interface WebCoreAXObject (PrivateWebCoreAXObject)
+// forward declarations as needed
+- (WebCoreTextMarker*)textMarkerForIndex: (NSNumber*) index lastIndexOK: (BOOL)lastIndexOK;
+- (id)doAXLineForTextMarker: (WebCoreTextMarker* ) textMarker;
+@end
+
 @implementation WebCoreAXObject
 
 -(id)initWithRenderer:(RenderObject*)renderer
@@ -757,9 +763,10 @@ static IntRect boundingBoxRect(RenderObject* obj)
 - (NSArray*)accessibilityAttributeNames
 {
     static NSArray* attributes = nil;
-    static NSMutableArray* anchorAttrs = nil;
-    static NSMutableArray* webAreaAttrs = nil;
-    static NSMutableArray* textAttrs = nil;
+    static NSArray* anchorAttrs = nil;
+    static NSArray* webAreaAttrs = nil;
+    static NSArray* textAttrs = nil;
+    NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
             NSAccessibilitySubroleAttribute,
@@ -782,22 +789,28 @@ static IntRect boundingBoxRect(RenderObject* obj)
             nil];
     }
     if (anchorAttrs == nil) {
-        anchorAttrs = [[NSMutableArray alloc] initWithArray:attributes];
-        [anchorAttrs addObject: NSAccessibilityURLAttribute];
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject: NSAccessibilityURLAttribute];
+        anchorAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
     }
     if (webAreaAttrs == nil) {
-        webAreaAttrs = [[NSMutableArray alloc] initWithArray:attributes];
-        [webAreaAttrs addObject: @"AXLinkUIElements"];
-        [webAreaAttrs addObject: @"AXLoaded"];
-        [webAreaAttrs addObject: @"AXLayoutCount"];
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject: @"AXLinkUIElements"];
+        [tempArray addObject: @"AXLoaded"];
+        [tempArray addObject: @"AXLayoutCount"];
+        webAreaAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
     }
     if (textAttrs == nil) {
-        textAttrs = [[NSMutableArray alloc] initWithArray:attributes];
-        [textAttrs addObject: NSAccessibilityNumberOfCharactersAttribute];
-        [textAttrs addObject: NSAccessibilitySelectedTextAttribute];
-        [textAttrs addObject: NSAccessibilitySelectedTextRangeAttribute];
-        [textAttrs addObject: NSAccessibilityVisibleCharacterRangeAttribute];
-        [textAttrs addObject: NSAccessibilityInsertionPointLineNumberAttribute];
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject: NSAccessibilityNumberOfCharactersAttribute];
+        [tempArray addObject: NSAccessibilitySelectedTextAttribute];
+        [tempArray addObject: NSAccessibilitySelectedTextRangeAttribute];
+        [tempArray addObject: NSAccessibilityVisibleCharacterRangeAttribute];
+        [tempArray addObject: NSAccessibilityInsertionPointLineNumberAttribute];
+        textAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
     }
     
     if (!m_renderer)
@@ -985,11 +998,12 @@ static IntRect boundingBoxRect(RenderObject* obj)
         // TODO: Get actual visible range. <rdar://problem/4712101>
         if ([attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute])
             return [NSValue valueWithRange: NSMakeRange(0, textControl->text().length())];
-        // TODO: Get actual AXInsertionPointLineNumber for a text area. <rdar://problem/4712111>
         if ([attributeName isEqualToString: NSAccessibilityInsertionPointLineNumberAttribute]) {
             if (textControl->selectionStart() != textControl->selectionEnd())
                 return nil;
-            return [NSNumber numberWithUnsignedInt: 0];
+            
+            NSNumber* index = [NSNumber numberWithInt: textControl->selectionStart()];
+            return [self doAXLineForTextMarker: [self textMarkerForIndex: index lastIndexOK: YES]];
         }
     }
     
@@ -1063,40 +1077,62 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
 - (NSArray* )accessibilityParameterizedAttributeNames
 {
-    static NSArray* paramAttributes = nil;
-    if (paramAttributes == nil) {
-        paramAttributes = [[NSArray alloc] initWithObjects:
-            @"AXUIElementForTextMarker",
-            @"AXTextMarkerRangeForUIElement",
-            @"AXLineForTextMarker",
-            @"AXTextMarkerRangeForLine",
-            @"AXStringForTextMarkerRange",
-            @"AXTextMarkerForPosition",
-            @"AXBoundsForTextMarkerRange",
-            @"AXAttributedStringForTextMarkerRange",
-            @"AXTextMarkerRangeForUnorderedTextMarkers",
-            @"AXNextTextMarkerForTextMarker",
-            @"AXPreviousTextMarkerForTextMarker",
-            @"AXLeftWordTextMarkerRangeForTextMarker",
-            @"AXRightWordTextMarkerRangeForTextMarker",
-            @"AXLeftLineTextMarkerRangeForTextMarker",
-            @"AXRightLineTextMarkerRangeForTextMarker",
-            @"AXSentenceTextMarkerRangeForTextMarker",
-            @"AXParagraphTextMarkerRangeForTextMarker",
-            @"AXNextWordEndTextMarkerForTextMarker",
-            @"AXPreviousWordStartTextMarkerForTextMarker",
-            @"AXNextLineEndTextMarkerForTextMarker",
-            @"AXPreviousLineStartTextMarkerForTextMarker",
-            @"AXNextSentenceEndTextMarkerForTextMarker",
-            @"AXPreviousSentenceStartTextMarkerForTextMarker",
-            @"AXNextParagraphEndTextMarkerForTextMarker",
-            @"AXPreviousParagraphStartTextMarkerForTextMarker",
-            @"AXStyleTextMarkerRangeForTextMarker",
-            @"AXLengthForTextMarkerRange",
-            nil];
+    static NSArray* paramAttrs = nil;
+    static NSArray* textParamAttrs = nil;
+    if (paramAttrs == nil) {
+        paramAttrs = [[NSArray alloc] initWithObjects:
+        @"AXUIElementForTextMarker",
+        @"AXTextMarkerRangeForUIElement",
+        @"AXLineForTextMarker",
+        @"AXTextMarkerRangeForLine",
+        @"AXStringForTextMarkerRange",
+        @"AXTextMarkerForPosition",
+        @"AXBoundsForTextMarkerRange",
+        @"AXAttributedStringForTextMarkerRange",
+        @"AXTextMarkerRangeForUnorderedTextMarkers",
+        @"AXNextTextMarkerForTextMarker",
+        @"AXPreviousTextMarkerForTextMarker",
+        @"AXLeftWordTextMarkerRangeForTextMarker",
+        @"AXRightWordTextMarkerRangeForTextMarker",
+        @"AXLeftLineTextMarkerRangeForTextMarker",
+        @"AXRightLineTextMarkerRangeForTextMarker",
+        @"AXSentenceTextMarkerRangeForTextMarker",
+        @"AXParagraphTextMarkerRangeForTextMarker",
+        @"AXNextWordEndTextMarkerForTextMarker",
+        @"AXPreviousWordStartTextMarkerForTextMarker",
+        @"AXNextLineEndTextMarkerForTextMarker",
+        @"AXPreviousLineStartTextMarkerForTextMarker",
+        @"AXNextSentenceEndTextMarkerForTextMarker",
+        @"AXPreviousSentenceStartTextMarkerForTextMarker",
+        @"AXNextParagraphEndTextMarkerForTextMarker",
+        @"AXPreviousParagraphStartTextMarkerForTextMarker",
+        @"AXStyleTextMarkerRangeForTextMarker",
+        @"AXLengthForTextMarkerRange",
+        nil];
     }
 
-    return paramAttributes;
+    if (textParamAttrs == nil) {
+        NSMutableArray* tempArray = [[NSMutableArray alloc] initWithArray:paramAttrs];
+        [tempArray addObject: (NSString*)kAXLineForIndexParameterizedAttribute];
+        [tempArray addObject: (NSString*)kAXRangeForLineParameterizedAttribute];
+        [tempArray addObject: (NSString*)kAXStringForRangeParameterizedAttribute];
+        [tempArray addObject: (NSString*)kAXRangeForPositionParameterizedAttribute];
+        [tempArray addObject: (NSString*)kAXRangeForIndexParameterizedAttribute];
+        [tempArray addObject: (NSString*)kAXBoundsForRangeParameterizedAttribute];
+        [tempArray addObject: (NSString*)kAXRTFForRangeParameterizedAttribute];
+        [tempArray addObject: (NSString*)kAXAttributedStringForRangeParameterizedAttribute];
+        [tempArray addObject: (NSString*)kAXStyleRangeForIndexParameterizedAttribute];
+        textParamAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
+    
+    if (!m_renderer)
+        return paramAttrs;
+
+    if ([self isTextControl])
+        return textParamAttrs;
+
+    return paramAttrs;
 }
 
 - (id)doAXUIElementForTextMarker: (WebCoreTextMarker* ) textMarker
@@ -1126,25 +1162,22 @@ static IntRect boundingBoxRect(RenderObject* obj)
         return nil;
 
     // move up until we get to the top
-    // NOTE: BUG this is not correct in non-editable elements when the position is on the
-    // first line, but not at the first offset, because previousLinePosition takes you to the
-    // first offset, the same as if you had started on the second line.  In editable elements,
-    // previousLinePosition returns nil, so the count is accurate.
     // NOTE: BUG This only takes us to the top of the rootEditableElement, not the top of the
     // top document.
-    while (visiblePos.isNotNull() && visiblePos != savedVisiblePos) {
+    while (visiblePos.isNotNull() && !(inSameLine(visiblePos, savedVisiblePos))) {
         lineCount += 1;
         savedVisiblePos = visiblePos;
         visiblePos = previousLinePosition(visiblePos, 0);
     }
     
-    return [NSNumber numberWithUnsignedInt:lineCount];
+    return [NSNumber numberWithUnsignedInt:(lineCount - 1)];
 }
 
 - (id)doAXTextMarkerRangeForLine: (NSNumber*) lineNumber
 {
     unsigned lineCount = [lineNumber unsignedIntValue];
-    if (lineCount == 0 || !m_renderer) return nil;
+    if (lineCount == 0 || !m_renderer)
+        return nil;
     
     // iterate over the lines
     // NOTE: BUG this is wrong when lineNumber is lineCount+1,  because nextLinePosition takes you to the
@@ -1874,6 +1907,195 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     return [NSNumber numberWithInt:CFStringGetLength(string)];
 }
 
+// NOTE: Consider providing this utility method as AX API
+- (WebCoreTextMarker*)textMarkerForIndex: (NSNumber*) index lastIndexOK: (BOOL)lastIndexOK
+{
+    ASSERT(m_renderer->isTextField() || m_renderer->isTextArea());
+    RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
+    unsigned int indexValue = [index unsignedIntValue];
+    
+    // lastIndexOK specifies whether the position after the last character is acceptable
+    if (indexValue >= textControl->text().length()) {
+        if (!lastIndexOK || indexValue > textControl->text().length())
+            return nil;
+    }
+    VisiblePosition position = textControl->visiblePositionForIndex(indexValue);
+    position.setAffinity(DOWNSTREAM);
+    return [self textMarkerForVisiblePosition: position];
+}
+
+// NOTE: Consider providing this utility method as AX API
+- (NSNumber*)indexForTextMarker: (WebCoreTextMarker*) marker
+{
+    ASSERT(m_renderer->isTextField() || m_renderer->isTextArea());
+    RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
+
+    VisiblePosition position = [self visiblePositionForTextMarker: marker];
+    Node* node = position.deepEquivalent().node();
+    if (!node)
+        return nil;
+    
+    for (RenderObject* renderer = node->renderer(); renderer && renderer->element(); renderer = renderer->parent()) {
+        if (renderer == textControl)
+            return [NSNumber numberWithInt: textControl->indexForVisiblePosition(position)];
+    }
+    
+    return nil;
+}
+
+// NOTE: Consider providing this utility method as AX API
+- (WebCoreTextMarkerRange*)textMarkerRangeForRange: (NSRange) range
+{
+    ASSERT(m_renderer->isTextField() || m_renderer->isTextArea());
+    RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
+    if (range.location + range.length >= textControl->text().length())
+        return nil;
+    
+    VisiblePosition startPosition = textControl->visiblePositionForIndex(range.location);
+    startPosition.setAffinity(DOWNSTREAM);
+    VisiblePosition endPosition = textControl->visiblePositionForIndex(range.location + range.length);
+    return [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
+}
+
+// NOTE: Consider providing this utility method as AX API
+- (NSValue*)rangeForTextMarkerRange: (WebCoreTextMarkerRange*) textMarkerRange
+{
+    WebCoreTextMarker* textMarker1 = [[WebCoreViewFactory sharedFactory] startOfTextMarkerRange:textMarkerRange];
+    WebCoreTextMarker* textMarker2 = [[WebCoreViewFactory sharedFactory] endOfTextMarkerRange:textMarkerRange];
+    NSNumber* index1 = [self indexForTextMarker: textMarker1];
+    NSNumber* index2 = [self indexForTextMarker: textMarker2];
+    if (!index1 || !index2 || [index1 unsignedIntValue] > [index2 unsignedIntValue])
+        return nil;
+    
+    return [NSValue valueWithRange: NSMakeRange([index1 unsignedIntValue], [index2 unsignedIntValue] - [index1 unsignedIntValue])];
+}
+
+// Given an indexed character, the line number of the text associated with this accessibility
+// object that contains the character.
+- (id)doAXLineForIndex: (NSNumber*) index
+{
+    return [self doAXLineForTextMarker: [self textMarkerForIndex: index lastIndexOK: NO]];
+}
+
+// Given a line number, the range of characters of the text associated with this accessibility
+// object that contains the line number.
+- (id)doAXRangeForLine: (NSNumber*) lineNumber
+{
+    ASSERT(m_renderer->isTextField() || m_renderer->isTextArea());
+    RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
+    
+    // iterate to the specified line
+    VisiblePosition visiblePos = textControl->visiblePositionForIndex(0);
+    VisiblePosition savedVisiblePos;
+    for (unsigned lineCount = [lineNumber unsignedIntValue]; lineCount != 0; lineCount -= 1) {
+        savedVisiblePos = visiblePos;
+        visiblePos = nextLinePosition(visiblePos, 0);
+        if (visiblePos.isNull() || visiblePos == savedVisiblePos)
+            return nil;
+    }
+    
+    // make a caret selection for the marker position, then extend it to the line
+    // NOTE: ignores results of selectionController.modify because it returns false when
+    // starting at an empty line.  The resulting selection in that case
+    // will be a caret at visiblePos.
+    SelectionController selectionController;
+    selectionController.setSelection(Selection(visiblePos));
+    selectionController.modify(SelectionController::EXTEND, SelectionController::LEFT, LineBoundary);
+    selectionController.modify(SelectionController::EXTEND, SelectionController::RIGHT, LineBoundary);
+    
+    // calculate the indices for the selection start and end
+    VisiblePosition startPosition = selectionController.selection().visibleStart();
+    VisiblePosition endPosition = selectionController.selection().visibleEnd();
+    int index1 = textControl->indexForVisiblePosition(startPosition);
+    int index2 = textControl->indexForVisiblePosition(endPosition);
+    
+    // add one to the end index for a line break not caused by soft line wrap (to match AppKit)
+    if (endPosition.affinity() == DOWNSTREAM && endPosition.next().isNotNull())
+        index2 += 1;
+
+    // return nil rather than an zero-length range (to match AppKit)
+    if (index1 == index2)
+        return nil;
+    
+    return [NSValue valueWithRange: NSMakeRange(index1, index2 - index1)];
+}
+
+// A substring of the text associated with this accessibility object that is
+// specified by the given character range.
+- (id)doAXStringForRange: (NSRange) range
+{
+    if (range.length == 0)
+        return @"";
+        
+    ASSERT(m_renderer->isTextField() || m_renderer->isTextArea());
+    RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
+    String text = textControl->text();
+    if (range.location + range.length > text.length())
+        return nil;
+        
+    return text.substring(range.location, range.length);
+}
+
+// The composed character range in the text associated with this accessibility object that
+// is specified by the given screen coordinates. This parameterized attribute returns the
+// complete range of characters (including surrogate pairs of multi-byte glyphs) at the given
+// screen coordinates.
+// NOTE: This varies from AppKit when the point is below the last line. AppKit returns an
+// an error in that case. We return textControl->text().length(), 1. Does this matter?
+- (id)doAXRangeForPosition: (NSPoint) point
+{
+    NSNumber* index = [self indexForTextMarker: [self doAXTextMarkerForPosition: point]];
+    if (!index)
+        return nil;
+        
+    return [NSValue valueWithRange: NSMakeRange([index unsignedIntValue], 1)];
+}
+
+// The composed character range in the text associated with this accessibility object that
+// is specified by the given index value. This parameterized attribute returns the complete
+// range of characters (including surrogate pairs of multi-byte glyphs) at the given index.
+- (id)doAXRangeForIndex: (NSNumber*) number
+{
+    ASSERT(m_renderer->isTextField() || m_renderer->isTextArea());
+    RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
+    String text = textControl->text();
+    if (!text.length() || [number unsignedIntValue] > text.length() - 1)
+        return nil;
+    
+    return [NSValue valueWithRange: NSMakeRange([number unsignedIntValue], 1)];
+}
+
+// The bounding rectangle of the text associated with this accessibility object that is
+// specified by the given range. This is the bounding rectangle a sighted user would see
+// on the display screen, in pixels.
+- (id)doAXBoundsForRange: (NSRange) range
+{
+    return [self doAXBoundsForTextMarkerRange: [self textMarkerRangeForRange:range]];
+}
+
+// The CFAttributedStringType representation of the text associated with this accessibility
+// object that is specified by the given range.
+- (id)doAXAttributedStringForRange: (NSRange) range
+{
+    return [self doAXAttributedStringForTextMarkerRange: [self textMarkerRangeForRange:range]];
+}
+
+// The RTF representation of the text associated with this accessibility object that is
+// specified by the given range.
+- (id)doAXRTFForRange: (NSRange) range
+{
+    NSAttributedString* attrString = [self doAXAttributedStringForRange: range];
+    return [attrString RTFFromRange: NSMakeRange(0, [attrString length]) documentAttributes: nil];
+}
+
+// Given a character index, the range of text associated with this accessibility object
+// over which the style in effect at that character index applies.
+- (id)doAXStyleRangeForIndex: (NSNumber*) index
+{
+    WebCoreTextMarkerRange* textMarkerRange = [self doAXStyleTextMarkerRangeForTextMarker: [self textMarkerForIndex: index lastIndexOK: NO]];
+    return [self rangeForTextMarkerRange: textMarkerRange];
+}
+
 - (id)accessibilityAttributeValue:(NSString*)attribute forParameter:(id)parameter
 {
     WebCoreTextMarker*      textMarker = nil;
@@ -1883,6 +2105,8 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     WebCoreAXObject*        uiElement = nil;
     NSPoint                 point = {0.0, 0.0};
     bool                    pointSet = false;
+    NSRange                 range = {0, 0};
+    bool                    rangeSet = false;
     
     // basic parameter validation
     if (!m_renderer || !attribute || !parameter)
@@ -1909,6 +2133,10 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     else if ([parameter isKindOfClass:[NSValue self]] && strcmp([(NSValue*)parameter objCType], @encode(NSPoint)) == 0) {
         pointSet = true;
         point = [(NSValue*)parameter pointValue];
+
+    } else if ([parameter isKindOfClass:[NSValue self]] && strcmp([(NSValue*)parameter objCType], @encode(NSRange)) == 0) {
+        rangeSet = true;
+        range = [(NSValue*)parameter rangeValue];
 
     } else {
         // got a parameter of a type we never use
@@ -1998,7 +2226,36 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     
     if ([attribute isEqualToString: @"AXLengthForTextMarkerRange"])
         return [self doAXLengthForTextMarkerRange: textMarkerRange];
-
+    
+    if ([self isTextControl]) {
+        if ([attribute isEqualToString: (NSString*)kAXLineForIndexParameterizedAttribute])
+            return [self doAXLineForIndex: number];
+        
+        if ([attribute isEqualToString: (NSString*)kAXRangeForLineParameterizedAttribute])
+            return [self doAXRangeForLine: number];
+        
+        if ([attribute isEqualToString: (NSString*)kAXStringForRangeParameterizedAttribute])
+            return rangeSet ? [self doAXStringForRange: range] : nil;
+        
+        if ([attribute isEqualToString: (NSString*)kAXRangeForPositionParameterizedAttribute])
+            return pointSet ? [self doAXRangeForPosition: point] : nil;
+        
+        if ([attribute isEqualToString: (NSString*)kAXRangeForIndexParameterizedAttribute])
+            return [self doAXRangeForIndex: number];
+        
+        if ([attribute isEqualToString: (NSString*)kAXBoundsForRangeParameterizedAttribute])
+            return rangeSet ? [self doAXBoundsForRange: range] : nil;
+       
+        if ([attribute isEqualToString: (NSString*)kAXRTFForRangeParameterizedAttribute])
+            return rangeSet ? [self doAXRTFForRange: range] : nil;
+        
+        if ([attribute isEqualToString: (NSString*)kAXAttributedStringForRangeParameterizedAttribute])
+            return rangeSet ? [self doAXAttributedStringForRange: range] : nil;
+        
+        if ([attribute isEqualToString: (NSString*)kAXStyleRangeForIndexParameterizedAttribute])
+            return [self doAXStyleRangeForIndex: number];
+    }
+    
     return nil;
 }
 

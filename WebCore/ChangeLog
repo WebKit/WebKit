@@ -1,3 +1,46 @@
+2006-09-25  David Harrison  <harrison@apple.com>
+
+        Reviewed by Tim Omernick and Tim Hatcher.
+
+        <rdar://problem/4717965> Text Field text parameterized attributes should work
+        <rdar://problem/4712111> Support NSAccessibilityInsertionPointLineNumberAttribute for AXTextArea elements
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        Use new line number support to implement NSAccessibilityInsertionPointLineNumberAttribute.
+        
+        (-[WebCoreAXObject accessibilityParameterizedAttributeNames]):
+        Cleaned up. Added text field and text area parameterzed attributes.
+        
+        (-[WebCoreAXObject doAXLineForTextMarker:]):
+        Fixed to be zero-based and to deal with the first position properly.
+        
+        (-[WebCoreAXObject doAXTextMarkerRangeForLine:]):
+        Minor formatting.
+        
+        (-[WebCoreAXObject textMarkerForIndex:lastIndexOK:]):
+        (-[WebCoreAXObject indexForTextMarker:]):
+        (-[WebCoreAXObject textMarkerRangeForRange:]):
+        (-[WebCoreAXObject rangeForTextMarkerRange:]):
+        New utility methods.
+        
+        (-[WebCoreAXObject doAXLineForIndex:]):
+        (-[WebCoreAXObject doAXRangeForLine:]):
+        (-[WebCoreAXObject doAXStringForRange:]):
+        (-[WebCoreAXObject doAXRangeForPosition:]):
+        (-[WebCoreAXObject doAXRangeForIndex:]):
+        (-[WebCoreAXObject doAXBoundsForRange:]):
+        (-[WebCoreAXObject doAXAttributedStringForRange:]):
+        (-[WebCoreAXObject doAXRTFForRange:]):
+        (-[WebCoreAXObject doAXStyleRangeForIndex:]):
+        Implement text field and text area parameterized attributes.
+         
+        (-[WebCoreAXObject accessibilityAttributeValue:forParameter:]):
+        Added text field and text area parameterzed attributes.
+
+        * rendering/RenderTextControl.h:
+        Made indexForVisiblePosition() and visiblePositionForIndex() public.
+
 2006-09-25  Adam Roben  <aroben@apple.com>
 
         Reviewed by Brady.
