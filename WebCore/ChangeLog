@@ -1,3 +1,12 @@
+2006-09-25  Brady Eidson  <beidson@apple.com>
+
+        Requested by ggaren
+
+        Disabled IconDatabase logging by default
+
+        * platform/Logging.cpp:
+        (WebCore::):
+
 2006-09-25  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix
