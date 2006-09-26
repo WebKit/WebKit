@@ -46,7 +46,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "KRenderingDeviceQt.h"
 #endif
 
@@ -777,7 +777,7 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     m_data->p().setMatrix(transform, true);
 }
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 KRenderingDeviceContext* GraphicsContext::createRenderingDeviceContext()
 {
     return new KRenderingDeviceContextQt(platformContext());

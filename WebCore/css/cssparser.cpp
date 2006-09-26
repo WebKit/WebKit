@@ -718,7 +718,7 @@ bool CSSParser::parseValue(int propId, bool important)
             } else if(strict && nrcoords == 2)
                 hotspot = IntPoint(coords[0], coords[1]);
             if (strict || coords.size() == 0) {
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
             if (uri.startsWith("#")) {
                 if (!list)
                     list = new CSSValueList; 

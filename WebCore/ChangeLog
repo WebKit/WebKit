@@ -1,3 +1,20 @@
+2006-09-26  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by mitzpettel.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=11020
+        No-SVG build broken since r16549
+        
+        Change #if SVG_SUPPORT to #ifdef SVG_SUPPORT
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * page/FrameView.cpp:
+        (WebCore::selectCursor):
+        * platform/qt/GraphicsContextQt.cpp:
+
 2006-09-26  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

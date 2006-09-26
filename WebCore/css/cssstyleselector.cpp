@@ -2440,7 +2440,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 primitiveValue = static_cast<CSSPrimitiveValue*>(item);
                 int type = primitiveValue->primitiveType();
                 if (type == CSSPrimitiveValue::CSS_URI) {
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
                     if (primitiveValue->getStringValue().find("#") == 0)
                         style->addSVGCursor(primitiveValue->getStringValue().substring(1));
                     else

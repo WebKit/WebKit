@@ -48,7 +48,7 @@
 #include "SelectionController.h"
 #include "cssstyleselector.h"
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 #include "XLinkNames.h"
 #include "SVGNames.h"
 #include "SVGCursorElement.h"
@@ -59,7 +59,7 @@ namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
 using namespace SVGNames;
 #endif
 
@@ -661,7 +661,7 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
         for (unsigned i = 0; i < cursors->size(); ++i) {
             CachedImage* cimage = (*cursors)[i].cursorImage;
             IntPoint hotSpot = (*cursors)[i].hotSpot;
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
             if (!cimage) {
                 Element* e = node->document()->getElementById((*cursors)[i].cursorFragmentId);
                 if (e && e->hasTagName(cursorTag)) {
