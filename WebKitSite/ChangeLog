@@ -1,3 +1,9 @@
+2006-09-26  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by anders.
+
+        * projects/svg/status.xml: update status to reflect current state of SVG development
+
 2006-09-21  Matt Lilek  <pewtermoose@gmail.com>
 
         Reviewed by Eric.

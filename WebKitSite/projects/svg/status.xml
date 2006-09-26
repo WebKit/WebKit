@@ -26,7 +26,7 @@
                 <url>http://www.w3.org/TR/SVG11/struct.html#SVGElement</url>
                 <status>Implemented</status>
                 <issues>
-                    <issue>bounding box relative percentages fail <bug>6003</bug></issue>
+                    <issue>SVGSVGElement does not support suspendRedraw, unsuspendRedraw <bug>10408</bug></issue>
                 </issues>
             </element>
             <element>
@@ -55,7 +55,7 @@
             <element>
                 <name>metadata</name>
                 <url>http://www.w3.org/TR/SVG11/metadata.html#MetadataElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>symbol</name>
@@ -221,9 +221,6 @@
                 <name>marker</name>
                 <url>http://www.w3.org/TR/SVG11/painting.html#MarkerElement</url>
                 <status>Implemented</status>
-                <issues>
-                    <issue>Clip path issues <bug>5967</bug></issue>
-                </issues>
             </element>
         </elements>
     </module>
@@ -279,9 +276,6 @@
                 <name>pattern</name>
                 <url>http://www.w3.org/TR/SVG11/pservers.html#PatternElement</url>
                 <status>Implemented</status>
-                <issues>
-                    <issue>Patterns seem to have minor coordinate space issues <bug>6003</bug></issue>
-                </issues>
             </element>
         </elements>
     </module>
@@ -293,9 +287,6 @@
                 <name>clipPath</name>
                 <url>http://www.w3.org/TR/SVG11/masking.html#ClipPathElement</url>
                 <status>Implemented</status>
-                <issues>
-                    <issue>clip data does not respect transforms <bug>6546</bug></issue>
-                </issues>
             </element>
         </elements>
     </module>
@@ -480,10 +471,8 @@
             <element>
                 <name>cursor</name>
                 <url>http://www.w3.org/TR/SVG11/interact.html#CursorElement</url>
-                <status>Broken</status>
                 <issues>
-                    <issue>SVG &lt;cursor&gt; needs to be wired into WebKit custom CSS cursor code <bug>6002</bug></issue>
-                    <issue>WebKit does not handle CSS custom cursor URI fallback <bug>6001</bug></issue>
+                    <issue>SVGs are not supported as real image types <bug>5971</bug></issue>
                 </issues>
             </element>
         </elements>
@@ -496,6 +485,9 @@
                 <name>a</name>
                 <url>http://www.w3.org/TR/SVG11/linking.html#AElement</url>
                 <status>Implemented</status>
+                <issues>
+                    <issue>SVG does not support tabbing navigation between web page links <bug>8823</bug></issue>
+                </issues>
             </element>
         </elements>
     </module>
@@ -521,10 +513,6 @@
                 <name>script</name>
                 <url>http://www.w3.org/TR/SVG11/script.html#ScriptElement</url>
                 <status>Implemented</status>
-                <issues>
-                    <issue>SVG JavaScript bindings do not correctly support multiple inheritance <bug>9229</bug></issue>
-                    <issue>Most SVG JS bindings are still broken <bug>9190</bug></issue>
-                </issues>
             </element>
         </elements>
     </module>
@@ -575,16 +563,25 @@
                 <name>font</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceElement</url>
                 <status>Unimplemented</status>
+                <issues>
+                    <issue>Implement SVGFontElement <bug>10650</bug></issue>
+                </issues>
             </element>
             <element>
                 <name>font-face</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceNameElement</url>
                 <status>Unimplemented</status>
+                <issues>
+                    <issue>Implement SVGFontFace*Elements <bug>10652</bug></issue>
+                </issues>
             </element>
             <element>
                 <name>glyph</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#GlyphElement</url>
                 <status>Unimplemented</status>
+                <issues>
+                    <issue>Implement SVGGlyphElement <bug>10651</bug></issue>
+                </issues>
             </element>
             <element>
                 <name>missing-glyph</name>
@@ -635,10 +632,7 @@
             <element>
                 <name>foreignObject</name>
                 <url>http://www.w3.org/TR/SVG11/extend.html#ForeignObjectElement</url>
-                <issues>
-                    <issue>&lt;input type="search"&gt; renders twice within &lt;foreignObject&gt; <bug>6582</bug></issue>
-                    <issue>object inside foreignObject limits extent of SVG <bug>9856</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
         </elements>
     </module>
