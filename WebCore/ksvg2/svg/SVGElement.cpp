@@ -65,7 +65,7 @@ String SVGElement::id() const
     return getAttribute(idAttr);
 }
 
-void SVGElement::setId(const String& value)
+void SVGElement::setId(const String& value, ExceptionCode&)
 {
     setAttribute(idAttr, value);
 }
@@ -75,7 +75,7 @@ String SVGElement::xmlbase() const
     return getAttribute(XMLNames::baseAttr);
 }
 
-void SVGElement::setXmlbase(const String& value)
+void SVGElement::setXmlbase(const String& value, ExceptionCode&)
 {
     setAttribute(XMLNames::baseAttr, value);
 }

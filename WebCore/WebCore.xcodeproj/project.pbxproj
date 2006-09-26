@@ -495,6 +495,11 @@
 		8541639C0AC718680001E01B /* DOMSVGLengthListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 854163940AC718680001E01B /* DOMSVGLengthListInternal.h */; };
 		8541639D0AC718680001E01B /* DOMSVGLengthInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 854163950AC718680001E01B /* DOMSVGLengthInternal.h */; };
 		8541639E0AC718680001E01B /* DOMSVGAngleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 854163960AC718680001E01B /* DOMSVGAngleInternal.h */; };
+		854949120AC858D8008AB035 /* DOMSVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 854949100AC858D8008AB035 /* DOMSVGElement.h */; };
+		854949130AC858D8008AB035 /* DOMSVGElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 854949110AC858D8008AB035 /* DOMSVGElement.mm */; };
+		854949170AC85950008AB035 /* DOMSVGElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 854949160AC85950008AB035 /* DOMSVGElementInternal.h */; };
+		8549492F0AC85A32008AB035 /* DOMSVGExecption.h in Headers */ = {isa = PBXBuildFile; fileRef = 8549492E0AC85A32008AB035 /* DOMSVGExecption.h */; };
+		854949690AC87613008AB035 /* SVGException.h in Headers */ = {isa = PBXBuildFile; fileRef = 854949680AC87613008AB035 /* SVGException.h */; };
 		854FE7300A2297BE0058D7AD /* NodeFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE7260A2297BE0058D7AD /* NodeFilter.cpp */; };
 		854FE7310A2297BE0058D7AD /* NodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE7270A2297BE0058D7AD /* NodeFilter.h */; };
 		854FE7320A2297BE0058D7AD /* NodeFilterCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE7280A2297BE0058D7AD /* NodeFilterCondition.cpp */; };
@@ -2970,6 +2975,11 @@
 		854163940AC718680001E01B /* DOMSVGLengthListInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGLengthListInternal.h; sourceTree = "<group>"; };
 		854163950AC718680001E01B /* DOMSVGLengthInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGLengthInternal.h; sourceTree = "<group>"; };
 		854163960AC718680001E01B /* DOMSVGAngleInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGAngleInternal.h; sourceTree = "<group>"; };
+		854949100AC858D8008AB035 /* DOMSVGElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElement.h; sourceTree = "<group>"; };
+		854949110AC858D8008AB035 /* DOMSVGElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGElement.mm; sourceTree = "<group>"; };
+		854949160AC85950008AB035 /* DOMSVGElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInternal.h; sourceTree = "<group>"; };
+		8549492E0AC85A32008AB035 /* DOMSVGExecption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGExecption.h; sourceTree = "<group>"; };
+		854949680AC87613008AB035 /* SVGException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGException.h; sourceTree = "<group>"; };
 		854FE7260A2297BE0058D7AD /* NodeFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeFilter.cpp; sourceTree = "<group>"; };
 		854FE7270A2297BE0058D7AD /* NodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NodeFilter.h; sourceTree = "<group>"; };
 		854FE7280A2297BE0058D7AD /* NodeFilterCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeFilterCondition.cpp; sourceTree = "<group>"; };
@@ -5645,6 +5655,14 @@
 			name = Range;
 			sourceTree = "<group>";
 		};
+		8549492D0AC85A0A008AB035 /* SVG */ = {
+			isa = PBXGroup;
+			children = (
+				8549492E0AC85A32008AB035 /* DOMSVGExecption.h */,
+			);
+			name = SVG;
+			sourceTree = "<group>";
+		};
 		854F12AC0A8EBC18000940B5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -5796,6 +5814,8 @@
 			children = (
 				854163690AC7180B0001E01B /* DOMSVGAngle.h */,
 				854163680AC7180B0001E01B /* DOMSVGAngle.mm */,
+				854949100AC858D8008AB035 /* DOMSVGElement.h */,
+				854949110AC858D8008AB035 /* DOMSVGElement.mm */,
 				854163670AC7180B0001E01B /* DOMSVGLength.h */,
 				854163660AC7180B0001E01B /* DOMSVGLength.mm */,
 				854163650AC7180B0001E01B /* DOMSVGLengthList.h */,
@@ -6073,6 +6093,7 @@
 				85E711870AC5D5350053270F /* DOMRectInternal.h */,
 				85E711880AC5D5350053270F /* DOMStyleSheetListInternal.h */,
 				854163960AC718680001E01B /* DOMSVGAngleInternal.h */,
+				854949160AC85950008AB035 /* DOMSVGElementInternal.h */,
 				854163950AC718680001E01B /* DOMSVGLengthInternal.h */,
 				854163940AC718680001E01B /* DOMSVGLengthListInternal.h */,
 				854163930AC718680001E01B /* DOMSVGMatrixInternal.h */,
@@ -6899,6 +6920,7 @@
 				A8C0F8EA089701F400BA5114 /* SVGViewElement.h */,
 				A8C0F8EB089701F400BA5114 /* SVGZoomAndPan.cpp */,
 				A8C0F8EC089701F400BA5114 /* SVGZoomAndPan.h */,
+				854949680AC87613008AB035 /* SVGException.h */,
 			);
 			path = svg;
 			sourceTree = "<group>";
@@ -7091,6 +7113,7 @@
 				85C7F4430AAF7686004014DD /* Events */,
 				85992FC20AA5DD4600AC0785 /* HTML */,
 				851EE8230ABCA58A00A6AA33 /* Range */,
+				8549492D0AC85A0A008AB035 /* SVG */,
 				859FA5F20AB0BEE2004FAEE9 /* Traversal */,
 				851EE8060ABCA25200A6AA33 /* Views */,
 				858015CC0ABCA7410080588D /* XPath */,
@@ -8877,6 +8900,10 @@
 				8541639C0AC718680001E01B /* DOMSVGLengthListInternal.h in Headers */,
 				8541639D0AC718680001E01B /* DOMSVGLengthInternal.h in Headers */,
 				8541639E0AC718680001E01B /* DOMSVGAngleInternal.h in Headers */,
+				854949120AC858D8008AB035 /* DOMSVGElement.h in Headers */,
+				854949170AC85950008AB035 /* DOMSVGElementInternal.h in Headers */,
+				8549492F0AC85A32008AB035 /* DOMSVGExecption.h in Headers */,
+				854949690AC87613008AB035 /* SVGException.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9977,6 +10004,7 @@
 				854163740AC7180B0001E01B /* DOMSVGLengthList.mm in Sources */,
 				854163760AC7180B0001E01B /* DOMSVGLength.mm in Sources */,
 				854163780AC7180B0001E01B /* DOMSVGAngle.mm in Sources */,
+				854949130AC858D8008AB035 /* DOMSVGElement.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

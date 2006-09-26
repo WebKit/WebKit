@@ -139,6 +139,7 @@ all : \
     DOMStyleSheet.h \
     DOMStyleSheetList.h \
     DOMSVGAngle.h \
+    DOMSVGElement.h \
     DOMSVGLength.h \
     DOMSVGLengthList.h \
     DOMSVGMatrix.h \

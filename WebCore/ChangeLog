@@ -1,3 +1,35 @@
+2006-09-26  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=11038
+        Auto-generate DOMSVGElement for the Objective-C bindings
+
+        - Auto-generates DOMSVGElement.
+
+        - Make SVGExceptions work like all the other ExceptionCode
+          extensions (Range, XPath, etc.) by adding SVGExceptionOffset
+          and SVGExceptionMax.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_binding.cpp:
+        (KJS::):
+        (KJS::setDOMException):
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMInternal.mm:
+        (raiseDOMException):
+        * bindings/objc/DOMSVG.h:
+        * bindings/objc/DOMSVGExecption.h: Added.
+        * ksvg2/ksvg.h:
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::setId):
+        (WebCore::SVGElement::setXmlbase):
+        * ksvg2/svg/SVGElement.h:
+        * ksvg2/svg/SVGElement.idl:
+        * ksvg2/svg/SVGException.h: Added.
+        (WebCore::):
+
 2006-09-26  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by Tim H.

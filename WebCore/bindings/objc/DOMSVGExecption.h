@@ -24,13 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DOMSVGAngle.h>
-#import <WebCore/DOMSVGElement.h>
-#import <WebCore/DOMSVGException.h>
-#import <WebCore/DOMSVGLength.h>
-#import <WebCore/DOMSVGLengthList.h>
-#import <WebCore/DOMSVGMatrix.h>
-#import <WebCore/DOMSVGPathSeg.h>
-#import <WebCore/DOMSVGPathSegList.h>
-#import <WebCore/DOMSVGTransform.h>
-#import <WebCore/DOMSVGTransformList.h>
+@class NSString;
+
+extern NSString * const DOMSVGException;
+
+enum DOMSVGException {
+    DOM_SVG_WRONG_TYPE_ERR           = 0,
+    DOM_SVG_INVALID_VALUE_ERR        = 1,
+    DOM_SVG_MATRIX_NOT_INVERTABLE    = 2
+};

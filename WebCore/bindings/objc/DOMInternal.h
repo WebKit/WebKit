@@ -124,6 +124,7 @@
 
 #ifdef SVG_SUPPORT
 #import "DOMSVGAngleInternal.h"
+#import "DOMSVGElementInternal.h"
 #import "DOMSVGLengthInternal.h"
 #import "DOMSVGLengthListInternal.h"
 #import "DOMSVGMatrixInternal.h"

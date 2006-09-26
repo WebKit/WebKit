@@ -31,6 +31,7 @@
 #import "FrameMac.h"
 #import "Range.h"
 #import "RangeException.h"
+#import "SVGException.h"
 #import "WebScriptObjectPrivate.h"
 #import "XPathEvaluator.h"
 #import "kjs_dom.h"
@@ -76,6 +77,9 @@ void removeDOMWrapper(DOMObjectInternal* impl)
 NSString * const DOMException = @"DOMException";
 NSString * const DOMRangeException = @"DOMRangeException";
 NSString * const DOMEventException = @"DOMEventException";
+#ifdef SVG_SUPPORT
+NSString * const DOMSVGException = @"DOMSVGException";
+#endif // SVG_SUPPORT
 #ifdef XPATH_SUPPORT
 NSString * const DOMXPathException = @"DOMXPathException";
 #endif // XPATH_SUPPORT
@@ -93,6 +97,11 @@ void raiseDOMException(ExceptionCode ec)
     } else if (ec >= EventExceptionOffset && ec <= EventExceptionMax) {
         name = DOMEventException;
         code -= EventExceptionOffset;
+#ifdef SVG_SUPPORT
+    } else if (ec >= SVGExceptionOffset && ec <= SVGExceptionMax) {
+        name = DOMSVGException;
+        code -= SVGExceptionOffset;
+#endif // SVG_SUPPORT
 #ifdef XPATH_SUPPORT
     } else if (ec >= XPathExceptionOffset && ec <= XPathExceptionMax) {
         name = DOMXPathException;

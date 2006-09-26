@@ -24,6 +24,8 @@
 #define KSVG_H
 #ifdef SVG_SUPPORT
 
+#include "SVGException.h"
+
 /**
  * @short General namespace specific definitions.
  */
@@ -31,12 +33,6 @@ namespace WebCore {
     /**
      * All SVG constants
      */
-    enum SVGExceptionCode {
-        SVG_WRONG_TYPE_ERR           = 1,
-        SVG_INVALID_VALUE_ERR        = 2,
-        SVG_MATRIX_NOT_INVERTABLE    = 3
-    };
-       
     enum SVGCSSRuleType {
         COLOR_PROFILE_RULE = 7
     };
