@@ -33,12 +33,12 @@
 #include "Length.h"
 #include "StringHash.h"
 #include "TextEncoding.h"
+#include <kjs/dtoa.h>
 #include <kjs/identifier.h>
 #include <wtf/Assertions.h>
 #include <unicode/ubrk.h>
 #include <unicode/ustring.h>
 #include <assert.h>
-#include <JavaScriptCore/dtoa.h>
 
 using namespace WTF;
 
