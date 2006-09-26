@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if PLATFORM(CAIRO)
-
 #include "config.h"
 #include "GraphicsContext.h"
+
+#if PLATFORM(CAIRO)
+
 #include <cairo-win32.h>
 
 namespace WebCore

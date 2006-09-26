@@ -82,6 +82,7 @@ namespace WebCore {
             , m_formDataString(0)
             , m_formDataLength(0)
             , m_bytesRemainingToWrite(0)
+            , m_hasReceivedResponse(false)
 #endif
 #if PLATFORM(GDK)
             , m_handle(0)
@@ -114,6 +115,7 @@ namespace WebCore {
             , m_formDataString(0)
             , m_formDataLength(0)
             , m_bytesRemainingToWrite(0)
+            , m_hasReceivedResponse(false)
 #endif
 #if PLATFORM(GDK)
             , m_handle(0)
@@ -153,6 +155,7 @@ namespace WebCore {
         int m_formDataLength;
         int m_bytesRemainingToWrite;
         String m_postReferrer;
+        bool m_hasReceivedResponse;
 #endif
 #if PLATFORM(GDK)
         CURL *m_handle;

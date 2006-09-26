@@ -1,3 +1,28 @@
+2006-09-25  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Brady.
+
+        Build fixes.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Fix malformed XML.
+        * platform/ResourceLoader.h: Store whether a particular job
+        has received a response within the ResourceLoader object itself, since
+        it's possible that we will enter the InternetReadFileExA while loop
+        twice for the same job.
+        * platform/ResourceLoaderInternal.h: Add private instance variable to
+        store whether we've received a response.
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/win/GraphicsContextWin.cpp: Fix order of preprocessor
+        directives.
+        * platform/win/ResourceLoaderWin.cpp: 
+        (WebCore::ResourceLoader::onRequestComplete): Ask the ResourceLoader
+        whether it has received a response instead of assuming it hasn't.
+        (WebCore::ResourceLoader::setHasReceivedResponse): Added.
+        (WebCore::ResourceLoader::hasReceivedResponse): Added.
+        * platform/win/TemporaryLinkStubs.cpp: Rename setKnobProportion to
+        setProportion
+        (ScrollBar::setProportion):
+
 2006-09-25  Brady Eidson  <beidson@apple.com>
 
         Requested by ggaren

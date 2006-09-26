@@ -225,8 +225,8 @@ void ResourceLoader::onRequestComplete(LPARAM lParam)
 
     bool receivedAnyData = false;
     while ((ok = InternetReadFileExA(handle, &buffers, IRF_NO_WAIT, (DWORD_PTR)this)) && buffers.dwBufferLength) {
-        if (!receivedAnyData) {
-            receivedAnyData = true;
+        if (!hasReceivedResponse()) {
+            setHasReceivedResponse();
             client()->receivedResponse(this, 0);
         }
         client()->receivedData(this, buffer, buffers.dwBufferLength);
@@ -417,6 +417,16 @@ void ResourceLoader::cancel()
     if (!d->m_resourceHandle)
         // Async load canceled before we have a handle -- mark ourselves as in error, to be deleted later.
         setError(1);
+}
+
+void ResourceLoader::setHasReceivedResponse(bool b)
+{
+    d->m_hasReceivedResponse = b;
+}
+
+bool ResourceLoader::hasReceivedResponse() const
+{
+    return d->m_hasReceivedResponse;
 }
 
 } // namespace WebCore
