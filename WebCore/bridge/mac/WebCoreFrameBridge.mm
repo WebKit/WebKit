@@ -1228,9 +1228,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame->findString(String(string), forward, caseFlag, wrapFlag);
 }
 
-- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag
+- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(unsigned)limit
 {
-    return m_frame->markAllMatchesForText(string, caseFlag);
+    return m_frame->markAllMatchesForText(string, caseFlag, limit);
 }
 
 - (BOOL)markedTextMatchesAreHighlighted

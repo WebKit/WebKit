@@ -1,3 +1,17 @@
+2006-09-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge markAllMatchesForText:caseSensitive:limit:]):
+        Added limit parameter, passed down to Frame
+        
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::markAllMatchesForText):
+        Added limit parameter. Stop the search if it hits limit.
+
 2006-09-26  Sean Gies  <seangies@apple.com>
 
         Reviewed by Brady Eidson.

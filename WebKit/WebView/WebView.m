@@ -2862,7 +2862,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [[[self mainFrame] _bridge] aeDescByEvaluatingJavaScriptFromString:script];
 }
 
-- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight
+- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(unsigned)limit
 {
     WebFrame *frame = [self mainFrame];
     unsigned matchCount = 0;
@@ -2871,8 +2871,14 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         // FIXME: introduce a protocol, or otherwise make this work with other types
         if ([view isKindOfClass:[WebHTMLView class]])
             [(WebHTMLView *)view setMarkedTextMatchesAreHighlighted:highlight];
-            matchCount += [(WebHTMLView *)view markAllMatchesForText:string caseSensitive:caseFlag];
+        
+        ASSERT(limit == 0 || matchCount < limit);
+        matchCount += [(WebHTMLView *)view markAllMatchesForText:string caseSensitive:caseFlag limit:limit == 0 ? 0 : limit - matchCount];
 
+        // Stop looking if we've reached the limit. A limit of 0 means no limit.
+        if (limit > 0 && matchCount >= limit)
+            break;
+        
         frame = incrementFrame(frame, YES, NO);
     } while (frame);
     

@@ -732,7 +732,7 @@ private:
   const Vector<MarkedTextUnderline>& markedTextUnderlines() const;  
   bool markedTextUsesUnderlines() const;
   
-  unsigned markAllMatchesForText(const String&, bool caseFlag);
+  unsigned markAllMatchesForText(const String&, bool caseFlag, unsigned limit);
   bool markedTextMatchesAreHighlighted() const;
   void setMarkedTextMatchesAreHighlighted(bool flag);
   

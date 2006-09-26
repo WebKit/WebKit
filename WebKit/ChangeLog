@@ -1,3 +1,17 @@
+2006-09-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        * WebView/WebHTMLViewPrivate.h:
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView markAllMatchesForText:caseSensitive:limit:]):
+        Added limit parameter, passed over the bridge. Stop the search if it hits limit.
+
+        * WebView/WebViewPrivate.h:
+        * WebView/WebView.m:
+        (-[WebView markAllMatchesForText:caseSensitive:highlight:limit:]):
+        Added limit parameter, passed to WebHTMLView.
+
 2006-09-26  David Harrison  <harrison@apple.com>
 
         Reviewed by John and TimH.

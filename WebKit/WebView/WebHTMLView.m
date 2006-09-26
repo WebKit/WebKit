@@ -1845,9 +1845,9 @@ static WebHTMLView *lastHitView = nil;
     [[self _bridge] setIsActive:isActive];
 }
 
-- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag
+- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(unsigned)limit
 {
-    return [[self _bridge] markAllMatchesForText:string caseSensitive:caseFlag];
+    return [[self _bridge] markAllMatchesForText:string caseSensitive:caseFlag limit:limit];
 }
 
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue
