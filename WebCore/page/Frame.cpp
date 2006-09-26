@@ -467,6 +467,14 @@ void Frame::clear(bool clearWindowProperties)
   d->m_bCleared = true;
   d->m_mousePressNode = 0;
 
+#if !PLATFORM(MAC)
+  // FIXME: This is a temporary hack to work around a mismatch between WebCore and WebKit
+  // regarding frame lifetime. The proper solution is to move all frame management
+  // into WebCore, so frames can work the same way on all platforms.
+  for (Frame* descendant = tree()->firstChild(); descendant; descendant = descendant->tree()->traverseNext())
+      descendant->disconnectOwnerElement();
+#endif
+
   if (d->m_doc) {
     d->m_doc->cancelParsing();
     d->m_doc->detach();
@@ -3639,7 +3647,7 @@ void Frame::started()
 
 void Frame::disconnectOwnerElement()
 {
-    if (d->m_ownerElement)
+    if (d->m_ownerElement && d->m_page)
         d->m_page->decrementFrameCount();
         
     d->m_ownerElement = 0;
