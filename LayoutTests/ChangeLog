@@ -1,6 +1,18 @@
 2006-09-26  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by Tim H.
+        
+        viewbox parser does not allow <tab> as a delimiter
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11014
+
+        * svg/hixie/viewbox/003-expected.checksum: Added.
+        * svg/hixie/viewbox/003-expected.png: Added.
+        * svg/hixie/viewbox/003-expected.txt: Added.
+        * svg/hixie/viewbox/003.xml: Added.
+
+2006-09-26  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by Tim H.
 
         SVGDocument::createElement does not create elements in the SVG namespace
         http://bugzilla.opendarwin.org/show_bug.cgi?id=10932

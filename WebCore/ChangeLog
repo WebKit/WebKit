@@ -1,6 +1,20 @@
 2006-09-26  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by Tim H.
+        
+        viewbox parser does not allow <tab> as a delimiter
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11014
+
+        Test: svg/hixie/viewbox/003.xml
+
+        * ksvg2/svg/svgpathparser.cpp:
+        (WebCore::isWhitespace): new function
+        (WebCore::skipOptionalSpaces):
+        (WebCore::skipOptionalSpacesOrComma):
+
+2006-09-26  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by Tim H.
 
         SVGDocument::createElement does not create elements in the SVG namespace
         http://bugzilla.opendarwin.org/show_bug.cgi?id=10932

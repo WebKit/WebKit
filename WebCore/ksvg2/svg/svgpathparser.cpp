@@ -26,20 +26,25 @@
 
 namespace WebCore {
 
+// SVG allows several different whitespace characters:
+// http://www.w3.org/TR/SVG/paths.html#PathDataBNF
+static inline bool isWhitespace(char c) {
+    return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
+}
 
 // All strings are assumed to be null terminated
 static inline bool skipOptionalSpaces(const char*& ptr) // true means "found space"
 {
-    if (*ptr != ' ')
+    if (!isWhitespace(*ptr))
         return false;
-    while (*ptr == ' ')
+    while (isWhitespace(*ptr))
         ptr++;
     return true;
 }
 
 static inline bool skipOptionalSpacesOrComma(const char*& ptr)
 {
-    if (*ptr != ' ' && *ptr != ',')
+    if (!isWhitespace(*ptr) && *ptr != ',')
         return false;
     skipOptionalSpaces(ptr);
     if (*ptr == ',') {
