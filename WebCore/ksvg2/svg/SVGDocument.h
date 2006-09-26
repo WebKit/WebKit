@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGDocumentImpl_H
-#define KSVG_SVGDocumentImpl_H
+#ifndef SVGDocument_H
+#define SVGDocument_H
 #ifdef SVG_SUPPORT
 
 #include "Document.h"
@@ -39,7 +39,9 @@ namespace WebCore {
         
         virtual bool isSVGDocument() const { return true; }
 
-        SVGSVGElement *rootElement() const;
+        SVGSVGElement* rootElement() const;
+        
+        virtual PassRefPtr<Element> SVGDocument::createElement(const String& tagName, ExceptionCode&);
         
         void dispatchZoomEvent(float prevScale, float newScale);
         void dispatchScrollEvent();
@@ -48,6 +50,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGDocumentImpl_H
+#endif // SVGDocument_H
 
 // vim:ts=4:noet

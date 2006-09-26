@@ -1,6 +1,18 @@
 2006-09-26  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by Tim H.
+
+        SVGDocument::createElement does not create elements in the SVG namespace
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10932
+
+        * svg/custom/createelement-expected.checksum: Added.
+        * svg/custom/createelement-expected.png: Added.
+        * svg/custom/createelement-expected.txt: Added.
+        * svg/custom/createelement.svg: Added.
+
+2006-09-26  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by Tim H.
         
         RenderPath::nodeAtPoint does not respect stroke width
         http://bugzilla.opendarwin.org/show_bug.cgi?id=10829
