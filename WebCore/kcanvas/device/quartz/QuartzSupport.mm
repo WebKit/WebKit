@@ -129,20 +129,6 @@ FloatRect strokeBoundingBox(const Path& path, const KRenderingStrokePainter& str
     return FloatRect(box);
 }
 
-bool pathContainsPoint(CGMutablePathRef cgPath, const FloatPoint& point, CGPathDrawingMode drawMode)
-{
-   CGContextRef context = scratchContext();
-   CGContextSaveGState(context);
-   
-   CGContextBeginPath(context);
-   CGContextAddPath(context, cgPath);
-   bool hitSuccess = CGContextPathContainsPoint(context, point, drawMode);
-
-   CGContextRestoreGState(context);
-
-   return hitSuccess;
-}
-
 }
 
 #endif // SVG_SUPPORT

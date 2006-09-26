@@ -1,5 +1,19 @@
 2006-09-26  Eric Seidel  <eric@eseidel.com>
 
+        Reviewed by Tim H.
+        
+        RenderPath::nodeAtPoint does not respect stroke width
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10829
+
+        Test: svg/custom/stroke-width-click.svg
+
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (WebCore::RenderPath::strokeContains):
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * kcanvas/device/quartz/QuartzSupport.mm:
+
+2006-09-26  Eric Seidel  <eric@eseidel.com>
+
         Reviewed by mitz.
 
         Bring animation back to life

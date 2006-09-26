@@ -68,7 +68,17 @@ bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) co
         return false;
 
     CGMutablePathRef cgPath = path().platformPath();
-    return pathContainsPoint(cgPath, point, kCGPathStroke);
+    
+    CGContextRef context = scratchContext();
+    CGContextSaveGState(context);
+    
+    CGContextBeginPath(context);
+    CGContextAddPath(context, cgPath);
+    applyStrokeStyleToContext(context, style(), this);
+    bool hitSuccess = CGContextPathContainsPoint(context, point, kCGPathStroke);
+    CGContextRestoreGState(context);
+    
+    return hitSuccess;
 }
 
 }

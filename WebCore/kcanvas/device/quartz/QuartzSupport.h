@@ -46,8 +46,8 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
 void applyStrokeStyleToContext(CGContextRef, const KRenderingStrokePainter&);
 void applyStrokeStyleToContext(CGContextRef, RenderStyle*, const RenderObject*);
 
-FloatRect strokeBoundingBox(const Path&, const KRenderingStrokePainter&);
-bool pathContainsPoint(CGMutablePathRef, const FloatPoint&, CGPathDrawingMode);
+CGContextRef scratchContext();
+FloatRect strokeBoundingBox(const Path& path, const KRenderingStrokePainter&);
 
 static inline CGLineCap CGLineCapFromKC(KCCapStyle cap)
 {

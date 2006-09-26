@@ -1,3 +1,13 @@
+2006-09-26  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by Tim H.
+        
+        RenderPath::nodeAtPoint does not respect stroke width
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10829
+
+        * svg/custom/stroke-width-click-expected.txt: Added.
+        * svg/custom/stroke-width-click.svg: Added.
+
 2006-09-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
