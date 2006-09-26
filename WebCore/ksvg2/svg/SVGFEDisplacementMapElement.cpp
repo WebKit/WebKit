@@ -78,7 +78,7 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
     else if (attr->name() == SVGNames::in2Attr)
         setIn2BaseValue(value);
     else if (attr->name() == SVGNames::scaleAttr)
-        setScaleBaseValue(value.deprecatedString().toDouble());
+        setScaleBaseValue(value.toDouble());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }

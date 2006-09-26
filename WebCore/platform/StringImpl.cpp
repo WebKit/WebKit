@@ -28,14 +28,17 @@
 #include "StringImpl.h"
 
 #include "AtomicString.h"
+#include "CString.h"
 #include "DeprecatedString.h"
 #include "Length.h"
 #include "StringHash.h"
+#include "TextEncoding.h"
 #include <kjs/identifier.h>
 #include <wtf/Assertions.h>
 #include <unicode/ubrk.h>
 #include <unicode/ustring.h>
 #include <assert.h>
+#include <JavaScriptCore/dtoa.h>
 
 using namespace WTF;
 
@@ -624,6 +627,21 @@ int StringImpl::toInt(bool* ok) const
             break;
     
     return DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(m_data), i).string().toInt(ok);
+}
+
+double StringImpl::toDouble(bool* ok) const
+{
+    if (!m_length) {
+        if (ok)
+            *ok = false;
+        return 0;
+    }
+    char *end;
+    CString latin1String = Latin1Encoding().encode(characters(), length());
+    double val = kjs_strtod(latin1String, &end);
+    if (ok)
+        *ok = end == 0 || *end == '\0';
+    return val;
 }
 
 static bool equal(const UChar* a, const char* b, int length)

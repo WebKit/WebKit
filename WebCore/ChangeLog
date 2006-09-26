@@ -1,3 +1,48 @@
+2006-09-26  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10820
+        Add StringImpl::toDouble() and remove uses of .deprecatedString().toDouble()
+        
+        (Originally written by Eric Seidel).
+        
+        * bindings/js/kjs_window.cpp:
+        (KJS::floatFeature):
+        * ksvg2/svg/SVGAngle.cpp:
+        (SVGAngle::setValueAsString):
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (SVGAnimationElement::parseMappedAttribute):
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        (SVGComponentTransferFunctionElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        (SVGFEDisplacementMapElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFELightElement.cpp:
+        (SVGFELightElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (SVGFESpecularLightingElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::parseMappedAttribute):
+        * ksvg2/svg/SVGStopElement.cpp:
+        (SVGStopElement::parseMappedAttribute):
+        * platform/AtomicString.h:
+        (WebCore::AtomicString::toDouble):
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::toDouble):
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::toDouble):
+        * platform/StringImpl.h:
+        * rendering/DeprecatedSlider.cpp:
+        (WebCore::DeprecatedSlider::updateFromElement):
+        * xml/XPathGrammar.y:
+
 2006-09-25  David Harrison  <harrison@apple.com>
 
         Reviewed by Tim Omernick and Tim Hatcher.

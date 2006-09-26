@@ -94,8 +94,8 @@ public:
     bool containsOnlyWhitespace() const;
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
 
-    // ignores trailing garbage, unlike DeprecatedString
-    int toInt(bool* ok = 0) const;
+    int toInt(bool* ok = 0) const; // ignores trailing garbage, unlike DeprecatedString
+    double toDouble(bool* ok = 0) const;
 
     Length* toCoordsArray(int& len) const;
     Length* toLengthArray(int& len) const;

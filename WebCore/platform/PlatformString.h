@@ -130,6 +130,7 @@ public:
     Vector<String> split(UChar separator, bool allowEmptyEntries = false) const;
 
     int toInt(bool* ok = 0) const;
+    double toDouble(bool* ok = 0) const;
     Length* toLengthArray(int& len) const;
     Length* toCoordsArray(int& len) const;
     bool percentage(int &_percentage) const;

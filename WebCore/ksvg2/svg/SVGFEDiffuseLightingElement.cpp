@@ -63,7 +63,7 @@ void SVGFEDiffuseLightingElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else if (attr->name() == SVGNames::surfaceScaleAttr)
-        setSurfaceScaleBaseValue(value.deprecatedString().toDouble());
+        setSurfaceScaleBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::diffuseConstantAttr)
         setDiffuseConstantBaseValue(value.toInt());
     else if (attr->name() == SVGNames::kernelUnitLengthAttr) {

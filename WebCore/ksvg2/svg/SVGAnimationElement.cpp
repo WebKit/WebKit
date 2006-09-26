@@ -227,7 +227,7 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
         if (value == "indefinite")
             m_repeatCount = DBL_MAX;
         else
-            m_repeatCount = value.deprecatedString().toDouble();
+            m_repeatCount = value.toDouble();
     }
     else if (attr->name() == SVGNames::repeatDurAttr)
         m_repeatDur = value.deprecatedString();

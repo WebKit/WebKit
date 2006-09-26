@@ -55,9 +55,9 @@ void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::dxAttr)
-        setDxBaseValue(value.deprecatedString().toDouble());
+        setDxBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::dyAttr)
-        setDyBaseValue(value.deprecatedString().toDouble());
+        setDyBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else

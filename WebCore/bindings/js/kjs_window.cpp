@@ -523,12 +523,11 @@ static float floatFeature(const HashMap<String, String> &features, const char *k
     HashMap<String, String>::const_iterator it = features.find(key);
     if (it == features.end())
         return defaultValue;
-    DeprecatedString value = it->second.deprecatedString();
     // FIXME: Can't distinguish "0q" from string with no digits in it -- both return d == 0 and ok == false.
     // Would be good to tell them apart somehow since string with no digits should be default value and
     // "0q" should be minimum value.
     bool ok;
-    double d = value.toDouble(&ok);
+    double d = it->second.toDouble(&ok);
     if ((d == 0 && !ok) || isnan(d))
         return defaultValue;
     if (d < min || max <= min)

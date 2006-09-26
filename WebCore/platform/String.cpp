@@ -355,6 +355,16 @@ int String::toInt(bool* ok) const
     return m_impl->toInt(ok);
 }
 
+double String::toDouble(bool* ok) const
+{
+    if (!m_impl) {
+        if (ok)
+            *ok = false;
+        return 0;
+    }
+    return m_impl->toDouble(ok);
+}
+
 String String::copy() const
 {
     if (!m_impl)

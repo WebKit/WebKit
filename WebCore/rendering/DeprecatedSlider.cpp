@@ -70,11 +70,11 @@ void DeprecatedSlider::updateFromElement()
     const AtomicString& maxStr = static_cast<HTMLInputElement*>(node())->getAttribute(maxAttr);
     const AtomicString& precision = static_cast<HTMLInputElement*>(node())->getAttribute(precisionAttr);
     
-    double minVal = minStr.isNull() ? 0.0 : minStr.deprecatedString().toDouble();
-    double maxVal = maxStr.isNull() ? 100.0 : maxStr.deprecatedString().toDouble();
+    double minVal = minStr.isNull() ? 0.0 : minStr.toDouble();
+    double maxVal = maxStr.isNull() ? 100.0 : maxStr.toDouble();
     minVal = min(minVal, maxVal); // Make sure the range is sane.
     
-    double val = value.isNull() ? (maxVal + minVal)/2.0 : value.deprecatedString().toDouble();
+    double val = value.isNull() ? (maxVal + minVal)/2.0 : value.toDouble();
     val = max(minVal, min(val, maxVal)); // Make sure val is within min/max.
     
     // Force integer value if not float.

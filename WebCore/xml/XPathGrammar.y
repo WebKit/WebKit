@@ -317,13 +317,13 @@ PrimaryExpr:
     LITERAL
     {
         $$ = new StringExpression(*$1);
-        PARSER->deleteString($1);        
+        PARSER->deleteString($1);
         PARSER->registerParseNode($$);
     }
     |
     NUMBER
     {
-        $$ = new Number($1->deprecatedString().toDouble());
+        $$ = new Number($1->toDouble());
         PARSER->deleteString($1);
         PARSER->registerParseNode($$);
     }

@@ -68,25 +68,25 @@ void SVGFELightElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::azimuthAttr)
-        setAzimuthBaseValue(value.deprecatedString().toDouble());
+        setAzimuthBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::elevationAttr)
-        setElevationBaseValue(value.deprecatedString().toDouble());
+        setElevationBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(value.deprecatedString().toDouble());
+        setXBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(value.deprecatedString().toDouble());
+        setYBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::zAttr)
-        setZBaseValue(value.deprecatedString().toDouble());
+        setZBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::pointsAtXAttr)
-        setPointsAtXBaseValue(value.deprecatedString().toDouble());
+        setPointsAtXBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::pointsAtYAttr)
-        setPointsAtYBaseValue(value.deprecatedString().toDouble());
+        setPointsAtYBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::pointsAtZAttr)
-        setPointsAtZBaseValue(value.deprecatedString().toDouble());
+        setPointsAtZBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::specularExponentAttr)
-        setSpecularExponentBaseValue(value.deprecatedString().toDouble());
+        setSpecularExponentBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::limitingConeAngleAttr)
-        setLimitingConeAngleBaseValue(value.deprecatedString().toDouble());
+        setLimitingConeAngleBaseValue(value.toDouble());
     else
         SVGElement::parseMappedAttribute(attr);
 }

@@ -88,7 +88,7 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute *attr)
             setBaseFrequencyYBaseValue(numbers[1].toDouble());
     }
     else if (attr->name() == SVGNames::seedAttr)
-        setSeedBaseValue(value.deprecatedString().toDouble());
+        setSeedBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::numOctavesAttr)
         setNumOctavesBaseValue(value.deprecatedString().toUInt());
     else

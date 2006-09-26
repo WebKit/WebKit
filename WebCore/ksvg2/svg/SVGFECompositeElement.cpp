@@ -83,13 +83,13 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == SVGNames::in2Attr)
         setIn2BaseValue(value);
     else if (attr->name() == SVGNames::k1Attr)
-        setK1BaseValue(value.deprecatedString().toDouble());
+        setK1BaseValue(value.toDouble());
     else if (attr->name() == SVGNames::k2Attr)
-        setK2BaseValue(value.deprecatedString().toDouble());
+        setK2BaseValue(value.toDouble());
     else if (attr->name() == SVGNames::k3Attr)
-        setK3BaseValue(value.deprecatedString().toDouble());
+        setK3BaseValue(value.toDouble());
     else if (attr->name() == SVGNames::k4Attr)
-        setK4BaseValue(value.deprecatedString().toDouble());
+        setK4BaseValue(value.toDouble());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }

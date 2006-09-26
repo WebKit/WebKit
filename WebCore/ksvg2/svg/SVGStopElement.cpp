@@ -53,7 +53,7 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute *attr)
         if(value.endsWith("%"))
             setOffsetBaseValue(value.deprecatedString().left(value.length() - 1).toDouble() / 100.);
         else
-            setOffsetBaseValue(value.deprecatedString().toDouble());
+            setOffsetBaseValue(value.toDouble());
     } else
         SVGStyledElement::parseMappedAttribute(attr);
 

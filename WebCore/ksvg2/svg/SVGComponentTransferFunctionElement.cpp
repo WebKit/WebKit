@@ -78,15 +78,15 @@ void SVGComponentTransferFunctionElement::parseMappedAttribute(MappedAttribute *
     else if (attr->name() == SVGNames::tableValuesAttr)
         tableValuesBaseValue()->parse(value.deprecatedString());
     else if (attr->name() == SVGNames::slopeAttr)
-        setSlopeBaseValue(value.deprecatedString().toDouble());
+        setSlopeBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::interceptAttr)
-        setInterceptBaseValue(value.deprecatedString().toDouble());
+        setInterceptBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::amplitudeAttr)
-        setAmplitudeBaseValue(value.deprecatedString().toDouble());
+        setAmplitudeBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::exponentAttr)
-        setExponentBaseValue(value.deprecatedString().toDouble());
+        setExponentBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::offsetAttr)
-        setOffsetBaseValue(value.deprecatedString().toDouble());
+        setOffsetBaseValue(value.toDouble());
     else
         SVGElement::parseMappedAttribute(attr);
 }
