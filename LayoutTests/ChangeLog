@@ -1,3 +1,14 @@
+2006-09-26  David Harrison  <harrison@apple.com>
+
+        Reviewed by John and TimH.
+        
+        <rdar://problem/4743256> Seed: Ctrl-Y key binding does nothing when kill ring is empty
+
+        * editing/pasteboard/emacs-cntl-y-001-expected.checksum: Added.
+        * editing/pasteboard/emacs-cntl-y-001-expected.png: Added.
+        * editing/pasteboard/emacs-cntl-y-001-expected.txt: Added.
+        * editing/pasteboard/emacs-cntl-y-001.html: Added.
+
 2006-09-26  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by Tim H.
