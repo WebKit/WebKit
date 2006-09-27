@@ -1,3 +1,10 @@
+2006-09-27  Sean Gies  <seangies@apple.com>
+
+        Reviewed by Adam Roben.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Debug config should link to debug runtime.
+        * JavaScriptCore.vcproj/dftables/dftables.vcproj: Debug config should link to debug runtime.
+
 2006-09-27  Don Melton  <gramps@apple.com>
 
         Reviewed by Adam Roben.
