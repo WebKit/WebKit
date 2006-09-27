@@ -1,3 +1,25 @@
+2006-09-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        In very specific circumstances, prepared SQLStatements can become invalid without
+        any warning.  This checks for that state and re-prepares the statement and also
+        adds more aggressive error-checking everywhere these statements are used.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::readySQLStatement): Check if the statement is expired - reprepare it
+        (WebCore::IconDatabase::imageDataForIconURLQuery): More thoroughly catch error cases
+        (WebCore::IconDatabase::timeStampForIconURLQuery): Ditto
+        (WebCore::IconDatabase::iconURLForPageURLQuery): Ditto
+        (WebCore::IconDatabase::forgetPageURLQuery): Ditto
+        (WebCore::IconDatabase::setIconIDForPageURLQuery): Ditto
+        (WebCore::IconDatabase::getIconIDForIconURLQuery): Ditto
+        (WebCore::IconDatabase::addIconForIconURLQuery): Ditto
+        (WebCore::IconDatabase::hasIconForIconURLQuery): Ditto
+        * loader/icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::isExpired): Added (accessor to sqlite3_expired())
+        * loader/icon/SQLStatement.h:
+
 2006-09-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Steve.
