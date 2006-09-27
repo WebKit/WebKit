@@ -1,3 +1,22 @@
+2006-09-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by thatcher
+        
+        <rdar://problem/4044271>
+        Writing Direction menu doesn't reflect the current writing direction (9773)
+
+        * English.lproj/Localizable.strings: Added "Right to Left" and "Left to Right"
+        * WebView/WebHTMLView.m:
+        (-[NSArray validateUserInterfaceItem:]): Validate menu items that perform
+        toggleBaseWritingDirection and changeBaseWritingDirection.  
+        Disable the menu item that changes the writing direction to NSWritingDirectionNautral
+        because NSWritingDirectionNatural's behavior can't be implemented with CSS.
+        Take control of the title of the menu item that performs toggleBaseWritingDirection:
+        instead of checking/unchecking it, otherwise we wouldn't know what a check means.
+        (-[NSArray changeBaseWritingDirection:]): ASSERT that the requested writing
+        direction is not NSWritingDirectionNatural, since we've disabled the
+        menu item that performs it.
+
 2006-09-27  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Maciej, landed by Brady

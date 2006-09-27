@@ -51,6 +51,7 @@
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNSAttributedStringExtras.h>
 #import <WebKit/WebNSEventExtras.h>
@@ -2089,8 +2090,7 @@ static WebHTMLView *lastHitView = nil;
     SEL action = [item action];
     WebFrameBridge *bridge = [self _bridge];
 
-    if (action == @selector(changeBaseWritingDirection:) // FIXME: check menu item based on writing direction
-            || action == @selector(changeSpelling:)
+    if (action == @selector(changeSpelling:)
             || action == @selector(_changeSpellingFromMenu:)
             || action == @selector(checkSpelling:)
             || action == @selector(complete:)
@@ -2155,10 +2155,32 @@ static WebHTMLView *lastHitView = nil;
             || action == @selector(pageUpAndModifySelection:)
             || action == @selector(pasteFont:)
             || action == @selector(showGuessPanel:)
-            || action == @selector(toggleBaseWritingDirection:)
             || action == @selector(transpose:)
             || action == @selector(yank:)
             || action == @selector(yankAndSelect:)) {
+        return [self _canEdit];
+    } else if (action == @selector(changeBaseWritingDirection:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]]) {
+            NSWritingDirection writingDirection = [item tag];
+            if (writingDirection == NSWritingDirectionNatural) {
+                [menuItem setState:NO];
+                return NO;
+            }
+            DOMCSSStyleDeclaration* style = [self _emptyStyle];
+            [style setDirection:writingDirection == NSWritingDirectionLeftToRight ? @"LTR" : @"RTL"];
+            [menuItem setState:[[self _bridge] selectionHasStyle:style]];
+        }
+        return [self _canEdit];
+    } else if (action == @selector(toggleBaseWritingDirection:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]]) {
+            DOMCSSStyleDeclaration* rtl = [self _emptyStyle];
+            [rtl setDirection:@"RTL"];
+            // Take control of the title of the menu item, instead of just checking/unchecking it because otherwise
+            // we don't know what the check would mean.
+            [menuItem setTitle:[[self _bridge] selectionHasStyle:rtl] ? UI_STRING("Left to Right", "Left to Right context menu item") : UI_STRING("Right to Left", "Right to Left context menu item")];
+        }
         return [self _canEdit];
     } else if (action == @selector(alignCenter:)
             || action == @selector(alignLeft:)
@@ -4718,19 +4740,13 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         return;
     
     NSWritingDirection writingDirection = [sender tag];
-
-    NSString *direction = @"LTR";
-    switch (writingDirection) {
-        case NSWritingDirectionLeftToRight:
-        case NSWritingDirectionNatural:
-            break;
-        case NSWritingDirectionRightToLeft:
-            direction = @"RTL";
-            break;
-    }
+    
+    // We disable the menu item that performs this action because we can't implement
+    // NSWritingDirectionNatural's behavior using CSS.
+    ASSERT(writingDirection != NSWritingDirectionNatural);
 
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setDirection:direction];
+    [style setDirection:writingDirection == NSWritingDirectionLeftToRight ? @"LTR" : @"RTL"];
     [self _applyParagraphStyleToSelection:style withUndoAction:WebUndoActionSetWritingDirection];
 }
 
