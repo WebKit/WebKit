@@ -1,3 +1,19 @@
+2006-09-27  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Maciej, landed by Brady
+
+        Update URL request associated with provisional data source on redirect.
+        Notify IWebFrameLoadDelegate of redirects for the provisional load.
+        Notify IWebFrameLoadDelegate of a provisional load being commited.
+
+        * COM/WebDataSource.cpp:
+        (WebDataSource::replaceRequest):
+        * COM/WebDataSource.h:
+        * COM/WebFrame.cpp:
+        (WebFrame::receivedRedirect):
+        (WebFrame::receivedResponse):
+        (WebFrame::receivedData):
+
 2006-09-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

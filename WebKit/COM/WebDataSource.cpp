@@ -65,6 +65,13 @@ WebDataSource* WebDataSource::createInstance(WebFrame* frame)
     return instance;
 }
 
+void WebDataSource::replaceRequest(IWebMutableURLRequest* request) {
+    if (m_request)
+        m_request->Release();
+    m_request = request;
+    m_request->AddRef();
+}
+
 // IUnknown -------------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebDataSource::QueryInterface(REFIID riid, void** ppvObject)

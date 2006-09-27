@@ -464,9 +464,27 @@ int WebFrame::getObjectCacheSize()
 
 // ResourceLoaderClient
 
-void WebFrame::receivedRedirect(ResourceLoader*, const KURL&)
+void WebFrame::receivedRedirect(ResourceLoader*, const KURL& url)
 {
-    //FIXME
+    DeprecatedString urlStr(url.url());
+    urlStr.append('\0');
+
+    // FIXME: is this the correct way to handle a redirect?
+
+    IWebMutableURLRequest* request = WebMutableURLRequest::createInstance();
+    BSTR urlBStr = SysAllocString((LPCTSTR)urlStr.unicode());
+    if (SUCCEEDED(request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 0))) {
+        _ASSERT(m_provisionalDataSource);
+        static_cast<WebDataSource*>(m_provisionalDataSource)->replaceRequest(request);
+    }
+    SysFreeString(urlBStr);
+    request->Release();
+
+    IWebFrameLoadDelegate* frameLoadDelegate;
+    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
+        frameLoadDelegate->didReceiveServerRedirectForProvisionalLoadForFrame(d->webView, this);
+        frameLoadDelegate->Release();
+    }
 }
 
 void WebFrame::receivedResponse(ResourceLoader*, PlatformResponse)
@@ -475,10 +493,22 @@ void WebFrame::receivedResponse(ResourceLoader*, PlatformResponse)
         m_dataSource = m_provisionalDataSource;
         m_provisionalDataSource = 0;
     }
+
+    // FIXME: pass mime type of response to frame.  perhaps the Frame::begin() 
+    // should be made from here.
+
+    IWebFrameLoadDelegate* frameLoadDelegate;
+    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
+        frameLoadDelegate->didCommitLoadForFrame(d->webView, this);
+        frameLoadDelegate->Release();
+    }
 }
 
 void WebFrame::receivedData(ResourceLoader*, const char* data, int length)
 {
+    // Ensure that WebFrame::receivedResponse was called.
+    _ASSERT(m_dataSource && !m_provisionalDataSource);
+
     d->frame->write(data, length);
 }
 

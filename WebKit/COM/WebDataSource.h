@@ -35,6 +35,10 @@ class WebDataSource : public IWebDataSource
 {
 public:
     static WebDataSource* createInstance(WebFrame* frame);
+
+    // Replace the request associated with this data source
+    void replaceRequest(IWebMutableURLRequest* request);
+
 protected:
     WebDataSource();
     ~WebDataSource();

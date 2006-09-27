@@ -1,3 +1,14 @@
+2006-09-27  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Maciej, landed by Brady
+
+        Fix URL bar updating.
+
+        * Spinneret/Spinneret/Spinneret.h:
+        (SpinneretWebHost::didStartProvisionalLoadForFrame):
+        (SpinneretWebHost::didCommitLoadForFrame):
+        (SpinneretWebHost::didFinishLoadForFrame):
+
 2006-09-23  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Eric.

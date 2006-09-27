@@ -40,7 +40,7 @@ public:
     // IWebFrameLoadDelegate
     virtual HRESULT STDMETHODCALLTYPE didStartProvisionalLoadForFrame( 
         /* [in] */ IWebView* webView,
-        /* [in] */ IWebFrame* /*frame*/) { return updateAddressBar(webView); }
+        /* [in] */ IWebFrame* /*frame*/) { return S_OK; }
     
     virtual HRESULT STDMETHODCALLTYPE didReceiveServerRedirectForProvisionalLoadForFrame( 
         /* [in] */ IWebView *webView,
@@ -53,7 +53,7 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE didCommitLoadForFrame( 
         /* [in] */ IWebView *webView,
-        /* [in] */ IWebFrame *frame) { return S_OK; }
+        /* [in] */ IWebFrame *frame) { return updateAddressBar(webView); }
     
     virtual HRESULT STDMETHODCALLTYPE didReceiveTitle( 
         /* [in] */ IWebView *webView,
@@ -67,7 +67,7 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE didFinishLoadForFrame( 
         /* [in] */ IWebView* webView,
-        /* [in] */ IWebFrame* /*frame*/) { return updateAddressBar(webView); }
+        /* [in] */ IWebFrame* /*frame*/) { return S_OK; }
     
     virtual HRESULT STDMETHODCALLTYPE didFailLoadWithError( 
         /* [in] */ IWebView *webView,
