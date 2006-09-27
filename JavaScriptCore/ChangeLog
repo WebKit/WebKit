@@ -1,3 +1,9 @@
+2006-09-27  Steve Falkenburg  <sfalken@apple.com>
+
+        Set path before build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2006-09-27  Sean Gies  <seangies@apple.com>
 
         Reviewed by Adam Roben.
