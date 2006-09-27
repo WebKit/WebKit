@@ -52,6 +52,8 @@ const uint8_t Font::gRoundingHackCharacterTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+Font::CodePath Font::codePath = Auto;
+
 struct WidthIterator {
     WidthIterator(const Font* font, const TextRun& run, const TextStyle& style, const FontData* substituteFontData = 0);
 
@@ -410,17 +412,21 @@ bool Font::isFixedPitch() const
     return m_fontList->isFixedPitch(this);
 }
 
-// FIXME: These methods will eventually be cross-platform, but to keep Windows compiling we'll make this Apple-only for now.
-bool Font::gAlwaysUseComplexPath = false;
-void Font::setAlwaysUseComplexPath(bool alwaysUse)
+void Font::setCodePath(CodePath p)
 {
-    gAlwaysUseComplexPath = alwaysUse;
+    codePath = p;
 }
 
 bool Font::canUseGlyphCache(const TextRun& run) const
 {
-    if (gAlwaysUseComplexPath)
-        return false;
+    switch (codePath) {
+        case Auto:
+            break;
+        case Simple:
+            return true;
+        case Complex:
+            return false;
+    }
     
     // Start from 0 since drawing and highlighting also measure the characters before run->from
     for (int i = 0; i < run.to(); i++) {

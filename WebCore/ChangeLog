@@ -1,3 +1,17 @@
+2006-09-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Steve.
+
+        - clean up options for font code path
+
+        * platform/Font.h:
+        * platform/Font.cpp:
+        (WebCore::Font::setCodePath): Added. Replaces boolean version.
+        (WebCore::Font::canUseGlyphCache): Update to handle "never use complex" case too.
+
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreSetAlwaysUseATSU): Change to call setCodePath.
+
 2006-09-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin
