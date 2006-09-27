@@ -1,5 +1,12 @@
 2006-09-27  Brady Eidson  <beidson@apple.com>
 
+        Build fix
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::readySQLStatement):
+
+2006-09-27  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adam
 
         In very specific circumstances, prepared SQLStatements can become invalid without
