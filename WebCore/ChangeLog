@@ -1,3 +1,26 @@
+2006-09-27  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by mitz.
+
+        paths with no fill specified default to black but do not recieve paint-related mouse events
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11069
+        The default fill was being applied at the wrong place in the rendering chain, causing this problem.
+
+        Test: svg/custom/hover-default-fill.svg
+
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::nodeAtPoint): use isFilled and isStroked
+        * ksvg2/css/SVGRenderStyle.h: use defaultFill() and defaultStroke()
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::isFilled): remove null check
+        (WebCore::KSVGPainterFactory::fillPaintServer): remove null check
+        (WebCore::KSVGPainterFactory::isStroked): remove null check
+        (WebCore::KSVGPainterFactory::strokePaintServer): remove null check
+        * ksvg2/svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::defaultFill): added.
+        (WebCore::SVGPaint::defaultStroke): added.
+        * ksvg2/svg/SVGPaint.h:
+
 2006-09-27  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.

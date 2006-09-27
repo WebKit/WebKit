@@ -21,13 +21,13 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGRenderStyle_H
-#define KSVG_SVGRenderStyle_H
+#ifndef SVGRenderStyle_H
+#define SVGRenderStyle_H
 #ifdef SVG_SUPPORT
 
 #include "DataRef.h"
-#include <ksvg2/svg/SVGPaint.h>
-#include <ksvg2/css/SVGRenderStyleDefs.h>
+#include "SVGPaint.h"
+#include "SVGRenderStyleDefs.h"
 #include <wtf/Platform.h>
 
 #if PLATFORM(WIN_OS)
@@ -63,14 +63,14 @@ namespace WebCore {
     public:
         SVGRenderStyle();
         SVGRenderStyle(bool); // Used to create the default style.
-        SVGRenderStyle(const SVGRenderStyle &other);
+        SVGRenderStyle(const SVGRenderStyle&);
         ~SVGRenderStyle();
 
-        bool inheritedNotEqual(const SVGRenderStyle *other) const;
+        bool inheritedNotEqual(const SVGRenderStyle*) const;
 
-        void inheritFrom(const SVGRenderStyle *inheritParent);
+        void inheritFrom(const SVGRenderStyle*);
         
-        bool operator==(const SVGRenderStyle& o) const;
+        bool operator==(const SVGRenderStyle&) const;
         bool operator!=(const SVGRenderStyle& o) const { return !(*this == o); }
 
         // SVG CSS Properties
@@ -93,15 +93,15 @@ namespace WebCore {
 
         // SVG CSS Properties (using DataRef's)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, fill, opacity, FillOpacity, fillOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(SVGPaint *, fill, paint, FillPaint, fillPaint, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(SVGPaint*, fill, paint, FillPaint, fillPaint, SVGPaint::defaultFill())
 
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stroke, opacity, StrokeOpacity, strokeOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(SVGPaint *, stroke, paint, StrokePaint, strokePaint, 0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValueList *, stroke, dashArray, StrokeDashArray, strokeDashArray, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(SVGPaint*, stroke, paint, StrokePaint, strokePaint, SVGPaint::defaultStroke())
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValueList*, stroke, dashArray, StrokeDashArray, strokeDashArray, 0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(unsigned int, stroke, miterLimit, StrokeMiterLimit, strokeMiterLimit, 4)
         
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValue *, stroke, width, StrokeWidth, strokeWidth, 0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValue *, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValue*, stroke, width, StrokeWidth, strokeWidth, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValue*, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
     
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stops, opacity, StopOpacity, stopOpacity, 1.0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, stops, color, StopColor, stopColor, Color(0, 0, 0))    
@@ -175,7 +175,7 @@ namespace WebCore {
         static SVGRenderStyle *s_defaultStyle;
 
     private:
-        SVGRenderStyle(const SVGRenderStyle *) { }
+        SVGRenderStyle(const SVGRenderStyle*) { }
 
         void setBitDefaults()
         {
@@ -201,6 +201,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGRenderStyle_H
+#endif // SVGRenderStyle_H
 
 // vim:ts=4:noet

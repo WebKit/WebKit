@@ -58,6 +58,9 @@ namespace WebCore {
         void setPaint(SVGPaintType, const String& uri, const String& rgbPaint, const String& iccPaint, ExceptionCode&);
 
         virtual String cssText() const;
+        
+        static SVGPaint* defaultFill();
+        static SVGPaint* defaultStroke();
 
     private:
         SVGPaintType m_paintType;

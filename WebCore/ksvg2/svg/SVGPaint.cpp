@@ -57,6 +57,18 @@ SVGPaint::~SVGPaint()
 {
 }
 
+SVGPaint* SVGPaint::defaultFill()
+{
+    static SVGPaint* _defaultFill = new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, String(), "black");
+    return _defaultFill;
+}
+
+SVGPaint* SVGPaint::defaultStroke()
+{
+    static SVGPaint* _defaultStroke = new SVGPaint(SVG_PAINTTYPE_NONE);
+    return _defaultStroke;
+}
+
 String SVGPaint::uri() const
 {
     return m_uri;
