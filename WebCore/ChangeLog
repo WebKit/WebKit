@@ -1,3 +1,28 @@
+2006-09-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11015
+        SVG handles em units incorrectly
+
+        Calculate viewport coordinates at layout time, since
+        at this point the font size is known and lengths depending
+        on font sizes can be calculated correctly.
+
+        * kcanvas/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::viewport):
+        (WebCore::RenderSVGContainer::calcViewport):
+        * kcanvas/RenderSVGContainer.h:
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::updateValue):
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::createRenderer):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createRenderer):
+        (WebCore::SVGSVGElement::attributeChanged):
+        * ksvg2/svg/SVGSVGElement.h:
+
 2006-09-27  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by darin.

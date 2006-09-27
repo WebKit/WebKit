@@ -129,6 +129,8 @@ namespace WebCore
         // 'virtual SVGZoomAndPan functions
         virtual void setZoomAndPan(unsigned short zoomAndPan);
 
+        virtual void attributeChanged(Attribute*, bool preserveDecls = false);
+
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 

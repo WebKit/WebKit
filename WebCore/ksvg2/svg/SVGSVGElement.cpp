@@ -370,7 +370,6 @@ RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
     RenderSVGContainer* rootContainer = new (arena) RenderSVGContainer(this);
 
     // FIXME: all this setup should be done after attributesChanged, not here.
-    rootContainer->setViewport(FloatRect(x()->value(), y()->value(), width()->value(), height()->value()));
     rootContainer->setViewBox(viewBox());
     rootContainer->setAlign(KCAlign(preserveAspectRatio()->align() - 1));
     rootContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE);
@@ -421,6 +420,18 @@ float SVGSVGElement::getCurrentTime() const
 void SVGSVGElement::setCurrentTime(float /* seconds */)
 {
     // TODO
+}
+
+void SVGSVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
+{
+    if (attr->name() == SVGNames::xAttr ||
+        attr->name() == SVGNames::yAttr ||
+        attr->name() == SVGNames::widthAttr ||
+        attr->name() == SVGNames::heightAttr)
+        if (renderer())
+            renderer()->setNeedsLayout(true);
+
+    SVGStyledElement::attributeChanged(attr, preserveDecls);
 }
 
 }

@@ -1,3 +1,20 @@
+2006-09-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel.
+
+        Testcases for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11015
+        SVG handles em units incorrectly
+
+        * svg/custom/viewport-em-expected.checksum: Added.
+        * svg/custom/viewport-em-expected.png: Added.
+        * svg/custom/viewport-em-expected.txt: Added.
+        * svg/custom/viewport-em.svg: Added.
+        * svg/custom/viewport-update2-expected.checksum: Added.
+        * svg/custom/viewport-update2-expected.png: Added.
+        * svg/custom/viewport-update2-expected.txt: Added.
+        * svg/custom/viewport-update2.svg: Added.
+
 2006-09-27  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by darin.

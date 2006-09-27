@@ -43,6 +43,7 @@ enum KCAlign {
 };
 
 class KCanvasRenderingStyle;
+class SVGElement;
 
 class RenderSVGContainer : public RenderContainer
 {
@@ -81,8 +82,7 @@ public:
     
     virtual AffineTransform localTransform() const;
     void setLocalTransform(const AffineTransform&);
-    
-    void setViewport(const FloatRect&);
+   
     FloatRect viewport() const;
 
     void setViewBox(const FloatRect&);
@@ -97,6 +97,7 @@ public:
     AffineTransform viewportTransform() const;
     
 private:
+    void calcViewport(); 
     AffineTransform getAspectRatio(const FloatRect& logical, const FloatRect& physical) const;
 
     bool m_drawsContents : 1;

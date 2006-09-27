@@ -140,7 +140,6 @@ KCanvasMarker *SVGMarkerElement::canvasResource()
 RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     RenderSVGContainer* markerContainer = new (arena) RenderSVGContainer(this);
-    markerContainer->setViewport(FloatRect(0, 0, markerWidth()->value(), markerHeight()->value()));
     markerContainer->setViewBox(viewBox());
     markerContainer->setAlign(KCAlign(preserveAspectRatio()->align() - 1));
     markerContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE);
