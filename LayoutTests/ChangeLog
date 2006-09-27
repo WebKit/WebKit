@@ -1,3 +1,15 @@
+2006-09-27  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by darin.
+        
+        Updated test (and results) for new invalid fill behavior.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11017
+
+        * svg/custom/invalid-fill-expected.checksum:
+        * svg/custom/invalid-fill-expected.png:
+        * svg/custom/invalid-fill-expected.txt:
+        * svg/custom/invalid-fill.svg:
+
 2006-09-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

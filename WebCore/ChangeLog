@@ -1,3 +1,16 @@
+2006-09-27  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by darin.
+
+        Change our invalid-fill error behavior to match Opera (and soon Firefox)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=11017
+
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::isFilled):
+        (WebCore::KSVGPainterFactory::fillPaintServer):
+        (WebCore::KSVGPainterFactory::isStroked):
+        (WebCore::KSVGPainterFactory::strokePaintServer):
+
 2006-09-27  Brady Eidson  <beidson@apple.com>
 
         Build fix

@@ -2,9 +2,12 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 100x100
       KCanvasContainer {g} at (0,0) size 100x100
-        KCanvasItem {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
-        KCanvasItem {rect} at (0,0) size 100x100 [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+        KCanvasItem {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+        KCanvasItem {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
         KCanvasContainer {g} at (0,0) size 0x0
+          RenderSVGText {text} at (0,0) size 800x18
+            RenderText {#text} at (0,0) size 223x18
+              text run at (0,0) width 223: "The above rect should be BLACK."
           RenderSVGText {text} at (0,0) size 800x18
             RenderText {#text} at (0,0) size 667x18
               text run at (0,0) width 667: "SVG 1.1 FULL says there should be a \"highly perceivable error\" message when an invalid fill url is used."
@@ -12,6 +15,6 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 468x18
               text run at (0,0) width 468: "Browsers don't display such an error, instead use some sort of fill-fallback."
           RenderSVGText {text} at (0,0) size 800x18
-            RenderText {#text} at (0,0) size 636x18
-              text run at (0,0) width 561: "Opera falls back to 'black' (default), Firefox to 'none', and Safari to 'none' (as of writing). "
-              text run at (561,0) width 75: "Bug 11017."
+            RenderText {#text} at (0,0) size 546x18
+              text run at (0,0) width 471: "Opera falls back to 'black' (default), Firefox to 'none', and Safari to 'black'. "
+              text run at (471,0) width 75: "Bug 11017."
