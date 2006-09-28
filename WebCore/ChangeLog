@@ -1,5 +1,11 @@
 2006-09-28  Alice Liu  <alice.liu@apple.com>
 
+        Adding CommandByName files to the vcproj
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
+2006-09-28  Alice Liu  <alice.liu@apple.com>
+
         Reviewed by Adam Roben.
 
         This patch adds a command class that is attached to the frame so the frame can more easily execute commands such as copy, paste, select, etc. 
