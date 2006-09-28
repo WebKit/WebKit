@@ -1,5 +1,11 @@
 2006-09-27  Steve Falkenburg  <sfalken@apple.com>
 
+        Fix last path fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2006-09-27  Steve Falkenburg  <sfalken@apple.com>
+
         Set path before build.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
