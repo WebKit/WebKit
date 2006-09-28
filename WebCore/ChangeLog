@@ -1,3 +1,17 @@
+2006-09-27  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 9222, cursor is wrong when mousing over overflow scrollbars in textareas.  Make sure
+        selectCursor checks for whether or not a scrollbar was hit.  Also stub out a mouseMoved method for
+        scrollbars to provide hover feedback if needed.
+
+        Reviewed by Eric
+
+        * page/FrameView.cpp:
+        (WebCore::selectCursor):
+        (WebCore::FrameView::handleMouseMoveEvent):
+        * platform/ScrollBar.h:
+        (WebCore::ScrollBar::mouseMoved):
+
 2006-09-27  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Maciej and Adam, landed by Adam

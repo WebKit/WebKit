@@ -40,6 +40,7 @@
 #include "MouseEventWithHitTestResults.h"
 #include "OverflowEvent.h"
 #include "PlatformKeyboardEvent.h"
+#include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
 #include "RenderArena.h"
 #include "RenderPart.h"
@@ -98,6 +99,7 @@ public:
         underMouse = 0;
         oldUnder = 0;
         oldSubframe = 0;
+        oldScrollBar = 0;
         linkPressed = false;
         useSlowRepaints = false;
         slowRepaintObjectCount = 0;
@@ -128,6 +130,7 @@ public:
     RefPtr<Node> underMouse;
     RefPtr<Node> oldUnder;
     RefPtr<Frame> oldSubframe;
+    RefPtr<PlatformScrollBar> oldScrollBar;
 
     bool borderTouched : 1;
     bool borderStart : 1;
@@ -690,7 +693,7 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
             bool inResizer = false;
             if (frame->view() && layer && layer->isPointInResizeControl(frame->view()->viewportToContents(event.event().pos())))
                 inResizer = true;
-            if ((editable || (renderer && renderer->isText() && renderer->canSelect())) && !inResizer)
+            if ((editable || (renderer && renderer->isText() && renderer->canSelect())) && !inResizer && !RenderLayer::gScrollBar)
                 return iBeamCursor();
             // FIXME: If the point is in a layer's overflow scrollbars, we should use the pointer cursor
             return pointerCursor();
@@ -783,9 +786,12 @@ void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
     
     if (newSubframe && d->oldSubframe != newSubframe)
         m_frame->passSubframeEventToSubframe(mev, newSubframe.get());
-    else
+    else {
+        if (RenderLayer::gScrollBar && !d->mousePressed)
+            RenderLayer::gScrollBar->mouseMoved(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         setCursor(selectCursor(mev, m_frame.get(), d->mousePressed));
-    
+    }
+
     d->oldSubframe = newSubframe;
 }
 
@@ -1148,8 +1154,10 @@ bool FrameView::dispatchMouseEvent(const AtomicString& eventType, Node* targetNo
 
     // mouseout/mouseover
     if (setUnder) {
-        if (d->oldUnder && d->oldUnder->document() != frame()->document())
+        if (d->oldUnder && d->oldUnder->document() != frame()->document()) {
             d->oldUnder = 0;
+            d->oldScrollBar = 0;
+        }
 
         if (d->oldUnder != targetNode) {
             // send mouseout event to the old node
@@ -1160,6 +1168,13 @@ bool FrameView::dispatchMouseEvent(const AtomicString& eventType, Node* targetNo
                 EventTargetNodeCast(targetNode)->dispatchMouseEvent(mouseEvent, mouseoverEvent, 0, d->oldUnder.get());
         }
         d->oldUnder = targetNode;
+                
+        if (d->oldScrollBar != RenderLayer::gScrollBar) {
+            // Send mouse exited to the old scrollbar.
+            if (d->oldScrollBar)
+                d->oldScrollBar->mouseExited();
+            d->oldScrollBar = RenderLayer::gScrollBar;
+        }
     }
 
     bool swallowEvent = false;

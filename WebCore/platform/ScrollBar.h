@@ -26,11 +26,14 @@
 #ifndef ScrollBar_h
 #define ScrollBar_h
 
+#include "Shared.h"
+
 namespace WebCore {
 
 class GraphicsContext;
 class IntRect;
 class ScrollBar;
+class PlatformMouseEvent;
 
 // These match the numbers we use over in WebKit (WebFrameView.m).
 #define LINE_STEP   40
@@ -58,7 +61,7 @@ public:
     virtual void valueChanged(ScrollBar*) = 0;
 };
 
-class ScrollBar {
+class ScrollBar : public Shared<ScrollBar> {
 protected:
     ScrollBar(ScrollBarClient*, ScrollBarOrientation);
 
@@ -89,6 +92,12 @@ public:
         // implement a platform scrollbar at all by default.  That's what this method is for.
         return true;
     }
+
+    // These methods are used for platform scrollbars to give :hover feedback.  They will not get called
+    // when the mouse went down in a scrollbar, since it is assumed the scrollbar will start
+    // grabbing all events in that case anyway.
+    virtual void mouseMoved(const PlatformMouseEvent&) {};
+    virtual void mouseExited() {};
 
 protected:
     virtual void updateThumbPosition() = 0;
