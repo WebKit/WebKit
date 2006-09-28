@@ -1,3 +1,18 @@
+2006-09-28  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        Remove no-longer-used PopUpButton.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Remove PopUpButton.h
+        * WebCore.xcodeproj/project.pbxproj: Remove PopUpButton.h,
+        PopUpButtonMac.mm
+        * platform/PopUpButton.h: Removed.
+        * platform/mac/PopUpButtonMac.mm: Removed.
+        * platform/win/TemporaryLinkStubs.cpp: Remove PopUpButton:: methods
+        * rendering/DeprecatedRenderSelect.cpp: Change #include of
+        PopUpButton.h to ListBox.h
+
 2006-09-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Alice.

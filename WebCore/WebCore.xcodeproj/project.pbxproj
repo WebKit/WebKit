@@ -1086,7 +1086,6 @@
 		93F1991808245E59001E9ABC /* Range.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30402DE4476018635CA /* Range.h */; };
 		93F1992108245E59001E9ABC /* XMLTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30A02DE4476018635CA /* XMLTokenizer.h */; };
 		93F1992908245E59001E9ABC /* DeprecatedCString.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868302DE3B8601EA4122 /* DeprecatedCString.h */; };
-		93F1992E08245E59001E9ABC /* PopUpButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868202DE3B8601EA4122 /* PopUpButton.h */; };
 		93F1992F08245E59001E9ABC /* Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868402DE3B8601EA4122 /* Cursor.h */; };
 		93F1994F08245E59001E9ABC /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863A02DE3A1401EA4122 /* Settings.h */; };
 		93F1995008245E59001E9ABC /* CachePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864902DE3A9A01EA4122 /* CachePolicy.h */; };
@@ -1144,7 +1143,6 @@
 		93F19A0908245E59001E9ABC /* southWestResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 84C0FA2C052B966D000440A1 /* southWestResizeCursor.tiff */; };
 		93F19A0A08245E59001E9ABC /* waitCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 84C0FA2D052B966D000440A1 /* waitCursor.tiff */; };
 		93F19A0B08245E59001E9ABC /* westResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 84C0FA2E052B966D000440A1 /* westResizeCursor.tiff */; };
-		93F19A1708245E59001E9ABC /* PopUpButtonMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784D202DE375901EA4122 /* PopUpButtonMac.mm */; };
 		93F19A1808245E59001E9ABC /* DeprecatedCString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58784D502DE375901EA4122 /* DeprecatedCString.cpp */; };
 		93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784F002DE375901EA4122 /* CursorMac.mm */; };
 		93F19A2E08245E59001E9ABC /* JavaAppletWidget.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784FF02DE375901EA4122 /* JavaAppletWidget.mm */; };
@@ -4906,7 +4904,6 @@
 		F56234E003026D7301629B47 /* WebCoreEncodings.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreEncodings.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F565AE8502ECA583018635CA /* WebCoreSettings.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreSettings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F565AE8602ECA583018635CA /* WebCoreSettings.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreSettings.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58784D202DE375901EA4122 /* PopUpButtonMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PopUpButtonMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784D502DE375901EA4122 /* DeprecatedCString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedCString.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784F002DE375901EA4122 /* CursorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CursorMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784FF02DE375901EA4122 /* JavaAppletWidget.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JavaAppletWidget.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -4931,7 +4928,6 @@
 		F587864502DE3A7701EA4122 /* JavaAppletWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JavaAppletWidget.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864902DE3A9A01EA4122 /* CachePolicy.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CachePolicy.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SSLKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587868202DE3B8601EA4122 /* PopUpButton.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = PopUpButton.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868302DE3B8601EA4122 /* DeprecatedCString.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedCString.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868402DE3B8601EA4122 /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Cursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587869802DE3B8601EA4122 /* TextField.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TextField.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -5591,7 +5587,6 @@
 				935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */,
 				BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */,
 				A82398A709B3ACF500B60641 /* PlugInInfoStoreMac.mm */,
-				F58784D202DE375901EA4122 /* PopUpButtonMac.mm */,
 				6582A15409999D6D00BEEB6D /* ScreenMac.mm */,
 				BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */,
 				BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */,
@@ -7418,7 +7413,6 @@
 				93CD4FEB0995FD2A007ECC97 /* PlatformString.h */,
 				935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */,
 				A82398A509B3ACDB00B60641 /* PlugInInfoStore.h */,
-				F587868202DE3B8601EA4122 /* PopUpButton.h */,
 				F587852B02DE375901EA4122 /* RegularExpression.cpp */,
 				F58786B302DE3B8601EA4122 /* RegularExpression.h */,
 				6545F66C09B82FED0013006F /* ResourceLoader.cpp */,
@@ -7931,7 +7925,6 @@
 				93F1991808245E59001E9ABC /* Range.h in Headers */,
 				93F1992108245E59001E9ABC /* XMLTokenizer.h in Headers */,
 				93F1992908245E59001E9ABC /* DeprecatedCString.h in Headers */,
-				93F1992E08245E59001E9ABC /* PopUpButton.h in Headers */,
 				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
 				93F1994F08245E59001E9ABC /* Settings.h in Headers */,
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
@@ -9206,7 +9199,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93F19A1708245E59001E9ABC /* PopUpButtonMac.mm in Sources */,
 				93F19A1808245E59001E9ABC /* DeprecatedCString.cpp in Sources */,
 				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				93F19A2E08245E59001E9ABC /* JavaAppletWidget.mm in Sources */,

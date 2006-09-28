@@ -30,7 +30,7 @@
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
-#include "PopUpButton.h"
+#include "ListBox.h"
 
 using std::min;
 

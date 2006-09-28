@@ -35,7 +35,7 @@
 #include "TextField.h"
 #include "FileChooser.h"
 #include "Font.h"
-#include "PopUpButton.h"
+#include "ListBox.h"
 #include "IntPoint.h"
 #include "Widget.h"
 #include "GraphicsContext.h"
@@ -78,9 +78,6 @@ using namespace WebCore;
 } while (0)
 
 void FrameView::updateBorder() { notImplemented(); }
-
-Widget::FocusPolicy PopUpButton::focusPolicy() const { notImplemented(); return NoFocus; }
-void PopUpButton::populate() { notImplemented(); }
 
 void Widget::enableFlushDrawing() { notImplemented(); }
 bool Widget::isEnabled() const { notImplemented(); return 0; }
@@ -330,18 +327,6 @@ void TextField::setColors(Color const&,Color const&) { }
 IntSize TextField::sizeForCharacterWidth(int) const { return IntSize(); }
 int TextField::baselinePosition(int) const { return 0; }
 void TextField::setLiveSearch(bool) { }
-
-PopUpButton::PopUpButton() { }
-PopUpButton::~PopUpButton() { }
-void PopUpButton::setFont(WebCore::Font const&) { }
-int PopUpButton::baselinePosition(int) const { return 0; }
-void PopUpButton::setWritingDirection(TextDirection) { }
-void PopUpButton::clear() { }
-void PopUpButton::appendItem(DeprecatedString const&,ListBoxItemType,bool) { }
-void PopUpButton::setCurrentItem(int) { }
-IntSize PopUpButton::sizeHint() const { return IntSize(); }
-IntRect PopUpButton::frameGeometry() const { return IntRect(); }
-void PopUpButton::setFrameGeometry(IntRect const&) { }
 
 PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation) : ScrollBar(client, orientation) { }
 PlatformScrollBar::~PlatformScrollBar() { }

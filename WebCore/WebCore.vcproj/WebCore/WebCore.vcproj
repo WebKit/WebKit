@@ -1411,10 +1411,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\PopUpButton.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\RegularExpression.cpp"
 				>
 			</File>
@@ -1625,10 +1621,10 @@
 					RelativePath="..\..\platform\win\GlyphMapWin.cpp"
 					>
 				</File>
-                                <File
-                                        RelativePath="..\..\platform\win\GraphicsContextWin.cpp"
-                                        >
-                                </File>
+				<File
+					RelativePath="..\..\platform\win\GraphicsContextWin.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\..\platform\win\ImageWin.cpp"
 					>
@@ -2510,14 +2506,14 @@
 				RelativePath="..\..\css\CSSComputedStyleDeclaration.h"
 				>
 			</File>
-                        <File
-                                RelativePath="..\..\css\CSSCursorImageValue.cpp"
-                                >
-                        </File>
-                        <File
-                                RelativePath="..\..\css\CSSCursorImageValue.h"
-                                >
-                        </File>
+			<File
+				RelativePath="..\..\css\CSSCursorImageValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\CSSCursorImageValue.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\css\CSSFontFaceRule.cpp"
 				>
