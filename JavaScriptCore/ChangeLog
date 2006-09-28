@@ -1,3 +1,10 @@
+2006-09-27  John Sullivan  <sullivan@apple.com>
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::getParameterName):
+        removed assertion that displeased gcc 4.0.1 (build 5420):
+        ASSERT(static_cast<size_t>(index) == index);
+
 2006-09-27  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by GGaren.
