@@ -270,8 +270,9 @@ void ScrollView::addChild(Widget*,int,int) { }
 void ScrollView::removeChild(Widget*) { }
 void ScrollView::scrollPointRecursively(int x, int y) { }
 bool ScrollView::inWindow() const { return true; }
-void ScrollView::paint(GraphicsContext*, const IntRect&) { };
+void ScrollView::paint(GraphicsContext*, const IntRect&) { }
 void ScrollView::wheelEvent(PlatformWheelEvent&) { }
+void ScrollView::themeChanged() { }
 
 void GraphicsContext::setShadow(IntSize const&,int,Color const&) { }
 void GraphicsContext::clearShadow() { }

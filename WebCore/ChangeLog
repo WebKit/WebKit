@@ -1,3 +1,14 @@
+2006-09-27  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Maciej and Adam, landed by Adam
+
+        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=11072
+        Windows build is busted
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (ScrollView::paint):
+        (ScrollView::themeChanged):
+
 2006-09-27  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by mitz.
