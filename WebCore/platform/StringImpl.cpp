@@ -547,7 +547,8 @@ StringImpl* StringImpl::simplifyWhiteSpace() const
     return c;
 }
 
-static UBreakIterator* getWordBreakIterator(const UChar* string, int length)
+// FIXME: this implementation should move to its own file now that StringImpl is not the only class that uses it
+UBreakIterator* getWordBreakIterator(const UChar* string, int length)
 {
     // The locale is currently ignored when determining character cluster breaks.
     // This may change in the future, according to Deborah Goldsmith.

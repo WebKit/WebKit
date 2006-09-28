@@ -55,6 +55,7 @@ namespace KJS {
 
 namespace WebCore {
 
+class CommandByName;
 class CSSComputedStyleDeclaration;
 class CSSMutableStyleDeclaration;
 class CSSStyleDeclaration;
@@ -821,6 +822,7 @@ public:
   SelectionController* dragCaretController() const;
   DOMWindow* domWindow() const;
 
+  CommandByName* command() const;
  private:
   friend class FramePrivate;
   FramePrivate* d;

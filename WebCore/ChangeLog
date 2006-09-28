@@ -1,3 +1,58 @@
+2006-09-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam Roben.
+
+        This patch adds a command class that is attached to the frame so the frame can more easily execute commands such as copy, paste, select, etc. 
+        This patch also exposes some UBRK-related utilities so that they can be used elsewhere.
+        This patch also changes windows PlatformMouseEvent so that we can detect multiple-click mouse events
+
+        * editing/CommandByName.cpp: Added.
+        Added a command class that hangs off the frame so the frame can call commands more easily.  
+        (WebCore::Frame::commandImp):
+        (WebCore::Frame::execCopy):
+        (WebCore::Frame::execCut):
+        (WebCore::Frame::execDelete):
+        (WebCore::Frame::execForwardDelete):
+        (WebCore::Frame::execPaste):
+        (WebCore::Frame::execMoveLeft):
+        (WebCore::Frame::execMoveRight):
+        (WebCore::Frame::execMoveUp):
+        (WebCore::Frame::execMoveDown):
+        (WebCore::Frame::execSelectAll):
+        (WebCore::Frame::execSelectLeft):
+        (WebCore::Frame::execSelectRight):
+        (WebCore::Frame::execSelectUp):
+        (WebCore::Frame::execSelectDown):
+        (WebCore::Frame::enabled):
+        (WebCore::Frame::enabledAnySelection):
+        (WebCore::Frame::enabledAnyEditableSelection):
+        (WebCore::Frame::enabledPaste):
+        (WebCore::Frame::enabledAnyRangeSelection):
+        (WebCore::Frame::enabledAnyEditableRangeSelection):
+        (WebCore::Frame::createCommandDictionary):
+        (WebCore::Frame::Command::):
+        (WebCore:::m_frame):
+        (WebCore::CommandByName::execCommand):
+        * editing/CommandByName.h: Added.
+        * page/Frame.cpp:
+        Added implementation of accessor for CommandByName member
+        (WebCore::Frame::command):
+        * page/Frame.h:
+        Added accessor for CommandByName member
+        * page/FramePrivate.h:
+        Added a CommandByName member
+        (WebCore::FramePrivate::FramePrivate):
+        * platform/PlatformMouseEvent.h:
+        Changed constructor prototype
+        * platform/StringImpl.cpp:
+        Exposing getWordBreakIterator to be used elsewhere
+        (WebCore::getWordBreakIterator):
+        * platform/StringImpl.h:
+        Exposing getWordBreakIterator to be used elsewhere
+        * platform/win/MouseEventWin.cpp:
+        Changed the PlatformMouseEvent on windows so that we "roll our own" multi-click mouse events instead of relying on the system to tell us, enabling us to detect triple-clicks
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2006-09-28  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.

@@ -33,6 +33,10 @@ const PlatformMouseEvent::CurrentEventTag PlatformMouseEvent::currentEvent = {};
 
 #define HIGH_BIT_MASK_SHORT 0x8000
 
+static int globalClickCount = 0;
+static DWORD globalPrevClickTime = 0;
+static IntPoint globalPrevClickPosition = IntPoint();
+
 static IntPoint positionForEvent(HWND hWnd, LPARAM lParam)
 {
     POINT point = {LOWORD(lParam), HIWORD(lParam)};
@@ -46,10 +50,10 @@ static IntPoint globalPositionForEvent(HWND hWnd, LPARAM lParam)
     return point;
 }
 
-PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, int clkCount)
+PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, WPARAM wParam, LPARAM lParam)
     : m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
-    , m_clickCount(clkCount)
+    , m_clickCount(0)
     , m_shiftKey(wParam & MK_SHIFT)
     , m_ctrlKey(wParam & MK_CONTROL)
     , m_altKey(GetAsyncKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
@@ -61,6 +65,19 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
         m_button = RightButton;
     else if (wParam & MK_MBUTTON)
         m_button = MiddleButton;
+
+    if (m_button == LeftButton) {
+        DWORD curTime = GetTickCount();
+        if (curTime - globalPrevClickTime > GetDoubleClickTime() 
+            || globalPrevClickPosition != m_position)
+            globalClickCount = 1;
+        else 
+            globalClickCount++;
+
+        globalPrevClickTime = curTime;
+        globalPrevClickPosition = m_position;
+        m_clickCount = globalClickCount;
+    }
 }
 
-}
+} // namespace WebCore
