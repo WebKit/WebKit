@@ -1,5 +1,19 @@
 2006-09-27  Kevin McCullough  <KMcCullough@apple.com>
 
+        Reviewed by GGaren.
+
+        Cleanup of previous fix which was to address Radar: 4752492
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::addParameter):
+        (KJS::FunctionImp::parameterString):
+        (KJS::FunctionImp::processParameters):
+        (KJS::FunctionImp::lengthGetter):
+        (KJS::FunctionImp::getParameterName):
+        * kjs/function.h:
+
+2006-09-27  Kevin McCullough  <KMcCullough@apple.com>
+
         Reviewed by Adele.
 
         Fixes a GC stack overflow crash.
