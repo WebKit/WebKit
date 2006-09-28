@@ -1,3 +1,20 @@
+2006-09-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alice.
+
+        - support for change that should fix <rdar://problem/4733044>
+          REGRESSION: XML iBench shows 10% perf. regression (copying
+          strings while decoding)
+
+        * wtf/Vector.h: Changed VectorBuffer so that the general case
+        contains an instance of the 0 case, since deriving from it
+        was violating the Liskov Substitution Principle.
+        (WTF::VectorBuffer::releaseBuffer): Added. Releases the buffer so it can
+        be adopted by another data structure that uses the FastMalloc.h allocator.
+        Returns 0 if the internal buffer was being used.
+        (WTF::Vector::releaseBuffer): Added. Releases the buffer as above or creates
+        a new one in the case where the internal buffer was being used.
+
 2006-09-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

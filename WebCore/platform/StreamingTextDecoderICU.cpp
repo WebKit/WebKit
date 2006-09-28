@@ -191,7 +191,7 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush)
         }
     }
 
-    String result = "";
+    Vector<UChar> result;
 
     UChar buffer[ConversionBufferSize];
     const char* source = reinterpret_cast<const char*>(bytes);
@@ -220,7 +220,7 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush)
         return String();
     }
 
-    return result;
+    return String::adopt(result);
 }
 
 CString TextCodecICU::encode(const UChar* characters, size_t length, bool allowEntities)

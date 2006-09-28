@@ -1068,4 +1068,16 @@ StringImpl* StringImpl::newUninitialized(size_t length, UChar*& characterBuffer)
     return result;
 }
 
+StringImpl* StringImpl::adopt(Vector<UChar>& buffer)
+{
+    size_t size = buffer.size();
+    UChar* data = buffer.releaseBuffer();
+    data = static_cast<UChar*>(fastRealloc(data, size * sizeof(UChar)));
+
+    StringImpl* result = new StringImpl;
+    result->m_length = size;
+    result->m_data = data;
+    return result;
+}
+
 } // namespace WebCore

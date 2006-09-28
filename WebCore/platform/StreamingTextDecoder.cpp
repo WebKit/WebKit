@@ -39,18 +39,18 @@ TextCodec::~TextCodec()
 
 // We strip BOM characters because they can show up both at the start of content
 // and inside content, and we never want them to end up in the decoded text.
-void TextCodec::appendOmittingBOM(String& s, const UChar* characters, size_t length)
+void TextCodec::appendOmittingBOM(Vector<UChar>& v, const UChar* characters, size_t length)
 {
     size_t start = 0;
     for (size_t i = 0; i != length; ++i) {
         if (BOM == characters[i]) {
             if (start != i)
-                s.append(String(&characters[start], i - start));
+                v.append(&characters[start], i - start);
             start = i + 1;
         }
     }
     if (start != length)
-        s.append(String(&characters[start], length - start));
+        v.append(&characters[start], length - start);
 }
 
 } // namespace WebCore

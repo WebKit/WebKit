@@ -488,6 +488,15 @@ String String::newUninitialized(size_t length, UChar*& characterBuffer)
     return StringImpl::newUninitialized(length, characterBuffer);
 }
 
+String String::adopt(Vector<UChar>& buffer)
+{
+    // For an empty buffer, construct an empty string, not a null string,
+    // and use a standard constructor so we get the shared empty string.
+    if (buffer.isEmpty())
+        return "";
+    return StringImpl::adopt(buffer);
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

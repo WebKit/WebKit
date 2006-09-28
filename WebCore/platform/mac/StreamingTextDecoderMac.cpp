@@ -193,7 +193,7 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush)
     if (!m_converterTEC && createTECConverter() != noErr)
         return String();
     
-    String result("");
+    Vector<UChar> result;
 
     const unsigned char* sourcePointer = reinterpret_cast<const unsigned char*>(bytes);
     int sourceLength = length;
@@ -253,14 +253,16 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush)
         appendOmittingBOM(result, buffer, bytesWritten / sizeof(UChar));
     }
 
+    String resultString = String::adopt(result);
+
     // Workaround for a bug in the Text Encoding Converter (see bug 3225472).
     // Simplified Chinese pages use the code U+A3A0 to mean "full-width space".
     // But GB18030 decodes it to U+E5E5, which is correct in theory but not in practice.
     // To work around, just change all occurences of U+E5E5 to U+3000 (ideographic space).
     if (m_encoding == kCFStringEncodingGB_18030_2000)
-        result.replace(0xE5E5, 0x3000);
+        resultString.replace(0xE5E5, 0x3000);
     
-    return result;
+    return resultString;
 }
 
 CString TextCodecMac::encode(const UChar* characters, size_t length, bool allowEntities)
