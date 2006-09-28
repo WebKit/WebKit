@@ -1,3 +1,23 @@
+2006-09-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mitz.
+
+        - fixed REGRESSION (r16606): javascriptCore Crash on website load
+        
+        Plus style fixes.
+        
+            - fixed some possible off-by-one bugs
+            - use indexing, not iterators, for Vectors
+            - store Vector by pointer instead of by value to avoid blowing out FunctionImp size
+        
+        * kjs/function.cpp:
+        (KJS::FunctionImp::addParameter):
+        (KJS::FunctionImp::parameterString):
+        (KJS::FunctionImp::processParameters):
+        (KJS::FunctionImp::lengthGetter):
+        (KJS::FunctionImp::getParameterName):
+        * kjs/function.h:
+
 2006-09-27  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Maciej.
