@@ -98,25 +98,25 @@ WebView* WebView::createInstance()
 
 void WebView::mouseMoved(WPARAM wParam, LPARAM lParam)
 {
-    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam, 0);
+    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam);
     m_mainFrame->impl()->view()->handleMouseMoveEvent(mouseEvent);
 }
 
 void WebView::mouseDown(WPARAM wParam, LPARAM lParam)
 {
-    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam, 1);
+    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam);
     m_mainFrame->impl()->view()->handleMousePressEvent(mouseEvent);
 }
 
 void WebView::mouseUp(WPARAM wParam, LPARAM lParam)
 {
-    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam, 1);
+    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam);
     m_mainFrame->impl()->view()->handleMouseReleaseEvent(mouseEvent);
 }
 
 void WebView::mouseDoubleClick(WPARAM wParam, LPARAM lParam)
 {
-    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam, 2);
+    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam);
     m_mainFrame->impl()->view()->handleMouseReleaseEvent(mouseEvent);
 }
 

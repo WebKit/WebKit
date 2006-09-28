@@ -1,3 +1,13 @@
+2006-09-28  Alice Liu  <alice.liu@apple.com>
+
+        fixing the windows build
+
+        * COM/WebView.cpp:
+        (WebView::mouseMoved):
+        (WebView::mouseDown):
+        (WebView::mouseUp):
+        (WebView::mouseDoubleClick):
+
 2006-09-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher
