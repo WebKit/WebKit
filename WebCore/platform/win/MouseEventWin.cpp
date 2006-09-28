@@ -36,7 +36,6 @@ const PlatformMouseEvent::CurrentEventTag PlatformMouseEvent::currentEvent = {};
 static IntPoint positionForEvent(HWND hWnd, LPARAM lParam)
 {
     POINT point = {LOWORD(lParam), HIWORD(lParam)};
-    MapWindowPoints(hWnd, GetAncestor(hWnd, GA_ROOT), &point, 1);
     return point;
 }
 

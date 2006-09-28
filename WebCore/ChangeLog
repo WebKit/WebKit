@@ -1,3 +1,14 @@
+2006-09-28  Dave Hyatt  <hyatt@apple.com>
+
+        Just eliminate MapWindowPoints usage and use the HWND as
+        the viewport.
+
+        * platform/win/MouseEventWin.cpp:
+        (WebCore::positionForEvent):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::viewportToContents):
+        (WebCore::ScrollView::contentsToViewport):
+
 2006-09-27  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 9222, cursor is wrong when mousing over overflow scrollbars in textareas.  Make sure
