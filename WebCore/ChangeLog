@@ -1,3 +1,14 @@
+2006-09-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel!!!
+
+        Change the error code check for common functions from SQLResultOk to SQLResultDone 
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::forgetPageURLQuery):
+        (WebCore::IconDatabase::setIconIDForPageURLQuery):
+        (WebCore::IconDatabase::addIconForIconURLQuery):
+
 2006-09-28  Dave Hyatt  <hyatt@apple.com>
 
         Just eliminate MapWindowPoints usage and use the HWND as
