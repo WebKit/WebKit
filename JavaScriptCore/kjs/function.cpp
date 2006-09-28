@@ -50,9 +50,10 @@ const ClassInfo FunctionImp::info = {"Function", &InternalFunctionImp::info, 0, 
 
   class Parameter {
   public:
+    Parameter() {};
     Parameter(const Identifier &n) : name(n) { }
     Identifier name;
-    OwnPtr<Parameter> next;
+//    OwnPtr<Parameter> next;
   };
 
 FunctionImp::FunctionImp(ExecState *exec, const Identifier &n, FunctionBodyNode* b)
@@ -151,23 +152,18 @@ JSValue *FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
 
 void FunctionImp::addParameter(const Identifier &n)
 {
-  OwnPtr<Parameter> *p = &param;
-  while (*p)
-    p = &(*p)->next;
-
-  p->set(new Parameter(n));
+    params.append(Parameter(n));
 }
 
 UString FunctionImp::parameterString() const
 {
   UString s;
-  const Parameter *p = param.get();
-  while (p) {
-    if (!s.isEmpty())
-        s += ", ";
-    s += p->name.ustring();
-    p = p->next.get();
-  }
+
+    for(Vector<Parameter>::const_iterator it = params.begin(); it < params.end(); it++) {
+        if (!s.isEmpty())
+            s += ", ";
+        s += it->name.ustring();
+    }
 
   return s;
 }
@@ -184,21 +180,20 @@ void FunctionImp::processParameters(ExecState *exec, const List &args)
           name().isEmpty() ? "(internal)" : name().ascii());
 #endif
 
-  if (param) {
+    if(params.size() != 0) {
     ListIterator it = args.begin();
-    Parameter *p = param.get();
+
     JSValue  *v = *it;
-    while (p) {
+    for(Vector<Parameter>::iterator pit = params.begin(); pit < params.end(); pit++) {
       if (it != args.end()) {
 #ifdef KJS_VERBOSE
         fprintf(stderr, "setting parameter %s ", p->name.ascii());
         printInfo(exec,"to", *it);
 #endif
-        variable->put(exec, p->name, v);
+        variable->put(exec, pit->name, v);
         v = ++it;
       } else
-        variable->put(exec, p->name, jsUndefined());
-      p = p->next.get();
+        variable->put(exec, pit->name, jsUndefined());
     }
   }
 #ifdef KJS_VERBOSE
@@ -228,14 +223,8 @@ JSValue *FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifi
 
 JSValue *FunctionImp::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
-  FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
-  const Parameter *p = thisObj->param.get();
-  int count = 0;
-  while (p) {
-    ++count;
-    p = p->next.get();
-  }
-  return jsNumber(count);
+    FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
+    return jsNumber(thisObj->params.size());
 }
 
 bool FunctionImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -278,27 +267,20 @@ bool FunctionImp::deleteProperty(ExecState *exec, const Identifier &propertyName
  */
 Identifier FunctionImp::getParameterName(int index)
 {
-  int i = 0;
-  Parameter *p = param.get();
+    if(params.size() == 0)
+        return Identifier::null();
   
-  if(!p)
-    return Identifier::null();
+    if (index > static_cast<int>(params.size()))
+        return Identifier::null();
   
-  // skip to the parameter we want
-  while (i++ < index && (p = p->next.get()))
-    ;
-  
-  if (!p)
-    return Identifier::null();
-  
-  Identifier name = p->name;
+    Identifier name = params[index].name;
 
-  // Are there any subsequent parameters with the same name?
-  while ((p = p->next.get()))
-    if (p->name == name)
-      return Identifier::null();
-  
-  return name;
+    // Are there any subsequent parameters with the same name?
+    for (Vector<Parameter>::iterator it = &(params[index+1]); it < params.end(); it++)
+        if (it->name == name)
+            return Identifier::null();
+
+    return name;
 }
 
 // ------------------------------ DeclaredFunctionImp --------------------------

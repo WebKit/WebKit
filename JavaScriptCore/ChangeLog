@@ -1,3 +1,20 @@
+2006-09-27  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Adele.
+
+        Fixes a GC stack overflow crash.
+        The change is to move from a linked list implementation of Parameters to a Vector.
+        The problem with the linked list is that each one creates it's own stack frame when being destroyed and in extreme cases this caused the stack to overflow. 
+
+        * kjs/function.cpp:
+        (KJS::Parameter::Parameter):
+        (KJS::FunctionImp::addParameter):
+        (KJS::FunctionImp::parameterString):
+        (KJS::FunctionImp::processParameters):
+        (KJS::FunctionImp::lengthGetter):
+        (KJS::FunctionImp::getParameterName):
+        * kjs/function.h:
+
 2006-09-27  Steve Falkenburg  <sfalken@apple.com>
 
         Fix last path fix.

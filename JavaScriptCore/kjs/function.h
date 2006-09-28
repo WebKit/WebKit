@@ -26,6 +26,7 @@
 
 #include "internal.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace KJS {
 
@@ -92,7 +93,7 @@ namespace KJS {
 
     virtual void mark();
   protected:
-    OwnPtr<Parameter> param;
+    Vector<Parameter> params;
 
   private:
     ScopeChain _scope;
