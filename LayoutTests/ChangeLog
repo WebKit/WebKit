@@ -1,3 +1,11 @@
+2006-09-28  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        Call clearKillRing() so we are guaranteed to start with empty kill ring.
+
+        * editing/pasteboard/emacs-cntl-y-001.html:
+
 2006-09-27  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by mitz.

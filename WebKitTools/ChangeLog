@@ -1,3 +1,14 @@
+2006-09-28  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+        
+        Add clearKillRing so we can test emacs support with empty kill ring.
+
+        * DumpRenderTree/EventSendingController.m:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (-[EventSendingController clearKillRing]):
+
 2006-09-27  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Maciej, landed by Brady

@@ -23,8 +23,10 @@
 function editingTest() {
     moveSelectionForwardByWordCommand();
     moveSelectionForwardByWordCommand();
-    if (window.eventSender)
+    if (window.eventSender) {
+        eventSender.clearKillRing();
         eventSender.keyDown("y", ["ctrlKey"]);
+    }
 }
 
 </script>

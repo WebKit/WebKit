@@ -101,7 +101,8 @@ NSArray *webkitDomEventNames;
             || aSelector == @selector(leapForward:)
             || aSelector == @selector(keyDown:withModifiers:)
             || aSelector == @selector(enableDOMUIEventLogging:)
-            || aSelector == @selector(fireKeyboardEventsToElement:))
+            || aSelector == @selector(fireKeyboardEventsToElement:)
+            || aSelector == @selector(clearKillRing))
         return NO;
     return YES;
 }
@@ -118,6 +119,8 @@ NSArray *webkitDomEventNames;
         return @"enableDOMUIEventLogging";
     if (aSelector == @selector(fireKeyboardEventsToElement:))
         return @"fireKeyboardEventsToElement";
+    if (aSelector == @selector(clearKillRing))
+        return @"clearKillRing";
     return nil;
 }
 
@@ -129,6 +132,13 @@ NSArray *webkitDomEventNames;
 - (void)leapForward:(int)milliseconds
 {
     timeOffset += milliseconds / 1000.0;
+}
+
+- (void)clearKillRing
+{
+    extern void _NSNewKillRingSequence();
+    
+    _NSNewKillRingSequence();
 }
 
 - (void)mouseDown
