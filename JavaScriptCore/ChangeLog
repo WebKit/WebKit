@@ -1,5 +1,15 @@
 2006-09-28  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Geoff.
+        
+        - change garbage collection to happen at increments proportional to number of live objects, not always
+        every 1000 allocations
+
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate):
+
+2006-09-28  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Mitz.
 
         - fixed REGRESSION (r16606): javascriptCore Crash on website load
