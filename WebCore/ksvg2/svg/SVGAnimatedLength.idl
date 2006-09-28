@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGAnimatedLength { 
-    readonly attribute SVGLength baseVal;
-    readonly attribute SVGLength animVal;
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGAnimatedLength {
+        readonly attribute SVGLength baseVal;
+        readonly attribute SVGLength animVal;
+    };
+
+}

@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,13 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGStylable { 
-    readonly attribute SVGAnimatedString className;
-    readonly attribute css::CSSStyleDeclaration style;
-    
-    // FIXME: This needs to be added in the SVG* classes!
-    // css::CSSValue getPresentationAttribute ( in core::DOMString name );
-  };
-};
+module svg {
+
+    interface [Conditional=SVG, ObjCProtocol] SVGStylable {
+        readonly attribute SVGAnimatedString className;
+        readonly attribute css::CSSStyleDeclaration style;
+        
+        // FIXME: This needs to be added in the SVG* classes!
+        // css::CSSValue getPresentationAttribute(in core::DOMString name);
+    };
+
+}

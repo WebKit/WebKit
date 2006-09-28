@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGAnimatedPathData { 
-    readonly attribute SVGPathSegList   pathSegList;
-    readonly attribute SVGPathSegList   normalizedPathSegList;
-    readonly attribute SVGPathSegList   animatedPathSegList;
-    readonly attribute SVGPathSegList   animatedNormalizedPathSegList;
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGAnimatedPathData {
+        readonly attribute SVGPathSegList   pathSegList;
+        readonly attribute SVGPathSegList   normalizedPathSegList;
+        readonly attribute SVGPathSegList   animatedPathSegList;
+        readonly attribute SVGPathSegList   animatedNormalizedPathSegList;
+    };
+
+}

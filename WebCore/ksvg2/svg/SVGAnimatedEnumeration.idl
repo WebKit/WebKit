@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGAnimatedEnumeration { 
-             attribute unsigned short baseVal;
-                         // raises DOMException on setting
-    readonly attribute unsigned short animVal;
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGAnimatedEnumeration {
+                 attribute unsigned short baseVal
+                     /*setter raises(DOMException)*/;
+        readonly attribute unsigned short animVal;
+    };
+
+}

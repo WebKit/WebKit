@@ -42,6 +42,7 @@ VPATH = \
 
 ifeq ($(OS),MACOS)
 all : \
+    DOMSVGRectElement.h \
     DOMAttr.h \
     DOMCDATASection.h \
     DOMCSSCharsetRule.h \
@@ -136,17 +137,35 @@ all : \
     DOMOverflowEvent.h \
     DOMProcessingInstruction.h \
     DOMRect.h \
-    DOMStyleSheet.h \
-    DOMStyleSheetList.h \
     DOMSVGAngle.h \
+    DOMSVGAnimatedAngle.h \
+    DOMSVGAnimatedBoolean.h \
+    DOMSVGAnimatedEnumeration.h \
+    DOMSVGAnimatedInteger.h \
+    DOMSVGAnimatedLength.h \
+    DOMSVGAnimatedLengthList.h \
+    DOMSVGAnimatedNumber.h \
+    DOMSVGAnimatedString.h \
+    DOMSVGAnimatedTransformList.h \
     DOMSVGElement.h \
+    DOMSVGExternalResourcesRequired.h \
+    DOMSVGLangSpace.h \
     DOMSVGLength.h \
     DOMSVGLengthList.h \
+    DOMSVGLocatable.h \
     DOMSVGMatrix.h \
+    DOMSVGMetadataElement.h \
     DOMSVGPathSeg.h \
     DOMSVGPathSegList.h \
+    DOMSVGStringList.h \
+    DOMSVGStylable.h \
+    DOMSVGStyleElement.h \
+    DOMSVGTests.h \
     DOMSVGTransform.h \
     DOMSVGTransformList.h \
+    DOMSVGTransformable.h \
+    DOMStyleSheet.h \
+    DOMStyleSheetList.h \
     DOMText.h \
     DOMTreeWalker.h \
     DOMUIEvent.h \
@@ -526,7 +545,7 @@ OBJC_BINDINGS_SCRIPTS = \
 #
 
 DOM%.h : %.idl $(OBJC_BINDINGS_SCRIPTS) bindings/objc/PublicDOMInterfaces.h
-	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --include $(WebCore)/dom --include $(WebCore)/html --include $(WebCore)/xpath --include $(WebCore)/ksvg2/svg --outputdir . $<
+	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --include dom --include html --include xml --include /ksvg2/svg --outputdir . $<
 
 # new-style JavaScript bindings
 

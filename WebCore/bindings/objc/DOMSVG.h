@@ -25,12 +25,31 @@
  */
 
 #import <WebCore/DOMSVGAngle.h>
+#import <WebCore/DOMSVGAnimatedAngle.h>
+#import <WebCore/DOMSVGAnimatedBoolean.h>
+#import <WebCore/DOMSVGAnimatedEnumeration.h>
+#import <WebCore/DOMSVGAnimatedInteger.h>
+#import <WebCore/DOMSVGAnimatedLength.h>
+#import <WebCore/DOMSVGAnimatedLengthList.h>
+#import <WebCore/DOMSVGAnimatedNumber.h>
+#import <WebCore/DOMSVGAnimatedString.h>
+#import <WebCore/DOMSVGAnimatedTransformList.h>
 #import <WebCore/DOMSVGElement.h>
 #import <WebCore/DOMSVGException.h>
+#import <WebCore/DOMSVGExternalResourcesRequired.h>
+#import <WebCore/DOMSVGLangSpace.h>
 #import <WebCore/DOMSVGLength.h>
 #import <WebCore/DOMSVGLengthList.h>
+#import <WebCore/DOMSVGLocatable.h>
 #import <WebCore/DOMSVGMatrix.h>
+#import <WebCore/DOMSVGMetadataElement.h>
 #import <WebCore/DOMSVGPathSeg.h>
 #import <WebCore/DOMSVGPathSegList.h>
+#import <WebCore/DOMSVGRectElement.h>
+#import <WebCore/DOMSVGStringList.h>
+#import <WebCore/DOMSVGStylable.h>
+#import <WebCore/DOMSVGStyleElement.h>
+#import <WebCore/DOMSVGTests.h>
 #import <WebCore/DOMSVGTransform.h>
 #import <WebCore/DOMSVGTransformList.h>
+#import <WebCore/DOMSVGTransformable.h>

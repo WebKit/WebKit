@@ -49,6 +49,8 @@ my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
 my $endCondition = 0;
 my $foundFilename = "";
 my @foundFilenames = ();
+my $ignoreParent = 1;
+my $defines = "";
 
 # Default constructor
 sub new
@@ -77,8 +79,8 @@ sub ProcessDocument
 {
     my $object = shift;
     $useDocument = shift;
-    my $defines = shift;
-  
+    $defines = shift;
+
     my $ifaceName = "CodeGenerator" . $useGenerator;
 
     # Dynamically load external code generation perl module
@@ -122,7 +124,6 @@ sub AddMethodsConstantsAndAttributesFromParentClasses
     # Exception: For the DOM 'Node' is our topmost baseclass, not EventTargetNode.
     return if $parentsMax eq 1 and $parents[0] eq "EventTargetNode";
 
-    my $ignoreParent = 1;
     foreach (@{$dataNode->parents}) {
         if ($ignoreParent) {
             # Ignore first parent class, already handled by the generation itself.
@@ -145,31 +146,23 @@ sub AddMethodsConstantsAndAttributesFromParentClasses
 
             # Step #2: Parse the found IDL file (in quiet mode).
             my $parser = IDLParser->new(1);
-            my $document = $parser->Parse($foundFilename, "");
+            my $document = $parser->Parse($foundFilename, $defines);
 
             foreach my $class (@{$document->classes}) {
-                # Step #3: Collect constants & functions & attributes of this parent-class
+                # Step #3: Enter recursive parent search
+                AddMethodsConstantsAndAttributesFromParentClasses($object, $class);
+
+                # Step #4: Collect constants & functions & attributes of this parent-class
                 my $constantsMax = @{$class->constants};
                 my $functionsMax = @{$class->functions};
                 my $attributesMax = @{$class->attributes};
 
                 print "  |  |>  -> Inherting $constantsMax constants, $functionsMax functions, $attributesMax attributes...\n  |  |>\n";
 
-                # Step #4: Concatenate data
-                foreach (@{$class->constants}) {
-                    push(@$constantsRef, $_);
-                }
-
-                foreach (@{$class->functions}) {
-                    push(@$functionsRef, $_);
-                }
-
-                foreach (@{$class->attributes}) {
-                    push(@$attributesRef, $_);
-                }
-
-                # Step #4: Enter recursive parent search
-                AddMethodsConstantsAndAttributesFromParentClasses($object, $class);
+                # Step #5: Concatenate data
+                push(@$constantsRef, $_) foreach (@{$class->constants});
+                push(@$functionsRef, $_) foreach (@{$class->functions});
+                push(@$attributesRef, $_) foreach (@{$class->attributes});
             }
         } else {
             die("Could NOT find specified parent interface \"$interface\"!\n");

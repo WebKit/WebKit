@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,12 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGLangSpace { 
-             attribute core::DOMString xmllang;
-                         // raises DOMException on setting
-             attribute core::DOMString xmlspace;
-                         // raises DOMException on setting
-  };
-};
+module svg {
+
+    interface [Conditional=SVG, ObjCProtocol] SVGLangSpace {
+                 attribute core::DOMString xmllang
+                     /*setter raises(DOMException)*/;
+                 attribute core::DOMString xmlspace
+                     /*setter raises(DOMException)*/;
+    };
+
+}

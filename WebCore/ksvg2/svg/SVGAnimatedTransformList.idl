@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGAnimatedTransformList { 
-    readonly attribute SVGTransformList baseVal;
-    readonly attribute SVGTransformList animVal;
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGAnimatedTransformList {
+        readonly attribute SVGTransformList baseVal;
+        readonly attribute SVGTransformList animVal;
+    };
+
+}

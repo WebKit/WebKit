@@ -1,3 +1,55 @@
+2006-09-28  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=11057
+        Auto-generate more SVG Objective-C bindings
+
+        - Auto-generates DOMSVGAnimatedAngle, DOMSVGAnimatedBoolean, 
+          DOMSVGAnimatedEnumeration, DOMSVGAnimatedInteger, DOMSVGAnimatedLength,
+          DOMSVGAnimatedLengthList, DOMSVGAnimatedNumber, DOMSVGAnimatedString,
+          DOMSVGAnimatedTransformList, DOMSVGExternalResourcesRequired,
+          DOMSVGLangSpace, DOMSVGLocatable, DOMSVGMetadataElement, DOMSVGRectElement,
+          DOMSVGStringList, DOMSVGStylable, DOMSVGStyleElement, DOMSVGTests, 
+          and DOMSVGTransformable.
+
+        - Adds ability to CodeGeneratorObjC.pm to handle interfaces with mulitple
+          parent interfaces and the SVG animated classes.
+
+        - Corrects CodeGenerator.pm to only skip the first parent for the main 
+          interface.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMSVG.h:
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * ksvg2/svg/SVGAnimatedAngle.idl:
+        * ksvg2/svg/SVGAnimatedBoolean.idl:
+        * ksvg2/svg/SVGAnimatedEnumeration.idl:
+        * ksvg2/svg/SVGAnimatedInteger.idl:
+        * ksvg2/svg/SVGAnimatedLength.idl:
+        * ksvg2/svg/SVGAnimatedLengthList.idl:
+        * ksvg2/svg/SVGAnimatedNumber.idl:
+        * ksvg2/svg/SVGAnimatedPathData.idl:
+        * ksvg2/svg/SVGAnimatedString.idl:
+        * ksvg2/svg/SVGAnimatedTransformList.idl:
+        * ksvg2/svg/SVGExternalResourcesRequired.idl:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.idl:
+        * ksvg2/svg/SVGFitToViewBox.idl:
+        * ksvg2/svg/SVGLangSpace.idl:
+        * ksvg2/svg/SVGLocatable.idl:
+        * ksvg2/svg/SVGMetadataElement.idl:
+        * ksvg2/svg/SVGStringList.idl:
+        * ksvg2/svg/SVGStylable.idl:
+        * ksvg2/svg/SVGStyleElement.idl:
+        * ksvg2/svg/SVGTests.idl:
+        * ksvg2/svg/SVGTransformable.idl:
+        * ksvg2/svg/SVGURIReference.idl:
+        * ksvg2/svg/SVGUnitTypes.idl:
+        * ksvg2/svg/SVGZoomAndPan.idl:
+
 2006-09-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitz Pettel!!!

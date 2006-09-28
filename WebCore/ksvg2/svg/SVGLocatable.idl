@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,15 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGLocatable { 
-    readonly attribute SVGElement              nearestViewportElement;
-    readonly attribute SVGElement              farthestViewportElement;
-    SVGRect   getBBox (  );
-    SVGMatrix getCTM (  );
-    SVGMatrix getScreenCTM (  );
-    SVGMatrix getTransformToElement ( in SVGElement element )
-                    raises( SVGException );
-  };
-};
+module svg {
+
+    interface [Conditional=SVG, ObjCProtocol] SVGLocatable {
+        readonly attribute SVGElement nearestViewportElement;
+        readonly attribute SVGElement farthestViewportElement;
+
+#if !defined(LANGUAGE_OBJECTIVE_C)
+        SVGRect   getBBox();
+#endif
+        SVGMatrix getCTM();
+        SVGMatrix getScreenCTM();
+        SVGMatrix getTransformToElement(in SVGElement element)
+            raises(SVGException);
+    };
+
+}

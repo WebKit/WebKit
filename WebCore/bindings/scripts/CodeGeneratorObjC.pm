@@ -49,7 +49,10 @@ my @implContent = ();
 my %implIncludes = ();
 
 # Hashes
-my %protocolTypeHash = ("XPathNSResolver" => 1, "EventListener" => 1, "EventTarget" => 1, "NodeFilter" => 1);
+my %protocolTypeHash = ("XPathNSResolver" => 1, "EventListener" => 1, "EventTarget" => 1, "NodeFilter" => 1,
+                        "SVGLocatable" => 1, "SVGTransformable" => 1, "SVGStylable" => 1, "SVGFilterPrimitiveStandardAttributes" => 1, 
+                        "SVGTests" => 1, "SVGLangSpace" => 1, "SVGExternalResourcesRequired" => 1, "SVGURIReference" => 1,
+                        "SVGZoomAndPan" => 1, "SVGFitToViewBox" => 1);
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 
 # Constants
@@ -259,6 +262,56 @@ sub GetParentImplClassName
     return $parent;
 }
 
+sub GetParentAndProtocols
+{
+    my $dataNode = shift;
+    my $numParents = @{$dataNode->parents};
+
+    my $parent = "";
+    my @protocols = ();
+    if ($numParents eq 0) {
+        if ($isProtocol) {
+            push(@protocols, "NSObject");
+            push(@protocols, "NSCopying") if $dataNode->name eq "EventTarget";
+        } else {
+            $parent = "DOMObject";
+        }
+    } elsif ($numParents eq 1) {
+        my $parentName = $codeGenerator->StripModule($dataNode->parents(0));
+        if ($isProtocol) {
+            die "Parents of protocols must also be protocols." unless IsProtocolType($parentName);
+            push(@protocols, "DOM" . $parentName);
+        } else {
+            if (IsProtocolType($parentName)) {
+                push(@protocols, "DOM" . $parentName);
+            } elsif ($parentName eq "EventTargetNode") {
+                $parent = "DOMNode";
+            } elsif ($parentName eq "HTMLCollection") {
+                $parent = "DOMObject";
+            } else {
+                $parent = "DOM" . $parentName;
+            }
+        }
+    } else {
+        my @parents = @{$dataNode->parents};
+        my $firstParent = $codeGenerator->StripModule(shift(@parents));
+        if (IsProtocolType($firstParent)) {
+            push(@protocols, "DOM" . $firstParent);
+        } else {
+            $parent = "DOM" . $firstParent;
+        }
+
+        foreach my $parentName (@parents) {
+            $parentName = $codeGenerator->StripModule($parentName);
+            die "Everything past the first class should be a protocol!" unless IsProtocolType($parentName);
+
+            push(@protocols, "DOM" . $parentName);
+        }
+    }
+
+    return ($parent, @protocols);
+}
+
 sub IsProtocolType
 {
     $type = shift;
@@ -412,8 +465,14 @@ sub AddIncludesForType
     }
 
     if ($type eq "EventTarget") {
-        $implIncludes{"DOM$type.h"} = 1;
         $implIncludes{"EventTargetNode.h"} = 1;
+        $implIncludes{"DOM$type.h"} = 1;
+        return;
+    }
+
+    if ($codeGenerator->IsSVGAnimatedType($type)) {
+        $implIncludes{"SVGAnimatedTemplate.h"} = 1;
+        $implIncludes{"DOM$type.h"} = 1;
         return;
     }
 
@@ -434,13 +493,16 @@ sub GenerateHeader
 
     # We only support multiple parents with SVG (for now).
     if (@{$dataNode->parents} > 1) {
-        die "A class can't have more than one parent" unless $module eq "SVG";
-        $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode);
+        die "A class can't have more than one parent" unless $module eq "svg";
     }
 
     my $interfaceName = $dataNode->name;
     my $className = GetClassName($interfaceName);
-    my $parentClassName = "DOM" . GetParentImplClassName($dataNode);
+
+    my $parentName = "";
+    my @protocolsToImplement = ();
+    ($parentName, @protocolsToImplement) = GetParentAndProtocols($dataNode);
+
     my $conditional = $dataNode->extendedAttributes->{"Conditional"};
 
     my $numConstants = @{$dataNode->constants};
@@ -453,9 +515,15 @@ sub GenerateHeader
 
     # - INCLUDES -
     unless ($isProtocol) {
-        my $parentHeaderName = GetClassHeaderName($parentClassName);
-        push(@headerContentHeader, "#import <WebCore/$parentHeaderName.h>\n\n");
+        my $parentHeaderName = GetClassHeaderName($parentName);
+        push(@headerContentHeader, "#import <WebCore/$parentHeaderName.h>\n");
     }
+    foreach my $parentProtocol (@protocolsToImplement) {
+        next if $parentProtocol =~ /^NS/; 
+        $parentProtocol = GetClassHeaderName($parentProtocol);
+        push(@headerContentHeader, "#import <WebCore/$parentProtocol.h>\n");
+    }
+    push(@headerContentHeader, "\n");
 
     # - Add constants.
     if ($numConstants > 0) {
@@ -481,10 +549,15 @@ sub GenerateHeader
 
     # - Begin @interface or @protocol
     if ($isProtocol) {
-        my $parentProtocols = "NSObject" . ($interfaceName eq "EventTarget" ? ", NSCopying" : "");
+        my $parentProtocols = join(", ", @protocolsToImplement);
         push(@headerContent, "\@protocol $className <$parentProtocols>\n");
     } else {
-        push(@headerContent, "\@interface $className : $parentClassName\n");
+        if (@protocolsToImplement eq 0) {
+            push(@headerContent, "\@interface $className : $parentName\n");
+        } else {
+             my $parentProtocols = join(", ", @protocolsToImplement);
+             push(@headerContent, "\@interface $className : $parentName <$parentProtocols>\n");
+        }
     }
 
     my @headerAttributes = ();
@@ -651,6 +724,12 @@ sub GenerateImplementation
     my $object = shift;
     my $dataNode = shift;
 
+    # We only support multiple parents with SVG (for now).
+    if (@{$dataNode->parents} > 1) {
+        die "A class can't have more than one parent" unless $module eq "svg";
+        $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode);
+    }
+
     my $interfaceName = $dataNode->name;
     my $className = GetClassName($interfaceName);
     my $implClassName = GetImplClassName($interfaceName);
@@ -671,7 +750,12 @@ sub GenerateImplementation
     push(@implContentHeader, "#import \"$classHeaderName.h\"\n\n");
     push(@implContentHeader, "#import <wtf/GetPtr.h>\n\n");
 
-    $implIncludes{"$implClassName.h"} = 1;
+    if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
+        $implIncludes{"SVGAnimatedTemplate.h"} = 1;
+    } else {
+        $implIncludes{"$implClassName.h"} = 1;
+    }
+
     $implIncludes{"DOMInternal.h"} = 1;
 
     @implContent = ();
@@ -762,6 +846,9 @@ sub GenerateImplementation
                 # FIXME: for now special case attribute ownerDocument to call document, this is incorrect
                 # legacy behavior. (see http://bugzilla.opendarwin.org/show_bug.cgi?id=10889)
                 $attributeName = "document";
+            } elsif ($codeGenerator->IsSVGAnimatedType($idlType)) {
+                # Special case for animated types.
+                $attributeName .= "Animated";
             }
 
             $attributeNames{$attributeInterfaceName} = 1;
@@ -1052,7 +1139,7 @@ sub GenerateImplementation
         push(@implContent, "$typeGetterSig\n");
         push(@implContent, "{\n");
         push(@implContent, "    return IMPL;\n");
-        push(@implContent, "}\n\n");            
+        push(@implContent, "}\n\n");
 
         # - Type-Maker
         my $typeMakerName = GetObjCTypeMaker($interfaceName);
@@ -1068,7 +1155,7 @@ sub GenerateImplementation
             push(@implContent, "    addDOMWrapper(self, impl);\n");
             push(@implContent, "    return self;\n");
             push(@implContent, "}\n\n");
-    
+
             # - (DOMFooBar)_FooBarWith:(WebCore::FooBar *)impl for implementation class FooBar
             push(@implContent, "$typeMakerSig\n");
             push(@implContent, "{\n");
@@ -1087,13 +1174,18 @@ sub GenerateImplementation
             push(@implContent, "    return static_cast<$className*>([DOMNode _nodeWith:impl]);\n");
             push(@implContent, "}\n\n");
         }
+
         # END WebCoreInternal category
         push(@implContent, "\@end\n");
-        
+
         # Generate interface definitions. 
         @intenalHeaderContent = split("\r", $implementationLicenceTemplate);
-        push(@intenalHeaderContent, "\n#import \"$className.h\"\n\n");
-        push(@intenalHeaderContent, "namespace WebCore { class $implClassName; }\n\n");
+        push(@intenalHeaderContent, "\n#import \"$className.h\"\n");
+        if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
+            push(@intenalHeaderContent, "#import \"SVGAnimatedTemplate.h\"\n\n");
+        } else {
+            push(@intenalHeaderContent, "\nnamespace WebCore { class $implClassName; }\n\n");
+        }
         push(@intenalHeaderContent, "\@interface $className (WebCoreInternal)\n");
         push(@intenalHeaderContent, "- ($implClassNameWithNamespace *)$typeGetterName;\n");
         push(@intenalHeaderContent, "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl;\n");

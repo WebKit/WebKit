@@ -23,23 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGStringList { 
-    readonly attribute unsigned long numberOfItems;
-    void   clear (  )
-                    raises( core::DOMException );
-    core::DOMString initialize ( in core::DOMString item )
-                    raises( core::DOMException, SVGException );
-    core::DOMString getItem ( in unsigned long index )
-                    raises( core::DOMException );
-    core::DOMString insertItemBefore ( in core::DOMString item, in unsigned long index )
-                    raises( core::DOMException, SVGException );
-    core::DOMString replaceItem ( in core::DOMString item, in unsigned long index )
-                    raises( core::DOMException, SVGException );
-    core::DOMString removeItem ( in unsigned long index )
-                    raises( core::DOMException );
-    core::DOMString appendItem ( in core::DOMString item )
-                    raises( core::DOMException, SVGException );
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGStringList {
+        readonly attribute unsigned long numberOfItems;
+
+        void clear()
+            raises(core::DOMException);
+        core::DOMString initialize(in core::DOMString item)
+            raises(core::DOMException, SVGException);
+        core::DOMString getItem(in unsigned long index)
+            raises(core::DOMException);
+        core::DOMString insertItemBefore(in core::DOMString item, in unsigned long index)
+            raises(core::DOMException, SVGException);
+        core::DOMString replaceItem(in core::DOMString item, in unsigned long index)
+            raises(core::DOMException, SVGException);
+        core::DOMString removeItem(in unsigned long index)
+            raises(core::DOMException);
+        core::DOMString appendItem(in core::DOMString item)
+            raises(core::DOMException, SVGException);
+    };
+
+}
