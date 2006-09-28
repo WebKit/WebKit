@@ -1,5 +1,14 @@
 2006-09-28  David Harrison  <harrison@apple.com>
 
+        Suggested by Darin.
+        
+        Moved an extern declaration from inside a method to the top of the file.
+
+        * DumpRenderTree/EventSendingController.m:
+        (-[EventSendingController clearKillRing]):
+
+2006-09-28  David Harrison  <harrison@apple.com>
+
         Reviewed by Justin.
         
         Add clearKillRing so we can test emacs support with empty kill ring.

@@ -37,6 +37,8 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/DOMPrivate.h>
 
+extern void _NSNewKillRingSequence();
+
 NSPoint lastMousePosition;
 NSArray *webkitDomEventNames;
 
@@ -136,8 +138,6 @@ NSArray *webkitDomEventNames;
 
 - (void)clearKillRing
 {
-    extern void _NSNewKillRingSequence();
-    
     _NSNewKillRingSequence();
 }
 
