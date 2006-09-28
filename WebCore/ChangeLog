@@ -1,5 +1,11 @@
 2006-09-28  Alice Liu  <alice.liu@apple.com>
 
+        Build fix by adding missing files for CommandByName
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2006-09-28  Alice Liu  <alice.liu@apple.com>
+
         Adding CommandByName files to the vcproj
 
         * WebCore.vcproj/WebCore/WebCore.vcproj:
