@@ -1,5 +1,11 @@
 2006-09-29  Adele Peterson  <adele@apple.com>
 
+        Fixing accidental include.
+
+        * rendering/RenderListBox.cpp:
+
+2006-09-29  Adele Peterson  <adele@apple.com>
+
         Adding RenderListBox files.
 
         * WebCore.vcproj/WebCore/WebCore.vcproj:
