@@ -12,7 +12,7 @@
 
         Reviewed by Tim H.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10394
+        http://bugs.webkit.org/show_bug.cgi?id=10394
         Bug 10394: WebKit Release and Production configurations should enable dead code stripping
 
         * JavaScriptGlue.xcodeproj/project.pbxproj:
@@ -21,7 +21,7 @@
 
         Reviewed by Tim H.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10384
+        http://bugs.webkit.org/show_bug.cgi?id=10384
         Bug 10384: Switch to DWARF for Release configuration
 
         * JavaScriptGlue.xcodeproj/project.pbxproj:
@@ -30,7 +30,7 @@
 
         Reviewed by Darin.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10192
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10192
           Make WebCore (and friends) compile with -Wshorten-64-to-32
 
           * Adds -Wshorten-64-to-32 flag to Xcode project.
@@ -41,7 +41,7 @@
 
         Reviewed by Darin.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10176
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10176
           Make WebCore compile with -Wundef
 
           * Adds -Wundef flag to Xcode project
@@ -52,7 +52,7 @@
 
         Reviewed by Darin.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10080
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10080
           Adopt pedantic changes from the Unity project to improve 
           cross-compiler compatibility
 
@@ -320,7 +320,7 @@
         Not reviewed, but I noticed these trivial extra changes were needed to avoid
         breaking the build with my reviewed patch for:
         
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7387
+        http://bugs.webkit.org/show_bug.cgi?id=7387
         
         Add config.h, includes of it, and Platform.h forwarding header.
 
@@ -393,7 +393,7 @@
 
         Reviewed by Geoff Garen and Eric Seidel.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4923
+        - fix http://bugs.webkit.org/show_bug.cgi?id=4923
           stop using <ostream> in WebCore, eliminating the <cmath> troubles it causes
 
         * kxmlcore/AlwaysInline.h: Added.
