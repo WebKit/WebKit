@@ -125,7 +125,7 @@
 
         Reviewed by john
         
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7165>
+        <http://bugs.webkit.org/show_bug.cgi?id=7165>
         TinyMCE: Dragging & dropping content always leaves a copy when editing inside a subframe
         
         The top level WebHTMLView is responsible for performing dragging operations, but
@@ -207,7 +207,7 @@
 
         Reviewed by Tim O.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10661
+        http://bugs.webkit.org/show_bug.cgi?id=10661
         REGRESSION: CFM plug-ins (Shockwave, SVG) are not loaded
 
         * Plugins/WebBasePluginPackage.m:
@@ -227,7 +227,7 @@
 
         Reviewed by Tim H.
 
-        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10903
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=10903
         Yet Another Objective-C Bindings Patch
 
         * MigrateHeaders.make:
@@ -297,7 +297,7 @@
 
         Reviewed by Anders.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10887
+        http://bugs.webkit.org/show_bug.cgi?id=10887
         Fix build error
 
         * MigrateHeaders.make: Remove reference to DOMEventPrivate.h.
@@ -314,7 +314,7 @@
 
         Reviewed by Tim H.
 
-        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10870
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=10870
         Auto-generate DOMNode for the Objective-C bindings
 
         * MigrateHeaders.make:
@@ -374,7 +374,7 @@
 
         Reviewed by eseidel.
 
-        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10876
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=10876
         containsItemForURLUnicode uses matchLetter instead of
         matchUnicodeLetter
 
@@ -420,7 +420,7 @@
 
         Reviewed/landed by aroben.
 
-        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10765
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=10765
         Windows build busted due to std::copy usage in Vector.h
 
         * WebKit.vcproj/WebKit.vcproj: Define _SCL_SECURE_NO_DEPRECATE to get
@@ -438,7 +438,7 @@
 
         Reviewed by Brady.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10547
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10547
           REGRESSION: Links that should open in a new window open in the same window,
           while opening another blank window
 
@@ -455,7 +455,7 @@
 
         Reviewed by Eric.
 
-        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10795
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=10795
         Auto-generate the Objective-C DOM XPath bindings
 
         * MigrateHeaders.make:
@@ -464,7 +464,7 @@
 
         Reviewed by Eric.
 
-        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10791
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=10791
         Even More Objective-C DOM auto-generation cleanup
 
         * MigrateHeaders.make:
@@ -499,7 +499,7 @@
 
         Reviewed by Darin and Tim H.
 
-        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10774
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=10774
         Auto-generate the Objective-C DOM Traversal bindings
 
         * MigrateHeaders.make:
@@ -508,7 +508,7 @@
 
         Reviewed by Darin.
 
-        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10766
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=10766
         Auto-generate the Objective-C DOM Events bindings
 
         * MigrateHeaders.make:
@@ -571,7 +571,7 @@
         Reviewed by Darin.
 
         Bug 10714: ObjC autogeneration needs safe-guards against easily modifying the public API
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10714
+        http://bugs.webkit.org/show_bug.cgi?id=10714
 
         - Added the new private DOM headers.
         - Factored out the common commands into variables.
@@ -585,7 +585,7 @@
 
         Reviewed by Darin and Tim H.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10711
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10711
           Auto-generate the Objective-C DOM Stylesheet bindings
 
         * MigrateHeaders.make:
@@ -594,7 +594,7 @@
 
         Reviewed by Tim H.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10684
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10684
           Auto-generate the Objective-C DOM CSS bindings
 
         * MigrateHeaders.make:
@@ -603,7 +603,7 @@
 
         Reviewed by Darin. Updated/landed by Adam.
 
-        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=10553
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=10553
         Windows build fixes
 
         * COM/WebFrame.cpp:
@@ -646,7 +646,7 @@
         Reviewed by Adele.
 
         Bug 10677: Omit "-webkit-text-security: none;" from the computed style list
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10677
+        http://bugs.webkit.org/show_bug.cgi?id=10677
 
         * WebInspector/webInspector/inspector.js:
 
@@ -654,7 +654,7 @@
 
         Reviewed by Tim H.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10669
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10669
           Auto-generate the remaining Objective-C HTML DOM bindings
 
         * MigrateHeaders.make:
@@ -663,7 +663,7 @@
 
         Reviewed by Darin.
 
-        WebKit part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10666
+        WebKit part of fix for http://bugs.webkit.org/show_bug.cgi?id=10666
         Password: Disallow Spelling, Font, Speech, and Writing Direction context menu
 
         * DefaultDelegates/WebDefaultContextMenuDelegate.m: (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
@@ -676,7 +676,7 @@
 
         Reviewed by Tim H.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10653
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10653
           Auto-generate another 20 Objective-C DOM HTML bindings
 
         * MigrateHeaders.make:
@@ -707,7 +707,7 @@
 
         Reviewed by Hyatt.
 
-        WebKit part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10575
+        WebKit part of fix for http://bugs.webkit.org/show_bug.cgi?id=10575
         Enable secure input mode for new password fields
 
         * WebCoreSupport/WebSystemInterface.m: (InitWebCoreSystemInterface):
@@ -740,7 +740,7 @@
 
         Reviewed by Tim H.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10640
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10640
           Auto-generate 10 more Objective-C DOM HTML bindings
 
         * WebKit.xcodeproj/project.pbxproj:
@@ -750,7 +750,7 @@
         Reviewed by Darin.
 
         WebKit part of fix for:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10576
+        http://bugs.webkit.org/show_bug.cgi?id=10576
         Disallow copy from new password fields
 
         * WebView/WebHTMLView.m:
@@ -764,7 +764,7 @@
         Reviewed by Eric and Tim H.
 
         Bug 10634: -webView:dragDestinationActionMaskForDraggingInfo: is ignored
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10634
+        http://bugs.webkit.org/show_bug.cgi?id=10634
         
         Remove the check for canShowFile: from _web_bestURL: since
         it shouldn't be concerned with whether or not the view
@@ -821,7 +821,7 @@
 
         Reviewed by Tim H.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10628
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10628
           Auto-generate the remaining Objective-C DOM bindings
 
           Auto-generates DOMHTMLCollection, DOMHTMLElement, DOMHTMLFormElement,
@@ -881,7 +881,7 @@
         Reviewed by John Sullivan.
 
         Part of <rdar://problem/4481553> NetscapeMoviePlugIn example code scripting doesn't work in Firefox (4319)
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4319>: NetscapeMoviePlugIn example code scripting doesn't work
+        <http://bugs.webkit.org/show_bug.cgi?id=4319>: NetscapeMoviePlugIn example code scripting doesn't work
         in Firefox
 
         * Plugins/WebBaseNetscapePluginView.h:
@@ -964,7 +964,7 @@
 
         Reviewed by Tim H.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=4624
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=4624
           WebCore needs autogenerated Obj-C DOM bindings
 
           First round of auto-generated Objective C DOM bindings, starting
@@ -1026,7 +1026,7 @@
         Reviewed by Adele.
         
         - fix assertion which I accidentally changed to one that sometimes fails
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10531
+        http://bugs.webkit.org/show_bug.cgi?id=10531
         
         * Loader/WebDocumentLoadState.m:
         (-[WebDocumentLoadState dealloc]):
@@ -1470,7 +1470,7 @@
 
         Reviewed by Darin Adler.
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8980>
+        <http://bugs.webkit.org/show_bug.cgi?id=8980>
         ASSERTION FAILED: !isLoaded (WebKit/WebKit/Plugins/WebBasePluginPackage.m:228 -[WebBasePluginPackage dealloc])
 
         <rdar://problem/4526052> intermittent assertion failure in -[WebBasePluginPackage dealloc] running layout tests (8980)
@@ -1570,7 +1570,7 @@
 
         Reviewed by Tim H.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10394
+        http://bugs.webkit.org/show_bug.cgi?id=10394
         Bug 10394: WebKit Release and Production configurations should enable dead code stripping
 
         * WebKit.xcodeproj/project.pbxproj:
@@ -1594,7 +1594,7 @@
 
         Reviewed by Tim H.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10384
+        http://bugs.webkit.org/show_bug.cgi?id=10384
         Bug 10384: Switch to DWARF for Release configuration
 
         * WebKit.xcodeproj/project.pbxproj:
@@ -1603,7 +1603,7 @@
 
         Reviewed by Darin.
         
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10314
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10314
           WebUnarchivingState archivedResourceForURL: doesn't work
 
         * WebView/WebUnarchivingState.m:
@@ -1635,7 +1635,7 @@
         Reviewed by Tim Omernick.
         
         - fixed REGRESSION: crash when leaving youtube page while movie is still loading
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10398
+        http://bugs.webkit.org/show_bug.cgi?id=10398
 
         * Loader/WebNetscapePlugInStreamLoader.m:
         (-[WebNetscapePlugInStreamLoader initWithStream:view:]): Set the frame loader for this stream.
@@ -1785,7 +1785,7 @@
 
         Reviewed by Darin.
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=10111> - Menu flickers over Flash content
+        <http://bugs.webkit.org/show_bug.cgi?id=10111> - Menu flickers over Flash content
         <rdar://problem/3052546> Plugins don't work with z-index (overlapping elements, etc.)
 
         * Plugins/WebBaseNetscapePluginView.m:
@@ -1871,7 +1871,7 @@
 
         Reviewed by Darin.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10192
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10192
           Make WebCore (and friends) compile with -Wshorten-64-to-32
 
           * Adds 'f' to float literals where expecting a float.
@@ -2117,7 +2117,7 @@
 
         Reviewed by Darin.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10176
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10176
           Make WebCore compile with -Wundef
 
           * Adds -Wundef flag to Xcode project
@@ -2164,7 +2164,7 @@
         Reviewed by Darin.
 
         Bug 10200: [Drosera] Deadlock between Drosera and Safari while loading page
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10200
+        http://bugs.webkit.org/show_bug.cgi?id=10200
 
         Prevent reentrancy in our debugger callbacks. This was causing a deadlock in Drosera because
         suspendProcessIfPaused was being called during a DO call into Safari.
@@ -2414,7 +2414,7 @@
 
         Reviewed by Darin.
 
-        Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=10159>
+        Fixes <http://bugs.webkit.org/show_bug.cgi?id=10159>
         "REGRESSION: delegate returning no menu elements crashes webkit"
 
         No automated test, because there's no way to programmatically open a context menu,
@@ -2441,7 +2441,7 @@
 
         Reviewed by Tim Hatcher.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10168
+        - http://bugs.webkit.org/show_bug.cgi?id=10168
           add a first cut at a Metrics pane to the inspector
 
         * WebInspector/webInspector/inspector.css: Add styles for the new metrics pane.
@@ -2470,7 +2470,7 @@
 
         Reviewed by Tim Hatcher.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10163
+        - http://bugs.webkit.org/show_bug.cgi?id=10163
           some improvements for the inspector
 
         * WebInspector/WebInspector.m:
@@ -2542,7 +2542,7 @@
 
         Reviewed by Darin.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10080
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10080
           Adopt pedantic changes from the Unity project to improve 
           cross-compiler compatibility
 
@@ -2558,7 +2558,7 @@
 
         Reviewed by John Sullivan.
 
-         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9984
+         - fix http://bugs.webkit.org/show_bug.cgi?id=9984
           ASSERTION FAILURE: _private->mouseDownEvent != nil
           (WebKit/WebView/WebHTMLView.m:4863 -[WebHTMLView(WebInternal) _delegateDragSourceActionMask])
 
@@ -2637,7 +2637,7 @@
         Reviewed by Geoff.
         
         - fix <rdar://problem/4609195> Help Viewer loads empty window (not getting didFailLoadingWithError: callback)
-        (without re-introducing http://bugzilla.opendarwin.org/show_bug.cgi?id=10062 )
+        (without re-introducing http://bugs.webkit.org/show_bug.cgi?id=10062 )
 
         * WebView/WebLoader.h:
         * WebView/WebMainResourceLoader.m:
@@ -2679,7 +2679,7 @@
 
         Reviewed by Darin.
 
-        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10009
+        Fix http://bugs.webkit.org/show_bug.cgi?id=10009
         REGRESSION: Schubert-IT PDF Plug-in not working for full page (works in frames)
 
         * WebView/WebView.m:
@@ -2691,7 +2691,7 @@
         Reviewed by Maciej.
 
         Bug 9686: [Drosera] Need the ability to break into Drosera on Javascript exceptions
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9686
+        http://bugs.webkit.org/show_bug.cgi?id=9686
 
         WebKit portion of the fix.
 
@@ -2721,7 +2721,7 @@
         Rolling out r15572.
         
         Bug 10062: REGRESSION: dom/xhtml/level2/html/HTMLIFrameElement11.xhtml asserts/crashes
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10062
+        http://bugs.webkit.org/show_bug.cgi?id=10062
 
     2006-07-21  Timothy Hatcher  <timothy@apple.com>
 
@@ -2882,7 +2882,7 @@
         Reviewed by levi
         
         Rolled the first fix for:
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9642>
+        <http://bugs.webkit.org/show_bug.cgi?id=9642>
         GMail Editor: Operations that use drop down menus blow away the selection
         back in and removed the call to _clearSelectionInOtherFrames from 
         -[WebHTMLView becomeFirstResponder] to fix the bug.
@@ -2897,7 +2897,7 @@
 
         Reviewed by John Sullivan.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9928
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9928
           REGRESSION: Text Encoding menu inoperative (after gcc protocol build fix)
 
         * WebView/WebHTMLView.m:
@@ -2936,7 +2936,7 @@
 
         Reviewed by levi & thatcher
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9642>
+        <http://bugs.webkit.org/show_bug.cgi?id=9642>
         GMail Editor: Operations that use drop down menus blow away the selection
 
         * WebView/WebHTMLView.m:
@@ -2967,7 +2967,7 @@
 
         Reviewed by Adele.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9625
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9625
           <rdar://problem/4604703>
           REGRESSION: Focus not removed from password field after ctrl-click in text field
 
@@ -2986,10 +2986,10 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9795
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9795
           REGRESSION: Crash in [WebHTMLView(WebPrivate) 
           _updateMouseoverWithEvent:]
-          and http://bugzilla.opendarwin.org/show_bug.cgi?id=9850
+          and http://bugs.webkit.org/show_bug.cgi?id=9850
           REGRESSION: Assertion failure (SHOULD NEVER BE REACHED) in -
           [WebHTMLView(WebPrivate) removeTrackingRect:]
 
@@ -3037,7 +3037,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9624
+        http://bugs.webkit.org/show_bug.cgi?id=9624
         REGRESSION: After ctrl-clicking in a EMPTY input or textarea field, the contextual menu shows "Search in Google" and "Search in Spotlight" as active menu items
 
         * DefaultDelegates/WebDefaultContextMenuDelegate.m:
@@ -3048,7 +3048,7 @@
 
         Reviewed by Timothy.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9868
+        http://bugs.webkit.org/show_bug.cgi?id=9868
         Applications shown in Drosera's "Attach" window remain after exit
 
         * DefaultDelegates/WebScriptDebugServer.m:
@@ -3105,7 +3105,7 @@
 
         Reviewed by Geoff.
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9843>:
+        <http://bugs.webkit.org/show_bug.cgi?id=9843>:
         Give Netscape plug-ins access to their own DOM element
 
         * Plugins/WebBaseNetscapePluginView.h:
@@ -3130,7 +3130,7 @@
 
         Reviewed by levi & thatcher
         
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9642>
+        <http://bugs.webkit.org/show_bug.cgi?id=9642>
         GMail Editor: Operations that use drop down menus blow away the selection
         
         * WebView/WebHTMLView.m:
@@ -3158,7 +3158,7 @@
 
         Reviewed by Tim O.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7808
+        - http://bugs.webkit.org/show_bug.cgi?id=7808
         Assertion failure in -[WebBaseNetscapePluginStream dealloc] when requesting an invalid URL
 
         * Plugins/WebNetscapePluginStream.m:
@@ -3171,7 +3171,7 @@
 
         Reviewed by John Sullivan.
 
-        - fix <rdar://problem/4621541>, aka <http://bugzilla.opendarwin.org/show_bug.cgi?id=9838>
+        - fix <rdar://problem/4621541>, aka <http://bugs.webkit.org/show_bug.cgi?id=9838>
           REGRESSION (r14968-r14977): View Source doesn't work for pages from the back/forward cache
 
         * WebView/WebDataSource.m:
@@ -3238,7 +3238,7 @@
         Reviewed by Darin.
 
         Bug 9820: Move new DOM API that has been through API review to public headers
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9820
+        http://bugs.webkit.org/show_bug.cgi?id=9820
 
         * Misc/WebElementDictionary.m: include DOMExtensions.h
         * Misc/WebNSViewExtras.m: include DOMExtensions.h
@@ -3249,7 +3249,7 @@
         Reviewed by Kevin.
 
         Bug 9818: move new UIDelegate API that has been through API review to public headers
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9818
+        http://bugs.webkit.org/show_bug.cgi?id=9818
 
         <rdar://problem/4387541> API: Remove webView:setContentRect: & webViewContentRect: delegate methods?
         The fix for 4310363 removed the only use of webViewContentRect: in our code. webView:setContentRect:
@@ -3271,7 +3271,7 @@
         Reviewed by Darin.
 
         Bug 9814: Move new WebView API that has been through API review to public headers
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9814
+        http://bugs.webkit.org/show_bug.cgi?id=9814
 
         * WebView/WebView.h:
         * WebView/WebView.m:
@@ -3299,7 +3299,7 @@
         Reviewed by Maciej.
 
         Bug 9487: The XPath section should be removed and/or moved.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9487
+        http://bugs.webkit.org/show_bug.cgi?id=9487
 
         * WebInspector/webInspector/inspector.css:
         * WebInspector/webInspector/inspector.html:
@@ -3454,7 +3454,7 @@
         Reviewed by Maciej.
 
         Bug 5312: comments aren't available via DOM
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5312
+        http://bugs.webkit.org/show_bug.cgi?id=5312
 
         Makes the Web Inspector show comment node contents.
 
@@ -3466,7 +3466,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9572
+        - http://bugs.webkit.org/show_bug.cgi?id=9572
         Add application/xhtml+xml to the Accept header
 
         * WebView/WebFrame.m:
@@ -3564,7 +3564,7 @@
 
         Reviewed by Maciej.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3581
+        http://bugs.webkit.org/show_bug.cgi?id=3581
         iFrames set to display:none are Missing from frames array
         
         * WebCoreSupport/WebFrameBridge.m:
@@ -3591,7 +3591,7 @@
         Reviewed by Maciej.
 
         Bug 9731: [Drosera] crash when trying to access the scope chain
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9731
+        http://bugs.webkit.org/show_bug.cgi?id=9731
 
         Because of <rdar://problem/4608404> the WebScriptObject, _globalObj, that
         WebCoreScriptDebugger holds is unprotected each time the page changes.
@@ -3610,7 +3610,7 @@
 
         Bug 9732: [Drosera] calling removeListener to many times will cause
                   WebKit's listener count to underflow/wraparound
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9732
+        http://bugs.webkit.org/show_bug.cgi?id=9732
 
         Adds a check to make sure the listener was in our listeners set before
         decrementing the global listener count. Also checks for nil in addListner
@@ -3624,7 +3624,7 @@
 
         Reviewed by Maciej.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8210
+        - http://bugs.webkit.org/show_bug.cgi?id=8210
         Conditional XMLHttpRequest gets should pass 304 responses unchanged
 
         Test: http/tests/xmlhttprequest/cache-override.html
@@ -3864,7 +3864,7 @@
 
         Reviewed by justin
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7568
+        http://bugs.webkit.org/show_bug.cgi?id=7568
         Bug 7568: Implement Indent/Outdent
         Added undo action strings and enum values
 
@@ -3912,7 +3912,7 @@
         Reviewed by Darin.
 
         Bug 9574: Drosera should show inline scripts within the original HTML
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9574
+        http://bugs.webkit.org/show_bug.cgi?id=9574
 
         * Adds a new version of the didParseSource delegate callback with base line number.
         * Adds a new delegate callback for when a script fails to parse.
@@ -3946,7 +3946,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9418
+        - http://bugs.webkit.org/show_bug.cgi?id=9418
         WebKit will not build when Space exists in path
 
         * WebKit.xcodeproj/project.pbxproj: Enclose search paths in quotes.
@@ -3984,7 +3984,7 @@
         Reviewed by Geoff.
 
         script debugger should only attach to JavaScriptCore when there are listeners
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9552
+        http://bugs.webkit.org/show_bug.cgi?id=9552
 
         Attaches the debugger to all WebFrames when the first listener
         is added. Detaches when the last listener is removed.
@@ -4263,7 +4263,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=5499
+        - http://bugs.webkit.org/show_bug.cgi?id=5499
         Page reload does not send any cache control headers
 
         * WebView/WebFrame.m:
@@ -4290,7 +4290,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9452
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9452
           Assertion failure in -[WebFramePrivate setProvisionalDataSource:]
 
         * WebView/WebFrame.m:
@@ -4301,7 +4301,7 @@
 
         Reviewed by xenon.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9479
+        - http://bugs.webkit.org/show_bug.cgi?id=9479
           Disassociate the inspector from the frame when it detaches from its parent
 
         * WebInspector/WebInspector.m:
@@ -4334,7 +4334,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9466
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9466
           Assertion failure when dragging an image from the document into Safari's address bar
 
         * WebView/WebFrameView.m:
@@ -4431,7 +4431,7 @@
 
         Reviewed by justin
         
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7580>
+        <http://bugs.webkit.org/show_bug.cgi?id=7580>
         TinyMCE: Implement execCommand(formatBlock, ...)
         
         * English.lproj/Localizable.strings:
@@ -4477,7 +4477,7 @@
 
         Reviewed by Geoff.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9406
+        http://bugs.webkit.org/show_bug.cgi?id=9406
         REGRESSION: fix for bug 9390 broke two layout tests
 
         * Plugins/WebPluginDatabase.h:
@@ -4556,7 +4556,7 @@
 
         Reviewed by Tim H.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8672
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8672
           Red outline from web inspector reappears after inspector is closed
 
         * WebInspector/WebInspector.m:
@@ -4571,7 +4571,7 @@
 
         Reviewed by Tim.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9390
+        http://bugs.webkit.org/show_bug.cgi?id=9390
         Move full-frame plugins to WebCore
 
         * Plugins/WebBaseNetscapePluginStream.h:
@@ -4690,7 +4690,7 @@
 
 2006-06-10  Graham Dennis  <Graham.Dennis@gmail.com>
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9384>
+        <http://bugs.webkit.org/show_bug.cgi?id=9384>
         WebView's initWithCoder: method does not set useBackForwardList
         correctly
         
@@ -4730,7 +4730,7 @@
 
         Reviewed by levi
         
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4468>
+        <http://bugs.webkit.org/show_bug.cgi?id=4468>
         Implement execCommand(Insert{Un}OrderedList)
 
         * WebView/WebFrame.m:
@@ -4777,7 +4777,7 @@
 
         Reviewed by Justin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8616
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8616
           REGRESSION: TinyMCE: Crash on Undo
 
         * WebView/WebHTMLView.m:
@@ -5266,7 +5266,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6309
+        http://bugs.webkit.org/show_bug.cgi?id=6309
         multiple problems prevent bookmarking/back button technique for AJAX/DHTML applications from working
 
         * Misc/WebNSURLExtras.m:
@@ -5287,7 +5287,7 @@
         Reviewed by Anders.
         
         - fixed "REGRESSION: Can't order from Pizza Hut (ToT, 05/24/06)"
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9103
+        http://bugs.webkit.org/show_bug.cgi?id=9103
 
         * WebView/WebDataSource.m:
         (-[WebDataSource _willSendRequest:forResource:redirectResponse:]): Set up the
@@ -5342,7 +5342,7 @@
 
         Reviewed by Anders.
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8347>
+        <http://bugs.webkit.org/show_bug.cgi?id=8347>
         REGRESSION: Flash movie audible but not visible until window is resized
 
         * Plugins/WebNetscapePluginDocumentView.m:
@@ -5552,7 +5552,7 @@
         Reviewed by Anders.
 
         Bug 9018: REGRESSION: resizing the top area of the inspector does not grow as expected
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9018
+        http://bugs.webkit.org/show_bug.cgi?id=9018
         
         Use clientHeight now that offsetHeight includes the border and padding.
         clientHeight should have been used initially.
@@ -5565,7 +5565,7 @@
         Reviewed by Eric.
         
         - remove loading-related code from WebView
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8981
+        http://bugs.webkit.org/show_bug.cgi?id=8981
 
         * Plugins/WebNetscapePluginStream.m:
         (-[WebNetscapePlugInStreamLoader didFinishLoading]):
@@ -5717,7 +5717,7 @@
 
         Reviewed by Hyatt.
 
-        WebKit part of initial checkin to prepare for http://bugzilla.opendarwin.org/show_bug.cgi?id=8948
+        WebKit part of initial checkin to prepare for http://bugs.webkit.org/show_bug.cgi?id=8948
         Switch to use new text field implementation for <textarea>
 
         * WebView/WebHTMLView.m:
@@ -5759,7 +5759,7 @@
 
         Reviewed by Tim Hatcher.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8945 (REGRESSION: Scrolling is very slow when dragging
+        http://bugs.webkit.org/show_bug.cgi?id=8945 (REGRESSION: Scrolling is very slow when dragging
         the thumb)
 
         Rolled out one of my tweaks to the window display throttle hack (remember the last flush time instead
@@ -5809,7 +5809,7 @@
 
         Reviewed by Anders.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8940
+        - http://bugs.webkit.org/show_bug.cgi?id=8940
           remove extra copy of image code
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for many recent changes.
@@ -5874,9 +5874,9 @@
 
         Reviewed by Hyatt.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8898
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8898
           REGRESSION: Attempting to right-click image in own tab on website causes crash
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8919
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8919
           REGRESSION: image could not be dragged, subsequent click-drag activity caused crash
 
         These fixes may become obsolete when Anders lands his standalone image viewer
@@ -5897,7 +5897,7 @@
 
         Reviewed by Maciej.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8921
+        http://bugs.webkit.org/show_bug.cgi?id=8921
         Use WebCore to render full-frame images
         
         * WebCoreSupport/WebFrameBridge.m:
@@ -6106,7 +6106,7 @@
 
         Reviewed by Maciej.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8913
+        http://bugs.webkit.org/show_bug.cgi?id=8913
         REGRESSION: Can view source for text files
 
         * WebView/WebDocumentPrivate.h:
@@ -6123,7 +6123,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8739
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8739
           Crash in RenderTableSection::paint due to manipulating DOM on resize
 
         Manual test: manual-tests/dom-manipulation-on-resize.html
@@ -6136,7 +6136,7 @@
 
         Reviewed by Brady.
         
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8876
+        http://bugs.webkit.org/show_bug.cgi?id=8876
         - move most private WebDataSource methods to uninstalled header
         
         I put the declarations for the ones only used in WebKit in WebDataSourceInternal.h
@@ -6174,7 +6174,7 @@
         Reviewed by John Sullivan.
 
         <rdar://problem/4542808> REGRESSION: benchjs test 1 has slowed by over 150% (8740)
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8740>
+        <http://bugs.webkit.org/show_bug.cgi?id=8740>
 
         Improvement to my NSWindow display throttle hack.  Remember the last flush time instead of the last display time.
         Our goal is to never draw less than 1/60th of a second after the window is flushed in order to avoid blocking on
@@ -6200,7 +6200,7 @@
         Reviewed by Darin.
 
         Bug 8856: Web Inspector should show the Xpath for the selected node
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8856
+        http://bugs.webkit.org/show_bug.cgi?id=8856
         
         Adds an Xpath area to the Node panel.
 
@@ -6214,7 +6214,7 @@
 
         Fixes <rdar://problem/4411845> lots of SPOD trying to scroll through
         Markup & Content inspecting body at apple.com (6614)
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6614
+        http://bugs.webkit.org/show_bug.cgi?id=6614
 
         Removed the Markup & Content pane when viewing a element.
         This pane was not that useful and made the inspector really slow
@@ -6228,7 +6228,7 @@
 
         Reviewed by Timothy.
 
-        Patch for <http://bugzilla.opendarwin.org/show_bug.cgi?id=8810>
+        Patch for <http://bugs.webkit.org/show_bug.cgi?id=8810>
         Bug 8810: Scrollbars in WebInspector rendered incorrectly
 
         * WebInspector/webInspector/inspector.css: 
@@ -6239,7 +6239,7 @@
         Reviewed by Darin.
 
         <rdar://problem/4542808> REGRESSION: benchjs test 1 has slowed by over 150% (8740)
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8740>
+        <http://bugs.webkit.org/show_bug.cgi?id=8740>
 
         * Misc/WebNSWindowExtras.h:
         * Misc/WebNSWindowExtras.m:
@@ -6315,7 +6315,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8808
+        http://bugs.webkit.org/show_bug.cgi?id=8808
         WebCore should handle text files
 
         * WebKit.exp:
@@ -6364,7 +6364,7 @@
         Reviewed by Anders.
 
         Bug 8804: Inspector should support searching by Xpath query
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8804
+        http://bugs.webkit.org/show_bug.cgi?id=8804
 
         * WebInspector/WebInspector.m:
         (-[WebInspector _refreshSearch]):
@@ -6376,7 +6376,7 @@
         
         - refactor things so that WebKit doesn't save a WebResource for every loaded URL,
         but rather retrieves the data from the WebCore cache as needed.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8802
+        http://bugs.webkit.org/show_bug.cgi?id=8802
 
         * WebCoreSupport/WebFrameBridge.m:
         (-[WebFrameBridge objectLoadedFromCacheWithURL:response:data:]):
@@ -6407,7 +6407,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8594
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8594
           REGRESSION: Exception on closing a page containing (just) an mp3
 
         Test: plugins/pluginDocumentView-deallocated-dataSource.html
@@ -6454,7 +6454,7 @@
 
         Reviewed by Eric.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8677
+        - http://bugs.webkit.org/show_bug.cgi?id=8677
           REGRESSION: wkSetUpFontCache() may be called before the SPIs are connected.
 
         I don't know how reproduce this without one of Rosyna's hacks installed, so I
@@ -6470,7 +6470,7 @@
 
         Reviewed by Tim O.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6988
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6988
         REGRESSION: Display correct context menus for new text fields
 
         * WebView/WebView.m: (-[WebView _menuForElement:defaultItems:]):
@@ -6480,7 +6480,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8658
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8658
           Assertion failure in -[WebPluginContainerCheck _isForbiddenFileLoad]
           (bridge is null) when clicking QuickTime object with href
 
@@ -6535,7 +6535,7 @@
         Reviewed by Maciej.
 
         Bug 8577: [TabBarView _web_superviewOfClass:stoppingAtClass:]
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8577
+        http://bugs.webkit.org/show_bug.cgi?id=8577
 
         Added back _web_superviewOfClass:stoppingAtClass:.
         This method was removed in r14032 (bug 8562), but Safari 2.0 still uses it.
@@ -6592,7 +6592,7 @@
         Reviewed by darin.
 
         Misc. style cleanup.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8643
+        http://bugs.webkit.org/show_bug.cgi?id=8643
 
         * Misc/WebIconDatabase.m:
         (-[NSMutableDictionary iconForURL:withSize:cache:]):
@@ -6655,7 +6655,7 @@
         Reviewed by Geoff.
 
         <rdar://problem/4525105> Repro TOT crash in [WebBaseNetscapePluginView dealloc] at coachella.com
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8564> crashed when closing a tab
+        <http://bugs.webkit.org/show_bug.cgi?id=8564> crashed when closing a tab
 
         * WebView/WebFrame.m:
         (-[WebFramePrivate dealloc]):
@@ -6832,7 +6832,7 @@
         Reviewed by Anders.
         
         - Remove use of _webSuperviewOfClass: and related
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8562
+        http://bugs.webkit.org/show_bug.cgi?id=8562
         
         I removed all use of these, now objects get at each other via
         actual pointers, not using the view hierarchy. However, I left two
@@ -6931,7 +6931,7 @@
         Reviewed by Darin.
         
         - push WebFileButton and WebStringTruncator code down to WebCore
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8552
+        http://bugs.webkit.org/show_bug.cgi?id=8552
 
         * Misc/WebStringTruncator.m:
         (+[WebStringTruncator centerTruncateString:toWidth:]):
@@ -7138,7 +7138,7 @@
 
         Reviewed by Eric.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8514
+        http://bugs.webkit.org/show_bug.cgi?id=8514
         Bug 8514: Web Inspector hides when the app is in the background
 
         Makes the inspector not hide in the background. Since the inspector is a floating panel
@@ -7157,7 +7157,7 @@
 
         Reviewed by Darin.
 
-        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8181
+        - Fix for http://bugs.webkit.org/show_bug.cgi?id=8181
         REGRESSION: After tabbing in page's field, attempting to tab from Google toolbar search to page fails on first try
 
         Test: manual-tests/tabbing-input-google.html
@@ -7190,10 +7190,10 @@
         Reviewed by Darin.
 
         WebKit part of:
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8276
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8276
           REGRESSION (NativeTextField): Pasting a Finder item into a text field results in
             a file: URL being pasted instead of just the file name
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8283
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8283
           REGRESSION: File's path doesn't appear after dragging file into input field
 
         * WebView/WebHTMLView.m:
@@ -7216,7 +7216,7 @@
 
         Reviewed by Adele.
 
-        - WebKit part of http://bugzilla.opendarwin.org/show_bug.cgi?id=8505
+        - WebKit part of http://bugs.webkit.org/show_bug.cgi?id=8505
           eliminate WebCoreGraphics bridge, demonstrate new SystemInterface technique
 
         * WebCoreSupport/WebGraphicsBridge.h: Removed.
@@ -7241,7 +7241,7 @@
 
         Reviewed by Timothy.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8442
+        http://bugs.webkit.org/show_bug.cgi?id=8442
         Bug 8442: improvements to Cocoa bindings support in WebView - code simplification
 
         Removes the WebController class added earlier; changes NSTreeController and 
@@ -7266,7 +7266,7 @@
 
         Reviewed by Timothy.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6635
+        http://bugs.webkit.org/show_bug.cgi?id=6635
         Bug 6635: Crash selecting inspector nodes for tabs that aren't foremost
 
         Stop observing window will close notifications before we tell the highlight window to close,
@@ -7281,7 +7281,7 @@
 
         Reviewed by Timothy.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6637
+        http://bugs.webkit.org/show_bug.cgi?id=6637
         Bug 6637: selecting node in Inspector after closing window crashes Safari
 
         When the window the Web Inspector was inspecting is closed, the inspector goes into its
@@ -7311,7 +7311,7 @@
 
         Reviewed by Darin.
 
-        - WebKit part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8324
+        - WebKit part of fix for http://bugs.webkit.org/show_bug.cgi?id=8324
           REGRESSION: textarea :focus not applied immediately
 
         * WebCoreSupport/WebFrameBridge.m:
@@ -7329,7 +7329,7 @@
         Reviewed by Timothy.
 
         Bug 8389: support for Cocoa bindings - binding an NSTreeController to the WebView's DOM
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8389
+        http://bugs.webkit.org/show_bug.cgi?id=8389
 
         Added a controller class, WebController, that is a subclass of
         NSTreeController that has a new outlet/binding for the WebView.
@@ -7443,7 +7443,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8100
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8100
           REGRESSION (NativeTextField): Right-aligned and RTL text jitters in new text fields
 
         * WebCoreSupport/WebTextRenderer.m:
@@ -7460,7 +7460,7 @@
 
         Reviewed by Adele Peterson.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=8260
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=8260
         REGRESSION: Assertion failure: ![_private->iconsToSaveWithURLs containsObject:iconURLString] 
         in WebIconDatabase.m:695-[WebIconDatabase(WebInternal) _retainIconForIconURLString:]
 
@@ -7544,7 +7544,7 @@
         Reviewed by Eric.
         
         - start on factoring WebArchive unpacking more into a separate class.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8208
+        http://bugs.webkit.org/show_bug.cgi?id=8208
         
         * WebKit.xcodeproj/project.pbxproj:
         * WebView/WebDataSource.m:
@@ -7604,7 +7604,7 @@
 
         Reviewed by Maciej.
 
-        fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8121
+        fix http://bugs.webkit.org/show_bug.cgi?id=8121
         REGRESSION: 404s are not displayed
 
         * WebView/WebMainResourceLoader.m:
@@ -7617,9 +7617,9 @@
 
         - fixed <rdar://problem/4198619> REGRESSION: tabbing through links fails after hitting text field w/ sys's "tab to all controls" off
         - fixed <rdar://problem/4463760> REGRESSION: Can't tab from old text field (like password fields) to new text field (6811)
-        (http://bugzilla.opendarwin.org/show_bug.cgi?id=6811)
+        (http://bugs.webkit.org/show_bug.cgi?id=6811)
         - fixed tab and shift tab don't select the right things
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5685
+        http://bugs.webkit.org/show_bug.cgi?id=5685
 
         * WebCoreSupport/WebFrameBridge.m:
         (-[WebFrameBridge willMakeFirstResponderForNodeFocus]): New method
@@ -7641,7 +7641,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8105
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8105
           REGRESSION (NativeTextField): Option-delete deletes one space before the deleted word
 
         Test: fast/forms/input-text-option-delete.html
@@ -7685,7 +7685,7 @@
 
         Reviewed by Maciej, landed by ap.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7739
+        http://bugs.webkit.org/show_bug.cgi?id=7739
         REGRESSION: Assertion failure loading acid2 test in -[WebCoreFrameBridge installInFrame:]
 
         Tests: http/tests/misc/acid2.html, http/tests/misc/acid2-pixel.html
@@ -7701,7 +7701,7 @@
 
         Reviewed by darin
         
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6989
+        http://bugs.webkit.org/show_bug.cgi?id=6989
         REGRESSION: Plain-text mode needed for contenteditable area used in new text field
 
         * WebView/WebHTMLView.m:
@@ -7910,7 +7910,7 @@
 
         Reviewed by darin
         
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7974>
+        <http://bugs.webkit.org/show_bug.cgi?id=7974>
         Add EditActions and WebUndoActions for CreateLink and Unlink
 
         * English.lproj/Localizable.strings:
@@ -7999,7 +7999,7 @@
 
 2006-03-21  Darin Adler  <darin@apple.com>
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3784
+        - fix http://bugs.webkit.org/show_bug.cgi?id=3784
           <rdar://problem/4483827> JavaScript save dialog disappears right away (sheet triggers blur event) (3784)
 
         * WebView/WebHTMLView.m:
@@ -8014,7 +8014,7 @@
 
         Reviewed by Darin.
 
-        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6813
+        - Fix for http://bugs.webkit.org/show_bug.cgi?id=6813
         elementAtPoint needs to return input element when clicking on new text field
 
         * WebView/WebDocumentInternal.h: Added elementAtPoint:allowShadowContent:
@@ -8101,7 +8101,7 @@
 
         Reviewed by Darin, landed by Beth.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7693
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7693
           WebKit relies on unpredictable timing for onload events
 
         * WebView/WebDataSource.m:
@@ -8144,7 +8144,7 @@
         Reviewed by Hyatt.
 
         WebKit part of fix for:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7797 
+        http://bugs.webkit.org/show_bug.cgi?id=7797 
         Can't set background color on new text fields
 
         Added function to draw bezeled text field without drawing background.
@@ -8290,7 +8290,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7656
+        - http://bugs.webkit.org/show_bug.cgi?id=7656
          Query string always appended to Flash URLs, instead of being replaced.
 
         * Misc/WebNSURLExtras.h: Added _webkit_URLByRemovingResourceSpecifier.
@@ -8305,7 +8305,7 @@
 
         Reviewed by Anders.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7655
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7655
           unwanted output while running layout tests
 
         * WebView/WebDataSourcePrivate.h:
@@ -8343,9 +8343,9 @@
         
         <rdar://problem/4411822> wrong element shown in Inspector inspecting main image at apple.com
         <rdar://problem/4411908> in the Web Inspector, state of disclosure triangles should be preserved after search
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6616
+        http://bugs.webkit.org/show_bug.cgi?id=6616
         Bug 6616: Double-clicking on a search result seems broken
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6709
+        http://bugs.webkit.org/show_bug.cgi?id=6709
         Bug 6709: TypeError: Value undefined (result of expression treeScrollbar.refresh) is not object.
 
         Code clean up and move more code into JavaScript.
@@ -8399,10 +8399,10 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7540
+        - http://bugs.webkit.org/show_bug.cgi?id=7540
           REGRESSION: frequent cache-related crashes
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7393
+        - http://bugs.webkit.org/show_bug.cgi?id=7393
           A stale comment about XMLHttpRequest responses being never cached
 
         * WebCoreSupport/WebFrameBridge.m: Don't call setHTTPHeader if the method is GET.
@@ -8432,7 +8432,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=3812
+        - http://bugs.webkit.org/show_bug.cgi?id=3812
           XMLHttpRequest: PUT, DELETE, HEAD and all other methods but POST actually do a GET.
 
         All WebKit changes are to use the method parameter passed from WebCore.
@@ -8450,7 +8450,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7450
+        http://bugs.webkit.org/show_bug.cgi?id=7450
         elementAtPoint is expensive and should return a smart dictionary
         
         <rdar://problem/2952761> moving the mouse around eats more CPU than I would expect (7450)
@@ -8526,7 +8526,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7293
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7293
           REGRESSION: Using Javascript Bookmarklets that reference location.href on a blank tab crashes WebKit
 
         The crash happened because an empty frame did not have a document.
@@ -8555,7 +8555,7 @@
 
         Collaborated with Graham Dennis <Graham.Dennis@gmail.com> on this.
 
-        - WebKit part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6831
+        - WebKit part of fix for http://bugs.webkit.org/show_bug.cgi?id=6831
           contentEditable outline darkens as caret moves
 
         * WebCoreSupport/WebGraphicsBridge.m:
@@ -8627,7 +8627,7 @@
 
         Reviewed by darin
         
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7148>
+        <http://bugs.webkit.org/show_bug.cgi?id=7148>
         Add drag and drop support to DumpRenderTree
         
         Added a UI delegate method so that DumpRenderTree can perform dragging on its own.
@@ -8813,7 +8813,7 @@
         Reviewed by Hyatt.
         
         - factor WebArchive creation code out of other classes into new WebArchiver
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7208
+        http://bugs.webkit.org/show_bug.cgi?id=7208
 
         * DOM/WebDOMOperations.m:
         (-[DOMNode webArchive]):
@@ -8844,7 +8844,7 @@
 
         Reviewed by John Sullivan.
 
-        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7171
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=7171
         No description in WebKitErrors.m for WebKitErrorPlugInWillHandleLoad
 
         * English.lproj/Localizable.strings: Added new UI_STRING().

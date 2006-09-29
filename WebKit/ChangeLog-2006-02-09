@@ -54,7 +54,7 @@
 
         Original patch by Graham Dennis, reviewed by me:
         
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=3982>
+        <http://bugs.webkit.org/show_bug.cgi?id=3982>
         webViewDidBeginEditing, webViewDidEndEditing notification methods not called on delegate
         
         Changes made by me, reviewed by thatcher:
@@ -77,7 +77,7 @@
 
         Reviewed by Darin.
 
-        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3527
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=3527
         Allow Safari to open postscript files in browser windows as well
 
         * WebView/WebPDFRepresentation.m:
@@ -92,7 +92,7 @@
         Reviewed by Timothy.
 
         Convert JavaScript objects to appropriate AppleScript types, instead of only strings
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7012
+        http://bugs.webkit.org/show_bug.cgi?id=7012
 
         Tests: fast/AppleScript/*
 
@@ -105,10 +105,10 @@
         Reviewed by Eric.
 
         - fixed "remove frame, renderer and completed flag from ChildFrame, make Frame track these"
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7125
+        http://bugs.webkit.org/show_bug.cgi?id=7125
         
         - fixed "onload event never called for iframe element with emtpy or about:blank src"
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3609
+        http://bugs.webkit.org/show_bug.cgi?id=3609
 
         * WebCoreSupport/WebFrameBridge.h:
         * WebCoreSupport/WebFrameBridge.m:
@@ -176,7 +176,7 @@
         
         - shuffle things around so that WebFrame no longer has a WebView backpointer, the backpointer is
         at the bridge level.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7093
+        http://bugs.webkit.org/show_bug.cgi?id=7093
 
         * WebCoreSupport.subproj/WebFrameBridge.h:
         * WebCoreSupport.subproj/WebFrameBridge.m:
@@ -294,7 +294,7 @@
 
         - change JavaScript collector statistics calls to use HashCountedSet instead
         of CFSet; other misc cleanup
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7072
+        http://bugs.webkit.org/show_bug.cgi?id=7072
 
         * Misc.subproj/WebCoreStatistics.h:
         * Misc.subproj/WebCoreStatistics.m:
@@ -564,7 +564,7 @@
 
         Reviewed by Darin.
         
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6631
+        http://bugs.webkit.org/show_bug.cgi?id=6631
         Inspector window has inappropriate maximum height
 
         * WebInspector.subproj/WebInspector.m:
@@ -651,7 +651,7 @@
 
         Reviewed by Timothy Hatcher.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6594
+        - http://bugs.webkit.org/show_bug.cgi?id=6594
         Web Inspector: finish node attributes
         
         * WebInspector.subproj/webInspector/inspector.css:
@@ -704,7 +704,7 @@
         To always enable enter the following in the Terminal (change the bundle id to affect other WebKit apps):
         defaults write com.apple.Safari WebKitEnableInspectElementContextMenuItem -bool true
  
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6571
+        http://bugs.webkit.org/show_bug.cgi?id=6571
 
         * English.lproj/Localizable.strings:
         * English.lproj/StringsNotToBeLocalized.txt: reorder of the entries
@@ -850,7 +850,7 @@
 
         Reviewed by Darin.
 
-        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6531
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=6531
         document.cookie="killmenothing" doesn't set the cookie
 
         * WebCoreSupport.subproj/WebCookieAdapter.m: (-[WebCookieAdapter setCookies:forURL:policyBaseURL:]):
@@ -1088,7 +1088,7 @@
         in onUnload event handler causes crash in 
         -[WebDataSource(WebPrivate) _commitIfReady:].)
 
-        - Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=6331
+        - Fixes http://bugs.webkit.org/show_bug.cgi?id=6331
         REGRESSION: form events don't fire after back/forward navigation, 
         due to inconsistent load state
         
@@ -1124,7 +1124,7 @@
 
         Affects many layout tests (when running with primary Russian language).
 
-        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4759
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=4759
         'ex' length unit calculation (Some layout tests fail if the system primary language is Russian)
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
@@ -1136,7 +1136,7 @@
         
         Test: fast/text/atsui-small-caps-punctuation-size.html
         
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6397
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6397
           ATSUI small caps use small punctuation
           
         * WebCoreSupport.subproj/WebTextRenderer.m:
@@ -1235,7 +1235,7 @@
 
         Reviewed by Darin.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6361
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=6361
         Add plugin support to DumpRenderTree
 
         * WebKit.exp: export WebPluginDatabase class, which DumpRenderTree
@@ -1246,7 +1246,7 @@
         Reviewed by Darin.
 
 	- move frame management and finding code from WebKit to WebCore
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6368
+	http://bugs.webkit.org/show_bug.cgi?id=6368
 
         * Plugins.subproj/WebBaseNetscapePluginView.m:
         (-[WebBaseNetscapePluginView loadPluginRequest:]): Set frame name straight on the bridge,
@@ -1334,7 +1334,7 @@
 
         Reviewed by Darin.
 
-        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6357
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=6357
         REGRESSION: iframe and target is broken
         
         * WebView.subproj/WebFrame.m:
@@ -1346,7 +1346,7 @@
         Reviewed by Eric.
 
 	    - moved frame traversal logic from WebFrame to WebBridge
-	    http://bugzilla.opendarwin.org/show_bug.cgi?id=6341
+	    http://bugs.webkit.org/show_bug.cgi?id=6341
 
 	    To do this, I had to invert the ownership so that WebBridge now
 	    owns WebFrame instead of vice versa. As a result, WebView now owns
@@ -1407,7 +1407,7 @@
         Test: fast/text/justified-text-rect.html
         
         - WebKit part of fix for
-          http://bugzilla.opendarwin.org/show_bug.cgi?id=5461
+          http://bugs.webkit.org/show_bug.cgi?id=5461
           Text width measured incorrectly when text-align: justify
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
@@ -1470,7 +1470,7 @@
 
         Reviewed by Eric, committed by Maciej.
         
-        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6288
+        - fix for http://bugs.webkit.org/show_bug.cgi?id=6288
           HEAD build broken 12/29/2005
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
@@ -1482,7 +1482,7 @@
         Reviewed by Eric.
 
         - finished frame traversal cleanup
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6293
+        http://bugs.webkit.org/show_bug.cgi?id=6293
 
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge childFrames]): Removed (this was unused)
@@ -1528,7 +1528,7 @@
         Reviewed by Darin.
 
 	- abstract frame traversal in WebFrame more
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6283
+	http://bugs.webkit.org/show_bug.cgi?id=6283
 	
 	Rewrote most of the frame traversal code in WebFrame to use DOM-style 
 	first/last/next/previous methods, to abstract access better in preparation 
@@ -1601,7 +1601,7 @@
         Test: fast/text/atsui-spacing-features.html
 
         - WebKit part of fix for
-          http://bugzilla.opendarwin.org/show_bug.cgi?id=3922
+          http://bugs.webkit.org/show_bug.cgi?id=3922
           Variable word/letter spacing and full justification not supported for
           ATSUI-rendered text
 
@@ -1614,7 +1614,7 @@
 
         Reviewed by Maciej, landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4844
+        - fix http://bugs.webkit.org/show_bug.cgi?id=4844
         Render "simple" Hebrew using the CG codepath
 
         * WebCoreSupport.subproj/WebTextRenderer.m: (shouldUseATSU): Exclude Hebrew letters and maqaf.
@@ -1624,7 +1624,7 @@
         Reviewed by Geoff
 
         - Remove WebFrame's parent frame pointer, instead rely on WebCore's parent concept
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6241
+        http://bugs.webkit.org/show_bug.cgi?id=6241
 
         * WebCoreSupport.subproj/WebBridge.h:
         * WebCoreSupport.subproj/WebBridge.m:
@@ -1657,7 +1657,7 @@
         Reviewed by Hyatt.
 
 	- fixed REGRESSION: world leak of WebDataSource
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6242
+	http://bugs.webkit.org/show_bug.cgi?id=6242
 
         * WebView.subproj/WebDataSource.m:
         (-[WebDataSource _stopLoading]): don't retain self until after
@@ -1669,7 +1669,7 @@
 
 	- rearrange some code in WebDataSource so that more of the frame traversal logic
 	is in WebFrame, in preparation for moving it down to WebBridge.
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6239
+	http://bugs.webkit.org/show_bug.cgi?id=6239
 
         * WebView.subproj/WebDataSource.m:
         (-[WebDataSource _archiveWithMarkupString:nodes:]): Assert that the
@@ -1770,7 +1770,7 @@
 
         Reviewed by justin
         
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4682>
+        <http://bugs.webkit.org/show_bug.cgi?id=4682>
         -[WebHTMLView firstRectForCharacterRange:] is using _selectedRange instead of the given range if no marked text
 
         * WebView.subproj/WebHTMLView.m:
@@ -1783,7 +1783,7 @@
 
         Reviewed by Darin Adler.
         
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6146
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=6146
           (REGRESSION: Bold font used for Google search result pages is too thick)
           
         This is a problem with a particular font that was installed by Microsoft Office X. Though the
@@ -1852,7 +1852,7 @@
 
 	- push more of frame lookup and management from WebView to
 	WebFrame, this is in preparation for shifting this to WebCore
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6163
+	http://bugs.webkit.org/show_bug.cgi?id=6163
 	
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge closeWindowSoon]): Adjust for change to WebFrameNamespaces
@@ -1889,7 +1889,7 @@
         Reviewed by Darin, committed by Adele.
 
         - fix deployment builds broken by the ATSUI multiple renderers patch
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6153
+        http://bugs.webkit.org/show_bug.cgi?id=6153
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
         (createATSULayoutParameters): Assign initial values, which will never be used,
@@ -1949,7 +1949,7 @@
         
         Test: fast/text/atsui-multiple-renderers.html
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6139
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6139
           ATSUI code path should implement small caps, synthetic bold and oblique and correct metrics for fallback fonts
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
@@ -1971,7 +1971,7 @@
         
         Test: fast/text/atsui-kerning-and-ligatures.html
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6137
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6137
           Disable kerning and some ligatures in the ATSUI code path
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
@@ -1985,7 +1985,7 @@
         
         Test: fast/text/should-use-atsui.html
 
-        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6132
+        - fix for http://bugs.webkit.org/show_bug.cgi?id=6132
           Incorrect selection highlighting for ATSUI text when selected range is "CG-safe"
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
@@ -2007,7 +2007,7 @@
 
         Reviewed and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5479
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5479
           Can't select text with RTL override rendered by ATSUI
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
@@ -2025,7 +2025,7 @@
 
         Reviewed and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4680
+        - fix http://bugs.webkit.org/show_bug.cgi?id=4680
           WebHTMLView (WebNSTextInputSupport) - attributedSubstringFromRange "not yet implemented"
 
         * WebView.subproj/WebHTMLView.m: (-[WebHTMLView attributedSubstringFromRange:]):
@@ -2035,7 +2035,7 @@
 
         Reviewed and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6090
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6090
           REGRESSION: Assertion failure when choosing Copy from a WebImageView's contextual menu
 
         * WebView.subproj/WebImageView.m:
@@ -2065,7 +2065,7 @@
         Reviewed by Darin.
 
 	- remove the dead _frameForDataSource: method (WebDataSource now knows its WebFrame)
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6072
+	http://bugs.webkit.org/show_bug.cgi?id=6072
 	
         * WebView.subproj/WebView.m:
         * WebView.subproj/WebViewPrivate.h:
@@ -2088,7 +2088,7 @@
 
         Reviewed and checked in by John Sullivan.
         
-        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6053
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=6053
         WebIconDatabase returns the Accessibility Verifier app icon instead of
         a generic document icon
         
@@ -2136,7 +2136,7 @@
 
         Reviewed by John Sullivan.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6032
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6032
           REGRESSION: Uncaught exception when image is dragged out of webpage
 
         * WebView.subproj/WebHTMLView.m:
@@ -2278,7 +2278,7 @@
 
         Reviewed by Eric.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5689
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5689
           add support for CSS "custom cursors" (cursor images)
 
         * WebCoreSupport.subproj/WebImageRenderer.h: Remove declaration of TIFFRepresentation and
@@ -2294,7 +2294,7 @@
 
         Reviewed by Maciej, landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5878
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5878
           REGRESSION (WebTextRenderer.m r1.201): pointToOffset always takes the CG code path
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
@@ -2429,7 +2429,7 @@
 
         Reviewed by darin.  Committed by eseidel.
 
-        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=4726
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=4726
         Drop of multiple non-image file URLs only yields one item
 
         * WebView.subproj/WebHTMLView.m:
@@ -2459,7 +2459,7 @@
         Reviewed by Darin. Committed by Maciej.
 
 	- fixed "Word completion doesn't work at end of word (unless last word)"
-	(http://bugzilla.opendarwin.org/show_bug.cgi?id=4062)
+	(http://bugs.webkit.org/show_bug.cgi?id=4062)
 
         * WebView.subproj/WebHTMLView.m:
         (-[WebTextCompleteController doCompletion]):
@@ -2483,7 +2483,7 @@
 
         Reviewed by mjs.  Committed by eseidel.
 
-        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5230
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=5230
         "characterIndexForPoint: not yet implemented"
 
         * WebView.subproj/WebHTMLView.m:
@@ -2690,7 +2690,7 @@
 
         Reviewed by Darin.  Committed by David Harrison.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5415
+        http://bugs.webkit.org/show_bug.cgi?id=5415
         "Left border of selection highlight leaves behind a trail"
         
         * manual-tests/drag_select_highlighting.html: Added.
@@ -2707,7 +2707,7 @@
 
         Reviewed by Dave Hyatt.
 
-	<http://bugzilla.opendarwin.org/show_bug.cgi?id=5365>
+	<http://bugs.webkit.org/show_bug.cgi?id=5365>
 
 	Send -webPlugInStop (or -pluginStop) and -webPluginDestroy (or -pluginDestroy)
 	to complying plugins right when they're removed from the WebHTMLView, and also
@@ -2808,8 +2808,8 @@
         Reviewed and landed by Darin.
 
         - fixed a couple regressions caused by my last check-in
-          http://bugzilla.opendarwin.org/show_bug.cgi?id=5437
-          http://bugzilla.opendarwin.org/show_bug.cgi?id=5443
+          http://bugs.webkit.org/show_bug.cgi?id=5437
+          http://bugs.webkit.org/show_bug.cgi?id=5443
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
         (-[WebTextRenderer CG_drawHighlightForRun:style:geometry:]): Compute background width
@@ -2929,7 +2929,7 @@
 
 	Changes by Mitz Pettel, reviewed by Maciej.
 
-	Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5029 (Assertion failure in -[NSPasteboard(WebExtras) 
+	Fix http://bugs.webkit.org/show_bug.cgi?id=5029 (Assertion failure in -[NSPasteboard(WebExtras) 
 	_web_writeImage:URL:title:archive:types:] when trying to drag an image from a site with no favicon)
 
         * Misc.subproj/WebNSPasteboardExtras.m:
@@ -2983,11 +2983,11 @@
 
 2005-10-11  Adele Peterson  <adele@apple.com>
 
-        Rolling out fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5195
+        Rolling out fix for http://bugs.webkit.org/show_bug.cgi?id=5195
         since it caused:
 
         REGRESSION text areas draw focus ring around each glyph, no caret in text fields
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5335
+        http://bugs.webkit.org/show_bug.cgi?id=5335
 
         * WebView.subproj/WebHTMLView.m:
         (-[WebHTMLView _propagateDirtyRectsToOpaqueAncestors]):
@@ -2998,7 +2998,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5195
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5195
           Would like API to flush rendering of pending DOM changes
 
         This was actually a Tiger regression. When AppKit added a new code path for rendering
@@ -3013,7 +3013,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5187
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5187
           UTF-8 in long text files breaks at some point
 
         * WebView.subproj/WebTextRepresentation.m:
@@ -3092,7 +3092,7 @@
 
         - fixed <rdar://problem/3217793> Monaco bold comes out as Helvetica bold, very bad if you choose Monaco as your fixed-width font
         - fixed <rdar://problem/3256269> CSS1: bold/italic font styles not programmatically created if font doesn't include them (3231)
-          also <http://bugzilla.opendarwin.org/show_bug.cgi?id=3231>
+          also <http://bugs.webkit.org/show_bug.cgi?id=3231>
 
         * WebCoreSupport.subproj/WebTextRenderer.h: Removed public declarations of private structures that are not
         used in the header. Removed the separate 16-bit character map; the difference in code size is only a few
@@ -3298,7 +3298,7 @@
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5100
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5100
           -[WebTextRenderer _ATSU_drawRun:...] does not check view flippedness
 
         * WebCoreSupport.subproj/WebTextRenderer.m: (-[WebTextRenderer _ATSU_drawRun:style:geometry:]):
@@ -3308,7 +3308,7 @@
 
         Reviewed, tweaked a tiny bit, and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4940
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4940
           CG and ATSUI give different width to the same text
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
@@ -3328,7 +3328,7 @@
         Reviewed by Dave.
         Landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4862
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4862
           Incorrect layout of bidi overrides
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
@@ -3341,7 +3341,7 @@
 
         Tweaked, reviewed, and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4394
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4394
           Mouse clicks ignored in inline input areas
 
         * WebView.subproj/WebHTMLView.m:
@@ -3422,7 +3422,7 @@
         (in two places) to single lists in the corresponding
         *Representation classes.  Also moved the list of types
         supported by WebCore (WebHTMLRepresentation) into WebCore.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5037
+        http://bugs.webkit.org/show_bug.cgi?id=5037
 
         * WebView.subproj/WebDataSource.m:
         (addTypesFromClass): new inline function
@@ -3480,7 +3480,7 @@
 
 2005-09-16  Adele Peterson  <adele@apple.com>
 
-        Rolling out the fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4924
+        Rolling out the fix for http://bugs.webkit.org/show_bug.cgi?id=4924
             QPainter should use CGContext as much as possible rather than NSGraphicsContext 
         since it caused a performance regression.
 
@@ -3488,7 +3488,7 @@
 
         Change by Darin, reviewed by me and Maciej.
 
-        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=4547
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=4547
         use int instead of long for 32-bit (to prepare for LP64 compiling)
 
         * Plugins.subproj/npapi.m: changed types to match those defined in npapi.h
@@ -3528,7 +3528,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4924
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4924
           QPainter should use CGContext as much as possible rather than NSGraphicsContext
 
         * WebCoreSupport.subproj/WebImageRendererFactory.m: Remove setCGCompositeOperationFromString
@@ -3567,7 +3567,7 @@
 
         Reviewed, tweaked, and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4286
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4286
           .Mac prefpane crashes when Safari using CVS WebKit is running
 
         * WebView.subproj/WebView.m: (-[WebView initWithFrame:frameName:groupName:]):
@@ -3603,7 +3603,7 @@
 
         Reviewed by Tim Omernick.
         
-        fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4070:
+        fixed http://bugs.webkit.org/show_bug.cgi?id=4070:
         Find in plain text won't find only occurrence if it overlaps selection
 
         * Misc.subproj/WebSearchableTextView.m:
@@ -3695,7 +3695,7 @@
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4846
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4846
           REGRESSION: Carbon WebKit applications don't work at all
 
         * Carbon.subproj/HIWebView.m: Remove lots of unneeded declarations of private stuff.
@@ -3718,7 +3718,7 @@
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4357
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4357
           crash related to animated GIFs, reproducible in non-Safari WebKit application
 
         * WebCoreSupport.subproj/WebImageData.m:
@@ -3788,7 +3788,7 @@
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4604
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4604
           LEAK -[WebTextRenderer _ATSU_pointToOffset:style:position:reversed:includePartialGlyphs:] leaks an ATSUTextLayout
           <rdar://problem/4228787> ATSUTextLayout leak in _ATSU_pointToOffset:style:position:reversed:includePartialGlyphs: (4604)
 
@@ -4013,7 +4013,7 @@
         Reviewed by Darin.
 
 	- 1% speedup on HTML load speed iBench by avoiding icon database thrash
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=4423
+	http://bugs.webkit.org/show_bug.cgi?id=4423
 	
         * Misc.subproj/WebIconDatabase.m:
         (-[WebIconDatabase _setIconURL:forURL:]): Be more aggressive about returning early, because
@@ -4024,7 +4024,7 @@
 
         Reviewed and landed by Darin.
 
-        WebKit part of fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=4011>:
+        WebKit part of fix for <http://bugs.webkit.org/show_bug.cgi?id=4011>:
         "Editing delegate selection methods not called when using mouse"
 
         Clicking on editable content would move the cursor or alter the selection without
@@ -4066,7 +4066,7 @@
         Reviewed by John Sullivan.
 
         - fixed <rdar://problem/3996324> REGRESSION (1.2-2.0): scroll bars sometimes not updated properly (with >40 duplicate reports!)
-          also http://bugzilla.opendarwin.org/show_bug.cgi?id=3416
+          also http://bugs.webkit.org/show_bug.cgi?id=3416
 
         * WebView.subproj/WebHTMLView.m:
         (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
@@ -4084,7 +4084,7 @@
         
         Fix for:
         <rdar://problem/3167884> Shockwave: 3D sprites rendered in OpenGL draw over the browser (3447)
-        also as <http://bugzilla.opendarwin.org/show_bug.cgi?id=3447>
+        also as <http://bugs.webkit.org/show_bug.cgi?id=3447>
         
         The WindowRef created by -[NSWindow windowRef] has a QuickDraw GrafPort that covers 
         the entire window frame (or structure region in Carbon parlance) rather then just the window content.
@@ -4182,7 +4182,7 @@
         Patch by Trey Matteson <trey@usa.net>
         Reviewed by me.
 
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4255
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=4255
           underlines still print too thick
 
         The real problem here is that we have code that scales a 0 width line to always
@@ -4198,14 +4198,14 @@
 
         * WebCoreSupport.subproj/WebGraphicsBridge.m:
         removed create*ColorSpace methods, now using CG API directly.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4211
+        http://bugs.webkit.org/show_bug.cgi?id=4211
 
 2005-07-31  John Sullivan  <sullivan@apple.com>
 
         Patch by Trey Matteson <trey@usa.net>
         Reviewed by me.
 
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4014
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=4014
           PDF files by default load with a poor choice of sizing
 
         For now the various PDF viewing settings are sticky, stored in 2 new defaults.  Since
@@ -4248,7 +4248,7 @@
 
         Reviewed by Maciej.
 
-        Fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=4226>
+        Fixed <http://bugs.webkit.org/show_bug.cgi?id=4226>
           link underlines print too thickly
 
         Reinstate the fix made by sullivan on 1/11/05.  There was a merge
@@ -4318,7 +4318,7 @@
 
         Reviewed by Dave Hyatt.
 
-	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4153
+	- fixed http://bugs.webkit.org/show_bug.cgi?id=4153
 	
         * WebView.subproj/WebFrame.m:
         (-[WebFrame _purgePageCache]): Find the oldest candidate for
@@ -4396,7 +4396,7 @@
 	Patch by Trey Matteson <trey@usa.net>
         Reviewed by me.
 
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4169
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=4169
           scaling PDF view up leaves later HTML view scaled too
 
         An additional step of separating scaling of HTML and PDF.  If we do a zoom and there
@@ -4421,10 +4421,10 @@
 	Patch by Trey Matteson <trey@usa.net>
         Reviewed by me.
 
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4015
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=4015
           PDF views should remember viewing mode, scroll position across back/forward
           Note this doesn't work within frames because of a PDFKit bug - see 4164
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4091
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=4091
           PDF views should keep a separate scaling factor from shared text scaling factor
 
         Basic idea #1 is that we now have a general mechanism for a WebDocView to save/restore some UI
@@ -4501,7 +4501,7 @@
 
         Reviewed by John Sullivan.
         
-        Fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=4072>
+        Fixed <http://bugs.webkit.org/show_bug.cgi?id=4072>
         Pressing back in browser misses out a page
         
         * WebView.subproj/WebFrame.m:
@@ -4609,7 +4609,7 @@
 
         Reviewed by john
         
-        Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3953> back-forward items have wrong titles after sub-frame navigations
+        Fixes <http://bugs.webkit.org/show_bug.cgi?id=3953> back-forward items have wrong titles after sub-frame navigations
 
         This was caused by a mistaken data structure, where WebDataSource tried to keep a list of
         b/f items it was responsible for.  The problem arose in the case of frames, where a subframe
@@ -4645,8 +4645,8 @@
 
         Reviewed by darin and hyatt
         
-        Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3862>
-        The fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=3545> enclosed each run of visually ordered
+        Fixes <http://bugs.webkit.org/show_bug.cgi?id=3862>
+        The fix for <http://bugs.webkit.org/show_bug.cgi?id=3545> enclosed each run of visually ordered
         hebrew with LRO and PDF control characters, but adjusted the run's to and from to include those characters,
         so that they would be rendered if the font includes a glyph for bidi control characters.
         
@@ -4846,9 +4846,9 @@
         Written by Trey Matteson  <trey@usa.net>
         Reviewed by John Sullivan.
 
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4049
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=4049
           scroll position not restored when going back/forward at ebay
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4061
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=4061
           When going back/forward to some pages, they redraw at top before restoring scroll position
 
         The short story is that attempting to restore the scroll position
@@ -4982,7 +4982,7 @@
         Written by Trey Matteson  <trey@usa.net>
         Reviewed by John Sullivan.
 
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3910 - REGRESSION: Replying "Cancel" to the form repost nag leaves wrong b/f cursor
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=3910 - REGRESSION: Replying "Cancel" to the form repost nag leaves wrong b/f cursor
 
         * WebView.subproj/WebFrame.m:
         (-[WebFrame _resetBackForwardList]):  new helper method
@@ -4995,7 +4995,7 @@
         Written by Trey Matteson
         Reviewed by me.
 
-        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4013
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=4013
                 text find doesn't wrap in PDF files
 
         This just works once WebPDFView implements the WebDocumentText protocol, which is
@@ -5139,7 +5139,7 @@
 2005-07-12  Geoffrey Garen  <ggaren@apple.com>
 
         -rolled in patch by opendarwin.org@mitzpettel.com 
-        for http://bugzilla.opendarwin.org/show_bug.cgi?id=3435
+        for http://bugs.webkit.org/show_bug.cgi?id=3435
         Parentheses are backwards in Hebrew text (no bidi mirroring?)
         
         Reviewed by mjs.
@@ -5226,7 +5226,7 @@
 
         Rolled in patch by opendarwin.org@mitzpettel.com
 
-        -fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3818
+        -fixes http://bugs.webkit.org/show_bug.cgi?id=3818
         Fallback font doesn't have requested weight in ATSUI-rendered text
 
         (See WebCore Changelog for layout test)
@@ -5265,7 +5265,7 @@
 
         Reviewed by Darin Adler.
         
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3711: Displayed PDF have limited options in contextual menu
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3711: Displayed PDF have limited options in contextual menu
         
         This was a problem with using Tiger's version of Safari with tip of tree WebKit.
 
@@ -5281,7 +5281,7 @@
 
         Reviewed by John Sullivan.
 
-        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3774>
+        - fixed <http://bugs.webkit.org/show_bug.cgi?id=3774>
           do renaming so that loaders are called "loader", not "client" or "delegate"
 
         * Misc.subproj/WebIconLoader.h:
@@ -5380,7 +5380,7 @@
 
         Reviewed by Darin.
 
-        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3489>
+        - Fixes <http://bugs.webkit.org/show_bug.cgi?id=3489>
         WebView's setSelectedDOMRange doesn't not implement clearing the selection as described in the WebView documentation:
         <http://developer.apple.com/documentation/Cocoa/Reference/WebKit/ObjC_classic/Classes/WebView.html>
 	
@@ -5394,7 +5394,7 @@
 
         Reviewed by Darin
 
-        - Fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3535>
+        - Fixed <http://bugs.webkit.org/show_bug.cgi?id=3535>
             Spelling suggestions in the context menu don't call the should* delegate methods
 
         * WebView.subproj/WebHTMLView.m:
@@ -5462,7 +5462,7 @@
         Change by Mitz Pettel.
         Reviewed by me.
 
-        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3618>
+        - fixed <http://bugs.webkit.org/show_bug.cgi?id=3618>
           RTL runs drawn by CG not reversed properly
 
         * WebCoreSupport.subproj/WebTextRenderer.m: (-[WebTextRenderer _CG_drawRun:style:geometry:]):
@@ -5473,7 +5473,7 @@
         Change by Michael Gaiman.
         Reviewed by me.
 
-        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3436>
+        - fixed <http://bugs.webkit.org/show_bug.cgi?id=3436>
           Missing implementation of -[NSData(WebNSDateExtras) _webkit_parseRFC822HeaderFields]
 
         * Misc.subproj/WebNSDataExtras.h: Fixed name of category say NSData, not NSDate.
@@ -5574,7 +5574,7 @@
 	Changes by Mitz Pettel
         Reviewed by me.
         
-        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3466>
+        - fixed <http://bugs.webkit.org/show_bug.cgi?id=3466>
           ATSUI text doesn't render at coordinates greater than 32K
 
         * WebCoreSupport.subproj/WebTextRenderer.m: (-[WebTextRenderer _ATSU_drawRun:style:geometry:]):
@@ -5585,7 +5585,7 @@
 	Changes by Mitz Pettel
         Reviewed by Richard Williamson.
 
-	Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3545
+	Fixed http://bugs.webkit.org/show_bug.cgi?id=3545
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
         (reverseCharactersInRun):
@@ -5662,7 +5662,7 @@
         Reviewed by Chris Blumenberg and Adele.
 
 	- better fix for <rdar://problem/4142247> REGRESSION: List to browse widgets at Apple website failed. Closing tab afterwards caused Safari crash
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=3445
+	http://bugs.webkit.org/show_bug.cgi?id=3445
 
 	With this change and the matching WebKit change we'll still stop loading the moment you click
 	a download link, but the unload event and detaching of event handlers will not happen early any more.
@@ -5690,7 +5690,7 @@
         Reviewed by Maciej.
 
         - fixed <rdar://problem/4141569> REGRESSION (412+): printing fails on any page with images, and for standalone images
-          also <http://bugzilla.opendarwin.org/show_bug.cgi?id=3318>
+          also <http://bugs.webkit.org/show_bug.cgi?id=3318>
 
         * WebCoreSupport.subproj/WebImageData.m: Got rid of use of tabs instead of spaces throughout the file.
         (-[WebImageData _checkSolidColor:]): Wrap use of NSGraphicsContext with an autorelease pool.
@@ -5743,7 +5743,7 @@
         Reviewed by Chris Blumenberg.
 
 	- fixed <rdar://problem/4142247> REGRESSION: List to browse widgets at Apple website failed. Closing tab afterwards caused Safari crash
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=3445
+	http://bugs.webkit.org/show_bug.cgi?id=3445
 	
         * WebView.subproj/WebFrame.m:
         (-[WebFrame _transitionToCommitted:]): Stop loading the non-provisional data
@@ -5775,7 +5775,7 @@
         Reviewed by me.
 
         - fixed the WebKit half of build failure with spaces in the path
-          http://bugzilla.opendarwin.org/show_bug.cgi?id=3291
+          http://bugs.webkit.org/show_bug.cgi?id=3291
 
         * WebKit.pbproj/project.pbxproj: Quote DERIVED_FILE_DIR when it is substituted
         into FRAMEWORK_SEARCH_PATHS, and SYMROOT when into HEADER_SEARCH_PATHS.
