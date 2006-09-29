@@ -808,6 +808,7 @@ set(WebCore_SRCS
     ${SVG_SOURCES}
     ${XPATH_SOURCES}
 
+    editing/CommandByName.cpp
     editing/InsertIntoTextNodeCommand.cpp
     editing/WrapContentsInDummySpanCommand.cpp
     editing/ReplaceSelectionCommand.cpp

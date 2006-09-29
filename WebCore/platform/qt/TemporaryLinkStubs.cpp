@@ -187,7 +187,7 @@ bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { return
 namespace WebCore {
     
 DeprecatedStringList supportedKeySizes() { notImplemented(); return DeprecatedStringList(); }
-DeprecatedString signedPublicKeyAndChallengeString(unsigned keySizeIndex, const DeprecatedString &challengeString, const KURL &url) { return DeprecatedString(); }
+String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 
 }
 

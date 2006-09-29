@@ -130,16 +130,15 @@ int ScrollView::contentsHeight() const
     return m_area->widget()->height();
 }
 
-IntPoint ScrollView::viewportToContents(const IntPoint& viewportPoint)
+
+IntPoint ScrollView::convertToContainingWindow(const IntPoint& point) const
 {
-    // Qt already handles this in the coordinates we get from the mouse events...
-    return viewportPoint;
+    return point - scrollOffset();
 }
 
-IntPoint ScrollView::contentsToViewport(const IntPoint& contentsPoint)
+IntPoint ScrollView::convertFromContainingWindow(const IntPoint& point) const
 {
-    // Qt already handles this in the coordinates we get from the mouse events...
-    return contentsPoint;
+    return point + scrollOffset();
 }
 
 IntSize ScrollView::scrollOffset() const

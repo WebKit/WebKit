@@ -1,3 +1,19 @@
+2006-09-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Hyatt.
+
+        Fix Qt/Linux build.
+
+        * CMakeLists.txt:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::convertToContainingWindow):
+        (WebCore::ScrollView::convertFromContainingWindow):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::convertToContainingWindow):
+        (WebCore::Widget::convertFromContainingWindow):
+
 2006-09-29  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
