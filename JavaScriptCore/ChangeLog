@@ -137,7 +137,7 @@
 
         Reviewed by Maciej.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10183
+        http://bugs.webkit.org/show_bug.cgi?id=10183
         REGRESSION: obfuscated JS decoding breaks because of soft hyphen removal
         (Fanfiction.net author pages not listing stories)
 
@@ -206,7 +206,7 @@
 
         Reviewed by Adam.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10864
+        http://bugs.webkit.org/show_bug.cgi?id=10864
         Bug 10864: Linux\GDK build fixes
 
         * JavaScriptCoreSources.bkl:
@@ -293,7 +293,7 @@
 
         Reviewed by Tim H.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10693
+        http://bugs.webkit.org/show_bug.cgi?id=10693
         Convert JavaScript arrays to AppleScript lists
 
         * JavaScriptCore.exp: Export ArrayInstance::info and ArrayInstance::getItem().
@@ -306,7 +306,7 @@
         Reviewed by Tim H.
 
         Bug 10454: Unix bakefile fixes
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10454
+        http://bugs.webkit.org/show_bug.cgi?id=10454
 
         * JavaScriptCoreSources.bkl:
 
@@ -407,7 +407,7 @@
         Reviewed, tweaked by ggaren.
 
         - Added storage and accessor functions for ExecState as a fix for
-          http://bugzilla.opendarwin.org/show_bug.cgi?id=10114
+          http://bugs.webkit.org/show_bug.cgi?id=10114
         
         * kjs/ExecState.cpp:
         (KJS::ExecState::ExecState):
@@ -436,7 +436,7 @@
 
         Reviewed, tweaked and landed by ap
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10467
+        http://bugs.webkit.org/show_bug.cgi?id=10467
         WebKit should have Qt platform support (Part II)
 
         * CMakeLists.txt: Adjust to Anders' build fixes.
@@ -539,7 +539,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6252
+        http://bugs.webkit.org/show_bug.cgi?id=6252
         JavaScript 1.6 Array.lastIndexOf
 
         Test: fast/js/array-lastIndexOf.html
@@ -554,7 +554,7 @@
 
         Reviewed by Maciej. Landed by rwlbuis.
 
-        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10463
+        Fixes parts of: http://bugs.webkit.org/show_bug.cgi?id=10463
         WebKit should have Qt platform support
 
         Removing obsolete QConstString/QString constructors in kjs code.
@@ -566,7 +566,7 @@
 
         Reviewed by Maciej. Landed by rwlbuis.
 
-        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10463
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10463
         WTF Changes needed for Qt platform code.
 
         * wtf/Platform.h:
@@ -592,7 +592,7 @@
 
         Reviewed by Eric. Landed by rwlbuis.
 
-        Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=10464
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10464
         Offer a cmake build system for Qt platform.
 
         * CMakeLists.txt: Added.
@@ -626,7 +626,7 @@
 
         Reviewed by Tim H.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10394
+        http://bugs.webkit.org/show_bug.cgi?id=10394
         Bug 10394: WebKit Release and Production configurations should enable dead code stripping
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
@@ -635,7 +635,7 @@
 
         Reviewed by Tim H.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10384
+        http://bugs.webkit.org/show_bug.cgi?id=10384
         Bug 10384: Switch to DWARF for Release configuration
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
@@ -715,7 +715,7 @@
 
         Reviewed by Darin.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10192
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10192
           Make WebCore (and friends) compile with -Wshorten-64-to-32
 
           * Adds -Wshorten-64-to-32 flag to Xcode project.
@@ -737,7 +737,7 @@
 
         Reviewed by Darin.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10176
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10176
           Make WebCore compile with -Wundef
 
           * Adds -Wundef flag to Xcode project
@@ -823,7 +823,7 @@
 
         Reviewed by Darin.
 
-        - patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10080
+        - patch for http://bugs.webkit.org/show_bug.cgi?id=10080
           Adopt pedantic changes from the Unity project to improve 
           cross-compiler compatibility
 
@@ -881,7 +881,7 @@
 
         Reviewed and tweaked a bit by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9902
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9902
           jsNull and NSNull not properly converted between JS and ObjC
 
         * bindings/objc/objc_utility.mm: (KJS::Bindings::convertObjcValueToValue):
@@ -891,7 +891,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4258
+        http://bugs.webkit.org/show_bug.cgi?id=4258
         Date().toString() only includes GMT offset, not timezone string
 
         Use the info in tm_zone to append timezone abbreviation
@@ -904,7 +904,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5257
+        http://bugs.webkit.org/show_bug.cgi?id=5257
         setYear() does not match FireFox/IE behavior
 
         Make sure the right values end up in tm_year.
@@ -917,7 +917,7 @@
         Reviewed by Maciej.
 
         Bug 9686: [Drosera] Need the ability to break into Drosera on Javascript exceptions
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9686
+        http://bugs.webkit.org/show_bug.cgi?id=9686
 
         JavaScriptCore portion of the fix.
 
@@ -1567,7 +1567,7 @@
 
         Reviewed by Geoff.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8395
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8395
           <rdar://problem/4613467>
           REGRESSION: RegEx seems broken for hex escaped non breaking space
 
@@ -1686,7 +1686,7 @@
 
         Reviewed by Geoffrey.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9742
+        http://bugs.webkit.org/show_bug.cgi?id=9742
         Bug 9742: REGRESSION: WebKit hangs when loading <http://www.vtbook.com>
 
         * kjs/value.h:
@@ -1845,7 +1845,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9179
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9179
           Implement select.options.add() method
 
         * JavaScriptCore.exp: Added overloaded KJS::JSValue::toInt32() method.
@@ -2439,7 +2439,7 @@
         Reviewed by Maciej.
         Tweaked a bit by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9678
+        - http://bugs.webkit.org/show_bug.cgi?id=9678
           work around MSVCRT's fmod function returning NaN for fmod(x, infinity) instead of x
 
         * wtf/MathExtras.h: Added include of <float.h>.
@@ -2792,7 +2792,7 @@
 
         Reviewed by Geoff.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8636
+        http://bugs.webkit.org/show_bug.cgi?id=8636
         REGRESSION: JavaScript access to Java applet causes hang (_webViewURL not implemented)
 
         * bindings/jni/jni_objc.mm:
@@ -2833,7 +2833,7 @@
         Reviewed by Darin.
 
         Bug 9574: Drosera should show inline scripts within the original HTML
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9574
+        http://bugs.webkit.org/show_bug.cgi?id=9574
 
         Pass the starting line number and error message to the debugger.
 
@@ -2866,7 +2866,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9418
+        - http://bugs.webkit.org/show_bug.cgi?id=9418
         WebKit will not build when Space exists in path
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Enclose search paths in quotes; create symlinks to 
@@ -2887,7 +2887,7 @@
 
         Build fix.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9539
+        - http://bugs.webkit.org/show_bug.cgi?id=9539
         Another case error preventing build
 
         * API/JSObjectRef.cpp: Changed "identifier.h" to "Identifier.h"
@@ -2896,7 +2896,7 @@
 
         Build fix.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9539
+        http://bugs.webkit.org/show_bug.cgi?id=9539
         Another case error preventing build
 
         * API/APICast.h: Changed "UString.h" to "ustring.h".
@@ -3132,7 +3132,7 @@
         
         Reviewed by Maciej
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9491
+        http://bugs.webkit.org/show_bug.cgi?id=9491
         Windows build breaks in interpreter.cpp 
 
         * kjs/interpreter.cpp
@@ -3145,7 +3145,7 @@
 
         Reviewed by darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9477
+        http://bugs.webkit.org/show_bug.cgi?id=9477
         REGRESSION: fast/dom/replaceChild.html crashes on WebKit ToT in debug build
 
         * kjs/function.cpp:
@@ -3156,7 +3156,7 @@
 
         Reviewed by ggaren.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9476
+        http://bugs.webkit.org/show_bug.cgi?id=9476
         REGRESSION: Reproducible crash after closing window after viewing
         css2.1/t0803-c5501-imrgn-t-00-b-ag.html
 
@@ -3168,7 +3168,7 @@
 
         Reviewed by Maciej and Geoff.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7080
+        http://bugs.webkit.org/show_bug.cgi?id=7080
         Provide some way to stop a JavaScript infinite loop
         
         * kjs/completion.h:
@@ -3233,7 +3233,7 @@
 
         Reviewed by Beth.
         
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=9438
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=9438
         Someone broke ToT: cannot build
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
@@ -3369,7 +3369,7 @@
 
 2006-06-10  Geoffrey Garen  <ggaren@apple.com>
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8515
+        - http://bugs.webkit.org/show_bug.cgi?id=8515
         Linux porting compile bug
         
         Fix by Mike Emmel, Reviewed by Darin.
@@ -3499,7 +3499,7 @@
 
         Reviewed by Maciej.
         
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9304
+        - http://bugs.webkit.org/show_bug.cgi?id=9304
         Minor cleanup in JavaScriptCore
 
         * kjs/value.h: Removed redundant declarations
@@ -3538,7 +3538,7 @@
 
         Reviewed by ggaren.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9234
+        - http://bugs.webkit.org/show_bug.cgi?id=9234
           Implement $&, $' and $` replacement codes in String.prototype.replace
 
         Test: fast/js/string-replace-3.html
@@ -3611,7 +3611,7 @@
 
         Reviewed by Geoff.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8993
+        http://bugs.webkit.org/show_bug.cgi?id=8993
         Support function declaration in case statements
         
         * kjs/grammar.y: Get rid of StatementList and use SourceElements instead.
@@ -3656,7 +3656,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8870
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8870
         Crash typing in Yahoo auto-complete widget.
 
         Test: fast/js/regexp-stack-overflow.html
@@ -3687,7 +3687,7 @@
 
         AKA 
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6179 
+        http://bugs.webkit.org/show_bug.cgi?id=6179 
         We treat "char" as a reserved word in JavaScript and firefox/IE do
         not
 
@@ -3730,7 +3730,7 @@
 
         Reviewed by Darin, landed by ap.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8528
+        - http://bugs.webkit.org/show_bug.cgi?id=8528
           Bakefiles (and generated Makefiles) for wx and gdk ports
 
         * make-generated-sources.sh: 
@@ -3885,7 +3885,7 @@
 
         Reviewed and landed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8765
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8765
         Random crashes on TOT since the form state change
         
         I haven't figured out how to construct a test for this, but this does seem to fix the
@@ -3900,7 +3900,7 @@
         
 2006-05-05  Darin Adler  <darin@apple.com>
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8722
+        - http://bugs.webkit.org/show_bug.cgi?id=8722
           IE compatibility fix in date parsing
 
         * kjs/date_object.cpp: (KJS::parseDate): Merged change that George Staikos provided
@@ -3910,7 +3910,7 @@
 
         Reviewed by Maciej.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8734
+        http://bugs.webkit.org/show_bug.cgi?id=8734
         Would like a Vector::append that takes another Vector
         
         * kxmlcore/Vector.h:
@@ -4004,7 +4004,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8507
+        - http://bugs.webkit.org/show_bug.cgi?id=8507
           Compilation fixes for building on gcc 4.0.2, and without precomp headers
 
         * kjs/operations.h:
@@ -4038,7 +4038,7 @@
         Reviewed by Timothy.
 
         Bug 8389: support for Cocoa bindings - binding an NSTreeController to the WebView's DOM
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8389
+        http://bugs.webkit.org/show_bug.cgi?id=8389
 
         Adds a category to WebScriptObject with array accessors for KVC/KVO.
 
@@ -4197,7 +4197,7 @@
 
         Reviewed by eric.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=8284
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=8284
         prevent unnecessary entries in the "nodes with extra refs" hash table
 
         This patch switches manually RefPtr exchange with use of
@@ -4237,7 +4237,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8264
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8264
         toLowerCase and toUpperCase don't honor special mappings
 
         Test: fast/js/string-capitalization.html
@@ -4297,7 +4297,7 @@
 
         Reviewed by Maciej.
 
-        - JavaScriptCore part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8049
+        - JavaScriptCore part of fix for http://bugs.webkit.org/show_bug.cgi?id=8049
           StringImpl hash traits deleted value creates an init routine for WebCore
           <rdar://problem/4442248> REGRESSION: WebCore has init routines (8049)
 
@@ -4382,9 +4382,9 @@
         Reviewed by ggaren & darin.  Landed by eseidel.
 
         Integrate CURL version of gettimeofday
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7399
+        http://bugs.webkit.org/show_bug.cgi?id=7399
         Disable crash report dialogs for testkjs.exe in Release mode
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8113
+        http://bugs.webkit.org/show_bug.cgi?id=8113
 
         * kjs/testkjs.cpp:
         (StopWatch::start):
@@ -4405,7 +4405,7 @@
         Reviewed by Darin.
         
         - fixed "toPrecision sometimes messes up the last digit on intel Macs"
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7748
+        http://bugs.webkit.org/show_bug.cgi?id=7748
 
         * kjs/number_object.cpp:
         (intPow10): Compute integer powers of 10 using exponentiation by squaring.
@@ -4658,7 +4658,7 @@
         Reviewed by Darin.
         
         - JSObject in LiveConnect not working.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7917
+        http://bugs.webkit.org/show_bug.cgi?id=7917
 
         * bindings/jni_jsobject.cpp:
         (JavaJSObject::convertJObjectToValue): Was trying to retrieve the native pointer from the wrong base
@@ -4677,7 +4677,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7726
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7726
           REGRESSION: orbitz calendar fails (JavaScript function serialization/parsing)
 
         * kjs/object.h: Take function name, as well as source URL and line number, when
@@ -4699,7 +4699,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7805
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7805
           LEAK: method name leaks in KJS::Bindings::CInstance::invokeMethod
 
         * bindings/c/c_utility.h: Remove NPN_UTF16FromString declaration (not implemented).
@@ -4760,7 +4760,7 @@
         Reviewed and landed by Maciej.
 
         - WebKit no longer builds with bison 2.1
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7923
+        http://bugs.webkit.org/show_bug.cgi?id=7923
 
         * generate-derived-sources:  Handle generated header named either grammar.cpp.h
         or grammar.hpp.
@@ -4797,7 +4797,7 @@
         Reviewed by Darin.
         
         - fixed "charAt layout test fails on intel macs; some NaNs are printed as -NaN"
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7745
+        http://bugs.webkit.org/show_bug.cgi?id=7745
 
         * kjs/ustring.cpp:
         (KJS::UString::from): Use "NaN" for all NaN values, regardless of sign.
@@ -4856,7 +4856,7 @@
         Reviewed by Anders.
         
         - KJS::Node and KJS::StatementNode are bigger than they need to be
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7775
+        http://bugs.webkit.org/show_bug.cgi?id=7775
 
         The memory usage of Node was reduced by 2 machine words per node:
 
@@ -4968,7 +4968,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7708
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7708
         REGRESSION: Flash callback to JavaScript function not working.
 
         Test: plugins/invoke.html
@@ -4994,7 +4994,7 @@
 
         Reviewed by Anders.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7655
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7655
           unwanted output while running layout tests
 
         * kjs/lexer.cpp: (Lexer::lex): Turn off the "yylex: ERROR" message.
@@ -5008,11 +5008,11 @@
 
         Reviewed by Darin, landed by ap.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=7582
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=7582
         c_utility.cpp contains CFString OS X platform-dependent code; should use ICU
 
         Tested with test case from:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5163
+        http://bugs.webkit.org/show_bug.cgi?id=5163
 
         * bindings/c_utility.cpp
         (convertUTF8ToUTF16): Changed to using Unicode converter from ICU, and manual Latin-1 conversion.
@@ -5028,7 +5028,7 @@
 
         Fix suggested by Alexey Proskuryakov <ap@nypop.com>, reviewed by Maciej and Hyatt.
         
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7601
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7601
           REGRESSION (r13089): Reproducible crash dereferencing a deallocated element on google image search
 
         * kxmlcore/Platform.h: Corrected the define to enable USE(MULTIPLE_THREADS) on Mac OS X.
@@ -5037,7 +5037,7 @@
 
         Reviewed by Maciej.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7616
+        - http://bugs.webkit.org/show_bug.cgi?id=7616
           get all references to KJS::Node out of internal.h
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Updated for file changes.
@@ -5262,7 +5262,7 @@
 
         Made Assertions.cpp platform independent.
         Moved mac-specific logging logic up into WebCore.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7503
+        http://bugs.webkit.org/show_bug.cgi?id=7503
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * kxmlcore/Assertions.cpp: Added.
@@ -5290,7 +5290,7 @@
         Reviewed by Darin.
         
         - Turn off -Wno-unused-param for JavaScriptCore and get rid of unused params
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7384
+        http://bugs.webkit.org/show_bug.cgi?id=7384
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * bindings/NP_jsobject.cpp:
@@ -5445,7 +5445,7 @@
         - Inline some functions suggested by Shark. 2.9% speedup on super
         accurate JS iBench.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7411
+        http://bugs.webkit.org/show_bug.cgi?id=7411
         <rdar://problem/4448116>
 
         * kjs/nodes.h:
@@ -5488,7 +5488,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7397
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7397
           TCPageMap.h would not compile for me because string.h was missing
 
         * kxmlcore/TCPageMap.h: Added <string.h> include.
@@ -5497,7 +5497,7 @@
 
         Reviewed by John Sullivan.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7404
+        - http://bugs.webkit.org/show_bug.cgi?id=7404
           remove a bunch of extra implementsCall overrides
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Sorted files.
@@ -5546,7 +5546,7 @@
 
         Change suggested by Mitz.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7402
+        - http://bugs.webkit.org/show_bug.cgi?id=7402
           REGRESSION: Methods do not execute
 
         * kjs/internal.h: Add implementsHasCall to InternalFunctionImp.
@@ -5569,7 +5569,7 @@
         significantly reworked by me.
         
         - Patch: give internal function names (KJS merge)
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6279
+        http://bugs.webkit.org/show_bug.cgi?id=6279
 
         * tests/mozilla/expected.html: Updated for newly fixed test.
 
@@ -5688,7 +5688,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7343
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7343
           REGRESSION: fast/js/toString-overrides.html fails when run multiple times
 
         * kjs/array_object.cpp:
@@ -5699,7 +5699,7 @@
 
         Reviewed by Maciej.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7345
+        - http://bugs.webkit.org/show_bug.cgi?id=7345
           add insert and remove to KXMLCore::Vector
 
         * kxmlcore/Vector.h: Added "moveOverlapping", which is used in both
@@ -5973,7 +5973,7 @@
 
         Reviewed by Darin.
 
-        - improve fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5163
+        - improve fix for http://bugs.webkit.org/show_bug.cgi?id=5163
         RealPlayer.GetTitle() Crashes Safari/Dashboard
 
         * bindings/c/c_utility.cpp: (KJS::Bindings::convertUTF8ToUTF16):
@@ -6162,7 +6162,7 @@
         Reviewed by Darin.
 
         - Refactor DateInstance to provide direct access to data. Several WIN32 modifications.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7107
+        http://bugs.webkit.org/show_bug.cgi?id=7107
 
         - No tests added - only changed functionality on WIN32, which should be covered by 
         existing tests.
@@ -6188,7 +6188,7 @@
         Reviewed by Anders.
         
         - fixed ~1100 KJS::Node leaked on layout tests
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7097
+        http://bugs.webkit.org/show_bug.cgi?id=7097
 
         * kjs/internal.cpp:
         (KJS::Parser::noteNodeCycle):
@@ -6238,7 +6238,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5210
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5210
           REGRESSION: for/in loop with var changes global variable instead of making local
 
         Test: fast/js/for-in-var-scope.html
@@ -6261,7 +6261,7 @@
         
         - change JavaScript collector statistics calls to use HashCountedSet instead
         of CFSet; other misc cleanup
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7072
+        http://bugs.webkit.org/show_bug.cgi?id=7072
         
         * kjs/collector.cpp:
         (KJS::Collector::numProtectedObjects): renamed from numReferencedObjects
@@ -6290,7 +6290,7 @@
 
         Reviewed by Maciej.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7005
+        - http://bugs.webkit.org/show_bug.cgi?id=7005
           add Noncopyable, OwnPtr, OwnArrayPtr to KXMLCore
 
         * kxmlcore/Noncopyable.h: Added.
@@ -6352,7 +6352,7 @@
 
         Reviewed by Darin.
 
-        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6907
+        Fix http://bugs.webkit.org/show_bug.cgi?id=6907
         REGRESSION: United.com menus messed up due to document.all/MSIE sniff
         
         * kjs/nodes.cpp:
@@ -6406,7 +6406,7 @@
 
         Reviewed by John Sullivan.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6895
+        - http://bugs.webkit.org/show_bug.cgi?id=6895
           include exception names in JavaScript form of DOM exception
 
         * khtml/ecma/kjs_binding.cpp: (KJS::setDOMException): Include the name of the
@@ -6428,7 +6428,7 @@
 
         Reviewed by John Sullivan
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6870
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6870
           REGRESSION: JavaScript Date constructor won't accept another Date object
 
         Test: fast/js/date-constructor.html
@@ -6451,7 +6451,7 @@
         Reviewed by Dave Hyatt.
         
         - added a Vector class
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6894
+        http://bugs.webkit.org/show_bug.cgi?id=6894
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * kjs/internal.cpp:
@@ -6510,7 +6510,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5163
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5163
         RealPlayer.GetTitle() Crashes Safari/Dashboard
 
         * bindings/c/c_utility.cpp: (KJS::Bindings::convertUTF8ToUTF16):
@@ -6533,7 +6533,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6737
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6737
         KJS_DEFINE_PROTOTYPE should work outside of the KJS namespace
         
         * kjs/lookup.h:
@@ -6550,7 +6550,7 @@
         - made PtrHash the default hash function for int and pointer types that aren't further specialized
         - added an AtomicStringImpl class to make it easier and more typesafe to identity hash atomic strings
         - did appropriate consequent cleanup (very few places now need to declare a hash function)
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6752
+        http://bugs.webkit.org/show_bug.cgi?id=6752
         
         * kjs/array_object.cpp:
         (ArrayProtoFunc::callAsFunction): no need to mention PointerHash
@@ -6579,7 +6579,7 @@
         
         - use classes instead of free functions for extractors, this better matches how other
         things work and should avoid the need for hacky workarounds on other compilers
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6748
+        http://bugs.webkit.org/show_bug.cgi?id=6748
 
         * kjs/array_object.cpp:
         * kjs/identifier.cpp:
@@ -6730,7 +6730,7 @@
 
         Reviewed by John Sullivan.
 
-        - change needed for fix to http://bugzilla.opendarwin.org/show_bug.cgi?id=6617
+        - change needed for fix to http://bugs.webkit.org/show_bug.cgi?id=6617
           REGRESSION: Crash in cloneChildNodes when clicking element
 
         * kxmlcore/PassRefPtr.h: Fix assignment operator from RefPtr of a different
@@ -6751,7 +6751,7 @@
         Reviewed by Darin.
 
         - Set up Page class and invert Frame / WebCoreFrameBridge ownership
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6577
+        http://bugs.webkit.org/show_bug.cgi?id=6577
 
         * kjs/interpreter.h: make globalExec virtual so ScriptInterpreter can 
         override it
@@ -6834,7 +6834,7 @@
 
         Reviewed by Anders.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6611
+        - http://bugs.webkit.org/show_bug.cgi?id=6611
           add assertions to check correct use of hash table iterators
 
         * kxmlcore/HashTable.h:
@@ -6891,7 +6891,7 @@
 
         Reviewed by Anders.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6610
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6610
           change RefPtr so that it works when deref ends up deleting the RefPtr
 
         * kxmlcore/PassRefPtr.h: Always set m_ptr before calling deref.
@@ -6901,7 +6901,7 @@
 
         Reviewed by darin.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6322
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=6322
         DateProtoFuncImp::callAsFunction can crash due to lack of type checking
 
         * kjs/date_object.cpp:
@@ -6940,7 +6940,7 @@
 
         Reviewed by Anders.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6561
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6561
         run-javascriptcore-tests doesn't work
 
         * JavaScriptCore/tests/mozilla/Getopt/Mixed.pm: 
@@ -6956,7 +6956,7 @@
 
         Mostly merging work by Peter Kelly. Reviewed by Maciej, landed by ap.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6261
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6261
         Misc. array object fixes from KJS
 
         * kjs/array_object.cpp: Don't treat 2^32-1 as a real array index property.
@@ -6996,7 +6996,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6494
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6494
         Crash when assigning a new function to a DOMParser object
         
         * JavaScriptCore.xcodeproj/project.pbxproj:
@@ -7028,7 +7028,7 @@
 
         Reviewed by Geoff.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6505
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6505
           retire APPLE_CHANGES from JavaScriptCore
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Removed both
@@ -7066,7 +7066,7 @@
 
         Reviewed, tweaked, and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6416
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6416
           lexer.cpp, grammar.y protect include of config.h with "HAVE_CONFIG_H"
 
         * kjs/dtoa.cpp: Removed HAVE_CONFIG_H, changed config.h to use
@@ -7089,7 +7089,7 @@
 
         Reviewed by Maciej and Darin, landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5939
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5939
           final comma in javascript object prevents parsing
 
         * kjs/grammar.y: Added rule to allow trailing comma in
@@ -7099,7 +7099,7 @@
 
         Reviewed by Geoff, landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5308
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5308
           Number.toFixed doesn't include leading 0
 
         * kjs/number_object.cpp: (NumberProtoFunc::callAsFunction):
@@ -7109,7 +7109,7 @@
 
         Reviewed by Geoff, landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5307
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5307
           Number.toFixed doesn't round 0.5 up
 
         * kjs/number_object.cpp: (NumberProtoFunc::callAsFunction):
@@ -7119,7 +7119,7 @@
 
         Reviewed and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6486
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6486
           JavaScriptCore should use system malloc on Windows
 
         * kjs/config.h: Add USE_SYSTEM_MALLOC to the Win32 section.
@@ -7138,7 +7138,7 @@
 
         Reviewed by Maciej.
         
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6373
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6373
         REGRESSION: JavaScript hang when comparing large array to null
         
         * kjs/object.h:
@@ -7155,7 +7155,7 @@
         Reviewed by Maciej.
 
         - Fix WebCore development build
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6408
+        http://bugs.webkit.org/show_bug.cgi?id=6408
 
         * kxmlcore/Assertions.h: Use __VA_ARGS__ in variadic macros.
 
@@ -7164,7 +7164,7 @@
         Reviewed by Darin.
 
         - miscellaneous changes for 4% speedup on the JavaScript iBench
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6396
+        http://bugs.webkit.org/show_bug.cgi?id=6396
         
         Changes mostly thanks to Maks Orlovich, tweaked a little by me.
 
@@ -7197,10 +7197,10 @@
         Reviewed by Eric.
 
         - fix remaining performance regression from Getter/Setter change
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6249
+        http://bugs.webkit.org/show_bug.cgi?id=6249
 
         - Activation objects should not have __proto__ property
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6395
+        http://bugs.webkit.org/show_bug.cgi?id=6395
 
         * kjs/function.cpp:
         (KJS::ActivationImp::getOwnPropertySlot): Implement directly, thus
@@ -7218,7 +7218,7 @@
 
         Patch by kimmo.t.kinnunen@nokia.com, reviewed by darin, tweaked by me.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4921
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=4921
         \u escape sequences in JavaScript identifiers
 
         * kjs/function_object.cpp:
@@ -7247,7 +7247,7 @@
 
         Reviewed by Maciej.
 
-        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6298
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=6298
         Getter setter test is failing
                 
         * kjs/object.cpp:
@@ -7260,7 +7260,7 @@
         Reviewed and committed by Maciej.
 
         - Handle negative, FP numbers with non-10 radix in toString
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6259
+        http://bugs.webkit.org/show_bug.cgi?id=6259
 
         (Merged from KJS, original work by Harri Porten)
         
@@ -7272,7 +7272,7 @@
 
         Patch by Maks Orlovich, reviewed and landed by me.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6267
+        - http://bugs.webkit.org/show_bug.cgi?id=6267
         Fix Number.prototype.toFixed/toExponential(undefined)
 
         * kjs/number_object.cpp:
@@ -7282,7 +7282,7 @@
 
         Patch by Maks Orlovich, Reviewed and landed by me.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6266
+        - http://bugs.webkit.org/show_bug.cgi?id=6266
         Minor object naming updates (to match Mozilla, KJS)
 
         * kjs/number_object.cpp:
@@ -7309,7 +7309,7 @@
         - Fixed <rdar://problem/4364705> run-javascriptcore-tests crashes in 
         KJS::BlockNode::deref 
         AKA 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6233
+        http://bugs.webkit.org/show_bug.cgi?id=6233
         Reproducible stack-overflow crash in ~RefPtr<T> due to RefPtr<T> use in 
         linked lists
 
@@ -7392,7 +7392,7 @@
 
         Reviewed by mjs.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4026
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=4026
         Math.random() not seeded.
 
         Added call to sranddev() -- it executes the first time a process
@@ -7405,7 +7405,7 @@
 
         Reviewed by darin.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6265
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=6265
         Name change regression: Java doesn't know what JavaJSObject is
 
         Changed strings passed to Java back to original "JSObject".
@@ -7418,7 +7418,7 @@
 
         Reviewed by Maciej.
 
-        - The JSC part of http://bugzilla.opendarwin.org/show_bug.cgi?id=6268
+        - The JSC part of http://bugs.webkit.org/show_bug.cgi?id=6268
         Add undetectable document.all
         
         * kjs/operations.cpp:
@@ -7484,7 +7484,7 @@
         Reviewed and landed by Maciej.
 
         - fixed 6234: Can delete array index property incorrectly.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6234
+        http://bugs.webkit.org/show_bug.cgi?id=6234
 
         * kjs/array_object.cpp:
         (ArrayInstance::deleteProperty): use toArrayIndex instead of toUInt32 when
@@ -7505,7 +7505,7 @@
         Changes by me and Anders.
 
         - mostly fixed REGRESSION: 5-10% performance regression on JS iBench from getter/setter change
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6083
+        http://bugs.webkit.org/show_bug.cgi?id=6083
 
         - also fixed some warnings reported by -Winline
         
@@ -7544,7 +7544,7 @@
         Reviewed by Eric and Dave Hyatt.
 
         - make even const PassRefPtrs give transfer of ownership semantics
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6238
+        http://bugs.webkit.org/show_bug.cgi?id=6238
         
         This is a somewhat cheesy change. Having to use PassRefPtr_Ref creates ambiguities
         in assignment and copy construction. And this makes life way easier and removes
@@ -7595,7 +7595,7 @@
         Reviewed by Eric.
 
         - fixed "HashMap does not work with const pointer keys or values"
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6222
+        http://bugs.webkit.org/show_bug.cgi?id=6222
         
         * kxmlcore/HashMapPtrSpec.h:
         (KXMLCore::HashMap): In all methods, explicitly cast all pointers
@@ -7623,7 +7623,7 @@
         Reviewed by Darin.
 
         - Make HashMap/HashSet support non-POD types
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5332
+        http://bugs.webkit.org/show_bug.cgi?id=5332
 
         The changes for support are relatively simple, but I also made extensive changes to
         avoid copying, so that there isn't refcount thrash when you put RefPtrs into a HashMap.
@@ -7710,7 +7710,7 @@
 
         Reviewed by Eric and Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6196
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6196
         Would like to be able to define prototypes in headers
         
         * kjs/lookup.h:
@@ -7721,7 +7721,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6191
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6191
           RefPtr/PassRefPtr have a leak issue, operator== issues
 
         * kxmlcore/PassRefPtr.h:
@@ -7771,7 +7771,7 @@
         Reviewed by Darin.
 
         - made ALWAYS_INLINE declare things inline as well as __attribute__((always_inline))
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6159
+        http://bugs.webkit.org/show_bug.cgi?id=6159
 
         * kxmlcore/AlwaysInline.h:
 
@@ -7780,7 +7780,7 @@
         Reviewed by Darin.
 
         - fixed a leak in the assignment operator from PassRefPtr to RefPtr
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6158
+        http://bugs.webkit.org/show_bug.cgi?id=6158
 
         * kxmlcore/RefPtr.h:
         (KXMLCore::RefPtr::operator=):
@@ -7844,7 +7844,7 @@
 
         Originally done by both George Staikos and Alexey Proskuryakov.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5706
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5706
           Sharedptr dependency can be removed
 
         Our coding guidelines say "use 0 instead of NULL" and both RefPtr and
@@ -7863,7 +7863,7 @@
 
         Reviewed by Geoff Garen and Eric Seidel.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4923
+        - fix http://bugs.webkit.org/show_bug.cgi?id=4923
           stop using <ostream> in WebCore, eliminating the <cmath> troubles it causes
 
         * kjs/simple_number.h: Removed many unnecessary includes, including
@@ -7908,7 +7908,7 @@
 
         Reviewed, tweaked, and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5227
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5227
           Array indexOf() extension for JavaScript 1.5 Core
 
         * kjs/array_object.h:
@@ -7918,7 +7918,7 @@
 
         Reviewed by Darin and Geoffrey.
 
-        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=4000>
+        - fix for <http://bugs.webkit.org/show_bug.cgi?id=4000>
         Object.prototype is missing isPrototypeOf
         
         * kjs/object_object.cpp:
@@ -7936,7 +7936,7 @@
 
         Reviewed by Darin.
 
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6119
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=6119
         split() function ignores case insensitive modifier.
 
         Glossary:
@@ -7970,7 +7970,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5688
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5688
           speed up JavaScript parsing by not creating a UString just to parse
 
         * kjs/internal.h:
@@ -7999,7 +7999,7 @@
 
         Reviewed by Darin.
 
-        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=6041>
+        - Fixes <http://bugs.webkit.org/show_bug.cgi?id=6041>
         Support property getters and setters.
         
         * bindings/runtime_array.cpp:
@@ -8401,7 +8401,7 @@
 
         Reviewed by Maciej, landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3539
+        - fix http://bugs.webkit.org/show_bug.cgi?id=3539
           Array join and toString methods do not support circular references
 
         * kjs/array_object.cpp: (ArrayProtoFuncImp::callAsFunction):
@@ -8504,7 +8504,7 @@
 
         Reviewed by Geoffrey.
 
-        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3999>
+        - Fixes <http://bugs.webkit.org/show_bug.cgi?id=3999>
         Object.prototype is missing propertyIsEnumerable
         
         * kjs/object.cpp:
@@ -8537,7 +8537,7 @@
 
         Reviewed by Darin.
 
-        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3382>
+        - Fixes <http://bugs.webkit.org/show_bug.cgi?id=3382>
         nodes2strings.cpp fails to print left expression of ForInNode when 'var' is not used
         
         Patch by Mark Rowe.
@@ -8601,7 +8601,7 @@
         Reviewed by ggaren.  Committed by eseidel.
 
         Date conversion to local time gets the DST flag wrong sometimes
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5514
+        http://bugs.webkit.org/show_bug.cgi?id=5514
 
         * kjs/date_object.cpp:
         (KJS::isTime_tSigned):
@@ -8696,7 +8696,7 @@
         Reviewed by eseidel.  Committed by eseidel.
 
         Inline ScopeChain functions for speed.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5687
+        http://bugs.webkit.org/show_bug.cgi?id=5687
 
         * kjs/object.h:
         (KJS::ScopeChain::mark):
@@ -8825,7 +8825,7 @@
 
         Reviewed by Darin.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5571
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=5571
           REGRESSION (412.5-TOT): duplicated words/sentences at 
           shakespeer.sourceforge.net
 
@@ -8848,7 +8848,7 @@
 
         Patch by Mitz Pettel, reviewed by Maciej.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5357
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=5357
           REGRESSION: Scriptable plugin hides properties of OBJECT element
 
         * bindings/objc/objc_class.mm:
@@ -8858,7 +8858,7 @@
 
         Reviewed by Darin.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5409
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=5409
         slice() testcase doesn't pass
 
         Modified String.slice to deal with funky values.
@@ -8892,7 +8892,7 @@
 
         Reviewed by darin.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5602
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=5602
           REGRESSION: RegExp("[^\\s$]+", "g") returns extra matches
 
         We now update lastIndex relative to the start of the last match,
@@ -8907,7 +8907,7 @@
 
         Reviewed by Darin Adler. Code changes by Alexey Proskuryakov.
         
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4931
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4931
         Unicode format characters (Cf) should be removed from JavaScript source
 
         * kjs/lexer.cpp:
@@ -8935,7 +8935,7 @@
 
         Reviewed by Darin Adler. Code changes by George Staikos/Geoff Garen.
         
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4142
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4142
         Date object does not always adjust daylight savings correctly
 
         * kjs/date_object.cpp:
@@ -9058,9 +9058,9 @@
         Reviewed by Maciej; some changes done after review.
 
         - fixed <rdar://problem/4092064> hanging loading page; rte.ie (works in IE and Firefox)
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5280
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5280
           Date.setMonth fails with negative values
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5154
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5154
           JSC should switch to _r variants of unix time/date functions
         - fixed a few possible overflow cases
 
@@ -9096,7 +9096,7 @@
         Reviewed by Geoff.
         Tweaked and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5266
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5266
           Support parenthesized comments in Date.parse()
 
         * kjs/date_object.cpp:
@@ -9109,9 +9109,9 @@
 
         Reviewed, tweaked, and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5189
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5189
           pcre_exec.c fails to compile using MSVC
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5190
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5190
           KJS config.h adjustment for Win32
         
         * kjs/config.h: Make sure HAVE_MMAP and HAVE_SBRK are off for Win32.
@@ -9248,7 +9248,7 @@
 
         Patch from George Staikos <staikos@kde.org>, reviewed and tweaked a bit by me.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5174
+        http://bugs.webkit.org/show_bug.cgi?id=5174
         Add support for compiling on Linux (likely to help for other POSIX systems too)
 
         * kjs/collector.cpp:
@@ -9300,7 +9300,7 @@
         Reviewed by Darin.
 
         <rdar://problem/4283967> REGRESSION: 3% regression on PLT from new FastMalloc
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5243
+        http://bugs.webkit.org/show_bug.cgi?id=5243
         
         A number of optimizations to the new threadsafe malloc that make it actually as fast
         as dlmalloc (I measured wrong before) and as memory-efficient as the system malloc.
@@ -9445,7 +9445,7 @@
         Reviewed by darin.
 
         Fix JSC memory smasher in TOT.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5176
+        http://bugs.webkit.org/show_bug.cgi?id=5176
 
         * pcre/pcre_exec.c:
         (match):
@@ -9457,7 +9457,7 @@
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
         Build fix for JSC+SVG after 5161.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5179
+        http://bugs.webkit.org/show_bug.cgi?id=5179
 
 2005-09-28  Geoffrey Garen  <ggaren@apple.com>
 
@@ -9484,7 +9484,7 @@
         Reviewed by Eric.
 
         - move HashMap/HashSet code down to JavaScriptCore
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5161
+        http://bugs.webkit.org/show_bug.cgi?id=5161
         
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * kjs/internal.cpp:
@@ -9681,14 +9681,14 @@
         * kjs/nodes.cpp:
         (FuncExprNode::evaluate): Now sets .constructor properly.
         Test cases added to WebCore/layout-tests.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3537
+        http://bugs.webkit.org/show_bug.cgi?id=3537
 
 2005-09-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
 
         - replace dlmalloc with tcmalloc
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5145
+        http://bugs.webkit.org/show_bug.cgi?id=5145
 
         I also moved SharedPtr and the assertion code from WebCore into a
         new kxmlcore directory.
@@ -9878,7 +9878,7 @@
         Reviewed by Darin.
 
         <rdar://problem/4260479> Finish deploying PropertySlot in the interpreter
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5112
+        http://bugs.webkit.org/show_bug.cgi?id=5112
         
         Convert postfix, prefix, delete, prefix, and for..in expressions to use
         PropertySlot-based lookup instead of evaluateReference.
@@ -9948,7 +9948,7 @@
 
 2005-09-22  Geoffrey Garen  <ggaren@apple.com>
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5053
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=5053
         Need to restore int/long changes to simple_number.h
         
         Reviewed by darin and mjs.
@@ -9966,7 +9966,7 @@
 
         Reviewed by Geoff and partly by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/post_bug.cgi
+        - fixed http://bugs.webkit.org/post_bug.cgi
         (Reduce conflicts in JavaScriptCore grammar)
 
         This change gets us down from over 200 shift/reduce and 45 reduce/reduce to
@@ -10040,7 +10040,7 @@
 
 2005-09-20  Geoffrey Garen  <ggaren@apple.com>
 
-        - Rolled in fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4892
+        - Rolled in fix for http://bugs.webkit.org/show_bug.cgi?id=4892
           Date constructor has problems with months larger than 11
 
         Test cases added:
@@ -10056,7 +10056,7 @@
 
 2005-09-19  Geoffrey Garen  <ggaren@apple.com>
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5028
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=5028
           9 layout tests fail following the change from long to int
           
         - Rolled out changes to simple_number.h, and added fits(long long) 
@@ -10167,7 +10167,7 @@
 
         Change by Darin, reviewed by me and Maciej.
 
-        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=4547
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=4547
         use int instead of long for 32-bit (to prepare for LP64 compiling)
 
         * bindings/c/c_class.h:
@@ -10238,7 +10238,7 @@
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Fixed JSC+SVG
         Fixed JavaScriptCore+SVG after PCRE 6.1 merger.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4932
+        http://bugs.webkit.org/show_bug.cgi?id=4932
 
 2005-09-10  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
@@ -10264,7 +10264,7 @@
 
         Windows changes by Krzysztof Kowalczyk <kkowalczyk@gmail.com>.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4870
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4870
           win portability: fix IS_NEGATIVE_ZERO macro in simple_number.h
 
         * kjs/simple_number.h:
@@ -10355,7 +10355,7 @@
 
 2005-09-07  Geoffrey Garen  <ggaren@apple.com>
 
-        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4781
+        -fixed http://bugs.webkit.org/show_bug.cgi?id=4781
         Date.setMonth fails with big values due to overflow
 
         Reviewed by darin.
@@ -10370,7 +10370,7 @@
 
 2005-09-07  Geoffrey Garen  <ggaren@apple.com>
         -updated expected test results to reflect fix for 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4698
+        http://bugs.webkit.org/show_bug.cgi?id=4698
         kjs does not allow named functions in function expressions
  
         * tests/mozilla/expected.html:
@@ -10482,7 +10482,7 @@
 
 2005-08-31  Geoffrey Garen  <ggaren@apple.com>
 
-        -rolled in fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4698
+        -rolled in fix for http://bugs.webkit.org/show_bug.cgi?id=4698
         kjs does not allow named functions in function expressions
         
         Fix by Arthur Langereis.
@@ -10504,9 +10504,9 @@
 
         Reviewed, tweaked, and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4085
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4087
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4096
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4085
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4087
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4096
           Some fixes for compiling on windows.
 
         * kjs/config.h: Added a WIN32 case in here, with suitable defines.
@@ -10518,7 +10518,7 @@
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4758
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4758
           unify SharedPtr in WebCore and JavaScriptCore
 
         * kjs/shared_ptr.h: Updated namespace to KXMLCore instead of kxhmlcore.
@@ -10697,7 +10697,7 @@
         Reviewed by John.
         Landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4664
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4664
           TOT Crash from backwards null check in WebScriptObject.mm
 
         * bindings/objc/WebScriptObject.mm:
@@ -10718,7 +10718,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4435
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4435
           speed up JavaScript by tweaking the Identifier class
 
         * kjs/identifier.h: Add a new global nullIdentifier and make Identifier::null a function
@@ -10734,7 +10734,7 @@
         Reviewed by Maciej.
         Revised and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4474
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4474
           REGRESSION: Crash when using in-place operator on uninitialized array element
 
         * kjs/nodes.cpp:
@@ -10800,7 +10800,7 @@
 
         Reviewed by Geoff.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4437
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4437
           clean up error creation with new throwError function
 
         * bindings/NP_jsobject.cpp:
@@ -10937,7 +10937,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4421
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4421
           speed up JavaScript by inlining some label stack functions
 
         * kjs/internal.h: Removed the copy constructor and assignment operator for LabelStack.
@@ -10956,7 +10956,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4419
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4419
           speed up JavaScript by improving KJS::List
 
         my measurements show an improvement of 1% on iBench JavaScript
@@ -10976,7 +10976,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4417
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4417
           speed up JavaScript with some small changes to the property map code
 
         my measurements show an improvement of 2% on iBench JavaScript
@@ -10994,7 +10994,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4416
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4416
           speed up JavaScript with some improvements to the garbage collector
 
         my measurements show an improvement of 2% on iBench JavaScript
@@ -11018,7 +11018,7 @@
 
 2005-08-14  Darin Adler  <darin@apple.com>
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4344
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4344
           REGRESSION: JavaScript crash when going back from viewing a thread (NULL protoype)
 
         * kjs/error_object.cpp: (NativeErrorImp::NativeErrorImp): Set proto in a more
@@ -11211,7 +11211,7 @@
 
 2005-08-08  Geoffrey Garen  <ggaren@apple.com>
 
-        -fixed crash caused by fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4313
+        -fixed crash caused by fix for http://bugs.webkit.org/show_bug.cgi?id=4313
         
         - exceptionDescription now gets explicitly initialized to NULL in all
         the places listed below -- our wrapper classes used to take care of this 
@@ -11227,7 +11227,7 @@
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4325
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4325
           Mozilla Date tests have an unnecessary loop that runs 1970 times before each test
 
         * tests/mozilla/ecma/shell.js: Added TIME_YEAR_0 constant.
@@ -11309,7 +11309,7 @@
 
         Rubber stamped by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4313
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4313
           eliminate KJS::Value and KJS::Object smart pointer wrappers (for simplicity and speed)
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Removed object_wrapper.h.
@@ -12200,7 +12200,7 @@
 
 2005-07-27  Geoffrey Garen  <ggaren@apple.com>
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4147
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4147
         Array.toString() and toLocaleString() improvements from KDE KJS
         (rolled in KDE changes)
 
@@ -12245,7 +12245,7 @@
 
 2005-07-27  Geoffrey Garen  <ggaren@apple.com>
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3381
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3381
         Date.prototype.setDate() incorrect for values >=128
         
         - Test cases added:
@@ -12261,7 +12261,7 @@
 2005-07-27  Geoffrey Garen  <ggaren@apple.com>
 
         -rolled in patch by Carsten Guenther <cguenther@gmail.com>
-        for http://bugzilla.opendarwin.org/show_bug.cgi?id=3759
+        for http://bugs.webkit.org/show_bug.cgi?id=3759
         Date object enhancements
         
         Test cases added:
@@ -12303,7 +12303,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=4124
+        - http://bugs.webkit.org/show_bug.cgi?id=4124
         (change JavaScript property access to avoid double lookup)
 
         - 10% speedup on JavaScript iBench
@@ -12382,7 +12382,7 @@
 
 2005-07-25  Geoffrey Garen  <ggaren@apple.com>
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3971
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3971
         JS test suite depends on JS 1.2 behavior
         
         Reviewed by darin.
@@ -12432,7 +12432,7 @@
 
         Patch from Trey Matteson <trey@usa.net>, reviewed by me.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3956
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3956
         some of WebKit builds with symbols, some doesn't
         
         * JavaScriptCore.pbproj/project.pbxproj: Generate symbols even for
@@ -12440,7 +12440,7 @@
 
 2005-07-19  Geoffrey Garen  <ggaren@apple.com>
 
-        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3991
+        -fixed http://bugs.webkit.org/show_bug.cgi?id=3991
         JSC doesn't implement Array.prototype.toLocaleString()
 
         -test failure: ecma_3/Array/15.4.4.3-1.js
@@ -12478,7 +12478,7 @@
 
 2005-07-18  Geoffrey Garen  <ggaren@apple.com>
 
-        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4008
+        -fixed http://bugs.webkit.org/show_bug.cgi?id=4008
         Error objects report incorrect length
         
         Reviewed by darin.
@@ -12492,7 +12492,7 @@
 
 2005-07-15  Geoffrey Garen  <ggaren@apple.com>
 
-        -rolled in KDE fixes for http://bugzilla.opendarwin.org/show_bug.cgi?id=3601
+        -rolled in KDE fixes for http://bugs.webkit.org/show_bug.cgi?id=3601
         Error instance type info
         
         Reviewed by mjs.
@@ -12525,7 +12525,7 @@
         * tests/mozilla/expected.html:
 
 2005-07-14  Geoffrey Garen  <ggaren@apple.com>
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4006
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4006
         testkjs doesn't implement gc()
         
         - test failure:
@@ -12545,7 +12545,7 @@
 
 2005-07-14  Geoffrey Garen  <ggaren@apple.com>
 
-        -rolled in patches for http://bugzilla.opendarwin.org/show_bug.cgi?id=3945
+        -rolled in patches for http://bugs.webkit.org/show_bug.cgi?id=3945
         [PATCH] Safe merges of comments and other trivialities from KDE's kjs
         
         -patch by Martijn Klingens <klingens@kde.org>
@@ -12622,7 +12622,7 @@
 
 2005-07-14  Geoffrey Garen  <ggaren@apple.com>
 
-        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3970
+        -fixed http://bugs.webkit.org/show_bug.cgi?id=3970
         throw statements fail inside eval statements
         
         Reviewed by mjs.
@@ -12644,7 +12644,7 @@
 
 2005-07-14  Geoffrey Garen  <ggaren@apple.com>
         
-        -landed fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3412
+        -landed fix for http://bugs.webkit.org/show_bug.cgi?id=3412
         Object.prototype is missing toLocaleString
 
         - patch by Mark Rowe (bdash) <opendarwin.org@bdash.net.nz>
@@ -12669,7 +12669,7 @@
 
 2005-07-12  Geoffrey Garen  <ggaren@apple.com>
 
-        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3881
+        -fixed http://bugs.webkit.org/show_bug.cgi?id=3881
         arguments object should share values with function parameters
 
         Reviewed by mjs.
@@ -12724,7 +12724,7 @@
 
         Fix from Carsten Guenther, reviewed by Maciej
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3644 (Error string representation)
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3644 (Error string representation)
 
         Switch from "-" to ":" in error strings.
 
@@ -12734,7 +12734,7 @@
 
 2005-07-08  Geoffrey Garen  <ggaren@apple.com>
 
-        -rolled in patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=3878
+        -rolled in patch for http://bugs.webkit.org/show_bug.cgi?id=3878
         arguments object should be an object not an array
 
         Reviewed by mjs.
@@ -12750,14 +12750,14 @@
         Reviewed by mjs.
 
         * kjs/grammar.y: removed #define YYMAXDEPTH 0 for bison 2.0
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3882
+        http://bugs.webkit.org/show_bug.cgi?id=3882
 
 2005-07-03  Maciej Stachowiak  <mjs@apple.com>
 
         Original patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
         Fixes to patch by me, reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3293
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3293
 
         Test cases added:
         * tests/mozilla/expected.html: Two tests newly pass.
@@ -12797,7 +12797,7 @@
 
         -landed patch by Eric Seidel <macdome@opendarwin.org>
         
-        -for http://bugzilla.opendarwin.org/show_bug.cgi?id=3657
+        -for http://bugs.webkit.org/show_bug.cgi?id=3657
         GroundWork:  Moving some functions from khtml->jsc following kjs TOT
         
         - no layout test necessary yet - only groundwork
@@ -12811,7 +12811,7 @@
 
         -landed patch by Carsten Guenther <cguenther@gmail.com>
 
-        -fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3477
+        -fixes http://bugs.webkit.org/show_bug.cgi?id=3477
         some US-centric date formats not parsed by JavaScript (clock at news8austin.com)
 
         -relevant tests:
@@ -12884,7 +12884,7 @@
         (KJS::Context::curStmtFirstLine): stub for compatibility with KDE
         * kjs/value.h:
         (KJS::Value::isValid): compatibility with KDE
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3687
+        http://bugs.webkit.org/show_bug.cgi?id=3687
 
 2005-07-01  Eric Seidel  <eseidel@apple.com>
 
@@ -12892,7 +12892,7 @@
 
         * kjs/create_hash_table: rolled in changes from KDE, including
         -n <namespace> support from KDOM and support for newer comments
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3771
+        http://bugs.webkit.org/show_bug.cgi?id=3771
 
 2005-06-30  Geoffrey Garen  <ggaren@apple.com>
 
@@ -12944,7 +12944,7 @@
 
         Patch by Francisco Tolmasky <tolmasky@gmail.com>
 
-        - fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3667
+        - fixes http://bugs.webkit.org/show_bug.cgi?id=3667
         Core JavaScript 1.5 Reference:Objects:Array:forEach
 
         See WebCore Changelog for layout tests added.
@@ -12960,7 +12960,7 @@
 
         Patch contributed by Oliver Hunt <ojh16@student.canterbury.ac.nz>
 
-        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3743
+        -fixed http://bugs.webkit.org/show_bug.cgi?id=3743
         Incorrect error message given for certain calls
 
         See WebCore Changelog for layout test added.
@@ -12990,7 +12990,7 @@
 
         Reviewed by Darin.
 
-        -fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3750
+        -fixes http://bugs.webkit.org/show_bug.cgi?id=3750
         build fails with KJS_VERBOSE set
 
         * kjs/nodes.cpp: changed debug print statement to use UString
@@ -13002,7 +13002,7 @@
 
         Patch contributed by Carsten Guenther <cguenther@gmail.com>.
 
-        -fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3477
+        -fixes http://bugs.webkit.org/show_bug.cgi?id=3477
         some US-centric date formats not parsed by JavaScript (clock at news8austin.com)
 
         Reviewed by darin.
@@ -13047,7 +13047,7 @@
         Change by Anders Carlsson.
         Reviewed by me.
 
-        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3294>
+        - fixed <http://bugs.webkit.org/show_bug.cgi?id=3294>
           String.prototype.replace() fails with function as second param
 
         * kjs/string_object.cpp: (replace): Added code to handle functions.
@@ -13059,7 +13059,7 @@
 
 2005-06-21  Adele Peterson  <adele@apple.com>
 
-        rolling out fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3293, since it caused layout test failures.
+        rolling out fix for http://bugs.webkit.org/show_bug.cgi?id=3293, since it caused layout test failures.
         fast/forms/element-by-name
         fast/loader/loadInProgress
 
@@ -13105,7 +13105,7 @@
 
         Patch from Anders Carlsson <andersca@mac.com>, reviewed by Darin.
 
-        Fixed: <http://bugzilla.opendarwin.org/show_bug.cgi?id=3450>
+        Fixed: <http://bugs.webkit.org/show_bug.cgi?id=3450>
         <rdar://problem/3881901> String.replace() method not working when regex pattern contains {n, m}
 
         * pcre/pcre.c: (pcre_compile): Remember the last char length so it can be subtracted correctly if needed.
@@ -13128,7 +13128,7 @@
 
         Reviewed by Darin(first pass) and Hyatt.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3576
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3576
         (roll in support for "const" keyword from KDE tree)
         - make processVarDecls handle deletability of variables declared
         in an eval block the same as evaluate would
@@ -13164,7 +13164,7 @@
 
         Patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3293
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3293
         
         Test cases added: 
         * tests/mozilla/expected.html: Updated for two fixed tests.
@@ -13212,7 +13212,7 @@
         Change by Finlay Dobbie.
         Reviewed by me.
 
-        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3331>
+        - fixed <http://bugs.webkit.org/show_bug.cgi?id=3331>
           10.3.9 Build Failure: NSString may not respond to `+stringWithCString:encoding:'
 
         * bindings/objc/WebScriptObject.mm: (-[WebScriptObject stringRepresentation]):
@@ -13281,7 +13281,7 @@
         Change by Mark Rowe <opendarwin.org@bdash.net.nz>
         Reviewed by me.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3327
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3327
         (Exception When Setting Style to Invalid Value Lacks Line/File Information)
 
         * kjs/nodes.cpp: Include source file and line number when making exception in
