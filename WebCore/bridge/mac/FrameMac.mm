@@ -2220,25 +2220,29 @@ static Node* isTextFirstInListItem(Node *e)
     return 0;
 }
 
-// FIXME: This collosal function needs to be refactored into maintainable smaller bits.
+// FIXME: Enhance TextIterator to optionally add attributes, then just call through to that.
 
 #define BULLET_CHAR 0x2022
 #define SQUARE_CHAR 0x25AA
 #define CIRCLE_CHAR 0x25E6
 
-NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, Node *endNode, int endOffset)
+NSAttributedString *FrameMac::attributedString(Node *startNode, int startOffset, Node *endNode, int endOffset)
 {
     ListItemInfo info;
     NSMutableAttributedString *result;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    Node * _startNode = _start;
-
-    if (!_startNode)
+    Range range(document(), startNode, startOffset, endNode, endOffset);
+    if (!range.boundaryPointsValid())
         return nil;
-
+    
+    Node* firstNode = range.startNode();
+    if (!firstNode)
+        return nil;
+    Node* pastEndNode = range.pastEndNode();
+    
     result = [[[NSMutableAttributedString alloc] init] autorelease];
-
+    
     bool hasNewLine = true;
     bool addedSpace = true;
     NSAttributedString *pendingStyledSpace = nil;
@@ -2249,25 +2253,25 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
     Vector<ListItemInfo> listItemLocations;
     float maxMarkerWidth = 0;
     
-    Node *n = _startNode;
+    Node *currentNode = firstNode;
     
     // If the first item is the entire text of a list item, use the list item node as the start of the 
     // selection, not the text node.  The user's intent was probably to select the list.
-    if (n->isTextNode() && startOffset == 0) {
-        Node *startListNode = isTextFirstInListItem(_startNode);
+    if (currentNode->isTextNode() && startOffset == 0) {
+        Node *startListNode = isTextFirstInListItem(firstNode);
         if (startListNode){
-            _startNode = startListNode;
-            n = _startNode;
+            firstNode = startListNode;
+            currentNode = firstNode;
         }
     }
     
-    while (n) {
-        RenderObject *renderer = n->renderer();
+    while (currentNode && currentNode != pastEndNode) {
+        RenderObject *renderer = currentNode->renderer();
         if (renderer) {
             RenderStyle *style = renderer->style();
             NSFont *font = style->font().primaryFont()->getNSFont();
             bool needSpace = pendingStyledSpace != nil;
-            if (n->isTextNode()) {
+            if (currentNode->isTextNode()) {
                 if (hasNewLine) {
                     addedSpace = true;
                     needSpace = false;
@@ -2276,9 +2280,9 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                     hasNewLine = false;
                 }
                 DeprecatedString text;
-                DeprecatedString str = n->nodeValue().deprecatedString();
-                int start = (n == _startNode) ? startOffset : -1;
-                int end = (n == endNode) ? endOffset : -1;
+                DeprecatedString str = currentNode->nodeValue().deprecatedString();
+                int start = (currentNode == firstNode) ? startOffset : -1;
+                int end = (currentNode == endNode) ? endOffset : -1;
                 if (renderer->isText()) {
                     if (!style->collapseWhiteSpace()) {
                         if (needSpace && !addedSpace) {
@@ -2363,24 +2367,24 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
             } else {
                 // This is our simple HTML -> ASCII transformation:
                 DeprecatedString text;
-                if (n->hasTagName(aTag)) {
+                if (currentNode->hasTagName(aTag)) {
                     // Note the start of the <a> element.  We will add the NSLinkAttributeName
                     // attribute to the attributed string when navigating to the next sibling 
                     // of this node.
                     linkStartLocation = [result length];
-                    linkStartNode = static_cast<Element*>(n);
-                } else if (n->hasTagName(brTag)) {
+                    linkStartNode = static_cast<Element*>(currentNode);
+                } else if (currentNode->hasTagName(brTag)) {
                     text += "\n";
                     hasNewLine = true;
-                } else if (n->hasTagName(liTag)) {
+                } else if (currentNode->hasTagName(liTag)) {
                     DeprecatedString listText;
-                    Element *itemParent = listParent(static_cast<Element*>(n));
+                    Element *itemParent = listParent(static_cast<Element*>(currentNode));
                     
                     if (!hasNewLine)
                         listText += '\n';
                     hasNewLine = true;
 
-                    listItems.append(static_cast<Element*>(n));
+                    listItems.append(static_cast<Element*>(currentNode));
                     info.start = [result length];
                     info.end = 0;
                     listItemLocations.append (info);
@@ -2425,31 +2429,31 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                         [result appendAttributedString: partialString];                
                         [partialString release];
                     }
-                } else if (n->hasTagName(olTag) || n->hasTagName(ulTag)) {
+                } else if (currentNode->hasTagName(olTag) || currentNode->hasTagName(ulTag)) {
                     if (!hasNewLine)
                         text += "\n";
                     hasNewLine = true;
-                } else if (n->hasTagName(blockquoteTag)
-                        || n->hasTagName(ddTag)
-                        || n->hasTagName(divTag)
-                        || n->hasTagName(dlTag)
-                        || n->hasTagName(dtTag)
-                        || n->hasTagName(hrTag)
-                        || n->hasTagName(listingTag)
-                        || n->hasTagName(preTag)
-                        || n->hasTagName(tdTag)
-                        || n->hasTagName(thTag)) {
+                } else if (currentNode->hasTagName(blockquoteTag)
+                        || currentNode->hasTagName(ddTag)
+                        || currentNode->hasTagName(divTag)
+                        || currentNode->hasTagName(dlTag)
+                        || currentNode->hasTagName(dtTag)
+                        || currentNode->hasTagName(hrTag)
+                        || currentNode->hasTagName(listingTag)
+                        || currentNode->hasTagName(preTag)
+                        || currentNode->hasTagName(tdTag)
+                        || currentNode->hasTagName(thTag)) {
                     if (!hasNewLine)
                         text += '\n';
                     hasNewLine = true;
-                } else if (n->hasTagName(h1Tag)
-                        || n->hasTagName(h2Tag)
-                        || n->hasTagName(h3Tag)
-                        || n->hasTagName(h4Tag)
-                        || n->hasTagName(h5Tag)
-                        || n->hasTagName(h6Tag)
-                        || n->hasTagName(pTag)
-                        || n->hasTagName(trTag)) {
+                } else if (currentNode->hasTagName(h1Tag)
+                        || currentNode->hasTagName(h2Tag)
+                        || currentNode->hasTagName(h3Tag)
+                        || currentNode->hasTagName(h4Tag)
+                        || currentNode->hasTagName(h5Tag)
+                        || currentNode->hasTagName(h6Tag)
+                        || currentNode->hasTagName(pTag)
+                        || currentNode->hasTagName(trTag)) {
                     if (!hasNewLine)
                         text += '\n';
                     
@@ -2465,7 +2469,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                     
                     hasNewLine = true;
                 }
-                else if (n->hasTagName(imgTag)) {
+                else if (currentNode->hasTagName(imgTag)) {
                     if (pendingStyledSpace != nil) {
                         if (linkStartLocation == [result length])
                             ++linkStartLocation;
@@ -2473,7 +2477,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                         [pendingStyledSpace release];
                         pendingStyledSpace = nil;
                     }
-                    NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<Element*>(n));
+                    NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<Element*>(currentNode));
                     NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
                     NSAttributedString *iString = [NSAttributedString attributedStringWithAttachment:attachment];
                     [result appendAttributedString: iString];
@@ -2486,25 +2490,22 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
             }
         }
 
-        if (n == endNode)
-            break;
+        Node *nextNode = currentNode->firstChild();
+        if (!nextNode)
+            nextNode = currentNode->nextSibling();
 
-        Node *next = n->firstChild();
-        if (!next)
-            next = n->nextSibling();
-
-        while (!next && n->parentNode()) {
+        while (!nextNode && currentNode->parentNode()) {
             DeprecatedString text;
-            n = n->parentNode();
-            if (n == endNode)
+            currentNode = currentNode->parentNode();
+            if (currentNode == pastEndNode)
                 break;
-            next = n->nextSibling();
+            nextNode = currentNode->nextSibling();
 
-            if (n->hasTagName(aTag)) {
+            if (currentNode->hasTagName(aTag)) {
                 // End of a <a> element.  Create an attributed string NSLinkAttributeName attribute
                 // for the range of the link.  Note that we create the attributed string from the DOM, which
                 // will have corrected any illegally nested <a> elements.
-                if (linkStartNode && n == linkStartNode) {
+                if (linkStartNode && currentNode == linkStartNode) {
                     String href = parseURL(linkStartNode->getAttribute(hrefAttr));
                     KURL kURL = Mac(linkStartNode->document()->frame())->completeURL(href.deprecatedString());
                     
@@ -2514,15 +2515,15 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                     linkStartNode = 0;
                 }
             }
-            else if (n->hasTagName(olTag) || n->hasTagName(ulTag)) {
+            else if (currentNode->hasTagName(olTag) || currentNode->hasTagName(ulTag)) {
                 if (!hasNewLine)
                     text += '\n';
                 hasNewLine = true;
-            } else if (n->hasTagName(liTag)) {
+            } else if (currentNode->hasTagName(liTag)) {
                 
                 int i, count = listItems.size();
                 for (i = 0; i < count; i++){
-                    if (listItems[i] == n){
+                    if (listItems[i] == currentNode){
                         listItemLocations[i].end = [result length];
                         break;
                     }
@@ -2530,27 +2531,27 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                 if (!hasNewLine)
                     text += '\n';
                 hasNewLine = true;
-            } else if (n->hasTagName(blockquoteTag) ||
-                       n->hasTagName(ddTag) ||
-                       n->hasTagName(divTag) ||
-                       n->hasTagName(dlTag) ||
-                       n->hasTagName(dtTag) ||
-                       n->hasTagName(hrTag) ||
-                       n->hasTagName(listingTag) ||
-                       n->hasTagName(preTag) ||
-                       n->hasTagName(tdTag) ||
-                       n->hasTagName(thTag)) {
+            } else if (currentNode->hasTagName(blockquoteTag) ||
+                       currentNode->hasTagName(ddTag) ||
+                       currentNode->hasTagName(divTag) ||
+                       currentNode->hasTagName(dlTag) ||
+                       currentNode->hasTagName(dtTag) ||
+                       currentNode->hasTagName(hrTag) ||
+                       currentNode->hasTagName(listingTag) ||
+                       currentNode->hasTagName(preTag) ||
+                       currentNode->hasTagName(tdTag) ||
+                       currentNode->hasTagName(thTag)) {
                 if (!hasNewLine)
                     text += '\n';
                 hasNewLine = true;
-            } else if (n->hasTagName(pTag) ||
-                       n->hasTagName(trTag) ||
-                       n->hasTagName(h1Tag) ||
-                       n->hasTagName(h2Tag) ||
-                       n->hasTagName(h3Tag) ||
-                       n->hasTagName(h4Tag) ||
-                       n->hasTagName(h5Tag) ||
-                       n->hasTagName(h6Tag)) {
+            } else if (currentNode->hasTagName(pTag) ||
+                       currentNode->hasTagName(trTag) ||
+                       currentNode->hasTagName(h1Tag) ||
+                       currentNode->hasTagName(h2Tag) ||
+                       currentNode->hasTagName(h3Tag) ||
+                       currentNode->hasTagName(h4Tag) ||
+                       currentNode->hasTagName(h5Tag) ||
+                       currentNode->hasTagName(h6Tag)) {
                 if (!hasNewLine)
                     text += '\n';
                 // An extra newline is needed at the start, not the end, of these types of tags,
@@ -2563,7 +2564,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
             [partialString release];
         }
 
-        n = next;
+        currentNode = nextNode;
     }
     
     [pendingStyledSpace release];
@@ -2583,7 +2584,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
         // each item in the list (in the resulting attributed string) will be relative to position 
         // of the outermost containing block.
         if (count > 0){
-            containingBlock = _startNode;
+            containingBlock = firstNode;
             while (containingBlock->renderer()->isInline()){
                 containingBlock = containingBlock->parentNode();
             }

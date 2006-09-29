@@ -1,3 +1,18 @@
+2006-09-29  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4663772> REGRESSION: Cannot type in Japanese after replying to a particular message
+        <rdar://problem/4673293> REGRESSION: Can't enter the Japanese characters in Mail or Blot
+
+        Test added
+        * fast/text/attributed-substring-from-range-001.html
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::attributedString):
+        Handle non-zero offsets when start and/or end node is a container. Offset used to be ignored in this case.
+        Also, add validation of the range.
+
 2006-09-29  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.
