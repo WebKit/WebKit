@@ -8,7 +8,7 @@
 
         Reviewed by Eric.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10975
+        http://bugs.webkit.org/show_bug.cgi?id=10975
         Update the blog template to valid HTML 4.01 Strict.
 
         * blog/wp-content/themes/webkit/comments-popup.php:
@@ -21,7 +21,7 @@
 
         Reviewed by Eric.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10966
+        http://bugs.webkit.org/show_bug.cgi?id=10966
         Bug 10966: Updates to website
 
         Resolves a few remaining validation issues, makes Bugzilla links consistent, and removes unneeded references to OpenDarwin.
@@ -71,7 +71,7 @@
 
 2006-09-19  Brady Eidson  <beidson@apple.com>
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8220
+        http://bugs.webkit.org/show_bug.cgi?id=8220
         Add the favicon.ico to the site.
         Notice, users of shipping Safari won't see the updated favicon 
         unless they clear their icon cache - ToT users can manually reload
@@ -91,7 +91,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=10444
+        - http://bugs.webkit.org/show_bug.cgi?id=10444
           Navigation links overlap the Spam Karma 2 footer
 
         * blog/wp-content/themes/webkit/style.css: Hide the footer altogether.
@@ -102,7 +102,7 @@
 
         Bug 9302: WebKit nightly download image says ~2.5 MB when
         universal binaries make it ~5.0 MB
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9302
+        http://bugs.webkit.org/show_bug.cgi?id=9302
         
         * images/download.png:
 
@@ -178,7 +178,7 @@
 
         Reviewed by Darin.
 
-        - see http://bugzilla.opendarwin.org/show_bug.cgi?id=9539
+        - see http://bugs.webkit.org/show_bug.cgi?id=9539
         Another case error preventing build
 
         * building/build.html: Building WebKit now requires Xcode 2.3.
@@ -200,7 +200,7 @@
 
         Patch by David Kilzer, reviewed by Geoffrey Garen, landed by Joost de Valk.
 
-        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9407
+        Fix http://bugs.webkit.org/show_bug.cgi?id=9407
 
         Improve wording of first paragraph of webkit site.
 
@@ -220,7 +220,7 @@
 
         Reviewed by ggaren.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9303
+        http://bugs.webkit.org/show_bug.cgi?id=9303
         JavaScript error when loading WebKit blog page
 
         * blog/wp-content/themes/webkit/sidebar.php: Removed unused JavaScript.  Synced with nav.inc.
@@ -317,7 +317,7 @@
 
         Reviewed by Darin.
 
-        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7918
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=7918
         Coding style doc uses illegal entity
 
         * coding/coding-style.html: Changed &emdash; to &mdash;.
@@ -675,7 +675,7 @@ bold in single view.
 
         Reviewed and landed by Anders.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7164
+        http://bugs.webkit.org/show_bug.cgi?id=7164
         Code cleanup
 
         Changed <div id="banner" to <h1 id="banner"
@@ -721,7 +721,7 @@ bold in single view.
 
         Reviewed by Darin. Landed by ap.
         
-        - fixes from http://bugzilla.opendarwin.org/show_bug.cgi?id=4871
+        - fixes from http://bugs.webkit.org/show_bug.cgi?id=4871
         "Reporting Bugs" Page Should Prompt User To Test In Newest Version of WebKit
         
         * quality/reporting.html:
@@ -732,7 +732,7 @@ bold in single view.
         Reviewed by Darin. Landed by Maciej.
         
         - Several fixes to the site
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7105
+        http://bugs.webkit.org/show_bug.cgi?id=7105
 
         * blog/wp-content/themes/webkit/style.css:
         * index.html:
