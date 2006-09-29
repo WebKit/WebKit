@@ -49,7 +49,7 @@
         Reviewed by Adam.
 
         Bug 10923: Frame scroll layout test failures on the buildbot
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10923
+        http://bugs.webkit.org/show_bug.cgi?id=10923
         
         Added a new method that will toggle on the recursive dump of
         child frame scroll positions.
@@ -85,7 +85,7 @@
 
         Reviewed by Brady.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10635
+        http://bugs.webkit.org/show_bug.cgi?id=10635
         Bug 10635: Buildbot configuration in SVN is out of sync with build.webkit.org
 
         * BuildSlaveSupport/build.webkit.org-config/webkit/builders.py: Reorder build slaves within build factories in an attempt to spread the load evenly.
@@ -96,7 +96,7 @@
 
         Reviewed by Eric.
 
-        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=10791
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=10791
         Even More Objective-C DOM auto-generation cleanup
 
         - Change to use new, more Objectice-C'ish version of
@@ -110,7 +110,7 @@
 
         Reviewed by Tim H.
 
-        Fixes last part of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10644
+        Fixes last part of: http://bugs.webkit.org/show_bug.cgi?id=10644
         Move QtLauncher down to WebKitQt.
 
         * QtLauncher/CMakeLists.txt: Removed.
@@ -120,7 +120,7 @@
 
         Reviewed by Darin.
 
-        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10644
+        Fixes parts of: http://bugs.webkit.org/show_bug.cgi?id=10644
         Adjust DumpRenderTree to the FrameQtClient changes.
 
         * DumpRenderTree/DumpRenderTree.qtproj/CMakeLists.txt:
@@ -142,7 +142,7 @@
 
         Reviewed by Tim H.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10693
+        http://bugs.webkit.org/show_bug.cgi?id=10693
         Convert JavaScript arrays to AppleScript lists
 
         * DumpRenderTree/AppleScriptController.m:
@@ -186,7 +186,7 @@
         Reviewed by John Sullivan.
 
         Part of <rdar://problem/4481553> NetscapeMoviePlugIn example code scripting doesn't work in Firefox (4319)
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4319>: NetscapeMoviePlugIn example code scripting doesn't work
+        <http://bugs.webkit.org/show_bug.cgi?id=4319>: NetscapeMoviePlugIn example code scripting doesn't work
         in Firefox
 
         * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
@@ -198,7 +198,7 @@
 
         Reviewed by Tim Hatcher.
         
-        Fixes one chunk of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10604
+        Fixes one chunk of: http://bugs.webkit.org/show_bug.cgi?id=10604
 
         * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
         (WebCore::DumpRenderTree::checkLoaded): Faster polling for isLoaded() in
@@ -318,7 +318,7 @@
 
         - added a function to create a few DOMKeyboardEvents and dispatch
           them to a specified HTML element
-          http://bugzilla.opendarwin.org/show_bug.cgi?id=9736
+          http://bugs.webkit.org/show_bug.cgi?id=9736
 
         * DumpRenderTree/EventSendingController.m:
         (+[EventSendingController isSelectorExcludedFromWebScript:]):
@@ -330,7 +330,7 @@
         Reviewed and tweaked by Darin.
 
         - added DumpRenderTree support so editing delegate can be made to refuse edits
-          to enable tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=10129
+          to enable tests for http://bugs.webkit.org/show_bug.cgi?id=10129
 
         * DumpRenderTree/DumpRenderTree.m:
         (+[LayoutTestController isSelectorExcludedFromWebScript:]): Add setAcceptsEditing:
@@ -362,7 +362,7 @@
         Reviewed by Darin.
 
         Bug 10224: [Drosera] Drosera icon should be set on DroseraLauncher so it appears in nightly builds
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10224
+        http://bugs.webkit.org/show_bug.cgi?id=10224
 
         * Drosera/Drosera.xcodeproj/project.pbxproj:
         * Drosera/LauncherInfo.plist:
@@ -381,7 +381,7 @@
         Reviewed by Darin.
 
         Bug 9632: [Drosera] syntax highlighting is slow (reproducible 40 second hang)
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9632
+        http://bugs.webkit.org/show_bug.cgi?id=9632
 
         Do not change the file source when normalizing the line endings.
         We use this file source to compare against new versions of the source
@@ -401,7 +401,7 @@
         Reviewed by Timothy.
 
         Bug 9931: [Drosera] Needs a cool icon
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9931
+        http://bugs.webkit.org/show_bug.cgi?id=9931
 
         * Drosera/Drosera.icns: Added.
         * Drosera/Drosera.xcodeproj/project.pbxproj:
@@ -418,7 +418,7 @@
 
         Reviewed by Maciej.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10182
+        http://bugs.webkit.org/show_bug.cgi?id=10182
         Bug 10182: [Drosera] Evaluating expressions in Console is slow when current frame has many variables
 
         * Drosera/console.js: String.indexOf returns -1 when the string is not found.
@@ -428,7 +428,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10171
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10171
           REGRESSION: failing layout test: fast/events/objc-event-api.html
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -451,7 +451,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10178
+        http://bugs.webkit.org/show_bug.cgi?id=10178
         Bug 10178: [Drosera] Selecting a frame in the stack list should take you to that location in the source
 
         * Drosera/debugger.js:  Keep a stack that contains the source file and line number references for outer
@@ -461,7 +461,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10175
+        http://bugs.webkit.org/show_bug.cgi?id=10175
         Bug 10175: [Drosera] Anonymous functions show up as "(global scope)" in stack list
 
         * Drosera/DebuggerDocument.m:
@@ -471,7 +471,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10167
+        http://bugs.webkit.org/show_bug.cgi?id=10167
         Bug 10167: REGRESSION(r15688): ASSERTION FAILED: _private->mouseDownEvent != nil in layout tests
 
         * DumpRenderTree/EventSendingController.m: Don't set the mouse down flag
@@ -482,7 +482,7 @@
         Reviewed by Maciej.
 
         Bug 9686: [Drosera] Need the ability to break into Drosera on Javascript exceptions
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9686
+        http://bugs.webkit.org/show_bug.cgi?id=9686
 
         * Drosera/DebuggerDocument.m:
         (-[WebScriptObject switchToServerNamed:]): Remove as listener before resuming to
@@ -515,7 +515,7 @@
 
         Reviewed by Darin.
 
-        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=10060
+        Fix http://bugs.webkit.org/show_bug.cgi?id=10060
         Improve iExploder results parsing
 
         * Scripts/run-iexploder-tests: Fix Apach logs parsing to produce a correct results 
@@ -525,7 +525,7 @@
 
         Reviewed by Timothy.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9964
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9964
           Add switch to prepare-ChangeLog to skip svn update of ChangeLog files
 
         * Scripts/prepare-ChangeLog: Added --[no-]update switch.
@@ -543,7 +543,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9875
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9875
           Teach svn-apply and svn-unapply to use patch(1) for additions and deletions
 
         * Scripts/svn-apply:
@@ -560,7 +560,7 @@
         Reviewed by Timothy.
 
         Bug 9889: [Drosera] Stepping out when paused after last statement in function skips a frame
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9889
+        http://bugs.webkit.org/show_bug.cgi?id=9889
 
         * Drosera/debugger.js:  Track whether we paused during the execution of willLeaveFrame.  If
         so, have stepOut pause on the next call to willExecuteStatement rather than second.
@@ -569,7 +569,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9848
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9848
           Teach svn-create-patch and friends to fix ChangeLog patches
 
         * Scripts/svn-apply: Added fixChangeLogPatch() and invoked it in the proper place.
@@ -581,7 +581,7 @@
         Reviewed by ggaren.
 
         Bug 9869: [Drosera] JS Console fails to evaluate input when paused in global scope
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9869
+        http://bugs.webkit.org/show_bug.cgi?id=9869
 
         * Drosera/DebuggerDocument.m:
         (-[WebScriptObject currentFunctionStack]): Include the global frame in the stack.
@@ -591,7 +591,7 @@
         Reviewed by ggaren.
 
         Bug 9863: Drosera needs to show something at launch
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9863
+        http://bugs.webkit.org/show_bug.cgi?id=9863
 
         * Drosera/DebuggerApplication.m:
         (-[DebuggerApplication applicationDidFinishLaunching:]): Show the attach window on launch.
@@ -611,7 +611,7 @@
 
         Reviewed by Tim O.
 
-        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7808
+        - test for http://bugs.webkit.org/show_bug.cgi?id=7808
         Assertion failure in -[WebBaseNetscapePluginStream dealloc] when requesting an invalid URL
 
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
@@ -623,7 +623,7 @@
         Reviewed by Darin.
 
         Bug 9598: [Drosera] add a JavaScript evaluator console
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9598
+        http://bugs.webkit.org/show_bug.cgi?id=9598
 
         * Drosera/DebuggerApplication.h:
         * Drosera/DebuggerApplication.m:
@@ -657,7 +657,7 @@
         Reviewed by a tired Geoff.
 
         Bug 9597: [Drosera] hook up the variables table to show stack variables
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9597
+        http://bugs.webkit.org/show_bug.cgi?id=9597
 
         * Drosera/DebuggerDocument.m:
         (-[WebScriptObject isSelectorExcludedFromWebScript:]):
@@ -678,7 +678,7 @@
 
         Reviewed by Beth Dakin.
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9844>:
+        <http://bugs.webkit.org/show_bug.cgi?id=9844>:
         Add DOM access test to DumpRenderTree's Netscape plug-in
 
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
@@ -689,7 +689,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9839
+        - http://bugs.webkit.org/show_bug.cgi?id=9839
           Bug 9839: Nightly launcher fails to detect extensions when extension causes crash on load
 
         Now track three states: initializing, running, and closed.  If we are launched and the previous
@@ -714,7 +714,7 @@
 
         Build fix. Reviewed by NOBODY.
 
-        - Backed out http://bugzilla.opendarwin.org/show_bug.cgi?id=7802
+        - Backed out http://bugs.webkit.org/show_bug.cgi?id=7802
           devenv.com not available in VC++ Express installations
 
         * Scripts/webkitdirs.pm: Backed out previous change.
@@ -723,7 +723,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9693
+        - http://bugs.webkit.org/show_bug.cgi?id=9693
           svn-apply should set ChangeLog date correctly when applying patches
 
         * Scripts/svn-apply: Set the ChangeLog entry date using a configurable timezone
@@ -742,7 +742,7 @@
 
         Reviewed by NOBODY (build fix).
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7802
+        - http://bugs.webkit.org/show_bug.cgi?id=7802
           devenv.com not available in VC++ Express installations
 
         * Scripts/webkitdirs.pm: Restore Hyatt's original logic to make buildbot
@@ -752,7 +752,7 @@
 
         Reviewed by Timothy Hatcher.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7802
+        - http://bugs.webkit.org/show_bug.cgi?id=7802
           devenv.com not available in VC++ Express installations
 
         * Scripts/webkitdirs.pm: Make Windows build work with Visual C++ Express.
@@ -761,7 +761,7 @@
 
         Reviewed by Eric.
 
-        Fixes bug http://bugzilla.opendarwin.org/show_bug.cgi?id=9804 .
+        Fixes bug http://bugs.webkit.org/show_bug.cgi?id=9804 .
         Patch by coldwinter@katamail.com.
 
         In the congratulations message, "capatibilies" should be "capabilities".
@@ -772,7 +772,7 @@
 
         Reviewed by Timothy Hatcher.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9794
+        - http://bugs.webkit.org/show_bug.cgi?id=9794
           Teach run-webkit-tests how to ignore tests with performance improvements
 
         * Scripts/run-webkit-tests: Speed up test list generation, implement --ignore-tests
@@ -782,7 +782,7 @@
 
         Reviewed by Geoff (well, half of it at least).
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9788
+        - http://bugs.webkit.org/show_bug.cgi?id=9788
           storage leaks in Objective-C tests
 
         * DumpRenderTree/DumpRenderTree.m: (-[LayoutTestController keepWebHistory]):
@@ -801,7 +801,7 @@
 
         Reviewed by Darin.
         
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9734
+        http://bugs.webkit.org/show_bug.cgi?id=9734
         - add support for dumping non-HTML as text - in this case use textContent
         instead of innerText
 
@@ -813,7 +813,7 @@
         Reviewed by Eric.
 
         Bug 9631: [Drosera] Add "Step Over" and "Step Out"
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9631
+        http://bugs.webkit.org/show_bug.cgi?id=9631
         
         Adds step over and step out. Along with a little code cleanup
         that was minor enough to piggyback on this fix.
@@ -838,7 +838,7 @@
         Reviewed by Eric.
 
         Bug 9628: [Drosera] Split Views acting oddly
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9628
+        http://bugs.webkit.org/show_bug.cgi?id=9628
         
         Only update the last X or Y coordinate if the new
         size was not constrained. Also adds the resize cursor to
@@ -852,7 +852,7 @@
         Reviewed by Alexy Proskuryakov.
 
         Bug 9692: Warning about Safari extensions on every launch is obnoxious
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9692
+        http://bugs.webkit.org/show_bug.cgi?id=9692
 
         * WebKitLauncher/WebKitNightlyEnabler.m:
         (myApplicationWillTerminate): Note that we are exiting cleanly.
@@ -866,7 +866,7 @@
         Reviewed by Alexy Proskuryakov.
 
         Bug 9654: Refresh Loop when accessing feed URLs
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9654
+        http://bugs.webkit.org/show_bug.cgi?id=9654
 
         * WebKitLauncher/Info.plist: Don't claim to handle feed:// URLs.
 
@@ -876,7 +876,7 @@
 
         Bug 9689: Nightly builds should warn a user about potential problems when using
         "Safari extensions"
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9689
+        http://bugs.webkit.org/show_bug.cgi?id=9689
 
         * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
         * WebKitLauncher/WebKitNightlyEnabler.m:
@@ -908,7 +908,7 @@
         Reviewed by Darin.
 
         Bug 9615: Buildbot configuration should be in SVN repository
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9615
+        http://bugs.webkit.org/show_bug.cgi?id=9615
 
         Import BuildBot configuration files as used by build.webkit.org.
         auth.py has been stubbed out so that slave passwords are not disclosed.
@@ -931,7 +931,7 @@
         Reviewed by Darin.
 
         Bug 9614: Nightly builds should notify user if a newer build is available
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9614
+        http://bugs.webkit.org/show_bug.cgi?id=9614
 
         * BuildSlaveSupport/build-launcher-app: Write revision number to WebKit.app's VERSION file.
         * BuildSlaveSupport/build-launcher-dmg: Pass revision number to server-side nightly maintenance
@@ -947,7 +947,7 @@
         Reviewed by Darin.
 
         Bug 9579: LayoutTests/fast/events/objc-event-api.html failing due to screenY output
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9579
+        http://bugs.webkit.org/show_bug.cgi?id=9579
 
         Report screenY values as (height of zero screen - screenY)
 
@@ -958,7 +958,7 @@
         Reviewed by Geoff.
 
         Bug 9591: [Drosera] breakpoints should be dragable and deletable by dragging off the gutter
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9591
+        http://bugs.webkit.org/show_bug.cgi?id=9591
         
         Makes breakpoints dragable. If dragged off the gutter they are deleted.
 
@@ -970,7 +970,7 @@
         Reviewed by Darin.
         
         Bug 9568: assertion failure in Safari after quitting Drosera
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9568
+        http://bugs.webkit.org/show_bug.cgi?id=9568
 
         Call switchToServerNamed:nil and not removeLister to make sure
         the server object is set to nil to prevent further removeListener calls.
@@ -997,7 +997,7 @@
 
         Formatting fix per Bug 9571 Comment #2.  Reviewed by NOBODY.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9571#c2
+        http://bugs.webkit.org/show_bug.cgi?id=9571#c2
 
         * Scripts/svn-apply: Formatting fix.
 
@@ -1005,7 +1005,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9571
+        http://bugs.webkit.org/show_bug.cgi?id=9571
         Teach svn-apply and svn-unapply to handle directory adds and removes better
 
         * Scripts/svn-apply: Handle directory adds more intelligently.  Handle directory removes.
@@ -1016,7 +1016,7 @@
         Reviewed by Darin.
 
         Bug 9574: Drosera should show inline scripts within the original HTML
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9574
+        http://bugs.webkit.org/show_bug.cgi?id=9574
 
         Refactor the JavaScript code to have a distinction between files
         and scripts. Show the script in the context of the HTML file if
@@ -1037,7 +1037,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9570
+        http://bugs.webkit.org/show_bug.cgi?id=9570
         Teach prepare-ChangeLog to operate on a list of files or directories
 
         * Scripts/prepare-ChangeLog: Accept a list of files and/or directories when running.
@@ -1047,7 +1047,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8843
+        - http://bugs.webkit.org/show_bug.cgi?id=8843
           add a way to build Objective-C test cases in HTML
 
         Tests running in DumpRenderTree can choose to relax some restrictions of the JavaScript/Objective-C bridge
@@ -1086,7 +1086,7 @@
 
         Build fix. Reviewed by NOBODY.
 
-        - Backed out http://bugzilla.opendarwin.org/show_bug.cgi?id=7802
+        - Backed out http://bugs.webkit.org/show_bug.cgi?id=7802
           devenv.com not available in VC++ Express installations
 
         * Scripts/webkitdirs.pm: Backed out previous change.
@@ -1095,7 +1095,7 @@
 
         Reviewed by Maciej.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7802
+        - http://bugs.webkit.org/show_bug.cgi?id=7802
           devenv.com not available in VC++ Express installations
 
         * Scripts/webkitdirs.pm: Make Windows build work with Visual C++ Express.
@@ -1104,7 +1104,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9564
+        - http://bugs.webkit.org/show_bug.cgi?id=9564
           A bunch of fixes to run-webkit-httpd
 
         - Add an -all-interfaces (-a) flag to bind to all interfaces, not just
@@ -1122,7 +1122,7 @@
 
         Reviewed by ggaren, landed by ap.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9181
+        - http://bugs.webkit.org/show_bug.cgi?id=9181
           Complete DOMUIEvent Obj-C API to reflect UIEvent
 
         Add function to enable logging of all events of one DOM node to stdout.
@@ -1145,7 +1145,7 @@
 
         Reviewed by ggaren.
 
-        - see http://bugzilla.opendarwin.org/show_bug.cgi?id=9539
+        - see http://bugs.webkit.org/show_bug.cgi?id=9539
         Another case error preventing build
 
         * Scripts/webkitdirs.pm: Building WebKit now requires Xcode 2.3.
@@ -1231,7 +1231,7 @@
 
         Reviewed by Anders.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9516
+        - http://bugs.webkit.org/show_bug.cgi?id=9516
           Would like a script to run a httpd server with the same configuration as run-webkit-tests http
 
         * Scripts/run-webkit-httpd: Added.
@@ -1347,7 +1347,7 @@
 
         Reviewed by darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9485
+        http://bugs.webkit.org/show_bug.cgi?id=9485
         Teach svn-apply and svn-unapply to use full path names
 
         * Scripts/svn-apply: Changed to use full path names.  Cleaned up code.
@@ -1357,7 +1357,7 @@
 
         Reviewed by ggaren.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9150
+        - http://bugs.webkit.org/show_bug.cgi?id=9150
           DumpRenderTree should be able to keep URL history during runs
 
         Test: LayoutTests/fast/history/clicked-link-is-visited.html
@@ -1374,7 +1374,7 @@
 
         Reviewed by darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9395
+        http://bugs.webkit.org/show_bug.cgi?id=9395
         Make prepare-ChangeLog faster
 
         * Scripts/prepare-ChangeLog: Use "svn diff" instead of "svn stat" to find changed files,
@@ -1399,7 +1399,7 @@
 
         Reviewed by Darin, landed by Geoff.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9350
+        http://bugs.webkit.org/show_bug.cgi?id=9350
         Use pathcmp() when sorting paths in svn-create-patch
 
         * Scripts/run-webkit-tests: Fixed splitpath() to use File::Basename subroutines instead of regex.
@@ -1411,7 +1411,7 @@
 
         Reviewed by darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9322
+        http://bugs.webkit.org/show_bug.cgi?id=9322
         Teach svn-create-patch to sort its output
 
         * Scripts/svn-create-patch: Clean up perl code.  Sort patch output alphabetically
@@ -1421,7 +1421,7 @@
 
         Reviewed by darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9299
+        http://bugs.webkit.org/show_bug.cgi?id=9299
         Teach svn-create-patch and friends to work with binary files
 
         * Scripts/svn-apply: Updated to use base64-encoded text for binary files when applying patches.
@@ -1432,7 +1432,7 @@
 
         Reviewed by Maciej.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9296
+        http://bugs.webkit.org/show_bug.cgi?id=9296
         Performance improvement for svn-create-patch
 
         * Scripts/svn-create-patch: Undef $indexPath after all paths have been fixed for a given patch.
@@ -1441,7 +1441,7 @@
 
         Reviewed by darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=9290
+        http://bugs.webkit.org/show_bug.cgi?id=9290
         Teach svn-apply and svn-unapply to patch ChangeLogs cleanly
 
         * Scripts/svn-apply: Fixed to apply ChangeLog patches without failing.
@@ -1502,7 +1502,7 @@
 
         Reviewed by Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=8996
+        http://bugs.webkit.org/show_bug.cgi?id=8996
         slow-utf8-text layout test case failing (no longer deterministic?)
         
         * DumpRenderTree/DumpRenderTree.m:
@@ -1590,7 +1590,7 @@
 
         Reviewed by Darin, landed by ap.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8528
+        - http://bugs.webkit.org/show_bug.cgi?id=8528
           Bakefiles (and generated Makefiles) for wx and gdk ports
 
         * Scripts/install-unix-extras: Added.
@@ -1688,7 +1688,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8633
+        - http://bugs.webkit.org/show_bug.cgi?id=8633
           DumpRenderTree should reset the URL cache
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -1705,7 +1705,7 @@
 
         Reviewed by hyatt.  Landed by eseidel.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8549
+        - http://bugs.webkit.org/show_bug.cgi?id=8549
           Enable detection of excessive repainting with DumpRenderTree
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -1715,7 +1715,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6905
+        - http://bugs.webkit.org/show_bug.cgi?id=6905
           DumpRenderTree needs a way to force painting (to allow invalidation tests)
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -1730,7 +1730,7 @@
 
         Reviewed by Maciej.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8532
+        - http://bugs.webkit.org/show_bug.cgi?id=8532
           Update iExploder to 1.3.2
 
         Test case numbers are not compatible with iExploder 1.2.
@@ -1777,7 +1777,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8444
+        - http://bugs.webkit.org/show_bug.cgi?id=8444
           Integrate mangleme test script.
 
         Works in a similar way to run-iexploder-tests.
@@ -1794,7 +1794,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8443
+        - http://bugs.webkit.org/show_bug.cgi?id=8443
           An easier way to save iExploder tests.
 
         * Scripts/run-iexploder-tests: Added a --get option to save a test into a file.
@@ -1803,7 +1803,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8421
+        - http://bugs.webkit.org/show_bug.cgi?id=8421
           Integrate iExploder test script.
 
         This script generates artificially mangled HTML documents, to test that the browser
@@ -1843,7 +1843,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8412
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8412
           Restore color profile after a crash
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -1868,7 +1868,7 @@
 
         Rubber-stamped by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8348
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8348
           upload-disk-image stage on buildslaves fail with "No space left on device"
 
         * BuildSlaveSupport/build-launcher-dmg:  Use the -srcfolder option to
@@ -1888,7 +1888,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8157
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8157
           Make HTTP tests using Perl use .pl extension
 
         * Scripts/run-webkit-tests: Added support for running .pl and .php tests,
@@ -1956,7 +1956,7 @@
 
         Reviewed by harrison
         
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7567>
+        <http://bugs.webkit.org/show_bug.cgi?id=7567>
         A drag and drop in DumpRenderTree copies the source, instead of cutting it
         
         Tell the source that the drag is over after the drag is performed, not before.
@@ -2115,7 +2115,7 @@
 
         Reviewed by darin.  Landed by eseidel.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7947
+        - http://bugs.webkit.org/show_bug.cgi?id=7947
           Add repaint testing support to run-webkit-tests
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -2338,7 +2338,7 @@
 
         Fix proposed by Mitz Pettel, reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7718
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7718
           run-webkit-tests fast/dom/HTMLObjectElement/ hangs
 
         * Scripts/run-webkit-tests: Make test paths canonical, to form proper URLs
@@ -2349,7 +2349,7 @@
 
         Reviewed by John Sullivan.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7681
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7681
           memory leak in the plug-in tests
 
         * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
@@ -2388,7 +2388,7 @@
 
         Reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7583
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7583
           DRT hangs when doing eventSender.mouseDown on native widgets
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -2467,7 +2467,7 @@
 
         Reviewed by Anders.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7655
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7655
           unwanted output while running layout tests
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -2527,7 +2527,7 @@
 
         Reviewed by Darin, landed by ap.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7589
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7589
           Mouse moved events do not work in DumpRenderTree
 
         Test: fast/events/event-sender-mouse-moved.html
@@ -2740,7 +2740,7 @@
         Reviewed by ggaren.
 
         Test new KConfig -> PlugInInfoStore change.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7498
+        http://bugs.webkit.org/show_bug.cgi?id=7498
 
         * DumpRenderTree/DumpRenderTree.m:
         (main): load test netscape plugin
@@ -2888,7 +2888,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7409
+        - http://bugs.webkit.org/show_bug.cgi?id=7409
           Some minor fixes to http tests.
 
         * Scripts/run-webkit-tests: Pass CustomLog and ErrorLog directives to httpd.
@@ -2897,7 +2897,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6197
+        - http://bugs.webkit.org/show_bug.cgi?id=6197
           Would like to use locally installed Apache for testing.
 
         Added two run-webkit-tests options:
@@ -2936,7 +2936,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7308
+        - http://bugs.webkit.org/show_bug.cgi?id=7308
           DumpRenderTree should be able to load files via HTTP
 
         * DumpRenderTree/DumpRenderTree.m: (dumpRenderTree):
@@ -2946,7 +2946,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7357
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7357
           REGRESSION: Warnings from WebKit scripts if PBXProductDirectory is undefined
 
         * Scripts/webkitdirs.pm: only call chomp if PBXProductDirectory is configured.
@@ -2986,7 +2986,7 @@
 
         Reviewed by darin
         
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7148>
+        <http://bugs.webkit.org/show_bug.cgi?id=7148>
         Add drag and drop support to DumpRenderTree
         
         Intercept the drag start using the new UI delegate method, package an NSDraggingInfo,
@@ -3066,7 +3066,7 @@
         Reviewed by thatcher
         
         Changes to test fix for:
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=3982>
+        <http://bugs.webkit.org/show_bug.cgi?id=3982>
         webViewDidBeginEditing, webViewDidEndEditing notification methods not called on delegate
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -3081,7 +3081,7 @@
         Reviewed by Timothy.
 
         Support automated testing of AppleScript "do JavaScript" command
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7012
+        http://bugs.webkit.org/show_bug.cgi?id=7012
 
         * DumpRenderTree/AppleScriptController.h: Added.
         * DumpRenderTree/AppleScriptController.m: Added.
@@ -3094,7 +3094,7 @@
         Reviewed by hyatt.
 
         Fix build-webkit for use on win32 (unblocks buildbot usage).
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=7122
+        http://bugs.webkit.org/show_bug.cgi?id=7122
 
         * Scripts/build-webkit: use ifCygwin() to conditionalize builds
         * Scripts/webkitdirs.pm: add ifOSX() and ifCygwin()
@@ -3181,7 +3181,7 @@
         Reviewed by mjs.
 
         run-webkit-test --leaks crashes (malloc logging runs out of memory)
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6869
+        http://bugs.webkit.org/show_bug.cgi?id=6869
 
         * Scripts/run-webkit-tests: fix --leaks to not crash
 
@@ -3190,13 +3190,13 @@
         Reviewed by darin.
 
         run-webkit-tests should produce a self-contained results directory
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6864
+        http://bugs.webkit.org/show_bug.cgi?id=6864
 
         * Scripts/run-webkit-tests: copy failing items to results dir.
 
 2006-01-23  Darin Adler  <darin@apple.com>
 
-         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3608
+         - fix http://bugs.webkit.org/show_bug.cgi?id=3608
            need script to update localizable strings file in WebKit
 
         * Scripts/update-webkit-localizable-strings: Added.
@@ -3237,7 +3237,7 @@
 
         Reviewed by eseidel.
 
-        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6682
+        - fix for http://bugs.webkit.org/show_bug.cgi?id=6682
         Call to checkWebCoreSVGSupport() broken in build-drawtest and run-drawtest
 
         * Scripts/build-drawtest: Changed bareword 'true' to 1.
@@ -3280,7 +3280,7 @@
         Reviewed by eseidel.  Committed by eseidel.
 
         - run-webkit-tests always launches Safari when tests fail
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6456
+        http://bugs.webkit.org/show_bug.cgi?id=6456
 
         * Scripts/run-webkit-tests:
         Add a command-line flag to prevent Safari being launched to display failed
@@ -3291,7 +3291,7 @@
         Reviewed by eseidel.  Committed by eseidel.
 
         - build-webkit should exit with non-zero status when build fails
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6459
+        http://bugs.webkit.org/show_bug.cgi?id=6459
 
         * Scripts/build-webkit:
         Use correct bits of subprocess exit code when passing back through
@@ -3367,7 +3367,7 @@
         Reviewed by Eric.
         
         - script to generate HTML wrappers for JS tests
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6441
+        http://bugs.webkit.org/show_bug.cgi?id=6441
 
         * Scripts/make-js-test-wrappers: Added.
 
@@ -3424,7 +3424,7 @@
         Reviewed by darin.
 
         build-webkit should pass on build arguments from command line
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5854
+        http://bugs.webkit.org/show_bug.cgi?id=5854
 
         * Scripts/build-webkit:
 
@@ -3446,7 +3446,7 @@
 
         Reviewed by darin.
 
-        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6361
+        - Fixed http://bugs.webkit.org/show_bug.cgi?id=6361
         Add plugin support to DumpRenderTree
 
         Also wrote first test plugin.
@@ -3535,7 +3535,7 @@
         Reviewed by darin.
 
         DumpRenderTree should set a consistent color profile while running
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6155
+        http://bugs.webkit.org/show_bug.cgi?id=6155
 
         Creates consistent colormatched renderings on every test machine
         using the only way possible with Tiger APIs: by setting the
@@ -3555,7 +3555,7 @@
 
         Reviewed by Darin Adler.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5846
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5846
           cvs-create-patch --include produces incorrect paths
 
         * Scripts/cvs-create-patch: Handle newly-added directories using chdir.
@@ -3570,7 +3570,7 @@
 
         Reviewed by Eric Seidel.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4990
+        - fix http://bugs.webkit.org/show_bug.cgi?id=4990
           WebKit needs to use a local pasteboard during testing
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -3646,7 +3646,7 @@
         Reviewed by Darin. Committed by Maciej.
 
         - fixed "DumpRenderTree should test for Ahem before doing anything else"
-        (http://bugzilla.opendarwin.org/show_bug.cgi?id=5838)
+        (http://bugs.webkit.org/show_bug.cgi?id=5838)
 
         * DumpRenderTree/DumpRenderTree.m:
         (main):
@@ -3664,7 +3664,7 @@
         Reviewed and committed by Maciej.
 
         - fixed cvs-create-patch --include produces incorrect paths
-        (http://bugzilla.opendarwin.org/show_bug.cgi?id=5846)
+        (http://bugs.webkit.org/show_bug.cgi?id=5846)
 
         * Scripts/cvs-create-patch: produce proper paths for new files.
 
@@ -3709,7 +3709,7 @@
 
         Reviewed by Maciej.
         
-        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=5303
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=5303
         TextInputController should support attributed strings
 
         * DumpRenderTree/TextInputController.m:
@@ -3749,7 +3749,7 @@
 
         Reviewed, rearranged and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4707
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4707
           Need a way to automatically test for regressions in NSTextInput implementation
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -3792,7 +3792,7 @@
 
 2005-09-28  Darin Adler  <darin@apple.com>
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5144
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5144
           pixel test should run even if render trees differ
 
         * Scripts/run-webkit-tests: Don't check if the text dump matches.
@@ -3803,7 +3803,7 @@
 
         * DumpKCanvasTree/DumpKCanvasTree.m:
         Missed one in my previous checkin.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5141
+        http://bugs.webkit.org/show_bug.cgi?id=5141
 
 2005-09-26  Eric Seidel  <eseidel@apple.com>
 
@@ -3816,7 +3816,7 @@
         * DrawTest/SVGTest.m:
         * DrawTest/TestController.m:
         Updated for WebCore+SVG -> WebCore rename.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5141
+        http://bugs.webkit.org/show_bug.cgi?id=5141
 
 2005-09-26  Eric Seidel  <eseidel@apple.com>
 
@@ -3826,14 +3826,14 @@
         (dump): updated error message
         * Scripts/check-dom-results: now includes xhtml
         Tool updates for xhtml.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4907
+        http://bugs.webkit.org/show_bug.cgi?id=4907
 
 2005-09-22  Duncan Wilcox  <duncan@mclink.it>
 
         Reviewed by Maciej.
         Landed by Darin.
 
-        - patch for <http://bugzilla.opendarwin.org/show_bug.cgi?id=4963>
+        - patch for <http://bugs.webkit.org/show_bug.cgi?id=4963>
         "Would like to simulate human interaction with webview"
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -3856,7 +3856,7 @@
         Update tools for WebCore+SVG -> WebCore rename.
         Also fold several SVG specific tools into their original
         WebCore counterparts.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5003
+        http://bugs.webkit.org/show_bug.cgi?id=5003
 
         * DrawTest/DrawTest.xcodeproj/project.pbxproj:
         * DumpKCanvasTree/DumpKCanvasTree.xcodeproj/project.pbxproj:
@@ -3875,7 +3875,7 @@
         Reviewed by darin.
 
         * Scripts/run-webkit-tests: added --guard-malloc option
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4613
+        http://bugs.webkit.org/show_bug.cgi?id=4613
 
 2005-09-16  Justin Garcia  <justin.garcia@apple.com>
 
@@ -3893,7 +3893,7 @@
 
 2005-09-14  Darin Adler  <darin@apple.com>
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4291
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4291
           dumpAsText doesn't work with XHTML documents
 
         * DumpRenderTree/DumpRenderTree.m: (dump): Dump the innerText of the document element
@@ -3909,7 +3909,7 @@
 
         Reviewed, tweaked, and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4286
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4286
           .Mac prefpane crashes when Safari using CVS WebKit is running
 
         * Scripts/run-safari: Set WEBKIT_UNSET_DYLD_FRAMEWORK_PATH.
@@ -3954,7 +3954,7 @@
         Reviewed by Darin.
 
         - set color variant and font settings to a consistent value.
-        (http://bugzilla.opendarwin.org/show_bug.cgi?id=4769)
+        (http://bugs.webkit.org/show_bug.cgi?id=4769)
 
         * DumpRenderTree/DumpRenderTree.m:
         (main):
@@ -3986,7 +3986,7 @@
 
         Reviewed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4723
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4723
         (some pixel tests fail when AA settings are changed)
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -4004,7 +4004,7 @@
 
         Reviewed by Eric.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4720
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4720
         (webkit pixel tests don't give consistent results with changed scrollbar arrow setting)
 
         * DumpRenderTree/DumpRenderTree.m:
@@ -4014,7 +4014,7 @@
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4676
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4676
           output of update-webkit is too verbose
 
         * Scripts/update-webkit:
@@ -4022,7 +4022,7 @@
 
 2005-08-27  Darin Adler  <darin@apple.com>
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4596
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4596
           cvs-create-patch --include-unknowns should ignore hidden files
 
         * Scripts/cvs-create-patch: Add code to check for files starting with ".".
@@ -4031,7 +4031,7 @@
 
         Reviewed, tweaked, and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4585
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4585
           update-webkit doesn't notice when you have SVGSupport and update properly
 
         * Scripts/update-webkit: Build SVGSupport directory if it's present.
@@ -4040,7 +4040,7 @@
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4572
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4572
           layout test machinery can't handle tests with applets that have code attributes
 
         * DumpRenderTree/DumpRenderTree.m: (main): Disable Java while running tests.
@@ -4049,7 +4049,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4625
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4625
           DumpRenderTree --pixel-tests crash
         - landed some other small changes I had sitting in my tree
 
@@ -4070,7 +4070,7 @@
 
         * Scripts/run-webkit-tests:
         Made --leaks option more readable by printing to a file.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4590
+        http://bugs.webkit.org/show_bug.cgi?id=4590
 
 2005-08-22  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
@@ -4079,7 +4079,7 @@
 
         * Scripts/run-webkit-tests: hides "expected actual diffs" links
         when they are not needed (for pixel-only failures)
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4584
+        http://bugs.webkit.org/show_bug.cgi?id=4584
 
 2005-08-22  Eric Seidel  <eseidel@apple.com>
 
@@ -4088,7 +4088,7 @@
         * Scripts/run-webkit-tests: Added the ability to display more than
         just two images as part of the image-diff "slideshow".
         Added display of "-w3c.png" baseline images for SVG.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4581
+        http://bugs.webkit.org/show_bug.cgi?id=4581
 
 2005-08-20  Eric Seidel  <eseidel@apple.com>
 
@@ -4104,7 +4104,7 @@
         (dumpRenderTree): closes CFString/CFURL leak
         * Scripts/run-webkit-tests:
         Adds --leaks option to run-webkit-tests
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4542
+        http://bugs.webkit.org/show_bug.cgi?id=4542
 
 2005-08-19  Ben La Monica  <ben.lamonica@gmail.com>
 
@@ -4182,7 +4182,7 @@
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4251
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4251
           Ideally would be able to pass arguments to apps using run-safari and run-webkit-app scripts
 
         * Scripts/run-safari: Pass arguments through to Safari on command line.
@@ -4196,7 +4196,7 @@
         * DrawTest/TestController.m:
         (-[TestController imagePathForSVGPath:]):
         Fixed support for using TextViewer with the layout-tests.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4385
+        http://bugs.webkit.org/show_bug.cgi?id=4385
 
 2005-08-11  Maciej Stachowiak  <mjs@apple.com>
 
@@ -4215,7 +4215,7 @@
 
         * DumpRenderTree/DumpRenderTree.m:
         Added support for rendering to a PNG file.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3840
+        http://bugs.webkit.org/show_bug.cgi?id=3840
 
 2005-08-07  Eric Seidel  <eseidel@apple.com>
 
@@ -4223,7 +4223,7 @@
 
         * Scripts/run-webkit-tests: added --svg option
         * Scripts/run-webkit-tests-svg: Removed.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4300
+        http://bugs.webkit.org/show_bug.cgi?id=4300
 
 2005-08-07  Eric Seidel  <eseidel@apple.com>
         Changes by Ben La Monica <ben.lamonica@gmail.com>
@@ -4241,7 +4241,7 @@
         (main): various argument changes.
         * svg2png/svg2png.xcodeproj/project.pbxproj:
         Several additions to provide image differencing functionality.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4193
+        http://bugs.webkit.org/show_bug.cgi?id=4193
 
 2005-08-07  Eric Seidel  <eseidel@apple.com>
 
@@ -4250,7 +4250,7 @@
         * Scripts/run-webkit-tests-svg: now uses WebCore/svg-tests
         * checkout-svg: links WebCore/svg-tests to SVGSupport/layout-tests
         Adding the first SVG layout tests:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4303
+        http://bugs.webkit.org/show_bug.cgi?id=4303
 
 2005-08-07  Darin Adler  <darin@apple.com>
 
@@ -4268,7 +4268,7 @@
         text-based layout regression testing.  This (like most of the
         SVG specific stuff) is temporary and will be replaced by
         DumpRenderTree once the DOMs and RenderTrees merge.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3917
+        http://bugs.webkit.org/show_bug.cgi?id=3917
 
 2005-08-06  Eric Seidel  <eseidel@apple.com>
 
@@ -4277,7 +4277,7 @@
         * DrawTest/DrawTestView.m:
         (-[DrawTestView toggleFilterSupport:]): missing negation.
         One half of fix for toggling filter support.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4252
+        http://bugs.webkit.org/show_bug.cgi?id=4252
 
 2005-08-04  Eric Seidel  <eseidel@apple.com>
 
@@ -4292,7 +4292,7 @@
         Added checkRequiredSystemConfig and made all the build-* scripts
         use it to print a pretty warning when trying to compile on an
         unsupported system (less than 10.4, Xcode 2.1).
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4280
+        http://bugs.webkit.org/show_bug.cgi?id=4280
 
 2005-08-04  Darin Adler  <darin@apple.com>
 
@@ -4352,7 +4352,7 @@
         * Scripts/run-drawtest: Added.
         * Scripts/webkitdirs.pm: added checkSVGFrameworks
         Made it much easier to build WebCore+SVG.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4208
+        http://bugs.webkit.org/show_bug.cgi?id=4208
 
 2005-07-29  Eric Seidel  <eseidel@apple.com>
 
@@ -4401,7 +4401,7 @@
         * DrawTest/TestViewerSplitView.m: Added.
         * DrawTest/main.m: Added.
         Adding simple cocoa app for testing SVG rendering, interaction.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4157
+        http://bugs.webkit.org/show_bug.cgi?id=4157
 
 2005-07-28  Eric Seidel  <eseidel@apple.com>
 
@@ -4412,7 +4412,7 @@
         * svg2png/svg2png_Prefix.pch: Added.
         Added a simple test tool which dumps a PNG from an SVG using
         WebCore+SVG's SVG rendering support.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4156
+        http://bugs.webkit.org/show_bug.cgi?id=4156
 
 2005-07-26  Maciej Stachowiak  <mjs@apple.com>
 
@@ -4621,7 +4621,7 @@
         Changes by Anders Carlsson.
         Reviewed by me.
 
-        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3496>
+        - fixed <http://bugs.webkit.org/show_bug.cgi?id=3496>
           Add gdb-safari script to launch Safari under gdb
 
         * Scripts/gdb-safari: Added.
@@ -4648,7 +4648,7 @@
         Changes by Michael Gaiman.
         Reviewed by me.
 
-        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3487>
+        - fixed <http://bugs.webkit.org/show_bug.cgi?id=3487>
           WebKit no longer builds after configuration supporting build changes
 
         * Scripts/webkitdirs.pm: Chomp off the result of `pwd`, and don't die when no Configuration file.
@@ -4702,7 +4702,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3397
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3397
           Build DumpRenderTree fails with unresolved NSAutoreleasePool, etc
 
         * DumpRenderTree/DumpRenderTree.xcode/project.pbxproj: Change type from "folder" to "wrapper.framework"
