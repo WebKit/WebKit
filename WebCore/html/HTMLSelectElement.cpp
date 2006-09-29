@@ -137,7 +137,7 @@ int HTMLSelectElement::lastSelectedListIndex() const
             }
         }
     }
-    return found ? index : -1;
+    return found ? (int) index : -1;
 }
 
 void HTMLSelectElement::deselectItems(HTMLOptionElement* excludeElement)

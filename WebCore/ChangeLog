@@ -1,5 +1,13 @@
 2006-09-29  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Hyatt.
+
+        Fixing build bustage with cast to int.
+
+        * html/HTMLSelectElement.cpp: (WebCore::HTMLSelectElement::lastSelectedListIndex):
+
+2006-09-29  Adele Peterson  <adele@apple.com>
+
         Fixing accidental include.
 
         * rendering/RenderListBox.cpp:
