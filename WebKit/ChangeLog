@@ -1,3 +1,30 @@
+2006-09-28  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Switch the inspector over to use border-image with styled buttons and selects.
+
+        * WebInspector/WebInspector.m:
+        (-[NSWindow window]):
+        (-[NSWindow setWebFrame:]):
+        (-[WebInspector _updateRoot]):
+        * WebInspector/webInspector/Images/button.png: Added.
+        * WebInspector/webInspector/Images/buttonDivider.png: Added.
+        * WebInspector/webInspector/Images/buttonPressed.png: Added.
+        * WebInspector/webInspector/Images/popup.png: Added.
+        * WebInspector/webInspector/Images/popupFill.png: Removed.
+        * WebInspector/webInspector/Images/popupFillPressed.png: Removed.
+        * WebInspector/webInspector/Images/popupLeft.png: Removed.
+        * WebInspector/webInspector/Images/popupLeftPressed.png: Removed.
+        * WebInspector/webInspector/Images/popupPressed.png: Added.
+        * WebInspector/webInspector/Images/popupRight.png: Removed.
+        * WebInspector/webInspector/Images/popupRightPressed.png: Removed.
+        * WebInspector/webInspector/Images/squareButtonRight.png: Removed.
+        * WebInspector/webInspector/Images/squareButtonRightPressed.png: Removed.
+        * WebInspector/webInspector/inspector.css:
+        * WebInspector/webInspector/inspector.html:
+        * WebInspector/webInspector/inspector.js:
+
 2006-09-28  Alice Liu  <alice.liu@apple.com>
 
         fixing the windows build

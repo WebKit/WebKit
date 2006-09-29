@@ -188,7 +188,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         [[NSNotificationCenter defaultCenter] removeObserver:self name:WebViewProgressFinishedNotification object:[_private->webFrame webView]];
         [_private->webFrame _removeInspector:self];
     }
-    
+
     [webFrame retain];
     [_private->webFrame release];
     _private->webFrame = webFrame;
@@ -738,10 +738,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     if (!_private->webViewLoaded || _private->searchResultsVisible)
         return;
 
-    DOMHTMLElement *titleArea = (DOMHTMLElement *)[_private->domDocument getElementById:@"treePopupTitleArea"];
-    [titleArea setTextContent:[[self rootDOMNode] _displayName]];
-
-    DOMHTMLElement *popup = (DOMHTMLElement *)[_private->domDocument getElementById:@"realTreePopup"];
+    DOMHTMLElement *popup = (DOMHTMLElement *)[_private->domDocument getElementById:@"treePopup"];
     [popup setInnerHTML:@""]; // reset the list
 
     DOMNode *currentNode = [self rootDOMNode];

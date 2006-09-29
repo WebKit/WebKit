@@ -42,11 +42,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <div id="title"><button class="close" onclick="window.close()"></button>Web Inspector<button class="menu" onmousedown="Inspector.showOptionsMenu()"></button></div>
 <div id="top">
     <div id="header">
-        <div id="traverse"><button class="square" id="traverseUp" onclick="Inspector.traverseTreeBackward()"><div class="left"></div><div class="middle"><img src="Images/upTriangle.png" /></div></button><button class="square" id="traverseDown" onclick="Inspector.traverseTreeForward()"><img src="Images/popupFillPressed.png" /><div class="middle"><img src="Images/downTriangle.png" /></div><div class="right"></div></button></div>
-        <div id="treePopup">
-            <select size="1" id="realTreePopup" onchange="Inspector.selectNewRoot(this)"></select>
-            <button id="treePopupButton" class="popup"><div class="left"></div><div id="treePopupTitleArea" class="middle"></div><div class="right"></div></button>
-        </div>
+        <div id="traverse"><button class="left" id="traverseUp" onclick="Inspector.traverseTreeBackward()"></button><button class="right" id="traverseDown" onclick="Inspector.traverseTreeForward()"></button></div>
+        <select size="1" id="treePopup"> onchange="Inspector.selectNewRoot(this)"></select>
         <div id="searchCount"></div>
         <input id="search" type="search" autosave="nodeSearch" results="20" placeholder="Search" incremental="incremental" onsearch="performSearch(this.value)" />
     </div>
@@ -58,13 +55,13 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <div id="splitter" onmousedown="Inspector.resizeTopArea()"><hr size="2" /></div>
 <div id="bottom">
     <div id="tabs">
-        <button class="square selected" id="nodeButton" onclick="switchPane('node')"><div class="left"></div><div class="middle">Node</div></button>
-        <button class="square" id="styleButton" onclick="switchPane('style')"><img src="Images/popupFillPressed.png" /><div class="middle">Style</div></button>
-        <button class="square" id="metricsButton" onclick="switchPane('metrics')"><img src="Images/popupFillPressed.png" /><div class="middle">Metrics</div></button>
-        <button class="square" id="propertiesButton" onclick="switchPane('properties')"><img src="Images/popupFillPressed.png" /><div class="middle">Properties</div><div class="right"></div></button>
+        <button class="left" id="nodeButton" onclick="switchPane('node')">Node</button>
+        <button class="middle" id="styleButton" onclick="switchPane('style')">Style</button>
+        <button class="middle" id="metricsButton" onclick="switchPane('metrics')">Metrics</button>
+        <button class="right" id="propertiesButton" onclick="switchPane('properties')">Properties</button>
     </div>
-    <div id="noSelection" style="display: none">No Selection</div>
-    <div id="nodePane" class="pane">
+    <div id="noSelection">No Selection</div>
+    <div id="nodePane" class="pane" style="display: none">
         <div class="infoRow">
             <span class="label">Node Type:</span>
             <span class="value" id="nodeType"></span>

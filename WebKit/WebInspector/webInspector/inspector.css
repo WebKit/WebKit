@@ -113,74 +113,31 @@ button {
     right: 106px;
 }
 
-#treePopupButton {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-}
-
-#realTreePopup {
-    opacity: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 10;
-    margin: 0;
-    padding: 0;
-}
-
-#treePopupTitleArea {
-    overflow: hidden;
-    white-space: nowrap;
-}
-
 #traverse {
     position: absolute;
     top: 4px;
-    left: 8px;
+    left: 9px;
     width: 50px;
-}
-
-#traverseUp .middle {
-    right: 0;
-}
-
-#traverseUp .middle > img {
-    position: absolute;
-    top: 4px;
-    left: 1px;
-}
-
-#traverseDown .middle {
-    left: 1px;
-}
-
-#traverseDown .middle > img {
-    position: absolute;
-    top: 5px;
-    left: 5px;
 }
 
 #traverseUp {
     position: absolute;
     top: 0;
     left: 0;
-    width: 20px;
+    width: 21px;
+    background-image: url( Images/upTriangle.png ), url( Images/buttonDivider.png );
+    background-repeat: no-repeat;
+    background-position: 2px 0px, -4px right;
 }
 
 #traverseDown {
     position: absolute;
     top: 0;
     left: 20px;
-    width: 21px;
-}
-
-#traverseDown > img {
-    position: absolute;
-    top: 0;
-    left: 0;
+    width: 20px;
+    background-image: url( Images/downTriangle.png );
+    background-repeat: no-repeat;
+    background-position: 5px 1px;
 }
 
 #tabs {
@@ -190,29 +147,11 @@ button {
     margin-left: -130px;
 }
 
-#tabs .middle {
-    left: 0;
-    right: 0;
-    text-align: center;
-}
-
-#tabs button > img {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
 #nodeButton {
     position: absolute;
     top: 0;
     left: 0;
     width: 60px;
-}
-
-#nodeButton .middle {
-    padding-right: 6px;
-    left: 6px;
-    right: 0;
 }
 
 #metricsButton {
@@ -234,12 +173,6 @@ button {
     top: 0;
     left: 180px;
     width: 80px;
-}
-
-#propertiesButton .middle {
-    padding-left: 6px;
-    left: 0;
-    right: 6px;
 }
 
 #title button.close {
@@ -282,154 +215,72 @@ button {
     background-image: url( Images/menuPressed.png );
 }
 
-button.popup {
+button {
+    -webkit-appearance: none;
+    border-width: 4px 6px 6px 6px;
+    border-color: transparent;
+    border-style: solid;
+    -webkit-border-image: url( Images/button.png ) 4 6 6 6;
+    box-sizing: border-box;
+    line-height: 5px;
     height: 20px;
-    border: 0;
     background-color: transparent;
     color: white;
     padding: 0;
     margin: 0;
 }
 
-button.popup .left {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 20px;
-    width: 6px;
-    background-image: url( Images/popupLeft.png );
-    background-repeat: no-repeat;
-}
-
-button.popup .middle {
-    position: absolute;
-    top: 0;
-    left: 6px;
-    right: 19px;
-    height: 20px;
-    line-height: 1em;
-    background-image: url( Images/popupFill.png );
-    background-repeat: repeat-x;
-    line-height: 17px;
-    text-align: left;
-    padding: 0 2px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-button.popup .right {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 20px;
-    width: 19px;
-    background-image: url( Images/popupRight.png );
-    background-repeat: no-repeat;
-}
-
-button.popup[disabled] {
-    opacity: 0.5;
-}
-
-button.popup[disabled] .left {
-    background-image: url( Images/popupLeft.png ) !important;
-}
-
-button.popup[disabled] .middle {
-    background-image: url( Images/popupFill.png ) !important;
-}
-
-button.popup[disabled] .right {
-    background-image: url( Images/popupRight.png ) !important;
-}
-
-button.popup:active .left {
-    background-image: url( Images/popupLeftPressed.png );
-}
-
-button.popup:active .middle {
-    background-image: url( Images/popupFillPressed.png );
+button:active, button.selected {
+    -webkit-border-image: url( Images/buttonPressed.png ) 4 6 6 6;
     text-shadow: black 1px -1px 3px;
 }
 
-button.popup:active .right {
-    background-image: url( Images/popupRightPressed.png );
+button[disabled] {
+    -webkit-border-image: url( Images/button.png ) 4 6 6 6;
+    opacity: 0.5;
 }
 
-button.square {
+button.left {
+    border-width: 4px 0 6px 6px;
+    background-image: url( Images/buttonDivider.png );
+    background-position: -4px right;
+    background-repeat: no-repeat;
+}
+
+button.right {
+    border-width: 4px 6px 6px 0;
+}
+
+button.middle {
+    border-width: 4px 0 6px 0;
+    background-image: url( Images/buttonDivider.png );
+    background-position: -4px right;
+    background-repeat: no-repeat;
+}
+
+select {
+    -webkit-appearance: none;
+    border-width: 4px 16px 6px 6px;
+    border-color: transparent;
+    border-style: solid;
+    -webkit-border-image: url( Images/popup.png ) 4 16 6 6;
+    box-sizing: border-box;
+    line-height: 5px;
     height: 20px;
-    border: 0;
     background-color: transparent;
     color: white;
     padding: 0;
     margin: 0;
+    outline: none;
 }
 
-button.square .left {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 20px;
-    width: 6px;
-    background-image: url( Images/popupLeft.png );
-    background-repeat: no-repeat;
+select:active {
+    -webkit-border-image: url( Images/popupPressed.png ) 4 16 6 6;
 }
 
-button.square .middle {
-    position: absolute;
-    top: 0;
-    left: 6px;
-    right: 6px;
-    height: 20px;
-    line-height: 1em;
-    background-image: url( Images/popupFill.png );
-    background-repeat: repeat-x;
-    line-height: 17px;
-    text-align: left;
-    padding: 0 2px;
-}
-
-button.square .right {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 20px;
-    width: 6px;
-    background-image: url( Images/squareButtonRight.png );
-    background-repeat: no-repeat;
-}
-
-button.square[disabled] {
+select[disabled] {
+    -webkit-border-image: url( Images/popup.png ) 4 16 6 6;
     opacity: 0.5;
-}
-
-button.square[disabled] .left {
-    background-image: url( Images/popupLeft.png ) !important;
-}
-
-button.square[disabled] .middle {
-    background-image: url( Images/popupFill.png ) !important;
-}
-
-button.square[disabled] .right {
-    background-image: url( Images/squareButtonRight.png ) !important;
-}
-
-button.square:active .left, button.square.selected .left {
-    background-image: url( Images/popupLeftPressed.png );
-}
-
-button.square:active .middle, button.square.selected .middle {
-    background-image: url( Images/popupFillPressed.png );
-    text-shadow: black 1px -1px 3px;
-}
-
-button.square.selected .middle {
-    font-weight: bold;
-}
-
-button.square:active .right, button.square.selected .right {
-    background-image: url( Images/squareButtonRightPressed.png );
 }
 
 #resize {

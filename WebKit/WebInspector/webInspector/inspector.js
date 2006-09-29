@@ -266,6 +266,9 @@ function loaded()
     }
 
     window.addEventListener("resize", refreshScrollbars, false);
+
+    toggleNoSelection(false);
+    switchPane("node");
 }
 
 function refreshScrollbars()
@@ -334,13 +337,17 @@ function switchPane(pane)
 {
     currentPane = pane;
     for (var i = 0; i < tabNames.length; i++) {
+        var paneElement = document.getElementById(tabNames[i] + "Pane");
+        var button = document.getElementById(tabNames[i] + "Button");
+        if (!button.originalClassName)
+            button.originalClassName = button.className;
         if (pane == tabNames[i]) {
             if (!noSelection)
-                document.getElementById(tabNames[i] + "Pane").style.display = null;
-            document.getElementById(tabNames[i] + "Button").className = "square selected";
+                paneElement.style.display = null;
+            button.className = button.originalClassName + " selected";
         } else {
-            document.getElementById(tabNames[i] + "Pane").style.display = "none";
-            document.getElementById(tabNames[i] + "Button").className = "square";
+            paneElement.style.display = "none";
+            button.className = button.originalClassName;
         }
     }
 
