@@ -80,7 +80,7 @@ bool HTMLFrameElement::isURLAllowed(const AtomicString &URLString) const
     KURL newURL(document()->completeURL(URLString.deprecatedString()));
     newURL.setRef(DeprecatedString::null);
 
-    // Don't allow more than 1000 total frames in a set. This seems
+    // Don't allow more than 200 total frames in a set. This seems
     // like a reasonable upper bound, and otherwise mutually recursive
     // frameset pages can quickly bring the program to its knees with
     // exponential growth in the number of frames.
@@ -88,7 +88,7 @@ bool HTMLFrameElement::isURLAllowed(const AtomicString &URLString) const
     // FIXME: This limit could be higher, but WebKit has some
     // algorithms that happen while loading which appear to be N^2 or
     // worse in the number of frames
-    if (w->frame()->page()->frameCount() >= 200)
+    if (w->frame()->page()->frameCount() > 200)
         return false;
 
     // We allow one level of self-reference because some sites depend on that.
@@ -109,20 +109,19 @@ bool HTMLFrameElement::isURLAllowed(const AtomicString &URLString) const
 
 void HTMLFrameElement::openURL()
 {
-    FrameView *w = document()->view();
-    if (!w)
+    if (!isURLAllowed(m_URL))
         return;
-    
-    AtomicString relativeURL = m_URL;
-    if (relativeURL.isEmpty())
-        relativeURL = "about:blank";
 
-    // Load the frame contents.
-    Frame* parentFrame = w->frame();
-    if (Frame* childFrame = parentFrame->tree()->child(m_name))
-        childFrame->openURL(document()->completeURL(relativeURL.deprecatedString()));
-    else
-        parentFrame->requestFrame(this, relativeURL, m_name);
+    if (m_URL.isEmpty())
+        m_URL = "about:blank";
+
+    document()->frame()->requestFrame(this, m_URL, m_name);
+
+    // FIXME: This is a relic from how HTMLIFrameElement used to do things.
+    // It's probably unnecessary, since viewsource mode doesn't really work,
+    // and both parseMappedAttribute and attach include the same check.
+    if (contentFrame())
+        contentFrame()->setInViewSourceMode(viewSourceMode());
 }
 
 void HTMLFrameElement::parseMappedAttribute(MappedAttribute *attr)
@@ -226,12 +225,10 @@ void HTMLFrameElement::attach()
 
 void HTMLFrameElement::close()
 {
-    Frame* frame = document()->frame();
-    if (renderer() && frame) {
-        if (Frame* childFrame = frame->tree()->child(m_name)) {
-            childFrame->frameDetached();
-            childFrame->disconnectOwnerElement();
-        }
+    Frame* frame = contentFrame();
+    if (frame && renderer()) {
+        frame->frameDetached();
+        frame->disconnectOwnerElement();
     }
 }
 
@@ -271,9 +268,6 @@ void HTMLFrameElement::setLocation(const String& str)
         return;
     }
     
-    if (!isURLAllowed(m_URL))
-        return;
-
     openURL();
 }
 
@@ -385,7 +379,7 @@ void HTMLFrameElement::setScrolling(const String &value)
 
 String HTMLFrameElement::src() const
 {
-    return getAttribute(srcAttr);
+    return document()->completeURL(getAttribute(srcAttr));
 }
 
 void HTMLFrameElement::setSrc(const String &value)
