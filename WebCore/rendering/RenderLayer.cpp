@@ -812,7 +812,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& offsetFro
     // FIXME Radar 4118564: ideally we'd autoscroll the window as necessary to keep the point under
     // the cursor in view.
 
-    IntPoint currentPoint = m_object->document()->view()->viewportToContents(evt.pos());
+    IntPoint currentPoint = m_object->document()->view()->convertFromContainingWindow(evt.pos());
     currentPoint += offsetFromResizeCorner;
 
     int x;

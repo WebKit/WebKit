@@ -353,9 +353,9 @@ void ScrollView::updateContents(const IntRect &rect, bool now)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-// NB, for us "viewport" means the NSWindow's coord system, which is origin lower left
+// "Containing Window" means the NSWindow's coord system, which is origin lower left
 
-IntPoint ScrollView::contentsToViewport(const IntPoint& contentsPoint)
+IntPoint ScrollView::convertToContainingWindow(const IntPoint& contentsPoint) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -375,7 +375,7 @@ IntPoint ScrollView::contentsToViewport(const IntPoint& contentsPoint)
     return IntPoint();
 }
 
-IntPoint ScrollView::viewportToContents(const IntPoint& viewportPoint)
+IntPoint ScrollView::convertFromContainingWindow(const IntPoint& point) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -386,7 +386,7 @@ IntPoint ScrollView::viewportToContents(const IntPoint& viewportPoint)
     if (docView)
         view = docView;
     
-    NSPoint tempPoint = { viewportPoint.x(), viewportPoint.y() }; // workaround for 4213314
+    NSPoint tempPoint = { point.x(), point.y() }; // workaround for 4213314
     NSPoint np = [view convertPoint:tempPoint fromView: nil];
 
     return IntPoint(np);

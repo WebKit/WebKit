@@ -1,3 +1,43 @@
+2006-09-28  Dave Hyatt  <hyatt@apple.com>
+
+        This patch eliminates viewportToContents/contentsToViewport in favor of convertTo/FromContainingWindow.
+        ScrollView now subclasses these methods to factor in its scrollOffset and to deal with the document
+        view.
+       
+        Reviewed by mjs (the convertTo/From changes), (I added the elimination of viewportToContents to
+        the patch after review, once I realized that these new functions essentially do the same thing.)
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+        (WebCore::EventTargetNode::dispatchWheelEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectClosestWordFromMouseEvent):
+        (WebCore::Frame::handleMousePressEventTripleClick):
+        (WebCore::Frame::handleMousePressEventSingleClick):
+        (WebCore::Frame::handleMouseMoveEvent):
+        (WebCore::Frame::handleMouseReleaseEvent):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleMousePressEvent):
+        (WebCore::selectCursor):
+        (WebCore::FrameView::dispatchDragEvent):
+        (WebCore::FrameView::prepareMouseEvent):
+        (WebCore::FrameView::handleWheelEvent):
+        * platform/ScrollView.h:
+        * platform/Widget.cpp:
+        (WebCore::Widget::convertToContainingWindow):
+        * platform/Widget.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::convertToContainingWindow):
+        (WebCore::ScrollView::convertFromContainingWindow):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::convertToContainingWindow):
+        (WebCore::Widget::convertFromContainingWindow):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::convertToContainingWindow):
+        (WebCore::ScrollView::convertFromContainingWindow):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+
 2006-09-28  Alice Liu  <alice.liu@apple.com>
 
         Build fix by adding missing files for CommandByName

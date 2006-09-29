@@ -584,7 +584,7 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     d->clickNode = mev.targetNode();
     
     RenderLayer* layer = d->clickNode->renderer()? d->clickNode->renderer()->enclosingLayer() : 0;
-    IntPoint p =  viewportToContents(mouseEvent.pos());
+    IntPoint p =  convertFromContainingWindow(mouseEvent.pos());
     if (layer && layer->isPointInResizeControl(p)) {
         layer->setInResizeMode(true);
         d->m_resizeLayer = layer;
@@ -691,7 +691,7 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
                 return handCursor();
             RenderLayer* layer = renderer ? renderer->enclosingLayer() : 0;
             bool inResizer = false;
-            if (frame->view() && layer && layer->isPointInResizeControl(frame->view()->viewportToContents(event.event().pos())))
+            if (frame->view() && layer && layer->isPointInResizeControl(frame->view()->convertFromContainingWindow(event.event().pos())))
                 inResizer = true;
             if ((editable || (renderer && renderer->isText() && renderer->canSelect())) && !inResizer && !RenderLayer::gScrollBar)
                 return iBeamCursor();
@@ -843,7 +843,7 @@ void FrameView::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
 bool FrameView::dispatchDragEvent(const AtomicString& eventType, Node *dragTarget, const PlatformMouseEvent& event, Clipboard* clipboard)
 {
-    IntPoint contentsPos = viewportToContents(event.pos());
+    IntPoint contentsPos = convertFromContainingWindow(event.pos());
     
     RefPtr<MouseEvent> me = new MouseEvent(eventType,
         true, true, m_frame->document()->defaultView(),
@@ -1138,7 +1138,7 @@ MouseEventWithHitTestResults FrameView::prepareMouseEvent(bool readonly, bool ac
     ASSERT(m_frame);
     ASSERT(m_frame->document());
     
-    IntPoint vPoint = viewportToContents(mev.pos());
+    IntPoint vPoint = convertFromContainingWindow(mev.pos());
     return m_frame->document()->prepareMouseEvent(readonly, active, mouseMove, vPoint, mev);
 }
 
@@ -1222,7 +1222,7 @@ void FrameView::handleWheelEvent(PlatformWheelEvent& e)
     if (doc) {
         RenderObject *docRenderer = doc->renderer();
         if (docRenderer) {
-            IntPoint vPoint = viewportToContents(e.pos());
+            IntPoint vPoint = convertFromContainingWindow(e.pos());
 
             RenderObject::NodeInfo hitTestResult(true, false);
             doc->renderer()->layer()->hitTest(hitTestResult, vPoint); 

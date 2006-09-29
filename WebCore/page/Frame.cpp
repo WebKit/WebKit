@@ -1814,7 +1814,7 @@ void Frame::selectClosestWordFromMouseEvent(const PlatformMouseEvent& mouse, Nod
     Selection newSelection;
 
     if (innerNode && innerNode->renderer() && mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
-        IntPoint vPoint = view()->viewportToContents(mouse.pos());
+        IntPoint vPoint = view()->convertFromContainingWindow(mouse.pos());
         VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
         if (pos.isNotNull()) {
             newSelection = Selection(pos);
@@ -1853,7 +1853,7 @@ void Frame::handleMousePressEventTripleClick(const MouseEventWithHitTestResults&
     if (event.event().button() == LeftButton && innerNode && innerNode->renderer() &&
         mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
         Selection newSelection;
-        IntPoint vPoint = view()->viewportToContents(event.event().pos());
+        IntPoint vPoint = view()->convertFromContainingWindow(event.event().pos());
         VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
         if (pos.isNotNull()) {
             newSelection = Selection(pos);
@@ -1882,7 +1882,7 @@ void Frame::handleMousePressEventSingleClick(const MouseEventWithHitTestResults&
 
             // Don't restart the selection when the mouse is pressed on an
             // existing selection so we can allow for text dragging.
-            IntPoint vPoint = view()->viewportToContents(event.event().pos());
+            IntPoint vPoint = view()->convertFromContainingWindow(event.event().pos());
             if (!extendSelection && isPointInsideSelection(vPoint))
                 return;
 
@@ -1954,7 +1954,7 @@ void Frame::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
         return;
 
     // handle making selection
-    IntPoint vPoint = view()->viewportToContents(event.event().pos());
+    IntPoint vPoint = view()->convertFromContainingWindow(event.event().pos());
     VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
 
     // Don't modify the selection if we're not on a node.
@@ -1996,7 +1996,7 @@ void Frame::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event)
         Selection newSelection;
         Node *node = event.targetNode();
         if (node && node->isContentEditable() && node->renderer()) {
-            IntPoint vPoint = view()->viewportToContents(event.event().pos());
+            IntPoint vPoint = view()->convertFromContainingWindow(event.event().pos());
             VisiblePosition pos = node->renderer()->positionForPoint(vPoint);
             newSelection = Selection(pos);
         }

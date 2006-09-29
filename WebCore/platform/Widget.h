@@ -128,11 +128,20 @@ namespace WebCore {
 
         virtual bool isFrameView() const;
 
-#if PLATFORM(WIN)
+        // Event coordinates are assumed to be in the coordinate space of a window that contains
+        // the entire widget hierarchy.  It is up to the platform to decide what the precise definition
+        // of containing window is.  (For example on Mac it is the containing NSWindow.)
+        //
+        // Note that for scrollable widgets, the points and rects given will be converted to and
+        // from the document coordinate space inside the scrollable widget.  Therefore
+        // for conversion to a containing window coordinate space, the argument should be in the
+        // scrollable widget's document coordinate space.  When converting from the containing window
+        // coordinate space, the result will be in the scrollable widget's document coordinate space.
         IntRect convertToContainingWindow(const IntRect&) const;
-        IntPoint convertToContainingWindow(const IntPoint&) const;
-        IntPoint convertFromContainingWindow(const IntPoint&) const;
+        virtual IntPoint convertToContainingWindow(const IntPoint&) const;
+        virtual IntPoint convertFromContainingWindow(const IntPoint&) const;
 
+#if PLATFORM(WIN)
         void setContainingWindow(HWND);
         HWND containingWindow() const;
 

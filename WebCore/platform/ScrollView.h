@@ -71,8 +71,8 @@ namespace WebCore {
         virtual void resizeContents(int w, int h);
         void updateContents(const IntRect&, bool now = false);
 
-        IntPoint contentsToViewport(const IntPoint&);
-        IntPoint viewportToContents(const IntPoint&);
+        virtual IntPoint convertToContainingWindow(const IntPoint&) const;
+        virtual IntPoint convertFromContainingWindow(const IntPoint&) const;
 
         void setStaticBackground(bool);
 

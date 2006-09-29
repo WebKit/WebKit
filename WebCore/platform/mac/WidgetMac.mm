@@ -452,4 +452,34 @@ WidgetClient* Widget::client() const
     return data->client;
 }
 
+// "Containing Window" means the NSWindow's coord system, which is origin lower left
+
+IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    NSView *view = getView();    
+    NSPoint tempPoint = { point.x(), point.y() }; // workaround for 4213314
+    NSPoint np = [view convertPoint:tempPoint toView: nil];
+    return IntPoint(np);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return IntPoint();
+}
+
+IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    NSView *view = getView();        
+    NSPoint tempPoint = { point.x(), point.y() }; // workaround for 4213314
+    NSPoint np = [view convertPoint:tempPoint fromView: nil];
+
+    return IntPoint(np);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return IntPoint();
+}
+
 }
