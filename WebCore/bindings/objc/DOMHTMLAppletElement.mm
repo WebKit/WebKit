@@ -148,3 +148,17 @@
 }
 
 @end
+
+@implementation DOMHTMLAppletElement (WebCoreInternal)
+
+- (WebCore::HTMLAppletElement *)_HTMLAppletElement
+{
+    return IMPL;
+}
+
++ (DOMHTMLAppletElement *)_HTMLOptionElementWith:(WebCore::HTMLAppletElement *)impl
+{
+    return static_cast<DOMHTMLAppletElement*>([DOMNode _nodeWith:impl]);
+}
+
+@end

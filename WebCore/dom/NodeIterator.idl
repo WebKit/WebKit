@@ -28,13 +28,12 @@ module traversal {
         readonly attribute boolean expandEntityReferences;
         readonly attribute Node referenceNode;
         readonly attribute boolean pointerBeforeReferenceNode;
-        
+
         Node nextNode() 
             raises (DOMException);
         Node previousNode()
             raises (DOMException);
         void detach();
     };
-}
 
- 
+}

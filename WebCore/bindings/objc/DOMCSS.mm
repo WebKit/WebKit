@@ -58,6 +58,11 @@ namespace WebCore {
 
 @implementation DOMStyleSheet (WebCoreInternal)
 
+- (WebCore::StyleSheet *)_styleSheet
+{
+    return reinterpret_cast<WebCore::StyleSheet*>(_internal);
+}
+
 - (id)_initWithStyleSheet:(WebCore::StyleSheet *)impl
 {
     [super _init];
@@ -71,7 +76,7 @@ namespace WebCore {
 {
     if (!impl)
         return nil;
-    
+
     id cachedInstance;
     cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
@@ -87,26 +92,17 @@ namespace WebCore {
 
 @end
 
-
-//------------------------------------------------------------------------------------------
-// DOMCSSStyleSheet
-
-@implementation DOMCSSStyleSheet (WebCoreInternal)
-
-+ (DOMCSSStyleSheet *)_CSSStyleSheetWith:(WebCore::CSSStyleSheet *)impl
-{
-    return static_cast<DOMCSSStyleSheet*>([DOMStyleSheet _styleSheetWith:impl]);
-}
-
-@end
-
-
 //------------------------------------------------------------------------------------------
 // DOMCSSRule
 
 @implementation DOMCSSRule (WebCoreInternal)
 
-- (id)_initWithRule:(WebCore::CSSRule *)impl
+- (WebCore::CSSRule *)_CSSRule
+{
+    return reinterpret_cast<WebCore::CSSRule*>(_internal);
+}
+
+- (id)_initWithCSSRule:(WebCore::CSSRule *)impl
 {
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal*>(impl);
@@ -119,7 +115,7 @@ namespace WebCore {
 {
     if (!impl)
         return nil;
-    
+
     id cachedInstance;
     cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
@@ -149,7 +145,7 @@ namespace WebCore {
             wrapperClass = [DOMCSSPageRule class];
             break;
     }
-    return [[[wrapperClass alloc] _initWithRule:impl] autorelease];
+    return [[[wrapperClass alloc] _initWithCSSRule:impl] autorelease];
 }
 
 @end
@@ -160,7 +156,12 @@ namespace WebCore {
 
 @implementation DOMCSSValue (WebCoreInternal)
 
-- (id)_initWithValue:(WebCore::CSSValue *)impl
+- (WebCore::CSSValue *)_CSSValue
+{
+    return reinterpret_cast<WebCore::CSSValue*>(_internal);
+}
+
+- (id)_initWithCSSValue:(WebCore::CSSValue *)impl
 {
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal*>(impl);
@@ -173,12 +174,12 @@ namespace WebCore {
 {
     if (!impl)
         return nil;
-    
+
     id cachedInstance;
     cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
-    
+
     Class wrapperClass = nil;
     switch (impl->cssValueType()) {
         case DOM_CSS_INHERIT:
@@ -194,31 +195,14 @@ namespace WebCore {
             wrapperClass = [DOMCSSValue class];
             break;
     }
-    return [[[wrapperClass alloc] _initWithValue:impl] autorelease];
+    return [[[wrapperClass alloc] _initWithCSSValue:impl] autorelease];
 }
 
 @end
 
 
 //------------------------------------------------------------------------------------------
-// DOMCSSPrimitiveValue
-
-@implementation DOMCSSPrimitiveValue (WebCoreInternal)
-
-- (WebCore::CSSPrimitiveValue *)_CSSPrimitiveValue
-{
-    return static_cast<WebCore::CSSPrimitiveValue*>(reinterpret_cast<WebCore::CSSValue*>(_internal));
-}
-
-+ (DOMCSSPrimitiveValue *)_CSSPrimitiveValueWith:(WebCore::CSSValue *)impl
-{
-    return static_cast<DOMCSSPrimitiveValue*>([DOMCSSValue _CSSValueWith:impl]);
-}
-
-@end
-
-
-//------------------------------------------------------------------------------------------
+// DOMCSSStyleDeclaration CSS2 Properties
 
 @implementation DOMCSSStyleDeclaration (DOMCSS2Properties)
 

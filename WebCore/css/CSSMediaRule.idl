@@ -21,7 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [ObjCNoInternal] CSSMediaRule : CSSRule {
+    interface CSSMediaRule : CSSRule {
 
         readonly attribute stylesheets::MediaList  media;
         readonly attribute CSSRuleList      cssRules;

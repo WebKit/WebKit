@@ -1,3 +1,50 @@
+2006-09-29  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=11082
+        Simplify Internal methods for the auto-generated Objective-C DOM code
+
+        - Auto-generate the internal methods for more Objective-C classes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMStyleSheet WebCore::]):
+        (+[DOMStyleSheet _styleSheetWith:WebCore::]):
+        (-[DOMCSSRule WebCore::]):
+        (-[DOMCSSRule _initWithCSSRule:WebCore::]):
+        (+[DOMCSSRule _CSSRuleWith:WebCore::]):
+        (-[DOMCSSValue WebCore::]):
+        (-[DOMCSSValue _initWithCSSValue:WebCore::]):
+        (+[DOMCSSValue _CSSValueWith:WebCore::]):
+        * bindings/objc/DOMHTMLAppletElement.mm:
+        (-[DOMHTMLAppletElement WebCore::]):
+        (+[DOMHTMLAppletElement _HTMLOptionElementWith:WebCore::]):
+        * bindings/objc/DOMHTMLEmbedElement.mm:
+        (-[DOMHTMLEmbedElement WebCore::]):
+        (+[DOMHTMLEmbedElement _HTMLEmbedElementWith:WebCore::]):
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMInternal.mm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * css/CSSCharsetRule.idl:
+        * css/CSSFontFaceRule.idl:
+        * css/CSSImportRule.idl:
+        * css/CSSMediaRule.idl:
+        * css/CSSPageRule.idl:
+        * css/CSSPrimitiveValue.idl:
+        * css/CSSStyleRule.idl:
+        * css/CSSStyleSheet.idl:
+        * css/CSSUnknownRule.idl:
+        * css/CSSValueList.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/NodeIterator.idl:
+        * dom/OverflowEvent.idl:
+        * dom/UIEvent.idl:
+        * dom/WheelEvent.idl:
+
 2006-09-29  David Harrison  <harrison@apple.com>
 
         Reviewed by John Sullivan.

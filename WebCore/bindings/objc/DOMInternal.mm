@@ -42,11 +42,10 @@ using namespace WebCore;
 using KJS::ExecState;
 using KJS::Interpreter;
 using KJS::JSObject;
-
 using KJS::Bindings::RootObject;
 
 //------------------------------------------------------------------------------------------
-// Wrapping khtml implementation objects
+// Wrapping WebCore implementation objects
 
 static HashMap<DOMObjectInternal*, NSObject*>* wrapperCache;
 

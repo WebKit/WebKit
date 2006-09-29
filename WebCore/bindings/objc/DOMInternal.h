@@ -29,9 +29,7 @@
 
 #import "Color.h"
 #import "DOMAbstractView.h"
-#import "DOMCSSPrimitiveValue.h"
 #import "DOMCSSRule.h"
-#import "DOMCSSStyleSheet.h"
 #import "DOMCSSValue.h"
 #import "DOMEvents.h"
 #import "DOMHTMLOptionElement.h"
@@ -47,8 +45,18 @@
 // Auto-generated internal interfaces
 #import "DOMAttrInternal.h"
 #import "DOMCDATASectionInternal.h"
+#import "DOMCSSCharsetRuleInternal.h"
+#import "DOMCSSFontFaceRuleInternal.h"
+#import "DOMCSSImportRuleInternal.h"
+#import "DOMCSSMediaRuleInternal.h"
+#import "DOMCSSPageRuleInternal.h"
+#import "DOMCSSPrimitiveValueInternal.h"
 #import "DOMCSSRuleListInternal.h"
 #import "DOMCSSStyleDeclarationInternal.h"
+#import "DOMCSSStyleRuleInternal.h"
+#import "DOMCSSStyleSheetInternal.h"
+#import "DOMCSSUnknownRuleInternal.h"
+#import "DOMCSSValueListInternal.h"
 #import "DOMCharacterDataInternal.h"
 #import "DOMCommentInternal.h"
 #import "DOMCounterInternal.h"
@@ -113,14 +121,20 @@
 #import "DOMHTMLTextAreaElementInternal.h"
 #import "DOMHTMLTitleElementInternal.h"
 #import "DOMHTMLUListElementInternal.h"
+#import "DOMKeyboardEventInternal.h"
 #import "DOMMediaListInternal.h"
+#import "DOMMouseEventInternal.h"
+#import "DOMMutationEventInternal.h"
 #import "DOMNamedNodeMapInternal.h"
 #import "DOMNodeListInternal.h"
 #import "DOMNotationInternal.h"
+#import "DOMOverflowEventInternal.h"
 #import "DOMProcessingInstructionInternal.h"
 #import "DOMRectInternal.h"
 #import "DOMStyleSheetListInternal.h"
 #import "DOMTextInternal.h"
+#import "DOMUIEventInternal.h"
+#import "DOMWheelEventInternal.h"
 
 #ifdef SVG_SUPPORT
 #import "DOMSVGAngleInternal.h"
@@ -153,9 +167,7 @@
 #endif // XPATH_SUPPORT
 
 namespace WebCore {
-    class CSSPrimitiveValue;
     class CSSRule;
-    class CSSStyleSheet;
     class CSSValue;
     class DOMWindow;
     class Event;
@@ -197,29 +209,23 @@ namespace WebCore {
 
 @interface DOMCSSRule (WebCoreInternal)
 + (DOMCSSRule *)_CSSRuleWith:(WebCore::CSSRule *)impl;
+- (WebCore::CSSRule *)_CSSRule;
 @end
 
 @interface DOMCSSValue (WebCoreInternal)
 + (DOMCSSValue *)_CSSValueWith:(WebCore::CSSValue *)impl;
-@end
-
-@interface DOMCSSPrimitiveValue (WebCoreInternal)
-- (WebCore::CSSPrimitiveValue *)_CSSPrimitiveValue;
-+ (DOMCSSPrimitiveValue *)_CSSPrimitiveValueWith:(WebCore::CSSValue *)impl;
+- (WebCore::CSSValue *)_CSSValue;
 @end
 
 @interface DOMRGBColor (WebCoreInternal)
 + (DOMRGBColor *)_RGBColorWithRGB:(WebCore::RGBA32)value;
 @end
 
-@interface DOMCSSStyleSheet (WebCoreInternal)
-+ (DOMCSSStyleSheet *)_CSSStyleSheetWith:(WebCore::CSSStyleSheet *)impl;
-@end
-
 // StyleSheets Internal Interfaces
 
 @interface DOMStyleSheet (WebCoreInternal)
 + (DOMStyleSheet *)_styleSheetWith:(WebCore::StyleSheet *)impl;
+- (WebCore::StyleSheet *)_styleSheet;
 @end
 
 // Events Internal Interfaces

@@ -21,7 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [ObjCNoInternal] CSSStyleRule : CSSRule {
+    interface CSSStyleRule : CSSRule {
 
                  // FIXME: DOM spec says that this can raise an
                  // exception on setting.

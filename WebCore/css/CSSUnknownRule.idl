@@ -21,7 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [ObjCNoInternal] CSSUnknownRule : CSSRule {
+    interface CSSUnknownRule : CSSRule {
     };
 
 }

@@ -21,7 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [ObjCNoInternal] CSSCharsetRule : CSSRule {
+    interface CSSCharsetRule : CSSRule {
 
         // FIXME: the DOM spec says that this attribute
         // should not be readonly.  The correct declaration

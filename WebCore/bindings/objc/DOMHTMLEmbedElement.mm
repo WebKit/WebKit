@@ -98,3 +98,18 @@
 }
 
 @end
+
+@implementation DOMHTMLEmbedElement (WebCoreInternal)
+
+- (WebCore::HTMLEmbedElement *)_HTMLEmbedElement
+{
+    return IMPL;
+}
+
++ (DOMHTMLEmbedElement *)_HTMLEmbedElementWith:(WebCore::HTMLEmbedElement *)impl
+{
+    return static_cast<DOMHTMLEmbedElement*>([DOMNode _nodeWith:impl]);
+}
+
+
+@end

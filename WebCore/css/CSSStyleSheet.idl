@@ -21,16 +21,15 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [ObjCNoInternal] CSSStyleSheet : stylesheets::StyleSheet {
-
+    interface CSSStyleSheet : stylesheets::StyleSheet {
         readonly attribute CSSRule          ownerRule;
         readonly attribute CSSRuleList      cssRules;
+
         [OldStyleObjC] unsigned long insertRule(in DOMString rule, 
-                                      in unsigned long index)
+                                                in unsigned long index)
             raises(DOMException);
         void               deleteRule(in unsigned long index)
             raises(DOMException);
-
     };
 
 }

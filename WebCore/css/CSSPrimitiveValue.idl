@@ -19,7 +19,7 @@
 
 module css {
 
-    interface [GenerateConstructor, ObjCNoInternal] CSSPrimitiveValue : CSSValue {
+    interface [GenerateConstructor] CSSPrimitiveValue : CSSValue {
 
         // UnitTypes
         const unsigned short CSS_UNKNOWN    = 0;
@@ -52,12 +52,12 @@ module css {
         readonly attribute unsigned short primitiveType;
 
         [OldStyleObjC] void setFloatValue(in unsigned short unitType,
-                           in float floatValue)
-            raises(dom::DOMException);
+                                          in float floatValue)
+            raises(DOMException);
         float getFloatValue(in unsigned short unitType);
         [OldStyleObjC] void setStringValue(in unsigned short stringType, 
-                            in DOMString stringValue)
-            raises(dom::DOMException);
+                                           in DOMString stringValue)
+            raises(DOMException);
         DOMString getStringValue();
         Counter getCounterValue();
         Rect getRectValue();

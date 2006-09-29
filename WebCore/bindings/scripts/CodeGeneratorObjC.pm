@@ -312,6 +312,15 @@ sub GetParentAndProtocols
     return ($parent, @protocols);
 }
 
+sub GetBaseClass
+{
+    $parent = shift;
+
+    return $parent if $parent eq "Object" or $parent eq "CSSValue" or $parent eq "CSSRule" or $parent eq "StyleSheet";
+    return "Event" if $parent eq "Event" or $parent eq "UIEvent";
+    return "Node";
+}
+
 sub IsProtocolType
 {
     $type = shift;
@@ -735,6 +744,7 @@ sub GenerateImplementation
     my $implClassName = GetImplClassName($interfaceName);
     my $parentImplClassName = GetParentImplClassName($dataNode);
     my $implClassNameWithNamespace = "WebCore::" . $implClassName;
+    my $baseClass = GetBaseClass($parentImplClassName);
     my $classHeaderName = GetClassHeaderName($className);
     my $conditional = $dataNode->extendedAttributes->{"Conditional"};
 
@@ -761,20 +771,11 @@ sub GenerateImplementation
     @implContent = ();
 
     # add implementation accessor
-    # FIXME: CSSStyleSheet should not need special casing like this.
-    if ($parentImplClassName eq "Object" or $interfaceName eq "CSSStyleSheet") {
+    if ($parentImplClassName eq "Object") {
         push(@implContent, "#define IMPL reinterpret_cast<$implClassNameWithNamespace*>(_internal)\n\n");
     } else {
-        my $internalBaseType = "WebCore::";
-        if ($parentImplClassName eq "CSSValue" or $parentImplClassName eq "CSSRule") {
-            $internalBaseType .= $parentImplClassName;
-        } elsif ($parentImplClassName eq "Event" or $parentImplClassName eq "UIEvent") {
-            $internalBaseType .= "Event";
-        } else {
-            $internalBaseType .= "Node";
-        }
-
-        push(@implContent, "#define IMPL static_cast<$implClassNameWithNamespace*>(reinterpret_cast<$internalBaseType*>(_internal))\n\n");
+        my $baseClassWithNamespace = "WebCore::$baseClass";
+        push(@implContent, "#define IMPL static_cast<$implClassNameWithNamespace*>(reinterpret_cast<$baseClassWithNamespace*>(_internal))\n\n");
     }
 
     # START implementation
@@ -1168,10 +1169,13 @@ sub GenerateImplementation
             push(@implContent, "    return [[[self alloc] $initWithImplName:impl] autorelease];\n");
             push(@implContent, "}\n\n");
         } else {
+            my $internalBaseType = "DOM$baseClass";
+            my $internalBaseTypeMaker = GetObjCTypeMaker($baseClass);
+
             # - (DOMFooBar)_FooBarWith:(WebCore::FooBar *)impl for implementation class FooBar
             push(@implContent, "$typeMakerSig\n");
             push(@implContent, "{\n");
-            push(@implContent, "    return static_cast<$className*>([DOMNode _nodeWith:impl]);\n");
+            push(@implContent, "    return static_cast<$className*>([$internalBaseType $internalBaseTypeMaker:impl]);\n");
             push(@implContent, "}\n\n");
         }
 
