@@ -83,6 +83,14 @@ MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, bool 
 {
 }
 
+MediaQueryEvaluator:: MediaQueryEvaluator(const char* acceptedMediaType, bool mediaFeatureResult)
+    : m_mediaType(acceptedMediaType)
+    , m_page(0)
+    , m_style(0)
+    , m_expResult(mediaFeatureResult)
+{
+}
+
 MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, Page* page, RenderStyle* style)
     : m_mediaType(acceptedMediaType.lower())
     , m_page(page)

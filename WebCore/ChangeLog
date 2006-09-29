@@ -1,3 +1,20 @@
+2006-09-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        We had a bug where html4.css was ignoring Media Queries. In the ned 
+        the problem was that we were trying to send a char* to the 
+        MediaQueryEvaluator constructor that expects a String, but the 
+        char* got interpreted as a bool, the wrong constructor was called, 
+        and the media type was never set.
+
+        No test case possible since this only affects html4.css
+
+        * css/MediaQueryEvaluator.cpp: New constructor that expects takes a 
+        char*
+        (WebCore::MediaQueryEvaluator):
+        * css/MediaQueryEvaluator.h: Same.
+
 2006-09-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by John, Maciej.
