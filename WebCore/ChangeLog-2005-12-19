@@ -11,7 +11,7 @@
 
         Reviewed by Geoff.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6144
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6144
           REGRESSION: DOMStringImpl leak in code to make DOMString from NSString
 
         * kwq/DOMInternal.mm: (DOMString::DOMString): Remove now-unneeded ref.
@@ -20,7 +20,7 @@
 
         Reviewed by Geoff.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5680
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5680
           containsOnlyWhitespace does not need to be a virtual function
 
         * khtml/rendering/render_frames.cpp: (RenderPartObject::updateWidget): Cast
@@ -39,7 +39,7 @@
 
         Test: fast/text/international/bidi-ignored-for-first-child-inline.html
 
-        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=5980
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=5980
         Bidi properties of an inline container whose first child is an
         inline container are ignored
 
@@ -53,7 +53,7 @@
 
         Reviewed and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5932
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5932
           Wrong encoding used for http://www.miel.ru
 
         * kwq/KWQCharsets.mm: (KWQCFStringEncodingFromIANACharsetName):
@@ -64,7 +64,7 @@
 
         Reviewed and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5927
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5927
           Result of XSLT transformation has no charset defined
 
         * khtml/xml/dom_docimpl.cpp: (DocumentImpl::applyXSLTransform):
@@ -84,7 +84,7 @@
 
         Reviewed by Eric, landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5631
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5631
           KWQKHTMLPart::attributedString ignores many tags
 
         * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::attributedString):
@@ -94,7 +94,7 @@
 
         Reviewed and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5768
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5768
           pages with frames that are all "fixed" get no layout and are blank (like www.farnell.nl)
 
         * khtml/rendering/render_frames.cpp: (RenderFrameSet::layout):
@@ -106,7 +106,7 @@
 
         Reviewed by Darin.
 
-        - Fix <http://bugzilla.opendarwin.org/show_bug.cgi?id=6120>
+        - Fix <http://bugs.webkit.org/show_bug.cgi?id=6120>
         Random crashes when running the test suite
         
         * khtml/css/css_ruleimpl.h:
@@ -117,7 +117,7 @@
 
         Reviewed and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5479
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5479
           Can't select text with RTL override rendered by ATSUI
 
         * khtml/rendering/font.h: Remove reversed parameter from checkSelectionPoint, replacing
@@ -134,7 +134,7 @@
         Reviewed by darin.
 
         DOMString should hold its impl in a RefPtr
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6106
+        http://bugs.webkit.org/show_bug.cgi?id=6106
         I also cleaned up spacing in dom_string.cpp
         No tests needed (no functionality changes).
 
@@ -168,7 +168,7 @@
         Reviewed by darin.
 
         XSLTProcessorImpl should use RefPtr instead of manual ref/deref
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6110
+        http://bugs.webkit.org/show_bug.cgi?id=6110
         No test cases needed (no functionality changes).
 
         * khtml/xsl/xsl_stylesheetimpl.cpp:
@@ -199,7 +199,7 @@
 
         Reviewed by Eric.
 
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6112
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=6112
         REGRESSION: navigator.plugins empty.
 
         Layout test added:
@@ -218,7 +218,7 @@
 
         Test: fast/text/international/bidi-european-terminators.html
 
-        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6014
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=6014
         Bidi algorithm: incorrect resolved levels for neutrals between R and
         ET ON L
 
@@ -231,7 +231,7 @@
 
         Reviewed and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5486
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5486
           DumpRenderTree should print the RTL and directional override flags for text runs
 
         * kwq/KWQRenderTreeDebug.cpp: (writeTextRun): Dump the additional flags.
@@ -240,7 +240,7 @@
 
         Reviewed and landed by Darin.
 
-        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6043
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=6043
         Incorrect selection highlighting in pre-formatted text with tabs
 
         * khtml/rendering/render_text.cpp: Correct parameters in calls to RenderText::width().
@@ -257,7 +257,7 @@
         
         Test: fast/js/replace-child-siblings.html
 
-        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6069
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=6069
         Assertion failure in RenderBlock::addChildToFlow during replaceChild
         
         * khtml/xml/dom_nodeimpl.cpp:
@@ -268,7 +268,7 @@
 
         Reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5688
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5688
           speed up JavaScript parsing by not creating a UString just to parse
 
         * khtml/ecma/kjs_dom.cpp: (KJS::DOMNode::getListener): Use listenerObj instead of
@@ -386,7 +386,7 @@
 
         Reviewed by Eric.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6092
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6092
           REGRESSION: dom/xhtml/level2/html//HTMLInputElement01.xhtml crashes
 
         * khtml/xml/xml_tokenizer.cpp:
@@ -468,7 +468,7 @@
         Reviewed by darin.
 
         Remove more legacy code from khtml/kwq
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6091
+        http://bugs.webkit.org/show_bug.cgi?id=6091
 
         No tests needed, no functionality changes.
 
@@ -621,7 +621,7 @@
         Reviewed by darin.
 
         khtml/css should use RefPtr instead of manual ref() deref()
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6094
+        http://bugs.webkit.org/show_bug.cgi?id=6094
 
         No functionality changes, thus no tests.
 
@@ -697,7 +697,7 @@
         Reviewed by Darin and Hyatt.
 
         Fixed <rdar://problem/4381360> REGRESSION: Focus ring on contenteditable div outlines text in overflow area instead of div (6100)
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6100
+        http://bugs.webkit.org/show_bug.cgi?id=6100
 
         Test: fast/overflow/overflow-focus-ring.html
 
@@ -740,7 +740,7 @@
 
         SVG test cases changed (now the svg.css is loaded properly).
         No other functionality changes, just code removal.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6078
+        http://bugs.webkit.org/show_bug.cgi?id=6078
 
         * ForwardingHeaders/klibloader.h: Removed.
         * WebCore.xcodeproj/project.pbxproj:
@@ -878,7 +878,7 @@
          
          Test: fast/overflow/overflow-text-hit-testing.html
  
-         Fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5921>
+         Fix for <http://bugs.webkit.org/show_bug.cgi?id=5921>
          Hit-testing text in overflows does not take scrolling into account.
  
          * khtml/rendering/render_text.cpp:
@@ -888,7 +888,7 @@
 
         Reviewed by Darin, committed by Adele.
 
-        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4362
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=4362
         Add mac-cyrillic to the list of encodings
 
         * kwq/mac-encodings.txt: Added maccyrillic
@@ -897,7 +897,7 @@
 
         Reviewed by Maciej.
 
-        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5465
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=5465
         REGRESSION: check box onchange event doesn't fire (radio buttons do not get disabled in Bugzilla)
 
         Test: fast/forms/checkbox-radio-onchange.html
@@ -1006,7 +1006,7 @@
 
         Fix crash on malformed transform attributes and transforms with
         trailing spaces:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6061
+        http://bugs.webkit.org/show_bug.cgi?id=6061
 
         * ksvg2/svg/SVGTransformableImpl.cpp:
         (SVGTransformableImpl::parseTransformAttribute):
@@ -1113,7 +1113,7 @@
         Test: svg/custom/control-points-for-S-and-T.svg
 
         "S" and "T" path types handle control points incorrectly
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6042
+        http://bugs.webkit.org/show_bug.cgi?id=6042
 
         * ksvg2/svg/svgpathparser.cpp:
         (SVGPathParser::parseSVG):
@@ -1124,7 +1124,7 @@
 
         No test cases needed, no functionality change.
         Corrected spacing, and conformance with style guidelines.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=6039
+        http://bugs.webkit.org/show_bug.cgi?id=6039
 
         * kcanvas/KCanvasFilters.cpp:
         * kcanvas/KCanvasFilters.h:
@@ -1161,7 +1161,7 @@
 
         Reviewed by Eric.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5538
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5538
           XSLT crashes with multi-word internal entity declarations
 
         Added the crashing specimen as a layout test.
@@ -1174,7 +1174,7 @@
         Reviewed by darin & mjs.
 
         Fixes SVG to load external scripts and report parse errors.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5875
+        http://bugs.webkit.org/show_bug.cgi?id=5875
 
         Added 7 layout tests to exercise parse error code.
 
@@ -1190,7 +1190,7 @@
         Reviewed by hyatt.
 
         Small fixes made during SVG code review.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5999
+        http://bugs.webkit.org/show_bug.cgi?id=5999
 
         One test case added for conditional processing directives
         used outside of switch statements.
@@ -1513,7 +1513,7 @@
 
         Reviewed by John Sullivan.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6032
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6032
           REGRESSION: Uncaught exception when image is dragged out of webpage
 
         * WebCore.exp: Export the new WebCoreElementImageRendererKey and remove the old
@@ -1526,7 +1526,7 @@
 
         Reviewed and landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6029
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6029
           plainText() returns a partial result when the node contains RTL text
 
         Test: fast/dom/inner-text-rtl.html
@@ -1545,7 +1545,7 @@
 
         Reviewed by Hyatt, landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5826
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5826
           Blocks with direction:rtl and overflow:auto or scroll have incorrect scrollbars
 
         * khtml/rendering/render_block.cpp: (khtml::RenderBlock::leftmostPosition):
@@ -1566,7 +1566,7 @@
 
         Reviewed by Hyatt, landed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3983
+        - fix http://bugs.webkit.org/show_bug.cgi?id=3983
           outline:auto improperly puts outline around contained elements, not the actual div
 
         * khtml/rendering/render_flow.cpp: (RenderFlow::addFocusRingRects):
@@ -1576,7 +1576,7 @@
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5784
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5784
           Assertion failure in DocumentImpl::removeElementById() (idCount > 0)
           Another symptom is that getElementById doesn't work when the ID is on a duplicate
           <html> or <body> element.
@@ -1598,7 +1598,7 @@
         Reviewed by Eric and Tim Omernick.
 
         - speed up timers by using CFTimerRunLoopRef instead of NSTimer
-          http://bugzilla.opendarwin.org/show_bug.cgi?id=5677
+          http://bugs.webkit.org/show_bug.cgi?id=5677
 
         * kwq/KWQObject.h: Removed pauseTimer, resumeTimers, and _addTimer, added timerIntervals and
         restartTimer. Made KWQObjectSenderScope functions be inline.
@@ -1756,7 +1756,7 @@
         
         No test possible since this fixes random behavior.
 
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5997
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=5997
         REGRESSION: Focus rings around links are not erased when focus is lost
 
         * khtml/xml/dom_nodeimpl.cpp:
@@ -1770,7 +1770,7 @@
         SVG is covered by <use> test cases (5 tests).
 
         Fixes <applet> in xhtml, as well as <use> in SVG.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5987
+        http://bugs.webkit.org/show_bug.cgi?id=5987
 
         * khtml/xml/xml_tokenizer.cpp:
         (khtml::XMLTokenizer::endElementNs): call closeRenderer()
@@ -1779,7 +1779,7 @@
 
         Reviewed by Eric.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5686
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5686
           make Shared::deref faster by eliminating multiple branches
 
         * khtml/misc/shared.h: Rewrote both Shared and TreeShared to be functionally
@@ -1813,7 +1813,7 @@
 
         Reviewed by Eric.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5689
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5689
           add support for CSS "custom cursors" (cursor images)
 
         * khtml/css/css_computedstyle.cpp:
@@ -1975,7 +1975,7 @@
 
 2005-12-05  Justin Garcia  <justin.garcia@apple.com>
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5936>
+        <http://bugs.webkit.org/show_bug.cgi?id=5936>
         REGRESSION: selection keeps growing after double-click
         Also filed as <rdar://problem/4364425>
 
@@ -2019,8 +2019,8 @@
         Made SVGRenderStyle a DataRef on RenderStyle.
         (Landing two bugs at once as their project file changes intertwine)
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5942
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5943
+        http://bugs.webkit.org/show_bug.cgi?id=5942
+        http://bugs.webkit.org/show_bug.cgi?id=5943
 
         * ForwardingHeaders/kdom/DOMString.h:
         * ForwardingHeaders/kdom/KDOMSettings.h:
@@ -2119,7 +2119,7 @@
         Added KCanvasPath and KCanvasPathQuartz instead.
         Updated methods to expect KCanvasPath* types and use RefPtr.
         Removed no longer needed KCPathDataList -> KCanvasUserData routines
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5747
+        http://bugs.webkit.org/show_bug.cgi?id=5747
 
         * WebCore.xcodeproj/project.pbxproj: added KCanvasPath(Quartz)
         * kcanvas/KCanvasCreator.cpp:
@@ -2211,7 +2211,7 @@
         Reviewed by Eric.
 
         - fixed <rdar://problem/4364374> Denver Regression: ModBlog.com user menus don't stay visible due to extra mouseout events (5668)
-          http://bugzilla.opendarwin.org/show_bug.cgi?id=5668
+          http://bugs.webkit.org/show_bug.cgi?id=5668
 
         * khtml/khtmlview.cpp: (KHTMLView::dispatchMouseEvent): Do the same "skip text node"
         logic for the "oldUnder" variable as for the "targetNode" variable.
@@ -2297,7 +2297,7 @@
         No additional test cases needed (or possible).
 
         Further dom/* cleanup, also removing extra forwarding headers
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5930
+        http://bugs.webkit.org/show_bug.cgi?id=5930
 
         * ForwardingHeaders/dom/dom2_views.h: Removed.
         * ForwardingHeaders/dom/dom_core.h: Removed.
@@ -2374,7 +2374,7 @@
 
         Reviewed by Darin and Geoffrey.
 
-        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=4194>
+        - Fixes <http://bugs.webkit.org/show_bug.cgi?id=4194>
         Reproducible Poof Crash when using search field at mathworks.com
         
         * khtml/xml/dom_docimpl.cpp:
@@ -2406,7 +2406,7 @@
 
         Removed dom_misc.* and changed to use Shared instead of DOMShared.
         Also removed FilterNode typedef, now using NodeImpl* directly.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5929
+        http://bugs.webkit.org/show_bug.cgi?id=5929
 
         * WebCore.xcodeproj/project.pbxproj:
         * khtml/css/css_base.h:
@@ -2431,7 +2431,7 @@
 
         Remove rotten #ifdef'd code from the source:
         APPLE_CHANGES & KHTML_NO_CPLUSPLUS_DOM
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5877
+        http://bugs.webkit.org/show_bug.cgi?id=5877
 
         * khtml/dom/css_rule.h:
         (DOM::CSSRule::):
@@ -2490,7 +2490,7 @@
 
 2005-12-03  Justin Garcia  <justin.garcia@apple.com>
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5856>
+        <http://bugs.webkit.org/show_bug.cgi?id=5856>
         Selection based in an editable block can extend outside
         
         validate() used to do expansion of the selection.  The expansion 
@@ -2535,7 +2535,7 @@
 
         Reviewed by Darin.
 
-        - Fix <http://bugzilla.opendarwin.org/show_bug.cgi?id=4340>
+        - Fix <http://bugs.webkit.org/show_bug.cgi?id=4340>
         Safari not supporting disabled in multi select option tag.
 
         * khtml/rendering/render_form.cpp:
@@ -2827,7 +2827,7 @@
 
 2005-12-01  Graham Dennis  <Graham.Dennis@gmail.com>
     
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4003>
+        <http://bugs.webkit.org/show_bug.cgi?id=4003>
         contentEditable div cannot be edited if it starts out with empty or <p/>
         
         Reviewed/tweaked/landed by justin
@@ -3208,7 +3208,7 @@
         - fonts-elem-03-t.svg
         - fonts-elem-04-t.svg
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5881
+        http://bugs.webkit.org/show_bug.cgi?id=5881
         Quadratic bezier path render error
 
         * ksvg2/svg/svgpathparser.cpp:
@@ -3220,7 +3220,7 @@
 
         Test: fast/dom/HTMLScriptElement/script-set-src.html
 
-        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=4403
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=4403
         Script element doesn't load if on set src if already in document
 
         * khtml/html/html_headimpl.cpp:
@@ -3234,7 +3234,7 @@
 
         Test: fast/table/cell-width-auto.html
 
-        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=5820
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=5820
         Table cells with width:auto should use width from their <col>
 
         * khtml/rendering/render_block.cpp:
@@ -3254,7 +3254,7 @@
 
         Test: fast/text/span-in-word-space-causes-overflow.html
 
-        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=4695
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=4695
         <span> in word-spaced text breaks width calc, causes overflow
 
         * khtml/rendering/bidi.cpp:
@@ -3266,7 +3266,7 @@
 
         No automated test possible.
 
-        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=4726
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=4726
         Drop of multiple non-image file URLs only yields one item
 
         * khtml/editing/markup.cpp:
@@ -3281,7 +3281,7 @@
         Reviewed by darin.  Committed by eseidel.
 
         Test case: fast/css/absolute-poition-in-rtl-parent.html
-        Fix for bug: http://bugzilla.opendarwin.org/show_bug.cgi?id=5800
+        Fix for bug: http://bugs.webkit.org/show_bug.cgi?id=5800
 
         * khtml/rendering/render_box.cpp:
         (RenderBox::calcAbsoluteHorizontal):
@@ -3306,7 +3306,7 @@
 
         Reviewed by eseidel.  Committed by eseidel.
 
-        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5879
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=5879
         REGRESSION: Buttons go into pushed state when moused over when text field has focus
 
         * khtml/xml/dom_nodeimpl.cpp:
@@ -3317,7 +3317,7 @@
         Reviewed by darin.
 
         Fixes W3C events tests, no additional tests necessary.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5876
+        http://bugs.webkit.org/show_bug.cgi?id=5876
 
         * ksvg2/css/svg.css: added namespace declaration
         * ksvg2/svg/SVGElementImpl.cpp:
@@ -3348,7 +3348,7 @@
 
 	Changes by Mitz Pettel, reviewed by Maciej.
 
-	- fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5829 (REGRESSION: cursor tracking and hit 
+	- fix http://bugs.webkit.org/show_bug.cgi?id=5829 (REGRESSION: cursor tracking and hit 
 	testing in scrollable block don't take borders into account)
 
 	* khtml/rendering/render_layer.cpp:
@@ -3359,7 +3359,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?5683
+        - fixed http://bugs.webkit.org/show_bug.cgi?5683
           add code so we can use CFURL instead of NSURL for speed
 
         * kwq/KWQKURL.h: Added declaration of createCFURL function.
@@ -3378,7 +3378,7 @@
         Reviewed by Maciej.
 
         - fixed <rdar://problem/4089752> Duplicate method implementation for -[DOMDocument getComputedStyle::]
-          also http://bugzilla.opendarwin.org/show_bug.cgi?5682
+          also http://bugs.webkit.org/show_bug.cgi?5682
 
         * kwq/DOM.mm: Removed extra implementation of -[DOMDocument getComputedStyle::].
         * kwq/DOM-CSS.mm: (-[DOMDocument getComputedStyle::]): Copied slightly better implementation from
@@ -3388,7 +3388,7 @@
 
         Reviewed by Eric.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5681
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5681
           font family management can be faster by avoiding NSString/autorelease
 
         * kwq/KWQFontFamily.h: Replace _NSFamily with _CFFamily.
@@ -3402,7 +3402,7 @@
 
         Reviewed by Geoff.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5679
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5679
           speed up QTime by removing unnecessary CFAbsoluteTimeGetGregorianDate
 
         * kwq/KWQDateTime.mm:
@@ -3415,7 +3415,7 @@
         Reviewed by Geoff.
 
         - fixed <rdar://problem/4300202> JavaScript event keyCode/charCode/which is 25 for shift+tab, should be 9 (5678)
-          also http://bugzilla.opendarwin.org/show_bug.cgi?id=5678
+          also http://bugs.webkit.org/show_bug.cgi?id=5678
 
         * kwq/KWQEvent.mm:
         (WindowsKeyCodeForKeyEvent): Add case for tab key.
@@ -3427,7 +3427,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4925
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4925
           HTMLMapElementImpl::mapMouseEvent can be implemented without a stack
         - did some other cleanup in this file
 
@@ -3457,7 +3457,7 @@
         - CSS dynamic updates
         - dynamic path data updates
         - first pass at CDF support
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5842
+        http://bugs.webkit.org/show_bug.cgi?id=5842
 
         * kcanvas/KCanvasContainer.cpp:
         (KCanvasContainer::KCanvasContainer): make "replaced" element
@@ -3493,7 +3493,7 @@
         Not possible to test (functionality shouldn't change).
 
         Switch QRegion from using NSBezierPath to CGPath
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5310
+        http://bugs.webkit.org/show_bug.cgi?id=5310
 
         * kwq/KWQRegion.h:
         * kwq/KWQRegion.mm:
@@ -3508,7 +3508,7 @@
 
         Reviewed by Darin. Commited by Maciej.
 
-	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5715
+	- fixed http://bugs.webkit.org/show_bug.cgi?id=5715
 	(document.charset, document.defaultCharset, and document.characterSet are not supported)
 
         * khtml/ecma/kjs_dom.cpp:
@@ -3525,7 +3525,7 @@
 
         This patch makes WebCore+SVG's marker support 90% complete
         This fixes marker drawing as well as auto-orientation & scaling.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5359
+        http://bugs.webkit.org/show_bug.cgi?id=5359
 
         * kcanvas/KCanvasResources.cpp:
         (KCanvasMarker::setRef): combined setRefX and setRefY
@@ -3561,7 +3561,7 @@
 
 2005-11-28  Justin Garcia  <justin.garcia@apple.com>
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5354>
+        <http://bugs.webkit.org/show_bug.cgi?id=5354>
         Corner case where you can select outside the bounds of an editable block.
         
         Reviewed by darin
@@ -3603,7 +3603,7 @@
         First-pass lighting filter implementation from Oliver.
         Also incomplete first-pass feConvolveMatrix
         Adding temporary QPointF, QSizeF for filter use.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5192
+        http://bugs.webkit.org/show_bug.cgi?id=5192
 
         * WebCore.xcodeproj/project.pbxproj: added lighting classes
         * kcanvas/KCanvasFilters.cpp:
@@ -3835,7 +3835,7 @@
         Reviewed by Darin. Committed by Maciej.
 
 	- fixed Bidi algorithm: AN after L has incorrect resolved level
-	(http://bugzilla.opendarwin.org/show_bug.cgi?id=5573)
+	(http://bugs.webkit.org/show_bug.cgi?id=5573)
 
         * khtml/rendering/bidi.cpp:
         (khtml::RenderBlock::bidiReorderLine):
@@ -3847,7 +3847,7 @@
         One test case added:
         fast/text/international/bidi-layout-across-linebreak.html
 
-        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=5172
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=5172
 
         * khtml/rendering/bidi.cpp:
         (khtml::BidiState::BidiState):
@@ -3888,7 +3888,7 @@
         - adds static KRenderingDevice *QPainter::renderingDevice()
         - removes RenderCanvas::renderingDevice()
         - removed RenderCanvas usage from KCanvasRenderingStyle
-        Bug: http://bugzilla.opendarwin.org/show_bug.cgi?id=5839
+        Bug: http://bugs.webkit.org/show_bug.cgi?id=5839
 
         * kcanvas/KCanvasItem.cpp:
         (RenderPath::RenderPath): remove canvas from KCanvasRenderingStyle
@@ -4048,7 +4048,7 @@
 
         Reviewed by darin.
 
-        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5548
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=5548
         Allow <meta> to override encoding.
 
         * khtml/misc/decoder.cpp:
@@ -4058,7 +4058,7 @@
 
         Reviewed by ggaren.  Committed by eseidel.
 
-        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5710
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=5710
         item(i) should work like item[i]
 
         * khtml/ecma/kjs_dom.cpp:
@@ -4068,7 +4068,7 @@
 
         Reviewed by mjs.  Committed by eseidel.
 
-        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5230
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=5230
         "characterIndexForPoint: not yet implemented"
 
         * kwq/WebCoreBridge.h:
@@ -4083,7 +4083,7 @@
         Reviewed by darin.  Committed by eseidel.
 
         * khtml/rendering/render_table.cpp: <col>, <colgroup> <caption> fix
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5822
+        http://bugs.webkit.org/show_bug.cgi?id=5822
 
 2005-11-26  Eric Seidel  <eseidel@apple.com>
 
@@ -4093,7 +4093,7 @@
         (by fixing isValid and adding childShouldCreateRenderer)
         Added remedial on* event support.
         Added basic <script> processing support.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5810
+        http://bugs.webkit.org/show_bug.cgi?id=5810
 
         * kcanvas/device/quartz/KCanvasItemQuartz.mm:
         (KCanvasItemQuartz::paint):
@@ -4544,7 +4544,7 @@
 
         Reviewed by Eric.
 
-        Fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5805>
+        Fix for <http://bugs.webkit.org/show_bug.cgi?id=5805>
         Implement adoptNode.
 
         * khtml/ecma/kjs_dom.cpp:
@@ -4853,7 +4853,7 @@
         Only affects SVG; no review required (or possible due to size).
 
         The KSVG/KCanvas section of the big DOM merger.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3249
+        http://bugs.webkit.org/show_bug.cgi?id=3249
         At least the following were addressed in this patch:
         
         - Namespace mapping (KDOM -> DOM, khtml)
@@ -5790,7 +5790,7 @@
         This section covers the additions necessary to the khtml/kwq side
         in order to support ksvg2 on top of WebCore's DOM.  All changes
         are enclosed within SVG_SUPPORT blocks for easy disabling.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3249
+        http://bugs.webkit.org/show_bug.cgi?id=3249
 
         * ForwardingHeaders/ksvg2/KSVGPart.h: to KDOMHeaders.h
         * ForwardingHeaders/ksvg2/KSVGView.h: to KDOMHeaders.h
@@ -5877,7 +5877,7 @@
         Reviewed by mjs.
 
         Remove #if !APPLE_CHANGES and #if 0 blocks.  No functional changes.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5711
+        http://bugs.webkit.org/show_bug.cgi?id=5711
 
         * khtml/css/css_computedstyle.cpp:
         (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
@@ -6303,7 +6303,7 @@
 
        	Rolling out the getMatchedCSSRules change, as it caused
         many layout tests to crash on TOT:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5777
+        http://bugs.webkit.org/show_bug.cgi?id=5777
 
         * khtml/css/cssparser.cpp:
         * khtml/css/cssstyleselector.cpp:
@@ -6326,7 +6326,7 @@
 
         Reviewed by Tim Hatcher.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5774
+        http://bugs.webkit.org/show_bug.cgi?id=5774
         Failed assertion `!eventDispatchForbidden()' in dom_nodeimpl.cpp:892
         
         Tests added: None, because it keeps some existing ones from crashing.
@@ -6391,7 +6391,7 @@
 
 2005-11-18  David Harrison  <harrison@apple.com>
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5629>
+        <http://bugs.webkit.org/show_bug.cgi?id=5629>
         REGRESSION: appendChild() does not remove nodes from source nodelist when inserting into destination
 
         Enable event dispatch when calling removeChild() in loops.   That it was
@@ -6635,7 +6635,7 @@
 
         Reviewed by Dave Harrson.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5759
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5759
         <rdar://problem/4346132> REGRESSION (10.4.3-10.4.4): horizontal link scrolling broken at aplacecalledcommon.co.uk (5759)
 
         * khtml/rendering/render_layer.cpp: (khtml::RenderLayer::getRectToExpose): If the rect is larger than the visible rect, and we're trying to align to the closest edge, align to the left edge.
@@ -6646,7 +6646,7 @@
 
         Reviewed by Eric.
 
-        - fix <http://bugzilla.opendarwin.org/show_bug.cgi?id=5737>
+        - fix <http://bugs.webkit.org/show_bug.cgi?id=5737>
         Implement DOM3 namespace functions.
 
         * khtml/ecma/kjs_dom.cpp:
@@ -6692,7 +6692,7 @@
 
 2005-11-15  Alexey Proskuryakov  <ap@nypop.com>
         
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=5717>
+        <http://bugs.webkit.org/show_bug.cgi?id=5717>
         REGRESSION: [WebCoreBridge _visiblePositionForPoint:(0,x)] crashes
         
         Reviewed by justin
@@ -6806,7 +6806,7 @@
 
         Reviewed by Eric.
 
-        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5728>
+        - fix for <http://bugs.webkit.org/show_bug.cgi?id=5728>
         createDocument should create a document element
 
         * khtml/xml/dom_docimpl.cpp:
@@ -6817,7 +6817,7 @@
 
         Reviewed by Eric.
 
-        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5725>
+        - fix for <http://bugs.webkit.org/show_bug.cgi?id=5725>
         setAttributeNS with null namespace sets namespace to string containing 'null'
 
         * khtml/ecma/kjs_binding.cpp:
@@ -6960,7 +6960,7 @@
 
         * khtml/ecma/kjs_html.cpp:
         (KJS::Image::getValueProperty): resolve relative urls in Image::src
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3473
+        http://bugs.webkit.org/show_bug.cgi?id=3473
         <rdar://problem/3787988> Preloaded Image objects .src field is not a fully resolved path (3473)
 
 2005-11-09  David Hyatt  <hyatt@apple.com>
@@ -7007,7 +7007,7 @@
 
 2005-11-08  Tim Omernick  <timo@apple.com>
 	
-	<http://bugzilla.opendarwin.org/show_bug.cgi?id=5665> (REGRESSION: Crash in deleteTimer)
+	<http://bugs.webkit.org/show_bug.cgi?id=5665> (REGRESSION: Crash in deleteTimer)
 	
 	Rolled back Darin's timer changes from 2005-11-07, as they caused a couple of regressions.
 	
@@ -7016,7 +7016,7 @@
         Reviewed by Darin.
 
         - fixed <rdar://problem/4333862> REGRESSION: Crash in new JavaScript timer implementation (5661)
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5661
+        http://bugs.webkit.org/show_bug.cgi?id=5661
 
         * kwq/KWQObject.mm: (sendDeferredTimerEvents): Added nil check for timers.
 
@@ -7321,7 +7321,7 @@
 
         Reviewed by Justin and Hyatt.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3739
+        http://bugs.webkit.org/show_bug.cgi?id=3739
         Unreproducible - Assertion failure in isEqualIgnoringAffinity on double-click
 
         Test case added:
@@ -7355,7 +7355,7 @@
         Reviewed by Darin Adler.
         Committed by Adele Peterson.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5398
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5398
         source visible when <script> used inside <option>
 
         Added:
@@ -7516,7 +7516,7 @@
 
         Reviewed by Darin.
 
-        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5643>
+        - fix for <http://bugs.webkit.org/show_bug.cgi?id=5643>
         setDragImage fails when passed Image object.
 
         * kwq/KWQClipboard.mm:
@@ -7546,7 +7546,7 @@
         Test case added:
         * manual-tests/whitespace-pre-affinity.html
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3739
+        http://bugs.webkit.org/show_bug.cgi?id=3739
 
         This patch addresses the root cause of the problem by making
         RenderText::inlineBox() cope with the fact that in white-space:pre text the
@@ -7865,7 +7865,7 @@
         Reviewed by Dave Hyatt.
         Commited by Tim Hatcher.
 
-        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=5256
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=5256
         Relayout during load causes duplicate plugin part.
 
         This was a problem with <OBJECT>s that contain an <EMBED>, if 
@@ -7889,7 +7889,7 @@
         Reviewed by Dave Hyatt.
         Commited by Tim Hatcher.
 
-        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=5541
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=5541
 
         HTMLNames constants are not yet initialized at Safari startup,
         when bookmarks are imported, which caused a crash in Decoder::decode().
@@ -7910,7 +7910,7 @@
 
         Reviewed by Darin.
 
-        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5572>
+        - fix for <http://bugs.webkit.org/show_bug.cgi?id=5572>
         Implement textContent property.
 
         * khtml/ecma/kjs_dom.cpp:
@@ -7936,7 +7936,7 @@
         Reviewed by hyatt.
 
         Now ignores XSLT PIs in documents resulting from transforms.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5529
+        http://bugs.webkit.org/show_bug.cgi?id=5529
 
         * khtml/xml/dom_docimpl.cpp:
         (DocumentImpl::recalcStyleSelector):
@@ -8084,7 +8084,7 @@
 
         Build fix, forgot to commit project file.
         Also need to make XSLT #ifdef's work for portability.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3275
+        http://bugs.webkit.org/show_bug.cgi?id=3275
 
         * WebCore.xcodeproj/project.pbxproj:
         * khtml/ecma/XSLTProcessor.cpp:
@@ -8189,7 +8189,7 @@
 
         Add XSLTProcessor support to WebCore's JavaScript bindings.
         <rdar://problem/3642402> add XSLTProcessor to WebCore's JavaScript support
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3275
+        http://bugs.webkit.org/show_bug.cgi?id=3275
 
         * WebCore.xcodeproj/project.pbxproj:
         * khtml/ecma/XSLTProcessor.cpp: Added.
@@ -8325,7 +8325,7 @@
 
         Various fixes to createMarkup and toString code to properly
         support serialization of XML.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5404
+        http://bugs.webkit.org/show_bug.cgi?id=5404
 
         * khtml/editing/markup.cpp:
         (khtml::startMarkup):
@@ -8376,7 +8376,7 @@
 
         Reviewed by Maciej.
 
-        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5513>
+        - fix for <http://bugs.webkit.org/show_bug.cgi?id=5513>
         Implement isEqualNode.
 
         * khtml/ecma/kjs_dom.cpp:
@@ -8455,7 +8455,7 @@
 
         Reviewed by Eric.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5315
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5315
           need to set document type based on contents of <!DOCTYPE>
           (fixes one layout test)
 
@@ -8531,7 +8531,7 @@
         Re-land the following fix, I tested to verify there is no performance regression:
 
 	Makes <object> tags not use image mode for svg content:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5175
+        http://bugs.webkit.org/show_bug.cgi?id=5175
 
         * khtml/html/html_objectimpl.cpp:
         (DOM::HTMLObjectElementImpl::isImageType):
@@ -8683,7 +8683,7 @@
 
         Reviewed by Dave Hyatt.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4945
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4945
           event init calls should not do anything if the event has already been dispatched
         - made a small performance improvement to event creation by simplifying the date code
           (seen on profiles)
@@ -8738,8 +8738,8 @@
 
         Patch by Niels Leenheer.
 
-        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3587
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3587
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=3587
+        http://bugs.webkit.org/show_bug.cgi?id=3587
 
         Reviewed by hyatt.
 
@@ -8765,7 +8765,7 @@
 
         Reviewed by Hyatt.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5054
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5054
           Crash with dataTransfer.setDragImage
 
         * khtml/ecma/kjs_events.cpp: (KJS::ClipboardProtoFunc::callAsFunction):
@@ -8819,7 +8819,7 @@
 
         Reviewed by Darin, committed by beth.
 
-	Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5384
+	Fix for http://bugs.webkit.org/show_bug.cgi?id=5384
 	Soft hyphen displayed as hyphen when it is the first character 
 	in a line/run.
 
@@ -8865,7 +8865,7 @@
         Reviewed by Darin Adler.
         Commited by Tim Hatcher.
 
-        - fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=5484
+        - fixes http://bugs.webkit.org/show_bug.cgi?id=5484
         REGRESSION: reproducible crash in CachedCSSStyleSheet::setCharset
 
         * khtml/misc/loader.cpp:
@@ -8876,7 +8876,7 @@
 
         Reviewed by Darin.  Committed by David Harrison.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5449
+        http://bugs.webkit.org/show_bug.cgi?id=5449
         "OBJECT should be accessible by id/name as document property only if its only children are PARAMs"
 
         Test added:
@@ -8901,7 +8901,7 @@
 
         Reviewed by Darin.  Committed by David Harrison.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5415
+        http://bugs.webkit.org/show_bug.cgi?id=5415
         "Left border of selection highlight leaves behind a trail"
 
         (Code changes are in WebKit)
@@ -8912,7 +8912,7 @@
 
 	Changes by Mitz Pettel, reviewed by Maciej.
 
-	- fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5306 (KHTMLPart::requestObject 
+	- fix http://bugs.webkit.org/show_bug.cgi?id=5306 (KHTMLPart::requestObject 
 	doesn't destroy old plugin content)
 
 	* khtml/html/html_objectimpl.cpp:
@@ -8922,7 +8922,7 @@
 
         Changes by Alexey Proskuryakov, reviewed by Maciej.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5140 (CachedObject loading 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5140 (CachedObject loading 
 	ignores charset from HTTP headers)
 
 	* khtml/misc/loader.cpp:
@@ -8940,7 +8940,7 @@
 
         Reviewed by Hyatt, landed by beth.
 
-	Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5318
+	Fix for http://bugs.webkit.org/show_bug.cgi?id=5318
 	forced line break should not be allowed after a list marker.
 
         * khtml/rendering/bidi.cpp:
@@ -8952,7 +8952,7 @@
 
         Fix Qualified Name parsing to match spec.
         xhtml dom tests cover these cases.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5317
+        http://bugs.webkit.org/show_bug.cgi?id=5317
 
         * khtml/xml/dom_docimpl.cpp:
         (isValidNameStart):
@@ -8973,7 +8973,7 @@
 
         Finally fix pattern "userspaceonuse" support.
         Several test cases already cover this.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5361
+        http://bugs.webkit.org/show_bug.cgi?id=5361
 
         * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
         (KRenderingPaintServerPatternQuartz::draw):
@@ -8989,7 +8989,7 @@
         Reviewed by eseidel.
 
         Merged over Shared -> Shared<T> change from kdom.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5391
+        http://bugs.webkit.org/show_bug.cgi?id=5391
 
         * WebCore.xcodeproj/project.pbxproj:
         * kdom/Shared.h:
@@ -9230,13 +9230,13 @@
 
         * WebCore+SVG/xml_kdomtokenizer.cpp:
         (KDOMTokenizer::KDOMTokenizer): build fix.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5462
+        http://bugs.webkit.org/show_bug.cgi?id=5462
 
 2005-10-23  Nicholas Shanks  <contact@nickshanks.com>
 
         Reviewed by Dave Hyatt.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3442
+        http://bugs.webkit.org/show_bug.cgi?id=3442
         Adds support for :first-of-type CSS3 pseudo-selectors
         And builds foundations for :last-of-type and :only-of-type
 
@@ -9844,7 +9844,7 @@
         Reviewed by eseidel.
 
         Fixed crash when animating unsupported elements.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5336
+        http://bugs.webkit.org/show_bug.cgi?id=5336
 
         * ksvg2/svg/SVGAnimationElementImpl.cpp:
         (SVGAnimationElementImpl::targetElement):
@@ -9884,7 +9884,7 @@
         Reviewed by Darin.
 
         no need to calculate linewidth multiple times in findnextlinebreak()
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5319
+        http://bugs.webkit.org/show_bug.cgi?id=5319
 
         No test case needed, this is a simple optimization.
 
@@ -9928,7 +9928,7 @@
         * svg-tests/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
 
         Fixed <svg> to base %lengths off of the nearest viewbox.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5326
+        http://bugs.webkit.org/show_bug.cgi?id=5326
 
         * ksvg2/svg/SVGPreserveAspectRatioImpl.cpp:
         (SVGPreserveAspectRatioImpl::SVGPreserveAspectRatioImpl):
@@ -9973,7 +9973,7 @@
         Reviewed by Eric.
 
         Crash: Drag element with CSS ::Before absolute positioning applied to it
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4088
+        http://bugs.webkit.org/show_bug.cgi?id=4088
 
         * kwq/KWQKHTMLPart.mm:
         (KWQKHTMLPart::khtmlMouseMoveEvent):
@@ -9999,11 +9999,11 @@
         
 2005-10-11  Adele Peterson  <adele@apple.com>
 
-        Rolling out fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5195
+        Rolling out fix for http://bugs.webkit.org/show_bug.cgi?id=5195
         since it caused:
 
         REGRESSION text areas draw focus ring around each glyph, no caret in text fields
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5335
+        http://bugs.webkit.org/show_bug.cgi?id=5335
 
         And updated expected results.
         * fast/clip/014-expected.checksum: Updated.
@@ -10032,7 +10032,7 @@
         Reviewed by eseidel.  Committed by eseidel.
 
         Fix SVGSymbolElementImpl to not warn when inheriting viewbox.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5278
+        http://bugs.webkit.org/show_bug.cgi?id=5278
 
         * ksvg2/svg/SVGUseElementImpl.cpp:
         (SVGUseElementImpl::close):
@@ -10042,7 +10042,7 @@
         Reviewed by eseidel.
 
         Fixes WebCore+SVG build under gcc 3.3
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5301
+        http://bugs.webkit.org/show_bug.cgi?id=5301
 
         * WebCore+SVG/DrawCanvasItem.mm:
         * WebCore+SVG/DrawView.mm:
@@ -10066,7 +10066,7 @@
 
         Reviewed by Maciej.
 
-        - finished fixing http://bugzilla.opendarwin.org/show_bug.cgi?id=5195
+        - finished fixing http://bugs.webkit.org/show_bug.cgi?id=5195
           Would like API to flush rendering of pending DOM changes
 
         The first half of the fix alone broke DumpRenderTree. Better now.
@@ -10094,7 +10094,7 @@
         Reviewed by eseidel.
 
         Mem leak fixes in xslt code.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5320
+        http://bugs.webkit.org/show_bug.cgi?id=5320
 
         * khtml/xml/dom_docimpl.cpp:
         (DocumentImpl::applyXSLTransform):
@@ -10125,7 +10125,7 @@
 
         Reviewed by Maciej.
 
-        - support for WebKit fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5187
+        - support for WebKit fix for http://bugs.webkit.org/show_bug.cgi?id=5187
           UTF-8 in long text files breaks at some point
 
         No layout test added: only affects plain text view and requires loading the
@@ -10140,7 +10140,7 @@
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4821
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4821
           Text in submitted forms should be entity-encoded if the current encoding doesn't support it
 
         Added one layout test.
@@ -10158,7 +10158,7 @@
 
         Reviewed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3852
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3852
           typeahead doesn't work in multiple row select boxes.
 
         * kwq/KWQListBox.mm:
@@ -10174,7 +10174,7 @@
 
         Reviewed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3245
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3245
           Support the 'bdo' element
 
         Fixes the results of some existing layout tests.
@@ -10197,7 +10197,7 @@
 
         Reviewed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4898
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4898
           Failures in dbaron's bidi ordering tests
 
         Added 3 dbaron bidi ordering tests to layout tests.
@@ -10214,7 +10214,7 @@
         Reviewed by eseidel.  Committed by eseidel.
 
         Almost forgot the layout test for the last commit. ;)
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5240
+        http://bugs.webkit.org/show_bug.cgi?id=5240
 
         * svg-tests/custom/use-forward-refs-expected.checksum: Added.
         * svg-tests/custom/use-forward-refs-expected.png: Added.
@@ -10226,7 +10226,7 @@
         Reviewed by eseidel.  Committed by eseidel.
 
         Fix to handle forward referencing <use> elements.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5240
+        http://bugs.webkit.org/show_bug.cgi?id=5240
 
         * ksvg2/svg/SVGDocumentImpl.cpp:
         (SVGDocumentImpl::executeScripts): delayed close.
@@ -10419,7 +10419,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         - fixed <rdar://problem/3217793> Monaco bold comes out as Helvetica bold, very bad if you choose Monaco as your fixed-width font
         - fixed <rdar://problem/3256269> CSS1: bold/italic font styles not programmatically created if font doesn't include them (3231)
-          also <http://bugzilla.opendarwin.org/show_bug.cgi?id=3231>
+          also <http://bugs.webkit.org/show_bug.cgi?id=3231>
 
         * kwq/WebCoreTextRendererFactory.h: Added WebCoreFont structure, and made this header work for
         non-Objective-C compiles. Changed all the methods to take and return WebCoreFont instead of
@@ -10586,7 +10586,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by mjs.
 
         Makes <object> tags not use image mode for svg content:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5175
+        http://bugs.webkit.org/show_bug.cgi?id=5175
 
         * khtml/html/html_objectimpl.cpp:
         (DOM::HTMLObjectElementImpl::isImageType):
@@ -10595,7 +10595,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
 
-        - fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=5271>
+        - fix for <http://bugs.webkit.org/show_bug.cgi?id=5271>
         Implement isSameNode.
 
         * khtml/ecma/kjs_dom.cpp:
@@ -10663,7 +10663,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Fix to include "config.h" in every file.
         Necessary to support fastMalloc.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5254
+        http://bugs.webkit.org/show_bug.cgi?id=5254
 
         * WebCore+SVG/DrawCanvasItem.mm:
         * WebCore+SVG/DrawDocument.mm:
@@ -11027,7 +11027,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
 
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=5180
+	http://bugs.webkit.org/show_bug.cgi?id=5180
 	event.stopPropagation() prevents the default action - it shouldn't
 
 	Amusingly this bug existed in 3 different places.
@@ -11047,7 +11047,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by Darin.
 
 	<rdar://problem/4283967> REGRESSION: 3% regression on PLT from new FastMalloc
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=5243
+	http://bugs.webkit.org/show_bug.cgi?id=5243
         
 	- use fastMalloc for everything - it now gets applied to all new/delete allocations
         via a private inline operator new that is now included into every file via config.h
@@ -11390,7 +11390,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by eseidel.  Committed by eseidel.
 
         Fixes hang, caused by path parser spinning forever.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5239
+        http://bugs.webkit.org/show_bug.cgi?id=5239
 
         * ksvg2/svg/svgpathparser.cpp:
         (SVGPathParser::parseSVG):
@@ -11404,7 +11404,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
        Reviewed by darin.
 
        Closes large memory leak in KSVG.
-       http://bugzilla.opendarwin.org/show_bug.cgi?id=5209
+       http://bugs.webkit.org/show_bug.cgi?id=5209
 
        * ksvg2/svg/SVGStyledElementImpl.cpp:
         (SVGStyledElementImpl::attach): delete orphans unless PatternImpl
@@ -11414,7 +11414,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by mjs.
 
         Fixes SVG animation support in Safari/WebKit.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5132
+        http://bugs.webkit.org/show_bug.cgi?id=5132
 
         * WebCore+SVG/dom_kdomnodetreewrapper.cpp:
         (KDOMNodeTreeWrapperImpl::attach): setup kcanvasviewquartz
@@ -11439,7 +11439,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by eseidel.
 
         Fix XSLT to preserve document.URL.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5219
+        http://bugs.webkit.org/show_bug.cgi?id=5219
 
         * khtml/xsl/xslt_processorimpl.cpp:
         (DOM::XSLTProcessorImpl::documentFromXMLDocPtr):
@@ -11449,7 +11449,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by mjs.
 
         Fix crash when encountering XML processing directives w/ KDOM:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5238
+        http://bugs.webkit.org/show_bug.cgi?id=5238
 
         * ksvg2/svg/SVGDocumentImpl.cpp:
         (SVGDocumentImpl::recalcStyleSelector): null check.
@@ -11466,7 +11466,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Eric.
 
-	- Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=5231>
+	- Fixes <http://bugs.webkit.org/show_bug.cgi?id=5231>
 	
         * khtml/xml/dom_elementimpl.cpp:
         (AttrImpl::localName):
@@ -11670,7 +11670,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by Eric.
 
 	- move HashMap/HashSet code down to JavaScriptCore; adapt usage to the new header location
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=5161
+	http://bugs.webkit.org/show_bug.cgi?id=5161
 
         * ForwardingHeaders/kxmlcore/HashMap.h: Added.
         * ForwardingHeaders/kxmlcore/HashSet.h: Added.
@@ -11727,7 +11727,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Removed 19 uses of dynamic_cast.
         Part of this came by making EventTarget abstract, and moving
         the necessary implementations up into NodeImpl.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3914
+        http://bugs.webkit.org/show_bug.cgi?id=3914
 
         * kdom/Helper.h: comment cleanup
         * kdom/bindings/IDLCodeGeneratorJs.pm: tabs -> spaces
@@ -11805,7 +11805,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by mjs.
 
         Test cases for JSC fix:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3537
+        http://bugs.webkit.org/show_bug.cgi?id=3537
 
         Test cases added:
         * layout-tests/fast/js/object-prototype-constructor-expected.txt: Added.
@@ -11816,7 +11816,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by John.
 
 	- replace dlmalloc with tcmalloc
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=5145
+	http://bugs.webkit.org/show_bug.cgi?id=5145
 
 	I also moved SharedPtr and the assertion code from WebCore into a
 	new kxmlcore directory.
@@ -11978,7 +11978,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         No review needed, svg build fix only.
         
         Fixes code to match WebCore+SVG -> WebCore rename.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5141
+        http://bugs.webkit.org/show_bug.cgi?id=5141
 
         * WebCore+SVG/DrawCanvasItemPrivate.h:
         * WebCore+SVG/DrawDocumentPrivate.h:
@@ -11992,7 +11992,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Landing the W3C XHTML DOM test suites.
         This also includes changes necessary to make these
         tests run (and many pass) on our system.
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=4907
+	http://bugs.webkit.org/show_bug.cgi?id=4907
 
         * khtml/xml/xml_tokenizer.cpp: removed XMLNamespace*, added entity support.
         * layout-tests/fast/dom/set-innerHTML.xhtml: improved error reporting.
@@ -16947,7 +16947,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
 2005-09-26  Geoffrey Garen  <ggaren@apple.com>
 
-        - Added layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5053
+        - Added layout test for http://bugs.webkit.org/show_bug.cgi?id=5053
         Need to restore int/long changes to simple_number.h
 
         Test cases added:
@@ -16970,7 +16970,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
 2005-09-24  Duncan Wilcox  <duncan@mclink.it>
 
-        - patch for <http://bugzilla.opendarwin.org/show_bug.cgi?id=4963>
+        - patch for <http://bugs.webkit.org/show_bug.cgi?id=4963>
           "Would like to simulate human interaction with webview"
 
         Test cases added:
@@ -17047,7 +17047,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by Dave.
         Landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4862
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4862
           Incorrect layout of bidi overrides
 
         Test cases added:
@@ -17085,8 +17085,8 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Landed by Darin (after taking tabs out).
 
         - worked around problems compiling with various versions of gcc 4
-          http://bugzilla.opendarwin.org/show_bug.cgi?id=5071
-          http://bugzilla.opendarwin.org/show_bug.cgi?id=5086
+          http://bugs.webkit.org/show_bug.cgi?id=5071
+          http://bugs.webkit.org/show_bug.cgi?id=5086
 
         * kwq/KWQLineEdit.mm:
         (QLineEdit::setCursorPosition): Don't use NSMakeRange.
@@ -17101,7 +17101,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5039
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5039
           XSLT text output doesn't work
 
         Test cases added:
@@ -17119,7 +17119,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5027
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5027
           Decoder doesn't auto-detect XML encoded as UTF-16 if BOM is not present
 
         Test cases added:
@@ -17135,7 +17135,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         * khtml/editing/SelectionController.cpp:
         (khtml::SelectionController::debugPosition):
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5113
+        http://bugs.webkit.org/show_bug.cgi?id=5113
 
 2005-09-23  Eric Seidel  <eseidel@apple.com>
         Fix from Mitz Pettel <opendarwin.org@mitzpettel.com>
@@ -17144,7 +17144,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         * WebCore.xcodeproj/project.pbxproj:
 	Build fix:  EcmaInterface.cpp paths.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5111
+        http://bugs.webkit.org/show_bug.cgi?id=5111
 
 2005-09-23  Duncan Wilcox  <duncan@mclink.it>
 
@@ -17202,7 +17202,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Eric.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4310
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4310
           "sheet" method is unimplemented in Obj-C DOM API
 
         * kwq/DOM-CSS.mm: (-[DOMObject sheet]): Added.
@@ -17211,7 +17211,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Eric.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4309
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4309
           CSSStyleSheet objects don't get Obj-C DOMCSSStyleSheet wrappers
 
         * kwq/DOM-CSS.mm:
@@ -17228,7 +17228,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by Maciej.
         Tested, landed, and tweaked a tiny bit by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=5092
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=5092
           Random crashes when running the layout tests
         
         Fix was to remove the "pending" concept from the tokenizer, which streamlined the
@@ -17270,7 +17270,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         WebKit app, including Safari.
         Also added extensions to QPainter to return a
         KRenderingDeviceContext object to be passed into KCanvas.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5003
+        http://bugs.webkit.org/show_bug.cgi?id=5003
 
         * WebCore+SVG/dom_kdomdocumentwrapper.cpp: Added.
         (KDOMDocumentWrapperImpl::renderingDevice):
@@ -17331,7 +17331,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Changes by Romain Brestac, reviewed by Darin.
 
-        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3418
+        - fix http://bugs.webkit.org/show_bug.cgi?id=3418
         (unicode characters not preserved after a xslt transformation)
 
         * khtml/misc/loader.cpp:
@@ -17480,7 +17480,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Pickup latest Ecma changes from KDE, including
         adding in the SVG ecma bindings and DOM 3 LS bindings.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4946
+        http://bugs.webkit.org/show_bug.cgi?id=4946
 
         * WebCore.xcodeproj/project.pbxproj:
         * kdom/bindings/IDLCodeGenerator.pm:
@@ -17701,14 +17701,14 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         * kdom/ecma/Ecma.cpp: ProtectedValue -> ProtectedPtr<ValueImp>
         build fix after mjs' recent ProtectedValue removal.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5058
+        http://bugs.webkit.org/show_bug.cgi?id=5058
 
 2005-09-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
 
         Moved MIME types list from WebKit into WebCore.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5037
+        http://bugs.webkit.org/show_bug.cgi?id=5037
 
         * kwq/WebCoreBridge.h:
         * kwq/WebCoreBridge.mm:
@@ -17716,7 +17716,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
 2005-09-20  Geoffrey Garen  <ggaren@apple.com>
 
-        - Added test case for fix to http://bugzilla.opendarwin.org/show_bug.cgi?id=4892
+        - Added test case for fix to http://bugs.webkit.org/show_bug.cgi?id=4892
           Date constructor has problems with months larger than 11
 
         Test cases added: 
@@ -17725,7 +17725,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         * layout-tests/fast/js/date-big-constructor.html: Added.
 
 2005-09-20  Geoffrey Garen  <ggaren@apple.com>
-        - Rolled in fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4247
+        - Rolled in fix for http://bugs.webkit.org/show_bug.cgi?id=4247
           addEventListener in Obj-C does not work
 
         No layout test because we don't have test machinery for the Obj-C bindings yet.
@@ -17743,7 +17743,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
 2005-09-20  Geoffrey Garen  <ggaren@apple.com>
 
-        - Rolled in fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4849
+        - Rolled in fix for http://bugs.webkit.org/show_bug.cgi?id=4849
           htmltokenizer.cpp won't compile with TOKEN_DEBUG defined
 
         No test case because this is a build fix.
@@ -17900,7 +17900,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
 2005-09-16  Adele Peterson  <adele@apple.com>
 
-        Rolling out the fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4924
+        Rolling out the fix for http://bugs.webkit.org/show_bug.cgi?id=4924
             QPainter should use CGContext as much as possible rather than NSGraphicsContext 
         since it caused a performance regression.
 
@@ -17908,7 +17908,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Change by Darin, reviewed by me and Maciej.
 
-        Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=4547
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=4547
         use int instead of long for 32-bit (to prepare for LP64 compiling)
 
         Changed longs (which IDL files use as 32-bit) to ints
@@ -18587,7 +18587,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed, tweaked, and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3809
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3809
           Should default to UTF-8 or UTF-16 for application/xml documents with omitted charset and encoding declaration
 
         Test cases added:
@@ -18644,10 +18644,10 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         No easy way to test this in layout tests, so no test added.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4984
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4984
           REGRESSION placeholder border left behind after image finishes loading
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4985
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4985
           REGRESSION assertion failure in KWQPainter.mm:841
 
         * kwq/KWQPainter.mm:
@@ -18661,7 +18661,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4924
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4924
           QPainter should use CGContext as much as possible rather than NSGraphicsContext
 
         * kwq/KWQPainter.h: Made no-op xForm be an inline. Reformatted to remove extraneous spaces.
@@ -18809,7 +18809,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4820
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4820
           hexadecimal HTML entities split across TCP packets are not parsed correctly
 
         Wasn't able to make a layout test for this because there's no easy way to
@@ -18830,7 +18830,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4806
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4806
           REGRESSION <area> elements misnested inside <div> elements not working
 
         Test cases added:
@@ -18852,7 +18852,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4367
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4367
           Crash when executing setTimeout / Date / document.write Javascript (bugtraq)
 
         Test cases added:
@@ -18940,7 +18940,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Don Melton.
  
-	- fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4891 (HTMLIFrameElement11.js checks for 
+	- fix http://bugs.webkit.org/show_bug.cgi?id=4891 (HTMLIFrameElement11.js checks for 
 	wrong title, causes false failure) and enabled HTMLIFrameElement11.html
 
         * layout-tests/dom/html/level2/html/HTMLIFrameElement11.js: check for correct title of resources/frame.html
@@ -18970,7 +18970,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Various whitespace adjustments.
         Fewer, clearer logs from kcanvas/device/quartz code.
         DOM exception support.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4863
+        http://bugs.webkit.org/show_bug.cgi?id=4863
 
         * ForwardingHeaders/qmatrix.h: Added.
         * WebCore+SVG/DrawDocument.mm:
@@ -19296,7 +19296,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
 2005-09-07  Geoffrey Garen  <ggaren@apple.com>
 
-        -added layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4781
+        -added layout test for http://bugs.webkit.org/show_bug.cgi?id=4781
         Date.setMonth fails with big values due to overflow
 
         Fix is in JavaScriptCore.
@@ -19336,7 +19336,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         * ksvg2/svg/SVGDocumentImpl.cpp:
         (SVGDocumentImpl::~SVGDocumentImpl):
         Fixed several leaks.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4868
+        http://bugs.webkit.org/show_bug.cgi?id=4868
 
 2005-09-06  Darin Adler  <darin@apple.com>
 
@@ -19345,13 +19345,13 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         - fixed storage leaks; one of the leaks caused these 3 bugs:
 
         <rdar://problem/4231952> leaks of DOMStringImpl called from HTMLTokenizer::processToken, seen running WebKit tests
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4797>
+        <http://bugs.webkit.org/show_bug.cgi?id=4797>
 
         <rdar://problem/4233800> leak inside DOM::DocumentImpl::DocumentImpl, seen running webkit tests
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4795>
+        <http://bugs.webkit.org/show_bug.cgi?id=4795>
 
         <rdar://problem/4232812> leaks of NodeImpl called from HTMLParser::textCreateErrorCheck, seen running webkit tests
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4796>
+        <http://bugs.webkit.org/show_bug.cgi?id=4796>
 
         * khtml/html/html_elementimpl.cpp:
         (HTMLElementImpl::setOuterHTML): Put ref/deref around call to replaceChild to avoid leaking the node being replaced.
@@ -19406,7 +19406,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Don't create empty fill/stroke servers if fill/stroke
         are specified as "none".
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4864
+        http://bugs.webkit.org/show_bug.cgi?id=4864
 
         Test cases updated:
         * svg-tests/W3C-SVG-1.1/Resources/animation-add-BE-09-expected.txt:
@@ -19636,7 +19636,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4822
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4822
           REGRESSION dragging does not stop when you release the mouse button in Google Maps
 
         Test cases added:
@@ -19650,7 +19650,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4493
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4493
           add qualifiedName checking for empty string
 
         * khtml/xml/dom_docimpl.cpp:
@@ -19679,7 +19679,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4025
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4025
           Reproducible crash (infinite recursion?) choosing Make Link from text field's contextual menu
 
         * kwq/KWQTextField.mm:
@@ -19699,9 +19699,9 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4274
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4274
           REGRESSION: canvas draws when window loses focus (flipped and in wrong position!)
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4755
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4755
           "CGContext*: invalid context" messages dumped to the console (may indicate a performance hit)
 
         * khtml/rendering/render_canvasimage.cpp: (RenderCanvasImage::paint):
@@ -19723,7 +19723,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4393
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4393
           REGRESSION: Unconfirmed text ignored in input type=text
 
         Test cases added:
@@ -19787,7 +19787,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed and landed by Darin.
 
         - fixed <rdar://problem/3698926> so slow it feels like a hang calling UCFindTextBreak() tons of times at forum.presence-pc.com (4789)
-          also http://bugzilla.opendarwin.org/show_bug.cgi?id=4789
+          also http://bugs.webkit.org/show_bug.cgi?id=4789
 
         No test cases added because this is a performance fix. Existing test cases continue to work.
 
@@ -19923,7 +19923,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         * kdom/xpointer/XMLNSSchemeImpl.h: ditto.
         * kdom/xpointer/XPath1SchemeImpl.h: ditto.
         * kdom/xpointer/XPointerSchemeImpl.h: ditto.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4790
+        http://bugs.webkit.org/show_bug.cgi?id=4790
 
 2005-09-02  Adele Peterson  <adele@apple.com>
 
@@ -19982,7 +19982,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4757
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4757
           leaks found by code inspection in apply-style command
 
         * khtml/editing/apply_style_command.h: Change m_style to be a SharedPtr.
@@ -20035,7 +20035,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         (ScriptInterpreter::mark):
         * kwq/KWQPtrDict.h:
         Re-ran scripts from previous commit, now including QPtrDict.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4799
+        http://bugs.webkit.org/show_bug.cgi?id=4799
 
 2005-09-02  Eric Seidel  <eseidel@apple.com>
 
@@ -20260,7 +20260,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Pulled over first section of Qt4 changes from kdom, mapping
         existing Qt3 classes to their new Qt4 names and adding necessary
         #defines to kwq to allow supporting both names.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4799
+        http://bugs.webkit.org/show_bug.cgi?id=4799
 
 2005-09-01  Vicki Murley  <vicki@apple.com>
 
@@ -20298,7 +20298,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         * kwq/KWQSlot.mm: changed ksvg2/core to ksvg/misc
         Build fix: issed one include from previous change.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4790
+        http://bugs.webkit.org/show_bug.cgi?id=4790
 
 2005-09-01  David Harrison  <harrison@apple.com>
 
@@ -20405,7 +20405,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4672
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4672
           Incorrect highlight when selection begins with space and word-spacing>0
 
         Test cases added:
@@ -20822,7 +20822,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         And made all the necessary header include and project file changes.
         This now brings our source tree fully up-to-date with all the
         recent kdom/ksvg2 file re-orgs (which were done per our request).
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4790
+        http://bugs.webkit.org/show_bug.cgi?id=4790
 
 2005-09-01  Eric Seidel  <eseidel@apple.com>
 
@@ -20830,7 +20830,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Replaced tabs with spaces throughout all of SVGSupport, excepting
         kdom/xpath upon specific request of the kdom/xpath maintainer.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4752
+        http://bugs.webkit.org/show_bug.cgi?id=4752
 
 2005-08-31  Maciej Stachowiak  <mjs@apple.com>
 
@@ -21171,7 +21171,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4560
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4560
           Markup in <title> prevents decoder from looking for a charset
 
 	Test cases added: 
@@ -21195,7 +21195,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed, tweaked, and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4626
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4626
           bidi-fallback-font-weight test requires font that's not part of default OS X install
 
         * layout-tests/fast/text/international/bidi-fallback-font-weight.html: Removed the part that
@@ -21510,13 +21510,13 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         (QTextStream::operator<<):
         (QTextStream::precision): added.
         Necessary additions for much better KCanvas render tree dumps.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4472
+        http://bugs.webkit.org/show_bug.cgi?id=4472
 
 2005-08-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/attachment.cgi?id=3702
+        - fixed http://bugs.webkit.org/attachment.cgi?id=3702
           Acid2 test has orange border around nose
 
         * kwq/KWQPainter.mm: (QPainter::drawConvexPolygon): Add back a call to
@@ -21558,11 +21558,11 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         * WebCore.xcodeproj/project.pbxproj: added EventNames.*
         * kdom/css/impl/Font.h: Fixed includes.
         Build fixes necessary after recent WebCore changes.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4780
+        http://bugs.webkit.org/show_bug.cgi?id=4780
 
 2005-08-31  Geoffrey Garen  <ggaren@apple.com>
 
-        -rolled in layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4698
+        -rolled in layout test for http://bugs.webkit.org/show_bug.cgi?id=4698
         kjs does not allow named functions in function expressions
         
         Test cases added:
@@ -21574,7 +21574,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4766
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4766
           many callers of removeChild are leaking the removed node
 
         * khtml/html/html_elementimpl.cpp:
@@ -21596,7 +21596,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders.
 
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=4768
+	http://bugs.webkit.org/show_bug.cgi?id=4768
         (Add counters for NodeImpl, ElementImpl and RenderObject in debug builds)
 	
 	Test cases added: None, this just adds debug output (which shows up on the regular layout tests).
@@ -21684,7 +21684,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4574
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4574
           HTML parser does not put attributes on the <isindex> element
 
         * layout-tests/dom/html/level2/html/HTMLIsIndexElement01-expected.txt:
@@ -21699,7 +21699,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4540
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4540
           event handlers for all custom events called when any custom event is set
 
         * layout-tests/dom/html/level2/events/dispatchEvent12-expected.txt: Updated results
@@ -21889,7 +21889,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4758
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4758
           unify SharedPtr in WebCore and JavaScriptCore
 
         * ForwardingHeaders/kjs/shared_ptr.h: Added.
@@ -21986,7 +21986,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Eric.
 
-	- http://bugzilla.opendarwin.org/show_bug.cgi?id=4749
+	- http://bugs.webkit.org/show_bug.cgi?id=4749
 	(Reduce header dependencies);
 	
         Test cases added: None, no functional change.
@@ -24442,7 +24442,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Converted "Generate JS Bindings" build phase into an
         idl -> h/cpp build rule.  This also now writes the generated
         files into DerivedSources instead of the source root.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4647
+        http://bugs.webkit.org/show_bug.cgi?id=4647
 
 2005-08-28  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
@@ -24460,7 +24460,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         (KCanvasCreator::createRectangle): ignore 0 rects
         (KCanvasCreator::createEllipse): ignore empty elipses
         (KCanvasCreator::createLine): ignore 0 lines
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4706
+        http://bugs.webkit.org/show_bug.cgi?id=4706
 
 2005-08-28  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
@@ -24486,7 +24486,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         * ksvg2/impl/SVGFETurbulenceElementImpl.cpp:
         (SVGFETurbulenceElementImpl::createCanvasItem):
 	Added null check to filter code, preventing crash.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4701
+        http://bugs.webkit.org/show_bug.cgi?id=4701
 
 2005-08-28  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
@@ -24500,7 +24500,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         (+[DrawView isHardwareFilterSupportEnabled]): ditto
         (-[DrawView resetCursorRects]): added browse cursor
         * WebCore+SVG/DrawViewPrivate.h: exposed hardware filter support SPI
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4697
+        http://bugs.webkit.org/show_bug.cgi?id=4697
 
 2005-08-28  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
@@ -24517,7 +24517,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
         (KCanvasContainerQuartz::draw): avoid drawing when 0 children
         Various performance enhancements and layout fixes.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4588
+        http://bugs.webkit.org/show_bug.cgi?id=4588
 
 2005-08-27  David Hyatt  <hyatt@apple.com>
 
@@ -24549,7 +24549,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3963
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=3963
           Trailing space included in line if next line begins with non-Latin-1 character
 
         Test cases added:
@@ -24600,7 +24600,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4391
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4391
           layout-tests/dom/html/level2/html/HTMLBaseElement01 and HTMLBaseElement02 fail
 
         * layout-tests/dom/html/level2/html/HTMLBaseElement01.html: New version.
@@ -24615,7 +24615,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed and landed by Darin.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4570
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4570
           dispatchEvent12 test is incorrect
 
         * layout-tests/dom/html/level2/events/dispatchEvent12.js: Fixed to match real updated test.
@@ -24818,7 +24818,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4654
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4654
           one more pass of HTMLNames refinement
 
         * khtml/html/htmlnames.h: Used new "for each" macros so the lists of tags here can
@@ -24891,7 +24891,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         * kdom/css/impl/RenderStyle.cpp:
         (describeFont): fixed APPLE_COMPILE_HACK usage
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4589
+        http://bugs.webkit.org/show_bug.cgi?id=4589
 
 2005-08-25  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
@@ -24907,7 +24907,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         * kdom/impl/DocumentImpl.cpp:
         (DocumentImpl::getId): ditto.
 	Fixes WebCore+SVG build after Darin's JSC change.
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4657
+        http://bugs.webkit.org/show_bug.cgi?id=4657
 
 2005-08-25  Darin Adler  <darin@apple.com>
 
@@ -25325,7 +25325,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4564
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4564
           nodeName for attributes in HTML documents should be lowercase
 
         * khtml/xml/dom_elementimpl.cpp: (AttrImpl::nodeName): Removed the code to
@@ -25338,7 +25338,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John Sullivan.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4551
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4551
           implement exceptions for a few XML-specific Document DOM functions
 
         * khtml/xml/dom_docimpl.h: Added exception codes to the three functions in question.
@@ -27434,7 +27434,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John.
 
-        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4545
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=4545
           REGRESSION: content inside <nolayer> does not get in the DOM tree, but should
 
         * khtml/html/htmlparser.cpp: (HTMLParser::getNode): Remove code to omit children of <nolayer>.
