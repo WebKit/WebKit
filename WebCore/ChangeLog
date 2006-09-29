@@ -1,3 +1,16 @@
+2006-09-28  David Hyatt  <hyatt@apple.com>
+
+        Switch over the Mac-specific uses of viewportToContents/contentsToViewport.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::eventMayStartDrag):
+        (WebCore::FrameMac::dragHysteresisExceeded):
+        (WebCore::FrameMac::mouseDown):
+        (WebCore::FrameMac::shouldDragAutoNode):
+        (WebCore::FrameMac::sendContextMenuEvent):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge _visiblePositionForPoint:]):
+
 2006-09-28  Dave Hyatt  <hyatt@apple.com>
 
         This patch eliminates viewportToContents/contentsToViewport in favor of convertTo/FromContainingWindow.

@@ -1549,7 +1549,7 @@ bool FrameMac::eventMayStartDrag(NSEvent *event) const
     }
 
     NSPoint loc = [event locationInWindow];
-    IntPoint mouseDownPos = d->m_view->viewportToContents(IntPoint(loc));
+    IntPoint mouseDownPos = d->m_view->convertFromContainingWindow(IntPoint(loc));
     RenderObject::NodeInfo nodeInfo(true, false);
     renderer()->layer()->hitTest(nodeInfo, mouseDownPos);
     bool srcIsDHTML;
@@ -1568,7 +1568,7 @@ const float TextDragDelay = 0.15;
 bool FrameMac::dragHysteresisExceeded(float dragLocationX, float dragLocationY) const
 {
     IntPoint dragViewportLocation((int)dragLocationX, (int)dragLocationY);
-    IntPoint dragLocation = d->m_view->viewportToContents(dragViewportLocation);
+    IntPoint dragLocation = d->m_view->convertFromContainingWindow(dragViewportLocation);
     IntSize delta = dragLocation - m_mouseDownPos;
     
     float threshold = GeneralDragHysteresis;
@@ -1960,7 +1960,7 @@ void FrameMac::mouseDown(NSEvent *event)
     _currentEvent = HardRetain(event);
     m_mouseDown = PlatformMouseEvent(event);
     NSPoint loc = [event locationInWindow];
-    m_mouseDownPos = d->m_view->viewportToContents(IntPoint(loc));
+    m_mouseDownPos = d->m_view->convertFromContainingWindow(IntPoint(loc));
     _mouseDownTimestamp = [event timestamp];
 
     _mouseDownMayStartDrag = false;
@@ -2120,7 +2120,7 @@ bool FrameMac::shouldDragAutoNode(Node* node, const IntPoint& point) const
     // the node hierarchy, and we also don't have to cook up a way to ask WK about non-leaf nodes
     // (since right now WK just hit-tests using a cached lastMouseDown).
     if (!node->hasChildNodes() && d->m_view) {
-        NSPoint eventLoc = d->m_view->contentsToViewport(point);
+        NSPoint eventLoc = d->m_view->convertToContainingWindow(point);
         return [_bridge mayStartDragAtEventLocation:eventLoc];
     } else
         return NO;
@@ -2141,7 +2141,7 @@ bool FrameMac::sendContextMenuEvent(NSEvent *event)
     
     PlatformMouseEvent mouseEvent(event);
 
-    IntPoint viewportPos = v->viewportToContents(mouseEvent.pos());
+    IntPoint viewportPos = v->convertFromContainingWindow(mouseEvent.pos());
     MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, viewportPos, mouseEvent);
 
     swallowEvent = v->dispatchMouseEvent(contextmenuEvent, mev.targetNode(), true, 0, mouseEvent, true);
