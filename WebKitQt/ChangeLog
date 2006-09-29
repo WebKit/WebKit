@@ -11,7 +11,7 @@
 
         Reviewed by Tim H.
 
-        Fixes last part of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10644
+        Fixes last part of: http://bugs.webkit.org/show_bug.cgi?id=10644
         Move QtLauncher down to WebKitQt.
 
         * QtLauncher/CMakeLists.txt: Added.
@@ -22,7 +22,7 @@
 
         Reviewed by Darin. Final polish by Sam.
 
-        Fixes parts of: http://bugzilla.opendarwin.org/show_bug.cgi?id=10644
+        Fixes parts of: http://bugs.webkit.org/show_bug.cgi?id=10644
         Add WebKitPart, an embeddable KPart for the KDE platform.
 
         * WebKitPart/CMakeLists.txt: Added.
