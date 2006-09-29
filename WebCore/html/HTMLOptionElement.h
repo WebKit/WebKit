@@ -79,6 +79,8 @@ public:
     void setLabel(const String&);
     
     String optionText();
+    
+    virtual bool disabled() const;
 
 private:
     String m_value;

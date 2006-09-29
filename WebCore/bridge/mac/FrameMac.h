@@ -351,6 +351,7 @@ private:
     bool _sendingEventToSubview;
     bool _mouseDownMayStartDrag;
     bool _mouseDownMayStartSelect;
+    bool _mouseDownMayStartAutoscroll;
     PlatformMouseEvent m_mouseDown;
     // in our view's coords
     IntPoint m_mouseDownPos;

@@ -64,6 +64,7 @@
 #include "PlugInInfoStore.h"
 #include "Plugin.h"
 #include "PluginDocument.h"
+#include "RenderListBox.h"
 #include "RenderPart.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
@@ -1954,6 +1955,7 @@ void Frame::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
         return;
 
     // handle making selection
+
     IntPoint vPoint = view()->convertFromContainingWindow(event.event().pos());
     VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
 
@@ -2841,7 +2843,7 @@ bool Frame::scrollOverflow(ScrollDirection direction, ScrollGranularity granular
     
     if (node != 0) {
         RenderObject *r = node->renderer();
-        if (r != 0) {
+        if (r != 0 && !r->isListBox()) {
             return r->scroll(direction, granularity);
         }
     }
@@ -2849,11 +2851,11 @@ bool Frame::scrollOverflow(ScrollDirection direction, ScrollGranularity granular
     return false;
 }
 
-void Frame::handleAutoscroll(RenderLayer* layer)
+void Frame::handleAutoscroll(RenderObject* renderer)
 {
     if (d->m_autoscrollTimer.isActive())
         return;
-    d->m_autoscrollLayer = layer;
+    d->m_autoscrollRenderer = renderer;
     startAutoscrollTimer();
 }
 
@@ -2863,8 +2865,8 @@ void Frame::autoscrollTimerFired(Timer<Frame>*)
         stopAutoscrollTimer();
         return;
     }
-    if (d->m_autoscrollLayer) {
-        d->m_autoscrollLayer->autoscroll();
+    if (d->m_autoscrollRenderer) {
+        d->m_autoscrollRenderer->autoscroll();
     } 
 }
 
@@ -2929,7 +2931,7 @@ void Frame::startAutoscrollTimer()
 
 void Frame::stopAutoscrollTimer()
 {
-    d->m_autoscrollLayer = 0;
+    d->m_autoscrollRenderer = 0;
     d->m_autoscrollTimer.stop();
 }
 
@@ -3260,7 +3262,12 @@ bool Frame::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults&
     if (!target)
         return false;
     
-    Widget* widget = RenderLayer::gScrollBar;
+    Widget* widget;
+    if (target->isListBox())
+        widget = static_cast<RenderListBox*>(target)->scrollBarTarget();
+    else
+        widget = RenderLayer::gScrollBar;
+
     if (!widget) {
         if (!target->isWidget())
             return false;

@@ -1,3 +1,125 @@
+2006-09-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Initial implementation of engine-based list box control.
+
+        * WebCore.xcodeproj/project.pbxproj: Added RenderListBox.h and RenderListBox.cpp
+
+        * bridge/mac/FrameMac.h: Added _mouseDownMayStartAutoscroll.
+        * bridge/mac/FrameMac.mm: Updated autoscroll code to use renderers instead of layers, so any renderer that implements autoscroll will work.
+        (WebCore::FrameMac::FrameMac):
+        (WebCore::FrameMac::handleMousePressEvent):
+        (WebCore::FrameMac::handleMouseMoveEvent):
+        (WebCore::FrameMac::mouseDown):
+
+        * page/Frame.cpp:
+        (WebCore::Frame::handleMouseMoveEvent):
+        (WebCore::Frame::scrollOverflow): Don't scroll list box here- this would cause arrow keys to scroll instead of select.
+        (WebCore::Frame::handleAutoscroll): Updated to use a renderer instead of a layer when setting up autoscroll.
+        (WebCore::Frame::autoscrollTimerFired): ditto.
+        (WebCore::Frame::stopAutoscrollTimer): ditto.
+        (WebCore::Frame::passWidgetMouseDownEventToWidget): Updated to check for list box's scroll bar.
+        * page/Frame.h:
+        * page/FramePrivate.h: (WebCore::FramePrivate::FramePrivate): Updated to use renderer unstead of layer for autoscroll.
+
+        * page/FrameView.cpp: Keep track of current mouse position so this can be used for list box autoscroll.
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::currentMousePosition):
+        (WebCore::FrameView::handleMousePressEvent):
+        (WebCore::FrameView::handleMouseDoubleClickEvent):
+        (WebCore::selectCursor):
+        (WebCore::FrameView::handleMouseMoveEvent):
+        (WebCore::FrameView::handleMouseReleaseEvent):
+        * page/FrameView.h:
+
+        * platform/ScrollBar.cpp: (WebCore::ScrollBar::ScrollBar): Added controlSize argument.  The list box will use a smaller scroll bar size.
+        * platform/ScrollBar.h:
+        (WebCore::):
+        (WebCore::ScrollBar::controlSize):
+        * platform/mac/PlatformScrollBar.h:
+        * platform/mac/PlatformScrollBarMac.mm:
+        (NSControlSizeForScrollBarControlSize):
+        (-[WebCoreScrollBar initWithPlatformScrollBar:]):
+        (WebCore::PlatformScrollBar::PlatformScrollBar):
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderLayer.cpp: (WebCore::RenderLayer::createScrollbar): Updated to pass regular control size to scrollbar constructor.
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldAutoscroll):
+        (WebCore::RenderObject::autoscroll):
+        * rendering/RenderObject.h: (WebCore::RenderObject::isListBox):
+
+        * css/html4.css: Added properties for new list boxes.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setSelected): Doesn't allow selection to be changed here if the option is disabled.
+        (WebCore::HTMLOptionElement::disabled): Added. Checks the parent's disabled status.
+        * html/HTMLOptionElement.h: Added disabled method.
+
+        * html/HTMLSelectElement.cpp: Added appearance switch for new list box implementation.
+        (WebCore::HTMLSelectElement::recalcStyle):
+        (WebCore::HTMLSelectElement::lastSelectedListIndex):
+        (WebCore::HTMLSelectElement::deselectItems):
+        (WebCore::HTMLSelectElement::setSelectedIndex):
+        (WebCore::HTMLSelectElement::isKeyboardFocusable):
+        (WebCore::HTMLSelectElement::isMouseFocusable):
+        (WebCore::HTMLSelectElement::createRenderer):
+        (WebCore::HTMLSelectElement::recalcListItems):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::notifyOptionSelected):
+        (WebCore::HTMLSelectElement::defaultEventHandler): Added code to select options for list box when clicking and using arrow keys.
+        (WebCore::HTMLSelectElement::nextSelectableListIndex):
+        (WebCore::HTMLSelectElement::previousSelectableListIndex):
+        * html/HTMLSelectElement.h:
+
+        * rendering/RenderTheme.cpp: Added support for ListBoxAppearance
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::activeListBoxSelectionBackgroundColor):
+        (WebCore::RenderTheme::activeListBoxSelectionForegroundColor):
+        (WebCore::RenderTheme::inactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderTheme::inactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderTheme::isControlStyled):
+        (WebCore::RenderTheme::supportsFocusRing):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::isControlStyled):
+
+        * rendering/RenderListBox.cpp: Added.
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::~RenderListBox):
+        (WebCore::RenderListBox::setStyle):
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::calcMinMaxWidth):
+        (WebCore::RenderListBox::size):
+        (WebCore::RenderListBox::numItems):
+        (WebCore::RenderListBox::calcHeight):
+        (WebCore::RenderListBox::baselinePosition):
+        (WebCore::RenderListBox::itemBoundingBoxRect):
+        (WebCore::RenderListBox::paintObject):
+        (WebCore::RenderListBox::paintScrollbar):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        (WebCore::RenderListBox::scrollBarTarget):
+        (WebCore::RenderListBox::isPointInScrollbar):
+        (WebCore::RenderListBox::optionAtPoint):
+        (WebCore::RenderListBox::autoscroll):
+        (WebCore::RenderListBox::scrollToRevealElementAtListIndex):
+        (WebCore::RenderListBox::scroll):
+        (WebCore::RenderListBox::valueChanged):
+        * rendering/RenderListBox.h: Added.
+        (WebCore::RenderListBox::isListBox):
+        (WebCore::RenderListBox::selectionChanged):
+        (WebCore::RenderListBox::setSelectionChanged):
+        (WebCore::RenderListBox::canHaveChildren):
+        (WebCore::RenderListBox::renderName):
+        (WebCore::RenderListBox::setOptionsChanged):
+        (WebCore::RenderListBox::shouldAutoscroll):
+        (WebCore::RenderListBox::listIndexIsVisible):
+
 2006-09-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

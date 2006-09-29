@@ -53,6 +53,7 @@ class HTMLFrameSetElement;
 class HTMLGenericFormElement;
 class HTMLTitleElement;
 class InlineBox;
+class IntPoint;
 class IntRect;
 class PlatformKeyboardEvent;
 class FrameMac;
@@ -183,10 +184,12 @@ public:
 
     void scheduleEvent(PassRefPtr<Event>, PassRefPtr<EventTargetNode>, bool tempEvent);
 
+    IntPoint currentMousePosition() const;
+
     void ref() { ++m_refCount; }
     void deref() { if (!--m_refCount) delete this; }
     bool hasOneRef() { return m_refCount == 1; }
-    
+
 private:
     void cleared();
     void scrollBarMoved();

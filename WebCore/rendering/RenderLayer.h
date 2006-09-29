@@ -251,7 +251,6 @@ public:
     void updateScrollInfoAfterLayout();
     bool scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier=1.0);
     void autoscroll();
-    bool shouldAutoscroll();
     IntRect resizeControlRect() { return m_resizeControlRect; }
     void setResizeControlRect(const IntRect& r) { m_resizeControlRect = r; }
     void resize(const PlatformMouseEvent&, const IntSize&);

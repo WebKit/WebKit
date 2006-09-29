@@ -153,6 +153,7 @@ FrameMac::FrameMac(Page* page, Element* ownerElement)
     , _sendingEventToSubview(false)
     , _mouseDownMayStartDrag(false)
     , _mouseDownMayStartSelect(false)
+    , _mouseDownMayStartAutoscroll(false)
     , _activationEventNumber(0)
     , _bindingRoot(0)
     , _windowScriptObject(0)
@@ -1380,6 +1381,8 @@ void FrameMac::handleMousePressEvent(const MouseEventWithHitTestResults& event)
     _mouseDownMayStartDrag = singleClick;
 
     d->m_mousePressNode = event.targetNode();
+
+    _mouseDownMayStartAutoscroll = d->m_mousePressNode && d->m_mousePressNode->renderer() && d->m_mousePressNode->renderer()->shouldAutoscroll();
     
     if (!passWidgetMouseDownEventToWidget(event, false)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
@@ -1714,7 +1717,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
             // No more default handling (like selection), whether we're past the hysteresis bounds or not
             return;
         }
-        if (!_mouseDownMayStartSelect) {
+        if (!_mouseDownMayStartSelect && !_mouseDownMayStartAutoscroll) {
             return;
         }
 
@@ -1723,16 +1726,16 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
         d->m_view->invalidateClick();
 
         Node* node = event.targetNode();
-        RenderLayer* layer = 0;
-        if (node && node->renderer())
-            layer = node->renderer()->enclosingLayer();
+        RenderObject* renderer = 0;
+        if (node)
+            renderer = node->renderer();
             
         // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
         // Otherwise, let the bridge handle it so the view can scroll itself.
-        while (layer && !layer->shouldAutoscroll())
-            layer = layer->parent();
-        if (layer)
-            handleAutoscroll(layer);
+        while (renderer && !renderer->shouldAutoscroll())
+            renderer = renderer->parent();
+        if (renderer)
+            handleAutoscroll(renderer);
         else {
             if (!d->m_autoscrollTimer.isActive())
                 startAutoscrollTimer();
@@ -1965,6 +1968,7 @@ void FrameMac::mouseDown(NSEvent *event)
 
     _mouseDownMayStartDrag = false;
     _mouseDownMayStartSelect = false;
+    _mouseDownMayStartAutoscroll = false;
 
     v->handleMousePressEvent(event);
     

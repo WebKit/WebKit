@@ -379,7 +379,7 @@ input[type="button"], input[type="submit"], input[type="reset"], input[type="fil
     box-sizing: border-box
 }
 
-input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, input[type="file"]::-webkit-file-upload-button:disabled, button:disabled, select:disabled {
+input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, input[type="file"]::-webkit-file-upload-button:disabled, button:disabled, select:disabled, optgroup:disabled, option:disabled {
     color: GrayText
 }
 
@@ -431,6 +431,14 @@ select[size][multiple] {
     color: initial;
     border: initial;
     background-color: initial;
+    /*
+    -webkit-appearance: listbox;
+    -webkit-box-align: start;
+    box-sizing: initial;
+    border: 1px inset gray;
+    -webkit-border-radius: initial;
+    white-space: initial;
+    */
 }
  
 select[size="0"],
@@ -521,7 +529,7 @@ html:focus, body:focus {
     outline: none
 }
   
-input:focus, textarea:focus, isindex:focus {
+input:focus, textarea:focus, isindex:focus, select:focus {
     outline-offset: -2px
 }
 

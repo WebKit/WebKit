@@ -102,7 +102,7 @@ namespace WebCore {
             , m_userStyleSheetLoader(0)
             , m_iconLoader(0)
             , m_autoscrollTimer(thisFrame, &Frame::autoscrollTimerFired)
-            , m_autoscrollLayer(0)
+            , m_autoscrollRenderer(0)
             , m_paintRestriction(PaintRestrictionNone)
             , m_markedTextUsesUnderlines(false)
             , m_highlightTextMatches(false)
@@ -223,7 +223,7 @@ namespace WebCore {
         IconLoader* m_iconLoader;
         
         Timer<Frame> m_autoscrollTimer;
-        RenderLayer* m_autoscrollLayer;
+        RenderObject* m_autoscrollRenderer;
         
         RefPtr<Node> m_elementToDraw;
         PaintRestriction m_paintRestriction;

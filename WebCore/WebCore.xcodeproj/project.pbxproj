@@ -1891,6 +1891,8 @@
 		AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AB4261D70A2F6C9700BDD17D /* missingImage.tiff */; };
 		AB67D1A8097F3AE300F9392E /* RenderTextControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB67D1A6097F3AE300F9392E /* RenderTextControl.cpp */; };
 		AB67D1A9097F3AE300F9392E /* RenderTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = AB67D1A7097F3AE300F9392E /* RenderTextControl.h */; };
+		ABB5419E0ACDDFE4002820EB /* RenderListBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */; };
+		ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = ABB5419D0ACDDFE4002820EB /* RenderListBox.h */; };
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		ABDDFE7B0A5C6E7000A3E11D /* RenderPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE750A5C6E7000A3E11D /* RenderPopupMenu.cpp */; };
@@ -4343,6 +4345,8 @@
 		AB4261D70A2F6C9700BDD17D /* missingImage.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = missingImage.tiff; sourceTree = "<group>"; };
 		AB67D1A6097F3AE300F9392E /* RenderTextControl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControl.cpp; sourceTree = "<group>"; };
 		AB67D1A7097F3AE300F9392E /* RenderTextControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextControl.h; sourceTree = "<group>"; };
+		ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderListBox.cpp; sourceTree = "<group>"; };
+		ABB5419D0ACDDFE4002820EB /* RenderListBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderListBox.h; sourceTree = "<group>"; };
 		ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMenuList.cpp; sourceTree = "<group>"; };
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		ABDDFE750A5C6E7000A3E11D /* RenderPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderPopupMenu.cpp; sourceTree = "<group>"; };
@@ -7697,6 +7701,8 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */,
+				ABB5419D0ACDDFE4002820EB /* RenderListBox.h */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
 				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
 				BCEA4813097D93020094C9E4 /* bidi.cpp */,
@@ -9135,6 +9141,7 @@
 				85989DD00ACC8BBD00A0BC51 /* DOMUIEventInternal.h in Headers */,
 				85989DD10ACC8BBD00A0BC51 /* DOMWheelEventInternal.h in Headers */,
 				4BBDBF7E0ACC9290005F6E97 /* CommandByName.h in Headers */,
+				ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9182,7 +9189,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -10247,6 +10253,7 @@
 				85D79ADB0ACA17EB00F02FC5 /* DOMSVGStringList.mm in Sources */,
 				859C9C400ACACCCC00791611 /* DOMSVGRectElement.mm in Sources */,
 				4BBDBF7D0ACC9290005F6E97 /* CommandByName.cpp in Sources */,
+				ABB5419E0ACDDFE4002820EB /* RenderListBox.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

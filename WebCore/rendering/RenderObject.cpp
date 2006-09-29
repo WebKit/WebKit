@@ -669,6 +669,17 @@ bool RenderObject::scroll(ScrollDirection direction, ScrollGranularity granulari
     return false;
 }
 
+bool RenderObject::shouldAutoscroll() const
+{
+    return (hasOverflowClip() && (scrollsOverflow() || (node() && node()->isContentEditable())));
+}
+
+void RenderObject::autoscroll()
+{
+    if (RenderLayer* l = layer())
+        l->autoscroll();
+}
+
 bool RenderObject::hasStaticX() const
 {
     return (style()->left().isAuto() && style()->right().isAuto()) ||

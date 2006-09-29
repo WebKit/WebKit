@@ -142,7 +142,7 @@ void RenderThemeMac::systemFont(int propId, FontDescription& fontDescription) co
 bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData& border, 
                                      const BackgroundLayer& background, const Color& backgroundColor) const
 {
-    if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance)
+    if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance || style->appearance() == ListboxAppearance)
         return style->border() != border;
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }

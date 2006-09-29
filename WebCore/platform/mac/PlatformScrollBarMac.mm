@@ -44,6 +44,15 @@ using namespace WebCore;
 
 @implementation WebCoreScrollBar
 
+static NSControlSize NSControlSizeForScrollBarControlSize(ScrollBarControlSize size)
+{
+    if (size == SmallScrollBar)
+        return NSSmallControlSize;
+    if (size == MiniScrollBar)
+        return NSMiniControlSize;
+    return NSRegularControlSize;
+}
+
 - (id)initWithPlatformScrollBar:(PlatformScrollBar*)s
 {
     // Cocoa scrollbars just set their orientation by examining their own
@@ -64,6 +73,7 @@ using namespace WebCore;
     [self setEnabled:YES];
     [self setTarget:self];
     [self setAction:@selector(scroll:)];
+    [self setControlSize:NSControlSizeForScrollBarControlSize(s->controlSize())];
 
     return self;
 }
@@ -97,8 +107,8 @@ using namespace WebCore;
 namespace WebCore
 {
 
-PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation)
-    : ScrollBar(client, orientation)
+PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation, ScrollBarControlSize controlSize)
+    : ScrollBar(client, orientation, controlSize)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

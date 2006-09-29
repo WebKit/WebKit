@@ -28,9 +28,10 @@
 
 namespace WebCore {
 
-ScrollBar::ScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation)
+ScrollBar::ScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation, ScrollBarControlSize controlSize)
     : m_client(client)
     , m_orientation(orientation)
+    , m_controlSize(controlSize)
     , m_visibleSize(0)
     , m_totalSize(0)
     , m_currentPos(0)

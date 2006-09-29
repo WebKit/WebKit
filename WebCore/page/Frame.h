@@ -760,7 +760,7 @@ protected:
     virtual void cleanupPluginObjects() { }
     void cancelAndClear();
     
-    void handleAutoscroll(RenderLayer*);
+    void handleAutoscroll(RenderObject*);
     void startAutoscrollTimer();
     void stopAutoscrollTimer();
 
