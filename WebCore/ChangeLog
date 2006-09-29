@@ -1,3 +1,14 @@
+2006-09-29  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10893
+        InsertRule can not handle @import statements
+
+        Allow @import as part of a css rule.
+
+        * css/CSSGrammar.y:
+
 2006-09-28  David Hyatt  <hyatt@apple.com>
 
         Switch over the Mac-specific uses of viewportToContents/contentsToViewport.

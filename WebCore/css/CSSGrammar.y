@@ -228,6 +228,7 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 
 %type <rule> charset
 %type <rule> ruleset
+%type <rule> ruleset_or_import
 %type <rule> media
 %type <rule> import
 %type <rule> page
@@ -297,8 +298,13 @@ stylesheet:
   | webkit_mediaquery maybe_space
   ;
 
+ruleset_or_import:
+   ruleset |
+   import
+;
+
 webkit_rule:
-    WEBKIT_RULE_SYM '{' maybe_space ruleset maybe_space '}' {
+    WEBKIT_RULE_SYM '{' maybe_space ruleset_or_import maybe_space '}' {
         static_cast<CSSParser*>(parser)->rule = $4;
     }
 ;
