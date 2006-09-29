@@ -1,3 +1,16 @@
+2006-09-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Maciej.
+        
+        Use $(ConfigSuffix) set via vsprops files to add _debug
+        to end of debug filenames.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/debug.vsprops: Added.
+        * JavaScriptCore.vcproj/dftables/dftables.vcproj:
+        * JavaScriptCore.vcproj/release.vsprops: Added.
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
+
 2006-09-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Alice.

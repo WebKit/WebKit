@@ -20,6 +20,7 @@
 			OutputDirectory="$(WebKitOutputDir)\bin"
 			IntermediateDirectory="$(WebKitOutputDir)\obj\JavaScriptCore\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="..\debug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -62,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\$(ProjectName)_debug.exe"
+				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -98,6 +99,7 @@
 			OutputDirectory="$(WebKitOutputDir)\bin"
 			IntermediateDirectory="$(WebKitOutputDir)\obj\JavaScriptCore\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="..\release.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -138,6 +140,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"

@@ -20,6 +20,7 @@
 			OutputDirectory="$(WebKitOutputDir)\bin"
 			IntermediateDirectory="$(WebKitOutputDir)\obj\JavaScriptCore\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="..\debug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -63,8 +64,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="JavaScriptCore_debug.lib icuuc.lib winmm.lib"
-				OutputFile="$(OutDir)\$(ProjectName)_debug.exe"
+				AdditionalDependencies="JavaScriptCore$(ConfigSuffix).lib icuuc$(ConfigSuffix).lib winmm.lib"
+				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitSDKDir)\lib&quot;;..\..\..\icu\lib;&quot;$(WebKitOutputDir)\lib&quot;"
 				GenerateDebugInformation="true"
@@ -102,6 +103,7 @@
 			OutputDirectory="$(WebKitOutputDir)\bin"
 			IntermediateDirectory="$(WebKitOutputDir)\obj\JavaScriptCore\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="..\release.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -143,7 +145,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="JavaScriptCore.lib icuuc.lib winmm.lib"
+				AdditionalDependencies="JavaScriptCore$(ConfigSuffix).lib icuuc$(ConfigSuffix).lib winmm.lib"
+				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitSDKDir)\lib&quot;;..\..\..\icu\lib;&quot;$(WebKitOutputDir)\lib&quot;"
 				GenerateDebugInformation="true"
