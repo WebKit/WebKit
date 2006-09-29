@@ -124,7 +124,7 @@
 
         Reviewed by Darin.
 
-        We had a bug where html4.css was ignoring Media Queries. In the ned 
+        We had a bug where html4.css was ignoring Media Queries. In the end 
         the problem was that we were trying to send a char* to the 
         MediaQueryEvaluator constructor that expects a String, but the 
         char* got interpreted as a bool, the wrong constructor was called, 
