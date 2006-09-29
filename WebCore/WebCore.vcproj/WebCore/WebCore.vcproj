@@ -3111,6 +3111,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\rendering\RenderListBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderListBox.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\rendering\RenderListItem.cpp"
 				>
 			</File>

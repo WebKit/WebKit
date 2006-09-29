@@ -1,5 +1,11 @@
 2006-09-29  Adele Peterson  <adele@apple.com>
 
+        Adding RenderListBox files.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
+2006-09-29  Adele Peterson  <adele@apple.com>
+
         Reviewed by Adam.
 
         Initial implementation of engine-based list box control.
