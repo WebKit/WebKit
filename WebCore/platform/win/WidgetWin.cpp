@@ -137,4 +137,14 @@ void Widget::setFrameGeometry(const IntRect &rect)
     MoveWindow(data->containingWindow, rect.x(), rect.y(), rect.width(), rect.height(), false);
 }
 
+IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
+{
+  return point;
+}
+
+IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
+{
+  return point;
+}
+
 }

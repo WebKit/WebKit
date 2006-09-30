@@ -1,3 +1,16 @@
+2006-09-29  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Adele.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11092
+
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::convertToContainingWindow):
+        (WebCore::ScrollView::convertFromContainingWindow):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::convertToContainingWindow):
+        (WebCore::Widget::convertFromContainingWindow):
+
 2006-09-29  Adele Peterson  <adele@apple.com>
 
         Updated with new argument for PlatformScrollBar.
