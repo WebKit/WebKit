@@ -57,6 +57,7 @@
 #import "Logging.h"
 #import "MouseEventWithHitTestResults.h"
 #import "PlatformKeyboardEvent.h"
+#import "PlatformScrollBar.h"
 #import "PlatformWheelEvent.h"
 #import "Plugin.h"
 #import "RegularExpression.h"
@@ -1384,7 +1385,7 @@ void FrameMac::handleMousePressEvent(const MouseEventWithHitTestResults& event)
 
     _mouseDownMayStartAutoscroll = d->m_mousePressNode && d->m_mousePressNode->renderer() && d->m_mousePressNode->renderer()->shouldAutoscroll();
     
-    if (!passWidgetMouseDownEventToWidget(event, false)) {
+    if (!passWidgetMouseDownEventToWidget(event)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
         // because we don't want to do it until we know we didn't hit a widget.
         NSView *view = d->m_view->getDocumentView();

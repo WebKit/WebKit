@@ -57,19 +57,19 @@ bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev,
     return Mac(m_frame.get())->passSubframeEventToSubframe(mev, subframe);
 }
 
-bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame*)
+bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
     return Mac(m_frame.get())->passSubframeEventToSubframe(mev, subframe);
 }
 
-bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame*)
+bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
     return Mac(m_frame.get())->passSubframeEventToSubframe(mev, subframe);
 }
 
-bool FrameView::passWheelEventToSubframe(PlatformWheelEvent&, Frame*)
+bool FrameView::passWheelEventToSubframe(PlatformWheelEvent&, Frame* subframe)
 {
-    return Mac(m_frame.get())->passWheelEventToWidget(subframe);
+    return Mac(m_frame.get())->passWheelEventToWidget(subframe->view());
 }
     
 }
