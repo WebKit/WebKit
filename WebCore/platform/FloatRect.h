@@ -88,6 +88,13 @@ public:
     void intersect(const FloatRect&);
     void unite(const FloatRect&);
 
+    // Note, this doesn't match what IntRect::contains(IntPoint&) does; the int version
+    // is really checking for containment of 1x1 rect, but that doesn't make sense with floats.
+    bool contains(float px, float py) const
+        { return px >= x() && px <= right() && py >= y() && py <= bottom(); }
+    bool contains(const FloatPoint& point) const { return contains(point.x(), point.y()); }
+
+
     void inflateX(float dx) {
         m_location.setX(m_location.x() - dx);
         m_size.setWidth(m_size.width() + dx + dx);

@@ -63,7 +63,7 @@ Path& Path::operator=(const Path& other)
 bool Path::contains(const FloatPoint &point, WindRule rule) const
 {
     // CGPathContainsPoint returns false for non-closed paths, as a work-around, we copy and close the path first.  Radar 4758998 asks for a better CG API to use
-    if (!enclosingIntRect(boundingRect()).contains(point.x(), point.y()))
+    if (!boundingRect().contains(point))
         return false;
 
     CGMutablePathRef path = CGPathCreateMutableCopy(m_path);

@@ -1,3 +1,15 @@
+2006-09-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+
+        - fix build
+
+        * platform/FloatRect.h:
+        (WebCore::FloatRect::contains): Added; not exactly the same semantic as IntRect containment
+        but more appropriate for path-type stuff.
+        * platform/cg/PathCG.cpp:
+        (WebCore::Path::contains): Don't use enclosingIntRect, just use FloatRect::contains.
+
 2006-09-30  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
