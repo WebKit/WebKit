@@ -1,3 +1,11 @@
+2006-09-29  David Hyatt  <hyatt@apple.com>
+
+        Change the default minimum font size pref to 0 in order to allow
+        font-size:0 to work.
+
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+
 2006-09-28  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.
