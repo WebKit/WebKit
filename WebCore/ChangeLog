@@ -1,3 +1,15 @@
+2006-09-29  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Adele.
+
+        Fixes windows bustage:
+        http://bugs.webkit.org/show_bug.cgi?id=11093
+
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (PlatformScrollBar::PlatformScrollBar):
+        (ScrollBar::ScrollBar):
+
 2006-09-29  David Hyatt  <hyatt@apple.com>
 
         Eliminate RenderLayer::gScrollBar in favor of caching the scrollbar hit

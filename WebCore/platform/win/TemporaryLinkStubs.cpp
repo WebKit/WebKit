@@ -338,7 +338,7 @@ void PlatformScrollBar::updateThumbPosition() { }
 void PlatformScrollBar::updateThumbProportion() { }
 void PlatformScrollBar::setRect(const IntRect&) { }
 
-ScrollBar::ScrollBar(ScrollBarClient*, ScrollBarOrientation) { }
+ScrollBar::ScrollBar(ScrollBarClient*, ScrollBarOrientation, ScrollBarControlSize) { }
 void ScrollBar::setSteps(int, int) { }
 bool ScrollBar::scroll(ScrollDirection, ScrollGranularity, float) { return false; }
 bool ScrollBar::setValue(int) { return false; }
