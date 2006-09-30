@@ -94,7 +94,7 @@ void Widget::setCapturingMouse(bool capturingMouse) { }
 Widget* Widget::capturingTarget() { return this; }
 Widget* Widget::capturingChild() { return 0; }
 void Widget::setCapturingChild(Widget* w) {}
-}
+
 JavaAppletWidget::JavaAppletWidget(IntSize const&,Element*,WTF::HashMap<String,String> const&) { notImplemented(); }
 
 void TextField::selectAll() { notImplemented(); }
