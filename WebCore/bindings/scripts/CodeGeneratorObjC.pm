@@ -52,8 +52,14 @@ my %implIncludes = ();
 my %protocolTypeHash = ("XPathNSResolver" => 1, "EventListener" => 1, "EventTarget" => 1, "NodeFilter" => 1,
                         "SVGLocatable" => 1, "SVGTransformable" => 1, "SVGStylable" => 1, "SVGFilterPrimitiveStandardAttributes" => 1, 
                         "SVGTests" => 1, "SVGLangSpace" => 1, "SVGExternalResourcesRequired" => 1, "SVGURIReference" => 1,
-                        "SVGZoomAndPan" => 1, "SVGFitToViewBox" => 1);
+                        "SVGZoomAndPan" => 1, "SVGFitToViewBox" => 1, "SVGAnimatedPathData" => 1, "SVGAnimatedPoints" => 1);
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
+
+# FIXME: need to add the SVG base types to this hash.
+my %baseTypeHash = ("Node" => 1, "NodeList" => 1, "NamedNodeMap" => 1, "DOMImplementation" => 1,
+                    "Event" => 1, "CSSRule" => 1, "CSSValue" => 1, "StyleSheet" => 1, "MediaList" => 1,
+                    "Counter" => 1, "Rect" => 1, "RGBColor" => 1, "XPathExpression" => 1, "XPathResult" => 1,
+                    "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1);
 
 # Constants
 my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} <= 10.4;
@@ -894,6 +900,9 @@ sub GenerateImplementation
                 push(@customGetterContent, "    // This node iterator was created from the C++ side.\n");
                 $getterContentHead = "[$attributeClassName $typeMaker:WTF::getPtr(" . $getterContentHead;
                 $getterContentTail .= ")]";
+            } elsif ($idlType eq "RGBColor") {
+                $getterContentHead = "[$attributeTypeSansPtr $typeMaker:" . $getterContentHead;
+                $getterContentTail .= "]";
             } elsif ($typeMaker ne "") {
                 # Surround getter with TypeMaker
                 $getterContentHead = "[$attributeTypeSansPtr $typeMaker:WTF::getPtr(" . $getterContentHead;

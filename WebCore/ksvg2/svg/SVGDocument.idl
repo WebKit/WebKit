@@ -22,15 +22,20 @@
 */
 
 module svg {
+
     interface [Conditional=SVG] SVGDocument : core::Document {
         readonly attribute core::DOMString      title;
         readonly attribute core::DOMString      referrer;
         readonly attribute core::DOMString      domain;
         readonly attribute core::DOMString      URL;
+
+#if !defined(LANGUAGE_OBJECTIVE_C)
         readonly attribute SVGSVGElement        rootElement;
+#endif
 
         // Overwrite the one in events::DocumentEvent
         events::Event createEvent(in core::DOMString eventType)
             raises(core::DOMException);
     };
-};
+
+}

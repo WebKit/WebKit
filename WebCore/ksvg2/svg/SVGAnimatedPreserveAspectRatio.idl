@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGAnimatedPreserveAspectRatio { 
-    readonly attribute SVGPreserveAspectRatio baseVal;
-    readonly attribute SVGPreserveAspectRatio animVal;
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGAnimatedPreserveAspectRatio {
+        readonly attribute SVGPreserveAspectRatio baseVal;
+        readonly attribute SVGPreserveAspectRatio animVal;
+    };
+
+}

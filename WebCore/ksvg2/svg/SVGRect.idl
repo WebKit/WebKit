@@ -22,14 +22,16 @@
 */
 
 module svg {
-    interface [Conditional=SVG] SVGRect { 
-        attribute float x
-            setter raises DOMException;
-        attribute float y
-            setter raises DOMException;
-        attribute float width
-            setter raises DOMException;
-        attribute float height
-            setter raises DOMException;
+
+    interface [Conditional=SVG] SVGRect {
+                 attribute float x
+                     setter raises(DOMException);
+                 attribute float y
+                     setter raises(DOMException);
+                 attribute float width
+                     setter raises(DOMException);
+                 attribute float height
+                     setter raises(DOMException);
     };
-};
+
+}

@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGAnimatedPoints { 
-    readonly attribute SVGPointList   points;
-    readonly attribute SVGPointList   animatedPoints;
-  };
-};
+module svg {
+
+    interface [Conditional=SVG, ObjCProtocol] SVGAnimatedPoints {
+        readonly attribute SVGPointList   points;
+        readonly attribute SVGPointList   animatedPoints;
+    };
+
+}

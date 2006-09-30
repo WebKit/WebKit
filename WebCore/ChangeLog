@@ -1,3 +1,43 @@
+2006-09-30  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11102
+        Add more SVG Objective-C DOM bindings
+
+        - Auto-generate Objective-C DOM bindings for DOMSVGAElement,
+          DOMSVGAnimateColorElement, DOMSVGAnimateElement, DOMSVGAnimateTransformElement,
+          DOMSVGAnimatedPathData, DOMSVGAnimatedPoints, DOMSVGAnimatedPreserveAspectRatio,
+          DOMSVGAnimationElement, DOMSVGCircleElement, DOMSVGClipPathElement, DOMSVGColor,
+          DOMSVGCursorElement, DOMSVGDefsElement, DOMSVGDescElement, DOMSVGDocument, 
+          DOMSVGEllipseElement, DOMSVGPreserveAspectRatio, and DOMSVGURIReference.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMSVG.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * ksvg2/svg/SVGAElement.idl:
+        * ksvg2/svg/SVGAnimateColorElement.idl:
+        * ksvg2/svg/SVGAnimateElement.idl:
+        * ksvg2/svg/SVGAnimateTransformElement.idl:
+        * ksvg2/svg/SVGAnimatedPathData.idl:
+        * ksvg2/svg/SVGAnimatedPoints.idl:
+        * ksvg2/svg/SVGAnimatedPreserveAspectRatio.idl:
+        * ksvg2/svg/SVGAnimationElement.idl:
+        * ksvg2/svg/SVGCircleElement.idl:
+        * ksvg2/svg/SVGClipPathElement.idl:
+        * ksvg2/svg/SVGColor.idl:
+        * ksvg2/svg/SVGCursorElement.idl:
+        * ksvg2/svg/SVGDefsElement.idl:
+        * ksvg2/svg/SVGDescElement.idl:
+        * ksvg2/svg/SVGDocument.idl:
+        * ksvg2/svg/SVGEllipseElement.idl:
+        * ksvg2/svg/SVGPointList.idl:
+        * ksvg2/svg/SVGPreserveAspectRatio.idl:
+        * ksvg2/svg/SVGRect.idl:
+        * ksvg2/svg/SVGSVGElement.idl:
+
 2006-09-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.

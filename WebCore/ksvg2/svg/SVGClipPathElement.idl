@@ -23,16 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGClipPathElement : 
-                SVGElement,
-                SVGTests,
-                SVGLangSpace,
-                SVGExternalResourcesRequired,
-                SVGStylable,
-                SVGTransformable {
-             //   SVGUnitTypes { 
-    readonly attribute SVGAnimatedEnumeration clipPathUnits;
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGClipPathElement : SVGElement
+                                                   , SVGTests
+                                                   , SVGLangSpace
+                                                   , SVGExternalResourcesRequired
+                                                   , SVGStylable
+                                                   , SVGTransformable
+                                                 /*, SVGUnitTypes*/ { 
+        readonly attribute SVGAnimatedEnumeration clipPathUnits;
+    };
+
+}

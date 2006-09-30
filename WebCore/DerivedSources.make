@@ -42,7 +42,6 @@ VPATH = \
 
 ifeq ($(OS),MACOS)
 all : \
-    DOMSVGRectElement.h \
     DOMAttr.h \
     DOMCDATASection.h \
     DOMCSSCharsetRule.h \
@@ -137,7 +136,11 @@ all : \
     DOMOverflowEvent.h \
     DOMProcessingInstruction.h \
     DOMRect.h \
+    DOMSVGAElement.h \
     DOMSVGAngle.h \
+    DOMSVGAnimateColorElement.h \
+    DOMSVGAnimateElement.h \
+    DOMSVGAnimateTransformElement.h \
     DOMSVGAnimatedAngle.h \
     DOMSVGAnimatedBoolean.h \
     DOMSVGAnimatedEnumeration.h \
@@ -145,9 +148,21 @@ all : \
     DOMSVGAnimatedLength.h \
     DOMSVGAnimatedLengthList.h \
     DOMSVGAnimatedNumber.h \
+    DOMSVGAnimatedPathData.h \
+    DOMSVGAnimatedPoints.h \
+    DOMSVGAnimatedPreserveAspectRatio.h \
     DOMSVGAnimatedString.h \
     DOMSVGAnimatedTransformList.h \
+    DOMSVGAnimationElement.h \
+    DOMSVGCircleElement.h \
+    DOMSVGClipPathElement.h \
+    DOMSVGColor.h \
+    DOMSVGCursorElement.h \
+    DOMSVGDefsElement.h \
+    DOMSVGDescElement.h \
+    DOMSVGDocument.h \
     DOMSVGElement.h \
+    DOMSVGEllipseElement.h \
     DOMSVGExternalResourcesRequired.h \
     DOMSVGLangSpace.h \
     DOMSVGLength.h \
@@ -157,6 +172,8 @@ all : \
     DOMSVGMetadataElement.h \
     DOMSVGPathSeg.h \
     DOMSVGPathSegList.h \
+    DOMSVGPreserveAspectRatio.h \
+    DOMSVGRectElement.h \
     DOMSVGStringList.h \
     DOMSVGStylable.h \
     DOMSVGStyleElement.h \
@@ -164,6 +181,7 @@ all : \
     DOMSVGTransform.h \
     DOMSVGTransformList.h \
     DOMSVGTransformable.h \
+    DOMSVGURIReference.h \
     DOMStyleSheet.h \
     DOMStyleSheetList.h \
     DOMText.h \

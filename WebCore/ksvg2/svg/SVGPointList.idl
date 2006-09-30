@@ -23,23 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGPointList { 
-    readonly attribute unsigned long numberOfItems;
-    void   clear (  )
-                    raises( DOMException );
-    SVGPoint initialize ( in SVGPoint item )
-                    raises( DOMException, SVGException );
-    SVGPoint getItem ( in unsigned long index )
-                    raises( DOMException );
-    SVGPoint insertItemBefore ( in SVGPoint item, in unsigned long index )
-                    raises( DOMException, SVGException );
-    SVGPoint replaceItem ( in SVGPoint item, in unsigned long index )
-                    raises( DOMException, SVGException );
-    SVGPoint removeItem ( in unsigned long index )
-                    raises( DOMException );
-    SVGPoint appendItem ( in SVGPoint item )
-                    raises( DOMException, SVGException );
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGPointList {
+        readonly attribute unsigned long numberOfItems;
+
+        void clear()
+            raises(DOMException);
+        SVGPoint initialize(in SVGPoint item)
+            raises(DOMException, SVGException);
+        SVGPoint getItem(in unsigned long index)
+            raises(DOMException);
+        SVGPoint insertItemBefore(in SVGPoint item, in unsigned long index)
+            raises(DOMException, SVGException);
+        SVGPoint replaceItem(in SVGPoint item, in unsigned long index)
+            raises(DOMException, SVGException);
+        SVGPoint removeItem(in unsigned long index)
+            raises(DOMException);
+        SVGPoint appendItem(in SVGPoint item)
+            raises(DOMException, SVGException);
+    };
+
+}

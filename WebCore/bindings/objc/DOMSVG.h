@@ -24,7 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import <WebCore/DOMSVGAElement.h>
 #import <WebCore/DOMSVGAngle.h>
+#import <WebCore/DOMSVGAnimateColorElement.h>
+#import <WebCore/DOMSVGAnimateElement.h>
+#import <WebCore/DOMSVGAnimateTransformElement.h>
 #import <WebCore/DOMSVGAnimatedAngle.h>
 #import <WebCore/DOMSVGAnimatedBoolean.h>
 #import <WebCore/DOMSVGAnimatedEnumeration.h>
@@ -32,9 +36,21 @@
 #import <WebCore/DOMSVGAnimatedLength.h>
 #import <WebCore/DOMSVGAnimatedLengthList.h>
 #import <WebCore/DOMSVGAnimatedNumber.h>
+#import <WebCore/DOMSVGAnimatedPathData.h>
+#import <WebCore/DOMSVGAnimatedPoints.h>
+#import <WebCore/DOMSVGAnimatedPreserveAspectRatio.h>
 #import <WebCore/DOMSVGAnimatedString.h>
 #import <WebCore/DOMSVGAnimatedTransformList.h>
+#import <WebCore/DOMSVGAnimationElement.h>
+#import <WebCore/DOMSVGCircleElement.h>
+#import <WebCore/DOMSVGClipPathElement.h>
+#import <WebCore/DOMSVGColor.h>
+#import <WebCore/DOMSVGCursorElement.h>
+#import <WebCore/DOMSVGDefsElement.h>
+#import <WebCore/DOMSVGDescElement.h>
+#import <WebCore/DOMSVGDocument.h>
 #import <WebCore/DOMSVGElement.h>
+#import <WebCore/DOMSVGEllipseElement.h>
 #import <WebCore/DOMSVGException.h>
 #import <WebCore/DOMSVGExternalResourcesRequired.h>
 #import <WebCore/DOMSVGLangSpace.h>
@@ -45,6 +61,7 @@
 #import <WebCore/DOMSVGMetadataElement.h>
 #import <WebCore/DOMSVGPathSeg.h>
 #import <WebCore/DOMSVGPathSegList.h>
+#import <WebCore/DOMSVGPreserveAspectRatio.h>
 #import <WebCore/DOMSVGRectElement.h>
 #import <WebCore/DOMSVGStringList.h>
 #import <WebCore/DOMSVGStylable.h>
@@ -53,3 +70,4 @@
 #import <WebCore/DOMSVGTransform.h>
 #import <WebCore/DOMSVGTransformList.h>
 #import <WebCore/DOMSVGTransformable.h>
+#import <WebCore/DOMSVGURIReference.h>
