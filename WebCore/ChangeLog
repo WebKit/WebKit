@@ -1,3 +1,15 @@
+2006-09-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11096
+        Hit testing for polylines fails
+
+        Fix Path::contains so it handles filled, non-closed paths too.
+
+        * platform/cg/PathCG.cpp:
+        (WebCore::Path::contains):
+
 2006-09-30  Dave Hyatt  <hyatt@apple.com>
 
         Refactor subframe event handling to hide more of the Mac-specific logic from the cross-platform code.

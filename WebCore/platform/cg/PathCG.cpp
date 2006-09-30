@@ -29,10 +29,11 @@
 
 #if PLATFORM(CG)
 
-#include "FloatRect.h"
-#include "PlatformString.h"
 #include "AffineTransform.h"
 #include <ApplicationServices/ApplicationServices.h>
+#include "FloatRect.h"
+#include "IntRect.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
@@ -61,7 +62,15 @@ Path& Path::operator=(const Path& other)
 
 bool Path::contains(const FloatPoint &point, WindRule rule) const
 {
-    return CGPathContainsPoint(m_path, 0, point, rule == RULE_EVENODD ? true : false);
+    // CGPathContainsPoint returns false for non-closed paths, as a work-around, we copy and close the path first.  Radar 4758998 asks for a better CG API to use
+    if (!enclosingIntRect(boundingRect()).contains(point.x(), point.y()))
+        return false;
+
+    CGMutablePathRef path = CGPathCreateMutableCopy(m_path);
+    CGPathCloseSubpath(path);
+    bool ret = CGPathContainsPoint(path, 0, point, rule == RULE_EVENODD ? true : false);
+    CGPathRelease(path);
+    return ret;
 }
 
 void Path::translate(const FloatSize& size)

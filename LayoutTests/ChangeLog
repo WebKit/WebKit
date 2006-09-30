@@ -1,3 +1,16 @@
+2006-09-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=11096
+        Hit testing for polylines fails
+
+        * svg/custom/polyline-hittest-expected.checksum: Added.
+        * svg/custom/polyline-hittest-expected.png: Added.
+        * svg/custom/polyline-hittest-expected.txt: Added.
+        * svg/custom/polyline-hittest.svg: Added.
+
 2006-09-29  Timothy Hatcher  <timothy@apple.com>
 
         Bug 11041: fast/dom/isindex-001 needs new results
