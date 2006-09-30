@@ -1,5 +1,12 @@
 2006-09-29  Adele Peterson  <adele@apple.com>
 
+        Updated with new argument for PlatformScrollBar.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (PlatformScrollBar::PlatformScrollBar):
+
+2006-09-29  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         Fixing build bustage with cast to int.

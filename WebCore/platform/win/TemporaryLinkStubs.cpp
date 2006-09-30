@@ -328,7 +328,7 @@ IntSize TextField::sizeForCharacterWidth(int) const { return IntSize(); }
 int TextField::baselinePosition(int) const { return 0; }
 void TextField::setLiveSearch(bool) { }
 
-PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation) : ScrollBar(client, orientation) { }
+PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation, ScrollBarControlSize controlSize) : ScrollBar(client, orientation, controlSize) { }
 PlatformScrollBar::~PlatformScrollBar() { }
 int PlatformScrollBar::width() const { return 0; }
 int PlatformScrollBar::height() const { return 0; }
