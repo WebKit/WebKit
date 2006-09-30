@@ -75,8 +75,6 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-PlatformScrollBar* RenderLayer::gScrollBar = 0;
-
 #ifndef NDEBUG
 static bool inRenderLayerDestroy;
 #endif
@@ -1388,8 +1386,6 @@ static inline IntRect frameVisibleRect(RenderObject* renderer)
 bool
 RenderLayer::hitTest(RenderObject::NodeInfo& info, const IntPoint& point)
 {
-    gScrollBar = 0;
-
     renderer()->document()->updateLayout();
     
     IntRect boundsRect(m_x, m_y, width(), height());

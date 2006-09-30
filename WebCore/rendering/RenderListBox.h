@@ -44,7 +44,7 @@ public:
     virtual bool canHaveChildren() const { return false; }
     virtual const char* renderName() const { return "RenderListBox"; }
     virtual void paintObject(PaintInfo&, int tx, int ty);
-    virtual bool isPointInScrollbar(int x, int y, int tx, int ty);
+    virtual bool isPointInScrollbar(NodeInfo&, int x, int y, int tx, int ty);
 
     virtual bool scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier=1.0);
 
@@ -56,8 +56,6 @@ public:
     virtual void valueChanged(ScrollBar*);
     
     HTMLOptionElement* optionAtPoint(int x, int y);
-    
-    PlatformScrollBar* scrollBarTarget();
     
     bool scrollToRevealElementAtListIndex(int index);
     
@@ -71,7 +69,6 @@ private:
     int m_optionsTotalHeight;
     int m_indexOffset;
     bool m_selectionChanged;
-    bool m_scrollBarHit;
     
     int size() const;
     int numItems() const;

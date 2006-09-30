@@ -2486,7 +2486,7 @@ int RenderBlock::getClearDelta(RenderObject *child)
     return result;
 }
 
-bool RenderBlock::isPointInScrollbar(int _x, int _y, int _tx, int _ty)
+bool RenderBlock::isPointInScrollbar(NodeInfo& info, int _x, int _y, int _tx, int _ty)
 {
     if (!scrollsOverflow())
         return false;
@@ -2497,7 +2497,7 @@ bool RenderBlock::isPointInScrollbar(int _x, int _y, int _tx, int _ty)
                        m_layer->verticalScrollbarWidth(),
                        height() + borderTopExtra() + borderBottomExtra() - borderTop() - borderBottom() -  m_layer->horizontalScrollbarHeight());
         if (vertRect.contains(_x, _y)) {
-            RenderLayer::gScrollBar = m_layer->verticalScrollbarWidget();
+            info.setScrollbar(m_layer->verticalScrollbarWidget());
             return true;
         }
     }
@@ -2508,7 +2508,7 @@ bool RenderBlock::isPointInScrollbar(int _x, int _y, int _tx, int _ty)
                         width() - borderLeft() - borderRight() - m_layer->verticalScrollbarWidth(),
                         m_layer->horizontalScrollbarHeight());
         if (horizRect.contains(_x, _y)) {
-            RenderLayer::gScrollBar = m_layer->horizontalScrollbarWidget();
+            info.setScrollbar(m_layer->horizontalScrollbarWidget());
             return true;
         }
     }
@@ -2539,7 +2539,7 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, 
         }
     }
 
-    if (isPointInScrollbar(_x, _y, tx, ty)) {
+    if (isPointInScrollbar(info, _x, _y, tx, ty)) {
         if (hitTestAction == HitTestBlockBackground) {
             setInnerNode(info);
             return true;

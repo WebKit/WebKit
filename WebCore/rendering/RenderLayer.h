@@ -167,8 +167,6 @@ public:
     static ScrollBehavior getVisibleBehavior(const ScrollAlignment& s) { return s.m_rectVisible; }
     static ScrollBehavior getPartialBehavior(const ScrollAlignment& s) { return s.m_rectPartial; }
     static ScrollBehavior getHiddenBehavior(const ScrollAlignment& s) { return s.m_rectHidden; }
-
-    static PlatformScrollBar* gScrollBar;
     
     RenderLayer(RenderObject*);
     ~RenderLayer();

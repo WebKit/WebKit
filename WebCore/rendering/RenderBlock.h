@@ -201,7 +201,7 @@ public:
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
                              HitTestAction hitTestAction);
 
-    virtual bool isPointInScrollbar(int x, int y, int tx, int ty);
+    virtual bool isPointInScrollbar(NodeInfo& info, int x, int y, int tx, int ty);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
     

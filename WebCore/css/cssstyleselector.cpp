@@ -3026,7 +3026,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 return;
         }
 
-        if (size <= 0)
+        if (size < 0)
             return;
 
         setFontSize(fontDescription, size);

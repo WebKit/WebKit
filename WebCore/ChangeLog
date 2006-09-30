@@ -1,3 +1,46 @@
+2006-09-29  David Hyatt  <hyatt@apple.com>
+
+        Eliminate RenderLayer::gScrollBar in favor of caching the scrollbar hit
+        in RenderObject::NodeInfo (and then propagating that Widget to
+        MouseEventWithHitTestResults).
+
+        This allows RenderListBox and RenderBlock to do the same thing when the
+        mouse is over the scrollbar.
+
+        Also land fix to support font-size: 0.
+
+        Reviewed by mjs (scrollbar), eric (font-size)
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareMouseEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::passWidgetMouseDownEventToWidget):
+        * page/FrameView.cpp:
+        (WebCore::selectCursor):
+        (WebCore::FrameView::handleMouseMoveEvent):
+        (WebCore::FrameView::dispatchMouseEvent):
+        * page/MouseEventWithHitTestResults.cpp:
+        (WebCore::MouseEventWithHitTestResults::MouseEventWithHitTestResults):
+        * page/MouseEventWithHitTestResults.h:
+        (WebCore::MouseEventWithHitTestResults::scrollbar):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isPointInScrollbar):
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::getHiddenBehavior):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::~RenderListBox):
+        (WebCore::RenderListBox::isPointInScrollbar):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::NodeInfo::NodeInfo):
+        (WebCore::RenderObject::NodeInfo::scrollbar):
+        (WebCore::RenderObject::NodeInfo::setScrollbar):
+
 2006-09-29  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Adele.

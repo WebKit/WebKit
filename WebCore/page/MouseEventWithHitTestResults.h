@@ -26,18 +26,22 @@
 
 namespace WebCore {
 
+class PlatformScrollBar;
+
 class MouseEventWithHitTestResults {
 public:
-    MouseEventWithHitTestResults(const PlatformMouseEvent&, PassRefPtr<Node>, bool isOverLink);
+    MouseEventWithHitTestResults(const PlatformMouseEvent&, PassRefPtr<Node>, PlatformScrollBar*, bool isOverLink);
 
     const PlatformMouseEvent& event() const { return m_event; }
     Node* targetNode() const;
+    PlatformScrollBar* scrollbar() const { return m_scrollbar; }
     bool isOverLink() const { return m_isOverLink; }
 
 private:
     PlatformMouseEvent m_event;
     RefPtr<Node> m_targetNode;
     RefPtr<Element> m_targetElement;
+    PlatformScrollBar* m_scrollbar;
     bool m_isOverLink;
 };
 
