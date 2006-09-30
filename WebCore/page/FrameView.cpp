@@ -551,12 +551,12 @@ void FrameView::layout(bool allowSubtree)
 //
 /////////////////
 
-static Frame* subframeForEvent(const MouseEventWithHitTestResults& mev)
+static Frame* subframeForTargetNode(Node* node)
 {
-    if (!mev.targetNode())
+    if (!node)
         return 0;
 
-    RenderObject* renderer = mev.targetNode()->renderer();
+    RenderObject* renderer = node->renderer();
     if (!renderer || !renderer->isWidget())
         return 0;
 
@@ -584,7 +584,8 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     
     MouseEventWithHitTestResults mev = prepareMouseEvent(false, true, false, mouseEvent);
 
-    if (m_frame->passSubframeEventToSubframe(mev)) {
+    Frame* subframe = subframeForTargetNode(mev.targetNode());
+    if (subframe && passMousePressEventToSubframe(mev, subframe)) {
         invalidateClick();
         return;
     }
@@ -623,6 +624,7 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     }
 }
 
+// This method only exists for platforms that don't know how to deliver 
 void FrameView::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEvent)
 {
     if (!m_frame->document())
@@ -635,8 +637,8 @@ void FrameView::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEvent
     d->m_currentMousePosition = convertFromContainingWindow(mouseEvent.pos());
 
     MouseEventWithHitTestResults mev = prepareMouseEvent(false, true, false, mouseEvent);
-
-    if (m_frame->passSubframeEventToSubframe(mev))
+    Frame* subframe = subframeForTargetNode(mev.targetNode());
+    if (subframe && passMousePressEventToSubframe(mev, subframe))
         return;
 
     d->clickCount = mouseEvent.clickCount();
@@ -645,11 +647,8 @@ void FrameView::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEvent
     if (mev.targetNode() == d->clickNode)
         dispatchMouseEvent(clickEvent, mev.targetNode(), true, d->clickCount, mouseEvent, true);
 
-    // Qt delivers a release event AND a double click event.
-    if (!swallowEvent) {
+    if (!swallowEvent)
         m_frame->handleMouseReleaseEvent(mev);
-        m_frame->handleMouseReleaseDoubleClickEvent(mev);
-    }
 
     invalidateClick();
 }
@@ -783,14 +782,14 @@ void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
         d->mousePressed, true, mouseEvent);
 
     if (d->oldSubframe && d->oldSubframe->tree()->isDescendantOf(m_frame.get()))
-        m_frame->passSubframeEventToSubframe(mev, d->oldSubframe.get());
+        passMouseMoveEventToSubframe(mev, d->oldSubframe.get());
 
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent, mev.targetNode(), false, 0, mouseEvent, true);
     
     if (d->oldScrollBar != mev.scrollbar()) {
         // Send mouse exited to the old scrollbar.
         if (d->oldScrollBar)
-            d->oldScrollBar->mouseExited();
+            d->oldScrollBar->handleMouseOutEvent(mouseEvent);
         d->oldScrollBar = mev.scrollbar();
     }
 
@@ -800,13 +799,12 @@ void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
     if (!swallowEvent)
         m_frame->handleMouseMoveEvent(mev);
     
-    RefPtr<Frame> newSubframe = subframeForEvent(mev);
-    
+    RefPtr<Frame> newSubframe = subframeForTargetNode(mev.targetNode());
     if (newSubframe && d->oldSubframe != newSubframe)
-        m_frame->passSubframeEventToSubframe(mev, newSubframe.get());
+        passMouseMoveEventToSubframe(mev, newSubframe.get());
     else {
         if (mev.scrollbar() && !d->mousePressed)
-            mev.scrollbar()->mouseMoved(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
+            mev.scrollbar()->handleMouseMoveEvent(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         setCursor(selectCursor(mev, m_frame.get(), d->mousePressed));
     }
 
@@ -840,8 +838,8 @@ void FrameView::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     }
 
     MouseEventWithHitTestResults mev = prepareMouseEvent(false, false, false, mouseEvent);
-
-    if (m_frame->passSubframeEventToSubframe(mev))
+    Frame* subframe = subframeForTargetNode(mev.targetNode());
+    if (subframe && passMouseReleaseEventToSubframe(mev, subframe))
         return;
 
     bool swallowEvent = dispatchMouseEvent(mouseupEvent, mev.targetNode(), true, d->clickCount, mouseEvent, false);
@@ -1239,8 +1237,8 @@ void FrameView::handleWheelEvent(PlatformWheelEvent& e)
             RenderObject::NodeInfo hitTestResult(true, false);
             doc->renderer()->layer()->hitTest(hitTestResult, vPoint); 
             Node *node = hitTestResult.innerNode();
-
-            if (m_frame->passWheelEventToChildWidget(node)) {
+            Frame* subframe = subframeForTargetNode(node);
+            if (subframe && passWheelEventToSubframe(e, subframe)) {
                 e.accept();
                 return;
             }

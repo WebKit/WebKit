@@ -78,6 +78,10 @@ using namespace WebCore;
 } while (0)
 
 void FrameView::updateBorder() { notImplemented(); }
+bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
+bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
+bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
+bool FrameView::passWheelEventToSubframe(PlatformWheelEvent& e, Frame* subframe) { return false; }
 
 void Widget::enableFlushDrawing() { notImplemented(); }
 bool Widget::isEnabled() const { notImplemented(); return 0; }
@@ -85,7 +89,12 @@ Widget::FocusPolicy Widget::focusPolicy() const { notImplemented(); return NoFoc
 void Widget::disableFlushDrawing() { notImplemented(); }
 GraphicsContext* Widget::lockDrawingFocus() { notImplemented(); return 0; }
 void Widget::unlockDrawingFocus(GraphicsContext*) { notImplemented(); }
-
+bool Widget::capturingMouse() const { return false; }
+void Widget::setCapturingMouse(bool capturingMouse) { }
+Widget* Widget::capturingTarget() { return this; }
+Widget* Widget::capturingChild() { return 0; }
+void Widget::setCapturingChild(Widget* w) {}
+}
 JavaAppletWidget::JavaAppletWidget(IntSize const&,Element*,WTF::HashMap<String,String> const&) { notImplemented(); }
 
 void TextField::selectAll() { notImplemented(); }

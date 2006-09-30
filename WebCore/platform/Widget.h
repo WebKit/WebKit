@@ -56,6 +56,7 @@ namespace WebCore {
     class IntPoint;
     class IntRect;
     class IntSize;
+    class PlatformMouseEvent;
     class WidgetClient;
     class WidgetPrivate;
 
@@ -147,6 +148,16 @@ namespace WebCore {
 
         void setParent(Widget*);
         Widget* parent() const;
+
+        bool capturingMouse() const;
+        void setCapturingMouse(bool);
+        Widget* capturingTarget();
+        Widget* capturingChild();
+        void setCapturingChild(Widget*);
+        
+        // These methods will be called on a widget while it is capturing the mouse.
+        virtual void handleMouseMoveEvent(const PlatformMouseEvent&) {};
+        virtual void handleMouseReleaseEvent(const PlatformMouseEvent&) {};
 #endif
 
 #if PLATFORM(GDK)

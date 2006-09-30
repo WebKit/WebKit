@@ -3250,39 +3250,6 @@ bool Frame::canMouseDownStartSelect(Node* node)
     return true;
 }
 
-void Frame::handleMouseReleaseDoubleClickEvent(const MouseEventWithHitTestResults& event)
-{
-    passWidgetMouseDownEventToWidget(event, true);
-}
-
-bool Frame::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event, bool isDoubleClick)
-{
-    // Figure out which view to send the event to.
-    RenderObject *target = event.targetNode() ? event.targetNode()->renderer() : 0;
-    if (!target)
-        return false;
-    
-    Widget* widget = event.scrollbar();
-    if (!widget) {
-        if (!target->isWidget())
-            return false;
-        widget = static_cast<RenderWidget*>(target)->widget();
-    }
-    
-    // Doubleclick events don't exist in Cocoa.  Since passWidgetMouseDownEventToWidget will
-    // just pass _currentEvent down to the widget,  we don't want to call it for events that
-    // don't correspond to Cocoa events.  The mousedown/ups will have already been passed on as
-    // part of the pressed/released handling.
-    if (!isDoubleClick)
-        return passMouseDownEventToWidget(widget);
-    return true;
-}
-
-bool Frame::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
-{
-    return passMouseDownEventToWidget(renderWidget->widget());
-}
-
 void Frame::clearTimers(FrameView *view)
 {
     if (view) {

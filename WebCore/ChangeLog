@@ -1,3 +1,49 @@
+2006-09-30  Dave Hyatt  <hyatt@apple.com>
+
+        Refactor subframe event handling to hide more of the Mac-specific logic from the cross-platform code.
+        Stub out a capturing API that mimics the way Web browsers capture events and route them to specific
+        subframes while the mouse is down.
+      
+        Reviewed by mitzpettel
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::passWidgetMouseDownEventToWidget):
+        (WebCore::FrameMac::passWheelEventToWidget):
+        * bridge/mac/FrameViewMac.mm:
+        (WebCore::FrameView::passMousePressEventToSubframe):
+        (WebCore::FrameView::passMouseMoveEventToSubframe):
+        (WebCore::FrameView::passMouseReleaseEventToSubframe):
+        (WebCore::FrameView::passWheelEventToSubframe):
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::subframeForTargetNode):
+        (WebCore::FrameView::handleMousePressEvent):
+        (WebCore::FrameView::handleMouseDoubleClickEvent):
+        (WebCore::FrameView::handleMouseMoveEvent):
+        (WebCore::FrameView::handleMouseReleaseEvent):
+        (WebCore::FrameView::handleWheelEvent):
+        * page/FrameView.h:
+        * platform/ScrollBar.h:
+        (WebCore::ScrollBar::handleMouseMoveEvent):
+        (WebCore::ScrollBar::handleMouseOutEvent):
+        * platform/Widget.h:
+        (WebCore::Widget::handleMouseMoveEvent):
+        (WebCore::Widget::handleMouseReleaseEvent):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameView::passMousePressEventToSubframe):
+        (FrameView::passMouseMoveEventToSubframe):
+        (FrameView::passMouseReleaseEventToSubframe):
+        (FrameView::passWheelEventToSubframe):
+        (Widget::capturingMouse):
+        (Widget::setCapturingMouse):
+        (Widget::capturingTarget):
+        (Widget::capturingChild):
+        (Widget::setCapturingChild):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
 2006-09-29  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Adele.

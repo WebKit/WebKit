@@ -521,7 +521,6 @@ public:
    */
   KURL completeURL(const DeprecatedString& url);
 
-  virtual void handleMouseReleaseDoubleClickEvent(const MouseEventWithHitTestResults&);
   virtual void handleMousePressEvent(const MouseEventWithHitTestResults&);
   virtual void handleMouseMoveEvent(const MouseEventWithHitTestResults&);
   virtual void handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
@@ -579,8 +578,6 @@ public:
   virtual void openURLRequest(const ResourceRequest&) = 0;
   virtual void submitForm(const ResourceRequest&) = 0;
   virtual void urlSelected(const ResourceRequest&) = 0;
-  virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframePart = 0) = 0;
-  virtual bool passWheelEventToChildWidget(Node*) = 0;
   virtual bool lastEventIsMouseUp() const = 0;
   virtual String overrideMediaType() const = 0;
   virtual void redirectDataToPlugin(Widget* pluginWidget) { }
@@ -716,9 +713,6 @@ private:
   bool scrollbarsVisible();
   void scrollToAnchor(const KURL&);
   bool canMouseDownStartSelect(Node*);
-  bool passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults&, bool isDoubleClick);
-  bool passWidgetMouseDownEventToWidget(RenderWidget*);
-  virtual bool passMouseDownEventToWidget(Widget*) = 0;
 
   void clearTimers();
   static void clearTimers(FrameView*);

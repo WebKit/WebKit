@@ -136,9 +136,14 @@ public:
 
     void handleMousePressEvent(const PlatformMouseEvent&);
     void handleMouseDoubleClickEvent(const PlatformMouseEvent&);
-    void handleMouseMoveEvent(const PlatformMouseEvent&);
-    void handleMouseReleaseEvent(const PlatformMouseEvent&);
+    virtual void handleMouseMoveEvent(const PlatformMouseEvent&);
+    virtual void handleMouseReleaseEvent(const PlatformMouseEvent&);
     void handleWheelEvent(PlatformWheelEvent&);
+
+    bool passMousePressEventToSubframe(MouseEventWithHitTestResults&, Frame*);
+    bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame*);
+    bool passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame*);
+    bool passWheelEventToSubframe(PlatformWheelEvent&, Frame*);
 
     bool mousePressed();
 

@@ -226,9 +226,11 @@ public:
     
     bool sendContextMenuEvent(NSEvent*);
 
-    virtual bool passMouseDownEventToWidget(Widget*);
-    virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframePart);
-    virtual bool passWheelEventToChildWidget(Node*);
+    bool passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults&);
+    bool passWidgetMouseDownEventToWidget(RenderWidget*);
+    bool passMouseDownEventToWidget(Widget*);
+    bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframePart);
+    bool passWheelEventToWidget(Widget*);
     
     NSString* searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellElement* cell);
     NSString* searchForLabelsBeforeElement(NSArray* labels, Element* element);

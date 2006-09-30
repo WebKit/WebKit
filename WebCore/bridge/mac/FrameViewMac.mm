@@ -52,4 +52,24 @@ void FrameView::updateDashboardRegions()
     }
 }
 
+bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
+{
+    return Mac(m_frame.get())->passSubframeEventToSubframe(mev, subframe);
+}
+
+bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame*)
+{
+    return Mac(m_frame.get())->passSubframeEventToSubframe(mev, subframe);
+}
+
+bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame*)
+{
+    return Mac(m_frame.get())->passSubframeEventToSubframe(mev, subframe);
+}
+
+bool FrameView::passWheelEventToSubframe(PlatformWheelEvent&, Frame*)
+{
+    return Mac(m_frame.get())->passWheelEventToWidget(subframe);
+}
+    
 }

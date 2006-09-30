@@ -191,13 +191,13 @@ void RenderView::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
             frameView()->setUseSlowRepaints();
     }
     
-    if ((firstChild() && firstChild()->style()->visibility() == VISIBLE) || !view())
+    if (elt || (firstChild() && firstChild()->style()->visibility() == VISIBLE) || !view())
         return;
 
     // This code typically only executes if the root element's visibility has been set to hidden.
     // Only fill with white if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
-    if (elt || view()->isTransparent())
+    if (view()->isTransparent())
         frameView()->setUseSlowRepaints(); // The parent must show behind the child.
     else {
         Color baseColor = frameView()->baseBackgroundColor();
