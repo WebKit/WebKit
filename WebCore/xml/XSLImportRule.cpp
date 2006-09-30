@@ -52,7 +52,7 @@ XSLStyleSheet* XSLImportRule::parentStyleSheet() const
     return (parent() && parent()->isXSLStyleSheet()) ? static_cast<XSLStyleSheet*>(parent()) : 0;
 }
 
-void XSLImportRule::setStyleSheet(const String& url, const String& sheet)
+void XSLImportRule::setXSLStyleSheet(const String& url, const String& sheet)
 {
     if (m_styleSheet)
         m_styleSheet->setParent(0);
@@ -102,7 +102,7 @@ void XSLImportRule::loadSheet()
     if (m_cachedSheet) {
         m_cachedSheet->ref(this);
         
-        // If the imported sheet is in the cache, then setStyleSheet gets called,
+        // If the imported sheet is in the cache, then setXSLStyleSheet gets called,
         // and the sheet even gets parsed (via parseString).  In this case we have
         // loaded (even if our subresources haven't), so if we have a stylesheet after
         // checking the cache, then we've clearly loaded.

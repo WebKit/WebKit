@@ -54,7 +54,7 @@ namespace WebCore {
         ~DocLoader();
 
         CachedImage* requestImage(const String& url);
-        CachedCSSStyleSheet* requestStyleSheet(const String& url, const String& charset);
+        CachedCSSStyleSheet* requestCSSStyleSheet(const String& url, const String& charset);
         CachedScript* requestScript(const String& url, const String& charset);
 
 #ifdef XSLT_SUPPORT

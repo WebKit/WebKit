@@ -51,14 +51,6 @@ CachedCSSStyleSheet::CachedCSSStyleSheet(DocLoader* dl, const String& url, Cache
     m_loading = true;
 }
 
-CachedCSSStyleSheet::CachedCSSStyleSheet(const String &url, const String& stylesheet_data)
-    : CachedResource(url, CSSStyleSheet, CachePolicyVerify, 0, stylesheet_data.length())
-{
-    m_loading = false;
-    m_status = Persistent;
-    m_sheet = stylesheet_data;
-}
-
 CachedCSSStyleSheet::~CachedCSSStyleSheet()
 {
 }
@@ -68,15 +60,15 @@ void CachedCSSStyleSheet::ref(CachedResourceClient *c)
     CachedResource::ref(c);
 
     if (!m_loading)
-        c->setStyleSheet(m_url, m_sheet);
+        c->setCSSStyleSheet(m_url, m_decoder->encoding().name(), m_sheet);
 }
 
 void CachedCSSStyleSheet::deref(CachedResourceClient *c)
 {
     Cache::flush();
     CachedResource::deref(c);
-    if ( canDelete() && m_free )
-      delete this;
+    if (canDelete() && m_free)
+        delete this;
 }
 
 void CachedCSSStyleSheet::setCharset(const String& chs)
@@ -105,10 +97,10 @@ void CachedCSSStyleSheet::checkNotify()
     while (CachedResourceClient *c = w.next()) {
 #if __APPLE__
         if (m_response && !IsResponseURLEqualToURL(m_response, m_url))
-            c->setStyleSheet(String(ResponseURL(m_response)), m_sheet);
+            c->setCSSStyleSheet(ResponseURL(m_response), m_decoder->encoding().name(), m_sheet);
         else
 #endif
-            c->setStyleSheet(m_url, m_sheet);
+            c->setCSSStyleSheet(m_url, m_decoder->encoding().name(), m_sheet);
     }
 }
 

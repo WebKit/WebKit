@@ -1,3 +1,92 @@
+2006-09-30  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11011
+        External CSS is parsed as iso-8859-1 even though the main document is utf-8
+
+        Test: fast/encoding/css-charset-default.xhtml
+
+        * loader/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::setCSSStyleSheet):
+        (WebCore::CachedResourceClient::setXSLStyleSheet):
+        Divided setStyleSheet into setCSSStyleSheet and setXSLStyleSheet. The former
+        takes an additional charset parameter, to be passed to CSSStyleSheet constructor.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::setCSSStyleSheet):
+        (WebCore::CSSImportRule::insertedIntoParent): Default to parent stylesheet's charset.
+        * css/CSSImportRule.h:
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        * css/CSSStyleSheet.h:
+        Added an m_charset member to be used when loading child stylesheets. Removed an unused m_implicit
+        member. Changed some String parameters to const String&.
+
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::StyleSheet):
+        * css/StyleSheet.h:
+        Changed some String parameters to const String&. Removed an unused (even unimplemented) constructor.
+
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::length):
+        (WebCore::StyleSheetList::item):
+        * css/StyleSheetList.h:
+        Special-casing implicit stylesheets seemed to be dead code, removed.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setCSSStyleSheet):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+        Renamed setStyleSheet() to setCSSStyleSheet().
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet): Pass a correct charset to requestCSSStyleSheet().
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        (WebCore::ProcessingInstruction::setXSLStyleSheet):
+        (WebCore::ProcessingInstruction::parseStyleSheet):
+        * dom/ProcessingInstruction.h:
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process): Default to document encoding if a charset attribute 
+        is not specified.
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * html/HTMLLinkElement.h:
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::childrenChanged):
+        * ksvg2/svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::childrenChanged):
+        Inherit URL and charset from the document.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestCSSStyleSheet):
+        * loader/Cache.h:
+        Adjust for setStyleSheet() renaming.
+
+        * loader/CachedCSSStyleSheet.h: Removed an unused constructor.
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::ref):
+        (WebCore::CachedCSSStyleSheet::deref):
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        Pass the encoding to setCSSStyleSheet().
+
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::ref):
+        (WebCore::CachedXSLStyleSheet::checkNotify):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestCSSStyleSheet):
+        * loader/DocLoader.h:
+        * page/Frame.cpp:
+        (WebCore::UserStyleSheetLoader::UserStyleSheetLoader):
+        (WebCore::UserStyleSheetLoader::setCSSStyleSheet):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::setXSLStyleSheet):
+        (WebCore::XSLImportRule::loadSheet):
+        * xml/XSLImportRule.h:
+        Adjust for setStyleSheet() renaming.
+
 2006-09-30  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.

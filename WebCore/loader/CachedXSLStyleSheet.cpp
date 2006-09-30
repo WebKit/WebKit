@@ -58,7 +58,7 @@ void CachedXSLStyleSheet::ref(CachedResourceClient *c)
     CachedResource::ref(c);
     
     if (!m_loading)
-        c->setStyleSheet(m_url, m_sheet);
+        c->setXSLStyleSheet(m_url, m_sheet);
 }
 
 void CachedXSLStyleSheet::deref(CachedResourceClient *c)
@@ -93,7 +93,7 @@ void CachedXSLStyleSheet::checkNotify()
     
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient *c = w.next())
-        c->setStyleSheet(m_url, m_sheet);
+        c->setXSLStyleSheet(m_url, m_sheet);
 }
 
 

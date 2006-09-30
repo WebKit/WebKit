@@ -63,7 +63,8 @@ namespace WebCore {
         // e.g., in the b/f cache or in a background tab).
         virtual bool willRenderImage(CachedImage*) { return false; }
 
-        virtual void setStyleSheet(const String& /*URL*/, const String& /*sheet*/) { }
+        virtual void setCSSStyleSheet(const String& /*URL*/, const String& /*charset*/, const String& /*sheet*/) { }
+        virtual void setXSLStyleSheet(const String& /*URL*/, const String& /*sheet*/) { }
 
 #ifdef XBL_SUPPORT
         virtual void setXBLDocument(const String& /*URL*/, XBL::XBLDocument*) { }

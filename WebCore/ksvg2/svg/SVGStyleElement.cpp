@@ -95,6 +95,7 @@ void SVGStyleElement::childrenChanged()
     if(m_sheet)
         m_sheet = 0;
 
+    // FIXME: this code should be shared with HTMLStyleElement::childrenChanged()
     m_loading = false;
     MediaQueryEvaluator screenEval("screen", true);
     MediaQueryEvaluator printEval("print", true);   
@@ -104,7 +105,7 @@ void SVGStyleElement::childrenChanged()
 
         m_loading = true;
  
-        m_sheet = new CSSStyleSheet(this);
+        m_sheet = new CSSStyleSheet(this, document()->URL(), document()->inputEncoding());
         m_sheet->parseString(textContent()); // SVG css is always parsed in strict mode
         
         m_sheet->setMedia(mediaList.get());

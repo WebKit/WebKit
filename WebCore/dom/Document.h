@@ -331,7 +331,7 @@ public:
     String completeURL(const String&);
 
     // from cachedObjectClient
-    virtual void setStyleSheet(const String& url, const String& sheetStr);
+    virtual void setCSSStyleSheet(const String& url, const String& charset, const String& sheetStr);
     void setUserStyleSheet(const String& sheet);
     const String& userStyleSheet() const { return m_usersheet; }
     void setPrintStyleSheet(const String& sheet) { m_printSheet = sheet; }

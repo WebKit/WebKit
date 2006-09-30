@@ -56,11 +56,11 @@ CSSImportRule::~CSSImportRule()
         m_cachedSheet->deref(this);
 }
 
-void CSSImportRule::setStyleSheet(const String &url, const String &sheet)
+void CSSImportRule::setCSSStyleSheet(const String &url, const String& charset, const String &sheet)
 {
     if (m_styleSheet)
         m_styleSheet->setParent(0);
-    m_styleSheet = new CSSStyleSheet(this, url);
+    m_styleSheet = new CSSStyleSheet(this, url, charset);
 
     CSSStyleSheet *parent = parentStyleSheet();
     m_styleSheet->parseString(sheet, !parent || parent->useStrictParsing());
@@ -98,8 +98,7 @@ void CSSImportRule::insertedIntoParent()
         if (absHref == parent->baseURL())
             return;
     
-    // ### pass correct charset here!!
-    m_cachedSheet = docLoader->requestStyleSheet(absHref, String());
+    m_cachedSheet = docLoader->requestCSSStyleSheet(absHref, parentSheet->charset());
     if (m_cachedSheet) {
         m_loading = true;
         m_cachedSheet->ref(this);

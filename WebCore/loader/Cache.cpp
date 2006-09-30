@@ -178,7 +178,7 @@ CachedImage* Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, ti
     return static_cast<CachedImage *>(o);
 }
 
-CachedCSSStyleSheet* Cache::requestStyleSheet(DocLoader* dl, const String& url, bool reload, time_t expireDate, const String& charset)
+CachedCSSStyleSheet* Cache::requestCSSStyleSheet(DocLoader* dl, const String& url, bool reload, time_t expireDate, const String& charset)
 {
     // this brings the _url to a standard form...
     KURL kurl;
@@ -212,7 +212,7 @@ CachedCSSStyleSheet* Cache::requestStyleSheet(DocLoader* dl, const String& url, 
     if (o->type() != CachedResource::CSSStyleSheet)
     {
 #ifdef CACHE_DEBUG
-        kdDebug(6060) << "Cache::Internal Error in requestStyleSheet url=" << kurl.url() << "!" << endl;
+        kdDebug(6060) << "Cache::Internal Error in requestCSSStyleSheet url=" << kurl.url() << "!" << endl;
 #endif
         return 0;
     }

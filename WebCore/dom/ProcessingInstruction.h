@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class StyleSheet;
+class CSSStyleSheet;
 
 class ProcessingInstruction : public ContainerNode, private CachedResourceClient
 {
@@ -55,8 +56,11 @@ public:
     String localHref() const { return m_localHref.get(); }
     StyleSheet* sheet() const { return m_sheet.get(); }
     bool checkStyleSheet();
-    virtual void setStyleSheet(const String& URL, const String& sheet);
-    void setStyleSheet(StyleSheet*);
+    virtual void setCSSStyleSheet(const String& URL, const String& charset, const String& sheet);
+#if XSLT_SUPPORT
+    virtual void setXSLStyleSheet(const String& URL, const String& sheet);
+#endif
+    void setCSSStyleSheet(CSSStyleSheet*);
     bool isLoading() const;
     void sheetLoaded();
     virtual String toString() const;
@@ -66,6 +70,8 @@ public:
 #endif
 
 private:
+    void parseStyleSheet(const String& sheet);
+
     RefPtr<StringImpl> m_target;
     RefPtr<StringImpl> m_data;
     RefPtr<StringImpl> m_localHref;

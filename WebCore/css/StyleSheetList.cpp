@@ -48,28 +48,12 @@ void StyleSheetList::remove(StyleSheet* s)
 
 unsigned StyleSheetList::length() const
 {
-    // hack so implicit BODY stylesheets don't get counted here
-    unsigned l = 0;
-    DeprecatedPtrListIterator<StyleSheet> it(styleSheets);
-    for (; it.current(); ++it) {
-        if (!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheet*>(it.current())->implicit())
-            l++;
-    }
-    return l;
+    return styleSheets.count();
 }
 
-StyleSheet *StyleSheetList::item (unsigned index)
+StyleSheet* StyleSheetList::item(unsigned index)
 {
-    unsigned l = 0;
-    DeprecatedPtrListIterator<StyleSheet> it(styleSheets);
-    for (; it.current(); ++it) {
-        if (!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheet*>(it.current())->implicit()) {
-            if (l == index)
-                return it.current();
-            l++;
-        }
-    }
-    return 0;
+    return index < length() ? styleSheets.at(index) : 0;
 }
 
 }

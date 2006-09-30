@@ -32,27 +32,27 @@
 
 namespace WebCore {
 
-CSSStyleSheet::CSSStyleSheet(CSSStyleSheet* parentSheet, String href)
+CSSStyleSheet::CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href, const String& charset)
     : StyleSheet(parentSheet, href)
     , m_doc(parentSheet ? parentSheet->doc() : 0)
-    , m_implicit(false)
     , m_namespaces(0)
+    , m_charset(charset)
 {
 }
 
-CSSStyleSheet::CSSStyleSheet(Node *parentNode, String href, bool _implicit)
+CSSStyleSheet::CSSStyleSheet(Node *parentNode, const String& href, const String& charset)
     : StyleSheet(parentNode, href)
     , m_doc(parentNode->document())
-    , m_implicit(_implicit) 
     , m_namespaces(0)
+    , m_charset(charset)
 {
 }
 
-CSSStyleSheet::CSSStyleSheet(CSSRule *ownerRule, String href)
+CSSStyleSheet::CSSStyleSheet(CSSRule *ownerRule, const String& href, const String& charset)
     : StyleSheet(ownerRule, href)
     , m_doc(0)
-    , m_implicit(false)
     , m_namespaces(0)
+    , m_charset(charset)
 {
 }
 

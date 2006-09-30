@@ -91,7 +91,7 @@ void HTMLStyleElement::childrenChanged()
         if (screenEval.eval(media.get()) || printEval.eval(media.get())) {
             document()->addPendingSheet();
             m_loading = true;
-            m_sheet = new CSSStyleSheet(this);
+            m_sheet = new CSSStyleSheet(this, document()->URL(), document()->inputEncoding());
             m_sheet->parseString(text, !document()->inCompatMode());
             m_sheet->setMedia(media.get());
             m_loading = false;

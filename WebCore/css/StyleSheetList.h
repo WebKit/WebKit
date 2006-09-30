@@ -35,7 +35,6 @@ class StyleSheetList : public Shared<StyleSheetList>
 public:
     ~StyleSheetList();
 
-    // the following two ignore implicit stylesheets
     unsigned length() const;
     StyleSheet* item(unsigned index);
 

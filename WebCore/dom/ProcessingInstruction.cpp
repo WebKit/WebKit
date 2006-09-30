@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "DocLoader.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "XSLStyleSheet.h"
 #include "XMLTokenizer.h" // for parseAttributes()
 
@@ -146,8 +147,7 @@ bool ProcessingInstruction::checkStyleSheet()
             }
             else
             {
-                // ### some validation on the URL?
-                // ### FIXME charset
+                // FIXME: some validation on the URL?
                 if (document()->frame()) {
                     m_loading = true;
                     document()->addPendingSheet();
@@ -158,7 +158,13 @@ bool ProcessingInstruction::checkStyleSheet()
                         m_cachedSheet = document()->docLoader()->requestXSLStyleSheet(document()->completeURL(href));
                     else
 #endif
-                    m_cachedSheet = document()->docLoader()->requestStyleSheet(document()->completeURL(href), String());
+                    {
+                        String charset = attrs.get("charset");
+                        if (charset.isEmpty())
+                            charset = document()->frame()->encoding();
+
+                        m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(document()->completeURL(href), charset);
+                    }
                     if (m_cachedSheet)
                         m_cachedSheet->ref( this );
 #if XSLT_SUPPORT
@@ -188,14 +194,24 @@ void ProcessingInstruction::sheetLoaded()
         document()->stylesheetLoaded();
 }
 
-void ProcessingInstruction::setStyleSheet(const String &url, const String &sheet)
+void ProcessingInstruction::setCSSStyleSheet(const String &url, const String& charset, const String &sheet)
 {
+    ASSERT(!m_isXSL);
+    m_sheet = new CSSStyleSheet(this, url, charset);
+    parseStyleSheet(sheet);
+}
+
 #if XSLT_SUPPORT
-    if (m_isXSL)
-        m_sheet = new XSLStyleSheet(this, url);
-    else
+void ProcessingInstruction::setXSLStyleSheet(const String &url, const String &sheet)
+{
+    ASSERT(m_isXSL);
+    m_sheet = new XSLStyleSheet(this, url);
+    parseStyleSheet(sheet);
+}
 #endif
-        m_sheet = new CSSStyleSheet(this, url);
+
+void ProcessingInstruction::parseStyleSheet(const String &sheet)
+{
     m_sheet->parseString(sheet);
     if (m_cachedSheet)
         m_cachedSheet->deref(this);
@@ -218,8 +234,10 @@ String ProcessingInstruction::toString() const
     return result;
 }
 
-void ProcessingInstruction::setStyleSheet(StyleSheet* sheet)
+void ProcessingInstruction::setCSSStyleSheet(CSSStyleSheet* sheet)
 {
+    ASSERT(!m_cachedSheet);
+    ASSERT(!m_loading);
     m_sheet = sheet;
 }
 

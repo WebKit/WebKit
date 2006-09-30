@@ -1,3 +1,16 @@
+2006-09-30  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11011
+        External CSS is parsed as iso-8859-1 even though the main document is utf-8
+
+        * fast/encoding/css-charset-default-expected.txt: Added.
+        * fast/encoding/css-charset-default.xhtml: Added.
+        * fast/encoding/css-charset-import.css: Added.
+        * fast/encoding/css-charset-inherit-iso-8859-5.css: Added.
+        * fast/encoding/css-charset-inherit-koi-8.css: Added.
+
 2006-09-30  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.
