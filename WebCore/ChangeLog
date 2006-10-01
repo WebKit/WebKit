@@ -1,3 +1,18 @@
+2006-10-01  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Hyatt.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10842
+        REGRESSION (r15418): contenteditable div truncates rightmost Japanese character
+        
+        Make sure we only break after a space (and not any other valid line-break) if
+        the style is -webkit-line-break: after-white-space (e.g. for a contentEditable div).
+        I also did a logic shuffle at Mitz's request to prevent doing an if on the same expression
+        twice in quick succession.
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): 
+
 2006-10-01  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej and Darin.

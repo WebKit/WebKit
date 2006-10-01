@@ -2262,28 +2262,29 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     if (o->style()->autoWrap() || breakWords) {
                         // If we break only after white-space, consider the current character
                         // as candidate width for this line.
-                        int charWidth = o->style()->breakOnlyAfterWhiteSpace() && !midWordBreak ?
-                                            t->width(pos, 1, f, w + tmpW) + (applyWordSpacing ? wordSpacing : 0) : 0;
-                        if (w + tmpW + charWidth > width) {
-                            if (o->style()->breakOnlyAfterWhiteSpace() && !midWordBreak) {
-                                // Check if line is too big even without the extra space
-                                // at the end of the line. If it is not, do nothing. 
-                                // If the line needs the extra whitespace to be too long, 
-                                // then move the line break to the space and skip all 
-                                // additional whitespace.
-                                if (w + tmpW <= width) {
-                                    lBreak.obj = o;
-                                    lBreak.pos = pos;
-                                    if (pos > 0) {
-                                        // Separate the trailing space into its own box, which we will
-                                        // resize to fit on the line in computeHorizontalPositionsForLine().
-                                        BidiIterator midpoint(0, o, pos);
-                                        addMidpoint(BidiIterator(0, o, pos-1)); // Stop
-                                        addMidpoint(BidiIterator(0, o, pos)); // Start
-                                    }
-                                    skipWhitespace(lBreak, bidi);
+                        bool lineWasTooWide = false;
+                        if (w + tmpW <= width && currentCharacterIsWS && o->style()->breakOnlyAfterWhiteSpace() && !midWordBreak) {
+                            int charWidth = t->width(pos, 1, f, w + tmpW) + (applyWordSpacing ? wordSpacing : 0);
+                            // Check if line is too big even without the extra space
+                            // at the end of the line. If it is not, do nothing. 
+                            // If the line needs the extra whitespace to be too long, 
+                            // then move the line break to the space and skip all 
+                            // additional whitespace.
+                            if (w + tmpW + charWidth > width) {
+                                lineWasTooWide = true;
+                                lBreak.obj = o;
+                                lBreak.pos = pos;
+                                if (pos > 0) {
+                                    // Separate the trailing space into its own box, which we will
+                                    // resize to fit on the line in computeHorizontalPositionsForLine().
+                                    BidiIterator midpoint(0, o, pos);
+                                    addMidpoint(BidiIterator(0, o, pos-1)); // Stop
+                                    addMidpoint(BidiIterator(0, o, pos)); // Start
                                 }
+                                skipWhitespace(lBreak, bidi);
                             }
+                        }
+                        if (lineWasTooWide || w + tmpW > width) {
                             if (lBreak.obj && lBreak.obj->style()->preserveNewline() && lBreak.obj->isText() && static_cast<RenderText*>(lBreak.obj)->text()[lBreak.pos] == '\n') {
                                 if (!stoppedIgnoringSpaces && pos > 0) {
                                     // We need to stop right before the newline and then start up again.

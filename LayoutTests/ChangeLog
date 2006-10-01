@@ -1,3 +1,15 @@
+2006-10-01  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Hyatt.
+        
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10842
+        REGRESSION (r15418): contenteditable div truncates rightmost Japanese character
+
+        * fast/text/line-breaks-after-white-space-expected.checksum: Added.
+        * fast/text/line-breaks-after-white-space-expected.png: Added.
+        * fast/text/line-breaks-after-white-space-expected.txt: Added.
+        * fast/text/line-breaks-after-white-space.html: Added.
+
 2006-10-01  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej and Darin.
