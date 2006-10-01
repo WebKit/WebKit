@@ -2,7 +2,7 @@
 
         Reviewed by Hyatt.
         
-        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=10842
+        Test for http://bugs.webkit.org/show_bug.cgi?id=10842
         REGRESSION (r15418): contenteditable div truncates rightmost Japanese character
 
         * fast/text/line-breaks-after-white-space-expected.checksum: Added.

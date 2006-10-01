@@ -1,8 +1,21 @@
+2006-10-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=10190
+        REGRESSION: Repro crash when navigating away from an image document that hasn't finished loading
+
+        No test case added (probably requires new DumpRenderTree functionality)
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged): Added early return if the document is
+        being destroyed.
+
 2006-10-01  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Hyatt.
 
-        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=10842
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=10842
         REGRESSION (r15418): contenteditable div truncates rightmost Japanese character
         
         Make sure we only break after a space (and not any other valid line-break) if

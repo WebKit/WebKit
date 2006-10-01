@@ -96,6 +96,9 @@ void RenderImage::setCachedImage(CachedImage* newImage)
 
 void RenderImage::imageChanged(CachedImage* o)
 {
+    if (documentBeingDestroyed())
+        return;
+
     if (o != m_cachedImage) {
         RenderReplaced::imageChanged(o);
         return;
