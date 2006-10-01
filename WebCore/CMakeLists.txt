@@ -1071,6 +1071,7 @@ set(WebCore_SRCS
     platform/GlyphMap.cpp
     platform/Font.cpp
     platform/FontData.cpp
+    rendering/RenderListBox.cpp
     rendering/RenderReplaced.cpp
     rendering/RenderPartObject.cpp
     rendering/RenderView.cpp

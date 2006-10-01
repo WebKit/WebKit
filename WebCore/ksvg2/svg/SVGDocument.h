@@ -41,7 +41,7 @@ namespace WebCore {
 
         SVGSVGElement* rootElement() const;
         
-        virtual PassRefPtr<Element> SVGDocument::createElement(const String& tagName, ExceptionCode&);
+        virtual PassRefPtr<Element> createElement(const String& tagName, ExceptionCode&);
         
         void dispatchZoomEvent(float prevScale, float newScale);
         void dispatchScrollEvent();

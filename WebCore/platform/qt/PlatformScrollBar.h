@@ -33,7 +33,7 @@ namespace WebCore {
 
 class PlatformScrollBar : public Widget, public ScrollBar {
 public:
-    PlatformScrollBar(ScrollBarClient*, ScrollBarOrientation);
+    PlatformScrollBar(ScrollBarClient*, ScrollBarOrientation, ScrollBarControlSize);
     virtual ~PlatformScrollBar();
 
     virtual bool isWidget() const { return true; }

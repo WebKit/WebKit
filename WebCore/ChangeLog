@@ -1,3 +1,21 @@
+2006-10-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric, tweaked and landed by ap.
+
+        Fix Qt/Linux build.
+
+        * CMakeLists.txt:
+        * platform/qt/PlatformScrollBar.h:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::ScrollBar::ScrollBar):
+        (WebCore::PlatformScrollBar::PlatformScrollBar):
+        (FrameView::passMousePressEventToSubframe):
+        (FrameView::passMouseMoveEventToSubframe):
+        (FrameView::passMouseReleaseEventToSubframe):
+        (FrameView::passWheelEventToSubframe):
+        (FrameView::passMousePressEventToScrollbar):
+        * ksvg2/svg/SVGDocument.h:
+
 2006-10-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

@@ -121,13 +121,13 @@ void Slider::setFont(WebCore::Font const&) { notImplemented(); }
 double Slider::value() const { notImplemented(); return 0; }
 Widget::FocusPolicy Slider::focusPolicy() const { notImplemented(); return NoFocus; }
 
-ScrollBar::ScrollBar(ScrollBarClient *, ScrollBarOrientation) { notImplemented(); }
+ScrollBar::ScrollBar(ScrollBarClient*, ScrollBarOrientation, ScrollBarControlSize) { notImplemented(); }
 void ScrollBar::setSteps(int, int) { notImplemented(); }
 bool ScrollBar::scroll(ScrollDirection, ScrollGranularity, float) { notImplemented(); return 0; }
 bool ScrollBar::setValue(int) { notImplemented(); return 0; }
 void ScrollBar::setProportion(int, int) { notImplemented(); }
 
-PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation) : ScrollBar(client, orientation) { notImplemented(); }
+PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation, ScrollBarControlSize controlSize) : ScrollBar(client, orientation, controlSize) { notImplemented(); }
 PlatformScrollBar::~PlatformScrollBar() { notImplemented(); }
 int PlatformScrollBar::width() const { notImplemented(); return 0; }
 int PlatformScrollBar::height() const { notImplemented(); return 0; }
@@ -175,6 +175,11 @@ bool WebCore::screenIsMonochrome(const Page*) { notImplemented(); return false; 
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { notImplemented(); }
 
 void FrameView::updateBorder() { notImplemented(); }
+bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
+bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
+bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
+bool FrameView::passWheelEventToSubframe(PlatformWheelEvent& e, Frame* subframe) { return false; }
+bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev) { return false; }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 
