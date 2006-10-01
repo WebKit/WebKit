@@ -1,3 +1,14 @@
+2006-09-30  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4641262> REGRESSION: Japanese text corrupts on wrapping point
+
+        * fast/text/international/wrap-CJK-001-expected.checksum: Added.
+        * fast/text/international/wrap-CJK-001-expected.png: Added.
+        * fast/text/international/wrap-CJK-001-expected.txt: Added.
+        * fast/text/international/wrap-CJK-001.html: Added.
+
 2006-10-01  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Hyatt.

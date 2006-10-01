@@ -1,3 +1,24 @@
+2006-09-30  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4641262> REGRESSION: Japanese text corrupts on wrapping point
+
+        Problem was that the decision to trim was based only on whether the character
+        is a soft hyphen, which caused pretty much any Japanese character to go.
+        Changed to decide based on whether the character is ignorable whitespace.
+        
+        Test:
+        * fast/text/international/wrap-CJK-001.html
+
+        * rendering/bidi.cpp:
+        (WebCore::isTrimmableChar):
+        New. Checks whether character is whitespace that can be ignored
+        according to the text node's style.
+        trimmed from the end of wrapped line.
+        (WebCore::checkMidpoints):
+        Call isTrimmable() rather than checking for char != SOFT_HYPHEN.
+
 2006-10-01  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Mitz Pettel.

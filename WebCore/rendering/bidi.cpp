@@ -104,6 +104,8 @@ static bool previousLineBrokeCleanly = true;
 static bool emptyRun = true;
 static int numSpaces;
 
+static const unsigned short nonBreakingSpace = 0xa0;
+
 static void embed(UCharDirection, BidiState&);
 static void appendRun(BidiState&);
 
@@ -501,6 +503,17 @@ static void chopMidpointsAt(RenderObject* obj, unsigned pos)
     }
 }
 
+static bool isTrimmable(RenderText* textObj, unsigned int index)
+{
+    ASSERT(index < textObj->length());
+    
+    // FIXME: Also ask ICU whether character is whitespace? Seems expensive. Is it needed for correctness?
+    UChar c = textObj->text()[index];
+    return c == ' ' || c == '\t' ||
+            (c == '\n' && !textObj->style()->preserveNewline()) ||
+            (c == nonBreakingSpace && textObj->style()->nbspMode() == SPACE);
+}
+
 static void checkMidpoints(BidiIterator& lBreak, BidiState& bidi)
 {
     // Check to see if our last midpoint is a start point beyond the line break.  If so,
@@ -518,10 +531,9 @@ static void checkMidpoints(BidiIterator& lBreak, BidiState& bidi)
             sNumMidpoints--;
             if (endpoint.obj->style()->collapseWhiteSpace()) {
                 if (endpoint.obj->isText()) {
-                    // Don't shave a character off the endpoint if it was from a soft hyphen.
                     RenderText* textObj = static_cast<RenderText*>(endpoint.obj);
                     if (endpoint.pos+1 < textObj->length()) {
-                        if (textObj->text()[endpoint.pos+1] == SOFT_HYPHEN)
+                        if (!isTrimmable(textObj, endpoint.pos+1))
                             return;
                     } else if (startpoint.obj->isText()) {
                         RenderText *startText = static_cast<RenderText*>(startpoint.obj);
@@ -1894,8 +1906,6 @@ bool RenderBlock::matchedEndLine(const BidiIterator& start, const BidiStatus& st
     }
     return false;
 }
-
-static const unsigned short nonBreakingSpace = 0xa0;
 
 static inline bool skipNonBreakingSpace(BidiIterator &it)
 {
