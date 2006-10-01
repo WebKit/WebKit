@@ -1,3 +1,20 @@
+2006-10-01  Dave Hyatt  <hyatt@apple.com>
+
+        Refactor the code that passes mouse presses to the Mac scrollbar and make it cross-platform.
+       
+        Reviewed by mitz
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::passWidgetMouseDownEventToWidget):
+        * bridge/mac/FrameViewMac.mm:
+        (WebCore::FrameView::passMousePressEventToScrollbar):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleMousePressEvent):
+        (WebCore::FrameView::setMousePressed):
+        * page/FrameView.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameView::passMousePressEventToScrollbar):
+
 2006-09-30  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.

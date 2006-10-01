@@ -613,7 +613,9 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         if (mev.targetNode()->isShadowNode() && mev.targetNode()->shadowParentNode()->hasTagName(inputTag))
             mev = prepareMouseEvent(true, true, false, mouseEvent);
 
-        m_frame->handleMousePressEvent(mev);
+        if (!mev.scrollbar() || !passMousePressEventToScrollbar(mev))
+            m_frame->handleMousePressEvent(mev);
+
         // Many AK widgets run their own event loops and consume events while the mouse is down.
         // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
         // the khtml state with this mouseUp, which khtml never saw.
@@ -820,6 +822,11 @@ void FrameView::invalidateClick()
 bool FrameView::mousePressed()
 {
     return d->mousePressed;
+}
+
+void FrameView::setMousePressed(bool pressed)
+{
+    d->mousePressed = pressed;
 }
 
 void FrameView::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)

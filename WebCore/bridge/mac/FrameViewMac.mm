@@ -71,5 +71,10 @@ bool FrameView::passWheelEventToSubframe(PlatformWheelEvent&, Frame* subframe)
 {
     return Mac(m_frame.get())->passWheelEventToWidget(subframe->view());
 }
-    
+
+bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev)
+{
+    return Mac(m_frame.get())->passMouseDownEventToWidget(mev.scrollbar());
+}
+ 
 }

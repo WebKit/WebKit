@@ -82,6 +82,7 @@ bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev,
 bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
 bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
 bool FrameView::passWheelEventToSubframe(PlatformWheelEvent& e, Frame* subframe) { return false; }
+bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev) { return false; }
 
 void Widget::enableFlushDrawing() { notImplemented(); }
 bool Widget::isEnabled() const { notImplemented(); return 0; }
