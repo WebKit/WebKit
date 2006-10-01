@@ -22,8 +22,6 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "DeprecatedStringList.h"
-
 #include "Attr.h"
 
 #include "KCanvasFilters.h"
@@ -80,9 +78,9 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute *attr)
     }
     else if (attr->name() == SVGNames::baseFrequencyAttr)
     {
-        DeprecatedStringList numbers = DeprecatedStringList::split(' ', value.deprecatedString());
+        Vector<String> numbers = value.split(' ');
         setBaseFrequencyXBaseValue(numbers[0].toDouble());
-        if(numbers.count() == 1)
+        if(numbers.size() == 1)
             setBaseFrequencyYBaseValue(numbers[0].toDouble());
         else
             setBaseFrequencyYBaseValue(numbers[1].toDouble());

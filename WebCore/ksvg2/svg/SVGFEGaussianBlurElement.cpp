@@ -22,8 +22,6 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "DeprecatedStringList.h"
-
 #include "Attr.h"
 
 #include "KCanvasFilters.h"
@@ -62,9 +60,9 @@ void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::stdDeviationAttr) {
-        DeprecatedStringList numbers = DeprecatedStringList::split(' ', value.deprecatedString());
+        Vector<String> numbers = value.split(' ');
         setStdDeviationXBaseValue(numbers[0].toDouble());
-        if(numbers.count() == 1)
+        if(numbers.size() == 1)
             setStdDeviationYBaseValue(numbers[0].toDouble());
         else
             setStdDeviationYBaseValue(numbers[1].toDouble());

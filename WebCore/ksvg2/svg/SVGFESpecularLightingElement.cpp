@@ -21,8 +21,6 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "DeprecatedStringList.h"
-
 #include "Attr.h"
 
 #include <kcanvas/KCanvasFilters.h>
@@ -75,9 +73,9 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == SVGNames::specularExponentAttr)
         setSpecularExponentBaseValue(value.toDouble());
     else if (attr->name() == SVGNames::kernelUnitLengthAttr) {
-        DeprecatedStringList numbers = DeprecatedStringList::split(' ', value.deprecatedString());
+        Vector<String> numbers = value.split(' ');
         setKernelUnitLengthXBaseValue(numbers[0].toDouble());
-        if (numbers.count() == 1)
+        if (numbers.size() == 1)
             setKernelUnitLengthYBaseValue(numbers[0].toDouble());
         else
             setKernelUnitLengthYBaseValue(numbers[1].toDouble());

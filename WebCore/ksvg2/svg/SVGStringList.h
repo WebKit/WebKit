@@ -37,7 +37,7 @@ namespace WebCore {
         virtual ~SVGStringList();
         
         // Internal
-        void reset(const DeprecatedString& str);
+        void reset(const String& str);
     };
 
 } // namespace WebCore

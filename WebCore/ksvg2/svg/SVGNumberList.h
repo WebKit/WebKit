@@ -37,7 +37,7 @@ namespace WebCore
         SVGNumberList();
         virtual ~SVGNumberList();
 
-        void parse(const DeprecatedString& value);
+        void parse(const String& value);
     };
 
 } // namespace WebCore

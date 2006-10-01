@@ -24,7 +24,6 @@
 #ifdef SVG_SUPPORT
 #include "SVGColor.h"
 
-#include "DeprecatedStringList.h"
 #include "ksvg.h"
 
 namespace WebCore {
@@ -227,24 +226,24 @@ void SVGColor::setRGBColor(const String& rgbColor, ExceptionCode& ec)
 
     String parse = m_rgbColor.stripWhiteSpace();
     if (parse.startsWith("rgb(")) {
-        DeprecatedStringList colors = DeprecatedStringList::split(',', parse.deprecatedString());
-        DeprecatedString r = colors[0].right((colors[0].length() - 4));
-        DeprecatedString g = colors[1];
-        DeprecatedString b = colors[2].left((colors[2].length() - 1));
+        Vector<String> colors = parse.split(',');
+        String r = colors[0].right((colors[0].length() - 4));
+        String g = colors[1];
+        String b = colors[2].left((colors[2].length() - 1));
     
         if (r.contains("%")) {
             r = r.left(r.length() - 1);
-            r = DeprecatedString::number(int(((255.0 * r.toDouble()) / 100.0)));
+            r = String::number(int(((255.0 * r.toDouble()) / 100.0)));
         }
 
         if (g.contains("%")) {
             g = g.left(g.length() - 1);
-            g = DeprecatedString::number(int(((255.0 * g.toDouble()) / 100.0)));
+            g = String::number(int(((255.0 * g.toDouble()) / 100.0)));
         }
     
         if (b.contains("%")) {
             b = b.left(b.length() - 1);
-            b = DeprecatedString::number(int(((255.0 * b.toDouble()) / 100.0)));
+            b = String::number(int(((255.0 * b.toDouble()) / 100.0)));
         }
 
         m_color = Color(r.toInt(), g.toInt(), b.toInt());

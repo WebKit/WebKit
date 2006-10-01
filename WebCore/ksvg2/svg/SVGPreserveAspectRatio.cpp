@@ -22,8 +22,6 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "DeprecatedStringList.h"
-
 #include "ksvg.h"
 #include "SVGMatrix.h"
 #include "SVGSVGElement.h"
@@ -69,7 +67,7 @@ void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
     setAlign(SVG_PRESERVEASPECTRATIO_NONE);
     setMeetOrSlice(SVG_MEETORSLICE_MEET);
     
-    DeprecatedStringList params = DeprecatedStringList::split(' ', string.deprecatedString().simplifyWhiteSpace());
+    Vector<String> params = string.simplifyWhiteSpace().split(' ');
 
     if (params[0] == "none")
         m_align = SVG_PRESERVEASPECTRATIO_NONE;
@@ -93,7 +91,7 @@ void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
         m_align = SVG_PRESERVEASPECTRATIO_XMAXYMAX;
 
     if (m_align != SVG_PRESERVEASPECTRATIO_NONE) {
-        if ((params.count() > 1) && (params[1] == "slice"))
+        if ((params.size() > 1) && (params[1] == "slice"))
             m_meetOrSlice = SVG_MEETORSLICE_SLICE;
         else
             m_meetOrSlice = SVG_MEETORSLICE_MEET;

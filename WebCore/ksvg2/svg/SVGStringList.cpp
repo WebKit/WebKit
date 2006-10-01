@@ -23,8 +23,6 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-
-#include "DeprecatedStringList.h"
 #include "SVGStringList.h"
 
 namespace WebCore {
@@ -38,16 +36,17 @@ SVGStringList::~SVGStringList()
 {
 }
 
-void SVGStringList::reset(const DeprecatedString& str)
+void SVGStringList::reset(const String& str)
 {
     ExceptionCode ec = 0;
 
-    DeprecatedStringList list = DeprecatedStringList::split(' ', str);
-    if (list.count() == 0) {
+    Vector<String> vector = str.split(' ');
+    if (vector.size() == 0) {
         appendItem(String(""), ec); // Create empty string...
     } else {
-        for(DeprecatedStringList::Iterator it = list.begin(); it != list.end(); ++it)
-            appendItem(String(*it), ec);
+        Vector<String>::const_iterator end = vector.end();
+        for(Vector<String>::const_iterator it = vector.begin(); it != end; ++it)
+            appendItem(*it, ec);
     }
 }
 

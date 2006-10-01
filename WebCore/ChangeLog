@@ -1,3 +1,32 @@
+2006-10-01  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Mitz Pettel.
+
+        Convert the SVG code to use Vector<String> instead of DeprecatedStringList.
+
+        * ksvg2/svg/SVGColor.cpp:
+        (WebCore::SVGColor::setRGBColor):
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (SVGFESpecularLightingElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::parseMappedAttribute):
+        * ksvg2/svg/SVGLengthList.cpp:
+        * ksvg2/svg/SVGNumberList.cpp:
+        (SVGNumberList::parse):
+        * ksvg2/svg/SVGNumberList.h:
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio):
+        * ksvg2/svg/SVGStringList.cpp:
+        (WebCore::SVGStringList::reset):
+        * ksvg2/svg/SVGStringList.h:
+        * ksvg2/svg/SVGTransformable.cpp:
+        (SVGTransformable::parseTransformAttribute):
+
 2006-10-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric, tweaked and landed by ap.
