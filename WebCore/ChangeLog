@@ -2,7 +2,7 @@
 
         Reviewed by Maciej and Darin.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=4372
+        http://bugs.webkit.org/show_bug.cgi?id=4372
         JavaScript document.write page form does not submit in Safari
 
         Test: fast/forms/document-write.html
