@@ -1,3 +1,9 @@
+2006-10-01  Alexey Proskuryakov  <ap@nypop.com>
+
+        Build fix.
+
+        * bridge/mac/FrameViewMac.mm: Add missing #imports.
+
 2006-10-01  Dave Hyatt  <hyatt@apple.com>
 
         Refactor the code that passes mouse presses to the Mac scrollbar and make it cross-platform.

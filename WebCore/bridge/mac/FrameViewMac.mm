@@ -29,8 +29,10 @@
 #import "Document.h"
 #import "BlockExceptions.h"
 #import "FrameMac.h"
-#import "WebCoreFrameBridge.h"
+#import "MouseEventWithHitTestResults.h"
+#import "PlatformScrollbar.h"
 #import "RenderObject.h"
+#import "WebCoreFrameBridge.h"
 
 namespace WebCore {
 
