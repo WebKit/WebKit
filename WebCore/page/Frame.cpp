@@ -1664,7 +1664,7 @@ void Frame::submitForm(const char *action, const String& url, const FormData& fo
       request.setContentType("Content-Type: " + contentType + "; boundary=" + boundary);
   }
 
-  if (d->m_doc->parsing() || d->m_runningScripts > 0) {
+  if (d->m_runningScripts > 0) {
     if (d->m_submitForm)
         return;
     d->m_submitForm = new FramePrivate::SubmitForm;

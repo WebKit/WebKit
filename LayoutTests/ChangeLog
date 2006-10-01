@@ -1,3 +1,13 @@
+2006-10-01  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej and Darin.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4372
+        JavaScript document.write page form does not submit in Safari
+
+        * fast/forms/document-write-expected.txt: Added.
+        * fast/forms/document-write.html: Added.
+
 2006-09-30  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

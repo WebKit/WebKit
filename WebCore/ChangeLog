@@ -1,5 +1,17 @@
 2006-10-01  Alexey Proskuryakov  <ap@nypop.com>
 
+        Reviewed by Maciej and Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4372
+        JavaScript document.write page form does not submit in Safari
+
+        Test: fast/forms/document-write.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::submitForm): Don't check for parsing().
+
+2006-10-01  Alexey Proskuryakov  <ap@nypop.com>
+
         Build fix.
 
         * bridge/mac/FrameViewMac.mm: Add missing #imports.
