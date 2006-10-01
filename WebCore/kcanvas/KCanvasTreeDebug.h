@@ -31,7 +31,6 @@ namespace WebCore {
 
     class AffineTransform;
     class Color;
-    class DeprecatedStringList;
     class FloatPoint;
     class FloatRect;
     class FloatSize;
@@ -59,8 +58,6 @@ TextStream& operator<<(TextStream&, const FloatPoint&);
 
 // helper operators specific to dumping the render tree. these are used in various classes to dump the render tree
 // these could be defined in separate namespace to avoid matching these generic signatures unintentionally.
-    
-TextStream& operator<<(TextStream&, const DeprecatedStringList&);
     
 template<typename Item>
 TextStream& operator<<(TextStream& ts, const DeprecatedValueList<Item*>& l)

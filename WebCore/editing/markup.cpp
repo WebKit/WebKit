@@ -32,6 +32,7 @@
 #include "CSSStyleRule.h"
 #include "cssstyleselector.h"
 #include "Comment.h"
+#include "DeprecatedStringList.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"

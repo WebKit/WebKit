@@ -37,7 +37,6 @@ namespace WebCore {
 
 class AtomicString;
 class ContainerNode;
-class DeprecatedStringList;
 class Document;
 class Element;
 class Event;

@@ -1,3 +1,28 @@
+2006-10-01  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+        Get rid of availableStyleSheets() and remove DeprecatedStringList.h include.
+        
+        * dom/Node.h:
+        Remove DeprecatedStringList class forward declaration.
+        
+        * editing/markup.cpp:
+        Include DeprecatedStringList.h here since it's not included by Document.h anymore.
+        
+        * kcanvas/KCanvasTreeDebug.cpp:
+        * kcanvas/KCanvasTreeDebug.h:
+        Remove unused functions.
+        
+        * loader/loader.cpp:
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * page/FrameView.h:
+        Fixup DeprecatedStringList.h includes.
+
 2006-09-30  David Harrison  <harrison@apple.com>
 
         Reviewed by John Sullivan.

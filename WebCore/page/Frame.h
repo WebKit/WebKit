@@ -30,7 +30,6 @@
 
 #include "BrowserExtension.h"
 #include "Color.h"
-#include "DeprecatedStringList.h"
 #include "EditAction.h"
 #include "FrameView.h"
 #include "Node.h"

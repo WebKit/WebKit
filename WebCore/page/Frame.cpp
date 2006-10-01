@@ -35,6 +35,7 @@
 #include "CSSPropertyNames.h"
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
+#include "DeprecatedStringList.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
 #include "Decoder.h"

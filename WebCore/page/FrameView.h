@@ -37,7 +37,6 @@ class Color;
 class CSSProperty;
 class CSSStyleSelector;
 class Clipboard;
-class DeprecatedStringList;
 class Document;
 class Element;
 class Event;

@@ -369,22 +369,6 @@ void writeRenderResources(TextStream& ts, Node *parent)
     } while ((node = node->traverseNextNode(parent)));
 }
 
-TextStream& operator<<(TextStream& ts, const DeprecatedStringList &l)
-{
-    ts << "[";
-    DeprecatedStringList::ConstIterator it = l.begin();
-    DeprecatedStringList::ConstIterator it_e = l.end();
-    while (it != it_e)
-    {
-        ts << *it;
-        ++it;
-        if (it != it_e) ts << ", ";
-    }
-    ts << "]";
-    
-    return ts;
-}
-
 }
 
 #endif // SVG_SUPPORT
