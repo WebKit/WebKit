@@ -1,3 +1,27 @@
+2006-10-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        - Updated results for <rdar://problem/4463841> Switch to use new list box implementation for <select multiple>
+
+        * fast/forms/HTMLOptionElement_label05-expected.checksum:
+        * fast/forms/HTMLOptionElement_label05-expected.png:
+        * fast/forms/HTMLOptionElement_label05-expected.txt:
+        * fast/forms/form-element-geometry-expected.checksum:
+        * fast/forms/form-element-geometry-expected.png:
+        * fast/forms/form-element-geometry-expected.txt:
+        * fast/forms/option-strip-whitespace-expected.checksum:
+        * fast/forms/option-strip-whitespace-expected.png:
+        * fast/forms/option-strip-whitespace-expected.txt:
+        * fast/forms/password-doubleclick-selection-expected.txt: Added.
+        * fast/forms/password-doubleclick-selection.html: Added.
+        * fast/forms/select-change-popup-to-listbox-expected.checksum:
+        * fast/forms/select-change-popup-to-listbox-expected.png:
+        * fast/forms/select-change-popup-to-listbox-expected.txt:
+        * fast/text/updateNewFont-expected.checksum:
+        * fast/text/updateNewFont-expected.png:
+        * fast/text/updateNewFont-expected.txt:
+
 2006-10-01  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Alexey.

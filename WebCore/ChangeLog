@@ -1,3 +1,14 @@
+2006-10-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        - Fix for <rdar://problem/4463841> Switch to use new list box implementation for <select multiple>
+
+        There are a few outstanding issues, so I've left the old code in for now.  So you can use the old-style listboxes
+        by using "-webkit-appearance:none".
+
+        * css/html4.css:
+
 2006-10-02  David Harrison  <harrison@apple.com>
 
         Reverted the code part of r16696, my patch for <rdar://problem/4641262>, because the problem was
