@@ -38,7 +38,10 @@
 */
 
 #include "Platform.h"
+
+#if !PLATFORM(WIN)
 #include <inttypes.h>
+#endif
 
 #ifdef NDEBUG
 #define ASSERTIONS_DISABLED_DEFAULT 1

@@ -1,3 +1,11 @@
+2006-10-02  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Fix win32 build, which has no inttypes.h
+
+        * wtf/Assertions.h:
+
 2006-10-02  Nikolas Zimmermann <zimmermann@kde.org>
 
         Reviewed by eseidel & mjs.  Landed by eseidel.
