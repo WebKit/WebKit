@@ -1,3 +1,13 @@
+2006-10-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adele
+
+        If the Icon DB schema changes underneath you, the latest ToT can crash and burn when writing
+        icon data out because we don't correctly check SQL error conditions.
+
+        * loader/icon/IconDataCache.cpp:
+        (WebCore::IconDataCache::writeToDatabase):
+
 2006-10-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Hyatt.

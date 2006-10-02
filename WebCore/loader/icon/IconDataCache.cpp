@@ -102,16 +102,28 @@ void IconDataCache::writeToDatabase(SQLDatabase& db)
     
     // First we'll try an update in case we're already in the DB
     SQLStatement updateAttempt(db, "UPDATE Icon SET stamp = ?, data = ? WHERE url = ?;");
-    updateAttempt.prepare();
+    if (updateAttempt.prepare() != SQLResultOk) {
+        LOG_ERROR("Failed to prepare SQL statement to update icon data for url %s", m_iconURL.ascii().data());
+        return;
+    }
     
     // Bind the url and timestamp
-    updateAttempt.bindInt64(1, m_stamp);
-    updateAttempt.bindText16(3, m_iconURL);
+    if (updateAttempt.bindInt64(1, m_stamp) != SQLResultOk) {
+        LOG_ERROR("Failed to bind iconID to SQL statement to update icon data for url %s", m_iconURL.ascii().data());
+        return;    
+    }
+    if (updateAttempt.bindText16(3, m_iconURL) != SQLResultOk) {
+        LOG_ERROR("Failed to bind url to SQL statement to update icon data for url %s", m_iconURL.ascii().data());
+        return;    
+    }
     
     // If we *have* image data, bind it to this statement - Otherwise the DB will get "null" for the blob data, 
     // signifying that this icon doesn't have any data    
     if (m_image && !m_image->dataBuffer().isEmpty())
-        updateAttempt.bindBlob(2, m_image->dataBuffer().data(), m_image->dataBuffer().size());
+        if (updateAttempt.bindBlob(2, m_image->dataBuffer().data(), m_image->dataBuffer().size()) != SQLResultOk) {
+            LOG_ERROR("Failed to bind icon data to SQL statement to update icon data for url %s", m_iconURL.ascii().data());
+            return;
+        }
     
     if (updateAttempt.step() != SQLResultDone) {
         LOG_ERROR("Failed to update icon data for IconURL %s", m_iconURL.ascii().data());
