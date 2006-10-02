@@ -460,12 +460,8 @@ static void dump(void)
             printf("ERROR: nil result from %s", dumpAsText ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");
         else {
             fputs([result UTF8String], stdout);
-            // FIXME: Buildbots seem to scroll to (-2,0) on a number of tests, but we can't reproduce locally.
-            // Once we fix that issue, we can turn this back on.
-            /*
             if (!dumpAsText)
                 dumpFrameScrollPosition(frame);
-             */
         }
 
         if (dumpBackForwardList) {
