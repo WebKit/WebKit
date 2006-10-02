@@ -130,6 +130,8 @@ public:
 
     void clear();
 
+    bool didFirstLayout() const;
+
 public:
     void clearPart();
 

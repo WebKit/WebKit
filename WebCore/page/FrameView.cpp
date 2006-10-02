@@ -263,6 +263,11 @@ void FrameView::clear()
     suppressScrollBars(true);
 }
 
+bool FrameView::didFirstLayout() const
+{
+    return !d->firstLayout;
+}
+
 void FrameView::initScrollBars()
 {
     if (!d->needToInitScrollBars)

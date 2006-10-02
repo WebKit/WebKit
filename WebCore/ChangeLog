@@ -1,3 +1,13 @@
+2006-10-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Hyatt.
+
+        Added method to find out whether a layout has occurred.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didFirstLayout):
+        * page/FrameView.h:
+
 2006-10-02  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
