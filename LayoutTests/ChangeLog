@@ -1,3 +1,12 @@
+2006-10-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Alexey.
+
+        - reverted fix for http://bugs.webkit.org/show_bug.cgi?id=10893 since it led to layout test crashes
+
+        * fast/dom/css-insert-import-rule-expected.txt: Removed.
+        * fast/dom/css-insert-import-rule.html: Removed.
+
 2006-09-30  Geoffrey Garen  <ggaren@apple.com>
 
         Added test for the viewource attribute, which applies to <frame> and

@@ -1,3 +1,11 @@
+2006-10-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Alexey.
+
+        - reverted fix for http://bugs.webkit.org/show_bug.cgi?id=10893 since it led to layout test crashes
+
+        * css/CSSGrammar.y:
+
 2006-10-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
