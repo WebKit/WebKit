@@ -43,6 +43,13 @@ find_package (KDE4 REQUIRED)
 include (KDE4Defaults)
 include (MacroLibrary)
 
+# Special option for BuildBot, to disable output colorization (must be done after KDE4Defaults is loaded)
+OPTION (WEBKIT_DO_NOT_USE_COLORFUL_OUTPUT "Do not colorize compilation output." OFF)
+
+IF (WEBKIT_DO_NOT_USE_COLORFUL_OUTPUT)
+    set(CMAKE_COLOR_MAKEFILE OFF)
+ENDIF (WEBKIT_DO_NOT_USE_COLORFUL_OUTPUT)
+
 find_package (LibXml2 REQUIRED)
 find_package (LibXslt REQUIRED)
 find_package (JPEG REQUIRED)

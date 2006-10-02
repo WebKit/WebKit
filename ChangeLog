@@ -1,0 +1,6 @@
+2006-10-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.
+
+        * CMakeLists.txt: add option to disable colored output when building on the buildbot
+
