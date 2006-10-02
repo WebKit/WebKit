@@ -35,6 +35,8 @@
  * and produce invaliud results.
  */
 
+#include "CSSPrimitiveValue.h"
+#include "CSSValueList.h"
 #include "Color.h"
 #include "CSSCursorImageValue.h"
 #include "DataRef.h"
@@ -42,6 +44,7 @@
 #include "GraphicsTypes.h"
 #include "IntRect.h"
 #include "Length.h"
+#include "Pair.h"
 #include "Shared.h"
 #include "TextDirection.h"
 #include <wtf/Vector.h>
@@ -60,11 +63,13 @@ namespace WebCore {
 
 using std::max;
 
-class CSSStyleSelector;
 class CachedImage;
 class CachedResource;
+class CSSStyleSelector;
+class CSSValueList;
 struct CursorData;
 class CursorList;
+class Pair;
 class RenderArena;
 class ShadowValue;
 class StringImpl;
@@ -410,8 +415,8 @@ public:
         return ( clip == o.clip &&
                  hasClip == o.hasClip &&
                  colspan == o.colspan &&
-                 counter_increment == o.counter_increment &&
-                 counter_reset == o.counter_reset &&
+                 counterIncrement == o.counterIncrement &&
+                 counterReset == o.counterReset &&
                  textDecoration == o.textDecoration);
     }
     bool operator!=( const StyleVisualData &o ) const {
@@ -424,8 +429,8 @@ public:
     
     short colspan; // for html, not a css2 attribute
 
-    short counter_increment; //ok, so these are not visual mode spesific
-    short counter_reset;     //can't go to inherited, since these are not inherited
+    short counterIncrement; // ok, so these are not visual mode specific
+    short counterReset;     // can't go to inherited, since these are not inherited
 
 };
 
@@ -898,6 +903,23 @@ enum ContentType {
     CONTENT_NONE, CONTENT_OBJECT, CONTENT_TEXT, CONTENT_COUNTER
 };
 
+class CounterData {
+    
+public:
+    CounterData() {}
+    CounterData(const String& i, EListStyleType l, const String& s)
+        : m_identifier(i), m_listStyle(l), m_separator(s) {}
+    
+    String identifier() { return m_identifier; }
+    EListStyleType listStyle() { return m_listStyle; }
+    String separator() { return m_separator; }
+
+private:
+    String m_identifier;
+    EListStyleType m_listStyle;
+    String m_separator;
+};
+
 struct ContentData {
     ContentData() :_contentType(CONTENT_NONE), _nextContent(0) {}
     ~ContentData();
@@ -907,13 +929,14 @@ struct ContentData {
 
     StringImpl* contentText() { if (contentType() == CONTENT_TEXT) return _content.text; return 0; }
     CachedResource* contentObject() { if (contentType() == CONTENT_OBJECT) return _content.object; return 0; }
+    CounterData* contentCounter() { if (contentType() == CONTENT_COUNTER) return _content.counter; return 0; }
     
     ContentType _contentType;
 
     union {
         CachedResource* object;
         StringImpl* text;
-        // counters...
+        CounterData* counter;
     } _content ;
 
     ContentData* _nextContent;
@@ -1071,7 +1094,9 @@ protected:
     
     // added this here, so we can get rid of the vptr in this class.
     // makes up for the same size.
-    ContentData *content;
+    ContentData* content;
+    RefPtr<CSSValueList> counterResetList;
+    RefPtr<CSSValueList> counterIncrementList;
 
     unsigned m_pseudoState : 3; // PseudoState
     bool m_affectedByAttributeSelectors : 1;
@@ -1321,8 +1346,8 @@ public:
     EEmptyCell emptyCells() const { return static_cast<EEmptyCell>(inherited_flags._empty_cells); }
     ECaptionSide captionSide() const { return static_cast<ECaptionSide>(inherited_flags._caption_side); }
 
-    short counterIncrement() const { return visual->counter_increment; }
-    short counterReset() const { return visual->counter_reset; }
+    short counterIncrement() const { return visual->counterIncrement; }
+    short counterReset() const { return visual->counterReset; }
 
     EListStyleType listStyleType() const { return static_cast<EListStyleType>(inherited_flags._list_style_type); }
     CachedImage *listStyleImage() const { return inherited->style_image; }
@@ -1527,8 +1552,8 @@ public:
     void setCaptionSide(ECaptionSide v) { inherited_flags._caption_side = v; }
 
 
-    void setCounterIncrement(short v) {  SET_VAR(visual,counter_increment,v) }
-    void setCounterReset(short v) {  SET_VAR(visual,counter_reset,v) }
+    void setCounterIncrement(short v) {  SET_VAR(visual,counterIncrement,v) }
+    void setCounterReset(short v) {  SET_VAR(visual,counterReset,v) }
 
     void setListStyleType(EListStyleType v) { inherited_flags._list_style_type = v; }
     void setListStyleImage(CachedImage *v) {  SET_VAR(inherited,style_image,v)}
@@ -1626,6 +1651,17 @@ public:
     bool contentDataEquivalent(const RenderStyle *otherStyle) const;
     void setContent(StringImpl* s, bool add = false);
     void setContent(CachedResource* o, bool add = false);
+    void setContent(CounterData*, bool add = false);
+
+    bool counterDataEquivalent(RenderStyle*);
+    void setCounterResetList(PassRefPtr<CSSValueList> l) { counterResetList = l; }
+    void setCounterIncrementList(PassRefPtr<CSSValueList> l) { counterIncrementList = l; }
+    bool hasCounterReset(const String&) const;
+    bool hasCounterIncrement(const String&) const;
+    int counterReset(const String&) const;
+    int counterIncrement(const String&) const;
+    CSSValueList* counterResetValueList() { return counterResetList.get(); }
+    CSSValueList* counterIncrementValueList() { return counterIncrementList.get(); }
 
     bool inheritedNotEqual( RenderStyle *other ) const;
 

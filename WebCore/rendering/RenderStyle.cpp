@@ -90,8 +90,8 @@ StyleVisualData::StyleVisualData()
     : hasClip(false)
     , textDecoration(RenderStyle::initialTextDecoration())
     , colspan(1)
-    , counter_increment(0)
-    , counter_reset(0)
+    , counterIncrement(0)
+    , counterReset(0)
 {
 }
 
@@ -105,8 +105,8 @@ StyleVisualData::StyleVisualData(const StyleVisualData& o)
     , hasClip(o.hasClip)
     , textDecoration(o.textDecoration)
     , colspan(o.colspan)
-    , counter_increment(o.counter_increment)
-    , counter_reset(o.counter_reset)
+    , counterIncrement(o.counterIncrement)
+    , counterReset(o.counterReset)
 {
 }
 
@@ -577,7 +577,6 @@ void RenderStyle::arenaDelete(RenderArena *arena)
         prev->deref(arena);
     }
     delete content;
-    
     delete this;
     
     // Recover the size left there for us by operator delete and free the memory.
@@ -649,6 +648,8 @@ RenderStyle::RenderStyle(const RenderStyle& o)
     , inherited(o.inherited)
     , pseudoStyle(0)
     , content(o.content)
+    , counterResetList(o.counterResetList)
+    , counterIncrementList(o.counterIncrementList)
     , m_pseudoState(o.m_pseudoState)
     , m_affectedByAttributeSelectors(false)
     , m_unique(false)
@@ -838,8 +839,8 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         !(noninherited_flags._floating == other->noninherited_flags._floating) ||
         !(noninherited_flags._originalDisplay == other->noninherited_flags._originalDisplay) ||
          visual->colspan != other->visual->colspan ||
-         visual->counter_increment != other->visual->counter_increment ||
-         visual->counter_reset != other->visual->counter_reset ||
+         visual->counterIncrement != other->visual->counterIncrement ||
+         visual->counterReset != other->visual->counterReset ||
          css3NonInheritedData->textOverflow != other->css3NonInheritedData->textOverflow ||
          (css3InheritedData->textSecurity != other->css3InheritedData->textSecurity))
         return Layout;
@@ -924,6 +925,10 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 
     // If regions change trigger a relayout to re-calc regions.
     if (!(css3NonInheritedData->m_dashboardRegions == other->css3NonInheritedData->m_dashboardRegions))
+        return Layout;
+    
+    // If the counter lists change, trigger a relayout to re-calc CounterNodes.
+    if (counterResetList != other->counterResetList || counterIncrementList != other->counterIncrementList)
         return Layout;
 
     // Make sure these left/top/right/bottom checks stay below all layout checks and above
@@ -1109,6 +1114,32 @@ void RenderStyle::setContent(StringImpl* s, bool add)
     newContentData->_contentType = CONTENT_TEXT;
 }
 
+void RenderStyle::setContent(CounterData* c, bool add)
+{
+    if (!c)
+        return;
+
+    ContentData* lastContent = content;
+    while (lastContent && lastContent->_nextContent)
+        lastContent = lastContent->_nextContent;
+
+    bool reuseContent = !add;
+    ContentData* newContentData = 0;
+    if (reuseContent && content) {
+        content->clearContent();
+        newContentData = content;
+    } else
+        newContentData = new ContentData;
+
+    if (lastContent && !reuseContent)
+        lastContent->_nextContent = newContentData;
+    else
+        content = newContentData;
+
+    newContentData->_content.counter = c;
+    newContentData->_contentType = CONTENT_COUNTER;
+}
+
 ContentData::~ContentData()
 {
     clearContent();
@@ -1127,6 +1158,11 @@ void ContentData::clearContent()
         case CONTENT_TEXT:
             _content.text->deref();
             _content.text = 0;
+            break;
+        case CONTENT_COUNTER:
+            delete _content.counter;
+            _content.counter = 0;
+            break;
         default:
             ;
     }
@@ -1212,6 +1248,82 @@ bool ShadowData::operator==(const ShadowData& o) const
         return false;
     
     return x == o.x && y == o.y && blur == o.blur && color == o.color;
+}
+
+bool RenderStyle::counterDataEquivalent(RenderStyle* otherStyle)
+{
+    // FIXME: Should we also compare the CounterData? 
+    return counterResetList == otherStyle->counterResetList &&
+           counterIncrementList == otherStyle->counterIncrementList;
+}
+
+static bool hasCounter(const String& c, CSSValueList* l)
+{
+    int len = l->length();
+    for (int i = 0; i < len; i++) {
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(l->item(i));
+        Pair* pair = primitiveValue->getPairValue();
+        ASSERT(pair);
+        CSSPrimitiveValue* counterName = static_cast<CSSPrimitiveValue*>(pair->first());
+        ASSERT(counterName);
+        if (counterName->getStringValue() == c)
+            return true;
+    }
+    return false;
+}
+
+bool RenderStyle::hasCounterReset(const String& counterName) const
+{
+    if (counterResetList)
+        return hasCounter(counterName, counterResetList.get());
+    return false;
+}
+
+bool RenderStyle::hasCounterIncrement(const String& counterName) const
+{
+    if (counterIncrementList)
+        return hasCounter(counterName, counterIncrementList.get());
+    return false;
+}
+
+static int readCounter(const String& c, CSSValueList* l, bool isReset)
+{
+    int len = l->length();
+    int total = 0;
+    
+    for (int i = 0; i < len; i++) {
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(l->item(i));
+        Pair* pair = primitiveValue->getPairValue();
+        ASSERT(pair);
+        CSSPrimitiveValue* counterName = static_cast<CSSPrimitiveValue*>(pair->first());
+        CSSPrimitiveValue* counterValue = static_cast<CSSPrimitiveValue*>(pair->second());
+        ASSERT(counterName);
+        ASSERT(counterValue);
+
+        if (counterName->getStringValue() == c) {
+            total += (int)counterValue->getFloatValue();
+            if (isReset)
+                return total;
+        }
+    }
+    
+    return total;
+}
+
+int RenderStyle::counterReset(const String& counterName) const
+{
+    if (counterResetList)
+        return readCounter(counterName, counterResetList.get(), true);
+    else
+        return 0;
+}
+
+int RenderStyle::counterIncrement(const String& counterName) const
+{
+    if (counterIncrementList)
+        return readCounter(counterName, counterIncrementList.get(), false);
+    else
+        return 0;
 }
 
 const Vector<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()

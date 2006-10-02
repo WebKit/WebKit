@@ -524,7 +524,10 @@ String CSSPrimitiveValue::cssText() const
             // ###
             break;
         case CSS_COUNTER:
-            // ###
+            text = "counter(";
+            text += String::number(m_value.num);
+            text += ")";
+            // FIXME: Add list-style and separator
             break;
         case CSS_RECT: {
             RectImpl* rectVal = getRectValue();

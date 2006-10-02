@@ -4,6 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
+ *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -29,6 +30,8 @@
 #include "AXObjectCache.h" 
 #include "AffineTransform.h"
 #include "CachedImage.h"
+#include "CounterNode.h"
+#include "CounterResetNode.h"
 #include "Decoder.h"
 #include "Document.h"
 #include "Element.h"
@@ -37,6 +40,7 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
+#include "HTMLOListElement.h"
 #include "Position.h"
 #include "RenderArena.h"
 #include "RenderFlexibleBox.h"
@@ -64,6 +68,15 @@ using namespace HTMLNames;
 #ifndef NDEBUG
 static void *baseOfRenderObjectBeingDeleted;
 #endif
+
+typedef HashMap<String, CounterNode*> CounterNodeMap;
+typedef HashMap<const RenderObject*, CounterNodeMap*> RenderObjectsToCounterNodeMaps;
+
+static RenderObjectsToCounterNodeMaps* getRenderObjectsToCounterNodeMaps()
+{
+    static RenderObjectsToCounterNodeMaps objectsMap;
+    return &objectsMap;
+}
 
 void* RenderObject::operator new(size_t sz, RenderArena* renderArena) throw()
 {
@@ -177,7 +190,8 @@ m_inline( true ),
 
 m_replaced( false ),
 m_isDragging( false ),
-m_hasOverflowClip(false)
+m_hasOverflowClip(false),
+m_hasCounterNodeMap(false)
 {
 #ifndef NDEBUG
     ++RenderObjectCounter::count;
@@ -2406,6 +2420,21 @@ bool RenderObject::documentBeingDestroyed() const
 
 void RenderObject::destroy()
 {
+    if (m_hasCounterNodeMap) {
+        RenderObjectsToCounterNodeMaps* objectsMap = getRenderObjectsToCounterNodeMaps();
+        if (CounterNodeMap* counterNodesMap = objectsMap->get(this)) {
+            CounterNodeMap::const_iterator end = counterNodesMap->end();
+            for (CounterNodeMap::const_iterator it = counterNodesMap->begin(); it != end; ++it) {
+                CounterNode* counterNode = it->second;
+                counterNode->remove();
+                delete counterNode;
+                counterNode = 0;
+            }
+            objectsMap->remove(this);
+            delete counterNodesMap;
+        }
+    }
+    
     document()->axObjectCache()->remove(this);
 
     // By default no ref-counting. RenderWidget::destroy() doesn't call
@@ -2846,6 +2875,132 @@ bool RenderObject::usesLineWidth() const
     // (b) <hr>s use lineWidth
     // (c) all other objects use lineWidth in quirks mode and contentWidth in strict mode.
     return (avoidsFloats() && (style()->width().isAuto() || isHR() || (style()->htmlHacks() && !isTable())));
+}
+
+CounterNode* RenderObject::findCounter(const String& counterName, bool willNeedLayout,
+    bool usesSeparator, bool createIfNotFound)
+{
+    if (!style())
+        return 0;
+
+    RenderObjectsToCounterNodeMaps* objectsMap = getRenderObjectsToCounterNodeMaps();
+    CounterNode* newNode = 0;
+    if (CounterNodeMap* counterNodesMap = objectsMap->get(this))
+        if (counterNodesMap)
+            newNode = counterNodesMap->get(counterName);
+        
+    if (newNode)
+        return newNode;
+
+    int val = 0;
+    if (style()->hasCounterReset(counterName) || isRoot()) {
+        newNode = new CounterResetNode(this);
+        val = style()->counterReset(counterName);
+        if (style()->hasCounterIncrement(counterName))
+            val += style()->counterIncrement(counterName);
+        newNode->setValue(val);
+    } else if (style()->hasCounterIncrement(counterName)) {
+        newNode = new CounterNode(this);
+        newNode->setValue(style()->counterIncrement(counterName));
+    } else if (counterName == "list-item") {
+        if (isListItem()) {
+            if (element()) {
+                String v = static_cast<Element*>(element())->getAttribute("value");
+                if (!v.isEmpty()) {
+                    newNode = new CounterResetNode(this);
+                    val = v.toInt();
+                }
+            } 
+            
+            if (!newNode) {
+                newNode = new CounterNode(this);
+                val = 1;
+            }
+
+            newNode->setValue(val);
+        } else if (element() && element()->hasTagName(olTag)) {
+            newNode = new CounterResetNode(this);
+            newNode->setValue(static_cast<HTMLOListElement*>(element())->start());
+        } else if (element() &&
+            (element()->hasTagName(ulTag) ||
+             element()->hasTagName(menuTag) ||
+             element()->hasTagName(dirTag))) {
+            newNode = new CounterResetNode(this);
+            newNode->setValue(0);
+        }
+    } 
+    
+    if (!newNode && !createIfNotFound)
+        return 0;
+    else if (!newNode) {
+        newNode = new CounterNode(this);
+        newNode->setValue(0);
+    }
+
+    if (willNeedLayout)
+        newNode->setWillNeedLayout();
+    if (usesSeparator)
+        newNode->setUsesSeparator();
+
+    CounterNodeMap* nodeMap;
+    if (m_hasCounterNodeMap)
+        nodeMap = objectsMap->get(this);
+    else {
+        nodeMap = new CounterNodeMap;
+        objectsMap->set(this, nodeMap);
+        m_hasCounterNodeMap = true;
+    }
+    
+    nodeMap->set(counterName, newNode);
+
+    if (!isRoot()) {
+        RenderObject* n = !isListItem() && previousSibling()
+            ? previousSibling()->previousSibling() : previousSibling();
+
+        CounterNode* current = 0;
+        for (; n; n = n->previousSibling()) {
+            current = n->findCounter(counterName, false, false, false);
+            if (current)
+                break;
+        }
+        
+        CounterNode* last = current;
+        CounterNode* sibling = current;
+        if (last && !newNode->isReset()) {
+            // Found render-sibling, now search for later counter-siblings among its render-children
+            n = n->lastChild();
+            while (n) {
+                current = n->findCounter(counterName, false, false, false);
+                if (current && (last->parent() == current->parent() || sibling == current->parent())) {
+                    last = current;
+                    // If the current counter is not the last, search deeper
+                    if (current->nextSibling()) {
+                        n = n->lastChild();
+                        continue;
+                    } else
+                        break;
+                }
+                n = n->previousSibling();
+            }
+            
+            if (sibling->isReset()) {
+                if (last != sibling)
+                    sibling->insertAfter(newNode, last);
+                else
+                    sibling->insertAfter(newNode, 0);
+            } else
+                last->parent()->insertAfter(newNode, last);
+        } else {
+            // Nothing found among siblings, let our parent search
+            last = parent()->findCounter(counterName, false);
+            if (last->isReset())
+                last->insertAfter(newNode, 0);
+            else
+                last->parent()->insertAfter(newNode, last);
+        }
+    }
+
+    return newNode;
 }
 
 UChar RenderObject::backslashAsCurrencySymbol() const

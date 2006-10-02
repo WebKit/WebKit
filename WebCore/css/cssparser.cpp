@@ -43,6 +43,7 @@
 #include "CSSQuirkPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
+#include "Counter.h"
 #include "DashboardRegion.h"
 #include "Document.h"
 #include "FontFamilyValue.h"
@@ -335,7 +336,7 @@ bool CSSParser::parseMediaQuery(MediaList* queries, const String& string)
 }
 
 
-void CSSParser::addProperty(int propId, CSSValue *value, bool important)
+void CSSParser::addProperty(int propId, PassRefPtr<CSSValue> value, bool important)
 {
     CSSProperty *prop = new CSSProperty(propId, value, important, m_currentShorthand, m_implicitShorthand);
     if (numParsedProperties >= maxParsedProperties) {
@@ -912,6 +913,16 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = true;
         else
             valid_primitive = (!id && validUnit(value, FNumber|FLength|FPercent, strict));
+        break;
+    case CSS_PROP_COUNTER_INCREMENT:    // [ <identifier> <integer>? ]+ | none | inherit
+        if (id != CSS_VAL_NONE)
+            return parseCounter(propId, 1, important);
+        valid_primitive = true;
+        break;
+     case CSS_PROP_COUNTER_RESET:        // [ <identifier> <integer>? ]+ | none | inherit
+        if (id != CSS_VAL_NONE)
+            return parseCounter(propId, 0, important);
+        valid_primitive = true;
         break;
     case CSS_PROP_FONT_FAMILY:
         // [[ <family-name> | <generic-family> ],]* [<family-name> | <generic-family>] | inherit
@@ -1566,28 +1577,38 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
 // [ <string> | attr(X) | open-quote | close-quote | no-open-quote | no-close-quote ]+ | inherit
 bool CSSParser::parseContent(int propId, bool important)
 {
-    CSSValueList* values = new CSSValueList;
+    RefPtr<CSSValueList> values = new CSSValueList;
 
     while (Value* val = valueList->current()) {
-        CSSValue* parsedValue = 0;
+        RefPtr<CSSValue> parsedValue;
         if (val->unit == CSSPrimitiveValue::CSS_URI) {
             // url
             String value = parseURL(domString(val->string));
             parsedValue = new CSSImageValue(
                 String(KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).url()), styleElement);
         } else if (val->unit == Value::Function) {
-            // attr(X)
+            // attr(X) | counter(X [,Y]) | counters(X, Y, [,Z])
             ValueList *args = val->function->args;
             String fname = domString(val->function->name).lower();
-            if (fname != "attr(" || !args)
+            if (!args)
                 return false;
-            if (args->size() != 1)
+            if (fname == "attr(") {
+                if (args->size() != 1)
+                    return false;
+                Value* a = args->current();
+                String attrName = domString(a->string);
+                if (document()->isHTMLDocument())
+                    attrName = attrName.lower();
+                parsedValue = new CSSPrimitiveValue(attrName, CSSPrimitiveValue::CSS_ATTR);
+            } else if (fname == "counter(") {
+                parsedValue = parseCounterContent(args, false);
+                if (!parsedValue) return false;
+            } else if (fname == "counters(") {
+                parsedValue = parseCounterContent(args, true);
+                if (!parsedValue)
+                    return false;
+            } else
                 return false;
-            Value *a = args->current();
-            String attrName = domString(a->string);
-            if (document()->isHTMLDocument())
-                attrName = attrName.lower();
-            parsedValue = new CSSPrimitiveValue(attrName, CSSPrimitiveValue::CSS_ATTR);
         } else if (val->unit == CSSPrimitiveValue::CSS_IDENT) {
             // open-quote
             // close-quote
@@ -1599,17 +1620,16 @@ bool CSSParser::parseContent(int propId, bool important)
         }
         if (!parsedValue)
             break;
-        values->append(parsedValue);
+        values->append(parsedValue.release());
         valueList->next();
     }
 
     if (values->length()) {
-        addProperty(propId, values, important);
+        addProperty(propId, values.release(), important);
         valueList->next();
         return true;
     }
 
-    delete values;
     return false;
 }
 
@@ -2020,6 +2040,59 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
     return valid;
 }
 #endif
+
+PassRefPtr<CSSValue> CSSParser::parseCounterContent(ValueList* args, bool counters)
+{
+    unsigned numArgs = args->size();
+    if (counters && numArgs != 3 && numArgs != 5)
+        return 0;
+    if (!counters && numArgs != 1 && numArgs != 3)
+        return 0;
+    
+    Value* i = args->current();
+    RefPtr<CSSPrimitiveValue> identifier = new CSSPrimitiveValue(domString(i->string),
+        CSSPrimitiveValue::CSS_STRING);
+
+    RefPtr<CSSPrimitiveValue> separator;
+    if (!counters)
+        separator = new CSSPrimitiveValue(String(), CSSPrimitiveValue::CSS_STRING);
+    else {
+        i = args->next();
+        if (i->unit != Value::Operator || i->iValue != ',')
+            return 0;
+        
+        i = args->next();
+        if (i->unit != CSSPrimitiveValue::CSS_STRING)
+            return 0;
+        
+        separator = new CSSPrimitiveValue(domString(i->string), (CSSPrimitiveValue::UnitTypes) i->unit);
+    }
+
+    RefPtr<CSSPrimitiveValue> listStyle;
+    i = args->next();
+    if (!i) // Make the list style default decimal
+        listStyle = new CSSPrimitiveValue(CSS_VAL_DECIMAL - CSS_VAL_DISC, CSSPrimitiveValue::CSS_NUMBER);
+    else {
+        if (i->unit != Value::Operator || i->iValue != ',')
+            return 0;
+        
+        i = args->next();
+        if (i->unit != CSSPrimitiveValue::CSS_IDENT)
+            return 0;
+        
+        short ls = 0;
+        if (i->id == CSS_VAL_NONE)
+            ls = CSS_VAL_KATAKANA_IROHA - CSS_VAL_DISC + 1;
+        else if (i->id >= CSS_VAL_DISC && i->id <= CSS_VAL_KATAKANA_IROHA)
+            ls = i->id - CSS_VAL_DISC;
+        else
+            return 0;
+
+        listStyle = new CSSPrimitiveValue(ls, (CSSPrimitiveValue::UnitTypes) i->unit);
+    }
+
+    return new CSSPrimitiveValue(new Counter(identifier.release(), listStyle.release(), separator.release()));
+}
 
 bool CSSParser::parseShape(int propId, bool important)
 {
@@ -2717,6 +2790,48 @@ bool CSSParser::parseBorderImage(int propId, bool important)
     }
     
     return context.failed();
+}
+
+bool CSSParser::parseCounter(int propId, int defaultValue, bool important)
+{
+    enum { ID, VAL } state = ID;
+
+    RefPtr<CSSValueList> list = new CSSValueList;
+    RefPtr<CSSPrimitiveValue> counterName;
+    
+    while (true) {
+        Value* val = valueList->current();
+        switch (state) {
+            case ID:
+                if (val && val->unit == CSSPrimitiveValue::CSS_IDENT) {
+                    counterName = new CSSPrimitiveValue(domString(val->string), CSSPrimitiveValue::CSS_STRING);
+                    state = VAL;
+                    valueList->next();
+                    continue;
+                }
+                break;
+            case VAL: {
+                int i = defaultValue;
+                if (val && val->unit == CSSPrimitiveValue::CSS_NUMBER) {
+                    i = (int)val->fValue;
+                    valueList->next();
+                }
+
+                list->append(new CSSPrimitiveValue(new Pair(counterName.release(),
+                    new CSSPrimitiveValue(i, CSSPrimitiveValue::CSS_NUMBER))));
+                state = ID;
+                continue;
+            }
+        }
+        break;
+    }
+    
+    if (list->length() > 0) {
+        addProperty(propId, list.release(), important);
+        return true;
+    }
+
+    return false;
 }
 
 #ifdef CSS_DEBUG

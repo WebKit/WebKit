@@ -200,6 +200,27 @@ void StringImpl::insert(const StringImpl* str, unsigned pos)
     }
 }
 
+void StringImpl::insert(const UChar* str, unsigned length, unsigned pos)
+{
+    assert(!m_inTable);
+    if (pos >= m_length) {
+        RefPtr<StringImpl> s = new StringImpl(str, length);
+        append(s.get());
+        return;
+    }
+    if (str && length != 0) {
+        size_t newlen = m_length + length;
+        UChar* c = newUCharVector(newlen);
+        memcpy(c, m_data, pos * sizeof(UChar));
+        memcpy(c + pos, str, length * sizeof(UChar));
+        memcpy(c + pos + length, m_data + pos, (m_length - pos) * sizeof(UChar));
+        deleteUCharVector(m_data);
+        m_data = c;
+        m_length = newlen;
+        m_hasTerminatingNullCharacter = false;
+    }
+}
+
 void StringImpl::truncate(int len)
 {
     assert(!m_inTable);

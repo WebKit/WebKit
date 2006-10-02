@@ -1,3 +1,140 @@
+2006-10-02  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Initial implementation of CSS2 counters. See http://
+        bugs.webkit.org/show_bug.cgi?id=4980 for more details.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp: 
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Return 
+        the increment/reset list now that this is implemented.
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText): 
+        * css/Counter.h:
+        (WebCore::Counter::Counter):
+        (WebCore::Counter::~Counter):
+        (WebCore::Counter::identifier):
+        (WebCore::Counter::listStyle):
+        (WebCore::Counter::separator):
+        (WebCore::Counter::listStyleNumber):
+        (WebCore::Counter::setIdentifier):
+        (WebCore::Counter::setListStyle):
+        (WebCore::Counter::setSeparator):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::addProperty): Take care of reset/increment
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseContent): content can now take counters
+        (WebCore::CSSParser::parseCounterContent): Parse counter() and 
+        counters()
+        (WebCore::CSSParser::parseCounter): Parse counter-reset and 
+        counter-increment
+        * css/cssparser.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::matchUARules):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::insert): Implemented a version of insert that 
+        accepts a UChar* and a length.
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::insert): Same as above.
+        * platform/StringImpl.h:
+        * rendering/CounterListItem.h: Added.
+        * rendering/CounterNode.cpp: Added.
+        (WebCore::CounterNode::CounterNode):
+        (WebCore::CounterNode::insertAfter):
+        (WebCore::CounterNode::removeChild):
+        (WebCore::CounterNode::remove):
+        (WebCore::CounterNode::setUsesSeparator):
+        (WebCore::CounterNode::recountAndGetNext):
+        (WebCore::CounterNode::recountTree):
+        (WebCore::CounterNode::setSelfDirty):
+        (WebCore::CounterNode::setParentDirty):
+        * rendering/CounterNode.h: Added.
+        (WebCore::CounterNode::~CounterNode):
+        (WebCore::CounterNode::parent):
+        (WebCore::CounterNode::previousSibling):
+        (WebCore::CounterNode::nextSibling):
+        (WebCore::CounterNode::firstChild):
+        (WebCore::CounterNode::lastChild):
+        (WebCore::CounterNode::value):
+        (WebCore::CounterNode::setValue):
+        (WebCore::CounterNode::count):
+        (WebCore::CounterNode::setCount):
+        (WebCore::CounterNode::setHasSeparator):
+        (WebCore::CounterNode::isReset):
+        (WebCore::CounterNode::hasSeparator):
+        (WebCore::CounterNode::willNeedLayout):
+        (WebCore::CounterNode::setWillNeedLayout):
+        (WebCore::CounterNode::isRoot):
+        (WebCore::CounterNode::setRenderer):
+        (WebCore::CounterNode::renderer):
+        * rendering/CounterResetNode.cpp: Added.
+        (WebCore::CounterResetNode::CounterResetNode):
+        (WebCore::CounterResetNode::insertAfter):
+        (WebCore::CounterResetNode::removeChild):
+        (WebCore::CounterResetNode::recountAndGetNext):
+        (WebCore::CounterResetNode::setParentDirty):
+        (WebCore::CounterResetNode::updateTotal):
+        * rendering/CounterResetNode.h: Added.
+        (WebCore::CounterResetNode::firstChild):
+        (WebCore::CounterResetNode::lastChild):
+        (WebCore::CounterResetNode::isReset):
+        (WebCore::CounterResetNode::total):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::updatePseudoChildForObject): Account for 
+        counter content.
+        * rendering/RenderCounter.cpp: Added.
+        (WebCore::RenderCounter::RenderCounter):
+        (WebCore::RenderCounter::layout):
+        (WebCore::toRoman):
+        (WebCore::toLetterString):
+        (WebCore::toHebrew):
+        (WebCore::RenderCounter::convertValueToType):
+        (WebCore::RenderCounter::calcMinMaxWidth):
+        * rendering/RenderCounter.h: Added.
+        (WebCore::RenderCounter::renderName):
+        (WebCore::RenderCounter::isCounter):
+        * rendering/RenderObject.cpp:
+        (WebCore::getRenderObjectsToCounterNodeMaps): Maps RenderObjects to 
+        maps of CounterNodes
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::destroy): Destroy the maps.
+        (WebCore::RenderObject::findCounter): Finds/creates counters.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isCounter):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleVisualData::StyleVisualData):
+        (WebCore::RenderStyle::arenaDelete):
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::setContent):
+        (WebCore::ContentData::clearContent):
+        (WebCore::RenderStyle::counterDataEquivalent):
+        (WebCore::hasCounter):
+        (WebCore::RenderStyle::hasCounterReset):
+        (WebCore::RenderStyle::hasCounterIncrement):
+        (WebCore::readCounter):
+        (WebCore::RenderStyle::counterReset):
+        (WebCore::RenderStyle::counterIncrement):
+        * rendering/RenderStyle.h:
+        (WebCore::StyleVisualData::operator==):
+        (WebCore::CounterData::CounterData):
+        (WebCore::CounterData::identifier):
+        (WebCore::CounterData::listStyle):
+        (WebCore::CounterData::separator):
+        (WebCore::ContentData::contentCounter):
+        (WebCore::ContentData::):
+        (WebCore::RenderStyle::counterIncrement):
+        (WebCore::RenderStyle::counterReset):
+        (WebCore::RenderStyle::setCounterIncrement):
+        (WebCore::RenderStyle::setCounterReset):
+        (WebCore::RenderStyle::setCounterResetList):
+        (WebCore::RenderStyle::setCounterIncrementList):
+        (WebCore::RenderStyle::counterResetValueList):
+        (WebCore::RenderStyle::counterIncrementValueList):
+
 2006-10-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

@@ -157,6 +157,14 @@ void String::insert(const String& str, unsigned pos)
         m_impl->insert(str.m_impl.get(), pos);
 }
 
+void String::insert(const UChar* str, unsigned length, unsigned pos)
+{
+    if (!m_impl)
+        m_impl = new StringImpl(str, length);
+    else
+        m_impl->insert(str, length, pos);
+}
+
 UChar String::operator[](unsigned i) const
 {
     if (!m_impl || i >= m_impl->length())

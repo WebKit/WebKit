@@ -91,6 +91,7 @@ public:
     void append(char);
     void append(UChar);
     void insert(const String&, unsigned pos);
+    void insert(const UChar*, unsigned length, unsigned pos);
 
     String& replace(UChar a, UChar b) { if (m_impl) m_impl = m_impl->replace(a, b); return *this; }
     String& replace(UChar a, const String& b) { if (m_impl) m_impl = m_impl->replace(a, b.impl()); return *this; }

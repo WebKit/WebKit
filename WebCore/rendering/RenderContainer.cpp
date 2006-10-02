@@ -4,6 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
+ *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
@@ -28,6 +29,7 @@
 #include "RenderContainer.h"
 
 #include "htmlediting.h"
+#include "RenderCounter.h"
 #include "RenderListItem.h"
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
@@ -296,7 +298,7 @@ void RenderContainer::updatePseudoChildForObject(RenderStyle::PseudoId type, Ren
         // determined that the pseudo is not display NONE, any display other than
         // inline should be mutated to INLINE.
         pseudo->setDisplay(INLINE);
-    
+
     if (oldContentPresent) {
         if (child && child->style()->styleType() == type) {
             // We have generated content present still.  We want to walk this content and update our
@@ -334,20 +336,24 @@ void RenderContainer::updatePseudoChildForObject(RenderStyle::PseudoId type, Ren
         if (!pseudoContainer)
             pseudoContainer = RenderFlow::createAnonymousFlow(document(), pseudo); /* anonymous box */
         
-        if (contentData->contentType() == CONTENT_TEXT)
-        {
+        if (contentData->contentType() == CONTENT_TEXT) {
             RenderText* t = new (renderArena()) RenderTextFragment(document() /*anonymous object */, contentData->contentText());
             t->setStyle(pseudo);
             pseudoContainer->addChild(t);
-        }
-        else if (contentData->contentType() == CONTENT_OBJECT)
-        {
+        } else if (contentData->contentType() == CONTENT_OBJECT) {
             RenderImage* img = new (renderArena()) RenderImage(document()); /* Anonymous object */
             RenderStyle* style = new (renderArena()) RenderStyle();
             style->inheritFrom(pseudo);
             img->setStyle(style);
             img->setContentObject(contentData->contentObject());
             pseudoContainer->addChild(img);
+        } else if (contentData->_contentType == CONTENT_COUNTER) {
+            RenderCounter* c = new (renderArena()) RenderCounter(element(), contentData->contentCounter());
+            RenderStyle* style = new (renderArena()) RenderStyle();
+            style->inheritFrom(pseudo);
+            c->setIsAnonymous(true);
+            c->setStyle(style);
+            pseudoContainer->addChild(c);
         }
     }
 

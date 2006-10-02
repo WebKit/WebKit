@@ -602,11 +602,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         // FIXME: unimplemented
         break;
     case CSS_PROP_COUNTER_INCREMENT:
-        // FIXME: unimplemented
-        break;
+        return style->counterIncrementValueList();
     case CSS_PROP_COUNTER_RESET:
-        // FIXME: unimplemented
-        break;
+        return style->counterResetValueList();
     case CSS_PROP_CURSOR: {
         CSSValueList* list = 0;
         CSSValue* value = 0;

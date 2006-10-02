@@ -23,23 +23,37 @@
 #ifndef Counter_H
 #define Counter_H
 
-#include "Shared.h"
+#include "CSSPrimitiveValue.h"
 #include "PlatformString.h"
+#include "Shared.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class Counter : public Shared<Counter> {
 public:
-    String identifier() const { return m_identifier; }
-    String listStyle() const { return m_listStyle; }
-    String separator() const { return m_separator; }
+    Counter() : m_identifier(0), m_listStyle(0), m_separator(0) { }
+    Counter(PassRefPtr<CSSPrimitiveValue> identifier, PassRefPtr<CSSPrimitiveValue> listStyle,
+        PassRefPtr<CSSPrimitiveValue> separator)
+        : m_identifier(identifier), m_listStyle(listStyle), m_separator(separator) { }
+    ~Counter() { }
 
-private:
-    String m_identifier;
-    String m_listStyle;
-    String m_separator;
-};
+    String identifier() const { return m_identifier ? m_identifier->getStringValue() : String(); }
+    String listStyle() const { return m_listStyle ? m_listStyle->getStringValue() : String(); }
+    String separator() const { return m_separator ? m_separator->getStringValue() : String(); }
 
-} // namespace
+    int listStyleNumber() const { return m_listStyle ? (int) m_listStyle->getFloatValue() : 0; }
+    
+    void setIdentifier(PassRefPtr<CSSPrimitiveValue> identifier) { m_identifier = identifier; }
+    void setListStyle(PassRefPtr<CSSPrimitiveValue> listStyle) { m_listStyle = listStyle; }
+    void setSeparator(PassRefPtr<CSSPrimitiveValue> separator) { m_separator = separator; }
+ 
+protected:
+    RefPtr<CSSPrimitiveValue> m_identifier; // String
+    RefPtr<CSSPrimitiveValue> m_listStyle;  // int
+    RefPtr<CSSPrimitiveValue> m_separator;  // String
+ };
+
+} //namespace
 
 #endif

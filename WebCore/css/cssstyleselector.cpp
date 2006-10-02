@@ -38,6 +38,7 @@
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
+#include "Counter.h"
 #include "CachedImage.h"
 #include "DashboardRegion.h"
 #include "FontFamilyValue.h"
@@ -757,18 +758,16 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
 
 void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
 {
-    // 1. First we match rules from the user agent sheet.
-    matchRules(defaultStyle, firstUARule, lastUARule);
+    // First we match rules from the user agent sheet.
+    CSSRuleSet* userAgentStyleSheet = m_medium->mediaTypeMatch("print")
+        ? defaultPrintStyle : defaultStyle;
+    matchRules(userAgentStyleSheet, firstUARule, lastUARule);
 
-    // 2. In quirks mode, we match rules from the quirks user agent sheet.
+    // In quirks mode, we match rules from the quirks user agent sheet.
     if (!strictParsing)
         matchRules(defaultQuirksStyle, firstUARule, lastUARule);
-
-    // 3. If our medium is print, then we match rules from the print sheet.
-    if (m_medium->mediaTypeMatch("print"))
-        matchRules(defaultPrintStyle, firstUARule, lastUARule);
         
-    // 4. If we're in view source mode, then we match rules from the view source style sheet.
+    // If we're in view source mode, then we match rules from the view source style sheet.
     if (view && view->frame() && view->frame()->inViewSourceMode())
         matchRules(defaultViewSourceStyle, firstUARule, lastUARule);
 }
@@ -3176,7 +3175,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
         for (int i = 0; i < len; i++) {
             CSSValue *item = list->item(i);
-            if (!item->isPrimitiveValue()) continue;
+            if (!item->isPrimitiveValue())
+                continue;
+            
             CSSPrimitiveValue *val = static_cast<CSSPrimitiveValue*>(item);
             if (val->primitiveType()==CSSPrimitiveValue::CSS_STRING)
                 style->setContent(val->getStringValue().impl(), i != 0);
@@ -3190,19 +3191,28 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 style->setContent(element->getAttribute(attr).impl(), i != 0);
                 // register the fact that the attribute value affects the style
                 m_selectorAttrs.add(attr.localName().impl());
-            }
-            else if (val->primitiveType()==CSSPrimitiveValue::CSS_URI) {
+            } else if (val->primitiveType()==CSSPrimitiveValue::CSS_URI) {
                 CSSImageValue *image = static_cast<CSSImageValue*>(val);
                 style->setContent(image->image(element->document()->docLoader()), i != 0);
-            }
+            } else if (val->primitiveType()==CSSPrimitiveValue::CSS_COUNTER) {
+                Counter* counterValue = val->getCounterValue();
+                CounterData counter(counterValue->identifier(),
+                    (EListStyleType)counterValue->listStyleNumber(), counterValue->separator());
+                style->setContent(new CounterData(counter), i != 0);
+           }
         }
         break;
     }
 
     case CSS_PROP_COUNTER_INCREMENT:
-        // list of CSS2CounterIncrement
+        if (!value->isValueList())
+            return;
+        style->setCounterIncrementList(static_cast<CSSValueList*>(value));
+        break;
     case CSS_PROP_COUNTER_RESET:
-        // list of CSS2CounterReset
+        if (!value->isValueList())
+            return;
+        style->setCounterResetList(static_cast<CSSValueList*>(value));
         break;
     case CSS_PROP_FONT_FAMILY: {
         // list of strings and ids
