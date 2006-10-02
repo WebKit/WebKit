@@ -118,6 +118,10 @@ class UploadLayoutResults(UploadCommand, ShellCommand):
 
         ShellCommand.__init__(self, *args, **kwargs)
 
+class CompileWebKitCMake(Compile):
+    command = "mkdir -p WebKitBuild && cd WebKitBuild && cmake -DWEBKIT_DO_NOT_USE_COLORFUL_OUTPUT=ON .. && make"
+    description = ["compiling"]
+    descriptionDone = ["compiled"]
 
 class CompileWebKit(Compile):
     command = ["./WebKitTools/Scripts/build-webkit"]

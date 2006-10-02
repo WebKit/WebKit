@@ -1,3 +1,14 @@
+2006-10-01  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Maciej.
+
+        Add QT build slave to Buildbot.
+
+        * BuildSlaveSupport/build.webkit.org-config/webkit/builders.py: Add QT build slave, fix existing errors.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/factories.py: Add QT build factory.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/status.py: Disable forcing of builds via web interface to prevent spamming.  Use the IRC bot in #webkit-build instead.
+        * BuildSlaveSupport/build.webkit.org-config/webkit/steps.py: Add CMake build step.
+
 2006-09-28  David Harrison  <harrison@apple.com>
 
         Suggested by Darin.

@@ -14,7 +14,7 @@ class MyWaterfall(html.Waterfall):
                 request.path = '/' + '/'.join(request.prepath + request.postpath)
         self.site.resource = RewriterResource(rootResource, rewriteXSL)
         
-waterfall = MyWaterfall(http_port=8010, css="buildbot.css", results_directory="/home/buildresults/results/")
+waterfall = MyWaterfall(http_port=8010, css="buildbot.css", results_directory="/home/buildresults/results/", allowForce=False)
 
 allBuildsEmail = mail.MailNotifier(fromaddr="buildbot@webkit.org",
                                     extraRecipients=["mark+webkit-builds@bdash.net.nz"],
