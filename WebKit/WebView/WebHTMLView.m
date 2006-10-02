@@ -2304,8 +2304,10 @@ static WebHTMLView *lastHitView = nil;
 
     if (nextResponder == self)
         return YES;
+        
+    BOOL nextResponderIsInWebView = [nextResponder isKindOfClass:[NSView class]] && [nextResponder isDescendantOf:[[[self _webView] mainFrame] frameView]];
 
-    return [[self _webView] maintainsInactiveSelection] || [[self _bridge] isSelectionEditable];
+    return [[self _webView] maintainsInactiveSelection] || ([[self _bridge] isSelectionEditable] && nextResponderIsInWebView);
 }
 
 - (void)addMouseMovedObserver

@@ -1,3 +1,17 @@
+2006-10-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/4757583>
+        REGRESSION: tabbing into page focuses wrong control on 2nd pass
+        <rdar://problem/4757594>
+        REGRESSION: Form field is left with secondary selection after tabbing out of WebView
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray maintainsInactiveSelection]): Replace code that I removed in error in the patch
+        for 9642.  Only leave inactive editable selections in the WebHTMLView if the nextResponder 
+        is in the same WebView.
+
 2006-10-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
