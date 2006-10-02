@@ -35,9 +35,9 @@
 @implementation WebDocumentLoadStateMac
 
 
-- (id)initWithRequest:(NSURLRequest *)request
+- (id)initWithRequest:(NSURLRequest *)req
 {
-    self = [super initWithRequest:request];
+    self = [super initWithRequest:req];
     return self;
 }
 

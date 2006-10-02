@@ -42,6 +42,24 @@
     // identifierForInitialRequest:fromDatasource: method.  It is
     // not guaranteed to remain unchanged, as requests are mutable.
     NSURLRequest *originalRequest;    
+
+    // A copy of the original request used to create the data source.
+    // We have to copy the request because requests are mutable.
+    NSURLRequest *originalRequestCopy;
+    
+    // The 'working' request for this datasource.  It may be mutated
+    // several times from the original request to include additional
+    // headers, cookie information, canonicalization and redirects.
+    NSMutableURLRequest *request;
+
+    NSURLResponse *response;
+    
+    NSError *mainDocumentError;    
+    
+    BOOL committed; // This data source has been committed
+    BOOL stopping;
+    BOOL loading; // self and webView are retained while loading
+    BOOL gotFirstByte; // got first byte
 }
 
 - (id)initWithRequest:(NSURLRequest *)request;
@@ -50,5 +68,26 @@
 - (void)setMainResourceData:(NSData *)data;
 - (NSData *)mainResourceData;
 - (NSURLRequest *)originalRequest;
+- (NSURLRequest *)originalRequestCopy;
+- (NSMutableURLRequest *)request;
+- (void)setRequest:(NSURLRequest *)request;
+- (void)replaceRequestURLForAnchorScrollWithURL:(NSURL *)URL;
+- (BOOL)isStopping;
+- (void)stopLoading;
+- (void)setupForReplace;
+- (void)commitIfReady;
+- (void)setCommitted:(BOOL)f;
+- (BOOL)isCommitted;
+- (BOOL)isLoading;
+- (void)setLoading:(BOOL)f;
+- (void)updateLoading;
+- (void)receivedData:(NSData *)data;
+- (void)setupForReplaceByMIMEType:(NSString *)newMIMEType;
+- (void)finishedLoading;
+- (NSURLResponse *)response;
+- (void)clearErrors;
+- (NSError *)mainDocumentError;
+- (void)mainReceivedError:(NSError *)error complete:(BOOL)isComplete;
+- (void)setResponse:(NSURLResponse *)resp;
 
 @end

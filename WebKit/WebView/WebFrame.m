@@ -365,18 +365,17 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     NSURL *originalURL;
     WebHistoryItem *bfItem;
 
-    if (useOriginal) {
-        request = [dataSrc _originalRequest];
-    } else {
+    if (useOriginal)
+        request = [[dataSrc _documentLoadState] originalRequestCopy];
+    else
         request = [dataSrc request];
-    }
 
     if (unreachableURL != nil) {
         URL = unreachableURL;
         originalURL = unreachableURL;
     } else {
         URL = [request URL];
-        originalURL = [[dataSrc _originalRequest] URL];
+        originalURL = [[[dataSrc _documentLoadState] originalRequestCopy] URL];
     }
 
     LOG (History, "creating item for %@", request);
@@ -526,7 +525,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 - (void)_receivedMainResourceError:(NSError *)error
 {
     if ([_private->frameLoader state] == WebFrameStateProvisional) {
-        NSURL *failedURL = [[[_private->frameLoader provisionalDataSource] _originalRequest] URL];
+        NSURL *failedURL = [[[_private->frameLoader provisionalDocumentLoadState] originalRequestCopy] URL];
         // When we are pre-commit, the currentItem is where the pageCache data resides
         NSDictionary *pageCache = [[_private currentItem] pageCache];
         [[self _bridge] didNotOpenURL:failedURL pageCache:pageCache];
@@ -618,7 +617,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 }
                 // Update the last visited time.  Mostly interesting for URL autocompletion
                 // statistics.
-                NSURL *URL = [[[ds _originalRequest] URL] _webkit_canonicalize];
+                NSURL *URL = [[[[ds _documentLoadState] originalRequestCopy] URL] _webkit_canonicalize];
                 WebHistory *sharedHistory = [WebHistory optionalSharedHistory];
                 WebHistoryItem *oldItem = [sharedHistory itemForURL:URL];
                 if (oldItem)
@@ -722,7 +721,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     WebFrameLoadType loadType = [self _loadType];
     bool reload = loadType == WebFrameLoadTypeReload || loadType == WebFrameLoadTypeReloadAllowingStaleData;
     
-    WebDataSource *provisionalDataSource = [self provisionalDataSource];
+    WebDataSource *provisionalDataSource = [[self provisionalDataSource] retain];
     NSURLResponse *response = [provisionalDataSource response];
 
     NSDictionary *headers = [response isKindOfClass:[NSHTTPURLResponse class]]
@@ -757,6 +756,8 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                     pageCache:pageCache];
     
     [self _opened];
+
+    [provisionalDataSource release];
 }
 
 - (BOOL)_canCachePage
@@ -896,7 +897,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                     // must be, to be in this branch of the if? And is it ok to just do 
                     // a full-on stopLoading?
                     [self _stopLoadingSubframes];
-                    [pd _stopLoading];
+                    [[pd _documentLoadState] stopLoading];
 
                     // Finish resetting the load state, but only if another load hasn't been started by the
                     // delegate callback.
@@ -1122,10 +1123,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
         // Fake the URL change by updating the data source's request.  This will no longer
         // be necessary if we do the better fix described above.
-        NSMutableURLRequest *hackedRequest = [[[self dataSource] request] mutableCopy];
-        [hackedRequest setURL: itemURL];
-        [[self dataSource] __adoptRequest:hackedRequest];
-        [hackedRequest release];
+        [[_private->frameLoader documentLoadState] replaceRequestURLForAnchorScrollWithURL:itemURL];
         
         [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                didChangeLocationWithinPageForFrame:self];
@@ -1535,13 +1533,12 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 
     NSURL *URL = [request URL];
-    WebDataSource *dataSrc = [self dataSource];
 
     BOOL isRedirect = _private->quickRedirectComing;
     LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
     _private->quickRedirectComing = NO;
 
-    [dataSrc _setURL:URL];
+    [[_private->frameLoader documentLoadState] replaceRequestURLForAnchorScrollWithURL:URL];
     if (!isRedirect && ![self _shouldTreatURLAsSameAsCurrent:URL]) {
         // NB: must happen after _setURL, since we add based on the current request.
         // Must also happen before we openURL and displace the scroll position, since
@@ -1889,10 +1886,8 @@ exit:
 
 - (void)_defersCallbacksChanged
 {
-    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
-        [[frame provisionalDataSource] _defersCallbacksChanged];
-        [[frame dataSource] _defersCallbacksChanged];
-    }
+    for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
+        [frame->_private->frameLoader defersCallbacksChanged];
 }
 
 - (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow
@@ -2211,6 +2206,12 @@ exit:
 @end
 
 @implementation WebFrame (WebInternal)
+
+- (void)_didReceiveServerRedirectForProvisionalLoadForFrame
+{
+    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
+        didReceiveServerRedirectForProvisionalLoadForFrame:self];
+}
 
 - (WebDataSource *)_policyDataSource
 {
@@ -2559,7 +2560,7 @@ exit:
     && loadType != WebFrameLoadTypeReloadAllowingStaleData
     && loadType != WebFrameLoadTypeSame
     && ![[self dataSource] isLoading]
-    && ![[self dataSource] _isStopping]) {
+    && ![[_private->frameLoader documentLoadState] isStopping]) {
         if ([[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]]) {
             if (![item pageCache]){
                 

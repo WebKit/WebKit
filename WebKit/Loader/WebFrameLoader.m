@@ -72,19 +72,47 @@
     [super dealloc];
 }
 
+- (WebDocumentLoadState *)activeDocumentLoadState
+{
+    if (state == WebFrameStateProvisional)
+        return provisionalDocumentLoadState;
+    
+    return documentLoadState;    
+}
+
+- (WebDataSource *)activeDataSource
+{
+    return [webFrame _dataSourceForDocumentLoadState:[self activeDocumentLoadState]];
+}
+
+- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL
+{
+    return [[self activeDataSource] _archivedSubresourceForURL:URL];
+}
+
 - (void)addPlugInStreamLoader:(WebLoader *)loader
 {
     if (!plugInStreamLoaders)
         plugInStreamLoaders = [[NSMutableArray alloc] init];
     [plugInStreamLoaders addObject:loader];
-    [[self activeDataSource] _setLoading:YES];
+    [[self activeDocumentLoadState] setLoading:YES];
 }
 
 - (void)removePlugInStreamLoader:(WebLoader *)loader
 {
     [plugInStreamLoaders removeObject:loader];
-    [[self activeDataSource] _updateLoading];
+    [[self activeDocumentLoadState] updateLoading];
 }    
+
+- (void)defersCallbacksChanged
+{
+    [self setDefersCallbacks:[[webFrame webView] defersCallbacks]];
+}
+
+- (BOOL)defersCallbacks
+{
+    return [[webFrame webView] defersCallbacks];
+}
 
 - (void)setDefersCallbacks:(BOOL)defers
 {
@@ -142,13 +170,13 @@
     if (subresourceLoaders == nil)
         subresourceLoaders = [[NSMutableArray alloc] init];
     [subresourceLoaders addObject:loader];
-    [[self activeDataSource] _setLoading:YES];
+    [[self activeDocumentLoadState] setLoading:YES];
 }
 
 - (void)removeSubresourceLoader:(WebLoader *)loader
 {
     [subresourceLoaders removeObject:loader];
-    [[self activeDataSource] _updateLoading];
+    [[self activeDocumentLoadState] updateLoading];
 }
 
 - (NSData *)mainResourceData
@@ -210,6 +238,11 @@
     documentLoadState = loadState;
 }
 
+- (WebDocumentLoadState *)documentLoadState
+{
+    return documentLoadState;
+}
+
 - (WebDataSource *)policyDataSource
 {
     return [webFrame _dataSourceForDocumentLoadState:policyDocumentLoadState];     
@@ -230,6 +263,11 @@
 - (WebDataSource *)provisionalDataSource 
 {
     return [webFrame _dataSourceForDocumentLoadState:provisionalDocumentLoadState]; 
+}
+
+- (WebDocumentLoadState *)provisionalDocumentLoadState
+{
+    return provisionalDocumentLoadState;
 }
 
 - (void)_setProvisionalDocumentLoadState:(WebDocumentLoadState *)loadState
@@ -313,8 +351,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)stopLoading
 {
-    [[self provisionalDataSource] _stopLoading];
-    [[self dataSource] _stopLoading];
+    [[self provisionalDocumentLoadState] stopLoading];
+    [[self documentLoadState] stopLoading];
     [self _clearProvisionalDataSource];
     [self clearArchivedResources];
 }
@@ -340,29 +378,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [old release];
     
     [webFrame _detachChildren];
-}
-
-- (WebDocumentLoadState *)activeDocumentLoadState
-{
-    if (state == WebFrameStateProvisional)
-        return provisionalDocumentLoadState;
-    
-    return documentLoadState;    
-}
-
-- (WebDataSource *)activeDataSource
-{
-    return [webFrame _dataSourceForDocumentLoadState:[self activeDocumentLoadState]];
-}
-
-- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL
-{
-    return [[self activeDataSource] _archivedSubresourceForURL:URL];
-}
-
-- (BOOL)_defersCallbacks
-{
-    return [[self activeDataSource] _defersCallbacks];
 }
 
 - (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest
@@ -422,7 +437,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (NSURLRequest *)_originalRequest
 {
-    return [[self activeDataSource] _originalRequest];
+    return [[self activeDocumentLoadState] originalRequestCopy];
 }
 
 - (WebFrame *)webFrame
@@ -445,12 +460,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_receivedData:(NSData *)data
 {
-    [[self activeDataSource] _receivedData:data];
+    [[self activeDocumentLoadState] receivedData:data];
 }
 
 - (void)_setRequest:(NSURLRequest *)request
 {
-    [[self activeDataSource] _setRequest:request];
+    [[self activeDocumentLoadState] setRequest:request];
 }
 
 - (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(id)proxy
@@ -458,29 +473,34 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[self activeDataSource] _downloadWithLoadingConnection:connection request:request response:r proxy:proxy];
 }
 
+- (WebFrameBridge *)bridge
+{
+    return [webFrame _bridge];
+}
+
 - (void)_handleFallbackContent
 {
-    [[webFrame _bridge] handleFallbackContent];
+    [[self bridge] handleFallbackContent];
 }
 
 - (BOOL)_isStopping
 {
-    return [[self activeDataSource] _isStopping];
+    return [[self activeDocumentLoadState] isStopping];
 }
 
 - (void)_setupForReplaceByMIMEType:(NSString *)newMIMEType
 {
-    [[self activeDataSource] _setupForReplaceByMIMEType:newMIMEType];
+    [[self activeDocumentLoadState] setupForReplaceByMIMEType:newMIMEType];
 }
 
 - (void)_setResponse:(NSURLResponse *)response
 {
-    [[self activeDataSource] _setResponse:response];
+    [[self activeDocumentLoadState] setResponse:response];
 }
 
 - (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete
 {
-    [[self activeDataSource] _mainReceivedError:error complete:isComplete];
+    [[self activeDocumentLoadState] mainReceivedError:error complete:isComplete];
 }
 
 - (void)_finishedLoading
@@ -488,7 +508,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebDataSource *ds = [self activeDataSource];
     
     [self retain];
-    [ds _finishedLoading];
+    [[self activeDocumentLoadState] finishedLoading];
 
     if ([ds _mainDocumentError] || ![ds webFrame]) {
         [self release];
@@ -544,7 +564,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)deliverArchivedResources
 {
-    if (![pendingArchivedResources count] || [self _defersCallbacks])
+    if (![pendingArchivedResources count] || [self defersCallbacks])
         return;
         
     NSEnumerator *keyEnum = [pendingArchivedResources keyEnumerator];
@@ -562,7 +582,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)deliverArchivedResourcesAfterDelay
 {
-    if (![pendingArchivedResources count] || [self _defersCallbacks])
+    if (![pendingArchivedResources count] || [self defersCallbacks])
         return;
     
     [self performSelector:@selector(deliverArchivedResources) withObject:nil afterDelay:0];
@@ -809,6 +829,57 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     [newDataSource _setOverrideEncoding:[ds _overrideEncoding]];
     
     [webFrame _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload formState:nil];
+}
+
+- (void)didReceiveServerRedirectForProvisionalLoadForFrame
+{
+    [webFrame _didReceiveServerRedirectForProvisionalLoadForFrame];
+}
+
+- (void)finishedLoadingDocumentLoadState:(WebDocumentLoadState *)loadState
+{
+    [[webFrame _dataSourceForDocumentLoadState:loadState] _finishedLoading];
+}
+
+- (void)commitProvisitionalLoad
+{
+    [webFrame _commitProvisionalLoad:nil];
+}
+
+- (void)committedLoadWithDocumentLoadState:(WebDocumentLoadState *)loadState data:(NSData *)data
+{
+    [[webFrame _dataSourceForDocumentLoadState:loadState] _receivedData:data];
+}
+
+- (BOOL)isReplacing
+{
+    return [webFrame _loadType] == WebFrameLoadTypeReplace;
+}
+
+- (void)setReplacing
+{
+    [webFrame _setLoadType:WebFrameLoadTypeReplace];
+}
+
+- (void)revertToProvisionalWithDocumentLoadState:(WebDocumentLoadState *)loadState
+{
+    [[webFrame _dataSourceForDocumentLoadState:loadState] _revertToProvisionalState];
+}
+
+- (void)documentLoadState:(WebDocumentLoadState *)loadState setMainDocumentError:(NSError *)error
+{
+    [[webFrame _dataSourceForDocumentLoadState:loadState] _setMainDocumentError:error];
+}
+
+- (void)documentLoadState:(WebDocumentLoadState *)loadState mainReceivedCompleteError:(NSError *)error
+{
+    [[webFrame _dataSourceForDocumentLoadState:loadState] _setPrimaryLoadComplete:YES];
+    [webFrame _checkLoadComplete];
+}
+
+- (void)finalSetupForReplaceWithDocumentLoadState:(WebDocumentLoadState *)loadState
+{
+    [[webFrame _dataSourceForDocumentLoadState:loadState] _clearUnarchivingState];
 }
 
 @end

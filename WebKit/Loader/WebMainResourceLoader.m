@@ -315,7 +315,7 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
 - (void)didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(shouldLoadAsEmptyDocument([r URL]) || ![self defersCallbacks]);
-    ASSERT(shouldLoadAsEmptyDocument([r URL]) || ![frameLoader _defersCallbacks]);
+    ASSERT(shouldLoadAsEmptyDocument([r URL]) || ![frameLoader defersCallbacks]);
 
     if (loadingMultipartContent) {
         [frameLoader _setupForReplaceByMIMEType:[r MIMEType]];
@@ -341,7 +341,7 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
     ASSERT(data);
     ASSERT([data length] != 0);
     ASSERT(![self defersCallbacks]);
-    ASSERT(![frameLoader _defersCallbacks]);
+    ASSERT(![frameLoader defersCallbacks]);
  
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
@@ -356,7 +356,7 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
 - (void)didFinishLoading
 {
     ASSERT(shouldLoadAsEmptyDocument([frameLoader _URL]) || ![self defersCallbacks]);
-    ASSERT(shouldLoadAsEmptyDocument([frameLoader _URL]) || ![frameLoader _defersCallbacks]);
+    ASSERT(shouldLoadAsEmptyDocument([frameLoader _URL]) || ![frameLoader defersCallbacks]);
 
     // Calls in this method will most likely result in a call to release, so we must retain.
     [self retain];
@@ -370,7 +370,7 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
 - (void)didFailWithError:(NSError *)error
 {
     ASSERT(![self defersCallbacks]);
-    ASSERT(![frameLoader _defersCallbacks]);
+    ASSERT(![frameLoader defersCallbacks]);
 
     [self receivedError:error];
 }
@@ -381,7 +381,7 @@ static BOOL shouldLoadAsEmptyDocument(NSURL *url)
 
     ASSERT(connection == nil);
     ASSERT(shouldLoadEmptyBeforeRedirect || ![self defersCallbacks]);
-    ASSERT(shouldLoadEmptyBeforeRedirect || ![frameLoader _defersCallbacks]);
+    ASSERT(shouldLoadEmptyBeforeRedirect || ![frameLoader defersCallbacks]);
 
     // Send this synthetic delegate callback since clients expect it, and
     // we no longer send the callback from within NSURLConnection for

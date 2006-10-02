@@ -1,3 +1,106 @@
+2006-10-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - move a big slice of data and logic from WebDataSource to WebDocumentLoadState
+        
+        * Loader/WebDocumentLoadState.h:
+        * Loader/WebDocumentLoadState.m:
+        (-[WebDocumentLoadState initWithRequest:]):
+        (-[WebDocumentLoadState dealloc]):
+        (-[WebDocumentLoadState originalRequestCopy]):
+        (-[WebDocumentLoadState request]):
+        (-[WebDocumentLoadState replaceRequestURLForAnchorScrollWithURL:]):
+        (-[WebDocumentLoadState setRequest:]):
+        (-[WebDocumentLoadState setResponse:]):
+        (-[WebDocumentLoadState isStopping]):
+        (-[WebDocumentLoadState bridge]):
+        (-[WebDocumentLoadState setMainDocumentError:]):
+        (-[WebDocumentLoadState mainDocumentError]):
+        (-[WebDocumentLoadState clearErrors]):
+        (-[WebDocumentLoadState mainReceivedError:complete:]):
+        (-[WebDocumentLoadState stopLoading]):
+        (-[WebDocumentLoadState setupForReplace]):
+        (-[WebDocumentLoadState commitIfReady]):
+        (-[WebDocumentLoadState finishedLoading]):
+        (-[WebDocumentLoadState setCommitted:]):
+        (-[WebDocumentLoadState isCommitted]):
+        (-[WebDocumentLoadState setLoading:]):
+        (-[WebDocumentLoadState isLoading]):
+        (-[WebDocumentLoadState commitLoadWithData:]):
+        (-[WebDocumentLoadState doesProgressiveLoadWithMIMEType:]):
+        (-[WebDocumentLoadState receivedData:]):
+        (-[WebDocumentLoadState setupForReplaceByMIMEType:]):
+        (-[WebDocumentLoadState updateLoading]):
+        (-[WebDocumentLoadState response]):
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader activeDocumentLoadState]):
+        (-[WebFrameLoader activeDataSource]):
+        (-[WebFrameLoader _archivedSubresourceForURL:]):
+        (-[WebFrameLoader addPlugInStreamLoader:]):
+        (-[WebFrameLoader removePlugInStreamLoader:]):
+        (-[WebFrameLoader addSubresourceLoader:]):
+        (-[WebFrameLoader removeSubresourceLoader:]):
+        (-[WebFrameLoader documentLoadState]):
+        (-[WebFrameLoader provisionalDocumentLoadState]):
+        (-[WebFrameLoader stopLoading]):
+        (-[WebFrameLoader _originalRequest]):
+        (-[WebFrameLoader _receivedData:]):
+        (-[WebFrameLoader _setRequest:]):
+        (-[WebFrameLoader bridge]):
+        (-[WebFrameLoader _handleFallbackContent]):
+        (-[WebFrameLoader _isStopping]):
+        (-[WebFrameLoader _setupForReplaceByMIMEType:]):
+        (-[WebFrameLoader _setResponse:]):
+        (-[WebFrameLoader _mainReceivedError:complete:]):
+        (-[WebFrameLoader _finishedLoading]):
+        (-[WebFrameLoader didReceiveServerRedirectForProvisionalLoadForFrame]):
+        (-[WebFrameLoader finishedLoadingDocumentLoadState:]):
+        (-[WebFrameLoader commitProvisitionalLoad]):
+        (-[WebFrameLoader committedLoadWithDocumentLoadState:data:]):
+        (-[WebFrameLoader isReplacing]):
+        (-[WebFrameLoader setReplacing]):
+        (-[WebFrameLoader revertToProvisionalWithDocumentLoadState:]):
+        (-[WebFrameLoader documentLoadState:setMainDocumentError:]):
+        (-[WebFrameLoader documentLoadState:mainReceivedCompleteError:]):
+        (-[WebFrameLoader finalSetupForReplaceWithDocumentLoadState:]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _prepareForLoadStart]):
+        (-[WebDataSource _mainDocumentError]):
+        (-[WebDataSource _finishedLoading]):
+        (-[WebDataSource _receivedData:]):
+        (-[WebDataSource _setMainDocumentError:]):
+        (-[WebDataSource _clearUnarchivingState]):
+        (-[WebDataSource _revertToProvisionalState]):
+        (-[WebDataSource _receivedMainResourceError:complete:]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _loadFromPageCache:]):
+        (-[WebDataSource _bridge]):
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (-[WebDataSource _URLForHistory]):
+        (-[WebDataSource _setTitle:]):
+        (-[WebDataSource _initWithDocumentLoadState:]):
+        (-[WebDataSource request]):
+        (-[WebDataSource response]):
+        (-[WebDataSource isLoading]):
+        (-[WebDataSource webArchive]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebDocumentLoadStateMac.m:
+        (-[WebDocumentLoadStateMac initWithRequest:]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _createItem:]):
+        (-[WebFrame _receivedMainResourceError:]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _commitProvisionalLoad:]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebFrame _didReceiveServerRedirectForProvisionalLoadForFrame]):
+        (-[WebFrame _provisionalLoadStarted]):
+        * WebView/WebFrameInternal.h:
+
 2006-10-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

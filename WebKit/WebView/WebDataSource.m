@@ -73,28 +73,18 @@
     @public
     
     WebDocumentLoadStateMac *loadState;
-    WebUnarchivingState *unarchivingState;
    
     id <WebDocumentRepresentation> representation;
     
-    // A copy of the original request used to create the data source.
-    // We have to copy the request because requests are mutable.
-    NSURLRequest *originalRequestCopy;
-    
-    // The 'working' request for this datasource.  It may be mutated
-    // several times from the original request to include additional
-    // headers, cookie information, canonicalization and redirects.
-    NSMutableURLRequest *request;
-    
-    NSURLResponse *response;
+    BOOL loadingFromPageCache;
+    WebUnarchivingState *unarchivingState;
+    NSMutableDictionary *subresources;
     
     // The time when the data source was told to start loading.
     double loadingStartedTime;
     
     BOOL primaryLoadComplete;
-    
-    BOOL stopping;
-    
+        
     BOOL isClientRedirect;
     
     NSString *pageTitle;
@@ -102,17 +92,8 @@
     NSString *encoding;
     NSString *overrideEncoding;
     
-    // Error associated with main document.
-    NSError *mainDocumentError;
-    
-    BOOL loading; // self and webView are retained while loading
-    
-    BOOL gotFirstByte; // got first byte
-    BOOL committed; // This data source has been committed
     BOOL representationFinishedLoading;
     
-    BOOL defersCallbacks;
-        
     // The action that triggered loading of this data source -
     // we keep this around for the benefit of the various policy
     // handlers.
@@ -126,13 +107,7 @@
     // WebResourceLoadDelegate messages if the item is loaded from the
     // page cache.
     NSMutableArray *responses;
-    BOOL stopRecordingResponses;
-    
-    BOOL loadingFromPageCache;
-    
-    NSMutableDictionary *subresources;
-    
-    BOOL supportsMultipartContent;
+    BOOL stopRecordingResponses;    
 }
 
 @end
@@ -141,16 +116,12 @@
 
 - (void)dealloc
 {
-    ASSERT(!loading);
+    ASSERT(![loadState isLoading]);
 
     [loadState release];
     
     [representation release];
-    [request release];
-    [originalRequestCopy release];
     [pageTitle release];
-    [response release];
-    [mainDocumentError release];
     [triggeringAction release];
     [lastCheckedRequest release];
     [responses release];
@@ -173,42 +144,17 @@
     _private->representationFinishedLoading = NO;
 }
 
-- (NSError *)_cancelledError
-{
-    return [NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                      code:NSURLErrorCancelled
-                                       URL:[self _URL]];
-}
-
-- (void)_setMainDocumentError: (NSError *)error
-{
-    [error retain];
-    [_private->mainDocumentError release];
-    _private->mainDocumentError = error;
-    
-    if (!_private->representationFinishedLoading) {
-        _private->representationFinishedLoading = YES;
-        [[self representation] receivedError:error withDataSource:self];
-    }
-}
-
-- (void)_clearErrors
-{
-    [_private->mainDocumentError release];
-    _private->mainDocumentError = nil;
-}
-
 - (void)_prepareForLoadStart
 {
-    ASSERT(![self _isStopping]);
+    ASSERT(![_private->loadState isStopping]);
     [self _setPrimaryLoadComplete:NO];
     ASSERT([self webFrame] != nil);
-    [self _clearErrors];
+    [_private->loadState clearErrors];
     
     // Mark the start loading time.
     _private->loadingStartedTime = CFAbsoluteTimeGetCurrent();
     
-    [self _setLoading:YES];
+    [_private->loadState setLoading:YES];
     [[self _webView] _progressStarted:[self webFrame]];
     [[self _webView] _didStartProvisionalLoadForFrame:[self webFrame]];
     [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
@@ -233,30 +179,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return [WebView _viewClass:nil andRepresentationClass:&repClass forMIMEType:MIMEType] ? repClass : nil;
 }
 
-- (void)_commitIfReady
-{
-    if (_private->gotFirstByte && !_private->committed) {
-        _private->committed = TRUE;
-        [[self webFrame] _commitProvisionalLoad:nil];
-    }
-}
-
-- (void)_commitLoadWithData:(NSData *)data
-{
-    // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
-    // by starting a new load, so retain temporarily.
-    [self retain];
-    [self _commitIfReady];
-    [[self representation] receivedData:data withDataSource:self];
-    [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
-    [self release];
-}
-
-- (BOOL)_doesProgressiveLoadWithMIMEType:(NSString *)MIMEType
-{
-    return [[self webFrame] _loadType] != WebFrameLoadTypeReplace || [MIMEType isEqualToString:@"text/html"];
-}
-
 - (void)_addResponse:(NSURLResponse *)r
 {
     if (!_private->stopRecordingResponses) {
@@ -266,20 +188,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
 }
 
-- (void)_revertToProvisionalState
-{
-    [self _setRepresentation:nil];
-    [[_private->loadState frameLoader] setupForReplace];
-    _private->committed = NO;
-}
-
 @end
 
 @implementation WebDataSource (WebPrivate)
 
 - (NSError *)_mainDocumentError
 {
-    return _private->mainDocumentError;
+    return [_private->loadState mainDocumentError];
 }
 
 - (void)_addSubframeArchives:(NSArray *)subframeArchives
@@ -316,6 +231,37 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 @implementation WebDataSource (WebInternal)
 
+- (void)_finishedLoading
+{
+    _private->representationFinishedLoading = YES;
+    [[self representation] finishedLoadingWithDataSource:self];
+}
+
+- (void)_receivedData:(NSData *)data
+{
+    [[self representation] receivedData:data withDataSource:self];
+    [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
+}
+
+- (void)_setMainDocumentError:(NSError *)error
+{
+    if (!_private->representationFinishedLoading) {
+        _private->representationFinishedLoading = YES;
+        [[self representation] receivedError:error withDataSource:self];
+    }
+}
+
+- (void)_clearUnarchivingState
+{
+    [_private->unarchivingState release];
+    _private->unarchivingState = nil;
+}
+
+- (void)_revertToProvisionalState
+{
+    [self _setRepresentation:nil];
+}
+
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
     static NSMutableDictionary *repTypes = nil;
@@ -348,89 +294,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
                           decisionListener:listener];
 }
 
-- (void)_finishedLoading
-{
-    _private->gotFirstByte = YES;
-    [self _commitIfReady];
-    
-    _private->representationFinishedLoading = YES;
-    [[self representation] finishedLoadingWithDataSource:self];
-    [[self _bridge] end];
-}
-
-- (void)_setResponse:(NSURLResponse *)response
-{
-    [_private->response release];
-    _private->response = [response retain];
-}
-
-- (void)_setRequest:(NSURLRequest *)request
-{
-    ASSERT_ARG(request, request != _private->request);
-    
-    // Replacing an unreachable URL with alternate content looks like a server-side
-    // redirect at this point, but we can replace a committed dataSource.
-    BOOL handlingUnreachableURL = [request _webDataRequestUnreachableURL] != nil;
-    if (handlingUnreachableURL) {
-        _private->committed = NO;
-    }
-    
-    // We should never be getting a redirect callback after the data
-    // source is committed, except in the unreachable URL case. It 
-    // would be a WebFoundation bug if it sent a redirect callback after commit.
-    ASSERT(!_private->committed);
-    
-    NSURLRequest *oldRequest = _private->request;
-    
-    _private->request = [request mutableCopy];
-    
-    // Only send webView:didReceiveServerRedirectForProvisionalLoadForFrame: if URL changed.
-    // Also, don't send it when replacing unreachable URLs with alternate content.
-    if (!handlingUnreachableURL && ![[oldRequest URL] isEqual: [request URL]]) {
-        LOG(Redirect, "Server redirect to: %@", [request URL]);
-        [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
-            didReceiveServerRedirectForProvisionalLoadForFrame:[self webFrame]];
-    }
-    
-    [oldRequest release];
-}
-
-- (void)_setupForReplaceByMIMEType:(NSString *)newMIMEType
-{
-    if (!_private->gotFirstByte)
-        return;
-    
-    WebFrame *frame = [self webFrame];
-    NSString *oldMIMEType = [[self response] MIMEType];
-    
-    if (![self _doesProgressiveLoadWithMIMEType:oldMIMEType]) {
-        [self _revertToProvisionalState];
-        [self _commitLoadWithData:[self data]];
-    }
-    
-    _private->representationFinishedLoading = YES;
-    [[self representation] finishedLoadingWithDataSource:self];
-    [[self _bridge] end];
-    
-    [frame _setLoadType:WebFrameLoadTypeReplace];
-    _private->gotFirstByte = NO;
-    
-    if ([self _doesProgressiveLoadWithMIMEType:newMIMEType])
-        [self _revertToProvisionalState];
-    
-    [[_private->loadState frameLoader] stopLoadingSubresources];
-    [[_private->loadState frameLoader] stopLoadingPlugIns];
-    [_private->unarchivingState release];
-}
-
--(void)_receivedData:(NSData *)data
-{    
-    _private->gotFirstByte = YES;
-    
-    if ([self _doesProgressiveLoadWithMIMEType:[[self response] MIMEType]])
-        [self _commitLoadWithData:data];
-}
-
 - (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
 {
     // MOVABLE
@@ -452,25 +315,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [bridge release];
     
     [[self webFrame] _receivedMainResourceError:error];
-    [self _mainReceivedError:error complete:isComplete];
-}
-
-- (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete
-{
-    if (![self webFrame])
-        return;
-    
-    [self _setMainDocumentError:error];
-    
-    if (isComplete) {
-        [self _setPrimaryLoadComplete:YES];
-        [[self webFrame] _checkLoadComplete];
-    }
-}
-
-- (BOOL)_defersCallbacks
-{
-    return _private->defersCallbacks;
+    [_private->loadState mainReceivedError:error complete:isComplete];
 }
 
 - (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(WKNSURLConnectionDelegateProxyPtr) proxy
@@ -579,19 +424,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return [_private->unarchivingState archivedResourceForURL:URL];
 }
 
-- (void)_setLoading:(BOOL)loading
-{
-    _private->loading = loading;
-}
-
-- (void)_updateLoading
-{
-    WebFrameLoader *frameLoader = [_private->loadState frameLoader];
-    ASSERT(self == [frameLoader activeDataSource]);
-
-    [self _setLoading:[frameLoader isLoading]];
-}
-
 - (void)_startLoading
 {
     [self _prepareForLoadStart];
@@ -608,8 +440,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     else
         identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:[_private->loadState originalRequest] fromDataSource:self];
     
-    if (![[_private->loadState frameLoader] startLoadingMainResourceWithRequest:_private->request identifier:identifier])
-        [self _updateLoading];
+    if (![[_private->loadState frameLoader] startLoadingMainResourceWithRequest:[_private->loadState request] identifier:identifier])
+        [_private->loadState updateLoading];
 }
 
 - (void)_stopRecordingResponses
@@ -681,11 +513,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return _private->pageTitle;
 }
 
-- (BOOL)_isStopping
-{
-    return _private->stopping;
-}
-
 - (void)_setWebFrame:(WebFrame *)frame
 {
     [self retain];
@@ -694,10 +521,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if (frame)
         [_private->loadState setDataSource:self];
     
-    [self _defersCallbacksChanged];
-    // no need to do _defersCallbacksChanged for subframes since they too
-    // will be or have been told of their WebFrame
-
     [self release];
 }
 
@@ -711,7 +534,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     [self _prepareForLoadStart];
     _private->loadingFromPageCache = YES;
-    _private->committed = TRUE;
+    [_private->loadState setCommitted:YES];
     [[self webFrame] _commitProvisionalLoad:pageCache];
 }
 
@@ -725,36 +548,11 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     _private->isClientRedirect = flag;
 }
 
-- (void)_setURL:(NSURL *)URL
-{
-    NSMutableURLRequest *newOriginalRequest = [_private->originalRequestCopy mutableCopy];
-    [_private->originalRequestCopy release];
-    [newOriginalRequest setURL:URL];
-    _private->originalRequestCopy = newOriginalRequest;
-    
-    NSMutableURLRequest *newRequest = [_private->request mutableCopy];
-    [_private->request release];
-    [newRequest setURL:URL];
-    _private->request = newRequest;
-}
-
 - (void)_setLastCheckedRequest:(NSURLRequest *)request
 {
     NSURLRequest *oldRequest = _private->lastCheckedRequest;
     _private->lastCheckedRequest = [request copy];
     [oldRequest release];
-}
-
-- (void)_defersCallbacksChanged
-{
-    BOOL defers = [[self _webView] defersCallbacks];
-    
-    if (defers == _private->defersCallbacks) {
-        return;
-    }
-    
-    _private->defersCallbacks = defers;
-    [[_private->loadState frameLoader] setDefersCallbacks:defers];
 }
 
 - (NSURLRequest *)_lastCheckedRequest
@@ -764,48 +562,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return [[_private->lastCheckedRequest retain] autorelease];
 }
 
-// Cancels the data source's pending loads.  Conceptually, a data source only loads
-// one document at a time, but one document may have many related resources. 
-// _stopLoading will stop all loads initiated by the data source, 
-// but not loads initiated by child frames' data sources -- that's the WebFrame's job.
-- (void)_stopLoading
-{
-    // Always attempt to stop the bridge/part because it may still be loading/parsing after the data source
-    // is done loading and not stopping it can cause a world leak.
-    if (_private->committed)
-        [[self _bridge] stopLoading];
-    
-    if (!_private->loading)
-        return;
-    
-    [self retain];
-    
-    _private->stopping = YES;
-    
-    if ([[_private->loadState frameLoader] isLoadingMainResource]) {
-        // Stop the main resource loader and let it send the cancelled message.
-        [[_private->loadState frameLoader] cancelMainResourceLoad];
-    } else if ([[_private->loadState frameLoader] isLoadingSubresources]) {
-        // The main resource loader already finished loading. Set the cancelled error on the 
-        // document and let the subresourceLoaders send individual cancelled messages below.
-        [self _setMainDocumentError:[self _cancelledError]];
-    } else {
-        // If there are no resource loaders, we need to manufacture a cancelled message.
-        // (A back/forward navigation has no resource loaders because its resources are cached.)
-        [self _mainReceivedError:[self _cancelledError] complete:YES];
-    }
-    
-    [[_private->loadState frameLoader] stopLoadingSubresources];
-    [[_private->loadState frameLoader] stopLoadingPlugIns];
-    
-    _private->stopping = NO;
-    
-    [self release];
-}
-
 - (WebFrameBridge *)_bridge
 {
-    ASSERT(_private->committed);
+    ASSERT([_private->loadState isCommitted]);
     return [[self webFrame] _bridge];
 }
 
@@ -824,14 +583,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [action retain];
     [_private->triggeringAction release];
     _private->triggeringAction = action;
-}
-
-- (void)__adoptRequest:(NSMutableURLRequest *)request
-{
-    if (request != _private->request){
-        [_private->request release];
-        _private->request = [request retain];
-    }
 }
 
 - (BOOL)_isDocumentHTML
@@ -855,7 +606,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
             [[_private->loadState frameLoader] releaseMainResourceLoader];
         }
         
-        [self _updateLoading];
+        [_private->loadState updateLoading];
 
         if ([WebScriptDebugServer listenerCount])
             [[WebScriptDebugServer sharedScriptDebugServer] webView:[[self webFrame] webView] didLoadMainResourceForDataSource:self];
@@ -891,21 +642,14 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return _private->isClientRedirect;
 }
 
-
-- (NSURLRequest *)_originalRequest
-{
-    return _private->originalRequestCopy;
-}
-
 - (NSURL *)_URLForHistory
 {
     // Return the URL to be used for history and B/F list.
     // Returns nil for WebDataProtocol URLs that aren't alternates 
     // for unreachable URLs, because these can't be stored in history.
-    NSURL *URL = [_private->originalRequestCopy URL];
-    if ([WebDataProtocol _webIsDataProtocolURL:URL]) {
-        URL = [_private->originalRequestCopy _webDataRequestUnreachableURL];
-    }
+    NSURL *URL = [[_private->loadState originalRequestCopy] URL];
+    if ([WebDataProtocol _webIsDataProtocolURL:URL])
+        URL = [[_private->loadState originalRequestCopy] _webDataRequestUnreachableURL];
     
     return [URL _webkit_canonicalize];
 }
@@ -956,7 +700,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [[self _webView] _didChangeValueForKey:_WebMainFrameTitleKey];
     
     // The title doesn't get communicated to the WebView until we are committed.
-    if (_private->committed) {
+    if ([_private->loadState isCommitted]) {
         NSURL *URLForHistory = [self _URLForHistory];
         if (URLForHistory != nil) {
             WebHistoryItem *entry = [[WebHistory optionalSharedHistory] itemForURL:URLForHistory];
@@ -989,12 +733,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     _private = [[WebDataSourcePrivate alloc] init];
     
     _private->loadState = [loadState retain];
-    
-    _private->originalRequestCopy = [[_private->loadState originalRequest] copy];
-    
-    LOG(Loading, "creating datasource for %@", [_private->originalRequestCopy URL]);
-    _private->request = [[_private->loadState originalRequest] mutableCopy];
-    _private->supportsMultipartContent = WKSupportsMultipartXMixedReplace(_private->request);
+        
+    LOG(Loading, "creating datasource for %@", [[_private->loadState request] URL]);
+    WKSupportsMultipartXMixedReplace([_private->loadState request]);
     
     ++WebDataSourceCount;
     
@@ -1054,15 +795,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 -(NSMutableURLRequest *)request
 {
-    NSMutableURLRequest *clientRequest = [_private->request _webDataRequestExternalRequest];
-    if (!clientRequest)
-        clientRequest = _private->request;
-    return clientRequest;
+    return [_private->loadState request];
 }
 
 - (NSURLResponse *)response
 {
-    return _private->response;
+    return [_private->loadState response];
 }
 
 - (NSString *)textEncodingName
@@ -1081,7 +819,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     // Once a frame has loaded, we no longer need to consider subresources,
     // but we still need to consider subframes.
     if ([[[self webFrame] _frameLoader] state] != WebFrameStateComplete) {
-        if (!_private->primaryLoadComplete && _private->loading)
+        if (!_private->primaryLoadComplete && [_private->loadState isLoading])
             return YES;
         if ([[_private->loadState frameLoader] isLoadingSubresources])
             return YES;
@@ -1106,7 +844,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 - (WebArchive *)webArchive
 {
     // it makes no sense to grab a WebArchive from an uncommitted document.
-    if (!_private->committed)
+    if (![_private->loadState isCommitted])
         return nil;
 
     return [WebArchiver archiveFrame:[self webFrame]];

@@ -102,6 +102,9 @@ typedef enum {
 - (WebDataSource *)provisionalDataSource;
 - (WebDataSource *)policyDataSource;
 - (WebDataSource *)activeDataSource;
+- (WebDocumentLoadState *)activeDocumentLoadState;
+- (WebDocumentLoadState *)documentLoadState;
+- (WebDocumentLoadState *)provisionalDocumentLoadState;
 - (void)_setPolicyDocumentLoadState:(WebDocumentLoadState *)loadState;
 - (WebFrameState)state;
 - (void)clearDataSource;
@@ -109,7 +112,8 @@ typedef enum {
 + (CFAbsoluteTime)timeOfLastCompletedLoad;
 
 - (WebResource *)_archivedSubresourceForURL:(NSURL *)URL;
-- (BOOL)_defersCallbacks;
+- (BOOL)defersCallbacks;
+- (void)defersCallbacksChanged;
 - (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest;
 - (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse;
 - (void)_didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier;
@@ -160,5 +164,17 @@ typedef enum {
 - (void)reload;
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding;
 - (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState;
+
+- (void)didReceiveServerRedirectForProvisionalLoadForFrame;
+- (WebFrameBridge *)bridge;
+- (void)finishedLoadingDocumentLoadState:(WebDocumentLoadState *)loadState;
+- (void)commitProvisitionalLoad;
+- (void)committedLoadWithDocumentLoadState:(WebDocumentLoadState *)loadState data:(NSData *)data;
+- (BOOL)isReplacing;
+- (void)setReplacing;
+- (void)revertToProvisionalWithDocumentLoadState:(WebDocumentLoadState *)loadState;
+- (void)documentLoadState:(WebDocumentLoadState *)loadState setMainDocumentError:(NSError *)error;
+- (void)documentLoadState:(WebDocumentLoadState *)loadState mainReceivedCompleteError:(NSError *)error;
+- (void)finalSetupForReplaceWithDocumentLoadState:(WebDocumentLoadState *)loadState;
 
 @end

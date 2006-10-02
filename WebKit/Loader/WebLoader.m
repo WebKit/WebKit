@@ -197,7 +197,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [frameLoader release];
     frameLoader = fl;
 
-    [self setDefersCallbacks:[frameLoader _defersCallbacks]];
+    [self setDefersCallbacks:[frameLoader defersCallbacks]];
 }
 
 - (WebFrameLoader *)frameLoader

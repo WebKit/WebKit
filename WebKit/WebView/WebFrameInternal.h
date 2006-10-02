@@ -74,6 +74,7 @@
 - (BOOL)_shouldReloadToHandleUnreachableURLFromRequest:(NSURLRequest *)request;
 - (WebDataSource *)_dataSourceForDocumentLoadState:(WebDocumentLoadState *)loadState;
 - (WebDocumentLoadState *)_createDocumentLoadStateWithRequest:(NSURLRequest *)request;
+- (void)_didReceiveServerRedirectForProvisionalLoadForFrame;
 
 @end
 
