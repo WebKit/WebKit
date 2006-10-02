@@ -2,6 +2,31 @@
 
         Reviewed by Anders.
         
+        - remove webFrame field from WebDataSourcePrivate, it can get it from WebDocumentLoadState now
+
+        * Loader/WebDocumentLoadState.h:
+        * Loader/WebDocumentLoadState.m:
+        (-[WebDocumentLoadState frameLoader]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _revertToProvisionalState]):
+        (-[WebDataSource _setupForReplaceByMIMEType:]):
+        (-[WebDataSource _updateLoading]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _setWebFrame:]):
+        (-[WebDataSource _defersCallbacksChanged]):
+        (-[WebDataSource _stopLoading]):
+        (-[WebDataSource _webView]):
+        (-[WebDataSource _stopLoadingWithError:]):
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (-[WebDataSource dealloc]):
+        (-[WebDataSource webFrame]):
+        (-[WebDataSource isLoading]):
+
+2006-10-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
         - fix crash on back/forward - reattach WebDocumentLoadState to data source when needed
 
         * WebView/WebDataSource.m:

@@ -73,7 +73,8 @@
     @public
     
     WebDocumentLoadStateMac *loadState;
-    
+    WebUnarchivingState *unarchivingState;
+   
     id <WebDocumentRepresentation> representation;
     
     // A copy of the original request used to create the data source.
@@ -129,11 +130,7 @@
     
     BOOL loadingFromPageCache;
     
-    WebFrame *webFrame;
-    
     NSMutableDictionary *subresources;
-    
-    WebUnarchivingState *unarchivingState;
     
     BOOL supportsMultipartContent;
 }
@@ -157,7 +154,6 @@
     [triggeringAction release];
     [lastCheckedRequest release];
     [responses release];
-    [webFrame release];
     [unarchivingState release];
 
     [super dealloc];
@@ -273,7 +269,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 - (void)_revertToProvisionalState
 {
     [self _setRepresentation:nil];
-    [[_private->webFrame _frameLoader] setupForReplace];
+    [[_private->loadState frameLoader] setupForReplace];
     _private->committed = NO;
 }
 
@@ -422,8 +418,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if ([self _doesProgressiveLoadWithMIMEType:newMIMEType])
         [self _revertToProvisionalState];
     
-    [[_private->webFrame _frameLoader] stopLoadingSubresources];
-    [[_private->webFrame _frameLoader] stopLoadingPlugIns];
+    [[_private->loadState frameLoader] stopLoadingSubresources];
+    [[_private->loadState frameLoader] stopLoadingPlugIns];
     [_private->unarchivingState release];
 }
 
@@ -590,7 +586,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_updateLoading
 {
-    WebFrameLoader *frameLoader = [_private->webFrame _frameLoader];
+    WebFrameLoader *frameLoader = [_private->loadState frameLoader];
     ASSERT(self == [frameLoader activeDataSource]);
 
     [self _setLoading:[frameLoader isLoading]];
@@ -600,7 +596,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     [self _prepareForLoadStart];
     
-    if ([[_private->webFrame _frameLoader] isLoadingMainResource])
+    if ([[_private->loadState frameLoader] isLoadingMainResource])
         return;
     
     _private->loadingFromPageCache = NO;
@@ -612,7 +608,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     else
         identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:[_private->loadState originalRequest] fromDataSource:self];
     
-    if (![[_private->webFrame _frameLoader] startLoadingMainResourceWithRequest:_private->request identifier:identifier])
+    if (![[_private->loadState frameLoader] startLoadingMainResourceWithRequest:_private->request identifier:identifier])
         [self _updateLoading];
 }
 
@@ -694,10 +690,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     [self retain];
 
-    [frame retain];
-    [_private->webFrame release];
-    _private->webFrame = frame;
-
     [_private->loadState setFrameLoader:[frame _frameLoader]];
     if (frame)
         [_private->loadState setDataSource:self];
@@ -762,7 +754,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
     
     _private->defersCallbacks = defers;
-    [[_private->webFrame _frameLoader] setDefersCallbacks:defers];
+    [[_private->loadState frameLoader] setDefersCallbacks:defers];
 }
 
 - (NSURLRequest *)_lastCheckedRequest
@@ -790,10 +782,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     
     _private->stopping = YES;
     
-    if ([[_private->webFrame _frameLoader] isLoadingMainResource]) {
+    if ([[_private->loadState frameLoader] isLoadingMainResource]) {
         // Stop the main resource loader and let it send the cancelled message.
-        [[_private->webFrame _frameLoader] cancelMainResourceLoad];
-    } else if ([[_private->webFrame _frameLoader] isLoadingSubresources]) {
+        [[_private->loadState frameLoader] cancelMainResourceLoad];
+    } else if ([[_private->loadState frameLoader] isLoadingSubresources]) {
         // The main resource loader already finished loading. Set the cancelled error on the 
         // document and let the subresourceLoaders send individual cancelled messages below.
         [self _setMainDocumentError:[self _cancelledError]];
@@ -803,8 +795,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         [self _mainReceivedError:[self _cancelledError] complete:YES];
     }
     
-    [[_private->webFrame _frameLoader] stopLoadingSubresources];
-    [[_private->webFrame _frameLoader] stopLoadingPlugIns];
+    [[_private->loadState frameLoader] stopLoadingSubresources];
+    [[_private->loadState frameLoader] stopLoadingPlugIns];
     
     _private->stopping = NO;
     
@@ -819,7 +811,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (WebView *)_webView
 {
-    return [_private->webFrame webView];
+    return [[[_private->loadState frameLoader] webFrame] webView];
 }
 
 - (NSDictionary *)_triggeringAction
@@ -850,7 +842,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_stopLoadingWithError:(NSError *)error
 {
-    [[_private->webFrame _frameLoader] stopLoadingWithError:error];
+    [[_private->loadState frameLoader] stopLoadingWithError:error];
 }
 
 - (void)_setPrimaryLoadComplete:(BOOL)flag
@@ -858,9 +850,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     _private->primaryLoadComplete = flag;
     
     if (flag) {
-        if ([[_private->webFrame _frameLoader] isLoadingMainResource]) {
-            [_private->loadState setMainResourceData:[[_private->webFrame _frameLoader] mainResourceData]];
-            [[_private->webFrame _frameLoader] releaseMainResourceLoader];
+        if ([[_private->loadState frameLoader] isLoadingMainResource]) {
+            [_private->loadState setMainResourceData:[[_private->loadState frameLoader] mainResourceData]];
+            [[_private->loadState frameLoader] releaseMainResourceLoader];
         }
         
         [self _updateLoading];
@@ -1021,7 +1013,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)dealloc
 {
-    ASSERT([[_private->webFrame _frameLoader] activeDataSource] != self || ![[_private->webFrame _frameLoader] isLoading]);
+    ASSERT([[_private->loadState frameLoader] activeDataSource] != self || ![[_private->loadState frameLoader] isLoading]);
 
     --WebDataSourceCount;
     
@@ -1049,7 +1041,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (WebFrame *)webFrame
 {
-    return _private->webFrame;
+    return [[_private->loadState frameLoader] webFrame];
 }
 
 -(NSURLRequest *)initialRequest
@@ -1091,7 +1083,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if ([[[self webFrame] _frameLoader] state] != WebFrameStateComplete) {
         if (!_private->primaryLoadComplete && _private->loading)
             return YES;
-        if ([[_private->webFrame _frameLoader] isLoadingSubresources])
+        if ([[_private->loadState frameLoader] isLoadingSubresources])
             return YES;
         if (![[[self webFrame] _bridge] doneProcessingData])
             return YES;

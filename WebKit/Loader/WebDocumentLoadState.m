@@ -63,6 +63,11 @@
     frameLoader = fl;
 }
 
+- (WebFrameLoader *)frameLoader
+{
+    return frameLoader;
+}
+
 - (void)setMainResourceData:(NSData *)data
 {
     [data retain];
