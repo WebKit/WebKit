@@ -130,3 +130,8 @@ set_target_properties(kjs-unity PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERS
 
 install (TARGETS wtf-unity DESTINATION ${LIB_INSTALL_DIR})
 install (TARGETS kjs-unity DESTINATION ${LIB_INSTALL_DIR})
+
+# testkjs
+set(testkjs_SRCS kjs/testkjs.cpp)
+kde4_add_executable(testkjs RUN_UNINSTALLED ${testkjs_SRCS})
+target_link_libraries(testkjs ${KDE4_KDECORE_LIBS} kjs-unity pcre-unity icuuc)

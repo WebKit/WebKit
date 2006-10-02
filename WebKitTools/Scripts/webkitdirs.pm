@@ -125,11 +125,6 @@ sub determineConfiguration
     } else {
         $configuration = "Release";
     }
-
-    if (isQt()) {
-        # We only support one build type for now
-        $configuration = "";
-    }
 }
 
 sub determineConfigurationProductDir
@@ -389,6 +384,30 @@ sub buildVisualStudioProject($)
 
     print "$devenvPath $project.sln /build $config";
     my $result = system $devenvPath, "$project.sln", "/build", $config;
+    chdir ".." or die;
+    return $result;
+}
+
+sub buildCMakeProject($)
+{
+    my ($project) = @_;
+
+    if ($project ne "WebKit") { 
+        die "Qt/Linux builds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
+    }
+
+    my $config = configuration();
+    print "Calling 'cmake -DCMAKE_BUILD_TYPE=$config ../' in " . baseProductDir() . " ...\n\n";
+
+    system "mkdir -p " . baseProductDir();
+    chdir baseProductDir() or die "Failed to cd into " . baseProductDir() . "\n";
+
+    my $result = system "cmake", "-DCMAKE_BUILD_TYPE=$config", "../";
+    if($result ne 0) {
+       die "Failed to setup build environment using cmake!\n";
+    }
+
+    $result = system "make";
     chdir ".." or die;
     return $result;
 }

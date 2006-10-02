@@ -94,7 +94,12 @@ for my $dir (@projects) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject($dir);
         }
+    } elsif (isQt()) {
+        if ($dir eq "WebKit") {
+            $result = buildCMakeProject($dir);
+        }
     }
+
     exit WEXITSTATUS($result) if WEXITSTATUS($result);
     chdir ".." or die;
 }
