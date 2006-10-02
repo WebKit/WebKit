@@ -1,3 +1,26 @@
+2006-10-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        More frame/iframe merging.
+        
+        - Removed needWidgetUpdate and related code. needWidgetUpdate is always
+        false, so this was dead code.
+        - Removed FIXME about setInViewSourceMode inside openURL(). openURL(), rather
+        than attach(), is the correct place for setInViewSourceMode, because
+        openURL() is the function that creates our frame.
+        - Moved IFRAME insertedIntoDocument() code into FRAME, and removed FRAME
+        code that did the same thing in other places.
+        - Made FRAME's attach() method suffuciently generic so that IFRAME could
+        call up to it, rather than skipping its superclass and calling up directly 
+        to ELEMENT.
+        - Changed a few IFRAME up-calls to ELEMENT into up-calls to FRAME.
+        - Replaced ad hoc frame loading code in FRAME::attach() with call to
+        openURL(), the designated frame loading function.
+
+        Layout tests pass. I added a layout test for viewsource mode, since I
+        broke it in the course of writing this patch.
+
 2006-10-01  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

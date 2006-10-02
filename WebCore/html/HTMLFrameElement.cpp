@@ -117,9 +117,6 @@ void HTMLFrameElement::openURL()
 
     document()->frame()->requestFrame(this, m_URL, m_name);
 
-    // FIXME: This is a relic from how HTMLIFrameElement used to do things.
-    // It's probably unnecessary, since viewsource mode doesn't really work,
-    // and both parseMappedAttribute and attach include the same check.
     if (contentFrame())
         contentFrame()->setInViewSourceMode(viewSourceMode());
 }
@@ -183,44 +180,33 @@ RenderObject *HTMLFrameElement::createRenderer(RenderArena *arena, RenderStyle *
     return new (arena) RenderFrame(this);
 }
 
-void HTMLFrameElement::attach()
+void HTMLFrameElement::insertedIntoDocument()
 {
+    HTMLElement::insertedIntoDocument();
+    
     m_name = getAttribute(nameAttr);
     if (m_name.isNull())
         m_name = getAttribute(idAttr);
 
-    // inherit default settings from parent frameset
-    for (Node *node = parentNode(); node; node = node->parentNode())
-        if (node->hasTagName(framesetTag)) {
-            HTMLFrameSetElement* frameset = static_cast<HTMLFrameSetElement*>(node);
-            if (!m_frameBorderSet)
-                m_frameBorder = frameset->frameBorder();
-            if (!m_noResize)
-                m_noResize = frameset->noResize();
-            break;
-        }
+    if (Frame* parentFrame = document()->frame())
+        m_name = parentFrame->tree()->uniqueChildName(m_name);
+}
 
+void HTMLFrameElement::attach()
+{
     HTMLElement::attach();
-
-    if (!renderer())
-        return;
-
-    Frame* frame = document()->frame();
-
-    if (!frame)
-        return;
-
-    AtomicString relativeURL = m_URL;
-    if (relativeURL.isEmpty())
-        relativeURL = "about:blank";
-
-    m_name = frame->tree()->uniqueChildName(m_name);
-
-    // load the frame contents
-    frame->requestFrame(this, relativeURL, m_name);
     
-    if (contentFrame())
-        contentFrame()->setInViewSourceMode(viewSourceMode());
+    if (hasTagName(frameTag)) {
+        if (HTMLFrameSetElement* frameSetElement = containingFrameSetElement()) {
+            if (!m_frameBorderSet)
+                m_frameBorder = frameSetElement->frameBorder();
+            if (!m_noResize)
+                m_noResize = frameSetElement->noResize();
+        }
+    }
+        
+    if (!contentFrame())
+        openURL();
 }
 
 void HTMLFrameElement::close()
@@ -305,6 +291,15 @@ Document* HTMLFrameElement::contentDocument() const
     if (!frame)
         return 0;
     return frame->document();
+}
+
+HTMLFrameSetElement* HTMLFrameElement::containingFrameSetElement() const
+{
+    for (Node* node = parentNode(); node; node = node->parentNode())
+        if (node->hasTagName(framesetTag))
+            return static_cast<HTMLFrameSetElement*>(node);
+
+    return 0;
 }
 
 bool HTMLFrameElement::isURLAttribute(Attribute *attr) const

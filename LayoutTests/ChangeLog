@@ -1,3 +1,13 @@
+2006-09-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Added test for the viewource attribute, which applies to <frame> and
+        <iframe> elements.
+
+        * fast/frames/viewsource-attribute-expected.txt: Added.
+        * fast/frames/viewsource-attribute.html: Added.
+
+        * fast/frames/frameElement-widthheight.html: Removed stray character.
+
 2006-09-30  David Harrison  <harrison@apple.com>
 
         Reviewed by John Sullivan.

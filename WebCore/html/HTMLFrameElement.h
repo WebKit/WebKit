@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class Frame;
+class HTMLFrameSetElement;
 
 class HTMLFrameElement : public HTMLElement
 {
@@ -49,12 +50,17 @@ public:
     virtual int tagPriority() const { return 0; }
   
     virtual void parseMappedAttribute(MappedAttribute*);
+
     virtual void attach();
-    void close();
-    virtual void willRemove();
     virtual void detach();
+
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject *createRenderer(RenderArena*, RenderStyle*);
+    
+    void insertedIntoDocument();
+    virtual void willRemove();
+
+    void close();
 
     bool noResize() { return m_noResize; }
 
@@ -65,6 +71,7 @@ public:
 
     Frame* contentFrame() const;
     Document* contentDocument() const;
+    HTMLFrameSetElement* containingFrameSetElement() const;
     
     virtual bool isURLAttribute(Attribute*) const;
 
