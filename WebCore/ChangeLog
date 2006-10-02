@@ -1,3 +1,16 @@
+2006-10-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
+        Eliminate a few more hotspots in SVG drawing code.
+        
+        No test cases were harmed in the making of this patch.  (And SVG has no perf tests.)
+
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (WebCore::KRenderingPaintServerSolidQuartz::setup): use a single shared colorspace, avoid a few mallocs
+        * platform/mac/ColorMac.mm:
+        (+[WebCoreControlTintObserver WebCore]): store a single shared colorspace instance
+
 2006-10-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

@@ -85,13 +85,16 @@ bool KRenderingPaintServerSolidQuartz::setup(KRenderingDeviceContext* renderingC
     RenderStyle* renderStyle = renderObject->style();
 
     CGContextSetAlpha(context, renderStyle->opacity());
-        
+    
+    static CGColorSpaceRef deviceRGBColorSpace = CGColorSpaceCreateDeviceRGB(); // This should be shared from GraphicsContext, or some other central location
+
     if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle)) {
-        CGColorRef colorCG = cgColor(color());
-        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, KSVGPainterFactory::fillPainter(renderStyle, renderObject).opacity());
-        CGContextSetFillColorWithColor(context, withAlpha);
-        CGColorRelease(colorCG);
-        CGColorRelease(withAlpha);
+        CGFloat colorComponents[4];
+        color().getRGBA(colorComponents[0], colorComponents[1], colorComponents[2], colorComponents[3]);
+        ASSERT(!color().hasAlpha());
+        colorComponents[3] = renderStyle->svgStyle()->fillOpacity(); // SVG/CSS colors are not specified w/o alpha
+        CGContextSetFillColorSpace(context, deviceRGBColorSpace);
+        CGContextSetFillColor(context, colorComponents);
         if (isPaintingText()) {
             const_cast<RenderObject*>(renderObject)->style()->setColor(color());
             CGContextSetTextDrawingMode(context, kCGTextFill);
@@ -99,11 +102,12 @@ bool KRenderingPaintServerSolidQuartz::setup(KRenderingDeviceContext* renderingC
     }
 
     if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle)) {
-        CGColorRef colorCG = cgColor(color());
-        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, KSVGPainterFactory::strokePainter(renderStyle, renderObject).opacity());         
-        CGContextSetStrokeColorWithColor(context, withAlpha);
-        CGColorRelease(colorCG);
-        CGColorRelease(withAlpha);
+        CGFloat colorComponents[4];
+        color().getRGBA(colorComponents[0], colorComponents[1], colorComponents[2], colorComponents[3]);
+        ASSERT(!color().hasAlpha());
+        colorComponents[3] = renderStyle->svgStyle()->strokeOpacity(); // SVG/CSS colors are not specified w/o alpha
+        CGContextSetStrokeColorSpace(context, deviceRGBColorSpace);
+        CGContextSetStrokeColor(context, colorComponents);
         applyStrokeStyleToContext(context, renderStyle, renderObject);
         if (isPaintingText()) {
             const_cast<RenderObject*>(renderObject)->style()->setColor(color());

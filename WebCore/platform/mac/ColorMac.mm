@@ -99,9 +99,8 @@ static CGColorRef CGColorFromNSColor(NSColor* color)
     CGFloat blue = [deviceColor blueComponent];
     CGFloat alpha = [deviceColor alphaComponent];
     const CGFloat components[4] = { red, green, blue, alpha };
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGColorRef cgColor = CGColorCreate(colorSpace, components);
-    CGColorSpaceRelease(colorSpace);
+    static CGColorSpaceRef deviceRGBColorSpace = CGColorSpaceCreateDeviceRGB();
+    CGColorRef cgColor = CGColorCreate(deviceRGBColorSpace, components);
     return cgColor;
 }
 
