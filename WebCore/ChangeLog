@@ -1,3 +1,12 @@
+2006-10-02  David Harrison  <harrison@apple.com>
+
+        Reverted the code part of r16696, my patch for <rdar://problem/4641262>, because the problem was
+        addressed at a deeper level by r16696, the patch for <http://bugs.webkit.org/show_bug.cgi?id=10842>.
+        Left the layout test.
+        
+        * rendering/bidi.cpp:
+        (WebCore::checkMidpoints):
+
 2006-10-02  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.
