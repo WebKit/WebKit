@@ -1,3 +1,17 @@
+2006-10-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Build fix, not reviewed.
+        
+        - Added missing files to fix build.
+
+        * WebView/WebDocumentLoadStateMac.h: Added.
+        * WebView/WebDocumentLoadStateMac.m: Added.
+        (-[WebDocumentLoadStateMac initWithRequest:]):
+        (-[WebDocumentLoadStateMac dealloc]):
+        (-[WebDocumentLoadStateMac setDataSource:]):
+        (-[WebDocumentLoadStateMac dataSource]):
+        (-[WebDocumentLoadStateMac setFrameLoader:]):
+
 2006-10-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady and Oliver.
