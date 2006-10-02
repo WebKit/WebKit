@@ -5,16 +5,16 @@ window.ReferenceError : function
 window.SyntaxError : function
 window.TypeError : function
 window.URIError : function
-window.layoutTestController : object
+window.layoutTestController : object (RuntimeObject)
 window.layoutTestController *** children skipped, already printed above under 'undefined'
-window.eventSender : object
-window.textInputController : object
-window.appleScriptController : object
-window.GCController : object
-window.navigationController : object
-window.objCPlugin : object
+window.eventSender : object (RuntimeObject)
+window.textInputController : object (RuntimeObject)
+window.appleScriptController : object (RuntimeObject)
+window.GCController : object (RuntimeObject)
+window.navigationController : object (RuntimeObject)
+window.objCPlugin : object (RuntimeObject)
 window.objCPluginFunction : function
-window.logDiv : object
+window.logDiv : object (HTMLDivElement)
 window.logDiv *** children skipped (explicitly)
 window.lastLogLine : number
 window.log : function
@@ -22,7 +22,7 @@ window.shouldSkipProperty : function
 window.shouldSkipChildren : function
 window.havePrintedChildren : function
 window.printProperties : function
-window.document : object
+window.document : object (HTMLDocument)
 window.document.title : string
 window.document.width : number
 window.document.anchors : function
@@ -35,7 +35,7 @@ window.document.applets : function
 window.document.height : number
 window.document.all : undefined
 window.document.lastModified : string
-window.document.body : object
+window.document.body : object (HTMLBodyElement)
 window.document.body.bgColor : string
 window.document.body.vLink : string
 window.document.body.aLink : string
@@ -47,7 +47,7 @@ window.document.body.text : string
 window.document.body.scrollTop : number
 window.document.body.scrollWidth : number
 window.document.body.id : string
-window.document.body.document : object
+window.document.body.document : object (HTMLDocument)
 window.document.body.document *** children skipped, already printed above under 'window.document'
 window.document.body.isContentEditable : boolean
 window.document.body.className : string
@@ -67,7 +67,7 @@ window.document.body.offsetLeft : number
 window.document.body.clientHeight : number
 window.document.body.offsetTop : number
 window.document.body.offsetParent : null
-window.document.body.style : object
+window.document.body.style : object (CSSStyleDeclaration)
 window.document.body.style.cssText : string
 window.document.body.style.length : number
 window.document.body.style.parentRule : null
@@ -81,10 +81,10 @@ window.document.body.style.isPropertyImplicit : function
 window.document.body.style.setProperty : function
 window.document.body.clientWidth : number
 window.document.body.clientTop : number
-window.document.body.parentNode : object
+window.document.body.parentNode : object (HTMLHtmlElement)
 window.document.body.parentNode.version : string
 window.document.body.parentNode.id : string
-window.document.body.parentNode.document : object
+window.document.body.parentNode.document : object (HTMLDocument)
 window.document.body.parentNode.document *** children skipped, already printed above under 'window.document'
 window.document.body.parentNode.isContentEditable : boolean
 window.document.body.parentNode.className : string
@@ -105,7 +105,7 @@ window.document.body.parentNode.offsetLeft : number
 window.document.body.parentNode.clientHeight : number
 window.document.body.parentNode.offsetTop : number
 window.document.body.parentNode.offsetParent : null
-window.document.body.parentNode.style : object
+window.document.body.parentNode.style : object (CSSStyleDeclaration)
 window.document.body.parentNode.style.cssText : string
 window.document.body.parentNode.style.length : number
 window.document.body.parentNode.style.parentRule : null
@@ -122,12 +122,12 @@ window.document.body.parentNode.scrollTop : number
 window.document.body.parentNode.clientWidth : number
 window.document.body.parentNode.clientTop : number
 window.document.body.parentNode.scrollWidth : number
-window.document.body.parentNode.parentNode : object
+window.document.body.parentNode.parentNode : object (HTMLDocument)
 window.document.body.parentNode.parentNode *** children skipped, already printed above under 'window.document'
 window.document.body.parentNode.childNodes : function
-window.document.body.parentNode.parentElement : object
+window.document.body.parentNode.parentElement : object (HTMLDocument)
 window.document.body.parentNode.parentElement *** children skipped, already printed above under 'window.document'
-window.document.body.parentNode.attributes : object
+window.document.body.parentNode.attributes : object (NamedNodeMap)
 window.document.body.parentNode.attributes.removeNamedItem : function
 window.document.body.parentNode.attributes.getNamedItem : function
 window.document.body.parentNode.attributes.item : function
@@ -139,15 +139,15 @@ window.document.body.parentNode.prefix : null
 window.document.body.parentNode.nodeValue : null
 window.document.body.parentNode.previousSibling : null
 window.document.body.parentNode.nodeType : number
-window.document.body.parentNode.lastChild : object
+window.document.body.parentNode.lastChild : object (HTMLBodyElement)
 window.document.body.parentNode.lastChild *** children skipped, already printed above under 'window.document.body'
 window.document.body.parentNode.namespaceURI : string
 window.document.body.parentNode.nodeName : string
-window.document.body.parentNode.firstChild : object
+window.document.body.parentNode.firstChild : object (HTMLBodyElement)
 window.document.body.parentNode.firstChild *** children skipped, already printed above under 'window.document.body'
 window.document.body.parentNode.nextSibling : null
 window.document.body.parentNode.localName : string
-window.document.body.parentNode.ownerDocument : object
+window.document.body.parentNode.ownerDocument : object (HTMLDocument)
 window.document.body.parentNode.ownerDocument *** children skipped, already printed above under 'window.document'
 window.document.body.parentNode.textContent : string
 window.document.body.parentNode.removeAttributeNode : function
@@ -204,9 +204,9 @@ window.document.body.parentNode.isSupported : function
 window.document.body.parentNode.isEqualNode : function
 window.document.body.parentNode.lookupNamespaceURI : function
 window.document.body.childNodes : function
-window.document.body.parentElement : object
+window.document.body.parentElement : object (HTMLHtmlElement)
 window.document.body.parentElement *** children skipped, already printed above under 'window.document.body.parentNode'
-window.document.body.attributes : object
+window.document.body.attributes : object (NamedNodeMap)
 window.document.body.attributes.removeNamedItem : function
 window.document.body.attributes.getNamedItem : function
 window.document.body.attributes.item : function
@@ -218,17 +218,17 @@ window.document.body.prefix : null
 window.document.body.nodeValue : null
 window.document.body.previousSibling : null
 window.document.body.nodeType : number
-window.document.body.lastChild : object
+window.document.body.lastChild : object (HTMLScriptElement)
 window.document.body.lastChild *** children skipped (explicitly)
 window.document.body.namespaceURI : string
 window.document.body.nodeName : string
-window.document.body.firstChild : object
+window.document.body.firstChild : object (Text)
 window.document.body.firstChild.data : string
 window.document.body.firstChild.length : number
-window.document.body.firstChild.parentNode : object
+window.document.body.firstChild.parentNode : object (HTMLBodyElement)
 window.document.body.firstChild.parentNode *** children skipped, already printed above under 'window.document.body'
 window.document.body.firstChild.childNodes : function
-window.document.body.firstChild.parentElement : object
+window.document.body.firstChild.parentElement : object (HTMLBodyElement)
 window.document.body.firstChild.parentElement *** children skipped, already printed above under 'window.document.body'
 window.document.body.firstChild.attributes : null
 window.document.body.firstChild.prefix : null
@@ -239,10 +239,10 @@ window.document.body.firstChild.lastChild : null
 window.document.body.firstChild.namespaceURI : null
 window.document.body.firstChild.nodeName : string
 window.document.body.firstChild.firstChild : null
-window.document.body.firstChild.nextSibling : object
+window.document.body.firstChild.nextSibling : object (HTMLDivElement)
 window.document.body.firstChild.nextSibling *** children skipped (explicitly)
 window.document.body.firstChild.localName : string
-window.document.body.firstChild.ownerDocument : object
+window.document.body.firstChild.ownerDocument : object (HTMLDocument)
 window.document.body.firstChild.ownerDocument *** children skipped, already printed above under 'window.document'
 window.document.body.firstChild.textContent : string
 window.document.body.firstChild.splitText : function
@@ -283,7 +283,7 @@ window.document.body.firstChild.isEqualNode : function
 window.document.body.firstChild.lookupNamespaceURI : function
 window.document.body.nextSibling : null
 window.document.body.localName : string
-window.document.body.ownerDocument : object
+window.document.body.ownerDocument : object (HTMLDocument)
 window.document.body.ownerDocument *** children skipped, already printed above under 'window.document'
 window.document.body.textContent : string
 window.document.body.removeAttributeNode : function
@@ -342,7 +342,9 @@ window.document.body.lookupNamespaceURI : function
 window.document.images : function
 window.document.alinkColor : string
 window.document.links : function
-window.document.location : object
+window.document.location : object (Location)
+window.document.location.toString : function
+window.document.location.assign : function
 window.document.cookie : string
 window.document.plugins : function
 window.document.forms : function
@@ -352,10 +354,10 @@ window.document.fgColor : string
 window.document.linkColor : string
 window.document.designMode : string
 window.document.defaultCharset : string
-window.document.styleSheets : object
+window.document.styleSheets : object (StyleSheetList)
 window.document.styleSheets.length : number
 window.document.styleSheets.item : function
-window.document.implementation : object
+window.document.implementation : object (DOMImplementation)
 window.document.implementation.createDocumentType : function
 window.document.implementation.hasFeature : function
 window.document.implementation.createDocument : function
@@ -363,23 +365,23 @@ window.document.implementation.createCSSStyleSheet : function
 window.document.implementation.createHTMLDocument : function
 window.document.doctype : null
 window.document.inputEncoding : string
-window.document.defaultView : object
+window.document.defaultView : object (DOMWindow)
 window.document.defaultView.EvalError : function
 window.document.defaultView.RangeError : function
 window.document.defaultView.ReferenceError : function
 window.document.defaultView.SyntaxError : function
 window.document.defaultView.TypeError : function
 window.document.defaultView.URIError : function
-window.document.defaultView.layoutTestController : object
+window.document.defaultView.layoutTestController : object (RuntimeObject)
 window.document.defaultView.layoutTestController *** children skipped, already printed above under 'undefined'
-window.document.defaultView.eventSender : object
-window.document.defaultView.textInputController : object
-window.document.defaultView.appleScriptController : object
-window.document.defaultView.GCController : object
-window.document.defaultView.navigationController : object
-window.document.defaultView.objCPlugin : object
+window.document.defaultView.eventSender : object (RuntimeObject)
+window.document.defaultView.textInputController : object (RuntimeObject)
+window.document.defaultView.appleScriptController : object (RuntimeObject)
+window.document.defaultView.GCController : object (RuntimeObject)
+window.document.defaultView.navigationController : object (RuntimeObject)
+window.document.defaultView.objCPlugin : object (RuntimeObject)
 window.document.defaultView.objCPluginFunction : function
-window.document.defaultView.logDiv : object
+window.document.defaultView.logDiv : object (HTMLDivElement)
 window.document.defaultView.logDiv *** children skipped (explicitly)
 window.document.defaultView.lastLogLine : number
 window.document.defaultView.log : function
@@ -387,11 +389,11 @@ window.document.defaultView.shouldSkipProperty : function
 window.document.defaultView.shouldSkipChildren : function
 window.document.defaultView.havePrintedChildren : function
 window.document.defaultView.printProperties : function
-window.document.defaultView.document : object
+window.document.defaultView.document : object (HTMLDocument)
 window.document.defaultView.document *** children skipped, already printed above under 'window.document'
 window.document.defaultView.propertyName : string
-window.document.defaultView.CSSValue : object
-window.document.defaultView.CSSValue.prototype : object
+window.document.defaultView.CSSValue : object (CSSValueConstructor)
+window.document.defaultView.CSSValue.prototype : object (CSSValue)
 window.document.defaultView.CSSValue.prototype.CSS_INHERIT : number
 window.document.defaultView.CSSValue.prototype.CSS_CUSTOM : number
 window.document.defaultView.CSSValue.prototype.CSS_PRIMITIVE_VALUE : number
@@ -400,8 +402,8 @@ window.document.defaultView.CSSValue.CSS_INHERIT : number
 window.document.defaultView.CSSValue.CSS_CUSTOM : number
 window.document.defaultView.CSSValue.CSS_PRIMITIVE_VALUE : number
 window.document.defaultView.CSSValue.CSS_VALUE_LIST : number
-window.document.defaultView.CSSPrimitiveValue : object
-window.document.defaultView.CSSPrimitiveValue.prototype : object
+window.document.defaultView.CSSPrimitiveValue : object (CSSPrimitiveValueConstructor)
+window.document.defaultView.CSSPrimitiveValue.prototype : object (CSSPrimitiveValue)
 window.document.defaultView.CSSPrimitiveValue.prototype *** children skipped, already printed above under 'window.document.defaultView.CSSValue.prototype'
 window.document.defaultView.CSSPrimitiveValue.CSS_IN : number
 window.document.defaultView.CSSPrimitiveValue.CSS_EMS : number
@@ -429,8 +431,8 @@ window.document.defaultView.CSSPrimitiveValue.CSS_STRING : number
 window.document.defaultView.CSSPrimitiveValue.CSS_ATTR : number
 window.document.defaultView.CSSPrimitiveValue.CSS_RECT : number
 window.document.defaultView.CSSPrimitiveValue.CSS_RGBCOLOR : number
-window.document.defaultView.XMLDocument : object
-window.document.defaultView.XMLDocument.prototype : object
+window.document.defaultView.XMLDocument : object (DocumentConstructor)
+window.document.defaultView.XMLDocument.prototype : object (Document)
 window.document.defaultView.XMLDocument.prototype.getElementById : function
 window.document.defaultView.XMLDocument.prototype.createElement : function
 window.document.defaultView.XMLDocument.prototype.createTextNode : function
@@ -491,17 +493,17 @@ window.document.defaultView.XMLDocument.prototype.hasChildNodes : function
 window.document.defaultView.XMLDocument.prototype.isSupported : function
 window.document.defaultView.XMLDocument.prototype.isEqualNode : function
 window.document.defaultView.XMLDocument.prototype.lookupNamespaceURI : function
-window.document.defaultView.DOMParser : object
-window.document.defaultView.DOMParser.prototype : object
+window.document.defaultView.DOMParser : object (DOMParserConstructor)
+window.document.defaultView.DOMParser.prototype : object (DOMParser)
 window.document.defaultView.DOMParser.prototype.parseFromString : function
-window.document.defaultView.RangeException : object
-window.document.defaultView.RangeException.prototype : object
+window.document.defaultView.RangeException : object (RangeExceptionConstructor)
+window.document.defaultView.RangeException.prototype : object (RangeException)
 window.document.defaultView.RangeException.prototype.BAD_BOUNDARYPOINTS_ERR : number
 window.document.defaultView.RangeException.prototype.INVALID_NODE_TYPE_ERR : number
 window.document.defaultView.RangeException.BAD_BOUNDARYPOINTS_ERR : number
 window.document.defaultView.RangeException.INVALID_NODE_TYPE_ERR : number
-window.document.defaultView.HTMLElement : object
-window.document.defaultView.HTMLElement.prototype : object
+window.document.defaultView.HTMLElement : object (HTMLElementConstructor)
+window.document.defaultView.HTMLElement.prototype : object (HTMLElement)
 window.document.defaultView.HTMLElement.prototype.removeAttributeNode : function
 window.document.defaultView.HTMLElement.prototype.removeAttribute : function
 window.document.defaultView.HTMLElement.prototype.getAttributeNode : function
@@ -555,8 +557,8 @@ window.document.defaultView.HTMLElement.prototype.hasChildNodes : function
 window.document.defaultView.HTMLElement.prototype.isSupported : function
 window.document.defaultView.HTMLElement.prototype.isEqualNode : function
 window.document.defaultView.HTMLElement.prototype.lookupNamespaceURI : function
-window.document.defaultView.NodeFilter : object
-window.document.defaultView.NodeFilter.prototype : object
+window.document.defaultView.NodeFilter : object (NodeFilterConstructor)
+window.document.defaultView.NodeFilter.prototype : object (NodeFilter)
 window.document.defaultView.NodeFilter.prototype.SHOW_CDATA_SECTION : number
 window.document.defaultView.NodeFilter.prototype.FILTER_ACCEPT : number
 window.document.defaultView.NodeFilter.prototype.FILTER_REJECT : number
@@ -589,8 +591,8 @@ window.document.defaultView.NodeFilter.SHOW_ATTRIBUTE : number
 window.document.defaultView.NodeFilter.SHOW_ENTITY : number
 window.document.defaultView.NodeFilter.SHOW_DOCUMENT_TYPE : number
 window.document.defaultView.NodeFilter.SHOW_DOCUMENT_FRAGMENT : number
-window.document.defaultView.CSSStyleDeclaration : object
-window.document.defaultView.CSSStyleDeclaration.prototype : object
+window.document.defaultView.CSSStyleDeclaration : object (CSSStyleDeclarationConstructor)
+window.document.defaultView.CSSStyleDeclaration.prototype : object (CSSStyleDeclaration)
 window.document.defaultView.CSSStyleDeclaration.prototype.item : function
 window.document.defaultView.CSSStyleDeclaration.prototype.getPropertyPriority : function
 window.document.defaultView.CSSStyleDeclaration.prototype.getPropertyValue : function
@@ -599,8 +601,8 @@ window.document.defaultView.CSSStyleDeclaration.prototype.getPropertyShorthand :
 window.document.defaultView.CSSStyleDeclaration.prototype.getPropertyCSSValue : function
 window.document.defaultView.CSSStyleDeclaration.prototype.isPropertyImplicit : function
 window.document.defaultView.CSSStyleDeclaration.prototype.setProperty : function
-window.document.defaultView.MutationEvent : object
-window.document.defaultView.MutationEvent.prototype : object
+window.document.defaultView.MutationEvent : object (MutationEventConstructor)
+window.document.defaultView.MutationEvent.prototype : object (MutationEvent)
 window.document.defaultView.MutationEvent.prototype.MODIFICATION : number
 window.document.defaultView.MutationEvent.prototype.ADDITION : number
 window.document.defaultView.MutationEvent.prototype.REMOVAL : number
@@ -630,8 +632,8 @@ window.document.defaultView.MutationEvent.prototype.initEvent : function
 window.document.defaultView.MutationEvent.MODIFICATION : number
 window.document.defaultView.MutationEvent.ADDITION : number
 window.document.defaultView.MutationEvent.REMOVAL : number
-window.document.defaultView.Element : object
-window.document.defaultView.Element.prototype : object
+window.document.defaultView.Element : object (ElementConstructor)
+window.document.defaultView.Element.prototype : object (Element)
 window.document.defaultView.Element.prototype.removeAttributeNode : function
 window.document.defaultView.Element.prototype.removeAttribute : function
 window.document.defaultView.Element.prototype.getAttributeNode : function
@@ -686,10 +688,10 @@ window.document.defaultView.Element.prototype.isSupported : function
 window.document.defaultView.Element.prototype.isEqualNode : function
 window.document.defaultView.Element.prototype.lookupNamespaceURI : function
 window.document.defaultView.devicePixelRatio : number
-window.document.defaultView.Document : object
+window.document.defaultView.Document : object (DocumentConstructor)
 window.document.defaultView.Document *** children skipped, already printed above under 'window.document.defaultView.XMLDocument'
-window.document.defaultView.CSSRule : object
-window.document.defaultView.CSSRule.prototype : object
+window.document.defaultView.CSSRule : object (CSSRuleConstructor)
+window.document.defaultView.CSSRule.prototype : object (CSSRule)
 window.document.defaultView.CSSRule.prototype.MEDIA_RULE : number
 window.document.defaultView.CSSRule.prototype.IMPORT_RULE : number
 window.document.defaultView.CSSRule.prototype.UNKNOWN_RULE : number
@@ -704,8 +706,8 @@ window.document.defaultView.CSSRule.STYLE_RULE : number
 window.document.defaultView.CSSRule.PAGE_RULE : number
 window.document.defaultView.CSSRule.CHARSET_RULE : number
 window.document.defaultView.CSSRule.FONT_FACE_RULE : number
-window.document.defaultView.DocumentFragment : object
-window.document.defaultView.DocumentFragment.prototype : object
+window.document.defaultView.DocumentFragment : object (DocumentFragmentConstructor)
+window.document.defaultView.DocumentFragment.prototype : object (DocumentFragment)
 window.document.defaultView.DocumentFragment.prototype.addEventListener : function
 window.document.defaultView.DocumentFragment.prototype.removeEventListener : function
 window.document.defaultView.DocumentFragment.prototype.dispatchEvent : function
@@ -736,8 +738,8 @@ window.document.defaultView.DocumentFragment.prototype.hasChildNodes : function
 window.document.defaultView.DocumentFragment.prototype.isSupported : function
 window.document.defaultView.DocumentFragment.prototype.isEqualNode : function
 window.document.defaultView.DocumentFragment.prototype.lookupNamespaceURI : function
-window.document.defaultView.Event : object
-window.document.defaultView.Event.prototype : object
+window.document.defaultView.Event : object (EventConstructor)
+window.document.defaultView.Event.prototype : object (Event)
 window.document.defaultView.Event.prototype.MOUSEOUT : number
 window.document.defaultView.Event.prototype.MOUSEOVER : number
 window.document.defaultView.Event.prototype.CAPTURING_PHASE : number
@@ -779,11 +781,11 @@ window.document.defaultView.Event.KEYDOWN : number
 window.document.defaultView.Event.KEYPRESS : number
 window.document.defaultView.Event.FOCUS : number
 window.document.defaultView.Event.CHANGE : number
-window.document.defaultView.HTMLDocument : object
-window.document.defaultView.HTMLDocument.prototype : object
+window.document.defaultView.HTMLDocument : object (HTMLDocumentConstructor)
+window.document.defaultView.HTMLDocument.prototype : object (HTMLDocument)
 window.document.defaultView.HTMLDocument.prototype *** children skipped, already printed above under 'window.document.defaultView.XMLDocument.prototype'
-window.document.defaultView.Node : object
-window.document.defaultView.Node.prototype : object
+window.document.defaultView.Node : object (NodeConstructor)
+window.document.defaultView.Node.prototype : object (Node)
 window.document.defaultView.Node.prototype.DOCUMENT_FRAGMENT_NODE : number
 window.document.defaultView.Node.prototype.ENTITY_REFERENCE_NODE : number
 window.document.defaultView.Node.prototype.CDATA_SECTION_NODE : number
@@ -823,8 +825,8 @@ window.document.defaultView.Node.PROCESSING_INSTRUCTION_NODE : number
 window.document.defaultView.Node.DOCUMENT_NODE : number
 window.document.defaultView.Node.DOCUMENT_TYPE_NODE : number
 window.document.defaultView.Node.NOTATION_NODE : number
-window.document.defaultView.Range : object
-window.document.defaultView.Range.prototype : object
+window.document.defaultView.Range : object (RangeConstructor)
+window.document.defaultView.Range.prototype : object (Range)
 window.document.defaultView.Range.prototype.START_TO_START : number
 window.document.defaultView.Range.prototype.setEnd : function
 window.document.defaultView.Range.prototype.selectNode : function
@@ -864,16 +866,16 @@ window.document.defaultView.Range.END_TO_END : number
 window.document.defaultView.Range.END_TO_START : number
 window.document.defaultView.Range.NODE_BEFORE_AND_AFTER : number
 window.document.defaultView.Range.NODE_INSIDE : number
-window.document.defaultView.XMLSerializer : object
-window.document.defaultView.XMLSerializer.prototype : object
+window.document.defaultView.XMLSerializer : object (XMLSerializerConstructor)
+window.document.defaultView.XMLSerializer.prototype : object (XMLSerializer)
 window.document.defaultView.XMLSerializer.prototype.serializeToString : function
-window.document.defaultView.XPathEvaluator : object
-window.document.defaultView.XPathEvaluator.prototype : object
+window.document.defaultView.XPathEvaluator : object (XPathEvaluatorConstructor)
+window.document.defaultView.XPathEvaluator.prototype : object (XPathEvaluator)
 window.document.defaultView.XPathEvaluator.prototype.evaluate : function
 window.document.defaultView.XPathEvaluator.prototype.createExpression : function
 window.document.defaultView.XPathEvaluator.prototype.createNSResolver : function
-window.document.defaultView.XPathResult : object
-window.document.defaultView.XPathResult.prototype : object
+window.document.defaultView.XPathResult : object (XPathResultConstructor)
+window.document.defaultView.XPathResult.prototype : object (XPathResult)
 window.document.defaultView.XPathResult.prototype.UNORDERED_NODE_SNAPSHOT_TYPE : number
 window.document.defaultView.XPathResult.prototype.snapshotItem : function
 window.document.defaultView.XPathResult.prototype.UNORDERED_NODE_ITERATOR_TYPE : number
@@ -897,24 +899,24 @@ window.document.defaultView.XPathResult.ORDERED_NODE_ITERATOR_TYPE : number
 window.document.defaultView.XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE : number
 window.document.defaultView.XPathResult.ANY_UNORDERED_NODE_TYPE : number
 window.document.defaultView.name : string
-window.document.defaultView.self : object
+window.document.defaultView.self : object (DOMWindow)
 window.document.defaultView.self *** children skipped, already printed above under 'window.document.defaultView'
 window.document.defaultView.pageYOffset : number
 window.document.defaultView.releaseEvents : function
 window.document.defaultView.offscreenBuffering : boolean
 window.document.defaultView.moveBy : function
-window.document.defaultView.personalbar : object
-window.document.defaultView.DOMException : object
+window.document.defaultView.personalbar : object (BarInfo)
+window.document.defaultView.DOMException : object (DOMExceptionConstructor)
 window.document.defaultView.scrollX : number
-window.document.defaultView.Image : object
-window.document.defaultView.window : object
+window.document.defaultView.Image : object (Object)
+window.document.defaultView.window : object (DOMWindow)
 window.document.defaultView.window *** children skipped, already printed above under 'window.document.defaultView'
 window.document.defaultView.onunload : null
 window.document.defaultView.clearTimeout : function
 window.document.defaultView.screenY : number
 window.document.defaultView.screenTop : number
-window.document.defaultView.XSLTProcessor : object
-window.document.defaultView.XSLTProcessor.prototype : object
+window.document.defaultView.XSLTProcessor : object (Object)
+window.document.defaultView.XSLTProcessor.prototype : object (XSLTProcessor)
 window.document.defaultView.XSLTProcessor.prototype.transformToDocument : function
 window.document.defaultView.XSLTProcessor.prototype.importStylesheet : function
 window.document.defaultView.XSLTProcessor.prototype.transformToFragment : function
@@ -925,34 +927,36 @@ window.document.defaultView.XSLTProcessor.prototype.clearParameters : function
 window.document.defaultView.XSLTProcessor.prototype.reset : function
 window.document.defaultView.innerHeight : number
 window.document.defaultView.defaultstatus : string
-window.document.defaultView.screen : object
-window.document.defaultView.parent : object
+window.document.defaultView.screen : object (Screen)
+window.document.defaultView.parent : object (DOMWindow)
 window.document.defaultView.parent *** children skipped, already printed above under 'window.document.defaultView'
-window.document.defaultView.menubar : object
-window.document.defaultView.Option : object
+window.document.defaultView.menubar : object (BarInfo)
+window.document.defaultView.Option : object (Object)
 window.document.defaultView.onchange : null
 window.document.defaultView.innerWidth : number
 window.document.defaultView.focus : function
 window.document.defaultView.getSelection : function
-window.document.defaultView.frames : object
-window.document.defaultView.frames.location : object
+window.document.defaultView.frames : object (FrameArray)
+window.document.defaultView.frames.location : object (Location)
 window.document.defaultView.frames.location *** children skipped, already printed above under 'window.document.location'
 window.document.defaultView.frames.length : number
-window.document.defaultView.locationbar : object
-window.document.defaultView.toolbar : object
+window.document.defaultView.locationbar : object (BarInfo)
+window.document.defaultView.toolbar : object (BarInfo)
 window.document.defaultView.length : number
 window.document.defaultView.onbeforeunload : null
 window.document.defaultView.outerHeight : number
 window.document.defaultView.onmousewheel : null
-window.document.defaultView.history : object
+window.document.defaultView.history : object (History)
+window.document.defaultView.history.back : function
+window.document.defaultView.history.forward : function
 window.document.defaultView.prompt : function
-window.document.defaultView.top : object
+window.document.defaultView.top : object (DOMWindow)
 window.document.defaultView.top *** children skipped, already printed above under 'window.document.defaultView'
 window.document.defaultView.onfocus : null
 window.document.defaultView.onmousedown : null
-window.document.defaultView.statusbar : object
+window.document.defaultView.statusbar : object (BarInfo)
 window.document.defaultView.screenLeft : number
-window.document.defaultView.location : object
+window.document.defaultView.location : object (Location)
 window.document.defaultView.location *** children skipped, already printed above under 'window.document.location'
 window.document.defaultView.resizeTo : function
 window.document.defaultView.clearInterval : function
@@ -964,18 +968,19 @@ window.document.defaultView.scroll : function
 window.document.defaultView.onload : null
 window.document.defaultView.scrollTo : function
 window.document.defaultView.onmouseover : null
-window.document.defaultView.opener : null
+window.document.defaultView.opener : object (DOMWindow)
+window.document.defaultView.opener *** children skipped, already printed above under 'window.document.defaultView'
 window.document.defaultView.onkeyup : null
 window.document.defaultView.outerWidth : number
 window.document.defaultView.ondblclick : null
 window.document.defaultView.onmouseout : null
 window.document.defaultView.onerror : null
 window.document.defaultView.onmousemove : null
-window.document.defaultView.scrollbars : object
+window.document.defaultView.scrollbars : object (BarInfo)
 window.document.defaultView.onclick : null
 window.document.defaultView.event : undefined
 window.document.defaultView.confirm : function
-window.document.defaultView.clientInformation : object
+window.document.defaultView.clientInformation : object (Navigator)
 window.document.defaultView.clientInformation.appVersion : string
 window.document.defaultView.clientInformation.appCodeName : string
 window.document.defaultView.clientInformation.javaEnabled : function
@@ -984,11 +989,11 @@ window.document.defaultView.clientInformation.language : string
 window.document.defaultView.clientInformation.appName : string
 window.document.defaultView.clientInformation.vendorSub : string
 window.document.defaultView.clientInformation.vendor : string
-window.document.defaultView.clientInformation.mimeTypes : object
+window.document.defaultView.clientInformation.mimeTypes : object (MimeTypeArray)
 window.document.defaultView.clientInformation.mimeTypes.length : number
 window.document.defaultView.clientInformation.userAgent : string
 window.document.defaultView.clientInformation.platform : string
-window.document.defaultView.clientInformation.plugins : object
+window.document.defaultView.clientInformation.plugins : object (PluginArray)
 window.document.defaultView.clientInformation.plugins.refresh : function
 window.document.defaultView.clientInformation.plugins.length : number
 window.document.defaultView.clientInformation.product : string
@@ -996,15 +1001,15 @@ window.document.defaultView.clientInformation.cookieEnabled : boolean
 window.document.defaultView.scrollY : number
 window.document.defaultView.alert : function
 window.document.defaultView.crypto : undefined
-window.document.defaultView.navigator : object
+window.document.defaultView.navigator : object (Navigator)
 window.document.defaultView.navigator *** children skipped, already printed above under 'window.document.defaultView.clientInformation'
 window.document.defaultView.pageXOffset : number
 window.document.defaultView.screenX : number
 window.document.defaultView.scrollBy : function
 window.document.defaultView.moveTo : function
 window.document.defaultView.resizeBy : function
-window.document.defaultView.XMLHttpRequest : object
-window.document.defaultView.XMLHttpRequest.prototype : object
+window.document.defaultView.XMLHttpRequest : object (Object)
+window.document.defaultView.XMLHttpRequest.prototype : object (JSXMLHttpRequest)
 window.document.defaultView.XMLHttpRequest.prototype.getResponseHeader : function
 window.document.defaultView.XMLHttpRequest.prototype.setRequestHeader : function
 window.document.defaultView.XMLHttpRequest.prototype.send : function
@@ -1037,7 +1042,7 @@ window.document.defaultView.frameElement : undefined
 window.document.defaultView.getMatchedCSSRules : function
 window.document.defaultView.getComputedStyle : function
 window.document.URL : string
-window.document.documentElement : object
+window.document.documentElement : object (HTMLHtmlElement)
 window.document.documentElement *** children skipped, already printed above under 'window.document.body.parentNode'
 window.document.charset : string
 window.document.readyState : string
@@ -1052,11 +1057,11 @@ window.document.prefix : null
 window.document.nodeValue : null
 window.document.previousSibling : null
 window.document.nodeType : number
-window.document.lastChild : object
+window.document.lastChild : object (HTMLHtmlElement)
 window.document.lastChild *** children skipped, already printed above under 'window.document.body.parentNode'
 window.document.namespaceURI : null
 window.document.nodeName : string
-window.document.firstChild : object
+window.document.firstChild : object (HTMLHtmlElement)
 window.document.firstChild *** children skipped, already printed above under 'window.document.body.parentNode'
 window.document.nextSibling : null
 window.document.localName : string
@@ -1130,103 +1135,103 @@ window.document.hasChildNodes : function
 window.document.isSupported : function
 window.document.isEqualNode : function
 window.document.lookupNamespaceURI : function
-window.CSSValue : object
+window.CSSValue : object (CSSValueConstructor)
 window.CSSValue *** children skipped, already printed above under 'window.document.defaultView.CSSValue'
-window.CSSPrimitiveValue : object
+window.CSSPrimitiveValue : object (CSSPrimitiveValueConstructor)
 window.CSSPrimitiveValue *** children skipped, already printed above under 'window.document.defaultView.CSSPrimitiveValue'
-window.XMLDocument : object
+window.XMLDocument : object (DocumentConstructor)
 window.XMLDocument *** children skipped, already printed above under 'window.document.defaultView.XMLDocument'
-window.DOMParser : object
+window.DOMParser : object (DOMParserConstructor)
 window.DOMParser *** children skipped, already printed above under 'window.document.defaultView.DOMParser'
-window.RangeException : object
+window.RangeException : object (RangeExceptionConstructor)
 window.RangeException *** children skipped, already printed above under 'window.document.defaultView.RangeException'
-window.HTMLElement : object
+window.HTMLElement : object (HTMLElementConstructor)
 window.HTMLElement *** children skipped, already printed above under 'window.document.defaultView.HTMLElement'
-window.NodeFilter : object
+window.NodeFilter : object (NodeFilterConstructor)
 window.NodeFilter *** children skipped, already printed above under 'window.document.defaultView.NodeFilter'
-window.CSSStyleDeclaration : object
+window.CSSStyleDeclaration : object (CSSStyleDeclarationConstructor)
 window.CSSStyleDeclaration *** children skipped, already printed above under 'window.document.defaultView.CSSStyleDeclaration'
-window.MutationEvent : object
+window.MutationEvent : object (MutationEventConstructor)
 window.MutationEvent *** children skipped, already printed above under 'window.document.defaultView.MutationEvent'
-window.Element : object
+window.Element : object (ElementConstructor)
 window.Element *** children skipped, already printed above under 'window.document.defaultView.Element'
 window.devicePixelRatio : number
-window.Document : object
+window.Document : object (DocumentConstructor)
 window.Document *** children skipped, already printed above under 'window.document.defaultView.XMLDocument'
-window.CSSRule : object
+window.CSSRule : object (CSSRuleConstructor)
 window.CSSRule *** children skipped, already printed above under 'window.document.defaultView.CSSRule'
-window.DocumentFragment : object
+window.DocumentFragment : object (DocumentFragmentConstructor)
 window.DocumentFragment *** children skipped, already printed above under 'window.document.defaultView.DocumentFragment'
-window.Event : object
+window.Event : object (EventConstructor)
 window.Event *** children skipped, already printed above under 'window.document.defaultView.Event'
-window.HTMLDocument : object
+window.HTMLDocument : object (HTMLDocumentConstructor)
 window.HTMLDocument *** children skipped, already printed above under 'window.document.defaultView.HTMLDocument'
-window.Node : object
+window.Node : object (NodeConstructor)
 window.Node *** children skipped, already printed above under 'window.document.defaultView.Node'
-window.Range : object
+window.Range : object (RangeConstructor)
 window.Range *** children skipped, already printed above under 'window.document.defaultView.Range'
-window.XMLSerializer : object
+window.XMLSerializer : object (XMLSerializerConstructor)
 window.XMLSerializer *** children skipped, already printed above under 'window.document.defaultView.XMLSerializer'
-window.XPathEvaluator : object
+window.XPathEvaluator : object (XPathEvaluatorConstructor)
 window.XPathEvaluator *** children skipped, already printed above under 'window.document.defaultView.XPathEvaluator'
-window.XPathResult : object
+window.XPathResult : object (XPathResultConstructor)
 window.XPathResult *** children skipped, already printed above under 'window.document.defaultView.XPathResult'
 window.name : string
-window.self : object
+window.self : object (DOMWindow)
 window.self *** children skipped, already printed above under 'window.document.defaultView'
 window.pageYOffset : number
 window.releaseEvents : function
 window.offscreenBuffering : boolean
 window.moveBy : function
-window.personalbar : object
+window.personalbar : object (BarInfo)
 window.personalbar *** children skipped, already printed above under 'window.document.defaultView.personalbar'
-window.DOMException : object
+window.DOMException : object (DOMExceptionConstructor)
 window.DOMException *** children skipped, already printed above under 'window.document.defaultView.DOMException'
 window.scrollX : number
-window.Image : object
-window.window : object
+window.Image : object (Object)
+window.window : object (DOMWindow)
 window.window *** children skipped, already printed above under 'window.document.defaultView'
 window.onunload : null
 window.clearTimeout : function
 window.screenY : number
 window.screenTop : number
-window.XSLTProcessor : object
-window.XSLTProcessor.prototype : object
+window.XSLTProcessor : object (Object)
+window.XSLTProcessor.prototype : object (XSLTProcessor)
 window.XSLTProcessor.prototype *** children skipped, already printed above under 'window.document.defaultView.XSLTProcessor.prototype'
 window.innerHeight : number
 window.defaultstatus : string
-window.screen : object
+window.screen : object (Screen)
 window.screen *** children skipped, already printed above under 'window.document.defaultView.screen'
-window.parent : object
+window.parent : object (DOMWindow)
 window.parent *** children skipped, already printed above under 'window.document.defaultView'
-window.menubar : object
+window.menubar : object (BarInfo)
 window.menubar *** children skipped, already printed above under 'window.document.defaultView.menubar'
-window.Option : object
+window.Option : object (Object)
 window.onchange : null
 window.innerWidth : number
 window.focus : function
 window.getSelection : function
-window.frames : object
+window.frames : object (FrameArray)
 window.frames *** children skipped, already printed above under 'window.document.defaultView.frames'
-window.locationbar : object
+window.locationbar : object (BarInfo)
 window.locationbar *** children skipped, already printed above under 'window.document.defaultView.locationbar'
-window.toolbar : object
+window.toolbar : object (BarInfo)
 window.toolbar *** children skipped, already printed above under 'window.document.defaultView.toolbar'
 window.length : number
 window.onbeforeunload : null
 window.outerHeight : number
 window.onmousewheel : null
-window.history : object
+window.history : object (History)
 window.history *** children skipped, already printed above under 'window.document.defaultView.history'
 window.prompt : function
-window.top : object
+window.top : object (DOMWindow)
 window.top *** children skipped, already printed above under 'window.document.defaultView'
 window.onfocus : null
 window.onmousedown : null
-window.statusbar : object
+window.statusbar : object (BarInfo)
 window.statusbar *** children skipped, already printed above under 'window.document.defaultView.statusbar'
 window.screenLeft : number
-window.location : object
+window.location : object (Location)
 window.location *** children skipped, already printed above under 'window.document.location'
 window.resizeTo : function
 window.clearInterval : function
@@ -1238,32 +1243,33 @@ window.scroll : function
 window.onload : null
 window.scrollTo : function
 window.onmouseover : null
-window.opener : null
+window.opener : object (DOMWindow)
+window.opener *** children skipped, already printed above under 'window.document.defaultView'
 window.onkeyup : null
 window.outerWidth : number
 window.ondblclick : null
 window.onmouseout : null
 window.onerror : null
 window.onmousemove : null
-window.scrollbars : object
+window.scrollbars : object (BarInfo)
 window.scrollbars *** children skipped, already printed above under 'window.document.defaultView.scrollbars'
 window.onclick : null
 window.event : undefined
 window.confirm : function
-window.clientInformation : object
+window.clientInformation : object (Navigator)
 window.clientInformation *** children skipped, already printed above under 'window.document.defaultView.clientInformation'
 window.scrollY : number
 window.alert : function
 window.crypto : undefined
-window.navigator : object
+window.navigator : object (Navigator)
 window.navigator *** children skipped, already printed above under 'window.document.defaultView.clientInformation'
 window.pageXOffset : number
 window.screenX : number
 window.scrollBy : function
 window.moveTo : function
 window.resizeBy : function
-window.XMLHttpRequest : object
-window.XMLHttpRequest.prototype : object
+window.XMLHttpRequest : object (Object)
+window.XMLHttpRequest.prototype : object (JSXMLHttpRequest)
 window.XMLHttpRequest.prototype *** children skipped, already printed above under 'window.document.defaultView.XMLHttpRequest.prototype'
 window.open : function
 window.print : function

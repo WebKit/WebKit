@@ -52,7 +52,15 @@ function printProperties(object, parentString) {
     if (shouldSkipProperty(fullPropertyName, propertyValue))
       continue;
     var type = (propertyValue === null ? 'null' : typeof(propertyValue));
-    log(fullPropertyName + " : " + type);
+    var classname = '';
+    if (type == 'object') {
+        try {
+          classname = ' (' + Object.prototype.toString.call(propertyValue).replace(/^\[object (.*)\]$/, '$1') + ')';
+        } catch(e) {
+          log(fullPropertyName + " : ERROR accessing class name, exception thrown: " + e);
+        }
+    }
+    log(fullPropertyName + " : " + type + classname);
     var previousPropertyName = '';
     if (propertyValue && type == 'object') {
       if (shouldSkipChildren(fullPropertyName, propertyValue))
@@ -68,6 +76,12 @@ function printProperties(object, parentString) {
 log('window : ' + typeof(window));
 havePrintedChildren(window, 'window');
 printProperties(window, 'window');
+
+if (!window.opener) {
+  // FIXME: This test should be able to specify that it depends on the (non)existence of session history
+  // http://bugs.webkit.org/show_bug.cgi?id=10965
+  log('This test must be run as part of ALL LayoutTests to run correctly');
+}
 
 </script>
 </body>

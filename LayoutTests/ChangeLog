@@ -1,3 +1,23 @@
+2006-10-02  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Tim H.
+
+        This change fixes a couple of problems with the window-properties
+        test. window-properties' output changes depending on the presence or
+        non-presence of session history (see
+        http://bugs.webkit.org/show_bug.cgi?id=10965 for details). For this
+        reason, the test must always be run as part of a run of ALL layout
+        tests. The test results checked in were generated from an individual
+        run of this test, so the buildbots were always failing since they run
+        all the tests at once.
+
+        This change regenerates the results for the test using a full run of
+        layout tests. The test now also prints out object class names, and
+        will print an error message when the test is run by itself.
+
+        * fast/js/window-properties-expected.txt:
+        * fast/js/window-properties.html:
+
 2006-10-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.
