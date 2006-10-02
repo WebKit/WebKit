@@ -1,3 +1,12 @@
+2006-10-02  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Fix Qt/Linux build.
+
+        * platform/qt/TemporaryLinkStubs.cpp: s/DeprecatedStringList/Vector<String>/
+        (WebCore::supportedKeySizes):
+
 2006-10-02  Nikolas Zimmermann <zimmermann@kde.org>
 
         Reviewed by eseidel & mjs.  Landed by eseidel.

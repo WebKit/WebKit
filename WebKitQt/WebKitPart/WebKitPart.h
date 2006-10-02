@@ -43,7 +43,6 @@ class WebKitPartClient;
 class WebKitPart : public KParts::ReadOnlyPart
 {
 Q_OBJECT
-Q_PROPERTY(QString url READ url)  
 
 public:
     enum GUIProfile {

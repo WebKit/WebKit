@@ -1,3 +1,11 @@
+2006-10-02  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Fix last remaining issue Qt/Linux build with gcc3.
+
+        * WebKitPart/WebKitPart.h: Remove Q_PROPERTY usage, which is not needed and made problems.
+
 2006-09-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by ap.
