@@ -1,5 +1,16 @@
 2006-10-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Anders.
+        
+        - fix crash on back/forward - reattach WebDocumentLoadState to data source when needed
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _setWebFrame:]):
+        (-[WebDataSource _initWithDocumentLoadState:]):
+        * WebView/WebDataSourceInternal.h:
+
+2006-10-02  Maciej Stachowiak  <mjs@apple.com>
+
         Build fix, not reviewed.
         
         - Added missing files to fix build.

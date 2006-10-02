@@ -66,13 +66,13 @@
 #import <WebKit/DOMHTML.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
-#import "WebDocumentLoadState.h"
+#import "WebDocumentLoadStateMac.h"
 
 @interface WebDataSourcePrivate : NSObject
 {
     @public
     
-    WebDocumentLoadState *loadState;
+    WebDocumentLoadStateMac *loadState;
     
     id <WebDocumentRepresentation> representation;
     
@@ -699,6 +699,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     _private->webFrame = frame;
 
     [_private->loadState setFrameLoader:[frame _frameLoader]];
+    if (frame)
+        [_private->loadState setDataSource:self];
     
     [self _defersCallbacksChanged];
     // no need to do _defersCallbacksChanged for subframes since they too
@@ -985,7 +987,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return _private->loadState;
 }
 
-- (id)_initWithDocumentLoadState:(WebDocumentLoadState *)loadState
+- (id)_initWithDocumentLoadState:(WebDocumentLoadStateMac *)loadState
 {
     self = [super init];
     if (!self) {
