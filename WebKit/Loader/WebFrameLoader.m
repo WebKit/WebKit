@@ -64,8 +64,10 @@
     [mainResourceLoader release];
     [subresourceLoaders release];
     [plugInStreamLoaders release];
-    [dataSource release];
-    [provisionalDataSource release];
+    [documentLoadState release];
+    [provisionalDocumentLoadState release];
+ 
+    ASSERT(!policyDocumentLoadState);
     
     [super dealloc];
 }
@@ -136,7 +138,7 @@
 
 - (void)addSubresourceLoader:(WebLoader *)loader
 {
-    ASSERT(!provisionalDataSource);
+    ASSERT(!provisionalDocumentLoadState);
     if (subresourceLoaders == nil)
         subresourceLoaders = [[NSMutableArray alloc] init];
     [subresourceLoaders addObject:loader];
@@ -170,7 +172,7 @@
     mainResourceLoader = [[WebMainResourceLoader alloc] initWithFrameLoader:self];
     
     [mainResourceLoader setIdentifier:identifier];
-    [[provisionalDataSource webFrame] _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
+    [webFrame _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
     if (![mainResourceLoader loadWithRequest:request]) {
         // FIXME: if this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?
@@ -190,49 +192,61 @@
 
 - (WebDataSource *)dataSource
 {
-    return dataSource; 
+    return [webFrame _dataSourceForDocumentLoadState:documentLoadState]; 
 }
 
-- (void)_setDataSource:(WebDataSource *)ds
+- (void)_setDocumentLoadState:(WebDocumentLoadState *)loadState
 {
-    if (ds == nil && dataSource == nil)
+    if (loadState == nil && documentLoadState == nil)
         return;
     
-    ASSERT(ds != dataSource);
+    ASSERT(loadState != documentLoadState);
     
     [webFrame _prepareForDataSourceReplacement];
-    [dataSource _setWebFrame:nil];
+    [[self dataSource] _setWebFrame:nil];
     
-    [ds retain];
-    [dataSource release];
-    dataSource = ds;
+    [loadState retain];
+    [documentLoadState release];
+    documentLoadState = loadState;
 }
 
+- (WebDataSource *)policyDataSource
+{
+    return [webFrame _dataSourceForDocumentLoadState:policyDocumentLoadState];     
+}
+
+- (void)_setPolicyDocumentLoadState:(WebDocumentLoadState *)loadState
+{
+    [loadState retain];
+    [policyDocumentLoadState release];
+    policyDocumentLoadState = loadState;
+}
+   
 - (void)clearDataSource
 {
-    [self _setDataSource:nil];
+    [self _setDocumentLoadState:nil];
 }
 
 - (WebDataSource *)provisionalDataSource 
 {
-    return provisionalDataSource; 
+    return [webFrame _dataSourceForDocumentLoadState:provisionalDocumentLoadState]; 
 }
 
-- (void)_setProvisionalDataSource: (WebDataSource *)d
+- (void)_setProvisionalDocumentLoadState:(WebDocumentLoadState *)loadState
 {
-    ASSERT(!d || !provisionalDataSource);
+    ASSERT(!loadState || !provisionalDocumentLoadState);
 
-    if (provisionalDataSource != dataSource)
-        [provisionalDataSource _setWebFrame:nil];
+    if (provisionalDocumentLoadState != documentLoadState)
+        [[self provisionalDataSource] _setWebFrame:nil];
 
-    [d retain];
-    [provisionalDataSource release];
-    provisionalDataSource = d;
+    [loadState retain];
+    [provisionalDocumentLoadState release];
+    provisionalDocumentLoadState = loadState;
 }
 
 - (void)_clearProvisionalDataSource
 {
-    [self _setProvisionalDataSource:nil];
+    [self _setProvisionalDocumentLoadState:nil];
 }
 
 - (WebFrameState)state
@@ -271,13 +285,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     else if (state == WebFrameStateComplete) {
         [webFrame _frameLoadCompleted];
         _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
-        [dataSource _stopRecordingResponses];
+        [[self dataSource] _stopRecordingResponses];
     }
 }
 
 - (void)clearProvisionalLoad
 {
-    [self _setProvisionalDataSource:nil];
+    [self _setProvisionalDocumentLoadState:nil];
     [[webFrame webView] _progressCompleted:webFrame];
     [self _setState:WebFrameStateComplete];
 }
@@ -292,15 +306,15 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self stopLoadingSubresources];
     [self stopLoadingPlugIns];
 
-    [self _setDataSource:provisionalDataSource];
-    [self _setProvisionalDataSource:nil];
+    [self _setDocumentLoadState:provisionalDocumentLoadState];
+    [self _setProvisionalDocumentLoadState:nil];
     [self _setState:WebFrameStateCommittedPage];
 }
 
 - (void)stopLoading
 {
-    [provisionalDataSource _stopLoading];
-    [dataSource _stopLoading];
+    [[self provisionalDataSource] _stopLoading];
+    [[self dataSource] _stopLoading];
     [self _clearProvisionalDataSource];
     [self clearArchivedResources];
 }
@@ -308,32 +322,37 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 // FIXME: poor method name; also why is this not part of startProvisionalLoad:?
 - (void)startLoading
 {
-    [provisionalDataSource _startLoading];
+    [[self provisionalDataSource] _startLoading];
 }
 
 - (void)startProvisionalLoad:(WebDataSource *)ds
 {
-    [self _setProvisionalDataSource:ds];
+    [self _setProvisionalDocumentLoadState:[ds _documentLoadState]];
     [self _setState:WebFrameStateProvisional];
 }
 
 - (void)setupForReplace
 {
     [self _setState:WebFrameStateProvisional];
-    WebDataSource *old = provisionalDataSource;
-    provisionalDataSource = dataSource;
-    dataSource = nil;
+    WebDocumentLoadState *old = provisionalDocumentLoadState;
+    provisionalDocumentLoadState = documentLoadState;
+    documentLoadState = nil;
     [old release];
     
     [webFrame _detachChildren];
 }
 
-- (WebDataSource *)activeDataSource
+- (WebDocumentLoadState *)activeDocumentLoadState
 {
     if (state == WebFrameStateProvisional)
-        return provisionalDataSource;
+        return provisionalDocumentLoadState;
+    
+    return documentLoadState;    
+}
 
-    return dataSource;
+- (WebDataSource *)activeDataSource
+{
+    return [webFrame _dataSourceForDocumentLoadState:[self activeDocumentLoadState]];
 }
 
 - (WebResource *)_archivedSubresourceForURL:(NSURL *)URL
@@ -699,8 +718,9 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 {
     WebFrameLoadType loadType;
     
-    // note this copies request
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    policyDocumentLoadState = [webFrame _createDocumentLoadStateWithRequest:request];
+    WebDataSource *newDataSource = [webFrame _dataSourceForDocumentLoadState:policyDocumentLoadState];
+
     NSMutableURLRequest *r = [newDataSource request];
     [webFrame _addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
     if ([webFrame _shouldTreatURLAsSameAsCurrent:[request URL]]) {
@@ -721,19 +741,18 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     }
     
     [webFrame _loadDataSource:newDataSource withLoadType:loadType formState:nil];
-    [newDataSource release];
 }
 
 - (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState
 {
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    policyDocumentLoadState = [webFrame _createDocumentLoadStateWithRequest:request];
+    WebDataSource *newDataSource = [webFrame _dataSourceForDocumentLoadState:policyDocumentLoadState];
+
     [newDataSource _setTriggeringAction:action];
 
     [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
 
     [webFrame _loadDataSource:newDataSource withLoadType:loadType formState:formState];
-
-    [newDataSource release];
 }
 
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding
@@ -748,14 +767,13 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
         [request setURL:unreachableURL];
 
     [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    policyDocumentLoadState = [webFrame _createDocumentLoadStateWithRequest:request];
+    WebDataSource *newDataSource = [webFrame _dataSourceForDocumentLoadState:policyDocumentLoadState];
     [request release];
     
     [newDataSource _setOverrideEncoding:encoding];
 
     [webFrame _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReloadAllowingStaleData formState:nil];
-    
-    [newDataSource release];
 }
 
 - (void)reload
@@ -776,8 +794,8 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     if (unreachableURL != nil)
         initialRequest = [NSURLRequest requestWithURL:unreachableURL];
     
-    // initWithRequest copies the request
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:initialRequest];
+    policyDocumentLoadState = [webFrame _createDocumentLoadStateWithRequest:initialRequest];
+    WebDataSource *newDataSource = [webFrame _dataSourceForDocumentLoadState:policyDocumentLoadState];
     NSMutableURLRequest *request = [newDataSource request];
 
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
@@ -791,8 +809,6 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     [newDataSource _setOverrideEncoding:[ds _overrideEncoding]];
     
     [webFrame _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload formState:nil];
-
-    [newDataSource release];
 }
 
 @end

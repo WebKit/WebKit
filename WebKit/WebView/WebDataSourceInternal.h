@@ -46,6 +46,8 @@
 @class WebResource;
 @class WebUnarchivingState;
 @class WebView;
+@class WebDocumentLoadState;
+
 @protocol WebDocumentRepresentation;
 
 @interface WebDataSource (WebInternal)
@@ -113,4 +115,6 @@
 - (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener;
 - (void)_setLoading:(BOOL)loading;
 - (void)_updateLoading;
+- (WebDocumentLoadState *)_documentLoadState;
+- (id)_initWithDocumentLoadState:(WebDocumentLoadState *)loadState;
 @end

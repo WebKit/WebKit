@@ -42,7 +42,7 @@
     if (!self)
         return nil;
     
-    // ignore request for now
+    originalRequest = [request retain];
 
     return self;
 }
@@ -50,7 +50,8 @@
 - (void)dealloc
 {
     [mainResourceData release];
-
+    [originalRequest release];
+    
     [super dealloc];
 }    
 
@@ -73,5 +74,11 @@
 {
     return mainResourceData != nil ? mainResourceData : [frameLoader mainResourceData];
 }
+
+- (NSURLRequest *)originalRequest
+{
+    return originalRequest;
+}
+
 
 @end

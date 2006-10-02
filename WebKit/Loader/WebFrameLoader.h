@@ -30,6 +30,8 @@
 
 #import <WebKit/WebFramePrivate.h>
 
+#import <WebKit/WebDocumentLoadState.h>
+
 @class WebArchive;
 @class WebDataSource;
 @class WebMainResourceLoader;
@@ -63,8 +65,10 @@ typedef enum {
     NSMutableArray *plugInStreamLoaders;
     
     WebFrame *webFrame;
-    WebDataSource *dataSource;
-    WebDataSource *provisionalDataSource;
+    WebDocumentLoadState *documentLoadState;
+    WebDocumentLoadState *provisionalDocumentLoadState;
+    WebDocumentLoadState *policyDocumentLoadState;
+        
     WebFrameState state;
     
     WebPolicyDecisionListener *listener;
@@ -96,7 +100,9 @@ typedef enum {
 - (void)startProvisionalLoad:(WebDataSource *)dataSource;
 - (WebDataSource *)dataSource;
 - (WebDataSource *)provisionalDataSource;
+- (WebDataSource *)policyDataSource;
 - (WebDataSource *)activeDataSource;
+- (void)_setPolicyDocumentLoadState:(WebDocumentLoadState *)loadState;
 - (WebFrameState)state;
 - (void)clearDataSource;
 - (void)setupForReplace;

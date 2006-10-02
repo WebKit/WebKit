@@ -1,3 +1,62 @@
+2006-10-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady and Oliver.
+        
+        - move things around so that WebDataSource and WebDocumentLoadState know about each other in
+        the right way. This lines things up to move nearly all functionality down to WebDocumentLoadState.
+
+        * Loader/WebDocumentLoadState.h:
+        * Loader/WebDocumentLoadState.m:
+        (-[WebDocumentLoadState initWithRequest:]):
+        (-[WebDocumentLoadState dealloc]):
+        (-[WebDocumentLoadState originalRequest]):
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader dealloc]):
+        (-[WebFrameLoader addSubresourceLoader:]):
+        (-[WebFrameLoader startLoadingMainResourceWithRequest:identifier:]):
+        (-[WebFrameLoader dataSource]):
+        (-[WebFrameLoader _setDocumentLoadState:]):
+        (-[WebFrameLoader policyDataSource]):
+        (-[WebFrameLoader _setPolicyDocumentLoadState:]):
+        (-[WebFrameLoader clearDataSource]):
+        (-[WebFrameLoader provisionalDataSource]):
+        (-[WebFrameLoader _setProvisionalDocumentLoadState:]):
+        (-[WebFrameLoader _clearProvisionalDataSource]):
+        (-[WebFrameLoader _setState:]):
+        (-[WebFrameLoader clearProvisionalLoad]):
+        (-[WebFrameLoader commitProvisionalLoad]):
+        (-[WebFrameLoader stopLoading]):
+        (-[WebFrameLoader startLoading]):
+        (-[WebFrameLoader startProvisionalLoad:]):
+        (-[WebFrameLoader setupForReplace]):
+        (-[WebFrameLoader activeDocumentLoadState]):
+        (-[WebFrameLoader activeDataSource]):
+        (-[WebFrameLoader _loadRequest:archive:]):
+        (-[WebFrameLoader _loadRequest:triggeringAction:loadType:formState:]):
+        (-[WebFrameLoader _reloadAllowingStaleDataWithOverrideEncoding:]):
+        (-[WebFrameLoader reload]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _setWebFrame:]):
+        (-[WebDataSource _documentLoadState]):
+        (-[WebDataSource _initWithDocumentLoadState:]):
+        (-[WebDataSource initWithRequest:]):
+        (-[WebDataSource initialRequest]):
+        (-[WebDataSource unreachableURL]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebFrame.m:
+        (-[WebFramePrivate dealloc]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrame _loadDataSource:withLoadType:formState:]):
+        (-[WebFrame _policyDataSource]):
+        (-[WebFrame _shouldReloadToHandleUnreachableURLFromRequest:]):
+        (-[WebFrame _dataSourceForDocumentLoadState:]):
+        (-[WebFrame _createDocumentLoadStateWithRequest:]):
+        * WebView/WebFrameInternal.h:
+
 2006-09-29  David Hyatt  <hyatt@apple.com>
 
         Change the default minimum font size pref to 0 in order to allow

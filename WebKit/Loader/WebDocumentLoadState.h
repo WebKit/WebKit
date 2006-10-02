@@ -36,11 +36,18 @@
     WebFrameLoader *frameLoader;
     
     NSData *mainResourceData;
+
+    // A reference to actual request used to create the data source.
+    // This should only be used by the resourceLoadDelegate's
+    // identifierForInitialRequest:fromDatasource: method.  It is
+    // not guaranteed to remain unchanged, as requests are mutable.
+    NSURLRequest *originalRequest;    
 }
 
 - (id)initWithRequest:(NSURLRequest *)request;
 - (void)setFrameLoader:(WebFrameLoader *)fl;
 - (void)setMainResourceData:(NSData *)data;
 - (NSData *)mainResourceData;
+- (NSURLRequest *)originalRequest;
 
 @end

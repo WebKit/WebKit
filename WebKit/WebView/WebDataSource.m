@@ -76,12 +76,6 @@
     
     id <WebDocumentRepresentation> representation;
     
-    // A reference to actual request used to create the data source.
-    // This should only be used by the resourceLoadDelegate's
-    // identifierForInitialRequest:fromDatasource: method.  It is
-    // not guaranteed to remain unchanged, as requests are mutable.
-    NSURLRequest *originalRequest;
-    
     // A copy of the original request used to create the data source.
     // We have to copy the request because requests are mutable.
     NSURLRequest *originalRequestCopy;
@@ -156,7 +150,6 @@
     
     [representation release];
     [request release];
-    [originalRequest release];
     [originalRequestCopy release];
     [pageTitle release];
     [response release];
@@ -615,9 +608,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     id identifier;
     id resourceLoadDelegate = [[self _webView] resourceLoadDelegate];
     if ([resourceLoadDelegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
-        identifier = [resourceLoadDelegate webView:[self _webView] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+        identifier = [resourceLoadDelegate webView:[self _webView] identifierForInitialRequest:[_private->loadState originalRequest] fromDataSource:self];
     else
-        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:[_private->loadState originalRequest] fromDataSource:self];
     
     if (![[_private->webFrame _frameLoader] startLoadingMainResourceWithRequest:_private->request identifier:identifier])
         [self _updateLoading];
@@ -699,6 +692,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_setWebFrame:(WebFrame *)frame
 {
+    [self retain];
+
     [frame retain];
     [_private->webFrame release];
     _private->webFrame = frame;
@@ -708,6 +703,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [self _defersCallbacksChanged];
     // no need to do _defersCallbacksChanged for subframes since they too
     // will be or have been told of their WebFrame
+
+    [self release];
 }
 
 // May return nil if not initialized with a URL.
@@ -983,11 +980,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
 }
 
-@end
+- (WebDocumentLoadState *)_documentLoadState
+{
+    return _private->loadState;
+}
 
-@implementation WebDataSource
-
--(id)initWithRequest:(NSURLRequest *)request
+- (id)_initWithDocumentLoadState:(WebDocumentLoadState *)loadState
 {
     self = [super init];
     if (!self) {
@@ -996,18 +994,27 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     
     _private = [[WebDataSourcePrivate alloc] init];
     
-    _private->loadState = [[WebDocumentLoadState alloc] initWithRequest:request];
+    _private->loadState = [loadState retain];
     
-    _private->originalRequest = [request retain];
-    _private->originalRequestCopy = [request copy];
+    _private->originalRequestCopy = [[_private->loadState originalRequest] copy];
     
-    LOG(Loading, "creating datasource for %@", [request URL]);
-    _private->request = [_private->originalRequest mutableCopy];
+    LOG(Loading, "creating datasource for %@", [_private->originalRequestCopy URL]);
+    _private->request = [[_private->loadState originalRequest] mutableCopy];
     _private->supportsMultipartContent = WKSupportsMultipartXMixedReplace(_private->request);
-
+    
     ++WebDataSourceCount;
     
     return self;
+    
+}
+
+@end
+
+@implementation WebDataSource
+
+-(id)initWithRequest:(NSURLRequest *)request
+{
+    return [self _initWithDocumentLoadState:[[WebDocumentLoadState alloc] initWithRequest:request]];
 }
 
 - (void)dealloc
@@ -1045,9 +1052,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 -(NSURLRequest *)initialRequest
 {
-    NSURLRequest *clientRequest = [_private->originalRequest _webDataRequestExternalRequest];
+    NSURLRequest *clientRequest = [[_private->loadState originalRequest] _webDataRequestExternalRequest];
     if (!clientRequest)
-        clientRequest = _private->originalRequest;
+        clientRequest = [_private->loadState originalRequest];
     return clientRequest;
 }
 
@@ -1099,7 +1106,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (NSURL *)unreachableURL
 {
-    return [_private->originalRequest _webDataRequestUnreachableURL];
+    return [[_private->loadState originalRequest] _webDataRequestUnreachableURL];
 }
 
 - (WebArchive *)webArchive

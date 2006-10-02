@@ -37,6 +37,7 @@
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDocumentInternal.h>
+#import <WebKit/WebDocumentLoadStateMac.h>
 #import <WebKit/WebFormDataStream.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameLoader.h>
@@ -135,6 +136,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 @end
 
 @interface WebFrame (ForwardDecls)
+- (WebDataSource *)_policyDataSource;
 - (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 - (NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
 
@@ -180,7 +182,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     id policyTarget;
     SEL policySelector;
     WebFormState *policyFormState;
-    WebDataSource *policyDataSource;
+
     WebFrameLoadType policyLoadType;
 
     BOOL quickRedirectComing;
@@ -246,7 +248,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     ASSERT(policyFrameName == nil);
     ASSERT(policyTarget == nil);
     ASSERT(policyFormState == nil);
-    ASSERT(policyDataSource == nil);
     ASSERT(frameNamespace == nil);
     ASSERT(plugInViews == nil);
     
@@ -1385,13 +1386,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     [formState release];
 }
 
-- (void)_setPolicyDataSource:(WebDataSource *)dataSource
-{
-    [dataSource retain];
-    [_private->policyDataSource release];
-    _private->policyDataSource = dataSource;
-}
-
 - (void)_checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
 {
     WebPolicyDecisionListener *listener = [[WebPolicyDecisionListener alloc]
@@ -2003,12 +1997,12 @@ exit:
     [_private->frameLoader startLoading];
 }
 
--(void)_continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
+- (void)_continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
 {
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
     // nil _private->policyDataSource because loading the alternate page will have passed
     // through this method already, nested; otherwise, _private->policyDataSource should still be set.
-    ASSERT(_private->policyDataSource || [[self provisionalDataSource] unreachableURL] != nil);
+    ASSERT([self _policyDataSource] || [[self provisionalDataSource] unreachableURL] != nil);
 
     WebHistoryItem *item = [_private provisionalItem];
 
@@ -2025,7 +2019,7 @@ exit:
         if (_private->quickRedirectComing)
             [self _clientRedirectCancelledOrFinished:NO];
 
-        [self _setPolicyDataSource:nil];
+        [_private->frameLoader _setPolicyDocumentLoadState:nil];
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
         // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
         // we only do this when punting a navigation for the target frame or top-level frame.  
@@ -2038,7 +2032,7 @@ exit:
     }
     
     WebFrameLoadType loadType = _private->policyLoadType;
-    WebDataSource *dataSource = [_private->policyDataSource retain];
+    WebDataSource *dataSource = [[self _policyDataSource] retain];
     
     [self stopLoading];
     [self _setLoadType:loadType];
@@ -2046,7 +2040,7 @@ exit:
     [_private->frameLoader startProvisionalLoad:dataSource];
 
     [dataSource release];
-    [self _setPolicyDataSource:nil];
+    [_private->frameLoader _setPolicyDocumentLoadState:nil];
     
     
     if (self == [[self webView] mainFrame])
@@ -2093,7 +2087,7 @@ exit:
 
     [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
-    [self _setPolicyDataSource:newDataSource];
+    [_private->frameLoader _setPolicyDocumentLoadState:[newDataSource _documentLoadState]];
 
     [self _checkNavigationPolicyForRequest:[newDataSource request]
                                 dataSource:newDataSource
@@ -2217,6 +2211,11 @@ exit:
 @end
 
 @implementation WebFrame (WebInternal)
+
+- (WebDataSource *)_policyDataSource
+{
+    return [_private->frameLoader policyDataSource];
+}
 
 - (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebFrameBridge *)bridge
 {
@@ -2644,12 +2643,28 @@ exit:
     // at other times behaves like a standard load.
     WebDataSource *compareDataSource = nil;
     if (_private->delegateIsDecidingNavigationPolicy || _private->delegateIsHandlingUnimplementablePolicy) {
-        compareDataSource = _private->policyDataSource;
+        compareDataSource = [self _policyDataSource];
     } else if (_private->delegateIsHandlingProvisionalLoadError) {
         compareDataSource = [self provisionalDataSource];
     }
     
     return compareDataSource != nil && [unreachableURL isEqual:[[compareDataSource request] URL]];
+}
+
+- (WebDataSource *)_dataSourceForDocumentLoadState:(WebDocumentLoadState *)loadState
+{
+    return [(WebDocumentLoadStateMac *)loadState dataSource];
+}
+
+- (WebDocumentLoadState *)_createDocumentLoadStateWithRequest:(NSURLRequest *)request
+{
+    WebDocumentLoadStateMac *loadState = [[WebDocumentLoadStateMac alloc] initWithRequest:request];
+    
+    WebDataSource *dataSource = [[WebDataSource alloc] _initWithDocumentLoadState:loadState];
+    [loadState setDataSource:dataSource];
+    [dataSource release];
+
+    return loadState;
 }
 
 @end
