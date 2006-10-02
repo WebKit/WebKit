@@ -1,3 +1,14 @@
+2006-10-02  Nikolas Zimmermann <zimmermann@kde.org>
+
+        Reviewed by eseidel & mjs.  Landed by eseidel.
+
+        Fix Qt/Linux build with older gcc 3.3.4.
+        http://bugs.webkit.org/show_bug.cgi?id=11116
+ 
+        * kjs/lookup.h: Move cacheGlobalObject into KJS namespace.
+        (KJS::cacheGlobalObject): Also remove GCC_ROOT_NS_HACK.
+        * wtf/Assertions.h: Include inttypes.h for uintptr_t.
+
 2006-09-28  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Maciej.

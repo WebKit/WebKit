@@ -84,8 +84,8 @@ NOT_SUPPORTED:
     pop ebx
   }
 
-  //mmx_supported_local=0; // test code for force don't support MMX
-  //printf("MMX : %u (1=MMX supported)\n",mmx_supported_local);
+  /* mmx_supported_local=0; // test code for force don't support MMX
+     printf("MMX : %u (1=MMX supported)\n",mmx_supported_local); */
 
   mmx_supported = mmx_supported_local;
   return mmx_supported_local;
@@ -2020,7 +2020,7 @@ davg3lp:
             // Add 1st active group (Raw(x-bpp)/2) to Average with LBCarry
             movq mm1, mm3      // now use mm1 for getting LBCarrys
             pand mm1, mm2      // get LBCarrys for each byte where both
-                               // lsb's were == 1 (Only valid for active group)
+                               /* lsb's were == 1 (Only valid for active group) */
             psrlq mm2, 1       // divide raw bytes by 2
             pand  mm2, mm4     // clear invalid bit 7 of each byte
             paddb mm2, mm1     // add LBCarrys to (Raw(x-bpp)/2) for each byte
@@ -2033,7 +2033,7 @@ davg3lp:
             psllq mm2, ShiftBpp  // shift data to position correctly
             movq mm1, mm3        // now use mm1 for getting LBCarrys
             pand mm1, mm2      // get LBCarrys for each byte where both
-                               // lsb's were == 1 (Only valid for active group)
+                               /* lsb's were == 1 (Only valid for active group) */
             psrlq mm2, 1       // divide raw bytes by 2
             pand  mm2, mm4     // clear invalid bit 7 of each byte
             paddb mm2, mm1     // add LBCarrys to (Raw(x-bpp)/2) for each byte
@@ -2050,7 +2050,7 @@ davg3lp:
                               // get the correct x-bpp offset.
             movq mm1, mm3     // now use mm1 for getting LBCarrys
             pand mm1, mm2     // get LBCarrys for each byte where both
-                              // lsb's were == 1 (Only valid for active group)
+                              /* lsb's were == 1 (Only valid for active group) */
             psrlq mm2, 1      // divide raw bytes by 2
             pand  mm2, mm4    // clear invalid bit 7 of each byte
             paddb mm2, mm1    // add LBCarrys to (Raw(x-bpp)/2) for each byte
@@ -2106,7 +2106,7 @@ davg4lp:
             // Add 1st active group (Raw(x-bpp)/2) to Average with LBCarry
             movq mm1, mm3     // now use mm1 for getting LBCarrys
             pand mm1, mm2     // get LBCarrys for each byte where both
-                              // lsb's were == 1 (Only valid for active group)
+                              /* lsb's were == 1 (Only valid for active group) */
             psrlq mm2, 1      // divide raw bytes by 2
             pand  mm2, mm4    // clear invalid bit 7 of each byte
             paddb mm2, mm1    // add LBCarrys to (Raw(x-bpp)/2) for each byte
@@ -2119,7 +2119,7 @@ davg4lp:
             add ebx, 8
             movq mm1, mm3     // now use mm1 for getting LBCarrys
             pand mm1, mm2     // get LBCarrys for each byte where both
-                              // lsb's were == 1 (Only valid for active group)
+                              /* lsb's were == 1 (Only valid for active group) */
             psrlq mm2, 1      // divide raw bytes by 2
             pand  mm2, mm4    // clear invalid bit 7 of each byte
             paddb mm2, mm1    // add LBCarrys to (Raw(x-bpp)/2) for each byte
@@ -2166,7 +2166,7 @@ davg2lp:
             // Add 1st active group (Raw(x-bpp)/2) to Average with LBCarry
             movq mm1, mm3     // now use mm1 for getting LBCarrys
             pand mm1, mm2     // get LBCarrys for each byte where both
-                              // lsb's were == 1 (Only valid for active group)
+                              /* lsb's were == 1 (Only valid for active group) */
             psrlq mm2, 1      // divide raw bytes by 2
             pand  mm2, mm4    // clear invalid bit 7 of each byte
             paddb mm2, mm1    // add LBCarrys to (Raw(x-bpp)/2) for each byte
@@ -2178,7 +2178,7 @@ davg2lp:
             psllq mm2, ShiftBpp // shift data to position correctly
             movq mm1, mm3       // now use mm1 for getting LBCarrys
             pand mm1, mm2       // get LBCarrys for each byte where both
-                                // lsb's were == 1 (Only valid for active group)
+                                /* lsb's were == 1 (Only valid for active group) */
             psrlq mm2, 1        // divide raw bytes by 2
             pand  mm2, mm4      // clear invalid bit 7 of each byte
             paddb mm2, mm1      // add LBCarrys to (Raw(x-bpp)/2) for each byte
@@ -2193,7 +2193,7 @@ davg2lp:
                                 // get the correct x-bpp offset.
             movq mm1, mm3       // now use mm1 for getting LBCarrys
             pand mm1, mm2       // get LBCarrys for each byte where both
-                                // lsb's were == 1 (Only valid for active group)
+                                /* lsb's were == 1 (Only valid for active group) */
             psrlq mm2, 1        // divide raw bytes by 2
             pand  mm2, mm4      // clear invalid bit 7 of each byte
             paddb mm2, mm1      // add LBCarrys to (Raw(x-bpp)/2) for each byte
@@ -2209,7 +2209,7 @@ davg2lp:
             add ebx, 8
             movq mm1, mm3    // now use mm1 for getting LBCarrys
             pand mm1, mm2    // get LBCarrys for each byte where both
-                             // lsb's were == 1 (Only valid for active group)
+                             /* lsb's were == 1 (Only valid for active group) */
             psrlq mm2, 1     // divide raw bytes by 2
             pand  mm2, mm4   // clear invalid bit 7 of each byte
             paddb mm2, mm1   // add LBCarrys to (Raw(x-bpp)/2) for each byte
@@ -2277,7 +2277,7 @@ davg8lp:
             pand mm3, mm1       // get lsb for each prev_row byte
             psrlq mm1, 1        // divide prev_row bytes by 2
             pand mm3, mm2       // get LBCarrys for each byte where both
-                                // lsb's were == 1
+                                /* lsb's were == 1 */
             psrlq mm2, 1        // divide raw bytes by 2
             pand  mm1, mm4      // clear invalid bit 7 of each byte
             paddb mm0, mm3      // add LBCarrys to Avg for each byte
@@ -2310,7 +2310,7 @@ davgAlp:
             movq mm2, [edx + ebx]
             psrlq mm1, 1        // divide prev_row bytes by 2
             pand mm3, mm2       // get LBCarrys for each byte where both
-                                // lsb's were == 1
+                                /* lsb's were == 1 */
             psrlq mm2, 1        // divide raw bytes by 2
             pand  mm1, mm4      // clear invalid bit 7 of each byte
             paddb mm0, mm3      // add LBCarrys to Avg for each byte

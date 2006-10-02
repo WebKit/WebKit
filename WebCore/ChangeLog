@@ -1,3 +1,21 @@
+2006-10-02  Nikolas Zimmermann <zimmermann@kde.org>
+
+        Reviewed by eseidel & mjs.  Landed by eseidel.
+
+        Fix Qt/Linux build with older gcc 3.3.4.
+        http://bugs.webkit.org/show_bug.cgi?id=11116
+
+        As discussed with Maciej, the GCC_ROOT_NS_HACK
+        can be completely removed, as well as the friendship
+        between cacheGlobalObject & the JS* objects.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Remove friendship.
+        * platform/image-decoders/png/pnggccrd.c: Fix comments for gcc3.
+        (png_read_filter_row_mmx_avg):
+        * platform/image-decoders/png/pngvcrd.c: Ditto.
+        (png_mmx_support):
+        (png_read_filter_row_mmx_avg):
+
 2006-10-01  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Alexey.

@@ -428,9 +428,6 @@ sub GenerateHeader
     
     # Add prototype declaration -- code adopted from the KJS_DEFINE_PROTOTYPE and KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE macros
     push(@headerContent, "class ${className}Proto : public KJS::JSObject {\n");
-    if (!$dataNode->extendedAttributes->{"DoNotCache"}) {
-        push(@headerContent, "    friend KJS::JSObject* KJS_GCC_ROOT_NS_HACK cacheGlobalObject<${className}Proto>(KJS::ExecState*, const KJS::Identifier& propertyName);\n");
-    }
     push(@headerContent, "public:\n");
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
         push(@headerContent, "    static KJS::JSObject* self();\n");
@@ -445,7 +442,6 @@ sub GenerateHeader
     if ($numConstants ne 0) {
         push(@headerContent, "    KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;\n");
     }
-    push(@headerContent, "protected:\n");
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
         push(@headerContent, "    ${className}Proto() { }\n");
     } else {
@@ -626,7 +622,7 @@ sub GenerateImplementation
   } else {
       push(@implContent, "JSObject* ${className}Proto::self(ExecState* exec)\n");
       push(@implContent, "{\n");
-      push(@implContent, "    return ::cacheGlobalObject<${className}Proto>(exec, \"[[${className}.prototype]]\");\n");
+      push(@implContent, "    return KJS::cacheGlobalObject<${className}Proto>(exec, \"[[${className}.prototype]]\");\n");
       push(@implContent, "}\n\n");
   }
   if ($numConstants > 0 || $numFunctions > 0) {
@@ -846,7 +842,7 @@ sub GenerateImplementation
 
   if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
     push(@implContent, "JSValue* ${className}::getConstructor(ExecState* exec)\n{\n");
-    push(@implContent, "    return cacheGlobalObject<${className}Constructor>(exec, \"[[${interfaceName}.constructor]]\");\n");
+    push(@implContent, "    return KJS::cacheGlobalObject<${className}Constructor>(exec, \"[[${interfaceName}.constructor]]\");\n");
     push(@implContent, "}\n");
   }    
   

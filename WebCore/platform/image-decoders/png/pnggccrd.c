@@ -2898,7 +2898,7 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
                                                 // LBCarrys
             "pand %%mm2, %%mm1            \n\t" // get LBCarrys for each byte
                                                 // where both
-                               // lsb's were == 1 (only valid for active group)
+                               /* lsb's were == 1 (only valid for active group) */
             "psrlq $1, %%mm2              \n\t" // divide raw bytes by 2
             "pand  %%mm4, %%mm2           \n\t" // clear invalid bit 7 of each
                                                 // byte
@@ -2918,7 +2918,7 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
                                                 // LBCarrys
             "pand %%mm2, %%mm1            \n\t" // get LBCarrys for each byte
                                                 // where both
-                               // lsb's were == 1 (only valid for active group)
+                               /* lsb's were == 1 (only valid for active group) */
             "psrlq $1, %%mm2              \n\t" // divide raw bytes by 2
             "pand  %%mm4, %%mm2           \n\t" // clear invalid bit 7 of each
                                                 // byte
@@ -2942,7 +2942,7 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
                                                 // LBCarrys
             "pand %%mm2, %%mm1            \n\t" // get LBCarrys for each byte
                                                 // where both
-                              // lsb's were == 1 (only valid for active group)
+                              /* lsb's were == 1 (only valid for active group) */
             "psrlq $1, %%mm2              \n\t" // divide raw bytes by 2
             "pand  %%mm4, %%mm2           \n\t" // clear invalid bit 7 of each
                                                 // byte
@@ -2978,8 +2978,8 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
 
       case 6:
       case 4:
-      //case 7:   // who wrote this?  PNG doesn't support 5 or 7 bytes/pixel
-      //case 5:   // GRR BOGUS
+      /*case 7:    who wrote this?  PNG doesn't support 5 or 7 bytes/pixel
+        case 5:    GRR BOGUS */
       {
          _ActiveMask.use  = 0xffffffffffffffffLL; // use shift below to clear
                                                   // appropriate inactive bytes
@@ -3023,7 +3023,7 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
                                                // LBCarrys
             "pand %%mm2, %%mm1           \n\t" // get LBCarrys for each byte
                                                // where both
-                              // lsb's were == 1 (only valid for active group)
+                              /* lsb's were == 1 (only valid for active group) */
             "psrlq $1, %%mm2             \n\t" // divide raw bytes by 2
             "pand  %%mm4, %%mm2          \n\t" // clear invalid bit 7 of each
                                                // byte
@@ -3042,7 +3042,7 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
                                                // LBCarrys
             "pand %%mm2, %%mm1           \n\t" // get LBCarrys for each byte
                                                // where both
-                              // lsb's were == 1 (only valid for active group)
+                              /* lsb's were == 1 (only valid for active group) */
             "psrlq $1, %%mm2             \n\t" // divide raw bytes by 2
             "pand  %%mm4, %%mm2          \n\t" // clear invalid bit 7 of each
                                                // byte
@@ -3114,7 +3114,7 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
                                                // LBCarrys
             "pand %%mm2, %%mm1           \n\t" // get LBCarrys for each byte
                                                // where both
-                                               // lsb's were == 1 (only valid
+                                               /* lsb's were == 1 (only valid */
                                                // for active group)
             "psrlq $1, %%mm2             \n\t" // divide raw bytes by 2
             "pand  %%mm4, %%mm2          \n\t" // clear invalid bit 7 of each
@@ -3135,7 +3135,7 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
                                                // LBCarrys
             "pand %%mm2, %%mm1           \n\t" // get LBCarrys for each byte
                                                // where both
-                                               // lsb's were == 1 (only valid
+                                               /* lsb's were == 1 (only valid */
                                                // for active group)
             "psrlq $1, %%mm2             \n\t" // divide raw bytes by 2
             "pand  %%mm4, %%mm2          \n\t" // clear invalid bit 7 of each
@@ -3155,7 +3155,7 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
             "movq %%mm3, %%mm1           \n\t" // now use mm1 for getting
                                                // LBCarrys
             "pand %%mm2, %%mm1           \n\t" // get LBCarrys for each byte
-                                               // where both lsb's were == 1
+                                               /* where both lsb's were == 1 */
                                                // (only valid for active group)
             "psrlq $1, %%mm2             \n\t" // divide raw bytes by 2
             "pand  %%mm4, %%mm2          \n\t" // clear invalid bit 7 of each
@@ -3177,7 +3177,7 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
                                                // LBCarrys
             "pand %%mm2, %%mm1           \n\t" // get LBCarrys for each byte
                                                // where both
-                                               // lsb's were == 1 (only valid
+                                               /* lsb's were == 1 (only valid */
                                                // for active group)
             "psrlq $1, %%mm2             \n\t" // divide raw bytes by 2
             "pand  %%mm4, %%mm2          \n\t" // clear invalid bit 7 of each
@@ -3288,7 +3288,7 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
             "pand %%mm1, %%mm3           \n\t" // get lsb for each prev_row byte
             "psrlq $1, %%mm1             \n\t" // divide prev_row bytes by 2
             "pand %%mm2, %%mm3           \n\t" // get LBCarrys for each byte
-                                               //  where both lsb's were == 1
+                                               /*  where both lsb's were == 1 */
             "psrlq $1, %%mm2             \n\t" // divide raw bytes by 2
             "pand  %%mm4, %%mm1          \n\t" // clear invalid bit 7, each byte
             "paddb %%mm3, %%mm0          \n\t" // add LBCarrys to Avg, each byte
@@ -3343,7 +3343,7 @@ png_read_filter_row_mmx_avg(png_row_infop row_info, png_bytep row,
             "movq (%%edx,%%ebx,), %%mm2  \n\t"
             "psrlq $1, %%mm1             \n\t" // divide prev_row bytes by 2
             "pand %%mm2, %%mm3           \n\t" // get LBCarrys for each byte
-                                               // where both lsb's were == 1
+                                               /* where both lsb's were == 1 */
             "psrlq $1, %%mm2             \n\t" // divide raw bytes by 2
             "pand  %%mm4, %%mm1          \n\t" // clear invalid bit 7 of each
                                                // byte
