@@ -1,3 +1,15 @@
+2006-10-03  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11137
+        Bug 11137: GdkLauncher dies with "pure virtual method called" if
+        window is closed while page still loading
+
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::~FrameGdk): Call cancelAndClear to allow virtual
+        methods to be called before the FrameGdk portion of "this" is torn down.
+
 2006-10-03  Adam Roben  <aroben@apple.com>
 
         Reviewed by Darin.

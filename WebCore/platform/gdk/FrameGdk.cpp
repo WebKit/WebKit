@@ -123,6 +123,7 @@ FrameGdk::FrameGdk(Page* page, Element* element)
 
 FrameGdk::~FrameGdk()
 {
+    cancelAndClear();
 }
 
 bool FrameGdk::openURL(const KURL& url)
