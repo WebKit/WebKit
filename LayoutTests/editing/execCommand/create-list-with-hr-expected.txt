@@ -16,10 +16,10 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 771x36
           RenderText {#text} at (514,0) size 771x36
             text run at (514,0) width 257: "The fact that the horizontal rule is put"
-            text run at (0,18) width 550: "into ans unnecessary div when it's pushed into the list might be considered a bug. "
-        RenderInline {B} at (0,0) size 732x36
-          RenderText {#text} at (550,18) size 732x36
-            text run at (550,18) width 182: "The fact that the caret isn't"
+            text run at (0,18) width 544: "into an unnecessary div when it's pushed into the list might be considered a bug. "
+        RenderInline {B} at (0,0) size 726x36
+          RenderText {#text} at (544,18) size 726x36
+            text run at (544,18) width 182: "The fact that the caret isn't"
             text run at (0,36) width 127: "preserved is a bug."
       RenderBlock {DIV} at (0,70) size 784x28
         RenderBlock {UL} at (0,0) size 784x28
