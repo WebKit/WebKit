@@ -96,27 +96,27 @@ WebView* WebView::createInstance()
     return instance;
 }
 
-void WebView::mouseMoved(WPARAM wParam, LPARAM lParam)
+void WebView::mouseMoved(UINT message, WPARAM wParam, LPARAM lParam)
 {
-    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam);
+    PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, lParam);
     m_mainFrame->impl()->view()->handleMouseMoveEvent(mouseEvent);
 }
 
-void WebView::mouseDown(WPARAM wParam, LPARAM lParam)
+void WebView::mouseDown(UINT message, WPARAM wParam, LPARAM lParam)
 {
-    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam);
+    PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, lParam);
     m_mainFrame->impl()->view()->handleMousePressEvent(mouseEvent);
 }
 
-void WebView::mouseUp(WPARAM wParam, LPARAM lParam)
+void WebView::mouseUp(UINT message, WPARAM wParam, LPARAM lParam)
 {
-    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam);
+    PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, lParam);
     m_mainFrame->impl()->view()->handleMouseReleaseEvent(mouseEvent);
 }
 
-void WebView::mouseDoubleClick(WPARAM wParam, LPARAM lParam)
+void WebView::mouseDoubleClick(UINT message, WPARAM wParam, LPARAM lParam)
 {
-    PlatformMouseEvent mouseEvent(m_viewWindow, wParam, lParam);
+    PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, lParam);
     m_mainFrame->impl()->view()->handleMouseReleaseEvent(mouseEvent);
 }
 
@@ -220,7 +220,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             break;
         case WM_MOUSEMOVE:
             if (webView)
-                webView->mouseMoved(wParam, lParam);
+                webView->mouseMoved(message, wParam, lParam);
             break;
         case WM_LBUTTONDOWN:
             // Make ourselves the focused window before doing anything else
@@ -231,19 +231,19 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_MBUTTONDOWN:
         case WM_RBUTTONDOWN:
             if (webView)
-                webView->mouseDown(wParam, lParam);
+                webView->mouseDown(message, wParam, lParam);
             break;
         case WM_LBUTTONUP:
         case WM_MBUTTONUP:
         case WM_RBUTTONUP:
             if (webView)
-                webView->mouseUp(wParam, lParam);
+                webView->mouseUp(message, wParam, lParam);
             break;
         case WM_LBUTTONDBLCLK:
         case WM_MBUTTONDBLCLK:
         case WM_RBUTTONDBLCLK:
             if (webView)
-                webView->mouseDoubleClick(wParam, lParam);
+                webView->mouseDoubleClick(message, wParam, lParam);
             break;
         case WM_HSCROLL: {
             if (mainFrameImpl) {

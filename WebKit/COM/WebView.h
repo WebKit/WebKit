@@ -393,10 +393,10 @@ public:
 
     // WebView
 
-    void mouseMoved(WPARAM, LPARAM);
-    void mouseDown(WPARAM, LPARAM);
-    void mouseUp(WPARAM, LPARAM);
-    void mouseDoubleClick(WPARAM, LPARAM);
+    void mouseMoved(UINT, WPARAM, LPARAM);
+    void mouseDown(UINT, WPARAM, LPARAM);
+    void mouseUp(UINT, WPARAM, LPARAM);
+    void mouseDoubleClick(UINT, WPARAM, LPARAM);
     bool keyPress(WPARAM, LPARAM);
     HRESULT goToItem(IWebHistoryItem* item, WebFrameLoadType withLoadType);
 

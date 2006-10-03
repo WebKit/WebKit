@@ -1,3 +1,18 @@
+2006-10-02  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Maciej.
+
+        Add message paramter to WebView::mouse* methods to pass down to
+        PlatformMouseEvent.
+
+        * COM/WebView.cpp:
+        (WebView::mouseMoved):
+        (WebView::mouseDown):
+        (WebView::mouseUp):
+        (WebView::mouseDoubleClick):
+        (WebViewWndProc):
+        * COM/WebView.h:
+
 2006-10-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Alice.
