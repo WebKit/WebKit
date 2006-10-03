@@ -42,80 +42,160 @@ and WebCore. Include this file to use these settings.
             <include>$(SRCDIR)/../JavaScriptCore/os-win32</include><!-- stdint.h is here -->
         </if>
         <if cond="FORMAT=='gnu'">
-			<ldflags>$(SRCDIR)/../JavaScriptCore/libjscore.a</ldflags>
+            <ldflags>$(SRCDIR)/../JavaScriptCore/libjscore.a</ldflags>
         </if>
     </template>
 
+
+    <option name="SQLITE3_LIBS">
+        <default-value>$(os.popen("pkg-config --libs sqlite3").read())</default-value>
+    </option>
+
+    <option name="SQLITE3_CFLAGS">
+        <default-value>$(os.popen("pkg-config --cflags sqlite3").read())</default-value>
+    </option>
+
     <template id="sqlite3">
-    	   <ldflags>`pkg-config --libs sqlite3`</ldflags>
-    	   <cxxflags>`pkg-config --cflags sqlite3`</cxxflags>
-	</template>
+        <ldflags>$(SQLITE3_LIBS)</ldflags>
+        <cxxflags>$(SQLITE3_CFLAGS)</cxxflags>
+    </template>
+
+
+    <option name="FREETYPE2_LIBS">
+        <default-value>$(os.popen("pkg-config --libs freetype2").read())</default-value>
+    </option>
+
+    <option name="FREETYPE2_CFLAGS">
+        <default-value>$(os.popen("pkg-config --cflags freetype2").read())</default-value>
+    </option>
+
+    <option name="FONTCONFIG_LIBS">
+        <default-value>$(os.popen("pkg-config --libs fontconfig").read())</default-value>
+    </option>
+
+    <option name="FONTCONFIG_CFLAGS">
+        <default-value>$(os.popen("pkg-config --cflags fontconfig").read())</default-value>
+    </option>
 
     <template id="freetype">
-    	   <ldflags>`pkg-config --libs freetype2`</ldflags>
-    	   <cxxflags>`pkg-config --cflags freetype2`</cxxflags>
-    	   <ldflags>`pkg-config --libs fontconfig`</ldflags>
-    	   <cxxflags>`pkg-config --cflags fontconfig`</cxxflags>
-	</template>
+        <ldflags>$(FREETYPE2_LIBS)</ldflags>
+        <cxxflags>$(FREETYPE2_CFLAGS)</cxxflags>
+        <ldflags>$(FONTCONFIG_LIBS)</ldflags>
+        <cxxflags>$(FONTCONFIG_CFLAGS)</cxxflags>
+    </template>
 
-     <template id="curl">
-     	   <ldflags>`curl-config --libs `</ldflags>
-     	   <cxxflags>`curl-config --cflags `</cxxflags>
- 	</template>
- 
+
+    <option name="CURL_LIBS">
+        <default-value>$(os.popen("curl-config --libs").read())</default-value>
+    </option>
+
+    <option name="CURL_CFLAGS">
+        <default-value>$(os.popen("curl-config --cflags").read())</default-value>
+    </option>
+
+    <template id="curl">
+        <ldflags>$(CURL_LIBS)</ldflags>
+        <cxxflags>$(CURL_CFLAGS)</cxxflags>
+    </template>
+
+
+    <option name="CAIRO_LIBS">
+        <default-value>$(os.popen("pkg-config --libs cairo").read())</default-value>
+    </option>
+
+    <option name="CAIRO_CFLAGS">
+        <default-value>$(os.popen("pkg-config --cflags cairo").read())</default-value>
+    </option>
+
     <template id="cairo">
-     	   <ldflags>`pkg-config --libs cairo`</ldflags>
-     	   <cxxflags>`pkg-config --cflags cairo`</cxxflags>
- 	</template>
+        <ldflags>$(CAIRO_LIBS)</ldflags>
+        <cxxflags>$(CAIRO_CFLAGS)</cxxflags>
+    </template>
+
+
+    <option name="GTK_LIBS">
+        <default-value>$(os.popen("pkg-config --libs gtk+-2.0").read())</default-value>
+    </option>
+
+    <option name="GTK_CFLAGS">
+        <default-value>$(os.popen("pkg-config --cflags gtk+-2.0").read())</default-value>
+    </option>
 
     <!-- GTK settings, for GTK ports - wx doesn't use these -->
     <template id="gtk">
         <if cond="FORMAT=='gnu'">
-    	   <ldflags>`pkg-config --libs gtk+-2.0`</ldflags>
-    	   <cxxflags>`pkg-config --cflags gtk+-2.0`</cxxflags>
+            <ldflags>$(GTK_LIBS)</ldflags>
+            <cxxflags>$(GTK_CFLAGS)</cxxflags>
         </if>
-        
+
         <!--    TODO: non-Cygwin Windows support for this? :) --> 
     </template>
+
+
+    <option name="XML2_LIBS">
+        <default-value>$(os.popen("xml2-config --libs").read())</default-value>
+    </option>
+
+    <option name="XML2_CFLAGS">
+        <default-value>$(os.popen("xml2-config --cflags").read())</default-value>
+    </option>
 
     <!-- XML2 library settings -->
     <template id="xml2">
         <if cond="FORMAT=='gnu'">
-    	   <ldflags>`xml2-config --libs`</ldflags>
-    	   <cxxflags>`xml2-config --cflags`</cxxflags>
+            <ldflags>$(XML2_LIBS)</ldflags>
+            <cxxflags>$(XML2_CFLAGS)</cxxflags>
         </if>
-        
+
         <if cond="PLATFORM_WIN32=='1'">
             <include>$(SRCDIR)/../libxml/include</include>
-        </if>        
-    </template>    
-    
-    
+        </if>
+    </template>
+
+
+    <option name="XSLT_LIBS">
+        <default-value>$(os.popen("xslt-config --libs").read())</default-value>
+    </option>
+
+    <option name="XSLT_CFLAGS">
+        <default-value>$(os.popen("xslt-config --cflags").read())</default-value>
+    </option>
+
     <!-- XSLT library settings -->
     <template id="xslt">
         <if cond="FORMAT=='gnu'">
-    	   <ldflags>`xslt-config --libs`</ldflags>
-    	   <cxxflags>`xslt-config --cflags`</cxxflags>
+            <ldflags>$(XSLT_LIBS)</ldflags>
+            <cxxflags>$(XSLT_CFLAGS)</cxxflags>
         </if>
-        
+
         <if cond="PLATFORM_WIN32=='1'">
             <include>$(SRCDIR)/../libxslt/include</include>
             <include>$(SRCDIR)/../libxml/include</include>
-        </if>        
+        </if>
     </template>
+
+
+    <option name="ICU_LIBS">
+        <default-value>$(os.popen("icu-config --ldflags").read())</default-value>
+    </option>
+
+    <option name="ICU_CFLAGS">
+        <default-value>$(os.popen("icu-config --cxxflags").read())</default-value>
+    </option>
 
     <!-- IBM ICU settings -->
     <template id="icu">
         <if cond="FORMAT=='gnu'">
-    	   <ldflags>`icu-config --ldflags`</ldflags>
-    	   <cxxflags>`icu-config --cxxflags`</cxxflags>
+            <ldflags>$(ICU_LIBS)</ldflags>
+            <cxxflags>$(ICU_CFLAGS)</cxxflags>
         </if>
-        
+
         <if cond="PLATFORM_WIN32=='1'">
             <include>$(SRCDIR)/../icu/include</include>
         </if>
     </template>
-    
+
+
     <template id="iconv">
         <if cond="PLATFORM_WIN32=='1'">
             <include>$(SRCDIR)/../iconv/include</include>
@@ -123,5 +203,3 @@ and WebCore. Include this file to use these settings.
     </template>
     
 </makefile>
-
-

@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
- * All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "PlatformWheelEvent.h"
+#ifndef PlatformScrollBar_h
+#define PlatformScrollBar_h
 
-#include <gdk/gdk.h>
+#include "Widget.h"
+#include "ScrollBar.h"
 
 namespace WebCore {
 
-PlatformWheelEvent::PlatformWheelEvent(GdkEvent* event)
-{
-    m_deltaX = 0;
-    m_deltaY = 0;
+class PlatformScrollBar : public Widget, public ScrollBar {
+public:
+    PlatformScrollBar(ScrollBarClient*, ScrollBarOrientation, ScrollBarControlSize);
+    virtual ~PlatformScrollBar();
 
-    if (event->scroll.direction == GDK_SCROLL_UP)
-        m_deltaY = -120;
-    else if (event->scroll.direction == GDK_SCROLL_LEFT)
-        m_deltaX = -120;
-    else if (event->scroll.direction == GDK_SCROLL_RIGHT)
-        m_deltaX = 120;
-    else
-        m_deltaY = 120;
+    virtual bool isWidget() const { return true; }
 
-    m_position = IntPoint((int)event->scroll.x, (int)event->scroll.y);
-    m_globalPosition = IntPoint((int)event->scroll.x_root, (int)event->scroll.y_root);
-    m_isAccepted = false;
-    m_shiftKey = event->button.state & GDK_SHIFT_MASK;
-    m_ctrlKey = event->button.state & GDK_CONTROL_MASK;
-    m_altKey = event->button.state & GDK_MOD1_MASK;
-    m_metaKey = event->button.state & GDK_MOD2_MASK;
-}
+    virtual int width() const;
+    virtual int height() const;
+    virtual void setRect(const IntRect&);
+    virtual void setEnabled(bool);
+    virtual void paint(GraphicsContext*, const IntRect& damageRect);
+
+protected:
+    virtual void updateThumbPosition();
+    virtual void updateThumbProportion();
+};
 
 }
+
+#endif // PlatformScrollBar_h

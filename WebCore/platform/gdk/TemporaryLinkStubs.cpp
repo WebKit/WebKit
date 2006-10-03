@@ -36,7 +36,7 @@
 #include "TextField.h"
 #include "FileChooser.h"
 #include "Font.h"
-#include "PopUpButton.h"
+#include "ListBox.h"
 #include "IntPoint.h"
 #include "Widget.h"
 #include "GraphicsContext.h"
@@ -74,10 +74,11 @@ using namespace WebCore;
 static void notImplemented() { puts("Not yet implemented"); }
 
 void FrameView::updateBorder() { notImplemented(); }
-
-
-Widget::FocusPolicy PopUpButton::focusPolicy() const { notImplemented(); return NoFocus; }
-void PopUpButton::populate() { notImplemented(); }
+bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults&) { return false; }
+bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults&, Frame*) { return true; }
+bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame*) { return true; }
+bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame*) { return true; }
+bool FrameView::passWheelEventToSubframe(PlatformWheelEvent&, Frame*) { return true; }
 
 void Widget::enableFlushDrawing() { notImplemented(); }
 bool Widget::isEnabled() const { notImplemented(); return 0; }
@@ -122,7 +123,7 @@ Widget::FocusPolicy Slider::focusPolicy() const { notImplemented(); return NoFoc
 Widget::FocusPolicy ListBox::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy TextField::focusPolicy() const { notImplemented(); return NoFocus; }
 
-Cursor::Cursor(Image*) { notImplemented(); }
+Cursor::Cursor(Image*, const IntPoint&) { notImplemented(); }
 
 PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
 String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
@@ -246,13 +247,18 @@ void CheckCacheObjectStatus(DocLoader*, CachedResource*) { }
 void Widget::setEnabled(bool) { }
 void Widget::paint(GraphicsContext*, IntRect const&) { }
 void Widget::setIsSelected(bool) { }
+void Widget::invalidate() { }
+void Widget::invalidateRect(const IntRect& r) { }
 
 void ScrollView::addChild(Widget*, int, int) { }
 void ScrollView::removeChild(Widget*) { }
 void ScrollView::scrollPointRecursively(int x, int y) { }
 bool ScrollView::inWindow() const { return true; }
+void ScrollView::wheelEvent(PlatformWheelEvent&) { }
 void ScrollView::updateScrollBars() { }
 int ScrollView::updateScrollInfo(short type, int current, int max, int pageSize) { return 0; }
+IntPoint ScrollView::convertToContainingWindow(const IntPoint& point) const { return point; }
+IntPoint ScrollView::convertFromContainingWindow(const IntPoint& point) const { return point; }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
         const IntSize& bottomLeft, const IntSize& bottomRight) { notImplemented(); }
@@ -270,7 +276,6 @@ void GraphicsContext::setMiterLimit(float) { }
 void GraphicsContext::setAlpha(float) { }
 void GraphicsContext::setCompositeOperation(CompositeOperator) { }
 void GraphicsContext::clip(const Path&) { }
-void GraphicsContext::translate(const FloatSize&) { }
 void GraphicsContext::rotate(float) { }
 void GraphicsContext::scale(const FloatSize&) { }
 
@@ -311,33 +316,21 @@ IntSize TextField::sizeForCharacterWidth(int) const { return IntSize(); }
 int TextField::baselinePosition(int) const { return 0; }
 void TextField::setLiveSearch(bool) { }
 
-PopUpButton::PopUpButton() { }
-PopUpButton::~PopUpButton() { }
-void PopUpButton::setFont(WebCore::Font const&) { }
-int PopUpButton::baselinePosition(int) const { return 0; }
-void PopUpButton::setWritingDirection(TextDirection) { }
-void PopUpButton::clear() { }
-void PopUpButton::appendItem(DeprecatedString const&, ListBoxItemType, bool) { }
-void PopUpButton::setCurrentItem(int) { }
-IntSize PopUpButton::sizeHint() const { return IntSize(); }
-IntRect PopUpButton::frameGeometry() const { return IntRect(); }
-void PopUpButton::setFrameGeometry(IntRect const&) { }
-
-PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation) : ScrollBar(client, orientation) { }
+PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation, ScrollBarControlSize controlSize) : ScrollBar(client, orientation, controlSize) { }
 PlatformScrollBar::~PlatformScrollBar() { }
 int PlatformScrollBar::width() const { return 0; }
 int PlatformScrollBar::height() const { return 0; }
 void PlatformScrollBar::setEnabled(bool) { }
 void PlatformScrollBar::paint(GraphicsContext*, const IntRect& damageRect) { }
-void PlatformScrollBar::setScrollBarValue(int v) { }
-void PlatformScrollBar::setKnobProportion(int visibleSize, int totalSize) { }
+void PlatformScrollBar::updateThumbPosition() { }
+void PlatformScrollBar::updateThumbProportion() { }
 void PlatformScrollBar::setRect(const IntRect&) { }
 
-ScrollBar::ScrollBar(ScrollBarClient*, ScrollBarOrientation) { }
+ScrollBar::ScrollBar(ScrollBarClient*, ScrollBarOrientation, ScrollBarControlSize controlSize) { }
 void ScrollBar::setSteps(int, int) { }
 bool ScrollBar::scroll(ScrollDirection, ScrollGranularity, float) { return 0; }
 bool ScrollBar::setValue(int) { return 0; }
-void ScrollBar::setKnobProportion(int, int) { }
+void ScrollBar::setProportion(int, int) { }
 
 ListBox::ListBox() { }
 ListBox::~ListBox() { }
@@ -384,8 +377,7 @@ float Font::floatWidthForComplexText(const TextRun&, const TextStyle&) const { n
 int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int, bool) const { notImplemented(); return 0; }
 
 namespace WebCore {
-
-DeprecatedStringList supportedKeySizes(){return DeprecatedStringList();};
-DeprecatedString signedPublicKeyAndChallengeString(unsigned keySizeIndex, const DeprecatedString &challengeString, const KURL &url){return DeprecatedString();};
+Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
+String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 
 }

@@ -381,6 +381,7 @@
 		css/CSSBorderImageValue.cpp
 		css/CSSCharsetRule.cpp
 		css/CSSComputedStyleDeclaration.cpp
+		css/CSSCursorImageValue.cpp
 		css/CSSFontFaceRule.cpp
 		css/csshelper.cpp
 		css/CSSImageValue.cpp
@@ -420,6 +421,8 @@
 		rendering/AutoTableLayout.cpp
 		rendering/bidi.cpp
 		rendering/break_lines.cpp
+		rendering/CounterNode.cpp
+		rendering/CounterResetNode.cpp
 		rendering/EllipsisBox.cpp
 		rendering/FixedTableLayout.cpp
 		rendering/InlineBox.cpp
@@ -434,6 +437,7 @@
 		rendering/RenderBR.cpp
 		rendering/RenderButton.cpp
 		rendering/RenderContainer.cpp
+		rendering/RenderCounter.cpp
 		rendering/RenderFieldset.cpp
 		rendering/RenderFileUploadControl.cpp
 		rendering/RenderFlexibleBox.cpp
@@ -449,6 +453,7 @@
 		rendering/RenderLayer.cpp
 		rendering/RenderLegend.cpp
 		rendering/RenderLineEdit.cpp
+		rendering/RenderListBox.cpp
 		rendering/RenderListItem.cpp
 		rendering/RenderListMarker.cpp
 		rendering/RenderMenuList.cpp
@@ -575,6 +580,7 @@
 		editing/AppendNodeCommand.cpp
 		editing/ApplyStyleCommand.cpp
 		editing/BreakBlockquoteCommand.cpp
+		editing/CommandByName.cpp
 		editing/CompositeEditCommand.cpp
 		editing/CreateLinkCommand.cpp
 		editing/DeleteFromTextNodeCommand.cpp

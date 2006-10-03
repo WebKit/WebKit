@@ -147,16 +147,6 @@ int ScrollView::contentsHeight() const
     return m_data->contentsSize.height();
 }
 
-IntPoint ScrollView::viewportToContents(const IntPoint& contentsPoint)
-{
-    return contentsPoint + scrollOffset();
-}
-
-IntPoint ScrollView::contentsToViewport(const IntPoint& viewportPoint)
-{
-    return IntPoint(viewportPoint) - scrollOffset();
-}
-
 IntSize ScrollView::scrollOffset() const
 {
     return m_data->scrollOffset;

@@ -69,7 +69,7 @@ Vector<char> loadResourceIntoArray(const char* resourceName)
 
 namespace WebCore {
 
-static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
+static void doScroll(const RenderObject* r, float deltaX, float deltaY)
 {
     // FIXME: The scrolling done here should be done in the default handlers
     // of the elements rather than here in the part.
@@ -81,18 +81,10 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
     //r->scroll(direction, ScrollByWheel, multiplier);
     if (!r->layer())
         return;
-    int x = r->layer()->scrollXOffset();
-    int y = r->layer()->scrollYOffset();
-    if (isHorizontal)
-        x += multiplier;
-    else
-        y += multiplier;
-    r->layer()->scrollToOffset(x, y, true, true);
-}
 
-bool FrameView::isFrameView() const
-{
-    return true;
+    int x = r->layer()->scrollXOffset() + deltaX;
+    int y = r->layer()->scrollYOffset() + deltaY;
+    r->layer()->scrollToOffset(x, y, true, true);
 }
 
 FrameGdk::FrameGdk(GdkDrawable* gdkdrawable)
@@ -203,7 +195,7 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
             //Default to scrolling the page
             //not sure why its null
             //broke anyway when its not null
-            doScroll(renderer(), wheelEvent.isHorizontal(), wheelEvent.delta());
+            doScroll(renderer(), wheelEvent.deltaX(), wheelEvent.deltaY());
             break;
         }
         case GDK_DRAG_ENTER:

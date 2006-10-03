@@ -1,3 +1,45 @@
+2006-10-03  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10981
+        Linux/GDK build fixes
+
+        Based on a patch by Krzysztof Kowalczyk.
+
+        * WebCoreSources.bkl:
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::doScroll):
+        (WebCore::FrameGdk::handleGdkEvent):
+        * platform/gdk/PlatformScrollBar.h: Added.
+        (WebCore::PlatformScrollBar::isWidget):
+        * platform/gdk/ScrollViewGdk.cpp:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (FrameView::passMousePressEventToScrollbar):
+        (FrameView::passMousePressEventToSubframe):
+        (FrameView::passMouseReleaseEventToSubframe):
+        (FrameView::passMouseMoveEventToSubframe):
+        (FrameView::passWheelEventToSubframe):
+        (Cursor::Cursor):
+        (Widget::invalidate):
+        (Widget::invalidateRect):
+        (ScrollView::wheelEvent):
+        (ScrollView::convertToContainingWindow):
+        (ScrollView::convertFromContainingWindow):
+        (GraphicsContext::clip):
+        (PlatformScrollBar::PlatformScrollBar):
+        (PlatformScrollBar::updateThumbPosition):
+        (PlatformScrollBar::updateThumbProportion):
+        (ScrollBar::ScrollBar):
+        (ScrollBar::setProportion):
+        (WebCore::supportedKeySizes):
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/gdk/WheelEventGdk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/gdk/WidgetGdk.cpp:
+        (WebCore::Widget::convertToContainingWindow):
+        (WebCore::Widget::convertFromContainingWindow):
+
 2006-10-02  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej.
