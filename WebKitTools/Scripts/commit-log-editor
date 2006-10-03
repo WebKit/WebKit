@@ -119,6 +119,7 @@ for my $sortKey (sort keys %changeLogSort) {
     print NEWLOG $changeLogContents{$label};
 }
 print NEWLOG $logContents;
+close NEWLOG;
 
 system $editor, "$log.edit";
 

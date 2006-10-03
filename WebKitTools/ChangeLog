@@ -1,3 +1,7 @@
+2006-10-03  Darin Adler  <darin@apple.com>
+
+        * Scripts/commit-log-editor: Added missing "close" call. Oops!
+
 2006-10-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.
