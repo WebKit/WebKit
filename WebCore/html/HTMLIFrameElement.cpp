@@ -94,17 +94,6 @@ void HTMLIFrameElement::insertedIntoDocument()
     openURL();
 }
 
-void HTMLIFrameElement::willRemove()
-{
-    if (Frame* frame = contentFrame()) {
-        frame->disconnectOwnerElement();
-        frame->frameDetached();
-        ASSERT(!contentFrame());
-    }
-
-    HTMLElement::willRemove();
-}
-
 void HTMLIFrameElement::removedFromDocument()
 {
     if (document()->isHTMLDocument()) {
@@ -130,17 +119,12 @@ void HTMLIFrameElement::attach()
 {
     HTMLFrameElement::attach();
 
-    if (RenderPartObject* renderPart = static_cast<RenderPartObject*>(renderer())) {        
+    if (RenderPartObject* renderPartObject = static_cast<RenderPartObject*>(renderer())) {        
         if (contentFrame()) {
-            renderPart->setWidget(contentFrame()->view());
-            renderPart->updateWidget();
+            renderPartObject->setWidget(contentFrame()->view());
+            renderPartObject->updateWidget();
         }
     }
-}
-
-void HTMLIFrameElement::detach()
-{
-    HTMLElement::detach();
 }
 
 bool HTMLIFrameElement::isURLAttribute(Attribute *attr) const

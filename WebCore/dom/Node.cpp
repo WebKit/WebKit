@@ -714,7 +714,6 @@ void Node::willRemove()
 void Node::detach()
 {
     m_inDetach = true;
-//    assert(m_attached);
 
     if (renderer())
         renderer()->destroy();

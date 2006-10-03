@@ -68,17 +68,13 @@ HTMLFrameElement::~HTMLFrameElement()
 {
 }
 
-bool HTMLFrameElement::isURLAllowed(const AtomicString &URLString) const
+bool HTMLFrameElement::isURLAllowed(const AtomicString& URLString) const
 {
     if (URLString.isEmpty())
         return true;
-    
-    FrameView* w = document()->view();
-    if (!w)
-        return false;
 
-    KURL newURL(document()->completeURL(URLString.deprecatedString()));
-    newURL.setRef(DeprecatedString::null);
+    KURL completeURL(document()->completeURL(URLString.deprecatedString()));
+    completeURL.setRef(DeprecatedString::null);
 
     // Don't allow more than 200 total frames in a set. This seems
     // like a reasonable upper bound, and otherwise mutually recursive
@@ -88,16 +84,17 @@ bool HTMLFrameElement::isURLAllowed(const AtomicString &URLString) const
     // FIXME: This limit could be higher, but WebKit has some
     // algorithms that happen while loading which appear to be N^2 or
     // worse in the number of frames
-    if (w->frame()->page()->frameCount() > 200)
-        return false;
+    if (Frame* parentFrame = document()->frame())
+        if (parentFrame->page()->frameCount() > 200)
+            return false;
 
     // We allow one level of self-reference because some sites depend on that.
     // But we don't allow more than one.
     bool foundSelfReference = false;
-    for (Frame *frame = w->frame(); frame; frame = frame->tree()->parent()) {
+    for (Frame* frame = document()->frame(); frame; frame = frame->tree()->parent()) {
         KURL frameURL = frame->url();
         frameURL.setRef(DeprecatedString::null);
-        if (frameURL == newURL) {
+        if (frameURL == completeURL) {
             if (foundSelfReference)
                 return false;
             foundSelfReference = true;
@@ -209,52 +206,22 @@ void HTMLFrameElement::attach()
         openURL();
 }
 
-void HTMLFrameElement::close()
-{
-    Frame* frame = contentFrame();
-    if (frame && renderer()) {
-        frame->frameDetached();
-        frame->disconnectOwnerElement();
-    }
-}
-
 void HTMLFrameElement::willRemove()
 {
-    // close the frame and dissociate the renderer, but leave the
-    // node attached so that frame does not get re-attached before
-    // actually leaving the document.  see <rdar://problem/4132581>
-    close();
-    if (renderer()) {
-        renderer()->destroy();
-        setRenderer(0);
+    if (Frame* frame = contentFrame()) {
+        frame->disconnectOwnerElement();
+        frame->frameDetached();
     }
-    
-    HTMLElement::willRemove();
-}
 
-void HTMLFrameElement::detach()
-{
-    close();
-    HTMLElement::detach();
+    HTMLElement::willRemove();
 }
 
 void HTMLFrameElement::setLocation(const String& str)
 {
     m_URL = AtomicString(str);
 
-    if (!attached()) {
-        return;
-    }
-    
-    // Handle the common case where we decided not to make a frame the first time.
-    // Detach and the let attach() decide again whether to make the frame for this URL.
-    if (!renderer() && !hasTagName(iframeTag)) {
-        detach();
-        attach();
-        return;
-    }
-    
-    openURL();
+    if (attached())
+        openURL();
 }
 
 bool HTMLFrameElement::isFocusable() const

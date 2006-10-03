@@ -1,3 +1,41 @@
+2006-10-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Feared, loathed, reviewed by Darin.
+
+        More frame/iframe merging. Merged IFRAME::willRemove and IFRAME::detach 
+        into FRAME, plus other cleanup.
+        
+        No new behavior, so no new test. Layout tests pass. Basic browsing and
+        Mail editing seem to work.
+        
+        * dom/Node.cpp:
+        (WebCore::Node::detach): Removed random commented-out code.
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::isURLAllowed): 
+        (1) Removed reference to FrameView, to dissociate frame loading from rendering.
+        (2) Renamed newURL to completeURL because the difference between newURL
+        and URLString is that newURL is a KURL that is the complete version of URLString,
+        not that it is new.
+        (WebCore::HTMLFrameElement::willRemove): 
+        (1) Removed close() call and moved close() code into willRemove(), also removing 
+        close() call from detach(), since willRemove is the well-defined place 
+        from DOM tear-down, not detach().
+        (2) Removed manual renderer detach code because the DOM is not responsible
+        for managing the render tree. I confirmed that this change not
+        regress <rdar://problem/4132581>.
+        (3) Removed questionable ASSERT. The ASSERT assumed that iframe elements
+        lost their content frames after being removed from the DOM. That's our 
+        current behavior, but it's going to change in future rounds of refactoring.
+        This also fixes <rdar://problem/4750835>.
+        (WebCore::HTMLFrameElement::setLocation): Removed wacky manual calls to
+        attach/detach, because the render tree should not be in charge of deciding
+        when to load.
+        * html/HTMLFrameElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::attach): Renamed renderPart to renderPartObject,
+        because the renderer is a renderPartObject, not a renderPart.
+        * html/HTMLIFrameElement.h:
+
 2006-10-03  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Mitz.

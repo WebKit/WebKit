@@ -52,15 +52,12 @@ public:
     virtual void parseMappedAttribute(MappedAttribute*);
 
     virtual void attach();
-    virtual void detach();
 
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject *createRenderer(RenderArena*, RenderStyle*);
     
     void insertedIntoDocument();
     virtual void willRemove();
-
-    void close();
 
     bool noResize() { return m_noResize; }
 
