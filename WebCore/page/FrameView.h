@@ -152,6 +152,8 @@ public:
 
     void doAutoScroll();
 
+    bool advanceFocus(bool forward);
+
     bool updateDragAndDrop(const PlatformMouseEvent&, Clipboard*);
     void cancelDragAndDrop(const PlatformMouseEvent&, Clipboard*);
     bool performDragAndDrop(const PlatformMouseEvent&, Clipboard*);
@@ -219,8 +221,6 @@ private:
     String mediaType() const;
 
     bool scrollTo(const IntRect&);
-
-    void focusNextPrevNode(bool next);
 
     bool useSlowRepaints() const;
     void setUseSlowRepaints();

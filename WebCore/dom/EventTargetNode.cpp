@@ -522,8 +522,17 @@ bool EventTargetNode::disabled() const
     return false;
 }
 
-void EventTargetNode::defaultEventHandler(Event *evt)
+void EventTargetNode::defaultEventHandler(Event* event)
 {
+    if (event->type() == keypressEvent && event->isKeyboardEvent()) {
+        KeyboardEvent* keyEvent = static_cast<KeyboardEvent*>(event);
+        if (keyEvent->keyIdentifier() == "U+000009") {
+            Frame* frame = document()->frame();
+            if (frame && frame->view())
+                frame->view()->advanceFocus(!keyEvent->shiftKey());
+            event->setDefaultHandled();
+        }
+    }
 }
 
 #ifndef NDEBUG

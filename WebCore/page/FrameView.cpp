@@ -1003,78 +1003,26 @@ bool FrameView::scrollTo(const IntRect& bounds)
     return scrollX != maxx && scrollY != maxy;
 }
 
-void FrameView::focusNextPrevNode(bool next)
+bool FrameView::advanceFocus(bool forward)
 {
-    // Sets the focus node of the document to be the node after (or if next is false, before) the current focus node.
-    // Only nodes that are selectable (i.e. for which isSelectable() returns true) are taken into account, and the order
-    // used is that specified in the HTML spec (see Document::nextFocusNode() and Document::previousFocusNode()
-    // for details).
+    Document* document = m_frame->document();
+    if (!document)
+        return false;
 
-    Document *doc = m_frame->document();
-    Node *oldFocusNode = doc->focusNode();
-    Node *newFocusNode;
+    Node* node = forward
+        ? document->nextFocusNode(document->focusNode())
+        : document->previousFocusNode(document->focusNode());
 
-    // Find the next/previous node from the current one
-    if (next)
-        newFocusNode = doc->nextFocusNode(oldFocusNode);
-    else
-        newFocusNode = doc->previousFocusNode(oldFocusNode);
+    if (!node)
+        // FIXME: Need to support tabbing out of the document to the UI.
+        return false;
 
-    // If there was previously no focus node and the user has scrolled the document, then instead of picking the first
-    // focusable node in the document, use the first one that lies within the visible area (if possible).
-    if (!oldFocusNode && newFocusNode && d->scrollBarMoved) {
-        bool visible = false;
-        Node *toFocus = newFocusNode;
-        while (!visible && toFocus) {
-            if (toFocus->getRect().intersects(IntRect(contentsX(), contentsY(), visibleWidth(), visibleHeight()))) {
-                // toFocus is visible in the contents area
-                visible = true;
-            } else {
-                // toFocus is _not_ visible in the contents area, pick the next node
-                if (next)
-                    toFocus = doc->nextFocusNode(toFocus);
-                else
-                    toFocus = doc->previousFocusNode(toFocus);
-            }
-        }
+    if (!node->isElementNode())
+        // FIXME: May need a way to focus a document here.
+        return false;
 
-        if (toFocus)
-            newFocusNode = toFocus;
-    }
-
-    d->scrollBarMoved = false;
-
-    if (!newFocusNode)
-      {
-        // No new focus node, scroll to bottom or top depending on next
-        if (next)
-            scrollTo(IntRect(contentsX()+visibleWidth()/2,contentsHeight(),0,0));
-        else
-            scrollTo(IntRect(contentsX()+visibleWidth()/2,0,0,0));
-    }
-    else {
-        // EDIT FIXME: if it's an editable element, activate the caret
-        // otherwise, hide it
-        if (newFocusNode->isContentEditable()) {
-            // make caret visible
-        } 
-        else {
-            // hide caret
-        }
-
-        // Scroll the view as necessary to ensure that the new focus node is visible
-        if (oldFocusNode) {
-            if (!scrollTo(newFocusNode->getRect()))
-                return;
-        }
-        else {
-            if (doc->renderer()) {
-                doc->renderer()->enclosingLayer()->scrollRectToVisible(IntRect(contentsX(), next ? 0: contentsHeight(), 0, 0));
-            }
-        }
-    }
-    // Set focus node on the document
-    m_frame->document()->setFocusNode(newFocusNode);
+    static_cast<Element*>(node)->focus();
+    return true;
 }
 
 void FrameView::setMediaType(const String& mediaType)
