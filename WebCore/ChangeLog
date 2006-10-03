@@ -1,3 +1,30 @@
+2006-10-03  David Harrison  <harrison@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4671286> Candidate Window isn't displayed and only first candidate is displayed at typing location.
+
+        Updated test:
+        * fast/text/justified-text-rect.html
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge convertToNSRange:]):
+        (-[WebCoreFrameBridge convertToDOMRange:]):
+        Make the selection's root editable element (or the document itself) be
+        the basis for NSRange conversions. This supports "shadow DOM" like
+        that for text fields and text areas.
+        
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        Pass the document element as the scope.
+        
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::rangeFromLocationAndLength):
+        Make the first parameter the scope.
+        
+        * editing/TextIterator.h:
+        Make the first parameter of rangeFromLocationAndLength() the scope.
+
 2006-10-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

@@ -71,7 +71,7 @@ public:
     PassRefPtr<Range> range() const;
      
     static int rangeLength(const Range *r);
-    static PassRefPtr<Range> rangeFromLocationAndLength(Document *doc, int rangeLocation, int rangeLength);
+    static PassRefPtr<Range> rangeFromLocationAndLength(Element *scope, int rangeLocation, int rangeLength);
     
 private:
     void exitNode();

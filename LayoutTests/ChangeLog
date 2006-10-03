@@ -1,3 +1,17 @@
+2006-10-03  David Harrison  <harrison@apple.com>
+
+        Reviewed by Maciej.
+        
+        <rdar://problem/4671286> Candidate Window isn't displayed and only first candidate is displayed at typing location.
+
+        Updated test so that it actually shows the caret rect for the caret position.
+        Before, it was showing the caret rect for the 9th character of the test description.
+        
+        * fast/text/justified-text-rect-expected.checksum:
+        * fast/text/justified-text-rect-expected.png:
+        * fast/text/justified-text-rect-expected.txt:
+        * fast/text/justified-text-rect.html:
+
 2006-10-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

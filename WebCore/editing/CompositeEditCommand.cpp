@@ -690,8 +690,8 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     applyCommandToComposite(new ReplaceSelectionCommand(document(), fragment.get(), true, false, !preserveStyle, false));
     
     if (preserveSelection && startIndex != -1) {
-        setEndingSelection(Selection(TextIterator::rangeFromLocationAndLength(document(), destinationIndex + startIndex, 0)->startPosition(), 
-                                     TextIterator::rangeFromLocationAndLength(document(), destinationIndex + endIndex, 0)->startPosition(), 
+        setEndingSelection(Selection(TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + startIndex, 0)->startPosition(), 
+                                     TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + endIndex, 0)->startPosition(), 
                                      DOWNSTREAM));
     }
 }

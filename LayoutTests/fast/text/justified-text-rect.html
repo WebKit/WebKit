@@ -16,15 +16,15 @@ body { margin: 0; padding: 0 }
             var s = window.getSelection();
             var e = document.getElementById("testspan");
             s.setPosition(e, 0);
-            rect = textInputController.firstRectForCharacterRange(9, 1);
+            rect = textInputController.firstRectForCharacterRange(8, 1);
             document.write(rect);
 
-		} catch (ex) {
-			document.write("Exception: " + ex.description);
-		}
-	} else {
-		document.write("(cannot run interactively)");
-	}
+        } catch (ex) {
+            document.write("Exception: " + ex.description);
+        }
+    } else {
+        document.write("(cannot run interactively)");
+    }
 </script>
 </body>
 </html>

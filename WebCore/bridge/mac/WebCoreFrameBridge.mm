@@ -1706,18 +1706,26 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSRange)convertToNSRange:(Range *)range
 {
-    if (!range || range->isDetached()) {
-        return NSMakeRange(NSNotFound, 0);
-    }
-
-    RefPtr<Range> fromStartRange(m_frame->document()->createRange());
     int exception = 0;
 
-    fromStartRange->setEnd(range->startContainer(exception), range->startOffset(exception), exception);
-    int startPosition = TextIterator::rangeLength(fromStartRange.get());
+    if (!range || range->isDetached())
+        return NSMakeRange(NSNotFound, 0);
 
-    fromStartRange->setEnd(range->endContainer(exception), range->endOffset(exception), exception);
-    int endPosition = TextIterator::rangeLength(fromStartRange.get());
+    Element* selectionRoot = m_frame->selectionController()->rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : m_frame->document()->documentElement();
+    
+    // our critical assumption is that we are only called by input methods that
+    // concentrate on a given area containing the selection.  See comments in convertToDOMRange.
+    ASSERT(range->startContainer(exception) == scope || range->startContainer(exception)->isDescendantOf(scope));
+    ASSERT(range->endContainer(exception) == scope || range->endContainer(exception)->isDescendantOf(scope));
+    
+    RefPtr<Range> testRange = new Range(scope->document(), scope, 0, range->startContainer(exception), range->startOffset(exception));
+    ASSERT(testRange->startContainer(exception) == scope);
+    int startPosition = TextIterator::rangeLength(testRange.get());
+
+    testRange->setEnd(range->endContainer(exception), range->endOffset(exception), exception);
+    ASSERT(testRange->startContainer(exception) == scope);
+    int endPosition = TextIterator::rangeLength(testRange.get());
 
     return NSMakeRange(startPosition, endPosition - startPosition);
 }
@@ -1729,7 +1737,15 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
         nsrange.length = INT_MAX - nsrange.location;
 
-    return TextIterator::rangeFromLocationAndLength(m_frame->document(), nsrange.location, nsrange.length);
+    // our critical assumption is that we are only called by input methods that
+    // concentrate on a given area containing the selection
+    // We have to do this because of text fields and textareas. The DOM for those is not
+    // directly in the document DOM, so serialization is problematic. Our solution is
+    // to use the root editable element of the selection start as the positional base.
+    // That fits with AppKit's idea of an input context.
+    Element* selectionRoot = m_frame->selectionController()->rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : m_frame->document()->documentElement();
+    return TextIterator::rangeFromLocationAndLength(scope, nsrange.location, nsrange.length);
 }
 
 - (DOMRange *)convertNSRangeToDOMRange:(NSRange)nsrange
