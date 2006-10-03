@@ -39,6 +39,7 @@ class NSEvent;
 
 #if PLATFORM(WIN)
 typedef struct HWND__* HWND;
+typedef unsigned UINT;
 typedef unsigned WPARAM;
 typedef long LPARAM;
 #endif
@@ -99,7 +100,7 @@ namespace WebCore {
         PlatformMouseEvent(NSEvent*);
 #endif
 #if PLATFORM(WIN)
-        PlatformMouseEvent(HWND, WPARAM, LPARAM);
+        PlatformMouseEvent(HWND, UINT, WPARAM, LPARAM);
         void setClickCount(int count) { m_clickCount = count; }
 #endif
 #if PLATFORM(GDK) 

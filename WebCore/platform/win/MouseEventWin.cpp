@@ -50,7 +50,7 @@ static IntPoint globalPositionForEvent(HWND hWnd, LPARAM lParam)
     return point;
 }
 
-PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, WPARAM wParam, LPARAM lParam)
+PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     : m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
     , m_clickCount(0)
@@ -59,12 +59,23 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, WPARAM wParam, LPARAM lParam)
     , m_altKey(GetAsyncKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
     , m_metaKey(m_altKey) // FIXME: We'll have to test other browsers
 {
-    if (wParam & MK_LBUTTON)
-        m_button = LeftButton;
-    else if (wParam & MK_RBUTTON)
-        m_button = RightButton;
-    else if (wParam & MK_MBUTTON)
-        m_button = MiddleButton;
+    switch (message) {
+        case WM_LBUTTONDOWN:
+        case WM_LBUTTONUP:
+        case WM_LBUTTONDBLCLK:
+            m_button = LeftButton;
+            break;
+        case WM_RBUTTONDOWN:
+        case WM_RBUTTONUP:
+        case WM_RBUTTONDBLCLK:
+            m_button = RightButton;
+            break;
+        case WM_MBUTTONDOWN:
+        case WM_MBUTTONUP:
+        case WM_MBUTTONDBLCLK:
+            m_button = MiddleButton;
+            break;
+    }
 
     if (m_button == LeftButton) {
         DWORD curTime = GetTickCount();

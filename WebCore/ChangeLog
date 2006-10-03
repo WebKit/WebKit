@@ -1,3 +1,14 @@
+2006-10-02  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Maciej.
+
+        Let Windows determine which mouse button is pressed.
+
+        * platform/PlatformMouseEvent.h: Add message parameter to constructor.
+        * platform/win/MouseEventWin.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent): Use message
+        parameter to determine which mouse button is pressed.
+
 2006-10-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by anders
