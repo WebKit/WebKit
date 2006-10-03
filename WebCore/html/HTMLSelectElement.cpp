@@ -92,7 +92,7 @@ void HTMLSelectElement::recalcStyle( StyleChange ch )
     if (hasChangedChild() && renderer()) {
         if (usesMenuList())
             static_cast<RenderMenuList*>(renderer())->setOptionsChanged(true);
-        else if (renderer() && renderer()->style()->appearance() == ListboxAppearance)
+        else if (renderer() && renderer()->isListBox())
             static_cast<RenderListBox*>(renderer())->setOptionsChanged(true);
         else
             static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
@@ -325,14 +325,14 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
 
 bool HTMLSelectElement::isKeyboardFocusable() const
 {
-    if (renderer() && (usesMenuList() || renderer()->style()->appearance() == ListboxAppearance))
+    if (renderer() && (usesMenuList() || renderer()->isListBox()))
         return isFocusable();
     return HTMLGenericFormElement::isKeyboardFocusable();
 }
 
 bool HTMLSelectElement::isMouseFocusable() const
 {
-    if (renderer() && (usesMenuList() || renderer()->style()->appearance() == ListboxAppearance))
+    if (renderer() && (usesMenuList() || renderer()->isListBox()))
         return isFocusable();
     return HTMLGenericFormElement::isMouseFocusable();
 }
@@ -341,9 +341,13 @@ RenderObject *HTMLSelectElement::createRenderer(RenderArena *arena, RenderStyle 
 {
     if (usesMenuList())
         return new (arena) RenderMenuList(this);
+#if PLATFORM(MAC)
+    // FIXME: Remove this when DeprecatedRenderSelect is no longer needed.
     if (style->appearance() == ListboxAppearance)
         return new (arena) RenderListBox(this);
     return new (arena) DeprecatedRenderSelect(this);
+#endif
+    return new (arena) RenderListBox(this);
 }
 
 bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
@@ -462,7 +466,7 @@ void HTMLSelectElement::setRecalcListItems()
     if (renderer()) {
         if (usesMenuList())
             static_cast<RenderMenuList*>(renderer())->setOptionsChanged(true);
-        else if (renderer() && renderer()->style()->appearance() == ListboxAppearance)
+        else if (renderer() && renderer()->isListBox())
             static_cast<RenderListBox*>(renderer())->setOptionsChanged(true);
         else
             static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
@@ -499,7 +503,7 @@ void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, 
         deselectItems(selectedOption);
 
     if (renderer() && !usesMenuList()) {
-        if (renderer()->style()->appearance() == ListboxAppearance)
+        if (renderer()->isListBox())
             static_cast<RenderListBox*>(renderer())->setSelectionChanged(true);
         else
             static_cast<DeprecatedRenderSelect*>(renderer())->setSelectionChanged(true);
@@ -512,7 +516,7 @@ void HTMLSelectElement::defaultEventHandler(Event* evt)
 {
     if (usesMenuList())
         menuListDefaultEventHandler(evt);
-    else if (renderer() && renderer()->isListBox() && renderer()->style()->appearance() == ListboxAppearance) 
+    else if (renderer() && renderer()->isListBox() && renderer()->isListBox()) 
         listBoxDefaultEventHandler(evt);
     HTMLGenericFormElement::defaultEventHandler(evt);
 }

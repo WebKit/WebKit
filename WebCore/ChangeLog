@@ -1,3 +1,18 @@
+2006-10-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Geoff.
+
+        Make code for turning off new listbox implementation mac-only, since there's no implementation on other platforms.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcStyle):
+        (WebCore::HTMLSelectElement::isKeyboardFocusable):
+        (WebCore::HTMLSelectElement::isMouseFocusable):
+        (WebCore::HTMLSelectElement::createRenderer):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::notifyOptionSelected):
+        (WebCore::HTMLSelectElement::defaultEventHandler):
+
 2006-10-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
