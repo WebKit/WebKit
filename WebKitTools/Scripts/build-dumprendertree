@@ -49,8 +49,8 @@ if (isOSX()) {
 } elsif (isCygwin()) {
     $result = buildVisualStudioProject("DumpRenderTree");
 } elsif (isQt()) {
-    $result = 1;
-    print "Please build DumpRenderTree yourself! Automatic compilation not supported yet!\n";
+    # Qt/Linux builds everything in one-shot.
+    $result = buildCMakeProject("WebKit");
 } else {
     die "Building not defined for this platform!\n";
 }

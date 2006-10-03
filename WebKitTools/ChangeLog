@@ -1,5 +1,19 @@
 2006-10-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Make all important scripts work with Qt/Linux.
+
+        You can safely use this now:
+        set-configuration-release --debug && build-webkit && run-javascriptcore-tests && run-webkit-tests
+
+        * Scripts/build-dumprendertree:
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
+2006-10-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric.
 
         build-webkit tweak: Use WebKitBuild/$config as output dir (Release/Debug).

@@ -170,6 +170,7 @@ $pixelTests = 1 if $repaintTests;
 $verbose = 1 if $singly;
 
 my $productDir = productDir();
+$productDir .= "/WebKitTools/DumpRenderTree/DumpRenderTree.qtproj" if (isQt());
 
 chdirWebKit();
 

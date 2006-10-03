@@ -262,7 +262,7 @@ sub builtDylibPathForName
         }
     }
     if (isQt()) {
-        return "$baseProductDir/../../../$framework";
+        return "$configurationProductDir/$framework";
     }
 
     die "Unsupported platform, can't determine built library locations.";
