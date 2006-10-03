@@ -33,6 +33,7 @@
 #import <WebCore/WebCoreResourceLoader.h>
 #import <WebKit/WebFormDataStream.h>
 #import <WebKit/WebFrameLoader.h>
+#import <WebKitSystemInterface.h>
 
 @implementation WebSubresourceLoader
 
@@ -98,6 +99,8 @@ static void setHTTPReferrer(NSMutableURLRequest *request, NSString *theReferrer)
 {
     if ([fl state] == WebFrameStateProvisional)
         return nil;
+        
+    WKSupportsMultipartXMixedReplace(newRequest);
 
     WebSubresourceLoader *loader = [[[self alloc] initWithLoader:rLoader frameLoader:fl] autorelease];
     

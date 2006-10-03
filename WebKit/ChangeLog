@@ -1,3 +1,14 @@
+2006-10-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by geoff
+        
+        <rdar://problem/4763519> REGRESSION: Multipart/x-mixed-replace sub-resources fail to load
+
+        * Loader/WebSubresourceLoader.m:
+        (+[WebSubresourceLoader startLoadingResource:withRequest:customHeaders:referrer:forFrameLoader:]): 
+        Enable multipart/x-mixed-replace support on the request.  This line was accidently removed during 
+        some loader refactoring.
+
 2006-10-02  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej.
