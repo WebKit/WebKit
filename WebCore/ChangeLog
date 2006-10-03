@@ -1,3 +1,19 @@
+2006-10-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+        
+        <rdar://problem/4760612>
+        TOT REGRESSION: Repro assertion failure when forwarding draft in Range::compareBoundaryPoints
+        
+        No layout test possible, attributedStringFrom:(DOMNode*)...etc isn't available to DRT.
+        
+        * dom/Range.cpp:
+        (WebCore::Range::boundaryPointsValid): compareBoundaryPoints asserts that the incoming 
+        positions are non-null since most of it's callers would be in a bad state if the positions 
+        were null.  boundaryPointsValid, which calls compareBoundaryPoints, is an exception.  
+        Instead of removing the assert I've added nil checks in boundaryPointsValid, to keep it 
+        from entering compareBoundaryPoints and hitting the assert.
+
 2006-10-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Geoff.
