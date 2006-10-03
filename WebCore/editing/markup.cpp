@@ -353,8 +353,8 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     for (Node *n = startNode; n != pastEnd; n = next) {
         next = n->traverseNextNode();
 
-        if (n->isBlockFlow() && next == pastEnd)
-            // Don't write out an empty block.
+        if (isBlock(n) && canHaveChildrenForEditing(n) && next == pastEnd)
+            // Don't write out empty block containers that aren't fully selected.
             continue;
         
         // Add the node to the markup.

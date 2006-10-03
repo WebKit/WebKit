@@ -1,0 +1,10 @@
+<p>This test pushes a horizontal rule into an unordered list with InsertUnorderedList. <b>The fact that the horizontal rule is put into an unnecessary div when it's pushed into the list might be considered a bug. </b><b>The fact that the caret isn't preserved is a bug.</b></p>
+<div contenteditable="true" id="div"><hr></div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+document.execCommand("InsertUnorderedList");
+</script>

@@ -1,3 +1,12 @@
+2006-10-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        * editing/execCommand/create-list-with-hr-expected.checksum: Added.
+        * editing/execCommand/create-list-with-hr-expected.png: Added.
+        * editing/execCommand/create-list-with-hr-expected.txt: Added.
+        * editing/execCommand/create-list-with-hr.html: Added.
+
 2006-10-02  Beth Dakin  <bdakin@apple.com>
 
         Minor harassment followed by abject surrender provided by ggggaren.

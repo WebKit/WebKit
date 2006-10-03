@@ -1,0 +1,33 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 49 of #text > B > P > BODY > HTML > #document to 49 of #text > B > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 514x18
+          text run at (0,0) width 514: "This test pushes a horizontal rule into an unordered list with InsertUnorderedList. "
+        RenderInline {B} at (0,0) size 771x36
+          RenderText {#text} at (514,0) size 771x36
+            text run at (514,0) width 257: "The fact that the horizontal rule is put"
+            text run at (0,18) width 550: "into ans unnecessary div when it's pushed into the list might be considered a bug. "
+        RenderInline {B} at (0,0) size 732x36
+          RenderText {#text} at (550,18) size 732x36
+            text run at (550,18) width 182: "The fact that the caret isn't"
+            text run at (0,36) width 127: "preserved is a bug."
+      RenderBlock {DIV} at (0,70) size 784x28
+        RenderBlock {UL} at (0,0) size 784x28
+          RenderListItem {LI} at (40,0) size 744x28
+            RenderBlock (anonymous) at (0,0) size 744x18
+              RenderListMarker at (-17,0) size 7x18
+            RenderBlock {DIV} at (0,26) size 744x2
+              RenderBlock {HR} at (0,0) size 744x2 [border: (1px inset #000000)]
+            RenderBlock (anonymous) at (0,36) size 744x0
+        RenderBlock (anonymous) at (0,44) size 784x0
+caret: position 49 of child 0 {#text} of child 2 {B} of child 0 {P} of child 0 {BODY} of child 0 {HTML} of document

@@ -1,3 +1,14 @@
+2006-10-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/4755287>
+        Writely Editor: Crash occurs at WebCore::maxDeepOffset(WebCore::Node const*) when attempting to create a OL/UL following a HR element
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Migrate to isBlock (isBlockFlow is true for inline replaced 
+        elements).  Don't skip blocks that aren't containers (like horizontal rules).
+
 2006-10-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin Garcia.
