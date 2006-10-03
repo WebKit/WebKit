@@ -397,12 +397,12 @@ sub buildCMakeProject($)
     }
 
     my $config = configuration();
-    print "Calling 'cmake -DCMAKE_BUILD_TYPE=$config ../' in " . baseProductDir() . " ...\n\n";
+    print "Calling 'cmake -DCMAKE_BUILD_TYPE=$config ../' in " . baseProductDir() . "/$config ...\n\n";
 
-    system "mkdir -p " . baseProductDir();
-    chdir baseProductDir() or die "Failed to cd into " . baseProductDir() . "\n";
+    system "mkdir -p " . baseProductDir() . "/$config";
+    chdir baseProductDir() . "/$config" or die "Failed to cd into " . baseProductDir() . "/$config \n";
 
-    my $result = system "cmake", "-DCMAKE_BUILD_TYPE=$config", "../";
+    my $result = system "cmake", "-DCMAKE_BUILD_TYPE=$config", "../../";
     if($result ne 0) {
        die "Failed to setup build environment using cmake!\n";
     }

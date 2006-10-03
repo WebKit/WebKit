@@ -1,3 +1,11 @@
+2006-10-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        build-webkit tweak: Use WebKitBuild/$config as output dir (Release/Debug).
+
+        * Scripts/webkitdirs.pm:
+
 2006-10-02  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed/landed by Adam.
