@@ -54,7 +54,6 @@ public:
     void moveTo(const VisiblePosition&, const VisiblePosition&, bool userTriggered = false);
     void moveTo(const Position&, EAffinity, bool userTriggered = false);
     void moveTo(const Position&, const Position&, EAffinity, bool userTriggered = false);
-    void moveTo(const SelectionController&, bool userTriggered = false);
 
     const Selection& selection() const { return m_sel; }
     void setSelection(const Selection&, bool closeTyping = true, bool clearTypingStyle = true, bool userTriggered = false);

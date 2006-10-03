@@ -1,5 +1,15 @@
 2006-10-02  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by anders
+        
+        Build fix
+        
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::empty):
+        * editing/SelectionController.h:
+
+2006-10-02  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by john
         
         <rdar://problem/4755287>
