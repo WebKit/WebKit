@@ -1,3 +1,18 @@
+2006-10-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11132
+          Caret disappears when you're typing
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection): Remove unnecessary call to
+        clearCaretRectIfNeeded. The recomputeCaretRect now takes care of this.
+        (WebCore::SelectionController::recomputeCaretRect): Explicitly set m_needsLayout
+        to false so we can get the old caret repaint rect. Later we need to change the
+        design so getting the rect doesn't have a side effect of causing a layout without
+        invalidation.
+
 2006-10-03  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej.

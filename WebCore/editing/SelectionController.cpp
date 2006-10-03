@@ -103,8 +103,6 @@ void SelectionController::setSelection(const Selection& s, bool closeTyping, boo
     if (m_sel == s)
         return;
     
-    m_frame->clearCaretRectIfNeeded();
-
     Selection oldSelection = m_sel;
 
     m_sel = s;
@@ -799,8 +797,14 @@ bool SelectionController::recomputeCaretRect()
     if (!m_needsLayout)
         return false;
 
+    // Set m_needsLayout to false to get the "old" repaint rect,
+    // since caretRepaintRect currently recomputes the rect if
+    // m_needsLayout is true. It's a problem if that ever happens
+    // outside this function, so we need to change that design in
+    // the future.
+    m_needsLayout = false;
     IntRect oldRect = caretRepaintRect();
-    layout();
+    m_needsLayout = true;
     IntRect newRect = caretRepaintRect();
     if (oldRect == newRect)
         return false;
