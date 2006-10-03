@@ -1,3 +1,33 @@
+2006-10-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        - correct mistaken code that would restart blinking every
+          time "invalidateSelection" is called even if the caret
+          has not moved
+
+        * editing/SelectionController.h:
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection): Update for name change.
+        (WebCore::SelectionController::recomputeCaretRect): New function.
+        Computes caret rect and does any necessary invalidation if the rect
+        changes.
+        (WebCore::SelectionController::invalidateCaretRect): Renamed from
+        needsCaretRepaint. Invalidates the caret rect unconditionally. Also
+        calls recomputeCaretRect as a side effect.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::invalidateSelection): Remove unneeded call to
+        clearCaretRectIfNeeded.
+        (WebCore::Frame::clearCaretRectIfNeeded): Updated for name change.
+        (WebCore::Frame::selectionLayoutChanged): Restructured to use the new
+        recomputeCaretRect function and not restart blinking if caret has
+        not changed position.
+        (WebCore::Frame::caretBlinkTimerFired): Removed some checks that
+        are not needed since selectionLayoutChanged already checks these.
+
+        * page/FramePrivate.h: Removed unused m_blinkCaret.
+
 2006-10-02  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

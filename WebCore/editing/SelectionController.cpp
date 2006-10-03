@@ -83,10 +83,10 @@ void SelectionController::moveTo(const Position &base, const Position &extent, E
 void SelectionController::setSelection(const Selection& s, bool closeTyping, bool clearTypingStyle, bool userTriggered)
 {
     if (m_isDragCaretController) {
-        needsCaretRepaint();
+        invalidateCaretRect();
         m_sel = s;
         m_needsLayout = true;
-        needsCaretRepaint();
+        invalidateCaretRect();
         return;
     }
     if (!m_frame) {
@@ -792,34 +792,55 @@ IntRect SelectionController::caretRepaintRect() const
     return IntRect(r.x() - 1, r.y() - 1, r.width() + 2, r.height() + 2);
 }
 
-void SelectionController::needsCaretRepaint()
+bool SelectionController::recomputeCaretRect()
+{
+    if (!isCaret())
+        return false;
+
+    FrameView* v = m_sel.start().node()->document()->view();
+    if (!v)
+        return false;
+
+    if (!m_needsLayout)
+        return false;
+
+    IntRect oldRect = caretRepaintRect();
+    layout();
+    IntRect newRect = caretRepaintRect();
+    if (oldRect == newRect)
+        return false;
+
+    v->updateContents(oldRect, false);
+    v->updateContents(newRect, false);
+    return true;
+}
+
+void SelectionController::invalidateCaretRect()
 {
     if (!isCaret())
         return;
 
-    FrameView *v = m_sel.start().node()->document()->view();
+    FrameView* v = m_sel.start().node()->document()->view();
     if (!v)
         return;
 
-    if (m_needsLayout) {
-        // repaint old position and calculate new position
+    bool caretRectChanged = recomputeCaretRect();
+
+    // EDIT FIXME: This is an unfortunate hack.
+    // Basically, we can't trust this layout position since we 
+    // can't guarantee that the check to see if we are in unrendered 
+    // content will work at this point. We may have to wait for
+    // a layout and re-render of the document to happen. So, resetting this
+    // flag will cause another caret layout to happen the first time
+    // that we try to paint the caret after this call. That one will work since
+    // it happens after the document has accounted for any editing
+    // changes which may have been done.
+    // And, we need to leave this layout here so the caret moves right 
+    // away after clicking.
+    m_needsLayout = true;
+
+    if (!caretRectChanged)
         v->updateContents(caretRepaintRect(), false);
-        layout();
-        
-        // EDIT FIXME: This is an unfortunate hack.
-        // Basically, we can't trust this layout position since we 
-        // can't guarantee that the check to see if we are in unrendered 
-        // content will work at this point. We may have to wait for
-        // a layout and re-render of the document to happen. So, resetting this
-        // flag will cause another caret layout to happen the first time
-        // that we try to paint the caret after this call. That one will work since
-        // it happens after the document has accounted for any editing
-        // changes which may have been done.
-        // And, we need to leave this layout here so the caret moves right 
-        // away after clicking.
-        m_needsLayout = true;
-    }
-    v->updateContents(caretRepaintRect(), false);
 }
 
 void SelectionController::paintCaret(GraphicsContext *p, const IntRect &rect)

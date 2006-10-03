@@ -1283,7 +1283,6 @@ void Frame::notifyRendererOfSelectionChange(bool userTriggered)
 
 void Frame::invalidateSelection()
 {
-    clearCaretRectIfNeeded();
     selectionController()->setNeedsLayout();
     selectionLayoutChanged();
 }
@@ -1304,7 +1303,7 @@ void Frame::clearCaretRectIfNeeded()
 {
     if (d->m_caretPaint) {
         d->m_caretPaint = false;
-        selectionController()->needsCaretRepaint();
+        selectionController()->invalidateCaretRect();
     }        
 }
 
@@ -1350,15 +1349,21 @@ void Frame::setFocusNodeIfNeeded()
 
 void Frame::selectionLayoutChanged()
 {
-    // kill any caret blink timer now running
-    d->m_caretBlinkTimer.stop();
+    bool caretRectChanged = selectionController()->recomputeCaretRect();
 
-    // see if a new caret blink timer needs to be started
-    if (d->m_caretVisible && d->m_caretBlinks && 
-        selectionController()->isCaret() && selectionController()->start().node()->isContentEditable()) {
+    bool shouldBlink = d->m_caretVisible
+        && selectionController()->isCaret() && selectionController()->isContentEditable();
+
+    // If the caret moved, stop the blink timer so we can restart with a
+    // black caret in the new location.
+    if (caretRectChanged || !shouldBlink)
+        d->m_caretBlinkTimer.stop();
+
+    // Start blinking with a black caret. Be sure not to restart if we're
+    // already blinking in the right location.
+    if (shouldBlink && !d->m_caretBlinkTimer.isActive()) {
         d->m_caretBlinkTimer.startRepeating(caretBlinkFrequency);
         d->m_caretPaint = true;
-        selectionController()->needsCaretRepaint();
     }
 
     if (d->m_doc)
@@ -1377,21 +1382,13 @@ int Frame::xPosForVerticalArrowNavigation() const
 
 void Frame::caretBlinkTimerFired(Timer<Frame>*)
 {
-    // Might be better to turn the timer off during some of these circumstances
-    // and assert rather then letting the timer fire and do nothing here.
-    // Could do that in selectionLayoutChanged.
-
-    if (!d->m_caretVisible)
-        return;
-    if (!d->m_caretBlinks)
-        return;
-    if (!selectionController()->isCaret())
-        return;
+    ASSERT(d->m_caretVisible);
+    ASSERT(selectionController()->isCaret());
     bool caretPaint = d->m_caretPaint;
     if (d->m_bMousePressed && caretPaint)
         return;
     d->m_caretPaint = !caretPaint;
-    selectionController()->needsCaretRepaint();
+    selectionController()->invalidateCaretRect();
 }
 
 void Frame::paintCaret(GraphicsContext* p, const IntRect& rect) const
