@@ -1,3 +1,11 @@
+2006-10-02  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Build fix. Add counters to vcproj.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
 2006-10-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adele

@@ -2855,6 +2855,26 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\rendering\CounterListItem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\CounterNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\CounterNode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\CounterResetNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\CounterResetNode.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\rendering\DataRef.h"
 				>
 			</File>
@@ -2988,6 +3008,14 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\RenderContainer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderCounter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderCounter.h"
 				>
 			</File>
 			<File
