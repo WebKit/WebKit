@@ -60,11 +60,10 @@
     return dataSource;
 }
 
-- (void)setFrameLoader:(WebFrameLoader *)fl
+- (void)detachFromFrameLoader
 {
-    [super setFrameLoader:fl];
-    if (!fl)
-        [self setDataSource:nil];
+    [super detachFromFrameLoader];
+    [self setDataSource:nil];
 }
 
 @end

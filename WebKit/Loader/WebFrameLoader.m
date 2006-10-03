@@ -231,7 +231,7 @@
     ASSERT(loadState != documentLoadState);
     
     [webFrame _prepareForDataSourceReplacement];
-    [[self dataSource] _setWebFrame:nil];
+    [documentLoadState detachFromFrameLoader];
     
     [loadState retain];
     [documentLoadState release];
@@ -275,7 +275,7 @@
     ASSERT(!loadState || !provisionalDocumentLoadState);
 
     if (provisionalDocumentLoadState != documentLoadState)
-        [[self provisionalDataSource] _setWebFrame:nil];
+        [provisionalDocumentLoadState detachFromFrameLoader];
 
     [loadState retain];
     [provisionalDocumentLoadState release];

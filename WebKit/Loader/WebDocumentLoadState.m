@@ -65,7 +65,8 @@
 
 - (void)setFrameLoader:(WebFrameLoader *)fl
 {
-    ASSERT(!fl || !frameLoader);
+    ASSERT(fl);
+    ASSERT(!frameLoader);
     
     frameLoader = fl;
 }
@@ -342,6 +343,11 @@
 - (NSURLResponse *)response
 {
     return response;
+}
+
+- (void)detachFromFrameLoader
+{
+    frameLoader = nil;
 }
 
 @end

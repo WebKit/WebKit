@@ -1,5 +1,25 @@
 2006-10-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Alice.
+        
+        - take away direct knowledge of WebFrame from WebDataSource
+
+        * Loader/WebDocumentLoadState.h:
+        * Loader/WebDocumentLoadState.m:
+        (-[WebDocumentLoadState setFrameLoader:]):
+        (-[WebDocumentLoadState detachFromFrameLoader]):
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _setDocumentLoadState:]):
+        (-[WebFrameLoader _setProvisionalDocumentLoadState:]):
+        * WebView/WebDataSource.m:
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebDocumentLoadStateMac.m:
+        (-[WebDocumentLoadStateMac detachFromFrameLoader]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _loadDataSource:withLoadType:formState:]):
+
+2006-10-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
         
         - move a big slice of data and logic from WebDataSource to WebDocumentLoadState

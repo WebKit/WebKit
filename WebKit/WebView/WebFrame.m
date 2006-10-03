@@ -2078,7 +2078,10 @@ exit:
     WebFrame *parentFrame = [self parentFrame];
     if (parentFrame)
         [newDataSource _setOverrideEncoding:[[parentFrame dataSource] _overrideEncoding]];
-    [newDataSource _setWebFrame:self];
+
+    WebDocumentLoadStateMac *loadState = (WebDocumentLoadStateMac *)[newDataSource _documentLoadState];
+    [loadState setFrameLoader:_private->frameLoader];
+    [loadState setDataSource:newDataSource];
 
     [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 

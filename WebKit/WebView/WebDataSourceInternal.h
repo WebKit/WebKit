@@ -74,7 +74,6 @@
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName;
 - (void)_loadFromPageCache:(NSDictionary *)pageCache;
 - (NSURL *)_URL;
-- (void)_setWebFrame:(WebFrame *)frame;
 - (NSString *)_title;
 - (DOMElement *)_imageElementWithImageResource:(WebResource *)resource;
 - (DOMDocumentFragment *)_documentFragmentWithImageResource:(WebResource *)resource;

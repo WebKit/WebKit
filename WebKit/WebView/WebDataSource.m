@@ -513,17 +513,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return _private->pageTitle;
 }
 
-- (void)_setWebFrame:(WebFrame *)frame
-{
-    [self retain];
-
-    [_private->loadState setFrameLoader:[frame _frameLoader]];
-    if (frame)
-        [_private->loadState setDataSource:self];
-    
-    [self release];
-}
-
 // May return nil if not initialized with a URL.
 - (NSURL *)_URL
 {
