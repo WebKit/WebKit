@@ -1409,35 +1409,43 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (void)issueCutCommand
 {
-    [[self webView] cut:nil];
+    NSView* documentView = [[_frame frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView*)documentView cut:nil];
 }
 
 - (void)issueCopyCommand
 {
-    [[self webView] copy:nil];
+    NSView* documentView = [[_frame frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView*)documentView copy:nil];
 }
 
 - (void)issuePasteCommand
 {
-    [[self webView] paste:nil];
+    NSView* documentView = [[_frame frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView*)documentView paste:nil];
 }
 
 - (void)issuePasteAndMatchStyleCommand
 {
-    [[self webView] pasteAsPlainText:nil];
+    NSView <WebDocumentView> *documentView = [[_frame frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView*)documentView pasteAsPlainText:nil];
 }
 
 - (void)issueTransposeCommand
 {
     NSView <WebDocumentView> *view = [[_frame frameView] documentView];
-    if ([view isKindOfClass:[WebHTMLView class]]) {
+    if ([view isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView *)view transpose:nil];
-    }
 }
 
 - (BOOL)canPaste
 {
-    return [[self webView] _canPaste];
+    NSView* documentView = [[_frame frameView] documentView];
+    return [documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView*)documentView _canPaste];
 }
 
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view

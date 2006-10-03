@@ -1,5 +1,27 @@
 2006-10-03  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by harrison
+        
+        execCommand("Cut"/"Copy"/"Paste") broken in editable subframes.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge issueCutCommand]): Issue the command on the WebHTMLView, not the WebView.
+        (-[WebFrameBridge issueCopyCommand]): Ditto.
+        (-[WebFrameBridge issuePasteCommand]): Ditto.
+        (-[WebFrameBridge issuePasteAndMatchStyleCommand]): Ditto.
+        (-[WebFrameBridge issueTransposeCommand]): Fixed formatting.
+        (-[WebFrameBridge canPaste]): Ask the WebHTMLView, not the WebView.
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView copy:]): Moved to WebInternal
+        (-[WebHTMLView cut:]): Ditto.
+        (-[WebHTMLView paste:]): Ditto.
+        (-[WebHTMLView pasteAsPlainText:]): Ditto.
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebView.m: Removed the now unused _canPaste.
+        * WebView/WebViewInternal.h: Ditto.
+
+2006-10-03  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by geoff
         
         <rdar://problem/4763519> REGRESSION: Multipart/x-mixed-replace sub-resources fail to load

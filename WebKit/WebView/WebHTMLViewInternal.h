@@ -110,5 +110,9 @@
 - (WebFrame *)_frame;
 - (void)_setInitiatedDrag:(BOOL)flag;
 - (BOOL)_initiatedDrag;
+- (void)copy:(id)sender;
+- (void)cut:(id)sender;
+- (void)paste:(id)sender;
+- (void)pasteAsPlainText:(id)sender;
 @end
 

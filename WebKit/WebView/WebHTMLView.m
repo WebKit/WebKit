@@ -3704,17 +3704,6 @@ done:
     [self _expandSelectionToGranularity:WebBridgeSelectByWord];
 }
 
-- (void)copy:(id)sender
-{
-    if ([[self _bridge] tryDHTMLCopy])
-        return; // DHTML did the whole operation
-    if (![self _canCopy]) {
-        NSBeep();
-        return;
-    }
-    [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
-}
-
 - (void)delete:(id)sender
 {
     if (![self _canDelete]) {
@@ -3722,34 +3711,6 @@ done:
         return;
     }
     [self _deleteSelection];
-}
-
-- (void)cut:(id)sender
-{
-    WebFrameBridge *bridge = [self _bridge];
-    if ([bridge tryDHTMLCut])
-        return; // DHTML did the whole operation
-    if (![self _canCut]) {
-        NSBeep();
-        return;
-    }
-    DOMRange *range = [self _selectedRange];
-    if ([self _shouldDeleteRange:range]) {
-        [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
-        [bridge deleteSelectionWithSmartDelete:[self _canSmartCopyOrDelete]];
-   }
-}
-
-- (void)paste:(id)sender
-{
-    if ([[self _bridge] tryDHTMLPaste])
-        return;     // DHTML did the whole operation
-    if (![self _canPaste])
-        return;
-    if ([[self _bridge] isSelectionRichlyEditable])
-        [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
-    else
-        [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
 }
 
 - (NSData *)_selectionStartFontAttributesAsRTF
@@ -3977,13 +3938,6 @@ done:
     // Read RTF with font attributes from the pasteboard.
     // Maybe later we should add a pasteboard type that contains CSS text for "native" copy and paste font.
     [self _applyStyleToSelection:[self _styleFromFontAttributes:[self _fontAttributesFromFontPasteboard]] withUndoAction:WebUndoActionPasteFont];
-}
-
-- (void)pasteAsPlainText:(id)sender
-{
-    if (![self _canEdit])
-        return;
-    [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
 }
 
 - (void)pasteAsRichText:(id)sender
@@ -5052,6 +5006,52 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (BOOL)_initiatedDrag
 {
     return _private->initiatedDrag;
+}
+
+- (void)copy:(id)sender
+{
+    if ([[self _bridge] tryDHTMLCopy])
+        return; // DHTML did the whole operation
+    if (![self _canCopy]) {
+        NSBeep();
+        return;
+    }
+    [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
+}
+
+- (void)cut:(id)sender
+{
+    WebFrameBridge *bridge = [self _bridge];
+    if ([bridge tryDHTMLCut])
+        return; // DHTML did the whole operation
+    if (![self _canCut]) {
+        NSBeep();
+        return;
+    }
+    DOMRange *range = [self _selectedRange];
+    if ([self _shouldDeleteRange:range]) {
+        [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
+        [bridge deleteSelectionWithSmartDelete:[self _canSmartCopyOrDelete]];
+   }
+}
+
+- (void)paste:(id)sender
+{
+    if ([[self _bridge] tryDHTMLPaste])
+        return;     // DHTML did the whole operation
+    if (![self _canPaste])
+        return;
+    if ([[self _bridge] isSelectionRichlyEditable])
+        [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
+    else
+        [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
+}
+
+- (void)pasteAsPlainText:(id)sender
+{
+    if (![self _canEdit])
+        return;
+    [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
 }
 
 @end

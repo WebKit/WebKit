@@ -3083,12 +3083,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [[self _editingDelegateForwarder] webView:self shouldEndEditingInDOMRange:range];
 }
 
-- (BOOL)_canPaste
-{
-    id documentView = [[[self mainFrame] frameView] documentView];
-    return [documentView respondsToSelector:@selector(_canPaste)] && [documentView _canPaste];
-}
-
 - (BOOL)maintainsInactiveSelection
 {
     return NO;
