@@ -2,6 +2,19 @@
 
         Reviewed by eseidel.  Landed by eseidel.
 
+        Offer a way for BuildBot to not colorize the cmake output, when building
+        with the 'build-webkit' script. Add "--color" / "--no-color" option pair.
+
+        Default is colorize output, though only Qt platform handles this for now.
+
+        * Scripts/build-dumprendertree:
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
+2006-10-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
         Make all important scripts work with Qt/Linux.
 
         You can safely use this now:

@@ -36,11 +36,15 @@ use webkitdirs;
 use POSIX;
 
 my $svgSupport = 1;
-GetOptions('svg!' => \$svgSupport);
+my $colorSupport = 1; # Default: colorize make output
+
+GetOptions('svg!' => \$svgSupport,
+           'color!' => \$colorSupport);
 
 checkRequiredSystemConfig();
 setConfiguration();
 chdirWebKit();
+
 my $productDir = productDir();
 my @options = XcodeOptions();
 my @additionalWebCoreOptions = ();
@@ -96,7 +100,7 @@ for my $dir (@projects) {
         }
     } elsif (isQt()) {
         if ($dir eq "WebKit") {
-            $result = buildCMakeProject($dir);
+            $result = buildCMakeProject($dir, $colorSupport);
         }
     }
 

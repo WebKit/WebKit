@@ -388,21 +388,26 @@ sub buildVisualStudioProject($)
     return $result;
 }
 
-sub buildCMakeProject($)
+sub buildCMakeProject($$)
 {
-    my ($project) = @_;
+    my ($project, $colorize) = @_;
 
     if ($project ne "WebKit") { 
         die "Qt/Linux builds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
     }
 
     my $config = configuration();
-    print "Calling 'cmake -DCMAKE_BUILD_TYPE=$config ../' in " . baseProductDir() . "/$config ...\n\n";
+ 
+    my @buildArgs = ("-DCMAKE_BUILD_TYPE=$config");
+    push @buildArgs, "-DWEBKIT_DO_NOT_USE_COLORFUL_OUTPUT=" . ($colorize ? "OFF" : "ON");
+    push @buildArgs, "../../";
+
+    print "Calling 'cmake @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
 
     system "mkdir -p " . baseProductDir() . "/$config";
     chdir baseProductDir() . "/$config" or die "Failed to cd into " . baseProductDir() . "/$config \n";
 
-    my $result = system "cmake", "-DCMAKE_BUILD_TYPE=$config", "../../";
+    my $result = system "cmake", @buildArgs;
     if($result ne 0) {
        die "Failed to setup build environment using cmake!\n";
     }
