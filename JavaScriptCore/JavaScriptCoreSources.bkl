@@ -7,6 +7,7 @@
 		kjs/bool_object.cpp
 		kjs/collector.cpp
 		kjs/Context.cpp
+		kjs/DateMath.cpp
 		kjs/date_object.cpp
 		kjs/debugger.cpp
 		kjs/dtoa.cpp
