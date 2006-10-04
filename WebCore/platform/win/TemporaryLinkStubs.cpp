@@ -285,6 +285,7 @@ void ScrollView::themeChanged() { }
 IntPoint ScrollView::convertChildToSelf(const Widget*, const IntPoint& p) const { return p; }
 IntPoint ScrollView::convertSelfToChild(const Widget*, const IntPoint& p) const { return p; }
 void ScrollView::scrolled() const {};
+PlatformScrollBar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent) { return 0; }
 
 void GraphicsContext::setShadow(IntSize const&,int,Color const&) { }
 void GraphicsContext::clearShadow() { }
