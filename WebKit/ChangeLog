@@ -1,3 +1,14 @@
+2006-09-26  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Timothy.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3723
+        Add -scrollDOMRangeToVisible:
+
+        * WebView/WebView.m:
+        (-[WebView scrollDOMRangeToVisible:]):
+        * WebView/WebViewPrivate.h:
+
 2006-10-03  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Timothy.

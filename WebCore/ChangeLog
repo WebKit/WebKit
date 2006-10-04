@@ -1,3 +1,16 @@
+2006-09-26  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Timothy.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3723
+        Add -scrollDOMRangeToVisible:
+
+        No automated tests are possible as this code path isn't reachable from JavaScript.
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge scrollDOMRangeToVisible:]):
+
 2006-10-03  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Timothy.

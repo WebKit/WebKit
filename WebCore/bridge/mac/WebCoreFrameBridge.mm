@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2005, 2006 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1427,6 +1428,18 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
                  startCaretRect.y(),
                  startCaretRect.width() + extraWidthToEndOfLine,
                  startCaretRect.height());
+}
+
+- (void)scrollDOMRangeToVisible:(DOMRange *)range
+{
+    NSRect rangeRect = [self firstRectForDOMRange:range];    
+    Node *startNode = [[range startContainer] _node];
+        
+    if (startNode && startNode->renderer()) {
+        RenderLayer *layer = startNode->renderer()->enclosingLayer();
+        if (layer)
+            layer->scrollRectToVisible(enclosingIntRect(rangeRect), RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignToEdgeIfNeeded);
+    }
 }
 
 - (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText;

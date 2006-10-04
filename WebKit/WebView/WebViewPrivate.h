@@ -78,6 +78,8 @@ typedef enum {
 - (void)setTabKeyCyclesThroughElements:(BOOL)cyclesElements;
 - (BOOL)tabKeyCyclesThroughElements;
 
+- (void)scrollDOMRangeToVisible:(DOMRange *)range;
+
 /*!
 @method setScriptDebugDelegate:
 @abstract Set the WebView's WebScriptDebugDelegate delegate.

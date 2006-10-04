@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3062,6 +3063,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 @end
 
 @implementation WebView (WebViewEditing)
+
+- (void)scrollDOMRangeToVisible:(DOMRange *)range
+{
+    [[[range startContainer] _bridge] scrollDOMRangeToVisible:range];
+}
 
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
