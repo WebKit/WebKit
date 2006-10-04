@@ -131,12 +131,12 @@ int ScrollView::contentsHeight() const
 }
 
 
-IntPoint ScrollView::convertToContainingWindow(const IntPoint& point) const
+IntPoint ScrollView::contentsToWindow(const IntPoint& point) const
 {
     return point - scrollOffset();
 }
 
-IntPoint ScrollView::convertFromContainingWindow(const IntPoint& point) const
+IntPoint ScrollView::windowToContents(const IntPoint& point) const
 {
     return point + scrollOffset();
 }

@@ -75,16 +75,6 @@ WidgetClient* Widget::client() const
     return 0;
 }
 
-IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
-{
-    return point;
-}
-
-IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
-{
-    return point;
-}
-
 IntRect Widget::frameGeometry() const
 {
     if (!data->m_widget)
