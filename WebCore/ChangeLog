@@ -1,3 +1,14 @@
+2006-10-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4654328>
+        Safari Crashes in WebCore::PluginTokenizer::writeRawData If I Try to Open a SWF File With Plug-ins Turned Off
+        
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::writeRawData):
+        Only send the data to the plug-in if plug-ins are enabled, otherwise just silently eat it.
+
 2006-10-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Tim H.
