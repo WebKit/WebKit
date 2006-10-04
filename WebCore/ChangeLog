@@ -1,3 +1,13 @@
+2006-10-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Tim H.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11130
+        Convert "undefined" to AE missing value
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (aeDescFromJSValue): return missing value for UndefinedType.
+
 2006-10-03  Dave Hyatt  <hyatt@apple.com>
 
         Scrolling work.  Eliminate convertTo/FromContainingWindow as cross-platform functions.  Add back in

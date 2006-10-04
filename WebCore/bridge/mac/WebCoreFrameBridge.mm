@@ -217,11 +217,13 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
             }
             break;
         }
+        case UndefinedType:
+            aeDesc = [NSAppleEventDescriptor descriptorWithTypeCode:cMissingValue];
+            break;
         default:
             LOG_ERROR("Unknown JavaScript type: %d", jsValue->type());
             // no break;
         case UnspecifiedType:
-        case UndefinedType:
         case NullType:
         case GetterSetterType:
             aeDesc = [NSAppleEventDescriptor nullDescriptor];

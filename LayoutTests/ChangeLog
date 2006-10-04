@@ -1,3 +1,14 @@
+2006-10-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Tim H.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11130
+        Convert "undefined" to AE missing value
+
+        * fast/AppleScript/001-expected.txt:
+        * fast/AppleScript/array-expected.txt:
+        Updated the results.
+
 2006-10-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

@@ -15,7 +15,7 @@ An automated test for basic AppleScript "do JavaScript" support. ('utxt')
 An automated test for basic AppleScript "do JavaScript" support. ('utxt')
 [object HTMLDocument] ('utxt')
 do JavaScript - converting to AppleScript types ('utxt')
-<> ('null')
+msng ('type')
 (null)
 [object Object] ('utxt')
 
