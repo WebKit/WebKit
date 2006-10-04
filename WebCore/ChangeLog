@@ -1,3 +1,13 @@
+2006-10-04  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed <rdar://problem/4758577> REGRESSION: Business and People widgets fails to complete search query
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        removed exception set when the request is not open yet
+
 2006-10-04  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John Sullivan.

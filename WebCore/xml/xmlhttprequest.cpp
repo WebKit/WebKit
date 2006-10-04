@@ -384,10 +384,9 @@ void XMLHttpRequest::overrideMIMEType(const String& override)
 
 void XMLHttpRequest::setRequestHeader(const String& name, const String& value, ExceptionCode& ec)
 {
-    if (m_state != Open) {
-        ec = INVALID_STATE_ERR;
+    if (m_state != Open)
+        // rdar 4758577: XHR spec says an exception should be thrown here.  However, doing so breaks the Business and People widgets.
         return;
-    }
 
     if (m_requestHeaders.length() > 0)
         m_requestHeaders += "\r\n";
