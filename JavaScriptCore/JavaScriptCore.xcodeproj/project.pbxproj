@@ -1793,7 +1793,6 @@
 					"-Wno-long-double",
 					"-Wundef",
 					"-Wshorten-64-to-32",
-					"-Wconversion",
 				);
 			};
 			name = Debug;
@@ -1838,7 +1837,6 @@
 					"-Wno-long-double",
 					"-Wundef",
 					"-Wshorten-64-to-32",
-					"-Wconversion",
 				);
 			};
 			name = Release;
@@ -1879,7 +1877,6 @@
 					"-Wno-long-double",
 					"-Wundef",
 					"-Wshorten-64-to-32",
-					"-Wconversion",
 				);
 			};
 			name = Production;
