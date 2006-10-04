@@ -2,7 +2,7 @@
 
         Reviewed by Timothy.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=3723
+        http://bugs.webkit.org/show_bug.cgi?id=3723
         Add -scrollDOMRangeToVisible:
 
         * WebView/WebView.m:
@@ -13,7 +13,7 @@
 
         Reviewed by Timothy.
 
-        <http://bugzilla.opendarwin.org/show_bug.cgi?id=10338>
+        <http://bugs.webkit.org/show_bug.cgi?id=10338>
         When contentEditable, cursor doesn't change to hand
         
         Allow the behaviour of editable links to be specified by a WebPreference
