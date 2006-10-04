@@ -277,7 +277,7 @@ static inline double timeToMseconds(double hour, double min, double sec, double 
 
 static int dateToDayInYear(int year, int month, int day)
 {
-    year += static_cast<int>(floor(month / 12));
+    year += static_cast<int>(floor(month / 12.0));
 
     month = static_cast<int>(fmod(month, 12.0));
     if (month < 0)

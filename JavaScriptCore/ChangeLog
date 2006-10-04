@@ -1,3 +1,10 @@
+2006-10-05  Kevin McCullough  <KMcCullough@apple.com>
+
+       build fix
+
+        * kjs/DateMath.cpp:
+        (KJS::dateToDayInYear):
+
 2006-10-05  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by maculloch.
