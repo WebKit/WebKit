@@ -257,8 +257,8 @@ bool ScrollView::inWindow() const { return true; }
 void ScrollView::wheelEvent(PlatformWheelEvent&) { }
 void ScrollView::updateScrollBars() { }
 int ScrollView::updateScrollInfo(short type, int current, int max, int pageSize) { return 0; }
-IntPoint ScrollView::convertToContainingWindow(const IntPoint& point) const { return point; }
-IntPoint ScrollView::convertFromContainingWindow(const IntPoint& point) const { return point; }
+IntPoint ScrollView::windowToContents(const IntPoint& point) const { return point; }
+IntPoint ScrollView::contentsToWindow(const IntPoint& point) const { return point; }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
         const IntSize& bottomLeft, const IntSize& bottomRight) { notImplemented(); }
