@@ -2933,6 +2933,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return result;
 }
 
+- (void)scrollDOMRangeToVisible:(DOMRange *)range
+{
+    [[[range startContainer] _bridge] scrollDOMRangeToVisible:range];
+}
+
 @end
 
 @implementation WebView (WebViewPrintingPrivate)
@@ -3063,11 +3068,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 @end
 
 @implementation WebView (WebViewEditing)
-
-- (void)scrollDOMRangeToVisible:(DOMRange *)range
-{
-    [[[range startContainer] _bridge] scrollDOMRangeToVisible:range];
-}
 
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {

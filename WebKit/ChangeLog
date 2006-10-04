@@ -1,3 +1,10 @@
+2006-10-04  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by NOBODY (build fix).
+
+        * WebView/WebView.m:
+        (-[WebView scrollDOMRangeToVisible:]): Move scrollDOMRangeToVisible: into the correct category.
+
 2006-09-26  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Timothy.
