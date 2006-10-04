@@ -79,11 +79,14 @@ public:
     static unsigned computeHash(const UChar*, unsigned len);
     static unsigned computeHash(const char*);
     
+    void append(const UChar*, unsigned length);
     void append(const StringImpl*);
-    void append(char);
     void append(UChar);
+    void append(char);
+
+    void insert(const UChar*, unsigned length, unsigned pos);
     void insert(const StringImpl*, unsigned pos);
-    void insert(const UChar* str, unsigned length, unsigned pos);
+
     void truncate(int len);
     void remove(unsigned pos, int len = 1);
 

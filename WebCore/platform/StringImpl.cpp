@@ -147,20 +147,25 @@ const UChar* StringImpl::charactersWithNullTermination()
     return m_data;
 }
 
-void StringImpl::append(const StringImpl* str)
+void StringImpl::append(const UChar* str, unsigned length)
 {
-    assert(!m_inTable);
-    if(str && str->m_length != 0)
-    {
-        int newlen = m_length+str->m_length;
+    ASSERT(!m_inTable);
+    if (str && length != 0) {
+        int newlen = m_length + length;
         UChar* c = newUCharVector(newlen);
         memcpy(c, m_data, m_length * sizeof(UChar));
-        memcpy(c + m_length, str->m_data, str->m_length * sizeof(UChar));
+        memcpy(c + m_length, str, length * sizeof(UChar));
         deleteUCharVector(m_data);
         m_data = c;
         m_length = newlen;
         m_hasTerminatingNullCharacter = false;
     }
+}
+
+void StringImpl::append(const StringImpl* str)
+{
+    if (str)
+        append(str->m_data, str->m_length);
 }
 
 void StringImpl::append(char c)
@@ -180,34 +185,14 @@ void StringImpl::append(UChar c)
     m_hasTerminatingNullCharacter = false;
 }
 
-void StringImpl::insert(const StringImpl* str, unsigned pos)
-{
-    assert(!m_inTable);
-    if (pos >= m_length) {
-        append(str);
-        return;
-    }
-    if (str && str->m_length != 0) {
-        int newlen = m_length + str->m_length;
-        UChar* c = newUCharVector(newlen);
-        memcpy(c, m_data, pos * sizeof(UChar));
-        memcpy(c + pos, str->m_data, str->m_length * sizeof(UChar));
-        memcpy(c + pos + str->m_length, m_data + pos, (m_length - pos) * sizeof(UChar));
-        deleteUCharVector(m_data);
-        m_data = c;
-        m_length = newlen;
-        m_hasTerminatingNullCharacter = false;
-    }
-}
-
 void StringImpl::insert(const UChar* str, unsigned length, unsigned pos)
 {
     assert(!m_inTable);
     if (pos >= m_length) {
-        RefPtr<StringImpl> s = new StringImpl(str, length);
-        append(s.get());
+        append(str, length);
         return;
     }
+
     if (str && length != 0) {
         size_t newlen = m_length + length;
         UChar* c = newUCharVector(newlen);
@@ -219,6 +204,12 @@ void StringImpl::insert(const UChar* str, unsigned length, unsigned pos)
         m_length = newlen;
         m_hasTerminatingNullCharacter = false;
     }
+}
+
+void StringImpl::insert(const StringImpl* str, unsigned pos)
+{
+    if (str)
+        insert(str->m_data, str->m_length, pos);
 }
 
 void StringImpl::truncate(int len)

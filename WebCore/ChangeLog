@@ -1,3 +1,18 @@
+2006-10-03  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed Darin.
+
+        No test cases needed.
+
+        Implemented a version of StringImpl::append that takes a UChar* and 
+        a length.
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::append):
+        (WebCore::StringImpl::insert): Call new append instead of making a 
+        new StringImpl.
+        * platform/StringImpl.h:
+
 2006-10-03  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Darin.
