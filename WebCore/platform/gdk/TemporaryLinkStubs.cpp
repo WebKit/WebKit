@@ -74,7 +74,7 @@ using namespace WebCore;
 static void notImplemented() { puts("Not yet implemented"); }
 
 void FrameView::updateBorder() { notImplemented(); }
-bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults&) { return false; }
+bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollBar*) { return false; }
 bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults&, Frame*) { return true; }
 bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame*) { return true; }
 bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame*) { return true; }
