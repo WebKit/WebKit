@@ -241,7 +241,7 @@ static int updateScrollInfo(ScrollView* view, short type, int current, int max, 
     return si.nPos;
 }
 
-void ScrollView::updateScrollBars(const IntPoint&)
+void ScrollView::updateScrollBars(const IntSize&)
 { 
     IntSize maxScrollPosition(contentsWidth(), contentsHeight());
     IntSize scroll = scrollOffset().shrunkTo(maxScrollPosition);
