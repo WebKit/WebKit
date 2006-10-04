@@ -8,6 +8,26 @@
 
 2006-10-04  Kevin McCullough  <KMcCullough@apple.com>
 
+        Reviewed by Tim H.
+
+        - The build machine is more sensitive about automatic conversions.  These fixes exp
+licitly cast or change the input and return types of functions to avoid conversions.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/DateMath.cpp:
+        (KJS::):
+        (KJS::msToDays):
+        (KJS::msToYear):
+        (KJS::dayInYear):
+        (KJS::monthToDayInYear):
+        (KJS::dateToDayInYear):
+        (KJS::getDSTOffsetSimple):
+        (KJS::getDSTOffset):
+        (KJS::dateToMseconds):
+        (KJS::msToTM):
+
+2006-10-04  Kevin McCullough  <KMcCullough@apple.com>
+
         Reviewed by GGaren
 
         - This is a big makeover for our Date implemenetation.  This solves many platform specific issues, specifically dates before 1970, and simplifies some ugly code.  The purpose of this was to get us to pass many of the JavaScriptCore tests on windows.

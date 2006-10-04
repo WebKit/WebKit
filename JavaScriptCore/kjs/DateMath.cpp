@@ -63,9 +63,9 @@ static const double maxUnixTime = 2145859200.0; /*equivalent to 12/31/2037 */
  * The following array contains the day of year for the first day of
  * each month, where index 0 is January, and day 0 is January 1.
  */
-static double firstDayOfMonth[2][12] = {
-    {0.0, 31.0, 59.0, 90.0, 120.0, 151.0, 181.0, 212.0, 243.0, 273.0, 304.0, 334.0},
-    {0.0, 31.0, 60.0, 91.0, 121.0, 152.0, 182.0, 213.0, 244.0, 274.0, 305.0, 335.0}
+static int firstDayOfMonth[2][12] = {
+    {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334},
+    {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335}
 };
 
 
@@ -108,14 +108,14 @@ static inline double msFrom1970ToYear(int year)
     return msPerDay * daysFrom1970ToYear(year);
 }
 
-static inline int msToDays(double ms)
+static inline double msToDays(double ms)
 {
     return floor(ms / msPerDay);
 }
 
-static inline int msToYear(double ms)
+static inline double msToYear(double ms)
 {
-    int y = floor(ms /(msPerDay*365.2425)) + 1970;
+    double y = floor(ms /(msPerDay*365.2425)) + 1970;
     double t2 = msFrom1970ToYear(y);
 
     if (t2 > ms) {
@@ -143,7 +143,7 @@ static inline bool isInLeapYear(double ms)
     return isLeapYear(msToYear(ms));
 }
 
-static inline int dayInYear(double ms, int year)
+static inline double dayInYear(double ms, int year)
 {
     return msToDays(ms) - daysFrom1970ToYear(year);
 }
@@ -265,7 +265,7 @@ static inline int msToDayInMonth(double ms)
     return d - step;
 }
 
-static inline double monthToDayInYear(int month, bool isLeapYear)
+static inline int monthToDayInYear(int month, bool isLeapYear)
 {
     return firstDayOfMonth[isLeapYear][month];
 }
@@ -275,7 +275,7 @@ static inline double timeToMseconds(double hour, double min, double sec, double 
     return (((hour * minutesPerHour + min) * secondsPerMinute + sec) * msPerSecond + ms);
 }
 
-static double dateToDayInYear(double year, double month, double day)
+static int dateToDayInYear(int year, int month, int day)
 {
     year += floor(month / 12);
 
@@ -283,8 +283,8 @@ static double dateToDayInYear(double year, double month, double day)
     if (month < 0)
         month += 12;
 
-    double yearday = floor(msFrom1970ToYear(year) / msPerDay);
-    double monthday = monthToDayInYear(month, isLeapYear(year));
+    int yearday = static_cast<int>(floor(msFrom1970ToYear(year) / msPerDay));
+    int monthday = monthToDayInYear(month, isLeapYear(year));
 
     return yearday + monthday + day - 1;
 }
@@ -362,8 +362,8 @@ static double getDSTOffsetSimple(double localTimeSeconds)
     prtm.tm_min   =  msToMinutes(offsetTime);
     prtm.tm_hour  =  msToHours(offsetTime);
 
-
-    time_t localTime = localTimeSeconds;
+    // FIXME: time_t has a potential problem in 2038
+    time_t localTime = static_cast<time_t>(localTimeSeconds);
 
     struct tm tm;
     #if PLATFORM(WIN_OS)
@@ -389,7 +389,7 @@ static double getDSTOffset(double ms)
      */
     if (ms < 0.0 || ms > 2145916800000.0) {
         int year;
-        double day;
+        int day;
 
         year = equivalentYearForDST(msToYear(ms));
         day = dateToDayInYear(year, msToMonth(ms), msToDayInMonth(ms));
@@ -416,7 +416,7 @@ static inline double UTCToLocalTime(double ms)
 
 double dateToMseconds(tm* t, double ms, bool inputIsUTC)
 {
-    double day = dateToDayInYear(t->tm_year + 1900, t->tm_mon, t->tm_mday);
+    int day = dateToDayInYear(t->tm_year + 1900, t->tm_mon, t->tm_mday);
     double msec_time = timeToMseconds(t->tm_hour, t->tm_min, t->tm_sec, ms);
     double result = (day * msPerDay) + msec_time;
 
@@ -445,7 +445,8 @@ void msToTM(double ms, bool outputIsUTC, struct tm& tm)
     //everyone else seems to have these fields
     #if !PLATFORM(WIN_OS)
     struct tm xtm;
-    time_t seconds = ms/usecPerMsec;
+    // FIXME: time_t has a potential problem in 2038
+    time_t seconds = static_cast<time_t>(ms/usecPerMsec);
     localtime_r(&seconds, &xtm);
     tm.tm_gmtoff = xtm.tm_gmtoff;
     tm.tm_zone = xtm.tm_zone;
