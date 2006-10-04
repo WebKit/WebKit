@@ -51,26 +51,30 @@
 
 #include "error_object.h"
 #include "operations.h"
+#include <DateMath.h>
 
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 
 #if PLATFORM(MAC)
-#include <CoreFoundation/CoreFoundation.h>
+    #include <CoreFoundation/CoreFoundation.h>
 #endif
+
+namespace KJS {
+
+static double parseDate(const UString&);
+static double timeClip(double);
 
 inline int gmtoffset(const tm& t)
 {
 #if PLATFORM(WIN_OS)
     // Time is supposed to be in the current timezone.
-    // FIXME: Use undocumented _dstbias?
-    return -(_timezone / 60 - (t.tm_isdst > 0 ? 60 : 0 )) * 60;
+    return static_cast<int>(getUTCOffset()/1000.0);
 #else
     return t.tm_gmtoff;
 #endif
 }
 
-namespace KJS {
 
 /**
  * @internal
@@ -89,23 +93,6 @@ public:
 private:
     int id;
 };
-
-// some constants
-const double hoursPerDay = 24;
-const double minutesPerHour = 60;
-const double secondsPerMinute = 60;
-const double msPerSecond = 1000;
-const double msPerMinute = 60 * 1000;
-const double msPerHour = 60 * 60 * 1000;
-const double msPerDay = 24 * 60 * 60 * 1000;
-
-static const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-static const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-
-static double makeTime(tm *, double ms, bool utc);
-static double parseDate(const UString &);
-static double timeClip(double);
-static void millisecondsToTM(double milli, bool utc, tm *t);
 
 #if PLATFORM(MAC)
 
@@ -196,8 +183,7 @@ static UString formatTime(const tm &t, bool utc)
 {
     char buffer[100];
     if (utc) {
-        // FIXME: why not on windows?
-#if !PLATFORM(WIN_OS)
+#if !PLATFORM(WIN_OS)   //win doesn't have the tm_gtoff member
         ASSERT(t.tm_gmtoff == 0);
 #endif
         snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.tm_hour, t.tm_min, t.tm_sec);
@@ -220,67 +206,6 @@ static UString formatTime(const tm &t, bool utc)
         }
     }
     return UString(buffer);
-}
-
-static int day(double t)
-{
-    return int(floor(t / msPerDay));
-}
-
-static double dayFromYear(int year)
-{
-    return 365.0 * (year - 1970)
-        + floor((year - 1969) / 4.0)
-        - floor((year - 1901) / 100.0)
-        + floor((year - 1601) / 400.0);
-}
-
-// based on the rule for whether it's a leap year or not
-static int daysInYear(int year)
-{
-    if (year % 4 != 0)
-        return 365;
-    if (year % 400 == 0)
-        return 366;
-    if (year % 100 == 0)
-        return 365;
-    return 366;
-}
-
-// time value of the start of a year
-static double timeFromYear(int year)
-{
-    return msPerDay * dayFromYear(year);
-}
-
-// year determined by time value
-static int yearFromTime(double t)
-{
-    // ### there must be an easier way
-
-    // initial guess
-    int y = 1970 + int(t / (365.25 * msPerDay));
-
-    // adjustment
-    if (timeFromYear(y) > t) {
-        do
-            --y;
-        while (timeFromYear(y) > t);
-    } else {
-        while (timeFromYear(y + 1) < t)
-            ++y;
-    }
-
-    return y;
-}
-
-// 0: Sunday, 1: Monday, etc.
-static int weekDay(double t)
-{
-    int wd = (day(t) + 4) % 7;
-    if (wd < 0)
-        wd += 7;
-    return wd;
 }
 
 // Converts a list of arguments sent to a Date member function into milliseconds, updating
@@ -368,7 +293,7 @@ bool DateInstance::getTime(tm &t, int &offset) const
     if (isNaN(milli))
         return false;
     
-    millisecondsToTM(milli, false, &t);
+    msToTM(milli, false, t);
     offset = gmtoffset(t);
     return true;
 }
@@ -379,7 +304,7 @@ bool DateInstance::getUTCTime(tm &t) const
     if (isNaN(milli))
         return false;
     
-    millisecondsToTM(milli, true, &t);
+    msToTM(milli, true, t);
     return true;
 }
 
@@ -390,7 +315,7 @@ bool DateInstance::getTime(double &milli, int &offset) const
         return false;
     
     tm t;
-    millisecondsToTM(milli, false, &t);
+    msToTM(milli, false, t);
     offset = gmtoffset(t);
     return true;
 }
@@ -409,43 +334,6 @@ static inline bool isTime_tSigned()
     time_t minusOne = (time_t)(-1);
     return minusOne < 0;
 }
-
-static void millisecondsToTM(double milli, bool utc, tm *t)
-{
-  // check whether time value is outside time_t's usual range
-  // make the necessary transformations if necessary
-  static bool time_tIsSigned = isTime_tSigned();
-  static double time_tMin = (time_tIsSigned ? - (double)(1ULL << (8 * sizeof(time_t) - 1)) : 0);
-  static double time_tMax = (time_tIsSigned ? (1ULL << 8 * sizeof(time_t) - 1) - 1 : 2 * (double)(1ULL << 8 * sizeof(time_t) - 1) - 1);
-  int realYearOffset = 0;
-  double milliOffset = 0.0;
-  double secs = floor(milli / msPerSecond);
-
-  if (secs < time_tMin || secs > time_tMax) {
-    // ### ugly and probably not very precise
-    int realYear = yearFromTime(milli);
-    int base = daysInYear(realYear) == 365 ? 2001 : 2000;
-    milliOffset = timeFromYear(base) - timeFromYear(realYear);
-    milli += milliOffset;
-    realYearOffset = realYear - base;
-  }
-
-  time_t tv = (time_t) floor(milli / msPerSecond);
-
-  *t = *(utc ? gmtime(&tv) : localtime(&tv));
-  // We had an out of range year. Restore the year (plus/minus offset
-  // found by calculating tm_year) and fix the week day calculation.
-  if (realYearOffset != 0) {
-    t->tm_year += realYearOffset;
-    milli -= milliOffset;
-    // Do our own weekday calculation. Use time zone offset to handle local time.
-    double m = milli;
-    if (!utc)
-      m += gmtoffset(*t) * msPerSecond;
-    t->tm_wday = weekDay(m);
-  }
-}    
-
 
 // ------------------------------ DatePrototype -----------------------------
 
@@ -575,7 +463,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   double ms = milli - secs * msPerSecond;
 
   tm t;
-  millisecondsToTM(milli, utc, &t);
+  msToTM(milli, utc, t);
 
   switch (id) {
   case ToString:
@@ -674,7 +562,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   if (id == SetYear || id == SetMilliSeconds || id == SetSeconds ||
       id == SetMinutes || id == SetHours || id == SetDate ||
       id == SetMonth || id == SetFullYear ) {
-    result = jsNumber(makeTime(&t, ms, utc));
+    result = jsNumber(dateToMseconds(&t, ms, utc));
     thisDateObj->setInternalValue(result);
   }
   
@@ -761,7 +649,7 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
       t.tm_sec = (numArgs >= 6) ? args[5]->toInt32(exec) : 0;
       t.tm_isdst = -1;
       double ms = (numArgs >= 7) ? roundValue(exec, args[6]) : 0;
-      value = makeTime(&t, ms, false);
+      value = dateToMseconds(&t, ms, false);
     }
   }
   
@@ -814,7 +702,7 @@ JSValue *DateObjectFuncImp::callAsFunction(ExecState* exec, JSObject*, const Lis
     t.tm_min = (n >= 5) ? args[4]->toInt32(exec) : 0;
     t.tm_sec = (n >= 6) ? args[5]->toInt32(exec) : 0;
     double ms = (n >= 7) ? roundValue(exec, args[6]) : 0;
-    return jsNumber(makeTime(&t, ms, true));
+    return jsNumber(dateToMseconds(&t, ms, true));
   }
 }
 
@@ -852,58 +740,6 @@ static const struct KnownZone {
     { "PST", -480 },
     { "PDT", -420 }
 };
-
-static double makeTime(tm *t, double ms, bool utc)
-{
-    int utcOffset;
-    if (utc) {
-        time_t zero = 0;
-#if PLATFORM(WIN_OS)
-        // FIXME: not thread safe
-        (void)localtime(&zero);
-#if COMPILER(BORLAND) || COMPILER(CYGWIN)
-        utcOffset = - _timezone;
-#else
-        utcOffset = - timezone;
-#endif
-        t->tm_isdst = 0;
-#else
-        tm t3;
-        localtime_r(&zero, &t3);
-        utcOffset = t3.tm_gmtoff;
-        t->tm_isdst = t3.tm_isdst;
-#endif
-    } else {
-        utcOffset = 0;
-        t->tm_isdst = -1;
-    }
-
-    double yearOffset = 0.0;
-    if (t->tm_year < (1970 - 1900) || t->tm_year > (2038 - 1900)) {
-        // we'll fool mktime() into believing that this year is within
-        // its normal, portable range (1970-2038) by setting tm_year to
-        // 2000 or 2001 and adding the difference in milliseconds later.
-        // choice between offset will depend on whether the year is a
-        // leap year or not.
-        int y = t->tm_year + 1900;
-        int baseYear = daysInYear(y) == 365 ? 2001 : 2000;
-        double baseTime = timeFromYear(baseYear);
-        yearOffset = timeFromYear(y) - baseTime;
-        t->tm_year = baseYear - 1900;
-    }
-
-    // Determine whether DST is in effect. mktime() can't do this for us because
-    // it doesn't know about ms and yearOffset.
-    // NOTE: Casting values of large magnitude to time_t (long) will 
-    // produce incorrect results, but there's no other option when calling localtime_r().
-    if (!utc) { 
-        time_t tval = mktime(t) + (time_t)((ms + yearOffset) / 1000);  
-        tm t3 = *localtime(&tval);  
-        t->tm_isdst = t3.tm_isdst;  
-    }
-
-    return (mktime(t) + utcOffset) * msPerSecond + ms + yearOffset;
-}
 
 inline static void skipSpacesAndComments(const char *&s)
 {
@@ -1233,8 +1069,8 @@ static double parseDate(const UString &date)
         t.tm_min = minute;
         t.tm_hour = hour;
 
-        // Use our makeTime() rather than mktime() as the latter can't handle the full year range.
-        return makeTime(&t, 0, false);
+        // Use our dateToMseconds() rather than mktime() as the latter can't handle the full year range.
+        return dateToMseconds(&t, 0, false);
     }
 
     return (ymdhmsToSeconds(year, month + 1, day, hour, minute, second) - (offset * 60.0)) * msPerSecond;

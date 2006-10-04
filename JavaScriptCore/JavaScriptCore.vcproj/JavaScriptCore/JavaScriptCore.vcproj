@@ -223,6 +223,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\DateMath.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\DateMath.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\debugger.cpp"
 				>
 			</File>
