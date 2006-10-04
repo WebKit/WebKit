@@ -51,7 +51,8 @@ bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
         return false;
         
     // if we're invisible or haven't received a layout yet, then just bail.
-    if (style()->visibility() != VISIBLE || m_y <=  -500000)  return false;
+    if (style()->visibility() != VISIBLE)
+        return false;
 
     int tx = _tx + m_x;
     int ty = _ty + m_y;

@@ -2100,7 +2100,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return VisiblePosition();
     FrameView* outerView = m_frame->view();
     FrameView* innerView = node->document()->view();
-    IntPoint innerPoint = innerView->convertFromContainingWindow(outerView->convertToContainingWindow(outerPoint));
+    IntPoint innerPoint = innerView->windowToContents(outerView->contentsToWindow(outerPoint));
     return renderer->positionForCoordinates(innerPoint.x(), innerPoint.y());
 }
 

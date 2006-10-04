@@ -587,7 +587,7 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     RefPtr<FrameView> protector(this);
 
     d->mousePressed = true;
-    d->m_currentMousePosition = convertFromContainingWindow(mouseEvent.pos());
+    d->m_currentMousePosition = windowToContents(mouseEvent.pos());
     
     MouseEventWithHitTestResults mev = prepareMouseEvent(false, true, false, mouseEvent);
 
@@ -601,7 +601,7 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     d->clickNode = mev.targetNode();
     
     RenderLayer* layer = d->clickNode->renderer()? d->clickNode->renderer()->enclosingLayer() : 0;
-    IntPoint p =  convertFromContainingWindow(mouseEvent.pos());
+    IntPoint p =  windowToContents(mouseEvent.pos());
     if (layer && layer->isPointInResizeControl(p)) {
         layer->setInResizeMode(true);
         d->m_resizeLayer = layer;
@@ -620,7 +620,10 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         if (mev.targetNode()->isShadowNode() && mev.targetNode()->shadowParentNode()->hasTagName(inputTag))
             mev = prepareMouseEvent(true, true, false, mouseEvent);
 
-        if (!mev.scrollbar() || !passMousePressEventToScrollbar(mev))
+        PlatformScrollBar* scrollbar = scrollbarUnderMouse(mouseEvent);
+        if (!scrollbar)
+            scrollbar = mev.scrollbar();
+        if (!scrollbar || !passMousePressEventToScrollbar(mev, scrollbar))
             m_frame->handleMousePressEvent(mev);
 
         // Many AK widgets run their own event loops and consume events while the mouse is down.
@@ -643,7 +646,7 @@ void FrameView::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEvent
 
     // We get this instead of a second mouse-up 
     d->mousePressed = false;
-    d->m_currentMousePosition = convertFromContainingWindow(mouseEvent.pos());
+    d->m_currentMousePosition = windowToContents(mouseEvent.pos());
 
     MouseEventWithHitTestResults mev = prepareMouseEvent(false, true, false, mouseEvent);
     Frame* subframe = subframeForTargetNode(mev.targetNode());
@@ -673,7 +676,7 @@ static bool nodeIsNotBeingEdited(Node* node, Frame* frame)
     return frame->selectionController()->rootEditableElement() != node->rootEditableElement();
 }
 
-static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* frame, bool mousePressed)
+static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* frame, bool mousePressed, PlatformScrollBar* scrollbar)
 {
     // During selection, use an I-beam no matter what we're over.
     if (mousePressed && frame->hasSelection())
@@ -736,9 +739,9 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
                 return handCursor();
             RenderLayer* layer = renderer ? renderer->enclosingLayer() : 0;
             bool inResizer = false;
-            if (frame->view() && layer && layer->isPointInResizeControl(frame->view()->convertFromContainingWindow(event.event().pos())))
+            if (frame->view() && layer && layer->isPointInResizeControl(frame->view()->windowToContents(event.event().pos())))
                 inResizer = true;
-            if ((editable || (renderer && renderer->isText() && renderer->canSelect())) && !inResizer && !event.scrollbar())
+            if ((editable || (renderer && renderer->isText() && renderer->canSelect())) && !inResizer && !scrollbar)
                 return iBeamCursor();
             // FIXME: If the point is in a layer's overflow scrollbars, we should use the pointer cursor
             return pointerCursor();
@@ -800,7 +803,7 @@ void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
         return;
 
     RefPtr<FrameView> protector(this);
-    d->m_currentMousePosition = convertFromContainingWindow(mouseEvent.pos());
+    d->m_currentMousePosition = windowToContents(mouseEvent.pos());
    
     if (d->hoverTimer.isActive())
         d->hoverTimer.stop();
@@ -822,11 +825,15 @@ void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
 
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent, mev.targetNode(), false, 0, mouseEvent, true);
     
-    if (d->oldScrollBar != mev.scrollbar()) {
+    PlatformScrollBar* scrollbar = scrollbarUnderMouse(mouseEvent);
+    if (!scrollbar)
+        scrollbar = mev.scrollbar();
+
+    if (d->oldScrollBar != scrollbar) {
         // Send mouse exited to the old scrollbar.
         if (d->oldScrollBar)
             d->oldScrollBar->handleMouseOutEvent(mouseEvent);
-        d->oldScrollBar = mev.scrollbar();
+        d->oldScrollBar = scrollbar;
     }
 
     if (d->m_resizeLayer && d->m_resizeLayer->inResizeMode())
@@ -839,9 +846,9 @@ void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
     if (newSubframe && d->oldSubframe != newSubframe)
         passMouseMoveEventToSubframe(mev, newSubframe.get());
     else {
-        if (mev.scrollbar() && !d->mousePressed)
-            mev.scrollbar()->handleMouseMoveEvent(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
-        setCursor(selectCursor(mev, m_frame.get(), d->mousePressed));
+        if (scrollbar && !d->mousePressed)
+            scrollbar->handleMouseMoveEvent(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
+        setCursor(selectCursor(mev, m_frame.get(), d->mousePressed, scrollbar));
     }
 
     d->oldSubframe = newSubframe;
@@ -871,7 +878,7 @@ void FrameView::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     RefPtr<FrameView> protector(this);
 
     d->mousePressed = false;
-    d->m_currentMousePosition = convertFromContainingWindow(mouseEvent.pos());
+    d->m_currentMousePosition = windowToContents(mouseEvent.pos());
 
     if (d->resizingFrameSet) {
         dispatchMouseEvent(mouseupEvent, d->resizingFrameSet.get(), true, d->clickCount, mouseEvent, false);
@@ -901,7 +908,7 @@ void FrameView::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
 bool FrameView::dispatchDragEvent(const AtomicString& eventType, Node *dragTarget, const PlatformMouseEvent& event, Clipboard* clipboard)
 {
-    IntPoint contentsPos = convertFromContainingWindow(event.pos());
+    IntPoint contentsPos = windowToContents(event.pos());
     
     RefPtr<MouseEvent> me = new MouseEvent(eventType,
         true, true, m_frame->document()->defaultView(),
@@ -1144,7 +1151,7 @@ MouseEventWithHitTestResults FrameView::prepareMouseEvent(bool readonly, bool ac
     ASSERT(m_frame);
     ASSERT(m_frame->document());
     
-    IntPoint vPoint = convertFromContainingWindow(mev.pos());
+    IntPoint vPoint = windowToContents(mev.pos());
     return m_frame->document()->prepareMouseEvent(readonly, active, mouseMove, vPoint, mev);
 }
 
@@ -1221,7 +1228,7 @@ void FrameView::handleWheelEvent(PlatformWheelEvent& e)
     if (doc) {
         RenderObject *docRenderer = doc->renderer();
         if (docRenderer) {
-            IntPoint vPoint = convertFromContainingWindow(e.pos());
+            IntPoint vPoint = windowToContents(e.pos());
 
             RenderObject::NodeInfo hitTestResult(true, false);
             doc->renderer()->layer()->hitTest(hitTestResult, vPoint); 

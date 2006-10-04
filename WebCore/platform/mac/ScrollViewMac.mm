@@ -355,7 +355,7 @@ void ScrollView::updateContents(const IntRect &rect, bool now)
 
 // "Containing Window" means the NSWindow's coord system, which is origin lower left
 
-IntPoint ScrollView::convertToContainingWindow(const IntPoint& contentsPoint) const
+IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -375,7 +375,7 @@ IntPoint ScrollView::convertToContainingWindow(const IntPoint& contentsPoint) co
     return IntPoint();
 }
 
-IntPoint ScrollView::convertFromContainingWindow(const IntPoint& point) const
+IntPoint ScrollView::windowToContents(const IntPoint& point) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -415,6 +415,12 @@ NSView *ScrollView::getDocumentView() const
     END_BLOCK_OBJC_EXCEPTIONS;
     
     return nil;
+}
+
+PlatformScrollBar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
+{
+    // On Mac, the ScrollView is really the "document", so events will never flow into it to get to the scrollers.
+    return 0;
 }
 
 bool ScrollView::inWindow() const

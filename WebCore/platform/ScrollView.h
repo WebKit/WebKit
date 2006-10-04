@@ -37,6 +37,7 @@ class QScrollArea;
 namespace WebCore {
     class FloatRect;
     class PlatformWheelEvent;
+    class PlatformScrollBar;
 
     class ScrollView : public Widget {
     public:
@@ -71,12 +72,18 @@ namespace WebCore {
         virtual void resizeContents(int w, int h);
         void updateContents(const IntRect&, bool now = false);
 
-        virtual IntPoint convertToContainingWindow(const IntPoint&) const;
-        virtual IntPoint convertFromContainingWindow(const IntPoint&) const;
-
+        // Event coordinates are assumed to be in the coordinate space of a window that contains
+        // the entire widget hierarchy.  It is up to the platform to decide what the precise definition
+        // of containing window is.  (For example on Mac it is the containing NSWindow.)
+        IntPoint windowToContents(const IntPoint&) const;
+        IntPoint contentsToWindow(const IntPoint&) const;
+ 
         void setStaticBackground(bool);
 
         bool inWindow() const;
+
+        // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
+        PlatformScrollBar* scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent);
 
         // This method exists for scrollviews that need to handle wheel events manually.
         // On Mac the underlying NSScrollView just does the scrolling, but on other platforms
@@ -93,11 +100,15 @@ namespace WebCore {
 
         virtual void paint(GraphicsContext*, const IntRect&);
         virtual void themeChanged();
+        
+        virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
+        virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
+        
+        virtual void scrolled() const;
 
     private:
-        void updateScrollBars();
+        void updateScrollBars(const IntSize& desiredOffset);
         IntSize maximumScroll() const;
-        int updateScrollInfo(short type, int current, int max, int pageSize);
         class ScrollViewPrivate;
         ScrollViewPrivate* m_data;
 #endif

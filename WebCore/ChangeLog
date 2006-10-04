@@ -1,3 +1,59 @@
+2006-10-03  Dave Hyatt  <hyatt@apple.com>
+
+        Scrolling work.  Eliminate convertTo/FromContainingWindow as cross-platform functions.  Add back in
+        the windowToContents/contentsToWindow functions.
+        
+        Reviewed by anders
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::eventMayStartDrag):
+        (WebCore::FrameMac::dragHysteresisExceeded):
+        (WebCore::FrameMac::mouseDown):
+        (WebCore::FrameMac::shouldDragAutoNode):
+        (WebCore::FrameMac::sendContextMenuEvent):
+        * bridge/mac/FrameViewMac.mm:
+        (WebCore::FrameView::passMousePressEventToScrollbar):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge _visiblePositionForPoint:]):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+        (WebCore::EventTargetNode::dispatchWheelEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectClosestWordFromMouseEvent):
+        (WebCore::Frame::handleMousePressEventTripleClick):
+        (WebCore::Frame::handleMousePressEventSingleClick):
+        (WebCore::Frame::handleMouseMoveEvent):
+        (WebCore::Frame::handleMouseReleaseEvent):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleMousePressEvent):
+        (WebCore::FrameView::handleMouseDoubleClickEvent):
+        (WebCore::selectCursor):
+        (WebCore::FrameView::handleMouseMoveEvent):
+        (WebCore::FrameView::handleMouseReleaseEvent):
+        (WebCore::FrameView::dispatchDragEvent):
+        (WebCore::FrameView::prepareMouseEvent):
+        (WebCore::FrameView::handleWheelEvent):
+        * page/FrameView.h:
+        * platform/ScrollBar.cpp:
+        (WebCore::ScrollBar::setValue):
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        (WebCore::Widget::scrolled):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::windowToContents):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        * platform/mac/WidgetMac.mm:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        (WebCore::RenderLayer::positionScrollbars):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderView.cpp:
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidget):
+
 2006-09-26  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Timothy.

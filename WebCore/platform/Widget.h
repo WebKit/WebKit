@@ -129,19 +129,6 @@ namespace WebCore {
 
         virtual bool isFrameView() const;
 
-        // Event coordinates are assumed to be in the coordinate space of a window that contains
-        // the entire widget hierarchy.  It is up to the platform to decide what the precise definition
-        // of containing window is.  (For example on Mac it is the containing NSWindow.)
-        //
-        // Note that for scrollable widgets, the points and rects given will be converted to and
-        // from the document coordinate space inside the scrollable widget.  Therefore
-        // for conversion to a containing window coordinate space, the argument should be in the
-        // scrollable widget's document coordinate space.  When converting from the containing window
-        // coordinate space, the result will be in the scrollable widget's document coordinate space.
-        IntRect convertToContainingWindow(const IntRect&) const;
-        virtual IntPoint convertToContainingWindow(const IntPoint&) const;
-        virtual IntPoint convertFromContainingWindow(const IntPoint&) const;
-
 #if PLATFORM(WIN)
         void setContainingWindow(HWND);
         HWND containingWindow() const;
@@ -149,12 +136,23 @@ namespace WebCore {
         void setParent(Widget*);
         Widget* parent() const;
 
+        virtual void scrolled() const {};
+
         bool capturingMouse() const;
         void setCapturingMouse(bool);
         Widget* capturingTarget();
         Widget* capturingChild();
         void setCapturingChild(Widget*);
         
+        IntRect convertToContainingWindow(const IntRect&) const;
+        IntPoint convertToContainingWindow(const IntPoint&) const;
+        IntPoint convertFromContainingWindow(const IntPoint&) const;
+
+        virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
+        virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
+
+        void setSuppressInvalidation(bool);
+
         // These methods will be called on a widget while it is capturing the mouse.
         virtual void handleMouseMoveEvent(const PlatformMouseEvent&) {};
         virtual void handleMouseReleaseEvent(const PlatformMouseEvent&) {};
