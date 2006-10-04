@@ -1,3 +1,15 @@
+2006-10-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mitz Pettel!
+
+        Bug 10708: [Drosera] Make the console input plaintext-only
+        http://bugs.webkit.org/show_bug.cgi?id=10708
+
+        Change the console input -webkit-user-modify property to
+        read-write-plaintext-only.
+
+        * Drosera/console.css:
+
 2006-10-04  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Tim H.
