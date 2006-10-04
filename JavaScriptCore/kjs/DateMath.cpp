@@ -113,9 +113,9 @@ static inline double msToDays(double ms)
     return floor(ms / msPerDay);
 }
 
-static inline double msToYear(double ms)
+static inline int msToYear(double ms)
 {
-    double y = floor(ms /(msPerDay*365.2425)) + 1970;
+    int y = static_cast<int>(floor(ms /(msPerDay*365.2425)) + 1970);
     double t2 = msFrom1970ToYear(y);
 
     if (t2 > ms) {
@@ -143,9 +143,9 @@ static inline bool isInLeapYear(double ms)
     return isLeapYear(msToYear(ms));
 }
 
-static inline double dayInYear(double ms, int year)
+static inline int dayInYear(double ms, int year)
 {
-    return msToDays(ms) - daysFrom1970ToYear(year);
+    return static_cast<int>(msToDays(ms) - daysFrom1970ToYear(year));
 }
 
 static inline double msToMilliseconds(double ms)
@@ -277,9 +277,9 @@ static inline double timeToMseconds(double hour, double min, double sec, double 
 
 static int dateToDayInYear(int year, int month, int day)
 {
-    year += floor(month / 12);
+    year += static_cast<int>(floor(month / 12));
 
-    month = fmod(month, 12.0);
+    month = static_cast<int>(fmod(month, 12.0));
     if (month < 0)
         month += 12;
 

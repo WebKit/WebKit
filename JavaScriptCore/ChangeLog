@@ -1,3 +1,14 @@
+2006-10-04  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by DethBakin.
+
+        - Apparently the build bot uses an older version of XCode which warns about conversions and the newest version does not.  I hope this fixes the build but I cann't be sure on my system.
+
+        * kjs/DateMath.cpp:
+        (KJS::msToYear):
+        (KJS::dayInYear):
+        (KJS::dateToDayInYear):
+
 2006-10-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
