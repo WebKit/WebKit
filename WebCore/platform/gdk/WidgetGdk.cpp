@@ -158,14 +158,4 @@ void Widget::setFrameGeometry(const IntRect& r)
     gdk_window_move_resize(window, r.x(), r.y(), r.width(), r.height());
 }
 
-IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
-{
-  return point;
-}
-
-IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
-{
-  return point;
-}
-
 }
