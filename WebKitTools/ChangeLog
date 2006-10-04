@@ -2,6 +2,18 @@
 
         Reviewed by Tim H.
 
+        Bug 10473: [Drosera] Overlapping text in JavaScript Console
+        http://bugs.webkit.org/show_bug.cgi?id=10473
+
+        Using min-height instead of height to avoid overlapping text.
+
+        * ChangeLog:
+        * Drosera/console.css:
+
+2006-10-04  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Tim H.
+
         Added a bash-style command history.
 
         * Drosera/console.js:
