@@ -1,3 +1,11 @@
+2006-10-03  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam and Brady.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main):
+        Update URL to Ahem.ttf
+
 2006-10-03  Darin Adler  <darin@apple.com>
 
         * Scripts/commit-log-editor: Added missing "close" call. Oops!
