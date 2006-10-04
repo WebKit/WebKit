@@ -1,3 +1,11 @@
+2006-10-04  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Tim H.
+
+        Added a bash-style command history.
+
+        * Drosera/console.js:
+
 2006-10-03  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam and Brady.
