@@ -76,45 +76,46 @@ set(kjs-unity_LIB_SRCS
     bindings/c/c_instance.cpp
     bindings/c/c_runtime.cpp
     bindings/c/c_utility.cpp
+    kjs/DateMath.cpp
     kjs/JSWrapperObject.cpp
-	kjs/PropertyNameArray.cpp
-	kjs/array_object.cpp
-	kjs/bool_object.cpp
-	kjs/collector.cpp
-	kjs/Context.cpp
-	kjs/date_object.cpp
-	kjs/debugger.cpp
-	kjs/dtoa.cpp
-	kjs/error_object.cpp
-	kjs/fpconst.cpp
-	kjs/function.cpp
-	kjs/function_object.cpp
+    kjs/PropertyNameArray.cpp
+    kjs/array_object.cpp
+    kjs/bool_object.cpp
+    kjs/collector.cpp
+    kjs/Context.cpp
+    kjs/date_object.cpp
+    kjs/debugger.cpp
+    kjs/dtoa.cpp
+    kjs/error_object.cpp
+    kjs/fpconst.cpp
+    kjs/function.cpp
+    kjs/function_object.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/kjs/grammar.cpp
-	kjs/identifier.cpp
-	kjs/internal.cpp
-	kjs/interpreter.cpp
+    kjs/identifier.cpp
+    kjs/internal.cpp
+    kjs/interpreter.cpp
     kjs/JSImmediate.cpp
-	kjs/JSLock.cpp 
-	kjs/lexer.cpp
-	kjs/list.cpp
-	kjs/lookup.cpp
-	kjs/math_object.cpp
-	kjs/nodes.cpp
-	kjs/nodes2string.cpp
-	kjs/number_object.cpp
-	kjs/object.cpp
-	kjs/object_object.cpp
-	kjs/operations.cpp
-	kjs/Parser.cpp
-	kjs/property_map.cpp
-	kjs/property_slot.cpp
-	kjs/regexp.cpp
-	kjs/regexp_object.cpp
-	kjs/scope_chain.cpp
-	kjs/string_object.cpp
-	kjs/ustring.cpp
-	kjs/value.cpp
-	kjs/ExecState.cpp
+    kjs/JSLock.cpp 
+    kjs/lexer.cpp
+    kjs/list.cpp
+    kjs/lookup.cpp
+    kjs/math_object.cpp
+    kjs/nodes.cpp
+    kjs/nodes2string.cpp
+    kjs/number_object.cpp
+    kjs/object.cpp
+    kjs/object_object.cpp
+    kjs/operations.cpp
+    kjs/Parser.cpp
+    kjs/property_map.cpp
+    kjs/property_slot.cpp
+    kjs/regexp.cpp
+    kjs/regexp_object.cpp
+    kjs/scope_chain.cpp
+    kjs/string_object.cpp
+    kjs/ustring.cpp
+    kjs/value.cpp
+    kjs/ExecState.cpp
 )
 
 kde4_add_library(kjs-unity STATIC ${kjs-unity_LIB_SRCS})
