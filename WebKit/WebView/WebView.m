@@ -876,6 +876,7 @@ static bool debugWidget = true;
     }
     [_private->settings setShouldPrintBackgrounds:[preferences shouldPrintBackgrounds]];
     [_private->settings setTextAreasAreResizable:[preferences textAreasAreResizable]];
+    [_private->settings setEditableLinkBehavior:[preferences editableLinkBehavior]];
 }
 
 - (void)_preferencesChangedNotification: (NSNotification *)notification

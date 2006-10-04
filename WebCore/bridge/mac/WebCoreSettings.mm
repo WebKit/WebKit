@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -332,6 +333,23 @@ using namespace WebCore;
 - (NSString *)defaultTextEncoding
 {
     return defaultTextEncoding;
+}
+
+- (void)setEditableLinkBehavior:(int)behavior
+{
+    Settings::EditableLinkBehavior b = (Settings::EditableLinkBehavior)behavior;
+    if (b != Settings::EditableLinkDefaultBehavior &&
+        b != Settings::EditableLinkAlwaysLive &&
+        b != Settings::EditableLinkOnlyLiveWithShiftKey &&
+        b != Settings::EditableLinkLiveWhenNotFocused) {
+        settings->setEditableLinkBehavior(Settings::EditableLinkDefaultBehavior);
+    } else
+        settings->setEditableLinkBehavior(b);
+}
+
+- (int)editableLinkBehavior
+{
+    return (int)settings->editableLinkBehavior();
 }
 
 - (Settings *)settings

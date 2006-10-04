@@ -5,6 +5,7 @@
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,6 +48,7 @@
 #include "RenderText.h"
 #include "RenderView.h"
 #include "SelectionController.h"
+#include "Settings.h"
 #include "cssstyleselector.h"
 
 #ifdef SVG_SUPPORT
@@ -665,6 +667,12 @@ static bool isSubmitImage(Node *node)
     return node && node->hasTagName(inputTag) && static_cast<HTMLInputElement*>(node)->inputType() == HTMLInputElement::IMAGE;
 }
 
+// Returns true if the node's editable block is not current focused for editing
+static bool nodeIsNotBeingEdited(Node* node, Frame* frame)
+{
+    return frame->selectionController()->rootEditableElement() != node->rootEditableElement();
+}
+
 static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* frame, bool mousePressed)
 {
     // During selection, use an I-beam no matter what we're over.
@@ -703,7 +711,28 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
     switch (style ? style->cursor() : CURSOR_AUTO) {
         case CURSOR_AUTO: {
             bool editable = (node && node->isContentEditable());
-            if ((event.isOverLink() || isSubmitImage(node)) && (!editable || event.event().shiftKey()))
+            bool editableLinkEnabled = false;
+
+            // If the link is editable, then we need to check the settings to see whether or not the link should be followed
+            if (editable) {
+                switch(frame->settings()->editableLinkBehavior()) {
+                    default:
+                    case Settings::EditableLinkDefaultBehavior:
+                    case Settings::EditableLinkAlwaysLive:
+                        editableLinkEnabled = true;
+                        break;
+                    
+                    case Settings::EditableLinkLiveWhenNotFocused:
+                        editableLinkEnabled = nodeIsNotBeingEdited(node, frame) || event.event().shiftKey();
+                        break;
+                    
+                    case Settings::EditableLinkOnlyLiveWithShiftKey:
+                        editableLinkEnabled = event.event().shiftKey();
+                        break;
+                }
+            }
+            
+            if ((event.isOverLink() || isSubmitImage(node)) && (!editable || editableLinkEnabled))
                 return handCursor();
             RenderLayer* layer = renderer ? renderer->enclosingLayer() : 0;
             bool inResizer = false;

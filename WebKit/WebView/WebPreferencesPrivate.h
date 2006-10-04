@@ -42,6 +42,14 @@
 
 #endif
 
+
+typedef enum {
+    WebKitEditableLinkDefaultBehavior = 0,
+    WebKitEditableLinkAlwaysLive,
+    WebKitEditableLinkOnlyLiveWithShiftKey,
+    WebKitEditableLinkLiveWhenNotFocused
+} WebKitEditableLinkBehavior;
+
 @interface WebPreferences (WebPrivate)
 
 // Preferences that might be public in a future release
@@ -60,6 +68,9 @@
 // zero means do AutoScale
 - (float)PDFScaleFactor;
 - (void)setPDFScaleFactor:(float)scale;
+
+- (WebKitEditableLinkBehavior)editableLinkBehavior;
+- (void)setEditableLinkBehavior:(WebKitEditableLinkBehavior)behavior;
 
 // Other private methods
 - (size_t)_pageCacheSize;

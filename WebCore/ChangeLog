@@ -1,3 +1,40 @@
+2006-10-03  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Timothy.
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=10338>
+        When contentEditable, cursor doesn't change to hand
+        
+        Allow the behaviour of editable links to be specified by a WebPreference
+        The preference WebKitEditableLinkBehavior has four options:
+         - AlwaysLive: Safari 2.0 behaviour
+         - OnlyLiveWithShiftKey: Firefox/WinIE behaviour (and prior WebKit-ToT behaviour)
+         - LiveWhenNotFocused: Editable links are live only when their editable block is not
+             focused, or when the shift key is pressed
+         - DefaultBehavior: This is the same as OnlyLiveWithShiftKey.
+         
+        No layout tests, just a modification of a manual-test as it isn't possible to test
+        this automatically.
+
+        * bridge/mac/WebCoreSettings.h:
+        * bridge/mac/WebCoreSettings.mm:
+        (-[WebCoreSettings setEditableLinkBehavior:]):
+        (-[WebCoreSettings editableLinkBehavior]):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement):
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::setActive):
+        * html/HTMLAnchorElement.h:
+        * manual-tests/contenteditable-link.html:
+        * page/FrameView.cpp:
+        (WebCore::nodeIsNotBeingEdited):
+        (WebCore::selectCursor):
+        * page/Settings.h:
+        (WebCore::Settings::):
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::editableLinkBehavior):
+        (WebCore::Settings::setEditableLinkBehavior):
+
 2006-10-03  Beth Dakin  <bdakin@apple.com>
 
         Reviewed Darin.

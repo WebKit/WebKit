@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -231,6 +232,8 @@ NS_ENDHANDLER
         [NSNumber numberWithBool:NO],   WebKitShowsURLsInToolTipsPreferenceKey,
         @"1",                           WebKitPDFDisplayModePreferenceKey,
         @"0",                           WebKitPDFScaleFactorPreferenceKey,
+        [NSNumber numberWithInt:WebKitEditableLinkDefaultBehavior], 
+                                        WebKitEditableLinkBehaviorPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -656,6 +659,25 @@ NS_ENDHANDLER
 {
     [self _setIntegerValue:mode forKey:WebKitPDFDisplayModePreferenceKey];
 }
+
+- (WebKitEditableLinkBehavior)editableLinkBehavior
+{
+    WebKitEditableLinkBehavior value = [self _integerValueForKey:WebKitEditableLinkBehaviorPreferenceKey];
+    if (value != WebKitEditableLinkDefaultBehavior &&
+        value != WebKitEditableLinkAlwaysLive &&
+        value != WebKitEditableLinkOnlyLiveWithShiftKey &&
+        value != WebKitEditableLinkLiveWhenNotFocused) {
+        // ensure that a valid result is returned
+        value = WebKitEditableLinkDefaultBehavior;
+    }
+    return value;
+}
+
+- (void)setEditableLinkBehavior:(WebKitEditableLinkBehavior)behavior
+{
+    [self _setIntegerValue:behavior forKey:WebKitEditableLinkBehaviorPreferenceKey];
+}
+
 
 static NSMutableDictionary *webPreferencesInstances = nil;
 

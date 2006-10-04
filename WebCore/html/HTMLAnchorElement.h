@@ -94,6 +94,9 @@ public:
     String protocol() const;
     String search() const;
     String text() const;
+    
+private:
+    Element *m_rootEditableElementForSelectionOnMouseDown;
 };
 
 } //namespace
