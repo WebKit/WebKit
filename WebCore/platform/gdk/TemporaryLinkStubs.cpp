@@ -259,6 +259,7 @@ void ScrollView::updateScrollBars() { }
 int ScrollView::updateScrollInfo(short type, int current, int max, int pageSize) { return 0; }
 IntPoint ScrollView::windowToContents(const IntPoint& point) const { return point; }
 IntPoint ScrollView::contentsToWindow(const IntPoint& point) const { return point; }
+PlatformScrollBar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent) { return 0; }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
         const IntSize& bottomLeft, const IntSize& bottomRight) { notImplemented(); }
