@@ -1,3 +1,13 @@
+2006-10-03  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Darin.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11099
+        HttpSendRequestEx results in ERROR_HTTP_HEADER_NOT_FOUND
+
+        * platform/win/ResourceLoaderWin.cpp:
+        (WebCore::ResourceLoader::onHandleCreated):
+
 2006-10-02  Geoffrey Garen  <ggaren@apple.com>
 
         Feared, loathed, reviewed by Darin.

@@ -167,11 +167,12 @@ void ResourceLoader::onHandleCreated(LPARAM lParam)
         headers += "Referer: ";
         headers += d->m_postReferrer;
         headers += "\n";
+        const CString& headersLatin1 = headers.latin1();
         String formData = postData().flattenToString();
         INTERNET_BUFFERSA buffers;
         memset(&buffers, 0, sizeof(buffers));
         buffers.dwStructSize = sizeof(INTERNET_BUFFERSA);
-        buffers.lpcszHeader = headers.latin1();
+        buffers.lpcszHeader = headersLatin1;
         buffers.dwHeadersLength = headers.length();
         buffers.dwBufferTotal = formData.length();
         
@@ -181,6 +182,7 @@ void ResourceLoader::onHandleCreated(LPARAM lParam)
         strncpy(d->m_formDataString, formData.latin1(), formData.length());
         d->m_writing = true;
         HttpSendRequestExA(d->m_secondaryHandle, &buffers, 0, 0, (DWORD_PTR)d->m_jobId);
+        // FIXME: add proper error handling
     }
 }
 
