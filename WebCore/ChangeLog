@@ -1,3 +1,12 @@
+2006-10-05  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11067
+          manual-tests/scrollbar-hittest2.html is invalid
+
+        * manual-tests/scrollbar-hittest2.html:
+
 2006-10-05  David Carson  <dacarson@gmail.com>
 
         Reviewed by Darin.
