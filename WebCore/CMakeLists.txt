@@ -1087,7 +1087,6 @@ set(WebCore_SRCS
     rendering/RenderLayer.cpp
     rendering/RenderTableCell.cpp
     rendering/RenderListItem.cpp
-    rendering/RenderImageButton.cpp
     rendering/AutoTableLayout.cpp
     rendering/RenderArena.cpp
     rendering/RenderWidget.cpp

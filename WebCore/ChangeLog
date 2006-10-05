@@ -1,3 +1,16 @@
+2006-10-05  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=10386
+          Delete RenderImageButton.* and remove references from .vcproj and .bkl files
+
+        * CMakeLists.txt:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCoreSources.bkl:
+        * rendering/RenderImageButton.cpp: Removed.
+        * rendering/RenderImageButton.h: Removed.
+
 2006-10-05  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

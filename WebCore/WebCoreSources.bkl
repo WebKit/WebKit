@@ -447,7 +447,6 @@
 		rendering/RenderFrameSet.cpp
 		rendering/RenderHTMLCanvas.cpp
 		rendering/RenderImage.cpp
-		rendering/RenderImageButton.cpp
 		rendering/RenderInline.cpp
 		rendering/RenderLabel.cpp
 		rendering/RenderLayer.cpp

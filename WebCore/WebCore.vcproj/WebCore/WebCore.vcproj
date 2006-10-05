@@ -3091,14 +3091,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderImageButton.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderImageButton.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\RenderInline.cpp"
 				>
 			</File>
