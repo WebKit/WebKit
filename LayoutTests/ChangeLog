@@ -1,3 +1,35 @@
+2006-10-05  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11054
+        REGRESSION: Traditional Chinese encoding in login authentication
+
+        Each of these tests is passed by Firefox 1.5 and/or WinIE 6.
+
+        * fast/encoding/GBK/EUC-CN-expected.txt: Added.
+        * fast/encoding/GBK/EUC-CN.html: Added.
+        * fast/encoding/GBK/chinese-expected.txt: Added.
+        * fast/encoding/GBK/chinese.html: Added.
+        * fast/encoding/GBK/cn-gb-expected.txt: Added.
+        * fast/encoding/GBK/cn-gb.html: Added.
+        * fast/encoding/GBK/csgb2312-expected.txt: Added.
+        * fast/encoding/GBK/csgb2312.html: Added.
+        * fast/encoding/GBK/csgb231280-expected.txt: Added.
+        * fast/encoding/GBK/csgb231280.html: Added.
+        * fast/encoding/GBK/gb2312-expected.txt: Added.
+        * fast/encoding/GBK/gb2312.html: Added.
+        * fast/encoding/GBK/gb_2312-80-expected.txt: Added.
+        * fast/encoding/GBK/gb_2312-80.html: Added.
+        * fast/encoding/GBK/gbk-expected.txt: Added.
+        * fast/encoding/GBK/gbk.html: Added.
+        * fast/encoding/GBK/iso-ir-58-expected.txt: Added.
+        * fast/encoding/GBK/iso-ir-58.html: Added.
+        * fast/encoding/GBK/x-euc-cn-expected.txt: Added.
+        * fast/encoding/GBK/x-euc-cn.html: Added.
+        * fast/encoding/GBK/x-gbk-expected.txt: Added.
+        * fast/encoding/GBK/x-gbk.html: Added.
+
 2006-10-04  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

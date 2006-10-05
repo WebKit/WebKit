@@ -63,7 +63,13 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
         if (!U_SUCCESS(error) || !standardName)
             continue;
 
-        registrar(standardName, standardName);
+        // 1. Treat GB2312 encoding as GBK (its more modern superset), to match other browsers.
+        // 2. On the Web, GB2312 is encoded as EUC-CN or HZ, while ICU provides a native encoding
+        //    for encoding GB_2312-80 and several others. So, we need to override this behavior, too.
+        if (strcmp(standardName, "GB2312") == 0 || strcmp(standardName, "GB_2312-80") == 0)
+            standardName = "GBK";
+        else
+            registrar(standardName, standardName);
 
         uint16_t numAliases = ucnv_countAliases(name, &error);
         ASSERT(U_SUCCESS(error));

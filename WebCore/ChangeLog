@@ -1,3 +1,17 @@
+2006-10-05  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11054
+        REGRESSION: Traditional Chinese encoding in login authentication
+
+        1. Treat GB2312 encoding as GBK (its more modern superset), to match other browsers.
+        2. On the Web, GB2312 is encoded as EUC-CN or HZ, while ICU provides a native encoding
+        for encoding GB_2312-80 and several others. So, we need to override this behavior, too.
+
+        * platform/StreamingTextDecoderICU.cpp:
+        (WebCore::TextCodecICU::registerEncodingNames):
+
 2006-10-05  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by mjs.
