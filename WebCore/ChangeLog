@@ -1,3 +1,12 @@
+2006-10-05  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Maciej.
+
+        Small ResourceLoaderInternal tweak.
+
+        * platform/ResourceLoaderInternal.h:
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+
 2006-10-05  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by mjs.
