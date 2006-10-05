@@ -118,7 +118,7 @@ void RenderButton::paintObject(PaintInfo& i, int _tx, int _ty)
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;
         i.p->save();
-        i.p->addClip(clipRect);
+        i.p->clip(clipRect);
     }
     
     // Paint the children.

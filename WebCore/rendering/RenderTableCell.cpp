@@ -733,7 +733,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& i, int _tx, int _ty,
             IntRect clipRect(_tx + borderLeft(), _ty + borderTop(),
                 w - borderLeft() - borderRight(), h - borderTop() - borderBottom());
             i.p->save();
-            i.p->addClip(clipRect);
+            i.p->clip(clipRect);
         }
         paintBackground(i.p, c, bgLayer, my, mh, _tx, _ty, w, h);
         if (hasLayer && tableElt->collapseBorders())

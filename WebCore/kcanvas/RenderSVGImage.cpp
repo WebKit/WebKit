@@ -160,7 +160,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     float opacity = style()->opacity();
     if (opacity < 1.0f) {
-        c->addClip(enclosingIntRect(boundingBox));
+        c->clip(enclosingIntRect(boundingBox));
         c->beginTransparencyLayer(opacity);
     }
 

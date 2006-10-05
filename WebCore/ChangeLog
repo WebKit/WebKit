@@ -1,3 +1,62 @@
+2006-10-05  David Hyatt  <hyatt@apple.com>
+
+        Rename addClip to clip.
+
+        Reviewed by darin
+
+        * kcanvas/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::paint):
+        * kcanvas/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * platform/GraphicsContext.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clip):
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::concatCTM):
+        * platform/cg/GraphicsContextPlatformPrivate.h:
+        (WebCore::GraphicsContextPlatformPrivate::save):
+        (WebCore::GraphicsContextPlatformPrivate::restore):
+        (WebCore::GraphicsContextPlatformPrivate::clip):
+        (WebCore::GraphicsContextPlatformPrivate::scale):
+        (WebCore::GraphicsContextPlatformPrivate::rotate):
+        (WebCore::GraphicsContextPlatformPrivate::translate):
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM):
+        * platform/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBackground):
+        (WebCore::InlineFlowBox::paintBackgroundAndBorder):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::paintObject):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::setClip):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintObject):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::paintObject):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+
 2006-10-05  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

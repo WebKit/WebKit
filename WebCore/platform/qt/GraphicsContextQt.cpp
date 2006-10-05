@@ -455,7 +455,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& c)
     m_data->p().fillRect(rect, QColor(c));
 }
 
-void GraphicsContext::addClip(const IntRect& rect)
+void GraphicsContext::clip(const IntRect& rect)
 {
     if (paintingDisabled())
         return;
@@ -685,7 +685,7 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect,
     if (paintingDisabled())
         return;
 
-    addClip(rect);
+    clip(rect);
     QPainterPath path;
 
     // Add outer ellipse
@@ -717,7 +717,7 @@ void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& top
         return;
 
     // Clip to our rect.
-    addClip(rect);
+    clip(rect);
 
     // OK, the curves can fit.
     QPainterPath path;

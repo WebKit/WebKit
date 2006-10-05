@@ -112,7 +112,7 @@ namespace WebCore {
             Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
             CompositeOperator = CompositeSourceOver);
 
-        void addClip(const IntRect&);
+        void clip(const IntRect&);
         void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
         void addInnerRoundedRectClip(const IntRect&, int thickness);
 

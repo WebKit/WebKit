@@ -164,7 +164,7 @@ void RenderMenuList::paintObject(PaintInfo& i, int x, int y)
         if (clipRect.isEmpty())
             return;
         i.p->save();
-        i.p->addClip(clipRect);
+        i.p->clip(clipRect);
     }
 
     // Paint the children.

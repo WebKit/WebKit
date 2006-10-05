@@ -166,7 +166,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     
     if (!viewport().isEmpty()) {
         if (style()->overflowX() != OVISIBLE)
-            paintInfo.p->addClip(enclosingIntRect(viewport())); // FIXME: Eventually we'll want float-precision clipping
+            paintInfo.p->clip(enclosingIntRect(viewport())); // FIXME: Eventually we'll want float-precision clipping
         deviceContext->concatCTM(AffineTransform().translate(viewport().x(), viewport().y()));
     }
     
@@ -183,7 +183,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     float opacity = style()->opacity();
     if (opacity < 1.0f) {
-        paintInfo.p->addClip(enclosingIntRect(strokeBBox));
+        paintInfo.p->clip(enclosingIntRect(strokeBBox));
         paintInfo.p->beginTransparencyLayer(opacity);
     }
 

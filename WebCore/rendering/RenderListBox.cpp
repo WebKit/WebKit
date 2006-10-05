@@ -208,7 +208,7 @@ void RenderListBox::paintObject(PaintInfo& i, int tx, int ty)
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;
         i.p->save();
-        i.p->addClip(clipRect);
+        i.p->clip(clipRect);
     }
     
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
