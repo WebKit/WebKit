@@ -1,3 +1,28 @@
+2006-10-05  Marvin Decker  <marv.decker@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10989
+        Provide a way for embedders to implement BrowserExtensionWin
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/BrowserExtensionWin.cpp: Added.
+        (BrowserExtensionWin::BrowserExtensionWin):
+        (BrowserExtensionWin::setTypedIconURL):
+        (BrowserExtensionWin::setIconURL):
+        (BrowserExtensionWin::getHistoryLength):
+        (BrowserExtensionWin::canRunModal):
+        (BrowserExtensionWin::createNewWindow):
+        (BrowserExtensionWin::canRunModalNow):
+        (BrowserExtensionWin::runModal):
+        (BrowserExtensionWin::goBackOrForward):
+        (BrowserExtensionWin::historyURL):
+        * bridge/win/BrowserExtensionWin.h:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::createNewWindow):
+        * bridge/win/FrameWin.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+
 2006-10-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

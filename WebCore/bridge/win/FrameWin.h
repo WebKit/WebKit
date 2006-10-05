@@ -33,6 +33,10 @@ namespace WebCore {
 class FrameWinClient
 {
 public:
+    virtual void createNewWindow(const ResourceRequest&) = 0;
+    virtual void createNewWindow(const ResourceRequest&,
+                                 const WindowArgs&,
+                                 Frame*& part) = 0;
     virtual void openURL(const DeprecatedString&, bool lockHistory) = 0;
     virtual void submitForm(const String& method, const KURL&, const FormData*) = 0;
     virtual void setTitle(const String& title) = 0;
@@ -45,6 +49,8 @@ public:
     FrameWin(Page*, Element*, FrameWinClient*);
     ~FrameWin();
 
+    virtual void createNewWindow(const ResourceRequest&);
+    virtual void createNewWindow(const ResourceRequest&, const WindowArgs&, Frame*& part);
     virtual bool openURL(const KURL&);
     virtual void openURLRequest(const ResourceRequest&);
     virtual void submitForm(const ResourceRequest&);

@@ -3942,6 +3942,10 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\..\bridge\win\BrowserExtensionWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\bridge\win\BrowserExtensionWin.h"
 					>
 				</File>

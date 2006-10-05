@@ -1,3 +1,15 @@
+2006-10-05  Marvin Decker  <marv.decker@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10989
+        Provide a way for embedders to implement BrowserExtensionWin
+
+        * COM/Interfaces/IWebUIDelegate.idl:
+        * COM/WebFrame.cpp:
+        (WebFrame::createNewWindow):
+        * COM/WebFrame.h:
+
 2006-10-04  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by NOBODY (build fix).

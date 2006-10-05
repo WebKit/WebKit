@@ -189,7 +189,7 @@ interface IWebUIDelegate : IUnknown
         @result The WebView for the new window.
         - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request;
     */
-    HRESULT createWebViewWithRequest([in] IWebView* sender, [in] IWebURLRequest* request, [out, retval] IWebView* newWebView);
+    HRESULT createWebViewWithRequest([in] IWebView* sender, [in] IWebURLRequest* request, [out, retval] IWebView** newWebView);
 
     /*!
         @method webViewShow:

@@ -137,6 +137,10 @@ public:
     virtual void receivedAllData(WebCore::ResourceLoader*, WebCore::PlatformData);
 
     // FrameWinClient
+    virtual void createNewWindow(const WebCore::ResourceRequest&);
+    virtual void createNewWindow(const WebCore::ResourceRequest&,
+                                 const WebCore::WindowArgs&,
+                                 WebCore::Frame*& part);
     virtual void openURL(const WebCore::DeprecatedString&, bool lockHistory);
     virtual void submitForm(const WebCore::String& method, const WebCore::KURL&, const WebCore::FormData*);
     virtual void setTitle(const WebCore::String& title);

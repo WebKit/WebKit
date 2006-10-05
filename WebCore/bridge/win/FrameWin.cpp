@@ -150,5 +150,16 @@ void FrameWin::setStatusBarText(const String& status)
     m_client->setStatusText(text);
 }
 
+void FrameWin::createNewWindow(const ResourceRequest& request)
+{
+    m_client->createNewWindow(request);
+}
+
+void FrameWin::createNewWindow(const ResourceRequest& request,
+                               const WindowArgs& args,
+                               Frame*& part)
+{
+    m_client->createNewWindow(request, args, part);
+}
 
 }

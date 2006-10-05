@@ -58,7 +58,6 @@
 #include "PlugInInfoStore.h"
 #include "RenderTheme.h"
 #include "FrameWin.h"
-#include "BrowserExtensionWin.h"
 #include "ResourceLoader.h"
 #include "RenderThemeWin.h"
 #include "TextBoundaries.h"
@@ -193,14 +192,6 @@ void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 KURL FrameWin::originalRequestURL() const { return KURL(); }
 bool FrameWin::isLoadTypeReload() { notImplemented(); return false; }
 
-bool BrowserExtensionWin::canRunModal() { notImplemented(); return 0; }
-void BrowserExtensionWin::createNewWindow(struct WebCore::ResourceRequest const&,struct WebCore::WindowArgs const&,Frame*&) { notImplemented(); }
-bool BrowserExtensionWin::canRunModalNow() { notImplemented(); return 0; }
-void BrowserExtensionWin::runModal() { notImplemented(); }
-void BrowserExtensionWin::goBackOrForward(int) { notImplemented(); }
-KURL BrowserExtensionWin::historyURL(int distance) { notImplemented(); return KURL(); }
-void BrowserExtensionWin::createNewWindow(struct WebCore::ResourceRequest const&) { notImplemented(); }
-
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
     const IntSize& bottomLeft, const IntSize& bottomRight) { notImplemented(); }
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness) { notImplemented(); }
@@ -255,11 +246,6 @@ void FrameWin::respondToChangedContents(const Selection&) { }
 void FrameWin::handledOnloadEvents() { }
 Plugin* FrameWin::createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&) { return 0; }
 ObjectContentType FrameWin::objectContentType(const KURL&, const String&) { return ObjectContentNone; }
-
-BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
-void BrowserExtensionWin::setTypedIconURL(KURL const&, const String&) { }
-void BrowserExtensionWin::setIconURL(KURL const&) { }
-int BrowserExtensionWin::getHistoryLength() { return 0; }
 
 namespace WebCore {
 

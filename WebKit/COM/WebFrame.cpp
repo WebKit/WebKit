@@ -554,6 +554,35 @@ void WebFrame::receivedAllData(ResourceLoader* job, PlatformData data)
 
 // FrameWinClient
 
+void WebFrame::createNewWindow(const WebCore::ResourceRequest&)
+{
+    // FIXME: This seems to never get called. Is it necessary?
+    IWebUIDelegate* uiDelegate = NULL;
+    if (FAILED(d->webView->uiDelegate(&uiDelegate)) || !uiDelegate)
+        return;
+    IWebView* new_view = NULL;
+    uiDelegate->createWebViewWithRequest(d->webView, NULL, &new_view);
+}
+
+void WebFrame::createNewWindow(const WebCore::ResourceRequest&,
+                               const WebCore::WindowArgs&,
+                               WebCore::Frame*& part)
+{
+    IWebUIDelegate* uiDelegate = NULL;
+    if (FAILED(d->webView->uiDelegate(&uiDelegate)) || !uiDelegate)
+        return;
+    IWebView* new_view = NULL;
+    if (FAILED(uiDelegate->createWebViewWithRequest(d->webView, NULL, &new_view)) || !new_view)
+        return;
+
+    IWebFrame* new_iwebframe = NULL;
+    if (FAILED(new_view->mainFrame(&new_iwebframe)) || !new_iwebframe)
+      return;
+
+    WebFrame* new_frame = static_cast<WebFrame*>(new_iwebframe);
+    part = new_frame->d->frame.get();
+}
+
 void WebFrame::openURL(const DeprecatedString& url, bool lockHistory)
 {
     DeprecatedString terminatedURL(url);

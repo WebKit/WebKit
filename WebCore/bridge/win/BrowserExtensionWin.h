@@ -28,11 +28,11 @@
 namespace WebCore {
 
 class Frame;
-class WinFrame;
+class FrameWin;
 
 class BrowserExtensionWin : public BrowserExtension {
 public:
-    BrowserExtensionWin(Frame*);
+    BrowserExtensionWin(FrameWin*);
  
     virtual void createNewWindow(const ResourceRequest&);
     virtual void createNewWindow(const ResourceRequest&,
@@ -51,7 +51,7 @@ public:
     virtual void runModal();
     
 private:
-     WinFrame *m_frame;
+     FrameWin *m_frame;
 };
 
 }
