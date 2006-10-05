@@ -1,3 +1,15 @@
+2006-10-05  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11138
+        Incorrect mouse event generation on Windows
+
+        * platform/win/MouseEventWin.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        (1) Set mouse button even for non-click-related messages.
+        (2) Track clicks correctly for all buttons, not just the left button.
+
 2006-10-05  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by ap.

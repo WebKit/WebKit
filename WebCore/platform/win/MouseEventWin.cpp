@@ -34,6 +34,7 @@ const PlatformMouseEvent::CurrentEventTag PlatformMouseEvent::currentEvent = {};
 #define HIGH_BIT_MASK_SHORT 0x8000
 
 static int globalClickCount = 0;
+static enum MouseButton globalPrevClickButton = LeftButton;
 static DWORD globalPrevClickTime = 0;
 static IntPoint globalPrevClickPosition = IntPoint();
 
@@ -53,7 +54,6 @@ static IntPoint globalPositionForEvent(HWND hWnd, LPARAM lParam)
 PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     : m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
-    , m_clickCount(0)
     , m_shiftKey(wParam & MK_SHIFT)
     , m_ctrlKey(wParam & MK_CONTROL)
     , m_altKey(GetAsyncKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
@@ -75,20 +75,45 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_MBUTTONDBLCLK:
             m_button = MiddleButton;
             break;
+        default:
+            if (wParam & MK_LBUTTON)
+                m_button = LeftButton;
+            else if (wParam & MK_RBUTTON)
+                m_button = RightButton;
+            else if (wParam & MK_MBUTTON)
+                m_button = MiddleButton;
+            else
+                m_button = LeftButton;
+            break;
     }
 
-    if (m_button == LeftButton) {
-        DWORD curTime = GetTickCount();
-        if (curTime - globalPrevClickTime > GetDoubleClickTime() 
-            || globalPrevClickPosition != m_position)
-            globalClickCount = 1;
-        else 
-            globalClickCount++;
-
-        globalPrevClickTime = curTime;
-        globalPrevClickPosition = m_position;
-        m_clickCount = globalClickCount;
+    switch (message) {
+        case WM_LBUTTONDOWN:
+        case WM_MBUTTONDOWN:
+        case WM_RBUTTONDOWN:
+            if (globalPrevClickButton != m_button)
+                globalClickCount = 0;
+            // FALL THROUGH
+        case WM_LBUTTONDBLCLK:  // For these messages, the OS ensures that the
+        case WM_MBUTTONDBLCLK:  // previous BUTTONDOWN was for the same button.
+        case WM_RBUTTONDBLCLK:
+            {
+                DWORD curTime = GetTickCount();
+                if (curTime - globalPrevClickTime > GetDoubleClickTime() ||
+                    m_position != globalPrevClickPosition)
+                    globalClickCount = 0;
+                globalPrevClickTime = curTime;
+            }
+            globalPrevClickButton = m_button;
+            globalPrevClickPosition = m_position;
+            m_clickCount = ++globalClickCount;
+            return;
     }
+
+    m_clickCount = (m_button == globalPrevClickButton) ? globalClickCount :
+        ((message == WM_LBUTTONUP || message == WM_MBUTTONUP ||
+          message == WM_RBUTTONUP) ? 1 : 0);
+    return;
 }
 
 } // namespace WebCore
