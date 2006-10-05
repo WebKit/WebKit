@@ -26,7 +26,7 @@
 #ifndef ScrollView_H
 #define ScrollView_H
 
-#include "ScrollBarMode.h"
+#include "ScrollbarMode.h"
 #include "ScrollBar.h"
 #include "Widget.h"
 #include <wtf/Platform.h>
@@ -38,7 +38,7 @@ class QScrollArea;
 namespace WebCore {
     class FloatRect;
     class PlatformWheelEvent;
-    class PlatformScrollBar;
+    class PlatformScrollbar;
 
     class ScrollView : public Widget {
     public:
@@ -55,17 +55,17 @@ namespace WebCore {
 
         virtual void setContentsPos(int x, int y);
 
-        virtual void setVScrollBarMode(ScrollBarMode);
-        virtual void setHScrollBarMode(ScrollBarMode);
+        virtual void setVScrollbarMode(ScrollbarMode);
+        virtual void setHScrollbarMode(ScrollbarMode);
 
-        // Set the mode for both scroll bars at once.
-        virtual void setScrollBarsMode(ScrollBarMode);
+        // Set the mode for both scrollbars at once.
+        virtual void setScrollbarsMode(ScrollbarMode);
 
         // This gives us a means of blocking painting on our scrollbars until the first layout has occurred.
-        void suppressScrollBars(bool suppressed, bool repaintOnUnsuppress = false);
+        void suppressScrollbars(bool suppressed, bool repaintOnUnsuppress = false);
         
-        ScrollBarMode vScrollBarMode() const;
-        ScrollBarMode hScrollBarMode() const;
+        ScrollbarMode vScrollbarMode() const;
+        ScrollbarMode hScrollbarMode() const;
 
         void addChild(Widget*, int x = 0, int y = 0);
         void removeChild(Widget*);
@@ -84,7 +84,7 @@ namespace WebCore {
         bool inWindow() const;
 
         // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
-        PlatformScrollBar* scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent);
+        PlatformScrollbar* scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent);
 
         // This method exists for scrollviews that need to handle wheel events manually.
         // On Mac the underlying NSScrollView just does the scrolling, but on other platforms
@@ -110,7 +110,7 @@ namespace WebCore {
         virtual void scrolled() const;
 
     private:
-        void updateScrollBars(const IntSize& desiredOffset);
+        void updateScrollbars(const IntSize& desiredOffset);
         IntSize maximumScroll() const;
         class ScrollViewPrivate;
         ScrollViewPrivate* m_data;
@@ -123,7 +123,7 @@ namespace WebCore {
         ScrollView();
         ~ScrollView();
     private:
-        void updateScrollBars();
+        void updateScrollbars();
         IntSize maximumScroll() const;
         int updateScrollInfo(short type, int current, int max, int pageSize);
         class ScrollViewPrivate;

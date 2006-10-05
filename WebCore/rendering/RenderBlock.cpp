@@ -2508,7 +2508,7 @@ bool RenderBlock::isPointInScrollbar(NodeInfo& info, int _x, int _y, int _tx, in
                         width() - borderLeft() - borderRight() - m_layer->verticalScrollbarWidth(),
                         m_layer->horizontalScrollbarHeight());
         if (horizRect.contains(_x, _y)) {
-            info.setScrollbar(m_layer->horizontalScrollbarWidget());
+            info.setScrollbar(m_layer->horizontaScrollbarWidget());
             return true;
         }
     }

@@ -126,8 +126,6 @@ m_scrollOriginX(0),
 m_scrollLeftOverflow(0),
 m_scrollWidth(0),
 m_scrollHeight(0),
-m_hBar(0),
-m_vBar(0),
 m_inResizeMode(false),
 m_resizeCornerImage(0),
 m_posZOrderList(0),
@@ -148,10 +146,12 @@ m_marquee(0)
 
 RenderLayer::~RenderLayer()
 {
+    destroyScrollbar(HorizontalScrollbar);
+    destroyScrollbar(VerticalScrollbar);
+
     // Child layers will be deleted by their corresponding render objects, so
-    // our destructor doesn't have to do anything.
-    delete m_hBar;
-    delete m_vBar;
+    // we don't need to delete them ourselves.
+
     delete m_resizeCornerImage;
     delete m_posZOrderList;
     delete m_negZOrderList;
@@ -603,7 +603,7 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     
     RenderView* view = renderer()->view();
     if (view) {
-#if __APPLE__
+#if PLATFORM(MAC)
         // Update dashboard regions, scrolling may change the clip of a
         // particular region.
         view->frameView()->updateDashboardRegions();
@@ -847,23 +847,23 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& offsetFro
     }
 }
 
-PlatformScrollBar* RenderLayer::horizontalScrollbarWidget() const
+PlatformScrollbar* RenderLayer::horizontaScrollbarWidget() const
 {
     if (m_hBar && m_hBar->isWidget())
-        return static_cast<PlatformScrollBar*>(m_hBar);
+        return static_cast<PlatformScrollbar*>(m_hBar.get());
     return 0;
 }
 
-PlatformScrollBar* RenderLayer::verticalScrollbarWidget() const
+PlatformScrollbar* RenderLayer::verticalScrollbarWidget() const
 {
     if (m_vBar && m_vBar->isWidget())
-        return static_cast<PlatformScrollBar*>(m_vBar);
+        return static_cast<PlatformScrollbar*>(m_vBar.get());
     return 0;
 }
 
-void RenderLayer::valueChanged(ScrollBar*)
+void RenderLayer::valueChanged(Scrollbar*)
 {
-    // Update scroll position from scroll bars.
+    // Update scroll position from scrollbars.
 
     bool needUpdate = false;
     int newX = scrollXOffset();
@@ -885,37 +885,32 @@ void RenderLayer::valueChanged(ScrollBar*)
         scrollToOffset(newX, newY, false);
 }
 
-ScrollBar* RenderLayer::createScrollbar(ScrollBarOrientation orientation)
+PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
 {
-    if (ScrollBar::hasPlatformScrollBars()) {
-        PlatformScrollBar* widget = new PlatformScrollBar(this, orientation, RegularScrollBar);
-        widget->ref();
-        m_object->element()->document()->view()->addChild(widget);
-        return widget;
+    if (Scrollbar::hasPlatformScrollbars()) {
+        RefPtr<PlatformScrollbar> widget = new PlatformScrollbar(this, orientation, RegularScrollbar);
+        m_object->element()->document()->view()->addChild(widget.get());
+        return widget.release();
     }
     
     // FIXME: Create scrollbars using the engine.
     return 0;
 }
 
-void RenderLayer::destroyScrollbar(ScrollBarOrientation orientation)
+void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
 {
-    if (orientation == HorizontalScrollBar) {
-        if (m_hBar->isWidget()) {
-            m_object->element()->document()->view()->removeChild(horizontalScrollbarWidget());
-            m_hBar->deref();
-            m_hBar = 0;
+    RefPtr<Scrollbar>& scrollbar = orientation == HorizontalScrollbar ? m_hBar : m_vBar;
+
+    if (scrollbar) {
+        if (scrollbar->isWidget()) {
+            PlatformScrollbar* scrollbarWidget = static_cast<PlatformScrollbar*>(scrollbar.get());
+            if (scrollbarWidget->parent()->isFrameView())
+                static_cast<FrameView*>(scrollbarWidget->parent())->removeChild(scrollbarWidget);
+            scrollbarWidget->setParent(0);
         }
-        
         // FIXME: Destroy the engine scrollbar.
-    } else {
-        if (m_vBar->isWidget()) {
-            m_object->element()->document()->view()->removeChild(verticalScrollbarWidget());
-            m_vBar->deref();
-            m_vBar = 0;
-        }
-        
-        // FIXME: Destroy the engine scrollbar.
+
+        scrollbar = 0;
     }
 }
 
@@ -925,11 +920,11 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
         return;
 
     if (hasScrollbar)
-        m_hBar = createScrollbar(HorizontalScrollBar);
+        m_hBar = createScrollbar(HorizontalScrollbar);
     else
-        destroyScrollbar(HorizontalScrollBar);
+        destroyScrollbar(HorizontalScrollbar);
 
-#if __APPLE__
+#if PLATFORM(MAC)
     // Force an update since we know the scrollbars have changed things.
     if (m_object->document()->hasDashboardRegions())
         m_object->document()->setDashboardRegionsDirty(true);
@@ -942,12 +937,12 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
     if (hasScrollbar == (m_vBar != 0))
         return;
 
-    if (hasScrollbar) {
-        m_vBar = createScrollbar(VerticalScrollBar);
-    } else
-        destroyScrollbar(VerticalScrollBar);
+    if (hasScrollbar)
+        m_vBar = createScrollbar(VerticalScrollbar);
+    else
+        destroyScrollbar(VerticalScrollbar);
 
-#if __APPLE__
+#if PLATFORM(MAC)
     // Force an update since we know the scrollbars have changed things.
     if (m_object->document()->hasDashboardRegions())
         m_object->document()->setDashboardRegionsDirty(true);
@@ -955,21 +950,17 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 
 }
 
-int
-RenderLayer::verticalScrollbarWidth()
+int RenderLayer::verticalScrollbarWidth() const
 {
     if (!m_vBar)
         return 0;
-
     return m_vBar->width();
 }
 
-int
-RenderLayer::horizontalScrollbarHeight()
+int RenderLayer::horizontalScrollbarHeight() const
 {
     if (!m_hBar)
         return 0;
-
     return m_hBar->height();
 }
 
@@ -1126,7 +1117,7 @@ RenderLayer::updateScrollInfoAfterLayout()
         if (m_object->hasAutoVerticalScrollbar())
             setHasVerticalScrollbar(verticalOverflow);
 
-#if __APPLE__
+#if PLATFORM(MAC)
         // Force an update since we know the scrollbars have changed things.
         if (m_object->document()->hasDashboardRegions())
             m_object->document()->setDashboardRegionsDirty(true);

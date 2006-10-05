@@ -640,7 +640,7 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
 
     wargs.dialog = true;
     wargs.resizable = boolFeature(features, "resizable");
-    wargs.scrollBarsVisible = boolFeature(features, "scroll", true);
+    wargs.scrollbarsVisible = boolFeature(features, "scroll", true);
     wargs.statusBarVisible = boolFeature(features, "status", !trusted);
     wargs.menuBarVisible = false;
     wargs.toolBarVisible = false;
@@ -1383,7 +1383,7 @@ static void setWindowFeature(const String& keyString, const String& valueString,
     else if (keyString == "fullscreen")
         windowArgs.fullscreen = value;
     else if (keyString == "scrollbars")
-        windowArgs.scrollBarsVisible = value;
+        windowArgs.scrollbarsVisible = value;
 }
 
 // Though isspace() considers \t and \v to be whitespace, Win IE doesn't.
@@ -1415,7 +1415,7 @@ static void parseWindowFeatures(const String& features, WindowArgs& windowArgs)
         windowArgs.statusBarVisible = true;
         windowArgs.toolBarVisible = true;
         windowArgs.locationBarVisible = true;
-        windowArgs.scrollBarsVisible = true;
+        windowArgs.scrollbarsVisible = true;
         windowArgs.resizable = true;
         
         return;
@@ -1425,7 +1425,7 @@ static void parseWindowFeatures(const String& features, WindowArgs& windowArgs)
     windowArgs.statusBarVisible = false;
     windowArgs.toolBarVisible = false;
     windowArgs.locationBarVisible = false;
-    windowArgs.scrollBarsVisible = false;
+    windowArgs.scrollbarsVisible = false;
     windowArgs.resizable = false;
     
     // Tread lightly in this code -- it was specifically designed to mimic Win IE's parsing behavior.

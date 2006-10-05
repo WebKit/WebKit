@@ -111,9 +111,9 @@ public:
     void setMarginWidth(int);
     void setMarginHeight(int);
 
-    virtual void setVScrollBarMode(ScrollBarMode);
-    virtual void setHScrollBarMode(ScrollBarMode);
-    virtual void setScrollBarsMode(ScrollBarMode);
+    virtual void setVScrollbarMode(ScrollbarMode);
+    virtual void setHScrollbarMode(ScrollbarMode);
+    virtual void setScrollbarsMode(ScrollbarMode);
     
     void print();
 
@@ -126,7 +126,7 @@ public:
     
     void addRepaintInfo(RenderObject*, const IntRect&);
 
-    void resetScrollBars();
+    void resetScrollbars();
 
     void clear();
 
@@ -145,7 +145,7 @@ public:
     bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame*);
     bool passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame*);
     bool passWheelEventToSubframe(PlatformWheelEvent&, Frame*);
-    bool passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollBar*);
+    bool passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar*);
 
     bool mousePressed();
     void setMousePressed(bool);
@@ -178,7 +178,7 @@ public:
     void scheduleHoverStateUpdate();
 
     void adjustViewSize();
-    void initScrollBars();
+    void initScrollbars();
     
     void setHasBorder(bool);
     bool hasBorder() const;
@@ -202,7 +202,7 @@ public:
 
 private:
     void cleared();
-    void scrollBarMoved();
+    void scrollbarMoved();
 
     void resetCursor();
     void invalidateClick();
@@ -233,7 +233,7 @@ private:
 
     Node *nodeUnderMouse() const;
 
-    void restoreScrollBar();
+    void restoreScrollbar();
 
     MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, const PlatformMouseEvent&);
 
@@ -242,7 +242,7 @@ private:
     bool dispatchDragEvent(const AtomicString& eventType, Node* target,
         const PlatformMouseEvent&, Clipboard*);
 
-    void applyOverflowToViewport(RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);
+    void applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, ScrollbarMode& vMode);
 
     virtual bool isFrameView() const;
 

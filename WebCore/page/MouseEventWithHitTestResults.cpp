@@ -35,7 +35,7 @@ static inline Element* targetElement(Node* node)
 }
 
 MouseEventWithHitTestResults::MouseEventWithHitTestResults(const PlatformMouseEvent& event,
-        PassRefPtr<Node> node, PlatformScrollBar* scrollbar, bool isOverLink)
+        PassRefPtr<Node> node, PlatformScrollbar* scrollbar, bool isOverLink)
     : m_event(event)
     , m_targetNode(node)
     , m_targetElement(targetElement(m_targetNode.get()))

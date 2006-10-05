@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollBar_h
-#define ScrollBar_h
+#ifndef Scrollbar_h
+#define Scrollbar_h
 
 #include "Shared.h"
 
@@ -32,7 +32,7 @@ namespace WebCore {
 
 class GraphicsContext;
 class IntRect;
-class ScrollBar;
+class Scrollbar;
 class PlatformMouseEvent;
 
 // These match the numbers we use over in WebKit (WebFrameView.m).
@@ -53,29 +53,29 @@ enum ScrollGranularity {
     ScrollByWheel
 };
 
-enum ScrollBarOrientation { HorizontalScrollBar, VerticalScrollBar };
+enum ScrollbarOrientation { HorizontalScrollbar, VerticalScrollbar };
 
-enum ScrollBarControlSize { RegularScrollBar, SmallScrollBar, MiniScrollBar };
+enum ScrollbarControlSize { RegularScrollbar, SmallScrollbar, MiniScrollbar };
 
-class ScrollBarClient {
+class ScrollbarClient {
 public:
-    virtual ~ScrollBarClient() {}
-    virtual void valueChanged(ScrollBar*) = 0;
+    virtual ~ScrollbarClient() {}
+    virtual void valueChanged(Scrollbar*) = 0;
 };
 
-class ScrollBar : public Shared<ScrollBar> {
+class Scrollbar : public Shared<Scrollbar> {
 protected:
-    ScrollBar(ScrollBarClient*, ScrollBarOrientation, ScrollBarControlSize);
+    Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 
 public:
-    virtual ~ScrollBar() {}
+    virtual ~Scrollbar() {}
 
     virtual bool isWidget() const = 0;
 
-    ScrollBarOrientation orientation() const { return m_orientation; }
+    ScrollbarOrientation orientation() const { return m_orientation; }
     int value() const { return m_currentPos; } 
     
-    ScrollBarControlSize controlSize() const { return m_controlSize; }
+    ScrollbarControlSize controlSize() const { return m_controlSize; }
 
     void setSteps(int lineStep, int pageStep);
     
@@ -90,7 +90,7 @@ public:
     virtual void setEnabled(bool) = 0;
     virtual void paint(GraphicsContext*, const IntRect& damageRect) = 0;
 
-    static bool hasPlatformScrollBars() {
+    static bool hasPlatformScrollbars() {
         // To use the platform's built-in scrollbars by default, return true.  We may
         // support styled engine scrollbars someday, and some platforms may wish to not
         // implement a platform scrollbar at all by default.  That's what this method is for.
@@ -107,11 +107,11 @@ protected:
     virtual void updateThumbPosition() = 0;
     virtual void updateThumbProportion() = 0;
 
-    ScrollBarClient* client() const { return m_client; }
+    ScrollbarClient* client() const { return m_client; }
 
-    ScrollBarClient* m_client;
-    ScrollBarOrientation m_orientation;
-    ScrollBarControlSize m_controlSize;
+    ScrollbarClient* m_client;
+    ScrollbarOrientation m_orientation;
+    ScrollbarControlSize m_controlSize;
     int m_visibleSize;
     int m_totalSize;
     int m_currentPos;

@@ -1,3 +1,100 @@
+2006-10-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+        
+        Fixed <rdar://problem/4766987>
+        
+        - renamed ScrollBar to Scrollbar and scroll bar to scrollbar in every case
+        except for file names.
+        
+        - fixed RenderLayer to properly tear down scrollbars, removing them from
+        their parents.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::showModalDialog):
+        (KJS::setWindowFeature):
+        (KJS::parseWindowFeatures):
+        * bridge/BrowserExtension.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setInPageCache):
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::init):
+        (WebCore::HTMLFrameElement::parseMappedAttribute):
+        * html/HTMLFrameElement.h:
+        (WebCore::HTMLFrameElement::scrollingMode):
+        * page/Frame.cpp:
+        (WebCore::Frame::finishedParsing):
+        (WebCore::Frame::scrollbarsVisible):
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::resetScrollbars):
+        (WebCore::FrameView::clear):
+        (WebCore::FrameView::initScrollbars):
+        (WebCore::FrameView::applyOverflowToViewport):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::handleMousePressEvent):
+        (WebCore::selectCursor):
+        (WebCore::FrameView::handleMouseMoveEvent):
+        (WebCore::FrameView::setScrollbarsMode):
+        (WebCore::FrameView::setVScrollbarMode):
+        (WebCore::FrameView::setHScrollbarMode):
+        (WebCore::FrameView::restoreScrollbar):
+        (WebCore::FrameView::dispatchMouseEvent):
+        (WebCore::FrameView::scrollbarMoved):
+        * page/FrameView.h:
+        * page/MouseEventWithHitTestResults.cpp:
+        (WebCore::MouseEventWithHitTestResults::MouseEventWithHitTestResults):
+        * page/MouseEventWithHitTestResults.h:
+        (WebCore::MouseEventWithHitTestResults::scrollbar):
+        * platform/ScrollBar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore::Scrollbar::setValue):
+        (WebCore::Scrollbar::setProportion):
+        (WebCore::Scrollbar::setSteps):
+        (WebCore::Scrollbar::scroll):
+        * platform/ScrollBar.h:
+        (WebCore::):
+        (WebCore::ScrollbarClient::~ScrollbarClient):
+        (WebCore::Scrollbar::~Scrollbar):
+        (WebCore::Scrollbar::orientation):
+        (WebCore::Scrollbar::controlSize):
+        (WebCore::Scrollbar::hasPlatformScrollbars):
+        (WebCore::Scrollbar::client):
+        * platform/ScrollBarMode.h:
+        (WebCore::):
+        * platform/ScrollView.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isPointInScrollbar):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::horizontaScrollbarWidget):
+        (WebCore::RenderLayer::verticalScrollbarWidget):
+        (WebCore::RenderLayer::valueChanged):
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::destroyScrollbar):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::verticalScrollbarWidth):
+        (WebCore::RenderLayer::horizontalScrollbarHeight):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::horizontalScrollbar):
+        (WebCore::RenderLayer::verticalScrollbar):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::~RenderListBox):
+        (WebCore::RenderListBox::calcMinMaxWidth):
+        (WebCore::RenderListBox::isPointInScrollbar):
+        (WebCore::RenderListBox::optionAtPoint):
+        (WebCore::RenderListBox::valueChanged):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::NodeInfo::scrollbar):
+        (WebCore::RenderObject::NodeInfo::setScrollbar):
+
 2006-10-05  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed by Adam.

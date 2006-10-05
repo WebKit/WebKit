@@ -57,7 +57,7 @@ class FrameView;
 class HTMLAreaElement;
 class InlineBox;
 class InlineFlowBox;
-class PlatformScrollBar;
+class PlatformScrollbar;
 class Position;
 class RenderArena;
 class RenderBlock;
@@ -500,7 +500,7 @@ public:
         Node* innerNode() const { return m_innerNode; }
         Node* innerNonSharedNode() const { return m_innerNonSharedNode; }
         Element* URLElement() const { return m_innerURLElement; }
-        PlatformScrollBar* scrollbar() const { return m_scrollbar; }
+        PlatformScrollbar* scrollbar() const { return m_scrollbar; }
         bool readonly() const { return m_readonly; }
         bool active() const { return m_active; }
         bool mouseMove() const { return m_mouseMove; }
@@ -508,13 +508,13 @@ public:
         void setInnerNode(Node* n) { m_innerNode = n; }
         void setInnerNonSharedNode(Node* n) { m_innerNonSharedNode = n; }
         void setURLElement(Element* n) { m_innerURLElement = n; }
-        void setScrollbar(PlatformScrollBar* s) { m_scrollbar = s; }
+        void setScrollbar(PlatformScrollbar* s) { m_scrollbar = s; }
 
     private:
         Node* m_innerNode;
         Node* m_innerNonSharedNode;
         Element* m_innerURLElement;
-        PlatformScrollBar* m_scrollbar;
+        PlatformScrollbar* m_scrollbar;
         bool m_readonly;
         bool m_active;
         bool m_mouseMove;

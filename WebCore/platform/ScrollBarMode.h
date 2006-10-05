@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollBarMode_h
-#define ScrollBarMode_h
+#ifndef ScrollbarMode_h
+#define ScrollbarMode_h
 
 namespace WebCore {
 
-    enum ScrollBarMode { ScrollBarAuto, ScrollBarAlwaysOff, ScrollBarAlwaysOn };
+    enum ScrollbarMode { ScrollbarAuto, ScrollbarAlwaysOff, ScrollbarAlwaysOn };
 
 }
 

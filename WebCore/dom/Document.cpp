@@ -2570,7 +2570,7 @@ void Document::setInPageCache(bool flag)
         ASSERT(m_savedRenderer == 0);
         m_savedRenderer = renderer();
         if (m_view)
-            m_view->resetScrollBars();
+            m_view->resetScrollbars();
     } else {
         ASSERT(renderer() == 0 || renderer() == m_savedRenderer);
         ASSERT(m_renderArena);

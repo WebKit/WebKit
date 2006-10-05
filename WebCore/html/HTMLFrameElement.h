@@ -27,7 +27,7 @@
 #define HTMLFrameElement_H
 
 #include "HTMLElement.h"
-#include "ScrollBarMode.h"
+#include "ScrollbarMode.h"
 
 namespace WebCore {
 
@@ -72,7 +72,7 @@ public:
     
     virtual bool isURLAttribute(Attribute*) const;
 
-    ScrollBarMode scrollingMode() const { return m_scrolling; }
+    ScrollbarMode scrollingMode() const { return m_scrolling; }
     int getMarginWidth() const { return m_marginWidth; }
     int getMarginHeight() const { return m_marginHeight; }
 
@@ -113,7 +113,7 @@ protected:
 
     int m_marginWidth;
     int m_marginHeight;
-    ScrollBarMode m_scrolling;
+    ScrollbarMode m_scrolling;
 
     bool m_frameBorder : 1;
     bool m_frameBorderSet : 1;

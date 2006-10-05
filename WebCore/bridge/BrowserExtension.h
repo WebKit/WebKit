@@ -46,7 +46,7 @@ struct WindowArgs {
     bool statusBarVisible;
     bool toolBarVisible;
     bool locationBarVisible;
-    bool scrollBarsVisible;
+    bool scrollbarsVisible;
     bool resizable;
 
     bool fullscreen;
