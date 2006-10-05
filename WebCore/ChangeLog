@@ -1,3 +1,14 @@
+2006-10-05  Dave Hyatt  <hyatt@apple.com>
+
+        Stub out some stuff for widget focusability.
+
+        Reviewed by maciej
+ 
+        * page/FrameView.cpp:
+        (WebCore::FrameView::dispatchMouseEvent):
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+
 2006-10-05  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej and Tim H.

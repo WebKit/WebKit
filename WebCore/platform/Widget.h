@@ -144,6 +144,12 @@ namespace WebCore {
         Widget* capturingChild();
         void setCapturingChild(Widget*);
         
+        void setFocused(bool);
+        Widget* focusedTarget();
+        Widget* focusedChild();
+        void setFocusedChild(Widget*);
+        void clearFocusFromDescendants();
+
         IntRect convertToContainingWindow(const IntRect&) const;
         IntPoint convertToContainingWindow(const IntPoint&) const;
         IntPoint convertFromContainingWindow(const IntPoint&) const;
