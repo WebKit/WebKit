@@ -118,6 +118,7 @@ void* Collector::allocate(size_t s)
   size_t numLiveObjects = heap.numLiveObjects;
   size_t numLiveObjectsAtLastCollect = heap.numLiveObjectsAtLastCollect;
   size_t numNewObjects = numLiveObjects - numLiveObjectsAtLastCollect;
+
   if (numNewObjects >= ALLOCATIONS_PER_COLLECTION && numNewObjects >= numLiveObjectsAtLastCollect) {
     collect();
     numLiveObjects = heap.numLiveObjects;
@@ -492,6 +493,11 @@ bool Collector::collect()
         if (imp->m_marked) {
           imp->m_marked = false;
         } else if (currentThreadIsMainThread || imp->m_destructorIsThreadSafe) {
+          // special case for allocated but uninitialized object
+          // (We don't need this check earlier because nothing prior this point assumes the object has a valid vptr.)
+          if (cell->u.freeCell.zeroIfFree == 0)
+            continue;
+
           imp->~JSCell();
           --usedCells;
           --numLiveObjects;
@@ -504,7 +510,7 @@ bool Collector::collect()
       }
     } else {
       size_t minimumCellsToProcess = usedCells;
-      for (size_t i = 0; i < minimumCellsToProcess; i++) {
+      for (size_t i = 0; (i < minimumCellsToProcess) & (i < CELLS_PER_BLOCK); i++) {
         CollectorCell *cell = curBlock->cells + i;
         if (cell->u.freeCell.zeroIfFree == 0) {
           ++minimumCellsToProcess;

@@ -1,3 +1,19 @@
+2006-10-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Patch by Darin and me, reviewed by Maciej.
+
+        Fixed <rdar://problem/4518397> REGRESSION(?): Oft-seen but unrepro crash 
+              in JavaScript garbage collection (KJS::Collector::collect())
+               <rdar://problem/4752492> Crash in KJS::collect
+              
+        The issue here was allocating one garbage-collected object in the midst 
+        of allocating a second garbage-collected object. In such a case, the
+        zeroIfFree word lies.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate):
+        (KJS::Collector::collect):
+
 2006-10-04  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Adam.
