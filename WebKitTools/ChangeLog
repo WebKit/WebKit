@@ -1,3 +1,11 @@
+2006-10-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        * Scripts/run-webkit-tests:
+        Add an environment variable, WebKitExpectedTestResultsDirectory, which controls where expected test 
+        results should be.
+
 2006-10-05  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed and landed by ap.
