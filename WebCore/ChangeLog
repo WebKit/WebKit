@@ -1,3 +1,37 @@
+2006-10-05  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by mjs.
+
+        More incremental KCanvas cleanup and optimization.
+        Added SVGRenderStyle::hasFill() and hasStroke() removed more KSVGPainterFactory methods.
+        Optimized dash array usage to not malloc.
+        Also removed un-needed KSVGRenderingStyle includes.
+
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (WebCore::operator<<):
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::nodeAtPoint):
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (WebCore::RenderPath::strokeBBox):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (WebCore::KRenderingPaintServerGradientQuartz::setup):
+        (WebCore::KRenderingPaintServerGradientQuartz::renderPath):
+        (WebCore::KRenderingPaintServerGradientQuartz::teardown):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (WebCore::KRenderingPaintServerSolidQuartz::setup):
+        (WebCore::KRenderingPaintServerSolidQuartz::renderPath):
+        (WebCore::KRenderingPaintServerPatternQuartz::setup):
+        (WebCore::KRenderingPaintServerPatternQuartz::renderPath):
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (WebCore::applyStrokeStyleToContext):
+        * ksvg2/css/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::hasStroke):
+        (WebCore::SVGRenderStyle::hasFill):
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::fillPaintServer):
+        (WebCore::KSVGPainterFactory::strokePaintServer):
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+
 2006-10-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam.

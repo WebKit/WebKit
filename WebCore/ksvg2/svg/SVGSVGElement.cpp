@@ -29,7 +29,6 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
-#include "KCanvasRenderingStyle.h"
 #include "KSVGTimeScheduler.h"
 #include "SVGAngle.h"
 #include "SVGLength.h"

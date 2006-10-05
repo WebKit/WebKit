@@ -32,7 +32,6 @@
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGLength.h"
-#include "KCanvasRenderingStyle.h"
 
 namespace WebCore {
 

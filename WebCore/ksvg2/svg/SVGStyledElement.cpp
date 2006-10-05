@@ -27,7 +27,6 @@
 #include "Attr.h"
 #include "HTMLNames.h"
 #include "Document.h"
-#include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "PlatformString.h"
 #include "RenderView.h"

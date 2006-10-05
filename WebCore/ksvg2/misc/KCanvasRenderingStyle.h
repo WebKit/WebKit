@@ -21,11 +21,11 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_KCanvasRenderingStyle_H
-#define KSVG_KCanvasRenderingStyle_H
+#ifndef KCanvasRenderingStyle_H
+#define KCanvasRenderingStyle_H
 #ifdef SVG_SUPPORT
 
-#include "DeprecatedValueList.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -43,7 +43,11 @@ enum KCJoinStyle {
 };
 
 // Special types
-typedef DeprecatedValueList<float> KCDashArray;
+#if PLATFORM(CG)
+typedef Vector<CGFloat> KCDashArray;
+#else
+typedef Vector<float> KCDashArray;
+#endif
 
     class CSSValue;
     class KRenderingFillPainter;
@@ -57,10 +61,7 @@ typedef DeprecatedValueList<float> KCDashArray;
         static KRenderingFillPainter fillPainter(const RenderStyle*, const RenderObject*);
         static KRenderingStrokePainter strokePainter(const RenderStyle*, const RenderObject*);
 
-        static bool isStroked(const RenderStyle*);
         static KRenderingPaintServer* strokePaintServer(const RenderStyle*, const RenderObject*);
-
-        static bool isFilled(const RenderStyle*);
         static KRenderingPaintServer* fillPaintServer(const RenderStyle*, const RenderObject*);
 
         static double cssPrimitiveToLength(const RenderObject*, CSSValue*, double defaultValue = 0.0);
@@ -69,6 +70,6 @@ typedef DeprecatedValueList<float> KCDashArray;
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_KCanvasRenderingStyle_H
+#endif // KCanvasRenderingStyle_H
 
 // vim:ts=4:noet

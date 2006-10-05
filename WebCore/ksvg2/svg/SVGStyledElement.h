@@ -33,7 +33,6 @@
 namespace WebCore {
 
     class CSSStyleDeclaration;
-    class KCanvasRenderingStyle;
     class KCanvasResource;
     class KRenderingDevice;
     class RenderPath;

@@ -29,18 +29,15 @@
 #include "config.h"
 #ifdef SVG_SUPPORT
 #import "KRenderingPaintServerQuartz.h"
-#import "QuartzSupport.h"
 
-#import "RenderObject.h"
-
-#import "KCanvasRenderingStyle.h"
-#import "KRenderingPaintServer.h"
-#import "KRenderingFillPainter.h"
-#import "KRenderingStrokePainter.h"
-#import "KRenderingDeviceQuartz.h"
-
-#import "KCanvasResourcesQuartz.h"
 #import "KCanvasImage.h"
+#import "KCanvasResourcesQuartz.h"
+#import "KRenderingDeviceQuartz.h"
+#import "KRenderingFillPainter.h"
+#import "KRenderingPaintServer.h"
+#import "KRenderingStrokePainter.h"
+#import "QuartzSupport.h"
+#import "RenderObject.h"
 
 #import <wtf/Assertions.h>
 
@@ -241,13 +238,13 @@ bool KRenderingPaintServerGradientQuartz::setup(const KRenderingPaintServerGradi
     CGContextSaveGState(context);
     CGContextSetAlpha(context, renderStyle->opacity());
     
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle)) {
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
         CGContextSaveGState(context);
         if (server->isPaintingText())
             CGContextSetTextDrawingMode(context, kCGTextClip);
     }
 
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle)) {
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
         CGContextSaveGState(context);
         applyStrokeStyleToContext(context, renderStyle, renderObject); // FIXME: this seems like the wrong place for this.
         if (server->isPaintingText()) {
@@ -276,9 +273,9 @@ void KRenderingPaintServerGradientQuartz::renderPath(const KRenderingPaintServer
     CGRect objectBBox;
     if (server->boundingBoxMode())
         objectBBox = CGContextGetPathBoundingBox(context);
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle))
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill())
         KRenderingPaintServerQuartzHelper::clipToFillPath(context, path);
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle))
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke())
         KRenderingPaintServerQuartzHelper::clipToStrokePath(context, path);
     // make the gradient fit in the bbox if necessary.
     if (server->boundingBoxMode()) { // no support for bounding boxes around text yet!
@@ -303,14 +300,14 @@ void KRenderingPaintServerGradientQuartz::teardown(const KRenderingPaintServerGr
     RenderStyle* renderStyle = renderObject->style();
     ASSERT(context != NULL);
     
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle)) {
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
         // workaround for filling the entire screen with the shading in the case that no text was intersected with the clip
         if (!server->isPaintingText() || (renderObject->width() > 0 && renderObject->height() > 0))
             CGContextDrawShading(context, shading);
         CGContextRestoreGState(context);
     }
     
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle)) {
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
         if (server->isPaintingText()) {
             int width  = 2048;
             int height = 2048; // FIXME??? SEE ABOVE

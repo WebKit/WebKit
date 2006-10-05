@@ -29,7 +29,6 @@
 #include "GraphicsContext.h"
 #include "RenderSVGContainer.h"
 #include "KCanvasImage.h"
-#include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "KRenderingPaintServerPattern.h"
 #include "SVGLength.h"

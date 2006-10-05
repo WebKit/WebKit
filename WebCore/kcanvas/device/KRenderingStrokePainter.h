@@ -27,7 +27,6 @@
 #include "KCanvasRenderingStyle.h"
 
 namespace WebCore {
-class KCanvasRenderingStyle;
 class KRenderingPaintServer;
 class KRenderingDeviceContext;
 class KRenderingStrokePainter

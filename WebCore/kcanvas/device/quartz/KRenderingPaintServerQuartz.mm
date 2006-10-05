@@ -88,7 +88,7 @@ bool KRenderingPaintServerSolidQuartz::setup(KRenderingDeviceContext* renderingC
     
     static CGColorSpaceRef deviceRGBColorSpace = CGColorSpaceCreateDeviceRGB(); // This should be shared from GraphicsContext, or some other central location
 
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle)) {
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
         CGFloat colorComponents[4];
         color().getRGBA(colorComponents[0], colorComponents[1], colorComponents[2], colorComponents[3]);
         ASSERT(!color().hasAlpha());
@@ -101,7 +101,7 @@ bool KRenderingPaintServerSolidQuartz::setup(KRenderingDeviceContext* renderingC
         }
     }
 
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle)) {
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
         CGFloat colorComponents[4];
         color().getRGBA(colorComponents[0], colorComponents[1], colorComponents[2], colorComponents[3]);
         ASSERT(!color().hasAlpha());
@@ -123,9 +123,9 @@ void KRenderingPaintServerSolidQuartz::renderPath(KRenderingDeviceContext* rende
     RenderStyle* renderStyle = renderPath->style();
     KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(renderingContext);
     CGContextRef context = quartzContext->cgContext();    
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle))
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill())
         KRenderingPaintServerQuartzHelper::fillPath(context, renderPath);
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle))
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke())
         KRenderingPaintServerQuartzHelper::strokePath(context, renderPath);
 }
 
@@ -190,7 +190,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
 
     m_patternSpace = CGColorSpaceCreatePattern(NULL);
 
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle)) {
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
         CGContextSetFillColorSpace(context, m_patternSpace);
         CGContextSetFillPattern(context, m_pattern, &alpha);
         if (isPaintingText()) {
@@ -199,7 +199,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
         }
     }
     
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle)) {
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
         CGContextSetStrokeColorSpace(context, m_patternSpace);
         CGContextSetStrokePattern(context, m_pattern, &alpha);
         applyStrokeStyleToContext(context, renderStyle, renderObject);
@@ -219,10 +219,10 @@ void KRenderingPaintServerPatternQuartz::renderPath(KRenderingDeviceContext* ren
     KRenderingDeviceContextQuartz* quartzContext = static_cast<KRenderingDeviceContextQuartz*>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
 
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle))
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill())
         KRenderingPaintServerQuartzHelper::fillPath(context, renderPath);
     
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle))
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke())
         KRenderingPaintServerQuartzHelper::strokePath(context, renderPath);
 }
 

@@ -28,15 +28,13 @@
 #include "CachedImage.h"
 #include "DocLoader.h"
 #include "Document.h"
-#include "KCanvasRenderingStyle.h"
-#include "KCanvasRenderingStyle.h"
-#include "SVGLength.h"
-#include "SVGPreserveAspectRatio.h"
+#include "KCanvasImage.h"
+#include "KRenderingDevice.h"
+#include "KRenderingFillPainter.h"
 #include "SVGHelper.h"
+#include "SVGLength.h"
 #include "SVGNames.h"
-#include <kcanvas/KCanvasImage.h>
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/device/KRenderingFillPainter.h>
+#include "SVGPreserveAspectRatio.h"
 
 namespace WebCore {
 

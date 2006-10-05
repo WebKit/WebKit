@@ -22,17 +22,15 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
+#include "SVGLength.h"
+
 #include "IntRect.h"
-
-#include <kcanvas/RenderPath.h>
-#include "KCanvasRenderingStyle.h"
-
+#include "RenderPath.h"
+#include "SVGElement.h"
+#include "SVGLength.h"
+#include "SVGSVGElement.h"
 #include "ksvg.h"
 #include "svgpathparser.h"
-#include "SVGLength.h"
-#include "SVGElement.h"
-#include "SVGSVGElement.h"
-#include "SVGLength.h"
 
 #include <math.h>
 

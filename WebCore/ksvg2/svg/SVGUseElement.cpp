@@ -26,8 +26,6 @@
 
 #include "Attr.h"
 #include "Document.h"
-#include "KCanvasRenderingStyle.h"
-#include "KCanvasRenderingStyle.h"
 #include "SVGLength.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGGElement.h"
@@ -36,12 +34,12 @@
 #include "SVGSVGElement.h"
 #include "SVGSymbolElement.h"
 #include "ksvg.h"
-#include <kcanvas/RenderSVGContainer.h>
-#include <kcanvas/device/KRenderingDevice.h>
+#include "RenderSVGContainer.h"
+#include "KRenderingDevice.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document *doc)
+SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledTransformableElement(tagName, doc)
     , SVGTests()
     , SVGLangSpace()
@@ -159,6 +157,8 @@ bool SVGUseElement::hasChildNodes() const
 RenderObject* SVGUseElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGContainer(this);
+}
+
 }
 
 // vim:ts=4:noet

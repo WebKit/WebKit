@@ -30,27 +30,22 @@
 
 #import <wtf/Assertions.h>
 
-#import "kcanvas/RenderPath.h"
-#import "KCanvasRenderingStyle.h"
+#import "KCanvasFilterQuartz.h"
+#import "KCanvasMaskerQuartz.h"
+#import "KCanvasResourcesQuartz.h"
+#import "KRenderingDeviceQuartz.h"
 #import "KRenderingFillPainter.h"
 #import "KRenderingStrokePainter.h"
-
-#import "KRenderingDeviceQuartz.h"
-#import "KCanvasFilterQuartz.h"
-#import "KCanvasResourcesQuartz.h"
-#import "KCanvasMaskerQuartz.h"
 #import "QuartzSupport.h"
-
+#import "RenderPath.h"
 #import "SVGRenderStyle.h"
 #import "SVGStyledElement.h"
-#import "KCanvasRenderingStyle.h"
-
 
 namespace WebCore {
 
 FloatRect RenderPath::strokeBBox() const
 {
-    if (KSVGPainterFactory::isStroked(style())) {
+    if (style()->svgStyle()->hasStroke()) {
         KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(style(), this);
         return strokeBoundingBox(path(), strokePainter);
     }

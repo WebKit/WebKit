@@ -56,7 +56,6 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
 
 void applyStrokeStyleToContext(CGContextRef context, const KRenderingStrokePainter& strokePainter)
 {
-
     /* Shouldn't all these be in the stroke painter? */
     CGContextSetLineWidth(context, strokePainter.strokeWidth());
 
@@ -68,15 +67,8 @@ void applyStrokeStyleToContext(CGContextRef context, const KRenderingStrokePaint
 
     CGContextSetMiterLimit(context, strokePainter.strokeMiterLimit());
 
-    KCDashArray dashes = strokePainter.dashArray();
-    if (dashes.count()) {
-        size_t dashCount = dashes.count();
-        CGFloat *lengths = (CGFloat *)malloc(dashCount * sizeof(CGFloat));
-        for (unsigned x = 0; x < dashCount; x++)
-            lengths[x] = dashes[x];
-        CGContextSetLineDash(context, strokePainter.dashOffset(), lengths, dashes.count());
-        free(lengths);
-    }
+    const KCDashArray& dashes = strokePainter.dashArray();
+    CGContextSetLineDash(context, strokePainter.dashOffset(), dashes.data(), dashes.size());
 }
 
 void applyStrokeStyleToContext(CGContextRef context, RenderStyle* renderStyle, const RenderObject* renderObject)

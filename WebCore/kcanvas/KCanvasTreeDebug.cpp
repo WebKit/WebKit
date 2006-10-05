@@ -172,7 +172,8 @@ static void writeIndent(TextStream& ts, int indent)
 static TextStream& operator<<(TextStream& ts, const KCDashArray &a)
 {
     ts << "{";
-    for (KCDashArray::ConstIterator it = a.begin(); it != a.end(); ++it) {
+    KCDashArray::const_iterator end = a.end();
+    for (KCDashArray::const_iterator it = a.begin(); it != end; ++it) {
         if (it != a.begin())
             ts << ", ";
         ts << *it;

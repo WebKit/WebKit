@@ -30,7 +30,6 @@
 #include "SVGImageElement.h"
 #include "SVGLength.h"
 #include "SVGMatrix.h"
-#include "KCanvasRenderingStyle.h"
 
 #include "RenderImage.h"
 

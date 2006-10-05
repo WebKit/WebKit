@@ -22,17 +22,15 @@
 
 #include "config.h"
 #ifdef SVG_SUPPORT
-#include "Attr.h"
-
-#include "SVGNames.h"
-#include "SVGHelper.h"
 #include "SVGRectElement.h"
-#include "SVGLength.h"
 
-#include "KCanvasRenderingStyle.h"
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/device/KRenderingFillPainter.h>
-#include <kcanvas/device/KRenderingPaintServerSolid.h>
+#include "Attr.h"
+#include "KRenderingDevice.h"
+#include "KRenderingFillPainter.h"
+#include "KRenderingPaintServerSolid.h"
+#include "SVGHelper.h"
+#include "SVGLength.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 

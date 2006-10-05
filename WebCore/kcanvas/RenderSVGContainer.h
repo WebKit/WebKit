@@ -42,7 +42,6 @@ enum KCAlign {
     ALIGN_XMAXYMAX = 9
 };
 
-class KCanvasRenderingStyle;
 class SVGElement;
 
 class RenderSVGContainer : public RenderContainer

@@ -24,14 +24,13 @@
 #ifdef SVG_SUPPORT
 #include "SVGTextElement.h"
 
-#include "KCanvasRenderingStyle.h"
 #include "SVGLengthList.h"
 #include "SVGTransformList.h"
 #include "SVGMatrix.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"
 #include "RenderStyle.h"
-#include <kcanvas/RenderSVGText.h>
+#include "RenderSVGText.h"
 #include "FloatRect.h"
 
 namespace WebCore {
