@@ -1,3 +1,15 @@
+2006-10-04  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Stephanie.
+
+        Switch the Qt buildbot to the standard set of build steps.
+        Have JavaScriptCoreTest check the output of run-javascriptcore-tests to
+        see if any regressions were spotted, and fail the test if so.
+
+        * BuildSlaveSupport/build.webkit.org-config/webkit/builders.py: 
+        * BuildSlaveSupport/build.webkit.org-config/webkit/factories.py:
+        * BuildSlaveSupport/build.webkit.org-config/webkit/steps.py:
+
 2006-10-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mitz Pettel!

@@ -51,6 +51,33 @@ class JavaScriptCoreTest(Test):
     descriptionDone = ["jscore-tests"]
     command = ["./WebKitTools/Scripts/run-javascriptcore-tests"]
 
+    def commandComplete(self, cmd):
+        Test.commandComplete(self, cmd)
+
+        logText = cmd.logs['stdio'].getText()
+        statusLines = [line for line in logText.splitlines() if line.find('regressions found.') >= 0]
+        if statusLines and statusLines[0].split()[0] != '0':
+            self.regressionLine = statusLines[0]
+        else:
+            self.regressionLine = None
+
+    def evaluateCommand(self, cmd):
+        if cmd.rc != 0:
+            return FAILURE
+
+        if self.regressionLine:
+            return FAILURE
+
+        return SUCCESS
+
+    def getText(self, cmd, results):
+        return self.getText2(cmd, results)
+
+    def getText2(self, cmd, results):
+        if results != SUCCESS and self.regressionLine:
+            return [self.name, self.regressionLine]
+
+        return [self.name]
 
 class PixelLayoutTest(LayoutTest):
     name = "pixel-layout-test"
@@ -118,13 +145,9 @@ class UploadLayoutResults(UploadCommand, ShellCommand):
 
         ShellCommand.__init__(self, *args, **kwargs)
 
-class CompileWebKitCMake(Compile):
-    command = "mkdir -p WebKitBuild && cd WebKitBuild && cmake -DWEBKIT_DO_NOT_USE_COLORFUL_OUTPUT=ON .. && make"
-    description = ["compiling"]
-    descriptionDone = ["compiled"]
 
 class CompileWebKit(Compile):
-    command = ["./WebKitTools/Scripts/build-webkit"]
+    command = ["./WebKitTools/Scripts/build-webkit", "--no-color"]
     def __init__(self, *args, **kwargs):
         configuration = kwargs.pop('configuration')
         
@@ -136,7 +159,7 @@ class CompileWebKit(Compile):
 
 
 class CompileWebKitNoSVG(CompileWebKit):
-    command = 'rm -rf WebKitBuild && ./WebKitTools/Scripts/build-webkit --no-svg'
+    command = 'rm -rf WebKitBuild && ./WebKitTools/Scripts/build-webkit --no-svg --no-color'
 
 class InstallWin32Dependencies(ShellCommand):
     description = ["installing Windows dependencies"]
