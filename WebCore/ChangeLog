@@ -1,3 +1,15 @@
+2006-10-06  Mitz Pettel  <mitz@webkit.org>
+
+        http://bugs.webkit.org/show_bug.cgi?id=8276
+        Fix broken manual test added back in r13990.
+
+        Add resource forks for test resources.
+
+        * manual-tests/resources/plain-text-paste/._1.textClipping: Added.
+        * manual-tests/resources/plain-text-paste/._2.textClipping: Added.
+        * manual-tests/resources/plain-text-paste/._4.txt: Added.
+        * manual-tests/resources/plain-text-paste/._5.webloc: Added.
+
 2006-10-05  David Hyatt  <hyatt@apple.com>
 
         Rename addClip to clip.
