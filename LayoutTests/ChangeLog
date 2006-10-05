@@ -1,3 +1,10 @@
+2006-10-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        * fast/frames/frame-src-attribute-expected.txt:
+        Update test result.
+
 2006-10-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Tim H.

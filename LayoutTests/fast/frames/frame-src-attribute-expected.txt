@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
               RenderBlock {PRE} at (0,34) size 782x15
                 RenderText {#text} at (0,0) size 624x15
                   text run at (0,0) width 624: "PASS: Frame 'src' attribute should include 'LayoutTests/fast/frames' and does."
-      RenderFrame {FRAME} at (0,-500000) size 0x0
+      RenderFrame {FRAME} at (0,0) size 0x0
         layer at (0,0) size 8x8
           RenderView at (0,0) size 0x0
         layer at (0,0) size 8x8
