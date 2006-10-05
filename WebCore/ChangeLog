@@ -1,3 +1,21 @@
+2006-10-05  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Maciej and Tim H.
+
+        Copy some WebKit frame lifetime logic into WebCore -- just a step
+        along the path to frame lifetime being handled completely in WebCore.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::setView): Move platform-independent parts of this
+        method into Frame.
+        * page/Frame.cpp:
+        (WebCore::Frame::setView): Adding platform-independent parts of
+        FrameMac::setView
+        (WebCore::Frame::detachChildren): New method to accomplish what
+        -[WebFrameBridge _detachChildren] currently does.
+        (WebCore::Frame::clear): Call detachChildren
+        * page/Frame.h: Add declaration for detachChildren
+
 2006-10-04  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin.

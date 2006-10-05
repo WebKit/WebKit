@@ -797,6 +797,8 @@ public:
 
   virtual void frameDetached();
 
+  void detachChildren();
+
   void updateBaseURLForEmptyDocument();
 
   KURL url() const;

@@ -361,6 +361,12 @@ FrameView* Frame::view() const
 
 void Frame::setView(FrameView* view)
 {
+    // Detach the document now, so any onUnload handlers get run - if
+    // we wait until the view is destroyed, then things won't be
+    // hooked up enough for some JavaScript calls to work.
+    if (d->m_doc && view == 0)
+        d->m_doc->detach();
+
     d->m_view = view;
 }
 
@@ -473,8 +479,7 @@ void Frame::clear(bool clearWindowProperties)
   // FIXME: This is a temporary hack to work around a mismatch between WebCore and WebKit
   // regarding frame lifetime. The proper solution is to move all frame management
   // into WebCore, so frames can work the same way on all platforms.
-  for (Frame* descendant = tree()->firstChild(); descendant; descendant = descendant->tree()->traverseNext())
-      descendant->disconnectOwnerElement();
+  detachChildren();
 #endif
 
   if (d->m_doc) {
@@ -3576,6 +3581,13 @@ void Frame::stopRedirectionTimer()
 
 void Frame::frameDetached()
 {
+}
+
+void Frame::detachChildren()
+{
+    // FIXME: is it really necessary to do this in reverse order any more?
+    while (Frame* child = tree()->lastChild())
+        tree()->removeChild(child);
 }
 
 void Frame::updateBaseURLForEmptyDocument()

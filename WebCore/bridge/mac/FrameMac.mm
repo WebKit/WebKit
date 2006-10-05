@@ -570,13 +570,7 @@ Frame* FrameMac::createFrame(const KURL& url, const String& name, Element* owner
 
 void FrameMac::setView(FrameView *view)
 {
-    // Detach the document now, so any onUnload handlers get run - if
-    // we wait until the view is destroyed, then things won't be
-    // hooked up enough for some JavaScript calls to work.
-    if (d->m_doc && view == 0)
-        d->m_doc->detach();
-    
-    d->m_view = view;
+    Frame::setView(view);
     
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
