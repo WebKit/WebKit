@@ -21,6 +21,7 @@
 #include <wtf/Platform.h>
 
 #define XSLT_SUPPORT 1
+#define MOBILE 0
 
 #if __APPLE__
 #define HAVE_FUNC_USLEEP 1

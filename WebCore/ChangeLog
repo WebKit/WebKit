@@ -1,3 +1,15 @@
+2006-10-05  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11152
+        Adjust the tokenizer chunk size to be smaller for
+        mobile devices, and also decrease the yield timer
+        for the tokenizer so that it can resume earlier.
+
+        * html/HTMLTokenizer.cpp:
+        * config.h:
+
 2006-10-05  Adam Roben  <aroben@apple.com>
 
         Removing accidentally-checked-in do-nothing code.

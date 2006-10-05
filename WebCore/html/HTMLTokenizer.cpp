@@ -46,7 +46,14 @@
 
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
+#if MOBILE
+// The mobile device needs to be responsive, as such the tokenizer chunk size is reduced.
+// This value is used to define how many characters the tokenizer will process before 
+// yeilding control.
+#define TOKENIZER_CHUNK_SIZE  256
+#else
 #define TOKENIZER_CHUNK_SIZE  4096
+#endif
 
 using namespace std;
 
@@ -55,10 +62,17 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace EventNames;
 
+#if MOBILE
+// As the chunks are smaller (above), the tokenizer should not yield for as long a period, otherwise
+// it will take way to long to load a page.
+const double tokenizerTimeDelay = 0.300;
+
+#else
 // FIXME: We would like this constant to be 200ms.
 // Yielding more aggressively results in increased responsiveness and better incremental rendering.
 // It slows down overall page-load on slower machines, though, so for now we set a value of 500.
 const double tokenizerTimeDelay = 0.500;
+#endif
 
 static const char commentStart [] = "<!--";
 static const char scriptEnd [] = "</script";
