@@ -1,3 +1,18 @@
+2006-10-05  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Timothy.
+
+        Bug: http://bugs.webkit.org/show_bug.cgi?id=9887
+        Continuous spell checking now remembers user's setting. The change is applied globally,
+        meaning, both TextArea and TextField are affected when either of them enables/disables
+        spell checking. 
+
+        * WebView/WebPreferenceKeysPrivate.h: added a define for WebContinuousSpellCheckingEnabled
+        * WebView/WebView.m:
+        (-[WebViewPrivate init]): reads WebContinuousSpellCheckingEnabled from NSUserDefaults
+        (-[WebView setContinuousSpellCheckingEnabled:]):
+        (-[WebView isContinuousSpellCheckingEnabled]):
+
 2006-10-05  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Darin.

@@ -79,6 +79,7 @@
 #import "WebPluginDatabase.h"
 #import "WebPolicyDelegate.h"
 #import "WebPreferencesPrivate.h"
+#import "WebPreferenceKeysPrivate.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebScriptDebugDelegatePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
@@ -292,9 +293,8 @@ macro(yankAndSelect) \
     BOOL hasSpellCheckerDocumentTag;
     WebNSInteger spellCheckerDocumentTag;
 
-    BOOL continuousSpellCheckingEnabled;
     BOOL smartInsertDeleteEnabled;
-    
+        
     BOOL dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
     BOOL dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;
     BOOL dashboardBehaviorAlwaysAcceptsFirstMouse;
@@ -369,6 +369,9 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
 @implementation WebProgressItem
 @end
 
+
+static BOOL continuousSpellCheckingEnabled;
+
 @implementation WebViewPrivate
 
 - init 
@@ -385,6 +388,7 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
     dashboardBehaviorAllowWheelScrolling = YES;
     tabKeyCyclesThroughElements = YES;
     shouldCloseWithWindow = objc_collecting_enabled();
+    continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
 
     return self;
 }
@@ -3163,7 +3167,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)setContinuousSpellCheckingEnabled:(BOOL)flag
 {
-    _private->continuousSpellCheckingEnabled = flag;
+    if (continuousSpellCheckingEnabled != flag) {
+        continuousSpellCheckingEnabled = flag;
+        [[NSUserDefaults standardUserDefaults] setBool:continuousSpellCheckingEnabled forKey:WebContinuousSpellCheckingEnabled];
+    }
+    
     if ([self isContinuousSpellCheckingEnabled]) {
         [[self class] _preflightSpellChecker];
     } else {
@@ -3173,7 +3181,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)isContinuousSpellCheckingEnabled
 {
-    return _private->continuousSpellCheckingEnabled && [self _continuousCheckingAllowed];
+    return (continuousSpellCheckingEnabled && [self _continuousCheckingAllowed]);
 }
 
 - (WebNSInteger)spellCheckerDocumentTag
