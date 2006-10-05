@@ -397,12 +397,15 @@ sub buildCMakeProject($$)
     }
 
     my $config = configuration();
+    my $prefix = $ENV{"WebKitInstallationPrefix"};
  
     my @buildArgs = ("-DCMAKE_BUILD_TYPE=$config");
+    push @buildArgs, "-DCMAKE_INSTALL_PREFIX=" . $prefix if(defined($prefix));
     push @buildArgs, "-DWEBKIT_DO_NOT_USE_COLORFUL_OUTPUT=" . ($colorize ? "OFF" : "ON");
     push @buildArgs, "../../";
 
     print "Calling 'cmake @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
+    print "Installation directory: $prefix\n" if(defined($prefix));
 
     system "mkdir -p " . baseProductDir() . "/$config";
     chdir baseProductDir() . "/$config" or die "Failed to cd into " . baseProductDir() . "/$config \n";
