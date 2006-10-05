@@ -160,8 +160,10 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
 
     float opacity = style()->opacity();
-    if (opacity < 1.0f)
+    if (opacity < 1.0f) {
+        c->addClip(enclosingIntRect(boundingBox));
         c->beginTransparencyLayer(opacity);
+    }
 
     PaintInfo pi(paintInfo);
     pi.p = c.get();

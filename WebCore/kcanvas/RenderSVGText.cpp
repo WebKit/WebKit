@@ -100,12 +100,12 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     float opacity = style()->opacity();
     if (opacity < 1.0f)
+        // FIXME: once RenderSVGText::relativeBBox() is fixed, clipping to the current bbox here will save time when rendering text w/ opacity
         c->beginTransparencyLayer(opacity);
 
     KRenderingPaintServer *fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
     if (fillPaintServer) {
         fillPaintServer->setPaintingText(true);
-        // fillPaintServer->setActiveClient(this);
         if (fillPaintServer->setup(context, this, APPLY_TO_FILL)) {
             RenderBlock::paint(pi, 0, 0);
             fillPaintServer->teardown(context, this, APPLY_TO_FILL);
@@ -116,7 +116,6 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     KRenderingPaintServer *strokePaintServer = KSVGPainterFactory::strokePaintServer(style(), this);
     if (strokePaintServer) {
         strokePaintServer->setPaintingText(true);
-        // strokePaintServer->setActiveClient(this);
         if (strokePaintServer->setup(context, this, APPLY_TO_STROKE)) {
             RenderBlock::paint(pi, 0, 0);
             strokePaintServer->teardown(context, this, APPLY_TO_STROKE);

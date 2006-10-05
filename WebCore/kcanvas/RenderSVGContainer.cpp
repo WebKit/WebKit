@@ -160,7 +160,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
         paintInfo.p->save();
     
     if (parentX != 0 || parentY != 0) {
-        // Translate from parent offsets (khtml) to a relative transform (ksvg2/kcanvas)
+        // Translate from parent offsets (html renderers) to a relative transform (svg renderers)
         deviceContext->concatCTM(AffineTransform().translate(parentX, parentY));
         parentX = parentY = 0;
     }
@@ -174,18 +174,22 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (!localTransform().isIdentity())
         deviceContext->concatCTM(localTransform());
     
+    FloatRect strokeBBox = relativeBBox(true);
+    
     if (KCanvasClipper *clipper = getClipperById(document(), style()->svgStyle()->clipPath().substring(1)))
-        clipper->applyClip(relativeBBox(true));
+        clipper->applyClip(strokeBBox);
 
     if (KCanvasMasker *masker = getMaskerById(document(), style()->svgStyle()->maskElement().substring(1)))
-        masker->applyMask(relativeBBox(true));
+        masker->applyMask(strokeBBox);
 
     float opacity = style()->opacity();
-    if (opacity < 1.0f)
+    if (opacity < 1.0f) {
+        paintInfo.p->addClip(enclosingIntRect(strokeBBox));
         paintInfo.p->beginTransparencyLayer(opacity);
+    }
 
     if (filter)
-        filter->prepareFilter(relativeBBox(true));
+        filter->prepareFilter(strokeBBox);
     
     if (!viewBox().isEmpty())
         deviceContext->concatCTM(viewportTransform());
@@ -193,7 +197,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     RenderContainer::paint(paintInfo, 0, 0);
     
     if (filter)
-        filter->applyFilter(relativeBBox(true));
+        filter->applyFilter(strokeBBox);
     
     if (opacity < 1.0f)
         paintInfo.p->endTransparencyLayer();

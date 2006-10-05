@@ -1,3 +1,21 @@
+2006-10-05  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by mjs.
+
+        Improve SVG opacity performance by clipping to the object bbox before starting a new opacity layer.
+        http://bugs.webkit.org/show_bug.cgi?id=11163
+        
+        No SVG performance tests yet.
+
+        * kcanvas/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::paint):
+        * kcanvas/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * kcanvas/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint):
+
 2006-10-05  Dave Hyatt  <hyatt@apple.com>
 
         Stub out some stuff for widget focusability.
