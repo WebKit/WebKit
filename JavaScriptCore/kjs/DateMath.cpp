@@ -277,11 +277,13 @@ static inline double timeToMseconds(double hour, double min, double sec, double 
 
 static int dateToDayInYear(int year, int month, int day)
 {
-    year += static_cast<int>(floor(month / 12.0));
+    year += month / 12;
 
-    month = static_cast<int>(fmod(month, 12.0));
-    if (month < 0)
+    month %= 12;
+    if (month < 0) {
         month += 12;
+        --year;
+    }
 
     int yearday = static_cast<int>(floor(msFrom1970ToYear(year) / msPerDay));
     int monthday = monthToDayInYear(month, isLeapYear(year));
