@@ -69,7 +69,8 @@ inline int gmtoffset(const tm& t)
 {
 #if PLATFORM(WIN_OS)
     // Time is supposed to be in the current timezone.
-    return static_cast<int>(getUTCOffset()/1000.0);
+    static int utcOffset = static_cast<int>(getUTCOffset()/1000.0);
+    return utcOffset;
 #else
     return t.tm_gmtoff;
 #endif
@@ -183,9 +184,6 @@ static UString formatTime(const tm &t, bool utc)
 {
     char buffer[100];
     if (utc) {
-#if !PLATFORM(WIN_OS)   //win doesn't have the tm_gtoff member
-        ASSERT(t.tm_gmtoff == 0);
-#endif
         snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.tm_hour, t.tm_min, t.tm_sec);
     } else {
         int offset = abs(gmtoffset(t));

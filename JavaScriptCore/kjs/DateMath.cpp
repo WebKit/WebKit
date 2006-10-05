@@ -333,10 +333,10 @@ double getUTCOffset() {
         ltime.tm_mday = 2;
         ltime.tm_year = 70;
 
-        #if !PLATFORM(WIN_OS)
+#if !PLATFORM(WIN_OS)
         ltime.tm_zone = 0;
         ltime.tm_gmtoff = 0;
-        #endif
+#endif
 
         utcOffset = mktime(&ltime) - (hoursPerDay * secondsPerHour);
         utcOffset *= -msPerSecond;
@@ -445,14 +445,14 @@ void msToTM(double ms, bool outputIsUTC, struct tm& tm)
     tm.tm_isdst =  isDST(ms);
 
     //everyone else seems to have these fields
-    #if !PLATFORM(WIN_OS)
+#if !PLATFORM(WIN_OS)
     struct tm xtm;
     // FIXME: time_t has a potential problem in 2038
     time_t seconds = static_cast<time_t>(ms/usecPerMsec);
     localtime_r(&seconds, &xtm);
     tm.tm_gmtoff = xtm.tm_gmtoff;
     tm.tm_zone = xtm.tm_zone;
-    #endif
+#endif
 }
 
 bool isDST(const double& ms)

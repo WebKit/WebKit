@@ -1,3 +1,16 @@
+2006-10-04  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Removed an unnecessary assert that was stopping many pages.  tm_gmtoff was not set for UTC time in mozilla but is always set for us.
+
+        * kjs/DateMath.cpp:
+        (KJS::getUTCOffset):
+        (KJS::msToTM):
+        * kjs/date_object.cpp:
+        (KJS::gmtoffset):
+        (KJS::formatTime):
+
 2006-10-04  Geoffrey Garen  <ggaren@apple.com>
 
         Patch by Darin and me, reviewed by Maciej.
