@@ -97,7 +97,7 @@ using namespace WebCore;
             client->receivedAllData(job, data);
             client->receivedAllData(job);
         }
-        delete job;
+        job->kill();
     }
     [handle release];
 }

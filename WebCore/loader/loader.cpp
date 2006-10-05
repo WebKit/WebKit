@@ -95,24 +95,24 @@ void Loader::servePendingRequests()
     Request* req = m_requestsPending.take(0);
 
     KURL u(req->cachedObject()->url().deprecatedString());
-    ResourceLoader* job = new ResourceLoader(this, "GET", u);
+    RefPtr<ResourceLoader> loader = ResourceLoader::create(this, "GET", u);
 
     if (!req->cachedObject()->accept().isEmpty())
-        job->addMetaData("accept", req->cachedObject()->accept());
+        loader->addMetaData("accept", req->cachedObject()->accept());
     if (req->docLoader())  {
         KURL r = req->docLoader()->doc()->URL();
         if (r.protocol().startsWith("http") && r.path().isEmpty())
             r.setPath("/");
-        job->addMetaData("referrer", r.url());
+        loader->addMetaData("referrer", r.url());
         DeprecatedString domain = r.host();
         if (req->docLoader()->doc()->isHTMLDocument())
             domain = static_cast<HTMLDocument*>(req->docLoader()->doc())->domain().deprecatedString();
         if (crossDomain(u.host(), domain))
-            job->addMetaData("cross-domain", "true");
+            loader->addMetaData("cross-domain", "true");
     }
 
-    if (job->start(req->docLoader()))
-        m_requestsLoading.add(job, req);
+    if (loader->start(req->docLoader()))
+        m_requestsLoading.add(loader.get(), req);
 }
 
 void Loader::receivedAllData(ResourceLoader* job, PlatformData allData)

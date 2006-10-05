@@ -1,3 +1,39 @@
+2006-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+
+        - changed ResourceLoader to be refcounted
+
+        It keeps a ref on itself while loading as well. This makes
+        for a much saner memory management model than the previous.
+
+        * bridge/mac/WebCoreResourceLoaderImp.mm:
+        (-[WebCoreResourceLoaderImp finishJobAndHandle:]):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::openFunc):
+        * loader/icon/IconLoader.cpp:
+        (IconLoader::IconLoader):
+        (IconLoader::~IconLoader):
+        (IconLoader::startLoading):
+        (IconLoader::stopLoading):
+        (IconLoader::receivedData):
+        * loader/icon/IconLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        * platform/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::create):
+        (WebCore::ResourceLoader::kill):
+        * platform/ResourceLoader.h:
+        * platform/ResourceLoaderInternal.h:
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::start):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        * xml/xmlhttprequest.h:
+
 2006-10-05  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by mjs.

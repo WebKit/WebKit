@@ -57,11 +57,14 @@ ResourceLoader::~ResourceLoader()
 
 bool ResourceLoader::start(DocLoader* docLoader)
 {
+    ref();
+    d->m_loading = true;
+
     ASSERT(docLoader);
     
     FrameMac* frame = Mac(docLoader->frame());
     if (!frame) {
-        delete this;
+        kill();
         return false;
     }
 
@@ -93,7 +96,7 @@ bool ResourceLoader::start(DocLoader* docLoader)
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    delete this;
+    kill();
     return false;
 }
 

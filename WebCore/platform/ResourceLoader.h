@@ -59,10 +59,15 @@ class FormData;
 class KURL;
 class ResourceLoaderInternal;
 
-class ResourceLoader {
-public:
+class ResourceLoader : public Shared<ResourceLoader> {
+private:
     ResourceLoader(ResourceLoaderClient*, const String& method, const KURL&);
     ResourceLoader(ResourceLoaderClient*, const String& method, const KURL&, const FormData& postData);
+
+public:
+    static PassRefPtr<ResourceLoader> create(ResourceLoaderClient*, const String& method, const KURL&);
+    static PassRefPtr<ResourceLoader> create(ResourceLoaderClient*, const String& method, const KURL&, const FormData& postData);    
+
     ~ResourceLoader();
 
     bool start(DocLoader*);
