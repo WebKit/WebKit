@@ -372,7 +372,6 @@ HRESULT WebFrame::loadDataSource(WebDataSource* dataSource)
             if (SUCCEEDED(hr)) {
                 KURL kurl(DeprecatedString((DeprecatedChar*)url, SysStringLen(url)));
                 d->frame->didOpenURL(kurl);
-                d->frame->begin(kurl);
                 String methodString(method, SysStringLen(method));
                 const FormData* formData = 0;
                 if (wcscmp(method, TEXT("GET"))) {
@@ -487,13 +486,32 @@ void WebFrame::receivedRedirect(ResourceLoader*, const KURL& url)
 
 void WebFrame::receivedResponse(ResourceLoader*, PlatformResponse)
 {
+    // Commit the provisional data source
+
     if (m_provisionalDataSource) {
         m_dataSource = m_provisionalDataSource;
         m_provisionalDataSource = 0;
     }
 
-    // FIXME: pass mime type of response to frame.  perhaps the Frame::begin() 
-    // should be made from here.
+    // Tell the Frame to expect new data.  We use the URL of the data source in
+    // order to account for redirects.
+
+    IWebMutableURLRequest* request;
+    m_dataSource->request(&request);
+
+    BSTR url;
+    request->URL(&url);
+    request->Release();
+
+    KURL kurl(DeprecatedString((DeprecatedChar*)url, SysStringLen(url)));
+    SysFreeString(url);
+
+    // Update MIME info
+    ResourceRequest r(d->frame->resourceRequest());    
+    r.m_responseMIMEType = "text/html";  // FIXME: get from PlatformResponse
+    d->frame->setResourceRequest(r);
+
+    d->frame->begin(kurl);
 
     IWebFrameLoadDelegate* frameLoadDelegate;
     if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {

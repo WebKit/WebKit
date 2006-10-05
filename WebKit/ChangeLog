@@ -1,3 +1,13 @@
+2006-10-05  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Darin.
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=11162
+
+        * COM/WebFrame.cpp:
+        (WebFrame::loadDataSource):
+        (WebFrame::receivedResponse):
+
 2006-10-05  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed by Darin, landed by Adam.
