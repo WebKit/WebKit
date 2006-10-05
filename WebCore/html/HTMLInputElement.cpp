@@ -1220,11 +1220,6 @@ void HTMLInputElement::postDispatchEventHandler(Event *evt, void* data)
 
 void HTMLInputElement::defaultEventHandler(Event *evt)
 {
-    if (evt->type() == clickEvent) {
-        int a = 1;
-        a++;
-    }
-    
     if (inputType() == IMAGE && evt->isMouseEvent() && evt->type() == clickEvent) {
         // record the mouse position for when we get the DOMActivate event
         MouseEvent *me = static_cast<MouseEvent*>(evt);
