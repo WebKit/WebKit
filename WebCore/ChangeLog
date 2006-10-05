@@ -1,3 +1,14 @@
+2006-10-05  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by mjs.
+
+        Removed dead code.
+        Filed http://bugs.webkit.org/show_bug.cgi?id=11167 to for followup on removed FIXMEs
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/ecma/GlobalObject.cpp: Removed.
+        * ksvg2/ecma/GlobalObject.h: Removed.
+
 2006-10-05  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej.

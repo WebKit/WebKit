@@ -4028,8 +4028,6 @@
 		A8C0F700089701F100BA5114 /* SVGRenderStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGRenderStyle.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F701089701F100BA5114 /* SVGRenderStyleDefs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderStyleDefs.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F702089701F100BA5114 /* SVGRenderStyleDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGRenderStyleDefs.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F7EE089701F300BA5114 /* GlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalObject.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F7EF089701F300BA5114 /* GlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = GlobalObject.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F7F5089701F300BA5114 /* SVGZoomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGZoomEvent.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F7F6089701F300BA5114 /* SVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGZoomEvent.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F7FF089701F300BA5114 /* SVGAElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -6843,7 +6841,6 @@
 			children = (
 				A8122C7B08D564B000844FA3 /* bindings */,
 				A8C0F6F2089701F100BA5114 /* css */,
-				A8C0F7E8089701F300BA5114 /* ecma */,
 				A8C0F7F1089701F300BA5114 /* events */,
 				A8C0F6EA089701F100BA5114 /* misc */,
 				A8C0F7FC089701F300BA5114 /* svg */,
@@ -6881,15 +6878,6 @@
 				A8C0F702089701F100BA5114 /* SVGRenderStyleDefs.h */,
 			);
 			path = css;
-			sourceTree = "<group>";
-		};
-		A8C0F7E8089701F300BA5114 /* ecma */ = {
-			isa = PBXGroup;
-			children = (
-				A8C0F7EE089701F300BA5114 /* GlobalObject.cpp */,
-				A8C0F7EF089701F300BA5114 /* GlobalObject.h */,
-			);
-			path = ecma;
 			sourceTree = "<group>";
 		};
 		A8C0F7F1089701F300BA5114 /* events */ = {
