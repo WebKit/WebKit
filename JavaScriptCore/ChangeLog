@@ -1,3 +1,9 @@
+2006-10-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin McCullough.
+
+        * wtf/Assertions.cpp: Fix build when _DEBUG is not defined.
+
 2006-10-04  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Adam.

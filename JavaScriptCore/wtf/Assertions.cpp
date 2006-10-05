@@ -99,7 +99,7 @@ static void printf_stderr_common(const char* format, ...)
 
 static void printCallSite(const char* file, int line, const char* function)
 {
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && defined _DEBUG
     _CrtDbgReport(_CRT_WARN, file, line, NULL, "%s\n", function);
 #else
     printf_stderr_common("(%s:%d %s)\n", file, line, function);
