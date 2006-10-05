@@ -55,10 +55,10 @@ void KRenderingPaintServerPatternQt::renderPath(KRenderingDeviceContext* context
     RenderStyle* renderStyle = path->style();
     KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
 
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle))
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill())
         qtContext->fillPath();
 
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle))
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke())
         qtContext->strokePath();
 }
 

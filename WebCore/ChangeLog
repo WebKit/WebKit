@@ -1,3 +1,24 @@
+2006-10-05  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed and landed by ap.
+
+        Fix Qt/Linux build, adapt to Eric's quartz changes and to Maciej's ResourceLoader changes.
+
+        * kcanvas/device/qt/KRenderingPaintServerGradientQt.cpp:
+        (WebCore::KRenderingPaintServerLinearGradientQt::renderPath):
+        (WebCore::KRenderingPaintServerLinearGradientQt::setup):
+        (WebCore::KRenderingPaintServerRadialGradientQt::setup):
+        (WebCore::KRenderingPaintServerRadialGradientQt::renderPath):
+        * kcanvas/device/qt/KRenderingPaintServerPatternQt.cpp:
+        (WebCore::KRenderingPaintServerPatternQt::renderPath):
+        * kcanvas/device/qt/KRenderingPaintServerQt.cpp:
+        (WebCore::KRenderingPaintServerQt::setPenProperties):
+        * kcanvas/device/qt/KRenderingPaintServerSolidQt.cpp:
+        (WebCore::KRenderingPaintServerSolidQt::setup):
+        (WebCore::KRenderingPaintServerSolidQt::renderPath):
+        * kcanvas/device/qt/RenderPathQt.cpp:
+        (WebCore::getPathStroke):
+
 2006-10-05  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

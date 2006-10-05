@@ -48,6 +48,7 @@ ResourceLoader::~ResourceLoader()
 
 bool ResourceLoader::start(DocLoader*)
 {
+    ref();
     ResourceLoaderManager::self()->add(this);
     return true;
 }

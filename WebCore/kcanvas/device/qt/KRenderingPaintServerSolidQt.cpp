@@ -64,7 +64,7 @@ bool KRenderingPaintServerSolidQt::setup(KRenderingDeviceContext* context, const
 
     QColor c = color();
 
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle)) {
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
         KRenderingFillPainter fillPainter = KSVGPainterFactory::fillPainter(renderStyle, object);
         c.setAlphaF(fillPainter.opacity());
 
@@ -75,7 +75,7 @@ bool KRenderingPaintServerSolidQt::setup(KRenderingDeviceContext* context, const
         /* if(isPaintingText()) ... */
     }
 
-    if((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle)) {
+    if((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
         KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(renderStyle, object);
         c.setAlphaF(strokePainter.opacity());
 
@@ -98,10 +98,10 @@ void KRenderingPaintServerSolidQt::renderPath(KRenderingDeviceContext* context, 
     RenderStyle* renderStyle = path->style();
     KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
 
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle))
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill())
         qtContext->fillPath();
 
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle))
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke())
         qtContext->strokePath();
 }
 

@@ -52,8 +52,8 @@ void KRenderingPaintServerQt::setPenProperties(const KRenderingStrokePainter& st
     } else if(strokePainter.strokeJoinStyle() == JOIN_ROUND)
         pen.setJoinStyle(Qt::RoundJoin);
 
-    KCDashArray dashes = strokePainter.dashArray();
-    unsigned int dashLength = !dashes.isEmpty() ? dashes.count() : 0;
+    const KCDashArray& dashes = strokePainter.dashArray();
+    unsigned int dashLength = !dashes.isEmpty() ? dashes.size() : 0;
     if(dashLength) {
         QVector<qreal> pattern;
         unsigned int count = (dashLength % 2) == 0 ? dashLength : dashLength * 2;

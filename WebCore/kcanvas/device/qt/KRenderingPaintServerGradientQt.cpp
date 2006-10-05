@@ -60,10 +60,10 @@ void KRenderingPaintServerLinearGradientQt::renderPath(KRenderingDeviceContext* 
     RenderStyle* renderStyle = path->style();
     KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
 
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle))
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill())
         qtContext->fillPath();
 
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle))
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke())
         qtContext->strokePath();
 }
 
@@ -106,7 +106,7 @@ bool KRenderingPaintServerLinearGradientQt::setup(KRenderingDeviceContext* conte
 
     // TODO: Gradient transform + opacity fixes! 
 
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle)) {
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
         KRenderingFillPainter fillPainter = KSVGPainterFactory::fillPainter(renderStyle, object);
         fill_color_array(gradient, gradientStops(), opacity);
 
@@ -116,7 +116,7 @@ bool KRenderingPaintServerLinearGradientQt::setup(KRenderingDeviceContext* conte
         qtContext->setFillRule(fillPainter.fillRule());
     }
 
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle)) {
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
         KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(renderStyle, object);
         fill_color_array(gradient, gradientStops(), opacity);
 
@@ -222,7 +222,7 @@ bool KRenderingPaintServerRadialGradientQt::setup(KRenderingDeviceContext* conte
     // gradientTrans.map(cx, cy, &cx, &cy);
     // qtContext->painter().setMatrix(mat);
 
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle)) {
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill()) {
         KRenderingFillPainter fillPainter = KSVGPainterFactory::fillPainter(renderStyle, object);
         fill_color_array(gradient, gradientStops(), opacity);
 
@@ -232,7 +232,7 @@ bool KRenderingPaintServerRadialGradientQt::setup(KRenderingDeviceContext* conte
         qtContext->setFillRule(fillPainter.fillRule());
     }
 
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle)) {
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke()) {
         KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(renderStyle, object);
         fill_color_array(gradient, gradientStops(), opacity);
 
@@ -266,10 +266,10 @@ void KRenderingPaintServerRadialGradientQt::renderPath(KRenderingDeviceContext* 
     RenderStyle* renderStyle = path->style();
     KRenderingDeviceContextQt* qtContext = static_cast<KRenderingDeviceContextQt*>(context);
 
-    if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle))
+    if ((type & APPLY_TO_FILL) && renderStyle->svgStyle()->hasFill())
         qtContext->fillPath();
 
-    if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle))
+    if ((type & APPLY_TO_STROKE) && renderStyle->svgStyle()->hasStroke())
         qtContext->strokePath();
 }
 
