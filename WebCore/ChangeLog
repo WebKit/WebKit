@@ -1,3 +1,13 @@
+2006-10-05  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Darin, landed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11176
+        Fix win32 build, adapt to Maciej's ResourceLoader changes.
+
+        * platform/win/ResourceLoaderWin.cpp:
+        (WebCore::ResourceLoader::start):
+
 2006-10-05  Marvin Decker  <marv.decker@gmail.com>
 
         Reviewed by Darin.

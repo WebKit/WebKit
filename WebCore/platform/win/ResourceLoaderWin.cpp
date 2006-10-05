@@ -305,6 +305,7 @@ static void __stdcall transferJobStatusCallback(HINTERNET internetHandle,
 
 bool ResourceLoader::start(DocLoader* docLoader)
 {
+    ref();
     if (d->URL.isLocalFile()) {
         DeprecatedString path = d->URL.path();
         // windows does not enjoy a leading slash on paths

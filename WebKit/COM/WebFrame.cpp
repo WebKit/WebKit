@@ -374,17 +374,15 @@ HRESULT WebFrame::loadDataSource(WebDataSource* dataSource)
                 d->frame->didOpenURL(kurl);
                 d->frame->begin(kurl);
                 String methodString(method, SysStringLen(method));
-                ResourceLoader* job;
                 const FormData* formData = 0;
                 if (wcscmp(method, TEXT("GET"))) {
                     WebMutableURLRequest* requestImpl = static_cast<WebMutableURLRequest*>(request);
                     formData = requestImpl->formData();
                 }
-                if (formData)
-                    job = new ResourceLoader(this, methodString, kurl, *formData);
-                else
-                    job = new ResourceLoader(this, methodString, kurl);
-                job->start(d->frame->document()->docLoader());
+                RefPtr<ResourceLoader> loader = formData ?
+                  ResourceLoader::create(this, methodString, kurl, *formData) :
+                  ResourceLoader::create(this, methodString, kurl);
+                loader->start(d->frame->document()->docLoader());
                 IWebFrameLoadDelegate* frameLoadDelegate;
                 if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
                     frameLoadDelegate->didStartProvisionalLoadForFrame(d->webView, this);
