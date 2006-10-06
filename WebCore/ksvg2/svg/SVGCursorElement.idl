@@ -31,6 +31,6 @@ module svg {
                                                    SVGExternalResourcesRequired {
         readonly attribute SVGAnimatedLength x;
         readonly attribute SVGAnimatedLength y;
-    }
+    };
 
-};
+}

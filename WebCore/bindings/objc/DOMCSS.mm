@@ -182,15 +182,13 @@ namespace WebCore {
 
     Class wrapperClass = nil;
     switch (impl->cssValueType()) {
-        case DOM_CSS_INHERIT:
-            wrapperClass = [DOMCSSValue class];
-            break;
         case DOM_CSS_PRIMITIVE_VALUE:
             wrapperClass = [DOMCSSPrimitiveValue class];
             break;
         case DOM_CSS_VALUE_LIST:
             wrapperClass = [DOMCSSValueList class];
             break;
+        case DOM_CSS_INHERIT:
         case DOM_CSS_CUSTOM:
             wrapperClass = [DOMCSSValue class];
             break;

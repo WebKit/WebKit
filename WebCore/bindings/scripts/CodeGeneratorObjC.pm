@@ -491,6 +491,23 @@ sub AddIncludesForType
         return;
     }
 
+    if ($type eq "SVGRect") {
+        $implIncludes{"DOMSVGRect.h"} = 1;
+        $implIncludes{"FloatRect.h"} = 1;
+        return;
+    }
+
+    if ($type eq "SVGPoint") {
+        $implIncludes{"DOMSVGPoint.h"} = 1;
+        $implIncludes{"FloatPoint.h"} = 1;
+        return;
+    }
+
+    if ($type eq "SVGNumber") {
+        $implIncludes{"DOMSVGNumber.h"} = 1;
+        return;
+    }
+
     # FIXME: won't compile without these
     $implIncludes{"CSSMutableStyleDeclaration.h"} = 1 if $type eq "CSSStyleDeclaration";
     $implIncludes{"NamedAttrMap.h"} = 1 if $type eq "NamedNodeMap";
@@ -900,7 +917,7 @@ sub GenerateImplementation
                 push(@customGetterContent, "    // This node iterator was created from the C++ side.\n");
                 $getterContentHead = "[$attributeClassName $typeMaker:WTF::getPtr(" . $getterContentHead;
                 $getterContentTail .= ")]";
-            } elsif ($idlType eq "RGBColor") {
+            } elsif ($idlType eq "RGBColor" or $idlType eq "SVGPoint" or $idlType eq "SVGRect" or $idlType eq "SVGNumber") {
                 $getterContentHead = "[$attributeTypeSansPtr $typeMaker:" . $getterContentHead;
                 $getterContentTail .= "]";
             } elsif ($typeMaker ne "") {
@@ -918,6 +935,7 @@ sub GenerateImplementation
 
             push(@implContent, $getterSig);
             push(@implContent, "{\n");
+            push(@implContent, @customGetterContent);
             if ($hasGetterException) {
                 # Differentiated between when the return type is a pointer and
                 # not for white space issue (ie. Foo *result vs. int result).
@@ -927,13 +945,11 @@ sub GenerateImplementation
                     $getterContent = $attributeType . " result = " . $getterContent;
                 }
 
-                push(@implContent, @customGetterContent);
                 push(@implContent, "    $exceptionInit\n");
                 push(@implContent, "    $getterContent;\n");
                 push(@implContent, "    $exceptionRaiseOnError\n");
                 push(@implContent, "    return result;\n");
             } else {
-                push(@implContent, @customGetterContent);
                 push(@implContent, "    return $getterContent;\n");
             }
             push(@implContent, "}\n\n");
@@ -1082,7 +1098,7 @@ sub GenerateImplementation
                     }
 
                     # Surround getter with TypeMaker
-                    if ($returnTypeClass eq "DOMRGBColor") {
+                    if ($returnTypeClass eq "DOMRGBColor" or $returnTypeClass eq "DOMSVGPoint" or $returnTypeClass eq "DOMSVGRect" or $returnTypeClass eq "DOMSVGNumber") {
                         $content = "[$returnTypeClass $typeMaker:" . $content . "]";
                     } else {
                         $content = "[$returnTypeClass $typeMaker:WTF::getPtr(" . $content . ")]";
@@ -1206,7 +1222,7 @@ sub GenerateImplementation
     }
 
     # - End the ifdef conditional if necessary
-    push(@implContent, "\n#endif // ${conditional}_SUPPORT\n\n") if $conditional;
+    push(@implContent, "\n#endif // ${conditional}_SUPPORT\n") if $conditional;
 }
 
 # Internal helper

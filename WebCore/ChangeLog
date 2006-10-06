@@ -1,3 +1,103 @@
+2006-10-06  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Tim H.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11177
+        Another round of Objective-C SVG DOM bindings auto-generation
+
+        - Auto-generate DOMSVGAnimatedNumberList, DOMSVGAnimatedRect, 
+          DOMSVGComponentTransferFunctionElement, DOMSVGFEBlendElement, 
+          DOMSVGFEColorMatrixElement, DOMSVGFEComponentTransferElement, 
+          DOMSVGFECompositeElement, DOMSVGFEDiffuseLightingElement,
+          DOMSVGFEDisplacementMapElement, DOMSVGFEDistantLightElement, 
+          DOMSVGFEFloodElement, DOMSVGFEFuncAElement, DOMSVGFEFuncBElement, 
+          DOMSVGFEFuncGElement, DOMSVGFEFuncRElement, DOMSVGFEGaussianBlurElement, 
+          DOMSVGFEImageElement, DOMSVGFEMergeElement, DOMSVGFEMergeNodeElement, 
+          DOMSVGFEOffsetElement, DOMSVGFEPointLightElement, 
+          DOMSVGFESpecularLightingElement, DOMSVGFESpotLightElement, 
+          DOMSVGFETileElement, DOMSVGFETurbulenceElement, 
+          DOMSVGFilterPrimitiveStandardAttributes and DOMSVGNumberList. 
+
+        - Adds interfaces and implementation stubs for DOMSVGNumber, DOMSVGPoint
+          and DOMSVGRect.
+
+        - IDL clean up.
+
+        - Make numOctaves in SVGFETurbulenceElement use a long instead of an int
+          in it's macro declaration and definition.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMCSS.mm:
+        (+[DOMCSSValue _CSSValueWith:WebCore::]):
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMSVG.h:
+        * bindings/objc/DOMSVGNumber.h: Added.
+        * bindings/objc/DOMSVGNumber.mm: Added.
+        (-[DOMSVGNumber dealloc]):
+        (-[DOMSVGNumber finalize]):
+        (-[DOMSVGNumber value]):
+        (-[DOMSVGNumber setValue:]):
+        (-[DOMSVGNumber _SVGNumber]):
+        (-[DOMSVGNumber _initWithFloat:]):
+        (+[DOMSVGNumber _SVGNumberWith:]):
+        * bindings/objc/DOMSVGPoint.h: Added.
+        * bindings/objc/DOMSVGPoint.mm: Added.
+        (-[DOMSVGPoint dealloc]):
+        (-[DOMSVGPoint finalize]):
+        (-[DOMSVGPoint x]):
+        (-[DOMSVGPoint setX:]):
+        (-[DOMSVGPoint y]):
+        (-[DOMSVGPoint setY:]):
+        (-[DOMSVGPoint WebCore::]):
+        (-[DOMSVGPoint _initWithFloatPoint:WebCore::]):
+        (+[DOMSVGPoint _SVGPointWith:WebCore::]):
+        * bindings/objc/DOMSVGRect.h: Added.
+        * bindings/objc/DOMSVGRect.mm: Added.
+        (-[DOMSVGRect dealloc]):
+        (-[DOMSVGRect finalize]):
+        (-[DOMSVGRect x]):
+        (-[DOMSVGRect setX:]):
+        (-[DOMSVGRect y]):
+        (-[DOMSVGRect setY:]):
+        (-[DOMSVGRect width]):
+        (-[DOMSVGRect setWidth:]):
+        (-[DOMSVGRect height]):
+        (-[DOMSVGRect setHeight:]):
+        (-[DOMSVGRect WebCore::]):
+        (-[DOMSVGRect _initWithFloatRect:WebCore::]):
+        (+[DOMSVGRect _SVGRectWith:WebCore::]):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * ksvg2/svg/SVGAnimatedNumberList.idl:
+        * ksvg2/svg/SVGAnimatedRect.idl:
+        * ksvg2/svg/SVGComponentTransferFunctionElement.idl:
+        * ksvg2/svg/SVGCursorElement.idl:
+        * ksvg2/svg/SVGFEBlendElement.idl:
+        * ksvg2/svg/SVGFEColorMatrixElement.idl:
+        * ksvg2/svg/SVGFEComponentTransferElement.idl:
+        * ksvg2/svg/SVGFECompositeElement.idl:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.idl:
+        * ksvg2/svg/SVGFEDisplacementMapElement.idl:
+        * ksvg2/svg/SVGFEDistantLightElement.idl:
+        * ksvg2/svg/SVGFEFloodElement.idl:
+        * ksvg2/svg/SVGFEFuncAElement.idl:
+        * ksvg2/svg/SVGFEFuncBElement.idl:
+        * ksvg2/svg/SVGFEFuncGElement.idl:
+        * ksvg2/svg/SVGFEFuncRElement.idl:
+        * ksvg2/svg/SVGFEGaussianBlurElement.idl:
+        * ksvg2/svg/SVGFEImageElement.idl:
+        * ksvg2/svg/SVGFEMergeElement.idl:
+        * ksvg2/svg/SVGFEMergeNodeElement.idl:
+        * ksvg2/svg/SVGFEOffsetElement.idl:
+        * ksvg2/svg/SVGFEPointLightElement.idl:
+        * ksvg2/svg/SVGFESpecularLightingElement.idl:
+        * ksvg2/svg/SVGFESpotLightElement.idl:
+        * ksvg2/svg/SVGFETileElement.idl:
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        * ksvg2/svg/SVGFETurbulenceElement.h:
+        * ksvg2/svg/SVGFETurbulenceElement.idl:
+        * ksvg2/svg/SVGNumberList.idl:
+
 2006-10-06  Adam Roben  <aroben@apple.com>
 
         Backing out my previous change.

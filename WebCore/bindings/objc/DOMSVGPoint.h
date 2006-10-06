@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+#import <WebCore/DOMObject.h>
 
-    interface [Conditional=SVG] SVGFEFuncGElement : SVGComponentTransferFunctionElement {
-    };
-
-}
+@interface DOMSVGPoint : DOMObject
+#ifndef BUILDING_ON_TIGER
+@property float x;
+@property float y;
+#else
+- (float)x;
+- (void)setX:(float)newX;
+- (float)y;
+- (void)setY:(float)newY;
+#endif
+@end

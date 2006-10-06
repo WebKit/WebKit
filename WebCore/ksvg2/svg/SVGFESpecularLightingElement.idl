@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-    interface [Conditional=SVG] SVGFESpecularLightingElement :
-                                SVGElement,
-                                SVGFilterPrimitiveStandardAttributes {
+module svg {
+
+    interface [Conditional=SVG] SVGFESpecularLightingElement : SVGElement,
+                                                               SVGFilterPrimitiveStandardAttributes {
         readonly attribute SVGAnimatedString in1;
         readonly attribute SVGAnimatedNumber surfaceScale;
         readonly attribute SVGAnimatedNumber specularConstant;
         readonly attribute SVGAnimatedNumber specularExponent;
     };
-};
+
+}

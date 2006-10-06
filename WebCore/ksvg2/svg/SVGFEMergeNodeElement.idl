@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGFEMergeNodeElement : SVGElement { 
-    readonly attribute SVGAnimatedString in1;
-  };
-};
+module svg {
+
+    interface [Conditional=SVG] SVGFEMergeNodeElement : SVGElement {
+        readonly attribute SVGAnimatedString in1;
+    };
+
+}

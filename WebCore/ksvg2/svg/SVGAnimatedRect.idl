@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGAnimatedRect { 
-    readonly attribute SVGRect baseVal;
-    readonly attribute SVGRect animVal;
-  };
+module svg {
+
+    interface [Conditional=SVG] SVGAnimatedRect {
+        readonly attribute SVGRect baseVal;
+        readonly attribute SVGRect animVal;
+    }
+
 };

@@ -148,15 +148,18 @@ all : \
     DOMSVGAnimatedLength.h \
     DOMSVGAnimatedLengthList.h \
     DOMSVGAnimatedNumber.h \
+    DOMSVGAnimatedNumberList.h \
     DOMSVGAnimatedPathData.h \
     DOMSVGAnimatedPoints.h \
     DOMSVGAnimatedPreserveAspectRatio.h \
+    DOMSVGAnimatedRect.h \
     DOMSVGAnimatedString.h \
     DOMSVGAnimatedTransformList.h \
     DOMSVGAnimationElement.h \
     DOMSVGCircleElement.h \
     DOMSVGClipPathElement.h \
     DOMSVGColor.h \
+    DOMSVGComponentTransferFunctionElement.h \
     DOMSVGCursorElement.h \
     DOMSVGDefsElement.h \
     DOMSVGDescElement.h \
@@ -164,12 +167,36 @@ all : \
     DOMSVGElement.h \
     DOMSVGEllipseElement.h \
     DOMSVGExternalResourcesRequired.h \
+    DOMSVGFEBlendElement.h \
+    DOMSVGFEColorMatrixElement.h \
+    DOMSVGFEComponentTransferElement.h \
+    DOMSVGFECompositeElement.h \
+    DOMSVGFEDiffuseLightingElement.h \
+    DOMSVGFEDisplacementMapElement.h \
+    DOMSVGFEDistantLightElement.h \
+    DOMSVGFEFloodElement.h \
+    DOMSVGFEFuncAElement.h \
+    DOMSVGFEFuncBElement.h \
+    DOMSVGFEFuncGElement.h \
+    DOMSVGFEFuncRElement.h \
+    DOMSVGFEGaussianBlurElement.h \
+    DOMSVGFEImageElement.h \
+    DOMSVGFEMergeElement.h \
+    DOMSVGFEMergeNodeElement.h \
+    DOMSVGFEOffsetElement.h \
+    DOMSVGFEPointLightElement.h \
+    DOMSVGFESpecularLightingElement.h \
+    DOMSVGFESpotLightElement.h \
+    DOMSVGFETileElement.h \
+    DOMSVGFETurbulenceElement.h \
+    DOMSVGFilterPrimitiveStandardAttributes.h \
     DOMSVGLangSpace.h \
     DOMSVGLength.h \
     DOMSVGLengthList.h \
     DOMSVGLocatable.h \
     DOMSVGMatrix.h \
     DOMSVGMetadataElement.h \
+    DOMSVGNumberList.h \
     DOMSVGPathSeg.h \
     DOMSVGPathSegList.h \
     DOMSVGPreserveAspectRatio.h \

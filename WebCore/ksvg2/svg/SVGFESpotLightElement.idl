@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-    interface [Conditional=SVG] SVGFESpotLightElement :
-                                SVGElement {
+module svg {
+
+    interface [Conditional=SVG] SVGFESpotLightElement : SVGElement {
         readonly attribute SVGAnimatedNumber x;
         readonly attribute SVGAnimatedNumber y;
         readonly attribute SVGAnimatedNumber z;
@@ -36,4 +35,5 @@ module svg
         readonly attribute SVGAnimatedNumber specularExponent;
         readonly attribute SVGAnimatedNumber limitingConeAngle;
     };
-};
+
+}

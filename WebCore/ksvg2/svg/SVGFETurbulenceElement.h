@@ -60,7 +60,7 @@ namespace WebCore
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, double, double, BaseFrequencyX, baseFrequencyX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, double, double, BaseFrequencyY, baseFrequencyY)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, int, NumOctaves, numOctaves)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, long, long, NumOctaves, numOctaves)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, double, double, Seed, seed)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, int, StitchTiles, stitchTiles)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, int, Type, type)

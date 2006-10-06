@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg
-{
-  interface [Conditional=SVG] SVGFECompositeElement : 
-                SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+module svg {
+
+    interface [Conditional=SVG] SVGFECompositeElement : SVGElement,
+                                                        SVGFilterPrimitiveStandardAttributes {
     // Composite Operators
     const unsigned short SVG_FECOMPOSITE_OPERATOR_UNKNOWN    = 0;
     const unsigned short SVG_FECOMPOSITE_OPERATOR_OVER       = 1;
@@ -36,6 +35,7 @@ module svg
     const unsigned short SVG_FECOMPOSITE_OPERATOR_ATOP       = 4;
     const unsigned short SVG_FECOMPOSITE_OPERATOR_XOR        = 5;
     const unsigned short SVG_FECOMPOSITE_OPERATOR_ARITHMETIC = 6;
+
     readonly attribute SVGAnimatedString      in1;
     readonly attribute SVGAnimatedString      in2;
     readonly attribute SVGAnimatedEnumeration _operator;
@@ -43,5 +43,6 @@ module svg
     readonly attribute SVGAnimatedNumber      k2;
     readonly attribute SVGAnimatedNumber      k3;
     readonly attribute SVGAnimatedNumber      k4;
-  };
-};
+    };
+
+}

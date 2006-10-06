@@ -38,6 +38,12 @@
 #import "DOMRGBColor.h"
 #import "DOMStyleSheet.h"
 
+#ifdef SVG_SUPPORT
+#import "DOMSVGNumber.h"
+#import "DOMSVGPoint.h"
+#import "DOMSVGRect.h"
+#endif // SVG_SUPPORT
+
 #ifdef XPATH_SUPPORT
 #import "DOMXPathNSResolver.h"
 #endif // XPATH_SUPPORT
@@ -149,23 +155,49 @@
 #import "DOMSVGAnimatedLengthInternal.h"
 #import "DOMSVGAnimatedLengthListInternal.h"
 #import "DOMSVGAnimatedNumberInternal.h"
+#import "DOMSVGAnimatedNumberListInternal.h"
 #import "DOMSVGAnimatedPreserveAspectRatioInternal.h"
+#import "DOMSVGAnimatedRectInternal.h"
 #import "DOMSVGAnimatedStringInternal.h"
 #import "DOMSVGAnimatedTransformListInternal.h"
 #import "DOMSVGAnimationElementInternal.h"
 #import "DOMSVGCircleElementInternal.h"
 #import "DOMSVGClipPathElementInternal.h"
 #import "DOMSVGColorInternal.h"
+#import "DOMSVGComponentTransferFunctionElementInternal.h"
 #import "DOMSVGCursorElementInternal.h"
 #import "DOMSVGDefsElementInternal.h"
 #import "DOMSVGDescElementInternal.h"
 #import "DOMSVGDocumentInternal.h"
 #import "DOMSVGElementInternal.h"
 #import "DOMSVGEllipseElementInternal.h"
+#import "DOMSVGFEBlendElementInternal.h"
+#import "DOMSVGFEColorMatrixElementInternal.h"
+#import "DOMSVGFEComponentTransferElementInternal.h"
+#import "DOMSVGFECompositeElementInternal.h"
+#import "DOMSVGFEDiffuseLightingElementInternal.h"
+#import "DOMSVGFEDisplacementMapElementInternal.h"
+#import "DOMSVGFEDistantLightElementInternal.h"
+#import "DOMSVGFEFloodElementInternal.h"
+#import "DOMSVGFEFuncAElementInternal.h"
+#import "DOMSVGFEFuncBElementInternal.h"
+#import "DOMSVGFEFuncGElementInternal.h"
+#import "DOMSVGFEFuncRElementInternal.h"
+#import "DOMSVGFEGaussianBlurElementInternal.h"
+#import "DOMSVGFEImageElementInternal.h"
+#import "DOMSVGFEMergeElementInternal.h"
+#import "DOMSVGFEMergeNodeElementInternal.h"
+#import "DOMSVGFEOffsetElementInternal.h"
+#import "DOMSVGFEPointLightElementInternal.h"
+#import "DOMSVGFESpecularLightingElementInternal.h"
+#import "DOMSVGFESpotLightElementInternal.h"
+#import "DOMSVGFETileElementInternal.h"
+#import "DOMSVGFETurbulenceElementInternal.h"
 #import "DOMSVGLengthInternal.h"
 #import "DOMSVGLengthListInternal.h"
 #import "DOMSVGMatrixInternal.h"
 #import "DOMSVGMetadataElementInternal.h"
+#import "DOMSVGNumberListInternal.h"
 #import "DOMSVGPathSegInternal.h"
 #import "DOMSVGPathSegListInternal.h"
 #import "DOMSVGPreserveAspectRatioInternal.h"
@@ -193,6 +225,11 @@ namespace WebCore {
     class Range;
     class StyleSheet;
     class TreeWalker;
+
+#ifdef SVG_SUPPORT
+    class FloatPoint;
+    class FloatRect;
+#endif // SVG_SUPPORT
 
 #ifdef XPATH_SUPPORT
     class XPathNSResolver;
@@ -277,6 +314,28 @@ namespace WebCore {
 + (DOMAbstractView *)_abstractViewWith:(WebCore::AbstractView *)impl;
 - (WebCore::AbstractView *)_abstractView;
 @end
+
+
+#ifdef SVG_SUPPORT
+// SVG Internal Interfaces
+
+@interface DOMSVGNumber (WebCoreInternal)
++ (DOMSVGNumber *)_SVGNumberWith:(float)value;
+- (float)_SVGNumber;
+@end
+
+@interface DOMSVGPoint (WebCoreInternal)
++ (DOMSVGPoint *)_SVGPointWith:(WebCore::FloatPoint)impl;
+- (WebCore::FloatPoint)_SVGPoint;
+@end
+
+@interface DOMSVGRect (WebCoreInternal)
++ (DOMSVGRect *)_SVGRectWith:(WebCore::FloatRect)impl;
+- (WebCore::FloatRect)_SVGRect;
+@end
+
+#endif // SVG_SUPPORT
+
 
 #ifdef XPATH_SUPPORT
 // XPath Internal Interfaces

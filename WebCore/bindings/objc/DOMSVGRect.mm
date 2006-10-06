@@ -1,6 +1,6 @@
 /*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +24,96 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+#import "config.h"
 
-    interface [Conditional=SVG] SVGNumberList {
-        readonly attribute unsigned long numberOfItems;
+#ifdef SVG_SUPPORT
 
-        void clear()
-            raises(DOMException);
-        SVGNumber initialize(in SVGNumber item)
-            raises(DOMException, SVGException);
-        SVGNumber getItem(in unsigned long index)
-            raises(DOMException);
-        SVGNumber insertItemBefore(in SVGNumber item, in unsigned long index)
-            raises(DOMException, SVGException);
-        SVGNumber replaceItem(in SVGNumber item, in unsigned long index)
-            raises(DOMException, SVGException);
-        SVGNumber removeItem(in unsigned long index)
-            raises(DOMException);
-        SVGNumber appendItem(in SVGNumber item)
-            raises(DOMException, SVGException);
-    };
+#import "DOMSVGRect.h"
 
+#import "DOMInternal.h"
+#import "FloatRect.h"
+
+@implementation DOMSVGRect
+
+- (void)dealloc
+{
+    // FIXME: IMPLEMENT ME
+    [super dealloc];
 }
+
+- (void)finalize
+{
+    // FIXME: IMPLEMENT ME
+    [super finalize];
+}
+
+- (float)x
+{
+    // FIXME: IMPLEMENT ME
+    return 0.0;
+}
+
+- (void)setX:(float)newX
+{
+    // FIXME: IMPLEMENT ME
+}
+
+- (float)y
+{
+    // FIXME: IMPLEMENT ME
+    return 0.0;
+}
+
+- (void)setY:(float)newY
+{
+    // FIXME: IMPLEMENT ME
+}
+
+- (float)width
+{
+    // FIXME: IMPLEMENT ME
+    return 0.0;
+}
+
+- (void)setWidth:(float)newWidth
+{
+    // FIXME: IMPLEMENT ME
+}
+
+- (float)height
+{
+    // FIXME: IMPLEMENT ME
+    return 0.0;
+}
+
+- (void)setHeight:(float)newHeight
+{
+    // FIXME: IMPLEMENT ME
+}
+
+@end
+
+@implementation DOMSVGRect (WebCoreInternal)
+
+- (WebCore::FloatRect)_SVGRect
+{
+    // FIXME: IMPLEMENT ME
+    return WebCore::FloatRect();
+}
+
+- (id)_initWithFloatRect:(WebCore::FloatRect)impl
+{
+    // FIXME: IMPLEMENT ME
+    [super _init];
+    return self;
+}
+
++ (DOMSVGRect *)_SVGRectWith:(WebCore::FloatRect)impl
+{
+    // FIXME: IMPLEMENT ME
+    return [[[self alloc] _initWithFloatRect:impl] autorelease];
+}
+
+@end
+
+#endif // SVG_SUPPORT

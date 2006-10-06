@@ -55,7 +55,7 @@ SVGFETurbulenceElement::~SVGFETurbulenceElement()
 ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, double, Number, number, BaseFrequencyX, baseFrequencyX, "baseFrequencyX", m_baseFrequencyX)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, double, Number, number, BaseFrequencyY, baseFrequencyY, "baseFrequencyY", m_baseFrequencyY)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, double, Number, number, Seed, seed, SVGNames::seedAttr.localName(), m_seed)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Integer, integer, NumOctaves, numOctaves, SVGNames::numOctavesAttr.localName(), m_numOctaves)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, long, Integer, integer, NumOctaves, numOctaves, SVGNames::numOctavesAttr.localName(), m_numOctaves)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Enumeration, enumeration, StitchTiles, stitchTiles, SVGNames::stitchTilesAttr.localName(), m_stitchTiles)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Enumeration, enumeration, Type, type, SVGNames::typeAttr.localName(), m_type)
 

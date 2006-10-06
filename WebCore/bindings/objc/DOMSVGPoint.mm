@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +24,75 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+#import "config.h"
 
-    interface [Conditional=SVG] SVGFEFuncGElement : SVGComponentTransferFunctionElement {
-    };
+#ifdef SVG_SUPPORT
 
+#import "DOMSVGPoint.h"
+
+#import "DOMInternal.h"
+#import "FloatPoint.h"
+
+@implementation DOMSVGPoint
+
+- (void)dealloc
+{
+    // FIXME: IMPLEMENT ME
+    [super dealloc];
 }
+
+- (void)finalize
+{
+    // FIXME: IMPLEMENT ME
+    [super finalize];
+}
+
+- (float)x
+{
+    // FIXME: IMPLEMENT ME
+    return 0.0;
+}
+
+- (void)setX:(float)newX
+{
+    // FIXME: IMPLEMENT ME
+}
+
+- (float)y
+{
+    // FIXME: IMPLEMENT ME
+    return 0.0;
+}
+
+- (void)setY:(float)newY
+{
+    // FIXME: IMPLEMENT ME
+}
+
+@end
+
+@implementation DOMSVGPoint (WebCoreInternal)
+
+- (WebCore::FloatPoint)_SVGPoint
+{
+    // FIXME: IMPLEMENT ME
+    return WebCore::FloatPoint();
+}
+
+- (id)_initWithFloatPoint:(WebCore::FloatPoint)impl
+{
+    // FIXME: IMPLEMENT ME
+    [super _init];
+    return self;
+}
+
++ (DOMSVGPoint *)_SVGPointWith:(WebCore::FloatPoint)impl
+{
+    // FIXME: IMPLEMENT ME
+    return [[[self alloc] _initWithFloatPoint:impl] autorelease];
+}
+
+@end
+
+#endif // SVG_SUPPORT
+
