@@ -305,11 +305,6 @@ void FrameView::adjustViewSize()
         resizeContents(docw, doch);
     }
 }
-    
-IntRect FrameView::windowResizerRect() const
-{
-    return IntRect();
-}
 
 void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, ScrollbarMode& vMode)
 {

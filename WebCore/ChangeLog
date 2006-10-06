@@ -1,5 +1,13 @@
 2006-10-06  Adam Roben  <aroben@apple.com>
 
+        Backing out my previous change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustViewSize):
+
+2006-10-06  Adam Roben  <aroben@apple.com>
+
         Build fix.
 
         * WebCore.xcodeproj/project.pbxproj:
