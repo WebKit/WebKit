@@ -37,7 +37,7 @@
 #include "KRenderingDeviceQuartz.h"
 #endif
 
-#include "GraphicsContextPlatformPrivate.h"
+#include <GraphicsContextPlatformPrivate.h> // FIXME: Temporary.
 
 using namespace std;
 
