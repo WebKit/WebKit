@@ -1,3 +1,9 @@
+2006-10-05  Dave Hyatt  <hyatt@apple.com>
+
+        Stub out setFrameGeometry.
+        
+        * platform/ScrollView.h:
+
 2006-10-05  Adele Peterson  <adele@apple.com>
 
         Reverting autoscroll fix.  I need to rework this a little.
