@@ -743,12 +743,9 @@ private:
   
   void replaceContentsWithScriptResult(const KURL& url);
 
-  void disconnectOwnerElement();
+    void disconnectOwnerElement();
 
-  void setNeedsReapplyStyles();
-
-  void stopAutoscrollTimer();
-  RenderObject* autoscrollRenderer() const;
+    void setNeedsReapplyStyles();
 
 protected:
     virtual void startRedirectionTimer();
@@ -758,7 +755,7 @@ protected:
     
     void handleAutoscroll(RenderObject*);
     void startAutoscrollTimer();
-    void setAutoscrollRenderer(RenderObject*);
+    void stopAutoscrollTimer();
 
  private:
   void emitLoadEvent();

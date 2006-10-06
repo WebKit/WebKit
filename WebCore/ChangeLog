@@ -1,3 +1,17 @@
+2006-10-05  Adele Peterson  <adele@apple.com>
+
+        Reverting autoscroll fix.  I need to rework this a little.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::handleAutoscroll):
+        (WebCore::Frame::autoscrollTimerFired):
+        (WebCore::Frame::stopAutoscrollTimer):
+        * page/Frame.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::~RenderListBox):
+
 2006-10-05  Alice  <alice.liu@apple.com>
 
         Reviewed by Adam.
