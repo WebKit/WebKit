@@ -1,5 +1,13 @@
 2006-10-06  Adam Roben  <aroben@apple.com>
 
+        Build fix.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::windowResizerRect):
+
+2006-10-06  Adam Roben  <aroben@apple.com>
+
         Reviewed by Maciej.
 
         More loader tweaks.
