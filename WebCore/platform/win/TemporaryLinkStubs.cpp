@@ -279,6 +279,7 @@ IntPoint ScrollView::convertSelfToChild(const Widget*, const IntPoint& p) const 
 void ScrollView::scrolled() const {};
 PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent) { return 0; }
 void ScrollView::setFrameGeometry(const IntRect& r) { Widget::setFrameGeometry(r); }
+IntRect ScrollView::windowResizerRect() { return IntRect(); }
 
 void GraphicsContext::setShadow(IntSize const&,int,Color const&) { }
 void GraphicsContext::clearShadow() { }
