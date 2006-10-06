@@ -115,7 +115,7 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
     
     [frameBridge setToolbarsVisible:winArgs.toolBarVisible || winArgs.locationBarVisible];
     [frameBridge setStatusbarVisible:winArgs.statusBarVisible];
-    [frameBridge setScrollbarsVisible:winArgs.scrollBarsVisible];
+    [frameBridge setScrollbarsVisible:winArgs.scrollbarsVisible];
     [frameBridge setWindowIsResizable:winArgs.resizable];
     
     NSRect windowRect = [pageBridge impl]->windowRect();

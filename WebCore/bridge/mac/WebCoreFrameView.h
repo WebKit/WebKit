@@ -30,18 +30,18 @@
 // scroll view is resized.
 
 typedef enum {
-    WebCoreScrollBarAuto,
-    WebCoreScrollBarAlwaysOff,
-    WebCoreScrollBarAlwaysOn
-} WebCoreScrollBarMode;
+    WebCoreScrollbarAuto,
+    WebCoreScrollbarAlwaysOff,
+    WebCoreScrollbarAlwaysOn
+} WebCoreScrollbarMode;
 
 @protocol WebCoreFrameView
-- (void)setHorizontalScrollingMode:(WebCoreScrollBarMode)mode;
-- (void)setVerticalScrollingMode:(WebCoreScrollBarMode)mode;
-- (void)setScrollingMode:(WebCoreScrollBarMode)mode;
+- (void)setHorizontalScrollingMode:(WebCoreScrollbarMode)mode;
+- (void)setVerticalScrollingMode:(WebCoreScrollbarMode)mode;
+- (void)setScrollingMode:(WebCoreScrollbarMode)mode;
 
-- (WebCoreScrollBarMode)horizontalScrollingMode;
-- (WebCoreScrollBarMode)verticalScrollingMode;
+- (WebCoreScrollbarMode)horizontalScrollingMode;
+- (WebCoreScrollbarMode)verticalScrollingMode;
 
 - (void)setScrollBarsSuppressed:(BOOL)suppressed repaintOnUnsuppress:(BOOL)repaint;
 

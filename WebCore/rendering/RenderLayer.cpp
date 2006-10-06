@@ -902,16 +902,11 @@ PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientat
 void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
 {
     RefPtr<Scrollbar>& scrollbar = orientation == HorizontalScrollbar ? m_hBar : m_vBar;
-
     if (scrollbar) {
-        if (scrollbar->isWidget()) {
-            PlatformScrollbar* scrollbarWidget = static_cast<PlatformScrollbar*>(scrollbar.get());
-            if (scrollbarWidget->parent()->isFrameView())
-                static_cast<FrameView*>(scrollbarWidget->parent())->removeChild(scrollbarWidget);
-            scrollbarWidget->setParent(0);
-        }
-        // FIXME: Destroy the engine scrollbar.
+        if (scrollbar->isWidget())
+            static_cast<PlatformScrollbar*>(scrollbar.get())->removeFromParent();
 
+        // FIXME: Destroy the engine scrollbar.
         scrollbar = 0;
     }
 }

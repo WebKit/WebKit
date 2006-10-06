@@ -1051,7 +1051,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
         // Now the render part owns the view, so we don't any more.
     }
 
-    m_frame->view()->initScrollBars();
+    m_frame->view()->initScrollbars();
 }
 
 - (void)setActivationEventNumber:(int)num

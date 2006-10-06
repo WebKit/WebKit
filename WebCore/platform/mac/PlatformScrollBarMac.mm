@@ -34,32 +34,32 @@ using namespace WebCore;
 
 @interface WebCoreScrollBar : NSScroller <WebCoreWidgetHolder>
 {
-    PlatformScrollBar* scrollBar;
+    PlatformScrollbar* scrollbar;
 }
 
-- (id)initWithPlatformScrollBar:(PlatformScrollBar*)s;
-- (void)detachPlatformScrollBar;
+- (id)initWithPlatformScrollbar:(PlatformScrollbar*)s;
+- (void)detachPlatformScrollbar;
 
 @end
 
 @implementation WebCoreScrollBar
 
-static NSControlSize NSControlSizeForScrollBarControlSize(ScrollBarControlSize size)
+static NSControlSize NSControlSizeForScrollBarControlSize(ScrollbarControlSize size)
 {
-    if (size == SmallScrollBar)
+    if (size == SmallScrollbar)
         return NSSmallControlSize;
-    if (size == MiniScrollBar)
+    if (size == MiniScrollbar)
         return NSMiniControlSize;
     return NSRegularControlSize;
 }
 
-- (id)initWithPlatformScrollBar:(PlatformScrollBar*)s
+- (id)initWithPlatformScrollbar:(PlatformScrollbar*)s
 {
     // Cocoa scrollbars just set their orientation by examining their own
     // dimensions, so we have to do this unsavory hack.
     NSRect orientation;
     orientation.origin.x = orientation.origin.y = 0;
-    if (s->orientation() == VerticalScrollBar) {
+    if (s->orientation() == VerticalScrollbar) {
         orientation.size.width = [NSScroller scrollerWidth];
         orientation.size.height = 100;
     } else {
@@ -68,7 +68,7 @@ static NSControlSize NSControlSizeForScrollBarControlSize(ScrollBarControlSize s
     }
     self = [self initWithFrame:orientation];
 
-    scrollBar = s;
+    scrollbar = s;
 
     [self setEnabled:YES];
     [self setTarget:self];
@@ -78,21 +78,21 @@ static NSControlSize NSControlSizeForScrollBarControlSize(ScrollBarControlSize s
     return self;
 }
 
-- (void)detachPlatformScrollBar
+- (void)detachPlatformScrollbar
 {
     [self setTarget:nil];
-    scrollBar = 0;
+    scrollbar = 0;
 }
 
 - (IBAction)scroll:(NSScroller*)sender
 {
-    if (scrollBar)
-        scrollBar->scrollbarHit([sender hitPart]);
+    if (scrollbar)
+        scrollbar->scrollbarHit([sender hitPart]);
 }
 
 - (Widget *)widget
 {
-    return scrollBar;
+    return scrollbar;
 }
 
 - (void)mouseDown:(NSEvent *)event
@@ -107,31 +107,31 @@ static NSControlSize NSControlSizeForScrollBarControlSize(ScrollBarControlSize s
 namespace WebCore
 {
 
-PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation, ScrollBarControlSize controlSize)
-    : ScrollBar(client, orientation, controlSize)
+PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+    : Scrollbar(client, orientation, controlSize)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    WebCoreScrollBar *bar = [[WebCoreScrollBar alloc] initWithPlatformScrollBar:this];
+    WebCoreScrollBar *bar = [[WebCoreScrollBar alloc] initWithPlatformScrollbar:this];
     setView(bar);
     [bar release];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-PlatformScrollBar::~PlatformScrollBar()
+PlatformScrollbar::~PlatformScrollbar()
 {
     WebCoreScrollBar* bar = (WebCoreScrollBar*)getView();
-    [bar detachPlatformScrollBar];
+    [bar detachPlatformScrollbar];
 
     // Widget should probably do this for all widgets.
     // But we don't need it for form elements, and for frames it doesn't work
     // well because of the way the NSViews are created in WebKit. So for now,
-    // we'll just do it explictly for ScrollBar.
+    // we'll just do it explictly for Scrollbar.
     removeFromSuperview();
 }
 
-void PlatformScrollBar::updateThumbPosition()
+void PlatformScrollbar::updateThumbPosition()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WebCoreScrollBar *bar = (WebCoreScrollBar *)getView();
@@ -140,7 +140,7 @@ void PlatformScrollBar::updateThumbPosition()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void PlatformScrollBar::updateThumbProportion()
+void PlatformScrollbar::updateThumbProportion()
 {
     float val = (float)m_visibleSize/m_totalSize;
 
@@ -151,7 +151,7 @@ void PlatformScrollBar::updateThumbProportion()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-bool PlatformScrollBar::scrollbarHit(NSScrollerPart hitPart)
+bool PlatformScrollbar::scrollbarHit(NSScrollerPart hitPart)
 {
     int maxPos = m_totalSize - m_visibleSize;
     if (maxPos <= 0)
@@ -186,27 +186,27 @@ bool PlatformScrollBar::scrollbarHit(NSScrollerPart hitPart)
     return setValue(newPos);
 }
 
-int PlatformScrollBar::width() const
+int PlatformScrollbar::width() const
 {
     return Widget::width();
 }
 
-int PlatformScrollBar::height() const
+int PlatformScrollbar::height() const
 {
     return Widget::height();
 }
 
-void PlatformScrollBar::setRect(const IntRect& rect)
+void PlatformScrollbar::setRect(const IntRect& rect)
 {
     setFrameGeometry(rect);
 }
 
-void PlatformScrollBar::setEnabled(bool enabled)
+void PlatformScrollbar::setEnabled(bool enabled)
 {
     Widget::setEnabled(enabled);
 }
 
-void PlatformScrollBar::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
+void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
     Widget::paint(graphicsContext, damageRect);
 }

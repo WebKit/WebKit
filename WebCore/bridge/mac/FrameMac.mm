@@ -57,7 +57,7 @@
 #import "Logging.h"
 #import "MouseEventWithHitTestResults.h"
 #import "PlatformKeyboardEvent.h"
-#import "PlatformScrollBar.h"
+#import "PlatformScrollbar.h"
 #import "PlatformWheelEvent.h"
 #import "Plugin.h"
 #import "RegularExpression.h"
@@ -550,7 +550,7 @@ Frame* FrameMac::createFrame(const KURL& url, const String& name, Element* owner
     int marginHeight = -1;
     if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag)) {
         HTMLFrameElement* o = static_cast<HTMLFrameElement*>(ownerElement);
-        allowsScrolling = o->scrollingMode() != ScrollBarAlwaysOff;
+        allowsScrolling = o->scrollingMode() != ScrollbarAlwaysOff;
         marginWidth = o->getMarginWidth();
         marginHeight = o->getMarginHeight();
     }

@@ -1,3 +1,57 @@
+2006-10-05  Geoffrey Garen  <ggaren@apple.com>
+
+        build fix.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::createFrame):
+        * bridge/mac/FrameViewMac.mm:
+        (WebCore::FrameView::passMousePressEventToScrollbar):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge installInFrame:]):
+        * bridge/mac/WebCoreFrameView.h:
+        * platform/ScrollBar.cpp:
+        * platform/Widget.h:
+        * platform/mac/PlatformScrollBar.h:
+        * platform/mac/PlatformScrollBarMac.mm:
+        (NSControlSizeForScrollBarControlSize):
+        (-[WebCoreScrollBar initWithPlatformScrollbar:]):
+        (-[WebCoreScrollBar detachPlatformScrollbar]):
+        (-[WebCoreScrollBar scroll:]):
+        (-[WebCoreScrollBar widget]):
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        (WebCore::PlatformScrollbar::~PlatformScrollbar):
+        (WebCore::PlatformScrollbar::updateThumbPosition):
+        (WebCore::PlatformScrollbar::updateThumbProportion):
+        (WebCore::PlatformScrollbar::scrollbarHit):
+        (WebCore::PlatformScrollbar::width):
+        (WebCore::PlatformScrollbar::height):
+        (WebCore::PlatformScrollbar::setRect):
+        (WebCore::PlatformScrollbar::setEnabled):
+        (WebCore::PlatformScrollbar::paint):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::setVScrollbarMode):
+        (WebCore::ScrollView::setHScrollbarMode):
+        (WebCore::ScrollView::setScrollbarsMode):
+        (WebCore::ScrollView::vScrollbarMode):
+        (WebCore::ScrollView::hScrollbarMode):
+        (WebCore::ScrollView::suppressScrollbars):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::removeFromParent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::destroyScrollbar):
+
+2006-10-05  Geoffrey Garen  <ggaren@apple.com>
+
+        build fix.
+        
+        * platform/Widget.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::destroyScrollbar):
+
 2006-10-06  Mitz Pettel  <mitz@webkit.org>
 
         http://bugs.webkit.org/show_bug.cgi?id=8276

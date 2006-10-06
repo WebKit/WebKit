@@ -452,4 +452,8 @@ WidgetClient* Widget::client() const
     return data->client;
 }
 
+void Widget::removeFromParent()
+{
+}
+
 }
