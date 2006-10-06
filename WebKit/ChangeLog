@@ -1,3 +1,19 @@
+2006-10-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - added WebFrameLoaderClient protocol -- to be used to make WebFrameLoader forget all about WebFrame
+
+        * Loader/WebDocumentLoadState.h: Added comment about Maciej's planned renaming here.
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m: Renamed webFrame to client and added the new protocol.
+        Eventually we'll be removing the dependency on WebFrame entirely.
+        * WebView/WebFrame.m: (-[WebFrame _initWithWebFrameView:webView:bridge:]): Update to call the method
+        by its new name.
+
+        * Loader/WebFrameLoaderClient.h: Added.
+        * WebKit.xcodeproj/project.pbxproj: Updated for new file, sorted things.
+
 2006-10-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

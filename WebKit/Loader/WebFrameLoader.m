@@ -26,34 +26,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebFrameLoader.h>
+#import "WebFrameLoader.h"
 
-#import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebMainResourceLoader.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebViewInternal.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebResourcePrivate.h>
-#import <WebKit/DOMHTML.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebPreferences.h>
-#import <WebKit/WebIconDatabasePrivate.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebFrameLoadDelegate.h>
-#import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebScriptDebugServerPrivate.h>
+#import "WebDataProtocol.h"
+#import "WebDataSourceInternal.h"
+#import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
+#import "WebFrameLoadDelegate.h"
+#import "WebIconDatabasePrivate.h"
+#import "WebKitErrorsPrivate.h"
+#import "WebKitLogging.h"
+#import "WebKitNSStringExtras.h"
+#import "WebMainResourceLoader.h"
 #import "WebNSDictionaryExtras.h"
+#import "WebNSURLExtras.h"
+#import "WebPreferences.h"
+#import "WebResourcePrivate.h"
+#import "WebScriptDebugServerPrivate.h"
+#import "WebViewInternal.h"
+#import <JavaScriptCore/Assertions.h>
+#import <WebKit/DOMHTML.h>
 
 @implementation WebFrameLoader
 
-- (id)initWithWebFrame:(WebFrame *)wf
+- (id)initWithClient:(WebFrame <WebFrameLoaderClient> *)c
 {
     self = [super init];
     if (self) {
-        webFrame = wf;
+        client = c;
         state = WebFrameStateCommittedPage;
     }
     return self;    
@@ -83,7 +83,7 @@
 
 - (WebDataSource *)activeDataSource
 {
-    return [webFrame _dataSourceForDocumentLoadState:[self activeDocumentLoadState]];
+    return [client _dataSourceForDocumentLoadState:[self activeDocumentLoadState]];
 }
 
 - (WebResource *)_archivedSubresourceForURL:(NSURL *)URL
@@ -107,12 +107,12 @@
 
 - (void)defersCallbacksChanged
 {
-    [self setDefersCallbacks:[[webFrame webView] defersCallbacks]];
+    [self setDefersCallbacks:[[client webView] defersCallbacks]];
 }
 
 - (BOOL)defersCallbacks
 {
-    return [[webFrame webView] defersCallbacks];
+    return [[client webView] defersCallbacks];
 }
 
 - (void)setDefersCallbacks:(BOOL)defers
@@ -201,7 +201,7 @@
     mainResourceLoader = [[WebMainResourceLoader alloc] initWithFrameLoader:self];
     
     [mainResourceLoader setIdentifier:identifier];
-    [webFrame _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
+    [client _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
     if (![mainResourceLoader loadWithRequest:request]) {
         // FIXME: if this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?
@@ -221,7 +221,7 @@
 
 - (WebDataSource *)dataSource
 {
-    return [webFrame _dataSourceForDocumentLoadState:documentLoadState]; 
+    return [client _dataSourceForDocumentLoadState:documentLoadState]; 
 }
 
 - (void)_setDocumentLoadState:(WebDocumentLoadState *)loadState
@@ -231,7 +231,7 @@
     
     ASSERT(loadState != documentLoadState);
     
-    [webFrame _prepareForDataSourceReplacement];
+    [client _prepareForDataSourceReplacement];
     [documentLoadState detachFromFrameLoader];
     
     [loadState retain];
@@ -246,7 +246,7 @@
 
 - (WebDataSource *)policyDataSource
 {
-    return [webFrame _dataSourceForDocumentLoadState:policyDocumentLoadState];     
+    return [client _dataSourceForDocumentLoadState:policyDocumentLoadState];     
 }
 
 - (void)_setPolicyDocumentLoadState:(WebDocumentLoadState *)loadState
@@ -263,7 +263,7 @@
 
 - (WebDataSource *)provisionalDataSource 
 {
-    return [webFrame _dataSourceForDocumentLoadState:provisionalDocumentLoadState]; 
+    return [client _dataSourceForDocumentLoadState:provisionalDocumentLoadState]; 
 }
 
 - (WebDocumentLoadState *)provisionalDocumentLoadState
@@ -310,19 +310,19 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_setState:(WebFrameState)newState
 {
-    LOG(Loading, "%@:  transition from %s to %s", [webFrame name], stateNames[state], stateNames[newState]);
-    if ([webFrame webView])
-        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [webFrame name], stateNames[state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[[webFrame webView] mainFrame] dataSource] _documentLoadState] loadingStartedTime]);
+    LOG(Loading, "%@:  transition from %s to %s", [client name], stateNames[state], stateNames[newState]);
+    if ([client webView])
+        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [client name], stateNames[state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[[client webView] mainFrame] dataSource] _documentLoadState] loadingStartedTime]);
     
-    if (newState == WebFrameStateComplete && webFrame == [[webFrame webView] mainFrame])
+    if (newState == WebFrameStateComplete && client == [[client webView] mainFrame])
         LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[[self dataSource] _documentLoadState] loadingStartedTime]);
     
     state = newState;
     
     if (state == WebFrameStateProvisional)
-        [webFrame _provisionalLoadStarted];
+        [client _provisionalLoadStarted];
     else if (state == WebFrameStateComplete) {
-        [webFrame _frameLoadCompleted];
+        [client _frameLoadCompleted];
         _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
         [[self dataSource] _stopRecordingResponses];
     }
@@ -331,7 +331,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)clearProvisionalLoad
 {
     [self _setProvisionalDocumentLoadState:nil];
-    [[webFrame webView] _progressCompleted:webFrame];
+    [[client webView] _progressCompleted:client];
     [self _setState:WebFrameStateComplete];
 }
 
@@ -378,7 +378,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     documentLoadState = nil;
     [old release];
     
-    [webFrame _detachChildren];
+    [client _detachChildren];
 }
 
 - (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest
@@ -423,17 +423,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (BOOL)_privateBrowsingEnabled
 {
-    return [[[webFrame webView] preferences] privateBrowsingEnabled];
+    return [[[client webView] preferences] privateBrowsingEnabled];
 }
 
 - (void)_finishedLoadingResource
 {
-    [webFrame _checkLoadComplete];
+    [client _checkLoadComplete];
 }
 
 - (void)_receivedError:(NSError *)error
 {
-    [webFrame _checkLoadComplete];
+    [client _checkLoadComplete];
 }
 
 - (NSURLRequest *)_originalRequest
@@ -443,7 +443,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (WebFrame *)webFrame
 {
-    return webFrame;
+    return client;
 }
 
 - (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
@@ -476,7 +476,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (WebFrameBridge *)bridge
 {
-    return [webFrame _bridge];
+    return [client _bridge];
 }
 
 - (void)_handleFallbackContent
@@ -518,8 +518,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     [[self activeDocumentLoadState] setPrimaryLoadComplete:YES];
     if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:[webFrame webView] didLoadMainResourceForDataSource:[self activeDataSource]];
-    [webFrame _checkLoadComplete];
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:[client webView] didLoadMainResourceForDataSource:[self activeDataSource]];
+    [client _checkLoadComplete];
 
     [self release];
 }
@@ -527,17 +527,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_notifyIconChanged:(NSURL *)iconURL
 {
     ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
-    ASSERT(webFrame == [[webFrame webView] mainFrame]);
+    ASSERT(client == [[client webView] mainFrame]);
 
-    [[webFrame webView] _willChangeValueForKey:_WebMainFrameIconKey];
+    [[client webView] _willChangeValueForKey:_WebMainFrameIconKey];
     
     NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForURL:[[[self activeDataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
     
-    [[[webFrame webView] _frameLoadDelegateForwarder] webView:[webFrame webView]
+    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
                                                didReceiveIcon:icon
-                                                     forFrame:webFrame];
+                                                     forFrame:client];
     
-    [[webFrame webView] _didChangeValueForKey:_WebMainFrameIconKey];
+    [[client webView] _didChangeValueForKey:_WebMainFrameIconKey];
 }
 
 - (NSURL *)_URL
@@ -671,12 +671,12 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 
 - (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f
 {
-    [webFrame _addExtraFieldsToRequest:request mainResource:mainResource alwaysFromRequest:f];
+    [client _addExtraFieldsToRequest:request mainResource:mainResource alwaysFromRequest:f];
 }
 
 - (void)cannotShowMIMETypeForURL:(NSURL *)URL
 {
-    [webFrame _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:URL];    
+    [client _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:URL];    
 }
 
 - (NSError *)interruptForPolicyChangeErrorWithRequest:(NSURLRequest *)request
@@ -687,13 +687,13 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 - (BOOL)isHostedByObjectElement
 {
     // Handle <object> fallback for error cases.            
-    DOMHTMLElement *hostElement = [webFrame frameElement];
+    DOMHTMLElement *hostElement = [client frameElement];
     return hostElement && [hostElement isKindOfClass:[DOMHTMLObjectElement class]];
 }
 
 - (BOOL)isLoadingMainFrame
 {
-    return [webFrame _isMainFrame];
+    return [client _isMainFrame];
 }
 
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType
@@ -713,7 +713,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 
 - (void)_checkNavigationPolicyForRequest:(NSURLRequest *)newRequest andCall:(id)obj withSelector:(SEL)sel
 {
-    [webFrame _checkNavigationPolicyForRequest:newRequest
+    [client _checkNavigationPolicyForRequest:newRequest
                                     dataSource:[self activeDataSource]
                                      formState:nil
                                        andCall:obj
@@ -741,12 +741,12 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 {
     WebFrameLoadType loadType;
     
-    policyDocumentLoadState = [webFrame _createDocumentLoadStateWithRequest:request];
-    WebDataSource *newDataSource = [webFrame _dataSourceForDocumentLoadState:policyDocumentLoadState];
+    policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
+    WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
 
     NSMutableURLRequest *r = [newDataSource request];
-    [webFrame _addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
-    if ([webFrame _shouldTreatURLAsSameAsCurrent:[request URL]]) {
+    [client _addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
+    if ([client _shouldTreatURLAsSameAsCurrent:[request URL]]) {
         [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
         loadType = WebFrameLoadTypeSame;
     } else
@@ -758,24 +758,24 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     // When we loading alternate content for an unreachable URL that we're
     // visiting in the b/f list, we treat it as a reload so the b/f list 
     // is appropriately maintained.
-    if ([webFrame _shouldReloadToHandleUnreachableURLFromRequest:request]) {
+    if ([client _shouldReloadToHandleUnreachableURLFromRequest:request]) {
         ASSERT(loadType == WebFrameLoadTypeStandard);
         loadType = WebFrameLoadTypeReload;
     }
     
-    [webFrame _loadDataSource:newDataSource withLoadType:loadType formState:nil];
+    [client _loadDataSource:newDataSource withLoadType:loadType formState:nil];
 }
 
 - (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState
 {
-    policyDocumentLoadState = [webFrame _createDocumentLoadStateWithRequest:request];
-    WebDataSource *newDataSource = [webFrame _dataSourceForDocumentLoadState:policyDocumentLoadState];
+    policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
+    WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
 
     [newDataSource _setTriggeringAction:action];
 
     [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
 
-    [webFrame _loadDataSource:newDataSource withLoadType:loadType formState:formState];
+    [client _loadDataSource:newDataSource withLoadType:loadType formState:formState];
 }
 
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding
@@ -790,13 +790,13 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
         [request setURL:unreachableURL];
 
     [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
-    policyDocumentLoadState = [webFrame _createDocumentLoadStateWithRequest:request];
-    WebDataSource *newDataSource = [webFrame _dataSourceForDocumentLoadState:policyDocumentLoadState];
+    policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
+    WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
     [request release];
     
     [newDataSource _setOverrideEncoding:encoding];
 
-    [webFrame _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReloadAllowingStaleData formState:nil];
+    [client _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReloadAllowingStaleData formState:nil];
 }
 
 - (void)reload
@@ -817,87 +817,87 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     if (unreachableURL != nil)
         initialRequest = [NSURLRequest requestWithURL:unreachableURL];
     
-    policyDocumentLoadState = [webFrame _createDocumentLoadStateWithRequest:initialRequest];
-    WebDataSource *newDataSource = [webFrame _dataSourceForDocumentLoadState:policyDocumentLoadState];
+    policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:initialRequest];
+    WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
     NSMutableURLRequest *request = [newDataSource request];
 
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
 
     // If we're about to rePOST, set up action so the app can warn the user
     if ([[request HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
-        NSDictionary *action = [webFrame _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:[request URL]];
+        NSDictionary *action = [client _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:[request URL]];
         [newDataSource _setTriggeringAction:action];
     }
 
     [newDataSource _setOverrideEncoding:[ds _overrideEncoding]];
     
-    [webFrame _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload formState:nil];
+    [client _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload formState:nil];
 }
 
 - (void)didReceiveServerRedirectForProvisionalLoadForFrame
 {
-    [webFrame _didReceiveServerRedirectForProvisionalLoadForFrame];
+    [client _didReceiveServerRedirectForProvisionalLoadForFrame];
 }
 
 - (void)finishedLoadingDocumentLoadState:(WebDocumentLoadState *)loadState
 {
-    [[webFrame _dataSourceForDocumentLoadState:loadState] _finishedLoading];
+    [[client _dataSourceForDocumentLoadState:loadState] _finishedLoading];
 }
 
 - (void)commitProvisitionalLoad
 {
-    [webFrame _commitProvisionalLoad:nil];
+    [client _commitProvisionalLoad:nil];
 }
 
 - (void)committedLoadWithDocumentLoadState:(WebDocumentLoadState *)loadState data:(NSData *)data
 {
-    [[webFrame _dataSourceForDocumentLoadState:loadState] _receivedData:data];
+    [[client _dataSourceForDocumentLoadState:loadState] _receivedData:data];
 }
 
 - (BOOL)isReplacing
 {
-    return [webFrame _loadType] == WebFrameLoadTypeReplace;
+    return [client _loadType] == WebFrameLoadTypeReplace;
 }
 
 - (void)setReplacing
 {
-    [webFrame _setLoadType:WebFrameLoadTypeReplace];
+    [client _setLoadType:WebFrameLoadTypeReplace];
 }
 
 - (void)revertToProvisionalWithDocumentLoadState:(WebDocumentLoadState *)loadState
 {
-    [[webFrame _dataSourceForDocumentLoadState:loadState] _revertToProvisionalState];
+    [[client _dataSourceForDocumentLoadState:loadState] _revertToProvisionalState];
 }
 
 - (void)documentLoadState:(WebDocumentLoadState *)loadState setMainDocumentError:(NSError *)error
 {
-    [[webFrame _dataSourceForDocumentLoadState:loadState] _setMainDocumentError:error];
+    [[client _dataSourceForDocumentLoadState:loadState] _setMainDocumentError:error];
 }
 
 - (void)documentLoadState:(WebDocumentLoadState *)loadState mainReceivedCompleteError:(NSError *)error
 {
     [loadState setPrimaryLoadComplete:YES];
     if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:[webFrame webView] didLoadMainResourceForDataSource:[self activeDataSource]];
-    [webFrame _checkLoadComplete];
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:[client webView] didLoadMainResourceForDataSource:[self activeDataSource]];
+    [client _checkLoadComplete];
 }
 
 - (void)finalSetupForReplaceWithDocumentLoadState:(WebDocumentLoadState *)loadState
 {
-    [[webFrame _dataSourceForDocumentLoadState:loadState] _clearUnarchivingState];
+    [[client _dataSourceForDocumentLoadState:loadState] _clearUnarchivingState];
 }
 
 - (void)prepareForLoadStart
 {
-    [[webFrame webView] _progressStarted:webFrame];
-    [[webFrame webView] _didStartProvisionalLoadForFrame:webFrame];
-    [[[webFrame webView] _frameLoadDelegateForwarder] webView:[webFrame webView]
-                               didStartProvisionalLoadForFrame:webFrame];    
+    [[client webView] _progressStarted:client];
+    [[client webView] _didStartProvisionalLoadForFrame:client];
+    [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
+                               didStartProvisionalLoadForFrame:client];    
 }
 
 - (BOOL)subframeIsLoading
 {
-    return [webFrame _subframeIsLoading];
+    return [client _subframeIsLoading];
 }
 
 @end

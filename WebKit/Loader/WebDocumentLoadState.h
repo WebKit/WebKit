@@ -30,6 +30,7 @@
 
 @class WebFrameLoader;
 
+// To be renamed to WebDocumentLoader
 @interface WebDocumentLoadState : NSObject
 {
 @public

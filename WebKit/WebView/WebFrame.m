@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,46 +26,46 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebFrameInternal.h>
+#import "WebFrameInternal.h"
 
+#import "WebArchive.h"
+#import "WebBackForwardList.h"
+#import "WebDataProtocol.h"
+#import "WebDataSourceInternal.h"
+#import "WebDefaultResourceLoadDelegate.h"
+#import "WebDefaultUIDelegate.h"
+#import "WebDocumentInternal.h"
+#import "WebDocumentLoadStateMac.h"
+#import "WebFormDataStream.h"
+#import "WebFrameBridge.h"
+#import "WebFrameLoadDelegate.h"
+#import "WebFrameLoader.h"
+#import "WebFrameLoaderClient.h"
+#import "WebFrameViewInternal.h"
+#import "WebHTMLRepresentationPrivate.h"
+#import "WebHTMLViewInternal.h"
+#import "WebHTMLViewPrivate.h"
+#import "WebHistoryItemPrivate.h"
+#import "WebHistoryPrivate.h"
+#import "WebKitErrorsPrivate.h"
+#import "WebKitLogging.h"
+#import "WebKitNSStringExtras.h"
+#import "WebKitStatisticsPrivate.h"
+#import "WebNSObjectExtras.h"
+#import "WebNSURLExtras.h"
+#import "WebNSURLRequestExtras.h"
+#import "WebNetscapePluginEmbeddedView.h"
+#import "WebNullPluginView.h"
+#import "WebPlugin.h"
+#import "WebPluginController.h"
+#import "WebPreferencesPrivate.h"
+#import "WebResourceLoadDelegate.h"
+#import "WebResourcePrivate.h"
+#import "WebScriptDebugDelegatePrivate.h"
+#import "WebUIDelegate.h"
+#import "WebViewInternal.h"
 #import <WebKit/DOM.h>
-#import <WebKit/WebArchive.h>
-#import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebDefaultResourceLoadDelegate.h>
-#import <WebKit/WebDefaultUIDelegate.h>
-#import <WebKit/WebDocumentInternal.h>
-#import <WebKit/WebDocumentLoadStateMac.h>
-#import <WebKit/WebFormDataStream.h>
-#import <WebKit/WebFrameLoadDelegate.h>
-#import <WebKit/WebFrameLoader.h>
-#import <WebKit/WebFrameViewInternal.h>
-#import <WebKit/WebHistoryPrivate.h>
-#import <WebKit/WebHistoryItemPrivate.h>
-#import <WebKit/WebHTMLRepresentationPrivate.h>
-#import <WebKit/WebHTMLViewInternal.h>
-#import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebNetscapePluginEmbeddedView.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebNSURLRequestExtras.h>
-#import <WebKit/WebNullPluginView.h>
-#import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebPlugin.h>
-#import <WebKit/WebPluginController.h>
-#import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebViewInternal.h>
-#import <WebKit/WebUIDelegate.h>
-#import <WebKit/WebScriptDebugDelegatePrivate.h>
 #import <WebKitSystemInterface.h>
-
 #import <objc/objc-runtime.h>
 
 /*
@@ -156,6 +156,9 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (WebFrame *)_previousSiblingFrame;
 - (WebFrame *)_nextSiblingFrame;
 - (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin;
+@end
+
+@interface WebFrame (WebFrameLoaderClient) <WebFrameLoaderClient>
 @end
 
 @interface NSView (WebFramePluginHosting)
@@ -2236,7 +2239,7 @@ exit:
         [fv _setWebFrame:self];
     }
     
-    _private->frameLoader = [[WebFrameLoader alloc] initWithWebFrame:self];
+    _private->frameLoader = [[WebFrameLoader alloc] initWithClient:self];
     
     ++WebFrameCount;
     
@@ -2873,4 +2876,7 @@ exit:
     return children;
 }
 
+@end
+
+@implementation WebFrame (WebFrameLoaderClient)
 @end

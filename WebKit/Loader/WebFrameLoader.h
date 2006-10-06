@@ -28,9 +28,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WebFramePrivate.h>
-
-#import <WebKit/WebDocumentLoadState.h>
+#import "WebDocumentLoadState.h"
+#import "WebFrameLoaderClient.h"
+#import "WebFramePrivate.h"
 
 @class WebArchive;
 @class WebDataSource;
@@ -64,7 +64,7 @@ typedef enum {
     NSMutableArray *subresourceLoaders;
     NSMutableArray *plugInStreamLoaders;
     
-    WebFrame *webFrame;
+    WebFrame <WebFrameLoaderClient> *client;
     WebDocumentLoadState *documentLoadState;
     WebDocumentLoadState *provisionalDocumentLoadState;
     WebDocumentLoadState *policyDocumentLoadState;
@@ -76,7 +76,7 @@ typedef enum {
     NSMutableDictionary *pendingArchivedResources;
 }
 
-- (id)initWithWebFrame:(WebFrame *)wf;
+- (id)initWithClient:(WebFrame <WebFrameLoaderClient> *)wf;
 - (void)addPlugInStreamLoader:(WebLoader *)loader;
 - (void)removePlugInStreamLoader:(WebLoader *)loader;
 - (void)setDefersCallbacks:(BOOL)defers;
