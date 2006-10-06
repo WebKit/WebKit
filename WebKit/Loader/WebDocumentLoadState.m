@@ -58,6 +58,10 @@
     [request release];
     [response release];
     [mainDocumentError release];
+    [pageTitle release];
+    [triggeringAction release];
+    [lastCheckedRequest release];
+    [responses release];    
     
     [super dealloc];
 }    
@@ -413,6 +417,100 @@
     }
     
     return [frameLoader subframeIsLoading];
-}    
+}
+
+- (void)addResponse:(NSURLResponse *)r
+{
+    if (!stopRecordingResponses) {
+        if (!responses)
+            responses = [[NSMutableArray alloc] init];
+        [responses addObject: r];
+    }
+}
+
+- (void)stopRecordingResponses
+{
+    stopRecordingResponses = YES;
+}
+
+- (NSString *)title
+{
+    return pageTitle;
+}
+
+- (void)setLastCheckedRequest:(NSURLRequest *)req
+{
+    NSURLRequest *oldRequest = lastCheckedRequest;
+    lastCheckedRequest = [req copy];
+    [oldRequest release];
+}
+
+- (NSURLRequest *)lastCheckedRequest
+{
+    // It's OK not to make a copy here because we know the caller
+    // isn't going to modify this request
+    return [[lastCheckedRequest retain] autorelease];
+}
+
+- (NSDictionary *)triggeringAction
+{
+    return [[triggeringAction retain] autorelease];
+}
+
+- (void)setTriggeringAction:(NSDictionary *)action
+{
+    [action retain];
+    [triggeringAction release];
+    triggeringAction = action;
+}
+
+- (NSArray *)responses
+{
+    return responses;
+}
+
+- (void)setOverrideEncoding:(NSString *)enc
+{
+    NSString *copy = [enc copy];
+    [overrideEncoding release];
+    overrideEncoding = copy;
+}
+
+- (NSString *)overrideEncoding
+{
+    return [[overrideEncoding copy] autorelease];
+}
+
+- (void)setTitle:(NSString *)title
+{
+    NSString *trimmed;
+    if (title == nil) {
+        trimmed = nil;
+    } else {
+        trimmed = [title mutableCopy];
+        CFStringTrimWhitespace((CFMutableStringRef)trimmed);
+        if ([trimmed length] == 0)
+            trimmed = nil;
+    }
+    if (trimmed == nil) {
+        if (pageTitle == nil)
+            return;
+    } else {
+        if ([pageTitle isEqualToString:trimmed])
+            return;
+    }
+    
+    if (!trimmed || [trimmed length] == 0)
+        return;
+
+    [frameLoader willChangeTitleForDocumentLoadState:self];
+
+    [pageTitle release];
+    pageTitle = [trimmed copy];
+
+    [trimmed release];
+
+    [frameLoader didChangeTitleForDocumentLoadState:self];
+}
 
 @end

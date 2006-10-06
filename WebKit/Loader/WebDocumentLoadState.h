@@ -60,12 +60,32 @@
     // The time when the data source was told to start loading.
     double loadingStartedTime;
 
-    BOOL committed; // This data source has been committed
+    BOOL committed;
     BOOL stopping;
-    BOOL loading; // self and webView are retained while loading
-    BOOL gotFirstByte; // got first byte
+    BOOL loading;
+    BOOL gotFirstByte;
     BOOL primaryLoadComplete;
     BOOL isClientRedirect;
+    
+    NSString *pageTitle;
+    
+    NSString *encoding;
+    NSString *overrideEncoding;
+    
+    // The action that triggered loading of this data source -
+    // we keep this around for the benefit of the various policy
+    // handlers.
+    NSDictionary *triggeringAction;
+    
+    // The last request that we checked click policy for - kept around
+    // so we can avoid asking again needlessly.
+    NSURLRequest *lastCheckedRequest;
+    
+    // We retain all the received responses so we can play back the
+    // WebResourceLoadDelegate messages if the item is loaded from the
+    // page cache.
+    NSMutableArray *responses;
+    BOOL stopRecordingResponses;        
 }
 
 - (id)initWithRequest:(NSURLRequest *)request;
@@ -103,6 +123,19 @@
 - (void)setIsClientRedirect:(BOOL)flag;
 - (BOOL)isLoadingInAPISense;
 - (void)setPrimaryLoadComplete:(BOOL)flag;
-
+- (void)setTitle:(NSString *)title;
+- (NSString *)overrideEncoding;
+- (void)addResponse:(NSURLResponse *)r;
+- (NSArray *)responses;
+- (NSDictionary *)triggeringAction;
+- (void)setTriggeringAction:(NSDictionary *)action;
+- (void)setOverrideEncoding:(NSString *)overrideEncoding;
+- (NSString *)overrideEncoding;
+- (NSDictionary *)triggeringAction;
+- (void)setTriggeringAction:(NSDictionary *)action;
+- (void)setLastCheckedRequest:(NSURLRequest *)request;
+- (NSURLRequest *)lastCheckedRequest;
+- (void)stopRecordingResponses;
+- (NSString *)title;
 
 @end

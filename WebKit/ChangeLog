@@ -1,3 +1,52 @@
+2006-10-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - move remaining movable WebDataSource fields to WebDocumentLoadState
+
+        * Loader/WebDocumentLoadState.h:
+        * Loader/WebDocumentLoadState.m:
+        (-[WebDocumentLoadState dealloc]):
+        (-[WebDocumentLoadState isLoadingInAPISense]):
+        (-[WebDocumentLoadState addResponse:]):
+        (-[WebDocumentLoadState stopRecordingResponses]):
+        (-[WebDocumentLoadState title]):
+        (-[WebDocumentLoadState setLastCheckedRequest:]):
+        (-[WebDocumentLoadState lastCheckedRequest]):
+        (-[WebDocumentLoadState triggeringAction]):
+        (-[WebDocumentLoadState setTriggeringAction:]):
+        (-[WebDocumentLoadState responses]):
+        (-[WebDocumentLoadState setOverrideEncoding:]):
+        (-[WebDocumentLoadState overrideEncoding]):
+        (-[WebDocumentLoadState setTitle:]):
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _setState:]):
+        (-[WebFrameLoader _loadRequest:archive:]):
+        (-[WebFrameLoader _loadRequest:triggeringAction:loadType:formState:]):
+        (-[WebFrameLoader _reloadAllowingStaleDataWithOverrideEncoding:]):
+        (-[WebFrameLoader reload]):
+        (-[WebFrameLoader willChangeTitleForDocumentLoadState:]):
+        (-[WebFrameLoader didChangeTitleForDocumentLoadState:]):
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge setTitle:]):
+        (-[WebFrameBridge receivedData:textEncodingName:]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _didReceiveResponse:forResource:]):
+        (-[WebDataSource textEncodingName]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _opened]):
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _addChild:]):
+        (-[WebFrame _loadDataSource:withLoadType:formState:]):
+        * WebView/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation title]):
+        * WebView/WebView.m:
+        (-[WebView _mainFrameOverrideEncoding]):
+
 2006-10-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

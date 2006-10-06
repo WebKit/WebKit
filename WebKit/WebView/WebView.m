@@ -2192,7 +2192,7 @@ NS_ENDHANDLER
     if (dataSource == nil) {
         return nil;
     }
-    return [dataSource _overrideEncoding];
+    return [[dataSource _documentLoadState] overrideEncoding];
 }
 
 - (NSString *)customTextEncodingName

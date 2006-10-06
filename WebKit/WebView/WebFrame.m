@@ -811,7 +811,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [view setNeedsLayout: YES];
         [view layout];
 
-        NSArray *responses = [[self dataSource] _responses];
+        NSArray *responses = [[_private->frameLoader documentLoadState] responses];
         NSURLResponse *response;
         int i, count = [responses count];
         for (i = 0; i < count; i++){
@@ -1418,15 +1418,15 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                                  andCall:(id)target
                             withSelector:(SEL)selector
 {    
-    NSDictionary *action = [dataSource _triggeringAction];
+    NSDictionary *action = [[dataSource _documentLoadState] triggeringAction];
     if (action == nil) {
         action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:nil originalURL:[request URL]];
-        [dataSource _setTriggeringAction:action];
+        [[dataSource _documentLoadState] setTriggeringAction:action];
     }
         
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
-    if ([request isEqual:[dataSource _lastCheckedRequest]] || [[request URL] _web_isEmpty]) {
+    if ([request isEqual:[[dataSource _documentLoadState] lastCheckedRequest]] || [[request URL] _web_isEmpty]) {
         [target performSelector:selector withObject:request withObject:nil];
         return;
     }
@@ -1443,7 +1443,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         return;
     }
     
-    [dataSource _setLastCheckedRequest:request];
+    [[dataSource _documentLoadState] setLastCheckedRequest:request];
 
     WebPolicyDecisionListener *listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueAfterNavigationPolicy:)];
     
@@ -1643,7 +1643,7 @@ exit:
         
         // FIXME: What about load types other than Standard and Reload?
 
-        [oldDataSource _setTriggeringAction:action];
+        [[oldDataSource _documentLoadState] setTriggeringAction:action];
         [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
         [self _checkNavigationPolicyForRequest:request
                                     dataSource:oldDataSource
@@ -1881,7 +1881,7 @@ exit:
 - (void)_addChild:(WebFrame *)child
 {
     [[self _bridge] appendChild:[child _bridge]];
-    [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];  
+    [[[child dataSource] _documentLoadState] setOverrideEncoding:[[[self dataSource] _documentLoadState] overrideEncoding]];  
 }
 
 - (void)_resetBackForwardList
@@ -2053,7 +2053,7 @@ exit:
 
     WebFrame *parentFrame = [self parentFrame];
     if (parentFrame)
-        [newDataSource _setOverrideEncoding:[[parentFrame dataSource] _overrideEncoding]];
+        [[newDataSource _documentLoadState] setOverrideEncoding:[[[parentFrame dataSource] _documentLoadState] overrideEncoding]];
 
     WebDocumentLoadStateMac *loadState = (WebDocumentLoadStateMac *)[newDataSource _documentLoadState];
     [loadState setFrameLoader:_private->frameLoader];

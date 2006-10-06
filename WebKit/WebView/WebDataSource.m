@@ -80,26 +80,6 @@
     WebUnarchivingState *unarchivingState;
     NSMutableDictionary *subresources;
     BOOL representationFinishedLoading;
-            
-    NSString *pageTitle;
-    
-    NSString *encoding;
-    NSString *overrideEncoding;
-    
-    // The action that triggered loading of this data source -
-    // we keep this around for the benefit of the various policy
-    // handlers.
-    NSDictionary *triggeringAction;
-    
-    // The last request that we checked click policy for - kept around
-    // so we can avoid asking again needlessly.
-    NSURLRequest *lastCheckedRequest;
-    
-    // We retain all the received responses so we can play back the
-    // WebResourceLoadDelegate messages if the item is loaded from the
-    // page cache.
-    NSMutableArray *responses;
-    BOOL stopRecordingResponses;    
 }
 
 @end
@@ -113,10 +93,6 @@
     [loadState release];
     
     [representation release];
-    [pageTitle release];
-    [triggeringAction release];
-    [lastCheckedRequest release];
-    [responses release];
     [unarchivingState release];
 
     [super dealloc];
@@ -152,15 +128,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     Class repClass;
     return [WebView _viewClass:nil andRepresentationClass:&repClass forMIMEType:MIMEType] ? repClass : nil;
-}
-
-- (void)_addResponse:(NSURLResponse *)r
-{
-    if (!_private->stopRecordingResponses) {
-        if (!_private->responses)
-            _private->responses = [[NSMutableArray alloc] init];
-        [_private->responses addObject: r];
-    }
 }
 
 @end
@@ -339,7 +306,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     WebView *webView = [self _webView];
     
-    [self _addResponse:r];
+    [_private->loadState addResponse:r];
     
     [webView _incrementProgressForIdentifier:identifier response:r];
     
@@ -418,11 +385,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         [_private->loadState updateLoading];
 }
 
-- (void)_stopRecordingResponses
-{
-    _private->stopRecordingResponses = YES;
-}
-
 - (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement
 {
     DOMDocumentFragment *fragment = [self _documentFragmentWithArchive:archive];
@@ -477,11 +439,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return imageElement;
 }
 
-- (NSString *)_title
-{
-    return _private->pageTitle;
-}
-
 // May return nil if not initialized with a URL.
 - (NSURL *)_URL
 {
@@ -501,20 +458,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return [_private->unarchivingState popSubframeArchiveWithFrameName:frameName];
 }
 
-- (void)_setLastCheckedRequest:(NSURLRequest *)request
-{
-    NSURLRequest *oldRequest = _private->lastCheckedRequest;
-    _private->lastCheckedRequest = [request copy];
-    [oldRequest release];
-}
-
-- (NSURLRequest *)_lastCheckedRequest
-{
-    // It's OK not to make a copy here because we know the caller
-    // isn't going to modify this request
-    return [[_private->lastCheckedRequest retain] autorelease];
-}
-
 - (WebFrameBridge *)_bridge
 {
     ASSERT([_private->loadState isCommitted]);
@@ -526,18 +469,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return [[[_private->loadState frameLoader] webFrame] webView];
 }
 
-- (NSDictionary *)_triggeringAction
-{
-    return [[_private->triggeringAction retain] autorelease];
-}
-
-- (void)_setTriggeringAction:(NSDictionary *)action
-{
-    [action retain];
-    [_private->triggeringAction release];
-    _private->triggeringAction = action;
-}
-
 - (BOOL)_isDocumentHTML
 {
     NSString *MIMEType = [[self response] MIMEType];
@@ -547,11 +478,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 - (void)_stopLoadingWithError:(NSError *)error
 {
     [[_private->loadState frameLoader] stopLoadingWithError:error];
-}
-
-- (NSArray *)_responses
-{
-    return _private->responses;
 }
 
 - (BOOL)_loadingFromPageCache
@@ -590,63 +516,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if (!_private->unarchivingState)
         _private->unarchivingState = [[WebUnarchivingState alloc] init];
     [_private->unarchivingState addArchive:archive];
-}
-
-- (void)_setOverrideEncoding:(NSString *)overrideEncoding
-{
-    NSString *copy = [overrideEncoding copy];
-    [_private->overrideEncoding release];
-    _private->overrideEncoding = copy;
-}
-
-- (NSString *)_overrideEncoding
-{
-    return [[_private->overrideEncoding copy] autorelease];
-}
-
-- (void)_setTitle:(NSString *)title
-{
-    NSString *trimmed;
-    if (title == nil) {
-        trimmed = nil;
-    } else {
-        trimmed = [title _webkit_stringByTrimmingWhitespace];
-        if ([trimmed length] == 0)
-            trimmed = nil;
-    }
-    if (trimmed == nil) {
-        if (_private->pageTitle == nil)
-            return;
-    } else {
-        if ([_private->pageTitle isEqualToString:trimmed])
-            return;
-    }
-    
-    if (!trimmed || [trimmed length] == 0)
-        return;
-    
-    [[self _webView] _willChangeValueForKey:_WebMainFrameTitleKey];
-    [_private->pageTitle release];
-    _private->pageTitle = [trimmed copy];
-    [[self _webView] _didChangeValueForKey:_WebMainFrameTitleKey];
-    
-    // The title doesn't get communicated to the WebView until we are committed.
-    if ([_private->loadState isCommitted]) {
-        NSURL *URLForHistory = [self _URLForHistory];
-        if (URLForHistory != nil) {
-            WebHistoryItem *entry = [[WebHistory optionalSharedHistory] itemForURL:URLForHistory];
-            [entry setTitle: _private->pageTitle];
-            
-            // Must update the entries in the back-forward list too.  This must go through the WebFrame because
-            // it has the right notion of the current b/f item.
-            [[self webFrame] _setTitle:_private->pageTitle];
-            
-            [[self _webView] setMainFrameDocumentReady:YES];    // update observers with new DOMDocument
-            [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
-                                                   didReceiveTitle:_private->pageTitle
-                                                          forFrame:[self webFrame]];
-        }
-    }
 }
 
 - (WebDocumentLoadState *)_documentLoadState
@@ -736,7 +605,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (NSString *)textEncodingName
 {
-    NSString *textEncodingName = [self _overrideEncoding];
+    NSString *textEncodingName = [_private->loadState overrideEncoding];
 
     if (!textEncodingName)
         textEncodingName = [[self response] textEncodingName];

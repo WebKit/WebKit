@@ -324,7 +324,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     else if (state == WebFrameStateComplete) {
         [client _frameLoadCompleted];
         _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
-        [[self dataSource] _stopRecordingResponses];
+        [[self documentLoadState] stopRecordingResponses];
     }
 }
 
@@ -752,7 +752,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     } else
         type = WebFrameLoadTypeStandard;
     
-    [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
+    [policyDocumentLoadState setOverrideEncoding:[[self documentLoadState] overrideEncoding]];
     [newDataSource _addToUnarchiveState:archive];
     
     // When we loading alternate content for an unreachable URL that we're
@@ -771,9 +771,9 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
     WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
 
-    [newDataSource _setTriggeringAction:action];
+    [policyDocumentLoadState setTriggeringAction:action];
 
-    [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
+    [policyDocumentLoadState setOverrideEncoding:[[self documentLoadState] overrideEncoding]];
 
     [client _loadDataSource:newDataSource withLoadType:type formState:formState];
 }
@@ -794,7 +794,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
     [request release];
     
-    [newDataSource _setOverrideEncoding:encoding];
+    [policyDocumentLoadState setOverrideEncoding:encoding];
 
     [client _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReloadAllowingStaleData formState:nil];
 }
@@ -826,10 +826,10 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     // If we're about to rePOST, set up action so the app can warn the user
     if ([[request HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
         NSDictionary *action = [client _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:[request URL]];
-        [newDataSource _setTriggeringAction:action];
+        [policyDocumentLoadState setTriggeringAction:action];
     }
 
-    [newDataSource _setOverrideEncoding:[ds _overrideEncoding]];
+    [policyDocumentLoadState setOverrideEncoding:[[ds _documentLoadState] overrideEncoding]];
     
     [client _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload formState:nil];
 }
@@ -900,6 +900,38 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     return [client _subframeIsLoading];
 }
 
+<<<<<<< .mine
+- (void)willChangeTitleForDocumentLoadState:(WebDocumentLoadState *)loadState
+{
+    // FIXME: should do this only in main frame case, right?
+    [[webFrame webView] _willChangeValueForKey:_WebMainFrameTitleKey];
+}
+
+- (void)didChangeTitleForDocumentLoadState:(WebDocumentLoadState *)loadState
+{
+    // FIXME: should do this only in main frame case, right?
+    [[webFrame webView] _didChangeValueForKey:_WebMainFrameTitleKey];
+
+    // The title doesn't get communicated to the WebView until we are committed.
+    if ([loadState isCommitted]) {
+        NSURL *URLForHistory = [[webFrame _dataSourceForDocumentLoadState:loadState] _URLForHistory];
+        if (URLForHistory != nil) {
+            WebHistoryItem *entry = [[WebHistory optionalSharedHistory] itemForURL:URLForHistory];
+            [entry setTitle:[loadState title]];
+        
+            // Must update the entries in the back-forward list too.  This must go through the WebFrame because
+            // it has the right notion of the current b/f item.
+            [webFrame _setTitle:[loadState title]];
+        
+            [[webFrame webView] setMainFrameDocumentReady:YES];    // update observers with new DOMDocument
+            [[[webFrame webView] _frameLoadDelegateForwarder] webView:[webFrame webView]
+                                                      didReceiveTitle:[loadState title]
+                                                             forFrame:webFrame];
+        }
+    }
+}
+
+=======
 - (WebFrameLoadType)loadType
 {
     return loadType;
@@ -910,4 +942,5 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     loadType = type;
 }
 
+>>>>>>> .r16864
 @end

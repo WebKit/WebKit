@@ -213,7 +213,7 @@
 
 - (NSString *)title
 {
-    return [_private->dataSource _title];
+    return [[_private->dataSource _documentLoadState] title];
 }
 
 - (DOMDocument *)DOMDocument
