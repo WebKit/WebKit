@@ -69,6 +69,12 @@
     // FIXME: IMPLEMENT ME
 }
 
+- (DOMSVGPoint *)matrixTransform:(DOMSVGMatrix *)matrix
+{
+    // FIXME: IMPLEMENT ME
+    return [DOMSVGPoint _SVGPointWith:WebCore::FloatPoint()];
+}
+
 @end
 
 @implementation DOMSVGPoint (WebCoreInternal)

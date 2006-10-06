@@ -566,11 +566,8 @@
 		850FD2180AC9C86A00123D0D /* DOMSVGAnimatedLengthListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 850FD20F0AC9C86A00123D0D /* DOMSVGAnimatedLengthListInternal.h */; };
 		850FD21A0AC9C86A00123D0D /* DOMSVGAnimatedStringInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 850FD2110AC9C86A00123D0D /* DOMSVGAnimatedStringInternal.h */; };
 		850FD21B0AC9C86A00123D0D /* DOMSVGAnimatedTransformListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 850FD2120AC9C86A00123D0D /* DOMSVGAnimatedTransformListInternal.h */; };
-		851620F30AD2FD890059A7DE /* DOMSVGNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 851620ED0AD2FD880059A7DE /* DOMSVGNumber.h */; };
 		851620F40AD2FD890059A7DE /* DOMSVGNumber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 851620EE0AD2FD880059A7DE /* DOMSVGNumber.mm */; };
-		851620F50AD2FD890059A7DE /* DOMSVGPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 851620EF0AD2FD880059A7DE /* DOMSVGPoint.h */; };
 		851620F60AD2FD890059A7DE /* DOMSVGPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = 851620F00AD2FD880059A7DE /* DOMSVGPoint.mm */; };
-		851620F70AD2FD890059A7DE /* DOMSVGRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 851620F10AD2FD880059A7DE /* DOMSVGRect.h */; };
 		851620F80AD2FD890059A7DE /* DOMSVGRect.mm in Sources */ = {isa = PBXBuildFile; fileRef = 851620F20AD2FD890059A7DE /* DOMSVGRect.mm */; };
 		85183B420AA6926100F19FA3 /* DOMHTMLBRElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85183B380AA6926100F19FA3 /* DOMHTMLBRElement.h */; };
 		85183B430AA6926100F19FA3 /* DOMHTMLBRElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85183B390AA6926100F19FA3 /* DOMHTMLBRElement.mm */; };
@@ -597,15 +594,27 @@
 		851EE8210ABCA58100A6AA33 /* DOMRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = 851EE8200ABCA58100A6AA33 /* DOMRangeException.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85217E020A5ECD4700DB8D00 /* XSLImportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85217E000A5ECD4700DB8D00 /* XSLImportRule.cpp */; };
 		85217E030A5ECD4700DB8D00 /* XSLImportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 85217E010A5ECD4700DB8D00 /* XSLImportRule.h */; };
-		852B9E870AA79C47002ADA6E /* DOMHTMLAppletElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 852B9E830AA79C47002ADA6E /* DOMHTMLAppletElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		852B9E880AA79C47002ADA6E /* DOMHTMLAppletElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 852B9E840AA79C47002ADA6E /* DOMHTMLAppletElement.mm */; };
-		852B9E890AA79C47002ADA6E /* DOMHTMLOptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 852B9E850AA79C47002ADA6E /* DOMHTMLOptionElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		852B9E8A0AA79C47002ADA6E /* DOMHTMLOptionElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 852B9E860AA79C47002ADA6E /* DOMHTMLOptionElement.mm */; };
 		853BF4DB0ABB6B55008647BB /* DOMNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 853BF4D90ABB6B55008647BB /* DOMNode.h */; };
 		853BF4DC0ABB6B55008647BB /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 853BF4DA0ABB6B55008647BB /* DOMNode.mm */; };
 		853BF4EB0ABB6E97008647BB /* DOMNodePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 853BF4EA0ABB6E97008647BB /* DOMNodePrivate.h */; };
 		853BF4EC0ABB6EB9008647BB /* DOMNode.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 853BF4D90ABB6B55008647BB /* DOMNode.h */; };
 		853BF4ED0ABB6EB9008647BB /* DOMNodePrivate.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 853BF4EA0ABB6E97008647BB /* DOMNodePrivate.h */; };
+		854074FC0AD6C22E00620C57 /* DOMSVGNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 854074F90AD6C22E00620C57 /* DOMSVGNumber.h */; };
+		854074FD0AD6C22E00620C57 /* DOMSVGPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 854074FA0AD6C22E00620C57 /* DOMSVGPoint.h */; };
+		854074FE0AD6C22E00620C57 /* DOMSVGRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 854074FB0AD6C22E00620C57 /* DOMSVGRect.h */; };
+		854075200AD6C5FB00620C57 /* DOMEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 8540751F0AD6C5FB00620C57 /* DOMEventTarget.h */; };
+		854075260AD6C66700620C57 /* DOMNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 854075250AD6C66700620C57 /* DOMNodeFilter.h */; };
+		8540753E0AD6C6DC00620C57 /* DOMEventTarget.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8540751F0AD6C5FB00620C57 /* DOMEventTarget.h */; };
+		8540753F0AD6C6DC00620C57 /* DOMNodeFilter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 854075250AD6C66700620C57 /* DOMNodeFilter.h */; };
+		854075690AD6CBF900620C57 /* DOMHTMLAppletElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 854075640AD6CBF900620C57 /* DOMHTMLAppletElement.h */; };
+		8540756A0AD6CBF900620C57 /* DOMHTMLEmbedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 854075650AD6CBF900620C57 /* DOMHTMLEmbedElement.h */; };
+		8540756B0AD6CBF900620C57 /* DOMHTMLOptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 854075660AD6CBF900620C57 /* DOMHTMLOptionElement.h */; };
+		8540756C0AD6CBF900620C57 /* DOMHTMLOptionElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 854075670AD6CBF900620C57 /* DOMHTMLOptionElement.mm */; };
+		8540756D0AD6CBF900620C57 /* DOMHTMLOptionElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 854075680AD6CBF900620C57 /* DOMHTMLOptionElementInternal.h */; };
+		854075830AD6CF1400620C57 /* DOMHTMLAppletElement.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 854075640AD6CBF900620C57 /* DOMHTMLAppletElement.h */; };
+		854075840AD6CF1400620C57 /* DOMHTMLEmbedElement.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 854075650AD6CBF900620C57 /* DOMHTMLEmbedElement.h */; };
+		854075850AD6CF1400620C57 /* DOMHTMLOptionElement.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 854075660AD6CBF900620C57 /* DOMHTMLOptionElement.h */; };
 		8541636A0AC7180B0001E01B /* DOMSVGTransformList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8541635A0AC7180B0001E01B /* DOMSVGTransformList.mm */; };
 		8541636B0AC7180B0001E01B /* DOMSVGTransformList.h in Headers */ = {isa = PBXBuildFile; fileRef = 8541635B0AC7180B0001E01B /* DOMSVGTransformList.h */; };
 		8541636C0AC7180B0001E01B /* DOMSVGTransform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8541635C0AC7180B0001E01B /* DOMSVGTransform.mm */; };
@@ -709,7 +718,6 @@
 		85909CE40ACC7A7E00DF01F1 /* DOMCSSUnknownRuleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85909CDB0ACC7A7E00DF01F1 /* DOMCSSUnknownRuleInternal.h */; };
 		85909D290ACC7D5500DF01F1 /* DOMCSSPrimitiveValueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85909D260ACC7D5500DF01F1 /* DOMCSSPrimitiveValueInternal.h */; };
 		85909D2B0ACC7D5500DF01F1 /* DOMCSSValueListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85909D280ACC7D5500DF01F1 /* DOMCSSValueListInternal.h */; };
-		859128F30AB2431A00202265 /* DOMHTMLEmbedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 859128F10AB2431A00202265 /* DOMHTMLEmbedElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		859128F40AB2431A00202265 /* DOMHTMLEmbedElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 859128F20AB2431A00202265 /* DOMHTMLEmbedElement.mm */; };
 		85989DCC0ACC8BBD00A0BC51 /* DOMKeyboardEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85989DC50ACC8BBD00A0BC51 /* DOMKeyboardEventInternal.h */; };
 		85989DCD0ACC8BBD00A0BC51 /* DOMMouseEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85989DC60ACC8BBD00A0BC51 /* DOMMouseEventInternal.h */; };
@@ -738,7 +746,6 @@
 		859C9C3F0ACACCCC00791611 /* DOMSVGRectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 859C9C3D0ACACCCC00791611 /* DOMSVGRectElement.h */; };
 		859C9C400ACACCCC00791611 /* DOMSVGRectElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 859C9C3E0ACACCCC00791611 /* DOMSVGRectElement.mm */; };
 		859C9C420ACACD6D00791611 /* DOMSVGRectElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 859C9C410ACACD6D00791611 /* DOMSVGRectElementInternal.h */; };
-		859FA5FB0AB0BF20004FAEE9 /* DOMNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 859FA5FA0AB0BF20004FAEE9 /* DOMNodeFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85A0F97E0AC7163D00161FDC /* DOMSVG.h in Headers */ = {isa = PBXBuildFile; fileRef = 85A0F97D0AC7163D00161FDC /* DOMSVG.h */; };
 		85ACA9860A9B520300671E90 /* DOMCharacterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACA9840A9B520300671E90 /* DOMCharacterData.h */; settings = {ATTRIBUTES = (); }; };
 		85ACA9870A9B520300671E90 /* DOMCharacterData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85ACA9850A9B520300671E90 /* DOMCharacterData.mm */; };
@@ -813,7 +820,6 @@
 		85C239840AD59098003533E7 /* DOMSVGNumberListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85C239830AD59098003533E7 /* DOMSVGNumberListInternal.h */; };
 		85C78A680ABDE1B40044FC16 /* DOMException.h in Headers */ = {isa = PBXBuildFile; fileRef = 85C78A670ABDE1B40044FC16 /* DOMException.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85C7F3E60AAF5D5E004014DD /* DOMEvent.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85AFA8200AAF528A00E84305 /* DOMEvent.h */; };
-		85C7F4470AAF76DC004014DD /* DOMEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 85C7F4450AAF76DC004014DD /* DOMEventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85C7F4910AAF79DC004014DD /* DOMUIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85C7F48F0AAF79DC004014DD /* DOMUIEvent.h */; };
 		85C7F4920AAF79DC004014DD /* DOMUIEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85C7F4900AAF79DC004014DD /* DOMUIEvent.mm */; };
 		85C7F4C30AAF8081004014DD /* DOMUIEventPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 85C7F4C20AAF8081004014DD /* DOMUIEventPrivate.h */; };
@@ -2492,6 +2498,11 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				854075830AD6CF1400620C57 /* DOMHTMLAppletElement.h in CopyFiles */,
+				854075840AD6CF1400620C57 /* DOMHTMLEmbedElement.h in CopyFiles */,
+				854075850AD6CF1400620C57 /* DOMHTMLOptionElement.h in CopyFiles */,
+				8540753E0AD6C6DC00620C57 /* DOMEventTarget.h in CopyFiles */,
+				8540753F0AD6C6DC00620C57 /* DOMNodeFilter.h in CopyFiles */,
 				85F264B20ABBAA580096944B /* DOMHTMLDocument.h in CopyFiles */,
 				853BF4EC0ABB6EB9008647BB /* DOMNode.h in CopyFiles */,
 				853BF4ED0ABB6EB9008647BB /* DOMNodePrivate.h in CopyFiles */,
@@ -3256,11 +3267,8 @@
 		850FD20F0AC9C86A00123D0D /* DOMSVGAnimatedLengthListInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGAnimatedLengthListInternal.h; sourceTree = "<group>"; };
 		850FD2110AC9C86A00123D0D /* DOMSVGAnimatedStringInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGAnimatedStringInternal.h; sourceTree = "<group>"; };
 		850FD2120AC9C86A00123D0D /* DOMSVGAnimatedTransformListInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGAnimatedTransformListInternal.h; sourceTree = "<group>"; };
-		851620ED0AD2FD880059A7DE /* DOMSVGNumber.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGNumber.h; sourceTree = "<group>"; };
 		851620EE0AD2FD880059A7DE /* DOMSVGNumber.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGNumber.mm; sourceTree = "<group>"; };
-		851620EF0AD2FD880059A7DE /* DOMSVGPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGPoint.h; sourceTree = "<group>"; };
 		851620F00AD2FD880059A7DE /* DOMSVGPoint.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGPoint.mm; sourceTree = "<group>"; };
-		851620F10AD2FD880059A7DE /* DOMSVGRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGRect.h; sourceTree = "<group>"; };
 		851620F20AD2FD890059A7DE /* DOMSVGRect.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGRect.mm; sourceTree = "<group>"; };
 		85183B380AA6926100F19FA3 /* DOMHTMLBRElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLBRElement.h; sourceTree = "<group>"; };
 		85183B390AA6926100F19FA3 /* DOMHTMLBRElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLBRElement.mm; sourceTree = "<group>"; };
@@ -3282,13 +3290,20 @@
 		851EE8200ABCA58100A6AA33 /* DOMRangeException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMRangeException.h; sourceTree = "<group>"; };
 		85217E000A5ECD4700DB8D00 /* XSLImportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XSLImportRule.cpp; sourceTree = "<group>"; };
 		85217E010A5ECD4700DB8D00 /* XSLImportRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XSLImportRule.h; sourceTree = "<group>"; };
-		852B9E830AA79C47002ADA6E /* DOMHTMLAppletElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLAppletElement.h; sourceTree = "<group>"; };
 		852B9E840AA79C47002ADA6E /* DOMHTMLAppletElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLAppletElement.mm; sourceTree = "<group>"; };
-		852B9E850AA79C47002ADA6E /* DOMHTMLOptionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLOptionElement.h; sourceTree = "<group>"; };
-		852B9E860AA79C47002ADA6E /* DOMHTMLOptionElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLOptionElement.mm; sourceTree = "<group>"; };
 		853BF4D90ABB6B55008647BB /* DOMNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMNode.h; sourceTree = "<group>"; };
 		853BF4DA0ABB6B55008647BB /* DOMNode.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMNode.mm; sourceTree = "<group>"; };
 		853BF4EA0ABB6E97008647BB /* DOMNodePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMNodePrivate.h; sourceTree = "<group>"; };
+		854074F90AD6C22E00620C57 /* DOMSVGNumber.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGNumber.h; sourceTree = "<group>"; };
+		854074FA0AD6C22E00620C57 /* DOMSVGPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGPoint.h; sourceTree = "<group>"; };
+		854074FB0AD6C22E00620C57 /* DOMSVGRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGRect.h; sourceTree = "<group>"; };
+		8540751F0AD6C5FB00620C57 /* DOMEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMEventTarget.h; sourceTree = "<group>"; };
+		854075250AD6C66700620C57 /* DOMNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMNodeFilter.h; sourceTree = "<group>"; };
+		854075640AD6CBF900620C57 /* DOMHTMLAppletElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLAppletElement.h; sourceTree = "<group>"; };
+		854075650AD6CBF900620C57 /* DOMHTMLEmbedElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLEmbedElement.h; sourceTree = "<group>"; };
+		854075660AD6CBF900620C57 /* DOMHTMLOptionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLOptionElement.h; sourceTree = "<group>"; };
+		854075670AD6CBF900620C57 /* DOMHTMLOptionElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLOptionElement.mm; sourceTree = "<group>"; };
+		854075680AD6CBF900620C57 /* DOMHTMLOptionElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLOptionElementInternal.h; sourceTree = "<group>"; };
 		8541635A0AC7180B0001E01B /* DOMSVGTransformList.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGTransformList.mm; sourceTree = "<group>"; };
 		8541635B0AC7180B0001E01B /* DOMSVGTransformList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGTransformList.h; sourceTree = "<group>"; };
 		8541635C0AC7180B0001E01B /* DOMSVGTransform.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGTransform.mm; sourceTree = "<group>"; };
@@ -3386,7 +3401,6 @@
 		85909D260ACC7D5500DF01F1 /* DOMCSSPrimitiveValueInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMCSSPrimitiveValueInternal.h; sourceTree = "<group>"; };
 		85909D280ACC7D5500DF01F1 /* DOMCSSValueListInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMCSSValueListInternal.h; sourceTree = "<group>"; };
 		859128790AB222EC00202265 /* HTMLEmbedElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLEmbedElement.idl; sourceTree = "<group>"; };
-		859128F10AB2431A00202265 /* DOMHTMLEmbedElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLEmbedElement.h; sourceTree = "<group>"; };
 		859128F20AB2431A00202265 /* DOMHTMLEmbedElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLEmbedElement.mm; sourceTree = "<group>"; };
 		85989DC50ACC8BBD00A0BC51 /* DOMKeyboardEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMKeyboardEventInternal.h; sourceTree = "<group>"; };
 		85989DC60ACC8BBD00A0BC51 /* DOMMouseEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMouseEventInternal.h; sourceTree = "<group>"; };
@@ -3416,7 +3430,6 @@
 		859C9C3D0ACACCCC00791611 /* DOMSVGRectElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGRectElement.h; sourceTree = "<group>"; };
 		859C9C3E0ACACCCC00791611 /* DOMSVGRectElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGRectElement.mm; sourceTree = "<group>"; };
 		859C9C410ACACD6D00791611 /* DOMSVGRectElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGRectElementInternal.h; sourceTree = "<group>"; };
-		859FA5FA0AB0BF20004FAEE9 /* DOMNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMNodeFilter.h; sourceTree = "<group>"; };
 		85A0F97D0AC7163D00161FDC /* DOMSVG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVG.h; sourceTree = "<group>"; };
 		85ACA9840A9B520300671E90 /* DOMCharacterData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMCharacterData.h; sourceTree = "<group>"; };
 		85ACA9850A9B520300671E90 /* DOMCharacterData.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCharacterData.mm; sourceTree = "<group>"; };
@@ -3491,7 +3504,6 @@
 		85C56CAC0AA89F8E00D95755 /* CSSCharsetRule.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSCharsetRule.idl; sourceTree = "<group>"; };
 		85C56CAD0AA89FE000D95755 /* CSSUnknownRule.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSUnknownRule.idl; sourceTree = "<group>"; };
 		85C78A670ABDE1B40044FC16 /* DOMException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMException.h; sourceTree = "<group>"; };
-		85C7F4450AAF76DC004014DD /* DOMEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMEventTarget.h; sourceTree = "<group>"; };
 		85C7F48F0AAF79DC004014DD /* DOMUIEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMUIEvent.h; sourceTree = "<group>"; };
 		85C7F4900AAF79DC004014DD /* DOMUIEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMUIEvent.mm; sourceTree = "<group>"; };
 		85C7F4C20AAF8081004014DD /* DOMUIEventPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMUIEventPrivate.h; sourceTree = "<group>"; };
@@ -6050,23 +6062,23 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
-		851EE8230ABCA58A00A6AA33 /* Range */ = {
+		854075420AD6C73E00620C57 /* DOMExceptions */ = {
 			isa = PBXGroup;
 			children = (
+				85C78A670ABDE1B40044FC16 /* DOMException.h */,
+				851EE8100ABCA39600A6AA33 /* DOMEventException.h */,
 				851EE8200ABCA58100A6AA33 /* DOMRangeException.h */,
+				8549492E0AC85A32008AB035 /* DOMSVGExecption.h */,
+				858015CD0ABCA75D0080588D /* DOMXPathException.h */,
 			);
-			name = Range;
+			name = DOMExceptions;
 			sourceTree = "<group>";
 		};
 		8549492D0AC85A0A008AB035 /* SVG */ = {
 			isa = PBXGroup;
 			children = (
-				8549492E0AC85A32008AB035 /* DOMSVGExecption.h */,
-				851620ED0AD2FD880059A7DE /* DOMSVGNumber.h */,
 				851620EE0AD2FD880059A7DE /* DOMSVGNumber.mm */,
-				851620EF0AD2FD880059A7DE /* DOMSVGPoint.h */,
 				851620F00AD2FD880059A7DE /* DOMSVGPoint.mm */,
-				851620F10AD2FD880059A7DE /* DOMSVGRect.h */,
 				851620F20AD2FD890059A7DE /* DOMSVGRect.mm */,
 			);
 			name = SVG;
@@ -6075,7 +6087,6 @@
 		854F12AC0A8EBC18000940B5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				85C78A670ABDE1B40044FC16 /* DOMException.h */,
 				856C8AE20A912649005C687B /* DOMObject.h */,
 				856C8AE30A912649005C687B /* DOMObject.mm */,
 				93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */,
@@ -6087,6 +6098,7 @@
 		85526C150AB0A12A000302EA /* Traversal */ = {
 			isa = PBXGroup;
 			children = (
+				854075250AD6C66700620C57 /* DOMNodeFilter.h */,
 				85526C3D0AB0A76F000302EA /* DOMNodeIteratorPrivate.h */,
 				85526C350AB0A17E000302EA /* DOMNodeIterator.h */,
 				85526C360AB0A17E000302EA /* DOMNodeIterator.mm */,
@@ -6094,14 +6106,6 @@
 				85526CD10AB0B7D9000302EA /* DOMTreeWalker.mm */,
 			);
 			name = Traversal;
-			sourceTree = "<group>";
-		};
-		858015CC0ABCA7410080588D /* XPath */ = {
-			isa = PBXGroup;
-			children = (
-				858015CD0ABCA75D0080588D /* DOMXPathException.h */,
-			);
-			name = XPath;
 			sourceTree = "<group>";
 		};
 		858C39510AA9024C00B187A4 /* CSS */ = {
@@ -6200,22 +6204,10 @@
 		85992FC20AA5DD4600AC0785 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
-				852B9E830AA79C47002ADA6E /* DOMHTMLAppletElement.h */,
 				852B9E840AA79C47002ADA6E /* DOMHTMLAppletElement.mm */,
-				859128F10AB2431A00202265 /* DOMHTMLEmbedElement.h */,
 				859128F20AB2431A00202265 /* DOMHTMLEmbedElement.mm */,
-				852B9E850AA79C47002ADA6E /* DOMHTMLOptionElement.h */,
-				852B9E860AA79C47002ADA6E /* DOMHTMLOptionElement.mm */,
 			);
 			name = HTML;
-			sourceTree = "<group>";
-		};
-		859FA5F20AB0BEE2004FAEE9 /* Traversal */ = {
-			isa = PBXGroup;
-			children = (
-				859FA5FA0AB0BF20004FAEE9 /* DOMNodeFilter.h */,
-			);
-			name = Traversal;
 			sourceTree = "<group>";
 		};
 		85A0F98E0AC716F400161FDC /* SVG */ = {
@@ -6335,14 +6327,17 @@
 				854163620AC7180B0001E01B /* DOMSVGMatrix.mm */,
 				8559F1100AC9BE9900A3439C /* DOMSVGMetadataElement.h */,
 				8559F1110AC9BE9900A3439C /* DOMSVGMetadataElement.mm */,
+				854074F90AD6C22E00620C57 /* DOMSVGNumber.h */,
 				85C2397F0AD5907D003533E7 /* DOMSVGNumberList.h */,
 				85C239800AD5907D003533E7 /* DOMSVGNumberList.mm */,
 				854163610AC7180B0001E01B /* DOMSVGPathSeg.h */,
 				854163600AC7180B0001E01B /* DOMSVGPathSeg.mm */,
 				8541635F0AC7180B0001E01B /* DOMSVGPathSegList.h */,
 				8541635E0AC7180B0001E01B /* DOMSVGPathSegList.mm */,
+				854074FA0AD6C22E00620C57 /* DOMSVGPoint.h */,
 				85ACEF0A0ACDCCCF001214FF /* DOMSVGPreserveAspectRatio.h */,
 				85ACEF0B0ACDCCCF001214FF /* DOMSVGPreserveAspectRatio.mm */,
+				854074FB0AD6C22E00620C57 /* DOMSVGRect.h */,
 				859C9C3D0ACACCCC00791611 /* DOMSVGRectElement.h */,
 				859C9C3E0ACACCCC00791611 /* DOMSVGRectElement.mm */,
 				85D79AD20ACA17EB00F02FC5 /* DOMSVGStringList.h */,
@@ -6365,6 +6360,7 @@
 			isa = PBXGroup;
 			children = (
 				85D2AD670AB1A40A00C313EA /* DOMEventListener.h */,
+				8540751F0AD6C5FB00620C57 /* DOMEventTarget.h */,
 				85AFA8200AAF528A00E84305 /* DOMEvent.h */,
 				85AFA8210AAF528A00E84305 /* DOMEvent.mm */,
 				85DF343F0AAFC0ED00E59AE3 /* DOMKeyboardEventPrivate.h */,
@@ -6410,6 +6406,7 @@
 				85DF81210AA7787200486AD7 /* DOMHTMLAnchorElement.h */,
 				1CFCEE7F0AACC3B300348750 /* DOMHTMLAnchorElementPrivate.h */,
 				85DF81220AA7787200486AD7 /* DOMHTMLAnchorElement.mm */,
+				854075640AD6CBF900620C57 /* DOMHTMLAppletElement.h */,
 				1CFCEE880AACC3C000348750 /* DOMHTMLAreaElementPrivate.h */,
 				85ECBEDD0AA7626800544F0B /* DOMHTMLAreaElement.h */,
 				85ECBEDE0AA7626800544F0B /* DOMHTMLAreaElement.mm */,
@@ -6437,6 +6434,7 @@
 				85BCBC120ABBA87D00381160 /* DOMHTMLDocument.mm */,
 				85DF2EEB0AA387CB00AD64C5 /* DOMHTMLElement.h */,
 				85DF2EEC0AA387CB00AD64C5 /* DOMHTMLElement.mm */,
+				854075650AD6CBF900620C57 /* DOMHTMLEmbedElement.h */,
 				85BA4CD70AA6861B0088052D /* DOMHTMLFieldSetElement.h */,
 				85BA4CD80AA6861B0088052D /* DOMHTMLFieldSetElement.mm */,
 				85ECBEE10AA7626800544F0B /* DOMHTMLFontElement.h */,
@@ -6490,6 +6488,9 @@
 				85DF81260AA7787200486AD7 /* DOMHTMLObjectElement.mm */,
 				85F32AE60AA63B8700FF3184 /* DOMHTMLOptGroupElement.h */,
 				85F32AE70AA63B8700FF3184 /* DOMHTMLOptGroupElement.mm */,
+				854075660AD6CBF900620C57 /* DOMHTMLOptionElement.h */,
+				854075670AD6CBF900620C57 /* DOMHTMLOptionElement.mm */,
+				854075680AD6CBF900620C57 /* DOMHTMLOptionElementInternal.h */,
 				1CFCEED40AACC65D00348750 /* DOMHTMLOptionsCollectionPrivate.h */,
 				85DF2F990AA3CAE500AD64C5 /* DOMHTMLOptionsCollection.h */,
 				85DF2F9A0AA3CAE500AD64C5 /* DOMHTMLOptionsCollection.mm */,
@@ -6530,15 +6531,6 @@
 				85BA4D0A0AA688680088052D /* DOMHTMLUListElement.mm */,
 			);
 			name = HTML;
-			sourceTree = "<group>";
-		};
-		85C7F4430AAF7686004014DD /* Events */ = {
-			isa = PBXGroup;
-			children = (
-				851EE8100ABCA39600A6AA33 /* DOMEventException.h */,
-				85C7F4450AAF76DC004014DD /* DOMEventTarget.h */,
-			);
-			name = Events;
 			sourceTree = "<group>";
 		};
 		85E7113D0AC5D4A10053270F /* Internal */ = {
@@ -7699,13 +7691,10 @@
 				85B232260A8BF3A100FDF47B /* Derived Sources */,
 				854F12AC0A8EBC18000940B5 /* Core */,
 				858C39510AA9024C00B187A4 /* CSS */,
-				85C7F4430AAF7686004014DD /* Events */,
 				85992FC20AA5DD4600AC0785 /* HTML */,
-				851EE8230ABCA58A00A6AA33 /* Range */,
 				8549492D0AC85A0A008AB035 /* SVG */,
-				859FA5F20AB0BEE2004FAEE9 /* Traversal */,
 				851EE8060ABCA25200A6AA33 /* Views */,
-				858015CC0ABCA7410080588D /* XPath */,
+				854075420AD6C73E00620C57 /* DOMExceptions */,
 				859B7FB90A8D288800A5F1EA /* CodeGeneratorObjC.pm */,
 				1CD0B6200AABDB5000D0A3FF /* PublicDOMInterfaces.h */,
 				BC1A3797097C715F0019F3D8 /* DOM.h */,
@@ -9213,8 +9202,6 @@
 				85DF82700AA78B8B00486AD7 /* DOMHTMLTableElement.h in Headers */,
 				85DF82230AA7849E00486AD7 /* DOMHTMLTableRowElement.h in Headers */,
 				85DF82250AA7849E00486AD7 /* DOMHTMLTableSectionElement.h in Headers */,
-				852B9E870AA79C47002ADA6E /* DOMHTMLAppletElement.h in Headers */,
-				852B9E890AA79C47002ADA6E /* DOMHTMLOptionElement.h in Headers */,
 				1A98955D0AA78149005EF5EF /* CString.h in Headers */,
 				D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */,
 				D23CA56C0AB0EB8D005108A5 /* RangeException.h in Headers */,
@@ -9243,7 +9230,6 @@
 				850657020AAB4763002D15C0 /* DOMStyleSheetList.h in Headers */,
 				934706AB0AACD809002C1D43 /* TextDecoder.h in Headers */,
 				85AFA8220AAF528A00E84305 /* DOMEvent.h in Headers */,
-				85C7F4470AAF76DC004014DD /* DOMEventTarget.h in Headers */,
 				85C7F4910AAF79DC004014DD /* DOMUIEvent.h in Headers */,
 				85C7F4C30AAF8081004014DD /* DOMUIEventPrivate.h in Headers */,
 				85C7F5BF0AAFB7CC004014DD /* DOMMutationEvent.h in Headers */,
@@ -9257,9 +9243,7 @@
 				85526C370AB0A17E000302EA /* DOMNodeIterator.h in Headers */,
 				85526C3E0AB0A76F000302EA /* DOMNodeIteratorPrivate.h in Headers */,
 				85526CD20AB0B7D9000302EA /* DOMTreeWalker.h in Headers */,
-				859FA5FB0AB0BF20004FAEE9 /* DOMNodeFilter.h in Headers */,
 				85D2AD680AB1A40A00C313EA /* DOMEventListener.h in Headers */,
-				859128F30AB2431A00202265 /* DOMHTMLEmbedElement.h in Headers */,
 				85E9E0A10AB3A0C700069CD0 /* DOMXPathExpression.h in Headers */,
 				85E9E0A40AB3A0C700069CD0 /* DOMXPathNSResolver.h in Headers */,
 				85E9E0A50AB3A0C700069CD0 /* DOMXPathResult.h in Headers */,
@@ -9587,9 +9571,6 @@
 				9392F1460AD1860C00691BD4 /* CounterResetNode.h in Headers */,
 				9392F14C0AD1861B00691BD4 /* CounterNode.h in Headers */,
 				9392F1520AD1862B00691BD4 /* CounterListItem.h in Headers */,
-				851620F30AD2FD890059A7DE /* DOMSVGNumber.h in Headers */,
-				851620F50AD2FD890059A7DE /* DOMSVGPoint.h in Headers */,
-				851620F70AD2FD890059A7DE /* DOMSVGRect.h in Headers */,
 				8502AB400AD438C000378540 /* DOMSVGFEBlendElement.h in Headers */,
 				8502AB420AD438C000378540 /* DOMSVGFEColorMatrixElement.h in Headers */,
 				8502AB440AD438C000378540 /* DOMSVGFEComponentTransferElement.h in Headers */,
@@ -9643,6 +9624,15 @@
 				850D06680AD43A9A0063B27A /* DOMSVGFilterPrimitiveStandardAttributes.h in Headers */,
 				85C239810AD5907D003533E7 /* DOMSVGNumberList.h in Headers */,
 				85C239840AD59098003533E7 /* DOMSVGNumberListInternal.h in Headers */,
+				854074FC0AD6C22E00620C57 /* DOMSVGNumber.h in Headers */,
+				854074FD0AD6C22E00620C57 /* DOMSVGPoint.h in Headers */,
+				854074FE0AD6C22E00620C57 /* DOMSVGRect.h in Headers */,
+				854075200AD6C5FB00620C57 /* DOMEventTarget.h in Headers */,
+				854075260AD6C66700620C57 /* DOMNodeFilter.h in Headers */,
+				854075690AD6CBF900620C57 /* DOMHTMLAppletElement.h in Headers */,
+				8540756A0AD6CBF900620C57 /* DOMHTMLEmbedElement.h in Headers */,
+				8540756B0AD6CBF900620C57 /* DOMHTMLOptionElement.h in Headers */,
+				8540756D0AD6CBF900620C57 /* DOMHTMLOptionElementInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10559,7 +10549,6 @@
 				85DF82260AA7849E00486AD7 /* DOMHTMLTableSectionElement.mm in Sources */,
 				85DF82710AA78B8B00486AD7 /* DOMHTMLTableElement.mm in Sources */,
 				852B9E880AA79C47002ADA6E /* DOMHTMLAppletElement.mm in Sources */,
-				852B9E8A0AA79C47002ADA6E /* DOMHTMLOptionElement.mm in Sources */,
 				1A98955C0AA78149005EF5EF /* CString.cpp in Sources */,
 				1A98956B0AA78F80005EF5EF /* KURLCFNet.cpp in Sources */,
 				D23CA55F0AB0EAB6005108A5 /* JSRangeException.cpp in Sources */,
@@ -10803,6 +10792,7 @@
 				8502AB750AD438E600378540 /* DOMSVGAnimatedRect.mm in Sources */,
 				8502AB770AD438E600378540 /* DOMSVGComponentTransferFunctionElement.mm in Sources */,
 				85C239820AD5907D003533E7 /* DOMSVGNumberList.mm in Sources */,
+				8540756C0AD6CBF900620C57 /* DOMHTMLOptionElement.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

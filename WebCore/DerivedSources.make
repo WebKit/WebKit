@@ -70,7 +70,9 @@ all : \
     DOMEntityReference.h \
     DOMEvent.h \
     DOMEventListener.h \
+    DOMEventTarget.h \
     DOMHTMLAnchorElement.h \
+    DOMHTMLAppletElement.h \
     DOMHTMLAreaElement.h \
     DOMHTMLBRElement.h \
     DOMHTMLBaseElement.h \
@@ -83,6 +85,7 @@ all : \
     DOMHTMLDivElement.h \
     DOMHTMLDocument.h \
     DOMHTMLElement.h \
+    DOMHTMLEmbedElement.h \
     DOMHTMLFieldSetElement.h \
     DOMHTMLFontElement.h \
     DOMHTMLFormElement.h \
@@ -107,6 +110,7 @@ all : \
     DOMHTMLOListElement.h \
     DOMHTMLObjectElement.h \
     DOMHTMLOptGroupElement.h \
+    DOMHTMLOptionElement.h \
     DOMHTMLOptionsCollection.h \
     DOMHTMLParagraphElement.h \
     DOMHTMLParamElement.h \
@@ -130,6 +134,7 @@ all : \
     DOMMutationEvent.h \
     DOMNamedNodeMap.h \
     DOMNode.h \
+    DOMNodeFilter.h \
     DOMNodeIterator.h \
     DOMNodeList.h \
     DOMNotation.h \
@@ -196,10 +201,13 @@ all : \
     DOMSVGLocatable.h \
     DOMSVGMatrix.h \
     DOMSVGMetadataElement.h \
+    DOMSVGNumber.h \
     DOMSVGNumberList.h \
     DOMSVGPathSeg.h \
     DOMSVGPathSegList.h \
+    DOMSVGPoint.h \
     DOMSVGPreserveAspectRatio.h \
+    DOMSVGRect.h \
     DOMSVGRectElement.h \
     DOMSVGStringList.h \
     DOMSVGStylable.h \

@@ -20,7 +20,7 @@
 
 module html {
 
-    interface HTMLEmbedElement : HTMLElement {
+    interface [ObjCCustomImplementation] HTMLEmbedElement : HTMLElement {
                  attribute DOMString       align;
                  attribute long            height;
                  attribute DOMString       name;

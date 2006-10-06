@@ -32,7 +32,6 @@
 #import "DOMCSSRule.h"
 #import "DOMCSSValue.h"
 #import "DOMEvents.h"
-#import "DOMHTMLOptionElement.h"
 #import "DOMNode.h"
 #import "DOMObject.h"
 #import "DOMRGBColor.h"
@@ -110,6 +109,7 @@
 #import "DOMHTMLOListElementInternal.h"
 #import "DOMHTMLObjectElementInternal.h"
 #import "DOMHTMLOptGroupElementInternal.h"
+#import "DOMHTMLOptionElementInternal.h"
 #import "DOMHTMLOptionsCollectionInternal.h"
 #import "DOMHTMLParagraphElementInternal.h"
 #import "DOMHTMLParamElementInternal.h"
@@ -218,7 +218,6 @@ namespace WebCore {
     class CSSValue;
     class DOMWindow;
     class Event;
-    class HTMLOptionElement;
     class Node;
     class NodeFilter;
     class NodeIterator;
@@ -248,13 +247,6 @@ namespace WebCore {
 @interface DOMNode (WebCoreInternal)
 + (DOMNode *)_nodeWith:(WebCore::Node *)impl;
 - (WebCore::Node *)_node;
-@end
-
-// HTML Internal Interfaces
-
-@interface DOMHTMLOptionElement (WebCoreInternal)
-+ (DOMHTMLOptionElement *)_HTMLOptionElementWith:(WebCore::HTMLOptionElement *)impl;
-- (WebCore::HTMLOptionElement *)_HTMLOptionElement;
 @end
 
 // CSS Internal Interfaces

@@ -30,6 +30,7 @@ my $outputDir = "";
 my %publicInterfaces = ();
 my $newPublicClass = 0;
 my $isProtocol = 0;
+my $noImpl = 0;
 my @ivars = ();
 
 my @headerContentHeader = ();
@@ -190,19 +191,20 @@ sub GenerateInterface
     my $className = GetClassName($name);
     my $parentClassName = "DOM" . GetParentImplClassName($dataNode);
     $isProtocol = $dataNode->extendedAttributes->{ObjCProtocol};
+    $noImpl = $dataNode->extendedAttributes->{ObjCCustomImplementation} || $isProtocol;
 
     ReadPublicInterfaces($className, $parentClassName, $defines);
 
     # Start actual generation..
     $object->GenerateHeader($dataNode);
-    $object->GenerateImplementation($dataNode) unless $isProtocol;
+    $object->GenerateImplementation($dataNode) unless $noImpl;
 
     # Write changes.
     $object->WriteData("DOM" . $name);
 
     # Check for missing public API
     if (keys %publicInterfaces > 0) {
-        my $missing = join( "\n", keys %publicInterfaces );
+        my $missing = join("\n", keys %publicInterfaces);
         die "error: Public API change. There are missing public properties and/or methods from the \"$className\" class.\n$missing\n";
     }
 }
@@ -1250,7 +1252,7 @@ sub WriteData
     print HEADER map { "\@class $_;\n" } sort keys(%headerForwardDeclarations);
     print HEADER map { "\@protocol $_;\n" } sort keys(%headerForwardDeclarationsForProtocols);
 
-    my $hasForwardDeclarations =  keys(%headerForwardDeclarations) + keys(%headerForwardDeclarationsForProtocols);
+    my $hasForwardDeclarations = keys(%headerForwardDeclarations) + keys(%headerForwardDeclarationsForProtocols);
     print HEADER "\n" if $hasForwardDeclarations;
     print HEADER @headerContent;
 
@@ -1268,7 +1270,7 @@ sub WriteData
         print PRIVATE_HEADER map { "\@class $_;\n" } sort keys(%privateHeaderForwardDeclarations);
         print PRIVATE_HEADER map { "\@protocol $_;\n" } sort keys(%privateHeaderForwardDeclarationsForProtocols);
 
-        $hasForwardDeclarations =  keys(%privateHeaderForwardDeclarations) + keys(%privateHeaderForwardDeclarationsForProtocols);
+        $hasForwardDeclarations = keys(%privateHeaderForwardDeclarations) + keys(%privateHeaderForwardDeclarationsForProtocols);
         print PRIVATE_HEADER "\n" if $hasForwardDeclarations;
         print PRIVATE_HEADER @privateHeaderContent;
 
@@ -1281,7 +1283,7 @@ sub WriteData
     }
 
     # Write implementation file.
-    unless ($isProtocol) {
+    unless ($noImpl) {
         open(IMPL, ">$implFileName") or die "Couldn't open file $implFileName";
 
         print IMPL @implContentHeader;
