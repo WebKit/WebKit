@@ -1,3 +1,21 @@
+2006-10-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fix for <rdar://problem/4707489> After timers fix, crash below RenderLayer::autoscroll after moving/destroying active <input type="text">
+          and <rdar://problem/4707519> After timers fix, crash below RenderLayer::autoscroll after moving/destroying active textarea
+
+        * rendering/RenderLayer.cpp: (WebCore::RenderLayer::~RenderLayer): If the renderer is being autoscrolled, then stop the autoscroll timer.
+        * rendering/RenderListBox.cpp: (WebCore::RenderListBox::~RenderListBox): ditto.
+
+        * page/Frame.cpp: Added getter and setter for the renderer being autoscrolled.
+        (WebCore::Frame::handleAutoscroll):
+        (WebCore::Frame::autoscrollTimerFired):
+        (WebCore::Frame::autoscrollRenderer):
+        (WebCore::Frame::setAutoscrollRenderer):
+        (WebCore::Frame::stopAutoscrollTimer):
+        * page/Frame.h:
+
 2006-10-05  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed by Eric.

@@ -2858,7 +2858,7 @@ void Frame::handleAutoscroll(RenderObject* renderer)
 {
     if (d->m_autoscrollTimer.isActive())
         return;
-    d->m_autoscrollRenderer = renderer;
+    setAutoscrollRenderer(renderer);
     startAutoscrollTimer();
 }
 
@@ -2868,9 +2868,19 @@ void Frame::autoscrollTimerFired(Timer<Frame>*)
         stopAutoscrollTimer();
         return;
     }
-    if (d->m_autoscrollRenderer) {
-        d->m_autoscrollRenderer->autoscroll();
+    if (RenderObject* r = autoscrollRenderer()) {
+        r->autoscroll();
     } 
+}
+
+RenderObject* Frame::autoscrollRenderer() const
+{
+    return d->m_autoscrollRenderer;
+}
+
+void Frame::setAutoscrollRenderer(RenderObject* renderer)
+{
+    d->m_autoscrollRenderer = renderer;
 }
 
 RenderObject::NodeInfo Frame::nodeInfoAtPoint(const IntPoint& point, bool allowShadowContent)
@@ -2934,7 +2944,7 @@ void Frame::startAutoscrollTimer()
 
 void Frame::stopAutoscrollTimer()
 {
-    d->m_autoscrollRenderer = 0;
+    setAutoscrollRenderer(0);
     d->m_autoscrollTimer.stop();
 }
 

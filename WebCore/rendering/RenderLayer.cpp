@@ -148,6 +148,10 @@ m_marquee(0)
 
 RenderLayer::~RenderLayer()
 {
+    // If this layer is being autoscrolled, stop the autoscroll timer
+    if (m_object && m_object->document() && m_object->document()->frame() && m_object->document()->frame()->autoscrollRenderer() == m_object)
+        m_object->document()->frame()->stopAutoscrollTimer();
+
     destroyScrollbar(HorizontalScrollbar);
     destroyScrollbar(VerticalScrollbar);
 

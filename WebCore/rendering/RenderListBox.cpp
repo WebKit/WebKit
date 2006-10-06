@@ -61,6 +61,10 @@ RenderListBox::RenderListBox(HTMLSelectElement* element)
 
 RenderListBox::~RenderListBox()
 {
+    // If this list box is being autoscrolled, stop the autoscroll timer
+    if (document() && document()->frame() && document()->frame()->autoscrollRenderer() == this)
+        document()->frame()->stopAutoscrollTimer();
+
     if (m_vBar && m_vBar->isWidget()) {
         element()->document()->view()->removeChild(static_cast<PlatformScrollbar*>(m_vBar));
         m_vBar->deref();
