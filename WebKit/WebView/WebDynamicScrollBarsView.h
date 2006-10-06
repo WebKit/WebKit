@@ -33,8 +33,8 @@
 
 @interface WebDynamicScrollBarsView : NSScrollView <WebCoreFrameView>
 {
-    WebCoreScrollBarMode hScroll;
-    WebCoreScrollBarMode vScroll;
+    WebCoreScrollbarMode hScroll;
+    WebCoreScrollbarMode vScroll;
     BOOL hScrollModeLocked;
     BOOL vScrollModeLocked;
     BOOL suppressLayout;

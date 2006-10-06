@@ -1464,29 +1464,29 @@ static bool debugWidget = true;
 {
     WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
     if (flag) {
-        [scrollview setVerticalScrollingMode:WebCoreScrollBarAlwaysOn];
+        [scrollview setVerticalScrollingMode:WebCoreScrollbarAlwaysOn];
         [scrollview setVerticalScrollingModeLocked:YES];
     } else {
         [scrollview setVerticalScrollingModeLocked:NO];
-        [scrollview setVerticalScrollingMode:WebCoreScrollBarAuto];
+        [scrollview setVerticalScrollingMode:WebCoreScrollbarAuto];
     }
 }
 
 - (BOOL)alwaysShowVerticalScroller
 {
     WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
-    return [scrollview verticalScrollingModeLocked] && [scrollview verticalScrollingMode] == WebCoreScrollBarAlwaysOn;
+    return [scrollview verticalScrollingModeLocked] && [scrollview verticalScrollingMode] == WebCoreScrollbarAlwaysOn;
 }
 
 - (void)setAlwaysShowHorizontalScroller:(BOOL)flag
 {
     WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
     if (flag) {
-        [scrollview setHorizontalScrollingMode:WebCoreScrollBarAlwaysOn];
+        [scrollview setHorizontalScrollingMode:WebCoreScrollbarAlwaysOn];
         [scrollview setHorizontalScrollingModeLocked:YES];
     } else {
         [scrollview setHorizontalScrollingModeLocked:NO];
-        [scrollview setHorizontalScrollingMode:WebCoreScrollBarAuto];
+        [scrollview setHorizontalScrollingMode:WebCoreScrollbarAuto];
     }
 }
 
@@ -1498,7 +1498,7 @@ static bool debugWidget = true;
 - (BOOL)alwaysShowHorizontalScroller
 {
     WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
-    return [scrollview horizontalScrollingModeLocked] && [scrollview horizontalScrollingMode] == WebCoreScrollBarAlwaysOn;
+    return [scrollview horizontalScrollingModeLocked] && [scrollview horizontalScrollingMode] == WebCoreScrollbarAlwaysOn;
 }
 
 - (void)_setInViewSourceMode:(BOOL)flag

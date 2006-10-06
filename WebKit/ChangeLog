@@ -1,3 +1,30 @@
+2006-10-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by the letter 'B'.
+
+        More build fixes.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        (-[WebDynamicScrollBarsView setAllowsScrolling:]):
+        (-[WebDynamicScrollBarsView allowsScrolling]):
+        (-[WebDynamicScrollBarsView setAllowsHorizontalScrolling:]):
+        (-[WebDynamicScrollBarsView setAllowsVerticalScrolling:]):
+        (-[WebDynamicScrollBarsView allowsHorizontalScrolling]):
+        (-[WebDynamicScrollBarsView allowsVerticalScrolling]):
+        (-[WebDynamicScrollBarsView horizontalScrollingMode]):
+        (-[WebDynamicScrollBarsView verticalScrollingMode]):
+        (-[WebDynamicScrollBarsView setHorizontalScrollingMode:]):
+        (-[WebDynamicScrollBarsView setVerticalScrollingMode:]):
+        (-[WebDynamicScrollBarsView setScrollingMode:]):
+        * WebView/WebView.m:
+        (-[WebView setAlwaysShowVerticalScroller:]):
+        (-[WebView alwaysShowVerticalScroller]):
+        (-[WebView setAlwaysShowHorizontalScroller:]):
+        (-[WebView alwaysShowHorizontalScroller]):
+
 2006-10-05  Vladimir Olexa  <vladimir.olexa@gmail.com>
 
         Reviewed by Timothy.
