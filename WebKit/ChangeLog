@@ -1,5 +1,13 @@
 2006-10-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Darin.
+        
+        - removed includes of unused headers.
+
+        * WebView/WebDataSource.m:
+
+2006-10-06  Maciej Stachowiak  <mjs@apple.com>
+
         Not reviewed.
         
         - fix build breakage
