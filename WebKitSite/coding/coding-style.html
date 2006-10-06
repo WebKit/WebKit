@@ -3,6 +3,20 @@
     include("../header.inc"); 
 ?>
 
+<style type="text/css">
+pre .code {
+   background-color: #F2F2F2;
+}
+
+.right {
+  color: #008000;
+}
+
+.wrong {
+  color: #ff0000;
+}
+</style>
+
 
 <h2>WebKit Coding Style Guidelines</h2>
 <h3>Indenting</h3>
@@ -20,16 +34,16 @@
 <ol>
 <li> Function definitions &mdash; open and close braces should be on lines by themselves. Do not put the open brace on the same line as the function signature. For example:<br>
 
-<h4 style="color: #008000 !important !important">Right:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="right">Right:</h4>
+<pre class="code">
 void foo()
 {
     // do stuff
 }
 </pre>
 
-<h4 style="color: #ff0000 !important">Wrong:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
 void foo() {
     // do stuff
 }
@@ -37,15 +51,15 @@ void foo() {
 </li>
 <li> Other braces, including for, while, do, switch statements and class definitions &mdash; the open brace should go on the same line as the as the control structure.<br>
 
-<h4 style="color: #008000 !important">Right:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="right">Right:</h4>
+<pre class="code">
 for (int i = 0; i < 10; i++) {
     // do stuff
 }
 </pre>
 
-<h4 style="color: #ff0000 !important">Wrong:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
 for (int i = 0; i < 10; i++)
 {
     // do stuff
@@ -53,8 +67,8 @@ for (int i = 0; i < 10; i++)
 </pre>
 <li> If/else statements &mdash; as above, but if there is an else clause, the close brace should go on the same line as the else.
      Also, one-line if or else clauses should not get braces.<br>
-<h4 style="color: #008000 !important">Right:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="right">Right:</h4>
+<pre class="code">
 if (timeToGetCoffee) {
     buyCoffee(&#038;coffee);
     chugIt(coffee);
@@ -63,8 +77,8 @@ if (timeToGetCoffee) {
     outtaHere = true;
 </pre>
 
-<h4 style="color: #ff0000 !important">Wrong:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
 if (timeToGetCoffee)
 {
     buyCoffee(&#038;coffee);
@@ -92,8 +106,8 @@ if (timeToGoHome)
 <li>Function declarations and calls &mdash; do not use any spaces between the name and the open paren, inside the parentheses, or before commas that separate arguments.
     Do use a single space after commas that separate arguments.<br>
 
-<h4 style="color: #008000 !important">Right:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="right">Right:</h4>
+<pre class="code">
 int myFunction(int arg1, float arg2);
 
 void noArgFunction(); // for C++ or Objective-C++
@@ -101,8 +115,8 @@ void noArgFunction(); // for C++ or Objective-C++
 void noArgFunction(void); // for C or Objective-C
 </pre>
 
-<h4 style="color: #ff0000 !important">Wrong:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
 int myFunction (int arg1, float arg2);
 
 int myFunction( int arg1 , float arg2 );
@@ -122,8 +136,8 @@ void noArgFunction ();
 <li>True and false values of type <code>bool</code> (common in C and C++), or just generic true/false values, should be written as <code>true</code> and <code>false</code>. Values of the Objective-C <code>BOOL</code> type should be written as <code>YES</code> and <code>NO</code>.</li>
 <li>Tests for null pointers, false values and 0 values should all be done directly, not through an inqueality or equality comparison.<br>
 
-<h4 style="color: #008000 !important">Right:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="right">Right:</h4>
+<pre class="code">
     
 // test for true
 if (foo->isSomething()) {
@@ -156,8 +170,8 @@ if (!count) {
 }
 </pre>
 
-<h4 style="color: #ff0000 !important">Wrong:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
 if (foo->isSomething() == true) {
     // code
 }
@@ -186,13 +200,13 @@ if (count == 0) {
 <li>General Rule: With very few exceptions, prefer embedded capitals instead of underscores for class, function and variable names.</li>
 <li>C++ and Objective-C classes, interfaces and protocols, and other type names &mdash; these names should start with a capital letter and use InterCaps.<br>
 
-<h4 style="color: #008000 !important">Right:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="right">Right:</h4>
+<pre class="code">
 class MyImportantClass;
 </pre>
 
-<h4 style="color: #ff0000 !important">Wrong:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
 class My_important_class;
     
 class myImportantClass;
@@ -201,13 +215,13 @@ class myImportantClass;
 
 <li>Local variables should use interCaps, but the first word should start with a lowercase letter, like this:<br>
 
-<h4 style="color: #008000 !important">Right:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="right">Right:</h4>
+<pre class="code">
 int myInt;
 </pre>
 
-<h4 style="color: #ff0000 !important">Wrong:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
 int MyInt;
     
 int my_int;
@@ -225,14 +239,14 @@ they should read like a phrase or sentence and each piece of the selector should
 <li>#defined constants should use all uppercase names with words separated by underscores.</li>
 <li> Macros that expand to function calls or other non-constant computation: these should be named like functions, and should have parentheses at the end, even if they take no arguments (with the exception of some special macros like ASSERT). Note that usually it is preferrable to use an inline function in such cases instead of a macro.<br>
 
-<h4 style="color: #008000 !important">Right:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="right">Right:</h4>
+<pre class="code">
 #define WBStopButtonTitle() \
         NSLocalizedString(@\"Stop\", @\"Stop button title\")
 </pre>
 
-<h4 style="color: #ff0000 !important">Wrong:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
 #define WB_STOP_BUTTON_TITLE \
         NSLocalizedString(@\"Stop\", @\"Stop button\")
 
@@ -244,14 +258,14 @@ they should read like a phrase or sentence and each piece of the selector should
 <li> Acronyms in names: If an identifier includes an acronym, make the acronym all-uppercase
      or all-lowercase, depending on whether a word in that position would be capitalized or not.<br>
 
-<h4 style="color: #008000 !important">Right:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="right">Right:</h4>
+<pre class="code">
 urlVariable
 myURLAccessor:
 </pre>
 
-<h4 style="color: #ff0000 !important">Wrong:</h4>
-<pre style="background-color: #F2F2F2">
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
 uRLVariable
 myUrlAccessor:
 </pre>
@@ -262,13 +276,57 @@ myUrlAccessor:
 
 <ol>
 
-<li>Pointer and reference types in C++ code &mdash; Both pointer types and reference types
-should be written with no space between the type name and the * or &amp;.
+<li>Constructors for C++ classes should initialize all of their members using C++ constructor synatax.  Each member (and superclass) should be indented on a separate line, with the colon or comma preceding the member on that line.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+MyClass::MyClass(Document* doc)
+    : MySuperClass()
+    , m_myMember(0)
+    , m_doc(doc)
+{
+}
+
+MyOtherClass::MyOtherClass()
+    : MySuperClass()
+{
+}
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+MyClass::MyClass(Document* doc) : MySuperClass()
+{
+    m_myMember = 0;
+    m_doc = doc;
+}
+
+MyOtherClass::MyOtherClass() : MySuperClass() {}
+</pre>
 
 <li>Pointer types in non-C++ code &mdash; Pointer types should be written with a space between the
 type and the * (so the * is adjacent to the following identifier if any).
 
 </ol>
+
+<li>Pointer and reference types in C++ code &mdash; Both pointer types and reference types
+should be written with no space between the type name and the * or &amp;.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+Image* SVGStyledElement::doSomething(PaintInfo& paintInfo)
+{
+  SVGStyledElement* element = static_cast<SVGStyledElement*>(node());
+  const KCDashArray& dashes = dashArray();
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+Image *SVGStyledElement::doSomething(PaintInfo &paintInfo)
+{
+    SVGStyledElement *element = static_cast<SVGStyledElement *>(node());
+    const KCDashArray &dashes = dashArray();
+</pre>
 
 <h3>Include Statements</h3>
 

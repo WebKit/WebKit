@@ -1,3 +1,9 @@
+2006-10-05  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by Tim H.
+
+        * coding/coding-style.html: use css styles, add example for whitespace, add example for c++ constructors
+
 2006-09-26  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by anders.
