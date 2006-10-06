@@ -1,3 +1,22 @@
+2006-10-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by aroben.
+
+        Stub out some methods that we'll be able to use to dodge a window resizer.
+
+        * bridge/win/FrameWin.h:
+        * page/Frame.h:
+        (WebCore::Frame::windowResizerRect):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::windowResizerRect):
+        * platform/Widget.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameView::windowResizerRect):
+        (Widget::setParent):
+        (Widget::parent):
+        (FrameWin::windowResizerRect):
+
 2006-10-05  Dave Hyatt  <hyatt@apple.com>
 
         Stub out setFrameGeometry.

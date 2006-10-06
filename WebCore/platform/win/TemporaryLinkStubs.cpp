@@ -82,6 +82,7 @@ bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, 
 bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
 bool FrameView::passWheelEventToSubframe(PlatformWheelEvent& e, Frame* subframe) { return false; }
 bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar*) { return false; }
+IntRect FrameView::windowResizerRect() const { return IntRect(); }
 
 void Widget::enableFlushDrawing() { notImplemented(); }
 bool Widget::isEnabled() const { notImplemented(); return 0; }
@@ -97,6 +98,8 @@ Widget* Widget::capturingChild() { return 0; }
 void Widget::setCapturingChild(Widget* w) {}
 IntPoint Widget::convertChildToSelf(const Widget*, const IntPoint& p) const { return p; }
 IntPoint Widget::convertSelfToChild(const Widget*, const IntPoint& p) const { return p; }
+void Widget::setParent(ScrollView*) {}
+ScrollView* Widget::parent() const { return 0; }
 
 JavaAppletWidget::JavaAppletWidget(IntSize const&,Element*,WTF::HashMap<String,String> const&) { notImplemented(); }
 
@@ -192,6 +195,7 @@ bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 KURL FrameWin::originalRequestURL() const { return KURL(); }
 bool FrameWin::isLoadTypeReload() { notImplemented(); return false; }
+IntRect FrameWin::windowResizerRect() const { return IntRect(); }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
     const IntSize& bottomLeft, const IntSize& bottomRight) { notImplemented(); }

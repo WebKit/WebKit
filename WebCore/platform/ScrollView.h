@@ -26,6 +26,7 @@
 #ifndef ScrollView_H
 #define ScrollView_H
 
+#include "IntRect.h"
 #include "ScrollbarMode.h"
 #include "ScrollBar.h"
 #include "Widget.h"
@@ -60,6 +61,8 @@ namespace WebCore {
 
         // Set the mode for both scrollbars at once.
         virtual void setScrollbarsMode(ScrollbarMode);
+
+        virtual IntRect windowResizerRect() const { return IntRect(); }
 
         // This gives us a means of blocking painting on our scrollbars until the first layout has occurred.
         void suppressScrollbars(bool suppressed, bool repaintOnUnsuppress = false);

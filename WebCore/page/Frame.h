@@ -747,6 +747,8 @@ private:
 
     void setNeedsReapplyStyles();
 
+  virtual IntRect windowResizerRect() const { return IntRect(); }
+
 protected:
     virtual void startRedirectionTimer();
     virtual void stopRedirectionTimer();
