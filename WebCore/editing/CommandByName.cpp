@@ -192,15 +192,14 @@ CommandMap* createCommandDictionary()
         { "ForwardDelete", { execForwardDelete, enabledAnyEditableSelection } },
         { "Paste", { execPaste, enabledPaste } },
         { "SelectAll", { execSelectAll, enabled } },
-        // FIXME: not sure if the following 8 should be enabledAnyRangeSelection or enabledAnySelection
-        { "MoveLeft", { execMoveLeft, enabledAnyRangeSelection } },
-        { "MoveRight", { execMoveRight, enabledAnyRangeSelection } },
-        { "MoveUp", { execMoveUp, enabledAnyRangeSelection } },
-        { "MoveDown", { execMoveDown, enabledAnyRangeSelection } },
-        { "SelectLeft", { execSelectLeft, enabledAnyRangeSelection } },
-        { "SelectRight", { execSelectRight, enabledAnyRangeSelection } },
-        { "SelectUp", { execSelectUp, enabledAnyRangeSelection } },
-        { "SelectDown", { execSelectDown, enabledAnyRangeSelection } }
+        { "MoveLeft", { execMoveLeft, enabledAnySelection } },
+        { "MoveRight", { execMoveRight, enabledAnySelection } },
+        { "MoveUp", { execMoveUp, enabledAnySelection } },
+        { "MoveDown", { execMoveDown, enabledAnySelection } },
+        { "SelectLeft", { execSelectLeft, enabledAnySelection } },
+        { "SelectRight", { execSelectRight, enabledAnySelection } },
+        { "SelectUp", { execSelectUp, enabledAnySelection } },
+        { "SelectDown", { execSelectDown, enabledAnySelection } }
     };
 
     CommandMap* commandMap = new CommandMap;

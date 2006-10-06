@@ -1,3 +1,13 @@
+2006-10-05  Alice  <alice.liu@apple.com>
+
+        Reviewed by Adam.
+
+        Fixed <rdar://problem/4731778>
+
+        * editing/CommandByName.cpp:
+        (WebCore::Frame::Command::):
+        was calling the wrong enabledFn for arrow selection and navigation
+
 2006-10-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
