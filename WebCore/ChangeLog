@@ -1,3 +1,49 @@
+2006-10-05  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Eric.
+
+        Fix win32 build bustage after ggaren's Scrollbar renaming changes.
+        Properly include PlatformScrollBar.h in WbCore.vcproj.
+        Clean up WidgetWin.cpp a bit.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/Widget.h:
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::hScrollbarMode):
+        (WebCore::ScrollView::vScrollbarMode):
+        (WebCore::ScrollView::suppressScrollbars):
+        (WebCore::ScrollView::setHScrollbarMode):
+        (WebCore::ScrollView::setVScrollbarMode):
+        (WebCore::ScrollView::setScrollbarsMode):
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameView::passMousePressEventToScrollbar):
+        (Widget::removeFromParent):
+        (ScrollView::scrollbarUnderMouse):
+        (PlatformScrollbar::PlatformScrollbar):
+        (PlatformScrollbar::~PlatformScrollbar):
+        (PlatformScrollbar::width):
+        (PlatformScrollbar::height):
+        (PlatformScrollbar::setEnabled):
+        (PlatformScrollbar::paint):
+        (PlatformScrollbar::updateThumbPosition):
+        (PlatformScrollbar::updateThumbProportion):
+        (PlatformScrollbar::setRect):
+        (Scrollbar::Scrollbar):
+        (Scrollbar::setSteps):
+        (Scrollbar::scroll):
+        (Scrollbar::setValue):
+        (Scrollbar::setProportion):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::setContainingWindow):
+        (WebCore::Widget::containingWindow):
+
 2006-10-05  Geoffrey Garen  <ggaren@apple.com>
 
         build fix.

@@ -41,28 +41,28 @@ public:
     HWND containingWindow;
     Font font;
     WidgetClient* client;
+
+    WidgetPrivate()
+        : containingWindow(0),
+          client(0) {}
 };
 
 Widget::Widget()
-    : data(new WidgetPrivate)
-{
-    data->containingWindow = 0;
-    data->client = 0;
-}
+    : data(new WidgetPrivate) {}
 
 Widget::~Widget() 
 {
     delete data;
 }
 
-HWND Widget::containingWindow() const
-{
-    return data->containingWindow;
-}
-
 void Widget::setContainingWindow(HWND hWnd)
 {
     data->containingWindow = hWnd;
+}
+
+HWND Widget::containingWindow() const
+{
+    return data->containingWindow;
 }
 
 void Widget::setClient(WidgetClient* c)

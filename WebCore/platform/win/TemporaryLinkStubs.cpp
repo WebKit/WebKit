@@ -45,7 +45,7 @@
 #include "FrameView.h"
 #include "KURL.h"
 #include "PlatformScrollBar.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "JavaAppletWidget.h"
 #include "Page.h"
 #include "Path.h"
@@ -81,12 +81,13 @@ bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev,
 bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
 bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
 bool FrameView::passWheelEventToSubframe(PlatformWheelEvent& e, Frame* subframe) { return false; }
-bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollBar*) { return false; }
+bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar*) { return false; }
 
 void Widget::enableFlushDrawing() { notImplemented(); }
 bool Widget::isEnabled() const { notImplemented(); return 0; }
 Widget::FocusPolicy Widget::focusPolicy() const { notImplemented(); return NoFocus; }
 void Widget::disableFlushDrawing() { notImplemented(); }
+void Widget::removeFromParent() { notImplemented(); }
 GraphicsContext* Widget::lockDrawingFocus() { notImplemented(); return 0; }
 void Widget::unlockDrawingFocus(GraphicsContext*) { notImplemented(); }
 bool Widget::capturingMouse() const { return false; }
@@ -271,7 +272,7 @@ void ScrollView::themeChanged() { }
 IntPoint ScrollView::convertChildToSelf(const Widget*, const IntPoint& p) const { return p; }
 IntPoint ScrollView::convertSelfToChild(const Widget*, const IntPoint& p) const { return p; }
 void ScrollView::scrolled() const {};
-PlatformScrollBar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent) { return 0; }
+PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent) { return 0; }
 
 void GraphicsContext::setShadow(IntSize const&,int,Color const&) { }
 void GraphicsContext::clearShadow() { }
@@ -330,21 +331,21 @@ IntSize TextField::sizeForCharacterWidth(int) const { return IntSize(); }
 int TextField::baselinePosition(int) const { return 0; }
 void TextField::setLiveSearch(bool) { }
 
-PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation, ScrollBarControlSize controlSize) : ScrollBar(client, orientation, controlSize) { }
-PlatformScrollBar::~PlatformScrollBar() { }
-int PlatformScrollBar::width() const { return 0; }
-int PlatformScrollBar::height() const { return 0; }
-void PlatformScrollBar::setEnabled(bool) { }
-void PlatformScrollBar::paint(GraphicsContext*, const IntRect& damageRect) { }
-void PlatformScrollBar::updateThumbPosition() { }
-void PlatformScrollBar::updateThumbProportion() { }
-void PlatformScrollBar::setRect(const IntRect&) { }
+PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize) : Scrollbar(client, orientation, controlSize) { }
+PlatformScrollbar::~PlatformScrollbar() { }
+int PlatformScrollbar::width() const { return 0; }
+int PlatformScrollbar::height() const { return 0; }
+void PlatformScrollbar::setEnabled(bool) { }
+void PlatformScrollbar::paint(GraphicsContext*, const IntRect& damageRect) { }
+void PlatformScrollbar::updateThumbPosition() { }
+void PlatformScrollbar::updateThumbProportion() { }
+void PlatformScrollbar::setRect(const IntRect&) { }
 
-ScrollBar::ScrollBar(ScrollBarClient*, ScrollBarOrientation, ScrollBarControlSize) { }
-void ScrollBar::setSteps(int, int) { }
-bool ScrollBar::scroll(ScrollDirection, ScrollGranularity, float) { return false; }
-bool ScrollBar::setValue(int) { return false; }
-void ScrollBar::setProportion(int, int) { }
+Scrollbar::Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize) { }
+void Scrollbar::setSteps(int, int) { }
+bool Scrollbar::scroll(ScrollDirection, ScrollGranularity, float) { return false; }
+bool Scrollbar::setValue(int) { return false; }
+void Scrollbar::setProportion(int, int) { }
 
 ListBox::ListBox() { }
 ListBox::~ListBox() { }
