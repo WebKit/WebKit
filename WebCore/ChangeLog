@@ -1,3 +1,15 @@
+2006-10-06  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Maciej.
+
+        More loader tweaks.
+
+        * platform/ResourceLoader.h:
+        * platform/ResourceLoaderInternal.h:
+        (WebCore::ResourceLoaderInternal::ResourceLoaderInternal):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::ResourceLoader::newHTTPRequest):
+
 2006-10-05  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by aroben.

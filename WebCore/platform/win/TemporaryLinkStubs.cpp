@@ -230,6 +230,7 @@ void WebCore::refreshPlugins(bool) { }
 
 void WebCore::ResourceLoader::assembleResponseHeaders() const { }
 void WebCore::ResourceLoader::retrieveCharset() const { }
+bool WebCore::ResourceLoader::startHTTPRequest(const String& referrer) { return false; }
 
 void FrameWin::restoreDocumentState() { }
 void FrameWin::partClearedInBegin() { }

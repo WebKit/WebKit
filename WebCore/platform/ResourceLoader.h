@@ -71,6 +71,7 @@ public:
     ~ResourceLoader();
 
     bool start(DocLoader*);
+    bool startHTTPRequest(const String& referrer);
 
     int error() const;
     void setError(int);
