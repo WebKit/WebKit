@@ -44,6 +44,7 @@
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebScriptDebugServerPrivate.h>
 #import "WebNSDictionaryExtras.h"
 
 @implementation WebFrameLoader
@@ -311,10 +312,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     LOG(Loading, "%@:  transition from %s to %s", [webFrame name], stateNames[state], stateNames[newState]);
     if ([webFrame webView])
-        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [webFrame name], stateNames[state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[webFrame webView] mainFrame] dataSource] _loadingStartedTime]);
+        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [webFrame name], stateNames[state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[[webFrame webView] mainFrame] dataSource] _documentLoadState] loadingStartedTime]);
     
     if (newState == WebFrameStateComplete && webFrame == [[webFrame webView] mainFrame])
-        LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
+        LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[[self dataSource] _documentLoadState] loadingStartedTime]);
     
     state = newState;
     
@@ -515,7 +516,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return;
     }
 
-    [ds _setPrimaryLoadComplete:YES];
+    [[self activeDocumentLoadState] setPrimaryLoadComplete:YES];
+    if ([WebScriptDebugServer listenerCount])
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:[webFrame webView] didLoadMainResourceForDataSource:[self activeDataSource]];
     [webFrame _checkLoadComplete];
 
     [self release];
@@ -873,13 +876,28 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 
 - (void)documentLoadState:(WebDocumentLoadState *)loadState mainReceivedCompleteError:(NSError *)error
 {
-    [[webFrame _dataSourceForDocumentLoadState:loadState] _setPrimaryLoadComplete:YES];
+    [loadState setPrimaryLoadComplete:YES];
+    if ([WebScriptDebugServer listenerCount])
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:[webFrame webView] didLoadMainResourceForDataSource:[self activeDataSource]];
     [webFrame _checkLoadComplete];
 }
 
 - (void)finalSetupForReplaceWithDocumentLoadState:(WebDocumentLoadState *)loadState
 {
     [[webFrame _dataSourceForDocumentLoadState:loadState] _clearUnarchivingState];
+}
+
+- (void)prepareForLoadStart
+{
+    [[webFrame webView] _progressStarted:webFrame];
+    [[webFrame webView] _didStartProvisionalLoadForFrame:webFrame];
+    [[[webFrame webView] _frameLoadDelegateForwarder] webView:[webFrame webView]
+                               didStartProvisionalLoadForFrame:webFrame];    
+}
+
+- (BOOL)subframeIsLoading
+{
+    return [webFrame _subframeIsLoading];
 }
 
 @end

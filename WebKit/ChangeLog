@@ -1,3 +1,36 @@
+2006-10-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - moved more data from WebDataSource to WebDocumentLoadState
+
+        * Loader/WebDocumentLoadState.h:
+        * Loader/WebDocumentLoadState.m:
+        (-[WebDocumentLoadState commitLoadWithData:]):
+        (-[WebDocumentLoadState prepareForLoadStart]):
+        (-[WebDocumentLoadState loadingStartedTime]):
+        (-[WebDocumentLoadState setIsClientRedirect:]):
+        (-[WebDocumentLoadState isClientRedirect]):
+        (-[WebDocumentLoadState setPrimaryLoadComplete:]):
+        (-[WebDocumentLoadState isLoadingInAPISense]):
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _setState:]):
+        (-[WebFrameLoader _finishedLoading]):
+        (-[WebFrameLoader documentLoadState:mainReceivedCompleteError:]):
+        (-[WebFrameLoader prepareForLoadStart]):
+        (-[WebFrameLoader subframeIsLoading]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _fileWrapperForURL:]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _loadFromPageCache:]):
+        (-[WebDataSource isLoading]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _opened]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+
 2006-10-06  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

@@ -79,20 +79,12 @@
     BOOL loadingFromPageCache;
     WebUnarchivingState *unarchivingState;
     NSMutableDictionary *subresources;
-    
-    // The time when the data source was told to start loading.
-    double loadingStartedTime;
-    
-    BOOL primaryLoadComplete;
-        
-    BOOL isClientRedirect;
-    
+    BOOL representationFinishedLoading;
+            
     NSString *pageTitle;
     
     NSString *encoding;
     NSString *overrideEncoding;
-    
-    BOOL representationFinishedLoading;
     
     // The action that triggered loading of this data source -
     // we keep this around for the benefit of the various policy
@@ -142,23 +134,6 @@
     [_private->representation release];
     _private->representation = [representation retain];
     _private->representationFinishedLoading = NO;
-}
-
-- (void)_prepareForLoadStart
-{
-    ASSERT(![_private->loadState isStopping]);
-    [self _setPrimaryLoadComplete:NO];
-    ASSERT([self webFrame] != nil);
-    [_private->loadState clearErrors];
-    
-    // Mark the start loading time.
-    _private->loadingStartedTime = CFAbsoluteTimeGetCurrent();
-    
-    [_private->loadState setLoading:YES];
-    [[self _webView] _progressStarted:[self webFrame]];
-    [[self _webView] _didStartProvisionalLoadForFrame:[self webFrame]];
-    [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
-                                     didStartProvisionalLoadForFrame:[self webFrame]];
 }
 
 static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class, NSArray *supportTypes)
@@ -213,9 +188,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
     
     WebResource *resource = [self subresourceForURL:URL];
-    if (resource) {
+    if (resource)
         return [resource _fileWrapperRepresentation];
-    }
     
     NSCachedURLResponse *cachedResponse = [[self _webView] _cachedResponseForURL:URL];
     if (cachedResponse) {
@@ -426,7 +400,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_startLoading
 {
-    [self _prepareForLoadStart];
+    [_private->loadState prepareForLoadStart];
     
     if ([[_private->loadState frameLoader] isLoadingMainResource])
         return;
@@ -447,11 +421,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 - (void)_stopRecordingResponses
 {
     _private->stopRecordingResponses = YES;
-}
-
-- (double)_loadingStartedTime
-{
-    return _private->loadingStartedTime;
 }
 
 - (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement
@@ -521,7 +490,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_loadFromPageCache:(NSDictionary *)pageCache
 {
-    [self _prepareForLoadStart];
+    [_private->loadState prepareForLoadStart];
     _private->loadingFromPageCache = YES;
     [_private->loadState setCommitted:YES];
     [[self webFrame] _commitProvisionalLoad:pageCache];
@@ -530,11 +499,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName
 {
     return [_private->unarchivingState popSubframeArchiveWithFrameName:frameName];
-}
-
-- (void)_setIsClientRedirect:(BOOL)flag
-{
-    _private->isClientRedirect = flag;
 }
 
 - (void)_setLastCheckedRequest:(NSURLRequest *)request
@@ -585,23 +549,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [[_private->loadState frameLoader] stopLoadingWithError:error];
 }
 
-- (void)_setPrimaryLoadComplete:(BOOL)flag
-{
-    _private->primaryLoadComplete = flag;
-    
-    if (flag) {
-        if ([[_private->loadState frameLoader] isLoadingMainResource]) {
-            [_private->loadState setMainResourceData:[[_private->loadState frameLoader] mainResourceData]];
-            [[_private->loadState frameLoader] releaseMainResourceLoader];
-        }
-        
-        [_private->loadState updateLoading];
-
-        if ([WebScriptDebugServer listenerCount])
-            [[WebScriptDebugServer sharedScriptDebugServer] webView:[[self webFrame] webView] didLoadMainResourceForDataSource:self];
-    }
-}
-
 - (NSArray *)_responses
 {
     return _private->responses;
@@ -624,11 +571,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
     
     [_private->representation setDataSource:self];
-}
-
-- (BOOL)_isClientRedirect
-{
-    return _private->isClientRedirect;
 }
 
 - (NSURL *)_URLForHistory
@@ -802,21 +744,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return textEncodingName;
 }
 
-// Returns YES if there are any pending loads.
 - (BOOL)isLoading
 {
-    // Once a frame has loaded, we no longer need to consider subresources,
-    // but we still need to consider subframes.
-    if ([[[self webFrame] _frameLoader] state] != WebFrameStateComplete) {
-        if (!_private->primaryLoadComplete && [_private->loadState isLoading])
-            return YES;
-        if ([[_private->loadState frameLoader] isLoadingSubresources])
-            return YES;
-        if (![[[self webFrame] _bridge] doneProcessingData])
-            return YES;
-    }
-
-    return [[self webFrame] _subframeIsLoading];
+    return [_private->loadState isLoadingInAPISense];
 }
 
 // Returns nil or the page title.

@@ -57,11 +57,9 @@
 - (void)_setOverrideEncoding:(NSString *)overrideEncoding;
 - (void)_addToUnarchiveState:(WebArchive *)archive;
 - (NSURL *)_URLForHistory;
-- (BOOL)_isClientRedirect;
 - (void)_makeRepresentation;
 - (BOOL)_loadingFromPageCache;
 - (NSArray *)_responses;
-- (void)_setPrimaryLoadComplete:(BOOL)flag;
 - (BOOL)_isDocumentHTML;
 - (void)_setTriggeringAction:(NSDictionary *)action;
 - (NSDictionary *)_triggeringAction;
@@ -70,7 +68,6 @@
 - (void)_stopLoadingWithError:(NSError *)error;
 - (NSURLRequest *)_lastCheckedRequest;
 - (void)_setLastCheckedRequest:(NSURLRequest *)request;
-- (void)_setIsClientRedirect:(BOOL)flag;
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName;
 - (void)_loadFromPageCache:(NSDictionary *)pageCache;
 - (NSURL *)_URL;
@@ -80,11 +77,9 @@
 - (DOMDocumentFragment *)_documentFragmentWithArchive:(WebArchive *)archive;
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission;
 - (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement;
-- (double)_loadingStartedTime;
 - (void)_stopRecordingResponses;
 - (void)_startLoading;
 - (WebResource *)_archivedSubresourceForURL:(NSURL *)URL;
-- (double)_loadingStartedTime;
 - (void)_stopRecordingResponses;
 - (void)_startLoading;
 - (WebResource *)_archivedSubresourceForURL:(NSURL *)URL;

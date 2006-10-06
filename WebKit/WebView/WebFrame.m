@@ -633,7 +633,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 break;
                 
             case WebFrameLoadTypeStandard:
-                if (![ds _isClientRedirect]) {
+                if (![[ds _documentLoadState] isClientRedirect]) {
                     // Add item to history and BF list
                     NSURL *URL = [ds _URLForHistory];
                     if (URL && ![URL _web_isEmpty]){
@@ -668,7 +668,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 
             case WebFrameLoadTypeInternal:
                 // Add an item to the item tree for this frame
-                ASSERT(![ds _isClientRedirect]);
+                ASSERT(![[ds _documentLoadState] isClientRedirect]);
                 WebFrame *parentFrame = [self parentFrame];
                 if (parentFrame) {
                     WebHistoryItem *parentItem = [parentFrame->_private currentItem];
@@ -818,7 +818,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 // Called after we send an openURL:... down to WebCore.
 - (void)_opened
 {
-    if ([self _loadType] == WebFrameLoadTypeStandard && [[self dataSource] _isClientRedirect]) {
+    if ([self _loadType] == WebFrameLoadTypeStandard && [[[self dataSource] _documentLoadState] isClientRedirect]) {
         // Clear out form data so we don't try to restore it into the incoming page.  Must happen after
         // khtml has closed the URL and saved away the form state.
         WebHistoryItem *item = [_private currentItem];
@@ -853,9 +853,9 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         // reset when we leave this page.  The core side of the page cache
         // will have already been invalidated by the bridge to prevent
         // premature release.
-        [[_private currentItem] setHasPageCache: NO];
+        [[_private currentItem] setHasPageCache:NO];
 
-        [[self dataSource] _setPrimaryLoadComplete: YES];
+        [[_private->frameLoader documentLoadState] setPrimaryLoadComplete:YES];
         // why only this frame and not parent frames?
         [self _checkLoadCompleteForThisFrame];
     }
@@ -1681,7 +1681,7 @@ exit:
         if (isRedirect) {
             LOG(Redirect, "%@(%p) _private->quickRedirectComing was %d", [self name], self, (int)isRedirect);
             _private->quickRedirectComing = NO;
-            [[self provisionalDataSource] _setIsClientRedirect:YES];
+            [[[self provisionalDataSource] _documentLoadState] setIsClientRedirect:YES];
         } else if (sameURL) {
             // Example of this case are sites that reload the same URL with a different cookie
             // driving the generated content, or a master frame with links that drive a target

@@ -355,4 +355,64 @@
     frameLoader = nil;
 }
 
+- (void)prepareForLoadStart
+{
+    ASSERT(!stopping);
+    [self setPrimaryLoadComplete:NO];
+    ASSERT(frameLoader != nil);
+    [self clearErrors];
+    
+    // Mark the start loading time.
+    loadingStartedTime = CFAbsoluteTimeGetCurrent();
+    
+    [self setLoading:YES];
+    
+    [frameLoader prepareForLoadStart];
+}
+
+- (double)loadingStartedTime
+{
+    return loadingStartedTime;
+}
+
+- (void)setIsClientRedirect:(BOOL)flag
+{
+    isClientRedirect = flag;
+}
+
+- (BOOL)isClientRedirect
+{
+    return isClientRedirect;
+}
+
+- (void)setPrimaryLoadComplete:(BOOL)flag
+{
+    primaryLoadComplete = flag;
+    
+    if (flag) {
+        if ([frameLoader isLoadingMainResource]) {
+            [self setMainResourceData:[frameLoader mainResourceData]];
+            [frameLoader releaseMainResourceLoader];
+        }
+        
+        [self updateLoading];
+    }
+}
+
+- (BOOL)isLoadingInAPISense
+{
+    // Once a frame has loaded, we no longer need to consider subresources,
+    // but we still need to consider subframes.
+    if ([frameLoader state] != WebFrameStateComplete) {
+        if (!primaryLoadComplete && [self isLoading])
+            return YES;
+        if ([frameLoader isLoadingSubresources])
+            return YES;
+        if (![[frameLoader bridge] doneProcessingData])
+            return YES;
+    }
+    
+    return [frameLoader subframeIsLoading];
+}    
+
 @end

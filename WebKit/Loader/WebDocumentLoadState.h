@@ -56,10 +56,15 @@
     
     NSError *mainDocumentError;    
     
+    // The time when the data source was told to start loading.
+    double loadingStartedTime;
+
     BOOL committed; // This data source has been committed
     BOOL stopping;
     BOOL loading; // self and webView are retained while loading
     BOOL gotFirstByte; // got first byte
+    BOOL primaryLoadComplete;
+    BOOL isClientRedirect;
 }
 
 - (id)initWithRequest:(NSURLRequest *)request;
@@ -91,5 +96,12 @@
 - (void)mainReceivedError:(NSError *)error complete:(BOOL)isComplete;
 - (void)setResponse:(NSURLResponse *)resp;
 - (void)detachFromFrameLoader;
+- (void)prepareForLoadStart;
+- (double)loadingStartedTime;
+- (BOOL)isClientRedirect;
+- (void)setIsClientRedirect:(BOOL)flag;
+- (BOOL)isLoadingInAPISense;
+- (void)setPrimaryLoadComplete:(BOOL)flag;
+
 
 @end
