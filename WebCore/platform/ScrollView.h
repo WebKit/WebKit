@@ -27,7 +27,7 @@
 #define ScrollView_H
 
 #include "IntRect.h"
-#include "ScrollbarMode.h"
+#include "ScrollBarMode.h"
 #include "ScrollBar.h"
 #include "Widget.h"
 #include <wtf/Platform.h>

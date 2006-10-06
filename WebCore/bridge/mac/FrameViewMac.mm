@@ -30,7 +30,7 @@
 #import "BlockExceptions.h"
 #import "FrameMac.h"
 #import "MouseEventWithHitTestResults.h"
-#import "PlatformScrollbar.h"
+#import "PlatformScrollBar.h"
 #import "RenderObject.h"
 #import "WebCoreFrameBridge.h"
 

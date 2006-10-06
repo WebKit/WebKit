@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Scrollbar.h"
+#include "ScrollBar.h"
 
 namespace WebCore {
 

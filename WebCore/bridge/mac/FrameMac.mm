@@ -57,7 +57,7 @@
 #import "Logging.h"
 #import "MouseEventWithHitTestResults.h"
 #import "PlatformKeyboardEvent.h"
-#import "PlatformScrollbar.h"
+#import "PlatformScrollBar.h"
 #import "PlatformWheelEvent.h"
 #import "Plugin.h"
 #import "RegularExpression.h"
