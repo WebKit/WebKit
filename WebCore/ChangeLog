@@ -2,6 +2,15 @@
 
         Reviewed by Tim H.
 
+        Make Qt/Linux compile again completly.
+
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::removeFromParent):
+
+2006-10-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Tim H.
+
         Fix Qt/Linux build by adapting the s/ScrollBar/Scrollbar/ patch.
 
         * platform/qt/PlatformScrollBar.h:

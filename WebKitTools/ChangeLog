@@ -1,3 +1,12 @@
+2006-10-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Tim H.
+
+        Fix Qt/Linux build by adapting the s/ScrollBar/Scrollbar/ changes.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
 2006-10-05  Oliver Hunt  <ohunt@apple.com>
 
         Reviewed by Anders.

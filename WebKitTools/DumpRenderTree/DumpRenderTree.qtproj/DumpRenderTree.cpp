@@ -62,7 +62,7 @@ DumpRenderTree::DumpRenderTree()
     page->setMainFrame(m_frame);
 
     FrameView* view = new FrameView(m_frame);
-    view->setScrollBarsMode(ScrollBarAlwaysOff);
+    view->setScrollbarsMode(ScrollbarAlwaysOff);
 
     m_frame->setView(view);
     view->setParentWidget(0 /* no toplevel widget */);

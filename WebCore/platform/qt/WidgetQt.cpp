@@ -238,6 +238,11 @@ void Widget::invalidateRect(const IntRect& r)
     notImplemented();
 }
 
+void Widget::removeFromParent()
+{
+    notImplemented();
+}
+
 }
 
 // vim: ts=4 sw=4 et
