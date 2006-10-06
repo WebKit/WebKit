@@ -121,21 +121,21 @@ void Slider::setFont(WebCore::Font const&) { notImplemented(); }
 double Slider::value() const { notImplemented(); return 0; }
 Widget::FocusPolicy Slider::focusPolicy() const { notImplemented(); return NoFocus; }
 
-ScrollBar::ScrollBar(ScrollBarClient*, ScrollBarOrientation, ScrollBarControlSize) { notImplemented(); }
-void ScrollBar::setSteps(int, int) { notImplemented(); }
-bool ScrollBar::scroll(ScrollDirection, ScrollGranularity, float) { notImplemented(); return 0; }
-bool ScrollBar::setValue(int) { notImplemented(); return 0; }
-void ScrollBar::setProportion(int, int) { notImplemented(); }
+Scrollbar::Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize) { notImplemented(); }
+void Scrollbar::setSteps(int, int) { notImplemented(); }
+bool Scrollbar::scroll(ScrollDirection, ScrollGranularity, float) { notImplemented(); return 0; }
+bool Scrollbar::setValue(int) { notImplemented(); return 0; }
+void Scrollbar::setProportion(int, int) { notImplemented(); }
 
-PlatformScrollBar::PlatformScrollBar(ScrollBarClient* client, ScrollBarOrientation orientation, ScrollBarControlSize controlSize) : ScrollBar(client, orientation, controlSize) { notImplemented(); }
-PlatformScrollBar::~PlatformScrollBar() { notImplemented(); }
-int PlatformScrollBar::width() const { notImplemented(); return 0; }
-int PlatformScrollBar::height() const { notImplemented(); return 0; }
-void PlatformScrollBar::setEnabled(bool) { notImplemented(); }
-void PlatformScrollBar::paint(GraphicsContext*, const IntRect& damageRect) { notImplemented(); }
-void PlatformScrollBar::updateThumbPosition() { notImplemented(); }
-void PlatformScrollBar::updateThumbProportion() { notImplemented(); }
-void PlatformScrollBar::setRect(const IntRect&) { notImplemented(); }
+PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize) : Scrollbar(client, orientation, controlSize) { notImplemented(); }
+PlatformScrollbar::~PlatformScrollbar() { notImplemented(); }
+int PlatformScrollbar::width() const { notImplemented(); return 0; }
+int PlatformScrollbar::height() const { notImplemented(); return 0; }
+void PlatformScrollbar::setEnabled(bool) { notImplemented(); }
+void PlatformScrollbar::paint(GraphicsContext*, const IntRect& damageRect) { notImplemented(); }
+void PlatformScrollbar::updateThumbPosition() { notImplemented(); }
+void PlatformScrollbar::updateThumbProportion() { notImplemented(); }
+void PlatformScrollbar::setRect(const IntRect&) { notImplemented(); }
 
 PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
 
@@ -179,7 +179,7 @@ bool FrameView::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev,
 bool FrameView::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
 bool FrameView::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe) { return true; }
 bool FrameView::passWheelEventToSubframe(PlatformWheelEvent& e, Frame* subframe) { return false; }
-bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev, PlatformScrollBar*) { return false; }
+bool FrameView::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev, PlatformScrollbar*) { return false; }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 

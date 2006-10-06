@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlatformScrollBar_h
-#define PlatformScrollBar_h
+#ifndef PlatformScrollbar_h
+#define PlatformScrollbar_h
 
 #include "Widget.h"
 #include "ScrollBar.h"
 
 namespace WebCore {
 
-class PlatformScrollBar : public Widget, public ScrollBar {
+class PlatformScrollbar : public Widget, public Scrollbar {
 public:
-    PlatformScrollBar(ScrollBarClient*, ScrollBarOrientation, ScrollBarControlSize);
-    virtual ~PlatformScrollBar();
+    PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+    virtual ~PlatformScrollbar();
 
     virtual bool isWidget() const { return true; }
 
@@ -51,4 +51,4 @@ protected:
 
 }
 
-#endif // PlatformScrollBar_h
+#endif // PlatformScrollbar_h
