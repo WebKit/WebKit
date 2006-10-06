@@ -169,11 +169,20 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     WebFrameLoader *frameLoader;
 
     WebFrameBridge *bridge;
-    WebFrameLoadType loadType;
     WebHistoryItem *currentItem;        // BF item for our current content
     WebHistoryItem *provisionalItem;    // BF item for where we're trying to go
                                         // (only known when navigating to a pre-existing BF item)
     WebHistoryItem *previousItem;       // BF item for previous content, see _itemForSavingDocState
+
+    WebScriptDebugger *scriptDebugger;
+    id internalLoadDelegate;
+    
+    NSMutableSet *plugInViews;
+    NSMutableSet *inspectors;
+    
+    // things below here should be moved
+    
+    WebFrameLoadType loadType;
 
     WebPolicyDecisionListener *listener;
     // state we'll need to continue after waiting for the policy delegate's decision
@@ -192,14 +201,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     BOOL delegateIsDecidingNavigationPolicy;
     BOOL delegateIsHandlingUnimplementablePolicy;
     BOOL firstLayoutDone;
-    
-    id internalLoadDelegate;
-    WebScriptDebugger *scriptDebugger;
-
-    NSString *frameNamespace;
-    
-    NSMutableSet *plugInViews;
-    NSMutableSet *inspectors;
 }
 
 - (void)setWebFrameView:(WebFrameView *)v;
@@ -248,7 +249,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     ASSERT(policyFrameName == nil);
     ASSERT(policyTarget == nil);
     ASSERT(policyFormState == nil);
-    ASSERT(frameNamespace == nil);
     ASSERT(plugInViews == nil);
     
     [super dealloc];

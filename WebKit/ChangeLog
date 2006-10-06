@@ -1,5 +1,16 @@
 2006-10-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+        
+        - segregate WebFrame methods into ones that should be moved into WebFrameLoader and ones that don't need to
+        
+        Also removed useless WebFrameLoader part
+
+        * WebView/WebFrame.m:
+        (-[WebFramePrivate dealloc]): 
+
+2006-10-06  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders.
         
         - moved more data from WebDataSource to WebDocumentLoadState
