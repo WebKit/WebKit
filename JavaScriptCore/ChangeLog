@@ -1,3 +1,20 @@
+2006-10-06  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Brady.
+
+        DST and TimeZones were wrong in some cases, specifically on some of the dates where DST changes.
+
+        * kjs/DateMath.cpp:
+        (KJS::equivalentYearForDST):
+        (KJS::getUTCOffset):
+        (KJS::getDSTOffsetSimple):
+        (KJS::getDSTOffset):
+        (KJS::dateToMseconds):
+        (KJS::msToTM):
+        * kjs/DateMath.h:
+        * kjs/date_object.cpp:
+        (KJS::gmtoffset):
+
 2006-10-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin McCullough.

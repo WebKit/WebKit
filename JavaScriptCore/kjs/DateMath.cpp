@@ -303,7 +303,7 @@ static inline int equivalentYearForDST(int year)
     int day;
 
     day = (int) daysFrom1970ToYear(year) + 4;
-    day = day % 7;
+    day %= 7;
 
     if (day < 0)
         day += 7;
@@ -329,7 +329,7 @@ double getUTCOffset() {
         ltime.tm_yday = 0;
         ltime.tm_isdst = 0;
 
-        /* get the difference between this time zone and GMT */
+        // get the difference between this time zone and GMT 
         ltime.tm_mday = 2;
         ltime.tm_year = 70;
 
@@ -355,14 +355,14 @@ static double getDSTOffsetSimple(double localTimeSeconds)
 {
     if(localTimeSeconds > maxUnixTime)
         localTimeSeconds = maxUnixTime;
-    else if(localTimeSeconds < 0) /*go ahead a day to make localtime work (does not work with 0) */
-        localTimeSeconds = secondsPerDay;
-
-    double offsetTime = (localTimeSeconds * usecPerMsec) + getUTCOffset() ;
+    else if(localTimeSeconds < 0) // Go ahead a day to make localtime work (does not work with 0)
+        localTimeSeconds += secondsPerDay;
 
     struct tm prtm;
-    prtm.tm_min   =  msToMinutes(offsetTime);
+    double offsetTime = (localTimeSeconds * usecPerMsec) + getUTCOffset() ;
+
     prtm.tm_hour  =  msToHours(offsetTime);
+    prtm.tm_min   =  msToMinutes(offsetTime);
 
     // FIXME: time_t has a potential problem in 2038
     time_t localTime = static_cast<time_t>(localTimeSeconds);
@@ -398,22 +398,7 @@ static double getDSTOffset(double ms)
         ms = (day * msPerDay) + msToMilliseconds(ms);
     }
 
-    /* put our ms in an LL, and map it to usec for prtime */
     return getDSTOffsetSimple(ms / usecPerMsec);
-}
-
-static inline double localTimeToUTC(double ms)
-{
-    ms -= getUTCOffset();
-    ms -= getDSTOffset(ms);
-    return ms;
-}
-
-static inline double UTCToLocalTime(double ms)
-{
-    ms += getUTCOffset();
-    ms += getDSTOffset(ms);
-    return ms;
 }
 
 double dateToMseconds(tm* t, double ms, bool inputIsUTC)
@@ -422,17 +407,23 @@ double dateToMseconds(tm* t, double ms, bool inputIsUTC)
     double msec_time = timeToMseconds(t->tm_hour, t->tm_min, t->tm_sec, ms);
     double result = (day * msPerDay) + msec_time;
 
-    if(!inputIsUTC)
-        result = localTimeToUTC(result);
+    if(!inputIsUTC) { // convert to UTC
+        result -= getUTCOffset();
+        result -= getDSTOffset(result);
+    }
 
     return result;
 }
 
 void msToTM(double ms, bool outputIsUTC, struct tm& tm)
 {
-    //input is UTC
-    if(!outputIsUTC)
-        ms = UTCToLocalTime(ms);
+    // input is UTC
+    double dstOff = 0.0;
+    
+    if(!outputIsUTC) {  // convert to local time
+        dstOff = getDSTOffset(ms);
+        ms += dstOff + getUTCOffset();
+    }
 
     tm.tm_sec   =  msToSeconds(ms);
     tm.tm_min   =  msToMinutes(ms);
@@ -442,9 +433,9 @@ void msToTM(double ms, bool outputIsUTC, struct tm& tm)
     tm.tm_yday  =  dayInYear(ms, msToYear(ms));
     tm.tm_mon   =  msToMonth(ms);
     tm.tm_year  =  msToYear(ms) - 1900;
-    tm.tm_isdst =  isDST(ms);
+    tm.tm_isdst =  dstOff != 0.0;
 
-    //everyone else seems to have these fields
+    // All other OS' seems to have these fields
 #if !PLATFORM(WIN_OS)
     struct tm xtm;
     // FIXME: time_t has a potential problem in 2038
@@ -455,10 +446,5 @@ void msToTM(double ms, bool outputIsUTC, struct tm& tm)
 #endif
 }
 
-bool isDST(const double& ms)
-{
-    return getDSTOffset(ms) != 0;
-}
-
-}   //namespace KJS
+}   // namespace KJS
 

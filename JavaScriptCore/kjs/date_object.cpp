@@ -69,8 +69,7 @@ inline int gmtoffset(const tm& t)
 {
 #if PLATFORM(WIN_OS)
     // Time is supposed to be in the current timezone.
-    static int utcOffset = static_cast<int>(getUTCOffset()/1000.0);
-    return utcOffset;
+    return -(_timezone / 60 - (t.tm_isdst != 0 ? 60 : 0 )) * 60;
 #else
     return t.tm_gmtoff;
 #endif

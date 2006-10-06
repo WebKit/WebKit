@@ -61,7 +61,6 @@ const double msPerHour = 60.0 * 60.0 * 1000.0;
 // Exported Functions //
 void msToTM(double, bool outputIsUTC, struct tm& );
 double dateToMseconds(tm*, double, bool inputIsUTC);
-bool isDST(const double&);
 double getUTCOffset();
 
 }   //namespace KJS
