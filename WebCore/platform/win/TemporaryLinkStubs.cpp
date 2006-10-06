@@ -45,7 +45,7 @@
 #include "FrameView.h"
 #include "KURL.h"
 #include "PlatformScrollBar.h"
-#include "Scrollbar.h"
+#include "ScrollBar.h"
 #include "JavaAppletWidget.h"
 #include "Page.h"
 #include "Path.h"
