@@ -1,5 +1,15 @@
 2006-10-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed.
+        
+        - fix build breakage
+
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader willChangeTitleForDocumentLoadState:]):
+        (-[WebFrameLoader didChangeTitleForDocumentLoadState:]):
+
+2006-10-06  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
         
         - move remaining movable WebDataSource fields to WebDocumentLoadState

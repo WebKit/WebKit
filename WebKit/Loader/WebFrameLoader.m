@@ -33,6 +33,7 @@
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
+#import "WebHistory.h"
 #import "WebIconDatabasePrivate.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
@@ -900,38 +901,36 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     return [client _subframeIsLoading];
 }
 
-<<<<<<< .mine
 - (void)willChangeTitleForDocumentLoadState:(WebDocumentLoadState *)loadState
 {
     // FIXME: should do this only in main frame case, right?
-    [[webFrame webView] _willChangeValueForKey:_WebMainFrameTitleKey];
+    [[client webView] _willChangeValueForKey:_WebMainFrameTitleKey];
 }
 
 - (void)didChangeTitleForDocumentLoadState:(WebDocumentLoadState *)loadState
 {
     // FIXME: should do this only in main frame case, right?
-    [[webFrame webView] _didChangeValueForKey:_WebMainFrameTitleKey];
+    [[client webView] _didChangeValueForKey:_WebMainFrameTitleKey];
 
     // The title doesn't get communicated to the WebView until we are committed.
     if ([loadState isCommitted]) {
-        NSURL *URLForHistory = [[webFrame _dataSourceForDocumentLoadState:loadState] _URLForHistory];
+        NSURL *URLForHistory = [[client _dataSourceForDocumentLoadState:loadState] _URLForHistory];
         if (URLForHistory != nil) {
             WebHistoryItem *entry = [[WebHistory optionalSharedHistory] itemForURL:URLForHistory];
             [entry setTitle:[loadState title]];
         
             // Must update the entries in the back-forward list too.  This must go through the WebFrame because
             // it has the right notion of the current b/f item.
-            [webFrame _setTitle:[loadState title]];
+            [client _setTitle:[loadState title]];
         
-            [[webFrame webView] setMainFrameDocumentReady:YES];    // update observers with new DOMDocument
-            [[[webFrame webView] _frameLoadDelegateForwarder] webView:[webFrame webView]
+            [[client webView] setMainFrameDocumentReady:YES];    // update observers with new DOMDocument
+            [[[client webView] _frameLoadDelegateForwarder] webView:[client webView]
                                                       didReceiveTitle:[loadState title]
-                                                             forFrame:webFrame];
+                                                             forFrame:client];
         }
     }
 }
 
-=======
 - (WebFrameLoadType)loadType
 {
     return loadType;
@@ -942,5 +941,4 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     loadType = type;
 }
 
->>>>>>> .r16864
 @end
