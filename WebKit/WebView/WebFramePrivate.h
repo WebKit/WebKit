@@ -78,7 +78,6 @@ typedef enum {
 - (void)_handledOnloadEvents;
 - (void)_checkLoadComplete;
 - (WebFrameBridge *)_bridge;
-- (void)_setLoadType:(WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;
 
 - (void)_checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;

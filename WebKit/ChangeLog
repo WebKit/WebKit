@@ -2,6 +2,41 @@
 
         Reviewed by Maciej.
 
+        - moved loadType into WebFrameLoader
+
+        * WebView/WebFramePrivate.h: Removed _setLoadType, but not _loadType because it's
+        currently used by Safari.
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader _loadRequest:archive:]):
+        (-[WebFrameLoader _loadRequest:triggeringAction:loadType:formState:]):
+        (-[WebFrameLoader isReplacing]):
+        (-[WebFrameLoader setReplacing]):
+        (-[WebFrameLoader loadType]):
+        (-[WebFrameLoader setLoadType:]):
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge isLoadTypeReload]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _loadType]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _commitProvisionalLoad:]):
+        (-[WebFrame _opened]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        (-[WebFrame _currentBackForwardListItemToResetTo]):
+        (-[WebFrame _itemForRestoringDocState]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrame _didFirstLayout]):
+        (-[WebFrame _addExtraFieldsToRequest:mainResource:alwaysFromRequest:]):
+        (-[WebFrame _provisionalLoadStarted]):
+        (-[WebFrame loadRequest:]):
+
+2006-10-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - added WebFrameLoaderClient protocol -- to be used to make WebFrameLoader forget all about WebFrame
 
         * Loader/WebDocumentLoadState.h: Added comment about Maciej's planned renaming here.

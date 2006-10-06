@@ -74,6 +74,8 @@ typedef enum {
     WebPolicyDecisionListener *listener;
     
     NSMutableDictionary *pendingArchivedResources;
+
+    WebFrameLoadType loadType;
 }
 
 - (id)initWithClient:(WebFrame <WebFrameLoaderClient> *)wf;
@@ -178,5 +180,8 @@ typedef enum {
 - (void)finalSetupForReplaceWithDocumentLoadState:(WebDocumentLoadState *)loadState;
 - (void)prepareForLoadStart;
 - (BOOL)subframeIsLoading;
+
+- (WebFrameLoadType)loadType;
+- (void)setLoadType:(WebFrameLoadType)type;
 
 @end

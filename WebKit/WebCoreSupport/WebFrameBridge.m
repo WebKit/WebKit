@@ -1724,7 +1724,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (BOOL)isLoadTypeReload
 {
-    return [_frame _loadType] == WebFrameLoadTypeReload;
+    return [[_frame _frameLoader] loadType] == WebFrameLoadTypeReload;
 }
 
 

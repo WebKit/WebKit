@@ -184,8 +184,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     NSMutableSet *inspectors;
     
     // things below here should be moved
-    
-    WebFrameLoadType loadType;
 
     WebPolicyDecisionListener *listener;
     // state we'll need to continue after waiting for the policy delegate's decision
@@ -208,8 +206,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (void)setWebFrameView:(WebFrameView *)v;
 - (WebFrameView *)webFrameView;
-- (WebFrameLoadType)loadType;
-- (void)setLoadType:(WebFrameLoadType)loadType;
 
 - (void)setProvisionalItem:(WebHistoryItem *)item;
 - (WebHistoryItem *)provisionalItem;
@@ -221,18 +217,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 @end
 
 @implementation WebFramePrivate
-
-- init
-{
-    self = [super init];
-    if (!self) {
-        return nil;
-    }
-    
-    loadType = WebFrameLoadTypeStandard;
-    
-    return self;
-}
 
 - (void)dealloc
 {
@@ -263,12 +247,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [v retain];
     [webFrameView release];
     webFrameView = v;
-}
-
-- (WebFrameLoadType)loadType { return loadType; }
-- (void)setLoadType: (WebFrameLoadType)t
-{
-    loadType = t;
 }
 
 - (WebHistoryItem *)provisionalItem { return provisionalItem; }
@@ -498,14 +476,9 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     [self release];
 }
 
-- (void)_setLoadType: (WebFrameLoadType)t
-{
-    [_private setLoadType:t];
-}
-
 - (WebFrameLoadType)_loadType
 {
-    return [_private loadType];
+    return [_private->frameLoader loadType];
 }
 
 - (void)_makeDocumentView
@@ -554,7 +527,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         {
             [[[[self frameView] _scrollView] contentView] setCopiesOnScroll:YES];
 
-            WebFrameLoadType loadType = [self _loadType];
+            WebFrameLoadType loadType = [_private->frameLoader loadType];
             if (loadType == WebFrameLoadTypeForward ||
                 loadType == WebFrameLoadTypeBack ||
                 loadType == WebFrameLoadTypeIndexedBackForward ||
@@ -721,7 +694,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
 - (void)_commitProvisionalLoad:(NSDictionary *)pageCache
 {
-    WebFrameLoadType loadType = [self _loadType];
+    WebFrameLoadType loadType = [_private->frameLoader loadType];
     bool reload = loadType == WebFrameLoadTypeReload || loadType == WebFrameLoadTypeReloadAllowingStaleData;
     
     WebDataSource *provisionalDataSource = [[self provisionalDataSource] retain];
@@ -821,7 +794,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 // Called after we send an openURL:... down to WebCore.
 - (void)_opened
 {
-    if ([self _loadType] == WebFrameLoadTypeStandard && [[[self dataSource] _documentLoadState] isClientRedirect]) {
+    if ([_private->frameLoader loadType] == WebFrameLoadTypeStandard && [[[self dataSource] _documentLoadState] isClientRedirect]) {
         // Clear out form data so we don't try to restore it into the incoming page.  Must happen after
         // khtml has closed the URL and saved away the form state.
         WebHistoryItem *item = [_private currentItem];
@@ -948,7 +921,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                 // the anchor point.  After much discussion it was decided by folks
                 // that the user scroll point should override the anchor point.
                 if ([[self webView] backForwardList]) {
-                    switch ([self _loadType]) {
+                    switch ([_private->frameLoader loadType]) {
                     case WebFrameLoadTypeForward:
                     case WebFrameLoadTypeBack:
                     case WebFrameLoadTypeIndexedBackForward:
@@ -1689,7 +1662,7 @@ exit:
             // Example of this case are sites that reload the same URL with a different cookie
             // driving the generated content, or a master frame with links that drive a target
             // frame, where the user has clicked on the same link repeatedly.
-            [self _setLoadType:WebFrameLoadTypeSame];
+            [_private->frameLoader setLoadType:WebFrameLoadTypeSame];
         }            
     }
 
@@ -1702,7 +1675,7 @@ exit:
 {
     WebHistoryItem *parentItem = [_private currentItem];
     NSArray *childItems = [parentItem children];
-    WebFrameLoadType loadType = [self _loadType];
+    WebFrameLoadType loadType = [_private->frameLoader loadType];
     WebFrameLoadType childLoadType = WebFrameLoadTypeInternal;
     WebHistoryItem *childItem = nil;
 
@@ -1927,7 +1900,7 @@ exit:
 // Return the item that we would reset to, so we can decide later whether to actually reset.
 - (WebHistoryItem *)_currentBackForwardListItemToResetTo
 {
-    WebFrameLoadType loadType = [self _loadType];
+    WebFrameLoadType loadType = [_private->frameLoader loadType];
     if ((loadType == WebFrameLoadTypeForward
          || loadType == WebFrameLoadTypeBack
          || loadType == WebFrameLoadTypeIndexedBackForward)
@@ -1956,7 +1929,7 @@ exit:
 
 - (WebHistoryItem *)_itemForRestoringDocState
 {
-    switch ([self _loadType]) {
+    switch ([_private->frameLoader loadType]) {
         case WebFrameLoadTypeReload:
         case WebFrameLoadTypeReloadAllowingStaleData:
         case WebFrameLoadTypeSame:
@@ -2033,7 +2006,7 @@ exit:
     WebDataSource *dataSource = [[self _policyDataSource] retain];
     
     [self stopLoading];
-    [self _setLoadType:loadType];
+    [_private->frameLoader setLoadType:loadType];
 
     [_private->frameLoader startProvisionalLoad:dataSource];
 
@@ -2379,7 +2352,7 @@ exit:
 - (void)_didFirstLayout
 {
     if ([[self webView] backForwardList]) {
-        WebFrameLoadType loadType = [self _loadType];
+        WebFrameLoadType loadType = [_private->frameLoader loadType];
         if (loadType == WebFrameLoadTypeForward ||
             loadType == WebFrameLoadTypeBack ||
             loadType == WebFrameLoadTypeIndexedBackForward)
@@ -2502,7 +2475,7 @@ exit:
 {
     [request _web_setHTTPUserAgent:[[self webView] userAgentForURL:[request URL]]];
     
-    if (_private->loadType == WebFrameLoadTypeReload)
+    if ([_private->frameLoader loadType] == WebFrameLoadTypeReload)
         [request setValue:@"max-age=0" forHTTPHeaderField:@"Cache-Control"];
     
     // Don't set the cookie policy URL if it's already been set.
@@ -2557,7 +2530,7 @@ exit:
     // No point writing to the cache on a reload or loadSame, since we will just write
     // over it again when we leave that page.
     WebHistoryItem *item = [_private currentItem];
-    WebFrameLoadType loadType = [self _loadType];
+    WebFrameLoadType loadType = [_private->frameLoader loadType];
     if ([self _canCachePage]
         && [_private->bridge canCachePage]
     && item
@@ -2784,10 +2757,9 @@ exit:
 
 - (void)loadRequest:(NSURLRequest *)request
 {
-    // FIXME: is this the right place to reset loadType? Perhaps, this should be done
+    // FIXME: is this the right place to reset loadType? Perhaps this should be done
     // after loading is finished or aborted.
-    _private->loadType = WebFrameLoadTypeStandard;
-    
+    [_private->frameLoader setLoadType:WebFrameLoadTypeStandard];
     [_private->frameLoader _loadRequest:request archive:nil];
 }
 

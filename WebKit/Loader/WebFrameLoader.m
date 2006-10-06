@@ -739,7 +739,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 
 - (void)_loadRequest:(NSURLRequest *)request archive:(WebArchive *)archive
 {
-    WebFrameLoadType loadType;
+    WebFrameLoadType type;
     
     policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
     WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
@@ -748,9 +748,9 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     [client _addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
     if ([client _shouldTreatURLAsSameAsCurrent:[request URL]]) {
         [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-        loadType = WebFrameLoadTypeSame;
+        type = WebFrameLoadTypeSame;
     } else
-        loadType = WebFrameLoadTypeStandard;
+        type = WebFrameLoadTypeStandard;
     
     [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
     [newDataSource _addToUnarchiveState:archive];
@@ -759,14 +759,14 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     // visiting in the b/f list, we treat it as a reload so the b/f list 
     // is appropriately maintained.
     if ([client _shouldReloadToHandleUnreachableURLFromRequest:request]) {
-        ASSERT(loadType == WebFrameLoadTypeStandard);
-        loadType = WebFrameLoadTypeReload;
+        ASSERT(type == WebFrameLoadTypeStandard);
+        type = WebFrameLoadTypeReload;
     }
     
-    [client _loadDataSource:newDataSource withLoadType:loadType formState:nil];
+    [client _loadDataSource:newDataSource withLoadType:type formState:nil];
 }
 
-- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState
+- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)type formState:(WebFormState *)formState
 {
     policyDocumentLoadState = [client _createDocumentLoadStateWithRequest:request];
     WebDataSource *newDataSource = [client _dataSourceForDocumentLoadState:policyDocumentLoadState];
@@ -775,7 +775,7 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 
     [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
 
-    [client _loadDataSource:newDataSource withLoadType:loadType formState:formState];
+    [client _loadDataSource:newDataSource withLoadType:type formState:formState];
 }
 
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding
@@ -856,12 +856,12 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 
 - (BOOL)isReplacing
 {
-    return [client _loadType] == WebFrameLoadTypeReplace;
+    return loadType == WebFrameLoadTypeReplace;
 }
 
 - (void)setReplacing
 {
-    [client _setLoadType:WebFrameLoadTypeReplace];
+    loadType = WebFrameLoadTypeReplace;
 }
 
 - (void)revertToProvisionalWithDocumentLoadState:(WebDocumentLoadState *)loadState
@@ -898,6 +898,16 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
 - (BOOL)subframeIsLoading
 {
     return [client _subframeIsLoading];
+}
+
+- (WebFrameLoadType)loadType
+{
+    return loadType;
+}
+
+- (void)setLoadType:(WebFrameLoadType)type
+{
+    loadType = type;
 }
 
 @end
