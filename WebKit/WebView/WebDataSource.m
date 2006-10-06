@@ -440,7 +440,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     else
         identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:[_private->loadState originalRequest] fromDataSource:self];
     
-    if (![[_private->loadState frameLoader] startLoadingMainResourceWithRequest:[_private->loadState request] identifier:identifier])
+    if (![[_private->loadState frameLoader] startLoadingMainResourceWithRequest:[_private->loadState actualRequest] identifier:identifier])
         [_private->loadState updateLoading];
 }
 

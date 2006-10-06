@@ -106,6 +106,11 @@
     return clientRequest;
 }
 
+- (NSMutableURLRequest *)actualRequest
+{
+    return request;
+}
+
 - (void)replaceRequestURLForAnchorScrollWithURL:(NSURL *)URL
 {
     // assert that URLs differ only by fragment ID

@@ -71,6 +71,7 @@
 - (NSURLRequest *)originalRequestCopy;
 - (NSMutableURLRequest *)request;
 - (void)setRequest:(NSURLRequest *)request;
+- (NSMutableURLRequest *)actualRequest;
 - (void)replaceRequestURLForAnchorScrollWithURL:(NSURL *)URL;
 - (BOOL)isStopping;
 - (void)stopLoading;

@@ -1,3 +1,25 @@
+2006-10-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+        
+        - fixed the following bugs:
+        
+        http://bugs.webkit.org/show_bug.cgi?id=11136
+        "REGRESSION: Safari snippet editor doesn't work"
+        http://bugs.webkit.org/show_bug.cgi?id=11140
+        "REGRESSION: view source window blank"
+        http://bugs.webkit.org/show_bug.cgi?id=11146
+        "REGRESSION: Instead of showing the error page, Safari opens its Resources folder in the Finder"
+        
+        Possibly more.
+
+        * Loader/WebDocumentLoadState.h:
+        * Loader/WebDocumentLoadState.m:
+        (-[WebDocumentLoadState actualRequest]): New method.
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _startLoading]): We need to make sure not to start loading the main
+        resource with the fake external request for an applewebdata: request.
+
 2006-10-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by the letter 'B'.
