@@ -1,3 +1,13 @@
+2006-10-06  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam.
+
+        Add another method we'll need for scrollbar dodging
+
+        * platform/ScrollView.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (ScrollView::resizerOverlapsContent):
+
 2006-10-06  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Tim H.
