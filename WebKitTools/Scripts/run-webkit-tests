@@ -375,7 +375,6 @@ for my $test (@tests) {
         my $expectedHash = "";
         my $actualPNGSize = 0;
         while (<IN>) {
-            print "$_";
             last if /#EOF/;
             if (/ActualHash: ([a-f0-9]{32})/) {
                 $actualHash = $1;
@@ -387,11 +386,10 @@ for my $test (@tests) {
             }
         }
 
-        die "$actualPNGSize";
-        if ($expectedHash ne $actualHash && -f "$expectedTestResultsDirectory/$base-$expectedTag.png") {
-            my $expectedPNGSize = -s "$expectedTestResultsDirectory/$base-$expectedTag.png";
+        if ($expectedHash ne $actualHash && -f "$testDirectory/$base-$expectedTag.png") {
+            my $expectedPNGSize = -s "$testDirectory/$base-$expectedTag.png";
             my $expectedPNG = "";
-            open EXPECTEDPNG, "$expectedTestResultsDirectory/$base-$expectedTag.png";
+            open EXPECTEDPNG, "$testDirectory/$base-$expectedTag.png";
             read(EXPECTEDPNG, $expectedPNG, $expectedPNGSize);
 
             print DIFFOUT "Content-length: $actualPNGSize\n";
@@ -413,22 +411,15 @@ for my $test (@tests) {
             }
         }
 
-        if ($actualPNGSize && ($resetResults || !-f "$expectedTestResultsDirectory/$base-$expectedTag.png")) {
-            # Create the path if needed
-            mkpath(catfile($expectedTestResultsDirectory, dirname($base))) if $testDirectory ne $expectedTestResultsDirectory;
-            
-            open EXPECTED, ">", "$expectedTestResultsDirectory/$base-expected.png" or die "could not create $expectedTestResultsDirectory/$base-expected.png\n";
+        if ($actualPNGSize && ($resetResults || !-f "$testDirectory/$base-$expectedTag.png")) {
+            open EXPECTED, ">", "$testDirectory/$base-expected.png" or die "could not create $testDirectory/$base-expected.png\n";
             print EXPECTED $actualPNG;
             close EXPECTED;
         }
 
         # update the expected hash if the image diff said that there was no difference
-        if ($actualHash ne "" && ($resetResults || !-f "$expectedTestResultsDirectory/$base-$expectedTag.checksum")) {
-    
-            # Create the path if needed
-            mkpath(catfile($expectedTestResultsDirectory, dirname($base))) if $testDirectory ne $expectedTestResultsDirectory;
-
-            open EXPECTED, ">", "$expectedTestResultsDirectory/$base-$expectedTag.checksum" or die "could not create $expectedTestResultsDirectory/$base-$expectedTag.checksum\n";
+        if ($actualHash ne "" && ($resetResults || !-f "$testDirectory/$base-$expectedTag.checksum")) {
+            open EXPECTED, ">", "$testDirectory/$base-$expectedTag.checksum" or die "could not create $testDirectory/$base-$expectedTag.checksum\n";
             print EXPECTED $actualHash;
             close EXPECTED;
         }
