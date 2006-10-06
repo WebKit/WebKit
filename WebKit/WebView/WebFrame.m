@@ -2806,18 +2806,8 @@ exit:
 
 - (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
-    CFStringEncoding cfencoding = CFStringGetFastestEncoding((CFStringRef)string);
-    NSStringEncoding nsencoding = CFStringConvertEncodingToNSStringEncoding(cfencoding);
-    CFStringRef cfencodingName = CFStringConvertEncodingToIANACharSetName(cfencoding);
-    
-    if (!cfencodingName || nsencoding == kCFStringEncodingInvalidId){
-        NSData *data = [string dataUsingEncoding: NSUnicodeStringEncoding];
-        [self _loadData:data MIMEType:nil textEncodingName:@"utf-16" baseURL:URL unreachableURL:unreachableURL];
-    }
-    else {
-        NSData *data = [string dataUsingEncoding: nsencoding];
-        [self _loadData:data MIMEType:nil textEncodingName:(NSString *)cfencodingName baseURL:URL unreachableURL:unreachableURL];
-    }
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    [self _loadData:data MIMEType:nil textEncodingName:@"UTF-8" baseURL:URL unreachableURL:unreachableURL];
 }
 
 - (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)URL

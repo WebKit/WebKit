@@ -1,3 +1,14 @@
+2006-10-06  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11183
+        REGRESSION: Safari loads error pages unstyled
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _loadHTMLString:baseURL:unreachableURL:]):
+        Use utf-8 encoding instead of the string's "fastest" encoding.
+
 2006-10-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam.
