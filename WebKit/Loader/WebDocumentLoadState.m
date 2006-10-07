@@ -483,24 +483,20 @@
 
 - (void)setTitle:(NSString *)title
 {
-    NSString *trimmed;
-    if (title == nil) {
-        trimmed = nil;
-    } else {
+    NSString *trimmed = nil;
+    if (title) {
         trimmed = [title mutableCopy];
         CFStringTrimWhitespace((CFMutableStringRef)trimmed);
-        if ([trimmed length] == 0)
+        if ([trimmed length] == 0) {
+            [trimmed release];
             trimmed = nil;
+        }
     }
-    if (trimmed == nil) {
-        if (pageTitle == nil)
-            return;
-    } else {
-        if ([pageTitle isEqualToString:trimmed])
-            return;
-    }
-    
-    if (!trimmed || [trimmed length] == 0)
+
+    if (!trimmed)
+        return;
+
+    if ([pageTitle isEqualToString:trimmed])
         return;
 
     [frameLoader willChangeTitleForDocumentLoadState:self];

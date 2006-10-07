@@ -1,3 +1,13 @@
+2006-10-07  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Mitz.
+
+        Fix memory leak from -[WebDocumentLoadState setTitle:].
+
+        * Loader/WebDocumentLoadState.m:
+        (-[WebDocumentLoadState setTitle:]): Ensure 'trimmed' is released even when length is
+        zero, and untangle the confusing logic around this case.
+
 2006-10-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
