@@ -2,6 +2,26 @@
 
         Reviewed by Maciej.
 
+        - moved firstLayoutDone BOOL from WebFrame to WebFrameLoader
+
+        * Loader/WebFrameLoader.h:
+        * Loader/WebFrameLoader.m:
+        (-[WebFrameLoader didFirstLayout]):
+        (-[WebFrameLoader provisionalLoadStarted]):
+        (-[WebFrameLoader frameLoadCompleted]):
+        (-[WebFrameLoader firstLayoutDone]):
+        * WebCoreSupport/WebFrameBridge.m: (-[WebFrameBridge didFirstLayout]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _firstLayoutDone]):
+        (-[WebFrame _provisionalLoadStarted]):
+        (-[WebFrame _frameLoadCompleted]):
+        (-[WebFrame _restoreScrollPositionAndViewState]):
+        * WebView/WebFrameInternal.h:
+
+2006-10-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - moved more data and the corresponding code from WebFrame to WebFrameLoader
 
         * Loader/WebFrameLoader.h:

@@ -109,7 +109,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
 
 - (void)_saveScrollPositionAndViewStateToItem:(WebHistoryItem *)item;
-- (void)_restoreScrollPositionAndViewState;
 
 - (WebHistoryItem *)_createItem: (BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
@@ -156,7 +155,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     BOOL quickRedirectComing;
     BOOL sentRedirectNotification;
     BOOL isStoppingLoad;
-    BOOL firstLayoutDone;
 }
 
 - (void)setWebFrameView:(WebFrameView *)v;
@@ -1596,35 +1594,6 @@ exit:
     }
 }
 
-/*
-    There is a race condition between the layout and load completion that affects restoring the scroll position.
-    We try to restore the scroll position at both the first layout and upon load completion.
-
-    1) If first layout happens before the load completes, we want to restore the scroll position then so that the
-       first time we draw the page is already scrolled to the right place, instead of starting at the top and later
-       jumping down.  It is possible that the old scroll position is past the part of the doc laid out so far, in
-       which case the restore silent fails and we will fix it in when we try to restore on doc completion.
-    2) If the layout happens after the load completes, the attempt to restore at load completion time silently
-       fails.  We then successfully restore it when the layout happens.
- */
-
-- (void)_restoreScrollPositionAndViewState
-{
-    ASSERT([_private currentItem]);
-    NSView <WebDocumentView> *docView = [[self frameView] documentView];
-    NSPoint point = [[_private currentItem] scrollPoint];
-    if ([docView conformsToProtocol:@protocol(_WebDocumentViewState)]) {        
-        id state = [[_private currentItem] viewState];
-        if (state) {
-            [(id <_WebDocumentViewState>)docView setViewState:state];
-        }
-        
-        [(id <_WebDocumentViewState>)docView setScrollPoint:point];
-    } else {
-        [docView scrollPoint:point];
-    }
-}
-
 - (void)_defersCallbacksChanged
 {
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
@@ -1821,7 +1790,7 @@ exit:
 
 - (BOOL)_firstLayoutDone
 {
-    return _private->firstLayoutDone;
+    return [_private->frameLoader firstLayoutDone];
 }
 
 @end
@@ -1986,22 +1955,6 @@ exit:
         [[frame _bridge] unmarkAllMisspellings];
 }
 
-- (void)_didFirstLayout
-{
-    if ([[self webView] backForwardList]) {
-        WebFrameLoadType loadType = [_private->frameLoader loadType];
-        if (loadType == WebFrameLoadTypeForward ||
-            loadType == WebFrameLoadTypeBack ||
-            loadType == WebFrameLoadTypeIndexedBackForward)
-        {
-            [self _restoreScrollPositionAndViewState];
-        }
-    }
-    
-    _private->firstLayoutDone = YES;
-}
-
-
 - (BOOL)_hasSelection
 {
     id documentView = [[self frameView] documentView];    
@@ -2153,7 +2106,7 @@ exit:
 
 - (void)_provisionalLoadStarted
 {
-    _private->firstLayoutDone = NO;
+    [_private->frameLoader provisionalLoadStarted];
     [_private->bridge provisionalLoadStarted];
     
     // FIXME: This is OK as long as no one resizes the window,
@@ -2169,17 +2122,16 @@ exit:
     WebHistoryItem *item = [_private currentItem];
     WebFrameLoadType loadType = [_private->frameLoader loadType];
     if ([self _canCachePage]
-        && [_private->bridge canCachePage]
-    && item
-    && !_private->quickRedirectComing
-    && loadType != WebFrameLoadTypeReload 
-    && loadType != WebFrameLoadTypeReloadAllowingStaleData
-    && loadType != WebFrameLoadTypeSame
-    && ![[self dataSource] isLoading]
-    && ![[_private->frameLoader documentLoadState] isStopping]) {
+            && [_private->bridge canCachePage]
+            && item
+            && !_private->quickRedirectComing
+            && loadType != WebFrameLoadTypeReload 
+            && loadType != WebFrameLoadTypeReloadAllowingStaleData
+            && loadType != WebFrameLoadTypeSame
+            && ![[self dataSource] isLoading]
+            && ![[_private->frameLoader documentLoadState] isStopping]) {
         if ([[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]]) {
             if (![item pageCache]){
-                
                 // Add the items to this page's cache.
                 if ([self _createPageCacheForItem:item]) {
                     LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
@@ -2235,9 +2187,7 @@ exit:
     if ([[self webView] drawsBackground])
         [sv setDrawsBackground:YES];
     [_private setPreviousItem:nil];
-    // After a canceled provisional load, firstLayoutDone is NO. Reset it to YES if we're displaying a page.
-    if ([_private->frameLoader dataSource])
-        _private->firstLayoutDone = YES;
+    [_private->frameLoader frameLoadCompleted];
 }
 
 - (WebDataSource *)_dataSourceForDocumentLoadState:(WebDocumentLoadState *)loadState
@@ -2254,6 +2204,35 @@ exit:
     [dataSource release];
 
     return loadState;
+}
+
+/*
+    There is a race condition between the layout and load completion that affects restoring the scroll position.
+    We try to restore the scroll position at both the first layout and upon load completion.
+
+    1) If first layout happens before the load completes, we want to restore the scroll position then so that the
+       first time we draw the page is already scrolled to the right place, instead of starting at the top and later
+       jumping down.  It is possible that the old scroll position is past the part of the doc laid out so far, in
+       which case the restore silent fails and we will fix it in when we try to restore on doc completion.
+    2) If the layout happens after the load completes, the attempt to restore at load completion time silently
+       fails.  We then successfully restore it when the layout happens.
+ */
+
+- (void)_restoreScrollPositionAndViewState
+{
+    ASSERT([_private currentItem]);
+    NSView <WebDocumentView> *docView = [[self frameView] documentView];
+    NSPoint point = [[_private currentItem] scrollPoint];
+    if ([docView conformsToProtocol:@protocol(_WebDocumentViewState)]) {        
+        id state = [[_private currentItem] viewState];
+        if (state) {
+            [(id <_WebDocumentViewState>)docView setViewState:state];
+        }
+        
+        [(id <_WebDocumentViewState>)docView setScrollPoint:point];
+    } else {
+        [docView scrollPoint:point];
+    }
 }
 
 @end

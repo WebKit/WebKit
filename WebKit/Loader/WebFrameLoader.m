@@ -1266,4 +1266,34 @@ static BOOL isCaseInsensitiveEqual(NSString *a, NSString *b)
     delegateIsHandlingProvisionalLoadError = is;
 }
 
+- (void)didFirstLayout
+{
+    if ([[client webView] backForwardList]) {
+        if (loadType == WebFrameLoadTypeForward || loadType == WebFrameLoadTypeBack || loadType == WebFrameLoadTypeIndexedBackForward)
+            [client _restoreScrollPositionAndViewState];
+    }
+    
+    firstLayoutDone = YES;
+
+    WebView *wv = [client webView];
+    [[wv _frameLoadDelegateForwarder] webView:wv didFirstLayoutInFrame:client];
+}
+
+- (void)provisionalLoadStarted
+{
+    firstLayoutDone = NO;
+}
+
+- (void)frameLoadCompleted
+{
+    // After a canceled provisional load, firstLayoutDone is NO. Reset it to YES if we're displaying a page.
+    if ([self dataSource])
+        firstLayoutDone = YES;
+}
+
+- (BOOL)firstLayoutDone
+{
+    return firstLayoutDone;
+}
+
 @end

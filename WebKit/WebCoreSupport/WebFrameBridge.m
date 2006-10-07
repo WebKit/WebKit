@@ -1521,9 +1521,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (void)didFirstLayout
 {
-    [_frame _didFirstLayout];
-    WebView *wv = [self webView];
-    [[wv _frameLoadDelegateForwarder] webView:wv didFirstLayoutInFrame:_frame];
+    [[_frame _frameLoader] didFirstLayout];
 }
 
 - (BOOL)_compareDashboardRegions:(NSDictionary *)regions
