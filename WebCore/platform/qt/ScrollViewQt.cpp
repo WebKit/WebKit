@@ -230,14 +230,10 @@ void ScrollView::setStaticBackground(bool flag)
     // no-op
 }
 
-void ScrollView::addChild(Widget* child, int x, int y)
+void ScrollView::addChild(Widget* child)
 {
     Q_ASSERT(child != 0);
     Q_ASSERT(m_area && m_area->widget());
-
-    // Ignore offscreen position initialization
-    if (x != -500000)
-        child->move(x, y);
 
     child->setParentWidget(m_area->widget());
 }
