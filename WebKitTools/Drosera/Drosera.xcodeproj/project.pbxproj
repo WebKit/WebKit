@@ -53,6 +53,9 @@
 		1CD8D56C0A49043E00E5677B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		1CD8D5A60A49102900E5677B /* Drosera.app in Resources */ = {isa = PBXBuildFile; fileRef = 8D15AC370486D014006FF6A4 /* Drosera.app */; };
 		5D2C827F0A816BA700C193FD /* Drosera.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1C3487970A81208400101C5C /* Drosera.icns */; };
+		63A9E23F0AD4869300C079EE /* breakpointEditor.css in Resources */ = {isa = PBXBuildFile; fileRef = 63A9E23C0AD4869300C079EE /* breakpointEditor.css */; };
+		63A9E2400AD4869400C079EE /* breakpointEditor.html in Resources */ = {isa = PBXBuildFile; fileRef = 63A9E23D0AD4869300C079EE /* breakpointEditor.html */; };
+		63A9E2410AD4869400C079EE /* breakpointEditor.js in Resources */ = {isa = PBXBuildFile; fileRef = 63A9E23E0AD4869300C079EE /* breakpointEditor.js */; };
 		8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */; };
 		8D15AC2E0486D014006FF6A4 /* Debugger.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B4FDCFA73011CA2CEA /* Debugger.nib */; };
 		8D15AC310486D014006FF6A4 /* DebuggerDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* DebuggerDocument.m */; settings = {ATTRIBUTES = (); }; };
@@ -129,8 +132,11 @@
 		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32DBCF750370BD2300C91783 /* Drosera.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Drosera.pch; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		63A9E23C0AD4869300C079EE /* breakpointEditor.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = breakpointEditor.css; sourceTree = "<group>"; };
+		63A9E23D0AD4869300C079EE /* breakpointEditor.html */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; path = breakpointEditor.html; sourceTree = "<group>"; };
+		63A9E23E0AD4869300C079EE /* breakpointEditor.js */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.javascript; path = breakpointEditor.js; sourceTree = "<group>"; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		8D15AC370486D014006FF6A4 /* Drosera.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Drosera.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D15AC370486D014006FF6A4 /* Drosera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drosera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +265,9 @@
 				1C6F861F0A599F65004FCD89 /* console.js */,
 				1C6F84540A58EE06004FCD89 /* console.html */,
 				1C6F84530A58EE06004FCD89 /* console.css */,
+				63A9E23C0AD4869300C079EE /* breakpointEditor.css */,
+				63A9E23D0AD4869300C079EE /* breakpointEditor.html */,
+				63A9E23E0AD4869300C079EE /* breakpointEditor.js */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -410,6 +419,9 @@
 				1C6F84560A58EE06004FCD89 /* console.html in Resources */,
 				1C6F86730A59A18B004FCD89 /* console.js in Resources */,
 				1C3487980A81208400101C5C /* Drosera.icns in Resources */,
+				63A9E23F0AD4869300C079EE /* breakpointEditor.css in Resources */,
+				63A9E2400AD4869400C079EE /* breakpointEditor.html in Resources */,
+				63A9E2410AD4869400C079EE /* breakpointEditor.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

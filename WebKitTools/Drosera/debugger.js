@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +46,7 @@ var steppingStack = 0;
 var pauseOnNextStatement = false;
 var pausedWhileLeavingFrame = false;
 var consoleWindow = null;
+var enabledBreakpoint = "break";
 
 ScriptCallFrame = function (functionName, index, row)
 {
@@ -306,25 +308,59 @@ function removeStyleClass(element, className)
 function addBreakPoint(event)
 {
     var row = event.target.parentNode;
+    var file = files[currentFile];
+    var lineNum = parseInt(event.target.title);
+    
     if (hasStyleClass(row, "breakpoint")) {
-        if (hasStyleClass(row, "disabled")) {
-            removeStyleClass(row, "disabled");
-            files[currentFile].breakpoints[parseInt(event.target.title)] = 1;
-        } else {
-            addStyleClass(row, "disabled");
-            files[currentFile].breakpoints[parseInt(event.target.title)] = -1;
-        }
-    } else {
-        addStyleClass(row, "breakpoint");
-        removeStyleClass(row, "disabled");
-        files[currentFile].breakpoints[parseInt(event.target.title)] = 1;
-    }
+        if(event.altKey && file.breakpoints[lineNum] != null)
+            showBreakpointEditor(file, lineNum);
+        else
+            toggleBreakpoint(row, file, lineNum);    
+    } else
+        createBreakpoint(row, file, lineNum);
+}
+
+function createBreakpoint(row, file, lineNum)
+{
+    addStyleClass(row, "breakpoint");
+    removeStyleClass(row, "disabled");
+    file.breakpoints[lineNum] = enabledBreakpoint;
+    file.disabledBreakpoints[lineNum] = null;
+}
+
+function showBreakpointEditor(file, lineNum)
+{
+    var editors = file.breakpointEditorWindows;
+
+    if (editors[lineNum] == null)
+        editors[lineNum] = window.open("breakpointEditor.html", ("Edit Breakpoint On Line " + lineNum), "top=200, left=200, width=400, height=200, toolbar=no, resizable=yes");
+    else
+        editors[lineNum].focus();
+        
+    event.preventDefault();
+}
+
+function toggleBreakpoint(row, file, lineNum)
+{
+    if (hasStyleClass(row, "disabled"))
+        removeStyleClass(row, "disabled");    
+    else
+        addStyleClass(row, "disabled");
+    
+    var temp = file.breakpoints[lineNum];
+    file.breakpoints[lineNum] = file.disabledBreakpoints[lineNum];
+    file.disabledBreakpoints[lineNum] = temp;
+}
+
+function finishEditingBreakpoint(line, file, newFunction)
+{
+    files[file].breakpoints[line] = newFunction;
+    files[file].breakpointEditorWindows[line] = null;
 }
 
 function moveBreakPoint(event)
 {
     if (hasStyleClass(event.target.parentNode, "breakpoint")) {
-        files[currentFile].breakpoints[parseInt(event.target.title)] = 0;
         draggingBreakpoint = event.target;
         draggingBreakpoint.started = false;
         draggingBreakpoint.dragLastY = event.clientY + window.scrollY;
@@ -351,11 +387,21 @@ function breakpointDrag(event)
     var deltaX = draggingBreakpoint.dragLastX - x;
     var deltaY = draggingBreakpoint.dragLastY - y;
     if (draggingBreakpoint.started || deltaX > 4 || deltaY > 4 || deltaX < -4 || deltaY < -4) {
+    
         if (!draggingBreakpoint.started) {
             draggingBreakpoint.isDisabled = hasStyleClass(draggingBreakpoint.parentNode, "disabled");
             removeStyleClass(draggingBreakpoint.parentNode, "breakpoint");
             removeStyleClass(draggingBreakpoint.parentNode, "disabled");
             draggingBreakpoint.started = true;
+            
+            var lineNum = parseInt(draggingBreakpoint.title);
+            
+            if(draggingBreakpoint.isDisabled)
+                draggingBreakpoint.breakFunction = files[currentFile].disabledBreakpoints[lineNum];
+            else
+                draggingBreakpoint.breakFunction = files[currentFile].breakpoints[lineNum];
+            files[currentFile].breakpoints[lineNum] = null;
+            files[currentFile].disabledBreakpoints[lineNum] = null;
 
             var dragImage = sourcesDocument.createElement("img");
             if (draggingBreakpoint.isDisabled)
@@ -398,7 +444,7 @@ function breakpointDragEnd(event)
     var dragImage = sourcesDocument.getElementById("breakpointDrag");
     if (!dragImage)
         return;
-
+        
     dragImage.parentNode.removeChild(dragImage);
 
     var x = event.clientX + window.scrollX;
@@ -419,12 +465,18 @@ function breakpointDragEnd(event)
     var tr = table.childNodes.item(row - 1);
     if (!tr)
         return;
-
-    if (draggingBreakpoint.isDisabled)
+        
+    if(draggingBreakpoint.isDisabled) {
         addStyleClass(tr, "disabled");
-    addStyleClass(tr, "breakpoint");
-    file.breakpoints[row] = (draggingBreakpoint.isDisabled ? -1 : 1);
+        file.disabledBreakpoints[row] = draggingBreakpoint.breakFunction;
+        file.breakpoints[row] = null;
+    } else {
+        file.disabledBreakpoints[row] = null;
+        file.breakpoints[row] = draggingBreakpoint.breakFunction;
+    }
 
+    addStyleClass(tr, "breakpoint");
+    
     draggingBreakpoint = null;
 }
 
@@ -764,6 +816,8 @@ function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
         file = new Object();
         file.scripts = new Array();
         file.breakpoints = new Array();
+        file.disabledBreakpoints = new Array();
+        file.breakpointEditorWindows = new Array();
         file.source = (fileSource.length ? fileSource : source);
         file.url = (url.length ? url : null);
         file.loaded = false;
@@ -836,8 +890,11 @@ function willExecuteStatement(sourceId, line, fromLeavingFrame)
         return;
 
     lastStatement = [sourceId, line];
-
-    if (pauseOnNextStatement || file.breakpoints[line] == 1 || (steppingOver && !steppingStack)) {
+    
+    var breakpoint = file.breakpoints[line];
+    var shouldBreak = breakpoint && (breakpoint == "break" || DebuggerDocument.evaluateScript_inCallFrame_(breakpoint, 0) == 1);
+    
+    if (pauseOnNextStatement || shouldBreak || (steppingOver && !steppingStack)) {
         pause();
         pauseOnNextStatement = false;
         pausedWhileLeavingFrame = fromLeavingFrame || false;

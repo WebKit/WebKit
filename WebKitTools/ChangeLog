@@ -1,3 +1,15 @@
+2006-10-06  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Timothy.
+
+        Bug 9665: [Drosera] Conditional breakpoints. http://bugs.webkit.org/show_bug.cgi?id=9665
+
+        * Drosera/Drosera.xcodeproj/project.pbxproj: Added new files
+        * Drosera/breakpointEditor.css: Added.
+        * Drosera/breakpointEditor.html: Added.
+        * Drosera/breakpointEditor.js: Added.
+        * Drosera/debugger.js: Added conditional breakpoint support, and the ability to open the breakpoint editor window on option-clicking a breakpoint.
+
 2006-10-06  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Tim H.
